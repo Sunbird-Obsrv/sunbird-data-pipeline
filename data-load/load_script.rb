@@ -45,7 +45,7 @@ class DataLoader
               path: 'session_id'
             },
             properties: {
-              session_id: { type: 'string' },
+              session_id: { type: 'string', index:    'not_analyzed' },
               users_id: { type: 'string', index:    'not_analyzed' },
               device_id: { type: 'string', index:    'not_analyzed' },
               device_name: { type: 'string' },
