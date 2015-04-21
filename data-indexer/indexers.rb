@@ -19,39 +19,11 @@ module Indexers
         body: {
           #settings: {}
           mappings: {
-            identities_v1: {
-              _id: {
-                path: 'users_id'
-              },
-              properties: {
-                users_id: { type: 'string' }
-              }
-            },
-            first_interactions_v1: {
-              _id: {
-                path: 'uid'
-              },
-              properties: {
-                ts: { type: 'date' },
-                uid: { type: 'string',index: 'not_analyzed' }
-              }
-            },
-            devices_v1: {
-              _id: {
-                path: 'device_id'
-              },
-              properties: {
-                device_id: { type: 'string' }
-                # device_name: { type: 'string' }
-              }
-            },
             events_v1: {
-              _id: {
-                path: 'sid'
-              },
               properties: {
+                eid: { type: 'string', index: 'not_analyzed'},
                 ts: { type: 'date' },
-                ver: { type: 'string' },
+                ver: { type: 'string', index: 'not_analyzed'},
                 gdata: {
                   type: 'nested',
                   include_in_parent: true,
@@ -60,44 +32,62 @@ module Indexers
                     ver: { type: 'string' }
                   }
                 },
-                sid: { type: 'string',index: 'not_analyzed' },
-                ddata: {
+                sid: { type: 'string', index: 'not_analyzed'},
+                uid: { type: 'string', index: 'not_analyzed'},
+                did: { type: 'string', index: 'not_analyzed'},
+                edata: {
                   type: 'nested',
                   include_in_parent: true,
                   properties: {
-                    #consider saving this in another doc
-                    did: { type: 'string', index: 'not_analyzed' },
-                    dos: { type: 'string', index: 'not_analyzed'  },
-                    make: { type: 'string', index: 'not_analyzed'  },
-                    loc: { type: 'geo_point' },
-                    spec: { type: 'string', index: 'not_analyzed'  }
-                  }
-                },
-                uid: { type: 'string', index: 'not_analyzed' },
-                eid: { type: 'string' }
-                # edata: { type: 'object' }
-              }
-            },
-            sessions_v1: {
-              # _parent: { type: "identities_v1" }, ?
-              _id: {
-                path: 'sid'
-              },
-              properties: {
-                sid: { type: 'string', index: 'not_analyzed' },
-                ts: { type: 'date' },
-                te: { type: 'date' },
-                duration: { type: 'double' },
-                ddata: {
-                  type: 'nested',
-                  include_in_parent: true,
-                  properties: {
-                    #consider saving this in another doc
-                    did: { type: 'string', index: 'not_analyzed' },
-                    dos: { type: 'string', index: 'not_analyzed'  },
-                    make: { type: 'string', index: 'not_analyzed'  },
-                    loc: { type: 'geo_point' },
-                    spec: { type: 'string', index: 'not_analyzed'  }
+                    eks: {
+                      type: 'nested',
+                      include_in_parent: true,
+                      properties: {
+                        length: { type: 'double'},
+                        loc: { type: 'geo_point'},
+                        uid: { type: 'string', index: 'not_analyzed' },
+                        err: { type: 'string' },
+                        gid: { type: 'string', index: 'not_analyzed' },
+                        attrs: { type: 'string' },
+                        mode: { type: 'string', index: 'not_analyzed' },
+                        api: { type: 'string', index: 'not_analyzed' },
+                        msgid: { type: 'string', index: 'not_analyzed' },
+                        ver: { type: 'string', index: 'not_analyzed' },
+                        size: { type: 'double' },
+                        os: { type: 'string', index: 'not_analyzed' },
+                        make: { type: 'string', index: 'not_analyzed' },
+                        mem: { type: 'long' },
+                        idisk: { type: 'long' },
+                        edisk: { type: 'long' },
+                        scrn: { type: 'double' },
+                        camera: { type: 'string', index: 'not_analyzed' },
+                        cpu: { type: 'string', index: 'not_analyzed' },
+                        sims: { type: 'long' },
+                        cap: { type: 'string', index: 'not_analyzed' },
+                        subj: { type: 'string', index: 'not_analyzed' },
+                        mc: { type: 'string', index: 'not_analyzed' },
+                        skill: { type: 'string', index: 'not_analyzed' },
+                        pass: { type: 'string', index: 'not_analyzed' },
+                        res: { type: 'string', index: 'not_analyzed' },
+                        exres: { type: 'string', index: 'not_analyzed' },
+                        # exlength: {},
+                        uri: { type: 'string', index: 'not_analyzed' },
+                        # current: {},
+                        # max: {},
+                        topics: {
+                          type: 'nested',
+                          include_in_parent: true,
+                          properties: {
+                            mc: { type: 'string', index: 'not_analyzed' },
+                            skill: { type: 'string', index: 'not_analyzed' },
+                            methods: { type: 'string', index: 'not_analyzed' }
+                          }
+                        },
+                        type: {type: 'string', index: 'not_analyzed'},
+                        extype: {type: 'string', index: 'not_analyzed'},
+                      }
+                    },
+                    ext: { type: 'nested' }
                   }
                 }
               }
