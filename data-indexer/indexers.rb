@@ -45,6 +45,16 @@ module Indexers
                       properties: {
                         length: { type: 'double'},
                         loc: { type: 'geo_point'},
+                        ldata: {
+                          type: 'nested',
+                          include_in_parent: true,
+                          properties: {
+                            locality: { type: 'string', index: 'not_analyzed' },
+                            district: { type: 'string', index: 'not_analyzed' },
+                            state: { type: 'string', index: 'not_analyzed' },
+                            country: { type: 'string', index: 'not_analyzed' }
+                          }
+                        },
                         uid: { type: 'string', index: 'not_analyzed' },
                         err: { type: 'string' },
                         gid: { type: 'string', index: 'not_analyzed' },
@@ -54,16 +64,22 @@ module Indexers
                         msgid: { type: 'string', index: 'not_analyzed' },
                         ver: { type: 'string', index: 'not_analyzed' },
                         size: { type: 'double' },
-                        os: { type: 'string', index: 'not_analyzed' },
-                        make: { type: 'string', index: 'not_analyzed' },
-                        mem: { type: 'long' },
-                        idisk: { type: 'long' },
-                        edisk: { type: 'long' },
-                        scrn: { type: 'double' },
-                        camera: { type: 'string', index: 'not_analyzed' },
-                        cpu: { type: 'string', index: 'not_analyzed' },
-                        sims: { type: 'long' },
-                        cap: { type: 'string', index: 'not_analyzed' },
+                        dspec: {
+                          type: 'nested',
+                          include_in_parent: true,
+                          properties: {
+                            os: { type: 'string', index: 'not_analyzed' },
+                            make: { type: 'string', index: 'not_analyzed' },
+                            mem: { type: 'long' },
+                            idisk: { type: 'long' },
+                            edisk: { type: 'long' },
+                            scrn: { type: 'double' },
+                            camera: { type: 'string', index: 'not_analyzed' },
+                            cpu: { type: 'string', index: 'not_analyzed' },
+                            sims: { type: 'long' },
+                            cap: { type: 'string', index: 'not_analyzed' },
+                          }
+                        },
                         subj: { type: 'string', index: 'not_analyzed' },
                         mc: { type: 'string', index: 'not_analyzed' },
                         skill: { type: 'string', index: 'not_analyzed' },

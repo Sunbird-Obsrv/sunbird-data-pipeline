@@ -1,11 +1,48 @@
 require 'securerandom'
 require 'pry'
+require 'geocoder'
+require 'ruby-progressbar'
 require_relative '../data-indexer/indexers.rb'
 
 module Generator
-  DEVICES = 10
-  USERS = 100
-  SESSIONS = 10
+  DEVICES = 12
+  USERS = 65
+  SESSIONS = 712
+  class Location
+    SLEEP_INTERVAL=0.2
+    ADDRESS_COMPONENTS_MAPPINGS={
+      city: :locality,
+      district: :administrative_area_level_2,
+      state: :administrative_area_level_1,
+      country: :country
+    }
+    attr_reader :loc,:city,:district,:state,:country
+    def initialize(loc)
+      @loc=loc
+      @results=reverse_search
+      set_identity
+    end
+    private
+    def reverse_search
+      sleep(SLEEP_INTERVAL)
+      Geocoder.search(loc)
+    end
+    def set_identity
+      @city = get_name(:city)
+      @district = get_name(:district)
+      @state = get_name(:state)
+      @country = get_name(:country)
+      raise 'Location not set!' if(@city&&@district&&@state&&@country).nil?
+    end
+    def get_name(type)
+      begin
+        result = @results.find{|r|!r.address_components_of_type(ADDRESS_COMPONENTS_MAPPINGS[type]).empty?}
+        result.address_components_of_type(ADDRESS_COMPONENTS_MAPPINGS[type]).first['long_name']
+      rescue => e
+        ""
+      end
+    end
+  end
   class User
     attr_reader :uid
     def initialize
@@ -15,12 +52,13 @@ module Generator
   class Device
     ANDROID_VERS = ['Android 5.0','Android 4.4','Android 4.1','Android 4.0']
     MAKES = ['Make A','Make B','Make C','Make D','Make E']
-    attr_reader :id,:os,:make,:spec,:loc
+    attr_reader :id,:os,:make,:spec,:location
     def initialize
       @id = SecureRandom.uuid
       @os = ANDROID_VERS.sample
       @make = MAKES.sample
-      @loc = "#{rand(16.0..28.0)},#{rand(74.0..82.0)}"
+      loc = "#{rand(16.0..28.0)},#{rand(74.0..82.0)}"
+      @location = Location.new(loc)
       @spec = "v1,1,.01,16,1,2,1,1,75,0"
     end
     def to_json
@@ -28,7 +66,7 @@ module Generator
         id: @id,
         os: @os,
         make: @make,
-        loc: @loc,
+        loc: @location.loc,
         spec: @spec
       }
     end
@@ -51,8 +89,8 @@ module Generator
       @sid = SecureRandom.uuid
       @start  = rand(START_TIME..END_TIME)
       @finish = rand(@start..(@start+rand(120..300)))
-      puts "#{SESSION_START_EVENT} : #{@start}\n"
-      puts "#{SESSION_END_EVENT}   : #{@finish}\n"
+      # puts "#{SESSION_START_EVENT} : #{@start}\n"
+      # puts "#{SESSION_END_EVENT}   : #{@finish}\n"
       @user = user
       @device = device
       @signup = (@start-rand(1..24)*3600)
@@ -86,7 +124,13 @@ module Generator
                    sims: 2, # number of sim cards
                    cap: ["GPS","BT","WIFI","3G","ACCEL"] # capabilities enums
                 },
-                loc: @device.loc # Location in lat,long format
+                loc: @device.location.loc, # Location in lat,long format
+                ldata: {
+                  locality: @device.location.city,
+                  district: @device.location.district,
+                  state: @device.location.state,
+                  country: @device.location.country,
+                }
              }
           }
         },
@@ -210,10 +254,11 @@ end
 client = ::Indexers::Elasticsearch.new
 r = Generator::Runner.new
 time = 0
-
+# bar = ProgressBar.create(total: Generator::SESSIONS)
 r.run do |session|
   session.events.each do |event|
     result = client.index('identities','events_v1',event)
+    # bar.increment
     # result = client.index('identities','first_interactions_v1',{uid:event[:uid],ts:event[:ts]})
     # if(event[:eid]==Generator::Session::SESSION_START_EVENT)
     #   result = client.index('identities','sessions_v1',{
