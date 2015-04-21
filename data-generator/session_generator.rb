@@ -71,7 +71,7 @@ module Generator
           },
           sid: "",
           uid: "",
-          id: @device.id,
+          did: @device.id,
           edata: {
              eks: {
                 dspec: {
@@ -98,7 +98,7 @@ module Generator
             ver: "1.0"
           },
           sid: @sid,
-          id: @device.id,
+          did: @device.id,
           uid: "",
           eid: GE_SIGNUP,
           edata: {
@@ -116,7 +116,7 @@ module Generator
             ver: "1.0"
           },
           sid: @sid,
-          id: @device.id,
+          did: @device.id,
           uid: @user.uid,
           eid: SESSION_START_EVENT,
           edata: {}
@@ -131,7 +131,7 @@ module Generator
           },
           sid: @sid,
           uid: @user.uid,
-          id: @id,
+          did: @id,
           edata: {
             eks:{
               gid: "lit.scrnr.kan.android",
@@ -149,7 +149,7 @@ module Generator
           },
           sid: @sid,
           uid: @user.uid,
-          id: @id,
+          did: @id,
           edata: {
             eks:{
               gid: "lit.scrnr.kan.android",
@@ -165,7 +165,7 @@ module Generator
             ver: "1.0"
           },
           sid: @sid,
-          id: @device.id,
+          did: @device.id,
           uid: @user.uid,
           eid: SESSION_END_EVENT,
           edata: {
@@ -184,7 +184,7 @@ module Generator
           },
           sid: "",
           uid: "",
-          id: @device.id,
+          did: @device.id,
           edata: {
              eks: {
                 length: ((@shutdown-@startup).to_i/3600.0).round(2)
