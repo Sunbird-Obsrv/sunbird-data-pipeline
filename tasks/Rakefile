@@ -7,18 +7,39 @@ end
 namespace :scheduled do
   task :reverse_search do
     require_relative '../data-async-processors/geo_reverse_search.rb'
-    Processors::ReverseSearch.perform
+    require_relative '../data-indexer/indexers.rb'
+    client = ::Indexers::Elasticsearch.new(false)
+    Processors::ReverseSearch.perform do |loc,ldata,hit|
+      result = client.index(
+        'identities',
+        'devices_v1',
+        {
+          ts: hit._source.ts,
+          did: hit._source.did,
+          loc: loc,
+          ldata: ldata,
+          dspec: hit._source.edata.eks.dspec
+        }
+      )
+    end
+  end
+  task :set_ldata do
+    require_relative '../data-async-processors/set_ldata.rb'
+    require_relative '../data-indexer/indexers.rb'
+    Processors::SetLdata.perform
   end
 end
 
 namespace :generators do
   task :sessions do
     require_relative '../data-generator/session_generator.rb'
-    client = ::Indexers::Elasticsearch.new(false)
+    require 'ruby-progressbar'
+    client = ::Indexers::Elasticsearch.new(true)
     r = Generator::Runner.new
     time = 0
-    # bar = ProgressBar.create(total: Generator::SESSIONS)
+    bar = ProgressBar.create(total: Generator::SESSIONS)
     r.run do |session,logger|
+      bar.increment
       session.events.each do |event|
         result = client.index('identities','events_v1',event)
         result.merge!(event)

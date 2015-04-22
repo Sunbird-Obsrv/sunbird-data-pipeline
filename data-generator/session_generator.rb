@@ -5,9 +5,9 @@ require 'geocoder'
 require_relative '../data-indexer/indexers.rb'
 
 module Generator
-  DEVICES = 1
-  USERS = 1
-  SESSIONS = 2
+  DEVICES = 10
+  USERS = 10
+  SESSIONS = 100
   class Location
     SLEEP_INTERVAL=0.2
     ADDRESS_COMPONENTS_MAPPINGS={
