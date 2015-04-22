@@ -78,12 +78,12 @@ module Processors
       response = Hashie::Mash.new response
       logger.info "FOUND #{response.hits.hits.count} hits."
       response.hits.hits.each do |hit|
-        if _loc=response.hits.hits.first._source.edata.eks.loc
+        result = nil
+        if _loc=hit._source.edata.eks.loc
           _id = hit._id
+          logger.info "LOC #{_loc}"
           location = Location.new(_loc)
-          edata = {
-            edata:{
-              eks: {
+          ldata = {
                 ldata: {
                   locality: location.locality,
                   district: location.district,
@@ -91,6 +91,10 @@ module Processors
                   country: location.country
                 }
               }
+          logger.info "LDATA #{ldata.to_json}"
+          edata = {
+            edata:{
+              eks: ldata
             }
           }
           result = @client.update({
@@ -101,8 +105,9 @@ module Processors
               doc: edata
             }
           })
-          logger.info "RESULT #{edata.merge(result).to_json}"
+          logger.info "RESULT #{result.to_json}"
         end
+        yield _loc,ldata,hit
       end
       logger.info "ENDING REVERSE SEARCH"
      rescue => e

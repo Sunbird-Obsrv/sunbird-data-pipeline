@@ -1,4 +1,5 @@
 require 'elasticsearch'
+require 'pry'
 
 module Indexers
   class Elasticsearch
@@ -22,6 +23,43 @@ module Indexers
             'index.number_of_shards' => 1
           },
           mappings: {
+            devices_v1: {
+              _id: {
+                path: "did"
+              },
+              properties: {
+                ts: { type: 'date' },
+                tu: { type: 'date' },
+                did: { type: 'string', index: 'not_analyzed'},
+                loc: { type: 'geo_point'},
+                ldata: {
+                  type: 'nested',
+                  include_in_parent: true,
+                  properties: {
+                    locality: { type: 'string', index: 'not_analyzed' },
+                    district: { type: 'string', index: 'not_analyzed' },
+                    state: { type: 'string', index: 'not_analyzed' },
+                    country: { type: 'string', index: 'not_analyzed' }
+                  }
+                },
+                dspec: {
+                  type: 'nested',
+                  include_in_parent: true,
+                  properties: {
+                    os: { type: 'string', index: 'not_analyzed' },
+                    make: { type: 'string', index: 'not_analyzed' },
+                    mem: { type: 'long' },
+                    idisk: { type: 'long' },
+                    edisk: { type: 'long' },
+                    scrn: { type: 'double' },
+                    camera: { type: 'string', index: 'not_analyzed' },
+                    cpu: { type: 'string', index: 'not_analyzed' },
+                    sims: { type: 'long' },
+                    cap: { type: 'string', index: 'not_analyzed' },
+                  }
+                }
+              }
+            },
             events_v1: {
               properties: {
                 eid: { type: 'string', index: 'not_analyzed', fielddata: { format: "doc_values" }},
@@ -117,6 +155,19 @@ module Indexers
       @client.indices.create({
         index: 'identities'
       })
+    end
+    def get(index,type,id)
+      begin
+        binding.pry
+        @client.get({
+              index: index,
+              type: type,
+              id: id
+              }
+            )
+      rescue => e
+        raise e
+      end
     end
     def index(index,type,body)
       begin

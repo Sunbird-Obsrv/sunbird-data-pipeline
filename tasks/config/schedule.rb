@@ -23,3 +23,6 @@ set :output, file
 every 1.minute do
   rake "scheduled:reverse_search"
 end
+every 1.minute do
+  rake "scheduled:set_ldata"
+end

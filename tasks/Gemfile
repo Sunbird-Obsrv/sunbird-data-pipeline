@@ -7,3 +7,5 @@ gem 'geocoder'
 gem 'elasticsearch'
 gem 'hashie'
 gem 'whenever'
+gem 'ruby-progressbar'
+
