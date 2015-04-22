@@ -96,6 +96,8 @@ module Generator
       @signup = (@start-rand(1..24)*3600)
       @startup = (@signup-rand(1..24)*3600)
       @shutdown = (@finish+rand(1..24)*3600)
+      @gamestart = @start+5
+      @gameend  = @finish-5
     end
     def events
       [
@@ -167,7 +169,7 @@ module Generator
         },
         {
           eid: GE_LAUNCH_GAME,
-          ts: (@start+5).to_i*1000,
+          ts: (@gamestart).to_i*1000,
           ver: "1.0",
           gdata: {
             id: "genie.android",
@@ -185,7 +187,7 @@ module Generator
         },
         {
           eid: GE_GAME_END,
-          ts: (@finish-5).to_i*1000,
+          ts: (@gameend).to_i*1000,
           ver: "1.0",
           gdata: {
             id: "genie.android",
@@ -197,7 +199,7 @@ module Generator
           edata: {
             eks:{
               gid: "lit.scrnr.kan.android",
-              err: ""
+              length: ((@gameend - @gamestart).to_i/3600.0).round(2)
             }
           }
         },

@@ -12,16 +12,17 @@ module Indexers
       @client.indices.delete index: 'identities' rescue nil
     end
     def create_indices
-      # creating all types in the same index as of now to avoid
-      # unnecessary sharding
-      @client.indices.create({
-        index: 'identities',
+      client.indices.put_template({
+        name: 'events',
         body: {
-          #settings: {}
+          template: '*',
+          settings: {
+            'index.number_of_shards' => 1
+          },
           mappings: {
             events_v1: {
               properties: {
-                eid: { type: 'string', index: 'not_analyzed'},
+                eid: { type: 'string', index: 'not_analyzed', fielddata: { format: "doc_values" }},
                 ts: { type: 'date' },
                 ver: { type: 'string', index: 'not_analyzed'},
                 gdata: {
@@ -111,6 +112,9 @@ module Indexers
           }
         }
       })
+      @client.indices.create({
+        index: 'identities'
+      })
     end
     def index(index,type,body)
       begin
@@ -138,3 +142,5 @@ module Indexers
     end
   end
 end
+
+Indexers::Elasticsearch.new
