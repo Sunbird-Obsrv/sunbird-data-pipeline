@@ -1,13 +1,13 @@
 require 'securerandom'
 require 'pry'
 require 'geocoder'
-require 'ruby-progressbar'
+# require 'ruby-progressbar'
 require_relative '../data-indexer/indexers.rb'
 
 module Generator
-  DEVICES = 12
-  USERS = 65
-  SESSIONS = 712
+  DEVICES = 1
+  USERS = 1
+  SESSIONS = 2
   class Location
     SLEEP_INTERVAL=0.2
     ADDRESS_COMPONENTS_MAPPINGS={
@@ -19,8 +19,8 @@ module Generator
     attr_reader :loc,:city,:district,:state,:country
     def initialize(loc)
       @loc=loc
-      @results=reverse_search
-      set_identity
+      # @results=reverse_search
+      # set_identity
     end
     private
     def reverse_search
@@ -98,6 +98,9 @@ module Generator
       @shutdown = (@finish+rand(1..24)*3600)
       @gamestart = @start+5
       @gameend  = @finish-5
+    end
+    def to_json
+      events.to_json
     end
     def events
       [
@@ -240,39 +243,19 @@ module Generator
       ]
     end
   end
+
   class Runner
     def initialize
       @user_pool = Array.new(USERS) {User.new}
       @device_pool = Array.new(DEVICES) {Device.new}
+      @logger = Logger.new(File.expand_path("./logs/logfile.log", File.dirname(__FILE__)))
     end
     def run
       SESSIONS.times do
-        yield Session.new(@user_pool.sample,@device_pool.sample)
+        session = Session.new(@user_pool.sample,@device_pool.sample)
+        # @logger.info "SESSION #{session.to_json}"
+        yield session,@logger
       end
     end
-  end
-end
-
-client = ::Indexers::Elasticsearch.new
-r = Generator::Runner.new
-time = 0
-# bar = ProgressBar.create(total: Generator::SESSIONS)
-r.run do |session|
-  session.events.each do |event|
-    result = client.index('identities','events_v1',event)
-    # bar.increment
-    # result = client.index('identities','first_interactions_v1',{uid:event[:uid],ts:event[:ts]})
-    # if(event[:eid]==Generator::Session::SESSION_START_EVENT)
-    #   result = client.index('identities','sessions_v1',{
-    #     sid:event[:sid],
-    #     ts: event[:ts],
-    #     ddata: event[:ddata]
-    #   })
-    #   time = event[:ts]
-    # elsif(event[:eid]==Generator::Session::SESSION_END_EVENT)
-    #   duration = (((event[:ts] - time).to_i)/(1000.0*3600)).round(2)
-    #   result = client.update('identities','sessions_v1',event[:sid],{ te: event[:ts], duration: duration })
-    #   time = 0
-    # end
   end
 end

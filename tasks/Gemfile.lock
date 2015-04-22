@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    chronic (0.10.2)
     coderay (1.1.0)
     elasticsearch (1.0.8)
       elasticsearch-api (= 1.0.7)
@@ -14,6 +15,7 @@ GEM
       multipart-post (>= 1.2, < 3)
     geocoder (1.2.8)
     hashie (3.4.1)
+    map_by_method (0.8.3)
     method_source (0.8.2)
     multi_json (1.11.0)
     multipart-post (2.0.0)
@@ -21,8 +23,10 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
-    ruby-progressbar (1.7.5)
     slop (3.6.0)
+    what_methods (1.0.1)
+    whenever (0.9.4)
+      chronic (>= 0.6.3)
 
 PLATFORMS
   ruby
@@ -31,5 +35,7 @@ DEPENDENCIES
   elasticsearch
   geocoder
   hashie
+  map_by_method
   pry
-  ruby-progressbar
+  what_methods
+  whenever

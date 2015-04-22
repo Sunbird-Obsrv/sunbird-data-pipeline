@@ -3,10 +3,12 @@ require 'elasticsearch'
 module Indexers
   class Elasticsearch
     attr_reader :client
-    def initialize
+    def initialize(refresh=true)
       @client = ::Elasticsearch::Client.new log: false
-      delete_indices
-      create_indices
+      if refresh
+        delete_indices
+        create_indices
+      end
     end
     def delete_indices
       @client.indices.delete index: 'identities' rescue nil
@@ -142,5 +144,3 @@ module Indexers
     end
   end
 end
-
-Indexers::Elasticsearch.new

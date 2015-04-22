@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    coderay (1.1.0)
+    chronic (0.10.2)
     elasticsearch (1.0.8)
       elasticsearch-api (= 1.0.7)
       elasticsearch-transport (= 1.0.7)
@@ -12,24 +12,14 @@ GEM
       multi_json
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
-    geocoder (1.2.8)
-    hashie (3.4.1)
-    method_source (0.8.2)
     multi_json (1.11.0)
     multipart-post (2.0.0)
-    pry (0.10.1)
-      coderay (~> 1.1.0)
-      method_source (~> 0.8.1)
-      slop (~> 3.4)
-    ruby-progressbar (1.7.5)
-    slop (3.6.0)
+    whenever (0.9.4)
+      chronic (>= 0.6.3)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   elasticsearch
-  geocoder
-  hashie
-  pry
-  ruby-progressbar
+  whenever

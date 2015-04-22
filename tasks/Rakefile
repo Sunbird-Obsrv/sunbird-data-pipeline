@@ -1,0 +1,29 @@
+task :default => :console
+
+task :console do
+  ruby "-Ilib -S irb"
+end
+
+namespace :scheduled do
+  task :reverse_search do
+    require_relative '../data-async-processors/geo_reverse_search.rb'
+    Processors::ReverseSearch.perform
+  end
+end
+
+namespace :generators do
+  task :sessions do
+    require_relative '../data-generator/session_generator.rb'
+    client = ::Indexers::Elasticsearch.new(false)
+    r = Generator::Runner.new
+    time = 0
+    # bar = ProgressBar.create(total: Generator::SESSIONS)
+    r.run do |session,logger|
+      session.events.each do |event|
+        result = client.index('identities','events_v1',event)
+        result.merge!(event)
+        logger.info "EVENT #{result.to_json}"
+      end
+    end
+  end
+end
