@@ -23,6 +23,42 @@ module Indexers
             'index.number_of_shards' => 1
           },
           mappings: {
+            game_events_v1:{
+              properties: {
+                eid: { type: 'string', index: 'not_analyzed'},
+                did: { type: 'string', index: 'not_analyzed'},
+                sid: { type: 'string', index: 'not_analyzed'},
+                lang: { type: 'string', index: 'not_analyzed'},
+                pmode: { type: 'string', index: 'not_analyzed'},
+                gdata: {
+                  type: 'nested',
+                  include_in_parent: true,
+                  properties: {
+                    id: { type: 'string' },
+                    ver: { type: 'string' }
+                  }
+                },
+                edata: {
+                  type: 'nested',
+                  include_in_parent: true,
+                  properties: {
+                    eks: {
+                      type: 'nested',
+                      include_in_parent: true,
+                      properties: {
+                        length: { type: 'double'},
+                        score: { type: 'double' },
+                        correct: { type: 'long' },
+                        incorrect: { type: 'long' },
+                        percent_correct: { type: 'double' },
+                        result: { type: 'string', index: 'not_analyzed'},
+                        total: { type: 'long' }
+                      }
+                    }
+                  }
+                }
+              }
+            },
             devices_v1: {
               _id: {
                 path: "did"

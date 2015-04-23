@@ -4,6 +4,16 @@ task :console do
   ruby "-Ilib -S irb"
 end
 
+namespace :uploaders do
+  namespace :numeracy do
+    task :assessment do
+      require_relative '../uploaders/numeracy/assessment.rb'
+      Uploaders::Numeracy::Assessment.upload
+    end
+  end
+end
+
+
 namespace :scheduled do
   task :reverse_search do
     require_relative '../data-async-processors/geo_reverse_search.rb'
