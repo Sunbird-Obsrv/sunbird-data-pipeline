@@ -35,8 +35,8 @@ module Uploaders
                     type: 'nested',
                     include_in_parent: true,
                     properties: {
-                      id: { type: 'string' },
-                      ver: { type: 'string' }
+                      id: { type: 'string', index: 'not_analyzed'},
+                      ver: { type: 'string', index: 'not_analyzed'},
                     }
                   },
                   edata: {
@@ -185,6 +185,7 @@ module Uploaders
               edata: {
                 eks: {
                   pmode: pmode,
+                  age: age,
                   qid: qid,
                   pass: qresult,
                   length: qlength
