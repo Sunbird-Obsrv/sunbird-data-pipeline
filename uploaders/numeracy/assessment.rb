@@ -1,4 +1,4 @@
-require 'CSV'
+require 'csv'
 require 'pry'
 require 'logger'
 require 'elasticsearch'
