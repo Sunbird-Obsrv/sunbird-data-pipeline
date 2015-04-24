@@ -5,9 +5,9 @@ require 'geocoder'
 require_relative '../data-indexer/indexers.rb'
 
 module Generator
-  DEVICES = 10
-  USERS = 10
-  SESSIONS = 100
+  DEVICES = 25
+  USERS = 200
+  SESSIONS = 600
   class Location
     SLEEP_INTERVAL=0.2
     ADDRESS_COMPONENTS_MAPPINGS={
@@ -57,7 +57,7 @@ module Generator
       @id = SecureRandom.uuid
       @os = ANDROID_VERS.sample
       @make = MAKES.sample
-      loc = "#{rand(16.0..28.0)},#{rand(74.0..82.0)}"
+      loc = "#{rand(12.0..20.0)},#{rand(74.0..78.0)}"
       @location = Location.new(loc)
       @spec = "v1,1,.01,16,1,2,1,1,75,0"
     end
@@ -180,7 +180,7 @@ module Generator
           },
           sid: @sid,
           uid: @user.uid,
-          did: @id,
+          did: @device.id,
           edata: {
             eks:{
               gid: "lit.scrnr.kan.android",
@@ -198,7 +198,7 @@ module Generator
           },
           sid: @sid,
           uid: @user.uid,
-          did: @id,
+          did: @device.id,
           edata: {
             eks:{
               gid: "lit.scrnr.kan.android",
