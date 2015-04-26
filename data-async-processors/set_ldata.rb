@@ -44,7 +44,7 @@ module Processors
         if ldata_from_cache.nil?
           begin
           response = @client.get({
-            index: 'identities',
+            index: 'ecosystem-identities',
             type: 'devices_v1',
             id: did
           })

@@ -4,6 +4,13 @@ task :console do
   ruby "-Ilib -S irb"
 end
 
+namespace :setup do
+  task :elasticsearch do
+    require_relative '../data-indexer/indexers.rb'
+    client = ::Indexers::Elasticsearch.new(true)
+  end
+end
+
 namespace :uploaders do
   namespace :numeracy do
     task :assessment do
@@ -21,10 +28,11 @@ namespace :scheduled do
     client = ::Indexers::Elasticsearch.new(false)
     Processors::ReverseSearch.perform do |loc,ldata,hit|
       result = client.index(
-        'identities',
+        'ecosystem-identities',
         'devices_v1',
         {
           ts: hit._source.ts,
+          "@timestamp" => hit._source["@timestamp"],
           did: hit._source.did,
           loc: loc,
           ldata: ldata,
@@ -51,7 +59,7 @@ namespace :generators do
     r.run do |session,logger|
       bar.increment
       session.events.each do |event|
-        result = client.index('identities','events_v1',event)
+        result = client.index('ecosystem-sample-identities','events_v1',event)
         result.merge!(event)
         logger.info "EVENT #{result.to_json}"
       end
