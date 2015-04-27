@@ -1,6 +1,0 @@
-## Dev setup
-
-* Install [Logstash](http://logstash.net/docs/1.4.2/tutorials/getting-started-with-logstash) 
-* Modify the configuration file and specify the telemetry log file path 
-* Run logstash with the configuration ``bin/logstash -f logstash.conf``
-

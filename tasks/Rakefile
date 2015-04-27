@@ -59,7 +59,8 @@ namespace :generators do
     r.run do |session,logger|
       bar.increment
       session.events.each do |event|
-        result = client.index('ecosystem-sample-identities','events_v1',event)
+        binding.pry
+        # result = client.index('ecosystem-sample-identities','events_v1',event)
         result.merge!(event)
         logger.info "EVENT #{result.to_json}"
       end

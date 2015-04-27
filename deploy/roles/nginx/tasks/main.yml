@@ -2,3 +2,7 @@
 - name: Install nginx
   apt: name=nginx state=present
   sudo: yes
+
+- name: Copy ekstep conf
+  copy: src=ekstep.conf dest=/etc/nginx/sites-available
+  sudo: yes

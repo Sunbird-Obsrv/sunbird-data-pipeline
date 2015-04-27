@@ -24,6 +24,10 @@
   command: bash -lc "update-rc.d kibana4 defaults 96 9"
   sudo: yes
 
+- name: Copy kibana config file
+  template: src=kibana.yml dest={{ kibana_config_loc }}
+  sudo: yes
+
 - name: Start kibana
   service: name=kibana4 state=started
   sudo: yes

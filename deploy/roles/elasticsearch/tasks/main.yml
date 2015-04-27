@@ -23,4 +23,3 @@
   environment: 
     java_home: "{{ java-home }}"
   sudo: yes
-  

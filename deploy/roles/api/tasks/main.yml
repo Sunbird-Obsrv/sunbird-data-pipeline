@@ -1,6 +1,6 @@
 ---
 - name: Install openjre
-  apt: name=openjdk-7-jre state=present
+  apt: name=openjdk-7-jre-headless state=present
   sudo: yes
 
 - name: Install git
