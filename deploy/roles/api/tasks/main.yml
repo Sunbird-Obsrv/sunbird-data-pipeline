@@ -35,6 +35,11 @@
   copy: src=Ecosystem-Platform-API dest=/usr/bin mode=755
   sudo: yes
 
+# - name: Stop Ecosystem-Platform-API
+#   command: bash -lc "pkill -f 'Ecosystem-Platform-API'"
+#   sudo: yes
+
+
 - name: Start Ecosystem-Platform-API
   command: bash -lc "nohup Ecosystem-Platform-API > nohub.out 2> nohub.err < /dev/null &"
   sudo: yes
@@ -44,4 +49,16 @@
 
 - name: Change logfile permission
   file: path=/var/log/telemetry.log mode=0644
+  sudo: yes
+
+- name: Install nginx
+  apt: name=nginx state=present
+  sudo: yes
+
+- name: Copy api conf
+  template: src=api.conf dest=/etc/nginx/sites-available/default
+  sudo: yes
+
+- name: Restart nginx
+  service: name=nginx state=restarted
   sudo: yes

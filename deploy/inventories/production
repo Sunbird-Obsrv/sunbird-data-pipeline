@@ -1,5 +1,5 @@
 [prod-api]
-52.74.173.39 ansible_ssh_user=ecosystem ansible_ssh_private_key_file=~/.ssh/ekstep/keys/ekstep ansible_sudo_pass=ec0syst3m
+52.74.115.168 ansible_ssh_user=ecosystem ansible_ssh_private_key_file=~/.ssh/ekstep/keys/ekstep ansible_sudo_pass=ec0syst3m
 
 [prod-kibana]
 52.74.130.55 ansible_ssh_user=ecosystem ansible_ssh_private_key_file=~/.ssh/ekstep/keys/ekstep ansible_sudo_pass=k1b@n@

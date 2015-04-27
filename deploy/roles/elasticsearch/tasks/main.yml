@@ -17,9 +17,18 @@
 - name: Install Elastic Search
   apt: name=elasticsearch state=present
   sudo: yes
+  sudo: yes
+
+- name: Creates directory
+  file: path=/etc/elasticsearch/scripts state=directory
+  sudo: yes
+
+- name: Add convert script
+  copy: src=convert_to_hours.groovy dest=/etc/elasticsearch/scripts/convert_to_hours.groovy mode=0666
+  sudo: yes
 
 - name: Start elasticsearch
-  service: name=elasticsearch state=started
-  environment: 
+  service: name=elasticsearch state=restarted
+  environment:
     java_home: "{{ java-home }}"
   sudo: yes
