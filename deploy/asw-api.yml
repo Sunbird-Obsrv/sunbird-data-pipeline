@@ -1,0 +1,11 @@
+---
+- hosts: api
+  remote_user: ecosystem
+  pre_tasks:
+    - name: Update
+      command: bash -lc "apt-get update"
+      sudo: yes
+
+  roles:
+    - logstash
+    - api

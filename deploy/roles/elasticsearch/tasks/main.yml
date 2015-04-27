@@ -1,0 +1,26 @@
+---
+
+- include: install_java.yml
+
+- name: Add Elastic Search APT repository
+  copy: src=elasticsearch.list dest=/etc/apt/sources.list.d/elasticsearch.list mode=0666
+  sudo: yes
+
+- name: Add Elastic Search repositpry key to APT
+  apt_key: url=http://packages.elasticsearch.org/GPG-KEY-elasticsearch state=present
+  sudo: yes
+
+- name: Update APT cache
+  command: apt-get update
+  sudo: yes
+
+- name: Install Elastic Search
+  apt: name=elasticsearch state=present
+  sudo: yes
+
+- name: Start elasticsearch
+  service: name=elasticsearch state=started
+  environment: 
+    java_home: "{{ java-home }}"
+  sudo: yes
+  

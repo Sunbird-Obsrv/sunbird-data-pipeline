@@ -1,0 +1,47 @@
+---
+- name: Install openjre
+  apt: name=openjdk-7-jre state=present
+  sudo: yes
+
+- name: Install git
+  apt: name=git state=present
+  sudo: yes
+
+- name: check if golang file has been downloaded
+  stat: path=/usr/local/{{ go_tar_file }}
+  register: st
+
+- name: Get golang binary
+  get_url: url={{ golang_url }} dest=/usr/local
+  sudo: yes
+  when: st.stat.exists == False
+
+- name: untar file
+  unarchive: src=/usr/local/{{ go_tar_file }} dest=/usr/local copy=no
+  sudo: yes
+  when: st.stat.exists == False
+
+- name: Add golang to PATH
+  lineinfile: dest=/etc/profile regexp="export PATH=$PATH:/usr/local/go/bin" insertafter=EOF line="export PATH=$PATH:/usr/local/go/bin"
+  sudo: yes
+
+- name: create go path folder
+  file: path=/home/{{ user }}/go state=directory
+
+- name: Add GOPATH
+  lineinfile: dest=/home/{{ user }}/.bashrc regexp="export GOPATH=$HOME/go" line="export GOPATH=$HOME/go" insertafter=EOF
+
+- name: Copy ecosystem_file
+  copy: src=Ecosystem-Platform-API dest=/usr/bin mode=755
+  sudo: yes
+
+- name: Start Ecosystem-Platform-API
+  command: bash -lc "nohup Ecosystem-Platform-API > nohub.out 2> nohub.err < /dev/null &"
+  sudo: yes
+  environment:
+    API_USER: "{{ apiuser }}"
+    API_PASS: "{{ apipass }}"
+
+- name: Change logfile permission
+  file: path=/var/log/telemetry.log mode=0644
+  sudo: yes

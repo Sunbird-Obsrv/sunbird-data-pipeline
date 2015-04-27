@@ -1,0 +1,31 @@
+---
+- name: add logstash key
+  apt_key: url=http://packages.elasticsearch.org/GPG-KEY-elasticsearch state=present
+  sudo: yes
+
+- name: Add to deb file
+  lineinfile: dest=/etc/apt/sources.list regexp="deb http://packages.elasticsearch.org/logstash/1.4/debian stable main" line=" deb http://packages.elasticsearch.org/logstash/1.4/debian stable main"
+  sudo: yes
+
+- name: Update
+  command: bash -lc "apt-get update"
+  sudo: yes
+
+- name: Install logstash
+  apt: name=logstash state=present
+  sudo: yes
+
+- name: Stop logstash
+  service: name=logstash state=stopped
+  sudo: yes
+
+- name: Create logstash conf directory
+  file: path=/home/{{ user }}/logstash state=directory
+
+- name: Copy logstash file
+  template: src=logstash.conf dest={{ logstash_config_loc }}/logstash.conf
+  sudo: yes
+
+- name: Start logstash
+  service: name=logstash state=started
+  sudo: yes
