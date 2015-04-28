@@ -26,3 +26,6 @@ end
 every 1.minute do
   rake "scheduled:set_ldata"
 end
+every 1.minute do
+  rake "scheduled:generate_signup"
+end

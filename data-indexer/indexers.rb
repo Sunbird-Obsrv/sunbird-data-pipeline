@@ -111,6 +111,17 @@ module Indexers
               }
             },
             {
+             boolean_fields:{
+                  match: "signup_processed",
+                  match_pattern: "regex",
+                  mapping: {
+                      type: "boolean",
+                      index: "not_analyzed",
+                      doc_values: true
+                  }
+              }
+            },
+            {
               integer_fields: {
                   match: "sims",
                   match_pattern: "regex",
