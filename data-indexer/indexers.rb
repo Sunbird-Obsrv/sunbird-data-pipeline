@@ -101,7 +101,7 @@ module Indexers
             },
             {
               double_fields: {
-                  match: "mem|idisk|edisk|scrn|length",
+                  match: "mem|idisk|edisk|scrn|length|age",
                   match_pattern: "regex",
                   mapping: {
                       type: "double",
@@ -123,7 +123,7 @@ module Indexers
             },
             {
               integer_fields: {
-                  match: "sims",
+                  match: "sims|score|maxscore",
                   match_pattern: "regex",
                   mapping: {
                       type: "integer",

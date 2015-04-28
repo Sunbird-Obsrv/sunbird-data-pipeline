@@ -1,8 +1,8 @@
 ---
 - hosts: elasticsearch
   remote_user: ecosystem
-  pre_tasks: 
-    - name: Update 
+  pre_tasks:
+    - name: Update
       command: bash -lc "apt-get update"
       sudo: yes
 
@@ -11,13 +11,13 @@
     - utils
     - kibana
 
-#- hosts: api
-#  remote_user: ecosystem
-#  pre_tasks:
-#    - name: Update
-#      command: bash -lc "apt-get update"
-#      sudo: yes
-#
-#  roles:
-#    - logstash
-#    - api
+- hosts: api
+  remote_user: ecosystem
+  pre_tasks:
+    - name: Update
+      command: bash -lc "apt-get update"
+      sudo: yes
+
+  roles:
+    - logstash
+    - api
