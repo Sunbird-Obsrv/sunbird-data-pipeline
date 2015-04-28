@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  div(class="container")
+    div(class="row")
+      div(class="col-sm-4")
+      div(class="col-sm-4")
+        div(style="min-height: 400px;background: url('http://www.ekstep.org/images/bannerbg.png') no-repeat center;")
+        div(style="font-size: 5em;font-weight: bold;") Dashboard
+        a(href="/ecosystem/auth/google",class="btn btn-block btn-social btn-lg btn-google",style="margin-top:20px;color: #fff;background-color: #dd4b39;border-color: rgba(0,0,0,0.2);")
+          i(class="fa fa-google",style="padding-right: 5px;") Sign in with Google
+      div(class="col-sm-4")

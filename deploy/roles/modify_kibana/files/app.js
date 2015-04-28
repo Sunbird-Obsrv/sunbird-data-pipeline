@@ -13,9 +13,9 @@ var passport = require( 'passport' );
 var GoogleStrategy = require('passport-google-oauth2').Strategy
 
 
-var GOOGLE_CLIENT_ID = '--client-id-here--',
-    GOOGLE_CLIENT_SECRET = '--client-secret-here--',
-    redirect = 'http://ep-sandbox.ekstep.org/oauth2callback';
+var GOOGLE_CLIENT_ID = '149422338782-gp602lvp42iig3cvovi7i6i4rp3dr9o5.apps.googleusercontent.com',
+    GOOGLE_CLIENT_SECRET = 'DiFwTGwVGcxgiTR6eWlntRN9',
+    redirect = 'http://platform.ekstep.org/ecosystem/oauth2callback';
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -88,14 +88,14 @@ app.get('/auth/google', passport.authenticate('google', { scope: [
 }));
 
 app.get( '/oauth2callback',
-    	passport.authenticate( 'google', {
-        successRedirect: '/',
-    		failureRedirect: '/login'
+      passport.authenticate( 'google', {
+        successRedirect: '/ecosystem/',
+        failureRedirect: '/ecosystem/login'
 }));
 
 app.get('/logout', function(req, res){
   req.logout();
-  res.redirect('/login');
+  res.redirect('/ecosystem/login');
 });
 
 app.use('/', routes);
@@ -132,8 +132,9 @@ app.use(function (err, req, res, next) {
 
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
+  //throw new Error(req.isAuthenticated());
   if (req.path === "/login" || req.path.indexOf("/auth") > -1  || req.path.indexOf('/oauth2callback') > -1 ) { return next(); }
-  res.redirect('/login');
+  res.redirect('/ecosystem/login');
 }
 
 module.exports = app;

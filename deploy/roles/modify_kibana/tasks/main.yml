@@ -1,0 +1,48 @@
+---
+- name: Check if kibana exists
+  stat: path=/opt/kibana
+  sudo: yes
+  register: kib
+
+- name: Copy files
+  copy: src=app.js dest=/opt/kibana/src/ mode=0644
+  when: kib.stat.isdir is defined and kib.stat.isdir
+  sudo: yes
+
+- name: Copy files
+  copy: src=package.json dest=/opt/kibana/src/ mode=0644
+  when: kib.stat.isdir is defined and kib.stat.isdir
+  sudo: yes
+
+- name: Copy files
+  copy: src=views/login.jade dest=/opt/kibana/src/views/ mode=0644
+  when: kib.stat.isdir is defined and kib.stat.isdir
+  sudo: yes
+
+- name: Copy files
+  copy: src=views/layout.jade dest=/opt/kibana/src/views/ mode=0644
+  when: kib.stat.isdir is defined and kib.stat.isdir
+  sudo: yes
+
+- name: Copy files
+  copy: src=no_border.png dest=/opt/kibana/src/public/images mode=0644 owner=ecosystem
+  when: kib.stat.isdir is defined and kib.stat.isdir
+  sudo: yes
+
+- name: Install nodejs
+  apt: name=nodejs state=present
+  sudo: yesyes
+
+- name: Install npm
+  apt: name=npm state=present
+  sudo: yes
+
+- name: Run NPM
+  command: bash -lc "npm install --production"
+  sudo: yes
+  args:
+    chdir: "/opt/kibana/src"
+
+- name: Start kibana
+  service: name=kibana4 state=restarted
+  sudo: yes

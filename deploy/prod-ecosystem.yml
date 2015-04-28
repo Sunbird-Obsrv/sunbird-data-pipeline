@@ -1,7 +1,7 @@
 ---
 - hosts: prod-elasticsearch
   remote_user: ecosystem
-  pre_tasks: 
+  pre_tasks:
     name: Update
     command: bash -lc "apt-get update"
     sudo: yes
@@ -10,17 +10,18 @@
 
 - hosts: prod-kibana
   remote_user: ecosystem
-  pre_tasks: 
+  pre_tasks:
     name: Update
     command: bash -lc "apt-get update"
     sudo: yes
   roles:
     - utils
     - kibana
+    - modify_kibana
 
 - hosts: prod-api
   remote_user: ecosystem
-  pre_tasks: 
+  pre_tasks:
     name: Update
     command: bash -lc "apt-get update"
     sudo: yes
