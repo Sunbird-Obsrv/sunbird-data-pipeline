@@ -34,18 +34,18 @@
 - name: Copy ecosystem_file
   copy: src=Ecosystem-Platform-API dest=/usr/bin mode=755
   sudo: yes
+  notify:
+  - restart ecosystem-api
 
-# - name: Stop Ecosystem-Platform-API
-#   command: bash -lc "pkill -f 'Ecosystem-Platform-API'"
-#   sudo: yes
-
+- name: Copy ecosystem init file
+  template: src=ecosystem-api.sh dest=/etc/init.d/ecosystem-api mode=755
+  sudo: yes
+  notify:
+  - restart ecosystem-api
 
 - name: Start Ecosystem-Platform-API
-  command: bash -lc "nohup Ecosystem-Platform-API > nohub.out 2> nohub.err < /dev/null &"
+  service: name=ecosystem-api state=started enabled=yes
   sudo: yes
-  environment:
-    API_USER: "{{ apiuser }}"
-    API_PASS: "{{ apipass }}"
 
 - name: Change logfile permission
   file: path=/var/log/telemetry.log mode=0644
