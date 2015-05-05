@@ -18,6 +18,8 @@
     - utils
     - kibana
     - modify_kibana
+  tags:
+    - kibana
 
 - hosts: api
   remote_user: ecosystem

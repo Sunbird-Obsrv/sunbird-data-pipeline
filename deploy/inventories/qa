@@ -1,0 +1,29 @@
+[qa-api]
+52.74.40.46 ansible_ssh_user=ecosystem ansible_ssh_private_key_file=~/.ssh/ekstep/keys/ekstep ansible_sudo_pass=ec0syst3m
+
+[qa-es]
+52.74.22.23 ansible_ssh_user=ecosystem ansible_ssh_private_key_file=~/.ssh/ekstep/keys/ekstep ansible_sudo_pass=p@ssw0rd
+
+[qa-kibana]
+52.74.22.23 ansible_ssh_user=ecosystem ansible_ssh_private_key_file=~/.ssh/ekstep/keys/ekstep ansible_sudo_pass=p@ssw0rd
+
+[qa-logstash]
+52.74.40.46 ansible_ssh_user=ecosystem ansible_ssh_private_key_file=~/.ssh/ekstep/keys/ekstep ansible_sudo_pass=ec0syst3m
+
+[qa:children]
+api
+es
+kibana
+logstash
+
+[api:children]
+qa-api
+
+[es:children]
+qa-es
+
+[kibana:children]
+qa-kibana
+
+[logstash:children]
+qa-logstash

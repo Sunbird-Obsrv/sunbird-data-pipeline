@@ -11,7 +11,7 @@
   sudo: yes
 
 - name: Update APT cache
-  command: apt-get update
+  apt: update_cache=yes
   sudo: yes
 
 - name: Install Elastic Search

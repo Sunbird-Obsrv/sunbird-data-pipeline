@@ -31,5 +31,5 @@
   sudo: yes
 
 - name: Start kibana
-  service: name=kibana4 state=started
+  service: name=kibana4 state=restarted
   sudo: yes

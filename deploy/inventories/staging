@@ -1,5 +1,29 @@
-[api]
-52.74.40.46 ansible_ssh_user=ecosystem ansible_ssh_private_key_file=~/.ssh/ekstep/keys/ekstep ansible_sudo_pass=ec0syst3m
+[staging-api]
+52.74.101.237 ansible_ssh_user=ecosystem ansible_ssh_private_key_file=~/.ssh/ekstep/keys/ekstep ansible_sudo_pass=ec0syst3m
 
-[elasticsearch]
-52.74.22.23 ansible_ssh_user=ecosystem ansible_ssh_private_key_file=~/.ssh/ekstep/keys/ekstep ansible_sudo_pass=p@ssw0rd
+[staging-es]
+52.74.61.230 ansible_ssh_user=ecosystem ansible_ssh_private_key_file=~/.ssh/ekstep/keys/ekstep ansible_sudo_pass=ec0syst3m
+
+[staging-kibana]
+52.74.61.230 ansible_ssh_user=ecosystem ansible_ssh_private_key_file=~/.ssh/ekstep/keys/ekstep ansible_sudo_pass=ec0syst3m
+
+[staging-logstash]
+52.74.101.237 ansible_ssh_user=ecosystem ansible_ssh_private_key_file=~/.ssh/ekstep/keys/ekstep ansible_sudo_pass=ec0syst3m
+
+[staging:children]
+api
+es
+kibana
+logstash
+
+[api:children]
+staging-api
+
+[es:children]
+staging-es
+
+[kibana:children]
+staging-kibana
+
+[logstash:children]
+staging-logstash

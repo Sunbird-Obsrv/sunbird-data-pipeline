@@ -1,0 +1,10 @@
+---
+- name: Create user
+  hosts: instances
+  tasks:
+    - name: Create user
+      user: name=ecosystem comment="ecosystem" group=sudo shell=/bin/bash password='{{ sudo_crypt }}' update_password=always
+      sudo: yes
+    - name: Add ssh key
+      authorized_key: user=ecosystem key='{{ssh_public_key}}'
+      sudo: yes
