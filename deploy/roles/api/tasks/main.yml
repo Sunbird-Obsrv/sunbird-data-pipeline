@@ -1,4 +1,6 @@
 ---
+- include_vars: "../../../secrets/{{env}}.yml"
+
 - name: Install openjre
   apt: name=openjdk-7-jre-headless state=present
   sudo: yes
