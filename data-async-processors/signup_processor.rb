@@ -5,15 +5,15 @@ require 'hashie'
 
 module Processors
   class SignupProcessor
-    def self.perform
+    def self.perform(index="ecosystem-*",type="events_v1")
       begin
       file = File.expand_path("./logs/logfile.log", File.dirname(__FILE__))
       logger = Logger.new(file)
       logger.info "STARTING SIGNUP SEARCH"
       @client = ::Elasticsearch::Client.new log: false
       response = @client.search({
-        index: "_all",
-        type: "events_v1",
+        index: index,
+        type: type,
         size: 1000,
         body: {
           "query"=> {
@@ -40,8 +40,13 @@ module Processors
       logger.info "FOUND #{response.hits.hits.count} hits."
       response.hits.hits.each do |hit|
         begin
+          if(ENV['ENV']=='test')
+            _index = 'test-objects'
+          else
+            _index = 'ecosystem-objects'
+          end
           result = @client.create({
-            index: hit._index,
+            index: _index,
             type: hit._type,
             id: hit._source.uid,
               body: {
@@ -70,7 +75,7 @@ module Processors
           id: hit._id,
           body: {
             doc: {
-              flags:{
+              flags: {
                 signup_processed: true
               }
             }

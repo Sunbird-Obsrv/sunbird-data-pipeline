@@ -85,9 +85,9 @@ module Generator
     GE_GAME_END = 'GE_GAME_END'
     MIN_SESSION_TIME = 120
     MAX_SESSION_TIME = 300
-    def initialize(user,device)
+    def initialize(user,device,start_time=rand(START_TIME..END_TIME))
       @sid = SecureRandom.uuid
-      @start  = rand(START_TIME..END_TIME)
+      @start  = start_time
       @finish = rand(@start..(@start+rand(120..300)))
       # puts "#{SESSION_START_EVENT} : #{@start}\n"
       # puts "#{SESSION_END_EVENT}   : #{@finish}\n"
@@ -106,7 +106,7 @@ module Generator
       [
         {
           eid: GE_GENIE_START, # unique event ID
-          ts: @startup.to_i*1000,
+          ts: @startup.strftime('%Y-%m-%dT%H:%M:%S%z'),
           ver: 1.0,
           gdata: {
              id: "genie.android",
@@ -134,31 +134,31 @@ module Generator
                   locality: @device.location.city,
                   district: @device.location.district,
                   state: @device.location.state,
-                  country: @device.location.country,
+                  country: @device.location.country
                 }
              }
           }
         },
+        # {
+        #   ts: @signup.strftime('%Y-%m-%dT%H:%M:%S%z'), #how early id she register
+        #   ver: "1.0",
+        #   gdata: {
+        #     id: "genie.android",
+        #     ver: "1.0"
+        #   },
+        #   sid: @sid,
+        #   did: @device.id,
+        #   uid: "",
+        #   eid: GE_SIGNUP,
+        #   edata: {
+        #     eks: {
+        #       uid: @user.uid,
+        #       err: ""
+        #     }
+        #   }
+        # },
         {
-          ts: @signup.to_i*1000, #how early id she register
-          ver: "1.0",
-          gdata: {
-            id: "genie.android",
-            ver: "1.0"
-          },
-          sid: @sid,
-          did: @device.id,
-          uid: "",
-          eid: GE_SIGNUP,
-          edata: {
-            eks: {
-              uid: @user.uid,
-              err: ""
-            }
-          }
-        },
-        {
-          ts: @start.to_i*1000,
+          ts: @start.strftime('%Y-%m-%dT%H:%M:%S%z'),
           ver: "1.0",
           gdata: {
             id: "genie.android",
@@ -172,7 +172,7 @@ module Generator
         },
         {
           eid: GE_LAUNCH_GAME,
-          ts: (@gamestart).to_i*1000,
+          ts: (@gamestart).strftime('%Y-%m-%dT%H:%M:%S%z'),
           ver: "1.0",
           gdata: {
             id: "genie.android",
@@ -190,7 +190,7 @@ module Generator
         },
         {
           eid: GE_GAME_END,
-          ts: (@gameend).to_i*1000,
+          ts: (@gameend).strftime('%Y-%m-%dT%H:%M:%S%z'),
           ver: "1.0",
           gdata: {
             id: "genie.android",
@@ -207,7 +207,7 @@ module Generator
           }
         },
         {
-          ts: @finish.to_i*1000,
+          ts: @finish.strftime('%Y-%m-%dT%H:%M:%S%z'),
           ver: "1.0",
           gdata: {
             id: "genie.android",
@@ -225,7 +225,7 @@ module Generator
         },
         {
           eid: GE_GENIE_END, # unique event ID
-          ts: @shutdown.to_i*1000,
+          ts: @shutdown.strftime('%Y-%m-%dT%H:%M:%S%z'),
           ver: 1.0,
           gdata: {
              id: "genie.android",

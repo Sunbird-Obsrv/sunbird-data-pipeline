@@ -3,80 +3,7 @@ require 'pry'
 
 module Indexers
   class Elasticsearch
-    attr_reader :client
-    def initialize(refresh=true)
-      @client = ::Elasticsearch::Client.new log: false
-      if refresh
-        delete_indices
-        create_indices
-      end
-    end
-    def delete_indices
-      client.indices.delete_template name: 'ecosystem' rescue nil
-      # @client.indices.delete index: 'identities' rescue nil
-    end
-    def create_indices
-      client.indices.put_template({
-        name: "ecosystem",
-        body: {
-        order: 20,
-        template: "dump",
-        settings: {
-          # "index.refresh_interval": "5s"
-        },
-        mappings: {
-          _default_: {
-            dynamic_templates: [
-            {
-              string_fields: {
-                mapping: {
-                  index: "not_analyzed",
-                  omit_norms: false,
-                  type: "string",
-                  doc_values: true
-                },
-                match_mapping_type: "string",
-                match: "*"
-              }
-            },
-            {
-              date_fields: {
-                  match: "ts|te",
-                  match_pattern: "regex",
-                  mapping: {
-                      type: "date",
-                      index: "not_analyzed",
-                      doc_values: true
-                  }
-              }
-            },
-            {
-              geo_location: {
-                  mapping: {
-                      type: "geo_point",
-                      doc_values: true
-                  },
-                  match: "loc"
-              }
-            }
-            ],
-            _all: {
-              enabled: true
-            }
-          }
-        },
-        aliases: {}
-        }
-      })
-      client.indices.put_template({
-        name: "ecosystem",
-        body: {
-        order: 10,
-        template: "ecosystem-*",
-        settings: {
-          "index.refresh_interval": "5s"
-        },
-        mappings: {
+    TEMPLATE_MAPPINGS = {
           devices_v1: {
             _id: {
               path: "did"
@@ -173,7 +100,81 @@ module Indexers
               enabled: true
             }
           }
+        }
+    attr_reader :client
+    def initialize(refresh=true)
+      @client = ::Elasticsearch::Client.new log: false
+      if refresh
+        delete_indices
+        create_indices
+      end
+    end
+    def delete_indices
+      client.indices.delete_template name: 'ecosystem' rescue nil
+      # @client.indices.delete index: 'identities' rescue nil
+    end
+    def create_indices
+      client.indices.put_template({
+        name: "ecosystem",
+        body: {
+        order: 20,
+        template: "dump",
+        settings: {
+          # "index.refresh_interval": "5s"
         },
+        mappings: {
+          _default_: {
+            dynamic_templates: [
+            {
+              string_fields: {
+                mapping: {
+                  index: "not_analyzed",
+                  omit_norms: false,
+                  type: "string",
+                  doc_values: true
+                },
+                match_mapping_type: "string",
+                match: "*"
+              }
+            },
+            {
+              date_fields: {
+                  match: "ts|te",
+                  match_pattern: "regex",
+                  mapping: {
+                      type: "date",
+                      index: "not_analyzed",
+                      doc_values: true
+                  }
+              }
+            },
+            {
+              geo_location: {
+                  mapping: {
+                      type: "geo_point",
+                      doc_values: true
+                  },
+                  match: "loc"
+              }
+            }
+            ],
+            _all: {
+              enabled: true
+            }
+          }
+        },
+        aliases: {}
+        }
+      })
+      client.indices.put_template({
+        name: "ecosystem",
+        body: {
+        order: 10,
+        template: "ecosystem-*",
+        settings: {
+          "index.refresh_interval": "5s"
+        },
+        mappings: TEMPLATE_MAPPINGS,
         aliases: {}
         }
       })
