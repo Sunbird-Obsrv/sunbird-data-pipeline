@@ -10,7 +10,7 @@
 DESC="Ecosystem-Platform-API Daemon"
 NAME=/usr/bin/Ecosystem-Platform-API
 LOGFILE="/var/log/telemetry.log"
-PORT="8080"
+PORT="{{ api_port }}"
 SCRIPTNAME=/etc/init.d/ecosystem-api
 PID="/var/run/ecosystem-api.pid"
 
