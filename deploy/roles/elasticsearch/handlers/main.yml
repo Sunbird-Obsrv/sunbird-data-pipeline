@@ -1,0 +1,13 @@
+---
+
+- name: start elasticsearch
+  service: name=elasticsearch state=restarted
+  environment:
+    java_home: "{{ java-home }}"
+  sudo: yes
+
+- name: stop elasticsearch
+  service: name=elasticsearch state=stopped
+  environment:
+    java_home: "{{ java-home }}"
+  sudo: yes

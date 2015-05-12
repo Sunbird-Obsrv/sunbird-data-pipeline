@@ -1,4 +1,12 @@
 ---
+- hosts: all
+  remote_user: ecosystem
+  sudo: yes
+  roles:
+    - ansible-timezone
+  tags:
+    - misc
+
 - hosts: es
   remote_user: ecosystem
   pre_tasks:
