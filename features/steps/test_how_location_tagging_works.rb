@@ -30,7 +30,6 @@ class Spinach::Features::TestHowLocationTaggingWorks < Spinach::FeatureSteps
     sessions.hits.hits.each do |session|
       events = search({q:"sid:#{session._source.sid}"}).hits.hits
       events.each do |event|
-        puts event
         location_string(event).should == location_string(session)
       end
     end
