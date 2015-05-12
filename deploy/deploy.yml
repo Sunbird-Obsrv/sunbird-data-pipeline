@@ -3,7 +3,7 @@
   remote_user: ecosystem
   sudo: yes
   roles:
-    - ansible-timezone
+    - timezone
   tags:
     - misc
 
