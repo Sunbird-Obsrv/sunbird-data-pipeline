@@ -1,12 +1,8 @@
+require_relative '../../data-async-processors/signup_processor.rb'
+
 class Spinach::Features::TestHowUniqueSignupWorks < Spinach::FeatureSteps
   include CommonSteps::ElasticsearchClient
   include CommonSteps::UserSimulation
-
-  step 'I have never played' do
-    elastic_search_client
-    elastic_search_client.indices.delete index: 'test*' rescue nil
-    create_templates["acknowledged"].should == true
-  end
 
   step 'I should see a unique signup' do
     q = search({q:"eid:GE_SIGNUP"})

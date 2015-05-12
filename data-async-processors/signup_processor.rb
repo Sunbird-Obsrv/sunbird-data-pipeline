@@ -41,9 +41,9 @@ module Processors
       response.hits.hits.each do |hit|
         begin
           if(ENV['ENV']=='test')
-            _index = 'test-objects'
+            _index = 'test-identities'
           else
-            _index = 'ecosystem-objects'
+            _index = 'ecosystem-identities'
           end
           result = @client.create({
             index: _index,

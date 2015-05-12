@@ -1,6 +1,5 @@
 require 'elasticsearch'
 require_relative '../../../data-indexer/indexers.rb'
-require_relative '../../../data-async-processors/signup_processor.rb'
 
 module CommonSteps
   module ElasticsearchClient
@@ -30,7 +29,7 @@ module CommonSteps
     end
 
     def search(q)
-      Hashie::Mash.new elastic_search_client.search({index:'test*'}.merge(q))
+      Hashie::Mash.new elastic_search_client.search({index:'test*',size:1000}.merge(q))
     end
 
   end

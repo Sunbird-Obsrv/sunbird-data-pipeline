@@ -53,13 +53,15 @@ module Generator
     ANDROID_VERS = ['Android 5.0','Android 4.4','Android 4.1','Android 4.0']
     MAKES = ['Make A','Make B','Make C','Make D','Make E']
     attr_reader :id,:os,:make,:spec,:location
-    def initialize
+    def initialize(loc="#{rand(12.0..20.0)},#{rand(74.0..78.0)}")
       @id = SecureRandom.uuid
       @os = ANDROID_VERS.sample
       @make = MAKES.sample
-      loc = "#{rand(12.0..20.0)},#{rand(74.0..78.0)}"
       @location = Location.new(loc)
       @spec = "v1,1,.01,16,1,2,1,1,75,0"
+    end
+    def loc=(loc)
+      @location = Location.new(loc)
     end
     def to_json
       {
@@ -85,6 +87,7 @@ module Generator
     GE_GAME_END = 'GE_GAME_END'
     MIN_SESSION_TIME = 120
     MAX_SESSION_TIME = 300
+    attr_reader :sid
     def initialize(user,device,start_time=rand(START_TIME..END_TIME))
       @sid = SecureRandom.uuid
       @start  = start_time
@@ -168,7 +171,12 @@ module Generator
           did: @device.id,
           uid: @user.uid,
           eid: SESSION_START_EVENT,
-          edata: {}
+          edata: {
+            eks:{
+               ueksid: "",
+               loc: @device.location.loc
+            }
+          }
         },
         {
           eid: GE_LAUNCH_GAME,
