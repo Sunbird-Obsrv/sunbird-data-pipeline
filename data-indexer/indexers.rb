@@ -28,7 +28,7 @@ module Indexers
             },
             {
               double_fields: {
-                  match: "mem|idisk|edisk|scrn|length|exlength|age|percent_correct|percent_attempt|size",
+                  match: "mem|idisk|edisk|scrn|length|exlength|age|percent_correct|percent_attempt|size|score|maxscore",
                   match_pattern: "regex",
                   mapping: {
                       type: "double",
@@ -50,7 +50,7 @@ module Indexers
             },
             {
               integer_fields: {
-                  match: "sims|score|maxscore|atmpts|failedatmpts|correct|incorrect|total",
+                  match: "sims|atmpts|failedatmpts|correct|incorrect|total",
                   match_pattern: "regex",
                   mapping: {
                       type: "integer",
