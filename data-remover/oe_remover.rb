@@ -1,0 +1,67 @@
+require 'logger'
+require 'elasticsearch'
+require 'pry'
+require 'hashie'
+
+class OERemover
+	ES_URL='http://52.74.22.23:9200'
+	def self.remove(index="ecosystem-*",type="events_v1",value="OE_.*")
+		begin
+			file = File.expand_path("./logs/logfile.log", File.dirname(__FILE__))
+			logger = Logger.new(file)
+			
+			@client = ::Elasticsearch::Client.new url: ES_URL,log: false
+			logger.info "Starting search"
+			response = @client.search({
+				index: index,
+				type: type,
+				size: 1,
+				body: {
+					"query" =>  {
+						"filtered" =>  {
+							"query" =>  {
+								"match_all"=> {}
+								},
+								"filter" => {
+									"regexp" => {
+										"eid" => value
+									}
+								}
+							}
+						}
+					}
+					})
+
+			response = ::Hashie::Mash.new response
+			logger.info "FOUND #{response.hits.total} hits."
+			if response.hits.total == 0
+				logger.info "No more events to remove"
+				return
+			end
+			res= @client.delete_by_query({
+				index: index,
+				type: type,
+				body: {
+					"query" =>  {
+						"filtered" =>  {
+							"query" =>  {
+								"match_all"=> {}
+								},
+								"filter" => {
+									"regexp" => {
+										"eid" => value
+									}
+								}
+							}
+						}
+					}
+				})
+			logger.info "Deleted all events with #{value}"
+		rescue => e
+			logger.error e
+		end
+	end
+end
+
+OERemover.remove
+
