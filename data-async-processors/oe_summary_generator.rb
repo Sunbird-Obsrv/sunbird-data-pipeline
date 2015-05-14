@@ -9,6 +9,8 @@ module Processors
         logger = Logger.new(file)
         logger.info "STARTING OE SUMMARIZER"
         @client = ::Elasticsearch::Client.new(host: '52.74.22.23:9200',log: false)
+        #TODO remove this bad code
+        @client.indices.refresh index: index
         response = @client.search({
           index: index,
           type: type,
@@ -37,7 +39,7 @@ module Processors
             attempted: 0,
             percent_correct: 0.0
           })
-          summary[event._source.sid].length+=(event._source.edata.eks["length"]).round(2)
+          summary[event._source.sid]['length']+=(event._source.edata.eks["length"]).round(2)
           summary[event._source.sid].attempted+=1
           if(event._source.edata.eks.pass=="YES")
             correct = summary[event._source.sid].correct+=1
@@ -50,7 +52,7 @@ module Processors
           payload = {
             index: data['index'],
             type: 'events_v1',
-            id: "#{sid}-#{data.gdata.id}-#{data.gdata.ver}-#{data['length']}}",
+            id: "#{sid}",
             body: {
               ts: data.ts,
               "@timestamp" => Time.now.strftime('%Y-%m-%dT%H:%M:%S%z'),
@@ -70,9 +72,11 @@ module Processors
               }
             }
           }
+          puts payload
           result = @client.index(payload)
           logger.info "RESULT #{result.to_json}"
         end
+        logger.info "OE_SUMMARY #{summary.keys.length}"
       rescue => e
         logger.error "ERROR in OE_SUMMARY GEN"
         logger.error e
