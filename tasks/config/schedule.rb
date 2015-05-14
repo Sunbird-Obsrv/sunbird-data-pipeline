@@ -29,3 +29,7 @@ end
 every 1.minute do
   rake "scheduled:generate_signup"
 end
+every 1.minute do
+  rake "scheduled:oe_summarize"
+end
+

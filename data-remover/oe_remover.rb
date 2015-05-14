@@ -5,11 +5,11 @@ require 'hashie'
 
 class OERemover
 	ES_URL='http://52.74.22.23:9200'
-	def self.remove(index="ecosystem-*",type="events_v1",value="OE_.*")
+	def self.remove(value="OE_.*",index="ecosystem-*",type="events_v1")
 		begin
 			file = File.expand_path("./logs/logfile.log", File.dirname(__FILE__))
 			logger = Logger.new(file)
-			
+
 			@client = ::Elasticsearch::Client.new url: ES_URL,log: false
 			logger.info "Starting search"
 			response = @client.search({
@@ -31,7 +31,6 @@ class OERemover
 						}
 					}
 					})
-
 			response = ::Hashie::Mash.new response
 			logger.info "FOUND #{response.hits.total} hits."
 			if response.hits.total == 0
@@ -62,6 +61,4 @@ class OERemover
 		end
 	end
 end
-
-OERemover.remove
 
