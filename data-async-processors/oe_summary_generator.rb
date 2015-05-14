@@ -12,7 +12,7 @@ module Processors
         response = @client.search({
           index: index,
           type: type,
-          size: 1000,
+          size: 1000000,
           body: {
             query: {
               match: {
@@ -73,6 +73,9 @@ module Processors
           result = @client.index(payload)
           logger.info "RESULT #{result.to_json}"
         end
+      rescue => e
+        logger.error "ERROR in OE_SUMMARY GEN"
+        logger.error e
       end
     end
   end
