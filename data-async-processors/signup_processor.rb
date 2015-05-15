@@ -11,6 +11,7 @@ module Processors
       logger = Logger.new(file)
       logger.info "STARTING SIGNUP SEARCH"
       @client = ::Elasticsearch::Client.new log: false
+      @client.indices.refresh index: index
       response = @client.search({
         index: index,
         type: type,

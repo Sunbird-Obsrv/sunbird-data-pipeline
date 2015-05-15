@@ -25,6 +25,12 @@ namespace :cleaners do
     require_relative '../data-remover/oe_remover.rb'
     OERemover.remove('OE_SUMMARY')
   end
+  task :ge_signup do
+    require_relative '../data-remover/oe_remover.rb'
+    require_relative '../data-remover/ge_signup_cleanup.rb'
+    OERemover.remove('GE_SIGNUP')
+    Removers::GeSignupCleanup.remove
+  end
 end
 
 namespace :scheduled do
