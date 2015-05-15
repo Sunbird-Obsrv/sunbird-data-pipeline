@@ -6,9 +6,10 @@ module Processors
     def self.perform(index="ecosystem-*",type="events_v1")
       begin
         file = File.expand_path("./logs/logfile.log", File.dirname(__FILE__))
+        #TODO refac logging
         logger = Logger.new(file)
         logger.info "STARTING OE SUMMARIZER"
-        @client = ::Elasticsearch::Client.new(host: '52.74.22.23:9200',log: false)
+        @client = ::Elasticsearch::Client.new(host:'52.74.22.23:9200', log: false)
         #TODO remove this bad code
         @client.indices.refresh index: index
         response = @client.search({
@@ -16,9 +17,22 @@ module Processors
           type: type,
           size: 1000000,
           body: {
-            query: {
-              match: {
-                eid: "OE_ASSESS"
+            "query"=> {
+              "constant_score" => {
+                "filter" => {
+                  "and"=> [
+                    {
+                      "term"=> {
+                        "eid"=>"OE_ASSESS"
+                      }
+                    },
+                    {
+                      "missing" => {
+                        "field" => "flags.summary_processed"
+                      }
+                    }
+                  ]
+                }
               }
             }
           }
@@ -26,7 +40,8 @@ module Processors
         response = Hashie::Mash.new response
         summary = {}
         logger.info "FOUND #{response.hits.hits.count} hits."
-        response.hits.hits.each do |event|
+        events = response.hits.hits
+        events.each do |event|
           summary[event._source.sid] ||= Hashie::Mash.new({
             index: event._index,
             ts: event._source.ts,
@@ -77,6 +92,21 @@ module Processors
           logger.info "RESULT #{result.to_json}"
         end
         logger.info "OE_SUMMARY #{summary.keys.length}"
+        events.each do |event|
+          result = @client.update({
+            index: event._index,
+            type: event._type,
+            id: event._id,
+            body: {
+              doc: {
+                flags: {
+                  summary_processed: true
+                }
+              }
+            }
+          })
+          logger.info "RESULT #{result.to_json}"
+        end
       rescue => e
         logger.error "ERROR in OE_SUMMARY GEN"
         logger.error e
