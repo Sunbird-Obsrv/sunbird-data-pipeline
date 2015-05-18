@@ -32,6 +32,18 @@ module CommonSteps
       q.hits.total.should == 1
     end
 
+    step 'I play with GPS not available' do
+      loc = ""
+      t1 = THAT_TIME
+      play(t1,loc)
+    end
+
+    step 'I play with GPS available' do
+      loc = THAT_LOCATION
+      t1 = THAT_TIME
+      play(t1,loc)
+    end
+
     step 'I play from a location' do
       t1  = THAT_TIME
       loc = THAT_LOCATION
@@ -97,6 +109,12 @@ module CommonSteps
       q.hits.total.should == 4
     end
 
+    step 'my device should also be tagged to that location' do
+      devices = search({q:"_type:devices_v1"})
+      devices.hits.total.should == 1
+      location_string(devices.hits.hits.first).should == THAT_LOCALITY
+    end
+
     private
 
     def user
@@ -132,6 +150,15 @@ module CommonSteps
           body: event
         })
       end
+    end
+
+    def play(t,loc)
+      q = search({q:"eid:GE_SESSION_START"})
+      total = q.hits.total
+      session = ::Generator::Session.new(user,device(loc),t)
+      write_events(session,t)
+      q = search({q:"eid:GE_SESSION_START"})
+      q.hits.total.should == total+1
     end
 
   end

@@ -50,11 +50,7 @@ module Processors
         ldata_from_cache = ldata_cache.did
         if ldata_from_cache.nil?
           begin
-          if(ENV['ENV']=='test')
-            _index = 'test-*'
-          else
-            _index = 'ecosystem-*'
-          end
+            _index=index
           response = @client.search({
             index: _index,
             body: {

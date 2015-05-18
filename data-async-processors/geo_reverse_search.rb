@@ -79,7 +79,7 @@ module Processors
       logger.info "FOUND #{response.hits.hits.count} hits."
       response.hits.hits.each do |hit|
         result = nil
-        if _loc=hit._source.edata.eks.loc
+        if _loc=(hit._source.edata.eks.loc rescue nil)
           _id = hit._id
           logger.info "LOC #{_loc}"
           location = Location.new(_loc)
@@ -112,19 +112,23 @@ module Processors
             _index = 'ecosystem-identities'
           end
           logger.info "DEVICE #{hit._source.did}"
-          result = @client.index({
-            index: _index,
-            type: 'devices_v1',
-            body: {
-              ts: hit._source.ts,
-              "@timestamp" => hit._source["@timestamp"],
-              did: hit._source.did,
-              loc: _loc,
-              ldata: ldata[:ldata],
-              dspec: hit._source.edata.eks.dspec
-            }
-          })
-          logger.info "RESULT #{result.to_json}"
+          if(_loc && !(ldata[:ldata][:country]||"").empty?)
+            result = @client.index({
+              index: _index,
+              type: 'devices_v1',
+              body: {
+                ts: hit._source.ts,
+                "@timestamp" => hit._source["@timestamp"],
+                did: hit._source.did,
+                loc: _loc,
+                ldata: ldata[:ldata],
+                dspec: hit._source.edata.eks.dspec
+              }
+            })
+            logger.info "RESULT #{result.to_json}"
+          else
+            logger.info "DEVICE NOT UPDATED #{ldata.to_json}"
+          end
         end
       end
       logger.info "ENDING REVERSE SEARCH"

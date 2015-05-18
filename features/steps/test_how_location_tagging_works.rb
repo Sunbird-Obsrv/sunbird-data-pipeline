@@ -5,6 +5,7 @@ require_relative '../../data-async-processors/set_ldata.rb'
 class Spinach::Features::TestHowLocationTaggingWorks < Spinach::FeatureSteps
   include CommonSteps::ElasticsearchClient
   include CommonSteps::UserSimulation
+  include CommonSteps::Utility
 
   step 'all events should be tagged to that location' do
     q = search({q:"eid:GE_SESSION_START"})
@@ -35,20 +36,8 @@ class Spinach::Features::TestHowLocationTaggingWorks < Spinach::FeatureSteps
     end
   end
 
-  step 'my device should also be tagged to that location' do
-    devices = search({q:"_type:devices_v1"})
-    devices.hits.total.should == 1
-    location_string(devices.hits.hits.first).should == THAT_LOCALITY
-  end
-
   step 'missing GPS events should be tagged to the devices current location' do
     pending 'step not implemented'
-  end
-
-  def location_string(o)
-    o.extend Hashie::Extensions::DeepFind
-    ldata = o.deep_find 'ldata'
-    "#{ldata.locality}"
   end
 
 end

@@ -16,7 +16,7 @@ module CommonSteps
         order: 10,
         template: "test*",
         settings: {
-          "index.refresh_interval": "5s"
+          "index.refresh_interval": "1s"
         },
         mappings: Indexers::Elasticsearch::TEMPLATE_MAPPINGS,
         aliases: {}
@@ -25,7 +25,7 @@ module CommonSteps
     end
 
     def refresh_index
-      elastic_search_client.indices.refresh index: 'test*'
+      puts elastic_search_client.indices.refresh index: 'test*'
     end
 
     def search(q)
