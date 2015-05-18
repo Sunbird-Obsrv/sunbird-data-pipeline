@@ -1,4 +1,4 @@
-/var/log/telemetry.log {
+/var/log/telemetry/telemetry.log {
         su root syslog
         daily
         copytruncate

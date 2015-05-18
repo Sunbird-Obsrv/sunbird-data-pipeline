@@ -26,6 +26,6 @@
   template: src=logstash.conf dest={{ logstash_config_loc }}/logstash.conf
   sudo: yes
 
-- name: Start logstash
-  service: name=logstash state=started
+- name: Retart logstash
+  service: name=logstash state=restarted
   sudo: yes
