@@ -74,6 +74,6 @@
   sudo: yes
 
 - name: Cron job for logrotate
-  cron: name="telemetry logrotate" minute=30 
+  cron: name="telemetry logrotate" minute=30 hour=2
         user="root" job="logrotate /etc/logrotate.d/telemetry > /dev/null"
   sudo: yes
