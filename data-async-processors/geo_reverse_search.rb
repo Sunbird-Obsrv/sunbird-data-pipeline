@@ -42,15 +42,15 @@ class Location
 
 module Processors
   class ReverseSearch
-    def self.perform(index="ecosystem-*",type="events_v1")
+    def self.perform
       begin
       file = File.expand_path("./logs/logfile.log", File.dirname(__FILE__))
       logger = Logger.new(file)
       logger.info "STARTING REVERSE SEARCH"
       @client = ::Elasticsearch::Client.new log: false
       response = @client.search({
-        index: index,
-        type: type,
+        index: "_all",
+        type: "events_v1",
         size: 1000,
         body: {
           "query"=> {
@@ -59,7 +59,7 @@ module Processors
                 "and"=> [
                   {
                     "term"=> {
-                      "eid"=>"GE_SESSION_START"
+                      "eid"=>"GE_GENIE_START"
                     }
                   },
                   {
@@ -79,7 +79,7 @@ module Processors
       logger.info "FOUND #{response.hits.hits.count} hits."
       response.hits.hits.each do |hit|
         result = nil
-        if _loc=(hit._source.edata.eks.loc rescue nil)
+        if _loc=hit._source.edata.eks.loc
           _id = hit._id
           logger.info "LOC #{_loc}"
           location = Location.new(_loc)
@@ -106,30 +106,8 @@ module Processors
             }
           })
           logger.info "RESULT #{result.to_json}"
-          if(ENV['ENV']=='test')
-            _index = 'test-identities'
-          else
-            _index = 'ecosystem-identities'
-          end
-          logger.info "DEVICE #{hit._source.did}"
-          if(_loc && !(ldata[:ldata][:country]||"").empty?)
-            result = @client.index({
-              index: _index,
-              type: 'devices_v1',
-              body: {
-                ts: hit._source.ts,
-                "@timestamp" => hit._source["@timestamp"],
-                did: hit._source.did,
-                loc: _loc,
-                ldata: ldata[:ldata],
-                dspec: hit._source.edata.eks.dspec
-              }
-            })
-            logger.info "RESULT #{result.to_json}"
-          else
-            logger.info "DEVICE NOT UPDATED #{ldata.to_json}"
-          end
         end
+        yield _loc,ldata,hit
       end
       logger.info "ENDING REVERSE SEARCH"
      rescue => e
@@ -138,4 +116,3 @@ module Processors
     end
   end
 end
-

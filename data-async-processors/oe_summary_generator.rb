@@ -39,7 +39,7 @@ module Processors
         })
         response = Hashie::Mash.new response
         summary = {}
-        logger.info "FOUND #{response.hits.hits.count} hits."
+        logger.info "OE SUMMARIZER: FOUND #{response.hits.hits.count} hits."
         events = response.hits.hits
         events.each do |event|
           summary[event._source.sid] ||= Hashie::Mash.new({
@@ -87,11 +87,10 @@ module Processors
               }
             }
           }
-          puts payload
           result = @client.index(payload)
-          logger.info "RESULT #{result.to_json}"
+          logger.info "OE SUMMARIZER: OE_SUMMARY #{result.to_json}"
         end
-        logger.info "OE_SUMMARY #{summary.keys.length}"
+        logger.info "OE SUMMARIZER: OE_SUMMARY #{summary.keys.length}"
         events.each do |event|
           result = @client.update({
             index: event._index,
@@ -105,10 +104,10 @@ module Processors
               }
             }
           })
-          logger.info "RESULT #{result.to_json}"
+          logger.info "OE SUMMARIZER: RESULT #{result.to_json}"
         end
       rescue => e
-        logger.error "ERROR in OE_SUMMARY GEN"
+        logger.error "OE SUMMARIZER: ERROR in OE_SUMMARY GEN"
         logger.error e
       end
     end

@@ -38,7 +38,7 @@ module Processors
         }
       })
       response = Hashie::Mash.new response
-      logger.info "FOUND #{response.hits.hits.count} hits."
+      logger.info "GE SIGNUP: FOUND #{response.hits.hits.count} hits."
       response.hits.hits.each do |hit|
         begin
           if(ENV['ENV']=='test')
@@ -66,9 +66,9 @@ module Processors
               }
             }
           })
-          logger.info "GE_SIGNUP #{result.to_json}"
+          logger.info "GE SIGNUP: #{result.to_json}"
         rescue Elasticsearch::Transport::Transport::Errors::Conflict => e
-          logger.info "SKIPPING GE_SIGNUP! ALREADY SIGNED UP"
+          logger.info "GE SIGNUP: SKIPPING GE_SIGNUP! ALREADY SIGNED UP"
         end
         result = @client.update({
           index: hit._index,
@@ -82,9 +82,9 @@ module Processors
             }
           }
         })
-        logger.info "GE_SESSION_START #{result.to_json}"
+        logger.info "GE SIGNUP: GE_SESSION_START #{result.to_json}"
       end
-      logger.info "ENDING SIGNUP SEARCH"
+      logger.info "GE SIGNUP: ENDING SIGNUP SEARCH"
      rescue => e
       logger.error e
      end

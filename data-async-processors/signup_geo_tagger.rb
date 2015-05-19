@@ -39,7 +39,7 @@ module Processors
           }
         })
         response = Hashie::Mash.new response
-        logger.info "FOUND #{response.hits.hits.count} hits."
+        logger.info "GE SIGNUP LOCATION TAG: FOUND #{response.hits.hits.count} hits."
         device_cache = {}
         response.hits.hits.each do |hit|
           did = hit._source.did
@@ -48,6 +48,9 @@ module Processors
             logger.info "DEVICE #{did} FOUND"
             ldata = cached_device._source.ldata
             loc = cached_device._source.loc
+            logger.info "LOC #{loc.to_json}"
+            logger.info "LDATA #{ldata.to_json}"
+            logger.info "---#{(loc && ldata.locality)}---"
             if(loc && ldata.locality)
               result = @client.update({
                 index: hit._index,
@@ -56,14 +59,18 @@ module Processors
                 body: {
                   doc: {
                     loc: loc,
-                    ldata: ldata
+                    edata: {
+                      eks: {
+                        ldata: ldata
+                      }
+                    }
                   }
                 }
               })
-              logger.info "GE_SIGNUP #{result.to_json} #{ldata.to_json}"
+              logger.info "GE SIGNUP LOCATION TAG: GE_SIGNUP #{result.to_json}"
             end
           else
-            logger.info "DEVICE #{did} NOT FOUND!"
+            logger.info "GE SIGNUP LOCATION TAG: DEVICE #{did} NOT FOUND!"
           end
         end
         logger.info "ENDING GE SIGNUP WITH LOCATION SEARCH"

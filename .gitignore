@@ -3,3 +3,5 @@
 *.tgz
 *.local
 */reports/*
+backups/
+logs/

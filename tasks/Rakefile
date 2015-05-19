@@ -58,6 +58,12 @@ namespace :scheduled do
     client = ::Indexers::Elasticsearch.new(false)
     Processors::OeSummaryGenerator.perform
   end
+  task :signup_geo_tag do
+    require_relative '../data-async-processors/signup_geo_tagger.rb'
+    require_relative '../data-indexer/indexers.rb'
+    client = ::Indexers::Elasticsearch.new(false)
+    Processors::SignupGeoTagger.perform
+  end
 end
 
 namespace :generators do
