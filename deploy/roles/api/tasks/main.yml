@@ -32,16 +32,38 @@
   sudo: yes
 
 - name: create go path folder
-  file: path=/home/{{ user }}/go state=directory
+  file: path=/home/{{ user }}/go/src state=directory
 
 - name: Add GOPATH
   lineinfile: dest=/home/{{ user }}/.bashrc regexp="export GOPATH=$HOME/go" line="export GOPATH=$HOME/go" insertafter=EOF
 
-- name: Copy ecosystem_file
-  copy: src=Ecosystem-Platform-API dest=/usr/bin mode=755
-  sudo: yes
+- name: Install godep
+  command: go get github.com/tools/godep
+  environment:
+    PATH: /usr/local/go/bin:{{ ansible_env.PATH }}
+    GOPATH: /home/{{ user }}/go
+
+- name: Clone API Repository
+  git: repo={{ api_repo }} dest=/home/{{ user }}/go/src/github.com/ekstep/Ecosystem-Platform-API accept_hostkey=yes key_file=/home/{{ user }}/.ssh/github_rsa
+
+- name: Build API
+  command: godep go build
+  args: 
+    chdir: /home/{{ user }}/go/src/github.com/ekstep/Ecosystem-Platform-API
+  environment:
+    PATH: /usr/local/go/bin:/home/{{ user }}/go/bin:{{ ansible_env.PATH }}
+    GOPATH: /home/{{ user }}/go
+
+- name: Check the binary file
+  stat: path=/home/{{ user }}/go/src/github.com/ekstep/Ecosystem-Platform-API/Ecosystem-Platform-API
+  register: binary_stat
+
+- name: Move ecosystem file
+  command: mv /home/{{ user }}/go/src/github.com/ekstep/Ecosystem-Platform-API/Ecosystem-Platform-API /usr/bin
+  when: binary_stat.stat.exists
   notify:
-  - restart ecosystem-api
+    - restart ecosystem-api
+  sudo: yes
 
 - name: Copy ecosystem init file
   template: src=ecosystem-api.sh dest=/etc/init.d/ecosystem-api mode=755

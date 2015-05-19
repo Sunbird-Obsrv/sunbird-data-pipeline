@@ -3,8 +3,12 @@
   hosts: instances
   tasks:
     - name: Create user
-      user: name=ecosystem comment="ecosystem" group=sudo shell=/bin/bash password='{{ sudo_crypt }}' update_password=always
+      user: name=ecosystem comment="ecosystem" group=ecosystem groups=sudo shell=/bin/bash password='{{ sudo_crypt }}' update_password=always
       sudo: yes
-    - name: Add ssh key
+    - name: Add ssh public key
       authorized_key: user=ecosystem key='{{ssh_public_key}}'
+      sudo: yes
+    - include_vars: secrets/ssh_key.yml
+    - name: Install ssh key
+      copy: content="{{ ssh_key }}" dest=/home/ecosystem/.ssh/github_rsa mode=600 owner=ecosystem
       sudo: yes
