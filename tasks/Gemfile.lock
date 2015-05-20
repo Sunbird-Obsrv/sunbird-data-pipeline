@@ -23,6 +23,7 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    rake (10.4.2)
     ruby-progressbar (1.7.5)
     slop (3.6.0)
     what_methods (1.0.1)
@@ -38,6 +39,7 @@ DEPENDENCIES
   hashie
   map_by_method
   pry
+  rake
   ruby-progressbar
   what_methods
   whenever
