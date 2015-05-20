@@ -1,5 +1,5 @@
-require_relative '../../data-async-processors/geo_reverse_search.rb'
-require_relative '../../data-async-processors/set_ldata.rb'
+require_relative '../../data-async-processors/geo_reverse_search2.rb'
+require_relative '../../data-async-processors/set_ldata2.rb'
 require_relative '../../data-async-processors/signup_processor.rb'
 require_relative '../../data-async-processors/signup_geo_tagger.rb'
 
@@ -26,8 +26,8 @@ class Spinach::Features::TestHowSignupLocationTaggingWorks < Spinach::FeatureSte
 
   def run_jobs
     Processors::SignupProcessor.perform('test*')
-    Processors::ReverseSearch.perform('test*')
-    Processors::SetLdata.perform('test*')
+    Processors::ReverseSearch2.perform('test*')
+    Processors::SetLdata2.perform('test*')
     Processors::SignupGeoTagger.perform('test*')
     refresh_index
   end

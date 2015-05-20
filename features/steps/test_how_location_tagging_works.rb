@@ -1,5 +1,5 @@
-require_relative '../../data-async-processors/geo_reverse_search.rb'
-require_relative '../../data-async-processors/set_ldata.rb'
+require_relative '../../data-async-processors/geo_reverse_search2.rb'
+require_relative '../../data-async-processors/set_ldata2.rb'
 
 
 class Spinach::Features::TestHowLocationTaggingWorks < Spinach::FeatureSteps
@@ -17,7 +17,7 @@ class Spinach::Features::TestHowLocationTaggingWorks < Spinach::FeatureSteps
     sessions = search({q:"eid:GE_SESSION_START"})
     ldata = sessions.hits.hits.map {|session| session._source.edata.eks.ldata }
     ldata.compact.should be_empty
-    Processors::ReverseSearch.perform('test*')
+    Processors::ReverseSearch2.perform('test*')
     refresh_index
     sessions = search({q:"eid:GE_SESSION_START"})
     ldata = sessions.hits.hits.map {|session| session._source.edata.eks.ldata }
@@ -25,7 +25,7 @@ class Spinach::Features::TestHowLocationTaggingWorks < Spinach::FeatureSteps
   end
 
   step 'events should be tagged to respective locations' do
-    Processors::SetLdata.perform('test*')
+    Processors::SetLdata2.perform('test*')
     refresh_index
     sessions = search({q:"eid:GE_SESSION_START"})
     sessions.hits.hits.each do |session|
