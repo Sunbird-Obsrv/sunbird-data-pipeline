@@ -96,4 +96,20 @@ class Spinach::Features::TestHowDeviceCountWorks < Spinach::FeatureSteps
     q.hits.total.should == 5
 
   end
+
+  step 'I play on another device' do
+    i_play_on_this_device_on_the_same_day
+    t1 = THAT_TIME
+    loc = "#{rand(12.0..20.0)},#{rand(74.0..78.0)}"
+    @device = ::Generator::Device.new(loc)
+    session = ::Generator::Session.new(user,device,t1)
+    write_events(session,t1)
+    q = search({q:"eid:GE_SESSION_START"})
+    q.hits.total.should == 3
+  end
+
+  step 'the number of devices will change' do
+    total_device_count_is_two
+  end
+
 end

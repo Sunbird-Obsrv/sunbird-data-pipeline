@@ -1,6 +1,6 @@
 Feature: Test how device count works
 
-Scenario: New device used by one child
+Scenario: New device used by a child
     Given the device has never been used
     When I play on this device
     Then a new device will be added
@@ -34,3 +34,8 @@ Scenario: Existing device used by existing and new children
     Given the device has already been used
     When all of us including new children play on this device
     Then the number of devices does not change
+
+Scenario: New Device used by an existing child
+    Given the device has already been used
+    When I play on another device
+    Then the number of devices will change
