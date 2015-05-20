@@ -2,6 +2,9 @@
 - name: Create user
   hosts: instances
   tasks:
+    - name: Create group
+      group: name=ecosystem state=present
+      sudo: yes
     - name: Create user
       user: name=ecosystem comment="ecosystem" group=ecosystem groups=sudo shell=/bin/bash password='{{ sudo_crypt }}' update_password=always
       sudo: yes

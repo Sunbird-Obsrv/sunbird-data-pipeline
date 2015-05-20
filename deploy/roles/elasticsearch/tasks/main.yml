@@ -31,3 +31,5 @@
 - name: Ensure Elasticsearch is started on boot
   service: name=elasticsearch enabled={{ elasticsearch_service_startonboot }} state={{ elasticsearch_service_state }}
   sudo: yes
+
+- include: install_jobs.yml

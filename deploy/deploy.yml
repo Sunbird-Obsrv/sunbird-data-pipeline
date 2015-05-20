@@ -9,6 +9,14 @@
 
 - hosts: es
   remote_user: ecosystem
+  sudo: yes
+  roles:
+    - rvm1-ansible
+  tags:
+    - ruby
+
+- hosts: es
+  remote_user: ecosystem
   pre_tasks:
     name: Update
     command: bash -lc "apt-get update"
