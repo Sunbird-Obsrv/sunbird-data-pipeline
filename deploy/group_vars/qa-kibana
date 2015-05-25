@@ -1,2 +1,3 @@
 ---
 es_host: 173.31.1.243
+kibana_server: ep-qa.ekstep.org

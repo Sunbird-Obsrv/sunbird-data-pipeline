@@ -5,7 +5,7 @@
   register: kib
 
 - name: Copy files
-  copy: src=app.js dest=/opt/kibana/src/ mode=0644
+  template: src=app.js dest=/opt/kibana/src/ mode=0644
   when: kib.stat.isdir is defined and kib.stat.isdir
   sudo: yes
 
