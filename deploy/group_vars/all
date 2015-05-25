@@ -13,8 +13,10 @@ logstash_config_loc: /etc/logstash/conf.d
 kibana_folder: kibana-4.0.1-linux-x64
 apiuser: ekstep
 es_port: 9200
+kibana_port: 5601
 kibana_config_loc: /opt/kibana/config/kibana.yml
 ssh_public_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDVAqovGUIl5nmWCoVtae5+TDuMGb31hk8rO0q2TZc41CP1X4girbGG50RAcCF8Pi2Mc6Gnif19vGJO/CxauatcigH5/BqKdhWORAsujsPmvzBFQW0xJ4lI6CmVf32Gl9e9665e6pkzkz6nqUD5hpUVWo++JYSrEHfErCf/lmzMYETX9eT3Cfommyu8PeV/Wamj6sjQUEq+lsw8yl+p7fFhtpP5i1eIHbTsZUyZZMBUuVjos6VNoJf07o/KMvyMXIRPOwyqjslsm+kpsTSwjp/2H+bGIUmH6OvrfU4NvnFcpBXhBjgkN8iBWvhv1hZL4nIDQ7TpOer3zlSimv6sgt8L maheshbr@Maheshs-MacBook-Pro.local
 sudo_crypt: $6$NXPGFJXx7OJEcPT$ZVzNP9Ln9SLQI/QWC7GeBkKUrcoOHegSrKfTGi7NKgiF5zcBwYOdz/6b/wOSNtCGSQu8t4heyWTXFeIbGVz8m.
 rvm1_rubies:
   - 'ruby-2.2.1'
+
