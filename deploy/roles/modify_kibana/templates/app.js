@@ -73,7 +73,8 @@ app.use(session({
 }))
 app.use( passport.initialize());
 app.use( passport.session());
-app.use(ensureAuthenticated)
+if(redirect!="")
+  app.use(ensureAuthenticated);
 app.use(express.static(config.public_folder));
 if (config.external_plugins_folder) app.use('/plugins', express.static(config.external_plugins_folder));
 
