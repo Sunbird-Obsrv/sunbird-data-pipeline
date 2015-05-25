@@ -15,7 +15,7 @@ var GoogleStrategy = require('passport-google-oauth2').Strategy
 
 var GOOGLE_CLIENT_ID = '149422338782-gp602lvp42iig3cvovi7i6i4rp3dr9o5.apps.googleusercontent.com',
     GOOGLE_CLIENT_SECRET = 'DiFwTGwVGcxgiTR6eWlntRN9',
-    redirect = 'http://{{ kibana_server }}/ecosystem/oauth2callback';
+    redirect = '{{kibana_oauth2_callback_url}}';
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -89,13 +89,13 @@ app.get('/auth/google', passport.authenticate('google', { scope: [
 
 app.get( '/oauth2callback',
       passport.authenticate( 'google', {
-        successRedirect: '/',
-        failureRedirect: '/login'
+        successRedirect: '/ecosystem/',
+        failureRedirect: '/ecosystem/login'
 }));
 
 app.get('/logout', function(req, res){
   req.logout();
-  res.redirect('/login');
+  res.redirect('/ecosystem/login');
 });
 
 app.use('/', routes);
@@ -134,7 +134,7 @@ function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   //throw new Error(req.isAuthenticated());
   if (req.path === "/login" || req.path.indexOf("/auth") > -1  || req.path.indexOf('/oauth2callback') > -1 ) { return next(); }
-  res.redirect('/login');
+  res.redirect('/ecosystem/login');
 }
 
 module.exports = app;
