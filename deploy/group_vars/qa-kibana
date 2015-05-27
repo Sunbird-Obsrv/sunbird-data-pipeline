@@ -4,4 +4,6 @@ kibana_server: ep-qa.ekstep.org
 kibana_port: 5601
 kibana_hosts:
   - 173.31.1.243
+leaning_hosts:
+  - 172.31.8.90
 kibana_oauth2_callback_url: ''
