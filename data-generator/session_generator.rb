@@ -87,8 +87,11 @@ module Generator
     GE_GAME_END = 'GE_GAME_END'
     MIN_SESSION_TIME = 120
     MAX_SESSION_TIME = 300
+    OLD_MODE = 'NO_LOC_IN_SESSION'
+    NEW_MODE = 'LOC_IN_SESSION'
     attr_reader :sid
-    def initialize(user,device,start_time=rand(START_TIME..END_TIME))
+    def initialize(user,device,start_time=rand(START_TIME..END_TIME),mode=NEW_MODE)
+      @mode=mode
       @sid = SecureRandom.uuid
       @start  = start_time
       @finish = rand(@start..(@start+rand(120..300)))
@@ -106,7 +109,7 @@ module Generator
       events.to_json
     end
     def events
-      [
+      e = [
         {
           eid: GE_GENIE_START, # unique event ID
           ts: @startup.strftime('%Y-%m-%dT%H:%M:%S%z'),
@@ -249,6 +252,11 @@ module Generator
           }
         },
       ]
+      if(@mode==OLD_MODE)
+        session_start_event = e.select{|ev|ev[:eid]==SESSION_START_EVENT}
+        session_start_event[0][:edata][:eks].delete(:loc)
+      end
+      e
     end
   end
 

@@ -3,14 +3,14 @@ require 'hashie'
 
 module Processors
   class SetLdata
-    def self.perform
+    def self.perform(index="ecosystem-*",type="events_v1")
       file = File.expand_path("./logs/logfile.log", File.dirname(__FILE__))
       logger = Logger.new(file)
       logger.info "STARTING LDATA SET"
       @client = ::Elasticsearch::Client.new log: false
       response = @client.search({
-        index: "_all",
-        type: "events_v1",
+        index: index,
+        type: type,
         size: 1000,
         body: {
           "query"=> {
@@ -43,8 +43,9 @@ module Processors
         ldata_from_cache = ldata_cache[did]
         if ldata_from_cache.nil?
           begin
+              _index=index
             response = @client.get({
-              index: 'ecosystem-identities',
+              index: _index,
               type: 'devices_v1',
               id: did
             })

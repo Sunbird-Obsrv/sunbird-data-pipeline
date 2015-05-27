@@ -42,15 +42,15 @@ class Location
 
 module Processors
   class ReverseSearch
-    def self.perform
+    def self.perform(index="ecosystem-*",type="events_v1")
       begin
       file = File.expand_path("./logs/logfile.log", File.dirname(__FILE__))
       logger = Logger.new(file)
       logger.info "STARTING REVERSE SEARCH"
       @client = ::Elasticsearch::Client.new log: false
       response = @client.search({
-        index: "_all",
-        type: "events_v1",
+        index: index,
+        type: type,
         size: 1000,
         body: {
           "query"=> {
@@ -106,6 +106,12 @@ module Processors
             }
           })
           logger.info "RESULT #{result.to_json}"
+          if(ENV['ENV']=='test')
+            _index = 'test-identities'
+          else
+            _index = 'ecosystem-identities'
+          end
+          logger.info "DEVICE #{hit._source.did}"
         end
         yield _loc,ldata,hit
       end
