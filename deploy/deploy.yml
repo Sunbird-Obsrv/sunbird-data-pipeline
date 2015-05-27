@@ -38,7 +38,6 @@
     - nginx
     - kibana_nginx
     - modify_kibana
-    - kibana-nginx
   tags:
     - kibana
 
