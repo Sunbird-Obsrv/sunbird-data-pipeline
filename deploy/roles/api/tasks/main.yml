@@ -83,18 +83,6 @@
   file: path=/var/log/telemetry/telemetry.log state=touch mode=0644
   sudo: yes
 
-- name: Install nginx
-  apt: name=nginx state=present
-  sudo: yes
-
-- name: Copy api conf
-  template: src=api.conf dest=/etc/nginx/sites-available/default
-  sudo: yes
-
-- name: Restart nginx
-  service: name=nginx state=restarted
-  sudo: yes
-
 - name: Copy logrotate file
   copy: src=telemetry.logrotate dest=/etc/logrotate.d/telemetry mode=0644
   sudo: yes

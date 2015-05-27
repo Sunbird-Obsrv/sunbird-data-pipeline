@@ -3,6 +3,10 @@
   apt: name=nginx state=present
   sudo: yes
 
-- name: Copy ekstep conf
-  copy: src=ekstep.conf dest=/etc/nginx/sites-available
+- name: remove default from sites available
+  file: path=/etc/nginx/sites-available/default state=absent
+  sudo: yes
+
+- name: remove default from sites enabled
+  file: path=/etc/nginx/sites-enabled/default state=absent
   sudo: yes

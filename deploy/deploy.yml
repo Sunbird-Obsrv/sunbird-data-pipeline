@@ -35,6 +35,8 @@
   roles:
     - utils
     - kibana
+    - nginx
+    - kibana_nginx
     - modify_kibana
     - kibana-nginx
   tags:
@@ -48,6 +50,8 @@
     sudo: yes
   roles:
     - api
+    - nginx
+    - api_nginx
     - logstash
   vars_files:
     - 'secrets/{{env}}.yml'

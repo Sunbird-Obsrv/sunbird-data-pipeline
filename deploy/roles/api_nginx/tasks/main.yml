@@ -1,0 +1,13 @@
+---
+- name: Copy api conf
+  template: src=api-nginx.conf dest=/etc/nginx/sites-available/api
+  sudo: yes
+  tags: blah
+
+- name: create soft link
+  file: path=/etc/nginx/sites-enabled/api src=/etc/nginx/sites-available/api state=link
+  sudo: yes
+
+- name: Restart nginx
+  service: name=nginx state=restarted
+  sudo: yes
