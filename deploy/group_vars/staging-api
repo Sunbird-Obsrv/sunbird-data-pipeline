@@ -3,3 +3,5 @@ api_port: 8080
 api_server: api-sandbox.ekstep.org
 api_hosts: 
  - 172.31.9.135
+learning_hosts: 
+ - 172.31.8.90

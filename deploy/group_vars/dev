@@ -7,3 +7,6 @@ kibana_hosts:
  - 192.168.33.11
 api_hosts: 
  - 192.168.33.10
+learning_hosts:
+ - 192.168.33.10
+kibana_oauth2_callback_url: ''

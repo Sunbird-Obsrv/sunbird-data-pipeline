@@ -4,5 +4,6 @@ es_port: 9200
 kibana_server: platform.ekstep.org
 kibana_hosts:
   - 10.10.1.34
-leaning_hosts:
+learning_hosts:
   - 10.10.1.143
+kibana_oauth2_callback_url: http://{{ kibana_server }}/oauth2callback

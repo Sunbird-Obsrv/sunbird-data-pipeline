@@ -3,3 +3,5 @@ api_port: 8080
 api_server: api-qa.ekstep.org
 api_hosts: 
  - 173.31.1.118
+learning_hosts: 
+ - 172.31.8.90

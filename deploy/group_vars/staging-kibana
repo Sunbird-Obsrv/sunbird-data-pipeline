@@ -4,6 +4,6 @@ kibana_port: 5601
 kibana_server: ep-sandbox.ekstep.org
 kibana_hosts:
   - 172.31.11.37
-leaning_hosts:
+learning_hosts:
   - 172.31.8.90
 kibana_oauth2_callback_url: http://{{ kibana_server }}/oauth2callback

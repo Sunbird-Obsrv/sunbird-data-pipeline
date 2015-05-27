@@ -4,3 +4,5 @@ api_port: 8080
 api_server: api.ekstep.org
 api_hosts: 
  - 10.10.1.232
+learning_hosts: 
+ - 10.10.1.143
