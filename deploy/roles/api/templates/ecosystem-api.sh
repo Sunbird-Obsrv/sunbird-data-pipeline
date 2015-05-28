@@ -14,7 +14,7 @@ PORT="{{ api_port }}"
 SCRIPTNAME=/etc/init.d/ecosystem-api
 PID="/var/run/ecosystem-api.pid"
 
-ARGS="-l ${LOGFILE} -p ${PORT} -db \"{{ apidb }}\""
+ARGS="-l ${LOGFILE} -p ${PORT} -db {{ apidb }}"
 API_USER="{{ apiuser }}"
 API_PASS="{{ apipass }}"
 

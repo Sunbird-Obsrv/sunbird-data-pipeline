@@ -59,8 +59,8 @@
   register: binary_stat
 
 - name: Move ecosystem file
-  command: mv /home/{{ user }}/go/src/github.com/ekstep/ecosystem-platform-api/ecosystem-platform-api /usr/bin
-  when: binary_stat.stat.exists
+  command: mv /home/{{ user }}/go/src/ecosystem-platform-api/ecosystem-platform-api /usr/bin
+  when: binary_stat.stat.exists  == True
   notify:
     - restart ecosystem-api
   sudo: yes
