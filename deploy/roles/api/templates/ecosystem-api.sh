@@ -8,13 +8,13 @@
 ### END INIT INFO
 
 DESC="Ecosystem-Platform-API Daemon"
-NAME=/usr/bin/Ecosystem-Platform-API
-LOGFILE="/var/log/telemetry/telemetry.log"
+NAME=/usr/bin/ecosystem-platform-api
+LOGFILE="/var/log/telemetry/"
 PORT="{{ api_port }}"
 SCRIPTNAME=/etc/init.d/ecosystem-api
 PID="/var/run/ecosystem-api.pid"
 
-ARGS="-l ${LOGFILE} -p ${PORT}"
+ARGS="-l ${LOGFILE} -p ${PORT} -db \"{{ apidb }}\""
 API_USER="{{ apiuser }}"
 API_PASS="{{ apipass }}"
 

@@ -44,22 +44,22 @@
     GOPATH: /home/{{ user }}/go
 
 - name: Clone API Repository
-  git: repo={{ api_repo }} dest=/home/{{ user }}/go/src/github.com/ekstep/Ecosystem-Platform-API accept_hostkey=yes key_file=/home/{{ user }}/.ssh/github_rsa
+  git: repo={{ api_repo }} dest=/home/{{ user }}/go/src/ecosystem-platform-api accept_hostkey=yes key_file=/home/{{ user }}/.ssh/github_rsa
 
 - name: Build API
   command: godep go build
   args: 
-    chdir: /home/{{ user }}/go/src/github.com/ekstep/Ecosystem-Platform-API
+    chdir: /home/{{ user }}/go/src/ecosystem-platform-api
   environment:
     PATH: /usr/local/go/bin:/home/{{ user }}/go/bin:{{ ansible_env.PATH }}
     GOPATH: /home/{{ user }}/go
 
 - name: Check the binary file
-  stat: path=/home/{{ user }}/go/src/github.com/ekstep/Ecosystem-Platform-API/Ecosystem-Platform-API
+  stat: path=/home/{{ user }}/go/src/ecosystem-platform-api/ecosystem-platform-api
   register: binary_stat
 
 - name: Move ecosystem file
-  command: mv /home/{{ user }}/go/src/github.com/ekstep/Ecosystem-Platform-API/Ecosystem-Platform-API /usr/bin
+  command: mv /home/{{ user }}/go/src/github.com/ekstep/ecosystem-platform-api/ecosystem-platform-api /usr/bin
   when: binary_stat.stat.exists
   notify:
     - restart ecosystem-api
