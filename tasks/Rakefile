@@ -40,7 +40,7 @@ namespace :scheduled do
     client = ::Indexers::Elasticsearch.new(false)
     Processors::ReverseSearch.perform do |loc,ldata,hit|
       result = client.index(
-        'identities',
+        'ecosystem-identities',
         'devices_v1',
         {
           ts: hit._source.ts,

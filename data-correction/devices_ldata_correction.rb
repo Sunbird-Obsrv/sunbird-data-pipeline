@@ -9,7 +9,7 @@ module Correctors
       begin
         file = File.expand_path("./logs/logfile.log", File.dirname(__FILE__))
         logger = Logger.new(file)
-        @client = ::Elasticsearch::Client.new log: false
+        @client = ::Elasticsearch::Client.new(log: false)
         @client.indices.refresh index: index
         logger.info "Starting search"
         response = @client.search({
