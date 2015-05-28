@@ -12,7 +12,7 @@ class Spinach::Features::TestHowLocationTaggingOfEventsWork < Spinach::FeatureSt
   FIRST_LOCATION = "12.912422, 77.645512"
   FIRST_STATE = "karnataka"
   FIRST_DISTRICT = "bangalore urban"
-  FIRST_LOCALITY = "bengaluru"
+  FIRST_LOCALITY = "Bengaluru"
 
   step 'I play for the first time on a new device' do
     t1 = THAT_TIME

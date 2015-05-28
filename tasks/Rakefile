@@ -39,17 +39,7 @@ namespace :scheduled do
     require_relative '../data-indexer/indexers.rb'
     client = ::Indexers::Elasticsearch.new(false)
     Processors::ReverseSearch.perform do |loc,ldata,hit|
-      result = client.index(
-        'ecosystem-identities',
-        'devices_v1',
-        {
-          ts: hit._source.ts,
-          did: hit._source.did,
-          loc: loc,
-          ldata: ldata,
-          dspec: hit._source.edata.eks.dspec
-        }
-      )
+
     end
   end
   task :set_ldata do

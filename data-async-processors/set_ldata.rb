@@ -58,7 +58,11 @@ module Processors
           ldata_from_cache = ldata_cache[did]
           if ldata_from_cache.nil?
             begin
-              _index='ecosystem-identities'
+              if(ENV['ENV']=='test')
+                _index = 'test-identities'
+              else
+                _index = 'ecosystem-identities'
+              end
               response = @client.get({
                 index: _index,
                 type: 'devices_v1',

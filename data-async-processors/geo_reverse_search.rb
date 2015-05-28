@@ -84,13 +84,11 @@ module Processors
           logger.info "LOC #{_loc}"
           location = Location.new(_loc)
           ldata = {
-                ldata: {
-                  locality: location.locality,
-                  district: location.district,
-                  state: location.state,
-                  country: location.country
-                }
-              }
+            locality: location.locality,
+            district: location.district,
+            state: location.state,
+            country: location.country
+          }
           logger.info "LDATA #{ldata.to_json}"
           edata = {
             edata:{
@@ -113,7 +111,20 @@ module Processors
           end
           logger.info "DEVICE #{hit._source.did}"
         end
-        yield _loc,ldata,hit
+        # yield _loc,ldata,hit
+        result = @client.index(
+          index: _index,
+          type: 'devices_v1',
+          body: {
+            ts: hit._source.ts,
+            "@timestamp" => hit._source["@timestamp"],
+            did: hit._source.did,
+            loc: _loc,
+            ldata: ldata,
+            dspec: hit._source.edata.eks.dspec
+          }
+        )
+        logger.info "devices_v1 UPDATE #{result.to_json}"
       end
       logger.info "ENDING REVERSE SEARCH"
      rescue => e
