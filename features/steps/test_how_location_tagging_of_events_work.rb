@@ -14,27 +14,75 @@ class Spinach::Features::TestHowLocationTaggingOfEventsWork < Spinach::FeatureSt
   FIRST_DISTRICT = "bangalore urban"
   FIRST_LOCALITY = "Bengaluru"
 
+  SECOND_LOCATION = "26.222125, 78.191586"
+  SECOND_STATE = "Madhya Pradesh"
+  SECOND_DISTRICT = "Gwalior"
+  SECOND_LOCALITY = "Gwalior"
+
   step 'I play for the first time on a new device' do
     t1 = THAT_TIME
     loc = FIRST_LOCATION
+    @user = ::Generator::User.new
     session = ::Generator::Session.new(user,device(loc),t1,::Generator::Session::OLD_MODE)
     write_events(session,t1)
     q = search({q:"eid:GE_SESSION_START"})
     q.hits.total.should == 1
   end
 
-  step 'my events should be tagged with my current location' do
+  step 'my events should be tagged with my existing location' do
     run_old_jobs
-    q = search({q:"eid:GE_SESSION_START"})
+    event_type = "GE_SESSION_START"
+    q = get_specific_type_of_event_for_user(event_type, @user)
+    q.hits.total.should == 1
+    location_string(q.hits.hits.first).should == FIRST_LOCALITY
+    event_type = "GE_LAUNCH_GAME"
+    q = get_specific_type_of_event_for_user(event_type, @user)
+    q.hits.total.should == 1
+    location_string(q.hits.hits.first).should == FIRST_LOCALITY
+    event_type = "GE_SIGNUP"
+    q = get_all_signup_events_for_user(event_type, @user)
+    q.hits.total.should == 1
     location_string(q.hits.hits.first).should == FIRST_LOCALITY
   end
 
+  step 'my events should be tagged with my new location' do
+    run_old_jobs
+    event_type = "GE_SESSION_START"
+    q = get_specific_type_of_event_for_user(event_type, @user)
+    q.hits.total.should == 1
+    location_string(q.hits.hits.first).should == SECOND_LOCALITY
+    event_type = "GE_LAUNCH_GAME"
+    q = get_specific_type_of_event_for_user(event_type, @user)
+    q.hits.total.should == 1
+    location_string(q.hits.hits.first).should == SECOND_LOCALITY
+    event_type = "GE_SIGNUP"
+    q = get_all_signup_events_for_user(event_type, @user)
+    q.hits.total.should == 1
+    location_string(q.hits.hits.first).should == SECOND_LOCALITY
+  end
+
   step 'I play for the first time on an existing device from an existing location' do
-    pending 'step not implemented'
+    i_play_for_the_first_time_on_a_new_device
+    run_old_jobs
+    t1 = THAT_TIME
+    loc = FIRST_LOCATION
+    @user = ::Generator::User.new
+    session = ::Generator::Session.new(user,device(loc),t1,::Generator::Session::OLD_MODE)
+    write_events(session,t1)
+    q = search({q:"eid:GE_SESSION_START"})
+    q.hits.total.should == 2
   end
 
   step 'I play for the first time on an existing device from a new location' do
-    pending 'step not implemented'
+    i_play_for_the_first_time_on_a_new_device
+    run_old_jobs
+    t1 = THAT_TIME
+    loc = SECOND_LOCATION
+    @user = ::Generator::User.new
+    session = ::Generator::Session.new(user,device(loc),t1,::Generator::Session::OLD_MODE)
+    write_events(session,t1)
+    q = search({q:"eid:GE_SESSION_START"})
+    q.hits.total.should == 2
   end
 
   step 'I have already played' do

@@ -73,7 +73,7 @@ Scenario: Registration of a new facilitator with name containing dot
 Scenario: Registration of a new facilitator with name containing single alphabet
     Given I have not signed up as a facilitator
     When I sign up as a facilitator using single alphabet in the name field
-    Then I should get invalid name error
+    Then I should get short name error
 
 Scenario: Registration of a new facilitator with name containing two alphabets
     Given I have not signed up as a facilitator

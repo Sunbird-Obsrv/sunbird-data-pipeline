@@ -7,4 +7,5 @@ group :test do
   gem 'rspec'
   gem 'hashie'
   gem 'geocoder'
+  gem 'mysql2'
 end

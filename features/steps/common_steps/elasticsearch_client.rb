@@ -32,5 +32,56 @@ module CommonSteps
       Hashie::Mash.new elastic_search_client.search({index:'test*',size:1000}.merge(q))
     end
 
+    def get_specific_type_of_event_for_user(event_type, user)
+      q = search({index:'test*',body: {
+        "query"=> {
+          "term"=>{
+            "eid"=> event_type
+          }
+        },
+        "filter": {
+            "bool": {
+              "must": [
+                {
+                  "query": {
+                    "match": {
+                      "uid": {
+                        "query": user.uid,
+                        "type": "phrase"
+                      }
+                    }
+                  }
+                },
+              ]
+              }
+            }
+          }})
+    end
+
+    def get_all_signup_events_for_user(event_type, user)
+      q = search({index:'test*',body: {
+        "query"=> {
+          "term"=>{
+            "eid"=> event_type
+          }
+        },
+        "filter": {
+            "bool": {
+              "must": [
+                {
+                  "query": {
+                    "match": {
+                      "edata.eks.uid": {
+                        "query": user.uid,
+                        "type": "phrase"
+                      }
+                    }
+                  }
+                },
+              ]
+              }
+            }
+          }})
+    end
   end
 end
