@@ -1,9 +1,11 @@
 require_relative '../data-generator/session_generator.rb'
 
+require 'digest/sha1'
 require 'securerandom'
 require 'pry'
 
-API_URL="http://localhost:8080/v1/facilitators/signup"
+FACILITATOR_SIGNUP_API_URL="http://localhost:8080/v1/facilitators/signup"
+FACILITATOR_LOGIN_API_URL="http://localhost:8080/v2/facilitators/login"
 
 
 module UserGenerator
@@ -39,9 +41,43 @@ module UserGenerator
 
     def post_newuserrequest
       data = newuserrequest
-      uri = URI.parse(API_URL)
+      uri = URI.parse(FACILITATOR_SIGNUP_API_URL)
       http = Net::HTTP.new(uri.host, uri.port)
-      if API_URL.start_with? "https"
+      if FACILITATOR_SIGNUP_API_URL.start_with? "https"
+        http.use_ssl = true
+      end
+      req = Net::HTTP::Post.new(uri.path, initheader = {'Content-Type' =>'application/json'})
+      req.body = JSON.generate(data)
+      res = http.request(req)
+      res
+    end
+
+    def loginrequest
+      ts = Time.now.strftime('%Y-%m-%dT%H:%M:%S%z')
+      password = ::Digest::SHA1.hexdigest (@password+ts)
+      e=
+        {
+          id: "ekstep.facilitator.signup",
+          ver: "1.0",
+          ts: ts,
+          params:{
+            requesterid: @mobile,
+            did: @device.id,
+            key: "",
+            msgid: SecureRandom.uuid,
+          },
+          request: {
+            mobile: @mobile,
+            password: password,
+          }
+        }
+    end
+
+    def post_loginrequest
+      data = loginrequest
+      uri = URI.parse(FACILITATOR_LOGIN_API_URL)
+      http = Net::HTTP.new(uri.host, uri.port)
+      if FACILITATOR_LOGIN_API_URL.start_with? "https"
         http.use_ssl = true
       end
       req = Net::HTTP::Post.new(uri.path, initheader = {'Content-Type' =>'application/json'})
