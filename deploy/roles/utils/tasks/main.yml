@@ -1,4 +1,0 @@
----
-- name: Install nodejs
-  apt: name=nodejs state=present
-  sudo: yes

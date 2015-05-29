@@ -1,4 +1,0 @@
----
-# defaults file for timezone
-timezone: Asia/Calcutta
-backup_etc_files: true

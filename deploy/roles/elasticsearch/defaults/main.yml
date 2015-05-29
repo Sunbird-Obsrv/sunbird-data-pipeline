@@ -1,9 +1,0 @@
----
-elasticsearch_version: 1.5.2
-elasticsearch_use_g1gc: false
-elasticsearch_include: "/usr/share/elasticsearch/bin/elasticsearch.in.sh"
-elasticsearch_plugin_exe: "/usr/share/elasticsearch/bin/plugin"
-elasticsearch_config: "/etc/elasticsearch"
-elasticsearch_service_startonboot: yes
-elasticsearch_service_state: started
-#elasticsearch_config: "/usr/share/elasticsearch/config"

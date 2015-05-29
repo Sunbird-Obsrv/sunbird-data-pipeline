@@ -1,3 +1,0 @@
----
-- name: restart ecosystem-api
-  service: name=ecosystem-api state=restarted

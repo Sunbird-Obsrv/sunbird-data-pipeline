@@ -1,9 +1,0 @@
-/var/log/telemetry/telemetry.log {
-        su root syslog
-        daily
-        copytruncate
-        compress
-        compressext .gz
-        rotate 4
-        maxage 100
-}
