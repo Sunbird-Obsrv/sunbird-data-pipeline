@@ -5,7 +5,7 @@ require 'securerandom'
 require 'pry'
 
 FACILITATOR_SIGNUP_API_URL="http://localhost:8080/v1/facilitators/signup"
-FACILITATOR_LOGIN_API_URL="http://localhost:8080/v2/facilitators/login"
+FACILITATOR_LOGIN_API_URL="http://localhost:8080/v1/facilitators/login"
 
 
 module UserGenerator
@@ -33,8 +33,8 @@ module UserGenerator
           request: {
             name: @name,
             mobile: @mobile,
-            password: @password,
-            confirmPassword: @confirm_password,
+            password: sha_of_password(@password),
+            confirmPassword: sha_of_password(@confirm_password),
           }
         }
     end
@@ -54,7 +54,8 @@ module UserGenerator
 
     def loginrequest
       ts = Time.now.strftime('%Y-%m-%dT%H:%M:%S%z')
-      password = ::Digest::SHA1.hexdigest (@password+ts)
+      password = sha_of_password(@password)
+      password = sha_of_password(password+ts)
       e=
         {
           id: "ekstep.facilitator.signup",
@@ -84,6 +85,14 @@ module UserGenerator
       req.body = JSON.generate(data)
       res = http.request(req)
       res
+    end
+
+    def sha_of_password(text_password)
+      if text_password == ""
+        return text_password
+      else
+        return ::Digest::SHA1.hexdigest (text_password)
+      end
     end
 
   end
