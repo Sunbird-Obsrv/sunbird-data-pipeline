@@ -47,7 +47,7 @@ module Processors
       file = File.expand_path("./logs/logfile.log", File.dirname(__FILE__))
       logger = Logger.new(file)
       logger.info "STARTING REVERSE SEARCH"
-      @client = ::Elasticsearch::Client.new log: false
+      @client = ::Elasticsearch::Client.new(host:ENV['ES_HOST']||'localhost:9200',log: false)
       response = @client.search({
         index: index,
         type: type,

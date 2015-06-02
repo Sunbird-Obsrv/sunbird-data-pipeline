@@ -10,7 +10,7 @@ module Processors
       file = File.expand_path("./logs/logfile.log", File.dirname(__FILE__))
       logger = Logger.new(file)
       logger.info "STARTING SIGNUP SEARCH"
-      @client = ::Elasticsearch::Client.new log: false
+      @client = ::Elasticsearch::Client.new(host:ENV['ES_HOST']||'localhost:9200',log: false)
       @client.indices.refresh index: index
       response = @client.search({
         index: index,

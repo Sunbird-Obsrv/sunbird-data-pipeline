@@ -9,7 +9,7 @@ module Processors
         #TODO refac logging
         logger = Logger.new(file)
         logger.info "STARTING OE SUMMARIZER"
-        @client = ::Elasticsearch::Client.new(log: false)
+        @client = ::Elasticsearch::Client.new(host:ENV['ES_HOST']||'localhost:9200',log: false)
         #TODO remove this bad code
         @client.indices.refresh index: index
         response = @client.search({
