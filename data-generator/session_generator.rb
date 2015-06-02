@@ -72,6 +72,9 @@ module Generator
         spec: @spec
       }
     end
+    def deviceid
+      return id
+    end
   end
   class Session
     SECONDS_IN_A_DAY = 86400

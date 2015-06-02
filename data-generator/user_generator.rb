@@ -10,12 +10,15 @@ FACILITATOR_LOGIN_API_URL="http://localhost:8080/v1/facilitators/login"
 
 module UserGenerator
   class User
+    attr_accessor :token, :mobile, :requesterid
     def initialize(name, mobile, password, confirm_password, device)
       @name = name
       @mobile = mobile
       @password = password
       @confirm_password = confirm_password
       @device = device
+      @token = SecureRandom.uuid
+      @requesterid = SecureRandom.uuid
     end
 
     def newuserrequest
@@ -25,7 +28,7 @@ module UserGenerator
           ver: "1.0",
           ts: Time.now.strftime('%Y-%m-%dT%H:%M:%S%z'),
           params:{
-            requesterid: @mobile,
+            requesterid: @requesterid,
             did: @device.id,
             key: "",
             msgid: SecureRandom.uuid,
