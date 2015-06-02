@@ -2,7 +2,7 @@ require 'digest/sha1'
 require 'securerandom'
 require 'pry'
 
-ADD_CHILD_API_URL="http://localhost:8080/v1/children"
+ADD_CHILD_API_URL="http://localhost:#{ENV['API_PORT']||8080}/v1/children"
 
 module ChildGenerator
   class Child
