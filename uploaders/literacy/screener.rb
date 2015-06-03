@@ -23,8 +23,8 @@ module Uploaders
           ver: "1.0",
           ts: Time.new.strftime("%Y-%m-%dT%H:%M:%S")+"+0530",
           params: {
-            did: "ff305d54-85b4-341b-da2f-eb6b9e5460fa", 
-            key: "13405d54-85b4-341b-da2f-eb6b9e546fff", 
+            did: "ff305d54-85b4-341b-da2f-eb6b9e5460fa",
+            key: "13405d54-85b4-341b-da2f-eb6b9e546fff",
             msgid: Digest::SHA1.hexdigest(file_path).upcase
           },
           events: []
@@ -47,7 +47,7 @@ module Uploaders
             wrapper[:events] << e
           end
         end
-        if wrapper[:events].count == 0 
+        if wrapper[:events].count == 0
           return nil
         else
           wrapper
@@ -76,26 +76,26 @@ module Uploaders
 
       def self.read_processed_files
         @@processed = Set.new
-        f = CSV.parse(File.read('./processed.csv'), headers: true) 
+        f = CSV.parse(File.read('./processed.csv'), headers: true)
         f.each do |row|
           @@processed << row["filename"]
         end
       end
 
       def self.upload
-        file = File.expand_path("./logs/logfile.log", File.dirname(__FILE__))
+        file = "#{ENV['EP_LOG_DIR']}/#{self.name.gsub('::','')}.log"
         @logger = Logger.new(file)
         error_count = 0
         skipped = 0
         read_processed_files
         @@unknown=Set.new
-        @@mapping_data = CSV.parse(File.read('mapping.csv'), headers: true) 
+        @@mapping_data = CSV.parse(File.read('mapping.csv'), headers: true)
         log_files = Dir.glob(LOG_FILE_PATH)
         @logger.info "Found #{log_files.size} log file(s)"
         @logger.info "Uploading...."
         begin
           log_files.each do |f|
-            filename = File.basename(f) 
+            filename = File.basename(f)
             if  @@processed.include? filename
               skipped += 1
               next
@@ -106,7 +106,7 @@ module Uploaders
               @logger.error "Unable to upload file #{f}"
             else
               res = post_data(data)
-              if res.code != "200" 
+              if res.code != "200"
                 error_count+=1
                 @logger.error "file #{f} . Response code: #{res.code}"
               else
@@ -136,7 +136,7 @@ module Uploaders
           @@processed.to_a.each do |name|
             csv << [name]
           end
-        end 
+        end
       end
     end
   end

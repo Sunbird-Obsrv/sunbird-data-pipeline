@@ -267,7 +267,8 @@ module Generator
     def initialize
       @user_pool = Array.new(USERS) {User.new}
       @device_pool = Array.new(DEVICES) {Device.new}
-      @logger = Logger.new(File.expand_path("./logs/logfile.log", File.dirname(__FILE__)))
+      file = "#{ENV['EP_LOG_DIR']}/#{self.name.gsub('::','')}.log"
+      @logger = Logger.new(file)
     end
     def run
       SESSIONS.times do

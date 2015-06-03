@@ -7,7 +7,7 @@ module Correctors
   class DevicesLdataCorrection
     def self.perform(index="ecosystem-*",type="devices_v1")
       begin
-        file = File.expand_path("./logs/logfile.log", File.dirname(__FILE__))
+        file = "#{ENV['EP_LOG_DIR']}/#{self.name.gsub('::','')}.log"
         logger = Logger.new(file)
         @client = ::Elasticsearch::Client.new(log: false)
         @client.indices.refresh index: index

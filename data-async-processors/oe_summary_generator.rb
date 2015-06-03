@@ -5,7 +5,7 @@ module Processors
   class OeSummaryGenerator
     def self.perform(index="ecosystem-*",type="events_v1")
       begin
-        file = File.expand_path("./logs/logfile.log", File.dirname(__FILE__))
+        file = "#{ENV['EP_LOG_DIR']}/#{self.name.gsub('::','')}.log"
         #TODO refac logging
         logger = Logger.new(file)
         logger.info "STARTING OE SUMMARIZER"

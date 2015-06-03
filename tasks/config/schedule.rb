@@ -5,8 +5,8 @@
 
 # Example:
 #
-file = File.expand_path("../logs/cron.log", File.dirname(__FILE__))
-set :output, file
+set :output, {:error => 'error.log', :standard => 'cron.log'}
+
 #
 # every 2.hours do
 #   command "/usr/bin/some_great_command"
@@ -19,6 +19,8 @@ set :output, file
 # end
 
 # Learn more: http://github.com/javan/whenever
+set :environment_variable, 'EP_LOG_DIR'
+set :environment, ENV['EP_LOG_DIR']
 
 every 1.minute do
   rake "scheduled:reverse_search"

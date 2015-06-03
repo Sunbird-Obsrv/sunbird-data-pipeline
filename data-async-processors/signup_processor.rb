@@ -7,7 +7,7 @@ module Processors
   class SignupProcessor
     def self.perform(index="ecosystem-*",type="events_v1")
       begin
-      file = File.expand_path("./logs/logfile.log", File.dirname(__FILE__))
+      file = "#{ENV['EP_LOG_DIR']}/#{self.name.gsub('::','')}.log"
       logger = Logger.new(file)
       logger.info "STARTING SIGNUP SEARCH"
       @client = ::Elasticsearch::Client.new(host:ENV['ES_HOST']||'localhost:9200',log: false)

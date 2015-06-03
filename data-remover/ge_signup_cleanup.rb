@@ -8,7 +8,7 @@ module Removers
     # ES_URL='http://52.74.22.23:9200'
     def self.remove(index="ecosystem-*",type="events_v1")
       begin
-        file = File.expand_path("./logs/logfile.log", File.dirname(__FILE__))
+        file = "#{ENV['EP_LOG_DIR']}/#{self.name.gsub('::','')}.log"
         logger = Logger.new(file)
         @client = ::Elasticsearch::Client.new log: false
         @client.indices.refresh index: index

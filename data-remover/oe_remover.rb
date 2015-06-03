@@ -7,7 +7,7 @@ class OERemover
 	# ES_URL='http://52.74.22.23:9200'
 	def self.remove(value="OE_.*",index="ecosystem-*",type="events_v1")
 		begin
-			file = File.expand_path("./logs/logfile.log", File.dirname(__FILE__))
+			file = "#{ENV['EP_LOG_DIR']}/#{self.name.gsub('::','')}.log"
 			logger = Logger.new(file)
 
 			@client = ::Elasticsearch::Client.new log: false

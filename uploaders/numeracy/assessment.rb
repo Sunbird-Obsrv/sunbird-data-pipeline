@@ -81,7 +81,8 @@ module Uploaders
       end
       def self.upload
         setup
-        logger = Logger.new(File.expand_path("../logs/upload.log", File.dirname(__FILE__)))
+        file = "#{ENV['EP_LOG_DIR']}/#{self.name.gsub('::','')}.log"
+        logger = Logger.new(file)
         logger.info("CSV #{CSV_FILE}")
         sessions_done = {}
         CSV.foreach("../CSV/#{CSV_FILE}", headers: true) do |row|
