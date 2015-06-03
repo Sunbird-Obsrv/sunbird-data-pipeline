@@ -35,7 +35,7 @@ end
 
 namespace :scheduled do
   task :reverse_search do
-    require_relative '../data-async-processors/geo_reverse_search.rb'
+    require_relative '../data-async-processors/geo_reverse_search2.rb'
     require_relative '../data-indexer/indexers.rb'
     client = ::Indexers::Elasticsearch.new(false)
     # Processors::ReverseSearch.perform do |loc,ldata,hit|
@@ -44,7 +44,7 @@ namespace :scheduled do
     Processors::ReverseSearch2.perform
   end
   task :set_ldata do
-    require_relative '../data-async-processors/set_ldata.rb'
+    require_relative '../data-async-processors/set_ldata2.rb'
     require_relative '../data-indexer/indexers.rb'
     # Processors::SetLdata.perform
     Processors::SetLdata2.perform
