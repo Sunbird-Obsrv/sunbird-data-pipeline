@@ -56,7 +56,7 @@ module Processors
           })
           summary[event._source.sid]['length']+=(event._source.edata.eks["length"]).to_f.round(2)
           summary[event._source.sid].attempted+=1
-          if(event._source.edata.eks.pass=="YES")
+          if(event._source.edata.eks.pass.downcase=="yes")
             correct = summary[event._source.sid].correct+=1
           else
             incorrect = summary[event._source.sid].incorrect+=1
