@@ -54,7 +54,7 @@ module Processors
             attempted: 0,
             percent_correct: 0.0
           })
-          summary[event._source.sid]['length']+=(event._source.edata.eks["length"]).round(2)
+          summary[event._source.sid]['length']+=(event._source.edata.eks["length"]).to_f.round(2)
           summary[event._source.sid].attempted+=1
           if(event._source.edata.eks.pass=="YES")
             correct = summary[event._source.sid].correct+=1
