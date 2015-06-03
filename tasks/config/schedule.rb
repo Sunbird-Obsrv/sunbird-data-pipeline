@@ -26,9 +26,10 @@ end
 every 1.minute do
   rake "scheduled:set_ldata"
 end
-every 1.minute do
-  rake "scheduled:generate_signup"
-end
+# DISABLED because devices are generating signup events
+# every 1.minute do
+#   rake "scheduled:generate_signup"
+# end
 every 1.minute do
   rake "scheduled:oe_summarize"
 end
