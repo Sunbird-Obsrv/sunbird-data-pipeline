@@ -43,3 +43,6 @@ DEPENDENCIES
   ruby-progressbar
   what_methods
   whenever
+
+BUNDLED WITH
+   1.10.3
