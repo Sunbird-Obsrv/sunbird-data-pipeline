@@ -33,6 +33,13 @@ namespace :cleaners do
   end
 end
 
+namespace :correctors do
+  task :event_signup_utype_correction do
+    require_relative '../lib/ecosystem-platform/correctors/signup_utype_add.rb'
+    EcosystemPlatform::Correctors::SignupUtypeAdd.perform
+  end
+end
+
 namespace :scheduled do
   task :reverse_search do
     require_relative '../data-async-processors/geo_reverse_search2.rb'
