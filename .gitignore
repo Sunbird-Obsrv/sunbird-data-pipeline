@@ -5,3 +5,5 @@
 */reports/*
 backups/
 logs/
+tasks/.bundle/*
+tasks/vendor/*
