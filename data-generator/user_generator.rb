@@ -6,7 +6,7 @@ require 'pry'
 
 FACILITATOR_SIGNUP_API_URL="http://localhost:#{ENV['API_PORT']||8080}/v1/facilitators/signup"
 FACILITATOR_LOGIN_API_URL="http://localhost:#{ENV['API_PORT']||8080}/v1/facilitators/login"
-
+FACILITATOR_CHILDREN_LIST_API = "http://localhost:#{ENV['API_PORT']||8080}/v1/facilitators/enrolments"
 
 module UserGenerator
   class User
@@ -88,6 +88,35 @@ module UserGenerator
       req.body = JSON.generate(data)
       res = http.request(req)
       res
+    end
+
+    def get_all_children(did, token, requesterid)
+      data = get_all_children_request(did, token, requesterid)
+      uri = URI.parse(FACILITATOR_CHILDREN_LIST_API)
+      http = Net::HTTP.new(uri.host, uri.port)
+      if FACILITATOR_CHILDREN_LIST_API.start_with? "https"
+        http.use_ssl = true
+      end
+      req = Net::HTTP::Post.new(uri.path, initheader = {'Content-Type' =>'application/json'})
+      req.body = JSON.generate(data)
+      res = http.request(req)
+      res
+    end
+
+    def get_all_children_request(did, token, requesterid)
+      ts = Time.now.strftime('%Y-%m-%dT%H:%M:%S%z')
+      e=
+        {
+          id: "ekstep.child.add",
+          ver: "1.0",
+          ts: ts,
+          params:{
+            requesterid: requesterid,
+            did: did,
+            key: ::Digest::SHA1.hexdigest(token+ts+did),
+            msgid: SecureRandom.uuid,
+          },
+        }
     end
 
     def sha_of_password(text_password)
