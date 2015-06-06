@@ -11,7 +11,7 @@ module Processors
       response = @client.search({
         index: index,
         type: type,
-        size: 1000,
+        size: 100000,
         body: {
           "query"=> {
             "constant_score" => {
@@ -34,6 +34,11 @@ module Processors
                       "field" => "edata.eks.ldata.country",
                       "existence" => true,
                       "null_value" => true
+                    }
+                  },
+                  {
+                    "missing" => {
+                      "field" => "flags.ldata_processed"
                     }
                   }
                 ]
@@ -76,6 +81,18 @@ module Processors
           raise Elasticsearch::Transport::Transport::Errors::NotFound if response.hits.total==0
           rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
             logger.error "LDATA SET: NOT FOUND - SKIPPING"
+            result = @client.update({
+              index: hit._index,
+              type: hit._type,
+              id: hit._id,
+              body: {
+                doc: {
+                  flags: {
+                    ldata_processed: true
+                  }
+                }
+              }
+            })
             next
           end
           ldata_cache[sid] = response.hits.hits.first._source rescue nil
@@ -89,6 +106,9 @@ module Processors
               eks: {
                 ldata: cache.edata.eks.ldata
               }
+            },
+            flags: {
+              ldata_processed: true
             }
           }
           logger.info "SID #{sid}"
@@ -103,6 +123,18 @@ module Processors
           })
           logger.info "LDATA SET: RESULT #{result.to_json}"
         else
+          result = @client.update({
+            index: hit._index,
+            type: hit._type,
+            id: hit._id,
+            body: {
+              doc: {
+                flags: {
+                  ldata_processed: true
+                }
+              }
+            }
+          })
           logger.info "LDATA SET: NOTHING DONE FOR #{sid} SID: cache #{cache} loc #{loc}"
         end
       end
