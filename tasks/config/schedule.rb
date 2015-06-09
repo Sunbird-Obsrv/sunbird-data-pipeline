@@ -35,4 +35,7 @@ end
 every 1.minute do
   rake "scheduled:oe_summarize"
 end
+every 1.minute do
+  rake "scheduled:age_populator"
+end
 
