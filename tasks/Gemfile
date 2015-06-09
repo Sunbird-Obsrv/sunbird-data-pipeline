@@ -9,4 +9,4 @@ gem 'elasticsearch'
 gem 'hashie'
 gem 'whenever'
 gem 'ruby-progressbar'
-
+gem 'mysql2'
