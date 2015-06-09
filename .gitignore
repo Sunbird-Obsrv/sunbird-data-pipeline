@@ -7,3 +7,4 @@ backups/
 logs/
 tasks/.bundle/*
 tasks/vendor/*
+database.yml

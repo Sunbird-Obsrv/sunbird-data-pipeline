@@ -2,6 +2,8 @@ require 'pry'
 require 'hashie'
 require 'elasticsearch'
 require 'mysql2'
+require 'yaml'
+
 require_relative '../utils/ep_logging.rb'
 
 module EcosystemPlatform
@@ -13,13 +15,8 @@ module EcosystemPlatform
         begin
           logger.start_task
           logger.info("INITIALIZING CLIENT")
-          db_connect_opts = {
-            :host => ENV['DB_HOST']||"localhost",
-            :username => "root",
-            :database => "ecosystem"
-          }
-          db_connect_opts.merge!(password:ENV['DB_PASS']) if(ENV['DB_PASS'])
-          @db_client = Mysql2::Client.new(db_connect_opts)
+          db_config = YAML::load_file('../config/database.yml')
+          @db_client = Mysql2::Client.new(db_config)
           @client = ::Elasticsearch::Client.new(log: false)
           @client.indices.refresh index: index
           logger.info("SEARCHING EVENTS FOR AGE ")
@@ -54,6 +51,11 @@ module EcosystemPlatform
                             "existence" => true,
                             "null_value" => true
                           }
+                        },
+                        {
+                          "missing" => {
+                            "field" => "flags.age_processed"
+                          }
                         }
                       ]
                     }
@@ -81,11 +83,28 @@ module EcosystemPlatform
                     udata: {
                       age: age_then,
                       dob: child.dob
+                    },
+                    flags: {
+                      age_processed: true
                     }
                   }
                 }
               })
               logger.info "<- RESULT #{result}"
+            else
+              result = @client.update({
+                index: hit._index,
+                type: hit._type,
+                id: hit._id,
+                body: {
+                  doc: {
+                    flags: {
+                      age_processed: true
+                    }
+                  }
+                }
+              })
+              logger.info "<- NOTHING MUCH DONE #{result}"
             end
           end
           logger.end_task
