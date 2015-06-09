@@ -1,6 +1,7 @@
 require 'pry'
 require 'hashie'
 require 'elasticsearch'
+require 'mysql'
 require_relative '../utils/ep_logging.rb'
 
 module EcosystemPlatform
