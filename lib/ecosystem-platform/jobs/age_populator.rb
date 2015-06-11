@@ -15,7 +15,9 @@ module EcosystemPlatform
         begin
           logger.start_task
           logger.info("INITIALIZING CLIENT")
-          db_config = YAML::load_file('../config/database.yml')
+          # TODO Terrible terrible
+          # will be replaced by a config module
+          db_config = YAML::load_file(File.expand_path('../../../../config/database.yml',__FILE__))
           @db_client = Mysql2::Client.new(db_config)
           @client = ::Elasticsearch::Client.new(log: false)
           @client.indices.refresh index: index
