@@ -99,29 +99,34 @@ module Processors
         end
         cache = ldata_cache[sid]
         loc = cache.edata.eks.loc rescue nil
+        ldata = cache.edata.eks.ldata rescue nil
         if(cache&&loc)
-          edata = {
-            loc: loc,
-            edata: {
-              eks: {
-                ldata: cache.edata.eks.ldata
+          if(ldata)
+            edata = {
+              loc: loc,
+              edata: {
+                eks: {
+                  ldata: cache.edata.eks.ldata
+                }
+              },
+              flags: {
+                ldata_processed: true
               }
-            },
-            flags: {
-              ldata_processed: true
             }
-          }
-          logger.info "SID #{sid}"
-          logger.info "EDATA #{edata.to_json}"
-          result = @client.update({
-            index: hit._index,
-            type: hit._type,
-            id: hit._id,
-            body: {
-              doc: edata
-            }
-          })
-          logger.info "LDATA SET: RESULT #{result.to_json}"
+            logger.info "SID #{sid}"
+            logger.info "EDATA #{edata.to_json}"
+            result = @client.update({
+              index: hit._index,
+              type: hit._type,
+              id: hit._id,
+              body: {
+                doc: edata
+              }
+            })
+            logger.info "LDATA SET: RESULT #{result.to_json}"
+          else
+            logger.info "WAITING FOR REVERSE SEARCH TO COMPLETE #{sid}"
+          end
         else
           result = @client.update({
             index: hit._index,
