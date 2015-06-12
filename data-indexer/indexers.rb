@@ -27,6 +27,18 @@ module Indexers
               }
             },
             {
+              string_fields_force: {
+                mapping: {
+                  index: "not_analyzed",
+                  omit_norms: false,
+                  type: "string",
+                  doc_values: true
+                },
+                match: "current|res|exres|max|mc|mmc|category",
+                match_pattern: "regex"
+              }
+            },
+            {
               double_fields: {
                   match: "mem|idisk|edisk|scrn|length|exlength|age|percent_correct|percent_attempt|size|score|maxscore",
                   match_pattern: "regex",
