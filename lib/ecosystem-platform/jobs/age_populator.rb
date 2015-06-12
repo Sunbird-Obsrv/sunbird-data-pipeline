@@ -19,7 +19,7 @@ module EcosystemPlatform
           # will be replaced by a config module
           db_config = YAML::load_file(File.expand_path('../../../../config/database.yml',__FILE__))
           @db_client = Mysql2::Client.new(db_config)
-          @client = ::Elasticsearch::Client.new(host:ENV['ES_HOST']||log: false)
+          @client = ::Elasticsearch::Client.new(host:ENV['ES_HOST']||'localhost',log: false)
           @client.indices.refresh index: index
           logger.info("SEARCHING EVENTS FOR AGE ")
           response = @client.search({
