@@ -129,6 +129,18 @@ module Indexers
               }
             },
             {
+              string_fields_force: {
+                mapping: {
+                  index: "not_analyzed",
+                  omit_norms: false,
+                  type: "string",
+                  doc_values: true
+                },
+                match: "current|res|exres|max|mc|mmc|category",
+                match_pattern: "regex"
+              }
+            },
+            {
               date_fields: {
                   match: "ts|te",
                   match_pattern: "regex",

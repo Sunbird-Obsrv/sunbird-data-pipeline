@@ -42,11 +42,13 @@ module Processors
         logger.info "OE SUMMARIZER: FOUND #{response.hits.hits.count} hits."
         events = response.hits.hits
         events.each do |event|
-          summary[event._source.sid] ||= Hashie::Mash.new({
+          summary_key = "#{event._source.sid}-#{event._source.gdata.id}"
+          summary[summary_key] ||= Hashie::Mash.new({
             index: event._index,
             ts: event._source.ts,
             did: event._source.did,
             uid: event._source.uid,
+            sid: event._source.sid,
             gdata: event._source.gdata,
             length: 0.0,
             correct: 0,
@@ -54,14 +56,14 @@ module Processors
             attempted: 0,
             percent_correct: 0.0
           })
-          summary[event._source.sid]['length']+=(event._source.edata.eks["length"]).to_f.round(2)
-          summary[event._source.sid].attempted+=1
+          summary[summary_key]['length']+=(event._source.edata.eks["length"]).to_f.round(2)
+          summary[summary_key].attempted+=1
           if(event._source.edata.eks.pass.downcase=="yes")
-            correct = summary[event._source.sid].correct+=1
+            correct = summary[summary_key].correct+=1
           else
-            incorrect = summary[event._source.sid].incorrect+=1
+            incorrect = summary[summary_key].incorrect+=1
           end
-          summary[event._source.sid].percent_correct=((summary[event._source.sid].correct)*100.0/summary[event._source.sid].attempted).round(2)
+          summary[summary_key].percent_correct=((summary[summary_key].correct)*100.0/summary[summary_key].attempted).round(2)
         end
         summary.each do |sid,data|
           payload = {
@@ -73,7 +75,7 @@ module Processors
               "@timestamp" => Time.now.strftime('%Y-%m-%dT%H:%M:%S%z'),
               eid: 'OE_SUMMARY',
               did: data.did,
-              sid: sid,
+              sid: data.sid,
               uid: data.uid,
               gdata: data.gdata,
               edata: {
