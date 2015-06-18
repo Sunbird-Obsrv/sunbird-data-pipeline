@@ -36,6 +36,6 @@ every 1.minute do
   rake "scheduled:oe_summarize"
 end
 every 1.minute do
-  rake "scheduled:age_populator"
+  rake "scheduled:child_data_populator"
 end
 

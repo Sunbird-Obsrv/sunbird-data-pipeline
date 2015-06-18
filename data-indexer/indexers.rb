@@ -62,7 +62,7 @@ module Indexers
             },
             {
               integer_fields: {
-                  match: "sims|atmpts|failedatmpts|correct|incorrect|total",
+                  match: "sims|atmpts|failedatmpts|correct|incorrect|total|age_completed_years",
                   match_pattern: "regex",
                   mapping: {
                       type: "integer",

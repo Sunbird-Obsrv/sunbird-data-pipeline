@@ -7,7 +7,7 @@ ASSOCIATE_CHILD_API_URL = "http://localhost:#{ENV['API_PORT']||8080}/v1/facilita
 
 module ChildGenerator
   class Child
-    attr_reader :uid,:dob
+    attr_reader :uid,:dob, :gender
     def initialize(name, dob, gender, ekstepId)
       @name = name
       @dob = dob
