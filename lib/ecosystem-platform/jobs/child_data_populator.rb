@@ -91,19 +91,25 @@ module EcosystemPlatform
       def self.request_body(child,hit)
         data = Hash.new
         doc = {doc: {flags: {child_data_processed: true}}}
-        if(child.dob)
-          time_then = Time.strptime(hit._source.ts,'%Y-%m-%dT%H:%M:%S%z')
-          age_then = time_then - child.dob
-          seconds_in_a_year = 31556952
-          completed_years = (age_then / seconds_in_a_year).floor
-          data[:age]= age_then
-          data[:dob]= child.dob
-          data[:age_completed_years]= completed_years
-          logger.info "-> UPDATE #{hit._source.eid} #{hit._id}"
-        end
-        data[:gender]=child.gender if child.gender
-        doc[:doc][:udata]=data unless data.empty?
-        return doc
+	  	begin 
+        	if(child.dob)
+          		time_then = Time.strptime(hit._source.ts,'%Y-%m-%dT%H:%M:%S%z')
+          		age_then = time_then - child.dob
+          		seconds_in_a_year = 31556952
+          		completed_years = (age_then / seconds_in_a_year).floor
+          		data[:age]= age_then
+          		data[:dob]= child.dob
+          		data[:age_completed_years]= completed_years
+          		logger.info "-> UPDATE #{hit._source.eid} #{hit._id}"
+        	end
+        	data[:gender]=child.gender if child.gender
+        	doc[:doc][:udata]=data unless data.empty?
+		rescue => e
+			logger.error(e,{backtrace: e.backtrace[0..4]})
+			logger.end_task
+		ensure
+			return doc
+		end
       end
     end
   end
