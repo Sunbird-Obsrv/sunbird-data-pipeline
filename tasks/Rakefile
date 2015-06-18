@@ -73,9 +73,9 @@ namespace :scheduled do
     client = ::Indexers::Elasticsearch.new(false)
     Processors::SignupGeoTagger.perform
   end
-  task :age_populator do
-    require_relative '../lib/ecosystem-platform/jobs/age_populator.rb'
-    EcosystemPlatform::Jobs::AgePopulator.perform
+  task :child_data_populator do
+    require_relative '../lib/ecosystem-platform/jobs/child_data_populator.rb'
+    EcosystemPlatform::Jobs::ChildDataPopulator.perform
   end
 end
 
