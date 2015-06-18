@@ -34,7 +34,7 @@ module Indexers
                   type: "string",
                   doc_values: true
                 },
-                match: "current|res|exres|max|mc|mmc|category",
+                match: "id|current|res|exres|max|mc|mmc|category",
                 match_pattern: "regex"
               }
             },
