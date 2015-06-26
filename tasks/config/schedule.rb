@@ -38,4 +38,3 @@ end
 every 1.minute do
   rake "scheduled:child_data_populator"
 end
-

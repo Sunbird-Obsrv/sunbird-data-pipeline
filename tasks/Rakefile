@@ -31,6 +31,10 @@ namespace :cleaners do
     OERemover.remove('GE_SIGNUP')
     Removers::GeSignupCleanup.remove
   end
+  task :child_flag_reseter do
+    require_relative '../lib/ecosystem-platform/jobs/child_flag_reseter.rb'
+    EcosystemPlatform::Jobs::ChildFlagReseter.perform
+  end
 end
 
 namespace :correctors do
