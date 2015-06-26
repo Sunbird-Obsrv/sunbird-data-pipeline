@@ -100,8 +100,8 @@ module EcosystemPlatform
           		logger.info "-> UPDATE #{hit._source.eid} #{hit._id}"
         	end
         	data[:gender]=child.gender if child.gender
-          data[:ekstep_id] = child.ekstep_id if child.ekstep_id
-          data[:name] = child.name if child.name
+          data[:uekstep_id] = child.ekstep_id if child.ekstep_id
+          data[:uname] = child.name if child.name
         	doc[:doc][:udata]=data unless data.empty?
 		rescue => e
 			logger.error(e,{backtrace: e.backtrace[0..4]})

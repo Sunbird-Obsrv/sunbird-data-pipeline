@@ -17,10 +17,6 @@ namespace :uploaders do
       require_relative '../uploaders/numeracy/assessment.rb'
       Uploaders::Numeracy::Assessment.upload
     end
-    task :child_data_populator_for_false_flag do
-      require_relative '../lib/ecosystem-platform/jobs/child_data_populator_for_false_flag.rb'
-      EcosystemPlatform::Jobs::ChildDataPopulatorForFalseFlag.perform
-    end
   end
 end
 
@@ -45,6 +41,10 @@ namespace :correctors do
   task :event_signup_utype_correction do
     require_relative '../lib/ecosystem-platform/correctors/signup_utype_add.rb'
     EcosystemPlatform::Correctors::SignupUtypeAdd.perform
+  end
+  task :child_data_populator_for_false_flag do
+    require_relative '../lib/ecosystem-platform/jobs/child_data_populator_for_false_flag.rb'
+    EcosystemPlatform::Jobs::ChildDataPopulatorForFalseFlag.perform
   end
 end
 
