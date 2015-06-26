@@ -17,6 +17,10 @@ namespace :uploaders do
       require_relative '../uploaders/numeracy/assessment.rb'
       Uploaders::Numeracy::Assessment.upload
     end
+    task :child_data_populator_for_false_flag do
+      require_relative '../lib/ecosystem-platform/jobs/child_data_populator_for_false_flag.rb'
+      EcosystemPlatform::Jobs::ChildDataPopulatorForFalseFlag.perform
+    end
   end
 end
 
