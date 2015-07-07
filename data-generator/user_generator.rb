@@ -4,9 +4,11 @@ require 'digest/sha1'
 require 'securerandom'
 require 'pry'
 
-FACILITATOR_SIGNUP_API_URL="http://localhost:#{ENV['API_PORT']||8080}/v1/facilitators/signup"
-FACILITATOR_LOGIN_API_URL="http://localhost:#{ENV['API_PORT']||8080}/v1/facilitators/login"
-FACILITATOR_CHILDREN_LIST_API = "http://localhost:#{ENV['API_PORT']||8080}/v1/facilitators/enrolments"
+API_ROOT = "http://#{ENV['API_HOST']||'localhost:8080'}"
+
+FACILITATOR_SIGNUP_API_URL="#{API_ROOT}/v1/facilitators/signup"
+FACILITATOR_LOGIN_API_URL="#{API_ROOT}/v1/facilitators/login"
+FACILITATOR_CHILDREN_LIST_API = "#{API_ROOT}/v1/facilitators/enrolments"
 
 module UserGenerator
   class User

@@ -2,8 +2,10 @@ require 'digest/sha1'
 require 'securerandom'
 require 'pry'
 
-ADD_CHILD_API_URL="http://localhost:#{ENV['API_PORT']||8080}/v1/children"
-ASSOCIATE_CHILD_API_URL = "http://localhost:#{ENV['API_PORT']||8080}/v1/facilitators/enrolments"
+API_ROOT = "http://#{ENV['API_HOST']||'localhost:8080'}"
+
+ADD_CHILD_API_URL="#{API_ROOT}/v1/children"
+ASSOCIATE_CHILD_API_URL = "#{API_ROOT}/v1/facilitators/enrolments"
 
 module ChildGenerator
   class Child
