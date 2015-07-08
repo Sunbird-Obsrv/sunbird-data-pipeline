@@ -25,15 +25,15 @@ under the License.
     <maven>3.0.0</maven>
   </prerequisites>
 
-  <groupId>org.apache.samza</groupId>
-  <artifactId>hello-samza</artifactId>
-  <version>0.10.0</version>
+  <groupId>org.ekstep.platform</groupId>
+  <artifactId>samza</artifactId>
+  <version>0.0.1</version>
   <packaging>jar</packaging>
-  <name>Samza Example</name>
+  <name>Samza Processor</name>
   <description>
-    Samza is a stream processing system. Think of it as Map-Reduce for streams.
+    Samza Processor is a stream processing system for ekStep.
   </description>
-  <url>https://samza.apache.org/</url>
+  <url>https://platform.ekstep.org/</url>
 
   <dependencies>
     <dependency>
@@ -108,7 +108,7 @@ under the License.
       <artifactId>hadoop-hdfs</artifactId>
       <version>2.4.0</version>
     </dependency>
-    <dependency>
+     <dependency>
       <groupId>com.cedarsoftware</groupId>
       <artifactId>json-io</artifactId>
       <version>4.0.0</version>
@@ -123,16 +123,8 @@ under the License.
   <properties>
     <!-- maven specific properties -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <samza.version>0.10.0-SNAPSHOT</samza.version>
+    <samza.version>0.9.0</samza.version>
   </properties>
-
-  <developers>
-    <developer>
-      <name>Chris Riccomini</name>
-      <email>criccomini@gmail.com</email>
-      <timezone>-8</timezone>
-    </developer>
-  </developers>
 
   <licenses>
     <license>
@@ -141,17 +133,6 @@ under the License.
       <distribution>repo</distribution>
     </license>
   </licenses>
-
-  <scm>
-    <connection>scm:git:git://github.com/linkedin/hello-samza.git</connection>
-    <developerConnection>scm:git:git@github.com:linkedin/hello-samza.git</developerConnection>
-    <url>http://github.com/linkedin/hello-samza/</url>
-  </scm>
-
-  <issueManagement>
-    <system>github</system>
-    <url>http://github.com/linkedin/hello-samza/issues</url>
-  </issueManagement>
 
   <repositories>
     <repository>
@@ -180,7 +161,7 @@ under the License.
   <build>
     <pluginManagement>
       <plugins>
-        <!-- <plugin>
+        <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <version>0.9</version>
@@ -201,7 +182,7 @@ under the License.
               <exclude>**/.project</exclude>
             </excludes>
           </configuration>
-        </plugin> -->
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -214,7 +195,7 @@ under the License.
           <target>1.6</target>
         </configuration>
       </plugin>
-<!--       <plugin>
+      <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
         <version>0.9</version>
@@ -226,7 +207,7 @@ under the License.
             </goals>
           </execution>
         </executions>
-      </plugin> -->
+      </plugin>
       <!-- plugin to build the tar.gz file filled with examples -->
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
