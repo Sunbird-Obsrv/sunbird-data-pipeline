@@ -49,6 +49,7 @@ module EcosystemPlatform
             logger.info "PAGE: #{page} - FOUND #{response.hits.hits.count} hits. - TOTAL #{response.hits.total}"
             to_index = []
             to_delete = []
+            to_debug = []
             response.hits.hits.each do |hit|
               uid = hit._source.uid
               doc = hit._source.reject{|z| KEYS_TO_REJECT.include?z }
@@ -64,6 +65,14 @@ module EcosystemPlatform
                 _split_on_index.pop
                 _index = _split_on_index.join(".")
               end
+              to_debug << {
+                  index: {
+                    _index: 'debug',
+                    _type: hit._type,
+                    _id: hit._id,
+                    data: doc
+                  }
+                }
               to_index << {
                   index: {
                     _index: _index,
@@ -79,6 +88,10 @@ module EcosystemPlatform
                   _id: hit._id
                 }
               }
+            end
+            unless(to_debug.empty?)
+              result = @client.bulk(body: to_debug)
+              logger.info "<- DEBUG BULK INDEXED #{result['errors']==false}"
             end
             unless(to_index.empty?)
               result = @client.bulk(body: to_index)
