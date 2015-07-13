@@ -85,6 +85,10 @@ namespace :scheduled do
     require_relative '../lib/ecosystem-platform/jobs/child_data_populator.rb'
     EcosystemPlatform::Jobs::ChildDataPopulator.perform
   end
+  task :generate_checksum do
+    require_relative '../lib/ecosystem-platform/jobs/checksum_generator.rb'
+    EcosystemPlatform::Jobs::ChecksumGenerator.perform
+  end
 end
 
 namespace :generators do
