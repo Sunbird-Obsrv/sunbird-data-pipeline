@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package samza.test.task;
+package ekstep.samza.task;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,8 +34,9 @@ import org.apache.samza.task.TaskCoordinator;
 import org.apache.samza.task.InitableTask;
 import org.apache.samza.task.TaskContext;
 
-import samza.test.system.Location;
-import samza.test.system.Device;
+import ekstep.samza.system.Location;
+import ekstep.samza.system.Device;
+
 import com.cedarsoftware.util.io.JsonWriter;
 import com.cedarsoftware.util.io.JsonReader;
 
@@ -46,7 +47,7 @@ import com.google.maps.model.LatLng;
 import com.google.maps.model.AddressComponent;
 import com.google.maps.model.AddressComponentType;
 
-public class TestStreamTask implements StreamTask, InitableTask {
+public class ReverseSearchStreamTask implements StreamTask, InitableTask {
 
   private KeyValueStore<String, Object> reverseSearchStore;
   private KeyValueStore<String, Object> deviceStore;

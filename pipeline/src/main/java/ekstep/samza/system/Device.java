@@ -17,9 +17,9 @@
  * under the License.
  */
 
-package samza.test.system;
+package ekstep.samza.system;
 
-import samza.test.system.Location;
+import ekstep.samza.system.Location;
 
 public class Device {
   private String id;

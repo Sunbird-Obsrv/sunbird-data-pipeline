@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package samza.test.system;
+package ekstep.samza.system;
 
 public class Location {
   private String city;
