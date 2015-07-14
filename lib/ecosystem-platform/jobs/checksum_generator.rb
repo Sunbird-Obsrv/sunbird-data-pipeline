@@ -12,7 +12,7 @@ module EcosystemPlatform
 
       PROGNAME = 'checksum_generator.jobs.ep'
       N = 10000
-      KEYS_TO_REJECT = %w()
+      KEYS_TO_REJECT = %w(uuid @timestamp udata flags ldata metadata)
 
       include EcosystemPlatform::Utils::EPLogging
 
@@ -52,8 +52,9 @@ module EcosystemPlatform
             to_debug = []
             response.hits.hits.each do |hit|
               uid = hit._source.uid
-              doc = hit._source.reject{|z| KEYS_TO_REJECT.include?z }
-              checksum = Digest::SHA1.hexdigest(Marshal::dump(doc))
+              doc = hit._source
+              _doc = doc.reject{|keys| KEYS_TO_REJECT.include?keys }
+              checksum = Digest::SHA1.hexdigest(Marshal::dump(_doc))
               doc["metadata"] = {
                 checksum: checksum,
                 original_id: hit._id
