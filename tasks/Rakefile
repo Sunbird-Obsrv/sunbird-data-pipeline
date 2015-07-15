@@ -50,6 +50,10 @@ namespace :correctors do
     require_relative '../lib/ecosystem-platform/correctors/remove_uid.rb'
     EcosystemPlatform::Correctors::RemoveUid.perform
   end
+  task :remove_uekstep_id do
+    require_relative '../lib/ecosystem-platform/correctors/remove_uekstep_id.rb'
+    EcosystemPlatform::Correctors::RemoveUekstepId.perform
+  end
 end
 
 namespace :scheduled do
