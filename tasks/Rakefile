@@ -46,6 +46,10 @@ namespace :correctors do
     require_relative '../lib/ecosystem-platform/jobs/child_data_populator_for_false_flag.rb'
     EcosystemPlatform::Jobs::ChildDataPopulatorForFalseFlag.perform
   end
+  task :remove_uid do
+    require_relative '../lib/ecosystem-platform/correctors/remove_uid.rb'
+    EcosystemPlatform::Correctors::RemoveUid.perform
+  end
 end
 
 namespace :scheduled do
