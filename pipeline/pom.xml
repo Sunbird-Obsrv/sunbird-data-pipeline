@@ -25,15 +25,15 @@ under the License.
     <maven>3.0.0</maven>
   </prerequisites>
 
-  <groupId>org.ekstep.platform</groupId>
-  <artifactId>samza</artifactId>
+  <groupId>org.apache.samza</groupId>
+  <artifactId>ekstep-samza</artifactId>
   <version>0.0.1</version>
   <packaging>jar</packaging>
-  <name>Samza Processor</name>
+  <name>EkStep-Samza</name>
   <description>
-    Samza Processor is a stream processing system for ekStep.
+    Stream processing Telemetry
   </description>
-  <url>https://platform.ekstep.org/</url>
+  <url>https://samza.apache.org/</url>
 
   <dependencies>
     <dependency>
@@ -123,8 +123,16 @@ under the License.
   <properties>
     <!-- maven specific properties -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <samza.version>0.9.0</samza.version>
+    <samza.version>0.9.1</samza.version>
   </properties>
+
+  <developers>
+    <developer>
+      <name>Chris Riccomini</name>
+      <email>criccomini@gmail.com</email>
+      <timezone>-8</timezone>
+    </developer>
+  </developers>
 
   <licenses>
     <license>
@@ -133,6 +141,17 @@ under the License.
       <distribution>repo</distribution>
     </license>
   </licenses>
+
+  <scm>
+    <connection>scm:git:git://github.com/linkedin/hello-samza.git</connection>
+    <developerConnection>scm:git:git@github.com:linkedin/hello-samza.git</developerConnection>
+    <url>http://github.com/linkedin/hello-samza/</url>
+  </scm>
+
+  <issueManagement>
+    <system>github</system>
+    <url>http://github.com/linkedin/hello-samza/issues</url>
+  </issueManagement>
 
   <repositories>
     <repository>
@@ -180,6 +199,10 @@ under the License.
               <exclude>**/.cache/**</exclude>
               <exclude>deploy/**</exclude>
               <exclude>**/.project</exclude>
+              <exclude>**/.gradle/**</exclude>
+              <exclude>**/gradle/**</exclude>
+              <exclude>**/gradlew*</exclude>
+              <exclude>**/build/**</exclude>
             </excludes>
           </configuration>
         </plugin>
