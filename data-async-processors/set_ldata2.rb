@@ -100,7 +100,9 @@ module Processors
         cache = ldata_cache[sid]
         loc = cache.edata.eks.loc rescue nil
         ldata = cache.edata.eks.ldata rescue nil
+        ldata_obtained = false
         if(cache&&loc)
+          ldata_obtained = !loc.empty?
           if(ldata)
             edata = {
               loc: loc,
@@ -135,7 +137,8 @@ module Processors
             body: {
               doc: {
                 flags: {
-                  ldata_processed: true
+                  ldata_processed: true,
+                  ldata_obtained: ldata_obtained
                 }
               }
             }
