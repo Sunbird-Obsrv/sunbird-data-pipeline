@@ -30,9 +30,9 @@ import org.apache.samza.task.*;
 import org.ekstep.ep.samza.actions.GoogleReverseSearch;
 import org.ekstep.ep.samza.api.GoogleGeoLocationAPI;
 import org.ekstep.ep.samza.system.Device;
+import org.ekstep.ep.samza.system.Event;
 import org.ekstep.ep.samza.system.Location;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class ReverseSearchStreamTask implements StreamTask, InitableTask {
@@ -65,42 +65,30 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
         Device device = null;
         try {
             jsonObject = (Map<String, Object>) envelope.getMessage();
-            processEvent(jsonObject, collector);
+            processEvent(new Event(jsonObject), collector);
         } catch (Exception e) {
             System.err.println("Error while getting message");
         }
     }
 
-    public static void main(String[] args) {
-
-    }
-
-    public void processEvent(Map<String, Object> event, MessageCollector collector) {
+    public void processEvent(Event event, MessageCollector collector) {
         Location location = null;
         Device device = null;
         try {
 
-            Map<String, Object> edata = (Map<String, Object>) event.get("edata");
-            Map<String, Object> eks = (Map<String, Object>) edata.get("eks");
-            String loc = (String) eks.get("loc");
-            String did = (String) event.get("did");
+            String loc = event.getGPSCoordinates();
+            String did = event.getDid();
 
-            System.out.println("loc= " + loc);
-
-            if (loc != null && loc != "") {
+            if (loc != null && !loc.isEmpty()) {
                 String stored_location = (String) reverseSearchStore.get(loc);
-                System.out.println("stored_location= " + stored_location);
-
                 if (stored_location == null) {
                     // do reverse search
                     System.out.println("Performing reverse search");
-
                     location = googleReverseSearch.getLocation(loc);
-
                     String json = JsonWriter.objectToJson(location);
-                    reverseSearchStore.put(loc, json);
 
-                    System.out.println("Setting device loc");
+                    System.out.println("Setting device loc in stores");
+                    reverseSearchStore.put(loc, json);
                     device = new Device(did);
                     device.setLocation(location);
                     String djson = JsonWriter.objectToJson(device);
@@ -116,26 +104,22 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
                 location = device.getLocation();
             }
         } catch (Exception e) {
+            System.out.println(e);
             System.err.println("unable to parse");
             event = null;
         }
         System.out.println("ok");
         try {
-
             if (location != null) {
-                System.out.println("Location available");
-                Map<String, String> ldata = new HashMap<String, String>();
-                ldata.put("locality", location.getCity());
-                ldata.put("district", location.getDistrict());
-                ldata.put("state", location.getState());
-                ldata.put("country", location.getCountry());
-                event.put("ldata", ldata);
+                event.AddLocation(location);
+                event.setFlag("ldata_obtained",true);
             } else {
-                System.out.println("location NOT available");
+                event.setFlag("ldata_obtained", false);
             }
-
-            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", "events_with_location"), event));
+            event.setFlag("ldata_processed",true);
+            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", "events_with_location"), event.getMap()));
         } catch (Exception e) {
+            System.out.println(e);
             System.err.println("!");
         }
 

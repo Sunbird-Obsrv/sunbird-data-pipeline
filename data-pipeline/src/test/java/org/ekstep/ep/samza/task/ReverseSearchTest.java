@@ -8,10 +8,13 @@ import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.actions.GoogleReverseSearch;
+import org.ekstep.ep.samza.system.Event;
 import org.ekstep.ep.samza.system.Location;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.mockito.Mockito.*;
@@ -36,8 +39,8 @@ public class ReverseSearchTest {
 
         when(googleReverseSearch.getLocation("15.9310593,78.6238299")).thenReturn(new Location());
 
-        Map<String, Object> event = createEventMock("15.9310593,78.6238299");
-        when(event.get("did")).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+        Event event = createEventMock("15.9310593,78.6238299");
+        when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
 
         ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch);
 
@@ -47,27 +50,55 @@ public class ReverseSearchTest {
     }
 
     @Test
+    public void shouldUpdateProperFlagIfSearchReturnEmpty() {
+
+        when(googleReverseSearch.getLocation("15.9310593,78.6238299")).thenReturn(null);
+        Map<String, Object> map = createMap("15.9310593,78.6238299");
+        Event event = new Event(map);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch);
+
+        reverseSearchStreamTask.processEvent(event, collector);
+        verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
+        verify(googleReverseSearch, times(1)).getLocation("15.9310593,78.6238299");
+
+        Assert.assertNotNull(event.getMap());
+
+        Map<String,Object> flagsResult = (Map<String, Object>) event.getMap().get("flags");
+        Assert.assertNotNull(flagsResult);
+
+        Assert.assertEquals(false, flagsResult.get("ldata_obtained"));
+        Assert.assertEquals(true, flagsResult.get("ldata_processed"));
+    }
+
+
+    @Test
     public void shouldTakeLocationFromDeviceStoreIfNotPresent() {
 
         when(deviceStore.get("bc811958-b4b7-4873-a43a-03718edba45b")).thenReturn("{\"@type\":\"org.ekstep.ep.samza.system.Device\",\"id\":\"bc811958-b4b7-4873-a43a-03718edba45b\",\"location\":{\"city\":null,\"district\":null,\"state\":null,\"country\":null}}");
-        Map<String, Object> event = createEventMock(null);
+        Event event = createEventMock("");
 
-        when(event.get("did")).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+        when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
 
         ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch);
 
         reverseSearchStreamTask.processEvent(event, collector);
-        verify(deviceStore, times(1)).get("bc811958-b4b7-4873-a43a-03718edba45b");
         verify(googleReverseSearch, times(0)).getLocation(anyString());
+        verify(deviceStore, times(1)).get("bc811958-b4b7-4873-a43a-03718edba45b");
+        verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
+        Event event1 = createEventMock("");
+        reverseSearchStreamTask.processEvent(event1, collector);
+        when(event1.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+        verify(googleReverseSearch, times(0)).getLocation(anyString());
+        verify(deviceStore, times(1)).get("bc811958-b4b7-4873-a43a-03718edba45b");
         verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
     }
 
     @Test
     public void shouldTakeLocationfromStore(){
-        Map<String, Object> event = createEventMock("15.9310593,78.6238299");
+        Event event = createEventMock("15.9310593,78.6238299");
 
         when(reverseSearchStore.get("15.9310593,78.6238299")).thenReturn("{\"@type\":\"org.ekstep.ep.samza.system.Location\",\"city\":\"Chennai\",\"district\":\"Chennai\",\"state\":\"Tamil Nadu\",\"country\": \"India\"}");
-        when(event.get("did")).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+        when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
 
         ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch);
 
@@ -79,7 +110,7 @@ public class ReverseSearchTest {
     }
 
     @Test
-    public void shouldIgnoreInValidMessages(){
+    public void shouldIgnoreInvalidMessages(){
 
         IncomingMessageEnvelope envelope = mock(IncomingMessageEnvelope.class);
         when(envelope.getMessage()).thenThrow(new RuntimeException());
@@ -92,7 +123,7 @@ public class ReverseSearchTest {
         when(context.getStore("reverse-search")).thenReturn(reverseSearchStore);
         when(context.getStore("device")).thenReturn(deviceStore);
         TaskCoordinator task = mock(TaskCoordinator.class);
-        reverseSearchStreamTask.process(envelope,collector,task);
+        reverseSearchStreamTask.process(envelope, collector, task);
 
         verify(deviceStore, times(0)).get(anyString());
         verify(reverseSearchStore, times(0)).get(anyString());
@@ -100,13 +131,21 @@ public class ReverseSearchTest {
         verify(collector, times(0)).send(any(OutgoingMessageEnvelope.class));
 
     }
-    private Map<String, Object> createEventMock(Object loc) {
+    private Event createEventMock(String loc) {
+        Event event = mock(Event.class);
+
+        Map<String, Object> eks = mock(Map.class);
+        when(event.getGPSCoordinates()).thenReturn(loc);
+        return event;
+    }
+
+    private Map<String,Object> createMap(String loc){
         Map<String, Object> eks = mock(Map.class);
         when(eks.get("loc")).thenReturn(loc);
         Map<String, Object> edata = mock(Map.class);
         when(edata.get("eks")).thenReturn(eks);
-        Map<String, Object> event = mock(Map.class);
-        when(event.get("edata")).thenReturn(edata);
+        Map<String, Object> event = new HashMap<String,Object>();
+        event.put("edata",edata);
         return event;
     }
 }
