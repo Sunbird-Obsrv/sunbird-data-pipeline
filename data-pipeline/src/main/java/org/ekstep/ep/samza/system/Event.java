@@ -39,7 +39,11 @@ public class Event {
 
 
     public void setFlag(String key, Object value) {
-        Map<String, Object> flags = (Map<String, Object>) map.get("flags");
+        Map<String, Object> flags=null;
+        try {
+            flags = (Map<String, Object>) map.get("flags");
+        }catch(Exception e){
+        }
         if (flags==null){
             flags = new HashMap<String, Object>();
         }

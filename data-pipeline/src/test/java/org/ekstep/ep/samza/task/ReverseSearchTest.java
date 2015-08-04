@@ -58,7 +58,7 @@ public class ReverseSearchTest {
         ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch);
 
         reverseSearchStreamTask.processEvent(event, collector);
-        verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
+        verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
         verify(googleReverseSearch, times(1)).getLocation("15.9310593,78.6238299");
 
         Assert.assertNotNull(event.getMap());
@@ -85,12 +85,13 @@ public class ReverseSearchTest {
         verify(googleReverseSearch, times(0)).getLocation(anyString());
         verify(deviceStore, times(1)).get("bc811958-b4b7-4873-a43a-03718edba45b");
         verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
+
         Event event1 = createEventMock("");
-        reverseSearchStreamTask.processEvent(event1, collector);
         when(event1.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+        reverseSearchStreamTask.processEvent(event1, collector);
         verify(googleReverseSearch, times(0)).getLocation(anyString());
-        verify(deviceStore, times(1)).get("bc811958-b4b7-4873-a43a-03718edba45b");
-        verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
+        verify(deviceStore, times(2)).get("bc811958-b4b7-4873-a43a-03718edba45b");
+        verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
     }
 
     @Test

@@ -106,7 +106,6 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
         } catch (Exception e) {
             System.out.println(e);
             System.err.println("unable to parse");
-            event = null;
         }
         System.out.println("ok");
         try {
@@ -115,11 +114,13 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
                 event.setFlag("ldata_obtained",true);
             } else {
                 event.setFlag("ldata_obtained", false);
+                collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", "events_failed_location"), event.getMap()));
             }
             event.setFlag("ldata_processed",true);
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", "events_with_location"), event.getMap()));
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("ok");
+            e.printStackTrace();
             System.err.println("!");
         }
 
