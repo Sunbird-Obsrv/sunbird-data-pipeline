@@ -40,9 +40,16 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
     private KeyValueStore<String, Object> reverseSearchStore;
     private KeyValueStore<String, Object> deviceStore;
     private GoogleReverseSearch googleReverseSearch;
+    private String successTopic;
+    private String failedTopic;
 
+    @Override
     public void init(Config config, TaskContext context) {
         String apiKey = config.get("google.api.key", "");
+
+        successTopic = config.get("output.success.topic.name", "events_with_location");
+        failedTopic = config.get("output.failed.topic.name", "events_failed_location");
+
         this.reverseSearchStore = (KeyValueStore<String, Object>) context.getStore("reverse-search");
         this.deviceStore = (KeyValueStore<String, Object>) context.getStore("device");
         googleReverseSearch = new GoogleReverseSearch(new GoogleGeoLocationAPI(apiKey));
@@ -114,10 +121,10 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
                 event.setFlag("ldata_obtained",true);
             } else {
                 event.setFlag("ldata_obtained", false);
-                collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", "events_failed_location"), event.getMap()));
+                collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
             }
             event.setFlag("ldata_processed",true);
-            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", "events_with_location"), event.getMap()));
+            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
         } catch (Exception e) {
             System.out.println("ok");
             e.printStackTrace();

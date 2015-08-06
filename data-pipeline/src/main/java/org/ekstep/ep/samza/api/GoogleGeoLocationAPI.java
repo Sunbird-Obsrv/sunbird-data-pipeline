@@ -10,7 +10,7 @@ public class GoogleGeoLocationAPI {
     private final GeoApiContext apiContext;
 
     public GoogleGeoLocationAPI(String apiKey) {
-        apiContext = new GeoApiContext().setApiKey("AIzaSyDd1SVvNpqDYQKAghY1-aY2EtdBoPI94l4");
+        apiContext = new GeoApiContext().setApiKey(apiKey);
     }
 
     public GeocodingResult[] requestFor(LatLng latLng) {
