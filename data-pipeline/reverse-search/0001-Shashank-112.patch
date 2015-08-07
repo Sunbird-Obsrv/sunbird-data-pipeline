@@ -1,0 +1,2551 @@
+From 71bdaf6062786f0775d9dac516741ef99a39615d Mon Sep 17 00:00:00 2001
+From: Shashank Teotia <shashankteotia@gmail.com>
+Date: Thu, 6 Aug 2015 14:49:27 +0530
+Subject: [PATCH] [Shashank] #112
+
+---
+ data-pipeline/pom.xml                              | 240 ---------------------
+ data-pipeline/reverse-search/pom.xml               | 240 +++++++++++++++++++++
+ .../reverse-search/src/main/assembly/src.xml       |  70 ++++++
+ .../src/main/config/reverse-search.properties      |  69 ++++++
+ .../ep/samza/actions/GoogleReverseSearch.java      |  84 ++++++++
+ .../ekstep/ep/samza/api/GoogleGeoLocationAPI.java  |  24 +++
+ .../java/org/ekstep/ep/samza/system/Device.java    |  35 +++
+ .../java/org/ekstep/ep/samza/system/Event.java     |  54 +++++
+ .../java/org/ekstep/ep/samza/system/Location.java  |  54 +++++
+ .../ep/samza/task/ReverseSearchStreamTask.java     | 129 +++++++++++
+ .../reverse-search/src/main/resources/log4j.xml    |  39 ++++
+ .../ep/samza/actions/GoogleReverseSearchTest.java  |  63 ++++++
+ .../java/org/ekstep/ep/samza/system/EventTest.java | 119 ++++++++++
+ .../org/ekstep/ep/samza/system/LocationTest.java   |  25 +++
+ .../ekstep/ep/samza/task/ReverseSearchTest.java    | 152 +++++++++++++
+ data-pipeline/src/main/assembly/src.xml            |  70 ------
+ .../src/main/config/reverse-search.properties      |  69 ------
+ .../ep/samza/actions/GoogleReverseSearch.java      |  84 --------
+ .../ekstep/ep/samza/api/GoogleGeoLocationAPI.java  |  24 ---
+ .../java/org/ekstep/ep/samza/system/Device.java    |  35 ---
+ .../java/org/ekstep/ep/samza/system/Event.java     |  54 -----
+ .../java/org/ekstep/ep/samza/system/Location.java  |  54 -----
+ .../ep/samza/task/ReverseSearchStreamTask.java     | 129 -----------
+ data-pipeline/src/main/resources/log4j.xml         |  39 ----
+ .../ep/samza/actions/GoogleReverseSearchTest.java  |  63 ------
+ .../java/org/ekstep/ep/samza/system/EventTest.java | 119 ----------
+ .../org/ekstep/ep/samza/system/LocationTest.java   |  25 ---
+ .../ekstep/ep/samza/task/ReverseSearchTest.java    | 152 -------------
+ 28 files changed, 1157 insertions(+), 1157 deletions(-)
+ delete mode 100644 data-pipeline/pom.xml
+ create mode 100644 data-pipeline/reverse-search/pom.xml
+ create mode 100644 data-pipeline/reverse-search/src/main/assembly/src.xml
+ create mode 100644 data-pipeline/reverse-search/src/main/config/reverse-search.properties
+ create mode 100644 data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/actions/GoogleReverseSearch.java
+ create mode 100644 data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/api/GoogleGeoLocationAPI.java
+ create mode 100644 data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/system/Device.java
+ create mode 100644 data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/system/Event.java
+ create mode 100644 data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/system/Location.java
+ create mode 100644 data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/task/ReverseSearchStreamTask.java
+ create mode 100644 data-pipeline/reverse-search/src/main/resources/log4j.xml
+ create mode 100644 data-pipeline/reverse-search/src/test/java/org/ekstep/ep/samza/actions/GoogleReverseSearchTest.java
+ create mode 100644 data-pipeline/reverse-search/src/test/java/org/ekstep/ep/samza/system/EventTest.java
+ create mode 100644 data-pipeline/reverse-search/src/test/java/org/ekstep/ep/samza/system/LocationTest.java
+ create mode 100644 data-pipeline/reverse-search/src/test/java/org/ekstep/ep/samza/task/ReverseSearchTest.java
+ delete mode 100644 data-pipeline/src/main/assembly/src.xml
+ delete mode 100644 data-pipeline/src/main/config/reverse-search.properties
+ delete mode 100644 data-pipeline/src/main/java/org/ekstep/ep/samza/actions/GoogleReverseSearch.java
+ delete mode 100644 data-pipeline/src/main/java/org/ekstep/ep/samza/api/GoogleGeoLocationAPI.java
+ delete mode 100644 data-pipeline/src/main/java/org/ekstep/ep/samza/system/Device.java
+ delete mode 100644 data-pipeline/src/main/java/org/ekstep/ep/samza/system/Event.java
+ delete mode 100644 data-pipeline/src/main/java/org/ekstep/ep/samza/system/Location.java
+ delete mode 100644 data-pipeline/src/main/java/org/ekstep/ep/samza/task/ReverseSearchStreamTask.java
+ delete mode 100644 data-pipeline/src/main/resources/log4j.xml
+ delete mode 100644 data-pipeline/src/test/java/org/ekstep/ep/samza/actions/GoogleReverseSearchTest.java
+ delete mode 100644 data-pipeline/src/test/java/org/ekstep/ep/samza/system/EventTest.java
+ delete mode 100644 data-pipeline/src/test/java/org/ekstep/ep/samza/system/LocationTest.java
+ delete mode 100644 data-pipeline/src/test/java/org/ekstep/ep/samza/task/ReverseSearchTest.java
+
+diff --git a/data-pipeline/pom.xml b/data-pipeline/pom.xml
+deleted file mode 100644
+index 6482b96..0000000
+--- a/data-pipeline/pom.xml
++++ /dev/null
+@@ -1,240 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<!--
+-Licensed to the Apache Software Foundation (ASF) under one
+-or more contributor license agreements.  See the NOTICE file
+-distributed with this work for additional information
+-regarding copyright ownership.  The ASF licenses this file
+-to you under the Apache License, Version 2.0 (the
+-"License"); you may not use this file except in compliance
+-with the License.  You may obtain a copy of the License at
+-
+-  http://www.apache.org/licenses/LICENSE-2.0
+-
+-Unless required by applicable law or agreed to in writing,
+-software distributed under the License is distributed on an
+-"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+-KIND, either express or implied.  See the License for the
+-specific language governing permissions and limitations
+-under the License.
+--->
+-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+-  <modelVersion>4.0.0</modelVersion>
+-
+-  <prerequisites>
+-    <maven>3.0.0</maven>
+-  </prerequisites>
+-
+-  <groupId>org.apache.samza</groupId>
+-  <artifactId>ekstep-samza</artifactId>
+-  <version>0.0.1</version>
+-  <packaging>jar</packaging>
+-  <name>Ekstep Samza</name>
+-  <description>
+-    EkStep Samza for stream processing within Ecosystem
+-  </description>
+-  <url>https://samza.apache.org/</url>
+-
+-  <dependencies>
+-    <dependency>
+-      <groupId>org.apache.samza</groupId>
+-      <artifactId>samza-api</artifactId>
+-      <version>${samza.version}</version>
+-    </dependency>
+-    <dependency>
+-      <groupId>org.apache.samza</groupId>
+-      <artifactId>samza-core_2.10</artifactId>
+-      <version>${samza.version}</version>
+-    </dependency>
+-    <dependency>
+-      <groupId>org.apache.samza</groupId>
+-      <artifactId>samza-log4j</artifactId>
+-      <version>${samza.version}</version>
+-    </dependency>
+-    <dependency>
+-      <groupId>org.apache.samza</groupId>
+-      <artifactId>samza-shell</artifactId>
+-      <classifier>dist</classifier>
+-      <type>tgz</type>
+-      <version>${samza.version}</version>
+-    </dependency>
+-    <dependency>
+-      <groupId>org.apache.samza</groupId>
+-      <artifactId>samza-yarn_2.10</artifactId>
+-      <version>${samza.version}</version>
+-    </dependency>
+-    <dependency>
+-      <groupId>org.apache.samza</groupId>
+-      <artifactId>samza-kv_2.10</artifactId>
+-      <version>${samza.version}</version>
+-    </dependency>
+-    <dependency>
+-      <groupId>org.apache.samza</groupId>
+-      <artifactId>samza-kv-rocksdb_2.10</artifactId>
+-      <version>${samza.version}</version>
+-    </dependency>
+-    <dependency>
+-      <groupId>org.apache.samza</groupId>
+-      <artifactId>samza-kafka_2.10</artifactId>
+-      <version>${samza.version}</version>
+-    </dependency>
+-    <dependency>
+-      <groupId>org.apache.kafka</groupId>
+-      <artifactId>kafka_2.10</artifactId>
+-      <version>0.8.2.1</version>
+-    </dependency>
+-    <dependency>
+-      <groupId>org.schwering</groupId>
+-      <artifactId>irclib</artifactId>
+-      <version>1.10</version>
+-    </dependency>
+-    <dependency>
+-      <groupId>org.slf4j</groupId>
+-      <artifactId>slf4j-api</artifactId>
+-      <version>1.6.2</version>
+-    </dependency>
+-    <dependency>
+-      <groupId>org.slf4j</groupId>
+-      <artifactId>slf4j-log4j12</artifactId>
+-      <version>1.6.2</version>
+-    </dependency>
+-    <dependency>
+-      <groupId>org.codehaus.jackson</groupId>
+-      <artifactId>jackson-jaxrs</artifactId>
+-      <version>1.8.5</version>
+-    </dependency>
+-    <dependency>
+-      <groupId>org.apache.hadoop</groupId>
+-      <artifactId>hadoop-hdfs</artifactId>
+-      <version>2.4.0</version>
+-    </dependency>
+-     <dependency>
+-      <groupId>com.cedarsoftware</groupId>
+-      <artifactId>json-io</artifactId>
+-      <version>4.0.0</version>
+-    </dependency>
+-    <dependency>
+-        <groupId>com.google.maps</groupId>
+-        <artifactId>google-maps-services</artifactId>
+-        <version>0.1.7</version>
+-    </dependency>
+-    <dependency>
+-      <groupId>junit</groupId>
+-      <artifactId>junit</artifactId>
+-      <version>4.12</version>
+-      <scope>test</scope>
+-    </dependency>
+-    <dependency>
+-      <groupId>org.mockito</groupId>
+-      <artifactId>mockito-core</artifactId>
+-      <version>2.0.31-beta</version>
+-      <scope>test</scope>
+-    </dependency>
+-  </dependencies>
+-
+-  <properties>
+-    <!-- maven specific properties -->
+-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+-    <samza.version>0.9.1</samza.version>
+-  </properties>
+-
+-  <repositories>
+-    <repository>
+-      <id>my-local-repo</id>
+-      <url>file://${user.home}/.m2/repository</url>
+-    </repository>
+-    <repository>
+-      <id>apache-releases</id>
+-      <url>https://repository.apache.org/content/groups/public</url>
+-    </repository>
+-    <repository>
+-      <id>scala-tools.org</id>
+-      <name>Scala-tools Maven2 Repository</name>
+-      <url>https://oss.sonatype.org/content/groups/scala-tools</url>
+-    </repository>
+-  </repositories>
+-
+-  <pluginRepositories>
+-    <pluginRepository>
+-      <id>scala-tools.org</id>
+-      <name>Scala-tools Maven2 Repository</name>
+-      <url>http://scala-tools.org/repo-releases</url>
+-    </pluginRepository>
+-  </pluginRepositories>
+-
+-  <build>
+-    <pluginManagement>
+-      <plugins>
+-        <!-- <plugin>
+-          <groupId>org.apache.rat</groupId>
+-          <artifactId>apache-rat-plugin</artifactId>
+-          <version>0.9</version>
+-          <configuration>
+-            <excludes>
+-              <exclude>*.patch</exclude>
+-              <exclude>**/target/**</exclude>
+-              <exclude>*.json</exclude>
+-              <exclude>.vagrant/**</exclude>
+-              <exclude>.git/**</exclude>
+-              <exclude>*.md</exclude>
+-              <exclude>docs/**</exclude>
+-              <exclude>config/**</exclude>
+-              <exclude>bin/**</exclude>
+-              <exclude>.gitignore</exclude>
+-              <exclude>**/.cache/**</exclude>
+-              <exclude>deploy/**</exclude>
+-              <exclude>**/.project</exclude>
+-              <exclude>**/.gradle/**</exclude>
+-              <exclude>**/gradle/**</exclude>
+-              <exclude>**/gradlew*</exclude>
+-              <exclude>**/build/**</exclude>
+-            </excludes>
+-          </configuration>
+-        </plugin> -->
+-      </plugins>
+-    </pluginManagement>
+-    <plugins>
+-      <plugin>
+-        <groupId>org.apache.maven.plugins</groupId>
+-        <artifactId>maven-compiler-plugin</artifactId>
+-        <version>3.1</version>
+-        <configuration>
+-          <source>1.6</source>
+-          <target>1.6</target>
+-        </configuration>
+-      </plugin>
+-      <!-- <plugin>
+-        <groupId>org.apache.rat</groupId>
+-        <artifactId>apache-rat-plugin</artifactId>
+-        <version>0.9</version>
+-        <executions>
+-          <execution>
+-            <phase>test</phase>
+-            <goals>
+-              <goal>check</goal>
+-            </goals>
+-          </execution>
+-        </executions>
+-      </plugin> -->
+-      <!-- plugin to build the tar.gz file filled with examples -->
+-      <plugin>
+-        <artifactId>maven-assembly-plugin</artifactId>
+-        <version>2.3</version>
+-        <configuration>
+-          <descriptors>
+-            <descriptor>src/main/assembly/src.xml</descriptor>
+-          </descriptors>
+-        </configuration>
+-        <executions>
+-          <execution>
+-            <id>make-assembly</id>
+-            <phase>package</phase>
+-            <goals>
+-              <goal>single</goal>
+-            </goals>
+-          </execution>
+-        </executions>
+-      </plugin>
+-    </plugins>
+-  </build>
+-</project>
+diff --git a/data-pipeline/reverse-search/pom.xml b/data-pipeline/reverse-search/pom.xml
+new file mode 100644
+index 0000000..6482b96
+--- /dev/null
++++ b/data-pipeline/reverse-search/pom.xml
+@@ -0,0 +1,240 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!--
++Licensed to the Apache Software Foundation (ASF) under one
++or more contributor license agreements.  See the NOTICE file
++distributed with this work for additional information
++regarding copyright ownership.  The ASF licenses this file
++to you under the Apache License, Version 2.0 (the
++"License"); you may not use this file except in compliance
++with the License.  You may obtain a copy of the License at
++
++  http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing,
++software distributed under the License is distributed on an
++"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++KIND, either express or implied.  See the License for the
++specific language governing permissions and limitations
++under the License.
++-->
++<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
++  <modelVersion>4.0.0</modelVersion>
++
++  <prerequisites>
++    <maven>3.0.0</maven>
++  </prerequisites>
++
++  <groupId>org.apache.samza</groupId>
++  <artifactId>ekstep-samza</artifactId>
++  <version>0.0.1</version>
++  <packaging>jar</packaging>
++  <name>Ekstep Samza</name>
++  <description>
++    EkStep Samza for stream processing within Ecosystem
++  </description>
++  <url>https://samza.apache.org/</url>
++
++  <dependencies>
++    <dependency>
++      <groupId>org.apache.samza</groupId>
++      <artifactId>samza-api</artifactId>
++      <version>${samza.version}</version>
++    </dependency>
++    <dependency>
++      <groupId>org.apache.samza</groupId>
++      <artifactId>samza-core_2.10</artifactId>
++      <version>${samza.version}</version>
++    </dependency>
++    <dependency>
++      <groupId>org.apache.samza</groupId>
++      <artifactId>samza-log4j</artifactId>
++      <version>${samza.version}</version>
++    </dependency>
++    <dependency>
++      <groupId>org.apache.samza</groupId>
++      <artifactId>samza-shell</artifactId>
++      <classifier>dist</classifier>
++      <type>tgz</type>
++      <version>${samza.version}</version>
++    </dependency>
++    <dependency>
++      <groupId>org.apache.samza</groupId>
++      <artifactId>samza-yarn_2.10</artifactId>
++      <version>${samza.version}</version>
++    </dependency>
++    <dependency>
++      <groupId>org.apache.samza</groupId>
++      <artifactId>samza-kv_2.10</artifactId>
++      <version>${samza.version}</version>
++    </dependency>
++    <dependency>
++      <groupId>org.apache.samza</groupId>
++      <artifactId>samza-kv-rocksdb_2.10</artifactId>
++      <version>${samza.version}</version>
++    </dependency>
++    <dependency>
++      <groupId>org.apache.samza</groupId>
++      <artifactId>samza-kafka_2.10</artifactId>
++      <version>${samza.version}</version>
++    </dependency>
++    <dependency>
++      <groupId>org.apache.kafka</groupId>
++      <artifactId>kafka_2.10</artifactId>
++      <version>0.8.2.1</version>
++    </dependency>
++    <dependency>
++      <groupId>org.schwering</groupId>
++      <artifactId>irclib</artifactId>
++      <version>1.10</version>
++    </dependency>
++    <dependency>
++      <groupId>org.slf4j</groupId>
++      <artifactId>slf4j-api</artifactId>
++      <version>1.6.2</version>
++    </dependency>
++    <dependency>
++      <groupId>org.slf4j</groupId>
++      <artifactId>slf4j-log4j12</artifactId>
++      <version>1.6.2</version>
++    </dependency>
++    <dependency>
++      <groupId>org.codehaus.jackson</groupId>
++      <artifactId>jackson-jaxrs</artifactId>
++      <version>1.8.5</version>
++    </dependency>
++    <dependency>
++      <groupId>org.apache.hadoop</groupId>
++      <artifactId>hadoop-hdfs</artifactId>
++      <version>2.4.0</version>
++    </dependency>
++     <dependency>
++      <groupId>com.cedarsoftware</groupId>
++      <artifactId>json-io</artifactId>
++      <version>4.0.0</version>
++    </dependency>
++    <dependency>
++        <groupId>com.google.maps</groupId>
++        <artifactId>google-maps-services</artifactId>
++        <version>0.1.7</version>
++    </dependency>
++    <dependency>
++      <groupId>junit</groupId>
++      <artifactId>junit</artifactId>
++      <version>4.12</version>
++      <scope>test</scope>
++    </dependency>
++    <dependency>
++      <groupId>org.mockito</groupId>
++      <artifactId>mockito-core</artifactId>
++      <version>2.0.31-beta</version>
++      <scope>test</scope>
++    </dependency>
++  </dependencies>
++
++  <properties>
++    <!-- maven specific properties -->
++    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
++    <samza.version>0.9.1</samza.version>
++  </properties>
++
++  <repositories>
++    <repository>
++      <id>my-local-repo</id>
++      <url>file://${user.home}/.m2/repository</url>
++    </repository>
++    <repository>
++      <id>apache-releases</id>
++      <url>https://repository.apache.org/content/groups/public</url>
++    </repository>
++    <repository>
++      <id>scala-tools.org</id>
++      <name>Scala-tools Maven2 Repository</name>
++      <url>https://oss.sonatype.org/content/groups/scala-tools</url>
++    </repository>
++  </repositories>
++
++  <pluginRepositories>
++    <pluginRepository>
++      <id>scala-tools.org</id>
++      <name>Scala-tools Maven2 Repository</name>
++      <url>http://scala-tools.org/repo-releases</url>
++    </pluginRepository>
++  </pluginRepositories>
++
++  <build>
++    <pluginManagement>
++      <plugins>
++        <!-- <plugin>
++          <groupId>org.apache.rat</groupId>
++          <artifactId>apache-rat-plugin</artifactId>
++          <version>0.9</version>
++          <configuration>
++            <excludes>
++              <exclude>*.patch</exclude>
++              <exclude>**/target/**</exclude>
++              <exclude>*.json</exclude>
++              <exclude>.vagrant/**</exclude>
++              <exclude>.git/**</exclude>
++              <exclude>*.md</exclude>
++              <exclude>docs/**</exclude>
++              <exclude>config/**</exclude>
++              <exclude>bin/**</exclude>
++              <exclude>.gitignore</exclude>
++              <exclude>**/.cache/**</exclude>
++              <exclude>deploy/**</exclude>
++              <exclude>**/.project</exclude>
++              <exclude>**/.gradle/**</exclude>
++              <exclude>**/gradle/**</exclude>
++              <exclude>**/gradlew*</exclude>
++              <exclude>**/build/**</exclude>
++            </excludes>
++          </configuration>
++        </plugin> -->
++      </plugins>
++    </pluginManagement>
++    <plugins>
++      <plugin>
++        <groupId>org.apache.maven.plugins</groupId>
++        <artifactId>maven-compiler-plugin</artifactId>
++        <version>3.1</version>
++        <configuration>
++          <source>1.6</source>
++          <target>1.6</target>
++        </configuration>
++      </plugin>
++      <!-- <plugin>
++        <groupId>org.apache.rat</groupId>
++        <artifactId>apache-rat-plugin</artifactId>
++        <version>0.9</version>
++        <executions>
++          <execution>
++            <phase>test</phase>
++            <goals>
++              <goal>check</goal>
++            </goals>
++          </execution>
++        </executions>
++      </plugin> -->
++      <!-- plugin to build the tar.gz file filled with examples -->
++      <plugin>
++        <artifactId>maven-assembly-plugin</artifactId>
++        <version>2.3</version>
++        <configuration>
++          <descriptors>
++            <descriptor>src/main/assembly/src.xml</descriptor>
++          </descriptors>
++        </configuration>
++        <executions>
++          <execution>
++            <id>make-assembly</id>
++            <phase>package</phase>
++            <goals>
++              <goal>single</goal>
++            </goals>
++          </execution>
++        </executions>
++      </plugin>
++    </plugins>
++  </build>
++</project>
+diff --git a/data-pipeline/reverse-search/src/main/assembly/src.xml b/data-pipeline/reverse-search/src/main/assembly/src.xml
+new file mode 100644
+index 0000000..c4c065c
+--- /dev/null
++++ b/data-pipeline/reverse-search/src/main/assembly/src.xml
+@@ -0,0 +1,70 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor
++  license agreements. See the NOTICE file distributed with this work for additional
++  information regarding copyright ownership. The ASF licenses this file to
++  you under the Apache License, Version 2.0 (the "License"); you may not use
++  this file except in compliance with the License. You may obtain a copy of
++  the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required
++  by applicable law or agreed to in writing, software distributed under the
++  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
++  OF ANY KIND, either express or implied. See the License for the specific
++  language governing permissions and limitations under the License. -->
++
++<assembly
++  xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
++  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
++  <id>dist</id>
++  <formats>
++    <format>tar.gz</format>
++  </formats>
++  <includeBaseDirectory>false</includeBaseDirectory>
++  <fileSets>
++    <fileSet>
++      <directory>${basedir}</directory>
++      <includes>
++        <include>README*</include>
++        <include>LICENSE*</include>
++        <include>NOTICE*</include>
++      </includes>
++    </fileSet>
++  </fileSets>
++  <files>
++    <file>
++      <source>${basedir}/src/main/resources/log4j.xml</source>
++      <outputDirectory>lib</outputDirectory>
++    </file>
++    <!-- filtered=true, so we do variable expansion so the yarn package path
++      always points to the correct spot on any machine -->
++    <file>
++      <source>${basedir}/src/main/config/reverse-search.properties</source>
++      <outputDirectory>config</outputDirectory>
++      <filtered>true</filtered>
++    </file>
++  </files>
++  <dependencySets>
++    <dependencySet>
++      <outputDirectory>bin</outputDirectory>
++      <includes>
++        <include>org.apache.samza:samza-shell:tgz:dist:*</include>
++      </includes>
++      <fileMode>0744</fileMode>
++      <unpack>true</unpack>
++    </dependencySet>
++    <dependencySet>
++      <outputDirectory>lib</outputDirectory>
++      <includes>
++        <include>org.apache.samza:samza-core_2.10</include>
++        <include>org.apache.samza:samza-kafka_2.10</include>
++        <include>org.apache.samza:samza-yarn_2.10</include>
++        <include>org.apache.samza:samza-kv-rocksdb_2.10</include>
++        <include>org.apache.samza:samza-log4j</include>
++        <include>org.apache.samza:ekstep-samza</include>
++        <include>org.slf4j:slf4j-log4j12</include>
++        <include>org.apache.kafka:kafka_2.10</include>
++        <include>org.apache.hadoop:hadoop-hdfs</include>
++      </includes>
++      <useTransitiveFiltering>true</useTransitiveFiltering>
++    </dependencySet>
++  </dependencySets>
++</assembly>
+diff --git a/data-pipeline/reverse-search/src/main/config/reverse-search.properties b/data-pipeline/reverse-search/src/main/config/reverse-search.properties
+new file mode 100644
+index 0000000..756d9ce
+--- /dev/null
++++ b/data-pipeline/reverse-search/src/main/config/reverse-search.properties
+@@ -0,0 +1,69 @@
++# Licensed to the Apache Software Foundation (ASF) under one
++# or more contributor license agreements.  See the NOTICE file
++# distributed with this work for additional information
++# regarding copyright ownership.  The ASF licenses this file
++# to you under the Apache License, Version 2.0 (the
++# "License"); you may not use this file except in compliance
++# with the License.  You may obtain a copy of the License at
++#
++#   http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing,
++# software distributed under the License is distributed on an
++# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++# KIND, either express or implied.  See the License for the
++# specific language governing permissions and limitations
++# under the License.
++
++# Job
++job.factory.class=org.apache.samza.job.yarn.YarnJobFactory
++job.name=ReverseSearch
++
++# YARN
++# yarn.package.path=file://${basedir}/target/${project.artifactId}-${pom.version}-dist.tar.gz
++yarn.package.path=http://172.31.12.23:8000/target/${project.artifactId}-${pom.version}-dist.tar.gz
++
++# Task
++task.class=org.ekstep.ep.samza.task.ReverseSearchStreamTask
++task.inputs=kafka.telemetry_events
++task.checkpoint.factory=org.apache.samza.checkpoint.kafka.KafkaCheckpointManagerFactory
++task.checkpoint.system=kafka
++# Normally, this would be 3, but we have only one broker.
++task.checkpoint.replication.factor=1
++task.commit.ms=60000
++
++# Metrics
++metrics.reporters=snapshot,jmx
++metrics.reporter.snapshot.class=org.apache.samza.metrics.reporter.MetricsSnapshotReporterFactory
++metrics.reporter.snapshot.stream=kafka.metrics
++metrics.reporter.jmx.class=org.apache.samza.metrics.reporter.JmxReporterFactory
++
++# Serializers
++serializers.registry.json.class=org.apache.samza.serializers.JsonSerdeFactory
++serializers.registry.metrics.class=org.apache.samza.serializers.MetricsSnapshotSerdeFactory
++
++# Key-value storage
++serializers.registry.string.class=org.apache.samza.serializers.StringSerdeFactory
++stores.reverse-search.factory=org.apache.samza.storage.kv.RocksDbKeyValueStorageEngineFactory
++stores.reverse-search.key.serde=string
++stores.reverse-search.msg.serde=json
++stores.device.factory=org.apache.samza.storage.kv.RocksDbKeyValueStorageEngineFactory
++stores.device.key.serde=string
++stores.device.msg.serde=json
++stores.device.changelog=kafka.device-changelog
++stores.device.changelog.replication.factor=1
++
++# Systems
++systems.kafka.samza.factory=org.apache.samza.system.kafka.KafkaSystemFactory
++systems.kafka.samza.msg.serde=json
++# systems.kafka.consumer.zookeeper.connect=localhost:2181/
++systems.kafka.consumer.zookeeper.connect=172.31.14.164:2181/
++systems.kafka.consumer.auto.offset.reset=largest
++systems.kafka.producer.bootstrap.servers=172.31.14.164:9092
++
++# Job Coordinator
++job.coordinator.system=kafka
++# Normally, this would be 3, but we have only one broker.
++job.coordinator.replication.factor=1
++
++google.api.key=AIzaSyDd1SVvNpqDYQKAghY1-aY2EtdBoPI94l4
+\ No newline at end of file
+diff --git a/data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/actions/GoogleReverseSearch.java b/data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/actions/GoogleReverseSearch.java
+new file mode 100644
+index 0000000..735f565
+--- /dev/null
++++ b/data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/actions/GoogleReverseSearch.java
+@@ -0,0 +1,84 @@
++package org.ekstep.ep.samza.actions;
++
++import com.google.maps.model.AddressComponent;
++import com.google.maps.model.AddressComponentType;
++import com.google.maps.model.GeocodingResult;
++import com.google.maps.model.LatLng;
++import org.ekstep.ep.samza.api.GoogleGeoLocationAPI;
++import org.ekstep.ep.samza.system.Location;
++
++public class GoogleReverseSearch {
++
++    GoogleGeoLocationAPI locationAPI;
++
++    public GoogleReverseSearch(GoogleGeoLocationAPI api) {
++       locationAPI=api;
++    }
++
++    public Location getLocation(String loc) {
++        LatLng latLng = parseLocation(loc);
++        if (latLng == null){
++            return null;
++        }
++
++        return locationFrom(latLng);
++    }
++
++    private Location locationFrom(LatLng latLng){
++        try {
++            Location location = new Location();
++            GeocodingResult[] results = locationAPI.requestFor(latLng);
++            for (GeocodingResult r: results) {
++                if(location.isReverseSearched()){
++                    break;
++                }
++                location=getAddressInformation(location, r);
++            }
++            return location;
++        } catch (Exception e) {
++            e.printStackTrace();
++            return null;
++        }
++    }
++
++    private Location getAddressInformation(Location location, GeocodingResult r) {
++        for(AddressComponent a:r.addressComponents){
++            if(location.isReverseSearched()){
++               break;
++            }
++            for (AddressComponentType t: a.types) {
++                if(location.isReverseSearched()){
++                    break;
++                }
++                switch(t.ordinal()){
++                    case 11:  location.setCity(a.longName);
++                        break;
++                    case 6:  location.setDistrict(a.longName);
++                        break;
++                    case 5:  location.setState(a.longName);
++                        break;
++                    case 4:  location.setCountry(a.longName);
++                        break;
++                    default: break;
++                }
++            }
++        }
++        return location;
++    }
++
++    private LatLng parseLocation(String loc){
++        if (loc.isEmpty()) return null;
++        String[] latlong = loc.split(",");
++        if (latlong.length!=2){
++            return null;
++        }
++        try {
++            Double _lat = Double.parseDouble(latlong[0]);
++            Double _long = Double.parseDouble(latlong[1]);
++            return new LatLng(_lat,_long);
++        }catch(NumberFormatException e){
++            return null;
++        }
++    }
++
++}
+diff --git a/data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/api/GoogleGeoLocationAPI.java b/data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/api/GoogleGeoLocationAPI.java
+new file mode 100644
+index 0000000..ff4b2f2
+--- /dev/null
++++ b/data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/api/GoogleGeoLocationAPI.java
+@@ -0,0 +1,24 @@
++package org.ekstep.ep.samza.api;
++
++
++import com.google.maps.GeoApiContext;
++import com.google.maps.GeocodingApi;
++import com.google.maps.model.GeocodingResult;
++import com.google.maps.model.LatLng;
++
++public class GoogleGeoLocationAPI {
++    private final GeoApiContext apiContext;
++
++    public GoogleGeoLocationAPI(String apiKey) {
++        apiContext = new GeoApiContext().setApiKey("AIzaSyDd1SVvNpqDYQKAghY1-aY2EtdBoPI94l4");
++    }
++
++    public GeocodingResult[] requestFor(LatLng latLng) {
++        try {
++            return GeocodingApi.newRequest(apiContext).latlng(latLng).await();
++        } catch (Exception e) {
++            e.printStackTrace();
++        }
++        return null;
++    }
++}
+diff --git a/data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/system/Device.java b/data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/system/Device.java
+new file mode 100644
+index 0000000..97ccf66
+--- /dev/null
++++ b/data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/system/Device.java
+@@ -0,0 +1,35 @@
++/*
++ * Licensed to the Apache Software Foundation (ASF) under one
++ * or more contributor license agreements.  See the NOTICE file
++ * distributed with this work for additional information
++ * regarding copyright ownership.  The ASF licenses this file
++ * to you under the Apache License, Version 2.0 (the
++ * "License"); you may not use this file except in compliance
++ * with the License.  You may obtain a copy of the License at
++ *
++ *   http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing,
++ * software distributed under the License is distributed on an
++ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied.  See the License for the
++ * specific language governing permissions and limitations
++ * under the License.
++ */
++
++package org.ekstep.ep.samza.system;
++
++public class Device {
++  private String id;
++  private Location location;
++  public Device(String id){
++    this.id=id;
++    this.location=null;
++  }
++  public Location getLocation(){
++    return this.location;
++  }
++  public void setLocation(Location location){
++    this.location = location;
++  }
++}
+diff --git a/data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/system/Event.java b/data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/system/Event.java
+new file mode 100644
+index 0000000..1d57b55
+--- /dev/null
++++ b/data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/system/Event.java
+@@ -0,0 +1,54 @@
++package org.ekstep.ep.samza.system;
++
++
++import java.util.HashMap;
++import java.util.Map;
++
++public class Event {
++    private final Map<String, Object> map;
++
++    public Event(Map<String,Object> map) {
++        this.map = map;
++    }
++
++    public String getGPSCoordinates() {
++        try {
++            Map<String, Object> edata = (Map<String, Object>) map.get("edata");
++            Map<String, Object> eks = (Map<String, Object>) edata.get("eks");
++            return (String) eks.get("loc");
++        }catch (Exception e){
++            return "";
++        }
++    }
++
++    public void AddLocation(Location location){
++        Map<String, String> ldata = new HashMap<String, String>();
++        ldata.put("locality", location.getCity());
++        ldata.put("district", location.getDistrict());
++        ldata.put("state", location.getState());
++        ldata.put("country", location.getCountry());
++        map.put("ldata", ldata);
++    }
++    public String getDid() {
++        return (String)map.get("did");
++    }
++
++    public Map<String, Object> getMap() {
++        return map;
++    }
++
++
++    public void setFlag(String key, Object value) {
++        Map<String, Object> flags=null;
++        try {
++            flags = (Map<String, Object>) map.get("flags");
++        }catch(Exception e){
++        }
++        if (flags==null){
++            flags = new HashMap<String, Object>();
++        }
++        flags.put(key,value);
++        map.put("flags",flags);
++    }
++}
++
+diff --git a/data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/system/Location.java b/data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/system/Location.java
+new file mode 100644
+index 0000000..6d80082
+--- /dev/null
++++ b/data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/system/Location.java
+@@ -0,0 +1,54 @@
++/*
++ * Licensed to the Apache Software Foundation (ASF) under one
++ * or more contributor license agreements.  See the NOTICE file
++ * distributed with this work for additional information
++ * regarding copyright ownership.  The ASF licenses this file
++ * to you under the Apache License, Version 2.0 (the
++ * "License"); you may not use this file except in compliance
++ * with the License.  You may obtain a copy of the License at
++ *
++ *   http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing,
++ * software distributed under the License is distributed on an
++ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied.  See the License for the
++ * specific language governing permissions and limitations
++ * under the License.
++ */
++
++package org.ekstep.ep.samza.system;
++
++public class Location {
++  private String city;
++  private String district;
++  private String state;
++  private String country;
++  public String getCity(){
++    return this.city;
++  }
++  public void setCity(String city){
++    this.city = city;
++  }
++  public String getDistrict(){
++    return this.district;
++  }
++  public void setDistrict(String district){
++    this.district = district;
++  }
++  public String getState(){
++    return this.state;
++  }
++  public void setState(String state){
++    this.state = state;
++  }
++  public String getCountry(){
++    return this.country;
++  }
++  public void setCountry(String country){
++    this.country = country;
++  }
++  public Boolean isReverseSearched(){
++    return this.city != null && this.district != null && this.state != null && this.country != null;
++  }
++}
+diff --git a/data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/task/ReverseSearchStreamTask.java b/data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/task/ReverseSearchStreamTask.java
+new file mode 100644
+index 0000000..d1781a7
+--- /dev/null
++++ b/data-pipeline/reverse-search/src/main/java/org/ekstep/ep/samza/task/ReverseSearchStreamTask.java
+@@ -0,0 +1,129 @@
++/*
++ * Licensed to the Apache Software Foundation (ASF) under one
++ * or more contributor license agreements.  See the NOTICE file
++ * distributed with this work for additional information
++ * regarding copyright ownership.  The ASF licenses this file
++ * to you under the Apache License, Version 2.0 (the
++ * "License"); you may not use this file except in compliance
++ * with the License.  You may obtain a copy of the License at
++ *
++ *   http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing,
++ * software distributed under the License is distributed on an
++ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied.  See the License for the
++ * specific language governing permissions and limitations
++ * under the License.
++ */
++
++package org.ekstep.ep.samza.task;
++
++import com.cedarsoftware.util.io.JsonReader;
++import com.cedarsoftware.util.io.JsonWriter;
++import org.apache.samza.config.Config;
++import org.apache.samza.storage.kv.KeyValueStore;
++import org.apache.samza.system.IncomingMessageEnvelope;
++import org.apache.samza.system.OutgoingMessageEnvelope;
++import org.apache.samza.system.SystemStream;
++import org.apache.samza.task.*;
++import org.ekstep.ep.samza.actions.GoogleReverseSearch;
++import org.ekstep.ep.samza.api.GoogleGeoLocationAPI;
++import org.ekstep.ep.samza.system.Device;
++import org.ekstep.ep.samza.system.Event;
++import org.ekstep.ep.samza.system.Location;
++
++import java.util.Map;
++
++public class ReverseSearchStreamTask implements StreamTask, InitableTask {
++
++    private KeyValueStore<String, Object> reverseSearchStore;
++    private KeyValueStore<String, Object> deviceStore;
++    private GoogleReverseSearch googleReverseSearch;
++
++    public void init(Config config, TaskContext context) {
++        String apiKey = config.get("google.api.key", "");
++        this.reverseSearchStore = (KeyValueStore<String, Object>) context.getStore("reverse-search");
++        this.deviceStore = (KeyValueStore<String, Object>) context.getStore("device");
++        googleReverseSearch = new GoogleReverseSearch(new GoogleGeoLocationAPI(apiKey));
++    }
++
++    public ReverseSearchStreamTask() {
++    }
++
++    public ReverseSearchStreamTask(KeyValueStore<String, Object> reverseSearchStore, KeyValueStore<String, Object> deviceStore, GoogleReverseSearch googleReverseSearch) {
++        this.reverseSearchStore = reverseSearchStore;
++        this.deviceStore = deviceStore;
++        this.googleReverseSearch = googleReverseSearch;
++    }
++
++    @SuppressWarnings("unchecked")
++    @Override
++    public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) {
++        Map<String, Object> jsonObject;
++        Location location = null;
++        Device device = null;
++        try {
++            jsonObject = (Map<String, Object>) envelope.getMessage();
++            processEvent(new Event(jsonObject), collector);
++        } catch (Exception e) {
++            System.err.println("Error while getting message");
++        }
++    }
++
++    public void processEvent(Event event, MessageCollector collector) {
++        Location location = null;
++        Device device = null;
++        try {
++
++            String loc = event.getGPSCoordinates();
++            String did = event.getDid();
++
++            if (loc != null && !loc.isEmpty()) {
++                String stored_location = (String) reverseSearchStore.get(loc);
++                if (stored_location == null) {
++                    // do reverse search
++                    System.out.println("Performing reverse search");
++                    location = googleReverseSearch.getLocation(loc);
++                    String json = JsonWriter.objectToJson(location);
++
++                    System.out.println("Setting device loc in stores");
++                    reverseSearchStore.put(loc, json);
++                    device = new Device(did);
++                    device.setLocation(location);
++                    String djson = JsonWriter.objectToJson(device);
++                    deviceStore.put(did, djson);
++                } else {
++                    System.out.println("Picking store data for reverse search");
++                    location = (Location) JsonReader.jsonToJava(stored_location);
++                }
++            } else {
++                System.out.println("Trying to pick from device");
++                String stored_device = (String) deviceStore.get(did);
++                device = (Device) JsonReader.jsonToJava(stored_device);
++                location = device.getLocation();
++            }
++        } catch (Exception e) {
++            System.out.println(e);
++            System.err.println("unable to parse");
++        }
++        System.out.println("ok");
++        try {
++            if (location != null) {
++                event.AddLocation(location);
++                event.setFlag("ldata_obtained",true);
++            } else {
++                event.setFlag("ldata_obtained", false);
++                collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", "events_failed_location"), event.getMap()));
++            }
++            event.setFlag("ldata_processed",true);
++            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", "events_with_location"), event.getMap()));
++        } catch (Exception e) {
++            System.out.println("ok");
++            e.printStackTrace();
++            System.err.println("!");
++        }
++
++    }
++
++}
+diff --git a/data-pipeline/reverse-search/src/main/resources/log4j.xml b/data-pipeline/reverse-search/src/main/resources/log4j.xml
+new file mode 100644
+index 0000000..f0de765
+--- /dev/null
++++ b/data-pipeline/reverse-search/src/main/resources/log4j.xml
+@@ -0,0 +1,39 @@
++<?xml version="1.0" encoding="UTF-8" ?>
++<!--
++
++ Licensed to the Apache Software Foundation (ASF) under one
++ or more contributor license agreements.  See the NOTICE file
++ distributed with this work for additional information
++ regarding copyright ownership.  The ASF licenses this file
++ to you under the Apache License, Version 2.0 (the
++ "License"); you may not use this file except in compliance
++ with the License.  You may obtain a copy of the License at
++
++   http://www.apache.org/licenses/LICENSE-2.0
++
++ Unless required by applicable law or agreed to in writing,
++ software distributed under the License is distributed on an
++ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ KIND, either express or implied.  See the License for the
++ specific language governing permissions and limitations
++ under the License.
++
++-->
++
++<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
++<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
++  <appender name="jmx" class="org.apache.samza.logging.log4j.JmxAppender" />
++
++  <appender name="RollingAppender" class="org.apache.log4j.DailyRollingFileAppender">
++     <param name="File" value="${samza.log.dir}/${samza.container.name}.log" />
++     <param name="DatePattern" value="'.'yyyy-MM-dd" />
++     <layout class="org.apache.log4j.PatternLayout">
++      <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %c{1} [%p] %m%n" />
++     </layout>
++  </appender>
++  <root>
++    <priority value="info" />
++    <appender-ref ref="RollingAppender"/>
++    <appender-ref ref="jmx" />
++  </root>
++</log4j:configuration>
+diff --git a/data-pipeline/reverse-search/src/test/java/org/ekstep/ep/samza/actions/GoogleReverseSearchTest.java b/data-pipeline/reverse-search/src/test/java/org/ekstep/ep/samza/actions/GoogleReverseSearchTest.java
+new file mode 100644
+index 0000000..d740c3a
+--- /dev/null
++++ b/data-pipeline/reverse-search/src/test/java/org/ekstep/ep/samza/actions/GoogleReverseSearchTest.java
+@@ -0,0 +1,63 @@
++package org.ekstep.ep.samza.actions;
++
++
++import com.google.gson.Gson;
++import com.google.maps.model.GeocodingResult;
++import com.google.maps.model.LatLng;
++import org.ekstep.ep.samza.api.GoogleGeoLocationAPI;
++import org.ekstep.ep.samza.system.Location;
++import org.junit.Assert;
++import org.junit.Test;
++
++import static org.mockito.Matchers.any;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.when;
++
++public class GoogleReverseSearchTest {
++    @Test
++    public void shouldHandleEmptyLatlong(){
++        GoogleGeoLocationAPI api = mock(GoogleGeoLocationAPI.class);
++
++        GoogleReverseSearch reverseSearch = new GoogleReverseSearch(api);
++        Assert.assertNull(reverseSearch.getLocation(""));
++    }
++
++    @Test
++    public void shouldReturnNullForInvalidLatLong(){
++        GoogleGeoLocationAPI api = mock(GoogleGeoLocationAPI.class);
++
++        GoogleReverseSearch reverseSearch = new GoogleReverseSearch(api);
++        Assert.assertNull(reverseSearch.getLocation("12"));
++        Assert.assertNull(reverseSearch.getLocation("12:123"));
++        Assert.assertNull(reverseSearch.getLocation("12:123,345"));
++        Assert.assertNull(reverseSearch.getLocation("invalid,format"));
++    }
++
++    @Test
++    public void shouldReturnValidLocation(){
++        GoogleGeoLocationAPI api = mock(GoogleGeoLocationAPI.class);
++
++        when(api.requestFor(any(LatLng.class))).thenReturn(generateResult());
++
++        GoogleReverseSearch reverseSearch = new GoogleReverseSearch(api);
++        Location location = reverseSearch.getLocation("12.90,77.62");
++        Assert.assertNotNull(location);
++        Assert.assertEquals("Bengaluru", location.getCity());
++    }
++
++    @Test
++    public void shouldReturnNullForException(){
++        GoogleGeoLocationAPI api = mock(GoogleGeoLocationAPI.class);
++
++        when(api.requestFor(any(LatLng.class))).thenThrow(new RuntimeException());
++
++        GoogleReverseSearch reverseSearch = new GoogleReverseSearch(api);
++        Location location = reverseSearch.getLocation("12.90,77.62");
++        Assert.assertNull(location);
++    }
++    private GeocodingResult[] generateResult(){
++        GeocodingResult geocodingResult1 = new Gson().fromJson("{\"addressComponents\":[{\"longName\":\"86-87\",\"shortName\":\"86-87\",\"types\":[\"STREET_NUMBER\"]},{\"longName\":\"7th Cross Road\",\"shortName\":\"7th Cross Rd\",\"types\":[\"ROUTE\"]},{\"longName\":\"Koramangala 3 Block\",\"shortName\":\"Koramangala 3 Block\",\"types\":[\"SUBLOCALITY_LEVEL_2\",\"SUBLOCALITY\",\"POLITICAL\"]},{\"longName\":\"Koramangala\",\"shortName\":\"Koramangala\",\"types\":[\"SUBLOCALITY_LEVEL_1\",\"SUBLOCALITY\",\"POLITICAL\"]},{\"longName\":\"Bangalore Urban\",\"shortName\":\"Bangalore Urban\",\"types\":[\"ADMINISTRATIVE_AREA_LEVEL_2\",\"POLITICAL\"]},{\"longName\":\"Karnataka\",\"shortName\":\"KA\",\"types\":[\"ADMINISTRATIVE_AREA_LEVEL_1\",\"POLITICAL\"]},{\"longName\":\"India\",\"shortName\":\"IN\",\"types\":[\"COUNTRY\",\"POLITICAL\"]},{\"longName\":\"560034\",\"shortName\":\"560034\",\"types\":[\"POSTAL_CODE\"]}],\"formattedAddress\":\"86-87, 7th Cross Road, Koramangala 3 Block, Koramangala, Bengaluru, Karnataka 560034, India\",\"geometry\":{\"bounds\":{\"northeast\":{\"lat\":12.931308,\"lng\":77.6242031},\"southwest\":{\"lat\":12.9309016,\"lng\":77.6231573}},\"location\":{\"lat\":12.931065,\"lng\":77.6238324},\"locationType\":\"RANGE_INTERPOLATED\",\"viewport\":{\"northeast\":{\"lat\":12.9324537802915,\"lng\":77.62502918029151},\"southwest\":{\"lat\":12.9297558197085,\"lng\":77.6223312197085}}},\"placeId\":\"Els4Ni04NywgN3RoIENyb3NzIFJvYWQsIEtvcmFtYW5nYWxhIDMgQmxvY2ssIEtvcmFtYW5nYWxhLCBCZW5nYWx1cnUsIEthcm5hdGFrYSA1NjAwMzQsIEluZGlh\",\"types\":[\"street_address\"]}",GeocodingResult.class);
++        GeocodingResult geocodingResult2 = new Gson().fromJson("{\"addressComponents\":[{\"longName\":\"86-87\",\"shortName\":\"86-87\",\"types\":[\"STREET_NUMBER\"]},{\"longName\":\"7th Cross Road\",\"shortName\":\"7th Cross Rd\",\"types\":[\"ROUTE\"]},{\"longName\":\"Koramangala 3 Block\",\"shortName\":\"Koramangala 3 Block\",\"types\":[\"SUBLOCALITY_LEVEL_2\",\"SUBLOCALITY\",\"POLITICAL\"]},{\"longName\":\"Koramangala\",\"shortName\":\"Koramangala\",\"types\":[\"SUBLOCALITY_LEVEL_1\",\"SUBLOCALITY\",\"POLITICAL\"]},{\"longName\":\"Bengaluru\",\"shortName\":\"Bengaluru\",\"types\":[\"LOCALITY\",\"POLITICAL\"]},{\"longName\":\"Bangalore Urban\",\"shortName\":\"Bangalore Urban\",\"types\":[\"ADMINISTRATIVE_AREA_LEVEL_2\",\"POLITICAL\"]},{\"longName\":\"Karnataka\",\"shortName\":\"KA\",\"types\":[\"ADMINISTRATIVE_AREA_LEVEL_1\",\"POLITICAL\"]},{\"longName\":\"India\",\"shortName\":\"IN\",\"types\":[\"COUNTRY\",\"POLITICAL\"]},{\"longName\":\"560034\",\"shortName\":\"560034\",\"types\":[\"POSTAL_CODE\"]}],\"formattedAddress\":\"86-87, 7th Cross Road, Koramangala 3 Block, Koramangala, Bengaluru, Karnataka 560034, India\",\"geometry\":{\"bounds\":{\"northeast\":{\"lat\":12.931308,\"lng\":77.6242031},\"southwest\":{\"lat\":12.9309016,\"lng\":77.6231573}},\"location\":{\"lat\":12.931065,\"lng\":77.6238324},\"locationType\":\"RANGE_INTERPOLATED\",\"viewport\":{\"northeast\":{\"lat\":12.9324537802915,\"lng\":77.62502918029151},\"southwest\":{\"lat\":12.9297558197085,\"lng\":77.6223312197085}}},\"placeId\":\"Els4Ni04NywgN3RoIENyb3NzIFJvYWQsIEtvcmFtYW5nYWxhIDMgQmxvY2ssIEtvcmFtYW5nYWxhLCBCZW5nYWx1cnUsIEthcm5hdGFrYSA1NjAwMzQsIEluZGlh\",\"types\":[\"street_address\"]}",GeocodingResult.class);
++        return new GeocodingResult[]{geocodingResult1,geocodingResult2};
++    }
++}
+diff --git a/data-pipeline/reverse-search/src/test/java/org/ekstep/ep/samza/system/EventTest.java b/data-pipeline/reverse-search/src/test/java/org/ekstep/ep/samza/system/EventTest.java
+new file mode 100644
+index 0000000..5c95989
+--- /dev/null
++++ b/data-pipeline/reverse-search/src/test/java/org/ekstep/ep/samza/system/EventTest.java
+@@ -0,0 +1,119 @@
++package org.ekstep.ep.samza.system;
++
++
++import org.junit.Assert;
++import org.junit.Test;
++
++import java.util.HashMap;
++import java.util.Map;
++
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.when;
++
++public class EventTest {
++    @Test
++    public void shouldReturnEmptyLocationIfNotPresent() {
++        Map<String,Object> map = new HashMap<String, Object>();
++        Event event = new Event(map);
++        Assert.assertEquals("",event.getGPSCoordinates());
++    }
++
++    @Test
++    public void shouldReturnLocation(){
++        Map<String,Object> map = getMap("12.44,11.56");
++        Event event = new Event(map);
++        Assert.assertEquals("12.44,11.56", event.getGPSCoordinates());
++    }
++
++    @Test
++    public void shouldGetDeviceID(){
++        Map<String, Object> map = mock(Map.class);
++        when(map.get("did")).thenReturn("device_id");
++
++        Event event = new Event(map);
++        Assert.assertEquals("device_id", event.getDid());
++    }
++
++    @Test
++    public void shouldAddLocation(){
++        Map<String,Object> map = new HashMap<String, Object>();
++        Event event = new Event(map);
++        Location location = getLocation();
++        event.AddLocation(location);
++        Map<String,Object>ldata = (Map<String, Object>) map.get("ldata");
++        Assert.assertEquals("City1",(String)ldata.get("locality"));
++    }
++
++    @Test
++    public void shouldSetFlagIfNotPresent(){
++        Map<String,Object> map = new HashMap<String, Object>();
++        Event event = new Event(map);
++        event.setFlag("ldata_obtained", true);
++
++        Map<String,Object> flags = (Map<String, Object>) map.get("flags");
++        Assert.assertNotNull(flags);
++
++        Assert.assertEquals(true, flags.get("ldata_obtained"));
++    }
++
++    @Test
++    public void shouldReuseFlagIfPresent(){
++        Map<String,Object> map = new HashMap<String, Object>();
++        Map<String, Object> flags = new HashMap<String, Object>();
++        flags.put("ldata_obtained",false);
++        map.put("flags",flags);
++
++        Event event = new Event(map);
++        event.setFlag("ldata_obtained", true);
++
++        Map<String,Object> flagsResult = (Map<String, Object>) map.get("flags");
++        Assert.assertNotNull(flagsResult);
++
++        Assert.assertEquals(true, flagsResult.get("ldata_obtained"));
++    }
++
++    @Test
++    public void shouldReuseFlagIfPresentForNewFlagEntry(){
++        Map<String,Object> map = new HashMap<String, Object>();
++        Map<String, Object> flags = new HashMap<String, Object>();
++        flags.put("ldata_obtained",true);
++        map.put("flags",flags);
++
++        Event event = new Event(map);
++        event.setFlag("ldata_processed", true);
++
++        Map<String,Object> flagsResult = (Map<String, Object>) map.get("flags");
++        Assert.assertNotNull(flagsResult);
++
++        Assert.assertEquals(true, flagsResult.get("ldata_obtained"));
++        Assert.assertEquals(true, flagsResult.get("ldata_processed"));
++    }
++
++    @Test
++    public void shouldReturnSameMap(){
++        Map<String,Object> map = new HashMap<String, Object>();
++        Event event = new Event(map);
++        Assert.assertEquals(map,event.getMap());
++    }
++
++    private Location getLocation() {
++        Location location = new Location();
++        location.setCity("City1");
++        location.setCountry("India");
++        location.setDistrict("Dist1");
++        location.setState("State1");
++        return location;
++    }
++
++    private Map<String, Object> getMap(Object loc) {
++        Map<String, Object> eks = mock(Map.class);
++        when(eks.get("loc")).thenReturn(loc);
++        Map<String, Object> edata = mock(Map.class);
++        when(edata.get("eks")).thenReturn(eks);
++        Map<String, Object> event = mock(Map.class);
++        when(event.get("edata")).thenReturn(edata);
++        return event;
++    }
++
++
++}
+diff --git a/data-pipeline/reverse-search/src/test/java/org/ekstep/ep/samza/system/LocationTest.java b/data-pipeline/reverse-search/src/test/java/org/ekstep/ep/samza/system/LocationTest.java
+new file mode 100644
+index 0000000..9d4fc8b
+--- /dev/null
++++ b/data-pipeline/reverse-search/src/test/java/org/ekstep/ep/samza/system/LocationTest.java
+@@ -0,0 +1,25 @@
++package org.ekstep.ep.samza.system;
++
++import org.junit.Assert;
++import org.junit.Test;
++
++public class LocationTest {
++
++    @Test
++    public void reverseSearchedFalseIfAllDataNotAvailable(){
++        Location loc = new Location();
++        Assert.assertFalse(loc.isReverseSearched());
++    }
++    @Test
++    public void reverseSearchedTrueIfAllDataAvailable(){
++        Location location = new Location();
++        location.setCity("City1");
++        Assert.assertFalse(location.isReverseSearched());
++        location.setCountry("India");
++        Assert.assertFalse(location.isReverseSearched());
++        location.setDistrict("Dist1");
++        Assert.assertFalse(location.isReverseSearched());
++        location.setState("State1");
++        Assert.assertTrue(location.isReverseSearched());
++    }
++}
+diff --git a/data-pipeline/reverse-search/src/test/java/org/ekstep/ep/samza/task/ReverseSearchTest.java b/data-pipeline/reverse-search/src/test/java/org/ekstep/ep/samza/task/ReverseSearchTest.java
+new file mode 100644
+index 0000000..994f0ef
+--- /dev/null
++++ b/data-pipeline/reverse-search/src/test/java/org/ekstep/ep/samza/task/ReverseSearchTest.java
+@@ -0,0 +1,152 @@
++package org.ekstep.ep.samza.task;
++
++import org.apache.samza.config.Config;
++import org.apache.samza.storage.kv.KeyValueStore;
++import org.apache.samza.system.IncomingMessageEnvelope;
++import org.apache.samza.system.OutgoingMessageEnvelope;
++import org.apache.samza.task.MessageCollector;
++import org.apache.samza.task.TaskContext;
++import org.apache.samza.task.TaskCoordinator;
++import org.ekstep.ep.samza.actions.GoogleReverseSearch;
++import org.ekstep.ep.samza.system.Event;
++import org.ekstep.ep.samza.system.Location;
++import org.junit.Assert;
++import org.junit.Before;
++import org.junit.Test;
++
++import java.util.HashMap;
++import java.util.Map;
++
++import static org.mockito.Mockito.*;
++
++public class ReverseSearchTest {
++
++    KeyValueStore<String, Object> reverseSearchStore;
++    KeyValueStore<String, Object> deviceStore;
++    GoogleReverseSearch googleReverseSearch;
++    private MessageCollector collector;
++
++    @Before
++    public void setMock() {
++        reverseSearchStore = mock(KeyValueStore.class);
++        deviceStore = mock(KeyValueStore.class);
++        googleReverseSearch = mock(GoogleReverseSearch.class);
++        collector = mock(MessageCollector.class);
++    }
++
++    @Test
++    public void shouldDoReverseSearchIfLocPresent() {
++
++        when(googleReverseSearch.getLocation("15.9310593,78.6238299")).thenReturn(new Location());
++
++        Event event = createEventMock("15.9310593,78.6238299");
++        when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
++
++        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch);
++
++        reverseSearchStreamTask.processEvent(event, collector);
++        verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
++        verify(googleReverseSearch, times(1)).getLocation("15.9310593,78.6238299");
++    }
++
++    @Test
++    public void shouldUpdateProperFlagIfSearchReturnEmpty() {
++
++        when(googleReverseSearch.getLocation("15.9310593,78.6238299")).thenReturn(null);
++        Map<String, Object> map = createMap("15.9310593,78.6238299");
++        Event event = new Event(map);
++        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch);
++
++        reverseSearchStreamTask.processEvent(event, collector);
++        verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
++        verify(googleReverseSearch, times(1)).getLocation("15.9310593,78.6238299");
++
++        Assert.assertNotNull(event.getMap());
++
++        Map<String,Object> flagsResult = (Map<String, Object>) event.getMap().get("flags");
++        Assert.assertNotNull(flagsResult);
++
++        Assert.assertEquals(false, flagsResult.get("ldata_obtained"));
++        Assert.assertEquals(true, flagsResult.get("ldata_processed"));
++    }
++
++
++    @Test
++    public void shouldTakeLocationFromDeviceStoreIfNotPresent() {
++
++        when(deviceStore.get("bc811958-b4b7-4873-a43a-03718edba45b")).thenReturn("{\"@type\":\"org.ekstep.ep.samza.system.Device\",\"id\":\"bc811958-b4b7-4873-a43a-03718edba45b\",\"location\":{\"city\":null,\"district\":null,\"state\":null,\"country\":null}}");
++        Event event = createEventMock("");
++
++        when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
++
++        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch);
++
++        reverseSearchStreamTask.processEvent(event, collector);
++        verify(googleReverseSearch, times(0)).getLocation(anyString());
++        verify(deviceStore, times(1)).get("bc811958-b4b7-4873-a43a-03718edba45b");
++        verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
++
++        Event event1 = createEventMock("");
++        when(event1.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
++        reverseSearchStreamTask.processEvent(event1, collector);
++        verify(googleReverseSearch, times(0)).getLocation(anyString());
++        verify(deviceStore, times(2)).get("bc811958-b4b7-4873-a43a-03718edba45b");
++        verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
++    }
++
++    @Test
++    public void shouldTakeLocationfromStore(){
++        Event event = createEventMock("15.9310593,78.6238299");
++
++        when(reverseSearchStore.get("15.9310593,78.6238299")).thenReturn("{\"@type\":\"org.ekstep.ep.samza.system.Location\",\"city\":\"Chennai\",\"district\":\"Chennai\",\"state\":\"Tamil Nadu\",\"country\": \"India\"}");
++        when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
++
++        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch);
++
++        reverseSearchStreamTask.processEvent(event, collector);
++        verify(deviceStore, times(0)).get(anyString());
++        verify(reverseSearchStore, times(1)).get("15.9310593,78.6238299");
++        verify(googleReverseSearch, times(0)).getLocation(anyString());
++        verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
++    }
++
++    @Test
++    public void shouldIgnoreInvalidMessages(){
++
++        IncomingMessageEnvelope envelope = mock(IncomingMessageEnvelope.class);
++        when(envelope.getMessage()).thenThrow(new RuntimeException());
++        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask();
++
++        Config config = mock(Config.class);
++        TaskContext context=mock(TaskContext.class);
++
++        reverseSearchStreamTask.init(config,context);
++        when(context.getStore("reverse-search")).thenReturn(reverseSearchStore);
++        when(context.getStore("device")).thenReturn(deviceStore);
++        TaskCoordinator task = mock(TaskCoordinator.class);
++        reverseSearchStreamTask.process(envelope, collector, task);
++
++        verify(deviceStore, times(0)).get(anyString());
++        verify(reverseSearchStore, times(0)).get(anyString());
++        verify(googleReverseSearch, times(0)).getLocation(anyString());
++        verify(collector, times(0)).send(any(OutgoingMessageEnvelope.class));
++
++    }
++    private Event createEventMock(String loc) {
++        Event event = mock(Event.class);
++
++        Map<String, Object> eks = mock(Map.class);
++        when(event.getGPSCoordinates()).thenReturn(loc);
++        return event;
++    }
++
++    private Map<String,Object> createMap(String loc){
++        Map<String, Object> eks = mock(Map.class);
++        when(eks.get("loc")).thenReturn(loc);
++        Map<String, Object> edata = mock(Map.class);
++        when(edata.get("eks")).thenReturn(eks);
++        Map<String, Object> event = new HashMap<String,Object>();
++        event.put("edata",edata);
++        return event;
++    }
++}
+diff --git a/data-pipeline/src/main/assembly/src.xml b/data-pipeline/src/main/assembly/src.xml
+deleted file mode 100644
+index c4c065c..0000000
+--- a/data-pipeline/src/main/assembly/src.xml
++++ /dev/null
+@@ -1,70 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor
+-  license agreements. See the NOTICE file distributed with this work for additional
+-  information regarding copyright ownership. The ASF licenses this file to
+-  you under the Apache License, Version 2.0 (the "License"); you may not use
+-  this file except in compliance with the License. You may obtain a copy of
+-  the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required
+-  by applicable law or agreed to in writing, software distributed under the
+-  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+-  OF ANY KIND, either express or implied. See the License for the specific
+-  language governing permissions and limitations under the License. -->
+-
+-<assembly
+-  xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+-  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+-  <id>dist</id>
+-  <formats>
+-    <format>tar.gz</format>
+-  </formats>
+-  <includeBaseDirectory>false</includeBaseDirectory>
+-  <fileSets>
+-    <fileSet>
+-      <directory>${basedir}</directory>
+-      <includes>
+-        <include>README*</include>
+-        <include>LICENSE*</include>
+-        <include>NOTICE*</include>
+-      </includes>
+-    </fileSet>
+-  </fileSets>
+-  <files>
+-    <file>
+-      <source>${basedir}/src/main/resources/log4j.xml</source>
+-      <outputDirectory>lib</outputDirectory>
+-    </file>
+-    <!-- filtered=true, so we do variable expansion so the yarn package path
+-      always points to the correct spot on any machine -->
+-    <file>
+-      <source>${basedir}/src/main/config/reverse-search.properties</source>
+-      <outputDirectory>config</outputDirectory>
+-      <filtered>true</filtered>
+-    </file>
+-  </files>
+-  <dependencySets>
+-    <dependencySet>
+-      <outputDirectory>bin</outputDirectory>
+-      <includes>
+-        <include>org.apache.samza:samza-shell:tgz:dist:*</include>
+-      </includes>
+-      <fileMode>0744</fileMode>
+-      <unpack>true</unpack>
+-    </dependencySet>
+-    <dependencySet>
+-      <outputDirectory>lib</outputDirectory>
+-      <includes>
+-        <include>org.apache.samza:samza-core_2.10</include>
+-        <include>org.apache.samza:samza-kafka_2.10</include>
+-        <include>org.apache.samza:samza-yarn_2.10</include>
+-        <include>org.apache.samza:samza-kv-rocksdb_2.10</include>
+-        <include>org.apache.samza:samza-log4j</include>
+-        <include>org.apache.samza:ekstep-samza</include>
+-        <include>org.slf4j:slf4j-log4j12</include>
+-        <include>org.apache.kafka:kafka_2.10</include>
+-        <include>org.apache.hadoop:hadoop-hdfs</include>
+-      </includes>
+-      <useTransitiveFiltering>true</useTransitiveFiltering>
+-    </dependencySet>
+-  </dependencySets>
+-</assembly>
+diff --git a/data-pipeline/src/main/config/reverse-search.properties b/data-pipeline/src/main/config/reverse-search.properties
+deleted file mode 100644
+index 756d9ce..0000000
+--- a/data-pipeline/src/main/config/reverse-search.properties
++++ /dev/null
+@@ -1,69 +0,0 @@
+-# Licensed to the Apache Software Foundation (ASF) under one
+-# or more contributor license agreements.  See the NOTICE file
+-# distributed with this work for additional information
+-# regarding copyright ownership.  The ASF licenses this file
+-# to you under the Apache License, Version 2.0 (the
+-# "License"); you may not use this file except in compliance
+-# with the License.  You may obtain a copy of the License at
+-#
+-#   http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing,
+-# software distributed under the License is distributed on an
+-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+-# KIND, either express or implied.  See the License for the
+-# specific language governing permissions and limitations
+-# under the License.
+-
+-# Job
+-job.factory.class=org.apache.samza.job.yarn.YarnJobFactory
+-job.name=ReverseSearch
+-
+-# YARN
+-# yarn.package.path=file://${basedir}/target/${project.artifactId}-${pom.version}-dist.tar.gz
+-yarn.package.path=http://172.31.12.23:8000/target/${project.artifactId}-${pom.version}-dist.tar.gz
+-
+-# Task
+-task.class=org.ekstep.ep.samza.task.ReverseSearchStreamTask
+-task.inputs=kafka.telemetry_events
+-task.checkpoint.factory=org.apache.samza.checkpoint.kafka.KafkaCheckpointManagerFactory
+-task.checkpoint.system=kafka
+-# Normally, this would be 3, but we have only one broker.
+-task.checkpoint.replication.factor=1
+-task.commit.ms=60000
+-
+-# Metrics
+-metrics.reporters=snapshot,jmx
+-metrics.reporter.snapshot.class=org.apache.samza.metrics.reporter.MetricsSnapshotReporterFactory
+-metrics.reporter.snapshot.stream=kafka.metrics
+-metrics.reporter.jmx.class=org.apache.samza.metrics.reporter.JmxReporterFactory
+-
+-# Serializers
+-serializers.registry.json.class=org.apache.samza.serializers.JsonSerdeFactory
+-serializers.registry.metrics.class=org.apache.samza.serializers.MetricsSnapshotSerdeFactory
+-
+-# Key-value storage
+-serializers.registry.string.class=org.apache.samza.serializers.StringSerdeFactory
+-stores.reverse-search.factory=org.apache.samza.storage.kv.RocksDbKeyValueStorageEngineFactory
+-stores.reverse-search.key.serde=string
+-stores.reverse-search.msg.serde=json
+-stores.device.factory=org.apache.samza.storage.kv.RocksDbKeyValueStorageEngineFactory
+-stores.device.key.serde=string
+-stores.device.msg.serde=json
+-stores.device.changelog=kafka.device-changelog
+-stores.device.changelog.replication.factor=1
+-
+-# Systems
+-systems.kafka.samza.factory=org.apache.samza.system.kafka.KafkaSystemFactory
+-systems.kafka.samza.msg.serde=json
+-# systems.kafka.consumer.zookeeper.connect=localhost:2181/
+-systems.kafka.consumer.zookeeper.connect=172.31.14.164:2181/
+-systems.kafka.consumer.auto.offset.reset=largest
+-systems.kafka.producer.bootstrap.servers=172.31.14.164:9092
+-
+-# Job Coordinator
+-job.coordinator.system=kafka
+-# Normally, this would be 3, but we have only one broker.
+-job.coordinator.replication.factor=1
+-
+-google.api.key=AIzaSyDd1SVvNpqDYQKAghY1-aY2EtdBoPI94l4
+\ No newline at end of file
+diff --git a/data-pipeline/src/main/java/org/ekstep/ep/samza/actions/GoogleReverseSearch.java b/data-pipeline/src/main/java/org/ekstep/ep/samza/actions/GoogleReverseSearch.java
+deleted file mode 100644
+index 735f565..0000000
+--- a/data-pipeline/src/main/java/org/ekstep/ep/samza/actions/GoogleReverseSearch.java
++++ /dev/null
+@@ -1,84 +0,0 @@
+-package org.ekstep.ep.samza.actions;
+-
+-import com.google.maps.model.AddressComponent;
+-import com.google.maps.model.AddressComponentType;
+-import com.google.maps.model.GeocodingResult;
+-import com.google.maps.model.LatLng;
+-import org.ekstep.ep.samza.api.GoogleGeoLocationAPI;
+-import org.ekstep.ep.samza.system.Location;
+-
+-public class GoogleReverseSearch {
+-
+-    GoogleGeoLocationAPI locationAPI;
+-
+-    public GoogleReverseSearch(GoogleGeoLocationAPI api) {
+-       locationAPI=api;
+-    }
+-
+-    public Location getLocation(String loc) {
+-        LatLng latLng = parseLocation(loc);
+-        if (latLng == null){
+-            return null;
+-        }
+-
+-        return locationFrom(latLng);
+-    }
+-
+-    private Location locationFrom(LatLng latLng){
+-        try {
+-            Location location = new Location();
+-            GeocodingResult[] results = locationAPI.requestFor(latLng);
+-            for (GeocodingResult r: results) {
+-                if(location.isReverseSearched()){
+-                    break;
+-                }
+-                location=getAddressInformation(location, r);
+-            }
+-            return location;
+-        } catch (Exception e) {
+-            e.printStackTrace();
+-            return null;
+-        }
+-    }
+-
+-    private Location getAddressInformation(Location location, GeocodingResult r) {
+-        for(AddressComponent a:r.addressComponents){
+-            if(location.isReverseSearched()){
+-               break;
+-            }
+-            for (AddressComponentType t: a.types) {
+-                if(location.isReverseSearched()){
+-                    break;
+-                }
+-                switch(t.ordinal()){
+-                    case 11:  location.setCity(a.longName);
+-                        break;
+-                    case 6:  location.setDistrict(a.longName);
+-                        break;
+-                    case 5:  location.setState(a.longName);
+-                        break;
+-                    case 4:  location.setCountry(a.longName);
+-                        break;
+-                    default: break;
+-                }
+-            }
+-        }
+-        return location;
+-    }
+-
+-    private LatLng parseLocation(String loc){
+-        if (loc.isEmpty()) return null;
+-        String[] latlong = loc.split(",");
+-        if (latlong.length!=2){
+-            return null;
+-        }
+-        try {
+-            Double _lat = Double.parseDouble(latlong[0]);
+-            Double _long = Double.parseDouble(latlong[1]);
+-            return new LatLng(_lat,_long);
+-        }catch(NumberFormatException e){
+-            return null;
+-        }
+-    }
+-
+-}
+diff --git a/data-pipeline/src/main/java/org/ekstep/ep/samza/api/GoogleGeoLocationAPI.java b/data-pipeline/src/main/java/org/ekstep/ep/samza/api/GoogleGeoLocationAPI.java
+deleted file mode 100644
+index ff4b2f2..0000000
+--- a/data-pipeline/src/main/java/org/ekstep/ep/samza/api/GoogleGeoLocationAPI.java
++++ /dev/null
+@@ -1,24 +0,0 @@
+-package org.ekstep.ep.samza.api;
+-
+-
+-import com.google.maps.GeoApiContext;
+-import com.google.maps.GeocodingApi;
+-import com.google.maps.model.GeocodingResult;
+-import com.google.maps.model.LatLng;
+-
+-public class GoogleGeoLocationAPI {
+-    private final GeoApiContext apiContext;
+-
+-    public GoogleGeoLocationAPI(String apiKey) {
+-        apiContext = new GeoApiContext().setApiKey("AIzaSyDd1SVvNpqDYQKAghY1-aY2EtdBoPI94l4");
+-    }
+-
+-    public GeocodingResult[] requestFor(LatLng latLng) {
+-        try {
+-            return GeocodingApi.newRequest(apiContext).latlng(latLng).await();
+-        } catch (Exception e) {
+-            e.printStackTrace();
+-        }
+-        return null;
+-    }
+-}
+diff --git a/data-pipeline/src/main/java/org/ekstep/ep/samza/system/Device.java b/data-pipeline/src/main/java/org/ekstep/ep/samza/system/Device.java
+deleted file mode 100644
+index 97ccf66..0000000
+--- a/data-pipeline/src/main/java/org/ekstep/ep/samza/system/Device.java
++++ /dev/null
+@@ -1,35 +0,0 @@
+-/*
+- * Licensed to the Apache Software Foundation (ASF) under one
+- * or more contributor license agreements.  See the NOTICE file
+- * distributed with this work for additional information
+- * regarding copyright ownership.  The ASF licenses this file
+- * to you under the Apache License, Version 2.0 (the
+- * "License"); you may not use this file except in compliance
+- * with the License.  You may obtain a copy of the License at
+- *
+- *   http://www.apache.org/licenses/LICENSE-2.0
+- *
+- * Unless required by applicable law or agreed to in writing,
+- * software distributed under the License is distributed on an
+- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+- * KIND, either express or implied.  See the License for the
+- * specific language governing permissions and limitations
+- * under the License.
+- */
+-
+-package org.ekstep.ep.samza.system;
+-
+-public class Device {
+-  private String id;
+-  private Location location;
+-  public Device(String id){
+-    this.id=id;
+-    this.location=null;
+-  }
+-  public Location getLocation(){
+-    return this.location;
+-  }
+-  public void setLocation(Location location){
+-    this.location = location;
+-  }
+-}
+diff --git a/data-pipeline/src/main/java/org/ekstep/ep/samza/system/Event.java b/data-pipeline/src/main/java/org/ekstep/ep/samza/system/Event.java
+deleted file mode 100644
+index 1d57b55..0000000
+--- a/data-pipeline/src/main/java/org/ekstep/ep/samza/system/Event.java
++++ /dev/null
+@@ -1,54 +0,0 @@
+-package org.ekstep.ep.samza.system;
+-
+-
+-import java.util.HashMap;
+-import java.util.Map;
+-
+-public class Event {
+-    private final Map<String, Object> map;
+-
+-    public Event(Map<String,Object> map) {
+-        this.map = map;
+-    }
+-
+-    public String getGPSCoordinates() {
+-        try {
+-            Map<String, Object> edata = (Map<String, Object>) map.get("edata");
+-            Map<String, Object> eks = (Map<String, Object>) edata.get("eks");
+-            return (String) eks.get("loc");
+-        }catch (Exception e){
+-            return "";
+-        }
+-    }
+-
+-    public void AddLocation(Location location){
+-        Map<String, String> ldata = new HashMap<String, String>();
+-        ldata.put("locality", location.getCity());
+-        ldata.put("district", location.getDistrict());
+-        ldata.put("state", location.getState());
+-        ldata.put("country", location.getCountry());
+-        map.put("ldata", ldata);
+-    }
+-    public String getDid() {
+-        return (String)map.get("did");
+-    }
+-
+-    public Map<String, Object> getMap() {
+-        return map;
+-    }
+-
+-
+-    public void setFlag(String key, Object value) {
+-        Map<String, Object> flags=null;
+-        try {
+-            flags = (Map<String, Object>) map.get("flags");
+-        }catch(Exception e){
+-        }
+-        if (flags==null){
+-            flags = new HashMap<String, Object>();
+-        }
+-        flags.put(key,value);
+-        map.put("flags",flags);
+-    }
+-}
+-
+diff --git a/data-pipeline/src/main/java/org/ekstep/ep/samza/system/Location.java b/data-pipeline/src/main/java/org/ekstep/ep/samza/system/Location.java
+deleted file mode 100644
+index 6d80082..0000000
+--- a/data-pipeline/src/main/java/org/ekstep/ep/samza/system/Location.java
++++ /dev/null
+@@ -1,54 +0,0 @@
+-/*
+- * Licensed to the Apache Software Foundation (ASF) under one
+- * or more contributor license agreements.  See the NOTICE file
+- * distributed with this work for additional information
+- * regarding copyright ownership.  The ASF licenses this file
+- * to you under the Apache License, Version 2.0 (the
+- * "License"); you may not use this file except in compliance
+- * with the License.  You may obtain a copy of the License at
+- *
+- *   http://www.apache.org/licenses/LICENSE-2.0
+- *
+- * Unless required by applicable law or agreed to in writing,
+- * software distributed under the License is distributed on an
+- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+- * KIND, either express or implied.  See the License for the
+- * specific language governing permissions and limitations
+- * under the License.
+- */
+-
+-package org.ekstep.ep.samza.system;
+-
+-public class Location {
+-  private String city;
+-  private String district;
+-  private String state;
+-  private String country;
+-  public String getCity(){
+-    return this.city;
+-  }
+-  public void setCity(String city){
+-    this.city = city;
+-  }
+-  public String getDistrict(){
+-    return this.district;
+-  }
+-  public void setDistrict(String district){
+-    this.district = district;
+-  }
+-  public String getState(){
+-    return this.state;
+-  }
+-  public void setState(String state){
+-    this.state = state;
+-  }
+-  public String getCountry(){
+-    return this.country;
+-  }
+-  public void setCountry(String country){
+-    this.country = country;
+-  }
+-  public Boolean isReverseSearched(){
+-    return this.city != null && this.district != null && this.state != null && this.country != null;
+-  }
+-}
+diff --git a/data-pipeline/src/main/java/org/ekstep/ep/samza/task/ReverseSearchStreamTask.java b/data-pipeline/src/main/java/org/ekstep/ep/samza/task/ReverseSearchStreamTask.java
+deleted file mode 100644
+index d1781a7..0000000
+--- a/data-pipeline/src/main/java/org/ekstep/ep/samza/task/ReverseSearchStreamTask.java
++++ /dev/null
+@@ -1,129 +0,0 @@
+-/*
+- * Licensed to the Apache Software Foundation (ASF) under one
+- * or more contributor license agreements.  See the NOTICE file
+- * distributed with this work for additional information
+- * regarding copyright ownership.  The ASF licenses this file
+- * to you under the Apache License, Version 2.0 (the
+- * "License"); you may not use this file except in compliance
+- * with the License.  You may obtain a copy of the License at
+- *
+- *   http://www.apache.org/licenses/LICENSE-2.0
+- *
+- * Unless required by applicable law or agreed to in writing,
+- * software distributed under the License is distributed on an
+- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+- * KIND, either express or implied.  See the License for the
+- * specific language governing permissions and limitations
+- * under the License.
+- */
+-
+-package org.ekstep.ep.samza.task;
+-
+-import com.cedarsoftware.util.io.JsonReader;
+-import com.cedarsoftware.util.io.JsonWriter;
+-import org.apache.samza.config.Config;
+-import org.apache.samza.storage.kv.KeyValueStore;
+-import org.apache.samza.system.IncomingMessageEnvelope;
+-import org.apache.samza.system.OutgoingMessageEnvelope;
+-import org.apache.samza.system.SystemStream;
+-import org.apache.samza.task.*;
+-import org.ekstep.ep.samza.actions.GoogleReverseSearch;
+-import org.ekstep.ep.samza.api.GoogleGeoLocationAPI;
+-import org.ekstep.ep.samza.system.Device;
+-import org.ekstep.ep.samza.system.Event;
+-import org.ekstep.ep.samza.system.Location;
+-
+-import java.util.Map;
+-
+-public class ReverseSearchStreamTask implements StreamTask, InitableTask {
+-
+-    private KeyValueStore<String, Object> reverseSearchStore;
+-    private KeyValueStore<String, Object> deviceStore;
+-    private GoogleReverseSearch googleReverseSearch;
+-
+-    public void init(Config config, TaskContext context) {
+-        String apiKey = config.get("google.api.key", "");
+-        this.reverseSearchStore = (KeyValueStore<String, Object>) context.getStore("reverse-search");
+-        this.deviceStore = (KeyValueStore<String, Object>) context.getStore("device");
+-        googleReverseSearch = new GoogleReverseSearch(new GoogleGeoLocationAPI(apiKey));
+-    }
+-
+-    public ReverseSearchStreamTask() {
+-    }
+-
+-    public ReverseSearchStreamTask(KeyValueStore<String, Object> reverseSearchStore, KeyValueStore<String, Object> deviceStore, GoogleReverseSearch googleReverseSearch) {
+-        this.reverseSearchStore = reverseSearchStore;
+-        this.deviceStore = deviceStore;
+-        this.googleReverseSearch = googleReverseSearch;
+-    }
+-
+-    @SuppressWarnings("unchecked")
+-    @Override
+-    public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) {
+-        Map<String, Object> jsonObject;
+-        Location location = null;
+-        Device device = null;
+-        try {
+-            jsonObject = (Map<String, Object>) envelope.getMessage();
+-            processEvent(new Event(jsonObject), collector);
+-        } catch (Exception e) {
+-            System.err.println("Error while getting message");
+-        }
+-    }
+-
+-    public void processEvent(Event event, MessageCollector collector) {
+-        Location location = null;
+-        Device device = null;
+-        try {
+-
+-            String loc = event.getGPSCoordinates();
+-            String did = event.getDid();
+-
+-            if (loc != null && !loc.isEmpty()) {
+-                String stored_location = (String) reverseSearchStore.get(loc);
+-                if (stored_location == null) {
+-                    // do reverse search
+-                    System.out.println("Performing reverse search");
+-                    location = googleReverseSearch.getLocation(loc);
+-                    String json = JsonWriter.objectToJson(location);
+-
+-                    System.out.println("Setting device loc in stores");
+-                    reverseSearchStore.put(loc, json);
+-                    device = new Device(did);
+-                    device.setLocation(location);
+-                    String djson = JsonWriter.objectToJson(device);
+-                    deviceStore.put(did, djson);
+-                } else {
+-                    System.out.println("Picking store data for reverse search");
+-                    location = (Location) JsonReader.jsonToJava(stored_location);
+-                }
+-            } else {
+-                System.out.println("Trying to pick from device");
+-                String stored_device = (String) deviceStore.get(did);
+-                device = (Device) JsonReader.jsonToJava(stored_device);
+-                location = device.getLocation();
+-            }
+-        } catch (Exception e) {
+-            System.out.println(e);
+-            System.err.println("unable to parse");
+-        }
+-        System.out.println("ok");
+-        try {
+-            if (location != null) {
+-                event.AddLocation(location);
+-                event.setFlag("ldata_obtained",true);
+-            } else {
+-                event.setFlag("ldata_obtained", false);
+-                collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", "events_failed_location"), event.getMap()));
+-            }
+-            event.setFlag("ldata_processed",true);
+-            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", "events_with_location"), event.getMap()));
+-        } catch (Exception e) {
+-            System.out.println("ok");
+-            e.printStackTrace();
+-            System.err.println("!");
+-        }
+-
+-    }
+-
+-}
+diff --git a/data-pipeline/src/main/resources/log4j.xml b/data-pipeline/src/main/resources/log4j.xml
+deleted file mode 100644
+index f0de765..0000000
+--- a/data-pipeline/src/main/resources/log4j.xml
++++ /dev/null
+@@ -1,39 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8" ?>
+-<!--
+-
+- Licensed to the Apache Software Foundation (ASF) under one
+- or more contributor license agreements.  See the NOTICE file
+- distributed with this work for additional information
+- regarding copyright ownership.  The ASF licenses this file
+- to you under the Apache License, Version 2.0 (the
+- "License"); you may not use this file except in compliance
+- with the License.  You may obtain a copy of the License at
+-
+-   http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing,
+- software distributed under the License is distributed on an
+- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+- KIND, either express or implied.  See the License for the
+- specific language governing permissions and limitations
+- under the License.
+-
+--->
+-
+-<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+-<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+-  <appender name="jmx" class="org.apache.samza.logging.log4j.JmxAppender" />
+-
+-  <appender name="RollingAppender" class="org.apache.log4j.DailyRollingFileAppender">
+-     <param name="File" value="${samza.log.dir}/${samza.container.name}.log" />
+-     <param name="DatePattern" value="'.'yyyy-MM-dd" />
+-     <layout class="org.apache.log4j.PatternLayout">
+-      <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %c{1} [%p] %m%n" />
+-     </layout>
+-  </appender>
+-  <root>
+-    <priority value="info" />
+-    <appender-ref ref="RollingAppender"/>
+-    <appender-ref ref="jmx" />
+-  </root>
+-</log4j:configuration>
+diff --git a/data-pipeline/src/test/java/org/ekstep/ep/samza/actions/GoogleReverseSearchTest.java b/data-pipeline/src/test/java/org/ekstep/ep/samza/actions/GoogleReverseSearchTest.java
+deleted file mode 100644
+index d740c3a..0000000
+--- a/data-pipeline/src/test/java/org/ekstep/ep/samza/actions/GoogleReverseSearchTest.java
++++ /dev/null
+@@ -1,63 +0,0 @@
+-package org.ekstep.ep.samza.actions;
+-
+-
+-import com.google.gson.Gson;
+-import com.google.maps.model.GeocodingResult;
+-import com.google.maps.model.LatLng;
+-import org.ekstep.ep.samza.api.GoogleGeoLocationAPI;
+-import org.ekstep.ep.samza.system.Location;
+-import org.junit.Assert;
+-import org.junit.Test;
+-
+-import static org.mockito.Matchers.any;
+-import static org.mockito.Mockito.mock;
+-import static org.mockito.Mockito.when;
+-
+-public class GoogleReverseSearchTest {
+-    @Test
+-    public void shouldHandleEmptyLatlong(){
+-        GoogleGeoLocationAPI api = mock(GoogleGeoLocationAPI.class);
+-
+-        GoogleReverseSearch reverseSearch = new GoogleReverseSearch(api);
+-        Assert.assertNull(reverseSearch.getLocation(""));
+-    }
+-
+-    @Test
+-    public void shouldReturnNullForInvalidLatLong(){
+-        GoogleGeoLocationAPI api = mock(GoogleGeoLocationAPI.class);
+-
+-        GoogleReverseSearch reverseSearch = new GoogleReverseSearch(api);
+-        Assert.assertNull(reverseSearch.getLocation("12"));
+-        Assert.assertNull(reverseSearch.getLocation("12:123"));
+-        Assert.assertNull(reverseSearch.getLocation("12:123,345"));
+-        Assert.assertNull(reverseSearch.getLocation("invalid,format"));
+-    }
+-
+-    @Test
+-    public void shouldReturnValidLocation(){
+-        GoogleGeoLocationAPI api = mock(GoogleGeoLocationAPI.class);
+-
+-        when(api.requestFor(any(LatLng.class))).thenReturn(generateResult());
+-
+-        GoogleReverseSearch reverseSearch = new GoogleReverseSearch(api);
+-        Location location = reverseSearch.getLocation("12.90,77.62");
+-        Assert.assertNotNull(location);
+-        Assert.assertEquals("Bengaluru", location.getCity());
+-    }
+-
+-    @Test
+-    public void shouldReturnNullForException(){
+-        GoogleGeoLocationAPI api = mock(GoogleGeoLocationAPI.class);
+-
+-        when(api.requestFor(any(LatLng.class))).thenThrow(new RuntimeException());
+-
+-        GoogleReverseSearch reverseSearch = new GoogleReverseSearch(api);
+-        Location location = reverseSearch.getLocation("12.90,77.62");
+-        Assert.assertNull(location);
+-    }
+-    private GeocodingResult[] generateResult(){
+-        GeocodingResult geocodingResult1 = new Gson().fromJson("{\"addressComponents\":[{\"longName\":\"86-87\",\"shortName\":\"86-87\",\"types\":[\"STREET_NUMBER\"]},{\"longName\":\"7th Cross Road\",\"shortName\":\"7th Cross Rd\",\"types\":[\"ROUTE\"]},{\"longName\":\"Koramangala 3 Block\",\"shortName\":\"Koramangala 3 Block\",\"types\":[\"SUBLOCALITY_LEVEL_2\",\"SUBLOCALITY\",\"POLITICAL\"]},{\"longName\":\"Koramangala\",\"shortName\":\"Koramangala\",\"types\":[\"SUBLOCALITY_LEVEL_1\",\"SUBLOCALITY\",\"POLITICAL\"]},{\"longName\":\"Bangalore Urban\",\"shortName\":\"Bangalore Urban\",\"types\":[\"ADMINISTRATIVE_AREA_LEVEL_2\",\"POLITICAL\"]},{\"longName\":\"Karnataka\",\"shortName\":\"KA\",\"types\":[\"ADMINISTRATIVE_AREA_LEVEL_1\",\"POLITICAL\"]},{\"longName\":\"India\",\"shortName\":\"IN\",\"types\":[\"COUNTRY\",\"POLITICAL\"]},{\"longName\":\"560034\",\"shortName\":\"560034\",\"types\":[\"POSTAL_CODE\"]}],\"formattedAddress\":\"86-87, 7th Cross Road, Koramangala 3 Block, Koramangala, Bengaluru, Karnataka 560034, India\",\"geometry\":{\"bounds\":{\"northeast\":{\"lat\":12.931308,\"lng\":77.6242031},\"southwest\":{\"lat\":12.9309016,\"lng\":77.6231573}},\"location\":{\"lat\":12.931065,\"lng\":77.6238324},\"locationType\":\"RANGE_INTERPOLATED\",\"viewport\":{\"northeast\":{\"lat\":12.9324537802915,\"lng\":77.62502918029151},\"southwest\":{\"lat\":12.9297558197085,\"lng\":77.6223312197085}}},\"placeId\":\"Els4Ni04NywgN3RoIENyb3NzIFJvYWQsIEtvcmFtYW5nYWxhIDMgQmxvY2ssIEtvcmFtYW5nYWxhLCBCZW5nYWx1cnUsIEthcm5hdGFrYSA1NjAwMzQsIEluZGlh\",\"types\":[\"street_address\"]}",GeocodingResult.class);
+-        GeocodingResult geocodingResult2 = new Gson().fromJson("{\"addressComponents\":[{\"longName\":\"86-87\",\"shortName\":\"86-87\",\"types\":[\"STREET_NUMBER\"]},{\"longName\":\"7th Cross Road\",\"shortName\":\"7th Cross Rd\",\"types\":[\"ROUTE\"]},{\"longName\":\"Koramangala 3 Block\",\"shortName\":\"Koramangala 3 Block\",\"types\":[\"SUBLOCALITY_LEVEL_2\",\"SUBLOCALITY\",\"POLITICAL\"]},{\"longName\":\"Koramangala\",\"shortName\":\"Koramangala\",\"types\":[\"SUBLOCALITY_LEVEL_1\",\"SUBLOCALITY\",\"POLITICAL\"]},{\"longName\":\"Bengaluru\",\"shortName\":\"Bengaluru\",\"types\":[\"LOCALITY\",\"POLITICAL\"]},{\"longName\":\"Bangalore Urban\",\"shortName\":\"Bangalore Urban\",\"types\":[\"ADMINISTRATIVE_AREA_LEVEL_2\",\"POLITICAL\"]},{\"longName\":\"Karnataka\",\"shortName\":\"KA\",\"types\":[\"ADMINISTRATIVE_AREA_LEVEL_1\",\"POLITICAL\"]},{\"longName\":\"India\",\"shortName\":\"IN\",\"types\":[\"COUNTRY\",\"POLITICAL\"]},{\"longName\":\"560034\",\"shortName\":\"560034\",\"types\":[\"POSTAL_CODE\"]}],\"formattedAddress\":\"86-87, 7th Cross Road, Koramangala 3 Block, Koramangala, Bengaluru, Karnataka 560034, India\",\"geometry\":{\"bounds\":{\"northeast\":{\"lat\":12.931308,\"lng\":77.6242031},\"southwest\":{\"lat\":12.9309016,\"lng\":77.6231573}},\"location\":{\"lat\":12.931065,\"lng\":77.6238324},\"locationType\":\"RANGE_INTERPOLATED\",\"viewport\":{\"northeast\":{\"lat\":12.9324537802915,\"lng\":77.62502918029151},\"southwest\":{\"lat\":12.9297558197085,\"lng\":77.6223312197085}}},\"placeId\":\"Els4Ni04NywgN3RoIENyb3NzIFJvYWQsIEtvcmFtYW5nYWxhIDMgQmxvY2ssIEtvcmFtYW5nYWxhLCBCZW5nYWx1cnUsIEthcm5hdGFrYSA1NjAwMzQsIEluZGlh\",\"types\":[\"street_address\"]}",GeocodingResult.class);
+-        return new GeocodingResult[]{geocodingResult1,geocodingResult2};
+-    }
+-}
+diff --git a/data-pipeline/src/test/java/org/ekstep/ep/samza/system/EventTest.java b/data-pipeline/src/test/java/org/ekstep/ep/samza/system/EventTest.java
+deleted file mode 100644
+index 5c95989..0000000
+--- a/data-pipeline/src/test/java/org/ekstep/ep/samza/system/EventTest.java
++++ /dev/null
+@@ -1,119 +0,0 @@
+-package org.ekstep.ep.samza.system;
+-
+-
+-import org.junit.Assert;
+-import org.junit.Test;
+-
+-import java.util.HashMap;
+-import java.util.Map;
+-
+-import static org.mockito.Mockito.mock;
+-import static org.mockito.Mockito.when;
+-
+-public class EventTest {
+-    @Test
+-    public void shouldReturnEmptyLocationIfNotPresent() {
+-        Map<String,Object> map = new HashMap<String, Object>();
+-        Event event = new Event(map);
+-        Assert.assertEquals("",event.getGPSCoordinates());
+-    }
+-
+-    @Test
+-    public void shouldReturnLocation(){
+-        Map<String,Object> map = getMap("12.44,11.56");
+-        Event event = new Event(map);
+-        Assert.assertEquals("12.44,11.56", event.getGPSCoordinates());
+-    }
+-
+-    @Test
+-    public void shouldGetDeviceID(){
+-        Map<String, Object> map = mock(Map.class);
+-        when(map.get("did")).thenReturn("device_id");
+-
+-        Event event = new Event(map);
+-        Assert.assertEquals("device_id", event.getDid());
+-    }
+-
+-    @Test
+-    public void shouldAddLocation(){
+-        Map<String,Object> map = new HashMap<String, Object>();
+-        Event event = new Event(map);
+-        Location location = getLocation();
+-        event.AddLocation(location);
+-        Map<String,Object>ldata = (Map<String, Object>) map.get("ldata");
+-        Assert.assertEquals("City1",(String)ldata.get("locality"));
+-    }
+-
+-    @Test
+-    public void shouldSetFlagIfNotPresent(){
+-        Map<String,Object> map = new HashMap<String, Object>();
+-        Event event = new Event(map);
+-        event.setFlag("ldata_obtained", true);
+-
+-        Map<String,Object> flags = (Map<String, Object>) map.get("flags");
+-        Assert.assertNotNull(flags);
+-
+-        Assert.assertEquals(true, flags.get("ldata_obtained"));
+-    }
+-
+-    @Test
+-    public void shouldReuseFlagIfPresent(){
+-        Map<String,Object> map = new HashMap<String, Object>();
+-        Map<String, Object> flags = new HashMap<String, Object>();
+-        flags.put("ldata_obtained",false);
+-        map.put("flags",flags);
+-
+-        Event event = new Event(map);
+-        event.setFlag("ldata_obtained", true);
+-
+-        Map<String,Object> flagsResult = (Map<String, Object>) map.get("flags");
+-        Assert.assertNotNull(flagsResult);
+-
+-        Assert.assertEquals(true, flagsResult.get("ldata_obtained"));
+-    }
+-
+-    @Test
+-    public void shouldReuseFlagIfPresentForNewFlagEntry(){
+-        Map<String,Object> map = new HashMap<String, Object>();
+-        Map<String, Object> flags = new HashMap<String, Object>();
+-        flags.put("ldata_obtained",true);
+-        map.put("flags",flags);
+-
+-        Event event = new Event(map);
+-        event.setFlag("ldata_processed", true);
+-
+-        Map<String,Object> flagsResult = (Map<String, Object>) map.get("flags");
+-        Assert.assertNotNull(flagsResult);
+-
+-        Assert.assertEquals(true, flagsResult.get("ldata_obtained"));
+-        Assert.assertEquals(true, flagsResult.get("ldata_processed"));
+-    }
+-
+-    @Test
+-    public void shouldReturnSameMap(){
+-        Map<String,Object> map = new HashMap<String, Object>();
+-        Event event = new Event(map);
+-        Assert.assertEquals(map,event.getMap());
+-    }
+-
+-    private Location getLocation() {
+-        Location location = new Location();
+-        location.setCity("City1");
+-        location.setCountry("India");
+-        location.setDistrict("Dist1");
+-        location.setState("State1");
+-        return location;
+-    }
+-
+-    private Map<String, Object> getMap(Object loc) {
+-        Map<String, Object> eks = mock(Map.class);
+-        when(eks.get("loc")).thenReturn(loc);
+-        Map<String, Object> edata = mock(Map.class);
+-        when(edata.get("eks")).thenReturn(eks);
+-        Map<String, Object> event = mock(Map.class);
+-        when(event.get("edata")).thenReturn(edata);
+-        return event;
+-    }
+-
+-
+-}
+diff --git a/data-pipeline/src/test/java/org/ekstep/ep/samza/system/LocationTest.java b/data-pipeline/src/test/java/org/ekstep/ep/samza/system/LocationTest.java
+deleted file mode 100644
+index 9d4fc8b..0000000
+--- a/data-pipeline/src/test/java/org/ekstep/ep/samza/system/LocationTest.java
++++ /dev/null
+@@ -1,25 +0,0 @@
+-package org.ekstep.ep.samza.system;
+-
+-import org.junit.Assert;
+-import org.junit.Test;
+-
+-public class LocationTest {
+-
+-    @Test
+-    public void reverseSearchedFalseIfAllDataNotAvailable(){
+-        Location loc = new Location();
+-        Assert.assertFalse(loc.isReverseSearched());
+-    }
+-    @Test
+-    public void reverseSearchedTrueIfAllDataAvailable(){
+-        Location location = new Location();
+-        location.setCity("City1");
+-        Assert.assertFalse(location.isReverseSearched());
+-        location.setCountry("India");
+-        Assert.assertFalse(location.isReverseSearched());
+-        location.setDistrict("Dist1");
+-        Assert.assertFalse(location.isReverseSearched());
+-        location.setState("State1");
+-        Assert.assertTrue(location.isReverseSearched());
+-    }
+-}
+diff --git a/data-pipeline/src/test/java/org/ekstep/ep/samza/task/ReverseSearchTest.java b/data-pipeline/src/test/java/org/ekstep/ep/samza/task/ReverseSearchTest.java
+deleted file mode 100644
+index 994f0ef..0000000
+--- a/data-pipeline/src/test/java/org/ekstep/ep/samza/task/ReverseSearchTest.java
++++ /dev/null
+@@ -1,152 +0,0 @@
+-package org.ekstep.ep.samza.task;
+-
+-import org.apache.samza.config.Config;
+-import org.apache.samza.storage.kv.KeyValueStore;
+-import org.apache.samza.system.IncomingMessageEnvelope;
+-import org.apache.samza.system.OutgoingMessageEnvelope;
+-import org.apache.samza.task.MessageCollector;
+-import org.apache.samza.task.TaskContext;
+-import org.apache.samza.task.TaskCoordinator;
+-import org.ekstep.ep.samza.actions.GoogleReverseSearch;
+-import org.ekstep.ep.samza.system.Event;
+-import org.ekstep.ep.samza.system.Location;
+-import org.junit.Assert;
+-import org.junit.Before;
+-import org.junit.Test;
+-
+-import java.util.HashMap;
+-import java.util.Map;
+-
+-import static org.mockito.Mockito.*;
+-
+-public class ReverseSearchTest {
+-
+-    KeyValueStore<String, Object> reverseSearchStore;
+-    KeyValueStore<String, Object> deviceStore;
+-    GoogleReverseSearch googleReverseSearch;
+-    private MessageCollector collector;
+-
+-    @Before
+-    public void setMock() {
+-        reverseSearchStore = mock(KeyValueStore.class);
+-        deviceStore = mock(KeyValueStore.class);
+-        googleReverseSearch = mock(GoogleReverseSearch.class);
+-        collector = mock(MessageCollector.class);
+-    }
+-
+-    @Test
+-    public void shouldDoReverseSearchIfLocPresent() {
+-
+-        when(googleReverseSearch.getLocation("15.9310593,78.6238299")).thenReturn(new Location());
+-
+-        Event event = createEventMock("15.9310593,78.6238299");
+-        when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+-
+-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch);
+-
+-        reverseSearchStreamTask.processEvent(event, collector);
+-        verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
+-        verify(googleReverseSearch, times(1)).getLocation("15.9310593,78.6238299");
+-    }
+-
+-    @Test
+-    public void shouldUpdateProperFlagIfSearchReturnEmpty() {
+-
+-        when(googleReverseSearch.getLocation("15.9310593,78.6238299")).thenReturn(null);
+-        Map<String, Object> map = createMap("15.9310593,78.6238299");
+-        Event event = new Event(map);
+-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch);
+-
+-        reverseSearchStreamTask.processEvent(event, collector);
+-        verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
+-        verify(googleReverseSearch, times(1)).getLocation("15.9310593,78.6238299");
+-
+-        Assert.assertNotNull(event.getMap());
+-
+-        Map<String,Object> flagsResult = (Map<String, Object>) event.getMap().get("flags");
+-        Assert.assertNotNull(flagsResult);
+-
+-        Assert.assertEquals(false, flagsResult.get("ldata_obtained"));
+-        Assert.assertEquals(true, flagsResult.get("ldata_processed"));
+-    }
+-
+-
+-    @Test
+-    public void shouldTakeLocationFromDeviceStoreIfNotPresent() {
+-
+-        when(deviceStore.get("bc811958-b4b7-4873-a43a-03718edba45b")).thenReturn("{\"@type\":\"org.ekstep.ep.samza.system.Device\",\"id\":\"bc811958-b4b7-4873-a43a-03718edba45b\",\"location\":{\"city\":null,\"district\":null,\"state\":null,\"country\":null}}");
+-        Event event = createEventMock("");
+-
+-        when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+-
+-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch);
+-
+-        reverseSearchStreamTask.processEvent(event, collector);
+-        verify(googleReverseSearch, times(0)).getLocation(anyString());
+-        verify(deviceStore, times(1)).get("bc811958-b4b7-4873-a43a-03718edba45b");
+-        verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
+-
+-        Event event1 = createEventMock("");
+-        when(event1.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+-        reverseSearchStreamTask.processEvent(event1, collector);
+-        verify(googleReverseSearch, times(0)).getLocation(anyString());
+-        verify(deviceStore, times(2)).get("bc811958-b4b7-4873-a43a-03718edba45b");
+-        verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
+-    }
+-
+-    @Test
+-    public void shouldTakeLocationfromStore(){
+-        Event event = createEventMock("15.9310593,78.6238299");
+-
+-        when(reverseSearchStore.get("15.9310593,78.6238299")).thenReturn("{\"@type\":\"org.ekstep.ep.samza.system.Location\",\"city\":\"Chennai\",\"district\":\"Chennai\",\"state\":\"Tamil Nadu\",\"country\": \"India\"}");
+-        when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+-
+-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch);
+-
+-        reverseSearchStreamTask.processEvent(event, collector);
+-        verify(deviceStore, times(0)).get(anyString());
+-        verify(reverseSearchStore, times(1)).get("15.9310593,78.6238299");
+-        verify(googleReverseSearch, times(0)).getLocation(anyString());
+-        verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
+-    }
+-
+-    @Test
+-    public void shouldIgnoreInvalidMessages(){
+-
+-        IncomingMessageEnvelope envelope = mock(IncomingMessageEnvelope.class);
+-        when(envelope.getMessage()).thenThrow(new RuntimeException());
+-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask();
+-
+-        Config config = mock(Config.class);
+-        TaskContext context=mock(TaskContext.class);
+-
+-        reverseSearchStreamTask.init(config,context);
+-        when(context.getStore("reverse-search")).thenReturn(reverseSearchStore);
+-        when(context.getStore("device")).thenReturn(deviceStore);
+-        TaskCoordinator task = mock(TaskCoordinator.class);
+-        reverseSearchStreamTask.process(envelope, collector, task);
+-
+-        verify(deviceStore, times(0)).get(anyString());
+-        verify(reverseSearchStore, times(0)).get(anyString());
+-        verify(googleReverseSearch, times(0)).getLocation(anyString());
+-        verify(collector, times(0)).send(any(OutgoingMessageEnvelope.class));
+-
+-    }
+-    private Event createEventMock(String loc) {
+-        Event event = mock(Event.class);
+-
+-        Map<String, Object> eks = mock(Map.class);
+-        when(event.getGPSCoordinates()).thenReturn(loc);
+-        return event;
+-    }
+-
+-    private Map<String,Object> createMap(String loc){
+-        Map<String, Object> eks = mock(Map.class);
+-        when(eks.get("loc")).thenReturn(loc);
+-        Map<String, Object> edata = mock(Map.class);
+-        when(edata.get("eks")).thenReturn(eks);
+-        Map<String, Object> event = new HashMap<String,Object>();
+-        event.put("edata",edata);
+-        return event;
+-    }
+-}
+-- 
+2.3.2
+
