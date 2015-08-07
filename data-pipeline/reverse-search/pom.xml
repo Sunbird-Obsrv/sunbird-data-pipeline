@@ -32,7 +32,7 @@ under the License.
   </parent>
 
   <groupId>org.ekstep.ecosystem.jobs</groupId>
-  <artifactId>ekstep-samza</artifactId>
+  <artifactId>reverse-search</artifactId>
   <version>0.0.1</version>
   <packaging>jar</packaging>
   <name>Reverse Search</name>
@@ -40,18 +40,102 @@ under the License.
     Reverse Searching from loc
   </description>
 
-  <dependencies>
-     <dependency>
-      <groupId>com.cedarsoftware</groupId>
-      <artifactId>json-io</artifactId>
-      <version>4.0.0</version>
-    </dependency>
-    <dependency>
-        <groupId>com.google.maps</groupId>
-        <artifactId>google-maps-services</artifactId>
-        <version>0.1.7</version>
-    </dependency>
-  </dependencies>
+<dependencies>
+  <dependency>
+    <groupId>org.apache.samza</groupId>
+    <artifactId>samza-api</artifactId>
+    <version>${samza.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>org.apache.samza</groupId>
+    <artifactId>samza-core_2.10</artifactId>
+    <version>${samza.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>org.apache.samza</groupId>
+    <artifactId>samza-log4j</artifactId>
+    <version>${samza.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>org.apache.samza</groupId>
+    <artifactId>samza-shell</artifactId>
+    <classifier>dist</classifier>
+    <type>tgz</type>
+    <version>${samza.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>org.apache.samza</groupId>
+    <artifactId>samza-yarn_2.10</artifactId>
+    <version>${samza.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>org.apache.samza</groupId>
+    <artifactId>samza-kv_2.10</artifactId>
+    <version>${samza.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>org.apache.samza</groupId>
+    <artifactId>samza-kv-rocksdb_2.10</artifactId>
+    <version>${samza.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>org.apache.samza</groupId>
+    <artifactId>samza-kafka_2.10</artifactId>
+    <version>${samza.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>org.apache.kafka</groupId>
+    <artifactId>kafka_2.10</artifactId>
+    <version>0.8.2.1</version>
+  </dependency>
+  <dependency>
+    <groupId>org.schwering</groupId>
+    <artifactId>irclib</artifactId>
+    <version>1.10</version>
+  </dependency>
+  <dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-api</artifactId>
+    <version>1.6.2</version>
+  </dependency>
+  <dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-log4j12</artifactId>
+    <version>1.6.2</version>
+  </dependency>
+  <dependency>
+    <groupId>org.codehaus.jackson</groupId>
+    <artifactId>jackson-jaxrs</artifactId>
+    <version>1.8.5</version>
+  </dependency>
+  <dependency>
+    <groupId>org.apache.hadoop</groupId>
+    <artifactId>hadoop-hdfs</artifactId>
+    <version>2.4.0</version>
+  </dependency>
+  <dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>4.12</version>
+    <scope>test</scope>
+  </dependency>
+  <dependency>
+    <groupId>org.mockito</groupId>
+    <artifactId>mockito-core</artifactId>
+    <version>2.0.31-beta</version>
+    <scope>test</scope>
+  </dependency>
+   <dependency>
+    <groupId>com.cedarsoftware</groupId>
+    <artifactId>json-io</artifactId>
+    <version>4.0.0</version>
+  </dependency>
+  <dependency>
+      <groupId>com.google.maps</groupId>
+      <artifactId>google-maps-services</artifactId>
+      <version>0.1.7</version>
+  </dependency>
+</dependencies>
 
   <build>
     <plugins>

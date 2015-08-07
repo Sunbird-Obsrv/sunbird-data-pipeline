@@ -14,7 +14,7 @@
   xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
-  <id>dist</id>
+  <id>distribution</id>
   <formats>
     <format>tar.gz</format>
   </formats>
@@ -59,12 +59,16 @@
         <include>org.apache.samza:samza-yarn_2.10</include>
         <include>org.apache.samza:samza-kv-rocksdb_2.10</include>
         <include>org.apache.samza:samza-log4j</include>
-        <include>org.ekstep.ecosystem.jobs:ekstep-samza</include>
+        <include>org.ekstep.ecosystem.jobs:reverse-search</include>
         <include>org.slf4j:slf4j-log4j12</include>
         <include>org.apache.kafka:kafka_2.10</include>
         <include>org.apache.hadoop:hadoop-hdfs</include>
       </includes>
       <useTransitiveFiltering>true</useTransitiveFiltering>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/</outputDirectory>
+      <unpack>false</unpack>
     </dependencySet>
   </dependencySets>
 </assembly>
