@@ -7,9 +7,10 @@ import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.model.Child;
-import org.ekstep.ep.samza.model.Database;
+import org.ekstep.ep.samza.model.ChildDto;
 import org.ekstep.ep.samza.model.Event;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 public class DeNormalizationTask implements StreamTask, InitableTask{
@@ -56,15 +57,25 @@ public class DeNormalizationTask implements StreamTask, InitableTask{
 
     private Child getChild(Event event) {
         Child child = event.getChild();
+        System.out.println("trying to get a child");
         if(child == null){
             System.out.println("Exiting couldn't process the data");
             return null;
         }
+        System.out.println("child not null");
+        System.out.println("child is processed:"+child.isProcessed());
+        System.out.println("child can be processed:"+child.canBeProcessed());
         if(!child.isProcessed() && child.canBeProcessed()){
+
             Child cachedChild = childData.get(child.getUid());
             if(cachedChild == null){
                 System.out.println("Getting data from db");
-                child.update(new Database(dbHost,dbPort,dbSchema,dbUserName,dbPassword));
+                ChildDto dataSource = new ChildDto(dbHost, dbPort, dbSchema, dbUserName, dbPassword);
+                try {
+                    dataSource.update(child);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
             else{
                 System.out.println("Cached data");

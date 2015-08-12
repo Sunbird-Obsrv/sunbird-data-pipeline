@@ -3,11 +3,18 @@ package org.ekstep.ep.samza.model;
 import java.io.Serializable;
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
 public class Child implements Serializable {
+    public static final String UNAME = "uname";
+    public static final String UEKSTEP_ID = "uekstep_id";
+    public static final String GENDER = "gender";
+    public static final String AGE_COMPLETED_YEARS = "age_completed_years";
+    public static final String DOB = "dob";
+    public static final String AGE = "age";
     private String uid;
     private Boolean child_data_processed;
     private long age;
@@ -18,20 +25,21 @@ public class Child implements Serializable {
     private String uEkStepId;
     private long timeOfReference;
 
-    public Child(String uid, Boolean child_data_processed, long timeOfReference) {
+    public Child(String uid, Boolean child_data_processed, long timeOfReference, Map<String, Object> udata) {
         this.uid = uid;
-        this.child_data_processed = child_data_processed;
+        this.child_data_processed = child_data_processed == null ? false : child_data_processed;
         this.timeOfReference = timeOfReference;
+        initialize(udata);
     }
 
-    public void populate(Map<String, Object> udata) {
+    private void initialize(Map<String, Object> udata) {
         if(udata == null) return;
-        this.age = ((Integer) udata.get("age"));
-        this.dob = ((String) udata.get("dob"));
-        this.age_completed_years = ((Integer) udata.get("age_completed_years"));
-        this.gender = ((String) udata.get("gender"));
-        this.uName = ((String) udata.get("uname"));
-        this.uEkStepId = ((String) udata.get("uekstep_id"));
+        this.age = ((Integer) udata.get(AGE));
+        this.dob = ((String) udata.get(DOB));
+        this.age_completed_years = ((Integer) udata.get(AGE_COMPLETED_YEARS));
+        this.gender = ((String) udata.get(GENDER));
+        this.uName = ((String) udata.get(UNAME));
+        this.uEkStepId = ((String) udata.get(UEKSTEP_ID));
     }
 
     public Boolean isProcessed(){
@@ -44,44 +52,33 @@ public class Child implements Serializable {
 
     public HashMap<String, Object> getData() {
         HashMap<String, Object> udata = new HashMap<String, Object>();
-        udata.put("uname", this.uName);
-        udata.put("dob", this.dob);
-        udata.put("age", this.age);
-        udata.put("age_completed_years", this.age_completed_years);
-        udata.put("gender", this.gender);
-        udata.put("uekstep_id", this.uEkStepId);
+        udata.put(UNAME, this.uName);
+        udata.put(DOB, this.dob);
+        udata.put(AGE, this.age);
+        udata.put(AGE_COMPLETED_YEARS, this.age_completed_years);
+        udata.put(GENDER, this.gender);
+        udata.put(UEKSTEP_ID, this.uEkStepId);
         return udata;
     }
 
-    public void update(Database dataSource){
-        String query = String.format("select * from child where encoded_id = %s", uid);
-        ResultSet childData = dataSource.get(query);
-        if(childData != null)
-            populate(childData);
-    }
-
-    private void populate(ResultSet childData) {
-        try {
-            System.out.println("trying to read from database");
-            String name = childData.getString("name");
-            String gender = childData.getString("gender");
-            String ekstep_id = childData.getString("ekstep_id");
-            Timestamp dob = childData.getTimestamp("dob");
-            long dobTicks = dob.getTime();
-            long secondsInYear = 31556952;
-            this.age = timeOfReference - dobTicks;
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("IST"));
-            this.dob = simpleDateFormat.format(dob);
-            this.age_completed_years = (int) (age/secondsInYear);
-            this.uName = name;
-            this.gender = gender;
-            this.uEkStepId = ekstep_id;
-            this.child_data_processed = true;
-            System.out.println("successfully read from db");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void populate(HashMap<String, Object> childData) {
+        System.out.println("trying to read from database");
+        String name = (String)childData.get("name");
+        String gender = (String)childData.get(GENDER);
+        String ekstep_id = (String)childData.get("ekstep_id");
+        Timestamp dob = (Timestamp)childData.get(DOB);
+        long dobTicks = dob.getTime();
+        long secondsInYear = 31556952;
+        this.age = timeOfReference - dobTicks;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("IST"));
+        this.dob = simpleDateFormat.format(dob);
+        this.age_completed_years = (int) (age/secondsInYear);
+        this.uName = name;
+        this.gender = gender;
+        this.uEkStepId = ekstep_id;
+        this.child_data_processed = true;
+        System.out.println("successfully read from db");
     }
 
     public String getUid() {
