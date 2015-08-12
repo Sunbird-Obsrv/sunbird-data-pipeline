@@ -26,7 +26,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask{
     public void init(Config config, TaskContext context) throws Exception {
         successTopic = config.get("output.success.topic.name", "events_with_de_normalization");
         failedTopic = config.get("output.failed.topic.name", "events_failed_de_normalization");
-        childData = (KeyValueStore<String, Child>) context.getStore("deNormalization");
+        childData = (KeyValueStore<String, Child>) context.getStore("de-normalization");
         dbHost = config.get("db.host");
         dbPort = config.get("db.port");
         dbUserName = config.get("db.userName");
