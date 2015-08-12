@@ -1,7 +1,11 @@
 package org.ekstep.ep.samza.model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class Event {
    private  final Map<String, Object> map;
@@ -11,13 +15,21 @@ public class Event {
    }
 
    public Child getChild() {
-      String uid = (String) map.get("uid");
-      Map<String, Object> udata = (Map<String, Object>) map.get("udata");
-      Map<String, Boolean> flags = (Map<String, Boolean>) map.get("flags");
-      Child child = new Child(uid, flags.get("child_data_processed"), Long.parseLong((String)map.get("ts")));
-      child.populate(udata);
-      return child;
-
+      try {
+         String uid = (String) map.get("uid");
+         Map<String, Object> udata = (Map<String, Object>) map.get("udata");
+         Map<String, Boolean> flags = (Map<String, Boolean>) map.get("flags");
+         String timeOfEvent = (String) map.get("ts");
+         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("IST"));
+         long timeOfEventTicks = simpleDateFormat.parse(timeOfEvent).getTime();
+         Child child = new Child(uid, flags.get("child_data_processed"), timeOfEventTicks);
+         child.populate(udata);
+         return child;
+      } catch (ParseException e) {
+         e.printStackTrace();
+      }
+      return null;
    }
 
    public void update(Child child) {

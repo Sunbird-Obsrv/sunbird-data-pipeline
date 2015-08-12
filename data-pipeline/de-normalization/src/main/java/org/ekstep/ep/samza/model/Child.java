@@ -1,11 +1,13 @@
 package org.ekstep.ep.samza.model;
 
+import java.io.Serializable;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
-public class Child {
+public class Child implements Serializable {
     private String uid;
     private Boolean child_data_processed;
     private long age;
@@ -23,9 +25,10 @@ public class Child {
     }
 
     public void populate(Map<String, Object> udata) {
-        this.age = Long.parseLong(((String) udata.get("age")));
+        if(udata == null) return;
+        this.age = ((Integer) udata.get("age"));
         this.dob = ((String) udata.get("dob"));
-        this.age_completed_years = (Integer.parseInt(((String) udata.get("age_completed_years"))));
+        this.age_completed_years = ((Integer) udata.get("age_completed_years"));
         this.gender = ((String) udata.get("gender"));
         this.uName = ((String) udata.get("uname"));
         this.uEkStepId = ((String) udata.get("uekstep_id"));
@@ -40,7 +43,6 @@ public class Child {
     }
 
     public HashMap<String, Object> getData() {
-        HashMap<String, Object> map = new HashMap<String, Object>();
         HashMap<String, Object> udata = new HashMap<String, Object>();
         udata.put("uname", this.uName);
         udata.put("dob", this.dob);
@@ -48,8 +50,7 @@ public class Child {
         udata.put("age_completed_years", this.age_completed_years);
         udata.put("gender", this.gender);
         udata.put("uekstep_id", this.uEkStepId);
-        map.put("udata", udata);
-        return map;
+        return udata;
     }
 
     public void update(Database dataSource){
@@ -69,7 +70,9 @@ public class Child {
             long dobTicks = dob.getTime();
             long secondsInYear = 31556952;
             this.age = timeOfReference - dobTicks;
-            this.dob = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(dob);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("IST"));
+            this.dob = simpleDateFormat.format(dob);
             this.age_completed_years = (int) (age/secondsInYear);
             this.uName = name;
             this.gender = gender;

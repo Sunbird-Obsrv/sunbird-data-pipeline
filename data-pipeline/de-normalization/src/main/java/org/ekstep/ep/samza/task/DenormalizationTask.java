@@ -39,7 +39,8 @@ public class DeNormalizationTask implements StreamTask, InitableTask{
         Map<String, Object> message = (Map<String, Object>) envelope.getMessage();
         Event event = new Event(message);
         Child child = getChild(event);
-        populateTopic(collector, event, child);
+        if(child!= null)
+            populateTopic(collector, event, child);
     }
 
     private void populateTopic(MessageCollector collector, Event event, Child child) {
@@ -55,7 +56,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask{
 
     private Child getChild(Event event) {
         Child child = event.getChild();
-        if(!child.isProcessed() && child.canBeProcessed()){
+        if(child!= null && !child.isProcessed() && child.canBeProcessed()){
             Child cachedChild = childData.get(child.getUid());
             if(cachedChild == null)
                 child.update(new Database(dbHost,dbPort,dbSchema,dbUserName,dbPassword));
