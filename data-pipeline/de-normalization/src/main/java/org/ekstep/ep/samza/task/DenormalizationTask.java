@@ -56,12 +56,20 @@ public class DeNormalizationTask implements StreamTask, InitableTask{
 
     private Child getChild(Event event) {
         Child child = event.getChild();
-        if(child!= null && !child.isProcessed() && child.canBeProcessed()){
+        if(child == null){
+            System.out.println("Exiting couldn't process the data");
+            return null;
+        }
+        if(!child.isProcessed() && child.canBeProcessed()){
             Child cachedChild = childData.get(child.getUid());
-            if(cachedChild == null)
+            if(cachedChild == null){
+                System.out.println("Getting data from db");
                 child.update(new Database(dbHost,dbPort,dbSchema,dbUserName,dbPassword));
-            else
+            }
+            else{
+                System.out.println("Cached data");
                 child = cachedChild;
+            }
             event.update(child);
         }
         return child;

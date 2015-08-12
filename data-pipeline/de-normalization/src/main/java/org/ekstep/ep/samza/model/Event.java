@@ -20,9 +20,11 @@ public class Event {
          Map<String, Object> udata = (Map<String, Object>) map.get("udata");
          Map<String, Boolean> flags = (Map<String, Boolean>) map.get("flags");
          String timeOfEvent = (String) map.get("ts");
+         System.out.println("trying to parse:"+timeOfEvent);
          SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
          simpleDateFormat.setTimeZone(TimeZone.getTimeZone("IST"));
          long timeOfEventTicks = simpleDateFormat.parse(timeOfEvent).getTime();
+         System.out.println("successfully parsed");
          Child child = new Child(uid, flags.get("child_data_processed"), timeOfEventTicks);
          child.populate(udata);
          return child;

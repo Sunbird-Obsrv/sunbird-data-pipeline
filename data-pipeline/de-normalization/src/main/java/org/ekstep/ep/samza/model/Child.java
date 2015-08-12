@@ -54,7 +54,6 @@ public class Child implements Serializable {
     }
 
     public void update(Database dataSource){
-
         String query = String.format("select * from child where encoded_id = %s", uid);
         ResultSet childData = dataSource.get(query);
         if(childData != null)
@@ -63,6 +62,7 @@ public class Child implements Serializable {
 
     private void populate(ResultSet childData) {
         try {
+            System.out.println("trying to read from database");
             String name = childData.getString("name");
             String gender = childData.getString("gender");
             String ekstep_id = childData.getString("ekstep_id");
@@ -78,6 +78,7 @@ public class Child implements Serializable {
             this.gender = gender;
             this.uEkStepId = ekstep_id;
             this.child_data_processed = true;
+            System.out.println("successfully read from db");
         } catch (SQLException e) {
             e.printStackTrace();
         }
