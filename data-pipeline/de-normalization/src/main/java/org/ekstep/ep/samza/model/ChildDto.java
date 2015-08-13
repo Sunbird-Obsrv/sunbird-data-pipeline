@@ -24,19 +24,18 @@ public class ChildDto {
         this.password = password;
     }
 
-    public void update(Child child) throws SQLException {
+    public void process(Child child) throws SQLException {
         String query = String.format("select * from children where encoded_id = '%s'", child.getUid());
         HashMap<String, Object> childData = new HashMap<String, Object>();
         Statement statement = null;
-        Connection connect=null;
+        Connection connection=null;
         ResultSet resultSet = null;
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            String connectionString = String.format("jdbc:mysql://%s:%s/%s?"
-                    + "user=%s&password=%s", host, port, schema, userName, password);
-            connect = DriverManager
-                    .getConnection(connectionString);
-            statement = connect.createStatement();
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            String url = String.format("jdbc:mysql://%s:%s/%s", host,port,schema);
+            connection = DriverManager
+                    .getConnection(url,userName,password);
+            statement = connection.createStatement();
 
             resultSet = statement.executeQuery(query);
             while (resultSet.next()){
@@ -49,12 +48,15 @@ public class ChildDto {
 
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        }
-        finally {
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } finally {
             if(statement!=null)
                 statement.close();
-            if(connect!=null)
-                connect.close();
+            if(connection!=null)
+                connection.close();
             if(resultSet!=null)
                 resultSet.close();
 

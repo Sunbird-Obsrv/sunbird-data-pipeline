@@ -67,9 +67,9 @@ public class Child implements Serializable {
         String gender = (String)childData.get(GENDER);
         String ekstep_id = (String)childData.get("ekstep_id");
         Timestamp dob = (Timestamp)childData.get(DOB);
-        long dobTicks = dob.getTime();
+        long dobTicksInSeconds = dob.getTime()/1000;
         long secondsInYear = 31556952;
-        this.age = timeOfReference - dobTicks;
+        this.age = timeOfReference - dobTicksInSeconds;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("IST"));
         this.dob = simpleDateFormat.format(dob);
