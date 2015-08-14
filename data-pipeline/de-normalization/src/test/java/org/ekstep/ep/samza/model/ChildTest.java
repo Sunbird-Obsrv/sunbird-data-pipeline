@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.TimeZone;
 
@@ -50,17 +49,24 @@ public class ChildTest {
     }
 
     @Test
-    public void ShouldNotBeAbleToProcessIfUidIsNull() {
-        Child child = new Child(null, false, 123456789, null);
+    public void ShouldNotBeProcessedIfAlreadyProcessed() {
+        Child child = new Child("1234abcd", true, 123456789, null);
 
-        assertFalse(child.canBeProcessed());
+        assertFalse(child.needsToBeProcessed());
     }
 
     @Test
-    public void ShouldNotBeAbleToProcessIfUidIsEmpty() {
+    public void ShouldNotBeProcessIfUidIsNull() {
+        Child child = new Child(null, false, 123456789, null);
+
+        assertFalse(child.needsToBeProcessed());
+    }
+
+    @Test
+    public void ShouldNotBeProcessIfUidIsEmpty() {
         Child child = new Child("", false, 123456789, null);
 
-        assertFalse(child.canBeProcessed());
+        assertFalse(child.needsToBeProcessed());
     }
 
     @Test

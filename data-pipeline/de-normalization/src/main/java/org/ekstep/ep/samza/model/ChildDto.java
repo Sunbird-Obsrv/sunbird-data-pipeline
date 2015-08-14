@@ -1,7 +1,6 @@
 package org.ekstep.ep.samza.model;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ChildDto {
@@ -24,7 +23,7 @@ public class ChildDto {
         this.password = password;
     }
 
-    public void process(Child child) throws SQLException {
+    public Child process(Child child) throws SQLException {
         String query = String.format("select * from children where encoded_id = '%s'", child.getUid());
         HashMap<String, Object> childData = new HashMap<String, Object>();
         Statement statement = null;
@@ -45,6 +44,7 @@ public class ChildDto {
                 childData.put(DOB, resultSet.getTimestamp(DOB));
             }
             child.populate(childData);
+            return child;
 
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -61,5 +61,6 @@ public class ChildDto {
                 resultSet.close();
 
         }
+        return child;
     }
 }

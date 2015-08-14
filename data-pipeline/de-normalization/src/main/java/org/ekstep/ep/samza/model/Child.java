@@ -1,9 +1,8 @@
 package org.ekstep.ep.samza.model;
 
 import java.io.Serializable;
-import java.sql.*;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
@@ -46,8 +45,8 @@ public class Child implements Serializable {
         return child_data_processed;
     }
 
-    public Boolean canBeProcessed(){
-        return uid!= null && !uid.isEmpty();
+    public Boolean needsToBeProcessed(){
+        return !isProcessed() && uid != null && !uid.isEmpty();
     }
 
     public HashMap<String, Object> getData() {
