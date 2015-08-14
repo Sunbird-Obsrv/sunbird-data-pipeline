@@ -11,42 +11,42 @@ public class UidValidatorTest {
 
     @Test
     public void TestShouldBeInvalidWhenMapIsNull() {
-        TimestampValidator timestampValidator = new TimestampValidator(null);
+        UidValidator uidValidator = new UidValidator(null);
 
-        assertTrue(timestampValidator.isInvalid());
+        assertTrue(uidValidator.isInvalid());
     }
 
     @Test
     public void ShouldBeInvalidWhenMapIsEmpty() {
-        TimestampValidator timestampValidator = new TimestampValidator(new HashMap<String, Object>());
+        UidValidator uidValidator = new UidValidator(new HashMap<String, Object>());
 
-        assertTrue(timestampValidator.isInvalid());
+        assertTrue(uidValidator.isInvalid());
     }
 
     @Test
     public void ShouldBeInvalidWhenMapDoesNotHaveUidKey() {
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("some key", "some value");
-        TimestampValidator timestampValidator = new TimestampValidator(map);
+        UidValidator uidValidator = new UidValidator(map);
 
-        assertTrue(timestampValidator.isInvalid());
+        assertTrue(uidValidator.isInvalid());
     }
     @Test
     public void ShouldBeInvalidWhenUidKeyInMapIsEmpty() {
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("uid", "");
-        TimestampValidator timestampValidator = new TimestampValidator(map);
+        UidValidator uidValidator = new UidValidator(map);
 
-        assertTrue(timestampValidator.isInvalid());
+        assertTrue(uidValidator.isInvalid());
     }
 
     @Test
     public void ShouldBeValidWhenThereIsUidKeyInMap() {
         HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put("uid", "2008-06-16T00:00:00 +0530");
-        TimestampValidator timestampValidator = new TimestampValidator(map);
+        map.put("uid", "1234321");
+        UidValidator uidValidator = new UidValidator(map);
 
-        assertFalse(timestampValidator.isInvalid());
+        assertFalse(uidValidator.isInvalid());
     }
 
 }
