@@ -215,6 +215,25 @@ public class EventTest {
         validateUdata(actualUdata);
     }
 
+    @Test
+    public void ShouldNotUpdateIfChildIsNotProcessed() throws SQLException {
+        map.put("ts", "2008-06-16T00:00:00 +0530");
+        map.put("uid", UID);
+
+        Child child = new Child(UID, false, 1234321, getUdata());
+        stub(childDtoMock.process(any(Child.class))).toReturn(child);
+
+        Event event = new Event(map, keyValueStoreMock);
+
+        event.initialize();
+        event.process(childDtoMock);
+        Map<String, Object> data = event.getData();
+
+        HashMap<String, Object> actualUdata = (HashMap<String, Object>)data.get("udata");
+        assertEquals(UID, data.get("uid"));
+        assertEquals(null, actualUdata);
+    }
+
     private void validateUdata(HashMap<String, Object> actualUdata) {
         HashMap<String, Object> expectedUdata = getUdata();
 

@@ -51,16 +51,15 @@ public class DenormalizationTaskTest{
     }
 
     @Test
-    public void ShouldSendOutputToFailedTopic() throws Exception {
+    public void ShouldSendOutputToFailedTopicAndSuccessTopic() throws Exception {
         stub(eventMock.isProcessed()).toReturn(false);
         HashMap<String, Object> message = new HashMap<String, Object>();
         stub(eventMock.getData()).toReturn(message);
-        deNormalizationTask.init(configMock,Mockito.mock(TaskContext.class));
+        deNormalizationTask.init(configMock, Mockito.mock(TaskContext.class));
 
         deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
 
-        verify(collectorMock).send(argThat(validateOutputTopic(message, "events_failed_de_normalization")));
-
+        verify(collectorMock,times(2)).send(any(OutgoingMessageEnvelope.class));
     }
 
     @Test
@@ -68,7 +67,7 @@ public class DenormalizationTaskTest{
         stub(eventMock.isProcessed()).toReturn(true);
         HashMap<String, Object> message = new HashMap<String, Object>();
         stub(eventMock.getData()).toReturn(message);
-        deNormalizationTask.init(configMock,Mockito.mock(TaskContext.class));
+        deNormalizationTask.init(configMock, Mockito.mock(TaskContext.class));
 
         deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
 

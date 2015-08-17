@@ -61,7 +61,8 @@ public class Event {
                 System.out.println("Processing child data, getting data from db");
                 child = childDto.process(child);
             }
-            update(child);
+            if(child.isProcessed())
+                update(child);
         } catch (SQLException e) {
             e.printStackTrace();
         }
