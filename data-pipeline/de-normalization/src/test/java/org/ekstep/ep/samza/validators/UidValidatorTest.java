@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.util.HashMap;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -47,6 +48,11 @@ public class UidValidatorTest {
         UidValidator uidValidator = new UidValidator(map);
 
         assertFalse(uidValidator.isInvalid());
+    }
+
+    @Test
+    public void ShouldPopulateProperErrorMessage() {
+        assertEquals("No uid in the event, skipping the event", new UidValidator(null).getErrorMessage());
     }
 
 }

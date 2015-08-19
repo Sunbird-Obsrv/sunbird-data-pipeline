@@ -49,4 +49,8 @@ public class TimestampValidatorTest{
         assertFalse(timestampValidator.isInvalid());
     }
 
+    @Test
+    public void ShouldPopulateCorrectErrorMessage() {
+        assertEquals("No ts in the event, skipping the event", new TimestampValidator(null).getErrorMessage());
+    }
 }

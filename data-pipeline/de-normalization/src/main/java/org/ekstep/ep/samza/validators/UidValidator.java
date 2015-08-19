@@ -20,7 +20,7 @@ public class UidValidator implements IValidator{
 
     @Override
     public String getErrorMessage() {
-        return "No ts in the event, skipping the event";
+        return "No uid in the event, skipping the event";
     }
 
 }

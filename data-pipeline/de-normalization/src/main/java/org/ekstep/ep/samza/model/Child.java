@@ -62,7 +62,7 @@ public class Child implements Serializable {
 
     public void populate(HashMap<String, Object> childData) {
         if(childData == null || childData.isEmpty()){
-            System.out.println("No record in the database, skipping the record");
+            System.err.println("No record in the database, skipping the record");
             return;
         }
         System.out.println("trying to read from database");
@@ -80,7 +80,7 @@ public class Child implements Serializable {
     private void populateAgeRelatedFields(HashMap<String, Object> childData) {
         Timestamp dob = (Timestamp)childData.get(DOB);
         if(dob == null){
-            System.out.println("No dob for the children, skipping all age related fields");
+            System.err.println("No dob for the children, skipping all age related fields");
             return;
         }
         long dobTicksInSeconds = dob.getTime()/1000;
