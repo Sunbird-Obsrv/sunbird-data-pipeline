@@ -21,11 +21,13 @@ public class DeNormalizationTask implements StreamTask, InitableTask{
     private String dbUserName;
     private String dbPassword;
     private String dbSchema;
+    private String retryTopic;
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
         successTopic = config.get("output.success.topic.name", "events_with_de_normalization");
         failedTopic = config.get("output.failed.topic.name", "events_failed_de_normalization");
+        retryTopic = config.get("output.retry.topic.name", "events_retry");
         childData = (KeyValueStore<String, Child>) context.getStore("de-normalization");
         dbHost = config.get("db.host");
         dbPort = config.get("db.port");
@@ -52,5 +54,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask{
         collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getData()));
         if(!event.isProcessed())
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getData()));
+        if(event.hadIssueWithDb())
+            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", retryTopic), event.getData()));
     }
 }

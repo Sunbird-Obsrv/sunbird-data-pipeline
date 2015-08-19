@@ -22,12 +22,12 @@ public class Child implements Serializable {
     private String gender;
     private String uName;
     private String uEkStepId;
-    private long timeOfReference;
+    private long timeOfReferenceInSeconds;
 
-    public Child(String uid, Boolean child_data_processed, long timeOfReference, Map<String, Object> udata) {
+    public Child(String uid, Boolean child_data_processed, long timeOfReferenceInMiliSeconds, Map<String, Object> udata) {
         this.uid = uid;
         this.child_data_processed = child_data_processed == null ? false : child_data_processed;
-        this.timeOfReference = timeOfReference;
+        this.timeOfReferenceInSeconds = timeOfReferenceInMiliSeconds/1000;
         initialize(udata);
     }
 
@@ -61,23 +61,35 @@ public class Child implements Serializable {
     }
 
     public void populate(HashMap<String, Object> childData) {
+        if(childData == null || childData.isEmpty()){
+            System.out.println("No record in the database, skipping the record");
+            return;
+        }
         System.out.println("trying to read from database");
         String name = (String)childData.get("name");
         String gender = (String)childData.get(GENDER);
         String ekstep_id = (String)childData.get("ekstep_id");
-        Timestamp dob = (Timestamp)childData.get(DOB);
-        long dobTicksInSeconds = dob.getTime()/1000;
-        long secondsInYear = 31556952;
-        this.age = timeOfReference - dobTicksInSeconds;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("IST"));
-        this.dob = simpleDateFormat.format(dob);
-        this.age_completed_years = (int) (age/secondsInYear);
+        populateAgeRelatedFields(childData);
         this.uName = name;
         this.gender = gender;
         this.uEkStepId = ekstep_id;
         this.child_data_processed = true;
         System.out.println("successfully read from db");
+    }
+
+    private void populateAgeRelatedFields(HashMap<String, Object> childData) {
+        Timestamp dob = (Timestamp)childData.get(DOB);
+        if(dob == null){
+            System.out.println("No dob for the children, skipping all age related fields");
+            return;
+        }
+        long dobTicksInSeconds = dob.getTime()/1000;
+        long secondsInYear = 31556952;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("IST"));
+        this.age = timeOfReferenceInSeconds - dobTicksInSeconds;
+        this.dob = simpleDateFormat.format(dob);
+        this.age_completed_years = (int) (age/secondsInYear);
     }
 
     public String getUid() {

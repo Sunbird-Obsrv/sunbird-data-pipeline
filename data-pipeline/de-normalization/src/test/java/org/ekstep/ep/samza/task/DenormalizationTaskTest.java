@@ -9,15 +9,21 @@ import org.ekstep.ep.samza.model.ChildDto;
 import org.ekstep.ep.samza.model.Event;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static junit.framework.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class DenormalizationTaskTest{
+    private final String SUCCESS_TOPIC = "events_with_de_normalization";
+    private final String FAILED_TOPIC = "events_failed_de_normalization";
+    private final String RETRY_TOPIC = "events_retry";
     private MessageCollector collectorMock;
     private Event eventMock;
     private ChildDto childDtoMock;
@@ -31,8 +37,9 @@ public class DenormalizationTaskTest{
         childDtoMock = mock(ChildDto.class);
 
         configMock = Mockito.mock(Config.class);
-        stub(configMock.get("output.success.topic.name", "events_with_de_normalization")).toReturn("events_with_de_normalization");
-        stub(configMock.get("output.failed.topic.name", "events_failed_de_normalization")).toReturn("events_failed_de_normalization");
+        stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
+        stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
+        stub(configMock.get("output.retry.topic.name", RETRY_TOPIC)).toReturn(RETRY_TOPIC);
 
         deNormalizationTask = new DeNormalizationTask();
     }
@@ -56,11 +63,29 @@ public class DenormalizationTaskTest{
         HashMap<String, Object> message = new HashMap<String, Object>();
         stub(eventMock.getData()).toReturn(message);
         deNormalizationTask.init(configMock, Mockito.mock(TaskContext.class));
+        ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
 
         deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
 
-        verify(collectorMock,times(2)).send(any(OutgoingMessageEnvelope.class));
+        verify(collectorMock,times(2)).send(argument.capture());
+        validateStreams(argument, message, new String[]{SUCCESS_TOPIC,FAILED_TOPIC});
     }
+
+    @Test
+    public void ShouldSendOutputToFailedTopicRetryTopicAndSuccessTopic() throws Exception {
+        stub(eventMock.isProcessed()).toReturn(false);
+        stub(eventMock.hadIssueWithDb()).toReturn(true);
+        HashMap<String, Object> message = new HashMap<String, Object>();
+        stub(eventMock.getData()).toReturn(message);
+        deNormalizationTask.init(configMock, Mockito.mock(TaskContext.class));
+        ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
+
+        deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
+
+        verify(collectorMock,times(3)).send(argument.capture());
+        validateStreams(argument, message, new String[]{SUCCESS_TOPIC, FAILED_TOPIC, RETRY_TOPIC});
+    }
+
 
     @Test
     public void ShouldSendOutputToSuccessTopic() throws Exception {
@@ -71,7 +96,7 @@ public class DenormalizationTaskTest{
 
         deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
 
-        verify(collectorMock).send(argThat(validateOutputTopic(message, "events_with_de_normalization")));
+        verify(collectorMock).send(argThat(validateOutputTopic(message, SUCCESS_TOPIC)));
 
     }
 
@@ -87,5 +112,20 @@ public class DenormalizationTaskTest{
                 return true;
             }
         };
+    }
+
+    private void validateStreams(ArgumentCaptor<OutgoingMessageEnvelope> argument, HashMap<String, Object> message, String[] topics) {
+        List<OutgoingMessageEnvelope> envelops = argument.getAllValues();
+
+        ArrayList<Object> messages = new ArrayList<Object>();
+        ArrayList<String> streams = new ArrayList<String>();
+        for(OutgoingMessageEnvelope envelope: envelops){
+            messages.add(envelope.getMessage());
+            streams.add(envelope.getSystemStream().getStream());
+        }
+
+        assertTrue(messages.contains(message));
+        for(String topic: topics)
+            assertTrue(streams.contains(topic));
     }
 }

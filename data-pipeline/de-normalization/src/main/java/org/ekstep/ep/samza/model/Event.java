@@ -14,15 +14,17 @@ import java.util.TimeZone;
 
 public class Event {
     private final Map<String, Object> map;
-    private Boolean isValid;
+    private Boolean canBeProcessed;
     private KeyValueStore<String, Child> childStore;
     private Child child;
-    private long timeOfEventTicks;
+    private long timeOfEventTicksInMilliSeconds;
+    private boolean hadIssueWithDb;
 
     public Event(Map<String, Object> map, KeyValueStore<String, Child> childStore) {
         this.map = map;
         this.childStore = childStore;
-        this.isValid = true;
+        this.canBeProcessed = true;
+        this.hadIssueWithDb = false;
     }
 
     public void initialize() {
@@ -31,7 +33,7 @@ public class Event {
             for (IValidator validator : validators)
                 if (validator.isInvalid()) {
                     System.out.println(validator.getErrorMessage());
-                    isValid = false;
+                    canBeProcessed = false;
                     return;
                 }
 
@@ -41,22 +43,22 @@ public class Event {
             Map<String, Boolean> flags = (Map<String, Boolean>) map.get("flags");
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             simpleDateFormat.setTimeZone(TimeZone.getTimeZone("IST"));
-            timeOfEventTicks = simpleDateFormat.parse(timeOfEvent).getTime();
+            timeOfEventTicksInMilliSeconds = simpleDateFormat.parse(timeOfEvent).getTime();
             child = childStore.get(uid);
             if (child == null){
                 Boolean childProcessed = flags == null ? false : flags.get("child_data_processed");
-                child = new Child(uid, childProcessed , timeOfEventTicks, udata);
+                child = new Child(uid, childProcessed , timeOfEventTicksInMilliSeconds, udata);
             }
         } catch (ParseException e) {
-            isValid = false;
+            canBeProcessed = false;
             e.printStackTrace();
         }
     }
 
     public void process(ChildDto childDto) {
-        if (!isValid) return;
+        if (!canBeProcessed) return;
         try {
-            System.out.println("Processing event at ts:" + timeOfEventTicks);
+            System.out.println("Processing event at ts:" + timeOfEventTicksInMilliSeconds);
             if (child.needsToBeProcessed()) {
                 System.out.println("Processing child data, getting data from db");
                 child = childDto.process(child);
@@ -64,12 +66,13 @@ public class Event {
             if(child.isProcessed())
                 update(child);
         } catch (SQLException e) {
+            hadIssueWithDb = true;
             e.printStackTrace();
         }
     }
 
     private void update(Child child) {
-        if (!isValid) return;
+        if (!canBeProcessed) return;
         map.put("udata", child.getData());
         Map<String, Boolean> flags = (Map<String, Boolean>) map.get("flags");
         if (flags == null)
@@ -83,6 +86,10 @@ public class Event {
     }
 
     public boolean isProcessed() {
-        return child.isProcessed();
+        return canBeProcessed && child.isProcessed();
+    }
+
+    public boolean hadIssueWithDb() {
+        return hadIssueWithDb;
     }
 }

@@ -71,7 +71,8 @@ public class ChildTest {
 
     @Test
     public void ShouldPopulateChildData() {
-        Child child = new Child("1123abcd", false, 31556952*3+123456789, null);
+        long timeOfReferenceInMiliSeconds = (31556952 * 3 + 123456789) * 1000L;
+        Child child = new Child("1123abcd", false, timeOfReferenceInMiliSeconds, null);
         Timestamp dob = new Timestamp(123456789000L);
 
         HashMap<String, Object> childData = new HashMap<String, Object>();
@@ -94,6 +95,38 @@ public class ChildTest {
         assertEquals("male", calculatedData.get("gender"));
         assertEquals("Clark Kent", calculatedData.get("uname"));
         assertEquals("superman", calculatedData.get("uekstep_id"));
+    }
 
+    @Test
+    public void ShouldNotTryToPopulateWhenChildDataIsNull() {
+        long timeOfReferenceInMiliSeconds = (31556952 * 3 + 123456789) * 1000L;
+        Child child = new Child("1123abcd", false, timeOfReferenceInMiliSeconds, null);
+
+        child.populate(null);
+
+        assertFalse(child.isProcessed());
+    }
+
+    @Test
+    public void ShouldNotTryToPopulateWhenChildDataIsEmpty() {
+        long timeOfReferenceInMiliSeconds = (31556952 * 3 + 123456789) * 1000L;
+        Child child = new Child("1123abcd", false, timeOfReferenceInMiliSeconds, null);
+
+        child.populate(new HashMap<String, Object>());
+
+        assertFalse(child.isProcessed());
+    }
+
+    @Test
+    public void ShouldPopulateOtherFieldsIfNotAllFieldsArePresent() {
+        long timeOfReferenceInMiliSeconds = (31556952 * 3 + 123456789) * 1000L;
+        Child child = new Child("1123abcd", false, timeOfReferenceInMiliSeconds, null);
+
+        HashMap<String, Object> childData = new HashMap<String, Object>();
+        childData.put("gender", "male");
+        childData.put("name", "some");
+        child.populate(childData);
+
+        assertTrue(child.isProcessed());
     }
 }

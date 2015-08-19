@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class EventTest {
@@ -216,7 +218,7 @@ public class EventTest {
     }
 
     @Test
-    public void ShouldNotUpdateIfChildIsNotProcessed() throws SQLException {
+    public void ShouldNotUpdateEventIfChildIsNotProcessed() throws SQLException {
         map.put("ts", "2008-06-16T00:00:00 +0530");
         map.put("uid", UID);
 
@@ -232,6 +234,37 @@ public class EventTest {
         HashMap<String, Object> actualUdata = (HashMap<String, Object>)data.get("udata");
         assertEquals(UID, data.get("uid"));
         assertEquals(null, actualUdata);
+    }
+
+    @Test
+    public void ShouldBeAbleToIndicateIfNotAbleToConnectToDatabase() throws SQLException {
+        map.put("ts", "2008-06-16T00:00:00 +0530");
+        map.put("uid", UID);
+
+        stub(childDtoMock.process(any(Child.class))).toThrow(new SQLException("Not able to connect to database"));
+
+        Event event = new Event(map, keyValueStoreMock);
+
+        event.initialize();
+        event.process(childDtoMock);
+        Map<String, Object> data = event.getData();
+
+        HashMap<String, Object> actualUdata = (HashMap<String, Object>)data.get("udata");
+        assertEquals(UID, data.get("uid"));
+        assertEquals(null, actualUdata);
+        assertTrue(event.hadIssueWithDb());
+    }
+
+    @Test
+    public void ShouldNotBeProcessedIfItDoesNotHaveChildData() {
+        map.put("uid", UID);
+
+        Event event = new Event(map, keyValueStoreMock);
+
+        event.initialize();
+        event.process(childDtoMock);
+
+        assertFalse(event.isProcessed());
     }
 
     private void validateUdata(HashMap<String, Object> actualUdata) {
