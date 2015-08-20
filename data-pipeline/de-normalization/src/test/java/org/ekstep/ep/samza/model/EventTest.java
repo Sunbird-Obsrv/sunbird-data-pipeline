@@ -267,6 +267,24 @@ public class EventTest {
         assertFalse(event.isProcessed());
     }
 
+    @Test
+    public void ShouldBeAbleToProcessIfFlagsDoesNotHaveChildProcessedFlag() throws SQLException {
+        HashMap<String, Boolean> flags = new HashMap<String, Boolean>();
+        map.put("ts", "2008-06-16T00:00:00 +0530");
+        map.put("uid", UID);
+        map.put("udata", getUdata());
+        map.put("flags", flags);
+
+        Child child = new Child(UID, true, 1234321, getUdata());
+        stub(childDtoMock.process(any(Child.class))).toReturn(child);
+        Event event = new Event(map, keyValueStoreMock);
+
+        event.initialize();
+        event.process(childDtoMock);
+
+       assertTrue(event.isProcessed());
+    }
+
     private void validateUdata(HashMap<String, Object> actualUdata) {
         HashMap<String, Object> expectedUdata = getUdata();
 

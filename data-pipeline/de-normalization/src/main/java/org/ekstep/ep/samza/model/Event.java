@@ -46,7 +46,7 @@ public class Event {
             timeOfEventTicksInMilliSeconds = simpleDateFormat.parse(timeOfEvent).getTime();
             child = childStore.get(uid);
             if (child == null){
-                Boolean childProcessed = flags == null ? false : flags.get("child_data_processed");
+                Boolean childProcessed = flags == null || !flags.containsKey("child_data_processed") ? false : flags.get("child_data_processed");
                 child = new Child(uid, childProcessed , timeOfEventTicksInMilliSeconds, udata);
             }
         } catch (ParseException e) {
