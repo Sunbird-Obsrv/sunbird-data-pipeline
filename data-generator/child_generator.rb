@@ -81,7 +81,7 @@ module ChildGenerator
             msgid: SecureRandom.uuid,
           },
           request: {
-            ekstepid: @ekstepId,
+            uid: @uid,
             name: @name,
             dob: @dob,
           }
