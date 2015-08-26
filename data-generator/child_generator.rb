@@ -18,6 +18,14 @@ module ChildGenerator
       @uid = uid
     end
 
+    def initialize(name, dob, gender, ekstepId)
+      @name = name
+      @dob = dob
+      @gender = gender
+      @ekstepId = ekstepId
+      @uid = SecureRandom.uuid
+    end
+
     def newchildrequest(did, token, requesterid)
       ts = Time.now.strftime('%Y-%m-%dT%H:%M:%S%z')
       e=
