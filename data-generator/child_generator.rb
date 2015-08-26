@@ -9,13 +9,13 @@ ASSOCIATE_CHILD_API_URL = "#{API_ROOT}/v1/facilitators/enrolments"
 
 module ChildGenerator
   class Child
-    attr_reader :uid,:dob, :gender, :name, :ekstepId
-    def initialize(name, dob, gender, ekstepId)
+    attr_reader :uid,:dob, :gender, :name, :ekstepId, :uid
+    def initialize(name, dob, gender, ekstepId, uid)
       @name = name
       @dob = dob
       @gender = gender
       @ekstepId = ekstepId
-      @uid = ekstepId
+      @uid = uid
     end
 
     def newchildrequest(did, token, requesterid)
@@ -36,6 +36,7 @@ module ChildGenerator
             dob: @dob,
             gender: @gender,
             ekstepId: @ekstepId,
+            uid: @uid
           }
         }
     end
