@@ -39,7 +39,7 @@ public class DeDuplicationTest {
     }
 
     @Test
-    public void shouldStoreTheChecksumFirstTime() {
+    public void ShouldSendOutPutToFailedTopicIfChecksumIsPresentInStore() {
 
         Event event = createEvent();
         when(deDuplicationStore.get(event.getChecksum())).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
@@ -60,7 +60,7 @@ public class DeDuplicationTest {
     }
 
     @Test
-    public void shouldCreateNewKeyValueStoreIfChecksumDoesNotExistInDeDuplicationStore() {
+    public void ShouldSendOutPutToSuccessTopicAndCreateNewEntryInStoreIfChecksumIsNotPresentInStore() {
 
         Event event = createEvent();
         when(deDuplicationStore.get(event.getChecksum())).thenReturn(null);

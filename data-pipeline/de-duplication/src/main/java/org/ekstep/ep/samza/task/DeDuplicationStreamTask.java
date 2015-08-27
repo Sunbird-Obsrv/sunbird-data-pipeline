@@ -27,6 +27,7 @@ import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.system.Event;
 
+import java.util.Date;
 import java.util.Map;
 
 public class DeDuplicationStreamTask implements StreamTask, InitableTask {
@@ -70,12 +71,16 @@ public class DeDuplicationStreamTask implements StreamTask, InitableTask {
         try {
             String checkSum = event.getChecksum();
             if(deDuplicationStore.get(checkSum) == null){
-                System.out.println("create new checksum if it is not present in deDuplicationStore");
-                deDuplicationStore.put(checkSum, event.getMap());
+                System.out.println("create new checksum if it is not present in Store");
+
+                Date date = new Date();
+                deDuplicationStore.put(checkSum, date.toString());
+
+                System.out.println("duplicationStore"+deDuplicationStore);
                 collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
             }
             else {
-                System.out.println("Event is Duplicate");
+                System.out.println("Output to Failed Topic if the checksum already present in store");
                 collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
             }
         }
