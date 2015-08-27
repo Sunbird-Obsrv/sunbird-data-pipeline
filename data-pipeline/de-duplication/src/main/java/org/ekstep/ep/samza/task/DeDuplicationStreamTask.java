@@ -25,16 +25,14 @@ import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
-import org.ekstep.ep.samza.system.Device;
 import org.ekstep.ep.samza.system.Event;
-import org.ekstep.ep.samza.system.Location;
 
 import java.util.Map;
 
 public class DeDuplicationStreamTask implements StreamTask, InitableTask {
 
     private KeyValueStore<String, Object> deDuplicationStore;
-    private KeyValueStore<String, Object> deviceStore;
+
     private String successTopic;
     private String failedTopic;
 
@@ -46,23 +44,20 @@ public class DeDuplicationStreamTask implements StreamTask, InitableTask {
         failedTopic = config.get("output.failed.topic.name", "duplicate_events");
 
         this.deDuplicationStore = (KeyValueStore<String, Object>) context.getStore("de-duplication");
-        this.deviceStore = (KeyValueStore<String, Object>) context.getStore("device");
+
     }
 
     public DeDuplicationStreamTask() {
 
     }
 
-    public DeDuplicationStreamTask(KeyValueStore<String, Object> deDuplicationStore, KeyValueStore<String, Object> deviceStore) {
+    public DeDuplicationStreamTask(KeyValueStore<String, Object> deDuplicationStore) {
         this.deDuplicationStore = deDuplicationStore;
-        this.deviceStore = deviceStore;
     }
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) {
         Map<String, Object> jsonObject;
-        Location location = null;
-        Device device = null;
         try {
             jsonObject = (Map<String, Object>) envelope.getMessage();
             processEvent(new Event(jsonObject), collector);
@@ -72,7 +67,20 @@ public class DeDuplicationStreamTask implements StreamTask, InitableTask {
     }
 
     public void processEvent(Event event, MessageCollector collector) {
-        deviceStore.put(event.getDid(),event);
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getDid()));
+        try {
+            String checkSum = event.getChecksum();
+            if(deDuplicationStore.get(checkSum) == null){
+                System.out.println("create new checksum if it is not present in deDuplicationStore");
+                deDuplicationStore.put(checkSum, event.getMap());
+                collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
+            }
+            else {
+                System.out.println("Event is Duplicate");
+                collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
+            }
+        }
+        catch (Exception e) {
+            System.err.println("Error while getting message"+e);
+        }
     }
 }

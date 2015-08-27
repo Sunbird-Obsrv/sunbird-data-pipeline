@@ -22,8 +22,8 @@
   <modules>
     <module>reverse-search</module>
     <module>de-normalization</module>
-    <module>distribution</module>
     <module>de-duplication</module>
+    <module>distribution</module>
   </modules>
 
   <properties>
