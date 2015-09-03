@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.task;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import org.apache.samza.config.Config;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
@@ -86,10 +87,9 @@ public class DeDuplicationTest {
         SystemStream systemStream = outgoingMessageEnvelope.getValue().getSystemStream();
         assertEquals("kafka", systemStream.getSystem());
         assertEquals("unique_events", systemStream.getStream());
-
     }
 
-    @Test(expected=com.google.gson.JsonSyntaxException.class)
+    @Test(expected=JsonSyntaxException.class)
     public void itShouldThrowAnExceptionIfTheJsonInputIsInValid() throws Exception {
 
         when(envelope.getMessage()).thenReturn("{'metadata':{'checksum':'sajksajska'}");
@@ -104,6 +104,22 @@ public class DeDuplicationTest {
         ArgumentCaptor<OutgoingMessageEnvelope> outgoingMessageEnvelope = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
 
         deDuplicationStreamTask.validateJson(collector, message, gson, jsonObject);
+    }
+
+    @Test
+    public void shouldIgnoreInvalidMessages(){
+
+        IncomingMessageEnvelope envelope = mock(IncomingMessageEnvelope.class);
+        when(envelope.getMessage()).thenReturn(" ");
+
+        DeDuplicationStreamTask deDuplicationStreamTask = new DeDuplicationStreamTask(deDuplicationStore);
+
+        deDuplicationStreamTask.init(configMock, contextMock);
+        deDuplicationStreamTask.process(envelope, collector, coordinator);
+
+        verify(deDuplicationStore, times(0)).get(anyString());
+        verify(collector, times(0)).send(any(OutgoingMessageEnvelope.class));
+
     }
 
     private Event createEvent() {

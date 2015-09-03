@@ -59,11 +59,12 @@ public class DeDuplicationStreamTask implements StreamTask, InitableTask {
     }
 
     @Override
-    public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) {
-        String message = (String) envelope.getMessage();
+    public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator){
         Gson gson=new Gson();
         Map<String,Object> jsonObject = new HashMap<String,Object>();
+
         try {
+            String message = (String) envelope.getMessage();
             jsonObject = validateJson(collector, message, gson, jsonObject);
             processEvent(new Event(jsonObject), collector);
         }
