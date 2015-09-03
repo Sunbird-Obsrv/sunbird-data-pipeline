@@ -104,6 +104,15 @@ namespace :scheduled do
 end
 
 namespace :generators do
+  task :json_dump do
+    require_relative '../data-generator/session_generator.rb'
+    r = Generator::Runner.new({users:1,devices:1,sessions:1})
+    r.run do |session,logger|
+      session.events.each do |event|
+        puts event
+      end
+    end
+  end
   task :sessions do
     require_relative '../data-generator/session_generator.rb'
     require 'ruby-progressbar'

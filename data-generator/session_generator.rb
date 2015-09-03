@@ -264,14 +264,15 @@ module Generator
   end
 
   class Runner
-    def initialize
-      @user_pool = Array.new(USERS) {User.new}
-      @device_pool = Array.new(DEVICES) {Device.new}
-      file = "#{ENV['EP_LOG_DIR']}/#{self.name.gsub('::','')}.log"
+    def initialize(opts={})
+      @user_pool = Array.new(opts[:users]||USERS) {User.new}
+      @device_pool = Array.new(opts[:devices]||DEVICES) {Device.new}
+      @sessions = opts[:sessions]
+      file = "#{ENV['EP_LOG_DIR']}/#{self.class.name.gsub('::','')}.log"
       @logger = Logger.new(file)
     end
     def run
-      SESSIONS.times do
+      (@sessions||SESSIONS).times do
         session = Session.new(@user_pool.sample,@device_pool.sample)
         # @logger.info "SESSION #{session.to_json}"
         yield session,@logger
