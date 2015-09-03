@@ -112,7 +112,7 @@ public class DeDuplicationTest {
         IncomingMessageEnvelope envelope = mock(IncomingMessageEnvelope.class);
         when(envelope.getMessage()).thenReturn(" ");
 
-        DeDuplicationStreamTask deDuplicationStreamTask = new DeDuplicationStreamTask(deDuplicationStore);
+        DeDuplicationStreamTask deDuplicationStreamTask = new DeDuplicationStreamTask();
 
         deDuplicationStreamTask.init(configMock, contextMock);
         deDuplicationStreamTask.process(envelope, collector, coordinator);
