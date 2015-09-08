@@ -28,6 +28,7 @@ import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.system.Event;
+import org.apache.samza.metrics.Counter;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ public class DeDuplicationStreamTask implements StreamTask, InitableTask {
     private String successTopic;
     private String failedTopic;
 
+    private Counter messageCount;
     @Override
     public void init(Config config, TaskContext context) {
         String apiKey = config.get("google.api.key", "");
@@ -48,6 +50,9 @@ public class DeDuplicationStreamTask implements StreamTask, InitableTask {
         failedTopic = config.get("output.failed.topic.name", "duplicate_events");
 
         this.deDuplicationStore = (KeyValueStore<String, Object>) context.getStore("de-duplication");
+        this.messageCount = context
+            .getMetricsRegistry()
+            .newCounter(getClass().getName(), "message-count");
     }
 
     public DeDuplicationStreamTask() {
@@ -74,6 +79,7 @@ public class DeDuplicationStreamTask implements StreamTask, InitableTask {
         catch (Exception e) {
             System.err.println("Error while getting message"+e);
         }
+        messageCount.inc();
     }
 
     public Map<String,Object> validateJson(MessageCollector collector, String message, Gson gson, Map<String, Object> jsonObject) throws JsonSyntaxException {

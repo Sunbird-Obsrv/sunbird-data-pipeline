@@ -15,6 +15,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.apache.samza.metrics.MetricsRegistry;
+import org.apache.samza.metrics.Counter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +33,8 @@ public class DeDuplicationTest {
     private TaskContext contextMock;
     private IncomingMessageEnvelope envelope;
     private TaskCoordinator coordinator;
+    private MetricsRegistry metricsRegistry;
+    private Counter counter;
 
     @Before
     public void setMock() {
@@ -40,11 +44,14 @@ public class DeDuplicationTest {
         contextMock = Mockito.mock(TaskContext.class);
         envelope = Mockito.mock(IncomingMessageEnvelope.class);
         coordinator = Mockito.mock(TaskCoordinator.class);
+        metricsRegistry = Mockito.mock(MetricsRegistry.class);
+        counter = Mockito.mock(Counter.class);
 
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
         stub(contextMock.getStore("de-duplication")).toReturn(deDuplicationStore);
-
+        stub(metricsRegistry.newCounter("org.ekstep.ep.samza.task.DeDuplicationStreamTask", "message-count")).toReturn(counter);
+        stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
     }
 
     @Test
