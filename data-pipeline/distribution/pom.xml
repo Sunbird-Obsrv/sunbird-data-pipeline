@@ -26,21 +26,21 @@
     <dependency>
       <groupId>org.ekstep.ecosystem.jobs</groupId>
       <artifactId>reverse-search</artifactId>
-      <version>0.0.2</version>
+      <version>0.0.3</version>
       <type>tar.gz</type>
       <classifier>distribution</classifier>
     </dependency>
     <dependency>
       <groupId>org.ekstep.ecosystem.jobs</groupId>
       <artifactId>de-normalization</artifactId>
-      <version>0.0.2</version>
+      <version>0.0.3</version>
       <type>tar.gz</type>
       <classifier>distribution</classifier>
     </dependency>
     <dependency>
         <groupId>org.ekstep.ecosystem.jobs</groupId>
         <artifactId>de-duplication</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.2</version>
         <type>tar.gz</type>
         <classifier>distribution</classifier>
     </dependency>
