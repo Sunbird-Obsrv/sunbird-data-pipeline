@@ -73,7 +73,7 @@ module Indexers
             },
             {
               date_fields: {
-                  match: "ts|te",
+                  match: "ts|te|time",
                   match_pattern: "regex",
                   mapping: {
                       type: "date",
@@ -142,7 +142,7 @@ module Indexers
             },
             {
               date_fields: {
-                  match: "ts|te",
+                  match: "ts|te|time|reset-time",
                   match_pattern: "regex",
                   mapping: {
                       type: "date",
@@ -175,11 +175,12 @@ module Indexers
       end
     end
     def delete_templates
+      client.indices.delete_template name: 'dump' rescue nil
       client.indices.delete_template name: 'ecosystem' rescue nil
     end
     def create_templates
       puts client.indices.put_template({
-        name: "ecosystem",
+        name: "dump",
         body: {
         order: 20,
         template: "dump",
