@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
+import org.apache.samza.metrics.Counter;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
@@ -23,6 +24,8 @@ public class DeNormalizationTask implements StreamTask, InitableTask{
     private String dbSchema;
     private String retryTopic;
 
+    private Counter messageCount;
+
     @Override
     public void init(Config config, TaskContext context) throws Exception {
         successTopic = config.get("output.success.topic.name", "events_with_de_normalization");
@@ -34,6 +37,9 @@ public class DeNormalizationTask implements StreamTask, InitableTask{
         dbUserName = config.get("db.userName");
         dbPassword = config.get("db.password");
         dbSchema = config.get("db.schema");
+        messageCount = context
+                .getMetricsRegistry()
+                .newCounter(getClass().getName(), "message-count");
     }
 
     @Override
@@ -42,6 +48,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask{
         ChildDto dataSource = new ChildDto(dbHost, dbPort, dbSchema, dbUserName, dbPassword);
         Event event = new Event(message, childData);
         processEvent(collector, event, dataSource);
+        messageCount.inc();
     }
 
     public void processEvent(MessageCollector collector, Event event, ChildDto dataSource) {

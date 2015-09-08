@@ -1,6 +1,8 @@
 package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
+import org.apache.samza.metrics.Counter;
+import org.apache.samza.metrics.MetricsRegistry;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
@@ -29,17 +31,25 @@ public class DenormalizationTaskTest{
     private ChildDto childDtoMock;
     private DeNormalizationTask deNormalizationTask;
     private Config configMock;
+    private TaskContext contextMock;
+    private MetricsRegistry metricsRegistry;
+    private Counter counter;
 
     @Before
     public void setUp(){
         collectorMock = mock(MessageCollector.class);
         eventMock = mock(Event.class);
         childDtoMock = mock(ChildDto.class);
+        contextMock = Mockito.mock(TaskContext.class);
+        metricsRegistry = Mockito.mock(MetricsRegistry.class);
+        counter = Mockito.mock(Counter.class);
 
         configMock = Mockito.mock(Config.class);
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
         stub(configMock.get("output.retry.topic.name", RETRY_TOPIC)).toReturn(RETRY_TOPIC);
+        stub(metricsRegistry.newCounter("org.ekstep.ep.samza.task.DeNormalizationTask", "message-count")).toReturn(counter);
+        stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
 
         deNormalizationTask = new DeNormalizationTask();
     }
@@ -62,7 +72,7 @@ public class DenormalizationTaskTest{
         stub(eventMock.isProcessed()).toReturn(false);
         HashMap<String, Object> message = new HashMap<String, Object>();
         stub(eventMock.getData()).toReturn(message);
-        deNormalizationTask.init(configMock, Mockito.mock(TaskContext.class));
+        deNormalizationTask.init(configMock, contextMock);
         ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
 
         deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
@@ -77,7 +87,7 @@ public class DenormalizationTaskTest{
         stub(eventMock.hadIssueWithDb()).toReturn(true);
         HashMap<String, Object> message = new HashMap<String, Object>();
         stub(eventMock.getData()).toReturn(message);
-        deNormalizationTask.init(configMock, Mockito.mock(TaskContext.class));
+        deNormalizationTask.init(configMock, contextMock);
         ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
 
         deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
@@ -92,7 +102,7 @@ public class DenormalizationTaskTest{
         stub(eventMock.isProcessed()).toReturn(true);
         HashMap<String, Object> message = new HashMap<String, Object>();
         stub(eventMock.getData()).toReturn(message);
-        deNormalizationTask.init(configMock, Mockito.mock(TaskContext.class));
+        deNormalizationTask.init(configMock, contextMock);
 
         deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
 
