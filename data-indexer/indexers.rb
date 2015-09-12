@@ -171,7 +171,7 @@ module Indexers
             dynamic_templates: [
             {
               date_fields: {
-                  match: "ts|te|time|reset-time|timestamp",
+                  match: "ts",
                   match_pattern: "regex",
                   mapping: {
                       type: "date",
