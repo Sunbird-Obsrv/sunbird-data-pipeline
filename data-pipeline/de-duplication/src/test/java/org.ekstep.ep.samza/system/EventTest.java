@@ -20,7 +20,6 @@ public class EventTest {
 
         Assert.assertEquals("1234", (String) event.getChecksum());
         Assert.assertEquals("{\"metadata\":{\"checksum\":\"1234\"}}", (String) event.getJson());
-
     }
 }
 
