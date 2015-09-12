@@ -170,8 +170,6 @@ module Indexers
           _default_: {
             dynamic_templates: [
             {
-
-            {
               date_fields: {
                   match: "ts|te|time|reset-time|timestamp",
                   match_pattern: "regex",
@@ -182,6 +180,7 @@ module Indexers
                   }
               }
             }
+            ],
             _all: {
               enabled: true
             }
