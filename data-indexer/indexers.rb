@@ -73,7 +73,7 @@ module Indexers
             },
             {
               date_fields: {
-                  match: "ts|te|time",
+                  match: "ts|te|time|timestamp",
                   match_pattern: "regex",
                   mapping: {
                       type: "date",
@@ -166,6 +166,27 @@ module Indexers
             }
           }
         }
+    LOG_MAPPINGS = {
+          _default_: {
+            dynamic_templates: [
+            {
+
+            {
+              date_fields: {
+                  match: "ts|te|time|reset-time|timestamp",
+                  match_pattern: "regex",
+                  mapping: {
+                      type: "date",
+                      index: "not_analyzed",
+                      doc_values: true
+                  }
+              }
+            }
+            _all: {
+              enabled: true
+            }
+          }
+        }
     attr_reader :client
     def initialize(refresh=true)
       @client = ::Elasticsearch::Client.new log: false
@@ -200,6 +221,18 @@ module Indexers
           "index.refresh_interval": "5s"
         },
         mappings: TEMPLATE_MAPPINGS,
+        aliases: {}
+        }
+      })
+      puts client.indices.put_template({
+        name: "logs",
+        body: {
+        order: 10,
+        template: "logs-*",
+        settings: {
+          "index.refresh_interval": "5s"
+        },
+        mappings: LOG_MAPPINGS,
         aliases: {}
         }
       })
