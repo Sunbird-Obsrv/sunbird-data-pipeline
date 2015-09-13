@@ -9,8 +9,20 @@ import java.util.Map;
 
 public class EventTest {
 
+
     @Test
     public void shouldReturnCidFromEvent(){
+
+        Map<String, Object> json = (Map<String, Object>) createMap();
+        Map<String, Object> taxonomyMap = (Map<String, Object>) createTaxonomyMap();
+
+        Event event = new Event(json);
+
+        Assert.assertEquals("LT1", (String) event.getCid());
+    }
+
+    @Test
+    public void shouldAddTaxonomyDataToEventAndReturnNewEventWithTaxonomyData(){
 
         Map<String, Object> json = (Map<String, Object>) createMap();
         Map<String, Object> taxonomyMap = (Map<String, Object>) createTaxonomyMap();
