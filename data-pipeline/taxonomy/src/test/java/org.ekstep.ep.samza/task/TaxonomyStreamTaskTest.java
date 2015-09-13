@@ -5,20 +5,26 @@ import org.apache.samza.config.Config;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
+import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
+import org.ekstep.ep.samza.api.TaxonomyApi;
 import org.ekstep.ep.samza.system.Event;
+import org.ekstep.ep.samza.system.Taxonomy;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import java.util.Map;
 
+import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class TaxonomyStreamTaskTest {
-    private final String SUCCESS_TOPIC = "taxonomy_events";
+    private final String SUCCESS_TOPIC = "unique_events";
     private final String FAILED_TOPIC = "failed_taxonomy_events";
     KeyValueStore taxonomyStore;
     private MessageCollector collector;
@@ -43,24 +49,90 @@ public class TaxonomyStreamTaskTest {
     }
 
     @Test
-    public void ShouldSendOutPutToFailedTopicIfChecksumIsPresentInStore() throws Exception{
+    public void ShouldCreateTaxonomyMapIfTaxonomyStoreIsNullAndShouldAddToEvent() throws Exception{
+        Event event = Mockito.mock(Event.class);
+        Map<String, Object> map = createMap();
 
-        Map<String, Object> event = createMap();
+        stub(event.getMap()).toReturn(map);
+        stub(event.getCid()).toReturn("LT1");
 
-//        Map<String, Object> library = (Map<String,Object>) createTaxonomyLibrary();
+        TaxonomyApi taxonomyApi = Mockito.mock(TaxonomyApi.class);
+        Map<String, Object> library = (Map<String,Object>) createTaxonomyLibrary();
+        stub(taxonomyApi.getTaxonomyLibrary()).toReturn(library);
 
-        stub(envelope.getMessage()).toReturn(event);
+        stub(taxonomyStore.get(event.getCid())).toReturn(null);
 
+        Map<String, Object> taxonomyData = (Map<String,Object>) getTaxonomyData();
+        Taxonomy taxonomy = Mockito.mock(Taxonomy.class);
+
+        stub(taxonomy.getTaxonomyData("LT1")).toReturn((Map<String,Object>) taxonomyData);
 
         TaxonomyStreamTask taxonomyStreamTask = new TaxonomyStreamTask(taxonomyStore);
-//        stub(taxonomyStreamTask.getTaxonomyLibrary()).toReturn((Map<String,Object>)library);
-
 
         taxonomyStreamTask.init(configMock, contextMock);
-        taxonomyStreamTask.process(envelope, collector, coordinator);
+        Map<String,Object> taxonomyStoreData = (Map<String,Object>) getTaxonomyStoreData();
+        stub(taxonomyStore.get(event.getCid())).toReturn(taxonomyStoreData);
+        taxonomyStreamTask.processEvent(event, collector);
 
+        ArgumentCaptor<OutgoingMessageEnvelope> outgoingMessageEnvelope = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
+
+        verify(collector,times(1)).send(outgoingMessageEnvelope.capture());
+        verify(event,times(1)).addTaxonomyData(Matchers.<Map<String, Object>>any());
+
+        SystemStream systemStream = outgoingMessageEnvelope.getValue().getSystemStream();
+        assertEquals("unique_events", systemStream.getStream());
+    }
+
+    @Test
+    public void ShouldCreateTaxonomyMapIfTaxonomyStoreHasValueAndShouldAddToEvent() throws Exception{
+
+
+        Event event = Mockito.mock(Event.class);
+        Map<String, Object> map = createMap();
+
+
+        stub(event.getMap()).toReturn(map);
+        stub(event.getCid()).toReturn("LT1");
+
+        stub(envelope.getMessage()).toReturn(map);
+
+
+        Map<String,Object> taxonomyStoreData = (Map<String,Object>) getTaxonomyStoreData();
+        stub(taxonomyStore.get(event.getCid())).toReturn(taxonomyStoreData);
+
+        Map<String, Object> taxonomyData = (Map<String,Object>) getTaxonomyData();
+        Taxonomy taxonomy = Mockito.mock(Taxonomy.class);
+
+        stub(taxonomy.getTaxonomyData("LT1")).toReturn((Map<String,Object>) taxonomyData);
+
+        TaxonomyStreamTask taxonomyStreamTask = new TaxonomyStreamTask(taxonomyStore);
+
+        taxonomyStreamTask.init(configMock, contextMock);
+        taxonomyStreamTask.processEvent(event, collector);
+
+        ArgumentCaptor<OutgoingMessageEnvelope> outgoingMessageEnvelope = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
+
+        verify(collector,times(1)).send(outgoingMessageEnvelope.capture());
+
+        verify(event,times(1)).addTaxonomyData(Matchers.<Map<String, Object>>any());
+
+        SystemStream systemStream = outgoingMessageEnvelope.getValue().getSystemStream();
+        assertEquals("unique_events", systemStream.getStream());
+    }
+
+
+    @Test
+    public void ShouldCheckNormalFlow() throws Exception{
+        Map<String, Object> event = createMap();
+        stub(envelope.getMessage()).toReturn(event);
+
+        TaxonomyStreamTask taxonomyStreamTask = new TaxonomyStreamTask(taxonomyStore);
+        taxonomyStreamTask.init(configMock, contextMock);
+
+        taxonomyStreamTask.process(envelope, collector, coordinator);
         verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
     }
+
 
     private Event createEvent() {
 
@@ -426,5 +498,137 @@ public class TaxonomyStreamTaskTest {
                 "}",Map.class);
         return jsonObject;
     }
+
+    private Map<String,Object> getTaxonomyData(){
+        Map<String, Object> taxonomyData = new Gson().fromJson("{\"LT1\":{\"id\":\"LT1\", \"name\":\"Read and choose Picture\", \"parent\":\"LO9\"}, \"LO9\": {\"id\":\"LO9\", \"name\":\"Sentence Comprehension\", \"parent\":\"LD5\"}, \"LD5\":{\"id\":\"LD5\", \"name\":\"Reading Comprehension\", \"parent\":null}}",Map.class);
+        return taxonomyData;
+    }
+
+    private Map<String,Object> getTaxonomyStoreData(){
+        Map<String,Object> taxonomyStoreData = new Gson().fromJson("{\n" +
+                "    \"LT6\": {\n" +
+                "        \"id\": \"LT6\",\n" +
+                "        \"name\": \"Teacher Teacher!\",\n" +
+                "        \"parent\": \"LO6\"\n" +
+                "    },\n" +
+                "    \"LT7\": {\n" +
+                "        \"id\": \"LT7\",\n" +
+                "        \"name\": \"Word picture matching\",\n" +
+                "        \"parent\": \"LO7\"\n" +
+                "    },\n" +
+                "    \"LT4\": {\n" +
+                "        \"id\": \"LT4\",\n" +
+                "        \"name\": \"Is this right?\",\n" +
+                "        \"parent\": \"LO4\"\n" +
+                "    },\n" +
+                "    \"LT5\": {\n" +
+                "        \"id\": \"LT5\",\n" +
+                "        \"name\": \"Akshara Sound\",\n" +
+                "        \"parent\": \"LO5\"\n" +
+                "    },\n" +
+                "    \"LT2\": {\n" +
+                "        \"id\": \"LT2\",\n" +
+                "        \"name\": \"Pick the correct Picture\",\n" +
+                "        \"parent\": \"LO2\"\n" +
+                "    },\n" +
+                "    \"LT3\": {\n" +
+                "        \"id\": \"LT3\",\n" +
+                "        \"name\": \"Listen and choose picture\",\n" +
+                "        \"parent\": \"LO3\"\n" +
+                "    },\n" +
+                "    \"LT1\": {\n" +
+                "        \"id\": \"LT1\",\n" +
+                "        \"name\": \"Chili Pili\",\n" +
+                "        \"parent\": \"LO1\"\n" +
+                "    },\n" +
+                "    \"LT9\": {\n" +
+                "        \"id\": \"LT9\",\n" +
+                "        \"name\": \"Word completion\",\n" +
+                "        \"parent\": \"LO8\"\n" +
+                "    },\n" +
+                "    \"LO2\": {\n" +
+                "        \"id\": \"LO2\",\n" +
+                "        \"name\": \"Lexical Judgement\",\n" +
+                "        \"parent\": \"LD1\"\n" +
+                "    },\n" +
+                "    \"LO1\": {\n" +
+                "        \"id\": \"LO1\",\n" +
+                "        \"name\": \"Receptive Vocabulary\",\n" +
+                "        \"parent\": \"LD1\"\n" +
+                "    },\n" +
+                "    \"LO10\": {\n" +
+                "        \"id\": \"LO10\",\n" +
+                "        \"name\": \"Passage Comprehension\",\n" +
+                "        \"parent\": \"LD5\"\n" +
+                "    },\n" +
+                "    \"LT11\": {\n" +
+                "        \"id\": \"LT11\",\n" +
+                "        \"name\": \"Read and choose Picture\",\n" +
+                "        \"parent\": \"LO9\"\n" +
+                "    },\n" +
+                "    \"LT13\": {\n" +
+                "        \"id\": \"LT13\",\n" +
+                "        \"name\": \"Passage Reading (match the words)\",\n" +
+                "        \"parent\": \"LO10\"\n" +
+                "    },\n" +
+                "    \"LD3\": {\n" +
+                "        \"id\": \"LD3\",\n" +
+                "        \"name\": \"Akshara Knowledge\"\n" +
+                "    },\n" +
+                "    \"LO7\": {\n" +
+                "        \"id\": \"LO7\",\n" +
+                "        \"name\": \"Decoding for Reading\",\n" +
+                "        \"parent\": \"LD4\"\n" +
+                "    },\n" +
+                "    \"LD2\": {\n" +
+                "        \"id\": \"LD2\",\n" +
+                "        \"name\": \"Listening Comprehension\"\n" +
+                "    },\n" +
+                "    \"LO8\": {\n" +
+                "        \"id\": \"LO8\",\n" +
+                "        \"name\": \"Decoding for Spelling\",\n" +
+                "        \"parent\": \"LD4\"\n" +
+                "    },\n" +
+                "    \"LD1\": {\n" +
+                "        \"id\": \"LD1\",\n" +
+                "        \"name\": \"Vocabulary\"\n" +
+                "    },\n" +
+                "    \"LO9\": {\n" +
+                "        \"id\": \"LO9\",\n" +
+                "        \"name\": \"Sentence Comprehension\",\n" +
+                "        \"parent\": \"LD5\"\n" +
+                "    },\n" +
+                "    \"LO3\": {\n" +
+                "        \"id\": \"LO3\",\n" +
+                "        \"name\": \"Sentence Comprehension\",\n" +
+                "        \"parent\": \"LD2\"\n" +
+                "    },\n" +
+                "    \"LO4\": {\n" +
+                "        \"id\": \"LO4\",\n" +
+                "        \"name\": \"Grammaticality Judgement/Syntax\",\n" +
+                "        \"parent\": \"LD2\"\n" +
+                "    },\n" +
+                "    \"LO5\": {\n" +
+                "        \"id\": \"LO5\",\n" +
+                "        \"name\": \"Sound-to-symbol Mapping\",\n" +
+                "        \"parent\": \"LD3\"\n" +
+                "    },\n" +
+                "    \"LD5\": {\n" +
+                "        \"id\": \"LD5\",\n" +
+                "        \"name\": \"Reading Comprehension\"\n" +
+                "    },\n" +
+                "    \"LO6\": {\n" +
+                "        \"id\": \"LO6\",\n" +
+                "        \"name\": \"Decoding for Spelling\",\n" +
+                "        \"parent\": \"LD4\"\n" +
+                "    },\n" +
+                "    \"LD4\": {\n" +
+                "        \"id\": \"LD4\",\n" +
+                "        \"name\": \"Decoding & Fluency\"\n" +
+                "    }\n" +
+                "}",Map.class);
+        return taxonomyStoreData;
+    }
+
 
 }
