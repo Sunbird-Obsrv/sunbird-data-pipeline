@@ -78,7 +78,7 @@ public class TaxonomyStreamTask implements StreamTask, InitableTask {
 
         try {
             if (taxonomyStore.get(cid) == null) {
-                System.out.println("if taxonomy store is null");
+                System.out.println("if taxonomy store returns null");
                 taxonomyLibrary = (Map<String, Object>) new TaxonomyApi().getTaxonomyLibrary();
                 createTaxonomyHash(taxonomyLibrary, taxonomyStore);
                 Taxonomy taxonomy = new Taxonomy(cid,taxonomyStore);
