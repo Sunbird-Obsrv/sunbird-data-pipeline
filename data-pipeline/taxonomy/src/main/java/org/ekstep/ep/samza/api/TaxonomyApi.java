@@ -36,9 +36,11 @@ public class TaxonomyApi {
             return jsonObject;
         }
         catch (java.net.SocketTimeoutException e) {
+            System.out.println("Socket Timeout Exception"+e.getMessage());
             return jsonObject;
         }
         catch (java.io.IOException e) {
+            System.out.println("IOException"+e.getMessage());
             return jsonObject;
         }
         finally {
