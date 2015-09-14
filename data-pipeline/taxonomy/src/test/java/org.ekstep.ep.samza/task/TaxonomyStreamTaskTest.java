@@ -139,7 +139,7 @@ public class TaxonomyStreamTaskTest {
         IncomingMessageEnvelope envelope = mock(IncomingMessageEnvelope.class);
         when(envelope.getMessage()).thenReturn(" ");
 
-        TaxonomyStreamTask taxonomyStreamTask = new TaxonomyStreamTask(taxonomyStore);
+        TaxonomyStreamTask taxonomyStreamTask = new TaxonomyStreamTask();
 
         taxonomyStreamTask.init(configMock, contextMock);
         taxonomyStreamTask.process(envelope, collector, coordinator);
