@@ -6,6 +6,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -13,23 +14,36 @@ import java.util.Map;
  */
 public class TaxonomyApi {
 
+    Map<String, Object> jsonObject = new HashMap<String, Object>();
+    DefaultHttpClient httpClient = new DefaultHttpClient();
+
     public Map<String, Object> getTaxonomyLibrary() throws Exception {
 
-        System.out.println("inside api call function");
-        DefaultHttpClient httpClient = new DefaultHttpClient();
-        HttpGet getRequest = new HttpGet(
-                "http://lp-sandbox.ekstep.org:8080/taxonomy-service/taxonomy/hierarchy/literacy_v2?cfields=description,name");
-        getRequest.addHeader("accept", "application/json");
-        getRequest.addHeader("user-id", "username");
+        try {
+            System.out.println("Inside api call function");
 
-        HttpResponse response = httpClient.execute(getRequest);
+            HttpGet getRequest = new HttpGet(
+                    "http://lp-sandbox.ekstep.org:8080/taxonomy-service/taxonomy/hierarchy/literacy_v2?cfields=description,name");
 
-        String json = EntityUtils.toString(response.getEntity(), "UTF-8");
-        Map<String, Object> jsonObject = new Gson().fromJson(json,Map.class);
+            getRequest.addHeader("accept", "application/json");
+            getRequest.addHeader("user-id", "username");
 
-        System.out.println("jsonObject .... \n"+jsonObject);
-        httpClient.getConnectionManager().shutdown();
-        return jsonObject;
+            HttpResponse response = httpClient.execute(getRequest);
+
+            String json = EntityUtils.toString(response.getEntity(), "UTF-8");
+            Map<String, Object> jsonObject = new Gson().fromJson(json, Map.class);
+
+            return jsonObject;
+        }
+        catch (java.net.SocketTimeoutException e) {
+            return jsonObject;
+        }
+        catch (java.io.IOException e) {
+            return jsonObject;
+        }
+        finally {
+            httpClient.getConnectionManager().shutdown();
+        }
     }
 
 }

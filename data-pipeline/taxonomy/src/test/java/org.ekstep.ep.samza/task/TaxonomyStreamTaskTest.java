@@ -133,6 +133,21 @@ public class TaxonomyStreamTaskTest {
         verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
     }
 
+    @Test
+    public void shouldIgnoreInvalidMessages(){
+
+        IncomingMessageEnvelope envelope = mock(IncomingMessageEnvelope.class);
+        when(envelope.getMessage()).thenReturn(" ");
+
+        TaxonomyStreamTask taxonomyStreamTask = new TaxonomyStreamTask(taxonomyStore);
+
+        taxonomyStreamTask.init(configMock, contextMock);
+        taxonomyStreamTask.process(envelope, collector, coordinator);
+
+        verify(taxonomyStore, times(0)).get(anyString());
+        verify(collector, times(0)).send(any(OutgoingMessageEnvelope.class));
+
+    }
 
     private Event createEvent() {
 
