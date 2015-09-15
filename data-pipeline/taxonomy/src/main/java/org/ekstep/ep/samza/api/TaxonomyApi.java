@@ -16,6 +16,11 @@ public class TaxonomyApi {
 
     Map<String, Object> jsonObject = new HashMap<String, Object>();
     DefaultHttpClient httpClient = new DefaultHttpClient();
+    private String host;
+
+    public TaxonomyApi(String host){
+        this.host = host;
+    }
 
     public Map<String, Object> getTaxonomyLibrary() throws Exception {
 
@@ -23,7 +28,7 @@ public class TaxonomyApi {
             System.out.println("Inside api call function");
 
             HttpGet getRequest = new HttpGet(
-                    "http://lp-sandbox.ekstep.org:8080/taxonomy-service/taxonomy/hierarchy/literacy_v2?cfields=description,name");
+                    host+"/taxonomy-service/taxonomy/hierarchy/literacy_v2?cfields=description,name");
 
             getRequest.addHeader("accept", "application/json");
             getRequest.addHeader("user-id", "username");

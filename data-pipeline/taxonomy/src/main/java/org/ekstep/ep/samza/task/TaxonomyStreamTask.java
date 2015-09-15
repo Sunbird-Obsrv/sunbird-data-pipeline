@@ -40,6 +40,7 @@ public class TaxonomyStreamTask implements StreamTask, InitableTask {
 
     private String successTopic;
     private String failedTopic;
+    private String apiHost;
 
     @Override
     public void init(Config config, TaskContext context) {
@@ -47,7 +48,7 @@ public class TaxonomyStreamTask implements StreamTask, InitableTask {
 
         successTopic = config.get("output.success.topic.name", "unique_events");
         failedTopic = config.get("output.failed.topic.name", "failed_taxonomy_events");
-
+        apiHost = config.get("api.host");
         this.taxonomyStore = (KeyValueStore<String, Object>) context.getStore("taxonomy");
     }
 
@@ -73,15 +74,16 @@ public class TaxonomyStreamTask implements StreamTask, InitableTask {
 
     public void processEvent(Event event, MessageCollector collector) throws Exception {
         String cid = (String) event.getCid();
-
         Map<String, Object> taxonomyLibrary = null;
+
+//        Map<String,Object> txStore = new HashMap<String, Object>();
 
         try {
             if (taxonomyStore.get(cid) == null) {
                 System.out.println("if taxonomy store returns null");
-                taxonomyLibrary = (Map<String, Object>) new TaxonomyApi().getTaxonomyLibrary();
+                taxonomyLibrary = (Map<String, Object>) new TaxonomyApi(apiHost).getTaxonomyLibrary();
                 createTaxonomyHash(taxonomyLibrary, taxonomyStore);
-                Taxonomy taxonomy = new Taxonomy(cid,taxonomyStore);
+                Taxonomy taxonomy = new Taxonomy(cid, taxonomyStore);
                 event.addTaxonomyData(taxonomy.getTaxonomyData(cid));
             }
             else {
@@ -121,6 +123,7 @@ public class TaxonomyStreamTask implements StreamTask, InitableTask {
         {
             taxonomyStore.put(entry.getKey(),entry.getValue());
         }
+
     }
 
     private void processChildData(Map<String, Object> map,  String parent, ArrayList<Map<String,Object>> childElements) throws Exception{
@@ -131,10 +134,12 @@ public class TaxonomyStreamTask implements StreamTask, InitableTask {
             Map<String, Object> metadata;
 
             String id = (String) element.get("identifier");
+            String type = (String) element.get("type");
             metadata = (Map<String, Object>) element.get("metadata");
             String name = (String) metadata.get("name");
 
             childData.put("id",id);
+            childData.put("type",type);
             childData.put("name", name);
             childData.put("parent", parent);
             map.put(id, childData);

@@ -16,14 +16,12 @@ public class Event {
         return map;
     }
 
-    public String getJson(){
-        Gson gson=new Gson();
-        String json = gson.toJson(map);
-        return json;
-    }
-
     public String getCid() {
         return (String) map.get("cid");
+    }
+
+    public String getCType() {
+        return (String) map.get("ctype");
     }
 
     public void addTaxonomyData(Map<String, Object> taxonomyMap){

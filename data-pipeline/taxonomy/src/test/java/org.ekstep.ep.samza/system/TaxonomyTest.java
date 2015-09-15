@@ -25,6 +25,18 @@ public class TaxonomyTest {
     }
 
     @Test
+    public void shouldReturnCType(){
+
+        taxonomyStore = Mockito.mock(KeyValueStore.class);
+        taxonomy =  new Taxonomy("LT11",taxonomyStore);
+
+        Map<String,Object> taxonomyStoreData = (Map<String,Object>) getTaxonomyStoreData();
+        stub(taxonomyStore.get("LT11")).toReturn(taxonomyStoreData.get("LT11"));
+
+        Assert.assertEquals("LT", (String) taxonomy.getCType());
+    }
+
+    @Test
     public void shouldCreateTaxonomyMapFromTaxonomyStoreAndReturnIt(){
 
         taxonomyStore = Mockito.mock(KeyValueStore.class);
@@ -42,19 +54,22 @@ public class TaxonomyTest {
 
     private Map<String,Object> getTaxonomyData(){
         Map<String, Object> taxonomyData = new Gson().fromJson("{\n" +
-                "    \"LT11\": {\n" +
+                "    \"LT\": {\n" +
                 "        \"id\": \"LT11\",\n" +
-                "        \"name\": \"Read and choose Picture\",\n" +
-                "        \"parent\": \"LO9\"\n" +
+                "        \"name\": \"ReadandchoosePicture\",\n" +
+                "        \"parent\": \"LO9\",\n" +
+                "        \"type\": \"LT\"\n" +
                 "    },\n" +
-                "    \"LO9\": {\n" +
+                "    \"LO\": {\n" +
                 "        \"id\": \"LO9\",\n" +
-                "        \"name\": \"Sentence Comprehension\",\n" +
-                "        \"parent\": \"LD5\"\n" +
+                "        \"name\": \"SentenceComprehension\",\n" +
+                "        \"parent\": \"LD5\",\n" +
+                "        \"type\": \"LO\"\n" +
                 "    },\n" +
-                "    \"LD5\": {\n" +
+                "    \"LD\": {\n" +
                 "        \"id\": \"LD5\",\n" +
-                "        \"name\": \"Reading Comprehension\",\n" +
+                "        \"name\": \"ReadingComprehension\",\n" +
+                "        \"type\": \"LD\",\n" +
                 "        \"parent\": null\n" +
                 "    }\n" +
                 "}",Map.class);
@@ -65,126 +80,152 @@ public class TaxonomyTest {
         Map<String,Object> taxonomyStoreData = new Gson().fromJson("{\n" +
                 "    \"LT6\": {\n" +
                 "        \"id\": \"LT6\",\n" +
-                "        \"name\": \"Teacher Teacher!\",\n" +
-                "        \"parent\": \"LO6\"\n" +
+                "        \"name\": \"TeacherTeacher!\",\n" +
+                "        \"parent\": \"LO6\",\n" +
+                "        \"type\": \"LT\"\n" +
                 "    },\n" +
                 "    \"LT7\": {\n" +
                 "        \"id\": \"LT7\",\n" +
-                "        \"name\": \"Word picture matching\",\n" +
-                "        \"parent\": \"LO7\"\n" +
+                "        \"name\": \"Wordpicturematching\",\n" +
+                "        \"parent\": \"LO7\",\n" +
+                "        \"type\": \"LT\"\n" +
                 "    },\n" +
                 "    \"LT4\": {\n" +
                 "        \"id\": \"LT4\",\n" +
-                "        \"name\": \"Is this right?\",\n" +
-                "        \"parent\": \"LO4\"\n" +
+                "        \"name\": \"Isthisright?\",\n" +
+                "        \"parent\": \"LO4\",\n" +
+                "        \"type\": \"LT\"\n" +
                 "    },\n" +
                 "    \"LT5\": {\n" +
                 "        \"id\": \"LT5\",\n" +
-                "        \"name\": \"Akshara Sound\",\n" +
-                "        \"parent\": \"LO5\"\n" +
+                "        \"name\": \"AksharaSound\",\n" +
+                "        \"parent\": \"LO5\",\n" +
+                "        \"type\": \"LT\"\n" +
                 "    },\n" +
                 "    \"LT2\": {\n" +
                 "        \"id\": \"LT2\",\n" +
-                "        \"name\": \"Pick the correct Picture\",\n" +
-                "        \"parent\": \"LO2\"\n" +
+                "        \"name\": \"PickthecorrectPicture\",\n" +
+                "        \"parent\": \"LO2\",\n" +
+                "        \"type\": \"LT\"\n" +
                 "    },\n" +
                 "    \"LT3\": {\n" +
                 "        \"id\": \"LT3\",\n" +
-                "        \"name\": \"Listen and choose picture\",\n" +
-                "        \"parent\": \"LO3\"\n" +
+                "        \"name\": \"Listenandchoosepicture\",\n" +
+                "        \"parent\": \"LO3\",\n" +
+                "        \"type\": \"LT\"\n" +
                 "    },\n" +
                 "    \"LT1\": {\n" +
                 "        \"id\": \"LT1\",\n" +
-                "        \"name\": \"Chili Pili\",\n" +
-                "        \"parent\": \"LO1\"\n" +
+                "        \"name\": \"ChiliPili\",\n" +
+                "        \"parent\": \"LO1\",\n" +
+                "        \"type\": \"LT\"\n" +
                 "    },\n" +
                 "    \"LT9\": {\n" +
                 "        \"id\": \"LT9\",\n" +
-                "        \"name\": \"Word completion\",\n" +
-                "        \"parent\": \"LO8\"\n" +
+                "        \"name\": \"Wordcompletion\",\n" +
+                "        \"parent\": \"LO8\",\n" +
+                "        \"type\": \"LT\"\n" +
                 "    },\n" +
                 "    \"LO2\": {\n" +
                 "        \"id\": \"LO2\",\n" +
-                "        \"name\": \"Lexical Judgement\",\n" +
-                "        \"parent\": \"LD1\"\n" +
+                "        \"name\": \"LexicalJudgement\",\n" +
+                "        \"parent\": \"LD1\",\n" +
+                "        \"type\": \"LO\"\n" +
                 "    },\n" +
                 "    \"LO1\": {\n" +
                 "        \"id\": \"LO1\",\n" +
-                "        \"name\": \"Receptive Vocabulary\",\n" +
-                "        \"parent\": \"LD1\"\n" +
+                "        \"name\": \"ReceptiveVocabulary\",\n" +
+                "        \"parent\": \"LD1\",\n" +
+                "        \"type\": \"LO\"\n" +
                 "    },\n" +
                 "    \"LO10\": {\n" +
                 "        \"id\": \"LO10\",\n" +
-                "        \"name\": \"Passage Comprehension\",\n" +
-                "        \"parent\": \"LD5\"\n" +
+                "        \"name\": \"PassageComprehension\",\n" +
+                "        \"parent\": \"LD5\",\n" +
+                "        \"type\": \"LO\"\n" +
                 "    },\n" +
                 "    \"LT11\": {\n" +
                 "        \"id\": \"LT11\",\n" +
-                "        \"name\": \"Read and choose Picture\",\n" +
-                "        \"parent\": \"LO9\"\n" +
+                "        \"name\": \"ReadandchoosePicture\",\n" +
+                "        \"parent\": \"LO9\",\n" +
+                "        \"type\": \"LT\"\n" +
                 "    },\n" +
                 "    \"LT13\": {\n" +
                 "        \"id\": \"LT13\",\n" +
-                "        \"name\": \"Passage Reading (match the words)\",\n" +
-                "        \"parent\": \"LO10\"\n" +
+                "        \"name\": \"PassageReading(matchthewords)\",\n" +
+                "        \"parent\": \"LO10\",\n" +
+                "        \"type\": \"LT\"\n" +
                 "    },\n" +
                 "    \"LD3\": {\n" +
                 "        \"id\": \"LD3\",\n" +
-                "        \"name\": \"Akshara Knowledge\"\n" +
+                "        \"name\": \"AksharaKnowledge\",\n" +
+                "        \"type\": \"LD\",\n" +
+                "        \"parent\" : null\n" +
                 "    },\n" +
                 "    \"LO7\": {\n" +
                 "        \"id\": \"LO7\",\n" +
-                "        \"name\": \"Decoding for Reading\",\n" +
-                "        \"parent\": \"LD4\"\n" +
+                "        \"name\": \"DecodingforReading\",\n" +
+                "        \"parent\": \"LD4\",\n" +
+                "        \"type\": \"LO\"\n" +
                 "    },\n" +
                 "    \"LD2\": {\n" +
                 "        \"id\": \"LD2\",\n" +
-                "        \"name\": \"Listening Comprehension\"\n" +
+                "        \"name\": \"ListeningComprehension\",\n" +
+                "        \"type\": \"LD\"\n" +
                 "    },\n" +
                 "    \"LO8\": {\n" +
                 "        \"id\": \"LO8\",\n" +
-                "        \"name\": \"Decoding for Spelling\",\n" +
-                "        \"parent\": \"LD4\"\n" +
+                "        \"name\": \"DecodingforSpelling\",\n" +
+                "        \"parent\": \"LD4\",\n" +
+                "        \"type\": \"LO\"\n" +
                 "    },\n" +
                 "    \"LD1\": {\n" +
                 "        \"id\": \"LD1\",\n" +
                 "        \"name\": \"Vocabulary\",\n" +
-                "        \"parent\": null\n" +
+                "        \"type\": \"LD\",\n" +
+                "        \"parent\" : null\n" +
                 "    },\n" +
                 "    \"LO9\": {\n" +
                 "        \"id\": \"LO9\",\n" +
-                "        \"name\": \"Sentence Comprehension\",\n" +
-                "        \"parent\": \"LD5\"\n" +
+                "        \"name\": \"SentenceComprehension\",\n" +
+                "        \"parent\": \"LD5\",\n" +
+                "        \"type\": \"LO\"\n" +
                 "    },\n" +
                 "    \"LO3\": {\n" +
                 "        \"id\": \"LO3\",\n" +
-                "        \"name\": \"Sentence Comprehension\",\n" +
-                "        \"parent\": \"LD2\"\n" +
+                "        \"name\": \"SentenceComprehension\",\n" +
+                "        \"parent\": \"LD2\",\n" +
+                "        \"type\": \"LO\"\n" +
                 "    },\n" +
                 "    \"LO4\": {\n" +
                 "        \"id\": \"LO4\",\n" +
-                "        \"name\": \"Grammaticality Judgement/Syntax\",\n" +
-                "        \"parent\": \"LD2\"\n" +
+                "        \"name\": \"GrammaticalityJudgement/Syntax\",\n" +
+                "        \"parent\": \"LD2\",\n" +
+                "        \"type\": \"LO\"\n" +
                 "    },\n" +
                 "    \"LO5\": {\n" +
                 "        \"id\": \"LO5\",\n" +
-                "        \"name\": \"Sound-to-symbol Mapping\",\n" +
-                "        \"parent\": \"LD3\"\n" +
+                "        \"name\": \"Sound-to-symbolMapping\",\n" +
+                "        \"parent\": \"LD3\",\n" +
+                "        \"type\": \"LO\"\n" +
                 "    },\n" +
                 "    \"LD5\": {\n" +
                 "        \"id\": \"LD5\",\n" +
-                "        \"name\": \"Reading Comprehension\",\n" +
-                "        \"parent\": null\n" +
+                "        \"name\": \"ReadingComprehension\",\n" +
+                "        \"type\": \"LD\",\n" +
+                "        \"parent\" : null\n" +
                 "    },\n" +
                 "    \"LO6\": {\n" +
                 "        \"id\": \"LO6\",\n" +
-                "        \"name\": \"Decoding for Spelling\",\n" +
-                "        \"parent\": \"LD4\"\n" +
+                "        \"name\": \"DecodingforSpelling\",\n" +
+                "        \"parent\": \"LD4\",\n" +
+                "        \"type\": \"LO\"\n" +
                 "    },\n" +
                 "    \"LD4\": {\n" +
                 "        \"id\": \"LD4\",\n" +
-                "        \"name\": \"Decoding & Fluency\",\n" +
-                "        \"parent\": null\n" +
+                "        \"name\": \"Decoding&Fluency\",\n" +
+                "        \"type\": \"LD\",\n" +
+                "        \"parent\" : null\n" +
                 "    }\n" +
                 "}",Map.class);
         return taxonomyStoreData;

@@ -12,28 +12,37 @@ public class Taxonomy {
     private final String cid;
 
     public Taxonomy(String cid, KeyValueStore<String,Object> taxonomyStore) {
-        this.taxonomyStore = taxonomyStore;
         this.cid = cid;
+        this.taxonomyStore = taxonomyStore;
     }
 
     public String getCid() {
         return (String) this.cid;
     }
 
+    public String getCType() {
+        Map<String, Object> parent = (Map<String, Object>) taxonomyStore.get(cid);
+        String type = (String) parent.get("type");
+        return (String) type;
+    }
+
     public Map<String,Object> getTaxonomyData(String cid) {
         Map<String, Object> taxonomyMap = new HashMap<String, Object>();
-        getTaxonomyMap(cid,taxonomyMap);
+        String cType = getCType();
+        getTaxonomyMap(cid,cType,taxonomyMap);
         return taxonomyMap;
     }
 
-    public void getTaxonomyMap(String cid,Map<String,Object> taxonomyMap){
-        taxonomyMap.put(cid, taxonomyStore.get(cid));
+    public void getTaxonomyMap(String cid,String cType, Map<String,Object> taxonomyMap){
+        taxonomyMap.put(cType, taxonomyStore.get(cid));
         Map<String,Object> parentMap = (Map<String,Object>) taxonomyStore.get(cid);
         String parent = (String) parentMap.get("parent");
         if (parent == null) {
             return;
         } else {
-            getTaxonomyMap(parent, taxonomyMap);
+            Map<String,Object> childParentMap = (Map<String,Object>) taxonomyStore.get(parent);
+            String type = (String) childParentMap.get("type");
+            getTaxonomyMap(parent,type, taxonomyMap);
         }
     }
 }
