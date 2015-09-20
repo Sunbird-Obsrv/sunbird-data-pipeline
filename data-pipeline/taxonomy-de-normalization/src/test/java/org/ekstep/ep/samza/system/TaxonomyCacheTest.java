@@ -1,8 +1,11 @@
 package org.ekstep.ep.samza.system;
 
+import org.ekstep.ep.samza.service.Fetchable;
+import org.ekstep.ep.samza.service.TaxonomyService;
 import org.junit.Before;
 import org.junit.Test;
 import org.apache.samza.storage.kv.KeyValueStore;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -20,6 +23,7 @@ public class TaxonomyCacheTest {
     private KeyValueStore mockStore;
     private Clock mockClock;
     private Date mockDate;
+    private Fetchable mockService;
 
     final String KEY = "KEY";
     final String VALUE = "VALUE";
@@ -32,6 +36,7 @@ public class TaxonomyCacheTest {
         mockStore = Mockito.mock(KeyValueStore.class);
         mockClock = Mockito.mock(Clock.class);
         mockDate = Mockito.mock(Date.class);
+        mockService = Mockito.mock(TaxonomyService.class);
         Mockito.when(mockDate.getTime()).thenReturn(STARTTIME);
         Mockito.when(mockClock.getDate()).thenReturn(mockDate);
         taxonomyCache = new TaxonomyCache(mockStore,mockClock);
@@ -61,5 +66,15 @@ public class TaxonomyCacheTest {
         Mockito.when(mockDate.getTime()).thenReturn(STARTTIME + TTL + DELAY);
         assertNull(taxonomyCache.get(KEY));
         verify(storeSpy, times(1)).delete(KEY);
+    }
+
+    @Test
+    public void ShouldWarmCache(){
+        HashMap<String,Object> map = new HashMap<String, Object>();
+        map.put(KEY, VALUE);
+        try{ Mockito.when(mockService.fetch()).thenReturn(map); } catch(java.io.IOException e){}
+        taxonomyCache.setService(mockService);
+        try{ taxonomyCache.warm(); } catch (java.io.IOException e){}
+        verify(mockStore).put(eq(KEY), eq(VALUE));
     }
 }
