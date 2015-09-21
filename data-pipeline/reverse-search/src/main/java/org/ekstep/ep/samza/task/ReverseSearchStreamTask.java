@@ -103,6 +103,10 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
                 } else {
                     System.out.println("Picking store data for reverse search");
                     location = (Location) JsonReader.jsonToJava(stored_location);
+                    device = new Device(did);
+                    device.setLocation(location);
+                    String djson = JsonWriter.objectToJson(device);
+                    deviceStore.put(did, djson);
                 }
             } else {
                 System.out.println("Trying to pick from device");
