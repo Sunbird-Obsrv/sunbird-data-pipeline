@@ -27,8 +27,9 @@ public class TaxonomyService implements Fetchable {
 //      TODO Check for HTTP Response
         HttpResponse response = httpService.get(url, headerOptions);
         String json = EntityUtils.toString(response.getEntity(), "UTF-8");
+        System.out.println("JSON: "+json);
         Map<String, Object> jsonObject = new Gson().fromJson(json, Map.class);
-        return parseJSON(parseJSON(parseJSON(jsonObject.get("result")).get("taxonomy_hierarchy")).get("children"));
+        return parseJSON(parseJSON(jsonObject.get("result")).get("taxonomy_hierarchy"));
     }
     private Map<String,Object> parseJSON(Object map){
         return (Map<String, Object>)map;

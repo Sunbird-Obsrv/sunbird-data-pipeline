@@ -33,6 +33,7 @@ public class TaxonomyEvent {
         Map<String,Object> eventMap = getMap();
         Object cid = getCID();
         Object cval = cache.get((String) cid);
+        System.out.println("LT: "+cval);
         Map<String,Object> cvalMap = null;
         String type;
         // TODO Put in a RetryStrategy

@@ -30,6 +30,7 @@ import org.ekstep.ep.samza.service.TaxonomyService;
 import org.ekstep.ep.samza.system.TaxonomyCache;
 import org.ekstep.ep.samza.system.TaxonomyEvent;
 
+import java.io.PrintStream;
 import java.util.Map;
 
 public class
@@ -72,10 +73,12 @@ public class
         }
         catch (java.io.IOException e){
             System.err.println("Communication Error: "+e);
+            e.printStackTrace(new PrintStream(System.err));
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), taxonomyEvent.getMap()));
         }
         catch (Exception e) {
-            System.err.println("Exception: "+e);
+            System.err.println("Exception: " + e);
+            e.printStackTrace(new PrintStream(System.err));
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), taxonomyEvent.getMap()));
         }
     }

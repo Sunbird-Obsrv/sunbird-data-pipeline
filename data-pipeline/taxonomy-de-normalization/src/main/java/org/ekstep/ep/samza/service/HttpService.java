@@ -32,7 +32,6 @@ public class HttpService {
         httpResponse = httpClient.execute(getRequest);
         System.out.println(httpResponse);
         // TODO take care of pooling and keep-alive
-        closeConnection();
         return httpResponse;
     }
     public void closeConnection(){
