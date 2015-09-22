@@ -2,11 +2,15 @@ package org.ekstep.ep.samza.system;
 
 
 import com.google.gson.Gson;
+import org.ekstep.ep.samza.system.ChecksumGenerator;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Event {
     private final Map<String, Object> map;
+
+    private Gson gson = new Gson();
 
     public Event(Map<String,Object> map) {
         this.map = map;
@@ -26,6 +30,17 @@ public class Event {
 
     public void addTaxonomyData(Map<String, Object> taxonomyMap){
         map.put("taxonomy", taxonomyMap);
+    }
+
+    public void addCheksum(){
+        String checksum = new ChecksumGenerator(map).generateCheksum();
+        Map<String,Object> metadata = new HashMap<String,Object>();
+        metadata.put("checksum",checksum);
+        map.put("metadata", metadata);
+    }
+
+    public Boolean isChecksumPresent(){
+        return map.containsKey("metadata");
     }
 }
 

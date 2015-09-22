@@ -6,12 +6,12 @@ import org.apache.samza.storage.kv.KeyValueStore;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Taxonomy {
+public class TaxonomyEvent {
 
     private final KeyValueStore<String, Object> taxonomyStore;
     private final String cid;
 
-    public Taxonomy(String cid, KeyValueStore<String,Object> taxonomyStore) {
+    public TaxonomyEvent(String cid, KeyValueStore<String,Object> taxonomyStore) {
         this.cid = cid;
         this.taxonomyStore = taxonomyStore;
     }

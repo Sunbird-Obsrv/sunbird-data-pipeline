@@ -9,11 +9,10 @@ import java.util.Map;
 
 public class EventTest {
 
-
     @Test
     public void shouldReturnCidFromEvent(){
 
-        Map<String, Object> json = (Map<String, Object>) createMap();
+        Map<String, Object> json = (Map<String, Object>) createEvent();
         Map<String, Object> taxonomyMap = (Map<String, Object>) createTaxonomyMap();
 
         Event event = new Event(json);
@@ -24,7 +23,7 @@ public class EventTest {
     @Test
     public void shouldAddTaxonomyDataToEventAndReturnNewEventWithTaxonomyData(){
 
-        Map<String, Object> json = (Map<String, Object>) createMap();
+        Map<String, Object> json = (Map<String, Object>) createEvent();
         Map<String, Object> taxonomyMap = (Map<String, Object>) createTaxonomyMap();
 
         Event event = new Event(json);
@@ -35,8 +34,24 @@ public class EventTest {
         Assert.assertEquals(taxonomyMap, (Map<String,Object>) event.getMap().get("taxonomy"));
     }
 
-    private Map<String, Object> createMap(){
-        Map<String, Object> jsonObject = new Gson().fromJson("{\n" +
+    @Test
+    public void shouldCreateChecksumIfNotPresentAsPartOfTheEvent(){
+        Map<String, Object> json = (Map<String, Object>) createEvent();
+
+        Event event = new Event(json);
+        event.addCheksum();
+        Assert.assertEquals(true,(Boolean) event.getMap().containsKey("metadata"));
+    }
+
+    @Test
+    public void ShouldNotCallChecksumGeneratorIfMetadataChecksumAlreadyPresent(){
+        Map<String, Object> json = (Map<String, Object>) createEvent();
+
+        Event event = new Event(json);
+    }
+
+    private Map<String, Object> createEvent(){
+        Map<String, Object> event = new Gson().fromJson("{\n" +
                 "     \"eid\": \"ME_USER_GAME_LEVEL\",\n" +
                 "     \"ts\": \"2015-07-24T12:07:35+05:30\",\n" +
                 "     \"ver\": \"1.0\",\n" +
@@ -60,7 +75,7 @@ public class EventTest {
                 "     }\n" +
                 "}",Map.class);
 
-        return jsonObject;
+        return event;
     }
 
     private Map<String, Object> createTaxonomyMap(){
@@ -85,5 +100,7 @@ public class EventTest {
         return taxonomyMap;
     }
 
+
 }
+
 

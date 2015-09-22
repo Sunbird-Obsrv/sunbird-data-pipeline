@@ -28,7 +28,7 @@ import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.api.TaxonomyApi;
 import org.ekstep.ep.samza.system.Event;
-import org.ekstep.ep.samza.system.Taxonomy;
+import org.ekstep.ep.samza.system.TaxonomyEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,29 +76,29 @@ public class TaxonomyStreamTask implements StreamTask, InitableTask {
         String cid = (String) event.getCid();
         Map<String, Object> taxonomyLibrary = null;
 
-//        Map<String,Object> txStore = new HashMap<String, Object>();
-
         try {
             if (taxonomyStore.get(cid) == null) {
                 System.out.println("if taxonomy store returns null");
                 taxonomyLibrary = (Map<String, Object>) new TaxonomyApi(apiHost).getTaxonomyLibrary();
                 createTaxonomyHash(taxonomyLibrary, taxonomyStore);
-                Taxonomy taxonomy = new Taxonomy(cid, taxonomyStore);
-                event.addTaxonomyData(taxonomy.getTaxonomyData(cid));
+                TaxonomyEvent taxonomyEvent = new TaxonomyEvent(cid, taxonomyStore);
+                event.addTaxonomyData(taxonomyEvent.getTaxonomyData(cid));
             }
             else {
-                System.out.println("if taxonomy store has value");
-                Taxonomy taxonomy = new Taxonomy(cid,taxonomyStore);
-                event.addTaxonomyData(taxonomy.getTaxonomyData(cid));
+                System.out.println("If taxonomy store has value");
+                TaxonomyEvent taxonomyEvent = new TaxonomyEvent(cid,taxonomyStore);
+                event.addTaxonomyData(taxonomyEvent.getTaxonomyData(cid));
             }
             System.out.println("Output to Success Topic ");
-            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
+            sendMessageToOutgoingMessageEnvelop(event,collector,successTopic);
         }
         catch(Exception e){
             System.out.println("Output to Failed Topic ");
-            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
+            sendMessageToOutgoingMessageEnvelop(event,collector,failedTopic);
         }
     }
+
+
 
     public void createTaxonomyHash(Map<String, Object> jsonObject,KeyValueStore<String,Object> taxonomyStore) throws Exception {
 
@@ -123,7 +123,6 @@ public class TaxonomyStreamTask implements StreamTask, InitableTask {
         {
             taxonomyStore.put(entry.getKey(),entry.getValue());
         }
-
     }
 
     private void processChildData(Map<String, Object> map,  String parent, ArrayList<Map<String,Object>> childElements) throws Exception{
@@ -156,4 +155,16 @@ public class TaxonomyStreamTask implements StreamTask, InitableTask {
             }
         }
     }
+
+    private void sendMessageToOutgoingMessageEnvelop(Event event, MessageCollector collector, String topic) {
+        verifyCheksum(event);
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", topic), event.getMap()));
+    }
+
+    private void verifyCheksum(Event event){
+        if(!event.isChecksumPresent()){
+            event.addCheksum();
+        }
+    }
+
 }

@@ -11,36 +11,36 @@ import java.util.Map;
 import static org.mockito.Mockito.stub;
 
 
-public class TaxonomyTest {
+public class TaxonomyEventTest {
     KeyValueStore taxonomyStore;
-    Taxonomy taxonomy;
+    TaxonomyEvent taxonomyEvent;
 
     @Test
     public void shouldReturnCid(){
 
         taxonomyStore = Mockito.mock(KeyValueStore.class);
-        taxonomy =  new Taxonomy("LT1",taxonomyStore);
+        taxonomyEvent =  new TaxonomyEvent("LT1",taxonomyStore);
 
-        Assert.assertEquals("LT1", (String) taxonomy.getCid());
+        Assert.assertEquals("LT1", (String) taxonomyEvent.getCid());
     }
 
     @Test
     public void shouldReturnCType(){
 
         taxonomyStore = Mockito.mock(KeyValueStore.class);
-        taxonomy =  new Taxonomy("LT11",taxonomyStore);
+        taxonomyEvent =  new TaxonomyEvent("LT11",taxonomyStore);
 
         Map<String,Object> taxonomyStoreData = (Map<String,Object>) getTaxonomyStoreData();
         stub(taxonomyStore.get("LT11")).toReturn(taxonomyStoreData.get("LT11"));
 
-        Assert.assertEquals("LT", (String) taxonomy.getCType());
+        Assert.assertEquals("LT", (String) taxonomyEvent.getCType());
     }
 
     @Test
     public void shouldCreateTaxonomyMapFromTaxonomyStoreAndReturnIt(){
 
         taxonomyStore = Mockito.mock(KeyValueStore.class);
-        Taxonomy taxonomy = new Taxonomy("LT11",taxonomyStore);
+        TaxonomyEvent taxonomyEvent = new TaxonomyEvent("LT11",taxonomyStore);
 
         Map<String,Object> taxonomyData = (Map<String,Object>) getTaxonomyData();
 
@@ -49,7 +49,7 @@ public class TaxonomyTest {
         stub(taxonomyStore.get("LO9")).toReturn(taxonomyStoreData.get("LO9"));
         stub(taxonomyStore.get("LD5")).toReturn(taxonomyStoreData.get("LD5"));
 
-        Assert.assertEquals(taxonomyData, (Map<String,Object>) taxonomy.getTaxonomyData("LT11"));
+        Assert.assertEquals(taxonomyData, (Map<String,Object>) taxonomyEvent.getTaxonomyData("LT11"));
     }
 
     private Map<String,Object> getTaxonomyData(){

@@ -11,7 +11,8 @@ import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.api.TaxonomyApi;
 import org.ekstep.ep.samza.system.Event;
-import org.ekstep.ep.samza.system.Taxonomy;
+import org.ekstep.ep.samza.system.TaxonomyEvent;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -63,9 +64,9 @@ public class TaxonomyStreamTaskTest {
         stub(taxonomyStore.get(event.getCid())).toReturn(null);
 
         Map<String, Object> taxonomyData = (Map<String,Object>) getTaxonomyData();
-        Taxonomy taxonomy = Mockito.mock(Taxonomy.class);
+        TaxonomyEvent taxonomyEvent = Mockito.mock(TaxonomyEvent.class);
 
-        stub(taxonomy.getTaxonomyData("LT1")).toReturn((Map<String,Object>) taxonomyData);
+        stub(taxonomyEvent.getTaxonomyData("LT1")).toReturn((Map<String,Object>) taxonomyData);
 
         TaxonomyStreamTask taxonomyStreamTask = new TaxonomyStreamTask(taxonomyStore);
 
@@ -98,9 +99,9 @@ public class TaxonomyStreamTaskTest {
         stub(taxonomyStore.get(event.getCid())).toReturn(taxonomyStoreData);
 
         Map<String, Object> taxonomyData = (Map<String,Object>) getTaxonomyData();
-        Taxonomy taxonomy = Mockito.mock(Taxonomy.class);
+        TaxonomyEvent taxonomyEvent = Mockito.mock(TaxonomyEvent.class);
 
-        stub(taxonomy.getTaxonomyData("LT1")).toReturn((Map<String,Object>) taxonomyData);
+        stub(taxonomyEvent.getTaxonomyData("LT1")).toReturn((Map<String,Object>) taxonomyData);
 
         TaxonomyStreamTask taxonomyStreamTask = new TaxonomyStreamTask(taxonomyStore);
 
@@ -144,6 +145,23 @@ public class TaxonomyStreamTaskTest {
         verify(taxonomyStore, times(0)).get(anyString());
         verify(collector, times(0)).send(any(OutgoingMessageEnvelope.class));
 
+    }
+
+    @Test
+    public void shouldNotCallCheckSumGeneratorIfChecksumIsAlreadyPresent(){
+
+        Event event = mock(Event.class);
+        Map<String, Object> map = createEventWithChecksum();
+        when(event.getMap()).thenReturn(map);
+
+        stub(envelope.getMessage()).toReturn(event);
+
+        TaxonomyStreamTask taxonomyStreamTask = new TaxonomyStreamTask();
+
+        taxonomyStreamTask.init(configMock, contextMock);
+        taxonomyStreamTask.process(envelope, collector, coordinator);
+
+        verify(event, times(0)).addCheksum();
     }
 
     private Event createEvent() {
@@ -667,5 +685,60 @@ public class TaxonomyStreamTaskTest {
         return taxonomyStoreData;
     }
 
+    private Map<String,Object> createEventWithChecksum(){
+        Map<String, Object> event = new Gson().fromJson("{\n" +
+                "    \"eid\": \"ME_USER_GAME_LEVEL\",\n" +
+                "    \"ts\": \"2015-09-18T08:23:11+00:00\",\n" +
+                "    \"ver\": \"1.0\",\n" +
+                "    \"uid\": \"40887ec1e1e82887a308a3ffe94dccbde9e067ee\",\n" +
+                "    \"cid\": \"LD4\",\n" +
+                "    \"ctype\": \"LD\",\n" +
+                "    \"gdata\": {\n" +
+                "        \"id\": \"org.ekstep.lit.scrnr.kan.lite_static\",\n" +
+                "        \"ver\": \"1.30\"\n" +
+                "    },\n" +
+                "    \"pdata\": {\n" +
+                "        \"id\": \"AssessmentPipeline\",\n" +
+                "        \"mod\": \"LitScreenerLevelComputation\",\n" +
+                "        \"ver\": \"1.0\"\n" +
+                "    },\n" +
+                "    \"edata\": {\n" +
+                "        \"eks\": {\n" +
+                "            \"score\": 17,\n" +
+                "            \"maxscore\": 35,\n" +
+                "            \"current_level\": \"NL\"\n" +
+                "        }\n" +
+                "    },\n" +
+                "    \"metadata\" : {\n" +
+                "        \"checksum\" : \"87449d29cba25993caa7b667dc533dacd3e5f798\"\n" +
+                "      },\n" +
+                "    \"taxonomy\": {\n" +
+                "        \"LD\": {\n" +
+                "            \"id\": \"LD4\",\n" +
+                "            \"name\": \"Decoding & Fluency\",\n" +
+                "            \"parent\": null,\n" +
+                "            \"type\": \"LD\"\n" +
+                "        }\n" +
+                "    },\n" +
+                "    \"flags\": {\n" +
+                "        \"ldata_processed\": true,\n" +
+                "        \"ldata_obtained\": false,\n" +
+                "        \"child_data_processed\": true\n" +
+                "    },\n" +
+                "    \"udata\": {\n" +
+                "        \"uname\": \"childone\",\n" +
+                "        \"age\": 158295191,\n" +
+                "        \"dob\": \"2010-09-12 05:30:00\",\n" +
+                "        \"age_completed_years\": 5,\n" +
+                "        \"gender\": \"male\",\n" +
+                "        \"uekstep_id\": \"child1\"\n" +
+                "    },\n" +
+                "    \"@version\": \"1\",\n" +
+                "    \"@timestamp\": \"2015-09-18T08:39:57.359Z\",\n" +
+                "    \"type\": \"events\"\n" +
+                "}",Map.class);
+
+        return event;
+    }
 
 }
