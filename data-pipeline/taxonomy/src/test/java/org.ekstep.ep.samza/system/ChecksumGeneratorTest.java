@@ -12,16 +12,15 @@ public class ChecksumGeneratorTest {
     @Test
     public void ShouldCreateChecksum(){
 
-        Map<String,Object> json = (Map<String,Object>) createEvent();
+        String json = (String) createEvent();
 
         ChecksumGenerator checksumGenerator = new ChecksumGenerator(json);
         String checksum = checksumGenerator.generateCheksum();
         Assert.assertNotNull(checksum);
     }
 
-    private Map<String,Object> createEvent(){
-        Gson gson = new Gson();
-        Map<String, Object> jsonObject = gson.fromJson("{\n" +
+    private String createEvent(){
+       String jsonObject = "{\n" +
                 "    \"eid\": \"ME_USER_GAME_LEVEL\",\n" +
                 "    \"ts\": \"2015-09-18T08:23:11+00:00\",\n" +
                 "    \"ver\": \"1.0\",\n" +
@@ -68,7 +67,7 @@ public class ChecksumGeneratorTest {
                 "    \"@version\": \"1\",\n" +
                 "    \"@timestamp\": \"2015-09-18T08:39:57.359Z\",\n" +
                 "    \"type\": \"events\"\n" +
-                "}", Map.class);
+                "}";
 
         return jsonObject;
     }

@@ -43,13 +43,6 @@ public class EventTest {
         Assert.assertEquals(true,(Boolean) event.getMap().containsKey("metadata"));
     }
 
-    @Test
-    public void ShouldNotCallChecksumGeneratorIfMetadataChecksumAlreadyPresent(){
-        Map<String, Object> json = (Map<String, Object>) createEvent();
-
-        Event event = new Event(json);
-    }
-
     private Map<String, Object> createEvent(){
         Map<String, Object> event = new Gson().fromJson("{\n" +
                 "     \"eid\": \"ME_USER_GAME_LEVEL\",\n" +

@@ -33,7 +33,8 @@ public class Event {
     }
 
     public void addCheksum(){
-        String checksum = new ChecksumGenerator(map).generateCheksum();
+        String newMap = gson.toJson(map);
+        String checksum = new ChecksumGenerator(newMap).generateCheksum();
         Map<String,Object> metadata = new HashMap<String,Object>();
         metadata.put("checksum",checksum);
         map.put("metadata", metadata);
