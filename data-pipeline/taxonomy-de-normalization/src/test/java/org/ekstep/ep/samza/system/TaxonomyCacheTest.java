@@ -1,17 +1,14 @@
 package org.ekstep.ep.samza.system;
 
 import com.google.gson.Gson;
+import org.ekstep.ep.samza.fixtures.TaxonomyEventFixture;
 import org.ekstep.ep.samza.fixtures.TaxonomyResponse;
 import org.ekstep.ep.samza.service.Fetchable;
 import org.ekstep.ep.samza.service.TaxonomyService;
 import org.junit.Before;
 import org.junit.Test;
 import org.apache.samza.storage.kv.KeyValueStore;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import java.util.*;
 
@@ -76,6 +73,6 @@ public class TaxonomyCacheTest {
         try{ Mockito.when(mockService.fetch()).thenReturn(map); } catch(java.io.IOException e){}
         taxonomyCache.setService(mockService);
         try{ taxonomyCache.warm(); } catch (java.io.IOException e){}
-        verify(mockStore).put(eq(KEY), eq(VALUE));
+        verify(mockStore).put(eq(TaxonomyEventFixture.LD), eq(TaxonomyEventFixture.LDJSON));
     }
 }

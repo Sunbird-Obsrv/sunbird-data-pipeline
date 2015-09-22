@@ -55,8 +55,8 @@ public class TaxonomyEventTest {
         assertEquals(expected_taxonomy_LT.get("name"),taxonomy_LT.get("name"));
     }
 
-    private Map<String,Object> getMap(Object json){
+    private Map<String,Object> getMap(Object map){
         // TODO unchecked
-        return new Gson().fromJson(String.valueOf(json),Map.class);
+        return (Map<String,Object>)map;
     }
 }

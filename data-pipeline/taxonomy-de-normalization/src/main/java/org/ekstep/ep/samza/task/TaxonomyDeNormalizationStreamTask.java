@@ -63,18 +63,11 @@ public class
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator){
         Map<String, Object> jsonObject;
+        TaxonomyEvent taxonomyEvent = new TaxonomyEvent();
         try {
-            jsonObject =  (Map<String, Object>) envelope.getMessage();
+            jsonObject = (Map<String, Object>) envelope.getMessage();
             taxonomyEvent = new TaxonomyEvent(new Gson().toJson(jsonObject));
-            // TODO make cache a Class Level attribute
-            taxonomyEvent.setCache(taxonomyCache);
-            taxonomyEvent.denormalize();
-            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), taxonomyEvent.getMap()));
-        }
-        catch (java.io.IOException e){
-            System.err.println("Communication Error: "+e);
-            e.printStackTrace(new PrintStream(System.err));
-            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), taxonomyEvent.getMap()));
+            processEvent(taxonomyEvent,collector);
         }
         catch (Exception e) {
             System.err.println("Exception: " + e);
@@ -83,4 +76,16 @@ public class
         }
     }
 
+    public void processEvent(TaxonomyEvent taxonomyEvent,MessageCollector collector){
+        // TODO make cache a Class Level attribute
+        try{
+            taxonomyEvent.setCache(taxonomyCache);
+            taxonomyEvent.denormalize();
+            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), taxonomyEvent.getMap()));
+        } catch (java.io.IOException e) {
+            System.err.println("Communication Error: " + e);
+            e.printStackTrace(new PrintStream(System.err));
+            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), taxonomyEvent.getMap()));
+        }
+    }
 }

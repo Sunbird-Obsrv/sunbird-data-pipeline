@@ -18,6 +18,10 @@ public class TaxonomyEvent {
         this.json=json;
     }
     public TaxonomyEvent(){
+        this.json="";
+    }
+    public TaxonomyCache getCache(){
+        return this.cache;
     }
     public void setCache(TaxonomyCache cache){
         this.cache = cache;
@@ -32,14 +36,14 @@ public class TaxonomyEvent {
         Map<String,Object> taxonomy = new HashMap<String, Object>();
         Map<String,Object> eventMap = getMap();
         Object cid = getCID();
-        Object cval = cache.get((String) cid);
+        Object cval = getCache().get((String) cid);
         System.out.println("LT: "+cval);
         Map<String,Object> cvalMap = null;
         String type;
         // TODO Put in a RetryStrategy
         if(cval==null){
-            cache.warm();
-            cval = cache.get((String)cid);
+            getCache().warm();
+            cval = getCache().get((String) cid);
         }
         if(cval!=null){
             type = getType();
@@ -47,16 +51,16 @@ public class TaxonomyEvent {
             taxonomy.put(type,cvalMap);
             cid = cvalMap.get("parent");
             if(cid!=null){
-                cval = cache.get((String) cid);
+                cval = getCache().get((String) cid);
                 cvalMap = new Gson().fromJson(String.valueOf(cval), Map.class);
                 type = (String)cvalMap.get("type");
                 taxonomy.put(type, cvalMap);
                 cid = cvalMap.get("parent");
                 if(cid!=null){
-                    cval = cache.get((String) cid);
+                    cval = getCache().get((String) cid);
                     cvalMap = new Gson().fromJson(String.valueOf(cval), Map.class);
                     type = (String)cvalMap.get("type");
-                    taxonomy.put(type,cvalMap);                }
+                    taxonomy.put(type, cvalMap);                }
             }
         }
         eventMap.put("taxonomy",taxonomy);
