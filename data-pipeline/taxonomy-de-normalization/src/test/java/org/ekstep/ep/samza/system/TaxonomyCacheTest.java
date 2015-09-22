@@ -1,5 +1,7 @@
 package org.ekstep.ep.samza.system;
 
+import com.google.gson.Gson;
+import org.ekstep.ep.samza.fixtures.TaxonomyResponse;
 import org.ekstep.ep.samza.service.Fetchable;
 import org.ekstep.ep.samza.service.TaxonomyService;
 import org.junit.Before;
@@ -70,8 +72,7 @@ public class TaxonomyCacheTest {
 
     @Test
     public void ShouldWarmCache(){
-        HashMap<String,Object> map = new HashMap<String, Object>();
-        map.put(KEY, VALUE);
+        Map<String,Object> map = TaxonomyResponse.fetchMap();
         try{ Mockito.when(mockService.fetch()).thenReturn(map); } catch(java.io.IOException e){}
         taxonomyCache.setService(mockService);
         try{ taxonomyCache.warm(); } catch (java.io.IOException e){}

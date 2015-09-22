@@ -29,7 +29,7 @@ public class TaxonomyEvent {
         return String.valueOf(getMap().get("ctype"));
     }
     public void denormalize() throws java.io.IOException{
-        JsonObject taxonomy = new JsonObject();
+        Map<String,Object> taxonomy = new HashMap<String, Object>();
         Map<String,Object> eventMap = getMap();
         Object cid = getCID();
         Object cval = cache.get((String) cid);
@@ -43,24 +43,23 @@ public class TaxonomyEvent {
         }
         if(cval!=null){
             type = getType();
-            taxonomy.addProperty(type, String.valueOf(cval));
             cvalMap = new Gson().fromJson(String.valueOf(cval),Map.class);
+            taxonomy.put(type,cvalMap);
             cid = cvalMap.get("parent");
             if(cid!=null){
                 cval = cache.get((String) cid);
                 cvalMap = new Gson().fromJson(String.valueOf(cval), Map.class);
                 type = (String)cvalMap.get("type");
-                taxonomy.addProperty(type, String.valueOf(cval));
+                taxonomy.put(type, cvalMap);
                 cid = cvalMap.get("parent");
                 if(cid!=null){
                     cval = cache.get((String) cid);
                     cvalMap = new Gson().fromJson(String.valueOf(cval), Map.class);
                     type = (String)cvalMap.get("type");
-                    taxonomy.addProperty(type, String.valueOf(cval));
-                }
+                    taxonomy.put(type,cvalMap);                }
             }
         }
-        eventMap.put("taxonomy", taxonomy.toString());
+        eventMap.put("taxonomy",taxonomy);
         this.json = new Gson().toJson(eventMap);
     }
     public Map<String, Object> getMap(){

@@ -28,7 +28,7 @@ public class TaxonomyCache {
         cacheClock = clock;
     }
     public Object get(String key){
-        System.out.println("GET: "+key);
+        System.out.println("GET: " + key);
         if(LAMap.containsKey(key)){
             System.out.println("cache HIT");
             long timeDiff = cacheClock.getDate().getTime() - LAMap.get(key);
@@ -43,7 +43,7 @@ public class TaxonomyCache {
     public void put(String key,Object value){
         System.out.println("PUT " + key);
         System.out.println("VALUE " + String.valueOf(value));
-        cacheStore.put(key,value);
+        cacheStore.put(key, value);
         LAMap.put(key, cacheClock.getDate().getTime());
     }
     public void setTTL(Long ttl){
@@ -52,32 +52,32 @@ public class TaxonomyCache {
     public void setService(Fetchable service){
         this.service = service;
     }
+    private void harvestFromChildren(Map<String,Object> parent,ArrayList<Map<String,Object>> childElements){
+        if(childElements==null)
+                return;
+        Map<String,Object> _map;
+        Map<String,Object> _metadata;
+        for (Map<String, Object> element : childElements) {
+            _map = new HashMap<String, Object>();
+            _map.put("id", element.get("identifier"));
+            _map.put("type", element.get("type"));
+            _metadata = (Map<String, Object>) element.get("metadata");
+            _map.put("name", _metadata.get("name"));
+            _map.put("description", _metadata.get("description"));
+            if(parent==null){
+                _map.put("parent", null);
+            } else {
+                _map.put("parent", parent.get("identifier"));
+            }
+            put(String.valueOf(element.get("identifier")), new Gson().toJson(_map));
+            childElements = (ArrayList<Map<String,Object>>) element.get("children");
+            harvestFromChildren(element,childElements);
+        }
+    }
     public void warm() throws java.io.IOException{
         System.out.println("Warming Cache");
-        Map<String,Object> _map;
         Map<String,Object> map = service.fetch();
         ArrayList<Map<String,Object>> childElements = (ArrayList<Map<String,Object>>) map.get("children");
-        for (Map<String, Object> elementLD : childElements) {
-            _map = new HashMap<String, Object>();
-            _map.put("id", elementLD.get("identifier"));
-            _map.put("type", elementLD.get("type"));
-            put(String.valueOf(elementLD.get("identifier")), new Gson().toJson(_map));
-            childElements = (ArrayList<Map<String,Object>>) elementLD.get("children");
-            for (Map<String, Object> elementLO : childElements) {
-                _map = new HashMap<String, Object>();
-                _map.put("id", elementLO.get("identifier"));
-                _map.put("type", elementLO.get("type"));
-                _map.put("parent", String.valueOf(elementLD.get("identifier")));
-                put(String.valueOf(elementLO.get("identifier")), new Gson().toJson(_map));
-                childElements = (ArrayList<Map<String,Object>>) elementLO.get("children");
-                for (Map<String, Object> elementLT : childElements) {
-                    _map = new HashMap<String, Object>();
-                    _map.put("id", elementLT.get("identifier"));
-                    _map.put("type", elementLT.get("type"));
-                    _map.put("parent", String.valueOf(elementLO.get("identifier")));
-                    put(String.valueOf(elementLT.get("identifier")), new Gson().toJson(_map));
-                }
-            }
-        }
+        harvestFromChildren(null,childElements);
     }
 }
