@@ -129,6 +129,11 @@
             <artifactId>httpclient</artifactId>
             <version>4.1.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem</groupId>
+            <artifactId>checksum-generator</artifactId>
+            <version>0.0.1</version>
+        </dependency>
     </dependencies>
 
     <build>

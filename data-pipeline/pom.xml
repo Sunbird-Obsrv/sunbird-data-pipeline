@@ -25,6 +25,8 @@
     <module>de-duplication</module>
     <module>taxonomy</module>
     <module>distribution</module>
+    <module>taxonomy-de-normalization</module>
+    <module>checksum-generator</module>
   </modules>
 
   <properties>

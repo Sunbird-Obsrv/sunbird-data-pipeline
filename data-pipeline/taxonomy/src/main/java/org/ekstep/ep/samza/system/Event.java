@@ -2,7 +2,8 @@ package org.ekstep.ep.samza.system;
 
 
 import com.google.gson.Gson;
-import org.ekstep.ep.samza.system.ChecksumGenerator;
+import com.library.checksum.system.ChecksumGenerator;
+import com.library.checksum.system.KeysToReject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,8 +34,8 @@ public class Event {
     }
 
     public void addCheksum(){
-        String newMap = gson.toJson(map);
-        String checksum = new ChecksumGenerator(newMap).generateCheksum();
+        String[] keys_to_reject = {"eid","@timestamp","pdata","gdata"};
+        String checksum = new ChecksumGenerator(new KeysToReject()).generateChecksum(map,keys_to_reject);
         Map<String,Object> metadata = new HashMap<String,Object>();
         metadata.put("checksum",checksum);
         map.put("metadata", metadata);
