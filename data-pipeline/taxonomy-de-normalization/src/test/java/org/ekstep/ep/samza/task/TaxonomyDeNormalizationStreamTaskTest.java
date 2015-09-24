@@ -1,6 +1,5 @@
 package org.ekstep.ep.samza.task;
 
-import com.google.gson.Gson;
 import org.apache.samza.config.Config;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
@@ -9,10 +8,11 @@ import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
-import org.ekstep.ep.samza.system.TaxonomyCache;
 import org.ekstep.ep.samza.fixtures.TaxonomyEventFixture;
-
+//import org.ekstep.ep.samza.fixtures.TaxonomyEvent;
+import org.ekstep.ep.samza.system.TaxonomyCache;
 import org.ekstep.ep.samza.system.TaxonomyEvent;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -23,6 +23,8 @@ import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.*;
+
+//import sun.jvm.hotspot.utilities.Assert;
 
 public class TaxonomyDeNormalizationStreamTaskTest {
     private MessageCollector collector;
@@ -78,6 +80,21 @@ public class TaxonomyDeNormalizationStreamTaskTest {
         verify(collector).send(argThat(validateOutputTopic(null, FAILURE_TOPIC)));
     }
 
+    @Test
+
+    public void ShouldStampChecksumToTaxonomyEvent() throws Exception{
+        TaxonomyEvent taxonomyEvent = new TaxonomyEvent((String) TaxonomyEventFixture.JSON);
+        // todo try catch added to handle taxonomyEvent.denormalize() failures
+        try{
+            taxonomyDenormalizationStreamTask.processEvent(taxonomyEvent, collector);
+        }
+        catch (Exception e){
+
+        }
+
+        Assert.assertEquals(true, taxonomyEvent.getMap().containsKey("metadata"));
+    }
+
     private ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
         return new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
@@ -91,6 +108,8 @@ public class TaxonomyDeNormalizationStreamTaskTest {
             }
         };
     }
+
+
 
 //    @Test
 //    public void ShouldAttemptToWarmCacheIfCacheMiss() throws Exception{

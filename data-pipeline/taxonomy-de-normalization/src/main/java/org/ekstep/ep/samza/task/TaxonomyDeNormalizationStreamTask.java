@@ -20,6 +20,8 @@
 package org.ekstep.ep.samza.task;
 
 import com.google.gson.Gson;
+import com.library.checksum.system.ChecksumGenerator;
+import com.library.checksum.system.KeysToAccept;
 import org.apache.samza.config.Config;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
@@ -45,6 +47,8 @@ public class
     private TaxonomyEvent taxonomyEvent;
     private String apiHost;
     private final String apiUrl = "/taxonomy-service/taxonomy/hierarchy/literacy_v2?cfields=description,name";
+    private ChecksumGenerator checksumGenerator;
+    private String[] keys_to_accept;
 
     @Override
     public void init(Config config, TaskContext context) {
@@ -58,6 +62,9 @@ public class
         taxonomyCache = new TaxonomyCache(taxonomyStore);
         taxonomyCache.setTTL(1 * 60 * 60 * 1000L);
         taxonomyCache.setService(taxonomyService);
+
+        String[] keys_to_accept = {"uid", "ts", "cid", "gdata","edata"};
+        checksumGenerator = new ChecksumGenerator(new KeysToAccept(keys_to_accept));
     }
 
     @Override
@@ -67,7 +74,7 @@ public class
         try {
             jsonObject = (Map<String, Object>) envelope.getMessage();
             taxonomyEvent = new TaxonomyEvent(new Gson().toJson(jsonObject));
-            processEvent(taxonomyEvent,collector);
+            processEvent(taxonomyEvent, collector);
         }
         catch (Exception e) {
             System.err.println("Exception: " + e);
@@ -79,6 +86,7 @@ public class
     public void processEvent(TaxonomyEvent taxonomyEvent,MessageCollector collector){
         // TODO make cache a Class Level attribute
         try{
+            checksumGenerator.stampChecksum(taxonomyEvent);
             taxonomyEvent.setCache(taxonomyCache);
             taxonomyEvent.denormalize();
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), taxonomyEvent.getMap()));

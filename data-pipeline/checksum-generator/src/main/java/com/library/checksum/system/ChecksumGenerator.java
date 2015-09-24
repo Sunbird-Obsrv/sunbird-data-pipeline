@@ -9,8 +9,8 @@ public class ChecksumGenerator {
         this.strategy = strategy;
     }
 
-    public String generateChecksum(Map<String,Object> event, String []keys){
-        return strategy.createChecksum(event,keys);
+    public Mappable stampChecksum(Mappable event){
+        return strategy.generateChecksum(event);
     }
 }
 

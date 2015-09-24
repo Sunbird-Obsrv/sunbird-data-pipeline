@@ -9,21 +9,31 @@ import java.util.Map;
 
 public class KeysToAccept implements Strategy {
     private Gson gson = new Gson();
+    private String[] keysToAccept;
 
-    @Override
-    public String createChecksum(Map<String, Object> event, String[] keys_to_accept) {
-        String filteredJson = filterEvent(event,keys_to_accept);
-        String checksum = DigestUtils.shaHex(filteredJson);
-        return checksum;
+    public KeysToAccept(String[] keysToAccept){
+        this.keysToAccept = keysToAccept;
     }
 
-    private String filterEvent(Map<String, Object> event,String[] keys_to_accept){
+    @Override
+    public Mappable generateChecksum(Mappable event) {
+        String filteredJson = filterEvent(event.getMap());
+        String checksum = DigestUtils.shaHex(filteredJson);
+        stampChecksum(event, checksum);
+        return event;
+    }
+
+    private void stampChecksum(Mappable event, String checksum) {
+        Map<String,Object> metadata = new HashMap<String,Object>();
+        metadata.put("checksum",checksum);
+        event.setMetadata(metadata);
+    }
+
+    private String filterEvent(Map<String, Object> event){
         Map<String,Object> newEvent = new HashMap<String, Object>();
-        for(String key : keys_to_accept){
+        for(String key : keysToAccept){
             newEvent.put(key,event.get(key));
         };
         return gson.toJson(newEvent);
     }
-
-
 }

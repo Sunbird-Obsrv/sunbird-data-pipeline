@@ -46,8 +46,8 @@
     </dependency>
     <dependency>
         <groupId>org.ekstep.ecosystem.jobs</groupId>
-        <artifactId>taxonomy</artifactId>
-        <version>0.0.2</version>
+        <artifactId>taxonomy-de-normalization</artifactId>
+        <version>0.0.1</version>
         <type>tar.gz</type>
         <classifier>distribution</classifier>
     </dependency>

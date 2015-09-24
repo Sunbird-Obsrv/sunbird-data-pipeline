@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.system;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.library.checksum.system.Mappable;
 import org.ekstep.ep.samza.service.Fetchable;
 
 import java.util.HashMap;
@@ -10,7 +11,7 @@ import java.util.Map;
 /**
  * Created by shashankteotia on 9/19/15.
  */
-public class TaxonomyEvent {
+public class TaxonomyEvent implements Mappable{
     private String json;
     private TaxonomyCache cache;
     public TaxonomyEvent(String json){
@@ -68,5 +69,12 @@ public class TaxonomyEvent {
     }
     public Map<String, Object> getMap(){
         return new Gson().fromJson(json,Map.class);
+    }
+
+    @Override
+    public void setMetadata(Map<String,Object> metadata){
+        Map<String,Object> eventMap = getMap();
+        eventMap.put("metadata",metadata);
+        this.json = new Gson().toJson(eventMap);
     }
 }

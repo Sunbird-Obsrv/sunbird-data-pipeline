@@ -9,17 +9,29 @@ import java.util.Map;
 
 public class KeysToReject implements Strategy {
     private Gson gson = new Gson();
+    private String[] keysToReject;
 
-    @Override
-    public String createChecksum(Map<String, Object> event, String[] keys_to_reject) {
-        String filteredJson = filterEvent(event,keys_to_reject);
-        String checksum = DigestUtils.shaHex(filteredJson);
-        return checksum;
+    public KeysToReject(String[] keysToReject){
+        this.keysToReject = keysToReject;
     }
 
-    private String filterEvent(Map<String, Object> event,String[] keys_to_reject){
+    @Override
+    public Mappable generateChecksum(Mappable event) {
+        String filteredJson = filterEvent(event.getMap());
+        String checksum = DigestUtils.shaHex(filteredJson);
+        stampChecksum(event, checksum);
+        return event;
+    }
+
+    private void stampChecksum(Mappable event, String checksum) {
+        Map<String,Object> metadata = new HashMap<String,Object>();
+        metadata.put("checksum",checksum);
+        event.setMetadata(metadata);
+    }
+
+    private String filterEvent(Map<String, Object> event){
         Map<String, Object> dupEvent = cloneEvent(event);
-        for(String key : keys_to_reject){
+        for(String key : keysToReject){
             dupEvent.remove(key);
         };
         return gson.toJson(dupEvent);
