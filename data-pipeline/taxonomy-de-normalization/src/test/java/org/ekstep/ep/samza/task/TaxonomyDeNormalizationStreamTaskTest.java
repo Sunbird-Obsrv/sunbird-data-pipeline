@@ -46,7 +46,7 @@ public class TaxonomyDeNormalizationStreamTaskTest {
         coordinator = mock(TaskCoordinator.class);
         configMock = Mockito.mock(Config.class);
         contextMock = Mockito.mock(TaskContext.class);
-        when(configMock.get("output.success.topic.name", "unique_events")).thenReturn(SUCCESS_TOPIC);
+        when(configMock.get("output.success.topic.name", "events.ecosystem")).thenReturn(SUCCESS_TOPIC);
         when(configMock.get("output.failed.topic.name", "failed_taxonomy_events")).thenReturn(FAILURE_TOPIC);
         taxonomyDenormalizationStreamTask = new TaxonomyDeNormalizationStreamTask();
         taxonomyDenormalizationStreamTask.init(configMock,contextMock);

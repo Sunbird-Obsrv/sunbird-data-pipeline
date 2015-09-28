@@ -53,12 +53,12 @@ public class
     @Override
     public void init(Config config, TaskContext context) {
 
-        successTopic = config.get("output.success.topic.name", "unique_events");
+        successTopic = config.get("output.success.topic.name", "events.ecosystem");
         failedTopic = config.get("output.failed.topic.name", "failed_taxonomy_events");
 
         apiHost = config.get("api.host");
         taxonomyService = new TaxonomyService(apiHost,apiUrl);
-        taxonomyStore = (KeyValueStore<String, Object>) context.getStore("taxonomy");
+        taxonomyStore = (KeyValueStore<String, Object>) context.getStore("taxonomy-de-normalization");
         taxonomyCache = new TaxonomyCache(taxonomyStore);
         taxonomyCache.setTTL(1 * 60 * 60 * 1000L);
         taxonomyCache.setService(taxonomyService);
