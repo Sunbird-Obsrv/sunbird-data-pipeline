@@ -1,4 +1,4 @@
-package org.ekstep.ep.samza.model;
+package org.ekstep.ep.samza;
 
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.ekstep.ep.samza.validators.IValidator;

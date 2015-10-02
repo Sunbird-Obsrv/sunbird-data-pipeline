@@ -26,6 +26,7 @@
     <module>distribution</module>
     <module>taxonomy-de-normalization</module>
     <module>checksum-generator</module>
+    <module>user-management</module>
   </modules>
 
   <properties>

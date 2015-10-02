@@ -1,4 +1,4 @@
-package org.ekstep.ep.samza.model;
+package org.ekstep.ep.samza;
 
 import org.junit.Test;
 

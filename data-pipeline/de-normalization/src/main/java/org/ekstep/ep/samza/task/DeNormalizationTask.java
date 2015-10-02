@@ -7,9 +7,9 @@ import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
-import org.ekstep.ep.samza.model.Child;
-import org.ekstep.ep.samza.model.ChildDto;
-import org.ekstep.ep.samza.model.Event;
+import org.ekstep.ep.samza.Child;
+import org.ekstep.ep.samza.ChildDto;
+import org.ekstep.ep.samza.Event;
 
 import java.util.Map;
 

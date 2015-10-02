@@ -1,0 +1,186 @@
+package org.ekstep.ep.samza.model;
+
+import javax.sql.DataSource;
+import java.sql.*;
+import java.sql.Date;
+import java.text.ParseException;
+import java.util.*;
+
+import static java.util.Calendar.*;
+
+public class CreateProfileDto implements IModel{
+    private String UID;
+    private String HANDLE;
+    private String GENDER;
+    private Timestamp DOB;
+    private Integer AGE;
+    private Integer STANDARD;
+    private Timestamp CREATED_AT;
+    private Timestamp UPDATED_AT;
+
+    private java.util.Date date = new java.util.Date();
+
+    private boolean isInserted = false;
+
+    private DataSource dataSource;
+
+    public CreateProfileDto(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    @Override
+    public void process(Event event) throws SQLException, ParseException {
+        Map<String,Object> EKS = (Map<String,Object>) event.getEks();
+
+        if(!isLearnerExist((String) EKS.get("uid"))){
+            createLearner(event);
+        }
+
+        parseData(EKS);
+        saveData();
+
+    }
+
+    private void parseData(Map<String, Object> EKS) throws ParseException {
+        UID = (String) EKS.get("uid");
+        if(UID == null) throw new ParseException("UID can't be blank",1);
+
+        HANDLE = (String) EKS.get("handle");
+        if(HANDLE == null) throw new ParseException("HANDLE can't be blank",2);
+
+        GENDER = (String) EKS.get("gender");
+        DOB = (Timestamp) getDOB((int)(double)(Double) EKS.get("age"));
+        AGE = getAge(EKS);
+        STANDARD = getStandard(EKS);
+
+        CREATED_AT = (Timestamp) new Timestamp(date.getTime());
+        UPDATED_AT = (Timestamp) new Timestamp(date.getTime());
+    }
+
+    private Integer getAge(Map<String, Object> EKS) {
+        Integer age = ((Double) EKS.get("age")).intValue();
+        if(age != -1){
+            return age;
+        }
+        return null;
+    }
+
+    private Integer getStandard(Map<String, Object> EKS) {
+        Integer standard = ((Double) EKS.get("standard")).intValue();
+        if(standard != -1){
+            return standard;
+        }
+        return null;
+    }
+
+    public void saveData() throws SQLException, ParseException {
+        PreparedStatement preparedStmt = null;
+        Connection connection = null;
+
+        try {
+            connection = dataSource.getConnection();
+            String query = " insert into profile (uid, handle, dob, gender, age, standard, created_at, updated_at)"
+                    + " values (?, ?, ?, ?, ?, ?, ?, ?)";
+            preparedStmt = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
+
+            preparedStmt.setString (1, UID);
+            preparedStmt.setString (2, HANDLE);
+            preparedStmt.setTimestamp(3, DOB);
+            preparedStmt.setString(4, GENDER);
+
+            if(AGE != null)
+                preparedStmt.setInt(5, AGE);
+            else
+                preparedStmt.setNull(5, java.sql.Types.INTEGER);
+
+            if(STANDARD != null)
+                preparedStmt.setInt(6, STANDARD);
+            else
+                preparedStmt.setNull(6, java.sql.Types.INTEGER);
+
+            preparedStmt.setTimestamp(7, CREATED_AT);
+            preparedStmt.setTimestamp(8, UPDATED_AT);
+
+
+            int affectedRows = preparedStmt.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Creating Profile failed, no rows affected.");
+            }
+
+            ResultSet generatedKeys = preparedStmt.getGeneratedKeys();
+
+            if (generatedKeys.next()) {
+                this.setIsInserted();
+            }
+            else {
+                throw new SQLException("Creating Profile failed, no ID obtained.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if(preparedStmt!=null)
+                preparedStmt.close();
+            if(connection!=null)
+                connection.close();
+        }
+    }
+
+    private void createLearner(Event event) throws SQLException, ParseException {
+        CreateLearnerDto learnerDto = new CreateLearnerDto(dataSource);
+        learnerDto.process(event);
+    }
+
+    public boolean isLearnerExist(String uid) throws SQLException {
+        boolean flag = false;
+        PreparedStatement preparedStmt = null;
+        Connection connection = null;
+        connection = dataSource.getConnection();
+        ResultSet resultSet = null;
+
+        try{
+            String query = "SELECT UID FROM LEARNER WHERE UID = ?";
+            preparedStmt = connection.prepareStatement(query);
+            preparedStmt.setString(1, uid);
+
+            resultSet = preparedStmt.executeQuery();
+
+            if(resultSet.first()){
+                flag = true;
+            }
+
+        } finally {
+            if(preparedStmt!=null)
+                preparedStmt.close();
+            if(connection!=null)
+                connection.close();
+        }
+        return flag;
+    }
+
+    private Timestamp getDOB(Integer age) throws ParseException {
+        Calendar dob = new GregorianCalendar();
+        if(age != -1){
+            dob.add((Calendar.YEAR),- age);
+            return new java.sql.Timestamp(dob.getTimeInMillis());
+        }
+        return null;
+    }
+
+    @Override
+    public boolean canProcessEvent(String eid){
+        return (eid.equals("GE_CREATE_PROFILE"));
+    }
+
+    @Override
+    public void setIsInserted(){
+        this.isInserted = true;
+    }
+
+    @Override
+    public boolean getIsInserted(){
+        return this.isInserted;
+    }
+
+}
