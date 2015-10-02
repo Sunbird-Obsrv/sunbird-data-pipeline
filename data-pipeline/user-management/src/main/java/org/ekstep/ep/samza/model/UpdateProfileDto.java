@@ -92,7 +92,7 @@ public class UpdateProfileDto implements IModel{
                 preparedStmt.setNull(3, java.sql.Types.INTEGER);
 
             if(STANDARD != null)
-                preparedStmt.setInt(4, AGE);
+                preparedStmt.setInt(4, STANDARD);
             else
                 preparedStmt.setNull(4, java.sql.Types.INTEGER);
 
