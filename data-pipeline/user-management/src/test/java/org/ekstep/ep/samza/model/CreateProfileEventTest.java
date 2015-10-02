@@ -18,7 +18,7 @@ public class CreateProfileEventTest {
         String url = String.format("jdbc:mysql://%s:%s/%s", "localhost", "3306", "eptestdb");
         dataSource = new HikariDataSource();
         dataSource.setJdbcUrl(url);
-        dataSource.setUsername("root");
+        dataSource.setUsername("jenkins");
         dataSource.setPassword("ec0syst3m");
     }
 

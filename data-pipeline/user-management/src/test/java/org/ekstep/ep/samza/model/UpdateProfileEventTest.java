@@ -18,10 +18,10 @@ public class UpdateProfileEventTest {
 
     @Before
     public void setUp(){
-        String url = String.format("jdbc:mysql://%s:%s/%s", "0.0.0.0", "3306", "eptestdb");
+        String url = String.format("jdbc:mysql://%s:%s/%s", "localhost", "3306", "eptestdb");
         dataSource = new HikariDataSource();
         dataSource.setJdbcUrl(url);
-        dataSource.setUsername("root");
+        dataSource.setUsername("jenkins");
         dataSource.setPassword("ec0syst3m");
     }
 
