@@ -54,9 +54,9 @@ public class UserManagementTaskTest {
         when(configMock.get("output.failed.topic.name", "failed_user_management_events")).thenReturn(FAILURE_TOPIC);
         when(configMock.get("db.host")).thenReturn("localhost");
         when(configMock.get("db.port")).thenReturn("3306");
-        when(configMock.get("db.userName")).thenReturn("root");
-        when(configMock.get("db.password")).thenReturn("");
-        when(configMock.get("db.schema")).thenReturn("eplocaldb");
+        when(configMock.get("db.userName")).thenReturn("jenkins");
+        when(configMock.get("db.password")).thenReturn("ec0syst3m");
+        when(configMock.get("db.schema")).thenReturn("eptestdb");
 
     }
 
