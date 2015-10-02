@@ -77,8 +77,8 @@ public class UpdateProfileDto implements IModel{
 
         try {
             connection = dataSource.getConnection();
-            String updateQuery = "UPDATE PROFILE SET DOB = ?, GENDER = ?, AGE = ?, STANDARD = ?, UPDATED_AT = ?"
-                    + "WHERE UID = ?";
+            String updateQuery = "update profile set dob = ?, gender = ?, age = ?, standard = ?, updated_at = ?"
+                    + "where uid = ?";
 
             preparedStmt = connection.prepareStatement(updateQuery);
 
@@ -137,7 +137,7 @@ public class UpdateProfileDto implements IModel{
         ResultSet resultSet = null;
 
         try{
-            String query = "SELECT UID FROM LEARNER WHERE UID = ?";
+            String query = "select uid from learner where uid = ?";
             preparedStmt = connection.prepareStatement(query);
             preparedStmt.setString(1, uid);
 
@@ -164,7 +164,7 @@ public class UpdateProfileDto implements IModel{
         ResultSet resultSet = null;
 
         try{
-            String query = "SELECT UID FROM PROFILE WHERE UID = ?";
+            String query = "select uid from learner where uid = ?";
             preparedStmt = connection.prepareStatement(query);
             preparedStmt.setString(1, uid);
 

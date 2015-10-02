@@ -140,7 +140,7 @@ public class CreateProfileDto implements IModel{
         ResultSet resultSet = null;
 
         try{
-            String query = "SELECT UID FROM LEARNER WHERE UID = ?";
+            String query = "select uid from learner where uid = ?";
             preparedStmt = connection.prepareStatement(query);
             preparedStmt.setString(1, uid);
 
