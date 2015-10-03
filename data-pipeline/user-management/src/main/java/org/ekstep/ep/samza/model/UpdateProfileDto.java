@@ -164,7 +164,7 @@ public class UpdateProfileDto implements IModel{
         ResultSet resultSet = null;
 
         try{
-            String query = "select uid from learner where uid = ?";
+            String query = "select uid from profile where uid = ?";
             preparedStmt = connection.prepareStatement(query);
             preparedStmt.setString(1, uid);
 
