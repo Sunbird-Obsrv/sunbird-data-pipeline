@@ -33,7 +33,7 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
         dbHost = config.get("db.host");
         dbPort = config.get("db.port");
         dbUserName = config.get("db.userName");
-        dbPassword = "";
+        dbPassword = config.get("db.password");
         dbSchema = config.get("db.schema");
 
         initDataSource();
