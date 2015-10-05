@@ -159,10 +159,10 @@ public class EventFixture {
                 "    \"edata\": {\n" +
                 "        \"eks\": {\n" +
                 "            \"uid\":\"+" + uid + "\",\n" +
-                "            \"gender\": \"FEMALE\",\n" +
+                "            \"gender\": \"MALE\",\n" +
                 "            \"age\": 10,\n" +
                 "            \"standard\": 5,\n" +
-                "            \"language\": \"ML\"\n" +
+                "            \"language\": \"EL\"\n" +
                 "        }\n" +
                 "    }\n" +
                 "}";

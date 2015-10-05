@@ -51,6 +51,7 @@ public class UpdateProfileDto implements IModel{
         GENDER = (String) EKS.get("gender");
         AGE = getAge(EKS);
         YEAR_OF_BIRTH = (Integer) getYear(((Double) EKS.get("age")).intValue());
+        LANGUAGE = (String) EKS.get("language");
         STANDARD = getStandard(EKS);
 
         UPDATED_AT = (Timestamp) new Timestamp(date.getTime());
@@ -78,7 +79,7 @@ public class UpdateProfileDto implements IModel{
 
         try {
             connection = dataSource.getConnection();
-            String updateQuery = "update profile set year_of_birth = ?, gender = ?, age = ?, standard = ?, updated_at = ?"
+            String updateQuery = "update profile set year_of_birth = ?, gender = ?, age = ?, standard = ?, language = ?, updated_at = ?"
                     + "where uid = ?";
 
             preparedStmt = connection.prepareStatement(updateQuery);
@@ -100,8 +101,9 @@ public class UpdateProfileDto implements IModel{
             else
                 preparedStmt.setNull(4, java.sql.Types.INTEGER);
 
-            preparedStmt.setTimestamp(5, UPDATED_AT);
-            preparedStmt.setString(6, UID);
+            preparedStmt.setString(5,LANGUAGE);
+            preparedStmt.setTimestamp(6, UPDATED_AT);
+            preparedStmt.setString(7, UID);
 
 
             int affectedRows = preparedStmt.executeUpdate();
