@@ -2,19 +2,20 @@ package org.ekstep.ep.samza.model;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.sql.Date;
 import java.text.ParseException;
-import java.util.*;
-
-import static java.util.Calendar.*;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Map;
 
 public class CreateProfileDto implements IModel{
     private String UID;
     private String HANDLE;
     private String GENDER;
-    private Timestamp DOB;
+    private Integer YEAR_OF_BIRTH;
     private Integer AGE;
     private Integer STANDARD;
+    private String LANGUAGE;
     private Timestamp CREATED_AT;
     private Timestamp UPDATED_AT;
 
@@ -49,9 +50,10 @@ public class CreateProfileDto implements IModel{
         if(HANDLE == null) throw new ParseException("HANDLE can't be blank",2);
 
         GENDER = (String) EKS.get("gender");
-        DOB = (Timestamp) getDOB((int)(double)(Double) EKS.get("age"));
+        YEAR_OF_BIRTH = (Integer) getYear(((Double) EKS.get("age")).intValue());
         AGE = getAge(EKS);
         STANDARD = getStandard(EKS);
+        LANGUAGE = (String) EKS.get("language");
 
         CREATED_AT = (Timestamp) new Timestamp(date.getTime());
         UPDATED_AT = (Timestamp) new Timestamp(date.getTime());
@@ -79,13 +81,18 @@ public class CreateProfileDto implements IModel{
 
         try {
             connection = dataSource.getConnection();
-            String query = " insert into profile (uid, handle, dob, gender, age, standard, created_at, updated_at)"
-                    + " values (?, ?, ?, ?, ?, ?, ?, ?)";
+            String query = " insert into profile (uid, handle, year_of_birth, gender, age, standard, language, created_at, updated_at)"
+                    + " values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             preparedStmt = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
 
             preparedStmt.setString (1, UID);
             preparedStmt.setString (2, HANDLE);
-            preparedStmt.setTimestamp(3, DOB);
+
+            if(AGE != null)
+                preparedStmt.setInt(3,YEAR_OF_BIRTH);
+            else
+                preparedStmt.setNull(3, java.sql.Types.INTEGER);
+
             preparedStmt.setString(4, GENDER);
 
             if(AGE != null)
@@ -98,8 +105,10 @@ public class CreateProfileDto implements IModel{
             else
                 preparedStmt.setNull(6, java.sql.Types.INTEGER);
 
-            preparedStmt.setTimestamp(7, CREATED_AT);
-            preparedStmt.setTimestamp(8, UPDATED_AT);
+            preparedStmt.setString(7,LANGUAGE);
+
+            preparedStmt.setTimestamp(8, CREATED_AT);
+            preparedStmt.setTimestamp(9, UPDATED_AT);
 
 
             int affectedRows = preparedStmt.executeUpdate();
@@ -159,11 +168,11 @@ public class CreateProfileDto implements IModel{
         return flag;
     }
 
-    private Timestamp getDOB(Integer age) throws ParseException {
+    private Integer getYear(Integer age) throws ParseException {
         Calendar dob = new GregorianCalendar();
         if(age != -1){
             dob.add((Calendar.YEAR),- age);
-            return new java.sql.Timestamp(dob.getTimeInMillis());
+            return dob.getWeekYear();
         }
         return null;
     }

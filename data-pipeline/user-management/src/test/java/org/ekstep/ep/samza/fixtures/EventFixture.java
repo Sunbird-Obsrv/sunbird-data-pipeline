@@ -5,9 +5,7 @@ import com.google.gson.Gson;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Created by sreeharikm on 9/28/15.
- */
+
 public class EventFixture {
     public String CREATE_USER_EVENT = "{\n" +
             "     \"eid\": \"GE_CREATE_USER\",\n" +
@@ -37,7 +35,8 @@ public class EventFixture {
             "            \"handle\": \"user@twitter.com\",\n" +
             "            \"gender\": \"male\",\n" +
             "            \"age\": -1,\n" +
-            "            \"standard\": -1.0\n" +
+            "            \"standard\": -1.0,\n" +
+            "            \"language\": \"ML\"\n" +
             "        }\n" +
             "    }\n" +
             "}";
@@ -59,7 +58,8 @@ public class EventFixture {
             "            \"handle\": \"user@twitter.com\",\n" +
             "            \"gender\": \"male\",\n" +
             "            \"age\": 10,\n" +
-            "            \"standard\": -1.0\n" +
+            "            \"standard\": -1.0,\n" +
+            "            \"language\": \"ML\"\n" +
             "        }\n" +
             "    }\n" +
             "}";
@@ -90,7 +90,8 @@ public class EventFixture {
             "            \"uid\":\"+" + getRandomUID() + "\",\n" +
             "            \"gender\": \"male\",\n" +
             "            \"age\": -1.0,\n" +
-            "            \"standard\": -1.0\n" +
+            "            \"standard\": -1.0,\n" +
+            "            \"language\": \"ML\"\n" +
             "        }\n" +
             "    }\n" +
             "}";
@@ -112,7 +113,8 @@ public class EventFixture {
                 "            \"handle\": \"user@twitter.com\",\n" +
                 "            \"gender\": \"FEMALE\",\n" +
                 "            \"age\": 10,\n" +
-                "            \"standard\": 5\n" +
+                "            \"standard\": 5,\n" +
+                "            \"language\": \"ML\"\n" +
                 "        }\n" +
                 "    }\n" +
                 "}";
@@ -136,7 +138,8 @@ public class EventFixture {
                 "            \"handle\": \"user@twitter.com\",\n" +
                 "            \"gender\": \"male\",\n" +
                 "            \"age\": -1,\n" +
-                "            \"standard\": -1\n" +
+                "            \"standard\": -1,\n" +
+                "            \"language\": \"ML\"\n" +
                 "        }\n" +
                 "    }\n" +
                 "}";
@@ -158,7 +161,8 @@ public class EventFixture {
                 "            \"uid\":\"+" + uid + "\",\n" +
                 "            \"gender\": \"FEMALE\",\n" +
                 "            \"age\": 10,\n" +
-                "            \"standard\": 5\n" +
+                "            \"standard\": 5,\n" +
+                "            \"language\": \"ML\"\n" +
                 "        }\n" +
                 "    }\n" +
                 "}";

@@ -10,9 +10,10 @@ import java.util.Map;
 public class UpdateProfileDto implements IModel{
     private String UID;
     private String GENDER;
-    private Timestamp DOB;
+    private Integer YEAR_OF_BIRTH;
     private Integer AGE;
     private Integer STANDARD;
+    private String LANGUAGE;
     private Timestamp UPDATED_AT;
 
     private java.util.Date date = new java.util.Date();
@@ -49,7 +50,7 @@ public class UpdateProfileDto implements IModel{
 
         GENDER = (String) EKS.get("gender");
         AGE = getAge(EKS);
-        DOB = (Timestamp) getDOB((int)(double)(Double) EKS.get("age"));
+        YEAR_OF_BIRTH = (Integer) getYear(((Double) EKS.get("age")).intValue());
         STANDARD = getStandard(EKS);
 
         UPDATED_AT = (Timestamp) new Timestamp(date.getTime());
@@ -77,19 +78,22 @@ public class UpdateProfileDto implements IModel{
 
         try {
             connection = dataSource.getConnection();
-            String updateQuery = "update profile set dob = ?, gender = ?, age = ?, standard = ?, updated_at = ?"
+            String updateQuery = "update profile set year_of_birth = ?, gender = ?, age = ?, standard = ?, updated_at = ?"
                     + "where uid = ?";
 
             preparedStmt = connection.prepareStatement(updateQuery);
 
 
-            preparedStmt.setTimestamp(1, DOB);
+            if(AGE != null) {
+                preparedStmt.setInt(1, YEAR_OF_BIRTH);
+                preparedStmt.setInt(3, AGE);
+            }
+            else {
+                preparedStmt.setNull(1, java.sql.Types.INTEGER);
+                preparedStmt.setNull(3, java.sql.Types.INTEGER);
+            }
             preparedStmt.setString(2, GENDER);
 
-            if(AGE != null)
-                preparedStmt.setInt(3, AGE);
-            else
-                preparedStmt.setNull(3, java.sql.Types.INTEGER);
 
             if(STANDARD != null)
                 preparedStmt.setInt(4, STANDARD);
@@ -183,11 +187,11 @@ public class UpdateProfileDto implements IModel{
         return flag;
     }
 
-    private Timestamp getDOB(Integer age) throws ParseException {
+    private Integer getYear(Integer age) throws ParseException {
         Calendar dob = new GregorianCalendar();
         if(age != -1){
             dob.add((Calendar.YEAR),- age);
-            return new Timestamp(dob.getTimeInMillis());
+            return dob.getWeekYear();
         }
         return null;
     }
