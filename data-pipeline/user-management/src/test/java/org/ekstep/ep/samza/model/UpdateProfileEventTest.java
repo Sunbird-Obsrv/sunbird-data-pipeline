@@ -26,16 +26,21 @@ public class UpdateProfileEventTest {
     }
 
     @Test
+    public void ShouldCheckCanProcess(){
+        Event event = new Event(new EventFixture().UPDATE_PROFILE_EVENT);
+        UpdateProfileDto profileDto = new UpdateProfileDto(dataSource);
+
+        Assert.assertEquals(true, profileDto.canProcessEvent(event.getEId()));
+    }
+
+    @Test
     public void ShouldCreateNewProfile() throws SQLException, ParseException {
-
-
         Event event = new Event(new EventFixture().CREATE_PROFILE_EVENT_1(uid));
 
         CreateProfileDto profileDto = new CreateProfileDto(dataSource);
         profileDto.process(event);
 
         Assert.assertEquals(true, profileDto.getIsInserted());
-
     }
 
     @Test

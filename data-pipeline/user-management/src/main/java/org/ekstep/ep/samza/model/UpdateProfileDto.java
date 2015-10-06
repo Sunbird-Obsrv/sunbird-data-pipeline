@@ -79,7 +79,6 @@ public class UpdateProfileDto implements IModel{
 
             preparedStmt = connection.prepareStatement(updateQuery);
 
-
             if(AGE != null) {
                 preparedStmt.setInt(1, YEAR_OF_BIRTH);
                 preparedStmt.setInt(3, AGE);
@@ -90,7 +89,6 @@ public class UpdateProfileDto implements IModel{
             }
 
             preparedStmt.setString(2, GENDER);
-
 
             if(STANDARD != null)
                 preparedStmt.setInt(4, STANDARD);
@@ -122,47 +120,9 @@ public class UpdateProfileDto implements IModel{
         }
     }
 
-    private void createLearner(Event event) throws SQLException, ParseException {
-        CreateLearnerDto learnerDto = new CreateLearnerDto(dataSource);
-        learnerDto.process(event);
-    }
-
     private void createProfile(Event event) throws SQLException, ParseException {
         CreateProfileDto profileDto = new CreateProfileDto(dataSource);
         profileDto.process(event);
-    }
-
-    private boolean isLearnerExist(String uid) throws SQLException {
-        boolean flag = false;
-        PreparedStatement preparedStmt = null;
-        Connection connection = null;
-        connection = dataSource.getConnection();
-        ResultSet resultSet = null;
-
-        try{
-            String query = "select uid from learner where uid = ?";
-            preparedStmt = connection.prepareStatement(query);
-            preparedStmt.setString(1, uid);
-
-            resultSet = preparedStmt.executeQuery();
-
-            if(resultSet.first()){
-                flag = true;
-            }
-
-        } catch (Exception e) {
-            System.err.println("Exception: " + e);
-            e.printStackTrace(new PrintStream(System.err));
-        }
-        finally {
-            if(preparedStmt!=null)
-                preparedStmt.close();
-            if(connection!=null)
-                connection.close();
-            if(resultSet!=null)
-                resultSet.close();
-        }
-        return flag;
     }
 
     public boolean isProfileExist(String uid) throws SQLException {

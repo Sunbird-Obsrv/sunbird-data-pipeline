@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.model;
 
+import com.google.gson.JsonSyntaxException;
 import com.zaxxer.hikari.HikariDataSource;
 import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.junit.Assert;
@@ -24,6 +25,14 @@ public class CreateUserEventTest {
     }
 
     @Test
+    public void ShouldCheckCanProcess(){
+        Event event = new Event(new EventFixture().CREATE_USER_EVENT);
+        CreateLearnerDto learnerDto = new CreateLearnerDto(dataSource);
+
+        Assert.assertEquals(true, learnerDto.canProcessEvent(event.getEId()));
+    }
+
+    @Test
     public void ShouldProcessEventAndInsertNewEntry() throws SQLException, ParseException {
         Event event = new Event(new EventFixture().CREATE_USER_EVENT);
 
@@ -33,16 +42,11 @@ public class CreateUserEventTest {
         Assert.assertEquals(true,learnerDto.getIsInserted());
     }
 
-    @Test
+    @Test(expected=ParseException.class)
     public void ShouldNotInsertIfUidIsNull() throws SQLException, ParseException {
         Event event = new Event(new EventFixture().INVALID_CREATE_EVENT);
         CreateLearnerDto learnerDto = new CreateLearnerDto(dataSource);
-        try {
-            learnerDto.process(event);
-        }
-        catch (Exception e){
-
-        }
-        Assert.assertEquals(false,learnerDto.getIsInserted());
+        learnerDto.process(event);
     }
+
 }
