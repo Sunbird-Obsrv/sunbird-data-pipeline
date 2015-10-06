@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.model;
 
 import javax.sql.DataSource;
+import java.io.PrintStream;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,7 +40,6 @@ public class CreateProfileDto implements IModel{
 
         parseData(EKS);
         saveData();
-
     }
 
     private void parseData(Map<String, Object> EKS) throws ParseException {
@@ -88,17 +88,16 @@ public class CreateProfileDto implements IModel{
             preparedStmt.setString (1, UID);
             preparedStmt.setString (2, HANDLE);
 
-            if(AGE != null)
-                preparedStmt.setInt(3,YEAR_OF_BIRTH);
-            else
+            if(AGE != null) {
+                preparedStmt.setInt(3, YEAR_OF_BIRTH);
+                preparedStmt.setInt(5, AGE);
+            }
+            else {
                 preparedStmt.setNull(3, java.sql.Types.INTEGER);
+                preparedStmt.setNull(5, java.sql.Types.INTEGER);
+            }
 
             preparedStmt.setString(4, GENDER);
-
-            if(AGE != null)
-                preparedStmt.setInt(5, AGE);
-            else
-                preparedStmt.setNull(5, java.sql.Types.INTEGER);
 
             if(STANDARD != null)
                 preparedStmt.setInt(6, STANDARD);
@@ -126,8 +125,9 @@ public class CreateProfileDto implements IModel{
                 throw new SQLException("Creating Profile failed, no ID obtained.");
             }
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Exception: " + e);
+            e.printStackTrace(new PrintStream(System.err));
         } finally {
             if(preparedStmt!=null)
                 preparedStmt.close();
@@ -159,11 +159,17 @@ public class CreateProfileDto implements IModel{
                 flag = true;
             }
 
-        } finally {
+        } catch (Exception e) {
+            System.err.println("Exception: " + e);
+            e.printStackTrace(new PrintStream(System.err));
+        }
+        finally {
             if(preparedStmt!=null)
                 preparedStmt.close();
             if(connection!=null)
                 connection.close();
+            if(resultSet!=null)
+                resultSet.close();
         }
         return flag;
     }

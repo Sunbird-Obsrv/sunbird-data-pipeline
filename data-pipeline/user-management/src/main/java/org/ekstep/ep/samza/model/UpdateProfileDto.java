@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.model;
 
 import javax.sql.DataSource;
+import java.io.PrintStream;
 import java.sql.*;
 import java.text.ParseException;
 import java.util.Calendar;
@@ -30,18 +31,12 @@ public class UpdateProfileDto implements IModel{
     public void process(Event event) throws SQLException, ParseException {
         Map<String,Object> EKS = (Map<String,Object>) event.getEks();
 
-
-        if(!isLearnerExist((String) EKS.get("uid"))){
-            createLearner(event);
-        }
-
         if(!isProfileExist((String) EKS.get("uid"))){
             createProfile(event);
         }
 
         parseData(EKS);
         saveData();
-
     }
 
     private void parseData(Map<String, Object> EKS) throws ParseException {
@@ -93,6 +88,7 @@ public class UpdateProfileDto implements IModel{
                 preparedStmt.setNull(1, java.sql.Types.INTEGER);
                 preparedStmt.setNull(3, java.sql.Types.INTEGER);
             }
+
             preparedStmt.setString(2, GENDER);
 
 
@@ -115,8 +111,9 @@ public class UpdateProfileDto implements IModel{
                 this.setIsInserted();
             }
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Exception: " + e);
+            e.printStackTrace(new PrintStream(System.err));
         } finally {
             if(preparedStmt!=null)
                 preparedStmt.close();
@@ -153,11 +150,17 @@ public class UpdateProfileDto implements IModel{
                 flag = true;
             }
 
-        } finally {
+        } catch (Exception e) {
+            System.err.println("Exception: " + e);
+            e.printStackTrace(new PrintStream(System.err));
+        }
+        finally {
             if(preparedStmt!=null)
                 preparedStmt.close();
             if(connection!=null)
                 connection.close();
+            if(resultSet!=null)
+                resultSet.close();
         }
         return flag;
     }
@@ -180,6 +183,9 @@ public class UpdateProfileDto implements IModel{
                 flag = true;
             }
 
+        } catch (Exception e) {
+            System.err.println("Exception: " + e);
+            e.printStackTrace(new PrintStream(System.err));
         } finally {
             if(preparedStmt!=null)
                 preparedStmt.close();
@@ -200,7 +206,6 @@ public class UpdateProfileDto implements IModel{
 
     @Override
     public boolean canProcessEvent(String eid){
-
         return (eid.equals("GE_UPDATE_PROFILE"));
     }
 

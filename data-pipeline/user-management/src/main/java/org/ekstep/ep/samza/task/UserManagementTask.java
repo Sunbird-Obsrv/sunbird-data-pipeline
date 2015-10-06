@@ -9,6 +9,7 @@ import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.model.*;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -52,10 +53,16 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
     }
 
     @Override
-    public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-        Map<String,Object> jsonObject = (Map<String,Object>) envelope.getMessage();
-        Event event = new Event(new Gson().toJson(jsonObject));
-        processEvent(event,collector);
+    public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) {
+        try{
+            Map<String,Object> jsonObject = (Map<String,Object>) envelope.getMessage();
+            Event event = new Event(new Gson().toJson(jsonObject));
+            processEvent(event,collector);
+        }
+        catch(Exception e){
+            System.err.println("Exception: " + e);
+            e.printStackTrace(new PrintStream(System.err));
+        }
     }
 
     public void processEvent(Event event,MessageCollector collector) throws Exception{

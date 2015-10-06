@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.model;
 import javax.sql.DataSource;
+import java.io.PrintStream;
 import java.sql.*;
 import java.text.ParseException;
 import java.util.Map;
@@ -61,9 +62,10 @@ public class CreateLearnerDto implements IModel{
                 throw new SQLException("Creating Learner failed, no ID obtained.");
             }
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }finally {
+        } catch (Exception e) {
+            System.err.println("Exception: " + e);
+            e.printStackTrace(new PrintStream(System.err));
+        } finally {
             if(preparedStmt!=null)
                 preparedStmt.close();
             if(connection!=null)
