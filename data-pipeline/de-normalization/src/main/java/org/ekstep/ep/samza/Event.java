@@ -27,6 +27,10 @@ public class Event {
         this.hadIssueWithDb = false;
     }
 
+    public Map<String,Object> getMap(){
+        return (Map<String,Object>) this.map;
+    }
+
     public void initialize() {
         try {
             ArrayList<IValidator> validators = ValidatorFactory.validators(map);
@@ -47,7 +51,7 @@ public class Event {
             child = childStore.get(uid);
             if (child == null){
                 Boolean childProcessed = flags == null || !flags.containsKey("child_data_processed") ? false : flags.get("child_data_processed");
-                child = new Child(uid, childProcessed , timeOfEventTicksInMilliSeconds, udata);
+                child = new Child(uid, childProcessed ,udata);
             }
         } catch (ParseException e) {
             canBeProcessed = false;

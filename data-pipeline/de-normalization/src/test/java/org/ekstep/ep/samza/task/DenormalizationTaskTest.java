@@ -3,13 +3,19 @@ package org.ekstep.ep.samza.task;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
+import org.apache.samza.storage.kv.KeyValueStore;
+import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
+import org.apache.samza.task.TaskCoordinator;
+import org.ekstep.ep.samza.Child;
 import org.ekstep.ep.samza.ChildDto;
 import org.ekstep.ep.samza.Event;
+import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
@@ -18,11 +24,13 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
-public class DenormalizationTaskTest{
+public class DeNormalizationTaskTest {
     private final String SUCCESS_TOPIC = "events_with_de_normalization";
     private final String FAILED_TOPIC = "events_failed_de_normalization";
     private final String RETRY_TOPIC = "events_retry";
@@ -34,6 +42,9 @@ public class DenormalizationTaskTest{
     private TaskContext contextMock;
     private MetricsRegistry metricsRegistry;
     private Counter counter;
+    private IncomingMessageEnvelope envelopMock;
+    private KeyValueStore<String, Object> deviceStore;
+    private TaskCoordinator coordinatorMock;
 
     @Before
     public void setUp(){
@@ -43,6 +54,10 @@ public class DenormalizationTaskTest{
         contextMock = Mockito.mock(TaskContext.class);
         metricsRegistry = Mockito.mock(MetricsRegistry.class);
         counter = Mockito.mock(Counter.class);
+        envelopMock = mock(IncomingMessageEnvelope.class);
+        deviceStore = mock(KeyValueStore.class);
+        coordinatorMock = mock(TaskCoordinator.class);
+
 
         configMock = Mockito.mock(Config.class);
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
@@ -53,6 +68,7 @@ public class DenormalizationTaskTest{
 
         deNormalizationTask = new DeNormalizationTask();
     }
+
     @Test
     public void ShouldInitializeEvent() {
         deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
@@ -68,7 +84,7 @@ public class DenormalizationTaskTest{
     }
 
     @Test
-    public void ShouldSendOutputToFailedTopicAndSuccessTopic() throws Exception {
+    public void ShouldSendOutputToReTryTopicIfUIDIsNotPresentInDb() throws Exception {
         stub(eventMock.isProcessed()).toReturn(false);
         HashMap<String, Object> message = new HashMap<String, Object>();
         stub(eventMock.getData()).toReturn(message);
@@ -77,12 +93,12 @@ public class DenormalizationTaskTest{
 
         deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
 
-        verify(collectorMock,times(2)).send(argument.capture());
-        validateStreams(argument, message, new String[]{SUCCESS_TOPIC,FAILED_TOPIC});
+        verify(collectorMock,times(1)).send(argument.capture());
+        validateStreams(argument, message, new String[]{RETRY_TOPIC});
     }
 
     @Test
-    public void ShouldSendOutputToFailedTopicRetryTopicAndSuccessTopic() throws Exception {
+    public void ShouldSendOutputToFailedTopicAndRetryTopic() throws Exception {
         stub(eventMock.isProcessed()).toReturn(false);
         stub(eventMock.hadIssueWithDb()).toReturn(true);
         HashMap<String, Object> message = new HashMap<String, Object>();
@@ -92,8 +108,8 @@ public class DenormalizationTaskTest{
 
         deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
 
-        verify(collectorMock,times(3)).send(argument.capture());
-        validateStreams(argument, message, new String[]{SUCCESS_TOPIC, FAILED_TOPIC, RETRY_TOPIC});
+        verify(collectorMock,times(2)).send(argument.capture());
+        validateStreams(argument, message, new String[]{RETRY_TOPIC,FAILED_TOPIC});
     }
 
 
@@ -107,7 +123,6 @@ public class DenormalizationTaskTest{
         deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
 
         verify(collectorMock).send(argThat(validateOutputTopic(message, SUCCESS_TOPIC)));
-
     }
 
     private ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {

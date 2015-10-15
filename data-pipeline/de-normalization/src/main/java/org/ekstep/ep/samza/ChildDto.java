@@ -4,10 +4,10 @@ import java.sql.*;
 import java.util.HashMap;
 
 public class ChildDto {
-    public static final String NAME = "name";
+    public static final String HANDLE = "handle";
+    public static final String STANDARD = "standard";
     public static final String GENDER = "gender";
-    public static final String EKSTEP_ID = "ekstep_id";
-    public static final String DOB = "dob";
+    public static final String YEAR_OF_BIRTH = "year_of_birth";
     private String host;
     private String port;
     private String schema;
@@ -24,7 +24,7 @@ public class ChildDto {
     }
 
     public Child process(Child child) throws SQLException {
-        String query = String.format("select * from children where encoded_id = '%s'", child.getUid());
+        String query = String.format("select * from profile where uid = '%s'", child.getUid());
         HashMap<String, Object> childData = new HashMap<String, Object>();
         Statement statement = null;
         Connection connection=null;
@@ -38,10 +38,10 @@ public class ChildDto {
 
             resultSet = statement.executeQuery(query);
             while (resultSet.next()){
-                childData.put(NAME, resultSet.getString(NAME));
+                childData.put(HANDLE, resultSet.getString(HANDLE));
+                childData.put(STANDARD, resultSet.getInt(STANDARD));
                 childData.put(GENDER, resultSet.getString(GENDER));
-                childData.put(EKSTEP_ID, resultSet.getString(EKSTEP_ID));
-                childData.put(DOB, resultSet.getTimestamp(DOB));
+                childData.put(YEAR_OF_BIRTH, resultSet.getInt(YEAR_OF_BIRTH));
             }
             child.populate(childData);
             return child;

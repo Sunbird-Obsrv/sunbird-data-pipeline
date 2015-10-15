@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.task;
 
+import com.google.gson.Gson;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.storage.kv.KeyValueStore;
@@ -44,7 +45,9 @@ public class DeNormalizationTask implements StreamTask, InitableTask{
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) throws Exception {
+        System.out.println("current stream"+envelope.getSystemStreamPartition().getSystemStream().toString());
         Map<String, Object> message = (Map<String, Object>) envelope.getMessage();
+        System.out.println("Event"+ new Gson().toJson(message));
         ChildDto dataSource = new ChildDto(dbHost, dbPort, dbSchema, dbUserName, dbPassword);
         Event event = new Event(message, childData);
         processEvent(collector, event, dataSource);
@@ -58,10 +61,13 @@ public class DeNormalizationTask implements StreamTask, InitableTask{
     }
 
     private void populateTopic(MessageCollector collector, Event event) {
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getData()));
-        if(!event.isProcessed())
-            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getData()));
-        if(event.hadIssueWithDb())
+        if(event.isProcessed()){
+            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getData()));
+        }
+        else{
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", retryTopic), event.getData()));
+        }
+        if(event.hadIssueWithDb())
+            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getData()));
     }
 }

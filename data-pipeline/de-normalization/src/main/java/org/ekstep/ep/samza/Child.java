@@ -3,42 +3,32 @@ package org.ekstep.ep.samza;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 public class Child implements Serializable {
-    public static final String UNAME = "uname";
-    public static final String UEKSTEP_ID = "uekstep_id";
+    public static final String HANDLE = "handle";
+    public static final String STANDARD = "standard";
     public static final String GENDER = "gender";
     public static final String AGE_COMPLETED_YEARS = "age_completed_years";
-    public static final String DOB = "dob";
-    public static final String AGE = "age";
     private String uid;
     private Boolean child_data_processed;
-    private long age;
-    private String dob;
     private int age_completed_years;
     private String gender;
-    private String uName;
-    private String uEkStepId;
-    private long timeOfReferenceInSeconds;
+    private String handle;
+    private Integer standard;
 
-    public Child(String uid, Boolean child_data_processed, long timeOfReferenceInMiliSeconds, Map<String, Object> udata) {
+    public Child(String uid, Boolean child_data_processed, Map<String, Object> udata) {
         this.uid = uid;
         this.child_data_processed = child_data_processed == null ? false : child_data_processed;
-        this.timeOfReferenceInSeconds = timeOfReferenceInMiliSeconds/1000;
         initialize(udata);
     }
 
     private void initialize(Map<String, Object> udata) {
         if(udata == null) return;
-        this.age = ((Integer) udata.get(AGE));
-        this.dob = ((String) udata.get(DOB));
         this.age_completed_years = ((Integer) udata.get(AGE_COMPLETED_YEARS));
         this.gender = ((String) udata.get(GENDER));
-        this.uName = ((String) udata.get(UNAME));
-        this.uEkStepId = ((String) udata.get(UEKSTEP_ID));
+        this.handle = ((String) udata.get(HANDLE));
+        this.standard = ((Integer) udata.get(STANDARD));
     }
 
     public Boolean isProcessed(){
@@ -51,12 +41,10 @@ public class Child implements Serializable {
 
     public HashMap<String, Object> getData() {
         HashMap<String, Object> udata = new HashMap<String, Object>();
-        udata.put(UNAME, this.uName);
-        udata.put(DOB, this.dob);
-        udata.put(AGE, this.age);
+        udata.put(HANDLE, this.handle);
+        udata.put(STANDARD,this.standard);
         udata.put(AGE_COMPLETED_YEARS, this.age_completed_years);
         udata.put(GENDER, this.gender);
-        udata.put(UEKSTEP_ID, this.uEkStepId);
         return udata;
     }
 
@@ -66,30 +54,26 @@ public class Child implements Serializable {
             return;
         }
         System.out.println("trying to read from database");
-        String name = (String)childData.get("name");
+        String handle = (String)childData.get(HANDLE);
+        Integer standard = (Integer)childData.get(STANDARD);
         String gender = (String)childData.get(GENDER);
-        String ekstep_id = (String)childData.get("ekstep_id");
         populateAgeRelatedFields(childData);
-        this.uName = name;
+        this.handle = handle;
+        this.standard = standard;
         this.gender = gender;
-        this.uEkStepId = ekstep_id;
         this.child_data_processed = true;
         System.out.println("successfully read from db");
     }
 
     private void populateAgeRelatedFields(HashMap<String, Object> childData) {
-        Timestamp dob = (Timestamp)childData.get(DOB);
-        if(dob == null){
-            System.err.println("No dob for the children, skipping all age related fields");
+        Integer year_of_birth = (Integer) childData.get("year_of_birth");
+        Calendar dob = new GregorianCalendar();
+        if(year_of_birth == null){
+            System.err.println("No Age for the children, skipping all age related fields");
             return;
         }
-        long dobTicksInSeconds = dob.getTime()/1000;
-        long secondsInYear = 31556952;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("IST"));
-        this.age = timeOfReferenceInSeconds - dobTicksInSeconds;
-        this.dob = simpleDateFormat.format(dob);
-        this.age_completed_years = (int) (age/secondsInYear);
+        dob.add((Calendar.YEAR),- year_of_birth);
+        this.age_completed_years = dob.getWeekYear();
     }
 
     public String getUid() {

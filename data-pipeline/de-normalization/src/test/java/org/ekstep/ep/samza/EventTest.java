@@ -132,7 +132,7 @@ public class EventTest {
     public void ShouldNotTryToProcessChildIfChildIsCached() {
         map.put("ts", "2008-06-16T00:00:00 +0530");
         map.put("uid", UID);
-        Child child = new Child(UID, true, 1234321, getUdata());
+        Child child = new Child(UID, true, getUdata());
 
         Mockito.stub(keyValueStoreMock.get(UID)).toReturn(child);
 
@@ -148,7 +148,7 @@ public class EventTest {
     public void ShouldProcessChildIfChildIsNotProcessed() throws SQLException {
         map.put("ts", "2008-06-16T00:00:00 +0530");
         map.put("uid", UID);
-        Child child = new Child(UID, true, 1234321, getUdata());
+        Child child = new Child(UID, true,  getUdata());
         stub(childDtoMock.process(any(Child.class))).toReturn(child);
 
         Event event = new Event(map, keyValueStoreMock);
@@ -183,7 +183,7 @@ public class EventTest {
     public void ShouldGetRightDataWhenCached() {
         map.put("ts", "2008-06-16T00:00:00 +0530");
         map.put("uid", UID);
-        Child child = new Child(UID, true, 1234321, getUdata());
+        Child child = new Child(UID, true,  getUdata());
 
         Mockito.stub(keyValueStoreMock.get(UID)).toReturn(child);
 
@@ -203,7 +203,7 @@ public class EventTest {
         map.put("ts", "2008-06-16T00:00:00 +0530");
         map.put("uid", UID);
 
-        Child child = new Child(UID, true, 1234321, getUdata());
+        Child child = new Child(UID, true,  getUdata());
         stub(childDtoMock.process(any(Child.class))).toReturn(child);
 
         Event event = new Event(map, keyValueStoreMock);
@@ -222,7 +222,7 @@ public class EventTest {
         map.put("ts", "2008-06-16T00:00:00 +0530");
         map.put("uid", UID);
 
-        Child child = new Child(UID, false, 1234321, getUdata());
+        Child child = new Child(UID, false, getUdata());
         stub(childDtoMock.process(any(Child.class))).toReturn(child);
 
         Event event = new Event(map, keyValueStoreMock);
@@ -275,7 +275,7 @@ public class EventTest {
         map.put("udata", getUdata());
         map.put("flags", flags);
 
-        Child child = new Child(UID, true, 1234321, getUdata());
+        Child child = new Child(UID, true, getUdata());
         stub(childDtoMock.process(any(Child.class))).toReturn(child);
         Event event = new Event(map, keyValueStoreMock);
 
@@ -288,12 +288,10 @@ public class EventTest {
     private void validateUdata(HashMap<String, Object> actualUdata) {
         HashMap<String, Object> expectedUdata = getUdata();
 
-        assertEquals(expectedUdata.get("age").toString(),actualUdata.get("age").toString());
-        assertEquals(expectedUdata.get("dob"),actualUdata.get("dob"));
         assertEquals(expectedUdata.get("age_completed_years"),actualUdata.get("age_completed_years"));
         assertEquals(expectedUdata.get("gender"),actualUdata.get("gender"));
-        assertEquals(expectedUdata.get("uname"),actualUdata.get("uname"));
-        assertEquals(expectedUdata.get("uekstep_id"),actualUdata.get("uekstep_id"));
+        assertEquals(expectedUdata.get("handle"),actualUdata.get("handle"));
+        assertEquals(expectedUdata.get("standard"),actualUdata.get("standard"));
     }
 
     private ArgumentMatcher<Child> validateChild(final String uid) {
@@ -310,12 +308,10 @@ public class EventTest {
 
     private HashMap<String, Object> getUdata() {
         HashMap<String, Object> udata = new HashMap<String, Object>();
-        udata.put("age", 112233445);
-        udata.put("dob", "2008-06-16 00:00:00 +0530");
         udata.put("age_completed_years", 7);
         udata.put("gender", "male");
-        udata.put("uname", "batman");
-        udata.put("uekstep_id", "dark_knight");
+        udata.put("handle", "user@twitter.com");
+        udata.put("standard", 2);
         return udata;
     }
 
