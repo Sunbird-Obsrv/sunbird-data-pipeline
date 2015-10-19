@@ -9,6 +9,10 @@ namespace :setup do
     require_relative '../data-indexer/indexers.rb'
     client = ::Indexers::Elasticsearch.new(true)
   end
+  task :transfer_data do
+    require_relative '../lib/ecosystem-platform/jobs/data_transferer.rb'
+    EcosystemPlatform::Jobs::DataTransferer.perform
+  end
 end
 
 namespace :uploaders do
@@ -57,7 +61,7 @@ namespace :correctors do
   task :remove_by_device_id do
     require_relative '../lib/ecosystem-platform/correctors/remove_by_device_id.rb'
     EcosystemPlatform::Correctors::RemoveByDeviceId.perform
-  end
+  end  
 end
 
 namespace :scheduled do
