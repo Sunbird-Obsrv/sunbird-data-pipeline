@@ -40,7 +40,7 @@ module Indexers
             },
             {
               double_fields: {
-                  match: "mem|idisk|edisk|scrn|length|exlength|age|percent_correct|percent_attempt|size|score|maxscore",
+                  match: "mem|idisk|edisk|scrn|length|exlength|age|percent_correct|percent_attempt|size|score|maxscore|osize|isize",
                   match_pattern: "regex",
                   mapping: {
                       type: "double",
