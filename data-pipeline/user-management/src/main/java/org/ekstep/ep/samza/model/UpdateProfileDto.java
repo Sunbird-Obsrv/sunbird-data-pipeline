@@ -9,13 +9,20 @@ import java.util.GregorianCalendar;
 import java.util.Map;
 
 public class UpdateProfileDto implements IModel{
-    private String UID;
-    private String GENDER;
-    private Integer YEAR_OF_BIRTH;
-    private Integer AGE;
-    private Integer STANDARD;
-    private String LANGUAGE;
-    private Timestamp UPDATED_AT;
+    public static final String UID = "uid";
+    public static final String HANDLE = "handle";
+    public static final String GENDER = "gender";
+    public static final String LANGUAGE = "language";
+    public static final String AGE = "age";
+    public static final String STANDARD = "standard";
+    private String uid;
+    private String gender;
+    private Integer yearOfBirth;
+    private Integer age;
+    private Integer standard;
+    private String language;
+    private String handle;
+    private Timestamp updatedAt;
 
     private java.util.Date date = new java.util.Date();
 
@@ -31,37 +38,53 @@ public class UpdateProfileDto implements IModel{
     public void process(Event event) throws SQLException, ParseException {
         Map<String,Object> EKS = (Map<String,Object>) event.getEks();
 
+        parseData(EKS);
+
         if(!isProfileExist((String) EKS.get("uid"))){
             createProfile(event);
         }
 
-        parseData(EKS);
         saveData();
     }
 
     private void parseData(Map<String, Object> EKS) throws ParseException {
-        UID = (String) EKS.get("uid");
-        if(UID == null) throw new ParseException("UID can't be blank",1);
+        uid = (String) EKS.get(UID);
+        validateEmptyString(UID,uid);
 
-        GENDER = (String) EKS.get("gender");
-        AGE = getAge(EKS);
-        YEAR_OF_BIRTH = (Integer) getYear(((Double) EKS.get("age")).intValue());
-        LANGUAGE = (String) EKS.get("language");
-        STANDARD = getStandard(EKS);
+        handle = (String) EKS.get(HANDLE);
+        validateEmptyString(HANDLE,handle);
 
-        UPDATED_AT = (Timestamp) new Timestamp(date.getTime());
+        gender = (String) EKS.get(GENDER);
+        age = getAge(EKS);
+
+        if(age!=null) {
+            yearOfBirth = (Integer) getYear(getAge(EKS));
+        }
+
+        language = (String) EKS.get(LANGUAGE);
+        standard = getStandard(EKS);
+
+        updatedAt = (Timestamp) new Timestamp(date.getTime());
+    }
+
+    private void validateEmptyString(String name,String value) throws ParseException {
+        if(value == null || value.isEmpty()) throw new ParseException(String.format("%s can't be blank",name),1);
     }
 
     private Integer getAge(Map<String, Object> EKS) {
-        Integer age = ((Double) EKS.get("age")).intValue();
-        if(age != -1){
-            return age;
+        try {
+            Integer age = ((Double) EKS.get(AGE)).intValue();
+            if (age != -1) {
+                return age;
+            }
+        }catch(Exception e){
+
         }
         return null;
     }
 
     private Integer getStandard(Map<String, Object> EKS) {
-        Integer standard = ((Double) EKS.get("standard")).intValue();
+        Integer standard = ((Double) EKS.get(STANDARD)).intValue();
         if(standard != -1){
             return standard;
         }
@@ -74,30 +97,33 @@ public class UpdateProfileDto implements IModel{
 
         try {
             connection = dataSource.getConnection();
-            String updateQuery = "update profile set year_of_birth = ?, gender = ?, age = ?, standard = ?, language = ?, updated_at = ?"
+            String updateQuery = "update profile set year_of_birth = ?, gender = ?, age = ?, standard = ?, language = ?, updated_at = ?, handle = ?"
                     + "where uid = ?";
 
             preparedStmt = connection.prepareStatement(updateQuery);
 
-            if(AGE != null) {
-                preparedStmt.setInt(1, YEAR_OF_BIRTH);
-                preparedStmt.setInt(3, AGE);
+            if(age != null) {
+                preparedStmt.setInt(1, yearOfBirth);
+                preparedStmt.setInt(3, age);
             }
             else {
                 preparedStmt.setNull(1, java.sql.Types.INTEGER);
                 preparedStmt.setNull(3, java.sql.Types.INTEGER);
             }
 
-            preparedStmt.setString(2, GENDER);
+            preparedStmt.setString(2, gender);
 
-            if(STANDARD != null)
-                preparedStmt.setInt(4, STANDARD);
+            if(standard != null)
+                preparedStmt.setInt(4, standard);
             else
                 preparedStmt.setNull(4, java.sql.Types.INTEGER);
 
-            preparedStmt.setString(5,LANGUAGE);
-            preparedStmt.setTimestamp(6, UPDATED_AT);
-            preparedStmt.setString(7, UID);
+            preparedStmt.setString(5, language);
+            preparedStmt.setTimestamp(6, updatedAt);
+
+            preparedStmt.setString(7, handle);
+
+            preparedStmt.setString(8, uid);
 
 
             int affectedRows = preparedStmt.executeUpdate();

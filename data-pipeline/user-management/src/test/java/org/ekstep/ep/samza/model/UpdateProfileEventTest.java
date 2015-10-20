@@ -45,12 +45,17 @@ public class UpdateProfileEventTest {
 
     @Test
     public void ShouldUpdateTheProfile() throws SQLException, ParseException {
-        Event event = new Event(new EventFixture().UPDATE_PROFILE_EVENT_1(uid));
+        Event event = new Event(new EventFixture().CREATE_PROFILE_EVENT_1(uid));
 
-        UpdateProfileDto profileDto = new UpdateProfileDto(dataSource);
+        CreateProfileDto profileDto = new CreateProfileDto(dataSource);
         profileDto.process(event);
 
-        Assert.assertEquals(true, profileDto.getIsInserted());
+        event = new Event(new EventFixture().UPDATE_PROFILE_EVENT_1(uid));
+
+        UpdateProfileDto updateProfileDto = new UpdateProfileDto(dataSource);
+        updateProfileDto.process(event);
+
+        Assert.assertEquals(true, updateProfileDto.getIsInserted());
     }
 
     @Test

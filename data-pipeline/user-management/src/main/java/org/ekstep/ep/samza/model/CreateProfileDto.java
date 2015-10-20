@@ -4,21 +4,26 @@ import javax.sql.DataSource;
 import java.io.PrintStream;
 import java.sql.*;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Map;
 
 public class CreateProfileDto implements IModel{
-    private String UID;
-    private String HANDLE;
-    private String GENDER;
-    private Integer YEAR_OF_BIRTH;
-    private Integer AGE;
-    private Integer STANDARD;
-    private String LANGUAGE;
-    private Timestamp CREATED_AT;
-    private Timestamp UPDATED_AT;
+    public static final String UID = "uid";
+    public static final String HANDLE = "handle";
+    public static final String GENDER = "gender";
+    public static final String LANGUAGE = "language";
+    public static final String AGE = "age";
+    public static final String STANDARD = "standard";
+    private String uid;
+    private String handle;
+    private String gender;
+    private Integer yearOfBirth;
+    private Integer age;
+    private Integer standard;
+    private String language;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     private java.util.Date date = new java.util.Date();
 
@@ -33,34 +38,37 @@ public class CreateProfileDto implements IModel{
     @Override
     public void process(Event event) throws SQLException, ParseException {
         Map<String,Object> EKS = (Map<String,Object>) event.getEks();
+        parseData(EKS);
 
-        if(!isLearnerExist((String) EKS.get("uid"))){
+        if(!isLearnerExist((String) EKS.get(UID))){
             createLearner(event);
         }
-
-        parseData(EKS);
         saveData();
     }
 
     private void parseData(Map<String, Object> EKS) throws ParseException {
-        UID = (String) EKS.get("uid");
-        if(UID == null) throw new ParseException("UID can't be blank",1);
+        uid = (String) EKS.get(UID);
+        validateEmptyString(UID,uid);
 
-        HANDLE = (String) EKS.get("handle");
-        if(HANDLE == null) throw new ParseException("HANDLE can't be blank",2);
+        handle = (String) EKS.get(HANDLE);
+        validateEmptyString(HANDLE,handle);
 
-        GENDER = (String) EKS.get("gender");
-        YEAR_OF_BIRTH = (Integer) getYear(((Double) EKS.get("age")).intValue());
-        AGE = getAge(EKS);
-        STANDARD = getStandard(EKS);
-        LANGUAGE = (String) EKS.get("language");
+        gender = (String) EKS.get(GENDER);
+        yearOfBirth = (Integer) getYear(((Double) EKS.get(AGE)).intValue());
+        age = getAge(EKS);
+        standard = getStandard(EKS);
+        language = (String) EKS.get(LANGUAGE);
 
-        CREATED_AT = (Timestamp) new Timestamp(date.getTime());
-        UPDATED_AT = (Timestamp) new Timestamp(date.getTime());
+        createdAt = (Timestamp) new Timestamp(date.getTime());
+        updatedAt = (Timestamp) new Timestamp(date.getTime());
+    }
+
+    private void validateEmptyString(String name,String value) throws ParseException {
+        if(value == null || value.isEmpty()) throw new ParseException(String.format("%s can't be blank",name),1);
     }
 
     private Integer getAge(Map<String, Object> EKS) {
-        Integer age = ((Double) EKS.get("age")).intValue();
+        Integer age = ((Double) EKS.get(AGE)).intValue();
         if(age != -1){
             return age;
         }
@@ -68,7 +76,7 @@ public class CreateProfileDto implements IModel{
     }
 
     private Integer getStandard(Map<String, Object> EKS) {
-        Integer standard = ((Double) EKS.get("standard")).intValue();
+        Integer standard = ((Double) EKS.get(STANDARD)).intValue();
         if(standard != -1){
             return standard;
         }
@@ -85,29 +93,29 @@ public class CreateProfileDto implements IModel{
                     + " values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             preparedStmt = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
 
-            preparedStmt.setString (1, UID);
-            preparedStmt.setString (2, HANDLE);
+            preparedStmt.setString (1, uid);
+            preparedStmt.setString (2, handle);
 
-            if(AGE != null) {
-                preparedStmt.setInt(3, YEAR_OF_BIRTH);
-                preparedStmt.setInt(5, AGE);
+            if(age != null) {
+                preparedStmt.setInt(3, yearOfBirth);
+                preparedStmt.setInt(5, age);
             }
             else {
                 preparedStmt.setNull(3, java.sql.Types.INTEGER);
                 preparedStmt.setNull(5, java.sql.Types.INTEGER);
             }
 
-            preparedStmt.setString(4, GENDER);
+            preparedStmt.setString(4, gender);
 
-            if(STANDARD != null)
-                preparedStmt.setInt(6, STANDARD);
+            if(standard != null)
+                preparedStmt.setInt(6, standard);
             else
                 preparedStmt.setNull(6, java.sql.Types.INTEGER);
 
-            preparedStmt.setString(7,LANGUAGE);
+            preparedStmt.setString(7, language);
 
-            preparedStmt.setTimestamp(8, CREATED_AT);
-            preparedStmt.setTimestamp(9, UPDATED_AT);
+            preparedStmt.setTimestamp(8, createdAt);
+            preparedStmt.setTimestamp(9, updatedAt);
 
 
             int affectedRows = preparedStmt.executeUpdate();
@@ -149,7 +157,7 @@ public class CreateProfileDto implements IModel{
         ResultSet resultSet = null;
 
         try{
-            String query = "select uid from learner where uid = ?";
+            String query = String.format("select %s from learner where %s = ?",UID,UID);
             preparedStmt = connection.prepareStatement(query);
             preparedStmt.setString(1, uid);
 

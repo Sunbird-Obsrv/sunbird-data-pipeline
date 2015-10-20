@@ -87,7 +87,7 @@ public class EventFixture {
             "    \"did\": \"eb6b9e5460faff305d5485b4341bda2f\",\n" +
             "    \"edata\": {\n" +
             "        \"eks\": {\n" +
-            "            \"uid\":\"+" + getRandomUID() + "\",\n" +
+            "            \"uid\":\"" + getRandomUID() + "\",\n" +
             "            \"gender\": \"male\",\n" +
             "            \"age\": -1.0,\n" +
             "            \"standard\": -1.0,\n" +
@@ -109,7 +109,7 @@ public class EventFixture {
                 "    \"did\": \"eb6b9e5460faff305d5485b4341bda2f\",\n" +
                 "    \"edata\": {\n" +
                 "        \"eks\": {\n" +
-                "            \"uid\":\"+" + getRandomUID() + "\",\n" +
+                "            \"uid\":\"" + getRandomUID() + "\",\n" +
                 "            \"handle\": \"user@twitter.com\",\n" +
                 "            \"gender\": \"FEMALE\",\n" +
                 "            \"age\": 10,\n" +
@@ -134,7 +134,7 @@ public class EventFixture {
                 "    \"did\": \"eb6b9e5460faff305d5485b4341bda2f\",\n" +
                 "    \"edata\": {\n" +
                 "        \"eks\": {\n" +
-                "            \"uid\":\"+" + uid + "\",\n" +
+                "            \"uid\":\"" + uid + "\",\n" +
                 "            \"handle\": \"user@twitter.com\",\n" +
                 "            \"gender\": \"male\",\n" +
                 "            \"age\": -1,\n" +
@@ -158,7 +158,8 @@ public class EventFixture {
                 "    \"did\": \"eb6b9e5460faff305d5485b4341bda2f\",\n" +
                 "    \"edata\": {\n" +
                 "        \"eks\": {\n" +
-                "            \"uid\":\"+" + uid + "\",\n" +
+                "            \"uid\":\"" + uid + "\",\n" +
+                "            \"handle\": \"newuser@twitter.com\",\n" +
                 "            \"gender\": \"MALE\",\n" +
                 "            \"age\": 10,\n" +
                 "            \"standard\": 5,\n" +

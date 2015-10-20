@@ -2,6 +2,7 @@ package org.ekstep.ep.samza;
 
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.ekstep.ep.samza.validators.IValidator;
+import org.ekstep.ep.samza.validators.UidValidator;
 import org.ekstep.ep.samza.validators.ValidatorFactory;
 
 import java.sql.SQLException;
@@ -91,6 +92,14 @@ public class Event {
 
     public boolean isProcessed() {
         return canBeProcessed && child.isProcessed();
+    }
+
+    public boolean canBeProcessed(){
+        return canBeProcessed;
+    }
+
+    public boolean isChildDataProcessed(){
+        return child.isProcessed();
     }
 
     public boolean hadIssueWithDb() {

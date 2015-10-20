@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class CreateLearnerDto implements IModel{
     private DataSource dataSource;
-    private String UID;
-    private Timestamp CREATED_AT;
+    private String uid;
+    private Timestamp createdAt;
 
     private java.util.Date date = new java.util.Date();
 
@@ -22,10 +22,10 @@ public class CreateLearnerDto implements IModel{
     public void process(Event event) throws ParseException, SQLException {
         Map<String,Object> EKS = (Map<String,Object>) event.getEks();
 
-        UID = (String) EKS.get("uid");
-        if(UID == null) throw new ParseException("UID can't be blank",1);
+        uid = (String) EKS.get("uid");
+        if(uid == null || uid.isEmpty()) throw new ParseException("uid can't be blank",1);
 
-        CREATED_AT = (Timestamp) new Timestamp(date.getTime());
+        createdAt = (Timestamp) new Timestamp(date.getTime());
 
         saveData();
     }
@@ -44,8 +44,8 @@ public class CreateLearnerDto implements IModel{
             String query = " insert into learner (uid,created_at)"
                     + " values (?,?)";
             preparedStmt = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
-            preparedStmt.setString(1, UID);
-            preparedStmt.setTimestamp(2, CREATED_AT);
+            preparedStmt.setString(1, uid);
+            preparedStmt.setTimestamp(2, createdAt);
 
             int affectedRows = preparedStmt.executeUpdate();
 

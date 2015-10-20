@@ -85,7 +85,9 @@ public class DenormalizationTaskTest {
 
     @Test
     public void ShouldSendOutputToReTryTopicIfUIDIsNotPresentInDb() throws Exception {
-        stub(eventMock.isProcessed()).toReturn(false);
+        stub(eventMock.canBeProcessed()).toReturn(true);
+        stub(eventMock.isChildDataProcessed()).toReturn(false);
+
         HashMap<String, Object> message = new HashMap<String, Object>();
         stub(eventMock.getData()).toReturn(message);
         deNormalizationTask.init(configMock, contextMock);
@@ -98,9 +100,10 @@ public class DenormalizationTaskTest {
     }
 
     @Test
-    public void ShouldSendOutputToFailedTopicAndRetryTopic() throws Exception {
+    public void ShouldSendOutputToFailedTopic() throws Exception {
         stub(eventMock.isProcessed()).toReturn(false);
         stub(eventMock.hadIssueWithDb()).toReturn(true);
+
         HashMap<String, Object> message = new HashMap<String, Object>();
         stub(eventMock.getData()).toReturn(message);
         deNormalizationTask.init(configMock, contextMock);
@@ -108,10 +111,9 @@ public class DenormalizationTaskTest {
 
         deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
 
-        verify(collectorMock,times(2)).send(argument.capture());
-        validateStreams(argument, message, new String[]{RETRY_TOPIC,FAILED_TOPIC});
+        verify(collectorMock,times(1)).send(argument.capture());
+        validateStreams(argument, message, new String[]{FAILED_TOPIC});
     }
-
 
     @Test
     public void ShouldSendOutputToSuccessTopic() throws Exception {
