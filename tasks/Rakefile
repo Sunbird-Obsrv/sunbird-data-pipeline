@@ -11,7 +11,14 @@ namespace :setup do
   end
   task :transfer_data do
     require_relative '../lib/ecosystem-platform/jobs/data_transferer.rb'
-    EcosystemPlatform::Jobs::DataTransferer.perform
+    puts "This task will transfer data from #{ENV['ES_HOST_OLD']} to #{ENV['ES_HOST_NEW']}. Do you want to continue?(y/n)"
+    input = STDIN.gets.chomp
+    if input.downcase == 'y'
+      puts "Executing"
+      EcosystemPlatform::Jobs::DataTransferer.perform
+    else
+      puts "Ending without executing the task"
+    end
   end
 end
 
