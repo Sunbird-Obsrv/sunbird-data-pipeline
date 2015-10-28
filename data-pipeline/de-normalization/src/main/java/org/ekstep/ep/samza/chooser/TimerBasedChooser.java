@@ -58,6 +58,7 @@ public class TimerBasedChooser extends BaseMessageChooser implements MessageChoo
 
         Minutes minutes = Minutes.minutesBetween(startTime, currentTime);
         if (minutes.isGreaterThan(Minutes.minutes(delayInMinutes))) {
+            System.out.println("Starting from retry topic");
             startTime = currentTime;
             envelope = retryQue.poll();
             if(envelope!=null){
