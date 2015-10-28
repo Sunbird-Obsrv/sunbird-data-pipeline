@@ -57,6 +57,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask{
     public void processEvent(MessageCollector collector, Event event, ChildDto dataSource) {
         event.initialize();
         event.process(dataSource);
+        event.addMetadata();
         populateTopic(collector,event);
     }
 

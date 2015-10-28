@@ -24,11 +24,15 @@ public class ChildDto {
     }
 
     public Child process(Child child) throws SQLException {
-        String query = String.format("select * from profile where uid = '%s'", child.getUid());
+        String profileQuery = String.format("select * from profile where uid = '%s'", child.getUid());
+        String learnerQuery = String.format("select * from learner where uid = '%s'", child.getUid());
+
         HashMap<String, Object> childData = new HashMap<String, Object>();
+        Boolean profileExist = false;
         Statement statement = null;
         Connection connection=null;
-        ResultSet resultSet = null;
+        ResultSet profileResultSet = null;
+        ResultSet learnerResultSet = null;
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             String url = String.format("jdbc:mysql://%s:%s/%s", host,port,schema);
@@ -36,13 +40,30 @@ public class ChildDto {
                     .getConnection(url,userName,password);
             statement = connection.createStatement();
 
-            resultSet = statement.executeQuery(query);
-            while (resultSet.next()){
-                childData.put(HANDLE, resultSet.getString(HANDLE));
-                childData.put(STANDARD, resultSet.getInt(STANDARD));
-                childData.put(GENDER, resultSet.getString(GENDER));
-                childData.put(YEAR_OF_BIRTH, resultSet.getInt(YEAR_OF_BIRTH));
+            System.out.println("trying to read from profile table");
+            profileResultSet = statement.executeQuery(profileQuery);
+
+
+            while (profileResultSet.next()) {
+                profileExist = true;
+                childData.put(HANDLE, profileResultSet.getString(HANDLE));
+                childData.put(STANDARD, profileResultSet.getInt(STANDARD));
+                childData.put(GENDER, profileResultSet.getString(GENDER));
+                childData.put(YEAR_OF_BIRTH, profileResultSet.getInt(YEAR_OF_BIRTH));
             }
+
+            if(!profileExist){
+                System.out.println("trying to read from learner table");
+                learnerResultSet = statement.executeQuery(learnerQuery);
+
+                if(learnerResultSet.first()) {
+                    childData.put(HANDLE, "");
+                    childData.put(STANDARD, null);
+                    childData.put(GENDER, "");
+                    childData.put(YEAR_OF_BIRTH, null);
+                }
+            }
+
             child.populate(childData);
             return child;
 
@@ -57,8 +78,10 @@ public class ChildDto {
                 statement.close();
             if(connection!=null)
                 connection.close();
-            if(resultSet!=null)
-                resultSet.close();
+            if(profileResultSet!=null)
+                profileResultSet.close();
+            if(learnerResultSet!=null)
+                learnerResultSet.close();
 
         }
         return child;

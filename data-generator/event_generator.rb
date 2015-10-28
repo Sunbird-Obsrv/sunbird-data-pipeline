@@ -13,7 +13,7 @@ module EventGenerator
   class Event
     include CommonSteps::ElasticsearchClient
     
-    attr_reader :uid
+    attr_accessor :uid
 
     def initialize
       @uid = SecureRandom.uuid

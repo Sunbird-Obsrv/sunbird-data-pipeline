@@ -4,6 +4,7 @@ import org.apache.samza.storage.kv.KeyValueStore;
 import org.ekstep.ep.samza.validators.IValidator;
 import org.ekstep.ep.samza.validators.UidValidator;
 import org.ekstep.ep.samza.validators.ValidatorFactory;
+import org.joda.time.DateTime;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -104,5 +105,25 @@ public class Event {
 
     public boolean hadIssueWithDb() {
         return hadIssueWithDb;
+    }
+
+    public void addMetadata() {
+        Map<String, Object> metadata = (Map<String, Object>) map.get("metadata");
+        DateTime currentTime = new DateTime();
+        if(metadata != null){
+            metadata.put("last_processed_at",currentTime.toString());
+            if(metadata.get("processed_count") == null)
+                metadata.put("processed_count",1);
+            else {
+                Integer count = ((Double) metadata.get("processed_count")).intValue();
+                metadata.put("processed_count",count + 1);
+            }
+        }
+        else{
+            metadata = new HashMap<String, Object>();
+            metadata.put("last_processed_at",currentTime.toString());
+            metadata.put("processed_count",1);
+            map.put("metadata",metadata);
+        }
     }
 }

@@ -54,9 +54,9 @@ public class Child implements Serializable {
             return;
         }
         System.out.println("trying to read from database");
-        String handle = (String)childData.get(HANDLE);
-        Integer standard = (Integer)childData.get(STANDARD);
-        String gender = (String)childData.get(GENDER);
+        String handle = (String) childData.get(HANDLE);
+        Integer standard = (Integer) childData.get(STANDARD);
+        String gender = (String) childData.get(GENDER);
         populateAgeRelatedFields(childData);
         this.handle = handle;
         this.standard = standard;
