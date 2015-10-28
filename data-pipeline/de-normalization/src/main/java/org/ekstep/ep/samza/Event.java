@@ -115,8 +115,9 @@ public class Event {
             if(metadata.get("processed_count") == null)
                 metadata.put("processed_count",1);
             else {
-                Integer count = ((Double) metadata.get("processed_count")).intValue();
-                metadata.put("processed_count",count + 1);
+                Integer count = (((Double) Double.parseDouble(String.valueOf(metadata.get("processed_count")))).intValue());
+                count = count + 1;
+                metadata.put("processed_count",count);
             }
         }
         else{

@@ -57,9 +57,9 @@ public class ChildDto {
                 learnerResultSet = statement.executeQuery(learnerQuery);
 
                 if(learnerResultSet.first()) {
-                    childData.put(HANDLE, "");
+                    childData.put(HANDLE, null);
                     childData.put(STANDARD, null);
-                    childData.put(GENDER, "");
+                    childData.put(GENDER, null);
                     childData.put(YEAR_OF_BIRTH, null);
                 }
             }

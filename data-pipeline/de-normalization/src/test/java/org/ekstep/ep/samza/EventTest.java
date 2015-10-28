@@ -285,6 +285,40 @@ public class EventTest {
        assertTrue(event.isProcessed());
     }
 
+    @Test
+    public void ShouldCreateProcessedCountFirstTime() throws SQLException {
+        map.put("ts", "2008-06-16T00:00:00 +0530");
+        map.put("uid", UID);
+
+        Event event = new Event(map, keyValueStoreMock);
+
+        event.initialize();
+        event.addMetadata();
+
+        Map<String,Object> metadata = (Map<String, Object>) event.getMap().get("metadata");
+        assertTrue(metadata.containsKey("processed_count"));
+        assertEquals(1,metadata.get("processed_count"));
+    }
+
+    @Test
+    public void ShouldIncrementProcessedTime() throws SQLException {
+
+        HashMap<String, Object> metadata = new HashMap<String, Object>();
+        metadata.put("processed_count",1);
+        map.put("ts", "2008-06-16T00:00:00 +0530");
+        map.put("uid", UID);
+        map.put("metadata",metadata);
+
+        Event event = new Event(map, keyValueStoreMock);
+
+        event.initialize();
+        event.addMetadata();
+
+        Map<String,Object> meta = (Map<String, Object>) event.getMap().get("metadata");
+        assertEquals(2,metadata.get("processed_count"));
+    }
+
+
     private void validateUdata(HashMap<String, Object> actualUdata) {
         HashMap<String, Object> expectedUdata = getUdata();
 
