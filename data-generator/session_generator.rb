@@ -87,6 +87,10 @@ module Generator
     SESSION_START_EVENT = 'GE_SESSION_START'
     SESSION_END_EVENT = 'GE_SESSION_END'
     GE_LAUNCH_GAME = 'GE_LAUNCH_GAME'
+    GE_CREATE_USER = 'GE_CREATE_USER'
+    OE_START = 'OE_START'
+    OE_ASSESS = 'OE_ASSESS'
+    OE_END = 'OE_END'
     GE_GAME_END = 'GE_GAME_END'
     MIN_SESSION_TIME = 120
     MAX_SESSION_TIME = 300
@@ -105,13 +109,17 @@ module Generator
       @signup = (@start-rand(1..24)*3600)
       @startup = (@signup-rand(1..24)*3600)
       @shutdown = (@finish+rand(1..24)*3600)
+      @createuser = @start+4
       @gamestart = @start+5
-      @gameend  = @finish-5
+      @oe_start = @gamestart + 1
+      @oe_access = @oe_start + 1
+      @oe_end = @oe_access + 1
+      @gameend  = @oe_end + 1
     end
     def to_json
       events.to_json
     end
-    def events
+    def events(anonymous = true)
       e = [
         {
           eid: GE_GENIE_START, # unique event ID
@@ -148,25 +156,25 @@ module Generator
              }
           }
         },
-        # {
-        #   ts: @signup.strftime('%Y-%m-%dT%H:%M:%S%z'), #how early id she register
-        #   ver: "1.0",
-        #   gdata: {
-        #     id: "genie.android",
-        #     ver: "1.0"
-        #   },
-        #   sid: @sid,
-        #   did: @device.id,
-        #   uid: "",
-        #   eid: GE_SIGNUP,
-        #   edata: {
-        #     eks: {
-        #       uid: @user.uid,
-        #       err: ""
-        #     }
-        #   }
-        # },
         {
+          eid: GE_CREATE_USER,
+          ts: (@createuser).strftime('%Y-%m-%dT%H:%M:%S%z'),
+          ver: "1.0",
+          gdata: {
+            id: "genie.android",
+            ver: "1.0"
+          },
+          sid: @sid,
+          uid: @user.uid,
+          did: @device.id,
+          edata: {
+            eks: {
+              uid: @user.uid
+            }
+          }
+        },
+        {
+          eid: SESSION_START_EVENT,
           ts: @start.strftime('%Y-%m-%dT%H:%M:%S%z'),
           ver: "1.0",
           gdata: {
@@ -176,7 +184,6 @@ module Generator
           sid: @sid,
           did: @device.id,
           uid: @user.uid,
-          eid: SESSION_START_EVENT,
           edata: {
             eks:{
                ueksid: "",
@@ -203,6 +210,76 @@ module Generator
           }
         },
         {
+          eid: OE_START,
+          uid:  @user.uid,
+          sid: @sid,
+          ts: (@oe_start).strftime('%Y-%m-%dT%H:%M:%S%z'),
+          edata: {
+            eks: {},
+            ext: {}
+          },
+          did:  @device.id,
+          ver: "1.0",
+          gdata: {
+            id: "genie.android",
+            ver: "1.0"
+          },
+        },
+        {
+            eid: OE_ASSESS,
+            uid:  @user.uid,
+            sid: @sid,
+            ts: (@oe_access).strftime('%Y-%m-%dT%H:%M:%S%z'),
+            edata: {
+              eks: {
+                  atmpts: 1,
+                  exlength: 0,
+                  exres: [],
+                  failedatmpts: 0,
+                  length: 0,
+                  maxscore: 1,
+                  mc: [
+                      "M92"
+                  ],
+                  pass: "No",
+                  qid: "q_2_sub",
+                  qlevel: "",
+                  qtype: "SUB",
+                  res: [],
+                  score: 0,
+                  subj: "NUM",
+                  uri: ""
+              },
+              ext: {
+                  "Question": ""
+              }
+            },
+            did:  @device.id,
+            ver: "1.0",
+            gdata: {
+              id: "genie.android",
+              ver: "1.0"
+            },
+        },
+        {
+          eid: OE_END,
+          uid:  @user.uid,
+          sid: @sid,
+          ts: (@oe_end).strftime('%Y-%m-%dT%H:%M:%S%z'),
+          edata: {
+            eks: {
+              length: 637
+            },
+            ext: {}
+          },
+          did:  @device.id,
+          ver: "1.0",
+          gdata: {
+            id: "genie.android",
+            ver: "1.0"
+          },
+        },
+        {
           eid: GE_GAME_END,
           ts: (@gameend).strftime('%Y-%m-%dT%H:%M:%S%z'),
           ver: "1.0",
@@ -221,6 +298,7 @@ module Generator
           }
         },
         {
+          eid: SESSION_END_EVENT,
           ts: @finish.strftime('%Y-%m-%dT%H:%M:%S%z'),
           ver: "1.0",
           gdata: {
@@ -230,7 +308,6 @@ module Generator
           sid: @sid,
           did: @device.id,
           uid: @user.uid,
-          eid: SESSION_END_EVENT,
           edata: {
             eks: {
               length: ((@finish - @start).to_i/3600.0).round(2)

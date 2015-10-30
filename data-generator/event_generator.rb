@@ -89,7 +89,29 @@ module EventGenerator
       res
     end
 
+    def self.post_set_of_events(deviceId, events)
+      wrapper={
+        id: "ekstep.telemetry",
+        ver: "1.0",
+        ts: Time.now.strftime('%Y-%m-%dT%H:%M:%S%z'),
+        params: {
+          did: deviceId,
+          key: "",
+          msgid: Digest::SHA1.hexdigest(Time.now.strftime('%Y-%m-%dT%H:%M:%S%z')).upcase
+        },
+        events: events
+      }
+     
+      uri = URI.parse(TELEMETRY_SYNC_URL)
+      http = Net::HTTP.new(uri.host, uri.port)
+      if TELEMETRY_SYNC_URL.start_with? "https"
+        http.use_ssl = true
+      end
+      req = Net::HTTP::Post.new(uri.path, initheader = {'Content-Type' =>'application/json'})
+      req.basic_auth API_USER, API_PASS
+      req.body = JSON.generate(wrapper)
+      res = http.request(req)
+      res
+    end
   end
 end
-
-
