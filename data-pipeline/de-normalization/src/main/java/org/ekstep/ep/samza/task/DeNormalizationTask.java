@@ -45,9 +45,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask{
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-        System.out.println("current stream"+envelope.getSystemStreamPartition().getSystemStream().toString());
         Map<String, Object> message = (Map<String, Object>) envelope.getMessage();
-        System.out.println("Event"+ new Gson().toJson(message));
         ChildDto dataSource = new ChildDto(dbHost, dbPort, dbSchema, dbUserName, dbPassword);
         Event event = new Event(message, childData);
         processEvent(collector, event, dataSource);

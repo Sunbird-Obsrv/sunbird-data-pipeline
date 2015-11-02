@@ -39,10 +39,8 @@ public class TimerBasedChooser extends BaseMessageChooser implements MessageChoo
 
         if (envelope.getSystemStreamPartition().getSystemStream().getStream().toString().equals(preferredSystemStream)) {
             preferredQue.add(envelope);
-            System.out.println("Setting preferredEnvelope");
         } else {
             retryQue.add(envelope);
-            System.out.println("Setting wrappedEnvelope");
         }
     }
 
@@ -58,7 +56,6 @@ public class TimerBasedChooser extends BaseMessageChooser implements MessageChoo
 
         Minutes minutes = Minutes.minutesBetween(startTime, currentTime);
         if (minutes.isGreaterThan(Minutes.minutes(delayInMinutes))) {
-            System.out.println("Starting from retry topic");
             startTime = currentTime;
             envelope = retryQue.poll();
             if(envelope!=null){
