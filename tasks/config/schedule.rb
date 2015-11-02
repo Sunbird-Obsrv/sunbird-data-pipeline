@@ -22,19 +22,30 @@ set :output, {:error => 'error.log', :standard => 'cron.log'}
 set :environment_variable, 'EP_LOG_DIR'
 set :environment, ENV['EP_LOG_DIR']
 
-every 1.minute do
-  rake "scheduled:reverse_search"
-end
-every 1.minute do
-  rake "scheduled:set_ldata"
-end
+set :environment_variable, 'EP_PRIVATE_KEYS'
+set :environment, ENV['EP_PRIVATE_KEYS']
+
+# every 1.minute do
+#   rake "scheduled:reverse_search"
+# end
+# every 1.minute do
+#   rake "scheduled:set_ldata"
+# end
 # DISABLED because devices are generating signup events
 # every 1.minute do
 #   rake "scheduled:generate_signup"
 # end
+# every 1.minute do
+#   rake "scheduled:oe_summarize"
+# end
+# every 1.minute do
+#   rake "scheduled:child_data_populator"
+# end
+
 every 1.minute do
-  rake "scheduled:oe_summarize"
+  rake "scheduled:decrypt_partner"
 end
-every 1.minute do
-  rake "scheduled:child_data_populator"
+
+every 2.minute do
+  rake "scheduled:denormalize_partner"
 end

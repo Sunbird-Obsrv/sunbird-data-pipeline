@@ -68,7 +68,7 @@ namespace :correctors do
   task :remove_by_device_id do
     require_relative '../lib/ecosystem-platform/correctors/remove_by_device_id.rb'
     EcosystemPlatform::Correctors::RemoveByDeviceId.perform
-  end  
+  end
 end
 
 namespace :scheduled do
@@ -111,6 +111,14 @@ namespace :scheduled do
   task :generate_checksum do
     require_relative '../lib/ecosystem-platform/jobs/checksum_generator.rb'
     EcosystemPlatform::Jobs::ChecksumGenerator.perform
+  end
+  task :decrypt_partner do
+    require_relative '../lib/ecosystem-platform/jobs/partner_decryptor.rb'
+    EcosystemPlatform::Jobs::PartnerDecryptor.perform
+  end
+  task :denormalize_partner do
+    require_relative '../lib/ecosystem-platform/jobs/partner_denormalizer.rb'
+    EcosystemPlatform::Jobs::PartnerDenormalizer.perform
   end
 end
 
