@@ -8,6 +8,7 @@ import org.ekstep.ep.samza.service.TaxonomyService;
 import org.junit.Before;
 import org.junit.Test;
 import org.apache.samza.storage.kv.KeyValueStore;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import java.util.*;
@@ -73,6 +74,21 @@ public class TaxonomyCacheTest {
         try{ Mockito.when(mockService.fetch()).thenReturn(map); } catch(java.io.IOException e){}
         taxonomyCache.setService(mockService);
         try{ taxonomyCache.warm(); } catch (java.io.IOException e){}
-        verify(mockStore).put(eq(TaxonomyEventFixture.LD), eq(TaxonomyEventFixture.LDJSON));
+        verify(mockStore).put(eq(TaxonomyEventFixture.LD), Mockito.argThat(validateJSON(TaxonomyEventFixture.LDJSON)));
+    }
+
+    private ArgumentMatcher<Object> validateJSON(final String json) {
+        return new ArgumentMatcher<Object>() {
+            @Override
+            public boolean matches(Object argument) {
+                Gson gson = new Gson();
+                HashMap actualJson = gson.fromJson((String) argument, HashMap.class);
+                HashMap expectedJson = gson.fromJson(json, HashMap.class);
+                List<String> keys = Arrays.asList("id", "description", "name", "type");
+                for(String key:keys)
+                    assertEquals(expectedJson.get(key), actualJson.get(key));
+                return true;
+            }
+        };
     }
 }

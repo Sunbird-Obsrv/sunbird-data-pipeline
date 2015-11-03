@@ -58,6 +58,13 @@
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
+      <dependency>
+          <groupId>org.ekstep.ecosystem.jobs</groupId>
+          <artifactId>partner-data-router</artifactId>
+          <version>0.0.1</version>
+          <type>tar.gz</type>
+          <classifier>distribution</classifier>
+      </dependency>
   </dependencies>
 
   <build>

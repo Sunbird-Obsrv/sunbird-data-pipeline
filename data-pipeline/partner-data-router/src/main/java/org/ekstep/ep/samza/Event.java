@@ -11,7 +11,7 @@ public class Event {
 
     public boolean belongsToAPartner() {
         String partnerId = getPartnerId();
-        return partnerId !=null && partnerId.isEmpty();
+        return partnerId !=null && !partnerId.isEmpty();
     }
 
     public String routeTo(){
@@ -21,6 +21,8 @@ public class Event {
 
     private String getPartnerId() {
         Map<String, Map<String, Object>> edata = (Map<String, Map<String, Object>>) data.get("edata");
+        if(edata == null)
+            return null;
         Map<String, Object> eks = edata.get("eks");
         if(eks==null)
             return null;
@@ -29,9 +31,5 @@ public class Event {
 
     public Map<String, Object> getData() {
         return data;
-    }
-
-    public void setData(Map<String, Object> data) {
-        this.data = data;
     }
 }

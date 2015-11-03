@@ -54,9 +54,12 @@ public class HttpServiceTest {
         httpService.setRequest(httpGet);
         httpService.addHeaders(httpHeaderMap);
         Header headers[] = httpGet.getAllHeaders();
-        assertEquals(HEADER1, headers[1].getName());
-        assertEquals(VALUE1, headers[1].getValue());
-        assertEquals(HEADER2, headers[0].getName());
-        assertEquals(VALUE2, headers[0].getValue());
+        HashMap<String, String> expectedHeaders = new HashMap();
+        for(Header header:headers)
+            expectedHeaders.put(header.getName(),header.getValue());
+        assertTrue(expectedHeaders.containsKey(HEADER1));
+        assertTrue(expectedHeaders.containsKey(HEADER2));
+        assertEquals(VALUE1,expectedHeaders.get(HEADER1));
+        assertEquals(VALUE2,expectedHeaders.get(HEADER2));
     }
 }
