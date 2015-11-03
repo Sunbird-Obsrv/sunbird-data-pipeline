@@ -22,9 +22,6 @@ set :output, {:error => 'error.log', :standard => 'cron.log'}
 set :environment_variable, 'EP_LOG_DIR'
 set :environment, ENV['EP_LOG_DIR']
 
-set :environment_variable, 'EP_PRIVATE_KEYS'
-set :environment, ENV['EP_PRIVATE_KEYS']
-
 # every 1.minute do
 #   rake "scheduled:reverse_search"
 # end

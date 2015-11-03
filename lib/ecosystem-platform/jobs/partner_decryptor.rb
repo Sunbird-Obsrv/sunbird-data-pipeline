@@ -22,7 +22,7 @@ module EcosystemPlatform
           logger.info("INITIALIZING CLIENT")
           # TODO Terrible terrible
           # will be replaced by a config module
-          @key = YAML.load_file(ENV['EP_PRIVATE_KEYS'])
+          @key = YAML.load_file('./config/keys.yml')
           @client = ::Elasticsearch::Client.new(host:ENV['ES_HOST']||'localhost',log: false)
           @client.indices.refresh index: index
           logger.info("SEARCHING EVENTS TO DECRYPT")
@@ -59,7 +59,6 @@ module EcosystemPlatform
               }
             })
             response = Hashie::Mash.new response
-            # binding.pry
             logger.info "PAGE: #{page} - FOUND #{response.hits.hits.count} hits. - TOTAL #{response.hits.total}"
             to_update = []
             response.hits.hits.each do |hit|
