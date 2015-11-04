@@ -31,11 +31,6 @@ public class CreateLearnerDto implements IModel{
     }
 
     @Override
-    public boolean canProcessEvent(String eid){
-        return (eid.equals("GE_CREATE_USER"));
-    }
-
-    @Override
     public void saveData() throws SQLException {
         PreparedStatement preparedStmt = null;
         Connection connection = null;

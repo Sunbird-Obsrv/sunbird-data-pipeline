@@ -10,7 +10,7 @@ import org.apache.samza.task.*;
 import org.ekstep.ep.samza.model.*;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -24,12 +24,13 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
     private String dbPassword;
     private String dbSchema;
     private HikariDataSource dataSource;
-    private ArrayList<IModel> modelObjects = new ArrayList<IModel>();
+    private Map<String, IModel> modelMap = new HashMap<String, IModel>();
+
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
-        successTopic = config.get("output.success.topic.name", "succeeded_user_management_events");
-        failedTopic = config.get("output.failed.topic.name", "failed_user_management_events");
+        successTopic = config.get("output.success.topic.name", "sandbox.learners");
+        failedTopic = config.get("output.failed.topic.name", "sandbox.learners.fail");
 
         dbHost = config.get("db.host");
         dbPort = config.get("db.port");
@@ -47,36 +48,34 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
         dataSource.setUsername(dbUserName);
         dataSource.setPassword(dbPassword);
 
-        modelObjects.add(new CreateProfileDto(dataSource));
-        modelObjects.add(new CreateLearnerDto(dataSource));
-        modelObjects.add(new UpdateProfileDto(dataSource));
+        modelMap.put("GE_CREATE_PROFILE", new CreateProfileDto(dataSource));
+        modelMap.put("GE_CREATE_USER", new CreateLearnerDto(dataSource));
+        modelMap.put("GE_UPDATE_PROFILE", new UpdateProfileDto(dataSource));
     }
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) {
-        try{
-            Map<String,Object> jsonObject = (Map<String,Object>) envelope.getMessage();
+        try {
+            Map<String, Object> jsonObject = (Map<String, Object>) envelope.getMessage();
             Event event = new Event(new Gson().toJson(jsonObject));
-            processEvent(event,collector);
-        }
-        catch(Exception e){
+            processEvent(event, collector);
+        } catch (Exception e) {
             System.err.println("Exception: " + e);
             e.printStackTrace(new PrintStream(System.err));
         }
     }
 
-    public void processEvent(Event event,MessageCollector collector) throws Exception{
-        for(IModel obj : modelObjects){
-            if(obj.canProcessEvent(event.getEId())){
-                obj.process(event);
-
-                if(obj.getIsInserted()){
-                    collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
-                }
-                else{
-                    collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
-                }
+    public void processEvent(Event event, MessageCollector collector) throws Exception {
+        IModel model = modelMap.get(event.getEId());
+        if (model != null) {
+            model.process(event);
+            if (model.getIsInserted()) {
+                collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
+            } else {
+                collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
             }
+        } else {
+            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
         }
     }
 

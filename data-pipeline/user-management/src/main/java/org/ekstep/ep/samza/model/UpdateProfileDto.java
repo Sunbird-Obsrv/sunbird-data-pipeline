@@ -191,11 +191,6 @@ public class UpdateProfileDto implements IModel{
     }
 
     @Override
-    public boolean canProcessEvent(String eid){
-        return (eid.equals("GE_UPDATE_PROFILE"));
-    }
-
-    @Override
     public void setIsInserted(){
         this.isInserted = true;
     }

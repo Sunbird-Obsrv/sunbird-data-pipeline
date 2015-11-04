@@ -13,8 +13,11 @@ import java.util.UUID;
 
 public class UpdateProfileEventTest {
     private HikariDataSource dataSource;
-    private static final String uid = getRandomUID();
+    private String uid;
 
+    private static String getRandomUID() {
+        return UUID.randomUUID().toString();
+    }
 
     @Before
     public void setUp(){
@@ -23,14 +26,7 @@ public class UpdateProfileEventTest {
         dataSource.setJdbcUrl(url);
         dataSource.setUsername("jenkins");
         dataSource.setPassword("ec0syst3m");
-    }
-
-    @Test
-    public void ShouldCheckCanProcess(){
-        Event event = new Event(new EventFixture().UPDATE_PROFILE_EVENT);
-        UpdateProfileDto profileDto = new UpdateProfileDto(dataSource);
-
-        Assert.assertEquals(true, profileDto.canProcessEvent(event.getEId()));
+        uid = getRandomUID();
     }
 
     @Test
@@ -67,9 +63,5 @@ public class UpdateProfileEventTest {
 
         Assert.assertEquals(true, profileDto.getIsInserted());
         Assert.assertEquals(true, profileDto.isProfileExist(event.getUID()));
-    }
-
-    private static String getRandomUID(){
-        return UUID.randomUUID().toString();
     }
 }

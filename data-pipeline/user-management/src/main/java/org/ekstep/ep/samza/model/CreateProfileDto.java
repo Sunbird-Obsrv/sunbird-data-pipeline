@@ -37,7 +37,7 @@ public class CreateProfileDto implements IModel{
 
     @Override
     public void process(Event event) throws SQLException, ParseException {
-        Map<String,Object> EKS = (Map<String,Object>) event.getEks();
+        Map<String,Object> EKS = event.getEks();
         parseData(EKS);
 
         if(!isLearnerExist((String) EKS.get(UID))){
@@ -54,13 +54,13 @@ public class CreateProfileDto implements IModel{
         validateEmptyString(HANDLE,handle);
 
         gender = (String) EKS.get(GENDER);
-        yearOfBirth = (Integer) getYear(((Double) EKS.get(AGE)).intValue());
+        yearOfBirth = getYear(((Double) EKS.get(AGE)).intValue());
         age = getAge(EKS);
         standard = getStandard(EKS);
         language = (String) EKS.get(LANGUAGE);
 
-        createdAt = (Timestamp) new Timestamp(date.getTime());
-        updatedAt = (Timestamp) new Timestamp(date.getTime());
+        createdAt = new Timestamp(date.getTime());
+        updatedAt = new Timestamp(date.getTime());
     }
 
     private void validateEmptyString(String name,String value) throws ParseException {
@@ -152,7 +152,7 @@ public class CreateProfileDto implements IModel{
     public boolean isLearnerExist(String uid) throws SQLException {
         boolean flag = false;
         PreparedStatement preparedStmt = null;
-        Connection connection = null;
+        Connection connection;
         connection = dataSource.getConnection();
         ResultSet resultSet = null;
 
@@ -189,11 +189,6 @@ public class CreateProfileDto implements IModel{
             return dob.getWeekYear();
         }
         return null;
-    }
-
-    @Override
-    public boolean canProcessEvent(String eid){
-        return (eid.equals("GE_CREATE_PROFILE"));
     }
 
     @Override

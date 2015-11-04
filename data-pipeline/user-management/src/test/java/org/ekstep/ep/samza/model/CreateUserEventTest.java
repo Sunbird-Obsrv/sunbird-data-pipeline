@@ -25,14 +25,6 @@ public class CreateUserEventTest {
     }
 
     @Test
-    public void ShouldCheckCanProcess(){
-        Event event = new Event(new EventFixture().CREATE_USER_EVENT);
-        CreateLearnerDto learnerDto = new CreateLearnerDto(dataSource);
-
-        Assert.assertEquals(true, learnerDto.canProcessEvent(event.getEId()));
-    }
-
-    @Test
     public void ShouldProcessEventAndInsertNewEntry() throws SQLException, ParseException {
         Event event = new Event(new EventFixture().CREATE_USER_EVENT);
 

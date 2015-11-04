@@ -10,8 +10,6 @@ public interface IModel {
 
     void process(Event event) throws SQLException, ParseException;
 
-    boolean canProcessEvent(String eid);
-
     void saveData() throws SQLException, ParseException;
 
     void setIsInserted();

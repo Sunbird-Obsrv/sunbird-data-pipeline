@@ -23,14 +23,6 @@ public class CreateProfileEventTest {
     }
 
     @Test
-    public void ShouldCheckCanProcess(){
-        Event event = new Event(new EventFixture().CREATE_PROFILE_EVENT);
-        CreateProfileDto profileDto = new CreateProfileDto(dataSource);
-
-        Assert.assertEquals(true, profileDto.canProcessEvent(event.getEId()));
-    }
-
-    @Test
     public void ShouldProcessEventAndCreateNewProfile() throws SQLException, ParseException {
         Event event = new Event(new EventFixture().CREATE_PROFILE_EVENT);
 
