@@ -14,10 +14,15 @@ module LearnerGenerator
     include CommonSteps::ElasticsearchClient
     include CommonSteps::ProfileData
 
-    attr_accessor :uid
+    attr_accessor :uid, :handle, :gender, :age, :standard, :language
 
-    def initialize
+    def initialize(handl=null, gender=null, agn=null, standard=null, language="en")
       @uid = SecureRandom.uuid
+      @handle = handle
+      @gender = gender
+      @age = age
+      @standard = standard
+      @language = language
     end
 
     def create_event(deviceId)

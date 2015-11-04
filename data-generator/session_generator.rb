@@ -88,6 +88,7 @@ module Generator
     SESSION_END_EVENT = 'GE_SESSION_END'
     GE_LAUNCH_GAME = 'GE_LAUNCH_GAME'
     GE_CREATE_USER = 'GE_CREATE_USER'
+    GE_CREATE_PROFILE = 'GE_CREATE_PROFILE'
     OE_START = 'OE_START'
     OE_ASSESS = 'OE_ASSESS'
     OE_END = 'OE_END'
@@ -110,7 +111,8 @@ module Generator
       @startup = (@signup-rand(1..24)*3600)
       @shutdown = (@finish+rand(1..24)*3600)
       @createuser = @start+4
-      @gamestart = @start+5
+      @create_profile = @createuser + 1
+      @gamestart = @start+6
       @oe_start = @gamestart + 1
       @oe_access = @oe_start + 1
       @oe_end = @oe_access + 1
@@ -119,7 +121,29 @@ module Generator
     def to_json
       events.to_json
     end
-    def events(anonymous = true)
+    def events(user_with_profile=false)
+      p_event = {
+        eid: GE_CREATE_PROFILE,
+        ts: (@create_profile).strftime('%Y-%m-%dT%H:%M:%S%z'),
+        ver: "1.0",
+        gdata: {
+          id: "genie.android",
+          ver: "1.0"
+        },
+        sid: @sid,
+        uid: @user.uid,
+        did: @device.id,
+        edata: {
+          eks: {
+            uid: @user.uid,
+            handle: "handle",
+            gender: "male",
+            age: 7,
+            standard: 2,
+            language: "en"
+          }
+        }
+      }
       e = [
         {
           eid: GE_GENIE_START, # unique event ID
@@ -332,7 +356,10 @@ module Generator
           }
         },
       ]
-      if(@mode==OLD_MODE)
+      create_user_index = e.find_index {|x| x[:eid] = 'GE_CREATE_USER'}
+      e.delete_at(create_user_index) if user_with_profile
+      e.insert(create_user_index, p_event) if user_with_profile
+      if(@mode == OLD_MODE)
         session_start_event = e.select{|ev|ev[:eid]==SESSION_START_EVENT}
         session_start_event[0][:edata][:eks].delete(:loc)
       end
