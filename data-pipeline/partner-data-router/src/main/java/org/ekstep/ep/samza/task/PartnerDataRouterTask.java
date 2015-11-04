@@ -29,6 +29,7 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask {
         if(!event.belongsToAPartner()){
             return;
         }
+        event.updateType();
         String topic = String.format("%s.%s", successTopicSuffix, event.routeTo());
         if(!topicExists(topic))
             throw new PartnerTopicNotPresentException(topic+" does not exists");

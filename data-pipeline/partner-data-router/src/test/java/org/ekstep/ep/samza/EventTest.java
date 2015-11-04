@@ -60,7 +60,7 @@ public class EventTest {
         eks.put("partnerid","org.test.partner.id");
         Event event = new Event(data);
 
-        Assert.assertEquals("org.test.partner.id.events",event.routeTo());
+        Assert.assertEquals("org.test.partner.id.events", event.routeTo());
     }
 
     @Test
@@ -74,6 +74,27 @@ public class EventTest {
         Event event = new Event(data);
 
         Assert.assertEquals(data,event.getData());
+    }
+
+    @Test
+    public void shouldUpdateTheTypeOfData(){
+        HashMap<String, Object> data = new HashMap<String,Object>();
+        data.put("type","otherType");
+        Event event = new Event(data);
+
+        event.updateType();
+
+        Assert.assertEquals("partner.events",event.getData().get("type"));
+    }
+
+    @Test
+    public void shouldHandleWhenThereIsNoType(){
+        HashMap<String, Object> data = new HashMap<String,Object>();
+        Event event = new Event(data);
+
+        event.updateType();
+
+        Assert.assertEquals("partner.events",event.getData().get("type"));
     }
 
 }

@@ -19,6 +19,10 @@ public class Event {
         return String.format("%s.events", partnerId);
     }
 
+    public void updateType(){
+        data.put("type","partner.events");
+    }
+
     private String getPartnerId() {
         Map<String, Map<String, Object>> edata = (Map<String, Map<String, Object>>) data.get("edata");
         if(edata == null)
