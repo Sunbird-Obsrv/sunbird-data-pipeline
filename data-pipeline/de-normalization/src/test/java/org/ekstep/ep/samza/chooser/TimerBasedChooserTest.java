@@ -25,8 +25,11 @@ public class TimerBasedChooserTest {
     }
 
     @Test
-    public void shouldGetEnvelopeFromPreferredStream() {
-        TimerBasedChooser timerBasedChooser = new TimerBasedChooser(10, 1, PREFERRED);
+    public void shouldGetEnvelopeFromPreferredStreamWhenCurrentTimeIsLessThanInitialDelay() {
+        DateTime currentTime = DateTime.now();
+        MockTimeProvider mockTimeProvider = new MockTimeProvider();
+        mockTimeProvider.setCurrentTime(currentTime);
+        TimerBasedChooser timerBasedChooser = new TimerBasedChooser(1, 1, PREFERRED, mockTimeProvider);
         registerChooser(timerBasedChooser);
 
         timerBasedChooser.update(retryEnvelope);
@@ -34,72 +37,99 @@ public class TimerBasedChooserTest {
 
         IncomingMessageEnvelope envelope = timerBasedChooser.choose();
 
-        assertEquals(preferredEnvelope,envelope);
+        assertEquals(preferredEnvelope, envelope);
         assertNull(timerBasedChooser.choose());
     }
 
     @Test
-    public void shouldGetRetryEnvelopeAfterTheTimeInterval(){
+    public void shouldGetRetryEnvelopeWhenCurrentTimeIsAfterInitialDelay() {
         DateTime currentTime = DateTime.now();
         MockTimeProvider mockTimeProvider = new MockTimeProvider();
         mockTimeProvider.setCurrentTime(currentTime);
-        TimerBasedChooser timerBasedChooser = new TimerBasedChooser(2, 3, PREFERRED,mockTimeProvider);
+        TimerBasedChooser timerBasedChooser = new TimerBasedChooser(2, 3, PREFERRED, mockTimeProvider);
         registerChooser(timerBasedChooser);
 
         timerBasedChooser.update(retryEnvelope);
 
-        IncomingMessageEnvelope envelope = timerBasedChooser.choose();
-        assertNull(envelope);
-
-        mockTimeProvider.setCurrentTime(currentTime.plusMinutes(3));
-        assertEquals(retryEnvelope,timerBasedChooser.choose());
-
+        mockTimeProvider.setCurrentTime(currentTime.plusMillis(3));
+        assertEquals(retryEnvelope, timerBasedChooser.choose());
     }
 
     @Test
-    public void shouldGetFromRetryStreamTillRetryTimeout(){
+    public void shouldGetRetryEnvelopeWhenCurrentTimeIsBetweenInitialDelayAndRetryInterval() {
         DateTime currentTime = DateTime.now();
         MockTimeProvider mockTimeProvider = new MockTimeProvider();
         mockTimeProvider.setCurrentTime(currentTime);
-        TimerBasedChooser timerBasedChooser = new TimerBasedChooser(5, 5, PREFERRED,mockTimeProvider);
+        TimerBasedChooser timerBasedChooser = new TimerBasedChooser(5, 5, PREFERRED, mockTimeProvider);
+        registerChooser(timerBasedChooser);
+
+        timerBasedChooser.update(retryEnvelope);
+        currentTime = currentTime.plusMillis(6);
+        mockTimeProvider.setCurrentTime(currentTime);
+        assertEquals(retryEnvelope, timerBasedChooser.choose());
+
+        // Current time is between initial delay and retry interval
+        timerBasedChooser.update(preferredEnvelope);
+        timerBasedChooser.update(retryEnvelope);
+        assertEquals(retryEnvelope, timerBasedChooser.choose());
+
+        // Current time is after retry interval
+        mockTimeProvider.setCurrentTime(currentTime.plusMillis(5));
+        assertEquals(preferredEnvelope, timerBasedChooser.choose());
+    }
+
+    @Test
+    public void shouldGetPreferredEnvelopeWhenCurrentTimeIsBetweenInitialDelayAndRetryIntervalAndThereIsNotRetryEnvelope() {
+        DateTime currentTime = DateTime.now();
+        MockTimeProvider mockTimeProvider = new MockTimeProvider();
+        mockTimeProvider.setCurrentTime(currentTime);
+        TimerBasedChooser timerBasedChooser = new TimerBasedChooser(5, 5, PREFERRED, mockTimeProvider);
+        registerChooser(timerBasedChooser);
+
+        // There is only preferred envelope
+        timerBasedChooser.update(preferredEnvelope);
+        currentTime = currentTime.plusMillis(6);
+        mockTimeProvider.setCurrentTime(currentTime);
+
+        // Current time is between initial delay and retry interval
+        assertEquals(preferredEnvelope, timerBasedChooser.choose());
+
+        // Current time is after retry interval
+        timerBasedChooser.update(retryEnvelope);
+        currentTime = currentTime.plusMillis(6);
+        mockTimeProvider.setCurrentTime(currentTime);
+        assertEquals(retryEnvelope, timerBasedChooser.choose());
+    }
+
+    @Test
+    public void shouldGetRetryEnvelopeWhenInitialDelayIsZero() {
+        DateTime currentTime = DateTime.now();
+        MockTimeProvider mockTimeProvider = new MockTimeProvider();
+        mockTimeProvider.setCurrentTime(currentTime);
+        TimerBasedChooser timerBasedChooser = new TimerBasedChooser(0, 0, PREFERRED, mockTimeProvider);
         registerChooser(timerBasedChooser);
 
         timerBasedChooser.update(retryEnvelope);
 
-        IncomingMessageEnvelope envelope = timerBasedChooser.choose();
-        assertNull(envelope);
-
-        currentTime=currentTime.plusMinutes(6);
-        mockTimeProvider.setCurrentTime(currentTime);
-        assertEquals(retryEnvelope,timerBasedChooser.choose());
-
-        timerBasedChooser.update(preferredEnvelope);
-        timerBasedChooser.update(retryEnvelope);
-
-        assertEquals(retryEnvelope,timerBasedChooser.choose());
-
-        timerBasedChooser.update(retryEnvelope);
         assertEquals(retryEnvelope, timerBasedChooser.choose());
-        mockTimeProvider.setCurrentTime(currentTime.plusMinutes(6));
-        assertEquals(preferredEnvelope,timerBasedChooser.choose());
     }
 
     private void registerChooser(TimerBasedChooser timerBasedChooser) {
-        timerBasedChooser.register(preferredEnvelope.getSystemStreamPartition(),null);
-        timerBasedChooser.register(retryEnvelope.getSystemStreamPartition(),null);
+        timerBasedChooser.register(preferredEnvelope.getSystemStreamPartition(), null);
+        timerBasedChooser.register(retryEnvelope.getSystemStreamPartition(), null);
         timerBasedChooser.start();
     }
 
     class MockTimeProvider implements TimeProvider {
         DateTime currentTime;
 
-        public void setCurrentTime(DateTime currentTime) {
-            this.currentTime = currentTime;
-        }
-
         @Override
         public DateTime getCurrentTime() {
             return currentTime;
+        }
+
+        public void setCurrentTime(DateTime currentTime) {
+            this.currentTime = currentTime;
         }
     }
 }
