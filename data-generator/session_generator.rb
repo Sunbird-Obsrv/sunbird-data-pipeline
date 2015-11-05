@@ -193,7 +193,8 @@ module Generator
           did: @device.id,
           edata: {
             eks: {
-              uid: @user.uid
+              uid: @user.uid,
+              loc: @device.location.loc # Location in lat,long format
             }
           }
         },
