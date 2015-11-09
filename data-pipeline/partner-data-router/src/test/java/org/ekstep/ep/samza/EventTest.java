@@ -3,18 +3,20 @@ package org.ekstep.ep.samza;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class EventTest {
     @Test
     public void shouldBelongToPartnerIfPartnerIdIsPresent() {
         HashMap<String, Object> data = new HashMap<String,Object>();
-        HashMap<String, Object> edata = new HashMap<String,Object>();
-        HashMap<String, Object> eks = new HashMap<String,Object>();
-        data.put("edata", edata);
-        edata.put("eks", eks);
-        eks.put("partnerid","org.test.partner.id");
+        ArrayList<HashMap> tags = new ArrayList<HashMap>();
+        data.put("tags", tags);
+        HashMap<String, String> firstTag = new HashMap<String,String>();
+        tags.add(firstTag);
+        firstTag.put("partnerid","org.test.partner.id");
         Event event = new Event(data);
 
         Assert.assertTrue(event.belongsToAPartner());
@@ -23,27 +25,18 @@ public class EventTest {
     @Test
     public void shouldNotBelongToPartnerIfPartnerIdIsAbsent() {
         HashMap<String, Object> data = new HashMap<String,Object>();
-        HashMap<String, Object> edata = new HashMap<String,Object>();
-        HashMap<String, Object> eks = new HashMap<String,Object>();
-        data.put("edata", edata);
-        edata.put("eks", eks);
+        ArrayList<HashMap> tags = new ArrayList<HashMap>();
+
+        data.put("tags", tags);
+        HashMap<String, String> firstTag = new HashMap<String,String>();
+        tags.add(firstTag);
         Event event = new Event(data);
 
         Assert.assertFalse(event.belongsToAPartner());
     }
 
     @Test
-    public void shouldNotBelongToPartnerIfEksIsAbsent() {
-        HashMap<String, Object> data = new HashMap<String,Object>();
-        HashMap<String, Object> edata = new HashMap<String,Object>();
-        data.put("edata", edata);
-        Event event = new Event(data);
-
-        Assert.assertFalse(event.belongsToAPartner());
-    }
-
-    @Test
-    public void shouldNotBelongToPartnerIfEdataIsAbsent() {
+    public void shouldNotBelongToPartnerIfTagsIsAbsent() {
         HashMap<String, Object> data = new HashMap<String,Object>();
         Event event = new Event(data);
 
@@ -53,11 +46,12 @@ public class EventTest {
     @Test
     public void shouldRouteToTheEventsTopicBasedOnPartnerId() {
         HashMap<String, Object> data = new HashMap<String,Object>();
-        HashMap<String, Object> edata = new HashMap<String,Object>();
-        HashMap<String, Object> eks = new HashMap<String,Object>();
-        data.put("edata", edata);
-        edata.put("eks", eks);
-        eks.put("partnerid","org.test.partner.id");
+        ArrayList<HashMap> tags = new ArrayList<HashMap>();
+
+        data.put("tags", tags);
+        HashMap<String, String> firstTag = new HashMap<String,String>();
+        tags.add(firstTag);
+        firstTag.put("partnerid","org.test.partner.id");
         Event event = new Event(data);
 
         Assert.assertEquals("org.test.partner.id.events", event.routeTo());

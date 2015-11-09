@@ -1,5 +1,7 @@
 package org.ekstep.ep.samza;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Map;
 
 public class Event {
@@ -24,13 +26,14 @@ public class Event {
     }
 
     private String getPartnerId() {
-        Map<String, Map<String, Object>> edata = (Map<String, Map<String, Object>>) data.get("edata");
-        if(edata == null)
+
+        ArrayList<Map> tags = (ArrayList<Map>) data.get("tags");
+        if(tags == null)
             return null;
-        Map<String, Object> eks = edata.get("eks");
-        if(eks==null)
+        Map firstTag = tags.get(0);
+        if(firstTag == null)
             return null;
-        return (String) eks.get("partnerid");
+        return (String)firstTag.get("partnerid");
     }
 
     public Map<String, Object> getData() {
