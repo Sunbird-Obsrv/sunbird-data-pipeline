@@ -23,6 +23,24 @@ public class EventTest {
     }
 
     @Test
+    public void shouldBelongToPartnerIfPartnerIdIsPresentWithMultipleTags() {
+        HashMap<String, Object> data = new HashMap<String,Object>();
+        ArrayList<HashMap> tags = new ArrayList<HashMap>();
+        data.put("tags", tags);
+        HashMap<String, String> firstTag = new HashMap<String,String>();
+        HashMap<String, String> secondTag = new HashMap<String,String>();
+        HashMap<String, String> thirdTag = new HashMap<String,String>();
+        tags.add(firstTag);
+        tags.add(secondTag);
+        tags.add(thirdTag);
+        firstTag.put("someKey","value");
+        secondTag.put("partnerid","org.test.partner.id");
+        Event event = new Event(data);
+
+        Assert.assertTrue(event.belongsToAPartner());
+    }
+
+    @Test
     public void shouldNotBelongToPartnerIfPartnerIdIsAbsent() {
         HashMap<String, Object> data = new HashMap<String,Object>();
         ArrayList<HashMap> tags = new ArrayList<HashMap>();
@@ -30,6 +48,17 @@ public class EventTest {
         data.put("tags", tags);
         HashMap<String, String> firstTag = new HashMap<String,String>();
         tags.add(firstTag);
+        Event event = new Event(data);
+
+        Assert.assertFalse(event.belongsToAPartner());
+    }
+
+    @Test
+    public void shouldNotBelongToPartnerIfTagsAreEmpty() {
+        HashMap<String, Object> data = new HashMap<String,Object>();
+        ArrayList<HashMap> tags = new ArrayList<HashMap>();
+
+        data.put("tags", tags);
         Event event = new Event(data);
 
         Assert.assertFalse(event.belongsToAPartner());

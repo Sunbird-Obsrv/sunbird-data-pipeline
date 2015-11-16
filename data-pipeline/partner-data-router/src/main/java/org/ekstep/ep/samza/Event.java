@@ -1,5 +1,7 @@
 package org.ekstep.ep.samza;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Map;
@@ -13,27 +15,27 @@ public class Event {
 
     public boolean belongsToAPartner() {
         String partnerId = getPartnerId();
-        return partnerId !=null && !partnerId.isEmpty();
+        return StringUtils.isNotBlank(partnerId);
     }
 
-    public String routeTo(){
+    public String routeTo() {
         String partnerId = getPartnerId();
         return String.format("%s.events", partnerId);
     }
 
-    public void updateType(){
-        data.put("type","partner.events");
+    public void updateType() {
+        data.put("type", "partner.events");
     }
 
     private String getPartnerId() {
-
         ArrayList<Map> tags = (ArrayList<Map>) data.get("tags");
-        if(tags == null)
+        if (tags == null || tags.isEmpty())
             return null;
-        Map firstTag = tags.get(0);
-        if(firstTag == null)
-            return null;
-        return (String)firstTag.get("partnerid");
+        String partnerid = "partnerid";
+        for (Map tag:tags)
+            if(tag!=null && tag.containsKey(partnerid))
+                return (String) tag.get(partnerid);
+        return null;
     }
 
     public Map<String, Object> getData() {
