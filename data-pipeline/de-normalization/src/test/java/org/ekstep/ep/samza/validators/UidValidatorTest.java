@@ -51,8 +51,15 @@ public class UidValidatorTest {
     }
 
     @Test
-    public void ShouldPopulateProperErrorMessage() {
-        assertEquals("No uid in the event, skipping the event", new UidValidator(null).getErrorMessage());
+    public void ShouldPopulateProperErrorMessageWhenMapIsNull() {
+        assertEquals("map is null", new UidValidator(null).getErrorMessage());
+    }
+
+    @Test
+    public void ShouldPopulateProperErrorMessageWhenUidIsNull() {
+        HashMap<String, Object> map = new HashMap<String,Object>();
+        map.put("some_key","value");
+        assertEquals("uid is empty", new UidValidator(map).getErrorMessage());
     }
 
 }

@@ -105,4 +105,20 @@ public class ChildTest {
 
         assertTrue(child.isProcessed());
     }
+
+    @Test
+    public void ShouldNotPopulateAgeIfAgeIsMissing() {
+        Child child = new Child("1123abcd", false, null);
+
+        HashMap<String, Object> childData = new HashMap<String, Object>();
+        childData.put("gender", "male");
+        childData.put("handle", "user@twitter.com");
+        child.populate(childData);
+
+        HashMap<String, Object> calculatedData = child.getData();
+
+        assertTrue(child.isProcessed());
+        assertEquals(0, calculatedData.get("age_completed_years"));
+
+    }
 }

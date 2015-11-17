@@ -68,7 +68,7 @@ public class Child implements Serializable {
     private void populateAgeRelatedFields(HashMap<String, Object> childData) {
         Integer year_of_birth = (Integer) childData.get("year_of_birth");
         Calendar dob = new GregorianCalendar();
-        if(year_of_birth == null){
+        if(year_of_birth == null || year_of_birth <= 0){
             System.err.println("No Age for the children, skipping all age related fields");
             return;
         }

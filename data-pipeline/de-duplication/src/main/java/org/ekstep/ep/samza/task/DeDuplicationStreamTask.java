@@ -74,9 +74,11 @@ public class DeDuplicationStreamTask implements StreamTask, InitableTask {
             processEvent(new Event(jsonObject), collector);
         }
         catch(JsonSyntaxException e){
+            e.printStackTrace();
             System.err.println("Invalid Json Input"+e);
         }
         catch (Exception e) {
+            e.printStackTrace();
             System.err.println("Error while getting message"+e);
         }
         messageCount.inc();
