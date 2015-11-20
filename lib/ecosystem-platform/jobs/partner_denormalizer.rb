@@ -56,7 +56,8 @@ module EcosystemPlatform
             logger.info "PAGE: #{page} - FOUND #{response.hits.hits.count} hits. - TOTAL #{response.hits.total}"
             response.hits.hits.each do |hit|
               uid = hit.fields.uid[0]
-              uids_dictionary[uid] = { id: hit._id, type: hit._type, index: hit._index }
+              uids_dictionary[uid] ||= []
+              uids_dictionary[uid] << { id: hit._id, type: hit._type, index: hit._index }
               uids_to_denormalize << uid
             end
             offset += N
@@ -95,22 +96,25 @@ module EcosystemPlatform
             end
           end
           data_dictionary.each do |uid,partner_data|
-            to_update << {
-              update: {
-                _index: uids_dictionary[uid][:index],
-                _type: uids_dictionary[uid][:type],
-                _id: uids_dictionary[uid][:id],
-                data: {
-                  doc: {
-                    partner: partner_data.to_hash
+            docs_to_update = uids_dictionary[uid]
+            docs_to_update.each |doc|
+              to_update << {
+                update: {
+                  _index: doc[:index],
+                  _type:  doc[:type],
+                  _id:    doc[:id],
+                  data: {
+                    doc: {
+                      partner: partner_data.to_hash
+                    }
                   }
                 }
               }
-            }
+            end
           end
           unless(to_update.empty?)
             result = @client.bulk(body: to_update)
-            logger.info "<- BULK INDEXED #{result['errors']==false}"
+            logger.info "<- BULK INDEXED #{to_update.length} #{result['errors']==false}"
           end
           logger.end_task
         rescue => e
