@@ -97,7 +97,7 @@ module EcosystemPlatform
           end
           data_dictionary.each do |uid,partner_data|
             docs_to_update = uids_dictionary[uid]
-            docs_to_update.each |doc|
+            docs_to_update.each do |doc|
               to_update << {
                 update: {
                   _index: doc[:index],
