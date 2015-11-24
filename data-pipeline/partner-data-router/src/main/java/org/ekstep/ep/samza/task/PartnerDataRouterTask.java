@@ -31,8 +31,8 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask {
         }
         event.updateType();
         String topic = String.format("%s.%s", successTopicSuffix, event.routeTo());
-        if(!topicExists(topic))
-            throw new PartnerTopicNotPresentException(topic+" does not exists");
+//        if(!topicExists(topic))
+//            throw new PartnerTopicNotPresentException(topic+" does not exists");
         SystemStream stream = new SystemStream("kafka", topic);
         collector.send(new OutgoingMessageEnvelope(stream, event.getData()));
     }
