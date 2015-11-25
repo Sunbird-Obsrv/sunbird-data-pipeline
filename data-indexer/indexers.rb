@@ -353,7 +353,7 @@ module Indexers
         settings: {
           "index.refresh_interval": "5s"
         },
-        mappings: LEARNING_MAPPING,
+        mappings: LEARNING_MAPPINGS,
         aliases: {}
         }
       })
