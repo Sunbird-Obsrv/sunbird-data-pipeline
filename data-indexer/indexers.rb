@@ -113,6 +113,116 @@ module Indexers
             }
           }
         }
+        LEARNING_MAPPINGS = {
+          devices_v1: {
+            _id: {
+              path: "did"
+            },
+            properties: {
+              did: { type: 'string', index: 'not_analyzed'}
+            }
+          },
+          _default_: {
+            dynamic_templates: [
+            {
+              string_fields: {
+                mapping: {
+                  index: "not_analyzed",
+                  omit_norms: false,
+                  type: "string",
+                  doc_values: true
+                },
+                match_mapping_type: "string",
+                match: "*"
+              }
+            },
+            {
+              string_fields_force: {
+                mapping: {
+                  index: "not_analyzed",
+                  omit_norms: false,
+                  type: "string",
+                  doc_values: true
+                },
+                match: "id|current|res|exres|max|mc|mmc|category",
+                match_pattern: "regex"
+              }
+            },
+            {
+              double_fields: {
+                  match: "mem|idisk|edisk|scrn|length|exlength|age|percent_correct|percent_attempt|size|score|maxscore|osize|isize|timeSpent|exTimeSpent",
+                  match_pattern: "regex",
+                  mapping: {
+                      type: "double",
+                      index: "not_analyzed",
+                      doc_values: true
+                  }
+              }
+            },
+            {
+             boolean_fields:{
+                  match: "signup_processed",
+                  match_pattern: "regex",
+                  mapping: {
+                      type: "boolean",
+                      index: "not_analyzed",
+                      doc_values: true
+                  }
+              }
+            },
+            {
+              integer_fields: {
+                  match: "sims|atmpts|failedatmpts|correct|incorrect|total|age_completed_years|standard|count|noOfAttempts|noOfLevelTransitions",
+                  match_pattern: "regex",
+                  mapping: {
+                      type: "integer",
+                      index: "not_analyzed",
+                      doc_values: true
+                  }
+              }
+            },
+            {
+              date_fields: {
+                  match: "ts|te|time|timestamp",
+                  match_pattern: "regex",
+                  mapping: {
+                      type: "date",
+                      index: "not_analyzed",
+                      doc_values: true
+                  }
+              }
+            },
+            {
+              geo_location: {
+                  mapping: {
+                      type: "geo_point",
+                      doc_values: true
+                  },
+                  match: "loc"
+              }
+            }
+            ],
+            properties: {
+              geoip: {
+                dynamic: true,
+                path: "full",
+                properties: {
+                  location: {
+                    type: "geo_point"
+                  }
+                },
+                type: "object"
+              },
+              "@version" => {
+                index: "not_analyzed",
+                type: "string"
+              }
+            },
+            _all: {
+              enabled: true
+            }
+          }
+        }
     DUMP_MAPPINGS = {
           _default_: {
             dynamic_templates: [
@@ -232,6 +342,18 @@ module Indexers
           "index.refresh_interval": "5s"
         },
         mappings: LOG_MAPPINGS,
+        aliases: {}
+        }
+      })
+      puts client.indices.put_template({
+        name: "learning",
+        body: {
+        order: 10,
+        template: "learning-*",
+        settings: {
+          "index.refresh_interval": "5s"
+        },
+        mappings: LEARNING_MAPPING,
         aliases: {}
         }
       })
