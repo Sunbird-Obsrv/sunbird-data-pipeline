@@ -7,7 +7,7 @@ require 'pry'
 API_ROOT = "http://#{ENV['API_HOST']||'localhost:8080'}"
 
 DATA_EXHAUST_USER_SIGNUP_API_URL="#{API_ROOT}/v1/user"
-DATA_EXHAUST_USER_VALIDATE_API_URL="#{API_ROOT}/v1/user/validate"
+DATA_EXHAUST_USER_VALIDATE_API_URL="#{API_ROOT}/v1/user/authenticate"
 
 module DataExhaustUserGenerator
   class User
