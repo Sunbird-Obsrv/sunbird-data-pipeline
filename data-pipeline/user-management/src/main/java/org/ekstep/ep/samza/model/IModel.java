@@ -10,8 +10,6 @@ public interface IModel {
 
     void process(Event event) throws SQLException, ParseException;
 
-    void saveData() throws SQLException, ParseException;
-
     void setIsInserted();
 
     boolean getIsInserted();

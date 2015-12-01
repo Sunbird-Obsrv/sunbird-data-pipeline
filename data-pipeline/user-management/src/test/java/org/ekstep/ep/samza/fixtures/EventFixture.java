@@ -54,7 +54,7 @@ public class EventFixture {
 
     public String CREATE_PROFILE_EVENT_WITH_AGE = "{\n" +
             "    \"eid\": \"GE_CREATE_PROFILE\",\n" +
-            "    \"ts\": \"2015-04-23T10:23:46+05:30\",\n" +
+            "    \"ts\": \"2014-04-23T10:23:46+05:30\",\n" +
             "    \"ver\": \"1.0\",\n" +
             "    \"gdata\": {\n" +
             "        \"id\": \"genie.android\",\n" +
@@ -69,7 +69,7 @@ public class EventFixture {
             "            \"handle\": \"user@twitter.com\",\n" +
             "            \"gender\": \"male\",\n" +
             "            \"age\": 10,\n" +
-            "            \"standard\": -1.0,\n" +
+            "            \"standard\": 3,\n" +
             "            \"language\": \"ML\"\n" +
             "        }\n" +
             "    }\n" +

@@ -5,9 +5,12 @@ import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
-import java.sql.SQLException;
+import javax.activation.DataSource;
+import java.sql.*;
 import java.text.ParseException;
+import java.util.Date;
 
 
 public class CreateProfileEventTest {
@@ -65,6 +68,29 @@ public class CreateProfileEventTest {
         }
         catch(Exception e){}
 
-        Assert.assertEquals(false,profileDto.getIsInserted());
+        Assert.assertEquals(false, profileDto.getIsInserted());
+    }
+
+    @Test
+    public void ShouldInvokeDataSourceWithValidData() throws SQLException, ParseException {
+        Event event = new Event(new EventFixture().CREATE_PROFILE_EVENT_WITH_AGE);
+        javax.sql.DataSource dataSourceMock = new Mockito().mock(javax.sql.DataSource.class);
+
+        CreateProfileDto profileDto = new CreateProfileDto(dataSourceMock);
+
+        Connection connectionMock = Mockito.mock(Connection.class);
+        Mockito.stub(dataSourceMock.getConnection()).toReturn(connectionMock);
+        PreparedStatement statementMock = Mockito.mock(PreparedStatement.class);
+        Mockito.stub(connectionMock.prepareStatement(Mockito.anyString(), Mockito.eq(Statement.RETURN_GENERATED_KEYS))).toReturn(statementMock);
+
+        profileDto.process(event);
+
+        Mockito.verify(statementMock).setString(2, "user@twitter.com");
+        Mockito.verify(statementMock).setInt(3, 2004);
+        Mockito.verify(statementMock).setString(4, "male");
+        Mockito.verify(statementMock).setInt(5, 10);
+        Mockito.verify(statementMock).setInt(6, 3);
+        Mockito.verify(statementMock).setString(7, "ML");
+
     }
 }

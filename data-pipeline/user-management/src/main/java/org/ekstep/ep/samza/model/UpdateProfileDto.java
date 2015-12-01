@@ -4,9 +4,8 @@ import javax.sql.DataSource;
 import java.io.PrintStream;
 import java.sql.*;
 import java.text.ParseException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Map;
+import java.util.*;
+import java.util.Date;
 
 public class UpdateProfileDto implements IModel{
     public static final String UID = "uid";
@@ -38,7 +37,8 @@ public class UpdateProfileDto implements IModel{
     public void process(Event event) throws SQLException, ParseException {
         Map<String,Object> EKS = (Map<String,Object>) event.getEks();
 
-        parseData(EKS);
+        java.util.Date timeOfEvent = event.getTs();
+        parseData(EKS,timeOfEvent);
 
         if(!isProfileExist((String) EKS.get("uid"))){
             createProfile(event);
@@ -47,7 +47,7 @@ public class UpdateProfileDto implements IModel{
         saveData();
     }
 
-    private void parseData(Map<String, Object> EKS) throws ParseException {
+    private void parseData(Map<String, Object> EKS, Date timeOfEvent) throws ParseException {
         uid = (String) EKS.get(UID);
         validateEmptyString(UID,uid);
 
@@ -56,10 +56,7 @@ public class UpdateProfileDto implements IModel{
 
         gender = (String) EKS.get(GENDER);
         age = getAge(EKS);
-
-        if(age!=null) {
-            yearOfBirth = (Integer) getYear(getAge(EKS));
-        }
+        yearOfBirth = getYear(((Double) EKS.get(AGE)).intValue(), timeOfEvent);
 
         language = (String) EKS.get(LANGUAGE);
         standard = getStandard(EKS);
@@ -91,7 +88,7 @@ public class UpdateProfileDto implements IModel{
         return null;
     }
 
-    public void saveData() throws SQLException, ParseException {
+    private void saveData() throws SQLException, ParseException {
         PreparedStatement preparedStmt = null;
         Connection connection = null;
 
@@ -181,11 +178,11 @@ public class UpdateProfileDto implements IModel{
         return flag;
     }
 
-    private Integer getYear(Integer age) throws ParseException {
-        Calendar dob = new GregorianCalendar();
-        if(age != -1){
-            dob.add((Calendar.YEAR),- age);
-            return dob.getWeekYear();
+    private Integer getYear(Integer age, Date timeOfEvent) throws ParseException {
+        if(age!=null && age != -1){
+            Calendar timeOfEventFromCalendar = Calendar.getInstance();
+            timeOfEventFromCalendar.setTime(timeOfEvent);
+            return timeOfEventFromCalendar.get(Calendar.YEAR) - age;
         }
         return null;
     }

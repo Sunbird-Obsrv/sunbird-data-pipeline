@@ -25,13 +25,12 @@ public class CreateLearnerDto implements IModel{
         uid = (String) EKS.get("uid");
         if(uid == null || uid.isEmpty()) throw new ParseException("uid can't be blank",1);
 
-        createdAt = (Timestamp) new Timestamp(date.getTime());
+        createdAt = new Timestamp(date.getTime());
 
         saveData();
     }
 
-    @Override
-    public void saveData() throws SQLException {
+    private void saveData() throws SQLException {
         PreparedStatement preparedStmt = null;
         Connection connection = null;
         try{
