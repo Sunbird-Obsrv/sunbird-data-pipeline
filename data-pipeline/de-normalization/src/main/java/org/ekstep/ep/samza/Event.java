@@ -9,18 +9,15 @@ import org.joda.time.DateTime;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 public class Event {
     private final Map<String, Object> map;
     private Boolean canBeProcessed;
     private KeyValueStore<String, Child> childStore;
     private Child child;
-    private long timeOfEventTicksInMilliSeconds;
     private boolean hadIssueWithDb;
+    private Date timeOfEvent;
 
     public Event(Map<String, Object> map, KeyValueStore<String, Child> childStore) {
         this.map = map;
@@ -44,12 +41,12 @@ public class Event {
                 }
 
             String uid = (String) map.get("uid");
-            String timeOfEvent = (String) map.get("ts");
+            String timeOfEventString = (String) map.get("ts");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            timeOfEvent = simpleDateFormat.parse(timeOfEventString);
             Map<String, Object> udata = (Map<String, Object>) map.get("udata");
             Map<String, Boolean> flags = (Map<String, Boolean>) map.get("flags");
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             simpleDateFormat.setTimeZone(TimeZone.getTimeZone("IST"));
-            timeOfEventTicksInMilliSeconds = simpleDateFormat.parse(timeOfEvent).getTime();
             child = childStore.get(uid);
             if (child == null){
                 Boolean childProcessed = flags == null || !flags.containsKey("child_data_processed") ? false : flags.get("child_data_processed");
@@ -64,10 +61,10 @@ public class Event {
     public void process(ChildDto childDto) {
         if (!canBeProcessed) return;
         try {
-            System.out.println("Processing event at ts:" + timeOfEventTicksInMilliSeconds);
+            System.out.println("Processing event at ts:" + timeOfEvent.getTime());
             if (child.needsToBeProcessed()) {
                 System.out.println("Processing child data, getting data from db");
-                child = childDto.process(child);
+                child = childDto.process(child,timeOfEvent);
             }
             if(child.isProcessed())
                 update(child);

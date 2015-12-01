@@ -2,10 +2,10 @@ package org.ekstep.ep.samza;
 
 import org.junit.Test;
 
-import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.TimeZone;
 
 import static org.junit.Assert.*;
 
@@ -64,7 +64,7 @@ public class ChildTest {
     }
 
     @Test
-    public void ShouldPopulateChildData() {
+    public void ShouldPopulateChildData() throws ParseException {
         Child child = new Child("1123abcd", false, null);
 
         HashMap<String, Object> childData = new HashMap<String, Object>();
@@ -73,12 +73,15 @@ public class ChildTest {
         childData.put("year_of_birth",2010);
         childData.put("standard", 2);
 
-        child.populate(childData);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date timeOfEvent = simpleDateFormat.parse("2014-11-12T5:23:12");
+
+        child.populate(childData, timeOfEvent);
 
         HashMap<String, Object> calculatedData = child.getData();
 
         assertTrue(child.isProcessed());
-        assertEquals(5, calculatedData.get("age_completed_years"));
+        assertEquals(4, calculatedData.get("age_completed_years"));
         assertEquals("male", calculatedData.get("gender"));
         assertEquals("user@twitter.com", calculatedData.get("handle"));
         assertEquals(2, calculatedData.get("standard"));
@@ -89,7 +92,8 @@ public class ChildTest {
     public void ShouldNotTryToPopulateWhenChildDataIsEmpty() {
         Child child = new Child("1123abcd", false, null);
 
-        child.populate(new HashMap<String, Object>());
+        Date timeOfEvent = new Date();
+        child.populate(new HashMap<String, Object>(), timeOfEvent);
 
         assertFalse(child.isProcessed());
     }
@@ -101,7 +105,8 @@ public class ChildTest {
         HashMap<String, Object> childData = new HashMap<String, Object>();
         childData.put("gender", "male");
         childData.put("handle", "user@twitter.com");
-        child.populate(childData);
+        Date timeOfEvent = new Date();
+        child.populate(childData, timeOfEvent);
 
         assertTrue(child.isProcessed());
     }
@@ -113,7 +118,8 @@ public class ChildTest {
         HashMap<String, Object> childData = new HashMap<String, Object>();
         childData.put("gender", "male");
         childData.put("handle", "user@twitter.com");
-        child.populate(childData);
+        Date timeOfEvent = new Date();
+        child.populate(childData, timeOfEvent);
 
         HashMap<String, Object> calculatedData = child.getData();
 

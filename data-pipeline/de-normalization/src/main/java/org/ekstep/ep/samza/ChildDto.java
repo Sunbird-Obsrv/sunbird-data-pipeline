@@ -1,7 +1,7 @@
 package org.ekstep.ep.samza;
 
 import java.sql.*;
-import java.util.HashMap;
+import java.util.*;
 
 public class ChildDto {
     public static final String HANDLE = "handle";
@@ -23,7 +23,7 @@ public class ChildDto {
         this.password = password;
     }
 
-    public Child process(Child child) throws SQLException {
+    public Child process(Child child, java.util.Date timeOfEvent) throws SQLException {
         String profileQuery = String.format("select * from profile where uid = '%s'", child.getUid());
         String learnerQuery = String.format("select * from learner where uid = '%s'", child.getUid());
 
@@ -64,7 +64,7 @@ public class ChildDto {
                 }
             }
 
-            child.populate(childData);
+            child.populate(childData,timeOfEvent);
             return child;
 
         } catch (ClassNotFoundException e) {

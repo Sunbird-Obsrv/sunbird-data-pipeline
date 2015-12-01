@@ -48,7 +48,7 @@ public class Child implements Serializable {
         return udata;
     }
 
-    public void populate(HashMap<String, Object> childData) {
+    public void populate(HashMap<String, Object> childData, Date timeOfEvent) {
         if(childData == null || childData.isEmpty()){
             System.err.println("No record in the database, skipping the record");
             return;
@@ -57,7 +57,7 @@ public class Child implements Serializable {
         String handle = (String) childData.get(HANDLE);
         Integer standard = (Integer) childData.get(STANDARD);
         String gender = (String) childData.get(GENDER);
-        populateAgeRelatedFields(childData);
+        populateAgeRelatedFields(childData,timeOfEvent);
         this.handle = handle;
         this.standard = standard;
         this.gender = gender;
@@ -65,15 +65,15 @@ public class Child implements Serializable {
         System.out.println("successfully read from db");
     }
 
-    private void populateAgeRelatedFields(HashMap<String, Object> childData) {
+    private void populateAgeRelatedFields(HashMap<String, Object> childData, Date timeOfEvent) {
         Integer year_of_birth = (Integer) childData.get("year_of_birth");
-        Calendar dob = new GregorianCalendar();
         if(year_of_birth == null || year_of_birth <= 0){
             System.err.println("No Age for the children, skipping all age related fields");
             return;
         }
-        dob.add((Calendar.YEAR),- year_of_birth);
-        this.age_completed_years = dob.getWeekYear();
+        Calendar timeOfEventFromCalendar = Calendar.getInstance();
+        timeOfEventFromCalendar.setTime(timeOfEvent);
+        this.age_completed_years = timeOfEventFromCalendar.get(Calendar.YEAR) - year_of_birth;
     }
 
     public String getUid() {

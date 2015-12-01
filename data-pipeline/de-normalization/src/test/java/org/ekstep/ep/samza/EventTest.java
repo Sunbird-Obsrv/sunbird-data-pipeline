@@ -1,12 +1,15 @@
 package org.ekstep.ep.samza;
 
 import org.apache.samza.storage.kv.KeyValueStore;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -146,17 +149,18 @@ public class EventTest {
 
     @Test
     public void ShouldProcessChildIfChildIsNotProcessed() throws SQLException {
-        map.put("ts", "2008-06-16T00:00:00 +0530");
+        Date date = new Date();
+        map.put("ts", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(date));
         map.put("uid", UID);
         Child child = new Child(UID, true,  getUdata());
-        stub(childDtoMock.process(any(Child.class))).toReturn(child);
+        stub(childDtoMock.process(any(Child.class), any(Date.class))).toReturn(child);
 
         Event event = new Event(map, keyValueStoreMock);
 
         event.initialize();
         event.process(childDtoMock);
 
-        verify(childDtoMock).process(argThat(validateChild(UID)));
+        verify(childDtoMock).process(argThat(validateChild(UID)), argThat(dateMatcher(date)));
     }
 
     @Test
@@ -204,7 +208,7 @@ public class EventTest {
         map.put("uid", UID);
 
         Child child = new Child(UID, true,  getUdata());
-        stub(childDtoMock.process(any(Child.class))).toReturn(child);
+        stub(childDtoMock.process(any(Child.class), any(Date.class))).toReturn(child);
 
         Event event = new Event(map, keyValueStoreMock);
 
@@ -223,7 +227,7 @@ public class EventTest {
         map.put("uid", UID);
 
         Child child = new Child(UID, false, getUdata());
-        stub(childDtoMock.process(any(Child.class))).toReturn(child);
+        stub(childDtoMock.process(any(Child.class), any(Date.class))).toReturn(child);
 
         Event event = new Event(map, keyValueStoreMock);
 
@@ -241,7 +245,7 @@ public class EventTest {
         map.put("ts", "2008-06-16T00:00:00 +0530");
         map.put("uid", UID);
 
-        stub(childDtoMock.process(any(Child.class))).toThrow(new SQLException("Not able to connect to database"));
+        stub(childDtoMock.process(any(Child.class), any(Date.class))).toThrow(new SQLException("Not able to connect to database"));
 
         Event event = new Event(map, keyValueStoreMock);
 
@@ -276,7 +280,7 @@ public class EventTest {
         map.put("flags", flags);
 
         Child child = new Child(UID, true, getUdata());
-        stub(childDtoMock.process(any(Child.class))).toReturn(child);
+        stub(childDtoMock.process(any(Child.class), any(Date.class))).toReturn(child);
         Event event = new Event(map, keyValueStoreMock);
 
         event.initialize();
@@ -297,7 +301,7 @@ public class EventTest {
 
         Map<String,Object> metadata = (Map<String, Object>) event.getMap().get("metadata");
         assertTrue(metadata.containsKey("processed_count"));
-        assertEquals(1,metadata.get("processed_count"));
+        assertEquals(1, metadata.get("processed_count"));
     }
 
     @Test
@@ -307,7 +311,7 @@ public class EventTest {
         metadata.put("processed_count",1);
         map.put("ts", "2008-06-16T00:00:00 +0530");
         map.put("uid", UID);
-        map.put("metadata",metadata);
+        map.put("metadata", metadata);
 
         Event event = new Event(map, keyValueStoreMock);
 
@@ -323,8 +327,8 @@ public class EventTest {
         HashMap<String, Object> expectedUdata = getUdata();
 
         assertEquals(expectedUdata.get("age_completed_years"),actualUdata.get("age_completed_years"));
-        assertEquals(expectedUdata.get("gender"),actualUdata.get("gender"));
-        assertEquals(expectedUdata.get("handle"),actualUdata.get("handle"));
+        assertEquals(expectedUdata.get("gender"), actualUdata.get("gender"));
+        assertEquals(expectedUdata.get("handle"), actualUdata.get("handle"));
         assertEquals(expectedUdata.get("standard"),actualUdata.get("standard"));
     }
 
@@ -348,5 +352,18 @@ public class EventTest {
         udata.put("standard", 2);
         return udata;
     }
+
+    private ArgumentMatcher<Date> dateMatcher(final Date expectedDate) {
+        return new ArgumentMatcher<Date>() {
+            @Override
+            public boolean matches(Object argument) {
+                Date actualDate = (Date) argument;
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                Assert.assertEquals(dateFormat.format(expectedDate),dateFormat.format(actualDate));
+                return true;
+            }
+        };
+    }
+
 
 }
