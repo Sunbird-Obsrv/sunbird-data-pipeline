@@ -5,7 +5,6 @@ import java.io.PrintStream;
 import java.sql.*;
 import java.text.ParseException;
 import java.util.*;
-import java.util.Date;
 
 public class CreateProfileDto implements IModel{
     public static final String UID = "uid";
@@ -24,8 +23,6 @@ public class CreateProfileDto implements IModel{
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
-    private Date date = new Date();
-
     private boolean isInserted = false;
 
     private DataSource dataSource;
@@ -37,7 +34,7 @@ public class CreateProfileDto implements IModel{
     @Override
     public void process(Event event) throws SQLException, ParseException {
         Map<String,Object> EKS = event.getEks();
-        Date timeOfEvent = event.getTs();
+        java.util.Date timeOfEvent = event.getTs();
         parseData(EKS,timeOfEvent);
 
         if(!isLearnerExist((String) EKS.get(UID))){
@@ -46,7 +43,7 @@ public class CreateProfileDto implements IModel{
         saveData();
     }
 
-    private void parseData(Map<String, Object> EKS, Date timeOfEvent) throws ParseException {
+    private void parseData(Map<String, Object> EKS, java.util.Date timeOfEvent) throws ParseException {
         uid = (String) EKS.get(UID);
         validateEmptyString(UID,uid);
 
@@ -60,6 +57,7 @@ public class CreateProfileDto implements IModel{
         standard = getStandard(EKS);
         language = (String) EKS.get(LANGUAGE);
 
+        java.util.Date date = new java.util.Date();
         createdAt = new Timestamp(date.getTime());
         updatedAt = new Timestamp(date.getTime());
     }
@@ -183,7 +181,7 @@ public class CreateProfileDto implements IModel{
         return flag;
     }
 
-    private Integer getYear(Integer age, Date timeOfEvent) throws ParseException {
+    private Integer getYear(Integer age, java.util.Date timeOfEvent) throws ParseException {
         if(age!=null && age != -1){
             Calendar timeOfEventFromCalendar = Calendar.getInstance();
             timeOfEventFromCalendar.setTime(timeOfEvent);

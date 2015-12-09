@@ -4,13 +4,13 @@ import java.io.PrintStream;
 import java.sql.*;
 import java.text.ParseException;
 import java.util.Map;
+import java.util.Date;
+
 
 public class CreateLearnerDto implements IModel{
     private DataSource dataSource;
     private String uid;
     private Timestamp createdAt;
-
-    private java.util.Date date = new java.util.Date();
 
     private boolean isInserted = false;
 
@@ -25,6 +25,7 @@ public class CreateLearnerDto implements IModel{
         uid = (String) EKS.get("uid");
         if(uid == null || uid.isEmpty()) throw new ParseException("uid can't be blank",1);
 
+        java.util.Date date = new java.util.Date();
         createdAt = new Timestamp(date.getTime());
 
         saveData();

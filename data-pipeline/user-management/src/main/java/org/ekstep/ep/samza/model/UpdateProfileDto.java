@@ -5,7 +5,6 @@ import java.io.PrintStream;
 import java.sql.*;
 import java.text.ParseException;
 import java.util.*;
-import java.util.Date;
 
 public class UpdateProfileDto implements IModel{
     public static final String UID = "uid";
@@ -22,8 +21,6 @@ public class UpdateProfileDto implements IModel{
     private String language;
     private String handle;
     private Timestamp updatedAt;
-
-    private java.util.Date date = new java.util.Date();
 
     private boolean isInserted = false;
 
@@ -47,7 +44,7 @@ public class UpdateProfileDto implements IModel{
         saveData();
     }
 
-    private void parseData(Map<String, Object> EKS, Date timeOfEvent) throws ParseException {
+    private void parseData(Map<String, Object> EKS, java.util.Date timeOfEvent) throws ParseException {
         uid = (String) EKS.get(UID);
         validateEmptyString(UID,uid);
 
@@ -61,6 +58,7 @@ public class UpdateProfileDto implements IModel{
         language = (String) EKS.get(LANGUAGE);
         standard = getStandard(EKS);
 
+        java.util.Date date = new java.util.Date();
         updatedAt = (Timestamp) new Timestamp(date.getTime());
     }
 
@@ -178,7 +176,7 @@ public class UpdateProfileDto implements IModel{
         return flag;
     }
 
-    private Integer getYear(Integer age, Date timeOfEvent) throws ParseException {
+    private Integer getYear(Integer age, java.util.Date timeOfEvent) throws ParseException {
         if(age!=null && age != -1){
             Calendar timeOfEventFromCalendar = Calendar.getInstance();
             timeOfEventFromCalendar.setTime(timeOfEvent);
