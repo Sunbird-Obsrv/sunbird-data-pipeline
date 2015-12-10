@@ -120,6 +120,10 @@ namespace :scheduled do
     require_relative '../lib/ecosystem-platform/jobs/partner_denormalizer.rb'
     EcosystemPlatform::Jobs::PartnerDenormalizer.perform
   end
+  task :fetch_partner_data do
+    require_relative '../lib/ecosystem-platform/jobs/partner_data_fetcher.rb'
+    EcosystemPlatform::Jobs::PartnerDataFetcher.perform(ENV['DATA_EXHAUST_URL'],ENV['LICENSEKEY'])
+  end
 end
 
 namespace :generators do
