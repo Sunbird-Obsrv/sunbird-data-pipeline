@@ -19,7 +19,6 @@ module EcosystemPlatform
       def self.perform(url,licensekey,from_date=nil,to_date=nil)
         from_date = "2015-12-01"
         to_date = "2015-12-03"
-        binding.pry
         logger.start_task
         logger.info("INITIALIZING CLIENT")
         wrapper = {
@@ -39,10 +38,8 @@ module EcosystemPlatform
         file_path = BASE_PATH + SecureRandom.uuid + ".gz"
         FileUtils.mkdir_p(BASE_PATH) unless Dir.exist?(BASE_PATH)
         logger.info("CREATING FILE PATH: #{file_path}")
-        binding.pry
         data_exhaust_api_url = construct_url(url,from_date,to_date)
         logger.info("CONSRUCTING DATA EXHAUST API URL: #{data_exhaust_api_url}")
-        binding.pry
         send_request(wrapper,data_exhaust_api_url,file_path)
         logger.info("EXTRACTING ZIP FILE")
         extract_data(file_path)
