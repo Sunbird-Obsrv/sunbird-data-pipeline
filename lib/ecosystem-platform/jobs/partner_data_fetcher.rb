@@ -17,8 +17,6 @@ module EcosystemPlatform
       include EcosystemPlatform::Utils::EPLogging
 
       def self.perform(url,licensekey,from_date=nil,to_date=nil)
-        from_date = "2015-12-01"
-        to_date = "2015-12-03"
         logger.start_task
         logger.info("INITIALIZING CLIENT")
         wrapper = {
