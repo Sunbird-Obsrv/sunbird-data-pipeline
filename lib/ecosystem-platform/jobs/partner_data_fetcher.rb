@@ -31,7 +31,7 @@ module EcosystemPlatform
             msgid: ""
           },
           request: {
-            licensekey: licensekey+"sa"
+            licensekey: licensekey
           }
         }
         file_path = BASE_PATH + SecureRandom.uuid + ".gz"
@@ -57,12 +57,15 @@ module EcosystemPlatform
           req.basic_auth ENV["API_USER"], ENV["API_PASS"]
           req.body = JSON.generate(data)
           http.request req do |response|
-            logger.info("RESPONSE STATUS : #{response.code}")
-            logger.info("ERROR RESPONSE: #{JSON.parse(response.body)}") if response.code != 200
-            open file_path, 'w' do |io|
-              response.read_body do |chunk|
-                io.write chunk
+            if response.code == '200'
+              logger.info("API RESPONSE IS SUCCESS ")
+              open file_path, 'w' do |io|
+                response.read_body do |chunk|
+                  io.write chunk
+                end
               end
+            else
+              logger.info("ERROR RESPONSE: #{JSON.parse(response.body)}")
             end
           end
         end
