@@ -4,6 +4,7 @@ require 'elasticsearch'
 require 'base64'
 require 'zip'
 require 'net/http'
+require 'json'
 
 require_relative '../utils/ep_logging.rb'
 
@@ -30,16 +31,19 @@ module EcosystemPlatform
             msgid: ""
           },
           request: {
-            licensekey: licensekey
+            licensekey: licensekey+"sa"
           }
         }
         file_path = BASE_PATH + SecureRandom.uuid + ".gz"
         FileUtils.mkdir_p(BASE_PATH) unless Dir.exist?(BASE_PATH)
         logger.info("CREATING FILE PATH: #{file_path}")
+
         data_exhaust_api_url = construct_url(url,from_date,to_date)
         logger.info("CONSRUCTING DATA EXHAUST API URL: #{data_exhaust_api_url}")
+
         send_request(wrapper,data_exhaust_api_url,file_path)
         logger.info("EXTRACTING ZIP FILE")
+
         extract_data(file_path)
       end
 
@@ -53,6 +57,8 @@ module EcosystemPlatform
           req.basic_auth ENV["API_USER"], ENV["API_PASS"]
           req.body = JSON.generate(data)
           http.request req do |response|
+            logger.info("RESPONSE STATUS : #{response.code}")
+            logger.info("ERROR RESPONSE: #{JSON.parse(response.body)}") if response.code != 200
             open file_path, 'w' do |io|
               response.read_body do |chunk|
                 io.write chunk
@@ -63,13 +69,18 @@ module EcosystemPlatform
       end
 
       def self.extract_data(file_path)
-        Zip::File.open(file_path) { |zip_file|
-          zip_file.each { |f|
-            f_path=File.join(BASE_PATH, f.name)
-            FileUtils.mkdir_p(File.dirname(f_path))
-            zip_file.extract(f, f_path) unless File.exist?(f_path)
+        if File.exist?(file_path)
+          Zip::File.open(file_path) { |zip_file|
+            zip_file.each { |f|
+              f_path=File.join(BASE_PATH, f.name)
+              FileUtils.mkdir_p(File.dirname(f_path))
+              zip_file.extract(f, f_path) unless File.exist?(f_path)
+            }
           }
-        }
+        else
+          logger.info("UNABLE TO FIND ZIP FILE : #{file_path}")
+        end
+
         # FileUtils.rm(file_path)
       end
 
