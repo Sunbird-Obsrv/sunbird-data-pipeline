@@ -66,6 +66,7 @@ module EcosystemPlatform
           end
           data_dictionary = {}
           uids_to_denormalize.flatten.uniq.each_slice(SLICE) do |batch|
+            logger.info "Batch UIDs #{batch}"
             page = 0
             offset = 0
             loop do
