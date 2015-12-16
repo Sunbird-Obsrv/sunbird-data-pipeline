@@ -39,10 +39,10 @@ set :environment, ENV['EP_LOG_DIR']
 #   rake "scheduled:child_data_populator"
 # end
 
-every 1.minute do
-  rake "scheduled:decrypt_partner"
-end
+# every 1.hour do
+#   rake "scheduled:decrypt_partner"
+# end
 
-every 2.minute do
-  rake "scheduled:denormalize_partner"
-end
+# every 2.hour do
+#   rake "scheduled:denormalize_partner"
+# end
