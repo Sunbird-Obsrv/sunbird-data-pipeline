@@ -95,6 +95,7 @@ module EcosystemPlatform
               break if response.hits.hits.count == 0
             end
           end
+          logger.info "Going to Update. #{data_dictionary.keys.count} UIDs"
           data_dictionary.each do |uid,partner_data|
             docs_to_update = uids_dictionary[uid]
             docs_to_update.each do |doc|
@@ -113,8 +114,10 @@ module EcosystemPlatform
             end
           end
           unless(to_update.empty?)
-            result = @client.bulk(body: to_update)
-            logger.info "<- BULK INDEXED #{to_update.length} #{result['errors']==false}"
+            to_update.each_slice(200) do |slice|
+              result = @client.bulk(body: slice)
+              logger.info "<- BULK INDEXED #{slice.length} #{result['errors']==false}"
+            end
           end
           logger.end_task
         rescue => e
