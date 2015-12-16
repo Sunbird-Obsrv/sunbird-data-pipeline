@@ -114,10 +114,14 @@ module EcosystemPlatform
             end
           end
           unless(to_update.empty?)
-            to_update.each_slice(200) do |slice|
-              result = @client.bulk(body: slice)
-              logger.info "<- BULK INDEXED #{slice.length} #{result['errors']==false}"
+            threads = []
+            to_update.each_slice(10000) do |slice|
+              threads << Thread.new do
+                result = @client.bulk(body: slice)
+                logger.info "<- BULK INDEXED #{slice.length} #{result['errors']==false}"
+              end
             end
+            threads.map(&:join)
           end
           logger.end_task
         rescue => e
