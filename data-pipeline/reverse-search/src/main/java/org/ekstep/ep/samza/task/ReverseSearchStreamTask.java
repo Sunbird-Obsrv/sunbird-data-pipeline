@@ -61,10 +61,11 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
     public ReverseSearchStreamTask() {
     }
 
-    public ReverseSearchStreamTask(KeyValueStore<String, Object> reverseSearchStore, KeyValueStore<String, Object> deviceStore, GoogleReverseSearch googleReverseSearch) {
+    public ReverseSearchStreamTask(KeyValueStore<String, Object> reverseSearchStore, KeyValueStore<String, Object> deviceStore, GoogleReverseSearch googleReverseSearch, String bypass) {
         this.reverseSearchStore = reverseSearchStore;
         this.deviceStore = deviceStore;
         this.googleReverseSearch = googleReverseSearch;
+        this.bypass = bypass;
     }
 
     @SuppressWarnings("unchecked")

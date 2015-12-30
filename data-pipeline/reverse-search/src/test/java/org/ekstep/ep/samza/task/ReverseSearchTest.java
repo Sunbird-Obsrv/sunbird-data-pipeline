@@ -42,7 +42,7 @@ public class ReverseSearchTest {
         Event event = createEventMock("15.9310593,78.6238299");
         when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch, "false");
 
         reverseSearchStreamTask.processEvent(event, collector);
         verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
@@ -55,7 +55,7 @@ public class ReverseSearchTest {
         when(googleReverseSearch.getLocation("15.9310593,78.6238299")).thenReturn(null);
         Map<String, Object> map = createMap("15.9310593,78.6238299");
         Event event = new Event(map);
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch, "false");
 
         reverseSearchStreamTask.processEvent(event, collector);
         verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
@@ -79,7 +79,7 @@ public class ReverseSearchTest {
 
         when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch, "false");
 
         reverseSearchStreamTask.processEvent(event, collector);
         verify(googleReverseSearch, times(0)).getLocation(anyString());
@@ -101,7 +101,7 @@ public class ReverseSearchTest {
         when(reverseSearchStore.get("15.9310593,78.6238299")).thenReturn("{\"@type\":\"org.ekstep.ep.samza.system.Location\",\"city\":\"Chennai\",\"district\":\"Chennai\",\"state\":\"Tamil Nadu\",\"country\": \"India\"}");
         when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch, "false");
 
         reverseSearchStreamTask.processEvent(event, collector);
         verify(deviceStore, times(0)).get(anyString());
@@ -121,6 +121,7 @@ public class ReverseSearchTest {
         TaskContext context=mock(TaskContext.class);
 
         reverseSearchStreamTask.init(config,context);
+        when(context.getStore("bypass")).thenReturn("false");
         when(context.getStore("reverse-search")).thenReturn(reverseSearchStore);
         when(context.getStore("device")).thenReturn(deviceStore);
         TaskCoordinator task = mock(TaskCoordinator.class);
