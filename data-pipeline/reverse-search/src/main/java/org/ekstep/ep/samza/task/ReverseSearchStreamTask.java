@@ -42,6 +42,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
     private GoogleReverseSearch googleReverseSearch;
     private String successTopic;
     private String failedTopic;
+    private String bypass;
 
     @Override
     public void init(Config config, TaskContext context) {
@@ -49,6 +50,8 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
 
         successTopic = config.get("output.success.topic.name", "events_with_location");
         failedTopic = config.get("output.failed.topic.name", "events_failed_location");
+
+        bypass = config.get("bypass", "false");
 
         this.reverseSearchStore = (KeyValueStore<String, Object>) context.getStore("reverse-search");
         this.deviceStore = (KeyValueStore<String, Object>) context.getStore("device");
@@ -81,44 +84,49 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
     public void processEvent(Event event, MessageCollector collector) {
         Location location = null;
         Device device = null;
-        try {
+        if(bypass.equals("true")){
+          System.out.println("bypassing");
+        } else {
+          try {
 
-            String loc = event.getGPSCoordinates();
-            String did = event.getDid();
+              String loc = event.getGPSCoordinates();
+              String did = event.getDid();
 
-            if (loc != null && !loc.isEmpty()) {
-                String stored_location = (String) reverseSearchStore.get(loc);
-                if (stored_location == null) {
-                    // do reverse search
-                    System.out.println("Performing reverse search");
-                    location = googleReverseSearch.getLocation(loc);
-                    String json = JsonWriter.objectToJson(location);
+              if (loc != null && !loc.isEmpty()) {
+                  String stored_location = (String) reverseSearchStore.get(loc);
+                  if (stored_location == null) {
+                      // do reverse search
+                      System.out.println("Performing reverse search");
+                      location = googleReverseSearch.getLocation(loc);
+                      String json = JsonWriter.objectToJson(location);
 
-                    System.out.println("Setting device loc in stores");
-                    reverseSearchStore.put(loc, json);
-                    device = new Device(did);
-                    device.setLocation(location);
-                    String djson = JsonWriter.objectToJson(device);
-                    deviceStore.put(did, djson);
-                } else {
-                    System.out.println("Picking store data for reverse search");
-                    location = (Location) JsonReader.jsonToJava(stored_location);
-                    device = new Device(did);
-                    device.setLocation(location);
-                    String djson = JsonWriter.objectToJson(device);
-                    deviceStore.put(did, djson);
-                }
-            } else {
-                System.out.println("Trying to pick from device");
-                String stored_device = (String) deviceStore.get(did);
-                device = (Device) JsonReader.jsonToJava(stored_device);
-                location = device.getLocation();
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            System.err.println("unable to parse");
+                      System.out.println("Setting device loc in stores");
+                      reverseSearchStore.put(loc, json);
+                      device = new Device(did);
+                      device.setLocation(location);
+                      String djson = JsonWriter.objectToJson(device);
+                      deviceStore.put(did, djson);
+                  } else {
+                      System.out.println("Picking store data for reverse search");
+                      location = (Location) JsonReader.jsonToJava(stored_location);
+                      device = new Device(did);
+                      device.setLocation(location);
+                      String djson = JsonWriter.objectToJson(device);
+                      deviceStore.put(did, djson);
+                  }
+              } else {
+                  System.out.println("Trying to pick from device");
+                  String stored_device = (String) deviceStore.get(did);
+                  device = (Device) JsonReader.jsonToJava(stored_device);
+                  location = device.getLocation();
+              }
+          } catch (Exception e) {
+              System.out.println(e);
+              System.err.println("unable to parse");
+          }
+          System.out.println("ok");
         }
-        System.out.println("ok");
+
         try {
             if (location != null) {
                 event.AddLocation(location);
