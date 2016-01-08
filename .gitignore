@@ -8,3 +8,4 @@ logs/
 tasks/.bundle/*
 tasks/vendor/*
 database.yml
+.idea
