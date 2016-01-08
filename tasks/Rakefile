@@ -124,7 +124,7 @@ namespace :scheduled do
     require_relative '../lib/ecosystem-platform/jobs/partner_data_fetcher.rb'
     EcosystemPlatform::Jobs::PartnerDataFetcher.perform(ENV['DATA_EXHAUST_URL'],ENV['LICENSEKEY'])
   end
-  task :archive_partner_data do
+  task :archive_file do
     require_relative '../lib/ecosystem-platform/jobs/file_archiver.rb'
     EcosystemPlatform::Jobs::FileArchiver.perform()
   end
