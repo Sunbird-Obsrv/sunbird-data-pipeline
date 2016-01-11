@@ -21,6 +21,8 @@ package org.ekstep.ep.samza.task;
 
 import com.cedarsoftware.util.io.JsonReader;
 import com.cedarsoftware.util.io.JsonWriter;
+import com.library.checksum.system.ChecksumGenerator;
+import com.library.checksum.system.KeysToAccept;
 import org.apache.samza.config.Config;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
@@ -43,6 +45,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
     private String successTopic;
     private String failedTopic;
     private String bypass;
+    private ChecksumGenerator checksumGenerator;
 
     @Override
     public void init(Config config, TaskContext context) {
@@ -56,16 +59,24 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
         this.reverseSearchStore = (KeyValueStore<String, Object>) context.getStore("reverse-search");
         this.deviceStore = (KeyValueStore<String, Object>) context.getStore("device");
         googleReverseSearch = new GoogleReverseSearch(new GoogleGeoLocationAPI(apiKey));
+
+        String[] keys_to_accept = {"uid", "ts", "cid", "gdata","edata"};
+        checksumGenerator = new ChecksumGenerator(new KeysToAccept(keys_to_accept));
     }
 
     public ReverseSearchStreamTask() {
     }
 
-    public ReverseSearchStreamTask(KeyValueStore<String, Object> reverseSearchStore, KeyValueStore<String, Object> deviceStore, GoogleReverseSearch googleReverseSearch, String bypass) {
+    //For testing only
+    protected ReverseSearchStreamTask(KeyValueStore<String, Object> reverseSearchStore,
+                                      KeyValueStore<String, Object> deviceStore,
+                                      GoogleReverseSearch googleReverseSearch, String bypass) {
         this.reverseSearchStore = reverseSearchStore;
         this.deviceStore = deviceStore;
         this.googleReverseSearch = googleReverseSearch;
         this.bypass = bypass;
+        String[] keys_to_accept = {"uid", "ts", "cid", "gdata","edata"};
+        checksumGenerator = new ChecksumGenerator(new KeysToAccept(keys_to_accept));
     }
 
     @SuppressWarnings("unchecked")
@@ -89,7 +100,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
           System.out.println("bypassing");
         } else {
           try {
-
+              checksumGenerator.stampChecksum(event);
               String loc = event.getGPSCoordinates();
               String did = event.getDid();
 

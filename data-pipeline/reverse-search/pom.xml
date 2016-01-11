@@ -33,7 +33,7 @@ under the License.
 
   <groupId>org.ekstep.ecosystem.jobs</groupId>
   <artifactId>reverse-search</artifactId>
-  <version>0.0.6</version>
+  <version>0.0.7</version>
   <packaging>jar</packaging>
   <name>Reverse Search</name>
   <description>
@@ -134,6 +134,11 @@ under the License.
       <groupId>com.google.maps</groupId>
       <artifactId>google-maps-services</artifactId>
       <version>0.1.7</version>
+  </dependency>
+  <dependency>
+     <groupId>org.ekstep.ecosystem</groupId>
+     <artifactId>checksum-generator</artifactId>
+     <version>0.0.1</version>
   </dependency>
 </dependencies>
 

@@ -1,10 +1,13 @@
 package org.ekstep.ep.samza.system;
 
 
+import com.google.gson.Gson;
+import com.library.checksum.system.Mappable;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class Event {
+public class Event implements Mappable {
     private final Map<String, Object> map;
 
     public Event(Map<String,Object> map) {
@@ -29,12 +32,26 @@ public class Event {
         ldata.put("country", location.getCountry());
         map.put("ldata", ldata);
     }
+
     public String getDid() {
         return (String)map.get("did");
     }
 
     public Map<String, Object> getMap() {
         return map;
+    }
+
+    @Override
+    public void setMetadata(Map<String, Object> metadata) {
+        if(map.get("metadata") == null){
+            map.put("metadata",metadata);
+        }
+        else{
+            Map<String, Object> mData = (Map<String, Object>) map.get("metadata");
+            if(mData.get("checksum") == null){
+                mData.put("checksum",metadata.get("checksum"));
+            }
+        }
     }
 
 

@@ -1,5 +1,8 @@
 package org.ekstep.ep.samza.task;
 
+import com.google.gson.Gson;
+import com.library.checksum.system.ChecksumGenerator;
+import com.library.checksum.system.Mappable;
 import org.apache.samza.config.Config;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
@@ -8,11 +11,13 @@ import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.actions.GoogleReverseSearch;
+import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.ekstep.ep.samza.system.Event;
 import org.ekstep.ep.samza.system.Location;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +30,6 @@ public class ReverseSearchTest {
     KeyValueStore<String, Object> deviceStore;
     GoogleReverseSearch googleReverseSearch;
     private MessageCollector collector;
-
     @Before
     public void setMock() {
         reverseSearchStore = mock(KeyValueStore.class);
@@ -77,6 +81,7 @@ public class ReverseSearchTest {
         when(deviceStore.get("bc811958-b4b7-4873-a43a-03718edba45b")).thenReturn("{\"@type\":\"org.ekstep.ep.samza.system.Device\",\"id\":\"bc811958-b4b7-4873-a43a-03718edba45b\",\"location\":{\"city\":null,\"district\":null,\"state\":null,\"country\":null}}");
         Event event = createEventMock("");
 
+
         when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
 
         ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch, "false");
@@ -115,15 +120,12 @@ public class ReverseSearchTest {
 
         IncomingMessageEnvelope envelope = mock(IncomingMessageEnvelope.class);
         when(envelope.getMessage()).thenThrow(new RuntimeException());
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask();
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch, "false");
 
         Config config = mock(Config.class);
         TaskContext context=mock(TaskContext.class);
 
-        reverseSearchStreamTask.init(config,context);
-        when(context.getStore("bypass")).thenReturn("false");
-        when(context.getStore("reverse-search")).thenReturn(reverseSearchStore);
-        when(context.getStore("device")).thenReturn(deviceStore);
+        reverseSearchStreamTask.init(config, context);
         TaskCoordinator task = mock(TaskCoordinator.class);
         reverseSearchStreamTask.process(envelope, collector, task);
 
@@ -133,6 +135,20 @@ public class ReverseSearchTest {
         verify(collector, times(0)).send(any(OutgoingMessageEnvelope.class));
 
     }
+
+    @Test
+    public void ShouldStampChecksumToEventIfChecksumNotPresent() throws Exception{
+        Map<String, Object> eventMap = new Gson().fromJson(EventFixture.JSON, Map.class);
+        Event event = new Event(eventMap);
+
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch, "false");
+
+        TaskCoordinator task = mock(TaskCoordinator.class);
+        reverseSearchStreamTask.processEvent(event, collector);
+
+        Assert.assertEquals(true, event.getMap().containsKey("metadata"));
+    }
+
     private Event createEventMock(String loc) {
         Event event = mock(Event.class);
 
