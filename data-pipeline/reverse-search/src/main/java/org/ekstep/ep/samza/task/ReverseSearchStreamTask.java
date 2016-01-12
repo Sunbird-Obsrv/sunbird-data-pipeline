@@ -60,7 +60,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
         this.deviceStore = (KeyValueStore<String, Object>) context.getStore("device");
         googleReverseSearch = new GoogleReverseSearch(new GoogleGeoLocationAPI(apiKey));
 
-        String[] keys_to_accept = {"uid", "ts", "cid", "gdata","edata"};
+        String[] keys_to_accept = {"uid", "ts", "gdata", "edata"};
         checksumGenerator = new ChecksumGenerator(new KeysToAccept(keys_to_accept));
     }
 
@@ -94,13 +94,14 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
     }
 
     public void processEvent(Event event, MessageCollector collector) {
+
         Location location = null;
         Device device = null;
+
         if(bypass.equals("true")){
           System.out.println("bypassing");
         } else {
           try {
-              checksumGenerator.stampChecksum(event);
               String loc = event.getGPSCoordinates();
               String did = event.getDid();
 
@@ -147,6 +148,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
                 event.setFlag("ldata_obtained", false);
                 collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
             }
+            checksumGenerator.stampChecksum(event);
             event.setFlag("ldata_processed",true);
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
         } catch (Exception e) {
