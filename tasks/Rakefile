@@ -127,6 +127,9 @@ namespace :scheduled do
   task :archive_file do
     require_relative '../lib/ecosystem-platform/jobs/file_archiver.rb'
     EcosystemPlatform::Jobs::FileArchiver.perform()
+  task :handle_denormalizer do
+    require_relative '../lib/ecosystem-platform/jobs/handle_denormalizer.rb'
+    EcosystemPlatform::Jobs::HandleDenormalizer.perform
   end
 end
 

@@ -46,3 +46,7 @@ set :environment, ENV['EP_LOG_DIR']
 # every 2.hour do
 #   rake "scheduled:denormalize_partner"
 # end
+
+every 6.hour do
+  rake "scheduled:handle_denormalizer"
+end
