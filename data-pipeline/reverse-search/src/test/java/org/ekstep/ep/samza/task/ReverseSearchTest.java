@@ -161,7 +161,6 @@ public class ReverseSearchTest {
         reverseSearchStreamTask.processEvent(event, collector);
 
         Assert.assertEquals(true, event.getMap().containsKey("ts"));
-        Assert.assertEquals("2016-01-19T16:57:45+05:30",event.getMap().get("ts"));
     }
 
     private Event createEventMock(String loc) {

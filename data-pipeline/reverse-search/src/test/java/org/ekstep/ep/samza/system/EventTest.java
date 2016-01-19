@@ -105,7 +105,6 @@ public class EventTest {
         event.setTimestamp();
 
         Assert.assertEquals(true,event.getMap().containsKey("ts"));
-        Assert.assertEquals("2016-01-19T16:57:45+05:30",event.getMap().get("ts"));
     }
 
     private Location getLocation() {
