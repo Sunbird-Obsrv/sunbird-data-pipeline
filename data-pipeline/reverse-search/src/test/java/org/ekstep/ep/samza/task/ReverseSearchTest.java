@@ -149,6 +149,21 @@ public class ReverseSearchTest {
         Assert.assertEquals(true, event.getMap().containsKey("metadata"));
     }
 
+    @Test
+    public void ShouldValidateTimestampAndCreateIfNotPresent() throws Exception{
+        Map<String, Object> eventMap = new HashMap<String, Object>();
+        eventMap.put("ets", 1453202865000L);
+        Event event = new Event(eventMap);
+
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch, "false");
+
+        TaskCoordinator task = mock(TaskCoordinator.class);
+        reverseSearchStreamTask.processEvent(event, collector);
+
+        Assert.assertEquals(true, event.getMap().containsKey("ts"));
+        Assert.assertEquals("2016-01-19T16:57:45+05:30",event.getMap().get("ts"));
+    }
+
     private Event createEventMock(String loc) {
         Event event = mock(Event.class);
 

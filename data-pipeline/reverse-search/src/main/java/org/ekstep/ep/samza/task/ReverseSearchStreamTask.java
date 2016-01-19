@@ -94,7 +94,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
     }
 
     public void processEvent(Event event, MessageCollector collector) {
-
+        event.setTimestamp();
         Location location = null;
         Device device = null;
 

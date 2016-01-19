@@ -1,9 +1,10 @@
 package org.ekstep.ep.samza.system;
 
 
-import com.google.gson.Gson;
 import com.library.checksum.system.Mappable;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,6 +67,16 @@ public class Event implements Mappable {
         }
         flags.put(key,value);
         map.put("flags",flags);
+    }
+
+    public void setTimestamp() {
+        if(map.get("ts") == null){
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+            if(map.get("ets") != null) {
+                String ts = simpleDateFormat.format(new Date((Long) map.get("ets")));
+                map.put("ts", ts);
+            }
+        }
     }
 }
 

@@ -96,6 +96,18 @@ public class EventTest {
         Assert.assertEquals(map,event.getMap());
     }
 
+    @Test
+    public void shouldCreateTimestamp(){
+        Map<String,Object> map = new HashMap<String, Object>();
+        map.put("ets",1453202865000L);
+
+        Event event = new Event(map);
+        event.setTimestamp();
+
+        Assert.assertEquals(true,event.getMap().containsKey("ts"));
+        Assert.assertEquals("2016-01-19T16:57:45+05:30",event.getMap().get("ts"));
+    }
+
     private Location getLocation() {
         Location location = new Location();
         location.setCity("City1");
