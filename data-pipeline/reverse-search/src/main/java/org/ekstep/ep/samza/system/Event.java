@@ -71,7 +71,7 @@ public class Event implements Mappable {
 
     public void setTimestamp() {
         if(map.get("ts") == null){
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
             if(map.get("ets") != null) {
                 String ts = simpleDateFormat.format(new Date((Long) map.get("ets")));
                 map.put("ts", ts);
