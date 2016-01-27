@@ -183,7 +183,7 @@ module Indexers
             },
             {
               date_fields: {
-                  match: "ts|te|time|timestamp",
+                  match: "ts|te|time|timestamp|end_time|start_time|end_ts|last_visit_ts|start_ts|syncDate|from|to|ets|time_stamp",
                   match_pattern: "regex",
                   mapping: {
                       type: "date",
