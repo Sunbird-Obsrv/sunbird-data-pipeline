@@ -48,7 +48,9 @@ public class ChildDto {
                 profileExist = true;
                 childData.put(HANDLE, profileResultSet.getString(HANDLE));
                 childData.put(STANDARD, profileResultSet.getInt(STANDARD));
-                childData.put(GENDER, profileResultSet.getString(GENDER));
+                String gender = profileResultSet.getString(GENDER);
+                String genderValue = gender == null ? "Not known" : gender;
+                childData.put(GENDER, genderValue);
                 childData.put(YEAR_OF_BIRTH, profileResultSet.getInt(YEAR_OF_BIRTH));
             }
 
@@ -59,7 +61,7 @@ public class ChildDto {
                 if(learnerResultSet.first()) {
                     childData.put(HANDLE, null);
                     childData.put(STANDARD, null);
-                    childData.put(GENDER, null);
+                    childData.put(GENDER, "Not known");
                     childData.put(YEAR_OF_BIRTH, null);
                 }
             }
