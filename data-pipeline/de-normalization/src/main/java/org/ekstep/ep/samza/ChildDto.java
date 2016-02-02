@@ -60,7 +60,7 @@ public class ChildDto {
 
                 if(learnerResultSet.first()) {
                     childData.put(HANDLE, null);
-                    childData.put(STANDARD, null);
+                    childData.put(STANDARD, 0);
                     childData.put(GENDER, "Not known");
                     childData.put(YEAR_OF_BIRTH, null);
                 }
