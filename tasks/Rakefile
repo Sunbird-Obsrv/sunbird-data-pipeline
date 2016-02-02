@@ -69,6 +69,10 @@ namespace :correctors do
     require_relative '../lib/ecosystem-platform/correctors/remove_by_device_id.rb'
     EcosystemPlatform::Correctors::RemoveByDeviceId.perform
   end
+  task :gender_correction do
+    require_relative '../lib/ecosystem-platform/correctors/gender_correction.rb'
+    EcosystemPlatform::Correctors::GenderCorrection.perform
+  end
 end
 
 namespace :scheduled do
