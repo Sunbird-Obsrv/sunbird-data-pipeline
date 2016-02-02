@@ -73,6 +73,10 @@ namespace :correctors do
     require_relative '../lib/ecosystem-platform/correctors/gender_correction.rb'
     EcosystemPlatform::Correctors::GenderCorrection.perform
   end
+  task :standard_correction do
+    require_relative '../lib/ecosystem-platform/correctors/standard_correction.rb'
+    EcosystemPlatform::Correctors::StandardCorrection.perform
+  end
 end
 
 namespace :scheduled do
