@@ -74,6 +74,10 @@ module LearnerGenerator
       res
     end
 
+    def udata
+      {"handle" => nil, "standard" => 0, "age_completed_years" => 0, "gender" => "Not known"}
+    end
+
   end
 end
 
