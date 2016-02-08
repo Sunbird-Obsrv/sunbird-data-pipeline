@@ -73,7 +73,7 @@ module Indexers
             },
             {
               date_fields: {
-                  match: "ts|te|time|timestamp",
+                  match: "ts|te|time|timestamp|ets",
                   match_pattern: "regex",
                   mapping: {
                       type: "date",
