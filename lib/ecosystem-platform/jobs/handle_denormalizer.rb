@@ -19,7 +19,7 @@ module EcosystemPlatform
 
       include EcosystemPlatform::Utils::EPLogging
 
-      def self.perform(index="ecosystem-*")
+      def self.perform(index)
         begin
           logger.start_task
           logger.info("INITIALIZING CLIENT")
