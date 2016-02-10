@@ -32,7 +32,7 @@ module EcosystemPlatform
           events = []
           count = 0
           loop do
-            break if offset>MAX_EVENTS_OFFSET
+            # break if offset>MAX_EVENTS_OFFSET
             response = @client.search({
               index: index,
               type: 'events_v1',
