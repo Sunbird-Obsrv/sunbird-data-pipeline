@@ -18,11 +18,9 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
 
     private String successTopic;
     private String failedTopic;
-    private String dbHost;
-    private String dbPort;
+    private String dbUrl;
     private String dbUserName;
     private String dbPassword;
-    private String dbSchema;
     private HikariDataSource dataSource;
     private Map<String, IModel> modelMap = new HashMap<String, IModel>();
 
@@ -32,17 +30,15 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
         successTopic = config.get("output.success.topic.name", "sandbox.learners");
         failedTopic = config.get("output.failed.topic.name", "sandbox.learners.fail");
 
-        dbHost = config.get("db.host");
-        dbPort = config.get("db.port");
+        dbUrl = config.get("db.url");
         dbUserName = config.get("db.userName");
         dbPassword = config.get("db.password");
-        dbSchema = config.get("db.schema");
 
         initDataSource();
     }
 
     private void initDataSource() {
-        String url = String.format("jdbc:mysql://%s:%s/%s", dbHost, dbPort, dbSchema);
+        String url = String.format("%s", dbUrl);
         dataSource = new HikariDataSource();
         dataSource.setJdbcUrl(url);
         dataSource.setUsername(dbUserName);
