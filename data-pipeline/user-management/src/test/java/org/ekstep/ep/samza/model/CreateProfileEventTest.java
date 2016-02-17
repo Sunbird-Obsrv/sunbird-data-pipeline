@@ -85,7 +85,7 @@ public class CreateProfileEventTest {
 
         profileDto.process(event);
 
-        Mockito.verify(statementMock).setString(2, "user@twitter.com");
+        Mockito.verify(statementMock).setNString(2, "user@twitter.com");
         Mockito.verify(statementMock).setInt(3, 2004);
         Mockito.verify(statementMock).setString(4, "male");
         Mockito.verify(statementMock).setInt(5, 10);
