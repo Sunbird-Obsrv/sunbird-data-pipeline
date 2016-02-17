@@ -54,6 +54,7 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
         try {
             Map<String, Object> jsonObject = (Map<String, Object>) envelope.getMessage();
             Event event = new Event(new Gson().toJson(jsonObject));
+            System.out.println("Event >>>> "+event.json);
             processEvent(event, collector);
         } catch (Exception e) {
             System.err.println("Exception: " + e);

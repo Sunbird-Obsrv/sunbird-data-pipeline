@@ -93,7 +93,8 @@ public class CreateProfileDto implements IModel{
             preparedStmt = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
 
             preparedStmt.setString(1, uid);
-            preparedStmt.setString (2, handle);
+            preparedStmt.setString(2, handle);
+            System.out.println("handle >>>> "+handle);
 
             if(age != null) {
                 preparedStmt.setInt(3, yearOfBirth);
