@@ -50,7 +50,6 @@ public class CreateProfileDto implements IModel{
         validateEmptyString(UID,uid);
 
         handle = (String) EKS.get(HANDLE);
-        Charset.forName("UTF-8").encode(handle);
         validateEmptyString(HANDLE,handle);
 
         gender = (String) EKS.get(GENDER);
@@ -97,7 +96,6 @@ public class CreateProfileDto implements IModel{
 
             preparedStmt.setString(1, uid);
             preparedStmt.setString(2, handle);
-            System.out.println("handle >>>> "+handle);
 
             if(age != null) {
                 preparedStmt.setInt(3, yearOfBirth);
