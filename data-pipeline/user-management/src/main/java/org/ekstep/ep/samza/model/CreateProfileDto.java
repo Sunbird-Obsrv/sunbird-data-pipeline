@@ -2,9 +2,11 @@ package org.ekstep.ep.samza.model;
 
 import javax.sql.DataSource;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.sql.*;
 import java.text.ParseException;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Map;
 
 public class CreateProfileDto implements IModel{
     public static final String UID = "uid";
@@ -48,6 +50,7 @@ public class CreateProfileDto implements IModel{
         validateEmptyString(UID,uid);
 
         handle = (String) EKS.get(HANDLE);
+        Charset.forName("UTF-8").encode(handle);
         validateEmptyString(HANDLE,handle);
 
         gender = (String) EKS.get(GENDER);
