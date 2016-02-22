@@ -31,7 +31,10 @@
       <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %c{1} [%p] %m%n" />
      </layout>
   </appender>
-  <root>
+    <logger name="com.zaxxer.hikari">
+        <level value="debug"/>
+    </logger>
+    <root>
     <priority value="info" />
     <appender-ref ref="RollingAppender"/>
     <appender-ref ref="jmx" />
