@@ -32,7 +32,7 @@
      </layout>
   </appender>
     <logger name="com.zaxxer.hikari">
-        <level value="debug"/>
+        <level value="trace"/>
     </logger>
     <root>
     <priority value="info" />
