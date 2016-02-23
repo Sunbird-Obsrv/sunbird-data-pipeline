@@ -53,6 +53,8 @@ public class UserManagementTestTask implements StreamTask, InitableTask, Closabl
         dataSource.setJdbcUrl(url);
         dataSource.setUsername(dbUserName);
         dataSource.setPassword(dbPassword);
+        dataSource.setMaximumPoolSize(5);
+        dataSource.setMinimumIdle(1);
     }
 
     @Override
