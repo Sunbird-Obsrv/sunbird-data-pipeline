@@ -27,6 +27,7 @@
     <module>taxonomy-de-normalization</module>
     <module>checksum-generator</module>
     <module>user-management</module>
+    <module>user-management-test</module>
     <module>partner-data-router</module>
   </modules>
 
