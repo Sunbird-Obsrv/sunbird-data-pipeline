@@ -7,6 +7,8 @@ import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
+import org.mozilla.universalchardet.UniversalDetector;
+
 import java.sql.*;
 import java.util.UUID;
 
@@ -53,22 +55,24 @@ public class UserManagementTestTask implements StreamTask, InitableTask, Closabl
         dataSource.setJdbcUrl(url);
         dataSource.setUsername(dbUserName);
         dataSource.setPassword(dbPassword);
-        dataSource.setMaximumPoolSize(5);
-        dataSource.setMinimumIdle(1);
+        dataSource.setMaximumPoolSize(2);
     }
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) {
         try {
             Map<String, Object> jsonObject = (Map<String, Object>) envelope.getMessage();
-            processEvent(collector);
+            Map<String, Object> edata = (Map<String, Object>) jsonObject.get("edata");
+            Map<String, Object> eks = (Map<String, Object>) jsonObject.get("eks");
+            String _handle = String.valueOf(eks.get("handle"));
+            processEvent(_handle);
         } catch (Exception e) {
             System.err.println("Exception: " + e);
             e.printStackTrace(new PrintStream(System.err));
         }
     }
 
-    public void processEvent(MessageCollector collector) throws Exception {
+    public void processEvent(String _handle) throws Exception {
 
         uid=UUID.randomUUID().toString();
         handle="गुड्डी";
@@ -84,6 +88,22 @@ public class UserManagementTestTask implements StreamTask, InitableTask, Closabl
 
         PreparedStatement preparedStmt = null;
         Connection connection = null;
+
+        String encoding = getCharset(handle);
+
+        if (encoding != null) {
+            System.out.println("Detected encoding = " + encoding);
+        } else {
+            System.out.println("No encoding detected.");
+        }
+
+        encoding = getCharset(_handle);
+
+        if (encoding != null) {
+            System.out.println("[event] Detected encoding = " + encoding);
+        } else {
+            System.out.println("[event] No encoding detected.");
+        }
 
         try {
             connection = dataSource.getConnection();
@@ -138,6 +158,16 @@ public class UserManagementTestTask implements StreamTask, InitableTask, Closabl
 //        } else {
 //            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
 //        }
+    }
+
+    private String getCharset(String string) {
+        UniversalDetector detector = new UniversalDetector(null);
+        byte[] bytes = string.getBytes();
+        detector.handleData(bytes,0,bytes.length);
+        detector.dataEnd();
+        String encoding = detector.getDetectedCharset();
+        detector.reset();
+        return encoding;
     }
 
     @Override
