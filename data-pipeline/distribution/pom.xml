@@ -54,14 +54,14 @@
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>user-management</artifactId>
-          <version>0.0.5</version>
+          <version>0.0.6</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>user-management-test</artifactId>
-          <version>0.0.2</version>
+          <version>0.0.4</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>

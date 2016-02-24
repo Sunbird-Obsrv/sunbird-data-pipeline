@@ -43,6 +43,7 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
         dataSource.setJdbcUrl(url);
         dataSource.setUsername(dbUserName);
         dataSource.setPassword(dbPassword);
+        dataSource.setMaximumPoolSize(2);
 
         modelMap.put("GE_CREATE_PROFILE", new CreateProfileDto(dataSource));
         modelMap.put("GE_CREATE_USER", new CreateLearnerDto(dataSource));
