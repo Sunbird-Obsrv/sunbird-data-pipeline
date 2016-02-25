@@ -63,7 +63,7 @@ public class UserManagementTestTask implements StreamTask, InitableTask, Closabl
         try {
             Map<String, Object> jsonObject = (Map<String, Object>) envelope.getMessage();
             Map<String, Object> edata = (Map<String, Object>) jsonObject.get("edata");
-            Map<String, Object> eks = (Map<String, Object>) jsonObject.get("eks");
+            Map<String, Object> eks = (Map<String, Object>) edata.get("eks");
             String _handle = String.valueOf(eks.get("handle"));
             processEvent(_handle);
         } catch (Exception e) {
