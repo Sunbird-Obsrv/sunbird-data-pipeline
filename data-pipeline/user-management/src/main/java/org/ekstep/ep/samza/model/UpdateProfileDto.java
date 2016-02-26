@@ -120,7 +120,7 @@ public class UpdateProfileDto implements IModel{
 
             preparedStmt.setString(8, uid);
 
-
+            System.out.println(preparedStmt);
             int affectedRows = preparedStmt.executeUpdate();
 
             if (affectedRows == 0) {

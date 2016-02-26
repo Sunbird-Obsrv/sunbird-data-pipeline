@@ -1,5 +1,7 @@
 package org.ekstep.ep.samza.model;
 
+import org.mozilla.universalchardet.UniversalDetector;
+
 import javax.sql.DataSource;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
@@ -96,7 +98,13 @@ public class CreateProfileDto implements IModel{
 
             preparedStmt.setString(1, uid);
             preparedStmt.setString(2, handle);
-
+            String encoding = getCharset(handle);
+            System.out.println(handle);
+            if (encoding != null) {
+                System.out.println("Detected encoding = " + encoding);
+            } else {
+                System.out.println("No encoding detected.");
+            }
             if(age != null) {
                 preparedStmt.setInt(3, yearOfBirth);
                 preparedStmt.setInt(5, age);
@@ -118,7 +126,7 @@ public class CreateProfileDto implements IModel{
             preparedStmt.setTimestamp(8, createdAt);
             preparedStmt.setTimestamp(9, updatedAt);
 
-
+            System.out.println(preparedStmt);
             int affectedRows = preparedStmt.executeUpdate();
 
             if (affectedRows == 0) {
@@ -202,4 +210,13 @@ public class CreateProfileDto implements IModel{
         return this.isInserted;
     }
 
+    private String getCharset(String string) {
+        UniversalDetector detector = new UniversalDetector(null);
+        byte[] bytes = string.getBytes();
+        detector.handleData(bytes,0,bytes.length);
+        detector.dataEnd();
+        String encoding = detector.getDetectedCharset();
+        detector.reset();
+        return encoding;
+    }
 }
