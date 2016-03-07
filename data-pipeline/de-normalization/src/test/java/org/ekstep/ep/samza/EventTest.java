@@ -330,6 +330,8 @@ public class EventTest {
         assertEquals(expectedUdata.get("gender"), actualUdata.get("gender"));
         assertEquals(expectedUdata.get("handle"), actualUdata.get("handle"));
         assertEquals(expectedUdata.get("standard"),actualUdata.get("standard"));
+        assertEquals(expectedUdata.get("day"),actualUdata.get("day"));
+        assertEquals(expectedUdata.get("month"),actualUdata.get("month"));
     }
 
     private ArgumentMatcher<Child> validateChild(final String uid) {
@@ -350,6 +352,8 @@ public class EventTest {
         udata.put("gender", "male");
         udata.put("handle", "user@twitter.com");
         udata.put("standard", 2);
+        udata.put("day", 12);
+        udata.put("month", 6);
         return udata;
     }
 
