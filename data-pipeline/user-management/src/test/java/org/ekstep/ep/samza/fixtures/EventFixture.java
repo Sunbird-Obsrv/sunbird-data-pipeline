@@ -47,7 +47,9 @@ public class EventFixture {
             "            \"gender\": \"male\",\n" +
             "            \"age\": -1,\n" +
             "            \"standard\": -1.0,\n" +
-            "            \"language\": \"ML\"\n" +
+            "            \"language\": \"ML\",\n" +
+            "            \"day\": 12,\n" +
+            "            \"month\": 11\n" +
             "        }\n" +
             "    }\n" +
             "}";
@@ -70,7 +72,9 @@ public class EventFixture {
             "            \"gender\": \"male\",\n" +
             "            \"age\": 10,\n" +
             "            \"standard\": 3,\n" +
-            "            \"language\": \"ML\"\n" +
+            "            \"language\": \"ML\",\n" +
+            "            \"day\": 12,\n" +
+            "            \"month\": 11\n" +
             "        }\n" +
             "    }\n" +
             "}";
@@ -125,7 +129,9 @@ public class EventFixture {
                 "            \"gender\": \"FEMALE\",\n" +
                 "            \"age\": 10,\n" +
                 "            \"standard\": 5,\n" +
-                "            \"language\": \"ML\"\n" +
+                "            \"language\": \"ML\",\n" +
+                "            \"day\": 12,\n" +
+                "            \"month\": 11\n" +
                 "        }\n" +
                 "    }\n" +
                 "}";
@@ -150,7 +156,9 @@ public class EventFixture {
                 "            \"gender\": \"male\",\n" +
                 "            \"age\": -1,\n" +
                 "            \"standard\": -1,\n" +
-                "            \"language\": \"ML\"\n" +
+                "            \"language\": \"ML\",\n" +
+                "            \"day\": 12,\n" +
+                "            \"month\": 11\n" +
                 "        }\n" +
                 "    }\n" +
                 "}";
@@ -175,7 +183,9 @@ public class EventFixture {
                 "            \"gender\": \"MALE\",\n" +
                 "            \"age\": 10,\n" +
                 "            \"standard\": 5,\n" +
-                "            \"language\": \"EL\"\n" +
+                "            \"language\": \"EL\",\n" +
+                "            \"day\": 12,\n" +
+                "            \"month\": 11\n" +
                 "        }\n" +
                 "    }\n" +
                 "}";

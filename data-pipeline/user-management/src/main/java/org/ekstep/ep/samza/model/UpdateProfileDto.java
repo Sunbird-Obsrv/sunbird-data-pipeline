@@ -13,6 +13,8 @@ public class UpdateProfileDto implements IModel{
     public static final String LANGUAGE = "language";
     public static final String AGE = "age";
     public static final String STANDARD = "standard";
+    public static final String DAY = "day";
+    public static final String MONTH = "month";
     private String uid;
     private String gender;
     private Integer yearOfBirth;
@@ -20,6 +22,8 @@ public class UpdateProfileDto implements IModel{
     private Integer standard;
     private String language;
     private String handle;
+    private Integer day;
+    private Integer month;
     private Timestamp updatedAt;
 
     private boolean isInserted = false;
@@ -52,11 +56,12 @@ public class UpdateProfileDto implements IModel{
         validateEmptyString(HANDLE,handle);
 
         gender = (String) EKS.get(GENDER);
-        age = getAge(EKS);
+        age = getValue(EKS, AGE);
         yearOfBirth = getYear(((Double) EKS.get(AGE)).intValue(), timeOfEvent);
-
+        standard = getValue(EKS, STANDARD);
         language = (String) EKS.get(LANGUAGE);
-        standard = getStandard(EKS);
+        day = getValue(EKS,DAY);
+        month = getValue(EKS, MONTH);
 
         java.util.Date date = new java.util.Date();
         updatedAt = (Timestamp) new Timestamp(date.getTime());
@@ -66,22 +71,10 @@ public class UpdateProfileDto implements IModel{
         if(value == null || value.isEmpty()) throw new ParseException(String.format("%s can't be blank",name),1);
     }
 
-    private Integer getAge(Map<String, Object> EKS) {
-        try {
-            Integer age = ((Double) EKS.get(AGE)).intValue();
-            if (age != -1) {
-                return age;
-            }
-        }catch(Exception e){
-
-        }
-        return null;
-    }
-
-    private Integer getStandard(Map<String, Object> EKS) {
-        Integer standard = ((Double) EKS.get(STANDARD)).intValue();
-        if(standard != -1){
-            return standard;
+    private Integer getValue(Map<String, Object> EKS,String name) {
+        Integer value = ((Double) EKS.get(name)).intValue();
+        if(value != -1){
+            return value;
         }
         return null;
     }
@@ -92,35 +85,23 @@ public class UpdateProfileDto implements IModel{
 
         try {
             connection = dataSource.getConnection();
-            String updateQuery = "update profile set year_of_birth = ?, gender = ?, age = ?, standard = ?, language = ?, updated_at = ?, handle = ?"
+            String updateQuery = "update profile set year_of_birth = ?, gender = ?, age = ?, standard = ?, language = ?, updated_at = ?, handle = ?, day = ?, month = ? "
                     + "where uid = ?";
 
             preparedStmt = connection.prepareStatement(updateQuery);
 
-            if(age != null) {
-                preparedStmt.setInt(1, yearOfBirth);
-                preparedStmt.setInt(3, age);
-            }
-            else {
-                preparedStmt.setNull(1, java.sql.Types.INTEGER);
-                preparedStmt.setNull(3, java.sql.Types.INTEGER);
-            }
-
+            setIntegerValues(preparedStmt,1,yearOfBirth);
             preparedStmt.setString(2, gender);
-
-            if(standard != null)
-                preparedStmt.setInt(4, standard);
-            else
-                preparedStmt.setNull(4, java.sql.Types.INTEGER);
-
+            setIntegerValues(preparedStmt,3,age);
+            setIntegerValues(preparedStmt,4,standard);
             preparedStmt.setString(5, language);
             preparedStmt.setTimestamp(6, updatedAt);
-
             preparedStmt.setString(7, handle);
+            setIntegerValues(preparedStmt,8,day);
+            setIntegerValues(preparedStmt,9,month);
 
-            preparedStmt.setString(8, uid);
+            preparedStmt.setString(10, uid);
 
-            System.out.println(preparedStmt);
             int affectedRows = preparedStmt.executeUpdate();
 
             if (affectedRows == 0) {
@@ -139,6 +120,13 @@ public class UpdateProfileDto implements IModel{
             if(connection!=null)
                 connection.close();
         }
+    }
+
+    private void setIntegerValues(PreparedStatement preparedStmt, int index, Integer value) throws SQLException {
+        if(value != null)
+            preparedStmt.setInt(index,value);
+        else
+            preparedStmt.setNull(index, Types.INTEGER);
     }
 
     private void createProfile(Event event) throws SQLException, ParseException {

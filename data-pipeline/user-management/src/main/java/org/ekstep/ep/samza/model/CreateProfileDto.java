@@ -17,6 +17,8 @@ public class CreateProfileDto implements IModel{
     public static final String LANGUAGE = "language";
     public static final String AGE = "age";
     public static final String STANDARD = "standard";
+    public static final String DAY = "day";
+    public static final String MONTH = "month";
     private String uid;
     private String handle;
     private String gender;
@@ -24,12 +26,15 @@ public class CreateProfileDto implements IModel{
     private Integer age;
     private Integer standard;
     private String language;
+    private Integer day;
+    private Integer month;
     private Timestamp createdAt;
+
     private Timestamp updatedAt;
 
     private boolean isInserted = false;
-
     private DataSource dataSource;
+
 
     public CreateProfileDto(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -56,10 +61,12 @@ public class CreateProfileDto implements IModel{
 
         gender = (String) EKS.get(GENDER);
 
-        age = getAge(EKS);
+        age = getValue(EKS, AGE);
         yearOfBirth = getYear(((Double) EKS.get(AGE)).intValue(), timeOfEvent);
-        standard = getStandard(EKS);
+        standard = getValue(EKS, STANDARD);
         language = (String) EKS.get(LANGUAGE);
+        day = getValue(EKS,DAY);
+        month = getValue(EKS, MONTH);
 
         java.util.Date date = new java.util.Date();
         createdAt = new Timestamp(date.getTime());
@@ -70,18 +77,10 @@ public class CreateProfileDto implements IModel{
         if(value == null || value.isEmpty()) throw new ParseException(String.format("%s can't be blank",name),1);
     }
 
-    private Integer getAge(Map<String, Object> EKS) {
-        Integer age = ((Double) EKS.get(AGE)).intValue();
-        if(age != -1){
-            return age;
-        }
-        return null;
-    }
-
-    private Integer getStandard(Map<String, Object> EKS) {
-        Integer standard = ((Double) EKS.get(STANDARD)).intValue();
-        if(standard != -1){
-            return standard;
+    private Integer getValue(Map<String, Object> EKS,String name) {
+        Integer value = ((Double) EKS.get(name)).intValue();
+        if(value != -1){
+            return value;
         }
         return null;
     }
@@ -92,41 +91,22 @@ public class CreateProfileDto implements IModel{
 
         try {
             connection = dataSource.getConnection();
-            String query = " insert into profile (uid, handle, year_of_birth, gender, age, standard, language, created_at, updated_at)"
-                    + " values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String query = " insert into profile (uid, handle, year_of_birth, gender, age, standard, language, day, month, created_at, updated_at)"
+                    + " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             preparedStmt = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
 
             preparedStmt.setString(1, uid);
             preparedStmt.setString(2, handle);
-            String encoding = getCharset(handle);
-            System.out.println(handle);
-            if (encoding != null) {
-                System.out.println("Detected encoding = " + encoding);
-            } else {
-                System.out.println("No encoding detected.");
-            }
-            if(age != null) {
-                preparedStmt.setInt(3, yearOfBirth);
-                preparedStmt.setInt(5, age);
-            }
-            else {
-                preparedStmt.setNull(3, java.sql.Types.INTEGER);
-                preparedStmt.setNull(5, java.sql.Types.INTEGER);
-            }
-
+            setIntegerValues(preparedStmt,3,yearOfBirth);
             preparedStmt.setString(4, gender);
-
-            if(standard != null)
-                preparedStmt.setInt(6, standard);
-            else
-                preparedStmt.setNull(6, java.sql.Types.INTEGER);
-
+            setIntegerValues(preparedStmt,5,age);
+            setIntegerValues(preparedStmt,6,standard);
             preparedStmt.setString(7, language);
+            setIntegerValues(preparedStmt,8,day);
+            setIntegerValues(preparedStmt,9,month);
+            preparedStmt.setTimestamp(10, createdAt);
+            preparedStmt.setTimestamp(11, updatedAt);
 
-            preparedStmt.setTimestamp(8, createdAt);
-            preparedStmt.setTimestamp(9, updatedAt);
-
-            System.out.println(preparedStmt);
             int affectedRows = preparedStmt.executeUpdate();
 
             if (affectedRows == 0) {
@@ -151,6 +131,13 @@ public class CreateProfileDto implements IModel{
             if(connection!=null)
                 connection.close();
         }
+    }
+
+    private void setIntegerValues(PreparedStatement preparedStmt, int index, Integer value) throws SQLException {
+        if(value != null)
+            preparedStmt.setInt(index,value);
+        else
+            preparedStmt.setNull(index, Types.INTEGER);
     }
 
     private void createLearner(Event event) throws SQLException, ParseException {
@@ -210,13 +197,4 @@ public class CreateProfileDto implements IModel{
         return this.isInserted;
     }
 
-    private String getCharset(String string) {
-        UniversalDetector detector = new UniversalDetector(null);
-        byte[] bytes = string.getBytes();
-        detector.handleData(bytes,0,bytes.length);
-        detector.dataEnd();
-        String encoding = detector.getDetectedCharset();
-        detector.reset();
-        return encoding;
-    }
 }

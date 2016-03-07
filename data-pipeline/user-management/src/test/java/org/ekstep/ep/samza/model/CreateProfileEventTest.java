@@ -91,6 +91,9 @@ public class CreateProfileEventTest {
         Mockito.verify(statementMock).setInt(5, 10);
         Mockito.verify(statementMock).setInt(6, 3);
         Mockito.verify(statementMock).setString(7, "ML");
+        Mockito.verify(statementMock).setInt(8, 12);
+        Mockito.verify(statementMock).setInt(9, 11);
+
 
     }
 }
