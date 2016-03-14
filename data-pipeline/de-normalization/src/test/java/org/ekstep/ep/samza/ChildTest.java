@@ -17,8 +17,6 @@ public class ChildTest {
         udata.put("gender", "male");
         udata.put("handle", "user@twitter.com");
         udata.put("standard", 2);
-        udata.put("day", 2);
-        udata.put("month", 10);
 
         Child child = new Child("1234567abcd", true, udata);
         HashMap<String, Object> childData = child.getData();
@@ -27,8 +25,6 @@ public class ChildTest {
         assertEquals("male", childData.get("gender"));
         assertEquals("user@twitter.com", childData.get("handle"));
         assertEquals(2, childData.get("standard"));
-        assertEquals(2, childData.get("day"));
-        assertEquals(10, childData.get("month"));
         assertTrue(child.isProcessed());
 
     }
@@ -44,8 +40,6 @@ public class ChildTest {
         assertEquals(null, childData.get("gender"));
         assertEquals(null, childData.get("handle"));
         assertEquals(null, childData.get("standard"));
-        assertEquals(null, childData.get("day"));
-        assertEquals(null, childData.get("month"));
     }
 
     @Test
@@ -78,8 +72,6 @@ public class ChildTest {
         childData.put("handle", "user@twitter.com");
         childData.put("year_of_birth",2010);
         childData.put("standard", 2);
-        childData.put("day", 2);
-        childData.put("month", 12);
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         Date timeOfEvent = simpleDateFormat.parse("2014-11-12T5:23:12");
@@ -93,8 +85,6 @@ public class ChildTest {
         assertEquals("male", calculatedData.get("gender"));
         assertEquals("user@twitter.com", calculatedData.get("handle"));
         assertEquals(2, calculatedData.get("standard"));
-        assertEquals(2, calculatedData.get("day"));
-        assertEquals(12, calculatedData.get("month"));
     }
 
 

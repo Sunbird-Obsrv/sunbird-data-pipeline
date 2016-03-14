@@ -51,7 +51,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask{
             Event event = new Event(message, childData);
             processEvent(collector, event, dataSource);
             messageCount.inc();
-        } catch (Exception e){
+        }catch (Exception e){
             System.err.println("Error while processing message"+e);
         }
     }

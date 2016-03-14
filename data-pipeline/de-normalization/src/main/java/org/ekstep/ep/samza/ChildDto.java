@@ -8,8 +8,6 @@ public class ChildDto {
     public static final String STANDARD = "standard";
     public static final String GENDER = "gender";
     public static final String YEAR_OF_BIRTH = "year_of_birth";
-    public static final String DAY = "day";
-    public static final String MONTH = "month";
     private String host;
     private String port;
     private String schema;
@@ -54,8 +52,6 @@ public class ChildDto {
                 String genderValue = gender == null ? "Not known" : gender;
                 childData.put(GENDER, genderValue);
                 childData.put(YEAR_OF_BIRTH, profileResultSet.getInt(YEAR_OF_BIRTH));
-                childData.put(DAY, profileResultSet.getInt(DAY));
-                childData.put(MONTH,profileResultSet.getInt(MONTH));
             }
 
             if(!profileExist){
@@ -67,8 +63,6 @@ public class ChildDto {
                     childData.put(STANDARD, 0);
                     childData.put(GENDER, "Not known");
                     childData.put(YEAR_OF_BIRTH, null);
-                    childData.put(DAY,0);
-                    childData.put(MONTH,0);
                 }
             }
 

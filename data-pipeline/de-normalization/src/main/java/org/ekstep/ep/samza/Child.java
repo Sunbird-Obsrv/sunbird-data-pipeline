@@ -9,15 +9,11 @@ public class Child implements Serializable {
     public static final String HANDLE = "handle";
     public static final String STANDARD = "standard";
     public static final String GENDER = "gender";
-    public static final String DAY = "day";
-    public static final String MONTH = "month";
     public static final String AGE_COMPLETED_YEARS = "age_completed_years";
     private String uid;
     private Boolean child_data_processed;
     private int age_completed_years;
     private String gender;
-    private Integer day;
-    private Integer month;
     private String handle;
     private Integer standard;
 
@@ -33,8 +29,6 @@ public class Child implements Serializable {
         this.gender = ((String) udata.get(GENDER));
         this.handle = ((String) udata.get(HANDLE));
         this.standard = ((Integer) udata.get(STANDARD));
-        this.day = ((Integer) udata.get(DAY));
-        this.month = ((Integer) udata.get(MONTH));
     }
 
     public Boolean isProcessed(){
@@ -51,8 +45,6 @@ public class Child implements Serializable {
         udata.put(STANDARD,this.standard);
         udata.put(AGE_COMPLETED_YEARS, this.age_completed_years);
         udata.put(GENDER, this.gender);
-        udata.put(DAY,this.day);
-        udata.put(MONTH,this.month);
         return udata;
     }
 
@@ -65,16 +57,11 @@ public class Child implements Serializable {
         String handle = (String) childData.get(HANDLE);
         Integer standard = (Integer) childData.get(STANDARD);
         String gender = (String) childData.get(GENDER);
-        Integer day = (Integer) childData.get(DAY);
-        Integer month= (Integer) childData.get(MONTH);
-
         populateAgeRelatedFields(childData,timeOfEvent);
         this.handle = handle;
         this.standard = standard;
         this.gender = gender;
         this.child_data_processed = true;
-        this.day = day;
-        this.month = month;
         System.out.println("successfully read from db");
     }
 
