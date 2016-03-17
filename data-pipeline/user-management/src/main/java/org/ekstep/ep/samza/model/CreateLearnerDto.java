@@ -20,7 +20,7 @@ public class CreateLearnerDto implements IModel{
 
     @Override
     public void process(Event event) throws ParseException, SQLException {
-        Map<String,Object> EKS = (Map<String,Object>) event.getEks();
+        Map<String,Object> EKS = event.getEks();
 
         uid = (String) EKS.get("uid");
         if(uid == null || uid.isEmpty()) throw new ParseException("uid can't be blank",1);

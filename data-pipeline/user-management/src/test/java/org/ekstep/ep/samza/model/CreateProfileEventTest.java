@@ -12,6 +12,9 @@ import java.sql.*;
 import java.text.ParseException;
 import java.util.Date;
 
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
 
 public class CreateProfileEventTest {
     private HikariDataSource dataSource;
@@ -32,7 +35,7 @@ public class CreateProfileEventTest {
         CreateProfileDto profileDto = new CreateProfileDto(dataSource);
         profileDto.process(event);
 
-        Assert.assertEquals(true, profileDto.getIsInserted());
+        assertEquals(true, profileDto.getIsInserted());
 
     }
 
@@ -43,7 +46,7 @@ public class CreateProfileEventTest {
         CreateProfileDto profileDto = new CreateProfileDto(dataSource);
         profileDto.process(event);
 
-        Assert.assertEquals(true, profileDto.getIsInserted());
+        assertEquals(true, profileDto.getIsInserted());
     }
 
     @Test
@@ -53,8 +56,8 @@ public class CreateProfileEventTest {
         CreateProfileDto profileDto = new CreateProfileDto(dataSource);
         profileDto.process(event);
 
-        Assert.assertEquals(true, profileDto.getIsInserted());
-        Assert.assertEquals(true, profileDto.isLearnerExist(event.getUID()));
+        assertEquals(true, profileDto.getIsInserted());
+        assertEquals(true, profileDto.isLearnerExist(event.getUID()));
     }
 
     @Test
@@ -68,7 +71,7 @@ public class CreateProfileEventTest {
         }
         catch(Exception e){}
 
-        Assert.assertEquals(false, profileDto.getIsInserted());
+        assertEquals(false, profileDto.getIsInserted());
     }
 
     @Test
@@ -78,22 +81,42 @@ public class CreateProfileEventTest {
 
         CreateProfileDto profileDto = new CreateProfileDto(dataSourceMock);
 
-        Connection connectionMock = Mockito.mock(Connection.class);
-        Mockito.stub(dataSourceMock.getConnection()).toReturn(connectionMock);
-        PreparedStatement statementMock = Mockito.mock(PreparedStatement.class);
-        Mockito.stub(connectionMock.prepareStatement(Mockito.anyString(), Mockito.eq(Statement.RETURN_GENERATED_KEYS))).toReturn(statementMock);
+        Connection connectionMock = mock(Connection.class);
+        stub(dataSourceMock.getConnection()).toReturn(connectionMock);
+        PreparedStatement statementMock = mock(PreparedStatement.class);
+        stub(connectionMock.prepareStatement(anyString(), eq(Statement.RETURN_GENERATED_KEYS))).toReturn(statementMock);
 
         profileDto.process(event);
 
-        Mockito.verify(statementMock).setString(2, "user@twitter.com");
-        Mockito.verify(statementMock).setInt(3, 2004);
-        Mockito.verify(statementMock).setString(4, "male");
-        Mockito.verify(statementMock).setInt(5, 10);
-        Mockito.verify(statementMock).setInt(6, 3);
-        Mockito.verify(statementMock).setString(7, "ML");
-        Mockito.verify(statementMock).setInt(8, 12);
-        Mockito.verify(statementMock).setInt(9, 11);
-
+        verify(statementMock).setString(2, "user@twitter.com");
+        verify(statementMock).setInt(3, 2004);
+        verify(statementMock).setString(4, "male");
+        verify(statementMock).setInt(5, 10);
+        verify(statementMock).setInt(6, 3);
+        verify(statementMock).setString(7, "ML");
+        verify(statementMock).setInt(8, 12);
+        verify(statementMock).setInt(9, 11);
+        verify(statementMock).setBoolean(10,false);
 
     }
+
+    @Test
+    public void ShouldCreateNewGroupUserProfile() throws SQLException, ParseException {
+        Event event = new Event(new EventFixture().CREATE_GROUP_USER_PROFILE_EVENT);
+        javax.sql.DataSource dataSourceMock = mock(javax.sql.DataSource.class);
+
+        CreateProfileDto profileDto = new CreateProfileDto(dataSourceMock);
+
+        Connection connectionMock = mock(Connection.class);
+        stub(dataSourceMock.getConnection()).toReturn(connectionMock);
+        PreparedStatement statementMock = mock(PreparedStatement.class);
+        stub(connectionMock.prepareStatement(anyString(), eq(Statement.RETURN_GENERATED_KEYS))).toReturn(statementMock);
+
+        profileDto.process(event);
+
+        verify(statementMock).setString(2, "user@twitter.com");
+        verify(statementMock).setBoolean(10,true);
+
+    }
+
 }

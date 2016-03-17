@@ -15,6 +15,7 @@ public class UpdateProfileDto implements IModel{
     public static final String STANDARD = "standard";
     public static final String DAY = "day";
     public static final String MONTH = "month";
+    private final String IS_GROUP_USER = "is_group_user";
     private String uid;
     private String gender;
     private Integer yearOfBirth;
@@ -24,10 +25,11 @@ public class UpdateProfileDto implements IModel{
     private String handle;
     private Integer day;
     private Integer month;
+    private Boolean isGroupUser;
+
     private Timestamp updatedAt;
 
     private boolean isInserted = false;
-
     private DataSource dataSource;
 
     public UpdateProfileDto(DataSource dataSource) {
@@ -36,7 +38,7 @@ public class UpdateProfileDto implements IModel{
 
     @Override
     public void process(Event event) throws SQLException, ParseException {
-        Map<String,Object> EKS = (Map<String,Object>) event.getEks();
+        Map<String,Object> EKS = event.getEks();
 
         java.util.Date timeOfEvent = event.getTs();
         parseData(EKS,timeOfEvent);
@@ -62,9 +64,16 @@ public class UpdateProfileDto implements IModel{
         language = (String) EKS.get(LANGUAGE);
         day = getValue(EKS,DAY);
         month = getValue(EKS, MONTH);
+        isGroupUser = getBoolean(EKS,IS_GROUP_USER);
 
         java.util.Date date = new java.util.Date();
-        updatedAt = (Timestamp) new Timestamp(date.getTime());
+        updatedAt = new Timestamp(date.getTime());
+    }
+
+    private Boolean getBoolean(Map<String, Object> EKS, String key) {
+        Object value = EKS.get(key);
+        Boolean booleanValue = value == null ? false : (Boolean) value;
+        return booleanValue;
     }
 
     private void validateEmptyString(String name,String value) throws ParseException {
@@ -85,7 +94,7 @@ public class UpdateProfileDto implements IModel{
 
         try {
             connection = dataSource.getConnection();
-            String updateQuery = "update profile set year_of_birth = ?, gender = ?, age = ?, standard = ?, language = ?, updated_at = ?, handle = ?, day = ?, month = ? "
+            String updateQuery = "update profile set year_of_birth = ?, gender = ?, age = ?, standard = ?, language = ?, updated_at = ?, handle = ?, day = ?, month = ?, is_group_user = ?"
                     + "where uid = ?";
 
             preparedStmt = connection.prepareStatement(updateQuery);
@@ -99,8 +108,9 @@ public class UpdateProfileDto implements IModel{
             preparedStmt.setString(7, handle);
             setIntegerValues(preparedStmt,8,day);
             setIntegerValues(preparedStmt,9,month);
+            preparedStmt.setBoolean(10,isGroupUser);
 
-            preparedStmt.setString(10, uid);
+            preparedStmt.setString(11, uid);
 
             int affectedRows = preparedStmt.executeUpdate();
 

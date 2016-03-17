@@ -1,10 +1,7 @@
 package org.ekstep.ep.samza.model;
 
-import org.mozilla.universalchardet.UniversalDetector;
-
 import javax.sql.DataSource;
 import java.io.PrintStream;
-import java.nio.charset.Charset;
 import java.sql.*;
 import java.text.ParseException;
 import java.util.Calendar;
@@ -19,6 +16,7 @@ public class CreateProfileDto implements IModel{
     public static final String STANDARD = "standard";
     public static final String DAY = "day";
     public static final String MONTH = "month";
+    private final String IS_GROUP_USER = "is_group_user";
     private String uid;
     private String handle;
     private String gender;
@@ -28,10 +26,11 @@ public class CreateProfileDto implements IModel{
     private String language;
     private Integer day;
     private Integer month;
+    private Boolean isGroupUser;
+
     private Timestamp createdAt;
 
     private Timestamp updatedAt;
-
     private boolean isInserted = false;
     private DataSource dataSource;
 
@@ -68,9 +67,17 @@ public class CreateProfileDto implements IModel{
         day = getValue(EKS,DAY);
         month = getValue(EKS, MONTH);
 
+        isGroupUser = getBoolean(EKS, IS_GROUP_USER);
+
         java.util.Date date = new java.util.Date();
         createdAt = new Timestamp(date.getTime());
         updatedAt = new Timestamp(date.getTime());
+    }
+
+    private Boolean getBoolean(Map<String, Object> EKS, String key) {
+        Object value = EKS.get(key);
+        Boolean booleanValue = value == null ? false : (Boolean) value;
+        return booleanValue;
     }
 
     private void validateEmptyString(String name,String value) throws ParseException {
@@ -91,8 +98,8 @@ public class CreateProfileDto implements IModel{
 
         try {
             connection = dataSource.getConnection();
-            String query = " insert into profile (uid, handle, year_of_birth, gender, age, standard, language, day, month, created_at, updated_at)"
-                    + " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String query = " insert into profile (uid, handle, year_of_birth, gender, age, standard, language, day, month, is_group_user, created_at, updated_at)"
+                    + " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             preparedStmt = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
 
             preparedStmt.setString(1, uid);
@@ -104,8 +111,9 @@ public class CreateProfileDto implements IModel{
             preparedStmt.setString(7, language);
             setIntegerValues(preparedStmt,8,day);
             setIntegerValues(preparedStmt,9,month);
-            preparedStmt.setTimestamp(10, createdAt);
-            preparedStmt.setTimestamp(11, updatedAt);
+            preparedStmt.setBoolean(10, isGroupUser);
+            preparedStmt.setTimestamp(11, createdAt);
+            preparedStmt.setTimestamp(12, updatedAt);
 
             int affectedRows = preparedStmt.executeUpdate();
 
