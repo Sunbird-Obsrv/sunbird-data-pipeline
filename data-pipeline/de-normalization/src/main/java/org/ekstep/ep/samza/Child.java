@@ -10,12 +10,14 @@ public class Child implements Serializable {
     public static final String STANDARD = "standard";
     public static final String GENDER = "gender";
     public static final String AGE_COMPLETED_YEARS = "age_completed_years";
+    private final String IS_GROUP_USER = "is_group_user";
     private String uid;
     private Boolean child_data_processed;
     private int age_completed_years;
     private String gender;
     private String handle;
     private Integer standard;
+    private Boolean isGroupUser;
 
     public Child(String uid, Boolean child_data_processed, Map<String, Object> udata) {
         this.uid = uid;
@@ -25,10 +27,11 @@ public class Child implements Serializable {
 
     private void initialize(Map<String, Object> udata) {
         if(udata == null) return;
-        this.age_completed_years = ((Integer) udata.get(AGE_COMPLETED_YEARS));
-        this.gender = ((String) udata.get(GENDER));
-        this.handle = ((String) udata.get(HANDLE));
-        this.standard = ((Integer) udata.get(STANDARD));
+        age_completed_years = ((Integer) udata.get(AGE_COMPLETED_YEARS));
+        gender = ((String) udata.get(GENDER));
+        handle = ((String) udata.get(HANDLE));
+        standard = ((Integer) udata.get(STANDARD));
+        isGroupUser = ((Boolean) udata.get(IS_GROUP_USER));
     }
 
     public Boolean isProcessed(){
@@ -41,10 +44,11 @@ public class Child implements Serializable {
 
     public HashMap<String, Object> getData() {
         HashMap<String, Object> udata = new HashMap<String, Object>();
-        udata.put(HANDLE, this.handle);
-        udata.put(STANDARD,this.standard);
-        udata.put(AGE_COMPLETED_YEARS, this.age_completed_years);
-        udata.put(GENDER, this.gender);
+        udata.put(HANDLE, handle);
+        udata.put(STANDARD,standard);
+        udata.put(AGE_COMPLETED_YEARS, age_completed_years);
+        udata.put(GENDER, gender);
+        udata.put(IS_GROUP_USER, isGroupUser);
         return udata;
     }
 
@@ -54,13 +58,11 @@ public class Child implements Serializable {
             return;
         }
         System.out.println("trying to read from database");
-        String handle = (String) childData.get(HANDLE);
-        Integer standard = (Integer) childData.get(STANDARD);
-        String gender = (String) childData.get(GENDER);
-        populateAgeRelatedFields(childData,timeOfEvent);
-        this.handle = handle;
-        this.standard = standard;
-        this.gender = gender;
+        populateAgeRelatedFields(childData, timeOfEvent);
+        this.handle = (String) childData.get(HANDLE);
+        this.standard = (Integer) childData.get(STANDARD);
+        this.gender = (String) childData.get(GENDER);
+        this.isGroupUser = ((Boolean) childData.get(IS_GROUP_USER));
         this.child_data_processed = true;
         System.out.println("successfully read from db");
     }

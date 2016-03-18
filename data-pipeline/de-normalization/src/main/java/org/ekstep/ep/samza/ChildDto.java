@@ -8,6 +8,7 @@ public class ChildDto {
     public static final String STANDARD = "standard";
     public static final String GENDER = "gender";
     public static final String YEAR_OF_BIRTH = "year_of_birth";
+    private final String IS_GROUP_USER = "is_group_user";
     private String host;
     private String port;
     private String schema;
@@ -52,6 +53,7 @@ public class ChildDto {
                 String genderValue = gender == null ? "Not known" : gender;
                 childData.put(GENDER, genderValue);
                 childData.put(YEAR_OF_BIRTH, profileResultSet.getInt(YEAR_OF_BIRTH));
+                childData.put(IS_GROUP_USER,profileResultSet.getBoolean(IS_GROUP_USER));
             }
 
             if(!profileExist){
@@ -63,6 +65,7 @@ public class ChildDto {
                     childData.put(STANDARD, 0);
                     childData.put(GENDER, "Not known");
                     childData.put(YEAR_OF_BIRTH, null);
+                    childData.put(IS_GROUP_USER,false);
                 }
             }
 

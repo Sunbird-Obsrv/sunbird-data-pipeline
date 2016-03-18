@@ -17,6 +17,8 @@ public class ChildTest {
         udata.put("gender", "male");
         udata.put("handle", "user@twitter.com");
         udata.put("standard", 2);
+        udata.put("is_group_user",false);
+
 
         Child child = new Child("1234567abcd", true, udata);
         HashMap<String, Object> childData = child.getData();
@@ -25,6 +27,7 @@ public class ChildTest {
         assertEquals("male", childData.get("gender"));
         assertEquals("user@twitter.com", childData.get("handle"));
         assertEquals(2, childData.get("standard"));
+        assertEquals(false, childData.get("is_group_user"));
         assertTrue(child.isProcessed());
 
     }
@@ -72,6 +75,8 @@ public class ChildTest {
         childData.put("handle", "user@twitter.com");
         childData.put("year_of_birth",2010);
         childData.put("standard", 2);
+        childData.put("is_group_user", false);
+
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         Date timeOfEvent = simpleDateFormat.parse("2014-11-12T5:23:12");
@@ -85,6 +90,7 @@ public class ChildTest {
         assertEquals("male", calculatedData.get("gender"));
         assertEquals("user@twitter.com", calculatedData.get("handle"));
         assertEquals(2, calculatedData.get("standard"));
+        assertEquals(false, calculatedData.get("is_group_user"));
     }
 
 
