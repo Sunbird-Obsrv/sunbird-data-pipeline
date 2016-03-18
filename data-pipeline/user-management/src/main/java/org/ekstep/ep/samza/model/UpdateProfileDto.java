@@ -95,7 +95,7 @@ public class UpdateProfileDto implements IModel{
         try {
             connection = dataSource.getConnection();
             String updateQuery = "update profile set year_of_birth = ?, gender = ?, age = ?, standard = ?, language = ?, updated_at = ?, handle = ?, day = ?, month = ?, is_group_user = ?"
-                    + "where uid = ?";
+                    + " where uid = ?";
 
             preparedStmt = connection.prepareStatement(updateQuery);
 
