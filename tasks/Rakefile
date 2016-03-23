@@ -143,6 +143,10 @@ namespace :scheduled do
     index_name = ENV["index"] ? ENV["index"] : "ecosystem-"+Date.today.strftime("%Y-%m")
     EcosystemPlatform::Jobs::HandleDenormalizer.perform index_name
   end
+  task :session_summarizer do
+    require_relative '../lib/ecosystem-platform/jobs/summarizer.rb'
+    EcosystemPlatform::Jobs::OESessionSummarizer.perform
+  end
 end
 
 namespace :generators do
