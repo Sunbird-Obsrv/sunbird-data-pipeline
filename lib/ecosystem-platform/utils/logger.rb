@@ -39,6 +39,16 @@ module EcosystemPlatform
         data.merge!({ msg: msg,type: format_severity(INFO) })
         add('EP_LOG',@progname,@tid,@aid,data)
       end
+      def debug(msg,data={})
+        data ||= {}
+        data.merge!({ msg: msg,type: format_severity(DEBUG) })
+        add('EP_LOG',@progname,@tid,@aid,data)
+      end
+      def warn(msg,data={})
+        data ||= {}
+        data.merge!({ msg: msg,type: format_severity(WARN) })
+        add('EP_LOG',@progname,@tid,@aid,data)
+      end
       def error(msg,data={})
         data ||= {}
         data.merge!({ msg: msg,type: format_severity(ERROR) })

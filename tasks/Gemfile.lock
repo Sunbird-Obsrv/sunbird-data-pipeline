@@ -33,6 +33,7 @@ GEM
       method_source (~> 0.8.1)
       slop (~> 3.4)
     rake (10.4.2)
+    ruby-kafka (0.3.2)
     ruby-progressbar (1.7.5)
     rubyzip (1.1.7)
     slop (3.6.0)
@@ -53,6 +54,7 @@ DEPENDENCIES
   mysql2
   pry
   rake
+  ruby-kafka
   ruby-progressbar
   rubyzip
   what_methods
