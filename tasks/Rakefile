@@ -1,3 +1,5 @@
+require 'optparse'
+
 task :default => :console
 
 task :console do
@@ -143,9 +145,9 @@ namespace :scheduled do
     index_name = ENV["index"] ? ENV["index"] : "ecosystem-"+Date.today.strftime("%Y-%m")
     EcosystemPlatform::Jobs::HandleDenormalizer.perform index_name
   end
-  task :session_summarizer do
+  task :session_summarizer,[:kafka_brokers,:kafka_topic,:es_host,:data_dir] do |t,args|
     require_relative '../lib/ecosystem-platform/jobs/summarizer.rb'
-    EcosystemPlatform::Jobs::OESessionSummarizer.perform
+    EcosystemPlatform::Jobs::OESessionSummarizer.perform(args)
   end
 end
 

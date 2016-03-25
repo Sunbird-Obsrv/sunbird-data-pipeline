@@ -19,17 +19,19 @@ module EcosystemPlatform
 
       include EcosystemPlatform::Utils::EPLogging
 
-      def self.perform(index="learning-*")
+      def self.perform(opts)
+        puts opts
         begin
+          index="learning-*"
           logger.start_task
           logger.info "VERSION: #{VERSION}"
-          @kafka = Kafka.new(logger: logger,seed_brokers: ENV['KAFKA_BROKERS'].split(','))
+          @kafka = Kafka.new(logger: logger,seed_brokers: opts[:kafka_brokers].split(','))
           @producer = @kafka.producer
           logger.info "INITIALIZING ES CLIENT"
 
-          @client = ::Elasticsearch::Client.new(host:ENV['ES_HOST']||'localhost',log: false)
+          @client = ::Elasticsearch::Client.new(host:opts[:es_host]||'localhost',log: false)
           @client.indices.refresh index: index
-          env_sync_date = ENV['SYNC_DATES']
+          env_sync_date = opts[:sync_dates]
           dates = []
           if(env_sync_date)
             dates = env_sync_date.split(',').map{|date|DateTime.strptime(date,DATE_MASK)}
@@ -185,11 +187,11 @@ module EcosystemPlatform
             end
             event.mid = Digest::SHA256.new.hexdigest eks.to_json
             begin
-              @producer.produce(event.to_json, topic: ENV['KAFKA_TOPIC'], partition: 0)
-              logger.info "PUBLISHING TO KAFKA #{event.mid} to #{ENV['KAFKA_TOPIC']}"
+              @producer.produce(event.to_json, topic: opts[:kafka_topic], partition: 0)
+              logger.info "PUBLISHING TO KAFKA #{event.mid} to #{opts[:kafka_topic]}"
               @producer.deliver_messages
-              if(ENV['DATA_FOLDER'])
-                filename = "#{ENV['DATA_FOLDER']||''}/content-session-summarizer-#{event.context.date.day}-#{event.context.date.month}-#{event.context.date.year}.json"
+              if(opts[:data_dir])
+                filename = "#{opts[:data_dir]||''}/content-session-summarizer-#{event.context.date.day}-#{event.context.date.month}-#{event.context.date.year}.json"
                 File.open(filename,"w") do |f|
                   f.write(event.to_json)
                 end
