@@ -25,7 +25,7 @@ module EcosystemPlatform
           index="learning-*"
           logger.start_task
           logger.info "VERSION: #{VERSION}"
-          @kafka = Kafka.new(logger: logger,seed_brokers: opts[:kafka_brokers].split(','))
+          @kafka = Kafka.new(logger: logger,seed_brokers: opts[:kafka_brokers].split(';'))
           @producer = @kafka.producer
           logger.info "INITIALIZING ES CLIENT"
 
