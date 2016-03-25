@@ -34,7 +34,7 @@ module EcosystemPlatform
           env_sync_date = opts[:sync_dates]
           dates = []
           if(env_sync_date)
-            dates = env_sync_date.split(',').map{|date|DateTime.strptime(date,DATE_MASK)}
+            dates = env_sync_date.split('+').map{|date|DateTime.strptime(date,DATE_MASK)}
           else
             dates = [(Date.today-1)]
           end
