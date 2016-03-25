@@ -17,6 +17,6 @@ set :environment, ENV['EP_LOG_DIR']
 # end
 
 every 1.day, :at => '4:30 am' do
-  @kafka_brokers = @kafka_brokers.split(',').join(';')
+  @kafka_brokers = @kafka_brokers.split(',').join('-')
   rake "scheduled:session_summarizer[#{@kafka_brokers},#{@kafka_topic},#{@es_host}]"
 end
