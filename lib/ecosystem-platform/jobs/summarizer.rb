@@ -44,6 +44,7 @@ module EcosystemPlatform
             begin
               logger.info "SYNC_DATE: #{sync_date}"
               event = Hashie::Mash.new
+              event.eid = 'ME_ROLLUP'
               event.ets = DateTime.now.strftime('%Q').to_i
               event.ver = EVENT_VERSION
               event.context = Hashie::Mash.new({
@@ -54,10 +55,9 @@ module EcosystemPlatform
                   mod: 'GenericSessionSummaryRollup',
                   ver: VERSION
                 },
-                date: {
-                  day: sync_date.day,
-                  month: sync_date.month,
-                  year: sync_date.year
+                date_range: {
+                  from: sync_date.strftime('%Q').to_i,
+                  to: sync_date.strftime('%Q').to_i
                 }
               })
               event.edata = Hashie::Mash.new
@@ -77,7 +77,7 @@ module EcosystemPlatform
                        },
                        "filter"=> {
                            "range"=> {
-                              "ts"=> {
+                              "edata.eks.syncDate"=> {
                                  "from"=> sync_date_epoch_ms_start,
                                  "to"=> sync_date_epoch_ms_stop
                               }

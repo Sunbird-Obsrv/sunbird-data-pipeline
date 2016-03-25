@@ -11,6 +11,10 @@ set :output, {:error => 'error.log', :standard => 'cron.log'}
 set :environment_variable, 'EP_LOG_DIR'
 set :environment, ENV['EP_LOG_DIR']
 
-every 6.hour do
-  rake "scheduled:handle_denormalizer"
+# every 6.hour do
+#   rake "scheduled:handle_denormalizer"
+# end
+
+every 1.day, :at => '4:30 am' do
+  rake "scheduled:session_summarizer"
 end
