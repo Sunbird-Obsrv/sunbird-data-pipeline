@@ -140,7 +140,9 @@ module Generator
             gender: "male",
             age: 7,
             standard: 2,
-            language: "en"
+            language: "en",
+            day: 21,
+            month: 11
           }
         }
       }

@@ -12,15 +12,17 @@ TELEMETRY_SYNC_URL="#{API_ROOT}/v1/telemetry"
 module ProfileGenerator
 	class Profile
 		include CommonSteps::ElasticsearchClient
-		attr_reader :uid, :gender, :age, :standard, :language
-		attr_accessor :handle
+		attr_reader :uid, :gender,  :language, :day, :month
+		attr_accessor :handle, :age, :standard
 
-		def initialize(handle, gender, age, standard, language="en", uid=SecureRandom.uuid)
+		def initialize(handle, gender, age, standard, day, month, language="en", uid=SecureRandom.uuid)
 			@uid = uid
 			@handle = handle
 			@gender = gender
 			@age = age
 			@standard = standard
+			@day = day
+			@month = month
 			@language = language
 		end
 
@@ -29,6 +31,8 @@ module ProfileGenerator
 			@age = attributes["age"] if attributes["age"] 
 			@gender = attributes["gender"] if attributes["gender"]
 			@standard = attributes["standard"] if attributes["standard"]
+			@day = attributes["day"] if attributes["day"]
+			@month = attributes["month"] if attributes["month"]
 			@language = attributes["language"] if attributes["language"]
 		end
 
@@ -43,7 +47,9 @@ module ProfileGenerator
 						handle: @handle,
 						standard: @standard,
 						language: @language,
-						gender: @gender
+						gender: @gender,
+						day: @day,
+						month: @month
 					}
 				},
 				eid: "GE_CREATE_PROFILE",
@@ -71,7 +77,9 @@ module ProfileGenerator
 						handle: @handle,
 						standard: @standard,
 						language: @language,
-						gender: @gender
+						gender: @gender,
+						day: @day,
+						month: @month
 					}
 				},
 				eid: "GE_UPDATE_PROFILE",
@@ -139,7 +147,7 @@ module ProfileGenerator
 		end
 
 		def udata
-			{"handle" => @handle, "standard" => @standard, "age_completed_years" => @age, "gender" => @gender}
+			{"handle" => @handle, "standard" => @standard, "age_completed_years" => @age, "gender" => @gender, "is_group_user" => false}
 		end
 
 	end
