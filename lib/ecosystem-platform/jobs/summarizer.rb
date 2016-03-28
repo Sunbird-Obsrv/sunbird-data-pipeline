@@ -75,8 +75,25 @@ module EcosystemPlatform
                   "query"=> {
                     "filtered"=> {
                        "query"=> {
-                            "match_all": {}
-                       },
+                          "bool"=> {
+                              "should"=> [
+                                 {
+                                     "term"=> {
+                                        "edata.eks.contentType"=> {
+                                           "value"=> "Collection"
+                                        }
+                                     }
+                                 },
+                                 {
+                                     "term"=> {
+                                        "dimensions.gdata.id"=> {
+                                           "value"=> "org.ekstep.quiz.app"
+                                        }
+                                     }
+                                 }
+                              ]
+                            }
+                          },
                        "filter"=> {
                            "range"=> {
                               "edata.eks.syncDate"=> {
