@@ -60,13 +60,6 @@
       </dependency>
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
-          <artifactId>user-management-test</artifactId>
-          <version>0.0.5</version>
-          <type>tar.gz</type>
-          <classifier>distribution</classifier>
-      </dependency>
-      <dependency>
-          <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>partner-data-router</artifactId>
           <version>0.0.3</version>
           <type>tar.gz</type>
