@@ -12,8 +12,8 @@ TELEMETRY_SYNC_URL="#{API_ROOT}/v1/telemetry"
 module ProfileGenerator
 	class Profile
 		include CommonSteps::ElasticsearchClient
-		attr_reader :uid, :gender,  :language, :day, :month
-		attr_accessor :handle, :age, :standard
+		attr_reader :uid, :gender, :age, :standard, :language, :day, :month
+		attr_accessor :handle
 
 		def initialize(handle, gender, age, standard, day, month, language="en", uid=SecureRandom.uuid)
 			@uid = uid
