@@ -9,9 +9,9 @@ require_relative '../utils/ep_logging.rb'
 
 module EcosystemPlatform
   module Jobs
-    class OESessionSummarizer
+    class OESessionCumulator
 
-      PROGNAME = 'summarizer.jobs.ep'
+      PROGNAME = 'cumulator.jobs.ep'
       N = 1000
       DATE_MASK = '%Y-%m-%d'
       VERSION = 1.0
@@ -33,24 +33,21 @@ module EcosystemPlatform
           @client.indices.refresh index: index
           env_sync_date = opts[:sync_dates]
           dates = []
-          if(env_sync_date)
-            dates = env_sync_date.split('+').map{|date|DateTime.strptime(date,DATE_MASK)}
-          else
-            dates = [(Date.today-1)]
-          end
-          dates.sort!
-          if(dates.length==2)
-            dates = Range.new(dates.first,dates.last)
-          end
-          dates.each do |sync_date|
+
+          dates = env_sync_date.split('+').map{|date|DateTime.strptime(date,DATE_MASK)}
+          start_date = dates[0]
+          end_date = dates[1]
+
+          # dates.each do |sync_date|
             begin
-              logger.info "SYNC_DATE: #{sync_date}"
+              logger.info "START_DATE: #{start_date.strftime('%Q')}"
+              logger.info "END_DATE: #{end_date.strftime('%Q')}"
               event = Hashie::Mash.new
               event.eid = 'ME_ROLLUP'
               event.ets = DateTime.now.strftime('%Q').to_i
               event.ver = EVENT_VERSION
               event.context = Hashie::Mash.new({
-                granularity: 'DAILY',
+                granularity: 'CUMULATIVE',
                 type: 'LEARNER_SESSION',
                 pdata: {
                   id: 'AnalyticsDataPipeline',
@@ -58,14 +55,14 @@ module EcosystemPlatform
                   ver: VERSION
                 },
                 date_range: {
-                  from: sync_date.strftime('%Q').to_i,
-                  to: sync_date.strftime('%Q').to_i
+                  from: start_date.strftime('%Q').to_i,
+                  to: end_date.strftime('%Q').to_i
                 }
               })
               event.edata = Hashie::Mash.new
               eks = Hashie::Mash.new
-              sync_date_epoch_ms_start = sync_date.strftime('%Q').to_i
-              sync_date_epoch_ms_stop = (sync_date+1).strftime('%Q').to_i
+              sync_date_epoch_ms_start = start_date.strftime('%Q').to_i
+              sync_date_epoch_ms_stop = end_date.strftime('%Q').to_i
               logger.info("SEARCHING EVENTS TO SUMMARIZE")
               response = @client.search({
                 index: index,
@@ -204,7 +201,7 @@ module EcosystemPlatform
             end
             event.mid = Digest::SHA256.new.hexdigest eks.to_json
             begin
-              kafka_topic = "#{opts[:kafka_topic]}.daily"
+              kafka_topic = "#{opts[:kafka_topic]}.cumulative"
               @producer.produce(event.to_json, topic: kafka_topic, partition: 0)
               logger.info "PUBLISHING TO KAFKA #{event.mid} to #{kafka_topic}"
               @producer.deliver_messages
@@ -218,7 +215,7 @@ module EcosystemPlatform
               logger.error(e,{backtrace: e.backtrace[0..4]})
             end
             pp event.edata.eks["count"]
-          end #end loop
+          # end #end loop
           logger.end_task
         rescue => e
           logger.error(e,{backtrace: e.backtrace[0..4]})
