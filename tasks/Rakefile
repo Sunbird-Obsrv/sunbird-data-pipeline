@@ -149,6 +149,10 @@ namespace :scheduled do
     require_relative '../lib/ecosystem-platform/jobs/summarizer.rb'
     EcosystemPlatform::Jobs::OESessionSummarizer.perform(args)
   end
+  task :session_cumulator,[:kafka_brokers,:kafka_topic,:es_host,:sync_dates,:data_dir] do |t,args|
+    require_relative '../lib/ecosystem-platform/jobs/cumulator.rb'
+    EcosystemPlatform::Jobs::OESessionCumulator.perform(args)
+  end
 end
 
 namespace :generators do

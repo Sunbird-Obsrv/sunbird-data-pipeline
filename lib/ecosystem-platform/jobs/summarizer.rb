@@ -76,7 +76,7 @@ module EcosystemPlatform
                     "filtered"=> {
                        "query"=> {
                           "bool"=> {
-                              "should"=> [
+                              "must_not"=> [
                                  {
                                      "term"=> {
                                         "edata.eks.contentType"=> {

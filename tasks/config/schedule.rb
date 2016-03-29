@@ -21,3 +21,10 @@ every 30.minutes do
   @kafka_brokers = @kafka_brokers.split(',').join('-')
   rake "scheduled:session_summarizer[#{@kafka_brokers},#{@kafka_topic},#{@es_host},2016-03-29+2016-03-30]"
 end
+
+every 30.minutes do
+  @kafka_brokers = @kafka_brokers.split(',').join('-')
+  start_date = '2015-04-28'
+  end_date = (Date.today+1).strftime('%Y-%m-%d')
+  rake "scheduled:session_cumulator[#{@kafka_brokers},#{@kafka_topic},#{@es_host},#{start_date}+#{end_date}]"
+end
