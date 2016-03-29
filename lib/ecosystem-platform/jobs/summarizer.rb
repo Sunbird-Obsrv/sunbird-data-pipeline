@@ -36,7 +36,7 @@ module EcosystemPlatform
           if(env_sync_date)
             dates = env_sync_date.split('+').map{|date|DateTime.strptime(date,DATE_MASK)}
           else
-            dates = [(Date.today-1)]
+            dates = [Date.today]
           end
           dates.sort!
           if(dates.length==2)
@@ -65,7 +65,9 @@ module EcosystemPlatform
               event.edata = Hashie::Mash.new
               eks = Hashie::Mash.new
               sync_date_epoch_ms_start = sync_date.strftime('%Q').to_i
-              sync_date_epoch_ms_stop = (sync_date+1).strftime('%Q').to_i
+              sync_date_epoch_ms_stop = (sync_date+1).strftime('%Q').to_i-1
+              logger.info "FROM: #{sync_date_epoch_ms_start}"
+              logger.info "TO: #{sync_date_epoch_ms_stop}"
               logger.info("SEARCHING EVENTS TO SUMMARIZE")
               response = @client.search({
                 index: index,

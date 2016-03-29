@@ -40,8 +40,6 @@ module EcosystemPlatform
 
           # dates.each do |sync_date|
             begin
-              logger.info "START_DATE: #{start_date.strftime('%Q')}"
-              logger.info "END_DATE: #{end_date.strftime('%Q')}"
               event = Hashie::Mash.new
               event.eid = 'ME_ROLLUP'
               event.ets = DateTime.now.strftime('%Q').to_i
@@ -62,7 +60,9 @@ module EcosystemPlatform
               event.edata = Hashie::Mash.new
               eks = Hashie::Mash.new
               sync_date_epoch_ms_start = start_date.strftime('%Q').to_i
-              sync_date_epoch_ms_stop = end_date.strftime('%Q').to_i
+              sync_date_epoch_ms_stop = end_date.strftime('%Q').to_i-1
+              logger.info "FROM: #{sync_date_epoch_ms_start}"
+              logger.info "TO: #{sync_date_epoch_ms_stop}"
               logger.info("SEARCHING EVENTS TO SUMMARIZE")
               response = @client.search({
                 index: index,

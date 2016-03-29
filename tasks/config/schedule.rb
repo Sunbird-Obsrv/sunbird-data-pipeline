@@ -19,7 +19,7 @@ set :environment, ENV['EP_LOG_DIR']
 # every 1.day, :at => '4:30 am' do
 every 30.minutes do
   @kafka_brokers = @kafka_brokers.split(',').join('-')
-  rake "scheduled:session_summarizer[#{@kafka_brokers},#{@kafka_topic},#{@es_host},2016-03-29+2016-03-30]"
+  rake "scheduled:session_summarizer[#{@kafka_brokers},#{@kafka_topic},#{@es_host}]"
 end
 
 every 30.minutes do
