@@ -49,6 +49,8 @@ module EcosystemPlatform
               event.eid = 'ME_ROLLUP'
               event.ets = DateTime.now.strftime('%Q').to_i
               event.ver = EVENT_VERSION
+              sync_date_epoch_ms_start = sync_date.strftime('%Q').to_i
+              sync_date_epoch_ms_stop = (sync_date+1).strftime('%Q').to_i-1
               event.context = Hashie::Mash.new({
                 granularity: 'DAILY',
                 type: 'LEARNER_SESSION',
@@ -58,14 +60,12 @@ module EcosystemPlatform
                   ver: VERSION
                 },
                 date_range: {
-                  from: sync_date.strftime('%Q').to_i,
-                  to: sync_date.strftime('%Q').to_i
+                  from: sync_date_epoch_ms_start,
+                  to: sync_date_epoch_ms_stop
                 }
               })
               event.edata = Hashie::Mash.new
               eks = Hashie::Mash.new
-              sync_date_epoch_ms_start = sync_date.strftime('%Q').to_i
-              sync_date_epoch_ms_stop = (sync_date+1).strftime('%Q').to_i-1
               logger.info "FROM: #{sync_date_epoch_ms_start}"
               logger.info "TO: #{sync_date_epoch_ms_stop}"
               logger.info("SEARCHING EVENTS TO SUMMARIZE")

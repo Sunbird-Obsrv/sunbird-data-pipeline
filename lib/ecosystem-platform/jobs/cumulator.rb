@@ -35,7 +35,8 @@ module EcosystemPlatform
 
           start_date = DateTime.strptime(env_sync_date,DATE_MASK)
           end_date = Date.today+1
-
+          sync_date_epoch_ms_start = start_date.strftime('%Q').to_i
+          sync_date_epoch_ms_stop = end_date.strftime('%Q').to_i-1
           # dates.each do |sync_date|
             begin
               event = Hashie::Mash.new
@@ -51,14 +52,12 @@ module EcosystemPlatform
                   ver: VERSION
                 },
                 date_range: {
-                  from: start_date.strftime('%Q').to_i,
-                  to: end_date.strftime('%Q').to_i
+                  from: sync_date_epoch_ms_start,
+                  to: sync_date_epoch_ms_stop
                 }
               })
               event.edata = Hashie::Mash.new
               eks = Hashie::Mash.new
-              sync_date_epoch_ms_start = start_date.strftime('%Q').to_i
-              sync_date_epoch_ms_stop = end_date.strftime('%Q').to_i-1
               logger.info "FROM: #{sync_date_epoch_ms_start}"
               logger.info "TO: #{sync_date_epoch_ms_stop}"
               logger.info("SEARCHING EVENTS TO SUMMARIZE")
