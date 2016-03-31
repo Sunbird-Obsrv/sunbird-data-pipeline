@@ -32,9 +32,8 @@ module EcosystemPlatform
           @client = ::Elasticsearch::Client.new(host:opts[:es_host]||'localhost',log: false)
           @client.indices.refresh index: index
           env_sync_date = opts[:sync_dates]
-          dates = []
 
-          start_date = env_sync_date.strptime(date,DATE_MASK)
+          start_date = env_sync_date.strptime(env_sync_date,DATE_MASK)
           end_date = Date.today+1
 
           # dates.each do |sync_date|
