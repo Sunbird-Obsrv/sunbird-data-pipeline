@@ -24,6 +24,5 @@ end
 
 every 30.minutes do
   @kafka_brokers = @kafka_brokers.split(',').join('-')
-  start_date = '2016-03-28'
-  rake "scheduled:session_cumulator[#{@kafka_brokers},#{@kafka_topic},#{@es_host},#{start_date}]"
+  rake "scheduled:session_cumulator[#{@kafka_brokers},#{@kafka_topic},#{@es_host},#{@start_date}]"
 end
