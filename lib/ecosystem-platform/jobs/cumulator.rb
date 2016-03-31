@@ -34,9 +34,8 @@ module EcosystemPlatform
           env_sync_date = opts[:sync_dates]
           dates = []
 
-          dates = env_sync_date.split('+').map{|date|DateTime.strptime(date,DATE_MASK)}
-          start_date = dates[0]
-          end_date = dates[1]
+          start_date = env_sync_date.strptime(date,DATE_MASK)
+          end_date = Date.today+1
 
           # dates.each do |sync_date|
             begin
