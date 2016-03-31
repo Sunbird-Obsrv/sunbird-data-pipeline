@@ -33,7 +33,7 @@ module EcosystemPlatform
           @client.indices.refresh index: index
           env_sync_date = opts[:sync_dates]
 
-          start_date = env_sync_date.strptime(env_sync_date,DATE_MASK)
+          start_date = DateTime.strptime(env_sync_date,DATE_MASK)
           end_date = Date.today+1
 
           # dates.each do |sync_date|
