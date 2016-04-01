@@ -2,7 +2,7 @@ require 'securerandom'
 require 'pry'
 require 'geocoder'
 # require 'ruby-progressbar'
-require_relative '../data-indexer/indexers.rb'
+require_relative '../../data-indexer/indexers.rb'
 
 module Generator
   DEVICES = 25
@@ -79,8 +79,8 @@ module Generator
   class Session
     SECONDS_IN_A_DAY = 86400
     DAYS = 10
-    END_TIME = Time.now
-    START_TIME = END_TIME - DAYS*SECONDS_IN_A_DAY
+    END_TIME = DateTime.now
+    START_TIME = END_TIME - DAYS * SECONDS_IN_A_DAY
     GE_GENIE_START = 'GE_GENIE_START'
     GE_GENIE_END = 'GE_GENIE_END'
     GE_SIGNUP = 'GE_SIGNUP'
@@ -102,21 +102,19 @@ module Generator
       @mode=mode
       @sid = SecureRandom.uuid
       @start  = start_time
-      @finish = rand(@start..(@start+rand(120..300)))
-      # puts "#{SESSION_START_EVENT} : #{@start}\n"
-      # puts "#{SESSION_END_EVENT}   : #{@finish}\n"
+      @finish = @start+Rational(rand(120..300), 86400)
       @user = user
       @device = device
-      @signup = (@start-rand(1..24)*3600)
-      @startup = (@signup-rand(1..24)*3600)
-      @shutdown = (@finish+rand(1..24)*3600)
-      @createuser = @start+4
-      @create_profile = @createuser + 1
-      @gamestart = @start+6
-      @oe_start = @gamestart + 1
-      @oe_access = @oe_start + 1
-      @oe_end = @oe_access + 1
-      @gameend  = @oe_end + 1
+      @signup = (@start - Rational(rand(1..24),86400))
+      @startup = (@signup - Rational(rand(1..24),86400))
+      @shutdown = (@finish + Rational(rand(1..24),86400))
+      @createuser = @start+ Rational(4,86400)
+      @create_profile = @createuser + Rational(1,86400)
+      @gamestart = @start+ Rational(6,86400)
+      @oe_start = @gamestart + Rational(1,86400)
+      @oe_access = @oe_start + Rational(1,86400)
+      @oe_end = @oe_access + Rational(1,86400)
+      @gameend  = @oe_end + Rational(1,86400)
     end
     def to_json
       events.to_json
@@ -124,7 +122,7 @@ module Generator
     def events(user_with_profile=false)
       p_event = {
         eid: GE_CREATE_PROFILE,
-        ts: (@create_profile).strftime('%Y-%m-%dT%H:%M:%S%z'),
+        ts: @startup.strftime('%Y-%m-%dT%H:%M:%S%z'),
         ver: "1.0",
         gdata: {
           id: "genie.android",
@@ -150,7 +148,7 @@ module Generator
         {
           eid: GE_GENIE_START, # unique event ID
           ts: @startup.strftime('%Y-%m-%dT%H:%M:%S%z'),
-          ver: 1.0,
+          ver: "1.0",
           gdata: {
              id: "genie.android",
              ver: "1.0"
@@ -238,7 +236,7 @@ module Generator
         },
         {
           eid: OE_START,
-          uid:  @user.uid,
+          uid: @user.uid,
           sid: @sid,
           ts: (@oe_start).strftime('%Y-%m-%dT%H:%M:%S%z'),
           edata: {
@@ -344,7 +342,7 @@ module Generator
         {
           eid: GE_GENIE_END, # unique event ID
           ts: @shutdown.strftime('%Y-%m-%dT%H:%M:%S%z'),
-          ver: 1.0,
+          ver: "1.0",
           gdata: {
              id: "genie.android",
              ver: "1.0"

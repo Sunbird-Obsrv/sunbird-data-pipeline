@@ -1,4 +1,4 @@
-require_relative '../data-generator/session_generator.rb'
+require_relative '../1.0/session_generator.rb'
 
 require 'digest/sha1'
 require 'securerandom'

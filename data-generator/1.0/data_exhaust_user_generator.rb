@@ -1,4 +1,4 @@
-require_relative '../data-generator/session_generator.rb'
+require_relative '../1.0/session_generator.rb'
 
 require 'digest/sha1'
 require 'securerandom'
@@ -17,7 +17,7 @@ module DataExhaustUserGenerator
       @licensekey = SecureRandom.uuid
     end
 
-    def newuserrequest
+    def new_user_request
       e=
         {
           id: "ekstep.data_exhaust_user",
@@ -35,11 +35,11 @@ module DataExhaustUserGenerator
         }
     end
 
-    def post_newuserrequest
-      data = newuserrequest
+    def post_new_user_request
+      data = new_user_request
       uri = URI.parse(DATA_EXHAUST_USER_SIGNUP_API_URL)
       http = Net::HTTP.new(uri.host, uri.port)
-      if FACILITATOR_SIGNUP_API_URL.start_with? "https"
+      if DATA_EXHAUST_USER_SIGNUP_API_URL.start_with? "https"
         http.use_ssl = true
       end
       req = Net::HTTP::Post.new(uri.path, initheader = {'Content-Type' =>'application/json'})
@@ -48,7 +48,7 @@ module DataExhaustUserGenerator
       res
     end
 
-    def validaterequest
+    def validate_request
       ts = Time.now.strftime('%Y-%m-%dT%H:%M:%S%z')
       e=
         {
@@ -68,10 +68,10 @@ module DataExhaustUserGenerator
     end
 
     def post_validate_request
-      data = validaterequest
+      data = validate_request
       uri = URI.parse(DATA_EXHAUST_USER_VALIDATE_API_URL)
       http = Net::HTTP.new(uri.host, uri.port)
-      if FACILITATOR_LOGIN_API_URL.start_with? "https"
+      if DATA_EXHAUST_USER_VALIDATE_API_URL.start_with? "https"
         http.use_ssl = true
       end
       req = Net::HTTP::Post.new(uri.path, initheader = {'Content-Type' =>'application/json'})
