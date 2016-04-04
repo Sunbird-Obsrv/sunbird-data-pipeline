@@ -6,6 +6,7 @@ import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 import org.ekstep.ep.samza.api.GoogleGeoLocationAPI;
 import org.ekstep.ep.samza.system.Location;
+import org.ekstep.ep.samza.util.LatLongUtils;
 
 public class GoogleReverseSearchService {
 
@@ -16,7 +17,7 @@ public class GoogleReverseSearchService {
     }
 
     public Location getLocation(String loc) {
-        LatLng latLng = parseLocation(loc);
+        LatLng latLng = LatLongUtils.parseLocation(loc);
         if (latLng == null){
             return null;
         }
@@ -65,20 +66,4 @@ public class GoogleReverseSearchService {
         }
         return location;
     }
-
-    private LatLng parseLocation(String loc){
-        if (loc.isEmpty()) return null;
-        String[] latlong = loc.split(",");
-        if (latlong.length!=2){
-            return null;
-        }
-        try {
-            Double _lat = Double.parseDouble(latlong[0]);
-            Double _long = Double.parseDouble(latlong[1]);
-            return new LatLng(_lat,_long);
-        }catch(NumberFormatException e){
-            return null;
-        }
-    }
-
 }

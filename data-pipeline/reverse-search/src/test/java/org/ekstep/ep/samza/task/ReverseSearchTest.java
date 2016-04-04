@@ -3,7 +3,6 @@ package org.ekstep.ep.samza.task;
 import com.google.gson.Gson;
 import com.library.checksum.system.ChecksumGenerator;
 import com.library.checksum.system.KeysToAccept;
-import com.library.checksum.system.Mappable;
 import org.apache.samza.config.Config;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
@@ -107,10 +106,6 @@ public class ReverseSearchTest {
         when(envelope.getMessage()).thenThrow(new RuntimeException());
         ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService);
 
-        Config config = mock(Config.class);
-        TaskContext context = mock(TaskContext.class);
-
-        reverseSearchStreamTask.init(config, context);
         TaskCoordinator task = mock(TaskCoordinator.class);
         reverseSearchStreamTask.process(envelope, collector, task);
 
@@ -134,7 +129,7 @@ public class ReverseSearchTest {
     }
 
     @Test
-    public void ShouldUseMidAsChecksumIfEventContainsMid(){
+    public void ShouldUseMidAsChecksumIfEventContainsMid() {
         Map<String, Object> eventMap = new Gson().fromJson(EventFixture.JSON_WITH_MID, Map.class);
         Event event = new Event(eventMap);
 
@@ -179,8 +174,8 @@ public class ReverseSearchTest {
         return event;
     }
 
-    private ChecksumGenerator getChecksumGenerator(){
-        String[] keys_to_accept = {"uid", "ts", "cid", "gdata","edata"};
+    private ChecksumGenerator getChecksumGenerator() {
+        String[] keys_to_accept = {"uid", "ts", "cid", "gdata", "edata"};
         ChecksumGenerator checksumGenerator = new ChecksumGenerator(new KeysToAccept(keys_to_accept));
         return checksumGenerator;
     }

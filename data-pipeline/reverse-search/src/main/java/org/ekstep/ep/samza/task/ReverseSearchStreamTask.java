@@ -47,6 +47,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
     private String bypass;
     private ChecksumGenerator checksumGenerator;
     private LocationService locationService;
+    private double reverseSearchCacheAreaSizeInMeters;
 
     @Override
     public void init(Config config, TaskContext context) {
@@ -54,6 +55,8 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
 
         successTopic = config.get("output.success.topic.name", "events_with_location");
         failedTopic = config.get("output.failed.topic.name", "events_failed_location");
+        reverseSearchCacheAreaSizeInMeters = Double.parseDouble(config.get("reverse.search.cache.area.size.in.meters",
+                "200"));
 
         bypass = config.get("bypass", "false");
 
@@ -63,7 +66,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
 
         String[] keys_to_accept = {"uid", "ts", "gdata", "edata"};
         checksumGenerator = new ChecksumGenerator(new KeysToAccept(keys_to_accept));
-        locationService = new LocationService(reverseSearchStore, googleReverseSearch);
+        locationService = new LocationService(reverseSearchStore, googleReverseSearch, reverseSearchCacheAreaSizeInMeters);
     }
 
     public ReverseSearchStreamTask() {
@@ -113,12 +116,14 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
                 } else {
                     System.out.println("Trying to pick from device");
                     String stored_device = (String) deviceStore.get(did);
+                    System.out.println("stored_device, " + stored_device);
                     device = (Device) JsonReader.jsonToJava(stored_device);
                     location = device.getLocation();
                 }
             } catch (Exception e) {
                 System.out.println(e);
                 System.err.println("unable to parse");
+                e.printStackTrace();
             }
             System.out.println("ok");
         }
@@ -131,12 +136,11 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
                 event.setFlag("ldata_obtained", false);
                 collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
             }
-            if(event.getMid() == null){
+            if (event.getMid() == null) {
                 checksumGenerator.stampChecksum(event);
-            }
-            else {
+            } else {
                 Map<String, Object> metadata = new HashMap<String, Object>();
-                metadata.put("checksum",event.getMid());
+                metadata.put("checksum", event.getMid());
                 event.setMetadata(metadata);
             }
             event.setFlag("ldata_processed",true);

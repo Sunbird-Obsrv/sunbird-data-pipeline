@@ -3,7 +3,6 @@ package org.ekstep.ep.samza.service;
 import com.cedarsoftware.util.io.JsonReader;
 import com.cedarsoftware.util.io.JsonWriter;
 import org.apache.samza.storage.kv.KeyValueStore;
-import org.ekstep.ep.samza.system.Event;
 import org.ekstep.ep.samza.system.Location;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,43 +26,36 @@ public class LocationServiceTest {
     @Before
     public void setMock() {
         initMocks(this);
-        locationService = new LocationService(reverseSearchStore, googleReverseSearch);
+        locationService = new LocationService(reverseSearchStore, googleReverseSearch, 200);
     }
 
     @Test
     public void shouldGetLocationFromExternalApiIfNotPresentInCache() {
+        String preciseLocation = "12.972455, 77.580655";
+        String nearestCacheLocation = "12.972512,77.580848";
         String expectedLocationJson = "{\"@type\":\"org.ekstep.ep.samza.system.Location\",\"city\":\"Bengaluru\",\"district\":\"Bengaluru\",\"state\":\"Karnataka\",\"country\":\"India\"}";
-
         Location expectedLocation = (Location) JsonReader.jsonToJava(expectedLocationJson);
-        when(googleReverseSearch.getLocation("15.9310593,78.6238299")).thenReturn(expectedLocation);
-        when(reverseSearchStore.get("15.9310593,78.6238299")).thenReturn(null);
+        when(googleReverseSearch.getLocation(nearestCacheLocation)).thenReturn(expectedLocation);
+        when(reverseSearchStore.get(nearestCacheLocation)).thenReturn(null);
 
-        Location actualLocation = locationService.getLocation("15.9310593,78.6238299");
+        Location actualLocation = locationService.getLocation(preciseLocation);
 
         assertEquals(expectedLocation, actualLocation);
-        verify(googleReverseSearch, times(1)).getLocation("15.9310593,78.6238299");
-        verify(reverseSearchStore, times(1)).put("15.9310593,78.6238299", expectedLocationJson);
+        verify(googleReverseSearch, times(1)).getLocation(nearestCacheLocation);
+        verify(reverseSearchStore, times(1)).put(nearestCacheLocation, expectedLocationJson);
     }
 
     @Test
     public void shouldTakeLocationFromCacheWhenPresent() {
-        Event event = createEventMock("15.9310593,78.6238299");
+        String preciseLocation = "12.972442, 77.580643";
+        String nearestCacheLocation = "12.972512,77.580848";
+        String expectedLocationJson = "{\"@type\":\"org.ekstep.ep.samza.system.Location\",\"city\":\"Bengaluru\",\"district\":\"Bengaluru\",\"state\":\"Karnataka\",\"country\":\"India\"}";
+        when(reverseSearchStore.get(nearestCacheLocation)).thenReturn(expectedLocationJson);
 
-        String expectedLocation = "{\"@type\":\"org.ekstep.ep.samza.system.Location\",\"city\":\"Chennai\",\"district\":\"Chennai\",\"state\":\"Tamil Nadu\",\"country\":\"India\"}";
-        when(reverseSearchStore.get("15.9310593,78.6238299")).thenReturn(expectedLocation);
-        when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+        Location actualLocation = locationService.getLocation(preciseLocation);
 
-        Location actualLocation = locationService.getLocation("15.9310593,78.6238299");
-
-        verify(reverseSearchStore, times(1)).get("15.9310593,78.6238299");
+        verify(reverseSearchStore, times(1)).get(nearestCacheLocation);
         verify(googleReverseSearch, times(0)).getLocation(anyString());
-
-        assertEquals(expectedLocation, JsonWriter.objectToJson(actualLocation));
-    }
-
-    private Event createEventMock(String loc) {
-        Event event = mock(Event.class);
-        when(event.getGPSCoordinates()).thenReturn(loc);
-        return event;
+        assertEquals(expectedLocationJson, JsonWriter.objectToJson(actualLocation));
     }
 }
