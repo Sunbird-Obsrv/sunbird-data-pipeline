@@ -1,4 +1,4 @@
-package org.ekstep.ep.samza.actions;
+package org.ekstep.ep.samza.service;
 
 import com.google.maps.model.AddressComponent;
 import com.google.maps.model.AddressComponentType;
@@ -7,11 +7,11 @@ import com.google.maps.model.LatLng;
 import org.ekstep.ep.samza.api.GoogleGeoLocationAPI;
 import org.ekstep.ep.samza.system.Location;
 
-public class GoogleReverseSearch {
+public class GoogleReverseSearchService {
 
     GoogleGeoLocationAPI locationAPI;
 
-    public GoogleReverseSearch(GoogleGeoLocationAPI api) {
+    public GoogleReverseSearchService(GoogleGeoLocationAPI api) {
        locationAPI=api;
     }
 

@@ -1,4 +1,4 @@
-package org.ekstep.ep.samza.actions;
+package org.ekstep.ep.samza.service;
 
 
 import com.google.gson.Gson;
@@ -13,12 +13,12 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class GoogleReverseSearchTest {
+public class GoogleReverseSearchServiceTest {
     @Test
     public void shouldHandleEmptyLatlong(){
         GoogleGeoLocationAPI api = mock(GoogleGeoLocationAPI.class);
 
-        GoogleReverseSearch reverseSearch = new GoogleReverseSearch(api);
+        GoogleReverseSearchService reverseSearch = new GoogleReverseSearchService(api);
         Assert.assertNull(reverseSearch.getLocation(""));
     }
 
@@ -26,7 +26,7 @@ public class GoogleReverseSearchTest {
     public void shouldReturnNullForInvalidLatLong(){
         GoogleGeoLocationAPI api = mock(GoogleGeoLocationAPI.class);
 
-        GoogleReverseSearch reverseSearch = new GoogleReverseSearch(api);
+        GoogleReverseSearchService reverseSearch = new GoogleReverseSearchService(api);
         Assert.assertNull(reverseSearch.getLocation("12"));
         Assert.assertNull(reverseSearch.getLocation("12:123"));
         Assert.assertNull(reverseSearch.getLocation("12:123,345"));
@@ -39,7 +39,7 @@ public class GoogleReverseSearchTest {
 
         when(api.requestFor(any(LatLng.class))).thenReturn(generateResult());
 
-        GoogleReverseSearch reverseSearch = new GoogleReverseSearch(api);
+        GoogleReverseSearchService reverseSearch = new GoogleReverseSearchService(api);
         Location location = reverseSearch.getLocation("12.90,77.62");
         Assert.assertNotNull(location);
         Assert.assertEquals("Bengaluru", location.getCity());
@@ -51,7 +51,7 @@ public class GoogleReverseSearchTest {
 
         when(api.requestFor(any(LatLng.class))).thenThrow(new RuntimeException());
 
-        GoogleReverseSearch reverseSearch = new GoogleReverseSearch(api);
+        GoogleReverseSearchService reverseSearch = new GoogleReverseSearchService(api);
         Location location = reverseSearch.getLocation("12.90,77.62");
         Assert.assertNull(location);
     }

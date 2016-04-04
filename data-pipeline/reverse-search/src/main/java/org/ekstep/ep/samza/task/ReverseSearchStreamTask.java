@@ -29,8 +29,9 @@ import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
-import org.ekstep.ep.samza.actions.GoogleReverseSearch;
 import org.ekstep.ep.samza.api.GoogleGeoLocationAPI;
+import org.ekstep.ep.samza.service.GoogleReverseSearchService;
+import org.ekstep.ep.samza.service.LocationService;
 import org.ekstep.ep.samza.system.Device;
 import org.ekstep.ep.samza.system.Event;
 import org.ekstep.ep.samza.system.Location;
@@ -40,13 +41,12 @@ import java.util.Map;
 
 public class ReverseSearchStreamTask implements StreamTask, InitableTask {
 
-    private KeyValueStore<String, Object> reverseSearchStore;
     private KeyValueStore<String, Object> deviceStore;
-    private GoogleReverseSearch googleReverseSearch;
     private String successTopic;
     private String failedTopic;
     private String bypass;
     private ChecksumGenerator checksumGenerator;
+    private LocationService locationService;
 
     @Override
     public void init(Config config, TaskContext context) {
@@ -57,28 +57,26 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
 
         bypass = config.get("bypass", "false");
 
-        this.reverseSearchStore = (KeyValueStore<String, Object>) context.getStore("reverse-search");
+        KeyValueStore<String, Object> reverseSearchStore = (KeyValueStore<String, Object>) context.getStore("reverse-search");
         this.deviceStore = (KeyValueStore<String, Object>) context.getStore("device");
-        googleReverseSearch = new GoogleReverseSearch(new GoogleGeoLocationAPI(apiKey));
+        GoogleReverseSearchService googleReverseSearch = new GoogleReverseSearchService(new GoogleGeoLocationAPI(apiKey));
 
         String[] keys_to_accept = {"uid", "ts", "gdata", "edata"};
         checksumGenerator = new ChecksumGenerator(new KeysToAccept(keys_to_accept));
+        locationService = new LocationService(reverseSearchStore, googleReverseSearch);
     }
 
     public ReverseSearchStreamTask() {
     }
 
     //For testing only
-    protected ReverseSearchStreamTask(KeyValueStore<String, Object> reverseSearchStore,
-                                      KeyValueStore<String, Object> deviceStore,
-                                      GoogleReverseSearch googleReverseSearch, String bypass) {
-        this.reverseSearchStore = reverseSearchStore;
+    ReverseSearchStreamTask(KeyValueStore<String, Object> deviceStore,
+                            String bypass, LocationService locationService) {
         this.deviceStore = deviceStore;
-        this.googleReverseSearch = googleReverseSearch;
         this.bypass = bypass;
-
-        String[] keys_to_accept = {"uid", "ts", "cid", "gdata","edata"};
+        String[] keys_to_accept = {"uid", "ts", "cid", "gdata", "edata"};
         checksumGenerator = new ChecksumGenerator(new KeysToAccept(keys_to_accept));
+        this.locationService = locationService;
     }
 
     @SuppressWarnings("unchecked")
@@ -100,52 +98,35 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
         Location location = null;
         Device device = null;
 
-        if(bypass.equals("true")){
-          System.out.println("bypassing");
+        if (bypass.equals("true")) {
+            System.out.println("bypassing");
         } else {
-          try {
-              String loc = event.getGPSCoordinates();
-              String did = event.getDid();
-
-              if (loc != null && !loc.isEmpty()) {
-                  String stored_location = (String) reverseSearchStore.get(loc);
-                  if (stored_location == null) {
-                      // do reverse search
-                      System.out.println("Performing reverse search");
-                      location = googleReverseSearch.getLocation(loc);
-                      String json = JsonWriter.objectToJson(location);
-
-                      System.out.println("Setting device loc in stores");
-                      reverseSearchStore.put(loc, json);
-                      device = new Device(did);
-                      device.setLocation(location);
-                      String djson = JsonWriter.objectToJson(device);
-                      deviceStore.put(did, djson);
-                  } else {
-                      System.out.println("Picking store data for reverse search");
-                      location = (Location) JsonReader.jsonToJava(stored_location);
-                      device = new Device(did);
-                      device.setLocation(location);
-                      String djson = JsonWriter.objectToJson(device);
-                      deviceStore.put(did, djson);
-                  }
-              } else {
-                  System.out.println("Trying to pick from device");
-                  String stored_device = (String) deviceStore.get(did);
-                  device = (Device) JsonReader.jsonToJava(stored_device);
-                  location = device.getLocation();
-              }
-          } catch (Exception e) {
-              System.out.println(e);
-              System.err.println("unable to parse");
-          }
-          System.out.println("ok");
+            try {
+                String loc = event.getGPSCoordinates();
+                String did = event.getDid();
+                if (loc != null && !loc.isEmpty()) {
+                    location = locationService.getLocation(loc);
+                    device = new Device(did);
+                    device.setLocation(location);
+                    String djson = JsonWriter.objectToJson(device);
+                    deviceStore.put(did, djson);
+                } else {
+                    System.out.println("Trying to pick from device");
+                    String stored_device = (String) deviceStore.get(did);
+                    device = (Device) JsonReader.jsonToJava(stored_device);
+                    location = device.getLocation();
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+                System.err.println("unable to parse");
+            }
+            System.out.println("ok");
         }
 
         try {
             if (location != null) {
                 event.AddLocation(location);
-                event.setFlag("ldata_obtained",true);
+                event.setFlag("ldata_obtained", true);
             } else {
                 event.setFlag("ldata_obtained", false);
                 collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
