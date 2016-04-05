@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.task;
 
 import com.google.gson.Gson;
 import com.library.checksum.system.ChecksumGenerator;
+import com.library.checksum.system.KeysToAccept;
 import com.library.checksum.system.Mappable;
 import org.apache.samza.config.Config;
 import org.apache.samza.storage.kv.KeyValueStore;
@@ -42,7 +43,6 @@ public class ReverseSearchTest {
     public void shouldDoReverseSearchIfLocPresent() {
 
         when(googleReverseSearch.getLocation("15.9310593,78.6238299")).thenReturn(new Location());
-
         Event event = createEventMock("15.9310593,78.6238299");
         when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
 
@@ -150,6 +150,20 @@ public class ReverseSearchTest {
     }
 
     @Test
+    public void ShouldUseMidAsChecksumIfEventContainsMid(){
+        Map<String, Object> eventMap = new Gson().fromJson(EventFixture.JSON_WITH_MID, Map.class);
+        Event event = new Event(eventMap);
+
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(reverseSearchStore, deviceStore, googleReverseSearch, "false");
+
+        TaskCoordinator task = mock(TaskCoordinator.class);
+        reverseSearchStreamTask.processEvent(event, collector);
+
+        Map<String, Object> metadata = (Map<String, Object>) event.getMap().get("metadata");
+        Assert.assertEquals(event.getMid(), metadata.get("checksum"));
+    }
+
+    @Test
     public void ShouldValidateTimestampAndCreateIfNotPresent() throws Exception{
         Map<String, Object> eventMap = new HashMap<String, Object>();
         eventMap.put("ets", 1453202865000L);
@@ -179,5 +193,11 @@ public class ReverseSearchTest {
         Map<String, Object> event = new HashMap<String,Object>();
         event.put("edata",edata);
         return event;
+    }
+
+    private ChecksumGenerator getChecksumGenerator(){
+        String[] keys_to_accept = {"uid", "ts", "cid", "gdata","edata"};
+        ChecksumGenerator checksumGenerator = new ChecksumGenerator(new KeysToAccept(keys_to_accept));
+        return checksumGenerator;
     }
 }

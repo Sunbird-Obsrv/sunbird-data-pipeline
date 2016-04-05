@@ -35,6 +35,7 @@ import org.ekstep.ep.samza.system.Device;
 import org.ekstep.ep.samza.system.Event;
 import org.ekstep.ep.samza.system.Location;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ReverseSearchStreamTask implements StreamTask, InitableTask {
@@ -64,9 +65,6 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
         checksumGenerator = new ChecksumGenerator(new KeysToAccept(keys_to_accept));
     }
 
-    public ReverseSearchStreamTask() {
-    }
-
     //For testing only
     protected ReverseSearchStreamTask(KeyValueStore<String, Object> reverseSearchStore,
                                       KeyValueStore<String, Object> deviceStore,
@@ -75,6 +73,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
         this.deviceStore = deviceStore;
         this.googleReverseSearch = googleReverseSearch;
         this.bypass = bypass;
+
         String[] keys_to_accept = {"uid", "ts", "cid", "gdata","edata"};
         checksumGenerator = new ChecksumGenerator(new KeysToAccept(keys_to_accept));
     }
@@ -147,6 +146,14 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
             } else {
                 event.setFlag("ldata_obtained", false);
                 collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
+            }
+            if(event.getMid() == null){
+                checksumGenerator.stampChecksum(event);
+            }
+            else {
+                Map<String, Object> metadata = new HashMap<String, Object>();
+                metadata.put("checksum",event.getMid());
+                event.setMetadata(metadata);
             }
             checksumGenerator.stampChecksum(event);
             event.setFlag("ldata_processed",true);

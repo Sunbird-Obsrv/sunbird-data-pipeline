@@ -78,5 +78,9 @@ public class Event implements Mappable {
             }
         }
     }
+
+    public String getMid() {
+        return (String) map.get("mid");
+    }
 }
 
