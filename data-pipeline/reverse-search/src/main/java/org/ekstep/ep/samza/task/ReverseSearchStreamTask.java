@@ -65,6 +65,10 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
         checksumGenerator = new ChecksumGenerator(new KeysToAccept(keys_to_accept));
     }
 
+    
+    public ReverseSearchStreamTask() {
+    }
+
     //For testing only
     protected ReverseSearchStreamTask(KeyValueStore<String, Object> reverseSearchStore,
                                       KeyValueStore<String, Object> deviceStore,
