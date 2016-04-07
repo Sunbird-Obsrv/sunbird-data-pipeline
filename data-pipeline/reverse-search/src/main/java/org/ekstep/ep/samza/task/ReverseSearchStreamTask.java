@@ -65,7 +65,6 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
         checksumGenerator = new ChecksumGenerator(new KeysToAccept(keys_to_accept));
     }
 
-    
     public ReverseSearchStreamTask() {
     }
 
@@ -159,7 +158,6 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
                 metadata.put("checksum",event.getMid());
                 event.setMetadata(metadata);
             }
-            checksumGenerator.stampChecksum(event);
             event.setFlag("ldata_processed",true);
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
         } catch (Exception e) {
