@@ -4,9 +4,10 @@ import javax.sql.DataSource;
 import java.io.PrintStream;
 import java.sql.*;
 import java.text.ParseException;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Map;
 
-public class UpdateProfileDto implements IModel{
+public class UpdateProfileDto implements IModel {
     public static final String UID = "uid";
     public static final String HANDLE = "handle";
     public static final String GENDER = "gender";
@@ -38,12 +39,12 @@ public class UpdateProfileDto implements IModel{
 
     @Override
     public void process(Event event) throws SQLException, ParseException {
-        Map<String,Object> EKS = event.getEks();
+        Map<String, Object> EKS = event.getEks();
 
         java.util.Date timeOfEvent = event.getTs();
-        parseData(EKS,timeOfEvent);
+        parseData(EKS, timeOfEvent);
 
-        if(!isProfileExist((String) EKS.get("uid"))){
+        if (!isProfileExist((String) EKS.get("uid"))) {
             createProfile(event);
         }
 
@@ -52,19 +53,19 @@ public class UpdateProfileDto implements IModel{
 
     private void parseData(Map<String, Object> EKS, java.util.Date timeOfEvent) throws ParseException {
         uid = (String) EKS.get(UID);
-        validateEmptyString(UID,uid);
+        validateEmptyString(UID, uid);
 
         handle = (String) EKS.get(HANDLE);
-        validateEmptyString(HANDLE,handle);
+        validateEmptyString(HANDLE, handle);
 
         gender = (String) EKS.get(GENDER);
-        age = getValue(EKS, AGE);
-        yearOfBirth = getYear(((Double) EKS.get(AGE)).intValue(), timeOfEvent);
-        standard = getValue(EKS, STANDARD);
+        age = getIntegerValueFromDouble(EKS, AGE);
+        yearOfBirth = getYear(EKS, timeOfEvent);
+        standard = getIntegerValueFromDouble(EKS, STANDARD);
         language = (String) EKS.get(LANGUAGE);
-        day = getValue(EKS,DAY);
-        month = getValue(EKS, MONTH);
-        isGroupUser = getBoolean(EKS,IS_GROUP_USER);
+        day = getIntegerValueFromDouble(EKS, DAY);
+        month = getIntegerValueFromDouble(EKS, MONTH);
+        isGroupUser = getBoolean(EKS, IS_GROUP_USER);
 
         java.util.Date date = new java.util.Date();
         updatedAt = new Timestamp(date.getTime());
@@ -76,16 +77,17 @@ public class UpdateProfileDto implements IModel{
         return booleanValue;
     }
 
-    private void validateEmptyString(String name,String value) throws ParseException {
-        if(value == null || value.isEmpty()) throw new ParseException(String.format("%s can't be blank",name),1);
+    private void validateEmptyString(String name, String value) throws ParseException {
+        if (value == null || value.isEmpty()) throw new ParseException(String.format("%s can't be blank", name), 1);
     }
 
-    private Integer getValue(Map<String, Object> EKS,String name) {
-        Integer value = ((Double) EKS.get(name)).intValue();
-        if(value != -1){
-            return value;
+    private Integer getIntegerValueFromDouble(Map<String, Object> EKS, String name) {
+        if (!EKS.containsKey(name)) {
+            return null;
         }
-        return null;
+        return ((Double) EKS.get(name)).intValue() != -1 ?
+                (Integer) ((Double) EKS.get(name)).intValue()
+                : null;
     }
 
     private void saveData() throws SQLException, ParseException {
@@ -99,16 +101,16 @@ public class UpdateProfileDto implements IModel{
 
             preparedStmt = connection.prepareStatement(updateQuery);
 
-            setIntegerValues(preparedStmt,1,yearOfBirth);
+            setIntegerValues(preparedStmt, 1, yearOfBirth);
             preparedStmt.setString(2, gender);
-            setIntegerValues(preparedStmt,3,age);
-            setIntegerValues(preparedStmt,4,standard);
+            setIntegerValues(preparedStmt, 3, age);
+            setIntegerValues(preparedStmt, 4, standard);
             preparedStmt.setString(5, language);
             preparedStmt.setTimestamp(6, updatedAt);
             preparedStmt.setString(7, handle);
-            setIntegerValues(preparedStmt,8,day);
-            setIntegerValues(preparedStmt,9,month);
-            preparedStmt.setBoolean(10,isGroupUser);
+            setIntegerValues(preparedStmt, 8, day);
+            setIntegerValues(preparedStmt, 9, month);
+            preparedStmt.setBoolean(10, isGroupUser);
 
             preparedStmt.setString(11, uid);
 
@@ -116,8 +118,7 @@ public class UpdateProfileDto implements IModel{
 
             if (affectedRows == 0) {
                 throw new SQLException("Updating Profile failed, no rows affected.");
-            }
-            else {
+            } else {
                 this.setIsInserted();
             }
 
@@ -125,16 +126,16 @@ public class UpdateProfileDto implements IModel{
             System.err.println("Exception: " + e);
             e.printStackTrace(new PrintStream(System.err));
         } finally {
-            if(preparedStmt!=null)
+            if (preparedStmt != null)
                 preparedStmt.close();
-            if(connection!=null)
+            if (connection != null)
                 connection.close();
         }
     }
 
     private void setIntegerValues(PreparedStatement preparedStmt, int index, Integer value) throws SQLException {
-        if(value != null)
-            preparedStmt.setInt(index,value);
+        if (value != null)
+            preparedStmt.setInt(index, value);
         else
             preparedStmt.setNull(index, Types.INTEGER);
     }
@@ -151,14 +152,14 @@ public class UpdateProfileDto implements IModel{
         connection = dataSource.getConnection();
         ResultSet resultSet = null;
 
-        try{
+        try {
             String query = "select uid from profile where uid = ?";
             preparedStmt = connection.prepareStatement(query);
             preparedStmt.setString(1, uid);
 
             resultSet = preparedStmt.executeQuery();
 
-            if(resultSet.first()){
+            if (resultSet.first()) {
                 flag = true;
             }
 
@@ -166,30 +167,34 @@ public class UpdateProfileDto implements IModel{
             System.err.println("Exception: " + e);
             e.printStackTrace(new PrintStream(System.err));
         } finally {
-            if(preparedStmt!=null)
+            if (preparedStmt != null)
                 preparedStmt.close();
-            if(connection!=null)
+            if (connection != null)
                 connection.close();
         }
         return flag;
     }
 
-    private Integer getYear(Integer age, java.util.Date timeOfEvent) throws ParseException {
-        if(age!=null && age != -1){
+    private Integer getYear(Map<String, Object> EKS, java.util.Date timeOfEvent) throws ParseException {
+        if (!EKS.containsKey(AGE)) {
+            return null;
+        }
+        Integer ageInEvent = ((Double) EKS.get(AGE)).intValue();
+        if (ageInEvent != null && ageInEvent != -1) {
             Calendar timeOfEventFromCalendar = Calendar.getInstance();
             timeOfEventFromCalendar.setTime(timeOfEvent);
-            return timeOfEventFromCalendar.get(Calendar.YEAR) - age;
+            return timeOfEventFromCalendar.get(Calendar.YEAR) - ageInEvent;
         }
         return null;
     }
 
     @Override
-    public void setIsInserted(){
+    public void setIsInserted() {
         this.isInserted = true;
     }
 
     @Override
-    public boolean getIsInserted(){
+    public boolean getIsInserted() {
         return this.isInserted;
     }
 

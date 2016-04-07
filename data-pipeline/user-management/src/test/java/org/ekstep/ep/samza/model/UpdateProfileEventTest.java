@@ -20,7 +20,7 @@ public class UpdateProfileEventTest {
     }
 
     @Before
-    public void setUp(){
+    public void setUp() {
         String url = String.format("jdbc:mysql://%s:%s/%s", "localhost", "3306", "eptestdb");
         dataSource = new HikariDataSource();
         dataSource.setJdbcUrl(url);
@@ -47,6 +47,21 @@ public class UpdateProfileEventTest {
         profileDto.process(event);
 
         event = new Event(new EventFixture().UPDATE_PROFILE_EVENT_1(uid));
+
+        UpdateProfileDto updateProfileDto = new UpdateProfileDto(dataSource);
+        updateProfileDto.process(event);
+
+        Assert.assertEquals(true, updateProfileDto.getIsInserted());
+    }
+
+    @Test
+    public void ShouldUpdateProfileWithNoAge() throws SQLException, ParseException {
+        Event event = new Event(new EventFixture().CREATE_PROFILE_EVENT_1(uid));
+
+        CreateProfileDto profileDto = new CreateProfileDto(dataSource);
+        profileDto.process(event);
+
+        event = new Event(new EventFixture().UPDATE_PROFILE_EVENT_1_WITH_NOO_AGE(uid));
 
         UpdateProfileDto updateProfileDto = new UpdateProfileDto(dataSource);
         updateProfileDto.process(event);
