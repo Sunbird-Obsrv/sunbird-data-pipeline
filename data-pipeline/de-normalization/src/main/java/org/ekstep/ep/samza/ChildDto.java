@@ -78,7 +78,10 @@ public class ChildDto {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
-        } finally {
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        finally {
             if(statement!=null)
                 statement.close();
             if(connection!=null)
