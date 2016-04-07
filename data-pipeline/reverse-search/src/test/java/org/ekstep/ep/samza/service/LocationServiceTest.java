@@ -58,4 +58,52 @@ public class LocationServiceTest {
         verify(googleReverseSearch, times(0)).getLocation(anyString());
         assertEquals(expectedLocationJson, JsonWriter.objectToJson(actualLocation));
     }
+
+    // Lisbon - 38.736946, -9.142685
+    // London - 51.5085300, -0.1257400
+    // Madrid - 40.4165000, -3.7025600
+    @Test
+    public void shouldGetAppropriateCoordinatesIfLatIsNegative() {
+        String preciseLocation = "-37.813611, 144.963056";
+        String nearestCacheLocation = "-37.814409,144.963169";
+        String expectedLocationJson = "{\"@type\":\"org.ekstep.ep.samza.system.Location\",\"city\":\"Melbourne\",\"district\":\"Melbourne\",\"state\":\"Melbourne\",\"country\":\"Australia\"}";
+        Location expectedLocation = (Location) JsonReader.jsonToJava(expectedLocationJson);
+        when(googleReverseSearch.getLocation(nearestCacheLocation)).thenReturn(expectedLocation);
+        when(reverseSearchStore.get(nearestCacheLocation)).thenReturn(null);
+
+        Location actualLocation = locationService.getLocation(preciseLocation);
+
+        verify(googleReverseSearch, times(1)).getLocation(nearestCacheLocation);
+        verify(reverseSearchStore, times(1)).put(nearestCacheLocation, expectedLocationJson);
+    }
+
+    @Test
+    public void shouldGetAppropriateCoordinatesIfLongIsNegative() {
+        String preciseLocation = "40.7142700,-74.0059700";
+        String nearestCacheLocation = "40.714157,-74.00557";
+        String expectedLocationJson = "{\"@type\":\"org.ekstep.ep.samza.system.Location\",\"city\":\"New York\",\"district\":\"New York\",\"state\":\"New York\",\"country\":\"USA\"}";
+        Location expectedLocation = (Location) JsonReader.jsonToJava(expectedLocationJson);
+        when(googleReverseSearch.getLocation(nearestCacheLocation)).thenReturn(expectedLocation);
+        when(reverseSearchStore.get(nearestCacheLocation)).thenReturn(null);
+
+        Location actualLocation = locationService.getLocation(preciseLocation);
+
+        verify(googleReverseSearch, times(1)).getLocation(nearestCacheLocation);
+        verify(reverseSearchStore, times(1)).put(nearestCacheLocation, expectedLocationJson);
+    }
+
+    @Test
+    public void shouldGetAppropriateCoordinatesIfBothLatLongAreNegative() {
+        String preciseLocation = "-12.043333, -77.028333";
+        String nearestCacheLocation = "-12.043658,-77.027488";
+        String expectedLocationJson = "{\"@type\":\"org.ekstep.ep.samza.system.Location\",\"city\":\"Lima\",\"district\":\"Lima\",\"state\":\"Lima\",\"country\":\"Peru\"}";
+        Location expectedLocation = (Location) JsonReader.jsonToJava(expectedLocationJson);
+        when(googleReverseSearch.getLocation(nearestCacheLocation)).thenReturn(expectedLocation);
+        when(reverseSearchStore.get(nearestCacheLocation)).thenReturn(null);
+
+        Location actualLocation = locationService.getLocation(preciseLocation);
+
+        verify(googleReverseSearch, times(1)).getLocation(nearestCacheLocation);
+        verify(reverseSearchStore, times(1)).put(nearestCacheLocation, expectedLocationJson);
+    }
 }

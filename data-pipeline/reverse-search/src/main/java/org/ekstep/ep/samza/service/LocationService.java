@@ -7,6 +7,8 @@ import org.apache.samza.storage.kv.KeyValueStore;
 import org.ekstep.ep.samza.system.Location;
 import org.ekstep.ep.samza.util.LatLongUtils;
 
+import java.text.NumberFormat;
+
 public class LocationService {
     public static final double ONE_DECIMAL_DEGREE_IN_METER_AT_EQUATOR_IN_KMS = 111320.0;
     private KeyValueStore<String, Object> reverseSearchStore;
@@ -46,13 +48,27 @@ public class LocationService {
         LatLng latLng = LatLongUtils.parseLocation(loc);
         double areaSize = convertAreaSizeFromMetersToDecimalDegrees();
 
-        int areaX = (int) (latLng.lng / areaSize);
-        int areaY = (int) (latLng.lat / areaSize);
-        double midX = sixDigits((areaX * areaSize) + areaSize / 2);
-        double midY = sixDigits((areaY * areaSize) + areaSize / 2);
+        double midX = getMidPointCoordinate(latLng.lng,areaSize);
+        double midY = getMidPointCoordinate(latLng.lat,areaSize);
 
-        return new Area(latLng.lat, latLng.lng, areaX, areaY, midX, midY);
+        return new Area(latLng.lat, latLng.lng, midX, midY);
     }
+
+    private double getMidPointCoordinate(double value, double areaSize) {
+        double midCoordinate;
+        double areaSideLength;
+        if(value<0) {
+            areaSideLength = -areaSize;
+        }else{
+            areaSideLength = areaSize;
+        }
+
+        int squareNumber = (int) (value / areaSideLength);
+        midCoordinate = sixDigits((squareNumber * areaSideLength) + areaSideLength / 2);
+        return midCoordinate;
+    }
+
+
 
     private double sixDigits(double x) {
         final NumberFormat numFormat = NumberFormat.getNumberInstance();
@@ -77,11 +93,9 @@ public class LocationService {
         private double midLongitude;
         private double midLatitude;
 
-        Area(double latitude, double longitude, double x, double y, double midLongitude, double midLatitude) {
+        Area(double latitude, double longitude, double midLongitude, double midLatitude) {
             this.latitude = latitude;
             this.longitude = longitude;
-            this.x = x;
-            this.y = y;
             this.midLongitude = midLongitude;
             this.midLatitude = midLatitude;
         }
