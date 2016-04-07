@@ -66,11 +66,10 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
         IModel model = modelMap.get(event.getEId());
         if (model != null) {
             model.process(event);
-            if (model.getIsInserted()) {
-                collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
-            } else {
+            if (!model.getIsInserted()) {
                 collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
             }
+            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
         } else {
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
         }
