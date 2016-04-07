@@ -100,7 +100,7 @@ public class DenormalizationTaskTest {
     }
 
     @Test
-    public void ShouldSendOutputToFailedTopic() throws Exception {
+    public void ShouldSendOutputToRetryTopicWhenProblemWithDb() throws Exception {
         stub(eventMock.isProcessed()).toReturn(false);
         stub(eventMock.hadIssueWithDb()).toReturn(true);
 
@@ -112,7 +112,7 @@ public class DenormalizationTaskTest {
         deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
 
         verify(collectorMock,times(1)).send(argument.capture());
-        validateStreams(argument, message, new String[]{FAILED_TOPIC});
+        validateStreams(argument, message, new String[]{RETRY_TOPIC});
     }
 
     @Test

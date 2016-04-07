@@ -65,12 +65,11 @@ public class DeNormalizationTask implements StreamTask, InitableTask{
 
     private void populateTopic(MessageCollector collector, Event event) {
 
-        if (event.canBeProcessed() && !event.isChildDataProcessed()) {
+        boolean childDataNotProcessed = event.canBeProcessed() && !event.isChildDataProcessed();
+        boolean hadProblemWithDb = event.hadIssueWithDb();
+        if (childDataNotProcessed || hadProblemWithDb)
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", retryTopic), event.getData()));
-        } else if(event.hadIssueWithDb())  {
-            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getData()));
-        } else {
+        else
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getData()));
-        }
     }
 }
