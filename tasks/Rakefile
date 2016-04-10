@@ -140,6 +140,10 @@ namespace :scheduled do
     require_relative '../lib/ecosystem-platform/jobs/file_archiver.rb'
     EcosystemPlatform::Jobs::FileArchiver.perform()
   end
+  task :learner_insertion do
+    require_relative '../lib/ecosystem-platform/jobs/learner_insertion.rb'
+    EcosystemPlatform::Jobs::LearnerInsertion.perform()
+  end
   task :handle_denormalizer do
     require_relative '../lib/ecosystem-platform/jobs/handle_denormalizer.rb'
     index_name = ENV["index"] ? ENV["index"] : "ecosystem-"+Date.today.strftime("%Y-%m")
