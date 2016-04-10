@@ -61,7 +61,7 @@ module EcosystemPlatform
           uid_count = response.aggregations.users.value
           logger.info "FOUND #{uid_count} hits."
           response.aggregations.uids.buckets.each do |bucket|
-            uid = bucket.key
+            uid = bucket["key"]
             results = @db_client.query("SELECT * FROM learner where uid = '#{uid}'")
             logger.info "<- RESULT #{result}"
           end
