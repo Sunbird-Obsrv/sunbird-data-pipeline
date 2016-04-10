@@ -62,11 +62,13 @@ module EcosystemPlatform
           logger.info "FOUND #{uid_count} hits."
           response.aggregations.uids.buckets.each do |bucket|
             uid = bucket["key"]
-            result = statement.query("SELECT * FROM learner where uid = '#{uid}'")
+            logger.info("UID #{uid}")
+            result = @db_client.query("SELECT * FROM learner where uid = '#{uid}'")
             if(result.size==0)
               logger.info "INSERTING #{uid}"
+              @db_client.query("insert into learner (created_at, uid) VALUES ('#{Time.now}', '#{uid}');")
             else
-              logger.info "NOTHING TO DO"
+              logger.info "NOTHING TO DO #{uid}"
             end
           end
           logger.end_task
