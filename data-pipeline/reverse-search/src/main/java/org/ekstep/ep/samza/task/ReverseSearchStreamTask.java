@@ -115,10 +115,12 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
                     deviceStore.put(did, djson);
                 } else {
                     System.out.println("Trying to pick from device");
-                    String stored_device = (String) deviceStore.get(did);
-                    System.out.println("stored_device, " + stored_device);
-                    device = (Device) JsonReader.jsonToJava(stored_device);
-                    location = device.getLocation();
+                    String storedDevice = (String) deviceStore.get(did);
+                    if (storedDevice != null) {
+                        System.out.println("stored_device, " + storedDevice);
+                        device = (Device) JsonReader.jsonToJava(storedDevice);
+                        location = device.getLocation();
+                    }
                 }
             } catch (Exception e) {
                 System.out.println(e);
@@ -143,7 +145,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
                 metadata.put("checksum", event.getMid());
                 event.setMetadata(metadata);
             }
-            event.setFlag("ldata_processed",true);
+            event.setFlag("ldata_processed", true);
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
         } catch (Exception e) {
             System.out.println("ok");

@@ -3,12 +3,10 @@ package org.ekstep.ep.samza.task;
 import com.google.gson.Gson;
 import com.library.checksum.system.ChecksumGenerator;
 import com.library.checksum.system.KeysToAccept;
-import org.apache.samza.config.Config;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.task.MessageCollector;
-import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.ekstep.ep.samza.service.LocationService;
@@ -96,6 +94,22 @@ public class ReverseSearchTest {
         reverseSearchStreamTask.processEvent(event1, collector);
         verify(locationService, times(0)).getLocation(anyString());
         verify(deviceStore, times(2)).get("bc811958-b4b7-4873-a43a-03718edba45b");
+        verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
+    }
+
+    @Test
+    public void shouldNotFailIfLocationInDeviceStoreIsNotPresent() {
+
+        when(deviceStore.get("bc811958-b4b7-4873-a43a-03718edba45b")).thenReturn(null);
+        Event event = createEventMock("");
+
+        when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService);
+
+        reverseSearchStreamTask.processEvent(event, collector);
+        verify(locationService, times(0)).getLocation(anyString());
+        verify(deviceStore, times(1)).get("bc811958-b4b7-4873-a43a-03718edba45b");
         verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
     }
 
