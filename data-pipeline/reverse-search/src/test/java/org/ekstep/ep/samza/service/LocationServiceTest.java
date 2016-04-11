@@ -42,7 +42,7 @@ public class LocationServiceTest {
 
         assertEquals(expectedLocation, actualLocation);
         verify(googleReverseSearch, times(1)).getLocation(nearestCacheLocation);
-        verify(reverseSearchStore, times(1)).put(nearestCacheLocation, expectedLocationJson);
+        verify(reverseSearchStore, times(1)).put(nearestCacheLocation, expectedLocation);
     }
 
     @Test
@@ -50,7 +50,8 @@ public class LocationServiceTest {
         String preciseLocation = "12.972442, 77.580643";
         String nearestCacheLocation = "12.972512,77.580848";
         String expectedLocationJson = "{\"@type\":\"org.ekstep.ep.samza.system.Location\",\"city\":\"Bengaluru\",\"district\":\"Bengaluru\",\"state\":\"Karnataka\",\"country\":\"India\"}";
-        when(reverseSearchStore.get(nearestCacheLocation)).thenReturn(expectedLocationJson);
+        Location expectedLocation = (Location) JsonReader.jsonToJava(expectedLocationJson);
+        when(reverseSearchStore.get(nearestCacheLocation)).thenReturn(expectedLocation);
 
         Location actualLocation = locationService.getLocation(preciseLocation);
 
@@ -74,7 +75,7 @@ public class LocationServiceTest {
         Location actualLocation = locationService.getLocation(preciseLocation);
 
         verify(googleReverseSearch, times(1)).getLocation(nearestCacheLocation);
-        verify(reverseSearchStore, times(1)).put(nearestCacheLocation, expectedLocationJson);
+        verify(reverseSearchStore, times(1)).put(nearestCacheLocation, expectedLocation);
         assertEquals(expectedLocationJson, JsonWriter.objectToJson(actualLocation));
     }
 
@@ -90,7 +91,7 @@ public class LocationServiceTest {
         Location actualLocation = locationService.getLocation(preciseLocation);
 
         verify(googleReverseSearch, times(1)).getLocation(nearestCacheLocation);
-        verify(reverseSearchStore, times(1)).put(nearestCacheLocation, expectedLocationJson);
+        verify(reverseSearchStore, times(1)).put(nearestCacheLocation, expectedLocation);
         assertEquals(expectedLocationJson, JsonWriter.objectToJson(actualLocation));
     }
 
@@ -106,7 +107,7 @@ public class LocationServiceTest {
         Location actualLocation = locationService.getLocation(preciseLocation);
 
         verify(googleReverseSearch, times(1)).getLocation(nearestCacheLocation);
-        verify(reverseSearchStore, times(1)).put(nearestCacheLocation, expectedLocationJson);
+        verify(reverseSearchStore, times(1)).put(nearestCacheLocation, expectedLocation);
         assertEquals(expectedLocationJson, JsonWriter.objectToJson(actualLocation));
     }
 }
