@@ -3,6 +3,7 @@ package org.ekstep.ep.samza.task;
 import kafka.admin.AdminUtils;
 import org.I0Itec.zkclient.ZkClient;
 import org.apache.samza.config.Config;
+import org.apache.samza.metrics.Counter;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
@@ -12,14 +13,18 @@ import org.ekstep.ep.samza.exception.PartnerTopicNotPresentException;
 
 import java.util.Map;
 
-public class PartnerDataRouterTask implements StreamTask, InitableTask {
+public class PartnerDataRouterTask implements StreamTask, InitableTask, WindowableTask {
     private String successTopicSuffix;
     private String zkServer;
+    private Counter messageCount;
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
         successTopicSuffix = config.get("output.success.topic.prefix", "partner");
         zkServer = config.get("systems.kafka.consumer.zookeeper.connect", "localhost:2181");
+        messageCount = context
+                .getMetricsRegistry()
+                .newCounter(getClass().getName(), "message-count");
     }
 
     @Override
@@ -35,6 +40,8 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask {
 //            throw new PartnerTopicNotPresentException(topic+" does not exists");
         SystemStream stream = new SystemStream("kafka", topic);
         collector.send(new OutgoingMessageEnvelope(stream, event.getData()));
+        messageCount.inc();
+
     }
 
     protected Event getEvent(Map<String, Object> message) {
@@ -45,4 +52,9 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask {
         return AdminUtils.topicExists(new ZkClient(zkServer), topic);
     }
 
+    @Override
+    public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
+        messageCount.clear();
+
+    }
 }

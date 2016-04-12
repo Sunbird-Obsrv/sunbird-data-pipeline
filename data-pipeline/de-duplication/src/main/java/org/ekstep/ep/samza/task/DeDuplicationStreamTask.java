@@ -34,7 +34,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DeDuplicationStreamTask implements StreamTask, InitableTask {
+public class DeDuplicationStreamTask implements StreamTask, InitableTask, WindowableTask {
 
     private KeyValueStore<String, Object> deDuplicationStore;
 
@@ -72,6 +72,7 @@ public class DeDuplicationStreamTask implements StreamTask, InitableTask {
             String message = (String) envelope.getMessage();
             jsonObject = validateJson(collector, message, gson, jsonObject);
             processEvent(new Event(jsonObject), collector);
+            messageCount.inc();
         }
         catch(JsonSyntaxException e){
             e.printStackTrace();
@@ -81,7 +82,6 @@ public class DeDuplicationStreamTask implements StreamTask, InitableTask {
             e.printStackTrace();
             System.err.println("Error while getting message"+e);
         }
-        messageCount.inc();
     }
 
     public Map<String,Object> validateJson(MessageCollector collector, String message, Gson gson, Map<String, Object> jsonObject) throws JsonSyntaxException {
@@ -105,5 +105,10 @@ public class DeDuplicationStreamTask implements StreamTask, InitableTask {
             System.out.println("Output to Failed Topic if the checksum already present in store");
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getJson()));
         }
+    }
+
+    @Override
+    public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
+        messageCount.clear();
     }
 }

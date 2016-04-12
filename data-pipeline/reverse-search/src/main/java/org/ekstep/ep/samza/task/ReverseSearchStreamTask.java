@@ -24,6 +24,7 @@ import com.cedarsoftware.util.io.JsonWriter;
 import com.library.checksum.system.ChecksumGenerator;
 import com.library.checksum.system.KeysToAccept;
 import org.apache.samza.config.Config;
+import org.apache.samza.metrics.Counter;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
@@ -39,7 +40,7 @@ import org.ekstep.ep.samza.system.Location;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ReverseSearchStreamTask implements StreamTask, InitableTask {
+public class ReverseSearchStreamTask implements StreamTask, InitableTask, WindowableTask {
 
     private KeyValueStore<String, Object> deviceStore;
     private String successTopic;
@@ -48,6 +49,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
     private ChecksumGenerator checksumGenerator;
     private LocationService locationService;
     private double reverseSearchCacheAreaSizeInMeters;
+    private Counter messageCount;
 
     @Override
     public void init(Config config, TaskContext context) {
@@ -67,6 +69,9 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
         String[] keys_to_accept = {"uid", "ts", "gdata", "edata"};
         checksumGenerator = new ChecksumGenerator(new KeysToAccept(keys_to_accept));
         locationService = new LocationService(reverseSearchStore, googleReverseSearch, reverseSearchCacheAreaSizeInMeters);
+        messageCount = context
+                .getMetricsRegistry()
+                .newCounter(getClass().getName(), "message-count");
     }
 
     public ReverseSearchStreamTask() {
@@ -91,6 +96,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
         try {
             jsonObject = (Map<String, Object>) envelope.getMessage();
             processEvent(new Event(jsonObject), collector);
+            messageCount.inc();
         } catch (Exception e) {
             System.err.println("Error while getting message");
         }
@@ -155,4 +161,8 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask {
 
     }
 
+    @Override
+    public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
+        messageCount.clear();
+    }
 }

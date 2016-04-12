@@ -14,7 +14,7 @@ import org.ekstep.ep.samza.Event;
 
 import java.util.Map;
 
-public class DeNormalizationTask implements StreamTask, InitableTask{
+public class DeNormalizationTask implements StreamTask, InitableTask, WindowableTask{
     private String successTopic;
     private String failedTopic;
     private KeyValueStore<String, Child> childData;
@@ -71,5 +71,10 @@ public class DeNormalizationTask implements StreamTask, InitableTask{
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", retryTopic), event.getData()));
         else
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getData()));
+    }
+
+    @Override
+    public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
+        messageCount.clear();
     }
 }

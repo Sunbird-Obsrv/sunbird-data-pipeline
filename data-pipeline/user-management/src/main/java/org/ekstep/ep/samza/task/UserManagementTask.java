@@ -3,6 +3,7 @@ package org.ekstep.ep.samza.task;
 import com.google.gson.Gson;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.samza.config.Config;
+import org.apache.samza.metrics.Counter;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
@@ -14,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class UserManagementTask implements StreamTask, InitableTask, ClosableTask {
+public class UserManagementTask implements StreamTask, InitableTask, ClosableTask, WindowableTask {
 
     private String successTopic;
     private String failedTopic;
@@ -23,6 +24,7 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
     private String dbPassword;
     private HikariDataSource dataSource;
     private Map<String, IModel> modelMap = new HashMap<String, IModel>();
+    private Counter messageCount;
 
 
     @Override
@@ -35,6 +37,9 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
         dbPassword = config.get("db.password");
 
         initDataSource();
+        messageCount = context
+                .getMetricsRegistry()
+                .newCounter(getClass().getName(), "message-count");
     }
 
     private void initDataSource() {
@@ -56,6 +61,7 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
             Map<String, Object> jsonObject = (Map<String, Object>) envelope.getMessage();
             Event event = new Event(new Gson().toJson(jsonObject));
             processEvent(event, collector);
+            messageCount.inc();
         } catch (Exception e) {
             System.err.println("Exception: " + e);
             e.printStackTrace(new PrintStream(System.err));
@@ -78,5 +84,11 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
     @Override
     public void close() throws Exception {
         dataSource.close();
+    }
+
+    @Override
+    public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
+        messageCount.clear();
+
     }
 }
