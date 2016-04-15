@@ -3,6 +3,8 @@ package org.ekstep.ep.samza.task;
 
 import com.google.gson.Gson;
 import org.apache.samza.config.Config;
+import org.apache.samza.metrics.Counter;
+import org.apache.samza.metrics.MetricsRegistry;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
@@ -30,6 +32,8 @@ public class UserManagementTaskTest {
     private MessageCollector collectorMock;
     private IncomingMessageEnvelope envelopMock;
     private TaskCoordinator coordinatorMock;
+    private MetricsRegistry metricsRegistryMock;
+    private Counter counterMock;
 
     @Before
     public void setup() {
@@ -39,13 +43,16 @@ public class UserManagementTaskTest {
         collectorMock = mock(MessageCollector.class);
         envelopMock = mock(IncomingMessageEnvelope.class);
         coordinatorMock = mock(TaskCoordinator.class);
+        metricsRegistryMock = mock(MetricsRegistry.class);
+        counterMock = mock(Counter.class);
 
         when(configMock.get("output.success.topic.name", "sandbox.learners")).thenReturn(SUCCESS_TOPIC);
         when(configMock.get("output.failed.topic.name", "sandbox.learners.fail")).thenReturn(FAILURE_TOPIC);
         when(configMock.get("db.url")).thenReturn("jdbc:mysql://localhost:3306/eptestdb");
         when(configMock.get("db.userName")).thenReturn("jenkins");
         when(configMock.get("db.password")).thenReturn("ec0syst3m");
-
+        when(contextMock.getMetricsRegistry()).thenReturn(metricsRegistryMock);
+        when(metricsRegistryMock.newCounter("org.ekstep.ep.samza.task.UserManagementTask", "message-count")).thenReturn(counterMock);
     }
 
     @Test
@@ -85,6 +92,7 @@ public class UserManagementTaskTest {
         userManagementTask.process(envelopMock, collectorMock, coordinatorMock);
 
         verify(collectorMock).send(argThat(validateOutputTopic(event.getMap(), SUCCESS_TOPIC)));
+        verify(counterMock).inc();
     }
 
     @Test
@@ -99,6 +107,7 @@ public class UserManagementTaskTest {
         userManagementTask.process(envelopMock, collectorMock, coordinatorMock);
 
         verify(collectorMock).send(argThat(validateOutputTopic(event.getMap(), SUCCESS_TOPIC)));
+        verify(counterMock).inc();
     }
 
     private ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
