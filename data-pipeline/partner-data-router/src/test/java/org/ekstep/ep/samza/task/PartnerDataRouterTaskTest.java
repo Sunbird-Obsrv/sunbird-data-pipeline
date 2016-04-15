@@ -1,11 +1,16 @@
 package org.ekstep.ep.samza.task;
 
+import org.apache.samza.config.Config;
+import org.apache.samza.metrics.Counter;
+import org.apache.samza.metrics.MetricsRegistry;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.task.MessageCollector;
+import org.apache.samza.task.TaskContext;
 import org.ekstep.ep.samza.Event;
 import org.ekstep.ep.samza.exception.PartnerTopicNotPresentException;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,10 +39,18 @@ public class PartnerDataRouterTaskTest {
         PartnerDataRouterTask task = new PartnerDataRouterTaskStub(eventMock,true);
         IncomingMessageEnvelope envelopeMock= mock(IncomingMessageEnvelope.class);
         HashMap<String, Object> message = new HashMap<String, Object>();
+        MetricsRegistry metricsRegistryMock = mock(MetricsRegistry.class);
+        Counter counterMock = mock(Counter.class);
+        Config configMock = Mockito.mock(Config.class);
+        TaskContext contextMock = Mockito.mock(TaskContext.class);
         stub(envelopeMock.getMessage()).toReturn(message);
         stub(eventMock.belongsToAPartner()).toReturn(true);
         MessageCollector collectorMock = mock(MessageCollector.class);
+        when(contextMock.getMetricsRegistry()).thenReturn(metricsRegistryMock);
+        when(metricsRegistryMock.newCounter("org.ekstep.ep.samza.task.PartnerDataRouterTaskStub", "message-count"))
+                .thenReturn(counterMock);
 
+        task.init(configMock, contextMock);
         task.process(envelopeMock, collectorMock, null);
 
         verify(eventMock).routeTo();
