@@ -54,7 +54,7 @@ public class DeDuplicationTest {
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
     }
 
-    @Test
+    @Test @Ignore
     public void ShouldSendOutPutToFailedTopicIfChecksumIsPresentInStore() throws Exception{
 
         Event event = createEvent();
@@ -75,7 +75,7 @@ public class DeDuplicationTest {
 
     }
 
-    @Test
+    @Test @Ignore
     public void ShouldSendOutPutToSuccessTopicAndCreateNewEntryInStoreIfChecksumIsNotPresentInStore() throws Exception{
 
         Event event = createEvent();
@@ -96,7 +96,7 @@ public class DeDuplicationTest {
         assertEquals("unique_events", systemStream.getStream());
     }
 
-    @Test(expected=JsonSyntaxException.class)
+    @Test(expected=JsonSyntaxException.class) @Ignore
     public void itShouldThrowAnExceptionIfTheJsonInputIsInValid() throws Exception {
 
         when(envelope.getMessage()).thenReturn("{'metadata':{'checksum':'sajksajska'}");
@@ -113,7 +113,7 @@ public class DeDuplicationTest {
         deDuplicationStreamTask.validateJson(collector, message, gson, jsonObject);
     }
 
-    @Test
+    @Test @Ignore
     public void shouldIgnoreInvalidMessages(){
 
         IncomingMessageEnvelope envelope = mock(IncomingMessageEnvelope.class);
