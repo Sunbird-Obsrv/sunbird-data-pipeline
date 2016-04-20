@@ -48,7 +48,6 @@ public class DeDuplicationStreamTask implements StreamTask, InitableTask, Window
 
         successTopic = config.get("output.success.topic.name", "unique_events");
         failedTopic = config.get("output.failed.topic.name", "duplicate_events");
-        suppressDedupe = config.get("output.failed.topic.name", "duplicate_events");
 
         this.deDuplicationStore = (KeyValueStore<String, Object>) context.getStore("de-duplication");
         this.messageCount = context
