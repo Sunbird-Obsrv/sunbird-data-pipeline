@@ -48,6 +48,7 @@ public class DeDuplicationStreamTask implements StreamTask, InitableTask, Window
 
         successTopic = config.get("output.success.topic.name", "unique_events");
         failedTopic = config.get("output.failed.topic.name", "duplicate_events");
+        suppressDedupe = config.get("output.failed.topic.name", "duplicate_events");
 
         this.deDuplicationStore = (KeyValueStore<String, Object>) context.getStore("de-duplication");
         this.messageCount = context
@@ -92,7 +93,9 @@ public class DeDuplicationStreamTask implements StreamTask, InitableTask, Window
 
     public void processEvent(Event event, MessageCollector collector) throws Exception {
         String checkSum = event.getChecksum();
-        if(deDuplicationStore.get(checkSum) == null){
+        // if(deDuplicationStore.get(checkSum) == null)
+        if(true)
+        {
             System.out.println("create new checksum if it is not present in Store");
 
             Date date = new Date();
