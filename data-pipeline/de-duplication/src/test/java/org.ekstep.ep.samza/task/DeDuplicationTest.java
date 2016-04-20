@@ -13,6 +13,7 @@ import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.system.Event;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.apache.samza.metrics.MetricsRegistry;
