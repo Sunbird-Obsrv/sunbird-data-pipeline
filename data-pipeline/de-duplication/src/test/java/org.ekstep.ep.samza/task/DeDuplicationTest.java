@@ -13,7 +13,6 @@ import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.system.Event;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Ignore;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.apache.samza.metrics.MetricsRegistry;
@@ -55,7 +54,7 @@ public class DeDuplicationTest {
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
     }
 
-    @Test @Ignore
+    @Test
     public void ShouldSendOutPutToFailedTopicIfChecksumIsPresentInStore() throws Exception{
 
         Event event = createEvent();
@@ -76,7 +75,7 @@ public class DeDuplicationTest {
 
     }
 
-    @Test @Ignore
+    @Test
     public void ShouldSendOutPutToSuccessTopicAndCreateNewEntryInStoreIfChecksumIsNotPresentInStore() throws Exception{
 
         Event event = createEvent();
@@ -97,7 +96,7 @@ public class DeDuplicationTest {
         assertEquals("unique_events", systemStream.getStream());
     }
 
-    @Test(expected=JsonSyntaxException.class) @Ignore
+    @Test(expected=JsonSyntaxException.class)
     public void itShouldThrowAnExceptionIfTheJsonInputIsInValid() throws Exception {
 
         when(envelope.getMessage()).thenReturn("{'metadata':{'checksum':'sajksajska'}");
@@ -114,7 +113,7 @@ public class DeDuplicationTest {
         deDuplicationStreamTask.validateJson(collector, message, gson, jsonObject);
     }
 
-    @Test @Ignore
+    @Test
     public void shouldIgnoreInvalidMessages(){
 
         IncomingMessageEnvelope envelope = mock(IncomingMessageEnvelope.class);

@@ -92,9 +92,7 @@ public class DeDuplicationStreamTask implements StreamTask, InitableTask, Window
 
     public void processEvent(Event event, MessageCollector collector) throws Exception {
         String checkSum = event.getChecksum();
-        // if(deDuplicationStore.get(checkSum) == null)
-        if(true)
-        {
+        if(deDuplicationStore.get(checkSum) == null){
             System.out.println("create new checksum if it is not present in Store");
 
             Date date = new Date();
