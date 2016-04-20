@@ -33,7 +33,7 @@
   <properties>
     <!-- maven specific properties -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <samza.version>0.9.1</samza.version>
+    <samza.version>0.10.0</samza.version>
   </properties>
 
   <repositories>

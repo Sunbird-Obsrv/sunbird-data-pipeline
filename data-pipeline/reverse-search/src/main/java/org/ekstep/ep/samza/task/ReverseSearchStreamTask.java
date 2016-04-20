@@ -60,7 +60,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
         reverseSearchCacheAreaSizeInMeters = Double.parseDouble(config.get("reverse.search.cache.area.size.in.meters",
                 "200"));
 
-        bypass = config.get("bypass", "false");
+        bypass = config.get("bypass", "true");
 
         KeyValueStore<String, Object> reverseSearchStore = (KeyValueStore<String, Object>) context.getStore("reverse-search");
         this.deviceStore = (KeyValueStore<String, Object>) context.getStore("device");
