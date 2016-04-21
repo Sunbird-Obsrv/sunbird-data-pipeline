@@ -30,12 +30,15 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) throws Exception {
         Map<String, Object> message = (Map<String, Object>) envelope.getMessage();
+        System.out.println("ts: " + (String) message.get("ts"));
+        System.out.println("sid: " + (String) message.get("sid"));
         Event event = getEvent(message);
         if(!event.belongsToAPartner()){
             return;
         }
         event.updateType();
         String topic = String.format("%s.%s", successTopicSuffix, event.routeTo());
+        System.out.println("TOPIC:" + topic);
 //        if(!topicExists(topic))
 //            throw new PartnerTopicNotPresentException(topic+" does not exists");
         SystemStream stream = new SystemStream("kafka", topic);
