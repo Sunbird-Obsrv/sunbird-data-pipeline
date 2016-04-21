@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza;
 
+import com.google.gson.Gson;
 import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Array;
@@ -33,6 +34,7 @@ public class Event {
 
     private String getPartnerId() {
         ArrayList<Map> tags = (ArrayList<Map>) data.get("tags");
+        System.out.println(String.format("TAGS:%s",new Gson().toJson(tags)));
         if (tags == null || tags.isEmpty())
             return null;
         String partnerid = "partnerid";
