@@ -81,7 +81,7 @@ public class EventTest {
         firstTag.put("partnerid","org.ekstep.partner.akshara");
         Event event = new Event(data);
 
-        Assert.assertEquals("org.test.partner.id.events", event.routeTo());
+        Assert.assertEquals("org.ekstep.partner.akshara.events", event.routeTo());
     }
 
     @Test
