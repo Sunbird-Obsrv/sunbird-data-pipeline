@@ -33,17 +33,21 @@ public class Event {
     }
 
     private String getPartnerId() {
-        ArrayList<Map> tags = (ArrayList<Map>) data.get("tags");
-        System.out.println(String.format("TAGS:%s",new Gson().toJson(tags)));
-        if (tags == null || tags.isEmpty())
-            return null;
-        String partnerid = "partnerid";
-        for (Map tag:tags)
-            if(tag!=null && tag.containsKey(partnerid)) {
-                String partnerId = (String) tag.get(partnerid);
-                if(validPartners.contains(partnerId))
-                    return partnerId;
-            }
+        try {
+            ArrayList<Map> tags = (ArrayList<Map>) data.get("tags");
+            System.out.println(String.format("TAGS:%s",new Gson().toJson(tags)));
+            if (tags == null || tags.isEmpty())
+                return null;
+            String partnerid = "partnerid";
+            for (Map tag:tags)
+                if(tag!=null && tag.containsKey(partnerid)) {
+                    String partnerId = (String) tag.get(partnerid);
+                    if(validPartners.contains(partnerId))
+                        return partnerId;
+                }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
