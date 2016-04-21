@@ -3,12 +3,10 @@ package org.ekstep.ep.samza;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class EventTest {
+
     @Test
     public void shouldBelongToPartnerIfPartnerIdIsPresent() {
         HashMap<String, Object> data = new HashMap<String,Object>();
@@ -16,7 +14,7 @@ public class EventTest {
         data.put("tags", tags);
         HashMap<String, String> firstTag = new HashMap<String,String>();
         tags.add(firstTag);
-        firstTag.put("partnerid","org.test.partner.id");
+        firstTag.put("partnerid", "org.ekstep.partner.akshara");
         Event event = new Event(data);
 
         Assert.assertTrue(event.belongsToAPartner());
@@ -34,7 +32,7 @@ public class EventTest {
         tags.add(secondTag);
         tags.add(thirdTag);
         firstTag.put("someKey","value");
-        secondTag.put("partnerid","org.test.partner.id");
+        secondTag.put("partnerid","org.ekstep.partner.akshara");
         Event event = new Event(data);
 
         Assert.assertTrue(event.belongsToAPartner());
@@ -80,7 +78,7 @@ public class EventTest {
         data.put("tags", tags);
         HashMap<String, String> firstTag = new HashMap<String,String>();
         tags.add(firstTag);
-        firstTag.put("partnerid","org.test.partner.id");
+        firstTag.put("partnerid","org.ekstep.partner.akshara");
         Event event = new Event(data);
 
         Assert.assertEquals("org.test.partner.id.events", event.routeTo());
@@ -93,7 +91,7 @@ public class EventTest {
         HashMap<String, Object> eks = new HashMap<String,Object>();
         data.put("edata", edata);
         edata.put("eks", eks);
-        eks.put("partnerid","org.test.partner.id");
+        eks.put("partnerid","org.ekstep.partner.akshara");
         Event event = new Event(data);
 
         Assert.assertEquals(data,event.getData());
