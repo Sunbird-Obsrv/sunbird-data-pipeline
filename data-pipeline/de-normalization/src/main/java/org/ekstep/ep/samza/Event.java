@@ -2,6 +2,7 @@ package org.ekstep.ep.samza;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.samza.storage.kv.KeyValueStore;
+import org.ekstep.ep.samza.task.DeNormalizationTask;
 import org.ekstep.ep.samza.validators.IValidator;
 import org.ekstep.ep.samza.validators.UidValidator;
 import org.ekstep.ep.samza.validators.ValidatorFactory;
@@ -9,6 +10,8 @@ import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -16,6 +19,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Event {
+    private static final String TAG = "Event";
+    static Logger LOGGER = LoggerFactory.getLogger(DeNormalizationTask.class);
     private static final Object ACTOR = "DENORMALIZER";
     private static final Long BACKOFF_CAP = 60*60*24*15L;
     private static final int BASE = 10;
@@ -178,7 +183,9 @@ public class Event {
         Integer nextBackoffInterval = getNextBackoffInterval();
         if(lastProcessedTime==null||nextBackoffInterval==null)
             return null;
-        return lastProcessedTime.plusSeconds(nextBackoffInterval);
+        DateTime nextProcessingTime = lastProcessedTime.plusSeconds(nextBackoffInterval);
+        LOGGER.debug(TAG+" nextProcessingTime: ",nextProcessingTime);
+        return nextProcessingTime;
     }
 
     private Integer getNextBackoffInterval() {
