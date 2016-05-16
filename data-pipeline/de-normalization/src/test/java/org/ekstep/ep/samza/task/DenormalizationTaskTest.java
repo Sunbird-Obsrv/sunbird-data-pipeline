@@ -10,12 +10,9 @@ import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
-import org.ekstep.ep.samza.Child;
 import org.ekstep.ep.samza.ChildDto;
 import org.ekstep.ep.samza.Event;
-import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
@@ -24,7 +21,6 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -45,6 +41,9 @@ public class DenormalizationTaskTest {
     private IncomingMessageEnvelope envelopMock;
     private KeyValueStore<String, Object> deviceStore;
     private TaskCoordinator coordinatorMock;
+    private IncomingMessageEnvelope envelopeMock;
+    private int retryBackoffBase;
+    private int retryBackoffLimit;
 
     @Before
     public void setUp(){
@@ -57,7 +56,7 @@ public class DenormalizationTaskTest {
         envelopMock = mock(IncomingMessageEnvelope.class);
         deviceStore = mock(KeyValueStore.class);
         coordinatorMock = mock(TaskCoordinator.class);
-
+        envelopeMock = mock(IncomingMessageEnvelope.class);
 
         configMock = Mockito.mock(Config.class);
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
@@ -65,6 +64,8 @@ public class DenormalizationTaskTest {
         stub(configMock.get("output.retry.topic.name", RETRY_TOPIC)).toReturn(RETRY_TOPIC);
         stub(metricsRegistry.newCounter("org.ekstep.ep.samza.task.DeNormalizationTask", "message-count")).toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
+        stub(configMock.get("retry.backoff.base")).toReturn("10");
+        stub(configMock.get("retry.backoff.limit")).toReturn("4");
 
         deNormalizationTask = new DeNormalizationTask();
     }
@@ -73,7 +74,7 @@ public class DenormalizationTaskTest {
     public void ShouldInitializeEvent() {
         deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
 
-        verify(eventMock).initialize();
+        verify(eventMock).initialize(retryBackoffBase, retryBackoffLimit);
     }
 
     @Test
@@ -124,6 +125,24 @@ public class DenormalizationTaskTest {
 
         deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
 
+        verify(collectorMock).send(argThat(validateOutputTopic(message, SUCCESS_TOPIC)));
+    }
+
+    @Test
+    public void ShouldNotRetryIfBackingOff() throws Exception {
+        deNormalizationTask.init(configMock, contextMock);
+        when(eventMock.isSkipped()).thenReturn(true);
+        deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
+        verifyZeroInteractions(collectorMock);
+    }
+
+    @Test
+    public void ShouldTryIfBackingOff() throws Exception {stub(eventMock.isProcessed()).toReturn(true);
+        HashMap<String, Object> message = new HashMap<String, Object>();
+        stub(eventMock.getData()).toReturn(message);
+        deNormalizationTask.init(configMock, contextMock);
+        when(eventMock.isSkipped()).thenReturn(false);
+        deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
         verify(collectorMock).send(argThat(validateOutputTopic(message, SUCCESS_TOPIC)));
     }
 

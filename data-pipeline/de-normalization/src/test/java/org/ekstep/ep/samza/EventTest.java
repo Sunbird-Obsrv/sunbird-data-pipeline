@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza;
 
 import org.apache.samza.storage.kv.KeyValueStore;
+import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +12,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
@@ -24,19 +26,22 @@ public class EventTest {
     private KeyValueStore keyValueStoreMock;
     private HashMap<String, Object> map;
     private ChildDto childDtoMock;
+    private int retryBackoffBase;
+    private int retryBackoffLimit;
 
     @Before
     public void setUp(){
         map = new HashMap<String, Object>();
         keyValueStoreMock = mock(KeyValueStore.class);
         childDtoMock = mock(ChildDto.class);
+        retryBackoffBase = 10;
     }
 
     @Test
     public void ShouldNotTryToInitializeEventIfNoUidIsPresent() {
         Event event = new Event(new HashMap<String, Object>(),keyValueStoreMock);
 
-        event.initialize();
+        event.initialize(retryBackoffBase, retryBackoffLimit);
 
         verify(keyValueStoreMock,never()).get(any());
         verifyZeroInteractions(keyValueStoreMock);
@@ -48,7 +53,7 @@ public class EventTest {
 
         Event event = new Event(map, keyValueStoreMock);
 
-        event.initialize();
+        event.initialize(retryBackoffBase, retryBackoffLimit);
 
         verify(keyValueStoreMock,never()).get(any());
         verifyZeroInteractions(keyValueStoreMock);
@@ -61,7 +66,7 @@ public class EventTest {
 
         Event event = new Event(map, keyValueStoreMock);
 
-        event.initialize();
+        event.initialize(retryBackoffBase, retryBackoffLimit);
 
         verify(keyValueStoreMock,never()).get(any());
         verifyZeroInteractions(keyValueStoreMock);
@@ -74,7 +79,7 @@ public class EventTest {
 
         Event event = new Event(map, keyValueStoreMock);
 
-        event.initialize();
+        event.initialize(retryBackoffBase, retryBackoffLimit);
 
         verify(keyValueStoreMock).get(UID);
     }
@@ -83,7 +88,7 @@ public class EventTest {
     public void ShouldNotTryToProcessEventWhenEventDoesNotHaveUid() throws SQLException {
         Event event = new Event(new HashMap<String, Object>(),keyValueStoreMock);
 
-        event.initialize();
+        event.initialize(retryBackoffBase, retryBackoffLimit);
         event.process(childDtoMock);
 
         Mockito.verifyZeroInteractions(childDtoMock);
@@ -95,7 +100,7 @@ public class EventTest {
 
         Event event = new Event(map, keyValueStoreMock);
 
-        event.initialize();
+        event.initialize(retryBackoffBase, retryBackoffLimit);
         event.process(childDtoMock);
 
         Mockito.verifyZeroInteractions(childDtoMock);
@@ -108,7 +113,7 @@ public class EventTest {
 
         Event event = new Event(map, keyValueStoreMock);
 
-        event.initialize();
+        event.initialize(retryBackoffBase, retryBackoffLimit);
         event.process(childDtoMock);
 
         Mockito.verifyZeroInteractions(childDtoMock);
@@ -125,7 +130,7 @@ public class EventTest {
 
         Event event = new Event(map, keyValueStoreMock);
 
-        event.initialize();
+        event.initialize(retryBackoffBase, retryBackoffLimit);
         event.process(childDtoMock);
 
         Mockito.verifyZeroInteractions(childDtoMock);
@@ -141,7 +146,7 @@ public class EventTest {
 
         Event event = new Event(map, keyValueStoreMock);
 
-        event.initialize();
+        event.initialize(retryBackoffBase, retryBackoffLimit);
         event.process(childDtoMock);
 
         Mockito.verifyZeroInteractions(childDtoMock);
@@ -157,7 +162,7 @@ public class EventTest {
 
         Event event = new Event(map, keyValueStoreMock);
 
-        event.initialize();
+        event.initialize(retryBackoffBase, retryBackoffLimit);
         event.process(childDtoMock);
 
         verify(childDtoMock).process(argThat(validateChild(UID)), argThat(dateMatcher(date)));
@@ -174,7 +179,7 @@ public class EventTest {
 
         Event event = new Event(map, keyValueStoreMock);
 
-        event.initialize();
+        event.initialize(retryBackoffBase, retryBackoffLimit);
         event.process(childDtoMock);
         Map<String, Object> data = event.getData();
 
@@ -193,7 +198,7 @@ public class EventTest {
 
         Event event = new Event(map, keyValueStoreMock);
 
-        event.initialize();
+        event.initialize(retryBackoffBase, retryBackoffLimit);
         event.process(childDtoMock);
         Map<String, Object> data = event.getData();
 
@@ -212,7 +217,7 @@ public class EventTest {
 
         Event event = new Event(map, keyValueStoreMock);
 
-        event.initialize();
+        event.initialize(retryBackoffBase, retryBackoffLimit);
         event.process(childDtoMock);
         Map<String, Object> data = event.getData();
 
@@ -231,7 +236,7 @@ public class EventTest {
 
         Event event = new Event(map, keyValueStoreMock);
 
-        event.initialize();
+        event.initialize(retryBackoffBase, retryBackoffLimit);
         event.process(childDtoMock);
         Map<String, Object> data = event.getData();
 
@@ -249,7 +254,7 @@ public class EventTest {
 
         Event event = new Event(map, keyValueStoreMock);
 
-        event.initialize();
+        event.initialize(retryBackoffBase, retryBackoffLimit);
         event.process(childDtoMock);
         Map<String, Object> data = event.getData();
 
@@ -265,7 +270,7 @@ public class EventTest {
 
         Event event = new Event(map, keyValueStoreMock);
 
-        event.initialize();
+        event.initialize(retryBackoffBase, retryBackoffLimit);
         event.process(childDtoMock);
 
         assertFalse(event.isProcessed());
@@ -283,7 +288,7 @@ public class EventTest {
         stub(childDtoMock.process(any(Child.class), any(Date.class))).toReturn(child);
         Event event = new Event(map, keyValueStoreMock);
 
-        event.initialize();
+        event.initialize(retryBackoffBase, retryBackoffLimit);
         event.process(childDtoMock);
 
        assertTrue(event.isProcessed());
@@ -296,7 +301,7 @@ public class EventTest {
 
         Event event = new Event(map, keyValueStoreMock);
 
-        event.initialize();
+        event.initialize(retryBackoffBase, retryBackoffLimit);
         event.addMetadata();
 
         Map<String,Object> metadata = (Map<String, Object>) event.getMap().get("metadata");
@@ -315,11 +320,55 @@ public class EventTest {
 
         Event event = new Event(map, keyValueStoreMock);
 
-        event.initialize();
+        event.initialize(retryBackoffBase, retryBackoffLimit);
         event.addMetadata();
 
         Map<String,Object> meta = (Map<String, Object>) event.getMap().get("metadata");
-        assertEquals(2,metadata.get("processed_count"));
+        assertEquals(2, metadata.get("processed_count"));
+    }
+
+    @Test
+    public void ShouldNotBeSkippedFirstTime(){
+        Event event = new Event(map, keyValueStoreMock);
+        assertEquals(event.isSkipped(),false);
+    }
+
+    @Test
+    public void ShouldCalculateBackoffAppropriately(){
+        Event event = new Event(map, keyValueStoreMock);
+        event.initialize(retryBackoffBase,retryBackoffLimit);
+        event.setLastProcessedCount(1);
+        DateTime now = new DateTime();
+        event.setLastProcessedAt(now);
+        List<DateTime> times = event.backoffTimes(20);
+        DateTime a = null;
+        int count=0;
+        for(DateTime b:times){
+            if(a!=null){
+                long diff = b.getSecondOfMinute() - a.getSecondOfMinute();
+                Assert.assertEquals((long)(10*Math.pow(2,count)),diff);
+            }
+        }
+    }
+
+    @Test
+    public void ShouldRetryAppropriately(){
+        Event event = new Event(map, keyValueStoreMock);
+        event.initialize(retryBackoffBase,retryBackoffLimit);
+        Assert.assertEquals(false, event.isSkipped());
+        DateTime now = new DateTime();
+        event.setLastProcessedAt(now);
+        event.setLastProcessedCount(1);
+        Assert.assertEquals(true, event.isSkipped());
+        event.setLastProcessedAt(now.minusSeconds(retryBackoffBase*2+1));
+        event.setLastProcessedCount(1);
+        Assert.assertEquals(false, event.isSkipped());
+        event.setLastProcessedAt(now.minusSeconds(21));
+        event.setLastProcessedCount(2);
+        Assert.assertEquals(true, event.isSkipped());
+        event.setLastProcessedAt(now.minusSeconds(41));
+        event.setLastProcessedCount(2);
+        Assert.assertEquals(false, event.isSkipped());
     }
 
 

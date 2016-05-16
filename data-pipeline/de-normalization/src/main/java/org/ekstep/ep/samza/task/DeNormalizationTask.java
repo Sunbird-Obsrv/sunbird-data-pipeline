@@ -11,10 +11,13 @@ import org.apache.samza.task.*;
 import org.ekstep.ep.samza.Child;
 import org.ekstep.ep.samza.ChildDto;
 import org.ekstep.ep.samza.Event;
+import org.joda.time.DateTime;
 
 import java.util.Map;
 
 public class DeNormalizationTask implements StreamTask, InitableTask, WindowableTask{
+    private static final String RETRY_BACKOFF_BASE_DEFAULT = "10";
+    private static final String RETRY_BACKOFF_LIMIT_DEFAULT = "4";
     private String successTopic;
     private String failedTopic;
     private KeyValueStore<String, Child> childData;
@@ -26,6 +29,8 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     private String retryTopic;
 
     private Counter messageCount;
+    private int retryBackoffBase;
+    private int retryBackoffLimit;
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
@@ -38,6 +43,8 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
         dbUserName = config.get("db.userName");
         dbPassword = config.get("db.password");
         dbSchema = config.get("db.schema");
+        retryBackoffBase = Integer.parseInt(config.get("retry.backoff.base"));
+        retryBackoffLimit = Integer.parseInt(config.get("retry.backoff.limit"));
         messageCount = context
                 .getMetricsRegistry()
                 .newCounter(getClass().getName(), "message-count");
@@ -57,10 +64,12 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     }
 
     public void processEvent(MessageCollector collector, Event event, ChildDto dataSource) {
-        event.initialize();
-        event.process(dataSource);
-        event.addMetadata();
-        populateTopic(collector,event);
+        event.initialize(retryBackoffBase,retryBackoffLimit);
+        if(!event.isSkipped()){
+            event.process(dataSource);
+            event.addMetadata();
+            populateTopic(collector,event);
+        }
     }
 
     private void populateTopic(MessageCollector collector, Event event) {

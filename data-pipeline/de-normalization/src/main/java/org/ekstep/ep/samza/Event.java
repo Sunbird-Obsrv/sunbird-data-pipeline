@@ -1,10 +1,14 @@
 package org.ekstep.ep.samza;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.ekstep.ep.samza.validators.IValidator;
 import org.ekstep.ep.samza.validators.UidValidator;
 import org.ekstep.ep.samza.validators.ValidatorFactory;
 import org.joda.time.DateTime;
+import org.joda.time.Period;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -12,12 +16,19 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Event {
+    private static final Object ACTOR = "DENORMALIZER";
+    private static final Long BACKOFF_CAP = 60*60*24*15L;
+    private static final int BASE = 10;
+    private static final int RETRY_BACKOFF_BASE_DEFAULT = 10;
+    private static final int RETRY_BACKOFF_LIMIT_DEFAULT = 4;
     private final Map<String, Object> map;
     private Boolean canBeProcessed;
     private KeyValueStore<String, Child> childStore;
     private Child child;
     private boolean hadIssueWithDb;
     private Date timeOfEvent;
+    private int retryBackoffBase;
+    private int retryBackoffLimit;
 
     public Event(Map<String, Object> map, KeyValueStore<String, Child> childStore) {
         this.map = map;
@@ -30,7 +41,13 @@ public class Event {
         return (Map<String,Object>) this.map;
     }
 
-    public void initialize() {
+    public void initialize(int retryBackoffBase, int retryBackoffLimit) {
+        if(retryBackoffBase==0)
+            retryBackoffBase  = RETRY_BACKOFF_BASE_DEFAULT;
+        if(retryBackoffLimit==0)
+            retryBackoffLimit = RETRY_BACKOFF_LIMIT_DEFAULT;
+        this.retryBackoffBase = retryBackoffBase;
+        this.retryBackoffLimit = retryBackoffLimit;
         try {
             ArrayList<IValidator> validators = ValidatorFactory.validators(map);
             for (IValidator validator : validators)
@@ -105,23 +122,99 @@ public class Event {
     }
 
     public void addMetadata() {
-        Map<String, Object> metadata = (Map<String, Object>) map.get("metadata");
+        Map<String, Object> metadata = getMetadata();
         DateTime currentTime = new DateTime();
         if(metadata != null){
-            metadata.put("last_processed_at",currentTime.toString());
+            setLastProcessedAt(currentTime);
             if(metadata.get("processed_count") == null)
-                metadata.put("processed_count",1);
+                setLastProcessedCount(1);
             else {
                 Integer count = (((Double) Double.parseDouble(String.valueOf(metadata.get("processed_count")))).intValue());
                 count = count + 1;
-                metadata.put("processed_count",count);
+                setLastProcessedCount(count);
             }
         }
         else{
-            metadata = new HashMap<String, Object>();
-            metadata.put("last_processed_at",currentTime.toString());
-            metadata.put("processed_count",1);
-            map.put("metadata",metadata);
+            setLastProcessedAt(currentTime);
+            setLastProcessedCount(1);
         }
+    }
+
+    public boolean isSkipped() {
+        DateTime nextProcessingTime = getNextProcessingTime(getLastProcessedTime());
+        if(nextProcessingTime==null||nextProcessingTime.isBeforeNow())
+            return false;
+        else
+            return true;
+    }
+
+    public void setLastProcessedAt(DateTime time){
+        Map<String, Object> metadata = getMetadata();
+        metadata.put("last_processed_at",time.toString());
+    }
+
+    public void setLastProcessedCount(int n){
+        Map<String, Object> metadata = getMetadata();
+        metadata.put("processed_count",n);
+    }
+
+    public List backoffTimes(int attempts){
+        List backoffList = new ArrayList();
+        DateTime thisTime = getLastProcessedTime();
+        int processedCount;
+        DateTime nextTime;
+        for(int i=0;i<attempts;i++){
+            nextTime = getNextProcessingTime(thisTime);
+            processedCount = getProcessedCount();
+            backoffList.add(nextTime);
+            thisTime = nextTime;
+            setLastProcessedAt(nextTime);
+            setLastProcessedCount(processedCount+1);
+        }
+        return backoffList;
+    }
+
+    private DateTime getNextProcessingTime(DateTime lastProcessedTime){
+        Integer nextBackoffInterval = getNextBackoffInterval();
+        if(lastProcessedTime==null||nextBackoffInterval==null)
+            return null;
+        return lastProcessedTime.plusSeconds(nextBackoffInterval);
+    }
+
+    private Integer getNextBackoffInterval() {
+        Integer processedCount = getProcessedCount();
+        if(processedCount==null)
+            return null;
+        return retryBackoffBase*(int)Math.pow(2,processedCount);
+    }
+
+    private Integer getProcessedCount(){
+        Map metadata = getMetadata();
+        if(metadata==null){
+            return null;
+        } else {
+            Integer processedCount = (Integer)metadata.get("processed_count");
+            return processedCount;
+        }
+    }
+
+    public DateTime getLastProcessedTime(){
+        Map metadata = getMetadata();
+        String lastProcessedAt = (String)metadata.get("last_processed_at");
+        if(lastProcessedAt==null)
+            return null;
+        DateTimeFormatter formatter = ISODateTimeFormat.dateTime();
+        DateTime dt = formatter.parseDateTime(lastProcessedAt);
+        return dt;
+    }
+
+    private Map<String, Object> getMetadata() {
+        Map metadata = (Map<String, Object>) map.get("metadata");
+        if(metadata==null){
+            metadata = new HashMap<String, Object>();
+            map.put("metadata",metadata);
+            return getMetadata();
+        }
+        return metadata;
     }
 }
