@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza;
 
+import com.google.gson.Gson;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.ekstep.ep.samza.task.DeNormalizationTask;
@@ -34,6 +35,7 @@ public class Event {
     private Date timeOfEvent;
     private int retryBackoffBase;
     private int retryBackoffLimit;
+    private KeyValueStore<String, Object> retryStore;
 
     public Event(Map<String, Object> map, KeyValueStore<String, Child> childStore) {
         this.map = map;
@@ -46,13 +48,14 @@ public class Event {
         return (Map<String,Object>) this.map;
     }
 
-    public void initialize(int retryBackoffBase, int retryBackoffLimit) {
+    public void initialize(int retryBackoffBase, int retryBackoffLimit, KeyValueStore<String, Object> retryStore) {
         if(retryBackoffBase==0)
             retryBackoffBase  = RETRY_BACKOFF_BASE_DEFAULT;
         if(retryBackoffLimit==0)
             retryBackoffLimit = RETRY_BACKOFF_LIMIT_DEFAULT;
         this.retryBackoffBase = retryBackoffBase;
         this.retryBackoffLimit = retryBackoffLimit;
+        this.retryStore = retryStore;
         try {
             ArrayList<IValidator> validators = ValidatorFactory.validators(map);
             for (IValidator validator : validators)
@@ -62,7 +65,7 @@ public class Event {
                     return;
                 }
 
-            String uid = (String) map.get("uid");
+            String uid = getUID();
             String timeOfEventString = (String) map.get("ts");
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             timeOfEvent = simpleDateFormat.parse(timeOfEventString);
@@ -80,19 +83,27 @@ public class Event {
         }
     }
 
-    public void process(ChildDto childDto) {
-        if (!canBeProcessed) return;
+    public void process(ChildDto childDto, DateTime now) {
         try {
-            System.out.println("Processing event at ts:" + timeOfEvent.getTime());
-            if (child.needsToBeProcessed()) {
-                System.out.println("Processing child data, getting data from db");
-                child = childDto.process(child,timeOfEvent);
+            if (!canBeProcessed) return;
+            try {
+                System.out.println("Processing event at ts:" + timeOfEvent.getTime());
+                if (child.needsToBeProcessed()) {
+                    System.out.println("Processing child data, getting data from db");
+                    child = childDto.process(child, timeOfEvent);
+                }
+                if (child.isProcessed()) {
+                    update(child);
+                    removeMetadataFromStore();
+                } else {
+                    updateMetadataToStore();
+                }
+            } catch (SQLException e) {
+                hadIssueWithDb = true;
+                e.printStackTrace();
             }
-            if(child.isProcessed())
-                update(child);
-        } catch (SQLException e) {
-            hadIssueWithDb = true;
-            e.printStackTrace();
+        } finally {
+            addMetadata(now);
         }
     }
 
@@ -126,9 +137,8 @@ public class Event {
         return hadIssueWithDb;
     }
 
-    public void addMetadata() {
+    public void addMetadata(DateTime currentTime) {
         Map<String, Object> metadata = getMetadata();
-        DateTime currentTime = new DateTime();
         if(metadata != null){
             setLastProcessedAt(currentTime);
             if(metadata.get("processed_count") == null)
@@ -143,14 +153,35 @@ public class Event {
             setLastProcessedAt(currentTime);
             setLastProcessedCount(1);
         }
+//        addMetadataToStore();
+    }
+
+    private void addMetadataToStore(){
+        if(retryStore.get(getUID())==null){
+            updateMetadataToStore();
+        }
+    }
+
+    private void updateMetadataToStore(){
+        if(map.get("metadata")!=null){
+            Map _map = new HashMap();
+            _map.put("metadata",map.get("metadata"));
+            retryStore.put(getUID(), _map);
+        }
+    }
+
+    private void removeMetadataFromStore(){
+        retryStore.delete(getUID());
     }
 
     public boolean isSkipped() {
         DateTime nextProcessingTime = getNextProcessingTime(getLastProcessedTime());
-        if(nextProcessingTime==null||nextProcessingTime.isBeforeNow())
+        if(nextProcessingTime==null||nextProcessingTime.isBeforeNow()){
             return false;
-        else
+        } else{
+            addMetadataToStore();
             return true;
+        }
     }
 
     public void setLastProcessedAt(DateTime time){
@@ -216,12 +247,27 @@ public class Event {
     }
 
     private Map<String, Object> getMetadata() {
-        Map metadata = (Map<String, Object>) map.get("metadata");
+        String uid = getUID();
+        Map retryData = (Map)retryStore.get(uid);
+        Map metadata = null;
+        Map _map;
+        if(retryData!=null){
+            _map = retryData;
+        } else {
+            _map = map;
+        }
+        if(_map!=null)
+            metadata = (Map<String, Object>) _map.get("metadata");
         if(metadata==null){
             metadata = new HashMap<String, Object>();
             map.put("metadata",metadata);
-            return getMetadata();
+            return metadata;
         }
         return metadata;
     }
+
+    private String getUID() {
+        return (String) map.get("uid");
+    }
+
 }

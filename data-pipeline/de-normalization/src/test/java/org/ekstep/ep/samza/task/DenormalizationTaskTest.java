@@ -12,6 +12,7 @@ import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.ChildDto;
 import org.ekstep.ep.samza.Event;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -44,6 +45,7 @@ public class DenormalizationTaskTest {
     private IncomingMessageEnvelope envelopeMock;
     private int retryBackoffBase;
     private int retryBackoffLimit;
+    private KeyValueStore<String, Object> retryStore;
 
     @Before
     public void setUp(){
@@ -74,14 +76,14 @@ public class DenormalizationTaskTest {
     public void ShouldInitializeEvent() {
         deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
 
-        verify(eventMock).initialize(retryBackoffBase, retryBackoffLimit);
+        verify(eventMock).initialize(retryBackoffBase, retryBackoffLimit, retryStore);
     }
 
     @Test
     public void ShouldProcessEvent() {
         deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
 
-        verify(eventMock).process(childDtoMock);
+        verify(eventMock).process(childDtoMock, DateTime.now());
     }
 
     @Test

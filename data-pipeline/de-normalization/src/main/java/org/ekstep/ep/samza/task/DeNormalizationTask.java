@@ -35,6 +35,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     private Counter messageCount;
     private int retryBackoffBase;
     private int retryBackoffLimit;
+    private KeyValueStore<String, Object> retryStore;
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
@@ -52,6 +53,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
         messageCount = context
                 .getMetricsRegistry()
                 .newCounter(getClass().getName(), "message-count");
+        retryStore = (KeyValueStore<String, Object>) context.getStore("retry");
     }
 
     @Override
@@ -68,15 +70,14 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     }
 
     public void processEvent(MessageCollector collector, Event event, ChildDto dataSource) {
-        event.initialize(retryBackoffBase,retryBackoffLimit);
+        event.initialize(retryBackoffBase,retryBackoffLimit,retryStore);
         LOGGER.info(TAG + " event:", event.getMap());
         if(!event.isSkipped()){
             LOGGER.info(TAG, "PROCESS");
-            event.process(dataSource);
-            event.addMetadata();
+            event.process(dataSource,DateTime.now());
             populateTopic(collector,event);
         } else {
-            LOGGER.info(TAG,"SKIP");
+            LOGGER.info(TAG, "SKIP");
         }
     }
 

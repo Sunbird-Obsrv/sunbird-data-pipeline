@@ -81,4 +81,8 @@ public class Child implements Serializable {
     public String getUid() {
         return uid;
     }
+
+    public void setAsProcessed() {
+        this.child_data_processed = true;
+    }
 }
