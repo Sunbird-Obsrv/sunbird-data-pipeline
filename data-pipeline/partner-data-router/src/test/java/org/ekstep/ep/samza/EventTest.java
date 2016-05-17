@@ -21,6 +21,20 @@ public class EventTest {
     }
 
     @Test
+    public void shouldHandleIfPartnerTagContainsListOfPartnerIds() {
+        HashMap<String, Object> data = new HashMap<String,Object>();
+        ArrayList<HashMap> tags = new ArrayList<HashMap>();
+        data.put("tags", tags);
+        HashMap<String, Object> firstTag = new HashMap<String,Object>();
+        ArrayList<String> partnerSet = new ArrayList<String>(Arrays.asList("org.ekstep.partner.akshara"));
+        firstTag.put("partnerid", partnerSet);
+        tags.add(firstTag);
+        Event event = new Event(data);
+
+        Assert.assertTrue(event.belongsToAPartner());
+    }
+
+    @Test
     public void shouldBelongToPartnerIfPartnerIdIsPresentWithMultipleTags() {
         HashMap<String, Object> data = new HashMap<String,Object>();
         ArrayList<HashMap> tags = new ArrayList<HashMap>();
