@@ -33,12 +33,16 @@ under the License.
 
   <groupId>org.ekstep.ecosystem.jobs</groupId>
   <artifactId>de-normalization</artifactId>
-  <version>0.1.4</version>
+  <version>0.1.5</version>
   <packaging>jar</packaging>
   <name>De-Normalization</name>
   <description>
     De-normalize the data in the topic
   </description>
+
+  <properties>
+    <resource>Default</resource>
+  </properties>
 
 <dependencies>
   <dependency>
@@ -168,5 +172,10 @@ under the License.
         </executions>
       </plugin>
     </plugins>
+    <resources>
+      <resource>
+        <directory>src/main/resources/${resource}</directory>
+      </resource>
+    </resources>
   </build>
 </project>

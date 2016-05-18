@@ -22,9 +22,6 @@ import java.util.*;
 public class Event {
     private static final String TAG = "Event";
     static Logger LOGGER = LoggerFactory.getLogger(DeNormalizationTask.class);
-    private static final Object ACTOR = "DENORMALIZER";
-    private static final Long BACKOFF_CAP = 60*60*24*15L;
-    private static final int BASE = 10;
     private static final int RETRY_BACKOFF_BASE_DEFAULT = 10;
     private static final int RETRY_BACKOFF_LIMIT_DEFAULT = 4;
     private final Map<String, Object> map;
@@ -60,7 +57,7 @@ public class Event {
             ArrayList<IValidator> validators = ValidatorFactory.validators(map);
             for (IValidator validator : validators)
                 if (validator.isInvalid()) {
-                    System.out.println(validator.getErrorMessage());
+                    LOGGER.info(TAG, validator.getErrorMessage());
                     canBeProcessed = false;
                     return;
                 }
@@ -87,9 +84,9 @@ public class Event {
         try {
             if (!canBeProcessed) return;
             try {
-                System.out.println("Processing event at ts:" + timeOfEvent.getTime());
+                LOGGER.info(TAG, "Processing event at ts:" + timeOfEvent.getTime());
                 if (child.needsToBeProcessed()) {
-                    System.out.println("Processing child data, getting data from db");
+                    LOGGER.info(TAG,"Processing child data, getting data from db");
                     child = childDto.process(child, timeOfEvent);
                 }
                 if (child.isProcessed()) {

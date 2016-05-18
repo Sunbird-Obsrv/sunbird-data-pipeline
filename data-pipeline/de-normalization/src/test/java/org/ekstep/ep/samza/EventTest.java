@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza;
 
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.log4j.BasicConfigurator;
 import org.apache.samza.storage.kv.KeyValueIterator;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.joda.time.DateTime;
@@ -86,6 +87,7 @@ public class EventTest {
         childDtoMock = mock(ChildDto.class);
         retryStore = new KVStore();
         retryBackoffBase = 10;
+        BasicConfigurator.configure();
     }
 
     @Test
@@ -440,37 +442,55 @@ public class EventTest {
         map2.put("ts", new SimpleDateFormat(DATE_FORMAT).format(date));
         map2.put("uid", UID);
 
+        Assert.assertNull(retryStore.get(UID));
+
         Event event2 = new Event(map2, keyValueStoreMock);
         event2.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
 //      ----- first event
         Assert.assertEquals(false, event.isSkipped()); //first try for first event is not skipped
         event.process(childDtoMock, DateTime.now());
+        Assert.assertNotNull(retryStore.get(UID));
+
 //      ----- second event
         Assert.assertEquals(true, event2.isSkipped()); //first try for second event is skipped
+        Assert.assertNotNull(retryStore.get(UID));
 //      ----- events again
         DateTimeUtils.setCurrentMillisFixed(5 * 1000);
         Assert.assertEquals(true, event.isSkipped()); //first backoff
         Assert.assertEquals(true, event2.isSkipped()); //first backoff
+        Assert.assertNotNull(retryStore.get(UID));
 //      ----- events again
         DateTimeUtils.setCurrentMillisFixed(21 * 1000); //10*2^1
         Assert.assertEquals(false, event.isSkipped()); //backoff over
         event.process(childDtoMock, DateTime.now()); //data not available
         Assert.assertEquals(true, event2.isSkipped()); //backoff back
+        Assert.assertNotNull(retryStore.get(UID));
 //      ----- events again
         DateTimeUtils.setCurrentMillisFixed(31 * 1000);
         Assert.assertEquals(true, event.isSkipped()); //backoff
         Assert.assertEquals(true, event2.isSkipped()); //backoff
+        Assert.assertNotNull(retryStore.get(UID));
 //      ----- events again
-        DateTimeUtils.setCurrentMillisFixed((21+40+1) * 1000); //10*2^2
+        DateTimeUtils.setCurrentMillisFixed((21 + 40 + 1) * 1000); //10*2^2
         Assert.assertEquals(false, event.isSkipped()); //backoff over
         event.process(childDtoMock, DateTime.now()); //data not available
         Assert.assertEquals(true, event2.isSkipped()); //backoff back
-
+        Assert.assertNotNull(retryStore.get(UID));
+//      ----- events again but this time they get processed
         child.setAsProcessed();
-        DateTimeUtils.setCurrentMillisFixed((21 + 40 + 1 + 80 +1) * 1000); //10*2^2
+        DateTimeUtils.setCurrentMillisFixed((21 + 40 + 1 + 80 + 1) * 1000); //10*2^2
         Assert.assertEquals(false, event.isSkipped()); //backoff over
         event.process(childDtoMock, DateTime.now()); //data not available
+        Assert.assertNull(retryStore.get(UID));
         Assert.assertEquals(false, event2.isSkipped()); //event not skipped
+        event2.process(childDtoMock, DateTime.now());
+
+        Assert.assertEquals(4, ((Map) (map.get("metadata"))).get("processed_count"));
+        Assert.assertEquals(DateTime.now().toString(),((Map)(map.get("metadata"))).get("last_processed_at"));
+        Assert.assertEquals(1, ((Map) (map2.get("metadata"))).get("processed_count"));
+        Assert.assertEquals(DateTime.now().toString(), ((Map) (map2.get("metadata"))).get("last_processed_at"));
+
+        Assert.assertNull(retryStore.get(UID));
     }
 
 
