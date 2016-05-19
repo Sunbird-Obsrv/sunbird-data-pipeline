@@ -4,6 +4,8 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.samza.storage.kv.KeyValueIterator;
 import org.apache.samza.storage.kv.KeyValueStore;
+import org.ekstep.ep.samza.external.UserService;
+import org.ekstep.ep.samza.external.UserServiceClient;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Assert;
@@ -12,7 +14,7 @@ import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
-import java.sql.SQLException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,7 +33,7 @@ public class EventTest {
     public static final String TS = "2008-06-16T00:00:00 +0530";
     private KeyValueStore keyValueStoreMock;
     private HashMap<String, Object> map;
-    private ChildDto childDtoMock;
+    private UserService userServiceMock;
     private int retryBackoffBase;
     private int retryBackoffLimit;
     private KeyValueStore<String, Object> retryStore;
@@ -84,7 +86,7 @@ public class EventTest {
         map = new HashMap<String, Object>();
         map.put("uid",UID);
         keyValueStoreMock = mock(KeyValueStore.class);
-        childDtoMock = mock(ChildDto.class);
+        userServiceMock = mock(UserServiceClient.class);
         retryStore = new KVStore();
         retryBackoffBase = 10;
         BasicConfigurator.configure();
@@ -138,13 +140,13 @@ public class EventTest {
     }
 
     @Test
-    public void ShouldNotTryToProcessEventWhenEventDoesNotHaveUid() throws SQLException {
+    public void ShouldNotTryToProcessEventWhenEventDoesNotHaveUid() throws IOException {
         Event event = new Event(new HashMap<String, Object>(),keyValueStoreMock);
 
         event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
-        event.process(childDtoMock, DateTime.now());
+        event.process(userServiceMock, DateTime.now());
 
-        Mockito.verifyZeroInteractions(childDtoMock);
+        Mockito.verifyZeroInteractions(userServiceMock);
     }
 
     @Test
@@ -154,9 +156,9 @@ public class EventTest {
         Event event = new Event(map, keyValueStoreMock);
 
         event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
-        event.process(childDtoMock, DateTime.now());
+        event.process(userServiceMock, DateTime.now());
 
-        Mockito.verifyZeroInteractions(childDtoMock);
+        Mockito.verifyZeroInteractions(userServiceMock);
     }
 
     @Test
@@ -167,9 +169,9 @@ public class EventTest {
         Event event = new Event(map, keyValueStoreMock);
 
         event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
-        event.process(childDtoMock, DateTime.now());
+        event.process(userServiceMock, DateTime.now());
 
-        Mockito.verifyZeroInteractions(childDtoMock);
+        Mockito.verifyZeroInteractions(userServiceMock);
     }
 
     @Test
@@ -184,9 +186,9 @@ public class EventTest {
         Event event = new Event(map, keyValueStoreMock);
 
         event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
-        event.process(childDtoMock, DateTime.now());
+        event.process(userServiceMock, DateTime.now());
 
-        Mockito.verifyZeroInteractions(childDtoMock);
+        Mockito.verifyZeroInteractions(userServiceMock);
     }
 
     @Test
@@ -200,25 +202,25 @@ public class EventTest {
         Event event = new Event(map, keyValueStoreMock);
 
         event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
-        event.process(childDtoMock, DateTime.now());
+        event.process(userServiceMock, DateTime.now());
 
-        Mockito.verifyZeroInteractions(childDtoMock);
+        Mockito.verifyZeroInteractions(userServiceMock);
     }
 
     @Test
-    public void ShouldProcessChildIfChildIsNotProcessed() throws SQLException {
+    public void ShouldProcessChildIfChildIsNotProcessed() throws IOException {
         Date date = new Date();
         map.put("ts", new SimpleDateFormat(DATE_FORMAT).format(date));
         map.put("uid", UID);
         Child child = new Child(UID, true,  getUdata());
-        stub(childDtoMock.process(any(Child.class), any(Date.class))).toReturn(child);
+        stub(userServiceMock.getUserFor(any(Child.class), any(Date.class))).toReturn(child);
 
         Event event = new Event(map, keyValueStoreMock);
 
         event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
-        event.process(childDtoMock, DateTime.now());
+        event.process(userServiceMock, DateTime.now());
 
-        verify(childDtoMock).process(argThat(validateChild(UID)), argThat(dateMatcher(date)));
+        verify(userServiceMock).getUserFor(argThat(validateChild(UID)), argThat(dateMatcher(date)));
     }
 
     @Test
@@ -233,7 +235,7 @@ public class EventTest {
         Event event = new Event(map, keyValueStoreMock);
 
         event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
-        event.process(childDtoMock, DateTime.now());
+        event.process(userServiceMock, DateTime.now());
         Map<String, Object> data = event.getData();
 
         HashMap<String, Object> actualUdata = (HashMap<String, Object>)data.get("udata");
@@ -252,7 +254,7 @@ public class EventTest {
         Event event = new Event(map, keyValueStoreMock);
 
         event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
-        event.process(childDtoMock, DateTime.now());
+        event.process(userServiceMock, DateTime.now());
         Map<String, Object> data = event.getData();
 
         HashMap<String, Object> actualUdata = (HashMap<String, Object>)data.get("udata");
@@ -261,17 +263,17 @@ public class EventTest {
     }
 
     @Test
-    public void ShouldGetRightDataWhenReadFromDb() throws SQLException {
+    public void ShouldGetRightDataWhenReadFromDb() throws IOException {
         map.put("ts", TS);
         map.put("uid", UID);
 
         Child child = new Child(UID, true,  getUdata());
-        stub(childDtoMock.process(any(Child.class), any(Date.class))).toReturn(child);
+        stub(userServiceMock.getUserFor(any(Child.class), any(Date.class))).toReturn(child);
 
         Event event = new Event(map, keyValueStoreMock);
 
         event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
-        event.process(childDtoMock, DateTime.now());
+        event.process(userServiceMock, DateTime.now());
         Map<String, Object> data = event.getData();
 
         HashMap<String, Object> actualUdata = (HashMap<String, Object>)data.get("udata");
@@ -280,17 +282,17 @@ public class EventTest {
     }
 
     @Test
-    public void ShouldNotUpdateEventIfChildIsNotProcessed() throws SQLException {
+    public void ShouldNotUpdateEventIfChildIsNotProcessed() throws IOException {
         map.put("ts", TS);
         map.put("uid", UID);
 
         Child child = new Child(UID, false, getUdata());
-        stub(childDtoMock.process(any(Child.class), any(Date.class))).toReturn(child);
+        stub(userServiceMock.getUserFor(any(Child.class), any(Date.class))).toReturn(child);
 
         Event event = new Event(map, keyValueStoreMock);
 
         event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
-        event.process(childDtoMock, DateTime.now());
+        event.process(userServiceMock, DateTime.now());
         Map<String, Object> data = event.getData();
 
         HashMap<String, Object> actualUdata = (HashMap<String, Object>)data.get("udata");
@@ -299,16 +301,16 @@ public class EventTest {
     }
 
     @Test
-    public void ShouldBeAbleToIndicateIfNotAbleToConnectToDatabase() throws SQLException {
+    public void ShouldBeAbleToIndicateIfNotAbleToConnectToDatabase() throws IOException {
         map.put("ts", TS);
         map.put("uid", UID);
 
-        stub(childDtoMock.process(any(Child.class), any(Date.class))).toThrow(new SQLException("Not able to connect to database"));
+        stub(userServiceMock.getUserFor(any(Child.class), any(Date.class))).toThrow(new IOException("Not able to connect to database"));
 
         Event event = new Event(map, keyValueStoreMock);
 
         event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
-        event.process(childDtoMock, DateTime.now());
+        event.process(userServiceMock, DateTime.now());
         Map<String, Object> data = event.getData();
 
         HashMap<String, Object> actualUdata = (HashMap<String, Object>)data.get("udata");
@@ -324,13 +326,13 @@ public class EventTest {
         Event event = new Event(map, keyValueStoreMock);
 
         event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
-        event.process(childDtoMock, DateTime.now());
+        event.process(userServiceMock, DateTime.now());
 
         assertFalse(event.isProcessed());
     }
 
     @Test
-    public void ShouldBeAbleToProcessIfFlagsDoesNotHaveChildProcessedFlag() throws SQLException {
+    public void ShouldBeAbleToProcessIfFlagsDoesNotHaveChildProcessedFlag() throws IOException {
         HashMap<String, Boolean> flags = new HashMap<String, Boolean>();
         map.put("ts", TS);
         map.put("uid", UID);
@@ -338,17 +340,17 @@ public class EventTest {
         map.put("flags", flags);
 
         Child child = new Child(UID, true, getUdata());
-        stub(childDtoMock.process(any(Child.class), any(Date.class))).toReturn(child);
+        stub(userServiceMock.getUserFor(any(Child.class), any(Date.class))).toReturn(child);
         Event event = new Event(map, keyValueStoreMock);
 
         event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
-        event.process(childDtoMock, DateTime.now());
+        event.process(userServiceMock, DateTime.now());
 
        assertTrue(event.isProcessed());
     }
 
     @Test
-    public void ShouldCreateProcessedCountFirstTime() throws SQLException {
+    public void ShouldCreateProcessedCountFirstTime() throws IOException {
         map.put("ts", TS);
         map.put("uid", UID);
 
@@ -363,7 +365,7 @@ public class EventTest {
     }
 
     @Test
-    public void ShouldIncrementProcessedTime() throws SQLException {
+    public void ShouldIncrementProcessedTime() throws IOException {
 
         HashMap<String, Object> metadata = new HashMap<String, Object>();
         metadata.put("processed_count",1);
@@ -426,7 +428,7 @@ public class EventTest {
     }
 
     @Test
-    public void ShouldBackoffForAllEventsRelevant() throws SQLException {
+    public void ShouldBackoffForAllEventsRelevant() throws IOException {
         DateTimeUtils.setCurrentMillisFixed(0); //big bang
         retryBackoffBase = 10;
 
@@ -436,7 +438,7 @@ public class EventTest {
         Event event = new Event(map,keyValueStoreMock);
         event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
         Child child = new Child(UID, false,  getUdata());
-        stub(childDtoMock.process(any(Child.class), any(Date.class))).toReturn(child);
+        stub(userServiceMock.getUserFor(any(Child.class), any(Date.class))).toReturn(child);
 
         Map map2 = new HashedMap();
         map2.put("ts", new SimpleDateFormat(DATE_FORMAT).format(date));
@@ -448,7 +450,7 @@ public class EventTest {
         event2.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
 //      ----- first event
         Assert.assertEquals(false, event.isSkipped()); //first try for first event is not skipped
-        event.process(childDtoMock, DateTime.now());
+        event.process(userServiceMock, DateTime.now());
         Assert.assertNotNull(retryStore.get(UID));
 
 //      ----- second event
@@ -462,7 +464,7 @@ public class EventTest {
 //      ----- events again
         DateTimeUtils.setCurrentMillisFixed(21 * 1000); //10*2^1
         Assert.assertEquals(false, event.isSkipped()); //backoff over
-        event.process(childDtoMock, DateTime.now()); //data not available
+        event.process(userServiceMock, DateTime.now()); //data not available
         Assert.assertEquals(true, event2.isSkipped()); //backoff back
         Assert.assertNotNull(retryStore.get(UID));
 //      ----- events again
@@ -473,17 +475,17 @@ public class EventTest {
 //      ----- events again
         DateTimeUtils.setCurrentMillisFixed((21 + 40 + 1) * 1000); //10*2^2
         Assert.assertEquals(false, event.isSkipped()); //backoff over
-        event.process(childDtoMock, DateTime.now()); //data not available
+        event.process(userServiceMock, DateTime.now()); //data not available
         Assert.assertEquals(true, event2.isSkipped()); //backoff back
         Assert.assertNotNull(retryStore.get(UID));
 //      ----- events again but this time they get processed
         child.setAsProcessed();
         DateTimeUtils.setCurrentMillisFixed((21 + 40 + 1 + 80 + 1) * 1000); //10*2^2
         Assert.assertEquals(false, event.isSkipped()); //backoff over
-        event.process(childDtoMock, DateTime.now()); //data not available
+        event.process(userServiceMock, DateTime.now()); //data not available
         Assert.assertNull(retryStore.get(UID));
         Assert.assertEquals(false, event2.isSkipped()); //event not skipped
-        event2.process(childDtoMock, DateTime.now());
+        event2.process(userServiceMock, DateTime.now());
 
         Assert.assertEquals(4, ((Map) (map.get("metadata"))).get("processed_count"));
         Assert.assertEquals(DateTime.now().toString(),((Map)(map.get("metadata"))).get("last_processed_at"));

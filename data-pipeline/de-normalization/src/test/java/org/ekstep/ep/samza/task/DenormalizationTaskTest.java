@@ -10,7 +10,8 @@ import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
-import org.ekstep.ep.samza.ChildDto;
+import org.ekstep.ep.samza.external.UserService;
+import org.ekstep.ep.samza.external.UserServiceClient;
 import org.ekstep.ep.samza.Event;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -33,7 +34,7 @@ public class DenormalizationTaskTest {
     private final String RETRY_TOPIC = "events_retry";
     private MessageCollector collectorMock;
     private Event eventMock;
-    private ChildDto childDtoMock;
+    private UserService userServiceMock;
     private DeNormalizationTask deNormalizationTask;
     private Config configMock;
     private TaskContext contextMock;
@@ -51,7 +52,7 @@ public class DenormalizationTaskTest {
     public void setUp(){
         collectorMock = mock(MessageCollector.class);
         eventMock = mock(Event.class);
-        childDtoMock = mock(ChildDto.class);
+        userServiceMock = mock(UserServiceClient.class);
         contextMock = Mockito.mock(TaskContext.class);
         metricsRegistry = Mockito.mock(MetricsRegistry.class);
         counter = Mockito.mock(Counter.class);
@@ -74,16 +75,16 @@ public class DenormalizationTaskTest {
 
     @Test
     public void ShouldInitializeEvent() {
-        deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
+        deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
 
         verify(eventMock).initialize(retryBackoffBase, retryBackoffLimit, retryStore);
     }
 
     @Test
     public void ShouldProcessEvent() {
-        deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
+        deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
 
-        verify(eventMock).process(childDtoMock, DateTime.now());
+        verify(eventMock).process(userServiceMock, DateTime.now());
     }
 
     @Test
@@ -96,7 +97,7 @@ public class DenormalizationTaskTest {
         deNormalizationTask.init(configMock, contextMock);
         ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
 
-        deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
+        deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
 
         verify(collectorMock,times(1)).send(argument.capture());
         validateStreams(argument, message, new String[]{RETRY_TOPIC});
@@ -112,7 +113,7 @@ public class DenormalizationTaskTest {
         deNormalizationTask.init(configMock, contextMock);
         ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
 
-        deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
+        deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
 
         verify(collectorMock,times(1)).send(argument.capture());
         validateStreams(argument, message, new String[]{RETRY_TOPIC});
@@ -125,7 +126,7 @@ public class DenormalizationTaskTest {
         stub(eventMock.getData()).toReturn(message);
         deNormalizationTask.init(configMock, contextMock);
 
-        deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
+        deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
 
         verify(collectorMock).send(argThat(validateOutputTopic(message, SUCCESS_TOPIC)));
     }
@@ -134,7 +135,7 @@ public class DenormalizationTaskTest {
     public void ShouldNotRetryIfBackingOff() throws Exception {
         deNormalizationTask.init(configMock, contextMock);
         when(eventMock.isSkipped()).thenReturn(true);
-        deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
+        deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
     }
 
     @Test
@@ -143,7 +144,7 @@ public class DenormalizationTaskTest {
         stub(eventMock.getData()).toReturn(message);
         deNormalizationTask.init(configMock, contextMock);
         when(eventMock.isSkipped()).thenReturn(false);
-        deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
+        deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
         verify(collectorMock).send(argThat(validateOutputTopic(message, SUCCESS_TOPIC)));
     }
 

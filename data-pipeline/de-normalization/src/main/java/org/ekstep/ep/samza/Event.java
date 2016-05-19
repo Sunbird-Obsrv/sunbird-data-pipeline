@@ -1,20 +1,17 @@
 package org.ekstep.ep.samza;
 
-import com.google.gson.Gson;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.samza.storage.kv.KeyValueStore;
+import org.ekstep.ep.samza.external.UserService;
 import org.ekstep.ep.samza.task.DeNormalizationTask;
 import org.ekstep.ep.samza.validators.IValidator;
-import org.ekstep.ep.samza.validators.UidValidator;
 import org.ekstep.ep.samza.validators.ValidatorFactory;
 import org.joda.time.DateTime;
-import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -41,14 +38,14 @@ public class Event {
         this.hadIssueWithDb = false;
     }
 
-    public Map<String,Object> getMap(){
-        return (Map<String,Object>) this.map;
+    public Map<String, Object> getMap() {
+        return (Map<String, Object>) this.map;
     }
 
     public void initialize(int retryBackoffBase, int retryBackoffLimit, KeyValueStore<String, Object> retryStore) {
-        if(retryBackoffBase==0)
-            retryBackoffBase  = RETRY_BACKOFF_BASE_DEFAULT;
-        if(retryBackoffLimit==0)
+        if (retryBackoffBase == 0)
+            retryBackoffBase = RETRY_BACKOFF_BASE_DEFAULT;
+        if (retryBackoffLimit == 0)
             retryBackoffLimit = RETRY_BACKOFF_LIMIT_DEFAULT;
         this.retryBackoffBase = retryBackoffBase;
         this.retryBackoffLimit = retryBackoffLimit;
@@ -70,9 +67,9 @@ public class Event {
             Map<String, Boolean> flags = (Map<String, Boolean>) map.get("flags");
             simpleDateFormat.setTimeZone(TimeZone.getTimeZone("IST"));
             child = childStore.get(uid);
-            if (child == null){
+            if (child == null) {
                 Boolean childProcessed = flags == null || !flags.containsKey("child_data_processed") ? false : flags.get("child_data_processed");
-                child = new Child(uid, childProcessed ,udata);
+                child = new Child(uid, childProcessed, udata);
             }
         } catch (ParseException e) {
             canBeProcessed = false;
@@ -80,14 +77,14 @@ public class Event {
         }
     }
 
-    public void process(ChildDto childDto, DateTime now) {
+    public void process(UserService userService, DateTime now) {
         try {
             LOGGER.info("PROCESSING - START");
             if (!canBeProcessed) return;
             try {
                 if (child.needsToBeProcessed()) {
                     LOGGER.info("PROCESSING - DB CALL");
-                    child = childDto.process(child, timeOfEvent);
+                    child = userService.getUserFor(child, timeOfEvent);
                 }
                 if (child.isProcessed()) {
                     LOGGER.info("PROCESSING - FOUND CHILD");
@@ -97,7 +94,7 @@ public class Event {
                     LOGGER.info("PROCESSING - CHILD NOT FOUND!");
                     updateMetadataToStore();
                 }
-            } catch (SQLException e) {
+            } catch (IOException e) {
                 hadIssueWithDb = true;
                 e.printStackTrace();
             }
@@ -125,7 +122,7 @@ public class Event {
         return canBeProcessed && child.isProcessed();
     }
 
-    public boolean canBeProcessed(){
+    public boolean canBeProcessed() {
         return canBeProcessed;
     }
 
@@ -135,17 +132,16 @@ public class Event {
 
     public void addMetadata(DateTime currentTime) {
         Map<String, Object> metadata = getMetadata();
-        if(metadata != null){
+        if (metadata != null) {
             setLastProcessedAt(currentTime);
-            if(metadata.get("processed_count") == null)
+            if (metadata.get("processed_count") == null)
                 setLastProcessedCount(1);
             else {
                 Integer count = (((Double) Double.parseDouble(String.valueOf(metadata.get("processed_count")))).intValue());
                 count = count + 1;
                 setLastProcessedCount(count);
             }
-        }
-        else{
+        } else {
             setLastProcessedAt(currentTime);
             setLastProcessedCount(1);
         }
@@ -153,23 +149,23 @@ public class Event {
 //        addMetadataToStore();
     }
 
-    private void addMetadataToStore(){
-        if(retryStore.get(getUID())==null){
+    private void addMetadataToStore() {
+        if (retryStore.get(getUID()) == null) {
             updateMetadataToStore();
             LOGGER.info("STORE - ADDED FOR "+getUID());
         }
     }
 
-    private void updateMetadataToStore(){
-        if(map.get("metadata")!=null){
+    private void updateMetadataToStore() {
+        if (map.get("metadata") != null) {
             Map _map = new HashMap();
-            _map.put("metadata",map.get("metadata"));
+            _map.put("metadata", map.get("metadata"));
             retryStore.put(getUID(), _map);
             LOGGER.info("STORE - UPDATED "+_map+" UID "+getUID());
         }
     }
 
-    private void removeMetadataFromStore(){
+    private void removeMetadataFromStore() {
         retryStore.delete(getUID());
     }
 
@@ -186,35 +182,35 @@ public class Event {
         }
     }
 
-    public void setLastProcessedAt(DateTime time){
+    public void setLastProcessedAt(DateTime time) {
         Map<String, Object> metadata = getMetadata();
-        metadata.put("last_processed_at",time.toString());
+        metadata.put("last_processed_at", time.toString());
     }
 
-    public void setLastProcessedCount(int n){
+    public void setLastProcessedCount(int n) {
         Map<String, Object> metadata = getMetadata();
-        metadata.put("processed_count",n);
+        metadata.put("processed_count", n);
     }
 
-    public List backoffTimes(int attempts){
+    public List backoffTimes(int attempts) {
         List backoffList = new ArrayList();
         DateTime thisTime = getLastProcessedTime();
         int processedCount;
         DateTime nextTime;
-        for(int i=0;i<attempts;i++){
+        for (int i = 0; i < attempts; i++) {
             nextTime = getNextProcessingTime(thisTime);
             processedCount = getProcessedCount();
             backoffList.add(nextTime);
             thisTime = nextTime;
             setLastProcessedAt(nextTime);
-            setLastProcessedCount(processedCount+1);
+            setLastProcessedCount(processedCount + 1);
         }
         return backoffList;
     }
 
-    private DateTime getNextProcessingTime(DateTime lastProcessedTime){
+    private DateTime getNextProcessingTime(DateTime lastProcessedTime) {
         Integer nextBackoffInterval = getNextBackoffInterval();
-        if(lastProcessedTime==null||nextBackoffInterval==null)
+        if (lastProcessedTime == null || nextBackoffInterval == null)
             return null;
         DateTime nextProcessingTime = lastProcessedTime.plusSeconds(nextBackoffInterval);
         LOGGER.info("nextProcessingTime: "+nextProcessingTime.toString());
@@ -223,25 +219,25 @@ public class Event {
 
     private Integer getNextBackoffInterval() {
         Integer processedCount = getProcessedCount();
-        if(processedCount==null)
+        if (processedCount == null)
             return null;
-        return retryBackoffBase*(int)Math.pow(2,processedCount);
+        return retryBackoffBase * (int) Math.pow(2, processedCount);
     }
 
-    private Integer getProcessedCount(){
+    private Integer getProcessedCount() {
         Map metadata = getMetadata();
-        if(metadata==null){
+        if (metadata == null) {
             return null;
         } else {
-            Integer processedCount = (Integer)metadata.get("processed_count");
+            Integer processedCount = (Integer) metadata.get("processed_count");
             return processedCount;
         }
     }
 
-    public DateTime getLastProcessedTime(){
+    public DateTime getLastProcessedTime() {
         Map metadata = getMetadata();
-        String lastProcessedAt = (String)metadata.get("last_processed_at");
-        if(lastProcessedAt==null)
+        String lastProcessedAt = (String) metadata.get("last_processed_at");
+        if (lastProcessedAt == null)
             return null;
         DateTimeFormatter formatter = ISODateTimeFormat.dateTime();
         DateTime dt = formatter.parseDateTime(lastProcessedAt);
@@ -250,19 +246,19 @@ public class Event {
 
     private Map<String, Object> getMetadata() {
         String uid = getUID();
-        Map retryData = (Map)retryStore.get(uid);
+        Map retryData = (Map) retryStore.get(uid);
         Map metadata = null;
         Map _map;
-        if(retryData!=null){
+        if (retryData != null) {
             _map = retryData;
         } else {
             _map = map;
         }
-        if(_map!=null)
+        if (_map != null)
             metadata = (Map<String, Object>) _map.get("metadata");
-        if(metadata==null){
+        if (metadata == null) {
             metadata = new HashMap<String, Object>();
-            map.put("metadata",metadata);
+            map.put("metadata", metadata);
             return metadata;
         }
         return metadata;

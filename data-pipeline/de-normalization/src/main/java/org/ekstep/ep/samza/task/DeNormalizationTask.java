@@ -1,6 +1,5 @@
 package org.ekstep.ep.samza.task;
 
-import com.google.gson.Gson;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.storage.kv.KeyValueStore;
@@ -9,7 +8,8 @@ import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.Child;
-import org.ekstep.ep.samza.ChildDto;
+import org.ekstep.ep.samza.external.UserService;
+import org.ekstep.ep.samza.external.UserServiceClient;
 import org.ekstep.ep.samza.Event;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -36,6 +36,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     private int retryBackoffBase;
     private int retryBackoffLimit;
     private KeyValueStore<String, Object> retryStore;
+    private String userServiceEndpoint;
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
@@ -48,6 +49,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
         dbUserName = config.get("db.userName");
         dbPassword = config.get("db.password");
         dbSchema = config.get("db.schema");
+        userServiceEndpoint = config.get("user.service.endpoint");
         retryBackoffBase = Integer.parseInt(config.get("retry.backoff.base"));
         retryBackoffLimit = Integer.parseInt(config.get("retry.backoff.limit"));
         messageCount = context
@@ -60,16 +62,17 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) {
         try {
             Map<String, Object> message = (Map<String, Object>) envelope.getMessage();
-            ChildDto dataSource = new ChildDto(dbHost, dbPort, dbSchema, dbUserName, dbPassword);
+            UserService dataSource = new UserServiceClient(userServiceEndpoint);
             Event event = new Event(message, childData);
             processEvent(collector, event, dataSource);
             messageCount.inc();
         }catch (Exception e){
             System.err.println("Error while processing message"+e);
+            e.printStackTrace();
         }
     }
 
-    public void processEvent(MessageCollector collector, Event event, ChildDto dataSource) {
+    public void processEvent(MessageCollector collector, Event event, UserService dataSource) {
         event.initialize(retryBackoffBase,retryBackoffLimit,retryStore);
         LOGGER.info(TAG + " EVENT:", event.getMap());
         if(!event.isSkipped()){
