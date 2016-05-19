@@ -21,7 +21,7 @@ import java.util.*;
 
 public class Event {
     private static final String TAG = "Event";
-    static Logger LOGGER = LoggerFactory.getLogger(DeNormalizationTask.class);
+    static Logger LOGGER = LoggerFactory.getLogger(Event.class);
     private static final int RETRY_BACKOFF_BASE_DEFAULT = 10;
     private static final int RETRY_BACKOFF_LIMIT_DEFAULT = 4;
     private final Map<String, Object> map;
@@ -57,7 +57,7 @@ public class Event {
             ArrayList<IValidator> validators = ValidatorFactory.validators(map);
             for (IValidator validator : validators)
                 if (validator.isInvalid()) {
-                    LOGGER.info(TAG, validator.getErrorMessage());
+                    LOGGER.error(validator.getErrorMessage());
                     canBeProcessed = false;
                     return;
                 }
@@ -82,23 +82,26 @@ public class Event {
 
     public void process(ChildDto childDto, DateTime now) {
         try {
+            LOGGER.info("PROCESSING - START");
             if (!canBeProcessed) return;
             try {
-                LOGGER.info(TAG, "Processing event at ts:" + timeOfEvent.getTime());
                 if (child.needsToBeProcessed()) {
-                    LOGGER.info(TAG,"Processing child data, getting data from db");
+                    LOGGER.info("PROCESSING - DB CALL");
                     child = childDto.process(child, timeOfEvent);
                 }
                 if (child.isProcessed()) {
+                    LOGGER.info("PROCESSING - FOUND CHILD");
                     update(child);
                     removeMetadataFromStore();
                 } else {
+                    LOGGER.info("PROCESSING - CHILD NOT FOUND!");
                     updateMetadataToStore();
                 }
             } catch (SQLException e) {
                 hadIssueWithDb = true;
                 e.printStackTrace();
             }
+            LOGGER.info("PROCESSING - STOP");
         } finally {
             addMetadata(now);
         }
@@ -150,12 +153,14 @@ public class Event {
             setLastProcessedAt(currentTime);
             setLastProcessedCount(1);
         }
+        LOGGER.info("METADATA - ADDED "+metadata);
 //        addMetadataToStore();
     }
 
     private void addMetadataToStore(){
         if(retryStore.get(getUID())==null){
             updateMetadataToStore();
+            LOGGER.info("STORE - ADDED FOR "+getUID());
         }
     }
 
@@ -164,6 +169,7 @@ public class Event {
             Map _map = new HashMap();
             _map.put("metadata",map.get("metadata"));
             retryStore.put(getUID(), _map);
+            LOGGER.info("STORE - UPDATED "+_map+" UID "+getUID());
         }
     }
 
@@ -172,10 +178,13 @@ public class Event {
     }
 
     public boolean isSkipped() {
+        LOGGER.info("CHECK - AT "+DateTime.now());
         DateTime nextProcessingTime = getNextProcessingTime(getLastProcessedTime());
         if(nextProcessingTime==null||nextProcessingTime.isBeforeNow()){
+            LOGGER.info("CHECK - PROCESSING "+map);
             return false;
         } else{
+            LOGGER.info("CHECK - BACKING OFF "+map);
             addMetadataToStore();
             return true;
         }
@@ -212,7 +221,7 @@ public class Event {
         if(lastProcessedTime==null||nextBackoffInterval==null)
             return null;
         DateTime nextProcessingTime = lastProcessedTime.plusSeconds(nextBackoffInterval);
-        LOGGER.debug(TAG+" nextProcessingTime: ",nextProcessingTime);
+        LOGGER.info("nextProcessingTime: "+nextProcessingTime.toString());
         return nextProcessingTime;
     }
 
