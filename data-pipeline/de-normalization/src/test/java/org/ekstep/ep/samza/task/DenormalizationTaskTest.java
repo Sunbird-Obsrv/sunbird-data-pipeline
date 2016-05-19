@@ -89,7 +89,7 @@ public class DenormalizationTaskTest {
     @Test
     public void ShouldSendOutputToReTryTopicIfUIDIsNotPresentInDb() throws Exception {
         stub(eventMock.canBeProcessed()).toReturn(true);
-        stub(eventMock.isChildDataProcessed()).toReturn(false);
+        stub(eventMock.isProcessed()).toReturn(false);
 
         HashMap<String, Object> message = new HashMap<String, Object>();
         stub(eventMock.getData()).toReturn(message);

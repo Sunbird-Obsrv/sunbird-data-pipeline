@@ -129,10 +129,6 @@ public class Event {
         return canBeProcessed;
     }
 
-    public boolean isChildDataProcessed(){
-        return child.isProcessed();
-    }
-
     public boolean hadIssueWithDb() {
         return hadIssueWithDb;
     }

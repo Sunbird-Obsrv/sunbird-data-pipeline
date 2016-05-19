@@ -71,19 +71,19 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
 
     public void processEvent(MessageCollector collector, Event event, ChildDto dataSource) {
         event.initialize(retryBackoffBase,retryBackoffLimit,retryStore);
-        LOGGER.info(TAG + " event:", event.getMap());
+        LOGGER.info(TAG + " EVENT:", event.getMap());
         if(!event.isSkipped()){
-            LOGGER.info(TAG, "PROCESS");
-            event.process(dataSource,DateTime.now());
-            populateTopic(collector,event);
+            LOGGER.info(TAG+" PROCESS");
+            event.process(dataSource, DateTime.now());
         } else {
-            LOGGER.info(TAG, "SKIP");
+            LOGGER.info(TAG+" SKIP");
         }
+        populateTopic(collector,event);
     }
 
     private void populateTopic(MessageCollector collector, Event event) {
 
-        boolean childDataNotProcessed = event.canBeProcessed() && !event.isChildDataProcessed();
+        boolean childDataNotProcessed = event.canBeProcessed() && !event.isProcessed();
         boolean hadProblemWithDb = event.hadIssueWithDb();
         if (childDataNotProcessed || hadProblemWithDb)
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", retryTopic), event.getData()));
