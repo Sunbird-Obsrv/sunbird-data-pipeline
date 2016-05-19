@@ -135,7 +135,6 @@ public class DenormalizationTaskTest {
         deNormalizationTask.init(configMock, contextMock);
         when(eventMock.isSkipped()).thenReturn(true);
         deNormalizationTask.processEvent(collectorMock, eventMock, childDtoMock);
-        verifyZeroInteractions(collectorMock);
     }
 
     @Test
