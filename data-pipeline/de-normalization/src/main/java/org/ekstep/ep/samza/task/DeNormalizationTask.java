@@ -25,11 +25,6 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     private String successTopic;
     private String failedTopic;
     private KeyValueStore<String, Child> childData;
-    private String dbHost;
-    private String dbPort;
-    private String dbUserName;
-    private String dbPassword;
-    private String dbSchema;
     private String retryTopic;
 
     private Counter messageCount;
@@ -44,11 +39,6 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
         failedTopic = config.get("output.failed.topic.name", "events_failed_de_normalization");
         retryTopic = config.get("output.retry.topic.name", "events_retry");
         childData = (KeyValueStore<String, Child>) context.getStore("de-normalization");
-        dbHost = config.get("db.host");
-        dbPort = config.get("db.port");
-        dbUserName = config.get("db.userName");
-        dbPassword = config.get("db.password");
-        dbSchema = config.get("db.schema");
         userServiceEndpoint = config.get("user.service.endpoint");
         retryBackoffBase = Integer.parseInt(config.get("retry.backoff.base"));
         retryBackoffLimit = Integer.parseInt(config.get("retry.backoff.limit"));
