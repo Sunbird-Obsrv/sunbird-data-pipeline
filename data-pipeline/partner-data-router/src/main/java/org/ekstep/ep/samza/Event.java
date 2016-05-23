@@ -7,7 +7,7 @@ import java.lang.reflect.Array;
 import java.util.*;
 
 public class Event {
-    private static final List<String> validPartners = Arrays.asList("org.ekstep.partner.akshara", "org.ekstep.partner.pratham", "org.ekstep.partner.sample");
+    private static final List<String> validPartners = Arrays.asList("org.ekstep.partner.akshara", "org.ekstep.partner.pratham", "org.ekstep.partner.enlearn");
     private Map<String, Object> data;
 
 
