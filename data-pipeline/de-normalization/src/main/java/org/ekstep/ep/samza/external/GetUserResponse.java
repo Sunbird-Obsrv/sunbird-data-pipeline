@@ -54,7 +54,7 @@ public class GetUserResponse {
         private String handle;
         private String gender;
         private int age;
-        private String standard;
+        private int standard;
         private String language;
         private int yearOfBirth;
         private int day;
@@ -73,7 +73,7 @@ public class GetUserResponse {
             return age;
         }
 
-        public String standard() {
+        public int standard() {
             return standard;
         }
 
