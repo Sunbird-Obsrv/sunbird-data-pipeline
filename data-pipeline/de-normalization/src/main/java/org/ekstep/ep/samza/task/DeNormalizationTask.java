@@ -8,16 +8,16 @@ import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.Child;
+import org.ekstep.ep.samza.Event;
 import org.ekstep.ep.samza.external.UserService;
 import org.ekstep.ep.samza.external.UserServiceClient;
-import org.ekstep.ep.samza.Event;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-public class DeNormalizationTask implements StreamTask, InitableTask, WindowableTask{
+public class DeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
     private static final String TAG = "DeNormalizationTask";
     static Logger LOGGER = LoggerFactory.getLogger(DeNormalizationTask.class);
     private static final String RETRY_BACKOFF_BASE_DEFAULT = "10";
@@ -50,28 +50,33 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) {
+        Event event = null;
         try {
             Map<String, Object> message = (Map<String, Object>) envelope.getMessage();
             UserService dataSource = new UserServiceClient(userServiceEndpoint);
-            Event event = new Event(message, childData);
+            event = new Event(message, childData);
             processEvent(collector, event, dataSource);
             messageCount.inc();
-        }catch (Exception e){
-            System.err.println("Error while processing message"+e);
+        } catch (Exception e) {
+            if (event != null) {
+                LOGGER.error(TAG + " FAILED, ADDING EVENT TO RETRY TOPIC", e);
+                collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", retryTopic), event.getData()));
+            }
+            System.err.println("Error while processing message" + e);
             e.printStackTrace();
         }
     }
 
-    public void processEvent(MessageCollector collector, Event event, UserService dataSource) {
-        event.initialize(retryBackoffBase,retryBackoffLimit,retryStore);
+    public void processEvent(MessageCollector collector, Event event, UserService userService) {
+        event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
         LOGGER.info(TAG + " EVENT:", event.getMap());
-        if(!event.isSkipped()){
-            LOGGER.info(TAG+" PROCESS");
-            event.process(dataSource, DateTime.now());
+        if (!event.isSkipped()) {
+            LOGGER.info(TAG + " PROCESS");
+            event.process(userService, DateTime.now());
         } else {
-            LOGGER.info(TAG+" SKIP");
+            LOGGER.info(TAG + " SKIP");
         }
-        populateTopic(collector,event);
+        populateTopic(collector, event);
     }
 
     private void populateTopic(MessageCollector collector, Event event) {
