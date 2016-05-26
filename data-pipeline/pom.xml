@@ -28,6 +28,7 @@
     <module>user-management</module>
     <module>user-management-test</module>
     <module>partner-data-router</module>
+    <module>telemetry-cleaner</module>
   </modules>
 
   <properties>
