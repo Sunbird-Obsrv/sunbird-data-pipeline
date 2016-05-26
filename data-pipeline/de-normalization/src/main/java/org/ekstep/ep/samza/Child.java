@@ -1,11 +1,18 @@
 package org.ekstep.ep.samza;
 
+import org.ekstep.ep.samza.task.DeNormalizationTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Child implements Serializable {
+    private static final String TAG = Child.class.getSimpleName();
+    static Logger LOGGER = LoggerFactory.getLogger(Child.class);
+
     public static final String HANDLE = "handle";
     public static final String STANDARD = "standard";
     public static final String GENDER = "gender";
@@ -54,23 +61,23 @@ public class Child implements Serializable {
 
     public void populate(HashMap<String, Object> childData, Date timeOfEvent) {
         if(childData == null || childData.isEmpty()){
-            System.err.println("No record in the database, skipping the record");
+            LOGGER.error(TAG + " NO RECORD IN THE DATABASE");
             return;
         }
-        System.out.println("trying to read from database");
+        LOGGER.info(TAG + " TRYING TO READ FROM DATABASE");
         populateAgeRelatedFields(childData, timeOfEvent);
         this.handle = (String) childData.get(HANDLE);
         this.standard = (Integer) childData.get(STANDARD);
         this.gender = (String) childData.get(GENDER);
         this.isGroupUser = ((Boolean) childData.get(IS_GROUP_USER));
         this.child_data_processed = true;
-        System.out.println("successfully read from db");
+        LOGGER.info(TAG + " SUCCESSFULLY READ FROM DB");
     }
 
     private void populateAgeRelatedFields(HashMap<String, Object> childData, Date timeOfEvent) {
         Integer year_of_birth = (Integer) childData.get("year_of_birth");
         if(year_of_birth == null || year_of_birth <= 0){
-            System.err.println("No Age for the children, skipping all age related fields");
+            LOGGER.error(TAG + " NO AGE FOR THE CHILDREN");
             return;
         }
         Calendar timeOfEventFromCalendar = Calendar.getInstance();

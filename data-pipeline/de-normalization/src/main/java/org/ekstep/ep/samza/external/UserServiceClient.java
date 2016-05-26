@@ -14,7 +14,7 @@ import static java.text.MessageFormat.format;
 
 public class UserServiceClient implements UserService {
     private static final String TAG = UserServiceClient.class.getSimpleName();
-    static Logger LOGGER = LoggerFactory.getLogger(Event.class);
+    static Logger LOGGER = LoggerFactory.getLogger(UserServiceClient.class);
 
     private static final String HANDLE = "handle";
     private static final String STANDARD = "standard";

@@ -62,8 +62,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
                 LOGGER.error(TAG + " FAILED, ADDING EVENT TO RETRY TOPIC", e);
                 collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", retryTopic), event.getData()));
             }
-            System.err.println("Error while processing message" + e);
-            e.printStackTrace();
+            LOGGER.error(TAG + " ERROR WHILE PROCESSING MESSAGE", e);
         }
     }
 
