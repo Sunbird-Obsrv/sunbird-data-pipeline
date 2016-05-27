@@ -28,8 +28,8 @@ public class TelemetryCleanerTask implements StreamTask, InitableTask {
     @Override
     public void init(Config config, TaskContext context) throws Exception {
         LOGGER.info(format("{0} INIT JOB", TAG));
-        successTopic = config.get("output.success.topic.name", "public_data");
-        failedTopic = config.get("output.failed.topic.name", "public_data.fail");
+        successTopic = config.get("output.success.topic.name", "telemetry.public");
+        failedTopic = config.get("output.failed.topic.name", "telemetry.public.fail");
         cleaners = CleanerFactory.cleaners();
     }
 
