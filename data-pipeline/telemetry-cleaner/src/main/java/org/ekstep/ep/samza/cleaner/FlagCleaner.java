@@ -13,10 +13,6 @@ public class FlagCleaner implements Cleaner {
 
     @Override
     public void clean(Map<String, Object> map) {
-        removeFlags(map);
-    }
-
-    private void removeFlags(Map<String, Object> map) {
         Map<String, Object> flags = (Map<String, Object>) map.get("flags");
         if (flags == null) {
             return;
