@@ -2,7 +2,6 @@ package org.ekstep.ep.samza.cleaner;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.contains;
@@ -17,6 +16,6 @@ public class CleanerFactoryTest {
                 instanceOf(ChildDataCleaner.class),
                 instanceOf(LocationDataCleaner.class),
                 instanceOf(DeviceDataCleaner.class),
-                instanceOf(FlagCleaner.class)));
+                instanceOf(MetadataCleaner.class)));
     }
 }

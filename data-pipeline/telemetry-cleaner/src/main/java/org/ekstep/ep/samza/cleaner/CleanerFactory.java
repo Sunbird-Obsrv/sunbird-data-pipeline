@@ -11,6 +11,6 @@ public class CleanerFactory {
                 new ChildDataCleaner(),
                 new LocationDataCleaner(),
                 new DeviceDataCleaner(),
-                new FlagCleaner());
+                new MetadataCleaner());
     }
 }

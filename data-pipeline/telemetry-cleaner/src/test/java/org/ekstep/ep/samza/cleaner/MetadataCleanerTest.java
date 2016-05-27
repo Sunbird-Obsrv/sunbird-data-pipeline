@@ -9,17 +9,16 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.collection.IsMapContaining.hasKey;
 import static org.junit.Assert.*;
 
-public class FlagCleanerTest {
+public class MetadataCleanerTest {
     @Test
     public void shouldRemoveAllFlags() throws Exception {
         Map<String, Object> eventMap = EventFixture.CreateProfile();
-        FlagCleaner flagCleaner = new FlagCleaner();
+        MetadataCleaner metadataCleaner = new MetadataCleaner();
 
-        flagCleaner.clean(eventMap);
+        metadataCleaner.clean(eventMap);
 
-        Map<String, Object> flags = (Map<String, Object>) eventMap.get("flags");
-        assertThat(flags, not(hasKey("ldata_processed")));
-        assertThat(flags, not(hasKey("ldata_obtained")));
-        assertThat(flags, not(hasKey("child_data_processed")));
+        assertThat(eventMap, not(hasKey("metadata")));
+        assertThat(eventMap, not(hasKey("flags")));
+        assertThat(eventMap, not(hasKey("ready_to_index")));
     }
 }
