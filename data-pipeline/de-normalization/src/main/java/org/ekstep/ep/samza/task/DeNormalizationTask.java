@@ -15,6 +15,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.MessageFormat;
 import java.util.Map;
 
 public class DeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
@@ -58,15 +59,15 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
             processEvent(collector, event, dataSource);
             messageCount.inc();
         } catch (Exception e) {
+            LOGGER.error(TAG + " ERROR WHILE PROCESSING MESSAGE", e);
             if (event != null) {
-                LOGGER.error(TAG + " FAILED, ADDING EVENT TO RETRY TOPIC", e);
+                LOGGER.error(MessageFormat.format("{0} ADDING FAILED EVENT, {1} TO RETRY TOPIC", TAG, event.getData()));
                 collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", retryTopic), event.getData()));
             }
-            LOGGER.error(TAG + " ERROR WHILE PROCESSING MESSAGE", e);
         }
     }
 
-    public void processEvent(MessageCollector collector, Event event, UserService userService) {
+    void processEvent(MessageCollector collector, Event event, UserService userService) {
         event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
         LOGGER.info(TAG + " EVENT:", event.getMap());
         if (!event.isSkipped()) {

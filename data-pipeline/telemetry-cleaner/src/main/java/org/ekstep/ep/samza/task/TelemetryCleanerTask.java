@@ -35,15 +35,20 @@ public class TelemetryCleanerTask implements StreamTask, InitableTask {
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) throws Exception {
+        Event event = null;
         try {
-            processEvent(collector, envelope);
+            event = new Event((Map<String, Object>) envelope.getMessage());
+            processEvent(collector, event);
         } catch (Exception e) {
             LOGGER.error(format("{0} CLEAN FAILED", TAG), e);
+            if (event != null) {
+                LOGGER.error(format("{0} ADDING TO EVENT FAILED TOPIC. {1}", TAG, event.getMap()), e);
+                collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
+            }
         }
     }
 
-    private void processEvent(MessageCollector collector, IncomingMessageEnvelope envelope) {
-        Event event = new Event((Map<String, Object>) envelope.getMessage());
+    private void processEvent(MessageCollector collector, Event event) {
         LOGGER.info(format("{0} CLEAN EVENT {1}", TAG, event.getMap()));
         for (Cleaner cleaner : cleaners) {
             cleaner.clean(event.getMap());
