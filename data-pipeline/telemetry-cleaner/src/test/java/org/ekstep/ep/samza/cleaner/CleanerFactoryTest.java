@@ -16,6 +16,7 @@ public class CleanerFactoryTest {
         assertThat(cleaners, contains(
                 instanceOf(ChildDataCleaner.class),
                 instanceOf(LocationDataCleaner.class),
-                instanceOf(DeviceDataCleaner.class)));
+                instanceOf(DeviceDataCleaner.class),
+                instanceOf(FlagCleaner.class)));
     }
 }

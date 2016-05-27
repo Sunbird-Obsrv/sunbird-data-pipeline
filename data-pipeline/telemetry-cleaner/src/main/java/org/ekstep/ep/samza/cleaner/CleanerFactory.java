@@ -10,6 +10,7 @@ public class CleanerFactory {
         return asList(
                 new ChildDataCleaner(),
                 new LocationDataCleaner(),
-                new DeviceDataCleaner());
+                new DeviceDataCleaner(),
+                new FlagCleaner());
     }
 }
