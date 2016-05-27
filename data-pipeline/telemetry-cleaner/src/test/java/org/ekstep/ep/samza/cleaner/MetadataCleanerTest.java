@@ -20,5 +20,9 @@ public class MetadataCleanerTest {
         assertThat(eventMap, not(hasKey("metadata")));
         assertThat(eventMap, not(hasKey("flags")));
         assertThat(eventMap, not(hasKey("ready_to_index")));
+        assertThat(eventMap, not(hasKey("type")));
+        assertThat(eventMap, not(hasKey("key")));
+        assertThat(eventMap, not(hasKey("@version")));
+        assertThat(eventMap, not(hasKey("@timestamp")));
     }
 }

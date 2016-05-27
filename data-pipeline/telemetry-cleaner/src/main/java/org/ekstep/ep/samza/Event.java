@@ -13,4 +13,8 @@ public class Event {
     public Event(Map<String, Object> map) {
         this.map = map;
     }
+
+    public String eid() {
+        return map != null && map.containsKey("eid") ? (String) map.get("eid") : null;
+    }
 }

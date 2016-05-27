@@ -13,12 +13,13 @@ import org.ekstep.ep.samza.cleaner.CleanerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static java.text.MessageFormat.format;
 
-public class TelemetryCleanerTask implements StreamTask, InitableTask, WindowableTask{
+public class TelemetryCleanerTask implements StreamTask, InitableTask, WindowableTask {
     private static final String TAG = TelemetryCleanerTask.class.getSimpleName();
     static Logger LOGGER = LoggerFactory.getLogger(TelemetryCleanerTask.class);
 
@@ -27,12 +28,14 @@ public class TelemetryCleanerTask implements StreamTask, InitableTask, Windowabl
     private List<Cleaner> cleaners;
 
     private Counter messageCount;
+    private List<String> nonPublicEvents;
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
         LOGGER.info(format("{0} INIT JOB", TAG));
         successTopic = config.get("output.success.topic.name", "telemetry.public");
         failedTopic = config.get("output.failed.topic.name", "telemetry.public.fail");
+        nonPublicEvents = getNonPublicEvents(config);
         cleaners = CleanerFactory.cleaners();
         messageCount = context
                 .getMetricsRegistry()
@@ -55,8 +58,23 @@ public class TelemetryCleanerTask implements StreamTask, InitableTask, Windowabl
         }
     }
 
-    private void processEvent(MessageCollector collector, Event event) {
+    private List<String> getNonPublicEvents(Config config) {
+        String[] split = config.get("events.to.skip", "").split(",");
+        List<String> eventsToSkip = new ArrayList<String>();
+        for (String event : split) {
+            eventsToSkip.add(event.trim().toUpperCase());
+        }
+        return eventsToSkip;
+    }
+
+    void processEvent(MessageCollector collector, Event event) {
         LOGGER.info(format("{0} CLEAN EVENT {1}", TAG, event.getMap()));
+
+        if (nonPublicEvents.contains(event.eid().toUpperCase())) {
+            LOGGER.info(format("{0} SKIPPING EVENT {1}", TAG, event.getMap()));
+            return;
+        }
+
         for (Cleaner cleaner : cleaners) {
             cleaner.clean(event.getMap());
         }
