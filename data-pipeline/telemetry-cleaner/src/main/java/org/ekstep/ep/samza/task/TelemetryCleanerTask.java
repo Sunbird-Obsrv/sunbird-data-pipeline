@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.task;
 
 
 import org.apache.samza.config.Config;
+import org.apache.samza.metrics.Counter;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
@@ -17,7 +18,7 @@ import java.util.Map;
 
 import static java.text.MessageFormat.format;
 
-public class TelemetryCleanerTask implements StreamTask, InitableTask {
+public class TelemetryCleanerTask implements StreamTask, InitableTask, WindowableTask{
     private static final String TAG = TelemetryCleanerTask.class.getSimpleName();
     static Logger LOGGER = LoggerFactory.getLogger(TelemetryCleanerTask.class);
 
@@ -25,12 +26,17 @@ public class TelemetryCleanerTask implements StreamTask, InitableTask {
     private String failedTopic;
     private List<Cleaner> cleaners;
 
+    private Counter messageCount;
+
     @Override
     public void init(Config config, TaskContext context) throws Exception {
         LOGGER.info(format("{0} INIT JOB", TAG));
         successTopic = config.get("output.success.topic.name", "telemetry.public");
         failedTopic = config.get("output.failed.topic.name", "telemetry.public.fail");
         cleaners = CleanerFactory.cleaners();
+        messageCount = context
+                .getMetricsRegistry()
+                .newCounter(getClass().getName(), "message-count");
     }
 
     @Override
@@ -39,6 +45,7 @@ public class TelemetryCleanerTask implements StreamTask, InitableTask {
         try {
             event = new Event((Map<String, Object>) envelope.getMessage());
             processEvent(collector, event);
+            messageCount.inc();
         } catch (Exception e) {
             LOGGER.error(format("{0} CLEAN FAILED", TAG), e);
             if (event != null) {
@@ -55,5 +62,10 @@ public class TelemetryCleanerTask implements StreamTask, InitableTask {
         }
         LOGGER.info(format("{0} CLEANED EVENT {1}", TAG, event.getMap()));
         collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
+    }
+
+    @Override
+    public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
+        messageCount.clear();
     }
 }
