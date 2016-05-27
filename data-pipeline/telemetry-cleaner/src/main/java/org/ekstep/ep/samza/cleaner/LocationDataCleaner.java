@@ -12,17 +12,14 @@ public class LocationDataCleaner implements Cleaner {
     static Logger LOGGER = LoggerFactory.getLogger(LocationDataCleaner.class);
 
     @Override
-    public void process(Map<String, Object> map) {
-        removeLoc(map);
-    }
-
-    private void removeLoc(Map<String, Object> map) {
+    public void clean(Map<String, Object> map) {
         Map<String, Object> eks = (Map<String, Object>) ((Map<String, Object>) map.get("edata")).get("eks");
         if (eks == null) {
             return;
         }
         eks.remove("loc");
 
-        LOGGER.debug(format("{0} CLEANED LOC {1}", TAG,map));
+        LOGGER.debug(format("{0} LOC CLEANED EVENT {1}", TAG, map));
     }
+
 }

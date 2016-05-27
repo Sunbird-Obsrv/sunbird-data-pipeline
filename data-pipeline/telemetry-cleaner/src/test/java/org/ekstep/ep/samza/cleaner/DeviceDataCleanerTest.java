@@ -15,7 +15,7 @@ public class DeviceDataCleanerTest {
         Map<String, Object> eventMap = EventFixture.GenieStart();
         DeviceDataCleaner deviceDataCleaner = new DeviceDataCleaner();
 
-        deviceDataCleaner.process(eventMap);
+        deviceDataCleaner.clean(eventMap);
 
         Map<String, Object> dspec = (Map<String, Object>) ((Map<String, Object>) ((Map<String, Object>) eventMap.get("edata")).get("eks")).get("dspec");
 
@@ -29,7 +29,7 @@ public class DeviceDataCleanerTest {
         Map<String, Object> eventMap = EventFixture.CreateProfile();
         DeviceDataCleaner deviceDataCleaner = new DeviceDataCleaner();
 
-        deviceDataCleaner.process(eventMap);
+        deviceDataCleaner.clean(eventMap);
 
         Map<String, Object> eks = ((Map<String, Object>) ((Map<String, Object>) eventMap.get("edata")).get("eks"));
 

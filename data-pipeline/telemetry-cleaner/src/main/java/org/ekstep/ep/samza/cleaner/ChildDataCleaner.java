@@ -12,12 +12,24 @@ public class ChildDataCleaner implements Cleaner {
     static Logger LOGGER = LoggerFactory.getLogger(ChildDataCleaner.class);
 
     @Override
-    public void process(Map<String, Object> map) {
-        removeUdata(map);
-        removeEdata(map);
+    public void clean(Map<String, Object> map) {
+        cleanUdata(map);
+        cleanEdataEks(map);
     }
 
-    private void removeEdata(Map<String, Object> map) {
+    private void cleanUdata(Map<String, Object> map) {
+        Map<String, Object> udata = (Map<String, Object>) map.get("udata");
+        if (udata == null) {
+            return;
+        }
+        udata.remove("is_group_user");
+        udata.remove("gender");
+        udata.remove("handle");
+
+        LOGGER.debug(format("{0} UDATA CLEANED EVENT {1}", TAG, map));
+    }
+
+    private void cleanEdataEks(Map<String, Object> map) {
         Map<String, Object> eks = (Map<String, Object>) ((Map<String, Object>) map.get("edata")).get("eks");
         if (eks == null) {
             return;
@@ -29,18 +41,6 @@ public class ChildDataCleaner implements Cleaner {
         eks.remove("loc");
         eks.remove("month");
 
-        LOGGER.debug(format("{0} CLEANED UDATA {1}", TAG , map));
-    }
-
-    private void removeUdata(Map<String, Object> map) {
-        Map<String, Object> udata = (Map<String, Object>) map.get("udata");
-        if (udata == null) {
-            return;
-        }
-        udata.remove("is_group_user");
-        udata.remove("gender");
-        udata.remove("handle");
-
-        LOGGER.debug(format("{0} CLEANED EKS {1}", TAG, map));
+        LOGGER.debug(format("{0} EDATA_EKS CLEANED EVENT {1}", TAG, map));
     }
 }

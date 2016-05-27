@@ -16,7 +16,7 @@ public class ChildDataCleanerTest {
         Map<String, Object> eventMap = EventFixture.CreateProfile();
         ChildDataCleaner childDataCleaner = new ChildDataCleaner();
 
-        childDataCleaner.process(eventMap);
+        childDataCleaner.clean(eventMap);
 
         Map<String, Object> udata = (Map<String, Object>) eventMap.get("udata");
         assertThat(udata, not(hasKey("is_group_user")));
@@ -33,7 +33,7 @@ public class ChildDataCleanerTest {
         Map<String, Object> eventMap = EventFixture.CreateProfile();
         ChildDataCleaner childDataCleaner = new ChildDataCleaner();
 
-        childDataCleaner.process(eventMap);
+        childDataCleaner.clean(eventMap);
 
         Map<String, Object> eks = (Map<String, Object>) ((Map<String, Object>) eventMap.get("edata")).get("eks");
         assertThat(eks, not(hasKey("day")));

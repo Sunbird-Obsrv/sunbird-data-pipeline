@@ -16,7 +16,7 @@ public class LocationDataCleanerTest {
         Map<String, Object> eventMap = EventFixture.GenieStart();
         LocationDataCleaner locationDataCleaner = new LocationDataCleaner();
 
-        locationDataCleaner.process(eventMap);
+        locationDataCleaner.clean(eventMap);
 
         Map<String, Object> eks = (Map<String, Object>) ((Map<String, Object>) eventMap.get("edata")).get("eks");
         Map<String, Object> ldata = (Map<String, Object>) eventMap.get("ldata");

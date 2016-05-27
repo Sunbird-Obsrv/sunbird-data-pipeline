@@ -7,12 +7,12 @@ import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.Event;
-import org.ekstep.ep.samza.cleaner.CleanerFactory;
 import org.ekstep.ep.samza.cleaner.Cleaner;
+import org.ekstep.ep.samza.cleaner.CleanerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static java.text.MessageFormat.format;
@@ -23,7 +23,7 @@ public class TelemetryCleanerTask implements StreamTask, InitableTask {
 
     private String successTopic;
     private String failedTopic;
-    private ArrayList<Cleaner> cleaners;
+    private List<Cleaner> cleaners;
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
@@ -46,7 +46,7 @@ public class TelemetryCleanerTask implements StreamTask, InitableTask {
         Event event = new Event((Map<String, Object>) envelope.getMessage());
         LOGGER.info(format("{0} CLEAN EVENT {1}", TAG, event.getMap()));
         for (Cleaner cleaner : cleaners) {
-            cleaner.process(event.getMap());
+            cleaner.clean(event.getMap());
         }
         LOGGER.info(format("{0} CLEANED EVENT {1}", TAG, event.getMap()));
         collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));

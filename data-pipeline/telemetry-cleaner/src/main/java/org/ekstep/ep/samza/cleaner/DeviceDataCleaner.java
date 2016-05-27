@@ -12,12 +12,11 @@ public class DeviceDataCleaner implements Cleaner {
     static Logger LOGGER = LoggerFactory.getLogger(DeviceDataCleaner.class);
 
     @Override
-    public void process(Map<String, Object> map) {
-        removeDeviceSpec(map);
-    }
-
-    private void removeDeviceSpec(Map<String, Object> map) {
-        Map<String, Object> dspec = (Map<String, Object>) ((Map<String, Object>) ((Map<String, Object>) map.get("edata")).get("eks")).get("dspec");
+    public void clean(Map<String, Object> map) {
+        Map<String, Object> dspec =
+                (Map<String, Object>)
+                        ((Map<String, Object>)
+                                ((Map<String, Object>) map.get("edata")).get("eks")).get("dspec");
         if (dspec == null) {
             return;
         }
@@ -25,6 +24,7 @@ public class DeviceDataCleaner implements Cleaner {
         dspec.remove("dname");
         dspec.remove("id");
 
-        LOGGER.debug(format("{0} CLEANED DSPEC {1}", TAG , map));
+        LOGGER.debug(format("{0} DSPEC CLEANED EVENT {1}", TAG, map));
     }
+
 }
