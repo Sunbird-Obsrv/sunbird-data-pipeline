@@ -15,11 +15,9 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import java.util.Map;
-
 import static org.mockito.Mockito.*;
 
-public class TelemetryCleanerTaskTest {
+public class PublicTelemetryTaskTest {
     private final String SUCCESS_TOPIC = "telemetry.public";
     private final String FAILED_TOPIC = "telemetry.public.fail";
     private final String EVENTS_TO_SKIP = "GE_ERROR, GE_SERVICE_API_CALL, GE_API_CALL, GE_REGISTER_PARTNER, GE_PARTNER_DATA, GE_START_PARTNER_SESSION, GE_STOP_PARTNER_SESSION";
@@ -31,7 +29,7 @@ public class TelemetryCleanerTaskTest {
     private IncomingMessageEnvelope envelopMock;
     private TaskCoordinator coordinatorMock;
     private IncomingMessageEnvelope envelopeMock;
-    private TelemetryCleanerTask telemetryCleanerTask;
+    private PublicTelemetryTask publicTelemetryTask;
 
     @Before
     public void setUp(){
@@ -48,17 +46,17 @@ public class TelemetryCleanerTaskTest {
         stub(metricsRegistry.newCounter("org.ekstep.ep.samza.task.TelemetryCleanerTask", "message-count")).toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
 
-        telemetryCleanerTask = new TelemetryCleanerTask();
+        publicTelemetryTask = new PublicTelemetryTask();
     }
 
     @Test
     public void shouldProcessPublicEvents() throws Exception {
         Event event = new Event(EventFixture.CreateProfile());
 
-        telemetryCleanerTask.init(configMock, contextMock);
+        publicTelemetryTask.init(configMock, contextMock);
         ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
 
-        telemetryCleanerTask.processEvent(collectorMock, event);
+        publicTelemetryTask.processEvent(collectorMock, event);
 
         verify(collectorMock,times(1)).send(argument.capture());
     }
@@ -67,10 +65,10 @@ public class TelemetryCleanerTaskTest {
     public void shouldNotProcessNonPublicEvents() throws Exception {
         Event event = new Event(EventFixture.PartnerData());
 
-        telemetryCleanerTask.init(configMock, contextMock);
+        publicTelemetryTask.init(configMock, contextMock);
         ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
 
-        telemetryCleanerTask.processEvent(collectorMock, event);
+        publicTelemetryTask.processEvent(collectorMock, event);
 
         verify(collectorMock,times(0)).send(argument.capture());
     }

@@ -60,7 +60,7 @@
       </dependency>
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
-          <artifactId>telemetry-cleaner</artifactId>
+          <artifactId>public-telemetry</artifactId>
           <version>0.0.3</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
