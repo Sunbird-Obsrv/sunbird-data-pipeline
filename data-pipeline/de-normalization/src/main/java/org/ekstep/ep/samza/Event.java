@@ -96,7 +96,7 @@ public class Event {
                     LOGGER.info("PROCESSING - CHILD NOT FOUND!");
                     updateMetadataToStore();
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 hadIssueWithDb = true;
                 LOGGER.error(format("{0} ERROR WHEN GETTING CHILD #{1}", TAG, this.getMap()));
                 e.printStackTrace();
