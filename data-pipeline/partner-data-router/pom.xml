@@ -33,7 +33,7 @@ under the License.
 
   <groupId>org.ekstep.ecosystem.jobs</groupId>
   <artifactId>partner-data-router</artifactId>
-  <version>0.0.15</version>
+  <version>0.0.16</version>
   <packaging>jar</packaging>
   <name>Partner-Data-Router</name>
   <description>
@@ -143,7 +143,7 @@ under the License.
   <dependency>
     <groupId>org.ekstep.ecosystem</groupId>
     <artifactId>telemetry-cleaner</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
   </dependency>
   <dependency>
     <groupId>org.hamcrest</groupId>
