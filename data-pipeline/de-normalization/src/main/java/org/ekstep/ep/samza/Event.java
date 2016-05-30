@@ -16,6 +16,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static java.text.MessageFormat.format;
+
 public class Event {
     private static final String TAG = "Event";
     static Logger LOGGER = LoggerFactory.getLogger(Event.class);
@@ -96,6 +98,7 @@ public class Event {
                 }
             } catch (IOException e) {
                 hadIssueWithDb = true;
+                LOGGER.error(format("{0} ERROR WHEN GETTING CHILD #{1}", TAG, this.getMap()));
                 e.printStackTrace();
             }
             LOGGER.info("PROCESSING - STOP");
