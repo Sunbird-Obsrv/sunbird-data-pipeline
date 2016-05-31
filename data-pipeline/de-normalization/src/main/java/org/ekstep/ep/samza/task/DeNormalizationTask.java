@@ -70,12 +70,12 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
 
     void processEvent(MessageCollector collector, Event event, UserService userService) {
         event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
-        LOGGER.info(TAG + " EVENT:", event.getMap());
+        LOGGER.debug(TAG + " EVENT:", event.getMap());
         if (!event.isSkipped()) {
-            LOGGER.info(TAG + " PROCESS");
+            LOGGER.debug(TAG + " PROCESS");
             event.process(userService, DateTime.now());
         } else {
-            LOGGER.info(TAG + " SKIP");
+            LOGGER.debug(TAG + " SKIP");
         }
         populateTopic(collector, event);
     }
