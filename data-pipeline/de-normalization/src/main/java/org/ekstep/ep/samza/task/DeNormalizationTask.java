@@ -33,6 +33,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     private int retryBackoffLimit;
     private KeyValueStore<String, Object> retryStore;
     private String userServiceEndpoint;
+    private UserService userService;
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
@@ -47,6 +48,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
                 .getMetricsRegistry()
                 .newCounter(getClass().getName(), "message-count");
         retryStore = (KeyValueStore<String, Object>) context.getStore("retry");
+        userService = new UserServiceClient(userServiceEndpoint);
     }
 
     @Override
@@ -54,9 +56,8 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
         Event event = null;
         try {
             Map<String, Object> message = (Map<String, Object>) envelope.getMessage();
-            UserService dataSource = new UserServiceClient(userServiceEndpoint);
             event = new Event(message, childData);
-            processEvent(collector, event, dataSource);
+            processEvent(collector, event, userService);
             messageCount.inc();
         } catch (Exception e) {
             LOGGER.error(TAG + " ERROR WHILE PROCESSING MESSAGE", e);
