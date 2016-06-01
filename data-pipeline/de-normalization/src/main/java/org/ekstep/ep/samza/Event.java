@@ -81,19 +81,19 @@ public class Event {
 
     public void process(UserService userService, DateTime now) {
         try {
-            LOGGER.debug("PROCESSING - START");
+            LOGGER.info("PROCESSING - START");
             if (!canBeProcessed) return;
             try {
                 if (child.needsToBeProcessed()) {
-                    LOGGER.debug("PROCESSING - DB CALL");
+                    LOGGER.info("PROCESSING - DB CALL");
                     child = userService.getUserFor(child, timeOfEvent);
                 }
                 if (child.isProcessed()) {
-                    LOGGER.debug("PROCESSING - FOUND CHILD");
+                    LOGGER.info("PROCESSING - FOUND CHILD");
                     update(child);
                     removeMetadataFromStore();
                 } else {
-                    LOGGER.debug("PROCESSING - CHILD NOT FOUND!");
+                    LOGGER.info("PROCESSING - CHILD NOT FOUND!");
                     updateMetadataToStore();
                 }
             } catch (Exception e) {
@@ -101,7 +101,7 @@ public class Event {
                 LOGGER.error(format("{0} ERROR WHEN GETTING CHILD #{1}", TAG, this.getMap()));
                 e.printStackTrace();
             }
-            LOGGER.debug("PROCESSING - STOP");
+            LOGGER.info("PROCESSING - STOP");
         } finally {
             addMetadata(now);
         }
@@ -148,7 +148,7 @@ public class Event {
             setLastProcessedAt(currentTime);
             setLastProcessedCount(1);
         }
-        LOGGER.debug("METADATA - ADDED "+metadata);
+        LOGGER.info("METADATA - ADDED "+metadata);
 //        addMetadataToStore();
     }
 
@@ -173,13 +173,13 @@ public class Event {
     }
 
     public boolean isSkipped() {
-        LOGGER.debug("CHECK - AT "+DateTime.now());
+        LOGGER.info("CHECK - AT "+DateTime.now());
         DateTime nextProcessingTime = getNextProcessingTime(getLastProcessedTime());
         if(nextProcessingTime==null||nextProcessingTime.isBeforeNow()){
-            LOGGER.debug("CHECK - PROCESSING "+map);
+            LOGGER.info("CHECK - PROCESSING "+map);
             return false;
         } else{
-            LOGGER.debug("CHECK - BACKING OFF "+map);
+            LOGGER.info("CHECK - BACKING OFF "+map);
             addMetadataToStore();
             return true;
         }
@@ -216,7 +216,7 @@ public class Event {
         if (lastProcessedTime == null || nextBackoffInterval == null)
             return null;
         DateTime nextProcessingTime = lastProcessedTime.plusSeconds(nextBackoffInterval);
-        LOGGER.debug("nextProcessingTime: "+nextProcessingTime.toString());
+        LOGGER.info("nextProcessingTime: "+nextProcessingTime.toString());
         return nextProcessingTime;
     }
 
