@@ -72,7 +72,7 @@ public class Event {
             }
         } catch (ParseException e) {
             canBeProcessed = false;
-            e.printStackTrace();
+            LOGGER.error(id(), "EVENT INIT ERROR", e);
         }
     }
 
@@ -96,7 +96,6 @@ public class Event {
             } catch (Exception e) {
                 hadIssueWithDb = true;
                 LOGGER.error(id(), format("{0} ERROR WHEN GETTING CHILD #{1}", TAG, this.getMap()));
-                e.printStackTrace();
             }
             LOGGER.info(id(), "PROCESSING - STOP");
         } finally {
