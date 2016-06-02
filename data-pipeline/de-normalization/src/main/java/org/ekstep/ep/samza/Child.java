@@ -58,25 +58,24 @@ public class Child implements Serializable {
         return udata;
     }
 
-    public void populate(HashMap<String, Object> childData, Date timeOfEvent) {
+    public void populate(HashMap<String, Object> childData, Date timeOfEvent, String eventId) {
         if (childData == null || childData.isEmpty()) {
-            LOGGER.error(TAG + " NO RECORD IN THE DATABASE");
+            LOGGER.error(eventId, " NO RECORD IN THE DATABASE");
             return;
         }
-        LOGGER.info(TAG + " TRYING TO READ FROM DATABASE");
-        populateAgeRelatedFields(childData, timeOfEvent);
+        populateAgeRelatedFields(childData, timeOfEvent, eventId);
         this.handle = (String) childData.get(HANDLE);
         this.standard = (Integer) childData.get(STANDARD);
         this.gender = (String) childData.get(GENDER);
         this.isGroupUser = ((Boolean) childData.get(IS_GROUP_USER));
         this.child_data_processed = true;
-        LOGGER.info(TAG + " SUCCESSFULLY READ FROM DB");
+        LOGGER.info(eventId, " SUCCESSFULLY READ FROM DB");
     }
 
-    private void populateAgeRelatedFields(HashMap<String, Object> childData, Date timeOfEvent) {
+    private void populateAgeRelatedFields(HashMap<String, Object> childData, Date timeOfEvent, String eventId) {
         Integer year_of_birth = (Integer) childData.get("year_of_birth");
         if (year_of_birth == null || year_of_birth <= 0) {
-            LOGGER.error(TAG + " NO AGE FOR THE CHILDREN");
+            LOGGER.error(eventId, " NO AGE FOR THE CHILDREN");
             return;
         }
         Calendar timeOfEventFromCalendar = Calendar.getInstance();

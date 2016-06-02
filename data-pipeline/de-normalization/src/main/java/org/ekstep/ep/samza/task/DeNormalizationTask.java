@@ -14,7 +14,6 @@ import org.ekstep.ep.samza.external.UserServiceClient;
 import org.ekstep.ep.samza.logger.Logger;
 import org.joda.time.DateTime;
 
-import java.text.MessageFormat;
 import java.util.Map;
 
 public class DeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
@@ -59,9 +58,9 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
             processEvent(collector, event, userService);
             messageCount.inc();
         } catch (Exception e) {
-            LOGGER.error(TAG + " ERROR WHILE PROCESSING MESSAGE", e);
+            LOGGER.error(event.id(), "ERROR WHILE PROCESSING EVENT", e);
             if (event != null) {
-                LOGGER.error(MessageFormat.format("{0} ADDING FAILED EVENT, {1} TO RETRY TOPIC", TAG, event.getData()));
+                LOGGER.error(event.id(), "ADDED FAILED EVENT TO RETRY TOPIC");
                 collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", retryTopic), event.getData()));
             }
         }
@@ -69,12 +68,12 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
 
     void processEvent(MessageCollector collector, Event event, UserService userService) {
         event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
-        LOGGER.info(TAG + " EVENT:", event.getMap());
+        LOGGER.info(event.id(), TAG + " EVENT:", event.getMap());
         if (!event.isSkipped()) {
-            LOGGER.info(TAG + " PROCESS");
+            LOGGER.info(event.id(), TAG + " PROCESS");
             event.process(userService, DateTime.now());
         } else {
-            LOGGER.info(TAG + " SKIP");
+            LOGGER.info(event.id(), TAG + " SKIP");
         }
         populateTopic(collector, event);
     }

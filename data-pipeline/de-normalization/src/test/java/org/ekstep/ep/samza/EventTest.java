@@ -213,14 +213,14 @@ public class EventTest {
         map.put("ts", new SimpleDateFormat(DATE_FORMAT).format(date));
         map.put("uid", UID);
         Child child = new Child(UID, true,  getUdata());
-        stub(userServiceMock.getUserFor(any(Child.class), any(Date.class))).toReturn(child);
+        stub(userServiceMock.getUserFor(any(Child.class), any(Date.class), any(String.class))).toReturn(child);
 
         Event event = new Event(map, keyValueStoreMock);
 
         event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
         event.process(userServiceMock, DateTime.now());
 
-        verify(userServiceMock).getUserFor(argThat(validateChild(UID)), argThat(dateMatcher(date)));
+        verify(userServiceMock).getUserFor(argThat(validateChild(UID)), argThat(dateMatcher(date)), any(String.class));
     }
 
     @Test
@@ -268,7 +268,7 @@ public class EventTest {
         map.put("uid", UID);
 
         Child child = new Child(UID, true,  getUdata());
-        stub(userServiceMock.getUserFor(any(Child.class), any(Date.class))).toReturn(child);
+        stub(userServiceMock.getUserFor(any(Child.class), any(Date.class), any(String.class))).toReturn(child);
 
         Event event = new Event(map, keyValueStoreMock);
 
@@ -287,7 +287,7 @@ public class EventTest {
         map.put("uid", UID);
 
         Child child = new Child(UID, false, getUdata());
-        stub(userServiceMock.getUserFor(any(Child.class), any(Date.class))).toReturn(child);
+        stub(userServiceMock.getUserFor(any(Child.class), any(Date.class), any(String.class))).toReturn(child);
 
         Event event = new Event(map, keyValueStoreMock);
 
@@ -305,7 +305,7 @@ public class EventTest {
         map.put("ts", TS);
         map.put("uid", UID);
 
-        stub(userServiceMock.getUserFor(any(Child.class), any(Date.class))).toThrow(new IOException("Not able to connect to database"));
+        stub(userServiceMock.getUserFor(any(Child.class), any(Date.class), any(String.class))).toThrow(new IOException("Not able to connect to database"));
 
         Event event = new Event(map, keyValueStoreMock);
 
@@ -340,7 +340,7 @@ public class EventTest {
         map.put("flags", flags);
 
         Child child = new Child(UID, true, getUdata());
-        stub(userServiceMock.getUserFor(any(Child.class), any(Date.class))).toReturn(child);
+        stub(userServiceMock.getUserFor(any(Child.class), any(Date.class), any(String.class))).toReturn(child);
         Event event = new Event(map, keyValueStoreMock);
 
         event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
@@ -438,7 +438,7 @@ public class EventTest {
         Event event = new Event(map,keyValueStoreMock);
         event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
         Child child = new Child(UID, false,  getUdata());
-        stub(userServiceMock.getUserFor(any(Child.class), any(Date.class))).toReturn(child);
+        stub(userServiceMock.getUserFor(any(Child.class), any(Date.class), any(String.class))).toReturn(child);
 
         Map map2 = new HashedMap();
         map2.put("ts", new SimpleDateFormat(DATE_FORMAT).format(date));

@@ -81,7 +81,7 @@ public class ChildTest {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         Date timeOfEvent = simpleDateFormat.parse("2014-11-12T5:23:12");
 
-        child.populate(childData, timeOfEvent);
+        child.populate(childData, timeOfEvent, "eventid");
 
         HashMap<String, Object> calculatedData = child.getData();
 
@@ -99,7 +99,7 @@ public class ChildTest {
         Child child = new Child("1123abcd", false, null);
 
         Date timeOfEvent = new Date();
-        child.populate(new HashMap<String, Object>(), timeOfEvent);
+        child.populate(new HashMap<String, Object>(), timeOfEvent, "eventid");
 
         assertFalse(child.isProcessed());
     }
@@ -112,7 +112,7 @@ public class ChildTest {
         childData.put("gender", "male");
         childData.put("handle", "user@twitter.com");
         Date timeOfEvent = new Date();
-        child.populate(childData, timeOfEvent);
+        child.populate(childData, timeOfEvent, "eventid");
 
         assertTrue(child.isProcessed());
     }
@@ -125,7 +125,7 @@ public class ChildTest {
         childData.put("gender", "male");
         childData.put("handle", "user@twitter.com");
         Date timeOfEvent = new Date();
-        child.populate(childData, timeOfEvent);
+        child.populate(childData, timeOfEvent, "eventid");
 
         HashMap<String, Object> calculatedData = child.getData();
 

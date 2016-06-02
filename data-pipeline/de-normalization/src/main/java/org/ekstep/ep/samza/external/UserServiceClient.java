@@ -6,6 +6,7 @@ import org.ekstep.ep.samza.Child;
 import org.ekstep.ep.samza.logger.Logger;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 
 import static java.text.MessageFormat.format;
@@ -29,7 +30,7 @@ public class UserServiceClient implements UserService {
     }
 
     @Override
-    public Child getUserFor(Child child, java.util.Date timeOfEvent) throws IOException {
+    public Child getUserFor(Child child, Date timeOfEvent, String eventId) throws IOException {
         Request request = new Request.Builder()
                 .url(userServiceEndpoint + child.getUid())
                 .post(RequestBody.create(JSON_MEDIA_TYPE, new Gson().toJson(GetUserRequest.create())))
@@ -39,13 +40,13 @@ public class UserServiceClient implements UserService {
 
         HashMap<String, Object> childData = new HashMap<String, Object>();
         if (!getUserResponse.successful()) {
-            LOGGER.error(format("{0} USER SERVICE FAILED. RESPONSE: {2}", TAG, child.getUid(), getUserResponse));
-            child.populate(childData, timeOfEvent);
+            LOGGER.error(eventId, format("{0} USER SERVICE FAILED. RESPONSE: {2}", TAG, child.getUid(), getUserResponse));
+            child.populate(childData, timeOfEvent, eventId);
             return child;
         }
 
         if (getUserResponse.profile() != null) {
-            LOGGER.info(format("{0} PROFILE FOUND", TAG));
+            LOGGER.info(eventId, format("{0} PROFILE FOUND", TAG));
             childData.put(HANDLE, getUserResponse.profile().handle());
             childData.put(STANDARD, getUserResponse.profile().standard());
             String genderValue = getUserResponse.profile().gender() == null
@@ -54,19 +55,19 @@ public class UserServiceClient implements UserService {
             childData.put(GENDER, genderValue);
             childData.put(YEAR_OF_BIRTH, getUserResponse.profile().yearOfBirth());
             childData.put(IS_GROUP_USER, getUserResponse.profile().isGroupUser());
-            child.populate(childData, timeOfEvent);
+            child.populate(childData, timeOfEvent, eventId);
             return child;
         }
 
         if (getUserResponse.learner() != null) {
-            LOGGER.info(format("{0} PROFILE NOT FOUND, BUT LEARNER FOUND", TAG));
+            LOGGER.info(eventId, format("{0} PROFILE NOT FOUND, BUT LEARNER FOUND", TAG));
             childData.put(HANDLE, null);
             childData.put(STANDARD, 0);
             childData.put(GENDER, "Not known");
             childData.put(YEAR_OF_BIRTH, null);
             childData.put(IS_GROUP_USER, false);
         }
-        child.populate(childData, timeOfEvent);
+        child.populate(childData, timeOfEvent, eventId);
         return child;
     }
 }

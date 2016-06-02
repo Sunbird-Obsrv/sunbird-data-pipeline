@@ -53,7 +53,7 @@ public class Event {
             ArrayList<IValidator> validators = ValidatorFactory.validators(map);
             for (IValidator validator : validators)
                 if (validator.isInvalid()) {
-                    LOGGER.error(validator.getErrorMessage());
+                    LOGGER.error(id(), validator.getErrorMessage());
                     canBeProcessed = false;
                     return;
                 }
@@ -78,27 +78,27 @@ public class Event {
 
     public void process(UserService userService, DateTime now) {
         try {
-            LOGGER.info("PROCESSING - START");
+            LOGGER.info(id(), "PROCESSING - START");
             if (!canBeProcessed) return;
             try {
                 if (child.needsToBeProcessed()) {
-                    LOGGER.info("PROCESSING - DB CALL");
-                    child = userService.getUserFor(child, timeOfEvent);
+                    LOGGER.info(id(), "PROCESSING - DB CALL");
+                    child = userService.getUserFor(child, timeOfEvent, id());
                 }
                 if (child.isProcessed()) {
-                    LOGGER.info("PROCESSING - FOUND CHILD");
+                    LOGGER.info(id(), "PROCESSING - FOUND CHILD");
                     update(child);
                     removeMetadataFromStore();
                 } else {
-                    LOGGER.info("PROCESSING - CHILD NOT FOUND!");
+                    LOGGER.info(id(), "PROCESSING - CHILD NOT FOUND!");
                     updateMetadataToStore();
                 }
             } catch (Exception e) {
                 hadIssueWithDb = true;
-                LOGGER.error(format("{0} ERROR WHEN GETTING CHILD #{1}", TAG, this.getMap()));
+                LOGGER.error(id(), format("{0} ERROR WHEN GETTING CHILD #{1}", TAG, this.getMap()));
                 e.printStackTrace();
             }
-            LOGGER.info("PROCESSING - STOP");
+            LOGGER.info(id(), "PROCESSING - STOP");
         } finally {
             addMetadata(now);
         }
@@ -145,14 +145,14 @@ public class Event {
             setLastProcessedAt(currentTime);
             setLastProcessedCount(1);
         }
-        LOGGER.info("METADATA - ADDED " + metadata);
+        LOGGER.info(id(), "METADATA - ADDED " + metadata);
 //        addMetadataToStore();
     }
 
     private void addMetadataToStore() {
         if (retryStore.get(getUID()) == null) {
             updateMetadataToStore();
-            LOGGER.info("STORE - ADDED FOR " + getUID());
+            LOGGER.info(id(), "STORE - ADDED FOR " + getUID());
         }
     }
 
@@ -161,7 +161,7 @@ public class Event {
             Map _map = new HashMap();
             _map.put("metadata", map.get("metadata"));
             retryStore.put(getUID(), _map);
-            LOGGER.info("STORE - UPDATED " + _map + " UID " + getUID());
+            LOGGER.info(id(), "STORE - UPDATED " + _map + " UID " + getUID());
         }
     }
 
@@ -170,13 +170,13 @@ public class Event {
     }
 
     public boolean isSkipped() {
-        LOGGER.info("CHECK - AT " + DateTime.now());
+        LOGGER.info(id(), "CHECK - AT " + DateTime.now());
         DateTime nextProcessingTime = getNextProcessingTime(getLastProcessedTime());
         if (nextProcessingTime == null || nextProcessingTime.isBeforeNow()) {
-            LOGGER.info("CHECK - PROCESSING " + map);
+            LOGGER.info(id(), "CHECK - PROCESSING " + map);
             return false;
         } else {
-            LOGGER.info("CHECK - BACKING OFF " + map);
+            LOGGER.info(id(), "CHECK - BACKING OFF " + map);
             addMetadataToStore();
             return true;
         }
@@ -213,7 +213,7 @@ public class Event {
         if (lastProcessedTime == null || nextBackoffInterval == null)
             return null;
         DateTime nextProcessingTime = lastProcessedTime.plusSeconds(nextBackoffInterval);
-        LOGGER.info("nextProcessingTime: " + nextProcessingTime.toString());
+        LOGGER.info(id(), "nextProcessingTime: " + nextProcessingTime.toString());
         return nextProcessingTime;
     }
 
@@ -268,4 +268,7 @@ public class Event {
         return (String) map.get("uid");
     }
 
+    public String id() {
+        return (String) map.get("checksum");
+    }
 }

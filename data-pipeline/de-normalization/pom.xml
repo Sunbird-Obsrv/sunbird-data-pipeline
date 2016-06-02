@@ -57,6 +57,11 @@ under the License.
   </dependency>
   <dependency>
     <groupId>org.apache.samza</groupId>
+      <artifactId>samza-log4j</artifactId>
+      <version>${samza.version}</version>
+    </dependency>
+  <dependency>
+    <groupId>org.apache.samza</groupId>
     <artifactId>samza-shell</artifactId>
     <classifier>dist</classifier>
     <type>tgz</type>
