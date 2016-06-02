@@ -18,14 +18,19 @@ public class Event {
     }
 
     public String getChecksum(){
-        Map<String, Object> metadata = (Map<String, Object>) map.get("metadata");
-        return (String)metadata.get("checksum");
+        return (String) ((Map<String, Object>) map.get("metadata")).get("checksum");
     }
 
     public String getJson(){
         Gson gson=new Gson();
         String json = gson.toJson(map);
         return json;
+    }
+
+    public String id() {
+        return map != null && map.containsKey("checksum")
+            ? (String) map.get("checksum")
+            : null;
     }
 }
 

@@ -22,13 +22,14 @@ package org.ekstep.ep.samza.task;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import org.apache.samza.config.Config;
+import org.apache.samza.metrics.Counter;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
+import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.system.Event;
-import org.apache.samza.metrics.Counter;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ import java.util.Map;
 public class DeDuplicationStreamTask implements StreamTask, InitableTask, WindowableTask {
 
     private KeyValueStore<String, Object> deDuplicationStore;
+    static Logger LOGGER = new Logger(DeDuplicationStreamTask.class);
 
     private String successTopic;
     private String failedTopic;
@@ -68,23 +70,23 @@ public class DeDuplicationStreamTask implements StreamTask, InitableTask, Window
         Gson gson=new Gson();
         Map<String,Object> jsonObject = new HashMap<String,Object>();
 
+        String message = null;
         try {
-            String message = (String) envelope.getMessage();
+            message = (String) envelope.getMessage();
             jsonObject = validateJson(collector, message, gson, jsonObject);
             processEvent(new Event(jsonObject), collector);
             messageCount.inc();
         }
         catch(JsonSyntaxException e){
-            e.printStackTrace();
-            System.err.println("Invalid Json Input"+e);
+            LOGGER.error(null, "INVALID EVENT: " + message, e);
         }
         catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Error while getting message"+e);
+            LOGGER.error(null, "EVENT FAILED: " + message, e);
         }
     }
 
-    public Map<String,Object> validateJson(MessageCollector collector, String message, Gson gson, Map<String, Object> jsonObject) throws JsonSyntaxException {
+    public Map<String,Object> validateJson(MessageCollector collector, String message, Gson gson,
+                                           Map<String, Object> jsonObject) throws JsonSyntaxException {
         Map<String,Object> validJson = new HashMap<String,Object>();
         validJson =  (Map<String,Object>) gson.fromJson(message, jsonObject.getClass());
         return validJson;
@@ -93,16 +95,11 @@ public class DeDuplicationStreamTask implements StreamTask, InitableTask, Window
     public void processEvent(Event event, MessageCollector collector) throws Exception {
         String checkSum = event.getChecksum();
         if(deDuplicationStore.get(checkSum) == null){
-            System.out.println("create new checksum if it is not present in Store");
-
-            Date date = new Date();
-            deDuplicationStore.put(checkSum, date.toString());
-
-            System.out.println("duplicationStore"+deDuplicationStore);
+            deDuplicationStore.put(checkSum, new Date().toString());
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getJson()));
         }
         else {
-            System.out.println("Output to Failed Topic if the checksum already present in store");
+            LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: ", checkSum);
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getJson()));
         }
     }

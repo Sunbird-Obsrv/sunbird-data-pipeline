@@ -17,7 +17,7 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>de-duplication</artifactId>
-    <version>0.0.8</version>
+    <version>0.0.9</version>
     <packaging>jar</packaging>
     <name>De Duplication</name>
     <description>
@@ -118,6 +118,11 @@
             <groupId>com.google.maps</groupId>
             <artifactId>google-maps-services</artifactId>
             <version>0.1.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem</groupId>
+            <artifactId>ep-logger</artifactId>
+            <version>0.0.1</version>
         </dependency>
     </dependencies>
 
