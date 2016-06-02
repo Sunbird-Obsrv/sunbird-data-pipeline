@@ -15,6 +15,7 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -494,7 +495,6 @@ public class EventTest {
 
         Assert.assertNull(retryStore.get(UID));
     }
-
 
     private void validateUdata(HashMap<String, Object> actualUdata) {
         HashMap<String, Object> expectedUdata = getUdata();

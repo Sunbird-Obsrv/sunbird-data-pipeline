@@ -8,10 +8,10 @@ import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.Event;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ekstep.ep.samza.cleaner.Cleaner;
 import org.ekstep.ep.samza.cleaner.CleanerFactory;
+import org.ekstep.ep.samza.logger.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +20,7 @@ import static java.text.MessageFormat.format;
 
 public class PublicTelemetryTask implements StreamTask, InitableTask, WindowableTask {
     private static final String TAG = PublicTelemetryTask.class.getSimpleName();
-    static Logger LOGGER = LoggerFactory.getLogger(PublicTelemetryTask.class);
+    static Logger LOGGER = new Logger(PublicTelemetryTask.class);
 
     private String successTopic;
     private String failedTopic;
@@ -31,7 +31,7 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
-        LOGGER.info(format("{0} INIT JOB", TAG));
+        LOGGER.info(null, format("{0} INIT JOB", TAG));
         successTopic = config.get("output.success.topic.name", "telemetry.public");
         failedTopic = config.get("output.failed.topic.name", "telemetry.public.fail");
         nonPublicEvents = getNonPublicEvents(config);
@@ -49,11 +49,9 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
             processEvent(collector, event);
             messageCount.inc();
         } catch (Exception e) {
-            LOGGER.error(format("{0} CLEAN FAILED", TAG), e);
-            if (event != null) {
-                LOGGER.error(format("{0} ADDING TO EVENT FAILED TOPIC. {1}", TAG, event.getMap()), e);
-                collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
-            }
+            LOGGER.error(event.id(), "CLEAN FAILED", e);
+            LOGGER.error(event.id(), "ADDING TO EVENT FAILED TOPIC");
+            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
         }
     }
 
@@ -67,17 +65,17 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
     }
 
     void processEvent(MessageCollector collector, Event event) {
-        LOGGER.info(format("{0} CLEAN EVENT {1}", TAG, event.getMap()));
+        LOGGER.info(event.id(), "CLEAN EVENT", event.getMap());
 
         if (nonPublicEvents.contains(event.eid().toUpperCase())) {
-            LOGGER.info(format("{0} SKIPPING EVENT {1}", TAG, event.getMap()));
+            LOGGER.info(event.id(), "SKIPPING EVENT");
             return;
         }
 
         for (Cleaner cleaner : cleaners) {
             cleaner.clean(event.getMap());
         }
-        LOGGER.info(format("{0} CLEANED EVENT {1}", TAG, event.getMap()));
+        LOGGER.info(event.id(), "CLEANED EVENT");
         collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
     }
 

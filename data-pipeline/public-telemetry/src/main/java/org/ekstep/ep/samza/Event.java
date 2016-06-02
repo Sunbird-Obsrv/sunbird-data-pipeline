@@ -17,4 +17,10 @@ public class Event {
     public String eid() {
         return map != null && map.containsKey("eid") ? (String) map.get("eid") : null;
     }
+
+    public String id() {
+        return map != null && map.containsKey("checksum")
+            ? (String) map.get("checksum")
+            : null;
+    }
 }

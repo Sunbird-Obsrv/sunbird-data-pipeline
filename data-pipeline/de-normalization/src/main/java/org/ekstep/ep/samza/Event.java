@@ -268,6 +268,8 @@ public class Event {
     }
 
     public String id() {
-        return (String) map.get("checksum");
+        return map != null && map.containsKey("checksum")
+            ? (String) map.get("checksum")
+            : null;
     }
 }
