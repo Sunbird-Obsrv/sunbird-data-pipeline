@@ -30,7 +30,7 @@
     <module>partner-data-router</module>
     <module>public-telemetry</module>
     <module>telemetry-cleaner</module>
-    <module>logger</module>
+    <module>ep-logger</module>
   </modules>
 
   <properties>
