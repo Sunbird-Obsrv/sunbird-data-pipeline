@@ -1,17 +1,16 @@
 package org.ekstep.ep.samza;
 
-import org.ekstep.ep.samza.task.DeNormalizationTask;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.ekstep.ep.samza.logger.Logger;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Child implements Serializable {
     private static final String TAG = Child.class.getSimpleName();
-    static Logger LOGGER = LoggerFactory.getLogger(Child.class);
+    static Logger LOGGER = new Logger(Child.class);
 
     public static final String HANDLE = "handle";
     public static final String STANDARD = "standard";
@@ -33,7 +32,7 @@ public class Child implements Serializable {
     }
 
     private void initialize(Map<String, Object> udata) {
-        if(udata == null) return;
+        if (udata == null) return;
         age_completed_years = ((Integer) udata.get(AGE_COMPLETED_YEARS));
         gender = ((String) udata.get(GENDER));
         handle = ((String) udata.get(HANDLE));
@@ -41,18 +40,18 @@ public class Child implements Serializable {
         isGroupUser = ((Boolean) udata.get(IS_GROUP_USER));
     }
 
-    public Boolean isProcessed(){
+    public Boolean isProcessed() {
         return child_data_processed;
     }
 
-    public Boolean needsToBeProcessed(){
+    public Boolean needsToBeProcessed() {
         return !isProcessed() && uid != null && !uid.isEmpty();
     }
 
     public HashMap<String, Object> getData() {
         HashMap<String, Object> udata = new HashMap<String, Object>();
         udata.put(HANDLE, handle);
-        udata.put(STANDARD,standard);
+        udata.put(STANDARD, standard);
         udata.put(AGE_COMPLETED_YEARS, age_completed_years);
         udata.put(GENDER, gender);
         udata.put(IS_GROUP_USER, isGroupUser);
@@ -60,7 +59,7 @@ public class Child implements Serializable {
     }
 
     public void populate(HashMap<String, Object> childData, Date timeOfEvent) {
-        if(childData == null || childData.isEmpty()){
+        if (childData == null || childData.isEmpty()) {
             LOGGER.error(TAG + " NO RECORD IN THE DATABASE");
             return;
         }
@@ -76,7 +75,7 @@ public class Child implements Serializable {
 
     private void populateAgeRelatedFields(HashMap<String, Object> childData, Date timeOfEvent) {
         Integer year_of_birth = (Integer) childData.get("year_of_birth");
-        if(year_of_birth == null || year_of_birth <= 0){
+        if (year_of_birth == null || year_of_birth <= 0) {
             LOGGER.error(TAG + " NO AGE FOR THE CHILDREN");
             return;
         }

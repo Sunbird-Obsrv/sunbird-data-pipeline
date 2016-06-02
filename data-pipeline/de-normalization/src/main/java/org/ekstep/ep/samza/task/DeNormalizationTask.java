@@ -11,16 +11,15 @@ import org.ekstep.ep.samza.Child;
 import org.ekstep.ep.samza.Event;
 import org.ekstep.ep.samza.external.UserService;
 import org.ekstep.ep.samza.external.UserServiceClient;
+import org.ekstep.ep.samza.logger.Logger;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
 import java.util.Map;
 
 public class DeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
     private static final String TAG = "DeNormalizationTask";
-    static Logger LOGGER = LoggerFactory.getLogger(DeNormalizationTask.class);
+    static Logger LOGGER = new Logger(DeNormalizationTask.class);
     private static final String RETRY_BACKOFF_BASE_DEFAULT = "10";
     private static final String RETRY_BACKOFF_LIMIT_DEFAULT = "4";
     private String successTopic;

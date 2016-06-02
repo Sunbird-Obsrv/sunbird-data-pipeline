@@ -2,16 +2,13 @@ package org.ekstep.ep.samza;
 
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.ekstep.ep.samza.external.UserService;
-import org.ekstep.ep.samza.task.DeNormalizationTask;
+import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.validators.IValidator;
 import org.ekstep.ep.samza.validators.ValidatorFactory;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -20,7 +17,7 @@ import static java.text.MessageFormat.format;
 
 public class Event {
     private static final String TAG = "Event";
-    static Logger LOGGER = LoggerFactory.getLogger(Event.class);
+    static Logger LOGGER = new Logger(Event.class);
     private static final int RETRY_BACKOFF_BASE_DEFAULT = 10;
     private static final int RETRY_BACKOFF_LIMIT_DEFAULT = 4;
     private final Map<String, Object> map;
@@ -148,14 +145,14 @@ public class Event {
             setLastProcessedAt(currentTime);
             setLastProcessedCount(1);
         }
-        LOGGER.info("METADATA - ADDED "+metadata);
+        LOGGER.info("METADATA - ADDED " + metadata);
 //        addMetadataToStore();
     }
 
     private void addMetadataToStore() {
         if (retryStore.get(getUID()) == null) {
             updateMetadataToStore();
-            LOGGER.info("STORE - ADDED FOR "+getUID());
+            LOGGER.info("STORE - ADDED FOR " + getUID());
         }
     }
 
@@ -164,7 +161,7 @@ public class Event {
             Map _map = new HashMap();
             _map.put("metadata", map.get("metadata"));
             retryStore.put(getUID(), _map);
-            LOGGER.info("STORE - UPDATED "+_map+" UID "+getUID());
+            LOGGER.info("STORE - UPDATED " + _map + " UID " + getUID());
         }
     }
 
@@ -173,13 +170,13 @@ public class Event {
     }
 
     public boolean isSkipped() {
-        LOGGER.info("CHECK - AT "+DateTime.now());
+        LOGGER.info("CHECK - AT " + DateTime.now());
         DateTime nextProcessingTime = getNextProcessingTime(getLastProcessedTime());
-        if(nextProcessingTime==null||nextProcessingTime.isBeforeNow()){
-            LOGGER.info("CHECK - PROCESSING "+map);
+        if (nextProcessingTime == null || nextProcessingTime.isBeforeNow()) {
+            LOGGER.info("CHECK - PROCESSING " + map);
             return false;
-        } else{
-            LOGGER.info("CHECK - BACKING OFF "+map);
+        } else {
+            LOGGER.info("CHECK - BACKING OFF " + map);
             addMetadataToStore();
             return true;
         }
@@ -216,7 +213,7 @@ public class Event {
         if (lastProcessedTime == null || nextBackoffInterval == null)
             return null;
         DateTime nextProcessingTime = lastProcessedTime.plusSeconds(nextBackoffInterval);
-        LOGGER.info("nextProcessingTime: "+nextProcessingTime.toString());
+        LOGGER.info("nextProcessingTime: " + nextProcessingTime.toString());
         return nextProcessingTime;
     }
 

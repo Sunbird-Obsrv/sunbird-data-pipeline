@@ -3,9 +3,7 @@ package org.ekstep.ep.samza.external;
 import com.google.gson.Gson;
 import okhttp3.*;
 import org.ekstep.ep.samza.Child;
-import org.ekstep.ep.samza.Event;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.ekstep.ep.samza.logger.Logger;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,7 +12,7 @@ import static java.text.MessageFormat.format;
 
 public class UserServiceClient implements UserService {
     private static final String TAG = UserServiceClient.class.getSimpleName();
-    static Logger LOGGER = LoggerFactory.getLogger(UserServiceClient.class);
+    static Logger LOGGER = new Logger(UserServiceClient.class);
 
     private static final String HANDLE = "handle";
     private static final String STANDARD = "standard";
