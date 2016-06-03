@@ -19,8 +19,9 @@ public class Event {
     }
 
     public String id() {
-        return map != null && map.containsKey("checksum")
-            ? (String) map.get("checksum")
+        return map != null && map.containsKey("metadata") &&
+            (((Map<String, Object>) map.get("metadata")).containsKey("checksum"))
+            ? (String) ((Map<String, Object>) map.get("metadata")).get("checksum")
             : null;
     }
 }
