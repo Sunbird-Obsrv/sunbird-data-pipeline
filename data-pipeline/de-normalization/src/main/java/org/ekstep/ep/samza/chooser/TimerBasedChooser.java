@@ -3,13 +3,16 @@ package org.ekstep.ep.samza.chooser;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.chooser.BaseMessageChooser;
 import org.apache.samza.system.chooser.MessageChooser;
+import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.util.SystemTimeProvider;
 import org.ekstep.ep.samza.util.TimeProvider;
 import org.joda.time.DateTime;
 
 import java.util.ArrayDeque;
+import java.util.Map;
 
 public class TimerBasedChooser extends BaseMessageChooser implements MessageChooser {
+    private static Logger LOGGER = new Logger(TimerBasedChooser.class);
     private ArrayDeque<IncomingMessageEnvelope> retryQue;
     private ArrayDeque<IncomingMessageEnvelope> preferredQue;
     private int delayInMilliSeconds;
@@ -18,6 +21,7 @@ public class TimerBasedChooser extends BaseMessageChooser implements MessageChoo
     private DateTime startTime = null;
     private boolean serveFromRetry = false;
     private TimeProvider timeProvider;
+    private String firstEventInRetryWindow = "";
 
     public TimerBasedChooser(int delayInMilliSeconds, int retryTimeInMilliSeconds, String preferredSystemStream) {
         this(delayInMilliSeconds, retryTimeInMilliSeconds, preferredSystemStream, new SystemTimeProvider());
@@ -54,10 +58,13 @@ public class TimerBasedChooser extends BaseMessageChooser implements MessageChoo
         }
 
         if (!startTime.plusMillis(delayInMilliSeconds).isAfter(currentTime)) {
+            //Start of retry window
             startTime = currentTime;
             envelope = retryQue.poll();
             if (envelope != null) {
                 serveFromRetry = true;
+                firstEventInRetryWindow = getChecksum(envelope);
+                LOGGER.info(null, "START OF RETRY WINDOW, FIRST EVENT " + firstEventInRetryWindow);
             } else {
                 envelope = preferredQue.poll();
             }
@@ -72,10 +79,24 @@ public class TimerBasedChooser extends BaseMessageChooser implements MessageChoo
 
         if (serveFromRetry && (startTime.plusMillis(retryTimeInMilliSeconds).isAfter(currentTime))) {
             envelope = retryQue.poll();
+            if (hasRetryWindowRecycled(envelope)) {
+                LOGGER.info(null, "RETRY HAS RECYCLED, FORCE FINISHING WINDOW");
+                resetServeFromRetry(currentTime);
+            }
         } else if (serveFromRetry) {
+            LOGGER.info(null, "RETRY WINDOW OVER");
             resetServeFromRetry(currentTime);
         }
         return envelope;
+    }
+
+    private boolean hasRetryWindowRecycled(IncomingMessageEnvelope envelope) {
+        return envelope != null && firstEventInRetryWindow.equals(getChecksum(envelope));
+    }
+
+    private String getChecksum(IncomingMessageEnvelope envelope) {
+        return (String) ((Map<String, Object>) ((Map<String, Object>)
+                envelope.getMessage()).get("metadata")).get("checksum");
     }
 
     private void resetServeFromRetry(DateTime currentTime) {

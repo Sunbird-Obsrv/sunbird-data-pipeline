@@ -3,10 +3,13 @@ package org.ekstep.ep.samza.chooser;
 import org.apache.samza.Partition;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.SystemStreamPartition;
+import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.ekstep.ep.samza.util.TimeProvider;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -17,11 +20,13 @@ public class TimerBasedChooserTest {
     public static final String RETRY = "retry";
     private IncomingMessageEnvelope preferredEnvelope;
     private IncomingMessageEnvelope retryEnvelope;
+    private Map<String, Object> message;
 
     @Before
     public void setup() {
-        preferredEnvelope = new IncomingMessageEnvelope(new SystemStreamPartition("kafka", PREFERRED, new Partition(0)), null, null, 1);
-        retryEnvelope = new IncomingMessageEnvelope(new SystemStreamPartition("kafka", RETRY, new Partition(0)), null, null, 1);
+        message = EventFixture.GeCreateProfile();
+        preferredEnvelope = new IncomingMessageEnvelope(new SystemStreamPartition("kafka", PREFERRED, new Partition(0)), null, null, message);
+        retryEnvelope = new IncomingMessageEnvelope(new SystemStreamPartition("kafka", RETRY, new Partition(0)), null, null, message);
     }
 
     @Test
@@ -112,6 +117,25 @@ public class TimerBasedChooserTest {
         timerBasedChooser.update(retryEnvelope);
 
         assertEquals(retryEnvelope, timerBasedChooser.choose());
+    }
+
+    @Test
+    public void shouldNotGetRetryEnvelopeWhenItHasCycled() {
+        DateTime currentTime = DateTime.now();
+        MockTimeProvider mockTimeProvider = new MockTimeProvider();
+        mockTimeProvider.setCurrentTime(currentTime);
+        TimerBasedChooser timerBasedChooser = new TimerBasedChooser(2, 3, PREFERRED, mockTimeProvider);
+        registerChooser(timerBasedChooser);
+
+        timerBasedChooser.update(retryEnvelope); //Initial retry event, added back to retry (skipped)
+        timerBasedChooser.update(retryEnvelope); //Reprocessing of initial retry event, with the retry window cycles
+        timerBasedChooser.update(retryEnvelope); //Reprocessed event is added back to retry, as processing is skipped
+        timerBasedChooser.update(preferredEnvelope);
+
+        mockTimeProvider.setCurrentTime(currentTime.plusMillis(3));
+        assertEquals(retryEnvelope, timerBasedChooser.choose());
+        assertEquals(retryEnvelope, timerBasedChooser.choose());
+        assertEquals(preferredEnvelope, timerBasedChooser.choose());
     }
 
     private void registerChooser(TimerBasedChooser timerBasedChooser) {
