@@ -273,4 +273,16 @@ public class Event {
             ? (String) ((Map<String, Object>) map.get("metadata")).get("checksum")
             : null;
     }
+
+    public void addLastSkippedAt(DateTime currentTime) {
+        Map<String, Object> metadata = (Map<String, Object>) map.get("metadata");
+        if (metadata != null) {
+            metadata.put("last_skipped_at",currentTime.toString());
+        } else {
+            metadata = new HashMap<String, Object>();
+            metadata.put("last_skipped_at",currentTime.toString());
+            map.put("metadata", metadata);
+        }
+        LOGGER.info(id(), "METADATA LAST SKIPPED AT - ADDED " + metadata);
+    }
 }

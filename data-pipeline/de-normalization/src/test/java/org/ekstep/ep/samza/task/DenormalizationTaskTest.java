@@ -148,6 +148,18 @@ public class DenormalizationTaskTest {
         verify(collectorMock).send(argThat(validateOutputTopic(message, SUCCESS_TOPIC)));
     }
 
+    @Test
+    public void ShouldAddLastSkippedAtToMetadataIfSkipping() throws Exception {
+        HashMap<String, Object> message = new HashMap<String, Object>();
+        stub(eventMock.getData()).toReturn(message);
+        stub(eventMock.isSkipped()).toReturn(true);
+        deNormalizationTask.init(configMock, contextMock);
+        deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(message, SUCCESS_TOPIC)));
+        verify(eventMock,times(1)).addLastSkippedAt(any(DateTime.class));
+    }
+
+
     private ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
         return new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override

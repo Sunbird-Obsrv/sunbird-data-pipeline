@@ -14,6 +14,7 @@ import org.ekstep.ep.samza.external.UserServiceClient;
 import org.ekstep.ep.samza.logger.Logger;
 import org.joda.time.DateTime;
 
+import java.util.Date;
 import java.util.Map;
 
 public class DeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
@@ -74,6 +75,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
             event.process(userService, DateTime.now());
         } else {
             LOGGER.info(event.id(), TAG + " SKIP");
+            event.addLastSkippedAt(DateTime.now());
         }
         populateTopic(collector, event);
     }
