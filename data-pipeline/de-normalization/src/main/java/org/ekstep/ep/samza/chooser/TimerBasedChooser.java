@@ -49,67 +49,68 @@ public class TimerBasedChooser extends BaseMessageChooser implements MessageChoo
 
     @Override
     public IncomingMessageEnvelope choose() {
-        IncomingMessageEnvelope envelope = null;
         DateTime currentTime = timeProvider.getCurrentTime();
 
-        updateWhichQueueToReadFrom(currentTime);
-
-        if (!serveFromRetry) {
+        if (shortCircuitRetryWindowIfItHasRecycled(currentTime)) {
             return preferredQue.poll();
         }
+        ifStartOfRetryWindowSwitchToRetryQueue(currentTime);
+        ifEndOfRetryWindowSwitchToPreferredQueue(currentTime);
 
-        envelope = retryQue.poll();
-        if (envelope == null) {
-            return preferredQue.poll();
-        }
-
-        shortCircuitRetryWindowIfRecycled(envelope, currentTime);
-        ifThisIsFirstEventInRetryWindowThenRememberIt(envelope);
-        return envelope;
+        return !serveFromRetry || retryQue.isEmpty()
+                ? preferredQue.poll()
+                : retryQue.poll();
     }
 
-    private void updateWhichQueueToReadFrom(DateTime currentTime) {
-        if (isStartOfRetryWindow(currentTime)) {
-            LOGGER.info(null, "START OF RETRY WINDOW, FIRST EVENT");
-            startTime = currentTime;
-            serveFromRetry = true;
-            firstEventInRetryWindow = "";
+    private boolean shortCircuitRetryWindowIfItHasRecycled(DateTime currentTime) {
+        if (!serveFromRetry
+                || retryQue.isEmpty()
+                || !firstEventInRetryWindow.equals(getChecksumOf(retryQue.peek()))) {
+            return false;
         }
+
+        switchToPreferredQueue(currentTime);
+        LOGGER.info(null, "RETRY HAS RECYCLED, FORCE FINISHED WINDOW");
+        return true;
+    }
+
+    private void ifStartOfRetryWindowSwitchToRetryQueue(DateTime currentTime) {
+        if (isStartOfRetryWindow(currentTime)) {
+            switchToRetryQueue(currentTime);
+            firstEventInRetryWindow = getChecksumOf(retryQue.peek());
+            LOGGER.info(null, "START OF RETRY WINDOW, FIRST EVENT", firstEventInRetryWindow);
+        }
+    }
+
+    private void ifEndOfRetryWindowSwitchToPreferredQueue(DateTime currentTime) {
         if (isEndOfRetryWindow(currentTime)) {
             LOGGER.info(null, "END OF RETRY WINDOW");
-            resetServeFromRetry(currentTime);
+            switchToPreferredQueue(currentTime);
         }
     }
 
     private boolean isStartOfRetryWindow(DateTime currentTime) {
-        return !serveFromRetry && !startTime.plusMillis(delayInMilliSeconds).isAfter(currentTime);
+        return !serveFromRetry
+                && !startTime.plusMillis(delayInMilliSeconds).isAfter(currentTime)
+                && !retryQue.isEmpty();
     }
 
     private boolean isEndOfRetryWindow(DateTime currentTime) {
         return serveFromRetry && startTime.plusMillis(retryTimeInMilliSeconds).isBefore(currentTime);
     }
 
-    private void shortCircuitRetryWindowIfRecycled(IncomingMessageEnvelope envelope, DateTime currentTime) {
-        if (firstEventInRetryWindow.equals(getChecksum(envelope))) {
-            resetServeFromRetry(currentTime);
-            LOGGER.info(null, "RETRY HAS RECYCLED, FORCE FINISHED WINDOW");
-        }
-    }
-
-    private void ifThisIsFirstEventInRetryWindowThenRememberIt(IncomingMessageEnvelope envelope) {
-        if ("".equals(firstEventInRetryWindow)) {
-            firstEventInRetryWindow = getChecksum(envelope);
-        }
-    }
-
-    private String getChecksum(IncomingMessageEnvelope envelope) {
-        return (String) ((Map<String, Object>) ((Map<String, Object>)
-                envelope.getMessage()).get("metadata")).get("checksum");
-    }
-
-    private void resetServeFromRetry(DateTime currentTime) {
+    private void switchToPreferredQueue(DateTime currentTime) {
         serveFromRetry = false;
         startTime = currentTime;
     }
 
+    private void switchToRetryQueue(DateTime currentTime) {
+        startTime = currentTime;
+        serveFromRetry = true;
+    }
+
+    private String getChecksumOf(IncomingMessageEnvelope envelope) {
+        return (String) ((Map<String, Object>) ((Map<String, Object>)
+                envelope.getMessage()).get("metadata")).get("checksum");
+    }
 }

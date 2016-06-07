@@ -20,13 +20,14 @@ public class TimerBasedChooserTest {
     public static final String RETRY = "retry";
     private IncomingMessageEnvelope preferredEnvelope;
     private IncomingMessageEnvelope retryEnvelope;
-    private Map<String, Object> message;
+    private IncomingMessageEnvelope anotherRetryEnvelope;
 
     @Before
     public void setup() {
-        message = EventFixture.GeCreateProfile();
+        Map<String, Object> message = EventFixture.GeCreateProfile();
         preferredEnvelope = new IncomingMessageEnvelope(new SystemStreamPartition("kafka", PREFERRED, new Partition(0)), null, null, message);
         retryEnvelope = new IncomingMessageEnvelope(new SystemStreamPartition("kafka", RETRY, new Partition(0)), null, null, message);
+        anotherRetryEnvelope = new IncomingMessageEnvelope(new SystemStreamPartition("kafka", RETRY, new Partition(0)), null, null, EventFixture.AnotherGeCreateProfile());
     }
 
     @Test
@@ -75,8 +76,8 @@ public class TimerBasedChooserTest {
 
         // Current time is between initial delay and retry interval
         timerBasedChooser.update(preferredEnvelope);
-        timerBasedChooser.update(retryEnvelope);
-        assertEquals(retryEnvelope, timerBasedChooser.choose());
+        timerBasedChooser.update(anotherRetryEnvelope);
+        assertEquals(anotherRetryEnvelope, timerBasedChooser.choose());
 
         // Current time is after retry interval
         mockTimeProvider.setCurrentTime(currentTime.plusMillis(5));
@@ -100,10 +101,10 @@ public class TimerBasedChooserTest {
         assertEquals(preferredEnvelope, timerBasedChooser.choose());
 
         // Current time is after retry interval
-//        timerBasedChooser.update(retryEnvelope);
-//        currentTime = currentTime.plusMillis(6);
-//        mockTimeProvider.setCurrentTime(currentTime);
-//        assertEquals(retryEnvelope, timerBasedChooser.choose());
+        timerBasedChooser.update(retryEnvelope);
+        currentTime = currentTime.plusMillis(6);
+        mockTimeProvider.setCurrentTime(currentTime);
+        assertEquals(retryEnvelope, timerBasedChooser.choose());
     }
 
     @Test
@@ -128,12 +129,10 @@ public class TimerBasedChooserTest {
         registerChooser(timerBasedChooser);
 
         timerBasedChooser.update(retryEnvelope); //Initial retry event, added back to retry (skipped)
-        timerBasedChooser.update(retryEnvelope); //Reprocessing of initial retry event, with the retry window cycles
-        timerBasedChooser.update(retryEnvelope); //Reprocessed event is added back to retry, as processing is skipped
+        timerBasedChooser.update(retryEnvelope); //Reprocessing of initial retry event, with the retry window recycles
         timerBasedChooser.update(preferredEnvelope);
 
         mockTimeProvider.setCurrentTime(currentTime.plusMillis(3));
-        assertEquals(retryEnvelope, timerBasedChooser.choose());
         assertEquals(retryEnvelope, timerBasedChooser.choose());
         assertEquals(preferredEnvelope, timerBasedChooser.choose());
     }
