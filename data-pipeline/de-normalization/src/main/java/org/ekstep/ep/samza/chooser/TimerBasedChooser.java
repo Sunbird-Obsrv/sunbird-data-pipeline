@@ -49,49 +49,57 @@ public class TimerBasedChooser extends BaseMessageChooser implements MessageChoo
 
     @Override
     public IncomingMessageEnvelope choose() {
-        IncomingMessageEnvelope envelope;
+        IncomingMessageEnvelope envelope = null;
         DateTime currentTime = timeProvider.getCurrentTime();
 
-        envelope = chooseFromRetry(currentTime);
-        if (envelope != null) {
-            return envelope;
+        updateWhichQueueToReadFrom(currentTime);
+
+        if (!serveFromRetry) {
+            return preferredQue.poll();
         }
 
-        if (!startTime.plusMillis(delayInMilliSeconds).isAfter(currentTime)) {
-            //Start of retry window
-            startTime = currentTime;
-            envelope = retryQue.poll();
-            if (envelope != null) {
-                serveFromRetry = true;
-                firstEventInRetryWindow = getChecksum(envelope);
-                LOGGER.info(null, "START OF RETRY WINDOW, FIRST EVENT " + firstEventInRetryWindow);
-            } else {
-                envelope = preferredQue.poll();
-            }
-        } else {
-            envelope = preferredQue.poll();
+        envelope = retryQue.poll();
+        if (envelope == null) {
+            return preferredQue.poll();
         }
+
+        shortCircuitRetryWindowIfRecycled(envelope, currentTime);
+        ifThisIsFirstEventInRetryWindowThenRememberIt(envelope);
         return envelope;
     }
 
-    private IncomingMessageEnvelope chooseFromRetry(DateTime currentTime) {
-        IncomingMessageEnvelope envelope = null;
-
-        if (serveFromRetry && (startTime.plusMillis(retryTimeInMilliSeconds).isAfter(currentTime))) {
-            envelope = retryQue.poll();
-            if (hasRetryWindowRecycled(envelope)) {
-                LOGGER.info(null, "RETRY HAS RECYCLED, FORCE FINISHING WINDOW");
-                resetServeFromRetry(currentTime);
-            }
-        } else if (serveFromRetry) {
-            LOGGER.info(null, "RETRY WINDOW OVER");
+    private void updateWhichQueueToReadFrom(DateTime currentTime) {
+        if (isStartOfRetryWindow(currentTime)) {
+            LOGGER.info(null, "START OF RETRY WINDOW, FIRST EVENT");
+            startTime = currentTime;
+            serveFromRetry = true;
+            firstEventInRetryWindow = "";
+        }
+        if (isEndOfRetryWindow(currentTime)) {
+            LOGGER.info(null, "END OF RETRY WINDOW");
             resetServeFromRetry(currentTime);
         }
-        return envelope;
     }
 
-    private boolean hasRetryWindowRecycled(IncomingMessageEnvelope envelope) {
-        return envelope != null && firstEventInRetryWindow.equals(getChecksum(envelope));
+    private boolean isStartOfRetryWindow(DateTime currentTime) {
+        return !serveFromRetry && !startTime.plusMillis(delayInMilliSeconds).isAfter(currentTime);
+    }
+
+    private boolean isEndOfRetryWindow(DateTime currentTime) {
+        return serveFromRetry && startTime.plusMillis(retryTimeInMilliSeconds).isBefore(currentTime);
+    }
+
+    private void shortCircuitRetryWindowIfRecycled(IncomingMessageEnvelope envelope, DateTime currentTime) {
+        if (firstEventInRetryWindow.equals(getChecksum(envelope))) {
+            resetServeFromRetry(currentTime);
+            LOGGER.info(null, "RETRY HAS RECYCLED, FORCE FINISHED WINDOW");
+        }
+    }
+
+    private void ifThisIsFirstEventInRetryWindowThenRememberIt(IncomingMessageEnvelope envelope) {
+        if ("".equals(firstEventInRetryWindow)) {
+            firstEventInRetryWindow = getChecksum(envelope);
+        }
     }
 
     private String getChecksum(IncomingMessageEnvelope envelope) {
