@@ -56,7 +56,7 @@ public class Logger {
         logger.error(logPrependedWithMetadata(eventId, s), throwable);
     }
 
-    private String logPrependedWithMetadata(String eventId, String s){
+    private String logPrependedWithMetadata(String eventId, String s) {
         return eventId == null ? s : format("{0} {1}", eventId, s);
     }
 }

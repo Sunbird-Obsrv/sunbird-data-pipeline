@@ -19,7 +19,6 @@ import java.util.Map;
 import static java.text.MessageFormat.format;
 
 public class PublicTelemetryTask implements StreamTask, InitableTask, WindowableTask {
-    private static final String TAG = PublicTelemetryTask.class.getSimpleName();
     static Logger LOGGER = new Logger(PublicTelemetryTask.class);
 
     private String successTopic;
@@ -31,7 +30,6 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
-        LOGGER.info(null, format("{0} INIT JOB", TAG));
         successTopic = config.get("output.success.topic.name", "telemetry.public");
         failedTopic = config.get("output.failed.topic.name", "telemetry.public.fail");
         nonPublicEvents = getNonPublicEvents(config);
@@ -65,7 +63,7 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
     }
 
     void processEvent(MessageCollector collector, Event event) {
-        LOGGER.info(event.id(), "CLEAN EVENT", event.getMap());
+        LOGGER.info(event.id(), "CLEAN EVENT {}", event.getMap());
 
         if (nonPublicEvents.contains(event.eid().toUpperCase())) {
             LOGGER.info(event.id(), "SKIPPING EVENT");

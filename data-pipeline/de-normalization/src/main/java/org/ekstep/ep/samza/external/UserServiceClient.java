@@ -12,7 +12,6 @@ import java.util.HashMap;
 import static java.text.MessageFormat.format;
 
 public class UserServiceClient implements UserService {
-    private static final String TAG = UserServiceClient.class.getSimpleName();
     static Logger LOGGER = new Logger(UserServiceClient.class);
 
     private static final String HANDLE = "handle";
@@ -40,13 +39,13 @@ public class UserServiceClient implements UserService {
 
         HashMap<String, Object> childData = new HashMap<String, Object>();
         if (!getUserResponse.successful()) {
-            LOGGER.error(eventId, format("{0} USER SERVICE FAILED. RESPONSE: {2}", TAG, child.getUid(), getUserResponse));
+            LOGGER.error(eventId, "USER SERVICE FAILED. RESPONSE: {}",getUserResponse);
             child.populate(childData, timeOfEvent, eventId);
             return child;
         }
 
         if (getUserResponse.profile() != null) {
-            LOGGER.info(eventId, format("{0} PROFILE FOUND", TAG));
+            LOGGER.info(eventId, "PROFILE FOUND");
             childData.put(HANDLE, getUserResponse.profile().handle());
             childData.put(STANDARD, getUserResponse.profile().standard());
             String genderValue = getUserResponse.profile().gender() == null
@@ -60,7 +59,7 @@ public class UserServiceClient implements UserService {
         }
 
         if (getUserResponse.learner() != null) {
-            LOGGER.info(eventId, format("{0} PROFILE NOT FOUND, BUT LEARNER FOUND", TAG));
+            LOGGER.info(eventId, "PROFILE NOT FOUND, BUT LEARNER FOUND");
             childData.put(HANDLE, null);
             childData.put(STANDARD, 0);
             childData.put(GENDER, "Not known");

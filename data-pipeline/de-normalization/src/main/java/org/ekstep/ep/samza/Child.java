@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Child implements Serializable {
-    private static final String TAG = Child.class.getSimpleName();
     static Logger LOGGER = new Logger(Child.class);
 
     public static final String HANDLE = "handle";

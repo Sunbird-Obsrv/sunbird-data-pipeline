@@ -99,7 +99,7 @@ public class DeDuplicationStreamTask implements StreamTask, InitableTask, Window
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getJson()));
         }
         else {
-            LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: ", checkSum);
+            LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checkSum);
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getJson()));
         }
     }

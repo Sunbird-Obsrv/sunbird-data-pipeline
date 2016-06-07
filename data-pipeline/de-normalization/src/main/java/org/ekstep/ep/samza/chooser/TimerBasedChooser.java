@@ -78,7 +78,7 @@ public class TimerBasedChooser extends BaseMessageChooser implements MessageChoo
         if (isStartOfRetryWindow(currentTime)) {
             switchToRetryQueue(currentTime);
             firstEventInRetryWindow = getChecksumOf(retryQue.peek());
-            LOGGER.info(null, "START OF RETRY WINDOW, FIRST EVENT", firstEventInRetryWindow);
+            LOGGER.info(null, "START OF RETRY WINDOW, FIRST EVENT {}", firstEventInRetryWindow);
         }
     }
 
