@@ -157,6 +157,10 @@ namespace :scheduled do
     require_relative '../lib/ecosystem-platform/jobs/cumulator.rb'
     EcosystemPlatform::Jobs::OESessionCumulator.perform(args)
   end
+  task :archive_public_data do
+    require_relative '../lib/ecosystem-platform/jobs/public_data_archiver.rb'
+    EcosystemPlatform::Jobs::PublicDataArchiver.perform()
+  end
 end
 
 namespace :generators do
