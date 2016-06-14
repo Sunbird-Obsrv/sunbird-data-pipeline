@@ -138,7 +138,15 @@ namespace :scheduled do
   end
   task :archive_file do
     require_relative '../lib/ecosystem-platform/jobs/file_archiver.rb'
-    EcosystemPlatform::Jobs::FileArchiver.perform()
+    src_dir = "/var/log/partners"
+    dest_dir = "/var/log/partners-archive"
+    EcosystemPlatform::Jobs::FileArchiver.perform(src_dir,dest_dir)
+  end
+  task :archive_public_data do
+    require_relative '../lib/ecosystem-platform/jobs/file_archiver.rb'
+    src_dir = "/var/log/public_data"
+    dest_dir = "/var/log/public_data_archive"
+    EcosystemPlatform::Jobs::FileArchiver.perform(src_dir,dest_dir)
   end
   task :learner_insertion do
     require_relative '../lib/ecosystem-platform/jobs/learner_insertion.rb'
@@ -156,10 +164,6 @@ namespace :scheduled do
   task :session_cumulator,[:kafka_brokers,:kafka_topic,:es_host,:sync_dates,:data_dir] do |t,args|
     require_relative '../lib/ecosystem-platform/jobs/cumulator.rb'
     EcosystemPlatform::Jobs::OESessionCumulator.perform(args)
-  end
-  task :archive_public_data do
-    require_relative '../lib/ecosystem-platform/jobs/public_data_archiver.rb'
-    EcosystemPlatform::Jobs::PublicDataArchiver.perform()
   end
 end
 
