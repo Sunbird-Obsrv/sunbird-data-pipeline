@@ -18,6 +18,7 @@ public class MetadataCleaner implements Cleaner {
         map.remove("flags");
         map.remove("ready_to_index");
         map.remove("key");
+        map.remove("type");
 
         Iterator<Map.Entry<String, Object>> itr = map.entrySet().iterator();
         while(itr.hasNext())
