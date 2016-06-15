@@ -7,7 +7,7 @@ module EcosystemPlatform
   module Jobs
     class FileArchiver
 
-      PROGNAME = 'file_archiver.jobs.ep'
+      PROGNAME = ENV['PROGNAME'] || 'file_archiver.jobs.ep'
 
       include EcosystemPlatform::Utils::EPLogging
 
