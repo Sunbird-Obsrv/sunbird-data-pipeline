@@ -15,12 +15,16 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import static org.mockito.Mockito.*;
 
 public class PublicTelemetryTaskTest {
     private final String SUCCESS_TOPIC = "telemetry.public";
     private final String FAILED_TOPIC = "telemetry.public.fail";
-    private final String EVENTS_TO_SKIP = "GE_ERROR, GE_SERVICE_API_CALL, GE_API_CALL, GE_REGISTER_PARTNER, GE_PARTNER_DATA, GE_START_PARTNER_SESSION, GE_STOP_PARTNER_SESSION";
+    private final String EVENTS_TO_SKIP = "GE_ERROR, GE_SERVICE_API_CALL, GE_API_CALL, GE_REGISTER_PARTNER, GE_PARTNER_DATA, GE_START_PARTNER_SESSION, GE_STOP_PARTNER_SESSION, ME_.*";
     private MessageCollector collectorMock;
     private Config configMock;
     private TaskContext contextMock;
@@ -69,6 +73,20 @@ public class PublicTelemetryTaskTest {
         ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
 
         publicTelemetryTask.processEvent(collectorMock, event);
+
+        verify(collectorMock,times(0)).send(argument.capture());
+    }
+
+    @Test
+    public void shouldNotProcessAnyLearningEvents() throws Exception {
+        List<Event> events = Arrays.asList(new Event(EventFixture.LearningEvent1()),new Event(EventFixture.LearningEvent2()));
+        ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
+
+        publicTelemetryTask.init(configMock, contextMock);
+
+        for (Event event : events) {
+            publicTelemetryTask.processEvent(collectorMock, event);
+        }
 
         verify(collectorMock,times(0)).send(argument.capture());
     }

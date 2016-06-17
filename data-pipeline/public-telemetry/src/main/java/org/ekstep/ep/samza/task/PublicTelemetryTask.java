@@ -15,8 +15,8 @@ import org.ekstep.ep.samza.logger.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import static java.text.MessageFormat.format;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class PublicTelemetryTask implements StreamTask, InitableTask, WindowableTask {
     static Logger LOGGER = new Logger(PublicTelemetryTask.class);
@@ -65,16 +65,25 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
     void processEvent(MessageCollector collector, Event event) {
         LOGGER.info(event.id(), "CLEAN EVENT {}", event.getMap());
 
-        if (nonPublicEvents.contains(event.eid().toUpperCase())) {
-            LOGGER.info(event.id(), "SKIPPING EVENT");
-            return;
-        }
+        if (skipNonPublicEvents(event)) return;
 
         for (Cleaner cleaner : cleaners) {
             cleaner.clean(event.getMap());
         }
         LOGGER.info(event.id(), "CLEANED EVENT");
         collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
+    }
+
+    private boolean skipNonPublicEvents(Event event) {
+        for (String nonPublicEvent : nonPublicEvents) {
+            Pattern p = Pattern.compile(nonPublicEvent);
+            Matcher m = p.matcher(event.eid());
+            if(m.matches()){
+                LOGGER.info(m.toString(), "SKIPPING EVENT");
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

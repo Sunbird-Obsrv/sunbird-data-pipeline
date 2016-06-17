@@ -208,4 +208,136 @@ public class EventFixture {
         return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
         }.getType());
     }
+
+    public static Map<String, Object> LearningEvent1() {
+        String json = "{\n" +
+                "  \"eid\": \"ME_SESSION_SUMMARY\",\n" +
+                "  \"ets\": 1462881701027,\n" +
+                "  \"syncts\": 1441324800000,\n" +
+                "  \"ver\": \"1.0\",\n" +
+                "  \"mid\": \"327A6D861952BC1B29C136E8806D3ECA\",\n" +
+                "  \"uid\": \"98e3e4f3e47f839e28618812a90e2ac79a2adc8a\",\n" +
+                "  \"context\": {\n" +
+                "    \"pdata\": {\n" +
+                "      \"id\": \"AnalyticsDataPipeline\",\n" +
+                "      \"model\": \"LearnerSessionSummary\",\n" +
+                "      \"ver\": \"1.0\"\n" +
+                "    },\n" +
+                "    \"granularity\": \"SESSION\",\n" +
+                "    \"date_range\": {\n" +
+                "      \"from\": 1441262850000,\n" +
+                "      \"to\": 1441262943000\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"dimensions\": {\n" +
+                "    \"did\": \"d5df4a8a801b5b6d28fe24bbcaeee680ea8a75cf\",\n" +
+                "    \"gdata\": {\n" +
+                "      \"id\": \"org.ekstep.aser\",\n" +
+                "      \"ver\": \"5.1\"\n" +
+                "    },\n" +
+                "    \"loc\": \"13.315301666666668,77.14502333333333\"\n" +
+                "  },\n" +
+                "  \"edata\": {\n" +
+                "    \"eks\": {\n" +
+                "      \"start_time\": 1441262850000,\n" +
+                "      \"noOfLevelTransitions\": -1,\n" +
+                "      \"levels\": [],\n" +
+                "      \"activitySummary\": [\n" +
+                "        {\n" +
+                "          \"actType\": \"TOUCH\",\n" +
+                "          \"count\": 8,\n" +
+                "          \"timeSpent\": 93.0\n" +
+                "        }\n" +
+                "      ],\n" +
+                "      \"noOfAttempts\": 1,\n" +
+                "      \"screenSummary\": [],\n" +
+                "      \"end_time\": 1441262943000,\n" +
+                "      \"partnerId\": \"\",\n" +
+                "      \"timeSpent\": 93.0,\n" +
+                "      \"interactEventsPerMin\": 5.16,\n" +
+                "      \"mimeType\": \"application/vnd.android.package-archive\",\n" +
+                "      \"syncDate\": 1441324800000,\n" +
+                "      \"anonymousUser\": false,\n" +
+                "      \"contentType\": \"Game\",\n" +
+                "      \"timeDiff\": 93.0,\n" +
+                "      \"groupUser\": false,\n" +
+                "      \"eventsSummary\": [\n" +
+                "        {\n" +
+                "          \"id\": \"OE_INTERACT\",\n" +
+                "          \"count\": 8\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"id\": \"OE_START\",\n" +
+                "          \"count\": 1\n" +
+                "        }\n" +
+                "      ],\n" +
+                "      \"currentLevel\": {},\n" +
+                "      \"noOfInteractEvents\": 8,\n" +
+                "      \"interruptTime\": 0.0,\n" +
+                "      \"itemResponses\": [],\n" +
+                "      \"telemetryVersion\": \"1.0\"\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+
+        return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
+
+    public static Map<String, Object> LearningEvent2() {
+        String json = "{\n" +
+                "  \"eid\": \"ME_GENIE_LAUNCH_SUMMARY\",\n" +
+                "  \"ets\": 1465522333811,\n" +
+                "  \"syncts\": 1465466359997,\n" +
+                "  \"ver\": \"1.0\",\n" +
+                "  \"mid\": \"0F5CE4150EA162407AD07F756CF40B88\",\n" +
+                "  \"uid\": \"\",\n" +
+                "  \"context\": {\n" +
+                "    \"pdata\": {\n" +
+                "      \"id\": \"AnalyticsDataPipeline\",\n" +
+                "      \"model\": \"GenieUsageSummarizer\",\n" +
+                "      \"ver\": \"1.0\"\n" +
+                "    },\n" +
+                "    \"granularity\": \"DAY\",\n" +
+                "    \"date_range\": {\n" +
+                "      \"from\": 1465368900608,\n" +
+                "      \"to\": 1465368900608\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"dimensions\": {\n" +
+                "    \"did\": \"f0994e5336511a802bb948ee108ce9a4d6089301\"\n" +
+                "  },\n" +
+                "  \"edata\": {\n" +
+                "    \"eks\": {\n" +
+                "      \"timeSpent\": 0.0,\n" +
+                "      \"time_stamp\": 1465368900608,\n" +
+                "      \"content\": [],\n" +
+                "      \"contentCount\": 0\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"tags\": [\n" +
+                "    {\n" +
+                "      \"genie\": []\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"@version\": \"1\",\n" +
+                "  \"@timestamp\": \"2016-06-10T01:28:43.935Z\",\n" +
+                "  \"type\": \"events\",\n" +
+                "  \"learning\": \"true\",\n" +
+                "  \"ts\": \"2016-06-10T07:02:13.000+0530\",\n" +
+                "  \"metadata\": {\n" +
+                "    \"ts_year\": \"2016\",\n" +
+                "    \"ts_month\": \"06\",\n" +
+                "    \"learning_index\": \"2016.06\",\n" +
+                "    \"year\": \"2016\",\n" +
+                "    \"month\": \"06\",\n" +
+                "    \"monthday\": \"10\",\n" +
+                "    \"hour\": \"01\",\n" +
+                "    \"sync_timestamp\": \"2016-06-10T01:28:43+00:00\"\n" +
+                "  }\n" +
+                "}";
+
+        return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
 }
