@@ -115,17 +115,21 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
                 String did = event.getDid();
                 if (loc != null && !loc.isEmpty()) {
                     location = locationService.getLocation(loc);
-                    device = new Device(did);
-                    device.setLocation(location);
-                    String djson = JsonWriter.objectToJson(device);
-                    deviceStore.put(did, djson);
+                    if (did != null && !did.isEmpty()){
+                        device = new Device(did);
+                        device.setLocation(location);
+                        String djson = JsonWriter.objectToJson(device);
+                        deviceStore.put(did, djson);
+                    }
                 } else {
                     System.out.println("Trying to pick from device");
-                    String storedDevice = (String) deviceStore.get(did);
-                    if (storedDevice != null) {
-                        System.out.println("stored_device, " + storedDevice);
-                        device = (Device) JsonReader.jsonToJava(storedDevice);
-                        location = device.getLocation();
+                    if(did != null && !did.isEmpty()){
+                        String storedDevice = (String) deviceStore.get(did);
+                        if (storedDevice != null) {
+                            System.out.println("stored_device, " + storedDevice);
+                            device = (Device) JsonReader.jsonToJava(storedDevice);
+                            location = device.getLocation();
+                        }
                     }
                 }
             } catch (Exception e) {

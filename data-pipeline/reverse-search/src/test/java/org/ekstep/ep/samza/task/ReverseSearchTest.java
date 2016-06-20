@@ -114,6 +114,20 @@ public class ReverseSearchTest {
     }
 
     @Test
+    public void shouldNotFailIfDeviseIdIsNull() {
+
+        when(deviceStore.get(null)).thenThrow(new NullPointerException("Null is not a valid key"));
+        Event event = createEventMock("");
+
+        when(event.getDid()).thenReturn(null);
+
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService);
+
+        reverseSearchStreamTask.processEvent(event, collector);
+        verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
+    }
+
+    @Test
     public void shouldIgnoreInvalidMessages() {
 
         IncomingMessageEnvelope envelope = mock(IncomingMessageEnvelope.class);
