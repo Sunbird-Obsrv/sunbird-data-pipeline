@@ -31,6 +31,7 @@ import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.api.GoogleGeoLocationAPI;
+import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.service.GoogleReverseSearchService;
 import org.ekstep.ep.samza.service.LocationService;
 import org.ekstep.ep.samza.system.Device;
@@ -42,6 +43,7 @@ import java.util.Map;
 
 public class ReverseSearchStreamTask implements StreamTask, InitableTask, WindowableTask {
 
+    static Logger LOGGER = new Logger(ReverseSearchStreamTask.class);
     private KeyValueStore<String, Object> deviceStore;
     private String successTopic;
     private String failedTopic;
@@ -90,7 +92,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
     @SuppressWarnings("unchecked")
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) {
-        Map<String, Object> jsonObject;
+        Map<String, Object> jsonObject = null;
         Location location = null;
         Device device = null;
         try {
@@ -98,7 +100,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
             processEvent(new Event(jsonObject), collector);
             messageCount.inc();
         } catch (Exception e) {
-            System.err.println("Error while getting message");
+            LOGGER.error(null, "PROCESSING FAILED: " + jsonObject, e);
         }
     }
 
@@ -108,13 +110,13 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
         Device device = null;
 
         if (bypass.equals("true")) {
-            System.out.println("bypassing");
+            LOGGER.info(event.id(), "BYPASSING: {}", event);
         } else {
             try {
                 String loc = event.getGPSCoordinates();
                 String did = event.getDid();
                 if (loc != null && !loc.isEmpty()) {
-                    location = locationService.getLocation(loc);
+                    location = locationService.getLocation(loc, event.id());
                     if (did != null && !did.isEmpty()){
                         device = new Device(did);
                         device.setLocation(location);
@@ -122,22 +124,19 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
                         deviceStore.put(did, djson);
                     }
                 } else {
-                    System.out.println("Trying to pick from device");
+                    LOGGER.info(event.id(), "TRYING TO PICK FROM DEVICE {}", event);
                     if(did != null && !did.isEmpty()){
                         String storedDevice = (String) deviceStore.get(did);
                         if (storedDevice != null) {
-                            System.out.println("stored_device, " + storedDevice);
+                            LOGGER.info(event.id(), "FOUND STORED DEVICE: {}", storedDevice);
                             device = (Device) JsonReader.jsonToJava(storedDevice);
                             location = device.getLocation();
                         }
                     }
                 }
             } catch (Exception e) {
-                System.out.println(e);
-                System.err.println("unable to parse");
-                e.printStackTrace();
+                LOGGER.error(null, "REVERSE SEARCH FAILED: " + event, e);
             }
-            System.out.println("ok");
         }
 
         try {
@@ -158,9 +157,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
             event.setFlag("ldata_processed", true);
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
         } catch (Exception e) {
-            System.out.println("ok");
-            e.printStackTrace();
-            System.err.println("!");
+            LOGGER.error(null, "ERROR WHEN ROUTING EVENT: {}" + event, e);
         }
 
     }

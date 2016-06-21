@@ -33,7 +33,7 @@ under the License.
 
   <groupId>org.ekstep.ecosystem.jobs</groupId>
   <artifactId>reverse-search</artifactId>
-  <version>0.2.0</version>
+  <version>0.2.1</version>
   <packaging>jar</packaging>
   <name>Reverse Search</name>
   <description>
@@ -139,6 +139,11 @@ under the License.
      <groupId>org.ekstep.ecosystem</groupId>
      <artifactId>checksum-generator</artifactId>
      <version>0.0.1</version>
+  </dependency>
+  <dependency>
+    <groupId>org.ekstep.ecosystem</groupId>
+    <artifactId>ep-logger</artifactId>
+    <version>0.0.1</version>
   </dependency>
 </dependencies>
 

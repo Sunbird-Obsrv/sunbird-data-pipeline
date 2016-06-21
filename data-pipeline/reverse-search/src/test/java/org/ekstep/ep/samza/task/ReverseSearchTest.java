@@ -39,7 +39,7 @@ public class ReverseSearchTest {
 
     @Test
     public void shouldDoReverseSearchIfLocPresent() {
-        when(locationService.getLocation("15.9310593,78.6238299")).thenReturn(new Location());
+        when(locationService.getLocation("15.9310593,78.6238299", null)).thenReturn(new Location());
         Event event = createEventMock("15.9310593,78.6238299");
         when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
 
@@ -48,20 +48,20 @@ public class ReverseSearchTest {
 
         reverseSearchStreamTask.processEvent(event, collector);
         verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
-        verify(locationService, times(1)).getLocation("15.9310593,78.6238299");
+        verify(locationService, times(1)).getLocation("15.9310593,78.6238299", null);
     }
 
     @Test
     public void shouldUpdateProperFlagIfSearchReturnEmpty() {
 
-        when(locationService.getLocation("15.9310593,78.6238299")).thenReturn(null);
+        when(locationService.getLocation("15.9310593,78.6238299", null)).thenReturn(null);
         Map<String, Object> map = createMap("15.9310593,78.6238299");
         Event event = new Event(map);
         ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService);
 
         reverseSearchStreamTask.processEvent(event, collector);
         verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
-        verify(locationService, times(1)).getLocation("15.9310593,78.6238299");
+        verify(locationService, times(1)).getLocation("15.9310593,78.6238299", null);
 
         Assert.assertNotNull(event.getMap());
 
@@ -85,14 +85,14 @@ public class ReverseSearchTest {
         ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService);
 
         reverseSearchStreamTask.processEvent(event, collector);
-        verify(locationService, times(0)).getLocation(anyString());
+        verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
         verify(deviceStore, times(1)).get("bc811958-b4b7-4873-a43a-03718edba45b");
         verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
 
         Event event1 = createEventMock("");
         when(event1.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
         reverseSearchStreamTask.processEvent(event1, collector);
-        verify(locationService, times(0)).getLocation(anyString());
+        verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
         verify(deviceStore, times(2)).get("bc811958-b4b7-4873-a43a-03718edba45b");
         verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
     }
@@ -108,7 +108,7 @@ public class ReverseSearchTest {
         ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService);
 
         reverseSearchStreamTask.processEvent(event, collector);
-        verify(locationService, times(0)).getLocation(anyString());
+        verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
         verify(deviceStore, times(1)).get("bc811958-b4b7-4873-a43a-03718edba45b");
         verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
     }
@@ -138,7 +138,7 @@ public class ReverseSearchTest {
         reverseSearchStreamTask.process(envelope, collector, task);
 
         verify(deviceStore, times(0)).get(anyString());
-        verify(locationService, times(0)).getLocation(anyString());
+        verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
         verify(collector, times(0)).send(any(OutgoingMessageEnvelope.class));
 
     }

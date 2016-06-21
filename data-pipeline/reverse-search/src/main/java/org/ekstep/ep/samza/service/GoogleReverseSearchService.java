@@ -5,10 +5,12 @@ import com.google.maps.model.AddressComponentType;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 import org.ekstep.ep.samza.api.GoogleGeoLocationAPI;
+import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.system.Location;
 import org.ekstep.ep.samza.util.LatLongUtils;
 
 public class GoogleReverseSearchService {
+    static Logger LOGGER = new Logger(GoogleReverseSearchService.class);
 
     GoogleGeoLocationAPI locationAPI;
 
@@ -16,19 +18,19 @@ public class GoogleReverseSearchService {
        locationAPI=api;
     }
 
-    public Location getLocation(String loc) {
+    public Location getLocation(String loc, String eventId) {
         LatLng latLng = LatLongUtils.parseLocation(loc);
         if (latLng == null){
             return null;
         }
 
-        return locationFrom(latLng);
+        return locationFrom(latLng, eventId);
     }
 
-    private Location locationFrom(LatLng latLng){
+    private Location locationFrom(LatLng latLng, String eventId){
         try {
             Location location = new Location();
-            GeocodingResult[] results = locationAPI.requestFor(latLng);
+            GeocodingResult[] results = locationAPI.requestFor(latLng, eventId);
             for (GeocodingResult r: results) {
                 if(location.isReverseSearched()){
                     break;
@@ -37,7 +39,7 @@ public class GoogleReverseSearchService {
             }
             return location;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(eventId, "ERROR WHEN FINDING LOCATION", e);
             return null;
         }
     }

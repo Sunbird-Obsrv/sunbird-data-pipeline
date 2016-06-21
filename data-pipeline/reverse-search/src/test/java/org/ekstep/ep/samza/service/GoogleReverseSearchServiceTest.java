@@ -10,6 +10,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -19,7 +20,7 @@ public class GoogleReverseSearchServiceTest {
         GoogleGeoLocationAPI api = mock(GoogleGeoLocationAPI.class);
 
         GoogleReverseSearchService reverseSearch = new GoogleReverseSearchService(api);
-        Assert.assertNull(reverseSearch.getLocation(""));
+        Assert.assertNull(reverseSearch.getLocation("", null));
     }
 
     @Test
@@ -27,20 +28,20 @@ public class GoogleReverseSearchServiceTest {
         GoogleGeoLocationAPI api = mock(GoogleGeoLocationAPI.class);
 
         GoogleReverseSearchService reverseSearch = new GoogleReverseSearchService(api);
-        Assert.assertNull(reverseSearch.getLocation("12"));
-        Assert.assertNull(reverseSearch.getLocation("12:123"));
-        Assert.assertNull(reverseSearch.getLocation("12:123,345"));
-        Assert.assertNull(reverseSearch.getLocation("invalid,format"));
+        Assert.assertNull(reverseSearch.getLocation("12", null));
+        Assert.assertNull(reverseSearch.getLocation("12:123", null));
+        Assert.assertNull(reverseSearch.getLocation("12:123,345", null));
+        Assert.assertNull(reverseSearch.getLocation("invalid,format", null));
     }
 
     @Test
     public void shouldReturnValidLocation(){
         GoogleGeoLocationAPI api = mock(GoogleGeoLocationAPI.class);
 
-        when(api.requestFor(any(LatLng.class))).thenReturn(generateResult());
+        when(api.requestFor(any(LatLng.class), isNull(String.class))).thenReturn(generateResult());
 
         GoogleReverseSearchService reverseSearch = new GoogleReverseSearchService(api);
-        Location location = reverseSearch.getLocation("12.90,77.62");
+        Location location = reverseSearch.getLocation("12.90,77.62", null);
         Assert.assertNotNull(location);
         Assert.assertEquals("Bengaluru", location.getCity());
     }
@@ -49,10 +50,10 @@ public class GoogleReverseSearchServiceTest {
     public void shouldReturnNullForException(){
         GoogleGeoLocationAPI api = mock(GoogleGeoLocationAPI.class);
 
-        when(api.requestFor(any(LatLng.class))).thenThrow(new RuntimeException());
+        when(api.requestFor(any(LatLng.class), isNull(String.class))).thenThrow(new RuntimeException());
 
         GoogleReverseSearchService reverseSearch = new GoogleReverseSearchService(api);
-        Location location = reverseSearch.getLocation("12.90,77.62");
+        Location location = reverseSearch.getLocation("12.90,77.62", null);
         Assert.assertNull(location);
     }
     private GeocodingResult[] generateResult(){

@@ -82,5 +82,12 @@ public class Event implements Mappable {
     public String getMid() {
         return (String) map.get("mid");
     }
+
+    public String id() {
+        return map != null && map.containsKey("metadata") &&
+                (((Map<String, Object>) map.get("metadata")).containsKey("checksum"))
+                ? (String) ((Map<String, Object>) map.get("metadata")).get("checksum")
+                : null;
+    }
 }
 
