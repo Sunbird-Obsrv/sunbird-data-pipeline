@@ -2,15 +2,12 @@ package org.ekstep.ep.samza.model;
 
 import com.zaxxer.hikari.HikariDataSource;
 import org.ekstep.ep.samza.fixtures.EventFixture;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import javax.activation.DataSource;
 import java.sql.*;
 import java.text.ParseException;
-import java.util.Date;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -67,7 +64,7 @@ public class CreateProfileEventTest {
         profileDto.process(event);
 
         assertEquals(true, profileDto.getIsInserted());
-        assertEquals(true, profileDto.isLearnerExist(event.getUID()));
+        assertEquals(true, profileDto.isLearnerExist(event.getUID(), event.id()));
     }
 
     @Test

@@ -8,6 +8,7 @@ import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
+import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.model.*;
 
 import java.io.PrintStream;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 
 public class UserManagementTask implements StreamTask, InitableTask, ClosableTask, WindowableTask {
+    static Logger LOGGER = new Logger(UserManagementTask.class);
 
     private String successTopic;
     private String failedTopic;
@@ -57,14 +59,14 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) {
+        Event event = null;
         try {
             Map<String, Object> jsonObject = (Map<String, Object>) envelope.getMessage();
-            Event event = new Event(new Gson().toJson(jsonObject));
+            event = new Event(new Gson().toJson(jsonObject));
             processEvent(event, collector);
             messageCount.inc();
         } catch (Exception e) {
-            System.err.println("Exception: " + e);
-            e.printStackTrace(new PrintStream(System.err));
+            LOGGER.error(null, "Exception, event: " + event, e);
         }
     }
 

@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.model;
 
 import com.google.gson.Gson;
+import org.ekstep.ep.samza.logger.Logger;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,14 +10,15 @@ import java.util.Map;
 
 
 public class Event  {
-    public String json;
+    static Logger LOGGER = new Logger(Event.class);
+    public final String json;
 
     public Event(String json) {
         this.json = json;
     }
 
     public Event() {
-        this.json = "";
+        this("");
     }
 
     public Map<String,Object> getEData(){
@@ -45,8 +47,15 @@ public class Event  {
             Date timeOfEvent = simpleDateFormat.parse((String)getMap().get("ts"));
             return timeOfEvent;
         } catch (ParseException e) {
-            e.printStackTrace();
+            LOGGER.error(id(), "EXCEPTION", e);
         }
         return null;
+    }
+
+    public String id() {
+        return getMap() != null && getMap().containsKey("metadata") &&
+                (((Map<String, Object>) getMap().get("metadata")).containsKey("checksum"))
+                ? (String) ((Map<String, Object>) getMap().get("metadata")).get("checksum")
+                : null;
     }
 }

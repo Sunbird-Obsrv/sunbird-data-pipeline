@@ -77,6 +77,6 @@ public class UpdateProfileEventTest {
         profileDto.process(event);
 
         Assert.assertEquals(true, profileDto.getIsInserted());
-        Assert.assertEquals(true, profileDto.isProfileExist(event.getUID()));
+        Assert.assertEquals(true, profileDto.isProfileExist(event.getUID(), event.id()));
     }
 }

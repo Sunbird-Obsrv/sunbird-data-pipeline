@@ -1,4 +1,6 @@
 package org.ekstep.ep.samza.model;
+import org.ekstep.ep.samza.logger.Logger;
+
 import javax.sql.DataSource;
 import java.io.PrintStream;
 import java.sql.*;
@@ -8,6 +10,7 @@ import java.util.Date;
 
 
 public class CreateLearnerDto implements IModel{
+    static Logger LOGGER = new Logger(CreateLearnerDto.class);
     private DataSource dataSource;
     private String uid;
     private Timestamp createdAt;
@@ -28,10 +31,10 @@ public class CreateLearnerDto implements IModel{
         java.util.Date date = new java.util.Date();
         createdAt = new Timestamp(date.getTime());
 
-        saveData();
+        saveData(event.id());
     }
 
-    private void saveData() throws SQLException {
+    private void saveData(String eventId) throws SQLException {
         PreparedStatement preparedStmt = null;
         Connection connection = null;
         try{
@@ -58,8 +61,7 @@ public class CreateLearnerDto implements IModel{
             }
 
         } catch (Exception e) {
-            System.err.println("Exception: " + e);
-            e.printStackTrace(new PrintStream(System.err));
+            LOGGER.error(eventId, "EXCEPTION", e);
         } finally {
             if(preparedStmt!=null)
                 preparedStmt.close();

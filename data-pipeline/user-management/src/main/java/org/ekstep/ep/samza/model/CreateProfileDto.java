@@ -1,5 +1,7 @@
 package org.ekstep.ep.samza.model;
 
+import org.ekstep.ep.samza.logger.Logger;
+
 import javax.sql.DataSource;
 import java.io.PrintStream;
 import java.sql.*;
@@ -8,6 +10,8 @@ import java.util.Calendar;
 import java.util.Map;
 
 public class CreateProfileDto implements IModel {
+    static Logger LOGGER = new Logger(CreateProfileDto.class);
+
     public static final String UID = "uid";
     public static final String HANDLE = "handle";
     public static final String GENDER = "gender";
@@ -45,10 +49,10 @@ public class CreateProfileDto implements IModel {
         java.util.Date timeOfEvent = event.getTs();
         parseData(EKS, timeOfEvent);
 
-        if (!isLearnerExist((String) EKS.get(UID))) {
+        if (!isLearnerExist((String) EKS.get(UID), event.id())) {
             createLearner(event);
         }
-        saveData();
+        saveData(event.id());
     }
 
     private void parseData(Map<String, Object> EKS, java.util.Date timeOfEvent) throws ParseException {
@@ -92,7 +96,7 @@ public class CreateProfileDto implements IModel {
                 : null;
     }
 
-    private void saveData() throws SQLException, ParseException {
+    private void saveData(String eventId) throws SQLException, ParseException {
         PreparedStatement preparedStmt = null;
         Connection connection = null;
 
@@ -130,8 +134,7 @@ public class CreateProfileDto implements IModel {
             }
 
         } catch (Exception e) {
-            System.err.println("Exception: " + e);
-            e.printStackTrace(new PrintStream(System.err));
+            LOGGER.error(eventId, "EXCEPTION", e);
         } finally {
             if (preparedStmt != null)
                 preparedStmt.close();
@@ -152,7 +155,7 @@ public class CreateProfileDto implements IModel {
         learnerDto.process(event);
     }
 
-    public boolean isLearnerExist(String uid) throws SQLException {
+    public boolean isLearnerExist(String uid, String eventId) throws SQLException {
         boolean flag = false;
         PreparedStatement preparedStmt = null;
         Connection connection;
@@ -171,8 +174,7 @@ public class CreateProfileDto implements IModel {
             }
 
         } catch (Exception e) {
-            System.err.println("Exception: " + e);
-            e.printStackTrace(new PrintStream(System.err));
+            LOGGER.error(eventId, "EXCEPTION", e);
         } finally {
             if (preparedStmt != null)
                 preparedStmt.close();
