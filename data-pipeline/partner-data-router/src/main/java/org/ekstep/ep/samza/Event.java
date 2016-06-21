@@ -2,14 +2,17 @@ package org.ekstep.ep.samza;
 
 import com.google.gson.Gson;
 import org.apache.commons.lang.StringUtils;
+import org.ekstep.ep.samza.logger.Logger;
 
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class Event {
     private static final List<String> validPartners = Arrays.asList("org.ekstep.partner.akshara", "org.ekstep.partner.pratham", "org.ekstep.partner.enlearn");
     private Map<String, Object> data;
-
+    static Logger LOGGER = new Logger(Event.class);
 
     public Event(Map<String, Object> data) {
         this.data = data;
@@ -32,7 +35,7 @@ public class Event {
     private String getPartnerId() {
         try {
             ArrayList<Map> tags = (ArrayList<Map>) data.get("tags");
-            System.out.println(String.format("TAGS:%s",new Gson().toJson(tags)));
+            LOGGER.info(id(), String.format("TAGS: %s", new Gson().toJson(tags)));
             if (tags == null || tags.isEmpty())
                 return null;
             String partnerid = "partnerid";
@@ -52,12 +55,19 @@ public class Event {
                     }
                 }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(id(), "ERROR WHEN GETTING PARTNER ID", e);
         }
         return null;
     }
 
     public Map<String, Object> getData() {
         return data;
+    }
+
+    public String id() {
+        return data != null && data.containsKey("metadata") &&
+                (((Map<String, Object>) data.get("metadata")).containsKey("checksum"))
+                ? (String) ((Map<String, Object>) data.get("metadata")).get("checksum")
+                : null;
     }
 }

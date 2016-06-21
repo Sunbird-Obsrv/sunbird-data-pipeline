@@ -151,6 +151,11 @@ under the License.
     <version>1.3</version>
     <scope>test</scope>
   </dependency>
+  <dependency>
+    <groupId>org.ekstep.ecosystem</groupId>
+    <artifactId>ep-logger</artifactId>
+    <version>0.0.1</version>
+  </dependency>
 </dependencies>
 
   <build>

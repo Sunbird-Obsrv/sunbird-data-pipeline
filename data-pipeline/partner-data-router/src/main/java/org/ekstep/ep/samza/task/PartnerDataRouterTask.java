@@ -9,6 +9,7 @@ import org.apache.samza.task.*;
 import org.ekstep.ep.samza.Event;
 import org.ekstep.ep.samza.cleaner.Cleaner;
 import org.ekstep.ep.samza.cleaner.CleanerFactory;
+import org.ekstep.ep.samza.logger.Logger;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
     private String successTopicSuffix;
     private Counter messageCount;
     private List<Cleaner> cleaners;
+    static Logger LOGGER = new Logger(Event.class);
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
@@ -30,15 +32,15 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) throws Exception {
         Map<String, Object> message = (Map<String, Object>) envelope.getMessage();
-        System.out.println("ts: " + message.get("ts"));
-        System.out.println("sid: " + message.get("sid"));
         Event event = getEvent(message);
+        LOGGER.info(event.id(), "TS: {}", message.get("ts"));
+        LOGGER.info(event.id(), "SID: {}", message.get("sid"));
         if(!event.belongsToAPartner()){
             return;
         }
         event.updateType();
         String topic = String.format("%s.%s", successTopicSuffix, event.routeTo());
-        System.out.println("TOPIC:" + topic);
+        LOGGER.info(event.id(), "TOPIC: {}", topic);
         for (Cleaner cleaner : cleaners) {
             cleaner.clean(event.getData());
         }
