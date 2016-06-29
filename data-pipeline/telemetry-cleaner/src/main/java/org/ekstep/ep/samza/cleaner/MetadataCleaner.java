@@ -19,16 +19,6 @@ public class MetadataCleaner implements Cleaner {
         map.remove("ready_to_index");
         map.remove("key");
 
-        Iterator<Map.Entry<String, Object>> itr = map.entrySet().iterator();
-        while(itr.hasNext())
-        {
-            Map.Entry<String, Object> entry = itr.next();
-            if(entry.getKey().startsWith("@"))
-            {
-                itr.remove();
-            }
-        }
-
         LOGGER.debug(format("{0} CLEANED METADATA & FLAGS {1}", TAG , map));
     }
 }
