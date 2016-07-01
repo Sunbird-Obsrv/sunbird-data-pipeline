@@ -1,4 +1,4 @@
-package org.ekstep.ep.samza.task.fixtures;
+package org.ekstep.ep.samza.fixtures;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -8,11 +8,16 @@ import java.util.Map;
 public class EventFixture {
     public static Map<String, Object> CreateProfile() {
         String json = "{\n" +
-                "  \"tags\": [\n" +
-                "    {\n" +
-                "      \"genie\": []\n" +
-                "    }\n" +
-                "  ],\n" +
+                "    \"tags\": [\n" +
+                "        {\n" +
+                "            \"partnerid\": [\n" +
+                "                \"org.ekstep.partner.pratham\"\n" +
+                "            ]\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"genie\": []\n" +
+                "        }\n" +
+                "    ],\n" +
                 "  \"uid\": \"68f24339-caae-4ebb-b4ff-6b1ae0478c02\",\n" +
                 "  \"sid\": \"\",\n" +
                 "  \"ts\": \"2016-05-25T15:03:54.857+0530\",\n" +
@@ -161,7 +166,7 @@ public class EventFixture {
                 "        }\n" +
                 "    ],\n" +
                 "    \"uid\": \"\",\n" +
-                "    \"sid\": \"\",\n" +
+                "    \"sid\": \"e2e50098-ed9e-41cf-bfb1-e61baaff8911\",\n" +
                 "    \"ts\": \"2016-05-27T15:21:59.995+0530\",\n" +
                 "    \"edata\": {\n" +
                 "        \"eks\": {\n" +
@@ -203,6 +208,63 @@ public class EventFixture {
                 "        \"ldata_obtained\": false\n" +
                 "    },\n" +
                 "    \"ready_to_index\": \"true\"\n" +
+                "}";
+
+        return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
+
+    public static Map<String, Object> LearningEvent() {
+        String json = "{\n" +
+                "  \"eid\": \"ME_GENIE_LAUNCH_SUMMARY\",\n" +
+                "  \"ets\": 1465522333811,\n" +
+                "  \"syncts\": 1465466359997,\n" +
+                "  \"ver\": \"1.0\",\n" +
+                "  \"mid\": \"0F5CE4150EA162407AD07F756CF40B88\",\n" +
+                "  \"uid\": \"\",\n" +
+                "  \"context\": {\n" +
+                "    \"pdata\": {\n" +
+                "      \"id\": \"AnalyticsDataPipeline\",\n" +
+                "      \"model\": \"GenieUsageSummarizer\",\n" +
+                "      \"ver\": \"1.0\"\n" +
+                "    },\n" +
+                "    \"granularity\": \"DAY\",\n" +
+                "    \"date_range\": {\n" +
+                "      \"from\": 1465368900608,\n" +
+                "      \"to\": 1465368900608\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"dimensions\": {\n" +
+                "    \"did\": \"f0994e5336511a802bb948ee108ce9a4d6089301\"\n" +
+                "  },\n" +
+                "  \"edata\": {\n" +
+                "    \"eks\": {\n" +
+                "      \"timeSpent\": 0.0,\n" +
+                "      \"time_stamp\": 1465368900608,\n" +
+                "      \"content\": [],\n" +
+                "      \"contentCount\": 0\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"tags\": [\n" +
+                "    {\n" +
+                "      \"genie\": []\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"@version\": \"1\",\n" +
+                "  \"@timestamp\": \"2016-06-10T01:28:43.935Z\",\n" +
+                "  \"type\": \"events\",\n" +
+                "  \"learning\": \"true\",\n" +
+                "  \"ts\": \"2016-06-10T07:02:13.000+0530\",\n" +
+                "  \"metadata\": {\n" +
+                "    \"ts_year\": \"2016\",\n" +
+                "    \"ts_month\": \"06\",\n" +
+                "    \"learning_index\": \"2016.06\",\n" +
+                "    \"year\": \"2016\",\n" +
+                "    \"month\": \"06\",\n" +
+                "    \"monthday\": \"10\",\n" +
+                "    \"hour\": \"01\",\n" +
+                "    \"sync_timestamp\": \"2016-06-10T01:28:43+00:00\"\n" +
+                "  }\n" +
                 "}";
 
         return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {

@@ -26,5 +26,4 @@ public class DeviceDataCleaner implements Cleaner {
 
         LOGGER.debug(format("{0} DSPEC CLEANED EVENT {1}", TAG, map));
     }
-
 }

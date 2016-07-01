@@ -7,12 +7,17 @@ import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
+import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.Event;
-import org.ekstep.ep.samza.task.fixtures.EventFixture;
+import org.ekstep.ep.samza.cleaner.CleanerFactory;
+import org.ekstep.ep.samza.fixtures.EventFixture;
+import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.mockito.ArgumentCaptor;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.not;
@@ -21,99 +26,82 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 public class PartnerDataRouterTaskTest {
+    private final String EVENTS_TO_SKIP = "ME_.*";
+    private MessageCollector collectorMock;
+    private Config configMock;
+    private TaskContext contextMock;
+    private MetricsRegistry metricsRegistryMock;
+    private IncomingMessageEnvelope envelopMock;
+    private PartnerDataRouterTask partnerDataRouterTask;
+    private Counter counterMock;
 
-  @Test
-  public void shouldNotGetTheTopicFromEventWhenTopicDoesNotBelongToPartner() throws Exception {
-    Event eventMock = mock(Event.class);
-    PartnerDataRouterTask task = new PartnerDataRouterTaskStub(eventMock, false);
-    IncomingMessageEnvelope envelopeMock = mock(IncomingMessageEnvelope.class);
-    HashMap<String, Object> message = new HashMap<String, Object>();
-    stub(envelopeMock.getMessage()).toReturn(message);
-    stub(eventMock.belongsToAPartner()).toReturn(false);
+    @Before
+    public void setUp() {
+        collectorMock = mock(MessageCollector.class);
+        contextMock = mock(TaskContext.class);
+        envelopMock = mock(IncomingMessageEnvelope.class);
+        metricsRegistryMock = mock(MetricsRegistry.class);
+        counterMock = mock(Counter.class);
 
-    task.process(envelopeMock, null, null);
+        configMock = mock(Config.class);
+        stub(configMock.get("output.success.topic.prefix")).toReturn("partner");
+        stub(configMock.get("events.to.skip", "")).toReturn(EVENTS_TO_SKIP);
+        stub(metricsRegistryMock.newCounter("org.ekstep.ep.samza.task.PartnerDataRouterTask", "message-count")).toReturn(counterMock);
+        stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistryMock);
+        partnerDataRouterTask = new PartnerDataRouterTask();
+    }
 
-    verify(eventMock, never()).routeTo();
-  }
+    @Test
+    public void shouldNotGetTheTopicFromEventWhenTopicDoesNotBelongToPartner() throws Exception {
+        Event eventMock = mock(Event.class);
+        HashMap<String, Object> message = new HashMap<String, Object>();
+        stub(envelopMock.getMessage()).toReturn(message);
+        stub(eventMock.belongsToAPartner()).toReturn(false);
 
-  @Test
-  public void shouldGetTheTopicFromEventWhenTopicBelongToPartner() throws Exception {
-    Event eventMock = mock(Event.class);
-    PartnerDataRouterTask task = new PartnerDataRouterTaskStub(eventMock, true);
-    IncomingMessageEnvelope envelopeMock = mock(IncomingMessageEnvelope.class);
-    HashMap<String, Object> message = new HashMap<String, Object>();
-    MetricsRegistry metricsRegistryMock = mock(MetricsRegistry.class);
-    Counter counterMock = mock(Counter.class);
-    Config configMock = Mockito.mock(Config.class);
-    TaskContext contextMock = Mockito.mock(TaskContext.class);
-    stub(envelopeMock.getMessage()).toReturn(message);
-    stub(eventMock.belongsToAPartner()).toReturn(true);
-    Map<String, Object> eventData = EventFixture.CreateProfile();
-    stub(eventMock.getData()).toReturn(eventData);
-    MessageCollector collectorMock = mock(MessageCollector.class);
-    when(contextMock.getMetricsRegistry()).thenReturn(metricsRegistryMock);
-    when(metricsRegistryMock.newCounter("org.ekstep.ep.samza.task.PartnerDataRouterTaskStub", "message-count"))
-        .thenReturn(counterMock);
+        partnerDataRouterTask.process(envelopMock, null, null);
 
-    task.init(configMock, contextMock);
-    task.process(envelopeMock, collectorMock, null);
+        verify(eventMock, never()).routeTo();
+    }
 
-    verify(eventMock).routeTo();
-    verify(collectorMock).send(any(OutgoingMessageEnvelope.class));
-  }
+    @Test
+    public void shouldGetTheTopicFromEventWhenTopicBelongToPartner() throws Exception {
+        Event eventMock = mock(Event.class);
+        stub(eventMock.getData()).toReturn(EventFixture.PartnerData());
+        stub(eventMock.eid()).toReturn("GE_PARTNER_DATA");
+        stub(eventMock.belongsToAPartner()).toReturn(true);
+        ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
 
-  @Test
-  public void shouldCleanThePartnerEventBeforeRoutingToCorrespondingTopic() throws Exception {
-    Event eventMock = mock(Event.class);
-    PartnerDataRouterTask task = new PartnerDataRouterTaskStub(eventMock, true);
-    IncomingMessageEnvelope envelopeMock = mock(IncomingMessageEnvelope.class);
-    HashMap<String, Object> message = new HashMap<String, Object>();
-    MetricsRegistry metricsRegistryMock = mock(MetricsRegistry.class);
-    Counter counterMock = mock(Counter.class);
-    Config configMock = Mockito.mock(Config.class);
-    TaskContext contextMock = Mockito.mock(TaskContext.class);
-    stub(envelopeMock.getMessage()).toReturn(message);
-    stub(eventMock.belongsToAPartner()).toReturn(true);
-    Map<String, Object> eventData = EventFixture.CreateProfile();
-    stub(eventMock.getData()).toReturn(eventData);
-    MessageCollector collectorMock = mock(MessageCollector.class);
-    when(contextMock.getMetricsRegistry()).thenReturn(metricsRegistryMock);
-    when(metricsRegistryMock.newCounter("org.ekstep.ep.samza.task.PartnerDataRouterTaskStub", "message-count"))
-        .thenReturn(counterMock);
+        partnerDataRouterTask.init(configMock, contextMock);
+        partnerDataRouterTask.processEvent(collectorMock, eventMock);
 
-    task.init(configMock, contextMock);
-    task.process(envelopeMock, collectorMock, null);
+        verify(eventMock).routeTo();
+        verify(collectorMock, times(1)).send(argument.capture());
+    }
 
-    Map<String, Object> udata = (Map<String, Object>) eventData.get("udata");
-    assertThat(udata, not(hasKey("is_group_user")));
-    assertThat(udata, not(hasKey("handle")));
-    assertThat(udata, not(hasKey("gender")));
-  }
+    @Test
+    public void shouldCleanThePartnerEventBeforeRoutingToCorrespondingTopic() throws Exception {
+        Event event = new Event(EventFixture.CreateProfile());
 
-//    @Test(expected = PartnerTopicNotPresentException.class)
-//    public void shouldThrowExceptionWhenTopicDoesNotExists() throws Exception {
-//        Event eventMock = mock(Event.class);
-//        PartnerDataRouterTask task = new PartnerDataRouterTaskStub(eventMock,false);
-//        IncomingMessageEnvelope envelopeMock= mock(IncomingMessageEnvelope.class);
-//        HashMap<String, Object> message = new HashMap<String, Object>();
-//        stub(envelopeMock.getMessage()).toReturn(message);
-//        stub(eventMock.belongsToAPartner()).toReturn(true);
-//
-//        task.process(envelopeMock, null, null);
-//    }
+        ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
 
+        partnerDataRouterTask.init(configMock, contextMock);
+        partnerDataRouterTask.processEvent(collectorMock, event);
 
-}
+        Map<String, Object> udata = (Map<String, Object>) event.getData().get("udata");
+        assertThat(udata, not(hasKey("is_group_user")));
+        assertThat(udata, not(hasKey("handle")));
+        assertThat(udata, not(hasKey("gender")));
+    }
 
-class PartnerDataRouterTaskStub extends PartnerDataRouterTask {
-  private Event event;
+    @Test
+    public void shouldSkipLearningEvents() throws Exception {
+        Event event = new Event(EventFixture.LearningEvent());
 
-  public PartnerDataRouterTaskStub(Event event, Boolean topicExists) {
-    this.event = event;
-  }
+        ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
 
-  @Override
-  protected Event getEvent(Map<String, Object> message) {
-    return event;
-  }
+        partnerDataRouterTask.init(configMock, contextMock);
+        partnerDataRouterTask.processEvent(collectorMock, event);
+
+        verify(collectorMock, times(0)).send(argument.capture());
+    }
 }

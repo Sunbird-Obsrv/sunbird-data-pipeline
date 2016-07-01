@@ -208,4 +208,61 @@ public class EventFixture {
         return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
         }.getType());
     }
+
+    public static Map<String, Object> LearningEvent() {
+        String json = "{\n" +
+                "  \"eid\": \"ME_GENIE_LAUNCH_SUMMARY\",\n" +
+                "  \"ets\": 1465522333811,\n" +
+                "  \"syncts\": 1465466359997,\n" +
+                "  \"ver\": \"1.0\",\n" +
+                "  \"mid\": \"0F5CE4150EA162407AD07F756CF40B88\",\n" +
+                "  \"uid\": \"\",\n" +
+                "  \"context\": {\n" +
+                "    \"pdata\": {\n" +
+                "      \"id\": \"AnalyticsDataPipeline\",\n" +
+                "      \"model\": \"GenieUsageSummarizer\",\n" +
+                "      \"ver\": \"1.0\"\n" +
+                "    },\n" +
+                "    \"granularity\": \"DAY\",\n" +
+                "    \"date_range\": {\n" +
+                "      \"from\": 1465368900608,\n" +
+                "      \"to\": 1465368900608\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"dimensions\": {\n" +
+                "    \"did\": \"f0994e5336511a802bb948ee108ce9a4d6089301\"\n" +
+                "  },\n" +
+                "  \"edata\": {\n" +
+                "    \"eks\": {\n" +
+                "      \"timeSpent\": 0.0,\n" +
+                "      \"time_stamp\": 1465368900608,\n" +
+                "      \"content\": [],\n" +
+                "      \"contentCount\": 0\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"tags\": [\n" +
+                "    {\n" +
+                "      \"genie\": []\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"@version\": \"1\",\n" +
+                "  \"@timestamp\": \"2016-06-10T01:28:43.935Z\",\n" +
+                "  \"type\": \"events\",\n" +
+                "  \"learning\": \"true\",\n" +
+                "  \"ts\": \"2016-06-10T07:02:13.000+0530\",\n" +
+                "  \"metadata\": {\n" +
+                "    \"ts_year\": \"2016\",\n" +
+                "    \"ts_month\": \"06\",\n" +
+                "    \"learning_index\": \"2016.06\",\n" +
+                "    \"year\": \"2016\",\n" +
+                "    \"month\": \"06\",\n" +
+                "    \"monthday\": \"10\",\n" +
+                "    \"hour\": \"01\",\n" +
+                "    \"sync_timestamp\": \"2016-06-10T01:28:43+00:00\"\n" +
+                "  }\n" +
+                "}";
+
+        return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
 }

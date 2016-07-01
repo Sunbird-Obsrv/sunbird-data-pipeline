@@ -70,4 +70,17 @@ public class Event {
                 ? (String) ((Map<String, Object>) data.get("metadata")).get("checksum")
                 : null;
     }
+
+    public String eid() {
+        return data != null && data.containsKey("eid") ? (String) data.get("eid") : null;
+    }
+
+    public String ts() {
+        return data != null && data.containsKey("ts") ? (String) data.get("ts") : null;
+    }
+
+    public String sid() {
+        return data != null && data.containsKey("sid") ? (String) data.get("sid") : null;
+    }
+
 }

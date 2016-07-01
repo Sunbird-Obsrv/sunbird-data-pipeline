@@ -8,35 +8,32 @@ import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.Event;
-import org.ekstep.ep.samza.cleaner.Cleaner;
 import org.ekstep.ep.samza.cleaner.CleanerFactory;
 import org.ekstep.ep.samza.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class PublicTelemetryTask implements StreamTask, InitableTask, WindowableTask {
     static Logger LOGGER = new Logger(PublicTelemetryTask.class);
 
     private String successTopic;
     private String failedTopic;
-    private List<Cleaner> cleaners;
 
     private Counter messageCount;
     private List<String> nonPublicEvents;
+    private CleanerFactory cleaner;
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
         successTopic = config.get("output.success.topic.name", "telemetry.public");
         failedTopic = config.get("output.failed.topic.name", "telemetry.public.fail");
         nonPublicEvents = getNonPublicEvents(config);
-        cleaners = CleanerFactory.cleaners();
         messageCount = context
                 .getMetricsRegistry()
                 .newCounter(getClass().getName(), "message-count");
+        cleaner = new CleanerFactory(nonPublicEvents);
     }
 
     @Override
@@ -65,25 +62,12 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
     void processEvent(MessageCollector collector, Event event) {
         LOGGER.info(event.id(), "CLEAN EVENT {}", event.getMap());
 
-        if (skipNonPublicEvents(event)) return;
+        if(cleaner.shouldSkipEvent(event.eid())){ return; }
 
-        for (Cleaner cleaner : cleaners) {
-            cleaner.clean(event.getMap());
-        }
+        cleaner.clean(event.getMap());
+
         LOGGER.info(event.id(), "CLEANED EVENT");
         collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
-    }
-
-    private boolean skipNonPublicEvents(Event event) {
-        for (String nonPublicEvent : nonPublicEvents) {
-            Pattern p = Pattern.compile(nonPublicEvent);
-            Matcher m = p.matcher(event.eid());
-            if(m.matches()){
-                LOGGER.info(m.toString(), "SKIPPING EVENT");
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
