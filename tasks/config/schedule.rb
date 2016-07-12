@@ -17,12 +17,12 @@ set :environment, ENV['EP_LOG_DIR']
 # end
 
 # every 1.day, :at => '4:30 am' do
-every 30.minutes do
-  @kafka_brokers = @kafka_brokers.split(',').join('-')
-  rake "scheduled:session_summarizer[#{@kafka_brokers},#{@kafka_topic},#{@es_host}]"
-end
+# every 30.minutes do
+#   @kafka_brokers = @kafka_brokers.split(',').join('-')
+#   rake "scheduled:session_summarizer[#{@kafka_brokers},#{@kafka_topic},#{@es_host}]"
+# end
 
-every 30.minutes do
-  @kafka_brokers = @kafka_brokers.split(',').join('-')
-  rake "scheduled:session_cumulator[#{@kafka_brokers},#{@kafka_topic},#{@es_host},#{@start_date}]"
-end
+# every 30.minutes do
+#   @kafka_brokers = @kafka_brokers.split(',').join('-')
+#   rake "scheduled:session_cumulator[#{@kafka_brokers},#{@kafka_topic},#{@es_host},#{@start_date}]"
+# end
