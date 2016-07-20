@@ -18,6 +18,8 @@ GEM
       multi_json
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
+    fileutils (0.7)
+      rmagick (>= 2.13.1)
     geocoder (1.2.8)
     hashie (3.4.1)
     map_by_method (0.8.3)
@@ -33,6 +35,7 @@ GEM
       method_source (~> 0.8.1)
       slop (~> 3.4)
     rake (10.4.2)
+    rmagick (2.15.4)
     ruby-kafka (0.3.2)
     ruby-progressbar (1.7.5)
     rubyzip (1.1.7)
@@ -41,6 +44,7 @@ GEM
     whenever (0.9.4)
       chronic (>= 0.6.3)
     xml-simple (1.1.5)
+    zip (2.0.2)
 
 PLATFORMS
   ruby
@@ -48,6 +52,7 @@ PLATFORMS
 DEPENDENCIES
   aws-s3 (~> 0.6.3)
   elasticsearch
+  fileutils
   geocoder
   hashie
   map_by_method
@@ -59,6 +64,7 @@ DEPENDENCIES
   rubyzip
   what_methods
   whenever
+  zip
 
 BUNDLED WITH
    1.10.6
