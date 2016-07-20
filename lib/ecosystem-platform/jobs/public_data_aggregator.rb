@@ -20,7 +20,7 @@ module EcosystemPlatform
           config = Config.load
           api = DataExhaustApi.new(config.data_exhaust_api_endpoint, logger)
           DataExhaustController.new(AggregateDate.new(config.data_dir, 
-            config.store_file_name, config.initial_download_date,logger),
+            config.store_file_name, config.initial_aggregate_date,logger),
             config.dataset_id, config.resource_id, config.licence_key,api,logger).aggregate()
           logger.end_task
         rescue => e
