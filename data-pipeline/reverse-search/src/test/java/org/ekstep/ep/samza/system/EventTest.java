@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -26,12 +27,55 @@ public class EventTest {
     }
 
     @Test
-    public void shouldGetDeviceID(){
-        Map<String, Object> map = mock(Map.class);
-        when(map.get("did")).thenReturn("device_id");
+    public void shouldGetDeviceIDFromDimensionsFirst(){
+        HashMap<String, Object> map = new HashMap<String,Object>();
+        map.put("did","device_id1");
+        HashMap<String, Object> dimensions = new HashMap<String,Object>();
+        dimensions.put("did","device_id2");
+        map.put("dimensions", dimensions);
 
         Event event = new Event(map);
-        Assert.assertEquals("device_id", event.getDid());
+        Assert.assertEquals("device_id2", event.getDid());
+    }
+
+    @Test
+    public void shouldGetEmptyDeviceIDFromDimensionsContainsEmptyDeviceId(){
+        HashMap<String, Object> map = new HashMap<String,Object>();
+        map.put("did","device_id1");
+        HashMap<String, Object> dimensions = new HashMap<String,Object>();
+        dimensions.put("did","");
+        map.put("dimensions", dimensions);
+
+        Event event = new Event(map);
+        Assert.assertEquals("", event.getDid());
+    }
+
+    @Test
+    public void shouldGetDeviceIDFromRootIfDimensionsDoesNotContainDid(){
+        HashMap<String, Object> map = new HashMap<String,Object>();
+        map.put("did","device_id1");
+        HashMap<String, Object> dimensions = new HashMap<String,Object>();
+        map.put("dimensions", dimensions);
+
+        Event event = new Event(map);
+        Assert.assertEquals("device_id1", event.getDid());
+    }
+
+    @Test
+    public void shouldGetDeviceIDFromRootWhenDimensionIsNotPresent(){
+        HashMap<String, Object> map = new HashMap<String,Object>();
+        map.put("did", "device_id1");
+
+        Event event = new Event(map);
+        Assert.assertEquals("device_id1", event.getDid());
+    }
+
+    @Test
+    public void shouldGetNullDidWhenAbsent(){
+        HashMap<String, Object> map = new HashMap<String,Object>();
+
+        Event event = new Event(map);
+        Assert.assertNull(event.getDid());
     }
 
     @Test

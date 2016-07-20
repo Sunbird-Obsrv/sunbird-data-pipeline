@@ -35,6 +35,11 @@ public class Event implements Mappable {
     }
 
     public String getDid() {
+        if(map.containsKey("dimensions")){
+            Map<String, Object> dimensions = (Map<String, Object>)map.get("dimensions");
+            if(dimensions.containsKey("did"))
+                return (String)dimensions.get("did");
+        }
         return (String)map.get("did");
     }
 
