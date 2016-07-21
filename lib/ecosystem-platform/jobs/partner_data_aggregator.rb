@@ -9,7 +9,7 @@ require_relative '../utils/ep_logging.rb'
 
 module EcosystemPlatform
   module Jobs
-    class PublicDataAggregator
+    class PartnerDataAggregator
 
       PROGNAME = ENV['PROGNAME'] || 'partner_data_aggregate.jobs.ep'
       PARTNER = ENV['PARTNER']
