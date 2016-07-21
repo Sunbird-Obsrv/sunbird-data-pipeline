@@ -5,4 +5,8 @@ class Config
     config = YAML.load_file(File.join(__dir__, 'config.yml'))
     return Hashie::Mash.new config
   end
+  def self.load_partner_spec(partner)
+    config = YAML.load_file(File.join(__dir__, "#{partner}.yml"))
+    return Hashie::Mash.new config
+  end
 end

@@ -161,6 +161,10 @@ namespace :scheduled do
     require_relative '../lib/ecosystem-platform/jobs/public_data_aggregator.rb'
     EcosystemPlatform::Jobs::PublicDataAggregator.perform 
   end
+  task :partner_data_aggregator do
+    require_relative '../lib/ecosystem-platform/jobs/partner_data_aggregator.rb'
+    EcosystemPlatform::Jobs::PartnerDataAggregator.perform 
+  end
 end
 
 namespace :generators do
