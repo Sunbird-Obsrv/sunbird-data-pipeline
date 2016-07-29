@@ -9,6 +9,7 @@ ASSEMBLE_PAGE_API_URL="#{API_ROOT}/v1/page/assemble/org.ekstep.genie.content.exp
 module AssembleApiEventGenerator
   class Assemble
     attr_accessor :event
+    attr_accessor :event_with_context
     def initialize
       self.event = create_event
       self.event_with_context = create_event_with_context
