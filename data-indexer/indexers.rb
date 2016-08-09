@@ -90,7 +90,18 @@ module Indexers
                   },
                   match: "loc"
               }
-            }
+            },
+            {
+              unstructured_object: {
+                mapping: {
+                        type: "object"
+                },
+                enabled: false,
+                include_in_all: true,
+                match: "resvalues",
+                match_pattern: "regex"
+              }
+           }
             ],
             properties: {
               geoip: {
