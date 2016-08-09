@@ -90,18 +90,7 @@ module Indexers
                   },
                   match: "loc"
               }
-            },
-            {
-              unstructured_object: {
-                mapping: {
-                        type: "object"
-                },
-                enabled: false,
-                include_in_all: true,
-                match: "resvalues",
-                match_pattern: "regex"
-              }
-           }
+            }
             ],
             properties: {
               geoip: {
@@ -113,6 +102,19 @@ module Indexers
                   }
                 },
                 type: "object"
+              },
+              edata: {
+                properties: {
+                  eks: {
+                    properties: {
+                      resvalues: {
+                        type: "object",
+                        enabled: false,
+                        include_in_all: true
+                        }
+                      }
+                   }
+                }
               },
               "@version" => {
                 index: "not_analyzed",
