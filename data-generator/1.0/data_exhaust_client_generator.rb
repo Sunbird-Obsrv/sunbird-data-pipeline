@@ -6,18 +6,19 @@ require 'pry'
 
 API_ROOT = "http://#{ENV['API_HOST']||'localhost:8080'}"
 
-DATA_EXHAUST_USER_SIGNUP_API_URL="#{API_ROOT}/v1/user"
-DATA_EXHAUST_USER_VALIDATE_API_URL="#{API_ROOT}/v1/user/authenticate"
+DATA_EXHAUST_REGISTER_CLIENT_API_URL="#{API_ROOT}/v1/client"
+DATA_EXHAUST_AUTHENTICATE_CLIENT_API_URL="#{API_ROOT}/v1/client/authenticate"
 
-module DataExhaustUserGenerator
-  class User
-    attr_accessor :username, :licensekey
-    def initialize(username)
-      @username = username
+module DataExhaustClientGenerator
+  class Client
+    attr_accessor :name, :licensekey, :licensekeyname
+    def initialize(name,license_key_name)
+      @name = name
       @licensekey = SecureRandom.uuid
+      @licensekeyname =  license_key_name
     end
 
-    def new_user_request
+    def new_client_request
       e=
         {
           id: "ekstep.data_exhaust_user",
@@ -27,19 +28,20 @@ module DataExhaustUserGenerator
             requesterid: "",
             did: "",
             key: "",
-            msgid: SecureRandom.uuid,
+            msgid: SecureRandom.uuid
           },
           request: {
-            username: @username,
+            clientName: name,
+            licenseKeyName: licensekeyname
           }
         }
     end
 
-    def post_new_user_request
-      data = new_user_request
-      uri = URI.parse(DATA_EXHAUST_USER_SIGNUP_API_URL)
+    def post_new_client_request
+      data = new_client_request
+      uri = URI.parse(DATA_EXHAUST_REGISTER_CLIENT_API_URL)
       http = Net::HTTP.new(uri.host, uri.port)
-      if DATA_EXHAUST_USER_SIGNUP_API_URL.start_with? "https"
+      if DATA_EXHAUST_REGISTER_CLIENT_API_URL.start_with? "https"
         http.use_ssl = true
       end
       req = Net::HTTP::Post.new(uri.path, initheader = {'Content-Type' =>'application/json'})
@@ -48,7 +50,7 @@ module DataExhaustUserGenerator
       res
     end
 
-    def validate_request
+    def authenticate_request
       ts = Time.now.strftime('%Y-%m-%dT%H:%M:%S%z')
       e=
         {
@@ -67,11 +69,11 @@ module DataExhaustUserGenerator
         }
     end
 
-    def post_validate_request
-      data = validate_request
-      uri = URI.parse(DATA_EXHAUST_USER_VALIDATE_API_URL)
+    def post_authenticate_request
+      data = authenticate_request
+      uri = URI.parse(DATA_EXHAUST_AUTHENTICATE_CLIENT_API_URL)
       http = Net::HTTP.new(uri.host, uri.port)
-      if DATA_EXHAUST_USER_VALIDATE_API_URL.start_with? "https"
+      if DATA_EXHAUST_AUTHENTICATE_CLIENT_API_URL.start_with? "https"
         http.use_ssl = true
       end
       req = Net::HTTP::Post.new(uri.path, initheader = {'Content-Type' =>'application/json'})
