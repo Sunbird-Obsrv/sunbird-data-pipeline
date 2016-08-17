@@ -4,17 +4,9 @@ require 'pry'
 module Indexers
   class Elasticsearch
     TEMPLATE_MAPPINGS = {
-          devices_v1: {
-            _id: {
-              path: "did"
-            },
-            properties: {
-              did: { type: 'string', index: 'not_analyzed'}
-            }
-          },
           _default_: {
             dynamic_templates: [
-            {
+           {
               string_fields: {
                 mapping: {
                   index: "not_analyzed",
@@ -90,12 +82,32 @@ module Indexers
                   },
                   match: "loc"
               }
+            },
+            {
+              parsed_object_fields:{
+                path_match: "*.searchCriteria",
+                mapping: {
+                    type: "object",
+                    index: "not_analyzed",
+                    doc_values: true
+                }
+              }
+            },
+            {
+              unparsed_object_fields:{
+                path_match: "*.resvalues",
+                mapping: {
+                    type: "object",
+                    index: "not_analyzed",
+                    doc_values: true,
+                    enabled: false
+                }
+              }
             }
             ],
             properties: {
               geoip: {
                 dynamic: true,
-                path: "full",
                 properties: {
                   location: {
                     type: "geo_point"
@@ -114,14 +126,6 @@ module Indexers
           }
         }
         LEARNING_MAPPINGS = {
-          devices_v1: {
-            _id: {
-              path: "did"
-            },
-            properties: {
-              did: { type: 'string', index: 'not_analyzed'}
-            }
-          },
           _default_: {
             dynamic_templates: [
             {
@@ -200,12 +204,23 @@ module Indexers
                   },
                   match: "loc"
               }
+            },
+            {
+              unparsed_object_fields:{
+                match: "resValues",
+                match_pattern: "regex",
+                mapping: {
+                    type: "object",
+                    index: "not_analyzed",
+                    doc_values: true,
+                    enabled: false
+                }
+              }
             }
             ],
             properties: {
               geoip: {
                 dynamic: true,
-                path: "full",
                 properties: {
                   location: {
                     type: "geo_point"
