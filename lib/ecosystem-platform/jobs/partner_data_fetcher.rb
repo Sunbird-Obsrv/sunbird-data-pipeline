@@ -31,7 +31,7 @@ module EcosystemPlatform
             msgid: ""
           },
           request: {
-            licensekey: licensekey
+            licenseKey: licensekey
           }
         }
         file_path = BASE_PATH + SecureRandom.uuid + ".gz"
