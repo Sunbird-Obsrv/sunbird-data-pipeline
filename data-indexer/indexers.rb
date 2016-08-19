@@ -115,6 +115,19 @@ module Indexers
                 },
                 type: "object"
               },
+              edata: {
+                properties: {
+                  eks: {
+                    properties: {
+                      resvalues: {
+                        type: "object",
+                        enabled: false,
+                        include_in_all: true
+                        }
+                      }
+                   }
+                }
+              },
               "@version" => {
                 index: "not_analyzed",
                 type: "string"
