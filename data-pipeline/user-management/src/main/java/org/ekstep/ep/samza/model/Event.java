@@ -58,4 +58,11 @@ public class Event  {
                 ? (String) ((Map<String, Object>) getMap().get("metadata")).get("checksum")
                 : null;
     }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "json='" + json + '\'' +
+                '}';
+    }
 }

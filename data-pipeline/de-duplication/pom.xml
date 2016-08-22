@@ -17,7 +17,7 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>de-duplication</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <packaging>jar</packaging>
     <name>De Duplication</name>
     <description>
@@ -69,8 +69,8 @@
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.10</artifactId>
-            <version>0.8.2.1</version>
+            <artifactId>kafka_2.11</artifactId>
+            <version>${kafka.version}</version>
         </dependency>
         <dependency>
             <groupId>org.schwering</groupId>
@@ -90,7 +90,7 @@
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-jaxrs</artifactId>
-            <version>1.8.5</version>
+            <version>1.9.13</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>

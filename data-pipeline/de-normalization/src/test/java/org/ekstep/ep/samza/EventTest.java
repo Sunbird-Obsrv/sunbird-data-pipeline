@@ -47,6 +47,15 @@ public class EventTest {
         }
 
         @Override
+        public Map getAll(List list) {
+            HashMap<Object, Object> map = new HashMap<Object, Object>();
+            for (Object key : list) {
+                map.put(key, data.get(key));
+            }
+            return map;
+        }
+
+        @Override
         public void put(Object key, Object value) {
             data.put(key,value);
         }
@@ -54,6 +63,13 @@ public class EventTest {
         @Override
         public void delete(Object key) {
             data.remove(key);
+        }
+
+        @Override
+        public void deleteAll(java.util.List list) {
+            for (Object key : list) {
+                data.remove(key);
+            }
         }
 
         @Override
