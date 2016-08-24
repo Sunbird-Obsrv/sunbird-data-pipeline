@@ -10,3 +10,4 @@ tasks/vendor/*
 database.yml
 .idea
 tmp/
+kibanaAuth/node_modules/
