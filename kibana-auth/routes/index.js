@@ -37,12 +37,11 @@ module.exports = function(app, passport, config) {
     		{ scope : ['profile', 'email'] }
     ));
     // the callback after google has authenticated the user
-    app.get('/auth/google/callback',
+    app.get(config.googleAuth.callbackURL,
     	passport.authenticate('google', {
         	successRedirect : '/',
         	failureRedirect : '/login'
     }));
-
 
     app.get('/connect/google', 
     	passport.authorize('google', 
