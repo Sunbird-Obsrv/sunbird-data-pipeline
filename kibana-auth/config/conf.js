@@ -9,6 +9,7 @@ module.exports = {
         'callbackURL'      : 'http://localhost:8080/auth/google/callback'
     },
     'kibana' : {
+        'port'              : '3000',
     	'rootURL'			: 'http://localhost:5601/',
         'dashboardURL'		: 'http://localhost:5601/#/dashboard?_g=()',
         'discoverURL'		: 'http://localhost:5601/#/discover?_g=()',

@@ -7,12 +7,13 @@
 var app = require('../app');
 var debug = require('debug')('kibanaAuth:server');
 var http = require('http');
+var config = require('../config/conf');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '8080');
+var port = normalizePort(process.env.PORT || config.kibana.port);
 app.set('port', port);
 
 /**
