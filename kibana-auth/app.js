@@ -12,6 +12,7 @@ var session      = require('express-session');
 var config = require('./config/conf');
 
 require('./auth/passport')(passport); // pass passport for configuration
+require('express-namespace');
 
 var app = express();
 // view engine setup
