@@ -4,12 +4,11 @@
 module.exports = {
 
     'googleAuth' : {
-        'clientID'         : '366420418948-ov5sn3pls3p3djb2t15r42f7d4j0ps1l.apps.googleusercontent.com',
-        'clientSecret'     : 'LMKXuScl1dwatNN1xgsd2RDa',
+        'clientID'         : 'id',
+        'clientSecret'     : 'secret',
         'callbackURL'      : 'http://localhost:8080/auth/google/callback'
     },
     'kibana' : {
-        'prefix'            : '/kibana',
         'port'              : '3000',
     	'rootURL'			: 'http://localhost:5601/',
         'dashboardURL'		: 'http://localhost:5601/#/dashboard?_g=()',
