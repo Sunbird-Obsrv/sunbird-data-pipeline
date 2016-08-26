@@ -26,7 +26,7 @@
     <dependency>
       <groupId>org.ekstep.ecosystem.jobs</groupId>
       <artifactId>reverse-search</artifactId>
-      <version>0.2.2</version>
+      <version>0.2.3</version>
       <type>tar.gz</type>
       <classifier>distribution</classifier>
     </dependency>
@@ -47,21 +47,21 @@
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>user-management</artifactId>
-          <version>0.1.5</version>
+          <version>0.1.6</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>partner-data-router</artifactId>
-          <version>0.0.21</version>
+          <version>0.1.0</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>public-telemetry</artifactId>
-          <version>0.1.4</version>
+          <version>0.1.5</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
