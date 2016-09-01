@@ -66,6 +66,18 @@ public class PublicTelemetryTaskTest {
     }
 
     @Test
+    public void shouldNotAllowVersionOneEvents() throws Exception {
+        Event event = new Event(EventFixture.VersionOneEvent());
+
+        publicTelemetryTask.init(configMock, contextMock);
+        ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
+
+        publicTelemetryTask.processEvent(collectorMock, event);
+
+        verify(collectorMock,times(0)).send(argument.capture());
+    }
+
+    @Test
     public void shouldNotProcessNonPublicEvents() throws Exception {
         Event event = new Event(EventFixture.PartnerData());
 

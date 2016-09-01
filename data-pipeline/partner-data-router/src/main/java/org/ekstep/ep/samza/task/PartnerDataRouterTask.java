@@ -52,6 +52,7 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
         String topic = String.format("%s.%s", successTopicSuffix, event.routeTo());
         LOGGER.info(event.id(), "TOPIC: {}", topic);
 
+        if(event.getData().containsKey("ver") && event.getData().get("ver").equals("1.0")){ return;}
         if(cleaner.shouldSkipEvent(event.eid())){ return; }
 
         cleaner.clean(event.getData());

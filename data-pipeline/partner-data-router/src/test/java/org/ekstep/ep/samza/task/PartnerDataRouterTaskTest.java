@@ -104,4 +104,16 @@ public class PartnerDataRouterTaskTest {
 
         verify(collectorMock, times(0)).send(argument.capture());
     }
+
+    @Test
+    public void shouldSkipAllVersionOneEvents() throws Exception {
+        Event event = new Event(EventFixture.VersionOneEvent());
+
+        ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
+
+        partnerDataRouterTask.init(configMock, contextMock);
+        partnerDataRouterTask.processEvent(collectorMock, event);
+
+        verify(collectorMock, times(0)).send(argument.capture());
+    }
 }

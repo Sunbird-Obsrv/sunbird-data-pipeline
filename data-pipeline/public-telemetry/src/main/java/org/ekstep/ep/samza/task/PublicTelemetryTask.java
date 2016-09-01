@@ -62,6 +62,8 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
     void processEvent(MessageCollector collector, Event event) {
         LOGGER.info(event.id(), "CLEAN EVENT {}", event.getMap());
 
+        if(event.getMap().containsKey("ver") && event.getMap().get("ver").equals("1.0")){ return;}
+
         if(cleaner.shouldSkipEvent(event.eid())){ return; }
 
         cleaner.clean(event.getMap());
