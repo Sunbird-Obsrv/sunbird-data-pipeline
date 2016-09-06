@@ -82,9 +82,20 @@ public class DenormalizationTaskTest {
 
     @Test
     public void ShouldProcessEvent() {
+        stub(eventMock.canBeProcessed()).toReturn(true);
+
         deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
 
         verify(eventMock).process(userServiceMock, DateTime.now());
+    }
+
+    @Test
+    public void ShouldNotProcessEvent() {
+        stub(eventMock.canBeProcessed()).toReturn(false);
+
+        deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
+
+        verify(eventMock,never()).process(userServiceMock, DateTime.now());
     }
 
     @Test
@@ -151,11 +162,12 @@ public class DenormalizationTaskTest {
     @Test
     public void ShouldAddLastSkippedAtToMetadataIfSkipping() throws Exception {
         HashMap<String, Object> message = new HashMap<String, Object>();
+        stub(eventMock.canBeProcessed()).toReturn(true);
         stub(eventMock.getData()).toReturn(message);
         stub(eventMock.isSkipped()).toReturn(true);
         deNormalizationTask.init(configMock, contextMock);
         deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(message, SUCCESS_TOPIC)));
+        verify(collectorMock).send(argThat(validateOutputTopic(message, RETRY_TOPIC)));
         verify(eventMock,times(1)).addLastSkippedAt(any(DateTime.class));
     }
 
