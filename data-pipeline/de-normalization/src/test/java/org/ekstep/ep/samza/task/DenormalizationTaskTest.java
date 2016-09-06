@@ -90,12 +90,17 @@ public class DenormalizationTaskTest {
     }
 
     @Test
-    public void ShouldNotProcessEvent() {
-        stub(eventMock.canBeProcessed()).toReturn(false);
+    public void ShouldNotProcessEvent() throws Exception {
+        HashMap<String, Object> message = new HashMap<String, Object>();
 
+        stub(eventMock.canBeProcessed()).toReturn(false);
+        stub(eventMock.getData()).toReturn(message);
+
+        deNormalizationTask.init(configMock, contextMock);
         deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
 
-        verify(eventMock,never()).process(userServiceMock, DateTime.now());
+        verify(collectorMock).send(argThat(validateOutputTopic(message, SUCCESS_TOPIC)));
+        verify(eventMock, never()).process(userServiceMock, DateTime.now());
     }
 
     @Test
