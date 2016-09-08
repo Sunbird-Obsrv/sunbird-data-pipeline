@@ -1,12 +1,12 @@
 package org.ekstep.ep.samza.system;
 
 
+import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -149,6 +149,18 @@ public class EventTest {
         event.setTimestamp();
 
         Assert.assertEquals(true,event.getMap().containsKey("ts"));
+    }
+
+    @Test
+    public void shouldReturnTrueIfSessionStartEventContainsEmptyLocation(){
+        Event event = new Event(EventFixture.sessionStartEvent());
+        Assert.assertEquals(true, event.shouldRemoveDeviceStoreEntry());
+    }
+
+    @Test
+    public void shouldReturnFalseForOtherEventsWhichContainsEmptyLocation(){
+        Event event = new Event(EventFixture.otherEvent());
+        Assert.assertEquals(false, event.shouldRemoveDeviceStoreEntry());
     }
 
     private Location getLocation() {

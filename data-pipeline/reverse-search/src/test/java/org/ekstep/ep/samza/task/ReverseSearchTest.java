@@ -184,6 +184,38 @@ public class ReverseSearchTest {
         Assert.assertEquals(true, event.getMap().containsKey("ts"));
     }
 
+    @Test
+    public void shouldRemoveDeviseStoreEntryIfSessionStartContainsEmptyLocation() {
+
+        when(deviceStore.get("bc811958-b4b7-4873-a43a-03718edba45b")).thenReturn("{\"@type\":\"org.ekstep.ep.samza.system.Device\",\"id\":\"bc811958-b4b7-4873-a43a-03718edba45b\",\"location\":{\"city\":null,\"district\":null,\"state\":null,\"country\":null}}");
+
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService);
+
+        Event event = createEventMock("");
+        when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+        when(event.shouldRemoveDeviceStoreEntry()).thenReturn(true);
+        reverseSearchStreamTask.processEvent(event, collector);
+        verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
+        verify(deviceStore, times(1)).delete("bc811958-b4b7-4873-a43a-03718edba45b");
+        verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
+    }
+
+    @Test
+    public void shouldNotRemoveDeviseStoreEntryForOtherEventsWhichContainsEmptyLocation() {
+
+        when(deviceStore.get("bc811958-b4b7-4873-a43a-03718edba45b")).thenReturn("{\"@type\":\"org.ekstep.ep.samza.system.Device\",\"id\":\"bc811958-b4b7-4873-a43a-03718edba45b\",\"location\":{\"city\":null,\"district\":null,\"state\":null,\"country\":null}}");
+
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService);
+
+        Event event = createEventMock("");
+        when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+        when(event.shouldRemoveDeviceStoreEntry()).thenReturn(false);
+        reverseSearchStreamTask.processEvent(event, collector);
+        verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
+        verify(deviceStore, times(0)).delete("bc811958-b4b7-4873-a43a-03718edba45b");
+        verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
+    }
+
     private Event createEventMock(String loc) {
         Event event = mock(Event.class);
 

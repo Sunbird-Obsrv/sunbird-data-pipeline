@@ -128,9 +128,14 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
                     if(did != null && !did.isEmpty()){
                         String storedDevice = (String) deviceStore.get(did);
                         if (storedDevice != null) {
-                            LOGGER.info(event.id(), "FOUND STORED DEVICE: {}", storedDevice);
-                            device = (Device) JsonReader.jsonToJava(storedDevice);
-                            location = device.getLocation();
+                            if(event.shouldRemoveDeviceStoreEntry()) {
+                                LOGGER.info(event.id(), "DELETING STORED DEVICE: {}", storedDevice);
+                                deviceStore.delete(did);
+                            } else {
+                                LOGGER.info(event.id(), "FOUND STORED DEVICE: {}", storedDevice);
+                                device = (Device) JsonReader.jsonToJava(storedDevice);
+                                location = device.getLocation();
+                            }
                         }
                     }
                 }
