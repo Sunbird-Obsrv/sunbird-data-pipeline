@@ -18,7 +18,8 @@ public class CleanerFactoryTest {
     @Test
     public void shouldSkipNonPublicEvents() throws Exception {
         List<String> nonPublicEvent = Arrays.asList("ME_.*");
-        CleanerFactory cleanerFactory = new CleanerFactory(nonPublicEvent);
+        List<String> publicEvent = Arrays.asList("GE.*");
+        CleanerFactory cleanerFactory = new CleanerFactory(publicEvent,nonPublicEvent);
 
         assertTrue(cleanerFactory.shouldSkipEvent("ME_SESSION_SUMMARY"));
     }
@@ -26,8 +27,9 @@ public class CleanerFactoryTest {
     @Test
     public void shouldCleanAllOtherEvents() throws Exception {
         List<String> nonPublicEvent = Arrays.asList("ME_.*");
+        List<String> publicEvent = Arrays.asList("GE.*");
         Map<String,Object> eventMap = EventFixture.LearningEvent();
-        CleanerFactory cleaner = new CleanerFactory(nonPublicEvent);
+        CleanerFactory cleaner = new CleanerFactory(publicEvent,nonPublicEvent);
 
         cleaner.clean(eventMap);
 

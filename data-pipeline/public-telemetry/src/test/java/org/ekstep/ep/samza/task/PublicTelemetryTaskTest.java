@@ -24,7 +24,8 @@ import static org.mockito.Mockito.*;
 public class PublicTelemetryTaskTest {
     private final String SUCCESS_TOPIC = "telemetry.public";
     private final String FAILED_TOPIC = "telemetry.public.fail";
-    private final String EVENTS_TO_SKIP = "GE_ERROR, GE_SERVICE_API_CALL, GE_API_CALL, GE_REGISTER_PARTNER, GE_PARTNER_DATA, GE_START_PARTNER_SESSION, GE_STOP_PARTNER_SESSION, ME_.*";
+    private final String EVENTS_TO_SKIP = "GE_ERROR, GE_SERVICE_API_CALL, GE_API_CALL, GE_REGISTER_PARTNER, GE_PARTNER_DATA, GE_START_PARTNER_SESSION, GE_STOP_PARTNER_SESSION";
+    private final String EVENTS_TO_ALLOW = "GE_.*, OE_.*";
     private MessageCollector collectorMock;
     private Config configMock;
     private TaskContext contextMock;
@@ -46,6 +47,7 @@ public class PublicTelemetryTaskTest {
         configMock = Mockito.mock(Config.class);
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
         stub(configMock.get("events.to.skip", "")).toReturn(EVENTS_TO_SKIP);
+        stub(configMock.get("events.to.allow", "")).toReturn(EVENTS_TO_ALLOW);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
         stub(metricsRegistry.newCounter("org.ekstep.ep.samza.task.TelemetryCleanerTask", "message-count")).toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
@@ -54,8 +56,20 @@ public class PublicTelemetryTaskTest {
     }
 
     @Test
-    public void shouldProcessPublicEvents() throws Exception {
+    public void shouldProcessEventsStartsWithGE() throws Exception {
         Event event = new Event(EventFixture.CreateProfile());
+
+        publicTelemetryTask.init(configMock, contextMock);
+        ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
+
+        publicTelemetryTask.processEvent(collectorMock, event);
+
+        verify(collectorMock,times(1)).send(argument.capture());
+    }
+
+    @Test
+    public void shouldProcessEventsStartsWithOE() throws Exception {
+        Event event = new Event(EventFixture.AssessmentEvent());
 
         publicTelemetryTask.init(configMock, contextMock);
         ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);

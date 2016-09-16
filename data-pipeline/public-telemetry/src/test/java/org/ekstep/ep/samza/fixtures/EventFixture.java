@@ -397,4 +397,51 @@ public class EventFixture {
         return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
         }.getType());
     }
+
+    public static Map<String, Object> AssessmentEvent() {
+        String json = "{\n" +
+                "    \"tags\": [\n" +
+                "        {\n" +
+                "            \"genie\": []\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"uid\": \"919280cb-3f51-46d7-ad7e-0ce4becb97a6\",\n" +
+                "    \"sid\": \"1e891213-5ec6-475c-b706-d65928f47f77\",\n" +
+                "    \"ts\": \"2016-09-07T11:36:40.784+0530\",\n" +
+                "    \"edata\": {\n" +
+                "        \"eks\": {\n" +
+                "            \"exlength\": 0,\n" +
+                "            \"length\": 19,\n" +
+                "            \"params\": [],\n" +
+                "            \"pass\": \"Yes\",\n" +
+                "            \"qid\": \"esl.l2q24\",\n" +
+                "            \"qindex\": 1,\n" +
+                "            \"resvalues\": [\n" +
+                "                {\n" +
+                "                    \"1\": \"ball\"\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"score\": 1,\n" +
+                "            \"uri\": \"\"\n" +
+                "        }\n" +
+                "    },\n" +
+                "    \"did\": \"b0ead84e4db348a5315a05e67137e3c518d7f5f5\",\n" +
+                "    \"ver\": \"2.0\",\n" +
+                "    \"type\": \"events\",\n" +
+                "    \"eid\": \"OE_ASSESS\",\n" +
+                "    \"@version\": \"1\",\n" +
+                "    \"gdata\": {\n" +
+                "        \"id\": \"do_30076072\",\n" +
+                "        \"ver\": \"1\"\n" +
+                "    },\n" +
+                "    \"@timestamp\": \"2016-09-07T06:08:00.037Z\",\n" +
+                "    \"ets\": 1473228400784,\n" +
+                "    \"uuid\": \"1173e3cd-b844-4b5c-8028-17fa0da3fab455\",\n" +
+                "    \"mid\": \"9cb093ff-1e3d-4e2f-9b0a-2122a85ad4ca\",\n" +
+                "    \"key\": \"919280cb-3f51-46d7-ad7e-0ce4becb97a6\"\n" +
+                "}";
+
+        return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
 }

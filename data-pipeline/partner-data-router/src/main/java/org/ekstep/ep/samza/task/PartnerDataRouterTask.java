@@ -21,6 +21,7 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
     private String successTopicSuffix;
     private Counter messageCount;
     private CleanerFactory cleaner;
+    private List<String> eventsToAllow;
     private List<String> eventsToSkip;
 
     static Logger LOGGER = new Logger(Event.class);
@@ -32,7 +33,8 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
                 .getMetricsRegistry()
                 .newCounter(getClass().getName(), "message-count");
         eventsToSkip = getEventsToSkip(config);
-        cleaner = new CleanerFactory(eventsToSkip);
+        eventsToAllow = getEventsToAllow(config);
+        cleaner = new CleanerFactory(eventsToAllow,eventsToSkip);
     }
 
     @Override
@@ -40,6 +42,7 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
         Map<String, Object> message = (Map<String, Object>) envelope.getMessage();
         Event event = getEvent(message);
         processEvent(collector, event);
+        messageCount.inc();
     }
 
     public void processEvent(MessageCollector collector,  Event event) {
@@ -53,14 +56,16 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
         LOGGER.info(event.id(), "TOPIC: {}", topic);
 
         if(event.getData().containsKey("ver") && event.getData().get("ver").equals("1.0")){ return;}
-        if(cleaner.shouldSkipEvent(event.eid())){ return; }
 
-        cleaner.clean(event.getData());
-        LOGGER.info(event.id(), "CLEANED EVENT");
+        if(cleaner.shouldAllowEvent(event.eid())){
+            if(cleaner.shouldSkipEvent(event.eid())){ return; }
 
-        SystemStream stream = new SystemStream("kafka", topic);
-        collector.send(new OutgoingMessageEnvelope(stream, event.getData()));
-        messageCount.inc();
+            cleaner.clean(event.getData());
+            LOGGER.info(event.id(), "CLEANED EVENT");
+
+            SystemStream stream = new SystemStream("kafka", topic);
+            collector.send(new OutgoingMessageEnvelope(stream, event.getData()));
+        }
     }
 
     private List<String> getEventsToSkip(Config config) {
@@ -70,6 +75,15 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
             eventsToSkip.add(event.trim().toUpperCase());
         }
         return eventsToSkip;
+    }
+
+    private List<String> getEventsToAllow(Config config) {
+        String[] split = config.get("events.to.allow", "").split(",");
+        List<String> eventsToAllow = new ArrayList<String>();
+        for (String event : split) {
+            eventsToAllow.add(event.trim().toUpperCase());
+        }
+        return eventsToAllow;
     }
 
     protected Event getEvent(Map<String, Object> message) {

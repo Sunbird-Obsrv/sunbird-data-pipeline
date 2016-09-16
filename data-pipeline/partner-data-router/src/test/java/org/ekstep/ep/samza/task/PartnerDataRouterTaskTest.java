@@ -27,6 +27,7 @@ import static org.mockito.Mockito.*;
 
 public class PartnerDataRouterTaskTest {
     private final String EVENTS_TO_SKIP = "ME_.*";
+    private final String EVENTS_TO_ALLOW = "GE_.*,OE_.*";
     private MessageCollector collectorMock;
     private Config configMock;
     private TaskContext contextMock;
@@ -46,6 +47,7 @@ public class PartnerDataRouterTaskTest {
         configMock = mock(Config.class);
         stub(configMock.get("output.success.topic.prefix")).toReturn("partner");
         stub(configMock.get("events.to.skip", "")).toReturn(EVENTS_TO_SKIP);
+        stub(configMock.get("events.to.allow", "")).toReturn(EVENTS_TO_ALLOW);
         stub(metricsRegistryMock.newCounter("org.ekstep.ep.samza.task.PartnerDataRouterTask", "message-count")).toReturn(counterMock);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistryMock);
         partnerDataRouterTask = new PartnerDataRouterTask();
@@ -58,7 +60,7 @@ public class PartnerDataRouterTaskTest {
         stub(envelopMock.getMessage()).toReturn(message);
         stub(eventMock.belongsToAPartner()).toReturn(false);
 
-        partnerDataRouterTask.process(envelopMock, null, null);
+        partnerDataRouterTask.processEvent(collectorMock, eventMock);
 
         verify(eventMock, never()).routeTo();
     }
@@ -68,6 +70,7 @@ public class PartnerDataRouterTaskTest {
         Event eventMock = mock(Event.class);
         stub(eventMock.getData()).toReturn(EventFixture.PartnerData());
         stub(eventMock.eid()).toReturn("GE_PARTNER_DATA");
+        stub(eventMock.belongsToAPartner()).toReturn(true);
         stub(eventMock.belongsToAPartner()).toReturn(true);
         ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
 
