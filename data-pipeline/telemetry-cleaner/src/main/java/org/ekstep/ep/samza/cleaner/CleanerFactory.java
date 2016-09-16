@@ -40,7 +40,6 @@ public class CleanerFactory {
     }
 
     public boolean shouldAllowEvent(String eventID) {
-        System.out.println(">>>>>>>>"+eventsToAllow);
         for (String eventToAllow : eventsToAllow) {
             Pattern p = Pattern.compile(eventToAllow);
             Matcher m = p.matcher(eventID);
