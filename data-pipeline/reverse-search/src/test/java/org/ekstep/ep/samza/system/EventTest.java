@@ -157,12 +157,6 @@ public class EventTest {
         Assert.assertEquals(true, event.shouldRemoveDeviceStoreEntry());
     }
 
-    @Test
-    public void shouldReturnFalseForOtherEventsWhichContainsEmptyLocation(){
-        Event event = new Event(EventFixture.otherEvent());
-        Assert.assertEquals(false, event.shouldRemoveDeviceStoreEntry());
-    }
-
     private Location getLocation() {
         Location location = new Location();
         location.setCity("City1");

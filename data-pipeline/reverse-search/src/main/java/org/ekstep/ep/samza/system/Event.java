@@ -96,14 +96,12 @@ public class Event implements Mappable {
     }
 
     public boolean shouldRemoveDeviceStoreEntry(){
-        if(map.containsKey("eid") && map.get("eid").equals("GE_SESSION_START")){
             if(map.containsKey("edata") && ((Map<String,Object>) map.get("edata")).containsKey("eks")){
                 return ((Map<String,Object>) ((Map<String,Object>) map.get("edata")).get("eks")).containsKey("loc") &&
                         ((String) ((Map<String,Object>) ((Map<String,Object>) map.get("edata")).get("eks")).get("loc")).isEmpty()
                         ? true
                         : false;
             }
-        }
         return false;
     }
 }
