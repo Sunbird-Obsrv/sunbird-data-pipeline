@@ -1,5 +1,7 @@
 package org.ekstep.ep.samza.service;
 
+import com.cedarsoftware.util.io.JsonReader;
+import com.cedarsoftware.util.io.JsonWriter;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.system.Area;
@@ -22,20 +24,23 @@ public class LocationService {
 
     public Location getLocation(String loc, String eventId) {
         Area area = Area.findAreaLocationBelongsTo(loc, reverseSearchCacheAreaSizeInMeters);
-        Location stored_location = (Location) reverseSearchStore.get(area.midpointLocationString());
+        String stored_location = (String) reverseSearchStore.get(area.midpointLocationString());
+
         if (stored_location == null) {
             return getLocationFromGoogle(area.midpointLocationString(), eventId);
         } else {
             LOGGER.info(eventId, "PICKING CACHED LOCATION {}", stored_location);
-            return stored_location;
+            Location location = (Location) JsonReader.jsonToJava(stored_location);;
+            return location;
         }
     }
 
     private Location getLocationFromGoogle(String loc, String eventId) {
         LOGGER.info(eventId, "PERFORMING REVERSE SEARCH {}", loc);
         Location location = googleReverseSearch.getLocation(loc, eventId);
+        String locationJson = JsonWriter.objectToJson(location);
 
-        reverseSearchStore.put(loc, location);
+        reverseSearchStore.put(loc, locationJson);
         return location;
     }
 
