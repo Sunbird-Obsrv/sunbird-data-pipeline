@@ -8,16 +8,19 @@ import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskCoordinator;
+import org.ekstep.ep.samza.rule.*;
 import org.ekstep.ep.samza.fixtures.EventFixture;
+import org.ekstep.ep.samza.service.DeviceService;
 import org.ekstep.ep.samza.service.LocationService;
-import org.ekstep.ep.samza.system.Event;
-import org.ekstep.ep.samza.system.Location;
+import org.ekstep.ep.samza.system.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Mockito.*;
@@ -30,11 +33,16 @@ public class ReverseSearchTest {
     @Mock
     LocationService locationService;
     @Mock
+    DeviceService deviceService;
+    @Mock
     private MessageCollector collector;
+
+    private List<Rule> locationRules;
 
     @Before
     public void setMock() {
         initMocks(this);
+        locationRules = Arrays.asList(new LocationPresent(), new LocationEmpty(), new LocationAbsent());
     }
 
     @Test
@@ -42,13 +50,16 @@ public class ReverseSearchTest {
         when(locationService.getLocation("15.9310593,78.6238299", null)).thenReturn(new Location());
         Event event = createEventMock("15.9310593,78.6238299");
         when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+        when(deviceService.getLocation(eq("bc811958-b4b7-4873-a43a-03718edba45b"), isNull(String.class))).thenReturn(new Location());
+        when(event.isLocationPresent()).thenReturn(true);
 
         ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore,
-                "false", locationService);
+                "false", locationService, deviceService, locationRules);
 
         reverseSearchStreamTask.processEvent(event, collector);
         verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
         verify(locationService, times(1)).getLocation("15.9310593,78.6238299", null);
+        verify(deviceService, times(1)).getLocation(eq("bc811958-b4b7-4873-a43a-03718edba45b"), isNull(String.class));
     }
 
     @Test
@@ -57,7 +68,7 @@ public class ReverseSearchTest {
         when(locationService.getLocation("15.9310593,78.6238299", null)).thenReturn(null);
         Map<String, Object> map = createMap("15.9310593,78.6238299");
         Event event = new Event(map);
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService,locationRules);
 
         reverseSearchStreamTask.processEvent(event, collector);
         verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
@@ -78,23 +89,28 @@ public class ReverseSearchTest {
 
         when(deviceStore.get("bc811958-b4b7-4873-a43a-03718edba45b")).thenReturn("{\"@type\":\"org.ekstep.ep.samza.system.Device\",\"id\":\"bc811958-b4b7-4873-a43a-03718edba45b\",\"location\":{\"city\":null,\"district\":null,\"state\":null,\"country\":null}}");
         Event event = createEventMock("");
-
-
         when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+        when(event.isLocationPresent()).thenReturn(false);
+        when(event.isLocationEmpty()).thenReturn(false);
+        when(event.isLocationAbsent()).thenReturn(true);
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService,locationRules);
 
         reverseSearchStreamTask.processEvent(event, collector);
         verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
-        verify(deviceStore, times(1)).get("bc811958-b4b7-4873-a43a-03718edba45b");
-        verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
+        verify(deviceService, times(1)).getLocation(eq("bc811958-b4b7-4873-a43a-03718edba45b"),isNull(String.class));
+        verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
 
         Event event1 = createEventMock("");
         when(event1.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+        when(event.isLocationPresent()).thenReturn(false);
+        when(event.isLocationEmpty()).thenReturn(false);
+        when(event.isLocationAbsent()).thenReturn(true);
+
         reverseSearchStreamTask.processEvent(event1, collector);
         verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
-        verify(deviceStore, times(2)).get("bc811958-b4b7-4873-a43a-03718edba45b");
-        verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
+        verify(deviceService, times(2)).getLocation(eq("bc811958-b4b7-4873-a43a-03718edba45b"), isNull(String.class));
+        verify(collector, times(4)).send(any(OutgoingMessageEnvelope.class));
     }
 
     @Test
@@ -105,11 +121,11 @@ public class ReverseSearchTest {
 
         when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules);
 
         reverseSearchStreamTask.processEvent(event, collector);
         verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
-        verify(deviceStore, times(1)).get("bc811958-b4b7-4873-a43a-03718edba45b");
+        verify(deviceService, times(1)).getLocation(eq("bc811958-b4b7-4873-a43a-03718edba45b"), isNull(String.class));
         verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
     }
 
@@ -121,7 +137,7 @@ public class ReverseSearchTest {
 
         when(event.getDid()).thenReturn(null);
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules);
 
         reverseSearchStreamTask.processEvent(event, collector);
         verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
@@ -132,7 +148,7 @@ public class ReverseSearchTest {
 
         IncomingMessageEnvelope envelope = mock(IncomingMessageEnvelope.class);
         when(envelope.getMessage()).thenThrow(new RuntimeException());
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules);
 
         TaskCoordinator task = mock(TaskCoordinator.class);
         reverseSearchStreamTask.process(envelope, collector, task);
@@ -148,7 +164,7 @@ public class ReverseSearchTest {
         Map<String, Object> eventMap = new Gson().fromJson(EventFixture.JSON, Map.class);
         Event event = new Event(eventMap);
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules);
 
         TaskCoordinator task = mock(TaskCoordinator.class);
         reverseSearchStreamTask.processEvent(event, collector);
@@ -161,7 +177,7 @@ public class ReverseSearchTest {
         Map<String, Object> eventMap = new Gson().fromJson(EventFixture.JSON_WITH_MID, Map.class);
         Event event = new Event(eventMap);
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules);
 
         TaskCoordinator task = mock(TaskCoordinator.class);
         reverseSearchStreamTask.processEvent(event, collector);
@@ -176,7 +192,7 @@ public class ReverseSearchTest {
         eventMap.put("ets", 1453202865000L);
         Event event = new Event(eventMap);
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules);
 
         TaskCoordinator task = mock(TaskCoordinator.class);
         reverseSearchStreamTask.processEvent(event, collector);
@@ -189,14 +205,16 @@ public class ReverseSearchTest {
 
         when(deviceStore.get("bc811958-b4b7-4873-a43a-03718edba45b")).thenReturn("{\"@type\":\"org.ekstep.ep.samza.system.Device\",\"id\":\"bc811958-b4b7-4873-a43a-03718edba45b\",\"location\":{\"city\":null,\"district\":null,\"state\":null,\"country\":null}}");
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService,locationRules);
 
         Event event = createEventMock("");
         when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
-        when(event.shouldRemoveDeviceStoreEntry()).thenReturn(true);
+        when(event.isLocationPresent()).thenReturn(false);
+        when(event.isLocationAbsent()).thenReturn(false);
+        when(event.isLocationEmpty()).thenReturn(true);
         reverseSearchStreamTask.processEvent(event, collector);
         verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
-        verify(deviceStore, times(1)).delete("bc811958-b4b7-4873-a43a-03718edba45b");
+        verify(deviceService, times(1)).deleteLocation(eq("bc811958-b4b7-4873-a43a-03718edba45b"), isNull(String.class));
         verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
     }
 
@@ -209,10 +227,10 @@ public class ReverseSearchTest {
     }
 
     private Map<String, Object> createMap(String loc) {
-        Map<String, Object> eks = mock(Map.class);
-        when(eks.get("loc")).thenReturn(loc);
-        Map<String, Object> edata = mock(Map.class);
-        when(edata.get("eks")).thenReturn(eks);
+        Map<String, Object> eks = new HashMap<String, Object>();
+        eks.put("loc", loc);
+        Map<String, Object> edata = new HashMap<String, Object>();
+        edata.put("eks", eks);
         Map<String, Object> event = new HashMap<String, Object>();
         event.put("edata", edata);
         return event;

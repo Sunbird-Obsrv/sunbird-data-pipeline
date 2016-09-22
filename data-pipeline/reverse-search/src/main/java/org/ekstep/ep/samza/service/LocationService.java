@@ -20,6 +20,7 @@ public class LocationService {
         this.reverseSearchStore = reverseSearchStore;
         this.googleReverseSearch = googleReverseSearch;
         this.reverseSearchCacheAreaSizeInMeters = reverseSearchCacheAreaSizeInMeters;
+
     }
 
     public Location getLocation(String loc, String eventId) {
@@ -30,7 +31,7 @@ public class LocationService {
             return getLocationFromGoogle(area.midpointLocationString(), eventId);
         } else {
             LOGGER.info(eventId, "PICKING CACHED LOCATION {}", stored_location);
-            Location location = (Location) JsonReader.jsonToJava(stored_location);;
+            Location location = (Location) JsonReader.jsonToJava(stored_location);
             return location;
         }
     }
@@ -43,6 +44,5 @@ public class LocationService {
         reverseSearchStore.put(loc, locationJson);
         return location;
     }
-
 
 }

@@ -152,9 +152,27 @@ public class EventTest {
     }
 
     @Test
-    public void shouldReturnTrueIfSessionStartEventContainsEmptyLocation(){
-        Event event = new Event(EventFixture.sessionStartEvent());
-        Assert.assertEquals(true, event.shouldRemoveDeviceStoreEntry());
+    public void shouldReturnTrueIfLocationIsPresent(){
+        Event event = new Event(EventFixture.locationPresent());
+        Assert.assertEquals(true, event.isLocationPresent());
+        Assert.assertEquals(false, event.isLocationAbsent());
+        Assert.assertEquals(false, event.isLocationEmpty());
+    }
+
+    @Test
+    public void shouldReturnTrueIfLocationIsAbsent(){
+        Event event = new Event(EventFixture.locationAbsent());
+        Assert.assertEquals(true, event.isLocationAbsent());
+        Assert.assertEquals(false, event.isLocationPresent());
+        Assert.assertEquals(false, event.isLocationEmpty());
+    }
+
+    @Test
+    public void shouldReturnTrueIfLocationIsEmpty(){
+        Event event = new Event(EventFixture.locationEmpty());
+        Assert.assertEquals(true, event.isLocationEmpty());
+        Assert.assertEquals(false, event.isLocationPresent());
+        Assert.assertEquals(false, event.isLocationAbsent());
     }
 
     private Location getLocation() {

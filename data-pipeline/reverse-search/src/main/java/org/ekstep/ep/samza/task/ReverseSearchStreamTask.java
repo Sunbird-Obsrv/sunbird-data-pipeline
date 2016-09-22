@@ -19,8 +19,6 @@
 
 package org.ekstep.ep.samza.task;
 
-import com.cedarsoftware.util.io.JsonReader;
-import com.cedarsoftware.util.io.JsonWriter;
 import com.library.checksum.system.ChecksumGenerator;
 import com.library.checksum.system.KeysToAccept;
 import org.apache.samza.config.Config;
@@ -30,16 +28,15 @@ import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
+import org.ekstep.ep.samza.rule.*;
 import org.ekstep.ep.samza.api.GoogleGeoLocationAPI;
 import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.service.DeviceService;
 import org.ekstep.ep.samza.service.GoogleReverseSearchService;
 import org.ekstep.ep.samza.service.LocationService;
-import org.ekstep.ep.samza.system.Device;
-import org.ekstep.ep.samza.system.Event;
-import org.ekstep.ep.samza.system.Location;
+import org.ekstep.ep.samza.system.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ReverseSearchStreamTask implements StreamTask, InitableTask, WindowableTask {
 
@@ -52,6 +49,8 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
     private LocationService locationService;
     private double reverseSearchCacheAreaSizeInMeters;
     private Counter messageCount;
+    private DeviceService deviceService;
+    private List<Rule> locationRules;
 
     @Override
     public void init(Config config, TaskContext context) {
@@ -70,7 +69,14 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
 
         String[] keys_to_accept = {"uid", "ts", "gdata", "edata"};
         checksumGenerator = new ChecksumGenerator(new KeysToAccept(keys_to_accept));
-        locationService = new LocationService(reverseSearchStore, googleReverseSearch, reverseSearchCacheAreaSizeInMeters);
+
+        locationRules = Arrays.asList(new LocationPresent(), new LocationEmpty(), new LocationAbsent());
+
+        locationService = new LocationService(reverseSearchStore,
+                googleReverseSearch,
+                reverseSearchCacheAreaSizeInMeters
+                );
+        deviceService = new DeviceService(deviceStore);
         messageCount = context
                 .getMetricsRegistry()
                 .newCounter(getClass().getName(), "message-count");
@@ -81,20 +87,20 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
 
     //For testing only
     ReverseSearchStreamTask(KeyValueStore<String, Object> deviceStore,
-                            String bypass, LocationService locationService) {
+                            String bypass, LocationService locationService, DeviceService deviceService, List<Rule> locationRules) {
         this.deviceStore = deviceStore;
         this.bypass = bypass;
         String[] keys_to_accept = {"uid", "ts", "cid", "gdata", "edata"};
         checksumGenerator = new ChecksumGenerator(new KeysToAccept(keys_to_accept));
         this.locationService = locationService;
+        this.deviceService =  deviceService;
+        this.locationRules = locationRules;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) {
         Map<String, Object> jsonObject = null;
-        Location location = null;
-        Device device = null;
         try {
             jsonObject = (Map<String, Object>) envelope.getMessage();
             processEvent(new Event(jsonObject), collector);
@@ -107,38 +113,18 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
     public void processEvent(Event event, MessageCollector collector) {
         event.setTimestamp();
         Location location = null;
-        Device device = null;
 
         if (bypass.equals("true")) {
             LOGGER.info(event.id(), "BYPASSING: {}", event);
         } else {
             try {
-                String loc = event.getGPSCoordinates();
                 String did = event.getDid();
-                if (loc != null && !loc.isEmpty()) {
-                    location = locationService.getLocation(loc, event.id());
-                    if (did != null && !did.isEmpty()){
-                        device = new Device(did);
-                        device.setLocation(location);
-                        String djson = JsonWriter.objectToJson(device);
-                        deviceStore.put(did, djson);
-                    }
-                } else {
-                    LOGGER.info(event.id(), "TRYING TO PICK FROM DEVICE {}", event);
-                    if(did != null && !did.isEmpty()){
-                        String storedDevice = (String) deviceStore.get(did);
-                        if (storedDevice != null) {
-                            if(event.shouldRemoveDeviceStoreEntry()) {
-                                LOGGER.info(event.id(), "DELETING STORED DEVICE: {}", storedDevice);
-                                deviceStore.delete(did);
-                            } else {
-                                LOGGER.info(event.id(), "FOUND STORED DEVICE: {}", storedDevice);
-                                device = (Device) JsonReader.jsonToJava(storedDevice);
-                                location = device.getLocation();
-                            }
-                        }
+                for (Rule rule : locationRules) {
+                    if(rule.isApplicableTo(event)){
+                        rule.apply(event, locationService, deviceService);
                     }
                 }
+                location = deviceService.getLocation(did,event.id());
             } catch (Exception e) {
                 LOGGER.error(null, "REVERSE SEARCH FAILED: " + event, e);
             }
@@ -152,6 +138,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
                 event.setFlag("ldata_obtained", false);
                 collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
             }
+
             if (event.getMid() == null) {
                 checksumGenerator.stampChecksum(event);
             } else {
@@ -164,7 +151,6 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
         } catch (Exception e) {
             LOGGER.error(null, "ERROR WHEN ROUTING EVENT: {}" + event, e);
         }
-
     }
 
     @Override

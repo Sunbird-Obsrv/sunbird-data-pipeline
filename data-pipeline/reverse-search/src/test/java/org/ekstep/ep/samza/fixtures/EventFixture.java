@@ -58,36 +58,107 @@ public class EventFixture {
             "}";
 
 
-    public static Map<String, Object> sessionStartEvent() {
+    public static Map<String, Object> locationPresent() {
 
         String json = "{\n" +
-                "    \"tags\": [\n" +
-                "        {\n" +
-                "            \"genie\": []\n" +
-                "        }\n" +
-                "    ],\n" +
-                "    \"uid\": \"0e86f56e-f69a-4704-b4c4-69057a0be7bc\",\n" +
-                "    \"sid\": \"3950c578-f7fe-402a-b4f6-d9917d7ae9f5\",\n" +
-                "    \"ts\": \"2016-06-29T10:36:51.688+0000\",\n" +
-                "    \"edata\": {\n" +
-                "        \"eks\": {\n" +
-                "            \"loc\": \"\"\n" +
-                "        }\n" +
-                "    },\n" +
-                "    \"did\": \"bc811958-b4b7-4873-a43a-03718edba45b\",\n" +
-                "    \"ver\": \"2.0\",\n" +
-                "    \"type\": \"events\",\n" +
-                "    \"eid\": \"GE_SESSION_START\",\n" +
-                "    \"@version\": \"1\",\n" +
-                "    \"gdata\": {\n" +
-                "        \"id\": \"genieservice.android\",\n" +
-                "        \"ver\": \"4.2.435production\"\n" +
-                "    },\n" +
-                "    \"@timestamp\": \"2016-07-04T02:33:50.599Z\",\n" +
-                "    \"ets\": 1467196611688,\n" +
-                "    \"uuid\": \"cf598e7e-7b34-4ec0-9fef-6292967f7a0955\",\n" +
-                "    \"mid\": \"3d8bae31-8c74-40be-99e2-409af7ab80e0\",\n" +
-                "    \"key\": \"0e86f56e-f69a-4704-b4c4-69057a0be7bc\"\n" +
+                "  \"@timestamp\": \"2016-05-03T04:36:14.921Z\",\n" +
+                "  \"@version\": \"1\",\n" +
+                "  \"did\": \"5dd192d88fc29f44e0c2b2495d0a09405340eb2b\",\n" +
+                "  \"edata\": {\n" +
+                "    \"eks\": {\n" +
+                "      \"loc\": \"12.9312015,77.6238068\"\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"eid\": \"GE_SESSION_START\",\n" +
+                "  \"ets\": 1462250323723,\n" +
+                "  \"gdata\": {\n" +
+                "    \"id\": \"genie.android\",\n" +
+                "    \"ver\": \"4.2.282productionxWalk.6\"\n" +
+                "  },\n" +
+                "  \"key\": \"\",\n" +
+                "  \"mid\": \"8c44a1c1-8919-4c6a-a256-69d14616c757\",\n" +
+                "  \"sid\": \"\",\n" +
+                "  \"tags\": [\n" +
+                "    {\n" +
+                "      \"genie\": []\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"ts\": \"2016-05-03T04:38:43.723+0000\",\n" +
+                "  \"type\": \"events\",\n" +
+                "  \"uid\": \"\",\n" +
+                "  \"uuid\": \"be4f0aef-3cd8-42bc-b92d-2f7b3901011418\",\n" +
+                "  \"ver\": \"2.0\"\n" +
+                "}";
+
+        return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
+        }.getType());
+
+    }
+
+    public static Map<String, Object> locationEmpty() {
+
+        String json = "{\n" +
+                "  \"@timestamp\": \"2016-05-03T04:36:14.921Z\",\n" +
+                "  \"@version\": \"1\",\n" +
+                "  \"did\": \"5dd192d88fc29f44e0c2b2495d0a09405340eb2b\",\n" +
+                "  \"edata\": {\n" +
+                "    \"eks\": {\n" +
+                "      \"loc\": \"\"\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"eid\": \"GE_SESSION_START\",\n" +
+                "  \"ets\": 1462250323723,\n" +
+                "  \"gdata\": {\n" +
+                "    \"id\": \"genie.android\",\n" +
+                "    \"ver\": \"4.2.282productionxWalk.6\"\n" +
+                "  },\n" +
+                "  \"key\": \"\",\n" +
+                "  \"mid\": \"8c44a1c1-8919-4c6a-a256-69d14616c757\",\n" +
+                "  \"sid\": \"\",\n" +
+                "  \"tags\": [\n" +
+                "    {\n" +
+                "      \"genie\": []\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"ts\": \"2016-05-03T04:38:43.723+0000\",\n" +
+                "  \"type\": \"events\",\n" +
+                "  \"uid\": \"\",\n" +
+                "  \"uuid\": \"be4f0aef-3cd8-42bc-b92d-2f7b3901011418\",\n" +
+                "  \"ver\": \"2.0\"\n" +
+                "}";
+
+        return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
+        }.getType());
+
+    }
+
+    public static Map<String, Object> locationAbsent() {
+
+        String json = "{\n" +
+                "  \"@timestamp\": \"2016-05-03T04:36:14.921Z\",\n" +
+                "  \"@version\": \"1\",\n" +
+                "  \"did\": \"bc811958-b4b7-4873-a43a-03718edba45b\",\n" +
+                "  \"edata\": {\n" +
+                "  },\n" +
+                "  \"eid\": \"GE_SESSION_START\",\n" +
+                "  \"ets\": 1462250323723,\n" +
+                "  \"gdata\": {\n" +
+                "    \"id\": \"genie.android\",\n" +
+                "    \"ver\": \"4.2.282productionxWalk.6\"\n" +
+                "  },\n" +
+                "  \"key\": \"\",\n" +
+                "  \"mid\": \"8c44a1c1-8919-4c6a-a256-69d14616c757\",\n" +
+                "  \"sid\": \"\",\n" +
+                "  \"tags\": [\n" +
+                "    {\n" +
+                "      \"genie\": []\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"ts\": \"2016-05-03T04:38:43.723+0000\",\n" +
+                "  \"type\": \"events\",\n" +
+                "  \"uid\": \"\",\n" +
+                "  \"uuid\": \"be4f0aef-3cd8-42bc-b92d-2f7b3901011418\",\n" +
+                "  \"ver\": \"2.0\"\n" +
                 "}";
 
         return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
