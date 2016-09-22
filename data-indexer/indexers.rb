@@ -324,6 +324,108 @@ module Indexers
             }
           }
         }
+    BACKEND_EVENT_MAPPINGS = {
+          _default_: {
+            dynamic_templates: [
+            {
+              string_fields: {
+                mapping: {
+                  index: "not_analyzed",
+                  omit_norms: false,
+                  type: "string",
+                  doc_values: true
+                },
+                match_mapping_type: "string",
+                match: "*"
+              }
+            },
+            {
+              string_fields_force: {
+                mapping: {
+                  index: "not_analyzed",
+                  omit_norms: false,
+                  type: "string",
+                  doc_values: true
+                },
+                match: "id|uip|status|cid",
+                match_pattern: "regex"
+              }
+            },
+            {
+              double_fields: {
+                  match: "mem|idisk|edisk|scrn|length|exlength|age|percent_correct|percent_attempt|size|score|maxscore|osize|isize|timeSpent|exTimeSpent",
+                  match_pattern: "regex",
+                  mapping: {
+                      type: "double",
+                      index: "not_analyzed",
+                      doc_values: true
+                  }
+              }
+            },
+            {
+              integer_fields: {
+                  match: "size|pkgVersion|assets|count|inputEvents|outputEvents|timeTaken|responseTime",
+                  match_pattern: "regex",
+                  mapping: {
+                      type: "integer",
+                      index: "not_analyzed",
+                      doc_values: true
+                  }
+              }
+            },
+            {
+              date_fields: {
+                  match: "ts|te|time|timestamp|ets|date",
+                  match_pattern: "regex",
+                  mapping: {
+                      type: "date",
+                      index: "not_analyzed",
+                      doc_values: true
+                  }
+              }
+            },
+            {
+              geo_location: {
+                  mapping: {
+                      type: "geo_point",
+                      doc_values: true
+                  },
+                  match: "loc"
+              }
+            },
+            {
+              unparsed_object_fields:{
+                match: "config|params",
+                match_pattern: "regex",
+                mapping: {
+                    type: "object",
+                    index: "not_analyzed",
+                    doc_values: true,
+                    enabled: false
+                }
+              }
+            }
+            ],
+            properties: {
+              geoip: {
+                dynamic: true,
+                properties: {
+                  location: {
+                    type: "geo_point"
+                  }
+                },
+                type: "object"
+              },
+              "@version" => {
+                index: "not_analyzed",
+                type: "string"
+              }
+            },
+            _all: {
+              enabled: true
+            }
+          }
+        }
     attr_reader :client
     def initialize(refresh=true)
       @client = ::Elasticsearch::Client.new log: false
@@ -385,10 +487,21 @@ module Indexers
         aliases: {}
         }
       })
+      puts client.indices.put_template({
+        name: "backend",
+        body: {
+        order: 10,
+        template: "backend-*",
+        settings: {
+          "index.refresh_interval": "5s"
+        },
+        mappings: BACKEND_EVENT_MAPPINGS,
+        aliases: {}
+        }
+      })
     end
     def get(index,type,id)
       begin
-        binding.pry
         @client.get({
               index: index,
               type: type,
