@@ -369,7 +369,7 @@ module Generator
           }
         },
       ]
-      create_user_index = e.find_index {|x| x[:eid] = 'GE_CREATE_USER'}
+      create_user_index = e.find_index {|x| x[:eid] == 'GE_CREATE_USER'}
       e.delete_at(create_user_index) if user_with_profile
       e.insert(create_user_index, p_event) if user_with_profile
       if(@mode == OLD_MODE)
@@ -377,6 +377,10 @@ module Generator
         session_start_event[0][:edata][:eks].delete(:loc)
       end
       e
+    end
+
+    def total_events_with_session
+      events.find {|s| !s.empty?}.size
     end
   end
 

@@ -170,13 +170,7 @@ module Generator
                    sims: 2, # number of sim cards
                    cap: ["GPS","BT","WIFI","3G","ACCEL"] # capabilities enums
                 },
-                loc: @device.location.loc, # Location in lat,long format
-                ldata: {
-                  locality: @device.location.city,
-                  district: @device.location.district,
-                  state: @device.location.state,
-                  country: @device.location.country
-                }
+                loc: @device.location.loc # Location in lat,long format
              }
           }
         },
@@ -357,7 +351,7 @@ module Generator
           }
         },
       ]
-      create_user_index = e.find_index {|x| x[:eid] = 'GE_CREATE_USER'}
+      create_user_index = e.find_index {|x| x[:eid] == 'GE_CREATE_USER'}
       e.delete_at(create_user_index) if user_with_profile
       e.insert(create_user_index, p_event) if user_with_profile
       if(@mode == OLD_MODE)
@@ -365,6 +359,10 @@ module Generator
         session_start_event[0][:edata][:eks].delete(:loc)
       end
       e
+    end
+
+    def total_events_with_session
+      events.find {|s| !s.empty?}.size
     end
   end
 
