@@ -48,9 +48,9 @@ public class UserManagementTaskTest {
 
         when(configMock.get("output.success.topic.name", "sandbox.learners")).thenReturn(SUCCESS_TOPIC);
         when(configMock.get("output.failed.topic.name", "sandbox.learners.fail")).thenReturn(FAILURE_TOPIC);
-        when(configMock.get("db.url")).thenReturn("jdbc:mysql://localhost:3306/eptestdb");
+        when(configMock.get("db.url")).thenReturn("jdbc:mysql://localhost:3306/ecosystem");
         when(configMock.get("db.userName")).thenReturn("jenkins");
-        when(configMock.get("db.password")).thenReturn("ec0syst3m");
+        when(configMock.get("db.password")).thenReturn("password");
         when(contextMock.getMetricsRegistry()).thenReturn(metricsRegistryMock);
         when(metricsRegistryMock.newCounter("org.ekstep.ep.samza.task.UserManagementTask", "message-count")).thenReturn(counterMock);
     }

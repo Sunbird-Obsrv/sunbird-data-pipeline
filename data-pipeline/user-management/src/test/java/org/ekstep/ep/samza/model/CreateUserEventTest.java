@@ -17,11 +17,11 @@ public class CreateUserEventTest {
 
     @Before
     public void setUp(){
-        String url = String.format("jdbc:mysql://%s:%s/%s", "localhost", "3306", "eptestdb");
+        String url = String.format("jdbc:mysql://%s:%s/%s", "localhost", "3306", "ecosystem");
         dataSource = new HikariDataSource();
         dataSource.setJdbcUrl(url);
         dataSource.setUsername("jenkins");
-        dataSource.setPassword("ec0syst3m");
+        dataSource.setPassword("password");
     }
 
     @Test
