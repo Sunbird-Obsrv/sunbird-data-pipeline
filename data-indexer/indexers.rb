@@ -98,7 +98,7 @@ module Indexers
                 path_match: "*.resvalues",
                 mapping: {
                     type: "object",
-                    index: "not_analyzed",
+                    index: "no",
                     doc_values: true,
                     enabled: false
                 }
@@ -224,7 +224,7 @@ module Indexers
                 match_pattern: "regex",
                 mapping: {
                     type: "object",
-                    index: "not_analyzed",
+                    index: "no",
                     doc_values: true,
                     enabled: false
                 }
@@ -399,7 +399,7 @@ module Indexers
                 match_pattern: "regex",
                 mapping: {
                     type: "object",
-                    index: "not_analyzed",
+                    index: "no",
                     doc_values: true,
                     enabled: false
                 }
