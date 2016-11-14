@@ -220,7 +220,7 @@ module Indexers
             },
             {
               unparsed_object_fields:{
-                match: "resValues",
+                match: "resValues|incorrect_res",
                 match_pattern: "regex",
                 mapping: {
                     type: "object",
