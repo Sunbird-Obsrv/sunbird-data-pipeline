@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Event {
-    private static final List<String> validPartners = Arrays.asList("org.ekstep.partner.akshara", "org.ekstep.partner.pratham", "org.ekstep.partner.enlearn");
+    private static final List<String> validPartners = Arrays.asList("org.ekstep.partner.akshara", "org.ekstep.partner.pratham", "org.ekstep.partner.enlearn", "9e94fb35");
     private Map<String, Object> data;
     static Logger LOGGER = new Logger(Event.class);
 
