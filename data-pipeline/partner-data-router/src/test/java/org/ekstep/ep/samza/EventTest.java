@@ -21,6 +21,19 @@ public class EventTest {
     }
 
     @Test
+    public void shouldBelongToPartnerIfPartnerIdIsNumberString() {
+        HashMap<String, Object> data = new HashMap<String,Object>();
+        ArrayList<HashMap> tags = new ArrayList<HashMap>();
+        data.put("tags", tags);
+        HashMap<String, String> firstTag = new HashMap<String,String>();
+        tags.add(firstTag);
+        firstTag.put("partnerid", "9e94fb35");
+        Event event = new Event(data);
+
+        Assert.assertTrue(event.belongsToAPartner());
+    }
+
+    @Test
     public void shouldHandleIfPartnerTagContainsListOfPartnerIds() {
         HashMap<String, Object> data = new HashMap<String,Object>();
         ArrayList<HashMap> tags = new ArrayList<HashMap>();
