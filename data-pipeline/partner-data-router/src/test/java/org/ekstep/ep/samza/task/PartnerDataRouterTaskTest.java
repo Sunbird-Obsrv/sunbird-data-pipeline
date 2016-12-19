@@ -48,6 +48,7 @@ public class PartnerDataRouterTaskTest {
 
         configMock = mock(Config.class);
         stub(configMock.get("output.success.topic.prefix")).toReturn("partner");
+        stub(configMock.get("valid.partners", "")).toReturn("org.ekstep.partner.akshara, org.ekstep.partner.pratham, org.ekstep.partner.enlearn, 9e94fb35");
         stub(configMock.get("events.to.skip", "")).toReturn(EVENTS_TO_SKIP);
         stub(configMock.get("events.to.allow", "")).toReturn(EVENTS_TO_ALLOW);
         stub(metricsRegistryMock.newCounter("org.ekstep.ep.samza.task.PartnerDataRouterTask", "message-count")).toReturn(counterMock);

@@ -7,7 +7,7 @@ import java.util.*;
 
 public class EventTest {
     private static final List<String> validPartners =
-            Arrays.asList("org.ekstep.partner.akshara", "org.ekstep.partner.pratham", "org.ekstep.partner.enlearn");
+            Arrays.asList("org.ekstep.partner.akshara", "org.ekstep.partner.pratham", "org.ekstep.partner.enlearn", "9e94fb35");
 
     @Test
     public void shouldBelongToPartnerIfPartnerIdIsPresent() {
@@ -30,7 +30,7 @@ public class EventTest {
         HashMap<String, String> firstTag = new HashMap<String,String>();
         tags.add(firstTag);
         firstTag.put("partnerid", "9e94fb35");
-        Event event = new Event(data);
+        Event event = new Event(data, validPartners);
 
         Assert.assertTrue(event.belongsToAPartner());
     }

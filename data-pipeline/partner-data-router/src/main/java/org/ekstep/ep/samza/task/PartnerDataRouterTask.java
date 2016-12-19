@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.task;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.system.IncomingMessageEnvelope;
@@ -17,8 +18,7 @@ import java.util.Map;
 import static java.util.Arrays.asList;
 
 public class PartnerDataRouterTask implements StreamTask, InitableTask, WindowableTask {
-    private static final List<String> validPartners =
-            asList("org.ekstep.partner.akshara", "org.ekstep.partner.pratham", "org.ekstep.partner.enlearn", "9e94fb35");
+    private static List<String> validPartners;
     private String successTopicSuffix;
     private Counter messageCount;
     private CleanerFactory cleaner;
@@ -30,6 +30,11 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
     @Override
     public void init(Config config, TaskContext context) throws Exception {
         successTopicSuffix = config.get("output.success.topic.prefix", "partner");
+        String validPartnersString = config.get("valid.partners", "");
+        validPartners = asList(StringUtils.split(validPartnersString, ", "));
+
+        LOGGER.info(null, "Valid partners: {}", validPartners);
+
         messageCount = context
                 .getMetricsRegistry()
                 .newCounter(getClass().getName(), "message-count");
