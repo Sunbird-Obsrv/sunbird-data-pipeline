@@ -6,6 +6,8 @@ import org.junit.Test;
 import java.util.*;
 
 public class EventTest {
+    private static final List<String> validPartners =
+            Arrays.asList("org.ekstep.partner.akshara", "org.ekstep.partner.pratham", "org.ekstep.partner.enlearn");
 
     @Test
     public void shouldBelongToPartnerIfPartnerIdIsPresent() {
@@ -15,7 +17,7 @@ public class EventTest {
         HashMap<String, String> firstTag = new HashMap<String,String>();
         tags.add(firstTag);
         firstTag.put("partnerid", "org.ekstep.partner.akshara");
-        Event event = new Event(data);
+        Event event = new Event(data, validPartners);
 
         Assert.assertTrue(event.belongsToAPartner());
     }
@@ -42,7 +44,7 @@ public class EventTest {
         ArrayList<String> partnerSet = new ArrayList<String>(Arrays.asList("org.ekstep.partner.akshara"));
         firstTag.put("partnerid", partnerSet);
         tags.add(firstTag);
-        Event event = new Event(data);
+        Event event = new Event(data, validPartners);
 
         Assert.assertTrue(event.belongsToAPartner());
     }
@@ -60,7 +62,7 @@ public class EventTest {
         tags.add(thirdTag);
         firstTag.put("someKey","value");
         secondTag.put("partnerid","org.ekstep.partner.akshara");
-        Event event = new Event(data);
+        Event event = new Event(data, validPartners);
 
         Assert.assertTrue(event.belongsToAPartner());
     }
@@ -73,7 +75,7 @@ public class EventTest {
         data.put("tags", tags);
         HashMap<String, String> firstTag = new HashMap<String,String>();
         tags.add(firstTag);
-        Event event = new Event(data);
+        Event event = new Event(data, validPartners);
 
         Assert.assertFalse(event.belongsToAPartner());
     }
@@ -84,7 +86,7 @@ public class EventTest {
         ArrayList<HashMap> tags = new ArrayList<HashMap>();
 
         data.put("tags", tags);
-        Event event = new Event(data);
+        Event event = new Event(data, validPartners);
 
         Assert.assertFalse(event.belongsToAPartner());
     }
@@ -92,7 +94,7 @@ public class EventTest {
     @Test
     public void shouldNotBelongToPartnerIfTagsIsAbsent() {
         HashMap<String, Object> data = new HashMap<String,Object>();
-        Event event = new Event(data);
+        Event event = new Event(data, validPartners);
 
         Assert.assertFalse(event.belongsToAPartner());
     }
@@ -106,7 +108,7 @@ public class EventTest {
         HashMap<String, String> firstTag = new HashMap<String,String>();
         tags.add(firstTag);
         firstTag.put("partnerid","org.ekstep.partner.akshara");
-        Event event = new Event(data);
+        Event event = new Event(data, validPartners);
 
         Assert.assertEquals("org.ekstep.partner.akshara.events", event.routeTo());
     }
@@ -119,7 +121,7 @@ public class EventTest {
         data.put("edata", edata);
         edata.put("eks", eks);
         eks.put("partnerid","org.ekstep.partner.akshara");
-        Event event = new Event(data);
+        Event event = new Event(data, validPartners);
 
         Assert.assertEquals(data,event.getData());
     }
@@ -128,7 +130,7 @@ public class EventTest {
     public void shouldUpdateTheTypeOfData(){
         HashMap<String, Object> data = new HashMap<String,Object>();
         data.put("type","otherType");
-        Event event = new Event(data);
+        Event event = new Event(data, validPartners);
 
         event.updateType();
 
@@ -138,7 +140,7 @@ public class EventTest {
     @Test
     public void shouldHandleWhenThereIsNoType(){
         HashMap<String, Object> data = new HashMap<String,Object>();
-        Event event = new Event(data);
+        Event event = new Event(data, validPartners);
 
         event.updateType();
 

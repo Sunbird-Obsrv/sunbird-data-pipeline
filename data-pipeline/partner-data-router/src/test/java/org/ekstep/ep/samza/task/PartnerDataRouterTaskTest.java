@@ -7,9 +7,7 @@ import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
-import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.Event;
-import org.ekstep.ep.samza.cleaner.CleanerFactory;
 import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +24,10 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 public class PartnerDataRouterTaskTest {
+
+    private static final List<String> validPartners =
+            Arrays.asList("org.ekstep.partner.akshara", "org.ekstep.partner.pratham", "org.ekstep.partner.enlearn");
+
     private final String EVENTS_TO_SKIP = "ME_.*";
     private final String EVENTS_TO_ALLOW = "GE_.*,OE_.*";
     private MessageCollector collectorMock;
@@ -83,7 +85,7 @@ public class PartnerDataRouterTaskTest {
 
     @Test
     public void shouldCleanThePartnerEventBeforeRoutingToCorrespondingTopic() throws Exception {
-        Event event = new Event(EventFixture.CreateProfile());
+        Event event = new Event(EventFixture.CreateProfile(), validPartners);
 
         ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
 
@@ -98,7 +100,7 @@ public class PartnerDataRouterTaskTest {
 
     @Test
     public void shouldSkipLearningEvents() throws Exception {
-        Event event = new Event(EventFixture.LearningEvent());
+        Event event = new Event(EventFixture.LearningEvent(), validPartners);
 
         ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
 
@@ -110,7 +112,7 @@ public class PartnerDataRouterTaskTest {
 
     @Test
     public void shouldSkipAllVersionOneEvents() throws Exception {
-        Event event = new Event(EventFixture.VersionOneEvent());
+        Event event = new Event(EventFixture.VersionOneEvent(), validPartners);
 
         ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
 

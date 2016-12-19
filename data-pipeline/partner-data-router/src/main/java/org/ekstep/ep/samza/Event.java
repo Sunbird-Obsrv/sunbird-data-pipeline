@@ -3,18 +3,19 @@ package org.ekstep.ep.samza;
 import com.google.gson.Gson;
 import org.apache.commons.lang.StringUtils;
 import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.task.PartnerDataRouterTask;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public class Event {
-    private static final List<String> validPartners = Arrays.asList("org.ekstep.partner.akshara", "org.ekstep.partner.pratham", "org.ekstep.partner.enlearn", "9e94fb35");
     private Map<String, Object> data;
     static Logger LOGGER = new Logger(Event.class);
+    private List<String> validPartners;
 
-    public Event(Map<String, Object> data) {
+    public Event(Map<String, Object> data, List<String> validPartners) {
+        this.validPartners = validPartners;
         this.data = data;
     }
 

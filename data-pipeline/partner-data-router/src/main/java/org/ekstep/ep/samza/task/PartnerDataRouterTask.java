@@ -7,17 +7,18 @@ import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.Event;
-import org.ekstep.ep.samza.cleaner.Cleaner;
 import org.ekstep.ep.samza.cleaner.CleanerFactory;
 import org.ekstep.ep.samza.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import static java.util.Arrays.asList;
 
 public class PartnerDataRouterTask implements StreamTask, InitableTask, WindowableTask {
+    private static final List<String> validPartners =
+            asList("org.ekstep.partner.akshara", "org.ekstep.partner.pratham", "org.ekstep.partner.enlearn", "9e94fb35");
     private String successTopicSuffix;
     private Counter messageCount;
     private CleanerFactory cleaner;
@@ -34,7 +35,7 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
                 .newCounter(getClass().getName(), "message-count");
         eventsToSkip = getEventsToSkip(config);
         eventsToAllow = getEventsToAllow(config);
-        cleaner = new CleanerFactory(eventsToAllow,eventsToSkip);
+        cleaner = new CleanerFactory(eventsToAllow, eventsToSkip);
     }
 
     @Override
@@ -45,20 +46,24 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
         messageCount.inc();
     }
 
-    public void processEvent(MessageCollector collector,  Event event) {
+    public void processEvent(MessageCollector collector, Event event) {
         LOGGER.info(event.id(), "TS: {}", event.ts());
         LOGGER.info(event.id(), "SID: {}", event.sid());
-        if(!event.belongsToAPartner()){
+        if (!event.belongsToAPartner()) {
             return;
         }
         event.updateType();
         String topic = String.format("%s.%s", successTopicSuffix, event.routeTo());
         LOGGER.info(event.id(), "TOPIC: {}", topic);
 
-        if(event.getData().containsKey("ver") && event.getData().get("ver").equals("1.0")){ return;}
+        if (event.getData().containsKey("ver") && event.getData().get("ver").equals("1.0")) {
+            return;
+        }
 
-        if(cleaner.shouldAllowEvent(event.eid())){
-            if(cleaner.shouldSkipEvent(event.eid())){ return; }
+        if (cleaner.shouldAllowEvent(event.eid())) {
+            if (cleaner.shouldSkipEvent(event.eid())) {
+                return;
+            }
 
             cleaner.clean(event.getData());
             LOGGER.info(event.id(), "CLEANED EVENT");
@@ -87,7 +92,7 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
     }
 
     protected Event getEvent(Map<String, Object> message) {
-        return new Event(message);
+        return new Event(message, validPartners);
     }
 
     @Override
