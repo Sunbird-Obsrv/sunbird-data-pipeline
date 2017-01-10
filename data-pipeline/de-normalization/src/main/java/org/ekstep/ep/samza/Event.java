@@ -95,7 +95,7 @@ public class Event {
                 }
             } catch (Exception e) {
                 hadIssueWithDb = true;
-                LOGGER.error(id(), format("{0} ERROR WHEN GETTING CHILD #{1}", TAG, this.getMap()));
+                LOGGER.error(id(), format("{0} ERROR WHEN GETTING CHILD #{1}", TAG, this.getMap()), e);
             }
             LOGGER.info(id(), "PROCESSING - STOP");
         } finally {
