@@ -3,14 +3,13 @@ package org.ekstep.ep.samza.model;
 import java.sql.SQLException;
 import java.text.ParseException;
 
-/**
- * Created by sreeharikm on 9/29/15.
- */
 public interface IModel {
 
     void process(Event event) throws SQLException, ParseException;
 
-    void setIsInserted();
+    void setInserted();
+
+    void setDefault();
 
     boolean getIsInserted();
 }

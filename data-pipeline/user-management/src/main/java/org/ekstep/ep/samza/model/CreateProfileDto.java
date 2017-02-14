@@ -3,13 +3,13 @@ package org.ekstep.ep.samza.model;
 import org.ekstep.ep.samza.logger.Logger;
 
 import javax.sql.DataSource;
-import java.io.PrintStream;
 import java.sql.*;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Map;
 
 public class CreateProfileDto implements IModel {
+
     static Logger LOGGER = new Logger(CreateProfileDto.class);
 
     public static final String UID = "uid";
@@ -21,6 +21,8 @@ public class CreateProfileDto implements IModel {
     public static final String DAY = "day";
     public static final String MONTH = "month";
     private final String IS_GROUP_USER = "is_group_user";
+    private static final String BOARD = "board";
+    private static final String MEDIUM = "medium";
     private String uid;
     private String handle;
     private String gender;
@@ -30,13 +32,16 @@ public class CreateProfileDto implements IModel {
     private String language;
     private Integer day;
     private Integer month;
+    private String board;
+    private String medium;
     private Boolean isGroupUser;
 
     private Timestamp createdAt;
 
     private Timestamp updatedAt;
-    private boolean isInserted = false;
+    private boolean isInserted;
     private DataSource dataSource;
+
 
 
     public CreateProfileDto(DataSource dataSource) {
@@ -55,6 +60,7 @@ public class CreateProfileDto implements IModel {
         saveData(event.id());
     }
 
+
     private void parseData(Map<String, Object> EKS, java.util.Date timeOfEvent) throws ParseException {
         uid = (String) EKS.get(UID);
         validateEmptyString(UID, uid);
@@ -70,6 +76,8 @@ public class CreateProfileDto implements IModel {
         language = (String) EKS.get(LANGUAGE);
         day = getIntegerValueFromDouble(EKS, DAY);
         month = getIntegerValueFromDouble(EKS, MONTH);
+        board = (String) EKS.get(BOARD);
+        medium = (String) EKS.get(MEDIUM);
 
         isGroupUser = getBoolean(EKS, IS_GROUP_USER);
 
@@ -102,8 +110,8 @@ public class CreateProfileDto implements IModel {
 
         try {
             connection = dataSource.getConnection();
-            String query = " insert into profile (uid, handle, year_of_birth, gender, age, standard, language, day, month, is_group_user, created_at, updated_at)"
-                    + " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String query = " insert into profile (uid, handle, year_of_birth, gender, age, standard, language, day, month, is_group_user, board, medium, created_at, updated_at)"
+                    + " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             preparedStmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
             preparedStmt.setString(1, uid);
@@ -116,8 +124,10 @@ public class CreateProfileDto implements IModel {
             setIntegerValues(preparedStmt, 8, day);
             setIntegerValues(preparedStmt, 9, month);
             preparedStmt.setBoolean(10, isGroupUser);
-            preparedStmt.setTimestamp(11, createdAt);
-            preparedStmt.setTimestamp(12, updatedAt);
+            preparedStmt.setString(11,board);
+            preparedStmt.setString(12,medium);
+            preparedStmt.setTimestamp(13, createdAt);
+            preparedStmt.setTimestamp(14, updatedAt);
 
             int affectedRows = preparedStmt.executeUpdate();
 
@@ -128,7 +138,7 @@ public class CreateProfileDto implements IModel {
             ResultSet generatedKeys = preparedStmt.getGeneratedKeys();
 
             if (generatedKeys.next()) {
-                this.setIsInserted();
+                this.setInserted();
             } else {
                 throw new SQLException("Creating Profile failed, no ID obtained.");
             }
@@ -200,13 +210,17 @@ public class CreateProfileDto implements IModel {
     }
 
     @Override
-    public void setIsInserted() {
+    public void setInserted() {
         this.isInserted = true;
+    }
+
+    @Override
+    public void setDefault() {
+        this.isInserted = false;
     }
 
     @Override
     public boolean getIsInserted() {
         return this.isInserted;
     }
-
 }

@@ -70,6 +70,21 @@ public class UpdateProfileEventTest {
     }
 
     @Test
+    public void ShouldUpdateProfileWithBoardAndMedium() throws SQLException, ParseException {
+        Event event = new Event(new EventFixture().CREATE_PROFILE_EVENT_1(uid));
+
+        CreateProfileDto profileDto = new CreateProfileDto(dataSource);
+        profileDto.process(event);
+
+        event = new Event(new EventFixture().UPDATE_PROFILE_EVENT_WITH_BOARD_AND_MEDIUM(uid));
+
+        UpdateProfileDto updateProfileDto = new UpdateProfileDto(dataSource);
+        updateProfileDto.process(event);
+
+        Assert.assertEquals(true, updateProfileDto.getIsInserted());
+    }
+
+    @Test
     public void ShouldCreateNewProfileIfProfileDoesNotExistAndUpdateProfile() throws SQLException, ParseException {
         Event event = new Event(new EventFixture().UPDATE_PROFILE_EVENT);
 

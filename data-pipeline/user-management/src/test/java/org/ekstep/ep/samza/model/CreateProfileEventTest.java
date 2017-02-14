@@ -57,6 +57,16 @@ public class CreateProfileEventTest {
     }
 
     @Test
+    public void ShouldProcessEventCreateNewProfileWithBoardAndMedium() throws SQLException, ParseException {
+        Event event = new Event(new EventFixture().CREATE_PROFILE_EVENT_WITH_BOARD_AND_MEDIUM);
+
+        CreateProfileDto profileDto = new CreateProfileDto(dataSource);
+        profileDto.process(event);
+
+        assertEquals(true, profileDto.getIsInserted());
+    }
+
+    @Test
     public void ShouldCreateLearnerIfLeanerDoesNotExistWhileCreatingProfile() throws SQLException, ParseException {
         Event event = new Event(new EventFixture().CREATE_PROFILE_EVENT_WITH_AGE);
 

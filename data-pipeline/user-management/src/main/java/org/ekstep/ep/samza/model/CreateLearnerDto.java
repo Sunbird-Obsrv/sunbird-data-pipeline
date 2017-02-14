@@ -2,11 +2,9 @@ package org.ekstep.ep.samza.model;
 import org.ekstep.ep.samza.logger.Logger;
 
 import javax.sql.DataSource;
-import java.io.PrintStream;
 import java.sql.*;
 import java.text.ParseException;
 import java.util.Map;
-import java.util.Date;
 
 
 public class CreateLearnerDto implements IModel{
@@ -15,7 +13,7 @@ public class CreateLearnerDto implements IModel{
     private String uid;
     private Timestamp createdAt;
 
-    private boolean isInserted = false;
+    private boolean isInserted;
 
     public CreateLearnerDto(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -54,7 +52,7 @@ public class CreateLearnerDto implements IModel{
             ResultSet generatedKeys = preparedStmt.getGeneratedKeys();
 
             if (generatedKeys.next()) {
-                this.setIsInserted();
+                this.setInserted();
             }
             else {
                 throw new SQLException("Creating Learner failed, no ID obtained.");
@@ -71,9 +69,14 @@ public class CreateLearnerDto implements IModel{
     }
 
     @Override
-    public void setIsInserted(){
+    public void setInserted(){
         this.isInserted = true;
-    };
+    }
+
+    @Override
+    public void setDefault() {
+        this.isInserted = false;
+    }
 
     @Override
     public boolean getIsInserted(){

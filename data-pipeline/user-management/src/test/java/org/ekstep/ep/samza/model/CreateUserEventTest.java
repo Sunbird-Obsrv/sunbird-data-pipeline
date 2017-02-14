@@ -1,6 +1,5 @@
 package org.ekstep.ep.samza.model;
 
-import com.google.gson.JsonSyntaxException;
 import com.zaxxer.hikari.HikariDataSource;
 import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.junit.Assert;

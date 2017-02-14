@@ -47,7 +47,7 @@
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>user-management</artifactId>
-          <version>0.1.6</version>
+          <version>0.2.0</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>

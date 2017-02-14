@@ -11,7 +11,6 @@ import org.apache.samza.task.*;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.model.*;
 
-import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -73,6 +72,7 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
     public void processEvent(Event event, MessageCollector collector) throws Exception {
         IModel model = modelMap.get(event.getEId());
         if (model != null) {
+            model.setDefault();
             model.process(event);
             if (!model.getIsInserted()) {
                 collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
@@ -91,6 +91,5 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
     @Override
     public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
         messageCount.clear();
-
     }
 }

@@ -3,7 +3,6 @@ package org.ekstep.ep.samza.model;
 import org.ekstep.ep.samza.logger.Logger;
 
 import javax.sql.DataSource;
-import java.io.PrintStream;
 import java.sql.*;
 import java.text.ParseException;
 import java.util.Calendar;
@@ -20,6 +19,8 @@ public class UpdateProfileDto implements IModel {
     public static final String DAY = "day";
     public static final String MONTH = "month";
     private final String IS_GROUP_USER = "is_group_user";
+    private static final String BOARD = "board";
+    private static final String MEDIUM = "medium";
     private String uid;
     private String gender;
     private Integer yearOfBirth;
@@ -29,11 +30,13 @@ public class UpdateProfileDto implements IModel {
     private String handle;
     private Integer day;
     private Integer month;
+    private String board;
+    private String medium;
     private Boolean isGroupUser;
 
     private Timestamp updatedAt;
 
-    private boolean isInserted = false;
+    private boolean isInserted;
     private DataSource dataSource;
 
     public UpdateProfileDto(DataSource dataSource) {
@@ -68,6 +71,8 @@ public class UpdateProfileDto implements IModel {
         language = (String) EKS.get(LANGUAGE);
         day = getIntegerValueFromDouble(EKS, DAY);
         month = getIntegerValueFromDouble(EKS, MONTH);
+        board = (String) EKS.get(BOARD);
+        medium = (String) EKS.get(MEDIUM);
         isGroupUser = getBoolean(EKS, IS_GROUP_USER);
 
         java.util.Date date = new java.util.Date();
@@ -99,7 +104,7 @@ public class UpdateProfileDto implements IModel {
 
         try {
             connection = dataSource.getConnection();
-            String updateQuery = "update profile set year_of_birth = ?, gender = ?, age = ?, standard = ?, language = ?, updated_at = ?, handle = ?, day = ?, month = ?, is_group_user = ?"
+            String updateQuery = "update profile set year_of_birth = ?, gender = ?, age = ?, standard = ?, language = ?, updated_at = ?, handle = ?, day = ?, month = ?, board = ?, medium = ?, is_group_user = ?"
                     + " where uid = ?";
 
             preparedStmt = connection.prepareStatement(updateQuery);
@@ -113,16 +118,18 @@ public class UpdateProfileDto implements IModel {
             preparedStmt.setString(7, handle);
             setIntegerValues(preparedStmt, 8, day);
             setIntegerValues(preparedStmt, 9, month);
-            preparedStmt.setBoolean(10, isGroupUser);
+            preparedStmt.setString(10, board);
+            preparedStmt.setString(11, medium);
+            preparedStmt.setBoolean(12, isGroupUser);
 
-            preparedStmt.setString(11, uid);
+            preparedStmt.setString(13, uid);
 
             int affectedRows = preparedStmt.executeUpdate();
 
             if (affectedRows == 0) {
                 throw new SQLException("Updating Profile failed, no rows affected.");
             } else {
-                this.setIsInserted();
+                this.setInserted();
             }
 
         } catch (Exception e) {
@@ -190,8 +197,13 @@ public class UpdateProfileDto implements IModel {
     }
 
     @Override
-    public void setIsInserted() {
+    public void setInserted() {
         this.isInserted = true;
+    }
+
+    @Override
+    public void setDefault() {
+        this.isInserted = false;
     }
 
     @Override

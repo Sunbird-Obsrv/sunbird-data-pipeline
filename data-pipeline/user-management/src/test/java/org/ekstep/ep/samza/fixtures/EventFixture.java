@@ -187,6 +187,33 @@ public class EventFixture {
             "    }\n" +
             "}";
 
+    public String CREATE_PROFILE_EVENT_WITH_BOARD_AND_MEDIUM = "{\n" +
+            "    \"eid\": \"GE_CREATE_PROFILE\",\n" +
+            "    \"ts\": \"2014-04-23T10:23:46+05:30\",\n" +
+            "    \"ver\": \"1.0\",\n" +
+            "    \"gdata\": {\n" +
+            "        \"id\": \"genie.android\",\n" +
+            "        \"ver\": \"1.0\"\n" +
+            "    },\n" +
+            "    \"sid\": \"\",\n" +
+            "    \"uid\": \"ff305d5485b4341bda2feb6b9e5460fa\",\n" +
+            "    \"did\": \"eb6b9e5460faff305d5485b4341bda2f\",\n" +
+            "    \"edata\": {\n" +
+            "        \"eks\": {\n" +
+            "            \"uid\":\"+" + getRandomUID() + "\",\n" +
+            "            \"handle\": \"user@twitter.com\",\n" +
+            "            \"gender\": \"male\",\n" +
+            "            \"age\": 10,\n" +
+            "            \"standard\": 3,\n" +
+            "            \"language\": \"ML\",\n" +
+            "            \"day\": 12,\n" +
+            "            \"month\": 11,\n" +
+            "            \"board\": \"SSLC\",\n" +
+            "            \"medium\": \"ma\",\n" +
+            "            \"is_group_user\": false\n" +
+            "        }\n" +
+            "    }\n" +
+            "}";
 
     public String CREATE_PROFILE_EVENT_1(String uid) {
         return "{\n" +
@@ -262,6 +289,35 @@ public class EventFixture {
                 "            \"standard\": 5,\n" +
                 "            \"language\": \"EL\",\n" +
                 "            \"day\": 12,\n" +
+                "            \"month\": 11\n" +
+                "        }\n" +
+                "    }\n" +
+                "}";
+    }
+
+    public String UPDATE_PROFILE_EVENT_WITH_BOARD_AND_MEDIUM(String uid) {
+        return "{\n" +
+                "    \"eid\": \"GE_UPDATE_PROFILE\",\n" +
+                "    \"ts\": \"2015-04-23T10:23:46+05:30\",\n" +
+                "    \"ver\": \"1.0\",\n" +
+                "    \"gdata\": {\n" +
+                "        \"id\": \"genie.android\",\n" +
+                "        \"ver\": \"1.0\"\n" +
+                "    },\n" +
+                "    \"sid\": \"\",\n" +
+                "    \"uid\":\"" + uid + "\",\n" +
+                "    \"did\": \"eb6b9e5460faff305d5485b4341bda2f\",\n" +
+                "    \"edata\": {\n" +
+                "        \"eks\": {\n" +
+                "            \"uid\":\"" + uid + "\",\n" +
+                "            \"handle\": \"newuser@twitter.com\",\n" +
+                "            \"gender\": \"MALE\",\n" +
+                "            \"age\": 10,\n" +
+                "            \"standard\": 5,\n" +
+                "            \"language\": \"EL\",\n" +
+                "            \"day\": 12,\n" +
+                "            \"board\": \"SSC\",\n" +
+                "            \"medium\": \"hindi\",\n" +
                 "            \"month\": 11\n" +
                 "        }\n" +
                 "    }\n" +
