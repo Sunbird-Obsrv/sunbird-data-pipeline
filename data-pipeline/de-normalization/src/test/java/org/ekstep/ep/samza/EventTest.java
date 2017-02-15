@@ -517,6 +517,8 @@ public class EventTest {
 
         assertEquals(expectedUdata.get("age_completed_years"),actualUdata.get("age_completed_years"));
         assertEquals(expectedUdata.get("gender"), actualUdata.get("gender"));
+        assertEquals(expectedUdata.get("board"), actualUdata.get("board"));
+        assertEquals(expectedUdata.get("medium"), actualUdata.get("medium"));
         assertEquals(expectedUdata.get("handle"), actualUdata.get("handle"));
         assertEquals(expectedUdata.get("standard"),actualUdata.get("standard"));
         assertEquals(expectedUdata.get("is_group_user"),actualUdata.get("is_group_user"));
@@ -538,6 +540,8 @@ public class EventTest {
         HashMap<String, Object> udata = new HashMap<String, Object>();
         udata.put("age_completed_years", 7);
         udata.put("gender", "male");
+        udata.put("medium", "kannada");
+        udata.put("board", "SSLC");
         udata.put("handle", "user@twitter.com");
         udata.put("standard", 2);
         udata.put("is_group_user", true);

@@ -18,6 +18,8 @@ public class UserServiceClient implements UserService {
     private static final String STANDARD = "standard";
     private static final String GENDER = "gender";
     private static final String YEAR_OF_BIRTH = "year_of_birth";
+    private static final String BOARD = "board";
+    private static final String MEDIUM = "medium";
     private static final MediaType JSON_MEDIA_TYPE = MediaType.parse("application/json; charset=utf-8");
     private final String IS_GROUP_USER = "is_group_user";
     private String userServiceEndpoint;
@@ -51,7 +53,15 @@ public class UserServiceClient implements UserService {
             String genderValue = getUserResponse.profile().gender() == null
                     ? "Not known"
                     : getUserResponse.profile().gender();
+            String board_value = getUserResponse.profile().board() == null
+                    ? "Not known"
+                    : getUserResponse.profile().board();
+            String medium_value = getUserResponse.profile().medium() == null
+                    ? "Not known"
+                    : getUserResponse.profile().medium();
             childData.put(GENDER, genderValue);
+            childData.put(BOARD, board_value);
+            childData.put(MEDIUM, medium_value);
             childData.put(YEAR_OF_BIRTH, getUserResponse.profile().yearOfBirth());
             childData.put(IS_GROUP_USER, getUserResponse.profile().isGroupUser());
             child.populate(childData, timeOfEvent, eventId);
@@ -63,6 +73,8 @@ public class UserServiceClient implements UserService {
             childData.put(HANDLE, null);
             childData.put(STANDARD, 0);
             childData.put(GENDER, "Not known");
+            childData.put(BOARD, "Not known");
+            childData.put(MEDIUM, "Not known");
             childData.put(YEAR_OF_BIRTH, null);
             childData.put(IS_GROUP_USER, false);
         }

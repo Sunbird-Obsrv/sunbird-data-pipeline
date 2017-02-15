@@ -15,6 +15,8 @@ public class ChildTest {
         HashMap<String, Object> udata = new HashMap<String, Object>();
         udata.put("age_completed_years", 7);
         udata.put("gender", "male");
+        udata.put("board", "SSLC");
+        udata.put("medium", "kannada");
         udata.put("handle", "user@twitter.com");
         udata.put("standard", 2);
         udata.put("is_group_user",false);
@@ -26,6 +28,8 @@ public class ChildTest {
         assertEquals(7, childData.get("age_completed_years"));
         assertEquals("male", childData.get("gender"));
         assertEquals("user@twitter.com", childData.get("handle"));
+        assertEquals("SSLC", childData.get("board"));
+        assertEquals("kannada", childData.get("medium"));
         assertEquals(2, childData.get("standard"));
         assertEquals(false, childData.get("is_group_user"));
         assertTrue(child.isProcessed());
@@ -75,6 +79,8 @@ public class ChildTest {
         childData.put("handle", "user@twitter.com");
         childData.put("year_of_birth",2010);
         childData.put("standard", 2);
+        childData.put("board", "SSLC");
+        childData.put("medium", "kannada");
         childData.put("is_group_user", false);
 
 
@@ -88,6 +94,8 @@ public class ChildTest {
         assertTrue(child.isProcessed());
         assertEquals(4, calculatedData.get("age_completed_years"));
         assertEquals("male", calculatedData.get("gender"));
+        assertEquals("SSLC", calculatedData.get("board"));
+        assertEquals("kannada", calculatedData.get("medium"));
         assertEquals("user@twitter.com", calculatedData.get("handle"));
         assertEquals(2, calculatedData.get("standard"));
         assertEquals(false, calculatedData.get("is_group_user"));

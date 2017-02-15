@@ -14,12 +14,16 @@ public class Child implements Serializable {
     public static final String HANDLE = "handle";
     public static final String STANDARD = "standard";
     public static final String GENDER = "gender";
+    private static final String BOARD = "board";
+    private static final String MEDIUM = "medium";
     public static final String AGE_COMPLETED_YEARS = "age_completed_years";
     private final String IS_GROUP_USER = "is_group_user";
     private String uid;
     private Boolean child_data_processed;
     private int age_completed_years;
     private String gender;
+    private String medium;
+    private String board;
     private String handle;
     private Integer standard;
     private Boolean isGroupUser;
@@ -34,6 +38,8 @@ public class Child implements Serializable {
         if (udata == null) return;
         age_completed_years = ((Integer) udata.get(AGE_COMPLETED_YEARS));
         gender = ((String) udata.get(GENDER));
+        medium = ((String) udata.get(MEDIUM));
+        board = ((String) udata.get(BOARD));
         handle = ((String) udata.get(HANDLE));
         standard = ((Integer) udata.get(STANDARD));
         isGroupUser = ((Boolean) udata.get(IS_GROUP_USER));
@@ -53,6 +59,8 @@ public class Child implements Serializable {
         udata.put(STANDARD, standard);
         udata.put(AGE_COMPLETED_YEARS, age_completed_years);
         udata.put(GENDER, gender);
+        udata.put(BOARD, board);
+        udata.put(MEDIUM, medium);
         udata.put(IS_GROUP_USER, isGroupUser);
         return udata;
     }
@@ -64,6 +72,8 @@ public class Child implements Serializable {
         }
         populateAgeRelatedFields(childData, timeOfEvent, eventId);
         this.handle = (String) childData.get(HANDLE);
+        this.board = (String) childData.get(BOARD);
+        this.medium = (String) childData.get(MEDIUM);
         this.standard = (Integer) childData.get(STANDARD);
         this.gender = (String) childData.get(GENDER);
         this.isGroupUser = ((Boolean) childData.get(IS_GROUP_USER));

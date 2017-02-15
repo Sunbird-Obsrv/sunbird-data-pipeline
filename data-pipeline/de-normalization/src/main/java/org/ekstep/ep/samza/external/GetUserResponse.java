@@ -59,6 +59,8 @@ public class GetUserResponse {
         private int yearOfBirth;
         private int day;
         private int month;
+        private String board;
+        private String medium;
         private boolean isGroupUser;
 
         public String handle() {
@@ -67,6 +69,14 @@ public class GetUserResponse {
 
         public String gender() {
             return gender;
+        }
+
+        public String board() {
+            return board;
+        }
+
+        public String medium() {
+            return medium;
         }
 
         public int age() {
@@ -110,6 +120,8 @@ public class GetUserResponse {
                     ", yearOfBirth=" + yearOfBirth +
                     ", day=" + day +
                     ", month=" + month +
+                    ", board=" + board +
+                    ", medium=" + medium +
                     ", isGroupUser=" + isGroupUser +
                     '}';
         }
