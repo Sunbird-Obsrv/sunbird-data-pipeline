@@ -1,8 +1,5 @@
 package org.ekstep.ep.samza.task;
 
-import java.util.Date;
-import java.util.Map;
-
 import com.google.gson.Gson;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
@@ -15,6 +12,7 @@ import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.ContentCache;
+import org.ekstep.ep.samza.ContentDeNormalizationMetrics;
 import org.ekstep.ep.samza.Event;
 import org.ekstep.ep.samza.external.SearchServiceClient;
 import org.ekstep.ep.samza.fixture.ContentFixture;
@@ -24,11 +22,12 @@ import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
@@ -53,7 +52,7 @@ public class ContentDeNormalizationTaskTest {
     private KeyValueStore contentStoreMock;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         collectorMock = mock(MessageCollector.class);
         eventMock = mock(Event.class);
         searchServiceMock = mock(SearchServiceClient.class);
@@ -70,7 +69,7 @@ public class ContentDeNormalizationTaskTest {
         stub(configMock.get("events.to.skip", "")).toReturn(EVENTS_TO_SKIP);
         stub(configMock.get("events.to.allow", "")).toReturn(EVENTS_TO_ALLOW);
         stub(configMock.get("content.store.ttl", "60000")).toReturn(CONTENT_CACHE_TTL);
-        stub(metricsRegistry.newCounter("org.ekstep.ep.samza.task.ContentDeNormalizationTask", "message-count")).toReturn(counter);
+        stub(metricsRegistry.newCounter(ContentDeNormalizationMetrics.class.getName(), "message-count")).toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
 
         contentDeNormalizationTask = new ContentDeNormalizationTask(configMock, contextMock, searchServiceMock, contentStoreMock);
@@ -143,7 +142,7 @@ public class ContentDeNormalizationTaskTest {
 
         assertTrue(processedMessage.containsKey("contentdata"));
 
-        HashMap<String,Object> contentData = (HashMap<String, Object>) processedMessage.get("contentdata");
+        HashMap<String, Object> contentData = (HashMap<String, Object>) processedMessage.get("contentdata");
         assertEquals(contentData.get("name"), ContentFixture.getContentMap().get("name"));
         assertEquals(contentData.get("description"), ContentFixture.getContentMap().get("description"));
 
@@ -162,7 +161,7 @@ public class ContentDeNormalizationTaskTest {
 
         assertTrue(processedMessage.containsKey("contentdata"));
 
-        HashMap<String,Object> contentData = (HashMap<String, Object>) processedMessage.get("contentdata");
+        HashMap<String, Object> contentData = (HashMap<String, Object>) processedMessage.get("contentdata");
         assertEquals(contentData.get("name"), ContentFixture.getContentMap().get("name"));
         assertEquals(contentData.get("description"), ContentFixture.getContentMap().get("description"));
 

@@ -21,7 +21,7 @@ public class CleanerFactory {
         this.eventsToSkip = eventsToSkip;
     }
 
-    public void clean(Map<String, Object> map){
+    public void clean(Map<String, Object> map) {
         for (Cleaner cleaner : cleaners()) {
             cleaner.clean(map);
         }
@@ -31,7 +31,7 @@ public class CleanerFactory {
         for (String eventToSkip : eventsToSkip) {
             Pattern p = Pattern.compile(eventToSkip);
             Matcher m = p.matcher(eventID);
-            if(m.matches()){
+            if (m.matches()) {
                 LOGGER.info(m.toString(), "SKIPPING EVENT");
                 return true;
             }
@@ -43,7 +43,7 @@ public class CleanerFactory {
         for (String eventToAllow : eventsToAllow) {
             Pattern p = Pattern.compile(eventToAllow);
             Matcher m = p.matcher(eventID);
-            if(m.matches()){
+            if (m.matches()) {
                 LOGGER.info(m.toString(), "ALLOWING EVENT");
                 return true;
             }
