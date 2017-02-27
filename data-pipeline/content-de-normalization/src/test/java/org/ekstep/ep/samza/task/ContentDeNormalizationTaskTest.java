@@ -11,6 +11,7 @@ import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
+import org.ekstep.ep.samza.Content;
 import org.ekstep.ep.samza.ContentCache;
 import org.ekstep.ep.samza.ContentDeNormalizationMetrics;
 import org.ekstep.ep.samza.Event;
@@ -40,7 +41,6 @@ public class ContentDeNormalizationTaskTest {
     private final String EVENTS_TO_SKIP = "ME_.*";
     private final String EVENTS_TO_ALLOW = "GE_LAUNCH_GAME,OE_.*";
     private MessageCollector collectorMock;
-    private Event eventMock;
     private SearchServiceClient searchServiceMock;
     private TaskContext contextMock;
     private MetricsRegistry metricsRegistry;
@@ -54,7 +54,6 @@ public class ContentDeNormalizationTaskTest {
     @Before
     public void setUp() {
         collectorMock = mock(MessageCollector.class);
-        eventMock = mock(Event.class);
         searchServiceMock = mock(SearchServiceClient.class);
         contextMock = Mockito.mock(TaskContext.class);
         metricsRegistry = Mockito.mock(MetricsRegistry.class);
@@ -101,12 +100,13 @@ public class ContentDeNormalizationTaskTest {
     @Test
     public void shouldCallSearchApiAndUpdateCacheIfEventIsNotPresentInCache() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.OeEvent());
-        stub(contentStoreMock.get(ContentFixture.getContentID())).toReturn(null);
+        when(contentStoreMock.get(ContentFixture.getContentID())).thenReturn(null, getContentCacheJson());
+
         stub(searchServiceMock.search(ContentFixture.getContentID())).toReturn(ContentFixture.getContent());
 
         contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
 
-        verify(contentStoreMock, times(1)).get(ContentFixture.getContentID());
+        verify(contentStoreMock, times(2)).get(ContentFixture.getContentID());
         verify(searchServiceMock, times(1)).search(ContentFixture.getContentID());
         verify(contentStoreMock, times(1)).put(anyString(), anyString());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
@@ -124,7 +124,7 @@ public class ContentDeNormalizationTaskTest {
 
         contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
 
-        verify(contentStoreMock, times(1)).get(ContentFixture.getContentID());
+        verify(contentStoreMock, times(2)).get(ContentFixture.getContentID());
         verify(searchServiceMock, times(1)).search(ContentFixture.getContentID());
         verify(contentStoreMock, times(1)).put(anyString(), anyString());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
@@ -132,6 +132,7 @@ public class ContentDeNormalizationTaskTest {
 
     @Test
     public void shouldProcessAllOeEventsAndUpdateContentData() throws Exception {
+        when(contentStoreMock.get(ContentFixture.getContentID())).thenReturn(null, getContentCacheJson());
         stub(envelopeMock.getMessage()).toReturn(EventFixture.OeEvent());
         stub(searchServiceMock.search("do_30076072")).toReturn(ContentFixture.getContent());
 
@@ -152,11 +153,14 @@ public class ContentDeNormalizationTaskTest {
     @Test
     public void shouldProcessGeLaunchEventAndUpdateContentData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.GeLaunchEvent());
-        stub(searchServiceMock.search("do_30074541")).toReturn(ContentFixture.getContent());
+        stub(searchServiceMock.search(ContentFixture.getContentID())).toReturn(ContentFixture.getContent());
+        ContentCache contentCache = new ContentCache(ContentFixture.getContent(), new Date().getTime() - 100000);
+        String contentCacheJson = new Gson().toJson(contentCache, ContentCache.class);
+        stub(contentStoreMock.get(ContentFixture.getContentID())).toReturn(contentCacheJson);
 
         contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
 
-        verify(searchServiceMock, times(1)).search("do_30074541");
+        verify(searchServiceMock, times(1)).search("do_30076072");
         Map<String, Object> processedMessage = (Map<String, Object>) envelopeMock.getMessage();
 
         assertTrue(processedMessage.containsKey("contentdata"));
@@ -203,4 +207,11 @@ public class ContentDeNormalizationTaskTest {
             }
         };
     }
+
+    private String getContentCacheJson() {
+        Content content = ContentFixture.getContent();
+        ContentCache contentCache = new ContentCache(content, new Date().getTime());
+        return new Gson().toJson(contentCache, ContentCache.class);
+    }
+
 }

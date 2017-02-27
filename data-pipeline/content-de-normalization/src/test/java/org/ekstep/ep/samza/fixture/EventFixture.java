@@ -151,7 +151,7 @@ public class EventFixture {
             "    \"edata\": {\n" +
             "        \"eks\": {\n" +
             "            \"err\": \"\",\n" +
-            "            \"gid\": \"do_30074541\",\n" +
+            "            \"gid\": \"do_30076072\",\n" +
             "            \"tmschm\": \"INTENT\"\n" +
             "        }\n" +
             "    },\n" +
@@ -168,7 +168,10 @@ public class EventFixture {
             "    \"ets\": 1487668045579,\n" +
             "    \"uuid\": \"b5fb3e21-4c62-4654-bde9-70b57edfbd8b126\",\n" +
             "    \"mid\": \"d35199df-25ac-4407-8493-246dc2b6c477\",\n" +
-            "    \"key\": \"ea6f7688-a5fb-4ec9-a851-28fc761e2c8d\"\n" +
+            "    \"key\": \"ea6f7688-a5fb-4ec9-a851-28fc761e2c8d\",\n" +
+            "    \"metadata\": {\n" +
+            "        \"checksum\": \"ea6f7688-a5fb-4ec4-a851-28fc761e2c8d\"\n" +
+            "    }\n" +
             "}";
 
     public static Map<String, Object> OeEvent() {

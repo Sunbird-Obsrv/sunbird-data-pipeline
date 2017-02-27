@@ -16,13 +16,13 @@ public class ContentDeNormalizationSink {
         this.config = config;
     }
 
-    public void sendToSuccess(Event event) {
+    public void toSuccessTopic(Event event) {
         collector.send(new OutgoingMessageEnvelope(
                 new SystemStream("kafka", config.successTopic()), event.getMap()));
         metrics.incCounter();
     }
 
-    public void sendToFailure(Event event) {
+    public void toFailedTopic(Event event) {
         collector.send(new OutgoingMessageEnvelope(
                 new SystemStream("kafka", config.failedTopic()), event.getMap()));
     }
