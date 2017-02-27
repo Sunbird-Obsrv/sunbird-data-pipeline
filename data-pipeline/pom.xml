@@ -31,6 +31,7 @@
     <module>public-telemetry</module>
     <module>telemetry-cleaner</module>
     <module>ep-logger</module>
+    <module>content-de-normalization</module>
   </modules>
 
   <properties>
