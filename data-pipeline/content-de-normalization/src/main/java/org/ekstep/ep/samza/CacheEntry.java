@@ -2,12 +2,12 @@ package org.ekstep.ep.samza;
 
 import java.util.Date;
 
-public class ContentCache {
-    private Content content;
+public class CacheEntry<T> {
+    private T value;
     private long cachedTime;
 
-    public ContentCache(Content content, long cachedTime) {
-        this.content = content;
+    public CacheEntry(T value, long cachedTime) {
+        this.value = value;
         this.cachedTime = cachedTime;
     }
 
@@ -15,8 +15,8 @@ public class ContentCache {
         return cachedTime;
     }
 
-    public Content getContent() {
-        return content;
+    public T getValue() {
+        return value;
     }
 
     public boolean expired(long cacheTTL) {

@@ -3,29 +3,43 @@ package org.ekstep.ep.samza;
 import com.google.gson.Gson;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.task.TaskContext;
+import org.ekstep.ep.samza.logger.Logger;
+
+import java.lang.reflect.Type;
+import java.util.Date;
 
 public class CacheService<K, V> {
+    static Logger LOGGER = new Logger(CacheService.class);
     private KeyValueStore<Object, Object> store;
-    private Class cachedValueClass;
+    private Type cachedValueType;
 
     //for testing
-    public CacheService(KeyValueStore<Object, Object> store, Class cachedValueClass) {
+    public CacheService(KeyValueStore<Object, Object> store, Type cachedValueType) {
         this.store = store;
-        this.cachedValueClass = cachedValueClass;
+        this.cachedValueType = cachedValueType;
     }
 
-    public CacheService(TaskContext context, String storeName, Class<ContentCache> cachedValueClass) {
-        this.cachedValueClass = cachedValueClass;
+    public CacheService(TaskContext context, String storeName, Class<CacheEntry> cachedValueType) {
+        this.cachedValueType = cachedValueType;
         this.store = (KeyValueStore<Object, Object>) context.getStore(storeName);
     }
 
-    public V get(K key) {
+    public V get(K key, long cacheTTL) {
         String value = (String) store.get(key);
-        return value != null ? (V) new Gson().<V>fromJson(value, cachedValueClass) : null;
+        if (value == null) {
+            return null;
+        }
+
+        CacheEntry<V> cacheEntry = (CacheEntry<V>) new Gson().<V>fromJson(value, cachedValueType);
+        if (cacheEntry.expired(cacheTTL)) {
+            LOGGER.info((String) key, "CACHE ENTRY EXPIRED", cacheEntry);
+            return null;
+        }
+        return cacheEntry.getValue();
     }
 
     public void put(K key, V value) {
-        String valueJson = new Gson().toJson(value);
+        String valueJson = new Gson().toJson(new CacheEntry(value, new Date().getTime()));
         store.put(key, valueJson);
     }
 }

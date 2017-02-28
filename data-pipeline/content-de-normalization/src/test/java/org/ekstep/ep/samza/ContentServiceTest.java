@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.ekstep.ep.samza.external.SearchServiceClient;
 import org.ekstep.ep.samza.fixture.ContentFixture;
@@ -19,14 +20,13 @@ public class ContentServiceTest {
     private long cacheTTL;
     private KeyValueStore contentStoreMock;
     private CacheService cacheService;
-    private ContentCache contentCache;
 
     @Before
     public void setUp() {
         searchServiceMock = mock(SearchServiceClient.class);
         contentStoreMock = mock(KeyValueStore.class);
-        contentCache = mock(ContentCache.class);
-        cacheService = new CacheService(contentStoreMock, ContentCache.class);
+        cacheService = new CacheService(contentStoreMock, new TypeToken<CacheEntry<Content>>() {
+        }.getType());
         cacheTTL = 6000;
     }
 
@@ -65,10 +65,13 @@ public class ContentServiceTest {
     @Test
     public void shouldCallSearchServiceAndUpdateCacheIfCacheIsExpired() throws IOException {
 
-        ContentCache contentCache = new ContentCache(ContentFixture.getContent(), new Date().getTime() - 10000);
-        String contentCacheJson = new Gson().toJson(contentCache, ContentCache.class);
+        CacheEntry expiredContent = new CacheEntry(ContentFixture.getContent(), new Date().getTime() - 10000);
+        CacheEntry validContent = new CacheEntry(ContentFixture.getContent(), new Date().getTime() + 10000);
 
-        stub(contentStoreMock.get(getContentID())).toReturn(contentCacheJson);
+        when(contentStoreMock.get(getContentID()))
+                .thenReturn(
+                        new Gson().toJson(expiredContent, CacheEntry.class),
+                        new Gson().toJson(validContent, CacheEntry.class));
         stub(searchServiceMock.search(getContentID())).toReturn(ContentFixture.getContent());
 
         ContentService contentService = new ContentService(searchServiceMock, cacheService, cacheTTL);
@@ -85,8 +88,8 @@ public class ContentServiceTest {
     @Test
     public void shouldNotCallSearchServiceIfCacheIsNotExpired() throws IOException {
 
-        ContentCache contentCache = new ContentCache(ContentFixture.getContent(), new Date().getTime() + 10000);
-        String contentCacheJson = new Gson().toJson(contentCache, ContentCache.class);
+        CacheEntry contentCache = new CacheEntry(ContentFixture.getContent(), new Date().getTime() + 10000);
+        String contentCacheJson = new Gson().toJson(contentCache, CacheEntry.class);
 
         stub(contentStoreMock.get(getContentID())).toReturn(contentCacheJson);
         stub(searchServiceMock.search(getContentID())).toReturn(ContentFixture.getContent());
@@ -106,7 +109,7 @@ public class ContentServiceTest {
 
     private String getContentCacheJson() {
         Content content = ContentFixture.getContent();
-        ContentCache contentCache = new ContentCache(content, new Date().getTime());
-        return new Gson().toJson(contentCache, ContentCache.class);
+        CacheEntry contentCache = new CacheEntry(content, new Date().getTime());
+        return new Gson().toJson(contentCache, CacheEntry.class);
     }
 }

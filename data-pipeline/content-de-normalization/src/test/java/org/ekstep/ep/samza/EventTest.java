@@ -12,7 +12,7 @@ public class EventTest {
     @Test
     public void testGetContentIdOfGeLaunchEvent() throws Exception {
         Event e = new Event(EventFixture.GeLaunchEvent());
-        assertEquals("do_30074541", e.getContentId());
+        assertEquals("do_30076072", e.getContentId());
     }
 
     @Test

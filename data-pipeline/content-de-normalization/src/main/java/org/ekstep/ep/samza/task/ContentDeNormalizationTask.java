@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.task;
 
+import com.google.gson.reflect.TypeToken;
 import org.apache.samza.config.Config;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
@@ -39,8 +40,9 @@ public class ContentDeNormalizationTask implements StreamTask, InitableTask, Win
         metrics = new ContentDeNormalizationMetrics(context);
         cleaner = new CleanerFactory(this.config.eventsToAllow(), this.config.eventsToSkip());
         CacheService cacheService = contentStore != null
-                ? new CacheService(contentStore, ContentCache.class)
-                : new CacheService(context, "content-store", ContentCache.class);
+                ? new CacheService(contentStore, new TypeToken<CacheEntry<Content>>() {
+        }.getType())
+                : new CacheService(context, "content-store", CacheEntry.class);
         SearchServiceClient searchServiceClient =
                 searchService == null
                         ? new SearchServiceClient(this.config.searchServiceEndpoint())

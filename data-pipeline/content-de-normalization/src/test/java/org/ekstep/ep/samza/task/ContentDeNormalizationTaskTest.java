@@ -12,9 +12,8 @@ import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.Content;
-import org.ekstep.ep.samza.ContentCache;
+import org.ekstep.ep.samza.CacheEntry;
 import org.ekstep.ep.samza.ContentDeNormalizationMetrics;
-import org.ekstep.ep.samza.Event;
 import org.ekstep.ep.samza.external.SearchServiceClient;
 import org.ekstep.ep.samza.fixture.ContentFixture;
 import org.ekstep.ep.samza.fixture.EventFixture;
@@ -85,8 +84,8 @@ public class ContentDeNormalizationTaskTest {
     public void shouldProcessEventFromCacheIfPresentAndSkipServiceCall() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.OeEvent());
 
-        ContentCache contentCache = new ContentCache(ContentFixture.getContent(), new Date().getTime());
-        String contentCacheJson = new Gson().toJson(contentCache, ContentCache.class);
+        CacheEntry contentCache = new CacheEntry(ContentFixture.getContent(), new Date().getTime());
+        String contentCacheJson = new Gson().toJson(contentCache, CacheEntry.class);
 
         stub(contentStoreMock.get(ContentFixture.getContentID())).toReturn(contentCacheJson);
 
@@ -115,8 +114,8 @@ public class ContentDeNormalizationTaskTest {
     @Test
     public void shouldCallSearchApiAndUpdateCacheIfCacheIsExpired() throws Exception {
 
-        ContentCache contentCache = new ContentCache(ContentFixture.getContent(), new Date().getTime() - 100000);
-        String contentCacheJson = new Gson().toJson(contentCache, ContentCache.class);
+        CacheEntry contentCache = new CacheEntry(ContentFixture.getContent(), new Date().getTime() - 100000);
+        String contentCacheJson = new Gson().toJson(contentCache, CacheEntry.class);
 
         stub(contentStoreMock.get(ContentFixture.getContentID())).toReturn(contentCacheJson);
         stub(envelopeMock.getMessage()).toReturn(EventFixture.OeEvent());
@@ -154,9 +153,14 @@ public class ContentDeNormalizationTaskTest {
     public void shouldProcessGeLaunchEventAndUpdateContentData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.GeLaunchEvent());
         stub(searchServiceMock.search(ContentFixture.getContentID())).toReturn(ContentFixture.getContent());
-        ContentCache contentCache = new ContentCache(ContentFixture.getContent(), new Date().getTime() - 100000);
-        String contentCacheJson = new Gson().toJson(contentCache, ContentCache.class);
-        stub(contentStoreMock.get(ContentFixture.getContentID())).toReturn(contentCacheJson);
+
+        CacheEntry expiredContent = new CacheEntry(ContentFixture.getContent(), new Date().getTime() - 100000);
+        CacheEntry validContent = new CacheEntry(ContentFixture.getContent(), new Date().getTime() + 100000);
+
+        when(contentStoreMock.get(ContentFixture.getContentID()))
+                .thenReturn(
+                        new Gson().toJson(expiredContent, CacheEntry.class),
+                        new Gson().toJson(validContent, CacheEntry.class));
 
         contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
 
@@ -210,8 +214,8 @@ public class ContentDeNormalizationTaskTest {
 
     private String getContentCacheJson() {
         Content content = ContentFixture.getContent();
-        ContentCache contentCache = new ContentCache(content, new Date().getTime());
-        return new Gson().toJson(contentCache, ContentCache.class);
+        CacheEntry contentCache = new CacheEntry(content, new Date().getTime());
+        return new Gson().toJson(contentCache, CacheEntry.class);
     }
 
 }
