@@ -1,7 +1,7 @@
 package org.ekstep.ep.samza.external;
 
 
-import org.ekstep.ep.samza.Content;
+import org.ekstep.ep.samza.domain.Content;
 
 import java.util.ArrayList;
 import java.util.Map;

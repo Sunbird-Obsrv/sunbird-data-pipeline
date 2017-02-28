@@ -1,6 +1,7 @@
-package org.ekstep.ep.samza;
+package org.ekstep.ep.samza.task;
 
 import org.apache.samza.system.IncomingMessageEnvelope;
+import org.ekstep.ep.samza.domain.Event;
 
 import java.util.Map;
 

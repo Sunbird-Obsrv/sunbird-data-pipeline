@@ -1,7 +1,7 @@
 package org.ekstep.ep.samza.fixture;
 
 import com.google.gson.Gson;
-import org.ekstep.ep.samza.Content;
+import org.ekstep.ep.samza.domain.Content;
 import java.util.Map;
 
 public class ContentFixture {

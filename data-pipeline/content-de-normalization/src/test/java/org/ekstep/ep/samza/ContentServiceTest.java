@@ -3,8 +3,12 @@ package org.ekstep.ep.samza;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.samza.storage.kv.KeyValueStore;
+import org.ekstep.ep.samza.cache.CacheEntry;
+import org.ekstep.ep.samza.cache.ContentService;
+import org.ekstep.ep.samza.domain.Content;
 import org.ekstep.ep.samza.external.SearchServiceClient;
 import org.ekstep.ep.samza.fixture.ContentFixture;
+import org.ekstep.ep.samza.service.CacheService;
 import org.junit.Before;
 import org.junit.Test;
 

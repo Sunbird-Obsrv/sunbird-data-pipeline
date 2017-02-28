@@ -1,4 +1,4 @@
-package org.ekstep.ep.samza;
+package org.ekstep.ep.samza.task;
 
 
 import org.apache.samza.config.Config;

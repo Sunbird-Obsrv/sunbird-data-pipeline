@@ -2,7 +2,7 @@ package org.ekstep.ep.samza.external;
 
 import com.google.gson.Gson;
 import okhttp3.*;
-import org.ekstep.ep.samza.Content;
+import org.ekstep.ep.samza.domain.Content;
 import org.ekstep.ep.samza.logger.Logger;
 
 import java.io.IOException;

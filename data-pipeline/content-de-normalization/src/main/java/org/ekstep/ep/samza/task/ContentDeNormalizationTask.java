@@ -5,10 +5,14 @@ import org.apache.samza.config.Config;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.task.*;
-import org.ekstep.ep.samza.*;
+import org.ekstep.ep.samza.cache.CacheEntry;
+import org.ekstep.ep.samza.cache.ContentService;
 import org.ekstep.ep.samza.cleaner.CleanerFactory;
+import org.ekstep.ep.samza.domain.Content;
 import org.ekstep.ep.samza.external.SearchServiceClient;
 import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.service.CacheService;
+import org.ekstep.ep.samza.service.ContentDeNormalizationService;
 
 public class ContentDeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
     static Logger LOGGER = new Logger(ContentDeNormalizationTask.class);

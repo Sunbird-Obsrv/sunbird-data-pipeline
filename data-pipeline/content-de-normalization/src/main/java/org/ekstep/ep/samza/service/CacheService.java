@@ -1,8 +1,9 @@
-package org.ekstep.ep.samza;
+package org.ekstep.ep.samza.service;
 
 import com.google.gson.Gson;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.task.TaskContext;
+import org.ekstep.ep.samza.cache.CacheEntry;
 import org.ekstep.ep.samza.logger.Logger;
 
 import java.lang.reflect.Type;

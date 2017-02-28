@@ -1,4 +1,4 @@
-package org.ekstep.ep.samza;
+package org.ekstep.ep.samza.cache;
 
 import java.util.Date;
 

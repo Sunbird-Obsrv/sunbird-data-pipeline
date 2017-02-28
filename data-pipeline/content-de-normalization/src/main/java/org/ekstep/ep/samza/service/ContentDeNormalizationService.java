@@ -1,7 +1,12 @@
-package org.ekstep.ep.samza;
+package org.ekstep.ep.samza.service;
 
+import org.ekstep.ep.samza.cache.ContentService;
 import org.ekstep.ep.samza.cleaner.CleanerFactory;
+import org.ekstep.ep.samza.domain.Content;
+import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.task.ContentDeNormalizationSink;
+import org.ekstep.ep.samza.task.ContentDeNormalizationSource;
 
 public class ContentDeNormalizationService {
     static Logger LOGGER = new Logger(ContentDeNormalizationService.class);

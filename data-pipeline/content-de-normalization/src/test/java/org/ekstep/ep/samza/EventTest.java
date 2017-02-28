@@ -1,8 +1,8 @@
 package org.ekstep.ep.samza;
 
+import org.ekstep.ep.samza.domain.Event;
 import org.junit.Test;
 
-import java.util.HashMap;
 import org.ekstep.ep.samza.fixture.EventFixture;
 
 import static org.junit.Assert.*;
