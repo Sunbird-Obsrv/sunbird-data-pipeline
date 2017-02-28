@@ -20,14 +20,14 @@ public class SearchResponse {
     }
 
     public Content content(){
-        if (result.content.isEmpty()) {
-            return null;
+        if (result.count > 0) {
+            return result.content.get(0);
         }
-        return result.content.get(0);
+        return null;
     }
 
     private class ContentResponse {
         private ArrayList<Content> content;
+        private Integer count;
     }
-
 }

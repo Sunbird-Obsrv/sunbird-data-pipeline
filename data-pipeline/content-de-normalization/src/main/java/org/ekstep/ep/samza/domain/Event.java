@@ -62,10 +62,30 @@ public class Event {
     }
 
     public void updateContent(Content content) {
+        updateMetadata(content);
         HashMap<String, Object> contentData = new HashMap<String, Object>();
         contentData.put("name", content.name());
         contentData.put("description", content.description());
+        contentData.put("ageGroup", content.ageGroup());
+        contentData.put("mediaType", content.mediaType());
+        contentData.put("contentType", content.contentType());
+        contentData.put("language", content.language());
+        contentData.put("owner", content.owner());
+        contentData.put("lastUpdatedOn", content.lastUpdatedOn());
         map.put("contentdata",contentData);
+    }
+
+    private void updateMetadata(Content content) {
+        Map<String, Object> metadata = (Map<String, Object>) map.get("metadata");
+        if (metadata != null) {
+            metadata.put("cachehit",content.getCacheHit());
+            return;
+        }
+        metadata = new HashMap<String, Object>();
+        metadata.put("cachehit",content.getCacheHit());
+        map.put("metadata", metadata);
+
+        LOGGER.info(id(), "METADATA CACHEHIT - ADDED " + metadata);
     }
 
     public String getEid() {

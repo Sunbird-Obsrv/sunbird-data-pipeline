@@ -11,14 +11,13 @@ public class Content {
     private ArrayList<String> language;
     private String owner;
     private String lastUpdatedOn;
+    private boolean cacheHit;
 
     public String name() {
         return name;
     }
 
-    public String description() {
-        return description;
-    }
+    public String description() {return description;}
 
     public ArrayList<String> ageGroup() {
         return ageGroup;
@@ -42,6 +41,14 @@ public class Content {
 
     public String lastUpdatedOn() {
         return lastUpdatedOn;
+    }
+
+    public void setCacheHit(boolean b) {
+        this.cacheHit = b;
+    }
+
+    public boolean getCacheHit() {
+        return cacheHit;
     }
 }
 

@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.util.Date;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class ContentServiceTest {
@@ -87,6 +89,7 @@ public class ContentServiceTest {
 
         assertEquals(content.name(), ContentFixture.getContentMap().get("name"));
         assertEquals(content.description(), ContentFixture.getContentMap().get("description"));
+        assertFalse(content.getCacheHit());
     }
 
     @Test
@@ -105,6 +108,7 @@ public class ContentServiceTest {
 
         assertEquals(content.name(), ContentFixture.getContentMap().get("name"));
         assertEquals(content.description(), ContentFixture.getContentMap().get("description"));
+        assertTrue(content.getCacheHit());
     }
 
     private String getContentID() {

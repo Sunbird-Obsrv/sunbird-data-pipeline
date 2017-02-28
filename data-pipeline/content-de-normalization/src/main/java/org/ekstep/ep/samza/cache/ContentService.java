@@ -23,6 +23,7 @@ public class ContentService {
         Content cachedContent = cacheService.get(contentId, cacheTTL);
         if (cachedContent != null) {
             LOGGER.info(id, "CONTENT CACHED", contentId);
+            cachedContent.setCacheHit(true);
             return cachedContent;
         }
 
@@ -36,6 +37,7 @@ public class ContentService {
         Content content = searchService.search(contentId);
         if (content != null) {
             LOGGER.info(id, "WRITING TO CACHE", contentId);
+            content.setCacheHit(false);
             cacheService.put(contentId, content);
         }
     }
