@@ -62,17 +62,24 @@ public class Event {
     }
 
     public void updateContent(Content content) {
-        updateMetadata(content);
         HashMap<String, Object> contentData = new HashMap<String, Object>();
         contentData.put("name", content.name());
+        contentData.put("identifier", content.identifier());
+        contentData.put("pkgVersion", content.pkgVersion());
         contentData.put("description", content.description());
-        contentData.put("ageGroup", content.ageGroup());
         contentData.put("mediaType", content.mediaType());
         contentData.put("contentType", content.contentType());
-        contentData.put("language", content.language());
         contentData.put("owner", content.owner());
         contentData.put("lastUpdatedOn", content.lastUpdatedOn());
+        contentData.put("duration", content.duration());
+        contentData.put("language", content.language());
+        contentData.put("ageGroup", content.ageGroup());
+        contentData.put("keywords", content.keywords());
+        contentData.put("concepts", content.concepts());
+        contentData.put("gradeLevel", content.gradeLevel());
         map.put("contentdata",contentData);
+
+        updateMetadata(content);
     }
 
     private void updateMetadata(Content content) {

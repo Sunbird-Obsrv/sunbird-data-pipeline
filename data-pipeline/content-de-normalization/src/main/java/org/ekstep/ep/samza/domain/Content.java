@@ -4,51 +4,55 @@ import java.util.ArrayList;
 
 public class Content {
     private String name;
+    private String identifier;
+    private Integer pkgVersion;
     private String description;
-    private ArrayList<String> ageGroup;
     private String mediaType;
     private String contentType;
-    private ArrayList<String> language;
     private String owner;
     private String lastUpdatedOn;
+    private String duration;
+
     private boolean cacheHit;
 
-    public String name() {
-        return name;
+    private ArrayList<String> language;
+    private ArrayList<String> ageGroup;
+    private ArrayList<String> keywords;
+    private ArrayList<String> concepts;
+    private ArrayList<String> gradeLevel;
+
+    public String name() { return name; }
+
+    public String identifier() {return identifier;}
+
+    public Integer pkgVersion() {
+        return pkgVersion;
     }
 
     public String description() {return description;}
 
-    public ArrayList<String> ageGroup() {
-        return ageGroup;
-    }
+    public String mediaType() { return mediaType; }
 
-    public String mediaType() {
-        return mediaType;
-    }
+    public String contentType() { return contentType; }
 
-    public String contentType() {
-        return contentType;
-    }
+    public String owner() { return owner; }
 
-    public ArrayList<String> language() {
-        return language;
-    }
+    public String lastUpdatedOn() { return lastUpdatedOn; }
 
-    public String owner() {
-        return owner;
-    }
+    public String duration() { return duration; }
 
-    public String lastUpdatedOn() {
-        return lastUpdatedOn;
-    }
+    public void setCacheHit(boolean b) { this.cacheHit = b;}
 
-    public void setCacheHit(boolean b) {
-        this.cacheHit = b;
-    }
+    public boolean getCacheHit() { return cacheHit; }
 
-    public boolean getCacheHit() {
-        return cacheHit;
-    }
+    public ArrayList<String> ageGroup() { return ageGroup; }
+
+    public ArrayList<String> language() { return language; }
+
+    public ArrayList<String> keywords() { return keywords; }
+
+    public ArrayList<String> concepts() { return concepts; }
+
+    public ArrayList<String> gradeLevel() { return gradeLevel; }
 }
 

@@ -46,7 +46,11 @@ public class ContentServiceTest {
         Content content = contentService.getContent("someid", getContentID());
 
         assertEquals(content.name(), ContentFixture.getContentMap().get("name"));
+        assertEquals(content.identifier(), ContentFixture.getContentMap().get("identifier"));
         assertEquals(content.description(), ContentFixture.getContentMap().get("description"));
+        assertEquals(content.pkgVersion(), (Integer) ((Double) ContentFixture.getContentMap().get("pkgVersion")).intValue());
+        assertEquals(content.keywords(), ContentFixture.getContentMap().get("keywords"));
+        assertEquals(content.concepts(), ContentFixture.getContentMap().get("concepts"));
         assertEquals(content.ageGroup(), ContentFixture.getContentMap().get("ageGroup"));
         assertEquals(content.mediaType(), ContentFixture.getContentMap().get("mediaType"));
         assertEquals(content.contentType(), ContentFixture.getContentMap().get("contentType"));
