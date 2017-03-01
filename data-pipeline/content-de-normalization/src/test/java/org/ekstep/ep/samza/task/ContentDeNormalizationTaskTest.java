@@ -11,8 +11,8 @@ import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
-import org.ekstep.ep.samza.domain.Content;
 import org.ekstep.ep.samza.cache.CacheEntry;
+import org.ekstep.ep.samza.domain.Content;
 import org.ekstep.ep.samza.external.SearchServiceClient;
 import org.ekstep.ep.samza.fixture.ContentFixture;
 import org.ekstep.ep.samza.fixture.EventFixture;
@@ -66,7 +66,8 @@ public class ContentDeNormalizationTaskTest {
         stub(configMock.get("events.to.skip", "")).toReturn(EVENTS_TO_SKIP);
         stub(configMock.get("events.to.allow", "")).toReturn(EVENTS_TO_ALLOW);
         stub(configMock.get("content.store.ttl", "60000")).toReturn(CONTENT_CACHE_TTL);
-        stub(metricsRegistry.newCounter(ContentDeNormalizationMetrics.class.getName(), "message-count")).toReturn(counter);
+        stub(metricsRegistry.newCounter(anyString(), anyString()))
+                .toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
 
         contentDeNormalizationTask = new ContentDeNormalizationTask(configMock, contextMock, searchServiceMock, contentStoreMock);

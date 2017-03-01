@@ -43,10 +43,10 @@ public class ContentDeNormalizationTask implements StreamTask, InitableTask, Win
         this.config = new ContentDeNormalizationConfig(config);
         metrics = new ContentDeNormalizationMetrics(context);
         cleaner = new CleanerFactory(this.config.eventsToAllow(), this.config.eventsToSkip());
-        CacheService cacheService = contentStore != null
-                ? new CacheService(contentStore, new TypeToken<CacheEntry<Content>>() {
-        }.getType())
-                : new CacheService(context, "content-store", CacheEntry.class);
+        CacheService<String, Content> cacheService = contentStore != null
+                ? new CacheService<String, Content>(contentStore, new TypeToken<CacheEntry<Content>>() {
+        }.getType(), metrics)
+                : new CacheService<String, Content>(context, "content-store", CacheEntry.class, metrics);
         SearchServiceClient searchServiceClient =
                 searchService == null
                         ? new SearchServiceClient(this.config.searchServiceEndpoint())

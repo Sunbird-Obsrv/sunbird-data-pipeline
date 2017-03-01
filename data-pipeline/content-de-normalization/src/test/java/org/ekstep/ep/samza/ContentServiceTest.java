@@ -9,6 +9,7 @@ import org.ekstep.ep.samza.domain.Content;
 import org.ekstep.ep.samza.external.SearchServiceClient;
 import org.ekstep.ep.samza.fixture.ContentFixture;
 import org.ekstep.ep.samza.service.CacheService;
+import org.ekstep.ep.samza.task.ContentDeNormalizationMetrics;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,22 +24,22 @@ import static org.mockito.Mockito.*;
 public class ContentServiceTest {
 
     private SearchServiceClient searchServiceMock;
-    private long cacheTTL;
+    private long cacheTTL = 6000;
     private KeyValueStore contentStoreMock;
     private CacheService cacheService;
+    private ContentDeNormalizationMetrics metricsMock;
 
     @Before
     public void setUp() {
         searchServiceMock = mock(SearchServiceClient.class);
         contentStoreMock = mock(KeyValueStore.class);
+        metricsMock = mock(ContentDeNormalizationMetrics.class);
         cacheService = new CacheService(contentStoreMock, new TypeToken<CacheEntry<Content>>() {
-        }.getType());
-        cacheTTL = 6000;
+        }.getType(), metricsMock);
     }
 
     @Test
     public void shouldProcessEventsFromCacheIfPresent() throws IOException {
-
         stub(contentStoreMock.get(getContentID())).toReturn(getContentCacheJson());
 
         ContentService contentService = new ContentService(searchServiceMock, cacheService, cacheTTL);
@@ -52,6 +53,8 @@ public class ContentServiceTest {
         assertEquals(content.language(), ContentFixture.getContentMap().get("language"));
         assertEquals(content.owner(), ContentFixture.getContentMap().get("owner"));
         assertEquals(content.lastUpdatedOn(), ContentFixture.getContentMap().get("lastUpdatedOn"));
+        verify(metricsMock).incCacheHitCounter();
+        verifyNoMoreInteractions(metricsMock);
     }
 
     @Test
@@ -66,6 +69,9 @@ public class ContentServiceTest {
         verify(contentStoreMock, times(2)).get(getContentID());
         verify(contentStoreMock, times(1)).put(anyString(), anyString());
         verify(searchServiceMock, times(1)).search(getContentID());
+        verify(metricsMock).incCacheMissCounter();
+        verify(metricsMock).incCacheHitCounter();
+        verifyNoMoreInteractions(metricsMock);
     }
 
     @Test
@@ -90,6 +96,9 @@ public class ContentServiceTest {
         assertEquals(content.name(), ContentFixture.getContentMap().get("name"));
         assertEquals(content.description(), ContentFixture.getContentMap().get("description"));
         assertFalse(content.getCacheHit());
+        verify(metricsMock).incCacheHitCounter();
+        verify(metricsMock).incCacheExpiredCounter();
+        verifyNoMoreInteractions(metricsMock);
     }
 
     @Test
@@ -109,6 +118,8 @@ public class ContentServiceTest {
         assertEquals(content.name(), ContentFixture.getContentMap().get("name"));
         assertEquals(content.description(), ContentFixture.getContentMap().get("description"));
         assertTrue(content.getCacheHit());
+        verify(metricsMock).incCacheHitCounter();
+        verifyNoMoreInteractions(metricsMock);
     }
 
     private String getContentID() {
