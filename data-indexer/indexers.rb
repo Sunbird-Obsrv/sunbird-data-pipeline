@@ -54,7 +54,7 @@ module Indexers
             },
             {
               integer_fields: {
-                  match: "sims|atmpts|failedatmpts|correct|incorrect|total|age_completed_years",
+                  match: "sims|atmpts|failedatmpts|correct|incorrect|total|age_completed_years|pkgVersion",
                   match_pattern: "regex",
                   mapping: {
                       type: "integer",
@@ -65,7 +65,7 @@ module Indexers
             },
             {
               date_fields: {
-                  match: "ts|te|time|timestamp|ets",
+                  match: "ts|te|time|timestamp|ets|lastUpdatedOn",
                   match_pattern: "regex",
                   mapping: {
                       type: "date",
