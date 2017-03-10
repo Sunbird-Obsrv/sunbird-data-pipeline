@@ -45,10 +45,16 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-        Map<String, Object> message = (Map<String, Object>) envelope.getMessage();
-        Event event = getEvent(message);
-        processEvent(collector, event);
-        messageCount.inc();
+        Event event = null;
+        try {
+            Map<String, Object> message = (Map<String, Object>) envelope.getMessage();
+            event = getEvent(message);
+            processEvent(collector, event);
+            messageCount.inc();
+        } catch (Exception e) {
+            LOGGER.error(event.id(), "PARTNER PROCESSING FAILED", e);
+            LOGGER.error(event.id(), "TODO: need a failed topic for partner job");
+        }
     }
 
     public void processEvent(MessageCollector collector, Event event) {
