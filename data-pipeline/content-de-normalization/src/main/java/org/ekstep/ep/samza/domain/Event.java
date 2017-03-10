@@ -2,54 +2,50 @@ package org.ekstep.ep.samza.domain;
 
 import org.ekstep.ep.samza.logger.Logger;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Event {
     static Logger LOGGER = new Logger(Event.class);
+    private Map<String, Object> contentTaxonomy;
     public Map<String, Object> map;
 
-    public Event(Map<String,Object> map) {
+    public Event(Map<String, Object> map, Map<String, Object> contentTaxonomy) {
         this.map = map;
-    }
-
-    public Map<String,Object> getGData(){
-        return getMap() != null &&
-                getMap().containsKey("gdata")
-                ? (Map<String,Object>) getMap().get("gdata")
-                : null;
-    }
-
-    public Map<String,Object> getEData(){
-        return getMap() != null &&
-                getMap().containsKey("edata")
-                ? (Map<String,Object>) getMap().get("edata")
-                : null;
-    }
-
-    public Map<String,Object> getEks(){
-        return getMap() != null && getEData() != null &&
-                getEData().containsKey("eks")
-                ? (Map<String,Object>) getEData().get("eks")
-                : null;
+        this.contentTaxonomy = contentTaxonomy;
     }
 
     public Map<String, Object> getMap(){
         return this.map;
     }
 
-
     public String getContentId(){
-        if(getEid().equals("GE_LAUNCH_GAME")){
-            Map<String, Object> eks = getEks();
-            if(eks != null && eks.containsKey("gid")){
-                return (String) eks.get("gid");
+        for (String event : contentTaxonomy.keySet()) {
+            if(getEid().startsWith(event.toUpperCase())){
+                ArrayList<String> fields = getRemovableFields(event);
+                return getContentId(map, fields);
             }
-        } else {
-            Map<String, Object> gData = getGData();
-            if (gData != null && gData.containsKey("id")) {
-                return (String) gData.get("id");
+        }
+        return null;
+    }
+
+    private ArrayList<String> getRemovableFields(String event) {
+        ArrayList<String> fields = new ArrayList<String>();
+        fields.addAll((Collection<? extends String>) contentTaxonomy.get(event));
+        return fields;
+    }
+
+    //TODO: Make this method more readable when writing ItemDenormalizationJob
+    private String getContentId(Map<String, Object> map, ArrayList<String> fields) {
+        String key = fields.remove(0);
+        if(key != null && map.containsKey(key)){
+            Object value = map.get(key);
+            if(value instanceof String){
+                return (String) value;
             }
+            return getContentId((Map<String, Object>) map.get(key), fields);
         }
         return null;
     }

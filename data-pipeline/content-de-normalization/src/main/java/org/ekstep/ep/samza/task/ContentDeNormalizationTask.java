@@ -14,6 +14,8 @@ import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.service.CacheService;
 import org.ekstep.ep.samza.service.ContentDeNormalizationService;
 
+import java.util.HashMap;
+
 public class ContentDeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
     static Logger LOGGER = new Logger(ContentDeNormalizationTask.class);
     private CleanerFactory cleaner;
@@ -21,6 +23,7 @@ public class ContentDeNormalizationTask implements StreamTask, InitableTask, Win
     private ContentDeNormalizationConfig config;
     private ContentDeNormalizationMetrics metrics;
     private ContentDeNormalizationService service;
+    private HashMap<String, Object> contentTaxonomy;
 
 
     public ContentDeNormalizationTask(Config config, TaskContext context, SearchServiceClient searchService,
@@ -52,13 +55,14 @@ public class ContentDeNormalizationTask implements StreamTask, InitableTask, Win
                         ? new SearchServiceClient(this.config.searchServiceEndpoint())
                         : searchService;
         this.contentService = new ContentService(searchServiceClient, cacheService, this.config.cacheTTL());
-        service = new ContentDeNormalizationService(cleaner, contentService);
+        service = new ContentDeNormalizationService(cleaner, contentService, this.config);
+        contentTaxonomy = this.config.contentTaxonomy();
     }
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector,
                         TaskCoordinator taskCoordinator) throws Exception {
-        ContentDeNormalizationSource source = new ContentDeNormalizationSource(envelope);
+        ContentDeNormalizationSource source = new ContentDeNormalizationSource(envelope, contentTaxonomy);
         ContentDeNormalizationSink sink = new ContentDeNormalizationSink(collector, metrics, config);
 
         service.process(source, sink);

@@ -5,6 +5,7 @@ import org.ekstep.ep.samza.cleaner.CleanerFactory;
 import org.ekstep.ep.samza.domain.Content;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.task.ContentDeNormalizationConfig;
 import org.ekstep.ep.samza.task.ContentDeNormalizationSink;
 import org.ekstep.ep.samza.task.ContentDeNormalizationSource;
 
@@ -12,10 +13,12 @@ public class ContentDeNormalizationService {
     static Logger LOGGER = new Logger(ContentDeNormalizationService.class);
     private final CleanerFactory cleanerFactory;
     private final ContentService contentService;
+    private final ContentDeNormalizationConfig config;
 
-    public ContentDeNormalizationService(CleanerFactory cleanerFactory, ContentService contentService) {
+    public ContentDeNormalizationService(CleanerFactory cleanerFactory, ContentService contentService, ContentDeNormalizationConfig config) {
         this.cleanerFactory = cleanerFactory;
         this.contentService = contentService;
+        this.config = config;
     }
 
     public void process(ContentDeNormalizationSource source, ContentDeNormalizationSink sink) {

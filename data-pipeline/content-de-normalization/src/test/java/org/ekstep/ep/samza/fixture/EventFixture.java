@@ -57,44 +57,46 @@ public class EventFixture {
             "}";
 
     public static final String ME_EVENT_JSON = "{\n" +
-            "    \"eid\": \"ME_GENIE_USAGE_SUMMARY\",\n" +
-            "    \"ets\": 1487660892491,\n" +
-            "    \"syncts\": 1487622011190,\n" +
+            "    \"eid\": \"ME_ITEM_USAGE_SUMMARY\",\n" +
+            "    \"ets\": 1489111212816,\n" +
+            "    \"syncts\": 1489069555431,\n" +
             "    \"ver\": \"1.0\",\n" +
-            "    \"mid\": \"1661C8EA1D5209D6ACF708FA0602BB49\",\n" +
+            "    \"mid\": \"07FF6BB2531844F506CBDE67E95E8357\",\n" +
             "    \"uid\": \"\",\n" +
             "    \"context\": {\n" +
             "        \"pdata\": {\n" +
             "            \"id\": \"AnalyticsDataPipeline\",\n" +
-            "            \"model\": \"GenieUsageSummaryModel\",\n" +
+            "            \"model\": \"ItemSummaryModel\",\n" +
             "            \"ver\": \"1.0\"\n" +
             "        },\n" +
             "        \"granularity\": \"DAY\",\n" +
             "        \"date_range\": {\n" +
-            "            \"from\": 1487621998810,\n" +
-            "            \"to\": 1487622007043\n" +
+            "            \"from\": 1489069599278,\n" +
+            "            \"to\": 1489069621675\n" +
             "        }\n" +
             "    },\n" +
             "    \"dimensions\": {\n" +
             "        \"tag\": \"all\",\n" +
-            "        \"period\": 20170221\n" +
+            "        \"period\": 20170309,\n" +
+            "        \"content_id\": \"do_30076072\",\n" +
+            "        \"item_id\": \"ek.n.ib.en.ad.I.10\"\n" +
             "    },\n" +
             "    \"edata\": {\n" +
             "        \"eks\": {\n" +
-            "            \"device_ids\": [\n" +
-            "                \"80f09a519421035b0dfc3e264dc520b27b7fb596\"\n" +
-            "            ],\n" +
-            "            \"avg_ts_session\": 1.9,\n" +
-            "            \"total_sessions\": 3,\n" +
-            "            \"contents\": [],\n" +
-            "            \"total_ts\": 5.71\n" +
+            "            \"avg_ts\": 0,\n" +
+            "            \"inc_res_count\": 2,\n" +
+            "            \"incorrect_res\": [],\n" +
+            "            \"total_ts\": 0,\n" +
+            "            \"total_count\": 2,\n" +
+            "            \"correct_res_count\": 0,\n" +
+            "            \"correct_res\": []\n" +
             "        }\n" +
             "    },\n" +
             "    \"@version\": \"1\",\n" +
-            "    \"@timestamp\": \"2017-02-21T07:08:20.148Z\",\n" +
+            "    \"@timestamp\": \"2017-03-10T01:57:59.814Z\",\n" +
             "    \"type\": \"events\",\n" +
             "    \"learning\": \"true\",\n" +
-            "    \"ts\": \"2017-02-21T12:38:12.000+0530\"\n" +
+            "    \"ts\": \"2017-03-10T02:00:12.000+0000\"\n" +
             "}";
 
     public static final String OTHER_GE_EVENT = "{\n" +

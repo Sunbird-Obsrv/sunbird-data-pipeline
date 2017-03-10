@@ -3,13 +3,13 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ContentDeNormalizationConfig {
 
     private final long cacheTTL;
     private final String searchServiceEndpoint;
+    private final HashMap<String,Object> contentTaxonomy;
     private String successTopic;
     private String failedTopic;
     private List<String> eventsToSkip;
@@ -21,7 +21,31 @@ public class ContentDeNormalizationConfig {
         searchServiceEndpoint = config.get("search.service.endpoint");
         eventsToSkip = commaSeparatedStringToList(config, "events.to.skip");
         eventsToAllow = commaSeparatedStringToList(config, "events.to.allow");
+        contentTaxonomy = getContentTaxonomy(config);
         cacheTTL = Long.parseLong(config.get("content.store.ttl", "60000"));
+    }
+
+    private HashMap<String, Object> getContentTaxonomy(Config config) {
+        HashMap<String, Object> map = new HashMap<String,Object>();
+        List<String> eventFields = commaSeparatedStringToList(config,"gid.overridden.events");
+        for (String eventField : eventFields) {
+            String field = eventField.toLowerCase();
+            String eventType = field.split("\\.")[0];
+            if (config.containsKey(field)){
+                List<String> gidPath = getGidField(config, field);
+                map.put(eventType.toUpperCase(), gidPath);
+            }
+        }
+        return map;
+    }
+
+    private List<String> getGidField(Config config, String key) {
+        List<String> list = new ArrayList<String>();
+            String[] split = config.get(key, "").split("\\.");
+            for (String e : split) {
+                list.add(e.trim());
+            }
+        return list;
     }
 
     private List<String> commaSeparatedStringToList(Config config, String key) {
@@ -47,6 +71,10 @@ public class ContentDeNormalizationConfig {
 
     public List<String> eventsToAllow() {
         return eventsToAllow;
+    }
+
+    public HashMap<String, Object> contentTaxonomy() {
+        return contentTaxonomy;
     }
 
     public long cacheTTL() {

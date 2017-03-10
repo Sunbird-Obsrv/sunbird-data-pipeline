@@ -18,6 +18,5 @@ public class SearchRequestTest {
         HashMap<String, Object> request = (HashMap<String, Object>) req.toMap().get("request");
         HashMap<String, Object> filters = (HashMap<String, Object>) request.get("filters");
         assertEquals(((ArrayList<String>)filters.get("identifier")).get(0),"testId" );
-        System.out.println(new Gson().toJson(req.toMap()));
     }
 }
