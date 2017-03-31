@@ -18,10 +18,11 @@ module EcosystemPlatform
         begin
           logger.start_task
           config = Config.load
-          api = DataExhaustApi.new(config.data_exhaust_api_endpoint, logger)
-          DataExhaustController.new(AggregateDate.new(config.data_dir, 
-            config.store_file_name, config.initial_aggregate_date,logger),
-            config.dataset_id, config.resource_id, config.licence_key,api,logger).aggregate()
+          api = DataExhaustApi.new(config.dataset_aggregate_endpoint, logger)
+          DataExhaustController.new(
+            AggregateDate.new(config.data_dir, config.store_file_name, config.initial_aggregate_date,logger),
+            config.dataset_id, config.resource_id,api,logger)
+          .aggregate()
           logger.end_task
         rescue => e
           logger.error(e, {backtrace: e.backtrace[0..4]})

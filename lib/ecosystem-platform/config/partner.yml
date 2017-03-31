@@ -1,0 +1,6 @@
+data_dir: partner-data-aggregate
+store_file_name: store.yml
+initial_aggregate_date: 2017-03-28 #YYYY-MM-dd format
+dataset_id: D002
+dataset_aggregate_endpoint: http://localhost:8091/v1/datasets
+get_partners_endpoint: http://localhost:8090/v1/partner/all

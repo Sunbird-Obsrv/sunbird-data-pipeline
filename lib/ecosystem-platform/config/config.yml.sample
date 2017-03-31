@@ -4,4 +4,4 @@ initial_aggregate_date: 2016-07-17 #YYYY-MM-dd format
 dataset_id: {dataset_id}
 resource_id: {resource_id}
 licence_key: {licensekey}
-data_exhaust_api_endpoint: http://sandbox.ekstep.org/dev/api/v1/datasets
+dataset_aggregate_endpoint: http://localhost:8091/v1/datasets

@@ -13,7 +13,7 @@ class DataExhaustApi
   end
 
   def aggregate(dataset_id, resource_id,
-               from_date, to_date, licence_key)
+               from_date, to_date)
     url = URI("#{@endpoint}/#{dataset_id}/#{resource_id}/#{from_date}/#{to_date}/aggregate")
     request = Net::HTTP::Post.new(url)
     request['content-type'] = 'application/json'
@@ -24,12 +24,12 @@ class DataExhaustApi
         :params => {
             :msgid => SecureRandom.uuid
         },
-        :request => {:licensekey => "#{licence_key}"}
+        :request => {}
     }.to_json
 
     @logger.info("AGGREGATING DATA USING DATA EXHAUST API. URL: #{url}")
     response = @http.request(request)
-    
+
     case response
     when Net::HTTPSuccess
       @logger.info("AGGREGATE SUCCESSFUL")
