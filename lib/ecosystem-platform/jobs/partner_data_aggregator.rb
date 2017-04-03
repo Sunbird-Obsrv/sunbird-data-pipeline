@@ -24,12 +24,16 @@ module EcosystemPlatform
           partner_service = PartnerService.new(config.get_partners_endpoint, logger)
           resources = partner_service.get_all_resources()
           resources.each do |resource|
-            logger.info("AGGREGATING FOR RESOURCE: #{resource.to_s}")
-            DataExhaustController.new(
-              AggregateDate.new(config.data_dir,
-                                "#{resource.partnerId}.yml", config.initial_aggregate_date,logger),
-            config.dataset_id, resource.partnerId, api,logger)
-            .aggregate()
+            begin
+              logger.info("AGGREGATING FOR RESOURCE: #{resource.to_s}")
+              controller = DataExhaustController.new(
+                AggregateDate.new(config.data_dir,
+                                  "#{resource.partnerId}.yml", config.initial_aggregate_date,logger),
+              config.dataset_id, resource.partnerId, api,logger)
+              controller.aggregate()
+            rescue => e
+              logger.error("ERROR WHEN AGGREGATING RESOURCE: #{resource.partnerId}. Exception: #{e}", {backtrace: e.backtrace[0..4]})
+            end
           end
           logger.end_task
         rescue => e
