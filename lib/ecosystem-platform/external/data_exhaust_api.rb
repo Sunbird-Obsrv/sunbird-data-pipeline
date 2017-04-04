@@ -14,7 +14,7 @@ class DataExhaustApi
 
   def aggregate(dataset_id, resource_id,
                from_date, to_date)
-    url = URI("#{@endpoint}/#{dataset_id}/#{resource_id}/#{from_date}/#{to_date}/aggregate")
+    url = URI("#{@endpoint}/#{dataset_id}/#{resource_id}/#{from_date}/#{to_date}")
     request = Net::HTTP::Post.new(url)
     request['content-type'] = 'application/json'
     request.body = {
