@@ -25,6 +25,6 @@ class DataExhaustController
     rescue => e
       @logger.error("EXCEPTION: #{e}")
       return
-    end
+    end while true
   end
 end
