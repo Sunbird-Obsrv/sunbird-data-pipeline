@@ -138,7 +138,7 @@ module Indexers
             }
           }
         }
-        LEARNING_MAPPINGS = {
+    LEARNING_MAPPINGS = {
           _default_: {
             dynamic_templates: [
             {
@@ -347,13 +347,13 @@ module Indexers
                   type: "string",
                   doc_values: true
                 },
-                match: "id|uip|status|cid",
+                match: "id|uip|status|cid|downloadUrl|prevState|type|protocol|method|action|state|correlationid|message|class|level",
                 match_pattern: "regex"
               }
             },
             {
               double_fields: {
-                  match: "mem|idisk|edisk|scrn|length|exlength|age|percent_correct|percent_attempt|size|score|maxscore|osize|isize|timeSpent|exTimeSpent",
+                  match: "",
                   match_pattern: "regex",
                   mapping: {
                       type: "double",
@@ -364,7 +364,7 @@ module Indexers
             },
             {
               integer_fields: {
-                  match: "size|pkgVersion|assets|count|inputEvents|outputEvents|timeTaken|responseTime",
+                  match: "size|duration|value|pkgVersion|assets|count|inputEvents|outputEvents|timeTaken|responseTime",
                   match_pattern: "regex",
                   mapping: {
                       type: "integer",
@@ -396,6 +396,210 @@ module Indexers
             {
               unparsed_object_fields:{
                 match: "config|params",
+                match_pattern: "regex",
+                mapping: {
+                    type: "object",
+                    index: "no",
+                    doc_values: true,
+                    enabled: false
+                }
+              }
+            }
+            ],
+            properties: {
+              geoip: {
+                dynamic: true,
+                properties: {
+                  location: {
+                    type: "geo_point"
+                  }
+                },
+                type: "object"
+              },
+              "@version" => {
+                index: "not_analyzed",
+                type: "string"
+              }
+            },
+            _all: {
+              enabled: true
+            }
+          }
+        }
+    PORTAL_EVENT_MAPPINGS = {
+          _default_: {
+            dynamic_templates: [
+            {
+              string_fields: {
+                mapping: {
+                  index: "not_analyzed",
+                  omit_norms: false,
+                  type: "string",
+                  doc_values: true
+                },
+                match_mapping_type: "string",
+                match: "*"
+              }
+            },
+            {
+              string_fields_force: {
+                mapping: {
+                  index: "not_analyzed",
+                  omit_norms: false,
+                  type: "string",
+                  doc_values: true
+                },
+                match: "status|protocol|method|action|uid|auth|agent|system|platform|env|type|id|name|url|target|targetid|subtype|content_id|sid|rid",
+                match_pattern: "regex"
+              }
+            },
+            {
+              double_fields: {
+                  match: "",
+                  match_pattern: "regex",
+                  mapping: {
+                      type: "double",
+                      index: "not_analyzed",
+                      doc_values: true
+                  }
+              }
+            },
+            {
+              integer_fields: {
+                  match: "",
+                  match_pattern: "regex",
+                  mapping: {
+                      type: "integer",
+                      index: "not_analyzed",
+                      doc_values: true
+                  }
+              }
+            },
+            {
+              date_fields: {
+                  match: "ts|te|time|timestamp|ets|date",
+                  match_pattern: "regex",
+                  mapping: {
+                      type: "date",
+                      index: "not_analyzed",
+                      doc_values: true
+                  }
+              }
+            },
+            {
+              geo_location: {
+                  mapping: {
+                      type: "geo_point",
+                      doc_values: true
+                  },
+                  match: "loc"
+              }
+            },
+            {
+              unparsed_object_fields:{
+                match: "config|params",
+                match_pattern: "regex",
+                mapping: {
+                    type: "object",
+                    index: "no",
+                    doc_values: true,
+                    enabled: false
+                }
+              }
+            }
+            ],
+            properties: {
+              geoip: {
+                dynamic: true,
+                properties: {
+                  location: {
+                    type: "geo_point"
+                  }
+                },
+                type: "object"
+              },
+              "@version" => {
+                index: "not_analyzed",
+                type: "string"
+              }
+            },
+            _all: {
+              enabled: true
+            }
+          }
+        }
+    EDITOR_EVENT_MAPPINGS = {
+          _default_: {
+            dynamic_templates: [
+            {
+              string_fields: {
+                mapping: {
+                  index: "not_analyzed",
+                  omit_norms: false,
+                  type: "string",
+                  doc_values: true
+                },
+                match_mapping_type: "string",
+                match: "*"
+              }
+            },
+            {
+              string_fields_force: {
+                mapping: {
+                  index: "not_analyzed",
+                  omit_norms: false,
+                  type: "string",
+                  doc_values: true
+                },
+                match: "type|pluginid|pluginver|objectid|assetid|stage|containerid|containerplugin|subtype|target|env|stage|action|err|data|severity|browser|browserver|os|content_id|sid",
+                match_pattern: "regex"
+              }
+            },
+            {
+              double_fields: {
+                  match: "",
+                  match_pattern: "regex",
+                  mapping: {
+                      type: "double",
+                      index: "not_analyzed",
+                      doc_values: true
+                  }
+              }
+            },
+            {
+              integer_fields: {
+                  match: "plugins|load_time|duration",
+                  match_pattern: "regex",
+                  mapping: {
+                      type: "integer",
+                      index: "not_analyzed",
+                      doc_values: true
+                  }
+              }
+            },
+            {
+              date_fields: {
+                  match: "ts|te|time|timestamp|ets|date",
+                  match_pattern: "regex",
+                  mapping: {
+                      type: "date",
+                      index: "not_analyzed",
+                      doc_values: true
+                  }
+              }
+            },
+            {
+              geo_location: {
+                  mapping: {
+                      type: "geo_point",
+                      doc_values: true
+                  },
+                  match: "loc"
+              }
+            },
+            {
+              unparsed_object_fields:{
+                match: "config|params|data",
                 match_pattern: "regex",
                 mapping: {
                     type: "object",
@@ -496,6 +700,30 @@ module Indexers
           "index.refresh_interval": "5s"
         },
         mappings: BACKEND_EVENT_MAPPINGS,
+        aliases: {}
+        }
+      })
+      puts client.indices.put_template({
+        name: "portal",
+        body: {
+        order: 10,
+        template: "portal-*",
+        settings: {
+          "index.refresh_interval": "5s"
+        },
+        mappings: PORTAL_EVENT_MAPPINGS,
+        aliases: {}
+        }
+      })
+      puts client.indices.put_template({
+        name: "editor",
+        body: {
+        order: 10,
+        template: "editor-*",
+        settings: {
+          "index.refresh_interval": "5s"
+        },
+        mappings: EDITOR_EVENT_MAPPINGS,
         aliases: {}
         }
       })
