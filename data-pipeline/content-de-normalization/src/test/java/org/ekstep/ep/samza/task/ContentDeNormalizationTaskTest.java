@@ -37,7 +37,7 @@ public class ContentDeNormalizationTaskTest {
     private static final String FAILED_TOPIC = "telemetry.content.de_normalized.fail";
     private static final String CONTENT_CACHE_TTL = "60000";
     private final String EVENTS_TO_SKIP = "";
-    private final String EVENTS_TO_ALLOW = "GE_LAUNCH_GAME,OE_.*,ME_.*,CE_*";
+    private final String EVENTS_TO_ALLOW = "GE_LAUNCH_GAME,OE_.*,ME_.*,CE_.*,CP_.*,BE_.*";
     private MessageCollector collectorMock;
     private SearchServiceClient searchServiceMock;
     private TaskContext contextMock;
@@ -65,13 +65,19 @@ public class ContentDeNormalizationTaskTest {
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
         stub(configMock.get("events.to.skip", "")).toReturn(EVENTS_TO_SKIP);
         stub(configMock.get("events.to.allow", "")).toReturn(EVENTS_TO_ALLOW);
-        stub(configMock.get("gid.overridden.events", "")).toReturn("oe.gid.field,ge.gid.field,me.gid.field");
+        stub(configMock.get("gid.overridden.events", "")).toReturn("oe.gid.field,ge.gid.field,me.gid.field,ce.gid.field,cp.gid.field,be.gid.field");
         stub(configMock.get("oe.gid.field", "")).toReturn("gdata.id");
         stub(configMock.get("ge.gid.field", "")).toReturn("edata.eks.gid");
         stub(configMock.get("me.gid.field", "")).toReturn("dimensions.content_id");
+        stub(configMock.get("ce.gid.field", "")).toReturn("context.content_id");
+        stub(configMock.get("be.gid.field", "")).toReturn("edata.eks.cid");
+        stub(configMock.get("cp.gid.field", "")).toReturn("edata.eks.action");
         stub(configMock.containsKey("oe.gid.field")).toReturn(true);
         stub(configMock.containsKey("ge.gid.field")).toReturn(true);
         stub(configMock.containsKey("me.gid.field")).toReturn(true);
+        stub(configMock.containsKey("ce.gid.field")).toReturn(true);
+        stub(configMock.containsKey("be.gid.field")).toReturn(true);
+        stub(configMock.containsKey("cp.gid.field")).toReturn(true);
         stub(configMock.get("content.store.ttl", "60000")).toReturn(CONTENT_CACHE_TTL);
         stub(metricsRegistry.newCounter(anyString(), anyString()))
                 .toReturn(counter);
@@ -140,74 +146,43 @@ public class ContentDeNormalizationTaskTest {
     public void shouldProcessAllOeEventsAndUpdateContentData() throws Exception {
         when(contentStoreMock.get(ContentFixture.getContentID())).thenReturn(null, getContentCacheJson());
         stub(envelopeMock.getMessage()).toReturn(EventFixture.OeEvent());
-        stub(searchServiceMock.search("do_30076072")).toReturn(ContentFixture.getContent());
 
-        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-
-        verify(searchServiceMock, times(1)).search("do_30076072");
-        Map<String, Object> processedMessage = (Map<String, Object>) envelopeMock.getMessage();
-
-        assertTrue(processedMessage.containsKey("contentdata"));
-
-        HashMap<String, Object> contentData = (HashMap<String, Object>) processedMessage.get("contentdata");
-        assertEquals(contentData.get("name"), ContentFixture.getContentMap().get("name"));
-        assertEquals(contentData.get("description"), ContentFixture.getContentMap().get("description"));
-
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+        verifyEventHasBeenProcessed();
     }
 
     @Test
     public void shouldProcessGeLaunchEventAndUpdateContentData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.GeLaunchEvent());
-        stub(searchServiceMock.search(ContentFixture.getContentID())).toReturn(ContentFixture.getContent());
 
-        CacheEntry expiredContent = new CacheEntry(ContentFixture.getContent(), new Date().getTime() - 100000);
-        CacheEntry validContent = new CacheEntry(ContentFixture.getContent(), new Date().getTime() + 100000);
-
-        when(contentStoreMock.get(ContentFixture.getContentID()))
-                .thenReturn(
-                        new Gson().toJson(expiredContent, CacheEntry.class),
-                        new Gson().toJson(validContent, CacheEntry.class));
-
-        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-
-        verify(searchServiceMock, times(1)).search("do_30076072");
-        Map<String, Object> processedMessage = (Map<String, Object>) envelopeMock.getMessage();
-
-        assertTrue(processedMessage.containsKey("contentdata"));
-
-        HashMap<String, Object> contentData = (HashMap<String, Object>) processedMessage.get("contentdata");
-        assertEquals(contentData.get("name"), ContentFixture.getContentMap().get("name"));
-        assertEquals(contentData.get("description"), ContentFixture.getContentMap().get("description"));
-
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+        verifyEventHasBeenProcessed();
     }
 
     @Test
     public void shouldProcessMeEventsAndUpdateContentCache() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.MeEvent());
-        stub(searchServiceMock.search(ContentFixture.getContentID())).toReturn(ContentFixture.getContent());
 
-        CacheEntry expiredContent = new CacheEntry(ContentFixture.getContent(), new Date().getTime() - 100000);
-        CacheEntry validContent = new CacheEntry(ContentFixture.getContent(), new Date().getTime() + 100000);
+        verifyEventHasBeenProcessed();
+    }
 
-        when(contentStoreMock.get(ContentFixture.getContentID()))
-                .thenReturn(
-                        new Gson().toJson(expiredContent, CacheEntry.class),
-                        new Gson().toJson(validContent, CacheEntry.class));
+    @Test
+    public void shouldProcessCeEventsAndUpdateContentCache() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.CeEvent());
 
-        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verifyEventHasBeenProcessed();
+    }
 
-        verify(searchServiceMock, times(1)).search("do_30076072");
-        Map<String, Object> processedMessage = (Map<String, Object>) envelopeMock.getMessage();
+    @Test
+    public void shouldProcessCpEventsAndUpdateContentCache() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.CpEvent());
 
-        assertTrue(processedMessage.containsKey("contentdata"));
+        verifyEventHasBeenProcessed();
+    }
 
-        HashMap<String, Object> contentData = (HashMap<String, Object>) processedMessage.get("contentdata");
-        assertEquals(contentData.get("name"), ContentFixture.getContentMap().get("name"));
-        assertEquals(contentData.get("description"), ContentFixture.getContentMap().get("description"));
+    @Test
+    public void shouldProcessBeEventsAndUpdateContentCache() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.BeEvent());
 
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+        verifyEventHasBeenProcessed();
     }
 
     @Test
@@ -239,6 +214,31 @@ public class ContentDeNormalizationTaskTest {
         Content content = ContentFixture.getContent();
         CacheEntry contentCache = new CacheEntry(content, new Date().getTime());
         return new Gson().toJson(contentCache, CacheEntry.class);
+    }
+
+    private void verifyEventHasBeenProcessed() throws Exception {
+        stub(searchServiceMock.search(ContentFixture.getContentID())).toReturn(ContentFixture.getContent());
+
+        CacheEntry expiredContent = new CacheEntry(ContentFixture.getContent(), new Date().getTime() - 100000);
+        CacheEntry validContent = new CacheEntry(ContentFixture.getContent(), new Date().getTime() + 100000);
+
+        when(contentStoreMock.get(ContentFixture.getContentID()))
+                .thenReturn(
+                        new Gson().toJson(expiredContent, CacheEntry.class),
+                        new Gson().toJson(validContent, CacheEntry.class));
+
+        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+
+        verify(searchServiceMock, times(1)).search("do_30076072");
+        Map<String, Object> processedMessage = (Map<String, Object>) envelopeMock.getMessage();
+
+        assertTrue(processedMessage.containsKey("contentdata"));
+
+        HashMap<String, Object> contentData = (HashMap<String, Object>) processedMessage.get("contentdata");
+        assertEquals(contentData.get("name"), ContentFixture.getContentMap().get("name"));
+        assertEquals(contentData.get("description"), ContentFixture.getContentMap().get("description"));
+
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
 
 }

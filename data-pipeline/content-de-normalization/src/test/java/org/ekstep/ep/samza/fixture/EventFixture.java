@@ -176,6 +176,114 @@ public class EventFixture {
             "    }\n" +
             "}";
 
+    public static final String BE_EVENT_JSON = "{\n" +
+            "    \"eid\": \"BE_CONTENT_LIFECYCLE\",\n" +
+            "    \"ets\": 1491911140141,\n" +
+            "    \"ver\": \"2.0\",\n" +
+            "    \"pdata\": {\n" +
+            "        \"ver\": \"1.0\",\n" +
+            "        \"pid\": \"\",\n" +
+            "        \"id\": \"org.ekstep.content.platform\"\n" +
+            "    },\n" +
+            "    \"edata\": {\n" +
+            "        \"eks\": {\n" +
+            "            \"prevState\": \"Processing\",\n" +
+            "            \"size\": 11652,\n" +
+            "            \"concepts\": null,\n" +
+            "            \"downloadUrl\": \"https://ekstep-public-qa.s3-ap-south-1.amazonaws.com\",\n" +
+            "            \"flags\": null,\n" +
+            "            \"mediaType\": \"content\",\n" +
+            "            \"state\": \"Live\",\n" +
+            "            \"contentType\": \"Plugin\",\n" +
+            "            \"pkgVersion\": 8,\n" +
+            "            \"cid\": \"do_30076072\"\n" +
+            "        }\n" +
+            "    },\n" +
+            "    \"@version\": \"1\",\n" +
+            "    \"@timestamp\": \"2017-04-11T11:42:32.917Z\",\n" +
+            "    \"type\": \"backend.events\",\n" +
+            "    \"ts\": \"2017-04-11T11:45:40.000+0000\"\n" +
+            "}";
+
+    public static final String CP_EVENT_JSON = "{\n" +
+            "    \"eid\": \"CP_INTERACT\",\n" +
+            "    \"edata\": {\n" +
+            "        \"eks\": {\n" +
+            "            \"type\": \"event\",\n" +
+            "            \"title\": null,\n" +
+            "            \"category\": \"Content.Publish\",\n" +
+            "            \"size\": null,\n" +
+            "            \"duration\": null,\n" +
+            "            \"status\": \"\",\n" +
+            "            \"protocol\": \"\",\n" +
+            "            \"method\": \"\",\n" +
+            "            \"action\": \"do_30076072\",\n" +
+            "            \"value\": \"\",\n" +
+            "            \"params\": {\n" +
+            "                \"piwik_idlink_va\": \"594565\"\n" +
+            "            },\n" +
+            "            \"uip\": \"182.73.0.0\",\n" +
+            "            \"rid\": \"qa.ekstep.in/content/search\"\n" +
+            "        }\n" +
+            "    },\n" +
+            "    \"ets\": 1491891374000,\n" +
+            "    \"ver\": \"2.0\",\n" +
+            "    \"pdata\": {\n" +
+            "        \"id\": \"https://qa.ekstep.in\",\n" +
+            "        \"pid\": \"com.ekstep.piwik\",\n" +
+            "        \"ver\": \"\"\n" +
+            "    },\n" +
+            "    \"uid\": \"ee16ee0fa7f21a4101793582e1cf4b24fef9f948\",\n" +
+            "    \"rid\": \"\",\n" +
+            "    \"@version\": \"1\",\n" +
+            "    \"@timestamp\": \"2017-04-11T11:50:02.731Z\",\n" +
+            "    \"path\": \"/var/log/piwik/piwik.raw.idsite_2.log\",\n" +
+            "    \"host\": \"ip-10-42-6-49\",\n" +
+            "    \"tags\": [\n" +
+            "        \"piwik_json\"\n" +
+            "    ],\n" +
+            "    \"type\": \"backend.events\",\n" +
+            "    \"ts\": \"2017-04-11T06:16:14.000+0000\"\n" +
+            "}";
+
+    public static final String CE_EVENT_JSON = "{\n" +
+            "    \"eid\": \"CE_INTERACT\",\n" +
+            "    \"ets\": 1491932923636,\n" +
+            "    \"ver\": \"1.0\",\n" +
+            "    \"pdata\": {\n" +
+            "        \"id\": \"ATTool\",\n" +
+            "        \"pid\": \"ContentEditor\",\n" +
+            "        \"ver\": \"2.0\"\n" +
+            "    },\n" +
+            "    \"cdata\": [],\n" +
+            "    \"uid\": \"266\",\n" +
+            "    \"context\": {\n" +
+            "        \"sid\": \"e64f3u1bcbb2q3j376m012or16\",\n" +
+            "        \"content_id\": \"do_30076072\"\n" +
+            "    },\n" +
+            "    \"rid\": \"\",\n" +
+            "    \"edata\": {\n" +
+            "        \"eks\": {\n" +
+            "            \"type\": \"click\",\n" +
+            "            \"subtype\": \"menu\",\n" +
+            "            \"target\": \"previewButton\",\n" +
+            "            \"pluginid\": \"\",\n" +
+            "            \"pluginver\": \"\",\n" +
+            "            \"objectid\": \"preview\",\n" +
+            "            \"stage\": \"190e950a-93c6-4c15-87b9-e907463ab31b\"\n" +
+            "        }\n" +
+            "    },\n" +
+            "    \"tags\": [\n" +
+            "        \"piwik_json\"\n" +
+            "    ],\n" +
+            "    \"@version\": \"1\",\n" +
+            "    \"@timestamp\": \"2017-04-11T17:50:02.285Z\",\n" +
+            "    \"path\": \"/var/log/piwik/piwik.raw.idsite_2.log\",\n" +
+            "    \"host\": \"ip-10-42-6-49\",\n" +
+            "    \"type\": \"backend.events\",\n" +
+            "    \"ts\": \"2017-04-11T17:48:43.000+0000\"\n" +
+            "}";
+
     public static Map<String, Object> OeEvent() {
         return new Gson().fromJson(OE_ASSESS_JSON_STRING, new TypeToken<Map<String, Object>>() {
         }.getType());
@@ -200,4 +308,20 @@ public class EventFixture {
         return new Gson().fromJson(JSON_WITHOUT_CONTENT_ID, new TypeToken<Map<String, Object>>() {
         }.getType());
     }
+
+    public static Map<String, Object> BeEvent() {
+        return new Gson().fromJson(BE_EVENT_JSON, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
+
+    public static Map<String, Object> CpEvent() {
+        return new Gson().fromJson(CP_EVENT_JSON, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
+
+    public static Map<String, Object> CeEvent() {
+        return new Gson().fromJson(CE_EVENT_JSON, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
+
 }

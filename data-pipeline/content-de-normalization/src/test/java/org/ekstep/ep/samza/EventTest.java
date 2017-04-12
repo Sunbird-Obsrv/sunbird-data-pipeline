@@ -44,6 +44,27 @@ public class EventTest {
     }
 
     @Test
+    public void testGetContentIdOfBeEvent() throws Exception {
+        Event e = new Event(EventFixture.BeEvent(),contentEventMap);
+
+        assertEquals("do_30076072", e.getContentId());
+    }
+
+    @Test
+    public void testGetContentIdOfCpEvent() throws Exception {
+        Event e = new Event(EventFixture.CpEvent(),contentEventMap);
+
+        assertEquals("do_30076072", e.getContentId());
+    }
+
+    @Test
+    public void testGetContentIdOfCeEvent() throws Exception {
+        Event e = new Event(EventFixture.CeEvent(),contentEventMap);
+
+        assertEquals("do_30076072", e.getContentId());
+    }
+
+    @Test
     public void testGetContentIdReturnsNullWhenItIsAbsent() throws Exception {
         Event e = new Event(EventFixture.EventWithoutContentId(),contentEventMap);
 
@@ -83,11 +104,13 @@ public class EventTest {
     private void createContentEventMap() {
         HashMap<String, Object> overRiddenEvents = new HashMap<String, Object>();
         HashMap<String, Object> eventGidFields = new HashMap<String, Object>();
-        overRiddenEvents.put("gid.overridden.events","me.gid.field,ge.gid.field,oe.gid.field,ce.gid.field");
+        overRiddenEvents.put("gid.overridden.events","me.gid.field,ge.gid.field,oe.gid.field,ce.gid.field,cp.gid.field,be.gid.field");
         eventGidFields.put("oe.gid.field","gdata.id");
         eventGidFields.put("ge.gid.field","edata.eks.gid");
         eventGidFields.put("me.gid.field","dimensions.content_id");
         eventGidFields.put("ce.gid.field","context.content_id");
+        eventGidFields.put("cp.gid.field","edata.eks.action");
+        eventGidFields.put("be.gid.field","edata.eks.cid");
 
         contentEventMap = getContentFieldMap(overRiddenEvents, eventGidFields);
     }
