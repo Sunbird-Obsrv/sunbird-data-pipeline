@@ -13,6 +13,7 @@ import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.external.UserService;
 import org.ekstep.ep.samza.external.UserServiceClient;
 import org.ekstep.ep.samza.Event;
+import org.ekstep.ep.samza.util.BackendEventFactory;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,10 +29,11 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
-public class DenormalizationTaskTest {
+public class DeNormalizationTaskTest {
     private final String SUCCESS_TOPIC = "events_with_de_normalization";
     private final String FAILED_TOPIC = "events_failed_de_normalization";
     private final String RETRY_TOPIC = "events_retry";
+    private final String BACKEND_EVENTS = "CE_.*, CP_.*, BE_.*";
     private MessageCollector collectorMock;
     private Event eventMock;
     private UserService userServiceMock;
@@ -47,6 +49,7 @@ public class DenormalizationTaskTest {
     private int retryBackoffBase;
     private int retryBackoffLimit;
     private KeyValueStore<String, Object> retryStore;
+    private BackendEventFactory backendEventFactoryMock;
 
     @Before
     public void setUp(){
@@ -60,15 +63,19 @@ public class DenormalizationTaskTest {
         deviceStore = mock(KeyValueStore.class);
         coordinatorMock = mock(TaskCoordinator.class);
         envelopeMock = mock(IncomingMessageEnvelope.class);
+        backendEventFactoryMock = mock(BackendEventFactory.class);
 
         configMock = Mockito.mock(Config.class);
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
         stub(configMock.get("output.retry.topic.name", RETRY_TOPIC)).toReturn(RETRY_TOPIC);
+        stub(configMock.get("backend.events", "")).toReturn(BACKEND_EVENTS);
         stub(metricsRegistry.newCounter("org.ekstep.ep.samza.task.DeNormalizationTask", "message-count")).toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
         stub(configMock.get("retry.backoff.base")).toReturn("10");
         stub(configMock.get("retry.backoff.limit")).toReturn("4");
+        stub(eventMock.getEID()).toReturn("BE_CONTENT_USAGE_SUMMARY");
+        stub(eventMock.isBackendEvent()).toReturn(false);
 
         deNormalizationTask = new DeNormalizationTask();
     }
@@ -81,9 +88,8 @@ public class DenormalizationTaskTest {
     }
 
     @Test
-    public void ShouldProcessEvent() {
+    public void ShouldProcessEvent() throws Exception {
         stub(eventMock.canBeProcessed()).toReturn(true);
-
         deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
 
         verify(eventMock).process(userServiceMock, DateTime.now());
@@ -174,6 +180,19 @@ public class DenormalizationTaskTest {
         deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
         verify(collectorMock).send(argThat(validateOutputTopic(message, RETRY_TOPIC)));
         verify(eventMock,times(1)).addLastSkippedAt(any(DateTime.class));
+    }
+
+    @Test
+    public void ShouldAddBackendEventTypeIfEventBelongToAnyOfTheBackendEvents() throws Exception {
+        HashMap<String, Object> message = new HashMap<String, Object>();
+        stub(eventMock.canBeProcessed()).toReturn(true);
+        stub(eventMock.getData()).toReturn(message);
+        stub(eventMock.isSkipped()).toReturn(false);
+        stub(eventMock.isBackendEvent()).toReturn(true);
+        deNormalizationTask.init(configMock, contextMock);
+        deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(message, RETRY_TOPIC)));
+        verify(eventMock,times(1)).setBackendTrue();
     }
 
 

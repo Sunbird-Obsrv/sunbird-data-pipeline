@@ -60,6 +60,35 @@ public class EventFixture {
             "    }\n" +
             "}";
 
+    private static final String BE_EVENT_JSON = "{\n" +
+            "  \"@timestamp\": \"2017-04-11T11:42:32.917Z\",\n" +
+            "  \"@version\": \"1\",\n" +
+            "  \"edata\": {\n" +
+            "    \"eks\": {\n" +
+            "      \"cid\": \"do_10096841\",\n" +
+            "      \"concepts\": null,\n" +
+            "      \"contentType\": \"Plugin\",\n" +
+            "      \"downloadUrl\": \"https://ekstep-public-qa.s3-ap-south-1.amazonaws.com/\",\n" +
+            "      \"flags\": null,\n" +
+            "      \"mediaType\": \"content\",\n" +
+            "      \"pkgVersion\": 8,\n" +
+            "      \"prevState\": \"Processing\",\n" +
+            "      \"size\": 11652,\n" +
+            "      \"state\": \"Live\"\n" +
+            "    }\n" +
+            "  },\n" +
+            "  \"eid\": \"BE_CONTENT_LIFECYCLE\",\n" +
+            "  \"ets\": 1491911140141,\n" +
+            "  \"pdata\": {\n" +
+            "    \"id\": \"org.ekstep.content.platform\",\n" +
+            "    \"pid\": \"\",\n" +
+            "    \"ver\": \"1.0\"\n" +
+            "  },\n" +
+            "  \"ts\": \"2017-04-11T11:45:40.000+0000\",\n" +
+            "  \"type\": \"backend.events\",\n" +
+            "  \"ver\": \"2.0\"\n" +
+            "}";
+
     public static Map<String, Object> GeCreateProfile() {
         return new Gson().fromJson(JSON, new TypeToken<Map<String, Object>>() {
         }.getType());
@@ -67,6 +96,11 @@ public class EventFixture {
 
     public static Map<String, Object> AnotherGeCreateProfile() {
         return new Gson().fromJson(ANOTHER_JSON, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
+
+    public static Map<String, Object> BeEvent() {
+        return new Gson().fromJson(BE_EVENT_JSON, new TypeToken<Map<String, Object>>() {
         }.getType());
     }
 }

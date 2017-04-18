@@ -14,6 +14,8 @@ import org.ekstep.ep.samza.external.UserServiceClient;
 import org.ekstep.ep.samza.logger.Logger;
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class DeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
@@ -31,6 +33,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     private KeyValueStore<String, Object> retryStore;
     private String userServiceEndpoint;
     private UserService userService;
+    private List<String> backendEvents;
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
@@ -46,14 +49,16 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
                 .newCounter(getClass().getName(), "message-count");
         retryStore = (KeyValueStore<String, Object>) context.getStore("retry");
         userService = new UserServiceClient(userServiceEndpoint);
+        backendEvents = getBackendEvents(config);
     }
+
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) {
         Event event = null;
         try {
             Map<String, Object> message = (Map<String, Object>) envelope.getMessage();
-            event = new Event(message, childData);
+            event = new Event(message, childData, backendEvents);
             processEvent(collector, event, userService);
             messageCount.inc();
         } catch (Exception e) {
@@ -77,6 +82,9 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
                 event.addLastSkippedAt(DateTime.now());
             }
         }
+        if(event.isBackendEvent()){
+            event.setBackendTrue();
+        }
         populateTopic(collector, event);
     }
 
@@ -88,6 +96,15 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", retryTopic), event.getData()));
         else
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getData()));
+    }
+
+    private List<String> getBackendEvents(Config config) {
+        String[] split = config.get("backend.events", "").split(",");
+        List<String> backendEvents = new ArrayList<String>();
+        for (String event : split) {
+            backendEvents.add(event.trim().toUpperCase());
+        }
+        return backendEvents;
     }
 
     @Override

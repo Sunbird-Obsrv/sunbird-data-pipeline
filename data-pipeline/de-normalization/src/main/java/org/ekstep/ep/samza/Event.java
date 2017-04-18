@@ -12,6 +12,8 @@ import org.joda.time.format.ISODateTimeFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.text.MessageFormat.format;
 
@@ -21,6 +23,7 @@ public class Event {
     private static final int RETRY_BACKOFF_BASE_DEFAULT = 10;
     private static final int RETRY_BACKOFF_LIMIT_DEFAULT = 4;
     private final Map<String, Object> map;
+    private final List<String> backendEvents;
     private Boolean canBeProcessed;
     private KeyValueStore<String, Child> childStore;
     private Child child;
@@ -30,11 +33,12 @@ public class Event {
     private int retryBackoffLimit;
     private KeyValueStore<String, Object> retryStore;
 
-    public Event(Map<String, Object> map, KeyValueStore<String, Child> childStore) {
+    public Event(Map<String, Object> map, KeyValueStore<String, Child> childStore, List<String> backendEvents) {
         this.map = map;
         this.childStore = childStore;
         this.canBeProcessed = true;
         this.hadIssueWithDb = false;
+        this.backendEvents = backendEvents;
     }
 
     public Map<String, Object> getMap() {
@@ -146,6 +150,7 @@ public class Event {
         }
         LOGGER.info(id(), "METADATA - ADDED " + metadata);
 //        addMetadataToStore();
+
     }
 
     private void addMetadataToStore() {
@@ -267,6 +272,10 @@ public class Event {
         return (String) map.get("uid");
     }
 
+    public String getEID() {
+        return map != null && map.containsKey("eid") ? (String) map.get("eid") : null;
+    }
+
     public String id() {
         return map != null && map.containsKey("metadata") &&
             (((Map<String, Object>) map.get("metadata")).containsKey("checksum"))
@@ -284,5 +293,22 @@ public class Event {
             map.put("metadata", metadata);
         }
         LOGGER.info(id(), "METADATA LAST SKIPPED AT - ADDED " + metadata);
+    }
+
+    public boolean isBackendEvent() {
+        for (String events : backendEvents) {
+            Pattern p = Pattern.compile(events);
+            Matcher m = p.matcher(getEID());
+            if (m.matches()) {
+                LOGGER.info(m.toString(), "FOUND BACKEND EVENT");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void setBackendTrue() {
+        LOGGER.info(id(), "ADDING BACKEND EVENT TYPE");
+        map.put("backend","true");
     }
 }
