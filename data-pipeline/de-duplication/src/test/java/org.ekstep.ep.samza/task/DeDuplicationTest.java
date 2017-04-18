@@ -108,8 +108,6 @@ public class DeDuplicationTest {
 
         DeDuplicationStreamTask deDuplicationStreamTask = new DeDuplicationStreamTask(deDuplicationStore);
 
-        ArgumentCaptor<OutgoingMessageEnvelope> outgoingMessageEnvelope = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
-
         deDuplicationStreamTask.validateJson(collector, message, gson, jsonObject);
     }
 

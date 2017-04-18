@@ -3,6 +3,7 @@ package org.ekstep.ep.samza.system;
 
 import com.google.gson.Gson;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Event {
@@ -18,7 +19,13 @@ public class Event {
     }
 
     public String getChecksum(){
-        return (String) ((Map<String, Object>) map.get("metadata")).get("checksum");
+        if(map != null && map.containsKey("metadata") && (((Map<String, Object>) map.get("metadata")).containsKey("checksum")))
+            return (String) ((Map<String, Object>) map.get("metadata")).get("checksum");
+
+        if( map != null && map.containsKey("mid"))
+            return (String) map.get("mid");
+
+        return null;
     }
 
     public String getJson(){
@@ -32,6 +39,10 @@ public class Event {
             (((Map<String, Object>) map.get("metadata")).containsKey("checksum"))
             ? (String) ((Map<String, Object>) map.get("metadata")).get("checksum")
             : null;
+    }
+
+    public void addEventType() {
+        map.put("type","events");
     }
 }
 

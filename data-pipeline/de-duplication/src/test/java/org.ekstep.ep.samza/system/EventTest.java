@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.system;
 
 
+import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,17 +10,24 @@ import java.util.Map;
 
 public class EventTest {
     @Test
-    public void shouldAddLocation(){
-        Map<String,String> checksum = new HashMap<String, String>();
-        checksum.put("checksum","1234");
+    public void shouldGetChecksumFromMetadataChecksumIfPresent(){
 
-        Map<String,Object> metadata = new HashMap<String, Object>();
-        metadata.put("metadata",checksum);
+        Event event = new Event(EventFixture.EventWithChecksum());
+        Assert.assertEquals("22e1430f2e5f339230dbf9595b060008", (String) event.getChecksum());
+    }
 
-        Event event = new Event(metadata);
+    @Test
+    public void shouldGetChecksumFromMidIfPresent(){
 
-        Assert.assertEquals("1234", (String) event.getChecksum());
-        Assert.assertEquals("{\"metadata\":{\"checksum\":\"1234\"}}", (String) event.getJson());
+        Event event = new Event(EventFixture.EventWithMid());
+        Assert.assertEquals("22e1430f2e5f339230dbf9595b060008", (String) event.getChecksum());
+    }
+
+    @Test
+    public void shouldReturnNullIfChecksumFieldIsAbsent(){
+
+        Event event = new Event(EventFixture.EventWithoutChecksumField());
+        Assert.assertEquals(null, (String) event.getChecksum());
     }
 }
 
