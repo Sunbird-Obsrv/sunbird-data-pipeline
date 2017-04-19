@@ -2,8 +2,9 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
-import org.ekstep.ep.samza.logger.Logger;
 import org.apache.samza.task.*;
+import org.ekstep.ep.samza.domain.Event;
+import org.ekstep.ep.samza.logger.Logger;
 
 public class ItemDeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
     static Logger LOGGER = new Logger(ItemDeNormalizationTask.class);
@@ -31,10 +32,23 @@ public class ItemDeNormalizationTask implements StreamTask, InitableTask, Window
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector,
                         TaskCoordinator taskCoordinator) throws Exception {
+
+        Event event = null;
         ItemDeNormalizationSource source = new ItemDeNormalizationSource(envelope);
         ItemDeNormalizationSink sink = new ItemDeNormalizationSink(collector, metrics, config);
+        try {
+            event = source.getEvent();
+            LOGGER.debug(event.id(), "PASSING EVENT THROUGH: {}", event.getMap());
+            sink.toSuccessTopic(event);
+        } catch (Exception e) {
+            LOGGER.error(null, "ERROR WHILE PROCESSING EVENT", e);
+            if (event != null && event.getMap() != null) {
+                LOGGER.error(event.id(), "ADDED FAILED EVENT TO FAILED TOPIC. EVENT: {}", event.getMap());
+                sink.toFailedTopic(event);
+            }
+        }
 
-        sink.toSuccessTopic(source.getEvent());
+
     }
 
     @Override

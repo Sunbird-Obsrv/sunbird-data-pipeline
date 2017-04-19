@@ -15,4 +15,11 @@ public class Event {
     public Map<String, Object> getMap() {
         return this.map;
     }
+
+    public String id() {
+        return getMap() != null && getMap().containsKey("metadata") &&
+                (((Map<String, Object>) getMap().get("metadata")).containsKey("checksum"))
+                ? (String) ((Map<String, Object>) getMap().get("metadata")).get("checksum")
+                : null;
+    }
 }
