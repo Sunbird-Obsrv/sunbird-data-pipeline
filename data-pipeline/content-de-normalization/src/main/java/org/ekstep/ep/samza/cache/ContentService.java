@@ -1,7 +1,7 @@
 package org.ekstep.ep.samza.cache;
 
 import org.ekstep.ep.samza.domain.Content;
-import org.ekstep.ep.samza.external.SearchServiceClient;
+import org.ekstep.ep.samza.external.SearchService;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.service.CacheService;
 
@@ -9,11 +9,11 @@ import java.io.IOException;
 
 public class ContentService {
     static Logger LOGGER = new Logger(ContentService.class);
-    private final SearchServiceClient searchService;
+    private final SearchService searchService;
     private final CacheService<String, Content> cacheService;
     private final long cacheTTL;
 
-    public ContentService(SearchServiceClient searchService, CacheService<String, Content> cacheService, long cacheTTL) {
+    public ContentService(SearchService searchService, CacheService<String, Content> cacheService, long cacheTTL) {
         this.searchService = searchService;
         this.cacheService = cacheService;
         this.cacheTTL = cacheTTL;

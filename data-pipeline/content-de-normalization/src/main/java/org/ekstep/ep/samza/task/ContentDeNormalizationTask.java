@@ -9,6 +9,7 @@ import org.ekstep.ep.samza.cache.CacheEntry;
 import org.ekstep.ep.samza.cache.ContentService;
 import org.ekstep.ep.samza.cleaner.CleanerFactory;
 import org.ekstep.ep.samza.domain.Content;
+import org.ekstep.ep.samza.external.SearchService;
 import org.ekstep.ep.samza.external.SearchServiceClient;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.service.CacheService;
@@ -42,7 +43,7 @@ public class ContentDeNormalizationTask implements StreamTask, InitableTask, Win
     }
 
     private void init(Config config, TaskContext context,
-                      KeyValueStore<Object, Object> contentStore, SearchServiceClient searchService) {
+                      KeyValueStore<Object, Object> contentStore, SearchService searchService) {
         this.config = new ContentDeNormalizationConfig(config);
         metrics = new ContentDeNormalizationMetrics(context);
         cleaner = new CleanerFactory(this.config.eventsToAllow(), this.config.eventsToSkip());
@@ -50,7 +51,7 @@ public class ContentDeNormalizationTask implements StreamTask, InitableTask, Win
                 ? new CacheService<String, Content>(contentStore, new TypeToken<CacheEntry<Content>>() {
         }.getType(), metrics)
                 : new CacheService<String, Content>(context, "content-store", CacheEntry.class, metrics);
-        SearchServiceClient searchServiceClient =
+        SearchService searchServiceClient =
                 searchService == null
                         ? new SearchServiceClient(this.config.searchServiceEndpoint())
                         : searchService;
