@@ -1,9 +1,8 @@
 package org.ekstep.ep.samza.cache;
 
-import org.ekstep.ep.samza.domain.Content;
-import org.ekstep.ep.samza.external.SearchService;
 import org.ekstep.ep.samza.logger.Logger;
-import org.ekstep.ep.samza.service.CacheService;
+import org.ekstep.ep.samza.search.domain.Content;
+import org.ekstep.ep.samza.search.service.SearchService;
 
 import java.io.IOException;
 

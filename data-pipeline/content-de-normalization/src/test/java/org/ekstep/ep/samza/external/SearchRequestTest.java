@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.external;
 
 import com.google.gson.GsonBuilder;
+import org.ekstep.ep.samza.search.dto.SearchRequest;
 import org.junit.Test;
 
 import java.lang.reflect.Array;

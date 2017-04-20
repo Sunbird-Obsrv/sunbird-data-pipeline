@@ -144,6 +144,16 @@
             <artifactId>telemetry-cleaner</artifactId>
             <version>0.0.8</version>
         </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem</groupId>
+            <artifactId>search-service</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem</groupId>
+            <artifactId>cache-service</artifactId>
+            <version>0.0.1</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -4,21 +4,19 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.ekstep.ep.samza.cache.CacheEntry;
+import org.ekstep.ep.samza.cache.CacheService;
 import org.ekstep.ep.samza.cache.ContentService;
-import org.ekstep.ep.samza.domain.Content;
-import org.ekstep.ep.samza.external.SearchServiceClient;
 import org.ekstep.ep.samza.fixture.ContentFixture;
-import org.ekstep.ep.samza.service.CacheService;
-import org.ekstep.ep.samza.task.ContentDeNormalizationMetrics;
+import org.ekstep.ep.samza.metrics.JobMetrics;
+import org.ekstep.ep.samza.search.domain.Content;
+import org.ekstep.ep.samza.search.service.SearchServiceClient;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Date;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class ContentServiceTest {
@@ -27,13 +25,13 @@ public class ContentServiceTest {
     private long cacheTTL = 6000;
     private KeyValueStore contentStoreMock;
     private CacheService cacheService;
-    private ContentDeNormalizationMetrics metricsMock;
+    private JobMetrics metricsMock;
 
     @Before
     public void setUp() {
         searchServiceMock = mock(SearchServiceClient.class);
         contentStoreMock = mock(KeyValueStore.class);
-        metricsMock = mock(ContentDeNormalizationMetrics.class);
+        metricsMock = mock(JobMetrics.class);
         cacheService = new CacheService(contentStoreMock, new TypeToken<CacheEntry<Content>>() {
         }.getType(), metricsMock);
     }

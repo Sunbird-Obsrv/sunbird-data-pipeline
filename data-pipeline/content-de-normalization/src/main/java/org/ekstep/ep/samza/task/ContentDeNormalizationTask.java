@@ -6,13 +6,14 @@ import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.cache.CacheEntry;
+import org.ekstep.ep.samza.cache.CacheService;
 import org.ekstep.ep.samza.cache.ContentService;
 import org.ekstep.ep.samza.cleaner.CleanerFactory;
-import org.ekstep.ep.samza.domain.Content;
-import org.ekstep.ep.samza.external.SearchService;
-import org.ekstep.ep.samza.external.SearchServiceClient;
 import org.ekstep.ep.samza.logger.Logger;
-import org.ekstep.ep.samza.service.CacheService;
+import org.ekstep.ep.samza.metrics.JobMetrics;
+import org.ekstep.ep.samza.search.domain.Content;
+import org.ekstep.ep.samza.search.service.SearchService;
+import org.ekstep.ep.samza.search.service.SearchServiceClient;
 import org.ekstep.ep.samza.service.ContentDeNormalizationService;
 
 import java.util.HashMap;
@@ -22,12 +23,12 @@ public class ContentDeNormalizationTask implements StreamTask, InitableTask, Win
     private CleanerFactory cleaner;
     private ContentService contentService;
     private ContentDeNormalizationConfig config;
-    private ContentDeNormalizationMetrics metrics;
+    private JobMetrics metrics;
     private ContentDeNormalizationService service;
     private HashMap<String, Object> contentTaxonomy;
 
 
-    public ContentDeNormalizationTask(Config config, TaskContext context, SearchServiceClient searchService,
+    public ContentDeNormalizationTask(Config config, TaskContext context, SearchService searchService,
                                       KeyValueStore<Object, Object> contentStore) {
         init(config, context, contentStore, searchService);
     }
@@ -45,7 +46,7 @@ public class ContentDeNormalizationTask implements StreamTask, InitableTask, Win
     private void init(Config config, TaskContext context,
                       KeyValueStore<Object, Object> contentStore, SearchService searchService) {
         this.config = new ContentDeNormalizationConfig(config);
-        metrics = new ContentDeNormalizationMetrics(context);
+        metrics = new JobMetrics(context);
         cleaner = new CleanerFactory(this.config.eventsToAllow(), this.config.eventsToSkip());
         CacheService<String, Content> cacheService = contentStore != null
                 ? new CacheService<String, Content>(contentStore, new TypeToken<CacheEntry<Content>>() {

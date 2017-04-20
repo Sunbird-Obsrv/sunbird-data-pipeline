@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.domain;
 
 import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.search.domain.Content;
 
 import java.util.ArrayList;
 import java.util.Collection;
