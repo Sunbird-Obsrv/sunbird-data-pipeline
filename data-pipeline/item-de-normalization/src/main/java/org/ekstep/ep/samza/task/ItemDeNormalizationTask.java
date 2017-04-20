@@ -8,9 +8,9 @@ import org.apache.samza.task.*;
 import org.ekstep.ep.samza.cache.CacheEntry;
 import org.ekstep.ep.samza.cache.CacheService;
 import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.search.domain.Item;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.metrics.JobMetrics;
+import org.ekstep.ep.samza.search.domain.Item;
 import org.ekstep.ep.samza.search.service.SearchService;
 import org.ekstep.ep.samza.search.service.SearchServiceClient;
 import org.ekstep.ep.samza.service.ItemDeNormalizationService;
@@ -23,8 +23,9 @@ public class ItemDeNormalizationTask implements StreamTask, InitableTask, Window
     private ItemDeNormalizationService service;
     private ItemService itemService;
 
-    public ItemDeNormalizationTask(Config config, TaskContext context) {
-        init(config, context);
+    public ItemDeNormalizationTask(Config config, TaskContext context,
+                                   KeyValueStore<Object, Object> itemStore, SearchService searchService) {
+        init(config, context, itemStore, searchService);
     }
 
     public ItemDeNormalizationTask() {

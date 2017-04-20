@@ -4,13 +4,14 @@ import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
 import org.ekstep.ep.samza.domain.Event;
+import org.ekstep.ep.samza.metrics.JobMetrics;
 
 public class ItemDeNormalizationSink {
     private MessageCollector collector;
-    private ItemDeNormalizationMetrics metrics;
+    private JobMetrics metrics;
     private ItemDeNormalizationConfig config;
 
-    public ItemDeNormalizationSink(MessageCollector collector, ItemDeNormalizationMetrics metrics,
+    public ItemDeNormalizationSink(MessageCollector collector, JobMetrics metrics,
                                    ItemDeNormalizationConfig config) {
         this.collector = collector;
         this.metrics = metrics;
