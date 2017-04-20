@@ -33,6 +33,9 @@
     <module>ep-logger</module>
     <module>content-de-normalization</module>
     <module>item-de-normalization</module>
+    <module>search-service</module>
+    <module>cache-service</module>
+    <module>job-metrics</module>
   </modules>
 
   <properties>

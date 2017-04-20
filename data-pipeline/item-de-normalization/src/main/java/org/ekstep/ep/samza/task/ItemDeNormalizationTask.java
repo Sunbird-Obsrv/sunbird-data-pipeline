@@ -1,19 +1,30 @@
 package org.ekstep.ep.samza.task;
 
+import com.google.gson.reflect.TypeToken;
 import org.apache.samza.config.Config;
+import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.task.*;
+import org.ekstep.ep.samza.cache.CacheEntry;
+import org.ekstep.ep.samza.cache.CacheService;
 import org.ekstep.ep.samza.domain.Event;
+import org.ekstep.ep.samza.search.domain.Item;
 import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.metrics.JobMetrics;
+import org.ekstep.ep.samza.search.service.SearchService;
+import org.ekstep.ep.samza.search.service.SearchServiceClient;
+import org.ekstep.ep.samza.service.ItemDeNormalizationService;
+import org.ekstep.ep.samza.service.ItemService;
 
 public class ItemDeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
     static Logger LOGGER = new Logger(ItemDeNormalizationTask.class);
     private org.ekstep.ep.samza.task.ItemDeNormalizationConfig config;
-    private ItemDeNormalizationMetrics metrics;
-
+    private JobMetrics metrics;
+    private ItemDeNormalizationService service;
+    private ItemService itemService;
 
     public ItemDeNormalizationTask(Config config, TaskContext context) {
-        initialise(config, context);
+        init(config, context);
     }
 
     public ItemDeNormalizationTask() {
@@ -21,12 +32,23 @@ public class ItemDeNormalizationTask implements StreamTask, InitableTask, Window
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
-        initialise(config, context);
+        init(config, context);
     }
 
-    private void initialise(Config config, TaskContext context) {
+    private void init(Config config, TaskContext context,
+                      KeyValueStore<Object, Object> itemStore, SearchService searchService) {
         this.config = new ItemDeNormalizationConfig(config);
-        metrics = new ItemDeNormalizationMetrics(context);
+        metrics = new JobMetrics(context);
+        CacheService<String, Item> cacheService = itemStore != null
+                ? new CacheService<String, Item>(itemStore, new TypeToken<CacheEntry<Item>>() {
+        }.getType(), metrics)
+                : new CacheService<String, Item>(context, "item-store", CacheEntry.class, metrics);
+        SearchService searchServiceClient =
+                searchService == null
+                        ? new SearchServiceClient(this.config.searchServiceEndpoint())
+                        : searchService;
+        this.itemService = new ItemService(searchServiceClient, cacheService, this.config.cacheTTL());
+        this.service = new ItemDeNormalizationService(this.itemService, this.config);
     }
 
     @Override

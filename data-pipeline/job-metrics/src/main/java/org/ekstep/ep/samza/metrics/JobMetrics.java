@@ -1,10 +1,10 @@
-package org.ekstep.ep.samza.task;
+package org.ekstep.ep.samza.metrics;
 
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
 import org.apache.samza.task.TaskContext;
 
-public class ItemDeNormalizationMetrics {
+public class JobMetrics {
     private final Counter successMessageCount;
     private final Counter failedMessageCount;
     private final Counter skippedMessageCount;
@@ -12,7 +12,7 @@ public class ItemDeNormalizationMetrics {
     private final Counter cacheMissCount;
     private final Counter cacheExpiredCount;
 
-    public ItemDeNormalizationMetrics(TaskContext context) {
+    public JobMetrics(TaskContext context) {
         MetricsRegistry metricsRegistry = context.getMetricsRegistry();
         successMessageCount = metricsRegistry.newCounter(getClass().getName(), "success-message-count");
         failedMessageCount = metricsRegistry.newCounter(getClass().getName(), "failed-message-count");
