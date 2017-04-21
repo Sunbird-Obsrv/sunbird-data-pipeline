@@ -29,7 +29,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
-public class DeNormalizationTaskTest {
+public class DenormalizationTaskTest {
     private final String SUCCESS_TOPIC = "events_with_de_normalization";
     private final String FAILED_TOPIC = "events_failed_de_normalization";
     private final String RETRY_TOPIC = "events_retry";
