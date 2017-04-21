@@ -325,104 +325,529 @@ module Indexers
           }
         }
     BACKEND_EVENT_MAPPINGS = {
-          _default_: {
-            dynamic_templates: [
-            {
-              string_fields: {
-                mapping: {
-                  index: "not_analyzed",
-                  omit_norms: false,
-                  type: "string",
-                  doc_values: true
-                },
-                match_mapping_type: "string",
-                match: "*"
-              }
-            },
-            {
-              string_fields_force: {
-                mapping: {
-                  index: "not_analyzed",
-                  omit_norms: false,
-                  type: "string",
-                  doc_values: true
-                },
-                match: "id|uip|status|cid|downloadUrl|prevState|type|protocol|method|action|state|correlationid|message|class|level",
-                match_pattern: "regex"
-              }
-            },
-            {
-              double_fields: {
-                  match: "",
-                  match_pattern: "regex",
-                  mapping: {
-                      type: "double",
-                      index: "not_analyzed",
-                      doc_values: true
-                  }
-              }
-            },
-            {
-              integer_fields: {
-                  match: "size|duration|value|pkgVersion|assets|count|inputEvents|outputEvents|timeTaken|responseTime",
-                  match_pattern: "regex",
-                  mapping: {
-                      type: "integer",
-                      index: "not_analyzed",
-                      doc_values: true
-                  }
-              }
-            },
-            {
-              date_fields: {
-                  match: "ts|te|time|timestamp|ets|date",
-                  match_pattern: "regex",
-                  mapping: {
-                      type: "date",
-                      index: "not_analyzed",
-                      doc_values: true
-                  }
-              }
-            },
-            {
-              geo_location: {
-                  mapping: {
-                      type: "geo_point",
-                      doc_values: true
-                  },
-                  match: "loc"
-              }
-            },
-            {
-              unparsed_object_fields:{
-                match: "config|params",
-                match_pattern: "regex",
-                mapping: {
-                    type: "object",
-                    index: "no",
-                    doc_values: true,
-                    enabled: false
-                }
-              }
-            }
-            ],
+        _default_: {
+            dynamic: false,
             properties: {
-              geoip: {
-                dynamic: true,
-                properties: {
-                  location: {
-                    type: "geo_point"
-                  }
-                },
-                type: "object"
+              "@timestamp": {
+                "format": "strict_date_optional_time||epoch_millis",
+                "type": "date"
               },
-              "@version" => {
-                index: "not_analyzed",
-                type: "string"
+              "@version": {
+                "type": "string"
+              },
+              "contentdata": {
+                "properties": {
+                  "ageGroup": {
+                    "type": "string"
+                  },
+                  "author": {
+                    "type": "string"
+                  },
+                  "code": {
+                    "type": "string"
+                  },
+                  "collaborators": {
+                    "type": "string"
+                  },
+                  "collections": {
+                    "type": "string"
+                  },
+                  "concepts": {
+                    "type": "string"
+                  },
+                  "contentType": {
+                    "type": "string"
+                  },
+                  "curriculum": {
+                    "type": "string"
+                  },
+                  "developer": {
+                    "type": "string"
+                  },
+                  "domain": {
+                    "type": "string"
+                  },
+                  "downloadUrl": {
+                    "type": "string"
+                  },
+                  "downloads": {
+                    "type": "long"
+                  },
+                  "edition": {
+                    "type": "string"
+                  },
+                  "genre": {
+                    "type": "string"
+                  },
+                  "gradeLevel": {
+                    "type": "string"
+                  },
+                  "keywords": {
+                    "type": "string"
+                  },
+                  "me_totalDevices": {
+                    "type": "long"
+                  },
+                  "me_totalDownloads": {
+                    "type": "long"
+                  },
+                  "me_totalInteractions": {
+                    "type": "long"
+                  },
+                  "me_totalRatings": {
+                    "type": "long"
+                  },
+                  "me_totalSessionsCount": {
+                    "type": "long"
+                  },
+                  "me_totalSideloads": {
+                    "type": "long"
+                  },
+                  "me_totalTimespent": {
+                    "type": "long"
+                  },
+                  "me_totalUsage": {
+                    "type": "long"
+                  },
+                  "medium": {
+                    "type": "string"
+                  },
+                  "methods": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "owner": {
+                    "type": "string"
+                  },
+                  "popularity": {
+                    "type": "long"
+                  },
+                  "portalOwner": {
+                    "type": "string"
+                  },
+                  "publication": {
+                    "type": "string"
+                  },
+                  "publisher": {
+                    "type": "string"
+                  },
+                  "rating": {
+                    "type": "long"
+                  },
+                  "size": {
+                    "type": "long"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "subject": {
+                    "type": "string"
+                  },
+                  "templateType": {
+                    "type": "string"
+                  },
+                  "theme": {
+                    "type": "string"
+                  },
+                  "words": {
+                    "type": "string"
+                  }
+                }
+              },
+              "itemdata": {
+                "properties": {
+                  "concepts": {
+                    "type": "string"
+                  },
+                  "createdBy": {
+                    "type": "string"
+                  },
+                  "createdOn": {
+                    "format": "strict_date_optional_time||epoch_millis",
+                    "type": "date"
+                  },
+                  "keywords": {
+                    "type": "string"
+                  },
+                  "language": {
+                    "type": "string"
+                  },
+                  "lastUpdatedBy": {
+                    "type": "string"
+                  },
+                  "lastUpdatedOn": {
+                    "format": "strict_date_optional_time||epoch_millis",
+                    "type": "date"
+                  },
+                  "media": {
+                    "properties": {
+                      "key": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "num_answers": {
+                    "type": "long"
+                  },
+                  "owner": {
+                    "type": "string"
+                  },
+                  "qlevel": {
+                    "type": "string"
+                  },
+                  "question": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "template": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "long"
+                  }
+                }
+              },
+              "context": {
+                "properties": {
+                  "content_id": {
+                    "type": "string"
+                  },
+                  "granularity": {
+                    "type": "string"
+                  },
+                  "pdata": {
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "model": {
+                        "type": "string"
+                      },
+                      "ver": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "sid": {
+                    "type": "string"
+                  }
+                }
+              },
+              "edata": {
+                "properties": {
+                  "eks": {
+                    "properties": {
+                      "action": {
+                        "type": "string"
+                      },
+                      "category": {
+                        "type": "string"
+                      },
+                      "cid": {
+                        "type": "string"
+                      },
+                      "class": {
+                        "type": "string"
+                      },
+                      "client": {
+                        "properties": {
+                          "browser": {
+                            "type": "string"
+                          },
+                          "browserver": {
+                            "type": "string"
+                          },
+                          "os": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "containerid": {
+                        "type": "string"
+                      },
+                      "containerplugin": {
+                        "type": "string"
+                      },
+                      "contentType": {
+                        "type": "string"
+                      },
+                      "context": {
+                        "type": "object"
+                      },
+                      "correlationid": {
+                        "type": "string"
+                      },
+                      "data": {
+                        "properties": {
+                          "config": {
+                            "properties": {
+                              "appName": {
+                                "type": "string"
+                              },
+                              "deviceMapping": {
+                                "type": "boolean"
+                              },
+                              "model": {
+                                "type": "string"
+                              },
+                              "output": {
+                                "properties": {
+                                  "params": {
+                                    "properties": {
+                                      "printEvent": {
+                                        "type": "boolean"
+                                      }
+                                    }
+                                  },
+                                  "to": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "parallelization": {
+                                "type": "long"
+                              },
+                              "search": {
+                                "properties": {
+                                  "queries": {
+                                    "properties": {
+                                      "bucket": {
+                                        "type": "string"
+                                      },
+                                      "delta": {
+                                        "type": "long"
+                                      },
+                                      "endDate": {
+                                        "format": "strict_date_optional_time||epoch_millis",
+                                        "type": "date"
+                                      },
+                                      "prefix": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  },
+                                  "type": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "defaultPlugins": {
+                        "type": "string"
+                      },
+                      "downloadUrl": {
+                        "type": "string"
+                      },
+                      "duration": {
+                        "type": "long"
+                      },
+                      "env": {
+                        "type": "string"
+                      },
+                      "filters": {
+                        "type": "object"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "level": {
+                        "type": "string"
+                      },
+                      "loadtimes": {
+                        "properties": {
+                          "contentLoad": {
+                            "type": "long"
+                          },
+                          "plugins": {
+                            "type": "long"
+                          }
+                        }
+                      },
+                      "mediaType": {
+                        "type": "string"
+                      },
+                      "message": {
+                        "type": "string"
+                      },
+                      "method": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "objectid": {
+                        "type": "string"
+                      },
+                      "pluginid": {
+                        "type": "string"
+                      },
+                      "pluginver": {
+                        "type": "string"
+                      },
+                      "prevState": {
+                        "type": "string"
+                      },
+                      "protocol": {
+                        "type": "string"
+                      },
+                      "query": {
+                        "type": "string"
+                      },
+                      "rid": {
+                        "type": "string"
+                      },
+                      "size": {
+                        "type": "long"
+                      },
+                      "stage": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "long"
+                      },
+                      "subtype": {
+                        "type": "string"
+                      },
+                      "target": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "uaspec": {
+                        "properties": {
+                          "agent": {
+                            "type": "string"
+                          },
+                          "platform": {
+                            "type": "string"
+                          },
+                          "system": {
+                            "type": "string"
+                          },
+                          "ver": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "uip": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "long"
+                      }
+                    }
+                  }
+                }
+              },
+              "eid": {
+                "type": "string"
+              },
+              "ets": {
+                "format": "strict_date_optional_time||epoch_millis",
+                "type": "date"
+              },
+              "host": {
+                "type": "string"
+              },
+              "metadata": {
+                "properties": {
+                  "hour": {
+                    "type": "string"
+                  },
+                  "month": {
+                    "type": "string"
+                  },
+                  "monthday": {
+                    "type": "string"
+                  },
+                  "sync_timestamp": {
+                    "format": "strict_date_optional_time||epoch_millis",
+                    "type": "date"
+                  },
+                  "ts_month": {
+                    "type": "string"
+                  },
+                  "ts_year": {
+                    "type": "string"
+                  },
+                  "year": {
+                    "type": "string"
+                  }
+                }
+              },
+              "mid": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "pdata": {
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "pid": {
+                    "type": "string"
+                  },
+                  "ver": {
+                    "type": "string"
+                  }
+                }
+              },
+              "rid": {
+                "type": "string"
+              },
+              "syncts": {
+                "type": "long"
+              },
+              "tags": {
+                "type": "string"
+              },
+              "ts": {
+                "format": "strict_date_optional_time||epoch_millis",
+                "type": "date"
+              },
+              "type": {
+                "type": "string"
+              },
+              "uid": {
+                "type": "string"
+              },
+              "ver": {
+                "type": "string"
               }
-            },
-            _all: {
-              enabled: true
             }
           }
         }
