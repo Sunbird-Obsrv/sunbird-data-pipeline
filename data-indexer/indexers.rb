@@ -954,10 +954,10 @@ module Indexers
         }
       })
       puts client.indices.put_template({
-        name: "backend-raw",
+        name: "backend_raw",
         body: {
         order: 10,
-        template: "backend-raw-*",
+        template: "backend_raw_*",
         settings: {
           "index.refresh_interval": "5s"
         },
