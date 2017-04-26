@@ -10,9 +10,9 @@ import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
+import org.ekstep.ep.samza.Event;
 import org.ekstep.ep.samza.external.UserService;
 import org.ekstep.ep.samza.external.UserServiceClient;
-import org.ekstep.ep.samza.Event;
 import org.ekstep.ep.samza.util.BackendEventFactory;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -52,7 +52,7 @@ public class DenormalizationTaskTest {
     private BackendEventFactory backendEventFactoryMock;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         collectorMock = mock(MessageCollector.class);
         eventMock = mock(Event.class);
         userServiceMock = mock(UserServiceClient.class);
@@ -90,9 +90,10 @@ public class DenormalizationTaskTest {
     @Test
     public void ShouldProcessEvent() throws Exception {
         stub(eventMock.canBeProcessed()).toReturn(true);
+
         deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
 
-        verify(eventMock).process(userServiceMock, DateTime.now());
+        verify(eventMock).process(eq(userServiceMock), isA(DateTime.class));
     }
 
     @Test
@@ -106,7 +107,7 @@ public class DenormalizationTaskTest {
         deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
 
         verify(collectorMock).send(argThat(validateOutputTopic(message, SUCCESS_TOPIC)));
-        verify(eventMock, never()).process(userServiceMock, DateTime.now());
+        verify(eventMock).process(eq(userServiceMock), isA(DateTime.class));
     }
 
     @Test
@@ -121,7 +122,7 @@ public class DenormalizationTaskTest {
 
         deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
 
-        verify(collectorMock,times(1)).send(argument.capture());
+        verify(collectorMock, times(1)).send(argument.capture());
         validateStreams(argument, message, new String[]{RETRY_TOPIC});
     }
 
@@ -137,7 +138,7 @@ public class DenormalizationTaskTest {
 
         deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
 
-        verify(collectorMock,times(1)).send(argument.capture());
+        verify(collectorMock, times(1)).send(argument.capture());
         validateStreams(argument, message, new String[]{RETRY_TOPIC});
     }
 
@@ -161,7 +162,8 @@ public class DenormalizationTaskTest {
     }
 
     @Test
-    public void ShouldTryIfBackingOff() throws Exception {stub(eventMock.isProcessed()).toReturn(true);
+    public void ShouldTryIfBackingOff() throws Exception {
+        stub(eventMock.isProcessed()).toReturn(true);
         HashMap<String, Object> message = new HashMap<String, Object>();
         stub(eventMock.getData()).toReturn(message);
         deNormalizationTask.init(configMock, contextMock);
@@ -179,7 +181,7 @@ public class DenormalizationTaskTest {
         deNormalizationTask.init(configMock, contextMock);
         deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
         verify(collectorMock).send(argThat(validateOutputTopic(message, RETRY_TOPIC)));
-        verify(eventMock,times(1)).addLastSkippedAt(any(DateTime.class));
+        verify(eventMock, times(1)).addLastSkippedAt(any(DateTime.class));
     }
 
     @Test
@@ -192,7 +194,7 @@ public class DenormalizationTaskTest {
         deNormalizationTask.init(configMock, contextMock);
         deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
         verify(collectorMock).send(argThat(validateOutputTopic(message, RETRY_TOPIC)));
-        verify(eventMock,times(1)).setBackendTrue();
+        verify(eventMock, times(1)).setBackendTrue();
     }
 
 
@@ -204,7 +206,7 @@ public class DenormalizationTaskTest {
                 SystemStream systemStream = outgoingMessageEnvelope.getSystemStream();
                 assertEquals("kafka", systemStream.getSystem());
                 assertEquals(stream, systemStream.getStream());
-                assertEquals(message,outgoingMessageEnvelope.getMessage());
+                assertEquals(message, outgoingMessageEnvelope.getMessage());
                 return true;
             }
         };
@@ -215,13 +217,13 @@ public class DenormalizationTaskTest {
 
         ArrayList<Object> messages = new ArrayList<Object>();
         ArrayList<String> streams = new ArrayList<String>();
-        for(OutgoingMessageEnvelope envelope: envelops){
+        for (OutgoingMessageEnvelope envelope : envelops) {
             messages.add(envelope.getMessage());
             streams.add(envelope.getSystemStream().getStream());
         }
 
         assertTrue(messages.contains(message));
-        for(String topic: topics)
+        for (String topic : topics)
             assertTrue(streams.contains(topic));
     }
 }
