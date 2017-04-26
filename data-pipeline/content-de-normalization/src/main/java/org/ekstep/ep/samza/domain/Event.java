@@ -69,11 +69,47 @@ public class Event {
         contentData.put("owner", content.owner());
         contentData.put("lastUpdatedOn", content.lastUpdatedOn());
         contentData.put("duration", content.duration());
+        contentData.put("gradeLevel", content.gradeLevel());
+        contentData.put("author", content.author());
+        contentData.put("code", content.code());
+        contentData.put("curriculum", content.curriculum());
+        contentData.put("developer", content.developer());
+        contentData.put("domain", content.domain());
+        contentData.put("downloadUrl", content.downloadUrl());
+        contentData.put("edition", content.edition());
+        contentData.put("genre", content.genre());
+        contentData.put("medium", content.medium());
+        contentData.put("portalOwner", content.portalOwner());
+        contentData.put("publication", content.publication());
+        contentData.put("publisher", content.publisher());
+        contentData.put("source", content.source());
+        contentData.put("status", content.status());
+        contentData.put("subject", content.subject());
+        contentData.put("templateType", content.templateType());
+        contentData.put("theme", content.theme());
+
+        contentData.put("downloads", content.downloads());
+        contentData.put("popularity", content.popularity());
+        contentData.put("rating", content.rating());
+        contentData.put("size", content.size());
+        contentData.put("me_totalDevices", content.me_totalDevices());
+        contentData.put("me_totalDownloads", content.me_totalDownloads());
+        contentData.put("me_totalInteractions", content.me_totalInteractions());
+        contentData.put("me_totalRatings", content.me_totalRatings());
+        contentData.put("me_totalSessionsCount", content.me_totalSessionsCount());
+        contentData.put("me_totalSideloads", content.me_totalSideloads());
+        contentData.put("me_totalTimespent", content.me_totalTimespent());
+        contentData.put("me_totalUsage", content.me_totalUsage());
+
         contentData.put("language", content.language());
         contentData.put("ageGroup", content.ageGroup());
         contentData.put("keywords", content.keywords());
         contentData.put("concepts", content.concepts());
-        contentData.put("gradeLevel", content.gradeLevel());
+        contentData.put("collaborators", content.collaborators());
+        contentData.put("collections", content.collections());
+        contentData.put("methods", content.methods());
+        contentData.put("words", content.words());
+
         map.put("contentdata",contentData);
 
         updateMetadata(content);
