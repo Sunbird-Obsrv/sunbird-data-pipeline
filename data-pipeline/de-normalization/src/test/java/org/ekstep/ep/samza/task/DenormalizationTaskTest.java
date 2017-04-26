@@ -93,7 +93,7 @@ public class DenormalizationTaskTest {
 
         deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
 
-        verify(eventMock).process(eq(userServiceMock), isA(DateTime.class));
+        verify(eventMock).process(eq(userServiceMock), any(DateTime.class));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class DenormalizationTaskTest {
         deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
 
         verify(collectorMock).send(argThat(validateOutputTopic(message, SUCCESS_TOPIC)));
-        verify(eventMock).process(eq(userServiceMock), isA(DateTime.class));
+        verify(eventMock).process(eq(userServiceMock), any(DateTime.class));
     }
 
     @Test
