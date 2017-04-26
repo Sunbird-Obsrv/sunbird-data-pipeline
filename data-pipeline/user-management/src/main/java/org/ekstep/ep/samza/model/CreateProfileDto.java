@@ -43,7 +43,6 @@ public class CreateProfileDto implements IModel {
     private DataSource dataSource;
 
 
-
     public CreateProfileDto(DataSource dataSource) {
         this.dataSource = dataSource;
     }
@@ -124,8 +123,8 @@ public class CreateProfileDto implements IModel {
             setIntegerValues(preparedStmt, 8, day);
             setIntegerValues(preparedStmt, 9, month);
             preparedStmt.setBoolean(10, isGroupUser);
-            preparedStmt.setString(11,board);
-            preparedStmt.setString(12,medium);
+            preparedStmt.setString(11, board);
+            preparedStmt.setString(12, medium);
             preparedStmt.setTimestamp(13, createdAt);
             preparedStmt.setTimestamp(14, updatedAt);
 
@@ -144,7 +143,7 @@ public class CreateProfileDto implements IModel {
             }
 
         } catch (Exception e) {
-            LOGGER.error(eventId, "EXCEPTION", e);
+            LOGGER.error(eventId, "EXCEPTION WHEN CREATING PROFILE", e);
         } finally {
             if (preparedStmt != null)
                 preparedStmt.close();
@@ -168,11 +167,11 @@ public class CreateProfileDto implements IModel {
     public boolean isLearnerExist(String uid, String eventId) throws SQLException {
         boolean flag = false;
         PreparedStatement preparedStmt = null;
-        Connection connection;
-        connection = dataSource.getConnection();
+        Connection connection = null;
         ResultSet resultSet = null;
 
         try {
+            connection = dataSource.getConnection();
             String query = String.format("select %s from learner where %s = ?", UID, UID);
             preparedStmt = connection.prepareStatement(query);
             preparedStmt.setString(1, uid);
@@ -184,7 +183,7 @@ public class CreateProfileDto implements IModel {
             }
 
         } catch (Exception e) {
-            LOGGER.error(eventId, "EXCEPTION", e);
+            LOGGER.error(eventId, "EXCEPTION WHEN CHECKING IF LEARNER EXISTS", e);
         } finally {
             if (preparedStmt != null)
                 preparedStmt.close();

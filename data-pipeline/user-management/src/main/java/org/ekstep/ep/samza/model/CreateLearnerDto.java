@@ -59,7 +59,7 @@ public class CreateLearnerDto implements IModel{
             }
 
         } catch (Exception e) {
-            LOGGER.error(eventId, "EXCEPTION", e);
+            LOGGER.error(eventId, "EXCEPTION WHEN CREATING LEARNER", e);
         } finally {
             if(preparedStmt!=null)
                 preparedStmt.close();

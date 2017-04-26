@@ -51,6 +51,7 @@ public class UserManagementTaskTest {
         when(configMock.get("db.url")).thenReturn("jdbc:mysql://localhost:3306/ecosystem");
         when(configMock.get("db.userName")).thenReturn("jenkins");
         when(configMock.get("db.password")).thenReturn("password");
+        when(configMock.get("db.connectionTimeoutMs")).thenReturn("10000");
         when(contextMock.getMetricsRegistry()).thenReturn(metricsRegistryMock);
         when(metricsRegistryMock.newCounter("org.ekstep.ep.samza.task.UserManagementTask", "message-count")).thenReturn(counterMock);
     }

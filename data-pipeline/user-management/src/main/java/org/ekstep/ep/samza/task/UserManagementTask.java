@@ -11,6 +11,7 @@ import org.apache.samza.task.*;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.model.*;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,19 +38,20 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
         dbUserName = config.get("db.userName");
         dbPassword = config.get("db.password");
 
-        initDataSource();
+        initDataSource(Integer.parseInt(config.get("db.connectionTimeoutMs")));
         messageCount = context
                 .getMetricsRegistry()
                 .newCounter(getClass().getName(), "message-count");
     }
 
-    private void initDataSource() {
+    private void initDataSource(int connectionTimeoutMs) throws SQLException {
         String url = String.format("%s", dbUrl);
         dataSource = new HikariDataSource();
         dataSource.setJdbcUrl(url);
         dataSource.setUsername(dbUserName);
         dataSource.setPassword(dbPassword);
         dataSource.setMaximumPoolSize(2);
+        dataSource.setConnectionTimeout(connectionTimeoutMs);
 
         modelMap.put("GE_CREATE_PROFILE", new CreateProfileDto(dataSource));
         modelMap.put("GE_CREATE_USER", new CreateLearnerDto(dataSource));

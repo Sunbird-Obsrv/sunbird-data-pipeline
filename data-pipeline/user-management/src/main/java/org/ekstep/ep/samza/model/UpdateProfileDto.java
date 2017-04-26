@@ -133,7 +133,7 @@ public class UpdateProfileDto implements IModel {
             }
 
         } catch (Exception e) {
-            LOGGER.error(eventId, "EXCEPTION", e);
+            LOGGER.error(eventId, "EXCEPTION WHEN UPDATING PROFILE", e);
         } finally {
             if (preparedStmt != null)
                 preparedStmt.close();
@@ -158,10 +158,10 @@ public class UpdateProfileDto implements IModel {
         boolean flag = false;
         PreparedStatement preparedStmt = null;
         Connection connection = null;
-        connection = dataSource.getConnection();
         ResultSet resultSet = null;
 
         try {
+            connection = dataSource.getConnection();
             String query = "select uid from profile where uid = ?";
             preparedStmt = connection.prepareStatement(query);
             preparedStmt.setString(1, uid);
@@ -173,7 +173,7 @@ public class UpdateProfileDto implements IModel {
             }
 
         } catch (Exception e) {
-            LOGGER.error(eventId, "EXCEPTION", e);
+            LOGGER.error(eventId, "EXCEPTION WHEN CHECKING IF PROFILE EXISTS", e);
         } finally {
             if (preparedStmt != null)
                 preparedStmt.close();
