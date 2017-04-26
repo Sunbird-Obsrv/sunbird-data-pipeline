@@ -44,5 +44,12 @@ public class Event {
     public void addEventType() {
         map.put("type","events");
     }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+            "map=" + getJson() +
+            '}';
+    }
 }
 

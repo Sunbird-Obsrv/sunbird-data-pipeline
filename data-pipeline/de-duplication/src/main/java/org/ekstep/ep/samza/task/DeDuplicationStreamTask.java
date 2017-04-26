@@ -94,17 +94,24 @@ public class DeDuplicationStreamTask implements StreamTask, InitableTask, Window
 
     public void processEvent(Event event, MessageCollector collector) throws Exception {
         String checkSum = event.getChecksum();
-        if(checkSum == null) return;
+        if(checkSum == null) {
+            LOGGER.info(event.id(), "EVENT WITHOUT CHECKSUM & MID, PASSING THROUGH : {}", event);
+            handleSucess(event,collector);
+        }
 
         if(deDuplicationStore.get(checkSum) == null){
             deDuplicationStore.put(checkSum, new Date().toString());
-            event.addEventType();
-            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getJson()));
+            handleSucess(event, collector);
         }
         else {
             LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checkSum);
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getJson()));
         }
+    }
+
+    private void handleSucess(Event event, MessageCollector collector) {
+        event.addEventType();
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getJson()));
     }
 
     @Override
