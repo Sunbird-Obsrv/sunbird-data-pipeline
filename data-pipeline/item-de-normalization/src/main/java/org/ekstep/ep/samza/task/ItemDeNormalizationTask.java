@@ -7,7 +7,6 @@ import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.cache.CacheEntry;
 import org.ekstep.ep.samza.cache.CacheService;
-import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.metrics.JobMetrics;
 import org.ekstep.ep.samza.search.domain.Item;
@@ -16,15 +15,18 @@ import org.ekstep.ep.samza.search.service.SearchServiceClient;
 import org.ekstep.ep.samza.service.ItemDeNormalizationService;
 import org.ekstep.ep.samza.service.ItemService;
 
+import java.util.HashMap;
+
 public class ItemDeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
     static Logger LOGGER = new Logger(ItemDeNormalizationTask.class);
     private org.ekstep.ep.samza.task.ItemDeNormalizationConfig config;
     private JobMetrics metrics;
     private ItemDeNormalizationService service;
     private ItemService itemService;
+    private HashMap<String, Object> itemTaxonomy;
 
     public ItemDeNormalizationTask(Config config, TaskContext context,
-                                   KeyValueStore<Object, Object> itemStore, SearchService searchService) {
+                                    SearchService searchService, KeyValueStore<Object, Object> itemStore) {
         init(config, context, itemStore, searchService);
     }
 
@@ -33,7 +35,7 @@ public class ItemDeNormalizationTask implements StreamTask, InitableTask, Window
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
-        init(config, context);
+        init(config, context, (KeyValueStore<Object, Object>) context.getStore("item-store"), null);
     }
 
     private void init(Config config, TaskContext context,
@@ -49,29 +51,16 @@ public class ItemDeNormalizationTask implements StreamTask, InitableTask, Window
                         ? new SearchServiceClient(this.config.searchServiceEndpoint())
                         : searchService;
         this.itemService = new ItemService(searchServiceClient, cacheService, this.config.cacheTTL());
-        this.service = new ItemDeNormalizationService(this.itemService, this.config);
+        service = new ItemDeNormalizationService(this.itemService, this.config);
+        itemTaxonomy = this.config.itemTaxonomy();
     }
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector,
                         TaskCoordinator taskCoordinator) throws Exception {
-
-        Event event = null;
-        ItemDeNormalizationSource source = new ItemDeNormalizationSource(envelope);
+        ItemDeNormalizationSource source = new ItemDeNormalizationSource(envelope, itemTaxonomy);
         ItemDeNormalizationSink sink = new ItemDeNormalizationSink(collector, metrics, config);
-        try {
-            event = source.getEvent();
-            LOGGER.debug(event.id(), "PASSING EVENT THROUGH: {}", event.getMap());
-            sink.toSuccessTopic(event);
-        } catch (Exception e) {
-            LOGGER.error(null, "ERROR WHILE PROCESSING EVENT", e);
-            if (event != null && event.getMap() != null) {
-                LOGGER.error(event.id(), "ADDED FAILED EVENT TO FAILED TOPIC. EVENT: {}", event.getMap());
-                sink.toFailedTopic(event);
-            }
-        }
-
-
+        service.process(source,sink);
     }
 
     @Override

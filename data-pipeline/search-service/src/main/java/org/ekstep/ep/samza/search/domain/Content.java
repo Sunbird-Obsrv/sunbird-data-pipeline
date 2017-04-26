@@ -21,38 +21,89 @@ public class Content {
     private ArrayList<String> concepts;
     private ArrayList<String> gradeLevel;
 
-    public String name() { return name; }
+    public String name() {
+        return name;
+    }
 
-    public String identifier() {return identifier;}
+    public String identifier() {
+        return identifier;
+    }
 
     public Integer pkgVersion() {
         return pkgVersion;
     }
 
-    public String description() {return description;}
+    public String description() {
+        return description;
+    }
 
-    public String mediaType() { return mediaType; }
+    public String mediaType() {
+        return mediaType;
+    }
 
-    public String contentType() { return contentType; }
+    public String contentType() {
+        return contentType;
+    }
 
-    public String owner() { return owner; }
+    public String owner() {
+        return owner;
+    }
 
-    public String lastUpdatedOn() { return lastUpdatedOn; }
+    public String lastUpdatedOn() {
+        return lastUpdatedOn;
+    }
 
-    public String duration() { return duration; }
+    public String duration() {
+        return duration;
+    }
 
-    public void setCacheHit(boolean b) { this.cacheHit = b;}
+    public void setCacheHit(boolean b) {
+        this.cacheHit = b;
+    }
 
-    public boolean getCacheHit() { return cacheHit; }
+    public boolean getCacheHit() {
+        return cacheHit;
+    }
 
-    public ArrayList<String> ageGroup() { return ageGroup; }
+    public ArrayList<String> ageGroup() {
+        return ageGroup;
+    }
 
-    public ArrayList<String> language() { return language; }
+    public ArrayList<String> language() {
+        return language;
+    }
 
-    public ArrayList<String> keywords() { return keywords; }
+    public ArrayList<String> keywords() {
+        return keywords;
+    }
 
-    public ArrayList<String> concepts() { return concepts; }
+    public ArrayList<String> concepts() {
+        return concepts;
+    }
 
-    public ArrayList<String> gradeLevel() { return gradeLevel; }
+    public ArrayList<String> gradeLevel() {
+        return gradeLevel;
+    }
+
+    @Override
+    public String toString() {
+        return "Content{" +
+                "name='" + name + '\'' +
+                ", identifier='" + identifier + '\'' +
+                ", pkgVersion=" + pkgVersion +
+                ", description='" + description + '\'' +
+                ", mediaType='" + mediaType + '\'' +
+                ", contentType='" + contentType + '\'' +
+                ", owner='" + owner + '\'' +
+                ", lastUpdatedOn='" + lastUpdatedOn + '\'' +
+                ", duration='" + duration + '\'' +
+                ", cacheHit=" + cacheHit +
+                ", language=" + language +
+                ", ageGroup=" + ageGroup +
+                ", keywords=" + keywords +
+                ", concepts=" + concepts +
+                ", gradeLevel=" + gradeLevel +
+                '}';
+    }
 }
 

@@ -29,8 +29,10 @@ public class SearchRequest {
         HashMap<String, Object> request = new HashMap<String, Object>();
         HashMap<String, Object> filters = new HashMap<String, Object>();
         ArrayList<String> identifiers = new ArrayList<String>();
+        ArrayList<String> status = new ArrayList<String>();
         identifiers.add(identifier);
         filters.put("identifier", identifiers);
+        filters.put("status", status);
         request.put("filters", filters);
         return request;
     }

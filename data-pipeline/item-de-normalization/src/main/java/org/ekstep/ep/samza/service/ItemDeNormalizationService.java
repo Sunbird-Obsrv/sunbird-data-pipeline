@@ -1,8 +1,8 @@
 package org.ekstep.ep.samza.service;
 
 import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.search.domain.Item;
 import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.search.domain.Item;
 import org.ekstep.ep.samza.task.ItemDeNormalizationConfig;
 import org.ekstep.ep.samza.task.ItemDeNormalizationSink;
 import org.ekstep.ep.samza.task.ItemDeNormalizationSource;
@@ -21,12 +21,6 @@ public class ItemDeNormalizationService {
         Event event = source.getEvent();
 
         try {
-//            if (!cleanerFactory.shouldAllowEvent(event.getEid())) {
-//                LOGGER.info(event.id(), "EVENT IN SKIP LIST, PASSING EVENT THROUGH");
-//                sink.toSuccessTopic(event);
-//                return;
-//            }
-
             String itemId = event.itemId();
             if (itemId == null) {
                 LOGGER.info(event.id(), "NULL ITEM ID, PASSING EVENT THROUGH");
@@ -46,8 +40,8 @@ public class ItemDeNormalizationService {
             sink.toSuccessTopic(event);
         } catch (Exception e) {
             LOGGER.error(event.id(), "EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO FAILED TOPIC", e);
-            sink.toFailedTopic(event);
             sink.toSuccessTopic(event);
+            sink.toFailedTopic(event);
         }
 
     }

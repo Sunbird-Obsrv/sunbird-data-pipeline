@@ -5,8 +5,9 @@ import okhttp3.*;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.search.domain.Content;
 import org.ekstep.ep.samza.search.domain.Item;
+import org.ekstep.ep.samza.search.dto.ItemSearchResponse;
 import org.ekstep.ep.samza.search.dto.SearchRequest;
-import org.ekstep.ep.samza.search.dto.SearchResponse;
+import org.ekstep.ep.samza.search.dto.ContentSearchResponse;
 
 import java.io.IOException;
 
@@ -29,33 +30,36 @@ public class SearchServiceClient implements SearchService {
                 .post(RequestBody.create(JSON_MEDIA_TYPE, body))
                 .build();
         Response response = httpClient.newCall(request).execute();
-        SearchResponse searchResponse = new Gson().fromJson(response.body().string(), SearchResponse.class);
-        if (!searchResponse.successful()) {
-            LOGGER.error("SEARCH SERVICE FAILED. RESPONSE: {}", searchResponse.toString());
+        ContentSearchResponse contentSearchResponse = new Gson().fromJson(response.body().string(), ContentSearchResponse.class);
+        if (!contentSearchResponse.successful()) {
+            LOGGER.error("SEARCH SERVICE FAILED. RESPONSE: {}", contentSearchResponse.toString());
             return null;
         }
-        if (searchResponse.content() != null) {
-            return searchResponse.content();
+        if (contentSearchResponse.value() != null) {
+            return contentSearchResponse.value();
         }
         return null;
     }
 
     @Override
     public Item searchItem(String itemId) throws IOException {
-//        String body = new Gson().toJson(new SearchRequest(itemId).toMap());
-//        Request request = new Request.Builder()
-//                .url(endpoint)
-//                .post(RequestBody.create(JSON_MEDIA_TYPE, body))
-//                .build();
-//        Response response = httpClient.newCall(request).execute();
-//        SearchResponse searchResponse = new Gson().fromJson(response.body().string(), SearchResponse.class);
-//        if (!searchResponse.successful()) {
-//            LOGGER.error("SEARCH SERVICE FAILED. RESPONSE: {}", searchResponse.toString());
-//            return null;
-//        }
-//        if (searchResponse.content() != null) {
-//            return searchResponse.content();
-//        }
+        String body = new Gson().toJson(new SearchRequest(itemId).toMap());
+        Request request = new Request.Builder()
+                .url(endpoint)
+                .post(RequestBody.create(JSON_MEDIA_TYPE, body))
+                .build();
+        Response response = httpClient.newCall(request).execute();
+        String string = response.body().string();
+        ItemSearchResponse searchResponse = new Gson().fromJson(string, ItemSearchResponse.class);
+
+        if (!searchResponse.successful()) {
+            LOGGER.error("SEARCH SERVICE FAILED. RESPONSE: {}", searchResponse.toString());
+            return null;
+        }
+
+        if (searchResponse.value() != null) {
+            return searchResponse.value();
+        }
         return null;
     }
 }
