@@ -128,6 +128,197 @@ module Indexers
                    }
                 }
               },
+              "contentdata": {
+                "properties": {
+                  "ageGroup": {
+                    "type": "string"
+                  },
+                  "author": {
+                    "type": "string"
+                  },
+                  "code": {
+                    "type": "string"
+                  },
+                  "collaborators": {
+                    "type": "string"
+                  },
+                  "collections": {
+                    "type": "string"
+                  },
+                  "concepts": {
+                    "type": "string"
+                  },
+                  "contentType": {
+                    "type": "string"
+                  },
+                  "curriculum": {
+                    "type": "string"
+                  },
+                  "developer": {
+                    "type": "string"
+                  },
+                  "domain": {
+                    "type": "string"
+                  },
+                  "downloadUrl": {
+                    "type": "string"
+                  },
+                  "downloads": {
+                    "type": "long"
+                  },
+                  "edition": {
+                    "type": "string"
+                  },
+                  "genre": {
+                    "type": "string"
+                  },
+                  "gradeLevel": {
+                    "type": "string"
+                  },
+                  "keywords": {
+                    "type": "string"
+                  },
+                  "me_totalDevices": {
+                    "type": "long"
+                  },
+                  "me_totalDownloads": {
+                    "type": "long"
+                  },
+                  "me_totalInteractions": {
+                    "type": "long"
+                  },
+                  "me_totalRatings": {
+                    "type": "long"
+                  },
+                  "me_totalSessionsCount": {
+                    "type": "long"
+                  },
+                  "me_totalSideloads": {
+                    "type": "long"
+                  },
+                  "me_totalTimespent": {
+                    "type": "long"
+                  },
+                  "me_totalUsage": {
+                    "type": "long"
+                  },
+                  "medium": {
+                    "type": "string"
+                  },
+                  "methods": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "owner": {
+                    "type": "string"
+                  },
+                  "popularity": {
+                    "type": "long"
+                  },
+                  "portalOwner": {
+                    "type": "string"
+                  },
+                  "publication": {
+                    "type": "string"
+                  },
+                  "publisher": {
+                    "type": "string"
+                  },
+                  "rating": {
+                    "type": "long"
+                  },
+                  "size": {
+                    "type": "long"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "subject": {
+                    "type": "string"
+                  },
+                  "templateType": {
+                    "type": "string"
+                  },
+                  "theme": {
+                    "type": "string"
+                  },
+                  "words": {
+                    "type": "string"
+                  }
+                }
+              },
+              "itemdata": {
+                "properties": {
+                  "concepts": {
+                    "type": "string"
+                  },
+                  "createdBy": {
+                    "type": "string"
+                  },
+                  "createdOn": {
+                    "format": "strict_date_optional_time||epoch_millis",
+                    "type": "date"
+                  },
+                  "keywords": {
+                    "type": "string"
+                  },
+                  "language": {
+                    "type": "string"
+                  },
+                  "lastUpdatedBy": {
+                    "type": "string"
+                  },
+                  "lastUpdatedOn": {
+                    "format": "strict_date_optional_time||epoch_millis",
+                    "type": "date"
+                  },
+                  "media": {
+                    "properties": {
+                      "key": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "num_answers": {
+                    "type": "long"
+                  },
+                  "owner": {
+                    "type": "string"
+                  },
+                  "qlevel": {
+                    "type": "string"
+                  },
+                  "question": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "template": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "long"
+                  }
+                }
+              },
               "@version" => {
                 index: "not_analyzed",
                 type: "string"
@@ -240,6 +431,197 @@ module Indexers
                   }
                 },
                 type: "object"
+              },
+                  "contentdata": {
+                "properties": {
+                  "ageGroup": {
+                    "type": "string"
+                  },
+                  "author": {
+                    "type": "string"
+                  },
+                  "code": {
+                    "type": "string"
+                  },
+                  "collaborators": {
+                    "type": "string"
+                  },
+                  "collections": {
+                    "type": "string"
+                  },
+                  "concepts": {
+                    "type": "string"
+                  },
+                  "contentType": {
+                    "type": "string"
+                  },
+                  "curriculum": {
+                    "type": "string"
+                  },
+                  "developer": {
+                    "type": "string"
+                  },
+                  "domain": {
+                    "type": "string"
+                  },
+                  "downloadUrl": {
+                    "type": "string"
+                  },
+                  "downloads": {
+                    "type": "long"
+                  },
+                  "edition": {
+                    "type": "string"
+                  },
+                  "genre": {
+                    "type": "string"
+                  },
+                  "gradeLevel": {
+                    "type": "string"
+                  },
+                  "keywords": {
+                    "type": "string"
+                  },
+                  "me_totalDevices": {
+                    "type": "long"
+                  },
+                  "me_totalDownloads": {
+                    "type": "long"
+                  },
+                  "me_totalInteractions": {
+                    "type": "long"
+                  },
+                  "me_totalRatings": {
+                    "type": "long"
+                  },
+                  "me_totalSessionsCount": {
+                    "type": "long"
+                  },
+                  "me_totalSideloads": {
+                    "type": "long"
+                  },
+                  "me_totalTimespent": {
+                    "type": "long"
+                  },
+                  "me_totalUsage": {
+                    "type": "long"
+                  },
+                  "medium": {
+                    "type": "string"
+                  },
+                  "methods": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "owner": {
+                    "type": "string"
+                  },
+                  "popularity": {
+                    "type": "long"
+                  },
+                  "portalOwner": {
+                    "type": "string"
+                  },
+                  "publication": {
+                    "type": "string"
+                  },
+                  "publisher": {
+                    "type": "string"
+                  },
+                  "rating": {
+                    "type": "long"
+                  },
+                  "size": {
+                    "type": "long"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "subject": {
+                    "type": "string"
+                  },
+                  "templateType": {
+                    "type": "string"
+                  },
+                  "theme": {
+                    "type": "string"
+                  },
+                  "words": {
+                    "type": "string"
+                  }
+                }
+              },
+              "itemdata": {
+                "properties": {
+                  "concepts": {
+                    "type": "string"
+                  },
+                  "createdBy": {
+                    "type": "string"
+                  },
+                  "createdOn": {
+                    "format": "strict_date_optional_time||epoch_millis",
+                    "type": "date"
+                  },
+                  "keywords": {
+                    "type": "string"
+                  },
+                  "language": {
+                    "type": "string"
+                  },
+                  "lastUpdatedBy": {
+                    "type": "string"
+                  },
+                  "lastUpdatedOn": {
+                    "format": "strict_date_optional_time||epoch_millis",
+                    "type": "date"
+                  },
+                  "media": {
+                    "properties": {
+                      "key": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "num_answers": {
+                    "type": "long"
+                  },
+                  "owner": {
+                    "type": "string"
+                  },
+                  "qlevel": {
+                    "type": "string"
+                  },
+                  "question": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "template": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "long"
+                  }
+                }
               },
               "@version" => {
                 index: "not_analyzed",
@@ -580,6 +962,13 @@ module Indexers
                     "type": "string"
                   }
                 }
+              },
+              "cdata": {
+                  "type": "nested",
+                  "properties": {
+                      "type": { "type": "string" },
+                      "id": { "type": "string" }
+                  },
               },
               "edata": {
                 "properties": {
