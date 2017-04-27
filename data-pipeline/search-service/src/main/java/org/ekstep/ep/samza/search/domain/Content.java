@@ -18,7 +18,7 @@ public class Content {
     private String code;
     private String curriculum;
     private String developer;
-    private String domain;
+
     private String downloadUrl;
     private String edition;
     private String genre;
@@ -30,7 +30,6 @@ public class Content {
     private String status;
     private String subject;
     private String templateType;
-    private String theme;
 
     private Integer downloads;
     private Integer popularity;
@@ -54,6 +53,8 @@ public class Content {
     private ArrayList<String> collections;
     private ArrayList<String> methods;
     private ArrayList<String> words;
+    private ArrayList<String> domain;
+    private ArrayList<String> theme;
 
     private boolean cacheHit;
 
@@ -101,7 +102,7 @@ public class Content {
 
     public String developer() { return developer; }
 
-    public String domain() { return domain; }
+
 
     public String downloadUrl() { return downloadUrl; }
 
@@ -125,7 +126,7 @@ public class Content {
 
     public String templateType() { return templateType; }
 
-    public String theme() { return theme; }
+
 
     public Integer downloads() { return downloads; }
 
@@ -186,6 +187,10 @@ public class Content {
     public ArrayList<String> words() {
         return words;
     }
+
+    public ArrayList<String> domain() { return domain; }
+
+    public ArrayList<String> theme() { return theme; }
 
 
     public void setCacheHit(boolean b) {
