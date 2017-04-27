@@ -71,6 +71,8 @@ public class Event {
         itemData.put("num_answers", item.num_answers());
         itemData.put("template", item.template());
         itemData.put("type", item.type());
+        itemData.put("status", item.status());
+        itemData.put("question", item.question());
         itemData.put("owner", item.owner());
         itemData.put("createdBy", item.createdBy());
         itemData.put("createdOn", item.createdOn());
@@ -80,7 +82,6 @@ public class Event {
         itemData.put("language", item.language());
         itemData.put("keywords", item.keywords());
         itemData.put("concepts", item.concepts());
-        itemData.put("gradeLevel", item.gradeLevel());
         itemData.put("gradeLevel", item.gradeLevel());
         map.put("itemdata", itemData);
 

@@ -11,6 +11,8 @@ public class Item {
     private String template;
     private String type;
     private String owner;
+    private String status;
+    private String question;
     private String createdBy;
     private String createdOn;
     private String lastUpdatedBy;
@@ -48,6 +50,14 @@ public class Item {
 
     public String type() {
         return type;
+    }
+
+    public String question() {
+        return question;
+    }
+
+    public String status() {
+        return status;
     }
 
     public String owner() {
