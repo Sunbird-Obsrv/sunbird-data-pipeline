@@ -278,11 +278,7 @@ module Indexers
                     "type": "date"
                   },
                   "media": {
-                    "properties": {
-                      "key": {
-                        "type": "string"
-                      }
-                    }
+                    "type": "string"
                   },
                   "name": {
                     "type": "string"
@@ -582,11 +578,7 @@ module Indexers
                     "type": "date"
                   },
                   "media": {
-                    "properties": {
-                      "key": {
-                        "type": "string"
-                      }
-                    }
+                    "type": "string"
                   },
                   "name": {
                     "type": "string"
@@ -896,11 +888,7 @@ module Indexers
                     "type": "date"
                   },
                   "media": {
-                    "properties": {
-                      "key": {
-                        "type": "string"
-                      }
-                    }
+                    "type": "string"
                   },
                   "name": {
                     "type": "string"
