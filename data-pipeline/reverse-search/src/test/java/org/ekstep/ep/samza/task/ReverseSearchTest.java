@@ -189,7 +189,7 @@ public class ReverseSearchTest {
     @Test
     public void ShouldValidateTimestampAndCreateIfNotPresent() throws Exception {
         Map<String, Object> eventMap = new HashMap<String, Object>();
-        eventMap.put("ets", 1453202865000L);
+        eventMap.put("ets", 1453202865000d);
         Event event = new Event(eventMap);
 
         ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules);
