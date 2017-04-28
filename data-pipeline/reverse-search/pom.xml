@@ -33,7 +33,7 @@ under the License.
 
   <groupId>org.ekstep.ecosystem.jobs</groupId>
   <artifactId>reverse-search</artifactId>
-  <version>0.3.2</version>
+  <version>0.3.3</version>
   <packaging>jar</packaging>
   <name>Reverse Search</name>
   <description>
