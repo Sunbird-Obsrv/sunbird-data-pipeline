@@ -36,6 +36,7 @@
     <module>search-service</module>
     <module>cache-service</module>
     <module>job-metrics</module>
+    <module>ep-telemetry-reader</module>
   </modules>
 
   <properties>

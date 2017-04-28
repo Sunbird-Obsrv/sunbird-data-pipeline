@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class EventTest {
     @Test
@@ -100,6 +99,8 @@ public class EventTest {
         Assert.assertEquals(true, flags.get("ldata_obtained"));
     }
 
+
+
     @Test
     public void shouldReuseFlagIfPresent(){
         Map<String,Object> map = new HashMap<String, Object>();
@@ -152,6 +153,28 @@ public class EventTest {
     }
 
     @Test
+    public void shouldNotCreateTimestampIfAlreadyPresent(){
+        String existingTs = "2017-04-28'T'10:45:33.001Z";
+        Map<String,Object> map = new HashMap<String, Object>();
+        map.put("ets",1453202865000L);
+        map.put("ts", existingTs);
+        Event event = new Event(map);
+        event.setTimestamp();
+
+        Assert.assertEquals(true,event.getMap().containsKey("ts"));
+        Assert.assertEquals(existingTs,event.getMap().get("ts"));
+    }
+
+    @Test
+    public void shouldNotCreateTimestampIfEtsAbsent(){
+        Map<String,Object> map = new HashMap<String, Object>();
+        Event event = new Event(map);
+        event.setTimestamp();
+
+        Assert.assertEquals(false,event.getMap().containsKey("ts"));
+    }
+
+    @Test
     public void shouldReturnTrueIfLocationIsPresent(){
         Event event = new Event(EventFixture.locationPresent());
         Assert.assertEquals(true, event.isLocationPresent());
@@ -184,13 +207,13 @@ public class EventTest {
         return location;
     }
 
-    private Map<String, Object> getMap(Object loc) {
-        Map<String, Object> eks = mock(Map.class);
-        when(eks.get("loc")).thenReturn(loc);
-        Map<String, Object> edata = mock(Map.class);
-        when(edata.get("eks")).thenReturn(eks);
-        Map<String, Object> event = mock(Map.class);
-        when(event.get("edata")).thenReturn(edata);
+    private Map<String, Object> getMap(String location) {
+        HashMap<String, Object> event = new HashMap<String, Object>();
+        HashMap<String, Object> edata = new HashMap<String, Object>();
+        HashMap<String, String> loc = new HashMap<String, String>();
+        event.put("edata", edata);
+        edata.put("eks", loc);
+        loc.put("loc",location);
         return event;
     }
 

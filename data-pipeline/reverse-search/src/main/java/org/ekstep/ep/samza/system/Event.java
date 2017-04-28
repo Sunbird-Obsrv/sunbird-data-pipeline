@@ -2,6 +2,8 @@ package org.ekstep.ep.samza.system;
 
 
 import com.library.checksum.system.Mappable;
+import org.ekstep.ep.samza.reader.Telemetry;
+import org.ekstep.ep.samza.reader.NullableValue;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,125 +11,98 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Event implements Mappable {
-    private final Map<String, Object> map;
+  private final Telemetry telemetry;
+//  private Logger logger;
 
-    public Event(Map<String, Object> map) {
-        this.map = map;
+  public Event(Map<String, Object> map) {
+    telemetry = new Telemetry(map);
+  }
+
+  public String getGPSCoordinates() {
+    NullableValue location = telemetry.read("edata.eks.loc");
+    return location.isNull() ? "" : (String) location.value();
+  }
+
+  public void AddLocation(Location location) {
+    Map<String, String> ldata = new HashMap<String, String>();
+    ldata.put("locality", location.getCity());
+    ldata.put("district", location.getDistrict());
+    ldata.put("state", location.getState());
+    ldata.put("country", location.getCountry());
+    telemetry.add("ldata",ldata);
+  }
+
+  public String getDid() {
+    NullableValue did = telemetry.read("dimensions.did");
+    return (String) (did.isNull()
+        ?  telemetry.read("did").value()
+        : did.value());
+  }
+
+  public Map<String, Object> getMap() {
+    return (Map<String, Object>)telemetry.getMap();
+  }
+
+  @Override
+  public void setMetadata(Map<String, Object> metadata) {
+    NullableValue metadataValue = telemetry.read("metadata");
+    if(metadataValue.isNull()){
+      telemetry.add("metadata",metadata);
     }
-
-    public String getGPSCoordinates() {
-        try {
-            Map<String, Object> edata = (Map<String, Object>) map.get("edata");
-            Map<String, Object> eks = (Map<String, Object>) edata.get("eks");
-            return (String) eks.get("loc");
-        } catch (Exception e) {
-            return "";
-        }
+    else {
+      NullableValue checksum = telemetry.read("metadata.checksum");
+      if(checksum.isNull())
+        telemetry.add("metadata.checksum",metadata.get("checksum"));
     }
+  }
 
-    public void AddLocation(Location location) {
-        Map<String, String> ldata = new HashMap<String, String>();
-        ldata.put("locality", location.getCity());
-        ldata.put("district", location.getDistrict());
-        ldata.put("state", location.getState());
-        ldata.put("country", location.getCountry());
-        map.put("ldata", ldata);
+
+  public void setFlag(String key, Object value) {
+    NullableValue telemetryFlag = telemetry.read("flags");
+    Map<String, Object> flags = telemetryFlag.isNull()
+        ? new HashMap<String,Object>()
+        : (Map<String, Object>) telemetryFlag.value();
+    flags.put(key, value);
+    telemetry.add("flags", flags);
+  }
+
+  public void setTimestamp() {
+    NullableValue ts = telemetry.read("ts");
+    NullableValue ets = telemetry.read("ets");
+    if (ts.isNull() && !ets.isNull()){
+      SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+      String updatedTs = simple.format(new Date((Long) ets.value()));
+      telemetry.add("ts", updatedTs);
     }
+  }
 
-    public String getDid() {
-        if (map.containsKey("dimensions")) {
-            Map<String, Object> dimensions = (Map<String, Object>) map.get("dimensions");
-            if (dimensions.containsKey("did"))
-                return (String) dimensions.get("did");
-        }
-        return (String) map.get("did");
-    }
+  public String getMid() {
+    return (String) telemetry.read("mid").value();
+  }
 
-    public Map<String, Object> getMap() {
-        return map;
-    }
+  public String id() {
+    return (String)telemetry.read("metadata.checksum").value();
 
-    @Override
-    public void setMetadata(Map<String, Object> metadata) {
-        if (map.get("metadata") == null) {
-            map.put("metadata", metadata);
-        } else {
-            Map<String, Object> mData = (Map<String, Object>) map.get("metadata");
-            if (mData.get("checksum") == null) {
-                mData.put("checksum", metadata.get("checksum"));
-            }
-        }
-    }
+  }
 
+  public boolean isLocationEmpty() {
+    NullableValue location = telemetry.read("edata.eks.loc");
+    return !location.isNull() && ((String) location.value()).isEmpty();
+  }
 
-    public void setFlag(String key, Object value) {
-        Map<String, Object> flags = null;
-        try {
-            flags = (Map<String, Object>) map.get("flags");
-        } catch (Exception e) {
-        }
-        if (flags == null) {
-            flags = new HashMap<String, Object>();
-        }
-        flags.put(key, value);
-        map.put("flags", flags);
-    }
+  public boolean isLocationPresent() {
+    NullableValue location = telemetry.read("edata.eks.loc");
+    return !(location.isNull() || ((String) location.value()).isEmpty());
+  }
 
-    public void setTimestamp() {
-        if (map.get("ts") == null) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-            if (map.get("ets") != null) {
-                String ts = simpleDateFormat.format(new Date((Long) map.get("ets")));
-                map.put("ts", ts);
-            }
-        }
-    }
+  public boolean isLocationAbsent() {
+    NullableValue location = telemetry.read("edata.eks.loc");
+    return location.isNull();
+  }
 
-    public String getMid() {
-        return (String) map.get("mid");
-    }
-
-    public String id() {
-        return map != null && map.containsKey("metadata") &&
-                (((Map<String, Object>) map.get("metadata")).containsKey("checksum"))
-                ? (String) ((Map<String, Object>) map.get("metadata")).get("checksum")
-                : null;
-    }
-
-    public boolean isLocationEmpty() {
-        if (map.containsKey("edata") && ((Map<String, Object>) map.get("edata")).containsKey("eks")) {
-            return ((Map<String, Object>) ((Map<String, Object>) map.get("edata")).get("eks")).containsKey("loc")
-                    && ((String) ((Map<String, Object>) ((Map<String, Object>) map.get("edata")).get("eks")).get("loc")).isEmpty()
-                    ? true
-                    : false;
-        }
-        return false;
-    }
-
-    public boolean isLocationPresent() {
-        if (map.containsKey("edata") && ((Map<String, Object>) map.get("edata")).containsKey("eks")) {
-           return ( ((Map<String, Object>) ((Map<String, Object>) map.get("edata")).get("eks")).containsKey("loc")
-                    && !(((String) ((Map<String, Object>) ((Map<String, Object>) map.get("edata")).get("eks")).get("loc")).isEmpty()))
-                   ? true
-                   : false;
-
-        }
-        return false;
-    }
-
-    public boolean isLocationAbsent() {
-        if (map.containsKey("edata") && ((Map<String, Object>) map.get("edata")).containsKey("eks")) {
-            return ((Map<String, Object>) ((Map<String, Object>) map.get("edata")).get("eks")).containsKey("loc")
-                    ? false
-                    : true;
-
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "event: "+ map.toString();
-    }
+  @Override
+  public String toString() {
+    return "event: " + telemetry.toString();
+  }
 }
 
