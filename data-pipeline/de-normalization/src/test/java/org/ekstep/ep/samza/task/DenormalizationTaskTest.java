@@ -10,20 +10,21 @@ import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
+import org.ekstep.ep.samza.Child;
 import org.ekstep.ep.samza.Event;
 import org.ekstep.ep.samza.external.UserService;
 import org.ekstep.ep.samza.external.UserServiceClient;
+import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.ekstep.ep.samza.util.BackendEventFactory;
 import org.joda.time.DateTime;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -197,6 +198,18 @@ public class DenormalizationTaskTest {
         verify(eventMock, times(1)).setBackendTrue();
     }
 
+    @Test
+    public void ShouldNotProcessAnyOfTheBackendEvent() throws Exception {
+        Map<String, Object> message = EventFixture.BeEvent();
+        KeyValueStore<String, Child> childStore = Mockito.mock(KeyValueStore.class);
+        Event event = new Event(message, childStore, Arrays.asList("BE_.*"));
+
+        deNormalizationTask.init(configMock, contextMock);
+        deNormalizationTask.processEvent(collectorMock, event, userServiceMock);
+
+        Assert.assertFalse(event.canBeProcessed());
+        verify(collectorMock).send(argThat(validateOutputTopic(message, SUCCESS_TOPIC)));
+    }
 
     private ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
         return new ArgumentMatcher<OutgoingMessageEnvelope>() {

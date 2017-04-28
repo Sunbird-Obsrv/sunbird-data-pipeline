@@ -42,7 +42,7 @@ public class Event {
     }
 
     public Map<String, Object> getMap() {
-        return (Map<String, Object>) this.map;
+        return this.map;
     }
 
     public void initialize(int retryBackoffBase, int retryBackoffLimit, KeyValueStore<String, Object> retryStore) {
@@ -126,7 +126,7 @@ public class Event {
     }
 
     public boolean canBeProcessed() {
-        return canBeProcessed;
+        return canBeProcessed && !isBackendEvent();
     }
 
     public boolean hadIssueWithDb() {
@@ -149,7 +149,6 @@ public class Event {
             setLastProcessedCount(1);
         }
         LOGGER.info(id(), "METADATA - ADDED " + metadata);
-//        addMetadataToStore();
 
     }
 

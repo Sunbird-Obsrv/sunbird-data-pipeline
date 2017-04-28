@@ -77,6 +77,7 @@ public class EventFixture {
             "      \"state\": \"Live\"\n" +
             "    }\n" +
             "  },\n" +
+            "    \"uid\": \"6\",\n" +
             "  \"eid\": \"BE_CONTENT_LIFECYCLE\",\n" +
             "  \"ets\": 1491911140141,\n" +
             "  \"pdata\": {\n" +
