@@ -144,7 +144,7 @@ public class EventTest {
     @Test
     public void shouldCreateTimestamp(){
         Map<String,Object> map = new HashMap<String, Object>();
-        map.put("ets",1453202865000L);
+        map.put("ets",1453202865000d);
 
         Event event = new Event(map);
         event.setTimestamp();
