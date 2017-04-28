@@ -21,7 +21,7 @@ public class Event implements Mappable {
     }
 
     public String getGPSCoordinates() {
-        NullableValue<String> location = telemetry.<String>read("edata.eks.loc");
+        NullableValue<String> location = telemetry.read("edata.eks.loc");
         return location.isNull() ? "" : location.value();
     }
 
@@ -35,10 +35,10 @@ public class Event implements Mappable {
     }
 
     public String getDid() {
-        NullableValue<String> did = telemetry.<String>read("dimensions.did");
-        return (String) (did.isNull()
+        NullableValue<String> did = telemetry.read("dimensions.did");
+        return did.isNull()
                 ? telemetry.<String>read("did").value()
-                : did.value());
+                : did.value();
     }
 
     public Map<String, Object> getMap() {
@@ -47,11 +47,11 @@ public class Event implements Mappable {
 
     @Override
     public void setMetadata(Map<String, Object> metadata) {
-        NullableValue<Map<String, Object>> metadataValue = telemetry.<Map<String, Object>>read("metadata");
+        NullableValue<Map<String, Object>> metadataValue = telemetry.read("metadata");
         if (metadataValue.isNull()) {
             telemetry.add("metadata", metadata);
         } else {
-            NullableValue<String> checksum = telemetry.<String>read("metadata.checksum");
+            NullableValue<String> checksum = telemetry.read("metadata.checksum");
             if (checksum.isNull())
                 telemetry.add("metadata.checksum", metadata.get("checksum"));
         }
@@ -59,7 +59,7 @@ public class Event implements Mappable {
 
 
     public void setFlag(String key, Object value) {
-        NullableValue<Map<String, Object>> telemetryFlag = telemetry.<Map<String, Object>>read("flags");
+        NullableValue<Map<String, Object>> telemetryFlag = telemetry.read("flags");
         Map<String, Object> flags = telemetryFlag.isNull()
                 ? new HashMap<String, Object>()
                 : telemetryFlag.value();
@@ -71,39 +71,39 @@ public class Event implements Mappable {
         Object ets1 = getMap().get("ets");
         if(ets1 != null)
             LOGGER.info("", MessageFormat.format("Inside Event. ETS:{0}, type: {1}", ets1, ets1.getClass()));
-        NullableValue<String> ts = telemetry.<String>read("ts");
-        NullableValue<Long> ets = telemetry.<Long>read("ets");
+        NullableValue<String> ts = telemetry.read("ts");
+        NullableValue<Double> ets = telemetry.read("ets");
 
         if (ts.isNull() && !ets.isNull()) {
             SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-            String updatedTs = simple.format(new Date(ets.value()));
+            String updatedTs = simple.format(new Date(ets.value().longValue()));
             telemetry.add("ts", updatedTs);
         }
     }
 
     public String getMid() {
-        NullableValue<String> mid = telemetry.<String>read("mid");
+        NullableValue<String> mid = telemetry.read("mid");
         return mid.value();
     }
 
     public String id() {
-        NullableValue<String> checksum = telemetry.<String>read("metadata.checksum");
+        NullableValue<String> checksum = telemetry.read("metadata.checksum");
         return checksum.value();
 
     }
 
     public boolean isLocationEmpty() {
-        NullableValue<String> location = telemetry.<String>read("edata.eks.loc");
+        NullableValue<String> location = telemetry.read("edata.eks.loc");
         return !location.isNull() && location.value().isEmpty();
     }
 
     public boolean isLocationPresent() {
-        NullableValue<String> location = telemetry.<String>read("edata.eks.loc");
+        NullableValue<String> location = telemetry.read("edata.eks.loc");
         return !(location.isNull() || location.value().isEmpty());
     }
 
     public boolean isLocationAbsent() {
-        NullableValue<String> location = telemetry.<String>read("edata.eks.loc");
+        NullableValue<String> location = telemetry.read("edata.eks.loc");
         return location.isNull();
     }
 
