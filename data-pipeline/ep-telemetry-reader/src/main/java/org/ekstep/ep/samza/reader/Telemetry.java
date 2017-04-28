@@ -26,7 +26,7 @@ public class Telemetry {
     return false;
   }
 
-  public Map getMap(){
+  public Map<String, Object> getMap(){
     return map;
   }
 

@@ -42,7 +42,7 @@ public class Event implements Mappable {
     }
 
     public Map<String, Object> getMap() {
-        return (Map<String, Object>) telemetry.getMap();
+        return telemetry.getMap();
     }
 
     @Override
@@ -69,7 +69,8 @@ public class Event implements Mappable {
 
     public void setTimestamp() {
         Object ets1 = getMap().get("ets");
-        LOGGER.info("", MessageFormat.format("ETS:{0}, type: {1}", ets1, ets1.getClass()));
+        if(ets1 != null)
+            LOGGER.info("", MessageFormat.format("ETS:{0}, type: {1}", ets1, ets1.getClass()));
         NullableValue<String> ts = telemetry.<String>read("ts");
         NullableValue<Long> ets = telemetry.<Long>read("ets");
 
