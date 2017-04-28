@@ -2,9 +2,11 @@ package org.ekstep.ep.samza.system;
 
 
 import com.library.checksum.system.Mappable;
+import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,7 +14,7 @@ import java.util.Map;
 
 public class Event implements Mappable {
     private final Telemetry telemetry;
-//  private Logger logger;
+    private Logger LOGGER = new Logger(this.getClass());
 
     public Event(Map<String, Object> map) {
         telemetry = new Telemetry(map);
@@ -66,8 +68,11 @@ public class Event implements Mappable {
     }
 
     public void setTimestamp() {
+        Object ets1 = getMap().get("ets");
+        LOGGER.info("", MessageFormat.format("ETS:{0}, type: {1}", ets1, ets1.getClass()));
         NullableValue<String> ts = telemetry.<String>read("ts");
         NullableValue<Long> ets = telemetry.<Long>read("ets");
+
         if (ts.isNull() && !ets.isNull()) {
             SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
             String updatedTs = simple.format(new Date(ets.value()));

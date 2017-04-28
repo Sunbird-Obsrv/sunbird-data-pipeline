@@ -30,7 +30,7 @@ public class Telemetry {
     return map;
   }
 
-  public <T> NullableValue read(String nestedKey) {
+  public <T> NullableValue<T> read(String nestedKey) {
     try {
       NestedMap nestedMap = getNestedMap(map, nestedKey);
       return new NullableValue<T>(nestedMap.<T>getValue());
