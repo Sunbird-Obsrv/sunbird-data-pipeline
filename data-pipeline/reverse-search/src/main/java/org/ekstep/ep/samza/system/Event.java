@@ -19,7 +19,7 @@ public class Event implements Mappable {
   }
 
   public String getGPSCoordinates() {
-    NullableValue<String> location = telemetry.read("edata.eks.loc");
+    NullableValue<String> location = telemetry.<String>read("edata.eks.loc");
     return location.isNull() ? "" : location.value();
   }
 
@@ -58,7 +58,7 @@ public class Event implements Mappable {
 
 
   public void setFlag(String key, Object value) {
-    NullableValue<Map<String, Object>> telemetryFlag = telemetry.read("flags");
+    NullableValue<Map<String, Object>> telemetryFlag = telemetry.<Map<String, Object>>read("flags");
     Map<String, Object> flags = telemetryFlag.isNull()
         ? new HashMap<String,Object>()
         :  telemetryFlag.value();
@@ -77,7 +77,7 @@ public class Event implements Mappable {
   }
 
   public String getMid() {
-    NullableValue<String> mid = telemetry.read("mid");
+    NullableValue<String> mid = telemetry.<String>read("mid");
     return mid.value();
   }
 
@@ -88,12 +88,12 @@ public class Event implements Mappable {
   }
 
   public boolean isLocationEmpty() {
-    NullableValue<String> location = telemetry.read("edata.eks.loc");
+    NullableValue<String> location = telemetry.<String>read("edata.eks.loc");
     return !location.isNull() && location.value().isEmpty();
   }
 
   public boolean isLocationPresent() {
-    NullableValue<String> location = telemetry.read("edata.eks.loc");
+    NullableValue<String> location = telemetry.<String>read("edata.eks.loc");
     return !(location.isNull() || location.value().isEmpty());
   }
 
