@@ -36,6 +36,7 @@ import org.ekstep.ep.samza.service.GoogleReverseSearchService;
 import org.ekstep.ep.samza.service.LocationService;
 import org.ekstep.ep.samza.system.*;
 
+import java.text.MessageFormat;
 import java.util.*;
 
 public class ReverseSearchStreamTask implements StreamTask, InitableTask, WindowableTask {
@@ -103,7 +104,11 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
         Map<String, Object> jsonObject = null;
         try {
             jsonObject = (Map<String, Object>) envelope.getMessage();
-            processEvent(new Event(jsonObject), collector);
+            Object ets1 = jsonObject.get("ets");
+            Event event = new Event(jsonObject);
+            if(ets1 != null)
+                LOGGER.info("", MessageFormat.format("Inside Task. ETS:{0}, type: {1}", ets1, ets1.getClass()));
+            processEvent(event, collector);
             messageCount.inc();
         } catch (Exception e) {
             LOGGER.error(null, "PROCESSING FAILED: " + jsonObject, e);
