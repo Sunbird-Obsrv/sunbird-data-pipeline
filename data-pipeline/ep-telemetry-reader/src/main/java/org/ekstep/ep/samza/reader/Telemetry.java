@@ -21,7 +21,7 @@ public class Telemetry {
       nestedMap.add(value);
       return true;
     } catch (Exception e) {
-      logger.error("",format("Couldn't add value:{0} at  key: {0} for event:{1}",value,nestedKeys,map));
+      logger.error("",format("Couldn't add value:{0} at  key: {0} for event:{1}",value,nestedKeys,map),e);
     }
     return false;
   }
@@ -35,7 +35,7 @@ public class Telemetry {
       NestedMap nestedMap = getNestedMap(map, nestedKey);
       return new NullableValue<T>(nestedMap.<T>getValue());
     } catch (Exception e) {
-      logger.error("",format("Couldn't get key: {0} from event:{1}",nestedKey,map));
+      logger.error("",format("Couldn't get key: {0} from event:{1}",nestedKey,map),e);
       return new NullableValue<T>(null);
     }
   }

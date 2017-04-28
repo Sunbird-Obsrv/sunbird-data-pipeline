@@ -19,8 +19,8 @@ public class Event implements Mappable {
   }
 
   public String getGPSCoordinates() {
-    NullableValue location = telemetry.read("edata.eks.loc");
-    return location.isNull() ? "" : (String) location.value();
+    NullableValue<String> location = telemetry.read("edata.eks.loc");
+    return location.isNull() ? "" : location.value();
   }
 
   public void AddLocation(Location location) {
@@ -58,10 +58,10 @@ public class Event implements Mappable {
 
 
   public void setFlag(String key, Object value) {
-    NullableValue telemetryFlag = telemetry.read("flags");
+    NullableValue<Map<String, Object>> telemetryFlag = telemetry.read("flags");
     Map<String, Object> flags = telemetryFlag.isNull()
         ? new HashMap<String,Object>()
-        : (Map<String, Object>) telemetryFlag.value();
+        :  telemetryFlag.value();
     flags.put(key, value);
     telemetry.add("flags", flags);
   }
@@ -77,22 +77,24 @@ public class Event implements Mappable {
   }
 
   public String getMid() {
-    return (String) telemetry.read("mid").value();
+    NullableValue<String> mid = telemetry.read("mid");
+    return mid.value();
   }
 
   public String id() {
-    return (String)telemetry.read("metadata.checksum").value();
+    NullableValue<String> checksum = telemetry.<String>read("metadata.checksum");
+    return checksum.value();
 
   }
 
   public boolean isLocationEmpty() {
-    NullableValue location = telemetry.read("edata.eks.loc");
-    return !location.isNull() && ((String) location.value()).isEmpty();
+    NullableValue<String> location = telemetry.read("edata.eks.loc");
+    return !location.isNull() && location.value().isEmpty();
   }
 
   public boolean isLocationPresent() {
-    NullableValue location = telemetry.read("edata.eks.loc");
-    return !(location.isNull() || ((String) location.value()).isEmpty());
+    NullableValue<String> location = telemetry.read("edata.eks.loc");
+    return !(location.isNull() || location.value().isEmpty());
   }
 
   public boolean isLocationAbsent() {
