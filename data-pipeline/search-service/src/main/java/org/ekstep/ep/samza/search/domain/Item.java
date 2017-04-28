@@ -15,6 +15,8 @@ public class Item {
     private String question;
     private String createdBy;
     private String createdOn;
+    private String source;
+    private String media;
     private String lastUpdatedBy;
     private String lastUpdatedOn;
     private String qlevel;
@@ -82,6 +84,14 @@ public class Item {
 
     public String qlevel() {
         return qlevel;
+    }
+
+    public String source() {
+        return source;
+    }
+
+    public String media() {
+        return media;
     }
 
     public ArrayList<String> language() {

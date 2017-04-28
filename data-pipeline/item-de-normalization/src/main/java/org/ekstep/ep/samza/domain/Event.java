@@ -74,6 +74,8 @@ public class Event {
         itemData.put("status", item.status());
         itemData.put("question", item.question());
         itemData.put("owner", item.owner());
+        itemData.put("source", item.source());
+        itemData.put("media", item.media());
         itemData.put("createdBy", item.createdBy());
         itemData.put("createdOn", item.createdOn());
         itemData.put("lastUpdatedBy", item.lastUpdatedBy());
