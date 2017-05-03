@@ -33,49 +33,49 @@
     <dependency>
       <groupId>org.ekstep.ecosystem.jobs</groupId>
       <artifactId>de-normalization</artifactId>
-      <version>0.4.7</version>
+      <version>0.4.8</version>
       <type>tar.gz</type>
       <classifier>distribution</classifier>
     </dependency>
     <dependency>
         <groupId>org.ekstep.ecosystem.jobs</groupId>
         <artifactId>de-duplication</artifactId>
-        <version>0.1.3</version>
+        <version>0.1.4</version>
         <type>tar.gz</type>
         <classifier>distribution</classifier>
     </dependency>
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>user-management</artifactId>
-          <version>0.2.1</version>
+          <version>0.2.2</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>partner-data-router</artifactId>
-          <version>0.1.7</version>
+          <version>0.1.8</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>public-telemetry</artifactId>
-          <version>0.1.6</version>
+          <version>0.1.7</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>content-de-normalization</artifactId>
-          <version>0.0.8</version>
+          <version>0.0.9</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>item-de-normalization</artifactId>
-          <version>0.0.4</version>
+          <version>0.0.5</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>

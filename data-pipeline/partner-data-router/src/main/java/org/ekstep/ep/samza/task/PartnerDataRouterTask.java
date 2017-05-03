@@ -53,6 +53,7 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
             sendToFailed(collector,event);
             LOGGER.error(event.id(), "PARTNER PROCESSING FAILED", e);
             LOGGER.error(event.id(), "TODO: need a failed topic for partner job");
+            e.printStackTrace();
         }
     }
 

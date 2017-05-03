@@ -82,6 +82,7 @@ public class DeDuplicationStreamTask implements StreamTask, InitableTask, Window
         }
         catch (Exception e) {
             LOGGER.error(null, "EVENT FAILED: " + message, e);
+            e.printStackTrace();
         }
     }
 
