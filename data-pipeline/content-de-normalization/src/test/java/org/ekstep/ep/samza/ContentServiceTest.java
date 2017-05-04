@@ -53,7 +53,6 @@ public class ContentServiceTest {
         assertEquals(content.mediaType(), ContentFixture.getContentMap().get("mediaType"));
         assertEquals(content.contentType(), ContentFixture.getContentMap().get("contentType"));
         assertEquals(content.language(), ContentFixture.getContentMap().get("language"));
-        assertEquals(content.owner(), ContentFixture.getContentMap().get("owner"));
         assertEquals(content.lastUpdatedOn(), ContentFixture.getContentMap().get("lastUpdatedOn"));
         verify(metricsMock).incCacheHitCounter();
         verifyNoMoreInteractions(metricsMock);
