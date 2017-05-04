@@ -3,7 +3,6 @@ package org.ekstep.ep.samza.search.domain;
 import java.util.ArrayList;
 
 public class Item {
-    private Integer version;
     private Integer num_answers;
 
     private String title;
@@ -12,13 +11,6 @@ public class Item {
     private String type;
     private String owner;
     private String status;
-    private String question;
-    private String createdBy;
-    private String createdOn;
-    private String source;
-    private String media;
-    private String lastUpdatedBy;
-    private String lastUpdatedOn;
     private String qlevel;
 
     private ArrayList<String> language;
@@ -33,10 +25,6 @@ public class Item {
     public boolean getCacheHit() { return cacheHit; }
 
     public String title() { return title; }
-
-    public Integer version() {
-        return version;
-    }
 
     public Integer num_answers() {
         return num_answers;
@@ -54,10 +42,6 @@ public class Item {
         return type;
     }
 
-    public String question() {
-        return question;
-    }
-
     public String status() {
         return status;
     }
@@ -66,32 +50,8 @@ public class Item {
         return owner;
     }
 
-    public String createdBy() {
-        return createdBy;
-    }
-
-    public String createdOn() {
-        return createdOn;
-    }
-
-    public String lastUpdatedBy() {
-        return lastUpdatedBy;
-    }
-
-    public String lastUpdatedOn() {
-        return lastUpdatedOn;
-    }
-
     public String qlevel() {
         return qlevel;
-    }
-
-    public String source() {
-        return source;
-    }
-
-    public String media() {
-        return media;
     }
 
     public ArrayList<String> language() {
@@ -114,26 +74,22 @@ public class Item {
         return cacheHit;
     }
 
-
     @Override
     public String toString() {
         return "Item{" +
-                "version=" + version +
-                ", num_answers=" + num_answers +
+                "num_answers=" + num_answers +
                 ", title='" + title + '\'' +
                 ", name='" + name + '\'' +
                 ", template='" + template + '\'' +
                 ", type='" + type + '\'' +
                 ", owner='" + owner + '\'' +
-                ", createdBy='" + createdBy + '\'' +
-                ", createdOn='" + createdOn + '\'' +
-                ", lastUpdatedBy='" + lastUpdatedBy + '\'' +
-                ", lastUpdatedOn='" + lastUpdatedOn + '\'' +
+                ", status='" + status + '\'' +
                 ", qlevel='" + qlevel + '\'' +
                 ", language=" + language +
                 ", keywords=" + keywords +
                 ", concepts=" + concepts +
                 ", gradeLevel=" + gradeLevel +
+                ", cacheHit=" + cacheHit +
                 '}';
     }
 }

@@ -201,10 +201,6 @@ public class ItemDeNormalizationTaskTest {
         assertEquals(itemData.get("template"), ItemFixture.getItemMap().get("template"));
         assertEquals(itemData.get("type"), ItemFixture.getItemMap().get("type"));
         assertEquals(itemData.get("owner"), ItemFixture.getItemMap().get("owner"));
-        assertEquals(itemData.get("createdBy"), ItemFixture.getItemMap().get("createdBy"));
-        assertEquals(itemData.get("createdOn"), ItemFixture.getItemMap().get("createdOn"));
-        assertEquals(itemData.get("lastUpdatedBy"), ItemFixture.getItemMap().get("lastUpdatedBy"));
-        assertEquals(itemData.get("lastUpdatedOn"), ItemFixture.getItemMap().get("lastUpdatedOn"));
         assertEquals(itemData.get("qlevel"), ItemFixture.getItemMap().get("qlevel"));
         assertEquals(itemData.get("language"), ItemFixture.getItemMap().get("language"));
         assertEquals(itemData.get("keywords"), ItemFixture.getItemMap().get("keywords"));
