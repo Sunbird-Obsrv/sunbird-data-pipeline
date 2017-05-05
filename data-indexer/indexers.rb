@@ -1189,6 +1189,9 @@ module Indexers
               },
               "metadata": {
                 "properties": {
+                  "checksum": {
+                    "type": "string",
+                  },
                   "hour": {
                     "type": "string"
                   },
