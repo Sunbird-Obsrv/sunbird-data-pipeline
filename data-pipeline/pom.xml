@@ -38,6 +38,7 @@
     <module>job-metrics</module>
     <module>ep-telemetry-reader</module>
     <module>object-lifecycle-management</module>
+    <module>object-de-normalization</module>
   </modules>
 
   <properties>
