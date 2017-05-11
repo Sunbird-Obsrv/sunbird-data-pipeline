@@ -37,6 +37,7 @@
     <module>cache-service</module>
     <module>job-metrics</module>
     <module>ep-telemetry-reader</module>
+    <module>object-lifecycle-management</module>
   </modules>
 
   <properties>
