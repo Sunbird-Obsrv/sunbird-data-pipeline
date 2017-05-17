@@ -39,6 +39,7 @@
     <module>ep-telemetry-reader</module>
     <module>object-lifecycle-management</module>
     <module>object-de-normalization</module>
+    <module>portal-profile-management</module>
   </modules>
 
   <properties>
