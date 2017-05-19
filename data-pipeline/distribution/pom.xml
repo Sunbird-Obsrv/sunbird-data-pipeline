@@ -89,14 +89,14 @@
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>object-de-normalization</artifactId>
-          <version>0.0.1</version>
+          <version>0.0.2</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>portal-profile-management</artifactId>
-          <version>0.0.1</version>
+          <version>0.0.2</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
