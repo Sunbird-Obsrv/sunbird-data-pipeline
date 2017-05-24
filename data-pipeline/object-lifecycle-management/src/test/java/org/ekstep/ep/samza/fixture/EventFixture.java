@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class EventFixture {
 
-    public static final String EVENT_JSON =
+    public static final String OTHER_EVENT =
             "{\n" +
                     "    \"eid\": \"ME_ITEM_USAGE_SUMMARY\",\n" +
                     "    \"dimensions\": {\n" +
@@ -17,9 +17,37 @@ public class EventFixture {
                     "    }\n" +
                     "  }";
 
+    public static final String LIFECYCLE_EVENT_JSON =
+            "{\n" +
+                    "    \"tags\": [],\n" +
+                    "    \"uid\": \"725\",\n" +
+                    "    \"cdata\": [],\n" +
+                    "    \"host\": \"ip-10-42-6-49\",\n" +
+                    "    \"edata\": {\n" +
+                    "        \"eks\": {\n" +
+                    "            \"type\": \"User\",\n" +
+                    "            \"subtype\": \"\",\n" +
+                    "            \"id\": \"725\",\n" +
+                    "            \"parentid\": \"\",\n" +
+                    "            \"code\": \"\",\n" +
+                    "            \"name\": \"Amit\",\n" +
+                    "            \"state\": \"Create\",\n" +
+                    "            \"prevstate\": \"\",\n" +
+                    "            \"parenttype\": \"\"\n" +
+                    "        }\n" +
+                    "    },\n" +
+                    "    \"ver\": \"2.0\",\n" +
+                    "    \"type\": \"events\",\n" +
+                    "    \"eid\": \"BE_OBJECT_LIFECYCLE\"\n" +
+                    "}";
 
-    public static Map<String, Object> Event() {
-        return new Gson().fromJson(EVENT_JSON, new TypeToken<Map<String, Object>>() {
+    public static Map<String, Object> OtherEvent() {
+        return new Gson().fromJson(OTHER_EVENT, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
+
+    public static Map<String, Object> LifecycleEvent() {
+        return new Gson().fromJson(LIFECYCLE_EVENT_JSON, new TypeToken<Map<String, Object>>() {
         }.getType());
     }
 }
