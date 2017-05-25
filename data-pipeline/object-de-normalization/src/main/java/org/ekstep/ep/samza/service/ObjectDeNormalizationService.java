@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.service;
 
+import org.ekstep.ep.samza.config.ObjectDenormalizationAdditionalConfig;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.task.ObjectDeNormalizationConfig;
@@ -9,9 +10,11 @@ import org.ekstep.ep.samza.task.ObjectDeNormalizationSource;
 public class ObjectDeNormalizationService {
     static Logger LOGGER = new Logger(ObjectDeNormalizationService.class);
     private final ObjectDeNormalizationConfig config;
+    private final ObjectDenormalizationAdditionalConfig additionalConfig;
 
-    public ObjectDeNormalizationService(ObjectDeNormalizationConfig config) {
+    public ObjectDeNormalizationService(ObjectDeNormalizationConfig config, ObjectDenormalizationAdditionalConfig additionalConfig) {
         this.config = config;
+        this.additionalConfig = additionalConfig;
     }
 
     public void process(ObjectDeNormalizationSource source, ObjectDeNormalizationSink sink) {

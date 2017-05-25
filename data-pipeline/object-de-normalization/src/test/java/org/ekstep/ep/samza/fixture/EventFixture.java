@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class EventFixture {
 
-    public static final String EVENT_JSON =
+    public static final String SKIP_EVENT_JSON =
             "{\n" +
                     "    \"eid\": \"ME_ITEM_USAGE_SUMMARY\",\n" +
                     "    \"dimensions\": {\n" +
@@ -17,9 +17,20 @@ public class EventFixture {
                     "    }\n" +
                     "  }";
 
+    public static final String CP_INTERACT_EVENT_JSON =
+            "{\n" +
+                    "    \"eid\": \"CP_INTERACT\",\n" +
+                    "    \"uid\": \"111\"\n" +
+                    "  }";
 
-    public static Map<String, Object> Event() {
-        return new Gson().fromJson(EVENT_JSON, new TypeToken<Map<String, Object>>() {
+
+    public static Map<String, Object> event() {
+        return new Gson().fromJson(SKIP_EVENT_JSON, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
+
+    public static Map<String, Object> cpInteractEvent() {
+        return new Gson().fromJson(CP_INTERACT_EVENT_JSON, new TypeToken<Map<String, Object>>() {
         }.getType());
     }
 }

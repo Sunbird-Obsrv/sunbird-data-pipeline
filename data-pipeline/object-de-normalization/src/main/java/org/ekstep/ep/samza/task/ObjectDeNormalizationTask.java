@@ -24,7 +24,7 @@ public class ObjectDeNormalizationTask implements StreamTask, InitableTask, Wind
     public void init(Config config, TaskContext context) throws Exception {
         this.config = new ObjectDeNormalizationConfig(config);
         metrics = new JobMetrics(context);
-        service = new ObjectDeNormalizationService(this.config);
+        service = new ObjectDeNormalizationService(this.config, this.config.additionalConfig());
     }
 
     @Override

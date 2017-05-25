@@ -55,7 +55,7 @@ public class ObjectDeNormalizationTaskTest {
 
     @Test
     public void shouldPassEventThrough() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(EventFixture.Event());
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.event());
         objectDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
