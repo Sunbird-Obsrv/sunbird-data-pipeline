@@ -1,0 +1,15 @@
+{
+  "desc": "Configuration to control Object Denormalization Job",
+  "eventConfigs": [
+    {
+      "name": "Portal User for all CP & CE events",
+      "eidPattern": "C[PE]\\_.*",
+      "denormalizationConfigs": [
+        {
+          "idFieldPath": "uid",
+          "denormalizedFieldPath": "portal_data"
+        }
+      ]
+    }
+  ]
+}
