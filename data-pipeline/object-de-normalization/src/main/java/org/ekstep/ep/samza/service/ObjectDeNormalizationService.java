@@ -1,5 +1,8 @@
 package org.ekstep.ep.samza.service;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import org.ekstep.ep.samza.config.DataDenormalizationConfig;
 import org.ekstep.ep.samza.config.EventDenormalizationConfig;
 import org.ekstep.ep.samza.config.ObjectDenormalizationAdditionalConfig;
@@ -16,11 +19,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static java.text.MessageFormat.format;
+
 public class ObjectDeNormalizationService {
     static Logger LOGGER = new Logger(ObjectDeNormalizationService.class);
     private final ObjectDeNormalizationConfig config;
     private final ObjectDenormalizationAdditionalConfig additionalConfig;
     private final ObjectService objectService;
+    private Gson gson = new Gson();
 
     public ObjectDeNormalizationService(ObjectDeNormalizationConfig config,
                                         ObjectDenormalizationAdditionalConfig additionalConfig, ObjectService objectService) {
@@ -45,9 +51,9 @@ public class ObjectDeNormalizationService {
                 }
                 GetObjectResponse getObjectResponse = objectService.get(objectId.value());
                 if (!getObjectResponse.successful()) {
-                    //HANDLE ERROR
+                    //#TODO HANDLE ERROR
                 } else {
-                    event.update(dataDenormalizationConfig.denormalizedFieldPath(), denormalizedData(getObjectResponse.result()));
+                    event.update(dataDenormalizationConfig.denormalizedFieldPath(), denormalizedData(event, getObjectResponse.result()));
                 }
             }
         }
@@ -63,7 +69,7 @@ public class ObjectDeNormalizationService {
         }
     }
 
-    public Map<String, String> denormalizedData(GetObjectResponse.Result result) {
+    public Map<String, String> denormalizedData(Event event, GetObjectResponse.Result result) {
         HashMap<String, String> denormalizedData = new HashMap<String, String>();
         denormalizedData.put("id", String.valueOf(result.id()));
         denormalizedData.put("type", result.type());
@@ -72,7 +78,19 @@ public class ObjectDeNormalizationService {
         denormalizedData.put("parenttype", result.parenttype());
         denormalizedData.put("code", result.code());
         denormalizedData.put("name", result.name());
-        denormalizedData.put("details", result.details());
+        Map<String, String> details = null;
+        try {
+            details = gson.fromJson(result.details(), new TypeToken<Map<String, String>>() {
+            }.getType());
+        } catch (JsonSyntaxException e) {
+            LOGGER.error(event.id(),
+                    format("UNABLE TO PARSE DETAILS INTO MAP<STRING, STRING>. EVENT: {0}, DETAILS: {1}",
+                            event, result.details()));
+            e.printStackTrace();
+        }
+        if (details != null) {
+            denormalizedData.putAll(details);
+        }
         return denormalizedData;
     }
 

@@ -35,7 +35,23 @@ public class EventFixture {
                     "    \"parenttype\": \"Admin\",\n" +
                     "    \"code\": \"XYZ\",\n" +
                     "    \"name\": \"User 111\",\n" +
-                    "    \"details\": \"{\\\"id\\\":\\\"another id\\\"}\"\n" +
+                    "    \"email\": \"e@mail.com\",\n" +
+                    "    \"channel\": \"channel 1\"\n" +
+                    "  }\n" +
+                    "}";
+
+    private static final String DENORMALIZED_CP_INTERACT_EVENT_JSON_WITHOUT_DETAILS =
+            "{\n" +
+                    "  \"eid\": \"CP_INTERACT\",\n" +
+                    "  \"uid\": \"111\",\n" +
+                    "  \"portaluserdata\": {\n" +
+                    "    \"id\": \"111\",\n" +
+                    "    \"type\": \"User\",\n" +
+                    "    \"subtype\": \"Reviewer\",\n" +
+                    "    \"parentid\": \"222\",\n" +
+                    "    \"parenttype\": \"Admin\",\n" +
+                    "    \"code\": \"XYZ\",\n" +
+                    "    \"name\": \"User 111\"\n" +
                     "  }\n" +
                     "}";
 
@@ -52,6 +68,11 @@ public class EventFixture {
 
     public static Map<String, Object> denormalizedCpInteractEvent() {
         return new Gson().fromJson(DENORMALIZED_CP_INTERACT_EVENT_JSON, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
+
+    public static Map<String, Object> denormalizedCpInteractEventWithoutDetails() {
+        return new Gson().fromJson(DENORMALIZED_CP_INTERACT_EVENT_JSON_WITHOUT_DETAILS, new TypeToken<Map<String, Object>>() {
         }.getType());
     }
 }

@@ -73,6 +73,23 @@ public class ObjectDeNormalizationServiceTest {
         verify(objectService).get("111");
     }
 
+    @Test
+    public void shouldDenormalizeEventWithoutDetailsFieldsWhenJsonIsInvalid() throws Exception {
+        additionalConfig = new ObjectDenormalizationAdditionalConfig(
+                asList(new EventDenormalizationConfig("Portal events", "C[PE]\\_.*",
+                        asList(new DataDenormalizationConfig("uid", "portaluserdata")))));
+        denormalizationService = new ObjectDeNormalizationService(config, additionalConfig, objectService);
+        Event event = new Event(new Telemetry(EventFixture.cpInteractEvent()));
+        when(source.getEvent()).thenReturn(event);
+        when(objectService.get("111")).thenReturn(GetObjectFixture.getObjectSuccessResponseWithMalformedDetails());
+
+        denormalizationService.process(source, sink);
+
+        Event expectedEvent = new Event(new Telemetry(EventFixture.denormalizedCpInteractEventWithoutDetails()));
+        verify(sink).toSuccessTopic(argThat(validateEvent(event, expectedEvent)));
+        verify(objectService).get("111");
+    }
+
     private ArgumentMatcher<Event> validateEvent(final Event event, final Event expectedEvent) {
         return new ArgumentMatcher<Event>() {
             @Override
@@ -84,7 +101,10 @@ public class ObjectDeNormalizationServiceTest {
                 assertThat(readValue(event, "portaluserdata.parenttype"), is(readValue(expectedEvent, "portaluserdata.parenttype")));
                 assertThat(readValue(event, "portaluserdata.code"), is(readValue(expectedEvent, "portaluserdata.code")));
                 assertThat(readValue(event, "portaluserdata.name"), is(readValue(expectedEvent, "portaluserdata.name")));
-                assertThat(readValue(event, "portaluserdata.details"), is(readValue(expectedEvent, "portaluserdata.details")));
+
+                //Details field
+                assertThat(readValue(event, "portaluserdata.email"), is(readValue(expectedEvent, "portaluserdata.email")));
+                assertThat(readValue(event, "portaluserdata.channel"), is(readValue(expectedEvent, "portaluserdata.channel")));
                 return true;
             }
         };
