@@ -1,7 +1,7 @@
 package org.ekstep.ep.samza.fixture;
 
 import com.google.gson.Gson;
-import org.ekstep.ep.samza.external.ObjectResponse;
+import org.ekstep.ep.samza.object.dto.ObjectResponse;
 
 import java.util.Map;
 

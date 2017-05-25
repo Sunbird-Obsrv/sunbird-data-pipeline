@@ -3,7 +3,7 @@ package org.ekstep.ep.samza.task;
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.task.*;
-import org.ekstep.ep.samza.external.ObjectServiceClient;
+import org.ekstep.ep.samza.object.service.ObjectServiceClient;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.metrics.JobMetrics;
 import org.ekstep.ep.samza.service.ObjectLifecycleManagementService;

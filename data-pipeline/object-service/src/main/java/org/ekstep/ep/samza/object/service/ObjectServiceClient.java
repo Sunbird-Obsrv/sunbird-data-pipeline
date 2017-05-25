@@ -1,8 +1,11 @@
-package org.ekstep.ep.samza.external;
+package org.ekstep.ep.samza.object.service;
 
 import com.google.gson.Gson;
 import okhttp3.*;
 import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.object.dto.ObjectRequest;
+import org.ekstep.ep.samza.object.dto.ObjectResponse;
+
 import java.util.Map;
 
 import java.io.IOException;

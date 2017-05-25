@@ -1,10 +1,10 @@
 package org.ekstep.ep.samza.service;
 
 import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.external.ObjectResponse;
-import org.ekstep.ep.samza.external.ObjectServiceClient;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.metrics.JobMetrics;
+import org.ekstep.ep.samza.object.dto.ObjectResponse;
+import org.ekstep.ep.samza.object.service.ObjectServiceClient;
 import org.ekstep.ep.samza.task.ObjectLifecycleManagementConfig;
 import org.ekstep.ep.samza.task.ObjectLifecycleManagementSink;
 import org.ekstep.ep.samza.task.ObjectLifecycleManagementSource;

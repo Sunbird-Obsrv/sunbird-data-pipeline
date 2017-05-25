@@ -1,4 +1,4 @@
-package org.ekstep.ep.samza.external;
+package org.ekstep.ep.samza.object.dto;
 
 import java.util.Map;
 

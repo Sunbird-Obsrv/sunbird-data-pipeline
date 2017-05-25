@@ -1,4 +1,4 @@
-package org.ekstep.ep.samza.domain;
+package org.ekstep.ep.samza.object.domain;
 
 
 public class LifecycleEventObject {
