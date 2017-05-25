@@ -10,7 +10,7 @@ import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.fixture.EventFixture;
-import org.ekstep.ep.samza.fixture.ObjectFixture;
+import org.ekstep.ep.samza.fixture.SaveObjectFixture;
 import org.ekstep.ep.samza.object.service.ObjectServiceClient;
 import org.junit.Assert;
 import org.junit.Before;
@@ -74,7 +74,7 @@ public class ObjectLifecycleManagementTaskTest {
     @Test
     public void shouldProcessLifeCycleEventsAndShouldCallObjectService() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.LifecycleEvent());
-        stub(objectServiceMock.createOrUpdate(ObjectFixture.getObjectRequest())).toReturn(ObjectFixture.getObjectResponse());
+        stub(objectServiceMock.createOrUpdate(SaveObjectFixture.getObjectRequest())).toReturn(SaveObjectFixture.getObjectResponse());
 
         objectLifecycleManagementTask.process(envelopeMock, collectorMock, coordinatorMock);
 
@@ -85,7 +85,7 @@ public class ObjectLifecycleManagementTaskTest {
     @Test
     public void shouldUpdateFlagsForSuccessfulObjectServiceResponse() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.LifecycleEvent());
-        stub(objectServiceMock.createOrUpdate(ObjectFixture.getObjectRequest())).toReturn(ObjectFixture.getObjectResponse());
+        stub(objectServiceMock.createOrUpdate(SaveObjectFixture.getObjectRequest())).toReturn(SaveObjectFixture.getObjectResponse());
 
         objectLifecycleManagementTask.process(envelopeMock, collectorMock, coordinatorMock);
 
@@ -97,7 +97,7 @@ public class ObjectLifecycleManagementTaskTest {
     @Test
     public void shouldUpdateFlagsForFailureObjectServiceResponse() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.LifecycleEvent());
-        stub(objectServiceMock.createOrUpdate(ObjectFixture.getObjectRequest())).toReturn(ObjectFixture.getFailureResponse());
+        stub(objectServiceMock.createOrUpdate(SaveObjectFixture.getObjectRequest())).toReturn(SaveObjectFixture.getFailureResponse());
 
         objectLifecycleManagementTask.process(envelopeMock, collectorMock, coordinatorMock);
 
@@ -109,7 +109,7 @@ public class ObjectLifecycleManagementTaskTest {
     @Test
     public void shouldUpdateErrorDetailsInMetadataForFailureObjectServiceResponse() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.LifecycleEvent());
-        stub(objectServiceMock.createOrUpdate(ObjectFixture.getObjectRequest())).toReturn(ObjectFixture.getFailureResponse());
+        stub(objectServiceMock.createOrUpdate(SaveObjectFixture.getObjectRequest())).toReturn(SaveObjectFixture.getFailureResponse());
 
         objectLifecycleManagementTask.process(envelopeMock, collectorMock, coordinatorMock);
 

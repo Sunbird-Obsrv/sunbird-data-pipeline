@@ -2,7 +2,7 @@ package org.ekstep.ep.samza.object.dto;
 
 import java.util.Map;
 
-public class ObjectResponse {
+public class SaveObjectResponse {
     public static final String SUCCESS_RESPONSE_STATUS = "successful";
     private String id;
     private String ver;
@@ -14,7 +14,7 @@ public class ObjectResponse {
         return params != null && SUCCESS_RESPONSE_STATUS.equals(params.get("status"));
     }
 
-    public Map<String,Object> params() {
+    public Map<String, Object> params() {
         return params;
     }
 
@@ -31,7 +31,7 @@ public class ObjectResponse {
 
     @Override
     public String toString() {
-        return "ObjectResponse{" +
+        return "SaveObjectResponse{" +
                 "id='" + id + '\'' +
                 ", ver='" + ver + '\'' +
                 ", ts='" + ts + '\'' +

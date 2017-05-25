@@ -13,6 +13,14 @@ public class EventDenormalizationConfig {
         this.denormalizationConfigs = denormalizationConfigs;
     }
 
+    public String eidPattern() {
+        return eidPattern;
+    }
+
+    public List<DataDenormalizationConfig> denormalizationConfigs() {
+        return denormalizationConfigs;
+    }
+
     @Override
     public String toString() {
         return "EventDenormalizationConfig{" +

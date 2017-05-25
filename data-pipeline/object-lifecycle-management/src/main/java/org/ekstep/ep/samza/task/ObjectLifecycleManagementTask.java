@@ -16,7 +16,6 @@ public class ObjectLifecycleManagementTask implements StreamTask, InitableTask, 
     private JobMetrics metrics;
     private ObjectLifecycleManagementService service;
     private List<String> lifeCycleEvents;
-    private ObjectServiceClient objectService;
     private String objectServiceEndpoint;
 
     public ObjectLifecycleManagementTask() {

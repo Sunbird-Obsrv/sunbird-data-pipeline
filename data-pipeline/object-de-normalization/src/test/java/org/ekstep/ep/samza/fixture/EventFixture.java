@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class EventFixture {
 
-    public static final String SKIP_EVENT_JSON =
+    private static final String SKIP_EVENT_JSON =
             "{\n" +
                     "    \"eid\": \"ME_ITEM_USAGE_SUMMARY\",\n" +
                     "    \"dimensions\": {\n" +
@@ -17,11 +17,27 @@ public class EventFixture {
                     "    }\n" +
                     "  }";
 
-    public static final String CP_INTERACT_EVENT_JSON =
+    private static final String CP_INTERACT_EVENT_JSON =
             "{\n" +
                     "    \"eid\": \"CP_INTERACT\",\n" +
                     "    \"uid\": \"111\"\n" +
                     "  }";
+
+    private static final String DENORMALIZED_CP_INTERACT_EVENT_JSON =
+            "{\n" +
+                    "  \"eid\": \"CP_INTERACT\",\n" +
+                    "  \"uid\": \"111\",\n" +
+                    "  \"portaluserdata\": {\n" +
+                    "    \"id\": \"111\",\n" +
+                    "    \"type\": \"User\",\n" +
+                    "    \"subtype\": \"Reviewer\",\n" +
+                    "    \"parentid\": \"222\",\n" +
+                    "    \"parenttype\": \"Admin\",\n" +
+                    "    \"code\": \"XYZ\",\n" +
+                    "    \"name\": \"User 111\",\n" +
+                    "    \"details\": \"{\\\"id\\\":\\\"another id\\\"}\"\n" +
+                    "  }\n" +
+                    "}";
 
 
     public static Map<String, Object> event() {
@@ -31,6 +47,11 @@ public class EventFixture {
 
     public static Map<String, Object> cpInteractEvent() {
         return new Gson().fromJson(CP_INTERACT_EVENT_JSON, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
+
+    public static Map<String, Object> denormalizedCpInteractEvent() {
+        return new Gson().fromJson(DENORMALIZED_CP_INTERACT_EVENT_JSON, new TypeToken<Map<String, Object>>() {
         }.getType());
     }
 }

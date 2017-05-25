@@ -16,7 +16,7 @@ public class ObjectLifecycleManagementConfig {
     public ObjectLifecycleManagementConfig(Config config) {
         successTopic = config.get("output.success.topic.name", "telemetry.objects");
         failedTopic = config.get("output.failed.topic.name", "telemetry.objects.fail");
-        objectServiceEndpoint = config.get("create.object.endpoint","");
+        objectServiceEndpoint = config.get("object.service.endpoint","");
         lifecycleEvents = config.get("lifecycle.events", "");
     }
 

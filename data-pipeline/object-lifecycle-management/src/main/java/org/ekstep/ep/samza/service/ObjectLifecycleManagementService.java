@@ -3,7 +3,7 @@ package org.ekstep.ep.samza.service;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.metrics.JobMetrics;
-import org.ekstep.ep.samza.object.dto.ObjectResponse;
+import org.ekstep.ep.samza.object.dto.SaveObjectResponse;
 import org.ekstep.ep.samza.object.service.ObjectServiceClient;
 import org.ekstep.ep.samza.task.ObjectLifecycleManagementConfig;
 import org.ekstep.ep.samza.task.ObjectLifecycleManagementSink;
@@ -32,14 +32,14 @@ public class ObjectLifecycleManagementService {
                 return;
             }
 
-            ObjectResponse objectResponse = objectService.createOrUpdate(event.LifecycleObjectAttributes());
+            SaveObjectResponse saveObjectResponse = objectService.createOrUpdate(event.LifecycleObjectAttributes());
 
-            if (objectResponse.successful()) {
+            if (saveObjectResponse.successful()) {
                 event.updateFlags(true);
             } else {
-                LOGGER.error(event.id(), "UNABLE TO SAVE OBJECT. RESPONSE: {}", objectResponse);
+                LOGGER.error(event.id(), "UNABLE TO SAVE OBJECT. RESPONSE: {}", saveObjectResponse);
                 event.updateFlags(false);
-                event.updateMetadata(objectResponse.params());
+                event.updateMetadata(saveObjectResponse.params());
             }
             LOGGER.info(event.id(), "PASSING EVENT THROUGH: {}", event);
             sink.toSuccessTopic(event);

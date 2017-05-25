@@ -1,11 +1,11 @@
 package org.ekstep.ep.samza.fixture;
 
 import com.google.gson.Gson;
-import org.ekstep.ep.samza.object.dto.ObjectResponse;
+import org.ekstep.ep.samza.object.dto.SaveObjectResponse;
 
 import java.util.Map;
 
-public class ObjectFixture {
+public class SaveObjectFixture {
     public static final String OBJECT_REQUEST_JSON = "{" +
                "            \"type\": \"User\",\n" +
                "            \"subtype\": \"\",\n" +
@@ -53,9 +53,9 @@ public class ObjectFixture {
         return new Gson().fromJson(OBJECT_REQUEST_JSON, Map.class);
     }
 
-    public static ObjectResponse getObjectResponse() {return new Gson().fromJson(OBJECT_RESPONSE_JSON, ObjectResponse.class);}
+    public static SaveObjectResponse getObjectResponse() {return new Gson().fromJson(OBJECT_RESPONSE_JSON, SaveObjectResponse.class);}
 
-    public static ObjectResponse getFailureResponse() {
-        return new Gson().fromJson(OBJECT_RESPONSE_FAILURE_JSON, ObjectResponse.class);
+    public static SaveObjectResponse getFailureResponse() {
+        return new Gson().fromJson(OBJECT_RESPONSE_FAILURE_JSON, SaveObjectResponse.class);
     }
 }

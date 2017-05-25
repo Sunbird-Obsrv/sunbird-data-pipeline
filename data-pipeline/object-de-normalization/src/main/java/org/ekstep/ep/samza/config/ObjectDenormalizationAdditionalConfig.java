@@ -9,11 +9,14 @@ public class ObjectDenormalizationAdditionalConfig {
         this.eventConfigs = eventConfigs;
     }
 
+    public List<EventDenormalizationConfig> eventConfigs() {
+        return eventConfigs;
+    }
+
     @Override
     public String toString() {
         return "ObjectDenormalizationAdditionalConfig{" +
                 "eventConfigs=" + eventConfigs +
                 '}';
     }
-
 }

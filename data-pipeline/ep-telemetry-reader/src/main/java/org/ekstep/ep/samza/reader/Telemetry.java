@@ -52,12 +52,24 @@ public class Telemetry {
     return new NestedMap(parentMap,lastKey);
   }
 
-
-
-
   @Override
   public String toString() {
     return map.toString();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    Telemetry telemetry = (Telemetry) o;
+
+    return map != null ? map.equals(telemetry.map) : telemetry.map == null;
+  }
+
+  @Override
+  public int hashCode() {
+    return map != null ? map.hashCode() : 0;
   }
 
   class NestedMap {

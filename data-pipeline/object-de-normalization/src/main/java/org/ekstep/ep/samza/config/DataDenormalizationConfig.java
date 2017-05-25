@@ -9,6 +9,14 @@ public class DataDenormalizationConfig {
         this.denormalizedFieldPath = denormalizedFieldPath;
     }
 
+    public String idFieldPath() {
+        return idFieldPath;
+    }
+
+    public String denormalizedFieldPath() {
+        return denormalizedFieldPath;
+    }
+
     @Override
     public String toString() {
         return "DataDenormalizationConfig{" +

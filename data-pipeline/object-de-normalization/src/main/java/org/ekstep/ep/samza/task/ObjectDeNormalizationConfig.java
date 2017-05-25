@@ -15,10 +15,12 @@ public class ObjectDeNormalizationConfig {
     private String successTopic;
     private String failedTopic;
     private ObjectDenormalizationAdditionalConfig additionalConfig;
+    private String objectServiceEndPoint;
 
     public ObjectDeNormalizationConfig(Config config) {
         successTopic = config.get("output.success.topic.name", "telemetry.objects.de_normalized");
         failedTopic = config.get("output.failed.topic.name", "telemetry.objects.de_normalized.fail");
+        objectServiceEndPoint = config.get("object.service.endpoint", "http://localhost:3003");
         String additionalConfigFile = config.get("denorm.config.file", "/etc/samza-jobs/object-denormalization-additional-config.json");
         try {
             String additionalConfigJson = IOUtils.toString(new FileReader(additionalConfigFile));
@@ -40,5 +42,9 @@ public class ObjectDeNormalizationConfig {
 
     public ObjectDenormalizationAdditionalConfig additionalConfig() {
         return additionalConfig;
+    }
+
+    public String objectServiceEndPoint() {
+        return objectServiceEndPoint;
     }
 }

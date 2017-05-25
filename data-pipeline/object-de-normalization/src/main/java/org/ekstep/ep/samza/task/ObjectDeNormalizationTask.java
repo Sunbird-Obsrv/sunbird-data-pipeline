@@ -5,6 +5,8 @@ import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.metrics.JobMetrics;
+import org.ekstep.ep.samza.object.service.ObjectService;
+import org.ekstep.ep.samza.object.service.ObjectServiceClient;
 import org.ekstep.ep.samza.service.ObjectDeNormalizationService;
 
 public class ObjectDeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
@@ -17,14 +19,26 @@ public class ObjectDeNormalizationTask implements StreamTask, InitableTask, Wind
     }
 
     public ObjectDeNormalizationTask(Config configMock, TaskContext contextMock) throws Exception {
-        init(configMock, contextMock);
+        init((Config) configMock, (TaskContext) contextMock);
     }
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
+        init(config, context, null);
+    }
+
+    private void init(Config config, TaskContext context, ObjectService objectService) {
         this.config = new ObjectDeNormalizationConfig(config);
         metrics = new JobMetrics(context);
-        service = new ObjectDeNormalizationService(this.config, this.config.additionalConfig());
+
+        String objectServiceEndpoint = this.config.objectServiceEndPoint();
+        objectService =
+                objectService == null ?
+                        new ObjectServiceClient(objectServiceEndpoint) :
+                        objectService;
+
+
+        service = new ObjectDeNormalizationService(this.config, this.config.additionalConfig(), objectService);
     }
 
     @Override

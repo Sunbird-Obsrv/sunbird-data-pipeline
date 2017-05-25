@@ -1,35 +1,41 @@
 package org.ekstep.ep.samza.service;
 
-import org.apache.samza.metrics.MetricsRegistry;
 import org.ekstep.ep.samza.config.DataDenormalizationConfig;
 import org.ekstep.ep.samza.config.EventDenormalizationConfig;
 import org.ekstep.ep.samza.config.ObjectDenormalizationAdditionalConfig;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.fixture.EventFixture;
+import org.ekstep.ep.samza.fixture.GetObjectFixture;
+import org.ekstep.ep.samza.object.service.ObjectService;
+import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.task.ObjectDeNormalizationConfig;
 import org.ekstep.ep.samza.task.ObjectDeNormalizationSink;
 import org.ekstep.ep.samza.task.ObjectDeNormalizationSource;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ObjectDeNormalizationServiceTest {
     @Mock
-    private MetricsRegistry metricsRegistry;
-    @Mock
     private ObjectDeNormalizationConfig config;
     @Mock
     private ObjectDeNormalizationSource source;
     @Mock
     private ObjectDeNormalizationSink sink;
+    @Mock
+    private ObjectService objectService;
 
     private ObjectDenormalizationAdditionalConfig additionalConfig;
-    private ObjectDeNormalizationService service;
+    private ObjectDeNormalizationService denormalizationService;
 
     @Before
     public void setUp() throws Exception {
@@ -41,11 +47,11 @@ public class ObjectDeNormalizationServiceTest {
         additionalConfig = new ObjectDenormalizationAdditionalConfig(
                 asList(new EventDenormalizationConfig("Portal events", "C[PE]\\_.*",
                         asList(new DataDenormalizationConfig("uid", "portaluserdata")))));
-        service = new ObjectDeNormalizationService(config, additionalConfig);
-        Event event = new Event(EventFixture.event());
+        denormalizationService = new ObjectDeNormalizationService(config, additionalConfig, objectService);
+        Event event = new Event(new Telemetry(EventFixture.event()));
         when(source.getEvent()).thenReturn(event);
 
-        service.process(source, sink);
+        denormalizationService.process(source, sink);
 
         verify(sink).toSuccessTopic(event);
     }
@@ -55,12 +61,37 @@ public class ObjectDeNormalizationServiceTest {
         additionalConfig = new ObjectDenormalizationAdditionalConfig(
                 asList(new EventDenormalizationConfig("Portal events", "C[PE]\\_.*",
                         asList(new DataDenormalizationConfig("uid", "portaluserdata")))));
-        service = new ObjectDeNormalizationService(config, additionalConfig);
-        Event event = new Event(EventFixture.cpInteractEvent());
+        denormalizationService = new ObjectDeNormalizationService(config, additionalConfig, objectService);
+        Event event = new Event(new Telemetry(EventFixture.cpInteractEvent()));
         when(source.getEvent()).thenReturn(event);
+        when(objectService.get("111")).thenReturn(GetObjectFixture.getObjectSuccessResponse());
 
-        service.process(source, sink);
+        denormalizationService.process(source, sink);
 
-        verify(sink).toSuccessTopic(event);
+        Event expectedEvent = new Event(new Telemetry(EventFixture.denormalizedCpInteractEvent()));
+        verify(sink).toSuccessTopic(argThat(validateEvent(event, expectedEvent)));
+        verify(objectService).get("111");
     }
+
+    private ArgumentMatcher<Event> validateEvent(final Event event, final Event expectedEvent) {
+        return new ArgumentMatcher<Event>() {
+            @Override
+            public boolean matches(Object o) {
+                assertThat(readValue(event, "portaluserdata.id"), is(readValue(expectedEvent, "portaluserdata.id")));
+                assertThat(readValue(event, "portaluserdata.type"), is(readValue(expectedEvent, "portaluserdata.type")));
+                assertThat(readValue(event, "portaluserdata.subtype"), is(readValue(expectedEvent, "portaluserdata.subtype")));
+                assertThat(readValue(event, "portaluserdata.parentid"), is(readValue(expectedEvent, "portaluserdata.parentid")));
+                assertThat(readValue(event, "portaluserdata.parenttype"), is(readValue(expectedEvent, "portaluserdata.parenttype")));
+                assertThat(readValue(event, "portaluserdata.code"), is(readValue(expectedEvent, "portaluserdata.code")));
+                assertThat(readValue(event, "portaluserdata.name"), is(readValue(expectedEvent, "portaluserdata.name")));
+                assertThat(readValue(event, "portaluserdata.details"), is(readValue(expectedEvent, "portaluserdata.details")));
+                return true;
+            }
+        };
+    }
+
+    private String readValue(Event event, String path) {
+        return event.read(path).value();
+    }
+
 }
