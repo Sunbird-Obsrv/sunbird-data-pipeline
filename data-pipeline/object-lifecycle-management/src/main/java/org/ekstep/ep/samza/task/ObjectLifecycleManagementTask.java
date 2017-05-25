@@ -40,7 +40,7 @@ public class ObjectLifecycleManagementTask implements StreamTask, InitableTask, 
                 objectService == null ?
                         new ObjectServiceClient(objectServiceEndpoint) :
                         objectService;
-        service = new ObjectLifecycleManagementService(this.config, objectService);
+        service = new ObjectLifecycleManagementService(this.config, objectService, metrics);
     }
 
     @Override

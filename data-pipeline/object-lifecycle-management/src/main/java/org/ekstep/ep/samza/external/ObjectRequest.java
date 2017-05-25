@@ -27,6 +27,6 @@ public class ObjectRequest {
         HashMap<String, Object> request = new HashMap<String, Object>();
         request.putAll(requestMap);
 
-        return new ObjectRequest("ekstep.users.get", "1.0", new Date().getTime(), params, request);
+        return new ObjectRequest("ekstep.object_service.create_or_update", "1.0", new Date().getTime(), params, request);
     }
 }

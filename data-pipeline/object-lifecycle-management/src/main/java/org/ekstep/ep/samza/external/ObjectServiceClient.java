@@ -26,12 +26,6 @@ public class ObjectServiceClient implements ObjectService {
                 .post(RequestBody.create(JSON_MEDIA_TYPE, new Gson().toJson(ObjectRequest.create(requestMap))))
                 .build();
         Response response = httpClient.newCall(request).execute();
-        ObjectResponse objectResponse = new Gson().fromJson(response.body().string(), ObjectResponse.class);
-
-        if (!objectResponse.successful()) {
-            LOGGER.error("", "OBJECT SERVICE FAILED. RESPONSE: {}", objectResponse.toString());
-        }
-
-        return objectResponse;
+        return new Gson().fromJson(response.body().string(), ObjectResponse.class);
     }
 }

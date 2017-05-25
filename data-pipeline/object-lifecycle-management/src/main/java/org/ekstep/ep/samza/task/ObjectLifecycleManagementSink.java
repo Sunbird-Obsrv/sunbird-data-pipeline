@@ -20,13 +20,13 @@ public class ObjectLifecycleManagementSink {
 
     public void toSuccessTopic(Event event) {
         collector.send(new OutgoingMessageEnvelope(
-                new SystemStream("kafka", config.successTopic()), event.map()));
+                new SystemStream("kafka", config.successTopic()), event.getMap()));
         metrics.incSuccessCounter();
     }
 
     public void toFailedTopic(Event event) {
         collector.send(new OutgoingMessageEnvelope(
-                new SystemStream("kafka", config.failedTopic()), event.map()));
+                new SystemStream("kafka", config.failedTopic()), event.getMap()));
         metrics.incFailedCounter();
     }
 
