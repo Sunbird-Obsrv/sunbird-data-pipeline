@@ -40,6 +40,7 @@
     <module>object-lifecycle-management</module>
     <module>object-de-normalization</module>
     <module>portal-profile-management</module>
+    <module>public-exhaust-de-duplication</module>
   </modules>
 
   <properties>
