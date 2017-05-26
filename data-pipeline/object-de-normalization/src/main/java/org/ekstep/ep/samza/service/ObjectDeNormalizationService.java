@@ -28,7 +28,9 @@ public class ObjectDeNormalizationService {
     private final ObjectService objectService;
     private Gson gson = new Gson();
 
-    public ObjectDeNormalizationService(ObjectDeNormalizationConfig config, ObjectDenormalizationAdditionalConfig additionalConfig, ObjectService objectService) {
+    public ObjectDeNormalizationService(ObjectDeNormalizationConfig config,
+                                        ObjectDenormalizationAdditionalConfig additionalConfig,
+                                        ObjectService objectService) {
         this.additionalConfig = additionalConfig;
         this.objectService = objectService;
         this.fieldsToDenormalize = config.fieldsToDenormalize();
@@ -37,28 +39,37 @@ public class ObjectDeNormalizationService {
     public void process(ObjectDeNormalizationSource source, ObjectDeNormalizationSink sink) {
         Event event = source.getEvent();
 
-        for (EventDenormalizationConfig config : additionalConfig.eventConfigs()) {
-            if (!config.eidCompiledPattern().matcher(event.eid()).matches()) {
-                continue;
-            }
-
-            for (DataDenormalizationConfig dataDenormalizationConfig : config.denormalizationConfigs()) {
-                NullableValue<String> objectId = event.read(dataDenormalizationConfig.idFieldPath());
-                if (objectId.isNull()) {
+        try {
+            boolean processingFailed = false;
+            for (EventDenormalizationConfig config : additionalConfig.eventConfigs()) {
+                if (!config.eidCompiledPattern().matcher(event.eid()).matches()) {
                     continue;
                 }
-                GetObjectResponse getObjectResponse = objectService.get(objectId.value());
-                if (!getObjectResponse.successful()) {
-                    //#TODO HANDLE ERROR
-                } else {
-                    event.update(dataDenormalizationConfig.denormalizedFieldPath(), denormalizedData(event, getObjectResponse.result()));
+
+                for (DataDenormalizationConfig dataDenormalizationConfig : config.denormalizationConfigs()) {
+                    NullableValue<String> objectId = event.read(dataDenormalizationConfig.idFieldPath());
+                    if (objectId.isNull()) {
+                        continue;
+                    }
+                    GetObjectResponse getObjectResponse = objectService.get(objectId.value());
+                    if (!getObjectResponse.successful()) {
+                        processingFailed = true;
+                        LOGGER.error(event.id(),
+                                format("ERROR WHEN GETTING OBJECT DATA. EVENT: {0}, RESPONSE: {1}",
+                                        event, getObjectResponse));
+                    } else {
+                        event.update(
+                                dataDenormalizationConfig.denormalizedFieldPath(),
+                                getDenormalizedData(event, getObjectResponse.result()));
+                    }
                 }
             }
-        }
 
-        try {
             LOGGER.info(event.id(), "PASSING EVENT THROUGH");
             sink.toSuccessTopic(event);
+            if (processingFailed) {
+                sink.toFailedTopic(event);
+            }
         } catch (Exception e) {
             LOGGER.error(event.id(), "EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO FAILED TOPIC. EVENT: " + event, e);
             sink.toSuccessTopic(event);
@@ -67,7 +78,7 @@ public class ObjectDeNormalizationService {
         }
     }
 
-    private Map<String, String> denormalizedData(Event event, Map<String, Object> result) {
+    private Map<String, String> getDenormalizedData(Event event, Map<String, Object> result) {
 
         HashMap<String, String> denormalizedData = new HashMap<String, String>();
 
@@ -92,5 +103,4 @@ public class ObjectDeNormalizationService {
         }
         return details;
     }
-
 }

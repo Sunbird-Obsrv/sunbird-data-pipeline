@@ -11,6 +11,7 @@ import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.task.ObjectDeNormalizationConfig;
 import org.ekstep.ep.samza.task.ObjectDeNormalizationSink;
 import org.ekstep.ep.samza.task.ObjectDeNormalizationSource;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -20,8 +21,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ObjectDeNormalizationServiceTest {
@@ -40,6 +40,11 @@ public class ObjectDeNormalizationServiceTest {
     @Before
     public void setUp() throws Exception {
         initMocks(this);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        verifyNoMoreInteractions(sink);
     }
 
     @Test
@@ -90,6 +95,25 @@ public class ObjectDeNormalizationServiceTest {
 
         Event expectedEvent = new Event(new Telemetry(EventFixture.denormalizedCpInteractEventWithoutDetails()));
         verify(sink).toSuccessTopic(argThat(validateEvent(event, expectedEvent)));
+        verify(objectService).get("111");
+    }
+
+    @Test
+    public void shouldSinkEventToBothSuccessAndFailedTopicWhenServiceReturnsError() throws Exception {
+        additionalConfig = new ObjectDenormalizationAdditionalConfig(
+                asList(new EventDenormalizationConfig("Portal events", "C[PE]\\_.*",
+                        asList(new DataDenormalizationConfig("uid", "portaluserdata")))));
+        Event event = new Event(new Telemetry(EventFixture.cpInteractEvent()));
+        when(config.fieldsToDenormalize()).thenReturn(asList("id", "type", "subtype", "parentid", "parenttype", "code", "name"));
+        when(source.getEvent()).thenReturn(event);
+        when(objectService.get("111")).thenReturn(GetObjectFixture.getFailureResponse());
+
+        denormalizationService = new ObjectDeNormalizationService(config, additionalConfig, objectService);
+        denormalizationService.process(source, sink);
+
+        Event expectedEvent = new Event(new Telemetry(EventFixture.denormalizedCpInteractEventWithoutDetails()));
+        verify(sink).toSuccessTopic(event);
+        verify(sink).toFailedTopic(event);
         verify(objectService).get("111");
     }
 
