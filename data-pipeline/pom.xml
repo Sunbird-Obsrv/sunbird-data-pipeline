@@ -41,6 +41,7 @@
     <module>object-de-normalization</module>
     <module>portal-profile-management</module>
     <module>public-exhaust-de-duplication</module>
+      <module>private-exhaust-de-duplication</module>
   </modules>
 
   <properties>
