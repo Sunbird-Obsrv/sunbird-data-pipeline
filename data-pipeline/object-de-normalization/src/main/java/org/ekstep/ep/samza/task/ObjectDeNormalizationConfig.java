@@ -8,6 +8,9 @@ import org.ekstep.ep.samza.config.ObjectDenormalizationAdditionalConfig;
 import org.ekstep.ep.samza.logger.Logger;
 
 import java.io.FileReader;
+import java.util.List;
+
+import static java.util.Arrays.asList;
 
 public class ObjectDeNormalizationConfig {
     static Logger LOGGER = new Logger(ObjectDeNormalizationConfig.class);
@@ -16,11 +19,24 @@ public class ObjectDeNormalizationConfig {
     private String failedTopic;
     private ObjectDenormalizationAdditionalConfig additionalConfig;
     private String objectServiceEndPoint;
+    private List<String> fieldsToDenormalize;
 
     public ObjectDeNormalizationConfig(Config config) {
         successTopic = config.get("output.success.topic.name", "telemetry.objects.de_normalized");
         failedTopic = config.get("output.failed.topic.name", "telemetry.objects.de_normalized.fail");
         objectServiceEndPoint = config.get("object.service.endpoint", "http://localhost:3003");
+        initFieldsToDenormalize(config);
+        initAdditionalConfig(config);
+    }
+
+    private void initFieldsToDenormalize(Config config) {
+        String fieldsToDenormalize = config
+                .get("fields.to.denormalize", "id,type,subtype,parentid,parenttype,code,name")
+                .replace(" ", "");
+        this.fieldsToDenormalize = asList(fieldsToDenormalize.split(","));
+    }
+
+    private void initAdditionalConfig(Config config) {
         String additionalConfigFile = config.get("denorm.config.file", "/etc/samza-jobs/object-denormalization-additional-config.json");
         try {
             String additionalConfigJson = IOUtils.toString(new FileReader(additionalConfigFile));
@@ -46,5 +62,9 @@ public class ObjectDeNormalizationConfig {
 
     public String objectServiceEndPoint() {
         return objectServiceEndPoint;
+    }
+
+    public List<String> fieldsToDenormalize() {
+        return fieldsToDenormalize;
     }
 }

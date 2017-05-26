@@ -47,10 +47,11 @@ public class ObjectDeNormalizationServiceTest {
         additionalConfig = new ObjectDenormalizationAdditionalConfig(
                 asList(new EventDenormalizationConfig("Portal events", "C[PE]\\_.*",
                         asList(new DataDenormalizationConfig("uid", "portaluserdata")))));
-        denormalizationService = new ObjectDeNormalizationService(config, additionalConfig, objectService);
         Event event = new Event(new Telemetry(EventFixture.event()));
+        when(config.fieldsToDenormalize()).thenReturn(asList("id", "type", "subtype", "parentid", "parenttype", "code", "name"));
         when(source.getEvent()).thenReturn(event);
 
+        denormalizationService = new ObjectDeNormalizationService(config, additionalConfig, objectService);
         denormalizationService.process(source, sink);
 
         verify(sink).toSuccessTopic(event);
@@ -61,11 +62,12 @@ public class ObjectDeNormalizationServiceTest {
         additionalConfig = new ObjectDenormalizationAdditionalConfig(
                 asList(new EventDenormalizationConfig("Portal events", "C[PE]\\_.*",
                         asList(new DataDenormalizationConfig("uid", "portaluserdata")))));
-        denormalizationService = new ObjectDeNormalizationService(config, additionalConfig, objectService);
         Event event = new Event(new Telemetry(EventFixture.cpInteractEvent()));
+        when(config.fieldsToDenormalize()).thenReturn(asList("id", "type", "subtype", "parentid", "parenttype", "code", "name"));
         when(source.getEvent()).thenReturn(event);
         when(objectService.get("111")).thenReturn(GetObjectFixture.getObjectSuccessResponse());
 
+        denormalizationService = new ObjectDeNormalizationService(config, additionalConfig, objectService);
         denormalizationService.process(source, sink);
 
         Event expectedEvent = new Event(new Telemetry(EventFixture.denormalizedCpInteractEvent()));
@@ -78,11 +80,12 @@ public class ObjectDeNormalizationServiceTest {
         additionalConfig = new ObjectDenormalizationAdditionalConfig(
                 asList(new EventDenormalizationConfig("Portal events", "C[PE]\\_.*",
                         asList(new DataDenormalizationConfig("uid", "portaluserdata")))));
-        denormalizationService = new ObjectDeNormalizationService(config, additionalConfig, objectService);
         Event event = new Event(new Telemetry(EventFixture.cpInteractEvent()));
+        when(config.fieldsToDenormalize()).thenReturn(asList("id", "type", "subtype", "parentid", "parenttype", "code", "name"));
         when(source.getEvent()).thenReturn(event);
         when(objectService.get("111")).thenReturn(GetObjectFixture.getObjectSuccessResponseWithMalformedDetails());
 
+        denormalizationService = new ObjectDeNormalizationService(config, additionalConfig, objectService);
         denormalizationService.process(source, sink);
 
         Event expectedEvent = new Event(new Telemetry(EventFixture.denormalizedCpInteractEventWithoutDetails()));

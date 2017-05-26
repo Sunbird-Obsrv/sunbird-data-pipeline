@@ -16,6 +16,7 @@ import org.ekstep.ep.samza.task.ObjectDeNormalizationSink;
 import org.ekstep.ep.samza.task.ObjectDeNormalizationSource;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -23,16 +24,15 @@ import static java.text.MessageFormat.format;
 
 public class ObjectDeNormalizationService {
     static Logger LOGGER = new Logger(ObjectDeNormalizationService.class);
-    private final ObjectDeNormalizationConfig config;
+    private final List<String> fieldsToDenormalize;
     private final ObjectDenormalizationAdditionalConfig additionalConfig;
     private final ObjectService objectService;
     private Gson gson = new Gson();
 
-    public ObjectDeNormalizationService(ObjectDeNormalizationConfig config,
-                                        ObjectDenormalizationAdditionalConfig additionalConfig, ObjectService objectService) {
-        this.config = config;
+    public ObjectDeNormalizationService(ObjectDeNormalizationConfig config, ObjectDenormalizationAdditionalConfig additionalConfig, ObjectService objectService) {
         this.additionalConfig = additionalConfig;
         this.objectService = objectService;
+        this.fieldsToDenormalize = config.fieldsToDenormalize();
     }
 
     public void process(ObjectDeNormalizationSource source, ObjectDeNormalizationSink sink) {
@@ -69,29 +69,30 @@ public class ObjectDeNormalizationService {
         }
     }
 
-    public Map<String, String> denormalizedData(Event event, GetObjectResponse.Result result) {
+    private Map<String, String> denormalizedData(Event event, Map<String, Object> result) {
+
         HashMap<String, String> denormalizedData = new HashMap<String, String>();
-        denormalizedData.put("id", String.valueOf(result.id()));
-        denormalizedData.put("type", result.type());
-        denormalizedData.put("subtype", result.subtype());
-        denormalizedData.put("parentid", result.parentid());
-        denormalizedData.put("parenttype", result.parenttype());
-        denormalizedData.put("code", result.code());
-        denormalizedData.put("name", result.name());
-        Map<String, String> details = null;
+
+        for (String field : fieldsToDenormalize) {
+            denormalizedData.put(field, String.valueOf(result.get(field)));
+        }
+
+        denormalizedData.putAll(getDetailsMap(event, result));
+        return denormalizedData;
+    }
+
+    private Map<String, String> getDetailsMap(Event event, Map<String, Object> result) {
+        Map<String, String> details = new HashMap<String, String>();
         try {
-            details = gson.fromJson(result.details(), new TypeToken<Map<String, String>>() {
+            details = gson.fromJson((String) result.get("details"), new TypeToken<Map<String, String>>() {
             }.getType());
         } catch (JsonSyntaxException e) {
             LOGGER.error(event.id(),
                     format("UNABLE TO PARSE DETAILS INTO MAP<STRING, STRING>. EVENT: {0}, DETAILS: {1}",
-                            event, result.details()));
+                            event, result.get("details")));
             e.printStackTrace();
         }
-        if (details != null) {
-            denormalizedData.putAll(details);
-        }
-        return denormalizedData;
+        return details;
     }
 
 }
