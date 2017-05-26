@@ -17,7 +17,7 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>object-lifecycle-management</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.3</version>
     <packaging>jar</packaging>
     <name>Object-Lifecycle-Management</name>
     <description>
