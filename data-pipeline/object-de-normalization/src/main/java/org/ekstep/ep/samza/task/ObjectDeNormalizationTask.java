@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.task;
 
+import okhttp3.OkHttpClient;
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.task.*;
@@ -34,7 +35,7 @@ public class ObjectDeNormalizationTask implements StreamTask, InitableTask, Wind
         String objectServiceEndpoint = this.config.objectServiceEndPoint();
         objectService =
                 objectService == null ?
-                        new ObjectServiceClient(objectServiceEndpoint) :
+                        new ObjectServiceClient(objectServiceEndpoint, new OkHttpClient()) :
                         objectService;
 
 

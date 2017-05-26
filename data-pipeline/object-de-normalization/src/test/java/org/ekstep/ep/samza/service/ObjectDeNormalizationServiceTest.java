@@ -76,7 +76,7 @@ public class ObjectDeNormalizationServiceTest {
         denormalizationService.process(source, sink);
 
         Event expectedEvent = new Event(new Telemetry(EventFixture.denormalizedCpInteractEvent()));
-        verify(sink).toSuccessTopic(argThat(validateEvent(event, expectedEvent)));
+        verify(sink).toSuccessTopic(argThat(validateEvent(expectedEvent)));
         verify(objectService).get("111");
     }
 
@@ -94,7 +94,7 @@ public class ObjectDeNormalizationServiceTest {
         denormalizationService.process(source, sink);
 
         Event expectedEvent = new Event(new Telemetry(EventFixture.denormalizedCpInteractEventWithoutDetails()));
-        verify(sink).toSuccessTopic(argThat(validateEvent(event, expectedEvent)));
+        verify(sink).toSuccessTopic(argThat(validateEvent(expectedEvent)));
         verify(objectService).get("111");
     }
 
@@ -111,27 +111,27 @@ public class ObjectDeNormalizationServiceTest {
         denormalizationService = new ObjectDeNormalizationService(config, additionalConfig, objectService);
         denormalizationService.process(source, sink);
 
-        Event expectedEvent = new Event(new Telemetry(EventFixture.denormalizedCpInteractEventWithoutDetails()));
         verify(sink).toSuccessTopic(event);
         verify(sink).toFailedTopic(event);
         verify(objectService).get("111");
     }
 
-    private ArgumentMatcher<Event> validateEvent(final Event event, final Event expectedEvent) {
+    private ArgumentMatcher<Event> validateEvent(final Event expectedEvent) {
         return new ArgumentMatcher<Event>() {
             @Override
             public boolean matches(Object o) {
-                assertThat(readValue(event, "portaluserdata.id"), is(readValue(expectedEvent, "portaluserdata.id")));
-                assertThat(readValue(event, "portaluserdata.type"), is(readValue(expectedEvent, "portaluserdata.type")));
-                assertThat(readValue(event, "portaluserdata.subtype"), is(readValue(expectedEvent, "portaluserdata.subtype")));
-                assertThat(readValue(event, "portaluserdata.parentid"), is(readValue(expectedEvent, "portaluserdata.parentid")));
-                assertThat(readValue(event, "portaluserdata.parenttype"), is(readValue(expectedEvent, "portaluserdata.parenttype")));
-                assertThat(readValue(event, "portaluserdata.code"), is(readValue(expectedEvent, "portaluserdata.code")));
-                assertThat(readValue(event, "portaluserdata.name"), is(readValue(expectedEvent, "portaluserdata.name")));
+                Event actualEvent = (Event) o;
+                assertThat(readValue(actualEvent, "portaluserdata.id"), is(readValue(expectedEvent, "portaluserdata.id")));
+                assertThat(readValue(actualEvent, "portaluserdata.type"), is(readValue(expectedEvent, "portaluserdata.type")));
+                assertThat(readValue(actualEvent, "portaluserdata.subtype"), is(readValue(expectedEvent, "portaluserdata.subtype")));
+                assertThat(readValue(actualEvent, "portaluserdata.parentid"), is(readValue(expectedEvent, "portaluserdata.parentid")));
+                assertThat(readValue(actualEvent, "portaluserdata.parenttype"), is(readValue(expectedEvent, "portaluserdata.parenttype")));
+                assertThat(readValue(actualEvent, "portaluserdata.code"), is(readValue(expectedEvent, "portaluserdata.code")));
+                assertThat(readValue(actualEvent, "portaluserdata.name"), is(readValue(expectedEvent, "portaluserdata.name")));
 
                 //Details field
-                assertThat(readValue(event, "portaluserdata.email"), is(readValue(expectedEvent, "portaluserdata.email")));
-                assertThat(readValue(event, "portaluserdata.channel"), is(readValue(expectedEvent, "portaluserdata.channel")));
+                assertThat(readValue(actualEvent, "portaluserdata.email"), is(readValue(expectedEvent, "portaluserdata.email")));
+                assertThat(readValue(actualEvent, "portaluserdata.channel"), is(readValue(expectedEvent, "portaluserdata.channel")));
                 return true;
             }
         };

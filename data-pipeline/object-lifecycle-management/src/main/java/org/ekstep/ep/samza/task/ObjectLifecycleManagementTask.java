@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.task;
 
+import okhttp3.OkHttpClient;
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.task.*;
@@ -37,7 +38,7 @@ public class ObjectLifecycleManagementTask implements StreamTask, InitableTask, 
         objectServiceEndpoint = this.config.getObjectServiceEndPoint();
         objectService =
                 objectService == null ?
-                        new ObjectServiceClient(objectServiceEndpoint) :
+                        new ObjectServiceClient(objectServiceEndpoint, new OkHttpClient()) :
                         objectService;
         service = new ObjectLifecycleManagementService(this.config, objectService, metrics);
     }

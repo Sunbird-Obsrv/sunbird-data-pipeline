@@ -18,9 +18,9 @@ public class ObjectServiceClient implements ObjectService {
     private String objectServiceEndpoint;
     private final OkHttpClient httpClient;
 
-    public ObjectServiceClient(String objectServiceEndpoint) {
+    public ObjectServiceClient(String objectServiceEndpoint, OkHttpClient httpClient) {
         this.objectServiceEndpoint = objectServiceEndpoint;
-        httpClient = new OkHttpClient();
+        this.httpClient = httpClient;
     }
 
     @Override
