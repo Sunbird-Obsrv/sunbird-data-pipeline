@@ -9,5 +9,5 @@ import java.util.Map;
 public interface ObjectService {
     SaveObjectResponse createOrUpdate(Map<String, Object> requestMap) throws IOException;
 
-    GetObjectResponse get(String id);
+    GetObjectResponse get(String id) throws IOException;
 }
