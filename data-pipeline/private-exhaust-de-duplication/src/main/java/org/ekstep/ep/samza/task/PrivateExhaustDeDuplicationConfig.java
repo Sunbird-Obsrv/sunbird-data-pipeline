@@ -9,8 +9,8 @@ public class PrivateExhaustDeDuplicationConfig {
     private String failedTopic;
 
     public PrivateExhaustDeDuplicationConfig(Config config) {
-        successTopic = config.get("output.success.topic.name", "telemetry.public_exhaust");
-        failedTopic = config.get("output.failed.topic.name", "telemetry.public_exhaust.fail");
+        successTopic = config.get("output.success.topic.name", "telemetry.private_exhaust");
+        failedTopic = config.get("output.failed.topic.name", "telemetry.private_exhaust.fail");
     }
 
     public String successTopic() {

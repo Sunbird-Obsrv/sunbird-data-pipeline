@@ -26,7 +26,7 @@ public class PrivateExhaustDeDuplicationTask implements StreamTask, InitableTask
     @Override
     public void init(Config config, TaskContext context) throws Exception {
         init(config, context,
-                (KeyValueStore<Object, Object>) context.getStore("private-exhaust-store"));
+                (KeyValueStore<Object, Object>) context.getStore("private-exhaust"));
     }
 
     private void init(Config config, TaskContext context,
