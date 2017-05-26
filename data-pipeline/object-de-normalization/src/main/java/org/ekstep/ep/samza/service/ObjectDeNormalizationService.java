@@ -18,7 +18,6 @@ import org.ekstep.ep.samza.task.ObjectDeNormalizationSource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import static java.text.MessageFormat.format;
 
@@ -39,8 +38,7 @@ public class ObjectDeNormalizationService {
         Event event = source.getEvent();
 
         for (EventDenormalizationConfig config : additionalConfig.eventConfigs()) {
-            Pattern compile = Pattern.compile(config.eidPattern());
-            if (!compile.matcher(event.eid()).matches()) {
+            if (!config.eidCompiledPattern().matcher(event.eid()).matches()) {
                 continue;
             }
 
