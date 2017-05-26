@@ -25,6 +25,7 @@ public class ObjectDeNormalizationTaskTest {
     private static final String SUCCESS_TOPIC = "telemetry.objects.de_normalized";
     private static final String FAILED_TOPIC = "telemetry.objects.de_normalized.fail";
     private static final String CONTENT_CACHE_TTL = "60000";
+    public static final String FIELDS_TO_DENORMALIZE = "id,type,subtype,parentid,parenttype,code,name";
     private MessageCollector collectorMock;
     private TaskContext contextMock;
     private MetricsRegistry metricsRegistry;
@@ -33,6 +34,7 @@ public class ObjectDeNormalizationTaskTest {
     private IncomingMessageEnvelope envelopeMock;
     private Config configMock;
     private ObjectDeNormalizationTask objectDeNormalizationTask;
+    private String additionalConfigFile = System.getProperty("user.dir") + "/src/main/resources/object-denormalization-additional-config.json";
 
     @Before
     public void setUp() throws Exception {
@@ -46,6 +48,10 @@ public class ObjectDeNormalizationTaskTest {
 
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
+        stub(configMock.get("fields.to.denormalize", FIELDS_TO_DENORMALIZE)).toReturn(FIELDS_TO_DENORMALIZE);
+        stub(configMock.get("denorm.config.file", "/etc/samza-jobs/object-denormalization-additional-config.json"))
+                .toReturn(additionalConfigFile);
+
         stub(metricsRegistry.newCounter(anyString(), anyString()))
                 .toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);

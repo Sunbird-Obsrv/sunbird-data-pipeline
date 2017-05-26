@@ -13,7 +13,6 @@ public class EventDenormalizationConfig {
         this.name = name;
         this.eidPattern = eidPattern;
         this.denormalizationConfigs = denormalizationConfigs;
-        this.eidCompiledPattern = Pattern.compile(eidPattern);
     }
 
     public String eidPattern() {
@@ -25,6 +24,9 @@ public class EventDenormalizationConfig {
     }
 
     public Pattern eidCompiledPattern() {
+        if (eidCompiledPattern == null) {
+            this.eidCompiledPattern = Pattern.compile(eidPattern);
+        }
         return eidCompiledPattern;
     }
 
