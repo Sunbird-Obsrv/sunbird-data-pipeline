@@ -4,6 +4,7 @@ import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Event {
@@ -36,7 +37,7 @@ public class Event {
         return telemetry.getMap();
     }
 
-    public NullableValue<String> read(String path) {
+    public <T> NullableValue<T> read(String path) {
         return telemetry.read(path);
     }
 
@@ -57,6 +58,24 @@ public class Event {
     @Override
     public int hashCode() {
         return telemetry != null ? telemetry.hashCode() : 0;
+    }
+
+    public void markSkipped() {
+        telemetry.add("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.object_denormalize_skipped", true);
+    }
+
+    public void markProcessed() {
+        telemetry.add("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.object_denormalize_processed", true);
+    }
+
+    public void markFailed(Map<String, Object> params) {
+        telemetry.add("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.object_denormalize_failed", true);
+        telemetry.add("metadata", new HashMap<String, Boolean>());
+        telemetry.add("flags.object_denormalize_err", params.get("err"));
+        telemetry.add("flags.object_denormalize_errmsg", params.get("errmsg"));
     }
 }
 

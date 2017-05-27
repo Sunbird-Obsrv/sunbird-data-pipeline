@@ -43,6 +43,7 @@ public class ObjectDeNormalizationService {
             boolean processingFailed = false;
             for (EventDenormalizationConfig config : additionalConfig.eventConfigs()) {
                 if (!config.eidCompiledPattern().matcher(event.eid()).matches()) {
+                    event.markSkipped();
                     continue;
                 }
 
@@ -54,10 +55,12 @@ public class ObjectDeNormalizationService {
                     GetObjectResponse getObjectResponse = objectService.get(objectId.value());
                     if (!getObjectResponse.successful()) {
                         processingFailed = true;
+                        event.markFailed(getObjectResponse.params());
                         LOGGER.error(event.id(),
                                 format("ERROR WHEN GETTING OBJECT DATA. EVENT: {0}, RESPONSE: {1}",
                                         event, getObjectResponse));
                     } else {
+                        event.markProcessed();
                         event.update(
                                 dataDenormalizationConfig.denormalizedFieldPath(),
                                 getDenormalizedData(event, getObjectResponse.result()));

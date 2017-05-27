@@ -19,7 +19,7 @@ import org.mockito.Mock;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -59,7 +59,7 @@ public class ObjectDeNormalizationServiceTest {
         denormalizationService = new ObjectDeNormalizationService(config, additionalConfig, objectService);
         denormalizationService.process(source, sink);
 
-        verify(sink).toSuccessTopic(event);
+        verify(sink).toSuccessTopic(argThat(validateSkippedEvent()));
     }
 
     @Test
@@ -112,7 +112,7 @@ public class ObjectDeNormalizationServiceTest {
         denormalizationService.process(source, sink);
 
         verify(sink).toSuccessTopic(event);
-        verify(sink).toFailedTopic(event);
+        verify(sink).toFailedTopic(argThat(validateFailedEvent("BAD_REQUEST", "TYPE IS MANDATORY, ID IS MANDATORY")));
         verify(objectService).get("111");
     }
 
@@ -132,13 +132,41 @@ public class ObjectDeNormalizationServiceTest {
                 //Details field
                 assertThat(readValue(actualEvent, "portaluserdata.email"), is(readValue(expectedEvent, "portaluserdata.email")));
                 assertThat(readValue(actualEvent, "portaluserdata.channel"), is(readValue(expectedEvent, "portaluserdata.channel")));
+                assertNull(actualEvent.<Boolean>read("flags.object_denormalize_skipped").value());
+                assertTrue(actualEvent.<Boolean>read("flags.object_denormalize_processed").value());
+                return true;
+            }
+        };
+    }
+
+    private ArgumentMatcher<Event> validateSkippedEvent() {
+        return new ArgumentMatcher<Event>() {
+            @Override
+            public boolean matches(Object o) {
+                Event actualEvent = (Event) o;
+                assertTrue(actualEvent.<Boolean>read("flags.object_denormalize_skipped").value());
+                assertNull(actualEvent.<Boolean>read("flags.object_denormalize_processed").value());
+                return true;
+            }
+        };
+    }
+
+    private ArgumentMatcher<Event> validateFailedEvent(final String err, final String errmsg) {
+        return new ArgumentMatcher<Event>() {
+            @Override
+            public boolean matches(Object o) {
+                Event actualEvent = (Event) o;
+                assertNull(actualEvent.<Boolean>read("flags.object_denormalize_skipped").value());
+                assertNull(actualEvent.<Boolean>read("flags.object_denormalize_processed").value());
+                assertTrue(actualEvent.<Boolean>read("flags.object_denormalize_failed").value());
+                assertThat(readValue(actualEvent, "flags.object_denormalize_err"), is(err));
+                assertThat(readValue(actualEvent, "flags.object_denormalize_errmsg"), is(errmsg));
                 return true;
             }
         };
     }
 
     private String readValue(Event event, String path) {
-        return event.read(path).value();
+        return event.<String>read(path).value();
     }
-
 }
