@@ -82,19 +82,23 @@ public class EventFixture {
             "    \"ver\": \"1.0\"" +
             "}";
 
-    public static Map<String, Object> EventWithChecksum() {
+    public static Map<String, Object> EventWithChecksumMap() {
         return new Gson().fromJson(EVENT_WITH_CHECKSUM, new TypeToken<Map<String, Object>>() {
         }.getType());
     }
 
-    public static Map<String, Object> EventWithMid() {
+    public static Map<String, Object> EventWithMidMap() {
         return new Gson().fromJson(EVENT_WITH_MID, new TypeToken<Map<String, Object>>() {
         }.getType());
     }
 
-    public static Map<String, Object> EventWithoutChecksumField() {
+    public static Map<String, Object> EventWithoutChecksumFieldMap() {
         return new Gson().fromJson(EVENT_WITHOUT_CHECKSUM, new TypeToken<Map<String, Object>>() {
         }.getType());
+    }
+
+    public static String EventWithChecksumJson() {
+        return EVENT_WITH_CHECKSUM;
     }
 
 }
