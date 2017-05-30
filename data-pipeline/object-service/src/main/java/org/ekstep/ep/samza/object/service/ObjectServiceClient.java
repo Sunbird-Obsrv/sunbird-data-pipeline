@@ -11,6 +11,8 @@ import org.ekstep.ep.samza.object.dto.SaveObjectResponse;
 import java.io.IOException;
 import java.util.Map;
 
+import static java.text.MessageFormat.format;
+
 public class ObjectServiceClient implements ObjectService {
     static Logger LOGGER = new Logger(ObjectServiceClient.class);
 
@@ -36,11 +38,15 @@ public class ObjectServiceClient implements ObjectService {
     @Override
     public GetObjectResponse get(String id) throws IOException {
         Request request = new Request.Builder()
-                .url(objectServiceEndpoint + "/v1/object/read")
+                .url(objectServiceEndpoint + "/v1/object/get")
                 .post(RequestBody.create(JSON_MEDIA_TYPE, new Gson().toJson(GetObjectRequest.create(id))))
                 .build();
         Response response = httpClient.newCall(request).execute();
-        return new Gson().fromJson(response.body().string(), GetObjectResponse.class);
+        String responseString = response.body().string();
+        GetObjectResponse getObjectResponse = new Gson().fromJson(responseString, GetObjectResponse.class);
+        LOGGER.debug(null,
+                format("RESPONSE_STRING {0}, RESPONSE: {1}", responseString, getObjectResponse));
+        return getObjectResponse;
 
     }
 }

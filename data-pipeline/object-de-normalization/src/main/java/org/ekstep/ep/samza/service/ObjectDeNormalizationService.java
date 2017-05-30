@@ -54,11 +54,11 @@ public class ObjectDeNormalizationService {
                     }
                     GetObjectResponse getObjectResponse = objectService.get(objectId.value());
                     if (!getObjectResponse.successful()) {
-                        processingFailed = true;
-                        event.markFailed(getObjectResponse.params());
                         LOGGER.error(event.id(),
                                 format("ERROR WHEN GETTING OBJECT DATA. EVENT: {0}, RESPONSE: {1}",
                                         event, getObjectResponse));
+                        processingFailed = true;
+                        event.markFailed(getObjectResponse.params());
                     } else {
                         event.markProcessed();
                         event.update(
