@@ -6,6 +6,8 @@ import org.apache.samza.task.MessageCollector;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.metrics.JobMetrics;
 
+import java.util.Map;
+
 public class DeDuplicationSink {
     private MessageCollector collector;
     private JobMetrics metrics;
@@ -20,20 +22,20 @@ public class DeDuplicationSink {
 
     public void toSuccessTopic(Event event) {
         collector.send(new OutgoingMessageEnvelope(
-                new SystemStream("kafka", config.successTopic()), event.getMap()));
-        metrics.incSuccessCounter();
+                new SystemStream("kafka", config.successTopic()), event.getJson()));
+        metrics.incFailedCounter();;
     }
 
     public void toFailedTopic(Event event) {
         collector.send(new OutgoingMessageEnvelope(
-                new SystemStream("kafka", config.failedTopic()), event.getMap()));
+                new SystemStream("kafka", config.failedTopic()), event.getJson()));
         metrics.incFailedCounter();
     }
 
 
     public void toDuplicateTopic(Event event) {
         collector.send(new OutgoingMessageEnvelope(
-                new SystemStream("kafka", config.duplicateTopic()), event.getMap()));
+                new SystemStream("kafka", config.duplicateTopic()), event.getJson()));
         metrics.incFailedCounter();
     }
 

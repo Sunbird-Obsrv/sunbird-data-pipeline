@@ -9,6 +9,7 @@ import org.ekstep.ep.samza.logger.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class DeDuplicationSource {
     static Logger LOGGER = new Logger(DeDuplicationSource.class);
@@ -21,7 +22,8 @@ public class DeDuplicationSource {
 
     public Event getEvent(){
         String message = (String) envelope.getMessage();
-        Map<String, Object> jsonMap = (Map<String, Object>) new Gson().fromJson(message, Map.class);
+        HashMap<String, Object> jsonObject = new HashMap<String,Object>();
+        Map<String, Object> jsonMap = (Map<String, Object>) new Gson().fromJson(message, jsonObject.getClass());
         return new Event(jsonMap);
     }
 

@@ -19,6 +19,12 @@ public class Event {
         return telemetry.getMap();
     }
 
+    public String getJson() {
+        Gson gson=new Gson();
+        String json = gson.toJson(getMap());
+        return json;
+    }
+
     public String getChecksum(){
 
         String checksum = id();
