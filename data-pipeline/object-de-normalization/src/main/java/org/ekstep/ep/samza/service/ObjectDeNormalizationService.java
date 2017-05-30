@@ -89,7 +89,10 @@ public class ObjectDeNormalizationService {
             denormalizedData.put(field, String.valueOf(result.get(field)));
         }
 
-        denormalizedData.putAll(getDetailsMap(event, result));
+        Map<String, String> detailsMap = getDetailsMap(event, result);
+        if (detailsMap != null) {
+            denormalizedData.putAll(detailsMap);
+        }
         return denormalizedData;
     }
 
