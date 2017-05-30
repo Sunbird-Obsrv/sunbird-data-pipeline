@@ -1,22 +1,100 @@
 package org.ekstep.ep.samza.fixtures;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.Map;
 
 public class EventFixture {
-    public static final String EVENT_JSON =
-            "{\n" +
-                    "    \"eid\": \"ME_ITEM_USAGE_SUMMARY\",\n" +
-                    "    \"dimensions\": {\n" +
-                    "      \"tag\": \"6c3791818e80b9d05fb975da1e972431d9f8c2a6\",\n" +
-                    "      \"period\": 20170424,\n" +
-                    "      \"content_id\": \"domain_4501\"\n" +
-                    "    }\n" +
-                    "  }";
+        private static final String EVENT_WITH_CHECKSUM = "{\n" +
+                "    \"edata\": {\n" +
+                "        \"eks\": {\n" +
+                "            \"loc\": \"\",\n" +
+                "            \"uid\": \"6\",\n" +
+                "            \"age\": 5,\n" +
+                "            \"handle\": \"Jijesh\",\n" +
+                "            \"standard\": -1,\n" +
+                "            \"language\": \"ML\"\n" +
+                "        }\n" +
+                "    },\n" +
+                "    \"eid\": \"GE_CREATE_PROFILE\",\n" +
+                "    \"did\": \"cbeda6a2ef327eaee21008de6495f89476aba58d\",\n" +
+                "    \"gdata\": {\n" +
+                "        \"id\": \"genieservice.android\",\n" +
+                "        \"ver\": \"1.0.local-qa-debug\"\n" +
+                "    },\n" +
+                "    \"sid\": \"\",\n" +
+                "    \"tags\": [],\n" +
+                "    \"ts\": \"2015-09-27T13:03:43-04:00\",\n" +
+                "    \"uid\": \"6\",\n" +
+                "    \"ver\": \"1.0\",\n" +
+                "    \"metadata\": {\n" +
+                "        \"checksum\": \"22e1430f2e5f339230dbf9595b060008\"\n" +
+                "    }\n" +
+                "}";
+
+        private static final String EVENT_WITH_MID = "{\n" +
+                "    \"edata\": {\n" +
+                "        \"eks\": {\n" +
+                "            \"loc\": \"\",\n" +
+                "            \"uid\": \"6\",\n" +
+                "            \"age\": 5,\n" +
+                "            \"handle\": \"Jijesh\",\n" +
+                "            \"standard\": -1,\n" +
+                "            \"language\": \"ML\"\n" +
+                "        }\n" +
+                "    },\n" +
+                "    \"eid\": \"GE_CREATE_PROFILE\",\n" +
+                "    \"did\": \"cbeda6a2ef327eaee21008de6495f89476aba58d\",\n" +
+                "    \"gdata\": {\n" +
+                "        \"id\": \"genieservice.android\",\n" +
+                "        \"ver\": \"1.0.local-qa-debug\"\n" +
+                "    },\n" +
+                "    \"sid\": \"\",\n" +
+                "    \"tags\": [],\n" +
+                "    \"ts\": \"2015-09-27T13:03:43-04:00\",\n" +
+                "    \"uid\": \"6\",\n" +
+                "    \"ver\": \"1.0\",\n" +
+                "    \"mid\": \"22e1430f2e5f339230dbf9595b060008\"" +
+                "}";
+
+        private static final String EVENT_WITHOUT_CHECKSUM = "{\n" +
+            "    \"edata\": {\n" +
+            "        \"eks\": {\n" +
+            "            \"loc\": \"\",\n" +
+            "            \"uid\": \"6\",\n" +
+            "            \"age\": 5,\n" +
+            "            \"handle\": \"Jijesh\",\n" +
+            "            \"standard\": -1,\n" +
+            "            \"language\": \"ML\"\n" +
+            "        }\n" +
+            "    },\n" +
+            "    \"eid\": \"GE_CREATE_PROFILE\",\n" +
+            "    \"did\": \"cbeda6a2ef327eaee21008de6495f89476aba58d\",\n" +
+            "    \"gdata\": {\n" +
+            "        \"id\": \"genieservice.android\",\n" +
+            "        \"ver\": \"1.0.local-qa-debug\"\n" +
+            "    },\n" +
+            "    \"sid\": \"\",\n" +
+            "    \"tags\": [],\n" +
+            "    \"ts\": \"2015-09-27T13:03:43-04:00\",\n" +
+            "    \"uid\": \"6\",\n" +
+            "    \"ver\": \"1.0\"" +
+            "}";
+
+        public static Map<String, Object> EventWithoutChecksum() {
+            return new Gson().fromJson(EVENT_WITHOUT_CHECKSUM, new TypeToken<Map<String, Object>>() {
+            }.getType());
+        }
 
 
-    public static Map<String, Object> Event() {
-        return new Gson().fromJson(EVENT_JSON, Map.class);
-    }
+        public static Map<String, Object> EventWithChecksum() {
+            return new Gson().fromJson(EVENT_WITH_CHECKSUM, new TypeToken<Map<String, Object>>() {
+            }.getType());
+        }
+
+        public static Map<String, Object> EventWithMid() {
+            return new Gson().fromJson(EVENT_WITH_MID, new TypeToken<Map<String, Object>>() {
+            }.getType());
+        }
 }
