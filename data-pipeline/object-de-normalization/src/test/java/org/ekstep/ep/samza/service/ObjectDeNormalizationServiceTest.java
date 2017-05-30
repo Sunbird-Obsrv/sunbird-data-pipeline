@@ -177,8 +177,8 @@ public class ObjectDeNormalizationServiceTest {
                 assertNull(actualEvent.<Boolean>read("flags.object_denormalize_skipped").value());
                 assertNull(actualEvent.<Boolean>read("flags.object_denormalize_processed").value());
                 assertTrue(actualEvent.<Boolean>read("flags.object_denormalize_failed").value());
-                assertThat(readValue(actualEvent, "flags.object_denormalize_err"), is(err));
-                assertThat(readValue(actualEvent, "flags.object_denormalize_errmsg"), is(errmsg));
+                assertThat(readValue(actualEvent, "metadata.object_denormalize_err"), is(err));
+                assertThat(readValue(actualEvent, "metadata.object_denormalize_errmsg"), is(errmsg));
                 return true;
             }
         };

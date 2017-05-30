@@ -74,8 +74,8 @@ public class Event {
         telemetry.add("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.object_denormalize_failed", true);
         telemetry.add("metadata", new HashMap<String, Boolean>());
-        telemetry.add("flags.object_denormalize_err", params.get("err"));
-        telemetry.add("flags.object_denormalize_errmsg", params.get("errmsg"));
+        telemetry.add("metadata.object_denormalize_err", params.get("err"));
+        telemetry.add("metadata.object_denormalize_errmsg", params.get("errmsg"));
     }
 }
 
