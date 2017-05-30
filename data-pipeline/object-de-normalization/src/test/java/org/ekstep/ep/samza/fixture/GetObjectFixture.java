@@ -64,6 +64,28 @@ public class GetObjectFixture {
             "   }  \n" +
             "}";
 
+    private static final String OBJECT_RESPONSE_JSON_WITH_NO_DETAILS = "{\n" + " " +
+            "  \"id\": \"ekstep.object-service.read\",\n" +
+            "   \"ver\": \"1.0\",\n" + "   \"ts\": \"\",\n" +
+            "   \"params\": {\n" +
+            "       \"resmsgid\": \"054f3b10-309f-4552-ae11-02c66640967b\",\n" +
+            "       \"msgid\": \"ff305d54-85b4-341b-da2f-eb6b9e5460fa\",\n" +
+            "       \"status\": \"successful\",\n" +
+            "       \"err\": \"\",\n" +
+            "       \"errmsg\": \"\"\n" + "   " +
+            "   },\n" +
+            "   \"result\": {\n" +
+            "         \"id\": \"111\"," +
+            "         \"type\": \"User\", " +
+            "         \"subtype\": \"Reviewer\", " +
+            "         \"parentid\": \"222\", " +
+            "         \"parenttype\": \"Admin\", " +
+            "         \"code\": \"XYZ\", " +
+            "         \"name\": \"User 111\", " +
+            "         \"details\": null " +
+            "   }  \n" +
+            "}";
+
     private static final String OBJECT_RESPONSE_FAILURE_JSON = "{\n" + " " +
             "  \"id\": \"ekstep.object-service.create_or_update\",\n" +
             "   \"ver\": \"1.0\",\n" + "   \"ts\": \"\",\n" +
@@ -89,6 +111,10 @@ public class GetObjectFixture {
 
     public static GetObjectResponse getObjectSuccessResponseWithMalformedDetails() {
         return new Gson().fromJson(OBJECT_RESPONSE_JSON_WITH_MALFORMED_DETAILS, GetObjectResponse.class);
+    }
+
+    public static GetObjectResponse getObjectSuccessResponseWithNoDetails() {
+        return new Gson().fromJson(OBJECT_RESPONSE_JSON_WITH_NO_DETAILS, GetObjectResponse.class);
     }
 
     public static GetObjectResponse getFailureResponse() {

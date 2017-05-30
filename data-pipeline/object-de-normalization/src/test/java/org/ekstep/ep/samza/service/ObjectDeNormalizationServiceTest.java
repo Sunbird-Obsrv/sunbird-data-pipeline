@@ -99,6 +99,24 @@ public class ObjectDeNormalizationServiceTest {
     }
 
     @Test
+    public void shouldDenormalizeEventWithoutDetailsFieldsWhenDetailsIsNotPresent() throws Exception {
+        additionalConfig = new ObjectDenormalizationAdditionalConfig(
+                asList(new EventDenormalizationConfig("Portal events", "C[PE]\\_.*",
+                        asList(new DataDenormalizationConfig("uid", "portaluserdata")))));
+        Event event = new Event(new Telemetry(EventFixture.cpInteractEvent()));
+        when(config.fieldsToDenormalize()).thenReturn(asList("id", "type", "subtype", "parentid", "parenttype", "code", "name"));
+        when(source.getEvent()).thenReturn(event);
+        when(objectService.get("111")).thenReturn(GetObjectFixture.getObjectSuccessResponseWithNoDetails());
+
+        denormalizationService = new ObjectDeNormalizationService(config, additionalConfig, objectService);
+        denormalizationService.process(source, sink);
+
+        Event expectedEvent = new Event(new Telemetry(EventFixture.denormalizedCpInteractEventWithoutDetails()));
+        verify(sink).toSuccessTopic(argThat(validateEvent(expectedEvent)));
+        verify(objectService).get("111");
+    }
+
+    @Test
     public void shouldSinkEventToBothSuccessAndFailedTopicWhenServiceReturnsError() throws Exception {
         additionalConfig = new ObjectDenormalizationAdditionalConfig(
                 asList(new EventDenormalizationConfig("Portal events", "C[PE]\\_.*",
