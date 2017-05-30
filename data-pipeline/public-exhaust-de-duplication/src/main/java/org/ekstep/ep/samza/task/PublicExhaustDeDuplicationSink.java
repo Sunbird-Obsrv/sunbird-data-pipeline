@@ -30,4 +30,10 @@ public class PublicExhaustDeDuplicationSink {
         metrics.incFailedCounter();
     }
 
+    public void toDuplicateTopic(Event event) {
+        collector.send(new OutgoingMessageEnvelope(
+                new SystemStream("kafka", config.duplicateTopic()), event.getMap()));
+        metrics.incFailedCounter();
+    }
+
 }

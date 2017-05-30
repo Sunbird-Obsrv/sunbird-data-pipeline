@@ -4,6 +4,7 @@ import org.apache.samza.config.Config;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.task.*;
+import org.ekstep.ep.samza.dedup.DeDupEngine;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.metrics.JobMetrics;
 import org.ekstep.ep.samza.service.PublicExhaustDeDuplicationService;
@@ -15,8 +16,8 @@ public class PublicExhaustDeDuplicationTask implements StreamTask, InitableTask,
     private PublicExhaustDeDuplicationService service;
 
     public PublicExhaustDeDuplicationTask(Config config, TaskContext context,
-                                          KeyValueStore<Object, Object> publicExhaustStore) {
-        init(config, context, publicExhaustStore);
+                                          KeyValueStore<Object, Object> publicExhaustStore, DeDupEngine deDupEngine) {
+        init(config, context, publicExhaustStore, deDupEngine);
     }
 
     public PublicExhaustDeDuplicationTask() {
@@ -26,14 +27,15 @@ public class PublicExhaustDeDuplicationTask implements StreamTask, InitableTask,
     @Override
     public void init(Config config, TaskContext context) throws Exception {
         init(config, context,
-                (KeyValueStore<Object, Object>) context.getStore("public-exhaust"));
+                (KeyValueStore<Object, Object>) context.getStore("public-exhaust"), null);
     }
 
     private void init(Config config, TaskContext context,
-                      KeyValueStore<Object, Object> publicExhaustStore) {
+                      KeyValueStore<Object, Object> publicExhaustStore, DeDupEngine deDupEngine) {
         this.config = new PublicExhaustDeDuplicationConfig(config);
         metrics = new JobMetrics(context);
-        service = new PublicExhaustDeDuplicationService(this.config);
+        deDupEngine = deDupEngine == null ? new DeDupEngine(publicExhaustStore) : deDupEngine;
+        service = new PublicExhaustDeDuplicationService(deDupEngine);
     }
 
     @Override

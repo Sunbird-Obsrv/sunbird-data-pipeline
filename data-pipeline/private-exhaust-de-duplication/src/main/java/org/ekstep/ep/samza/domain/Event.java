@@ -35,7 +35,7 @@ public class Event {
     }
 
     public void updateMetadata(String value) {
-        telemetry.add("metadata.public_de_duplication_error",value);
+        telemetry.add("metadata.private_de_duplication_error",value);
     }
 
     @Override

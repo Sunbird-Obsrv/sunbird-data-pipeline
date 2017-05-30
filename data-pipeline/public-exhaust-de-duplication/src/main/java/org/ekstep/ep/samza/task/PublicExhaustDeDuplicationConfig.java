@@ -11,10 +11,12 @@ public class PublicExhaustDeDuplicationConfig {
 
     private String successTopic;
     private String failedTopic;
+    private String duplicateTopic;
 
     public PublicExhaustDeDuplicationConfig(Config config) {
         successTopic = config.get("output.success.topic.name", "telemetry.public_exhaust");
         failedTopic = config.get("output.failed.topic.name", "telemetry.public_exhaust.fail");
+        duplicateTopic = config.get("output.duplicate.topic.name", "telemetry.public_exhaust.duplicate");
     }
 
     public String successTopic() {
@@ -23,5 +25,9 @@ public class PublicExhaustDeDuplicationConfig {
 
     public String failedTopic() {
         return failedTopic;
+    }
+
+    public String duplicateTopic() {
+        return duplicateTopic;
     }
 }
