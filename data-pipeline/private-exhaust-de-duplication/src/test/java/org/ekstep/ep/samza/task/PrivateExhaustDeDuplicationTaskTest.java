@@ -12,10 +12,13 @@ import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.dedup.DeDupEngine;
 import org.ekstep.ep.samza.fixtures.EventFixture;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
+
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
@@ -66,7 +69,9 @@ public class PrivateExhaustDeDuplicationTaskTest {
         when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
 
         privateExhaustDeDuplicationTask.process(envelopeMock,collectorMock,coordinatorMock);
+
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("private_de_dup_processed")), true);
     }
 
     @Test
@@ -75,7 +80,21 @@ public class PrivateExhaustDeDuplicationTaskTest {
         when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(false);
 
         privateExhaustDeDuplicationTask.process(envelopeMock,collectorMock,coordinatorMock);
+
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), DUPLICATE_TOPIC)));
+        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("private_de_dup_processed")), false);
+        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("private_de_dup_duplicate_event")), true);
+    }
+
+    @Test
+    public void ShouldSkipEventsAndSendToSuccessTopicIfChecksumIsAbsent() throws Exception{
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithoutChecksum());
+
+        privateExhaustDeDuplicationTask.process(envelopeMock,collectorMock,coordinatorMock);
+
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("private_de_dup_processed")), false);
+        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("private_de_dup_checksum_present")), false);
     }
 
     private ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {

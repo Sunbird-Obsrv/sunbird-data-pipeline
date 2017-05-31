@@ -3,6 +3,7 @@ package org.ekstep.ep.samza.domain;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Event {
@@ -43,6 +44,35 @@ public class Event {
         return "Event{" +
                 "telemetry=" + telemetry +
                 '}';
+    }
+
+    public void updateFlag(boolean bool) {
+        telemetry.add("flags.private_de_dup_processed",bool);
+    }
+
+    public void markSkipped() {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.private_de_dup_processed", false);
+        telemetry.add("flags.private_de_dup_checksum_present", false);
+    }
+
+    public void markDuplicate() {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.private_de_dup_processed", false);
+        telemetry.add("flags.private_de_dup_duplicate_event", true);
+    }
+
+    public void markSuccess() {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.private_de_dup_processed", true);
+    }
+
+    public void markFailure(String error) {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.private_de_dup_processed", false);
+
+        telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
+        telemetry.add("metadata.private_de_dup_error", error);
     }
 }
 
