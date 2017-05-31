@@ -12,5 +12,5 @@ public interface ObjectService {
 
     GetObjectResponse get(String id) throws IOException;
 
-    SaveObjectDetailsResponse saveDetails(String id, String details);
+    SaveObjectDetailsResponse saveDetails(String id, String details) throws IOException;
 }

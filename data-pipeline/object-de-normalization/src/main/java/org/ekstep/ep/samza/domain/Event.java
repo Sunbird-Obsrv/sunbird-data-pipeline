@@ -74,7 +74,7 @@ public class Event {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.object_denormalize_failed", true);
 
-        telemetry.addFieldIfAbsent("metadata", new HashMap<String, Boolean>());
+        telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
         telemetry.add("metadata.object_denormalize_err", params.get("err"));
         telemetry.add("metadata.object_denormalize_errmsg", params.get("errmsg"));
     }

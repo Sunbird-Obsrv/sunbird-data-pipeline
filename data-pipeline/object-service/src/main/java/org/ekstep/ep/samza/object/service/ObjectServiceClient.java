@@ -48,7 +48,12 @@ public class ObjectServiceClient implements ObjectService {
     }
 
     @Override
-    public SaveObjectDetailsResponse saveDetails(String id, String details) {
-        return null;
+    public SaveObjectDetailsResponse saveDetails(String id, String details) throws IOException {
+        Request request = new Request.Builder()
+                .url(objectServiceEndpoint + "/v1/object/details/save")
+                .post(RequestBody.create(JSON_MEDIA_TYPE, new Gson().toJson(SaveObjectDetailsRequest.create(id, details))))
+                .build();
+        Response response = httpClient.newCall(request).execute();
+        return new Gson().fromJson(response.body().string(), SaveObjectDetailsResponse.class);
     }
 }
