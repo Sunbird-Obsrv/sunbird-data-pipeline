@@ -73,7 +73,7 @@ public class Telemetry {
     return map != null ? map.hashCode() : 0;
   }
 
-  public void addFieldIfAbsent(String fieldName, HashMap<String, Boolean> value) {
+  public <T> void addFieldIfAbsent(String fieldName, T value) {
       if (read(fieldName).isNull()) {
           add(fieldName, value);
       }
