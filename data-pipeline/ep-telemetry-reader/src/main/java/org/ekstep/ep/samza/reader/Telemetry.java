@@ -3,6 +3,7 @@ package org.ekstep.ep.samza.reader;
 
 import org.ekstep.ep.samza.logger.Logger;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static java.text.MessageFormat.format;
@@ -70,6 +71,12 @@ public class Telemetry {
   @Override
   public int hashCode() {
     return map != null ? map.hashCode() : 0;
+  }
+
+  public void addFieldIfAbsent(String fieldName, HashMap<String, Boolean> value) {
+      if (read(fieldName).isNull()) {
+          add(fieldName, value);
+      }
   }
 
   class NestedMap {
