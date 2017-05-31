@@ -36,8 +36,29 @@ public class Event {
         return checksum.value();
     }
 
-    public void updateMetadata(String value) {
-        telemetry.add("metadata.public_de_duplication_error",value);
+    public void markSkipped() {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.public_de_dup_processed", false);
+        telemetry.add("flags.public_de_dup_checksum_present", false);
+    }
+
+    public void markDuplicate() {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.public_de_dup_processed", false);
+        telemetry.add("flags.public_de_dup_duplicate_event", true);
+    }
+
+    public void markSuccess() {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.public_de_dup_processed", true);
+    }
+
+    public void markFailure(String error) {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.public_de_dup_processed", false);
+
+        telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
+        telemetry.add("metadata.public_de_dup_error", error);
     }
 
     @Override
@@ -46,6 +67,8 @@ public class Event {
                 "telemetry=" + telemetry +
                 '}';
     }
+
+
 }
 
 

@@ -12,10 +12,13 @@ import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.dedup.DeDupEngine;
 import org.ekstep.ep.samza.fixtures.EventFixture;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
+
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
@@ -60,14 +63,15 @@ public class PublicExhaustDeDuplicationTaskTest {
         publicExhaustDeDuplicationTask = new PublicExhaustDeDuplicationTask(configMock, contextMock,publicExhaustStoreMock,deDupEngineMock);
     }
 
-
     @Test
     public void ShouldSendEventToSuccessTopicIfEventIsUnique() throws Exception{
         stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithChecksum());
         when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
 
-        publicExhaustDeDuplicationTask.process(envelopeMock,collectorMock,coordinatorMock);
+        publicExhaustDeDuplicationTask.process(envelopeMock, collectorMock, coordinatorMock);
+
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("public_de_dup_processed")), true);
     }
 
     @Test
@@ -77,6 +81,20 @@ public class PublicExhaustDeDuplicationTaskTest {
 
         publicExhaustDeDuplicationTask.process(envelopeMock,collectorMock,coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), DUPLICATE_TOPIC)));
+
+        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("public_de_dup_processed")), false);
+        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("public_de_dup_duplicate_event")), true);
+    }
+
+    @Test
+    public void ShouldSkipEventsAndSendToSuccessTopicIfChecksumIsAbsent() throws Exception{
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithoutChecksum());
+
+        publicExhaustDeDuplicationTask.process(envelopeMock,collectorMock,coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+
+        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("public_de_dup_processed")), false);
+        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("public_de_dup_checksum_present")), false);
     }
 
     private ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
