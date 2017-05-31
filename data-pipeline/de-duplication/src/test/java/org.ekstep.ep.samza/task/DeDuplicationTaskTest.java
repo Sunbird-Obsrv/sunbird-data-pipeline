@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.task;
 
 
+import com.google.gson.Gson;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
@@ -13,10 +14,13 @@ import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.dedup.DeDupEngine;
 import org.ekstep.ep.samza.fixtures.EventFixture;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
+
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
@@ -68,7 +72,7 @@ public class DeDuplicationTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithChecksumJson());
         when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
 
-        deDuplicationTask.process(envelopeMock,collectorMock,coordinatorMock);
+        deDuplicationTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
 
@@ -77,7 +81,7 @@ public class DeDuplicationTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithChecksumJson());
         when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(false);
 
-        deDuplicationTask.process(envelopeMock,collectorMock,coordinatorMock);
+        deDuplicationTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), DUPLICATE_TOPIC)));
     }
 
@@ -86,7 +90,7 @@ public class DeDuplicationTaskTest {
 
         when(envelopeMock.getMessage()).thenReturn("{'metadata':{'checksum':'sajksajska'}");
 
-        deDuplicationTask.process(envelopeMock,collectorMock,coordinatorMock);
+        deDuplicationTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), MALFORMED_TOPIC)));
     }
 
@@ -96,7 +100,7 @@ public class DeDuplicationTaskTest {
         when(envelopeMock.getMessage()).thenReturn(EventFixture.EventWithChecksumJson());
         when(deDupEngineMock.isUniqueEvent(anyString())).thenThrow(new Exception());
 
-        deDuplicationTask.process(envelopeMock,collectorMock,coordinatorMock);
+        deDuplicationTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), MALFORMED_TOPIC)));
     }
 
@@ -106,7 +110,7 @@ public class DeDuplicationTaskTest {
         when(envelopeMock.getMessage()).thenReturn(EventFixture.EventWithChecksumJson());
         when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
 
-        deDuplicationTask.process(envelopeMock,collectorMock,coordinatorMock);
+        deDuplicationTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(deDupEngineMock,times(1)).isUniqueEvent(anyString());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }

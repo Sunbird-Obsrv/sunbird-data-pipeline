@@ -22,17 +22,11 @@ public class DeDuplicationSource {
 
     public Event getEvent(){
         String message = (String) envelope.getMessage();
-        HashMap<String, Object> jsonObject = new HashMap<String,Object>();
-        Map<String, Object> jsonMap = (Map<String, Object>) new Gson().fromJson(message, jsonObject.getClass());
+        Map<String, Object> jsonMap = (Map<String, Object>) new Gson().fromJson(message, Map.class);
         return new Event(jsonMap);
     }
 
     public String getMessage() {
         return envelope.toString();
-    }
-
-    public Map<String, Object> getMap() {
-        String message = (String) envelope.getMessage();
-        return (Map<String, Object>) new Gson().fromJson(message, Map.class);
     }
 }

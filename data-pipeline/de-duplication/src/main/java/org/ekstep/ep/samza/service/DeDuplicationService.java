@@ -7,8 +7,6 @@ import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.task.DeDuplicationSink;
 import org.ekstep.ep.samza.task.DeDuplicationSource;
 
-import java.text.MessageFormat;
-
 import static java.text.MessageFormat.format;
 
 public class DeDuplicationService {
@@ -28,12 +26,14 @@ public class DeDuplicationService {
 
             if (checksum == null) {
                 LOGGER.info(event.id(), "EVENT WITHOUT CHECKSUM & MID, PASSING THROUGH : {}", event);
+                event.markSkipped();
                 sink.toSuccessTopic(event);
-                event.updateMetadata("event_without_checksum");
+                return;
             }
 
             if (!deDupEngine.isUniqueEvent(checksum)) {
                 LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
+                event.markDuplicate();
                 sink.toDuplicateTopic(event);
                 return;
             }
@@ -41,13 +41,13 @@ public class DeDuplicationService {
             LOGGER.info(event.id(), "ADDING EVENT CHECKSUM TO STORE");
 
             deDupEngine.storeChecksum(checksum);
-            event.addEventType();
+            event.markSuccess();
             sink.toSuccessTopic(event);
         } catch(JsonSyntaxException e){
             LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
             sink.toMalformedEventsTopic(source.getMessage());
         } catch (Exception e) {
-            event.updateMetadata(e.getMessage());
+            event.markFailure(e.getMessage());
             LOGGER.error(null, format(
                     "EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO EXCEPTION TOPIC. EVENT: {0}, EXCEPTION: {1}",
                     event, e));

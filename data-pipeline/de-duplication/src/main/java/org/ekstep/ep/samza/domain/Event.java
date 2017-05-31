@@ -11,7 +11,7 @@ import java.util.Map;
 public class Event {
     private final Telemetry telemetry;
 
-    public Event(Map<String,Object> map) {
+    public Event(Map<String, Object> map) {
         this.telemetry = new Telemetry(map);
     }
 
@@ -20,18 +20,18 @@ public class Event {
     }
 
     public String getJson() {
-        Gson gson=new Gson();
+        Gson gson = new Gson();
         String json = gson.toJson(getMap());
         return json;
     }
 
-    public String getChecksum(){
+    public String getChecksum() {
 
         String checksum = id();
-        if(checksum != null)
+        if (checksum != null)
             return checksum;
 
-       return mid();
+        return mid();
     }
 
     public String id() {
@@ -55,8 +55,30 @@ public class Event {
                 '}';
     }
 
-    public void updateMetadata(String value) {
-        telemetry.add("metadata.de_duplication_error",value);
+    public void markSkipped() {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.de_dup_processed", false);
+        telemetry.add("flags.de_dup_checksum_present", false);
+    }
+
+    public void markDuplicate() {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.de_dup_processed", false);
+        telemetry.add("flags.de_dup_duplicate_event", true);
+    }
+
+    public void markSuccess() {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.de_dup_processed", true);
+        telemetry.add("type", "events");
+    }
+
+    public void markFailure(String error) {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.de_dup_processed", false);
+
+        telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
+        telemetry.add("metadata.de_dup_error", error);
     }
 }
 
