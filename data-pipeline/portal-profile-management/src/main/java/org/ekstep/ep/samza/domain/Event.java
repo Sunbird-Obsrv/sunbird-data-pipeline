@@ -25,8 +25,8 @@ public class Event {
         return telemetry.<Map<String, Boolean>>read("flags").value();
     }
 
-    public Map<String, String> metadata() {
-        return telemetry.<Map<String, String>>read("metadata").value();
+    public Map<String, Object> metadata() {
+        return telemetry.<Map<String, Object>>read("metadata").value();
     }
 
     @Override
@@ -65,4 +65,14 @@ public class Event {
         }
         return gson.toJson(detailsMap.value());
     }
+
+    public void markFailed(Object err, Object errmsg) {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.portal_profile_manage_failed", true);
+
+        telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
+        telemetry.add("metadata.portal_profile_manage_err", err);
+        telemetry.add("metadata.portal_profile_manage_errmsg", errmsg);
+    }
+
 }

@@ -6,6 +6,7 @@ import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.metrics.JobMetrics;
+import org.ekstep.ep.samza.object.service.ObjectService;
 import org.ekstep.ep.samza.object.service.ObjectServiceClient;
 import org.ekstep.ep.samza.service.PortalProfileManagementService;
 
@@ -18,8 +19,8 @@ public class PortalProfileManagementTask implements StreamTask, InitableTask, Wi
     public PortalProfileManagementTask() {
     }
 
-    public PortalProfileManagementTask(Config configMock, TaskContext contextMock) throws Exception {
-        init((Config) configMock, (TaskContext) contextMock);
+    public PortalProfileManagementTask(Config config, TaskContext context, ObjectService objectService) {
+        init(config, context, objectService);
     }
 
     @Override
@@ -27,7 +28,7 @@ public class PortalProfileManagementTask implements StreamTask, InitableTask, Wi
         init(config, context, null);
     }
 
-    private void init(Config config, TaskContext context, ObjectServiceClient objectService) {
+    private void init(Config config, TaskContext context, ObjectService objectService) {
         this.config = new PortalProfileManagementConfig(config);
         metrics = new JobMetrics(context);
         String objectServiceEndpoint = this.config.getObjectServiceEndPoint();

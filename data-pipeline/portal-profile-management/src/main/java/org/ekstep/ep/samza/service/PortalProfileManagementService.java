@@ -2,8 +2,8 @@ package org.ekstep.ep.samza.service;
 
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.object.dto.SaveObjectDetailsResponse;
 import org.ekstep.ep.samza.object.service.ObjectService;
-import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.task.PortalProfileManagementConfig;
 import org.ekstep.ep.samza.task.PortalProfileManagementSink;
 import org.ekstep.ep.samza.task.PortalProfileManagementSource;
@@ -23,23 +23,24 @@ public class PortalProfileManagementService {
 
         try {
             if (!config.cpUpdateProfileEvent().equalsIgnoreCase(event.eid())) {
-                LOGGER.info(event.id(), "SKIPPING EVENT");
+                LOGGER.info(event.id(), "SKIPPING EVENT AS ITS NOT PART OF PROCESS LIST");
                 event.markSkipped();
                 sink.toSuccessTopic(event);
                 return;
             }
 
-            NullableValue<String> uid = event.uid();
-            String details = event.userDetails();
-            if (uid.isNull() || details == null) {
-                //TODO:# implement
+            SaveObjectDetailsResponse saveObjectDetailsResponse = objectService.saveDetails(event.uid().value(), event.userDetails());
+            if (!saveObjectDetailsResponse.successful()) {
+                event.markFailed(saveObjectDetailsResponse.params().get("err"), saveObjectDetailsResponse.params().get("errmsg"));
+                sink.toSuccessTopic(event);
+                sink.toFailedTopic(event);
+                return;
             }
-            objectService.saveDetails(uid.value(), details);
             event.markProcessed();
-            LOGGER.info(event.id(), "PASSING EVENT THROUGH");
             sink.toSuccessTopic(event);
         } catch (Exception e) {
             LOGGER.error(event.id(), "EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO FAILED TOPIC", e);
+            event.markFailed("INTERNAL_ERROR", e.toString());
             sink.toSuccessTopic(event);
             sink.toFailedTopic(event);
             e.printStackTrace();

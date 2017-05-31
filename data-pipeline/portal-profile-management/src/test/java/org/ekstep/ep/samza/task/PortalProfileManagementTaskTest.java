@@ -10,9 +10,12 @@ import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.fixture.EventFixture;
+import org.ekstep.ep.samza.fixture.SaveObjectDetailsFixture;
+import org.ekstep.ep.samza.object.service.ObjectService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import static junit.framework.Assert.assertEquals;
@@ -34,6 +37,7 @@ public class PortalProfileManagementTaskTest {
     private IncomingMessageEnvelope envelopeMock;
     private Config configMock;
     private PortalProfileManagementTask portalProfileManagementTask;
+    private ObjectService objectService;
 
     @Before
     public void setUp() throws Exception {
@@ -44,6 +48,7 @@ public class PortalProfileManagementTaskTest {
         coordinatorMock = mock(TaskCoordinator.class);
         envelopeMock = mock(IncomingMessageEnvelope.class);
         configMock = Mockito.mock(Config.class);
+        objectService = Mockito.mock(ObjectService.class);
 
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
@@ -52,13 +57,16 @@ public class PortalProfileManagementTaskTest {
                 .toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
 
-        portalProfileManagementTask = new PortalProfileManagementTask(configMock, contextMock);
+        portalProfileManagementTask = new PortalProfileManagementTask(configMock, contextMock, objectService);
     }
 
     @Test
     public void shouldPassEventThrough() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.cpUpdateProfileEvent());
+        stub(objectService.saveDetails(anyString(), anyString())).toReturn(SaveObjectDetailsFixture.getObjectResponse());
+
         portalProfileManagementTask.process(envelopeMock, collectorMock, coordinatorMock);
+
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
 
