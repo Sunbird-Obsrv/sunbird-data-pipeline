@@ -3,10 +3,7 @@ package org.ekstep.ep.samza.object.service;
 import com.google.gson.Gson;
 import okhttp3.*;
 import org.ekstep.ep.samza.logger.Logger;
-import org.ekstep.ep.samza.object.dto.GetObjectRequest;
-import org.ekstep.ep.samza.object.dto.GetObjectResponse;
-import org.ekstep.ep.samza.object.dto.SaveObjectRequest;
-import org.ekstep.ep.samza.object.dto.SaveObjectResponse;
+import org.ekstep.ep.samza.object.dto.*;
 
 import java.io.IOException;
 import java.util.Map;
@@ -48,5 +45,10 @@ public class ObjectServiceClient implements ObjectService {
                 format("RESPONSE_STRING {0}, RESPONSE: {1}", responseString, getObjectResponse));
         return getObjectResponse;
 
+    }
+
+    @Override
+    public SaveObjectDetailsResponse saveDetails(String id, String details) {
+        return null;
     }
 }

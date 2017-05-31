@@ -57,7 +57,7 @@ public class PortalProfileManagementTaskTest {
 
     @Test
     public void shouldPassEventThrough() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(EventFixture.Event());
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.cpUpdateProfileEvent());
         portalProfileManagementTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }

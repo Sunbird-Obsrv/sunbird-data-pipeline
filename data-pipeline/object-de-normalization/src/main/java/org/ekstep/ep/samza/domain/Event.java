@@ -61,21 +61,23 @@ public class Event {
     }
 
     public void markSkipped() {
-        telemetry.add("flags", new HashMap<String, Boolean>());
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.object_denormalize_skipped", true);
     }
 
     public void markProcessed() {
-        telemetry.add("flags", new HashMap<String, Boolean>());
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.object_denormalize_processed", true);
     }
 
     public void markFailed(Map<String, Object> params) {
-        telemetry.add("flags", new HashMap<String, Boolean>());
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.object_denormalize_failed", true);
-        telemetry.add("metadata", new HashMap<String, Boolean>());
+
+        telemetry.addFieldIfAbsent("metadata", new HashMap<String, Boolean>());
         telemetry.add("metadata.object_denormalize_err", params.get("err"));
         telemetry.add("metadata.object_denormalize_errmsg", params.get("errmsg"));
     }
+
 }
 

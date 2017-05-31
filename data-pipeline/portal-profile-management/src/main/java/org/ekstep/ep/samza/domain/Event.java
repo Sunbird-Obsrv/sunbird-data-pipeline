@@ -1,6 +1,8 @@
 package org.ekstep.ep.samza.domain;
 
+import com.google.gson.Gson;
 import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 
 import java.util.HashMap;
@@ -9,6 +11,7 @@ import java.util.Map;
 public class Event {
     static Logger LOGGER = new Logger(Event.class);
     private final Telemetry telemetry;
+    private final Gson gson = new Gson();
 
     public Event(Map<String, Object> map) {
         this.telemetry = new Telemetry(map);
@@ -20,6 +23,10 @@ public class Event {
 
     public Map<String, Boolean> flags() {
         return telemetry.<Map<String, Boolean>>read("flags").value();
+    }
+
+    public Map<String, String> metadata() {
+        return telemetry.<Map<String, String>>read("metadata").value();
     }
 
     @Override
@@ -38,7 +45,24 @@ public class Event {
     }
 
     public void markSkipped() {
-        telemetry.add("flags", new HashMap<String, Boolean>());
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.portal_profile_manage_skipped", true);
+    }
+
+    public void markProcessed() {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.portal_profile_manage_processed", true);
+    }
+
+    public NullableValue<String> uid() {
+        return telemetry.read("uid");
+    }
+
+    public String userDetails() {
+        NullableValue<Map<String, Object>> detailsMap = telemetry.read("edata.eks");
+        if (detailsMap.isNull()) {
+            return null;
+        }
+        return gson.toJson(detailsMap.value());
     }
 }
