@@ -58,7 +58,9 @@ public class Telemetry {
 
     @Override
     public String toString() {
-        return map.toString();
+        return "Telemetry{" +
+                "map=" + map +
+                '}';
     }
 
     @Override

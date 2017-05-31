@@ -18,6 +18,13 @@ public class PortalProfileManagementService {
         Event event = source.getEvent();
 
         try {
+            if (!config.cpUpdateProfileEvent().equalsIgnoreCase(event.eid())) {
+                LOGGER.info(event.id(), "SKIPPING EVENT");
+                event.markSkipped();
+                sink.toSuccessTopic(event);
+                return;
+            }
+
             LOGGER.info(event.id(), "PASSING EVENT THROUGH");
             sink.toSuccessTopic(event);
         } catch (Exception e) {

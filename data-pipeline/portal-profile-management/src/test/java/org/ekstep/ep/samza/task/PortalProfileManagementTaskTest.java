@@ -25,6 +25,7 @@ public class PortalProfileManagementTaskTest {
     private static final String SUCCESS_TOPIC = "telemetry.portal_profiles";
     private static final String FAILED_TOPIC = "telemetry.portal_profiles.fail";
     private static final String CONTENT_CACHE_TTL = "60000";
+    private static final String CP_UPDATE_PROFILE_EVENT = "CP_UPDATE_PROFILE";
     private MessageCollector collectorMock;
     private TaskContext contextMock;
     private MetricsRegistry metricsRegistry;
@@ -46,6 +47,7 @@ public class PortalProfileManagementTaskTest {
 
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
+        stub(configMock.get("cp.update.profile.event", CP_UPDATE_PROFILE_EVENT)).toReturn(CP_UPDATE_PROFILE_EVENT);
         stub(metricsRegistry.newCounter(anyString(), anyString()))
                 .toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
