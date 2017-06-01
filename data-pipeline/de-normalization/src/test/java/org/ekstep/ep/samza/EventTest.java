@@ -39,8 +39,9 @@ public class EventTest {
                 Arrays.asList("BE_.*", "CE_.*", "CP_.*"));
     }
 
-    class KVStore implements KeyValueStore{
+    class KVStore implements KeyValueStore {
         private Map data = new HashMap();
+
         @Override
         public Object get(Object key) {
             return data.get(key);
@@ -57,7 +58,7 @@ public class EventTest {
 
         @Override
         public void put(Object key, Object value) {
-            data.put(key,value);
+            data.put(key, value);
         }
 
         @Override
@@ -112,11 +113,11 @@ public class EventTest {
 
     @Test
     public void ShouldNotTryToInitializeEventIfNoUidIsPresent() {
-        Event event = new Event(new HashMap<String, Object>(),keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event = new Event(new HashMap<String, Object>(), keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
 
         event.initialize();
 
-        verify(keyValueStoreMock,never()).get(any());
+        verify(keyValueStoreMock, never()).get(any());
         verifyZeroInteractions(keyValueStoreMock);
     }
 
@@ -124,11 +125,11 @@ public class EventTest {
     public void ShouldNotTryToInitializeEventIfEventDoesNotTime() {
         map.put("uid", UID);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
 
         event.initialize();
 
-        verify(keyValueStoreMock,never()).get(any());
+        verify(keyValueStoreMock, never()).get(any());
         verifyZeroInteractions(keyValueStoreMock);
     }
 
@@ -137,11 +138,11 @@ public class EventTest {
         map.put("ts", "invalid-time");
         map.put("uid", UID);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
 
         event.initialize();
 
-        verify(keyValueStoreMock,never()).get(any());
+        verify(keyValueStoreMock, never()).get(any());
         verifyZeroInteractions(keyValueStoreMock);
     }
 
@@ -150,7 +151,7 @@ public class EventTest {
         map.put("ts", TS);
         map.put("uid", UID);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
 
         event.initialize();
 
@@ -159,7 +160,7 @@ public class EventTest {
 
     @Test
     public void ShouldNotTryToProcessEventWhenEventDoesNotHaveUid() throws IOException {
-        Event event = new Event(new HashMap<String, Object>(),keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event = new Event(new HashMap<String, Object>(), keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
@@ -171,7 +172,7 @@ public class EventTest {
     public void ShouldNotTryToProcessEventIfItDoesNotTime() {
         map.put("uid", UID);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
@@ -184,7 +185,7 @@ public class EventTest {
         map.put("ts", "invalid-time");
         map.put("uid", UID);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
@@ -201,7 +202,7 @@ public class EventTest {
         map.put("udata", getUdata());
         map.put("flags", flags);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
@@ -217,7 +218,7 @@ public class EventTest {
 
         Mockito.stub(keyValueStoreMock.get(UID)).toReturn(child);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
@@ -227,16 +228,16 @@ public class EventTest {
 
     @Test
     public void ShouldProcessChildIfChildIsNotProcessed() throws IOException {
-        Date date = new Date();
-        map.put("ts", new SimpleDateFormat(DATE_FORMAT).format(date));
+        DateTime date = new DateTime();
+        map.put("ts", date.toString(DATE_FORMAT));
         map.put("uid", UID);
-        Child child = new Child(UID, true,  getUdata());
+        Child child = new Child(UID, true, getUdata());
         stub(userServiceMock.getUserFor(any(Child.class), any(Date.class), any(String.class))).toReturn(child);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
 
         event.initialize();
-        event.process(userServiceMock, new DateTime(date));
+        event.process(userServiceMock, date);
 
         verify(userServiceMock).getUserFor(argThat(validateChild(UID)), argThat(dateMatcher(date)), any(String.class));
     }
@@ -250,13 +251,13 @@ public class EventTest {
         map.put("udata", getUdata());
         map.put("flags", flags);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
         Map<String, Object> data = event.getData();
 
-        HashMap<String, Object> actualUdata = (HashMap<String, Object>)data.get("udata");
+        HashMap<String, Object> actualUdata = (HashMap<String, Object>) data.get("udata");
         assertEquals(UID, data.get("uid"));
         validateUdata(actualUdata);
     }
@@ -265,17 +266,17 @@ public class EventTest {
     public void ShouldGetRightDataWhenCached() {
         map.put("ts", TS);
         map.put("uid", UID);
-        Child child = new Child(UID, true,  getUdata());
+        Child child = new Child(UID, true, getUdata());
 
         Mockito.stub(keyValueStoreMock.get(UID)).toReturn(child);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
         Map<String, Object> data = event.getData();
 
-        HashMap<String, Object> actualUdata = (HashMap<String, Object>)data.get("udata");
+        HashMap<String, Object> actualUdata = (HashMap<String, Object>) data.get("udata");
         assertEquals(UID, data.get("uid"));
         validateUdata(actualUdata);
     }
@@ -285,16 +286,16 @@ public class EventTest {
         map.put("ts", TS);
         map.put("uid", UID);
 
-        Child child = new Child(UID, true,  getUdata());
+        Child child = new Child(UID, true, getUdata());
         stub(userServiceMock.getUserFor(any(Child.class), any(Date.class), any(String.class))).toReturn(child);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
         Map<String, Object> data = event.getData();
 
-        HashMap<String, Object> actualUdata = (HashMap<String, Object>)data.get("udata");
+        HashMap<String, Object> actualUdata = (HashMap<String, Object>) data.get("udata");
         assertEquals(UID, data.get("uid"));
         validateUdata(actualUdata);
     }
@@ -307,13 +308,13 @@ public class EventTest {
         Child child = new Child(UID, false, getUdata());
         stub(userServiceMock.getUserFor(any(Child.class), any(Date.class), any(String.class))).toReturn(child);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
         Map<String, Object> data = event.getData();
 
-        HashMap<String, Object> actualUdata = (HashMap<String, Object>)data.get("udata");
+        HashMap<String, Object> actualUdata = (HashMap<String, Object>) data.get("udata");
         assertEquals(UID, data.get("uid"));
         assertEquals(null, actualUdata);
     }
@@ -325,13 +326,13 @@ public class EventTest {
 
         stub(userServiceMock.getUserFor(any(Child.class), any(Date.class), any(String.class))).toThrow(new IOException("Not able to connect to database"));
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
         Map<String, Object> data = event.getData();
 
-        HashMap<String, Object> actualUdata = (HashMap<String, Object>)data.get("udata");
+        HashMap<String, Object> actualUdata = (HashMap<String, Object>) data.get("udata");
         assertEquals(UID, data.get("uid"));
         assertEquals(null, actualUdata);
         assertTrue(event.hadIssueWithDb());
@@ -341,7 +342,7 @@ public class EventTest {
     public void ShouldNotBeProcessedIfItDoesNotHaveChildData() {
         map.put("uid", UID);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
@@ -359,12 +360,12 @@ public class EventTest {
 
         Child child = new Child(UID, true, getUdata());
         stub(userServiceMock.getUserFor(any(Child.class), any(Date.class), any(String.class))).toReturn(child);
-        Event event = new Event(map, keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
 
-       assertTrue(event.isProcessed());
+        assertTrue(event.isProcessed());
     }
 
     @Test
@@ -372,12 +373,12 @@ public class EventTest {
         map.put("ts", TS);
         map.put("uid", UID);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
 
         event.initialize();
-        event.process(null,DateTime.now());
+        event.process(null, DateTime.now());
 
-        Map<String,Object> metadata = (Map<String, Object>) event.getData().get("metadata");
+        Map<String, Object> metadata = (Map<String, Object>) event.getData().get("metadata");
         assertTrue(metadata.containsKey("processed_count"));
         assertEquals(1, metadata.get("processed_count"));
     }
@@ -386,25 +387,25 @@ public class EventTest {
     public void ShouldIncrementProcessedTime() throws IOException {
 
         HashMap<String, Object> metadata = new HashMap<String, Object>();
-        metadata.put("processed_count",1);
+        metadata.put("processed_count", 1);
         map.put("ts", TS);
         map.put("uid", UID);
         map.put("metadata", metadata);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
 
         event.initialize();
-        event.process(null,DateTime.now());
+        event.process(null, DateTime.now());
 
-        Map<String,Object> meta = (Map<String, Object>) event.getData().get("metadata");
+        Map<String, Object> meta = (Map<String, Object>) event.getData().get("metadata");
         assertEquals(2, metadata.get("processed_count"));
     }
 
     @Test
-    public void ShouldNotBeSkippedFirstTime(){
-        Event event = new Event(map, keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+    public void ShouldNotBeSkippedFirstTime() {
+        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
         event.initialize();
-        assertEquals(event.shouldBackoff(),false);
+        assertEquals(event.shouldBackoff(), false);
     }
 
 //    @Test
@@ -435,9 +436,9 @@ public class EventTest {
         Date date = new Date();
         map.put("ts", new SimpleDateFormat(DATE_FORMAT).format(date));
         map.put("uid", UID);
-        Event event = new Event(map,keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
         event.initialize();
-        Child child = new Child(UID, false,  getUdata());
+        Child child = new Child(UID, false, getUdata());
         stub(userServiceMock.getUserFor(any(Child.class), any(Date.class), any(String.class))).toReturn(child);
 
         Map map2 = new HashedMap();
@@ -446,7 +447,7 @@ public class EventTest {
 
         Assert.assertNull(retryStore.get(UID));
 
-        Event event2 = new Event(map2, keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
+        Event event2 = new Event(map2, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
         event2.initialize();
 //      ----- first event
         Assert.assertEquals(false, event.shouldBackoff()); //first try for first event is not skipped
@@ -488,7 +489,7 @@ public class EventTest {
         event2.process(userServiceMock, DateTime.now());
 
         Assert.assertEquals(4, ((Map) (map.get("metadata"))).get("processed_count"));
-        Assert.assertEquals(DateTime.now().toString(),((Map)(map.get("metadata"))).get("last_processed_at"));
+        Assert.assertEquals(DateTime.now().toString(), ((Map) (map.get("metadata"))).get("last_processed_at"));
         Assert.assertEquals(1, ((Map) (map2.get("metadata"))).get("processed_count"));
         Assert.assertEquals(DateTime.now().toString(), ((Map) (map2.get("metadata"))).get("last_processed_at"));
 
@@ -498,15 +499,14 @@ public class EventTest {
     private void validateUdata(HashMap<String, Object> actualUdata) {
         HashMap<String, Object> expectedUdata = getUdata();
 
-        assertEquals(expectedUdata.get("age_completed_years"),actualUdata.get("age_completed_years"));
+        assertEquals(expectedUdata.get("age_completed_years"), actualUdata.get("age_completed_years"));
         assertEquals(expectedUdata.get("gender"), actualUdata.get("gender"));
         assertEquals(expectedUdata.get("board"), actualUdata.get("board"));
         assertEquals(expectedUdata.get("medium"), actualUdata.get("medium"));
         assertEquals(expectedUdata.get("handle"), actualUdata.get("handle"));
-        assertEquals(expectedUdata.get("standard"),actualUdata.get("standard"));
-        assertEquals(expectedUdata.get("is_group_user"),actualUdata.get("is_group_user"));
+        assertEquals(expectedUdata.get("standard"), actualUdata.get("standard"));
+        assertEquals(expectedUdata.get("is_group_user"), actualUdata.get("is_group_user"));
     }
-
 
 
     private ArgumentMatcher<Child> validateChild(final String uid) {
@@ -533,13 +533,17 @@ public class EventTest {
         return udata;
     }
 
-    private ArgumentMatcher<Date> dateMatcher(final Date expectedDate) {
+    private ArgumentMatcher<Date> dateMatcher(final DateTime expectedDate) {
         return new ArgumentMatcher<Date>() {
             @Override
             public boolean matches(Object argument) {
-                Date actualDate = (Date) argument;
+                DateTime actualDate = new DateTime(argument);
                 SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-                Assert.assertEquals(dateFormat.format(expectedDate),dateFormat.format(actualDate));
+                Assert.assertEquals(expectedDate.year(), actualDate.year());
+                Assert.assertEquals(expectedDate.monthOfYear(), actualDate.monthOfYear());
+                Assert.assertEquals(expectedDate.dayOfMonth(), actualDate.dayOfMonth());
+                Assert.assertEquals(expectedDate.hourOfDay(), actualDate.hourOfDay());
+                Assert.assertEquals(expectedDate.minuteOfHour(), actualDate.minuteOfHour());
                 return true;
             }
         };
