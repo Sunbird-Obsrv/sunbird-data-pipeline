@@ -26,7 +26,7 @@ module Indexers
                   type: "string",
                   doc_values: true
                 },
-                match: "id|current|res|exres|max|mc|mmc|category",
+                match: "id|current|res|exres|max|mc|mmc|category|env|type|stageid|objecttype|objectid|err|action|data|severity",
                 match_pattern: "regex"
               }
             },
@@ -428,7 +428,7 @@ module Indexers
                 },
                 type: "object"
               },
-                  "contentdata": {
+              "contentdata": {
                 "properties": {
                   "ageGroup": {
                     "type": "string"
@@ -1175,9 +1175,6 @@ module Indexers
                         },
                         "value": {
                           "type": "long"
-                        },
-                        "parentid": {
-                          "type": "string"
                         },
                         "code": {
                           "type": "string"
