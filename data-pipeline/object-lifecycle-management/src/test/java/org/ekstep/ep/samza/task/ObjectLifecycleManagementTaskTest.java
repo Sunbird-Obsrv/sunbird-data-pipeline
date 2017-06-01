@@ -91,7 +91,7 @@ public class ObjectLifecycleManagementTaskTest {
 
         verify(objectServiceMock, times(1)).createOrUpdate(anyMap());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
-        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("lifecycle_data_processed")),true);
+        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("olm_processed")),true);
     }
 
     @Test
@@ -103,7 +103,7 @@ public class ObjectLifecycleManagementTaskTest {
 
         verify(objectServiceMock, times(1)).createOrUpdate(anyMap());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
-        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("lifecycle_data_processed")),false);
+        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("olm_processed")),false);
     }
 
     @Test
@@ -115,8 +115,8 @@ public class ObjectLifecycleManagementTaskTest {
 
         verify(objectServiceMock, times(1)).createOrUpdate(anyMap());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
-        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("metadata")).get("lifecycle_data_process_err")),"BAD_REQUEST");
-        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("metadata")).get("lifecycle_data_process_err_msg")),"TYPE IS MANDATORY, ID IS MANDATORY");
+        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("metadata")).get("olm_process_err")),"BAD_REQUEST");
+        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("metadata")).get("olm_process_err_msg")),"TYPE IS MANDATORY, ID IS MANDATORY");
     }
 
     private ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {

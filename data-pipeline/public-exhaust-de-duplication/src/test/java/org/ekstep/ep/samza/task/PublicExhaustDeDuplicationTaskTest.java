@@ -71,7 +71,7 @@ public class PublicExhaustDeDuplicationTaskTest {
         publicExhaustDeDuplicationTask.process(envelopeMock, collectorMock, coordinatorMock);
 
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
-        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("public_de_dup_processed")), true);
+        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("puedd_processed")), true);
     }
 
     @Test
@@ -82,8 +82,8 @@ public class PublicExhaustDeDuplicationTaskTest {
         publicExhaustDeDuplicationTask.process(envelopeMock,collectorMock,coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), DUPLICATE_TOPIC)));
 
-        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("public_de_dup_processed")), false);
-        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("public_de_dup_duplicate_event")), true);
+        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("puedd_processed")), false);
+        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("puedd_duplicate_event")), true);
     }
 
     @Test
@@ -93,8 +93,8 @@ public class PublicExhaustDeDuplicationTaskTest {
         publicExhaustDeDuplicationTask.process(envelopeMock,collectorMock,coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
 
-        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("public_de_dup_processed")), false);
-        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("public_de_dup_checksum_present")), false);
+        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("puedd_processed")), false);
+        Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("puedd_checksum_present")), false);
     }
 
     private ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {

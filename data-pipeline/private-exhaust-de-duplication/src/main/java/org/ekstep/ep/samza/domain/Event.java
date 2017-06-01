@@ -36,7 +36,7 @@ public class Event {
     }
 
     public void updateMetadata(String value) {
-        telemetry.add("metadata.private_de_duplication_error",value);
+        telemetry.add("metadata.predd_error",value);
     }
 
     @Override
@@ -47,32 +47,32 @@ public class Event {
     }
 
     public void updateFlag(boolean bool) {
-        telemetry.add("flags.private_de_dup_processed",bool);
+        telemetry.add("flags.predd_processed",bool);
     }
 
     public void markSkipped() {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.private_de_dup_processed", false);
-        telemetry.add("flags.private_de_dup_checksum_present", false);
+        telemetry.add("flags.predd_processed", false);
+        telemetry.add("flags.predd_checksum_present", false);
     }
 
     public void markDuplicate() {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.private_de_dup_processed", false);
-        telemetry.add("flags.private_de_dup_duplicate_event", true);
+        telemetry.add("flags.predd_processed", false);
+        telemetry.add("flags.predd_duplicate_event", true);
     }
 
     public void markSuccess() {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.private_de_dup_processed", true);
+        telemetry.add("flags.predd_processed", true);
     }
 
     public void markFailure(String error) {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.private_de_dup_processed", false);
+        telemetry.add("flags.predd_processed", false);
 
         telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
-        telemetry.add("metadata.private_de_dup_error", error);
+        telemetry.add("metadata.predd_error", error);
     }
 }
 

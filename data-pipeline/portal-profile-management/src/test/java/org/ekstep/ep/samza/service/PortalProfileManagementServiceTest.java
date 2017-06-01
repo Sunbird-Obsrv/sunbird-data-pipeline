@@ -115,8 +115,8 @@ public class PortalProfileManagementServiceTest {
             @Override
             public boolean matches(Object o) {
                 Event actualEvent = (Event) o;
-                assertTrue(actualEvent.flags().get("portal_profile_manage_skipped"));
-                assertNull(actualEvent.flags().get("portal_profile_manage_processed"));
+                assertTrue(actualEvent.flags().get("ppm_skipped"));
+                assertNull(actualEvent.flags().get("ppm_processed"));
                 return true;
             }
         };
@@ -127,9 +127,9 @@ public class PortalProfileManagementServiceTest {
             @Override
             public boolean matches(Object o) {
                 Event actualEvent = (Event) o;
-                assertTrue(actualEvent.flags().get("portal_profile_manage_skipped"));
-                assertNull(actualEvent.flags().get("portal_profile_manage_processed"));
-                assertTrue(actualEvent.flags().get("portal_profile_manage_uid_absent"));
+                assertTrue(actualEvent.flags().get("ppm_skipped"));
+                assertNull(actualEvent.flags().get("ppm_processed"));
+                assertTrue(actualEvent.flags().get("ppm_uid_absent"));
                 return true;
             }
         };
@@ -140,9 +140,9 @@ public class PortalProfileManagementServiceTest {
             @Override
             public boolean matches(Object o) {
                 Event actualEvent = (Event) o;
-                assertTrue(actualEvent.flags().get("portal_profile_manage_skipped"));
-                assertNull(actualEvent.flags().get("portal_profile_manage_processed"));
-                assertTrue(actualEvent.flags().get("portal_profile_manage_details_absent"));
+                assertTrue(actualEvent.flags().get("ppm_skipped"));
+                assertNull(actualEvent.flags().get("ppm_processed"));
+                assertTrue(actualEvent.flags().get("ppm_details_absent"));
                 return true;
             }
         };
@@ -155,8 +155,8 @@ public class PortalProfileManagementServiceTest {
                 Event actualEvent = (Event) o;
                 Map<String, Boolean> flags = actualEvent.flags();
 
-                assertNull(flags.get("portal_profile_manage_skipped"));
-                assertTrue(flags.get("portal_profile_manage_processed"));
+                assertNull(flags.get("ppm_skipped"));
+                assertTrue(flags.get("ppm_processed"));
                 return true;
             }
         };
@@ -170,10 +170,10 @@ public class PortalProfileManagementServiceTest {
                 Map<String, Boolean> flags = actualEvent.flags();
                 Map<String, Object> metadata = actualEvent.metadata();
 
-                assertTrue(flags.get("portal_profile_manage_failed"));
-                assertNull(flags.get("portal_profile_manage_processed"));
-                assertEquals("BAD_REQUEST", metadata.get("portal_profile_manage_err"));
-                assertEquals("ID IS MANDATORY", metadata.get("portal_profile_manage_errmsg"));
+                assertTrue(flags.get("ppm_failed"));
+                assertNull(flags.get("ppm_processed"));
+                assertEquals("BAD_REQUEST", metadata.get("ppm_err"));
+                assertEquals("ID IS MANDATORY", metadata.get("ppm_errmsg"));
                 return true;
             }
         };

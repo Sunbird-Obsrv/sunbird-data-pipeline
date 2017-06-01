@@ -46,12 +46,12 @@ public class Event {
 
     public void markSkipped() {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.portal_profile_manage_skipped", true);
+        telemetry.add("flags.ppm_skipped", true);
     }
 
     public void markProcessed() {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.portal_profile_manage_processed", true);
+        telemetry.add("flags.ppm_processed", true);
     }
 
     public NullableValue<String> uid() {
@@ -68,11 +68,11 @@ public class Event {
 
     public void markFailed(Object err, Object errmsg) {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.portal_profile_manage_failed", true);
+        telemetry.add("flags.ppm_failed", true);
 
         telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
-        telemetry.add("metadata.portal_profile_manage_err", err);
-        telemetry.add("metadata.portal_profile_manage_errmsg", errmsg);
+        telemetry.add("metadata.ppm_err", err);
+        telemetry.add("metadata.ppm_errmsg", errmsg);
     }
 
 }

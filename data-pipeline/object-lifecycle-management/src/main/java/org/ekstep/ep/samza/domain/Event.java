@@ -60,7 +60,7 @@ public class Event {
         Map<String, Object> flags = telemetryFlag.isNull()
                 ? new HashMap<String, Object>()
                 : telemetryFlag.value();
-        flags.put("lifecycle_data_processed", processed);
+        flags.put("olm_processed", processed);
         telemetry.add("flags", flags);
     }
 
@@ -69,8 +69,8 @@ public class Event {
         Map<String, Object> metadata = telemetryMetadata.isNull()
                 ? new HashMap<String, Object>()
                 : telemetryMetadata.value();
-        metadata.put("lifecycle_data_process_err", params.get("err"));
-        metadata.put("lifecycle_data_process_err_msg", params.get("errmsg"));
+        metadata.put("olm_process_err", params.get("err"));
+        metadata.put("olm_process_err_msg", params.get("errmsg"));
         telemetry.add("metadata", metadata);
     }
 

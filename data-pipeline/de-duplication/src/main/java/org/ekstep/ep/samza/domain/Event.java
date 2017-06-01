@@ -57,28 +57,28 @@ public class Event {
 
     public void markSkipped() {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.de_dup_processed", false);
-        telemetry.add("flags.de_dup_checksum_present", false);
+        telemetry.add("flags.dd_processed", false);
+        telemetry.add("flags.dd_checksum_present", false);
     }
 
     public void markDuplicate() {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.de_dup_processed", false);
-        telemetry.add("flags.de_dup_duplicate_event", true);
+        telemetry.add("flags.dd_processed", false);
+        telemetry.add("flags.dd_duplicate_event", true);
     }
 
     public void markSuccess() {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.de_dup_processed", true);
+        telemetry.add("flags.dd_processed", true);
         telemetry.add("type", "events");
     }
 
     public void markFailure(String error) {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.de_dup_processed", false);
+        telemetry.add("flags.dd_processed", false);
 
         telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
-        telemetry.add("metadata.de_dup_error", error);
+        telemetry.add("metadata.dd_error", error);
     }
 }
 

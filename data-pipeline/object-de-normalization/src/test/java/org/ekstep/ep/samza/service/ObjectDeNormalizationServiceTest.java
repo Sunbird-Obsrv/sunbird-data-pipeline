@@ -150,8 +150,8 @@ public class ObjectDeNormalizationServiceTest {
                 //Details field
                 assertThat(readValue(actualEvent, "portaluserdata.email"), is(readValue(expectedEvent, "portaluserdata.email")));
                 assertThat(readValue(actualEvent, "portaluserdata.channel"), is(readValue(expectedEvent, "portaluserdata.channel")));
-                assertNull(actualEvent.<Boolean>read("flags.object_denormalize_skipped").value());
-                assertTrue(actualEvent.<Boolean>read("flags.object_denormalize_processed").value());
+                assertNull(actualEvent.<Boolean>read("flags.od_skipped").value());
+                assertTrue(actualEvent.<Boolean>read("flags.od_processed").value());
                 return true;
             }
         };
@@ -162,8 +162,8 @@ public class ObjectDeNormalizationServiceTest {
             @Override
             public boolean matches(Object o) {
                 Event actualEvent = (Event) o;
-                assertTrue(actualEvent.<Boolean>read("flags.object_denormalize_skipped").value());
-                assertNull(actualEvent.<Boolean>read("flags.object_denormalize_processed").value());
+                assertTrue(actualEvent.<Boolean>read("flags.od_skipped").value());
+                assertNull(actualEvent.<Boolean>read("flags.od_processed").value());
                 return true;
             }
         };
@@ -174,11 +174,11 @@ public class ObjectDeNormalizationServiceTest {
             @Override
             public boolean matches(Object o) {
                 Event actualEvent = (Event) o;
-                assertNull(actualEvent.<Boolean>read("flags.object_denormalize_skipped").value());
-                assertNull(actualEvent.<Boolean>read("flags.object_denormalize_processed").value());
-                assertTrue(actualEvent.<Boolean>read("flags.object_denormalize_failed").value());
-                assertThat(readValue(actualEvent, "metadata.object_denormalize_err"), is(err));
-                assertThat(readValue(actualEvent, "metadata.object_denormalize_errmsg"), is(errmsg));
+                assertNull(actualEvent.<Boolean>read("flags.od_skipped").value());
+                assertNull(actualEvent.<Boolean>read("flags.od_processed").value());
+                assertTrue(actualEvent.<Boolean>read("flags.od_failed").value());
+                assertThat(readValue(actualEvent, "metadata.od_err"), is(err));
+                assertThat(readValue(actualEvent, "metadata.od_errmsg"), is(errmsg));
                 return true;
             }
         };
