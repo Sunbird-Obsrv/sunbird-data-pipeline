@@ -236,7 +236,7 @@ public class EventTest {
         Event event = new Event(map, keyValueStoreMock, backendEvents,retryBackoffBase, retryStore);
 
         event.initialize();
-        event.process(userServiceMock, DateTime.now());
+        event.process(userServiceMock, new DateTime(date));
 
         verify(userServiceMock).getUserFor(argThat(validateChild(UID)), argThat(dateMatcher(date)), any(String.class));
     }
