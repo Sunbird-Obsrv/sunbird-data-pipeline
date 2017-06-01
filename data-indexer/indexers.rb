@@ -962,217 +962,250 @@ module Indexers
                 "properties": {
                   "eks": {
                     "properties": {
-                      "action": {
-                        "type": "string"
-                      },
-                      "category": {
-                        "type": "string"
-                      },
-                      "cid": {
-                        "type": "string"
-                      },
-                      "class": {
-                        "type": "string"
-                      },
-                      "client": {
-                        "properties": {
-                          "browser": {
-                            "type": "string"
-                          },
-                          "browserver": {
-                            "type": "string"
-                          },
-                          "os": {
-                            "type": "string"
+                        "action": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string"
+                        },
+                        "cid": {
+                          "type": "string"
+                        },
+                        "class": {
+                          "type": "string"
+                        },
+                        "client": {
+                          "properties": {
+                            "browser": {
+                              "type": "string"
+                            },
+                            "browserver": {
+                              "type": "string"
+                            },
+                            "os": {
+                              "type": "string"
+                            }
                           }
-                        }
-                      },
-                      "containerid": {
-                        "type": "string"
-                      },
-                      "containerplugin": {
-                        "type": "string"
-                      },
-                      "contentType": {
-                        "type": "string"
-                      },
-                      "context": {
-                        "type": "object"
-                      },
-                      "correlationid": {
-                        "type": "string"
-                      },
-                      "data": {
-                        "properties": {
-                          "config": {
-                            "properties": {
-                              "appName": {
-                                "type": "string"
-                              },
-                              "deviceMapping": {
-                                "type": "boolean"
-                              },
-                              "model": {
-                                "type": "string"
-                              },
-                              "output": {
-                                "properties": {
-                                  "params": {
-                                    "properties": {
-                                      "printEvent": {
-                                        "type": "boolean"
+                        },
+                        "containerid": {
+                          "type": "string"
+                        },
+                        "containerplugin": {
+                          "type": "string"
+                        },
+                        "contentType": {
+                          "type": "string"
+                        },
+                        "context": {
+                          "type": "string"
+                        },
+                        "correlationid": {
+                          "type": "string"
+                        },
+                        "data": {
+                          "properties": {
+                            "config": {
+                              "properties": {
+                                "appName": {
+                                  "type": "string"
+                                },
+                                "deviceMapping": {
+                                  "type": "boolean"
+                                },
+                                "model": {
+                                  "type": "string"
+                                },
+                                "output": {
+                                  "properties": {
+                                    "params": {
+                                      "properties": {
+                                        "printEvent": {
+                                          "type": "boolean"
+                                        }
                                       }
+                                    },
+                                    "to": {
+                                      "type": "string"
                                     }
-                                  },
-                                  "to": {
-                                    "type": "string"
                                   }
-                                }
-                              },
-                              "parallelization": {
-                                "type": "long"
-                              },
-                              "search": {
-                                "properties": {
-                                  "queries": {
-                                    "properties": {
-                                      "bucket": {
-                                        "type": "string"
-                                      },
-                                      "delta": {
-                                        "type": "long"
-                                      },
-                                      "endDate": {
-                                        "format": "strict_date_optional_time||epoch_millis",
-                                        "type": "date"
-                                      },
-                                      "prefix": {
-                                        "type": "string"
+                                },
+                                "parallelization": {
+                                  "type": "long"
+                                },
+                                "search": {
+                                  "properties": {
+                                    "queries": {
+                                      "properties": {
+                                        "bucket": {
+                                          "type": "string"
+                                        },
+                                        "delta": {
+                                          "type": "long"
+                                        },
+                                        "endDate": {
+                                          "format": "strict_date_optional_time||epoch_millis",
+                                          "type": "date"
+                                        },
+                                        "prefix": {
+                                          "type": "string"
+                                        }
                                       }
+                                    },
+                                    "type": {
+                                      "type": "string"
                                     }
-                                  },
-                                  "type": {
-                                    "type": "string"
                                   }
                                 }
                               }
                             }
                           }
-                        }
-                      },
-                      "defaultPlugins": {
-                        "type": "string"
-                      },
-                      "downloadUrl": {
-                        "type": "string"
-                      },
-                      "duration": {
-                        "type": "long"
-                      },
-                      "env": {
-                        "type": "string"
-                      },
-                      "filters": {
-                        "type": "object"
-                      },
-                      "id": {
-                        "type": "string"
-                      },
-                      "level": {
-                        "type": "string"
-                      },
-                      "loadtimes": {
-                        "properties": {
-                          "contentLoad": {
-                            "type": "long"
-                          },
-                          "plugins": {
-                            "type": "long"
+                        },
+                        "defaultPlugins": {
+                          "type": "string"
+                        },
+                        "downloadUrl": {
+                          "type": "string"
+                        },
+                        "duration": {
+                          "type": "long"
+                        },
+                        "env": {
+                          "type": "string"
+                        },
+                        "filters": {
+                          "type": "object"
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "level": {
+                          "type": "string"
+                        },
+                        "loadtimes": {
+                                    "properties": {
+                                      "contentLoad": {
+                                        "type": "long"
+                                      },
+                                      "plugins": {
+                                        "type": "long"
+                                      }
+                                    }
+                        },
+                        "mediaType": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "method": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "objectid": {
+                          "type": "string"
+                        },
+                        "pluginid": {
+                          "type": "string"
+                        },
+                        "pluginver": {
+                          "type": "string"
+                        },
+                        "prevstate": {
+                          "type": "string"
+                        },
+                        "parentid": {
+                          "type": "string"
+                        },
+                        "protocol": {
+                          "type": "string"
+                        },
+                        "query": {
+                          "type": "string"
+                        },
+                        "rid": {
+                          "type": "string"
+                        },
+                        "size": {
+                          "type": "long"
+                        },
+                        "stage": {
+                          "type": "string"
+                        },
+                        "state": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "subtype": {
+                          "type": "string"
+                        },
+                        "target": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "uaspec": {
+                          "properties": {
+                            "agent": {
+                              "type": "string"
+                            },
+                            "platform": {
+                              "type": "string"
+                            },
+                            "system": {
+                              "type": "string"
+                            },
+                            "ver": {
+                              "type": "string"
+                            }
                           }
+                        },
+                        "uip": {
+                          "type": "string"
+                        },
+                        "url": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "long"
+                        },
+                        "parentid": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "partners": {
+                          "type": "nested",
+                           "properties": {
+                                  "id": { "type": "string" },
+                                  "value": { "type": "string" }
+                              },
+                        },
+                        "access": {
+                          "type": "nested",
+                           "properties": {
+                                  "id": { "type": "string" },
+                                  "value": { "type": "string" }
+                              },
+                        },
+                        "profile": {
+                          "type": "nested",
+                           "properties": {
+                                  "id": { "type": "string" },
+                                  "value": { "type": "string" }
+                              },
                         }
-                      },
-                      "mediaType": {
-                        "type": "string"
-                      },
-                      "message": {
-                        "type": "string"
-                      },
-                      "method": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "objectid": {
-                        "type": "string"
-                      },
-                      "pluginid": {
-                        "type": "string"
-                      },
-                      "pluginver": {
-                        "type": "string"
-                      },
-                      "prevState": {
-                        "type": "string"
-                      },
-                      "protocol": {
-                        "type": "string"
-                      },
-                      "query": {
-                        "type": "string"
-                      },
-                      "rid": {
-                        "type": "string"
-                      },
-                      "size": {
-                        "type": "long"
-                      },
-                      "stage": {
-                        "type": "string"
-                      },
-                      "state": {
-                        "type": "string"
-                      },
-                      "status": {
-                        "type": "string"
-                      },
-                      "subtype": {
-                        "type": "string"
-                      },
-                      "target": {
-                        "type": "string"
-                      },
-                      "title": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
-                      },
-                      "uaspec": {
-                        "properties": {
-                          "agent": {
-                            "type": "string"
-                          },
-                          "platform": {
-                            "type": "string"
-                          },
-                          "system": {
-                            "type": "string"
-                          },
-                          "ver": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "uip": {
-                        "type": "string"
-                      },
-                      "url": {
-                        "type": "string"
-                      },
-                      "value": {
-                        "type": "long"
-                      }
                     }
                   }
                 }
@@ -1256,6 +1289,34 @@ module Indexers
               },
               "ver": {
                 "type": "string"
+              },
+              "portaluserdata": {
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "subtype": {
+                    "type": "string"
+                  },
+                  "parentid": {
+                    "type": "string"
+                  },
+                  "parenttype": {
+                    "type": "string"
+                  },
+                  "code": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "details": {
+                    "type": "string"
+                  }
+                }
               }
             }
           }
