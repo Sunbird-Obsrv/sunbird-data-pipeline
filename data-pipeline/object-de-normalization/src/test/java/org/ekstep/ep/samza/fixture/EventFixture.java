@@ -35,8 +35,15 @@ public class EventFixture {
                     "    \"parenttype\": \"Admin\",\n" +
                     "    \"code\": \"XYZ\",\n" +
                     "    \"name\": \"User 111\",\n" +
-                    "    \"email\": \"e@mail.com\",\n" +
-                    "    \"channel\": \"channel 1\"\n" +
+                    "    \"email\": \"user@ekstep.in\",\n" +
+                    "    \"access\": [\n" +
+                    "    {\n" +
+                    "      \"id\": \"2\",\n" +
+                    "      \"value\": \"Registered\"\n" +
+                    "    }\n" +
+                    "  ],\n" +
+                    "  \"partners\": [],\n" +
+                    "  \"profile\": []\n" +
                     "  }\n" +
                     "}";
 

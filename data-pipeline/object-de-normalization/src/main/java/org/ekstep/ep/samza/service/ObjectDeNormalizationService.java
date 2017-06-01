@@ -99,7 +99,7 @@ public class ObjectDeNormalizationService {
     private Map<String, String> getDetailsMap(Event event, Map<String, Object> result) {
         Map<String, String> details = new HashMap<String, String>();
         try {
-            details = gson.fromJson((String) result.get("details"), new TypeToken<Map<String, String>>() {
+            details = gson.fromJson((String) result.get("details"), new TypeToken<Map<String, Object>>() {
             }.getType());
         } catch (JsonSyntaxException e) {
             LOGGER.error(event.id(),

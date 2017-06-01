@@ -38,7 +38,7 @@ public class GetObjectFixture {
             "         \"parenttype\": \"Admin\", " +
             "         \"code\": \"XYZ\", " +
             "         \"name\": \"User 111\", " +
-            "         \"details\": \"{\\\"email\\\":\\\"e@mail.com\\\",\\\"channel\\\":\\\"channel 1\\\"}\" " +
+            "         \"details\": \"{\\\"name\\\":\\\"User 111\\\",\\\"email\\\":\\\"user@ekstep.in\\\",\\\"access\\\":[{\\\"id\\\":\\\"2\\\",\\\"value\\\":\\\"Registered\\\"}],\\\"partners\\\":[],\\\"profile\\\":[]}\" " +
             "   }  \n" +
             "}";
 
