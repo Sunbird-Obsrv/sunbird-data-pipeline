@@ -41,7 +41,7 @@ public class Event {
         return telemetry.read(path);
     }
 
-    public void update(String path, Map<String, String> data) {
+    public void update(String path, HashMap<String, Object> data) {
         telemetry.add(path, data);
     }
 

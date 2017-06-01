@@ -81,9 +81,9 @@ public class ObjectDeNormalizationService {
         }
     }
 
-    private Map<String, String> getDenormalizedData(Event event, Map<String, Object> result) {
+    private HashMap<String, Object> getDenormalizedData(Event event, Map<String, Object> result) {
 
-        HashMap<String, String> denormalizedData = new HashMap<String, String>();
+        HashMap<String, Object> denormalizedData = new HashMap<String, Object>();
 
         for (String field : fieldsToDenormalize) {
             denormalizedData.put(field, String.valueOf(result.get(field)));
