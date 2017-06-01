@@ -75,8 +75,8 @@ public class DenormalizationTaskTest {
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
         stub(configMock.get("retry.backoff.base")).toReturn("10");
         stub(configMock.get("retry.backoff.limit")).toReturn("4");
-        stub(eventMock.getEID()).toReturn("BE_CONTENT_USAGE_SUMMARY");
-        stub(eventMock.isBackendEvent()).toReturn(false);
+//        stub(eventMock.read("eid")).toReturn(new NullableValue<Object>("BE_CONTENT_USAGE_SUMMARY"));
+//        stub(eventMock.isBackendEvent()).toReturn(false);
 
         deNormalizationTask = new DeNormalizationTask();
     }
@@ -85,7 +85,7 @@ public class DenormalizationTaskTest {
     public void ShouldInitializeEvent() {
         deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
 
-        verify(eventMock).initialize(retryBackoffBase, retryBackoffLimit, retryStore);
+        verify(eventMock).initialize();
     }
 
     @Test
@@ -158,7 +158,7 @@ public class DenormalizationTaskTest {
     @Test
     public void ShouldNotRetryIfBackingOff() throws Exception {
         deNormalizationTask.init(configMock, contextMock);
-        when(eventMock.isSkipped()).thenReturn(true);
+        when(eventMock.shouldBackoff()).thenReturn(true);
         deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
     }
 
@@ -168,7 +168,7 @@ public class DenormalizationTaskTest {
         HashMap<String, Object> message = new HashMap<String, Object>();
         stub(eventMock.getData()).toReturn(message);
         deNormalizationTask.init(configMock, contextMock);
-        when(eventMock.isSkipped()).thenReturn(false);
+        when(eventMock.shouldBackoff()).thenReturn(false);
         deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
         verify(collectorMock).send(argThat(validateOutputTopic(message, SUCCESS_TOPIC)));
     }
@@ -178,7 +178,7 @@ public class DenormalizationTaskTest {
         HashMap<String, Object> message = new HashMap<String, Object>();
         stub(eventMock.canBeProcessed()).toReturn(true);
         stub(eventMock.getData()).toReturn(message);
-        stub(eventMock.isSkipped()).toReturn(true);
+        stub(eventMock.shouldBackoff()).toReturn(true);
         deNormalizationTask.init(configMock, contextMock);
         deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
         verify(collectorMock).send(argThat(validateOutputTopic(message, RETRY_TOPIC)));
@@ -190,19 +190,20 @@ public class DenormalizationTaskTest {
         HashMap<String, Object> message = new HashMap<String, Object>();
         stub(eventMock.canBeProcessed()).toReturn(true);
         stub(eventMock.getData()).toReturn(message);
-        stub(eventMock.isSkipped()).toReturn(false);
-        stub(eventMock.isBackendEvent()).toReturn(true);
+        stub(eventMock.shouldBackoff()).toReturn(false);
+//        stub(eventMock.isBackendEvent()).toReturn(true);
         deNormalizationTask.init(configMock, contextMock);
         deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
         verify(collectorMock).send(argThat(validateOutputTopic(message, RETRY_TOPIC)));
-        verify(eventMock, times(1)).setBackendTrue();
+//        verify(eventMock, times(1)).setBackendTrue();
     }
 
     @Test
     public void ShouldNotProcessAnyOfTheBackendEvent() throws Exception {
         Map<String, Object> message = EventFixture.BeEvent();
         KeyValueStore<String, Child> childStore = Mockito.mock(KeyValueStore.class);
-        Event event = new Event(message, childStore, Arrays.asList("BE_.*"));
+        KeyValueStore<String, Object> retryStore = Mockito.mock(KeyValueStore.class);
+        Event event = new Event(message, childStore, Arrays.asList("BE_.*"),10,retryStore);
 
         deNormalizationTask.init(configMock, contextMock);
         deNormalizationTask.processEvent(collectorMock, event, userServiceMock);

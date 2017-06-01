@@ -44,6 +44,7 @@
     <module>private-exhaust-de-duplication</module>
     <module>object-service</module>
     <module>ep-de-duplication</module>
+    <module>retry-service</module>
   </modules>
 
   <properties>

@@ -33,7 +33,7 @@ under the License.
 
   <groupId>org.ekstep.ecosystem.jobs</groupId>
   <artifactId>de-normalization</artifactId>
-  <version>0.4.8</version>
+  <version>0.4.9</version>
   <packaging>jar</packaging>
   <name>De-Normalization</name>
   <description>
@@ -152,6 +152,16 @@ under the License.
   <dependency>
     <groupId>org.ekstep.ecosystem</groupId>
     <artifactId>ep-logger</artifactId>
+    <version>0.0.1</version>
+  </dependency>
+  <dependency>
+    <groupId>org.ekstep.ecosystem</groupId>
+    <artifactId>ep-telemetry-reader</artifactId>
+    <version>0.0.1</version>
+  </dependency>
+  <dependency>
+    <groupId>org.ekstep.ecosystem</groupId>
+    <artifactId>retry-service</artifactId>
     <version>0.0.1</version>
   </dependency>
 </dependencies>

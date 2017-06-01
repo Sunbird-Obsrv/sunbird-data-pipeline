@@ -20,16 +20,12 @@ import java.util.Map;
 
 public class DeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
     static Logger LOGGER = new Logger(DeNormalizationTask.class);
-    private static final String RETRY_BACKOFF_BASE_DEFAULT = "10";
-    private static final String RETRY_BACKOFF_LIMIT_DEFAULT = "4";
     private String successTopic;
-    private String failedTopic;
     private KeyValueStore<String, Child> childData;
     private String retryTopic;
 
     private Counter messageCount;
     private int retryBackoffBase;
-    private int retryBackoffLimit;
     private KeyValueStore<String, Object> retryStore;
     private String userServiceEndpoint;
     private UserService userService;
@@ -38,12 +34,10 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     @Override
     public void init(Config config, TaskContext context) throws Exception {
         successTopic = config.get("output.success.topic.name", "events_with_de_normalization");
-        failedTopic = config.get("output.failed.topic.name", "events_failed_de_normalization");
         retryTopic = config.get("output.retry.topic.name", "events_retry");
         childData = (KeyValueStore<String, Child>) context.getStore("de-normalization");
         userServiceEndpoint = config.get("user.service.endpoint");
         retryBackoffBase = Integer.parseInt(config.get("retry.backoff.base"));
-        retryBackoffLimit = Integer.parseInt(config.get("retry.backoff.limit"));
         messageCount = context
                 .getMetricsRegistry()
                 .newCounter(getClass().getName(), "message-count");
@@ -58,7 +52,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
         Event event = null;
         try {
             Map<String, Object> message = (Map<String, Object>) envelope.getMessage();
-            event = new Event(message, childData, backendEvents);
+            event = new Event(message, childData, backendEvents, retryBackoffBase, retryStore);
             processEvent(collector, event, userService);
             messageCount.inc();
         } catch (Exception e) {
@@ -72,13 +66,10 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     }
 
     void processEvent(MessageCollector collector, Event event, UserService userService) {
-        event.initialize(retryBackoffBase, retryBackoffLimit, retryStore);
-        LOGGER.info(event.id(), " EVENT: {}", event.getMap());
-        if(event.isBackendEvent()){
-            event.setBackendTrue();
-        }
-        if(event.canBeProcessed()) {
-            if (!event.isSkipped()) {
+        event.initialize();
+        LOGGER.info(event.id(), " EVENT: {}", event.getData());
+        if (event.canBeProcessed()) {
+            if (!event.shouldBackoff()) {
                 LOGGER.info(event.id(), "PROCESS");
                 event.process(userService, DateTime.now());
             } else {
@@ -86,12 +77,10 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
                 event.addLastSkippedAt(DateTime.now());
             }
         }
-
         populateTopic(collector, event);
     }
 
     private void populateTopic(MessageCollector collector, Event event) {
-
         boolean childDataNotProcessed = event.canBeProcessed() && !event.isProcessed();
         boolean hadProblemWithDb = event.hadIssueWithDb();
         if (childDataNotProcessed || hadProblemWithDb)

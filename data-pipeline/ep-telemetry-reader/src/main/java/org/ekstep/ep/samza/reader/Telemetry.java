@@ -2,101 +2,98 @@ package org.ekstep.ep.samza.reader;
 
 
 import org.ekstep.ep.samza.logger.Logger;
-
 import java.util.HashMap;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
+import java.util.TimeZone;
 
 import static java.text.MessageFormat.format;
 
 public class Telemetry {
-  private Map<String, Object> map;
-  private Logger logger = new Logger(this.getClass());
+    private Map<String, Object> map;
+    private Logger logger = new Logger(this.getClass());
 
-  public Telemetry(Map<String, Object> map){
-    this.map = map;
-  }
-
-  public boolean add(String nestedKeys, Object value){
-    try {
-      NestedMap nestedMap = getNestedMap(map, nestedKeys);
-      nestedMap.add(value);
-      return true;
-    } catch (Exception e) {
-      logger.error("",format("Couldn't add value:{0} at  key: {0} for event:{1}",value,nestedKeys,map),e);
-    }
-    return false;
-  }
-
-  public Map<String, Object> getMap(){
-    return map;
-  }
-
-  public <T> NullableValue<T> read(String nestedKey) {
-    try {
-      NestedMap nestedMap = getNestedMap(map, nestedKey);
-      return new NullableValue<T>(nestedMap.<T>getValue());
-    } catch (Exception e) {
-      logger.error("",format("Couldn't get key: {0} from event:{1}",nestedKey,map),e);
-      return new NullableValue<T>(null);
-    }
-  }
-
-  private NestedMap getNestedMap(Map<String, Object> map, String nestedKeys){
-    Map<String, Object> parentMap = map;
-    String[] keys = nestedKeys.split("\\.");
-    int lastIndex = keys.length - 1;
-    if (keys.length > 1){
-      for(int i = 0; i < lastIndex && parentMap != null; i++)
-        parentMap = new NestedMap(parentMap,keys[i]).getValue();
-    }
-    String lastKey = keys[lastIndex];
-    return new NestedMap(parentMap,lastKey);
-  }
-
-  @Override
-  public String toString() {
-    return map.toString();
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    Telemetry telemetry = (Telemetry) o;
-
-    return map != null ? map.equals(telemetry.map) : telemetry.map == null;
-  }
-
-  @Override
-  public int hashCode() {
-    return map != null ? map.hashCode() : 0;
-  }
-
-  public <T> void addFieldIfAbsent(String fieldName, T value) {
-      if (read(fieldName).isNull()) {
-          add(fieldName, value);
-      }
-  }
-
-  class NestedMap {
-    Map<String, Object> nestedMap;
-    String nestedKey;
-
-    NestedMap(Map<String, Object> nestedMap, String nestedKey) {
-      this.nestedMap = nestedMap;
-      this.nestedKey = nestedKey;
+    public Telemetry(Map<String, Object> map) {
+        this.map = map;
     }
 
-    <T> T getValue() {
-      if(nestedMap!=null && nestedMap.containsKey(nestedKey) && nestedMap.get(nestedKey) != null)
-        return (T)nestedMap.get(nestedKey);
-      return null;
+    public boolean add(String keyPath, Object value) {
+        try {
+            ParentMap lastParent = lastParentMap(map, keyPath);
+            lastParent.addChild(value);
+            return true;
+        } catch (Exception e) {
+            logger.error("", format("Couldn't add value:{0} at  key: {0} for event:{1}", value, keyPath, map), e);
+        }
+        return false;
     }
 
-    void add(Object value){
-      if (nestedMap !=null)
-        nestedMap.put(nestedKey,value);
+    public Map<String, Object> getMap() {
+        return map;
     }
-  }
+
+    public <T> NullableValue<T> read(String keyPath) {
+        try {
+            ParentMap parentMap = lastParentMap(map, keyPath);
+            return new NullableValue<T>(parentMap.<T>readChild());
+        } catch (Exception e) {
+            logger.error("", format("Couldn't get key: {0} from event:{1}", keyPath, map), e);
+            return new NullableValue<T>(null);
+        }
+    }
+
+    private ParentMap lastParentMap(Map<String, Object> map, String keyPath) {
+        Map<String, Object> parentMap = map;
+        String[] keys = keyPath.split("\\.");
+        int lastIndex = keys.length - 1;
+        if (keys.length > 1) {
+            for (int i = 0; i < lastIndex && parentMap != null; i++)
+                parentMap = new ParentMap(parentMap, keys[i]).readChild();
+        }
+        String lastKeyInPath = keys[lastIndex];
+        return new ParentMap(parentMap, lastKeyInPath);
+    }
+
+    @Override
+    public String toString() {
+        return map.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Telemetry telemetry = (Telemetry) o;
+
+        return map != null ? map.equals(telemetry.map) : telemetry.map == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return map != null ? map.hashCode() : 0;
+    }
+
+    public String getUID() {
+        return this.<String>read("uid").value();
+    }
+
+    public String id() {
+        return this.<String>read("metadata.checksum").value();
+    }
+
+    public Date getTime() throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        String ts = this.<String>read("ts").value();
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("IST"));
+        return simpleDateFormat.parse(ts);
+    }
+
+    public <T> void addFieldIfAbsent(String fieldName, T value) {
+        if (read(fieldName).isNull()) {
+            add(fieldName, value);
+        }
+    }
 }

@@ -3,7 +3,7 @@ package org.ekstep.ep.samza.chooser;
 import org.apache.samza.Partition;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.SystemStreamPartition;
-import org.ekstep.ep.samza.fixtures.EventFixture;
+import org.ekstep.ep.samza.fixture.EventFixture;
 import org.ekstep.ep.samza.util.TimeProvider;
 import org.joda.time.DateTime;
 import org.junit.Before;
