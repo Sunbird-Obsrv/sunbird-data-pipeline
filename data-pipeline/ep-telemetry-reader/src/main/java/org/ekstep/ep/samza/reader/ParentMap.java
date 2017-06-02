@@ -1,8 +1,11 @@
 package org.ekstep.ep.samza.reader;
 
+import org.ekstep.ep.samza.logger.Logger;
+
 import java.util.Map;
 
-class ParentMap {
+class ParentMap implements ParentType {
+    static Logger LOGGER = new Logger(ParentMap.class);
     Map<String, Object> map;
     String childKey;
 
@@ -11,13 +14,17 @@ class ParentMap {
         this.childKey = childKey;
     }
 
-    <T> T readChild() {
-        if (map != null && map.containsKey(childKey) && map.get(childKey) != null)
-            return (T) map.get(childKey);
+    @Override
+    public <T> T readChild() {
+        if (map != null && map.containsKey(childKey) && map.get(childKey) != null) {
+            Object child = map.get(childKey);
+            return (T) child;
+        }
         return null;
     }
 
-    void addChild(Object value) {
+    @Override
+    public void addChild(Object value) {
         if (map != null)
             map.put(childKey, value);
     }

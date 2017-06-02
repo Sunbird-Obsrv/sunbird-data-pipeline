@@ -58,7 +58,7 @@ public class ObjectDeNormalizationService {
                                 format("ERROR WHEN GETTING OBJECT DATA. EVENT: {0}, RESPONSE: {1}",
                                         event, getObjectResponse));
                         processingFailed = true;
-                        event.markFailed(getObjectResponse.params());
+                        event.markFailed(getObjectResponse.params().get("err"), getObjectResponse.params().get("errmsg"));
                     } else {
                         event.markProcessed();
                         event.update(
@@ -75,6 +75,7 @@ public class ObjectDeNormalizationService {
             }
         } catch (Exception e) {
             LOGGER.error(event.id(), "EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO FAILED TOPIC. EVENT: " + event, e);
+            event.markFailed(e.getMessage(), "");
             sink.toSuccessTopic(event);
             sink.toFailedTopic(event);
             e.printStackTrace();
@@ -82,7 +83,6 @@ public class ObjectDeNormalizationService {
     }
 
     private HashMap<String, Object> getDenormalizedData(Event event, Map<String, Object> result) {
-
         HashMap<String, Object> denormalizedData = new HashMap<String, Object>();
 
         for (String field : fieldsToDenormalize) {

@@ -23,6 +23,23 @@ public class EventFixture {
                     "    \"uid\": \"111\"\n" +
                     "  }";
 
+    private static final String CP_INTERACT_EVENT_FOR_PARTNER_JSON =
+            "{\n" +
+                    "  \"eid\": \"CP_INTERACT\",\n" +
+                    "  \"uid\": \"111\",\n" +
+                    "  \"tags\": [\n" +
+                    "    {\n" +
+                    "      \"partnerid\": [\n" +
+                    "        \"org.ekstep.partner.partner1\"\n" +
+                    "      ]\n" +
+                    "    },\n" +
+                    "    {\n" +
+                    "      \"genie\": []\n" +
+                    "    },\n" +
+                    "    \"piwik_json\"\n" +
+                    "  ]\n" +
+                    "}";
+
     private static final String DENORMALIZED_CP_INTERACT_EVENT_JSON =
             "{\n" +
                     "  \"eid\": \"CP_INTERACT\",\n" +
@@ -62,6 +79,21 @@ public class EventFixture {
                     "  }\n" +
                     "}";
 
+    private static final String DENORMALIZED_CP_INTERACT_EVENT_FOR_PARTNER_JSON =
+            "{\n" +
+                    "  \"eid\": \"CP_INTERACT\",\n" +
+                    "  \"uid\": \"111\",\n" +
+                    "  \"partnerdata\": {\n" +
+                    "    \"id\": \"org.ekstep.partner.partner1\",\n" +
+                    "    \"type\": \"Partner\",\n" +
+                    "    \"subtype\": \"\",\n" +
+                    "    \"parentid\": \"\",\n" +
+                    "    \"parenttype\": \"\",\n" +
+                    "    \"code\": \"\",\n" +
+                    "    \"name\": \"Partner 1\"\n" +
+                    "  }\n" +
+                    "}";
+
 
     public static Map<String, Object> event() {
         return new Gson().fromJson(SKIP_EVENT_JSON, new TypeToken<Map<String, Object>>() {
@@ -73,8 +105,18 @@ public class EventFixture {
         }.getType());
     }
 
+    public static Map<String, Object> cpInteractEventForPartner() {
+        return new Gson().fromJson(CP_INTERACT_EVENT_FOR_PARTNER_JSON, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
+
     public static Map<String, Object> denormalizedCpInteractEvent() {
         return new Gson().fromJson(DENORMALIZED_CP_INTERACT_EVENT_JSON, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
+
+    public static Map<String, Object> denormalizedCpInteractEventForParther() {
+        return new Gson().fromJson(DENORMALIZED_CP_INTERACT_EVENT_FOR_PARTNER_JSON, new TypeToken<Map<String, Object>>() {
         }.getType());
     }
 

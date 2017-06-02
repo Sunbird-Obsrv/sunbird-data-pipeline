@@ -2,7 +2,6 @@ package org.ekstep.ep.samza.fixture;
 
 import com.google.gson.Gson;
 import org.ekstep.ep.samza.object.dto.GetObjectResponse;
-import org.ekstep.ep.samza.object.dto.SaveObjectResponse;
 
 import java.util.Map;
 
@@ -41,6 +40,32 @@ public class GetObjectFixture {
             "         \"details\": \"{\\\"name\\\":\\\"User 111\\\",\\\"email\\\":\\\"user@ekstep.in\\\",\\\"access\\\":[{\\\"id\\\":\\\"2\\\",\\\"value\\\":\\\"Registered\\\"}],\\\"partners\\\":[],\\\"profile\\\":[]}\" " +
             "   }  \n" +
             "}";
+
+    private static final String PARTNER_OBJECT_RESPONSE_JSON =
+            "{\n" +
+                    " \n" +
+                    "  \"id\": \"ekstep.object-service.read\",\n" +
+                    "   \"ver\": \"1.0\",\n" +
+                    "   \"ts\": \"\",\n" +
+                    "   \"params\": {\n" +
+                    "       \"resmsgid\": \"054f3b10-309f-4552-ae11-02c66640967b\",\n" +
+                    "       \"msgid\": \"ff305d54-85b4-341b-da2f-eb6b9e5460fa\",\n" +
+                    "       \"status\": \"successful\",\n" +
+                    "       \"err\": \"\",\n" +
+                    "       \"errmsg\": \"\"\n" +
+                    "   \n" +
+                    "   },\n" +
+                    "   \"result\": {\n" +
+                    "         \"id\": \"org.ekstep.partner.partner1\",\n" +
+                    "         \"type\": \"Partner\", \n" +
+                    "         \"subtype\": \"\", \n" +
+                    "         \"parentid\": \"\", \n" +
+                    "         \"parenttype\": \"\", \n" +
+                    "         \"code\": \"\", \n" +
+                    "         \"name\": \"Partner 1\", \n" +
+                    "         \"details\": null \n" +
+                    "   }  \n" +
+                    "}";
 
     private static final String OBJECT_RESPONSE_JSON_WITH_MALFORMED_DETAILS = "{\n" + " " +
             "  \"id\": \"ekstep.object-service.read\",\n" +
@@ -107,6 +132,10 @@ public class GetObjectFixture {
 
     public static GetObjectResponse getObjectSuccessResponse() {
         return new Gson().fromJson(OBJECT_RESPONSE_JSON, GetObjectResponse.class);
+    }
+
+    public static GetObjectResponse getPartnerObjectSuccessResponse() {
+        return new Gson().fromJson(PARTNER_OBJECT_RESPONSE_JSON, GetObjectResponse.class);
     }
 
     public static GetObjectResponse getObjectSuccessResponseWithMalformedDetails() {

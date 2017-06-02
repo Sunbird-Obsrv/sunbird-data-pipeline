@@ -7,6 +7,10 @@
         {
           "idFieldPath": "uid",
           "denormalizedFieldPath": "portaluserdata"
+        },
+        {
+          "idFieldPath": "tags.partnerid",
+          "denormalizedFieldPath": "partnerdata"
         }
       ]
     }

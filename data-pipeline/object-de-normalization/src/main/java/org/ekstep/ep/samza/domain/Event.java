@@ -70,13 +70,13 @@ public class Event {
         telemetry.add("flags.od_processed", true);
     }
 
-    public void markFailed(Map<String, Object> params) {
+    public void markFailed(Object err, Object errmsg) {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.od_failed", true);
 
         telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
-        telemetry.add("metadata.od_err", params.get("err"));
-        telemetry.add("metadata.od_errmsg", params.get("errmsg"));
+        telemetry.add("metadata.od_err", err);
+        telemetry.add("metadata.od_errmsg", errmsg);
     }
 
 }

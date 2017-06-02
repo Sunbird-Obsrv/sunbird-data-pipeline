@@ -134,6 +134,24 @@ public class ObjectDeNormalizationServiceTest {
         verify(objectService).get("111");
     }
 
+    @Test
+    public void shouldDenormalizePartnerData() throws Exception {
+        additionalConfig = new ObjectDenormalizationAdditionalConfig(
+                asList(new EventDenormalizationConfig("Partner data", "C[PE]\\_.*",
+                        asList(new DataDenormalizationConfig("tags.partnerid", "partnerdata")))));
+        Event event = new Event(new Telemetry(EventFixture.cpInteractEventForPartner()));
+        when(config.fieldsToDenormalize()).thenReturn(asList("id", "type", "subtype", "parentid", "parenttype", "code", "name"));
+        when(source.getEvent()).thenReturn(event);
+        when(objectService.get("org.ekstep.partner.partner1")).thenReturn(GetObjectFixture.getPartnerObjectSuccessResponse());
+
+        denormalizationService = new ObjectDeNormalizationService(config, additionalConfig, objectService);
+        denormalizationService.process(source, sink);
+
+        Event expectedEvent = new Event(new Telemetry(EventFixture.denormalizedCpInteractEventForParther()));
+        verify(sink).toSuccessTopic(argThat(validateEvent(expectedEvent)));
+        verify(objectService).get("org.ekstep.partner.partner1");
+    }
+
     private ArgumentMatcher<Event> validateEvent(final Event expectedEvent) {
         return new ArgumentMatcher<Event>() {
             @Override

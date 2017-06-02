@@ -2,10 +2,11 @@ package org.ekstep.ep.samza.reader;
 
 
 import org.ekstep.ep.samza.logger.Logger;
-import java.util.HashMap;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -21,7 +22,7 @@ public class Telemetry {
 
     public boolean add(String keyPath, Object value) {
         try {
-            ParentMap lastParent = lastParentMap(map, keyPath);
+            ParentType lastParent = lastParentMap(map, keyPath);
             lastParent.addChild(value);
             return true;
         } catch (Exception e) {
@@ -36,7 +37,7 @@ public class Telemetry {
 
     public <T> NullableValue<T> read(String keyPath) {
         try {
-            ParentMap parentMap = lastParentMap(map, keyPath);
+            ParentType parentMap = lastParentMap(map, keyPath);
             return new NullableValue<T>(parentMap.<T>readChild());
         } catch (Exception e) {
             logger.error("", format("Couldn't get key: {0} from event:{1}", keyPath, map), e);
@@ -44,16 +45,27 @@ public class Telemetry {
         }
     }
 
-    private ParentMap lastParentMap(Map<String, Object> map, String keyPath) {
-        Map<String, Object> parentMap = map;
+    private ParentType lastParentMap(Map<String, Object> map, String keyPath) {
+        Object parent = map;
         String[] keys = keyPath.split("\\.");
         int lastIndex = keys.length - 1;
         if (keys.length > 1) {
-            for (int i = 0; i < lastIndex && parentMap != null; i++)
-                parentMap = new ParentMap(parentMap, keys[i]).readChild();
+            for (int i = 0; i < lastIndex && parent != null; i++) {
+                Object o;
+                if (parent instanceof Map) {
+                    o = new ParentMap((Map<String, Object>) parent, keys[i]).readChild();
+                } else {
+                    o = new ParentListOfMap((List<Map<String, Object>>) parent, keys[i]).readChild();
+                }
+                parent = o;
+            }
         }
         String lastKeyInPath = keys[lastIndex];
-        return new ParentMap(parentMap, lastKeyInPath);
+        if (parent instanceof Map) {
+            return new ParentMap((Map<String, Object>) parent, lastKeyInPath);
+        } else {
+            return new ParentListOfMap((List<Map<String, Object>>) parent, lastKeyInPath);
+        }
     }
 
     @Override
