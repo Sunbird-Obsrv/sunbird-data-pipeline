@@ -4,6 +4,7 @@ import okhttp3.OkHttpClient;
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.task.*;
+import org.ekstep.ep.samza.config.ObjectDeNormalizationConfig;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.metrics.JobMetrics;
 import org.ekstep.ep.samza.object.service.ObjectService;
@@ -29,7 +30,7 @@ public class ObjectDeNormalizationTask implements StreamTask, InitableTask, Wind
     }
 
     private void init(Config config, TaskContext context, ObjectService objectService) {
-        this.config = new ObjectDeNormalizationConfig(config);
+        this.config = new ObjectDeNormalizationConfig(config,context);
         metrics = new JobMetrics(context);
 
         String objectServiceEndpoint = this.config.objectServiceEndPoint();

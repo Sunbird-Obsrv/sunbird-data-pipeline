@@ -134,6 +134,21 @@
             <artifactId>ep-telemetry-reader</artifactId>
             <version>0.0.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem</groupId>
+            <artifactId>retry-service</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.samza</groupId>
+            <artifactId>samza-kv_2.10</artifactId>
+            <version>${samza.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.samza</groupId>
+            <artifactId>samza-kv-rocksdb_2.10</artifactId>
+            <version>${samza.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

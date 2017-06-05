@@ -114,7 +114,7 @@ public class DenormalizationTaskTest {
     @Test
     public void ShouldSendOutputToReTryTopicIfUIDIsNotPresentInDb() throws Exception {
         stub(eventMock.canBeProcessed()).toReturn(true);
-        stub(eventMock.isProcessed()).toReturn(false);
+        stub(eventMock.shouldPutInRetry()).toReturn(true);
 
         HashMap<String, Object> message = new HashMap<String, Object>();
         stub(eventMock.getData()).toReturn(message);
@@ -127,10 +127,12 @@ public class DenormalizationTaskTest {
         validateStreams(argument, message, new String[]{RETRY_TOPIC});
     }
 
+    //TODO: needs to revisit. Still applicable : GAURAV
     @Test
     public void ShouldSendOutputToRetryTopicWhenProblemWithDb() throws Exception {
-        stub(eventMock.isProcessed()).toReturn(false);
-        stub(eventMock.hadIssueWithDb()).toReturn(true);
+        stub(eventMock.shouldPutInRetry()).toReturn(true);
+//        stub(eventMock.hadIssueWithDb()).toReturn(true);
+        stub(eventMock.shouldPutInRetry()).toReturn(true);
 
         HashMap<String, Object> message = new HashMap<String, Object>();
         stub(eventMock.getData()).toReturn(message);
@@ -145,7 +147,7 @@ public class DenormalizationTaskTest {
 
     @Test
     public void ShouldSendOutputToSuccessTopic() throws Exception {
-        stub(eventMock.isProcessed()).toReturn(true);
+        stub(eventMock.shouldPutInRetry()).toReturn(false);
         HashMap<String, Object> message = new HashMap<String, Object>();
         stub(eventMock.getData()).toReturn(message);
         deNormalizationTask.init(configMock, contextMock);
@@ -164,7 +166,7 @@ public class DenormalizationTaskTest {
 
     @Test
     public void ShouldTryIfBackingOff() throws Exception {
-        stub(eventMock.isProcessed()).toReturn(true);
+        stub(eventMock.shouldPutInRetry()).toReturn(false);
         HashMap<String, Object> message = new HashMap<String, Object>();
         stub(eventMock.getData()).toReturn(message);
         deNormalizationTask.init(configMock, contextMock);
@@ -179,18 +181,21 @@ public class DenormalizationTaskTest {
         stub(eventMock.canBeProcessed()).toReturn(true);
         stub(eventMock.getData()).toReturn(message);
         stub(eventMock.shouldBackoff()).toReturn(true);
+        stub(eventMock.shouldPutInRetry()).toReturn(true);
         deNormalizationTask.init(configMock, contextMock);
         deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);
         verify(collectorMock).send(argThat(validateOutputTopic(message, RETRY_TOPIC)));
         verify(eventMock, times(1)).addLastSkippedAt(any(DateTime.class));
     }
 
+    //TODO: needs to be revisited. Test intent not clear : GAURAV
     @Test
     public void ShouldAddBackendEventTypeIfEventBelongToAnyOfTheBackendEvents() throws Exception {
         HashMap<String, Object> message = new HashMap<String, Object>();
         stub(eventMock.canBeProcessed()).toReturn(true);
         stub(eventMock.getData()).toReturn(message);
         stub(eventMock.shouldBackoff()).toReturn(false);
+        stub(eventMock.shouldPutInRetry()).toReturn(true);
 //        stub(eventMock.isBackendEvent()).toReturn(true);
         deNormalizationTask.init(configMock, contextMock);
         deNormalizationTask.processEvent(collectorMock, eventMock, userServiceMock);

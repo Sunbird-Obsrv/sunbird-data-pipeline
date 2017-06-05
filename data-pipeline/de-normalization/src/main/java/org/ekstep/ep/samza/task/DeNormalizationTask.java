@@ -81,9 +81,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     }
 
     private void populateTopic(MessageCollector collector, Event event) {
-        boolean childDataNotProcessed = event.canBeProcessed() && !event.isProcessed();
-        boolean hadProblemWithDb = event.hadIssueWithDb();
-        if (childDataNotProcessed || hadProblemWithDb)
+        if (event.shouldPutInRetry())
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", retryTopic), event.getData()));
         else
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getData()));

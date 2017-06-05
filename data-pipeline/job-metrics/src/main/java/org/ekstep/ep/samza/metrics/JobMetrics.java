@@ -7,6 +7,7 @@ import org.apache.samza.task.TaskContext;
 public class JobMetrics {
     private final Counter successMessageCount;
     private final Counter failedMessageCount;
+    private final Counter retryMessageCount;
     private final Counter skippedMessageCount;
     private final Counter cacheHitCount;
     private final Counter cacheMissCount;
@@ -16,6 +17,7 @@ public class JobMetrics {
         MetricsRegistry metricsRegistry = context.getMetricsRegistry();
         successMessageCount = metricsRegistry.newCounter(getClass().getName(), "success-message-count");
         failedMessageCount = metricsRegistry.newCounter(getClass().getName(), "failed-message-count");
+        retryMessageCount = metricsRegistry.newCounter(getClass().getName(), "retry-message-count");
         skippedMessageCount = metricsRegistry.newCounter(getClass().getName(), "skipped-message-count");
         cacheHitCount = metricsRegistry.newCounter(getClass().getName(), "cache-hit-count");
         cacheMissCount = metricsRegistry.newCounter(getClass().getName(), "cache-miss-count");
@@ -36,6 +38,10 @@ public class JobMetrics {
 
     public void incFailedCounter() {
         failedMessageCount.inc();
+    }
+
+    public void incRetryCounter(){
+        retryMessageCount.inc();
     }
 
     public void incSkippedCounter() {

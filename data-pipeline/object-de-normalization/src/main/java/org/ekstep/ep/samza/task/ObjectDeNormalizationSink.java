@@ -3,9 +3,9 @@ package org.ekstep.ep.samza.task;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
+import org.ekstep.ep.samza.config.ObjectDeNormalizationConfig;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.metrics.JobMetrics;
-import org.ekstep.ep.samza.service.ObjectDeNormalizationService;
 
 public class ObjectDeNormalizationSink {
     private MessageCollector collector;
@@ -30,5 +30,12 @@ public class ObjectDeNormalizationSink {
                 new SystemStream("kafka", config.failedTopic()), event.map()));
         metrics.incFailedCounter();
     }
+
+    public void toRetryTopic(Event event) {
+        collector.send(new OutgoingMessageEnvelope(
+                new SystemStream("kafka", config.retryTopic()), event.map()));
+        metrics.incRetryCounter();
+    }
+
 
 }

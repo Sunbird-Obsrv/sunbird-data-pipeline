@@ -11,9 +11,10 @@ import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.object.dto.GetObjectResponse;
 import org.ekstep.ep.samza.object.service.ObjectService;
 import org.ekstep.ep.samza.reader.NullableValue;
-import org.ekstep.ep.samza.task.ObjectDeNormalizationConfig;
+import org.ekstep.ep.samza.config.ObjectDeNormalizationConfig;
 import org.ekstep.ep.samza.task.ObjectDeNormalizationSink;
 import org.ekstep.ep.samza.task.ObjectDeNormalizationSource;
+import org.joda.time.DateTime;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,7 @@ import static java.text.MessageFormat.format;
 public class ObjectDeNormalizationService {
     static Logger LOGGER = new Logger(ObjectDeNormalizationService.class);
     private final List<String> fieldsToDenormalize;
+    private ObjectDeNormalizationConfig config;
     private final ObjectDenormalizationAdditionalConfig additionalConfig;
     private final ObjectService objectService;
     private Gson gson = new Gson();
@@ -31,22 +33,22 @@ public class ObjectDeNormalizationService {
     public ObjectDeNormalizationService(ObjectDeNormalizationConfig config,
                                         ObjectDenormalizationAdditionalConfig additionalConfig,
                                         ObjectService objectService) {
+        this.config = config;
         this.additionalConfig = additionalConfig;
         this.objectService = objectService;
         this.fieldsToDenormalize = config.fieldsToDenormalize();
     }
 
     public void process(ObjectDeNormalizationSource source, ObjectDeNormalizationSink sink) {
-        Event event = source.getEvent();
-
+        Event event = source.getEvent(config);
         try {
-            boolean processingFailed = false;
-            for (EventDenormalizationConfig config : additionalConfig.eventConfigs()) {
-                if (!config.eidCompiledPattern().matcher(event.eid()).matches()) {
-                    event.markSkipped();
-                    continue;
-                }
-
+            if(event.shouldBackOff()){
+                event.addLastSkippedAt(DateTime.now());
+                sink.toRetryTopic(event);
+                return;
+            }
+            List<EventDenormalizationConfig> eventConfigs = additionalConfig.filter(event);
+            for (EventDenormalizationConfig config : eventConfigs) {
                 for (DataDenormalizationConfig dataDenormalizationConfig : config.denormalizationConfigs()) {
                     NullableValue<String> objectId = event.read(dataDenormalizationConfig.idFieldPath());
                     if (objectId.isNull()) {
@@ -57,8 +59,7 @@ public class ObjectDeNormalizationService {
                         LOGGER.error(event.id(),
                                 format("ERROR WHEN GETTING OBJECT DATA. EVENT: {0}, RESPONSE: {1}",
                                         event, getObjectResponse));
-                        processingFailed = true;
-                        event.markFailed(getObjectResponse.params().get("err"), getObjectResponse.params().get("errmsg"));
+                        event.markRetry(getObjectResponse.params().get("err"), getObjectResponse.params().get("errmsg"));
                     } else {
                         event.markProcessed();
                         event.update(
@@ -67,15 +68,10 @@ public class ObjectDeNormalizationService {
                     }
                 }
             }
-
-            LOGGER.info(event.id(), "PASSING EVENT THROUGH");
-            sink.toSuccessTopic(event);
-            if (processingFailed) {
-                sink.toFailedTopic(event);
-            }
+            event.flowIn(sink);
         } catch (Exception e) {
             LOGGER.error(event.id(), "EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO FAILED TOPIC. EVENT: " + event, e);
-            event.markFailed(e.getMessage(), "");
+//            event.markRetry(e.getMessage(), "");
             sink.toSuccessTopic(event);
             sink.toFailedTopic(event);
             e.printStackTrace();

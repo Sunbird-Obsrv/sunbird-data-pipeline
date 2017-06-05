@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.task;
 
 import org.apache.samza.system.IncomingMessageEnvelope;
+import org.ekstep.ep.samza.config.ObjectDeNormalizationConfig;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.reader.Telemetry;
 
@@ -14,8 +15,8 @@ public class ObjectDeNormalizationSource {
         this.envelope = envelope;
     }
 
-    public Event getEvent() {
-        return new Event(new Telemetry((Map<String, Object>) envelope.getMessage()));
+    public Event getEvent(ObjectDeNormalizationConfig config) {
+        return new Event(new Telemetry((Map<String, Object>) envelope.getMessage()),config);
     }
 
     public Telemetry getTelemetryEvent() {

@@ -59,7 +59,8 @@ public class Event {
             hadIssueWithDb = true;
             LOGGER.error(telemetry.id(), String.format("{0} ERROR WHEN GETTING CHILD #{1}", TAG, this.getData()), e);
         } finally {
-            retryData.addMetadata(now);
+            if(canBeProcessed)
+                retryData.addMetadata(now);
         }
     }
 
@@ -67,20 +68,17 @@ public class Event {
         return telemetry.getMap();
     }
 
-    public boolean isProcessed() {
-        return canBeProcessed && childData.isProcessed();
-    }
-
     public boolean canBeProcessed() {
         return canBeProcessed && !backendData.isBackendEvent();
     }
 
-    public boolean hadIssueWithDb() {
-        return hadIssueWithDb;
-    }
-
     public boolean shouldBackoff() {
         return retryData.shouldBackOff();
+    }
+
+    public boolean shouldPutInRetry(){
+        boolean childDataNotProcessed = canBeProcessed() && !childData.isProcessed();
+        return hadIssueWithDb || childDataNotProcessed;
     }
 
     public void addLastSkippedAt(DateTime currentTime) {

@@ -18,8 +18,17 @@ public class RetryData {
     private int retryBackoffBase;
     private static final int RETRY_BACKOFF_BASE_DEFAULT = 10;
     static Logger LOGGER = new Logger(RetryData.class);
+    private int maxAttempts;
+    private Boolean enableMaxAttempts;
+    private boolean maxAttemptReached = false;
 
     public RetryData(Telemetry telemetry, KeyValueStore<String, Object> retryStore, int retryBackoffBase) {
+        this(telemetry,retryStore,retryBackoffBase,0,false);
+    }
+
+    public RetryData(Telemetry telemetry, KeyValueStore<String, Object> retryStore, int retryBackoffBase, int maxAttempts, Boolean enableMaxAttempts) {
+        this.maxAttempts = maxAttempts;
+        this.enableMaxAttempts = enableMaxAttempts;
         if (retryBackoffBase == 0)
             retryBackoffBase = RETRY_BACKOFF_BASE_DEFAULT;
         this.telemetry = telemetry;
@@ -42,7 +51,7 @@ public class RetryData {
             setLastProcessedAt(currentTime);
             setLastProcessedCount(1);
         }
-        LOGGER.info(telemetry.id(), "METADATA - ADDED " + metadata);
+        LOGGER.info(this.telemetry.id(), "METADATA - ADDED " + metadata);
     }
 
     public void addLastSkippedAt(DateTime currentTime) {
@@ -54,6 +63,12 @@ public class RetryData {
     }
 
     public boolean shouldBackOff() {
+        Integer processedCount = getProcessedCount();
+        if(enableMaxAttempts && processedCount != null && maxAttempts < processedCount) {
+            maxAttemptReached = true;
+            return false;
+
+        }
         LOGGER.info(telemetry.id(), "CHECK - AT " + DateTime.now());
         DateTime nextProcessingTime = getNextProcessingTime(getLastProcessedTime());
         if (nextProcessingTime == null || nextProcessingTime.isBeforeNow()) {
@@ -108,7 +123,9 @@ public class RetryData {
         if (metadata == null) {
             return null;
         } else {
-            Integer processedCount = (Integer) metadata.get("processed_count");
+            Object processed_count_object = metadata.get("processed_count");
+            if(processed_count_object == null) return null;
+            Integer processedCount = (Integer) processed_count_object;
             return processedCount;
         }
     }
@@ -135,6 +152,7 @@ public class RetryData {
 
     private Map<String, Object> getMetadata() {
         String uid = telemetry.getUID();
+        if(uid == null) return null;
         Map retryData = (Map) retryStore.get(uid);
         Telemetry telemetryData = retryData == null ? this.telemetry : new Telemetry(retryData);
         NullableValue<Map<String, Object>> metadata = telemetryData.read("metadata");
@@ -146,4 +164,7 @@ public class RetryData {
         return metadata.value();
     }
 
+    public Boolean maxAttemptReached(){
+        return maxAttemptReached;
+    }
 }

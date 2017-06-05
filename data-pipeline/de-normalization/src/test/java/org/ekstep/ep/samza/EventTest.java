@@ -321,7 +321,7 @@ public class EventTest {
     }
 
     @Test
-    public void ShouldBeAbleToIndicateIfNotAbleToConnectToDatabase() throws IOException {
+    public void ShouldPutInRetryWhenNotAbleToConnectToDatabase() throws IOException {
         map.put("ts", TS);
         map.put("uid", UID);
 
@@ -336,23 +336,27 @@ public class EventTest {
         HashMap<String, Object> actualUdata = (HashMap<String, Object>) data.get("udata");
         assertEquals(UID, data.get("uid"));
         assertEquals(null, actualUdata);
-        assertTrue(event.hadIssueWithDb());
+        assertTrue(event.shouldPutInRetry());
     }
 
     @Test
-    public void ShouldNotBeProcessedIfItDoesNotHaveChildData() {
+    public void ShouldPutInRetryWhenItDoesNotHaveChildData() throws IOException {
         map.put("uid", UID);
+        map.put("ts", TS);
 
         Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Child child = new Child(UID, false, getUdata());
+        stub(userServiceMock.getUserFor(any(Child.class), any(Date.class), any(String.class))).toReturn(child);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
 
-        assertFalse(event.isProcessed());
+        assertTrue(event.shouldPutInRetry());
     }
 
+    //TODO: Needs to be revisited : GAURAV
     @Test
-    public void ShouldBeAbleToProcessIfFlagsDoesNotHaveChildProcessedFlag() throws IOException {
+    public void ShouldPutInRetryWhenFlagsDoesNotHaveChildProcessedFlag() throws IOException {
         HashMap<String, Boolean> flags = new HashMap<String, Boolean>();
         map.put("ts", TS);
         map.put("uid", UID);
@@ -366,7 +370,7 @@ public class EventTest {
         event.initialize();
         event.process(userServiceMock, DateTime.now());
 
-        assertTrue(event.isProcessed());
+        assertFalse(event.shouldPutInRetry());
     }
 
     @Test
