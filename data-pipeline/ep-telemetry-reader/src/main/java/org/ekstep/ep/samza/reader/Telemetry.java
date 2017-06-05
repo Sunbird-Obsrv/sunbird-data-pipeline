@@ -54,8 +54,10 @@ public class Telemetry {
                 Object o;
                 if (parent instanceof Map) {
                     o = new ParentMap((Map<String, Object>) parent, keys[i]).readChild();
-                } else {
+                } else if (parent instanceof List) {
                     o = new ParentListOfMap((List<Map<String, Object>>) parent, keys[i]).readChild();
+                } else {
+                    o = new NullParent(parent, keys[i]).readChild();
                 }
                 parent = o;
             }
@@ -63,8 +65,10 @@ public class Telemetry {
         String lastKeyInPath = keys[lastIndex];
         if (parent instanceof Map) {
             return new ParentMap((Map<String, Object>) parent, lastKeyInPath);
-        } else {
+        } else if (parent instanceof List) {
             return new ParentListOfMap((List<Map<String, Object>>) parent, lastKeyInPath);
+        } else {
+            return new NullParent(parent, lastKeyInPath);
         }
     }
 
