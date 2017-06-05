@@ -85,7 +85,10 @@ public class Event {
     }
 
     private void updateMetadata(boolean processed) {
-        this.processed = processed;
+        if(triedProcessing)
+            this.processed &=  processed;
+        else
+            this.processed = processed;
         triedProcessing = true;
         retryData.addMetadata(DateTime.now());
     }
