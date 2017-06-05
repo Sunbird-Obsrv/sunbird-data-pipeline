@@ -15,6 +15,7 @@ public class Content {
     private String createdBy;
 
     private String author;
+    private String audience;
     private String code;
     private String curriculum;
 
@@ -37,6 +38,7 @@ public class Content {
     private ArrayList<String> createdFor;
 
     private boolean cacheHit;
+
 
     public String name() {
         return name;
@@ -71,6 +73,8 @@ public class Content {
     }
 
     public String author() { return author; }
+
+    public String audience() { return audience; }
 
     public String code() { return code; }
 
@@ -139,10 +143,11 @@ public class Content {
                 ", contentType='" + contentType + '\'' +
                 ", lastUpdatedOn='" + lastUpdatedOn + '\'' +
                 ", duration='" + duration + '\'' +
+                ", createdBy='" + createdBy + '\'' +
                 ", author='" + author + '\'' +
+                ", audience='" + audience + '\'' +
                 ", code='" + code + '\'' +
                 ", curriculum='" + curriculum + '\'' +
-                ", domain='" + domain + '\'' +
                 ", medium='" + medium + '\'' +
                 ", source='" + source + '\'' +
                 ", status='" + status + '\'' +
@@ -156,6 +161,8 @@ public class Content {
                 ", concepts=" + concepts +
                 ", gradeLevel=" + gradeLevel +
                 ", methods=" + methods +
+                ", domain=" + domain +
+                ", createdFor=" + createdFor +
                 ", cacheHit=" + cacheHit +
                 '}';
     }
