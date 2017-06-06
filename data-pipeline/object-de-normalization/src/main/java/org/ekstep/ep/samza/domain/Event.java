@@ -6,8 +6,8 @@ import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.task.ObjectDeNormalizationSink;
+import org.ekstep.ep.samza.util.Flag;
 import org.joda.time.DateTime;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +20,7 @@ public class Event {
 
     public Event(Telemetry telemetry, ObjectDeNormalizationConfig config) {
         this.telemetry = telemetry;
-        retryData = new RetryData(telemetry, config.retryStore(), config.retryBackoffBase(),config.retryBackoffLimit(),config.retryBackoffLimitEnable());
+        retryData = new RetryData(telemetry, config.retryStore(), config.retryBackoffBase(),config.retryBackoffLimit(),config.retryBackoffLimitEnable(), new Flag("od"));
     }
 
     public String id() {

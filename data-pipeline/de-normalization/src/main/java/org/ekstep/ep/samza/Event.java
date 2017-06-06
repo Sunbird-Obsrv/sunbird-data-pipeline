@@ -7,6 +7,7 @@ import org.ekstep.ep.samza.eventData.ChildData;
 import org.ekstep.ep.samza.external.UserService;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.reader.Telemetry;
+import org.ekstep.ep.samza.util.Flag;
 import org.ekstep.ep.samza.validators.IValidator;
 import org.ekstep.ep.samza.validators.ValidatorFactory;
 import org.joda.time.DateTime;
@@ -31,7 +32,7 @@ public class Event {
         this.hadIssueWithDb = false;
         telemetry = new Telemetry(map);
         backendData = new BackendData(telemetry, backendEvents);
-        retryData = new RetryData(telemetry, retryStore, retryBackoffBase);
+        retryData = new RetryData(telemetry, retryStore, retryBackoffBase, new Flag("gud"));
         childData = new ChildData(telemetry, childStore, retryData);
     }
 

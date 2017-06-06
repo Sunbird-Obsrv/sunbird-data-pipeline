@@ -4,6 +4,7 @@ import org.apache.samza.storage.kv.KeyValueStore;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
+import org.ekstep.ep.samza.util.Flag;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -21,12 +22,13 @@ public class RetryData {
     private int maxAttempts;
     private Boolean enableMaxAttempts;
     private boolean maxAttemptReached = false;
+    private Flag flag;
 
-    public RetryData(Telemetry telemetry, KeyValueStore<String, Object> retryStore, int retryBackoffBase) {
-        this(telemetry,retryStore,retryBackoffBase,0,false);
+    public RetryData(Telemetry telemetry, KeyValueStore<String, Object> retryStore, int retryBackoffBase, Flag flag) {
+        this(telemetry,retryStore,retryBackoffBase,0,false,flag);
     }
 
-    public RetryData(Telemetry telemetry, KeyValueStore<String, Object> retryStore, int retryBackoffBase, int maxAttempts, Boolean enableMaxAttempts) {
+    public RetryData(Telemetry telemetry, KeyValueStore<String, Object> retryStore, int retryBackoffBase, int maxAttempts, Boolean enableMaxAttempts, Flag flag) {
         this.maxAttempts = maxAttempts;
         this.enableMaxAttempts = enableMaxAttempts;
         if (retryBackoffBase == 0)
@@ -34,16 +36,17 @@ public class RetryData {
         this.telemetry = telemetry;
         this.retryStore = retryStore;
         this.retryBackoffBase = retryBackoffBase;
+        this.flag = flag;
     }
 
     public void addMetadata(DateTime currentTime) {
         Map<String, Object> metadata = getMetadata();
         if (metadata != null) {
             setLastProcessedAt(currentTime);
-            if (metadata.get("processed_count") == null)
+            if (metadata.get(flag.processedCount()) == null)
                 setLastProcessedCount(1);
             else {
-                Integer count = (((Double) Double.parseDouble(String.valueOf(metadata.get("processed_count")))).intValue());
+                Integer count = (((Double) Double.parseDouble(String.valueOf(metadata.get(flag.processedCount())))).intValue());
                 count = count + 1;
                 setLastProcessedCount(count);
             }
@@ -55,11 +58,10 @@ public class RetryData {
     }
 
     public void addLastSkippedAt(DateTime currentTime) {
-        NullableValue<Map<String, Object>> metadata = telemetry.read("metadata");
-        if (metadata.isNull())
-            telemetry.add("metadata", new HashMap<String, Object>());
-        telemetry.add("metadata.last_skipped_at", currentTime.toString());
-        LOGGER.info(telemetry.id(), "METADATA LAST SKIPPED AT - ADDED " + telemetry.<String>read("metadata"));
+        telemetry.addFieldIfAbsent(flag.metadata(),new HashMap<String,Object>());
+        String lastSkippedAt = String.format("%s.%s", flag.metadata(), flag.lastSkippedAt());
+        telemetry.add(lastSkippedAt, currentTime.toString());
+        LOGGER.info(telemetry.id(), "METADATA LAST SKIPPED AT - ADDED " + telemetry.<String>read(flag.metadata()));
     }
 
     public boolean shouldBackOff() {
@@ -86,10 +88,10 @@ public class RetryData {
     }
 
     public void updateMetadataToStore() {
-        NullableValue<Map<String, Object>> metadata = telemetry.read("metadata");
+        NullableValue<Map<String, Object>> metadata = telemetry.read(flag.metadata());
         if (!metadata.isNull()) {
             Map _map = new HashMap();
-            _map.put("metadata", metadata.value());
+            _map.put(flag.metadata(), metadata.value());
             retryStore.put(telemetry.getUID(), _map);
             LOGGER.info(telemetry.id(), "STORE - UPDATED " + _map + " UID " + telemetry.getUID());
         }
@@ -123,7 +125,7 @@ public class RetryData {
         if (metadata == null) {
             return null;
         } else {
-            Object processed_count_object = metadata.get("processed_count");
+            Object processed_count_object = metadata.get(flag.processedCount());
             if(processed_count_object == null) return null;
             Integer processedCount = (Integer) processed_count_object;
             return processedCount;
@@ -132,17 +134,17 @@ public class RetryData {
 
     private void setLastProcessedAt(DateTime time) {
         Map<String, Object> metadata = getMetadata();
-        metadata.put("last_processed_at", time.toString());
+        metadata.put(flag.lastProcessedAt(), time.toString());
     }
 
     private void setLastProcessedCount(int n) {
         Map<String, Object> metadata = getMetadata();
-        metadata.put("processed_count", n);
+        metadata.put(flag.processedCount(), n);
     }
 
     private DateTime getLastProcessedTime() {
         Map metadata = getMetadata();
-        String lastProcessedAt = (String) metadata.get("last_processed_at");
+        String lastProcessedAt = (String) metadata.get(flag.lastProcessedAt());
         if (lastProcessedAt == null)
             return null;
         DateTimeFormatter formatter = ISODateTimeFormat.dateTime();
@@ -155,10 +157,10 @@ public class RetryData {
         if(uid == null) return null;
         Map retryData = (Map) retryStore.get(uid);
         Telemetry telemetryData = retryData == null ? this.telemetry : new Telemetry(retryData);
-        NullableValue<Map<String, Object>> metadata = telemetryData.read("metadata");
+        NullableValue<Map<String, Object>> metadata = telemetryData.read(flag.metadata());
         if (metadata.isNull()) {
             Map<String, Object> newMetadata = new HashMap<String, Object>();
-            telemetryData.add("metadata", newMetadata);
+            telemetryData.add(flag.metadata(), newMetadata);
             return newMetadata;
         }
         return metadata.value();

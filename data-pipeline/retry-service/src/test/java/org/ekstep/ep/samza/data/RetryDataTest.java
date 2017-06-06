@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.data;
 
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.ekstep.ep.samza.reader.Telemetry;
+import org.ekstep.ep.samza.util.Flag;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +14,8 @@ import static org.junit.Assert.*;
 
 public class RetryDataTest {
 
+    private final String PROCESSED_COUNT_FLAG = "test_processed_count";
+    private final String LAST_PROCESSED_AT_FLAG = "test_last_processed_at";
     private KeyValueStore<String,Object> retryStoreMock;
 
     @Before
@@ -28,7 +31,7 @@ public class RetryDataTest {
         telemetry.put("uid","123");
         metadata.put("processed_count",4);
 
-        RetryData retryData = new RetryData(new Telemetry(telemetry), retryStoreMock, 10, 3, true);
+        RetryData retryData = new RetryData(new Telemetry(telemetry), retryStoreMock, 10, 3, true, new Flag("test"));
 
         assertFalse(retryData.shouldBackOff());
     }
@@ -39,10 +42,10 @@ public class RetryDataTest {
         HashMap<String, Object> metadata = new HashMap<String, Object>();
         telemetry.put("metadata", metadata);
         telemetry.put("uid","123");
-        metadata.put("processed_count",2);
-        metadata.put("last_processed_at", DateTime.now().toString());
+        metadata.put(PROCESSED_COUNT_FLAG,2);
+        metadata.put(LAST_PROCESSED_AT_FLAG, DateTime.now().toString());
 
-        RetryData retryData = new RetryData(new Telemetry(telemetry), retryStoreMock, 10, 3, true);
+        RetryData retryData = new RetryData(new Telemetry(telemetry), retryStoreMock, 10, 3, true, new Flag("test"));
 
         assertTrue(retryData.shouldBackOff());
     }
@@ -53,10 +56,10 @@ public class RetryDataTest {
         HashMap<String, Object> metadata = new HashMap<String, Object>();
         telemetry.put("metadata", metadata);
         telemetry.put("uid","123");
-        metadata.put("processed_count",3);
-        metadata.put("last_processed_at", DateTime.now().minus(20).toString());
+        metadata.put(PROCESSED_COUNT_FLAG,3);
+        metadata.put(LAST_PROCESSED_AT_FLAG, DateTime.now().minus(20).toString());
 
-        RetryData retryData = new RetryData(new Telemetry(telemetry), retryStoreMock, 1, 3, true);
+        RetryData retryData = new RetryData(new Telemetry(telemetry), retryStoreMock, 1, 3, true, new Flag("test"));
 
         assertTrue(retryData.shouldBackOff());
     }
@@ -68,10 +71,10 @@ public class RetryDataTest {
         telemetry.put("metadata", metadata);
         telemetry.put("uid","123");
 
-        metadata.put("processed_count",4);
-        metadata.put("last_processed_at", DateTime.now().toString());
+        metadata.put(PROCESSED_COUNT_FLAG,4);
+        metadata.put(LAST_PROCESSED_AT_FLAG, DateTime.now().toString());
 
-        RetryData retryData = new RetryData(new Telemetry(telemetry), retryStoreMock, 10, 3, false);
+        RetryData retryData = new RetryData(new Telemetry(telemetry), retryStoreMock, 10, 3, false, new Flag("test"));
 
         assertTrue(retryData.shouldBackOff());
     }
@@ -84,10 +87,10 @@ public class RetryDataTest {
         telemetry.put("metadata", metadata);
         telemetry.put("uid","123");
 
-        metadata.put("processed_count",1);
-        metadata.put("last_processed_at", DateTime.now().minus(25).toString());
+        metadata.put(PROCESSED_COUNT_FLAG,1);
+        metadata.put(LAST_PROCESSED_AT_FLAG, DateTime.now().minus(25).toString());
 
-        RetryData retryData = new RetryData(new Telemetry(telemetry), retryStoreMock, 10, 3, false);
+        RetryData retryData = new RetryData(new Telemetry(telemetry), retryStoreMock, 10, 3, false, new Flag("test"));
 
         assertTrue(retryData.shouldBackOff());
     }

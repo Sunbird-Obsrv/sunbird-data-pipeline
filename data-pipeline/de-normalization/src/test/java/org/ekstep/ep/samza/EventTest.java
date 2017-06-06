@@ -27,11 +27,12 @@ public class EventTest {
     public static final String UID = "1234321";
     public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
     public static final String TS = "2008-06-16T00:00:00 +0530";
+    private final String PROCESSED_COUNT_FLAG = "gud_processed_count";
+    private final String LAST_PROCESSED_AT_FLAG = "gud_last_processed_at";
     private KeyValueStore keyValueStoreMock;
     private HashMap<String, Object> map;
     private UserService userServiceMock;
     private int retryBackoffBase;
-    private int retryBackoffLimit;
     private KeyValueStore<String, Object> retryStore;
     private List<String> backendEvents;
 
@@ -384,15 +385,15 @@ public class EventTest {
         event.process(null, DateTime.now());
 
         Map<String, Object> metadata = (Map<String, Object>) event.getData().get("metadata");
-        assertTrue(metadata.containsKey("processed_count"));
-        assertEquals(1, metadata.get("processed_count"));
+        assertTrue(metadata.containsKey(PROCESSED_COUNT_FLAG));
+        assertEquals(1, metadata.get(PROCESSED_COUNT_FLAG));
     }
 
     @Test
     public void ShouldIncrementProcessedTime() throws IOException {
 
         HashMap<String, Object> metadata = new HashMap<String, Object>();
-        metadata.put("processed_count", 1);
+        metadata.put(PROCESSED_COUNT_FLAG, 1);
         map.put("ts", TS);
         map.put("uid", UID);
         map.put("metadata", metadata);
@@ -403,7 +404,7 @@ public class EventTest {
         event.process(null, DateTime.now());
 
         Map<String, Object> meta = (Map<String, Object>) event.getData().get("metadata");
-        assertEquals(2, metadata.get("processed_count"));
+        assertEquals(2, metadata.get(PROCESSED_COUNT_FLAG));
     }
 
     @Test
@@ -493,10 +494,10 @@ public class EventTest {
         Assert.assertEquals(false, event2.shouldBackoff()); //event not skipped
         event2.process(userServiceMock, DateTime.now());
 
-        Assert.assertEquals(4, ((Map) (map.get("metadata"))).get("processed_count"));
-        Assert.assertEquals(DateTime.now().toString(), ((Map) (map.get("metadata"))).get("last_processed_at"));
-        Assert.assertEquals(1, ((Map) (map2.get("metadata"))).get("processed_count"));
-        Assert.assertEquals(DateTime.now().toString(), ((Map) (map2.get("metadata"))).get("last_processed_at"));
+        Assert.assertEquals(4, ((Map) (map.get("metadata"))).get(PROCESSED_COUNT_FLAG));
+        Assert.assertEquals(DateTime.now().toString(), ((Map) (map.get("metadata"))).get(LAST_PROCESSED_AT_FLAG));
+        Assert.assertEquals(1, ((Map) (map2.get("metadata"))).get(PROCESSED_COUNT_FLAG));
+        Assert.assertEquals(DateTime.now().toString(), ((Map) (map2.get("metadata"))).get(LAST_PROCESSED_AT_FLAG));
 
         Assert.assertNull(retryStore.get(UID));
     }
