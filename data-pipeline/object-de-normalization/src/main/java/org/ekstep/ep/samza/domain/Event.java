@@ -103,7 +103,9 @@ public class Event {
 
     public void flowIn(ObjectDeNormalizationSink sink) {
         if(!triedProcessing){
+            LOGGER.info(id(), "EVENT NOT PROCESSED, PASSING THROUGH");
             markSkipped();
+            sink.toSuccessTopic(this);
             return;
         }
         LOGGER.info(id(), "PASSING EVENT THROUGH");

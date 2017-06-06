@@ -71,7 +71,6 @@ public class ObjectDeNormalizationService {
             event.flowIn(sink);
         } catch (Exception e) {
             LOGGER.error(event.id(), "EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO FAILED TOPIC. EVENT: " + event, e);
-//            event.markRetry(e.getMessage(), "");
             sink.toSuccessTopic(event);
             sink.toFailedTopic(event);
             e.printStackTrace();
