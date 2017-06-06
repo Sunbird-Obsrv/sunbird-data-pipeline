@@ -7,9 +7,25 @@
         {
           "idFieldPath": "uid",
           "denormalizedFieldPath": "portaluserdata"
-        },
+        }
+      ]
+    },
+    {
+      "name": "Partner data for ME_CONTENT_SNAPSHOT_SUMMARY",
+      "eidPattern": "ME_CONTENT_SNAPSHOT_SUMMARY",
+      "denormalizationConfigs": [
         {
-          "idFieldPath": "tags.partnerid",
+          "idFieldPath": "dimensions.partner_id",
+          "denormalizedFieldPath": "partnerdata"
+        }
+      ]
+    },
+    {
+      "name": "Partner data for ME_ASSET_SNAPSHOT_SUMMARY",
+      "eidPattern": "ME_ASSET_SNAPSHOT_SUMMARY",
+      "denormalizationConfigs": [
+        {
+          "idFieldPath": "dimensions.partner_id",
           "denormalizedFieldPath": "partnerdata"
         }
       ]
