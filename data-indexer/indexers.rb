@@ -436,6 +436,9 @@ module Indexers
                   "author": {
                     "type": "string"
                   },
+                  "audience": {
+                    "type": "string"
+                  },
                   "code": {
                     "type": "string"
                   },
@@ -744,6 +747,9 @@ module Indexers
                     "type": "string"
                   },
                   "author": {
+                    "type": "string"
+                  },
+                  "audience": {
                     "type": "string"
                   },
                   "code": {
