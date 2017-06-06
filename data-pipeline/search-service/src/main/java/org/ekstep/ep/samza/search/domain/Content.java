@@ -13,9 +13,8 @@ public class Content {
     private String lastUpdatedOn;
     private String duration;
     private String createdBy;
-
     private String author;
-    private String audience;
+
     private String code;
     private String curriculum;
 
@@ -32,6 +31,7 @@ public class Content {
     private ArrayList<String> ageGroup;
     private ArrayList<String> keywords;
     private ArrayList<String> concepts;
+    private ArrayList<String> audience;
     private ArrayList<String> gradeLevel;
     private ArrayList<String> methods;
     private ArrayList<String> domain;
@@ -74,8 +74,6 @@ public class Content {
 
     public String author() { return author; }
 
-    public String audience() { return audience; }
-
     public String code() { return code; }
 
     public String curriculum() { return curriculum; }
@@ -111,6 +109,8 @@ public class Content {
     public ArrayList<String> concepts() {
         return concepts;
     }
+
+    public ArrayList<String> audience() { return audience; }
 
     public ArrayList<String> gradeLevel() {
         return gradeLevel;

@@ -70,7 +70,6 @@ public class Event {
         contentData.put("duration", content.duration());
         contentData.put("gradeLevel", content.gradeLevel());
         contentData.put("author", content.author());
-        contentData.put("audience",content.audience());
         contentData.put("code", content.code());
         contentData.put("curriculum", content.curriculum());
         contentData.put("domain", content.domain());
@@ -87,6 +86,7 @@ public class Event {
         contentData.put("language", content.language());
         contentData.put("ageGroup", content.ageGroup());
         contentData.put("keywords", content.keywords());
+        contentData.put("audience",content.audience());
         contentData.put("concepts", content.concepts());
         contentData.put("methods", content.methods());
         contentData.put("createdFor", content.createdFor());
