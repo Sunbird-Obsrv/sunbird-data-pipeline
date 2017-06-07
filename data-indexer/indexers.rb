@@ -971,6 +971,9 @@ module Indexers
                         "action": {
                           "type": "string"
                         },
+                        "authprovider": {
+                          "type": "string"
+                        },
                         "category": {
                           "type": "string"
                         },
@@ -1128,6 +1131,9 @@ module Indexers
                           "type": "string"
                         },
                         "query": {
+                          "type": "string"
+                        },
+                        "raw": {
                           "type": "string"
                         },
                         "rid": {
