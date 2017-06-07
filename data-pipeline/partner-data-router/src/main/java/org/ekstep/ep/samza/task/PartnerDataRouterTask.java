@@ -67,10 +67,12 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
         }
 
         if (event.getData().containsKey("ver") && event.getData().get("ver").equals("1.0")) {
+            LOGGER.info(event.id(), "EVENT VERSION 1, SKIPPING");
             return;
         }
 
         if (!event.belongsToAPartner()) {
+            LOGGER.info(event.id(), "EVENT DOES NOT BELONG TO A PARTNER, SKIPPING");
             return;
         }
 

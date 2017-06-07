@@ -54,7 +54,7 @@
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>partner-data-router</artifactId>
-          <version>0.1.8</version>
+          <version>0.1.9</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
