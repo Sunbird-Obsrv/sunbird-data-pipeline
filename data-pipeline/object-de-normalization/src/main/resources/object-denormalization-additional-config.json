@@ -29,6 +29,56 @@
           "denormalizedFieldPath": "partnerdata"
         }
       ]
+    },
+    {
+      "name": "Portal user data for ME_APP_SESSION_SUMMARY",
+      "eidPattern": "ME_APP_SESSION_SUMMARY",
+      "denormalizationConfigs": [
+        {
+          "idFieldPath": "uid",
+          "denormalizedFieldPath": "portaluserdata"
+        }
+      ]
+    },
+    {
+      "name": "Portal user data for ME_APP_USAGE_SUMMARY",
+      "eidPattern": "ME_APP_USAGE_SUMMARY",
+      "denormalizationConfigs": [
+        {
+          "idFieldPath": "dimensions.author_id",
+          "denormalizedFieldPath": "portaluserdata"
+        }
+      ]
+    },
+    {
+      "name": "Portal user data for ME_CE_SESSION_SUMMARY",
+      "eidPattern": "ME_CE_SESSION_SUMMARY",
+      "denormalizationConfigs": [
+        {
+          "idFieldPath": "uid",
+          "denormalizedFieldPath": "portaluserdata"
+        }
+      ]
+    },
+    {
+      "name": "Portal user data for ME_AUTHOR_USAGE_SUMMARY",
+      "eidPattern": "ME_AUTHOR_USAGE_SUMMARY",
+      "denormalizationConfigs": [
+        {
+          "idFieldPath": "uid",
+          "denormalizedFieldPath": "portaluserdata"
+        }
+      ]
+    },
+    {
+      "name": "Portal user data for ME_TEXTBOOK_SESSION_SUMMARY",
+      "eidPattern": "ME_TEXTBOOK_SESSION_SUMMARY",
+      "denormalizationConfigs": [
+        {
+          "idFieldPath": "uid",
+          "denormalizedFieldPath": "portaluserdata"
+        }
+      ]
     }
   ]
 }
