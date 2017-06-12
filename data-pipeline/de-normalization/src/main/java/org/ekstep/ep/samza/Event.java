@@ -40,6 +40,7 @@ public class Event {
         backendData = new BackendData(telemetry, backendEvents);
         retryData = new RetryData(telemetry, retryStore, retryBackoffBase, new Flag("gud"));
         childData = new ChildData(telemetry, childStore, retryData);
+        backendData.initialize();
     }
 
     public void initialize() {
@@ -48,7 +49,6 @@ public class Event {
                 canBeProcessed = false;
                 return;
             }
-            backendData.initialize();
             telemetry.getTime();
             childData.initialize();
         } catch (ParseException e) {
