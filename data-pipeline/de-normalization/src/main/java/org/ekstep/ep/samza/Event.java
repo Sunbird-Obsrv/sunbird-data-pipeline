@@ -73,6 +73,10 @@ public class Event {
         return canBeProcessed && !backendData.isBackendEvent();
     }
 
+    public boolean isBackendEvent() {
+        return backendData.isBackendEvent();
+    }
+
     public boolean shouldBackoff() {
         return retryData.shouldBackOff();
     }

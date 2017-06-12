@@ -56,11 +56,13 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
             processEvent(collector, event, userService);
             messageCount.inc();
         } catch (Exception e) {
-            LOGGER.error(event.id(), "ERROR WHILE PROCESSING EVENT", e);
+            LOGGER.error(null, "ERROR WHILE PROCESSING EVENT", e);
             e.printStackTrace();
-            if (event != null) {
+            if (event != null && !event.isBackendEvent()) {
                 LOGGER.error(event.id(), "ADDED FAILED EVENT TO RETRY TOPIC");
                 collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", retryTopic), event.getData()));
+            } else {
+                LOGGER.error(event.id(), "NOT ADDING EVENT TO RETRY TOPIC AS ITS EITHER NULL OR A BACKEND EVENT");
             }
         }
     }
