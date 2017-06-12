@@ -30,6 +30,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     private String userServiceEndpoint;
     private UserService userService;
     private List<String> backendEvents;
+    private List<String> eventsToSkip;
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
@@ -44,15 +45,15 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
         retryStore = (KeyValueStore<String, Object>) context.getStore("retry");
         userService = new UserServiceClient(userServiceEndpoint);
         backendEvents = getBackendEvents(config);
+        eventsToSkip = getEventsToSkip(config);
     }
-
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) {
         Event event = null;
         try {
             Map<String, Object> message = (Map<String, Object>) envelope.getMessage();
-            event = new Event(message, childData, backendEvents, retryBackoffBase, retryStore);
+            event = new Event(message, childData, backendEvents, eventsToSkip, retryBackoffBase, retryStore);
             processEvent(collector, event, userService);
             messageCount.inc();
         } catch (Exception e) {
@@ -65,6 +66,17 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
                 LOGGER.error(event.id(), "NOT ADDING EVENT TO RETRY TOPIC AS ITS EITHER NULL OR A BACKEND EVENT");
             }
         }
+    }
+
+
+    private List<String> getEventsToSkip(Config config) {
+        String[] split = config.get("events.to.skip", "ME_APP_SESSION_SUMMARY,ME_APP_USAGE_SUMMARY,ME_CE_SESSION_SUMMARY,ME_AUTHOR_USAGE_SUMMARY,ME_TEXTBOOK_SESSION_SUMMARY").split(",");
+        List<String> eventsToSkip = new ArrayList<String>();
+        for (String event : split) {
+            eventsToSkip.add(event.trim().toUpperCase());
+        }
+        return eventsToSkip;
+
     }
 
     void processEvent(MessageCollector collector, Event event, UserService userService) {

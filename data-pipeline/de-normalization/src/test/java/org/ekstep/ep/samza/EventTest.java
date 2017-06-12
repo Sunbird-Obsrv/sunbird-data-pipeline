@@ -38,7 +38,7 @@ public class EventTest {
 
     public List<String> getBackendEvents() {
         return new ArrayList<String>(
-                Arrays.asList("BE_.*", "CE_.*", "CP_.*","ME_APP_SESSION_SUMMARY","ME_APP_USAGE_SUMMARY","ME_AUTHOR_USAGE_SUMMARY","ME_CE_SESSION_SUMMARY","ME_TEXTBOOK_SESSION_SUMMARY"));
+                Arrays.asList("BE_.*", "CE_.*", "CP_.*"));
     }
 
     class KVStore implements KeyValueStore {
@@ -115,7 +115,7 @@ public class EventTest {
 
     @Test
     public void ShouldNotTryToInitializeEventIfNoUidIsPresent() {
-        Event event = new Event(new HashMap<String, Object>(), keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(new HashMap<String, Object>(), keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
 
         event.initialize();
 
@@ -127,7 +127,7 @@ public class EventTest {
     public void ShouldNotTryToInitializeEventIfEventDoesNotTime() {
         map.put("uid", UID);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
 
         event.initialize();
 
@@ -140,7 +140,7 @@ public class EventTest {
         map.put("ts", "invalid-time");
         map.put("uid", UID);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
 
         event.initialize();
 
@@ -153,7 +153,7 @@ public class EventTest {
         map.put("ts", TS);
         map.put("uid", UID);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
 
         event.initialize();
 
@@ -162,7 +162,7 @@ public class EventTest {
 
     @Test
     public void ShouldNotTryToProcessEventWhenEventDoesNotHaveUid() throws IOException {
-        Event event = new Event(new HashMap<String, Object>(), keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(new HashMap<String, Object>(), keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
@@ -174,7 +174,7 @@ public class EventTest {
     public void ShouldNotTryToProcessEventIfItDoesNotTime() {
         map.put("uid", UID);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
@@ -187,7 +187,7 @@ public class EventTest {
         map.put("ts", "invalid-time");
         map.put("uid", UID);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
@@ -204,7 +204,7 @@ public class EventTest {
         map.put("udata", getUdata());
         map.put("flags", flags);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
@@ -220,7 +220,7 @@ public class EventTest {
 
         Mockito.stub(keyValueStoreMock.get(UID)).toReturn(child);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
@@ -236,7 +236,7 @@ public class EventTest {
         Child child = new Child(UID, true, getUdata());
         stub(userServiceMock.getUserFor(any(Child.class), any(Date.class), any(String.class))).toReturn(child);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, date);
@@ -253,7 +253,7 @@ public class EventTest {
         map.put("udata", getUdata());
         map.put("flags", flags);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
@@ -272,7 +272,7 @@ public class EventTest {
 
         Mockito.stub(keyValueStoreMock.get(UID)).toReturn(child);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
@@ -291,7 +291,7 @@ public class EventTest {
         Child child = new Child(UID, true, getUdata());
         stub(userServiceMock.getUserFor(any(Child.class), any(Date.class), any(String.class))).toReturn(child);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
@@ -310,7 +310,7 @@ public class EventTest {
         Child child = new Child(UID, false, getUdata());
         stub(userServiceMock.getUserFor(any(Child.class), any(Date.class), any(String.class))).toReturn(child);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
@@ -328,7 +328,7 @@ public class EventTest {
 
         stub(userServiceMock.getUserFor(any(Child.class), any(Date.class), any(String.class))).toThrow(new IOException("Not able to connect to database"));
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
@@ -345,7 +345,7 @@ public class EventTest {
         map.put("uid", UID);
         map.put("ts", TS);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
         Child child = new Child(UID, false, getUdata());
         stub(userServiceMock.getUserFor(any(Child.class), any(Date.class), any(String.class))).toReturn(child);
 
@@ -366,7 +366,7 @@ public class EventTest {
 
         Child child = new Child(UID, true, getUdata());
         stub(userServiceMock.getUserFor(any(Child.class), any(Date.class), any(String.class))).toReturn(child);
-        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(userServiceMock, DateTime.now());
@@ -379,7 +379,7 @@ public class EventTest {
         map.put("ts", TS);
         map.put("uid", UID);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(null, DateTime.now());
@@ -398,7 +398,7 @@ public class EventTest {
         map.put("uid", UID);
         map.put("metadata", metadata);
 
-        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
 
         event.initialize();
         event.process(null, DateTime.now());
@@ -409,7 +409,7 @@ public class EventTest {
 
     @Test
     public void ShouldNotBeSkippedFirstTime() {
-        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
         event.initialize();
         assertEquals(event.shouldBackoff(), false);
     }
@@ -442,7 +442,7 @@ public class EventTest {
         Date date = new Date();
         map.put("ts", new SimpleDateFormat(DATE_FORMAT).format(date));
         map.put("uid", UID);
-        Event event = new Event(map, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event = new Event(map, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
         event.initialize();
         Child child = new Child(UID, false, getUdata());
         stub(userServiceMock.getUserFor(any(Child.class), any(Date.class), any(String.class))).toReturn(child);
@@ -453,7 +453,7 @@ public class EventTest {
 
         Assert.assertNull(retryStore.get(UID));
 
-        Event event2 = new Event(map2, keyValueStoreMock, backendEvents, retryBackoffBase, retryStore);
+        Event event2 = new Event(map2, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
         event2.initialize();
 //      ----- first event
         Assert.assertEquals(false, event.shouldBackoff()); //first try for first event is not skipped
@@ -518,49 +518,19 @@ public class EventTest {
     public void ShouldSendAllBackendEventsToRetryTopic() throws Exception {
         HashMap<String, Object> map1 = new HashMap<String, Object>();
         map1.put("eid", "CP_INTERACT");
-        Event event = new Event(map1, keyValueStoreMock, getBackendEvents(), retryBackoffBase, retryStore);
+        Event event = new Event(map1, keyValueStoreMock, getBackendEvents(), Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
         Assert.assertTrue(event.isBackendEvent());
         Assert.assertFalse(event.shouldPutInRetry());
 
         HashMap<String, Object> map2 = new HashMap<String, Object>();
         map2.put("eid", "CE_INTERACT");
-        event = new Event(map2, keyValueStoreMock, getBackendEvents(), retryBackoffBase, retryStore);
+        event = new Event(map2, keyValueStoreMock, getBackendEvents(), Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
         Assert.assertTrue(event.isBackendEvent());
         Assert.assertFalse(event.shouldPutInRetry());
 
         HashMap<String, Object> map3 = new HashMap<String, Object>();
         map3.put("eid", "BE_CONTENT_SEARCH");
-        event = new Event(map3, keyValueStoreMock, getBackendEvents(), retryBackoffBase, retryStore);
-        Assert.assertTrue(event.isBackendEvent());
-        Assert.assertFalse(event.shouldPutInRetry());
-
-        HashMap<String, Object> map4 = new HashMap<String, Object>();
-        map4.put("eid", "ME_APP_SESSION_SUMMARY");
-        event = new Event(map4, keyValueStoreMock, getBackendEvents(), retryBackoffBase, retryStore);
-        Assert.assertTrue(event.isBackendEvent());
-        Assert.assertFalse(event.shouldPutInRetry());
-
-        HashMap<String, Object> map5 = new HashMap<String, Object>();
-        map5.put("eid", "ME_APP_USAGE_SUMMARY");
-        event = new Event(map5, keyValueStoreMock, getBackendEvents(), retryBackoffBase, retryStore);
-        Assert.assertTrue(event.isBackendEvent());
-        Assert.assertFalse(event.shouldPutInRetry());
-
-        HashMap<String, Object> map6 = new HashMap<String, Object>();
-        map6.put("eid", "ME_CE_SESSION_SUMMARY");
-        event = new Event(map6, keyValueStoreMock, getBackendEvents(), retryBackoffBase, retryStore);
-        Assert.assertTrue(event.isBackendEvent());
-        Assert.assertFalse(event.shouldPutInRetry());
-
-        HashMap<String, Object> map7 = new HashMap<String, Object>();
-        map7.put("eid", "ME_AUTHOR_USAGE_SUMMARY");
-        event = new Event(map7, keyValueStoreMock, getBackendEvents(), retryBackoffBase, retryStore);
-        Assert.assertTrue(event.isBackendEvent());
-        Assert.assertFalse(event.shouldPutInRetry());
-
-        HashMap<String, Object> map8 = new HashMap<String, Object>();
-        map8.put("eid", "ME_TEXTBOOK_SESSION_SUMMARY");
-        event = new Event(map8, keyValueStoreMock, getBackendEvents(), retryBackoffBase, retryStore);
+        event = new Event(map3, keyValueStoreMock, getBackendEvents(), Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
         Assert.assertTrue(event.isBackendEvent());
         Assert.assertFalse(event.shouldPutInRetry());
     }

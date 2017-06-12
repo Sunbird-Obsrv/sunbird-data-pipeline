@@ -35,6 +35,7 @@ public class DenormalizationTaskTest {
     private final String FAILED_TOPIC = "events_failed_de_normalization";
     private final String RETRY_TOPIC = "events_retry";
     private final String BACKEND_EVENTS = "CE_.*, CP_.*, BE_.*";
+    private final String EVENTS_TO_SKIP = "ME_APP_SESSION_SUMMARY,ME_APP_USAGE_SUMMARY,ME_CE_SESSION_SUMMARY,ME_AUTHOR_USAGE_SUMMARY,ME_TEXTBOOK_SESSION_SUMMARY";
     private MessageCollector collectorMock;
     private Event eventMock;
     private UserService userServiceMock;
@@ -71,6 +72,7 @@ public class DenormalizationTaskTest {
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
         stub(configMock.get("output.retry.topic.name", RETRY_TOPIC)).toReturn(RETRY_TOPIC);
         stub(configMock.get("backend.events", "")).toReturn(BACKEND_EVENTS);
+        stub(configMock.get("events.to.skip", EVENTS_TO_SKIP)).toReturn(EVENTS_TO_SKIP);
         stub(metricsRegistry.newCounter("org.ekstep.ep.samza.task.DeNormalizationTask", "message-count")).toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
         stub(configMock.get("retry.backoff.base")).toReturn("10");
@@ -208,12 +210,27 @@ public class DenormalizationTaskTest {
         Map<String, Object> message = EventFixture.BeEvent();
         KeyValueStore<String, Child> childStore = Mockito.mock(KeyValueStore.class);
         KeyValueStore<String, Object> retryStore = Mockito.mock(KeyValueStore.class);
-        Event event = new Event(message, childStore, Arrays.asList("BE_.*"),10,retryStore);
+        Event event = new Event(message, childStore, Arrays.asList("BE_.*"), Arrays.asList("ME_CE_SESSION_SUMMARY"), 10, retryStore);
 
         deNormalizationTask.init(configMock, contextMock);
         deNormalizationTask.processEvent(collectorMock, event, userServiceMock);
 
         Assert.assertFalse(event.canBeProcessed());
+        verify(collectorMock).send(argThat(validateOutputTopic(message, SUCCESS_TOPIC)));
+    }
+
+    @Test
+    public void ShouldNotProcessAnyOfTheEventMarkedToBeSkiped() throws Exception {
+        Map<String, Object> message = EventFixture.MeEvent();
+        KeyValueStore<String, Child> childStore = Mockito.mock(KeyValueStore.class);
+        KeyValueStore<String, Object> retryStore = Mockito.mock(KeyValueStore.class);
+        Event event = new Event(message, childStore, Arrays.asList("BE_.*"), Arrays.asList("ME_CE_SESSION_SUMMARY"), 10, retryStore);
+
+        deNormalizationTask.init(configMock, contextMock);
+        deNormalizationTask.processEvent(collectorMock, event, userServiceMock);
+
+        Assert.assertFalse(event.canBeProcessed());
+        Assert.assertFalse(event.isBackendEvent());
         verify(collectorMock).send(argThat(validateOutputTopic(message, SUCCESS_TOPIC)));
     }
 
