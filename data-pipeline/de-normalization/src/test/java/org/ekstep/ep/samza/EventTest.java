@@ -38,7 +38,7 @@ public class EventTest {
 
     public List<String> getBackendEvents() {
         return new ArrayList<String>(
-                Arrays.asList("BE_.*", "CE_.*", "CP_.*"));
+                Arrays.asList("BE_.*", "CE_.*", "CP_.*","ME_APP_SESSION_SUMMARY","ME_APP_USAGE_SUMMARY","ME_AUTHOR_USAGE_SUMMARY","ME_CE_SESSION_SUMMARY","ME_TEXTBOOK_SESSION_SUMMARY"));
     }
 
     class KVStore implements KeyValueStore {
@@ -514,6 +514,56 @@ public class EventTest {
         assertEquals(expectedUdata.get("is_group_user"), actualUdata.get("is_group_user"));
     }
 
+    @Test
+    public void ShouldSendAllBackendEventsToRetryTopic() throws Exception {
+        HashMap<String, Object> map1 = new HashMap<String, Object>();
+        map1.put("eid", "CP_INTERACT");
+        Event event = new Event(map1, keyValueStoreMock, getBackendEvents(), retryBackoffBase, retryStore);
+        Assert.assertTrue(event.isBackendEvent());
+        Assert.assertFalse(event.shouldPutInRetry());
+
+        HashMap<String, Object> map2 = new HashMap<String, Object>();
+        map2.put("eid", "CE_INTERACT");
+        event = new Event(map2, keyValueStoreMock, getBackendEvents(), retryBackoffBase, retryStore);
+        Assert.assertTrue(event.isBackendEvent());
+        Assert.assertFalse(event.shouldPutInRetry());
+
+        HashMap<String, Object> map3 = new HashMap<String, Object>();
+        map3.put("eid", "BE_CONTENT_SEARCH");
+        event = new Event(map3, keyValueStoreMock, getBackendEvents(), retryBackoffBase, retryStore);
+        Assert.assertTrue(event.isBackendEvent());
+        Assert.assertFalse(event.shouldPutInRetry());
+
+        HashMap<String, Object> map4 = new HashMap<String, Object>();
+        map4.put("eid", "ME_APP_SESSION_SUMMARY");
+        event = new Event(map4, keyValueStoreMock, getBackendEvents(), retryBackoffBase, retryStore);
+        Assert.assertTrue(event.isBackendEvent());
+        Assert.assertFalse(event.shouldPutInRetry());
+
+        HashMap<String, Object> map5 = new HashMap<String, Object>();
+        map5.put("eid", "ME_APP_USAGE_SUMMARY");
+        event = new Event(map5, keyValueStoreMock, getBackendEvents(), retryBackoffBase, retryStore);
+        Assert.assertTrue(event.isBackendEvent());
+        Assert.assertFalse(event.shouldPutInRetry());
+
+        HashMap<String, Object> map6 = new HashMap<String, Object>();
+        map6.put("eid", "ME_CE_SESSION_SUMMARY");
+        event = new Event(map6, keyValueStoreMock, getBackendEvents(), retryBackoffBase, retryStore);
+        Assert.assertTrue(event.isBackendEvent());
+        Assert.assertFalse(event.shouldPutInRetry());
+
+        HashMap<String, Object> map7 = new HashMap<String, Object>();
+        map7.put("eid", "ME_AUTHOR_USAGE_SUMMARY");
+        event = new Event(map7, keyValueStoreMock, getBackendEvents(), retryBackoffBase, retryStore);
+        Assert.assertTrue(event.isBackendEvent());
+        Assert.assertFalse(event.shouldPutInRetry());
+
+        HashMap<String, Object> map8 = new HashMap<String, Object>();
+        map8.put("eid", "ME_TEXTBOOK_SESSION_SUMMARY");
+        event = new Event(map8, keyValueStoreMock, getBackendEvents(), retryBackoffBase, retryStore);
+        Assert.assertTrue(event.isBackendEvent());
+        Assert.assertFalse(event.shouldPutInRetry());
+    }
 
     private ArgumentMatcher<Child> validateChild(final String uid) {
         return new ArgumentMatcher<Child>() {
@@ -554,6 +604,4 @@ public class EventTest {
             }
         };
     }
-
-
 }
