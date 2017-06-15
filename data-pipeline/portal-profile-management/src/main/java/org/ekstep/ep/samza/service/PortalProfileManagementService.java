@@ -43,7 +43,6 @@ public class PortalProfileManagementService {
             event.markFailed("INTERNAL_ERROR", e.toString());
             sink.toSuccessTopic(event);
             sink.toFailedTopic(event);
-            e.printStackTrace();
         }
 
     }

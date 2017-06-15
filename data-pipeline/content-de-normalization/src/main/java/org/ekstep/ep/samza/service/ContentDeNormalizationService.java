@@ -50,7 +50,6 @@ public class ContentDeNormalizationService {
             sink.toSuccessTopic(event);
         } catch (Exception e) {
             LOGGER.error(event.id(), "EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO FAILED TOPIC", e);
-            e.printStackTrace();
             sink.toSuccessTopic(event);
             sink.toFailedTopic(event);
         }

@@ -68,7 +68,6 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
             messageCount.inc();
         } catch (Exception e) {
             LOGGER.error(null, "Exception, event: " + event, e);
-            e.printStackTrace();
         }
     }
 

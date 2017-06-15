@@ -49,9 +49,8 @@ public class DeDuplicationService {
         } catch (Exception e) {
             event.markFailure(e.getMessage());
             LOGGER.error(null, format(
-                    "EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO EXCEPTION TOPIC. EVENT: {0}, EXCEPTION: {1}",
-                    event, e));
-            e.printStackTrace();
+                    "EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO EXCEPTION TOPIC. EVENT: {0}, EXCEPTION:",
+                    event),e);
             sink.toSuccessTopic(event);
             sink.toFailedTopic(event);
         }

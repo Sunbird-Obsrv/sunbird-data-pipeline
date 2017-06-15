@@ -112,7 +112,6 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
             messageCount.inc();
         } catch (Exception e) {
             LOGGER.error(null, "PROCESSING FAILED: " + jsonObject, e);
-            e.printStackTrace();
         }
     }
 

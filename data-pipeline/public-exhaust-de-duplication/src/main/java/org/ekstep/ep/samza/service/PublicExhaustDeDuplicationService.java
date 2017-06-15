@@ -43,7 +43,6 @@ public class PublicExhaustDeDuplicationService {
         } catch (Exception e) {
             LOGGER.error(event.id(), "EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO FAILED TOPIC", e);
             event.markFailure(e.getMessage());
-            e.printStackTrace();
             sink.toFailedTopic(event);
         }
     }

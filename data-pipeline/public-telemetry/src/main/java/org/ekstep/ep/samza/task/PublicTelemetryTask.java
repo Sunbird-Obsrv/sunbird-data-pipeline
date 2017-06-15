@@ -47,7 +47,6 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
             messageCount.inc();
         } catch (Exception e) {
             LOGGER.error(event.id(), "CLEAN FAILED", e);
-            e.printStackTrace();
             LOGGER.error(event.id(), "ADDING TO EVENT FAILED TOPIC");
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
         }

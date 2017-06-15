@@ -48,7 +48,6 @@ public class ObjectLifecycleManagementService {
             event.updateFlags(false);
             sink.toSuccessTopic(event);
             sink.toFailedTopic(event);
-            e.printStackTrace();
         }
     }
 }

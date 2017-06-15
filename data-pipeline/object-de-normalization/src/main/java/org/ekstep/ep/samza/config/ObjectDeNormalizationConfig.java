@@ -58,7 +58,6 @@ public class ObjectDeNormalizationConfig {
             LOGGER.info(null, "OBJECT DENORMALIZATION ADDITIONAL CONFIG: {}", additionalConfig);
         } catch (Exception e) {
             LOGGER.error(null, "UNABLE TO LOAD OBJECT DENORMALIZATION ADDITIONAL CONFIG JSON FILE", e);
-            e.printStackTrace();
         }
     }
 

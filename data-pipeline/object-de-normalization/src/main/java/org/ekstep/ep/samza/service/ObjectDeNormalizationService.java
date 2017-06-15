@@ -65,7 +65,6 @@ public class ObjectDeNormalizationService {
             LOGGER.error(event.id(), "EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO FAILED TOPIC. EVENT: " + event, e);
             sink.toRetryTopic(event);
             sink.toFailedTopic(event);
-            e.printStackTrace();
         }
     }
 
@@ -106,8 +105,7 @@ public class ObjectDeNormalizationService {
         } catch (JsonSyntaxException e) {
             LOGGER.error(event.id(),
                     format("UNABLE TO PARSE DETAILS INTO MAP<STRING, STRING>. EVENT: {0}, DETAILS: {1}",
-                            event, result.get("details")));
-            e.printStackTrace();
+                            event, result.get("details")),e);
         }
         return details;
     }
