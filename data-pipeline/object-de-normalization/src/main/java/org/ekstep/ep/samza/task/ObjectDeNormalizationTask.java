@@ -20,8 +20,8 @@ public class ObjectDeNormalizationTask implements StreamTask, InitableTask, Wind
     public ObjectDeNormalizationTask() {
     }
 
-    public ObjectDeNormalizationTask(Config configMock, TaskContext contextMock) throws Exception {
-        init((Config) configMock, (TaskContext) contextMock);
+    public ObjectDeNormalizationTask(Config config, TaskContext contextMock) throws Exception {
+        init((Config) config, (TaskContext) contextMock);
     }
 
     @Override
