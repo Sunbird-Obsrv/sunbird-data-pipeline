@@ -33,7 +33,7 @@
     <dependency>
       <groupId>org.ekstep.ecosystem.jobs</groupId>
       <artifactId>de-normalization</artifactId>
-      <version>0.5.5</version>
+      <version>0.5.6</version>
       <type>tar.gz</type>
       <classifier>distribution</classifier>
     </dependency>
@@ -89,7 +89,7 @@
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>object-de-normalization</artifactId>
-          <version>0.1.7</version>
+          <version>0.1.8</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>

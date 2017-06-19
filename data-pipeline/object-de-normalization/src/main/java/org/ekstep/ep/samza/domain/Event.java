@@ -97,6 +97,10 @@ public class Event {
         return retryData.shouldBackOff();
     }
 
+    public void setDeNormalizationId(String deNormalizationId){
+        retryData.setMetadataKey(deNormalizationId);
+    }
+
     public void addLastSkippedAt(DateTime now) {
         retryData.addLastSkippedAt(now);
     }
