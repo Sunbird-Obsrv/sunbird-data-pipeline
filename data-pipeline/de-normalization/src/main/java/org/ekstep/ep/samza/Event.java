@@ -39,6 +39,7 @@ public class Event {
         telemetry = new Telemetry(map);
         backendData = new BackendData(telemetry, backendEvents);
         retryData = new RetryData(telemetry, retryStore, retryBackoffBase, new Flag("gud"));
+        retryData.setMetadataKey(telemetry.<String>read("uid").value());
         childData = new ChildData(telemetry, childStore, retryData);
         backendData.initialize();
     }
