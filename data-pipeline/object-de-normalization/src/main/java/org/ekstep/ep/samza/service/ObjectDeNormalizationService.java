@@ -42,7 +42,6 @@ public class ObjectDeNormalizationService {
 
     public void process(ObjectDeNormalizationSource source, ObjectDeNormalizationSink sink) {
         Event event = source.getEvent(config);
-        LOGGER.info(event.id(), "EVENT: {}", event.map());
         try {
             List<EventDenormalizationConfig> eventConfigs = additionalConfig.filter(event);
             for (EventDenormalizationConfig config : eventConfigs) {
