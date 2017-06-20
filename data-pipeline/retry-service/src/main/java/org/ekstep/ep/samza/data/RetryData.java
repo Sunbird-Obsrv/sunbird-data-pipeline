@@ -23,7 +23,6 @@ public class RetryData {
     private Boolean enableMaxAttempts;
     private boolean maxAttemptReached = false;
     private Flag flag;
-    private String metadataKey;
 
     public RetryData(Telemetry telemetry, KeyValueStore<String, Object> retryStore, int retryBackoffBase, Flag flag) {
         this(telemetry,retryStore,retryBackoffBase,0,false,flag);
@@ -38,10 +37,6 @@ public class RetryData {
         this.retryStore = retryStore;
         this.retryBackoffBase = retryBackoffBase;
         this.flag = flag;
-    }
-
-    public void setMetadataKey(String metadataKey){
-        this.metadataKey = metadataKey;
     }
 
     public void addMetadata(DateTime currentTime) {
@@ -89,8 +84,7 @@ public class RetryData {
     }
 
     public void removeMetadataFromStore() {
-        LOGGER.info(this.telemetry.id(), "METADATA - DELETING. KEY: " + metadataKey);
-        retryStore.delete(metadataKey);
+        retryStore.delete(telemetry.getUID());
     }
 
     public void updateMetadataToStore() {
@@ -98,15 +92,15 @@ public class RetryData {
         if (!metadata.isNull()) {
             Map _map = new HashMap();
             _map.put(flag.metadata(), metadata.value());
-            retryStore.put(metadataKey, _map);
-            LOGGER.info(telemetry.id(), "STORE - UPDATED " + _map + " UID " + metadataKey);
+            retryStore.put(telemetry.getUID(), _map);
+            LOGGER.info(telemetry.id(), "STORE - UPDATED " + _map + " UID " + telemetry.getUID());
         }
     }
 
     private void addMetadataToStore() {
-        if (retryStore.get(metadataKey) == null) {
+        if (retryStore.get(telemetry.getUID()) == null) {
             updateMetadataToStore();
-            LOGGER.info(telemetry.id(), "STORE - ADDED FOR " + metadataKey);
+            LOGGER.info(telemetry.id(), "STORE - ADDED FOR " + telemetry.getUID());
         }
     }
 
@@ -159,8 +153,9 @@ public class RetryData {
     }
 
     private Map<String, Object> getMetadata() {
-        if(metadataKey == null || metadataKey.isEmpty()) return null;
-        Map retryData = (Map) retryStore.get(metadataKey);
+        String uid = telemetry.getUID();
+        if(uid == null) return null;
+        Map retryData = (Map) retryStore.get(uid);
         Telemetry telemetryData = retryData == null ? this.telemetry : new Telemetry(retryData);
         NullableValue<Map<String, Object>> metadata = telemetryData.read(flag.metadata());
         if (metadata.isNull()) {

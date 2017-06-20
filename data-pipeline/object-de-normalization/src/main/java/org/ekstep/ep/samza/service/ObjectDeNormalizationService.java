@@ -16,7 +16,6 @@ import org.ekstep.ep.samza.task.ObjectDeNormalizationSink;
 import org.ekstep.ep.samza.task.ObjectDeNormalizationSource;
 import org.joda.time.DateTime;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +42,11 @@ public class ObjectDeNormalizationService {
     public void process(ObjectDeNormalizationSource source, ObjectDeNormalizationSink sink) {
         Event event = source.getEvent(config);
         try {
+            if(event.shouldBackOff()){
+                event.addLastSkippedAt(DateTime.now());
+                sink.toRetryTopic(event);
+                return;
+            }
             List<EventDenormalizationConfig> eventConfigs = additionalConfig.filter(event);
             for (EventDenormalizationConfig config : eventConfigs) {
                 for (DataDenormalizationConfig dataDenormalizationConfig : config.denormalizationConfigs()) {
@@ -50,13 +54,18 @@ public class ObjectDeNormalizationService {
                     if (objectId.isNull()) {
                         continue;
                     }
-                    event.setDeNormalizationId(objectId.value());
-                    if(event.shouldBackOff()){
-                        event.addLastSkippedAt(DateTime.now());
-                        sink.toRetryTopic(event);
-                        return;
+                    GetObjectResponse getObjectResponse = objectService.get(objectId.value());
+                    if (!getObjectResponse.successful()) {
+                        LOGGER.error(event.id(),
+                                format("ERROR WHEN GETTING OBJECT DATA. EVENT: {0}, RESPONSE: {1}",
+                                        event, getObjectResponse));
+                        event.markRetry(getObjectResponse.params().get("err"), getObjectResponse.params().get("errmsg"));
+                    } else {
+                        event.markProcessed();
+                        event.update(
+                                dataDenormalizationConfig.denormalizedFieldPath(),
+                                getDenormalizedData(event, getObjectResponse.result()));
                     }
-                    deNormalise(event, dataDenormalizationConfig, objectId);
                 }
             }
             event.flowIn(sink);
@@ -64,21 +73,6 @@ public class ObjectDeNormalizationService {
             LOGGER.error(event.id(), "EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO FAILED TOPIC. EVENT: " + event, e);
             sink.toRetryTopic(event);
             sink.toFailedTopic(event);
-        }
-    }
-
-    private void deNormalise(Event event, DataDenormalizationConfig dataDenormalizationConfig, NullableValue<String> objectId) throws IOException {
-        GetObjectResponse getObjectResponse = objectService.get(objectId.value());
-        if (!getObjectResponse.successful()) {
-            LOGGER.error(event.id(),
-                    format("ERROR WHEN GETTING OBJECT DATA. EVENT: {0}, RESPONSE: {1}",
-                            event, getObjectResponse));
-            event.markRetry(getObjectResponse.params().get("err"), getObjectResponse.params().get("errmsg"));
-        } else {
-            event.markProcessed();
-            event.update(
-                    dataDenormalizationConfig.denormalizedFieldPath(),
-                    getDenormalizedData(event, getObjectResponse.result()));
         }
     }
 

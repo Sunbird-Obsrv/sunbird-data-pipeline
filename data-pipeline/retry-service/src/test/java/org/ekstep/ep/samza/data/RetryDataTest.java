@@ -32,7 +32,6 @@ public class RetryDataTest {
         metadata.put("processed_count",4);
 
         RetryData retryData = new RetryData(new Telemetry(telemetry), retryStoreMock, 10, 3, true, new Flag("test"));
-        retryData.setMetadataKey((String) telemetry.get("uid"));
 
         assertFalse(retryData.shouldBackOff());
     }
@@ -47,7 +46,6 @@ public class RetryDataTest {
         metadata.put(LAST_PROCESSED_AT_FLAG, DateTime.now().toString());
 
         RetryData retryData = new RetryData(new Telemetry(telemetry), retryStoreMock, 10, 3, true, new Flag("test"));
-        retryData.setMetadataKey((String) telemetry.get("uid"));
 
         assertTrue(retryData.shouldBackOff());
     }
@@ -62,7 +60,6 @@ public class RetryDataTest {
         metadata.put(LAST_PROCESSED_AT_FLAG, DateTime.now().minus(20).toString());
 
         RetryData retryData = new RetryData(new Telemetry(telemetry), retryStoreMock, 1, 3, true, new Flag("test"));
-        retryData.setMetadataKey((String) telemetry.get("uid"));
 
         assertTrue(retryData.shouldBackOff());
     }
@@ -78,7 +75,6 @@ public class RetryDataTest {
         metadata.put(LAST_PROCESSED_AT_FLAG, DateTime.now().toString());
 
         RetryData retryData = new RetryData(new Telemetry(telemetry), retryStoreMock, 10, 3, false, new Flag("test"));
-        retryData.setMetadataKey((String) telemetry.get("uid"));
 
         assertTrue(retryData.shouldBackOff());
     }
@@ -95,7 +91,6 @@ public class RetryDataTest {
         metadata.put(LAST_PROCESSED_AT_FLAG, DateTime.now().minus(25).toString());
 
         RetryData retryData = new RetryData(new Telemetry(telemetry), retryStoreMock, 10, 3, false, new Flag("test"));
-        retryData.setMetadataKey((String) telemetry.get("uid"));
 
         assertTrue(retryData.shouldBackOff());
     }

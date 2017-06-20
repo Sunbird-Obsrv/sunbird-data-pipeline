@@ -33,7 +33,7 @@ under the License.
 
   <groupId>org.ekstep.ecosystem.jobs</groupId>
   <artifactId>de-normalization</artifactId>
-  <version>0.5.6</version>
+  <version>0.5.5</version>
   <packaging>jar</packaging>
   <name>De-Normalization</name>
   <description>
