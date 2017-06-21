@@ -61,8 +61,14 @@ public class ObjectDeNormalizationService {
                 }
             }
             event.flowIn(sink);
-        } catch (Exception e) {
-            LOGGER.error(event.id(), "EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO FAILED TOPIC. EVENT: " + event, e);
+        } catch (NullPointerException e){
+            LOGGER.error(event.id(), "NULL EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO FAILED TOPIC. EVENT: " + event, e);
+            e.printStackTrace();
+            sink.toSuccessTopic(event);
+            sink.toFailedTopic(event);
+        }catch (Exception e) {
+            LOGGER.error(event.id(), "EXCEPTION. SENDING EVENT TO RETRY AND ADDING IT TO FAILED TOPIC. EVENT: " + event, e);
+            e.printStackTrace();
             event.markRetry(e.toString(),e.getMessage());
             sink.toRetryTopic(event);
             sink.toFailedTopic(event);
