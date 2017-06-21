@@ -140,12 +140,14 @@ public class RetryData {
 
     private void setLastProcessedAt(DateTime time) {
         Map<String, Object> metadata = getMetadata();
-        metadata.put(flag.lastProcessedAt(), time.toString());
+        if(metadata!= null)
+            metadata.put(flag.lastProcessedAt(), time.toString());
     }
 
     private void setLastProcessedCount(int n) {
         Map<String, Object> metadata = getMetadata();
-        metadata.put(flag.processedCount(), n);
+        if(metadata!= null)
+            metadata.put(flag.processedCount(), n);
     }
 
     private DateTime getLastProcessedTime() {
