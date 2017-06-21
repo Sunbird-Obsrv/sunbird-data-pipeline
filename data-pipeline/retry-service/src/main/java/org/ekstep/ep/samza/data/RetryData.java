@@ -152,6 +152,8 @@ public class RetryData {
 
     private DateTime getLastProcessedTime() {
         Map metadata = getMetadata();
+        if(metadata == null)
+            return null;
         String lastProcessedAt = (String) metadata.get(flag.lastProcessedAt());
         if (lastProcessedAt == null)
             return null;
