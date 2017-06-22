@@ -140,22 +140,5 @@ public class Event {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.od_skipped", true);
     }
-
-    public boolean canDeNormalise() {
-        if(deNormalizationId==null || deNormalizationId.isEmpty()){
-            LOGGER.info(id(),"Id is not defined");
-            return false;
-        }
-        NullableValue<Object> deNormalizationField = telemetry.read(deNormalizationId);
-        boolean deNormalizationFieldIsString = deNormalizationField.value() instanceof String;
-        if(deNormalizationField.isNull() || (deNormalizationFieldIsString && ((String)deNormalizationField.value()).isEmpty())){
-            LOGGER.info(id(),String.format("Id field is empty. Expecting value in %s",deNormalizationId));
-            LOGGER.info(id(),String.format("Value of denormalisation field %s",deNormalizationField.value()));
-            return false;
-
-        }
-
-        return true;
-    }
 }
 

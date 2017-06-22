@@ -48,12 +48,10 @@ public class ObjectDeNormalizationService {
             for (EventDenormalizationConfig config : eventConfigs) {
                 for (DataDenormalizationConfig dataDenormalizationConfig : config.denormalizationConfigs()) {
                     NullableValue<String> objectId = event.read(dataDenormalizationConfig.idFieldPath());
-                    if (objectId.isNull()) {
+                    if (objectId.isNull() || objectId.value().isEmpty()) {
                         continue;
                     }
                     event.setDeNormalizationId(objectId.value());
-                    if(!event.canDeNormalise())
-                        continue;
                     if(event.shouldBackOff()){
                         event.addLastSkippedAt(DateTime.now());
                         sink.toRetryTopic(event);
