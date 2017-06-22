@@ -52,6 +52,8 @@ public class ObjectDeNormalizationService {
                         continue;
                     }
                     event.setDeNormalizationId(objectId.value());
+                    if(!event.canDeNormalise())
+                        continue;
                     if(event.shouldBackOff()){
                         event.addLastSkippedAt(DateTime.now());
                         sink.toRetryTopic(event);

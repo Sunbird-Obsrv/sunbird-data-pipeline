@@ -17,6 +17,7 @@ public class Event {
     private final RetryData retryData;
     private Boolean processed = false;
     private Boolean triedProcessing = false;
+    private String deNormalizationId;
 
     public Event(Telemetry telemetry, ObjectDeNormalizationConfig config) {
         this.telemetry = telemetry;
@@ -98,6 +99,7 @@ public class Event {
     }
 
     public void setDeNormalizationId(String deNormalizationId){
+        this.deNormalizationId = deNormalizationId;
         retryData.setMetadataKey(deNormalizationId);
     }
 
@@ -137,6 +139,16 @@ public class Event {
     private void markSkipped() {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.od_skipped", true);
+    }
+
+    public boolean canDeNormalise() {
+        if(deNormalizationId==null || deNormalizationId.isEmpty())
+            return false;
+        NullableValue<Object> deNormalizationField = telemetry.read(deNormalizationId);
+        boolean deNormalizationFieldIsString = deNormalizationField.value() instanceof String;
+        if(deNormalizationField.isNull() || (deNormalizationFieldIsString && ((String)deNormalizationField.value()).isEmpty()))
+            return false;
+        return true;
     }
 }
 
