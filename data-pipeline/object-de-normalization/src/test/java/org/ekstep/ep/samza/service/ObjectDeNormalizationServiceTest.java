@@ -175,7 +175,7 @@ public class ObjectDeNormalizationServiceTest {
     }
 
     @Test
-    public void shouldSinkEventToBothSuccessAndFailedTopicWhenServiceReturnsError() throws Exception {
+    public void shouldSinkEventToRetryTopicWhenServiceReturnsError() throws Exception {
         additionalConfig = new ObjectDenormalizationAdditionalConfig(
                 asList(new EventDenormalizationConfig("Portal events", "C[PE]\\_.*",
                         asList(new DataDenormalizationConfig("uid", "portaluserdata")))));
