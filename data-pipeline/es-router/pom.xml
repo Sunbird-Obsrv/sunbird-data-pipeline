@@ -33,10 +33,10 @@ under the License.
 
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
-    <artifactId>es-indexer</artifactId>
-    <version>0.0.2</version>
+    <artifactId>es-router</artifactId>
+    <version>0.0.1</version>
     <packaging>jar</packaging>
-    <name>ES Indexer</name>
+    <name>ES Router</name>
     <description>
         Indexes events into ES
     </description>

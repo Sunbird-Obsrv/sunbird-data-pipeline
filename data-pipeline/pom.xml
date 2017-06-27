@@ -46,6 +46,7 @@
     <module>ep-de-duplication</module>
     <module>retry-service</module>
     <module>es-indexer</module>
+    <module>es-router</module>
   </modules>
 
   <properties>
