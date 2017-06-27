@@ -111,6 +111,20 @@ public class UserManagementTaskTest {
         verify(counterMock).inc();
     }
 
+    @Test
+    public void shouldSendEventsToFailedTopicIfUidIsEmpty() throws Exception {
+        Gson gson = new Gson();
+        Event event = new Event(new EventFixture().EVENT_WITHOUT_UID);
+
+        when(envelopMock.getMessage()).thenReturn(gson.fromJson(event.json, Map.class));
+
+        UserManagementTask userManagementTask = new UserManagementTask();
+        userManagementTask.init(configMock, contextMock);
+        userManagementTask.process(envelopMock, collectorMock, coordinatorMock);
+
+        verify(collectorMock).send(argThat(validateOutputTopic(event.getMap(), FAILURE_TOPIC)));
+    }
+
     private ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
         return new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override

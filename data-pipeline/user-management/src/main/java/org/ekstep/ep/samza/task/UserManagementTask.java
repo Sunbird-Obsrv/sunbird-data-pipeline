@@ -12,6 +12,7 @@ import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.model.*;
 
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,8 +67,13 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
             event = new Event(new Gson().toJson(jsonObject));
             processEvent(event, collector);
             messageCount.inc();
+        } catch (ParseException p){
+            LOGGER.error(null, "Parser Exception, event: " + event, p);
+            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
         } catch (Exception e) {
             LOGGER.error(null, "Exception, event: " + event, e);
+            e.printStackTrace();
+            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
         }
     }
 

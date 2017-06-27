@@ -215,6 +215,22 @@ public class EventFixture {
             "    }\n" +
             "}";
 
+    public String EVENT_WITHOUT_UID = "{\n" +
+            "  \"@timestamp\": \"2017-04-13T03:58:33.542Z\",\n" +
+            "  \"@version\": \"1\",\n" +
+            "  \"did\": \"cbeda6a2ef327eaee21008de6495f89476aba58d\",\n" +
+            "  \"edata\": {\n" +
+            "    \"eks\": {\n" +
+            "    }\n" +
+            "  },\n" +
+            "  \"eid\": \"GE_CREATE_PROFILE\",\n" +
+            "  \"key\": \"11bf311d-09b1-47fc-810c-f987bbf55917\",\n" +
+            "  \"mid\": \"3BE38CAFADC951C3E87D3BE0FDD06144507BB8921\",\n" +
+            "  \"sid\": \"\",\n" +
+            "  \"tags\": [],\n" +
+            "  \"ts\": \"2017-04-12T18:45:02+05:30\"\n" +
+            "}";
+
     public String CREATE_PROFILE_EVENT_1(String uid) {
         return "{\n" +
                 "    \"eid\": \"GE_UPDATE_PROFILE\",\n" +
