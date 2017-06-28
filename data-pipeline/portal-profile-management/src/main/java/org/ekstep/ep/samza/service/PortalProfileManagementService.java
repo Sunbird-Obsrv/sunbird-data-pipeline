@@ -31,6 +31,7 @@ public class PortalProfileManagementService {
 
             SaveObjectDetailsResponse saveObjectDetailsResponse = objectService.saveDetails(event.uid().value(), event.userDetails());
             if (!saveObjectDetailsResponse.successful()) {
+                LOGGER.error(event.id(), "UNABLE TO SAVE OBJECT. RESPONSE: {}", saveObjectDetailsResponse);
                 event.markFailed(saveObjectDetailsResponse.params().get("err"), saveObjectDetailsResponse.params().get("errmsg"));
                 sink.toSuccessTopic(event);
                 sink.toFailedTopic(event);
