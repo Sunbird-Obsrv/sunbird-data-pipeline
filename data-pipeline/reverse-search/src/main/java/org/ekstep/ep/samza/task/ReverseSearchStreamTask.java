@@ -19,8 +19,6 @@
 
 package org.ekstep.ep.samza.task;
 
-import com.library.checksum.system.ChecksumGenerator;
-import com.library.checksum.system.KeysToAccept;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.storage.kv.KeyValueStore;
@@ -35,6 +33,7 @@ import org.ekstep.ep.samza.service.DeviceService;
 import org.ekstep.ep.samza.service.GoogleReverseSearchService;
 import org.ekstep.ep.samza.service.LocationService;
 import org.ekstep.ep.samza.system.*;
+import org.ekstep.ep.samza.util.Configuration;
 
 import java.text.MessageFormat;
 import java.util.*;
@@ -43,39 +42,26 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
 
     static Logger LOGGER = new Logger(ReverseSearchStreamTask.class);
     private KeyValueStore<String, Object> deviceStore;
-    private String successTopic;
-    private String failedTopic;
     private String bypass;
-    private ChecksumGenerator checksumGenerator;
     private LocationService locationService;
-    private double reverseSearchCacheAreaSizeInMeters;
     private Counter messageCount;
     private DeviceService deviceService;
     private List<Rule> locationRules;
+    private Configuration configuration;
 
     @Override
     public void init(Config config, TaskContext context) {
-        String apiKey = config.get("google.api.key", "");
-
-        successTopic = config.get("output.success.topic.name", "events_with_location");
-        failedTopic = config.get("output.failed.topic.name", "events_failed_location");
-        reverseSearchCacheAreaSizeInMeters = Double.parseDouble(config.get("reverse.search.cache.area.size.in.meters",
-                "200"));
-
-        bypass = config.get("bypass", "true");
-
+        this.configuration = new Configuration(config);
+        bypass = configuration.getByPass();
         KeyValueStore<String, Object> reverseSearchStore = (KeyValueStore<String, Object>) context.getStore("reverse-search");
         this.deviceStore = (KeyValueStore<String, Object>) context.getStore("device");
-        GoogleReverseSearchService googleReverseSearch = new GoogleReverseSearchService(new GoogleGeoLocationAPI(apiKey));
-
-        String[] keys_to_accept = {"uid", "ts", "gdata", "edata"};
-        checksumGenerator = new ChecksumGenerator(new KeysToAccept(keys_to_accept));
+        GoogleReverseSearchService googleReverseSearch = new GoogleReverseSearchService(new GoogleGeoLocationAPI(configuration.getApiKey()));
 
         locationRules = Arrays.asList(new LocationPresent(), new LocationEmpty(), new LocationAbsent());
 
         locationService = new LocationService(reverseSearchStore,
                 googleReverseSearch,
-                reverseSearchCacheAreaSizeInMeters
+                configuration.getReverseSearchCacheAreaSizeInMeters()
                 );
         deviceService = new DeviceService(deviceStore);
         messageCount = context
@@ -88,14 +74,13 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
 
     //For testing only
     ReverseSearchStreamTask(KeyValueStore<String, Object> deviceStore,
-                            String bypass, LocationService locationService, DeviceService deviceService, List<Rule> locationRules) {
+                            String bypass, LocationService locationService, DeviceService deviceService, List<Rule> locationRules, Config config) {
         this.deviceStore = deviceStore;
         this.bypass = bypass;
-        String[] keys_to_accept = {"uid", "ts", "cid", "gdata", "edata"};
-        checksumGenerator = new ChecksumGenerator(new KeysToAccept(keys_to_accept));
         this.locationService = locationService;
         this.deviceService =  deviceService;
         this.locationRules = locationRules;
+        this.configuration = new Configuration(config);
     }
 
     @SuppressWarnings("unchecked")
@@ -141,18 +126,11 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
                 event.setFlag("ldata_obtained", true);
             } else {
                 event.setFlag("ldata_obtained", false);
-                collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
+                collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", configuration.getFailedTopic()), event.getMap()));
             }
-
-            if (event.getMid() == null) {
-                checksumGenerator.stampChecksum(event);
-            } else {
-                Map<String, Object> metadata = new HashMap<String, Object>();
-                metadata.put("checksum", event.getMid());
-                event.setMetadata(metadata);
-            }
+            event.updateDefaults(configuration);
             event.setFlag("ldata_processed", true);
-            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
+            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", configuration.getSuccessTopic()), event.getMap()));
         } catch (Exception e) {
             LOGGER.error(null, "ERROR WHEN ROUTING EVENT: {}" + event, e);
         }

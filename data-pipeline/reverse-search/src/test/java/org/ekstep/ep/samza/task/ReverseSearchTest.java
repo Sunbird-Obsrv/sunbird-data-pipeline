@@ -3,6 +3,7 @@ package org.ekstep.ep.samza.task;
 import com.google.gson.Gson;
 import com.library.checksum.system.ChecksumGenerator;
 import com.library.checksum.system.KeysToAccept;
+import org.apache.samza.config.Config;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
@@ -17,6 +18,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -54,7 +56,7 @@ public class ReverseSearchTest {
         when(event.isLocationPresent()).thenReturn(true);
 
         ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore,
-                "false", locationService, deviceService, locationRules);
+                "false", locationService, deviceService, locationRules, Mockito.mock(Config.class));
 
         reverseSearchStreamTask.processEvent(event, collector);
         verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
@@ -68,7 +70,7 @@ public class ReverseSearchTest {
         when(locationService.getLocation("15.9310593,78.6238299", null)).thenReturn(null);
         Map<String, Object> map = createMap("15.9310593,78.6238299");
         Event event = new Event(map);
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService,locationRules);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService,locationRules, Mockito.mock(Config.class));
 
         reverseSearchStreamTask.processEvent(event, collector);
         verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
@@ -94,7 +96,7 @@ public class ReverseSearchTest {
         when(event.isLocationEmpty()).thenReturn(false);
         when(event.isLocationAbsent()).thenReturn(true);
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService,locationRules);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService,locationRules, Mockito.mock(Config.class));
 
         reverseSearchStreamTask.processEvent(event, collector);
         verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
@@ -121,7 +123,7 @@ public class ReverseSearchTest {
 
         when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules, Mockito.mock(Config.class));
 
         reverseSearchStreamTask.processEvent(event, collector);
         verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
@@ -137,7 +139,7 @@ public class ReverseSearchTest {
 
         when(event.getDid()).thenReturn(null);
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules, Mockito.mock(Config.class));
 
         reverseSearchStreamTask.processEvent(event, collector);
         verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
@@ -148,7 +150,7 @@ public class ReverseSearchTest {
 
         IncomingMessageEnvelope envelope = mock(IncomingMessageEnvelope.class);
         when(envelope.getMessage()).thenThrow(new RuntimeException());
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules, Mockito.mock(Config.class));
 
         TaskCoordinator task = mock(TaskCoordinator.class);
         reverseSearchStreamTask.process(envelope, collector, task);
@@ -164,7 +166,7 @@ public class ReverseSearchTest {
         Map<String, Object> eventMap = new Gson().fromJson(EventFixture.JSON, Map.class);
         Event event = new Event(eventMap);
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules, Mockito.mock(Config.class));
 
         TaskCoordinator task = mock(TaskCoordinator.class);
         reverseSearchStreamTask.processEvent(event, collector);
@@ -177,7 +179,7 @@ public class ReverseSearchTest {
         Map<String, Object> eventMap = new Gson().fromJson(EventFixture.JSON_WITH_MID, Map.class);
         Event event = new Event(eventMap);
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules, Mockito.mock(Config.class));
 
         TaskCoordinator task = mock(TaskCoordinator.class);
         reverseSearchStreamTask.processEvent(event, collector);
@@ -192,7 +194,7 @@ public class ReverseSearchTest {
         eventMap.put("ets", 1453202865000d);
         Event event = new Event(eventMap);
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules, Mockito.mock(Config.class));
 
         TaskCoordinator task = mock(TaskCoordinator.class);
         reverseSearchStreamTask.processEvent(event, collector);
@@ -205,7 +207,7 @@ public class ReverseSearchTest {
 
         when(deviceStore.get("bc811958-b4b7-4873-a43a-03718edba45b")).thenReturn("{\"@type\":\"org.ekstep.ep.samza.system.Device\",\"id\":\"bc811958-b4b7-4873-a43a-03718edba45b\",\"location\":{\"city\":null,\"district\":null,\"state\":null,\"country\":null}}");
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService,locationRules);
+        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService,locationRules, Mockito.mock(Config.class));
 
         Event event = createEventMock("");
         when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
