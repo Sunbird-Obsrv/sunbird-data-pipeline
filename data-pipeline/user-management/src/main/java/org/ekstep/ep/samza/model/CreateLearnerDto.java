@@ -14,6 +14,7 @@ public class CreateLearnerDto implements IModel{
     private Timestamp createdAt;
 
     private boolean isInserted;
+    private String channelid;
 
     public CreateLearnerDto(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -28,6 +29,7 @@ public class CreateLearnerDto implements IModel{
 
         java.util.Date date = new java.util.Date();
         createdAt = new Timestamp(date.getTime());
+        channelid = (String) event.getMap().get("channelid");
 
         saveData(event.id());
     }
@@ -37,11 +39,12 @@ public class CreateLearnerDto implements IModel{
         Connection connection = null;
         try{
             connection = dataSource.getConnection();
-            String query = " insert into learner (uid,created_at)"
-                    + " values (?,?)";
+            String query = " insert into learner (uid,created_at,channelid)"
+                    + " values (?,?,?)";
             preparedStmt = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
             preparedStmt.setString(1, uid);
             preparedStmt.setTimestamp(2, createdAt);
+            preparedStmt.setString(3,channelid);
 
             int affectedRows = preparedStmt.executeUpdate();
 

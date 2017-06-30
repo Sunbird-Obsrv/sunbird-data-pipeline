@@ -8,6 +8,7 @@ public class EventFixture {
             "     \"eid\": \"OTHER_EVENTS\",\n" +
             "     \"ts\": \"2015-07-24T12:07:35+05:30\",\n" +
             "     \"ver\": \"1.0\",\n" +
+            "    \"channelid\": \"in.ekstep.test\",\n" +
             "     \"edata\": {\n" +
             "          \"eks\": {\n" +
             "              \"uid\":\"" + getRandomUID() + "\"\n" +
@@ -19,6 +20,7 @@ public class EventFixture {
             "     \"eid\": \"GE_CREATE_USER\",\n" +
             "     \"ts\": \"2015-07-24T12:07:35+05:30\",\n" +
             "     \"ver\": \"1.0\",\n" +
+            "    \"channelid\": \"in.ekstep.test\",\n" +
             "     \"edata\": {\n" +
             "          \"eks\": {\n" +
             "              \"uid\":\"" + getRandomUID() + "\"\n" +
@@ -30,6 +32,7 @@ public class EventFixture {
             "    \"eid\": \"GE_CREATE_PROFILE\",\n" +
             "    \"ts\": \"2015-04-23T10:23:46+05:30\",\n" +
             "    \"ver\": \"1.0\",\n" +
+            "    \"channelid\": \"in.ekstep.test\",\n" +
             "    \"gdata\": {\n" +
             "        \"id\": \"genie.android\",\n" +
             "        \"ver\": \"1.0\"\n" +
@@ -56,6 +59,7 @@ public class EventFixture {
             "    \"eid\": \"GE_CREATE_PROFILE\",\n" +
             "    \"ts\": \"2015-04-23T10:23:46+05:30\",\n" +
             "    \"ver\": \"1.0\",\n" +
+            "    \"channelid\": \"in.ekstep.test\",\n" +
             "    \"gdata\": {\n" +
             "        \"id\": \"genie.android\",\n" +
             "        \"ver\": \"1.0\"\n" +
@@ -82,6 +86,7 @@ public class EventFixture {
             "    \"eid\": \"GE_CREATE_PROFILE\",\n" +
             "    \"ts\": \"2014-04-23T10:23:46+05:30\",\n" +
             "    \"ver\": \"1.0\",\n" +
+            "    \"channelid\": \"in.ekstep.test\",\n" +
             "    \"gdata\": {\n" +
             "        \"id\": \"genie.android\",\n" +
             "        \"ver\": \"1.0\"\n" +
@@ -108,6 +113,7 @@ public class EventFixture {
             "    \"eid\": \"GE_CREATE_PROFILE\",\n" +
             "    \"ts\": \"2014-04-23T10:23:46+05:30\",\n" +
             "    \"ver\": \"1.0\",\n" +
+            "    \"channelid\": \"in.ekstep.test\",\n" +
             "    \"gdata\": {\n" +
             "        \"id\": \"genie.android\",\n" +
             "        \"ver\": \"1.0\"\n" +
@@ -132,6 +138,7 @@ public class EventFixture {
     public String INVALID_CREATE_EVENT = "{\n" +
             "     \"eid\": \"GE_CREATE_USER\",\n" +
             "     \"ts\": \"2015-07-24T12:07:35+05:30\",\n" +
+            "    \"channelid\": \"in.ekstep.test\",\n" +
             "     \"ver\": \"1.0\",\n" +
             "     \"edata\": {\n" +
             "          \"eks\": {\n" +
@@ -143,6 +150,7 @@ public class EventFixture {
             "    \"eid\": \"GE_CREATE_PROFILE\",\n" +
             "    \"ts\": \"2015-04-23T10:23:46+05:30\",\n" +
             "    \"ver\": \"1.0\",\n" +
+            "    \"channelid\": \"in.ekstep.test\",\n" +
             "    \"gdata\": {\n" +
             "        \"id\": \"genie.android\",\n" +
             "        \"ver\": \"1.0\"\n" +
@@ -166,6 +174,7 @@ public class EventFixture {
             "    \"eid\": \"GE_UPDATE_PROFILE\",\n" +
             "    \"ts\": \"2015-04-23T10:23:46+05:30\",\n" +
             "    \"ver\": \"1.0\",\n" +
+            "    \"channelid\": \"in.ekstep.test\",\n" +
             "    \"gdata\": {\n" +
             "        \"id\": \"genie.android\",\n" +
             "        \"ver\": \"1.0\"\n" +
@@ -191,6 +200,7 @@ public class EventFixture {
             "    \"eid\": \"GE_CREATE_PROFILE\",\n" +
             "    \"ts\": \"2014-04-23T10:23:46+05:30\",\n" +
             "    \"ver\": \"1.0\",\n" +
+            "    \"channelid\": \"in.ekstep.test\",\n" +
             "    \"gdata\": {\n" +
             "        \"id\": \"genie.android\",\n" +
             "        \"ver\": \"1.0\"\n" +
@@ -218,6 +228,7 @@ public class EventFixture {
     public String EVENT_WITHOUT_UID = "{\n" +
             "  \"@timestamp\": \"2017-04-13T03:58:33.542Z\",\n" +
             "  \"@version\": \"1\",\n" +
+            "    \"channelid\": \"in.ekstep.test\",\n" +
             "  \"did\": \"cbeda6a2ef327eaee21008de6495f89476aba58d\",\n" +
             "  \"edata\": {\n" +
             "    \"eks\": {\n" +
@@ -236,6 +247,7 @@ public class EventFixture {
                 "    \"eid\": \"GE_UPDATE_PROFILE\",\n" +
                 "    \"ts\": \"2015-04-23T10:23:46+05:30\",\n" +
                 "    \"ver\": \"1.0\",\n" +
+                "    \"channelid\": \"in.ekstep.test\",\n" +
                 "    \"gdata\": {\n" +
                 "        \"id\": \"genie.android\",\n" +
                 "        \"ver\": \"1.0\"\n" +
@@ -263,6 +275,7 @@ public class EventFixture {
                 "    \"eid\": \"GE_UPDATE_PROFILE\",\n" +
                 "    \"ts\": \"2015-04-23T10:23:46+05:30\",\n" +
                 "    \"ver\": \"1.0\",\n" +
+                "    \"channelid\": \"in.ekstep.test\",\n" +
                 "    \"gdata\": {\n" +
                 "        \"id\": \"genie.android\",\n" +
                 "        \"ver\": \"1.0\"\n" +
@@ -290,6 +303,7 @@ public class EventFixture {
                 "    \"eid\": \"GE_UPDATE_PROFILE\",\n" +
                 "    \"ts\": \"2015-04-23T10:23:46+05:30\",\n" +
                 "    \"ver\": \"1.0\",\n" +
+                "    \"channelid\": \"in.ekstep.test\",\n" +
                 "    \"gdata\": {\n" +
                 "        \"id\": \"genie.android\",\n" +
                 "        \"ver\": \"1.0\"\n" +
@@ -316,6 +330,7 @@ public class EventFixture {
                 "    \"eid\": \"GE_UPDATE_PROFILE\",\n" +
                 "    \"ts\": \"2015-04-23T10:23:46+05:30\",\n" +
                 "    \"ver\": \"1.0\",\n" +
+                "    \"channelid\": \"in.ekstep.test\",\n" +
                 "    \"gdata\": {\n" +
                 "        \"id\": \"genie.android\",\n" +
                 "        \"ver\": \"1.0\"\n" +

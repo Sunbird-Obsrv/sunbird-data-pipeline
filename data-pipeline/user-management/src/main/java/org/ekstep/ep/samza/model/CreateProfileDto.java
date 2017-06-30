@@ -41,6 +41,7 @@ public class CreateProfileDto implements IModel {
     private Timestamp updatedAt;
     private boolean isInserted;
     private DataSource dataSource;
+    private String channelid;
 
 
     public CreateProfileDto(DataSource dataSource) {
@@ -51,6 +52,7 @@ public class CreateProfileDto implements IModel {
     public void process(Event event) throws SQLException, ParseException {
         Map<String, Object> EKS = event.getEks();
         java.util.Date timeOfEvent = event.getTs();
+        channelid = (String)event.getMap().get("channelid");
         parseData(EKS, timeOfEvent);
 
         if (!isLearnerExist((String) EKS.get(UID), event.id())) {
@@ -83,6 +85,7 @@ public class CreateProfileDto implements IModel {
         java.util.Date date = new java.util.Date();
         createdAt = new Timestamp(date.getTime());
         updatedAt = new Timestamp(date.getTime());
+
     }
 
     private Boolean getBoolean(Map<String, Object> EKS, String key) {
@@ -109,8 +112,8 @@ public class CreateProfileDto implements IModel {
 
         try {
             connection = dataSource.getConnection();
-            String query = " insert into profile (uid, handle, year_of_birth, gender, age, standard, language, day, month, is_group_user, board, medium, created_at, updated_at)"
-                    + " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String query = " insert into profile (uid, handle, year_of_birth, gender, age, standard, language, day, month, is_group_user, board, medium, created_at, updated_at, channelid)"
+                    + " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             preparedStmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
             preparedStmt.setString(1, uid);
@@ -127,6 +130,7 @@ public class CreateProfileDto implements IModel {
             preparedStmt.setString(12, medium);
             preparedStmt.setTimestamp(13, createdAt);
             preparedStmt.setTimestamp(14, updatedAt);
+            preparedStmt.setString(15, channelid);
 
             int affectedRows = preparedStmt.executeUpdate();
 

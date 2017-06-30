@@ -38,6 +38,7 @@ public class UpdateProfileDto implements IModel {
 
     private boolean isInserted;
     private DataSource dataSource;
+    private String channelid;
 
     public UpdateProfileDto(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -46,6 +47,7 @@ public class UpdateProfileDto implements IModel {
     @Override
     public void process(Event event) throws SQLException, ParseException {
         Map<String, Object> EKS = event.getEks();
+        channelid = ((String) event.getMap().get("channelid"));
 
         java.util.Date timeOfEvent = event.getTs();
         parseData(EKS, timeOfEvent);
@@ -105,7 +107,7 @@ public class UpdateProfileDto implements IModel {
         try {
             connection = dataSource.getConnection();
             String updateQuery = "update profile set year_of_birth = ?, gender = ?, age = ?, standard = ?, language = ?, updated_at = ?, handle = ?, day = ?, month = ?, board = ?, medium = ?, is_group_user = ?"
-                    + " where uid = ?";
+                    + " where uid = ? and channelid = ?";
 
             preparedStmt = connection.prepareStatement(updateQuery);
 
@@ -123,6 +125,7 @@ public class UpdateProfileDto implements IModel {
             preparedStmt.setBoolean(12, isGroupUser);
 
             preparedStmt.setString(13, uid);
+            preparedStmt.setString(14, channelid);
 
             int affectedRows = preparedStmt.executeUpdate();
 

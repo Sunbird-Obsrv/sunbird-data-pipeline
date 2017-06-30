@@ -114,6 +114,7 @@ public class CreateProfileEventTest {
         verify(statementMock).setInt(8, 12);
         verify(statementMock).setInt(9, 11);
         verify(statementMock).setBoolean(10,false);
+        verify(statementMock).setString(15,"in.ekstep.test");
 
     }
 
