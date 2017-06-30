@@ -44,6 +44,10 @@ public class Event {
         return telemetry.<String>read("eid").value();
     }
 
+    public String channelId() {
+        return telemetry.<String>read("channelid").value();
+    }
+
     public void markSkipped() {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.ppm_skipped", true);

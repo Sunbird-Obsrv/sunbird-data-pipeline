@@ -15,7 +15,6 @@ import org.ekstep.ep.samza.object.service.ObjectService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import static junit.framework.Assert.assertEquals;
@@ -63,7 +62,7 @@ public class PortalProfileManagementTaskTest {
     @Test
     public void shouldPassEventThrough() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.cpUpdateProfileEvent());
-        stub(objectService.saveDetails(anyString(), anyString())).toReturn(SaveObjectDetailsFixture.getObjectResponse());
+        stub(objectService.saveDetails(anyString(), anyString(), anyString())).toReturn(SaveObjectDetailsFixture.getObjectResponse());
 
         portalProfileManagementTask.process(envelopeMock, collectorMock, coordinatorMock);
 

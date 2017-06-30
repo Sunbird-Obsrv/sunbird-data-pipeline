@@ -10,6 +10,7 @@ public class EventFixture {
     public static final String OTHER_EVENT =
             "{\n" +
                     "    \"eid\": \"ME_ITEM_USAGE_SUMMARY\",\n" +
+                    "    \"channelid\": \"in.ekstep.test\",\n" +
                     "    \"dimensions\": {\n" +
                     "      \"tag\": \"6c3791818e80b9d05fb975da1e972431d9f8c2a6\",\n" +
                     "      \"period\": 20170424,\n" +
@@ -23,6 +24,7 @@ public class EventFixture {
                     "    \"uid\": \"725\",\n" +
                     "    \"cdata\": [],\n" +
                     "    \"host\": \"ip-10-42-6-49\",\n" +
+                    "    \"channelid\": \"in.ekstep.test\",\n" +
                     "    \"edata\": {\n" +
                     "        \"eks\": {\n" +
                     "            \"type\": \"User\",\n" +

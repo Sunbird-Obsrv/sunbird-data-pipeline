@@ -20,7 +20,7 @@ public class SaveObjectRequest {
         this.request = request;
     }
 
-    public static SaveObjectRequest create(Map<String,Object> requestMap) {
+    public static SaveObjectRequest create(Map<String,Object> requestMap,String channelId) {
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("msgid", UUID.randomUUID().toString());
 

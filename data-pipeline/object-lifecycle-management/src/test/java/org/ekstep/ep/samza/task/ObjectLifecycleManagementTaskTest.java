@@ -67,29 +67,29 @@ public class ObjectLifecycleManagementTaskTest {
 
         objectLifecycleManagementTask.process(envelopeMock, collectorMock, coordinatorMock);
 
-        verify(objectServiceMock, times(0)).createOrUpdate(anyMap());
+        verify(objectServiceMock, times(0)).createOrUpdate(anyMap(), anyString());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
 
     @Test
     public void shouldProcessLifeCycleEventsAndShouldCallObjectService() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.LifecycleEvent());
-        stub(objectServiceMock.createOrUpdate(SaveObjectFixture.getObjectRequest())).toReturn(SaveObjectFixture.getObjectResponse());
+        stub(objectServiceMock.createOrUpdate(SaveObjectFixture.getObjectRequest(), "in.ekstep.test")).toReturn(SaveObjectFixture.getObjectResponse());
 
         objectLifecycleManagementTask.process(envelopeMock, collectorMock, coordinatorMock);
 
-        verify(objectServiceMock, times(1)).createOrUpdate(anyMap());
+        verify(objectServiceMock, times(1)).createOrUpdate(anyMap(), anyString());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
 
     @Test
     public void shouldUpdateFlagsForSuccessfulObjectServiceResponse() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.LifecycleEvent());
-        stub(objectServiceMock.createOrUpdate(SaveObjectFixture.getObjectRequest())).toReturn(SaveObjectFixture.getObjectResponse());
+        stub(objectServiceMock.createOrUpdate(SaveObjectFixture.getObjectRequest(), "in.ekstep.test")).toReturn(SaveObjectFixture.getObjectResponse());
 
         objectLifecycleManagementTask.process(envelopeMock, collectorMock, coordinatorMock);
 
-        verify(objectServiceMock, times(1)).createOrUpdate(anyMap());
+        verify(objectServiceMock, times(1)).createOrUpdate(anyMap(), anyString());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
         Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("olm_processed")),true);
     }
@@ -97,11 +97,11 @@ public class ObjectLifecycleManagementTaskTest {
     @Test
     public void shouldUpdateFlagsForFailureObjectServiceResponse() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.LifecycleEvent());
-        stub(objectServiceMock.createOrUpdate(SaveObjectFixture.getObjectRequest())).toReturn(SaveObjectFixture.getFailureResponse());
+        stub(objectServiceMock.createOrUpdate(SaveObjectFixture.getObjectRequest(), "in.ekstep.test")).toReturn(SaveObjectFixture.getFailureResponse());
 
         objectLifecycleManagementTask.process(envelopeMock, collectorMock, coordinatorMock);
 
-        verify(objectServiceMock, times(1)).createOrUpdate(anyMap());
+        verify(objectServiceMock, times(1)).createOrUpdate(anyMap(), anyString());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
         Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("flags")).get("olm_processed")),false);
     }
@@ -109,11 +109,11 @@ public class ObjectLifecycleManagementTaskTest {
     @Test
     public void shouldUpdateErrorDetailsInMetadataForFailureObjectServiceResponse() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.LifecycleEvent());
-        stub(objectServiceMock.createOrUpdate(SaveObjectFixture.getObjectRequest())).toReturn(SaveObjectFixture.getFailureResponse());
+        stub(objectServiceMock.createOrUpdate(SaveObjectFixture.getObjectRequest(), "in.ekstep.test")).toReturn(SaveObjectFixture.getFailureResponse());
 
         objectLifecycleManagementTask.process(envelopeMock, collectorMock, coordinatorMock);
 
-        verify(objectServiceMock, times(1)).createOrUpdate(anyMap());
+        verify(objectServiceMock, times(1)).createOrUpdate(anyMap(), anyString());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
         Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("metadata")).get("olm_process_err")),"BAD_REQUEST");
         Assert.assertEquals((((Map<String, Object>) ((Map<String, Object>) envelopeMock.getMessage()).get("metadata")).get("olm_process_err_msg")),"TYPE IS MANDATORY, ID IS MANDATORY");

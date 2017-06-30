@@ -29,7 +29,7 @@ public class PortalProfileManagementService {
                 return;
             }
 
-            SaveObjectDetailsResponse saveObjectDetailsResponse = objectService.saveDetails(event.uid().value(), event.userDetails());
+            SaveObjectDetailsResponse saveObjectDetailsResponse = objectService.saveDetails(event.uid().value(), event.userDetails(), event.channelId());
             if (!saveObjectDetailsResponse.successful()) {
                 LOGGER.error(event.id(), "UNABLE TO SAVE OBJECT. RESPONSE: {}", saveObjectDetailsResponse);
                 event.markFailed(saveObjectDetailsResponse.params().get("err"), saveObjectDetailsResponse.params().get("errmsg"));

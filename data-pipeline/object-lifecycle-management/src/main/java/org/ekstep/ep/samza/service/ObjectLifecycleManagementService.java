@@ -32,7 +32,7 @@ public class ObjectLifecycleManagementService {
                 return;
             }
 
-            SaveObjectResponse saveObjectResponse = objectService.createOrUpdate(event.LifecycleObjectAttributes());
+            SaveObjectResponse saveObjectResponse = objectService.createOrUpdate(event.LifecycleObjectAttributes(), event.channelId());
 
             if (saveObjectResponse.successful()) {
                 event.updateFlags(true);

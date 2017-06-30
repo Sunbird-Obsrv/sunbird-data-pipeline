@@ -59,7 +59,7 @@ public class PortalProfileManagementServiceTest {
         Event event = new Event(EventFixture.cpUpdateProfileEvent());
         when(config.cpUpdateProfileEvent()).thenReturn("CP_UPDATE_PROFILE");
         when(source.getEvent()).thenReturn(event);
-        when(objectService.saveDetails(anyString(), anyString())).thenReturn(SaveObjectDetailsFixture.getObjectResponse());
+        when(objectService.saveDetails(anyString(), anyString(), anyString())).thenReturn(SaveObjectDetailsFixture.getObjectResponse());
 
         service = new PortalProfileManagementService(config, objectService);
         service.process(source, sink);
@@ -72,7 +72,7 @@ public class PortalProfileManagementServiceTest {
         Event event = new Event(EventFixture.cpUpdateProfileEventWithoutUid());
         when(config.cpUpdateProfileEvent()).thenReturn("CP_UPDATE_PROFILE");
         when(source.getEvent()).thenReturn(event);
-        when(objectService.saveDetails(any(String.class), anyString())).thenReturn(SaveObjectDetailsFixture.getFailureResponse());
+        when(objectService.saveDetails(any(String.class), anyString(), anyString())).thenReturn(SaveObjectDetailsFixture.getFailureResponse());
 
         service = new PortalProfileManagementService(config, objectService);
         service.process(source, sink);
@@ -86,13 +86,13 @@ public class PortalProfileManagementServiceTest {
         Event event = new Event(EventFixture.cpUpdateProfileEvent());
         when(config.cpUpdateProfileEvent()).thenReturn("CP_UPDATE_PROFILE");
         when(source.getEvent()).thenReturn(event);
-        when(objectService.saveDetails(anyString(), anyString())).thenReturn(SaveObjectDetailsFixture.getObjectResponse());
+        when(objectService.saveDetails(anyString(), anyString(), anyString())).thenReturn(SaveObjectDetailsFixture.getObjectResponse());
 
         service = new PortalProfileManagementService(config, objectService);
         service.process(source, sink);
 
         verify(sink).toSuccessTopic(argThat(validateProcessedEvent()));
-        verify(objectService).saveDetails("111", "{\"name\":\"Portal-User-10\",\"email\":\"portal.user.10@ekstep.in\",\"access\":[{\"id\":11.0,\"value\":\"Content-Creator\"}],\"partners\":[{\"id\":\"org.ekstep.partners.pratham\",\"value\":\"Pratham\"}],\"profile\":[{\"id\":\"field_gender\",\"value\":\"Female\"}]}");
+        verify(objectService).saveDetails("111", "{\"name\":\"Portal-User-10\",\"email\":\"portal.user.10@ekstep.in\",\"access\":[{\"id\":11.0,\"value\":\"Content-Creator\"}],\"partners\":[{\"id\":\"org.ekstep.partners.pratham\",\"value\":\"Pratham\"}],\"profile\":[{\"id\":\"field_gender\",\"value\":\"Female\"}]}", "in.ekstep.test");
     }
 
     @Test
@@ -100,14 +100,14 @@ public class PortalProfileManagementServiceTest {
         Event event = new Event(EventFixture.cpUpdateProfileEvent());
         when(config.cpUpdateProfileEvent()).thenReturn("CP_UPDATE_PROFILE");
         when(source.getEvent()).thenReturn(event);
-        when(objectService.saveDetails(anyString(), anyString())).thenReturn(SaveObjectDetailsFixture.getFailureResponse());
+        when(objectService.saveDetails(anyString(), anyString(), anyString())).thenReturn(SaveObjectDetailsFixture.getFailureResponse());
 
         service = new PortalProfileManagementService(config, objectService);
         service.process(source, sink);
 
         verify(sink).toSuccessTopic(argThat(validateFailedEvent()));
         verify(sink).toFailedTopic(argThat(validateFailedEvent()));
-        verify(objectService).saveDetails("111", "{\"name\":\"Portal-User-10\",\"email\":\"portal.user.10@ekstep.in\",\"access\":[{\"id\":11.0,\"value\":\"Content-Creator\"}],\"partners\":[{\"id\":\"org.ekstep.partners.pratham\",\"value\":\"Pratham\"}],\"profile\":[{\"id\":\"field_gender\",\"value\":\"Female\"}]}");
+        verify(objectService).saveDetails("111", "{\"name\":\"Portal-User-10\",\"email\":\"portal.user.10@ekstep.in\",\"access\":[{\"id\":11.0,\"value\":\"Content-Creator\"}],\"partners\":[{\"id\":\"org.ekstep.partners.pratham\",\"value\":\"Pratham\"}],\"profile\":[{\"id\":\"field_gender\",\"value\":\"Female\"}]}", "in.ekstep.test");
     }
 
     private ArgumentMatcher<Event> validateSkippedEvent() {

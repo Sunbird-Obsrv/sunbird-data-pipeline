@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.util.Map;
 
 public interface ObjectService {
-    SaveObjectResponse createOrUpdate(Map<String, Object> requestMap) throws IOException;
+    SaveObjectResponse createOrUpdate(Map<String, Object> requestMap, String channelId) throws IOException;
 
     GetObjectResponse get(String id) throws IOException;
 
-    SaveObjectDetailsResponse saveDetails(String id, String details) throws IOException;
+    SaveObjectDetailsResponse saveDetails(String id, String details, String channelId) throws IOException;
 }
