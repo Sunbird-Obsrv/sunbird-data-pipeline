@@ -33,10 +33,10 @@ public class ObjectServiceClient implements ObjectService {
     }
 
     @Override
-    public GetObjectResponse get(String id) throws IOException {
+    public GetObjectResponse get(String id,String channelId) throws IOException {
         Request request = new Request.Builder()
                 .url(objectServiceEndpoint + "/v1/object/get")
-                .post(RequestBody.create(JSON_MEDIA_TYPE, new Gson().toJson(GetObjectRequest.create(id))))
+                .post(RequestBody.create(JSON_MEDIA_TYPE, new Gson().toJson(GetObjectRequest.create(id,channelId))))
                 .build();
         Response response = httpClient.newCall(request).execute();
         String responseString = response.body().string();

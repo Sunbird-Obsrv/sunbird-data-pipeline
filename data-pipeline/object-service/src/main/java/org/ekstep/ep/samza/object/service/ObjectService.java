@@ -10,7 +10,7 @@ import java.util.Map;
 public interface ObjectService {
     SaveObjectResponse createOrUpdate(Map<String, Object> requestMap, String channelId) throws IOException;
 
-    GetObjectResponse get(String id) throws IOException;
+    GetObjectResponse get(String id, String channelId) throws IOException;
 
     SaveObjectDetailsResponse saveDetails(String id, String details, String channelId) throws IOException;
 }

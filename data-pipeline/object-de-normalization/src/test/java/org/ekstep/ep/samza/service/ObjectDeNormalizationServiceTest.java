@@ -127,14 +127,14 @@ public class ObjectDeNormalizationServiceTest {
         Event event = new Event(new Telemetry(EventFixture.cpInteractEvent()),config);
         when(config.fieldsToDenormalize()).thenReturn(asList("id", "type", "subtype", "parentid", "parenttype", "code", "name"));
         when(source.getEvent(config)).thenReturn(event);
-        when(objectService.get("111")).thenReturn(GetObjectFixture.getObjectSuccessResponse());
+        when(objectService.get("111","in.ekstep")).thenReturn(GetObjectFixture.getObjectSuccessResponse());
 
         denormalizationService = new ObjectDeNormalizationService(config, additionalConfig, objectService);
         denormalizationService.process(source, sink);
 
         Event expectedEvent = new Event(new Telemetry(EventFixture.denormalizedCpInteractEvent()),config);
         verify(sink).toSuccessTopic(argThat(validateEvent(expectedEvent)));
-        verify(objectService).get("111");
+        verify(objectService).get("111","in.ekstep");
     }
 
     @Test
@@ -146,14 +146,14 @@ public class ObjectDeNormalizationServiceTest {
         Event event = new Event(new Telemetry(EventFixture.cpInteractEvent()),config);
         when(config.fieldsToDenormalize()).thenReturn(asList("id", "type", "subtype", "parentid", "parenttype", "code", "name"));
         when(source.getEvent(config)).thenReturn(event);
-        when(objectService.get("111")).thenReturn(GetObjectFixture.getObjectSuccessResponseWithMalformedDetails());
+        when(objectService.get("111","in.ekstep")).thenReturn(GetObjectFixture.getObjectSuccessResponseWithMalformedDetails());
 
         denormalizationService = new ObjectDeNormalizationService(config, additionalConfig, objectService);
         denormalizationService.process(source, sink);
 
         Event expectedEvent = new Event(new Telemetry(EventFixture.denormalizedCpInteractEventWithoutDetails()),config);
         verify(sink).toSuccessTopic(argThat(validateEvent(expectedEvent)));
-        verify(objectService).get("111");
+        verify(objectService).get("111","in.ekstep");
     }
 
     @Test
@@ -164,14 +164,14 @@ public class ObjectDeNormalizationServiceTest {
         Event event = new Event(new Telemetry(EventFixture.cpInteractEvent()),config);
         when(config.fieldsToDenormalize()).thenReturn(asList("id", "type", "subtype", "parentid", "parenttype", "code", "name"));
         when(source.getEvent(config)).thenReturn(event);
-        when(objectService.get("111")).thenReturn(GetObjectFixture.getObjectSuccessResponseWithNoDetails());
+        when(objectService.get("111","in.ekstep")).thenReturn(GetObjectFixture.getObjectSuccessResponseWithNoDetails());
 
         denormalizationService = new ObjectDeNormalizationService(config, additionalConfig, objectService);
         denormalizationService.process(source, sink);
 
         Event expectedEvent = new Event(new Telemetry(EventFixture.denormalizedCpInteractEventWithoutDetails()),config);
         verify(sink).toSuccessTopic(argThat(validateEvent(expectedEvent)));
-        verify(objectService).get("111");
+        verify(objectService).get("111","in.ekstep");
     }
 
     @Test
@@ -182,13 +182,13 @@ public class ObjectDeNormalizationServiceTest {
         Event event = new Event(new Telemetry(EventFixture.cpInteractEvent()),config);
         when(config.fieldsToDenormalize()).thenReturn(asList("id", "type", "subtype", "parentid", "parenttype", "code", "name"));
         when(source.getEvent(config)).thenReturn(event);
-        when(objectService.get("111")).thenReturn(GetObjectFixture.getFailureResponse());
+        when(objectService.get("111","in.ekstep")).thenReturn(GetObjectFixture.getFailureResponse());
 
         denormalizationService = new ObjectDeNormalizationService(config, additionalConfig, objectService);
         denormalizationService.process(source, sink);
 
         verify(sink).toRetryTopic(argThat(validateRetriedEvent("BAD_REQUEST", "TYPE IS MANDATORY, ID IS MANDATORY")));
-        verify(objectService).get("111");
+        verify(objectService).get("111","in.ekstep");
     }
 
     @Test
@@ -199,14 +199,14 @@ public class ObjectDeNormalizationServiceTest {
         Event event = new Event(new Telemetry(EventFixture.cpInteractEventForPartner()),config);
         when(config.fieldsToDenormalize()).thenReturn(asList("id", "type", "subtype", "parentid", "parenttype", "code", "name"));
         when(source.getEvent(config)).thenReturn(event);
-        when(objectService.get("org.ekstep.partner.partner1")).thenReturn(GetObjectFixture.getPartnerObjectSuccessResponse());
+        when(objectService.get("org.ekstep.partner.partner1","in.ekstep")).thenReturn(GetObjectFixture.getPartnerObjectSuccessResponse());
 
         denormalizationService = new ObjectDeNormalizationService(config, additionalConfig, objectService);
         denormalizationService.process(source, sink);
 
         Event expectedEvent = new Event(new Telemetry(EventFixture.denormalizedCpInteractEventForParther()),config);
         verify(sink).toSuccessTopic(argThat(validateEvent(expectedEvent)));
-        verify(objectService).get("org.ekstep.partner.partner1");
+        verify(objectService).get("org.ekstep.partner.partner1","in.ekstep");
     }
 //
     private ArgumentMatcher<Event> validateEvent(final Event expectedEvent) {

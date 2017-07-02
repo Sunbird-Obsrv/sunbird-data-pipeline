@@ -10,6 +10,7 @@ public class EventFixture {
     private static final String SKIP_EVENT_JSON =
             "{\n" +
                     "    \"eid\": \"ME_ITEM_USAGE_SUMMARY\",\n" +
+                    "    \"channelid\": \"in.ekstep\",\n" +
                     "    \"dimensions\": {\n" +
                     "      \"tag\": \"6c3791818e80b9d05fb975da1e972431d9f8c2a6\",\n" +
                     "      \"period\": 20170424,\n" +
@@ -20,13 +21,15 @@ public class EventFixture {
     private static final String CP_INTERACT_EVENT_JSON =
             "{\n" +
                     "    \"eid\": \"CP_INTERACT\",\n" +
-                    "    \"uid\": \"111\"\n" +
+                    "    \"uid\": \"111\",\n" +
+                    "    \"channelid\": \"in.ekstep\"\n" +
                     "  }";
 
     private static final String CP_INTERACT_EVENT_FOR_PARTNER_JSON =
             "{\n" +
                     "  \"eid\": \"CP_INTERACT\",\n" +
                     "  \"uid\": \"111\",\n" +
+                    "    \"channelid\": \"in.ekstep\",\n" +
                     "  \"tags\": [\n" +
                     "    {\n" +
                     "      \"partnerid\": [\n" +
@@ -44,6 +47,7 @@ public class EventFixture {
             "{\n" +
                     "  \"eid\": \"CP_INTERACT\",\n" +
                     "  \"uid\": \"111\",\n" +
+                    "  \"channelid\": \"in.ekstep\",\n" +
                     "  \"portaluserdata\": {\n" +
                     "    \"id\": \"111\",\n" +
                     "    \"type\": \"User\",\n" +
@@ -68,6 +72,7 @@ public class EventFixture {
             "{\n" +
                     "  \"eid\": \"CP_INTERACT\",\n" +
                     "  \"uid\": \"111\",\n" +
+                    "  \"channelid\": \"in.ekstep\",\n" +
                     "  \"portaluserdata\": {\n" +
                     "    \"id\": \"111\",\n" +
                     "    \"type\": \"User\",\n" +
@@ -83,6 +88,7 @@ public class EventFixture {
             "{\n" +
                     "  \"eid\": \"CP_INTERACT\",\n" +
                     "  \"uid\": \"111\",\n" +
+                    "    \"channelid\": \"in.ekstep\",\n" +
                     "  \"partnerdata\": {\n" +
                     "    \"id\": \"org.ekstep.partner.partner1\",\n" +
                     "    \"type\": \"Partner\",\n" +
