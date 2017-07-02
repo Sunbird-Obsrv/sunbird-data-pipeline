@@ -114,4 +114,8 @@ public class Telemetry {
             add(fieldName, value);
         }
     }
+
+    public String getChannelId() {
+        return this.<String>read("channelid").value();
+    }
 }

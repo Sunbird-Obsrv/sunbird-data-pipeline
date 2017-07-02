@@ -29,12 +29,17 @@ public class RetryDataTest {
         HashMap<String, Object> metadata = new HashMap<String, Object>();
         telemetry.put("metadata", metadata);
         telemetry.put("uid","123");
+        telemetry.put("channelid","in.ekste.test");
         metadata.put("processed_count",4);
 
         RetryData retryData = new RetryData(new Telemetry(telemetry), retryStoreMock, 10, 3, true, new Flag("test"));
-        retryData.setMetadataKey((String) telemetry.get("uid"));
+        retryData.setMetadataKey(getMetdataKey(telemetry));
 
         assertFalse(retryData.shouldBackOff());
+    }
+
+    private String getMetdataKey(HashMap<String, Object> telemetry) {
+        return String.valueOf(telemetry.get("uid") + "_" + telemetry.get("channelid"));
     }
 
     @Test
@@ -43,11 +48,12 @@ public class RetryDataTest {
         HashMap<String, Object> metadata = new HashMap<String, Object>();
         telemetry.put("metadata", metadata);
         telemetry.put("uid","123");
+        telemetry.put("channelid","in.ekste.test");
         metadata.put(PROCESSED_COUNT_FLAG,2);
         metadata.put(LAST_PROCESSED_AT_FLAG, DateTime.now().toString());
 
         RetryData retryData = new RetryData(new Telemetry(telemetry), retryStoreMock, 10, 3, true, new Flag("test"));
-        retryData.setMetadataKey((String) telemetry.get("uid"));
+        retryData.setMetadataKey(getMetdataKey(telemetry));
 
         assertTrue(retryData.shouldBackOff());
     }
@@ -58,11 +64,12 @@ public class RetryDataTest {
         HashMap<String, Object> metadata = new HashMap<String, Object>();
         telemetry.put("metadata", metadata);
         telemetry.put("uid","123");
+        telemetry.put("channelid","in.ekste.test");
         metadata.put(PROCESSED_COUNT_FLAG,3);
         metadata.put(LAST_PROCESSED_AT_FLAG, DateTime.now().minus(20).toString());
 
         RetryData retryData = new RetryData(new Telemetry(telemetry), retryStoreMock, 1, 3, true, new Flag("test"));
-        retryData.setMetadataKey((String) telemetry.get("uid"));
+        retryData.setMetadataKey(getMetdataKey(telemetry));
 
         assertTrue(retryData.shouldBackOff());
     }
@@ -73,12 +80,13 @@ public class RetryDataTest {
         HashMap<String, Object> metadata = new HashMap<String, Object>();
         telemetry.put("metadata", metadata);
         telemetry.put("uid","123");
+        telemetry.put("channelid","in.ekste.test");
 
         metadata.put(PROCESSED_COUNT_FLAG,4);
         metadata.put(LAST_PROCESSED_AT_FLAG, DateTime.now().toString());
 
         RetryData retryData = new RetryData(new Telemetry(telemetry), retryStoreMock, 10, 3, false, new Flag("test"));
-        retryData.setMetadataKey((String) telemetry.get("uid"));
+        retryData.setMetadataKey(getMetdataKey(telemetry));
 
         assertTrue(retryData.shouldBackOff());
     }
@@ -90,12 +98,13 @@ public class RetryDataTest {
         HashMap<String, Object> metadata = new HashMap<String, Object>();
         telemetry.put("metadata", metadata);
         telemetry.put("uid","123");
+        telemetry.put("channelid","in.ekste.test");
 
         metadata.put(PROCESSED_COUNT_FLAG,1);
         metadata.put(LAST_PROCESSED_AT_FLAG, DateTime.now().minus(25).toString());
 
         RetryData retryData = new RetryData(new Telemetry(telemetry), retryStoreMock, 10, 3, false, new Flag("test"));
-        retryData.setMetadataKey((String) telemetry.get("uid"));
+        retryData.setMetadataKey(getMetdataKey(telemetry));;
 
         assertTrue(retryData.shouldBackOff());
     }

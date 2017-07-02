@@ -46,7 +46,7 @@ public class ChildData {
     public void process(UserService userService) throws Exception {
         if (child.needsToBeProcessed()) {
             LOGGER.info(telemetry.id(), "PROCESSING - User Service CALL");
-            child = userService.getUserFor(child, telemetry.getTime(), telemetry.id());
+            child = userService.getUserFor(child, telemetry.getTime(), telemetry.id(), telemetry.getChannelId());
         }
         if (child.isProcessed()) {
             LOGGER.info(telemetry.id(), "PROCESSING - FOUND CHILD");

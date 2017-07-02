@@ -39,7 +39,7 @@ public class Event {
         telemetry = new Telemetry(map);
         backendData = new BackendData(telemetry, backendEvents);
         retryData = new RetryData(telemetry, retryStore, retryBackoffBase, new Flag("gud"));
-        retryData.setMetadataKey(telemetry.<String>read("uid").value());
+        retryData.setMetadataKey(getMetadataKey());
         childData = new ChildData(telemetry, childStore, retryData);
         backendData.initialize();
     }
@@ -127,4 +127,7 @@ public class Event {
         return true;
     }
 
+    public String getMetadataKey() {
+        return String.valueOf(telemetry.getUID()+"_"+telemetry.getChannelId());
+    }
 }

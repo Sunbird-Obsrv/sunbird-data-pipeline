@@ -31,10 +31,10 @@ public class UserServiceClient implements UserService {
     }
 
     @Override
-    public Child getUserFor(Child child, Date timeOfEvent, String eventId) throws IOException {
+    public Child getUserFor(Child child, Date timeOfEvent, String eventId, String channelId) throws IOException {
         Request request = new Request.Builder()
                 .url(userServiceEndpoint + child.getUid())
-                .post(RequestBody.create(JSON_MEDIA_TYPE, new Gson().toJson(GetUserRequest.create())))
+                .post(RequestBody.create(JSON_MEDIA_TYPE, new Gson().toJson(GetUserRequest.create(channelId))))
                 .build();
         Response response = httpClient.newCall(request).execute();
         GetUserResponse getUserResponse = new Gson().fromJson(response.body().string(), GetUserResponse.class);
