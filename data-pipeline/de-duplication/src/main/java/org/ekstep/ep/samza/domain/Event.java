@@ -4,6 +4,7 @@ package org.ekstep.ep.samza.domain;
 import com.google.gson.Gson;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
+import org.ekstep.ep.samza.task.DeDuplicationConfig;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -79,6 +80,10 @@ public class Event {
 
         telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
         telemetry.add("metadata.dd_error", error);
+    }
+
+    public void updateDefaults(DeDuplicationConfig config) {
+        telemetry.addFieldIfAbsent("channelid",config.defaultChannelId());
     }
 }
 

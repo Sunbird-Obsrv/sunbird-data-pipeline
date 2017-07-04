@@ -65,7 +65,7 @@ public class DeDuplicationTask implements StreamTask, InitableTask, WindowableTa
         this.config = new DeDuplicationConfig(config);
         metrics = new JobMetrics(context);
         deDupEngine = deDupEngine == null ? new DeDupEngine(deDuplicationStore) : deDupEngine;
-        service = new DeDuplicationService(deDupEngine);
+        service = new DeDuplicationService(deDupEngine,this.config);
     }
 
     @Override

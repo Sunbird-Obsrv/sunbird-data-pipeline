@@ -4,6 +4,7 @@ import com.google.gson.JsonSyntaxException;
 import org.ekstep.ep.samza.dedup.DeDupEngine;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.task.DeDuplicationConfig;
 import org.ekstep.ep.samza.task.DeDuplicationSink;
 import org.ekstep.ep.samza.task.DeDuplicationSource;
 
@@ -12,9 +13,11 @@ import static java.text.MessageFormat.format;
 public class DeDuplicationService {
     static Logger LOGGER = new Logger(DeDuplicationService.class);
     private final DeDupEngine deDupEngine;
+    private final DeDuplicationConfig config;
 
-    public DeDuplicationService(DeDupEngine deDupEngine) {
+    public DeDuplicationService(DeDupEngine deDupEngine, DeDuplicationConfig config) {
         this.deDupEngine= deDupEngine;
+        this.config = config;
     }
 
     public void process(DeDuplicationSource source, DeDuplicationSink sink) {
@@ -41,6 +44,7 @@ public class DeDuplicationService {
             LOGGER.info(event.id(), "ADDING EVENT CHECKSUM TO STORE");
 
             deDupEngine.storeChecksum(checksum);
+            event.updateDefaults(config);
             event.markSuccess();
             sink.toSuccessTopic(event);
         } catch(JsonSyntaxException e){

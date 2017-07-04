@@ -9,6 +9,7 @@ public class DeDuplicationConfig {
     private String failedTopic;
     private String duplicateTopic;
     private String malformedTopic;
+    private String defaultChannelId;
 
 
     public DeDuplicationConfig(Config config) {
@@ -16,7 +17,7 @@ public class DeDuplicationConfig {
         failedTopic = config.get("output.failed.topic.name", "telemetry.unique.fail");
         duplicateTopic = config.get("output.duplicate.topic.name", "telemetry.duplicate");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
-
+        defaultChannelId = config.get("default.channel.id", "in.ekstep");
     }
 
     public String successTopic() {
@@ -33,5 +34,9 @@ public class DeDuplicationConfig {
 
     public String malformedTopic() {
         return malformedTopic;
+    }
+
+    public String defaultChannelId() {
+        return defaultChannelId;
     }
 }
