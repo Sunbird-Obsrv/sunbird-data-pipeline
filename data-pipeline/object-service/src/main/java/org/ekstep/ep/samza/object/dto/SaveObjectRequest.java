@@ -11,13 +11,15 @@ public class SaveObjectRequest {
     private long ets;
     private Map<String, Object> params;
     private Map<String, Object> request;
+    private String channelid;
 
-    private SaveObjectRequest(String id, String ver, long ets, Map<String, Object> params, Map<String, Object> request) {
+    private SaveObjectRequest(String id, String ver, long ets, Map<String, Object> params, Map<String, Object> request, String channelId) {
         this.id = id;
         this.ver = ver;
         this.ets = ets;
         this.params = params;
         this.request = request;
+        this.channelid = channelId;
     }
 
     public static SaveObjectRequest create(Map<String,Object> requestMap,String channelId) {
@@ -27,6 +29,6 @@ public class SaveObjectRequest {
         HashMap<String, Object> request = new HashMap<String, Object>();
         request.putAll(requestMap);
 
-        return new SaveObjectRequest("ekstep.object_service.create_or_update", "1.0", new Date().getTime(), params, request);
+        return new SaveObjectRequest("ekstep.object_service.create_or_update", "1.0", new Date().getTime(), params, request, channelId);
     }
 }

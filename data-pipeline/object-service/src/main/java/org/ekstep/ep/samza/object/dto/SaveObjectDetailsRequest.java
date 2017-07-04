@@ -11,7 +11,7 @@ public class SaveObjectDetailsRequest {
     private long ets;
     private Map<String, Object> params;
     private Map<String, Object> request;
-    private String channelId;
+    private String channelid;
 
     private SaveObjectDetailsRequest(String id, String ver, long ets, Map<String, Object> params,
                                      Map<String, Object> request, String channelId) {
@@ -20,7 +20,7 @@ public class SaveObjectDetailsRequest {
         this.ets = ets;
         this.params = params;
         this.request = request;
-        this.channelId = channelId;
+        this.channelid = channelId;
     }
 
     public static SaveObjectDetailsRequest create(String id, String details, String channelId) {
