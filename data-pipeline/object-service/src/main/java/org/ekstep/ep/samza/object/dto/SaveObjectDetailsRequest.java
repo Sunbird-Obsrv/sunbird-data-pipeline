@@ -11,19 +11,19 @@ public class SaveObjectDetailsRequest {
     private long ets;
     private Map<String, Object> params;
     private Map<String, Object> request;
-    private String channel;
+    private String channelid;
 
     private SaveObjectDetailsRequest(String id, String ver, long ets, Map<String, Object> params,
-                                     Map<String, Object> request, String channel) {
+                                     Map<String, Object> request, String channelId) {
         this.id = id;
         this.ver = ver;
         this.ets = ets;
         this.params = params;
         this.request = request;
-        this.channel = channel;
+        this.channelid = channelId;
     }
 
-    public static SaveObjectDetailsRequest create(String id, String details, String channel) {
+    public static SaveObjectDetailsRequest create(String id, String details, String channelId) {
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("msgid", UUID.randomUUID().toString());
 
@@ -32,6 +32,6 @@ public class SaveObjectDetailsRequest {
         request.put("details", details);
 
         return new SaveObjectDetailsRequest("ekstep.object_service.create_or_update", "1.0",
-                new Date().getTime(), params, request, channel);
+                new Date().getTime(), params, request, channelId);
     }
 }

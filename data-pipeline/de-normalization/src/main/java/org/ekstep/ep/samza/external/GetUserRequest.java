@@ -12,17 +12,17 @@ public class GetUserRequest {
     private Map<String, Object> params;
     private String channelid;
 
-    private GetUserRequest(String id, String ver, long ets, Map<String, Object> params, String channel) {
+    private GetUserRequest(String id, String ver, long ets, Map<String, Object> params, String channelId) {
         this.id = id;
         this.ver = ver;
         this.ets = ets;
         this.params = params;
-        this.channelid = channel;
+        this.channelid = channelId;
     }
 
-    public static GetUserRequest create(String channel) {
+    public static GetUserRequest create(String channelId) {
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("msgid", UUID.randomUUID().toString());
-        return new GetUserRequest("ekstep.users.get", "1.0", new Date().getTime(), params, channel);
+        return new GetUserRequest("ekstep.users.get", "1.0", new Date().getTime(), params, channelId);
     }
 }
