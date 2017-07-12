@@ -115,7 +115,7 @@ public class Telemetry {
         }
     }
 
-    public String getChannelId() {
-        return this.<String>read("channelid").value();
+    public String getChannel() {
+        return this.<String>read("channel").value();
     }
 }

@@ -112,11 +112,11 @@ public class Event implements Mappable {
 
     public void updateDefaults(Configuration configuration){
         updateChecksum();
-        updateDefaultChannelId(configuration);
+        updateDefaultChannel(configuration);
     }
 
-    private void updateDefaultChannelId(Configuration configuration) {
-        telemetry.addFieldIfAbsent(path.channelId(),configuration.getDefaultChannel());
+    private void updateDefaultChannel(Configuration configuration) {
+        telemetry.addFieldIfAbsent(path.channel(),configuration.getDefaultChannel());
     }
 
     private void updateChecksum() {

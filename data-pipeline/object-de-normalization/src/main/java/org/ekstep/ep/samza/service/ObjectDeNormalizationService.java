@@ -51,13 +51,13 @@ public class ObjectDeNormalizationService {
                     if (objectId.isNull() || objectId.value().isEmpty()) {
                         continue;
                     }
-                    event.setDeNormalizationId(objectId.value(),event.channelId());
+                    event.setDeNormalizationId(objectId.value(),event.channel());
                     if(event.shouldBackOff()){
                         event.addLastSkippedAt(DateTime.now());
                         sink.toRetryTopic(event);
                         return;
                     }
-                    deNormalise(event, dataDenormalizationConfig, objectId, event.channelId());
+                    deNormalise(event, dataDenormalizationConfig, objectId, event.channel());
                 }
             }
             event.flowIn(sink);
@@ -75,8 +75,8 @@ public class ObjectDeNormalizationService {
         }
     }
 
-    private void deNormalise(Event event, DataDenormalizationConfig dataDenormalizationConfig, NullableValue<String> objectId, String channelId) throws IOException {
-        GetObjectResponse getObjectResponse = objectService.get(objectId.value(),channelId);
+    private void deNormalise(Event event, DataDenormalizationConfig dataDenormalizationConfig, NullableValue<String> objectId, String channel) throws IOException {
+        GetObjectResponse getObjectResponse = objectService.get(objectId.value(),channel);
         if (!getObjectResponse.successful()) {
             LOGGER.error(event.id(),
                     format("ERROR WHEN GETTING OBJECT DATA. EVENT: {0}, RESPONSE: {1}",

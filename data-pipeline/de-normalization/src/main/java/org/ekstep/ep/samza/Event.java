@@ -128,6 +128,6 @@ public class Event {
     }
 
     public String getMetadataKey() {
-        return String.valueOf(telemetry.getUID()+"_"+telemetry.getChannelId());
+        return String.valueOf(telemetry.getUID()+"_"+telemetry.getChannel());
     }
 }

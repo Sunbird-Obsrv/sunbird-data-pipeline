@@ -31,6 +31,6 @@ public class Configuration {
     }
 
     public String getDefaultChannel(){
-        return config.get("default.channel.id", "ekstep.in");
+        return config.get("default.channel", "ekstep.in");
     }
 }

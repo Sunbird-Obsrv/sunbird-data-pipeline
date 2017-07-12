@@ -11,15 +11,15 @@ public class SaveObjectRequest {
     private long ets;
     private Map<String, Object> params;
     private Map<String, Object> request;
-    private String channelid;
+    private String channel;
 
-    private SaveObjectRequest(String id, String ver, long ets, Map<String, Object> params, Map<String, Object> request, String channelId) {
+    private SaveObjectRequest(String id, String ver, long ets, Map<String, Object> params, Map<String, Object> request, String channel) {
         this.id = id;
         this.ver = ver;
         this.ets = ets;
         this.params = params;
         this.request = request;
-        this.channelid = channelId;
+        this.channel = channel;
     }
 
     public static SaveObjectRequest create(Map<String,Object> requestMap,String channelId) {

@@ -97,8 +97,8 @@ public class Event {
         return retryData.shouldBackOff();
     }
 
-    public void setDeNormalizationId(String deNormalizationId, String channelId){
-        String metadata_key = String.valueOf(deNormalizationId+"_"+channelId);
+    public void setDeNormalizationId(String deNormalizationId, String channel){
+        String metadata_key = String.valueOf(deNormalizationId+"_"+channel);
         retryData.setMetadataKey(metadata_key);
     }
 
@@ -140,8 +140,8 @@ public class Event {
         telemetry.add("flags.od_skipped", true);
     }
 
-    public String channelId() {
-        return telemetry.<String>read("channelid").value();
+    public String channel() {
+        return telemetry.<String>read("channel").value();
     }
 }
 

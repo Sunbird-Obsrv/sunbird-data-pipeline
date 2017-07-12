@@ -27,7 +27,7 @@ public class EventTest {
     public static final String UID = "1234321";
     public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
     public static final String TS = "2008-06-16T00:00:00 +0530";
-    private static final String CHANNELID = "in.ekstep.test";
+    private static final String CHANNEL = "in.ekstep.test";
     private final String PROCESSED_COUNT_FLAG = "gud_processed_count";
     private final String LAST_PROCESSED_AT_FLAG = "gud_last_processed_at";
     private KeyValueStore keyValueStoreMock;
@@ -440,12 +440,12 @@ public class EventTest {
     public void ShouldBackoffForAllEventsRelevant() throws IOException {
         DateTimeUtils.setCurrentMillisFixed(0); //big bang
         retryBackoffBase = 10;
-        metadataKey = String.valueOf(UID+"_"+CHANNELID);
+        metadataKey = String.valueOf(UID+"_"+ CHANNEL);
 
         Date date = new Date();
         map.put("ts", new SimpleDateFormat(DATE_FORMAT).format(date));
         map.put("uid", UID);
-        map.put("channelid", CHANNELID);
+        map.put("channel", CHANNEL);
 
         Event event = new Event(map, keyValueStoreMock, backendEvents, Arrays.asList("ME_CE_SESSION_SUMMARY"), retryBackoffBase, retryStore);
         event.initialize();
@@ -455,7 +455,7 @@ public class EventTest {
         Map map2 = new HashedMap();
         map2.put("ts", new SimpleDateFormat(DATE_FORMAT).format(date));
         map2.put("uid", UID);
-        map2.put("channelid", CHANNELID);
+        map2.put("channel", CHANNEL);
 
         Assert.assertNull(retryStore.get(metadataKey));
 

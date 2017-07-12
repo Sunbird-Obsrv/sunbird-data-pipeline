@@ -81,8 +81,8 @@ public class Event {
                 '}';
     }
 
-    public String channelId() {
-        return telemetry.<String>read("channelid").value();
+    public String channel() {
+        return telemetry.<String>read("channel").value();
     }
 }
 

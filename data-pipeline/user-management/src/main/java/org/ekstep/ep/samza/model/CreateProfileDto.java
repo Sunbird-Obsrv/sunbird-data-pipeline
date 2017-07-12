@@ -41,7 +41,7 @@ public class CreateProfileDto implements IModel {
     private Timestamp updatedAt;
     private boolean isInserted;
     private DataSource dataSource;
-    private String channelid;
+    private String channel;
 
 
     public CreateProfileDto(DataSource dataSource) {
@@ -52,7 +52,7 @@ public class CreateProfileDto implements IModel {
     public void process(Event event) throws SQLException, ParseException {
         Map<String, Object> EKS = event.getEks();
         java.util.Date timeOfEvent = event.getTs();
-        channelid = (String)event.getMap().get("channelid");
+        channel = (String)event.getMap().get("channel");
         parseData(EKS, timeOfEvent);
 
         if (!isLearnerExist((String) EKS.get(UID), event.id())) {
@@ -130,7 +130,7 @@ public class CreateProfileDto implements IModel {
             preparedStmt.setString(12, medium);
             preparedStmt.setTimestamp(13, createdAt);
             preparedStmt.setTimestamp(14, updatedAt);
-            preparedStmt.setString(15, channelid);
+            preparedStmt.setString(15, channel);
 
             int affectedRows = preparedStmt.executeUpdate();
 

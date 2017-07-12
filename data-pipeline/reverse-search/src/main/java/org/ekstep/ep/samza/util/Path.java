@@ -13,8 +13,8 @@ public class Path {
         return "metadata";
     }
 
-    public String channelId(){
-        return "channelid";
+    public String channel(){
+        return "channel";
     }
 
     public String flags(){

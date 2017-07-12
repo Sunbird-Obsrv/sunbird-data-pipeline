@@ -83,7 +83,7 @@ public class Event {
     }
 
     public void updateDefaults(DeDuplicationConfig config) {
-        telemetry.addFieldIfAbsent("channelid",config.defaultChannelId());
+        telemetry.addFieldIfAbsent("channel",config.defaultChannel());
     }
 }
 

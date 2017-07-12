@@ -44,8 +44,8 @@ public class Event {
         return telemetry.<String>read("eid").value();
     }
 
-    public String channelId() {
-        return telemetry.<String>read("channelid").value();
+    public String channel() {
+        return telemetry.<String>read("channel").value();
     }
 
     public void markSkipped() {
