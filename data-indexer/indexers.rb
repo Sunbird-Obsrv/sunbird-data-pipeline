@@ -26,7 +26,7 @@ module Indexers
                   type: "string",
                   doc_values: true
                 },
-                match: "id|current|res|exres|max|mc|mmc|category|env|type|stageid|objecttype|objectid|err|action|data|severity",
+                match: "id|current|res|exres|max|mc|mmc|category|env|type|stageid|objecttype|objectid|err|action|data|severity|channel",
                 match_pattern: "regex"
               }
             },
@@ -348,7 +348,7 @@ module Indexers
                   type: "string",
                   doc_values: true
                 },
-                match: "id|current|res|exres|max|mc|mmc|category",
+                match: "id|current|res|exres|max|mc|mmc|category|channel",
                 match_pattern: "regex"
               }
             },
@@ -1299,6 +1299,9 @@ module Indexers
               "ver": {
                 "type": "string"
               },
+              "channel": {
+                "type": "string"
+              },
               "portaluserdata": {
                 "properties": {
                   "id": {
@@ -1326,10 +1329,23 @@ module Indexers
                     "type": "string"
                   }
                 }
+              },
+              "etags": {
+                "properties": {
+                  "app": {
+                    "type": "string"
+                  },
+                  "partner": {
+                    "type": "string"
+                  },
+                  "dims": {
+                    "type": "string"
+                  }
+                }
               }
-            }
-          }
+            }  
         }
+    }
     attr_reader :client
     def initialize(refresh=true)
       @client = ::Elasticsearch::Client.new log: false
