@@ -1,6 +1,5 @@
 package org.ekstep.ep.samza.task;
 
-import junit.framework.Assert;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
@@ -17,9 +16,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
@@ -65,22 +62,35 @@ public class PartnerDataRouterTaskTest {
 
 
     @Test
-    public void shouldSendEventsToSuccessTopicWhenEventBelongToPartner() throws Exception {
+    public void shouldReadPartnerIdFromTagsAndSendToSuccessTopicWhenEventBelongToPartner() throws Exception {
 
         Event event =  new Event(EventFixture.PartnerData());
-        stub(envelopMock.getMessage()).toReturn(event.getData());
+        stub(envelopMock.getMessage()).toReturn(event.getMap());
 
         partnerDataRouterTask.init(configMock, contextMock);
         partnerDataRouterTask.process(envelopMock, collectorMock, coordindatorMock);
 
         verify(collectorMock).send(argThat(validateOutputTopic(SUCCESS_TOPIC)));
-        assertTrue(((Map<String,Object>) event.getData().get("metadata")).containsKey("partner_name"));
+        assertTrue(((Map<String,Object>) event.getMap().get("metadata")).containsKey("partner_name"));
+    }
+
+    @Test
+    public void shouldReadPartnerIdFromETagsAndSendToSuccessTopicWhenEventBelongToPartner() throws Exception {
+
+        Event event =  new Event(EventFixture.PartnerDataV2());
+        stub(envelopMock.getMessage()).toReturn(event.getMap());
+
+        partnerDataRouterTask.init(configMock, contextMock);
+        partnerDataRouterTask.process(envelopMock, collectorMock, coordindatorMock);
+
+        verify(collectorMock).send(argThat(validateOutputTopic(SUCCESS_TOPIC)));
+        assertTrue(((Map<String,Object>) event.getMap().get("metadata")).containsKey("partner_name"));
     }
 
     @Test
     public void shouldNotSendEventsToSuccessTopicIfEventNotBelongToPartner() throws Exception {
         Event eventMock = mock(Event.class);
-        stub(eventMock.getData()).toReturn(EventFixture.PartnerData());
+        stub(eventMock.getMap()).toReturn(EventFixture.PartnerData());
         stub(eventMock.eid()).toReturn("GE_PARTNER_DATA");
         stub(eventMock.belongsToAPartner()).toReturn(false);
         ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
@@ -99,7 +109,7 @@ public class PartnerDataRouterTaskTest {
         partnerDataRouterTask.init(configMock, contextMock);
         partnerDataRouterTask.processEvent(collectorMock, event);
 
-        Map<String, Object> udata = (Map<String, Object>) event.getData().get("udata");
+        Map<String, Object> udata = (Map<String, Object>) event.getMap().get("udata");
         assertThat(udata, not(hasKey("is_group_user")));
         assertThat(udata, not(hasKey("handle")));
         assertThat(udata, not(hasKey("gender")));

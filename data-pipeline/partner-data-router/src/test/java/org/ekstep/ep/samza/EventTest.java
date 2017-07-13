@@ -66,7 +66,22 @@ public class EventTest {
     }
 
     @Test
-    public void shouldNotBelongToPartnerIfPartnerIdIsAbsent() {
+    public void shouldBelongToPartnerIfPartnerIdIsPresentInETags() {
+        HashMap<String, Object> data = new HashMap<String,Object>();
+        HashMap<String, Object> etags = new HashMap<String,Object>();
+
+        ArrayList<String> partner = new ArrayList<String>();
+        partner.add("org.ekstep.partner.akshara");
+
+        etags.put("partner",partner);
+        data.put("etags", etags);
+        Event event = new Event(data);
+
+        Assert.assertTrue(event.belongsToAPartner());
+    }
+
+    @Test
+    public void shouldNotBelongToPartnerIfPartnerIdIsAbsentInBothTagsAndETags() {
         HashMap<String, Object> data = new HashMap<String,Object>();
         ArrayList<HashMap> tags = new ArrayList<HashMap>();
 
@@ -107,7 +122,7 @@ public class EventTest {
         eks.put("partnerid","org.ekstep.partner.akshara");
         Event event = new Event(data);
 
-        Assert.assertEquals(data, event.getData());
+        Assert.assertEquals(data, event.getMap());
     }
 
     @Test
@@ -118,7 +133,7 @@ public class EventTest {
 
         event.updateType();
 
-        Assert.assertEquals("partner.events",event.getData().get("type"));
+        Assert.assertEquals("partner.events",event.getMap().get("type"));
     }
 
     @Test
@@ -134,7 +149,7 @@ public class EventTest {
 
         event.updateMetadata();
 
-        Assert.assertEquals("fd001eaba2e5b79b814446307d709ee2097fbd51",(String) ( (Map<String,Object>) event.getData().get("metadata")).get("partner_name"));
+        Assert.assertEquals("fd001eaba2e5b79b814446307d709ee2097fbd51",(String) ( (Map<String,Object>) event.getMap().get("metadata")).get("partner_name"));
     }
 
     @Test
@@ -144,7 +159,7 @@ public class EventTest {
 
         event.updateType();
 
-        Assert.assertEquals("partner.events",event.getData().get("type"));
+        Assert.assertEquals("partner.events",event.getMap().get("type"));
     }
 
 }

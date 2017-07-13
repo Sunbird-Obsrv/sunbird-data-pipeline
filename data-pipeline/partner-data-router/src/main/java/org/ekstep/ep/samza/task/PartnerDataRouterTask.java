@@ -1,6 +1,5 @@
 package org.ekstep.ep.samza.task;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.system.IncomingMessageEnvelope;
@@ -11,13 +10,9 @@ import org.ekstep.ep.samza.Event;
 import org.ekstep.ep.samza.cleaner.CleanerFactory;
 import org.ekstep.ep.samza.logger.Logger;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Arrays.asList;
 
 public class PartnerDataRouterTask implements StreamTask, InitableTask, WindowableTask {
     private Counter messageCount;
@@ -61,11 +56,11 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
             if (cleaner.shouldSkipEvent(event.eid())) {
                 return;
             }
-            cleaner.clean(event.getData());
+            cleaner.clean(event.getMap());
             LOGGER.info(event.id(), "CLEANED EVENT");
         }
 
-        if (event.getData().containsKey("ver") && event.getData().get("ver").equals("1.0")) {
+        if (event.getMap().containsKey("ver") && event.getMap().get("ver").equals("1.0")) {
             LOGGER.info(event.id(), "EVENT VERSION 1, SKIPPING");
             return;
         }
@@ -81,11 +76,11 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
     }
 
     public void sendToSuccess(MessageCollector collector, Event event) {
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getData()));
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
     }
 
     public void sendToFailed(MessageCollector collector, Event event) {
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getData()));
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
     }
 
     private List<String> getEventsToSkip(Config config) {

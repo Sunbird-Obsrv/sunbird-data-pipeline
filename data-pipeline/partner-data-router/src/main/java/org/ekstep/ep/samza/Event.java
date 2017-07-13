@@ -1,8 +1,8 @@
 package org.ekstep.ep.samza;
 
-import com.google.gson.Gson;
 import org.apache.commons.lang.StringUtils;
 import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.reader.Telemetry;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -10,15 +10,14 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Event {
-    private Map<String, Object> data;
+    private Telemetry telemetry;
     static Logger LOGGER = new Logger(Event.class);
 
     public Event(Map<String, Object> data) {
-        this.data = data;
+        this.telemetry = new Telemetry(data);
     }
 
     public boolean belongsToAPartner() {
@@ -27,69 +26,81 @@ public class Event {
     }
 
     public void updateType() {
-        data.put("type", "partner.events");
+        telemetry.add("type", "partner.events");
     }
 
     public void updateMetadata() throws Exception {
         String partnerName = getShaOfPartnerId();
-        Map<String, Object> metadata = (Map<String, Object>) data.get("metadata");
-        if (metadata != null) {
-            metadata.put("partner_name",partnerName);
-        } else {
-            metadata = new HashMap<String, Object>();
-            metadata.put("partner_name",partnerName);
-            data.put("metadata", metadata);
-        }
-        LOGGER.info(id(), "METADATA partner_name - ADDED " + metadata);
+        telemetry.addFieldIfAbsent("metadata",new HashMap<String,Object>());
+        telemetry.add("metadata.partner_name", partnerName);
+        LOGGER.info(id(), "METADATA partner_name - ADDED " + telemetry.read("metadata").value());
     }
 
     private String getPartnerId() {
         try {
-            ArrayList<Map> tags = (ArrayList<Map>) data.get("tags");
-            LOGGER.info(id(), String.format("TAGS: %s", new Gson().toJson(tags)));
-            if (tags == null || tags.isEmpty())
-                return null;
-            String partnerid = "partnerid";
-            for (Map tag:tags)
-                if(tag!=null && tag.containsKey(partnerid)) {
-                    if(tag.get(partnerid) instanceof String) {
-                        String partnerId = (String) tag.get(partnerid);
-                        return partnerId;
-                    }
-                    else{
-                        ArrayList<String> partners = (ArrayList<String>) tag.get(partnerid);
-                        for (String partnerID : partners) {
-                            return partnerID;
-                        }
-                    }
-                }
+            return getPartnerIdFromPartnerTags();
         } catch (Exception e) {
             LOGGER.error(id(), "ERROR WHEN GETTING PARTNER ID", e);
         }
         return null;
     }
 
-    public Map<String, Object> getData() {
-        return data;
+    private String getPartnerIdFromPartnerTags() {
+        ArrayList<Map> tags = (ArrayList<Map>) telemetry.read("tags").value();
+        if(tags != null && !tags.isEmpty()){
+            return getPartnerIdFromTags(tags, "partnerid");
+        }
+
+        ArrayList<String> partners = (ArrayList<String>) telemetry.read("etags.partner").value();
+        if(partners != null && !partners.isEmpty()){
+            return getPartnerIdFromETags(partners);
+        }
+
+        return null;
+    }
+
+    private String getPartnerIdFromETags(ArrayList<String> partners) {
+        for (String partner : partners) {
+            return partner;
+        }
+        return null;
+    }
+
+    private String getPartnerIdFromTags(ArrayList<Map> tags, String partnerId){
+        for (Map tag:tags)
+            if(tag!=null && tag.containsKey(partnerId)) {
+                if(tag.get(partnerId) instanceof String) {
+                    String partnerID = (String) tag.get(partnerId);
+                    return partnerID;
+                }
+                else{
+                    ArrayList<String> partners = (ArrayList<String>) tag.get(partnerId);
+                    for (String partnerID : partners) {
+                        return partnerID;
+                    }
+                }
+            }
+        return null;
+    }
+
+    public Map<String,Object> getMap(){
+        return telemetry.getMap();
     }
 
     public String id() {
-        return data != null && data.containsKey("metadata") &&
-                (((Map<String, Object>) data.get("metadata")).containsKey("checksum"))
-                ? (String) ((Map<String, Object>) data.get("metadata")).get("checksum")
-                : null;
+        return telemetry.<String>read("metadata.checksum").value();
     }
 
     public String eid() {
-        return data != null && data.containsKey("eid") ? (String) data.get("eid") : null;
+        return telemetry.<String>read("eid").value();
     }
 
     public String ts() {
-        return data != null && data.containsKey("ts") ? (String) data.get("ts") : null;
+        return telemetry.<String>read("ts").value();
     }
 
     public String sid() {
-        return data != null && data.containsKey("sid") ? (String) data.get("sid") : null;
+        return telemetry.<String>read("sid").value();
     }
 
     public String getShaOfPartnerId() throws Exception {
