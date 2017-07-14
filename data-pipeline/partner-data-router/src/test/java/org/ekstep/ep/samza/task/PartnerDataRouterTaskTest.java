@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 
 public class PartnerDataRouterTaskTest {
 
-    private final String EVENTS_TO_SKIP = "ME_.*";
+    private final String EVENTS_TO_SKIP = "ME_.*,CE_.*,CP_.*,BE_.*";
     private final String EVENTS_TO_ALLOW = "GE_.*,OE_.*";
     private final String SUCCESS_TOPIC = "partners";
     private final String FAILED_TOPIC = "partners.fail";
@@ -89,17 +89,14 @@ public class PartnerDataRouterTaskTest {
 
     @Test
     public void shouldNotSendEventsToSuccessTopicIfEventNotBelongToPartner() throws Exception {
-        Event eventMock = mock(Event.class);
-        stub(eventMock.getMap()).toReturn(EventFixture.PartnerData());
-        stub(eventMock.eid()).toReturn("GE_PARTNER_DATA");
-        stub(eventMock.belongsToAPartner()).toReturn(false);
+        Event event =  new Event(EventFixture.EventWithoutPartnerId());
+        stub(envelopMock.getMessage()).toReturn(event.getMap());
         ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
 
-        HashMap<String, Object> message = new HashMap<String, Object>();
         partnerDataRouterTask.init(configMock, contextMock);
         partnerDataRouterTask.process(envelopMock, collectorMock, coordindatorMock);
 
-        verify(collectorMock, times(1)).send(argument.capture());
+        verify(collectorMock, times(0)).send(argument.capture());
     }
 
     @Test
@@ -118,6 +115,42 @@ public class PartnerDataRouterTaskTest {
     @Test
     public void shouldSkipLearningEvents() throws Exception {
         Event event = new Event(EventFixture.LearningEvent());
+
+        ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
+
+        partnerDataRouterTask.init(configMock, contextMock);
+        partnerDataRouterTask.processEvent(collectorMock, event);
+
+        verify(collectorMock, times(0)).send(argument.capture());
+    }
+
+    @Test
+    public void shouldSkipAllBEEvents() throws Exception {
+        Event event = new Event(EventFixture.BEEvent());
+
+        ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
+
+        partnerDataRouterTask.init(configMock, contextMock);
+        partnerDataRouterTask.processEvent(collectorMock, event);
+
+        verify(collectorMock, times(0)).send(argument.capture());
+    }
+
+    @Test
+    public void shouldSkipAllCEEvents() throws Exception {
+        Event event = new Event(EventFixture.CEEvent());
+
+        ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
+
+        partnerDataRouterTask.init(configMock, contextMock);
+        partnerDataRouterTask.processEvent(collectorMock, event);
+
+        verify(collectorMock, times(0)).send(argument.capture());
+    }
+
+    @Test
+    public void shouldSkipAllCPEvents() throws Exception {
+        Event event = new Event(EventFixture.CPEvent());
 
         ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
 

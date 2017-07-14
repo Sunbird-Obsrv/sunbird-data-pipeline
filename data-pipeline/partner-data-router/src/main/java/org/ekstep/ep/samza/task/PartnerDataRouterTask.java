@@ -52,12 +52,10 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
     }
 
     public void processEvent(MessageCollector collector, Event event) throws Exception {
-        if (cleaner.shouldAllowEvent(event.eid())) {
-            if (cleaner.shouldSkipEvent(event.eid())) {
-                return;
-            }
-            cleaner.clean(event.getMap());
-            LOGGER.info(event.id(), "CLEANED EVENT");
+
+        if (cleaner.shouldSkipEvent(event.eid())) {
+            LOGGER.info(event.id(), "EVENT IN SKIPPED LIST, SKIPPING");
+            return;
         }
 
         if (event.getMap().containsKey("ver") && event.getMap().get("ver").equals("1.0")) {
@@ -68,6 +66,11 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
         if (!event.belongsToAPartner()) {
             LOGGER.info(event.id(), "EVENT DOES NOT BELONG TO A PARTNER, SKIPPING");
             return;
+        }
+
+        if (cleaner.shouldAllowEvent(event.eid())) {
+            cleaner.clean(event.getMap());
+            LOGGER.info(event.id(), "CLEANED EVENT");
         }
 
         event.updateType();
