@@ -25,11 +25,13 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
     private CleanerFactory cleaner;
     private List<String> nonPublicEvents;
     private List<String> publicEvents;
+    private String defaultChannel;
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
         successTopic = config.get("output.success.topic.name", "telemetry.public");
         failedTopic = config.get("output.failed.topic.name", "telemetry.public.fail");
+        defaultChannel = config.get("default.channel", "in.ekstep");
         publicEvents = getPublicEvents(config);
         nonPublicEvents = getNonPublicEvents(config);
         messageCount = context
@@ -70,12 +72,12 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
         return eventsToAllow;
     }
 
-
-
     void processEvent(MessageCollector collector, Event event) {
         LOGGER.info(event.id(), "CLEAN EVENT {}", event.getMap());
 
-        if(event.getMap().containsKey("ver") && event.getMap().get("ver").equals("1.0")){ return;}
+        if(!event.isDefaultChannel(defaultChannel)){ return;}
+
+        if(event.isVersionOne()){ return;}
 
         if(cleaner.shouldAllowEvent(event.eid())) {
             if (cleaner.shouldSkipEvent(event.eid())) {

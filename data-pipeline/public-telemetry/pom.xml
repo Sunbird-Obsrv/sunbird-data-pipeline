@@ -33,7 +33,7 @@ under the License.
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>public-telemetry</artifactId>
-    <version>0.1.7</version>
+    <version>0.1.8</version>
     <packaging>jar</packaging>
     <name>public-telemetry</name>
     <description>
@@ -144,6 +144,11 @@ under the License.
             <groupId>org.ekstep.ecosystem</groupId>
             <artifactId>ep-logger</artifactId>
             <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem</groupId>
+            <artifactId>ep-telemetry-reader</artifactId>
+            <version>0.0.2</version>
         </dependency>
     </dependencies>
 

@@ -15,6 +15,7 @@ public class EventFixture {
                 "  ],\n" +
                 "  \"uid\": \"68f24339-caae-4ebb-b4ff-6b1ae0478c02\",\n" +
                 "  \"sid\": \"\",\n" +
+                "    \"channel\": \"in.ekstep\",\n" +
                 "  \"ts\": \"2016-05-25T15:03:54.857+0530\",\n" +
                 "  \"edata\": {\n" +
                 "    \"eks\": {\n" +
@@ -75,79 +76,6 @@ public class EventFixture {
         }.getType());
     }
 
-    public static Map<String, Object> GenieStart() {
-        String json = "{\n" +
-                "    \"tags\": [\n" +
-                "      {\n" +
-                "        \"genie\": []\n" +
-                "      }\n" +
-                "    ],\n" +
-                "    \"uid\": \"\",\n" +
-                "    \"sid\": \"\",\n" +
-                "    \"ts\": \"2016-05-25T19:03:33.856+0530\",\n" +
-                "    \"edata\": {\n" +
-                "      \"eks\": {\n" +
-                "        \"dspec\": {\n" +
-                "          \"camera\": \"6.0,2.0\",\n" +
-                "          \"cap\": [],\n" +
-                "          \"cpu\": \"abi: armeabi-v7a  ARMv7 Processor rev 3 (v7l) \",\n" +
-                "          \"dlocname\": \"\",\n" +
-                "          \"dname\": \"\",\n" +
-                "          \"edisk\": 5.52,\n" +
-                "          \"id\": \"49f257354ef26714\",\n" +
-                "          \"idisk\": 0,\n" +
-                "          \"make\": \"Motorola XT1033\",\n" +
-                "          \"mem\": -1,\n" +
-                "          \"os\": \"Android 5.1\",\n" +
-                "          \"scrn\": 4.49,\n" +
-                "          \"sims\": -1\n" +
-                "        },\n" +
-                "        \"loc\": \"12.9311397,77.6236127\"\n" +
-                "      }\n" +
-                "    },\n" +
-                "    \"did\": \"cf979a7ba0162ddb0ac0702e397d8b689b61712b\",\n" +
-                "    \"ver\": \"2.0\",\n" +
-                "    \"type\": \"events\",\n" +
-                "    \"eid\": \"GE_GENIE_START\",\n" +
-                "    \"@version\": \"1\",\n" +
-                "    \"gdata\": {\n" +
-                "      \"id\": \"genie.android\",\n" +
-                "      \"ver\": \"4.2.localsandbox-debug.6\"\n" +
-                "    },\n" +
-                "    \"@timestamp\": \"2016-05-25T13:31:05.869Z\",\n" +
-                "    \"ets\": 1464183213856,\n" +
-                "    \"uuid\": \"2ab01daa-9134-471c-8abb-e676765020b425\",\n" +
-                "    \"mid\": \"97d882b6-4a65-4f50-b288-c46d700ee615\",\n" +
-                "    \"key\": \"\",\n" +
-                "    \"metadata\": {\n" +
-                "      \"checksum\": \"f079e3f4448a20d9afcb0fa93449daba584ac65b\",\n" +
-                "      \"last_processed_at\": \"2016-05-26T04:18:26.601+05:30\",\n" +
-                "      \"processed_count\": 1,\n" +
-                "      \"ts_year\": \"2016\",\n" +
-                "      \"ts_month\": \"05\",\n" +
-                "      \"year\": \"2016\",\n" +
-                "      \"month\": \"05\",\n" +
-                "      \"monthday\": \"25\",\n" +
-                "      \"hour\": \"22\",\n" +
-                "      \"sync_timestamp\": \"2016-05-25T22:44:55+00:00\"\n" +
-                "    },\n" +
-                "    \"ldata\": {\n" +
-                "      \"state\": \"Karnataka\",\n" +
-                "      \"locality\": \"Bengaluru\",\n" +
-                "      \"district\": \"Bangalore Urban\",\n" +
-                "      \"country\": \"India\"\n" +
-                "    },\n" +
-                "    \"flags\": {\n" +
-                "      \"ldata_processed\": true,\n" +
-                "      \"ldata_obtained\": true\n" +
-                "    },\n" +
-                "    \"ready_to_index\": \"true\"\n" +
-                "}";
-
-        return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
-        }.getType());
-    }
-
     public static Map<String, Object> PartnerData() {
         String json = "{\n" +
                 "    \"tags\": [\n" +
@@ -162,6 +90,7 @@ public class EventFixture {
                 "    ],\n" +
                 "    \"uid\": \"\",\n" +
                 "    \"sid\": \"\",\n" +
+                "    \"channel\": \"in.ekstep\",\n" +
                 "    \"ts\": \"2016-05-27T15:21:59.995+0530\",\n" +
                 "    \"edata\": {\n" +
                 "        \"eks\": {\n" +
@@ -229,6 +158,7 @@ public class EventFixture {
                 "      \"to\": 1441262943000\n" +
                 "    }\n" +
                 "  },\n" +
+                "    \"channel\": \"in.ekstep\",\n" +
                 "  \"dimensions\": {\n" +
                 "    \"did\": \"d5df4a8a801b5b6d28fe24bbcaeee680ea8a75cf\",\n" +
                 "    \"gdata\": {\n" +
@@ -293,6 +223,7 @@ public class EventFixture {
                 "  \"mid\": \"0F5CE4150EA162407AD07F756CF40B88\",\n" +
                 "  \"uid\": \"\",\n" +
                 "  \"context\": {\n" +
+                "    \"channel\": \"in.ekstep\",\n" +
                 "    \"pdata\": {\n" +
                 "      \"id\": \"AnalyticsDataPipeline\",\n" +
                 "      \"model\": \"GenieUsageSummarizer\",\n" +
@@ -349,6 +280,7 @@ public class EventFixture {
                 "  \"ver\": \"1.0\",\n" +
                 "  \"mid\": \"0F5CE4150EA162407AD07F756CF40B88\",\n" +
                 "  \"uid\": \"\",\n" +
+                "    \"channel\": \"in.ekstep\",\n" +
                 "  \"context\": {\n" +
                 "    \"pdata\": {\n" +
                 "      \"id\": \"AnalyticsDataPipeline\",\n" +
@@ -407,6 +339,7 @@ public class EventFixture {
                 "    ],\n" +
                 "    \"uid\": \"919280cb-3f51-46d7-ad7e-0ce4becb97a6\",\n" +
                 "    \"sid\": \"1e891213-5ec6-475c-b706-d65928f47f77\",\n" +
+                "    \"channel\": \"in.ekstep\",\n" +
                 "    \"ts\": \"2016-09-07T11:36:40.784+0530\",\n" +
                 "    \"edata\": {\n" +
                 "        \"eks\": {\n" +
@@ -439,6 +372,80 @@ public class EventFixture {
                 "    \"uuid\": \"1173e3cd-b844-4b5c-8028-17fa0da3fab455\",\n" +
                 "    \"mid\": \"9cb093ff-1e3d-4e2f-9b0a-2122a85ad4ca\",\n" +
                 "    \"key\": \"919280cb-3f51-46d7-ad7e-0ce4becb97a6\"\n" +
+                "}";
+
+        return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
+
+    public static Map<String, Object> OtherChannel() {
+        String json = "{\n" +
+                "    \"tags\": [\n" +
+                "      {\n" +
+                "        \"genie\": []\n" +
+                "      }\n" +
+                "    ],\n" +
+                "    \"uid\": \"\",\n" +
+                "    \"channel\": \"in.ntp\",\n" +
+                "    \"sid\": \"\",\n" +
+                "    \"ts\": \"2016-05-25T19:03:33.856+0530\",\n" +
+                "    \"edata\": {\n" +
+                "      \"eks\": {\n" +
+                "        \"dspec\": {\n" +
+                "          \"camera\": \"6.0,2.0\",\n" +
+                "          \"cap\": [],\n" +
+                "          \"cpu\": \"abi: armeabi-v7a  ARMv7 Processor rev 3 (v7l) \",\n" +
+                "          \"dlocname\": \"\",\n" +
+                "          \"dname\": \"\",\n" +
+                "          \"edisk\": 5.52,\n" +
+                "          \"id\": \"49f257354ef26714\",\n" +
+                "          \"idisk\": 0,\n" +
+                "          \"make\": \"Motorola XT1033\",\n" +
+                "          \"mem\": -1,\n" +
+                "          \"os\": \"Android 5.1\",\n" +
+                "          \"scrn\": 4.49,\n" +
+                "          \"sims\": -1\n" +
+                "        },\n" +
+                "        \"loc\": \"12.9311397,77.6236127\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"did\": \"cf979a7ba0162ddb0ac0702e397d8b689b61712b\",\n" +
+                "    \"ver\": \"2.0\",\n" +
+                "    \"type\": \"events\",\n" +
+                "    \"eid\": \"GE_GENIE_START\",\n" +
+                "    \"@version\": \"1\",\n" +
+                "    \"gdata\": {\n" +
+                "      \"id\": \"genie.android\",\n" +
+                "      \"ver\": \"4.2.localsandbox-debug.6\"\n" +
+                "    },\n" +
+                "    \"@timestamp\": \"2016-05-25T13:31:05.869Z\",\n" +
+                "    \"ets\": 1464183213856,\n" +
+                "    \"uuid\": \"2ab01daa-9134-471c-8abb-e676765020b425\",\n" +
+                "    \"mid\": \"97d882b6-4a65-4f50-b288-c46d700ee615\",\n" +
+                "    \"key\": \"\",\n" +
+                "    \"metadata\": {\n" +
+                "      \"checksum\": \"f079e3f4448a20d9afcb0fa93449daba584ac65b\",\n" +
+                "      \"last_processed_at\": \"2016-05-26T04:18:26.601+05:30\",\n" +
+                "      \"processed_count\": 1,\n" +
+                "      \"ts_year\": \"2016\",\n" +
+                "      \"ts_month\": \"05\",\n" +
+                "      \"year\": \"2016\",\n" +
+                "      \"month\": \"05\",\n" +
+                "      \"monthday\": \"25\",\n" +
+                "      \"hour\": \"22\",\n" +
+                "      \"sync_timestamp\": \"2016-05-25T22:44:55+00:00\"\n" +
+                "    },\n" +
+                "    \"ldata\": {\n" +
+                "      \"state\": \"Karnataka\",\n" +
+                "      \"locality\": \"Bengaluru\",\n" +
+                "      \"district\": \"Bangalore Urban\",\n" +
+                "      \"country\": \"India\"\n" +
+                "    },\n" +
+                "    \"flags\": {\n" +
+                "      \"ldata_processed\": true,\n" +
+                "      \"ldata_obtained\": true\n" +
+                "    },\n" +
+                "    \"ready_to_index\": \"true\"\n" +
                 "}";
 
         return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
