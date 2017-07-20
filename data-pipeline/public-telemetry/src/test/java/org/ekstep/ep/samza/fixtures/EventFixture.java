@@ -378,7 +378,7 @@ public class EventFixture {
         }.getType());
     }
 
-    public static Map<String, Object> OtherChannelEvent() {
+    public static Map<String, Object> OtherChannel() {
         String json = "{\n" +
                 "    \"tags\": [\n" +
                 "        {\n" +
