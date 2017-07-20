@@ -60,7 +60,10 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
             return;
         }
 
-        if(!event.isDefaultChannel(defaultChannel)){ return;}
+        if(!event.isDefaultChannel(defaultChannel)){
+            LOGGER.info(event.id(), "OTHER CHANNEL EVENT, SKIPPING");
+            return;
+        }
 
         if (event.isVersionOne()) {
             LOGGER.info(event.id(), "EVENT VERSION 1, SKIPPING");
@@ -74,7 +77,7 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
 
         if (cleaner.shouldAllowEvent(event.eid())) {
             cleaner.clean(event.getMap());
-            LOGGER.info(event.id(), "CLEANED EVENT");
+            LOGGER.info(event.id(), "CLEANED EVENT", event.getMap());
         }
 
         event.updateType();

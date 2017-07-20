@@ -73,11 +73,17 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
     }
 
     void processEvent(MessageCollector collector, Event event) {
-        LOGGER.info(event.id(), "CLEAN EVENT {}", event.getMap());
 
-        if(!event.isDefaultChannel(defaultChannel)){ return;}
 
-        if(event.isVersionOne()){ return;}
+        if(!event.isDefaultChannel(defaultChannel)){
+            LOGGER.info(event.id(), "OTHER CHANNEL EVENT, SKIPPING");
+            return;
+        }
+
+        if(event.isVersionOne()){
+            LOGGER.info(event.id(), "EVENT VERSION 1, SKIPPING");
+            return;
+        }
 
         if(cleaner.shouldAllowEvent(event.eid())) {
             if (cleaner.shouldSkipEvent(event.eid())) {
@@ -85,7 +91,7 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
             }
             cleaner.clean(event.getMap());
 
-            LOGGER.info(event.id(), "CLEANED EVENT");
+            LOGGER.info(event.id(), "CLEANED EVENT",event.getMap());
             collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
         }
     }
