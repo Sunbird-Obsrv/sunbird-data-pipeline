@@ -103,6 +103,14 @@ public class Event {
         return telemetry.<String>read("sid").value();
     }
 
+    public String channel() {
+        return telemetry.<String>read("channel").value();
+    }
+
+    public String ver() {
+        return telemetry.<String>read("ver").value();
+    }
+
     public String getShaOfPartnerId() throws Exception {
         String partnerId = getPartnerId();
         return encryptPartnerId(partnerId);
@@ -116,5 +124,16 @@ public class Event {
             return new BigInteger(1, crypt.digest()).toString(16);
         }
         return null;
+    }
+
+    public boolean isVersionOne(){
+        return ver() != null && ver().equals("1.0");
+    }
+
+    public boolean isDefaultChannel(String defaultChannel){
+        if(channel() != null && channel().equals(defaultChannel)){
+            return true;
+        }
+        return false;
     }
 }

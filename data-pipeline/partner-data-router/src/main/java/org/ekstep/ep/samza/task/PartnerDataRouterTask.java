@@ -20,6 +20,7 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
     private List<String> eventsToAllow;
     private String successTopic;
     private String failedTopic;
+    private String defaultChannel;
 
     private List<String> eventsToSkip;
     static Logger LOGGER = new Logger(Event.class);
@@ -29,6 +30,7 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
     public void init(Config config, TaskContext context) throws Exception {
         successTopic = config.get("output.success.topic.name", "partners");
         failedTopic = config.get("output.failed.topic.name", "partners.fail");
+        defaultChannel = config.get("default.channel", "in.ekstep");
         messageCount = context
                 .getMetricsRegistry()
                 .newCounter(getClass().getName(), "message-count");
@@ -58,7 +60,9 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
             return;
         }
 
-        if (event.getMap().containsKey("ver") && event.getMap().get("ver").equals("1.0")) {
+        if(!event.isDefaultChannel(defaultChannel)){ return;}
+
+        if (event.isVersionOne()) {
             LOGGER.info(event.id(), "EVENT VERSION 1, SKIPPING");
             return;
         }
