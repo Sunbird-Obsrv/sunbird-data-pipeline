@@ -23,25 +23,22 @@ import org.apache.samza.config.Config;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.task.*;
-import org.ekstep.ep.samza.dedup.DeDupEngine;
+import org.ekstep.ep.samza.esclient.ElasticSearchClient;
+import org.ekstep.ep.samza.esclient.ElasticSearchService;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.metrics.JobMetrics;
-import org.ekstep.ep.samza.reader.NullableValue;
-import org.ekstep.ep.samza.reader.Telemetry;
+import org.ekstep.ep.samza.service.EsIndexerService;
 
-import java.io.IOException;
-import java.util.Map;
+import java.net.UnknownHostException;
 
 public class EsIndexerTask implements StreamTask, InitableTask, WindowableTask {
-
-
     static Logger LOGGER = new Logger(EsIndexerTask.class);
     private EsIndexerConfig config;
     private JobMetrics metrics;
+    private EsIndexerService service;
 
-    public EsIndexerTask(Config config, TaskContext context,
-                         KeyValueStore<Object, Object> deDuplicationStore, DeDupEngine deDupEngine) {
-        init(config, context, deDuplicationStore, deDupEngine);
+    public EsIndexerTask(Config config, TaskContext context, ElasticSearchService elasticSearchService) throws Exception {
+        init(config, context, elasticSearchService);
     }
 
     public EsIndexerTask(){
@@ -50,33 +47,31 @@ public class EsIndexerTask implements StreamTask, InitableTask, WindowableTask {
 
     @Override
     public void init(Config config, TaskContext context) throws Exception{
-        init(config, context,
-                (KeyValueStore<Object, Object>) context.getStore("es-indexer"), null);
+        init(config, context, null);
     }
 
-    private void init(Config config, TaskContext context,
-                      KeyValueStore<Object, Object> deDuplicationStore, DeDupEngine deDupEngine) {
-//        metrics = new JobMetrics(context);
+    private void init(Config config, TaskContext context, ElasticSearchService elasticSearchService) throws UnknownHostException {
+        this.config = new EsIndexerConfig(config);
+        metrics = new JobMetrics(context);
+
+        elasticSearchService =
+                elasticSearchService == null ?
+                        new ElasticSearchClient(this.config.esHost(),this.config.esPort()) :
+                        elasticSearchService;
+
+        service = new EsIndexerService(elasticSearchService);
     }
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector,
                         TaskCoordinator taskCoordinator) throws Exception {
-
-        Telemetry telemetry = new Telemetry((Map<String, Object>) envelope.getMessage());
-        NullableValue<String> mid = telemetry.read("mid");
-        NullableValue<String> eid = telemetry.read("eid");
-        dumpToFile(mid,eid);
-    }
-
-    private void dumpToFile(NullableValue<String> mid, NullableValue<String> eid) throws IOException {
-        String midValue = mid.isNull()? "mid is missing": mid.value();
-        String eidValue = eid.isNull()? "eid is missing": eid.value();
-        LOGGER.info(eidValue,String.format("MID:%s",midValue));
+        EsIndexerSource source = new EsIndexerSource(envelope, config);
+        EsIndexerSink sink = new EsIndexerSink(collector, metrics, config);
+        service.process(source, sink);
     }
 
     @Override
     public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-//        metrics.clear();
+        metrics.clear();
     }
 }

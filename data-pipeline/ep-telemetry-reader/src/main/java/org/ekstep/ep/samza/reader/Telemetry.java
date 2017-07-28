@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.reader;
 
 
+import com.google.gson.Gson;
 import org.ekstep.ep.samza.logger.Logger;
 
 import java.text.ParseException;
@@ -117,5 +118,9 @@ public class Telemetry {
 
     public String getChannel() {
         return this.<String>read("channel").value();
+    }
+
+    public String getJson(){
+        return new Gson().toJson(map);
     }
 }

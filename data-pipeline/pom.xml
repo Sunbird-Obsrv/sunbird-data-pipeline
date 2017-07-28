@@ -47,6 +47,7 @@
     <module>retry-service</module>
     <module>es-indexer</module>
     <module>es-router</module>
+      <module>es-client</module>
   </modules>
 
   <properties>
