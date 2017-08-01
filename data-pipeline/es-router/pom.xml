@@ -156,6 +156,21 @@ under the License.
             <artifactId>ep-telemetry-reader</artifactId>
             <version>0.0.2</version>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem</groupId>
+            <artifactId>ep-telemetry-reader</artifactId>
+            <version>0.0.3</version>
+        </dependency>
     </dependencies>
 
     <build>

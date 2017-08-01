@@ -15,7 +15,7 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>public-exhaust-de-duplication</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.6</version>
     <packaging>jar</packaging>
     <name>Public-Exhaust-De-Duplication</name>
     <description>
@@ -134,7 +134,7 @@
         <dependency>
             <groupId>org.ekstep.ecosystem</groupId>
             <artifactId>ep-telemetry-reader</artifactId>
-            <version>0.0.2</version>
+            <version>0.0.3</version>
         </dependency>
     </dependencies>
 

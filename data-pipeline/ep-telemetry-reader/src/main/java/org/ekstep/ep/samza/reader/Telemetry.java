@@ -104,11 +104,16 @@ public class Telemetry {
     }
 
     public Date getTime() throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        String ts = this.<String>read("ts").value();
+        return getTime("ts", "yyyy-MM-dd'T'HH:mm:ss");
+    }
+
+    public Date getTime(String key, String timePattern) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(timePattern);
+        String ts = this.<String>read(key).value();
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("IST"));
         return simpleDateFormat.parse(ts);
     }
+
 
     public <T> void addFieldIfAbsent(String fieldName, T value) {
         if (read(fieldName).isNull()) {

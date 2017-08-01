@@ -17,7 +17,7 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>object-de-normalization</artifactId>
-    <version>0.2.5</version>
+    <version>0.2.6</version>
     <packaging>jar</packaging>
     <name>Object-De-Normalization</name>
     <description>
@@ -132,7 +132,7 @@
         <dependency>
             <groupId>org.ekstep.ecosystem</groupId>
             <artifactId>ep-telemetry-reader</artifactId>
-            <version>0.0.2</version>
+            <version>0.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem</groupId>
