@@ -4,6 +4,7 @@ package org.ekstep.ep.samza.system;
 import com.library.checksum.system.ChecksumGenerator;
 import com.library.checksum.system.KeysToAccept;
 import com.library.checksum.system.Mappable;
+import org.apache.commons.lang.StringUtils;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
@@ -116,7 +117,10 @@ public class Event implements Mappable {
     }
 
     private void updateDefaultChannel(Configuration configuration) {
-        telemetry.addFieldIfAbsent(path.channel(),configuration.getDefaultChannel());
+        String channelString = telemetry.<String>read("channel").value();
+        String channel = StringUtils.deleteWhitespace(channelString);
+        if(channel == null || channel.isEmpty())
+            telemetry.add("channel",configuration.getDefaultChannel());
     }
 
     private void updateChecksum() {

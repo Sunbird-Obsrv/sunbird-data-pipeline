@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.domain;
 
 
 import com.google.gson.Gson;
+import org.apache.commons.lang.StringUtils;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.task.DeDuplicationConfig;
@@ -83,7 +84,10 @@ public class Event {
     }
 
     public void updateDefaults(DeDuplicationConfig config) {
-        telemetry.addFieldIfAbsent("channel",config.defaultChannel());
+        String channelString = telemetry.<String>read("channel").value();
+        String channel = StringUtils.deleteWhitespace(channelString);
+        if(channel == null || channel.isEmpty())
+            telemetry.add("channel",config.defaultChannel());
     }
 }
 

@@ -31,11 +31,13 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     private UserService userService;
     private List<String> backendEvents;
     private List<String> eventsToSkip;
+    private String defaultChannel;
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
         successTopic = config.get("output.success.topic.name", "events_with_de_normalization");
         retryTopic = config.get("output.retry.topic.name", "events_retry");
+        defaultChannel = config.get("default.channel", "in.ekstep");
         childData = (KeyValueStore<String, Child>) context.getStore("de-normalization");
         userServiceEndpoint = config.get("user.service.endpoint");
         retryBackoffBase = Integer.parseInt(config.get("retry.backoff.base"));
@@ -53,7 +55,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
         Event event = null;
         try {
             Map<String, Object> message = (Map<String, Object>) envelope.getMessage();
-            event = new Event(message, childData, backendEvents, eventsToSkip, retryBackoffBase, retryStore);
+            event = new Event(message, childData, backendEvents, eventsToSkip, retryBackoffBase, retryStore, defaultChannel);
             processEvent(collector, event, userService);
             messageCount.inc();
         } catch (Exception e) {
