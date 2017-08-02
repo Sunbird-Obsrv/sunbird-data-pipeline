@@ -165,4 +165,39 @@ public class EventFixture {
         }.getType());
 
     }
+
+    public static Map<String, Object> emptyChannel() {
+
+        String json = "{\n" +
+                "  \"@timestamp\": \"2016-05-03T04:36:14.921Z\",\n" +
+                "  \"@version\": \"1\",\n" +
+                "  \"did\": \"bc811958-b4b7-4873-a43a-03718edba45b\",\n" +
+                "  \"edata\": {\n" +
+                "  },\n" +
+                "  \"eid\": \"GE_SESSION_START\",\n" +
+                "  \"ets\": 1462250323723,\n" +
+                "  \"gdata\": {\n" +
+                "    \"id\": \"genie.android\",\n" +
+                "    \"ver\": \"4.2.282productionxWalk.6\"\n" +
+                "  },\n" +
+                "  \"key\": \"\",\n" +
+                "  \"mid\": \"8c44a1c1-8919-4c6a-a256-69d14616c757\",\n" +
+                "  \"sid\": \"\",\n" +
+                "  \"tags\": [\n" +
+                "    {\n" +
+                "      \"genie\": []\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"ts\": \"2016-05-03T04:38:43.723+0000\",\n" +
+                "  \"type\": \"events\",\n" +
+                "  \"uid\": \"\",\n" +
+                "  \"channel\": \"\",\n" +
+                "  \"uuid\": \"be4f0aef-3cd8-42bc-b92d-2f7b3901011418\",\n" +
+                "  \"ver\": \"2.0\"\n" +
+                "}";
+
+        return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
+        }.getType());
+
+    }
 }

@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.system;
 
 
 import org.ekstep.ep.samza.fixtures.EventFixture;
+import org.ekstep.ep.samza.util.Configuration;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class EventTest {
     @Test
@@ -196,6 +198,21 @@ public class EventTest {
         Assert.assertEquals(true, event.isLocationEmpty());
         Assert.assertEquals(false, event.isLocationPresent());
         Assert.assertEquals(false, event.isLocationAbsent());
+    }
+
+    @Test
+    public void shouldAddChannelIfChannelIsAbsentNullOrEmpty(){
+        Configuration conf = mock(Configuration.class);
+        when(conf.getDefaultChannel()).thenReturn("in.ekstep");
+
+        Event event = new Event(EventFixture.locationAbsent());
+        event.updateDefaults(conf);
+        Assert.assertEquals("in.ekstep", event.getMap().get("channel"));
+
+
+        Event event2 = new Event(EventFixture.emptyChannel());
+        event2.updateDefaults(conf);
+        Assert.assertEquals("in.ekstep", event.getMap().get("channel"));
     }
 
     private Location getLocation() {

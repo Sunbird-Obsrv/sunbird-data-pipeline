@@ -36,6 +36,7 @@ public class DenormalizationTaskTest {
     private final String RETRY_TOPIC = "events_retry";
     private final String BACKEND_EVENTS = "CE_.*, CP_.*, BE_.*";
     private final String EVENTS_TO_SKIP = "ME_APP_SESSION_SUMMARY,ME_APP_USAGE_SUMMARY,ME_CE_SESSION_SUMMARY,ME_AUTHOR_USAGE_SUMMARY,ME_TEXTBOOK_SESSION_SUMMARY";
+    private final String DEFAULT_CHANNEL = "in.ekstep";
     private MessageCollector collectorMock;
     private Event eventMock;
     private UserService userServiceMock;
@@ -210,7 +211,7 @@ public class DenormalizationTaskTest {
         Map<String, Object> message = EventFixture.BeEvent();
         KeyValueStore<String, Child> childStore = Mockito.mock(KeyValueStore.class);
         KeyValueStore<String, Object> retryStore = Mockito.mock(KeyValueStore.class);
-        Event event = new Event(message, childStore, Arrays.asList("BE_.*"), Arrays.asList("ME_CE_SESSION_SUMMARY"), 10, retryStore);
+        Event event = new Event(message, childStore, Arrays.asList("BE_.*"), Arrays.asList("ME_CE_SESSION_SUMMARY"), 10, retryStore, DEFAULT_CHANNEL);
 
         deNormalizationTask.init(configMock, contextMock);
         deNormalizationTask.processEvent(collectorMock, event, userServiceMock);
@@ -224,7 +225,7 @@ public class DenormalizationTaskTest {
         Map<String, Object> message = EventFixture.MeEvent();
         KeyValueStore<String, Child> childStore = Mockito.mock(KeyValueStore.class);
         KeyValueStore<String, Object> retryStore = Mockito.mock(KeyValueStore.class);
-        Event event = new Event(message, childStore, Arrays.asList("BE_.*"), Arrays.asList("ME_CE_SESSION_SUMMARY"), 10, retryStore);
+        Event event = new Event(message, childStore, Arrays.asList("BE_.*"), Arrays.asList("ME_CE_SESSION_SUMMARY"), 10, retryStore, DEFAULT_CHANNEL);
 
         deNormalizationTask.init(configMock, contextMock);
         deNormalizationTask.processEvent(collectorMock, event, userServiceMock);

@@ -1,7 +1,8 @@
 package org.ekstep.ep.samza;
 
-import org.ekstep.ep.samza.data.RetryData;
+import org.apache.commons.lang.StringUtils;
 import org.apache.samza.storage.kv.KeyValueStore;
+import org.ekstep.ep.samza.data.RetryData;
 import org.ekstep.ep.samza.eventData.BackendData;
 import org.ekstep.ep.samza.eventData.ChildData;
 import org.ekstep.ep.samza.external.UserService;
@@ -25,6 +26,7 @@ public class Event {
     static Logger LOGGER = new Logger(Event.class);
     private final Telemetry telemetry;
     private final List<String> eventsToSkip;
+    private final String defaultChannel;
     private Boolean canBeProcessed;
     private Boolean hadIssueWithDb;
     private final BackendData backendData;
@@ -32,10 +34,11 @@ public class Event {
     private RetryData retryData;
 
     public Event(Map<String, Object> map, KeyValueStore<String, Child> childStore, List<String> backendEvents,
-                 List<String> eventsToSkip, int retryBackoffBase, KeyValueStore<String, Object> retryStore) {
+                 List<String> eventsToSkip, int retryBackoffBase, KeyValueStore<String, Object> retryStore, String defaultChannel) {
         this.eventsToSkip = eventsToSkip;
         this.canBeProcessed = true;
         this.hadIssueWithDb = false;
+        this.defaultChannel = defaultChannel;
         telemetry = new Telemetry(map);
         backendData = new BackendData(telemetry, backendEvents);
         retryData = new RetryData(telemetry, retryStore, retryBackoffBase, new Flag("gud"));
@@ -52,10 +55,18 @@ public class Event {
             }
             telemetry.getTime();
             childData.initialize();
+            addDefaultChannelId();
         } catch (ParseException e) {
             canBeProcessed = false;
             LOGGER.error(telemetry.id(), "EVENT INIT ERROR", e);
         }
+    }
+
+    private void addDefaultChannelId() {
+        String channelString = telemetry.<String>read("channel").value();
+        String channel = StringUtils.deleteWhitespace(channelString);
+        if(channel == null || channel.isEmpty())
+            telemetry.add("channel", defaultChannel);
     }
 
     public void process(UserService userService, DateTime now) {

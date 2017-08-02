@@ -82,6 +82,31 @@ public class EventFixture {
             "    \"ver\": \"1.0\"" +
             "}";
 
+    private static final String EVENT_WITH_EMTPY_CHANNEL = "{\n" +
+            "    \"edata\": {\n" +
+            "        \"eks\": {\n" +
+            "            \"loc\": \"\",\n" +
+            "            \"uid\": \"6\",\n" +
+            "            \"age\": 5,\n" +
+            "            \"handle\": \"Jijesh\",\n" +
+            "            \"standard\": -1,\n" +
+            "            \"language\": \"ML\"\n" +
+            "        }\n" +
+            "    },\n" +
+            "    \"eid\": \"GE_CREATE_PROFILE\",\n" +
+            "    \"did\": \"cbeda6a2ef327eaee21008de6495f89476aba58d\",\n" +
+            "    \"gdata\": {\n" +
+            "        \"id\": \"genieservice.android\",\n" +
+            "        \"ver\": \"1.0.local-qa-debug\"\n" +
+            "    },\n" +
+            "    \"sid\": \"\",\n" +
+            "    \"channel\": \"\",\n" +
+            "    \"tags\": [],\n" +
+            "    \"ts\": \"2015-09-27T13:03:43-04:00\",\n" +
+            "    \"uid\": \"6\",\n" +
+            "    \"ver\": \"1.0\"" +
+            "}";
+
     public static Map<String, Object> EventWithChecksumMap() {
         return new Gson().fromJson(EVENT_WITH_CHECKSUM, new TypeToken<Map<String, Object>>() {
         }.getType());
@@ -94,6 +119,11 @@ public class EventFixture {
 
     public static Map<String, Object> EventWithoutChecksumFieldMap() {
         return new Gson().fromJson(EVENT_WITHOUT_CHECKSUM, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
+
+    public static Map<String, Object> EventWithEmptyChannel() {
+        return new Gson().fromJson(EVENT_WITH_EMTPY_CHANNEL, new TypeToken<Map<String, Object>>() {
         }.getType());
     }
 
