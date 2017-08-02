@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.indexerDate;
 
 import org.ekstep.ep.samza.Event;
 import org.ekstep.ep.samza.reader.NullableValue;
+import org.ekstep.ep.samza.reader.Telemetry;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -21,18 +22,28 @@ public class EpochTimeParser extends TimeParser {
     boolean canHandleParsing = TIME_FORMAT.equals(timeFormat);
     boolean valueIsParsable = false;
     if(canHandleParsing){
-      NullableValue<Double> time = event.getTelemetry().read(timeField);
-      valueIsParsable = !(time.isNull() || time.value().isNaN());
+      Double time = safelyParse(event.getTelemetry());
+      valueIsParsable = !(time == null || time.isNaN());
     }
 
     return canHandleParsing && valueIsParsable;
   }
 
+  private Double safelyParse(Telemetry telemetry){
+    try {
+      NullableValue<Double> time = telemetry.read(timeField);
+      return time.value();
+    } catch (ClassCastException e) {
+      NullableValue<Long> timeInLong = telemetry.read(timeField);
+      return Double.valueOf(timeInLong.value());
+    }
+  }
+
   @Override
   public Date parse() throws ParseException {
     if(!canParse()) return new Date();
-    NullableValue<Double> time = event.read(timeField);
-    return new Date(time.value().longValue());
+    Double time = safelyParse(event.getTelemetry());
+    return new Date(time.longValue());
   }
 
   @Override

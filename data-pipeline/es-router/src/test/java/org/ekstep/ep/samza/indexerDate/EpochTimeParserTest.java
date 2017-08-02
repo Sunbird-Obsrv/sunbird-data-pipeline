@@ -55,6 +55,17 @@ public class EpochTimeParserTest {
     assertEquals(new Date(1501565087105L),timeParser.parse());
   }
 
+  @Test
+  public void shouldGetLongDateFromEvent() throws ParseException {
+    Telemetry telemetry = new Telemetry(new HashMap<String, Object>());
+    telemetry.add("ets",1501565087105L);
+    Event event = new Event(telemetry,"kafkaSource");
+
+    EpochTimeParser timeParser = new EpochTimeParser(event, "ets", "epoch");
+
+    assertEquals(new Date(1501565087105L),timeParser.parse());
+  }
+
   //TODO: mock Date
 //  @Test
 //  public void shouldGetTodayDateWhenEventDoesNotHaveTime() throws ParseException {

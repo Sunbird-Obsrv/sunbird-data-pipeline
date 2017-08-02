@@ -1,5 +1,7 @@
 package org.ekstep.ep.samza;
 
+import org.ekstep.ep.samza.logger.Logger;
+
 import java.text.ParseException;
 import java.util.List;
 
@@ -8,19 +10,18 @@ import java.util.List;
  */
 public class EsIndexerConfig {
   private List<TopicConfig> topicConfigs;
-
+  static Logger LOGGER = new Logger(EsIndexerConfig.class);
   public EsIndexerConfig(List<TopicConfig> topicConfigs) {
     this.topicConfigs = topicConfigs;
   }
 
   public void updateEsIndex(Event event){
-
     try {
       for(TopicConfig config:topicConfigs)
         if(config.isApplicable(event))
           config.updateEsIndex(event);
     } catch (ParseException e) {
-      e.printStackTrace();
+      LOGGER.error(event.getTelemetry().id(),"Parsing Exception",e);
     }
   }
 }

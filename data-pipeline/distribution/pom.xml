@@ -54,7 +54,7 @@
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>partner-data-router</artifactId>
-          <version>0.2.3</version>
+          <version>0.2.4</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
@@ -82,35 +82,42 @@
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>object-lifecycle-management</artifactId>
-          <version>0.1.0</version>
+          <version>0.1.1</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>object-de-normalization</artifactId>
-          <version>0.2.5</version>
+          <version>0.2.6</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>portal-profile-management</artifactId>
-          <version>0.1.0</version>
+          <version>0.1.1</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>public-exhaust-de-duplication</artifactId>
-          <version>0.0.5</version>
+          <version>0.0.6</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>private-exhaust-de-duplication</artifactId>
-          <version>0.0.6</version>
+          <version>0.0.7</version>
+          <type>tar.gz</type>
+          <classifier>distribution</classifier>
+      </dependency>
+      <dependency>
+          <groupId>org.ekstep.ecosystem.jobs</groupId>
+          <artifactId>es-router-primary</artifactId>
+          <version>0.0.1</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
