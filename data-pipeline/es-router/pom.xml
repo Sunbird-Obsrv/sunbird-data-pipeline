@@ -32,7 +32,7 @@ under the License.
     </parent>
 
 
-    <groupId>org.ekstep.ecosystem.jobs</groupId>
+    <groupId>org.ekstep.ecosystem</groupId>
     <artifactId>es-router</artifactId>
     <version>0.0.1</version>
     <packaging>jar</packaging>
