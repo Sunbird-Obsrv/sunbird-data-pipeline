@@ -123,8 +123,8 @@
       </dependency>
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
-          <artifactId>es-indexer</artifactId>
-          <version>0.0.3</version>
+          <artifactId>es-indexer-primary</artifactId>
+          <version>0.0.4</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>

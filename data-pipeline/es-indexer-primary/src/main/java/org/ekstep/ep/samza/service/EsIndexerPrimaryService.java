@@ -4,21 +4,20 @@ import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.esclient.ElasticSearchService;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.esclient.ClientResponse;
-import org.ekstep.ep.samza.task.EsIndexerConfig;
-import org.ekstep.ep.samza.task.EsIndexerSink;
-import org.ekstep.ep.samza.task.EsIndexerSource;
+import org.ekstep.ep.samza.task.EsIndexerPrimarySink;
+import org.ekstep.ep.samza.task.EsIndexerPrimarySource;
 
 import java.io.IOException;
 
-public class EsIndexerService {
-    static Logger LOGGER = new Logger(EsIndexerService.class);
+public class EsIndexerPrimaryService {
+    static Logger LOGGER = new Logger(EsIndexerPrimaryService.class);
     private final ElasticSearchService elasticSearchService;
 
-    public EsIndexerService(ElasticSearchService elasticSearchService) {
+    public EsIndexerPrimaryService(ElasticSearchService elasticSearchService) {
         this.elasticSearchService = elasticSearchService;
     }
 
-    public void process(EsIndexerSource source, EsIndexerSink sink) {
+    public void process(EsIndexerPrimarySource source, EsIndexerPrimarySink sink) {
 
         Event event = source.getEvent();
 

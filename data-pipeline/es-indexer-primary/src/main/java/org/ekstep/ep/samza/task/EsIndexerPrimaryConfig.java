@@ -2,7 +2,7 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 
-public class EsIndexerConfig {
+public class EsIndexerPrimaryConfig {
 
     private final String failedTopic;
     private final String elasticSearchHost;
@@ -10,7 +10,7 @@ public class EsIndexerConfig {
     private final String defaultIndexName;
     private final String defaultIndexType;
 
-    public EsIndexerConfig(Config config) {
+    public EsIndexerPrimaryConfig(Config config) {
         failedTopic = config.get("output.failed.topic.name", "telemetry.es-sink.fail");
         elasticSearchHost = config.get("host.elastic_search","localhost");
         elasticSearchPort = config.get("port.elastic_search","9200");

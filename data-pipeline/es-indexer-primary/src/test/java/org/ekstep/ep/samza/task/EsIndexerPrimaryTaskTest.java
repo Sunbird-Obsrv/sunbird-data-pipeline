@@ -24,7 +24,7 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.mock;
 
-public class EsIndexerTaskTest {
+public class EsIndexerPrimaryTaskTest {
 
     private static final String FAILED_TOPIC = "telemetry.es-sink.fail";
     private static final String ES_HOST = "localhost";
@@ -37,7 +37,7 @@ public class EsIndexerTaskTest {
     private TaskCoordinator coordinatorMock;
     private IncomingMessageEnvelope envelopeMock;
     private Config configMock;
-    private EsIndexerTask esIndexerTask;
+    private EsIndexerPrimaryTask esIndexerPrimaryTask;
 
     @Before
     public void setUp() throws Exception {
@@ -58,7 +58,7 @@ public class EsIndexerTaskTest {
                 .toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
 
-        esIndexerTask = new EsIndexerTask(configMock, contextMock, esServiceMock);
+        esIndexerPrimaryTask = new EsIndexerPrimaryTask(configMock, contextMock, esServiceMock);
     }
 
     @Test
@@ -66,7 +66,7 @@ public class EsIndexerTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithIndexDetails());
         stub(esServiceMock.index(anyString(),anyString(),anyString(),anyString())).toReturn(new IndexResponse("200", null));
 
-        esIndexerTask.process(envelopeMock, collectorMock, coordinatorMock);
+        esIndexerPrimaryTask.process(envelopeMock, collectorMock, coordinatorMock);
 
         verify(esServiceMock, times(1)).index(anyString(),anyString(),anyString(),anyString());
         verify(collectorMock, times(0)).send(any(OutgoingMessageEnvelope.class));
@@ -77,7 +77,7 @@ public class EsIndexerTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithIndexDetails());
         stub(esServiceMock.index(anyString(),anyString(),anyString(),anyString())).toReturn(new IndexResponse("400", null));
 
-        esIndexerTask.process(envelopeMock, collectorMock, coordinatorMock);
+        esIndexerPrimaryTask.process(envelopeMock, collectorMock, coordinatorMock);
 
         verify(esServiceMock, times(2)).index(anyString(),anyString(),anyString(),anyString());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
@@ -88,7 +88,7 @@ public class EsIndexerTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithoutIndexDetails());
         stub(esServiceMock.index(anyString(),anyString(),anyString(),anyString())).toReturn(new IndexResponse("200", null));
 
-        esIndexerTask.process(envelopeMock, collectorMock, coordinatorMock);
+        esIndexerPrimaryTask.process(envelopeMock, collectorMock, coordinatorMock);
 
         verify(esServiceMock, times(0)).index(anyString(),anyString(),anyString(),anyString());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));

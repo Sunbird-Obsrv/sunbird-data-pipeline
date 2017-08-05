@@ -1,19 +1,16 @@
 package org.ekstep.ep.samza.task;
 
 import org.apache.samza.system.IncomingMessageEnvelope;
-import org.apache.samza.system.OutgoingMessageEnvelope;
-import org.apache.samza.system.SystemStream;
 import org.ekstep.ep.samza.domain.Event;
 
-import java.util.HashMap;
 import java.util.Map;
 
-public class EsIndexerSource {
+public class EsIndexerPrimarySource {
 
-    private EsIndexerConfig config;
+    private EsIndexerPrimaryConfig config;
     private IncomingMessageEnvelope envelope;
 
-    public EsIndexerSource(IncomingMessageEnvelope envelope, EsIndexerConfig config) {
+    public EsIndexerPrimarySource(IncomingMessageEnvelope envelope, EsIndexerPrimaryConfig config) {
         this.envelope = envelope;
         this.config = config;
     }

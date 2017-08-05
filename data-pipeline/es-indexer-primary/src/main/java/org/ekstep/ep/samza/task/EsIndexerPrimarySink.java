@@ -6,13 +6,13 @@ import org.apache.samza.task.MessageCollector;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.metrics.JobMetrics;
 
-public class EsIndexerSink {
+public class EsIndexerPrimarySink {
 
     private MessageCollector collector;
     private JobMetrics metrics;
-    private EsIndexerConfig config;
+    private EsIndexerPrimaryConfig config;
 
-    public EsIndexerSink(MessageCollector collector, JobMetrics metrics, EsIndexerConfig config) {
+    public EsIndexerPrimarySink(MessageCollector collector, JobMetrics metrics, EsIndexerPrimaryConfig config) {
         this.collector = collector;
         this.metrics = metrics;
         this.config = config;

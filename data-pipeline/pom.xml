@@ -45,7 +45,7 @@
     <module>object-service</module>
     <module>ep-de-duplication</module>
     <module>retry-service</module>
-    <module>es-indexer</module>
+    <module>es-indexer-primary</module>
     <module>es-router</module>
     <module>es-client</module>
     <module>es-router-primary</module>

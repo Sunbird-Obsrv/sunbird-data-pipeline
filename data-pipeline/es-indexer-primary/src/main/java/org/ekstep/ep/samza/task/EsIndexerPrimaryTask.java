@@ -20,28 +20,27 @@
 package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
-import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.esclient.ElasticSearchClient;
 import org.ekstep.ep.samza.esclient.ElasticSearchService;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.metrics.JobMetrics;
-import org.ekstep.ep.samza.service.EsIndexerService;
+import org.ekstep.ep.samza.service.EsIndexerPrimaryService;
 
 import java.net.UnknownHostException;
 
-public class EsIndexerTask implements StreamTask, InitableTask, WindowableTask {
-    static Logger LOGGER = new Logger(EsIndexerTask.class);
-    private EsIndexerConfig config;
+public class EsIndexerPrimaryTask implements StreamTask, InitableTask, WindowableTask {
+    static Logger LOGGER = new Logger(EsIndexerPrimaryTask.class);
+    private EsIndexerPrimaryConfig config;
     private JobMetrics metrics;
-    private EsIndexerService service;
+    private EsIndexerPrimaryService service;
 
-    public EsIndexerTask(Config config, TaskContext context, ElasticSearchService elasticSearchService) throws Exception {
+    public EsIndexerPrimaryTask(Config config, TaskContext context, ElasticSearchService elasticSearchService) throws Exception {
         init(config, context, elasticSearchService);
     }
 
-    public EsIndexerTask(){
+    public EsIndexerPrimaryTask(){
 
     }
 
@@ -51,7 +50,7 @@ public class EsIndexerTask implements StreamTask, InitableTask, WindowableTask {
     }
 
     private void init(Config config, TaskContext context, ElasticSearchService elasticSearchService) throws UnknownHostException {
-        this.config = new EsIndexerConfig(config);
+        this.config = new EsIndexerPrimaryConfig(config);
         metrics = new JobMetrics(context);
 
         elasticSearchService =
@@ -59,14 +58,14 @@ public class EsIndexerTask implements StreamTask, InitableTask, WindowableTask {
                         new ElasticSearchClient(this.config.esHost(),this.config.esPort()) :
                         elasticSearchService;
 
-        service = new EsIndexerService(elasticSearchService);
+        service = new EsIndexerPrimaryService(elasticSearchService);
     }
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector,
                         TaskCoordinator taskCoordinator) throws Exception {
-        EsIndexerSource source = new EsIndexerSource(envelope, config);
-        EsIndexerSink sink = new EsIndexerSink(collector, metrics, config);
+        EsIndexerPrimarySource source = new EsIndexerPrimarySource(envelope, config);
+        EsIndexerPrimarySink sink = new EsIndexerPrimarySink(collector, metrics, config);
         service.process(source, sink);
     }
 
