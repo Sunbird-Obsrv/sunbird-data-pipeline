@@ -36,7 +36,7 @@ under the License.
     <artifactId>es-indexer-secondary</artifactId>
     <version>0.0.1</version>
     <packaging>jar</packaging>
-    <name>ES Indexer Primary</name>
+    <name>ES Indexer Secondary</name>
     <description>
         Indexes events from failed/retry topics into ES
     </description>
