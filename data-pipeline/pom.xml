@@ -49,6 +49,7 @@
     <module>es-router</module>
     <module>es-client</module>
     <module>es-router-primary</module>
+    <module>es-indexer-secondary</module>
   </modules>
 
   <properties>
