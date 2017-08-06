@@ -124,7 +124,7 @@
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>es-indexer-primary</artifactId>
-          <version>0.0.4</version>
+          <version>0.0.5</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>

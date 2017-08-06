@@ -53,10 +53,15 @@ public class EsIndexerPrimaryService {
         LOGGER.info("WRITING TO FAILED INDEX", event.id());
         try {
             ClientResponse response = elasticSearchService.index(event.failedIndexName(), event.failedIndexType(), event.getJson(), event.id());
-            LOGGER.info("ES INDEXER RESPONSE", response.toString());
+            if(success(response)) {
+                LOGGER.info("ES INDEXER SUCCESS", event.id());
+            } else {
+                LOGGER.error("ES INDEXER FAILED", response.toString());
+                event.markFailed(response.getStatus(),response.getMessage());
+            }
         } catch (IOException e) {
             e.printStackTrace();
-            LOGGER.error("ES INDEXER EXCEPTION", e.getMessage());
+            LOGGER.error("ES INDEXER EXCEPTION WHEN WRITING TO FAILED INDEX", e.getMessage());
             event.markFailed("Error", e.getMessage());
         }
     }

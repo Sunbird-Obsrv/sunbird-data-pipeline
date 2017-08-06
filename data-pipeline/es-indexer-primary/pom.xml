@@ -34,11 +34,11 @@ under the License.
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>es-indexer-primary</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
     <packaging>jar</packaging>
-    <name>ES Indexer</name>
+    <name>ES Indexer Primary</name>
     <description>
-        Indexes events into ES
+        Indexes events from success topics into ES
     </description>
 
     <dependencies>
