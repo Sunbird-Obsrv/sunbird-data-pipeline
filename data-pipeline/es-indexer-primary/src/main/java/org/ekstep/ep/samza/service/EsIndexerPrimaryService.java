@@ -26,7 +26,6 @@ public class EsIndexerPrimaryService {
             if(!event.can_be_indexed()){
                 LOGGER.info("INDEX DETAILS ARE MISSING! SKIPPING", event.id());
                 event.markSkipped();
-                writeToFailedIndex(event);
                 sink.toFailedTopic(event);
                 return;
             }
@@ -38,7 +37,6 @@ public class EsIndexerPrimaryService {
             } else {
                 LOGGER.error("ES INDEXER FAILED", response.toString());
                 event.markFailed(response.getStatus(),response.getMessage());
-                writeToFailedIndex(event);
                 sink.toFailedTopic(event);
             }
         } catch (Exception e) {
@@ -46,23 +44,6 @@ public class EsIndexerPrimaryService {
             LOGGER.error("ES INDEXER EXCEPTION", e.getMessage());
             event.markFailed("Error", e.getMessage());
             sink.toFailedTopic(event);
-        }
-    }
-
-    private void writeToFailedIndex(Event event) {
-        LOGGER.info("WRITING TO FAILED INDEX", event.id());
-        try {
-            ClientResponse response = elasticSearchService.index(event.failedIndexName(), event.failedIndexType(), event.getJson(), event.id());
-            if(success(response)) {
-                LOGGER.info("ES INDEXER SUCCESS", event.id());
-            } else {
-                LOGGER.error("ES INDEXER FAILED", response.toString());
-                event.markFailed(response.getStatus(),response.getMessage());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            LOGGER.error("ES INDEXER EXCEPTION WHEN WRITING TO FAILED INDEX", e.getMessage());
-            event.markFailed("Error", e.getMessage());
         }
     }
 

@@ -10,13 +10,9 @@ import java.util.Map;
 
 public class Event {
     private final Telemetry telemetry;
-    private final String defaultIndexName;
-    private final String defaultIndexType;
 
-    public Event(Map<String, Object> message, String defaultIndexName, String defaultIndexType) {
+    public Event(Map<String, Object> message) {
         this.telemetry = new Telemetry(message);
-        this.defaultIndexName = defaultIndexName;
-        this.defaultIndexType = defaultIndexType;
     }
 
     public Map<String, Object> getMap() {
@@ -25,14 +21,6 @@ public class Event {
 
     public String indexName() {
         return telemetry.<String>read("metadata.index_name").value();
-    }
-
-    public String failedIndexName() {
-        return indexName() != null ? MessageFormat.format("failed-{0}", indexName()) : getFailedIndexName();
-    }
-
-    public String failedIndexType() {
-        return indexType() != null ? indexType() : getFailedIndexType();
     }
 
     public String indexType() {
@@ -63,16 +51,5 @@ public class Event {
 
     public boolean can_be_indexed() {
         return (indexName() != null && indexType() != null);
-    }
-
-    public String getFailedIndexName() {
-        DateTime time = new DateTime();
-        String year = String.valueOf(time.getYear());
-        String month = String.valueOf(time.getMonthOfYear());
-        return MessageFormat.format("{0}-{1}.{2}",defaultIndexName,year,month);
-    }
-
-    public String getFailedIndexType() {
-        return defaultIndexType;
     }
 }

@@ -29,8 +29,6 @@ public class EsIndexerPrimaryTaskTest {
     private static final String FAILED_TOPIC = "telemetry.es-sink.fail";
     private static final String ES_HOST = "localhost";
     private static final String ES_PORT = "9200";
-    private static final String DEFAULT_INDEX_NAME = "failed-telemetry";
-    private static final String DEFAULT_INDEX_TYPE = "events";
     private MessageCollector collectorMock;
     private ElasticSearchService esServiceMock;
     private TaskContext contextMock;
@@ -56,8 +54,6 @@ public class EsIndexerPrimaryTaskTest {
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
         stub(configMock.get("host.elastic_search", ES_HOST)).toReturn(ES_HOST);
         stub(configMock.get("port.elastic_search", ES_PORT)).toReturn(ES_PORT);
-        stub(configMock.get("default.failed.index_name", DEFAULT_INDEX_NAME)).toReturn(DEFAULT_INDEX_NAME);
-        stub(configMock.get("default.failed.index_type", DEFAULT_INDEX_TYPE)).toReturn(DEFAULT_INDEX_TYPE);
         stub(metricsRegistry.newCounter(anyString(), anyString()))
                 .toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
@@ -83,29 +79,16 @@ public class EsIndexerPrimaryTaskTest {
 
         esIndexerPrimaryTask.process(envelopeMock, collectorMock, coordinatorMock);
 
-        verify(esServiceMock, times(2)).index(anyString(),anyString(),anyString(),anyString());
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
-    }
-
-    @Test
-    public void shouldWriteEventsToFailedIndexAndSendToFailedTopicIfIndexDetailsAreMissingInEvent() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithoutIndexDetails());
-        stub(esServiceMock.index(anyString(),anyString(),anyString(),anyString())).toReturn(new IndexResponse("200", null));
-
-        esIndexerPrimaryTask.process(envelopeMock, collectorMock, coordinatorMock);
-
         verify(esServiceMock, times(1)).index(anyString(),anyString(),anyString(),anyString());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
 
     @Test
-    public void shouldWriteEventsToFailedIndexAndSendToFailedTopicIfIndexActionFailed() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithIndexDetails());
-        stub(esServiceMock.index(anyString(),anyString(),anyString(),anyString())).toReturn(new IndexResponse("400", null));
+    public void shouldWriteEventsToFailedIndexDetailsAreMissingInEvent() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithoutIndexDetails());
 
         esIndexerPrimaryTask.process(envelopeMock, collectorMock, coordinatorMock);
 
-        verify(esServiceMock, times(2)).index(anyString(),anyString(),anyString(),anyString());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
 

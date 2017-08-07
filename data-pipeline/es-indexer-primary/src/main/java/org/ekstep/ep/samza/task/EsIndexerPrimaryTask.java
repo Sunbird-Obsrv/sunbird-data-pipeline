@@ -64,7 +64,7 @@ public class EsIndexerPrimaryTask implements StreamTask, InitableTask, Windowabl
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector,
                         TaskCoordinator taskCoordinator) throws Exception {
-        EsIndexerPrimarySource source = new EsIndexerPrimarySource(envelope, config);
+        EsIndexerPrimarySource source = new EsIndexerPrimarySource(envelope);
         EsIndexerPrimarySink sink = new EsIndexerPrimarySink(collector, metrics, config);
         service.process(source, sink);
     }

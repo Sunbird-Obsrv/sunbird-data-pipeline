@@ -7,15 +7,13 @@ import java.util.Map;
 
 public class EsIndexerPrimarySource {
 
-    private EsIndexerPrimaryConfig config;
     private IncomingMessageEnvelope envelope;
 
-    public EsIndexerPrimarySource(IncomingMessageEnvelope envelope, EsIndexerPrimaryConfig config) {
+    public EsIndexerPrimarySource(IncomingMessageEnvelope envelope) {
         this.envelope = envelope;
-        this.config = config;
     }
 
     public Event getEvent() {
-        return new Event((Map<String, Object>) envelope.getMessage(), config.getDefaultIndexName(), config.getDefaultIndexType());
+        return new Event((Map<String, Object>) envelope.getMessage());
     }
 }
