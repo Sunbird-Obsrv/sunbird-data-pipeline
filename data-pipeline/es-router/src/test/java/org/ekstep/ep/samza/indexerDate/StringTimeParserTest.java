@@ -1,12 +1,10 @@
 package org.ekstep.ep.samza.indexerDate;
 
-import org.ekstep.ep.samza.Event;
+import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.junit.Test;
 
-import java.sql.Time;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;

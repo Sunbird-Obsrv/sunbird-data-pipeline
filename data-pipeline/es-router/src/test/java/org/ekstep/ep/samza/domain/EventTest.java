@@ -1,5 +1,7 @@
-package org.ekstep.ep.samza;
+package org.ekstep.ep.samza.domain;
 
+import org.ekstep.ep.samza.config.EsIndexDateConfig;
+import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.junit.Before;
 import org.junit.Test;
@@ -7,7 +9,7 @@ import org.junit.Test;
 import java.text.ParseException;
 import java.util.HashMap;
 
-import static org.ekstep.ep.samza.Constants.DEFAULT_INDEX_TYPE;
+import static org.ekstep.ep.samza.util.Constants.DEFAULT_INDEX_TYPE;
 import static org.junit.Assert.*;
 
 /**
@@ -15,11 +17,11 @@ import static org.junit.Assert.*;
  */
 public class EventTest {
 
-  private EsIndexDate indexDate;
+  private EsIndexDateConfig indexDate;
 
   @Before
   public void setup(){
-    indexDate = new EsIndexDate("ts", "string", "", "", false);
+    indexDate = new EsIndexDateConfig("ts", "string", "", "", false);
   }
 
   @Test

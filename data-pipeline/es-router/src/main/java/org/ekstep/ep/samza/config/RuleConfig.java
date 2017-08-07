@@ -1,5 +1,6 @@
-package org.ekstep.ep.samza;
+package org.ekstep.ep.samza.config;
 
+import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.reader.NullableValue;
 
 import java.util.regex.Pattern;
@@ -7,11 +8,11 @@ import java.util.regex.Pattern;
 /**
  * Created by aks on 01/08/17.
  */
-public class Rule {
+public class RuleConfig {
   private String idPath;
   private String idValue;
 
-  public Rule(String idPath, String idValue) {
+  public RuleConfig(String idPath, String idValue) {
     this.idPath = idPath;
     this.idValue = idValue;
   }

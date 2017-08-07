@@ -2,6 +2,8 @@ package org.ekstep.ep.samza;
 
 import com.google.gson.Gson;
 import org.apache.commons.io.IOUtils;
+import org.ekstep.ep.samza.config.EsIndexerConfig;
+import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.reader.Telemetry;
 import java.io.FileReader;
 import java.io.IOException;

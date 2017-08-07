@@ -1,5 +1,10 @@
-package org.ekstep.ep.samza;
+package org.ekstep.ep.samza.config;
 
+import org.ekstep.ep.samza.config.EsIndexDateConfig;
+import org.ekstep.ep.samza.config.EventConfig;
+import org.ekstep.ep.samza.config.RuleConfig;
+import org.ekstep.ep.samza.config.TopicConfig;
+import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,30 +14,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import static org.ekstep.ep.samza.Constants.DEFAULT_INDEX_TYPE;
+import static org.ekstep.ep.samza.util.Constants.DEFAULT_INDEX_TYPE;
 import static org.junit.Assert.*;
 
 public class TopicConfigTest {
 
   private String DEFAULT_TIME = "2017-07-21T05:24:47.105+0000";
-  EsIndexDate defaultEsIndexDate = new EsIndexDate("ts", "string", "", "", false);
-  private Rule geRule;
-  private Rule oeRule;
-  private Rule defaultRule;
+  EsIndexDateConfig defaultEsIndexDateConfig = new EsIndexDateConfig("ts", "string", "", "", false);
+  private RuleConfig geRuleConfig;
+  private RuleConfig oeRuleConfig;
+  private RuleConfig defaultRuleConfig;
 
   @Before
   public void setup(){
-    geRule = new Rule("eid", "GE.*");
-    oeRule = new Rule("eid", "OE.*");
-    defaultRule = new Rule("eid", ".*");
+    geRuleConfig = new RuleConfig("eid", "GE.*");
+    oeRuleConfig = new RuleConfig("eid", "OE.*");
+    defaultRuleConfig = new RuleConfig("eid", ".*");
 
   }
 
   @Test
   public void shouldGetTheSpecificEsIndex() throws ParseException {
-    EventConfig geEventConfig = new EventConfig(Arrays.asList(geRule), "geIndex", 2.0, defaultEsIndexDate, false, DEFAULT_INDEX_TYPE);
-    EventConfig oeEventConfig = new EventConfig(Arrays.asList(oeRule), "oeIndex", 2.0, defaultEsIndexDate, false, DEFAULT_INDEX_TYPE);
-    EventConfig defaultEventConfig = new EventConfig(Arrays.asList(defaultRule), "oeIndex", 1.0, defaultEsIndexDate, false, DEFAULT_INDEX_TYPE);
+    EventConfig geEventConfig = new EventConfig(Arrays.asList(geRuleConfig), "geIndex", 2.0, defaultEsIndexDateConfig, false, DEFAULT_INDEX_TYPE);
+    EventConfig oeEventConfig = new EventConfig(Arrays.asList(oeRuleConfig), "oeIndex", 2.0, defaultEsIndexDateConfig, false, DEFAULT_INDEX_TYPE);
+    EventConfig defaultEventConfig = new EventConfig(Arrays.asList(defaultRuleConfig), "oeIndex", 1.0, defaultEsIndexDateConfig, false, DEFAULT_INDEX_TYPE);
     TopicConfig topicConfig = new TopicConfig("topicName", Arrays.asList(geEventConfig, oeEventConfig, defaultEventConfig));
     Event event = getEvent("GE_INTERRUPT", "", "2017-06-15T05:24:47.105+0000");
 
@@ -44,9 +49,9 @@ public class TopicConfigTest {
 
   @Test
   public void shouldGetTheDefaultEventEsIndex() throws ParseException {
-    EventConfig geEventConfig = new EventConfig(Arrays.asList(geRule), "geIndex", 2.0, defaultEsIndexDate, false, DEFAULT_INDEX_TYPE);
-    EventConfig oeEventConfig = new EventConfig(Arrays.asList(oeRule), "oeIndex", 2.0, defaultEsIndexDate, false, DEFAULT_INDEX_TYPE);
-    EventConfig defaultEventConfig = new EventConfig(Arrays.asList(defaultRule), "default", 1.0, defaultEsIndexDate, false, DEFAULT_INDEX_TYPE);
+    EventConfig geEventConfig = new EventConfig(Arrays.asList(geRuleConfig), "geIndex", 2.0, defaultEsIndexDateConfig, false, DEFAULT_INDEX_TYPE);
+    EventConfig oeEventConfig = new EventConfig(Arrays.asList(oeRuleConfig), "oeIndex", 2.0, defaultEsIndexDateConfig, false, DEFAULT_INDEX_TYPE);
+    EventConfig defaultEventConfig = new EventConfig(Arrays.asList(defaultRuleConfig), "default", 1.0, defaultEsIndexDateConfig, false, DEFAULT_INDEX_TYPE);
     TopicConfig topicConfig = new TopicConfig("topicName", Arrays.asList(geEventConfig, oeEventConfig, defaultEventConfig));
     Event event = getEvent("BE_ASSESS", "", DEFAULT_TIME);
 

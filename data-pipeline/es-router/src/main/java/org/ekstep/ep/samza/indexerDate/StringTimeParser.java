@@ -1,8 +1,7 @@
 package org.ekstep.ep.samza.indexerDate;
 
-import org.ekstep.ep.samza.Event;
+import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.reader.NullableValue;
-import org.ekstep.ep.samza.reader.Telemetry;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

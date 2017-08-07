@@ -1,12 +1,13 @@
-package org.ekstep.ep.samza;
+package org.ekstep.ep.samza.domain;
 
+import org.ekstep.ep.samza.config.EsIndexDateConfig;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 
 import java.text.ParseException;
 import java.util.HashMap;
 
-import static org.ekstep.ep.samza.Constants.*;
+import static org.ekstep.ep.samza.util.Constants.*;
 
 /**
  * Created by aks on 27/07/17.
@@ -30,7 +31,7 @@ public class Event {
     return source.equals(this.kafkaSource);
   }
 
-  public void addEsIndex(String esIndex, boolean cumulative, EsIndexDate indexDate, String indexType) throws ParseException {
+  public void addEsIndex(String esIndex, boolean cumulative, EsIndexDateConfig indexDate, String indexType) throws ParseException {
     telemetry.addFieldIfAbsent(METADATA_KEY, new HashMap<String, String>());
     String effectiveEsIndex = cumulative ? esIndex : indexDate.getIndex(esIndex,this);
 

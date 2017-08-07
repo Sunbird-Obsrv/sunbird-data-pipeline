@@ -1,5 +1,7 @@
-package org.ekstep.ep.samza;
+package org.ekstep.ep.samza.config;
 
+import org.ekstep.ep.samza.config.*;
+import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.junit.Before;
 import org.junit.Test;
@@ -7,29 +9,29 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import static org.ekstep.ep.samza.Constants.DEFAULT_INDEX_TYPE;
+import static org.ekstep.ep.samza.util.Constants.DEFAULT_INDEX_TYPE;
 import static org.junit.Assert.*;
 
 /**
  * Created by aks on 01/08/17.
  */
 public class EsIndexerConfigTest {
-  EsIndexDate defaultEsIndexDate = new EsIndexDate("ts", "string", "", "", false);
+  EsIndexDateConfig defaultEsIndexDateConfig = new EsIndexDateConfig("ts", "string", "", "", false);
   private Telemetry telemetry;
-  private Rule geRule;
-  private Rule oeRule;
+  private RuleConfig geRuleConfig;
+  private RuleConfig oeRuleConfig;
 
   @Before
   public void setup(){
-    geRule = new Rule("eid", "GE.*");
-    oeRule = new Rule("eid", "OE.*");
+    geRuleConfig = new RuleConfig("eid", "GE.*");
+    oeRuleConfig = new RuleConfig("eid", "OE.*");
   }
 
   @Test
   public void shouldApplyApplicableTopicConfig() {
 
-    EventConfig geEventConfig = new EventConfig(Arrays.asList(geRule), "geIndex", 2.0, defaultEsIndexDate, false, DEFAULT_INDEX_TYPE);
-    EventConfig geEventConfig2 = new EventConfig(Arrays.asList(geRule), "geIndex2", 2.0, defaultEsIndexDate, false, DEFAULT_INDEX_TYPE);
+    EventConfig geEventConfig = new EventConfig(Arrays.asList(geRuleConfig), "geIndex", 2.0, defaultEsIndexDateConfig, false, DEFAULT_INDEX_TYPE);
+    EventConfig geEventConfig2 = new EventConfig(Arrays.asList(geRuleConfig), "geIndex2", 2.0, defaultEsIndexDateConfig, false, DEFAULT_INDEX_TYPE);
     TopicConfig kafka1 = new TopicConfig("kafka1", Arrays.asList(geEventConfig));
     TopicConfig kafka2 = new TopicConfig("kafka2", Arrays.asList(geEventConfig2));
     EsIndexerConfig esIndexerConfig = new EsIndexerConfig(Arrays.asList(kafka1, kafka2));
@@ -42,8 +44,8 @@ public class EsIndexerConfigTest {
 
   @Test
   public void shouldNotApplyWhenNoTopicConfigMatches() {
-    EventConfig geEventConfig = new EventConfig(Arrays.asList(geRule), "geIndex", 2.0, defaultEsIndexDate, false, DEFAULT_INDEX_TYPE);
-    EventConfig geEventConfig2 = new EventConfig(Arrays.asList(geRule), "geIndex2", 2.0, defaultEsIndexDate, false, DEFAULT_INDEX_TYPE);
+    EventConfig geEventConfig = new EventConfig(Arrays.asList(geRuleConfig), "geIndex", 2.0, defaultEsIndexDateConfig, false, DEFAULT_INDEX_TYPE);
+    EventConfig geEventConfig2 = new EventConfig(Arrays.asList(geRuleConfig), "geIndex2", 2.0, defaultEsIndexDateConfig, false, DEFAULT_INDEX_TYPE);
     TopicConfig kafka1 = new TopicConfig("kafka1", Arrays.asList(geEventConfig));
     TopicConfig kafka2 = new TopicConfig("kafka2", Arrays.asList(geEventConfig2));
     EsIndexerConfig esIndexerConfig = new EsIndexerConfig(Arrays.asList(kafka1, kafka2));
@@ -56,8 +58,8 @@ public class EsIndexerConfigTest {
 
   @Test
   public void shouldNotApplyWhenNoEventConfigMatches() {
-    EventConfig geEventConfig = new EventConfig(Arrays.asList(oeRule), "oeIndex", 2.0, defaultEsIndexDate, false, DEFAULT_INDEX_TYPE);
-    EventConfig geEventConfig2 = new EventConfig(Arrays.asList(geRule), "geIndex2", 2.0, defaultEsIndexDate, false, DEFAULT_INDEX_TYPE);
+    EventConfig geEventConfig = new EventConfig(Arrays.asList(oeRuleConfig), "oeIndex", 2.0, defaultEsIndexDateConfig, false, DEFAULT_INDEX_TYPE);
+    EventConfig geEventConfig2 = new EventConfig(Arrays.asList(geRuleConfig), "geIndex2", 2.0, defaultEsIndexDateConfig, false, DEFAULT_INDEX_TYPE);
     TopicConfig kafka1 = new TopicConfig("kafka1", Arrays.asList(geEventConfig));
     TopicConfig kafka2 = new TopicConfig("kafka2", Arrays.asList(geEventConfig2));
     EsIndexerConfig esIndexerConfig = new EsIndexerConfig(Arrays.asList(kafka1, kafka2));

@@ -1,4 +1,4 @@
-package org.ekstep.ep.samza;
+package org.ekstep.ep.samza.util;
 
 /**
  * Created by aks on 01/08/17.

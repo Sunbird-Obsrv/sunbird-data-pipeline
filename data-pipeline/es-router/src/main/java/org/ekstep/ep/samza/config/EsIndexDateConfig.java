@@ -1,5 +1,6 @@
-package org.ekstep.ep.samza;
+package org.ekstep.ep.samza.config;
 
+import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.indexerDate.TimeParser;
 import org.ekstep.ep.samza.reader.NullableValue;
 
@@ -10,14 +11,14 @@ import java.util.Date;
 /**
  * Created by aks on 01/08/17.
  */
-public class EsIndexDate {
+public class EsIndexDateConfig {
   private String primary;
   private String primaryFormat;
   private String secondary;
   private String secondaryFormat;
   private boolean updatePrimary;
 
-  public EsIndexDate(String primary, String primaryFormat, String secondary, String secondaryFormat, boolean updatePrimary) {
+  public EsIndexDateConfig(String primary, String primaryFormat, String secondary, String secondaryFormat, boolean updatePrimary) {
     this.primary = primary;
     this.primaryFormat = primaryFormat;
     this.secondary = secondary;

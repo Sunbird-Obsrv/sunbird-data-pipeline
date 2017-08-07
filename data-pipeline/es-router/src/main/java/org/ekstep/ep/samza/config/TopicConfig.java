@@ -1,4 +1,6 @@
-package org.ekstep.ep.samza;
+package org.ekstep.ep.samza.config;
+
+import org.ekstep.ep.samza.domain.Event;
 
 import java.text.ParseException;
 import java.util.ArrayList;

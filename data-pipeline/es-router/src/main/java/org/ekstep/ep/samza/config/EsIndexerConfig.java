@@ -1,5 +1,6 @@
-package org.ekstep.ep.samza;
+package org.ekstep.ep.samza.config;
 
+import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.logger.Logger;
 
 import java.text.ParseException;

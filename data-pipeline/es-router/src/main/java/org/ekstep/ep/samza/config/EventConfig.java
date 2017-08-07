@@ -1,9 +1,9 @@
-package org.ekstep.ep.samza;
+package org.ekstep.ep.samza.config;
+
+import org.ekstep.ep.samza.domain.Event;
 
 import java.text.ParseException;
 import java.util.List;
-
-import static org.ekstep.ep.samza.Constants.DEFAULT_INDEX_TYPE;
 
 /**
  * Created by aks on 27/07/17.
@@ -12,22 +12,22 @@ public class EventConfig implements Comparable<EventConfig>{
   private String esIndexValue;
   private String esIndexType;
   private Double weight;
-  private EsIndexDate esIndexDate;
+  private EsIndexDateConfig esIndexDateConfig;
   private boolean cumulative;
-  private List<Rule> rules;
+  private List<RuleConfig> ruleConfigs;
 
-  public EventConfig(List<Rule> rules, String esIndexValue, Double weight, EsIndexDate esIndexDate, boolean cumulative, String esIndexType){
-    this.rules = rules;
+  public EventConfig(List<RuleConfig> ruleConfigs, String esIndexValue, Double weight, EsIndexDateConfig esIndexDateConfig, boolean cumulative, String esIndexType){
+    this.ruleConfigs = ruleConfigs;
     this.esIndexValue = esIndexValue;
     this.weight = weight;
-    this.esIndexDate = esIndexDate;
+    this.esIndexDateConfig = esIndexDateConfig;
     this.cumulative = cumulative;
     this.esIndexType = esIndexType;
   }
 
   public boolean isApplicable(Event event){
-    for(Rule rule:rules)
-      if(!rule.isApplicable(event))
+    for(RuleConfig ruleConfig : ruleConfigs)
+      if(!ruleConfig.isApplicable(event))
         return false;
     return true;
   }
@@ -45,6 +45,6 @@ public class EventConfig implements Comparable<EventConfig>{
   }
 
   public void update(Event event) throws ParseException {
-    event.addEsIndex(esIndexValue,cumulative, esIndexDate, esIndexType);
+    event.addEsIndex(esIndexValue,cumulative, esIndexDateConfig, esIndexType);
   }
 }
