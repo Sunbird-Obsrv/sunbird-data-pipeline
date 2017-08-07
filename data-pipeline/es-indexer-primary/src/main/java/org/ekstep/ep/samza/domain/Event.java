@@ -1,10 +1,10 @@
 package org.ekstep.ep.samza.domain;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.ekstep.ep.samza.reader.Telemetry;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
 
-import java.text.MessageFormat;
+import java.text.DateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +32,9 @@ public class Event {
     }
 
     public String getJson() {
-        return telemetry.getJson();
+        Gson gson = new GsonBuilder()
+                .setDateFormat(DateFormat.FULL, DateFormat.FULL).create();
+        return gson.toJson(telemetry.getMap());
     }
 
     public void markFailed(String status, String errorMsg) {
