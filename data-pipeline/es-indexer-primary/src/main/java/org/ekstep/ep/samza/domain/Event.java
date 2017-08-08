@@ -60,7 +60,7 @@ public class Event {
     }
 
     public boolean can_be_indexed() {
-        return (indexName() != null && indexType() != null);
+        return ((indexName() != null && !indexName().isEmpty()) && (indexType() != null && !indexType().isEmpty()));
     }
 
     @Override

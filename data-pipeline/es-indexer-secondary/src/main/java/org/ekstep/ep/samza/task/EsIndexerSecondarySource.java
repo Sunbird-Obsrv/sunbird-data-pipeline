@@ -7,15 +7,13 @@ import java.util.Map;
 
 public class EsIndexerSecondarySource {
 
-    private EsIndexerSecondaryConfig config;
     private IncomingMessageEnvelope envelope;
 
-    public EsIndexerSecondarySource(IncomingMessageEnvelope envelope, EsIndexerSecondaryConfig config) {
+    public EsIndexerSecondarySource(IncomingMessageEnvelope envelope) {
         this.envelope = envelope;
-        this.config = config;
     }
 
     public Event getEvent() {
-        return new Event((Map<String, Object>) envelope.getMessage(), config.getDefaultIndexName(), config.getDefaultIndexType());
+        return new Event((Map<String, Object>) envelope.getMessage());
     }
 }
