@@ -26,7 +26,7 @@ import static org.mockito.Mockito.mock;
 
 public class EsIndexerPrimaryTaskTest {
 
-    private static final String FAILED_TOPIC = "telemetry.es-sink.fail";
+    private static final String FAILED_TOPIC = "telemetry.es-indexer-primary.fail";
     private static final String ES_HOST = "localhost";
     private static final String ES_PORT = "9200";
     private MessageCollector collectorMock;

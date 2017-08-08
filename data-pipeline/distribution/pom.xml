@@ -124,14 +124,14 @@
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>es-indexer-primary</artifactId>
-          <version>0.1.2</version>
+          <version>0.1.3</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>es-indexer-secondary</artifactId>
-          <version>0.0.4</version>
+          <version>0.0.5</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>

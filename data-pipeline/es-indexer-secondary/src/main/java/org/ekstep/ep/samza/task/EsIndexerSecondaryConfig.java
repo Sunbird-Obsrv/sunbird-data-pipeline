@@ -9,7 +9,7 @@ public class EsIndexerSecondaryConfig {
     private final String elasticSearchPort;
 
     public EsIndexerSecondaryConfig(Config config) {
-        failedTopic = config.get("output.failed.topic.name", "telemetry.es-sink-secondary.fail");
+        failedTopic = config.get("output.failed.topic.name", "telemetry.es-indexer-secondary.fail");
         elasticSearchHost = config.get("host.elastic_search","localhost");
         elasticSearchPort = config.get("port.elastic_search","9200");
     }

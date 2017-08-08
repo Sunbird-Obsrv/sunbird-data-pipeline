@@ -64,7 +64,7 @@ public class EsIndexerSecondaryTask implements StreamTask, InitableTask, Windowa
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector,
                         TaskCoordinator taskCoordinator) throws Exception {
-        EsIndexerSecondarySource source = new EsIndexerSecondarySource(envelope, config);
+        EsIndexerSecondarySource source = new EsIndexerSecondarySource(envelope);
         EsIndexerSecondarySink sink = new EsIndexerSecondarySink(collector, metrics, config);
         service.process(source, sink);
     }
