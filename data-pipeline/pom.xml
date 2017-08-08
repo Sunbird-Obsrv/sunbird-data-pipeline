@@ -50,6 +50,7 @@
     <module>es-client</module>
     <module>es-router-primary</module>
     <module>es-indexer-secondary</module>
+    <module>es-router-secondary</module>
   </modules>
 
   <properties>
