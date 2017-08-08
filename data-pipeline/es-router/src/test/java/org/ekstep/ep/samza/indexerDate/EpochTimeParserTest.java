@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.indexerDate;
 
-import org.ekstep.ep.samza.domain.Event;
+import org.ekstep.ep.es_router.domain.Event;
+import org.ekstep.ep.es_router.indexerDate.EpochTimeParser;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.junit.Test;
 

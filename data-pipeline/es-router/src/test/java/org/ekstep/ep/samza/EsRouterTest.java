@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza;
 
+import org.ekstep.ep.es_router.EsRouter;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.junit.Test;
 

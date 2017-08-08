@@ -1,10 +1,10 @@
 package org.ekstep.ep.samza.config;
 
-import org.ekstep.ep.samza.config.EsIndexDateConfig;
-import org.ekstep.ep.samza.config.EventConfig;
-import org.ekstep.ep.samza.config.RuleConfig;
-import org.ekstep.ep.samza.config.TopicConfig;
-import org.ekstep.ep.samza.domain.Event;
+import org.ekstep.ep.es_router.config.EsIndexDateConfig;
+import org.ekstep.ep.es_router.config.EventConfig;
+import org.ekstep.ep.es_router.config.RuleConfig;
+import org.ekstep.ep.es_router.config.TopicConfig;
+import org.ekstep.ep.es_router.domain.Event;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import static org.ekstep.ep.samza.util.Constants.DEFAULT_INDEX_TYPE;
+import static org.ekstep.ep.es_router.util.Constants.DEFAULT_INDEX_TYPE;
 import static org.junit.Assert.*;
 
 public class TopicConfigTest {

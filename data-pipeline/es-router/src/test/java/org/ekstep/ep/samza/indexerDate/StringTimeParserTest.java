@@ -1,10 +1,13 @@
 package org.ekstep.ep.samza.indexerDate;
 
-import org.ekstep.ep.samza.domain.Event;
+import org.ekstep.ep.es_router.domain.Event;
+import org.ekstep.ep.es_router.indexerDate.StringTimeParser;
+import org.ekstep.ep.es_router.indexerDate.TimeParser;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.junit.Test;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
@@ -55,6 +58,19 @@ public class StringTimeParserTest {
 
     assertEquals(telemetry.getTime("ts","yyyy-MM-dd'T'HH:mm:ss.SSSZ"),timeParser.parse());
   }
+
+  @Test
+  public void shouldGetDateFromEventWithOtherStringFormat() throws ParseException {
+    Telemetry telemetry = new Telemetry(new HashMap<String, Object>());
+    telemetry.add("ts","2017-07-08T09:16:57.730Z");
+    Event event = new Event(telemetry,"kafkaSource");
+
+    TimeParser timeParser = new StringTimeParser(event, "ts", "string");
+
+    Date expectedTime = telemetry.getTime("ts", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    assertEquals(expectedTime,timeParser.parse());
+  }
+
 
   //TODO: mock date
 //  @Test

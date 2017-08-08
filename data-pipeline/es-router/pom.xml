@@ -34,11 +34,11 @@ under the License.
 
     <groupId>org.ekstep.ecosystem</groupId>
     <artifactId>es-router</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <packaging>jar</packaging>
     <name>ES Router</name>
     <description>
-        Indexes events into ES
+        Decides the es index of the events
     </description>
 
     <dependencies>
