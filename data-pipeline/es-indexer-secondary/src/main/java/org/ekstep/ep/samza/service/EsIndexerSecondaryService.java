@@ -36,14 +36,16 @@ public class EsIndexerSecondaryService {
             if(success(response)) {
                 LOGGER.info("ES INDEXER SUCCESS", event.id());
             } else {
-                LOGGER.error("ES INDEXER FAILED", response.toString());
+                LOGGER.error("ES INDEXER FAILED : RESPONSE", response.toString());
+                LOGGER.error("ES INDEXER FAILED : EVENT", event.toString());
                 event.markFailed(response.getStatus(),response.getMessage());
                 writeToFailedIndex(event);
                 sink.toFailedTopic(event);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            LOGGER.error("ES INDEXER EXCEPTION", e.getMessage());
+            LOGGER.error("ES INDEXER EXCEPTION : MESSAGE", e.getMessage());
+            LOGGER.error("ES INDEXER EXCEPTION : EVENT", event.toString());
             event.markFailed("Error", e.getMessage());
             sink.toFailedTopic(event);
         }

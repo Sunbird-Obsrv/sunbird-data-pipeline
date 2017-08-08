@@ -37,7 +37,7 @@ public class Event {
         gsonBuilder.registerTypeAdapter(Double.class,  new JsonSerializer<Double>() {
             @Override
             public JsonElement serialize(final Double src, final Type typeOfSrc, final JsonSerializationContext context) {
-                BigDecimal value = BigDecimal.valueOf(src);
+                BigDecimal value = BigDecimal.valueOf(src.longValue());
                 return new JsonPrimitive(value);
             }
         });
@@ -61,5 +61,12 @@ public class Event {
 
     public boolean can_be_indexed() {
         return (indexName() != null && indexType() != null);
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "telemetry=" + telemetry +
+                '}';
     }
 }

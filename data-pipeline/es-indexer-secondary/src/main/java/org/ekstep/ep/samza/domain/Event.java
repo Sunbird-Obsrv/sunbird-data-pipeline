@@ -1,9 +1,12 @@
 package org.ekstep.ep.samza.domain;
 
+import com.google.gson.*;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +47,16 @@ public class Event {
     }
 
     public String getJson() {
-        return telemetry.getJson();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(Double.class,  new JsonSerializer<Double>() {
+            @Override
+            public JsonElement serialize(final Double src, final Type typeOfSrc, final JsonSerializationContext context) {
+                BigDecimal value = BigDecimal.valueOf(src.longValue());
+                return new JsonPrimitive(value);
+            }
+        });
+        Gson gson = gsonBuilder.create();
+        return gson.toJson(telemetry.getMap());
     }
 
     public void markFailed(String status, String errorMsg) {
@@ -74,5 +86,12 @@ public class Event {
 
     public String getFailedIndexType() {
         return defaultIndexType;
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "telemetry=" + telemetry +
+                '}';
     }
 }
