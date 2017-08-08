@@ -38,7 +38,7 @@ public class Event {
             @Override
             public JsonElement serialize(final Double src, final Type typeOfSrc, final JsonSerializationContext context) {
                 BigDecimal value = BigDecimal.valueOf(src);
-                return new JsonPrimitive(value.toPlainString());
+                return new JsonPrimitive(value);
             }
         });
         Gson gson = gsonBuilder.create();

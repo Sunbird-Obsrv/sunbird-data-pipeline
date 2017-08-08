@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>es-client</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <packaging>jar</packaging>
     <name>es-client</name>
 
@@ -18,7 +18,7 @@
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>rest</artifactId>
-            <version>5.4.1</version>
+            <version>5.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem</groupId>
