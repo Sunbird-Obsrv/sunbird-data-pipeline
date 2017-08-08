@@ -28,7 +28,7 @@ public class Event {
     }
 
     public String failedIndexName() {
-        return indexName() != null ? MessageFormat.format("failed-{0}", indexName()) : getFailedIndexName();
+        return indexName() != null && !indexName().isEmpty() ? indexName() : getFailedIndexName();
     }
 
     public String failedIndexType() {
@@ -62,7 +62,7 @@ public class Event {
     }
 
     public boolean can_be_indexed() {
-        return (indexName() != null && indexType() != null);
+        return ( (indexName() != null && !indexName().isEmpty()) && (indexType() != null && !indexType().isEmpty()));
     }
 
     public String getFailedIndexName() {

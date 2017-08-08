@@ -29,7 +29,7 @@ public class EsIndexerSecondaryTaskTest {
     private static final String FAILED_TOPIC = "telemetry.es-sink-secondary.fail";
     private static final String ES_HOST = "localhost";
     private static final String ES_PORT = "9200";
-    private static final String DEFAULT_INDEX_NAME = "failed-telemetry-retry";
+    private static final String DEFAULT_INDEX_NAME = "failed-telemetry";
     private static final String DEFAULT_INDEX_TYPE = "events";
     private MessageCollector collectorMock;
     private ElasticSearchService esServiceMock;
