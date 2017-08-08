@@ -1,9 +1,10 @@
 package org.ekstep.ep.samza.domain;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import org.ekstep.ep.samza.reader.Telemetry;
 
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,8 +33,15 @@ public class Event {
     }
 
     public String getJson() {
-        Gson gson = new GsonBuilder()
-                .setDateFormat(DateFormat.FULL, DateFormat.FULL).create();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(Double.class,  new JsonSerializer<Double>() {
+            @Override
+            public JsonElement serialize(final Double src, final Type typeOfSrc, final JsonSerializationContext context) {
+                BigDecimal value = BigDecimal.valueOf(src);
+                return new JsonPrimitive(value.toPlainString());
+            }
+        });
+        Gson gson = gsonBuilder.create();
         return gson.toJson(telemetry.getMap());
     }
 
