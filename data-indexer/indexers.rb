@@ -1471,18 +1471,6 @@ module Indexers
         aliases: {}
         }
       })
-      puts client.indices.put_template({
-        name: "failed-telemetry-retry",
-        body: {
-        order: 10,
-        template: "failed-telemetry-retry-*",
-        settings: {
-          "index.refresh_interval": "5s"
-        },
-        mappings: BASIC_TELEMETRY_MAPPINGS,
-        aliases: {}
-        }
-      })
     end
     def get(index,type,id)
       begin
