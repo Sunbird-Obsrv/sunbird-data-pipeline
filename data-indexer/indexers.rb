@@ -1357,6 +1357,9 @@ module Indexers
           "@version": {
             "type": "string"
           },
+          "channel": {
+            "type": "string"
+          },
           "eid": {
             "type": "string"
           },
@@ -1370,6 +1373,19 @@ module Indexers
           "ts": {
             "format": "strict_date_optional_time||epoch_millis",
             "type": "date"
+          },
+          "metadata": {
+            "properties": {
+              "source": {
+                "type": "string"
+              },
+              "index_name": {
+                "type": "string"
+              },
+              "index_type": {
+                "type": "string"
+              }
+            }
           }
         }
       }
