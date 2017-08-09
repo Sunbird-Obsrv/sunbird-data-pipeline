@@ -18,11 +18,17 @@ public class EsIndexerConfig {
 
   public void updateEsIndex(Event event){
     try {
+      boolean configApplied = false;
       for(TopicConfig config:topicConfigs)
-        if(config.isApplicable(event))
+        if(config.isApplicable(event)){
           config.updateEsIndex(event);
+          configApplied = true;
+        }
+        if(!configApplied){
+          LOGGER.error(event.id(),String.format("No topic configuration found for the event. Event: %s",event.toString()));
+        }
     } catch (ParseException e) {
-      LOGGER.error(event.getTelemetry().id(),"Parsing Exception",e);
+      LOGGER.error(event.id(),String.format("Parsing Exception. Event: %s",event.toString()),e);
     }
   }
 }

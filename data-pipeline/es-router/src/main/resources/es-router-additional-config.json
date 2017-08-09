@@ -1,7 +1,7 @@
 {
   "topicConfigs":[
     {
-      "name":"telemetry.de_normalized",
+      "names":["telemetry.de_normalized"],
       "eventConfigs":[
         {
           "rules":[
@@ -116,6 +116,31 @@
         }
       ]
 
+    },
+    {
+      "names":["telemetry.es-router-primary.fail"],
+      "eventConfigs":[
+        {
+          "rules":[
+            {
+              "idPath":"eid",
+              "idValue":".*"
+            }
+          ],
+          "esIndexValue":"failed-telemetry",
+          "esIndexType":"events",
+          "weight":3,
+          "cumulative":false,
+          "esIndexDate": {
+            "primary" : "ts",
+            "primaryFormat": "string",
+            "secondary" : "ets",
+            "secondaryFormat": "epoch",
+            "updatePrimary": false
+          }
+
+        }
+      ]
     }
   ]
 }

@@ -6,6 +6,7 @@ import org.ekstep.ep.samza.reader.Telemetry;
 
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.ekstep.ep.es_router.util.Constants.*;
 
@@ -25,10 +26,10 @@ public class Event {
     return telemetry.read(path);
   }
 
-  public boolean originatedFrom(String source){
-    if(source == null || source.isEmpty())
+  public boolean originatedFrom(List<String> sources){
+    if(sources == null || sources.isEmpty())
       return false;
-    return source.equals(this.kafkaSource);
+    return sources.contains(this.kafkaSource);
   }
 
   public void addEsIndex(String esIndex, boolean cumulative, EsIndexDateConfig indexDate, String indexType) throws ParseException {
@@ -38,6 +39,20 @@ public class Event {
     telemetry.add(INDEX_NAME_KEY,effectiveEsIndex);
     telemetry.add(INDEX_TYPE_KEY, indexType);
 
+  }
+
+  public String id(){
+    if(telemetry!= null)
+      return telemetry.id();
+    return "";
+  }
+
+  @Override
+  public String toString() {
+    return "Event{" +
+        "telemetry=" + telemetry +
+        ", kafkaSource='" + kafkaSource + '\'' +
+        '}';
   }
 
   public Telemetry getTelemetry(){
