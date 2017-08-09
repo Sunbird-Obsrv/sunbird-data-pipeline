@@ -52,7 +52,7 @@ public class EsIndexerPrimaryTaskTest {
         esServiceMock = Mockito.mock(ElasticSearchService.class);
 
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
-        stub(configMock.get("host.elastic_search", ES_HOST)).toReturn(ES_HOST);
+        stub(configMock.get("hosts.elastic_search", ES_HOST)).toReturn(ES_HOST);
         stub(configMock.get("port.elastic_search", ES_PORT)).toReturn(ES_PORT);
         stub(metricsRegistry.newCounter(anyString(), anyString()))
                 .toReturn(counter);

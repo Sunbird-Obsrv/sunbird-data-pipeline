@@ -12,17 +12,23 @@ import org.elasticsearch.client.RestClient;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 public class ElasticSearchClient implements ElasticSearchService {
     static Logger LOGGER = new Logger(ElasticSearchClient.class);
     private final RestClient client;
 
-    public ElasticSearchClient(String host, int port) {
+    public ElasticSearchClient(int port,String... hosts) {
         this.client = RestClient.builder(
-                new HttpHost(host, port, "http")).build();
+                getHosts(port, hosts)).build();
+    }
+
+    private HttpHost[] getHosts(int port, String... hosts) {
+        HttpHost httpHosts[] = new HttpHost[hosts.length];
+        for (int i = 0; i < hosts.length; i++) {
+            httpHosts[i] = new HttpHost(hosts[i], port, "http");
+        }
+        return httpHosts;
     }
 
     @Override

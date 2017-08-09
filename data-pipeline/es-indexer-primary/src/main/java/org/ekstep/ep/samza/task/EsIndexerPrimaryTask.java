@@ -55,7 +55,7 @@ public class EsIndexerPrimaryTask implements StreamTask, InitableTask, Windowabl
 
         elasticSearchService =
                 elasticSearchService == null ?
-                        new ElasticSearchClient(this.config.esHost(),this.config.esPort()) :
+                        new ElasticSearchClient(this.config.esPort(), this.config.esHosts()) :
                         elasticSearchService;
 
         service = new EsIndexerPrimaryService(elasticSearchService);

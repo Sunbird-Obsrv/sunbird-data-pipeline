@@ -55,7 +55,7 @@ public class EsIndexerSecondaryTask implements StreamTask, InitableTask, Windowa
 
         elasticSearchService =
                 elasticSearchService == null ?
-                        new ElasticSearchClient(this.config.esHost(),this.config.esPort()) :
+                        new ElasticSearchClient(this.config.esPort(), this.config.esHost()) :
                         elasticSearchService;
 
         service = new EsIndexerSecondaryService(elasticSearchService);
