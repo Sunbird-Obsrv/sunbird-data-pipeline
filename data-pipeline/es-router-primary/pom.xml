@@ -33,7 +33,7 @@ under the License.
 
   <groupId>org.ekstep.ecosystem.jobs</groupId>
   <artifactId>es-router-primary</artifactId>
-  <version>0.0.2</version>
+  <version>0.0.3</version>
   <packaging>jar</packaging>
   <name>ES-Router-Primary</name>
   <description>
