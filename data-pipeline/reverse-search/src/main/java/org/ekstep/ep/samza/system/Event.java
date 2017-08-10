@@ -76,11 +76,11 @@ public class Event implements Mappable {
         if(ets1 != null)
             LOGGER.info("", MessageFormat.format("Inside Event. ETS:{0}, type: {1}", ets1, ets1.getClass()));
         NullableValue<String> ts = telemetry.read(path.ts());
-        NullableValue<Double> ets = telemetry.read(path.ets());
+        Double ets = safelyParse(path.ets());
 
-        if (ts.isNull() && !ets.isNull()) {
+        if (ts.isNull() && ets != null) {
             SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-            String updatedTs = simple.format(new Date(ets.value().longValue()));
+            String updatedTs = simple.format(new Date(ets.longValue()));
             telemetry.add(path.ts(), updatedTs);
         }
     }
@@ -88,6 +88,16 @@ public class Event implements Mappable {
     public String getMid() {
         NullableValue<String> mid = telemetry.read(path.mid());
         return mid.value();
+    }
+
+    private Double safelyParse(String etsField){
+        try {
+            NullableValue<Double> time = telemetry.read(etsField);
+            return time.value();
+        } catch (ClassCastException e) {
+            NullableValue<Long> timeInLong = telemetry.read(etsField);
+            return Double.valueOf(timeInLong.value());
+        }
     }
 
     public String id() {
