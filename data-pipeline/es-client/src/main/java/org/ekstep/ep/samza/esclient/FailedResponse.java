@@ -1,9 +1,5 @@
 package org.ekstep.ep.samza.esclient;
 
-import com.google.gson.Gson;
-
-import java.util.Map;
-
 public class FailedResponse implements ClientResponse {
 
     private static final String STATUS = "FAILED";
