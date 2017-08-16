@@ -1346,6 +1346,451 @@ module Indexers
             }  
         }
     }
+    INFRA_EVENT_MAPPINGS = {
+        _default_: {
+            dynamic: false,
+            properties: {
+              "@timestamp": {
+                "format": "strict_date_optional_time||epoch_millis",
+                "type": "date"
+              },
+              "@version": {
+                "type": "string"
+              },
+              "contentdata": {
+                "properties": {
+                  "ageGroup": {
+                    "type": "string"
+                  },
+                  "author": {
+                    "type": "string"
+                  },
+                  "audience": {
+                    "type": "string"
+                  },
+                  "code": {
+                    "type": "string"
+                  },
+                  "collaborators": {
+                    "type": "string"
+                  },
+                  "collections": {
+                    "type": "string"
+                  },
+                  "concepts": {
+                    "type": "string"
+                  },
+                  "contentType": {
+                    "type": "string"
+                  },
+                  "curriculum": {
+                    "type": "string"
+                  },
+                  "developer": {
+                    "type": "string"
+                  },
+                  "domain": {
+                    "type": "string"
+                  },
+                  "downloadUrl": {
+                    "type": "string"
+                  },
+                  "downloads": {
+                    "type": "long"
+                  },
+                  "edition": {
+                    "type": "string"
+                  },
+                  "genre": {
+                    "type": "string"
+                  },
+                  "gradeLevel": {
+                    "type": "string"
+                  },
+                  "keywords": {
+                    "type": "string"
+                  },
+                  "me_totalDevices": {
+                    "type": "long"
+                  },
+                  "me_totalDownloads": {
+                    "type": "long"
+                  },
+                  "me_totalInteractions": {
+                    "type": "long"
+                  },
+                  "me_totalRatings": {
+                    "type": "long"
+                  },
+                  "me_totalSessionsCount": {
+                    "type": "long"
+                  },
+                  "me_totalSideloads": {
+                    "type": "long"
+                  },
+                  "me_totalTimespent": {
+                    "type": "long"
+                  },
+                  "me_totalUsage": {
+                    "type": "long"
+                  },
+                  "medium": {
+                    "type": "string"
+                  },
+                  "methods": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "owner": {
+                    "type": "string"
+                  },
+                  "popularity": {
+                    "type": "long"
+                  },
+                  "portalOwner": {
+                    "type": "string"
+                  },
+                  "publication": {
+                    "type": "string"
+                  },
+                  "publisher": {
+                    "type": "string"
+                  },
+                  "rating": {
+                    "type": "long"
+                  },
+                  "size": {
+                    "type": "long"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "subject": {
+                    "type": "string"
+                  },
+                  "templateType": {
+                    "type": "string"
+                  },
+                  "theme": {
+                    "type": "string"
+                  },
+                  "words": {
+                    "type": "string"
+                  }
+                }
+              },
+              "itemdata": {
+                "properties": {
+                  "concepts": {
+                    "type": "string"
+                  },
+                  "createdBy": {
+                    "type": "string"
+                  },
+                  "createdOn": {
+                    "format": "strict_date_optional_time||epoch_millis",
+                    "type": "date"
+                  },
+                  "keywords": {
+                    "type": "string"
+                  },
+                  "language": {
+                    "type": "string"
+                  },
+                  "lastUpdatedBy": {
+                    "type": "string"
+                  },
+                  "lastUpdatedOn": {
+                    "format": "strict_date_optional_time||epoch_millis",
+                    "type": "date"
+                  },
+                  "media": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "num_answers": {
+                    "type": "long"
+                  },
+                  "owner": {
+                    "type": "string"
+                  },
+                  "qlevel": {
+                    "type": "string"
+                  },
+                  "question": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "template": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "long"
+                  }
+                }
+              },
+              "context": {
+                "properties": {
+                  "content_id": {
+                    "type": "string"
+                  },
+                  "granularity": {
+                    "type": "string"
+                  },
+                  "pdata": {
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "model": {
+                        "type": "string"
+                      },
+                      "ver": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "sid": {
+                    "type": "string"
+                  }
+                }
+              },
+              "cdata": {
+                  "type": "nested",
+                  "properties": {
+                      "type": { "type": "string" },
+                      "id": { "type": "string" }
+                  },
+              },
+              "edata": {
+                "properties": {
+                  "eks": {
+                    "dynamic": true,
+                    "properties": {
+                      "rid": {
+                        "type": "string"
+                      },
+                      "uip": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "category": {
+                        "type": "string"
+                      },
+                      "size": {
+                        "type": "long"
+                      },
+                      "duration": {
+                        "type": "long"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "protocol": {
+                        "type": "string"
+                      },
+                      "method": {
+                        "type": "string"
+                      },
+                      "action": {
+                        "type": "string"
+                      },
+                      "params": {
+                        "properties": {
+                          "key": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "message": {
+                        "type": "string"
+                      },
+                      "class": {
+                        "type": "string"
+                      },
+                      "level": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "data": {
+                        "properties":{
+                          "config": {
+                            "dynamic": true,
+                            "type": "object"
+                          },
+                          "count":{
+                            "type": "long"
+                          },
+                          "date": {
+                            "type": "string"
+                          },
+                          "inputEvents": {
+                            "type": "long"
+                          },
+                          "outputEvents": {
+                            "type": "long"
+                          },
+                          "timeTaken": {
+                            "type": "long"
+                          }
+                        } 
+                      }
+                    }
+                  }
+                }
+              },
+              "eid": {
+                "type": "string"
+              },
+              "ets": {
+                "format": "strict_date_optional_time||epoch_millis",
+                "type": "date"
+              },
+              "host": {
+                "type": "string"
+              },
+              "metadata": {
+                "properties": {
+                  "checksum": {
+                    "type": "string",
+                  },
+                  "hour": {
+                    "type": "string"
+                  },
+                  "month": {
+                    "type": "string"
+                  },
+                  "monthday": {
+                    "type": "string"
+                  },
+                  "sync_timestamp": {
+                    "format": "strict_date_optional_time||epoch_millis",
+                    "type": "date"
+                  },
+                  "ts_month": {
+                    "type": "string"
+                  },
+                  "ts_year": {
+                    "type": "string"
+                  },
+                  "year": {
+                    "type": "string"
+                  }
+                }
+              },
+              "mid": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "pdata": {
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "pid": {
+                    "type": "string"
+                  },
+                  "ver": {
+                    "type": "string"
+                  }
+                }
+              },
+              "rid": {
+                "type": "string"
+              },
+              "syncts": {
+                "type": "long"
+              },
+              "tags": {
+                "type": "string"
+              },
+              "ts": {
+                "format": "strict_date_optional_time||epoch_millis",
+                "type": "date"
+              },
+              "type": {
+                "type": "string"
+              },
+              "uid": {
+                "type": "string"
+              },
+              "ver": {
+                "type": "string"
+              },
+              "channel": {
+                "type": "string"
+              },
+              "portaluserdata": {
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "subtype": {
+                    "type": "string"
+                  },
+                  "parentid": {
+                    "type": "string"
+                  },
+                  "parenttype": {
+                    "type": "string"
+                  },
+                  "code": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "details": {
+                    "type": "string"
+                  }
+                }
+              },
+              "etags": {
+                "properties": {
+                  "app": {
+                    "type": "string"
+                  },
+                  "partner": {
+                    "type": "string"
+                  },
+                  "dims": {
+                    "type": "string"
+                  }
+                }
+              }
+            }  
+        }
+    }
     BASIC_TELEMETRY_MAPPINGS = {
       _default_:{
         dynamic: false,
@@ -1460,6 +1905,18 @@ module Indexers
           "index.refresh_interval": "5s"
         },
         mappings: BACKEND_EVENT_MAPPINGS,
+        aliases: {}
+        }
+      })
+      puts client.indices.put_template({
+        name: "infra",
+        body: {
+        order: 10,
+        template: "infra-*",
+        settings: {
+          "index.refresh_interval": "5s"
+        },
+        mappings: INFRA_EVENT_MAPPINGS,
         aliases: {}
         }
       })
