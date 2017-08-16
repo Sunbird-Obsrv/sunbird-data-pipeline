@@ -27,6 +27,7 @@ import static org.mockito.Mockito.*;
 public class UserManagementTaskTest {
     private static final String SUCCESS_TOPIC = "SUCCESS_TOPIC";
     private static final String FAILURE_TOPIC = "FAILURE_TOPIC";
+    private static final String DEFAULT_CHANNEL = "in.ekstep.test";
     private Config configMock;
     private TaskContext contextMock;
     private MessageCollector collectorMock;
@@ -48,6 +49,7 @@ public class UserManagementTaskTest {
 
         when(configMock.get("output.success.topic.name", "sandbox.learners")).thenReturn(SUCCESS_TOPIC);
         when(configMock.get("output.failed.topic.name", "sandbox.learners.fail")).thenReturn(FAILURE_TOPIC);
+        when(configMock.get("default.channel", "in.ekstep")).thenReturn(DEFAULT_CHANNEL);
         when(configMock.get("db.url")).thenReturn("jdbc:mysql://localhost:3306/ecosystem");
         when(configMock.get("db.userName")).thenReturn("jenkins");
         when(configMock.get("db.password")).thenReturn("password");
@@ -100,6 +102,21 @@ public class UserManagementTaskTest {
     public void shouldSkipOtherEvents() throws Exception {
         Gson gson = new Gson();
         Event event = new Event(new EventFixture().OTHER_EVENT);
+
+        when(envelopMock.getMessage()).thenReturn(gson.fromJson(event.json, Map.class));
+
+        UserManagementTask userManagementTask = new UserManagementTask();
+        userManagementTask.init(configMock, contextMock);
+        userManagementTask.process(envelopMock, collectorMock, coordinatorMock);
+
+        verify(collectorMock).send(argThat(validateOutputTopic(event.getMap(), SUCCESS_TOPIC)));
+        verify(counterMock).inc();
+    }
+
+    @Test
+    public void shouldSkipOtherChannelEvents() throws Exception {
+        Gson gson = new Gson();
+        Event event = new Event(new EventFixture().OTHER_CHANNEL_EVENT);
 
         when(envelopMock.getMessage()).thenReturn(gson.fromJson(event.json, Map.class));
 

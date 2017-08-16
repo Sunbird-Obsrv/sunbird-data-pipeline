@@ -28,12 +28,14 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
     private HikariDataSource dataSource;
     private Map<String, IModel> modelMap = new HashMap<String, IModel>();
     private Counter messageCount;
+    private String defaultChannel;
 
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
         successTopic = config.get("output.success.topic.name", "sandbox.learners");
         failedTopic = config.get("output.failed.topic.name", "sandbox.learners.fail");
+        defaultChannel = config.get("default.channel", "in.ekstep");
 
         dbUrl = config.get("db.url");
         dbUserName = config.get("db.userName");
@@ -78,6 +80,12 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
     }
 
     public void processEvent(Event event, MessageCollector collector) throws Exception {
+        if(!event.isDefaultChannel(defaultChannel)){
+            LOGGER.info(event.id(), "OTHER CHANNEL EVENT, SKIP PROCESSING");
+            sentToSuccess(event, collector);
+            return;
+        }
+
         IModel model = modelMap.get(event.getEId());
         if (model != null) {
             model.setDefault();
@@ -85,10 +93,14 @@ public class UserManagementTask implements StreamTask, InitableTask, ClosableTas
             if (!model.getIsInserted()) {
                 collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
             }
-            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
+            sentToSuccess(event, collector);
         } else {
-            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
+            sentToSuccess(event, collector);
         }
+    }
+
+    private void sentToSuccess(Event event, MessageCollector collector) {
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
     }
 
     @Override

@@ -59,6 +59,19 @@ public class Event  {
                 : null;
     }
 
+    public String channel() {
+        return getMap() != null && getMap().containsKey("channel")
+                ? (String) getMap().get("channel")
+                : null;
+    }
+
+    public boolean isDefaultChannel(String defaultChannel) {
+        if(channel() != null && channel().equals(defaultChannel)){
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return "Event{" +

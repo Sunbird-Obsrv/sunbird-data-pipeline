@@ -12,7 +12,7 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>user-management</artifactId>
-    <version>0.2.5</version>
+    <version>0.2.6</version>
     <packaging>jar</packaging>
     <name>User Management</name>
     <description>
