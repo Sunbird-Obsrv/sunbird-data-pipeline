@@ -30,6 +30,7 @@ public class ObjectLifecycleManagementTaskTest {
     private static final String SUCCESS_TOPIC = "telemetry.objects";
     private static final String FAILED_TOPIC = "telemetry.objects.fail";
     private final String OBJECT_LIFECYCLE_EVENTS = "BE_OBJECT_LIFECYCLE";
+    private final String DEFAULT_CHANNEL = "in.ekstep.test";
     private MessageCollector collectorMock;
     private TaskContext contextMock;
     private MetricsRegistry metricsRegistry;
@@ -54,6 +55,7 @@ public class ObjectLifecycleManagementTaskTest {
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
         stub(configMock.get("lifecycle.events", "")).toReturn(OBJECT_LIFECYCLE_EVENTS);
+        stub(configMock.get("default.channel", "in.ekstep")).toReturn(DEFAULT_CHANNEL);
         stub(metricsRegistry.newCounter(anyString(), anyString()))
                 .toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
@@ -64,6 +66,16 @@ public class ObjectLifecycleManagementTaskTest {
     @Test
     public void shouldNotProcessOtherEvents() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.OtherEvent());
+
+        objectLifecycleManagementTask.process(envelopeMock, collectorMock, coordinatorMock);
+
+        verify(objectServiceMock, times(0)).createOrUpdate(anyMap(), anyString());
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+    }
+
+    @Test
+    public void shouldNotProcessOtherChannelEvents() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.OtherChannelEvent());
 
         objectLifecycleManagementTask.process(envelopeMock, collectorMock, coordinatorMock);
 

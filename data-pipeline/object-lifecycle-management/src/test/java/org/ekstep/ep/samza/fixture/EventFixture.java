@@ -18,6 +18,17 @@ public class EventFixture {
                     "    }\n" +
                     "  }";
 
+    public static final String OTHER_CHANNEL_EVENT =
+            "{\n" +
+                    "    \"eid\": \"ME_ITEM_USAGE_SUMMARY\",\n" +
+                    "    \"channel\": \"in.other.channel\",\n" +
+                    "    \"dimensions\": {\n" +
+                    "      \"tag\": \"6c3791818e80b9d05fb975da1e972431d9f8c2a6\",\n" +
+                    "      \"period\": 20170424,\n" +
+                    "      \"content_id\": \"domain_4501\"\n" +
+                    "    }\n" +
+                    "  }";
+
     public static final String LIFECYCLE_EVENT_JSON =
             "{\n" +
                     "    \"tags\": [],\n" +
@@ -50,6 +61,11 @@ public class EventFixture {
 
     public static Map<String, Object> LifecycleEvent() {
         return new Gson().fromJson(LIFECYCLE_EVENT_JSON, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
+
+    public static Map<String, Object> OtherChannelEvent() {
+        return new Gson().fromJson(OTHER_CHANNEL_EVENT, new TypeToken<Map<String, Object>>() {
         }.getType());
     }
 }

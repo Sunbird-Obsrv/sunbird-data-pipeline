@@ -32,6 +32,13 @@ public class ObjectLifecycleManagementService {
                 return;
             }
 
+            if(!event.isDefaultChannel(config.defaultChannel())){
+                LOGGER.info(event.id(), "OTHER CHANNEL EVENT, SKIP PROCESSING");
+                sink.toSuccessTopic(event);
+                metrics.incSkippedCounter();
+                return;
+            }
+
             SaveObjectResponse saveObjectResponse = objectService.createOrUpdate(event.LifecycleObjectAttributes(), event.channel());
 
             if (saveObjectResponse.successful()) {

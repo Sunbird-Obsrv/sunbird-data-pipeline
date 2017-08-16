@@ -10,6 +10,7 @@ public class ObjectLifecycleManagementConfig {
 
     private final String objectServiceEndpoint;
     private final String lifecycleEvents;
+    private final String defaultChannel;
     private String successTopic;
     private String failedTopic;
 
@@ -18,6 +19,7 @@ public class ObjectLifecycleManagementConfig {
         failedTopic = config.get("output.failed.topic.name", "telemetry.objects.fail");
         objectServiceEndpoint = config.get("object.service.endpoint","");
         lifecycleEvents = config.get("lifecycle.events", "");
+        defaultChannel = config.get("default.channel", "in.ekstep");
     }
 
     public String successTopic() {
@@ -39,5 +41,9 @@ public class ObjectLifecycleManagementConfig {
 
     public String getObjectServiceEndPoint() {
         return objectServiceEndpoint;
+    }
+
+    public String defaultChannel() {
+        return defaultChannel;
     }
 }
