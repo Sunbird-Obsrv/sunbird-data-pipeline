@@ -44,6 +44,13 @@ public class ObjectDeNormalizationService {
         Event event = source.getEvent(config);
         LOGGER.info(event.id(), "EVENT: {}", event.map());
         try {
+
+            if(!event.isDefaultChannel(config.defaultChannel())){
+                LOGGER.info(event.id(), "OTHER CHANNEL EVENT, SKIP PROCESSING");
+                sink.toSuccessTopic(event);
+                return;
+            }
+
             List<EventDenormalizationConfig> eventConfigs = additionalConfig.filter(event);
             for (EventDenormalizationConfig config : eventConfigs) {
                 for (DataDenormalizationConfig dataDenormalizationConfig : config.denormalizationConfigs()) {

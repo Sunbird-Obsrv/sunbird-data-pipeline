@@ -26,6 +26,7 @@ public class ObjectDeNormalizationTaskTest {
     private static final String FAILED_TOPIC = "telemetry.objects.de_normalized.fail";
     private static final String CONTENT_CACHE_TTL = "60000";
     public static final String FIELDS_TO_DENORMALIZE = "id,type,subtype,parentid,parenttype,code,name";
+    private static final String DEFAULT_CHANNEL = "in.ekstep";
     private MessageCollector collectorMock;
     private TaskContext contextMock;
     private MetricsRegistry metricsRegistry;
@@ -54,6 +55,7 @@ public class ObjectDeNormalizationTaskTest {
         stub(configMock.get("retry.backoff.base","10")).toReturn("10");
         stub(configMock.get("retry.backoff.limit","4")).toReturn("4");
         stub(configMock.get("retry.backoff.limit.enable","true")).toReturn("true");
+        stub(configMock.get("default.channel","in.ekstep")).toReturn(DEFAULT_CHANNEL);
 
         stub(metricsRegistry.newCounter(anyString(), anyString()))
                 .toReturn(counter);

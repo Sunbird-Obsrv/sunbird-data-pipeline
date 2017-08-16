@@ -17,10 +17,12 @@ public class ObjectDeNormalizationConfig {
     public static final String DEFAULT_BACKOFF_BASE = "10";
     public static final String DEFAULT_BACKOFF_LIMIT = "4";
     public static final String DEFAULT_BACKOFF_LIMIT_ENABLE = "true";
+    public static final String DEFAULT_CHANNEL = "in.ekstep";
     static Logger LOGGER = new Logger(ObjectDeNormalizationConfig.class);
     private final int retryBackoffBase;
     private final int retryBackoffLimit;
     private final Boolean retryBackoffLimitEnable;
+    private final String defaultChannel;
     private String successTopic;
     private String retryTopic;
     private String failedTopic;
@@ -39,6 +41,7 @@ public class ObjectDeNormalizationConfig {
         retryBackoffBase = Integer.parseInt(config.get("retry.backoff.base", DEFAULT_BACKOFF_BASE));
         retryBackoffLimit = Integer.parseInt(config.get("retry.backoff.limit", DEFAULT_BACKOFF_LIMIT));
         retryBackoffLimitEnable = Boolean.parseBoolean(config.get("retry.backoff.limit.enable", DEFAULT_BACKOFF_LIMIT_ENABLE));
+        defaultChannel = config.get("default.channel", DEFAULT_CHANNEL);
         initFieldsToDenormalize(config);
         initAdditionalConfig(config);
     }
@@ -101,4 +104,6 @@ public class ObjectDeNormalizationConfig {
     public Boolean retryBackoffLimitEnable() {
         return retryBackoffLimitEnable;
     }
+
+    public String defaultChannel() { return defaultChannel; }
 }

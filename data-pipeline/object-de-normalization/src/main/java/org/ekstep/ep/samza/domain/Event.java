@@ -143,5 +143,12 @@ public class Event {
     public String channel() {
         return telemetry.<String>read("channel").value();
     }
+
+    public boolean isDefaultChannel(String defaultChannel) {
+        if(channel() != null && channel().equals(defaultChannel)){
+            return true;
+        }
+        return false;
+    }
 }
 

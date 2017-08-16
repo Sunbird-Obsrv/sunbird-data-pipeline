@@ -89,7 +89,7 @@
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>object-de-normalization</artifactId>
-          <version>0.2.6</version>
+          <version>0.2.7</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>

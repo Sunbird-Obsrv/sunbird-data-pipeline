@@ -111,6 +111,7 @@ public class ObjectDeNormalizationServiceTest {
                         asList(new DataDenormalizationConfig("uid", "portaluserdata")))));
         Event event = new Event(new Telemetry(EventFixture.event()),config);
         when(config.fieldsToDenormalize()).thenReturn(asList("id", "type", "subtype", "parentid", "parenttype", "code", "name"));
+        when(config.defaultChannel()).thenReturn("in.ekstep");
         when(source.getEvent(config)).thenReturn(event);
 
         denormalizationService = new ObjectDeNormalizationService(config, additionalConfig, objectService);
@@ -126,6 +127,7 @@ public class ObjectDeNormalizationServiceTest {
                         asList(new DataDenormalizationConfig("uid", "portaluserdata")))));
         Event event = new Event(new Telemetry(EventFixture.cpInteractEvent()),config);
         when(config.fieldsToDenormalize()).thenReturn(asList("id", "type", "subtype", "parentid", "parenttype", "code", "name"));
+        when(config.defaultChannel()).thenReturn("in.ekstep");
         when(source.getEvent(config)).thenReturn(event);
         when(objectService.get("111","in.ekstep")).thenReturn(GetObjectFixture.getObjectSuccessResponse());
 
@@ -145,6 +147,7 @@ public class ObjectDeNormalizationServiceTest {
 
         Event event = new Event(new Telemetry(EventFixture.cpInteractEvent()),config);
         when(config.fieldsToDenormalize()).thenReturn(asList("id", "type", "subtype", "parentid", "parenttype", "code", "name"));
+        when(config.defaultChannel()).thenReturn("in.ekstep");
         when(source.getEvent(config)).thenReturn(event);
         when(objectService.get("111","in.ekstep")).thenReturn(GetObjectFixture.getObjectSuccessResponseWithMalformedDetails());
 
@@ -163,6 +166,7 @@ public class ObjectDeNormalizationServiceTest {
                         asList(new DataDenormalizationConfig("uid", "portaluserdata")))));
         Event event = new Event(new Telemetry(EventFixture.cpInteractEvent()),config);
         when(config.fieldsToDenormalize()).thenReturn(asList("id", "type", "subtype", "parentid", "parenttype", "code", "name"));
+        when(config.defaultChannel()).thenReturn("in.ekstep");
         when(source.getEvent(config)).thenReturn(event);
         when(objectService.get("111","in.ekstep")).thenReturn(GetObjectFixture.getObjectSuccessResponseWithNoDetails());
 
@@ -181,6 +185,7 @@ public class ObjectDeNormalizationServiceTest {
                         asList(new DataDenormalizationConfig("uid", "portaluserdata")))));
         Event event = new Event(new Telemetry(EventFixture.cpInteractEvent()),config);
         when(config.fieldsToDenormalize()).thenReturn(asList("id", "type", "subtype", "parentid", "parenttype", "code", "name"));
+        when(config.defaultChannel()).thenReturn("in.ekstep");
         when(source.getEvent(config)).thenReturn(event);
         when(objectService.get("111","in.ekstep")).thenReturn(GetObjectFixture.getFailureResponse());
 
@@ -198,6 +203,7 @@ public class ObjectDeNormalizationServiceTest {
                         asList(new DataDenormalizationConfig("tags.partnerid", "partnerdata")))));
         Event event = new Event(new Telemetry(EventFixture.cpInteractEventForPartner()),config);
         when(config.fieldsToDenormalize()).thenReturn(asList("id", "type", "subtype", "parentid", "parenttype", "code", "name"));
+        when(config.defaultChannel()).thenReturn("in.ekstep");
         when(source.getEvent(config)).thenReturn(event);
         when(objectService.get("org.ekstep.partner.partner1","in.ekstep")).thenReturn(GetObjectFixture.getPartnerObjectSuccessResponse());
 
