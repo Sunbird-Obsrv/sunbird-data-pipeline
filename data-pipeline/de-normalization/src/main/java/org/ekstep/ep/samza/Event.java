@@ -103,8 +103,10 @@ public class Event {
                 return true;
             }
         }
+        if(!isDefaultChannel(defaultChannel)){
+            return true;
+        }
         return false;
-
     }
 
     public boolean isBackendEvent() {
@@ -140,5 +142,16 @@ public class Event {
 
     public String getMetadataKey() {
         return String.valueOf(telemetry.getUID()+"_"+telemetry.getChannel());
+    }
+
+    public String channel() {
+        return telemetry.<String>read("channel").value();
+    }
+
+    public boolean isDefaultChannel(String defaultChannel) {
+        if(channel() != null && channel().equals(defaultChannel)){
+            return true;
+        }
+        return false;
     }
 }

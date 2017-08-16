@@ -235,6 +235,20 @@ public class DenormalizationTaskTest {
         verify(collectorMock).send(argThat(validateOutputTopic(message, SUCCESS_TOPIC)));
     }
 
+    @Test
+    public void ShouldNotProcessAnyNonEkstepEvents() throws Exception {
+        Map<String, Object> message = EventFixture.OtherChannelEvent();
+        KeyValueStore<String, Child> childStore = Mockito.mock(KeyValueStore.class);
+        KeyValueStore<String, Object> retryStore = Mockito.mock(KeyValueStore.class);
+        Event event = new Event(message, childStore, Arrays.asList("BE_.*"), Arrays.asList("ME_CE_SESSION_SUMMARY"), 10, retryStore, DEFAULT_CHANNEL);
+
+        deNormalizationTask.init(configMock, contextMock);
+        deNormalizationTask.processEvent(collectorMock, event, userServiceMock);
+
+        Assert.assertFalse(event.canBeProcessed());
+        verify(collectorMock).send(argThat(validateOutputTopic(message, SUCCESS_TOPIC)));
+    }
+
     private ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
         return new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
