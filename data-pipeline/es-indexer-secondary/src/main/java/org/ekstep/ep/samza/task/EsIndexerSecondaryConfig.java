@@ -18,7 +18,7 @@ public class EsIndexerSecondaryConfig {
         return failedTopic;
     }
 
-    public String[] esHost() {
+    public String[] esHosts() {
         String[] hosts = elasticSearchHosts.split(",");
         return hosts;
     }

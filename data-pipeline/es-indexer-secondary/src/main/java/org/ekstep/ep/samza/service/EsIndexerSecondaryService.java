@@ -30,7 +30,7 @@ public class EsIndexerSecondaryService {
                 return;
             }
 
-            ClientResponse response = elasticSearchService.index(event.indexName(), event.indexType(), event.getJson(), event.id());
+            ClientResponse response = elasticSearchService.index(event.indexName(), event.indexType(), event.getJson(), null);
 
             if(success(response)) {
                 LOGGER.info("ES INDEXER SUCCESS", event.id());

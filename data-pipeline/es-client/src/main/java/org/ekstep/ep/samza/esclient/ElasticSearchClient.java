@@ -53,7 +53,7 @@ public class ElasticSearchClient implements ElasticSearchService {
     }
 
     private String getRequestEndpoint(String indexName, String indexType, String documentId) {
-        if (documentId != null) {
+        if (documentId != null && !documentId.isEmpty()) {
             return MessageFormat.format("/{0}/{1}/{2}", indexName, indexType, documentId);
         }
         return MessageFormat.format("/{0}/{1}", indexName, indexType);

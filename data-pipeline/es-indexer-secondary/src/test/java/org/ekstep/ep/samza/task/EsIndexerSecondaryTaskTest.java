@@ -64,33 +64,33 @@ public class EsIndexerSecondaryTaskTest {
     @Test
     public void shouldSuccessfullyIndexToEsIfIndexNameAndTypeIsPresent() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithIndexDetails());
-        stub(esServiceMock.index(anyString(),anyString(),anyString(),anyString())).toReturn(new IndexResponse("200", null));
+        stub(esServiceMock.index(anyString(),anyString(),anyString(), (String) isNull())).toReturn(new IndexResponse("200", null));
 
         esIndexerSecondaryTask.process(envelopeMock, collectorMock, coordinatorMock);
 
-        verify(esServiceMock, times(1)).index(anyString(),anyString(),anyString(),anyString());
+        verify(esServiceMock, times(1)).index(anyString(),anyString(),anyString(), (String) isNull());
         verify(collectorMock, times(0)).send(any(OutgoingMessageEnvelope.class));
     }
 
     @Test
     public void shouldSendTheEventsToFailedTopicIfIndexActionIsFailed() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithIndexDetails());
-        stub(esServiceMock.index(anyString(),anyString(),anyString(),anyString())).toReturn(new IndexResponse("400", null));
+        stub(esServiceMock.index(anyString(),anyString(),anyString(), (String) isNull())).toReturn(new IndexResponse("400", null));
 
         esIndexerSecondaryTask.process(envelopeMock, collectorMock, coordinatorMock);
 
-        verify(esServiceMock, times(1)).index(anyString(),anyString(),anyString(),anyString());
+        verify(esServiceMock, times(1)).index(anyString(),anyString(),anyString(), (String) isNull());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
 
     @Test
     public void shouldSendEventsToFailedTopicIfIndexDetailsAreMissingInEvent() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithoutIndexDetails());
-        stub(esServiceMock.index(anyString(),anyString(),anyString(),anyString())).toReturn(new IndexResponse("200", null));
+        stub(esServiceMock.index(anyString(),anyString(),anyString(), (String) isNull())).toReturn(new IndexResponse("200", null));
 
         esIndexerSecondaryTask.process(envelopeMock, collectorMock, coordinatorMock);
 
-        verify(esServiceMock, times(0)).index(anyString(),anyString(),anyString(),anyString());
+        verify(esServiceMock, times(0)).index(anyString(),anyString(),anyString(), (String) isNull());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
 
