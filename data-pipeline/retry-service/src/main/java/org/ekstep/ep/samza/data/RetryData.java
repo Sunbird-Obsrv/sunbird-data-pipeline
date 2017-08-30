@@ -71,12 +71,14 @@ public class RetryData {
 
     public boolean shouldBackOff() {
         Integer processedCount = getProcessedCount();
+
         if(enableMaxAttempts && processedCount != null && maxAttempts < processedCount) {
             maxAttemptReached = true;
             return false;
-
         }
+
         LOGGER.info(telemetry.id(), "CHECK - AT " + DateTime.now());
+
         DateTime nextProcessingTime = getNextProcessingTime(getLastProcessedTime());
         if (nextProcessingTime == null || nextProcessingTime.isBeforeNow()) {
             LOGGER.info(telemetry.id(), "CHECK - PROCESSING " + telemetry.getMap());
@@ -95,11 +97,11 @@ public class RetryData {
 
     public void updateMetadataToStore() {
         NullableValue<Map<String, Object>> metadata = telemetry.read(flag.metadata());
-        if (!metadata.isNull()) {
+        if (!metadata.isNull() && retryStore.get(metadataKey) == null) {
             Map _map = new HashMap();
             _map.put(flag.metadata(), metadata.value());
             retryStore.put(metadataKey, _map);
-            LOGGER.info(telemetry.id(), "STORE - UPDATED " + _map + " UID " + metadataKey);
+            LOGGER.info(telemetry.id(), "STORE - UPDATED" + _map + " UID " + metadataKey);
         }
     }
 
@@ -115,7 +117,7 @@ public class RetryData {
         if (lastProcessedTime == null || nextBackoffInterval == null)
             return null;
         DateTime nextProcessingTime = lastProcessedTime.plusSeconds(nextBackoffInterval);
-        LOGGER.info(telemetry.id(), "nextProcessingTime: " + nextProcessingTime.toString());
+        LOGGER.info(telemetry.id(), "NEXT PROCESSING TIME " + nextProcessingTime.toString());
         return nextProcessingTime;
     }
 
@@ -140,14 +142,22 @@ public class RetryData {
 
     private void setLastProcessedAt(DateTime time) {
         Map<String, Object> metadata = getMetadata();
-        if(metadata!= null)
+        if(metadata!= null){
             metadata.put(flag.lastProcessedAt(), time.toString());
+            String lastProcessedAt = String.format("%s.%s", flag.metadata(), flag.lastProcessedAt());
+            telemetry.add(lastProcessedAt, time.toString());
+            LOGGER.info(telemetry.id(), "METADATA LAST PROCESSED AT - ADDED " + telemetry.<String>read(flag.metadata()));
+        }
     }
 
     private void setLastProcessedCount(int n) {
         Map<String, Object> metadata = getMetadata();
-        if(metadata!= null)
+        if(metadata!= null) {
             metadata.put(flag.processedCount(), n);
+            String processedCount = String.format("%s.%s", flag.metadata(), flag.processedCount());
+            telemetry.add(processedCount, n);
+            LOGGER.info(telemetry.id(), "METADATA PROCESSED COUNT - ADDED " + telemetry.<String>read(flag.metadata()));
+        }
     }
 
     private DateTime getLastProcessedTime() {
@@ -165,14 +175,17 @@ public class RetryData {
     private Map<String, Object> getMetadata() {
         if(metadataKey == null || metadataKey.isEmpty()) return null;
         Map retryData = (Map) retryStore.get(metadataKey);
+
         Telemetry telemetryData = retryData == null ? this.telemetry : new Telemetry(retryData);
-        NullableValue<Map<String, Object>> metadata = telemetryData.read(flag.metadata());
-        if (metadata.isNull()) {
+        Map<String, Object> metadata = (Map<String, Object>) telemetryData.read(flag.metadata()).value();
+
+        if (metadata == null) {
             Map<String, Object> newMetadata = new HashMap<String, Object>();
             telemetryData.add(flag.metadata(), newMetadata);
             return newMetadata;
         }
-        return metadata.value();
+
+        return metadata;
     }
 
     public Boolean maxAttemptReached(){

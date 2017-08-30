@@ -17,7 +17,7 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>object-de-normalization</artifactId>
-    <version>0.2.7</version>
+    <version>0.2.8</version>
     <packaging>jar</packaging>
     <name>Object-De-Normalization</name>
     <description>
@@ -137,7 +137,7 @@
         <dependency>
             <groupId>org.ekstep.ecosystem</groupId>
             <artifactId>retry-service</artifactId>
-            <version>0.0.3</version>
+            <version>0.0.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.samza</groupId>

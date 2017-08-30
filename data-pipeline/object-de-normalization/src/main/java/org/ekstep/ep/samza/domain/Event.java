@@ -113,7 +113,6 @@ public class Event {
             sink.toSuccessTopic(this);
             return;
         }
-        LOGGER.info(id(), "PASSING EVENT THROUGH");
 
         boolean shouldAddInRetry = !retryData.maxAttemptReached() && !processed;
         boolean failedToProcess = retryData.maxAttemptReached() && !processed;
