@@ -51,6 +51,7 @@
     <module>es-router-primary</module>
     <module>es-indexer-secondary</module>
     <module>es-router-secondary</module>
+    <module>telemetry-validator</module>
   </modules>
 
   <properties>
