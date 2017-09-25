@@ -10,17 +10,11 @@ import java.util.Map;
 
 public class TelemetryValidatorSource {
     static Logger LOGGER = new Logger(TelemetryValidatorSource.class);
-    private final Telemetry telemetry;
-
+    
     private IncomingMessageEnvelope envelope;
 
     public TelemetryValidatorSource(IncomingMessageEnvelope envelope) {
         this.envelope = envelope;
-        this.telemetry = initializeTelemetry(envelope);
-    }
-
-    private Telemetry initializeTelemetry(IncomingMessageEnvelope envelope) {
-        return new Telemetry(getMap());
     }
 
     public Event getEvent(){
