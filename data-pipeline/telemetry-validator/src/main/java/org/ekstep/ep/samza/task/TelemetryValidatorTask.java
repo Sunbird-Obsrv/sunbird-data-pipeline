@@ -39,6 +39,10 @@ public class TelemetryValidatorTask implements StreamTask, InitableTask, Windowa
     public TelemetryValidatorTask(Config config, TaskContext context) {
         init(config, context);
     }
+    
+    public TelemetryValidatorTask() {
+    	
+    }
 
     @Override
     public void init(Config config, TaskContext context) {
