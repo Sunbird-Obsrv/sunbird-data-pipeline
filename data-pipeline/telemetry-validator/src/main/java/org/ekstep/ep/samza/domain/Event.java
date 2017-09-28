@@ -7,6 +7,7 @@ import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.task.TelemetryValidatorConfig;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,10 +47,17 @@ public class Event {
         return checksum.value();
     }
 
+    public String eid() {
+        NullableValue<String> eid = telemetry.read("eid");
+        return eid.value();
+    }
+
     public String schemaName(){
-        String eid = (String) telemetry.read("eid").value();
-        String schemaName = eid.toLowerCase() + ".json";
-        return schemaName;
+        String eid = eid();
+        if (eid != null){
+            return MessageFormat.format("{0}.json",eid.toLowerCase());
+        }
+        return null;
     }
 
     public String version(){
