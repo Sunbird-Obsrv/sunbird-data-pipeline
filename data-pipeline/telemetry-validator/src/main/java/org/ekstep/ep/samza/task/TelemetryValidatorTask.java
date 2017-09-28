@@ -20,7 +20,7 @@
 package org.ekstep.ep.samza.task;
 
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import com.github.fge.jsonschema.main.JsonValidator;
+import org.apache.samza.task.StreamTask;
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.task.*;
@@ -29,7 +29,6 @@ import org.ekstep.ep.samza.metrics.JobMetrics;
 import org.ekstep.ep.samza.service.TelemetryValidatorService;
 
 public class TelemetryValidatorTask implements StreamTask, InitableTask, WindowableTask {
-
 
     static Logger LOGGER = new Logger(TelemetryValidatorTask.class);
     private TelemetryValidatorConfig config;
@@ -40,9 +39,9 @@ public class TelemetryValidatorTask implements StreamTask, InitableTask, Windowa
     public TelemetryValidatorTask(Config config, TaskContext context) {
         init(config, context);
     }
-
+    
     public TelemetryValidatorTask() {
-
+    	
     }
 
     @Override
@@ -58,7 +57,7 @@ public class TelemetryValidatorTask implements StreamTask, InitableTask, Windowa
         TelemetryValidatorSource source = new TelemetryValidatorSource(envelope);
         TelemetryValidatorSink sink = new TelemetryValidatorSink(collector, metrics, config);
         jsonSchemaFactory = JsonSchemaFactory.byDefault();
-
+        
         service.process(source, sink, jsonSchemaFactory);
     }
 

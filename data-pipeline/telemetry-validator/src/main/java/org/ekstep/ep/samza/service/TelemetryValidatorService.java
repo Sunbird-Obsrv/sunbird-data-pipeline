@@ -1,22 +1,22 @@
 package org.ekstep.ep.samza.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jackson.JsonLoader;
-import com.github.fge.jsonschema.core.report.ProcessingReport;
-import com.github.fge.jsonschema.main.JsonSchema;
-import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import com.github.fge.jsonschema.main.JsonValidator;
-import com.google.gson.JsonSyntaxException;
+import static java.text.MessageFormat.format;
+
+import java.io.File;
+import java.text.MessageFormat;
+
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.task.TelemetryValidatorConfig;
 import org.ekstep.ep.samza.task.TelemetryValidatorSink;
 import org.ekstep.ep.samza.task.TelemetryValidatorSource;
 
-import java.io.File;
-import java.text.MessageFormat;
-
-import static java.text.MessageFormat.format;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jackson.JsonLoader;
+import com.github.fge.jsonschema.core.report.ProcessingReport;
+import com.github.fge.jsonschema.main.JsonSchema;
+import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import com.google.gson.JsonSyntaxException;
 
 public class TelemetryValidatorService {
     static Logger LOGGER = new Logger(TelemetryValidatorService.class);
@@ -28,13 +28,11 @@ public class TelemetryValidatorService {
 
     public void process(TelemetryValidatorSource source, TelemetryValidatorSink sink, JsonSchemaFactory jsonSchemaFactory) {
         Event event = null;
-
         try {
-            event = source.getEvent();
-
+        	event = source.getEvent();
             String schemaFilePath = MessageFormat.format("{0}/{1}/{2}",config.schemaPath(), event.version(),event.schemaName());
             File schemaFile = new File(schemaFilePath);
-
+            	
             if(!schemaFile.exists()){
                 LOGGER.error("SCHEMA DOES NOT FOUND", schemaFilePath);
                 sink.toFailedTopic(event);
@@ -46,7 +44,6 @@ public class TelemetryValidatorService {
 
             JsonSchema jsonSchema = jsonSchemaFactory.getJsonSchema(schemaJson);
             ProcessingReport report = jsonSchema.validate(eventJson);
-
             if(report.isSuccess()){
                 LOGGER.info("VALIDATION SUCCESS",source.getMessage());
                 event.markSuccess();
