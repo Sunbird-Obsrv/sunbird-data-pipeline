@@ -13,7 +13,7 @@ public class DeDuplicationConfig {
 
 
     public DeDuplicationConfig(Config config) {
-        successTopic = config.get("output.success.topic.name", "telemetry.unique");
+        successTopic = config.get("output.success.topic.name", "telemetry.valid");
         failedTopic = config.get("output.failed.topic.name", "telemetry.unique.fail");
         duplicateTopic = config.get("output.duplicate.topic.name", "telemetry.duplicate");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");

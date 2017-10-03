@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 
 public class DeDuplicationTaskTest {
 
-    private static final String SUCCESS_TOPIC = "telemetry.unique";
+    private static final String SUCCESS_TOPIC = "telemetry.valid";
     private static final String FAILED_TOPIC = "telemetry.unique.fail";
     private static final String DUPLICATE_TOPIC = "telemetry.duplicate";
     private static final String MALFORMED_TOPIC = "telemetry.malformed";
@@ -101,7 +101,7 @@ public class DeDuplicationTaskTest {
         when(deDupEngineMock.isUniqueEvent(anyString())).thenThrow(new Exception());
 
         deDuplicationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), MALFORMED_TOPIC)));
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
 
     @Test

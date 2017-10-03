@@ -84,5 +84,10 @@ public class Event {
         telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
         telemetry.add("metadata.tv_error", error);
     }
+
+    public void markSkipped() {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.tv_skipped", true);
+    }
 }
 

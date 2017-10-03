@@ -30,12 +30,15 @@ public class TelemetryValidatorService {
         Event event = null;
         try {
         	event = source.getEvent();
+
             String schemaFilePath = MessageFormat.format("{0}/{1}/{2}",config.schemaPath(), event.version(),event.schemaName());
             File schemaFile = new File(schemaFilePath);
             	
             if(!schemaFile.exists()){
-                LOGGER.error("SCHEMA DOES NOT FOUND", schemaFilePath);
-                sink.toFailedTopic(event);
+                LOGGER.info("SCHEMA DOES NOT FOUND", schemaFilePath);
+                LOGGER.info("SKIP PROCESSING: SENDING TO SUCCESS", event.mid());
+                event.markSkipped();
+                sink.toSuccessTopic(event);
                 return;
             }
 
@@ -44,8 +47,9 @@ public class TelemetryValidatorService {
 
             JsonSchema jsonSchema = jsonSchemaFactory.getJsonSchema(schemaJson);
             ProcessingReport report = jsonSchema.validate(eventJson);
+
             if(report.isSuccess()){
-                LOGGER.info("VALIDATION SUCCESS",source.getMessage());
+                LOGGER.info("VALIDATION SUCCESS", event.mid());
                 event.markSuccess();
                 sink.toSuccessTopic(event);
             } else {

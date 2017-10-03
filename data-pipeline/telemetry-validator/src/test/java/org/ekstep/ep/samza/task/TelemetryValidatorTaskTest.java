@@ -96,21 +96,21 @@ public class TelemetryValidatorTaskTest {
     }
     
     @Test
-    public void shouldSendEventToFailedTopicIfEventIsEmptyJSON() throws Exception{
-    	
+    public void shouldSendEventToSuccessTopicIfEventIsEmptyJSON() throws Exception{
+
     	stub(envelopeMock.getMessage()).toReturn(EventFixture.EMPTY_JSON);
-    	
+
     	telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
-    
+
     @Test
-    public void shouldSendEventToFailedTopicIfSchemaIsNotPresent() throws Exception{
+    public void shouldSendEventToSuccessTopicIfSchemaIsNotPresent() throws Exception{
     	
     	stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_GE_INTERACT_EVENT);
     	
     	telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
 
     public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
