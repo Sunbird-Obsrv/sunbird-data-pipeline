@@ -1,0 +1,98 @@
+{
+  "cdata": [
+    {
+      "id": "9497e01e1bdc1ff77a65ff1773056b8d",
+      "type": "ContentSession"
+    }
+  ],
+  "channel": "ekstep",
+  "did": "b24b368416113734693395a39a7c05d460c849dd",
+  "edata": {
+    "eks": {
+      "mode": "play"
+    }
+  },
+  "eid": "OE_START",
+  "etags": {
+    "app": [
+      "984d91d52c5cdd8dfc8ec2b37562577fa981f65a"
+    ],
+    "dims": [],
+    "partner": []
+  },
+  "ets": 1510216719872,
+  "gdata": {
+    "id": "do_3122776458043965441441",
+    "ver": "3.0"
+  },
+  "mid": "3f34adf0-89d5-4884-8920-4fadbe9680cd",
+  "pdata": {
+    "id": "in.ekstep",
+    "pid": "test",
+    "ver": "1.0"
+  },
+  "sid": "a7a44f3c-b26c-4e21-8224-c504b92ec1b8",
+  "uid": "516a4365-eb22-44c0-add1-0b9000d1d09f",
+  "ver": "2.1",
+  "@version": "1",
+  "@timestamp": "2017-11-09T08:39:06.989Z",
+  "metadata": {
+    "checksum": "3f34adf0-89d5-4884-8920-4fadbe9680cd",
+    "cachehit": true,
+    "index_name": "ecosystem-2017.11",
+    "index_type": "events_v1"
+  },
+  "uuid": "268588fd-c444-4eee-8c02-fcfcd5d2f9989",
+  "key": "516a4365-eb22-44c0-add1-0b9000d1d09f",
+  "type": "events",
+  "ts": "2017-11-09T08:38:39.872+0000",
+  "flags": {
+    "tv_processed": true,
+    "dd_processed": true,
+    "ppm_skipped": true,
+    "ldata_obtained": false,
+    "ldata_processed": true
+  },
+  "contentdata": {
+    "code": "org.ekstep.literacy.story.9912",
+    "keywords": [
+      "alohomora education",
+      "digital literacy",
+      "internet"
+    ],
+    "subject": "English",
+    "description": "about e-mail",
+    "language": [
+      "Hindi"
+    ],
+    "medium": "",
+    "source": "",
+    "gradeLevel": [
+      "Other"
+    ],
+    "lastUpdatedOn": "2017-08-21T15:52:05.493+0000",
+    "contentType": "Story",
+    "identifier": "do_3122776458043965441441",
+    "audience": [
+      "Learner"
+    ],
+    "createdFor": [
+      ""
+    ],
+    "mediaType": "content",
+    "ageGroup": [
+      ">10"
+    ],
+    "pkgVersion": 3,
+    "size": 131091,
+    "concepts": [
+      "LO45"
+    ],
+    "createdBy": "2814",
+    "domain": [
+      "literacy"
+    ],
+    "name": "What is e-mail ?",
+    "status": "Live"
+  }
+}

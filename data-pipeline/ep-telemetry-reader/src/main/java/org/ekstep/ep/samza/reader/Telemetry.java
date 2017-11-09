@@ -46,6 +46,14 @@ public class Telemetry {
         }
     }
 
+    public <T> T mustReadValue(String keyPath) throws TelemetryReaderException {
+        NullableValue<T> val = read(keyPath);
+        if (val.isNull())
+            throw new TelemetryReaderException(keyPath +  " is not available in the event");
+
+        return val.value();
+    }
+
     private ParentType lastParentMap(Map<String, Object> map, String keyPath) {
         Object parent = map;
         String[] keys = keyPath.split("\\.");
