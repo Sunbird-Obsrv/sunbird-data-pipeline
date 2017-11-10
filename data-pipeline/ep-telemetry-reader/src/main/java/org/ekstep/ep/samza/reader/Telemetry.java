@@ -48,8 +48,14 @@ public class Telemetry {
 
     public <T> T mustReadValue(String keyPath) throws TelemetryReaderException {
         NullableValue<T> val = read(keyPath);
-        if (val.isNull())
-            throw new TelemetryReaderException(keyPath +  " is not available in the event");
+        if (val.isNull()) {
+            NullableValue<String> eid = read("eid");
+            String message = keyPath + " is not available in the event";
+            if (!eid.isNull()) {
+                message = keyPath + " is not available in " + eid.value();
+            }
+            throw new TelemetryReaderException(message);
+        }
 
         return val.value();
     }

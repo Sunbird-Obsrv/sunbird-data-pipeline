@@ -5,12 +5,14 @@ import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.reader.TelemetryReaderException;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class Context {
     private String channel;
     private String env;
     private String sid;
-    private String did;
+    private String did = "";
     private PData pData;
     private ArrayList<CData> cData = new ArrayList<CData>();
     private Rollup rollUp;
@@ -30,10 +32,26 @@ public class Context {
         } else if (eid.startsWith("CE_")) {
             this.env = "ContentEditor";
         } else if (eid.startsWith("CP_")) {
-            NullableValue<String> env = reader.read("edata.eks.env");
-            if (!env.isNull()) {
-                this.env = env.value();
-            }
+            this.env = reader.<String>read("edata.eks.env").valueOrDefault("");
+        }
+
+        // sid is a mandatory field. but it can come in two possible paths
+        // - sid (at the envelope)
+        // - context.sid (CE and CP events)
+        NullableValue<String> sid = reader.read("sid");
+        if (sid.isNull()) {
+            // sid in envelope is null. so it should come in context.sid
+            this.sid = reader.mustReadValue("context.sid");
+        } else {
+            this.sid = sid.value();
+        }
+
+        this.did = reader.<String>read("did").valueOrDefault("");
+
+        List cdata = reader.<List>read("cdata").valueOrDefault(new ArrayList());
+        for (Object item : cdata) {
+            Map<String, Object> m = (Map<String, Object>) item;
+            this.cData.add(new CData(m));
         }
     }
 
@@ -49,24 +67,12 @@ public class Context {
         return sid;
     }
 
-    public void setSid(String sid) {
-        this.sid = sid;
-    }
-
     public String getDid() {
         return did;
     }
 
-    public void setDid(String did) {
-        this.did = did;
-    }
-
     public PData getpData() {
         return pData;
-    }
-
-    public void setpData(PData pData) {
-        this.pData = pData;
     }
 
     public Rollup getRollUp() {
@@ -77,11 +83,7 @@ public class Context {
         this.rollUp = rollUp;
     }
 
-    public Iterable<CData> getcData() {
+    public List<CData> getCData() {
         return cData;
-    }
-
-    public void addCData(CData c) {
-        cData.add(c);
     }
 }

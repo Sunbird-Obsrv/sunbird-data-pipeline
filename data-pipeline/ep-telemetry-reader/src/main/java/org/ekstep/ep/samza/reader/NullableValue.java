@@ -15,6 +15,13 @@ public class NullableValue<T> {
         return value == null;
     }
 
+    public T valueOrDefault(T defaultValue) {
+        if (isNull())
+            return defaultValue;
+
+        return value();
+    }
+
     @Override
     public String toString() {
         return "NullableValue{" +
