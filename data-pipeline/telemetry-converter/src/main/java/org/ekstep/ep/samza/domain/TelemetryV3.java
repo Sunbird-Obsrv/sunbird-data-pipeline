@@ -1,88 +1,106 @@
 package org.ekstep.ep.samza.domain;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class TelemetryV3 {
-    private String eid;
-    private long ets;
-    private final String ver = "3.0";
-    private String mid;
-    private Actor actor;
-    private Context context;
-    private TObject object;
-    private HashMap<String, Object> edata;
-    private ArrayList<String> tags;
 
-    public TelemetryV3() {
-    }
+	private String eid;
+	private long ets;
+	private final String ver = "3.0";
+	private String mid;
+	private Actor actor;
+	private Context context;
+	private TObject object;
+	private HashMap<String, Object> edata;
+	private ArrayList<String> tags;
 
-    public long getEts() {
-        return ets;
-    }
+	public TelemetryV3() {
+	}
 
-    public void setEts(long ets) {
-        this.ets = ets;
-    }
+	public long getEts() {
+		return ets;
+	}
 
-    public String getMid() {
-        return mid;
-    }
+	public void setEts(long ets) {
+		this.ets = ets;
+	}
 
-    public void setMid(String mid) {
-        this.mid = mid;
-    }
+	public String getMid() {
+		return mid;
+	}
 
-    public String getEid() {
-        return eid;
-    }
+	public void setMid(String mid) {
+		this.mid = mid;
+	}
 
-    public void setEid(String eid) {
-        this.eid = eid;
-    }
+	public String getEid() {
+		return eid;
+	}
 
-    public String getVer() {
-        return ver;
-    }
+	public void setEid(String eid) {
+		this.eid = eid;
+	}
 
-    public Actor getActor() {
-        return actor;
-    }
+	public String getVer() {
+		return ver;
+	}
 
-    public void setActor(Actor actor) {
-        this.actor = actor;
-    }
+	public Actor getActor() {
+		return actor;
+	}
 
-    public TObject getObject() {
-        return object;
-    }
+	public void setActor(Actor actor) {
+		this.actor = actor;
+	}
 
-    public void setObject(TObject object) {
-        this.object = object;
-    }
+	public TObject getObject() {
+		return object;
+	}
 
-    public HashMap<String, Object> getEdata() {
-        return edata;
-    }
+	public void setObject(TObject object) {
+		this.object = object;
+	}
 
-    public void setEdata(HashMap<String, Object> edata) {
-        this.edata = edata;
-    }
+	public HashMap<String, Object> getEdata() {
+		return edata;
+	}
 
-    public ArrayList<String> getTags() {
-        return tags;
-    }
+	public void setEdata(HashMap<String, Object> edata) {
+		this.edata = edata;
+	}
 
-    public void setTags(ArrayList<String> tags) {
-        this.tags = tags;
-    }
+	public ArrayList<String> getTags() {
+		return tags;
+	}
 
-    public Context getContext() {
-        return context;
-    }
+	public void setTags(ArrayList<String> tags) {
+		this.tags = tags;
+	}
+	
+	public void setTags(Map<String, Object> event) {
 
-    public void setContext(Context context) {
-        this.context = context;
-    }
+		Map<String, List<String>> etags = (Map<String, List<String>>) event.get("etags");
+		
+		if (!etags.isEmpty()) {
+			Set<String> keys = etags.keySet();
+			Iterator<String> it = keys.iterator();
+			while (it.hasNext()) {
+				List<String> tags = etags.get(it.next());
+				this.tags.addAll(tags);
+			}
+		}
+	}
+
+	public Context getContext() {
+		return context;
+	}
+
+	public void setContext(Context context) {
+		this.context = context;
+	}
 }

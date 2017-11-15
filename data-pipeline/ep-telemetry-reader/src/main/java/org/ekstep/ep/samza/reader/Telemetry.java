@@ -139,6 +139,9 @@ public class Telemetry {
         return this.<String>read("channel").value();
     }
 
+    public Map<String, Object> getEdata(){
+    	return this.<Map<String, Object>>read("edata.eks").value();
+    }
     public String getJson(){
         return new Gson().toJson(map);
     }

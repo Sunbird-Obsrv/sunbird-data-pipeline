@@ -1,11 +1,20 @@
 package org.ekstep.ep.samza.domain;
 
+import org.ekstep.ep.samza.reader.Telemetry;
+
 public class TObject {
     private String id;
     private String type;
     private String ver;
     private Rollup rollUp;
-
+    private String defaultType = "Content";
+    
+    public TObject(Telemetry reader){
+    	this.id = reader.<String>read("gdata.id").valueOrDefault("");
+    	this.type = defaultType;
+    	this.ver = reader.<String>read("gdata.ver").valueOrDefault("");
+    }
+    
     public String getId() {
         return id;
     }
