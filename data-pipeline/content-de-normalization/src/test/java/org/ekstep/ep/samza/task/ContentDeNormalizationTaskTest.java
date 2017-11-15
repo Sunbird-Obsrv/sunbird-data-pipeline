@@ -105,7 +105,7 @@ public class ContentDeNormalizationTaskTest {
         contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
 
         verify(contentStoreMock, times(1)).get(ContentFixture.getContentID());
-        verify(searchServiceMock, times(0)).search(ContentFixture.getContentID());
+        verify(searchServiceMock, times(0)).searchContent(ContentFixture.getContentID());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
 
@@ -114,12 +114,12 @@ public class ContentDeNormalizationTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.OeEvent());
         when(contentStoreMock.get(ContentFixture.getContentID())).thenReturn(null, getContentCacheJson());
 
-        stub(searchServiceMock.search(ContentFixture.getContentID())).toReturn(ContentFixture.getContent());
+        stub(searchServiceMock.searchContent(ContentFixture.getContentID())).toReturn(ContentFixture.getContent());
 
         contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
 
         verify(contentStoreMock, times(2)).get(ContentFixture.getContentID());
-        verify(searchServiceMock, times(1)).search(ContentFixture.getContentID());
+        verify(searchServiceMock, times(1)).searchContent(ContentFixture.getContentID());
         verify(contentStoreMock, times(1)).put(anyString(), anyString());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
@@ -132,12 +132,12 @@ public class ContentDeNormalizationTaskTest {
 
         stub(contentStoreMock.get(ContentFixture.getContentID())).toReturn(contentCacheJson);
         stub(envelopeMock.getMessage()).toReturn(EventFixture.OeEvent());
-        stub(searchServiceMock.search(ContentFixture.getContentID())).toReturn(ContentFixture.getContent());
+        stub(searchServiceMock.searchContent(ContentFixture.getContentID())).toReturn(ContentFixture.getContent());
 
         contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
 
         verify(contentStoreMock, times(2)).get(ContentFixture.getContentID());
-        verify(searchServiceMock, times(1)).search(ContentFixture.getContentID());
+        verify(searchServiceMock, times(1)).searchContent(ContentFixture.getContentID());
         verify(contentStoreMock, times(1)).put(anyString(), anyString());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
@@ -192,7 +192,7 @@ public class ContentDeNormalizationTaskTest {
         contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
 
         verify(contentStoreMock, times(0)).get(anyString());
-        verify(searchServiceMock, times(0)).search(anyString());
+        verify(searchServiceMock, times(0)).searchContent(anyString());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
 
@@ -217,7 +217,7 @@ public class ContentDeNormalizationTaskTest {
     }
 
     private void verifyEventHasBeenProcessed() throws Exception {
-        stub(searchServiceMock.search(ContentFixture.getContentID())).toReturn(ContentFixture.getContent());
+        stub(searchServiceMock.searchContent(ContentFixture.getContentID())).toReturn(ContentFixture.getContent());
 
         CacheEntry expiredContent = new CacheEntry(ContentFixture.getContent(), new Date().getTime() - 100000);
         CacheEntry validContent = new CacheEntry(ContentFixture.getContent(), new Date().getTime() + 100000);
@@ -229,7 +229,7 @@ public class ContentDeNormalizationTaskTest {
 
         contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
 
-        verify(searchServiceMock, times(1)).search("do_30076072");
+        verify(searchServiceMock, times(1)).searchContent("do_30076072");
         Map<String, Object> processedMessage = (Map<String, Object>) envelopeMock.getMessage();
 
         assertTrue(processedMessage.containsKey("contentdata"));

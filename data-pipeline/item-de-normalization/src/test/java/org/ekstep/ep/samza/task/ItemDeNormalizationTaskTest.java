@@ -95,7 +95,7 @@ public class ItemDeNormalizationTaskTest {
         itemDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
 
         verify(itemStoreMock, times(1)).get(ItemFixture.getItemID());
-        verify(searchServiceMock, times(0)).search(ItemFixture.getItemID());
+        verify(searchServiceMock, times(0)).searchContent(ItemFixture.getItemID());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
 

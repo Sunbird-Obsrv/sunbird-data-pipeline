@@ -62,14 +62,14 @@ public class ContentServiceTest {
     public void shouldCallSearchServiceIfContentIsNotPresentInCache() throws IOException {
         Content content = ContentFixture.getContent();
         when(contentStoreMock.get(getContentID())).thenReturn(null, getContentCacheJson());
-        stub(searchServiceMock.search(getContentID())).toReturn(content);
+        stub(searchServiceMock.searchContent(getContentID())).toReturn(content);
 
         ContentService contentService = new ContentService(searchServiceMock, cacheService, cacheTTL);
         contentService.getContent("someid", getContentID());
 
         verify(contentStoreMock, times(2)).get(getContentID());
         verify(contentStoreMock, times(1)).put(anyString(), anyString());
-        verify(searchServiceMock, times(1)).search(getContentID());
+        verify(searchServiceMock, times(1)).searchContent(getContentID());
         verify(metricsMock).incCacheMissCounter();
         verify(metricsMock).incCacheHitCounter();
         verifyNoMoreInteractions(metricsMock);
@@ -85,14 +85,14 @@ public class ContentServiceTest {
                 .thenReturn(
                         new Gson().toJson(expiredContent, CacheEntry.class),
                         new Gson().toJson(validContent, CacheEntry.class));
-        stub(searchServiceMock.search(getContentID())).toReturn(ContentFixture.getContent());
+        stub(searchServiceMock.searchContent(getContentID())).toReturn(ContentFixture.getContent());
 
         ContentService contentService = new ContentService(searchServiceMock, cacheService, cacheTTL);
         Content content = contentService.getContent("someid", getContentID());
 
         verify(contentStoreMock, times(2)).get(getContentID());
         verify(contentStoreMock, times(1)).put(anyString(), anyString());
-        verify(searchServiceMock, times(1)).search(getContentID());
+        verify(searchServiceMock, times(1)).searchContent(getContentID());
 
         assertEquals(content.name(), ContentFixture.getContentMap().get("name"));
         assertEquals(content.description(), ContentFixture.getContentMap().get("description"));
@@ -109,12 +109,12 @@ public class ContentServiceTest {
         String contentCacheJson = new Gson().toJson(contentCache, CacheEntry.class);
 
         stub(contentStoreMock.get(getContentID())).toReturn(contentCacheJson);
-        stub(searchServiceMock.search(getContentID())).toReturn(ContentFixture.getContent());
+        stub(searchServiceMock.searchContent(getContentID())).toReturn(ContentFixture.getContent());
         ContentService contentService = new ContentService(searchServiceMock, cacheService, cacheTTL);
         Content content = contentService.getContent("someid", getContentID());
 
         verify(contentStoreMock, times(0)).put(anyString(), anyString());
-        verify(searchServiceMock, times(0)).search(getContentID());
+        verify(searchServiceMock, times(0)).searchContent(getContentID());
 
         assertEquals(content.name(), ContentFixture.getContentMap().get("name"));
         assertEquals(content.description(), ContentFixture.getContentMap().get("description"));

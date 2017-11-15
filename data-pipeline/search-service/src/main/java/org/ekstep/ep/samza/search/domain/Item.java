@@ -2,7 +2,7 @@ package org.ekstep.ep.samza.search.domain;
 
 import java.util.ArrayList;
 
-public class Item {
+public class Item implements IObject {
     private Integer num_answers;
 
     private String title;
@@ -19,10 +19,6 @@ public class Item {
     private ArrayList<String> gradeLevel;
 
     private boolean cacheHit;
-
-    public void setCacheHit(boolean b) { this.cacheHit = b;}
-
-    public boolean getCacheHit() { return cacheHit; }
 
     public String title() { return title; }
 
@@ -70,8 +66,14 @@ public class Item {
         return gradeLevel;
     }
 
-    public boolean isCacheHit() {
-        return cacheHit;
+    @Override
+    public boolean getCacheHit() {
+        return false;
+    }
+
+    @Override
+    public void setCacheHit(boolean b) {
+
     }
 
     @Override

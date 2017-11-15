@@ -33,7 +33,7 @@ public class ContentService {
 
     private void loadContentAndPopulateCache(String id, String contentId) throws IOException {
         LOGGER.info(id, "CALLING SEARCH API", contentId);
-        Content content = searchService.search(contentId);
+        Content content = searchService.searchContent(contentId);
         if (content != null) {
             LOGGER.info(id, "WRITING TO CACHE", contentId);
             content.setCacheHit(false);

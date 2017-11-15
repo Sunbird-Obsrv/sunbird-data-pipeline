@@ -223,7 +223,7 @@ public class EventFixture {
             "                \"piwik_idlink_va\": \"594565\"\n" +
             "            },\n" +
             "            \"uip\": \"182.73.0.0\",\n" +
-            "            \"rid\": \"qa.ekstep.in/content/search\"\n" +
+            "            \"rid\": \"qa.ekstep.in/content/searchContent\"\n" +
             "        }\n" +
             "    },\n" +
             "    \"ets\": 1491891374000,\n" +
