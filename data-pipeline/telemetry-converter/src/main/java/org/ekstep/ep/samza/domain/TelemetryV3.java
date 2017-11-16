@@ -18,10 +18,19 @@ public class TelemetryV3 {
 	private TObject object;
 	private HashMap<String, Object> edata;
 	private ArrayList<String> tags;
-
+	private HashMap<String, String> metadata;
+	
 	public TelemetryV3() {
 	}
 
+	public HashMap<String, String> getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(HashMap<String, String> metadata) {
+		this.metadata = metadata;
+	}
+	
 	public long getEts() {
 		return ets;
 	}

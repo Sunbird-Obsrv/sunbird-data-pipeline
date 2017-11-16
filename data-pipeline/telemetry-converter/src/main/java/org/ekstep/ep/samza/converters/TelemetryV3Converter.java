@@ -13,6 +13,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,12 @@ public class TelemetryV3Converter {
 		v3.setEid(v3Eid);
 		v3.setEts(reader.<Long> mustReadValue("ets"));
 		v3.setMid(reader.<String> mustReadValue("mid"));
+		
+		HashMap<String, String> metadata = new HashMap<String, String>();
+		String checksum = (String)reader.id();
+		metadata.put("checksum", checksum);
+		v3.setMetadata(metadata);
+		
 		v3.setActor(new Actor(source));
 		v3.setContext(new Context(reader));
 		v3.setObject(new TObject(reader));
