@@ -1,24 +1,34 @@
 package org.ekstep.ep.samza.converters;
 
-import org.ekstep.ep.samza.domain.Actor;
-import org.ekstep.ep.samza.domain.Context;
-import org.ekstep.ep.samza.domain.TObject;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ekstep.ep.samza.domain.TelemetryV3;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.reader.TelemetryReaderException;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.io.File;
-import java.io.FileReader;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 public class TelemetryV3Converter {
+
+	public static Map<String, String> EVENT_MAP = new HashMap<String, String>();
+	public static Map<String, String> EDATA_TYPE_MAP = new HashMap<String, String>();
+
+	private static String eventMappingStr = "OE_START:START,GE_START:START,GE_GENIE_START:START,GE_SESSION_START:START,CP_SESSION_START:START,CE_START:START,OE_END:END,GE_END:END,GE_SESSION_END:END,CE_END:END,OE_NAVIGATE:IMPRESSION,GE_INTERACT:IMPRESSION,CP_IMPRESSION:IMPRESSION,CE_START:IMPRESSION,OE_INTERACT:INTERACT,GE_INTERACT:INTERACT,CP_INTERACT:INTERACT,CE_INTERACT:INTERACT,CE_PLUGIN_LIFECYCLE:INTERACT,OE_ASSESS:ASSESS,OE_ITEM_RESPONSE:RESPONSE,OE_INTERRUPT:INTERRUPT,GE_RESUME:INTERRUPT,GE_INTERRUPT:INTERRUPT,GE_FEEDBACK:FEEDBACK,GE_TRANSFER:SHARE,BE_OBJECT_LIFECYCLE:AUDIT,GE_ERROR:ERROR,CE_ERROR:ERROR,GE_INTERACT:LOG,GE_UPDATE:LOG,GE_API_CALL:LOG,GE_GENIE_START:EXDATA,GE_PARTNER_DATA:EXDATA";
+	private static String typeMappingStr = "OE_START:player,GE_GENIE_START:app,GE_SESSION_START:session,CP_SESSION_START:session,CE_START:editor,GE_SESSION_END:session,CP_SESSION_END:session,OE_END:player,GE_END:app,CE_END:editor";
+	
+	static {
+		String[] pairEventArr = eventMappingStr.split(",");
+		for (String pair : pairEventArr) {
+			String[] eachEventArr = pair.split(":");
+			EVENT_MAP.put(eachEventArr[0], eachEventArr[1]);
+		}
+
+		String[] pairTypeArr = typeMappingStr.split(",");
+		for (String pair : pairTypeArr) {
+			String[] eachTypeArr = pair.split(":");
+			EDATA_TYPE_MAP.put(eachTypeArr[0], eachTypeArr[1]);
+		}
+	}
+	
 	private final Map<String, Object> source;
 	private final Telemetry reader;
 
@@ -28,55 +38,8 @@ public class TelemetryV3Converter {
 	}
 
 	public TelemetryV3 convert() throws TelemetryReaderException {
-		TelemetryV3 v3 = convertEnvelope();
+		TelemetryV3 v3 = new TelemetryV3(reader, source);
+		v3.setEdata(new EdataConverter(reader).getEdata());
 		return v3;
-	}
-
-	private TelemetryV3 convertEnvelope() throws TelemetryReaderException {
-		TelemetryV3 v3 = new TelemetryV3();
-
-		String v3Eid = V3Util.EVENT_MAP.get(reader.<String> mustReadValue("eid"));
-		v3.setEid(v3Eid);
-		v3.setEts(reader.<Long> mustReadValue("ets"));
-		v3.setMid(reader.<String> mustReadValue("mid"));
-		
-		HashMap<String, String> metadata = new HashMap<String, String>();
-		String checksum = (String)reader.id();
-		metadata.put("checksum", checksum);
-		v3.setMetadata(metadata);
-		
-		v3.setActor(new Actor(source));
-		v3.setContext(new Context(reader));
-		v3.setObject(new TObject(reader));
-		v3.setEdata(V3Util.fetchEdata(reader));
-		v3.setTags(source);
-		return v3;
-	}
-
-	public static void main(String[] args) throws Exception {
-
-		File file = new File("src/test/resources/OE_START.json");
-		Type type = new TypeToken<Map<String, Object>>() {
-		}.getType();
-
-		Map<String, Object> oeStart = new Gson().fromJson(new FileReader(file),
-				type);
-		Iterator<String> it = oeStart.keySet().iterator();
-		while (it.hasNext()) {
-			String key = it.next();
-			if (oeStart.get(key) instanceof String) {
-				System.out.println((String) oeStart.get(key));
-			} else if (oeStart.get(key) instanceof Double) {
-				System.out.println((Double) oeStart.get(key));
-			} else if (oeStart.get(key) instanceof Long) {
-				System.out.println((Long) oeStart.get(key));
-			} else if (oeStart.get(key) instanceof List) {
-				System.out.println(((List) oeStart.get(key)).toString());
-			}
-		}
-
-		TelemetryV3Converter conv = new TelemetryV3Converter(oeStart);
-		TelemetryV3 v3 = conv.convertEnvelope();
-		System.out.println(v3.getEid());
 	}
 }

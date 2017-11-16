@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ekstep.ep.samza.converters.TelemetryV3Converter;
+import org.ekstep.ep.samza.reader.Telemetry;
+import org.ekstep.ep.samza.reader.TelemetryReaderException;
+
 public class TelemetryV3 {
 
 	private String eid;
@@ -19,8 +23,30 @@ public class TelemetryV3 {
 	private HashMap<String, Object> edata;
 	private ArrayList<String> tags;
 	private HashMap<String, String> metadata;
+
+	private Telemetry reader;
 	
-	public TelemetryV3() {
+	public TelemetryV3(Telemetry reader, Map<String, Object> source) throws TelemetryReaderException {
+		
+		String v3Eid = TelemetryV3Converter.EVENT_MAP.get(reader
+				.<String> mustReadValue("eid"));
+		this.eid = v3Eid;
+		this.ets = reader.<Long> mustReadValue("ets");
+		this.mid = reader.<String> mustReadValue("mid");
+		
+		HashMap<String, String> metadata = new HashMap<String, String>();
+		String checksum = (String) reader.id();
+		metadata.put("checksum", checksum);
+		this.metadata = metadata;
+		this.actor = new Actor(source);
+		this.context = new Context(reader);
+		this.object = new TObject(reader);
+		
+		this.reader = reader;
+	}
+	
+	public TelemetryV3() throws TelemetryReaderException {
+		
 	}
 
 	public HashMap<String, String> getMetadata() {
@@ -30,7 +56,7 @@ public class TelemetryV3 {
 	public void setMetadata(HashMap<String, String> metadata) {
 		this.metadata = metadata;
 	}
-	
+
 	public long getEts() {
 		return ets;
 	}
@@ -90,11 +116,12 @@ public class TelemetryV3 {
 	public void setTags(ArrayList<String> tags) {
 		this.tags = tags;
 	}
-	
+
 	public void setTags(Map<String, Object> event) {
 
-		Map<String, List<String>> etags = (Map<String, List<String>>) event.get("etags");
-		
+		Map<String, List<String>> etags = (Map<String, List<String>>) event
+				.get("etags");
+
 		if (!etags.isEmpty()) {
 			Set<String> keys = etags.keySet();
 			Iterator<String> it = keys.iterator();
@@ -111,5 +138,24 @@ public class TelemetryV3 {
 
 	public void setContext(Context context) {
 		this.context = context;
+	}
+	
+	public Map<String, Object> toMap() {
+		
+		Map<String, Object> v3map = new HashMap<String, Object>();
+		
+		v3map.put("eid", eid);
+		v3map.put("ets", ets);
+		v3map.put("ver", ver);
+		v3map.put("mid", mid);
+		v3map.put("actor", actor);
+		v3map.put("context", context);
+		v3map.put("object", object);
+		v3map.put("metadata", metadata);
+		v3map.put("edata", edata);
+		v3map.put("tags", tags);
+		v3map.put("`@timestamp`", reader.getAtTimestamp());
+		
+		return v3map;
 	}
 }
