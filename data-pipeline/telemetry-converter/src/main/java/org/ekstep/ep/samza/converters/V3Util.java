@@ -94,7 +94,7 @@ public class V3Util {
 		} catch (TelemetryReaderException e) {
 
 		}
-		return null;
+		return v3Edata;
 	}
 
 	private static void updateStartEdata(Map<String, Object> edata) {
