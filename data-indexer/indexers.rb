@@ -1835,6 +1835,54 @@ module Indexers
         }
       }
     }
+    GENERIC_TELEMETRY_MAPPINGS = {
+      _default_:{
+        dynamic: false,
+        properties: {
+          "@timestamp": {
+            "format": "strict_date_optional_time||epoch_millis",
+            "type": "date"
+          },
+          "@version": {
+            "type": "string"
+          },
+          "eid": {
+            "type": "string"
+          },
+          "ets": {
+            "format": "strict_date_optional_time||epoch_millis",
+            "type": "date"
+          },
+          "mid": {
+            "type": "string"
+          },
+          "ts": {
+            "format": "strict_date_optional_time||epoch_millis",
+            "type": "date"
+          },
+          "context": {
+            "properties": {
+              "channel": {
+                "type": "string"
+              }
+            }
+          },
+          "metadata": {
+            "properties": {
+              "source": {
+                "type": "string"
+              },
+              "index_name": {
+                "type": "string"
+              },
+              "index_type": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
     attr_reader :client
     def initialize(refresh=true)
       @client = ::Elasticsearch::Client.new log: false
@@ -1937,6 +1985,18 @@ module Indexers
         body: {
         order: 10,
         template: "failed-telemetry-*",
+        settings: {
+          "index.refresh_interval": "5s"
+        },
+        mappings: BASIC_TELEMETRY_MAPPINGS,
+        aliases: {}
+        }
+      })
+      puts client.indices.put_template({
+        name: "telemetry",
+        body: {
+        order: 10,
+        template: "telemetry-*",
         settings: {
           "index.refresh_interval": "5s"
         },
