@@ -19,27 +19,30 @@
 
 package org.ekstep.ep.samza.task;
 
+import com.google.gson.Gson;
 import org.apache.samza.config.Config;
-import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
+import org.apache.samza.system.OutgoingMessageEnvelope;
+import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
-import org.ekstep.ep.samza.dedup.DeDupEngine;
+import org.ekstep.ep.samza.converters.TelemetryV3Converter;
+import org.ekstep.ep.samza.domain.TelemetryV3;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.metrics.JobMetrics;
-import org.ekstep.ep.samza.service.DeDuplicationService;
+
+import java.util.Map;
 
 public class TelemetryConverterTask implements StreamTask, InitableTask, WindowableTask {
 
 
     static Logger LOGGER = new Logger(TelemetryConverterTask.class);
-    private DeDuplicationConfig config;
+    private TelemetryConverterConfig config;
     private JobMetrics metrics;
-    private DeDuplicationService service;
 
-    public TelemetryConverterTask(Config config, TaskContext context,
-                                  KeyValueStore<Object, Object> deDuplicationStore, DeDupEngine deDupEngine) {
-        init(config, context, deDuplicationStore, deDupEngine);
-    }
+//    public TelemetryConverterTask(Config config, TaskContext context,
+//                                  KeyValueStore<Object, Object> deDuplicationStore, DeDupEngine deDupEngine) {
+//        init(config, context, deDuplicationStore, deDupEngine);
+//    }
 
     public TelemetryConverterTask() {
 
@@ -47,29 +50,44 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
 
     @Override
     public void init(Config config, TaskContext context) {
-        init(config, context,
-                (KeyValueStore<Object, Object>) context.getStore("de-duplication"), null);
-    }
-
-    private void init(Config config, TaskContext context,
-                      KeyValueStore<Object, Object> deDuplicationStore, DeDupEngine deDupEngine) {
-        this.config = new DeDuplicationConfig(config);
-        metrics = new JobMetrics(context);
-        deDupEngine = deDupEngine == null ? new DeDupEngine(deDuplicationStore) : deDupEngine;
-        service = new DeDuplicationService(deDupEngine,this.config);
+//        init(config, context,
+//                (KeyValueStore<Object, Object>) context.getStore("de-duplication"), null);
     }
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector,
                         TaskCoordinator taskCoordinator) throws Exception {
-        DeDuplicationSource source = new DeDuplicationSource(envelope);
-        DeDuplicationSink sink = new DeDuplicationSink(collector, metrics, config);
+        //TODO: Logger
+        try {
+            String message = (String) envelope.getMessage();
+            Map<String, Object> map = (Map<String, Object>) new Gson().fromJson(message, Map.class);
+            TelemetryV3Converter converter = new TelemetryV3Converter(map);
 
-        service.process(source, sink);
+            TelemetryV3 telemetryV3 = converter.convert();
+            toSuccessTopic(collector, telemetryV3);
+        }
+        catch(Exception ex) {
+            toFailedTopic(collector, envelope);
+        }
     }
 
     @Override
     public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
         metrics.clear();
+    }
+
+    private void toSuccessTopic(MessageCollector collector, TelemetryV3 v3) {
+        // TODO: v3.toJson()
+        String json = "";
+        collector.send(new OutgoingMessageEnvelope(
+                new SystemStream("kafka", config.successTopic()), json));
+        metrics.incFailedCounter();;
+    }
+
+    private void toFailedTopic(MessageCollector collector, IncomingMessageEnvelope envelope) {
+        String json = "";
+        collector.send(new OutgoingMessageEnvelope(
+                new SystemStream("kafka", config.failedTopic()), json));
+        metrics.incFailedCounter();
     }
 }
