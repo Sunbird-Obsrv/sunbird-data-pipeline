@@ -139,6 +139,9 @@ public class Telemetry {
         return this.<String>read("channel").value();
     }
 
+    public String getAtTimestamp(){
+    	return this.<String>read("`@timestamp`").value();
+    }
     public Map<String, Object> getEdata(){
     	return this.<Map<String, Object>>read("edata.eks").value();
     }
