@@ -34,7 +34,6 @@ import java.util.Map;
 
 public class TelemetryConverterTask implements StreamTask, InitableTask, WindowableTask {
 
-
     static Logger LOGGER = new Logger(TelemetryConverterTask.class);
     private TelemetryConverterConfig config;
     private JobMetrics metrics;
@@ -57,7 +56,6 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector,
                         TaskCoordinator taskCoordinator) throws Exception {
-        //TODO: Logger
         try {
             String message = (String) envelope.getMessage();
             Map<String, Object> map = (Map<String, Object>) new Gson().fromJson(message, Map.class);
@@ -65,8 +63,10 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
 
             TelemetryV3 telemetryV3 = converter.convert();
             toSuccessTopic(collector, telemetryV3);
+            LOGGER.info(telemetryV3.getEid(), "Converted to V3. EVENT: {}", telemetryV3.toMap());
         }
         catch(Exception ex) {
+            LOGGER.error("", "Failed to convert event to telemetry v3", ex);
             toFailedTopic(collector, envelope);
         }
     }
@@ -77,15 +77,14 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
     }
 
     private void toSuccessTopic(MessageCollector collector, TelemetryV3 v3) {
-        // TODO: v3.toJson()
-        String json = "";
-        collector.send(new OutgoingMessageEnvelope(
-                new SystemStream("kafka", config.successTopic()), json));
-        metrics.incFailedCounter();;
+        Map<String, Object> event = v3.toMap();
+        String json = new Gson().toJson(event);
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), json));
+        metrics.incFailedCounter();
     }
 
     private void toFailedTopic(MessageCollector collector, IncomingMessageEnvelope envelope) {
-        String json = "";
+        String json = (String) envelope.getMessage();
         collector.send(new OutgoingMessageEnvelope(
                 new SystemStream("kafka", config.failedTopic()), json));
         metrics.incFailedCounter();
