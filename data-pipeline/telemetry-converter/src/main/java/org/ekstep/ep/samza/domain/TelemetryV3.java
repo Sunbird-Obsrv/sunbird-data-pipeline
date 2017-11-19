@@ -21,7 +21,7 @@ public class TelemetryV3 {
 	private Context context;
 	private TObject object;
 	private HashMap<String, Object> edata;
-	private ArrayList<String> tags;
+	private ArrayList<String> tags = new ArrayList<>();
 	private HashMap<String, String> metadata;
 
 	private Telemetry reader;
@@ -31,7 +31,7 @@ public class TelemetryV3 {
 		String v3Eid = TelemetryV3Converter.EVENT_MAP.get(reader
 				.<String> mustReadValue("eid"));
 		this.eid = v3Eid;
-		this.ets = reader.<Long> mustReadValue("ets");
+		this.ets = new Double(reader.mustReadValue("ets")).longValue();
 		this.mid = reader.<String> mustReadValue("mid");
 		
 		HashMap<String, String> metadata = new HashMap<String, String>();
@@ -121,7 +121,6 @@ public class TelemetryV3 {
 
 		Map<String, List<String>> etags = (Map<String, List<String>>) event
 				.get("etags");
-
 		if (!etags.isEmpty()) {
 			Set<String> keys = etags.keySet();
 			Iterator<String> it = keys.iterator();
@@ -154,7 +153,7 @@ public class TelemetryV3 {
 		v3map.put("metadata", metadata);
 		v3map.put("edata", edata);
 		v3map.put("tags", tags);
-		v3map.put("`@timestamp`", reader.getAtTimestamp());
+		v3map.put("@timestamp", reader.getAtTimestamp());
 		
 		return v3map;
 	}

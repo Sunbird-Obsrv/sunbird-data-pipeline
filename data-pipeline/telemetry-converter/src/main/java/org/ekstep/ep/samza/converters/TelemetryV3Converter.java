@@ -40,6 +40,7 @@ public class TelemetryV3Converter {
 	public TelemetryV3 convert() throws TelemetryReaderException {
 		TelemetryV3 v3 = new TelemetryV3(reader, source);
 		v3.setEdata(new EdataConverter(reader).getEdata());
+		v3.setTags(source);
 		return v3;
 	}
 }
