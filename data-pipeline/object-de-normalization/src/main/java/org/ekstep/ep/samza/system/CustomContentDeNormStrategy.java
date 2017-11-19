@@ -7,10 +7,10 @@ import org.ekstep.ep.samza.service.ContentService;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class GenericDeNormStrategy implements Strategy {
+public class CustomContentDeNormStrategy implements Strategy {
     private final ContentService contentService;
 
-    public GenericDeNormStrategy(ContentService contentService) {
+    public CustomContentDeNormStrategy(ContentService contentService) {
         this.contentService = contentService;
     }
 

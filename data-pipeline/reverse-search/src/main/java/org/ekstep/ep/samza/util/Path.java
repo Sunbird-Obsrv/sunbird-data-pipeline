@@ -22,7 +22,7 @@ public class Path {
     }
 
     public String did(){
-        return "dimensions.did";
+        return "context.did";
     }
 
     public String ets(){

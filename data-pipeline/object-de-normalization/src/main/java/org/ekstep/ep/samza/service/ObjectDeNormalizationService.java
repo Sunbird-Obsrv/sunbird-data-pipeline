@@ -10,7 +10,7 @@ import org.ekstep.ep.samza.task.ObjectDeNormalizationSource;
 import java.util.HashMap;
 
 public class ObjectDeNormalizationService {
-    public static final String GENERIC = "generic";
+    public static final String CUSTOM = "custom";
     static Logger LOGGER = new Logger(ObjectDeNormalizationService.class);
     private final ObjectDeNormalizationConfig config;
     private final HashMap strategies;
@@ -35,8 +35,8 @@ public class ObjectDeNormalizationService {
                 }
             }
 
-            LOGGER.info(event.getObjectID(), "DENORMALIZING USING GENERIC STRATEGY");
-            Strategy strategy = (Strategy) strategies.get(GENERIC);
+            LOGGER.info(event.getObjectID(), "DENORMALIZING USING CUSTOM STRATEGY");
+            Strategy strategy = (Strategy) strategies.get(CUSTOM);
             strategy.execute(event);
             sink.toSuccessTopic(event);
         } catch (Exception e) {
