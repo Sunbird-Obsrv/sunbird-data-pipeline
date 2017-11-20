@@ -11,6 +11,8 @@ import org.ekstep.ep.samza.domain.Visits;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.reader.TelemetryReaderException;
 
+import com.google.gson.Gson;
+
 public class EdataConverter {
 
 	private Telemetry event;
@@ -26,8 +28,12 @@ public class EdataConverter {
 		
 		try {
 			String eid = event.<String> mustReadValue("eid");
+			//String v3Eid = TelemetryV3Converter.EVENT_MAP.getOrDefault(eid, "");
 			String v3Eid = TelemetryV3Converter.EVENT_MAP.get(eid);
-
+			//System.out.println(eid + " -> "+v3Eid);
+			
+			//System.out.println(new Gson().toJson(event));
+			
 			Map<String, Object> edata = event.getEdata();
 
 			switch (v3Eid) {
@@ -174,7 +180,7 @@ public class EdataConverter {
 		if ("GE_UPDATE".equals(eid)) {
 			v3Edata.put("type", "app_update");
 			v3Edata.put("level", "info");
-		} else if ("GE_API_CALL".equals(eid)) {
+		} else if (eid.endsWith("API_CALL")) {
 			v3Edata.put("type", "api_call");
 			v3Edata.put("level", "trace");
 		} else {

@@ -118,7 +118,7 @@ public class TelemetryV3 {
 
 		Map<String, List<String>> etags = (Map<String, List<String>>) event
 				.get("etags");
-		if (!etags.isEmpty()) {
+		if (null != etags && !etags.isEmpty()) {
 			Set<String> keys = etags.keySet();
 			Iterator<String> it = keys.iterator();
 			while (it.hasNext()) {
