@@ -38,10 +38,9 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
     private TelemetryConverterConfig config;
     private JobMetrics metrics;
 
-//    public TelemetryConverterTask(Config config, TaskContext context,
-//                                  KeyValueStore<Object, Object> deDuplicationStore, DeDupEngine deDupEngine) {
-//        init(config, context, deDuplicationStore, deDupEngine);
-//    }
+    public TelemetryConverterTask(Config config, TaskContext context) {
+        init(config, context);
+    }
 
     public TelemetryConverterTask() {
 
@@ -49,8 +48,8 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
 
     @Override
     public void init(Config config, TaskContext context) {
-//        init(config, context,
-//                (KeyValueStore<Object, Object>) context.getStore("de-duplication"), null);
+        this.config = new TelemetryConverterConfig(config);
+        this.metrics = new JobMetrics(context);
     }
 
     @Override
