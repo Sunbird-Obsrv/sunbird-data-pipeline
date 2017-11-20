@@ -8,7 +8,7 @@ import java.util.Map;
 public class Actor {
     private String id;
     private String type;
-    private final String defaultType = "User";
+    transient private final String defaultType = "User";
 
     public Actor() { }
 

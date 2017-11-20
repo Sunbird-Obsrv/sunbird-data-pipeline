@@ -140,7 +140,7 @@ public class Telemetry {
     }
 
     public String getAtTimestamp(){
-    	return this.<String>read("`@timestamp`").value();
+    	return this.<String>read("@timestamp").value();
     }
     public Map<String, Object> getEdata(){
     	return this.<Map<String, Object>>read("edata.eks").value();

@@ -7,7 +7,7 @@ public class TObject {
     private String type;
     private String ver;
     private Rollup rollUp;
-    private String defaultType = "Content";
+    transient private String defaultType = "Content";
     
     public TObject(Telemetry reader){
     	this.id = reader.<String>read("gdata.id").valueOrDefault("");
