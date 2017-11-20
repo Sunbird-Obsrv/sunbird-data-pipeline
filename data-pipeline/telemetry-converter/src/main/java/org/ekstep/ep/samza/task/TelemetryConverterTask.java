@@ -30,6 +30,7 @@ import org.ekstep.ep.samza.domain.TelemetryV3;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.metrics.JobMetrics;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class TelemetryConverterTask implements StreamTask, InitableTask, WindowableTask {
@@ -55,18 +56,17 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector,
                         TaskCoordinator taskCoordinator) throws Exception {
+        String message = (String) envelope.getMessage();
+        Map<String, Object> map = (Map<String, Object>) new Gson().fromJson(message, Map.class);
         try {
-            String message = (String) envelope.getMessage();
-            Map<String, Object> map = (Map<String, Object>) new Gson().fromJson(message, Map.class);
             TelemetryV3Converter converter = new TelemetryV3Converter(map);
-
             TelemetryV3 telemetryV3 = converter.convert();
             toSuccessTopic(collector, telemetryV3);
             LOGGER.info(telemetryV3.getEid(), "Converted to V3. EVENT: {}", telemetryV3.toMap());
         }
         catch(Exception ex) {
             LOGGER.error("", "Failed to convert event to telemetry v3", ex);
-            toFailedTopic(collector, envelope);
+            toFailedTopic(collector, map, ex);
         }
     }
 
@@ -77,15 +77,39 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
 
     private void toSuccessTopic(MessageCollector collector, TelemetryV3 v3) {
         Map<String, Object> event = v3.toMap();
+        Map<String, Object> flags = new HashMap<>();
+        flags.put("v2_converted", true);
+        event.put("flags", flags);
+
         String json = new Gson().toJson(event);
         collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), json));
         metrics.incFailedCounter();
     }
 
-    private void toFailedTopic(MessageCollector collector, IncomingMessageEnvelope envelope) {
-        String json = (String) envelope.getMessage();
+    private void toFailedTopic(MessageCollector collector, Map<String, Object> event, Exception ex) {
+        Map<String, Object> flags = new HashMap<>();
+        flags.put("v2_converted", false);
+        flags.put("error", ex.getMessage());
+        flags.put("stack", stacktraceToString(ex.getStackTrace()));
+
+        Map<String, Object> payload = event;
+        payload.put("flags", flags);
+
+        String json = new Gson().toJson(payload);
+
         collector.send(new OutgoingMessageEnvelope(
                 new SystemStream("kafka", config.failedTopic()), json));
         metrics.incFailedCounter();
     }
+
+    private String stacktraceToString(StackTraceElement[] stackTrace) {
+        String stack = "";
+        for (StackTraceElement trace: stackTrace) {
+            stack += trace.toString() + "\n";
+        }
+        return stack;
+    }
+
+
+
 }
