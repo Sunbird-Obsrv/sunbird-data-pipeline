@@ -27,15 +27,12 @@ public class TelemetryV3 {
 	private Telemetry reader;
 	
 	public TelemetryV3(Telemetry reader, Map<String, Object> source) throws TelemetryReaderException {
-		
-		String v3Eid = TelemetryV3Converter.EVENT_MAP.get(reader
-				.<String> mustReadValue("eid"));
-		this.eid = v3Eid;
-		this.ets = new Double(reader.mustReadValue("ets")).longValue();
+		this.eid = TelemetryV3Converter.EVENT_MAP.get(reader.<String> mustReadValue("eid"));
+		this.ets = reader.getEts();
 		this.mid = reader.<String> mustReadValue("mid");
 		
 		HashMap<String, String> metadata = new HashMap<String, String>();
-		String checksum = (String) reader.id();
+		String checksum = reader.id();
 		metadata.put("checksum", checksum);
 		this.metadata = metadata;
 		this.actor = new Actor(source);

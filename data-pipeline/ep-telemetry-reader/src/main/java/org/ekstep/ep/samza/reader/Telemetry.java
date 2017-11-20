@@ -139,6 +139,11 @@ public class Telemetry {
         return this.<String>read("channel").value();
     }
 
+    public long getEts() throws TelemetryReaderException {
+        double ets = this.<Double>mustReadValue("ets");
+        return (long) ets;
+    }
+
     public String getAtTimestamp(){
     	return this.<String>read("@timestamp").value();
     }
