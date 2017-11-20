@@ -38,7 +38,6 @@
     <module>job-metrics</module>
     <module>ep-telemetry-reader</module>
     <module>object-lifecycle-management</module>
-    <module>object-de-normalization</module>
     <module>portal-profile-management</module>
     <module>public-exhaust-de-duplication</module>
     <module>private-exhaust-de-duplication</module>
@@ -53,6 +52,7 @@
     <module>es-router-secondary</module>
     <module>telemetry-validator</module>
     <module>telemetry-converter</module>
+    <module>object-de-normalization</module>
   </modules>
 
   <properties>

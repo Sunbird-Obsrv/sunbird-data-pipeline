@@ -23,7 +23,7 @@ public class SearchServiceClient implements SearchService {
     }
 
     @Override
-    public Content search(String contentId) throws IOException {
+    public Content searchContent(String contentId) throws IOException {
         String body = new Gson().toJson(new SearchRequest(contentId).toMap());
         Request request = new Request.Builder()
                 .url(endpoint)
