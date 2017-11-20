@@ -9,8 +9,8 @@ public class TelemetryConverterConfig {
 
     public TelemetryConverterConfig(Config config) {
         // TODO: decide on the output topics
-        successTopic = config.get("output.success.topic.name", "telemetry.valid");
-        failedTopic = config.get("output.failed.topic.name", "telemetry.unique.fail");
+        successTopic = config.get("output.success.topic.name", "telemetry.v3");
+        failedTopic = config.get("output.failed.topic.name", "telemetry.v3.fail");
     }
 
     public String successTopic() {
