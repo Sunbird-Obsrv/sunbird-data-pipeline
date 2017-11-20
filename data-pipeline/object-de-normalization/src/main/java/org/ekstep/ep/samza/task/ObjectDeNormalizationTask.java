@@ -17,7 +17,7 @@ import org.ekstep.ep.samza.service.ContentService;
 import org.ekstep.ep.samza.service.ItemService;
 import org.ekstep.ep.samza.service.ObjectDeNormalizationService;
 import org.ekstep.ep.samza.system.ContentDeNormStrategy;
-import org.ekstep.ep.samza.system.GenericDeNormStrategy;
+import org.ekstep.ep.samza.system.CustomContentDeNormStrategy;
 import org.ekstep.ep.samza.system.ItemDeNormStrategy;
 import org.ekstep.ep.samza.system.Strategy;
 
@@ -26,7 +26,7 @@ import java.util.HashMap;
 public class ObjectDeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
     public static final String CONTENT = "content";
     public static final String ITEM = "item";
-    public static final String GENERIC = "generic";
+    public static final String CUSTOM = "custom";
     static Logger LOGGER = new Logger(ObjectDeNormalizationTask.class);
     private ObjectDeNormalizationConfig config;
     private JobMetrics metrics;
@@ -69,21 +69,15 @@ public class ObjectDeNormalizationTask implements StreamTask, InitableTask, Wind
 
         this.contentService = new ContentService(searchServiceClient, contentCacheService, this.config.cacheTTL());
 
-        // TODO: Add back when events with object type item starts coming in
-//         CacheService<String, Item> itemCacheService = contentStore != null
-//                ? new CacheService<String, Item>(contentStore, new TypeToken<CacheEntry<Content>>() {
-//         }.getType(), metrics)
-//                : new CacheService<String, Item>(context, "object-store", CacheEntry.class, metrics);
+         CacheService<String, Item> itemCacheService = contentStore != null
+                ? new CacheService<String, Item>(contentStore, new TypeToken<CacheEntry<Content>>() {
+         }.getType(), metrics)
+                : new CacheService<String, Item>(context, "object-store", CacheEntry.class, metrics);
+         this.itemService = new ItemService(searchServiceClient, itemCacheService, this.config.cacheTTL());
 
-
-
-//         this.itemService = new ItemService(searchServiceClient, itemCacheService, this.config.cacheTTL());
-
-        this.strategies.put(GENERIC,new GenericDeNormStrategy(this.contentService));
         this.strategies.put(CONTENT,new ContentDeNormStrategy(this.contentService));
-
- // TODO: Add back when events with object type item starts coming in
-//        this.strategies.put(ITEM,new ItemDeNormStrategy(this.itemService));
+        this.strategies.put(ITEM,new ItemDeNormStrategy(this.itemService));
+        this.strategies.put(CUSTOM,new CustomContentDeNormStrategy(this.contentService));
 
         service = new ObjectDeNormalizationService(strategies, this.config);
     }

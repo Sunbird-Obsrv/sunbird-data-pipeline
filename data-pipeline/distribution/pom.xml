@@ -26,14 +26,7 @@
     <dependency>
       <groupId>org.ekstep.ecosystem.jobs</groupId>
       <artifactId>reverse-search</artifactId>
-      <version>0.4.1</version>
-      <type>tar.gz</type>
-      <classifier>distribution</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.ekstep.ecosystem.jobs</groupId>
-      <artifactId>de-normalization</artifactId>
-      <version>0.6.2</version>
+      <version>0.4.2</version>
       <type>tar.gz</type>
       <classifier>distribution</classifier>
     </dependency>
@@ -46,13 +39,6 @@
     </dependency>
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
-          <artifactId>user-management</artifactId>
-          <version>0.2.6</version>
-          <type>tar.gz</type>
-          <classifier>distribution</classifier>
-      </dependency>
-      <dependency>
-          <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>partner-data-router</artifactId>
           <version>0.2.4</version>
           <type>tar.gz</type>
@@ -61,42 +47,14 @@
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>public-telemetry</artifactId>
-          <version>0.1.9</version>
-          <type>tar.gz</type>
-          <classifier>distribution</classifier>
-      </dependency>
-      <dependency>
-          <groupId>org.ekstep.ecosystem.jobs</groupId>
-          <artifactId>content-de-normalization</artifactId>
-          <version>0.1.2</version>
-          <type>tar.gz</type>
-          <classifier>distribution</classifier>
-      </dependency>
-      <dependency>
-          <groupId>org.ekstep.ecosystem.jobs</groupId>
-          <artifactId>item-de-normalization</artifactId>
-          <version>0.0.6</version>
-          <type>tar.gz</type>
-          <classifier>distribution</classifier>
-      </dependency>
-      <dependency>
-          <groupId>org.ekstep.ecosystem.jobs</groupId>
-          <artifactId>object-lifecycle-management</artifactId>
-          <version>0.1.2</version>
+          <version>0.2.1</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>object-de-normalization</artifactId>
-          <version>0.0.1</version>
-          <type>tar.gz</type>
-          <classifier>distribution</classifier>
-      </dependency>
-      <dependency>
-          <groupId>org.ekstep.ecosystem.jobs</groupId>
-          <artifactId>portal-profile-management</artifactId>
-          <version>0.1.1</version>
+          <version>0.0.2</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
@@ -117,7 +75,7 @@
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>es-router-primary</artifactId>
-          <version>0.0.4</version>
+          <version>0.0.6</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>
@@ -138,7 +96,7 @@
       <dependency>
           <groupId>org.ekstep.ecosystem.jobs</groupId>
           <artifactId>es-router-secondary</artifactId>
-          <version>0.0.4</version>
+          <version>0.0.5</version>
           <type>tar.gz</type>
           <classifier>distribution</classifier>
       </dependency>

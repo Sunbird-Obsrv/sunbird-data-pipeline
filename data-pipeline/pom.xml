@@ -21,24 +21,17 @@
 
   <modules>
     <module>reverse-search</module>
-    <module>de-normalization</module>
     <module>de-duplication</module>
     <module>distribution</module>
     <module>checksum-generator</module>
-    <module>user-management</module>
-    <module>user-management-test</module>
     <module>partner-data-router</module>
     <module>public-telemetry</module>
     <module>telemetry-cleaner</module>
     <module>ep-logger</module>
-    <module>content-de-normalization</module>
-    <module>item-de-normalization</module>
     <module>search-service</module>
     <module>cache-service</module>
     <module>job-metrics</module>
     <module>ep-telemetry-reader</module>
-    <module>object-lifecycle-management</module>
-    <module>portal-profile-management</module>
     <module>public-exhaust-de-duplication</module>
     <module>private-exhaust-de-duplication</module>
     <module>object-service</module>

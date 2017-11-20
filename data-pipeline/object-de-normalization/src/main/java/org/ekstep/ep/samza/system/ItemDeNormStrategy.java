@@ -16,9 +16,9 @@ public class ItemDeNormStrategy implements Strategy {
 
     @Override
     public void execute(Event event) throws IOException {
-//        Item item = itemService.getItem(event.id(), event.getObjectID());
-//        if(item != null){
-//            event.updateItem(item);
-//        }
+        Item item = itemService.getItem(event.id(), event.getObjectID());
+        if(item != null){
+            event.updateItem(item);
+        }
     }
 }
