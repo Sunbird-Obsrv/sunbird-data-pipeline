@@ -100,7 +100,9 @@ public class EventFixture {
             "        \"ver\": \"1.0.local-qa-debug\"\n" +
             "    },\n" +
             "    \"sid\": \"\",\n" +
-            "    \"channel\": \"\",\n" +
+            "    \"context\": {\n" +
+                "    \"channel\": \"\"\n" +
+            "    },\n" +
             "    \"tags\": [],\n" +
             "    \"ts\": \"2015-09-27T13:03:43-04:00\",\n" +
             "    \"uid\": \"6\",\n" +

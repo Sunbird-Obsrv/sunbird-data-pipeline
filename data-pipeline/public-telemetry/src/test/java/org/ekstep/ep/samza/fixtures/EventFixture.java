@@ -15,7 +15,9 @@ public class EventFixture {
                 "  ],\n" +
                 "  \"uid\": \"68f24339-caae-4ebb-b4ff-6b1ae0478c02\",\n" +
                 "  \"sid\": \"\",\n" +
-                "    \"channel\": \"in.ekstep\",\n" +
+                "    \"context\": {\n" +
+                "       \"channel\": \"in.ekstep\"\n" +
+                "    },\n" +
                 "  \"ts\": \"2016-05-25T15:03:54.857+0530\",\n" +
                 "  \"edata\": {\n" +
                 "    \"eks\": {\n" +
@@ -339,7 +341,9 @@ public class EventFixture {
                 "    ],\n" +
                 "    \"uid\": \"919280cb-3f51-46d7-ad7e-0ce4becb97a6\",\n" +
                 "    \"sid\": \"1e891213-5ec6-475c-b706-d65928f47f77\",\n" +
-                "    \"channel\": \"in.ekstep\",\n" +
+                "    \"context\": {\n" +
+                "       \"channel\": \"in.ekstep\"\n" +
+                "    },\n" +
                 "    \"ts\": \"2016-09-07T11:36:40.784+0530\",\n" +
                 "    \"edata\": {\n" +
                 "        \"eks\": {\n" +

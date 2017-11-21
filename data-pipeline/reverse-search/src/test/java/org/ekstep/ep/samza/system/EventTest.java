@@ -207,12 +207,12 @@ public class EventTest {
 
         Event event = new Event(EventFixture.locationAbsent());
         event.updateDefaults(conf);
-        Assert.assertEquals("in.ekstep", event.getMap().get("channel"));
+        Assert.assertEquals("in.ekstep", ( (Map<String,Object>) event.getMap().get("context")).get("channel") );
 
 
         Event event2 = new Event(EventFixture.emptyChannel());
         event2.updateDefaults(conf);
-        Assert.assertEquals("in.ekstep", event.getMap().get("channel"));
+        Assert.assertEquals("in.ekstep", ( (Map<String,Object>) event.getMap().get("context")).get("channel") );
     }
 
     private Location getLocation() {
