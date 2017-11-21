@@ -103,10 +103,10 @@ public class TelemetryV3 {
 			
 			if(((String)event.getEdata().get("subtype")).equalsIgnoreCase("SHOW")){
 				v3Eid = "IMPRESSION";
+				//v3Eid = "LOG"; // For IMPRESSION & LOG the condition is same so I commented LOG
 			}else {
 				v3Eid = "INTERACT";
 			}
-			//v3Eid = "LOG"; // For IMPRESSION & LOG the condition is same so I commented LOG
 			break;
 		case "CP_IMPRESSION":
 			v3Eid = "IMPRESSION";
