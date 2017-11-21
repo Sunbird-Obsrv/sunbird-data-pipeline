@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.domain;
 
+import java.util.List;
 import java.util.Map;
 
 public class Question {
@@ -11,8 +12,8 @@ public class Question {
 	private String uri;
 	private String desc;
 	private String title;
-	private String[] mmc;
-	private String[] mc;
+	private List<String> mmc;
+	private List<String> mc;
 
 	public Question(Map<String, Object> edata) {
 		this.id = (String) edata.getOrDefault("qid", "");
@@ -22,8 +23,8 @@ public class Question {
 		this.uri = (String) edata.get("uri");
 		this.desc = (String) edata.get("qdesc");
 		this.title = (String) edata.get("qtitle");
-		this.mmc = (String[]) edata.get("mmc");
-		this.mc = (String[]) edata.get("mc");
+		this.mmc = (List<String>) edata.get("mmc");
+		this.mc = (List<String>) edata.get("mc");
 	}
 
 	public String getId() {
@@ -82,19 +83,19 @@ public class Question {
 		this.title = title;
 	}
 
-	public String[] getMmc() {
+	public List<String> getMmc() {
 		return mmc;
 	}
 
-	public void setMmc(String[] mmc) {
+	public void setMmc(List<String> mmc) {
 		this.mmc = mmc;
 	}
 
-	public String[] getMc() {
+	public List<String> getMc() {
 		return mc;
 	}
 
-	public void setMc(String[] mc) {
+	public void setMc(List<String> mc) {
 		this.mc = mc;
 	}
 }

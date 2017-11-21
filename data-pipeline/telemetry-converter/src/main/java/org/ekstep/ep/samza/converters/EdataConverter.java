@@ -11,7 +11,6 @@ import org.ekstep.ep.samza.domain.Question;
 import org.ekstep.ep.samza.domain.Target;
 import org.ekstep.ep.samza.domain.Visits;
 import org.ekstep.ep.samza.reader.Telemetry;
-import org.ekstep.ep.samza.reader.TelemetryReaderException;
 
 import com.google.gson.Gson;
 
@@ -24,25 +23,18 @@ public class EdataConverter {
 		this.event = reader;
 	}
 
-	public HashMap<String, Object> getEdata() {
+	public HashMap<String, Object> getEdata(String v3Eid, String eid) {
 
 		v3Edata = new HashMap<String, Object>();
 
 		try {
-			String eid = event.<String> mustReadValue("eid");
-			// String v3Eid = TelemetryV3Converter.EVENT_MAP.getOrDefault(eid,
-			// "");
-			String v3Eid = TelemetryV3Converter.EVENT_MAP.get(eid);
-			// System.out.println(eid + " -> "+v3Eid);
-
-			// System.out.println(new Gson().toJson(event));
 
 			Map<String, Object> edata = event.getEdata();
-
 			switch (v3Eid) {
 			case "START":
 				v3Edata.put("type",
 						TelemetryV3Converter.EDATA_TYPE_MAP.get(eid));
+
 				updateStartEdata(edata);
 				break;
 			case "END":
@@ -86,19 +78,18 @@ public class EdataConverter {
 				break;
 			case "EXDATA":
 				updateExDataEdata(edata);
-
 			default:
 				break;
 			}
-		} catch (TelemetryReaderException e) {
-
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return v3Edata;
 	}
 
 	private void updateStartEdata(Map<String, Object> edata) {
 		v3Edata.put("dspec", edata.get("dspec"));
-		v3Edata.put("uaspec", edata.get("uaspec"));
+		v3Edata.put("uaspec", edata.getOrDefault("uaspec", edata.get("client")));
 		v3Edata.put("loc", edata.get("loc"));
 		v3Edata.put("mode", edata.getOrDefault("mode", ""));
 		v3Edata.put("duration", edata.getOrDefault("load_time", 0));
@@ -152,9 +143,9 @@ public class EdataConverter {
 
 		v3Edata.put("target", new Target(edata));
 		v3Edata.put("type", "");
-		HashMap<String, String> values = new HashMap<String, String>();
+		HashMap<String, Object> values = new HashMap<String, Object>();
 		values.put("state", (String) edata.get("state"));
-		values.put("resvalues", (String) edata.get("resvalues"));
+		values.put("resvalues", (ArrayList<String>) edata.get("resvalues"));
 		v3Edata.put("values", values);
 	}
 
@@ -189,8 +180,8 @@ public class EdataConverter {
 	}
 
 	private List getShareItem(Map<String, Object> edata) {
-		String dataType = (String)edata.getOrDefault("datatype","");
-		
+		String dataType = (String) edata.getOrDefault("datatype", "");
+
 		List<Map<String, Object>> contents = (List<Map<String, Object>>) edata
 				.getOrDefault("contents", new ArrayList<Map<String, Object>>());
 
@@ -200,36 +191,36 @@ public class EdataConverter {
 
 		List<Map<String, String>> params = new ArrayList<Map<String, String>>();
 		Map<String, String> paramsMap = null;
-		 
-				
+
 		for (Map<String, Object> content : contents) {
-			
+
 			paramsMap = new HashMap<String, String>();
-			paramsMap.put("transfers",Integer.toString((Integer)content.get("transferCount")));
-			paramsMap.put("count",Integer.toString((Integer)content.get("count")));
+			paramsMap.put("transfers", Double.toString((Double) content
+					.getOrDefault("transferCount", 0)));
+			paramsMap.put("count", Integer.toString((Integer) content
+					.getOrDefault("count", 0)));
 			params.add(paramsMap);
-			
-			
-			obj.put("id", (String)content.get("identifier"));
-			obj.put("type",dataType);
-			obj.put("ver", (String)content.get("pkgVersion"));
-			
-			origin.put("id", (String)content.get("origin"));
-			origin.put("type","device");
-			
+
+			obj.put("id", (String) content.get("identifier"));
+			obj.put("type", dataType);
+			obj.put("ver", Double.toString((Double) content.get("pkgVersion")));
+
+			origin.put("id", (String) content.get("origin"));
+			origin.put("type", "device");
+
 			to.put("id", "");
 			to.put("type", "");
 		}
 
-		List items =  new ArrayList();
+		List items = new ArrayList();
 		items.add(obj);
 		items.add(params);
 		items.add(origin);
 		items.add(to);
-		
+
 		return items;
 	}
-	
+
 	private void updateLogEdata(Map<String, Object> edata, String eid) {
 		if ("GE_UPDATE".equals(eid)) {
 			v3Edata.put("type", "app_update");

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ekstep.ep.samza.converters.TelemetryV3Converter;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.reader.TelemetryReaderException;
 
@@ -25,12 +24,16 @@ public class TelemetryV3 {
 	private HashMap<String, String> metadata;
 
 	private Telemetry reader;
-	
-	public TelemetryV3(Telemetry reader, Map<String, Object> source) throws TelemetryReaderException {
-		this.eid = TelemetryV3Converter.EVENT_MAP.get(reader.<String> mustReadValue("eid"));
+
+	public TelemetryV3(Telemetry reader, Map<String, Object> source)
+			throws TelemetryReaderException {
+		this.reader = reader;
+
+		this.eid = getEid(reader.<String> mustReadValue("eid"), reader);
+
 		this.ets = reader.getEts();
 		this.mid = reader.<String> mustReadValue("mid");
-		
+
 		HashMap<String, String> metadata = new HashMap<String, String>();
 		String checksum = reader.id();
 		metadata.put("checksum", checksum);
@@ -38,12 +41,140 @@ public class TelemetryV3 {
 		this.actor = new Actor(source);
 		this.context = new Context(reader);
 		this.object = new TObject(reader);
-		
-		this.reader = reader;
 	}
-	
+
 	public TelemetryV3() throws TelemetryReaderException {
+
+	}
+
+	private String getEid(String eid, Telemetry event) {
+
+		String v3Eid = "";
 		
+		switch (eid) {
+		case "OE_START":
+			v3Eid = "START";
+			break;
+		case "GE_START":
+			v3Eid = "START";
+			break;
+		case "GE_LAUNCH_GAME":
+			v3Eid = "START";
+			break;
+		case "GE_GENIE_START":
+			Map<String, Object> dspec = (Map<String, Object>)event.getEdata().get("dspec");
+			if(dspec!=null && dspec.containsKey("mdata")){
+				v3Eid = "EXDATA";
+			}else {
+				v3Eid = "START";
+			}
+			break;
+		case "GE_SESSION_START":
+			v3Eid = "START";
+			break;
+		case "CP_SESSION_START":
+			v3Eid = "START";
+			break;
+		case "CE_START":
+			v3Eid = "START";
+			break;
+		case "OE_END":
+			v3Eid = "END";
+			break;
+		case "GE_END":
+			v3Eid = "END";
+			break;
+		case "GE_GENIE_END":
+			v3Eid = "END";
+			break;
+		case "GE_GAME_END":
+			v3Eid = "END";
+			break;
+		case "GE_SESSION_END":
+			v3Eid = "END";
+			break;
+		case "CE_END":
+			v3Eid = "END";
+			break;
+		case "OE_NAVIGATE":
+			v3Eid = "IMPRESSION";
+			break;
+		case "GE_INTERACT":
+			
+			if(((String)event.getEdata().get("subtype")).equalsIgnoreCase("SHOW")){
+				v3Eid = "IMPRESSION";
+			}else {
+				v3Eid = "INTERACT";
+			}
+			//v3Eid = "LOG"; // For IMPRESSION & LOG the condition is same so I commented LOG
+			break;
+		case "CP_IMPRESSION":
+			v3Eid = "IMPRESSION";
+			break;
+		case "OE_INTERACT":
+			v3Eid = "INTERACT";
+			break;
+		case "CP_INTERACT":
+			v3Eid = "INTERACT";
+			break;
+		case "CE_INTERACT":
+			v3Eid = "INTERACT";
+			break;
+		case "CE_PLUGIN_LIFECYCLE":
+			v3Eid = "INTERACT";
+			break;
+		case "OE_ASSESS":
+			v3Eid = "ASSESS";
+			break;
+		case "OE_ITEM_RESPONSE":
+			v3Eid = "RESPONSE";
+			break;
+		case "OE_INTERRUPT":
+			v3Eid = "INTERRUPT";
+			break;
+		case "GE_RESUME":
+			v3Eid = "INTERRUPT";
+			break;
+		case "GE_GENIE_RESUME":
+			v3Eid = "INTERRUPT";
+			break;
+		case "GE_INTERRUPT":
+			v3Eid = "INTERRUPT";
+			break;
+		case "GE_FEEDBACK":
+			v3Eid = "FEEDBACK";
+			break;
+		case "GE_TRANSFER":
+			v3Eid = "SHARE";
+			break;
+		case "BE_OBJECT_LIFECYCLE":
+			v3Eid = "AUDIT";
+			break;
+		case "GE_ERROR":
+			v3Eid = "ERROR";
+			break;
+		case "CE_ERROR":
+			v3Eid = "ERROR";
+			break;
+		case "GE_UPDATE":
+			v3Eid = "LOG";
+			break;
+		case "GE_API_CALL":
+			v3Eid = "LOG";
+			break;
+		case "GE_SERVICE_API_CALL":
+			v3Eid = "LOG";
+			break;
+		case "GE_PARTNER_DATA":
+			v3Eid = "EXDATA";
+			break;
+		case "GE_CREATE_USER":
+			break;
+		default:
+			break;
+
+		}
+		return v3Eid;
 	}
 
 	public HashMap<String, String> getMetadata() {
@@ -135,11 +266,11 @@ public class TelemetryV3 {
 	public void setContext(Context context) {
 		this.context = context;
 	}
-	
+
 	public Map<String, Object> toMap() {
-		
+
 		Map<String, Object> v3map = new HashMap<String, Object>();
-		
+
 		v3map.put("eid", eid);
 		v3map.put("ets", ets);
 		v3map.put("ver", ver);
@@ -151,7 +282,7 @@ public class TelemetryV3 {
 		v3map.put("edata", edata);
 		v3map.put("tags", tags);
 		v3map.put("@timestamp", reader.getAtTimestamp());
-		
+
 		return v3map;
 	}
 }
