@@ -12,8 +12,6 @@ import org.ekstep.ep.samza.domain.Target;
 import org.ekstep.ep.samza.domain.Visits;
 import org.ekstep.ep.samza.reader.Telemetry;
 
-import com.google.gson.Gson;
-
 public class EdataConverter {
 
 	private Telemetry event;
@@ -250,7 +248,7 @@ public class EdataConverter {
 	}
 
 	private void updateExDataEdata(Map<String, Object> edata) {
-		v3Edata.put("type", "partnerdata");
-		v3Edata.put("data", edata);
+		v3Edata.put("type", edata.getOrDefault("dspec.mdata.type", "partnerdata"));
+		v3Edata.put("data", edata.getOrDefault("dspec.mdata.id", edata));
 	}
 }
