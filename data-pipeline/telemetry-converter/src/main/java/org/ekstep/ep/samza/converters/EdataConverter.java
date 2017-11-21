@@ -1,6 +1,8 @@
 package org.ekstep.ep.samza.converters;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.ekstep.ep.samza.domain.EdataObject;
@@ -17,32 +19,35 @@ public class EdataConverter {
 
 	private Telemetry event;
 	private HashMap<String, Object> v3Edata;
-	
-	public EdataConverter(Telemetry reader){
+
+	public EdataConverter(Telemetry reader) {
 		this.event = reader;
 	}
 
 	public HashMap<String, Object> getEdata() {
 
 		v3Edata = new HashMap<String, Object>();
-		
+
 		try {
 			String eid = event.<String> mustReadValue("eid");
-			//String v3Eid = TelemetryV3Converter.EVENT_MAP.getOrDefault(eid, "");
+			// String v3Eid = TelemetryV3Converter.EVENT_MAP.getOrDefault(eid,
+			// "");
 			String v3Eid = TelemetryV3Converter.EVENT_MAP.get(eid);
-			//System.out.println(eid + " -> "+v3Eid);
-			
-			//System.out.println(new Gson().toJson(event));
-			
+			// System.out.println(eid + " -> "+v3Eid);
+
+			// System.out.println(new Gson().toJson(event));
+
 			Map<String, Object> edata = event.getEdata();
 
 			switch (v3Eid) {
 			case "START":
-				v3Edata.put("type", TelemetryV3Converter.EDATA_TYPE_MAP.get(eid));
+				v3Edata.put("type",
+						TelemetryV3Converter.EDATA_TYPE_MAP.get(eid));
 				updateStartEdata(edata);
 				break;
 			case "END":
-				v3Edata.put("type", TelemetryV3Converter.EDATA_TYPE_MAP.get(eid));
+				v3Edata.put("type",
+						TelemetryV3Converter.EDATA_TYPE_MAP.get(eid));
 				updateEndEdata(edata);
 				break;
 			case "IMPRESSION":
@@ -64,6 +69,7 @@ public class EdataConverter {
 				updateFeedbackEdata(edata);
 				break;
 			case "SHARE":
+				updateShareEdata(edata);
 				break;
 			case "AUDIT":
 				updateAuditEdata(edata);
@@ -176,6 +182,54 @@ public class EdataConverter {
 		v3Edata.put("plugin", new Plugin(edata));
 	}
 
+	private void updateShareEdata(Map<String, Object> edata) {
+		v3Edata.put("dir", edata.get("direction"));
+		v3Edata.put("type", edata.getOrDefault("type", "File"));
+		v3Edata.put("items", getShareItem(edata));
+	}
+
+	private List getShareItem(Map<String, Object> edata) {
+		String dataType = (String)edata.getOrDefault("datatype","");
+		
+		List<Map<String, Object>> contents = (List<Map<String, Object>>) edata
+				.getOrDefault("contents", new ArrayList<Map<String, Object>>());
+
+		Map<String, String> obj = new HashMap<String, String>();
+		Map<String, String> origin = new HashMap<String, String>();
+		Map<String, String> to = new HashMap<String, String>();
+
+		List<Map<String, String>> params = new ArrayList<Map<String, String>>();
+		Map<String, String> paramsMap = null;
+		 
+				
+		for (Map<String, Object> content : contents) {
+			
+			paramsMap = new HashMap<String, String>();
+			paramsMap.put("transfers",Integer.toString((Integer)content.get("transferCount")));
+			paramsMap.put("count",Integer.toString((Integer)content.get("count")));
+			params.add(paramsMap);
+			
+			
+			obj.put("id", (String)content.get("identifier"));
+			obj.put("type",dataType);
+			obj.put("ver", (String)content.get("pkgVersion"));
+			
+			origin.put("id", (String)content.get("origin"));
+			origin.put("type","device");
+			
+			to.put("id", "");
+			to.put("type", "");
+		}
+
+		List items =  new ArrayList();
+		items.add(obj);
+		items.add(params);
+		items.add(origin);
+		items.add(to);
+		
+		return items;
+	}
+	
 	private void updateLogEdata(Map<String, Object> edata, String eid) {
 		if ("GE_UPDATE".equals(eid)) {
 			v3Edata.put("type", "app_update");
