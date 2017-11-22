@@ -1,0 +1,40 @@
+{
+  "channel": "in.ekstep",
+  "did": "c9780ae822d99adcd363e1f5d52e3d3ee04167bd",
+  "edata": {
+    "eks": {
+      "id": "",
+      "type": "BACKGROUND"
+    }
+  },
+  "eid": "GE_INTERRUPT",
+  "etags": {
+    "app": []
+  },
+  "ets": 1511341604939,
+  "gdata": {
+    "id": "org.ekstep.genieservices",
+    "ver": "6.5.2306"
+  },
+  "mid": "547c509b-cc7e-424a-9bbd-f40ae193fbab",
+  "pdata": {
+    "id": "genie",
+    "ver": "6.5.2306"
+  },
+  "sid": "f76af53f-5eaf-4117-98b9-823f48930290",
+  "ts": "2017-11-22T09:06:44.939+0000",
+  "uid": "8a7088b8-168f-4b53-96bf-22a0c6cdde4d",
+  "ver": "2.1",
+  "@version": "1",
+  "@timestamp": "2017-11-22T08:24:21.865Z",
+  "metadata": {
+    "checksum": "547c509b-cc7e-424a-9bbd-f40ae193fbab",
+    "gud_last_processed_at": "2017-11-22T08:24:22.265Z",
+    "gud_processed_count": 1,
+    "index_name": "ecosystem-2017.11",
+    "index_type": "events_v1"
+  },
+  "uuid": "268bf64f-4262-4c99-8699-ad7b447d83d925",
+  "key": "8a7088b8-168f-4b53-96bf-22a0c6cdde4d",
+  "type": "events"
+}
