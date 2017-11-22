@@ -9,16 +9,16 @@ import org.ekstep.ep.samza.domain.EdataObject;
 import org.ekstep.ep.samza.domain.Plugin;
 import org.ekstep.ep.samza.domain.Question;
 import org.ekstep.ep.samza.domain.Target;
-import org.ekstep.ep.samza.domain.Visits;
+import org.ekstep.ep.samza.domain.Visit;
 import org.ekstep.ep.samza.reader.Telemetry;
 
 public class EdataConverter {
 
-	private Telemetry event;
+	private Telemetry reader;
 	private HashMap<String, Object> v3Edata;
 
 	public EdataConverter(Telemetry reader) {
-		this.event = reader;
+		this.reader = reader;
 	}
 
 	public HashMap<String, Object> getEdata(String v3Eid, String eid) {
@@ -27,7 +27,7 @@ public class EdataConverter {
 
 		try {
 
-			Map<String, Object> edata = event.getEdata();
+			Map<String, Object> edata = reader.getEdata();
 			switch (v3Eid) {
 			case "START":
 				v3Edata.put("type",
@@ -107,9 +107,9 @@ public class EdataConverter {
 	private void updateImpressionEdata(Map<String, Object> edata) {
 		v3Edata.put("type", edata.getOrDefault("type", ""));
 		v3Edata.put("subtype", edata.getOrDefault("itype", ""));
-		v3Edata.put("pageid", edata.get("stageid"));
+		v3Edata.put("pageid", edata.get("pageid"));
 		v3Edata.put("uri", edata.get("uri"));
-		v3Edata.put("visits", new Visits());
+		v3Edata.put("visit", new Visit(reader));
 	}
 
 	private void updateInteractEdata(Map<String, Object> edata) {

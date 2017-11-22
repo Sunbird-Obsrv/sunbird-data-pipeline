@@ -75,4 +75,18 @@ public class TelemetryV3ConverterTest {
         assertEquals(eData.get("type"), "editor");
         assertEquals(eData.get("pageid"), "");
     }
+
+
+    @Test
+    public void convertCP_IMPRESSION() throws TelemetryReaderException, FileNotFoundException {
+        Map<String, Object> cpImpression = EventFixture.getEvent("CP_IMPRESSION");
+        TelemetryV3Converter converter = new TelemetryV3Converter(cpImpression);
+        TelemetryV3 v3 = converter.convert();
+        Map<String, Object> v3Map = v3.toMap();
+
+        Map<String, Object> eData = (Map<String, Object>)v3Map.get("edata");
+        assertEquals(eData.get("pageid"), "com_ekcontent.content");
+        assertEquals(eData.get("type"), "view");
+        assertEquals( ((Visit) eData.get("visit")).getObjid(), "domain_4083");
+    }
 }
