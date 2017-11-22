@@ -39,4 +39,16 @@ public class GeSessionStartConversionTest {
         assertEquals(5438.0, eData.get("duration"));
         assertEquals("session", eData.get("type"));
     }
+
+    @Test
+    public void convertGE_INTERRUPT() throws FileNotFoundException, TelemetryReaderException {
+        Map<String, Object> event = EventFixture.getEvent("GE_INTERRUPT");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+        TelemetryV3 v3 = converter.convert();
+        Map<String, Object> v3Map = v3.toMap();
+
+        Map<String, String> eData = (Map<String, String>) v3Map.get("edata");
+        assertEquals("", eData.get("pageid"));
+        assertEquals("BACKGROUND", eData.get("type"));
+    }
 }
