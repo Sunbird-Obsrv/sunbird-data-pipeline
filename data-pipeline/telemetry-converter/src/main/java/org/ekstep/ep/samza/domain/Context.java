@@ -18,7 +18,9 @@ public class Context {
     @SerializedName("pdata")
     private PData pData;
 
+    @SerializedName("cdata")
     private ArrayList<CData> cData = new ArrayList<CData>();
+
     private Rollup rollUp;
 
     public Context() {
