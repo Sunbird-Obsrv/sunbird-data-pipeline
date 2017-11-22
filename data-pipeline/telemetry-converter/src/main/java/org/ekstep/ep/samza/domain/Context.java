@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.domain;
 
+import com.google.gson.annotations.SerializedName;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.reader.TelemetryReaderException;
@@ -13,7 +14,10 @@ public class Context {
     private String env;
     private String sid;
     private String did = "";
+
+    @SerializedName("pdata")
     private PData pData;
+
     private ArrayList<CData> cData = new ArrayList<CData>();
     private Rollup rollUp;
 

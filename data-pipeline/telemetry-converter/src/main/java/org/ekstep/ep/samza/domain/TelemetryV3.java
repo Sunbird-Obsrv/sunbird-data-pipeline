@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.gson.Gson;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.reader.TelemetryReaderException;
 
@@ -247,8 +248,7 @@ public class TelemetryV3 {
 
 	public void setTags(Map<String, Object> event) {
 
-		Map<String, List<String>> etags = (Map<String, List<String>>) event
-				.get("etags");
+		Map<String, List<String>> etags = (Map<String, List<String>>) event.get("etags");
 		if (null != etags && !etags.isEmpty()) {
 			Set<String> keys = etags.keySet();
 			Iterator<String> it = keys.iterator();
@@ -268,9 +268,7 @@ public class TelemetryV3 {
 	}
 
 	public Map<String, Object> toMap() {
-
 		Map<String, Object> v3map = new HashMap<String, Object>();
-
 		v3map.put("eid", eid);
 		v3map.put("ets", ets);
 		v3map.put("ver", ver);
@@ -282,7 +280,11 @@ public class TelemetryV3 {
 		v3map.put("edata", edata);
 		v3map.put("tags", tags);
 		v3map.put("@timestamp", reader.getAtTimestamp());
-
 		return v3map;
+	}
+
+	public String toJson() {
+		Map<String, Object> map = toMap();
+		return new Gson().toJson(map);
 	}
 }
