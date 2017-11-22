@@ -109,7 +109,9 @@ public class EdataConverter {
 		v3Edata.put("subtype", edata.getOrDefault("itype", ""));
 		v3Edata.put("pageid", edata.get("pageid"));
 		v3Edata.put("uri", edata.get("uri"));
-		v3Edata.put("visit", new Visit(reader));
+		ArrayList<Visit> visits = new ArrayList<Visit>();
+		visits.add(new Visit(reader));
+		v3Edata.put("visits", visits);
 	}
 
 	private void updateInteractEdata(Map<String, Object> edata) {

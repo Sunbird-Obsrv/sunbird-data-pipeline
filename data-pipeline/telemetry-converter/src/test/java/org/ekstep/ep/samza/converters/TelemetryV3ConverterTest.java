@@ -1,18 +1,16 @@
 package org.ekstep.ep.samza.converters;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.FileNotFoundException;
-import java.util.Map;
-
-import com.google.gson.GsonBuilder;
+import com.google.gson.Gson;
 import org.ekstep.ep.samza.domain.*;
 import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.ekstep.ep.samza.reader.TelemetryReaderException;
-import org.junit.Before;
 import org.junit.Test;
 
-import com.google.gson.Gson;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 public class TelemetryV3ConverterTest {
 
@@ -87,6 +85,7 @@ public class TelemetryV3ConverterTest {
         Map<String, Object> eData = (Map<String, Object>)v3Map.get("edata");
         assertEquals(eData.get("pageid"), "com_ekcontent.content");
         assertEquals(eData.get("type"), "view");
-        assertEquals( ((Visit) eData.get("visit")).getObjid(), "domain_4083");
+        ArrayList<Visit> visits = (ArrayList<Visit>) eData.get("visits");
+        assertEquals(visits.get(0).getObjid(), "domain_4083");
     }
 }
