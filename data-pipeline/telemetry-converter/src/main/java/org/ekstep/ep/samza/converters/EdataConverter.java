@@ -167,7 +167,7 @@ public class EdataConverter {
 			v3Edata.put("state", edata.getOrDefault("state", ""));
 			v3Edata.put("prevstate", edata.getOrDefault("prevstate", ""));
 		}else {
-			v3Edata.put("state", new Gson().toJson(edata));
+			v3Edata.put("state", edata);
 		}
 	}
 
