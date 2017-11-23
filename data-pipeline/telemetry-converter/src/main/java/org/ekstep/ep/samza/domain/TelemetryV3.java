@@ -170,6 +170,10 @@ public class TelemetryV3 {
 			v3Eid = "EXDATA";
 			break;
 		case "GE_CREATE_USER":
+		    v3Eid = "AUDIT";
+			break;
+		case "GE_CREATE_PROFILE":
+			v3Eid = "AUDIT";
 			break;
 		default:
 			break;

@@ -12,6 +12,8 @@ import org.ekstep.ep.samza.domain.Target;
 import org.ekstep.ep.samza.domain.Visit;
 import org.ekstep.ep.samza.reader.Telemetry;
 
+import com.google.gson.Gson;
+
 public class EdataConverter {
 
 	private Telemetry reader;
@@ -62,7 +64,7 @@ public class EdataConverter {
 				updateShareEdata(edata);
 				break;
 			case "AUDIT":
-				updateAuditEdata(edata);
+				updateAuditEdata(edata, eid);
 				break;
 			case "ERROR":
 				updateErrorEdata(edata);
@@ -159,9 +161,14 @@ public class EdataConverter {
 		v3Edata.put("comments", edata.getOrDefault("comments", ""));
 	}
 
-	private void updateAuditEdata(Map<String, Object> edata) {
-		v3Edata.put("state", edata.getOrDefault("state", ""));
-		v3Edata.put("prevstate", edata.getOrDefault("prevstate", ""));
+	private void updateAuditEdata(Map<String, Object> edata, String eid) {
+		
+		if("BE_OBJECT_LIFECYCLE".equals(eid)){
+			v3Edata.put("state", edata.getOrDefault("state", ""));
+			v3Edata.put("prevstate", edata.getOrDefault("prevstate", ""));
+		}else {
+			v3Edata.put("state", new Gson().toJson(edata));
+		}
 	}
 
 	private void updateErrorEdata(Map<String, Object> edata) {
