@@ -88,4 +88,22 @@ public class TelemetryV3ConverterTest {
         ArrayList<Visit> visits = (ArrayList<Visit>) eData.get("visits");
         assertEquals(visits.get(0).getObjid(), "domain_4083");
     }
+
+    @Test
+    public void convertCP_INTERACT() throws TelemetryReaderException, FileNotFoundException {
+        Map<String, Object> cpInteraction = EventFixture.getEvent("CP_INTERACT");
+        TelemetryV3Converter converter = new TelemetryV3Converter(cpInteraction);
+        TelemetryV3 v3 = converter.convert();
+        Map<String, Object> v3Map = v3.toMap();
+
+        Map<String, Object> eData = (Map<String, Object>)v3Map.get("edata");
+        assertEquals(eData.get("subtype"), "create");
+        assertEquals(eData.get("type"), "click");
+
+        Context context = (Context) v3Map.get("context");
+        assertEquals(context.getEnv(), "textbook");
+
+        Target target = (Target) eData.get("target");
+        assertEquals(target.getType(), "click");
+    }
 }
