@@ -6,7 +6,7 @@ import java.util.Map;
 public class Question {
 
 	private String id;
-	private Integer maxscore;
+	private Double maxscore;
 	private Double exlength;
 	private Object params;
 	private String uri;
@@ -17,7 +17,7 @@ public class Question {
 
 	public Question(Map<String, Object> edata) {
 		this.id = (String) edata.getOrDefault("qid", "");
-		this.maxscore = (Integer) edata.getOrDefault("maxscore", 0);
+		this.maxscore = (Double) edata.getOrDefault("maxscore", 0);
 		this.exlength = (Double) edata.getOrDefault("exlength", 0.0);
 		this.params = edata.get("params");
 		this.uri = (String) edata.get("uri");
@@ -35,11 +35,11 @@ public class Question {
 		this.id = id;
 	}
 
-	public Integer getMaxscore() {
+	public Double getMaxscore() {
 		return maxscore;
 	}
 
-	public void setMaxscore(Integer maxscore) {
+	public void setMaxscore(Double maxscore) {
 		this.maxscore = maxscore;
 	}
 
