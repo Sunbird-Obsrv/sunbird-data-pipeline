@@ -11,7 +11,7 @@ public class Target {
 	private HashMap<String, String> parent;
 	
 	public Target(Map<String, Object> edata){
-		this.id = (String)edata.getOrDefault("tid", edata.getOrDefault("qid", ""));
+		this.id = (String)edata.getOrDefault("target", edata.getOrDefault("qid", ""));
 		this.type = (String)edata.getOrDefault("type", "");
 	}
 
