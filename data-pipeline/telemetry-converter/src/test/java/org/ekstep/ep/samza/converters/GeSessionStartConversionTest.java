@@ -32,8 +32,6 @@ public class GeSessionStartConversionTest {
         TelemetryV3 v3 = converter.convert();
         Map<String, Object> v3Map = v3.toMap();
 
-        System.out.println(v3.toJson());
-
         Map<String, String> eData = (Map<String, String>) v3Map.get("edata");
         assertEquals("", eData.get("mode"));
         assertEquals(5438.0, eData.get("duration"));
