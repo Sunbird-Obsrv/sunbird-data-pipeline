@@ -187,6 +187,9 @@ public class EdataConverter {
 	}
 
 	private List getShareItem(Map<String, Object> edata) {
+		
+		List items = new ArrayList();
+		
 		String dataType = (String) edata.getOrDefault("datatype", "");
 
 		List<Map<String, Object>> contents = (List<Map<String, Object>>) edata
@@ -217,14 +220,13 @@ public class EdataConverter {
 
 			to.put("id", "");
 			to.put("type", "");
+			Map<String, Object> item = new HashMap<String, Object>();
+			item.put("obj", obj);
+			item.put("params", params);
+			item.put("origin", origin);
+			item.put("to", to);
+			items.add(item);
 		}
-
-		List items = new ArrayList();
-		items.add(obj);
-		items.add(params);
-		items.add(origin);
-		items.add(to);
-
 		return items;
 	}
 

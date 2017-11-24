@@ -17,8 +17,8 @@ public class Question {
 
 	public Question(Map<String, Object> edata) {
 		this.id = (String) edata.getOrDefault("qid", "");
-		this.maxscore = (Double) edata.getOrDefault("maxscore", 0);
-		this.exlength = (Double) edata.getOrDefault("exlength", 0.0);
+		this.maxscore = ((Number) edata.getOrDefault("maxscore", 0)).doubleValue();
+		this.exlength = ((Number) edata.getOrDefault("exlength", 0.0)).doubleValue();
 		this.params = edata.get("params");
 		this.uri = (String) edata.get("uri");
 		this.desc = (String) edata.get("qdesc");
