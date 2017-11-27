@@ -87,7 +87,7 @@ public class TelemetryV3ConverterTest {
         assertEquals(v3Map.get("eid"), "IMPRESSION");
 
         Map<String, Object> eData = (Map<String, Object>)v3Map.get("edata");
-//        assertEquals(eData.get("pageid"), "com_ekcontent.content");
+        assertEquals(eData.get("pageid"), "com_ekcontent.content");
         assertEquals(eData.get("type"), "view");
         ArrayList<Visit> visits = (ArrayList<Visit>) eData.get("visits");
         assertEquals(visits.get(0).getObjid(), "domain_4083");
