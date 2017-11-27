@@ -5,7 +5,7 @@
     "eks": {
       "env": "content",
       "type": "view",
-      "stageid": "com_ekcontent.content",
+      "pageid": "com_ekcontent.content",
       "id": "domain_4083",
       "name": "कुत्ता और रोटी",
       "url": "community.ekstep.in/preview/content/domain_4083"
