@@ -32,18 +32,16 @@ public class EdataConverter {
 			Map<String, Object> edata = reader.getEdata();
 			switch (v3Eid) {
 			case "START":
-				v3Edata.put("type",
-						TelemetryV3Converter.EDATA_TYPE_MAP.get(eid));
+				v3Edata.put("type",TelemetryV3Converter.EDATA_TYPE_MAP.get(eid));
 
 				updateStartEdata(edata);
 				break;
 			case "END":
-				v3Edata.put("type",
-						TelemetryV3Converter.EDATA_TYPE_MAP.get(eid));
+				v3Edata.put("type",TelemetryV3Converter.EDATA_TYPE_MAP.get(eid));
 				updateEndEdata(edata);
 				break;
 			case "IMPRESSION":
-				updateImpressionEdata(edata);
+				updateImpressionEdata(edata, eid);
 				break;
 			case "INTERACT":
 				updateInteractEdata(edata);
@@ -106,10 +104,18 @@ public class EdataConverter {
 		v3Edata.put("summary", summary);
 	}
 
-	private void updateImpressionEdata(Map<String, Object> edata) {
+	private void updateImpressionEdata(Map<String, Object> edata, String eid) {
 		v3Edata.put("type", edata.getOrDefault("type", ""));
 		v3Edata.put("subtype", edata.getOrDefault("itype", ""));
-		v3Edata.put("pageid", edata.getOrDefault("stageto", edata.get("stageid")));
+		String pageid = "";
+		if("CP_IMPRESSION".equals(eid)){
+			pageid = (String)edata.get("pageid");
+		} else if("GE_INTERACT".equals(eid)){
+			pageid = (String)edata.get("stageid");
+		} else if("OE_NAVIGATE".equals(eid)){
+			pageid = (String)edata.get("stageto");
+		}
+		v3Edata.put("pageid", pageid);
 		v3Edata.put("uri", edata.get("uri"));
 		ArrayList<Visit> visits = new ArrayList<Visit>();
 		visits.add(new Visit(reader));
@@ -118,12 +124,10 @@ public class EdataConverter {
 
 	private void updateInteractEdata(Map<String, Object> edata) {
 
-		v3Edata.put("pageid",
-				edata.getOrDefault("stageid", edata.getOrDefault("stage", "")));
+		v3Edata.put("pageid",edata.getOrDefault("stageid", edata.getOrDefault("stage", "")));
 		v3Edata.put("type", edata.getOrDefault("type", ""));
 		v3Edata.put("subtype", edata.getOrDefault("subtype", ""));
-		v3Edata.put("id",
-				edata.getOrDefault("id", edata.getOrDefault("objectid", "")));
+		v3Edata.put("id",edata.getOrDefault("id", edata.getOrDefault("objectid", "")));
 		HashMap<String, Object> extra = new HashMap<String, Object>();
 		extra.put("pos", edata.get("pos"));
 		extra.put("values", edata.get("values"));
