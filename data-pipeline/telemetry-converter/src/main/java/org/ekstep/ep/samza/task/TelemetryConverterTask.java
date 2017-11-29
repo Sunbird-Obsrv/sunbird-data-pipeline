@@ -87,7 +87,7 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
 
         Map<String, Object> event = v3.toMap();
         event.put("flags", flags);
-        event.put("metadata", flags);
+        event.put("metadata", metadata);
 
         String json = new Gson().toJson(event);
         collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), json));
