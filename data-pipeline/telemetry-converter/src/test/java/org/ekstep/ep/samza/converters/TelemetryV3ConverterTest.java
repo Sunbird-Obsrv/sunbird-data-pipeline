@@ -82,10 +82,9 @@ public class TelemetryV3ConverterTest {
 
         assert(impression.getEdata().containsKey("visits"));
         assertEquals("", impression.getEdata().get("subtype"));
-        assertEquals("", impression.getEdata().get("type"));
-        assertEquals("", impression.getEdata().get("pageid"));
+        assertEquals("edit", impression.getEdata().get("type"));
+        assertEquals("contenteditor", impression.getEdata().get("pageid"));
     }
-
 
     @Test
     public void convertCP_IMPRESSION() throws Exception {

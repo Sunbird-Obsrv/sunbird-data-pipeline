@@ -114,6 +114,9 @@ public class EdataConverter {
 			pageid = (String)edata.get("stageid");
 		} else if("OE_NAVIGATE".equals(eid)){
 			pageid = (String)edata.get("stageto");
+		} else if("CE_START".equals(eid)) {
+			pageid = "contenteditor";
+            v3Edata.put("type", "edit");
 		}
 		v3Edata.put("pageid", pageid);
 		v3Edata.put("uri", edata.get("uri"));
@@ -151,7 +154,7 @@ public class EdataConverter {
 		v3Edata.put("type", "");
 		HashMap<String, Object> values = new HashMap<String, Object>();
 		values.put("state", (String) edata.get("state"));
-		values.put("resvalues", (ArrayList<String>) edata.get("resvalues"));
+		values.put("resvalues", edata.get("resvalues"));
 		v3Edata.put("values", values);
 	}
 
