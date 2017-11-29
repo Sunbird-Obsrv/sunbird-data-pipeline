@@ -198,8 +198,7 @@ public class EdataConverter {
 
 		List<Map<String, Object>> contents = (List<Map<String, Object>>) edata
 				.getOrDefault("contents", new ArrayList<Map<String, Object>>());
-
-		Map<String, String> obj = new HashMap<String, String>();
+		
 		Map<String, String> origin = new HashMap<String, String>();
 		Map<String, String> to = new HashMap<String, String>();
 
@@ -209,26 +208,31 @@ public class EdataConverter {
 		for (Map<String, Object> content : contents) {
 
 			paramsMap = new HashMap<String, String>();
-			paramsMap.put("transfers", Double.toString((Double) content
-					.getOrDefault("transferCount", 0)));
-			paramsMap.put("count", Integer.toString((Integer) content
-					.getOrDefault("count", 0)));
+			paramsMap.put("transfers", Double.toString((Double) content.getOrDefault("transferCount", 0)));
+			paramsMap.put("count", Integer.toString((Integer) content.getOrDefault("count", 0)));
 			params.add(paramsMap);
-
-			obj.put("id", (String) content.get("identifier"));
-			obj.put("type", dataType);
-			obj.put("ver", Double.toString((Double) content.get("pkgVersion")));
 
 			origin.put("id", (String) content.get("origin"));
 			origin.put("type", "device");
 
 			to.put("id", "");
 			to.put("type", "");
+			
 			Map<String, Object> item = new HashMap<String, Object>();
-			item.put("obj", obj);
+			
+			item.put("id", (String) content.get("identifier"));
+			item.put("type", dataType);
+			Double version = (Double) content.get("pkgVersion");
+			String ver = "";
+			if(null != version){
+				ver = Double.toString(version);
+			}
+			item.put("ver", ver);
+			
 			item.put("params", params);
 			item.put("origin", origin);
 			item.put("to", to);
+			
 			items.add(item);
 		}
 		return items;
