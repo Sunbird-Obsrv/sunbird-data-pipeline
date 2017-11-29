@@ -11,7 +11,12 @@ public class TObject {
     
     public TObject(Telemetry reader){
     	this.id = reader.<String>read("gdata.id").valueOrDefault("");
-    	this.type = defaultType;
+    	
+    	if("genieservices.android".equals(this.id) || "org.ekstep.genieservices".equals(this.id)){
+    		this.type = "";
+    	} else {
+    		this.type = defaultType;
+    	}
     	this.ver = reader.<String>read("gdata.ver").valueOrDefault("");
     }
     

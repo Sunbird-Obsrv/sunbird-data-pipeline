@@ -248,4 +248,15 @@ public class TelemetryV3ConverterTest {
         assertEquals(15808638L, end.getEdata().get("duration"));
         assertEquals("editor", end.getEdata().get("type"));
     }
+    
+    @Test
+    public void convertGE_INTERACT_Object_Type_ShouldNotBeContent() throws Exception {
+    	Map<String, Object> event = EventFixture.getEvent("GE_INTERACT");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+        TelemetryV3 v3Event = (converter.convert())[0];
+        String objType = v3Event.getObject().getType();
+        assertNotEquals("Content", objType);
+        assertEquals("", objType);
+    }
+    
 }
