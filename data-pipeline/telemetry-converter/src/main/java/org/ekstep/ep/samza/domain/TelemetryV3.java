@@ -1,11 +1,9 @@
 package org.ekstep.ep.samza.domain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.nio.charset.Charset;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 
 import com.google.gson.Gson;
 import org.ekstep.ep.samza.reader.Telemetry;
@@ -27,14 +25,11 @@ public class TelemetryV3 {
 	private Telemetry reader;
 
 	public TelemetryV3(Telemetry reader, Map<String, Object> source)
-			throws TelemetryReaderException {
+            throws TelemetryReaderException, NoSuchAlgorithmException {
 		this.reader = reader;
-
 		this.eid = getEid(reader.<String> mustReadValue("eid"), reader);
-
 		this.ets = reader.getEts();
-		this.mid = reader.<String> mustReadValue("mid");
-
+		this.mid = computeMid(this.eid, reader.<String> mustReadValue("mid"));
 		HashMap<String, String> metadata = new HashMap<String, String>();
 		String checksum = reader.id();
 		metadata.put("checksum", checksum);
@@ -47,6 +42,18 @@ public class TelemetryV3 {
 	public TelemetryV3() throws TelemetryReaderException {
 
 	}
+
+	private String computeMid(String eid, String oldMid) throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-1");
+        Charset utf8 = Charset.forName("UTF-8");
+        byte[] input = (eid + "-" + oldMid).getBytes(utf8);
+        byte[] computedMid = digest.digest(input);
+        final StringBuilder builder = new StringBuilder();
+        for(byte b : computedMid) {
+            builder.append(String.format("%02x", b));
+        }
+        return builder.toString();
+    }
 
 	private String getEid(String eid, Telemetry event) {
 
@@ -202,16 +209,14 @@ public class TelemetryV3 {
 		return mid;
 	}
 
-	public void setMid(String mid) {
-		this.mid = mid;
-	}
-
 	public String getEid() {
 		return eid;
 	}
 
-	public void setEid(String eid) {
-		this.eid = eid;
+	public void setEid(String eid) throws TelemetryReaderException, NoSuchAlgorithmException {
+	    this.eid = eid;
+        String oldMid = reader.<String>mustReadValue("mid");
+	    this.mid = computeMid(this.eid, oldMid);
 	}
 
 	public String getVer() {
@@ -220,10 +225,6 @@ public class TelemetryV3 {
 
 	public Actor getActor() {
 		return actor;
-	}
-
-	public void setActor(Actor actor) {
-		this.actor = actor;
 	}
 
 	public TObject getObject() {
@@ -244,10 +245,6 @@ public class TelemetryV3 {
 
 	public ArrayList<String> getTags() {
 		return tags;
-	}
-
-	public void setTags(ArrayList<String> tags) {
-		this.tags = tags;
 	}
 
 	public void setTags(Map<String, Object> event) {
