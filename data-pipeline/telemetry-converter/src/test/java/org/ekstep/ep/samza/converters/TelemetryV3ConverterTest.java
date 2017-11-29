@@ -234,4 +234,18 @@ public class TelemetryV3ConverterTest {
 
         assertEquals(3, uniqueMIDs.size());
     }
+
+    @Test
+    public void convertCE_END() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("CE_END");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+
+        TelemetryV3[] v3Events = converter.convert();
+        assertEquals(1, v3Events.length);
+
+        TelemetryV3 end = v3Events[0];
+        assertEquals("END", end.getEid());
+        assertEquals(15808638L, end.getEdata().get("duration"));
+        assertEquals("editor", end.getEdata().get("type"));
+    }
 }

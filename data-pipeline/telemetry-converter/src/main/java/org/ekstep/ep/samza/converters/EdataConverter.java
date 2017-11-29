@@ -96,7 +96,7 @@ public class EdataConverter {
 
 	private void updateEndEdata(Map<String, Object> edata) {
 		v3Edata.put("mode", edata.getOrDefault("mode", ""));
-		v3Edata.put("duration", edata.getOrDefault("length", 0));
+		v3Edata.put("duration", ((Number) edata.getOrDefault("length", edata.getOrDefault("duration", 0))).longValue());
 		v3Edata.put("pageid", edata.get("stageid"));
 		HashMap<String, String> summary = new HashMap<>();
 		String progress = (String) edata.get("progress");
