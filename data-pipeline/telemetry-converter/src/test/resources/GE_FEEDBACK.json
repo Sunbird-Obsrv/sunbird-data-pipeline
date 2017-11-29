@@ -1,0 +1,48 @@
+{
+  "channel": "in.ekstep",
+  "did": "453c828a600ef4b8583518106ff4b3b4af168052",
+  "edata": {
+    "eks": {
+      "comments": "खूप छान",
+      "context": {
+        "id": "do_30100165",
+        "stageid": "ContentDetail",
+        "type": "Content"
+      },
+      "rating": 0,
+      "type": "RATING"
+    }
+  },
+  "eid": "GE_FEEDBACK",
+  "etags": {
+    "app": [
+      "411017b75481a7dc17e99696c09ecf012e7466f2"
+    ]
+  },
+  "ets": 1511348114957,
+  "gdata": {
+    "id": "org.ekstep.genieservices",
+    "ver": "6.5.2306"
+  },
+  "mid": "98eabd09-e2d2-4ae7-9a7f-338fadc55576",
+  "pdata": {
+    "id": "genie",
+    "ver": "6.5.2306"
+  },
+  "sid": "34cf4136-5b15-42cb-8401-e4efd7d1660c",
+  "ts": "2017-11-22T10:55:14.957+0000",
+  "uid": "31b64db3-ff04-40e1-ac0a-7c47ca276a1d",
+  "ver": "2.1",
+  "@version": "1",
+  "@timestamp": "2017-11-22T10:55:46.121Z",
+  "metadata": {
+    "checksum": "98eabd09-e2d2-4ae7-9a7f-338fadc55576",
+    "gud_last_processed_at": "2017-11-22T10:55:46.177Z",
+    "gud_processed_count": 1,
+    "index_name": "ecosystem-2017.11",
+    "index_type": "events_v1"
+  },
+  "uuid": "b0fb0108-0d3b-4ca0-98ac-c5a5c96eb49f2",
+  "key": "31b64db3-ff04-40e1-ac0a-7c47ca276a1d",
+  "type": "events"
+}
