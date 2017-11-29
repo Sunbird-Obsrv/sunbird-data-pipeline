@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.converters;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +29,9 @@ public class TelemetryV3Converter {
 		this.reader = new Telemetry(source);
 	}
 
-	public TelemetryV3 convert() throws TelemetryReaderException {
+	public TelemetryV3[] convert() throws TelemetryReaderException {
+		ArrayList<TelemetryV3> v3Events = new ArrayList<>();
+
 		TelemetryV3 v3 = new TelemetryV3(reader, source);
 
 		String v3Eid = v3.getEid();
@@ -36,6 +39,9 @@ public class TelemetryV3Converter {
 
 		v3.setEdata(new EdataConverter(reader).getEdata(v3Eid, eid));
 		v3.setTags(source);
-		return v3;
+
+		v3Events.add(v3);
+
+		return v3Events.toArray(new TelemetryV3[v3Events.size()]);
 	}
 }

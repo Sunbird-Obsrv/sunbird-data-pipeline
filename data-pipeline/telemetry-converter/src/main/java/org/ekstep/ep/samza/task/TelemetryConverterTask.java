@@ -60,9 +60,11 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
         Map<String, Object> map = (Map<String, Object>) new Gson().fromJson(message, Map.class);
         try {
             TelemetryV3Converter converter = new TelemetryV3Converter(map);
-            TelemetryV3 telemetryV3 = converter.convert();
-            toSuccessTopic(collector, telemetryV3);
-            LOGGER.info(telemetryV3.getEid(), "Converted to V3. EVENT: {}", telemetryV3.toMap());
+            TelemetryV3[] v3Events = converter.convert();
+            for (TelemetryV3 telemetryV3: v3Events) {
+                toSuccessTopic(collector, telemetryV3);
+                LOGGER.info(telemetryV3.getEid(), "Converted to V3. EVENT: {}", telemetryV3.toMap());
+            }
         }
         catch(Exception ex) {
             LOGGER.error("", "Failed to convert event to telemetry v3", ex);

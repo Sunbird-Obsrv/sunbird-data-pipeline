@@ -18,8 +18,8 @@ public class TelemetryV3ConverterTest {
     public void convertEnvelope() throws FileNotFoundException, TelemetryReaderException {
         Map<String, Object> oeStart = EventFixture.getEvent("OE_START");
         TelemetryV3Converter converter = new TelemetryV3Converter(oeStart);
-        TelemetryV3 v3 = converter.convert();
-        Map<String, Object> v3Map = v3.toMap();
+        TelemetryV3[] v3 = converter.convert();
+        Map<String, Object> v3Map = v3[0].toMap();
 
         assertEquals(v3Map.get("eid"), "START");
         assertEquals(v3Map.get("ets"), 1510216719872L);
@@ -50,8 +50,8 @@ public class TelemetryV3ConverterTest {
 	 public void convertOE_START() throws TelemetryReaderException, FileNotFoundException {
          Map<String, Object> oeStart = EventFixture.getEvent("OE_START");
          TelemetryV3Converter converter = new TelemetryV3Converter(oeStart);
-         TelemetryV3 v3 = converter.convert();
-         Map<String, Object> v3Map = v3.toMap();
+         TelemetryV3[] v3 = converter.convert();
+         Map<String, Object> v3Map = v3[0].toMap();
 
          Map<String, String> eData = (Map<String, String>)v3Map.get("edata");
 		 assertEquals(eData.get("mode"), "play");
@@ -64,8 +64,8 @@ public class TelemetryV3ConverterTest {
     public void convertCE_START() throws TelemetryReaderException, FileNotFoundException {
         Map<String, Object> oeStart = EventFixture.getEvent("CE_START");
         TelemetryV3Converter converter = new TelemetryV3Converter(oeStart);
-        TelemetryV3 v3 = converter.convert();
-        Map<String, Object> v3Map = v3.toMap();
+        TelemetryV3[] v3 = converter.convert();
+        Map<String, Object> v3Map = v3[0].toMap();
 
         assertEquals(v3Map.get("eid"), "START");
 
@@ -81,8 +81,8 @@ public class TelemetryV3ConverterTest {
     public void convertCP_IMPRESSION() throws TelemetryReaderException, FileNotFoundException {
         Map<String, Object> cpImpression = EventFixture.getEvent("CP_IMPRESSION");
         TelemetryV3Converter converter = new TelemetryV3Converter(cpImpression);
-        TelemetryV3 v3 = converter.convert();
-        Map<String, Object> v3Map = v3.toMap();
+        TelemetryV3[] v3 = converter.convert();
+        Map<String, Object> v3Map = v3[0].toMap();
 
         assertEquals(v3Map.get("eid"), "IMPRESSION");
 
@@ -97,8 +97,8 @@ public class TelemetryV3ConverterTest {
     public void convertCP_INTERACT() throws TelemetryReaderException, FileNotFoundException {
         Map<String, Object> cpInteraction = EventFixture.getEvent("CP_INTERACT");
         TelemetryV3Converter converter = new TelemetryV3Converter(cpInteraction);
-        TelemetryV3 v3 = converter.convert();
-        Map<String, Object> v3Map = v3.toMap();
+        TelemetryV3[] v3 = converter.convert();
+        Map<String, Object> v3Map = v3[0].toMap();
 
         assertEquals(v3Map.get("eid"), "INTERACT");
 
@@ -117,8 +117,8 @@ public class TelemetryV3ConverterTest {
     public void convertCE_INTERACT() throws TelemetryReaderException, FileNotFoundException {
         Map<String, Object> ceInteract = EventFixture.getEvent("CE_INTERACT");
         TelemetryV3Converter converter = new TelemetryV3Converter(ceInteract);
-        TelemetryV3 v3 = converter.convert();
-        Map<String, Object> v3Map = v3.toMap();
+        TelemetryV3[] v3 = converter.convert();
+        Map<String, Object> v3Map = v3[0].toMap();
 
         Gson gson = new Gson();
         System.out.println("Converted"+gson.toJson(v3Map));
