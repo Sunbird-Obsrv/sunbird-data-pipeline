@@ -62,7 +62,7 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
             TelemetryV3Converter converter = new TelemetryV3Converter(map);
             TelemetryV3[] v3Events = converter.convert();
             for (TelemetryV3 telemetryV3: v3Events) {
-                toSuccessTopic(collector, telemetryV3);
+                toSuccessTopic(collector, telemetryV3, map);
                 LOGGER.info(telemetryV3.getEid(), "Converted to V3. EVENT: {}", telemetryV3.toMap());
             }
         }
@@ -77,11 +77,17 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
         metrics.clear();
     }
 
-    private void toSuccessTopic(MessageCollector collector, TelemetryV3 v3) {
-        Map<String, Object> event = v3.toMap();
+    private void toSuccessTopic(MessageCollector collector, TelemetryV3 v3, Map<String, Object> v2) {
         Map<String, Object> flags = new HashMap<>();
         flags.put("v2_converted", true);
+
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("source_eid", v2.getOrDefault("eid", ""));
+        metadata.put("source_mid", v2.getOrDefault("mid", ""));
+
+        Map<String, Object> event = v3.toMap();
         event.put("flags", flags);
+        event.put("metadata", flags);
 
         String json = new Gson().toJson(event);
         collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), json));
