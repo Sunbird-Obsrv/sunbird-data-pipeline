@@ -11,6 +11,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class TelemetryV3ConverterTest {
 
@@ -64,16 +65,25 @@ public class TelemetryV3ConverterTest {
     public void convertCE_START() throws Exception {
         Map<String, Object> oeStart = EventFixture.getEvent("CE_START");
         TelemetryV3Converter converter = new TelemetryV3Converter(oeStart);
-        TelemetryV3[] v3 = converter.convert();
-        Map<String, Object> v3Map = v3[0].toMap();
+        TelemetryV3[] v3Events = converter.convert();
 
-        assertEquals(v3Map.get("eid"), "START");
+        assertEquals(2, v3Events.length);
 
-        Map<String, String> eData = (Map<String, String>)v3Map.get("edata");
-        assertEquals(eData.get("mode"), "");
-        assertEquals(eData.get("duration"), 0);
-        assertEquals(eData.get("type"), "editor");
-        assertEquals(eData.get("pageid"), "");
+        TelemetryV3 start = Arrays.stream(v3Events).filter(e -> "START".equals(e.getEid())).findFirst().get();
+        TelemetryV3 impression = Arrays.stream(v3Events).filter(e -> "IMPRESSION".equals(e.getEid())).findFirst().get();
+
+        assertNotEquals(start.getMid(), impression.getMid());
+
+        assertEquals("", start.getEdata().get("mode"));
+        assertEquals(0, start.getEdata().get("duration"));
+        assertEquals("editor", start.getEdata().get("type"));
+        assertEquals("", start.getEdata().get("pageid"));
+        assert(start.getEdata().containsKey("uaspec"));
+
+        assert(impression.getEdata().containsKey("visits"));
+        assertEquals("", impression.getEdata().get("subtype"));
+        assertEquals("", impression.getEdata().get("type"));
+        assertEquals("", impression.getEdata().get("pageid"));
     }
 
 

@@ -38,7 +38,9 @@ public class TelemetryV3Converter {
 		String v2Eid = reader.mustReadValue("eid");
 		if ("GE_INTERACT".equals(v2Eid)) {
 			v3Events = convertGeInteract();
-		} else {
+		} else if ("CE_START".equals(v2Eid)) {
+            v3Events = convertCeStart();
+        } else {
 			TelemetryV3 v3 = new TelemetryV3(reader, source);
 			String v3Eid = v3.getEid();
 			String eid = reader.<String> mustReadValue("eid");
@@ -49,7 +51,26 @@ public class TelemetryV3Converter {
 		return v3Events.toArray(new TelemetryV3[v3Events.size()]);
 	}
 
-	private ArrayList<TelemetryV3> convertGeInteract() throws TelemetryReaderException, NoSuchAlgorithmException {
+    private ArrayList<TelemetryV3> convertCeStart() throws NoSuchAlgorithmException, TelemetryReaderException {
+	    // CE_START will become START and IMPRESSION
+        TelemetryV3 start = new TelemetryV3(reader, source);
+        start.setEid("START");
+        start.setEdata(new EdataConverter(reader).getEdata("START", "CE_START"));
+        start.setTags(source);
+
+        TelemetryV3 impression = new TelemetryV3(reader, source);
+        impression.setEid("IMPRESSION");
+        impression.setEdata(new EdataConverter(reader).getEdata("IMPRESSION", "CE_START"));
+        impression.setTags(source);
+
+        ArrayList<TelemetryV3> events = new ArrayList<>();
+        events.add(start);
+        events.add(impression);
+
+        return events;
+    }
+
+    private ArrayList<TelemetryV3> convertGeInteract() throws TelemetryReaderException, NoSuchAlgorithmException {
 		// edata.eks.subtype = show, generate both IMPRESSION and and LOG
 		// Otherwise generate only INTERACT
 		ArrayList<TelemetryV3> events = new ArrayList<>();
