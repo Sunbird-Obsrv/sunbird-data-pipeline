@@ -169,7 +169,7 @@ public class TelemetryV3ConverterTest {
 
         Map<String, String> eData = (Map<String, String>) v3Map.get("edata");
         assertEquals("", eData.get("mode"));
-        assertEquals(5438.0, eData.get("duration"));
+        assertEquals(5438L, eData.get("duration"));
         assertEquals("session", eData.get("type"));
     }
 
