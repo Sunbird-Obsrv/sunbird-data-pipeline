@@ -308,4 +308,17 @@ public class TelemetryV3ConverterTest {
         assertEquals("Live", audit.getEdata().get("state"));
         assertEquals("Draft", audit.getEdata().get("prevstate"));
     }
+
+    @Test
+    public void convertGE_RESUME() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("GE_RESUME");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+
+        TelemetryV3[] v3Events = converter.convert();
+        assertEquals(1, v3Events.length);
+
+        TelemetryV3 resume = v3Events[0];
+        assertEquals("resume", resume.getEdata().get("type"));
+        System.out.println(resume.toJson());
+    }
 }
