@@ -22,7 +22,10 @@ public class TObject {
     
     public TObject(Telemetry reader){
     	this.id = computeId(reader);
-    	String type = reader.<String>read("edata.eks.type").valueOrDefault(defaultType);
+        String type = reader.<String>read("edata.eks.objecttype").valueOrDefault(null);
+        if (type == null) {
+            type = reader.<String>read("edata.eks.type").valueOrDefault(defaultType);
+        }
     	if("genieservices.android".equals(this.id) || "org.ekstep.genieservices".equals(this.id)){
     		this.type = "";
     	} else {
@@ -43,7 +46,12 @@ public class TObject {
             return gdataId.value();
         }
 
-        return reader.<String>read("edata.eks.id").valueOrDefault("");
+        NullableValue<String> edataEksId = reader.<String>read("edata.eks.id");
+        if (!edataEksId.isNull()) {
+            return edataEksId.value();
+        }
+
+        return reader.<String>read("edata.eks.objectid").valueOrDefault("");
     }
 
     public String getId() {

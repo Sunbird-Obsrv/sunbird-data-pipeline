@@ -1,0 +1,91 @@
+{
+  "eid": "CE_ERROR",
+  "mid": "CE:40c43fef4040e6ce0525ebe48be33ab2",
+  "ets": 1511762901086,
+  "channel": "in.ekstep",
+  "ver": "2.1",
+  "pdata": {},
+  "cdata": [],
+  "uid": "1252",
+  "context": {
+    "sid": "mj2m0u4usfc3slsketm5h4hlc5",
+    "content_id": "do_31236685451209932823957"
+  },
+  "rid": "",
+  "edata": {
+    "eks": {
+      "env": "content",
+      "stage": "06b6c11c-743a-4a30-a5c9-b1e7644ded12",
+      "action": "invoke",
+      "objectid": "org.ekstep.text",
+      "objecttype": "plugin",
+      "err": {},
+      "type": "PORTAL",
+      "data": "",
+      "severity": "error"
+    }
+  },
+  "etags": {
+    "app": [],
+    "partner": [],
+    "dims": []
+  },
+  "@version": "1",
+  "@timestamp": "2017-11-27T06:10:35.302Z",
+  "path": "/var/log/piwik/piwik.raw.idsite_1.log",
+  "host": "ip-11-52-4-113",
+  "tags": [
+    "piwik_json"
+  ],
+  "flags": {
+    "tv_skipped": true,
+    "dd_processed": true,
+    "ppm_skipped": true,
+    "ldata_obtained": false,
+    "ldata_processed": true,
+    "od_retry": true
+  },
+  "type": "events",
+  "ts": "2017-11-27T06:08:21.086+0000",
+  "metadata": {
+    "checksum": "CE:40c43fef4040e6ce0525ebe48be33ab2",
+    "cachehit": true,
+    "od_err": "OBJECT_NOT_FOUND",
+    "od_errmsg": "NO OBJECT WITH GIVEN ID: 1252 IN CHANNEL:in.ekstep",
+    "od_last_processed_at": "2017-11-27T06:10:36.250Z",
+    "od_processed_count": 9747,
+    "index_name": "backend-2017.11",
+    "index_type": "backend"
+  },
+  "contentdata": {
+    "code": "org.ekstep.literacy.story.12459",
+    "subject": "English",
+    "description": "",
+    "language": [
+      "English"
+    ],
+    "gradeLevel": [
+      "Grade 11"
+    ],
+    "lastUpdatedOn": "2017-11-09T07:23:33.083+0000",
+    "contentType": "Story",
+    "identifier": "do_31236685451209932823957",
+    "audience": [
+      "Learner"
+    ],
+    "createdFor": [
+      ""
+    ],
+    "mediaType": "content",
+    "concepts": [
+      "LO46"
+    ],
+    "createdBy": "3446",
+    "domain": [
+      "literacy"
+    ],
+    "name": "Backward Planning",
+    "status": "Draft"
+  },
+  "backend": "true"
+}

@@ -270,6 +270,27 @@ public class TelemetryV3ConverterTest {
 
         TelemetryV3 error = v3Events[0];
         assertEquals("ERROR", error.getEid());
+        assertEquals("INVALID_USER", error.getEdata().get("err"));
+        assertEquals("GENIESDK", error.getEdata().get("errtype"));
+    }
+
+    @Test
+    public void convertCE_ERROR() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("CE_ERROR");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+
+        TelemetryV3[] v3Events = converter.convert();
+        assertEquals(1, v3Events.length);
+
+        TelemetryV3 error = v3Events[0];
+        assertEquals("ERROR", error.getEid());
+        assertEquals("content", error.getContext().getEnv());
+        assertEquals("06b6c11c-743a-4a30-a5c9-b1e7644ded12", error.getEdata().get("pageid"));
+        assertEquals("org.ekstep.text", error.getObject().getId());
+        assertEquals("plugin", error.getObject().getType());
+        assertEquals("", error.getEdata().get("err"));
+        assertEquals("", error.getEdata().get("errtype"));
+
     }
 
     @Test
@@ -289,7 +310,5 @@ public class TelemetryV3ConverterTest {
         assertEquals("", audit.getObject().getParent().get("type"));
         assertEquals("Live", audit.getEdata().get("state"));
         assertEquals("Draft", audit.getEdata().get("prevstate"));
-
-        System.out.println(audit.toJson());
     }
 }

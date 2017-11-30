@@ -5,14 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ekstep.ep.samza.domain.EdataObject;
 import org.ekstep.ep.samza.domain.Plugin;
 import org.ekstep.ep.samza.domain.Question;
 import org.ekstep.ep.samza.domain.Target;
 import org.ekstep.ep.samza.domain.Visit;
 import org.ekstep.ep.samza.reader.Telemetry;
-
-import com.google.gson.Gson;
 
 public class EdataConverter {
 
@@ -179,10 +176,9 @@ public class EdataConverter {
 
 	private void updateErrorEdata(Map<String, Object> edata) {
 		v3Edata.put("err", edata.getOrDefault("err", ""));
-		v3Edata.put("errtype", edata.getOrDefault("type", ""));
+		v3Edata.put("errtype", edata.getOrDefault("type", "MOBILEAPP"));
 		v3Edata.put("data", edata.get("stacktrace"));
 		v3Edata.put("pageid", edata.get("stage"));
-		v3Edata.put("object", new EdataObject(edata));
 		v3Edata.put("plugin", new Plugin(edata));
 	}
 

@@ -31,14 +31,15 @@ public class Context {
         this.pData = new PData(reader);
 
         String eid = reader.mustReadValue("eid");
-        if (eid.startsWith("OE_")) {
+        String env = reader.<String>read("edata.eks.env").valueOrDefault("");
+        if (!env.equals("")) {
+            this.env = env;
+        } else if (eid.startsWith("OE_")) {
             this.env = "ContentPlayer";
         } else if (eid.startsWith("GE_")) {
             this.env = "Genie";
         } else if (eid.startsWith("CE_")) {
             this.env = "ContentEditor";
-        } else if (eid.startsWith("CP_")) {
-            this.env = reader.<String>read("edata.eks.env").valueOrDefault("");
         }
 
         // sid is a mandatory field. but it can come in two possible paths
