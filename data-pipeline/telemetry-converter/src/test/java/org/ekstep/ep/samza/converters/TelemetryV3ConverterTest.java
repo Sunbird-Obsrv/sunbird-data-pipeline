@@ -288,9 +288,6 @@ public class TelemetryV3ConverterTest {
         assertEquals("06b6c11c-743a-4a30-a5c9-b1e7644ded12", error.getEdata().get("pageid"));
         assertEquals("org.ekstep.text", error.getObject().getId());
         assertEquals("plugin", error.getObject().getType());
-        assertEquals("", error.getEdata().get("err"));
-        assertEquals("", error.getEdata().get("errtype"));
-
     }
 
     @Test
