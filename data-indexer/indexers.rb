@@ -1634,9 +1634,6 @@ module Indexers
                       "level": {
                         "type": "string"
                       },
-                      "status": {
-                        "type": "string"
-                      },
                       "data": {
                         "properties":{
                           "config": {
@@ -1835,7 +1832,7 @@ module Indexers
         }
       }
     }
-    GENERIC_TELEMETRY_MAPPINGS = {
+    TELEMETRY_MAPPINGS = {
       _default_:{
         dynamic: false,
         properties: {
@@ -1860,10 +1857,335 @@ module Indexers
             "format": "strict_date_optional_time||epoch_millis",
             "type": "date"
           },
+          "edata": {
+            "properties": {
+              "comments": {
+                "type": "string"
+              },
+              "correlationid": {
+                "type": "string"
+              },
+              "duration": {
+                "type": "double"
+              },
+              "data": {
+                "type": "string"
+              },
+              "dir": {
+                "type": "string"
+              },
+              "err": {
+                "type": "string"
+              },
+              "errtype": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "level": {
+                "type": "string"
+              },
+              "loc": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "mode": {
+                "type": "string"
+              },
+              "pass": {
+                "type": "string"
+              },
+              "prevstate": {
+                "type": "string"
+              },
+              "pageid": {
+                "type": "string"
+              },
+              "query": {
+                "type": "string"
+              },
+              "rating": {
+                "type": "double"
+              },
+              "score": {
+                "type": "double"
+              },
+              "size": {
+                "type": "double"
+              },
+              "stacktrace": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              },
+              "subtype": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "uri": {
+                "type": "string"
+              },
+              "items": {
+                "type": "nested",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "ver": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "origin": {
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              "target": {
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "ver": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "parent": {
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              "visits": {
+                "type": "nested",
+                "properties": {
+                  "objid": {
+                    "type": "string"
+                  },
+                  "objtype": {
+                    "type": "string"
+                  }
+                }
+              },
+              "plugin": {
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "ver": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  }
+                }
+              },
+              "object": {
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "subtype": {
+                    "type": "string"
+                  },
+                  "ver": {
+                    "type": "string"
+                  }
+                }
+              },
+              "uaspec": {
+                "properties": {
+                  "agent": {
+                    "type": "string"
+                  },
+                  "ver": {
+                    "type": "string"
+                  },
+                  "system": {
+                    "type": "string"
+                  },
+                  "platform": {
+                    "type": "string"
+                  },
+                  "raw": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
           "context": {
             "properties": {
               "channel": {
                 "type": "string"
+              },
+              "env": {
+                "type": "string"
+              },
+              "sid": {
+                "type": "string"
+              },
+              "did": {
+                "type": "string"
+              },
+              "pdata": {
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "pid": {
+                    "type": "string"
+                  },
+                  "ver": {
+                    "type": "string"
+                  }
+                }
+              },
+              "rollup": {
+                "properties": {
+                  "l1": {
+                    "type": "string"
+                  },
+                  "l2": {
+                    "type": "string"
+                  },
+                  "l3": {
+                    "type": "string"
+                  },
+                  "l4": {
+                    "type": "string"
+                  }
+                }
+              },
+              "cdata": {
+                "type": "nested",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "object": {
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "subtype": {
+                "type": "string"
+              },
+              "parentid": {
+                "type": "string"
+              },
+              "parenttype": {
+                "type": "string"
+              },
+              "ver": {
+                "type": "string"
+              },
+              "rollup": {
+                "properties": {
+                  "l1": {
+                    "type": "string"
+                  },
+                  "l2": {
+                    "type": "string"
+                  },
+                  "l3": {
+                    "type": "string"
+                  },
+                  "l4": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "uaspec": {
+            "properties": {
+             "agent": {
+                "type": "string"
+              },
+              "ver": {
+                "type": "string"
+              },
+              "system": {
+                "type": "string"
+              },
+              "platform": {
+                "type": "string"
+              },
+              "raw": {
+                "type": "string"
+              }
+            }
+          },
+          "dspec": {
+            "properties": {
+             "camera": {
+                "type": "string"
+              },
+              "cpu": {
+                "type": "string"
+              },
+              "edisk": {
+                "type": "double"
+              },
+              "id": {
+                "type": "string"
+              },
+              "idisk": {
+                "type": "double"
+              },
+              "make": {
+                "type": "string"
+              },
+              "mem": {
+                "type": "double"
+              },
+              "os": {
+                "type": "string"
+              },
+              "scrn": {
+                "type": "double"
+              },
+              "sims": {
+                "type": "double"
               }
             }
           },
@@ -1881,7 +2203,7 @@ module Indexers
             }
           }
         }
-      }
+      } 
     }
     attr_reader :client
     def initialize(refresh=true)
@@ -2000,7 +2322,7 @@ module Indexers
         settings: {
           "index.refresh_interval": "5s"
         },
-        mappings: BASIC_TELEMETRY_MAPPINGS,
+        mappings: TELEMETRY_MAPPINGS,
         aliases: {}
         }
       })
