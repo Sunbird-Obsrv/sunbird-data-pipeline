@@ -46,8 +46,8 @@ public class Context {
         // - context.sid (CE and CP events)
         NullableValue<String> sid = reader.read("sid");
         if (sid.isNull()) {
-            // sid in envelope is null. so it should come in context.sid
-            this.sid = reader.mustReadValue("context.sid");
+            // sid in envelope is null. so it might be in context.sid
+            this.sid = reader.<String>read("context.sid").valueOrDefault("");
         } else {
             this.sid = sid.value();
         }

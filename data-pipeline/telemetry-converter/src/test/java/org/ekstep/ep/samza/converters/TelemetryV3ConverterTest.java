@@ -5,6 +5,7 @@ import org.ekstep.ep.samza.domain.*;
 import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.junit.Test;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -269,5 +270,26 @@ public class TelemetryV3ConverterTest {
 
         TelemetryV3 error = v3Events[0];
         assertEquals("ERROR", error.getEid());
+    }
+
+    @Test
+    public void convertBE_OBJECT_LIFECYCLE() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("BE_OBJECT_LIFECYCLE");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+
+        TelemetryV3[] v3Events = converter.convert();
+        assertEquals(1, v3Events.length);
+
+        TelemetryV3 audit = v3Events[0];
+        assertEquals("AUDIT", audit.getEid());
+        assertEquals("Asset", audit.getObject().getType());
+        assertEquals("do_31238594379452416022722", audit.getObject().getId());
+        assertEquals("audio", audit.getObject().getSubType());
+        assertEquals("", audit.getObject().getParent().get("id"));
+        assertEquals("", audit.getObject().getParent().get("type"));
+        assertEquals("Live", audit.getEdata().get("state"));
+        assertEquals("Draft", audit.getEdata().get("prevstate"));
+
+        System.out.println(audit.toJson());
     }
 }

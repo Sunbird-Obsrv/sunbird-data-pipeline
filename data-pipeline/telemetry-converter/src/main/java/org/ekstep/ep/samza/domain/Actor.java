@@ -10,12 +10,10 @@ public class Actor {
     private String type;
     transient private final String defaultType = "User";
 
-    public Actor() { }
-
     public Actor(Map<String, Object> source) throws TelemetryReaderException {
         Telemetry reader = new Telemetry(source);
-        this.id = reader.mustReadValue("uid");
-        this.type = defaultType;
+        this.id = reader.<String>read("uid").valueOrDefault("");
+        this.type = this.id.equals("") ? "" : defaultType;
     }
 
     public String getId() {

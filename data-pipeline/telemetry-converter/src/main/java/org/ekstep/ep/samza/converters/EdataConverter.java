@@ -169,7 +169,6 @@ public class EdataConverter {
 	}
 
 	private void updateAuditEdata(Map<String, Object> edata, String eid) {
-		
 		if("BE_OBJECT_LIFECYCLE".equals(eid)){
 			v3Edata.put("state", edata.getOrDefault("state", ""));
 			v3Edata.put("prevstate", edata.getOrDefault("prevstate", ""));

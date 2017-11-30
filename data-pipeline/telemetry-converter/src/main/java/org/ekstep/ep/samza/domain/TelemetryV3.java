@@ -272,7 +272,6 @@ public class TelemetryV3 {
         v3map.put("metadata", metadata);
         v3map.put("edata", edata);
         v3map.put("tags", tags);
-        v3map.put("@timestamp", reader.getAtTimestamp());
         return v3map;
     }
 
