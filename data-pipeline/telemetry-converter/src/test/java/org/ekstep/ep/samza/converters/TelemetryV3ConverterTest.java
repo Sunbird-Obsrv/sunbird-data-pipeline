@@ -3,12 +3,12 @@ package org.ekstep.ep.samza.converters;
 import com.google.gson.Gson;
 import org.ekstep.ep.samza.domain.*;
 import org.ekstep.ep.samza.fixtures.EventFixture;
-import org.ekstep.ep.samza.reader.TelemetryReaderException;
 import org.junit.Test;
 
-import java.io.FileNotFoundException;
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -25,7 +25,7 @@ public class TelemetryV3ConverterTest {
         assertEquals(v3Map.get("eid"), "START");
         assertEquals(v3Map.get("ets"), 1510216719872L);
         assertEquals(v3Map.get("ver"), "3.0");
-        assertEquals(v3Map.get("mid"), "76953ec6ea4cf7724931289d9f0e0619787da753");
+        assertEquals(v3Map.get("mid"), "START:3f34adf0-89d5-4884-8920-4fadbe9680cd");
 
         Actor actor = (Actor) v3Map.get("actor");
         assertEquals("516a4365-eb22-44c0-add1-0b9000d1d09f", actor.getId());
