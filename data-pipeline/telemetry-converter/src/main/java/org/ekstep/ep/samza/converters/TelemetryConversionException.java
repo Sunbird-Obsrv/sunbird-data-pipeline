@@ -2,7 +2,7 @@ package org.ekstep.ep.samza.converters;
 
 import java.util.Map;
 
-public class TelemetryConversionException extends Throwable {
+public class TelemetryConversionException extends Exception {
     private final Map<String, Object> sourceEvent;
 
     public TelemetryConversionException(String message, Map<String, Object> sourceEvent) {

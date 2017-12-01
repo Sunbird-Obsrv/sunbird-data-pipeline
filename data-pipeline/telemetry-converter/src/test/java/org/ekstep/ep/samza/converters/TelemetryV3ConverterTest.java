@@ -10,8 +10,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 public class TelemetryV3ConverterTest {
 
@@ -84,6 +83,33 @@ public class TelemetryV3ConverterTest {
         assertEquals("", impression.getEdata().get("subtype"));
         assertEquals("edit", impression.getEdata().get("type"));
         assertEquals("contenteditor", impression.getEdata().get("pageid"));
+    }
+
+    @Test
+    public void convertCE_PLUGIN_LIFECYCLE() throws Exception {
+        Map<String, Object> oeStart = EventFixture.getEvent("CE_PLUGIN_LIFECYCLE");
+        TelemetryV3Converter converter = new TelemetryV3Converter(oeStart);
+        TelemetryV3[] v3Events = converter.convert();
+
+        assertEquals(1, v3Events.length);
+
+        TelemetryV3 lifeCycle = v3Events[0];
+
+        assertEquals("INTERACT", lifeCycle.getEid());
+        assertEquals("ContentEditor", lifeCycle.getContext().getEnv());
+        assertEquals("load", lifeCycle.getEdata().get("type"));
+
+        Plugin plugin = (Plugin) lifeCycle.getEdata().get("plugin");
+        assertEquals("org.ekstep.plugins.funtoot.variationunitary", plugin.getId());
+        assertEquals("1.0", plugin.getVer());
+
+        assertEquals("", lifeCycle.getEdata().get("id"));
+        assertEquals("", lifeCycle.getEdata().get("pageid"));
+
+        assertNotNull("", lifeCycle.getEdata().get("target"));
+        Target target = (Target) lifeCycle.getEdata().get("target");
+        assertEquals("", target.getId());
+        assertEquals("load", target.getType());
     }
 
     @Test
@@ -331,5 +357,138 @@ public class TelemetryV3ConverterTest {
         TelemetryV3 exdata = v3Events[0];
         assertEquals("EXDATA", exdata.getEid());
         assertEquals("partnerdata", exdata.getEdata().get("type"));
+    }
+
+    @Test
+    public void convertOE_END() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("OE_END");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+
+        TelemetryV3[] v3Events = converter.convert();
+        assertEquals(1, v3Events.length);
+
+        TelemetryV3 end = v3Events[0];
+        assertEquals("END", end.getEid());
+        assertEquals("player", end.getEdata().get("type"));
+        assertEquals("play", end.getEdata().get("mode"));
+        assertEquals(64L, end.getEdata().get("duration"));
+        assertEquals("ContentApp-Renderer", end.getEdata().get("pageid"));
+        assert (end.getEdata().containsKey("summary"));
+        Map<String, Object> summary = (Map<String, Object>) end.getEdata().get("summary");
+        assertEquals(100.0, summary.get("progress"));
+    }
+
+    @Test
+    public void convertOE_INTERACT() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("OE_INTERACT");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+
+        TelemetryV3[] v3Events = converter.convert();
+        assertEquals(1, v3Events.length);
+
+        TelemetryV3 interact = v3Events[0];
+        assertEquals("INTERACT", interact.getEid());
+        assertEquals("next", interact.getEdata().get("id"));
+        assertEquals("TOUCH", interact.getEdata().get("type"));
+        assertEquals("62c379c8-7046-45ec-8a83-78782ba0031c", interact.getEdata().get("pageid"));
+        assertEquals("", interact.getEdata().get("subtype"));
+        assert (interact.getEdata().containsKey("extra"));
+
+        Map<String, Object> extra = (Map<String, Object>) interact.getEdata().get("extra");
+        assertNotNull(extra);
+        assertNotNull(extra.get("pos"));
+        assertNotNull(extra.get("values"));
+        assertEquals("", extra.get("uri"));
+
+        Target target = (Target) interact.getEdata().get("target");
+        assertNotNull(target);
+        assertEquals("", target.getId());
+    }
+
+    @Test
+    public void convertOE_INTERRUPT() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("OE_INTERRUPT");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+
+        TelemetryV3[] v3Events = converter.convert();
+        assertEquals(1, v3Events.length);
+
+        TelemetryV3 interrupt = v3Events[0];
+        assertEquals("INTERRUPT", interrupt.getEid());
+        assertEquals("eb2691e6-d297-4e57-98c7-746c575bdc2b", interrupt.getEdata().get("pageid"));
+        assertEquals("OTHER", interrupt.getEdata().get("type"));
+    }
+
+    @Test
+    public void convertOE_NAVIGATE() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("OE_NAVIGATE");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+
+        TelemetryV3[] v3Events = converter.convert();
+        assertEquals(1, v3Events.length);
+
+        TelemetryV3 navigate = v3Events[0];
+        assertEquals("IMPRESSION", navigate.getEid());
+        assertEquals("", navigate.getEdata().get("type"));
+        assertEquals("", navigate.getEdata().get("subtype"));
+        assertEquals("55a2dc33-94ed-4212-a5aa-a80ad5b3892d", navigate.getEdata().get("pageid"));
+    }
+
+    @Test
+    public void convertOE_ASSESS() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("OE_ASSESS");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+
+        TelemetryV3[] v3Events = converter.convert();
+        assertEquals(1, v3Events.length);
+
+
+        TelemetryV3 assess = v3Events[0];
+        assertEquals("ASSESS", assess.getEid());
+        assertEquals("Yes", assess.getEdata().get("pass"));
+        assertEquals(35.0, assess.getEdata().get("duration"));
+        assertEquals(1.0, assess.getEdata().get("index"));
+
+
+        assertNotNull(assess.getEdata().get("resvalues"));
+        ArrayList<Object> res_values = (ArrayList<Object>) assess.getEdata().get("resvalues");
+        assertEquals(4, res_values.size());
+
+        assertNotNull(assess.getEdata().get("item"));
+        Question item = (Question) assess.getEdata().get("item");
+
+        assertEquals("do_3123177778625740801346", item.getId());
+        assertEquals(0.0, item.getExlength(), 0);
+        assertNotNull(item.getParams());
+        assertEquals("", item.getUri());
+        assertEquals("படத்தைப் பார்த்து அதன் முதல் எழுத்தைக் கண்டுபிடித்துப் பொருத்திக் காட்டுக", item.getDesc());
+        assertEquals("முதல் எழுத்தைக் கண்டுபிடி", item.getTitle());
+        assertNotNull(item.getMmc());
+        assertNotNull(item.getMc());
+    }
+
+    @Test
+    public void convertOE_ITEM_RESPONSE() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("OE_ITEM_RESPONSE");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+
+        TelemetryV3[] v3Events = converter.convert();
+        assertEquals(1, v3Events.length);
+
+
+        TelemetryV3 response = v3Events[0];
+        assertEquals("RESPONSE", response.getEid());
+
+        assertNotNull(response.getEdata().get("target"));
+        Target target = (Target) response.getEdata().get("target");
+        assertEquals("do_31226008849936384013357", target.getId());
+        assertEquals("CHOOSE", target.getType());
+
+        assertNotNull(response.getEdata().get("values"));
+        Map<String, Object> values = (Map<String, Object>) response.getEdata().get("values");
+        assertEquals("SELECTED", values.get("state"));
+        assertNotNull(values.get("resvalues"));
+        ArrayList<Object> res_values = (ArrayList<Object>) values.get("resvalues");
+        assertEquals(1, res_values.size());
     }
 }

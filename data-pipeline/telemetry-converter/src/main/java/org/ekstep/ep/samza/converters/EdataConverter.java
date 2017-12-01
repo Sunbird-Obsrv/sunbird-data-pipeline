@@ -20,9 +20,9 @@ public class EdataConverter {
         this.reader = reader;
     }
 
-    public HashMap<String, Object> getEdata(String v3Eid, String eid) {
+    public HashMap<String, Object> getEdata(String v3Eid, String eid) throws TelemetryConversionException {
 
-        v3Edata = new HashMap<String, Object>();
+        v3Edata = new HashMap<>();
 
         try {
 
@@ -35,7 +35,7 @@ public class EdataConverter {
                     break;
                 case "END":
                     v3Edata.put("type", TelemetryV3Converter.EDATA_TYPE_MAP.get(eid));
-                    updateEndEdata(edata);
+                    updateEndEdata(edata, eid);
                     break;
                 case "IMPRESSION":
                     updateImpressionEdata(edata, eid);
@@ -77,7 +77,7 @@ public class EdataConverter {
                     break;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new TelemetryConversionException("Failed to convert " + eid + ". " + e.getMessage(), null);
         }
         return v3Edata;
     }
@@ -91,12 +91,16 @@ public class EdataConverter {
         v3Edata.put("pageid", edata.getOrDefault("stageid", ""));
     }
 
-    private void updateEndEdata(Map<String, Object> edata) {
-        v3Edata.put("mode", edata.getOrDefault("mode", ""));
+    private void updateEndEdata(Map<String, Object> edata, String eid) {
+        if ("OE_END".equals(eid)) {
+            v3Edata.put("mode", "play");
+        } else {
+            v3Edata.put("mode", edata.getOrDefault("mode", ""));
+        }
         v3Edata.put("duration", ((Number) edata.getOrDefault("length", edata.getOrDefault("duration", 0))).longValue());
         v3Edata.put("pageid", edata.get("stageid"));
-        HashMap<String, String> summary = new HashMap<>();
-        String progress = (String) edata.get("progress");
+        HashMap<String, Object> summary = new HashMap<>();
+        Object progress = edata.get("progress");
         summary.put("progress", progress);
         v3Edata.put("summary", summary);
     }
@@ -117,7 +121,7 @@ public class EdataConverter {
         }
         v3Edata.put("pageid", pageid);
         v3Edata.put("uri", edata.get("uri"));
-        ArrayList<Visit> visits = new ArrayList<Visit>();
+        ArrayList<Visit> visits = new ArrayList<>();
         visits.add(new Visit(reader));
         v3Edata.put("visits", visits);
     }
@@ -128,9 +132,10 @@ public class EdataConverter {
         v3Edata.put("type", edata.getOrDefault("type", ""));
         v3Edata.put("subtype", edata.getOrDefault("subtype", ""));
         v3Edata.put("id", edata.getOrDefault("id", edata.getOrDefault("objectid", "")));
-        HashMap<String, Object> extra = new HashMap<String, Object>();
+        HashMap<String, Object> extra = new HashMap<>();
         extra.put("pos", edata.get("pos"));
         extra.put("values", edata.get("values"));
+        extra.put("uri", edata.getOrDefault("uri", ""));
         v3Edata.put("extra", extra);
         v3Edata.put("target", new Target(edata));
         v3Edata.put("plugin", new Plugin(edata));
@@ -149,7 +154,7 @@ public class EdataConverter {
 
         v3Edata.put("target", new Target(edata));
         v3Edata.put("type", "");
-        HashMap<String, Object> values = new HashMap<String, Object>();
+        HashMap<String, Object> values = new HashMap<>();
         values.put("state", (String) edata.get("state"));
         values.put("resvalues", edata.get("resvalues"));
         v3Edata.put("values", values);
@@ -201,15 +206,15 @@ public class EdataConverter {
         List<Map<String, Object>> contents = (List<Map<String, Object>>) edata
                 .getOrDefault("contents", new ArrayList<Map<String, Object>>());
 
-        Map<String, String> origin = new HashMap<String, String>();
-        Map<String, String> to = new HashMap<String, String>();
+        Map<String, String> origin = new HashMap<>();
+        Map<String, String> to = new HashMap<>();
 
-        List<Map<String, String>> params = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> params = new ArrayList<>();
         Map<String, String> paramsMap = null;
 
         for (Map<String, Object> content : contents) {
 
-            paramsMap = new HashMap<String, String>();
+            paramsMap = new HashMap<>();
             paramsMap.put("transfers", Double.toString((Double) content.getOrDefault("transferCount", 0)));
             paramsMap.put("count", Integer.toString((Integer) content.getOrDefault("count", 0)));
             params.add(paramsMap);
@@ -220,7 +225,7 @@ public class EdataConverter {
             to.put("id", "");
             to.put("type", "");
 
-            Map<String, Object> item = new HashMap<String, Object>();
+            Map<String, Object> item = new HashMap<>();
 
             item.put("id", (String) content.get("identifier"));
             item.put("type", dataType);
