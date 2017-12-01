@@ -61,12 +61,11 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
         try {
             TelemetryV3Converter converter = new TelemetryV3Converter(map);
             TelemetryV3[] v3Events = converter.convert();
-            for (TelemetryV3 telemetryV3: v3Events) {
+            for (TelemetryV3 telemetryV3 : v3Events) {
                 toSuccessTopic(collector, telemetryV3, map);
                 LOGGER.info(telemetryV3.getEid(), "Converted to V3. EVENT: {}", telemetryV3.toMap());
             }
-        }
-        catch(Exception ex) {
+        } catch (Exception ex) {
             LOGGER.error("", "Failed to convert event to telemetry v3", ex);
             toFailedTopic(collector, map, ex);
         }
@@ -112,12 +111,9 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
 
     private String stacktraceToString(StackTraceElement[] stackTrace) {
         String stack = "";
-        for (StackTraceElement trace: stackTrace) {
+        for (StackTraceElement trace : stackTrace) {
             stack += trace.toString() + "\n";
         }
         return stack;
     }
-
-
-
 }
