@@ -5,7 +5,6 @@ import org.ekstep.ep.samza.domain.*;
 import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.junit.Test;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -37,7 +36,7 @@ public class TelemetryV3ConverterTest {
         assertEquals("a7a44f3c-b26c-4e21-8224-c504b92ec1b8", context.getSid());
         assertEquals("b24b368416113734693395a39a7c05d460c849dd", context.getDid());
         assertEquals("ekstep", context.getChannel());
-        for(CData cdata : context.getCData()) {
+        for (CData cdata : context.getCData()) {
             assertEquals("ContentSession", cdata.getType());
             assertEquals("9497e01e1bdc1ff77a65ff1773056b8d", cdata.getId());
         }
@@ -48,19 +47,19 @@ public class TelemetryV3ConverterTest {
         assertEquals("1.0", pdata.getVer());
     }
 
-	 @Test
-	 public void convertOE_START() throws Exception {
-         Map<String, Object> oeStart = EventFixture.getEvent("OE_START");
-         TelemetryV3Converter converter = new TelemetryV3Converter(oeStart);
-         TelemetryV3[] v3 = converter.convert();
-         Map<String, Object> v3Map = v3[0].toMap();
+    @Test
+    public void convertOE_START() throws Exception {
+        Map<String, Object> oeStart = EventFixture.getEvent("OE_START");
+        TelemetryV3Converter converter = new TelemetryV3Converter(oeStart);
+        TelemetryV3[] v3 = converter.convert();
+        Map<String, Object> v3Map = v3[0].toMap();
 
-         Map<String, String> eData = (Map<String, String>)v3Map.get("edata");
-		 assertEquals(eData.get("mode"), "play");
-		 assertEquals(eData.get("duration"), 0);
-		 assertEquals(eData.get("type"), "player");
-		 assertEquals(eData.get("pageid"), "");
-	 }
+        Map<String, String> eData = (Map<String, String>) v3Map.get("edata");
+        assertEquals(eData.get("mode"), "play");
+        assertEquals(eData.get("duration"), 0);
+        assertEquals(eData.get("type"), "player");
+        assertEquals(eData.get("pageid"), "");
+    }
 
     @Test
     public void convertCE_START() throws Exception {
@@ -79,9 +78,9 @@ public class TelemetryV3ConverterTest {
         assertEquals(0, start.getEdata().get("duration"));
         assertEquals("editor", start.getEdata().get("type"));
         assertEquals("", start.getEdata().get("pageid"));
-        assert(start.getEdata().containsKey("uaspec"));
+        assert (start.getEdata().containsKey("uaspec"));
 
-        assert(impression.getEdata().containsKey("visits"));
+        assert (impression.getEdata().containsKey("visits"));
         assertEquals("", impression.getEdata().get("subtype"));
         assertEquals("edit", impression.getEdata().get("type"));
         assertEquals("contenteditor", impression.getEdata().get("pageid"));
@@ -96,7 +95,7 @@ public class TelemetryV3ConverterTest {
 
         assertEquals(v3Map.get("eid"), "IMPRESSION");
 
-        Map<String, Object> eData = (Map<String, Object>)v3Map.get("edata");
+        Map<String, Object> eData = (Map<String, Object>) v3Map.get("edata");
         assertEquals(eData.get("pageid"), "com_ekcontent.content");
         assertEquals(eData.get("type"), "view");
         ArrayList<Visit> visits = (ArrayList<Visit>) eData.get("visits");
@@ -112,7 +111,7 @@ public class TelemetryV3ConverterTest {
 
         assertEquals(v3Map.get("eid"), "INTERACT");
 
-        Map<String, Object> eData = (Map<String, Object>)v3Map.get("edata");
+        Map<String, Object> eData = (Map<String, Object>) v3Map.get("edata");
         assertEquals(eData.get("subtype"), "create");
         assertEquals(eData.get("type"), "click");
 
@@ -131,11 +130,11 @@ public class TelemetryV3ConverterTest {
         Map<String, Object> v3Map = v3[0].toMap();
 
         Gson gson = new Gson();
-        System.out.println("Converted"+gson.toJson(v3Map));
+        System.out.println("Converted" + gson.toJson(v3Map));
 
         assertEquals(v3Map.get("eid"), "INTERACT");
 
-        Map<String, Object> eData = (Map<String, Object>)v3Map.get("edata");
+        Map<String, Object> eData = (Map<String, Object>) v3Map.get("edata");
         assertEquals(eData.get("type"), "click");
         assertEquals(eData.get("subtype"), "menu");
 
@@ -229,7 +228,7 @@ public class TelemetryV3ConverterTest {
         TelemetryV3Converter converter = new TelemetryV3Converter(event);
         TelemetryV3[] v3Events = converter.convert();
         HashSet<String> uniqueMIDs = new HashSet<>();
-        for(TelemetryV3 v3 : v3Events) {
+        for (TelemetryV3 v3 : v3Events) {
             uniqueMIDs.add(v3.getMid());
         }
 
@@ -252,14 +251,14 @@ public class TelemetryV3ConverterTest {
 
     @Test
     public void convertGE_INTERACT_Object_Type_ShouldNotBeContent() throws Exception {
-    	Map<String, Object> event = EventFixture.getEvent("GE_INTERACT");
+        Map<String, Object> event = EventFixture.getEvent("GE_INTERACT");
         TelemetryV3Converter converter = new TelemetryV3Converter(event);
         TelemetryV3 v3Event = (converter.convert())[0];
         String objType = v3Event.getObject().getType();
         assertNotEquals("Content", objType);
         assertEquals("", objType);
     }
-    
+
     @Test
     public void convertGE_ERROR() throws Exception {
         Map<String, Object> event = EventFixture.getEvent("GE_ERROR");
@@ -319,6 +318,18 @@ public class TelemetryV3ConverterTest {
 
         TelemetryV3 resume = v3Events[0];
         assertEquals("resume", resume.getEdata().get("type"));
-        System.out.println(resume.toJson());
+    }
+
+    @Test
+    public void convertGE_PARTNER_DATA() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("GE_PARTNER_DATA");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+
+        TelemetryV3[] v3Events = converter.convert();
+        assertEquals(1, v3Events.length);
+
+        TelemetryV3 exdata = v3Events[0];
+        assertEquals("EXDATA", exdata.getEid());
+        assertEquals("partnerdata", exdata.getEdata().get("type"));
     }
 }
