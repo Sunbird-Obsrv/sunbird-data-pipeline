@@ -332,7 +332,7 @@ public class TelemetryV3ConverterTest {
         assertEquals("", audit.getObject().getParent().get("type"));
         assertEquals("Live", audit.getEdata().get("state"));
         assertEquals("Draft", audit.getEdata().get("prevstate"));
-        assertEquals("2017-11-29T17:17:11.447Z", audit.toMap().get("@timestamp"));
+        assertEquals(true, audit.toMap().containsKey("@timestamp"));
     }
 
     @Test
