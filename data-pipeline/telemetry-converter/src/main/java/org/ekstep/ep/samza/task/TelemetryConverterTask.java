@@ -50,7 +50,7 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
     @Override
     public void init(Config config, TaskContext context) {
         this.config = new TelemetryConverterConfig(config);
-        this.metrics = new JobMetrics(context);
+        metrics = new JobMetrics(context);
     }
 
     @Override
@@ -59,11 +59,16 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
         String message = (String) envelope.getMessage();
         Map<String, Object> map = (Map<String, Object>) new Gson().fromJson(message, Map.class);
         try {
-            TelemetryV3Converter converter = new TelemetryV3Converter(map);
-            TelemetryV3[] v3Events = converter.convert();
-            for (TelemetryV3 telemetryV3 : v3Events) {
-                toSuccessTopic(collector, telemetryV3, map);
-                LOGGER.info(telemetryV3.getEid(), "Converted to V3. EVENT: {}", telemetryV3.toMap());
+            if ("3.0".equals(map.get("ver"))) {
+                // It is already a V3 events. Skipping and let it pass through
+                toSuccessTopic(collector, message);
+            } else {
+                TelemetryV3Converter converter = new TelemetryV3Converter(map);
+                TelemetryV3[] v3Events = converter.convert();
+                for (TelemetryV3 telemetryV3 : v3Events) {
+                    toSuccessTopic(collector, telemetryV3, map);
+                    LOGGER.info(telemetryV3.getEid(), "Converted to V3. EVENT: {}", telemetryV3.toMap());
+                }
             }
         } catch (Exception ex) {
             LOGGER.error("", "Failed to convert event to telemetry v3", ex);
@@ -76,6 +81,11 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
         metrics.clear();
     }
 
+    private void toSuccessTopic(MessageCollector collector, String v2Event) {
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), v2Event));
+        metrics.incSkippedCounter();
+    }
+    
     private void toSuccessTopic(MessageCollector collector, TelemetryV3 v3, Map<String, Object> v2) {
         Map<String, Object> flags = new HashMap<>();
         flags.put("v2_converted", true);
@@ -90,7 +100,7 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
 
         String json = new Gson().toJson(event);
         collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), json));
-        metrics.incFailedCounter();
+        metrics.incSuccessCounter();
     }
 
     private void toFailedTopic(MessageCollector collector, Map<String, Object> event, Exception ex) {

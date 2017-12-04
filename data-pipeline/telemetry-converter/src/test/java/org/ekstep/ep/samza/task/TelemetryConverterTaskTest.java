@@ -31,7 +31,7 @@ public class TelemetryConverterTaskTest {
 
         @Override
         public void send(OutgoingMessageEnvelope outgoingMessageEnvelope) {
-            this.outgoingEnvelope = outgoingMessageEnvelope;
+            outgoingEnvelope = outgoingMessageEnvelope;
         }
     }
 
@@ -59,6 +59,23 @@ public class TelemetryConverterTaskTest {
                 .toReturn(counter);
         stub(config.get("output.success.topic.name", "telemetry.v3")).toReturn(successTopic);
         stub(config.get("output.failed.topic.name", "telemetry.v3.fail")).toReturn(failedTopic);
+    }
+
+    @Test
+    public void v3EventsShouldNotBeProcessed() throws Exception {
+        String v3Event = EventFixture.getEventAsString("START");
+        stub(envelope.getMessage()).toReturn(v3Event);
+        TelemetryConverterTask task = new TelemetryConverterTask(config, context);
+        task.process(envelope, collector, coordinator);
+
+        OutgoingMessageEnvelope envelope = ((TestMessageCollector) collector).outgoingEnvelope;
+        SystemStream stream = envelope.getSystemStream();
+
+        assertEquals("kafka", stream.getSystem());
+        assertEquals("kafka.success", stream.getStream());
+
+        String output = (String) envelope.getMessage();
+        assertEquals(v3Event, output);
     }
 
     @Test
