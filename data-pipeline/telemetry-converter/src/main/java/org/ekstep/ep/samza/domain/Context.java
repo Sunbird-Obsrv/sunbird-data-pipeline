@@ -19,7 +19,7 @@ public class Context {
     private PData pData;
 
     @SerializedName("cdata")
-    private ArrayList<CData> cData = new ArrayList<CData>();
+    private ArrayList<CData> cData = new ArrayList<>();
 
     private Rollup rollUp;
 
@@ -27,8 +27,11 @@ public class Context {
     }
 
     public Context(Telemetry reader) throws TelemetryReaderException {
-        this.channel = reader.getChannel();
-        this.pData = new PData(reader);
+        channel = reader.<String>read("channel").valueOrDefault("in.ekstep");
+        if ("".equals(channel.trim())) {
+            channel = "in.ekstep";
+        }
+        pData = new PData(reader);
 
         String eid = reader.mustReadValue("eid");
         String env = reader.<String>read("edata.eks.env").valueOrDefault("");
@@ -53,12 +56,12 @@ public class Context {
             this.sid = sid.value();
         }
 
-        this.did = reader.<String>read("did").valueOrDefault("");
+        did = reader.<String>read("did").valueOrDefault("");
 
         List cdata = reader.<List>read("cdata").valueOrDefault(new ArrayList());
         for (Object item : cdata) {
             Map<String, Object> m = (Map<String, Object>) item;
-            this.cData.add(new CData(m));
+            cData.add(new CData(m));
         }
     }
 

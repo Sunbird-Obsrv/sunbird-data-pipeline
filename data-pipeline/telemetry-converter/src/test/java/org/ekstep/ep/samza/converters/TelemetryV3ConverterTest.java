@@ -491,4 +491,30 @@ public class TelemetryV3ConverterTest {
         ArrayList<Object> res_values = (ArrayList<Object>) values.get("resvalues");
         assertEquals(1, res_values.size());
     }
+
+    @Test
+    public void defaultChannelShouldGetAddedIfChannelFieldIsMissing() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("CE_START_MISSING_CHANNEL");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+
+        TelemetryV3[] v3Events = converter.convert();
+        TelemetryV3 start = Arrays.stream(v3Events).filter(e -> "START".equals(e.getEid())).findFirst().get();
+        TelemetryV3 impression = Arrays.stream(v3Events).filter(e -> "IMPRESSION".equals(e.getEid())).findFirst().get();
+
+        assertEquals("in.ekstep", start.getContext().getChannel());
+        assertEquals("in.ekstep", impression.getContext().getChannel());
+    }
+
+    @Test
+    public void defaultChannelShouldGetAddedIfChannelIsEmpty() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("CE_START_EMPTY_CHANNEL");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+
+        TelemetryV3[] v3Events = converter.convert();
+        TelemetryV3 start = Arrays.stream(v3Events).filter(e -> "START".equals(e.getEid())).findFirst().get();
+        TelemetryV3 impression = Arrays.stream(v3Events).filter(e -> "IMPRESSION".equals(e.getEid())).findFirst().get();
+
+        assertEquals("in.ekstep", start.getContext().getChannel());
+        assertEquals("in.ekstep", impression.getContext().getChannel());
+    }
 }
