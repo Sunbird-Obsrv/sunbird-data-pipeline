@@ -79,6 +79,58 @@ public class TelemetryConverterTaskTest {
     }
 
     @Test
+    public void flagsShouldNotBeOverwritten() throws Exception {
+        // If flags are already there in the event, converter should not overwrite. Instead it should merge
+        String v2Event = EventFixture.getEventAsString("CE_END");
+        stub(envelope.getMessage()).toReturn(v2Event);
+        TelemetryConverterTask task = new TelemetryConverterTask(config, context);
+        task.process(envelope, collector, coordinator);
+
+        OutgoingMessageEnvelope envelope = ((TestMessageCollector) collector).outgoingEnvelope;
+        SystemStream stream = envelope.getSystemStream();
+
+        assertEquals("kafka", stream.getSystem());
+        assertEquals("kafka.success", stream.getStream());
+
+        Map<String, Object> v3Event = (Map<String, Object>) new Gson().fromJson((String) envelope.getMessage(), Map.class);
+        Map<String, Object> flags = (Map<String, Object>) v3Event.get("flags");
+        String[] existingFlags = new String[]{"tv_skipped", "dd_processed", "ppm_skipped", "ldata_obtained", "ldata_processed", "od_processed"};
+        for (String existingFlag : existingFlags) {
+            assertEquals("flags don't have " + existingFlag, true, flags.containsKey(existingFlag));
+        }
+
+        String newFlag = "v2_converted";
+        assertEquals("flags don't have " + newFlag, true, flags.containsKey(newFlag));
+    }
+
+    @Test
+    public void metadataShouldNotBeOverwritten() throws Exception {
+        // If metadata are already there in the event, converter should not overwrite. Instead it should merge
+        String v2Event = EventFixture.getEventAsString("CE_END");
+        stub(envelope.getMessage()).toReturn(v2Event);
+        TelemetryConverterTask task = new TelemetryConverterTask(config, context);
+        task.process(envelope, collector, coordinator);
+
+        OutgoingMessageEnvelope envelope = ((TestMessageCollector) collector).outgoingEnvelope;
+        SystemStream stream = envelope.getSystemStream();
+
+        assertEquals("kafka", stream.getSystem());
+        assertEquals("kafka.success", stream.getStream());
+
+        Map<String, Object> v3Event = (Map<String, Object>) new Gson().fromJson((String) envelope.getMessage(), Map.class);
+        Map<String, Object> metadata = (Map<String, Object>) v3Event.get("metadata");
+        String[] existingMetadata = new String[]{"checksum", "cachehit", "od_last_processed_at", "od_processed_count", "index_name", "index_type"};
+        for (String m : existingMetadata) {
+            assertEquals("metadata don't have " + m, true, metadata.containsKey(m));
+        }
+
+        String[] newMetadata = new String[]{"source_eid", "source_mid"};
+        for (String m : newMetadata) {
+            assertEquals("metadata don't have " + m, true, metadata.containsKey(m));
+        }
+    }
+
+    @Test
     public void processToSuccessTopic() throws Exception {
         String v2Event = EventFixture.getEventAsString("GE_START");
         stub(envelope.getMessage()).toReturn(v2Event);

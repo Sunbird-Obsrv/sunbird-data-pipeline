@@ -85,12 +85,12 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
         collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), v2Event));
         metrics.incSkippedCounter();
     }
-    
+
     private void toSuccessTopic(MessageCollector collector, TelemetryV3 v3, Map<String, Object> v2) {
-        Map<String, Object> flags = new HashMap<>();
+        Map<String, Object> flags = getFlags(v2);
         flags.put("v2_converted", true);
 
-        Map<String, Object> metadata = new HashMap<>();
+        Map<String, Object> metadata = getMetadata(v2);
         metadata.put("source_eid", v2.getOrDefault("eid", ""));
         metadata.put("source_mid", v2.getOrDefault("mid", ""));
 
@@ -104,13 +104,14 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
     }
 
     private void toFailedTopic(MessageCollector collector, Map<String, Object> event, Exception ex) {
-        Map<String, Object> flags = new HashMap<>();
+        Map<String, Object> flags = getFlags(event);
         flags.put("v2_converted", false);
         flags.put("error", ex.getMessage());
         flags.put("stack", stacktraceToString(ex.getStackTrace()));
 
         Map<String, Object> payload = event;
         payload.put("flags", flags);
+        payload.put("metadata", getMetadata(event));
 
         String json = new Gson().toJson(payload);
 
@@ -125,5 +126,27 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
             stack += trace.toString() + "\n";
         }
         return stack;
+    }
+
+    private Map<String, Object> getFlags(Map<String, Object> event) {
+        Map<String, Object> flags;
+        if (event.containsKey("flags") && (event.get("flags") instanceof Map)) {
+            flags = (Map<String, Object>) event.get("flags");
+        } else {
+            flags = new HashMap<>();
+        }
+
+        return flags;
+    }
+
+    private Map<String, Object> getMetadata(Map<String, Object> event) {
+        Map<String, Object> metadata;
+        if (event.containsKey("metadata") && (event.get("metadata") instanceof Map)) {
+            metadata = (Map<String, Object>) event.get("metadata");
+        } else {
+            metadata = new HashMap<>();
+        }
+
+        return metadata;
     }
 }
