@@ -14,10 +14,8 @@ import static java.util.Arrays.asList;
 public class CleanerFactory {
     static Logger LOGGER = LoggerFactory.getLogger(DeviceDataCleaner.class);
     private static List<String> eventsToSkip;
-    private static List<String> eventsToAllow;
 
-    public CleanerFactory(List<String> eventsToAllow, List<String> eventsToSkip) {
-        this.eventsToAllow = eventsToAllow;
+    public CleanerFactory(List<String> eventsToSkip) {
         this.eventsToSkip = eventsToSkip;
     }
 
@@ -33,18 +31,6 @@ public class CleanerFactory {
             Matcher m = p.matcher(eventID);
             if (m.matches()) {
                 LOGGER.info(m.toString(), "SKIPPING EVENT");
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean shouldAllowEvent(String eventID) {
-        for (String eventToAllow : eventsToAllow) {
-            Pattern p = Pattern.compile(eventToAllow);
-            Matcher m = p.matcher(eventID);
-            if (m.matches()) {
-                LOGGER.info(m.toString(), "ALLOWING EVENT");
                 return true;
             }
         }

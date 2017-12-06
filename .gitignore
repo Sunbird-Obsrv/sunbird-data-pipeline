@@ -4,6 +4,7 @@
 *.local
 */reports/*
 backups/
+old_jobs/
 logs/
 tasks/.bundle/*
 tasks/vendor/*

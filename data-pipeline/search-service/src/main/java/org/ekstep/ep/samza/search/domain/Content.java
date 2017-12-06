@@ -2,7 +2,7 @@ package org.ekstep.ep.samza.search.domain;
 
 import java.util.ArrayList;
 
-public class Content {
+public class Content implements IObject {
 
     private String name;
     private String identifier;
@@ -124,14 +124,6 @@ public class Content {
 
     public ArrayList<String> createdFor() { return createdFor; }
 
-    public void setCacheHit(boolean b) {
-        this.cacheHit = b;
-    }
-
-    public boolean getCacheHit() {
-        return cacheHit;
-    }
-
     @Override
     public String toString() {
         return "Content{" +
@@ -165,6 +157,16 @@ public class Content {
                 ", createdFor=" + createdFor +
                 ", cacheHit=" + cacheHit +
                 '}';
+    }
+
+    @Override
+    public boolean getCacheHit() {
+        return cacheHit;
+    }
+
+    @Override
+    public void setCacheHit(boolean b) {
+        this.cacheHit = b;
     }
 }
 

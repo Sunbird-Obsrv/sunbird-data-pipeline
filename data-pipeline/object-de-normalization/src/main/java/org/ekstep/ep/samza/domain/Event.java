@@ -1,153 +1,149 @@
 package org.ekstep.ep.samza.domain;
 
-import org.ekstep.ep.samza.config.ObjectDeNormalizationConfig;
-import org.ekstep.ep.samza.data.RetryData;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
-import org.ekstep.ep.samza.task.ObjectDeNormalizationSink;
-import org.ekstep.ep.samza.util.Flag;
-import org.joda.time.DateTime;
+import org.ekstep.ep.samza.search.domain.Content;
+import org.ekstep.ep.samza.search.domain.IObject;
+import org.ekstep.ep.samza.search.domain.Item;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Event {
     static Logger LOGGER = new Logger(Event.class);
     private final Telemetry telemetry;
-    private final RetryData retryData;
-    private Boolean processed = false;
-    private Boolean triedProcessing = false;
+    private Map<String, Object> contentTaxonomy;
 
-    public Event(Telemetry telemetry, ObjectDeNormalizationConfig config) {
-        this.telemetry = telemetry;
-        retryData = new RetryData(telemetry, config.retryStore(), config.retryBackoffBase(),config.retryBackoffLimit(),config.retryBackoffLimitEnable(), new Flag("od"));
+    public Event(Map<String, Object> map, Map<String, Object> contentTaxonomy) {
+        this.telemetry = new Telemetry(map);
+        this.contentTaxonomy = contentTaxonomy;
     }
 
-    public String id() {
-        NullableValue<String> checksum = telemetry.read("metadata.checksum");
-        return checksum.value();
-    }
-
-    public String eid() {
-        NullableValue<String> checksum = telemetry.read("eid");
-        return checksum.value();
-    }
-
-    @Override
-    public String toString() {
-        return "Event{" +
-                "telemetry=" + telemetry +
-                '}';
-    }
-
-    public Map<String, Object> map() {
+    public Map<String, Object> getMap(){
         return telemetry.getMap();
     }
 
-    public <T> NullableValue<T> read(String path) {
-        return telemetry.read(path);
+    public String getObjectID(){
+        if(objectFieldsPresent()){
+            return telemetry.<String>read("object.id").value();
+        }
+        for (String event : contentTaxonomy.keySet()) {
+            if(getEid().startsWith(event.toUpperCase())){
+                ArrayList<String> fields = getRemovableFields(event);
+                return getObjectID(telemetry.getMap(), fields);
+            }
+        }
+        return null;
     }
 
-    public void update(String path, HashMap<String, Object> data) {
-        telemetry.add(path, data);
+    public boolean objectFieldsPresent() {
+        String objectId = telemetry.<String>read("object.id").value();
+        String objectType = telemetry.<String>read("object.type").value();
+        return objectId != null && objectType != null && !objectId.isEmpty() && !objectType.isEmpty();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Event event = (Event) o;
-
-        return telemetry != null ? telemetry.equals(event.telemetry) : event.telemetry == null;
+    public String getObjectType(){
+        NullableValue<String> checksum = telemetry.read("object.type");
+        return checksum.value().toLowerCase();
     }
 
-    @Override
-    public int hashCode() {
-        return telemetry != null ? telemetry.hashCode() : 0;
+    private ArrayList<String> getRemovableFields(String event) {
+        ArrayList<String> fields = new ArrayList<String>();
+        fields.addAll((Collection<? extends String>) contentTaxonomy.get(event));
+        return fields;
     }
 
-    public void markProcessed() {
-        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.od_processed", true);
-        retryData.removeMetadataFromStore();
-        updateMetadata(true);
+    private String getObjectID(Map<String, Object> map, ArrayList<String> fields) {
+        String key = fields.remove(0);
+        if(key != null && map.containsKey(key)){
+            Object value = map.get(key);
+            if(value instanceof String){
+                return (String) value;
+            }
+            return getObjectID((Map<String, Object>) map.get(key), fields);
+        }
+        return null;
     }
 
-    public void markRetry(Object err, Object errmsg) {
-        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.od_retry", true);
-        telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
-        telemetry.add("metadata.od_err", err);
-        telemetry.add("metadata.od_errmsg", errmsg);
-        retryData.updateMetadataToStore();
-        updateMetadata(false);
+    public String id() {
+        return telemetry.<String>read("metadata.checksum").value();
     }
 
-    private void updateMetadata(boolean processed) {
-        if(triedProcessing)
-            this.processed &=  processed;
-        else
-            this.processed = processed;
-        triedProcessing = true;
-        retryData.addMetadata(DateTime.now());
+    public void updateContent(Content content) {
+        HashMap<String, Object> contentData = new HashMap<String, Object>();
+        contentData.put("name", content.name());
+        contentData.put("identifier", content.identifier());
+        contentData.put("pkgVersion", content.pkgVersion());
+        contentData.put("description", content.description());
+        contentData.put("mediaType", content.mediaType());
+        contentData.put("contentType", content.contentType());
+        contentData.put("lastUpdatedOn", content.lastUpdatedOn());
+        contentData.put("duration", content.duration());
+        contentData.put("gradeLevel", content.gradeLevel());
+        contentData.put("author", content.author());
+        contentData.put("code", content.code());
+        contentData.put("curriculum", content.curriculum());
+        contentData.put("domain", content.domain());
+        contentData.put("medium", content.medium());
+        contentData.put("source", content.source());
+        contentData.put("status", content.status());
+        contentData.put("subject", content.subject());
+        contentData.put("createdBy", content.createdBy());
+
+        contentData.put("downloads", content.downloads());
+        contentData.put("rating", content.rating());
+        contentData.put("size", content.size());
+
+        contentData.put("language", content.language());
+        contentData.put("ageGroup", content.ageGroup());
+        contentData.put("keywords", content.keywords());
+        contentData.put("audience",content.audience());
+        contentData.put("concepts", content.concepts());
+        contentData.put("methods", content.methods());
+        contentData.put("createdFor", content.createdFor());
+
+        telemetry.add("contentdata",contentData);
+
+        updateMetadata(content);
     }
 
-    public boolean shouldBackOff() {
-        return retryData.shouldBackOff();
-    }
-
-    public void setDeNormalizationId(String deNormalizationId, String channel){
-        String metadata_key = String.valueOf(deNormalizationId+"_"+channel);
-        retryData.setMetadataKey(metadata_key);
-    }
-
-    public void addLastSkippedAt(DateTime now) {
-        retryData.addLastSkippedAt(now);
-    }
-
-    public void flowIn(ObjectDeNormalizationSink sink) {
-        if(!triedProcessing){
-            LOGGER.info(id(), "EVENT NOT PROCESSED, PASSING THROUGH");
-            markSkipped();
-            sink.toSuccessTopic(this);
+    private void updateMetadata(IObject object) {
+        Map<String, Object> metadata = (Map<String, Object>) telemetry.read("metadata").value();
+        if (metadata != null) {
+            metadata.put("cachehit",object.getCacheHit());
             return;
         }
+        metadata = new HashMap<String, Object>();
+        metadata.put("cachehit",object.getCacheHit());
 
-        boolean shouldAddInRetry = !retryData.maxAttemptReached() && !processed;
-        boolean failedToProcess = retryData.maxAttemptReached() && !processed;
+        telemetry.add("metadata", metadata);
 
-        if(shouldAddInRetry){
-            LOGGER.info(id(),"ADDING in retry");
-            sink.toRetryTopic(this);
-
-        }
-        else{
-            LOGGER.info(id(),"ADDING in success");
-            sink.toSuccessTopic(this);
-        }
-
-        if (failedToProcess){
-            LOGGER.info(id(),"ADDING in failed");
-            sink.toFailedTopic(this);
-        }
-
+        LOGGER.info(id(), "METADATA CACHEHIT - ADDED " + metadata);
     }
 
-    private void markSkipped() {
-        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.od_skipped", true);
+    public String getEid() {
+        return telemetry.<String>read("eid").value();
     }
 
-    public String channel() {
-        return telemetry.<String>read("channel").value();
-    }
+    public void updateItem(Item item) {
+            HashMap<String, Object> itemData = new HashMap<String, Object>();
+            itemData.put("title", item.title());
+            itemData.put("name", item.name());
+            itemData.put("num_answers", item.num_answers());
+            itemData.put("template", item.template());
+            itemData.put("type", item.type());
+            itemData.put("status", item.status());
+            itemData.put("owner", item.owner());
+            itemData.put("qlevel", item.qlevel());
+            itemData.put("language", item.language());
+            itemData.put("keywords", item.keywords());
+            itemData.put("concepts", item.concepts());
+            itemData.put("gradeLevel", item.gradeLevel());
+            telemetry.add("itemdata", itemData);
 
-    public boolean isDefaultChannel(String defaultChannel) {
-        if(channel() != null && channel().equals(defaultChannel)){
-            return true;
-        }
-        return false;
+            updateMetadata(item);
     }
 }
-

@@ -104,7 +104,7 @@ public class Event {
     }
 
     public String channel() {
-        return telemetry.<String>read("channel").value();
+        return telemetry.<String>read("context.channel").value();
     }
 
     public String ver() {

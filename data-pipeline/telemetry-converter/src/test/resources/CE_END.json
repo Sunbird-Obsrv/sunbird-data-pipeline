@@ -1,0 +1,107 @@
+{
+  "eid": "CE_END",
+  "mid": "CE:d9fac0d87cd61e7de2b25e0faa580e96",
+  "ets": 1511949021481,
+  "channel": "in.ekstep",
+  "ver": "2.1",
+  "pdata": {},
+  "cdata": [],
+  "uid": "350",
+  "context": {
+    "sid": "aaanmu2sl4q026u52smr9p5q24",
+    "content_id": "do_3123271445233008642543"
+  },
+  "rid": "",
+  "edata": {
+    "eks": {
+      "duration": 15808638
+    }
+  },
+  "etags": {
+    "app": [],
+    "partner": [],
+    "dims": []
+  },
+  "@version": "1",
+  "@timestamp": "2017-11-29T09:55:03.364Z",
+  "path": "/var/log/piwik/piwik.raw.idsite_1.log",
+  "host": "ip-11-52-4-113",
+  "tags": [
+    "piwik_json"
+  ],
+  "flags": {
+    "tv_skipped": true,
+    "dd_processed": true,
+    "ppm_skipped": true,
+    "ldata_obtained": false,
+    "ldata_processed": true,
+    "od_processed": true
+  },
+  "type": "events",
+  "ts": "2017-11-29T09:50:21.481+0000",
+  "metadata": {
+    "checksum": "CE:d9fac0d87cd61e7de2b25e0faa580e96",
+    "cachehit": true,
+    "od_last_processed_at": "2017-11-29T09:55:04.121Z",
+    "od_processed_count": 1,
+    "index_name": "backend-2017.11",
+    "index_type": "backend"
+  },
+  "contentdata": {
+    "code": "org.ekstep.literacy.story.8627.fork.350.1504778580",
+    "subject": "English",
+    "description": "या भागामध्ये s चा आवाज  कसा  होतो ते शिकणार आहोत.",
+    "language": [
+      "Marathi"
+    ],
+    "medium": "Marathi",
+    "gradeLevel": [
+      "Other"
+    ],
+    "lastUpdatedOn": "2017-10-09T11:28:19.393+0000",
+    "contentType": "Story",
+    "identifier": "do_3123271445233008642543",
+    "audience": [
+      "Learner"
+    ],
+    "mediaType": "content",
+    "ageGroup": [
+      "Other"
+    ],
+    "concepts": [
+      "LO12",
+      "LO16",
+      "LO14",
+      "LO17"
+    ],
+    "createdBy": "350",
+    "domain": [
+      "literacy"
+    ],
+    "name": "Copied from Copied from 3.2.1 वाचण्याची पद्धत(S)(ERM)",
+    "status": "Draft"
+  },
+  "portaluserdata": {
+    "code": "",
+    "access": [
+      {
+        "id": "2",
+        "value": "Registered"
+      },
+      {
+        "id": "14",
+        "value": "Content-creator"
+      }
+    ],
+    "subtype": "",
+    "partners": [],
+    "profile": [],
+    "name": "Vinu Kumar Tarento",
+    "id": "350",
+    "type": "User",
+    "parenttype": "",
+    "parentid": "",
+    "email": "vinu.kumar@tarento.com"
+  },
+  "backend": "true"
+}

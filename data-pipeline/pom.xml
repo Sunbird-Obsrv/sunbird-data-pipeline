@@ -21,25 +21,17 @@
 
   <modules>
     <module>reverse-search</module>
-    <module>de-normalization</module>
     <module>de-duplication</module>
     <module>distribution</module>
     <module>checksum-generator</module>
-    <module>user-management</module>
-    <module>user-management-test</module>
     <module>partner-data-router</module>
     <module>public-telemetry</module>
     <module>telemetry-cleaner</module>
     <module>ep-logger</module>
-    <module>content-de-normalization</module>
-    <module>item-de-normalization</module>
     <module>search-service</module>
     <module>cache-service</module>
     <module>job-metrics</module>
     <module>ep-telemetry-reader</module>
-    <module>object-lifecycle-management</module>
-    <module>object-de-normalization</module>
-    <module>portal-profile-management</module>
     <module>public-exhaust-de-duplication</module>
     <module>private-exhaust-de-duplication</module>
     <module>object-service</module>
@@ -52,6 +44,8 @@
     <module>es-indexer-secondary</module>
     <module>es-router-secondary</module>
     <module>telemetry-validator</module>
+    <module>telemetry-converter</module>
+    <module>object-de-normalization</module>
   </modules>
 
   <properties>
@@ -94,8 +88,8 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.1</version>
           <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
+            <source>1.8</source>
+            <target>1.8</target>
           </configuration>
         </plugin>
       </plugins>

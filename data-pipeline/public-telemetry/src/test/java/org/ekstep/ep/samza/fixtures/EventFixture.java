@@ -6,7 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.Map;
 
 public class EventFixture {
-    public static Map<String, Object> CreateProfile() {
+    public static Map<String, Object> Interact() {
         String json = "{\n" +
                 "  \"tags\": [\n" +
                 "    {\n" +
@@ -15,7 +15,9 @@ public class EventFixture {
                 "  ],\n" +
                 "  \"uid\": \"68f24339-caae-4ebb-b4ff-6b1ae0478c02\",\n" +
                 "  \"sid\": \"\",\n" +
-                "    \"channel\": \"in.ekstep\",\n" +
+                "   \"context\": {\n" +
+                "       \"channel\": \"in.ekstep\"\n" +
+                "    },\n" +
                 "  \"ts\": \"2016-05-25T15:03:54.857+0530\",\n" +
                 "  \"edata\": {\n" +
                 "    \"eks\": {\n" +
@@ -34,7 +36,7 @@ public class EventFixture {
                 "  \"did\": \"79e957c03a7297d4e2aaab3ca218ab9af9e88403\",\n" +
                 "  \"ver\": \"2.0\",\n" +
                 "  \"type\": \"events\",\n" +
-                "  \"eid\": \"GE_CREATE_PROFILE\",\n" +
+                "  \"eid\": \"INTERACT\",\n" +
                 "  \"@version\": \"1\",\n" +
                 "  \"gdata\": {\n" +
                 "    \"id\": \"genieservice.android\",\n" +
@@ -90,7 +92,9 @@ public class EventFixture {
                 "    ],\n" +
                 "    \"uid\": \"\",\n" +
                 "    \"sid\": \"\",\n" +
-                "    \"channel\": \"in.ekstep\",\n" +
+                "   \"context\": {\n" +
+                "       \"channel\": \"in.ekstep\"\n" +
+                "    },\n" +
                 "    \"ts\": \"2016-05-27T15:21:59.995+0530\",\n" +
                 "    \"edata\": {\n" +
                 "        \"eks\": {\n" +
@@ -104,7 +108,7 @@ public class EventFixture {
                 "    \"did\": \"89feecbf900d1730c59b71c35f3dca344d2bd5e3\",\n" +
                 "    \"ver\": \"2.0\",\n" +
                 "    \"type\": \"events\",\n" +
-                "    \"eid\": \"GE_PARTNER_DATA\",\n" +
+                "    \"eid\": \"EXDATA\",\n" +
                 "    \"@version\": \"1\",\n" +
                 "    \"gdata\": {\n" +
                 "        \"id\": \"genieservice.android\",\n" +
@@ -143,7 +147,7 @@ public class EventFixture {
                 "  \"eid\": \"ME_SESSION_SUMMARY\",\n" +
                 "  \"ets\": 1462881701027,\n" +
                 "  \"syncts\": 1441324800000,\n" +
-                "  \"ver\": \"1.0\",\n" +
+                "  \"ver\": \"2.0\",\n" +
                 "  \"mid\": \"327A6D861952BC1B29C136E8806D3ECA\",\n" +
                 "  \"uid\": \"98e3e4f3e47f839e28618812a90e2ac79a2adc8a\",\n" +
                 "  \"context\": {\n" +
@@ -156,9 +160,9 @@ public class EventFixture {
                 "    \"date_range\": {\n" +
                 "      \"from\": 1441262850000,\n" +
                 "      \"to\": 1441262943000\n" +
-                "    }\n" +
+                "    },\n" +
+                "    \"channel\": \"in.ekstep\"\n" +
                 "  },\n" +
-                "    \"channel\": \"in.ekstep\",\n" +
                 "  \"dimensions\": {\n" +
                 "    \"did\": \"d5df4a8a801b5b6d28fe24bbcaeee680ea8a75cf\",\n" +
                 "    \"gdata\": {\n" +
@@ -219,7 +223,7 @@ public class EventFixture {
                 "  \"eid\": \"ME_GENIE_LAUNCH_SUMMARY\",\n" +
                 "  \"ets\": 1465522333811,\n" +
                 "  \"syncts\": 1465466359997,\n" +
-                "  \"ver\": \"1.0\",\n" +
+                "  \"ver\": \"2.0\",\n" +
                 "  \"mid\": \"0F5CE4150EA162407AD07F756CF40B88\",\n" +
                 "  \"uid\": \"\",\n" +
                 "  \"context\": {\n" +
@@ -280,8 +284,8 @@ public class EventFixture {
                 "  \"ver\": \"1.0\",\n" +
                 "  \"mid\": \"0F5CE4150EA162407AD07F756CF40B88\",\n" +
                 "  \"uid\": \"\",\n" +
-                "    \"channel\": \"in.ekstep\",\n" +
                 "  \"context\": {\n" +
+                "    \"channel\": \"in.ekstep\",\n" +
                 "    \"pdata\": {\n" +
                 "      \"id\": \"AnalyticsDataPipeline\",\n" +
                 "      \"model\": \"GenieUsageSummarizer\",\n" +
@@ -339,7 +343,9 @@ public class EventFixture {
                 "    ],\n" +
                 "    \"uid\": \"919280cb-3f51-46d7-ad7e-0ce4becb97a6\",\n" +
                 "    \"sid\": \"1e891213-5ec6-475c-b706-d65928f47f77\",\n" +
-                "    \"channel\": \"in.ekstep\",\n" +
+                "    \"context\": {\n" +
+                "       \"channel\": \"in.ekstep\"\n" +
+                "    },\n" +
                 "    \"ts\": \"2016-09-07T11:36:40.784+0530\",\n" +
                 "    \"edata\": {\n" +
                 "        \"eks\": {\n" +
@@ -361,7 +367,7 @@ public class EventFixture {
                 "    \"did\": \"b0ead84e4db348a5315a05e67137e3c518d7f5f5\",\n" +
                 "    \"ver\": \"2.0\",\n" +
                 "    \"type\": \"events\",\n" +
-                "    \"eid\": \"OE_ASSESS\",\n" +
+                "    \"eid\": \"ASSESS\",\n" +
                 "    \"@version\": \"1\",\n" +
                 "    \"gdata\": {\n" +
                 "        \"id\": \"do_30076072\",\n" +
@@ -392,7 +398,9 @@ public class EventFixture {
                 "    ],\n" +
                 "    \"uid\": \"\",\n" +
                 "    \"sid\": \"\",\n" +
-                "    \"channel\": \"ntp.sunbird\",\n" +
+                "   \"context\": {\n" +
+                "       \"channel\": \"ntp.in.ekstep\"\n" +
+                "    },\n" +
                 "    \"ts\": \"2016-05-27T15:21:59.995+0530\",\n" +
                 "    \"edata\": {\n" +
                 "        \"eks\": {\n" +
@@ -406,7 +414,7 @@ public class EventFixture {
                 "    \"did\": \"89feecbf900d1730c59b71c35f3dca344d2bd5e3\",\n" +
                 "    \"ver\": \"2.0\",\n" +
                 "    \"type\": \"events\",\n" +
-                "    \"eid\": \"GE_PARTNER_DATA\",\n" +
+                "    \"eid\": \"EXDATA\",\n" +
                 "    \"@version\": \"1\",\n" +
                 "    \"gdata\": {\n" +
                 "        \"id\": \"genieservice.android\",\n" +

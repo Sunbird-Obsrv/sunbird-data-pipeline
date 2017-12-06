@@ -20,7 +20,9 @@ public class EventFixture {
                 "    ],\n" +
                 "  \"uid\": \"68f24339-caae-4ebb-b4ff-6b1ae0478c02\",\n" +
                 "  \"sid\": \"\",\n" +
-                "    \"channel\": \"in.ekstep\",\n" +
+                "    \"context\": {\n" +
+                "       \"channel\": \"in.ekstep\"\n" +
+                "    },\n" +
                 "  \"ts\": \"2016-05-25T15:03:54.857+0530\",\n" +
                 "  \"edata\": {\n" +
                 "    \"eks\": {\n" +
@@ -107,7 +109,9 @@ public class EventFixture {
                 "  },\n" +
                 "  \"did\": \"79e957c03a7297d4e2aaab3ca218ab9af9e88403\",\n" +
                 "  \"ver\": \"2.0\",\n" +
-                "    \"channel\": \"in.ekstep\",\n" +
+                "    \"context\": {\n" +
+                "       \"channel\": \"in.ekstep\"\n" +
+                "    },\n" +
                 "  \"type\": \"events\",\n" +
                 "  \"eid\": \"GE_CREATE_PROFILE\",\n" +
                 "  \"@version\": \"1\",\n" +
@@ -164,7 +168,9 @@ public class EventFixture {
                 "        }\n" +
                 "    ],\n" +
                 "    \"uid\": \"\",\n" +
-                "    \"channel\": \"in.ekstep\",\n" +
+                "    \"context\": {\n" +
+                "       \"channel\": \"in.ekstep\"\n" +
+                "    },\n" +
                 "    \"sid\": \"e2e50098-ed9e-41cf-bfb1-e61baaff8911\",\n" +
                 "    \"ts\": \"2016-05-27T15:21:59.995+0530\",\n" +
                 "    \"edata\": {\n" +
@@ -223,7 +229,9 @@ public class EventFixture {
                 "    \"uid\": \"\",\n" +
                 "    \"sid\": \"e2e50098-ed9e-41cf-bfb1-e61baaff8911\",\n" +
                 "    \"ts\": \"2016-05-27T15:21:59.995+0530\",\n" +
-                "    \"channel\": \"in.ekstep\",\n" +
+                "    \"context\": {\n" +
+                "       \"channel\": \"in.ekstep\"\n" +
+                "    },\n" +
                 "    \"edata\": {\n" +
                 "        \"eks\": {\n" +
                 "            \"data\": \"L0ouPhQSzupyU5O/w87KZqZp5UQ+ay2fiDwJ5d9mkN8=\\n\",\n" +
@@ -278,8 +286,8 @@ public class EventFixture {
                 "  \"ver\": \"2.0\",\n" +
                 "  \"mid\": \"0F5CE4150EA162407AD07F756CF40B88\",\n" +
                 "  \"uid\": \"\",\n" +
-                "    \"channel\": \"in.ekstep\",\n" +
                 "  \"context\": {\n" +
+                "   \"channel\": \"in.ekstep\",\n" +
                 "    \"pdata\": {\n" +
                 "      \"id\": \"AnalyticsDataPipeline\",\n" +
                 "      \"model\": \"GenieUsageSummarizer\",\n" +
@@ -350,11 +358,12 @@ public class EventFixture {
                 "      }\n" +
                 "    ],\n" +
                 "    \"uid\": \"718\",\n" +
-                "    \"channel\": \"in.ekstep\",\n" +
+
                 "    \"rid\": \"\",\n" +
                 "    \"context\": {\n" +
                 "      \"sid\": \"1vbnii58kjr7i17abisplvpgj0\",\n" +
-                "      \"content_id\": \"do_2122880790441738241317\"\n" +
+                "      \"content_id\": \"do_2122880790441738241317\",\n" +
+                "    \"channel\": \"in.ekstep\"\n" +
                 "    },\n" +
                 "    \"tags\": [\n" +
                 "      \"piwik_json\"\n" +

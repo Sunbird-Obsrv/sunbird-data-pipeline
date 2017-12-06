@@ -7,7 +7,6 @@ import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
-import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.Event;
 import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.junit.Before;
@@ -17,23 +16,19 @@ import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
 public class PublicTelemetryTaskTest {
     private final String SUCCESS_TOPIC = "telemetry.public";
     private final String FAILED_TOPIC = "telemetry.public.fail";
-    private final String EVENTS_TO_SKIP = "GE_ERROR, GE_SERVICE_API_CALL, GE_API_CALL, GE_REGISTER_PARTNER, GE_PARTNER_DATA, GE_START_PARTNER_SESSION, GE_STOP_PARTNER_SESSION";
-    private final String EVENTS_TO_ALLOW = "GE_.*, OE_.*";
+    private final String EVENTS_TO_SKIP = "ERROR, LOG, EXDATA, ME_.*";
     private final String DEFAULT_CHANNEL = "in.ekstep";
     private MessageCollector collectorMock;
     private Config configMock;
     private TaskContext contextMock;
     private MetricsRegistry metricsRegistry;
     private Counter counter;
-    private IncomingMessageEnvelope envelopMock;
-    private TaskCoordinator coordinatorMock;
     private IncomingMessageEnvelope envelopeMock;
     private PublicTelemetryTask publicTelemetryTask;
 
@@ -43,12 +38,11 @@ public class PublicTelemetryTaskTest {
         contextMock = Mockito.mock(TaskContext.class);
         metricsRegistry = Mockito.mock(MetricsRegistry.class);
         counter = Mockito.mock(Counter.class);
-        envelopMock = mock(IncomingMessageEnvelope.class);
+        envelopeMock = mock(IncomingMessageEnvelope.class);
 
         configMock = Mockito.mock(Config.class);
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
         stub(configMock.get("events.to.skip", "")).toReturn(EVENTS_TO_SKIP);
-        stub(configMock.get("events.to.allow", "")).toReturn(EVENTS_TO_ALLOW);
         stub(configMock.get("default.channel", "in.ekstep")).toReturn(DEFAULT_CHANNEL);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
         stub(metricsRegistry.newCounter("org.ekstep.ep.samza.task.TelemetryCleanerTask", "message-count")).toReturn(counter);
@@ -58,8 +52,8 @@ public class PublicTelemetryTaskTest {
     }
 
     @Test
-    public void shouldProcessEventsStartsWithGE() throws Exception {
-        Event event = new Event(EventFixture.CreateProfile());
+    public void shouldProcessTelemetryV3Events() throws Exception {
+        Event event = new Event(EventFixture.Interact());
         ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
 
         publicTelemetryTask.init(configMock, contextMock);
@@ -69,7 +63,7 @@ public class PublicTelemetryTaskTest {
     }
 
     @Test
-    public void shouldProcessEventsStartsWithOE() throws Exception {
+    public void shouldProcessAssessmentEvents() throws Exception {
         Event event = new Event(EventFixture.AssessmentEvent());
 
         ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);

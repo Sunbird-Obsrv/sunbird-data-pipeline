@@ -1,0 +1,60 @@
+{
+  "cdata": [
+    {
+      "id": "",
+      "type": ""
+    }
+  ],
+  "channel": "505c7c48ac6dc1edc9b08f21db5a571d",
+  "context": {
+    "sid": "PN_WlmBzyzfiu1PCA9-NLZ6CxJb_LaGD"
+  },
+  "did": "",
+  "edata": {
+    "eks": {
+      "authprovider": "keycloak",
+      "uaspec": {
+        "agent": "Maxthon",
+        "platform": "WebKit",
+        "raw": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36 Maxthon/5.1.3.2000",
+        "system": "Windows",
+        "ver": "5.1.3.2000"
+      }
+    }
+  },
+  "eid": "CP_SESSION_START",
+  "etags": {
+    "app": [],
+    "dims": [
+      "505c7c48ac6dc1edc9b08f21db5a571d"
+    ],
+    "partner": []
+  },
+  "ets": 1511770079475,
+  "mid": "SB:14f5ad1ee281f175b18002ae43999adb",
+  "pdata": {
+    "id": "sunbird_portal",
+    "ver": "1.0"
+  },
+  "uid": "3f5a846d-8981-4bd8-9130-92e0093b9b6e",
+  "ver": "2.1",
+  "@version": "1",
+  "@timestamp": "2017-11-27T08:08:00.271Z",
+  "metadata": {
+    "checksum": "SB:14f5ad1ee281f175b18002ae43999adb",
+    "index_name": "backend-2017.11",
+    "index_type": "backend"
+  },
+  "uuid": "15327b40-d34a-11e7-b432-0d5952d837510",
+  "key": "3f5a846d-8981-4bd8-9130-92e0093b9b6e",
+  "type": "events",
+  "ts": "2017-11-27T08:07:59.475+0000",
+  "flags": {
+    "tv_skipped": true,
+    "dd_processed": true,
+    "ppm_skipped": true,
+    "ldata_obtained": false,
+    "ldata_processed": true
+  },
+  "backend": "true"
+}

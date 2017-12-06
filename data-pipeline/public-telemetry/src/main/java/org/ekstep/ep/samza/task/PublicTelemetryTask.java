@@ -32,12 +32,11 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
         successTopic = config.get("output.success.topic.name", "telemetry.public");
         failedTopic = config.get("output.failed.topic.name", "telemetry.public.fail");
         defaultChannel = config.get("default.channel", "in.ekstep");
-        publicEvents = getPublicEvents(config);
         nonPublicEvents = getNonPublicEvents(config);
         messageCount = context
                 .getMetricsRegistry()
                 .newCounter(getClass().getName(), "message-count");
-        cleaner = new CleanerFactory(publicEvents,nonPublicEvents);
+        cleaner = new CleanerFactory(nonPublicEvents);
     }
 
     @Override
@@ -63,18 +62,7 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
         return eventsToSkip;
     }
 
-    private List<String> getPublicEvents(Config config) {
-        String[] split = config.get("events.to.allow", "").split(",");
-        List<String> eventsToAllow = new ArrayList<String>();
-        for (String event : split) {
-            eventsToAllow.add(event.trim().toUpperCase());
-        }
-        return eventsToAllow;
-    }
-
     void processEvent(MessageCollector collector, Event event) {
-
-
         if(!event.isDefaultChannel(defaultChannel)){
             LOGGER.info(event.id(), "OTHER CHANNEL EVENT, SKIPPING");
             return;
@@ -85,15 +73,14 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
             return;
         }
 
-        if(cleaner.shouldAllowEvent(event.eid())) {
-            if (cleaner.shouldSkipEvent(event.eid())) {
-                return;
-            }
-            cleaner.clean(event.getMap());
-
-            LOGGER.info(event.id(), "CLEANED EVENT",event.getMap());
-            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
+        if (cleaner.shouldSkipEvent(event.eid())) {
+            return;
         }
+
+        cleaner.clean(event.getMap());
+
+        LOGGER.info(event.id(), "CLEANED EVENT",event.getMap());
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
     }
 
     @Override

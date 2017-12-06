@@ -46,6 +46,20 @@ public class Telemetry {
         }
     }
 
+    public <T> T mustReadValue(String keyPath) throws TelemetryReaderException {
+        NullableValue<T> val = read(keyPath);
+        if (val.isNull()) {
+            NullableValue<String> eid = read("eid");
+            String message = keyPath + " is not available in the event";
+            if (!eid.isNull()) {
+                message = keyPath + " is not available in " + eid.value();
+            }
+            throw new TelemetryReaderException(message);
+        }
+
+        return val.value();
+    }
+
     private ParentType lastParentMap(Map<String, Object> map, String keyPath) {
         Object parent = map;
         String[] keys = keyPath.split("\\.");
@@ -125,6 +139,25 @@ public class Telemetry {
         return this.<String>read("channel").value();
     }
 
+    public long getEts() throws TelemetryReaderException {
+        double ets = this.<Double>mustReadValue("ets");
+        return (long) ets;
+    }
+
+    public String getAtTimestamp(){
+        Object timestamp = this.read("@timestamp").value();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        if ( timestamp instanceof Number){
+            Date date = new Date(((Number) timestamp).longValue());
+            return simpleDateFormat.format(date);
+        } else {
+            return this.<String>read("@timestamp").value();
+        }
+    }
+
+    public Map<String, Object> getEdata(){
+    	return this.<Map<String, Object>>read("edata.eks").value();
+    }
     public String getJson(){
         return new Gson().toJson(map);
     }

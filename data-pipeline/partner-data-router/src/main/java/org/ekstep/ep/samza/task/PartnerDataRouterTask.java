@@ -35,8 +35,7 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
                 .getMetricsRegistry()
                 .newCounter(getClass().getName(), "message-count");
         eventsToSkip = getEventsToSkip(config);
-        eventsToAllow = getEventsToAllow(config);
-        cleaner = new CleanerFactory(eventsToAllow, eventsToSkip);
+        cleaner = new CleanerFactory(eventsToSkip);
     }
 
     @Override
@@ -75,10 +74,8 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
             return;
         }
 
-        if (cleaner.shouldAllowEvent(event.eid())) {
-            cleaner.clean(event.getMap());
-            LOGGER.info(event.id(), "CLEANED EVENT", event.getMap());
-        }
+        cleaner.clean(event.getMap());
+        LOGGER.info(event.id(), "CLEANED EVENT", event.getMap());
 
         event.updateType();
         event.updateMetadata();

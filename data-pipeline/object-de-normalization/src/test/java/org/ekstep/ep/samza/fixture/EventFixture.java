@@ -6,128 +6,145 @@ import com.google.gson.reflect.TypeToken;
 import java.util.Map;
 
 public class EventFixture {
+    public static final String OE_ASSESS_JSON_STRING = "{\n" +
+            "\n" +
+            "  \"eid\": \"ASSESS\",\n" +
+            "  \"ets\": \"1442816723\",\n" +
+            "  \"ver\": \"3.0\",\n" +
+            "  \"mid\": \"\",\n" +
+            "  \"actor\": { \n" +
+            "    \"id\": \"\",\n" +
+            "    \"type\": \"user\"\n" +
+            "  },\n" +
+            "  \"context\": { \n" +
+            "    \"channel\": \"ekstep\",\n" +
+            "    \"pdata\": {\n" +
+            "      \"id\": \"\",\n" +
+            "      \"pid\": \"\",\n" +
+            "      \"ver\": \"\"\n" +
+            "    },\n" +
+            "    \"env\": \"\",\n" +
+            "    \"sid\": \"\",\n" +
+            "    \"did\": \"\",\n" +
+            "    \"cdata\": [{ \n" +
+            "      \"type\":\"\", \n" +
+            "      \"id\": \"\"\n" +
+            "    }],\n" +
+            "    \"rollup\": { \n" +
+            "      \"l1\": \"\",\n" +
+            "      \"l2\": \"\",\n" +
+            "      \"l3\": \"\",\n" +
+            "      \"l4\": \"\"\n" +
+            "    }\n" +
+            "  },\n" +
+            "  \"object\": { \n" +
+            "    \"id\": \"do_30076072\", \n" +
+            "    \"type\": \"Content\", \n" +
+            "    \"ver\": \"\" , \n" +
+            "    \"rollup\": { \n" +
+            "    \t\"l1\": \"\",\n" +
+            "      \"l2\": \"\",\n" +
+            "      \"l3\": \"\",\n" +
+            "      \"l4\": \"\"\n" +
+            "    }\n" +
+            "  },\n" +
+            "  \"edata\": {},\n" +
+            "  \"tags\": []\n" +
+            "}";
 
-    private static final String SKIP_EVENT_JSON =
-            "{\n" +
-                    "    \"eid\": \"ME_ITEM_USAGE_SUMMARY\",\n" +
-                    "    \"channel\": \"in.ekstep\",\n" +
-                    "    \"dimensions\": {\n" +
-                    "      \"tag\": \"6c3791818e80b9d05fb975da1e972431d9f8c2a6\",\n" +
-                    "      \"period\": 20170424,\n" +
-                    "      \"content_id\": \"domain_4501\"\n" +
-                    "    }\n" +
-                    "  }";
+    public static final String ME_EVENT_JSON = "{\n" +
+            "    \"eid\": \"ME_ITEM_USAGE_SUMMARY\",\n" +
+            "    \"ets\": 1489111212816,\n" +
+            "    \"syncts\": 1489069555431,\n" +
+            "    \"ver\": \"1.0\",\n" +
+            "    \"mid\": \"07FF6BB2531844F506CBDE67E95E8357\",\n" +
+            "    \"uid\": \"\",\n" +
+            "    \"context\": {\n" +
+            "        \"pdata\": {\n" +
+            "            \"id\": \"AnalyticsDataPipeline\",\n" +
+            "            \"model\": \"ItemSummaryModel\",\n" +
+            "            \"ver\": \"1.0\"\n" +
+            "        },\n" +
+            "        \"granularity\": \"DAY\",\n" +
+            "        \"date_range\": {\n" +
+            "            \"from\": 1489069599278,\n" +
+            "            \"to\": 1489069621675\n" +
+            "        }\n" +
+            "    },\n" +
+            "    \"dimensions\": {\n" +
+            "        \"tag\": \"all\",\n" +
+            "        \"period\": 20170309,\n" +
+            "        \"content_id\": \"do_30076072\",\n" +
+            "        \"item_id\": \"ek.n.ib.en.ad.I.10\"\n" +
+            "    },\n" +
+            "    \"edata\": {\n" +
+            "        \"eks\": {\n" +
+            "            \"avg_ts\": 0,\n" +
+            "            \"inc_res_count\": 2,\n" +
+            "            \"incorrect_res\": [],\n" +
+            "            \"total_ts\": 0,\n" +
+            "            \"total_count\": 2,\n" +
+            "            \"correct_res_count\": 0,\n" +
+            "            \"correct_res\": []\n" +
+            "        }\n" +
+            "    },\n" +
+            "    \"@version\": \"1\",\n" +
+            "    \"@timestamp\": \"2017-03-10T01:57:59.814Z\",\n" +
+            "    \"type\": \"events\",\n" +
+            "    \"learning\": \"true\",\n" +
+            "    \"ts\": \"2017-03-10T02:00:12.000+0000\"\n" +
+            "}";
 
-    private static final String CP_INTERACT_EVENT_JSON =
-            "{\n" +
-                    "    \"eid\": \"CP_INTERACT\",\n" +
-                    "    \"uid\": \"111\",\n" +
-                    "    \"channel\": \"in.ekstep\"\n" +
-                    "  }";
+    public static final String EVENT_WITHOUT_OBJECT_ID = "{\n" +
+            "\n" +
+            "  \"eid\": \"ASSESS\",\n" +
+            "  \"ets\": \"1442816723\",\n" +
+            "  \"ver\": \"3.0\",\n" +
+            "  \"mid\": \"\",\n" +
+            "  \"actor\": { \n" +
+            "    \"id\": \"\",\n" +
+            "    \"type\": \"user\"\n" +
+            "  },\n" +
+            "  \"edata\": {},\n" +
+            "  \"tags\": []\n" +
+            "}";
 
-    private static final String CP_INTERACT_EVENT_FOR_PARTNER_JSON =
-            "{\n" +
-                    "  \"eid\": \"CP_INTERACT\",\n" +
-                    "  \"uid\": \"111\",\n" +
-                    "    \"channel\": \"in.ekstep\",\n" +
-                    "  \"tags\": [\n" +
-                    "    {\n" +
-                    "      \"partnerid\": [\n" +
-                    "        \"org.ekstep.partner.partner1\"\n" +
-                    "      ]\n" +
-                    "    },\n" +
-                    "    {\n" +
-                    "      \"genie\": []\n" +
-                    "    },\n" +
-                    "    \"piwik_json\"\n" +
-                    "  ]\n" +
-                    "}";
-
-    private static final String DENORMALIZED_CP_INTERACT_EVENT_JSON =
-            "{\n" +
-                    "  \"eid\": \"CP_INTERACT\",\n" +
-                    "  \"uid\": \"111\",\n" +
-                    "  \"channel\": \"in.ekstep\",\n" +
-                    "  \"portaluserdata\": {\n" +
-                    "    \"id\": \"111\",\n" +
-                    "    \"type\": \"User\",\n" +
-                    "    \"subtype\": \"Reviewer\",\n" +
-                    "    \"parentid\": \"222\",\n" +
-                    "    \"parenttype\": \"Admin\",\n" +
-                    "    \"code\": \"XYZ\",\n" +
-                    "    \"name\": \"User 111\",\n" +
-                    "    \"email\": \"user@ekstep.in\",\n" +
-                    "    \"access\": [\n" +
-                    "    {\n" +
-                    "      \"id\": \"2\",\n" +
-                    "      \"value\": \"Registered\"\n" +
-                    "    }\n" +
-                    "  ],\n" +
-                    "  \"partners\": [],\n" +
-                    "  \"profile\": []\n" +
-                    "  }\n" +
-                    "}";
-
-    private static final String DENORMALIZED_CP_INTERACT_EVENT_JSON_WITHOUT_DETAILS =
-            "{\n" +
-                    "  \"eid\": \"CP_INTERACT\",\n" +
-                    "  \"uid\": \"111\",\n" +
-                    "  \"channel\": \"in.ekstep\",\n" +
-                    "  \"portaluserdata\": {\n" +
-                    "    \"id\": \"111\",\n" +
-                    "    \"type\": \"User\",\n" +
-                    "    \"subtype\": \"Reviewer\",\n" +
-                    "    \"parentid\": \"222\",\n" +
-                    "    \"parenttype\": \"Admin\",\n" +
-                    "    \"code\": \"XYZ\",\n" +
-                    "    \"name\": \"User 111\"\n" +
-                    "  }\n" +
-                    "}";
-
-    private static final String DENORMALIZED_CP_INTERACT_EVENT_FOR_PARTNER_JSON =
-            "{\n" +
-                    "  \"eid\": \"CP_INTERACT\",\n" +
-                    "  \"uid\": \"111\",\n" +
-                    "    \"channel\": \"in.ekstep\",\n" +
-                    "  \"partnerdata\": {\n" +
-                    "    \"id\": \"org.ekstep.partner.partner1\",\n" +
-                    "    \"type\": \"Partner\",\n" +
-                    "    \"subtype\": \"\",\n" +
-                    "    \"parentid\": \"\",\n" +
-                    "    \"parenttype\": \"\",\n" +
-                    "    \"code\": \"\",\n" +
-                    "    \"name\": \"Partner 1\"\n" +
-                    "  }\n" +
-                    "}";
+    public static final String EVENT_WITH_EMPTY_OBJECT_ID = "{\n" +
+            "  \"object\": { \n" +
+            "    \"id\": \"\", \n" +
+            "    \"type\": \"Content\", \n" +
+            "    \"ver\": \"\" , \n" +
+            "    \"rollup\": { \n" +
+            "    \t\"l1\": \"\",\n" +
+            "      \"l2\": \"\",\n" +
+            "      \"l3\": \"\",\n" +
+            "      \"l4\": \"\"\n" +
+            "    }\n" +
+            "  },\n" +
+            "  \"edata\": {},\n" +
+            "  \"eid\": \"START\", \n" +
+            "  \"tags\": []\n" +
+            "}";
 
 
-    public static Map<String, Object> event() {
-        return new Gson().fromJson(SKIP_EVENT_JSON, new TypeToken<Map<String, Object>>() {
+    public static Map<String, Object> OeEvent() {
+        return new Gson().fromJson(OE_ASSESS_JSON_STRING, new TypeToken<Map<String, Object>>() {
         }.getType());
     }
 
-    public static Map<String, Object> cpInteractEvent() {
-        return new Gson().fromJson(CP_INTERACT_EVENT_JSON, new TypeToken<Map<String, Object>>() {
+    public static Map<String, Object> MeEvent() {
+        return new Gson().fromJson(ME_EVENT_JSON, new TypeToken<Map<String, Object>>() {
         }.getType());
     }
 
-    public static Map<String, Object> cpInteractEventForPartner() {
-        return new Gson().fromJson(CP_INTERACT_EVENT_FOR_PARTNER_JSON, new TypeToken<Map<String, Object>>() {
+    public static Map<String, Object> EventWithoutObjectID() {
+        return new Gson().fromJson(EVENT_WITHOUT_OBJECT_ID, new TypeToken<Map<String, Object>>() {
         }.getType());
     }
 
-    public static Map<String, Object> denormalizedCpInteractEvent() {
-        return new Gson().fromJson(DENORMALIZED_CP_INTERACT_EVENT_JSON, new TypeToken<Map<String, Object>>() {
+    public static Map<String, Object> EventWithEmptyObjectID() {
+        return new Gson().fromJson(EVENT_WITH_EMPTY_OBJECT_ID, new TypeToken<Map<String, Object>>() {
         }.getType());
     }
 
-    public static Map<String, Object> denormalizedCpInteractEventForParther() {
-        return new Gson().fromJson(DENORMALIZED_CP_INTERACT_EVENT_FOR_PARTNER_JSON, new TypeToken<Map<String, Object>>() {
-        }.getType());
-    }
-
-    public static Map<String, Object> denormalizedCpInteractEventWithoutDetails() {
-        return new Gson().fromJson(DENORMALIZED_CP_INTERACT_EVENT_JSON_WITHOUT_DETAILS, new TypeToken<Map<String, Object>>() {
-        }.getType());
-    }
 }

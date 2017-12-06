@@ -1,0 +1,67 @@
+{
+    "cdata": [],
+    "did": "2e7712bd40cd2cf1f3cc4887d0aa7a77aa7609cf",
+    "edata": {
+      "eks": {
+        "extype": "",
+        "id": "",
+        "pos": [],
+        "stageid": "Genie-TelemetrySync",
+        "subtype": "show",
+        "tid": "",
+        "type": "OTHER",
+        "uri": "",
+        "values": [
+          {
+            "SizeOfFileInKB": "0.64"
+          }
+        ]
+      }
+    },
+    "eid": "GE_INTERACT",
+    "ets": 1511893340381,
+    "gdata": {
+      "id": "genie.android",
+      "ver": "6.3.2279"
+    },
+    "mid": "4335c914-73cb-48b8-89b5-daf34ba685fd",
+    "sid": "76fcd36f-9341-48d8-a1d6-1f341b51319f",
+    "tags": [
+      {
+        "genie": []
+      }
+    ],
+    "uid": "d57dab78-34a2-434f-96e4-3f7144ede934",
+    "ver": "2.0",
+    "@version": "1",
+    "@timestamp": "2017-11-28T19:11:01.514Z",
+    "metadata": {
+      "checksum": "4335c914-73cb-48b8-89b5-daf34ba685fd",
+      "gud_last_processed_at": "2017-11-28T19:11:01.551Z",
+      "gud_processed_count": 1,
+      "index_name": "ecosystem-2017.11",
+      "index_type": "events_v1"
+    },
+    "uuid": "53806bb1-2a66-47be-8825-caf129431c551",
+    "key": "d57dab78-34a2-434f-96e4-3f7144ede934",
+    "type": "events",
+    "ts": "2017-11-28T18:22:20.381+0000",
+    "flags": {
+      "tv_processed": true,
+      "dd_processed": true,
+      "ppm_skipped": true,
+      "ldata_obtained": false,
+      "ldata_processed": true,
+      "od_skipped": true,
+      "child_data_processed": true
+    },
+    "channel": "in.ekstep",
+    "udata": {
+      "standard": 0,
+      "gender": "Not known",
+      "medium": "Not known",
+      "is_group_user": false,
+      "age_completed_years": 0,
+      "board": "Not known"
+    }
+  }
