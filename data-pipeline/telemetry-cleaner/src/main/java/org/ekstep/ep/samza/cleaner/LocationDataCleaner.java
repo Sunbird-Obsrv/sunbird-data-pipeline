@@ -1,5 +1,7 @@
 package org.ekstep.ep.samza.cleaner;
 
+import org.ekstep.ep.samza.reader.NullableValue;
+import org.ekstep.ep.samza.reader.Telemetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,14 +14,16 @@ public class LocationDataCleaner implements Cleaner {
     static Logger LOGGER = LoggerFactory.getLogger(LocationDataCleaner.class);
 
     @Override
-    public void clean(Map<String, Object> map) {
-        Map<String, Object> eks = (Map<String, Object>) ((Map<String, Object>) map.get("edata")).get("eks");
-        if (eks == null) {
+    public void clean(Telemetry telemetry) {
+        NullableValue<Object> edata = telemetry.read("edata");
+        if (edata.isNull()) {
             return;
         }
-        eks.remove("loc");
 
-        LOGGER.debug(format("{0} LOC CLEANED EVENT {1}", TAG, map));
+        Map<String, Object> edataMap = (Map<String, Object>)  edata.value();
+        edataMap.remove("loc");
+
+        LOGGER.debug(format("{0} LOC CLEANED EVENT {1}", TAG, telemetry.getMap()));
     }
 
 }

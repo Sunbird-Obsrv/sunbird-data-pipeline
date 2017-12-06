@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.cleaner;
 
 import org.ekstep.ep.samza.fixtures.EventFixture;
+import org.ekstep.ep.samza.reader.Telemetry;
 import org.junit.Test;
 
 import java.util.Map;
@@ -15,9 +16,9 @@ public class DeviceDataCleanerTest {
         Map<String, Object> eventMap = EventFixture.GenieStart();
         DeviceDataCleaner deviceDataCleaner = new DeviceDataCleaner();
 
-        deviceDataCleaner.clean(eventMap);
+        deviceDataCleaner.clean(new Telemetry(eventMap));
 
-        Map<String, Object> dspec = (Map<String, Object>) ((Map<String, Object>) ((Map<String, Object>) eventMap.get("edata")).get("eks")).get("dspec");
+        Map<String, Object> dspec =  ((Map<String, Object>) ((Map<String, Object>) eventMap.get("edata")).get("dsepc"));
 
         assertThat(dspec, not(hasKey("dlocname")));
         assertThat(dspec, not(hasKey("dname")));
@@ -29,9 +30,9 @@ public class DeviceDataCleanerTest {
         Map<String, Object> eventMap = EventFixture.CreateProfile();
         DeviceDataCleaner deviceDataCleaner = new DeviceDataCleaner();
 
-        deviceDataCleaner.clean(eventMap);
+        deviceDataCleaner.clean(new Telemetry(eventMap));
 
-        Map<String, Object> eks = ((Map<String, Object>) ((Map<String, Object>) eventMap.get("edata")).get("eks"));
+        Map<String, Object> eks = ((Map<String, Object>) ((Map<String, Object>) eventMap.get("edata")).get("dsepc"));
 
         assertThat(eks, not(hasKey("dspec")));
     }

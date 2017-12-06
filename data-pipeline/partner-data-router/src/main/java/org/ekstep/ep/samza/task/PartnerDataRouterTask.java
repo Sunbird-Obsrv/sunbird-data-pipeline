@@ -74,7 +74,7 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
             return;
         }
 
-        cleaner.clean(event.getMap());
+        cleaner.clean(event.telemetry());
         LOGGER.info(event.id(), "CLEANED EVENT", event.getMap());
 
         event.updateType();

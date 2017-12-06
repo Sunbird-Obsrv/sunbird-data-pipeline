@@ -77,7 +77,7 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
             return;
         }
 
-        cleaner.clean(event.getMap());
+        cleaner.clean(event.telemetry());
 
         LOGGER.info(event.id(), "CLEANED EVENT",event.getMap());
         collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));

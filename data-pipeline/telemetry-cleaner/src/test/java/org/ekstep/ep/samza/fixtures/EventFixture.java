@@ -77,72 +77,81 @@ public class EventFixture {
 
     public static Map<String, Object> GenieStart() {
         String json = "{\n" +
-                "    \"tags\": [\n" +
-                "      {\n" +
-                "        \"genie\": []\n" +
-                "      }\n" +
-                "    ],\n" +
-                "    \"uid\": \"\",\n" +
-                "    \"sid\": \"\",\n" +
-                "    \"ts\": \"2016-05-25T19:03:33.856+0530\",\n" +
+                "    \"actor\": {\n" +
+                "      \"id\": \"874ed8a5-782e-4f6c-8f36-e0288455901e\",\n" +
+                "      \"type\": \"User\"\n" +
+                "    },\n" +
+                "    \"eid\": \"START\",\n" +
                 "    \"edata\": {\n" +
-                "      \"eks\": {\n" +
-                "        \"dspec\": {\n" +
-                "          \"camera\": \"6.0,2.0\",\n" +
-                "          \"cap\": [],\n" +
-                "          \"cpu\": \"abi: armeabi-v7a  ARMv7 Processor rev 3 (v7l) \",\n" +
-                "          \"dlocname\": \"\",\n" +
-                "          \"dname\": \"\",\n" +
-                "          \"edisk\": 5.52,\n" +
-                "          \"id\": \"49f257354ef26714\",\n" +
-                "          \"idisk\": 0,\n" +
-                "          \"make\": \"Motorola XT1033\",\n" +
-                "          \"mem\": -1,\n" +
-                "          \"os\": \"Android 5.1\",\n" +
-                "          \"scrn\": 4.49,\n" +
-                "          \"sims\": -1\n" +
-                "        },\n" +
-                "        \"loc\": \"12.9311397,77.6236127\"\n" +
-                "      }\n" +
+                "      \"mode\": \"\",\n" +
+                "      \"duration\": 0,\n" +
+                "      \"loc\": \"12.936936936936936,77.6280860297418\",\n" +
+                "      \"dspec\": {\n" +
+                "        \"camera\": \"12.0,6.0\",\n" +
+                "        \"cap\": [],\n" +
+                "        \"cpu\": \"abi: arm64-v8a  AArch64 Processor rev 4 (aarch64) \",\n" +
+                "        \"dlocname\": \"\",\n" +
+                "        \"dname\": \"\",\n" +
+                "        \"edisk\": 50,\n" +
+                "        \"id\": \"d592ee283e322f6b\",\n" +
+                "        \"idisk\": 50,\n" +
+                "        \"make\": \"Xiaomi Mi A1\",\n" +
+                "        \"mem\": -1,\n" +
+                "        \"os\": \"Android 7.1.2\",\n" +
+                "        \"scrn\": 5,\n" +
+                "        \"sims\": -1\n" +
+                "      },\n" +
+                "      \"pageid\": \"\"\n" +
                 "    },\n" +
-                "    \"did\": \"cf979a7ba0162ddb0ac0702e397d8b689b61712b\",\n" +
-                "    \"ver\": \"2.0\",\n" +
-                "    \"type\": \"events\",\n" +
-                "    \"eid\": \"GE_GENIE_START\",\n" +
-                "    \"@version\": \"1\",\n" +
-                "    \"gdata\": {\n" +
-                "      \"id\": \"genie.android\",\n" +
-                "      \"ver\": \"4.2.localsandbox-debug.6\"\n" +
-                "    },\n" +
-                "    \"@timestamp\": \"2016-05-25T13:31:05.869Z\",\n" +
-                "    \"ets\": 1464183213856,\n" +
-                "    \"uuid\": \"2ab01daa-9134-471c-8abb-e676765020b425\",\n" +
-                "    \"mid\": \"97d882b6-4a65-4f50-b288-c46d700ee615\",\n" +
-                "    \"key\": \"\",\n" +
+                "    \"ver\": \"3.0\",\n" +
                 "    \"metadata\": {\n" +
-                "      \"checksum\": \"f079e3f4448a20d9afcb0fa93449daba584ac65b\",\n" +
-                "      \"last_processed_at\": \"2016-05-26T04:18:26.601+05:30\",\n" +
-                "      \"processed_count\": 1,\n" +
-                "      \"ts_year\": \"2016\",\n" +
-                "      \"ts_month\": \"05\",\n" +
-                "      \"year\": \"2016\",\n" +
-                "      \"month\": \"05\",\n" +
-                "      \"monthday\": \"25\",\n" +
-                "      \"hour\": \"22\",\n" +
-                "      \"sync_timestamp\": \"2016-05-25T22:44:55+00:00\"\n" +
+                "      \"checksum\": \"68462c44-33ce-45f6-8b0f-516746fcf011\",\n" +
+                "      \"source_eid\": \"GE_START\",\n" +
+                "      \"source_mid\": \"68462c44-33ce-45f6-8b0f-516746fcf011\",\n" +
+                "      \"index_name\": \"telemetry-2017.12\",\n" +
+                "      \"index_type\": \"events_v1\"\n" +
                 "    },\n" +
-                "    \"ldata\": {\n" +
-                "      \"state\": \"Karnataka\",\n" +
-                "      \"locality\": \"Bengaluru\",\n" +
-                "      \"district\": \"Bangalore Urban\",\n" +
-                "      \"country\": \"India\"\n" +
+                "    \"@timestamp\": \"2017-12-06T10:57:56.792Z\",\n" +
+                "    \"ets\": 1512557871074,\n" +
+                "    \"context\": {\n" +
+                "      \"channel\": \"in.ekstep\",\n" +
+                "      \"env\": \"Genie\",\n" +
+                "      \"sid\": \"5bbdf35e-c907-4f98-990e-0f15d92b3e1d\",\n" +
+                "      \"did\": \"bac4ff75910c96e33d93396b73c4585cdfa4fda5\",\n" +
+                "      \"pdata\": {\n" +
+                "        \"id\": \"sunbird\",\n" +
+                "        \"ver\": \"1.0.localdev-debug\"\n" +
+                "      },\n" +
+                "      \"cdata\": []\n" +
                 "    },\n" +
                 "    \"flags\": {\n" +
-                "      \"ldata_processed\": true,\n" +
-                "      \"ldata_obtained\": true\n" +
+                "      \"tv_processed\": true,\n" +
+                "      \"v2_converted\": true,\n" +
+                "      \"dd_processed\": true,\n" +
+                "      \"ldata_obtained\": false,\n" +
+                "      \"ldata_processed\": true\n" +
                 "    },\n" +
-                "    \"ready_to_index\": \"true\"\n" +
-                "}";
+                "    \"mid\": \"START:68462c44-33ce-45f6-8b0f-516746fcf011\",\n" +
+                "    \"object\": {\n" +
+                "      \"id\": \"org.sunbird.app\",\n" +
+                "      \"type\": \"Content\",\n" +
+                "      \"ver\": \"1.0.localdev-debug\",\n" +
+                "      \"subtype\": \"\",\n" +
+                "      \"parent\": {\n" +
+                "        \"id\": \"\",\n" +
+                "        \"type\": \"\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"tags\": [],\n" +
+                "    \"type\": \"events\",\n" +
+                "    \"ts\": \"2017-12-06T10:57:51.074+0000\",\n" +
+                "    \"ldata\": {\n" +
+                "      \"country\": \"India\",\n" +
+                "      \"district\": \"Chennai\",\n" +
+                "      \"locality\": \"Chennai\",\n" +
+                "      \"state\": \"Tamil Nadu\"\n" +
+                "    }\n" +
+                "  }";
 
         return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
         }.getType());
@@ -245,11 +254,16 @@ public class EventFixture {
                 "      \"genie\": []\n" +
                 "    }\n" +
                 "  ],\n" +
+                "  \"key\": \"68f24339-caae-4ebb-b4ff-6b1ae0478c02\",\n" +
                 "  \"@version\": \"1\",\n" +
                 "  \"@timestamp\": \"2016-06-10T01:28:43.935Z\",\n" +
                 "  \"type\": \"events\",\n" +
                 "  \"learning\": \"true\",\n" +
                 "  \"ts\": \"2016-06-10T07:02:13.000+0530\",\n" +
+                "  \"flags\": {\n" +
+                "    \"tv_processed\": \"true\",\n" +
+                "    \"tc_processed\": \"06\"\n" +
+                "  },\n" +
                 "  \"metadata\": {\n" +
                 "    \"ts_year\": \"2016\",\n" +
                 "    \"ts_month\": \"06\",\n" +

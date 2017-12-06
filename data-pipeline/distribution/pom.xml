@@ -40,14 +40,14 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>partner-data-router</artifactId>
-            <version>0.2.6</version>
+            <version>0.2.7</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>public-telemetry</artifactId>
-            <version>0.2.3</version>
+            <version>0.2.4</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>

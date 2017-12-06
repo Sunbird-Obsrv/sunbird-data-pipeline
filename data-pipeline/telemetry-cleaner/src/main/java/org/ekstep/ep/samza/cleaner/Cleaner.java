@@ -1,7 +1,7 @@
 package org.ekstep.ep.samza.cleaner;
 
-import java.util.Map;
+import org.ekstep.ep.samza.reader.Telemetry;
 
 public interface Cleaner {
-    public void clean(Map<String, Object> map);
+    public void clean(Telemetry telemetry);
 }

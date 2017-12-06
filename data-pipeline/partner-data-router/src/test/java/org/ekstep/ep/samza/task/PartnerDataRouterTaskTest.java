@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 
 public class PartnerDataRouterTaskTest {
 
-    private final String EVENTS_TO_SKIP = "ME_.*,CE_.*,CP_.*,BE_.*";
+    private final String EVENTS_TO_SKIP = "ME_.*";
     private final String EVENTS_TO_ALLOW = "GE_.*,OE_.*";
     private final String SUCCESS_TOPIC = "partners";
     private final String FAILED_TOPIC = "partners.fail";
@@ -108,10 +108,8 @@ public class PartnerDataRouterTaskTest {
         partnerDataRouterTask.init(configMock, contextMock);
         partnerDataRouterTask.processEvent(collectorMock, event);
 
-        Map<String, Object> udata = (Map<String, Object>) event.getMap().get("udata");
-        assertThat(udata, not(hasKey("is_group_user")));
-        assertThat(udata, not(hasKey("handle")));
-        assertThat(udata, not(hasKey("gender")));
+        Map<String, Object> map = event.getMap();
+        assertThat(map, not(hasKey("flags")));
     }
 
     @Test

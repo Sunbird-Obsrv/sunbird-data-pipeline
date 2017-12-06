@@ -136,4 +136,8 @@ public class Event {
         }
         return false;
     }
+
+    public Telemetry telemetry() {
+        return this.telemetry;
+    }
 }

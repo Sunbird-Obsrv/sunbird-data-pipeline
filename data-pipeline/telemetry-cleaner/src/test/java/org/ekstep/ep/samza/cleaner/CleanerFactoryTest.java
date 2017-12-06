@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.cleaner;
 
 import org.ekstep.ep.samza.fixtures.EventFixture;
+import org.ekstep.ep.samza.reader.Telemetry;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -29,12 +30,9 @@ public class CleanerFactoryTest {
         Map<String,Object> eventMap = EventFixture.LearningEvent();
         CleanerFactory cleaner = new CleanerFactory(nonPublicEvent);
 
-        cleaner.clean(eventMap);
+        cleaner.clean(new Telemetry(eventMap));
 
-        Map<String, Object> dspec = (Map<String, Object>) ((Map<String, Object>) ((Map<String, Object>) eventMap.get("edata")).get("eks")).get("dspec");
-
-        assertThat(dspec, not(hasKey("dlocname")));
-        assertThat(dspec, not(hasKey("dname")));
-        assertThat(dspec, not(hasKey("id")));
+        assertThat(eventMap, not(hasKey("metadata")));
+        assertThat(eventMap, not(hasKey("flags")));
     }
 }

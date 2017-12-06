@@ -8,70 +8,64 @@ import java.util.Map;
 public class EventFixture {
     public static Map<String, Object> Interact() {
         String json = "{\n" +
-                "  \"tags\": [\n" +
-                "    {\n" +
-                "      \"genie\": []\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"uid\": \"68f24339-caae-4ebb-b4ff-6b1ae0478c02\",\n" +
-                "  \"sid\": \"\",\n" +
-                "   \"context\": {\n" +
-                "       \"channel\": \"in.ekstep\"\n" +
-                "    },\n" +
-                "  \"ts\": \"2016-05-25T15:03:54.857+0530\",\n" +
-                "  \"edata\": {\n" +
-                "    \"eks\": {\n" +
-                "      \"age\": 5,\n" +
-                "      \"day\": 25,\n" +
-                "      \"gender\": \"female\",\n" +
-                "      \"handle\": \"Geetha\",\n" +
-                "      \"is_group_user\": false,\n" +
-                "      \"language\": \"en\",\n" +
-                "      \"loc\": \"\",\n" +
-                "      \"month\": 5,\n" +
-                "      \"standard\": -1,\n" +
-                "      \"uid\": \"68f24339-caae-4ebb-b4ff-6b1ae0478c02\"\n" +
-                "    }\n" +
+                "  \"actor\": {\n" +
+                "    \"id\": \"9a4cd587-751d-4e22-9ee6-9bb18edc07f6\",\n" +
+                "    \"type\": \"User\"\n" +
                 "  },\n" +
-                "  \"did\": \"79e957c03a7297d4e2aaab3ca218ab9af9e88403\",\n" +
-                "  \"ver\": \"2.0\",\n" +
-                "  \"type\": \"events\",\n" +
                 "  \"eid\": \"INTERACT\",\n" +
-                "  \"@version\": \"1\",\n" +
-                "  \"gdata\": {\n" +
-                "    \"id\": \"genieservice.android\",\n" +
-                "    \"ver\": \"4.2.374sandboxxWalk\"\n" +
+                "  \"edata\": {\n" +
+                "    \"plugin\": {\n" +
+                "      \"id\": \"\",\n" +
+                "      \"ver\": \"\"\n" +
+                "    },\n" +
+                "    \"subtype\": \"AutoSync-Initiated\",\n" +
+                "    \"extra\": {\n" +
+                "      \"pos\": [],\n" +
+                "      \"values\": [],\n" +
+                "      \"uri\": \"\"\n" +
+                "    },\n" +
+                "    \"id\": \"\",\n" +
+                "    \"pageid\": \"Genie-TelemetrySync\",\n" +
+                "    \"type\": \"TOUCH\",\n" +
+                "    \"target\": {\n" +
+                "      \"id\": \"\",\n" +
+                "      \"type\": \"TOUCH\"\n" +
+                "    }\n" +
                 "  },\n" +
-                "  \"@timestamp\": \"2016-05-25T09:42:00.877Z\",\n" +
-                "  \"ets\": 1464168834857,\n" +
-                "  \"uuid\": \"d1c45492-3aae-4429-a0e3-453cb6f27b3a13\",\n" +
-                "  \"mid\": \"987fe351-d77d-4f17-9609-ee6ec3f0ac5d\",\n" +
-                "  \"key\": \"68f24339-caae-4ebb-b4ff-6b1ae0478c02\",\n" +
+                "  \"ver\": \"3.0\",\n" +
                 "  \"metadata\": {\n" +
-                "    \"checksum\": \"fb95ae1a8c4943c50a2dbf84cd9026ad4312f260\",\n" +
-                "    \"last_processed_at\": \"2016-05-25T15:12:18.054+05:30\",\n" +
-                "    \"processed_count\": 1,\n" +
-                "    \"ts_year\": \"2016\",\n" +
-                "    \"ts_month\": \"05\",\n" +
-                "    \"year\": \"2016\",\n" +
-                "    \"month\": \"05\",\n" +
-                "    \"monthday\": \"25\",\n" +
-                "    \"hour\": \"10\",\n" +
-                "    \"sync_timestamp\": \"2016-05-25T10:17:59+00:00\"\n" +
+                "    \"checksum\": \"c4040c6c-350f-4759-8cec-64654d32631d\",\n" +
+                "    \"source_eid\": \"GE_INTERACT\",\n" +
+                "    \"source_mid\": \"c4040c6c-350f-4759-8cec-64654d32631d\"\n" +
+                "  },\n" +
+                "  \"@timestamp\": \"2017-12-06T10:29:36.931Z\",\n" +
+                "  \"ets\": 1512556259037,\n" +
+                "  \"context\": {\n" +
+                "    \"channel\": \"in.ekstep\",\n" +
+                "    \"env\": \"Genie\",\n" +
+                "    \"sid\": \"a612c30f-1031-41c0-8bd0-9a11503c9086\",\n" +
+                "    \"did\": \"7d2f87dc71f3a72901740e2296c5c82807c754aa\",\n" +
+                "    \"pdata\": {},\n" +
+                "    \"cdata\": []\n" +
                 "  },\n" +
                 "  \"flags\": {\n" +
-                "    \"ldata_processed\": true,\n" +
-                "    \"ldata_obtained\": false,\n" +
-                "    \"child_data_processed\": true\n" +
+                "    \"tv_processed\": true,\n" +
+                "    \"v2_converted\": true,\n" +
+                "    \"dd_processed\": true\n" +
                 "  },\n" +
-                "  \"udata\": {\n" +
-                "    \"is_group_user\": false,\n" +
-                "    \"handle\": \"Geetha\",\n" +
-                "    \"standard\": 0,\n" +
-                "    \"age_completed_years\": 5,\n" +
-                "    \"gender\": \"female\"\n" +
+                "  \"mid\": \"INTERACT:c4040c6c-350f-4759-8cec-64654d32631d\",\n" +
+                "  \"object\": {\n" +
+                "    \"id\": \"genieservice.android\",\n" +
+                "    \"type\": \"TOUCH\",\n" +
+                "    \"ver\": \"6.1.195\",\n" +
+                "    \"subtype\": \"AutoSync-Initiated\",\n" +
+                "    \"parent\": {\n" +
+                "      \"id\": \"\",\n" +
+                "      \"type\": \"\"\n" +
+                "    }\n" +
                 "  },\n" +
-                "  \"ready_to_index\": \"true\"\n" +
+                "  \"tags\": [],\n" +
+                "  \"type\": \"events\"\n" +
                 "}";
 
         return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {

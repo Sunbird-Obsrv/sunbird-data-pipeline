@@ -43,4 +43,8 @@ public class Event {
     public boolean isVersionOne(){
         return ver() != null && ver().equals("1.0");
     }
+
+    public Telemetry telemetry(){
+        return this.telemetry;
+    }
 }

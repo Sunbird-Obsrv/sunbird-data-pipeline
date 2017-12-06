@@ -1,11 +1,11 @@
 package org.ekstep.ep.samza.cleaner;
 
 
+import org.ekstep.ep.samza.reader.Telemetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,9 +19,9 @@ public class CleanerFactory {
         this.eventsToSkip = eventsToSkip;
     }
 
-    public void clean(Map<String, Object> map) {
+    public void clean(Telemetry telemetry) {
         for (Cleaner cleaner : cleaners()) {
-            cleaner.clean(map);
+            cleaner.clean(telemetry);
         }
     }
 
@@ -39,7 +39,6 @@ public class CleanerFactory {
 
     private List<Cleaner> cleaners() {
         return asList(
-                new ChildDataCleaner(),
                 new LocationDataCleaner(),
                 new DeviceDataCleaner(),
                 new MetadataCleaner());
