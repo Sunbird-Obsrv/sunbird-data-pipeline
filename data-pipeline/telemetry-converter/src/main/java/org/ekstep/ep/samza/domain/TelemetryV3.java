@@ -172,9 +172,6 @@ public class TelemetryV3 {
             case "GE_CREATE_USER":
                 v3Eid = "AUDIT";
                 break;
-            case "GE_CREATE_PROFILE":
-                v3Eid = "AUDIT";
-                break;
             default:
                 throw new TelemetryConversionException(String.format("Cannot convert '%s' to V3 telemetry. No mapping found", eid), event.getMap());
         }

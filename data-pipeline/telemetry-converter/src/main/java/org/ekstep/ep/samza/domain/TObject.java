@@ -26,7 +26,7 @@ public class TObject {
         if (type == null) {
             type = reader.<String>read("edata.eks.type").valueOrDefault(defaultType);
         }
-    	if("genieservices.android".equals(this.id) || "org.ekstep.genieservices".equals(this.id)){
+    	if("genieservices.android".equals(this.id) || "genieservice.android".equals(this.id) || "org.ekstep.genieservices".equals(this.id)){
     		this.type = "";
     	} else {
     		this.type = type;

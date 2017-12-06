@@ -179,7 +179,8 @@ public class EdataConverter {
             v3Edata.put("state", edata.getOrDefault("state", ""));
             v3Edata.put("prevstate", edata.getOrDefault("prevstate", ""));
         } else {
-            v3Edata.put("state", edata);
+            v3Edata.put("state", "Create");
+            v3Edata.put("prevstate", "");
         }
     }
 
