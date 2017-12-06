@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.domain;
 
 import com.google.gson.Gson;
+import org.ekstep.ep.samza.converters.TelemetryConversionException;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.reader.TelemetryReaderException;
 
@@ -23,12 +24,12 @@ public class TelemetryV3 {
     private Telemetry reader;
 
     public TelemetryV3(Telemetry reader, Map<String, Object> source)
-            throws TelemetryReaderException, NoSuchAlgorithmException {
+            throws TelemetryReaderException, NoSuchAlgorithmException, TelemetryConversionException {
         this.reader = reader;
-        this.eid = getEid(reader.<String>mustReadValue("eid"), reader);
+        this.eid = getEid(reader.mustReadValue("eid"), reader);
         this.ets = reader.getEts();
         this.mid = computeMid(this.eid, reader.<String>mustReadValue("mid"));
-        HashMap<String, String> metadata = new HashMap<String, String>();
+        HashMap<String, String> metadata = new HashMap<>();
         String checksum = reader.id();
         metadata.put("checksum", checksum);
         this.metadata = metadata;
@@ -47,9 +48,9 @@ public class TelemetryV3 {
         return String.format("%s:%s", eid, oldMid);
     }
 
-    private String getEid(String eid, Telemetry event) {
+    private String getEid(String eid, Telemetry event) throws TelemetryConversionException {
 
-        String v3Eid = "";
+        String v3Eid = null;
 
         switch (eid) {
             case "OE_START":
@@ -175,9 +176,9 @@ public class TelemetryV3 {
                 v3Eid = "AUDIT";
                 break;
             default:
-                break;
-
+                throw new TelemetryConversionException(String.format("Cannot convert '%s' to V3 telemetry. No mapping found", eid), event.getMap());
         }
+
         return v3Eid;
     }
 
@@ -261,7 +262,7 @@ public class TelemetryV3 {
     }
 
     public Map<String, Object> toMap() {
-        Map<String, Object> v3map = new HashMap<String, Object>();
+        Map<String, Object> v3map = new HashMap<>();
         v3map.put("eid", eid);
         v3map.put("ets", ets);
         v3map.put("ver", ver);

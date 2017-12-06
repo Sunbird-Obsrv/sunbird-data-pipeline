@@ -518,4 +518,17 @@ public class TelemetryV3ConverterTest {
         assertEquals("in.ekstep", start.getContext().getChannel());
         assertEquals("in.ekstep", impression.getContext().getChannel());
     }
+
+    @Test
+    public void eventsWithoutAnyMappingShouldNotGetConverted() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("GE_UPDATE_PROFILE");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+
+        try {
+            converter.convert();
+            fail("converter is converting events even without a mapping!");
+        } catch (TelemetryConversionException e) {
+            assertEquals("Cannot convert 'GE_UPDATE_PROFILE' to V3 telemetry. No mapping found", e.getMessage());
+        }
+    }
 }
