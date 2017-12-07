@@ -1,0 +1,43 @@
+{
+  "eid": "BE_OBJECT_LIFECYCLE",
+  "edata": {
+    "eks": {
+      "code": "org.ekstep.asset.खराब.1990413569",
+      "subtype": "audio",
+      "name": "खराब",
+      "id": "do_31238594379452416022722",
+      "state": "Live",
+      "type": "Asset",
+      "prevstate": "Draft",
+      "parenttype": "",
+      "parentid": ""
+    }
+  },
+  "ver": "2.1",
+  "pdata": {
+    "ver": "1.0",
+    "pid": "ObjectLifecycleTask",
+    "id": "org.ekstep.content.platform"
+  },
+  "@timestamp": 1511956031447,
+  "ets": 1511956029936,
+  "channel": "in.ekstep",
+  "mid": "LP:cf6deffd88efc236bc2f1cf21760cdc6",
+  "flags": {
+    "tv_skipped": true,
+    "dd_processed": true,
+    "olm_processed": true,
+    "ppm_skipped": true,
+    "ldata_obtained": false,
+    "ldata_processed": true,
+    "od_skipped": true
+  },
+  "type": "events",
+  "ts": "2017-11-29T11:47:09.936+0000",
+  "metadata": {
+    "checksum": "LP:cf6deffd88efc236bc2f1cf21760cdc6",
+    "index_name": "backend-2017.11",
+    "index_type": "backend"
+  },
+  "backend": "true"
+}

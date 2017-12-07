@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.task;
 
 import com.google.gson.Gson;
+import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
@@ -10,7 +11,6 @@ import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
-import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -80,7 +80,7 @@ public class TelemetryConverterTaskTest {
 
     @Test
     public void flagsShouldNotBeOverwritten() throws Exception {
-        // If flags are already there in the event, converter should not overwrite. Instead it should merge
+        // If flags are already there in the event, converters should not overwrite. Instead it should merge
         String v2Event = EventFixture.getEventAsString("CE_END");
         stub(envelope.getMessage()).toReturn(v2Event);
         TelemetryConverterTask task = new TelemetryConverterTask(config, context);
@@ -105,7 +105,7 @@ public class TelemetryConverterTaskTest {
 
     @Test
     public void metadataShouldNotBeOverwritten() throws Exception {
-        // If metadata are already there in the event, converter should not overwrite. Instead it should merge
+        // If metadata are already there in the event, converters should not overwrite. Instead it should merge
         String v2Event = EventFixture.getEventAsString("CE_END");
         stub(envelope.getMessage()).toReturn(v2Event);
         TelemetryConverterTask task = new TelemetryConverterTask(config, context);

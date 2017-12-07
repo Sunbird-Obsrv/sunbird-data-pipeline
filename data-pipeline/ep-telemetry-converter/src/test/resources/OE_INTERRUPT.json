@@ -1,0 +1,51 @@
+{
+  "cdata": [
+    {
+      "id": "9557a248eca1c3d724129961a22b5ff0",
+      "type": "ContentSession"
+    }
+  ],
+  "channel": "in.ekstep",
+  "did": "308445714621a79331f6e096ca520c61",
+  "edata": {
+    "eks": {
+      "stageid": "eb2691e6-d297-4e57-98c7-746c575bdc2b",
+      "type": "OTHER"
+    }
+  },
+  "eid": "OE_INTERRUPT",
+  "etags": {
+    "app": [],
+    "dims": [],
+    "partner": []
+  },
+  "ets": 1512105000562,
+  "gdata": {
+    "id": "org.ekstep.quiz.app",
+    "ver": "408"
+  },
+  "mid": "OE_2bde954e9f16380df92da591f89cf08e",
+  "pdata": {
+    "id": "in.ekstep",
+    "ver": "1.0"
+  },
+  "sid": "5ppemm9rff3e6cpfkvhm4d29a7",
+  "uid": "2432",
+  "ver": "2.1",
+  "@version": "1",
+  "uuid": "1",
+  "key": "2432",
+  "type": "events",
+  "ts": "2017-12-01T05:10:00.562+0000",
+  "contentdata": {
+    "identifier": "org.ekstep.quiz.app"
+  },
+  "udata": {
+    "standard": 0,
+    "gender": "Not known",
+    "medium": "Not known",
+    "is_group_user": false,
+    "age_completed_years": 0,
+    "board": "Not known"
+  }
+}

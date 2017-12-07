@@ -25,8 +25,8 @@ import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
-import org.ekstep.ep.samza.converters.TelemetryV3Converter;
-import org.ekstep.ep.samza.domain.TelemetryV3;
+import org.ekstep.ep.samza.converter.converters.TelemetryV3Converter;
+import org.ekstep.ep.samza.converter.domain.TelemetryV3;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.metrics.JobMetrics;
 

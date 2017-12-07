@@ -1,0 +1,65 @@
+{
+  "channel": "0123207707019919361056",
+  "did": "20d63257084c2dca33f31a8f14d8e94c0d939de4",
+  "edata": {
+    "eks": {
+      "dspec": {
+        "camera": "13.0,6.0",
+        "cap": [],
+        "cpu": "abi: armeabi-v7a processor\t: 0 ",
+        "dlocname": "",
+        "dname": "",
+        "edisk": 10,
+        "id": "44da9c626043dc64",
+        "idisk": 10,
+        "make": "Motorola Moto G (5)",
+        "mem": -1,
+        "os": "Android 7.0",
+        "scrn": 4,
+        "sims": -1
+      },
+      "loc": "12.936936936936936,77.6280860297418"
+    }
+  },
+  "eid": "GE_START",
+  "etags": {
+    "app": []
+  },
+  "ets": 1510223372452,
+  "gdata": {
+    "id": "in.gov.diksha.app",
+    "ver": "1.0.33"
+  },
+  "mid": "06a89a02-c5b5-4225-a0d1-ba52312d2246",
+  "pdata": {
+    "id": "sunbird",
+    "ver": "1.0.33"
+  },
+  "sid": "a57bc531-cd0e-424e-8998-811980d89794",
+  "ts": "2017-11-09T10:29:32.452+0000",
+  "uid": "ef644daf-69e6-4ed4-ae40-916c21496708",
+  "ver": "2.2",
+  "@version": "1",
+  "@timestamp": "2017-11-09T10:29:37.587Z",
+  "metadata": {
+    "checksum": "06a89a02-c5b5-4225-a0d1-ba52312d2246",
+    "index_name": "ecosystem-2017.11",
+    "index_type": "events_v1"
+  },
+  "uuid": "bf53f830-e77b-4b96-9ac3-80f0dc843663282",
+  "key": "ef644daf-69e6-4ed4-ae40-916c21496708",
+  "type": "events",
+  "flags": {
+    "tv_processed": true,
+    "dd_processed": true,
+    "ppm_skipped": true,
+    "ldata_obtained": true,
+    "ldata_processed": true
+  },
+  "ldata": {
+    "country": "India",
+    "district": "Bangalore Urban",
+    "locality": "Bengaluru",
+    "state": "Karnataka"
+  }
+}

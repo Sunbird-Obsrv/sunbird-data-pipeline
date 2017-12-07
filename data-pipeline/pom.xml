@@ -46,6 +46,7 @@
     <module>telemetry-validator</module>
     <module>telemetry-converter</module>
     <module>object-de-normalization</module>
+      <module>ep-telemetry-converter</module>
   </modules>
 
   <properties>

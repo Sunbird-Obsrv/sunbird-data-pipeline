@@ -1,0 +1,51 @@
+{
+  "channel": "in.ekstep",
+  "did": "b064f3fe996b14566b843cb7a271c84c9d2603b5",
+  "edata": {
+    "eks": {
+      "age": 5,
+      "board": "NCERT",
+      "day": -1,
+      "gender": "female",
+      "handle": "Vanashree",
+      "is_group_user": false,
+      "language": "en",
+      "medium": "English",
+      "month": -1,
+      "standard": 0,
+      "uid": "71cd581e-e90e-41e2-aad3-7aba9aa132ef"
+    }
+  },
+  "eid": "GE_UPDATE_PROFILE",
+  "etags": {
+    "app": []
+  },
+  "ets": 1512492600538,
+  "gdata": {
+    "id": "org.ekstep.genieservices",
+    "ver": "6.5.2306"
+  },
+  "mid": "cc04a752-09bd-4e36-95d9-3b2438a329ca",
+  "pdata": {
+    "id": "genie",
+    "ver": "6.5.2306"
+  },
+  "sid": "73e9b53d-1d41-4e40-9fb0-ccee4f51f765",
+  "ts": "2017-12-05T16:50:00.538+0000",
+  "uid": "71cd581e-e90e-41e2-aad3-7aba9aa132ef",
+  "ver": "2.1",
+  "@version": "1",
+  "@timestamp": "2017-12-05T16:57:09.894Z",
+  "uuid": "22f6215b-45f4-48d0-8a04-3141cd116ac88",
+  "key": "71cd581e-e90e-41e2-aad3-7aba9aa132ef",
+  "type": "events",
+  "udata": {
+    "standard": 0,
+    "gender": "female",
+    "handle": "Vanashree",
+    "medium": "English",
+    "is_group_user": false,
+    "age_completed_years": 5,
+    "board": "NCERT"
+  }
+}

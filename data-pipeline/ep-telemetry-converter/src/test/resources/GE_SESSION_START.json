@@ -1,0 +1,37 @@
+{
+  "channel": "in.tnpilot",
+  "did": "52e116925349664d88be1c255357cde5d18cdf3e",
+  "edata": {
+    "eks": {
+      "loc": ""
+    }
+  },
+  "eid": "GE_SESSION_START",
+  "etags": {
+    "app": []
+  },
+  "ets": 1511340785411,
+  "gdata": {
+    "id": "org.ekstep.ipa",
+    "ver": "1.0.local-debug"
+  },
+  "mid": "5a9af0e6-14e6-4416-849d-01cb4127d0a6",
+  "pdata": {
+    "id": "tnpilot",
+    "ver": "1.0.local-debug"
+  },
+  "sid": "7c76427c-5074-4ae9-a1a9-bee0e05320e8",
+  "ts": "2017-11-22T08:53:05.411+0000",
+  "uid": "332f6b33-7443-4044-863c-69b6943c4600",
+  "ver": "2.2",
+  "@version": "1",
+  "@timestamp": "2017-11-22T08:53:07.001Z",
+  "metadata": {
+    "checksum": "5a9af0e6-14e6-4416-849d-01cb4127d0a6",
+    "index_name": "ecosystem-2017.11",
+    "index_type": "events_v1"
+  },
+  "uuid": "d11a5926-9d54-4784-8202-9c3e27c454714",
+  "key": "332f6b33-7443-4044-863c-69b6943c4600",
+  "type": "events"
+}

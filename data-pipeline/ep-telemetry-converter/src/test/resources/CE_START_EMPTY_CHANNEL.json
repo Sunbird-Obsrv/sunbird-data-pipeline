@@ -1,0 +1,132 @@
+{
+  "eid": "CE_START",
+  "mid": "CE:993a303bac2fe9ebf0ab515a3051acab",
+  "ets": 1510224377591,
+  "ver": "2.1",
+  "channel": "",
+  "pdata": {},
+  "cdata": [],
+  "uid": "1242",
+  "context": {
+    "sid": "kck544tkdms53ivd5pcephtcd1",
+    "content_id": "do_31226502331176550424574"
+  },
+  "rid": "",
+  "edata": {
+    "eks": {
+      "defaultPlugins": [
+        "org.ekstep.assessmentbrowser",
+        "org.ekstep.assetbrowser",
+        "org.ekstep.colorpicker",
+        "org.ekstep.conceptselector",
+        "org.ekstep.config",
+        "org.ekstep.stage",
+        "org.ekstep.text",
+        "org.ekstep.shape",
+        "org.ekstep.image",
+        "org.ekstep.audio",
+        "org.ekstep.hotspot",
+        "org.ekstep.scribblepad",
+        "org.ekstep.readalongbrowser",
+        "org.ekstep.quiz",
+        "org.ekstep.stageconfig",
+        "org.ekstep.telemetry",
+        "org.ekstep.preview",
+        "org.ekstep.activitybrowser",
+        "org.ekstep.collaborator",
+        "org.ekstep.download",
+        "org.ekstep.unsupported",
+        "org.ekstep.wordinfobrowser",
+        "org.ekstep.viewecml",
+        "org.ekstep.utils",
+        "org.ekstep.help",
+        "org.ekstep.video",
+        "org.ekstep.editorstate",
+        "org.ekstep.contenteditorfunctions",
+        "org.ekstep.keyboardshortcuts",
+        "org.ekstep.editcontentmeta",
+        "org.ekstep.richtext",
+        "org.ekstep.review",
+        "org.ekstep.whatsnew",
+        "org.ekstep.todo",
+        "org.ekstep.ceheader"
+      ],
+      "loadtimes": {
+        "plugins": 3,
+        "contentLoad": 5142
+      },
+      "client": {
+        "browser": "chrome",
+        "browserver": "61.0.3163.100",
+        "os": "Win32"
+      }
+    }
+  },
+  "etags": {
+    "app": [],
+    "partner": [],
+    "dims": []
+  },
+  "@version": "1",
+  "@timestamp": "2017-11-09T10:50:17.853Z",
+  "path": "/var/log/piwik/piwik.raw.idsite_1.log",
+  "host": "ip-11-52-4-113",
+  "tags": [
+    "piwik_json"
+  ],
+  "flags": {
+    "tv_skipped": true,
+    "dd_processed": true,
+    "ppm_skipped": true,
+    "ldata_obtained": false,
+    "ldata_processed": true,
+    "od_retry": true
+  },
+  "type": "events",
+  "ts": "2017-11-09T10:46:17.591+0000",
+  "metadata": {
+    "checksum": "CE:993a303bac2fe9ebf0ab515a3051acab",
+    "cachehit": true,
+    "od_err": "OBJECT_NOT_FOUND",
+    "od_errmsg": "NO OBJECT WITH GIVEN ID: 1242 IN CHANNEL:in.ekstep",
+    "od_last_processed_at": "2017-11-09T10:50:17.963Z",
+    "od_processed_count": 43919,
+    "index_name": "backend-2017.11",
+    "index_type": "backend"
+  },
+  "contentdata": {
+    "code": "org.ekstep.numeracy.story.9438",
+    "description": "Compare two given numbers using symbols. Arrange given numbers in ascending/descending order. Form largest/smallest odd/even numbers using given digits.",
+    "language": [
+      "English"
+    ],
+    "gradeLevel": [
+      "Grade 4"
+    ],
+    "lastUpdatedOn": "2017-07-20T09:42:39.829+0000",
+    "contentType": "Worksheet",
+    "identifier": "do_31226502331176550424574",
+    "audience": [
+      "Learner"
+    ],
+    "createdFor": [
+      ""
+    ],
+    "mediaType": "content",
+    "ageGroup": [
+      "8-10"
+    ],
+    "pkgVersion": 1,
+    "size": 328900,
+    "concepts": [
+      "C70"
+    ],
+    "createdBy": "2107",
+    "domain": [
+      "numeracy"
+    ],
+    "name": "Class 4: Number System: Comparing and Ordering Numbers",
+    "status": "Draft"
+  },
+  "backend": "true"
+}

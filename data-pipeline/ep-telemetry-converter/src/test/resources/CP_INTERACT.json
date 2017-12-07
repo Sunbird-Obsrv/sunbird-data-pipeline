@@ -1,0 +1,61 @@
+{
+  "eid": "CP_INTERACT",
+  "ets": 1511417219812,
+  "ver": "2.1",
+  "channel": "in.ekstep",
+  "pdata": {
+    "id": "in.ekstep.qa",
+    "pid": "ekstep_portal",
+    "ver": "147"
+  },
+  "etags": {
+    "app": [],
+    "partner": [],
+    "dims": []
+  },
+  "cdata": [
+    {
+      "type": "",
+      "id": ""
+    }
+  ],
+  "uid": "225",
+  "rid": "",
+  "context": {
+    "sid": "gfkvo0unnhfegsddqbvk4sd413",
+    "content_id": "do_21236974172673638415"
+  },
+  "tags": [
+    "piwik_json"
+  ],
+  "edata": {
+    "eks": {
+      "env": "textbook",
+      "context": "do_21236974172673638415",
+      "type": "click",
+      "target": "sample",
+      "targetid": "createtoc",
+      "subtype": "create",
+      "values": []
+    }
+  },
+  "mid": "CP:08e7b16f1bb178ce44a62ba1a0e5ec46",
+  "@version": "1",
+  "@timestamp": "2017-11-23T06:10:05.261Z",
+  "path": "/var/log/piwik/piwik.raw.idsite_2.log",
+  "host": "ip-10-42-6-49",
+  "piwik_pipeline": "qa",
+  "flags": {
+    "tv_skipped": true,
+    "dd_processed": true,
+    "ppm_skipped": true,
+    "ldata_obtained": false,
+    "ldata_processed": true,
+    "od_processed": true
+  },
+  "type": "events",
+  "ts": "2017-11-23T06:06:59.812+0000",
+  "metadata": {
+    "checksum": "CP:08e7b16f1bb178ce44a62ba1a0e5ec46"
+  }
+}
