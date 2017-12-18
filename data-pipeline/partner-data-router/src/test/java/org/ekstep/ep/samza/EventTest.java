@@ -10,11 +10,17 @@ public class EventTest {
     @Test
     public void shouldBelongToPartnerIfPartnerIdIsPresent() {
         HashMap<String, Object> data = new HashMap<String,Object>();
-        ArrayList<HashMap> tags = new ArrayList<HashMap>();
-        data.put("tags", tags);
-        HashMap<String, String> firstTag = new HashMap<String,String>();
-        tags.add(firstTag);
-        firstTag.put("partnerid", "org.ekstep.partner.akshara");
+        HashMap<String, Object> context = new HashMap<String,Object>();
+
+        ArrayList<HashMap> cdata = new ArrayList<HashMap>();
+        context.put("cdata", cdata);
+
+        HashMap<String, String> firstMap = new HashMap<String,String>();
+        cdata.add(firstMap);
+        firstMap.put("type", "partner");
+        firstMap.put("id", "org.ekstep.partner.akshara");
+        data.put("context",context);
+
         Event event = new Event(data);
 
         Assert.assertTrue(event.belongsToAPartner());
@@ -22,90 +28,75 @@ public class EventTest {
 
     @Test
     public void shouldBelongToPartnerIfPartnerIdIsNumberString() {
+        HashMap<String, Object> context = new HashMap<String,Object>();
         HashMap<String, Object> data = new HashMap<String,Object>();
-        ArrayList<HashMap> tags = new ArrayList<HashMap>();
-        data.put("tags", tags);
-        HashMap<String, String> firstTag = new HashMap<String,String>();
-        tags.add(firstTag);
-        firstTag.put("partnerid", "9e94fb35");
+        ArrayList<HashMap> cdata = new ArrayList<HashMap>();
+        data.put("cdata", cdata);
+        HashMap<String, String> firstMap = new HashMap<String,String>();
+        cdata.add(firstMap);
+        firstMap.put("type", "partner");
+        firstMap.put("id", "9e94fb35");
+        context.put("context",data);
+        Event event = new Event(context);
+
+        Assert.assertTrue(event.belongsToAPartner());
+    }
+
+
+    @Test
+    public void shouldBelongToPartnerIfPartnerIdIsPresentWithMultipleMaps() {
+        HashMap<String, Object> context = new HashMap<String,Object>();
+        HashMap<String, Object> data = new HashMap<String,Object>();
+        ArrayList<HashMap> cdata = new ArrayList<HashMap>();
+        context.put("cdata", cdata);
+
+        HashMap<String, String> firstMap = new HashMap<String,String>();
+        cdata.add(firstMap);
+        firstMap.put("type", "partner");
+        firstMap.put("id", "9e94fb35");
+
+        HashMap<String, String> secondMap = new HashMap<String,String>();
+        cdata.add(secondMap);
+        firstMap.put("type", "partner");
+        firstMap.put("id", "6e94fb35");
+
+        data.put("context",context);
         Event event = new Event(data);
 
         Assert.assertTrue(event.belongsToAPartner());
     }
 
     @Test
-    public void shouldHandleIfPartnerTagContainsListOfPartnerIds() {
+    public void shouldNotBelongToPartnerIfPartnerIdIsAbsent() {
+        HashMap<String, Object> context = new HashMap<String,Object>();
         HashMap<String, Object> data = new HashMap<String,Object>();
-        ArrayList<HashMap> tags = new ArrayList<HashMap>();
-        data.put("tags", tags);
-        HashMap<String, Object> firstTag = new HashMap<String,Object>();
-        ArrayList<String> partnerSet = new ArrayList<String>(Arrays.asList("org.ekstep.partner.akshara"));
-        firstTag.put("partnerid", partnerSet);
-        tags.add(firstTag);
-        Event event = new Event(data);
+        ArrayList<HashMap> cdata = new ArrayList<HashMap>();
+        context.put("cdata", cdata);
 
-        Assert.assertTrue(event.belongsToAPartner());
-    }
+        HashMap<String, String> firstMap = new HashMap<String,String>();
+        cdata.add(firstMap);
+        data.put("context",context);
 
-    @Test
-    public void shouldBelongToPartnerIfPartnerIdIsPresentWithMultipleTags() {
-        HashMap<String, Object> data = new HashMap<String,Object>();
-        ArrayList<HashMap> tags = new ArrayList<HashMap>();
-        data.put("tags", tags);
-        HashMap<String, String> firstTag = new HashMap<String,String>();
-        HashMap<String, String> secondTag = new HashMap<String,String>();
-        HashMap<String, String> thirdTag = new HashMap<String,String>();
-        tags.add(firstTag);
-        tags.add(secondTag);
-        tags.add(thirdTag);
-        firstTag.put("someKey","value");
-        secondTag.put("partnerid", "org.ekstep.partner.akshara");
-        Event event = new Event(data);
-
-        Assert.assertTrue(event.belongsToAPartner());
-    }
-
-    @Test
-    public void shouldBelongToPartnerIfPartnerIdIsPresentInETags() {
-        HashMap<String, Object> data = new HashMap<String,Object>();
-        HashMap<String, Object> etags = new HashMap<String,Object>();
-
-        ArrayList<String> partner = new ArrayList<String>();
-        partner.add("org.ekstep.partner.akshara");
-
-        etags.put("partner",partner);
-        data.put("etags", etags);
-        Event event = new Event(data);
-
-        Assert.assertTrue(event.belongsToAPartner());
-    }
-
-    @Test
-    public void shouldNotBelongToPartnerIfPartnerIdIsAbsentInBothTagsAndETags() {
-        HashMap<String, Object> data = new HashMap<String,Object>();
-        ArrayList<HashMap> tags = new ArrayList<HashMap>();
-
-        data.put("tags", tags);
-        HashMap<String, String> firstTag = new HashMap<String,String>();
-        tags.add(firstTag);
         Event event = new Event(data);
 
         Assert.assertFalse(event.belongsToAPartner());
     }
 
     @Test
-    public void shouldNotBelongToPartnerIfTagsAreEmpty() {
+    public void shouldNotBelongToPartnerIfCDataIsEmpty() {
+        HashMap<String, Object> context = new HashMap<String,Object>();
         HashMap<String, Object> data = new HashMap<String,Object>();
-        ArrayList<HashMap> tags = new ArrayList<HashMap>();
+        ArrayList<HashMap> cdata = new ArrayList<HashMap>();
+        context.put("cdata", cdata);
+        data.put("context",context);
 
-        data.put("tags", tags);
         Event event = new Event(data);
 
         Assert.assertFalse(event.belongsToAPartner());
     }
 
     @Test
-    public void shouldNotBelongToPartnerIfTagsIsAbsent() {
+    public void shouldNotBelongToPartnerIfContextIsAbsent() {
         HashMap<String, Object> data = new HashMap<String,Object>();
         Event event = new Event(data);
 
@@ -139,12 +130,17 @@ public class EventTest {
     @Test
     public void shouldUpdateMetadataWithShaOfPartnerId() throws Exception {
         HashMap<String, Object> data = new HashMap<String,Object>();
-        ArrayList<HashMap> tags = new ArrayList<HashMap>();
-        data.put("tags", tags);
-        HashMap<String, String> tag = new HashMap<String,String>();
-        tag.put("partnerid","org.ekstep.partner.pratham");
-        tags.add(tag);
-        data.put("tags",tags);
+        HashMap<String, Object> context = new HashMap<String,Object>();
+
+        ArrayList<HashMap> cdata = new ArrayList<HashMap>();
+        context.put("cdata", cdata);
+
+        HashMap<String, String> firstMap = new HashMap<String,String>();
+        cdata.add(firstMap);
+        firstMap.put("type", "partner");
+        firstMap.put("id", "org.ekstep.partner.pratham");
+        data.put("context",context);
+
         Event event = new Event(data);
 
         event.updateMetadata();

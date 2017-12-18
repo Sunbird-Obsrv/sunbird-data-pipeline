@@ -46,38 +46,20 @@ public class Event {
     }
 
     private String getPartnerIdFromPartnerTags() {
-        ArrayList<Map> tags = (ArrayList<Map>) telemetry.read("tags").value();
-        if(tags != null && !tags.isEmpty()){
-            return getPartnerIdFromTags(tags, "partnerid");
-        }
-
-        ArrayList<String> partners = (ArrayList<String>) telemetry.read("etags.partner").value();
-        if(partners != null && !partners.isEmpty()){
-            return getPartnerIdFromETags(partners);
+        ArrayList<Map> cData = (ArrayList<Map>) telemetry.read("context.cdata").value();
+        if(cData != null && !cData.isEmpty()){
+            return getPartnerIdFromCData(cData);
         }
 
         return null;
     }
 
-    private String getPartnerIdFromETags(ArrayList<String> partners) {
-        for (String partner : partners) {
-            return partner;
-        }
-        return null;
-    }
-
-    private String getPartnerIdFromTags(ArrayList<Map> tags, String partnerId){
-        for (Map tag:tags)
-            if(tag!=null && tag.containsKey(partnerId)) {
-                if(tag.get(partnerId) instanceof String) {
-                    String partnerID = (String) tag.get(partnerId);
+    private String getPartnerIdFromCData(ArrayList<Map> cData){
+        for (Map tag:cData)
+            if(tag!=null && tag.containsKey("type") && tag.containsKey("id")) {
+                if(tag.get("type").equals("partner")) {
+                    String partnerID = (String) tag.get("id");
                     return partnerID;
-                }
-                else{
-                    ArrayList<String> partners = (ArrayList<String>) tag.get(partnerId);
-                    for (String partnerID : partners) {
-                        return partnerID;
-                    }
                 }
             }
         return null;

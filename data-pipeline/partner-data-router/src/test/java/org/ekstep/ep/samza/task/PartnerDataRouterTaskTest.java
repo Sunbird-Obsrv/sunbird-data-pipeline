@@ -77,19 +77,6 @@ public class PartnerDataRouterTaskTest {
     }
 
     @Test
-    public void shouldReadPartnerIdFromETagsAndSendToSuccessTopicWhenEventBelongToPartner() throws Exception {
-
-        Event event =  new Event(EventFixture.PartnerDataV2());
-        stub(envelopMock.getMessage()).toReturn(event.getMap());
-
-        partnerDataRouterTask.init(configMock, contextMock);
-        partnerDataRouterTask.process(envelopMock, collectorMock, coordindatorMock);
-
-        verify(collectorMock).send(argThat(validateOutputTopic(SUCCESS_TOPIC)));
-        assertTrue(((Map<String,Object>) event.getMap().get("metadata")).containsKey("partner_name"));
-    }
-
-    @Test
     public void shouldNotSendEventsToSuccessTopicIfEventNotBelongToPartner() throws Exception {
         Event event =  new Event(EventFixture.EventWithoutPartnerId());
         stub(envelopMock.getMessage()).toReturn(event.getMap());
