@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +39,20 @@ public class TObject {
         String parentType = reader.<String>read("edata.eks.parenttype").valueOrDefault("");
         this.parent.put("id", parentId);
         this.parent.put("type", parentType);
+
+        ArrayList<Map> cData = (ArrayList<Map>) reader.read("cdata").value();
+
+        if(cData != null)
+            createRollupData(cData);
+    }
+
+    private void createRollupData(ArrayList<Map> cData) {
+        for (Map data : cData) {
+            if (data.containsKey("type") && data.get("type").equals("collection")) {
+                String[] rollupData = ((String) data.get("id")).split("/");
+                this.setRollUp(new Rollup(rollupData));
+            }
+        }
     }
 
     private String computeId(Telemetry reader) {

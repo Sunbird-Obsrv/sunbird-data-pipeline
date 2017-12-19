@@ -1,5 +1,14 @@
 {
-  "cdata": [],
+  "cdata": [
+    {
+      "id": "0e34e24ca3a186f8a031a426a08f4eac",
+      "type": "ContentSession"
+    },
+    {
+      "type": "collection",
+      "id": "do_2121925679111454721253/do_30019820"
+    }
+  ],
   "channel": "in.ekstep",
   "did": "ee3521b24ecc99c7fc77620245299130a7fd796f",
   "edata": {

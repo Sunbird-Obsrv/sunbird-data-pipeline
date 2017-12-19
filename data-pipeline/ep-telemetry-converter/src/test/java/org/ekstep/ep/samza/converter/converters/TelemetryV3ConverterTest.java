@@ -284,6 +284,10 @@ public class TelemetryV3ConverterTest {
         String objType = v3Event.getObject().getType();
         assertNotEquals("Content", objType);
         assertEquals("", objType);
+
+        Rollup rollup = (Rollup) v3Event.getObject().getRollUp();
+        assertEquals("do_2121925679111454721253", rollup.getL1());
+        assertEquals("do_30019820", rollup.getL2());
     }
 
     @Test
@@ -405,6 +409,10 @@ public class TelemetryV3ConverterTest {
         Target target = (Target) interact.getEdata().get("target");
         assertNotNull(target);
         assertEquals("", target.getId());
+
+        Rollup rollup = (Rollup) interact.getObject().getRollUp();
+        assertEquals("do_2121925679111454721253", rollup.getL1());
+        assertEquals("do_30019820", rollup.getL2());
     }
 
     @Test
