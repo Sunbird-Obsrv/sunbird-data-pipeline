@@ -320,6 +320,22 @@ public class TelemetryV3ConverterTest {
         assertEquals("plugin", error.getObject().getType());
     }
 
+
+    @Test
+    public void convertOE_ERROR() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("OE_ERROR");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+
+        TelemetryV3[] v3Events = converter.convert();
+        assertEquals(1, v3Events.length);
+
+        TelemetryV3 error = v3Events[0];
+        assertEquals("ERROR", error.getEid());
+        assertEquals("Cannot read property 'mimeType' of undefined", error.getEdata().get("err"));
+        assertEquals("CONTENT", error.getEdata().get("errtype"));
+        assertEquals("TypeError: Cannot read property 'mimeType' of undefined",error.getEdata().get("data"));
+    }
+
     @Test
     public void convertBE_OBJECT_LIFECYCLE() throws Exception {
         Map<String, Object> event = EventFixture.getEvent("BE_OBJECT_LIFECYCLE");

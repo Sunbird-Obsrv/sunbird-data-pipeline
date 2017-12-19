@@ -151,6 +151,9 @@ public class TelemetryV3 {
             case "BE_OBJECT_LIFECYCLE":
                 v3Eid = "AUDIT";
                 break;
+            case "OE_ERROR":
+                v3Eid = "ERROR";
+                break;
             case "GE_ERROR":
                 v3Eid = "ERROR";
                 break;

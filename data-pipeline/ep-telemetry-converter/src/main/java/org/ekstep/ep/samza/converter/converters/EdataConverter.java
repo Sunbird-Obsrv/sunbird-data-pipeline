@@ -188,7 +188,11 @@ public class EdataConverter {
     private void updateErrorEdata(Map<String, Object> edata) {
         v3Edata.put("err", edata.getOrDefault("err", ""));
         v3Edata.put("errtype", edata.getOrDefault("type", "MOBILEAPP"));
-        v3Edata.put("data", edata.get("stacktrace"));
+        if(edata.containsKey("stacktrace")){
+            v3Edata.put("data", edata.get("stacktrace"));
+        } else {
+            v3Edata.put("data", edata.get("data"));
+        }
         v3Edata.put("pageid", edata.get("stage"));
         v3Edata.put("plugin", new Plugin(edata));
     }
