@@ -82,7 +82,7 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>es-indexer-primary</artifactId>
-            <version>0.1.6</version>
+            <version>0.1.7</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>

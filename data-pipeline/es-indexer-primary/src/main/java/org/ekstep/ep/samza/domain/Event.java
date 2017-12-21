@@ -29,7 +29,7 @@ public class Event {
     }
 
     public String id() {
-        return telemetry.<String>read("metadata.checksum").value();
+        return telemetry.<String>read("mid").value();
     }
 
     public String getJson() {
