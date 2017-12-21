@@ -1857,6 +1857,9 @@ module Indexers
             "format": "strict_date_optional_time||epoch_millis",
             "type": "date"
           },
+          "ver": {
+            "type": "string"
+          },
           "edata": {
             "properties": {
               "comments": {
@@ -2039,6 +2042,40 @@ module Indexers
                     "type": "string"
                   }
                 }
+              },
+              "dspec": {
+                "properties": {
+                   "camera": {
+                      "type": "string"
+                    },
+                    "cpu": {
+                      "type": "string"
+                    },
+                    "edisk": {
+                      "type": "double"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "idisk": {
+                      "type": "double"
+                    },
+                    "make": {
+                      "type": "string"
+                    },
+                    "mem": {
+                      "type": "double"
+                    },
+                    "os": {
+                      "type": "string"
+                    },
+                    "scrn": {
+                      "type": "double"
+                    },
+                    "sims": {
+                      "type": "double"
+                    }
+                }
               }
             }
           },
@@ -2133,59 +2170,6 @@ module Indexers
                     "type": "string"
                   }
                 }
-              }
-            }
-          },
-          "uaspec": {
-            "properties": {
-             "agent": {
-                "type": "string"
-              },
-              "ver": {
-                "type": "string"
-              },
-              "system": {
-                "type": "string"
-              },
-              "platform": {
-                "type": "string"
-              },
-              "raw": {
-                "type": "string"
-              }
-            }
-          },
-          "dspec": {
-            "properties": {
-             "camera": {
-                "type": "string"
-              },
-              "cpu": {
-                "type": "string"
-              },
-              "edisk": {
-                "type": "double"
-              },
-              "id": {
-                "type": "string"
-              },
-              "idisk": {
-                "type": "double"
-              },
-              "make": {
-                "type": "string"
-              },
-              "mem": {
-                "type": "double"
-              },
-              "os": {
-                "type": "string"
-              },
-              "scrn": {
-                "type": "double"
-              },
-              "sims": {
-                "type": "double"
               }
             }
           },
