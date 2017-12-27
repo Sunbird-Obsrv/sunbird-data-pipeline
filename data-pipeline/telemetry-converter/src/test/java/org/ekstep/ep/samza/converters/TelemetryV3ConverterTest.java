@@ -300,6 +300,19 @@ public class TelemetryV3ConverterTest {
     }
 
     @Test
+    public void convertGE_END() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("GE_END");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+
+        TelemetryV3[] v3Events = converter.convert();
+        assertEquals(1, v3Events.length);
+
+        TelemetryV3 end = v3Events[0];
+        assertEquals("END", end.getEid());
+        assertEquals("in.tnpilot", end.getContext().getChannel());
+    }
+
+    @Test
     public void convertCE_ERROR() throws Exception {
         Map<String, Object> event = EventFixture.getEvent("CE_ERROR");
         TelemetryV3Converter converter = new TelemetryV3Converter(event);
