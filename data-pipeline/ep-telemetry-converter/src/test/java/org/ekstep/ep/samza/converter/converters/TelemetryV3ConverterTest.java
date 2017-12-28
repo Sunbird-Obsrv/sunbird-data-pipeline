@@ -1,11 +1,8 @@
 package org.ekstep.ep.samza.converter.converters;
 
-import com.google.gson.Gson;
 import org.ekstep.ep.samza.converter.domain.*;
 import org.ekstep.ep.samza.converter.exceptions.TelemetryConversionException;
 import org.ekstep.ep.samza.converter.fixtures.EventFixture;
-import org.ekstep.ep.samza.domain.*;
-import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.junit.Test;
 
 import java.util.ArrayList;
