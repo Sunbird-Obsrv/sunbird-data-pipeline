@@ -179,6 +179,21 @@ public class TelemetryConverterTaskTest {
     }
 
     @Test
+    public void checksumShouldBeRecomputed() throws Exception {
+        String v2Event = EventFixture.getEventAsString("GE_START");
+        stub(envelope.getMessage()).toReturn(v2Event);
+        TelemetryConverterTask task = new TelemetryConverterTask(config, context);
+        task.process(envelope, collector, coordinator);
+
+        OutgoingMessageEnvelope envelope = ((TestMessageCollector) collector).outgoingEnvelope;
+
+        Map<String, Object> v3Event = (Map<String, Object>) new Gson().fromJson((String) envelope.getMessage(), Map.class);
+        assert (v3Event.containsKey("metadata"));
+        Map<String, Object> metadata = (Map<String, Object>) v3Event.get("metadata");
+        assertEquals("START:06a89a02-c5b5-4225-a0d1-ba52312d2246", metadata.get("checksum"));
+    }
+
+    @Test
     public void conversionFailuresShouldGoToFailedTopic() throws Exception {
         String v2Event = corruptedGE_START();
         stub(envelope.getMessage()).toReturn(v2Event);

@@ -269,8 +269,6 @@ public class TelemetryV3ConverterTest {
         assertEquals("show", interact.getEdata().get("subtype"));
         assertEquals("Genie-TelemetrySync", interact.getEdata().get("pageid"));
         assertEquals("OTHER", interact.getEdata().get("type"));
-
-        System.out.println(log.toJson());
     }
 
     @Test

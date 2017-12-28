@@ -93,6 +93,7 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
         Map<String, Object> metadata = getMetadata(v2);
         metadata.put("source_eid", v2.getOrDefault("eid", ""));
         metadata.put("source_mid", v2.getOrDefault("mid", ""));
+        metadata.put("checksum", v3.getMid());
 
         Map<String, Object> event = v3.toMap();
         event.put("flags", flags);
