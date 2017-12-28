@@ -110,7 +110,7 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>telemetry-converter</artifactId>
-            <version>0.0.15</version>
+            <version>1.0.0</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
