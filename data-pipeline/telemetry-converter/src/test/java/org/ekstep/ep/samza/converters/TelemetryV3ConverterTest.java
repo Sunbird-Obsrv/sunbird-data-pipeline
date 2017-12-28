@@ -187,6 +187,29 @@ public class TelemetryV3ConverterTest {
     }
 
     @Test
+    public void convertGE_START() throws Exception {
+        Map<String, Object> oeStart = EventFixture.getEvent("GE_START_TN_PILOT");
+        TelemetryV3Converter converter = new TelemetryV3Converter(oeStart);
+        TelemetryV3[] v3 = converter.convert();
+        Map<String, Object> v3Map = v3[0].toMap();
+
+        TelemetryV3 start = v3[0];
+        assertEquals("START", start.getEid());
+        assertEquals("in.tnpilot", start.getContext().getChannel());
+    }
+
+    @Test
+    public void convertGE_SERVICE_API_CALL() throws Exception {
+        Map<String, Object> serviceCall = EventFixture.getEvent("GE_SERVICE_API_CALL");
+        TelemetryV3Converter converter = new TelemetryV3Converter(serviceCall);
+        TelemetryV3[] v3 = converter.convert();
+
+        TelemetryV3 log = v3[0];
+        assertEquals("LOG", log.getEid());
+        assertEquals("in.tnpilot", log.getContext().getChannel());
+    }
+
+    @Test
     public void convertGE_SESSION_END() throws Exception {
         Map<String, Object> oeStart = EventFixture.getEvent("GE_SESSION_END");
         TelemetryV3Converter converter = new TelemetryV3Converter(oeStart);

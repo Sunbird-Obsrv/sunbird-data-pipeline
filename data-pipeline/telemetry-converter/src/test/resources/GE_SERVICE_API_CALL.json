@@ -1,0 +1,46 @@
+{
+  "channel": "in.tnpilot",
+  "did": "0bad2971aee14143ca6062bace0ce9b30222484c",
+  "edata": {
+    "eks": {
+      "message": "successful",
+      "method": "getTelemetryStat@TelemetryServiceImpl",
+      "mode": "WIFI",
+      "request": {
+        "logLevel": "2"
+      },
+      "result": {},
+      "service": "TelemetryServiceImpl",
+      "status": "Successful"
+    }
+  },
+  "eid": "GE_SERVICE_API_CALL",
+  "etags": {
+    "app": []
+  },
+  "ets": 1.514372934751E12,
+  "gdata": {
+    "id": "org.ekstep.genieservices.qa",
+    "ver": "6.5.localdev-debug"
+  },
+  "mid": "2194dea2-0715-4aad-84c5-08499ad0db93-edited",
+  "pdata": {
+    "id": "genie",
+    "ver": "6.5.localdev-debug"
+  },
+  "sid": "addfd243-9b70-4f76-99de-dcc9451e62fa",
+  "ts": "2017-12-27T11:08:54.751+0000",
+  "uid": "67574b43-6e6b-4b10-8c15-6a530b7ef2e1",
+  "ver": "2.2",
+  "@version": "1",
+  "@timestamp": "2017-12-27T11:08:52.304Z",
+  "metadata": {
+    "checksum": "2194dea2-0715-4aad-84c5-08499ad0db93"
+  },
+  "uuid": "31602257-1017-437e-898d-a85b6cbebfb63",
+  "key": "67574b43-6e6b-4b10-8c15-6a530b7ef2e1",
+  "type": "events",
+  "flags": {
+    "tv_processed": true
+  }
+}
