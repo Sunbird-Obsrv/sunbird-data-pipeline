@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -634,5 +635,17 @@ public class TelemetryV3ConverterTest {
         TelemetryV3 feedback = v3[0];
         assertEquals("FEEDBACK", feedback.getEid());
         assertEquals("do_30100165", feedback.getObject().getId());
+    }
+    
+    @Test
+    public void convertGE_SERVICE_API_CALLAnd_edata_paramsShouldBeList() throws Exception {
+        Map<String, Object> v2 = EventFixture.getEvent("GE_SERVICE_API_CALL");
+        TelemetryV3Converter converter = new TelemetryV3Converter(v2);
+        TelemetryV3[] events = converter.convert();
+
+        TelemetryV3 event = events[0];
+        boolean flag = event.getEdata().get("params") instanceof List;
+        assertEquals(flag, true);
+        
     }
 }
