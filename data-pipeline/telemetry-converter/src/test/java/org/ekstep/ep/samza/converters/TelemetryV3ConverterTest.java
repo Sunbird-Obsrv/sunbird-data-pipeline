@@ -360,6 +360,7 @@ public class TelemetryV3ConverterTest {
         assertEquals(1, v3Events.length);
 
         TelemetryV3 audit = v3Events[0];
+        assertEquals("", audit.getContext().getEnv());
         assertEquals("AUDIT", audit.getEid());
         assertEquals("Asset", audit.getObject().getType());
         assertEquals("do_31238594379452416022722", audit.getObject().getId());
