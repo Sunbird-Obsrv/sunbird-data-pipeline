@@ -320,6 +320,8 @@ public class TelemetryV3ConverterTest {
         assertEquals("ERROR", error.getEid());
         assertEquals("INVALID_USER", error.getEdata().get("err"));
         assertEquals("GENIESDK", error.getEdata().get("errtype"));
+        assertEquals("ddde6543daed8d535ddc96d27a7ef19cdf4276e3", error.getTags().get(0));
+        assertEquals("98033218daf4a38dd3f009e4a7aea1f6f5f1541d", error.getTags().get(1));
     }
 
     @Test
@@ -395,6 +397,8 @@ public class TelemetryV3ConverterTest {
         TelemetryV3 exdata = v3Events[0];
         assertEquals("EXDATA", exdata.getEid());
         assertEquals("partnerdata", exdata.getEdata().get("type"));
+        assertTrue("tags are not converted properly", exdata.getTags().size() > 0);
+        assertEquals("org.ekstep.ipa.sample", exdata.getTags().get(0));
     }
 
     @Test

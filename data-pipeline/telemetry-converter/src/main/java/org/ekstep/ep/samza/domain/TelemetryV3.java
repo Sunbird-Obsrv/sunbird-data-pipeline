@@ -241,14 +241,15 @@ public class TelemetryV3 {
     }
 
     public void setTags(Map<String, Object> event) {
-
-        Map<String, List<String>> etags = (Map<String, List<String>>) event.get("etags");
-        if (null != etags && !etags.isEmpty()) {
-            Set<String> keys = etags.keySet();
-            Iterator<String> it = keys.iterator();
-            while (it.hasNext()) {
-                List<String> tags = etags.get(it.next());
-                this.tags.addAll(tags);
+        if (event.containsKey("etags")) {
+            Map<String, List<String>> etags = (Map<String, List<String>>) event.get("etags");
+            if (null != etags && !etags.isEmpty()) {
+                Set<String> keys = etags.keySet();
+                Iterator<String> it = keys.iterator();
+                while (it.hasNext()) {
+                    List<String> tags = etags.get(it.next());
+                    this.tags.addAll(tags);
+                }
             }
         }
     }

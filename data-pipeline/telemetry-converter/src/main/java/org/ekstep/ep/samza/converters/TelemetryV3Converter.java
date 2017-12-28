@@ -44,6 +44,7 @@ public class TelemetryV3Converter {
             String v3Eid = v3.getEid();
             String eid = reader.<String>mustReadValue("eid");
             v3.setEdata(new EdataConverter(reader).getEdata(v3Eid, eid));
+            v3.setTags(source);
             v3Events.add(v3);
         }
 
