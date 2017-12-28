@@ -265,17 +265,18 @@ public class EdataConverter {
         v3Edata.put("message", edata.get("message"));
         v3Edata.put("pageid", edata.get("id"));
 
-        HashMap<String, String> params = new HashMap<>();
-        params.put("mode", (String) edata.get("mode"));
-        params.put("ver", (String) edata.get("ver"));
-        params.put("size", (String) edata.get("size"));
-        params.put("err", (String) edata.get("err"));
-        params.put("action", (String) edata.get("referrer.action"));
-        params.put("utmsource", (String) edata.get("referrer.utmsource"));
-        params.put("utmmedium", (String) edata.get("referrer.utmmedium"));
-        params.put("utmcontent", (String) edata.get("referrer.utmcontent"));
-        params.put("utmcampaign", (String) edata.get("referrer.utmcampaign"));
-
+        List<Map<String, String>> params = new ArrayList<>();
+        HashMap<String, String> param = new HashMap<>();
+        param.put("mode", (String) edata.get("mode"));
+        param.put("ver", (String) edata.get("ver"));
+        param.put("size", (String) edata.get("size"));
+        param.put("err", (String) edata.get("err"));
+        param.put("action", (String) edata.get("referrer.action"));
+        param.put("utmsource", (String) edata.get("referrer.utmsource"));
+        param.put("utmmedium", (String) edata.get("referrer.utmmedium"));
+        param.put("utmcontent", (String) edata.get("referrer.utmcontent"));
+        param.put("utmcampaign", (String) edata.get("referrer.utmcampaign"));
+        params.add(param);
         v3Edata.put("params", edata.getOrDefault("values", params));
     }
 
