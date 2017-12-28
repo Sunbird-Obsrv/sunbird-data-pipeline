@@ -192,7 +192,19 @@ public class EdataConverter {
     }
 
     private void updateShareEdata(Map<String, Object> edata) {
-        v3Edata.put("dir", edata.get("direction"));
+        final String in = "In";
+        final String out = "Out";
+
+        Object eDir = edata.get("direction");
+        if (eDir != null) {
+            String dir = (String) eDir;
+            if ("import".equalsIgnoreCase(dir)) {
+                v3Edata.put("dir", in);
+            } else if ("export".equalsIgnoreCase(dir)) {
+                v3Edata.put("dir", out);
+            }
+        }
+
         v3Edata.put("type", edata.getOrDefault("type", "File"));
         v3Edata.put("items", getShareItem(edata));
     }

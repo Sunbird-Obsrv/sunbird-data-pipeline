@@ -567,4 +567,32 @@ public class TelemetryV3ConverterTest {
             assertEquals("Cannot convert 'GE_UPDATE_PROFILE' to V3 telemetry. No mapping found", e.getMessage());
         }
     }
+
+    @Test
+    public void convertGE_TRANSFER_IMPORT() throws Exception {
+        Map<String, Object> geTransfer = EventFixture.getEvent("GE_TRANSFER_IMPORT");
+        TelemetryV3Converter converter = new TelemetryV3Converter(geTransfer);
+        TelemetryV3[] v3 = converter.convert();
+
+        TelemetryV3 share = v3[0];
+        assertEquals("SHARE", share.getEid());
+        assertEquals("in.tnpilot", share.getContext().getChannel());
+
+        Map<String, Object> eData = share.getEdata();
+        assertEquals("In", eData.get("dir"));
+    }
+
+    @Test
+    public void convertGE_TRANSFER_EXPORT() throws Exception {
+        Map<String, Object> geTransfer = EventFixture.getEvent("GE_TRANSFER_EXPORT");
+        TelemetryV3Converter converter = new TelemetryV3Converter(geTransfer);
+        TelemetryV3[] v3 = converter.convert();
+
+        TelemetryV3 share = v3[0];
+        assertEquals("SHARE", share.getEid());
+        assertEquals("in.tnpilot", share.getContext().getChannel());
+
+        Map<String, Object> eData = share.getEdata();
+        assertEquals("Out", eData.get("dir"));
+    }
 }

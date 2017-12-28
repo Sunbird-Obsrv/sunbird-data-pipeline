@@ -1,0 +1,49 @@
+{
+  "channel": "in.tnpilot",
+  "did": "0bad2971aee14143ca6062bace0ce9b30222484c",
+  "edata": {
+    "eks": {
+      "contents": [
+        {
+          "identifier": "do_30094761",
+          "origin": "0bad2971aee14143ca6062bace0ce9b30222484c",
+          "pkgVersion": 1.0,
+          "transferCount": 0.0
+        }
+      ],
+      "count": 1.0,
+      "datatype": "CONTENT",
+      "direction": "IMPORT",
+      "size": 552711.0
+    }
+  },
+  "eid": "GE_TRANSFER",
+  "etags": {
+    "app": []
+  },
+  "ets": 1.514368376923E12,
+  "gdata": {
+    "id": "org.ekstep.genieservices.qa",
+    "ver": "6.5.localdev-debug"
+  },
+  "mid": "586cb09c-ac23-4c89-9386-3aaca4754544",
+  "pdata": {
+    "id": "genie",
+    "ver": "6.5.localdev-debug"
+  },
+  "sid": "addfd243-9b70-4f76-99de-dcc9451e62fa",
+  "ts": "2017-12-27T09:52:56.923+0000",
+  "uid": "67574b43-6e6b-4b10-8c15-6a530b7ef2e1",
+  "ver": "2.2",
+  "@version": "1",
+  "@timestamp": "2017-12-27T09:53:19.786Z",
+  "metadata": {
+    "checksum": "586cb09c-ac23-4c89-9386-3aaca4754544"
+  },
+  "uuid": "e9982cb7-b6da-4f40-9b44-c6572964b12512",
+  "key": "67574b43-6e6b-4b10-8c15-6a530b7ef2e1",
+  "type": "events",
+  "flags": {
+    "tv_processed": true
+  }
+}
