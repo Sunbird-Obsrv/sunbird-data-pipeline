@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 public class Context {
-    private String channel;
-    private String env;
-    private String sid;
+    private String channel = "";
+    private String env = "";
+    private String sid = "";
     private String did = "";
 
     @SerializedName("pdata")

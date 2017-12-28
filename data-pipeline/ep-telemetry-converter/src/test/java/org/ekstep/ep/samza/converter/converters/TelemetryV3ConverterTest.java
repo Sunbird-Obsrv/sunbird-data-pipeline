@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import org.ekstep.ep.samza.converter.domain.*;
 import org.ekstep.ep.samza.converter.exceptions.TelemetryConversionException;
 import org.ekstep.ep.samza.converter.fixtures.EventFixture;
+import org.ekstep.ep.samza.domain.*;
+import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -121,6 +123,7 @@ public class TelemetryV3ConverterTest {
         Map<String, Object> v3Map = v3[0].toMap();
 
         assertEquals(v3Map.get("eid"), "IMPRESSION");
+        assertEquals("domain_4083", v3[0].getObject().getId());
 
         Map<String, Object> eData = (Map<String, Object>) v3Map.get("edata");
         assertEquals(eData.get("pageid"), "com_ekcontent.content");
@@ -156,10 +159,8 @@ public class TelemetryV3ConverterTest {
         TelemetryV3[] v3 = converter.convert();
         Map<String, Object> v3Map = v3[0].toMap();
 
-        Gson gson = new Gson();
-        System.out.println("Converted" + gson.toJson(v3Map));
-
         assertEquals(v3Map.get("eid"), "INTERACT");
+        assertEquals("do_2123406893993410561225", v3[0].getObject().getId());
 
         Map<String, Object> eData = (Map<String, Object>) v3Map.get("edata");
         assertEquals(eData.get("type"), "click");
@@ -185,6 +186,30 @@ public class TelemetryV3ConverterTest {
         assertEquals(0, eData.get("duration"));
         assertEquals("session", eData.get("type"));
         assertEquals("", eData.get("pageid"));
+    }
+
+    @Test
+    public void convertGE_START() throws Exception {
+        Map<String, Object> oeStart = EventFixture.getEvent("GE_START_TN_PILOT");
+        TelemetryV3Converter converter = new TelemetryV3Converter(oeStart);
+        TelemetryV3[] v3 = converter.convert();
+        Map<String, Object> v3Map = v3[0].toMap();
+
+        TelemetryV3 start = v3[0];
+        assertEquals("START", start.getEid());
+        assertEquals("in.tnpilot", start.getContext().getChannel());
+        assertEquals("in.gov.diksha.tnpilot", start.getObject().getId());
+    }
+
+    @Test
+    public void convertGE_SERVICE_API_CALL() throws Exception {
+        Map<String, Object> serviceCall = EventFixture.getEvent("GE_SERVICE_API_CALL");
+        TelemetryV3Converter converter = new TelemetryV3Converter(serviceCall);
+        TelemetryV3[] v3 = converter.convert();
+
+        TelemetryV3 log = v3[0];
+        assertEquals("LOG", log.getEid());
+        assertEquals("in.tnpilot", log.getContext().getChannel());
     }
 
     @Test
@@ -247,6 +272,8 @@ public class TelemetryV3ConverterTest {
         assertEquals("show", interact.getEdata().get("subtype"));
         assertEquals("Genie-TelemetrySync", interact.getEdata().get("pageid"));
         assertEquals("OTHER", interact.getEdata().get("type"));
+
+        System.out.println(log.toJson());
     }
 
     @Test
@@ -302,6 +329,21 @@ public class TelemetryV3ConverterTest {
         assertEquals("ERROR", error.getEid());
         assertEquals("INVALID_USER", error.getEdata().get("err"));
         assertEquals("GENIESDK", error.getEdata().get("errtype"));
+        assertEquals("ddde6543daed8d535ddc96d27a7ef19cdf4276e3", error.getTags().get(0));
+        assertEquals("98033218daf4a38dd3f009e4a7aea1f6f5f1541d", error.getTags().get(1));
+    }
+
+    @Test
+    public void convertGE_END() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("GE_END");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+
+        TelemetryV3[] v3Events = converter.convert();
+        assertEquals(1, v3Events.length);
+
+        TelemetryV3 end = v3Events[0];
+        assertEquals("END", end.getEid());
+        assertEquals("in.tnpilot", end.getContext().getChannel());
     }
 
     @Test
@@ -316,7 +358,7 @@ public class TelemetryV3ConverterTest {
         assertEquals("ERROR", error.getEid());
         assertEquals("content", error.getContext().getEnv());
         assertEquals("06b6c11c-743a-4a30-a5c9-b1e7644ded12", error.getEdata().get("pageid"));
-        assertEquals("org.ekstep.text", error.getObject().getId());
+        assertEquals("do_31236685451209932823957", error.getObject().getId());
         assertEquals("plugin", error.getObject().getType());
     }
 
@@ -345,6 +387,7 @@ public class TelemetryV3ConverterTest {
         assertEquals(1, v3Events.length);
 
         TelemetryV3 audit = v3Events[0];
+        assertEquals("", audit.getContext().getEnv());
         assertEquals("AUDIT", audit.getEid());
         assertEquals("Asset", audit.getObject().getType());
         assertEquals("do_31238594379452416022722", audit.getObject().getId());
@@ -379,6 +422,8 @@ public class TelemetryV3ConverterTest {
         TelemetryV3 exdata = v3Events[0];
         assertEquals("EXDATA", exdata.getEid());
         assertEquals("partnerdata", exdata.getEdata().get("type"));
+        assertTrue("tags are not converted properly", exdata.getTags().size() > 0);
+        assertEquals("org.ekstep.ipa.sample", exdata.getTags().get(0));
     }
 
     @Test
@@ -555,5 +600,44 @@ public class TelemetryV3ConverterTest {
         } catch (TelemetryConversionException e) {
             assertEquals("Cannot convert 'GE_UPDATE_PROFILE' to V3 telemetry. No mapping found", e.getMessage());
         }
+    }
+
+    @Test
+    public void convertGE_TRANSFER_IMPORT() throws Exception {
+        Map<String, Object> geTransfer = EventFixture.getEvent("GE_TRANSFER_IMPORT");
+        TelemetryV3Converter converter = new TelemetryV3Converter(geTransfer);
+        TelemetryV3[] v3 = converter.convert();
+
+        TelemetryV3 share = v3[0];
+        assertEquals("SHARE", share.getEid());
+        assertEquals("in.tnpilot", share.getContext().getChannel());
+
+        Map<String, Object> eData = share.getEdata();
+        assertEquals("In", eData.get("dir"));
+    }
+
+    @Test
+    public void convertGE_TRANSFER_EXPORT() throws Exception {
+        Map<String, Object> geTransfer = EventFixture.getEvent("GE_TRANSFER_EXPORT");
+        TelemetryV3Converter converter = new TelemetryV3Converter(geTransfer);
+        TelemetryV3[] v3 = converter.convert();
+
+        TelemetryV3 share = v3[0];
+        assertEquals("SHARE", share.getEid());
+        assertEquals("in.tnpilot", share.getContext().getChannel());
+
+        Map<String, Object> eData = share.getEdata();
+        assertEquals("Out", eData.get("dir"));
+    }
+
+    @Test
+    public void convertGE_FEEDBACK() throws Exception {
+        Map<String, Object> geFeedback = EventFixture.getEvent("GE_FEEDBACK");
+        TelemetryV3Converter converter = new TelemetryV3Converter(geFeedback);
+        TelemetryV3[] v3 = converter.convert();
+
+        TelemetryV3 feedback = v3[0];
+        assertEquals("FEEDBACK", feedback.getEid());
+        assertEquals("do_30100165", feedback.getObject().getId());
     }
 }

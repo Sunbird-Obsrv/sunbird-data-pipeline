@@ -1,0 +1,42 @@
+{
+  "channel": "in.tnpilot",
+  "did": "0bad2971aee14143ca6062bace0ce9b30222484c",
+  "edata": {
+    "eks": {
+      "loc": "",
+      "dspec": {
+        "camera": "",
+        "cap": [],
+        "cpu": "abi: armeabi-v7a  ARMv7 Processor rev 3 (v7l) ",
+        "dlocname": "",
+        "dname": "",
+        "edisk": 5.75,
+        "id": "3aaa271cc9076ad5",
+        "idisk": 5.75,
+        "make": "Micromax AQ4502",
+        "mem": -1.0,
+        "os": "Android 6.0.1",
+        "scrn": 4.08,
+        "sims": -1.0
+      }
+    }
+  },
+  "eid": "GE_START",
+  "mid": "6ccd8bb7-0489-44a5-a725-828fafc73646",
+  "etags": {
+    "app": []
+  },
+  "ets": 1514359253172,
+  "gdata": {
+    "id": "in.gov.diksha.tnpilot",
+    "ver": "1.0.localqa-debug"
+  },
+  "pdata": {
+    "id": "tnpilot",
+    "ver": "1.0.localqa-debug"
+  },
+  "sid": "70b6c875-d779-423a-a32f-1baa2b900f37",
+  "ts": "2017-12-27T12:50:52+05:30",
+  "uid": "919a8534-edeb-4b40-898c-c2689a455690",
+  "ver": "2.2"
+}
