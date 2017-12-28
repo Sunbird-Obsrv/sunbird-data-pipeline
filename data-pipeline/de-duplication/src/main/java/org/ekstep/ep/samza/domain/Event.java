@@ -86,9 +86,10 @@ public class Event {
     public void updateDefaults(DeDuplicationConfig config) {
         String channelString = telemetry.<String>read("context.channel").value();
         String channel = StringUtils.deleteWhitespace(channelString);
-        if(channel == null || channel.isEmpty())
+        if(channel == null || channel.isEmpty()) {
             telemetry.addFieldIfAbsent("context", new HashMap<String, Object>());
-            telemetry.add("context.channel",config.defaultChannel());
+            telemetry.add("context.channel", config.defaultChannel());
+        }
     }
 }
 

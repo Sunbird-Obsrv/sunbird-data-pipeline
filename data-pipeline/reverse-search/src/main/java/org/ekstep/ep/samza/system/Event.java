@@ -129,9 +129,10 @@ public class Event implements Mappable {
     private void updateDefaultChannel(Configuration configuration) {
         String channelString = telemetry.<String>read("context.channel").value();
         String channel = StringUtils.deleteWhitespace(channelString);
-        if(channel == null || channel.isEmpty())
+        if(channel == null || channel.isEmpty()) {
             telemetry.addFieldIfAbsent("context", new HashMap<String, Object>());
-            telemetry.add("context.channel",configuration.getDefaultChannel());
+            telemetry.add("context.channel", configuration.getDefaultChannel());
+        }
     }
 
     private void updateChecksum() {
