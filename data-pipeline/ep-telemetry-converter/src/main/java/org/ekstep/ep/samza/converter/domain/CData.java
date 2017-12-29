@@ -11,6 +11,11 @@ public class CData {
         this.type = (String) cdata.get("type");
     }
 
+    public CData(String type, String id) {
+        this.type = type;
+        this.id = id;
+    }
+
     public String getType() {
         return type;
     }

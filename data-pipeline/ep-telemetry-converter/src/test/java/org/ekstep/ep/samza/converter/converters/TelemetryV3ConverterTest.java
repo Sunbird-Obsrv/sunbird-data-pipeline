@@ -420,6 +420,8 @@ public class TelemetryV3ConverterTest {
         assertEquals("partnerdata", exdata.getEdata().get("type"));
         assertTrue("tags are not converted properly", exdata.getTags().size() > 0);
         assertEquals("org.ekstep.ipa.sample", exdata.getTags().get(0));
+        List<CData> cData = exdata.getContext().getCData();
+        assertEquals(1, cData.size());
     }
 
     @Test
@@ -636,7 +638,7 @@ public class TelemetryV3ConverterTest {
         assertEquals("FEEDBACK", feedback.getEid());
         assertEquals("do_30100165", feedback.getObject().getId());
     }
-    
+
     @Test
     public void convertGE_SERVICE_API_CALLAnd_edata_paramsShouldBeList() throws Exception {
         Map<String, Object> v2 = EventFixture.getEvent("GE_SERVICE_API_CALL");
@@ -646,6 +648,6 @@ public class TelemetryV3ConverterTest {
         TelemetryV3 event = events[0];
         boolean flag = event.getEdata().get("params") instanceof List;
         assertEquals(flag, true);
-        
+
     }
 }

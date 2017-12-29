@@ -58,10 +58,16 @@ public class Context {
 
         did = reader.<String>read("did").valueOrDefault("");
 
-        List cdata = reader.<List>read("cdata").valueOrDefault(new ArrayList());
-        for (Object item : cdata) {
+        List v2CData = reader.<List>read("cdata").valueOrDefault(new ArrayList());
+        for (Object item : v2CData) {
             Map<String, Object> m = (Map<String, Object>) item;
             cData.add(new CData(m));
+        }
+
+        // etags.partner should come in the cdata
+        List<String> partnerETags = reader.<List<String>>read("etags.partner").valueOrDefault(new ArrayList<>());
+        for (String eTag: partnerETags) {
+            cData.add(new CData("partner", eTag));
         }
     }
 
