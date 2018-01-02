@@ -41,6 +41,8 @@ public class TelemetryV3Converter {
             v3Events = convertGeInteract();
         } else if ("CE_START".equals(v2Eid)) {
             v3Events = convertCeStart();
+        } else if("GE_GENIE_START".equals(v2Eid)){
+            v3Events = convertGeGenieStart();
         } else {
             TelemetryV3 v3 = new TelemetryV3(reader, source);
             String v3Eid = v3.getEid();
@@ -51,6 +53,29 @@ public class TelemetryV3Converter {
         }
 
         return v3Events.toArray(new TelemetryV3[v3Events.size()]);
+    }
+
+    private ArrayList<TelemetryV3> convertGeGenieStart() throws NoSuchAlgorithmException, TelemetryReaderException, TelemetryConversionException{
+        // GE_GENIE_START will become START and EXDATA
+        TelemetryV3 start = new TelemetryV3(reader, source);
+        start.setEid("START");
+        start.setEdata(new EdataConverter(reader).getEdata("START", "GE_GENIE_START"));
+        start.setTags(source);
+
+        ArrayList<TelemetryV3> events = new ArrayList<>();
+        events.add(start);
+
+        Map<String, Object> dspec = (Map<String, Object>) reader.getEdata().get("dspec");
+
+        if (dspec != null && dspec.containsKey("mdata")) {
+            TelemetryV3 exData = new TelemetryV3(reader, source);
+            exData.setEid("EXDATA");
+            exData.setEdata(new EdataConverter(reader).getEdata("EXDATA", "GE_GENIE_START"));
+            exData.setTags(source);
+            events.add(exData);
+        }
+
+        return events;
     }
 
     private ArrayList<TelemetryV3> convertCeStart() throws NoSuchAlgorithmException, TelemetryReaderException, TelemetryConversionException {

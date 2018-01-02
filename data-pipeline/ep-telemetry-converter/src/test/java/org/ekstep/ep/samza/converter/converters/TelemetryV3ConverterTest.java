@@ -1,15 +1,12 @@
 package org.ekstep.ep.samza.converter.converters;
 
+import com.google.gson.Gson;
 import org.ekstep.ep.samza.converter.domain.*;
 import org.ekstep.ep.samza.converter.exceptions.TelemetryConversionException;
 import org.ekstep.ep.samza.converter.fixtures.EventFixture;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -270,6 +267,40 @@ public class TelemetryV3ConverterTest {
         assertEquals("show", interact.getEdata().get("subtype"));
         assertEquals("Genie-TelemetrySync", interact.getEdata().get("pageid"));
         assertEquals("OTHER", interact.getEdata().get("type"));
+    }
+
+    @Test
+    public void convertGE_GENIE_START() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("GE_GENIE_START");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+        TelemetryV3[] v3 = converter.convert();
+
+        assertEquals(2, v3.length);
+        assertEquals(1, Arrays.stream(v3).filter(e -> "START".equals(e.getEid())).count());
+        assertEquals(1, Arrays.stream(v3).filter(e -> "EXDATA".equals(e.getEid())).count());
+
+        TelemetryV3 start = Arrays.stream(v3).filter(e -> "START".equals(e.getEid())).findFirst().get();
+        assertEquals(true, start.getEdata().containsKey("dspec"));
+        assertEquals("9.5654912,77.6912447", start.getEdata().get("loc"));
+
+        TelemetryV3 exdata = Arrays.stream(v3).filter(e -> "EXDATA".equals(e.getEid())).findFirst().get();
+        assertEquals(true, exdata.getEdata().containsKey("data"));
+        assertEquals(true, exdata.getEdata().containsKey("type"));
+    }
+
+    @Test
+    public void convertGE_GENIE_START_WITHOUT_MDATA() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("GE_GENIE_START_WITHOUT_MDATA");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+        TelemetryV3[] v3 = converter.convert();
+
+        assertEquals(1, v3.length);
+        assertEquals(1, Arrays.stream(v3).filter(e -> "START".equals(e.getEid())).count());
+        assertEquals(0, Arrays.stream(v3).filter(e -> "EXDATA".equals(e.getEid())).count());
+
+        TelemetryV3 start = Arrays.stream(v3).filter(e -> "START".equals(e.getEid())).findFirst().get();
+        assertEquals(true, start.getEdata().containsKey("dspec"));
+        assertEquals("9.6912447,77.5654912", start.getEdata().get("loc"));
     }
 
     @Test

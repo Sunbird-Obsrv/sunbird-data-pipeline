@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.converter.converters;
 
+import com.google.gson.Gson;
 import org.ekstep.ep.samza.converter.domain.Plugin;
 import org.ekstep.ep.samza.converter.domain.Question;
 import org.ekstep.ep.samza.converter.domain.Target;
@@ -294,6 +295,8 @@ public class EdataConverter {
 
     private void updateExDataEdata(Map<String, Object> edata) {
         v3Edata.put("type", edata.getOrDefault("dspec.mdata.type", "partnerdata"));
-        v3Edata.put("data", edata.getOrDefault("dspec.mdata.id", edata));
+
+        String data = new Gson().toJson(edata.getOrDefault("dspec.mdata.id", ""));
+        v3Edata.put("data", data);
     }
 }
