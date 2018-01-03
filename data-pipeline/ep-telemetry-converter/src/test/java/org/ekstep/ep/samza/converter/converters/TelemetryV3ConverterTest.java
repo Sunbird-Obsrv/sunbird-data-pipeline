@@ -284,6 +284,7 @@ public class TelemetryV3ConverterTest {
         assertEquals("9.5654912,77.6912447", start.getEdata().get("loc"));
 
         TelemetryV3 exdata = Arrays.stream(v3).filter(e -> "EXDATA".equals(e.getEid())).findFirst().get();
+
         assertEquals(true, exdata.getEdata().containsKey("data"));
         assertEquals(true, exdata.getEdata().containsKey("type"));
     }

@@ -6,6 +6,7 @@ import org.ekstep.ep.samza.converter.domain.Question;
 import org.ekstep.ep.samza.converter.domain.Target;
 import org.ekstep.ep.samza.converter.domain.Visit;
 import org.ekstep.ep.samza.converter.exceptions.TelemetryConversionException;
+import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 
 import java.util.ArrayList;
@@ -228,14 +229,14 @@ public class EdataConverter {
         Map<String, String> origin = new HashMap<>();
         Map<String, String> to = new HashMap<>();
 
-        List<Map<String, String>> params = new ArrayList<>();
-        Map<String, String> paramsMap = null;
+        List<Map<String, Object>> params = new ArrayList<>();
+        Map<String, Object> paramsMap = null;
 
         for (Map<String, Object> content : contents) {
 
             paramsMap = new HashMap<>();
-            paramsMap.put("transfers", Double.toString((Double) content.getOrDefault("transferCount", 0)));
-            paramsMap.put("count", Integer.toString((Integer) content.getOrDefault("count", 0)));
+            paramsMap.put("transfers", content.getOrDefault("transferCount", 0));
+            paramsMap.put("count", content.getOrDefault("count", 0));
             params.add(paramsMap);
 
             origin.put("id", (String) content.get("origin"));
@@ -284,19 +285,19 @@ public class EdataConverter {
         param.put("ver", (String) edata.get("ver"));
         param.put("size", (String) edata.get("size"));
         param.put("err", (String) edata.get("err"));
-        param.put("action", (String) edata.get("referrer.action"));
-        param.put("utmsource", (String) edata.get("referrer.utmsource"));
-        param.put("utmmedium", (String) edata.get("referrer.utmmedium"));
-        param.put("utmcontent", (String) edata.get("referrer.utmcontent"));
-        param.put("utmcampaign", (String) edata.get("referrer.utmcampaign"));
+        param.put("action", (String) reader.read("edata.eks.referrer.action").value());
+        param.put("utmsource", (String) reader.read("edata.eks.referrer.utmsource").value());
+        param.put("utmmedium", (String) reader.read("edata.eks.referrer.utmmedium").value());
+        param.put("utmcontent", (String) reader.read("edata.eks.referrer.utmcontent").value());
+        param.put("utmcampaign", (String) reader.read("edata.eks.referrer.utmcampaign").value());
         params.add(param);
-        v3Edata.put("params", edata.getOrDefault("values", params));
+        v3Edata.put("params", reader.readOrDefault("values", params).value());
     }
 
     private void updateExDataEdata(Map<String, Object> edata) {
-        v3Edata.put("type", edata.getOrDefault("dspec.mdata.type", "partnerdata"));
+        v3Edata.put("type", reader.readOrDefault("edata.eks.dspec.mdata.type", "partnerdata").value());
 
-        String data = new Gson().toJson(edata.getOrDefault("dspec.mdata.id", ""));
+        String data = new Gson().toJson(reader.readOrDefault("edata.eks.dspec.mdata.id", "").value());
         v3Edata.put("data", data);
     }
 }

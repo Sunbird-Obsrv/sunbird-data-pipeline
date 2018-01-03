@@ -46,6 +46,10 @@ public class Telemetry {
         }
     }
 
+    public <T> NullableValue<T> readOrDefault(String keyPath, T defaultValue) {
+        return read(keyPath).isNull() ? new NullableValue<T>(defaultValue) : read(keyPath);
+    }
+
     public <T> T mustReadValue(String keyPath) throws TelemetryReaderException {
         NullableValue<T> val = read(keyPath);
         if (val.isNull()) {
