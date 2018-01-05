@@ -2183,6 +2183,28 @@ module Indexers
               },
               "index_type": {
                 "type": "string"
+              },
+              "source_eid": {
+                "type": "string"
+              },
+              "source_mid": {
+                "type": "string"
+              },
+              "pump": {
+                "type": "string"
+              }
+            }
+          },
+          "flags": {
+            "properties": {
+              "v2_converted": {
+                "type": "boolean"
+              },
+              "dd_processed": {
+                "type": "boolean"
+              },
+              "tv_processed": {
+                "type": "boolean"
               }
             }
           }
