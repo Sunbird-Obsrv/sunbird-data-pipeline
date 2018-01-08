@@ -83,6 +83,15 @@ namespace :correctors do
   end
 end
 
+namespace :data_validators do
+  task :pump_validator do
+    require_relative '../lib/ecosystem-platform/data_validators/pump_validator.rb'
+    index_name = ENV["index"] ? ENV["index"] : "telemetry-"+Date.today.strftime("%Y-%m")
+    file_path = ENV["file_path"] ? ENV["file_path"] : "/tmp/pump/telemetry-*.txt"
+    EcosystemPlatform::DataValidators::PumpValidator.perform(index_name,file_path)
+  end
+end 
+
 namespace :scheduled do
   task :reverse_search do
     require_relative '../data-async-processors/geo_reverse_search2.rb'
