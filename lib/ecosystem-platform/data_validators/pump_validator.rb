@@ -31,11 +31,16 @@ module EcosystemPlatform
                 type: 'events_v1',
                 sort: 'ts',
                 body: {
-                  "fields" => ["mid"],
                   "query"=> {
-                    "term"=> { "mid" => "#{mid}" }
+                    "filtered": {
+                      "query": {
+                       "query_string": {
+                          "query": "mid: \"#{mid.strip}\""
+                        }
+                      }
+                    }
                   }
-                }
+                } 
               })
               binding.pry
               response = Hashie::Mash.new response
