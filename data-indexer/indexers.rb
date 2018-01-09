@@ -2209,7 +2209,7 @@ module Indexers
             }
           }
         }
-      } 
+      }
     }
     attr_reader :client
     def initialize(refresh=true)

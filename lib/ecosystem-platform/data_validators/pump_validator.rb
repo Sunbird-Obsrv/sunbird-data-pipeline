@@ -31,13 +31,13 @@ module EcosystemPlatform
                 type: 'events_v1',
                 sort: 'ts',
                 body: {
+                  "fields" => ["mid"],
                   "query"=> {
-                    "term": {
-                      "mid": mid
-                    }
+                    "term"=> { "mid" => "#{mid}" }
                   }
                 }
               })
+              binding.pry
               response = Hashie::Mash.new response
               logger.info "FOUND #{response.hits.hits.count} hits. - TOTAL #{response.hits.total}"
               response.hits.hits.each do |hit|
