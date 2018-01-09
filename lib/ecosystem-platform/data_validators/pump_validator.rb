@@ -45,8 +45,9 @@ module EcosystemPlatform
                 } 
               })
               response = Hashie::Mash.new response
+              logger.info "#{mid} - TOTAL #{response.hits.total} hits"
               if response.hits.total >= 1
-                logger.info "FOUND #{mid} - TOTAL #{response.hits.total} hits"
+                logger.info "FOUND #{mid} "
                 response.hits.hits.each do |hit|
                   metadata = hit._source.metadata
                   if(metadata != nil)
