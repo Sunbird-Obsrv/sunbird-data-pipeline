@@ -5,7 +5,7 @@ import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.reader.TelemetryReaderException;
 
 public class PData {
-    private String id;
+    private String id = "genie";
     private String pid;
     private String ver;
 
