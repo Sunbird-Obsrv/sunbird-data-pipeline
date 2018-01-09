@@ -26,6 +26,7 @@ module EcosystemPlatform
           Dir.glob(file_path) do |file_name|
             logger.info "PROCESSING FILE : #{file_name}"
             File.foreach(file_name) do |mid|
+              mid = mid.strip
               response = @client.search({
                 index: index,
                 type: 'events_v1',
@@ -35,7 +36,7 @@ module EcosystemPlatform
                     "filtered": {
                       "query": {
                        "query_string": {
-                          "query": "mid: \"#{mid.strip}\""
+                          "query": "mid: \"#{mid}\""
                         }
                       }
                     }
