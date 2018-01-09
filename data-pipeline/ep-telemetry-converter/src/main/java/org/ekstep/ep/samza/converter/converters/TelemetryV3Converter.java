@@ -15,7 +15,7 @@ import java.util.Map;
 public class TelemetryV3Converter {
 
     public static Map<String, String> EDATA_TYPE_MAP = new HashMap<>();
-    private static String typeMappingStr = "OE_START:player,GE_GENIE_START:app,GE_SESSION_START:session,CP_SESSION_START:session,CE_START:editor,GE_SESSION_END:session,CP_SESSION_END:session,OE_END:player,GE_END:app,CE_END:editor";
+    private static String typeMappingStr = "OE_START:player,GE_START:app,GE_GENIE_START:app,GE_SESSION_START:session,CP_SESSION_START:session,CE_START:editor,GE_SESSION_END:session,CP_SESSION_END:session,OE_END:player,GE_GENIE_END:app,GE_END:app,CE_END:editor";
 
     static {
         String[] pairTypeArr = typeMappingStr.split(",");
