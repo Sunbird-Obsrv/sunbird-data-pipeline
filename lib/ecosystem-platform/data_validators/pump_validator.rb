@@ -42,7 +42,6 @@ module EcosystemPlatform
                   }
                 } 
               })
-              binding.pry
               response = Hashie::Mash.new response
               logger.info "FOUND #{response.hits.hits.count} hits. - TOTAL #{response.hits.total}"
               response.hits.hits.each do |hit|
