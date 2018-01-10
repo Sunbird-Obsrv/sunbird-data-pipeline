@@ -490,7 +490,10 @@ public class TelemetryV3ConverterTest {
         assertEquals("62c379c8-7046-45ec-8a83-78782ba0031c", interact.getEdata().get("pageid"));
         assertEquals("", interact.getEdata().get("subtype"));
         assert (interact.getEdata().containsKey("extra"));
-
+        
+        assertNotEquals("TOUCH", interact.getObject().getType());
+        assertEquals("Content", interact.getObject().getType());
+        
         Map<String, Object> extra = (Map<String, Object>) interact.getEdata().get("extra");
         assertNotNull(extra);
         assertNotNull(extra.get("pos"));

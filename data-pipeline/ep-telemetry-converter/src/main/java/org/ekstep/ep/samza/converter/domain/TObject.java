@@ -21,17 +21,14 @@ public class TObject {
 
     transient private String defaultType = "Content";
 
+    public TObject(){
+    	
+    }
     public TObject(Telemetry reader) throws TelemetryReaderException {
-        this.id = computeId(reader);
-        String type = reader.<String>read("edata.eks.objecttype").valueOrDefault(null);
-        if (type == null) {
-            type = reader.<String>read("edata.eks.type").valueOrDefault(defaultType);
-        }
-    	if("genieservices.android".equals(this.id) || "genieservice.android".equals(this.id) || "org.ekstep.genieservices".equals(this.id)){
-    		this.type = "";
-    	} else {
-    		this.type = type;
-    	}
+    	//this.id = computeId(reader);
+    	
+    	setIdType(reader);
+    	
     	this.ver = reader.<String>read("gdata.ver").valueOrDefault("");
     	this.subType = reader.<String>read("edata.eks.subtype").valueOrDefault("");
 
@@ -55,31 +52,77 @@ public class TObject {
         }
     }
 
-    private String computeId(Telemetry reader) throws TelemetryReaderException {
-        String eid = reader.mustReadValue("eid");
-        if (eid.startsWith("GE_")) {
-            String id = reader.<String>read("gdata.id").valueOrDefault("");
-            if ("GE_FEEDBACK".equals(eid)) {
-                // for GE_FEEDBACK, object.id is edata.eks.context.id
-                id = reader.mustReadValue("edata.eks.context.id");
-            }
-            return id;
-        }
-
-        if (eid.startsWith("CE_") || eid.startsWith("CP_")) {
-            return reader.<String>read("context.content_id").valueOrDefault("");
-        }
-
-        if (eid.startsWith("OE_")) {
-            return reader.<String>read("gdata.id").valueOrDefault("");
-        }
-
-        if (eid.startsWith("BE_")) {
-            return reader.<String>read("edata.eks.id").valueOrDefault("");
-        }
-
-        return "";
+    private void setIdType(Telemetry reader) throws TelemetryReaderException {
+        
+    	String id = "";
+        String type = "";
+        
+    	String eid = reader.mustReadValue("eid");
+    	
+    	switch (eid.substring(0, 2)) {
+    		case "GE": 
+    			id = reader.<String>read("gdata.id").valueOrDefault("");
+                if("genieservices.android".equals(this.id) || "genieservice.android".equals(this.id) || "org.ekstep.genieservices".equals(this.id))
+            		type = "";
+            		
+                if ("GE_FEEDBACK".equals(eid)) {
+                    // for GE_FEEDBACK, object.id is edata.eks.context.id
+                    id = reader.mustReadValue("edata.eks.context.id");
+                    type = reader.mustReadValue("edata.eks.context.type");
+                }
+                break;
+    		case "CE":
+    			id = reader.<String>read("context.content_id").valueOrDefault("");
+    			System.out.println(id);
+            	if(eid.equals("CE_ERROR"))
+            		type = reader.<String>read("edata.eks.objecttype").valueOrDefault(defaultType);
+            	break;
+    		case "OE":
+    			id = reader.<String>read("gdata.id").valueOrDefault("");
+                type = this.defaultType;
+                break;
+    		case "BE":
+    			id = reader.<String>read("edata.eks.id").valueOrDefault("");
+                type = reader.<String>read("edata.eks.type").valueOrDefault(defaultType);
+                break;
+    		case "CP":
+    			id = reader.<String>read("context.content_id").valueOrDefault("");
+    			break;
+    		default:
+    			id = "";
+    			type = defaultType;
+    			break;
+    	}
+    	// setting id & type
+    	this.id = id;
+    	this.type = type;
     }
+    
+//    private String computeId(Telemetry reader) throws TelemetryReaderException {
+//        String eid = reader.mustReadValue("eid");
+//        if (eid.startsWith("GE_")) {
+//            String id = reader.<String>read("gdata.id").valueOrDefault("");
+//            if ("GE_FEEDBACK".equals(eid)) {
+//                // for GE_FEEDBACK, object.id is edata.eks.context.id
+//                id = reader.mustReadValue("edata.eks.context.id");
+//            }
+//            return id;
+//        }
+//
+//        if (eid.startsWith("CE_") || eid.startsWith("CP_")) {
+//            return reader.<String>read("context.content_id").valueOrDefault("");
+//        }
+//
+//        if (eid.startsWith("OE_")) {
+//            return reader.<String>read("gdata.id").valueOrDefault("");
+//        }
+//
+//        if (eid.startsWith("BE_")) {
+//            return reader.<String>read("edata.eks.id").valueOrDefault("");
+//        }
+//
+//        return "";
+//    }
 
     public String getId() {
         return id;
