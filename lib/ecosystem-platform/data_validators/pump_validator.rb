@@ -55,10 +55,10 @@ module EcosystemPlatform
                   if(metadata != nil)
                     if metadata.source_mid == mid
                       logger.info "MID #{mid} IS MATCHING WITH METADATA SOURCE MID #{metadata.source_mid}"
-                      mid_found += 1
+                      mid_found_in_metadata += 1
                     else
                       logger.info "#{mid} : MID NOT MATCHING"
-                      mid_not_found += 1
+                      mid_not_found_metadata += 1
                     end
                   end
                 end
@@ -68,8 +68,8 @@ module EcosystemPlatform
               end
             end
           end
-          logger.info "COUNT MID FOUND: #{mid_found}"
-          logger.info "COUNT MID NOT FOUND: #{mid_not_found}"
+          logger.info "COUNT MID FOUND: #{mid_found_in_metadata}"
+          logger.info "COUNT MID NOT FOUND: #{mid_not_found_metadata}"
           logger.info "COUNT MID NOT INDEXED: #{mid_not_indexed}"
           logger.info "TOTAL COUNT : #{total_events}"
           logger.end_task
