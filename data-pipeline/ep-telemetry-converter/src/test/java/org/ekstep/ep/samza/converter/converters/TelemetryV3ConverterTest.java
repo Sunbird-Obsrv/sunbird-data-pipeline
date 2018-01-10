@@ -682,4 +682,17 @@ public class TelemetryV3ConverterTest {
         assertEquals(flag, true);
 
     }
+    
+    @Test
+    public void convertGE_EVENT_WITHOUT_Pdata() throws Exception {
+        Map<String, Object> v2 = EventFixture.getEvent("GE_EVENT_WITHOUT_Pdata");
+        TelemetryV3Converter converter = new TelemetryV3Converter(v2);
+        TelemetryV3[] events = converter.convert();
+
+        TelemetryV3 event = events[0];
+        String pid = event.getContext().getpData().getPid();
+        String id = event.getContext().getpData().getId();
+        assertEquals(pid, "genieservice.android");
+        assertEquals(id, "genie");
+    }
 }

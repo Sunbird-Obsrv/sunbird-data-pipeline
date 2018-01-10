@@ -6,7 +6,7 @@ import org.ekstep.ep.samza.reader.TelemetryReaderException;
 
 public class PData {
     private String id = "genie";
-    private String pid;
+    private String pid = "genieservice.android";
     private String ver;
 
     public PData(Telemetry reader) throws TelemetryReaderException {
