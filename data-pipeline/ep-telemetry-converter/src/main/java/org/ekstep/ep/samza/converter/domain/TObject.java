@@ -20,10 +20,7 @@ public class TObject {
     private final HashMap<String, String> parent = new HashMap<>();
 
     transient private String defaultType = "Content";
-
-    public TObject(){
-    	
-    }
+    
     public TObject(Telemetry reader) throws TelemetryReaderException {
     	//this.id = computeId(reader);
     	
