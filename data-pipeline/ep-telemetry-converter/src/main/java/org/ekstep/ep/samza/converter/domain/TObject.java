@@ -84,6 +84,7 @@ public class TObject {
                 break;
     		case "CP":
     			id = reader.<String>read("context.content_id").valueOrDefault("");
+    			type = defaultType;
     			break;
     		default:
     			id = "";
