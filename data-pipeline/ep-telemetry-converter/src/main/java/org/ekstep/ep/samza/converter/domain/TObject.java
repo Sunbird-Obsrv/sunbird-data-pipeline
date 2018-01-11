@@ -18,23 +18,12 @@ public class TObject {
     private String subType;
 
     private final HashMap<String, String> parent = new HashMap<>();
-
-    transient private String defaultType = "Content";
     
     public TObject(Telemetry reader) throws TelemetryReaderException {
-    	//this.id = computeId(reader);
     	
-    	setIdType(reader);
+    	setObjectAttr(reader);
     	
-    	this.ver = reader.<String>read("gdata.ver").valueOrDefault("");
-    	this.subType = reader.<String>read("edata.eks.subtype").valueOrDefault("");
-
-        String parentId = reader.<String>read("edata.eks.parentid").valueOrDefault("");
-        String parentType = reader.<String>read("edata.eks.parenttype").valueOrDefault("");
-        this.parent.put("id", parentId);
-        this.parent.put("type", parentType);
-
-        ArrayList<Map> cData = (ArrayList<Map>) reader.read("cdata").value();
+    	ArrayList<Map> cData = (ArrayList<Map>) reader.read("cdata").value();
 
         if(cData != null)
             createRollupData(cData);
@@ -49,75 +38,47 @@ public class TObject {
         }
     }
 
-    private void setIdType(Telemetry reader) throws TelemetryReaderException {
+private void setObjectAttr(Telemetry reader) throws TelemetryReaderException {
         
-    	String id = "";
-        String type = defaultType;
-        
-    	String eid = reader.mustReadValue("eid");
-    	
-    	switch (eid.substring(0, 2)) {
-    		case "GE": 
-    			id = reader.<String>read("gdata.id").valueOrDefault("");
-                if("genieservices.android".equals(id) || "genieservice.android".equals(id) || "org.ekstep.genieservices".equals(id))
-            		type = "";
-            		
+        String eid = reader.mustReadValue("eid");
+        switch (eid.substring(0, 2)) {
+            case "GE": 
                 if ("GE_FEEDBACK".equals(eid)) {
-                    // for GE_FEEDBACK, object.id is edata.eks.context.id
-                    id = reader.mustReadValue("edata.eks.context.id");
-                    type = reader.mustReadValue("edata.eks.context.type");
+                    this.id = reader.mustReadValue("edata.eks.context.id");
+                    this.type = reader.mustReadValue("edata.eks.context.type");
                 }
                 break;
-    		case "CE":
-    			id = reader.<String>read("context.content_id").valueOrDefault("");
-            	if(eid.equals("CE_ERROR")){
-            		id = reader.<String>read("edata.eks.objectid").valueOrDefault("");
-            		type = reader.<String>read("edata.eks.objecttype").valueOrDefault(defaultType);
-            	}
-            	break;
-    		case "OE":
-    			id = reader.<String>read("gdata.id").valueOrDefault("");
+            case "CE":
+                this.id = reader.<String>read("context.content_id").valueOrDefault("");
+                this.type = "Content";
                 break;
-    		case "BE":
-    			id = reader.<String>read("edata.eks.id").valueOrDefault("");
-                type = reader.<String>read("edata.eks.type").valueOrDefault(defaultType);
+            case "OE":
+                this.id = reader.<String>read("gdata.id").valueOrDefault("");
+                this.type = "Content";
+                this.ver = reader.<String>read("gdata.ver").valueOrDefault("");
                 break;
-    		case "CP":
-    			id = reader.<String>read("context.content_id").valueOrDefault("");
-    			break;
-    		default:
-    			break;
-    	}
-    	// setting id & type
-    	this.id = id;
-    	this.type = type;
+            case "BE":
+                if("BE_OBJECT_LIFECYCLE".equals(eid)) {
+                    this.id = reader.<String>read("edata.eks.id").valueOrDefault("");
+                    this.type = reader.<String>read("edata.eks.type").valueOrDefault("");
+                    this.ver = reader.<String>read("edata.eks.ver").valueOrDefault("");
+                    this.subType = reader.<String>read("edata.eks.subtype").valueOrDefault("");
+                    String parentId = reader.<String>read("edata.eks.parentid").valueOrDefault("");
+                    String parentType = reader.<String>read("edata.eks.parenttype").valueOrDefault("");
+                    this.parent.put("id", parentId);
+                    this.parent.put("type", parentType);
+                }
+                break;
+            case "CP":
+                this.id = reader.<String>read("context.content_id").valueOrDefault("");
+                if(!id.isEmpty()) {
+                    this.type = "Content";
+                }
+                break;
+            default:
+                break;
+        }
     }
-    
-//    private String computeId(Telemetry reader) throws TelemetryReaderException {
-//        String eid = reader.mustReadValue("eid");
-//        if (eid.startsWith("GE_")) {
-//            String id = reader.<String>read("gdata.id").valueOrDefault("");
-//            if ("GE_FEEDBACK".equals(eid)) {
-//                // for GE_FEEDBACK, object.id is edata.eks.context.id
-//                id = reader.mustReadValue("edata.eks.context.id");
-//            }
-//            return id;
-//        }
-//
-//        if (eid.startsWith("CE_") || eid.startsWith("CP_")) {
-//            return reader.<String>read("context.content_id").valueOrDefault("");
-//        }
-//
-//        if (eid.startsWith("OE_")) {
-//            return reader.<String>read("gdata.id").valueOrDefault("");
-//        }
-//
-//        if (eid.startsWith("BE_")) {
-//            return reader.<String>read("edata.eks.id").valueOrDefault("");
-//        }
-//
-//        return "";
-//    }
 
     public String getId() {
         return id;

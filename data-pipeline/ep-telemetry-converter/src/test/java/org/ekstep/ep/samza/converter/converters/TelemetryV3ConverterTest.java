@@ -184,8 +184,8 @@ public class TelemetryV3ConverterTest {
         assertEquals("session", eData.get("type"));
         assertEquals("", eData.get("pageid"));
         
-        assertEquals(v3[0].getObject().getId(), "org.ekstep.ipa");
-        assertEquals(v3[0].getObject().getType(), "Content");
+        assertEquals(v3[0].getObject().getId(), null);
+        assertEquals(v3[0].getObject().getType(), null);
         
     }
 
@@ -199,7 +199,7 @@ public class TelemetryV3ConverterTest {
         TelemetryV3 start = v3[0];
         assertEquals("START", start.getEid());
         assertEquals("in.tnpilot", start.getContext().getChannel());
-        assertEquals("in.gov.diksha.tnpilot", start.getObject().getId());
+        assertEquals(null, start.getObject().getId());
     }
 
     @Test
@@ -347,7 +347,7 @@ public class TelemetryV3ConverterTest {
         TelemetryV3 v3Event = (converter.convert())[0];
         String objType = v3Event.getObject().getType();
         assertNotEquals("Content", objType);
-        assertEquals("", objType);
+        assertEquals(null, objType);
 
         Rollup rollup = (Rollup) v3Event.getObject().getRollUp();
         assertEquals("do_2121925679111454721253", rollup.getL1());
@@ -395,8 +395,8 @@ public class TelemetryV3ConverterTest {
         assertEquals("ERROR", error.getEid());
         assertEquals("content", error.getContext().getEnv());
         assertEquals("06b6c11c-743a-4a30-a5c9-b1e7644ded12", error.getEdata().get("pageid"));
-        assertEquals("org.ekstep.text", error.getObject().getId());
-        assertEquals("plugin", error.getObject().getType());
+        assertEquals("do_31236685451209932823957", error.getObject().getId());
+        assertEquals("Content", error.getObject().getType());
     }
 
 
