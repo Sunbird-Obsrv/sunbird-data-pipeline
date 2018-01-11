@@ -52,14 +52,14 @@ public class TObject {
     private void setIdType(Telemetry reader) throws TelemetryReaderException {
         
     	String id = "";
-        String type = "";
+        String type = defaultType;
         
     	String eid = reader.mustReadValue("eid");
     	
     	switch (eid.substring(0, 2)) {
     		case "GE": 
     			id = reader.<String>read("gdata.id").valueOrDefault("");
-                if("genieservices.android".equals(this.id) || "genieservice.android".equals(this.id) || "org.ekstep.genieservices".equals(this.id))
+                if("genieservices.android".equals(id) || "genieservice.android".equals(id) || "org.ekstep.genieservices".equals(id))
             		type = "";
             		
                 if ("GE_FEEDBACK".equals(eid)) {
@@ -70,13 +70,13 @@ public class TObject {
                 break;
     		case "CE":
     			id = reader.<String>read("context.content_id").valueOrDefault("");
-    			System.out.println(id);
-            	if(eid.equals("CE_ERROR"))
+            	if(eid.equals("CE_ERROR")){
+            		id = reader.<String>read("edata.eks.objectid").valueOrDefault("");
             		type = reader.<String>read("edata.eks.objecttype").valueOrDefault(defaultType);
+            	}
             	break;
     		case "OE":
     			id = reader.<String>read("gdata.id").valueOrDefault("");
-                type = this.defaultType;
                 break;
     		case "BE":
     			id = reader.<String>read("edata.eks.id").valueOrDefault("");
@@ -84,11 +84,8 @@ public class TObject {
                 break;
     		case "CP":
     			id = reader.<String>read("context.content_id").valueOrDefault("");
-    			type = defaultType;
     			break;
     		default:
-    			id = "";
-    			type = defaultType;
     			break;
     	}
     	// setting id & type

@@ -1,6 +1,5 @@
 package org.ekstep.ep.samza.converter.converters;
 
-import com.google.gson.Gson;
 import org.ekstep.ep.samza.converter.domain.*;
 import org.ekstep.ep.samza.converter.exceptions.TelemetryConversionException;
 import org.ekstep.ep.samza.converter.fixtures.EventFixture;
@@ -125,6 +124,7 @@ public class TelemetryV3ConverterTest {
         assertEquals(eData.get("type"), "view");
         ArrayList<Visit> visits = (ArrayList<Visit>) eData.get("visits");
         assertEquals(visits.get(0).getObjid(), "domain_4083");
+        assertEquals(v3[0].getObject().getType(), "Content");
     }
 
     @Test
@@ -167,6 +167,8 @@ public class TelemetryV3ConverterTest {
         Plugin plugin = (Plugin) eData.get("plugin");
         assertEquals(plugin.getId(), "org.ekstep.ceheader");
         assertEquals(plugin.getVer(), "1.0");
+        
+        assertEquals(v3[0].getObject().getType(), "Content");
     }
 
     @Test
@@ -181,6 +183,10 @@ public class TelemetryV3ConverterTest {
         assertEquals(0, eData.get("duration"));
         assertEquals("session", eData.get("type"));
         assertEquals("", eData.get("pageid"));
+        
+        assertEquals(v3[0].getObject().getId(), "org.ekstep.ipa");
+        assertEquals(v3[0].getObject().getType(), "Content");
+        
     }
 
     @Test
@@ -329,6 +335,9 @@ public class TelemetryV3ConverterTest {
         assertEquals("END", end.getEid());
         assertEquals(15808638L, end.getEdata().get("duration"));
         assertEquals("editor", end.getEdata().get("type"));
+        
+        assertEquals("do_3123271445233008642543", end.getObject().getId());
+        assertEquals("Content", end.getObject().getType());
     }
 
     @Test
@@ -386,7 +395,7 @@ public class TelemetryV3ConverterTest {
         assertEquals("ERROR", error.getEid());
         assertEquals("content", error.getContext().getEnv());
         assertEquals("06b6c11c-743a-4a30-a5c9-b1e7644ded12", error.getEdata().get("pageid"));
-        assertEquals("do_31236685451209932823957", error.getObject().getId());
+        assertEquals("org.ekstep.text", error.getObject().getId());
         assertEquals("plugin", error.getObject().getType());
     }
 
@@ -404,6 +413,7 @@ public class TelemetryV3ConverterTest {
         assertEquals("Cannot read property 'mimeType' of undefined", error.getEdata().get("err"));
         assertEquals("CONTENT", error.getEdata().get("errtype"));
         assertEquals("TypeError: Cannot read property 'mimeType' of undefined",error.getEdata().get("data"));
+        assertEquals(error.getObject().getType(), "Content");
     }
 
     @Test
