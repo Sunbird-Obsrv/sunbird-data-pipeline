@@ -22,6 +22,7 @@ module EcosystemPlatform
           @client.indices.refresh index: index
           logger.info("SEARCHING EVENTS TO VALIDATE")
           total_events = 0
+          v2_converted = 0
           mid_found_in_metadata = 0
           mid_not_found_metadata = 0
           mid_not_indexed = 0
@@ -53,12 +54,15 @@ module EcosystemPlatform
                 response.hits.hits.each do |hit|
                   metadata = hit._source.metadata
                   if(metadata != nil)
-                    if metadata.source_mid == mid
-                      logger.info "MID #{mid} IS MATCHING WITH METADATA SOURCE MID #{metadata.source_mid}"
-                      mid_found_in_metadata += 1
-                    else
-                      logger.info "#{mid} : MID NOT MATCHING"
-                      mid_not_found_metadata += 1
+                    if metadata.v2_converted && metadata.v2_converted.to_s == 'true'
+                      v2_converted += 1
+                      if metadata.source_mid == mid
+                        logger.info "MID #{mid} IS MATCHING WITH METADATA SOURCE MID #{metadata.source_mid}"
+                        mid_found_in_metadata += 1
+                      else
+                        logger.info "#{mid} : SOURCE MID NOT MATCHING"
+                        mid_not_found_metadata += 1
+                      end
                     end
                   end
                 end
@@ -71,6 +75,7 @@ module EcosystemPlatform
           logger.info "COUNT MID FOUND: #{mid_found_in_metadata}"
           logger.info "COUNT MID NOT FOUND: #{mid_not_found_metadata}"
           logger.info "COUNT MID NOT INDEXED: #{mid_not_indexed}"
+          logger.info "COUNT V2 CONVERTED: #{v2_converted}"
           logger.info "TOTAL COUNT : #{total_events}"
           logger.end_task
         rescue => e
