@@ -99,6 +99,11 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
         event.put("flags", flags);
         event.put("metadata", metadata);
 
+        if(v2.containsKey("pump")){
+            event.put("pump", "true");
+        }
+
+
         String json = new Gson().toJson(event);
         collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), json));
         metrics.incSuccessCounter();
