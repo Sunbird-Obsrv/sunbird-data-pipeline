@@ -46,6 +46,9 @@ private void setObjectAttr(Telemetry reader) throws TelemetryReaderException {
                 if ("GE_FEEDBACK".equals(eid)) {
                     this.id = reader.mustReadValue("edata.eks.context.id");
                     this.type = reader.mustReadValue("edata.eks.context.type");
+                }else if ("GE_CREATE_USER".equals(eid)) {
+                    this.type = "User";
+                    this.id = reader.mustReadValue("edata.uid");
                 }
                 break;
             case "CE":
