@@ -634,15 +634,24 @@ public class TelemetryV3ConverterTest {
 
     @Test
     public void eventsWithoutAnyMappingShouldNotGetConverted() throws Exception {
-        Map<String, Object> event = EventFixture.getEvent("GE_UPDATE_PROFILE");
+        Map<String, Object> event = EventFixture.getEvent("GE_LAUNCH_GAME");
         TelemetryV3Converter converter = new TelemetryV3Converter(event);
 
         try {
             converter.convert();
             fail("converters is converting events even without a mapping!");
         } catch (TelemetryConversionException e) {
-            assertEquals("Cannot convert 'GE_UPDATE_PROFILE' to V3 telemetry. No mapping found", e.getMessage());
+            assertEquals("Cannot convert 'GE_LAUNCH_GAME' to V3 telemetry. No mapping found", e.getMessage());
         }
+    }
+    
+    @Test
+    public void forkGE_UPDATE_PROFILE() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("GE_UPDATE_PROFILE");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+        TelemetryV3 [] v3 = converter.convert();
+        String [] props = (String []) v3[0].getEdata().get("props");
+        assertEquals(10, props.length);
     }
 
     @Test

@@ -59,9 +59,6 @@ public class TelemetryV3 {
             case "GE_START":
                 v3Eid = "START";
                 break;
-            case "GE_LAUNCH_GAME":
-                v3Eid = "START";
-                break;
             case "GE_GENIE_START":
                 Map<String, Object> dspec = (Map<String, Object>) event.getEdata().get("dspec");
                 if (dspec != null && dspec.containsKey("mdata")) {
@@ -174,6 +171,9 @@ public class TelemetryV3 {
                 break;
             case "GE_CREATE_USER":
                 v3Eid = "AUDIT";
+                break;
+            case "GE_UPDATE_PROFILE":
+            	v3Eid = "AUDIT";
                 break;
             default:
                 throw new TelemetryConversionException(String.format("Cannot convert '%s' to V3 telemetry. No mapping found", eid), event.getMap());

@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.converter.converters;
 
 import com.google.gson.Gson;
+
 import org.ekstep.ep.samza.converter.domain.Plugin;
 import org.ekstep.ep.samza.converter.domain.Question;
 import org.ekstep.ep.samza.converter.domain.Target;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class EdataConverter {
 
@@ -181,6 +183,12 @@ public class EdataConverter {
         if ("BE_OBJECT_LIFECYCLE".equals(eid)) {
             v3Edata.put("state", edata.getOrDefault("state", ""));
             v3Edata.put("prevstate", edata.getOrDefault("prevstate", ""));
+        } else if("GE_UPDATE_PROFILE".equals(eid)){
+            v3Edata.put("state", "Update");
+            Set<String> allKeys = edata.keySet(); 
+            allKeys.remove("uid");
+            String [] props = (String []) allKeys.toArray(new String[allKeys.size()]);;
+            v3Edata.put("props", props);
         } else {
             v3Edata.put("state", "Create");
             v3Edata.put("prevstate", "");
