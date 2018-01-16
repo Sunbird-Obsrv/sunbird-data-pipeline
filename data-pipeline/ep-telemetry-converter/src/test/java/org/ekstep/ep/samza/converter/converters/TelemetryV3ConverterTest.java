@@ -651,7 +651,20 @@ public class TelemetryV3ConverterTest {
         TelemetryV3Converter converter = new TelemetryV3Converter(event);
         TelemetryV3 [] v3 = converter.convert();
         String [] props = (String []) v3[0].getEdata().get("props");
+        
         assertEquals(10, props.length);
+        assertEquals("User", v3[0].getObject().getType());
+        assertEquals("Update", v3[0].getEdata().get("state"));
+    }
+    
+    @Test
+    public void convertGE_CREATE_USER() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("GE_CREATE_USER");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+        TelemetryV3 [] v3 = converter.convert();
+        
+        assertEquals("User", v3[0].getObject().getType());
+        assertEquals("Create", v3[0].getEdata().get("state"));
     }
 
     @Test
