@@ -77,7 +77,7 @@ public class EdataConverter {
                 case "SEARCH":
                     break;
                 case "EXDATA":
-                    updateExDataEdata(edata);
+                    updateExDataEdata(eid);
                 default:
                     break;
             }
@@ -302,10 +302,15 @@ public class EdataConverter {
         v3Edata.put("params", reader.readOrDefault("values", params).value());
     }
 
-    private void updateExDataEdata(Map<String, Object> edata) {
-        v3Edata.put("type", reader.readOrDefault("edata.eks.dspec.mdata.type", "partnerdata").value());
-
+    private void updateExDataEdata(String eid) {
+        String type = reader.readOrDefault("edata.eks.dspec.mdata.type", "").value();
         String data = new Gson().toJson(reader.readOrDefault("edata.eks.dspec.mdata.id", "").value());
+        
+        if("GE_PARTNER_DATA".equals(eid)){
+        	type = "partnerdata";
+        	data = new Gson().toJson(reader.readOrDefault("edata.eks.data", "").value());
+        }
+        v3Edata.put("type", type);
         v3Edata.put("data", data);
     }
 }
