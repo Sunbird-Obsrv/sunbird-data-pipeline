@@ -308,7 +308,7 @@ public class EdataConverter {
         
         if("GE_PARTNER_DATA".equals(eid)){
         	type = "partnerdata";
-        	data = new Gson().toJson(reader.readOrDefault("edata.eks.data", "").value());
+        	data = new Gson().toJson(reader.readOrDefault("edata.eks", "").value());
         }
         v3Edata.put("type", type);
         v3Edata.put("data", data);

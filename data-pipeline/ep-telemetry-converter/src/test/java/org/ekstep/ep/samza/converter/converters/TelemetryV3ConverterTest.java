@@ -460,6 +460,18 @@ public class TelemetryV3ConverterTest {
         TelemetryV3 exdata = v3Events[0];
         assertEquals("EXDATA", exdata.getEid());
         assertEquals("partnerdata", exdata.getEdata().get("type"));
+        System.out.println(exdata.getEdata().get("data"));
+        String data = "{\"data\":\"2fLZUsrQd0hXs45lR+FXcDWW2uUOkwBQwsX/hOmxvDhRTogYocsoJi0260Vm7sD8/98Upl/43TMt\\n"
+        		+ "EgVKyhhiJGv8s05dDAj5qExH7Xy4/EY\\u003d\\n"
+        		+ "\",\"iv\":\"LXJbHRoI9tfV9bX7hCYHGg\\u003d\\u003d\\n"
+        		+ "\",\"key\":\"iZ1Gi77QB6B7wg4QQaleowY0aBs1veVMQJ2vnJktP7az4XPeqFM2fhhmYyNI8YJxxAwVE1tqh8ea\\n"
+        		+ "R2voUkoPpInUNsn31cqzA49HUYl1d+LLQDNRACfGS/edEaUzg0MZzL/KEmGmNErh1iOie34jbQbw\\n"
+        		+ "03inbY518P/tlw5Pz18GAEHbu3yWi1oLWdStNhqPqk7IaoQxom7Yh2DVFe3BBP8GsyypYbKARS3H\\n"
+        		+ "okIbGtVlzwlyGsFGPJed9Cgq1GuIU+oqaeAnV+8NMC4ft9m5Yu43GvO04arqTZIRLjOTQHYAiriM\\n"
+        		+ "01RI9w+ywocBHjFSKp1hhI1Ri0Q/gX12hGPi8Q\\u003d\\u003d\\n"
+        		+ "\",\"partnerid\":\"org.ekstep.ipa.sample\",\"publickeyid\":\"863634dd2f285a55945cfae195bd8560438ea297\"}";
+        
+        assertEquals(data, exdata.getEdata().get("data"));
         assertTrue("tags are not converted properly", exdata.getTags().size() > 0);
         assertEquals("org.ekstep.ipa.sample", exdata.getTags().get(0));
         List<CData> cData = exdata.getContext().getCData();
