@@ -1,65 +1,58 @@
 {
-  "channel": "0123207707019919361056",
-  "did": "20d63257084c2dca33f31a8f14d8e94c0d939de4",
+  "channel": "in.ekstep",
+  "did": "475ca6c4484cc71d712068ec29ac6a9a33fb41ef",
   "edata": {
     "eks": {
       "dspec": {
-        "camera": "13.0,6.0",
+        "camera": "9.0,5.0",
         "cap": [],
-        "cpu": "abi: armeabi-v7a processor\t: 0 ",
+        "cpu": "abi: armeabi-v7a  ARMv7 Processor rev 3 (v7l) ",
         "dlocname": "",
         "dname": "",
-        "edisk": 10,
-        "id": "44da9c626043dc64",
-        "idisk": 10,
-        "make": "Motorola Moto G (5)",
+        "edisk": 11,
+        "id": "7812300742eadce7",
+        "idisk": 11,
+        "make": "BLU R1 HD",
+        "mdata": {
+          "id": "cTi4nAbph8s:APA91bEIAZPAs4yzlT8xYvRPF0hFJ8WKOMXtdLuyjYOIv5zw-_tObAsVK73VI5RrlT-B85cmIYW4ruKLzI9LB7GTZ23LEFTaxZQW9hyNe83vYtsPqHX3PPStBlurFddIb_TXbHtmdOiY",
+          "type": "fcm"
+        },
         "mem": -1,
-        "os": "Android 7.0",
+        "os": "Android 6.0",
         "scrn": 4,
         "sims": -1
       },
-      "loc": "12.936936936936936,77.6280860297418"
+      "loc": "9.5654912,77.6912447"
     }
   },
-  "eid": "GE_START",
+  "eid": "GE_GENIE_START",
   "etags": {
     "app": []
   },
-  "ets": 1510223372452,
+  "ets": 1511349231313,
   "gdata": {
-    "id": "in.gov.diksha.app",
-    "ver": "1.0.33"
+    "id": "org.ekstep.genieservices",
+    "ver": "6.5.2306"
   },
-  "mid": "06a89a02-c5b5-4225-a0d1-ba52312d2246",
+  "mid": "0dfa9c62-f2e2-4a9f-8003-0265084feb73",
   "pdata": {
-    "id": "sunbird",
-    "ver": "1.0.33"
+    "id": "genie",
+    "ver": "6.5.2306"
   },
-  "sid": "a57bc531-cd0e-424e-8998-811980d89794",
-  "ts": "2017-11-09T10:29:32.452+0000",
-  "uid": "ef644daf-69e6-4ed4-ae40-916c21496708",
+  "sid": "781ff3d6-0c96-4a12-9ed4-9f16d0f0b30c",
+  "ts": "2017-11-22T11:13:51.313+0000",
+  "uid": "30a2840c-af78-4b8e-b81e-c40b8b1c9e78",
   "ver": "2.2",
   "@version": "1",
-  "@timestamp": "2017-11-09T10:29:37.587Z",
+  "@timestamp": "2017-11-22T11:13:55.590Z",
   "metadata": {
-    "checksum": "06a89a02-c5b5-4225-a0d1-ba52312d2246",
+    "checksum": "0dfa9c62-f2e2-4a9f-8003-0265084feb73",
+    "gud_last_processed_at": "2017-11-22T11:13:56.081Z",
+    "gud_processed_count": 1,
     "index_name": "ecosystem-2017.11",
     "index_type": "events_v1"
   },
-  "uuid": "bf53f830-e77b-4b96-9ac3-80f0dc843663282",
-  "key": "ef644daf-69e6-4ed4-ae40-916c21496708",
-  "type": "events",
-  "flags": {
-    "tv_processed": true,
-    "dd_processed": true,
-    "ppm_skipped": true,
-    "ldata_obtained": true,
-    "ldata_processed": true
-  },
-  "ldata": {
-    "country": "India",
-    "district": "Bangalore Urban",
-    "locality": "Bengaluru",
-    "state": "Karnataka"
-  }
+  "uuid": "5bba3db3-c6c5-4711-9091-abb444b59b4775",
+  "key": "30a2840c-af78-4b8e-b81e-c40b8b1c9e78",
+  "type": "events"
 }

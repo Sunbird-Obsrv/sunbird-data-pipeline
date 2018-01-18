@@ -190,7 +190,7 @@ public class TelemetryV3ConverterTest {
     }
 
     @Test
-    public void convertGE_START() throws Exception {
+    public void convertGE_START_TN_PILOT() throws Exception {
         Map<String, Object> oeStart = EventFixture.getEvent("GE_START_TN_PILOT");
         TelemetryV3Converter converter = new TelemetryV3Converter(oeStart);
         TelemetryV3[] v3 = converter.convert();
@@ -278,6 +278,26 @@ public class TelemetryV3ConverterTest {
     @Test
     public void convertGE_GENIE_START() throws Exception {
         Map<String, Object> event = EventFixture.getEvent("GE_GENIE_START");
+        TelemetryV3Converter converter = new TelemetryV3Converter(event);
+        TelemetryV3[] v3 = converter.convert();
+
+        assertEquals(2, v3.length);
+        assertEquals(1, Arrays.stream(v3).filter(e -> "START".equals(e.getEid())).count());
+        assertEquals(1, Arrays.stream(v3).filter(e -> "EXDATA".equals(e.getEid())).count());
+
+        TelemetryV3 start = Arrays.stream(v3).filter(e -> "START".equals(e.getEid())).findFirst().get();
+        assertEquals(true, start.getEdata().containsKey("dspec"));
+        assertEquals("9.5654912,77.6912447", start.getEdata().get("loc"));
+
+        TelemetryV3 exdata = Arrays.stream(v3).filter(e -> "EXDATA".equals(e.getEid())).findFirst().get();
+
+        assertEquals(true, exdata.getEdata().containsKey("data"));
+        assertEquals(true, exdata.getEdata().containsKey("type"));
+    }
+
+    @Test
+    public void convertGE_START() throws Exception {
+        Map<String, Object> event = EventFixture.getEvent("GE_START");
         TelemetryV3Converter converter = new TelemetryV3Converter(event);
         TelemetryV3[] v3 = converter.convert();
 

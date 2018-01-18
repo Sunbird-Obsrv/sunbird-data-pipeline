@@ -41,7 +41,7 @@ public class TelemetryV3Converter {
             v3Events = convertGeInteract();
         } else if ("CE_START".equals(v2Eid)) {
             v3Events = convertCeStart();
-        } else if("GE_GENIE_START".equals(v2Eid)){
+        } else if ( "GE_GENIE_START".equals(v2Eid) || "GE_START".equals(v2Eid) ) {
             v3Events = convertGeGenieStart();
         } else {
             TelemetryV3 v3 = new TelemetryV3(reader, source);
