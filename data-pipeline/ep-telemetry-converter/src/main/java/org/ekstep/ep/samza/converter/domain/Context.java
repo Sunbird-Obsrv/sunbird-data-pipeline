@@ -65,9 +65,22 @@ public class Context {
         }
 
         // etags.partner should come in the cdata
-        List<String> partnerETags = reader.<List<String>>read("etags.partner").valueOrDefault(new ArrayList<>());
-        for (String eTag: partnerETags) {
-            cData.add(new CData("partner", eTag));
+        if( !reader.<List<String>>read("etags.partner").isNull()){
+            List<String> partnerETags = reader.<List<String>>read("etags.partner").valueOrDefault(new ArrayList<>());
+            for (String eTag: partnerETags) {
+                cData.add(new CData("partner", eTag));
+            }
+        } else {
+            List<Map<String,Object>> tags = reader.<List<Map<String,Object>>>read("tags").value();
+            for (Map<String, Object> tag : tags) {
+                if(tag.containsKey("partnerid")){
+                    List<String> partnerTags = (List<String>) tag.get("partnerid");
+                    for (String eTag: partnerTags) {
+                        cData.add(new CData("partner", eTag));
+                    }
+                }
+            }
+
         }
     }
 

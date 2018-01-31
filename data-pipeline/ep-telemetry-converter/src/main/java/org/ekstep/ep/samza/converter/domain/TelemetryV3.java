@@ -251,6 +251,18 @@ public class TelemetryV3 {
                     this.tags.addAll(tags);
                 }
             }
+        } else if (event.containsKey("tags")) {
+            List<Map<String,Object>> tags = (List<Map<String, Object>>) event.get("tags");
+            if (null != tags && !tags.isEmpty()) {
+                for (Map<String, Object> tag : tags) {
+                    Set<String> keys = tag.keySet();
+                    Iterator<String> it = keys.iterator();
+                    while (it.hasNext()) {
+                        List<String> items = (List<String>) tag.get(it.next());
+                        this.tags.addAll(items);
+                    }
+                }
+            }
         }
     }
 
