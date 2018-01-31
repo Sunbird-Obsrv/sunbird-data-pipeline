@@ -5,9 +5,7 @@ import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.reader.TelemetryReaderException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Context {
     private String channel = "";
@@ -65,22 +63,26 @@ public class Context {
         }
 
         // etags.partner should come in the cdata
-        if( !reader.<List<String>>read("etags.partner").isNull()){
+        if( !reader.<List<String>>read("etags.partner").isNull() ){
             List<String> partnerETags = reader.<List<String>>read("etags.partner").valueOrDefault(new ArrayList<>());
             for (String eTag: partnerETags) {
                 cData.add(new CData("partner", eTag));
             }
         } else {
             List<Map<String,Object>> tags = reader.<List<Map<String,Object>>>read("tags").value();
-            for (Map<String, Object> tag : tags) {
-                if(tag.containsKey("partnerid")){
-                    List<String> partnerTags = (List<String>) tag.get("partnerid");
-                    for (String eTag: partnerTags) {
-                        cData.add(new CData("partner", eTag));
+            if( tags != null && !tags.isEmpty()) {
+                for( int i=0; i < tags.size(); i++) {
+                    if( tags.get(i) instanceof Map ) {
+                        Map partnerTags = tags.get(i);
+                        if (partnerTags != null && partnerTags.containsKey("partnerid") ) {
+                            List<String> pTags = (List<String>) partnerTags.get("partnerid");
+                            for (String pTag : pTags) {
+                                cData.add(new CData("partner", pTag));
+                            }
+                        }
                     }
                 }
             }
-
         }
     }
 

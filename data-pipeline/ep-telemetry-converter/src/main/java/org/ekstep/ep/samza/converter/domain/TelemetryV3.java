@@ -253,13 +253,18 @@ public class TelemetryV3 {
             }
         } else if (event.containsKey("tags")) {
             List<Map<String,Object>> tags = (List<Map<String, Object>>) event.get("tags");
-            if (null != tags && !tags.isEmpty()) {
-                for (Map<String, Object> tag : tags) {
-                    Set<String> keys = tag.keySet();
-                    Iterator<String> it = keys.iterator();
-                    while (it.hasNext()) {
-                        List<String> items = (List<String>) tag.get(it.next());
-                        this.tags.addAll(items);
+            if(tags != null && !tags.isEmpty()) {
+                for (int i = 0; i < tags.size(); i++) {
+                    if (tags.get(i) instanceof Map) {
+                        Map partnerTags = tags.get(i);
+                        if (partnerTags != null && !partnerTags.isEmpty()) {
+                            Set<String> keys = partnerTags.keySet();
+                            Iterator<String> it = keys.iterator();
+                            while (it.hasNext()) {
+                                List<String> items = (List<String>) partnerTags.get(it.next());
+                                this.tags.addAll(items);
+                            }
+                        }
                     }
                 }
             }
