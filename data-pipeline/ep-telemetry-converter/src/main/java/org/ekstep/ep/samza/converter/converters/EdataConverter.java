@@ -104,10 +104,14 @@ public class EdataConverter {
         }
         v3Edata.put("duration", ((Number) edata.getOrDefault("length", edata.getOrDefault("duration", 0))).longValue());
         v3Edata.put("pageid", edata.get("stageid"));
+        List<HashMap<String, Object>> summaries = new ArrayList<>();
         HashMap<String, Object> summary = new HashMap<>();
         Object progress = edata.get("progress");
-        summary.put("progress", progress);
-        v3Edata.put("summary", summary);
+        if (progress != null) {
+            summary.put("progress", progress);
+            summaries.add(summary);
+        }
+        v3Edata.put("summary", summaries);
     }
 
     private void updateImpressionEdata(Map<String, Object> edata, String eid) {
@@ -185,7 +189,7 @@ public class EdataConverter {
             v3Edata.put("prevstate", edata.getOrDefault("prevstate", ""));
         } else if("GE_UPDATE_PROFILE".equals(eid)){
             v3Edata.put("state", "Update");
-            Set<String> allKeys = edata.keySet(); 
+            Set<String> allKeys = edata.keySet();
             allKeys.remove("uid");
             String [] props = (String []) allKeys.toArray(new String[allKeys.size()]);;
             v3Edata.put("props", props);
@@ -305,7 +309,7 @@ public class EdataConverter {
     private void updateExDataEdata(String eid) {
         String type = reader.readOrDefault("edata.eks.dspec.mdata.type", "").value();
         String data = new Gson().toJson(reader.readOrDefault("edata.eks.dspec.mdata.id", "").value());
-        
+
         if("GE_PARTNER_DATA".equals(eid)){
         	type = "partnerdata";
         	data = new Gson().toJson(reader.readOrDefault("edata.eks", "").value());

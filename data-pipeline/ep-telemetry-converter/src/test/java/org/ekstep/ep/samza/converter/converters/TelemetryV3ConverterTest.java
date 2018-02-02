@@ -167,7 +167,7 @@ public class TelemetryV3ConverterTest {
         Plugin plugin = (Plugin) eData.get("plugin");
         assertEquals(plugin.getId(), "org.ekstep.ceheader");
         assertEquals(plugin.getVer(), "1.0");
-        
+
         assertEquals(v3[0].getObject().getType(), "Content");
     }
 
@@ -183,10 +183,10 @@ public class TelemetryV3ConverterTest {
         assertEquals(0, eData.get("duration"));
         assertEquals("session", eData.get("type"));
         assertEquals("", eData.get("pageid"));
-        
+
         assertEquals(v3[0].getObject().getId(), null);
         assertEquals(v3[0].getObject().getType(), null);
-        
+
     }
 
     @Test
@@ -355,7 +355,7 @@ public class TelemetryV3ConverterTest {
         assertEquals("END", end.getEid());
         assertEquals(15808638L, end.getEdata().get("duration"));
         assertEquals("editor", end.getEdata().get("type"));
-        
+
         assertEquals("do_3123271445233008642543", end.getObject().getId());
         assertEquals("Content", end.getObject().getType());
     }
@@ -480,7 +480,6 @@ public class TelemetryV3ConverterTest {
         TelemetryV3 exdata = v3Events[0];
         assertEquals("EXDATA", exdata.getEid());
         assertEquals("partnerdata", exdata.getEdata().get("type"));
-        System.out.println(exdata.getEdata().get("data"));
         String data = "{\"data\":\"2fLZUsrQd0hXs45lR+FXcDWW2uUOkwBQwsX/hOmxvDhRTogYocsoJi0260Vm7sD8/98Upl/43TMt\\n"
         		+ "EgVKyhhiJGv8s05dDAj5qExH7Xy4/EY\\u003d\\n"
         		+ "\",\"iv\":\"LXJbHRoI9tfV9bX7hCYHGg\\u003d\\u003d\\n"
@@ -490,7 +489,7 @@ public class TelemetryV3ConverterTest {
         		+ "okIbGtVlzwlyGsFGPJed9Cgq1GuIU+oqaeAnV+8NMC4ft9m5Yu43GvO04arqTZIRLjOTQHYAiriM\\n"
         		+ "01RI9w+ywocBHjFSKp1hhI1Ri0Q/gX12hGPi8Q\\u003d\\u003d\\n"
         		+ "\",\"partnerid\":\"org.ekstep.ipa.sample\",\"publickeyid\":\"863634dd2f285a55945cfae195bd8560438ea297\"}";
-        
+
         assertEquals(data, exdata.getEdata().get("data"));
         assertTrue("tags are not converted properly", exdata.getTags().size() > 0);
         assertEquals("org.ekstep.ipa.sample", exdata.getTags().get(0));
@@ -510,7 +509,6 @@ public class TelemetryV3ConverterTest {
         TelemetryV3 exdata = v3Events[0];
         assertEquals("EXDATA", exdata.getEid());
         assertEquals("partnerdata", exdata.getEdata().get("type"));
-        System.out.println(exdata.getEdata().get("data"));
         String data = "{\"data\":\"2fLZUsrQd0hXs45lR+FXcDWW2uUOkwBQwsX/hOmxvDhRTogYocsoJi0260Vm7sD8/98Upl/43TMt\\n"
                 + "EgVKyhhiJGv8s05dDAj5qExH7Xy4/EY\\u003d\\n"
                 + "\",\"iv\":\"LXJbHRoI9tfV9bX7hCYHGg\\u003d\\u003d\\n"
@@ -544,8 +542,8 @@ public class TelemetryV3ConverterTest {
         assertEquals(64L, end.getEdata().get("duration"));
         assertEquals("ContentApp-Renderer", end.getEdata().get("pageid"));
         assert (end.getEdata().containsKey("summary"));
-        Map<String, Object> summary = (Map<String, Object>) end.getEdata().get("summary");
-        assertEquals(100.0, summary.get("progress"));
+        List<Map<String, Object>> summary = (List<Map<String, Object>>) end.getEdata().get("summary");
+        assertEquals(100.0, summary.get(0).get("progress"));
     }
 
     @Test
@@ -563,10 +561,10 @@ public class TelemetryV3ConverterTest {
         assertEquals("62c379c8-7046-45ec-8a83-78782ba0031c", interact.getEdata().get("pageid"));
         assertEquals("", interact.getEdata().get("subtype"));
         assert (interact.getEdata().containsKey("extra"));
-        
+
         assertNotEquals("TOUCH", interact.getObject().getType());
         assertEquals("Content", interact.getObject().getType());
-        
+
         Map<String, Object> extra = (Map<String, Object>) interact.getEdata().get("extra");
         assertNotNull(extra);
         assertNotNull(extra.get("pos"));
@@ -707,25 +705,25 @@ public class TelemetryV3ConverterTest {
             assertEquals("Cannot convert 'GE_LAUNCH_GAME' to V3 telemetry. No mapping found", e.getMessage());
         }
     }
-    
+
     @Test
     public void forkGE_UPDATE_PROFILE() throws Exception {
         Map<String, Object> event = EventFixture.getEvent("GE_UPDATE_PROFILE");
         TelemetryV3Converter converter = new TelemetryV3Converter(event);
         TelemetryV3 [] v3 = converter.convert();
         String [] props = (String []) v3[0].getEdata().get("props");
-        
+
         assertEquals(10, props.length);
         assertEquals("User", v3[0].getObject().getType());
         assertEquals("Update", v3[0].getEdata().get("state"));
     }
-    
+
     @Test
     public void convertGE_CREATE_USER() throws Exception {
         Map<String, Object> event = EventFixture.getEvent("GE_CREATE_USER");
         TelemetryV3Converter converter = new TelemetryV3Converter(event);
         TelemetryV3 [] v3 = converter.convert();
-        
+
         assertEquals("User", v3[0].getObject().getType());
         assertEquals("Create", v3[0].getEdata().get("state"));
     }
@@ -780,7 +778,7 @@ public class TelemetryV3ConverterTest {
         assertEquals(flag, true);
 
     }
-    
+
     @Test
     public void convertGE_EVENT_WITHOUT_Pdata() throws Exception {
         Map<String, Object> v2 = EventFixture.getEvent("GE_EVENT_WITHOUT_Pdata");
