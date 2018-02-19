@@ -33,12 +33,16 @@ public class ObjectDeNormalizationService {
                     sink.toSuccessTopic(event);
                     return;
                 }
-            }
 
-            LOGGER.info(event.getObjectID(), "DENORMALIZING USING CUSTOM STRATEGY");
-            Strategy strategy = (Strategy) strategies.get(CUSTOM);
-            strategy.execute(event);
-            sink.toSuccessTopic(event);
+                LOGGER.info(event.getObjectID(), "DENORMALIZING USING CUSTOM STRATEGY");
+                Strategy cStrategy = (Strategy) strategies.get(CUSTOM);
+                cStrategy.execute(event);
+                sink.toSuccessTopic(event);
+
+            } else {
+                LOGGER.info(event.getObjectID(), "COULDNT DE-NORMALIZE : PASSING EVENT THROUGH");
+                sink.toSuccessTopic(event);
+            }
         } catch (Exception e) {
             LOGGER.error(event.id(), "EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO FAILED TOPIC", e);
             sink.toSuccessTopic(event);
