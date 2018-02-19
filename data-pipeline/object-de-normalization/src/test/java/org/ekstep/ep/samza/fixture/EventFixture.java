@@ -96,17 +96,65 @@ public class EventFixture {
             "}";
 
     public static final String EVENT_WITHOUT_OBJECT_ID = "{\n" +
-            "\n" +
-            "  \"eid\": \"ASSESS\",\n" +
-            "  \"ets\": \"1442816723\",\n" +
+            "  \"eid\": \"LOG\",\n" +
+            "  \"ets\": 1519026217617,\n" +
             "  \"ver\": \"3.0\",\n" +
-            "  \"mid\": \"\",\n" +
-            "  \"actor\": { \n" +
-            "    \"id\": \"\",\n" +
-            "    \"type\": \"user\"\n" +
+            "  \"mid\": \"LP.1519026217617.14f44fcf-4bb0-4b0b-9dd3-ceea958373b4\",\n" +
+            "  \"actor\": {\n" +
+            "    \"id\": \"org.ekstep.learning.platform\",\n" +
+            "    \"type\": \"System\"\n" +
             "  },\n" +
-            "  \"edata\": {},\n" +
-            "  \"tags\": []\n" +
+            "  \"context\": {\n" +
+            "    \"channel\": \"in.ekstep\",\n" +
+            "    \"pdata\": {\n" +
+            "      \"id\": \"org.ekstep.learning.platform\",\n" +
+            "      \"pid\": \"search-service\",\n" +
+            "      \"ver\": \"1.0\"\n" +
+            "    },\n" +
+            "    \"env\": \"search\"\n" +
+            "  },\n" +
+            "  \"edata\": {\n" +
+            "    \"level\": \"INFO\",\n" +
+            "    \"type\": \"api_access\",\n" +
+            "    \"message\": \"\",\n" +
+            "    \"params\": [\n" +
+            "      {\n" +
+            "        \"duration\": 2.0\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"protocol\": \"HTTP\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"size\": 289.0\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"method\": \"GET\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"rid\": \"search-service.health\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"uip\": \"10.32.6.7\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"url\": \"/health\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"status\": 200.0\n" +
+            "      }\n" +
+            "    ]\n" +
+            "  },\n" +
+            "  \"flags\": {\n" +
+            "    \"tv_processed\": true,\n" +
+            "    \"dd_processed\": true,\n" +
+            "    \"ldata_obtained\": false,\n" +
+            "    \"ldata_processed\": true\n" +
+            "  },\n" +
+            "  \"type\": \"events\",\n" +
+            "  \"ts\": \"2018-02-19T07:43:37.617+0000\",\n" +
+            "  \"metadata\": {\n" +
+            "    \"checksum\": \"LP.1519026217617.14f44fcf-4bb0-4b0b-9dd3-ceea958373b4\"\n" +
+            "  }\n" +
             "}";
 
     public static final String EVENT_WITH_EMPTY_OBJECT_ID = "{\n" +

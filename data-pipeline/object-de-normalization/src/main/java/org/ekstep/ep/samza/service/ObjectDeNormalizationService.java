@@ -25,7 +25,7 @@ public class ObjectDeNormalizationService {
 
         try {
 
-            if (event.getObjectID() == null && String.valueOf(event.getObjectID()).isEmpty()) {
+            if (event.getObjectID() == null) {
                 LOGGER.info(event.getObjectID(), "OBJECT ID IS ABSENT: SKIPPING THE EVENT THROUGH");
                 sink.toSuccessTopic(event);
                 return;
