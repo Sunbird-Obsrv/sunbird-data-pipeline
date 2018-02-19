@@ -50,7 +50,7 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
     @Override
     public void init(Config config, TaskContext context) {
         this.config = new TelemetryConverterConfig(config);
-        metrics = new JobMetrics(context);
+        metrics = new JobMetrics(context, this.config.jobName());
     }
 
     @Override
@@ -78,6 +78,8 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
 
     @Override
     public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
+        String mEvent = metrics.collect();
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
         metrics.clear();
     }
 
@@ -103,7 +105,6 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
             event.put("pump", "true");
         }
 
-
         String json = new Gson().toJson(event);
         collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), json));
         metrics.incSuccessCounter();
@@ -123,7 +124,7 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
 
         collector.send(new OutgoingMessageEnvelope(
                 new SystemStream("kafka", config.failedTopic()), json));
-        metrics.incFailedCounter();
+        metrics.incErrorCounter();
     }
 
     private String stacktraceToString(StackTraceElement[] stackTrace) {

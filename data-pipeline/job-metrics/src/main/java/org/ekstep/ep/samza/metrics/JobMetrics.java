@@ -1,35 +1,39 @@
 package org.ekstep.ep.samza.metrics;
 
+import com.google.gson.Gson;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
 import org.apache.samza.task.TaskContext;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class JobMetrics {
+
     private final Counter successMessageCount;
     private final Counter failedMessageCount;
-    private final Counter retryMessageCount;
     private final Counter skippedMessageCount;
-    private final Counter cacheHitCount;
-    private final Counter cacheMissCount;
-    private final Counter cacheExpiredCount;
+    private final Counter errorMessageCount;
+    private final String jobName;
 
     public JobMetrics(TaskContext context) {
+        this(context,null);
+    }
+
+    public JobMetrics(TaskContext context, String jName) {
         MetricsRegistry metricsRegistry = context.getMetricsRegistry();
         successMessageCount = metricsRegistry.newCounter(getClass().getName(), "success-message-count");
         failedMessageCount = metricsRegistry.newCounter(getClass().getName(), "failed-message-count");
-        retryMessageCount = metricsRegistry.newCounter(getClass().getName(), "retry-message-count");
         skippedMessageCount = metricsRegistry.newCounter(getClass().getName(), "skipped-message-count");
-        cacheHitCount = metricsRegistry.newCounter(getClass().getName(), "cache-hit-count");
-        cacheMissCount = metricsRegistry.newCounter(getClass().getName(), "cache-miss-count");
-        cacheExpiredCount = metricsRegistry.newCounter(getClass().getName(), "cache-expired-count");
+        errorMessageCount = metricsRegistry.newCounter(getClass().getName(), "error-message-count");
+        jobName = jName;
     }
 
     public void clear() {
         successMessageCount.clear();
         failedMessageCount.clear();
         skippedMessageCount.clear();
-        cacheHitCount.clear();
-        cacheMissCount.clear();
+        errorMessageCount.clear();
     }
 
     public void incSuccessCounter() {
@@ -40,23 +44,21 @@ public class JobMetrics {
         failedMessageCount.inc();
     }
 
-    public void incRetryCounter(){
-        retryMessageCount.inc();
-    }
-
     public void incSkippedCounter() {
         skippedMessageCount.inc();
     }
 
-    public void incCacheHitCounter() {
-        cacheHitCount.inc();
+    public void incErrorCounter() {
+        errorMessageCount.inc();
     }
 
-    public void incCacheMissCounter() {
-        cacheMissCount.inc();
-    }
-
-    public void incCacheExpiredCounter() {
-        cacheExpiredCount.inc();
+    public String collect() {
+        Map<String,Object> metricsEvent = new HashMap<>();
+        metricsEvent.put("job-name", jobName);
+        metricsEvent.put("success-message-count", successMessageCount.getCount());
+        metricsEvent.put("failed-message-count", failedMessageCount.getCount());
+        metricsEvent.put("error-message-count", errorMessageCount.getCount());
+        metricsEvent.put("skipped-message-count", skippedMessageCount.getCount());
+        return new Gson().toJson(metricsEvent);
     }
 }

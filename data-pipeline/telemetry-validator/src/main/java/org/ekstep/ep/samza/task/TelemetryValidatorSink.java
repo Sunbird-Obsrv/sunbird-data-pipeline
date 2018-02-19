@@ -21,7 +21,7 @@ public class TelemetryValidatorSink {
     public void toSuccessTopic(Event event) {
         collector.send(new OutgoingMessageEnvelope(
                 new SystemStream("kafka", config.successTopic()), event.getJson()));
-        metrics.incFailedCounter();;
+        metrics.incSuccessCounter();
     }
 
     public void toFailedTopic(Event event) {
@@ -30,10 +30,15 @@ public class TelemetryValidatorSink {
         metrics.incFailedCounter();
     }
 
+    public void toErrorTopic(Event event) {
+        collector.send(new OutgoingMessageEnvelope(
+                new SystemStream("kafka", config.failedTopic()), event.getJson()));
+        metrics.incErrorCounter();
+    }
+
     public void toMalformedEventsTopic(String message) {
         collector.send(new OutgoingMessageEnvelope(
                 new SystemStream("kafka", config.malformedTopic()), message));
         metrics.incFailedCounter();
     }
-
 }

@@ -20,6 +20,8 @@
 package org.ekstep.ep.samza.task;
 
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import org.apache.samza.system.OutgoingMessageEnvelope;
+import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.StreamTask;
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
@@ -47,7 +49,7 @@ public class TelemetryValidatorTask implements StreamTask, InitableTask, Windowa
     @Override
     public void init(Config config, TaskContext context) {
         this.config = new TelemetryValidatorConfig(config);
-        metrics = new JobMetrics(context);
+        metrics = new JobMetrics(context,this.config.jobName());
         service = new TelemetryValidatorService(this.config);
     }
 
@@ -63,6 +65,8 @@ public class TelemetryValidatorTask implements StreamTask, InitableTask, Windowa
 
     @Override
     public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
+        String mEvent = metrics.collect();
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
         metrics.clear();
     }
 }
