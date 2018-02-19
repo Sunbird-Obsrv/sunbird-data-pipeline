@@ -26,12 +26,13 @@ public class ObjectDeNormalizationService {
         try {
 
             if (event.getObjectID() == null) {
-                LOGGER.info(event.getObjectID(), "OBJECT ID IS ABSENT: SKIPPING THE EVENT THROUGH");
+                LOGGER.info(event.id(), "OBJECT ID IS ABSENT: SKIPPING THE EVENT THROUGH");
                 sink.toSuccessTopic(event);
                 return;
             }
 
             if (event.objectFieldsPresent()) {
+                LOGGER.info(event.id(), "DENORMALIZING USING DEFINED STRATEGIES");
                 LOGGER.info(event.getObjectID(), "FOUND OBJECT ID");
                 Strategy strategy = (Strategy) strategies.get(event.getObjectType());
                 if (strategy != null) {
@@ -41,7 +42,7 @@ public class ObjectDeNormalizationService {
                 }
             }
 
-            LOGGER.info(event.getObjectID(), "DENORMALIZING USING CUSTOM STRATEGY");
+            LOGGER.info(event.id(), "DENORMALIZING USING CUSTOM STRATEGY");
             Strategy cStrategy = (Strategy) strategies.get(CUSTOM);
             cStrategy.execute(event);
             sink.toSuccessTopic(event);
