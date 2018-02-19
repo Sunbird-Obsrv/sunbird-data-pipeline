@@ -25,24 +25,26 @@ public class ObjectDeNormalizationService {
 
         try {
 
+            if (event.getObjectID() == null && String.valueOf(event.getObjectID()).isEmpty()) {
+                LOGGER.info(event.getObjectID(), "OBJECT ID IS ABSENT: SKIPPING THE EVENT THROUGH");
+                sink.toSuccessTopic(event);
+                return;
+            }
+
             if (event.objectFieldsPresent()) {
                 LOGGER.info(event.getObjectID(), "FOUND OBJECT ID");
                 Strategy strategy = (Strategy) strategies.get(event.getObjectType());
-                if(strategy != null) {
+                if (strategy != null) {
                     strategy.execute(event);
                     sink.toSuccessTopic(event);
                     return;
                 }
-
-                LOGGER.info(event.getObjectID(), "DENORMALIZING USING CUSTOM STRATEGY");
-                Strategy cStrategy = (Strategy) strategies.get(CUSTOM);
-                cStrategy.execute(event);
-                sink.toSuccessTopic(event);
-
-            } else {
-                LOGGER.info(event.getObjectID(), "COULDNT DE-NORMALIZE : PASSING EVENT THROUGH");
-                sink.toSuccessTopic(event);
             }
+
+            LOGGER.info(event.getObjectID(), "DENORMALIZING USING CUSTOM STRATEGY");
+            Strategy cStrategy = (Strategy) strategies.get(CUSTOM);
+            cStrategy.execute(event);
+            sink.toSuccessTopic(event);
         } catch (Exception e) {
             LOGGER.error(event.id(), "EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO FAILED TOPIC", e);
             sink.toSuccessTopic(event);
