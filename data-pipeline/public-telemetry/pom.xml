@@ -33,7 +33,7 @@ under the License.
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>public-telemetry</artifactId>
-    <version>0.2.5</version>
+    <version>0.2.6</version>
     <packaging>jar</packaging>
     <name>public-telemetry</name>
     <description>
