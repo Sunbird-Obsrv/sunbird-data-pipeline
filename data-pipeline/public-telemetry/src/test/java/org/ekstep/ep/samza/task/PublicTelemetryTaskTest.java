@@ -23,7 +23,7 @@ public class PublicTelemetryTaskTest {
     private final String SUCCESS_TOPIC = "telemetry.public";
     private final String FAILED_TOPIC = "telemetry.public.fail";
     private final String EVENTS_TO_SKIP = "ERROR, LOG, EXDATA, ME_.*";
-    private final String DEFAULT_CHANNEL = "in.ekstep";
+    private final String DEFAULT_CHANNEL = "in.ekstep,ekstep";
     private MessageCollector collectorMock;
     private Config configMock;
     private TaskContext contextMock;
@@ -43,7 +43,7 @@ public class PublicTelemetryTaskTest {
         configMock = Mockito.mock(Config.class);
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
         stub(configMock.get("events.to.skip", "")).toReturn(EVENTS_TO_SKIP);
-        stub(configMock.get("default.channel", "in.ekstep")).toReturn(DEFAULT_CHANNEL);
+        stub(configMock.get("default.channel", "")).toReturn(DEFAULT_CHANNEL);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
         stub(metricsRegistry.newCounter("org.ekstep.ep.samza.task.TelemetryCleanerTask", "message-count")).toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
@@ -120,5 +120,16 @@ public class PublicTelemetryTaskTest {
         publicTelemetryTask.processEvent(collectorMock, event);
 
         verify(collectorMock,times(0)).send(argument.capture());
+    }
+
+    @Test
+    public void shouldProcessDefaultChannelEvents() throws Exception {
+        Event event = new Event(EventFixture.DefaultChannel());
+        ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
+
+        publicTelemetryTask.init(configMock, contextMock);
+        publicTelemetryTask.processEvent(collectorMock, event);
+
+        verify(collectorMock,times(1)).send(argument.capture());
     }
 }

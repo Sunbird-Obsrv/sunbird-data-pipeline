@@ -441,4 +441,68 @@ public class EventFixture {
         return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
         }.getType());
     }
+
+    public static Map<String, Object> DefaultChannel() {
+        String json = "{\n" +
+                "    \"tags\": [\n" +
+                "        {\n" +
+                "            \"partnerid\": [\n" +
+                "                \"org.ekstep.partner.pratham\"\n" +
+                "            ]\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"genie\": []\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"uid\": \"\",\n" +
+                "    \"sid\": \"\",\n" +
+                "   \"context\": {\n" +
+                "       \"channel\": \"ekstep\"\n" +
+                "    },\n" +
+                "    \"ts\": \"2016-05-27T15:21:59.995+0530\",\n" +
+                "    \"edata\": {\n" +
+                "        \"eks\": {\n" +
+                "            \"data\": \"L0ouPhQSzupyU5O/w87KZqZp5UQ+ay2fiDwJ5d9mkN8=\\n\",\n" +
+                "            \"iv\": \"O3ZBNFXvA6HXE54g1H7TbA==\\n\",\n" +
+                "            \"key\": \"LLNrwwlPZCtUYtDgF3UKph/OFISao5RvC3JQmzJDCItH17ZHoGsAioUzMry5u9VM50vTSBjW0W2M\\nkR6Nf9oJ35sO0PPZLs7kyWYTXKXACWi4QkaTAyTvY0j1Vrd1YXL5Fp9hjbOCyPyyVrvyioBKfFrl\\nGvWX8D6WNQsLGRcMIujkCK3oD7d3d2PLb3CKNFdaPPbxxofojtWZFI71uR9tYe7QDJk+x4WkJnNs\\nNdWjJLc3qIEaea9CNca/7+hdGLeeyleqpEqh/KmxTyefUWyIZyfkiho31vaN44jLGtXrwhJYc3cc\\n7PjNr8AncYZ1o9WzGkbnObQqSD76Lqsmt+YjPA==\\n\",\n" +
+                "            \"partnerid\": \"org.ekstep.partner.pratham\",\n" +
+                "            \"publickeyid\": \"[B@44cec40\"\n" +
+                "        }\n" +
+                "    },\n" +
+                "    \"did\": \"89feecbf900d1730c59b71c35f3dca344d2bd5e3\",\n" +
+                "    \"ver\": \"2.0\",\n" +
+                "    \"type\": \"events\",\n" +
+                "    \"eid\": \"ACCESS\",\n" +
+                "    \"@version\": \"1\",\n" +
+                "    \"gdata\": {\n" +
+                "        \"id\": \"genieservice.android\",\n" +
+                "        \"ver\": \"4.2.localqa-debug\"\n" +
+                "    },\n" +
+                "    \"@timestamp\": \"2016-05-27T09:55:18.100Z\",\n" +
+                "    \"ets\": 1464342719995,\n" +
+                "    \"uuid\": \"558a1acf-4995-4af8-bdca-3ac95f9064b225\",\n" +
+                "    \"mid\": \"249a9496-165e-44f4-bf55-d06855ab71b1\",\n" +
+                "    \"key\": \"\",\n" +
+                "    \"metadata\": {\n" +
+                "        \"checksum\": \"30b91597f09d477c29349a9f1de1d2671c2bdbca\",\n" +
+                "        \"last_processed_at\": \"2016-05-27T15:24:38.049+05:30\",\n" +
+                "        \"processed_count\": 1,\n" +
+                "        \"ts_year\": \"2016\",\n" +
+                "        \"ts_month\": \"05\",\n" +
+                "        \"year\": \"2016\",\n" +
+                "        \"month\": \"05\",\n" +
+                "        \"monthday\": \"27\",\n" +
+                "        \"hour\": \"09\",\n" +
+                "        \"sync_timestamp\": \"2016-05-27T09:54:39+00:00\"\n" +
+                "    },\n" +
+                "    \"flags\": {\n" +
+                "        \"ldata_processed\": true,\n" +
+                "        \"ldata_obtained\": false\n" +
+                "    },\n" +
+                "    \"ready_to_index\": \"true\"\n" +
+                "}";
+
+        return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
 }

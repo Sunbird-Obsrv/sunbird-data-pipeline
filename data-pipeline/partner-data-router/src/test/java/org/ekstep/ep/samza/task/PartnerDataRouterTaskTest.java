@@ -32,7 +32,7 @@ public class PartnerDataRouterTaskTest {
     private final String EVENTS_TO_ALLOW = "GE_.*,OE_.*";
     private final String SUCCESS_TOPIC = "partners";
     private final String FAILED_TOPIC = "partners.fail";
-    private final String DEFAULT_CHANNEL = "in.ekstep";
+    private final String DEFAULT_CHANNEL = "in.ekstep,ekstep";
     private MessageCollector collectorMock;
     private Config configMock;
     private TaskContext contextMock;
@@ -55,7 +55,7 @@ public class PartnerDataRouterTaskTest {
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
         stub(configMock.get("events.to.skip", "")).toReturn(EVENTS_TO_SKIP);
-        stub(configMock.get("default.channel", "in.ekstep")).toReturn(DEFAULT_CHANNEL);
+        stub(configMock.get("default.channel", "")).toReturn(DEFAULT_CHANNEL);
         stub(configMock.get("events.to.allow", "")).toReturn(EVENTS_TO_ALLOW);
         stub(metricsRegistryMock.newCounter("org.ekstep.ep.samza.task.PartnerDataRouterTask", "message-count")).toReturn(counterMock);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistryMock);
@@ -169,6 +169,18 @@ public class PartnerDataRouterTaskTest {
         partnerDataRouterTask.processEvent(collectorMock, event);
 
         verify(collectorMock, times(0)).send(argument.capture());
+    }
+
+    @Test
+    public void shouldProcessDefaultChannelEvents() throws Exception {
+        Event event = new Event(EventFixture.DefaultChannel());
+
+        ArgumentCaptor<OutgoingMessageEnvelope> argument = ArgumentCaptor.forClass(OutgoingMessageEnvelope.class);
+
+        partnerDataRouterTask.init(configMock, contextMock);
+        partnerDataRouterTask.processEvent(collectorMock, event);
+
+        verify(collectorMock, times(1)).send(argument.capture());
     }
 
     private ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final String stream) {

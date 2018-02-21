@@ -10,6 +10,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Event {
@@ -112,9 +113,11 @@ public class Event {
         return ver() != null && ver().equals("1.0");
     }
 
-    public boolean isDefaultChannel(String defaultChannel){
-        if(channel() != null && channel().equals(defaultChannel)){
-            return true;
+    public boolean isDefaultChannel(List<String> defaultChannels){
+        for (String dChannel : defaultChannels) {
+            if(channel() != null && channel().equals(dChannel)){
+                return true;
+            }
         }
         return false;
     }

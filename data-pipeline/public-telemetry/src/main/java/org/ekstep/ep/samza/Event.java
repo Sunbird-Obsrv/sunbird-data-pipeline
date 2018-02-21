@@ -2,6 +2,7 @@ package org.ekstep.ep.samza;
 
 import org.ekstep.ep.samza.reader.Telemetry;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -33,9 +34,11 @@ public class Event {
         return telemetry.<String>read("context.channel").value();
     }
 
-    public boolean isDefaultChannel(String defaultChannel){
-        if(channel() != null && channel().equals(defaultChannel)){
-            return true;
+    public boolean isDefaultChannel(List<String> defaultChannels){
+        for (String dChannel : defaultChannels) {
+            if(channel() != null && channel().equals(dChannel)){
+                return true;
+            }
         }
         return false;
     }

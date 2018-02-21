@@ -20,7 +20,7 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
     private List<String> eventsToAllow;
     private String successTopic;
     private String failedTopic;
-    private String defaultChannel;
+    private List<String> defaultChannels;
 
     private List<String> eventsToSkip;
     static Logger LOGGER = new Logger(Event.class);
@@ -30,12 +30,21 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
     public void init(Config config, TaskContext context) throws Exception {
         successTopic = config.get("output.success.topic.name", "partners");
         failedTopic = config.get("output.failed.topic.name", "partners.fail");
-        defaultChannel = config.get("default.channel", "in.ekstep");
+        defaultChannels = getDefaultChannelValues(config);
         messageCount = context
                 .getMetricsRegistry()
                 .newCounter(getClass().getName(), "message-count");
         eventsToSkip = getEventsToSkip(config);
         cleaner = new CleanerFactory(eventsToSkip);
+    }
+
+    private List<String> getDefaultChannelValues(Config config) {
+        String[] split = config.get("default.channel", "").split(",");
+        List<String> defaultChannels = new ArrayList<String>();
+        for (String event : split) {
+            defaultChannels.add(event.trim());
+        }
+        return defaultChannels;
     }
 
     @Override
@@ -59,7 +68,7 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
             return;
         }
 
-        if(!event.isDefaultChannel(defaultChannel)){
+        if(!event.isDefaultChannel(defaultChannels)){
             LOGGER.info(event.id(), "OTHER CHANNEL EVENT, SKIPPING");
             return;
         }

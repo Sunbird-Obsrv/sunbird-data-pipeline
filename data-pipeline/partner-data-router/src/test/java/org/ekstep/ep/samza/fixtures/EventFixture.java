@@ -612,7 +612,113 @@ public class EventFixture {
                 "      }\n" +
                 "    ],\n" +
                 "    \"uid\": \"\",\n" +
-                "    \"channel\": \"in.ntp\",\n" +
+                "  \"context\": {\n" +
+                "    \"channel\": \"ntp.in.ekstep\",\n" +
+                "    \"env\": \"ContentPlayer\",\n" +
+                "    \"sid\": \"qhpdr29tr3rp9jufmcj4tpa2a7\",\n" +
+                "    \"did\": \"\",\n" +
+                "    \"pdata\": {},\n" +
+                "    \"cdata\": [\n" +
+                "      {\n" +
+                "        \"type\": \"collection\",\n" +
+                "        \"id\": \"do_2121925679111454721253/do_30019820\"\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"type\": \"partner\",\n" +
+                "        \"id\": \"org.sample\"\n" +
+                "      }\n" +
+                "    ]\n" +
+                "  },\n" +
+                "    \"sid\": \"\",\n" +
+                "    \"ts\": \"2016-05-25T19:03:33.856+0530\",\n" +
+                "    \"edata\": {\n" +
+                "      \"eks\": {\n" +
+                "        \"dspec\": {\n" +
+                "          \"camera\": \"6.0,2.0\",\n" +
+                "          \"cap\": [],\n" +
+                "          \"cpu\": \"abi: armeabi-v7a  ARMv7 Processor rev 3 (v7l) \",\n" +
+                "          \"dlocname\": \"\",\n" +
+                "          \"dname\": \"\",\n" +
+                "          \"edisk\": 5.52,\n" +
+                "          \"id\": \"49f257354ef26714\",\n" +
+                "          \"idisk\": 0,\n" +
+                "          \"make\": \"Motorola XT1033\",\n" +
+                "          \"mem\": -1,\n" +
+                "          \"os\": \"Android 5.1\",\n" +
+                "          \"scrn\": 4.49,\n" +
+                "          \"sims\": -1\n" +
+                "        },\n" +
+                "        \"loc\": \"12.9311397,77.6236127\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"did\": \"cf979a7ba0162ddb0ac0702e397d8b689b61712b\",\n" +
+                "    \"ver\": \"2.0\",\n" +
+                "    \"type\": \"events\",\n" +
+                "    \"eid\": \"GE_GENIE_START\",\n" +
+                "    \"@version\": \"1\",\n" +
+                "    \"gdata\": {\n" +
+                "      \"id\": \"genie.android\",\n" +
+                "      \"ver\": \"4.2.localsandbox-debug.6\"\n" +
+                "    },\n" +
+                "    \"@timestamp\": \"2016-05-25T13:31:05.869Z\",\n" +
+                "    \"ets\": 1464183213856,\n" +
+                "    \"uuid\": \"2ab01daa-9134-471c-8abb-e676765020b425\",\n" +
+                "    \"mid\": \"97d882b6-4a65-4f50-b288-c46d700ee615\",\n" +
+                "    \"key\": \"\",\n" +
+                "    \"metadata\": {\n" +
+                "      \"checksum\": \"f079e3f4448a20d9afcb0fa93449daba584ac65b\",\n" +
+                "      \"last_processed_at\": \"2016-05-26T04:18:26.601+05:30\",\n" +
+                "      \"processed_count\": 1,\n" +
+                "      \"ts_year\": \"2016\",\n" +
+                "      \"ts_month\": \"05\",\n" +
+                "      \"year\": \"2016\",\n" +
+                "      \"month\": \"05\",\n" +
+                "      \"monthday\": \"25\",\n" +
+                "      \"hour\": \"22\",\n" +
+                "      \"sync_timestamp\": \"2016-05-25T22:44:55+00:00\"\n" +
+                "    },\n" +
+                "    \"ldata\": {\n" +
+                "      \"state\": \"Karnataka\",\n" +
+                "      \"locality\": \"Bengaluru\",\n" +
+                "      \"district\": \"Bangalore Urban\",\n" +
+                "      \"country\": \"India\"\n" +
+                "    },\n" +
+                "    \"flags\": {\n" +
+                "      \"ldata_processed\": true,\n" +
+                "      \"ldata_obtained\": true\n" +
+                "    },\n" +
+                "    \"ready_to_index\": \"true\"\n" +
+                "}";
+
+        return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
+
+    public static Map<String, Object> DefaultChannel() {
+        String json = "{\n" +
+                "    \"tags\": [\n" +
+                "      {\n" +
+                "        \"genie\": []\n" +
+                "      }\n" +
+                "    ],\n" +
+                "    \"uid\": \"\",\n" +
+                "  \"context\": {\n" +
+                "    \"channel\": \"ekstep\",\n" +
+                "    \"env\": \"ContentPlayer\",\n" +
+                "    \"sid\": \"qhpdr29tr3rp9jufmcj4tpa2a7\",\n" +
+                "    \"did\": \"\",\n" +
+                "    \"pdata\": {},\n" +
+                "    \"cdata\": [\n" +
+                "      {\n" +
+                "        \"type\": \"collection\",\n" +
+                "        \"id\": \"do_2121925679111454721253/do_30019820\"\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"type\": \"partner\",\n" +
+                "        \"id\": \"org.sample\"\n" +
+                "      }\n" +
+                "    ]\n" +
+                "  },\n" +
                 "    \"sid\": \"\",\n" +
                 "    \"ts\": \"2016-05-25T19:03:33.856+0530\",\n" +
                 "    \"edata\": {\n" +

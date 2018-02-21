@@ -25,19 +25,20 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
     private CleanerFactory cleaner;
     private List<String> nonPublicEvents;
     private List<String> publicEvents;
-    private String defaultChannel;
+    private List<String> defaultChannels;
 
     @Override
     public void init(Config config, TaskContext context) throws Exception {
         successTopic = config.get("output.success.topic.name", "telemetry.public");
         failedTopic = config.get("output.failed.topic.name", "telemetry.public.fail");
-        defaultChannel = config.get("default.channel", "in.ekstep");
+        defaultChannels = getDefaultChannelValues(config);
         nonPublicEvents = getNonPublicEvents(config);
         messageCount = context
                 .getMetricsRegistry()
                 .newCounter(getClass().getName(), "message-count");
         cleaner = new CleanerFactory(nonPublicEvents);
     }
+
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) throws Exception {
@@ -62,8 +63,18 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
         return eventsToSkip;
     }
 
+
+    private List<String> getDefaultChannelValues(Config config) {
+        String[] split = config.get("default.channel", "").split(",");
+        List<String> defaultChannels = new ArrayList<String>();
+        for (String event : split) {
+            defaultChannels.add(event.trim());
+        }
+        return defaultChannels;
+    }
+
     void processEvent(MessageCollector collector, Event event) {
-        if(!event.isDefaultChannel(defaultChannel)){
+        if(!event.isDefaultChannel(defaultChannels)){
             LOGGER.info(event.id(), "OTHER CHANNEL EVENT, SKIPPING");
             return;
         }
