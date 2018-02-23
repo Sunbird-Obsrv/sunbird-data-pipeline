@@ -10,11 +10,15 @@ import java.util.Map;
 
 public class JobMetrics {
 
+    private final String jobName;
     private final Counter successMessageCount;
     private final Counter failedMessageCount;
     private final Counter skippedMessageCount;
     private final Counter errorMessageCount;
-    private final String jobName;
+    private final Counter cacheHitCount;
+    private final Counter cacheMissCount;
+    private final Counter cacheExpiredCount;
+
 
     public JobMetrics(TaskContext context) {
         this(context,null);
@@ -26,6 +30,9 @@ public class JobMetrics {
         failedMessageCount = metricsRegistry.newCounter(getClass().getName(), "failed-message-count");
         skippedMessageCount = metricsRegistry.newCounter(getClass().getName(), "skipped-message-count");
         errorMessageCount = metricsRegistry.newCounter(getClass().getName(), "error-message-count");
+        cacheHitCount = metricsRegistry.newCounter(getClass().getName(), "cache-hit-count");
+        cacheMissCount = metricsRegistry.newCounter(getClass().getName(), "cache-miss-count");
+        cacheExpiredCount = metricsRegistry.newCounter(getClass().getName(), "cache-expired-count");
         jobName = jName;
     }
 
@@ -51,6 +58,12 @@ public class JobMetrics {
     public void incErrorCounter() {
         errorMessageCount.inc();
     }
+
+    public void incCacheHitCounter() { cacheHitCount.inc(); }
+
+    public void incCacheExpiredCounter() { cacheExpiredCount.inc();}
+
+    public void incCacheMissCounter() { cacheMissCount.inc();}
 
     public String collect() {
         Map<String,Object> metricsEvent = new HashMap<>();
