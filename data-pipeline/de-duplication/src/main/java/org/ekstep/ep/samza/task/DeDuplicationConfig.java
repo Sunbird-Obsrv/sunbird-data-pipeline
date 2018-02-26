@@ -5,10 +5,10 @@ import org.apache.samza.config.Config;
 
 public class DeDuplicationConfig {
 
+    private final String JOB_NAME = "DeDuplication";
     private String successTopic;
     private String failedTopic;
     private String duplicateTopic;
-    private final String jobName;
     private String malformedTopic;
     private String defaultChannel;
     private final String metricsTopic;
@@ -21,7 +21,6 @@ public class DeDuplicationConfig {
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
         metricsTopic = config.get("output.metrics.topic.name", "pipeline_metrics");
         defaultChannel = config.get("default.channel", "in.ekstep");
-        jobName = config.get("job.name", "DeDuplication");
     }
 
     public String successTopic() {
@@ -49,6 +48,6 @@ public class DeDuplicationConfig {
     }
 
     public String jobName() {
-        return jobName;
+        return JOB_NAME;
     }
 }

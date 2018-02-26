@@ -5,7 +5,7 @@ import org.apache.samza.config.Config;
 
 public class TelemetryValidatorConfig {
 
-    private String jobName;
+    private final String JOB_NAME = "TelemetryValidator";
     private String schemaPath;
     private String successTopic;
     private String failedTopic;
@@ -20,7 +20,6 @@ public class TelemetryValidatorConfig {
         metricsTopic = config.get("output.metrics.topic.name", "telemetry.pipeline_metrics");
         defaultChannel = config.get("default.channel", "in.ekstep");
         schemaPath = config.get("telemetry.schema.path", "/etc/samza-jobs/schemas");
-        jobName = config.get("job.name", "TelemetryConverter");
     }
 
     public String successTopic() {
@@ -46,6 +45,6 @@ public class TelemetryValidatorConfig {
     public String schemaPath() { return schemaPath; }
 
     public String jobName() {
-        return jobName;
+        return JOB_NAME;
     }
 }
