@@ -79,6 +79,8 @@ public class DeDuplicationTask implements StreamTask, InitableTask, WindowableTa
 
     @Override
     public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
+        String mEvent = metrics.collect();
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
         metrics.clear();
     }
 }
