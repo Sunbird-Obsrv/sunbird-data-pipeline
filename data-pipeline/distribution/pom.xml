@@ -33,7 +33,7 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>de-duplication</artifactId>
-            <version>0.2.6</version>
+            <version>0.2.7</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
