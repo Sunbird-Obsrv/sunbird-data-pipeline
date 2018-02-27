@@ -26,17 +26,24 @@ import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
-import org.ekstep.ep.samza.rule.*;
 import org.ekstep.ep.samza.api.GoogleGeoLocationAPI;
 import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.metrics.JobMetrics;
+import org.ekstep.ep.samza.rule.LocationAbsent;
+import org.ekstep.ep.samza.rule.LocationEmpty;
+import org.ekstep.ep.samza.rule.LocationPresent;
+import org.ekstep.ep.samza.rule.Rule;
 import org.ekstep.ep.samza.service.DeviceService;
 import org.ekstep.ep.samza.service.GoogleReverseSearchService;
 import org.ekstep.ep.samza.service.LocationService;
-import org.ekstep.ep.samza.system.*;
+import org.ekstep.ep.samza.system.Event;
+import org.ekstep.ep.samza.system.Location;
 import org.ekstep.ep.samza.util.Configuration;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class ReverseSearchStreamTask implements StreamTask, InitableTask, WindowableTask {
 
@@ -48,6 +55,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
     private DeviceService deviceService;
     private List<Rule> locationRules;
     private Configuration configuration;
+    private JobMetrics metrics;
 
     @Override
     public void init(Config config, TaskContext context) {
@@ -64,9 +72,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
                 configuration.getReverseSearchCacheAreaSizeInMeters()
                 );
         deviceService = new DeviceService(deviceStore);
-        messageCount = context
-                .getMetricsRegistry()
-                .newCounter(getClass().getName(), "message-count");
+        metrics = new JobMetrics(context, this.configuration.jobName());
     }
 
     public ReverseSearchStreamTask() {
@@ -74,13 +80,14 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
 
     //For testing only
     ReverseSearchStreamTask(KeyValueStore<String, Object> deviceStore,
-                            String bypass, LocationService locationService, DeviceService deviceService, List<Rule> locationRules, Config config) {
+                            String bypass, LocationService locationService, DeviceService deviceService, List<Rule> locationRules, Config config, TaskContext context) {
         this.deviceStore = deviceStore;
         this.bypass = bypass;
         this.locationService = locationService;
         this.deviceService =  deviceService;
         this.locationRules = locationRules;
         this.configuration = new Configuration(config);
+        this.metrics = new JobMetrics(context, this.configuration.jobName());
     }
 
     @SuppressWarnings("unchecked")
@@ -97,6 +104,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
             messageCount.inc();
         } catch (Exception e) {
             LOGGER.error(null, "PROCESSING FAILED: " + jsonObject, e);
+            sendToErrorTopic(jsonObject, collector);
         }
     }
 
@@ -117,6 +125,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
                 location = deviceService.getLocation(did,event.id());
             } catch (Exception e) {
                 LOGGER.error(null, "REVERSE SEARCH FAILED: " + event, e);
+                sendToErrorTopic(event.getMap(), collector);
             }
         }
 
@@ -126,18 +135,31 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
                 event.setFlag("ldata_obtained", true);
             } else {
                 event.setFlag("ldata_obtained", false);
-                collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", configuration.getFailedTopic()), event.getMap()));
             }
+
             event.updateDefaults(configuration);
             event.setFlag("ldata_processed", true);
-            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", configuration.getSuccessTopic()), event.getMap()));
+            sendToSuccessTopic(event.getMap(), collector);
         } catch (Exception e) {
             LOGGER.error(null, "ERROR WHEN ROUTING EVENT: {}" + event, e);
+            sendToErrorTopic(event.getMap(), collector);
         }
+    }
+
+    private void sendToSuccessTopic(Map<String, Object>  event, MessageCollector collector) {
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", configuration.getSuccessTopic()), event));
+        metrics.incSuccessCounter();
+    }
+
+    private void sendToErrorTopic(Map<String, Object> event, MessageCollector collector) {
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", configuration.getFailedTopic()), event));
+        metrics.incErrorCounter();
     }
 
     @Override
     public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-        messageCount.clear();
+        String mEvent = metrics.collect();
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", configuration.getMetricsTopic()), mEvent));
+        metrics.clear();
     }
 }

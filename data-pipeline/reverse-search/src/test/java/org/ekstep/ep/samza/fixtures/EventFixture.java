@@ -26,12 +26,10 @@ public class EventFixture {
             "          \"ver\":\"1.0\"\n" +
             "     },\n" +
             "     \"edata\": {\n" +
-            "          \"eks\": {\n" +
             "              \"current_level\":\"Primary 5\",\n" +
             "              \"score\":\"15\"\n" +
             "          }\n" +
-            "     }\n" +
-            "}";
+                    "}";
 
     public static final String JSON_WITH_MID = "{\n" +
             "     \"eid\": \"ME_USER_GAME_LEVEL\",\n" +
@@ -55,11 +53,9 @@ public class EventFixture {
             "          \"ver\":\"1.0\"\n" +
             "     },\n" +
             "     \"edata\": {\n" +
-            "          \"eks\": {\n" +
             "              \"current_level\":\"Primary 5\",\n" +
             "              \"score\":\"15\"\n" +
             "          }\n" +
-            "     }\n" +
             "}";
 
 
@@ -72,9 +68,7 @@ public class EventFixture {
                 "          \"did\":\"9aa9291822a0f3df7f91f36a4cca8445ebb458a8\"\n" +
                 "     },\n" +
                 "  \"edata\": {\n" +
-                "    \"eks\": {\n" +
                 "      \"loc\": \"12.9312015,77.6238068\"\n" +
-                "    }\n" +
                 "  },\n" +
                 "  \"eid\": \"GE_SESSION_START\",\n" +
                 "  \"ets\": 1462250323723,\n" +
@@ -111,9 +105,7 @@ public class EventFixture {
                 "          \"did\":\"9aa9291822a0f3df7f91f36a4cca8445ebb458a8\"\n" +
                 "     },\n" +
                 "  \"edata\": {\n" +
-                "    \"eks\": {\n" +
                 "      \"loc\": \"\"\n" +
-                "    }\n" +
                 "  },\n" +
                 "  \"eid\": \"GE_SESSION_START\",\n" +
                 "  \"ets\": 1462250323723,\n" +

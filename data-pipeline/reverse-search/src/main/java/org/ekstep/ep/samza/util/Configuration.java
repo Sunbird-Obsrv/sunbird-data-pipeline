@@ -4,6 +4,8 @@ import org.apache.samza.config.Config;
 
 public class Configuration {
     private Config config;
+    private String JOB_NAME = "ReverseSearch";
+    private String metricsTopic;
 
     public Configuration(Config config) {
         this.config = config;
@@ -32,5 +34,13 @@ public class Configuration {
 
     public String getDefaultChannel(){
         return config.get("default.channel", "ekstep.in");
+    }
+
+    public String jobName() {
+        return JOB_NAME;
+    }
+
+    public String getMetricsTopic() {
+        return config.get("output.metrics.topic.name", "pipeline_metrics");
     }
 }

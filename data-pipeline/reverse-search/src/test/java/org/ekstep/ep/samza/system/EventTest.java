@@ -227,10 +227,8 @@ public class EventTest {
     private Map<String, Object> getMap(String location) {
         HashMap<String, Object> event = new HashMap<String, Object>();
         HashMap<String, Object> edata = new HashMap<String, Object>();
-        HashMap<String, String> loc = new HashMap<String, String>();
         event.put("edata", edata);
-        edata.put("eks", loc);
-        loc.put("loc",location);
+        edata.put("loc",location);
         return event;
     }
 

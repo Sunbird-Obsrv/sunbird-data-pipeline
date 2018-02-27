@@ -2,7 +2,7 @@ package org.ekstep.ep.samza.util;
 
 public class Path {
     public String loc(){
-        return "edata.eks.loc";
+        return "edata.loc";
     }
 
     public String checksum(){
