@@ -48,7 +48,6 @@ public class ObjectDeNormalizationService {
             sink.toSuccessTopic(event);
         } catch (Exception e) {
             LOGGER.error(event.id(), "EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO FAILED TOPIC", e);
-            sink.toSuccessTopic(event);
             sink.toFailedTopic(event);
         }
     }

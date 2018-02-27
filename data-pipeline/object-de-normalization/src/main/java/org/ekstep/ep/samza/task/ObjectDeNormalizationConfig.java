@@ -10,14 +10,17 @@ public class ObjectDeNormalizationConfig {
     private final long cacheTTL;
     private final String searchServiceEndpoint;
     private final HashMap<String,Object> contentTaxonomy;
+    private final String metricsTopic;
     private String successTopic;
     private String failedTopic;
     private List<String> eventsToSkip;
     private List<String> eventsToAllow;
+    private final String JOB_NAME = "ObjectDeNormalization";
 
     public ObjectDeNormalizationConfig(Config config) {
         successTopic = config.get("output.success.topic.name", "telemetry.content.de_normalized");
         failedTopic = config.get("output.failed.topic.name", "telemetry.content.de_normalized.fail");
+        metricsTopic = config.get("output.metrics.topic.name", "pipeline_metrics");
         searchServiceEndpoint = config.get("search.service.endpoint");
         contentTaxonomy = getContentTaxonomy(config);
         cacheTTL = Long.parseLong(config.get("object.store.ttl", "60000"));
@@ -73,5 +76,13 @@ public class ObjectDeNormalizationConfig {
 
     public String searchServiceEndpoint() {
         return searchServiceEndpoint;
+    }
+
+    public String metricsTopic() {
+        return metricsTopic;
+    }
+
+    public String jobName() {
+        return JOB_NAME;
     }
 }

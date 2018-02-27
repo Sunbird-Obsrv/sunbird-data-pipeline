@@ -5,7 +5,6 @@ import org.apache.samza.config.Config;
 public class Configuration {
     private Config config;
     private String JOB_NAME = "ReverseSearch";
-    private String metricsTopic;
 
     public Configuration(Config config) {
         this.config = config;

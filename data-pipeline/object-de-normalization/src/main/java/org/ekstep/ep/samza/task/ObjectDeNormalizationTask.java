@@ -4,6 +4,8 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.samza.config.Config;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
+import org.apache.samza.system.OutgoingMessageEnvelope;
+import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.cache.CacheEntry;
 import org.ekstep.ep.samza.cache.CacheService;
@@ -54,7 +56,7 @@ public class ObjectDeNormalizationTask implements StreamTask, InitableTask, Wind
     private void init(Config config, TaskContext context,
                       KeyValueStore<Object, Object> contentStore, SearchService searchService) {
         this.config = new ObjectDeNormalizationConfig(config);
-        metrics = new JobMetrics(context);
+        metrics = new JobMetrics(context,this.config.jobName());
         objectTaxonomy = this.config.objectTaxonomy();
 
         CacheService<String, Content> contentCacheService = contentStore != null
@@ -92,7 +94,9 @@ public class ObjectDeNormalizationTask implements StreamTask, InitableTask, Wind
     }
 
     @Override
-    public void window(MessageCollector messageCollector, TaskCoordinator taskCoordinator) throws Exception {
+    public void window(MessageCollector collector, TaskCoordinator taskCoordinator) throws Exception {
+        String mEvent = metrics.collect();
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
         metrics.clear();
     }
 }
