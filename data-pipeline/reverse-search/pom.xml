@@ -33,7 +33,7 @@ under the License.
 
   <groupId>org.ekstep.ecosystem.jobs</groupId>
   <artifactId>reverse-search</artifactId>
-  <version>0.4.6</version>
+  <version>0.4.7</version>
   <packaging>jar</packaging>
   <name>Reverse Search</name>
   <description>
@@ -154,6 +154,11 @@ under the License.
     <groupId>org.ekstep.ecosystem</groupId>
     <artifactId>job-metrics</artifactId>
     <version>0.0.1</version>
+  </dependency>
+  <dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.4</version>
   </dependency>
 </dependencies>
 

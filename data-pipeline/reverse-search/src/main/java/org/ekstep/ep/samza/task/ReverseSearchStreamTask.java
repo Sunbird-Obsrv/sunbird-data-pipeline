@@ -39,6 +39,7 @@ import org.ekstep.ep.samza.service.LocationService;
 import org.ekstep.ep.samza.system.Event;
 import org.ekstep.ep.samza.system.Location;
 import org.ekstep.ep.samza.util.Configuration;
+import com.google.gson.Gson;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -159,7 +160,8 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
     @Override
     public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
         String mEvent = metrics.collect();
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", configuration.getMetricsTopic()), mEvent));
+        Map<String,Object> mEventMap = new Gson().fromJson(mEvent,Map.class);
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", configuration.getMetricsTopic()), mEventMap));
         metrics.clear();
     }
 }

@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.task;
 
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.samza.config.Config;
 import org.apache.samza.storage.kv.KeyValueStore;
@@ -24,6 +25,7 @@ import org.ekstep.ep.samza.system.ItemDeNormStrategy;
 import org.ekstep.ep.samza.system.Strategy;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class ObjectDeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
     public static final String CONTENT = "content";
@@ -96,7 +98,8 @@ public class ObjectDeNormalizationTask implements StreamTask, InitableTask, Wind
     @Override
     public void window(MessageCollector collector, TaskCoordinator taskCoordinator) throws Exception {
         String mEvent = metrics.collect();
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
+        Map<String,Object> mEventMap = new Gson().fromJson(mEvent,Map.class);
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", this.config.metricsTopic()), mEventMap));
         metrics.clear();
     }
 }
