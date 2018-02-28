@@ -52,7 +52,6 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
     private KeyValueStore<String, Object> deviceStore;
     private String bypass;
     private LocationService locationService;
-    private Counter messageCount;
     private DeviceService deviceService;
     private List<Rule> locationRules;
     private Configuration configuration;
@@ -102,7 +101,6 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
             if(ets1 != null)
                 LOGGER.info("", MessageFormat.format("Inside Task. ETS:{0}, type: {1}", ets1, ets1.getClass()));
             processEvent(event, collector);
-            messageCount.inc();
         } catch (Exception e) {
             LOGGER.error(null, "PROCESSING FAILED: " + jsonObject, e);
             sendToErrorTopic(jsonObject, collector);
