@@ -1958,6 +1958,28 @@ module Indexers
                   }
                 }
               },
+              "item": {
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "maxscore": {
+                    "type": "long"
+                  },
+                  "exlength": {
+                    "type": "long"
+                  },
+                  "uri": {
+                    "type": "string"
+                  },
+                  "desc": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                }
+              },
               "target": {
                 "properties": {
                   "id": {
