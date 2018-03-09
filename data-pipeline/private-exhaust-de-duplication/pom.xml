@@ -15,7 +15,7 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>private-exhaust-de-duplication</artifactId>
-    <version>0.0.7</version>
+    <version>0.0.8</version>
     <packaging>jar</packaging>
     <name>Private-Exhaust-De-Duplication</name>
     <description>
