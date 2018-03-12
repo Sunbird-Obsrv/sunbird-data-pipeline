@@ -33,7 +33,7 @@ under the License.
 
   <groupId>org.ekstep.ecosystem.jobs</groupId>
   <artifactId>es-router-secondary</artifactId>
-  <version>0.0.6</version>
+  <version>0.0.7</version>
   <packaging>jar</packaging>
   <name>ES-Router-Secondary</name>
   <description>
@@ -160,6 +160,11 @@ under the License.
     <groupId>org.ekstep.ecosystem</groupId>
     <artifactId>es-router</artifactId>
     <version>0.0.2</version>
+  </dependency>
+  <dependency>
+    <groupId>org.ekstep.ecosystem</groupId>
+    <artifactId>job-metrics</artifactId>
+    <version>0.0.1</version>
   </dependency>
 </dependencies>
 

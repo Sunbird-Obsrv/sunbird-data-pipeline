@@ -47,7 +47,7 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>public-telemetry</artifactId>
-            <version>0.2.6</version>
+            <version>0.2.7</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
@@ -75,7 +75,7 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>es-router-primary</artifactId>
-            <version>0.0.6</version>
+            <version>0.0.7</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
@@ -96,7 +96,7 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>es-router-secondary</artifactId>
-            <version>0.0.6</version>
+            <version>0.0.7</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
