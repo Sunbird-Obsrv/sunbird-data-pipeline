@@ -150,6 +150,11 @@ under the License.
             <artifactId>ep-telemetry-reader</artifactId>
             <version>0.0.3</version>
         </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem</groupId>
+            <artifactId>job-metrics</artifactId>
+            <version>0.0.1</version>
+        </dependency>
     </dependencies>
 
     <build>

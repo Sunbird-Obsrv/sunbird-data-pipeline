@@ -45,7 +45,8 @@ public class PublicTelemetryTaskTest {
         stub(configMock.get("events.to.skip", "")).toReturn(EVENTS_TO_SKIP);
         stub(configMock.get("default.channel", "")).toReturn(DEFAULT_CHANNEL);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
-        stub(metricsRegistry.newCounter("org.ekstep.ep.samza.task.TelemetryCleanerTask", "message-count")).toReturn(counter);
+        stub(metricsRegistry.newCounter(anyString(), anyString()))
+                .toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
 
         publicTelemetryTask = new PublicTelemetryTask();

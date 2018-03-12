@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.task;
 
 
+import com.google.gson.Gson;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.system.IncomingMessageEnvelope;
@@ -10,6 +11,7 @@ import org.apache.samza.task.*;
 import org.ekstep.ep.samza.Event;
 import org.ekstep.ep.samza.cleaner.CleanerFactory;
 import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.metrics.JobMetrics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,22 +22,24 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
 
     private String successTopic;
     private String failedTopic;
+    private String metricTopic;
 
-    private Counter messageCount;
+    private JobMetrics metrics;
+
     private CleanerFactory cleaner;
     private List<String> nonPublicEvents;
     private List<String> publicEvents;
     private List<String> defaultChannels;
 
+
     @Override
     public void init(Config config, TaskContext context) throws Exception {
         successTopic = config.get("output.success.topic.name", "telemetry.public");
         failedTopic = config.get("output.failed.topic.name", "telemetry.public.fail");
+        metricTopic = config.get("output.metrics.topic.name", "pipeline_metrics");
         defaultChannels = getDefaultChannelValues(config);
         nonPublicEvents = getNonPublicEvents(config);
-        messageCount = context
-                .getMetricsRegistry()
-                .newCounter(getClass().getName(), "message-count");
+        metrics = new JobMetrics(context, config.get("output.metrics.job.name", "PublicTelemetry"));
         cleaner = new CleanerFactory(nonPublicEvents);
     }
 
@@ -46,11 +50,10 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
         try {
             event = new Event((Map<String, Object>) envelope.getMessage());
             processEvent(collector, event);
-            messageCount.inc();
         } catch (Exception e) {
             LOGGER.error(event.id(), "CLEAN FAILED", e);
             LOGGER.error(event.id(), "ADDING TO EVENT FAILED TOPIC");
-            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
+            sendToFailedTopic(collector, event);
         }
     }
 
@@ -76,26 +79,42 @@ public class PublicTelemetryTask implements StreamTask, InitableTask, Windowable
     void processEvent(MessageCollector collector, Event event) {
         if(!event.isDefaultChannel(defaultChannels)){
             LOGGER.info(event.id(), "OTHER CHANNEL EVENT, SKIPPING");
+            metrics.incSkippedCounter();
             return;
         }
 
         if(event.isVersionOne()){
             LOGGER.info(event.id(), "EVENT VERSION 1, SKIPPING");
+            metrics.incSkippedCounter();
             return;
         }
 
         if (cleaner.shouldSkipEvent(event.eid())) {
+            metrics.incSkippedCounter();
             return;
         }
 
         cleaner.clean(event.telemetry());
 
         LOGGER.info(event.id(), "CLEANED EVENT",event.getMap());
+        sendToSuccessTopic(collector,  event);
+    }
+
+    private void sendToSuccessTopic(MessageCollector collector,  Event event) {
         collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", successTopic), event.getMap()));
+        metrics.incSuccessCounter();
+    }
+
+    private void sendToFailedTopic(MessageCollector collector, Event event) {
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", failedTopic), event.getMap()));
+        metrics.incErrorCounter();
     }
 
     @Override
     public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-        messageCount.clear();
+        String mEvent = metrics.collect();
+        Map<String,Object> mEventMap = new Gson().fromJson(mEvent,Map.class);
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", metricTopic), mEventMap));
+        metrics.clear();
     }
 }
