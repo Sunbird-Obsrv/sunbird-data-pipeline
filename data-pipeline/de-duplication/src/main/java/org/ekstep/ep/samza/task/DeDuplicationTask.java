@@ -70,11 +70,20 @@ public class DeDuplicationTask implements StreamTask, InitableTask, WindowableTa
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector,
-                        TaskCoordinator taskCoordinator) throws Exception {
-        DeDuplicationSource source = new DeDuplicationSource(envelope);
-        DeDuplicationSink sink = new DeDuplicationSink(collector, metrics, config);
+                        TaskCoordinator taskCoordinator) {
+        try {
+            DeDuplicationSource source = new DeDuplicationSource(envelope);
+            DeDuplicationSink sink = new DeDuplicationSink(collector, metrics, config);
 
-        service.process(source, sink);
+            service.process(source, sink);
+        }
+        catch (Exception ex) {
+            LOGGER.error("", "Deduplication failed: " + ex.getMessage());
+            Object event = envelope.getMessage();
+            if (event != null) {
+                LOGGER.info("", "FAILED_EVENT: " + event);
+            }
+        }
     }
 
     @Override
