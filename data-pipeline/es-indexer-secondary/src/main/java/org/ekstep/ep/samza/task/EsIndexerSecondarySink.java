@@ -23,4 +23,14 @@ public class EsIndexerSecondarySink {
                 new SystemStream("kafka", config.failedTopic()), event.getMap()));
         metrics.incFailedCounter();
     }
+
+    public void toErrorTopic(Event event) {
+        collector.send(new OutgoingMessageEnvelope(
+                new SystemStream("kafka", config.failedTopic()), event.getMap()));
+        metrics.incErrorCounter();
+    }
+
+    public void markSuccess() {
+        metrics.incSuccessCounter();
+    }
 }

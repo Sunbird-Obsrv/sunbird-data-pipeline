@@ -19,8 +19,11 @@
 
 package org.ekstep.ep.samza.task;
 
+import com.google.gson.Gson;
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
+import org.apache.samza.system.OutgoingMessageEnvelope;
+import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.esclient.ElasticSearchClient;
 import org.ekstep.ep.samza.esclient.ElasticSearchService;
@@ -29,6 +32,7 @@ import org.ekstep.ep.samza.metrics.JobMetrics;
 import org.ekstep.ep.samza.service.EsIndexerSecondaryService;
 
 import java.net.UnknownHostException;
+import java.util.Map;
 
 public class EsIndexerSecondaryTask implements StreamTask, InitableTask, WindowableTask {
     static Logger LOGGER = new Logger(EsIndexerSecondaryTask.class);
@@ -51,7 +55,7 @@ public class EsIndexerSecondaryTask implements StreamTask, InitableTask, Windowa
 
     private void init(Config config, TaskContext context, ElasticSearchService elasticSearchService) throws UnknownHostException {
         this.config = new EsIndexerSecondaryConfig(config);
-        metrics = new JobMetrics(context);
+        metrics = new JobMetrics(context,this.config.jobName());
 
         elasticSearchService =
                 elasticSearchService == null ?
@@ -71,6 +75,9 @@ public class EsIndexerSecondaryTask implements StreamTask, InitableTask, Windowa
 
     @Override
     public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
+        String mEvent = metrics.collect();
+        Map<String,Object> mEventMap = new Gson().fromJson(mEvent,Map.class);
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEventMap));
         metrics.clear();
     }
 }

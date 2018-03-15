@@ -34,6 +34,7 @@ public class EsIndexerPrimaryService {
 
             if(success(response)) {
                 LOGGER.info("ES INDEXER SUCCESS", event.id());
+                sink.markSuccess();
             } else {
                 LOGGER.error("ES INDEXER FAILED : RESPONSE", response.toString());
                 LOGGER.error("ES INDEXER FAILED : EVENT",event.toString());
@@ -45,7 +46,7 @@ public class EsIndexerPrimaryService {
             LOGGER.error("ES INDEXER EXCEPTION : MESSAGE", e.getMessage());
             LOGGER.error("ES INDEXER EXCEPTION : EVENT", event.toString());
             event.markFailed("Error", e.getMessage());
-            sink.toFailedTopic(event);
+            sink.toErrorTopic(event);
         }
     }
 
