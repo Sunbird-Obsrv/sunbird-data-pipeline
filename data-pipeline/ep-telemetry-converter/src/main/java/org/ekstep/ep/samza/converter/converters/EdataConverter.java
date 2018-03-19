@@ -241,11 +241,12 @@ public class EdataConverter {
         Map<String, String> origin = new HashMap<>();
         Map<String, String> to = new HashMap<>();
 
-        List<Map<String, Object>> params = new ArrayList<>();
+        List<Map<String, Object>> params = null;
         Map<String, Object> paramsMap = null;
 
         for (Map<String, Object> content : contents) {
 
+            params = new ArrayList<>();
             paramsMap = new HashMap<>();
             paramsMap.put("transfers", content.getOrDefault("transferCount", 0));
             paramsMap.put("count", content.getOrDefault("count", 0));

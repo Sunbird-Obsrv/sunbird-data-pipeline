@@ -740,6 +740,26 @@ public class TelemetryV3ConverterTest {
 
         Map<String, Object> eData = share.getEdata();
         assertEquals("In", eData.get("dir"));
+        
+        List<Map<String, Object>> items = (List<Map<String, Object>>) eData.get("items");
+        List<Map<String, Object>> params = (List<Map<String, Object>>) items.get(0).get("params");
+        assertEquals(1, params.size());
+    }
+    
+    @Test
+    public void convertGE_TRANSFER() throws Exception {
+        Map<String, Object> geTransfer = EventFixture.getEvent("GE_TRANSFER");
+        TelemetryV3Converter converter = new TelemetryV3Converter(geTransfer);
+        TelemetryV3[] v3 = converter.convert();
+
+        TelemetryV3 share = v3[0];
+        
+        Map<String, Object> eData = share.getEdata();
+        
+        List<Map<String, Object>> items = (List<Map<String, Object>>) eData.get("items");
+        List<Map<String, Object>> params = (List<Map<String, Object>>) items.get(0).get("params");
+        assertEquals(1, params.size());
+        System.out.println(share.toJson());
     }
 
     @Test
