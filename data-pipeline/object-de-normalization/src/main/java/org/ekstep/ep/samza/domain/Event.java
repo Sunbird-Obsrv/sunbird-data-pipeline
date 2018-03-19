@@ -146,4 +146,13 @@ public class Event {
 
             updateMetadata(item);
     }
+
+    public void markFailed(String status, String errorMsg) {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.odn_processed", false);
+
+        telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
+        telemetry.add("metadata.odn_status", status);
+        telemetry.add("metadata.odn_error", errorMsg);
+    }
 }

@@ -24,10 +24,10 @@ public class ObjectDeNormalizationSink {
         metrics.incSuccessCounter();
     }
 
-    public void toFailedTopic(Event event) {
+    public void toErrorTopic(Event event) {
         collector.send(new OutgoingMessageEnvelope(
                 new SystemStream("kafka", config.failedTopic()), event.getMap()));
-        metrics.incFailedCounter();
+        metrics.incErrorCounter();
     }
 
 }
