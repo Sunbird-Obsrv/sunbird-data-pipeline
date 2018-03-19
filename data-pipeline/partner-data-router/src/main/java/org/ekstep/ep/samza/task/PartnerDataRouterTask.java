@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.task;
 
+import com.google.gson.Gson;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.system.IncomingMessageEnvelope;
@@ -130,6 +131,9 @@ public class PartnerDataRouterTask implements StreamTask, InitableTask, Windowab
 
     @Override
     public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-        messageCount.clear();
+        String mEvent = metrics.collect();
+        Map<String,Object> mEventMap = new Gson().fromJson(mEvent,Map.class);
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", metricsTopic), mEventMap));
+        metrics.clear();
     }
 }
