@@ -57,7 +57,8 @@ public class PartnerDataRouterTaskTest {
         stub(configMock.get("events.to.skip", "")).toReturn(EVENTS_TO_SKIP);
         stub(configMock.get("default.channel", "")).toReturn(DEFAULT_CHANNEL);
         stub(configMock.get("events.to.allow", "")).toReturn(EVENTS_TO_ALLOW);
-        stub(metricsRegistryMock.newCounter("org.ekstep.ep.samza.task.PartnerDataRouterTask", "message-count")).toReturn(counterMock);
+        stub(metricsRegistryMock.newCounter(anyString(), anyString()))
+                .toReturn(counterMock);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistryMock);
         partnerDataRouterTask = new PartnerDataRouterTask();
     }

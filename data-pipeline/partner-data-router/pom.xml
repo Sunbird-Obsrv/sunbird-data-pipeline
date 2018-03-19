@@ -33,7 +33,7 @@ under the License.
 
   <groupId>org.ekstep.ecosystem.jobs</groupId>
   <artifactId>partner-data-router</artifactId>
-  <version>0.2.9</version>
+  <version>0.3.0</version>
   <packaging>jar</packaging>
   <name>Partner-Data-Router</name>
   <description>
@@ -160,6 +160,11 @@ under the License.
     <groupId>org.ekstep.ecosystem</groupId>
     <artifactId>ep-telemetry-reader</artifactId>
     <version>0.0.3</version>
+  </dependency>
+  <dependency>
+    <groupId>org.ekstep.ecosystem</groupId>
+    <artifactId>job-metrics</artifactId>
+    <version>0.0.1</version>
   </dependency>
 </dependencies>
 
