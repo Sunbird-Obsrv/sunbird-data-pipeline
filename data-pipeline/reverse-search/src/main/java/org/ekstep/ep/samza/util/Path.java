@@ -21,7 +21,11 @@ public class Path {
         return "flags";
     }
 
-    public String did(){
+    public String dimensionsDid(){
+        return "dimensions.did";
+    }
+
+    public String contextDid(){
         return "context.did";
     }
 

@@ -45,9 +45,9 @@ public class Event implements Mappable {
     }
 
     public String getDid() {
-        NullableValue<String> did = telemetry.read(path.did());
+        NullableValue<String> did = telemetry.read(path.dimensionsDid());
         return did.isNull()
-                ? telemetry.<String>read("did").value()
+                ? telemetry.<String>read(path.contextDid()).value()
                 : did.value();
     }
 

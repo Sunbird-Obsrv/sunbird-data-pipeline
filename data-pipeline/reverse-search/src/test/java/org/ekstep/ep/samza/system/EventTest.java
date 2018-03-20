@@ -31,9 +31,9 @@ public class EventTest {
     public void shouldGetDeviceIDFromDimensionsFirst(){
         HashMap<String, Object> map = new HashMap<String,Object>();
         map.put("did","device_id1");
-        HashMap<String, Object> context = new HashMap<String,Object>();
-        context.put("did","device_id2");
-        map.put("context", context);
+        HashMap<String, Object> dimensions = new HashMap<String,Object>();
+        dimensions.put("did","device_id2");
+        map.put("dimensions", dimensions);
 
         Event event = new Event(map);
         Assert.assertEquals("device_id2", event.getDid());
@@ -43,18 +43,21 @@ public class EventTest {
     public void shouldGetEmptyDeviceIDFromDimensionsContainsEmptyDeviceId(){
         HashMap<String, Object> map = new HashMap<String,Object>();
         map.put("did","device_id1");
-        HashMap<String, Object> context = new HashMap<String,Object>();
-        context.put("did","");
-        map.put("context", context);
+        HashMap<String, Object> dimensions = new HashMap<String,Object>();
+        dimensions.put("did","");
+        map.put("dimensions", dimensions);
 
         Event event = new Event(map);
         Assert.assertEquals("", event.getDid());
     }
 
     @Test
-    public void shouldGetDeviceIDFromRootIfDimensionsDoesNotContainDid(){
+    public void shouldGetDeviceIDFromContextIfDimensionsDoesNotContainDid(){
         HashMap<String, Object> map = new HashMap<String,Object>();
-        map.put("did","device_id1");
+        HashMap<String, Object> context = new HashMap<String,Object>();
+        context.put("did","device_id1");
+        map.put("context",context);
+
         HashMap<String, Object> dimensions = new HashMap<String,Object>();
         map.put("dimensions", dimensions);
 
@@ -63,9 +66,12 @@ public class EventTest {
     }
 
     @Test
-    public void shouldGetDeviceIDFromRootWhenDimensionIsNotPresent(){
+    public void shouldGetDeviceIDFromContextWhenDimensionIsNotPresent(){
         HashMap<String, Object> map = new HashMap<String,Object>();
-        map.put("did", "device_id1");
+        HashMap<String, Object> context = new HashMap<String,Object>();
+        context.put("did","device_id1");
+        map.put("context", context);
+
 
         Event event = new Event(map);
         Assert.assertEquals("device_id1", event.getDid());
