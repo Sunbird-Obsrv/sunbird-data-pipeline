@@ -1860,6 +1860,16 @@ module Indexers
           "ver": {
             "type": "string"
           },
+          "actor": {
+             "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
+             }
+          },
           "edata": {
             "properties": {
               "comments": {
