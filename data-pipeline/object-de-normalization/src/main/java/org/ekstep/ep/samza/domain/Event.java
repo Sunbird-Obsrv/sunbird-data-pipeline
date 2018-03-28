@@ -155,4 +155,14 @@ public class Event {
         telemetry.add("metadata.odn_status", status);
         telemetry.add("metadata.odn_error", errorMsg);
     }
+
+    public void markSkipped() {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.odn_skipped", true);
+    }
+
+    public boolean canDeNormalize() {
+        String objectType = getObjectType();
+        return (objectType.equals("content") || objectType.equals("item"));
+    }
 }

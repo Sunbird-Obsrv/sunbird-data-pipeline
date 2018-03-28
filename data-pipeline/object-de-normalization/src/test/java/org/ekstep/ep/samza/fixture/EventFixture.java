@@ -173,7 +173,41 @@ public class EventFixture {
             "  \"eid\": \"START\", \n" +
             "  \"tags\": []\n" +
             "}";
-
+    public static final String EVENT_WITH_WORD_OBJECT = "{\n" +
+            "  \"eid\": \"END\",\n" +
+            "  \"ets\": 1522215084870,\n" +
+            "  \"ver\": \"3.0\",\n" +
+            "  \"mid\": \"END:ca93706b305734ba8ddff58755681f15\",\n" +
+            "  \"actor\": {\n" +
+            "    \"id\": \"446\",\n" +
+            "    \"type\": \"User\"\n" +
+            "  },\n" +
+            "  \"context\": {\n" +
+            "    \"channel\": \"in.ekstep\",\n" +
+            "    \"pdata\": {\n" +
+            "      \"id\": \"dev.ekstep.portal\",\n" +
+            "      \"pid\": \"ekstep_portal\",\n" +
+            "      \"ver\": \"382\"\n" +
+            "    },\n" +
+            "    \"env\": \"word\",\n" +
+            "    \"sid\": \"bdvd04os32j4bfneii5g4q4dl0\",\n" +
+            "    \"did\": \"dd38152e81d552ad3e9e1dbace364322\",\n" +
+            "    \"cdata\": [],\n" +
+            "    \"rollup\": {}\n" +
+            "  },\n" +
+            "  \"object\": {\n" +
+            "    \"id\": \"18605\",\n" +
+            "    \"type\": \"word\",\n" +
+            "    \"ver\": \"382\"\n" +
+            "  },\n" +
+            "  \"tags\": [],\n" +
+            "  \"edata\": {\n" +
+            "    \"type\": \"word\",\n" +
+            "    \"mode\": \"edit\",\n" +
+            "    \"pageid\": \"word-detail\",\n" +
+            "    \"summary\": []\n" +
+            "  }\n" +
+            "}";
 
     public static Map<String, Object> OeEvent() {
         return new Gson().fromJson(OE_ASSESS_JSON_STRING, new TypeToken<Map<String, Object>>() {
@@ -195,4 +229,8 @@ public class EventFixture {
         }.getType());
     }
 
+    public static Map<String, Object> EventWithOtherObjectType() {
+        return new Gson().fromJson(EVENT_WITH_WORD_OBJECT, new TypeToken<Map<String, Object>>() {
+        }.getType());
+    }
 }

@@ -141,13 +141,6 @@ public class ObjectDeNormalizationTaskTest {
     }
 
     @Test
-    public void shouldProcessMeEventsAndUpdateContentCache() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(EventFixture.MeEvent());
-
-        verifyEventHasBeenProcessed();
-    }
-
-    @Test
     public void shouldNotProcessEventIfObjectIdIsAbsent() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithoutObjectID());
 
@@ -161,6 +154,17 @@ public class ObjectDeNormalizationTaskTest {
     @Test
     public void shouldNotProcessEventIfObjectIdIsEmpty() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithoutObjectID());
+
+        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+
+        verify(objectStoreMock, times(0)).get(anyString());
+        verify(searchServiceMock, times(0)).searchContent(anyString());
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+    }
+
+    @Test
+    public void shouldSkipIfDeNormalizationIsNotSupported() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithOtherObjectType());
 
         contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
 
