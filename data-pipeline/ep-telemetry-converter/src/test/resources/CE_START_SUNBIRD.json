@@ -2,14 +2,14 @@
   "eid": "CE_START",
   "mid": "CE:993a303bac2fe9ebf0ab515a3051acab",
   "ets": 1510224377591,
-  "channel": "in.ekstep",
+  "channel": "sunbird",
   "ver": "2.1",
-  "pdata": {
-    "id": "in.ekstep",
-    "pid": "somehting"
-  },
   "cdata": [],
   "uid": "1242",
+  "pdata": {
+    "id": "sunbird",
+    "ver": "1.0"
+  },
   "context": {
     "sid": "kck544tkdms53ivd5pcephtcd1",
     "content_id": "do_31226502331176550424574"

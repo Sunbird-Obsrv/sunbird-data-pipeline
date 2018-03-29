@@ -38,7 +38,7 @@ public class ContextTest {
         Context context = new Context(oeStart);
         PData pdata = context.getpData();
         assertEquals(oeStart.mustReadValue("pdata.id"), pdata.getId());
-        assertEquals(oeStart.mustReadValue("pdata.pid"), pdata.getPid());
+        assertEquals("ekstep.genie", pdata.getPid());
         assertEquals(oeStart.mustReadValue("pdata.ver"), pdata.getVer());
     }
 

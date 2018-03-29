@@ -39,7 +39,7 @@ public class TelemetryV3ConverterTest {
 
         PData pdata = context.getpData();
         assertEquals("in.ekstep", pdata.getId());
-        assertEquals("test", pdata.getPid());
+        assertEquals("ekstep.genie", pdata.getPid());
         assertEquals("1.0", pdata.getVer());
     }
 
@@ -74,12 +74,41 @@ public class TelemetryV3ConverterTest {
         assertEquals(0, start.getEdata().get("duration"));
         assertEquals("editor", start.getEdata().get("type"));
         assertEquals("", start.getEdata().get("pageid"));
+        assertEquals("ekstep_portal", start.getContext().getpData().getPid());
         assert (start.getEdata().containsKey("uaspec"));
 
         assert (impression.getEdata().containsKey("visits"));
         assertEquals("", impression.getEdata().get("subtype"));
         assertEquals("edit", impression.getEdata().get("type"));
         assertEquals("contenteditor", impression.getEdata().get("pageid"));
+        assertEquals("ekstep_portal", impression.getContext().getpData().getPid());
+    }
+
+    @Test
+    public void convertCE_START_SUNBIRD() throws Exception {
+        Map<String, Object> oeStart = EventFixture.getEvent("CE_START_SUNBIRD");
+        TelemetryV3Converter converter = new TelemetryV3Converter(oeStart);
+        TelemetryV3[] v3Events = converter.convert();
+
+        assertEquals(2, v3Events.length);
+
+        TelemetryV3 start = Arrays.stream(v3Events).filter(e -> "START".equals(e.getEid())).findFirst().get();
+        TelemetryV3 impression = Arrays.stream(v3Events).filter(e -> "IMPRESSION".equals(e.getEid())).findFirst().get();
+
+        assertNotEquals(start.getMid(), impression.getMid());
+
+        assertEquals("", start.getEdata().get("mode"));
+        assertEquals(0, start.getEdata().get("duration"));
+        assertEquals("editor", start.getEdata().get("type"));
+        assertEquals("", start.getEdata().get("pageid"));
+        assertEquals("sunbird-portal", start.getContext().getpData().getPid());
+        assert (start.getEdata().containsKey("uaspec"));
+
+        assert (impression.getEdata().containsKey("visits"));
+        assertEquals("", impression.getEdata().get("subtype"));
+        assertEquals("edit", impression.getEdata().get("type"));
+        assertEquals("contenteditor", impression.getEdata().get("pageid"));
+        assertEquals("sunbird-portal", impression.getContext().getpData().getPid());
     }
 
     @Test
@@ -726,6 +755,7 @@ public class TelemetryV3ConverterTest {
 
         assertEquals("User", v3[0].getObject().getType());
         assertEquals("Create", v3[0].getEdata().get("state"));
+        assertEquals("ekstep.genie", v3[0].getContext().getpData().getPid());
     }
 
     @Test
@@ -738,11 +768,15 @@ public class TelemetryV3ConverterTest {
         assertEquals("SHARE", share.getEid());
         assertEquals("in.tnpilot", share.getContext().getChannel());
 
+        assertEquals("ekstep.genie", share.getContext().getpData().getPid());
+
         Map<String, Object> eData = share.getEdata();
         assertEquals("In", eData.get("dir"));
         
         List<Map<String, Object>> items = (List<Map<String, Object>>) eData.get("items");
         List<Map<String, Object>> params = (List<Map<String, Object>>) items.get(0).get("params");
+
+
         assertEquals(1, params.size());
     }
     
@@ -753,7 +787,8 @@ public class TelemetryV3ConverterTest {
         TelemetryV3[] v3 = converter.convert();
 
         TelemetryV3 share = v3[0];
-        
+        assertEquals("tnpilot", share.getContext().getpData().getPid());
+
         Map<String, Object> eData = share.getEdata();
         
         List<Map<String, Object>> items = (List<Map<String, Object>>) eData.get("items");
@@ -808,7 +843,7 @@ public class TelemetryV3ConverterTest {
         TelemetryV3 event = events[0];
         String pid = event.getContext().getpData().getPid();
         String id = event.getContext().getpData().getId();
-        assertEquals(pid, "genieservice.android");
+        assertEquals(pid, null);
         assertEquals(id, "genie");
     }
 }
