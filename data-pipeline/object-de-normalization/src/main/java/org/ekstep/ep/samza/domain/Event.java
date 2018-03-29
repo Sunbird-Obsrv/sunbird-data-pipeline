@@ -165,4 +165,9 @@ public class Event {
         String objectType = getObjectType();
         return (objectType.equals("content") || objectType.equals("item"));
     }
+
+    public boolean isSummaryEvent() {
+        NullableValue<String> eid = telemetry.read("eid");
+        return (!eid.isNull() && eid.value().startsWith("ME_"));
+    }
 }

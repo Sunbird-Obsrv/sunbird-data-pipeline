@@ -141,6 +141,13 @@ public class ObjectDeNormalizationTaskTest {
     }
 
     @Test
+    public void shouldProcessMeEventsAndUpdateContentCache() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.MeEvent());
+
+        verifyEventHasBeenProcessed();
+    }
+
+    @Test
     public void shouldNotProcessEventIfObjectIdIsAbsent() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithoutObjectID());
 
