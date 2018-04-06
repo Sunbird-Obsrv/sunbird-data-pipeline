@@ -34,13 +34,14 @@ public class ObjectDeNormalizationService {
             if (event.objectFieldsPresent() && event.canDeNormalize()) {
                 LOGGER.info(event.id(), "DENORMALIZING USING DEFINED STRATEGIES");
                 LOGGER.info(event.getObjectID(), "FOUND OBJECT ID");
+                LOGGER.info(event.getObjectType(), "FOUND OBJECT TYPE");
                 Strategy strategy = (Strategy) strategies.get(event.getObjectType());
                 if (strategy != null) {
                     strategy.execute(event);
                     sink.toSuccessTopic(event);
                 }
             } else if (event.isSummaryEvent()){
-                LOGGER.info(event.id(), "DENORMALIZING USING DEFINED STRATEGIES");
+                LOGGER.info(event.id(), "DENORMALIZING SUMMARY EVENT");
                 LOGGER.info(event.getObjectID(), "FOUND OBJECT ID");
                 Strategy strategy = (Strategy) strategies.get("content");
                 if (strategy != null) {

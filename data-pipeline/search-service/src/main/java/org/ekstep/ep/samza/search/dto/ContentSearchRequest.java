@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-public class SearchRequest {
+public class ContentSearchRequest {
 
     public static final String REQUEST_ID = "ekstep.composite-searchContent.searchContent";
     public static final String VERSION = "1.0";
     private final String identifier;
 
-    public SearchRequest(String identifier) {
+    public ContentSearchRequest(String identifier) {
         this.identifier = identifier;
     }
 
@@ -32,6 +32,7 @@ public class SearchRequest {
         ArrayList<String> status = new ArrayList<String>();
         identifiers.add(identifier);
         filters.put("identifier", identifiers);
+        filters.put("objectType","Content");
         filters.put("status", status);
         request.put("filters", filters);
         return request;

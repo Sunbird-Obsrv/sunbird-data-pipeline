@@ -5,9 +5,10 @@ import okhttp3.*;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.search.domain.Content;
 import org.ekstep.ep.samza.search.domain.Item;
-import org.ekstep.ep.samza.search.dto.ItemSearchResponse;
-import org.ekstep.ep.samza.search.dto.SearchRequest;
+import org.ekstep.ep.samza.search.dto.ContentSearchRequest;
 import org.ekstep.ep.samza.search.dto.ContentSearchResponse;
+import org.ekstep.ep.samza.search.dto.ItemSearchRequest;
+import org.ekstep.ep.samza.search.dto.ItemSearchResponse;
 
 import java.io.IOException;
 
@@ -24,7 +25,7 @@ public class SearchServiceClient implements SearchService {
 
     @Override
     public Content searchContent(String contentId) throws IOException {
-        String body = new Gson().toJson(new SearchRequest(contentId).toMap());
+        String body = new Gson().toJson(new ContentSearchRequest(contentId).toMap());
         Request request = new Request.Builder()
                 .url(endpoint)
                 .post(RequestBody.create(JSON_MEDIA_TYPE, body))
@@ -43,7 +44,7 @@ public class SearchServiceClient implements SearchService {
 
     @Override
     public Item searchItem(String itemId) throws IOException {
-        String body = new Gson().toJson(new SearchRequest(itemId).toMap());
+        String body = new Gson().toJson(new ItemSearchRequest(itemId).toMap());
         Request request = new Request.Builder()
                 .url(endpoint)
                 .post(RequestBody.create(JSON_MEDIA_TYPE, body))
