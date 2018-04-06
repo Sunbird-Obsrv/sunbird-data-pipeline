@@ -87,11 +87,11 @@ public class ObjectDeNormalizationTaskTest {
         CacheEntry contentCache = new CacheEntry(ContentFixture.getContent(), new Date().getTime());
         String contentCacheJson = new Gson().toJson(contentCache, CacheEntry.class);
 
-        stub(objectStoreMock.get(ContentFixture.getContentID())).toReturn(contentCacheJson);
+        stub(objectStoreMock.get(ContentFixture.getContentCacheKey())).toReturn(contentCacheJson);
 
         contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
 
-        verify(objectStoreMock, times(1)).get(ContentFixture.getContentID());
+        verify(objectStoreMock, times(1)).get(ContentFixture.getContentCacheKey());
         verify(searchServiceMock, times(0)).searchContent(ContentFixture.getContentID());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
@@ -105,7 +105,7 @@ public class ObjectDeNormalizationTaskTest {
 
         contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
 
-        verify(objectStoreMock, times(2)).get(ContentFixture.getContentID());
+        verify(objectStoreMock, times(2)).get(ContentFixture.getContentCacheKey());
         verify(searchServiceMock, times(1)).searchContent(ContentFixture.getContentID());
         verify(objectStoreMock, times(1)).put(anyString(), anyString());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
@@ -120,13 +120,13 @@ public class ObjectDeNormalizationTaskTest {
         CacheEntry contentCacheNew = new CacheEntry(ContentFixture.getContent(), new Date().getTime() + 100000);
         String contentCacheNewJson = new Gson().toJson(contentCacheNew, CacheEntry.class);
 
-        when(objectStoreMock.get(ContentFixture.getContentID())).thenReturn(contentCacheExpiredJson,contentCacheNewJson);
+        when(objectStoreMock.get(ContentFixture.getContentCacheKey())).thenReturn(contentCacheExpiredJson,contentCacheNewJson);
         stub(envelopeMock.getMessage()).toReturn(EventFixture.OeEvent());
         stub(searchServiceMock.searchContent(ContentFixture.getContentID())).toReturn(ContentFixture.getContent());
 
         contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
 
-        verify(objectStoreMock, times(2)).get(ContentFixture.getContentID());
+        verify(objectStoreMock, times(2)).get(ContentFixture.getContentCacheKey());
         verify(searchServiceMock, times(1)).searchContent(ContentFixture.getContentID());
         verify(objectStoreMock, times(1)).put(anyString(), anyString());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
@@ -134,7 +134,7 @@ public class ObjectDeNormalizationTaskTest {
 
     @Test
     public void shouldProcessAllOeEventsAndUpdateContentData() throws Exception {
-        when(objectStoreMock.get(ContentFixture.getContentID())).thenReturn(null, getContentCacheJson());
+        when(objectStoreMock.get(ContentFixture.getContentCacheKey())).thenReturn(null, getContentCacheJson());
         stub(envelopeMock.getMessage()).toReturn(EventFixture.OeEvent());
 
         verifyEventHasBeenProcessed();
@@ -206,7 +206,7 @@ public class ObjectDeNormalizationTaskTest {
         CacheEntry expiredContent = new CacheEntry(ContentFixture.getContent(), new Date().getTime() - 100000);
         CacheEntry validContent = new CacheEntry(ContentFixture.getContent(), new Date().getTime() + 100000);
 
-        when(objectStoreMock.get(ContentFixture.getContentID()))
+        when(objectStoreMock.get(ContentFixture.getContentCacheKey()))
                 .thenReturn(
                         new Gson().toJson(expiredContent, CacheEntry.class),
                         new Gson().toJson(validContent, CacheEntry.class));

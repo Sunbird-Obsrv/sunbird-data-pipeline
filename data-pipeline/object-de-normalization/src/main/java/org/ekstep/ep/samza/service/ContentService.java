@@ -20,25 +20,27 @@ public class ContentService {
     }
 
     public Content getContent(String id, String contentId) throws IOException {
-        Content cachedContent = cacheService.get(contentId, cacheTTL);
+        String key = contentId + "_content";
+        Content cachedContent = cacheService.get(key, cacheTTL);
         if (cachedContent != null) {
-            LOGGER.info(id, "CONTENT CACHED", contentId);
+            LOGGER.info(id, "CONTENT CACHED", key);
             cachedContent.setCacheHit(true);
             return cachedContent;
         }
 
-        LOGGER.info(id, "CONTENT NOT CACHED", contentId);
+        LOGGER.info(id, "CONTENT NOT CACHED", key);
         loadContentAndPopulateCache(id, contentId);
-        return cacheService.get(contentId, cacheTTL);
+        return cacheService.get(key, cacheTTL);
     }
 
     private void loadContentAndPopulateCache(String id, String contentId) throws IOException {
         LOGGER.info(id, "CALLING SEARCH API", contentId);
         Content content = searchService.searchContent(contentId);
         if (content != null) {
-            LOGGER.info(id, "WRITING TO CACHE", contentId);
+            String key = contentId + "_content";
+            LOGGER.info(id, "WRITING TO CACHE", key);
             content.setCacheHit(false);
-            cacheService.put(contentId, content);
+            cacheService.put(key, content);
         }
     }
 }

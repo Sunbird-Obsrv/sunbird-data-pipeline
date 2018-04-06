@@ -20,25 +20,27 @@ public class ItemService {
     }
 
     public Item getItem(String id, String itemId) throws IOException {
-        Item cachedItem = cacheService.get(itemId, cacheTTL);
+        String key = itemId + "_item";
+        Item cachedItem = cacheService.get(key, cacheTTL);
         if (cachedItem != null) {
-            LOGGER.info(id, "ITEM CACHED", itemId);
+            LOGGER.info(id, "ITEM CACHED", key);
             cachedItem.setCacheHit(true);
             return cachedItem;
         }
 
         LOGGER.info(id, "ITEM NOT CACHED", itemId);
         loadItemAndPopulateCache(id, itemId);
-        return cacheService.get(itemId, cacheTTL);
+        return cacheService.get(key, cacheTTL);
     }
 
     private void loadItemAndPopulateCache(String id, String itemId) throws IOException {
         LOGGER.info(id, "CALLING SEARCH API", itemId);
         Item item = searchService.searchItem(itemId);
         if (item != null) {
-            LOGGER.info(id, "WRITING TO CACHE", itemId);
+            String key = itemId + "_item";
+            LOGGER.info(id, "WRITING TO CACHE", key);
             item.setCacheHit(false);
-            cacheService.put(itemId, item);
+            cacheService.put(key, item);
         }
     }
 }

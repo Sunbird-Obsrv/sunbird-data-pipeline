@@ -38,7 +38,7 @@ public class ContentServiceTest {
 
     @Test
     public void shouldProcessEventsFromCacheIfPresent() throws IOException {
-        stub(contentStoreMock.get(getContentID())).toReturn(getContentCacheJson());
+        stub(contentStoreMock.get(getContentCacheKey())).toReturn(getContentCacheJson());
 
         ContentService objectService = new ContentService(searchServiceMock, cacheService, cacheTTL);
         Content content = objectService.getContent("someid", getContentID());
@@ -61,13 +61,13 @@ public class ContentServiceTest {
     @Test
     public void shouldCallSearchServiceIfContentIsNotPresentInCache() throws IOException {
         Content content = ContentFixture.getContent();
-        when(contentStoreMock.get(getContentID())).thenReturn(null, getContentCacheJson());
+        when(contentStoreMock.get(getContentCacheKey())).thenReturn(null, getContentCacheJson());
         stub(searchServiceMock.searchContent(getContentID())).toReturn(content);
 
         ContentService objectService = new ContentService(searchServiceMock, cacheService, cacheTTL);
         objectService.getContent("someid", getContentID());
 
-        verify(contentStoreMock, times(2)).get(getContentID());
+        verify(contentStoreMock, times(2)).get(getContentCacheKey());
         verify(contentStoreMock, times(1)).put(anyString(), anyString());
         verify(searchServiceMock, times(1)).searchContent(getContentID());
         verify(metricsMock).incCacheMissCounter();
@@ -81,7 +81,7 @@ public class ContentServiceTest {
         CacheEntry expiredContent = new CacheEntry(ContentFixture.getContent(), new Date().getTime() - 10000);
         CacheEntry validContent = new CacheEntry(ContentFixture.getContent(), new Date().getTime() + 10000);
 
-        when(contentStoreMock.get(getContentID()))
+        when(contentStoreMock.get(getContentCacheKey()))
                 .thenReturn(
                         new Gson().toJson(expiredContent, CacheEntry.class),
                         new Gson().toJson(validContent, CacheEntry.class));
@@ -90,7 +90,7 @@ public class ContentServiceTest {
         ContentService objectService = new ContentService(searchServiceMock, cacheService, cacheTTL);
         Content content = objectService.getContent("someid", getContentID());
 
-        verify(contentStoreMock, times(2)).get(getContentID());
+        verify(contentStoreMock, times(2)).get(getContentCacheKey());
         verify(contentStoreMock, times(1)).put(anyString(), anyString());
         verify(searchServiceMock, times(1)).searchContent(getContentID());
 
@@ -108,7 +108,7 @@ public class ContentServiceTest {
         CacheEntry contentCache = new CacheEntry(ContentFixture.getContent(), new Date().getTime() + 10000);
         String contentCacheJson = new Gson().toJson(contentCache, CacheEntry.class);
 
-        stub(contentStoreMock.get(getContentID())).toReturn(contentCacheJson);
+        stub(contentStoreMock.get(getContentCacheKey())).toReturn(contentCacheJson);
         stub(searchServiceMock.searchContent(getContentID())).toReturn(ContentFixture.getContent());
         ContentService objectService = new ContentService(searchServiceMock, cacheService, cacheTTL);
         Content content = objectService.getContent("someid", getContentID());
@@ -126,6 +126,12 @@ public class ContentServiceTest {
     private String getContentID() {
         return ContentFixture.getContentID();
     }
+
+    private String getContentCacheKey() {
+        return ContentFixture.getContentID()+"_content";
+    }
+
+
 
     private String getContentCacheJson() {
         Content content = ContentFixture.getContent();

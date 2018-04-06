@@ -62,4 +62,8 @@ public class ContentFixture {
         return "do_30076072";
     }
 
+    public static String getContentCacheKey() {
+        return "do_30076072_content";
+    }
+
 }
