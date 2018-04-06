@@ -29,6 +29,7 @@ import java.util.Map;
 public class ObjectDeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
     public static final String CONTENT = "content";
     public static final String ITEM = "item";
+    public static final String ASSESSMENT_ITEM = "assessmentitem";
     static Logger LOGGER = new Logger(ObjectDeNormalizationTask.class);
     private ObjectDeNormalizationConfig config;
     private JobMetrics metrics;
@@ -79,6 +80,7 @@ public class ObjectDeNormalizationTask implements StreamTask, InitableTask, Wind
 
         this.strategies.put(CONTENT,new ContentDeNormStrategy(this.contentService));
         this.strategies.put(ITEM,new ItemDeNormStrategy(this.itemService));
+        this.strategies.put(ASSESSMENT_ITEM,new ItemDeNormStrategy(this.itemService));
 
         service = new ObjectDeNormalizationService(strategies, this.config);
     }
