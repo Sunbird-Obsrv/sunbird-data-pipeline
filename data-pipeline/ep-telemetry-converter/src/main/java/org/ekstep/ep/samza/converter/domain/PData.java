@@ -5,9 +5,9 @@ import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.reader.TelemetryReaderException;
 
 public class PData {
-    private String MOBILE_PID = "ekstep.genie";
-    private String PORTAL_PID = "ekstep_portal";
-    private String SUNBIRD_PID = "sunbird-portal";
+    transient private final String MOBILE_PID = "ekstep.genie";
+    transient private final String PORTAL_PID = "ekstep_portal";
+    transient private final String SUNBIRD_PID = "sunbird-portal";
 
     private String id = "genie";
     private String pid = "genieservice.android";
