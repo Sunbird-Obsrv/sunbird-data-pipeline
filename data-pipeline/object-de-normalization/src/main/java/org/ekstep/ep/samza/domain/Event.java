@@ -163,7 +163,7 @@ public class Event {
 
     public boolean canDeNormalize() {
         String objectType = getObjectType();
-        return (objectType.equals("content") || objectType.equals("item"));
+        return (objectType.equals("content") || objectType.equals("item") || objectType.equals("assessmentitem"));
     }
 
     public boolean isSummaryEvent() {
