@@ -73,9 +73,10 @@ public class ObjectDeNormalizationTask implements StreamTask, InitableTask, Wind
         this.contentService = new ContentService(searchServiceClient, contentCacheService, this.config.cacheTTL());
 
          CacheService<String, Item> itemCacheService = contentStore != null
-                ? new CacheService<String, Item>(contentStore, new TypeToken<CacheEntry<Content>>() {
+                ? new CacheService<String, Item>(contentStore, new TypeToken<CacheEntry<Item>>() {
          }.getType(), metrics)
                 : new CacheService<String, Item>(context, "object-store", CacheEntry.class, metrics);
+
          this.itemService = new ItemService(searchServiceClient, itemCacheService, this.config.cacheTTL());
 
         this.strategies.put(CONTENT,new ContentDeNormStrategy(this.contentService));
