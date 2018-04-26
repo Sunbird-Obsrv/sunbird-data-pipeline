@@ -17,8 +17,8 @@
     <dependencies>
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
-            <artifactId>rest</artifactId>
-            <version>5.0.0</version>
+            <artifactId>elasticsearch-rest-client</artifactId>
+            <version>6.2.3</version>
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem</groupId>
