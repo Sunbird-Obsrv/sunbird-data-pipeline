@@ -67,7 +67,7 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
         	}
             if ("3.0".equals(map.get("ver"))) {
                 // It is already a V3 events. Skipping and let it pass through
-            	toSuccessTopic(collector, map.toString());
+            	toSuccessTopic(collector, new Gson().toJson(map));
             } else {
                 TelemetryV3Converter converter = new TelemetryV3Converter(map);
                 TelemetryV3[] v3Events = converter.convert();
