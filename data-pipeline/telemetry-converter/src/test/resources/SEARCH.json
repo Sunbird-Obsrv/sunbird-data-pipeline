@@ -1,0 +1,41 @@
+{
+    "eid": "SEARCH",
+    "ets": 1.528183691041E12,
+    "ver": "3.0",
+    "mid": "LP.1528183691041.632f8caa-df6c-4557-9792-b3e3d9f66b81",
+    "actor": {
+        "id": "f6878ac4-e9c9-4bc4-80be-298c5a73b447",
+        "type": "System"
+    },
+    "context": {
+        "channel": "in.ekstep",
+        "pdata": {
+            "id": "dev.ekstep.learning.platform",
+            "pid": "search-service",
+            "ver": "1.0"
+        },
+        "env": "search"
+    },
+    "edata": {
+        "size": 55751.0,
+        "query": "",
+        "correlationid": "54632ba1-b314-42e3-9fcb-e3b363bd6f51",
+        "filters": {
+            
+        },
+        "sort": {
+            
+        },
+        "type": "all",
+        "topn": [
+            {
+                "identifier": "domain_14443"
+            }
+        ]
+    },
+    "flags": {
+        "tv_processed": true,
+        "dd_processed": true
+    },
+    "type": "events"
+}

@@ -223,11 +223,26 @@ public class TelemetryConverterTaskTest {
         assertEquals("mid is not available in GE_START", flags.get("error"));
         assert (flags.containsKey("stack"));
     }
+    
+    @Test
+    public void addTimestampIfItIsAbsent() throws Exception {
+    	String v2Event = EventFixture.getEventAsString("SEARCH");
+        stub(envelope.getMessage()).toReturn(v2Event);
+        TelemetryConverterTask task = new TelemetryConverterTask(config, context);
+        task.process(envelope, collector, coordinator);
+
+        OutgoingMessageEnvelope envelope = ((TestMessageCollector) collector).outgoingEnvelope;
+
+        Map<String, Object> event = (Map<String, Object>) new Gson().fromJson((String) envelope.getMessage(), Map.class);
+        assert (event.containsKey("@timestamp"));
+        String timestamp = (String) event.get("@timestamp");
+        assertEquals("2018-06-05T12:58:11.041+05:30", timestamp);
+    }
 
     private String corruptedGE_START() throws IOException, URISyntaxException {
         Map<String, Object> geStart = (Map<String, Object>) new Gson().fromJson(EventFixture.getEventAsString("GE_START"), Map.class);
         geStart.remove("mid"); // mid is a mandatory value and removing it should fail the conversion
         return new Gson().toJson(geStart);
     }
-
+    
 }
