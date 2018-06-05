@@ -20,6 +20,7 @@
 package org.ekstep.ep.samza.task;
 
 import com.google.gson.Gson;
+
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
@@ -29,6 +30,7 @@ import org.ekstep.ep.samza.converter.converters.TelemetryV3Converter;
 import org.ekstep.ep.samza.converter.domain.TelemetryV3;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.metrics.JobMetrics;
+import org.joda.time.DateTime;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,9 +61,13 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
         String message = (String) envelope.getMessage();
         Map<String, Object> map = (Map<String, Object>) new Gson().fromJson(message, Map.class);
         try {
+        	if(!map.containsKey("@timestamp")){
+        		String timestamp = new DateTime((long)map.get("ets")).toString();
+        		map.put("@timestamp", timestamp);
+        	}
             if ("3.0".equals(map.get("ver"))) {
                 // It is already a V3 events. Skipping and let it pass through
-                toSuccessTopic(collector, message);
+            	toSuccessTopic(collector, map.toString());
             } else {
                 TelemetryV3Converter converter = new TelemetryV3Converter(map);
                 TelemetryV3[] v3Events = converter.convert();
