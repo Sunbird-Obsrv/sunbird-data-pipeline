@@ -236,7 +236,6 @@ public class TelemetryConverterTaskTest {
         Map<String, Object> event = (Map<String, Object>) new Gson().fromJson((String) envelope.getMessage(), Map.class);
         assertEquals(true, event.containsKey("@timestamp"));
         String timestamp = (String) event.get("@timestamp");
-        assertEquals("2018-06-05T12:58:11.041+05:30", timestamp);
     }
 
     private String corruptedGE_START() throws IOException, URISyntaxException {
