@@ -31,11 +31,13 @@ import org.ekstep.ep.samza.converter.domain.TelemetryV3;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.metrics.JobMetrics;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class TelemetryConverterTask implements StreamTask, InitableTask, WindowableTask {
 
@@ -64,10 +66,8 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
         Map<String, Object> map = (Map<String, Object>) new Gson().fromJson(message, Map.class);
         try {
         	if(!map.containsKey("@timestamp")){
-        		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         		long ets = ((Number)map.get("ets")).longValue();
-        		simpleDateFormat.format(ets);
-        		String timestamp = new DateTime(ets).toString();
+        		String timestamp = new DateTime(ets).withZone(DateTimeZone.UTC).toString();
         		map.put("@timestamp", timestamp);
         	}
             if ("3.0".equals(map.get("ver"))) {
