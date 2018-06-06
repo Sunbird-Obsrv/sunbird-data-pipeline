@@ -62,7 +62,8 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
         Map<String, Object> map = (Map<String, Object>) new Gson().fromJson(message, Map.class);
         try {
         	if(!map.containsKey("@timestamp")){
-        		String timestamp = new DateTime((long)map.get("ets")).toString();
+        		long ets = ((Number)map.get("ets")).longValue();
+        		String timestamp = new DateTime(ets).toString();
         		map.put("@timestamp", timestamp);
         	}
             if ("3.0".equals(map.get("ver"))) {
