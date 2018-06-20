@@ -1,0 +1,13 @@
+{
+  "id": "ekstep.telemetry",
+  "ver": "2.0",
+  "ets": 1455031059061,
+  "params": {
+    "did": "e97987fa-c056-411d-hfkf-c23496093ujd",
+    "key": "57c176ca-1977-4785-af9e-d59d37214b0b",
+    "msgid": "7x87bc51-afbg-4344-88bc-a2a90df5fd76"
+  },
+  "events": [
+    {"cdata":[],"channel":"in.ekstep","did":"baa87c960c9559eb44d99c6b4509aabdf6988d71","edata":{"eks":{"extype":"","id":"","pos":[],"stageid":"Genie-TelemetrySync","subtype":"ManualSync-Initiated","tid":"","type":"TOUCH","uri":"","values":[]}},"eid":"GE_INTERACT","etags":{"app":[]},"ets":1.511969620559E12,"gdata":{"id":"org.ekstep.genieservices","ver":"6.5.2306"},"mid":"bb9560cb-acf9-4426-b47c-4114589eaee5","pdata":{"id":"genie","ver":"6.5.2306"},"sid":"e3a35092-6069-41ca-99cd-e46a167de4aa","ts":"2017-11-29T15:33:40.559+0000","uid":"e61014dd-2a46-4e15-9bbd-8e57dbafb308","ver":"2.1","@version":"1","uuid":"30413a88-903a-4942-9f49-06b280d996db54","key":"e61014dd-2a46-4e15-9bbd-8e57dbafb308"}
+    ]
+}
