@@ -93,34 +93,4 @@ public class TelemetryExtractorTaskTest {
         assertEquals(true, output.containsKey("@timestamp"));
         assertEquals("baa87c960c9559eb44d99c6b4509aabdf6988d71", ((String)output.get("did")));
     }
-
-
-    @Test
-    public void shouldExtractUnZippedRawData() throws Exception {
-        // If metadata are already there in the event, converters should not overwrite. Instead it should merge
-        String eventString = EventFixture.getEventAsString("event");
-        byte[] data = eventString.getBytes(StandardCharsets.UTF_8);
-        String encodedString = Base64.getEncoder().encodeToString(data);
-        Map event = new HashMap();
-        event.put("Timestamp", new DateTime(System.currentTimeMillis()).toString());
-        event.put("DataType", "json");
-        event.put("RawData", encodedString);
-
-        byte[] eventBytes = new Gson().toJson(event).getBytes();
-        byte[] compresedEvent = ExtractorUtils.compress(eventBytes);
-
-        stub(envelope.getMessage()).toReturn(compresedEvent);
-        TelemetryExtractorTask task = new TelemetryExtractorTask(config, context);
-        task.process(envelope, collector, coordinator);
-
-        OutgoingMessageEnvelope envelope = ((TestMessageCollector) collector).outgoingEnvelope;
-        SystemStream stream = envelope.getSystemStream();
-        assertEquals("kafka", stream.getSystem());
-        assertEquals("telemetry.extracted", stream.getStream());
-
-        Map<String, Object> output = (Map<String, Object>) envelope.getMessage();
-        assertEquals(true, output.containsKey("eid"));
-        assertEquals(true, output.containsKey("@timestamp"));
-        assertEquals("baa87c960c9559eb44d99c6b4509aabdf6988d71", ((String)output.get("did")));
-    }
 }

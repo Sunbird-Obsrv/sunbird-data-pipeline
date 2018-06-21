@@ -161,7 +161,7 @@ public class TelemetryExtractorTask implements StreamTask, InitableTask, Windowa
             String rawDataStr = new String(decompresedRawData);
             return rawDataStr;
         }catch (Exception e){
-            e.printStackTrace();
+            e.printStackTrace(); 
             return null;
             //TODO add log statement
         }
