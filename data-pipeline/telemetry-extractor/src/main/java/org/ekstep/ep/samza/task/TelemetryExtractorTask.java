@@ -60,13 +60,10 @@ public class TelemetryExtractorTask implements StreamTask, InitableTask, Windowa
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator taskCoordinator) throws Exception {
         try {
-            byte[] message = (byte[]) envelope.getMessage();
-            byte[] decompressedData = ExtractorUtils.decompress(message);
-            String jsonString = new String(decompressedData);
-            Map map = (Map)new Gson().fromJson(jsonString, Map.class);
-            String rawDataStr = getRawDataStr(map);
+            Map<String,Object> message = (Map<String,Object>) envelope.getMessage();
+            String rawDataStr = getRawDataStr(message);
             if(rawDataStr!=null){
-                String ts = (String) map.get("Timestamp");
+                String ts = (String) message.get("Timestamp");
                 processEvents(rawDataStr, ts, collector);
             }
         } catch (Exception e){
@@ -161,7 +158,7 @@ public class TelemetryExtractorTask implements StreamTask, InitableTask, Windowa
             String rawDataStr = new String(decompresedRawData);
             return rawDataStr;
         }catch (Exception e){
-            e.printStackTrace(); 
+            e.printStackTrace();
             return null;
             //TODO add log statement
         }

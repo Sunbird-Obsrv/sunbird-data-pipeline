@@ -76,10 +76,8 @@ public class TelemetryExtractorTaskTest {
         event.put("DataType", "gzip");
         event.put("RawData", encodedString);
 
-        byte[] eventBytes = new Gson().toJson(event).getBytes();
-        byte[] compresedEvent = ExtractorUtils.compress(eventBytes);
 
-        stub(envelope.getMessage()).toReturn(compresedEvent);
+        stub(envelope.getMessage()).toReturn(event);
         TelemetryExtractorTask task = new TelemetryExtractorTask(config, context);
         task.process(envelope, collector, coordinator);
 
