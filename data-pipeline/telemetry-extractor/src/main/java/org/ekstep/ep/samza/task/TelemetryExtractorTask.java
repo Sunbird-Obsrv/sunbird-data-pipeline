@@ -155,18 +155,11 @@ public class TelemetryExtractorTask implements StreamTask, InitableTask, Windowa
     }
     private String getRawDataStr(Map map) {
         try {
-            String datatype = (String) map.get("DataType");
             String encodedString = (String) map.get("RawData");
             byte[] decoded = Base64.getDecoder().decode(encodedString);
-
-            if(StringUtils.equals("gzip", datatype)) {
-                byte[] decompresedRawData = ExtractorUtils.decompress(decoded);
-                String rawDataStr = new String(decompresedRawData);
-                return rawDataStr;
-            }else {
-                String rawDataStr = new String(decoded, StandardCharsets.UTF_8);
-                return rawDataStr;
-            }
+            byte[] decompresedRawData = ExtractorUtils.decompress(decoded);
+            String rawDataStr = new String(decompresedRawData);
+            return rawDataStr;
         }catch (Exception e){
             e.printStackTrace();
             return null;
