@@ -69,7 +69,7 @@ public class TelemetryExtractorTask implements StreamTask, InitableTask, Windowa
                 String ts = (String) map.get("Timestamp");
                 processEvents(rawDataStr, ts, collector);
             }
-        }catch (Exception e){
+        } catch (Exception e){
             e.printStackTrace();
             //TODO add log statement
         }
