@@ -26,11 +26,13 @@ public class DeDuplicationService {
         try {
             event = source.getEvent();
             String checksum = event.getChecksum();
+            long startTime = System.nanoTime();
 
             if (checksum == null) {
                 LOGGER.info(event.id(), "EVENT WITHOUT CHECKSUM & MID, PASSING THROUGH : {}", event);
                 event.markSkipped();
                 sink.toSuccessTopic(event);
+                LOGGER.info(event.id(), String.format("{\"checksum_check_ms\": %d}", (System.nanoTime() - startTime)/1000000));
                 return;
             }
 
@@ -38,6 +40,7 @@ public class DeDuplicationService {
                 LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
                 event.markDuplicate();
                 sink.toDuplicateTopic(event);
+                LOGGER.info(event.id(), String.format("{\"duplicate_check_ms\": %d}", (System.nanoTime() - startTime)/1000000));
                 return;
             }
 
@@ -47,6 +50,8 @@ public class DeDuplicationService {
             event.updateDefaults(config);
             event.markSuccess();
             sink.toSuccessTopic(event);
+            LOGGER.info(event.id(), String.format("{\"insert_to_store_ms\": %d}", (System.nanoTime() - startTime)/1000000));
+
         } catch(JsonSyntaxException e){
             LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
             sink.toMalformedEventsTopic(source.getMessage());
