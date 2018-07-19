@@ -138,7 +138,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
 
             event.updateDefaults(configuration);
             event.setFlag("ldata_processed", true);
-            sendToSuccessTopic(event.getMap(), event.getMid(), collector);
+            sendToSuccessTopic(event.getMap(), event.getObjectId(), collector);
         } catch (Exception e) {
             LOGGER.error(null, "ERROR WHEN ROUTING EVENT: {}" + event, e);
             sendToErrorTopic(event.getMap(), collector);

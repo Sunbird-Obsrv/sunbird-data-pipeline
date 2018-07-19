@@ -90,6 +90,14 @@ public class Event implements Mappable {
         return mid.value();
     }
 
+    public String getObjectId() {
+        NullableValue<String> objectId =
+                new NullableValue<>(String.format("%s_%s", telemetry.read("object.id"),
+                        telemetry.read("object.type").toString().toLowerCase()
+                ));
+        return objectId.value();
+    }
+
     private Double safelyParse(String etsField){
         try {
             NullableValue<Double> time = telemetry.read(etsField);
