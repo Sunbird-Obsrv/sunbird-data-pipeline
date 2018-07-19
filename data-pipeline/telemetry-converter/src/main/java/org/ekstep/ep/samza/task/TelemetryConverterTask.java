@@ -72,7 +72,7 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
         	}
             if ("3.0".equals(map.get("ver"))) {
                 // It is already a V3 events. Skipping and let it pass through
-            	toSuccessTopic(collector, new Gson().toJson(map));
+            	toSuccessTopic(collector, String.valueOf(map.get("mid")), new Gson().toJson(map));
             } else {
                 TelemetryV3Converter converter = new TelemetryV3Converter(map);
                 TelemetryV3[] v3Events = converter.convert();
@@ -94,8 +94,8 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
         metrics.clear();
     }
 
-    private void toSuccessTopic(MessageCollector collector, String v2Event) {
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), v2Event));
+    private void toSuccessTopic(MessageCollector collector, Object mid, String v2Event) {
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), mid, v2Event));
         metrics.incSkippedCounter();
     }
 
@@ -117,7 +117,7 @@ public class TelemetryConverterTask implements StreamTask, InitableTask, Windowa
         }
 
         String json = new Gson().toJson(event);
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), json));
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), v3.getMid(), json));
         metrics.incSuccessCounter();
     }
 
