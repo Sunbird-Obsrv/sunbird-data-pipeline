@@ -61,9 +61,9 @@ public class ObjectDeNormalizationTask implements StreamTask, InitableTask, Wind
         objectTaxonomy = this.config.objectTaxonomy();
 
         CacheService<String, Content> contentCacheService = contentStore != null
-                ? new CacheService<String, Content>(contentStore, new TypeToken<CacheEntry<Content>>() {
+                ? new CacheService<>(contentStore, new TypeToken<CacheEntry<Content>>() {
         }.getType(), metrics)
-                : new CacheService<String, Content>(context, "object-store", CacheEntry.class, metrics);
+                : new CacheService<>(context, "object-store", CacheEntry.class, metrics);
 
         SearchService searchServiceClient =
                 searchService == null
@@ -73,9 +73,9 @@ public class ObjectDeNormalizationTask implements StreamTask, InitableTask, Wind
         this.contentService = new ContentService(searchServiceClient, contentCacheService, this.config.cacheTTL());
 
          CacheService<String, Item> itemCacheService = contentStore != null
-                ? new CacheService<String, Item>(contentStore, new TypeToken<CacheEntry<Item>>() {
+                ? new CacheService<>(contentStore, new TypeToken<CacheEntry<Item>>() {
          }.getType(), metrics)
-                : new CacheService<String, Item>(context, "object-store", CacheEntry.class, metrics);
+                : new CacheService<>(context, "object-store", CacheEntry.class, metrics);
 
          this.itemService = new ItemService(searchServiceClient, itemCacheService, this.config.cacheTTL());
 

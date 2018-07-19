@@ -23,7 +23,7 @@ public class DeDuplicationSink {
     public void toSuccessTopic(Event event) {
         collector.send(new OutgoingMessageEnvelope(
                 new SystemStream("kafka", config.successTopic()), event.getJson()));
-        metrics.incSuccessCounter();;
+        metrics.incSuccessCounter();
     }
 
     public void toDuplicateTopic(Event event) {

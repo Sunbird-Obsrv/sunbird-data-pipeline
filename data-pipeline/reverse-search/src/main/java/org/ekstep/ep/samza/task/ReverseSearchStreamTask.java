@@ -138,15 +138,15 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
 
             event.updateDefaults(configuration);
             event.setFlag("ldata_processed", true);
-            sendToSuccessTopic(event.getMap(), collector);
+            sendToSuccessTopic(event.getMap(), event.getMid(), collector);
         } catch (Exception e) {
             LOGGER.error(null, "ERROR WHEN ROUTING EVENT: {}" + event, e);
             sendToErrorTopic(event.getMap(), collector);
         }
     }
 
-    private void sendToSuccessTopic(Map<String, Object>  event, MessageCollector collector) {
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", configuration.getSuccessTopic()), event));
+    private void sendToSuccessTopic(Map<String, Object>  event, Object key, MessageCollector collector) {
+        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", configuration.getSuccessTopic()), key, event));
         metrics.incSuccessCounter();
     }
 
