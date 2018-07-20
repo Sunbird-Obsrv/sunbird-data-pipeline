@@ -1,4 +1,4 @@
-package org.ekstep.ep.samza.task.domain;
+package org.ekstep.ep.samza.domain;
 
 
 import org.ekstep.ep.samza.domain.Event;
