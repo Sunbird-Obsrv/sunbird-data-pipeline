@@ -35,7 +35,7 @@ GEM
     rake (10.4.2)
     ruby-kafka (0.3.2)
     ruby-progressbar (1.7.5)
-    rubyzip (1.1.7)
+    rubyzip (~> 1.2.1)
     slop (3.6.0)
     what_methods (1.0.1)
     whenever (0.9.4)
