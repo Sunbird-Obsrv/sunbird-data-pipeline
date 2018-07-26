@@ -19,7 +19,6 @@
 
 package org.ekstep.ep.samza.task;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.samza.config.Config;
@@ -43,130 +42,61 @@ import com.google.gson.Gson;
 
 public class TelemetryConverterTask implements StreamTask, InitableTask, WindowableTask {
 
-    static Logger LOGGER = new Logger(TelemetryConverterTask.class);
-    private TelemetryConverterConfig config;
-    private JobMetrics metrics;
+	static Logger LOGGER = new Logger(TelemetryConverterTask.class);
+	private TelemetryConverterConfig config;
+	private JobMetrics metrics;
 
-    public TelemetryConverterTask(Config config, TaskContext context) {
-        init(config, context);
-    }
+	public TelemetryConverterTask(Config config, TaskContext context) {
+		init(config, context);
+	}
 
-    public TelemetryConverterTask() {
+	public TelemetryConverterTask() {
 
-    }
+	}
 
-    @Override
-    public void init(Config config, TaskContext context) {
-        this.config = new TelemetryConverterConfig(config);
-        metrics = new JobMetrics(context, this.config.jobName());
-    }
+	@Override
+	public void init(Config config, TaskContext context) {
+		this.config = new TelemetryConverterConfig(config);
+		metrics = new JobMetrics(context, this.config.jobName());
+	}
 
-    @Override
-    public void process(IncomingMessageEnvelope envelope, MessageCollector collector,
-                        TaskCoordinator taskCoordinator) throws Exception {
-        String message = (String) envelope.getMessage();
-        Map<String, Object> map = (Map<String, Object>) new Gson().fromJson(message, Map.class);
-        try {
-        	if(!map.containsKey("@timestamp")){
-        		long ets = ((Number)map.get("ets")).longValue();
-        		String timestamp = new DateTime(ets).withZone(DateTimeZone.UTC).toString();
-        		map.put("@timestamp", timestamp);
-        	}
-            if ("3.0".equals(map.get("ver"))) {
-                // It is already a V3 events. Skipping and let it pass through
-            	toSuccessTopic(collector, new Gson().toJson(map));
-            } else {
-                TelemetryV3Converter converter = new TelemetryV3Converter(map);
-                TelemetryV3[] v3Events = converter.convert();
-                for (TelemetryV3 telemetryV3 : v3Events) {
-                    toSuccessTopic(collector, telemetryV3, map);
-                    LOGGER.info(telemetryV3.getEid(), "Converted to V3. EVENT: {}", telemetryV3.toMap());
-                }
-            }
-        } catch (Exception ex) {
-            LOGGER.error("", "Failed to convert event to telemetry v3", ex);
-            toFailedTopic(collector, map, ex);
-        }
-    }
+	
+	@Override
+	public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator taskCoordinator)
+			throws Exception {
 
-    @Override
-    public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-        String mEvent = metrics.collect();
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
-        metrics.clear();
-    }
+		TelemetryConverterSink sink = new TelemetryConverterSink(collector, metrics, config);
+		String message = (String) envelope.getMessage();
+		@SuppressWarnings("unchecked")
+		Map<String, Object> map = (Map<String, Object>) new Gson().fromJson(message, Map.class);
+		try {
+			if (!map.containsKey("@timestamp")) {
+				long ets = ((Number) map.get("ets")).longValue();
+				String timestamp = new DateTime(ets).withZone(DateTimeZone.UTC).toString();
+				map.put("@timestamp", timestamp);
+			}
+			if ("3.0".equals(map.get("ver"))) {
+				// It is already a V3 events. Skipping and let it pass through
+				sink.toSuccessTopic(map.get("mid") != null ? map.get("mid").toString() : null, new Gson().toJson(map));
+			} else {
+				TelemetryV3Converter converter = new TelemetryV3Converter(map);
+				TelemetryV3[] v3Events = converter.convert();
+				for (TelemetryV3 telemetryV3 : v3Events) {
+					sink.toSuccessTopic(telemetryV3, map);
+					LOGGER.info(telemetryV3.getEid(), "Converted to V3. EVENT: {}", telemetryV3.toMap());
+				}
+			}
+		} catch (Exception ex) {
+			LOGGER.error("", "Failed to convert event to telemetry v3", ex);
+			sink.toFailedTopic(map, ex);
+		}
+	}
 
-    private void toSuccessTopic(MessageCollector collector, String v2Event) {
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), v2Event));
-        metrics.incSkippedCounter();
-    }
+	@Override
+	public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
+		String mEvent = metrics.collect();
+		collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
+		metrics.clear();
+	}
 
-    private void toSuccessTopic(MessageCollector collector, TelemetryV3 v3, Map<String, Object> v2) {
-        Map<String, Object> flags = getFlags(v2);
-        flags.put("v2_converted", true);
-
-        Map<String, Object> metadata = getMetadata(v2);
-        metadata.put("source_eid", v2.getOrDefault("eid", ""));
-        metadata.put("source_mid", v2.getOrDefault("mid", ""));
-        metadata.put("checksum", v3.getMid());
-
-        Map<String, Object> event = v3.toMap();
-        event.put("flags", flags);
-        event.put("metadata", metadata);
-
-        if(v2.containsKey("pump")){
-            event.put("pump", "true");
-        }
-
-        String json = new Gson().toJson(event);
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), json));
-        metrics.incSuccessCounter();
-    }
-
-    private void toFailedTopic(MessageCollector collector, Map<String, Object> event, Exception ex) {
-        Map<String, Object> flags = getFlags(event);
-        flags.put("v2_converted", false);
-        flags.put("error", ex.getMessage());
-        flags.put("stack", stacktraceToString(ex.getStackTrace()));
-
-        Map<String, Object> payload = event;
-        payload.put("flags", flags);
-        payload.put("metadata", getMetadata(event));
-
-        String json = new Gson().toJson(payload);
-
-        collector.send(new OutgoingMessageEnvelope(
-                new SystemStream("kafka", config.failedTopic()), json));
-        metrics.incErrorCounter();
-    }
-
-    private String stacktraceToString(StackTraceElement[] stackTrace) {
-        String stack = "";
-        for (StackTraceElement trace : stackTrace) {
-            stack += trace.toString() + "\n";
-        }
-        return stack;
-    }
-
-    private Map<String, Object> getFlags(Map<String, Object> event) {
-        Map<String, Object> flags;
-        if (event.containsKey("flags") && (event.get("flags") instanceof Map)) {
-            flags = (Map<String, Object>) event.get("flags");
-        } else {
-            flags = new HashMap<>();
-        }
-
-        return flags;
-    }
-
-    private Map<String, Object> getMetadata(Map<String, Object> event) {
-        Map<String, Object> metadata;
-        if (event.containsKey("metadata") && (event.get("metadata") instanceof Map)) {
-            metadata = (Map<String, Object>) event.get("metadata");
-        } else {
-            metadata = new HashMap<>();
-        }
-
-        return metadata;
-    }
 }

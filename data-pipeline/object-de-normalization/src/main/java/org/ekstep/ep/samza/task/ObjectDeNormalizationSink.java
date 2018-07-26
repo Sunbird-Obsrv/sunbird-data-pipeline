@@ -18,7 +18,7 @@ public class ObjectDeNormalizationSink extends BaseSink {
     }
 
     public void toSuccessTopic(Event event) {
-        toTopic(config.successTopic(), event.id(), event.getMap());
+        toTopic(config.successTopic(), event.getDid(), event.getMap());
         metrics.incSuccessCounter();
     }
 

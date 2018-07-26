@@ -1,15 +1,15 @@
 package org.ekstep.ep.samza.domain;
 
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.google.gson.Gson;
 import org.apache.commons.lang.StringUtils;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.task.TelemetryValidatorConfig;
 
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
+import com.google.gson.Gson;
 
 public class Event {
     private final Telemetry telemetry;
@@ -88,6 +88,15 @@ public class Event {
     public void markSkipped() {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.tv_skipped", true);
+    }
+    
+    public void updateDefaults(TelemetryValidatorConfig config) {
+        String channelString = telemetry.<String>read("context.channel").value();
+        String channel = StringUtils.deleteWhitespace(channelString);
+        if(channel == null || channel.isEmpty()) {
+            telemetry.addFieldIfAbsent("context", new HashMap<String, Object>());
+            telemetry.add("context.channel", config.defaultChannel());
+        }
     }
 }
 

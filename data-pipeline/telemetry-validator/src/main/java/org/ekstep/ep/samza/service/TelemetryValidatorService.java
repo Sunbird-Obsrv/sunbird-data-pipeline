@@ -51,6 +51,7 @@ public class TelemetryValidatorService {
             if(report.isSuccess()){
                 LOGGER.info("VALIDATION SUCCESS", event.mid());
                 event.markSuccess();
+                event.updateDefaults(config);
                 sink.toSuccessTopic(event);
             } else {
                 LOGGER.error(null, "VALIDATION FAILED: " + report.toString());
