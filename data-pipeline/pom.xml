@@ -47,6 +47,7 @@
 		<module>object-de-normalization</module>
 		<module>ep-telemetry-converter</module>
 		<module>telemetry-extractor</module>
+		<module>telemetry-router</module>
 	</modules>
 
 	<properties>
