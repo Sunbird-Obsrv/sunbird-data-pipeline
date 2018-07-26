@@ -1,13 +1,11 @@
 package org.ekstep.ep.samza.service;
 
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.esclient.ElasticSearchService;
-import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.esclient.ClientResponse;
+import org.ekstep.ep.samza.esclient.ElasticSearchService;
 import org.ekstep.ep.samza.task.EsIndexerSecondarySink;
 import org.ekstep.ep.samza.task.EsIndexerSecondarySource;
-
-import java.io.IOException;
 
 public class EsIndexerSecondaryService {
     static Logger LOGGER = new Logger(EsIndexerSecondaryService.class);

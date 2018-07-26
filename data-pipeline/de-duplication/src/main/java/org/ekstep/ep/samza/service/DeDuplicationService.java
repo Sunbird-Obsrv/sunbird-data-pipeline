@@ -1,9 +1,10 @@
 package org.ekstep.ep.samza.service;
 
 import com.google.gson.JsonSyntaxException;
+
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.dedup.DeDupEngine;
 import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.task.DeDuplicationConfig;
 import org.ekstep.ep.samza.task.DeDuplicationSink;
 import org.ekstep.ep.samza.task.DeDuplicationSource;

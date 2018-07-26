@@ -3,8 +3,8 @@ package org.ekstep.ep.samza.cache;
 import com.google.gson.Gson;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.task.TaskContext;
-import org.ekstep.ep.samza.logger.Logger;
-import org.ekstep.ep.samza.metrics.JobMetrics;
+import org.ekstep.ep.samza.core.JobMetrics;
+import org.ekstep.ep.samza.core.Logger;
 
 import java.lang.reflect.Type;
 import java.util.Date;

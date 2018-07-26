@@ -10,8 +10,8 @@ import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.Event;
 import org.ekstep.ep.samza.cleaner.CleanerFactory;
-import org.ekstep.ep.samza.logger.Logger;
-import org.ekstep.ep.samza.metrics.JobMetrics;
+import org.ekstep.ep.samza.core.JobMetrics;
+import org.ekstep.ep.samza.core.Logger;
 
 import java.util.ArrayList;
 import java.util.List;

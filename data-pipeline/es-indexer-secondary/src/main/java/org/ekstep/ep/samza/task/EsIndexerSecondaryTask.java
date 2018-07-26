@@ -25,59 +25,60 @@ import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
+import org.ekstep.ep.samza.core.JobMetrics;
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.esclient.ElasticSearchClient;
 import org.ekstep.ep.samza.esclient.ElasticSearchService;
-import org.ekstep.ep.samza.logger.Logger;
-import org.ekstep.ep.samza.metrics.JobMetrics;
 import org.ekstep.ep.samza.service.EsIndexerSecondaryService;
 
 import java.net.UnknownHostException;
 import java.util.Map;
 
 public class EsIndexerSecondaryTask implements StreamTask, InitableTask, WindowableTask {
-    static Logger LOGGER = new Logger(EsIndexerSecondaryTask.class);
-    private EsIndexerSecondaryConfig config;
-    private JobMetrics metrics;
-    private EsIndexerSecondaryService service;
+	static Logger LOGGER = new Logger(EsIndexerSecondaryTask.class);
+	private EsIndexerSecondaryConfig config;
+	private JobMetrics metrics;
+	private EsIndexerSecondaryService service;
 
-    public EsIndexerSecondaryTask(Config config, TaskContext context, ElasticSearchService elasticSearchService) throws Exception {
-        init(config, context, elasticSearchService);
-    }
+	public EsIndexerSecondaryTask(Config config, TaskContext context, ElasticSearchService elasticSearchService)
+			throws Exception {
+		init(config, context, elasticSearchService);
+	}
 
-    public EsIndexerSecondaryTask(){
+	public EsIndexerSecondaryTask() {
 
-    }
+	}
 
-    @Override
-    public void init(Config config, TaskContext context) throws Exception{
-        init(config, context, null);
-    }
+	@Override
+	public void init(Config config, TaskContext context) throws Exception {
+		init(config, context, null);
+	}
 
-    private void init(Config config, TaskContext context, ElasticSearchService elasticSearchService) throws UnknownHostException {
-        this.config = new EsIndexerSecondaryConfig(config);
-        metrics = new JobMetrics(context,this.config.jobName());
+	private void init(Config config, TaskContext context, ElasticSearchService elasticSearchService)
+			throws UnknownHostException {
+		this.config = new EsIndexerSecondaryConfig(config);
+		metrics = new JobMetrics(context, this.config.jobName());
 
-        elasticSearchService =
-                elasticSearchService == null ?
-                        new ElasticSearchClient(this.config.esPort(), this.config.esHosts()) :
-                        elasticSearchService;
+		elasticSearchService = elasticSearchService == null
+				? new ElasticSearchClient(this.config.esPort(), this.config.esHosts())
+				: elasticSearchService;
 
-        service = new EsIndexerSecondaryService(elasticSearchService);
-    }
+		service = new EsIndexerSecondaryService(elasticSearchService);
+	}
 
-    @Override
-    public void process(IncomingMessageEnvelope envelope, MessageCollector collector,
-                        TaskCoordinator taskCoordinator) throws Exception {
-        EsIndexerSecondarySource source = new EsIndexerSecondarySource(envelope);
-        EsIndexerSecondarySink sink = new EsIndexerSecondarySink(collector, metrics, config);
-        service.process(source, sink);
-    }
+	@Override
+	public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator taskCoordinator)
+			throws Exception {
+		EsIndexerSecondarySource source = new EsIndexerSecondarySource(envelope);
+		EsIndexerSecondarySink sink = new EsIndexerSecondarySink(collector, metrics, config);
+		service.process(source, sink);
+	}
 
-    @Override
-    public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-        String mEvent = metrics.collect();
-        Map<String,Object> mEventMap = new Gson().fromJson(mEvent,Map.class);
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEventMap));
-        metrics.clear();
-    }
+	@Override
+	public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
+		String mEvent = metrics.collect();
+		Map<String, Object> mEventMap = new Gson().fromJson(mEvent, Map.class);
+		collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEventMap));
+		metrics.clear();
+	}
 }

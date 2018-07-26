@@ -2,9 +2,6 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class EsIndexerPrimaryConfig {
 
     private final String failedTopic;

@@ -25,10 +25,10 @@ import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
+import org.ekstep.ep.samza.core.JobMetrics;
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.esclient.ElasticSearchClient;
 import org.ekstep.ep.samza.esclient.ElasticSearchService;
-import org.ekstep.ep.samza.logger.Logger;
-import org.ekstep.ep.samza.metrics.JobMetrics;
 import org.ekstep.ep.samza.service.EsIndexerPrimaryService;
 
 import java.net.UnknownHostException;

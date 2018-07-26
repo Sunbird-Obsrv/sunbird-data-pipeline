@@ -1,7 +1,7 @@
 package org.ekstep.ep.samza;
 
 import org.apache.commons.lang.StringUtils;
-import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.reader.Telemetry;
 
 import java.io.UnsupportedEncodingException;

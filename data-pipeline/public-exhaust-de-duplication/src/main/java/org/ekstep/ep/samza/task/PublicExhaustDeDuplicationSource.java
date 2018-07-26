@@ -1,8 +1,8 @@
 package org.ekstep.ep.samza.task;
 
 import org.apache.samza.system.IncomingMessageEnvelope;
+import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.metrics.JobMetrics;
 
 import java.util.HashMap;
 import java.util.Map;

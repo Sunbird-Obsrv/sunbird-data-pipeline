@@ -1,7 +1,7 @@
 package org.ekstep.ep.samza.service;
 
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.system.Strategy;
 import org.ekstep.ep.samza.task.ObjectDeNormalizationConfig;
 import org.ekstep.ep.samza.task.ObjectDeNormalizationSink;

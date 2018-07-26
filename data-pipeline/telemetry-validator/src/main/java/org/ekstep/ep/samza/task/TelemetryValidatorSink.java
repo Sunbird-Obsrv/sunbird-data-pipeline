@@ -3,8 +3,8 @@ package org.ekstep.ep.samza.task;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
+import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.metrics.JobMetrics;
 
 public class TelemetryValidatorSink {
     private MessageCollector collector;

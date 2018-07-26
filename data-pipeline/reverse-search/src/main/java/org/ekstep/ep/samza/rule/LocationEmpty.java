@@ -1,7 +1,7 @@
 package org.ekstep.ep.samza.rule;
 
 
-import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.DeviceService;
 import org.ekstep.ep.samza.service.LocationService;
 import org.ekstep.ep.samza.system.Event;

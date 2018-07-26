@@ -1,9 +1,8 @@
 package org.ekstep.ep.samza.service;
 
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.dedup.DeDupEngine;
 import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.logger.Logger;
-import org.ekstep.ep.samza.task.PrivateExhaustDeDuplicationConfig;
 import org.ekstep.ep.samza.task.PrivateExhaustDeDuplicationSink;
 import org.ekstep.ep.samza.task.PrivateExhaustDeDuplicationSource;
 

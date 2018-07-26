@@ -19,23 +19,21 @@
 
 package org.ekstep.ep.samza.task;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import org.apache.samza.config.Config;
-import org.apache.samza.metrics.Counter;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.*;
+import org.apache.samza.task.InitableTask;
+import org.apache.samza.task.MessageCollector;
+import org.apache.samza.task.StreamTask;
+import org.apache.samza.task.TaskContext;
+import org.apache.samza.task.TaskCoordinator;
+import org.apache.samza.task.WindowableTask;
+import org.ekstep.ep.samza.core.JobMetrics;
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.dedup.DeDupEngine;
-import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.logger.Logger;
-import org.ekstep.ep.samza.metrics.JobMetrics;
 import org.ekstep.ep.samza.service.DeDuplicationService;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class DeDuplicationTask implements StreamTask, InitableTask, WindowableTask {
 

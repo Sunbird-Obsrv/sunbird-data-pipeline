@@ -9,8 +9,8 @@ import org.apache.samza.task.*;
 import org.ekstep.ep.es_router.EsRouter;
 import org.ekstep.ep.es_router_primary.util.EsRouterConfig;
 import org.ekstep.ep.es_router_primary.domain.Event;
-import org.ekstep.ep.samza.logger.Logger;
-import org.ekstep.ep.samza.metrics.JobMetrics;
+import org.ekstep.ep.samza.core.JobMetrics;
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.reader.NullableValue;
 
 import java.io.IOException;

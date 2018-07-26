@@ -45,6 +45,11 @@ public class Event {
         NullableValue<String> checksum = telemetry.read("mid");
         return checksum.value();
     }
+    
+    public String did() {
+        NullableValue<String> checksum = telemetry.read("context.did");
+        return checksum.value();
+    }
 
     public void addEventType() {
         telemetry.add("type", "events");

@@ -3,8 +3,8 @@ package org.ekstep.ep.samza.chooser;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.chooser.BaseMessageChooser;
 import org.apache.samza.system.chooser.MessageChooser;
-import org.ekstep.ep.samza.logger.Logger;
 import org.joda.time.DateTime;
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.util.SystemTimeProvider;
 import org.ekstep.ep.samza.util.TimeProvider;
 

@@ -1,8 +1,8 @@
 package org.ekstep.ep.samza.reader;
 
-import org.ekstep.ep.samza.logger.Logger;
-
 import java.text.MessageFormat;
+
+import org.ekstep.ep.samza.core.Logger;
 
 class NullParent implements ParentType {
     static Logger LOGGER = new Logger(NullParent.class);

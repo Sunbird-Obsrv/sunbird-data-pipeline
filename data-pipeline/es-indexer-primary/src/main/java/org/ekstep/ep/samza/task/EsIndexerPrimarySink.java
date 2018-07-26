@@ -1,32 +1,29 @@
 package org.ekstep.ep.samza.task;
 
-import org.apache.samza.system.OutgoingMessageEnvelope;
-import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
+import org.ekstep.ep.samza.core.BaseSink;
+import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.metrics.JobMetrics;
 
-public class EsIndexerPrimarySink {
+public class EsIndexerPrimarySink extends BaseSink {
 
-    private MessageCollector collector;
     private JobMetrics metrics;
     private EsIndexerPrimaryConfig config;
 
     public EsIndexerPrimarySink(MessageCollector collector, JobMetrics metrics, EsIndexerPrimaryConfig config) {
-        this.collector = collector;
+    	
+    	super(collector);
         this.metrics = metrics;
         this.config = config;
     }
 
     public void toFailedTopic(Event event) {
-        collector.send(new OutgoingMessageEnvelope(
-                new SystemStream("kafka", config.failedTopic()), event.getMap()));
+        toTopic(config.failedTopic(), event.id(), event.getMap());
         metrics.incFailedCounter();
     }
 
     public void toErrorTopic(Event event) {
-        collector.send(new OutgoingMessageEnvelope(
-                new SystemStream("kafka", config.failedTopic()), event.getMap()));
+    	toTopic(config.failedTopic(), event.id(), event.getMap());
         metrics.incErrorCounter();
     }
 

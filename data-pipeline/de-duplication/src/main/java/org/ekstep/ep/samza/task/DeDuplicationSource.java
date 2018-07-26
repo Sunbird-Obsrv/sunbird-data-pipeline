@@ -1,15 +1,12 @@
 package org.ekstep.ep.samza.task;
 
-import com.google.gson.JsonSyntaxException;
-import org.apache.directory.shared.kerberos.components.Checksum;
-import org.apache.samza.system.IncomingMessageEnvelope;
-import org.ekstep.ep.samza.domain.Event;
-import com.google.gson.Gson;
-import org.ekstep.ep.samza.logger.Logger;
-
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+
+import org.apache.samza.system.IncomingMessageEnvelope;
+import org.ekstep.ep.samza.core.Logger;
+import org.ekstep.ep.samza.domain.Event;
+
+import com.google.gson.Gson;
 
 public class DeDuplicationSource {
     static Logger LOGGER = new Logger(DeDuplicationSource.class);

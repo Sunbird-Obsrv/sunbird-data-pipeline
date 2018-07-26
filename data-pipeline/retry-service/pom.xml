@@ -27,7 +27,7 @@
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem</groupId>
-            <artifactId>ep-logger</artifactId>
+            <artifactId>ep-core</artifactId>
             <version>0.0.1</version>
         </dependency>
         <dependency>

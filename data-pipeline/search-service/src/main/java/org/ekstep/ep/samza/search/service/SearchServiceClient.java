@@ -2,7 +2,8 @@ package org.ekstep.ep.samza.search.service;
 
 import com.google.gson.Gson;
 import okhttp3.*;
-import org.ekstep.ep.samza.logger.Logger;
+
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.search.domain.Content;
 import org.ekstep.ep.samza.search.domain.Item;
 import org.ekstep.ep.samza.search.dto.ContentSearchRequest;

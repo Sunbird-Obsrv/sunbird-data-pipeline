@@ -5,7 +5,7 @@ import com.google.maps.model.AddressComponentType;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 import org.ekstep.ep.samza.api.GoogleGeoLocationAPI;
-import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.system.Location;
 import org.ekstep.ep.samza.util.LatLongUtils;
 

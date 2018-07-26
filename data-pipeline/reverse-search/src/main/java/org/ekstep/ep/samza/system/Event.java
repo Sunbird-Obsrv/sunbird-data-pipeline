@@ -5,7 +5,7 @@ import com.library.checksum.system.ChecksumGenerator;
 import com.library.checksum.system.KeysToAccept;
 import com.library.checksum.system.Mappable;
 import org.apache.commons.lang.StringUtils;
-import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.util.Configuration;

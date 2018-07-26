@@ -1,7 +1,7 @@
 package org.ekstep.ep.samza.data;
 
 import org.apache.samza.storage.kv.KeyValueStore;
-import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.util.Flag;

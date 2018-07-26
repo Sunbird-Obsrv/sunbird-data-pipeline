@@ -19,25 +19,27 @@
 
 package org.ekstep.ep.samza.task;
 
-import com.google.gson.Gson;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.*;
+import org.apache.samza.task.InitableTask;
+import org.apache.samza.task.MessageCollector;
+import org.apache.samza.task.StreamTask;
+import org.apache.samza.task.TaskContext;
+import org.apache.samza.task.TaskCoordinator;
+import org.apache.samza.task.WindowableTask;
 import org.ekstep.ep.samza.converter.converters.TelemetryV3Converter;
 import org.ekstep.ep.samza.converter.domain.TelemetryV3;
-import org.ekstep.ep.samza.logger.Logger;
-import org.ekstep.ep.samza.metrics.JobMetrics;
+import org.ekstep.ep.samza.core.JobMetrics;
+import org.ekstep.ep.samza.core.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
+import com.google.gson.Gson;
 
 public class TelemetryConverterTask implements StreamTask, InitableTask, WindowableTask {
 

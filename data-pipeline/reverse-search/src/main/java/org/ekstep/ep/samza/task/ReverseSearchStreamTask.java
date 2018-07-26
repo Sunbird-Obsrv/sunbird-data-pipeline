@@ -19,16 +19,25 @@
 
 package org.ekstep.ep.samza.task;
 
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.samza.config.Config;
-import org.apache.samza.metrics.Counter;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.*;
+import org.apache.samza.task.InitableTask;
+import org.apache.samza.task.MessageCollector;
+import org.apache.samza.task.StreamTask;
+import org.apache.samza.task.TaskContext;
+import org.apache.samza.task.TaskCoordinator;
+import org.apache.samza.task.WindowableTask;
 import org.ekstep.ep.samza.api.GoogleGeoLocationAPI;
-import org.ekstep.ep.samza.logger.Logger;
-import org.ekstep.ep.samza.metrics.JobMetrics;
+import org.ekstep.ep.samza.core.JobMetrics;
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.rule.LocationAbsent;
 import org.ekstep.ep.samza.rule.LocationEmpty;
 import org.ekstep.ep.samza.rule.LocationPresent;
@@ -39,12 +48,8 @@ import org.ekstep.ep.samza.service.LocationService;
 import org.ekstep.ep.samza.system.Event;
 import org.ekstep.ep.samza.system.Location;
 import org.ekstep.ep.samza.util.Configuration;
-import com.google.gson.Gson;
 
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import com.google.gson.Gson;
 
 public class ReverseSearchStreamTask implements StreamTask, InitableTask, WindowableTask {
 

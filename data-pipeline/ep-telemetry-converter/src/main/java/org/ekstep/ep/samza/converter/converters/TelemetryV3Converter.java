@@ -1,16 +1,15 @@
 package org.ekstep.ep.samza.converter.converters;
 
-import org.ekstep.ep.samza.converter.domain.TelemetryV3;
-import org.ekstep.ep.samza.converter.exceptions.TelemetryConversionException;
-import org.ekstep.ep.samza.converter.domain.TelemetryV3;
-import org.ekstep.ep.samza.reader.NullableValue;
-import org.ekstep.ep.samza.reader.Telemetry;
-import org.ekstep.ep.samza.reader.TelemetryReaderException;
-
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.ekstep.ep.samza.converter.domain.TelemetryV3;
+import org.ekstep.ep.samza.converter.exceptions.TelemetryConversionException;
+import org.ekstep.ep.samza.reader.NullableValue;
+import org.ekstep.ep.samza.reader.Telemetry;
+import org.ekstep.ep.samza.reader.TelemetryReaderException;
 
 public class TelemetryV3Converter {
 

@@ -1,7 +1,7 @@
 package org.ekstep.ep.samza.service;
 
 import org.ekstep.ep.samza.cache.CacheService;
-import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.search.domain.Item;
 import org.ekstep.ep.samza.search.service.SearchService;
 

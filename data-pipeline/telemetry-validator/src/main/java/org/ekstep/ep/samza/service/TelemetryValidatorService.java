@@ -5,8 +5,8 @@ import static java.text.MessageFormat.format;
 import java.io.File;
 import java.text.MessageFormat;
 
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.task.TelemetryValidatorConfig;
 import org.ekstep.ep.samza.task.TelemetryValidatorSink;
 import org.ekstep.ep.samza.task.TelemetryValidatorSource;

@@ -1,13 +1,18 @@
 package org.ekstep.ep.samza.domain;
 
-import com.google.gson.*;
-import org.ekstep.ep.samza.reader.Telemetry;
-
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.ekstep.ep.samza.reader.Telemetry;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 public class Event {
     private final Telemetry telemetry;

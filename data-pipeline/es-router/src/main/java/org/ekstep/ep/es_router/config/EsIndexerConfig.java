@@ -1,7 +1,7 @@
 package org.ekstep.ep.es_router.config;
 
 import org.ekstep.ep.es_router.domain.Event;
-import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.core.Logger;
 
 import java.text.ParseException;
 import java.util.List;
