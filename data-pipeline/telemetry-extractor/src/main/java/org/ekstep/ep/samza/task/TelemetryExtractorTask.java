@@ -21,19 +21,15 @@ package org.ekstep.ep.samza.task;
 
 import com.google.gson.Gson;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
+import org.ekstep.ep.samza.domain.Telemetry;
 import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.metrics.JobMetrics;
-import org.ekstep.ep.samza.util.ExtractorUtils;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,15 +56,15 @@ public class TelemetryExtractorTask implements StreamTask, InitableTask, Windowa
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator taskCoordinator) throws Exception {
         try {
-            Map<String,Object> message = (Map<String,Object>) envelope.getMessage();
-            String rawDataStr = getRawDataStr(message);
-            if(rawDataStr!=null){
-                String ts = (String) message.get("Timestamp");
-                processEvents(rawDataStr, ts, collector);
-            }
+            String message = (String) envelope.getMessage();
+            Map<String, Object> eventSpec = (Map<String, Object>) new Gson().fromJson(message, Map.class);
+            long syncts = ((Number)eventSpec.get("syncts")).longValue();
+            List<Map<String, Object>> events = (List<Map<String, Object>>) eventSpec.get("events");
+            processEvents(events, syncts, collector);
+            generateLOGEvent(eventSpec, collector);
+
         } catch (Exception e){
-            e.printStackTrace();
-            //TODO add log statement
+            LOGGER.info("","Failed to process events: "+ e.getMessage());
         }
     }
 
@@ -79,88 +75,27 @@ public class TelemetryExtractorTask implements StreamTask, InitableTask, Windowa
         metrics.clear();
     }
 
-    private void toSuccessTopic(MessageCollector collector, String v2Event) {
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), v2Event));
-        metrics.incSkippedCounter();
-    }
-
-    private void toSuccessTopic(MessageCollector collector, Map<String, Object> event) {
-        String json = new Gson().toJson(event);
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), json));
-        metrics.incSuccessCounter();
-    }
-
-    private void toFailedTopic(MessageCollector collector, Map<String, Object> event, Exception ex) {
-        Map<String, Object> flags = getFlags(event);
-        flags.put("v2_converted", false);
-        flags.put("error", ex.getMessage());
-        flags.put("stack", stacktraceToString(ex.getStackTrace()));
-
-        Map<String, Object> payload = event;
-        payload.put("flags", flags);
-        payload.put("metadata", getMetadata(event));
-
-        String json = new Gson().toJson(payload);
-
-        collector.send(new OutgoingMessageEnvelope(
-                new SystemStream("kafka", config.failedTopic()), json));
-        metrics.incErrorCounter();
-    }
-
-    private String stacktraceToString(StackTraceElement[] stackTrace) {
-        String stack = "";
-        for (StackTraceElement trace : stackTrace) {
-            stack += trace.toString() + "\n";
-        }
-        return stack;
-    }
-
-    private Map<String, Object> getFlags(Map<String, Object> event) {
-        Map<String, Object> flags;
-        if (event.containsKey("flags") && (event.get("flags") instanceof Map)) {
-            flags = (Map<String, Object>) event.get("flags");
-        } else {
-            flags = new HashMap<>();
-        }
-
-        return flags;
-    }
-
-    private Map<String, Object> getMetadata(Map<String, Object> event) {
-        Map<String, Object> metadata;
-        if (event.containsKey("metadata") && (event.get("metadata") instanceof Map)) {
-            metadata = (Map<String, Object>) event.get("metadata");
-        } else {
-            metadata = new HashMap<>();
-        }
-        return metadata;
-    }
-
-    private void processEvents(String rawDataStr, String ts, MessageCollector collector){
-        Map<String, Object> eventMap = (Map<String, Object>)new Gson().fromJson(rawDataStr, Map.class);
-        List<Map<String, Object>> events = (List<Map<String, Object>>) eventMap.get("events");
+    private void processEvents(List<Map<String, Object>> events, long syncts, MessageCollector collector){
         for(Map<String, Object> event: events){
             try {
-                event.put("@timestamp",ts);
-                collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), event));
+                event.put("syncts",syncts);
+                String json = new Gson().toJson(event);
+                collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), json));
             }catch (Exception e){
-                e.printStackTrace();
-                //TODO add log statement
-                collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.failedTopic()), event));
+                LOGGER.info((String)event.get("eid"),"Failed to process the event: "+ e.getMessage() + " mid: "+(String)event.get("mid"));
             }
+
         }
     }
-    private String getRawDataStr(Map map) {
+    private void generateLOGEvent(Map<String, Object> eventSpec, MessageCollector collector) {
         try {
-            String encodedString = (String) map.get("RawData");
-            byte[] decoded = Base64.getDecoder().decode(encodedString);
-            byte[] decompresedRawData = ExtractorUtils.decompress(decoded);
-            String rawDataStr = new String(decompresedRawData);
-            return rawDataStr;
+            // Creating LOG event
+            Telemetry v3spec = new Telemetry(eventSpec);
+            String auditEvent =  v3spec.toJson();
+            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), auditEvent));
         }catch (Exception e){
             e.printStackTrace();
-            return null;
-            //TODO add log statement
+            LOGGER.info("","Failed to generate LOG event: "+ e.getMessage());
         }
     }
 }
