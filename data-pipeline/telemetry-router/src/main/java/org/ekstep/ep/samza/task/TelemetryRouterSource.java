@@ -21,7 +21,8 @@ public class TelemetryRouterSource {
         return new Event(getMap());
     }
 
-    private Map<String, Object> getMap() {
+    @SuppressWarnings("unchecked")
+	private Map<String, Object> getMap() {
         String message = (String) envelope.getMessage();
         return (Map<String, Object>) new Gson().fromJson(message, Map.class);
     }

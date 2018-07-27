@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class EventFixture {
 
-	public static final String VALID_GE_ERROR_EVENT = "{\n" +
+	public static final String LOG_EVENT = "{\n" +
             "  \"did\": \"00b09a9e-6af9-4bb7-b102-57380b43ddc8\",\n" +
             "  \"mid\": \"43288930-e54a-230b-b56e-876gnm8712ok\",\n" +
             "  \"edata\": {\n" +
@@ -19,7 +19,7 @@ public class EventFixture {
             "      \"type\": \"GENIE\"\n" +
             "    }\n" +
             "  },\n" +
-            "  \"eid\": \"GE_ERROR\",\n" +
+            "  \"eid\": \"LOG\",\n" +
             "  \"gdata\": {\n" +
             "    \"id\": \"genie.android\",\n" +
             "    \"ver\": \"2.2.15\"\n" +
@@ -40,10 +40,10 @@ public class EventFixture {
             "    }\n" +
             "  ]\n" +
             "}";
-	public static final String INVALID_GE_ERROR_EVENT = "{\n" +
+	public static final String ERROR_EVENT = "{\n" +
             "  \"did\": \"00b09a9e-6af9-4bb7-b102-57380b43ddc8\",\n" +
             "  \"mid\": \"43288930-e54a-230b-b56e-876gnm8712ok\",\n" +
-            "  \"eid\": \"GE_ERROR\",\n" +
+            "  \"eid\": \"ERROR\",\n" +
             "  \"gdata\": {\n" +
             "    \"id\": \"genie.android\",\n" +
             "    \"ver\": \"2.2.15\"\n" +
@@ -64,7 +64,7 @@ public class EventFixture {
             "    }\n" +
             "  ]\n" +
             "}";
-	public static final String UNPARSABLE_GE_GENIE_UPDATE_EVENT = "{\n" +
+	public static final String UNPARSABLE_START_EVENT = "{\n" +
             "  \"did\": \"c270f15d-5230-4954-92aa-d239e4281cc4\",\n" +
             "  \"mid\": \"43288930-e54a-230b-b56e-876gnm8712ok\",\n" +
             "  \"edata\": {\n" +
@@ -85,7 +85,7 @@ public class EventFixture {
             "      ]\n" +
             "    }\n" +
             "  },\n" +
-            "  \"eid\": \"GE_GENIE_UPDATE\",\n" +
+            "  \"eid\": \"START\",\n" +
             "  \"gdata\": {\n" +
             "    \"id\": \"genie.android\",\n" +
             "    \"ver\": \"1.0\"\n" +
@@ -99,7 +99,7 @@ public class EventFixture {
             "      \"id\": \"correlationid\",\n" +
             "      \"type\": \"correlationtype\"\n" +
             "    ";
-	public static final String VALID_GE_INTERACT_EVENT = "{\n" +
+	public static final String START_EVENT = "{\n" +
             "  \"cdata\": [],\n" +
             "  \"channel\": \"in.ekstep\",\n" +
             "  \"did\": \"0427fedf56eea1c8a127d876fd1907ffb245684f\",\n" +
@@ -154,13 +154,8 @@ public class EventFixture {
 	public static final String ANY_STRING = "Hey Samza, Whats Up?";
 	public static final String EMPTY_JSON = "{}";
 	
-    public static Map<String, Object> validGeErrorEventMap() {
-        return new Gson().fromJson(VALID_GE_ERROR_EVENT, new TypeToken<Map<String, Object>>() {
-        }.getType());
-    }
-
-    public static Map<String, Object> invalidGeErrorEventMap() {
-        return new Gson().fromJson(INVALID_GE_ERROR_EVENT, new TypeToken<Map<String, Object>>() {
-        }.getType());
-    }
+	public static Map<String, Object> getMap(String message) {
+		return (Map<String, Object>) new Gson().fromJson(message, Map.class);
+	}
+	
 }

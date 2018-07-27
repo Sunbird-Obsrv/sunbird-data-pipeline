@@ -6,35 +6,34 @@ import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.domain.Event;
 
 public class TelemetryRouterSink extends BaseSink {
-    
-    private JobMetrics metrics;
-    private TelemetryRouterConfig config;
 
-    public TelemetryRouterSink(MessageCollector collector, JobMetrics metrics,
-                                  TelemetryRouterConfig config) {
-        
-    	super(collector);
-        this.metrics = metrics;
-        this.config = config;
-    }
+	private JobMetrics metrics;
+	private TelemetryRouterConfig config;
 
-    public void toSuccessTopic(Event event) {
-        toTopic(config.successTopic(), event.mid(), event.getJson());
-        metrics.incSuccessCounter();
-    }
+	public TelemetryRouterSink(MessageCollector collector, JobMetrics metrics, TelemetryRouterConfig config) {
 
-    public void toFailedTopic(Event event) {
-        toTopic(config.failedTopic(), event.mid(), event.getJson());
-        metrics.incFailedCounter();
-    }
+		super(collector);
+		this.metrics = metrics;
+		this.config = config;
+	}
 
-    public void toErrorTopic(Event event) {
-        toTopic(config.failedTopic(), event.mid(), event.getJson());
-        metrics.incErrorCounter();
-    }
+	public void toPrimaryRoute(Event event) {
+		toTopic(config.getPrimaryRouteTopic(), event.mid(), event.getJson());
+		metrics.incSuccessCounter();
+	}
 
-    public void toMalformedEventsTopic(String message) {
-        toTopic(config.malformedTopic(), null, message);
-        metrics.incFailedCounter();
-    }
+	public void toErrorTopic(Event event) {
+		toTopic(config.failedTopic(), event.mid(), event.getJson());
+		metrics.incErrorCounter();
+	}
+	
+	public void toMalformedTopic(String message) {
+		toTopic(config.failedTopic(), null, message);
+		metrics.incErrorCounter();
+	}
+
+	public void toSecondaryRoute(Event event) {
+		toTopic(config.getSecondaryRouteTopic(), event.mid(), event.getJson());
+		metrics.incSuccessCounter();
+	}
 }

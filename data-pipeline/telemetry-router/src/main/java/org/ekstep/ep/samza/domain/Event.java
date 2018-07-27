@@ -6,86 +6,50 @@ import java.util.Map;
 
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
+import org.ekstep.ep.samza.task.TelemetryRouterConfig;
 
 import com.google.gson.Gson;
 
 public class Event {
-    private final Telemetry telemetry;
 
-    public Event(Map<String, Object> map) {
-        this.telemetry = new Telemetry(map);
-    }
+	private final Telemetry telemetry;
 
-    public Map<String, Object> getMap() {
-        return telemetry.getMap();
-    }
+	public Event(Map<String, Object> map) {
+		this.telemetry = new Telemetry(map);
+	}
 
-    public String getJson() {
-        Gson gson = new Gson();
-        String json = gson.toJson(getMap());
-        return json;
-    }
+	public Map<String, Object> getMap() {
+		return telemetry.getMap();
+	}
 
-    public String getChecksum() {
+	public String getJson() {
+		Gson gson = new Gson();
+		String json = gson.toJson(getMap());
+		return json;
+	}
 
-        String checksum = id();
-        if (checksum != null)
-            return checksum;
+	public String mid() {
+		NullableValue<String> checksum = telemetry.read("mid");
+		return checksum.value();
+	}
 
-        return mid();
-    }
+	public String eid() {
+		NullableValue<String> eid = telemetry.read("eid");
+		return eid.value();
+	}
 
-    public String id() {
-        NullableValue<String> checksum = telemetry.read("metadata.checksum");
-        return checksum.value();
-    }
+	@Override
+	public String toString() {
+		return "Event{" + "telemetry=" + telemetry + '}';
+	}
 
-    public String mid() {
-        NullableValue<String> checksum = telemetry.read("mid");
-        return checksum.value();
-    }
+	public void markFailure(String error, TelemetryRouterConfig config) {
+		telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+		telemetry.add("flags.tr_processed", false);
 
-    public String eid() {
-        NullableValue<String> eid = telemetry.read("eid");
-        return eid.value();
-    }
+		telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
+		telemetry.add("metadata.tr_error", error);
+		telemetry.add("metadata.src", config.jobName());
+	}
 
-    public String schemaName(){
-        String eid = eid();
-        if (eid != null){
-            return MessageFormat.format("{0}.json",eid.toLowerCase());
-        }
-        return null;
-    }
-
-    public String version(){
-        return (String) telemetry.read("ver").value();
-    }
-
-    @Override
-    public String toString() {
-        return "Event{" +
-                "telemetry=" + telemetry +
-                '}';
-    }
-
-    public void markSuccess() {
-        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.tv_processed", true);
-        telemetry.add("type", "events");
-    }
-
-    public void markFailure(String error) {
-        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.tv_processed", false);
-
-        telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
-        telemetry.add("metadata.tv_error", error);
-    }
-
-    public void markSkipped() {
-        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.tv_skipped", true);
-    }
 }
-

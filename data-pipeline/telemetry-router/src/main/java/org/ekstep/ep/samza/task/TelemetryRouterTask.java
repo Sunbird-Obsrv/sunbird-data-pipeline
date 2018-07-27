@@ -19,54 +19,57 @@
 
 package org.ekstep.ep.samza.task;
 
-import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import org.apache.samza.system.OutgoingMessageEnvelope;
-import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.StreamTask;
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
-import org.apache.samza.task.*;
+import org.apache.samza.system.OutgoingMessageEnvelope;
+import org.apache.samza.system.SystemStream;
+import org.apache.samza.task.InitableTask;
+import org.apache.samza.task.MessageCollector;
+import org.apache.samza.task.StreamTask;
+import org.apache.samza.task.TaskContext;
+import org.apache.samza.task.TaskCoordinator;
+import org.apache.samza.task.WindowableTask;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.TelemetryRouterService;
 
 public class TelemetryRouterTask implements StreamTask, InitableTask, WindowableTask {
 
-    static Logger LOGGER = new Logger(TelemetryRouterTask.class);
-    private TelemetryRouterConfig config;
-    private JobMetrics metrics;
-    private TelemetryRouterService service;
-    private JsonSchemaFactory jsonSchemaFactory;
+	static Logger LOGGER = new Logger(TelemetryRouterTask.class);
+	private TelemetryRouterConfig config;
+	private JobMetrics metrics;
+	private TelemetryRouterService service;
 
-    public TelemetryRouterTask(Config config, TaskContext context) {
-        init(config, context);
-    }
-    
-    public TelemetryRouterTask() {
-    	
-    }
+	public TelemetryRouterTask(Config config, TaskContext context) {
+		init(config, context);
+	}
 
-    @Override
-    public void init(Config config, TaskContext context) {
-        this.config = new TelemetryRouterConfig(config);
-        metrics = new JobMetrics(context,this.config.jobName());
-        service = new TelemetryRouterService(this.config);
-    }
+	public TelemetryRouterTask() {
 
-    @Override
-    public void process(IncomingMessageEnvelope envelope, MessageCollector collector,
-                        TaskCoordinator taskCoordinator) throws Exception {
-        TelemetryRouterSource source = new TelemetryRouterSource(envelope);
-        TelemetryRouterSink sink = new TelemetryRouterSink(collector, metrics, config);
-        jsonSchemaFactory = JsonSchemaFactory.byDefault();
-        
-        service.process(source, sink, jsonSchemaFactory);
-    }
+	}
 
-    @Override
-    public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-        String mEvent = metrics.collect();
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
-        metrics.clear();
-    }
+	@Override
+	public void init(Config config, TaskContext context) {
+		
+		this.config = new TelemetryRouterConfig(config);
+		metrics = new JobMetrics(context, this.config.jobName());
+		service = new TelemetryRouterService(this.config);
+	}
+
+	@Override
+	public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator taskCoordinator)
+			throws Exception {
+
+		TelemetryRouterSink sink = new TelemetryRouterSink(collector, metrics, config);
+		TelemetryRouterSource source = new TelemetryRouterSource(envelope);
+		service.process(source, sink);
+	}
+
+	@Override
+	public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
+
+		String mEvent = metrics.collect();
+		collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
+		metrics.clear();
+	}
 }

@@ -12,30 +12,24 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 public class EventTest {
+	
 	@Test
-	public void shouldReturnSchemaFileFromEid() {
+	public void shouldReturnMid() {
 
-		Event event = new Event(EventFixture.validGeErrorEventMap());
-		Assert.assertEquals("ge_error.json", (String) event.schemaName());
+		Event event = new Event(EventFixture.getMap(EventFixture.ERROR_EVENT));
+		Assert.assertEquals("43288930-e54a-230b-b56e-876gnm8712ok", event.mid());
 	}
 
 	@Test
-	public void shouldReturnVerIfPresent() {
+	public void shouldReturnEid() {
 
-		Event event = new Event(EventFixture.validGeErrorEventMap());
-		Assert.assertEquals("2.2", (String) event.version());
-	}
-
-	@Test
-	public void shouldReturnNullForEdata() {
-
-		Map<String, Object> event = EventFixture.invalidGeErrorEventMap();
-		Assert.assertEquals(null, (Map<String, Object>) event.get("edata"));
+		Event event = new Event(EventFixture.getMap(EventFixture.LOG_EVENT));
+		Assert.assertEquals("LOG", event.eid());
 	}
 
 	@Test(expected = JsonSyntaxException.class)
 	public void shouldThrowException() {
-		new Gson().fromJson(EventFixture.UNPARSABLE_GE_GENIE_UPDATE_EVENT,
+		new Gson().fromJson(EventFixture.UNPARSABLE_START_EVENT,
 				new TypeToken<Map<String, Object>>() {
 				}.getType());
 	}
