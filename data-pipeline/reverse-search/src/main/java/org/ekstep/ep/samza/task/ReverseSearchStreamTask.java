@@ -110,12 +110,13 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
 			processEvent(event, collector);
 		} catch (Exception e) {
 			LOGGER.error(null, "PROCESSING FAILED: " + jsonObject, e);
-			sink.sendToErrorTopic(jsonObject);
+			if (null != jsonObject)
+				sink.sendToErrorTopic(jsonObject);
 		}
 	}
 
 	public void processEvent(Event event, MessageCollector collector) {
-		
+
 		ReverseSearchSink sink = new ReverseSearchSink(collector, metrics, configuration);
 		event.setTimestamp();
 		Location location = null;
@@ -147,7 +148,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
 		event.updateDefaults(configuration);
 		event.setFlag("ldata_processed", true);
 		sink.sendToSuccessTopic(event);
-		
+
 	}
 
 	@Override

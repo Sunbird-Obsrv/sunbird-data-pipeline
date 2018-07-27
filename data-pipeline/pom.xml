@@ -21,7 +21,6 @@
 
 	<modules>
 		<module>ep-core</module>
-		<module>reverse-search</module>
 		<module>de-duplication</module>
 		<module>distribution</module>
 		<module>checksum-generator</module>
@@ -33,9 +32,7 @@
 		<module>ep-telemetry-reader</module>
 		<module>public-exhaust-de-duplication</module>
 		<module>private-exhaust-de-duplication</module>
-		<module>object-service</module>
 		<module>ep-de-duplication</module>
-		<module>retry-service</module>
 		<module>es-indexer-primary</module>
 		<module>es-router</module>
 		<module>es-client</module>
@@ -48,6 +45,7 @@
 		<module>ep-telemetry-converter</module>
 		<module>telemetry-extractor</module>
 		<module>telemetry-router</module>
+		<module>reverse-search</module>
 	</modules>
 
 	<properties>
@@ -56,6 +54,8 @@
 		<samza.version>0.14.0</samza.version>
 		<kafka.version>1.1.0</kafka.version>
 		<jackson-jaxrs.version>1.9.13</jackson-jaxrs.version>
+		<samza.log.dir>/tmp</samza.log.dir>
+		<samza.container.name>test-container</samza.container.name>
 	</properties>
 
 	<repositories>

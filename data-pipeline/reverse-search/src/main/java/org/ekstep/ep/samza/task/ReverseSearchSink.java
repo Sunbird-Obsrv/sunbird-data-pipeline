@@ -28,5 +28,10 @@ public class ReverseSearchSink extends BaseSink {
 		toTopic(config.getFailedTopic(), event.get("mid") != null ? event.get("mid").toString() : null, event);
 		metrics.incErrorCounter();
 	}
+	
+	public void sendToMalformedTopic(String message) {
+		toTopic(config.getFailedTopic(), null, message);
+		metrics.incErrorCounter();
+	}
 
 }
