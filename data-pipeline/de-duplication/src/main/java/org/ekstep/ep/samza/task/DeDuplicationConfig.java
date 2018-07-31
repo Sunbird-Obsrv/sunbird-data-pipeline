@@ -16,7 +16,7 @@ public class DeDuplicationConfig {
 
     public DeDuplicationConfig(Config config) {
         successTopic = config.get("output.success.topic.name", "telemetry.valid");
-        failedTopic = config.get("output.failed.topic.name", "telemetry.unique.fail");
+        failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
         duplicateTopic = config.get("output.duplicate.topic.name", "telemetry.duplicate");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
         metricsTopic = config.get("output.metrics.topic.name", "pipeline_metrics");

@@ -76,6 +76,11 @@ public class Event {
 	public String id() {
 		return telemetry.<String>read("metadata.checksum").value();
 	}
+	
+	public String mid() {
+		NullableValue<String> mid = telemetry.read("mid");
+		return mid.value();
+	}
 
 	public void updateContent(Content content) {
 		HashMap<String, Object> contentData = new HashMap<String, Object>();

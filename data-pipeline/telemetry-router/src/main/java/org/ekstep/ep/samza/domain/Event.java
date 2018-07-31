@@ -1,6 +1,5 @@
 package org.ekstep.ep.samza.domain;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +30,11 @@ public class Event {
 	public String mid() {
 		NullableValue<String> checksum = telemetry.read("mid");
 		return checksum.value();
+	}
+	
+	public String did() {
+		NullableValue<String> did = telemetry.read("dimensions.did");
+		return did.isNull() ? telemetry.<String>read("context.did").value() : did.value();
 	}
 
 	public String eid() {

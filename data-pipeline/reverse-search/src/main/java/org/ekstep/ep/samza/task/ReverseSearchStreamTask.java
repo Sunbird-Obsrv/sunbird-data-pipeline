@@ -62,6 +62,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
 	private Configuration configuration;
 	private JobMetrics metrics;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void init(Config config, TaskContext context) {
 		this.configuration = new Configuration(config);
@@ -154,6 +155,7 @@ public class ReverseSearchStreamTask implements StreamTask, InitableTask, Window
 	@Override
 	public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
 		String mEvent = metrics.collect();
+		@SuppressWarnings("unchecked")
 		Map<String, Object> mEventMap = new Gson().fromJson(mEvent, Map.class);
 		collector.send(
 				new OutgoingMessageEnvelope(new SystemStream("kafka", configuration.getMetricsTopic()), mEventMap));

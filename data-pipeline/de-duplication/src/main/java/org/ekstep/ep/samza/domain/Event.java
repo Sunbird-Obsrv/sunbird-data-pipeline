@@ -80,12 +80,13 @@ public class Event {
         telemetry.add("type", "events");
     }
 
-    public void markFailure(String error) {
+    public void markFailure(String error, DeDuplicationConfig config) {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.dd_processed", false);
 
         telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
         telemetry.add("metadata.dd_error", error);
+        telemetry.add("metadata.src", config.jobName());
     }
 
     public void updateDefaults(DeDuplicationConfig config) {

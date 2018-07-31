@@ -20,7 +20,7 @@ public class ReverseSearchSink extends BaseSink {
 	}
 
 	public void sendToSuccessTopic(Event event) {
-		toTopic(config.getSuccessTopic(), event.getMid(), event.getMap());
+		toTopic(config.getSuccessTopic(), event.getObjectID(config.objectTaxonomy()), event.getMap());
 		metrics.incSuccessCounter();
 	}
 

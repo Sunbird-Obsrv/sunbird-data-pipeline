@@ -15,7 +15,7 @@ public class TelemetryValidatorConfig {
 
     public TelemetryValidatorConfig(Config config) {
         successTopic = config.get("output.success.topic.name", "telemetry.valid");
-        failedTopic = config.get("output.failed.topic.name", "telemetry.valid.fail");
+        failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
         metricsTopic = config.get("output.metrics.topic.name", "telemetry.pipeline_metrics");
         defaultChannel = config.get("default.channel", "in.ekstep");

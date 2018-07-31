@@ -33,222 +33,240 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ReverseSearchTest {
 
-    @Mock
-    KeyValueStore<String, Object> deviceStore;
-    @Mock
-    LocationService locationService;
-    @Mock
-    DeviceService deviceService;
-    @Mock
-    private MessageCollector collector;
+	@Mock
+	KeyValueStore<String, Object> deviceStore;
+	@Mock
+	LocationService locationService;
+	@Mock
+	DeviceService deviceService;
+	@Mock
+	private MessageCollector collector;
 
-    private List<Rule> locationRules;
-    private TaskContext context;
-    private Counter counter;
-    private MetricsRegistry metricsRegistry;
+	private List<Rule> locationRules;
+	private TaskContext context;
+	private Counter counter;
+	private MetricsRegistry metricsRegistry;
+	private Config configMock;
 
-    @Before
-    public void setMock() {
-        initMocks(this);
-        locationRules = Arrays.asList(new LocationPresent(), new LocationEmpty(), new LocationAbsent());
-        context = mock(TaskContext.class);
-        metricsRegistry = mock(MetricsRegistry.class);
-        counter = mock(Counter.class);
-        stub(context.getMetricsRegistry()).toReturn(metricsRegistry);
-        stub(metricsRegistry.newCounter(anyString(), anyString()))
-                .toReturn(counter);
-    }
+	@Before
+	public void setMock() {
+		initMocks(this);
+		locationRules = Arrays.asList(new LocationPresent(), new LocationEmpty(), new LocationAbsent());
+		context = mock(TaskContext.class);
+		metricsRegistry = mock(MetricsRegistry.class);
+		counter = mock(Counter.class);
+		configMock = Mockito.mock(Config.class);
+		stub(context.getMetricsRegistry()).toReturn(metricsRegistry);
+		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
+		stub(configMock.get("gid.overridden.events", "")).toReturn("me.gid.field");
+		stub(configMock.get("me.gid.field", "")).toReturn("dimensions.content_id");
+		stub(configMock.containsKey("me.gid.field")).toReturn(true);
+	}
 
-    @Test
-    public void shouldDoReverseSearchIfLocPresent() {
-        when(locationService.getLocation("15.9310593,78.6238299", null)).thenReturn(new Location());
-        Event event = createEventMock("15.9310593,78.6238299");
-        when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
-        when(deviceService.getLocation(eq("bc811958-b4b7-4873-a43a-03718edba45b"), isNull(String.class))).thenReturn(new Location());
-        when(event.isLocationPresent()).thenReturn(true);
+	@Test
+	public void shouldDoReverseSearchIfLocPresent() {
+		when(locationService.getLocation("15.9310593,78.6238299", null)).thenReturn(new Location());
+		Event event = createEventMock("15.9310593,78.6238299");
+		when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+		when(deviceService.getLocation(eq("bc811958-b4b7-4873-a43a-03718edba45b"), isNull(String.class)))
+				.thenReturn(new Location());
+		when(event.isLocationPresent()).thenReturn(true);
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore,
-                "false", locationService, deviceService, locationRules, Mockito.mock(Config.class), context);
+		ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false",
+				locationService, deviceService, locationRules, configMock, context);
 
-        reverseSearchStreamTask.processEvent(event, collector);
-        verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
-        verify(locationService, times(1)).getLocation("15.9310593,78.6238299", null);
-        verify(deviceService, times(1)).getLocation(eq("bc811958-b4b7-4873-a43a-03718edba45b"), isNull(String.class));
-    }
+		reverseSearchStreamTask.processEvent(event, collector);
+		verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
+		verify(locationService, times(1)).getLocation("15.9310593,78.6238299", null);
+		verify(deviceService, times(1)).getLocation(eq("bc811958-b4b7-4873-a43a-03718edba45b"), isNull(String.class));
+	}
 
-    @Test
-    public void shouldUpdateProperFlagIfSearchReturnEmpty() {
+	@Test
+	public void shouldUpdateProperFlagIfSearchReturnEmpty() {
 
-        when(locationService.getLocation("15.9310593,78.6238299", null)).thenReturn(null);
-        Map<String, Object> map = createMap("15.9310593,78.6238299");
-        Event event = new Event(map);
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService,locationRules, Mockito.mock(Config.class), context);
+		when(locationService.getLocation("15.9310593,78.6238299", null)).thenReturn(null);
+		Map<String, Object> map = createMap("15.9310593,78.6238299");
+		Event event = new Event(map);
+		ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false",
+				locationService, deviceService, locationRules, configMock, context);
 
-        reverseSearchStreamTask.processEvent(event, collector);
-        verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
-        verify(locationService, times(1)).getLocation("15.9310593,78.6238299", null);
+		reverseSearchStreamTask.processEvent(event, collector);
+		verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
+		verify(locationService, times(1)).getLocation("15.9310593,78.6238299", null);
 
-        Assert.assertNotNull(event.getMap());
+		Assert.assertNotNull(event.getMap());
 
-        Map<String, Object> flagsResult = (Map<String, Object>) event.getMap().get("flags");
-        Assert.assertNotNull(flagsResult);
+		Map<String, Object> flagsResult = (Map<String, Object>) event.getMap().get("flags");
+		Assert.assertNotNull(flagsResult);
 
-        Assert.assertEquals(false, flagsResult.get("ldata_obtained"));
-        Assert.assertEquals(true, flagsResult.get("ldata_processed"));
-    }
+		Assert.assertEquals(false, flagsResult.get("ldata_obtained"));
+		Assert.assertEquals(true, flagsResult.get("ldata_processed"));
+	}
 
+	@Test
+	public void shouldTakeLocationFromDeviceStoreIfNotPresent() {
 
-    @Test
-    public void shouldTakeLocationFromDeviceStoreIfNotPresent() {
+		when(deviceStore.get("bc811958-b4b7-4873-a43a-03718edba45b")).thenReturn(
+				"{\"@type\":\"org.ekstep.ep.samza.system.Device\",\"id\":\"bc811958-b4b7-4873-a43a-03718edba45b\",\"location\":{\"city\":null,\"district\":null,\"state\":null,\"country\":null}}");
+		Event event = createEventMock("");
+		when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+		when(event.isLocationPresent()).thenReturn(false);
+		when(event.isLocationEmpty()).thenReturn(false);
+		when(event.isLocationAbsent()).thenReturn(true);
 
-        when(deviceStore.get("bc811958-b4b7-4873-a43a-03718edba45b")).thenReturn("{\"@type\":\"org.ekstep.ep.samza.system.Device\",\"id\":\"bc811958-b4b7-4873-a43a-03718edba45b\",\"location\":{\"city\":null,\"district\":null,\"state\":null,\"country\":null}}");
-        Event event = createEventMock("");
-        when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
-        when(event.isLocationPresent()).thenReturn(false);
-        when(event.isLocationEmpty()).thenReturn(false);
-        when(event.isLocationAbsent()).thenReturn(true);
+		ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false",
+				locationService, deviceService, locationRules, configMock, context);
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService,locationRules, Mockito.mock(Config.class), context);
+		reverseSearchStreamTask.processEvent(event, collector);
+		verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
+		verify(deviceService, times(1)).getLocation(eq("bc811958-b4b7-4873-a43a-03718edba45b"), isNull(String.class));
+		verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
 
-        reverseSearchStreamTask.processEvent(event, collector);
-        verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
-        verify(deviceService, times(1)).getLocation(eq("bc811958-b4b7-4873-a43a-03718edba45b"),isNull(String.class));
-        verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
+		Event event1 = createEventMock("");
+		when(event1.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+		when(event.isLocationPresent()).thenReturn(false);
+		when(event.isLocationEmpty()).thenReturn(false);
+		when(event.isLocationAbsent()).thenReturn(true);
 
-        Event event1 = createEventMock("");
-        when(event1.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
-        when(event.isLocationPresent()).thenReturn(false);
-        when(event.isLocationEmpty()).thenReturn(false);
-        when(event.isLocationAbsent()).thenReturn(true);
+		reverseSearchStreamTask.processEvent(event1, collector);
+		verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
+		verify(deviceService, times(2)).getLocation(eq("bc811958-b4b7-4873-a43a-03718edba45b"), isNull(String.class));
+		verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
+	}
 
-        reverseSearchStreamTask.processEvent(event1, collector);
-        verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
-        verify(deviceService, times(2)).getLocation(eq("bc811958-b4b7-4873-a43a-03718edba45b"), isNull(String.class));
-        verify(collector, times(2)).send(any(OutgoingMessageEnvelope.class));
-    }
+	@Test
+	public void shouldNotFailIfLocationInDeviceStoreIsNotPresent() {
 
-    @Test
-    public void shouldNotFailIfLocationInDeviceStoreIsNotPresent() {
+		when(deviceStore.get("bc811958-b4b7-4873-a43a-03718edba45b")).thenReturn(null);
+		Event event = createEventMock("");
 
-        when(deviceStore.get("bc811958-b4b7-4873-a43a-03718edba45b")).thenReturn(null);
-        Event event = createEventMock("");
+		when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
 
-        when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+		ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false",
+				locationService, deviceService, locationRules, configMock, context);
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules, Mockito.mock(Config.class), context);
+		reverseSearchStreamTask.processEvent(event, collector);
+		verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
+		verify(deviceService, times(1)).getLocation(eq("bc811958-b4b7-4873-a43a-03718edba45b"), isNull(String.class));
+		verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
+	}
 
-        reverseSearchStreamTask.processEvent(event, collector);
-        verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
-        verify(deviceService, times(1)).getLocation(eq("bc811958-b4b7-4873-a43a-03718edba45b"), isNull(String.class));
-        verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
-    }
+	@Test
+	public void shouldNotFailIfDeviseIdIsNull() {
 
-    @Test
-    public void shouldNotFailIfDeviseIdIsNull() {
+		when(deviceStore.get(null)).thenThrow(new NullPointerException("Null is not a valid key"));
+		Event event = createEventMock("");
 
-        when(deviceStore.get(null)).thenThrow(new NullPointerException("Null is not a valid key"));
-        Event event = createEventMock("");
+		when(event.getDid()).thenReturn(null);
 
-        when(event.getDid()).thenReturn(null);
+		ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false",
+				locationService, deviceService, locationRules, configMock, context);
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules, Mockito.mock(Config.class), context);
+		reverseSearchStreamTask.processEvent(event, collector);
+		verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
+	}
 
-        reverseSearchStreamTask.processEvent(event, collector);
-        verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
-    }
+	@Test
+	public void shouldIgnoreInvalidMessages() {
 
-    @Test
-    public void shouldIgnoreInvalidMessages() {
+		IncomingMessageEnvelope envelope = mock(IncomingMessageEnvelope.class);
+		when(envelope.getMessage()).thenThrow(new RuntimeException());
+		ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false",
+				locationService, deviceService, locationRules, configMock, context);
 
-        IncomingMessageEnvelope envelope = mock(IncomingMessageEnvelope.class);
-        when(envelope.getMessage()).thenThrow(new RuntimeException());
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules, Mockito.mock(Config.class), context);
+		TaskCoordinator task = mock(TaskCoordinator.class);
+		reverseSearchStreamTask.process(envelope, collector, task);
 
-        TaskCoordinator task = mock(TaskCoordinator.class);
-        reverseSearchStreamTask.process(envelope, collector, task);
+		verify(deviceStore, times(0)).get(anyString());
+		verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
+	}
 
-        verify(deviceStore, times(0)).get(anyString());
-        verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
-    }
+	@Test
+	public void ShouldStampChecksumToEventIfChecksumNotPresent() throws Exception {
+		Map<String, Object> eventMap = new Gson().fromJson(EventFixture.JSON, Map.class);
+		Event event = new Event(eventMap);
 
-    @Test
-    public void ShouldStampChecksumToEventIfChecksumNotPresent() throws Exception {
-        Map<String, Object> eventMap = new Gson().fromJson(EventFixture.JSON, Map.class);
-        Event event = new Event(eventMap);
+		ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false",
+				locationService, deviceService, locationRules, configMock, context);
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules, Mockito.mock(Config.class), context);
+		TaskCoordinator task = mock(TaskCoordinator.class);
+		reverseSearchStreamTask.processEvent(event, collector);
 
-        TaskCoordinator task = mock(TaskCoordinator.class);
-        reverseSearchStreamTask.processEvent(event, collector);
+		Assert.assertEquals(true, event.getMap().containsKey("metadata"));
+	}
 
-        Assert.assertEquals(true, event.getMap().containsKey("metadata"));
-    }
+	@Test
+	public void ShouldUseMidAsChecksumIfEventContainsMid() {
+		Map<String, Object> eventMap = new Gson().fromJson(EventFixture.JSON_WITH_MID, Map.class);
+		Event event = new Event(eventMap);
 
-    @Test
-    public void ShouldUseMidAsChecksumIfEventContainsMid() {
-        Map<String, Object> eventMap = new Gson().fromJson(EventFixture.JSON_WITH_MID, Map.class);
-        Event event = new Event(eventMap);
+		ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false",
+				locationService, deviceService, locationRules, configMock, context);
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules, Mockito.mock(Config.class), context);
+		TaskCoordinator task = mock(TaskCoordinator.class);
+		reverseSearchStreamTask.processEvent(event, collector);
 
-        TaskCoordinator task = mock(TaskCoordinator.class);
-        reverseSearchStreamTask.processEvent(event, collector);
+		Map<String, Object> metadata = (Map<String, Object>) event.getMap().get("metadata");
+		Assert.assertEquals(event.getMid(), metadata.get("checksum"));
+	}
 
-        Map<String, Object> metadata = (Map<String, Object>) event.getMap().get("metadata");
-        Assert.assertEquals(event.getMid(), metadata.get("checksum"));
-    }
+	@Test
+	public void ShouldValidateTimestampAndCreateIfNotPresent() throws Exception {
+		Map<String, Object> eventMap = new HashMap<String, Object>();
+		eventMap.put("ets", 1453202865000d);
+		eventMap.put("eid", "");
+		Event event = new Event(eventMap);
 
-    @Test
-    public void ShouldValidateTimestampAndCreateIfNotPresent() throws Exception {
-        Map<String, Object> eventMap = new HashMap<String, Object>();
-        eventMap.put("ets", 1453202865000d);
-        Event event = new Event(eventMap);
+		ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false",
+				locationService, deviceService, locationRules, configMock, context);
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService, locationRules, Mockito.mock(Config.class), context);
+		TaskCoordinator task = mock(TaskCoordinator.class);
+		reverseSearchStreamTask.processEvent(event, collector);
 
-        TaskCoordinator task = mock(TaskCoordinator.class);
-        reverseSearchStreamTask.processEvent(event, collector);
+		Assert.assertEquals(true, event.getMap().containsKey("ts"));
+	}
 
-        Assert.assertEquals(true, event.getMap().containsKey("ts"));
-    }
+	@Test
+	public void shouldRemoveDeviseStoreEntryForAllEventsWhichContainsEmptyLocation() {
 
-    @Test
-    public void shouldRemoveDeviseStoreEntryForAllEventsWhichContainsEmptyLocation() {
+		when(deviceStore.get("bc811958-b4b7-4873-a43a-03718edba45b")).thenReturn(
+				"{\"@type\":\"org.ekstep.ep.samza.system.Device\",\"id\":\"bc811958-b4b7-4873-a43a-03718edba45b\",\"location\":{\"city\":null,\"district\":null,\"state\":null,\"country\":null}}");
 
-        when(deviceStore.get("bc811958-b4b7-4873-a43a-03718edba45b")).thenReturn("{\"@type\":\"org.ekstep.ep.samza.system.Device\",\"id\":\"bc811958-b4b7-4873-a43a-03718edba45b\",\"location\":{\"city\":null,\"district\":null,\"state\":null,\"country\":null}}");
+		ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false",
+				locationService, deviceService, locationRules, configMock, context);
 
-        ReverseSearchStreamTask reverseSearchStreamTask = new ReverseSearchStreamTask(deviceStore, "false", locationService, deviceService,locationRules, Mockito.mock(Config.class), context);
+		Event event = createEventMock("");
+		when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
+		when(event.isLocationPresent()).thenReturn(false);
+		when(event.isLocationAbsent()).thenReturn(false);
+		when(event.isLocationEmpty()).thenReturn(true);
+		reverseSearchStreamTask.processEvent(event, collector);
+		verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
+		verify(deviceService, times(1)).deleteLocation(eq("bc811958-b4b7-4873-a43a-03718edba45b"),
+				isNull(String.class));
+		verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
+	}
 
-        Event event = createEventMock("");
-        when(event.getDid()).thenReturn("bc811958-b4b7-4873-a43a-03718edba45b");
-        when(event.isLocationPresent()).thenReturn(false);
-        when(event.isLocationAbsent()).thenReturn(false);
-        when(event.isLocationEmpty()).thenReturn(true);
-        reverseSearchStreamTask.processEvent(event, collector);
-        verify(locationService, times(0)).getLocation(anyString(), isNull(String.class));
-        verify(deviceService, times(1)).deleteLocation(eq("bc811958-b4b7-4873-a43a-03718edba45b"), isNull(String.class));
-        verify(collector, times(1)).send(any(OutgoingMessageEnvelope.class));
-    }
+	private Event createEventMock(String loc) {
+		Event event = mock(Event.class);
 
-    private Event createEventMock(String loc) {
-        Event event = mock(Event.class);
+		Map<String, Object> eks = mock(Map.class);
+		when(event.getGPSCoordinates()).thenReturn(loc);
+		return event;
+	}
 
-        Map<String, Object> eks = mock(Map.class);
-        when(event.getGPSCoordinates()).thenReturn(loc);
-        return event;
-    }
+	private Map<String, Object> createMap(String loc) {
+		Map<String, Object> edata = new HashMap<String, Object>();
+		edata.put("loc", loc);
+		Map<String, Object> event = new HashMap<String, Object>();
+		event.put("edata", edata);
+		event.put("eid", "");
+		return event;
+	}
 
-    private Map<String, Object> createMap(String loc) {
-        Map<String, Object> edata = new HashMap<String, Object>();
-        edata.put("loc", loc);
-        Map<String, Object> event = new HashMap<String, Object>();
-        event.put("edata", edata);
-        return event;
-    }
-
-    private ChecksumGenerator getChecksumGenerator() {
-        String[] keys_to_accept = {"uid", "ts", "cid", "gdata", "edata"};
-        ChecksumGenerator checksumGenerator = new ChecksumGenerator(new KeysToAccept(keys_to_accept));
-        return checksumGenerator;
-    }
+	private ChecksumGenerator getChecksumGenerator() {
+		String[] keys_to_accept = { "uid", "ts", "cid", "gdata", "edata" };
+		ChecksumGenerator checksumGenerator = new ChecksumGenerator(new KeysToAccept(keys_to_accept));
+		return checksumGenerator;
+	}
 }

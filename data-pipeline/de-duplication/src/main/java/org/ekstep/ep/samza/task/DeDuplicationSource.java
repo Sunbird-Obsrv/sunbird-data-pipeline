@@ -9,21 +9,22 @@ import org.ekstep.ep.samza.domain.Event;
 import com.google.gson.Gson;
 
 public class DeDuplicationSource {
-    static Logger LOGGER = new Logger(DeDuplicationSource.class);
+	static Logger LOGGER = new Logger(DeDuplicationSource.class);
 
-    private IncomingMessageEnvelope envelope;
+	private IncomingMessageEnvelope envelope;
 
-    public DeDuplicationSource(IncomingMessageEnvelope envelope) {
-        this.envelope = envelope;
-    }
+	public DeDuplicationSource(IncomingMessageEnvelope envelope) {
+		this.envelope = envelope;
+	}
 
-    public Event getEvent(){
-        String message = (String) envelope.getMessage();
-        Map<String, Object> jsonMap = (Map<String, Object>) new Gson().fromJson(message, Map.class);
-        return new Event(jsonMap);
-    }
+	public Event getEvent() {
+		String message = (String) envelope.getMessage();
+		@SuppressWarnings("unchecked")
+		Map<String, Object> jsonMap = (Map<String, Object>) new Gson().fromJson(message, Map.class);
+		return new Event(jsonMap);
+	}
 
-    public String getMessage() {
-        return envelope.toString();
-    }
+	public String getMessage() {
+		return envelope.toString();
+	}
 }

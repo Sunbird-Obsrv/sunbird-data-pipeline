@@ -15,13 +15,16 @@ public class TelemetryRouterConfig {
     private String primaryRouteTopic;
     private String secondaryRouteTopic;
     private String secondaryRouteEvents;
+    private String malformedTopic;
 
     public TelemetryRouterConfig(Config config) {
-        failedTopic = config.get("output.failed.topic.name", "telemetry.fail");
+        failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
         metricsTopic = config.get("output.metrics.topic.name", "telemetry.pipeline_metrics");
         primaryRouteTopic = config.get("router.events.primary.route.topic", "telemetry.sink");
         secondaryRouteEvents = config.get("router.events.secondary.route.events", "LOG,ERROR");
         secondaryRouteTopic = config.get("router.events.secondary.route.topic", "telemetry.log");
+        malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
+        
     }
 
     public String getPrimaryRouteTopic() {
@@ -55,6 +58,10 @@ public class TelemetryRouterConfig {
 
     public String metricsTopic() {
         return metricsTopic;
+    }
+    
+    public String malformedTopic() {
+    	return malformedTopic;
     }
 
     public String jobName() {

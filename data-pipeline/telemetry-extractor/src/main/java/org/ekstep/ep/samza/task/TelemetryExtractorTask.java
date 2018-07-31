@@ -19,83 +19,62 @@
 
 package org.ekstep.ep.samza.task;
 
-import com.google.gson.Gson;
-
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.*;
-import org.ekstep.ep.samza.domain.Telemetry;
-import org.ekstep.ep.samza.core.Logger;
+import org.apache.samza.task.InitableTask;
+import org.apache.samza.task.MessageCollector;
+import org.apache.samza.task.StreamTask;
+import org.apache.samza.task.TaskContext;
+import org.apache.samza.task.TaskCoordinator;
+import org.apache.samza.task.WindowableTask;
 import org.ekstep.ep.samza.core.JobMetrics;
-
-import java.util.List;
-import java.util.Map;
+import org.ekstep.ep.samza.core.Logger;
+import org.ekstep.ep.samza.service.TelemetryExtractorService;
 
 public class TelemetryExtractorTask implements StreamTask, InitableTask, WindowableTask {
 
-    static Logger LOGGER = new Logger(TelemetryExtractorTask.class);
-    private TelemetryExtractorConfig config;
-    private JobMetrics metrics;
+	static Logger LOGGER = new Logger(TelemetryExtractorTask.class);
+	private TelemetryExtractorConfig config;
+	private TelemetryExtractorService service;
+	private JobMetrics metrics;
 
-    public TelemetryExtractorTask(Config config, TaskContext context) {
-        init(config, context);
-    }
+	public TelemetryExtractorTask(Config config, TaskContext context) {
+		init(config, context);
+	}
 
-    public TelemetryExtractorTask() {
+	public TelemetryExtractorTask() {
 
-    }
+	}
 
-    @Override
-    public void init(Config config, TaskContext context) {
-        this.config = new TelemetryExtractorConfig(config);
-        metrics = new JobMetrics(context, this.config.jobName());
-    }
+	@Override
+	public void init(Config config, TaskContext context) {
+		this.config = new TelemetryExtractorConfig(config);
+		this.metrics = new JobMetrics(context, this.config.jobName());
+		this.service = new TelemetryExtractorService(this.config, this.metrics);
+	}
 
-    @Override
-    public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator taskCoordinator) throws Exception {
-        try {
-            String message = (String) envelope.getMessage();
-            Map<String, Object> eventSpec = (Map<String, Object>) new Gson().fromJson(message, Map.class);
-            long syncts = ((Number)eventSpec.get("syncts")).longValue();
-            List<Map<String, Object>> events = (List<Map<String, Object>>) eventSpec.get("events");
-            processEvents(events, syncts, collector);
-            generateLOGEvent(eventSpec, collector);
+	@Override
+	public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator taskCoordinator)
+			throws Exception {
 
-        } catch (Exception e){
-            LOGGER.info("","Failed to process events: "+ e.getMessage());
-        }
-    }
+		String message = (String) envelope.getMessage();
+		TelemetryExtractorSink sink = new TelemetryExtractorSink(collector, metrics, config);
 
-    @Override
-    public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-        String mEvent = metrics.collect();
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
-        metrics.clear();
-    }
+		try {
+			service.process(message, sink);
+		} catch (Exception e) {
+			LOGGER.info("", "Failed to process events: " + e.getMessage());
+			sink.toErrorTopic(message);
+		}
+	}
 
-    private void processEvents(List<Map<String, Object>> events, long syncts, MessageCollector collector){
-        for(Map<String, Object> event: events){
-            try {
-                event.put("syncts",syncts);
-                String json = new Gson().toJson(event);
-                collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), json));
-            }catch (Exception e){
-                LOGGER.info((String)event.get("eid"),"Failed to process the event: "+ e.getMessage() + " mid: "+(String)event.get("mid"));
-            }
+	@Override
+	public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
+		String mEvent = metrics.collect();
+		collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
+		metrics.clear();
+	}
 
-        }
-    }
-    private void generateLOGEvent(Map<String, Object> eventSpec, MessageCollector collector) {
-        try {
-            // Creating LOG event
-            Telemetry v3spec = new Telemetry(eventSpec);
-            String auditEvent =  v3spec.toJson();
-            collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.successTopic()), auditEvent));
-        }catch (Exception e){
-            e.printStackTrace();
-            LOGGER.info("","Failed to generate LOG event: "+ e.getMessage());
-        }
-    }
 }

@@ -25,8 +25,10 @@ import org.mockito.Mockito;
 public class TelemetryRouterTaskTest {
 
 	private static final String PRIMARY_TOPIC = "telemetry.sink";
-	private static final String FAILED_TOPIC = "telemetry.fail";
+	private static final String FAILED_TOPIC = "telemetry.failed";
 	private static final String SECONDARY_TOPIC = "telemetry.log";
+	private static final String MALFORMED_TOPIC = "telemetry.malformed";
+	
 	private MessageCollector collectorMock;
 	private TaskContext contextMock;
 	private MetricsRegistry metricsRegistry;
@@ -49,6 +51,7 @@ public class TelemetryRouterTaskTest {
 		stub(configMock.get("router.events.primary.route.topic", PRIMARY_TOPIC)).toReturn(PRIMARY_TOPIC);
 		stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
 		stub(configMock.get("router.events.secondary.route.topic", SECONDARY_TOPIC)).toReturn(SECONDARY_TOPIC);
+		stub(configMock.get("output.malformed.topic.name", MALFORMED_TOPIC)).toReturn(MALFORMED_TOPIC);
 
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
@@ -109,7 +112,7 @@ public class TelemetryRouterTaskTest {
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.UNPARSABLE_START_EVENT);
 		telemetryRouterTask = new TelemetryRouterTask(configMock, contextMock);
 		telemetryRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
-		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), MALFORMED_TOPIC)));
 	}
 
 	@Test
@@ -118,7 +121,7 @@ public class TelemetryRouterTaskTest {
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.ANY_STRING);
 		telemetryRouterTask = new TelemetryRouterTask(configMock, contextMock);
 		telemetryRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
-		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), MALFORMED_TOPIC)));
 	}
 
 	public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {

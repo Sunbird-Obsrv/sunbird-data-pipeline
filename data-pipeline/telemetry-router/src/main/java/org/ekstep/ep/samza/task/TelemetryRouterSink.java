@@ -9,7 +9,7 @@ public class TelemetryRouterSink extends BaseSink {
 
 	private JobMetrics metrics;
 	private TelemetryRouterConfig config;
-
+	
 	public TelemetryRouterSink(MessageCollector collector, JobMetrics metrics, TelemetryRouterConfig config) {
 
 		super(collector);
@@ -18,22 +18,23 @@ public class TelemetryRouterSink extends BaseSink {
 	}
 
 	public void toPrimaryRoute(Event event) {
-		toTopic(config.getPrimaryRouteTopic(), event.mid(), event.getJson());
+		toTopic(config.getPrimaryRouteTopic(), event.did(), event.getJson());
 		metrics.incSuccessCounter();
 	}
 
-	public void toErrorTopic(Event event) {
+	public void toErrorTopic(Event event, String errorMessage) {
+		event.markFailure(errorMessage, config);
 		toTopic(config.failedTopic(), event.mid(), event.getJson());
 		metrics.incErrorCounter();
 	}
-	
+
 	public void toMalformedTopic(String message) {
-		toTopic(config.failedTopic(), null, message);
+		toTopic(config.malformedTopic(), null, message);
 		metrics.incErrorCounter();
 	}
 
 	public void toSecondaryRoute(Event event) {
-		toTopic(config.getSecondaryRouteTopic(), event.mid(), event.getJson());
+		toTopic(config.getSecondaryRouteTopic(), event.did(), event.getJson());
 		metrics.incSuccessCounter();
 	}
 }

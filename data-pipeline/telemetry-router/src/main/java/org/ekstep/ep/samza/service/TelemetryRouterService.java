@@ -37,12 +37,11 @@ public class TelemetryRouterService {
             LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
             sink.toMalformedTopic(source.getMessage());
         } catch (Exception e) {
-			event.markFailure(e.getMessage(), config);
 			LOGGER.error(null,
 					format("EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO EXCEPTION TOPIC. EVENT: {0}, EXCEPTION:",
 							event),
 					e);
-			sink.toErrorTopic(event);
+			sink.toErrorTopic(event, e.getMessage());
 		}
 	}
 }

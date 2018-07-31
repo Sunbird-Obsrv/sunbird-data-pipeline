@@ -37,57 +37,54 @@ import org.ekstep.ep.samza.service.DeDuplicationService;
 
 public class DeDuplicationTask implements StreamTask, InitableTask, WindowableTask {
 
+	static Logger LOGGER = new Logger(DeDuplicationTask.class);
+	private DeDuplicationConfig config;
+	private JobMetrics metrics;
+	private DeDuplicationService service;
 
-    static Logger LOGGER = new Logger(DeDuplicationTask.class);
-    private DeDuplicationConfig config;
-    private JobMetrics metrics;
-    private DeDuplicationService service;
+	public DeDuplicationTask(Config config, TaskContext context, KeyValueStore<Object, Object> deDuplicationStore,
+			DeDupEngine deDupEngine) {
+		init(config, context, deDuplicationStore, deDupEngine);
+	}
 
-    public DeDuplicationTask(Config config, TaskContext context,
-                             KeyValueStore<Object, Object> deDuplicationStore, DeDupEngine deDupEngine) {
-        init(config, context, deDuplicationStore, deDupEngine);
-    }
+	public DeDuplicationTask() {
 
-    public DeDuplicationTask() {
+	}
 
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	public void init(Config config, TaskContext context) {
+		init(config, context, (KeyValueStore<Object, Object>) context.getStore("de-duplication"), null);
+	}
 
-    @Override
-    public void init(Config config, TaskContext context) {
-        init(config, context,
-                (KeyValueStore<Object, Object>) context.getStore("de-duplication"), null);
-    }
+	private void init(Config config, TaskContext context, KeyValueStore<Object, Object> deDuplicationStore,
+			DeDupEngine deDupEngine) {
+		this.config = new DeDuplicationConfig(config);
+		metrics = new JobMetrics(context, this.config.jobName());
+		deDupEngine = deDupEngine == null ? new DeDupEngine(deDuplicationStore) : deDupEngine;
+		service = new DeDuplicationService(deDupEngine, this.config);
+	}
 
-    private void init(Config config, TaskContext context,
-                      KeyValueStore<Object, Object> deDuplicationStore, DeDupEngine deDupEngine) {
-        this.config = new DeDuplicationConfig(config);
-        metrics = new JobMetrics(context, this.config.jobName());
-        deDupEngine = deDupEngine == null ? new DeDupEngine(deDuplicationStore) : deDupEngine;
-        service = new DeDuplicationService(deDupEngine,this.config);
-    }
+	@Override
+	public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator taskCoordinator) {
+		try {
+			DeDuplicationSource source = new DeDuplicationSource(envelope);
+			DeDuplicationSink sink = new DeDuplicationSink(collector, metrics, config);
 
-    @Override
-    public void process(IncomingMessageEnvelope envelope, MessageCollector collector,
-                        TaskCoordinator taskCoordinator) {
-        try {
-            DeDuplicationSource source = new DeDuplicationSource(envelope);
-            DeDuplicationSink sink = new DeDuplicationSink(collector, metrics, config);
+			service.process(source, sink);
+		} catch (Exception ex) {
+			LOGGER.error("", "Deduplication failed: " + ex.getMessage());
+			Object event = envelope.getMessage();
+			if (event != null) {
+				LOGGER.info("", "FAILED_EVENT: " + event);
+			}
+		}
+	}
 
-            service.process(source, sink);
-        }
-        catch (Exception ex) {
-            LOGGER.error("", "Deduplication failed: " + ex.getMessage());
-            Object event = envelope.getMessage();
-            if (event != null) {
-                LOGGER.info("", "FAILED_EVENT: " + event);
-            }
-        }
-    }
-
-    @Override
-    public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-        String mEvent = metrics.collect();
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
-        metrics.clear();
-    }
+	@Override
+	public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
+		String mEvent = metrics.collect();
+		collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
+		metrics.clear();
+	}
 }

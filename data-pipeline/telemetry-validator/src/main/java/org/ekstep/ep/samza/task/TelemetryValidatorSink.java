@@ -23,12 +23,14 @@ public class TelemetryValidatorSink extends BaseSink {
         metrics.incSuccessCounter();
     }
 
-    public void toFailedTopic(Event event) {
+    public void toFailedTopic(Event event, String failedMessage) {
+    	event.markFailure(failedMessage, config);
         toTopic(config.failedTopic(), event.mid(), event.getJson());
         metrics.incFailedCounter();
     }
 
-    public void toErrorTopic(Event event) {
+    public void toErrorTopic(Event event, String errorMessage) {
+    	event.markFailure(errorMessage, config);
         toTopic(config.failedTopic(), event.mid(), event.getJson());
         metrics.incErrorCounter();
     }
