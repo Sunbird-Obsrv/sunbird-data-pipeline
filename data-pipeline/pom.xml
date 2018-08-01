@@ -33,6 +33,7 @@
 		<module>public-exhaust-de-duplication</module>
 		<module>private-exhaust-de-duplication</module>
 		<module>ep-de-duplication</module>
+		<module>es-indexer</module>
 		<module>es-indexer-primary</module>
 		<module>es-router</module>
 		<module>es-client</module>
