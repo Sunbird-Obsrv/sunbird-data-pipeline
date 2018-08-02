@@ -1,32 +1,27 @@
 package org.ekstep.ep.samza.task;
 
-import com.google.gson.Gson;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.stub;
 
-import org.apache.samza.system.SystemStream;
-import org.ekstep.ep.samza.fixtures.EventFixture;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
+import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
-import org.ekstep.ep.samza.util.ExtractorUtils;
-import org.joda.time.DateTime;
+import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.stub;
+import com.google.gson.Gson;
 
 public class TelemetryExtractorTaskTest {
 
@@ -155,21 +150,30 @@ public class TelemetryExtractorTaskTest {
         assertEquals(false, output.contains("events"));
     }
     
-//    @Test
-//    public void auditEventMetrics() throws Exception {
-//        String spec = EventFixture.getEventAsString("event");
-//        stub(envelope.getMessage()).toReturn(spec);
-//        TelemetryExtractorTask task = new TelemetryExtractorTask(config, context);
-//        task.process(envelope, collector, coordinator);
-//
-//        OutgoingMessageEnvelope envelope = ((TestMessageCollector) collector).outgoingEnvelope;
-//        SystemStream stream = envelope.getSystemStream();
-//
-//        String output = (String) envelope.getMessage();
-//        System.out.println(output);
-//        String output2 = (String) envelope.getMessage();
-//        System.out.println(output2);
-//        assertEquals("kafka", stream.getSystem());
-//        assertEquals("telemetry.raw", stream.getStream());
-//    }
+    @Test
+    public void auditEventMetrics() throws Exception {
+        String spec = EventFixture.getEventAsString("event1");
+        stub(envelope.getMessage()).toReturn(spec);
+        TelemetryExtractorTask task = new TelemetryExtractorTask(config, context);
+        task.process(envelope, collector, coordinator);
+
+        OutgoingMessageEnvelope envelope = ((TestMessageCollector) collector).outgoingEnvelope;
+        SystemStream stream = envelope.getSystemStream();
+        
+        String output = (String) envelope.getMessage();
+        System.out.println(output);
+        Map<String, Object> event = (Map<String, Object>) new Gson().fromJson(output, Map.class);
+        assertEquals("kafka", stream.getSystem());
+        assertEquals("LOG", (String)event.get("eid"));
+        Map<String, Object> edata = (Map<String, Object>)event.get("edata");
+        assertEquals("telemetry_audit", (String)edata.get("type"));
+        assertEquals("INFO", (String)edata.get("level"));
+        
+        Map<String, Object> param = (Map<String, Object>)((List<Object>)edata.get("params")).get(0);
+        assertEquals(2, ((Number)param.get("events_count")).intValue());
+        assertEquals("SUCCESS", (String)param.get("sync_status"));
+        
+        
+        
+    }
 }
