@@ -159,6 +159,17 @@ public class Telemetry {
             return this.<String>read("@timestamp").value();
         }
     }
+    
+    public String getSyncts(){
+        Object timestamp = this.read("syncts").value();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        if ( timestamp instanceof Number){
+            Date date = new Date(((Number) timestamp).longValue());
+            return simpleDateFormat.format(date);
+        } else {
+            return this.<String>read("syncts").value();
+        }
+    }
 
     public Map<String, Object> getEdata(){
     	return this.<Map<String, Object>>read("edata.eks").value();
