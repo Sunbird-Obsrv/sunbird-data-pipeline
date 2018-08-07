@@ -8,10 +8,14 @@ import org.apache.commons.lang.StringUtils;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.task.TelemetryValidatorConfig;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import com.google.gson.Gson;
 
 public class Event {
+	
+	private DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ").withZoneUTC();
     private final Telemetry telemetry;
 
     public Event(Map<String, Object> map) {
@@ -101,6 +105,9 @@ public class Event {
             telemetry.addFieldIfAbsent("context", new HashMap<String, Object>());
             telemetry.add("context.channel", config.defaultChannel());
         }
+        long syncts = System.currentTimeMillis();
+        telemetry.addFieldIfAbsent("syncts", syncts);
+        telemetry.addFieldIfAbsent("@timestamp", df.print(syncts));
     }
 }
 
