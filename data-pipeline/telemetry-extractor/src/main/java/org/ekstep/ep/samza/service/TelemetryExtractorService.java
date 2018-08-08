@@ -17,7 +17,7 @@ public class TelemetryExtractorService {
 
 	static Logger LOGGER = new Logger(TelemetryExtractorService.class);
 
-	private DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ").withZoneUTC();
+	private DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZoneUTC();
 	private JobMetrics metrics;
 
 	public TelemetryExtractorService(TelemetryExtractorConfig config, JobMetrics metrics) {
