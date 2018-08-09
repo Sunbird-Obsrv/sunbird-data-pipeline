@@ -1,13 +1,16 @@
 package org.ekstep.ep.samza.task;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.stub;
 
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.reflect.TypeToken;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
@@ -44,6 +47,7 @@ public class TelemetryExtractorTaskTest {
     private MetricsRegistry metricsRegistry;
     private final String successTopic = "telemetry.raw";
     private final String errorTopic = "telemetry.extractor.failed";
+    private Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
 
     @Before
     public void setup() {
@@ -74,10 +78,12 @@ public class TelemetryExtractorTaskTest {
 
         assertEquals("kafka", stream.getSystem());
         assertEquals("telemetry.raw", stream.getStream());
-        
-        String output = (String) envelope.getMessage();
-        assertEquals(true, output.contains("syncts"));
-        assertEquals(true, output.contains("@timestamp"));
+
+        Map<String, Object> output = new Gson().fromJson((String) envelope.getMessage(), mapType);
+        assertTrue(output.containsKey("syncts"));
+        assertTrue(output.containsKey("@timestamp"));
+        assertEquals(1529500243955L, ((Number) output.get("syncts")).longValue());
+        assertEquals("2018-06-20T13:10:43.955Z", output.get("@timestamp"));
     }
 
     @Test
