@@ -51,8 +51,8 @@ public class TelemetryExtractorService {
 
 		if (batchEvent.containsKey("syncts")) {
 			Object obj = batchEvent.get("syncts");
-			if (obj instanceof Long) {
-				return ((Long) obj).longValue();
+			if (obj instanceof Number) {
+				return ((Number) obj).longValue();
 			}
 		}
 
