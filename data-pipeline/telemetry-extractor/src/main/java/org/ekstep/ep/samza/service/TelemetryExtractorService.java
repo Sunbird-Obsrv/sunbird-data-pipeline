@@ -40,7 +40,6 @@ public class TelemetryExtractorService {
 				event.put("@timestamp", syncTimestamp);
 				Map<String, Object> context = (Map<String, Object>)event.get("context");
 				String channel = (String)context.get("channel");
-				System.out.println(defaultChannel);
 				if(StringUtils.isEmpty(channel)){
 					event.put("context", context);
 				}
