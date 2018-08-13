@@ -111,6 +111,9 @@ public class TelemetryExtractorTaskTest {
         Map<String, Object> context = (Map<String, Object>)event.get("context");
         String channel = (String)context.get("channel");
         assertEquals("01250894314817126443", channel);
+
+        Map<String, String> padata = (Map<String, String>)context.get("pdata");
+        assertEquals("pipeline", padata.get("id"));
     }
     
     @Test

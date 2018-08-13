@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.domain;
 
 import com.google.gson.annotations.SerializedName;
+
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.task.TelemetryExtractorConfig;
 
@@ -14,7 +15,7 @@ public class Context {
     static Logger LOGGER = new Logger(Context.class);
 
     @SerializedName("pdata")
-    private Map<String, String> pData;
+    private Map<String, String> pData = new HashMap<String, String>();
 
     @SerializedName("cdata")
     private ArrayList<CData> cData = new ArrayList<>();
@@ -24,6 +25,10 @@ public class Context {
     public Context(Map<String, Object> eventSpec, String defaultChannel) {
 
     	this.channel = defaultChannel;
+        this.pData.put("id", "pipeline");
+        this.pData.put("pid", "");
+        this.pData.put("ver", "");
+
         try{
             List<Map<String, Object>> events = (List<Map<String, Object>>)eventSpec.get("events");
             Map<String, Object> event = events.get(0);
@@ -34,7 +39,6 @@ public class Context {
             if (channel!=null && !"".equals(channel.trim())) {
             	this.channel = channel;
             }
-            pData = (Map<String, String>)eventContext.get("pdata");
         }catch(Exception e){
             LOGGER.info("","Failed to initialize context: "+ e.getMessage());
         }
