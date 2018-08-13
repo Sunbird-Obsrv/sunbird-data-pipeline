@@ -39,6 +39,11 @@ public class Context {
             if (channel!=null && !"".equals(channel.trim())) {
             	this.channel = channel;
             }
+            Map<String, String> pdata = (Map<String, String>)eventContext.get("pdata");
+            if(pdata!=null && pdata.containsKey("id")){
+            	this.pData = pdata;
+            }
+            
         }catch(Exception e){
             LOGGER.info("","Failed to initialize context: "+ e.getMessage());
         }
