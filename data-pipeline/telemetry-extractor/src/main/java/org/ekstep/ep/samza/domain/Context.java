@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.domain;
 
 import com.google.gson.annotations.SerializedName;
 import org.ekstep.ep.samza.core.Logger;
+import org.ekstep.ep.samza.task.TelemetryExtractorConfig;
 
 import java.util.*;
 
@@ -20,20 +21,18 @@ public class Context {
 
     private Rollup rollUp;
 
-    public Context() {
-    }
+    public Context(Map<String, Object> eventSpec, String defaultChannel) {
 
-    public Context(Map<String, Object> eventSpec) {
-
+    	this.channel = defaultChannel;
         try{
             List<Map<String, Object>> events = (List<Map<String, Object>>)eventSpec.get("events");
             Map<String, Object> event = events.get(0);
             Map<String, Object> eventContext = (Map<String, Object>)event.get("context");
             env = "telemetry-sync";
             did = (String)eventContext.get("did");
-            channel = (String)eventContext.get("channel");
-            if (channel==null && "".equals(channel.trim())) {
-                channel = "";
+            String channel = (String)eventContext.get("channel");
+            if (channel!=null && !"".equals(channel.trim())) {
+            	this.channel = channel;
             }
             pData = (Map<String, String>)eventContext.get("pdata");
         }catch(Exception e){

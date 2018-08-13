@@ -3,6 +3,7 @@ package org.ekstep.ep.samza.service;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Telemetry;
@@ -19,9 +20,11 @@ public class TelemetryExtractorService {
 
 	private DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZoneUTC();
 	private JobMetrics metrics;
+	private String defaultChannel = "";
 
 	public TelemetryExtractorService(TelemetryExtractorConfig config, JobMetrics metrics) {
 		this.metrics = metrics;
+		this.defaultChannel = config.defaultChannel();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -35,11 +38,17 @@ public class TelemetryExtractorService {
 			for (Map<String, Object> event : events) {
 				event.put("syncts", syncts);
 				event.put("@timestamp", syncTimestamp);
+				Map<String, Object> context = (Map<String, Object>)event.get("context");
+				String channel = (String)context.get("channel");
+				System.out.println(defaultChannel);
+				if(StringUtils.isEmpty(channel)){
+					event.put("context", context);
+				}
 				String json = new Gson().toJson(event);
 				sink.toSuccessTopic(json);
 			}
 			metrics.incSuccessCounter();
-			generateAuditEvent(batchEvent, syncts, syncTimestamp, sink);
+			generateAuditEvent(batchEvent, syncts, syncTimestamp, sink, defaultChannel);
 		} catch (Exception ex) {
 			LOGGER.info("", "Failed to process events: " + ex.getMessage());
 			sink.toErrorTopic(message);
@@ -68,10 +77,9 @@ public class TelemetryExtractorService {
 	 * @param sink
 	 */
 	private void generateAuditEvent(Map<String, Object> eventSpec, long syncts, String syncTimestamp,
-			TelemetryExtractorSink sink) {
-
+			TelemetryExtractorSink sink, String defaultChannel) {
 		try {
-			Telemetry v3spec = new Telemetry(eventSpec, syncts, syncTimestamp);
+			Telemetry v3spec = new Telemetry(eventSpec, syncts, syncTimestamp, defaultChannel);
 			String auditEvent = v3spec.toJson();
 			sink.toSuccessTopic(auditEvent);
 		} catch (Exception e) {

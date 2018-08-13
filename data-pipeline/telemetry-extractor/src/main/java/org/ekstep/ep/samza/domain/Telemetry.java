@@ -26,7 +26,7 @@ public class Telemetry {
 
 	}
 
-	public Telemetry(Map<String, Object> batchEvent, long syncts, String syncTimestamp) {
+	public Telemetry(Map<String, Object> batchEvent, long syncts, String syncTimestamp, String defaultChannel) {
 
 		try {
 			@SuppressWarnings("unchecked")
@@ -70,7 +70,7 @@ public class Telemetry {
 			this.mid = computeMid(this.eid, mid);
 			this.metadata = new HashMap<>();
 			this.actor = new Actor(batchEvent);
-			this.context = new Context(batchEvent);
+			this.context = new Context(batchEvent, defaultChannel);
 			this.object = new TObject(batchEvent);
 		} catch (Exception e) {
 

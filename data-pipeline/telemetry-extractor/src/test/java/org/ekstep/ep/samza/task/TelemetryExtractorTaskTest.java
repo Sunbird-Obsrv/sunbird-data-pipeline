@@ -47,6 +47,7 @@ public class TelemetryExtractorTaskTest {
     private MetricsRegistry metricsRegistry;
     private final String successTopic = "telemetry.raw";
     private final String errorTopic = "telemetry.extractor.failed";
+    private final String defaultChannel = "01250894314817126443";
     private Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
 
     @Before
@@ -63,6 +64,7 @@ public class TelemetryExtractorTaskTest {
                 .toReturn(counter);
         stub(config.get("output.success.topic.name", "telemetry.raw")).toReturn(successTopic);
         stub(config.get("output.error.topic.name", "telemetry.extractor.failed")).toReturn(errorTopic);
+        stub(config.get("default.channel", "01250894314817126443")).toReturn(defaultChannel);
         
     }
 
@@ -84,6 +86,7 @@ public class TelemetryExtractorTaskTest {
         assertTrue(output.containsKey("@timestamp"));
         assertEquals(1529500243955L, ((Number) output.get("syncts")).longValue());
         assertEquals("2018-06-20T13:10:43.955Z", output.get("@timestamp"));
+
     }
 
     @Test
@@ -104,6 +107,10 @@ public class TelemetryExtractorTaskTest {
         List<Map<String, Object>> edata = (List<Map<String, Object>>)((Map<String, Object>)event.get("edata")).get("params");
         int event_count = ((Number)edata.get(0).get("events_count")).intValue();
         assertEquals(0, event_count);
+
+        Map<String, Object> context = (Map<String, Object>)event.get("context");
+        String channel = (String)context.get("channel");
+        assertEquals("01250894314817126443", channel);
     }
     
     @Test
@@ -167,7 +174,6 @@ public class TelemetryExtractorTaskTest {
         SystemStream stream = envelope.getSystemStream();
         
         String output = (String) envelope.getMessage();
-        System.out.println(output);
         Map<String, Object> event = (Map<String, Object>) new Gson().fromJson(output, Map.class);
         assertEquals("kafka", stream.getSystem());
         assertEquals("LOG", (String)event.get("eid"));
@@ -178,8 +184,5 @@ public class TelemetryExtractorTaskTest {
         Map<String, Object> param = (Map<String, Object>)((List<Object>)edata.get("params")).get(0);
         assertEquals(2, ((Number)param.get("events_count")).intValue());
         assertEquals("SUCCESS", (String)param.get("sync_status"));
-        
-        
-        
     }
 }
