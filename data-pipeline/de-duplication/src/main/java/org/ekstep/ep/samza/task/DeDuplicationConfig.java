@@ -20,7 +20,7 @@ public class DeDuplicationConfig {
         duplicateTopic = config.get("output.duplicate.topic.name", "telemetry.duplicate");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
         metricsTopic = config.get("output.metrics.topic.name", "pipeline_metrics");
-        defaultChannel = config.get("default.channel", "in.ekstep");
+        defaultChannel = config.get("default.channel", "org.sunbird");
     }
 
     public String successTopic() {

@@ -18,7 +18,7 @@ public class TelemetryValidatorConfig {
         failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
         metricsTopic = config.get("output.metrics.topic.name", "telemetry.pipeline_metrics");
-        defaultChannel = config.get("default.channel", "in.ekstep");
+        defaultChannel = config.get("default.channel", "org.sunbird");
         schemaPath = config.get("telemetry.schema.path", "/etc/samza-jobs/schemas");
     }
 
