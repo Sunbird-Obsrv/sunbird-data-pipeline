@@ -113,6 +113,13 @@ public class TelemetryValidatorTaskTest {
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
 
+    @Test
+    public void shouldSendEventToFailedTopicIfEidNotPresent() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.EVENT_WITH_EID_MISSING);
+        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+    }
+
     public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
         return new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override

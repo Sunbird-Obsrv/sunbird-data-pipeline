@@ -60,8 +60,9 @@ public class Event {
 		String eid = eid();
 		if (eid != null) {
 			return MessageFormat.format("{0}.json", eid.toLowerCase());
+		} else {
+			return "envelope.json";
 		}
-		return null;
 	}
 
 	public String version() {
