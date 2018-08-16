@@ -24,26 +24,26 @@
 		<module>de-duplication</module>
 		<module>distribution</module>
 		<module>checksum-generator</module>
-		<module>partner-data-router</module>
-		<module>public-telemetry</module>
+		<!-- <module>partner-data-router</module> -->
+		<!-- <module>public-telemetry</module> -->
 		<module>telemetry-cleaner</module>
 		<module>search-service</module>
 		<module>cache-service</module>
 		<module>ep-telemetry-reader</module>
-		<module>public-exhaust-de-duplication</module>
-		<module>private-exhaust-de-duplication</module>
+		<!-- <module>public-exhaust-de-duplication</module> -->
+		<!-- <module>private-exhaust-de-duplication</module> -->
 		<module>ep-de-duplication</module>
 		<module>es-indexer</module>
-		<module>es-indexer-primary</module>
-		<module>es-router</module>
+		<!-- <module>es-indexer-primary</module> -->
+		<!-- <module>es-router</module> -->
 		<module>es-client</module>
-		<module>es-router-primary</module>
-		<module>es-indexer-secondary</module>
-		<module>es-router-secondary</module>
+		<!-- <module>es-router-primary</module> -->
+		<!-- <module>es-indexer-secondary</module> -->
+		<!-- <module>es-router-secondary</module> -->
 		<module>telemetry-validator</module>
 		<module>telemetry-converter</module>
 		<module>object-de-normalization</module>
-		<module>ep-telemetry-converter</module>
+		<!-- <module>ep-telemetry-converter</module> -->
 		<module>telemetry-extractor</module>
 		<module>telemetry-router</module>
 		<module>reverse-search</module>

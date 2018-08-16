@@ -181,6 +181,28 @@ public class EsIndexerTaskTest {
 		
 		verify(collectorMock, times(0)).send(any(OutgoingMessageEnvelope.class));
 	}
+
+	@Test
+	public void shouldIndexMissingEidEventsToFailedIndex() throws Exception {
+
+		stub(streamMock.getStream()).toReturn("telemetry.failed");
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.getEvent(EventFixture.EVENT_WITH_EID_MISSING));
+		stub(esServiceMock.index(anyString(), anyString(), anyString(), anyString()))
+				.toReturn(new IndexResponse("200", null));
+		ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+
+		esIndexerPrimaryTask.process(envelopeMock, collectorMock, coordinatorMock);
+
+		verify(esServiceMock, times(1)).index(argument.capture(), argument.capture(),
+				argument.capture(), argument.capture());
+
+		List<String> values = argument.getAllValues();
+
+		assertEquals("failed-telemetry", values.get(0));
+		assertEquals("events", values.get(1));
+
+		verify(collectorMock, times(0)).send(any(OutgoingMessageEnvelope.class));
+	}
 	
 	
 	@Test

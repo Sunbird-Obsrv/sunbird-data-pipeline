@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.service;
 
+import com.google.common.base.Optional;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.esclient.ClientResponse;
@@ -33,10 +34,10 @@ public class EsIndexerService {
 			}
 
 			ClientResponse response = elasticSearchService.index(indexName, event.indexType(), event.getJson(),
-					event.id());
+					Optional.fromNullable(event.id()).or("Eid Missing Event"));
 
 			if (success(response)) {
-				LOGGER.info("ES INDEXER SUCCESS", event.id());
+				LOGGER.info("ES INDEXER SUCCESS", Optional.fromNullable(event.id()).or("Eid Missing Event"));
 				sink.markSuccess();
 			} else {
 				LOGGER.error("ES INDEXER FAILED : RESPONSE", response.toString());

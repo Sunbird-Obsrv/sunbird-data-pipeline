@@ -18,6 +18,7 @@ public class EsIndexerConfig {
     private String primaryIndex;
     private String summaryIndex;
     private String summaryCumulativeIndex;
+    private String failedTelemetryIndex;
 
 	public EsIndexerConfig(Config config) {
     	
@@ -25,6 +26,7 @@ public class EsIndexerConfig {
         primaryIndex = config.get("indexer.primary.index", "telemetry");
         summaryIndex = config.get("indexer.summary.index", "summary");
         summaryCumulativeIndex = config.get("indexer.summary.cumulative.index", "summary-cumulative");
+        failedTelemetryIndex = config.get("indexer.failed.index", "failed-telemetry");
         metricsTopic = config.get("output.metrics.topic.name", "pipeline_metrics");
         elasticSearchHosts = config.get("hosts.elastic_search","localhost");
         elasticSearchPort = config.get("port.elastic_search","9200");
@@ -48,6 +50,10 @@ public class EsIndexerConfig {
     
     public String derivedCumulativeIndex() {
     	return summaryCumulativeIndex;
+    }
+
+    public String failedTelemetryIndex() {
+	    return failedTelemetryIndex;
     }
 
     public String failedTopic() {

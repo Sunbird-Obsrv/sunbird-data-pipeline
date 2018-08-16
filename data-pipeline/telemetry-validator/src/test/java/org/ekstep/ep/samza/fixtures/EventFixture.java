@@ -158,14 +158,6 @@ public class EventFixture {
             "  \"tags\":[\n" +
             "\n" +
             "  ],\n" +
-            "  \"flags\":{\n" +
-            "    \"tv_skipped\":true,\n" +
-            "    \"dd_processed\":false,\n" +
-            "    \"dd_checksum_present\":false,\n" +
-            "    \"ldata_obtained\":false,\n" +
-            "    \"ldata_processed\":true,\n" +
-            "    \"odn_processed\":false\n" +
-            "  },\n" +
             "  \"context\":{\n" +
             "    \"channel\":\"01250894314817126443\"\n" +
             "  },\n" +

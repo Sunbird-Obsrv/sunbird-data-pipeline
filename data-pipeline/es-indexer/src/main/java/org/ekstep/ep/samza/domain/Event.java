@@ -31,17 +31,19 @@ public class Event {
     public String indexName(EsIndexerConfig config, String streamName) {
     	
     	String indexName = config.indexMapping().get(streamName);
-    	if(StringUtils.equalsIgnoreCase("default", indexName)) {
-    		String eid = telemetry.<String>read("eid").value();
-    		if(eid.startsWith("ME_")) {
-    			indexName = config.derivedIndex();
-    			if(isCumulativeEvent()) {
-    				indexName = config.derivedCumulativeIndex();
-    			}
-    		} else {
-    			indexName = config.primaryIndex();
-    		}
-    	}
+        if (StringUtils.equalsIgnoreCase("default", indexName)) {
+            String eid = telemetry.<String>read("eid").value();
+            if (eid == null) {
+                indexName = config.failedTelemetryIndex();
+            } else if (eid.startsWith("ME_")) {
+                indexName = config.derivedIndex();
+                if (isCumulativeEvent()) {
+                    indexName = config.derivedCumulativeIndex();
+                }
+            } else {
+                indexName = config.primaryIndex();
+            }
+        }
     	
         return indexName;
     }
