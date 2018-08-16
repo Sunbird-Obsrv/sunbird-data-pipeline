@@ -34,7 +34,7 @@ public class EsIndexerService {
 			}
 
 			ClientResponse response = elasticSearchService.index(indexName, event.indexType(), event.getJson(),
-					Optional.fromNullable(event.id()).or("Eid Missing Event"));
+					Optional.fromNullable(event.id()).or(""));
 
 			if (success(response)) {
 				LOGGER.info("ES INDEXER SUCCESS", Optional.fromNullable(event.id()).or("Eid Missing Event"));
