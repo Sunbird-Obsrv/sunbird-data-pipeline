@@ -43,7 +43,7 @@
 		<module>telemetry-validator</module>
 		<module>telemetry-converter</module>
 		<module>object-de-normalization</module>
-		<!-- <module>ep-telemetry-converter</module> -->
+		<module>ep-telemetry-converter</module>
 		<module>telemetry-extractor</module>
 		<module>telemetry-router</module>
 		<module>reverse-search</module>
