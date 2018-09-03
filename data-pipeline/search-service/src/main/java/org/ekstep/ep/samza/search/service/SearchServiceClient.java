@@ -34,8 +34,9 @@ public class SearchServiceClient implements SearchService {
                 .post(RequestBody.create(JSON_MEDIA_TYPE, body))
                 .build();
         Response response = httpClient.newCall(request).execute();
+        String responseBody = response.body().string();
         try {
-            ContentSearchResponse contentSearchResponse = new Gson().fromJson(response.body().string(), ContentSearchResponse.class);
+            ContentSearchResponse contentSearchResponse = new Gson().fromJson(responseBody, ContentSearchResponse.class);
             if (!contentSearchResponse.successful()) {
                 LOGGER.error("SEARCH SERVICE FAILED. RESPONSE: {}", contentSearchResponse.toString());
                 return null;
@@ -44,7 +45,7 @@ public class SearchServiceClient implements SearchService {
                 return contentSearchResponse.value();
             }
         } catch (Exception ex) {
-            LOGGER.error("SEARCH RESPONSE PARSING FAILED. RESPONSE: {}", response.body().string());
+            LOGGER.error("SEARCH RESPONSE PARSING FAILED. RESPONSE: {}", responseBody);
             StringWriter sw = new StringWriter();
             ex.printStackTrace(new PrintWriter(sw));
             LOGGER.error("Error trace when parsing Search Response: ", sw.toString());
