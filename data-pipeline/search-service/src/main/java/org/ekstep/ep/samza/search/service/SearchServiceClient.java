@@ -12,6 +12,8 @@ import org.ekstep.ep.samza.search.dto.ItemSearchRequest;
 import org.ekstep.ep.samza.search.dto.ItemSearchResponse;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class SearchServiceClient implements SearchService {
     static Logger LOGGER = new Logger(SearchServiceClient.class);
@@ -43,6 +45,9 @@ public class SearchServiceClient implements SearchService {
             }
         } catch (Exception ex) {
             LOGGER.error("SEARCH RESPONSE PARSING FAILED. RESPONSE: {}", response.body().string());
+            StringWriter sw = new StringWriter();
+            ex.printStackTrace(new PrintWriter(sw));
+            LOGGER.error("Error trace when parsing Search Response: ", sw.toString());
         }
         return null;
     }
