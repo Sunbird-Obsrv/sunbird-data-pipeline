@@ -32,13 +32,17 @@ public class SearchServiceClient implements SearchService {
                 .post(RequestBody.create(JSON_MEDIA_TYPE, body))
                 .build();
         Response response = httpClient.newCall(request).execute();
-        ContentSearchResponse contentSearchResponse = new Gson().fromJson(response.body().string(), ContentSearchResponse.class);
-        if (!contentSearchResponse.successful()) {
-            LOGGER.error("SEARCH SERVICE FAILED. RESPONSE: {}", contentSearchResponse.toString());
-            return null;
-        }
-        if (contentSearchResponse.value() != null) {
-            return contentSearchResponse.value();
+        try {
+            ContentSearchResponse contentSearchResponse = new Gson().fromJson(response.body().string(), ContentSearchResponse.class);
+            if (!contentSearchResponse.successful()) {
+                LOGGER.error("SEARCH SERVICE FAILED. RESPONSE: {}", contentSearchResponse.toString());
+                return null;
+            }
+            if (contentSearchResponse.value() != null) {
+                return contentSearchResponse.value();
+            }
+        } catch (Exception ex) {
+            LOGGER.error("SEARCH RESPONSE PARSING FAILED. RESPONSE: {}", response.body().string());
         }
         return null;
     }
