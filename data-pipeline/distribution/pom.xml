@@ -23,6 +23,7 @@
          distribution project builds AFTER that one...
     -->
     <dependencies>
+        <!--
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>reverse-search</artifactId>
@@ -30,6 +31,7 @@
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
+        -->
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>de-duplication</artifactId>
@@ -37,6 +39,7 @@
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>object-de-normalization</artifactId>
@@ -44,6 +47,7 @@
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
+        -->
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>es-indexer</artifactId>

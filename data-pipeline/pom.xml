@@ -30,10 +30,12 @@
 		<module>es-indexer</module>
 		<module>es-client</module>
 		<module>telemetry-validator</module>
-		<module>object-de-normalization</module>
 		<module>telemetry-extractor</module>
 		<module>telemetry-router</module>
+		<!--
 		<module>reverse-search</module>
+		<module>object-de-normalization</module>
+		-->
 	</modules>
 
 	<properties>
