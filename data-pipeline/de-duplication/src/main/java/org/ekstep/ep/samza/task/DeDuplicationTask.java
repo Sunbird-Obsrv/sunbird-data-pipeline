@@ -32,7 +32,7 @@ import org.apache.samza.task.TaskCoordinator;
 import org.apache.samza.task.WindowableTask;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
-import org.ekstep.ep.samza.dedup.DeDupEngine;
+import org.ekstep.ep.samza.engine.DeDupEngine;
 import org.ekstep.ep.samza.service.DeDuplicationService;
 
 public class DeDuplicationTask implements StreamTask, InitableTask, WindowableTask {

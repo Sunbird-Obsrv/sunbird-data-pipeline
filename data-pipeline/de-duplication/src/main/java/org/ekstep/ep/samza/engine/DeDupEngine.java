@@ -1,4 +1,4 @@
-package org.ekstep.ep.samza.dedup;
+package org.ekstep.ep.samza.engine;
 
 import org.apache.samza.storage.kv.KeyValueStore;
 
