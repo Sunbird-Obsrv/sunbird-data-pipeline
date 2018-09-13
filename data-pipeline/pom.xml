@@ -24,7 +24,6 @@
 		<module>de-duplication</module>
 		<module>distribution</module>
 		<module>checksum-generator</module>
-		<module>telemetry-cleaner</module>
 		<module>search-service</module>
 		<module>cache-service</module>
 		<module>ep-telemetry-reader</module>
