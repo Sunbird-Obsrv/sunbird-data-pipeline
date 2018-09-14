@@ -34,7 +34,7 @@ public class EsIndexerTaskTest {
 	private static final String FAILED_TOPIC = "telemetry.indexer.failed";
 	private static final String ES_HOST = "localhost";
 	private static final String ES_PORT = "9200";
-	private static final String INDEX_STREAM_MAPPING = "{\"telemetry.denormalized\":\"default\",\"telemetry.log\":\"backend\",\"telemetry.failed\":\"failed-telemetry\"}";
+	private static final String INDEX_STREAM_MAPPING = "{\"telemetry.sink\":\"default\",\"telemetry.log\":\"backend\",\"telemetry.failed\":\"failed-telemetry\"}";
 	private MessageCollector collectorMock;
 	private ElasticSearchService esServiceMock;
 	private TaskContext contextMock;
@@ -79,7 +79,7 @@ public class EsIndexerTaskTest {
 	@Test
 	public void shouldIndexEventsToTelemetryIndex() throws Exception {
 		
-		stub(streamMock.getStream()).toReturn("telemetry.denormalized");
+		stub(streamMock.getStream()).toReturn("telemetry.sink");
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.getEvent(EventFixture.RAW_EVENT));
 		stub(esServiceMock.index(anyString(), anyString(), anyString(), anyString())).toReturn(new IndexResponse("200", null));
 		ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
@@ -101,7 +101,7 @@ public class EsIndexerTaskTest {
 	@Test
 	public void shouldIndexEventsToSummaryIndex() throws Exception {
 		
-		stub(streamMock.getStream()).toReturn("telemetry.denormalized");
+		stub(streamMock.getStream()).toReturn("telemetry.sink");
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.getEvent(EventFixture.SUMMARY_EVENT));
 		stub(esServiceMock.index(anyString(), anyString(), anyString(), anyString())).toReturn(new IndexResponse("200", null));
 		ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
@@ -122,7 +122,7 @@ public class EsIndexerTaskTest {
 	@Test
 	public void shouldIndexEventsToCumulativeSummaryIndex() throws Exception {
 
-		stub(streamMock.getStream()).toReturn("telemetry.denormalized");
+		stub(streamMock.getStream()).toReturn("telemetry.sink");
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.getEvent(EventFixture.CUMULATIVE_SUMMARY_EVENT));
 		stub(esServiceMock.index(anyString(), anyString(), anyString(), anyString())).toReturn(new IndexResponse("200", null));
 		ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);

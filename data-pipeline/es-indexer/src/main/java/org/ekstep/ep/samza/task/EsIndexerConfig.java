@@ -32,7 +32,7 @@ public class EsIndexerConfig {
         elasticSearchPort = config.get("port.elastic_search","9200");
         jobName = config.get("output.metrics.job.name", "EsIndexer");
         
-        String indexMappingStr = config.get("indexer.stream.mapping", "{\"telemetry.denormalized\":\"default\",\"telemetry.log\":\"backend\",\"telemetry.failed\":\"failed-telemetry\"}");
+        String indexMappingStr = config.get("indexer.stream.mapping", "{\"telemetry.sink\":\"default\",\"telemetry.log\":\"backend\",\"telemetry.failed\":\"failed-telemetry\"}");
         this.indexMapping = new Gson().fromJson(indexMappingStr, new TypeToken<Map<String, String>>() {}.getType());
     }
     
