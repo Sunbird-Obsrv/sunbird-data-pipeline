@@ -7,6 +7,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.stub;
 import static org.mockito.Mockito.verify;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
@@ -21,6 +23,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
+
+import java.lang.reflect.Type;
+import java.util.Map;
 
 public class TelemetryRouterTaskTest {
 
@@ -104,6 +109,25 @@ public class TelemetryRouterTaskTest {
 		telemetryRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), PRIMARY_TOPIC)));
 		
+	}
+
+	@Test
+	public void shouldStampTSForPrimaryEvent() throws Exception {
+		stub(configMock.get("router.events.secondary.route.events", "LOG,ERROR")).toReturn("LOG");
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.START_EVENT);
+		telemetryRouterTask = new TelemetryRouterTask(configMock, contextMock);
+		telemetryRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
+		Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+			@Override
+			public boolean matches(Object o) {
+				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+				assertEquals(outputEvent.get("ts"), "2017-09-25T14:10:24.238+0530");
+				return true;
+			}
+		}));
 	}
 
 	@Test

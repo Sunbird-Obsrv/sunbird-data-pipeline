@@ -90,9 +90,9 @@ public class EsIndexerTaskTest {
 		
 		List<String> values = argument.getAllValues();
 		
-		assertTrue("telemetry".equals(values.get(0)));
-		assertTrue("events".equals(values.get(1)));
-		assertTrue(EventFixture.getEvent(EventFixture.RAW_EVENT).get("mid").equals(values.get(3)));
+		assertEquals("telemetry", values.get(0));
+		assertEquals("events", values.get(1));
+		assertEquals(EventFixture.getEvent(EventFixture.RAW_EVENT).get("mid"), values.get(3));
 		
 		verify(collectorMock, times(0)).send(any(OutgoingMessageEnvelope.class));
 	}
