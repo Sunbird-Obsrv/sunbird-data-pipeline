@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.task;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -124,7 +125,7 @@ public class TelemetryRouterTaskTest {
 				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-				assertEquals(outputEvent.get("ts"), "2017-09-25T14:10:24.238+0530");
+				assertNotNull(outputEvent.get("ts"));
 				return true;
 			}
 		}));
