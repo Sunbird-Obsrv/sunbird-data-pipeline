@@ -1,0 +1,8 @@
+language: java
+jdk:
+- openjdk8
+cache:
+  directories:
+  - "$HOME/.m2"
+script:
+- cd ${TRAVIS_BUILD_DIR}/data-pipeline && mvn clean install
