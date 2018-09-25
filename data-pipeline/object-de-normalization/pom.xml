@@ -136,14 +136,16 @@
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem</groupId>
-            <artifactId>ep-logger</artifactId>
+            <artifactId>ep-core</artifactId>
             <version>0.0.1</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.ekstep.ecosystem</groupId>
             <artifactId>telemetry-cleaner</artifactId>
             <version>0.0.8</version>
         </dependency>
+        -->
         <dependency>
             <groupId>org.ekstep.ecosystem</groupId>
             <artifactId>search-service</artifactId>

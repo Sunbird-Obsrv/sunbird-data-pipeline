@@ -121,23 +121,13 @@
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem</groupId>
-            <artifactId>ep-logger</artifactId>
+            <artifactId>ep-core</artifactId>
             <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ekstep.ecosystem</groupId>
-            <artifactId>job-metrics</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ekstep.ecosystem</groupId>
-            <artifactId>ep-de-duplication</artifactId>
-            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem</groupId>

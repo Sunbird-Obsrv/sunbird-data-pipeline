@@ -2,7 +2,8 @@ package org.ekstep.ep.samza.search.service;
 
 import com.google.gson.Gson;
 import okhttp3.*;
-import org.ekstep.ep.samza.logger.Logger;
+
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.search.domain.Content;
 import org.ekstep.ep.samza.search.domain.Item;
 import org.ekstep.ep.samza.search.dto.ContentSearchRequest;
@@ -11,6 +12,8 @@ import org.ekstep.ep.samza.search.dto.ItemSearchRequest;
 import org.ekstep.ep.samza.search.dto.ItemSearchResponse;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class SearchServiceClient implements SearchService {
     static Logger LOGGER = new Logger(SearchServiceClient.class);
@@ -31,13 +34,21 @@ public class SearchServiceClient implements SearchService {
                 .post(RequestBody.create(JSON_MEDIA_TYPE, body))
                 .build();
         Response response = httpClient.newCall(request).execute();
-        ContentSearchResponse contentSearchResponse = new Gson().fromJson(response.body().string(), ContentSearchResponse.class);
-        if (!contentSearchResponse.successful()) {
-            LOGGER.error("SEARCH SERVICE FAILED. RESPONSE: {}", contentSearchResponse.toString());
-            return null;
-        }
-        if (contentSearchResponse.value() != null) {
-            return contentSearchResponse.value();
+        String responseBody = response.body().string();
+        try {
+            ContentSearchResponse contentSearchResponse = new Gson().fromJson(responseBody, ContentSearchResponse.class);
+            if (!contentSearchResponse.successful()) {
+                LOGGER.error("SEARCH SERVICE FAILED. RESPONSE: {}", contentSearchResponse.toString());
+                return null;
+            }
+            if (contentSearchResponse.value() != null) {
+                return contentSearchResponse.value();
+            }
+        } catch (Exception ex) {
+            LOGGER.error("SEARCH RESPONSE PARSING FAILED. RESPONSE: {}", responseBody);
+            StringWriter sw = new StringWriter();
+            ex.printStackTrace(new PrintWriter(sw));
+            LOGGER.error("Error trace when parsing Search Response: ", sw.toString());
         }
         return null;
     }

@@ -150,6 +150,24 @@ public class EventFixture {
             "    \"dd_processed\": true\n" +
             "  }\n" +
             "}";
+
+	public static final String EVENT_WITH_EID_MISSING = "{\n" +
+            "  \"ver\":\"3.0\",\n" +
+            "  \"syncts\":0.0,\n" +
+            "  \"ets\":0.0,\n" +
+            "  \"tags\":[\n" +
+            "\n" +
+            "  ],\n" +
+            "  \"context\":{\n" +
+            "    \"channel\":\"01250894314817126443\"\n" +
+            "  },\n" +
+            "  \"ts\":\"1970-01-01T00:00:00.000+0000\",\n" +
+            "  \"metadata\":{\n" +
+            "    \"checksum\":\"10b890f9783ddcae406e7d6514d073eed4327941\",\n" +
+            "    \"odn_status\":\"failed\",\n" +
+            "    \"odn_error\":null\n" +
+            "  }\n" +
+            "}";
 	
 	public static final String ANY_STRING = "Hey Samza, Whats Up?";
 	public static final String EMPTY_JSON = "{}";

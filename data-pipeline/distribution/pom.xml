@@ -23,6 +23,7 @@
          distribution project builds AFTER that one...
     -->
     <dependencies>
+        <!--
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>reverse-search</artifactId>
@@ -30,6 +31,7 @@
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
+        -->
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>de-duplication</artifactId>
@@ -37,20 +39,7 @@
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
-        <dependency>
-            <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>partner-data-router</artifactId>
-            <version>0.3.1</version>
-            <type>tar.gz</type>
-            <classifier>distribution</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>public-telemetry</artifactId>
-            <version>0.2.7</version>
-            <type>tar.gz</type>
-            <classifier>distribution</classifier>
-        </dependency>
+        <!--
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>object-de-normalization</artifactId>
@@ -58,59 +47,32 @@
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
+        -->
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>public-exhaust-de-duplication</artifactId>
-            <version>0.0.7</version>
-            <type>tar.gz</type>
-            <classifier>distribution</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>private-exhaust-de-duplication</artifactId>
-            <version>0.0.8</version>
-            <type>tar.gz</type>
-            <classifier>distribution</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>es-router-primary</artifactId>
-            <version>0.0.8</version>
-            <type>tar.gz</type>
-            <classifier>distribution</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>es-indexer-primary</artifactId>
-            <version>0.1.9</version>
-            <type>tar.gz</type>
-            <classifier>distribution</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>es-indexer-secondary</artifactId>
-            <version>0.0.10</version>
-            <type>tar.gz</type>
-            <classifier>distribution</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>es-router-secondary</artifactId>
-            <version>0.0.8</version>
+            <artifactId>es-indexer</artifactId>
+            <version>0.0.2</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>telemetry-validator</artifactId>
-            <version>0.0.6</version>
+            <version>0.0.7</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>telemetry-converter</artifactId>
-            <version>1.1.8</version>
+            <artifactId>telemetry-extractor</artifactId>
+            <version>0.0.1</version>
+            <type>tar.gz</type>
+            <classifier>distribution</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem.jobs</groupId>
+            <artifactId>telemetry-router</artifactId>
+            <version>0.0.1</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>

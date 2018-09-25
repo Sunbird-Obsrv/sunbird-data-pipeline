@@ -13,8 +13,6 @@ public class ObjectDeNormalizationConfig {
     private final String metricsTopic;
     private String successTopic;
     private String failedTopic;
-    private List<String> eventsToSkip;
-    private List<String> eventsToAllow;
     private final String JOB_NAME = "ObjectDeNormalization";
 
     public ObjectDeNormalizationConfig(Config config) {

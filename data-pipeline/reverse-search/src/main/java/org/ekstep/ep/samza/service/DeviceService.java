@@ -4,7 +4,7 @@ package org.ekstep.ep.samza.service;
 import com.cedarsoftware.util.io.JsonReader;
 import com.cedarsoftware.util.io.JsonWriter;
 import org.apache.samza.storage.kv.KeyValueStore;
-import org.ekstep.ep.samza.logger.Logger;
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.system.Device;
 import org.ekstep.ep.samza.system.Location;
 

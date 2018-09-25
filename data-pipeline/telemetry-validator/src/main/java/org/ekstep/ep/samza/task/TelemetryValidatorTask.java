@@ -26,8 +26,8 @@ import org.apache.samza.task.StreamTask;
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.task.*;
-import org.ekstep.ep.samza.logger.Logger;
-import org.ekstep.ep.samza.metrics.JobMetrics;
+import org.ekstep.ep.samza.core.JobMetrics;
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.TelemetryValidatorService;
 
 public class TelemetryValidatorTask implements StreamTask, InitableTask, WindowableTask {

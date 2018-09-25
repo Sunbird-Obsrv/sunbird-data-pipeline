@@ -1,7 +1,7 @@
 package org.ekstep.ep.samza.service;
 
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.system.Strategy;
 import org.ekstep.ep.samza.task.ObjectDeNormalizationConfig;
 import org.ekstep.ep.samza.task.ObjectDeNormalizationSink;
@@ -55,8 +55,8 @@ public class ObjectDeNormalizationService {
             }
         } catch (Exception e) {
             LOGGER.error(event.id(), "EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO FAILED TOPIC", e);
-            event.markFailed("Error", e.getMessage());
-            sink.toErrorTopic(event);
+            event.markFailed("failed", e.getMessage());
+            sink.toSuccessTopic(event);
         }
     }
 }

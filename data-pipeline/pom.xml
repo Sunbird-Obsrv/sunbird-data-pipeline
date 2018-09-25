@@ -1,101 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 
-  <prerequisites>
-    <maven>3.0.0</maven>
-  </prerequisites>
+	<prerequisites>
+		<maven>3.0.0</maven>
+	</prerequisites>
 
-  <groupId>org.ekstep.ecosystem</groupId>
-  <artifactId>jobs</artifactId>
-  <version>0.0.1</version>
-  <packaging>pom</packaging>
-  <name>Ekstep Samza</name>
-  <description>
-    EkStep Samza for stream processing within Ecosystem
-  </description>
-  <url>https://ekstep.org/</url>
+	<groupId>org.ekstep.ecosystem</groupId>
+	<artifactId>jobs</artifactId>
+	<version>0.0.1</version>
+	<packaging>pom</packaging>
+	<name>Ekstep Samza</name>
+	<description>
+    	EkStep Samza for stream processing within Ecosystem
+  	</description>
+	<url>https://ekstep.org/</url>
 
-  <modules>
-    <module>reverse-search</module>
-    <module>de-duplication</module>
-    <module>de-duplication-temp</module>
-    <module>distribution</module>
-    <module>checksum-generator</module>
-    <module>partner-data-router</module>
-    <module>public-telemetry</module>
-    <module>telemetry-cleaner</module>
-    <module>ep-logger</module>
-    <module>search-service</module>
-    <module>cache-service</module>
-    <module>job-metrics</module>
-    <module>ep-telemetry-reader</module>
-    <module>public-exhaust-de-duplication</module>
-    <module>private-exhaust-de-duplication</module>
-    <module>object-service</module>
-    <module>ep-de-duplication</module>
-    <module>retry-service</module>
-    <module>es-indexer-primary</module>
-    <module>es-router</module>
-    <module>es-client</module>
-    <module>es-router-primary</module>
-    <module>es-indexer-secondary</module>
-    <module>es-router-secondary</module>
-    <module>telemetry-validator</module>
-    <module>telemetry-converter</module>
-    <module>object-de-normalization</module>
-      <module>ep-telemetry-converter</module>
-  </modules>
+	<modules>
+		<module>ep-core</module>
+		<module>de-duplication</module>
+		<module>distribution</module>
+		<module>checksum-generator</module>
+		<module>search-service</module>
+		<module>cache-service</module>
+		<module>ep-telemetry-reader</module>
+		<module>es-indexer</module>
+		<module>es-client</module>
+		<module>telemetry-validator</module>
+		<module>telemetry-extractor</module>
+		<module>telemetry-router</module>
+		<!--
+		<module>reverse-search</module>
+		<module>object-de-normalization</module>
+		-->
+	</modules>
 
-  <properties>
-    <!-- maven specific properties -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <samza.version>0.10.1</samza.version>
-    <kafka.version>0.10.0.1</kafka.version>
-    <jackson-jaxrs.version>1.9.13</jackson-jaxrs.version>
-  </properties>
+	<properties>
+		<!-- maven specific properties -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<samza.version>0.14.0</samza.version>
+		<kafka.version>1.1.0</kafka.version>
+		<jackson-jaxrs.version>1.9.13</jackson-jaxrs.version>
+		<samza.log.dir>/tmp</samza.log.dir>
+		<samza.container.name>test-container</samza.container.name>
+	</properties>
 
-  <repositories>
-    <repository>
-      <id>my-local-repo</id>
-      <url>file://${user.home}/.m2/repository</url>
-    </repository>
-    <repository>
-      <id>apache-releases</id>
-      <url>https://repository.apache.org/content/groups/public</url>
-    </repository>
-    <repository>
-      <id>scala-tools.org</id>
-      <name>Scala-tools Maven2 Repository</name>
-      <url>https://oss.sonatype.org/content/groups/scala-tools</url>
-    </repository>
-  </repositories>
+	<repositories>
+		<repository>
+			<id>my-local-repo</id>
+			<url>file://${user.home}/.m2/repository</url>
+		</repository>
+		<repository>
+			<id>apache-releases</id>
+			<url>https://repository.apache.org/content/groups/public</url>
+		</repository>
+		<repository>
+			<id>scala-tools.org</id>
+			<name>Scala-tools Maven2 Repository</name>
+			<url>https://oss.sonatype.org/content/groups/scala-tools</url>
+		</repository>
+	</repositories>
 
-  <pluginRepositories>
-    <pluginRepository>
-      <id>scala-tools.org</id>
-      <name>Scala-tools Maven2 Repository</name>
-      <url>http://scala-tools.org/repo-releases</url>
-    </pluginRepository>
-  </pluginRepositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>scala-tools.org</id>
+			<name>Scala-tools Maven2 Repository</name>
+			<url>http://scala-tools.org/repo-releases</url>
+		</pluginRepository>
+	</pluginRepositories>
 
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.1</version>
-          <configuration>
-            <source>1.8</source>
-            <target>1.8</target>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.1</version>
+					<configuration>
+						<source>1.8</source>
+						<target>1.8</target>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 
 </project>

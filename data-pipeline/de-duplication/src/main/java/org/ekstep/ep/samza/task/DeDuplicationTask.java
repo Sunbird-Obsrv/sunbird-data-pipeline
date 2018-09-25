@@ -19,77 +19,72 @@
 
 package org.ekstep.ep.samza.task;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import org.apache.samza.config.Config;
-import org.apache.samza.metrics.Counter;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.*;
-import org.ekstep.ep.samza.dedup.DeDupEngine;
-import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.logger.Logger;
-import org.ekstep.ep.samza.metrics.JobMetrics;
+import org.apache.samza.task.InitableTask;
+import org.apache.samza.task.MessageCollector;
+import org.apache.samza.task.StreamTask;
+import org.apache.samza.task.TaskContext;
+import org.apache.samza.task.TaskCoordinator;
+import org.apache.samza.task.WindowableTask;
+import org.ekstep.ep.samza.core.JobMetrics;
+import org.ekstep.ep.samza.core.Logger;
+import org.ekstep.ep.samza.engine.DeDupEngine;
 import org.ekstep.ep.samza.service.DeDuplicationService;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class DeDuplicationTask implements StreamTask, InitableTask, WindowableTask {
 
+	static Logger LOGGER = new Logger(DeDuplicationTask.class);
+	private DeDuplicationConfig config;
+	private JobMetrics metrics;
+	private DeDuplicationService service;
 
-    static Logger LOGGER = new Logger(DeDuplicationTask.class);
-    private DeDuplicationConfig config;
-    private JobMetrics metrics;
-    private DeDuplicationService service;
+	public DeDuplicationTask(Config config, TaskContext context, KeyValueStore<Object, Object> deDuplicationStore,
+			DeDupEngine deDupEngine) {
+		init(config, context, deDuplicationStore, deDupEngine);
+	}
 
-    public DeDuplicationTask(Config config, TaskContext context,
-                             KeyValueStore<Object, Object> deDuplicationStore, DeDupEngine deDupEngine) {
-        init(config, context, deDuplicationStore, deDupEngine);
-    }
+	public DeDuplicationTask() {
 
-    public DeDuplicationTask() {
+	}
 
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	public void init(Config config, TaskContext context) {
+		init(config, context, (KeyValueStore<Object, Object>) context.getStore("de-duplication"), null);
+	}
 
-    @Override
-    public void init(Config config, TaskContext context) {
-        init(config, context,
-                (KeyValueStore<Object, Object>) context.getStore("de-duplication"), null);
-    }
+	private void init(Config config, TaskContext context, KeyValueStore<Object, Object> deDuplicationStore,
+			DeDupEngine deDupEngine) {
+		this.config = new DeDuplicationConfig(config);
+		metrics = new JobMetrics(context, this.config.jobName());
+		deDupEngine = deDupEngine == null ? new DeDupEngine(deDuplicationStore) : deDupEngine;
+		service = new DeDuplicationService(deDupEngine, this.config);
+	}
 
-    private void init(Config config, TaskContext context,
-                      KeyValueStore<Object, Object> deDuplicationStore, DeDupEngine deDupEngine) {
-        this.config = new DeDuplicationConfig(config);
-        metrics = new JobMetrics(context, this.config.jobName());
-        deDupEngine = deDupEngine == null ? new DeDupEngine(deDuplicationStore) : deDupEngine;
-        service = new DeDuplicationService(deDupEngine,this.config);
-    }
+	@Override
+	public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator taskCoordinator) {
+		try {
+			DeDuplicationSource source = new DeDuplicationSource(envelope);
+			DeDuplicationSink sink = new DeDuplicationSink(collector, metrics, config);
 
-    @Override
-    public void process(IncomingMessageEnvelope envelope, MessageCollector collector,
-                        TaskCoordinator taskCoordinator) {
-        try {
-            DeDuplicationSource source = new DeDuplicationSource(envelope);
-            DeDuplicationSink sink = new DeDuplicationSink(collector, metrics, config);
+			service.process(source, sink);
+		} catch (Exception ex) {
+			LOGGER.error("", "Deduplication failed: " + ex.getMessage());
+			Object event = envelope.getMessage();
+			if (event != null) {
+				LOGGER.info("", "FAILED_EVENT: " + event);
+			}
+		}
+	}
 
-            service.process(source, sink);
-        }
-        catch (Exception ex) {
-            LOGGER.error("", "Deduplication failed: " + ex.getMessage());
-            Object event = envelope.getMessage();
-            if (event != null) {
-                LOGGER.info("", "FAILED_EVENT: " + event);
-            }
-        }
-    }
-
-    @Override
-    public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-        String mEvent = metrics.collect();
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
-        metrics.clear();
-    }
+	@Override
+	public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
+		String mEvent = metrics.collect();
+		collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
+		metrics.clear();
+	}
 }

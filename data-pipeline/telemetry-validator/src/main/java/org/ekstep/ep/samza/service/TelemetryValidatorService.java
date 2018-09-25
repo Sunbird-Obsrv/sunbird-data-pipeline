@@ -5,8 +5,8 @@ import static java.text.MessageFormat.format;
 import java.io.File;
 import java.text.MessageFormat;
 
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.logger.Logger;
 import org.ekstep.ep.samza.task.TelemetryValidatorConfig;
 import org.ekstep.ep.samza.task.TelemetryValidatorSink;
 import org.ekstep.ep.samza.task.TelemetryValidatorSource;
@@ -51,20 +51,20 @@ public class TelemetryValidatorService {
             if(report.isSuccess()){
                 LOGGER.info("VALIDATION SUCCESS", event.mid());
                 event.markSuccess();
+                event.updateDefaults(config);
                 sink.toSuccessTopic(event);
             } else {
                 LOGGER.error(null, "VALIDATION FAILED: " + report.toString());
-                sink.toFailedTopic(event);
+                sink.toFailedTopic(event, "validation failed");
             }
         } catch(JsonSyntaxException e){
             LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
             sink.toMalformedEventsTopic(source.getMessage());
         } catch (Exception e) {
-            event.markFailure(e.getMessage());
             LOGGER.error(null, format(
                     "EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO EXCEPTION TOPIC. EVENT: {0}, EXCEPTION:",
                     event),e);
-            sink.toErrorTopic(event);
+            sink.toErrorTopic(event, e.getMessage());
         }
     }
 }

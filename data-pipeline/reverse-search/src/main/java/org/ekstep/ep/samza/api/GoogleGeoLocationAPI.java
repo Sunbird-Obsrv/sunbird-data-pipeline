@@ -1,11 +1,12 @@
 package org.ekstep.ep.samza.api;
 
 
+import org.ekstep.ep.samza.core.Logger;
+
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
-import org.ekstep.ep.samza.logger.Logger;
 
 public class GoogleGeoLocationAPI {
     static Logger LOGGER = new Logger(GoogleGeoLocationAPI.class);

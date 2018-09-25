@@ -2,7 +2,6 @@ package org.ekstep.ep.samza.reader;
 
 
 import com.google.gson.Gson;
-import org.ekstep.ep.samza.logger.Logger;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+
+import org.ekstep.ep.samza.core.Logger;
 
 import static java.text.MessageFormat.format;
 
@@ -156,6 +157,17 @@ public class Telemetry {
             return simpleDateFormat.format(date);
         } else {
             return this.<String>read("@timestamp").value();
+        }
+    }
+    
+    public String getSyncts(){
+        Object timestamp = this.read("syncts").value();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        if ( timestamp instanceof Number){
+            Date date = new Date(((Number) timestamp).longValue());
+            return simpleDateFormat.format(date);
+        } else {
+            return this.<String>read("syncts").value();
         }
     }
 

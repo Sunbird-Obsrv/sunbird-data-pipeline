@@ -26,6 +26,7 @@ public class EventTest {
 		Assert.assertEquals("2.2", (String) event.version());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldReturnNullForEdata() {
 

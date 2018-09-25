@@ -26,7 +26,7 @@ import org.mockito.Mockito;
 public class TelemetryValidatorTaskTest {
 
     private static final String SUCCESS_TOPIC = "telemetry.valid";
-    private static final String FAILED_TOPIC = "telemetry.valid.fail";
+    private static final String FAILED_TOPIC = "telemetry.failed";
     private static final String MALFORMED_TOPIC = "telemetry.malformed";
     private static final String SCHEMA_PATH = "src/test/resources";
     private MessageCollector collectorMock;
@@ -111,6 +111,13 @@ public class TelemetryValidatorTaskTest {
     	
     	telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+    }
+
+    @Test
+    public void shouldSendEventToFailedTopicIfEidNotPresent() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.EVENT_WITH_EID_MISSING);
+        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
 
     public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {

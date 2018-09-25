@@ -38,14 +38,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.ekstep.ecosystem</groupId>
-            <artifactId>ep-logger</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem</groupId>
+            <artifactId>ep-core</artifactId>
+            <version>0.0.1</version>
         </dependency>
     </dependencies>
 
