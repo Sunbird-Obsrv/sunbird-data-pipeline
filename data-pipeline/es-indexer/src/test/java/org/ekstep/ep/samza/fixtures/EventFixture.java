@@ -129,7 +129,7 @@ public class EventFixture {
             "  \"context\":{\n" +
             "    \"channel\":\"01250894314817126443\"\n" +
             "  },\n" +
-            "  \"ts\":\"1970-01-01T00:00:00.000+0000\",\n" +
+            "  \"ts\":\"2017-02-21T09:04:49.138Z\",\n" +
             "  \"metadata\":{\n" +
             "    \"checksum\":\"10b890f9783ddcae406e7d6514d073eed4327941\",\n" +
             "    \"odn_status\":\"failed\",\n" +

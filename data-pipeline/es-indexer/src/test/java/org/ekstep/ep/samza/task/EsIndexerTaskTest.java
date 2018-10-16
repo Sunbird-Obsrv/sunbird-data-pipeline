@@ -69,6 +69,11 @@ public class EsIndexerTaskTest {
 		stub(configMock.get("indexer.summary.index", "summary")).toReturn("summary");
 		stub(configMock.get("indexer.summary.cumulative.index", "summary-cumulative")).toReturn("summary-cumulative");
 		stub(configMock.get("indexer.stream.mapping", INDEX_STREAM_MAPPING)).toReturn(INDEX_STREAM_MAPPING);
+		stub(configMock.get("esindex.name.suffix.datetime.field", "ts")).toReturn("ts");
+		stub(configMock.get("esindex.name.suffix.datetime.field.pattern", "yyyy-MM-dd'T'HH:mm:ss"))
+				.toReturn("yyyy-MM-dd'T'HH:mm:ss");
+		stub(configMock.get("esindex.name.suffix.datetime.pattern", "yyyy.MM"))
+				.toReturn("yyyy.MM");
 
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
@@ -90,7 +95,7 @@ public class EsIndexerTaskTest {
 		
 		List<String> values = argument.getAllValues();
 		
-		assertEquals("telemetry", values.get(0));
+		assertEquals("telemetry-2017.02", values.get(0));
 		assertEquals("events", values.get(1));
 		assertEquals(EventFixture.getEvent(EventFixture.RAW_EVENT).get("mid"), values.get(3));
 		
@@ -112,9 +117,9 @@ public class EsIndexerTaskTest {
 		
 		List<String> values = argument.getAllValues();
 		
-		assertTrue("summary".equals(values.get(0)));
-		assertTrue("events".equals(values.get(1)));
-		assertTrue(EventFixture.getEvent(EventFixture.RAW_EVENT).get("mid").equals(values.get(3)));
+		assertEquals("summary-2017.02", values.get(0));
+		assertEquals("events", values.get(1));
+		assertEquals(EventFixture.getEvent(EventFixture.RAW_EVENT).get("mid"), values.get(3));
 		
 		verify(collectorMock, times(0)).send(any(OutgoingMessageEnvelope.class));
 	}
@@ -133,9 +138,9 @@ public class EsIndexerTaskTest {
 		
 		List<String> values = argument.getAllValues();
 		
-		assertTrue("summary-cumulative".equals(values.get(0)));
-		assertTrue("events".equals(values.get(1)));
-		assertTrue(EventFixture.getEvent(EventFixture.RAW_EVENT).get("mid").equals(values.get(3)));
+		assertEquals("summary-cumulative-2017.02", values.get(0));
+		assertEquals("events", values.get(1));
+		assertEquals(EventFixture.getEvent(EventFixture.RAW_EVENT).get("mid"), values.get(3));
 		
 		verify(collectorMock, times(0)).send(any(OutgoingMessageEnvelope.class));
 	}
@@ -153,10 +158,10 @@ public class EsIndexerTaskTest {
 		verify(esServiceMock, times(1)).index(argument.capture(), argument.capture(), argument.capture(), argument.capture());
 		
 		List<String> values = argument.getAllValues();
-		
-		assertTrue("backend".equals(values.get(0)));
-		assertTrue("events".equals(values.get(1)));
-		assertTrue(EventFixture.getEvent(EventFixture.RAW_EVENT).get("mid").equals(values.get(3)));
+
+		assertEquals("backend-2017.02", values.get(0));
+		assertEquals("events", values.get(1));
+		assertEquals(EventFixture.getEvent(EventFixture.RAW_EVENT).get("mid"), values.get(3));
 		
 		verify(collectorMock, times(0)).send(any(OutgoingMessageEnvelope.class));
 	}
@@ -175,9 +180,9 @@ public class EsIndexerTaskTest {
 		
 		List<String> values = argument.getAllValues();
 		
-		assertTrue("failed-telemetry".equals(values.get(0)));
-		assertTrue("events".equals(values.get(1)));
-		assertTrue(EventFixture.getEvent(EventFixture.RAW_EVENT).get("mid").equals(values.get(3)));
+		assertEquals("failed-telemetry-2017.02", values.get(0));
+		assertEquals("events", values.get(1));
+		assertEquals(EventFixture.getEvent(EventFixture.RAW_EVENT).get("mid"), values.get(3));
 		
 		verify(collectorMock, times(0)).send(any(OutgoingMessageEnvelope.class));
 	}
@@ -198,7 +203,7 @@ public class EsIndexerTaskTest {
 
 		List<String> values = argument.getAllValues();
 
-		assertEquals("failed-telemetry", values.get(0));
+		assertEquals("failed-telemetry-2017.02", values.get(0));
 		assertEquals("events", values.get(1));
 
 		verify(collectorMock, times(0)).send(any(OutgoingMessageEnvelope.class));

@@ -19,6 +19,12 @@ public class EsIndexerConfig {
     private String summaryIndex;
     private String summaryCumulativeIndex;
     private String failedTelemetryIndex;
+    // Telemetry Event field which will be used to extract the DateTime pattern for ES Index name suffix
+    private String esIndexNameSuffixDateTimeField;
+    // DateTime pattern of the Telemetry Event field which will be used to extract the DateTime pattern for ES Index name suffix
+    private String esIndexNameSuffixDateTimeFieldPattern;
+    // This field will be used to add a datetime pattern suffix to the ES Index name
+    private String esIndexNameSuffixDateTimePattern;
 
 	public EsIndexerConfig(Config config) {
     	
@@ -31,6 +37,9 @@ public class EsIndexerConfig {
         elasticSearchHosts = config.get("hosts.elastic_search","localhost");
         elasticSearchPort = config.get("port.elastic_search","9200");
         jobName = config.get("output.metrics.job.name", "EsIndexer");
+        esIndexNameSuffixDateTimeField = config.get("esindex.name.suffix.datetime.field", "ts");
+        esIndexNameSuffixDateTimeFieldPattern = config.get("esindex.name.suffix.datetime.field.pattern", "yyyy-MM-dd'T'HH:mm:ss");
+        esIndexNameSuffixDateTimePattern = config.get("esindex.name.suffix.datetime.pattern", "yyyy.MM");
         
         String indexMappingStr = config.get("indexer.stream.mapping", "{\"telemetry.sink\":\"default\",\"telemetry.log\":\"backend\",\"telemetry.failed\":\"failed-telemetry\"}");
         this.indexMapping = new Gson().fromJson(indexMappingStr, new TypeToken<Map<String, String>>() {}.getType());
@@ -75,5 +84,17 @@ public class EsIndexerConfig {
 
     public String jobName() {
         return jobName;
+    }
+
+    public String esIndexNameSuffixDateTimeField() {
+	    return esIndexNameSuffixDateTimeField;
+    }
+
+    public String esIndexNameSuffixDateTimeFieldPattern() {
+	    return esIndexNameSuffixDateTimeFieldPattern;
+    }
+
+    public String esIndexNameSuffixDateTimePattern() {
+	    return esIndexNameSuffixDateTimePattern;
     }
 }

@@ -2,8 +2,9 @@ package org.ekstep.ep.samza.domain;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.ekstep.ep.samza.reader.NullableValue;
@@ -44,8 +45,30 @@ public class Event {
                 indexName = config.primaryIndex();
             }
         }
+
+        Date parsedDate = parseDateTime(config.esIndexNameSuffixDateTimeField(), config.esIndexNameSuffixDateTimeFieldPattern());
+        indexName = constructIndexNameWithSuffix(indexName, parsedDate, config.esIndexNameSuffixDateTimePattern());
     	
         return indexName;
+    }
+
+    private String constructIndexNameWithSuffix(String indexPrefix, Date date,
+                                                               String suffixPattern) {
+        SimpleDateFormat sdf = new SimpleDateFormat(suffixPattern);
+        return String.format("%s-%s",indexPrefix, sdf.format(date));
+    }
+
+    private Date parseDateTime(String dateField, String timePattern) {
+        Date parsedDate = null;
+        try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(timePattern);
+            String ts = telemetry.<String>read(dateField).value();
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("IST"));
+            parsedDate = simpleDateFormat.parse(ts);
+        } catch (ParseException ex) {
+            parsedDate = new Date();
+        }
+        return parsedDate;
     }
 
     public String indexType() {
