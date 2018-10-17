@@ -1,5 +1,7 @@
 package org.ekstep.ep.samza.task;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
@@ -13,13 +15,13 @@ import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.esclient.ElasticSearchService;
 import org.ekstep.ep.samza.esclient.IndexResponse;
 import org.ekstep.ep.samza.fixtures.EventFixture;
+import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -100,6 +102,31 @@ public class EsIndexerTaskTest {
 		assertEquals(EventFixture.getEvent(EventFixture.RAW_EVENT).get("mid"), values.get(3));
 		
 		verify(collectorMock, times(0)).send(any(OutgoingMessageEnvelope.class));
+	}
+
+	@Test
+	public void testWhenEmptyTsFieldForTelemetryIndex() throws Exception {
+		DateTimeUtils.setCurrentMillisFixed(10L);
+		JsonObject modifiedRawEvent = new JsonParser().parse(EventFixture.RAW_EVENT).getAsJsonObject();
+		modifiedRawEvent.remove("ts");
+		stub(streamMock.getStream()).toReturn("telemetry.sink");
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.getEvent(modifiedRawEvent.toString()));
+		stub(esServiceMock.index(anyString(), anyString(), anyString(), anyString())).
+				toReturn(new IndexResponse("200", null));
+		ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+
+		esIndexerPrimaryTask.process(envelopeMock, collectorMock, coordinatorMock);
+
+		verify(esServiceMock, times(1)).index(argument.capture(), argument.capture(), argument.capture(), argument.capture());
+
+		List<String> values = argument.getAllValues();
+
+		assertEquals("telemetry-1970.01", values.get(0));
+		assertEquals("events", values.get(1));
+		assertEquals(EventFixture.getEvent(EventFixture.RAW_EVENT).get("mid"), values.get(3));
+
+		verify(collectorMock, times(0)).send(any(OutgoingMessageEnvelope.class));
+		DateTimeUtils.setCurrentMillisSystem();
 	}
 
 	

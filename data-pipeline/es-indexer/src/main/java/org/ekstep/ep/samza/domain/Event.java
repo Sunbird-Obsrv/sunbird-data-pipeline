@@ -17,9 +17,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 public class Event {
     private final Telemetry telemetry;
+    private final String timezone = "Asia/Kolkata";
 
     public Event(Map<String, Object> message) {
         this.telemetry = new Telemetry(message);
@@ -62,11 +65,15 @@ public class Event {
         Date parsedDate = null;
         try {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(timePattern);
-            String ts = telemetry.<String>read(dateField).value();
             simpleDateFormat.setTimeZone(TimeZone.getTimeZone("IST"));
-            parsedDate = simpleDateFormat.parse(ts);
+            String ts = telemetry.<String>read(dateField).value();
+            if (ts == null || ts.isEmpty()) {
+                parsedDate = new DateTime(DateTimeZone.forID(timezone)).toDate();
+            } else {
+                parsedDate = simpleDateFormat.parse(ts);
+            }
         } catch (ParseException ex) {
-            parsedDate = new Date();
+            parsedDate = new DateTime(DateTimeZone.forID(timezone)).toDate();
         }
         return parsedDate;
     }
