@@ -18,20 +18,10 @@ public class BaseSink {
 	}
 	
 	public void toTopic(String topic, String mid, String message) {
-		try {
-			collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", topic), mid, message));
-		} catch (Exception ex) {
-			LOGGER.error(null, format(
-					"PASSING EVENT MID {0} THROUGH FROM {1} TOPIC. EXCEPTION: ", mid, topic), ex.getMessage());
-		}
+		collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", topic), mid, message));
 	}
 	
 	public void toTopic(String topic, String mid, Map<String, Object> message) {
-		try {
-			collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", topic), mid, message));
-		} catch (Exception ex) {
-			LOGGER.error(null, format(
-					"PASSING EVENT MID {0} THROUGH FROM {1} TOPIC. EXCEPTION: ", mid, topic), ex.getMessage());
-		}
+		collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", topic), mid, message));
 	}
 }

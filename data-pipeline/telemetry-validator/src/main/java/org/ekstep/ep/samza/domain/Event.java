@@ -56,6 +56,11 @@ public class Event {
 		return eid.value();
 	}
 
+	public String pid() {
+		NullableValue<String> pid = telemetry.read("context.pdata.pid");
+		return pid.value();
+	}
+
 	public String schemaName() {
 		String eid = eid();
 		if (eid != null) {
