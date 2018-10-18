@@ -31,7 +31,8 @@ public class TelemetryValidatorService {
         try {
         	event = source.getEvent();
 
-            if (event.pid().equalsIgnoreCase("learning-service")) {
+            if (event.pid() != null && !event.pid().isEmpty()
+                    && event.pid().equalsIgnoreCase("learning-service")) {
                 LOGGER.info("SKIP PROCESSING LEARNING-SERVICE EVENTS", event.mid());
                 event.markSkipped();
                 return;
