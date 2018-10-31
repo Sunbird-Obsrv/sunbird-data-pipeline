@@ -8,7 +8,7 @@ import org.apache.samza.config.Config;
 
 public class TelemetryRouterConfig {
 
-    private final String JOB_NAME = "TelemetryValidator";
+    private final String JOB_NAME = "TelemetryRouter";
     
     private String failedTopic;
     private String metricsTopic;
