@@ -12,6 +12,8 @@ import org.ekstep.ep.samza.task.TelemetryLocationUpdaterConfig;
 import com.google.gson.Gson;
 import org.ekstep.ep.samza.util.Path;
 
+import org.ekstep.ep.samza.domain.Location;
+
 public class Event {
 
 	private final Telemetry telemetry;
@@ -81,6 +83,22 @@ public class Event {
 			NullableValue<Long> timeInLong = telemetry.read(etsField);
 			return Double.valueOf(timeInLong.value());
 		}
+	}
+
+	public void addLocation(Location location) {
+		telemetry.add(path.state(), location.getState());
+		telemetry.add(path.district(), location.getDistrict());
+	}
+
+	public void updateVersion() {
+		telemetry.add(path.ver(), "3.1");
+	}
+
+	public void setFlag(String key, Object value) {
+		NullableValue<Map<String, Object>> telemetryFlag = telemetry.read(path.flags());
+		Map<String, Object> flags = telemetryFlag.isNull() ? new HashMap<String, Object>() : telemetryFlag.value();
+		flags.put(key, value);
+		telemetry.add(path.flags(), flags);
 	}
 
 }

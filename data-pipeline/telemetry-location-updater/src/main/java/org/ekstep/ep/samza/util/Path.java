@@ -44,4 +44,16 @@ public class Path {
     public String ldata(){
         return "ldata";
     }
+
+    public String state(){
+        return "edata.state";
+    }
+
+    public String district(){
+        return "edata.district";
+    }
+
+    public String ver(){
+        return "ver";
+    }
 }
