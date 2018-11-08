@@ -32,6 +32,7 @@ import org.apache.samza.task.WindowableTask;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.TelemetryLocationUpdaterService;
+import org.ekstep.ep.samza.util.LocationCache;
 
 public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, WindowableTask {
 
@@ -39,8 +40,10 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 	private TelemetryLocationUpdaterConfig config;
 	private JobMetrics metrics;
 	private TelemetryLocationUpdaterService service;
+	private LocationCache cache;
 
-	public TelemetryLocationUpdaterTask(Config config, TaskContext context) {
+	public TelemetryLocationUpdaterTask(Config config, TaskContext context, LocationCache cache) {
+		this.cache = cache;
 		init(config, context);
 	}
 
@@ -53,7 +56,7 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 		
 		this.config = new TelemetryLocationUpdaterConfig(config);
 		metrics = new JobMetrics(context, this.config.jobName());
-		service = new TelemetryLocationUpdaterService(this.config);
+		service = new TelemetryLocationUpdaterService(this.config, cache);
 	}
 
 	@Override

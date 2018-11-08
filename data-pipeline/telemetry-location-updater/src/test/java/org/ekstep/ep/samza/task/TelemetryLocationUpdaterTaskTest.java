@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.task;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -19,7 +20,9 @@ import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
+import org.ekstep.ep.samza.domain.Location;
 import org.ekstep.ep.samza.fixtures.EventFixture;
+import org.ekstep.ep.samza.util.LocationCache;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -41,17 +44,19 @@ public class TelemetryLocationUpdaterTaskTest {
 	private TaskCoordinator coordinatorMock;
 	private IncomingMessageEnvelope envelopeMock;
 	private Config configMock;
+	private LocationCache locationCacheMock;
 	private TelemetryLocationUpdaterTask telemetryLocationUpdaterTask;
 
 	@Before
 	public void setUp() {
 		collectorMock = mock(MessageCollector.class);
-		contextMock = Mockito.mock(TaskContext.class);
+		contextMock = mock(TaskContext.class);
 		metricsRegistry = Mockito.mock(MetricsRegistry.class);
 		counter = Mockito.mock(Counter.class);
 		coordinatorMock = mock(TaskCoordinator.class);
 		envelopeMock = mock(IncomingMessageEnvelope.class);
 		configMock = Mockito.mock(Config.class);
+		locationCacheMock = Mockito.mock(LocationCache.class);
 
 		stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
 		stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
@@ -62,20 +67,11 @@ public class TelemetryLocationUpdaterTaskTest {
 	}
 	
 	@Test
-	public void shouldSendEventsToSuccessTopic() throws Exception {
+	public void shouldSendEventsToSuccessTopicWithoutStampingLocation() throws Exception {
 
-		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock);
-		
-		stub(envelopeMock.getMessage()).toReturn(EventFixture.START_EVENT);
-		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
-		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
-		
-	}
-
-	@Test
-	public void shouldStampLocation() throws Exception {
-		stub(envelopeMock.getMessage()).toReturn(EventFixture.START_EVENT);
-		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock);
+		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationCacheMock);
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
+		stub(locationCacheMock.getLoc("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
 		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
 		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
@@ -84,7 +80,40 @@ public class TelemetryLocationUpdaterTaskTest {
 				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-				assertNotNull(outputEvent.get("ts"));
+				Map<String, Object> edata = new Gson().fromJson(outputEvent.get("edata").toString(), mapType);
+				assertEquals(outputEvent.get("ver"), "3.0");
+				assertNull(edata.get("state"));
+				assertNull(edata.get("district"));
+				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+				assertEquals(flags.get("ldata_obtained"), false);
+				return true;
+			}
+		}));
+		
+	}
+
+	@Test
+	public void shouldSendEventsToSuccessTopicWithLocation() throws Exception {
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
+		Location loc = new Location();
+		loc.setDistrict("Bangalore");
+		loc.setState("Karnataka");
+		stub(locationCacheMock.getLoc("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(loc);
+		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationCacheMock);
+		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
+		Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+			@Override
+			public boolean matches(Object o) {
+				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+				Map<String, Object> edata = new Gson().fromJson(outputEvent.get("edata").toString(), mapType);
+				assertEquals(outputEvent.get("ver"), "3.1");
+				assertNotNull(edata.get("state"));
+				assertNotNull(edata.get("district"));
+				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+				assertEquals(flags.get("ldata_obtained"), true);
 				return true;
 			}
 		}));
@@ -94,7 +123,7 @@ public class TelemetryLocationUpdaterTaskTest {
 	public void shouldSendEventToFailedTopicIfEventIsNotParseable() throws Exception {
 
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.UNPARSABLE_START_EVENT);
-		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock);
+		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationCacheMock);
 		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), MALFORMED_TOPIC)));
 	}
@@ -103,7 +132,7 @@ public class TelemetryLocationUpdaterTaskTest {
 	public void shouldSendEventToMalformedTopicIfEventIsAnyRandomString() throws Exception {
 
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.ANY_STRING);
-		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock);
+		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationCacheMock);
 		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), MALFORMED_TOPIC)));
 	}

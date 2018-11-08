@@ -2,8 +2,6 @@ package org.ekstep.ep.samza.service;
 
 import static java.text.MessageFormat.format;
 
-import java.util.List;
-
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.domain.Location;
@@ -11,17 +9,18 @@ import com.google.gson.JsonSyntaxException;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterConfig;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterSink;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterSource;
-import org.ekstep.ep.samza.util.Cache;
+import org.ekstep.ep.samza.util.LocationCache;
 
 
 public class TelemetryLocationUpdaterService {
 	
 	private static Logger LOGGER = new Logger(TelemetryLocationUpdaterService.class);
 	private final TelemetryLocationUpdaterConfig config;
-	private Cache cache = new Cache();
+	private LocationCache cache;
 
-	public TelemetryLocationUpdaterService(TelemetryLocationUpdaterConfig config) {
+	public TelemetryLocationUpdaterService(TelemetryLocationUpdaterConfig config, LocationCache cache) {
 		this.config = config;
+		this.cache = cache;
 	}
 
 	public void process(TelemetryLocationUpdaterSource source, TelemetryLocationUpdaterSink sink) {
@@ -29,7 +28,7 @@ public class TelemetryLocationUpdaterService {
 		Location location = null;
 		try {
 			event = source.getEvent();
-			location = getLocation(event.did());
+			location = cache.getLoc(event.did());
 
 			if (location != null) {
 				event.addLocation(location);
@@ -50,13 +49,4 @@ public class TelemetryLocationUpdaterService {
 			sink.toErrorTopic(event, e.getMessage());
 		}
 	}
-
-	public Location getLocation(String did){
-//        Location location = new Location();
-//        location.setDistrict("Mysore");
-//        location.setState("Karnataka");
-//        return location;
-		Location location = cache.getLoc(did);
-		return location;
-    }
 }
