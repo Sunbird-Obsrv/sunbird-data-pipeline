@@ -33,8 +33,12 @@ public class TelemetryLocationUpdaterService {
 			if (location != null) {
 				event.addLocation(location);
 				event.updateVersion();
+				event.removeLoc();
 				event.setFlag("ldata_obtained", true);
 			} else {
+				// add default location
+				event.removeLoc();
+				event.updateVersion();
 				event.setFlag("ldata_obtained", false);
 			}
 			sink.toSuccessTopic(event);

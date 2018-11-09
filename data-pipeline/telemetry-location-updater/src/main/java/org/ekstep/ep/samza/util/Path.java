@@ -46,14 +46,18 @@ public class Path {
     }
 
     public String state(){
-        return "edata.state";
+        return "context.state";
     }
 
     public String district(){
-        return "edata.district";
+        return "context.district";
     }
 
     public String ver(){
         return "ver";
+    }
+
+    public String edata(){
+        return "edata";
     }
 }

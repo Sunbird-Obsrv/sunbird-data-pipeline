@@ -158,6 +158,7 @@ public class EventFixture {
 			"    },\n" +
 			"    \"eid\": \"INTERACT\",\n" +
 			"    \"edata\": {\n" +
+			"		 \"loc\":\"xyz\",\n" +
 			"        \"id\": \"ContentDetail\",\n" +
 			"        \"pageid\": \"ContentDetail\",\n" +
 			"        \"type\": \"TOUCH\",\n" +

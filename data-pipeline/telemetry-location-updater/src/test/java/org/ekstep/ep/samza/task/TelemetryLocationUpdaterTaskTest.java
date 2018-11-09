@@ -80,8 +80,8 @@ public class TelemetryLocationUpdaterTaskTest {
 				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-				Map<String, Object> edata = new Gson().fromJson(outputEvent.get("edata").toString(), mapType);
-				assertEquals(outputEvent.get("ver"), "3.0");
+				Map<String, Object> edata = new Gson().fromJson(outputEvent.get("context").toString(), mapType);
+				assertEquals(outputEvent.get("ver"), "3.1");
 				assertNull(edata.get("state"));
 				assertNull(edata.get("district"));
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
@@ -108,7 +108,7 @@ public class TelemetryLocationUpdaterTaskTest {
 				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-				Map<String, Object> edata = new Gson().fromJson(outputEvent.get("edata").toString(), mapType);
+				Map<String, Object> edata = new Gson().fromJson(outputEvent.get("context").toString(), mapType);
 				assertEquals(outputEvent.get("ver"), "3.1");
 				assertNotNull(edata.get("state"));
 				assertNotNull(edata.get("district"));

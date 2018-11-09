@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gson.JsonObject;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterConfig;
@@ -92,6 +93,13 @@ public class Event {
 
 	public void updateVersion() {
 		telemetry.add(path.ver(), "3.1");
+	}
+
+	public void removeLoc() {
+		Gson gson = new Gson();
+		JsonObject json = gson.toJsonTree(getMap()).getAsJsonObject().get("edata").getAsJsonObject();
+		json.remove("loc");
+		telemetry.add(path.edata(), json);
 	}
 
 	public void setFlag(String key, Object value) {
