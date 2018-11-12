@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.util;
 
+import org.ekstep.ep.samza.domain.LocObject;
 import org.ekstep.ep.samza.domain.Location;
 import org.ekstep.ep.samza.domain.OrgObject;
 
@@ -20,23 +21,20 @@ public class LocationSearchResponse {
 
     public Location value() {
         Location location = new Location();
-        if (result.count > 0) {
+        if (result.loc.size() > 0) {
+            String state = "";
+            if(result.loc.get(0).type().equals("state")) {
+                state = result.loc.get(0).name();
+            }
+            location.setState(state);
+            location.setDistrict("");
             return location;
         }
         return null;
     }
 
     private class SearchResult {
-        private List<OrgObject> org;
-        private Integer count;
-
-        @Override
-        public String toString() {
-            return "SearchResult{" +
-                    "content=" + org +
-                    ", count=" + count +
-                    '}';
-        }
+        private List<LocObject> loc;
     }
 
 }

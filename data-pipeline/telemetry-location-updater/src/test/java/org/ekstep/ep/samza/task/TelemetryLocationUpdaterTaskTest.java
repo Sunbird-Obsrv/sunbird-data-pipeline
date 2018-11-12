@@ -105,11 +105,11 @@ public class TelemetryLocationUpdaterTaskTest {
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
 		stub(locationCacheMock.getLoc("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
 		Location loc = new Location();
-		loc.setDistrict("Mysore");
+		loc.setDistrict("");
 		loc.setState("Karnataka");
 		stub(locationStore.get("0123221617357783046602")).toReturn(null);
-		stub(searchService.searchChannelLocationId("0123221617357783046602")).toReturn("mysore");
-		stub(searchService.searchLocation("mysore")).toReturn(loc);
+		stub(searchService.searchChannelLocationId("0123221617357783046602")).toReturn("loc1");
+		stub(searchService.searchLocation("loc1")).toReturn(loc);
 		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
 		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
@@ -118,10 +118,9 @@ public class TelemetryLocationUpdaterTaskTest {
 				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-				Map<String, Object> context = new Gson().fromJson(outputEvent.get("context").toString(), mapType);
 				assertEquals(outputEvent.get("ver"), "3.1");
-				assertEquals(context.get("state"), "Karnataka");
-				assertEquals(context.get("district"), "Mysore");
+				assertEquals(outputMessage.contains("\"state\":\"Karnataka\""), true);
+				assertEquals(outputMessage.contains("\"district\":\"\""), true);
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
 				assertEquals(flags.get("ldata_obtained"), true);
 				return true;
