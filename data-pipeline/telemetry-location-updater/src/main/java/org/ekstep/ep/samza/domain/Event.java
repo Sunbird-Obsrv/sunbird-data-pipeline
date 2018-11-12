@@ -45,6 +45,11 @@ public class Event {
 		return did.isNull() ? telemetry.<String>read("context.did").value() : did.value();
 	}
 
+	public String channel() {
+		NullableValue<String> channel = telemetry.read("dimensions.channel");
+		return channel.isNull() ? telemetry.<String>read("context.channel").value() : channel.value();
+	}
+
 	public String eid() {
 		NullableValue<String> eid = telemetry.read("eid");
 		return eid.value();

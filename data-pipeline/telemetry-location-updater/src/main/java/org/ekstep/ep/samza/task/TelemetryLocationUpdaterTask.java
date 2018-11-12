@@ -20,6 +20,7 @@
 package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
+import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
@@ -31,8 +32,10 @@ import org.apache.samza.task.TaskCoordinator;
 import org.apache.samza.task.WindowableTask;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
+import org.ekstep.ep.samza.domain.Location;
 import org.ekstep.ep.samza.service.TelemetryLocationUpdaterService;
 import org.ekstep.ep.samza.util.LocationCache;
+import org.ekstep.ep.samza.util.LocationSearchServiceClient;
 
 public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, WindowableTask {
 
@@ -41,9 +44,13 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 	private JobMetrics metrics;
 	private TelemetryLocationUpdaterService service;
 	private LocationCache cache;
+	private KeyValueStore<String, Location> locationStore;
+	private LocationSearchServiceClient searchService;
 
-	public TelemetryLocationUpdaterTask(Config config, TaskContext context, LocationCache cache) {
+	public TelemetryLocationUpdaterTask(Config config, TaskContext context, LocationCache cache, KeyValueStore<String, Location> locationStore, LocationSearchServiceClient searchService) {
 		this.cache = cache;
+		this.locationStore = locationStore;
+		this.searchService = searchService;
 		init(config, context);
 	}
 
@@ -57,7 +64,7 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 		this.config = new TelemetryLocationUpdaterConfig(config);
 		if (cache == null) cache = new LocationCache(config);
 		metrics = new JobMetrics(context, this.config.jobName());
-		service = new TelemetryLocationUpdaterService(this.config, cache);
+		service = new TelemetryLocationUpdaterService(this.config, cache, locationStore, searchService);
 	}
 
 	@Override
