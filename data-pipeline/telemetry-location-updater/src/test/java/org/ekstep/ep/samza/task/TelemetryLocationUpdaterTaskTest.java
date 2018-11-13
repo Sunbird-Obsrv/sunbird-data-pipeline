@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.task;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -84,7 +85,7 @@ public class TelemetryLocationUpdaterTaskTest {
 				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-				assertEquals(outputEvent.get("ver"), "3.1");
+				assertEquals(outputEvent.get("ver"), "3.0");
 				assertEquals(outputMessage.contains("\"state\":\"\""), true);
 				assertEquals(outputMessage.contains("\"district\":\"\""), true);
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
@@ -115,7 +116,7 @@ public class TelemetryLocationUpdaterTaskTest {
 				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-				assertEquals(outputEvent.get("ver"), "3.1");
+				assertEquals(outputEvent.get("ver"), "3.0");
 				assertEquals(outputMessage.contains("\"state\":\"Karnataka\""), true);
 				assertEquals(outputMessage.contains("\"district\":\"\""), true);
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
@@ -144,12 +145,14 @@ public class TelemetryLocationUpdaterTaskTest {
 				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-				Map<String, Object> context = new Gson().fromJson(outputEvent.get("context").toString(), mapType);
-				assertEquals(outputEvent.get("ver"), "3.1");
+				Map<String, Object> context = new Gson().fromJson(outputEvent.get("ldata").toString(), mapType);
+				assertEquals(outputEvent.get("ver"), "3.0");
 				assertEquals(context.get("state"), "Karnataka");
 				assertEquals(context.get("district"), "Kodagu");
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
 				assertEquals(flags.get("ldata_obtained"), true);
+				Map<String, Object> edata = new Gson().fromJson(outputEvent.get("edata").toString(), mapType);
+				assertNull(edata.get("loc"));
 				return true;
 			}
 		}));
@@ -172,8 +175,8 @@ public class TelemetryLocationUpdaterTaskTest {
 				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-				Map<String, Object> context = new Gson().fromJson(outputEvent.get("context").toString(), mapType);
-				assertEquals(outputEvent.get("ver"), "3.1");
+				Map<String, Object> context = new Gson().fromJson(outputEvent.get("ldata").toString(), mapType);
+				assertEquals(outputEvent.get("ver"), "3.0");
 				assertEquals(context.get("state"), "Karnataka");
 				assertEquals(context.get("district"), "Bangalore");
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);

@@ -38,29 +38,20 @@ public class TelemetryLocationUpdaterService {
 			location = cache.getLocationForDeviceId(event.did());
 
 			if (location != null) {
-				event.addLocation(location);
-				event.updateVersion();
-				event.removeLoc();
-				event.setFlag("ldata_obtained", true);
+				event = updateEvent(event, location, true);
 			} else {
 				// add default location from ORG search API
 				LocationEngine engine = new LocationEngine(locationStore, searchService);
 				location = engine.getLocation(event.channel());
 				if (location != null) {
-					event.addLocation(location);
-					event.updateVersion();
-					event.removeLoc();
-					event.setFlag("ldata_obtained", true);
+					event = updateEvent(event, location, true);
 				}
 				else{
 					// add empty location
 					location = new Location();
 					location.setState("");
 					location.setDistrict("");
-					event.addLocation(location);
-					event.updateVersion();
-					event.removeLoc();
-					event.setFlag("ldata_obtained", false);
+					event = updateEvent(event, location, false);
 				}
 			}
 			sink.toSuccessTopic(event);
@@ -74,5 +65,12 @@ public class TelemetryLocationUpdaterService {
 					e);
 			sink.toErrorTopic(event, e.getMessage());
 		}
+	}
+
+	public Event updateEvent(Event event, Location location, Boolean ldataFlag) {
+		event.addLocation(location);
+		event.removeEdataLoc();
+		event.setFlag("ldata_obtained", ldataFlag);
+		return event;
 	}
 }

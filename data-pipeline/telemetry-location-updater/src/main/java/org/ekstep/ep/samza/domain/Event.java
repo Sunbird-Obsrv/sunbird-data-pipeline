@@ -92,15 +92,13 @@ public class Event {
 	}
 
 	public void addLocation(Location location) {
-		telemetry.add(path.state(), location.getState());
-		telemetry.add(path.district(), location.getDistrict());
+		Map<String, String> ldata = new HashMap<String, String>();
+		ldata.put("district", location.getDistrict());
+		ldata.put("state", location.getState());
+		telemetry.add(path.ldata(), ldata);
 	}
 
-	public void updateVersion() {
-		telemetry.add(path.ver(), "3.1");
-	}
-
-	public void removeLoc() {
+	public void removeEdataLoc() {
 		Gson gson = new Gson();
 		JsonObject json = gson.toJsonTree(getMap()).getAsJsonObject().get("edata").getAsJsonObject();
 		json.remove("loc");

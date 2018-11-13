@@ -45,14 +45,6 @@ public class Path {
         return "ldata";
     }
 
-    public String state(){
-        return "context.state";
-    }
-
-    public String district(){
-        return "context.district";
-    }
-
     public String ver(){
         return "ver";
     }
