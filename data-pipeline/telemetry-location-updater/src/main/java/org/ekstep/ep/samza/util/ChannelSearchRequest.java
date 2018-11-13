@@ -29,8 +29,7 @@ public class ChannelSearchRequest {
         HashMap<String, Object> filters = new HashMap<String, Object>();
         ArrayList<String> identifiers = new ArrayList<String>();
         ArrayList<String> status = new ArrayList<String>();
-        filters.put("channel", identifier);
-        filters.put("isRootOrg", true);
+        filters.put("hashTagId", identifier);
         request.put("filters", filters);
         return request;
     }

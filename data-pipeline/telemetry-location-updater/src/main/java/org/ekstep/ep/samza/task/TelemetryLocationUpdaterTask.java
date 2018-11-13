@@ -67,7 +67,7 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 		metrics = new JobMetrics(context, this.config.jobName());
 
 		LocationSearchServiceClient searchServiceClient = searchService == null
-				? new LocationSearchServiceClient(config.get("channel.search.service.endpoint") ,config.get("location.search.service.endpoint"))
+				? new LocationSearchServiceClient(config.get("channel.search.service.endpoint") ,config.get("location.search.service.endpoint"), config.get("search.service.authorization.token"))
 				: searchService;
 
 		service = new TelemetryLocationUpdaterService(this.config, cache, locationStore, searchServiceClient);
