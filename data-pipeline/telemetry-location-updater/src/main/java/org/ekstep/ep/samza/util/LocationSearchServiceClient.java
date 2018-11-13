@@ -10,19 +10,21 @@ import java.io.StringWriter;
 
 public class LocationSearchServiceClient {
     static Logger LOGGER = new Logger(LocationSearchServiceClient.class);
-    private final String endpoint;
+    private final String channelEndpoint;
+    private final String locationEndpoint;
     private static final MediaType JSON_MEDIA_TYPE = MediaType.parse("application/json; charset=utf-8");
     private final OkHttpClient httpClient;
 
-    public LocationSearchServiceClient(String endpoint) {
-        this.endpoint = endpoint;
+    public LocationSearchServiceClient(String channelEndpoint, String locationEndpoint) {
+        this.channelEndpoint = channelEndpoint;
+        this.locationEndpoint = locationEndpoint;
         httpClient = new OkHttpClient();
     }
 
     public String searchChannelLocationId(String channel) throws IOException {
         String body = new Gson().toJson(new ChannelSearchRequest(channel).toMap());
         Request request = new Request.Builder()
-            .url(endpoint)
+            .url(channelEndpoint)
             .post(RequestBody.create(JSON_MEDIA_TYPE, body))
             .build();
         Response response = httpClient.newCall(request).execute();
@@ -48,7 +50,7 @@ public class LocationSearchServiceClient {
     public Location searchLocation(String locationId) throws IOException {
         String body = new Gson().toJson(new LocationSearchRequest(locationId).toMap());
         Request request = new Request.Builder()
-            .url(endpoint)
+            .url(locationEndpoint)
             .post(RequestBody.create(JSON_MEDIA_TYPE, body))
             .build();
         Response response = httpClient.newCall(request).execute();
