@@ -35,7 +35,7 @@ public class TelemetryLocationUpdaterService {
 		Location location = null;
 		try {
 			event = source.getEvent();
-			location = cache.getLoc(event.did());
+			location = cache.getLocationForDeviceId(event.did());
 
 			if (location != null) {
 				event.addLocation(location);

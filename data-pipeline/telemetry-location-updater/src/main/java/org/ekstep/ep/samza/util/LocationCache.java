@@ -2,61 +2,89 @@ package org.ekstep.ep.samza.util;
 
 import com.datastax.driver.core.Row;
 import org.apache.samza.config.Config;
+import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Location;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.exceptions.JedisException;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
 public class LocationCache {
 
-    String cassandra_db;
-    String cassandra_table;
-    String redis_host;
-    Integer redis_port;
-    Config config;
-    Jedis jedis;
-    CassandraConnect cc ;
+    private static Logger LOGGER = new Logger(LocationCache.class);
+
+    private String cassandra_db;
+    private String cassandra_table;
+    private Config config;
+    private CassandraConnect cassandraConnetion;
+    private JedisPool jedisPool;
 
     public LocationCache(Config config) {
         this.config = config;
         this.cassandra_db = config.get("cassandra.keyspace", "device_db");
         this.cassandra_table = config.get("cassandra.device_profile_table", "device_profile");
-        this.redis_host = config.get("redis.host", "localhost");
-        this.redis_port = config.getInt("redis.port", 6379);
-        this.jedis = new Jedis(redis_host, redis_port);
-        this.cc = new CassandraConnect(config);
+        String redis_host = config.get("redis.host", "localhost");
+        Integer redis_port = config.getInt("redis.port", 6379);
+        this.jedisPool = new JedisPool(buildPoolConfig(), redis_host, redis_port);
+        this.cassandraConnetion = new CassandraConnect(config);
     }
 
-    public Location getLoc(String did) {
+    private JedisPoolConfig buildPoolConfig() {
+        final JedisPoolConfig poolConfig = new JedisPoolConfig();
+        poolConfig.setMaxTotal(config.getInt("redis.connection.max", 20));
+        poolConfig.setMaxIdle(config.getInt("redis.connection.idle.max", 20));
+        poolConfig.setMinIdle(config.getInt("redis.connection.idle.min", 10));
+        poolConfig.setTestOnBorrow(true);
+        poolConfig.setTestOnReturn(true);
+        poolConfig.setTestWhileIdle(true);
+        poolConfig.setMinEvictableIdleTimeMillis(Duration.ofSeconds(config.getInt("redis.connection.minEvictableIdleTimeSeconds", 120)).toMillis());
+        poolConfig.setTimeBetweenEvictionRunsMillis(Duration.ofSeconds(config.getInt("redis.connection.timeBetweenEvictionRunsSeconds", 300)).toMillis());
+        poolConfig.setNumTestsPerEvictionRun(3);
+        poolConfig.setBlockWhenExhausted(true);
+        return poolConfig;
+    }
 
-        Map<String, String> fields = jedis.hgetAll(did);
-        List<Row> rows = null;
-        if(fields.isEmpty()) {
-            String query = "SELECT device_id, state, district FROM " + cassandra_db + "." + cassandra_table + " WHERE device_id="+"'"+did+"'";
-            rows = cc.execute(query);
-            if(rows.size() > 0) {
-                Row r = rows.get(0);
-                String state = r.getString("state");
-                String district = r.getString("district");
+    public Location getLocationForDeviceId(String did) {
+
+        try (Jedis jedis = jedisPool.getResource()) {
+            Map<String, String> fields = jedis.hgetAll(did);
+            List<Row> rows;
+            if (fields.isEmpty()) {
+                String query = String.format("SELECT device_id, state, district FROM %s.%s WHERE device_id = '%s'",
+                        cassandra_db, cassandra_table, did);
+                rows = cassandraConnetion.execute(query);
+                if (rows.size() > 0) {
+                    Row r = rows.get(0);
+                    String state = r.getString("state");
+                    String district = r.getString("district");
+                    Location location = new Location();
+                    location.setDistrict(district);
+                    location.setState(state);
+                    addLocationToCache(did, state, district);
+                    return location;
+                } else return null;
+            } else {
                 Location location = new Location();
-                location.setDistrict(district);
-                location.setState(state);
-                putLocation(did, state, district);
+                location.setDistrict(fields.get("district"));
+                location.setState(fields.get("state"));
                 return location;
             }
-            else return null;
-        }
-        else {
-            Location location = new Location();
-            location.setDistrict(fields.get("district"));
-            location.setState(fields.get("state"));
-            return location;
+        } catch (JedisException ex) {
+            LOGGER.error("", "Unable to get a connection resource from the redis connection pool ", ex);
+            return null;
         }
     }
 
-    public void putLocation(String did, String state, String district) {
-        jedis.hset(did, "state", state);
-        jedis.hset(did, "district", district);
+    public void addLocationToCache(String did, String state, String district) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            jedis.hset(did, "state", state);
+            jedis.hset(did, "district", district);
+        } catch (JedisException ex) {
+            LOGGER.error("", "Unable to get a connection resource from the redis connection pool ", ex);
+        }
     }
 }

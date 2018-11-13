@@ -8,21 +8,17 @@ import java.util.List;
 import org.apache.samza.config.Config;
 
 public class CassandraConnect {
-    String host;
-    Integer port;
-    Cluster cluster;
-    Session session;
+    private Session session;
 
     public CassandraConnect(Config config) {
-        this.host = config.get("cassandra.host", "127.0.0.1");
-        this.port = config.getInt("cassandra.port", 9042);
-        this.cluster = Cluster.builder().addContactPoint(host).withPort(port).build();
+        String host = config.get("cassandra.host", "127.0.0.1");
+        Integer port = config.getInt("cassandra.port", 9042);
+        Cluster cluster = Cluster.builder().addContactPoint(host).withPort(port).build();
         this.session = cluster.connect();
     }
 
     public List<Row> execute(String query) {
         ResultSet rs = session.execute(query);
-        List<Row> rows = rs.all();
-        return rows;
+        return rs.all();
     }
 }

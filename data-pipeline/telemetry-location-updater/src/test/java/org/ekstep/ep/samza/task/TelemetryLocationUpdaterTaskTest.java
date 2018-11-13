@@ -1,8 +1,6 @@
 package org.ekstep.ep.samza.task;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -11,7 +9,6 @@ import static org.mockito.Mockito.verify;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
@@ -78,7 +75,7 @@ public class TelemetryLocationUpdaterTaskTest {
 
 		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationCacheMock, locationStore, searchService);
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
-		stub(locationCacheMock.getLoc("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
+		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
 		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
 		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
@@ -103,7 +100,7 @@ public class TelemetryLocationUpdaterTaskTest {
 
 		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationCacheMock, locationStore, searchService);
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
-		stub(locationCacheMock.getLoc("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
+		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
 		Location loc = new Location();
 		loc.setDistrict("");
 		loc.setState("Karnataka");
@@ -134,7 +131,7 @@ public class TelemetryLocationUpdaterTaskTest {
 
 		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationCacheMock, locationStore, searchService);
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
-		stub(locationCacheMock.getLoc("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
+		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
 		Location loc = new Location();
 		loc.setDistrict("Kodagu");
 		loc.setState("Karnataka");
@@ -165,7 +162,7 @@ public class TelemetryLocationUpdaterTaskTest {
 		Location loc = new Location();
 		loc.setDistrict("Bangalore");
 		loc.setState("Karnataka");
-		stub(locationCacheMock.getLoc("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(loc);
+		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(loc);
 		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationCacheMock, locationStore, searchService);
 		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
