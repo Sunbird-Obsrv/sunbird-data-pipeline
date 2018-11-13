@@ -63,6 +63,7 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 		
 		this.config = new TelemetryLocationUpdaterConfig(config);
 		if (cache == null) cache = new LocationCache(config);
+		if (locationStore == null) locationStore = (KeyValueStore<String, Location>) context.getStore("location-store");
 		metrics = new JobMetrics(context, this.config.jobName());
 		service = new TelemetryLocationUpdaterService(this.config, cache, locationStore, searchService);
 	}
