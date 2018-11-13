@@ -1,0 +1,8 @@
+---
+- hosts: spark
+  vars_files:
+       - "{{ secrets_path }}"
+  become: yes
+  become_user: "{{ user }}"
+  roles:
+   - data-products-update-config

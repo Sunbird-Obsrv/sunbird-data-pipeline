@@ -1,0 +1,4 @@
+- hosts: cassandra
+  become: yes
+  roles:
+    - cassandra-deploy

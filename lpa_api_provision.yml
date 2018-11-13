@@ -1,0 +1,9 @@
+---
+- hosts: analytics-api
+  vars_files:
+    - "{{ secrets_path }}"
+  become: yes
+  gather_facts: false
+  roles:
+   - analytics-bootstrap-always       
+   - analytics-api-provision

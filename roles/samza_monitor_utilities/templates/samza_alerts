@@ -1,0 +1,52 @@
+#!/bin/bash
+#set -x
+
+###-------------------------------------------------------------------
+### Created By: kaliraja
+### Description: To Send alert for samza jobs failure.
+###-------------------------------------------------------------------
+
+### Getting the job pattern count, running job details and running jobs count
+job=`cat samza-job-string`
+job_count=`wc -l samza-job-string | awk '{print $1}'`
+/usr/local/hadoop/bin/yarn application --list | awk '{print $1 " " $2 " " $6 " " $7 " " $9}' > running_jobs_live
+job_count_live=`grep -c application running_jobs_live`
+
+### Getting the running jobs details to separate file when only job count is match
+if [[ "$job_count_live" -eq "$job_count" ]]; then
+   /usr/local/hadoop/bin/yarn application --list | awk '{print $1 " " $2 " " $6 " " $7 " " $9}' > running_jobs_list
+fi
+
+### Findout what are the jobs are not running, and send slack, email notification
+if [[ "$job_count_live" -ne "$job_count" ]]; then
+   for i in $job
+   do 
+      if ! grep -q $i running_jobs_live; then
+         failed_job="$i"
+         failed_job_details=`grep $failed_job running_jobs_list`
+         failed_job_string=`echo "$failed_job_details" | awk '{print $2}' | awk -F'.' '{print $2}'` 
+      if ! grep -q $failed_job_string failed_jobs_details ; then
+         echo "$failed_job_string" >> failed_jobs_details
+      fi
+         text=`echo "The job is not running $failed_job_details" | sed 's/RUNNING/killed/g'`
+         /usr/local/bin/samza_slack.sh critical "$text"
+         echo "$text" | mail -s "Samza jobs failed alert" kaliraja.ramasamy@tarento.com, devops@ekstep.org
+      fi
+   done
+fi
+
+### Check if the job state changed to running and send notification
+if [[ -f failed_jobs_details ]]; then
+   failed_job=`cat failed_jobs_details`
+
+   for i in $failed_job
+   do
+      if grep -q $i running_jobs_live; then
+         running_job_details=`grep $i running_jobs_live`
+         text=`echo "The job is back to running $running_job_details"`
+         sed -i 's/'$i'//g; /^$/d ' failed_jobs_details
+         /usr/local/bin/samza_slack.sh good "$text"
+         echo "$text" | mail -s "Samza jobs success alert" kaliraja.ramasamy@tarento.com, devops@ekstep.org
+      fi
+   done
+fi

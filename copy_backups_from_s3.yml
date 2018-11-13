@@ -1,0 +1,5 @@
+- hosts: "{{remote}}"
+  vars_files:
+       - "{{ secrets_path }}"
+  roles:
+        - copy-backups-from-s3
