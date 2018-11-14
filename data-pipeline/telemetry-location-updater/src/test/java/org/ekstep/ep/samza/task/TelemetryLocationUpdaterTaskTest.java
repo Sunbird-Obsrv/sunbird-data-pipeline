@@ -75,14 +75,19 @@ public class TelemetryLocationUpdaterTaskTest {
 
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
+
+		locationEngine = new LocationEngine(locationStore, searchService, locationCacheMock);
+		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStore, locationEngine);
 	}
 
 	@Test
 	public void shouldSendEventsToSuccessTopicIfDidIsNull() throws Exception {
 		
-		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStore, locationEngine);
+//		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStore, locationEngine);
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITHOUT_DID);
-		// stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
+		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
+//		stub(locationEngine.locationCache()).toReturn(locationCacheMock);
+//		stub(locationEngine.getLocation("0123221617357783046602")).toReturn(null);
 		Location loc = new Location();
 		loc.setDistrict("");
 		loc.setState("Karnataka");
@@ -101,7 +106,7 @@ public class TelemetryLocationUpdaterTaskTest {
 				assertTrue(outputMessage.contains("\"state\":\"Karnataka\""));
 				assertTrue(outputMessage.contains("\"district\":\"\""));
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-				assertEquals(flags.get("ldata_obtained"), true);
+				assertEquals(flags.get("ldata_retrieved"), true);
 				return true;
 			}
 		}));
@@ -111,9 +116,11 @@ public class TelemetryLocationUpdaterTaskTest {
 	@Test
 	public void shouldSendEventsToSuccessTopicWithoutStampingLocation() throws Exception {
 
-		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStore, locationEngine);
+//		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStore, locationEngine);
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
 		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
+		//stub(locationEngine.getLocation("0123221617357783046602")).toReturn(null);
+//		stub(locationEngine.locationCache()).toReturn(locationCacheMock);
 		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
 		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
@@ -126,7 +133,7 @@ public class TelemetryLocationUpdaterTaskTest {
 				assertTrue(outputMessage.contains("\"state\":\"\""));
 				assertTrue(outputMessage.contains("\"district\":\"\""));
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-				assertEquals(flags.get("ldata_obtained"), false);
+				assertEquals(flags.get("ldata_retrieved"), false);
 				return true;
 			}
 		}));
@@ -136,9 +143,10 @@ public class TelemetryLocationUpdaterTaskTest {
 	@Test
 	public void shouldSendEventsToSuccessTopicWithStampingLocationFromChannelAPI() throws Exception {
 
-		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStore, locationEngine);
+//		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStore, locationEngine);
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
 		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
+//		stub(locationEngine.locationCache()).toReturn(locationCacheMock);
 		Location loc = new Location();
 		loc.setDistrict("");
 		loc.setState("Karnataka");
@@ -157,7 +165,7 @@ public class TelemetryLocationUpdaterTaskTest {
 				assertEquals(outputMessage.contains("\"state\":\"Karnataka\""), true);
 				assertEquals(outputMessage.contains("\"district\":\"\""), true);
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-				assertEquals(flags.get("ldata_obtained"), true);
+				assertEquals(flags.get("ldata_retrieved"), true);
 				return true;
 			}
 		}));
@@ -167,9 +175,10 @@ public class TelemetryLocationUpdaterTaskTest {
 	@Test
 	public void shouldSendEventsToSuccessTopicWithStampingLocationFromLocalStore() throws Exception {
 
-		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStore, locationEngine);
+//		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStore, locationEngine);
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
 		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
+//		stub(locationEngine.locationCache()).toReturn(locationCacheMock);
 		Location loc = new Location();
 		loc.setDistrict("Kodagu");
 		loc.setState("Karnataka");
@@ -187,7 +196,7 @@ public class TelemetryLocationUpdaterTaskTest {
 				assertEquals(context.get("state"), "Karnataka");
 				assertEquals(context.get("district"), "Kodagu");
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-				assertEquals(flags.get("ldata_obtained"), true);
+				assertEquals(flags.get("ldata_retrieved"), true);
 				Map<String, Object> edata = new Gson().fromJson(outputEvent.get("edata").toString(), mapType);
 				assertNull(edata.get("loc"));
 				return true;
@@ -203,6 +212,7 @@ public class TelemetryLocationUpdaterTaskTest {
 		loc.setDistrict("Bangalore");
 		loc.setState("Karnataka");
 		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(loc);
+//		stub(locationEngine.locationCache()).toReturn(locationCacheMock);
 		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStore, locationEngine);
 		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
@@ -217,7 +227,7 @@ public class TelemetryLocationUpdaterTaskTest {
 				assertEquals(context.get("state"), "Karnataka");
 				assertEquals(context.get("district"), "Bangalore");
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-				assertEquals(flags.get("ldata_obtained"), true);
+				assertEquals(flags.get("ldata_retrieved"), true);
 				return true;
 			}
 		}));

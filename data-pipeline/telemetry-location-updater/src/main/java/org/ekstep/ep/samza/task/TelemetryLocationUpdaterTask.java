@@ -45,15 +45,9 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 	private JobMetrics metrics;
 	private TelemetryLocationUpdaterService service;
 	private LocationEngine locationEngine;
-	// private LocationCache cache;
-	// private KeyValueStore<String, Location> locationStore;
-	// private LocationSearchServiceClient searchService;
 
 	public TelemetryLocationUpdaterTask(Config config, TaskContext context, KeyValueStore<String,
 			Location> locationStore, LocationEngine locationEngine) {
-		// this.cache = cache;
-		// this.locationStore = locationStore;
-		// this.searchService = searchService;
 		init(config, context, locationStore, locationEngine);
 	}
 
@@ -64,7 +58,7 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 	@SuppressWarnings("unchecked")
 	@Override
 	public void init(Config config, TaskContext context) {
-		init(config, context, (KeyValueStore<String, Location>) context.getStore("location-store"), null);
+		init(config, context, (KeyValueStore<String, Location>) context.getStore("location-store"), locationEngine);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -72,27 +66,17 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 					 KeyValueStore<String, Location> locationCacheStore, LocationEngine locationEngine) {
 
 		this.config = new TelemetryLocationUpdaterConfig(config);
-		// if (cache == null) cache = new LocationCache(config);
-		// if (locationStore == null) locationStore = (KeyValueStore<String, Location>) context.getStore("location-store");
 		LocationSearchServiceClient searchServiceClient =
 				new LocationSearchServiceClient(config.get("channel.search.service.endpoint"),
 						config.get("location.search.service.endpoint"),
 						config.get("search.service.authorization.token"));
-		LocationCache locationCache = new LocationCache(config);
+
 		locationEngine =
 				locationEngine == null ?
 				new LocationEngine(locationCacheStore,
-						searchServiceClient, locationCache)
+						searchServiceClient, new LocationCache(config))
 				: locationEngine;
 		metrics = new JobMetrics(context, this.config.jobName());
-
-		/*
-		LocationSearchServiceClient searchServiceClient = searchService == null
-				? new LocationSearchServiceClient(config.get("channel.search.service.endpoint") ,config.get("location.search.service.endpoint"), config.get("search.service.authorization.token"))
-				: searchService;
-				*/
-
-		// service = new TelemetryLocationUpdaterService(this.config, cache, locationStore, searchServiceClient);
 		service = new TelemetryLocationUpdaterService(this.config, locationEngine);
 	}
 

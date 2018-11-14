@@ -22,15 +22,11 @@ public class TelemetryLocationUpdaterService {
 	private static Logger LOGGER = new Logger(TelemetryLocationUpdaterService.class);
 	private final TelemetryLocationUpdaterConfig config;
 	private LocationEngine locationEngine;
-	// private LocationCache cache;
-	// private KeyValueStore<String, Location> locationStore;
-	// private LocationSearchServiceClient searchService;
+
 
 	public TelemetryLocationUpdaterService(TelemetryLocationUpdaterConfig config, LocationEngine locationEngine) {
 		this.config = config;
-		// this.cache = cache;
-		// this.locationStore = locationStore;
-		// this.searchService = searchService;
+		this.locationEngine = locationEngine;
 	}
 
 	public void process(TelemetryLocationUpdaterSource source, TelemetryLocationUpdaterSink sink) {
@@ -65,7 +61,6 @@ public class TelemetryLocationUpdaterService {
 	}
 
 	private Event updateEventWithLocationFromChannel(Event event) throws IOException {
-		// LocationEngine engine = new LocationEngine(locationStore, searchService);
 		Location location = locationEngine.getLocation(event.channel());
 		if (location != null) {
 			event = updateEvent(event, location, true);

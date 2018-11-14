@@ -5,7 +5,7 @@ import org.apache.samza.config.Config;
 public class TelemetryLocationUpdaterConfig {
 
     private final String JOB_NAME = "TelemetryLocationUpdater";
-    private static final String locationJobFlag = "ldata_retrived";
+    private static final String locationJobFlag = "ldata_retrieved";
 
     private String successTopic;
     private String failedTopic;
