@@ -20,13 +20,13 @@ public class TelemetryLocationUpdaterSink extends BaseSink {
 	}
 
 	public void toSuccessTopic(Event event) {
-		toTopic(config.successTopic(), event.mid(), event.getJson());
+		toTopic(config.successTopic(), event.did(), event.getJson());
 		metrics.incSuccessCounter();
 	}
 
 	public void toErrorTopic(Event event, String errorMessage) {
 		event.markFailure(errorMessage, config);
-		toTopic(config.failedTopic(), event.mid(), event.getJson());
+		toTopic(config.failedTopic(), event.did(), event.getJson());
 		metrics.incErrorCounter();
 	}
 

@@ -33,6 +33,7 @@ import org.apache.samza.task.WindowableTask;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Location;
+import org.ekstep.ep.samza.engine.LocationEngine;
 import org.ekstep.ep.samza.service.TelemetryLocationUpdaterService;
 import org.ekstep.ep.samza.util.LocationCache;
 import org.ekstep.ep.samza.util.LocationSearchServiceClient;
@@ -43,34 +44,56 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 	private TelemetryLocationUpdaterConfig config;
 	private JobMetrics metrics;
 	private TelemetryLocationUpdaterService service;
-	private LocationCache cache;
-	private KeyValueStore<String, Location> locationStore;
-	private LocationSearchServiceClient searchService;
+	private LocationEngine locationEngine;
+	// private LocationCache cache;
+	// private KeyValueStore<String, Location> locationStore;
+	// private LocationSearchServiceClient searchService;
 
-	public TelemetryLocationUpdaterTask(Config config, TaskContext context, LocationCache cache, KeyValueStore<String, Location> locationStore, LocationSearchServiceClient searchService) {
-		this.cache = cache;
-		this.locationStore = locationStore;
-		this.searchService = searchService;
-		init(config, context);
+	public TelemetryLocationUpdaterTask(Config config, TaskContext context, KeyValueStore<String,
+			Location> locationStore, LocationEngine locationEngine) {
+		// this.cache = cache;
+		// this.locationStore = locationStore;
+		// this.searchService = searchService;
+		init(config, context, locationStore, locationEngine);
 	}
 
 	public TelemetryLocationUpdaterTask() {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void init(Config config, TaskContext context) {
-		
+		init(config, context, (KeyValueStore<String, Location>) context.getStore("location-store"), null);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void init(Config config, TaskContext context,
+					 KeyValueStore<String, Location> locationCacheStore, LocationEngine locationEngine) {
+
 		this.config = new TelemetryLocationUpdaterConfig(config);
-		if (cache == null) cache = new LocationCache(config);
-		if (locationStore == null) locationStore = (KeyValueStore<String, Location>) context.getStore("location-store");
+		// if (cache == null) cache = new LocationCache(config);
+		// if (locationStore == null) locationStore = (KeyValueStore<String, Location>) context.getStore("location-store");
+		LocationSearchServiceClient searchServiceClient =
+				new LocationSearchServiceClient(config.get("channel.search.service.endpoint"),
+						config.get("location.search.service.endpoint"),
+						config.get("search.service.authorization.token"));
+		LocationCache locationCache = new LocationCache(config);
+		locationEngine =
+				locationEngine == null ?
+				new LocationEngine(locationCacheStore,
+						searchServiceClient, locationCache)
+				: locationEngine;
 		metrics = new JobMetrics(context, this.config.jobName());
 
+		/*
 		LocationSearchServiceClient searchServiceClient = searchService == null
 				? new LocationSearchServiceClient(config.get("channel.search.service.endpoint") ,config.get("location.search.service.endpoint"), config.get("search.service.authorization.token"))
 				: searchService;
+				*/
 
-		service = new TelemetryLocationUpdaterService(this.config, cache, locationStore, searchServiceClient);
+		// service = new TelemetryLocationUpdaterService(this.config, cache, locationStore, searchServiceClient);
+		service = new TelemetryLocationUpdaterService(this.config, locationEngine);
 	}
 
 	@Override

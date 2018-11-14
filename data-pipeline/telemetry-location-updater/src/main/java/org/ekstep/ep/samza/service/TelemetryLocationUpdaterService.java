@@ -21,15 +21,16 @@ public class TelemetryLocationUpdaterService {
 	
 	private static Logger LOGGER = new Logger(TelemetryLocationUpdaterService.class);
 	private final TelemetryLocationUpdaterConfig config;
-	private LocationCache cache;
-	private KeyValueStore<String, Location> locationStore;
-	private LocationSearchServiceClient searchService;
+	private LocationEngine locationEngine;
+	// private LocationCache cache;
+	// private KeyValueStore<String, Location> locationStore;
+	// private LocationSearchServiceClient searchService;
 
-	public TelemetryLocationUpdaterService(TelemetryLocationUpdaterConfig config, LocationCache cache, KeyValueStore<String, Location> locationStore, LocationSearchServiceClient searchService) {
+	public TelemetryLocationUpdaterService(TelemetryLocationUpdaterConfig config, LocationEngine locationEngine) {
 		this.config = config;
-		this.cache = cache;
-		this.locationStore = locationStore;
-		this.searchService = searchService;
+		// this.cache = cache;
+		// this.locationStore = locationStore;
+		// this.searchService = searchService;
 	}
 
 	public void process(TelemetryLocationUpdaterSource source, TelemetryLocationUpdaterSink sink) {
@@ -39,7 +40,7 @@ public class TelemetryLocationUpdaterService {
 			event = source.getEvent();
 			String did = event.did();
 			if (did != null && !did.isEmpty()) {
-				location = cache.getLocationForDeviceId(event.did());
+				location = locationEngine.locationCache().getLocationForDeviceId(event.did());
 
 				if (location != null) {
 					event = updateEvent(event, location, true);
@@ -64,8 +65,8 @@ public class TelemetryLocationUpdaterService {
 	}
 
 	private Event updateEventWithLocationFromChannel(Event event) throws IOException {
-		LocationEngine engine = new LocationEngine(locationStore, searchService);
-		Location location = engine.getLocation(event.channel());
+		// LocationEngine engine = new LocationEngine(locationStore, searchService);
+		Location location = locationEngine.getLocation(event.channel());
 		if (location != null) {
 			event = updateEvent(event, location, true);
 		} else {
@@ -81,7 +82,7 @@ public class TelemetryLocationUpdaterService {
 	public Event updateEvent(Event event, Location location, Boolean ldataFlag) {
 		event.addLocation(location);
 		event.removeEdataLoc();
-		event.setFlag("ldata_obtained", ldataFlag);
+		event.setFlag(TelemetryLocationUpdaterConfig.locationJobFlag(), ldataFlag);
 		return event;
 	}
 }
