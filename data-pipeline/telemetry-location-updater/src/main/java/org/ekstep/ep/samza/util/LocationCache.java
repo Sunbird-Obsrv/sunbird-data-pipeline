@@ -79,7 +79,7 @@ public class LocationCache {
                 return location;
             }
         } catch (JedisException ex) {
-            LOGGER.error("", "Unable to get a resource from the redis connection pool ", ex);
+            LOGGER.error("", "GetLocationForDeviceId: Unable to get a resource from the redis connection pool ", ex);
             return null;
         }
     }
@@ -89,7 +89,7 @@ public class LocationCache {
             if(state != null) jedis.hset(did, "state", state);
             if(district != null) jedis.hset(did, "district", district);
         } catch (JedisException ex) {
-            LOGGER.error("", "Unable to get a resource from the redis connection pool ", ex);
+            LOGGER.error("", "AddLocationToCache: Unable to get a resource from the redis connection pool ", ex);
         }
     }
 }

@@ -14,6 +14,8 @@ import org.ekstep.ep.samza.task.TelemetryLocationUpdaterSource;
 import org.ekstep.ep.samza.util.LocationCache;
 import org.ekstep.ep.samza.util.LocationSearchServiceClient;
 
+import java.io.IOException;
+
 
 public class TelemetryLocationUpdaterService {
 	
@@ -35,24 +37,18 @@ public class TelemetryLocationUpdaterService {
 		Location location;
 		try {
 			event = source.getEvent();
-			location = cache.getLocationForDeviceId(event.did());
+			String did = event.did();
+			if (did != null && !did.isEmpty()) {
+				location = cache.getLocationForDeviceId(event.did());
 
-			if (location != null) {
-				event = updateEvent(event, location, true);
-			} else {
-				// add default location from ORG search API
-				LocationEngine engine = new LocationEngine(locationStore, searchService);
-				location = engine.getLocation(event.channel());
 				if (location != null) {
 					event = updateEvent(event, location, true);
+				} else {
+					// add default location from ORG search API
+					event = updateEventWithLocationFromChannel(event);
 				}
-				else{
-					// add empty location
-					location = new Location();
-					location.setState("");
-					location.setDistrict("");
-					event = updateEvent(event, location, false);
-				}
+			} else {
+				event = updateEventWithLocationFromChannel(event);
 			}
 			sink.toSuccessTopic(event);
 		} catch(JsonSyntaxException e){
@@ -65,6 +61,21 @@ public class TelemetryLocationUpdaterService {
 					e);
 			sink.toErrorTopic(event, e.getMessage());
 		}
+	}
+
+	private Event updateEventWithLocationFromChannel(Event event) throws IOException {
+		LocationEngine engine = new LocationEngine(locationStore, searchService);
+		Location location = engine.getLocation(event.channel());
+		if (location != null) {
+			event = updateEvent(event, location, true);
+		} else {
+			// add empty location
+			location = new Location();
+			location.setState("");
+			location.setDistrict("");
+			event = updateEvent(event, location, false);
+		}
+		return event;
 	}
 
 	public Event updateEvent(Event event, Location location, Boolean ldataFlag) {

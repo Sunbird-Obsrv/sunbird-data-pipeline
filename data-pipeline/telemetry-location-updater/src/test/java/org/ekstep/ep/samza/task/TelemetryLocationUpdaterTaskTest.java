@@ -71,6 +71,38 @@ public class TelemetryLocationUpdaterTaskTest {
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
 	}
+
+	@Test
+	public void shouldSendEventsToSuccessTopicIfDidIsNull() throws Exception {
+
+		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationCacheMock,
+				locationStore, searchService);
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITHOUT_DID);
+		// stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
+		Location loc = new Location();
+		loc.setDistrict("");
+		loc.setState("Karnataka");
+		stub(locationStore.get("0123221617357783046602")).toReturn(null);
+		stub(searchService.searchChannelLocationId("0123221617357783046602")).toReturn("loc1");
+		stub(searchService.searchLocation("loc1")).toReturn(loc);
+		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
+		Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+			@Override
+			public boolean matches(Object o) {
+				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+				assertEquals(outputEvent.get("ver"), "3.0");
+				assertTrue(outputMessage.contains("\"state\":\"Karnataka\""));
+				assertTrue(outputMessage.contains("\"district\":\"\""));
+				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+				assertEquals(flags.get("ldata_obtained"), true);
+				return true;
+			}
+		}));
+
+	}
 	
 	@Test
 	public void shouldSendEventsToSuccessTopicWithoutStampingLocation() throws Exception {
