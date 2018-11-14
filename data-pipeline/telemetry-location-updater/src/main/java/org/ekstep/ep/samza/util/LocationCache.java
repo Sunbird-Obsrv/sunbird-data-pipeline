@@ -62,7 +62,7 @@ public class LocationCache {
                 if (rows.size() > 0) {
                     Row r = rows.get(0);
                     state = r.getString("state");
-                    district = r.getString("district");
+                    district = r.getString("city");
                 }
 
                 if (state != null && district != null) {
