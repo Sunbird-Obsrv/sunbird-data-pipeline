@@ -54,7 +54,7 @@ public class LocationCache {
             Map<String, String> fields = jedis.hgetAll(did);
             List<Row> rows;
             if (fields.isEmpty()) {
-                String query = String.format("SELECT device_id, state, district FROM %s.%s WHERE device_id = '%s'",
+                String query = String.format("SELECT device_id, state, city FROM %s.%s WHERE device_id = '%s'",
                         cassandra_db, cassandra_table, did);
                 rows = cassandraConnetion.execute(query);
                 String state = null;
