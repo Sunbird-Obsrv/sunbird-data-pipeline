@@ -32,7 +32,7 @@ public class TelemetryLocationUpdaterService {
 
 	public void process(TelemetryLocationUpdaterSource source, TelemetryLocationUpdaterSink sink) {
 		Event event = null;
-		Location location = null;
+		Location location;
 		try {
 			event = source.getEvent();
 			location = cache.getLocationForDeviceId(event.did());

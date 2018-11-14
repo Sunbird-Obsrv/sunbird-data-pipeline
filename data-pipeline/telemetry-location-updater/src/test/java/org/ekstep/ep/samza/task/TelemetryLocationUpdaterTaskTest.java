@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.task;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -86,8 +87,8 @@ public class TelemetryLocationUpdaterTaskTest {
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
 				assertEquals(outputEvent.get("ver"), "3.0");
-				assertEquals(outputMessage.contains("\"state\":\"\""), true);
-				assertEquals(outputMessage.contains("\"district\":\"\""), true);
+				assertTrue(outputMessage.contains("\"state\":\"\""));
+				assertTrue(outputMessage.contains("\"district\":\"\""));
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
 				assertEquals(flags.get("ldata_obtained"), false);
 				return true;

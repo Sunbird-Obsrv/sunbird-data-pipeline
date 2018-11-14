@@ -57,10 +57,15 @@ public class LocationCache {
                 String query = String.format("SELECT device_id, state, district FROM %s.%s WHERE device_id = '%s'",
                         cassandra_db, cassandra_table, did);
                 rows = cassandraConnetion.execute(query);
+                String state = null;
+                String district = null;
                 if (rows.size() > 0) {
                     Row r = rows.get(0);
-                    String state = r.getString("state");
-                    String district = r.getString("district");
+                    state = r.getString("state");
+                    district = r.getString("district");
+                }
+
+                if (state != null && district != null) {
                     Location location = new Location();
                     location.setDistrict(district);
                     location.setState(state);
@@ -74,17 +79,17 @@ public class LocationCache {
                 return location;
             }
         } catch (JedisException ex) {
-            LOGGER.error("", "Unable to get a connection resource from the redis connection pool ", ex);
+            LOGGER.error("", "Unable to get a resource from the redis connection pool ", ex);
             return null;
         }
     }
 
     public void addLocationToCache(String did, String state, String district) {
         try (Jedis jedis = jedisPool.getResource()) {
-            jedis.hset(did, "state", state);
-            jedis.hset(did, "district", district);
+            if(state != null) jedis.hset(did, "state", state);
+            if(district != null) jedis.hset(did, "district", district);
         } catch (JedisException ex) {
-            LOGGER.error("", "Unable to get a connection resource from the redis connection pool ", ex);
+            LOGGER.error("", "Unable to get a resource from the redis connection pool ", ex);
         }
     }
 }

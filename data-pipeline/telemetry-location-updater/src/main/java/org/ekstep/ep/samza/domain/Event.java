@@ -13,8 +13,6 @@ import org.ekstep.ep.samza.task.TelemetryLocationUpdaterConfig;
 import com.google.gson.Gson;
 import org.ekstep.ep.samza.util.Path;
 
-import org.ekstep.ep.samza.domain.Location;
-
 public class Event {
 
 	private final Telemetry telemetry;
@@ -92,7 +90,7 @@ public class Event {
 	}
 
 	public void addLocation(Location location) {
-		Map<String, String> ldata = new HashMap<String, String>();
+		Map<String, String> ldata = new HashMap<>();
 		ldata.put("district", location.getDistrict());
 		ldata.put("state", location.getState());
 		telemetry.add(path.ldata(), ldata);
@@ -107,7 +105,7 @@ public class Event {
 
 	public void setFlag(String key, Object value) {
 		NullableValue<Map<String, Object>> telemetryFlag = telemetry.read(path.flags());
-		Map<String, Object> flags = telemetryFlag.isNull() ? new HashMap<String, Object>() : telemetryFlag.value();
+		Map<String, Object> flags = telemetryFlag.isNull() ? new HashMap<>() : telemetryFlag.value();
 		flags.put(key, value);
 		telemetry.add(path.flags(), flags);
 	}

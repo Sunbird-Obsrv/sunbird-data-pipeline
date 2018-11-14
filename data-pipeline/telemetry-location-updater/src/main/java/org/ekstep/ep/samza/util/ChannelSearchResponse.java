@@ -17,7 +17,7 @@ public class ChannelSearchResponse {
     }
 
     public String value() {
-        if (result.count > 0) {
+        if (result.count > 0 && result.org.size() > 0) {
             return result.org.get(0).locationId();
         }
         return null;
