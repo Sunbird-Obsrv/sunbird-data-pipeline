@@ -1,7 +1,7 @@
 application.env="{{ env }}"
 telemetry.version="2.1"
 default.parallelization="10"
-spark_output_temp_dir="/mount/data/analytics/{{ env }}/tmp/"
+spark_output_temp_dir="/mount/data/analytics/tmp/"
 lp.url=""
 service.search.url=""
 spark.cassandra.connection.host="{{groups['dp-cassandra'][0]}}"
@@ -76,3 +76,48 @@ storage-service.request-signature-version="AWS4-HMAC-SHA256"
 s3service.region="ap-south-1"
 
 cloud_storage_type="azure"
+
+
+# Media Service Type
+media_service_type = "azure"
+
+azure_tanent="{{ media_service_azure_tanent }}"
+azure_subscription_id="{{ media_service_azure_subscription_id }}"
+azure_account_name="{{ media_service_azure_account_name }}"
+azure_resource_group_name="{{ media_service_azure_resource_group_name }}"
+azure_token_client_key="{{ media_service_azure_token_client_key }}" 
+azure_token_client_secret="{{ media_service_azure_token_client_secret }}"
+
+
+# Azure Media Service Config
+azure {
+  location = "centralindia"
+  tanent = "tanent name"
+  subscription_id = "subscription id"
+
+  api {
+    endpoint="Media Service API End Point"
+    version = "2018-07-01"
+  }
+
+  account_name = "account name"
+  resource_group_name = "Resource Group Name"
+
+  transform {
+    default = "media_transform_default"
+    hls = "media_transform_hls"
+  }
+
+  stream {
+    base_url = "{{ straem_base_url }}"
+    endpoint_name = "default"
+    protocol = "Hls"
+    policy_name = "Predefined_ClearStreamingOnly"
+  }
+
+  token {
+    client_key = "client key"
+    client_secret = "client secret"
+  }
+}
+
