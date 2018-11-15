@@ -406,7 +406,7 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}device_db.device_profi
     total_ts double,
     total_launches bigint,
     avg_ts double,
-    spec Map<text,text>,
+    device_spec Map<text,text>,
     updated_date timestamp,
     PRIMARY KEY (device_id, channel)
 );
@@ -698,5 +698,8 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.workflow_u
   PRIMARY KEY (d_period, d_channel, d_app_id, d_tag, d_type, d_mode, d_device_id, d_content_id, d_user_id)
 );
 
+ALTER TABLE {{ cassandra.keyspace_prefix }}platform_db.job_request
+ADD (job_name text);
+
 ALTER TABLE {{ cassandra.keyspace_prefix }}device_db.device_profile
-ADD (state text, city text, uaspec text);
+ADD (state text, city text, uaspec Map<text,text>);
