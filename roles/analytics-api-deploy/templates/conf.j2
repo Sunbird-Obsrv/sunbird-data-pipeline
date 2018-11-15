@@ -114,10 +114,10 @@ default.channel.id="{{default_channel_id}}"
 default.creation.app.id="no_value"
 
 
-postgres.url="jdbc:postgresql://{{ lpa_api_postgres.db_url }}:5432/analytics"
-postgres.user="{{ lpa_api_postgres.db_username }}"
-postgres.pass="{{ lpa_api_postgres.db_password }}"
-postgres.table_name="{{ lpa_api_postgres.db_table_name }}"
+postgres.url="jdbc:postgresql://{{ postgres.db_url }}:5432/analytics"
+postgres.user="{{ postgres.db_username }}"
+postgres.pass="{{ postgres.db_password }}"
+postgres.table_name="{{ postgres.db_table_name }}"
 
 #channel specifix telemetry exhaust
 
