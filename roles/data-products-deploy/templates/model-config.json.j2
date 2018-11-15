@@ -3840,6 +3840,98 @@
       }
     ]
   },
+  "ds": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "unique/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        },
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/wfs/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.DeviceSummaryModel",
+    "modelParams": {
+      "apiVersion": "v2"
+    },
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/device-summary/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Device Summarizer",
+    "deviceMapping": false
+  },
+  "dpu": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/device-summary/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.UpdateDeviceProfileDB",
+    "modelParams": {
+      "apiVersion": "v2"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Device Profile Updater",
+    "deviceMapping": false
+  },
+  "video-streaming": {
+    "search": {
+        "type": "azure"
+    },
+    "model": "org.ekstep.analytics.job.VideoStreamingJob",
+    "modelParams": {
+        "maxIterations": 10
+    },
+    "output": [
+        {
+            "to": "console",
+            "params": {
+                "printEvent": false
+            }
+        }
+    ],
+    "parallelization": 8,
+    "appName": "Video Streaming Job",
+    "deviceMapping": false
+ },
   "monitor-job-summ": {
     "search": {
       "type": "local",
@@ -3939,6 +4031,16 @@
           "model": "LearnerSessionSummaryModel",
           "category": "consumption",
           "input_dependency": "None"
+        },
+        {
+          "model": "DeviceSummaryModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "UpdateDeviceProfileDB",
+          "category": "consumption",
+          "input_dependency": "DeviceSummaryModel"
         },
         {
           "model": "GenieSessionSummaryModel",
