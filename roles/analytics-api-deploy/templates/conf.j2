@@ -2,7 +2,7 @@ application.env="{{ env }}"
 spark.cassandra.connection.host={{groups['cassandra'][0]}}
 service.search.url="{{lp_search}}"
 service.search.path="/v2/search"
-service.search.requestbody="""{"request":{"filters":{"objectType":["Content"],"contentType":["Resource"],"status":["Live"]},"exists":["downloadUrl"],"offset":1200,"limit":200}}"""
+service.search.requestbody="""{"request":{"filters":{"objectType":["Content"],"contentType":["Story","Worksheet","Collection","Game"],"status":["Live"]},"limit":1000}}"""
 service.search.limit="10"
 
 metrics.creation.es.url="{{lp_composite_search}}"
@@ -63,6 +63,10 @@ akka {
           router = smallest-mailbox-pool
             nr-of-instances = 10
         }
+        /deviceRegisterServiceAPIActor {
+          router = smallest-mailbox-pool
+            nr-of-instances = 10
+        }
     }
 
     default-dispatcher {
@@ -118,6 +122,8 @@ postgres.url="jdbc:postgresql://{{ postgres.db_url }}:5432/analytics"
 postgres.user="{{ postgres.db_username }}"
 postgres.pass="{{ postgres.db_password }}"
 postgres.table_name="{{ postgres.db_table_name }}"
+postgres.table.geo_location_city.name="{{ geo_location_city }}"
+postgres.table.geo_location_city_ipv4.name="{{ geo_location_city_ipv4 }}"
 
 #channel specifix telemetry exhaust
 
