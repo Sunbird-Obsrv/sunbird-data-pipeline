@@ -5,21 +5,6 @@
 - name: Copy Framework Library
   copy: src=analytics-framework-1.0.jar dest={{ analytics.home }}/models
 
-- name: Copy Cloud-Storage-sdk
-  copy: src=sunbird-cloud-store-sdk-1.0.jar dest={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7/jars
-
-- name: Copy EP Logger
-  copy: src=ep-logger-0.0.1.jar dest={{ analytics.home }}/models
-
-- name: Copy Telemetry Reader For DataExhaust
-  copy: src=ep-telemetry-reader-0.0.3.jar dest={{ analytics.home }}/models
-
-- name: Remove Telemetry Converter 0.0.3.jar
-  file: path={{ analytics.home }}/models/ep-telemetry-converter-0.0.3.jar state=absent
-
-- name: Copy Telemetry Converter For DataExhaust
-  copy: src=ep-telemetry-converter-{{ telemetry_converter_ver }}.jar dest={{ analytics.home }}/models
-
 - name: Copy Job Manager
   copy: src=job-manager-1.0-distribution.tar.gz dest={{ analytics.home }}
 
