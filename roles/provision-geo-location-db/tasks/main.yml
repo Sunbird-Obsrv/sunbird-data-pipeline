@@ -1,0 +1,68 @@
+- name: Load secret file
+  include_vars: "{{ secret_path }}/{{ env }}.yml"
+
+- name: Remove previously downloaded files
+  # become_user: "{{ download_user }}"
+  file: path={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}/ state=absent
+
+- name: Remove previously downloaded files
+  # become_user: "{{ download_user }}"
+  file: path={{ maxmind_db_download_dir }}/geoip2-csv-converter-v1.0.0/ state=absent
+
+- name: Remove archive files
+  become: yes
+  file: path={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}.zip state=absent
+
+- name: Download Maxmind Geolite2 database
+  # become_user: "{{ download_user }}"
+  # get_url: url={{ maxmind_geolite2_db_url }} dest={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}.zip force=no owner={{ download_user }} group={{ download_group }}
+  get_url: url={{ maxmind_geolite2_db_url }} dest={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}.zip force=no
+
+- name: Unarchive Maxmind Geolite2 database
+  # become_user: "{{ download_user }}"
+  # unarchive: src={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}.zip dest={{ maxmind_db_download_dir }} copy=no owner={{ download_user }} group={{ download_group }}
+  unarchive: src={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}.zip dest={{ maxmind_db_download_dir }} copy=no
+
+- name: Rename unzipped geolite2 city directory
+  # become_user: "{{ download_user }}"
+  shell: mv {{ maxmind_db_download_dir }}/GeoLite2-City-CSV_* {{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}
+  run_once: true
+
+- name: Download Maxmind GeoIP2 CSV Converter Program v1.0.0
+  # become_user: "{{ download_user }}"
+  # get_url: url={{ maxmind_geoip2_csv_converter_url }} dest={{ maxmind_db_download_dir }}/{{ maxmind_db_converter_archive_filename }} force=no owner={{ download_user }} group={{ download_group }}
+  get_url: url={{ maxmind_geoip2_csv_converter_url }} dest={{ maxmind_db_download_dir }}/{{ maxmind_db_converter_archive_filename }} force=no
+
+- name: Unarchive Maxmind GeoIP2 CSV Converter
+  become_user: "{{ download_user }}"
+  # unarchive: src={{ maxmind_db_download_dir }}/{{ maxmind_db_converter_archive_filename }} dest={{ maxmind_db_download_dir }}/ copy=no owner={{ download_user }} group={{ download_group }}
+  unarchive: src={{ maxmind_db_download_dir }}/{{ maxmind_db_converter_archive_filename }} dest={{ maxmind_db_download_dir }}/ copy=no
+
+- name: Convert IPV4 CSV database to IP Range database
+  # become_user: "{{ download_user }}"
+  shell: "cd {{ maxmind_db_download_dir }} && ./geoip2-csv-converter-v1.0.0/geoip2-csv-converter -block-file={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}/{{ maxmind_db_geo_city_blocks_filename }} -output-file={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}/{{ maxmind_db_geo_city_ip_range_filename }} -include-integer-range"
+  run_once: true
+
+- name: Create {{ env }}_geo_location_city_ipv4 table
+  shell: PGPASSWORD="{{ pgdb_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_geo_location_city_ipv4(network_start_integer BIGINT, network_last_integer BIGINT, geoname_id INTEGER, registered_country_geoname_id INTEGER, represented_country_geoname_id INTEGER, is_anonymous_proxy SMALLINT, is_satellite_provider SMALLINT, postal_code VARCHAR(50), latitude NUMERIC(9, 6), longitude NUMERIC(9, 6), accuracy_radius SMALLINT)"
+  run_once: true
+
+- name: Create {{ env }}_geo_location_city table
+  shell: PGPASSWORD="{{ pgdb_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_geo_location_city(geoname_id INTEGER, locale_code VARCHAR(3), continent_code VARCHAR(3), continent_name VARCHAR(50), country_iso_code VARCHAR(5), country_name VARCHAR(70), subdivision_1_iso_code VARCHAR(50), subdivision_1_name VARCHAR(70), subdivision_2_iso_code VARCHAR(50), subdivision_2_name VARCHAR(70), city_name VARCHAR(70), metro_code VARCHAR(5), time_zone VARCHAR(50), is_in_european_union SMALLINT)"
+  run_once: true
+
+- name: Truncate {{ env }}_geo_location_city_ipv4 table
+  shell: PGPASSWORD="{{ pgdb_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "TRUNCATE TABLE {{ env }}_geo_location_city_ipv4"
+  run_once: true
+
+- name: Truncate {{ env }}_geo_location_city table
+  shell: PGPASSWORD="{{ pgdb_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "TRUNCATE TABLE {{ env }}_geo_location_city"
+  run_once: true
+
+- name: Load csv data into {{ env }}_geo_location_city_ipv4 table
+  shell: PGPASSWORD="{{ pgdb_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "\COPY {{ env }}_geo_location_city_ipv4 FROM '{{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}/{{ maxmind_db_geo_city_ip_range_filename }}' WITH CSV HEADER DELIMITER ','"
+  run_once: true
+
+- name: Load csv data into {{ env }}_geo_location_city table
+  shell: PGPASSWORD="{{ pgdb_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "\COPY {{ env }}_geo_location_city FROM '{{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}/{{ maxmind_db_geo_city_locations_filename }}' WITH CSV HEADER DELIMITER ','"
+  run_once: true
