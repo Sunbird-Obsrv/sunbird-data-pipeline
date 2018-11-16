@@ -370,6 +370,22 @@
               }
             }
           },
+          "ldata": {
+            "properties": {
+              "country": {
+                "type": "keyword"
+              },
+              "state": {
+                "type": "keyword"
+              },
+              "district": {
+                "type": "keyword"
+              },
+              "city": {
+                "type": "keyword"
+              }
+            }
+          },
           "metadata": {
             "properties": {
               "source": {
@@ -401,6 +417,9 @@
                 "type": "boolean"
               },
               "tv_processed": {
+                "type": "boolean"
+              },
+              "ldata_retrieved": {
                 "type": "boolean"
               }
             }
