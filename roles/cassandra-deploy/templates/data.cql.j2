@@ -698,6 +698,9 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.workflow_u
   PRIMARY KEY (d_period, d_channel, d_app_id, d_tag, d_type, d_mode, d_device_id, d_content_id, d_user_id)
 );
 
+ALTER TABLE {{ cassandra.keyspace_prefix }}platform_db.workflow_usage_summary_fact
+ADD (m_content_type text);
+
 ALTER TABLE {{ cassandra.keyspace_prefix }}platform_db.job_request
 ADD (job_name text);
 
