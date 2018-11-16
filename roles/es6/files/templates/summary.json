@@ -777,6 +777,22 @@
             }
           }
         },
+        "ldata": {
+            "properties": {
+              "country": {
+                "type": "keyword"
+              },
+              "state": {
+                "type": "keyword"
+              },
+              "district": {
+                "type": "keyword"
+              },
+              "city": {
+                "type": "keyword"
+              }
+            }
+          },
         "@version": {
           "type": "keyword"
         }
