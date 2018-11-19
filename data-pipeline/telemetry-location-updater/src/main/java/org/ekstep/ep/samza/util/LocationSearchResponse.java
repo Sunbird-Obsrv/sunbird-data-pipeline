@@ -6,6 +6,7 @@ import org.ekstep.ep.samza.domain.OrgObject;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class LocationSearchResponse {
     public static final String SUCCESS_RESPONSE_STATUS = "successful";
@@ -35,6 +36,16 @@ public class LocationSearchResponse {
 
     private class SearchResult {
         private List<LocObject> loc;
+
+        @Override
+        public String toString() {
+            return "SearchResult{" + loc.stream().map(LocObject::toString).collect(Collectors.joining("|")) +" }";
+        }
+    }
+
+    @Override
+    public String toString() {
+        return result.toString();
     }
 
 }

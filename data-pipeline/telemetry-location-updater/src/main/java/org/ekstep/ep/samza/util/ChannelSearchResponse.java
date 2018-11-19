@@ -35,4 +35,9 @@ public class ChannelSearchResponse {
                     '}';
         }
     }
+
+    @Override
+    public String toString() {
+        return result.toString();
+    }
 }

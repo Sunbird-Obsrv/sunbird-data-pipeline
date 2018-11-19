@@ -36,10 +36,11 @@ public class LocationSearchServiceClient {
         try {
             ChannelSearchResponse channelSearchResponse = new Gson().fromJson(responseBody, ChannelSearchResponse.class);
             if (!channelSearchResponse.successful()) {
-                LOGGER.error("SEARCH SERVICE FAILED. RESPONSE: {}", channelSearchResponse.toString());
+                LOGGER.info("SEARCH SERVICE RESPONSE UNSUCCESSFUL. RESPONSE: ", channelSearchResponse.toString());
                 return null;
             }
             if (channelSearchResponse.value() != null) {
+                LOGGER.info("SEARCH SERVICE RESPONSE SUCCESSFUL. RESPONSE: ", channelSearchResponse.toString());
                 return channelSearchResponse.value();
             }
         } catch (Exception ex) {
@@ -62,7 +63,7 @@ public class LocationSearchServiceClient {
         LocationSearchResponse searchResponse = new Gson().fromJson(string, LocationSearchResponse.class);
 
         if (!searchResponse.successful()) {
-            LOGGER.error("SEARCH SERVICE FAILED. RESPONSE: {}", searchResponse.toString());
+            LOGGER.error("SEARCH SERVICE RESPONSE UNSUCCESSFUL. RESPONSE: {}", searchResponse.toString());
             return null;
         }
 
