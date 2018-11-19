@@ -125,6 +125,11 @@ postgres.table_name="{{ postgres.db_table_name }}"
 postgres.table.geo_location_city.name="{{ geo_location_city }}"
 postgres.table.geo_location_city_ipv4.name="{{ geo_location_city_ipv4 }}"
 
+elasticsearch.service.endpoint="http://{{groups['composite-search-cluster'][0]}}:9200"
+elasticsearch.index.compositesearch.name="compositesearch"
+elasticsearch.index.dialcodemetrics.name="dialcodemetrics"
+metrics.dialcodemetrics.request.limit=1000
+
 #channel specifix telemetry exhaust
 
 dataexhaust.authorization_check=true
