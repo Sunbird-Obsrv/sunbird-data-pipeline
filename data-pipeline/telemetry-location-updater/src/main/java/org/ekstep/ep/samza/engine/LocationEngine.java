@@ -37,7 +37,7 @@ public class LocationEngine {
         if (locationId != null) {
             loc = searchService.searchLocation(locationId);
         }
-        if (loc != null) {
+        if (loc != null && channel != null && !channel.isEmpty()) {
             locationStore.put(channel, loc);
         }
         return loc;
