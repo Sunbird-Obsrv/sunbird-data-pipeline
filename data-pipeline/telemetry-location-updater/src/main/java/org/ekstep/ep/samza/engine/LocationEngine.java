@@ -21,14 +21,16 @@ public class LocationEngine {
     }
 
     public Location getLocation(String channel) throws IOException {
-        Location loc = locationStore.get(channel);
-        if (loc != null) {
-            return loc;
+        if (channel != null && !channel.isEmpty()) {
+            Location loc = locationStore.get(channel);
+            if (loc != null) {
+                return loc;
+            } else {
+                loc = loadChannelAndPopulateCache(channel);
+                return loc;
+            }
         }
-        else {
-            loc = loadChannelAndPopulateCache(channel);
-            return loc;
-        }
+        return null;
     }
 
     private Location loadChannelAndPopulateCache(String channel) throws IOException {
