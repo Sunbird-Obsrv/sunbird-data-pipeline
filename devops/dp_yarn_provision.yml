@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: dp-yarn
   gather_facts: false
   become: true
   tasks:
