@@ -9,7 +9,7 @@ secor:
   properties: ['secor.azure', 'secor.common', 'secor', 'secor.partition', 'log4j']
   artifact_dir: /mount/secor
 
-service_name:
+secor_service_name:
   channel-telemetry-backup:
     consumer_group: "{{ env }}.telemetry.channel.backup"
     base_path: "channel"
