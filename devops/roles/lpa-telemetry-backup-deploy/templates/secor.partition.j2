@@ -17,10 +17,10 @@ include=secor.properties
 include=secor.azure.properties
 
 # Name of the Kafka consumer group.
-secor.kafka.group={{ service_name[item[0]].consumer_group }}
+secor.kafka.group={{ secor_service_name[item[0]].consumer_group }}
 
 # Parser class that extracts s3 partitions from consumed messages.
-secor.message.parser.class={{ service_name[item[0]].message_parser }}
+secor.message.parser.class={{ secor_service_name[item[0]].message_parser }}
 
 # S3 path where sequence files are stored.
 secor.s3.path=
@@ -29,24 +29,24 @@ secor.s3.path=
 secor.swift.path=secor_dev/partition
 
 # Azure path where sequence files are stored.
-secor.azure.path={{ service_name[item[0]].base_path }}
+secor.azure.path={{ secor_service_name[item[0]].base_path }}
 
 # Local path where sequence files are stored before they are uploaded to s3.
 secor.local.path=/mount/{{ item.0 }}/message_logs/partition
 
 # Port of the Ostrich server.
-ostrich.port={{ service_name[item[0]].ostrich_port }}
+ostrich.port={{ secor_service_name[item[0]].ostrich_port }}
 
 # Secor custom properties
 
 # Partition Date Output format. This is used along with PatternDateMessageParser. Defaults to 'yyyy-MM-dd' *New*
 secor.partition.output_dt_format=yyyy-MM-dd
 
-secor.partition.prefix.enable={{ service_name[item[0]].partition_prefix_enabled }}
+secor.partition.prefix.enable={{ secor_service_name[item[0]].partition_prefix_enabled }}
 # Name of field that contains timestamp for JSON, MessagePack, or Thrift message parser. (1405970352123)
-secor.partition.prefix.identifier={{ service_name[item[0]].partition_prefix_key }}
+secor.partition.prefix.identifier={{ secor_service_name[item[0]].partition_prefix_key }}
 
-secor.partition.prefix.mapping={{ service_name[item[0]].partition_prefix_mapping }}
+secor.partition.prefix.mapping={{ secor_service_name[item[0]].partition_prefix_mapping }}
 
 secor.max.file.age.policy=oldest
 
@@ -62,4 +62,4 @@ secor.max.file.age.policy=oldest
 # currentTime - Time of upload in HH-mm format
 # currentDate - Time of upload in YYYYMMDD format
 # folder - Folder to use based on message id map lookup
-secor.s3.output_file_pattern={{ service_name[item[0]].output_file_pattern }}
+secor.s3.output_file_pattern={{ secor_service_name[item[0]].output_file_pattern }}

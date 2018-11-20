@@ -28,13 +28,13 @@ secor.swift.container=logsContainer
 # END MUST SET #
 ################
 
-kafka.seed.broker.host={{ service_name[item[0]].kafka_broker_host }}
+kafka.seed.broker.host={{ secor_service_name[item[0]].kafka_broker_host }}
 kafka.seed.broker.port=
 
-zookeeper.quorum={{ service_name[item[0]].zookeeper_quorum }}
+zookeeper.quorum={{ secor_service_name[item[0]].zookeeper_quorum }}
 
 # Upload policies.
 # 10K
-secor.max.file.size.bytes={{ service_name[item[0]].max_file_size }}
+secor.max.file.size.bytes={{ secor_service_name[item[0]].max_file_size }}
 # 10 seconds
-secor.max.file.age.seconds={{ service_name[item[0]].max_file_age }}
+secor.max.file.age.seconds={{ secor_service_name[item[0]].max_file_age }}
