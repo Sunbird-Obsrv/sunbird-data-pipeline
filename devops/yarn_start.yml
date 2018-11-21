@@ -3,7 +3,7 @@
 - name: Start yarn in master
   hosts: yarn-master
   var_files:
-    - "{{ secrets_path }}"
+    - "{{inventory_dir}}/secrets/dp_secrets.yml"
   become: yes
   tasks:
     - name: Start yarn resource manager
@@ -21,7 +21,7 @@
 - name: start yarn in slaves
   hosts: yarn-slave
   var_files:
-    - "{{ secrets_path }}"
+    - "{{inventory_dir}}/secrets/dp_secrets.yml"
   become: yes
   tasks:
     - name: Start yarn node manager

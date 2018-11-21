@@ -2,7 +2,7 @@
 - name: submit all jobs too JobManager Queue
   hosts: spark
   vars_files:
-       - "{{ secrets_path }}"
+       - "{{inventory_dir}}/secrets/dp_secrets.yml"
   become: yes
   become_user: "{{ analytics_user }}"
   tasks:

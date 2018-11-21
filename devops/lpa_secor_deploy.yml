@@ -1,7 +1,7 @@
 ---
 - hosts: secor
   vars_files:
-    - "{{ secrets_path }}"
+    - "{{inventory_dir}}/secrets/dp_secrets.yml"
   become: yes
   roles:
     - secor-deploy

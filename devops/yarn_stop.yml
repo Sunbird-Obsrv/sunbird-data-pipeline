@@ -1,7 +1,7 @@
 ---
 - name: Stop yarn in master
   var_files:
-    - "{{ secrets_path }}"
+    - "{{inventory_dir}}/secrets/dp_secrets.yml"
   hosts: yarn-master
   become: yes
   roles:
@@ -11,7 +11,7 @@
 - name: stop yarn in slaves
   hosts: yarn-slave
   var_files:
-    - "{{ secrets_path }}"
+    - "{{inventory_dir}}/secrets/dp_secrets.yml"
   become: yes
   tasks:
     - name: Stop yarn nodemanager

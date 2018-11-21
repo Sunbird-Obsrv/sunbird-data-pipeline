@@ -4,4 +4,4 @@
   roles:
     - kibana-oauth-proxy
   vars_files:
-    - "{{ secrets_path }}"
+    - "{{inventory_dir}}/secrets/dp_secrets.yml"

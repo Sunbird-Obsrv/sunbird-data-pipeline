@@ -1,5 +1,5 @@
 - hosts: "{{remote}}"
   vars_files:
-       - "{{ secrets_path }}"
+       - "{{inventory_dir}}/secrets/dp_secrets.yml"
   roles:
         - copy-backups-from-s3

@@ -1,7 +1,7 @@
 ---
 - hosts: analytics-api
   vars_files:
-    - "{{ secrets_path }}"
+    - "{{inventory_dir}}/secrets/dp_secrets.yml"
   become: yes
   become_user: "{{analytics_user}}"
   roles:

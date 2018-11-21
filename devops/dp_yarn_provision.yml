@@ -9,7 +9,7 @@
 - hosts: dp-yarn
   become: yes
   vars_files:
-    - "{{ secrets_path }}"
+    - "{{inventory_dir}}/secrets/dp_secrets.yml"
   tasks:
     - name: Create group
       group: 
@@ -27,7 +27,7 @@
   hosts: "dp-yarn-master"
   become: yes
   vars_files:
-    - "{{ secrets_path }}"
+    - "{{inventory_dir}}/secrets/dp_secrets.yml"
   roles:
     - java
     - yarn
@@ -37,7 +37,7 @@
   hosts: "dp-yarn-slave"
   become: yes
   vars_files:
-    - "{{ secrets_path }}"
+    - "{{inventory_dir}}/secrets/dp_secrets.yml"
   remote_user: hduser
   roles:
     - java
