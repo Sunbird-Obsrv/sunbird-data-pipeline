@@ -9,7 +9,7 @@
 
 - name: Get cron job details on this instance
   become: yes
-  become_user: "{{ user }}"
+  become_user: "{{ analytics_user }}"
   shell: "crontab -l"
   register: jobs_list
   tags:
@@ -17,7 +17,7 @@
 
 - name: Print jobs_list to console
   become: yes
-  become_user: "{{ user }}"
+  become_user: "{{ analytics_user }}"
   debug:
     var: jobs_list
   tags:

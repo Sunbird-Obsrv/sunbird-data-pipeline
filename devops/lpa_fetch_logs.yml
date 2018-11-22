@@ -1,13 +1,13 @@
 - hosts: spark
   become: yes
-  become_user: "{{user}}"
+  become_user: "{{analytics_user}}"
   roles:
     - data-products-fetch-logs
   serial: 1
 
 - hosts: analytics-api
   become: yes
-  become_user: "{{user}}"
+  become_user: "{{analytics_user}}"
   roles:
     - analytics-api-fetch-logs
   serial: 1
