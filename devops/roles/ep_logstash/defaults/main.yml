@@ -10,7 +10,7 @@ logstash_conf:
  - ".indexer.public"
  - ".indexer.pipeline_metrics"
  - ".indexer.analytics_metrics"
-kafka_topic_prefix: "dev."
+kafka_topic_prefix: "{{ env }}."
 apt_cache_valid_time: 3600
 
 zookeepers: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
