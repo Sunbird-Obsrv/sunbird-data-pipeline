@@ -5,3 +5,6 @@ analytics_api:
    paths: ['/home/analytics/sbin', '/mount/data/analytics', '/mount/data/analytics/logs', '/mount/data/analytics/logs/services', '/mount/data/analytics/logs/api-service', '/mount/data/analytics/api', '/mount/data/analytics/tmp', '/mount/data/analytics/scripts/monitor-data']
 cassandra:
   keyspace_prefix: "{{ env }}_"
+
+geo_location_city: "{{ env }}_geo_location_city"
+geo_location_city_ipv4: "{{ env }}_geo_location_city_ipv4"
