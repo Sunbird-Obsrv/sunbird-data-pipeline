@@ -57,3 +57,5 @@ start_jobmanager:
     hour: 0
     minute: 30
 have_weekly_jobs: false
+
+video_stream_job_schedule: 10
