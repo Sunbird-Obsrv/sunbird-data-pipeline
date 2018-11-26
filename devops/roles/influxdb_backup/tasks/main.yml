@@ -8,8 +8,9 @@
 
 - name: zip the backup dir
   archive:
-    path: /tmp/influxdb_backup
+    path: "{{ influxdb_backup_dir }}"
     format: zip
+    dest: "{{ influxdb_backup_dir }}"
 
 - name: Upload the backup to azure blob storage
   command: az storage blob upload --name "{{ influxdb_backup_dir }}.zip" --file {{ influxdb_backup_dir }}.zip --container-name {{ azure_influxdb_backup_container }}
