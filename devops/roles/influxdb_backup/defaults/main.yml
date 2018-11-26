@@ -1,0 +1,2 @@
+influxdb_backup_dir: /tmp/influxdb_backup
+influxdb_backup_databases: ["monitoring_events"]

@@ -1,0 +1,13 @@
+---
+- name: Cleanup old backup directory
+  file: dest={{ influxdb_backup_dir }} state=absent
+
+- name: Backup the database
+  command: "influxd backup -db {{ item }} {{ influxdb_backup_dir }}"
+  with_items: "{{ influxdb_backup_databases }}"
+
+- name: Upload the backup to azure blob storage
+  command: az storage blob upload --name "{{ influxdb_backup_dir }}" --file {{ influxdb_backup_dir }} --container-name {{ backup_azure_container_name }}
+  environment:
+    AZURE_STORAGE_ACCOUNT: "{{ backup_azure_storage_account_name }}"
+    AZURE_STORAGE_KEY: "{{ vault_backup_storage_access_key }}"
