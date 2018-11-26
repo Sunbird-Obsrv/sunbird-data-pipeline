@@ -3,7 +3,7 @@
   file: dest={{ influxdb_backup_dir }} state=absent
 
 - name: Backup the database
-  command: "influxd backup -db {{ item }} {{ influxdb_backup_dir }}"
+  command: "influxd backup -portable -db {{ item }} {{ influxdb_backup_dir }}"
   with_items: "{{ influxdb_backup_databases }}"
 
 - name: Upload the backup to azure blob storage
