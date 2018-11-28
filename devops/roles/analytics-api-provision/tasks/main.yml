@@ -10,7 +10,7 @@
     insertafter: EOF
     create: yes
   with_items:
-    - "export azure_storage_key={{ azure_storage_key }}"
+    - "export azure_storage_key={{ azure_account_name }}"
     - "export azure_storage_secret={{ azure_storage_secret }}"
   no_log: true
 
@@ -23,7 +23,7 @@
     insertafter: EOF
     create: yes
   with_items:
-    - "azure_storage_secret={{ azure_storage_secret }}"
+    - "azure_storage_secret={{ azure_account_name }}"
     - "azure_storage_key={{ azure_storage_key }}" 
   no_log: true
 
