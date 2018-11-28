@@ -2,7 +2,7 @@
   become: yes
   template:
     src: "data.cql.j2"
-    dest: "{{ user_home }}/data.cql"
+    dest: "{{ analytics_user_home }}/data.cql"
     mode: 0644
 
 - name: run cql
