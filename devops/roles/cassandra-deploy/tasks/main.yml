@@ -6,5 +6,5 @@
     mode: 0644
 
 - name: run cql
-  raw: /bin/bash -c 'CQLSH_NO_BUNDLED=true {{cql_path}} -f {{user_home}}/data2.cql'
+  raw: /bin/bash -c 'CQLSH_NO_BUNDLED=true {{cql_path}} -f {{analytics_user_home}}/data2.cql'
   ignore_errors: yes
