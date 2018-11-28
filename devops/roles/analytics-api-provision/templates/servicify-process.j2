@@ -29,7 +29,7 @@ start() {
         fi
     else
         printf "%-50s" "Starting $prog ..."
-        export azure_storage_key="{{ azure_storage_key }}"
+        export azure_storage_key="{{ azure_account_name }}"
         export azure_storage_secret="{{ azure_storage_secret }}"
         cd $APP_HOME
         if [ -z "$DAEMON_HOME" ]; then
