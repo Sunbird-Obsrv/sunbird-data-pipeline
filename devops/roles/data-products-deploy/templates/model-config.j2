@@ -286,6 +286,9 @@ config() {
 		"video-streaming")
 		echo '{"search":{"type":"azure"},"model":"org.ekstep.analytics.job.VideoStreamingJob","modelParams":{"maxIterations":10},"output":[{"to":"console","params":{"printEvent":false}}],"parallelization":8,"appName":"Video Streaming Job","deviceMapping":false}'
 	   	;;
+	   	"portal-metrics")
+		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.updater.UpdatePortalMetrics","modelParams":{},"output":[{"to":"console","params":{"printEvent":false}},{"to":"azure","params":{"bucket":"'$bucket'","key":"portal-metrics/","zip":true}}],"parallelization":8,"appName":"PortalMetricsUpdater","deviceMapping":false}'
+		;;
 		"*")
 		echo "Unknown model code"
       	exit 1 # Command to come out of the program with status 1
