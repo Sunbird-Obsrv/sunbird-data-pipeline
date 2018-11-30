@@ -3,8 +3,8 @@ telemetry.version="2.1"
 default.parallelization="10"
 spark_output_temp_dir="/mount/data/analytics/tmp/"
 lp.url="{{lp_url}}"
-service.search.url={{ service.search.url }}
-service.search.path={{ service.search.path }}
+service.search.url="{{ service.search.url }}"
+service.search.path="{{ service.search.path }}"
 spark.cassandra.connection.host="{{groups['dp-cassandra'][0]}}"
 cassandra.keyspace_prefix="{{ cassandra_keyspace_prefix }}"
 
