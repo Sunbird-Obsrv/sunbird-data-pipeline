@@ -7,6 +7,7 @@ service.search.url="{{ service.search.url }}"
 service.search.path="{{ service.search.path }}"
 spark.cassandra.connection.host="{{groups['dp-cassandra'][0]}}"
 cassandra.keyspace_prefix="{{ cassandra_keyspace_prefix }}"
+cassandra.content_store_prefix="dev_"
 
 # Content to vec configurations
 
