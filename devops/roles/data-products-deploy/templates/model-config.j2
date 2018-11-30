@@ -290,7 +290,7 @@ config() {
 		echo '{"search":{"type":"azure"},"model":"org.ekstep.analytics.model.DialcodeUsageSummaryModel","modelParams":{},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$topic'"}}],"parallelization":8,"appName":"Dialcode Usage Summarizer","deviceMapping":false}'
 	   	;;
 	   	"etb-coverage-summary")
-		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.model.ETBCoverageSummaryModel","modelParams":{"fromDate":"'$endDate'","toDate":"'$endDate'"},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$topic'"}}],"parallelization":8,"appName":"ETB Coverage Model","deviceMapping":false}'
+		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.model.ETBCoverageSummaryModel","modelParams":{"fromDate":"'$endDate'","toDate":"'$endDate'"},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$learning_topic'"}}],"parallelization":8,"appName":"ETB Coverage Model","deviceMapping":false}'
 	   	;;
 		"*")
 		echo "Unknown model code"
