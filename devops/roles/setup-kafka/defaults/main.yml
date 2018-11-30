@@ -62,6 +62,9 @@ processing_kafka_topics:
   - name: learning.republish.job.request
     num_of_partitions: 1
     replication_factor: 1
+  - name: qrimage.request
+    num_of_partitions: 1
+    replication_factor: 1
   - name: telemetry.derived
     num_of_partitions: 1
     replication_factor: 1
