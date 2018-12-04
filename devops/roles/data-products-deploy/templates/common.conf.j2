@@ -2,10 +2,12 @@ application.env="{{ env }}"
 telemetry.version="2.1"
 default.parallelization="10"
 spark_output_temp_dir="/mount/data/analytics/tmp/"
-lp.url=""
+lp.url="{{lp_url}}"
 service.search.url="{{ service.search.url }}"
+service.search.path="{{ service.search.path }}"
 spark.cassandra.connection.host="{{groups['dp-cassandra'][0]}}"
 cassandra.keyspace_prefix="{{ cassandra_keyspace_prefix }}"
+cassandra.content_store_prefix="dev_"
 
 # Content to vec configurations
 
@@ -81,7 +83,7 @@ cloud_storage_type="azure"
 # Media Service Type
 media_service_type = "azure"
 
-azure_tanent="{{ media_service_azure_tanent }}"
+azure_tenant="{{ media_service_azure_tenant }}"
 azure_subscription_id="{{ media_service_azure_subscription_id }}"
 azure_account_name="{{ media_service_azure_account_name }}"
 azure_resource_group_name="{{ media_service_azure_resource_group_name }}"
@@ -92,7 +94,7 @@ azure_token_client_secret="{{ media_service_azure_token_client_secret }}"
 # Azure Media Service Config
 azure {
   location = "centralindia"
-  tanent = "tanent name"
+  tenant = "tenant name"
   subscription_id = "subscription id"
 
   api {
