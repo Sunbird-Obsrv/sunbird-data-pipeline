@@ -706,3 +706,16 @@ ADD (job_name text);
 
 ALTER TABLE {{ cassandra.keyspace_prefix }}device_db.device_profile
 ADD (state text, city text, uaspec Map<text,text>);
+
+CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.dialcode_usage_metrics (
+    period int,
+    dial_code text,
+    channel text,
+    average_scans_per_day bigint,
+    first_scan timestamp,
+    last_scan timestamp,
+    total_dial_scans_global bigint,
+    total_dial_scans_local bigint,
+    updated_date timestamp,
+    PRIMARY KEY (period, dial_code, channel)
+)

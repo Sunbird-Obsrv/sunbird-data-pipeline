@@ -48,7 +48,7 @@ config() {
 		;;
 		"cmu")
         if [ -z "$2" ]; then queryDate=$currentDate; else queryDate=$endDate; fi
-        echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/cus/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.updater.ContentModelUpdater","modelParams":{"date":"'$queryDate'"},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$learning_topic'"}}],"parallelization":10,"appName":"Content Model Updater","deviceMapping":false}'
+        echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/cus/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.updater.ContentModelUpdater","modelParams":{"date":"'$queryDate'","contentTypes":{"Content":["Resource", "Collection", "TextBook", "LessonPlan", "Course", "Template", "Asset", "Plugin", "LessonPlanUnit","CourseUnit", "TextBookUnit"]}},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$learning_topic'"}}],"parallelization":10,"appName":"Content Model Updater","deviceMapping":false}'
         ;;
 		"as")
 		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"unique/","endDate":"'$endDate'","delta":0}]},"filters":[{"name":"ver","operator":"EQ","value":"1.0"}],"model":"org.ekstep.analytics.model.AserScreenSummary","modelParams":{"apiVersion":"v2"},"output":[{"to":"console","params":{"printEvent": false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$topic'"}}],"parallelization":8,"appName":"Aser Screen Summarizer","deviceMapping":true}'
@@ -295,6 +295,9 @@ config() {
 	   	"etb-coverage-summary")
 		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.model.ETBCoverageSummaryModel","modelParams":{"fromDate":"'$endDate'","toDate":"'$endDate'"},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$learning_topic'"}}],"parallelization":8,"appName":"ETB Coverage Model","deviceMapping":false}'
 	   	;;
+	   	"dialcode-usage-updater")
+		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/dialus","endDate":"'$endDate'","delta":0}]]},"model":"org.ekstep.analytics.updater.UpdateDialcodeUsageDB","modelParams":{},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$learning_topic'"}}],"parallelization":8,"appName":"DialcodeUsageUpdater","deviceMapping":false}'
+		;;
 		"*")
 		echo "Unknown model code"
       	exit 1 # Command to come out of the program with status 1
