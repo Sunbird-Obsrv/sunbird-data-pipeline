@@ -22,6 +22,7 @@ public class LocationCache {
     private Config config;
     private CassandraConnect cassandraConnetion;
     private JedisPool jedisPool;
+    private int locationDbKeyExpiryTimeInSeconds;
 
     public LocationCache(Config config) {
         this.config = config;
@@ -31,6 +32,7 @@ public class LocationCache {
         Integer redis_port = config.getInt("redis.port", 6379);
         this.jedisPool = new JedisPool(buildPoolConfig(), redis_host, redis_port);
         this.cassandraConnetion = new CassandraConnect(config);
+        this.locationDbKeyExpiryTimeInSeconds = config.getInt("location.db.redis.key.expiry.seconds", 86400);
     }
 
     private JedisPoolConfig buildPoolConfig() {
@@ -86,8 +88,9 @@ public class LocationCache {
 
     public void addLocationToCache(String did, String state, String district) {
         try (Jedis jedis = jedisPool.getResource()) {
-            if(state != null) jedis.hset(did, "state", state);
-            if(district != null) jedis.hset(did, "district", district);
+            if(state != null && !state.isEmpty()) jedis.hset(did, "state", state);
+            if(district != null && !district.isEmpty()) jedis.hset(did, "district", district);
+            jedis.expire(did, locationDbKeyExpiryTimeInSeconds);
         } catch (JedisException ex) {
             LOGGER.error("", "AddLocationToCache: Unable to get a resource from the redis connection pool ", ex);
         }
