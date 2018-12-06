@@ -4477,6 +4477,26 @@
           "model": "WorkFlowUsageSummaryModel",
           "category": "consumption",
           "input_dependency": "WorkFlowSummaryModel"
+        },
+        {
+          "model": "UpdatePortalMetrics",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "DialcodeUsageSummaryModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "ETBCoverageSummaryModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "UpdateDialcodeUsageDB",
+          "category": "consumption",
+          "input_dependency": "DialcodeUsageSummaryModel"
         }
       ]
     },
