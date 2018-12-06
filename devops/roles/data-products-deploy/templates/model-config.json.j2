@@ -3947,7 +3947,7 @@
         {
           "bucket": "'$bucket'",
           "prefix": "unique",
-          "endDate": "'$endDate'",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
           "delta": 0
         }
       ]
@@ -4020,8 +4020,8 @@
     },
     "model": "org.ekstep.analytics.model.ETBCoverageSummaryModel",
     "modelParams": {
-      "fromDate": "'$endDate'",
-      "toDate": "'$endDate'"
+      "fromDate": "$(date --date yesterday '+%Y-%m-%d')",
+      "toDate": "$(date --date yesterday '+%Y-%m-%d')"
     },
     "output": [
       {
