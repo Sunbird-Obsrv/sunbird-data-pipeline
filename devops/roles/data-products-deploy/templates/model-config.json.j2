@@ -3046,7 +3046,7 @@
   },
   "model": "org.ekstep.analytics.updater.ContentModelUpdater",
   "modelParams": {
-    "date": "'$queryDate'",
+    "date": "$(date --date yesterday '+%Y-%m-%d')",
     "contentTypes": {
       "Content": [
         "Resource",
