@@ -3041,56 +3041,47 @@
     "deviceMapping": false
   },
   "cmu": {
-    "search": {
-      "type": "azure",
-      "queries": [
-        {
-          "bucket": "{{ bucket }}",
-          "prefix": "{{ job_manager_tmp_dir }}/cus/",
-          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
-          "delta": 0,
-          "folder": "true"
-        }
-      ]
-    },
-    "model": "org.ekstep.analytics.updater.ContentModelUpdater",
-    "modelParams": {
-      "date": "$(date '+%Y-%m-%d')",
-      "contentTypes": {
-        "Content": [
-          "Resource",
-          "Collection",
-          "TextBook",
-          "LessonPlan",
-          "Course",
-          "Template",
-          "Asset",
-          "Plugin",
-          "LessonPlanUnit",
-          "CourseUnit",
-          "TextBookUnit"
-        ]
-      }
-    },
-    "output": [
-      {
-        "to": "console",
-        "params": {
-          "printEvent": false
-        }
-      },
-      {
-        "to": "kafka",
-        "params": {
-          "brokerList": "{{ brokerlist }}",
-          "topic": "{{ learning_topic }}"
-        }
-      }
-    ],
-    "parallelization": 10,
-    "appName": "Content Model Updater",
-    "deviceMapping": false
+  "search": {
+    "type": "none"
   },
+  "model": "org.ekstep.analytics.updater.ContentModelUpdater",
+  "modelParams": {
+    "date": "'$queryDate'",
+    "contentTypes": {
+      "Content": [
+        "Resource",
+        "Collection",
+        "TextBook",
+        "LessonPlan",
+        "Course",
+        "Template",
+        "Asset",
+        "Plugin",
+        "LessonPlanUnit",
+        "CourseUnit",
+        "TextBookUnit"
+      ]
+    }
+  },
+  "output": [
+    {
+      "to": "console",
+      "params": {
+        "printEvent": false
+      }
+    },
+    {
+      "to": "kafka",
+      "params": {
+        "brokerList": "'$brokerList'",
+        "topic": "'$learning_topic'"
+      }
+    }
+  ],
+  "parallelization": 10,
+  "appName": "Content Model Updater",
+  "deviceMapping": false
+},
   "precomp-views": {
     "search": {
       "type": "azure",
@@ -3929,15 +3920,7 @@
   },
   "portal-metrics": {
     "search": {
-      "type": "azure",
-      "queries": [
-        {
-          "bucket": "'$bucket'",
-          "prefix": "",
-          "endDate": "'$endDate'",
-          "delta": 0
-        }
-      ]
+      "type": "none"
     },
     "model": "org.ekstep.analytics.updater.UpdatePortalMetrics",
     "modelParams": {
@@ -3979,6 +3962,13 @@
         }
       },
       {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/dialus/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
         "to": "kafka",
         "params": {
           "brokerList": "'$brokerList'",
@@ -3988,6 +3978,40 @@
     ],
     "parallelization": 8,
     "appName": "Dialcode Usage Summarizer",
+    "deviceMapping": false
+  },
+  "dialcode-usage-updater": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/derived/dialus",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.updater.UpdateDialcodeUsageDB",
+    "modelParams": {},
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ learning_topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Dialcode Usage Updater",
     "deviceMapping": false
   },
   "etb-coverage-summary": {
@@ -4018,6 +4042,7 @@
     "appName": "ETB Coverage Model",
     "deviceMapping": false
   },
+
   "video-streaming": {
     "search": {
       "type": "azure"
@@ -4472,39 +4497,6 @@
     ],
     "appName": "TestMonitorSummarizer",
     "deviceMapping": true
-  },
-  "dialcode-usage-updater": {
-    "search": {
-      "type": "azure",
-      "queries": [
-        {
-          "bucket": "{{ bucket }}",
-          "prefix": "derived/dialus",
-          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
-          "delta": 0,
-          "folder": "true"
-        }
-      ]
-    },
-    "model": "org.ekstep.analytics.updater.UpdateDialcodeUsageDB",
-    "modelParams": {},
-    "output": [
-      {
-        "to": "console",
-        "params": {
-          "printEvent": false
-        }
-      },
-      {
-        "to": "kafka",
-        "params": {
-          "brokerList": "{{ brokerlist }}",
-          "topic": "{{ learning_topic }}"
-        }
-      }
-    ],
-    "parallelization": 8,
-    "appName": "Dialcode Usage Updater",
-    "deviceMapping": false
   }
+  
 }
