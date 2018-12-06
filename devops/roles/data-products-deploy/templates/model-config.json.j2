@@ -8,8 +8,8 @@
     "appName": "Data Exhaust",
     "deviceMapping": false,
     "modelParams": {
-      "shouldDelay":true,
-      "delayInMilis":1800000
+      "shouldDelay": true,
+      "delayInMilis": 1800000
     },
     "exhaustConfig": {
       "eks-consumption-raw": {
@@ -79,7 +79,7 @@
                 "operator": "EQ"
               }
             }
-          },        
+          },
           "ME_SESSION_SUMMARY": {
             "searchType": "azure",
             "fetchConfig": {
@@ -2046,7 +2046,7 @@
         "operator": "NE",
         "value": "JOB_START"
       }
-    ],    
+    ],
     "model": "org.ekstep.analytics.model.LearnerSessionSummary",
     "modelParams": {
       "apiVersion": "v2"
@@ -3056,7 +3056,21 @@
     "model": "org.ekstep.analytics.updater.ContentModelUpdater",
     "modelParams": {
       "date": "$(date '+%Y-%m-%d')",
-      "contentTypes":{"Content" :["Resource", "Collection", "TextBook", "LessonPlan", "Course", "Template", "Asset", "Plugin", "LessonPlanUnit","CourseUnit", "TextBookUnit"]}
+      "contentTypes": {
+        "Content": [
+          "Resource",
+          "Collection",
+          "TextBook",
+          "LessonPlan",
+          "Course",
+          "Template",
+          "Asset",
+          "Plugin",
+          "LessonPlanUnit",
+          "CourseUnit",
+          "TextBookUnit"
+        ]
+      }
     },
     "output": [
       {
@@ -3913,20 +3927,49 @@
     "appName": "Device Profile Updater",
     "deviceMapping": false
   },
-  "dialcode-usage-updater": {
+  "portal-metrics": {
     "search": {
       "type": "azure",
       "queries": [
         {
-          "bucket": "{{ bucket }}",
-          "prefix": "derived/dialus",
-          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
-          "delta": 0,
-          "folder": "true"
+          "bucket": "'$bucket'",
+          "prefix": "",
+          "endDate": "'$endDate'",
+          "delta": 0
         }
       ]
     },
-    "model": "org.ekstep.analytics.updater.UpdateDialcodeUsageDB",
+    "model": "org.ekstep.analytics.updater.UpdatePortalMetrics",
+    "modelParams": {
+      "bucket": "'$bucket'",
+      "key": "portal-metrics/diksha-aggregate-metrics.json",
+      "dispatch": true
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "PortalMetricsUpdater",
+    "deviceMapping": false
+  },
+  "dialcode-usage-summary": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "'$bucket'",
+          "prefix": "unique",
+          "endDate": "'$endDate'",
+          "delta": 0
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.DialcodeUsageSummaryModel",
     "modelParams": {},
     "output": [
       {
@@ -3938,35 +3981,63 @@
       {
         "to": "kafka",
         "params": {
-          "brokerList": "{{ brokerlist }}",
-          "topic": "{{ learning_topic }}"
+          "brokerList": "'$brokerList'",
+          "topic": "'$topic'"
         }
       }
     ],
     "parallelization": 8,
-    "appName": "Dialcode Usage Updater",
+    "appName": "Dialcode Usage Summarizer",
     "deviceMapping": false
-  }
+  },
+  "etb-coverage-summary": {
+    "search": {
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.model.ETBCoverageSummaryModel",
+    "modelParams": {
+      "fromDate": "'$endDate'",
+      "toDate": "'$endDate'"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "'$brokerList'",
+          "topic": "'$learning_topic'"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "ETB Coverage Model",
+    "deviceMapping": false
+  },
   "video-streaming": {
     "search": {
-        "type": "azure"
+      "type": "azure"
     },
     "model": "org.ekstep.analytics.job.VideoStreamingJob",
     "modelParams": {
-        "maxIterations": 10
+      "maxIterations": 10
     },
     "output": [
-        {
-            "to": "console",
-            "params": {
-                "printEvent": false
-            }
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
         }
+      }
     ],
     "parallelization": 8,
     "appName": "Video Streaming Job",
     "deviceMapping": false
- },
+  },
   "monitor-job-summ": {
     "search": {
       "type": "local",
@@ -4056,7 +4127,7 @@
           "model": "UpdateLearnerProfileUpdateDB",
           "category": "consumption",
           "input_dependency": "None"
-        },        
+        },
         {
           "model": "UpdateDeviceSpecificationDB",
           "category": "consumption",
@@ -4088,9 +4159,9 @@
           "input_dependency": "None"
         },
         {
-        "model": "UpdateWorkFlowUsageDB",
-        "category": "consumption",
-        "input_dependency": "WorkFlowUsageSummaryModel"
+          "model": "UpdateWorkFlowUsageDB",
+          "category": "consumption",
+          "input_dependency": "WorkFlowUsageSummaryModel"
         },
         {
           "model": "ContentPopularitySummaryModel",
@@ -4401,5 +4472,39 @@
     ],
     "appName": "TestMonitorSummarizer",
     "deviceMapping": true
+  },
+  "dialcode-usage-updater": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "derived/dialus",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.updater.UpdateDialcodeUsageDB",
+    "modelParams": {},
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ learning_topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Dialcode Usage Updater",
+    "deviceMapping": false
   }
 }
