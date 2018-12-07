@@ -3946,7 +3946,7 @@
       "queries": [
         {
           "bucket": "{{ bucket }}",
-          "prefix": "unique",
+          "prefix": "unique/",
           "endDate": "$(date --date yesterday '+%Y-%m-%d')",
           "delta": 0
         }
@@ -4042,7 +4042,6 @@
     "appName": "ETB Coverage Model",
     "deviceMapping": false
   },
-
   "video-streaming": {
     "search": {
       "type": "azure"

@@ -290,13 +290,13 @@ config() {
 		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.updater.UpdatePortalMetrics","modelParams":{"bucket":"'$bucket'","key":"portal-metrics/diksha-aggregate-metrics.json","dispatch":true},"output":[{"to":"console","params":{"printEvent":false}}],"parallelization":8,"appName":"PortalMetricsUpdater","deviceMapping":false}'
 		;;
 	   	"dialcode-usage-summary")
-		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"unique","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.model.DialcodeUsageSummaryModel","modelParams":{},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$topic'"}}],"parallelization":8,"appName":"Dialcode Usage Summarizer","deviceMapping":false}'
+		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"unique/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.model.DialcodeUsageSummaryModel","modelParams":{},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$topic'"}}],"parallelization":8,"appName":"Dialcode Usage Summarizer","deviceMapping":false}'
 	   	;;
 	   	"etb-coverage-summary")
 		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.model.ETBCoverageSummaryModel","modelParams":{"fromDate":"'$endDate'","toDate":"'$endDate'"},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$learning_topic'"}}],"parallelization":8,"appName":"ETB Coverage Model","deviceMapping":false}'
 	   	;;
 	   	"dialcode-usage-updater")
-		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/dialus","endDate":"'$endDate'","delta":0}]]},"model":"org.ekstep.analytics.updater.UpdateDialcodeUsageDB","modelParams":{},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$learning_topic'"}}],"parallelization":8,"appName":"DialcodeUsageUpdater","deviceMapping":false}'
+		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/dialus/","endDate":"'$endDate'","delta":0}]]},"model":"org.ekstep.analytics.updater.UpdateDialcodeUsageDB","modelParams":{},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$learning_topic'"}}],"parallelization":8,"appName":"DialcodeUsageUpdater","deviceMapping":false}'
 		;;
 		"*")
 		echo "Unknown model code"
