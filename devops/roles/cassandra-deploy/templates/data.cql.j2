@@ -698,15 +698,6 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.workflow_u
   PRIMARY KEY (d_period, d_channel, d_app_id, d_tag, d_type, d_mode, d_device_id, d_content_id, d_user_id)
 );
 
-ALTER TABLE {{ cassandra.keyspace_prefix }}platform_db.workflow_usage_summary_fact
-ADD (m_content_type text);
-
-ALTER TABLE {{ cassandra.keyspace_prefix }}platform_db.job_request
-ADD (job_name text);
-
-ALTER TABLE {{ cassandra.keyspace_prefix }}device_db.device_profile
-ADD (state text, city text, uaspec Map<text,text>);
-
 CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.dialcode_usage_metrics (
     period int,
     dial_code text,
@@ -718,4 +709,13 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.dialcode_u
     total_dial_scans_local bigint,
     updated_date timestamp,
     PRIMARY KEY (period, dial_code, channel)
-)
+);
+
+ALTER TABLE {{ cassandra.keyspace_prefix }}platform_db.workflow_usage_summary_fact
+ADD (m_content_type text);
+
+ALTER TABLE {{ cassandra.keyspace_prefix }}platform_db.job_request
+ADD (job_name text);
+
+ALTER TABLE {{ cassandra.keyspace_prefix }}device_db.device_profile
+ADD (state text, city text, uaspec Map<text,text>);
