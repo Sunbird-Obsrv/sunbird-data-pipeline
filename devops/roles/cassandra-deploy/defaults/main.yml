@@ -3,5 +3,5 @@ analytics_user_home: /home/{{ analytics_user }}
 cql_path: cqlsh
 
 cassandra:
-  keyspace_prefix: '{{ env }}_'
-  replication_factor: 1
+   keyspace_prefix: '{{ env }}_'
+   replication_factor: 1
