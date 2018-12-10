@@ -59,3 +59,8 @@ start_jobmanager:
 have_weekly_jobs: false
 
 video_stream_job_schedule: 10
+
+service:
+  search:
+    url: http://{{groups['search1'][0]}}:9000
+    path: /v3/search

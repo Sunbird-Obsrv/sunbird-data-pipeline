@@ -45,7 +45,7 @@
   run_once: true
 
 - name: Create {{ env }}_geo_location_city table
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_geo_location_city(geoname_id INTEGER, locale_code VARCHAR(3), continent_code VARCHAR(3), continent_name VARCHAR(50), country_iso_code VARCHAR(5), country_name VARCHAR(70), subdivision_1_iso_code VARCHAR(50), subdivision_1_name VARCHAR(70), subdivision_2_iso_code VARCHAR(50), subdivision_2_name VARCHAR(70), city_name VARCHAR(70), metro_code VARCHAR(5), time_zone VARCHAR(50), is_in_european_union SMALLINT)"
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_geo_location_city(geoname_id INTEGER, locale_code VARCHAR(3), continent_code VARCHAR(3), continent_name VARCHAR(100), country_iso_code VARCHAR(5), country_name VARCHAR(100), subdivision_1_iso_code VARCHAR(50), subdivision_1_name VARCHAR(100), subdivision_2_iso_code VARCHAR(50), subdivision_2_name VARCHAR(100), city_name VARCHAR(100), metro_code VARCHAR(10), time_zone VARCHAR(50), is_in_european_union SMALLINT)"
   run_once: true
 
 - name: Truncate {{ env }}_geo_location_city_ipv4 table
