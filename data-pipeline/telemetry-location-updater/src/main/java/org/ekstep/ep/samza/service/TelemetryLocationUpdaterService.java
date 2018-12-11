@@ -2,7 +2,6 @@ package org.ekstep.ep.samza.service;
 
 import static java.text.MessageFormat.format;
 
-import org.apache.samza.storage.kv.KeyValueStore;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.domain.Location;
@@ -11,8 +10,6 @@ import org.ekstep.ep.samza.engine.LocationEngine;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterConfig;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterSink;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterSource;
-import org.ekstep.ep.samza.util.LocationCache;
-import org.ekstep.ep.samza.util.LocationSearchServiceClient;
 
 import java.io.IOException;
 
@@ -66,9 +63,7 @@ public class TelemetryLocationUpdaterService {
 			event = updateEvent(event, location, true);
 		} else {
 			// add empty location
-			location = new Location();
-			location.setState("");
-			location.setDistrict("");
+			location = new Location("", "", "", "", "");
 			event = updateEvent(event, location, false);
 		}
 		return event;

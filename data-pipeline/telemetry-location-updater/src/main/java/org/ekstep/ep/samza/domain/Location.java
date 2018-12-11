@@ -20,22 +20,38 @@
 package org.ekstep.ep.samza.domain;
 
 public class Location {
-  private String district;
+  private String countryCode;
+  private String country;
+  private String stateCode;
   private String state;
+  private String city;
 
-  public String getDistrict(){
-    return this.district;
+  public Location(){}
+  public Location(String countryCode, String country, String stateCode, String state, String city) {
+    this.countryCode = countryCode;
+    this.country = country;
+    this.stateCode = stateCode;
+    this.state = state;
+    this.city = city;
   }
-  public void setDistrict(String district){
-    this.district = district;
+
+  public String getCity(){
+    return this.city;
   }
   public String getState(){
     return this.state;
   }
-  public void setState(String state){
-    this.state = state;
+  public String getCountryCode() {
+    return countryCode;
   }
-  public Boolean isReverseSearched(){
-    return this.district != null && this.state != null;
+  public String getCountry() {
+    return country;
+  }
+  public String getStateCode() {
+    return stateCode;
+  }
+
+  public Boolean isLocationResolved(){
+    return this.state != null && !this.state.isEmpty() && this.city != null && !this.city.isEmpty();
   }
 }

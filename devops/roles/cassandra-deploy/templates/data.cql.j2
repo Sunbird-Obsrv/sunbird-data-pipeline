@@ -719,3 +719,6 @@ ADD (job_name text);
 
 ALTER TABLE {{ cassandra.keyspace_prefix }}device_db.device_profile
 ADD (state text, city text, uaspec Map<text,text>);
+
+ALTER TABLE {{ cassandra.keyspace_prefix }}device_db.device_profile
+ADD (country_code text, country text, state_code text);

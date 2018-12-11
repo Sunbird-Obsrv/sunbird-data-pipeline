@@ -56,29 +56,33 @@ public class LocationCache {
             Map<String, String> fields = jedis.hgetAll(did);
             List<Row> rows;
             if (fields.isEmpty()) {
-                String query = String.format("SELECT device_id, state, city FROM %s.%s WHERE device_id = '%s'",
+                String query =
+                    String.format("SELECT device_id, country_code, country, state_code, state, city FROM %s.%s WHERE device_id = '%s'",
                         cassandra_db, cassandra_table, did);
                 rows = cassandraConnetion.execute(query);
+                String countryCode = null;
+                String country = null;
+                String stateCode = null;
                 String state = null;
-                String district = null;
+                String city = null;
+
                 if (rows.size() > 0) {
-                    Row r = rows.get(0);
-                    state = r.getString("state");
-                    district = r.getString("city");
+                    Row row = rows.get(0);
+                    countryCode = row.getString("country_code");
+                    country = row.getString("country");
+                    stateCode = row.getString("state_code");
+                    state = row.getString("state");
+                    city = row.getString("city");
                 }
 
-                if (state != null && district != null) {
-                    Location location = new Location();
-                    location.setDistrict(district);
-                    location.setState(state);
-                    addLocationToCache(did, state, district);
+                Location location = new Location(countryCode, country, stateCode, state, city);
+                if (location.isLocationResolved()) {
+                    addLocationToCache(did, location);
                     return location;
                 } else return null;
             } else {
-                Location location = new Location();
-                location.setDistrict(fields.get("district"));
-                location.setState(fields.get("state"));
-                return location;
+                return new Location(fields.get("country_code"), fields.get("country"),
+                        fields.get("state_code"), fields.get("state"), fields.get("city"));
             }
         } catch (JedisException ex) {
             LOGGER.error("", "GetLocationForDeviceId: Unable to get a resource from the redis connection pool ", ex);
@@ -86,11 +90,16 @@ public class LocationCache {
         }
     }
 
-    public void addLocationToCache(String did, String state, String district) {
+    public void addLocationToCache(String did, Location location) {
         try (Jedis jedis = jedisPool.getResource()) {
-            if(state != null && !state.isEmpty()) jedis.hset(did, "state", state);
-            if(district != null && !district.isEmpty()) jedis.hset(did, "district", district);
-            jedis.expire(did, locationDbKeyExpiryTimeInSeconds);
+            if(location.isLocationResolved()) {
+                jedis.hset(did, "country_code", location.getCountryCode());
+                jedis.hset(did, "country", location.getCountry());
+                jedis.hset(did, "state_code", location.getStateCode());
+                jedis.hset(did, "state", location.getState());
+                jedis.hset(did, "city", location.getCity());
+                jedis.expire(did, locationDbKeyExpiryTimeInSeconds);
+            }
         } catch (JedisException ex) {
             LOGGER.error("", "AddLocationToCache: Unable to get a resource from the redis connection pool ", ex);
         }
