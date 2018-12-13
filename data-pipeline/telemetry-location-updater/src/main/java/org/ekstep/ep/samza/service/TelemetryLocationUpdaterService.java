@@ -32,8 +32,9 @@ public class TelemetryLocationUpdaterService {
 		try {
 			event = source.getEvent();
 			String did = event.did();
+			String channel = event.channel();
 			if (did != null && !did.isEmpty()) {
-				location = locationEngine.locationCache().getLocationForDeviceId(event.did());
+				location = locationEngine.locationCache().getLocationForDeviceId(event.did(), channel);
 
 				if (location != null) {
 					event = updateEvent(event, location, true);

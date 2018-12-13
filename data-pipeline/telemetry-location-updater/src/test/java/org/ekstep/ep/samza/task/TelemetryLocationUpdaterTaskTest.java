@@ -86,7 +86,8 @@ public class TelemetryLocationUpdaterTaskTest {
 		
 
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITHOUT_DID);
-		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
+		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+				"0123221617357783046602")).toReturn(null);
 		Location loc = new Location("", "", "", "Karnataka", "");
 		stub(locationStore.get("0123221617357783046602")).toReturn(null);
 		stub(searchService.searchChannelLocationId("0123221617357783046602")).toReturn("loc1");
@@ -117,7 +118,8 @@ public class TelemetryLocationUpdaterTaskTest {
 	public void shouldSendEventsToSuccessTopicWithoutStampingLocation() throws Exception {
 
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
-		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
+		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+				"0123221617357783046602")).toReturn(null);
 		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
 		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
@@ -176,7 +178,8 @@ public class TelemetryLocationUpdaterTaskTest {
 	public void shouldSendEventsToSuccessTopicWithStampingLocationFromLocalStore() throws Exception {
 
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
-		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
+		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+				"0123221617357783046602")).toReturn(null);
 		Location loc = new Location("IN", "India", "KA", "Karnataka", "Bangalore");
 		stub(locationStore.get("0123221617357783046602")).toReturn(loc);
 		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
@@ -208,7 +211,8 @@ public class TelemetryLocationUpdaterTaskTest {
 	public void shouldSendEventsToSuccessTopicWithLocation() throws Exception {
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
 		Location loc = new Location("IN", "India", "KA", "Karnataka", "Bangalore");
-		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(loc);
+		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+				"0123221617357783046602")).toReturn(loc);
 		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStore, locationEngine);
 		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		Type mapType = new TypeToken<Map<String, Object>>(){}.getType();

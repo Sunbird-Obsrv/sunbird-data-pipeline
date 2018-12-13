@@ -10,6 +10,7 @@ import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.exceptions.JedisException;
 
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,15 +51,17 @@ public class LocationCache {
         return poolConfig;
     }
 
-    public Location getLocationForDeviceId(String did) {
+    public Location getLocationForDeviceId(String did, String channel) {
 
         try (Jedis jedis = jedisPool.getResource()) {
-            Map<String, String> fields = jedis.hgetAll(did);
+            // Key will be device_id:channel
+            String key = String.format("%s:%s", did, channel);
+            Map<String, String> fields = jedis.hgetAll(key);
             List<Row> rows;
             if (fields.isEmpty()) {
                 String query =
-                    String.format("SELECT device_id, country_code, country, state_code, state, city FROM %s.%s WHERE device_id = '%s'",
-                        cassandra_db, cassandra_table, did);
+                    String.format("SELECT device_id, country_code, country, state_code, state, city FROM %s.%s WHERE device_id = '%s' AND channel = '%s'",
+                        cassandra_db, cassandra_table, did, channel);
                 rows = cassandraConnetion.execute(query);
                 String countryCode = null;
                 String country = null;
@@ -77,7 +80,7 @@ public class LocationCache {
 
                 Location location = new Location(countryCode, country, stateCode, state, city);
                 if (location.isLocationResolved()) {
-                    addLocationToCache(did, location);
+                    addLocationToCache(did, channel, location);
                     return location;
                 } else return null;
             } else {
@@ -90,15 +93,19 @@ public class LocationCache {
         }
     }
 
-    public void addLocationToCache(String did, Location location) {
+    public void addLocationToCache(String did, String channel, Location location) {
         try (Jedis jedis = jedisPool.getResource()) {
             if(location.isLocationResolved()) {
-                jedis.hset(did, "country_code", location.getCountryCode());
-                jedis.hset(did, "country", location.getCountry());
-                jedis.hset(did, "state_code", location.getStateCode());
-                jedis.hset(did, "state", location.getState());
-                jedis.hset(did, "city", location.getCity());
-                jedis.expire(did, locationDbKeyExpiryTimeInSeconds);
+                // Key will be device_id:channel
+                String key = String.format("%s:%s", did, channel);
+                Map<String, String> values = new HashMap<>();
+                values.put("country_code", location.getCountryCode());
+                values.put("country", location.getCountry());
+                values.put("state_code", location.getStateCode());
+                values.put("state", location.getState());
+                values.put("city", location.getCity());
+                jedis.hmset(key, values);
+                jedis.expire(key, locationDbKeyExpiryTimeInSeconds);
             }
         } catch (JedisException ex) {
             LOGGER.error("", "AddLocationToCache: Unable to get a resource from the redis connection pool ", ex);
