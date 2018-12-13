@@ -50,15 +50,15 @@ public class LocationCache {
         return poolConfig;
     }
 
-    public Location getLocationForDeviceId(String did) {
+    public Location getLocationForDeviceId(String did, String channel) {
 
         try (Jedis jedis = jedisPool.getResource()) {
             Map<String, String> fields = jedis.hgetAll(did);
             List<Row> rows;
             if (fields.isEmpty()) {
                 String query =
-                    String.format("SELECT device_id, country_code, country, state_code, state, city FROM %s.%s WHERE device_id = '%s'",
-                        cassandra_db, cassandra_table, did);
+                    String.format("SELECT device_id, country_code, country, state_code, state, city FROM %s.%s WHERE device_id = '%s' AND channel = '%s'",
+                        cassandra_db, cassandra_table, did, channel);
                 rows = cassandraConnetion.execute(query);
                 String countryCode = null;
                 String country = null;
