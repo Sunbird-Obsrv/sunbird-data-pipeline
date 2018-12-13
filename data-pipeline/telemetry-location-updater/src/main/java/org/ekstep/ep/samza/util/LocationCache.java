@@ -54,7 +54,8 @@ public class LocationCache {
     public Location getLocationForDeviceId(String did, String channel) {
 
         try (Jedis jedis = jedisPool.getResource()) {
-            String key = String.format("did:%s:channel:%s", did, channel);
+            // Key will be device_id:channel
+            String key = String.format("%s:%s", did, channel);
             Map<String, String> fields = jedis.hgetAll(key);
             List<Row> rows;
             if (fields.isEmpty()) {
@@ -95,7 +96,8 @@ public class LocationCache {
     public void addLocationToCache(String did, String channel, Location location) {
         try (Jedis jedis = jedisPool.getResource()) {
             if(location.isLocationResolved()) {
-                String key = String.format("did:%s:channel:%s", did, channel);
+                // Key will be device_id:channel
+                String key = String.format("%s:%s", did, channel);
                 Map<String, String> values = new HashMap<>();
                 values.put("country_code", location.getCountryCode());
                 values.put("country", location.getCountry());
