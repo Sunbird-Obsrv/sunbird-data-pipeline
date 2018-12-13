@@ -10,33 +10,24 @@
   become: yes
   file: path={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}.zip state=absent
 
-- name: Download Maxmind Geolite2 database
-  # become_user: "{{ download_user }}"
-  # get_url: url={{ maxmind_geolite2_db_url }} dest={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}.zip force=no owner={{ download_user }} group={{ download_group }}
-  get_url: url={{ maxmind_geolite2_db_url }} dest={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}.zip force=no
+- name: Download Maxmind GeoCity database
+  get_url: url={{ maxmind_geocity_db_url }} dest={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}.zip force=no
 
-- name: Unarchive Maxmind Geolite2 database
-  # become_user: "{{ download_user }}"
-  # unarchive: src={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}.zip dest={{ maxmind_db_download_dir }} copy=no owner={{ download_user }} group={{ download_group }}
+- name: Unarchive Maxmind GeoCity database
   unarchive: src={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}.zip dest={{ maxmind_db_download_dir }} copy=no
 
-- name: Rename unzipped geolite2 city directory
-  # become_user: "{{ download_user }}"
-  shell: mv {{ maxmind_db_download_dir }}/GeoLite2-City-CSV_* {{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}
+- name: Rename unzipped geocity directory
+  shell: mv {{ maxmind_db_download_dir }}/{{ maxmind_db_unarchived_dir_prefix }} {{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}
   run_once: true
 
 - name: Download Maxmind GeoIP2 CSV Converter Program v1.0.0
-  # become_user: "{{ download_user }}"
-  # get_url: url={{ maxmind_geoip2_csv_converter_url }} dest={{ maxmind_db_download_dir }}/{{ maxmind_db_converter_archive_filename }} force=no owner={{ download_user }} group={{ download_group }}
   get_url: url={{ maxmind_geoip2_csv_converter_url }} dest={{ maxmind_db_download_dir }}/{{ maxmind_db_converter_archive_filename }} force=no
 
 - name: Unarchive Maxmind GeoIP2 CSV Converter
   become_user: "{{ download_user }}"
-  # unarchive: src={{ maxmind_db_download_dir }}/{{ maxmind_db_converter_archive_filename }} dest={{ maxmind_db_download_dir }}/ copy=no owner={{ download_user }} group={{ download_group }}
   unarchive: src={{ maxmind_db_download_dir }}/{{ maxmind_db_converter_archive_filename }} dest={{ maxmind_db_download_dir }}/ copy=no
 
 - name: Convert IPV4 CSV database to IP Range database
-  # become_user: "{{ download_user }}"
   shell: "cd {{ maxmind_db_download_dir }} && ./geoip2-csv-converter-v1.0.0/geoip2-csv-converter -block-file={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}/{{ maxmind_db_geo_city_blocks_filename }} -output-file={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}/{{ maxmind_db_geo_city_ip_range_filename }} -include-integer-range"
   run_once: true
 
