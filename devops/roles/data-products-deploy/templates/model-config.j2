@@ -290,7 +290,7 @@ config() {
 		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.updater.UpdatePortalMetrics","modelParams":{"bucket":"portal-metrics","key":"diksha-aggregate-metrics.json","dispatch":true, "public":true},"output":[{"to":"console","params":{"printEvent":false}}],"parallelization":8,"appName":"PortalMetricsUpdater","deviceMapping":false}'
 		;;
 		"workflow-usage-metrics")
-		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix": "{{ job_manager_tmp_dir }}/wfus/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.updater.UpdateMetrics","output":[{"to":"console","params":{"printEvent":false}}],"parallelization":10,"appName":"Workflow Metrics Updater","deviceMapping":false}'
+		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix": "derived/wfus/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.updater.UpdateMetrics","output":[{"to":"console","params":{"printEvent":false}}],"parallelization":10,"appName":"Workflow Metrics Updater","deviceMapping":false}'
 		;;
 	   	"dialcode-usage-summary")
 		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"unique/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.model.DialcodeUsageSummaryModel","modelParams":{},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$topic'"}}],"parallelization":8,"appName":"Dialcode Usage Summarizer","deviceMapping":false}'
