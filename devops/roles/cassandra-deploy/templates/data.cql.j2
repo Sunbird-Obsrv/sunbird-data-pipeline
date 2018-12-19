@@ -711,6 +711,17 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.dialcode_u
     PRIMARY KEY (period, dial_code, channel)
 );
 
+CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.workflow_usage_summary (
+    event_data date,
+        total_content_play_sessions bigint,
+        total_timeSpent double,
+        total_interactions bigint,
+        total_pageviews bigint,
+    last_updated_at timestamp,
+        PRIMARY KEY (event_data)
+);
+
+
 ALTER TABLE {{ cassandra.keyspace_prefix }}platform_db.workflow_usage_summary_fact
 ADD (m_content_type text);
 

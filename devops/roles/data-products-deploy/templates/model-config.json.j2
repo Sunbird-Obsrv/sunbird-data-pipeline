@@ -3941,6 +3941,31 @@
     "appName": "PortalMetricsUpdater",
     "deviceMapping": false
   },
+  "workflow-usage-metrics": {
+  "search": {
+    "type": "azure",
+    "queries": [
+      {
+        "bucket": "'$bucket'",
+        "prefix": "derived/wfus/",
+        "endDate": "'$endDate'",
+        "delta": 0
+      }
+    ]
+  },
+  "model": "org.ekstep.analytics.updater.UpdateMetrics",
+  "output": [
+    {
+      "to": "console",
+      "params": {
+        "printEvent": false
+      }
+    }
+  ],
+  "parallelization": 10,
+  "appName": "Workflow Usage Metrics Updater",
+  "deviceMapping": false
+},
   "dialcode-usage-summary": {
     "search": {
       "type": "azure",
