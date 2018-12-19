@@ -712,13 +712,13 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.dialcode_u
 );
 
 CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.workflow_usage_summary (
-    event_data date,
-        total_content_play_sessions bigint,
-        total_timeSpent double,
-        total_interactions bigint,
-        total_pageviews bigint,
+    event_date date,
+    total_content_play_sessions bigint,
+    total_timespent double,
+    total_interactions bigint,
+    total_pageviews bigint,
     last_updated_at timestamp,
-        PRIMARY KEY (event_data)
+    PRIMARY KEY (event_date)
 );
 
 
