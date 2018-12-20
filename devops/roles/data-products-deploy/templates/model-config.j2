@@ -15,6 +15,7 @@ config() {
 	currentDate=$(date "+%Y-%m-%d");
 	analytics_home={{ analytics.home }}	
 	temp_folder={{ job_manager_tmp_dir }}
+	sparkCassandraConnectionHost="{{groups['lp-cassandra'][0]}}"
 	
 	if [ -z "$2" ]; then endDate=$(date --date yesterday "+%Y-%m-%d"); else endDate=$2; fi
 	case "$1" in
@@ -296,7 +297,7 @@ config() {
 		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"unique/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.model.DialcodeUsageSummaryModel","modelParams":{},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$topic'"}}],"parallelization":8,"appName":"Dialcode Usage Summarizer","deviceMapping":false}'
 	   	;;
 	   	"etb-coverage-summary")
-		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.model.ETBCoverageSummaryModel","modelParams":{"fromDate":"'$endDate'","toDate":"'$endDate'"},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$learning_topic'"}}],"parallelization":8,"appName":"ETB Coverage Model","deviceMapping":false}'
+		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.model.ETBCoverageSummaryModel","modelParams":{"fromDate":"'$endDate'","toDate":"'$endDate'","sparkCassandraConnectionHost":"'$sparkCassandraConnectionHost'"},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$learning_topic'"}}],"parallelization":8,"appName":"ETB Coverage Model","deviceMapping":false}'
 	   	;;
 	   	"dialcode-usage-updater")
 		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/dialus/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.updater.UpdateDialcodeUsageDB","modelParams":{},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$learning_topic'"}}],"parallelization":8,"appName":"DialcodeUsageUpdater","deviceMapping":false}'

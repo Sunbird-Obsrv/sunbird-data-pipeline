@@ -4047,7 +4047,8 @@
     "model": "org.ekstep.analytics.model.ETBCoverageSummaryModel",
     "modelParams": {
       "fromDate": "$(date --date yesterday '+%Y-%m-%d')",
-      "toDate": "$(date --date yesterday '+%Y-%m-%d')"
+      "toDate": "$(date --date yesterday '+%Y-%m-%d')",
+      "sparkCassandraConnectionHost": "{{groups['lp-cassandra'][0]}}"
     },
     "output": [
       {
