@@ -33,13 +33,16 @@ public class LocationEngine {
         return null;
     }
 
-    private Location loadChannelAndPopulateCache(String channel) throws IOException {
+    public Location loadChannelAndPopulateCache(String channel) throws IOException {
         Location loc = null;
         String locationId = searchService.searchChannelLocationId(channel);
         if (locationId != null) {
             loc = searchService.searchLocation(locationId);
         }
         if (loc != null && channel != null && !channel.isEmpty()) {
+            locationStore.put(channel, loc);
+        } else {
+            loc = new Location("", "", "", "", "");
             locationStore.put(channel, loc);
         }
         return loc;
