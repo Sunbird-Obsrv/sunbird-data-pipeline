@@ -3948,7 +3948,7 @@
       {
         "bucket": "'$bucket'",
         "prefix": "{{ job_manager_tmp_dir }}/wfus/",
-        "endDate": "'$endDate'",
+        "endDate": "$(date --date yesterday '+%Y-%m-%d')",
         "delta": 0
       }
     ]
