@@ -26,7 +26,7 @@ public class OrgObject {
         return "OrgObject{" +
                 "name='" + name + '\'' +
                 ", identifier='" + identifier + '\'' +
-                ", locationIds=" + locationIds +
+                ", locationIds=[" + String.join(",", locationIds) + "]" +
                 '}';
     }
 }
