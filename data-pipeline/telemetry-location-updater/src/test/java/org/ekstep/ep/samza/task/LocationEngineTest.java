@@ -15,6 +15,8 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LocationEngineTest {
 
@@ -50,14 +52,16 @@ public class LocationEngineTest {
     public void shouldReturnLocationFromLocationApi() throws IOException {
         String channel = "0123221617357783046602";
         Location location = new Location("", "", "", "Karnataka", "");
+        List<String> locationIds = new ArrayList<String>();
+        locationIds.add("testLocationId");
         doAnswer((loc) -> {
             assertEquals(channel, loc.getArguments()[0]);
             assertEquals(location, loc.getArguments()[1]);
             return null;
         }).when(locationStoreMock).put(anyString(), any(Location.class));
 
-        doAnswer((loc) -> "testLocationId").when(searchServiceClientMock).searchChannelLocationId(anyString());
-        doAnswer((loc) -> location).when(searchServiceClientMock).searchLocation(anyString());
+        doAnswer((loc) -> locationIds).when(searchServiceClientMock).searchChannelLocationId(anyString());
+        doAnswer((loc) -> location).when(searchServiceClientMock).searchLocation(locationIds);
         doAnswer((loc) -> location).when(locationEngine).loadChannelAndPopulateCache(anyString());
 
         stub(locationStoreMock.get(channel)).toReturn(null);

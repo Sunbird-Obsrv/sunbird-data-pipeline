@@ -7,6 +7,7 @@ import org.ekstep.ep.samza.util.LocationCache;
 import org.ekstep.ep.samza.util.LocationSearchServiceClient;
 
 import java.io.IOException;
+import java.util.List;
 
 public class LocationEngine {
     private KeyValueStore<String, Location> locationStore;
@@ -35,9 +36,9 @@ public class LocationEngine {
 
     public Location loadChannelAndPopulateCache(String channel) throws IOException {
         Location loc = null;
-        String locationId = searchService.searchChannelLocationId(channel);
-        if (locationId != null) {
-            loc = searchService.searchLocation(locationId);
+        List<String> locationIds = searchService.searchChannelLocationId(channel);
+        if (locationIds != null) {
+            loc = searchService.searchLocation(locationIds);
         }
         if (loc != null && channel != null && !channel.isEmpty()) {
             locationStore.put(channel, loc);

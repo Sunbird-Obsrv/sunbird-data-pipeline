@@ -16,9 +16,9 @@ public class ChannelSearchResponse {
         return params != null && SUCCESS_RESPONSE_STATUS.equals(params.get("status"));
     }
 
-    public String value() {
+    public List<String> value() {
         if (result.count > 0 && result.org.size() > 0) {
-            return result.org.get(0).locationId();
+            return result.org.get(0).locationIds();
         }
         return null;
     }
