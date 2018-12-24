@@ -92,8 +92,8 @@ azure_token_client_secret="{{ media_service_azure_token_client_secret }}"
 elasticsearch.service.endpoint="http://{{groups['composite-search-cluster'][0]}}:9200"
 elasticsearch.index.compositesearch.name="compositesearch"
 
-org.search.api.url={{ channelSearchServiceEndpoint }}
-org.search.api.key={{ searchServiceAuthorizationToken }}
+org.search.api.url="{{ channelSearchServiceEndpoint }}"
+org.search.api.key="{{ searchServiceAuthorizationToken }}"
 
 # Azure Media Service Config
 azure {
