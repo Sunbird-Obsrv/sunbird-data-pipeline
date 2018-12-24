@@ -54,8 +54,8 @@ submit_jobs:
 
 start_jobmanager:
   job-manager:
-    hour: 0
-    minute: 30
+    hour: 3
+    minute: 00
 have_weekly_jobs: false
 
 video_stream_job_schedule: 10
