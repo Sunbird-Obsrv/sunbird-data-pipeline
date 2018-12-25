@@ -90,7 +90,7 @@ azure_resource_group_name="{{ media_service_azure_resource_group_name }}"
 azure_token_client_key="{{ media_service_azure_token_client_key }}" 
 azure_token_client_secret="{{ media_service_azure_token_client_secret }}"
 elasticsearch.service.endpoint="http://{{groups['composite-search-cluster'][0]}}:9200"
-elasticsearch.index.compositesearch.name="{{ es_search_index }}"
+elasticsearch.index.compositesearch.name="{{ compositesearch_index_name }}"
 
 org.search.api.url="{{ channelSearchServiceEndpoint }}"
 org.search.api.key="{{ searchServiceAuthorizationToken }}"
