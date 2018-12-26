@@ -3946,7 +3946,7 @@
     "type": "azure",
     "queries": [
       {
-        "bucket": "'$bucket'",
+        "bucket": "{{ bucket }}",
         "prefix": "{{ job_manager_tmp_dir }}/wfus/",
         "endDate": "$(date --date yesterday '+%Y-%m-%d')",
         "delta": 0
