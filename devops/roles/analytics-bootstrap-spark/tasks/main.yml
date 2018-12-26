@@ -3,7 +3,7 @@
 - name: Add azure key to user profile
   become: yes
   become_user: "{{ analytics_user }}"
-  lineinfile: dest={{ analytics_user_home }}/.bashrc line='export azure_storage_key={{ azure_storage_key }}'  state=present insertafter=EOF create=yes
+  lineinfile: dest={{ analytics_user_home }}/.bashrc line='export azure_storage_key={{ azure_account_name }}'  state=present insertafter=EOF create=yes
 
 - name: Add azure secret to user profile
   become: yes
@@ -12,7 +12,7 @@
 
 - name: Add azure key to environment
   become: yes
-  lineinfile: dest=/etc/environment line='azure_storage_key={{ azure_storage_key }}'  state=present insertafter=EOF create=yes
+  lineinfile: dest=/etc/environment line='azure_storage_key={{ azure_account_name }}'  state=present insertafter=EOF create=yes
 
 - name: Add azure secret to environment
   become: yes
