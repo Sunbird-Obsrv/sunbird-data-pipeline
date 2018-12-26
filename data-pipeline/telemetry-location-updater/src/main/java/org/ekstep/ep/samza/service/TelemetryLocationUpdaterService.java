@@ -60,7 +60,7 @@ public class TelemetryLocationUpdaterService {
 
 	private Event updateEventWithLocationFromChannel(Event event) throws IOException {
 		Location location = locationEngine.getLocation(event.channel());
-		if (location != null) {
+		if (location != null && !location.getState().isEmpty()) {
 			event = updateEvent(event, location, true);
 		} else {
 			// add empty location

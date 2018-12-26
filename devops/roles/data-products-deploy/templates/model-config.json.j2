@@ -2043,8 +2043,8 @@
     "filters": [
       {
         "name": "eid",
-        "operator": "NE",
-        "value": "JOB_START"
+        "operator": "NIN",
+        "value": ["JOB_START","JOB_END"]
       }
     ],
     "model": "org.ekstep.analytics.model.LearnerSessionSummary",
@@ -3755,8 +3755,8 @@
     "filters": [
       {
         "name": "eid",
-        "operator": "NE",
-        "value": "JOB_START"
+        "operator": "NIN",
+        "value": ["JOB_START","JOB_END"]
       }
     ],
     "model": "org.ekstep.analytics.model.WorkflowSummary",
@@ -3941,6 +3941,31 @@
     "appName": "PortalMetricsUpdater",
     "deviceMapping": false
   },
+  "workflow-usage-metrics": {
+  "search": {
+    "type": "azure",
+    "queries": [
+      {
+        "bucket": "'$bucket'",
+        "prefix": "{{ job_manager_tmp_dir }}/wfus/",
+        "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+        "delta": 0
+      }
+    ]
+  },
+  "model": "org.ekstep.analytics.updater.UpdateMetrics",
+  "output": [
+    {
+      "to": "console",
+      "params": {
+        "printEvent": false
+      }
+    }
+  ],
+  "parallelization": 10,
+  "appName": "Workflow Usage Metrics Updater",
+  "deviceMapping": false
+},
   "dialcode-usage-summary": {
     "search": {
       "type": "azure",
@@ -4022,7 +4047,8 @@
     "model": "org.ekstep.analytics.model.ETBCoverageSummaryModel",
     "modelParams": {
       "fromDate": "$(date --date yesterday '+%Y-%m-%d')",
-      "toDate": "$(date --date yesterday '+%Y-%m-%d')"
+      "toDate": "$(date --date yesterday '+%Y-%m-%d')",
+      "sparkCassandraConnectionHost": "{{groups['lp-cassandra'][0]}}"
     },
     "output": [
       {
@@ -4480,6 +4506,11 @@
         },
         {
           "model": "UpdatePortalMetrics",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "UpdateMetrics",
           "category": "consumption",
           "input_dependency": "None"
         },

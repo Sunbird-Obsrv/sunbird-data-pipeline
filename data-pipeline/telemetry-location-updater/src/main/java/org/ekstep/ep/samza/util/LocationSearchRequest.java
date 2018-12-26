@@ -3,13 +3,14 @@ package org.ekstep.ep.samza.util;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 public class LocationSearchRequest {
     public static final String REQUEST_ID = "unique API ID";
     public static final String VERSION = "1.0";
-    private final String identifier;
+    private final List<String> identifier;
 
-    public LocationSearchRequest(String identifier) {
+    public LocationSearchRequest(List<String> identifier) {
         this.identifier = identifier;
     }
 
@@ -30,6 +31,7 @@ public class LocationSearchRequest {
         ArrayList<String> identifiers = new ArrayList<String>();
         ArrayList<String> status = new ArrayList<String>();
         filters.put("id", identifier);
+        filters.put("type", "state");
         request.put("filters", filters);
         return request;
     }

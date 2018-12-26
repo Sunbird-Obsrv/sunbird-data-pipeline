@@ -33,6 +33,8 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class TelemetryLocationUpdaterTaskTest {
@@ -90,8 +92,10 @@ public class TelemetryLocationUpdaterTaskTest {
 				"0123221617357783046602")).toReturn(null);
 		Location loc = new Location("", "", "", "Karnataka", "");
 		stub(locationStore.get("0123221617357783046602")).toReturn(null);
-		stub(searchService.searchChannelLocationId("0123221617357783046602")).toReturn("loc1");
-		stub(searchService.searchLocation("loc1")).toReturn(loc);
+		List<String> locationIds = new ArrayList<String>();
+		locationIds.add("loc1");
+		stub(searchService.searchChannelLocationId("0123221617357783046602")).toReturn(locationIds);
+		stub(searchService.searchLocation(locationIds)).toReturn(loc);
 		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
 		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {

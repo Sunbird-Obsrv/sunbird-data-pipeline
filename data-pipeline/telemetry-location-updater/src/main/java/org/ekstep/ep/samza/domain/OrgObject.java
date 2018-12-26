@@ -1,9 +1,11 @@
 package org.ekstep.ep.samza.domain;
 
+import java.util.List;
+
 public class OrgObject {
     private String name;
     private String identifier;
-    private String locationId;
+    private List<String> locationIds;
 
 
     public String name() {
@@ -14,8 +16,8 @@ public class OrgObject {
         return identifier;
     }
 
-    public String locationId() {
-        return locationId;
+    public List<String> locationIds() {
+        return locationIds;
     }
 
 
@@ -24,7 +26,7 @@ public class OrgObject {
         return "OrgObject{" +
                 "name='" + name + '\'' +
                 ", identifier='" + identifier + '\'' +
-                ", locationId=" + locationId +
+                ", locationIds=[" + String.join(",", locationIds) + "]" +
                 '}';
     }
 }

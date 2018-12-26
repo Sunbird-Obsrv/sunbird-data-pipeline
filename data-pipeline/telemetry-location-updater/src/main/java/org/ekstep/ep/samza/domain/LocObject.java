@@ -26,7 +26,7 @@ public class LocObject {
 
     @Override
     public String toString() {
-        return "OrgObject{" +
+        return "LocObject{" +
                 "name='" + name + '\'' +
                 ", code='" + code + '\'' +
                 ", id=" + id +

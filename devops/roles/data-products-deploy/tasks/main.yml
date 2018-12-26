@@ -81,10 +81,10 @@
   tags:
     - cronjobs
 
-- name: Create video-streaming cron job
-  cron: name="{{env}}-video-streaming" minute=*/{{ video_stream_job_schedule }} job="{{ analytics.home }}/scripts/run-job.sh video-streaming"
-  tags:
-    - cronjobs
+#- name: Create video-streaming cron job
+#  cron: name="{{env}}-video-streaming" minute=*/{{ video_stream_job_schedule }} job="{{ analytics.home }}/scripts/run-job.sh video-streaming"
+#  tags:
+#    - cronjobs
 
 - name: Update start jobmanager
   template: src=start-jobmanager.j2 dest={{ analytics.home }}/scripts/start-jobmanager.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}

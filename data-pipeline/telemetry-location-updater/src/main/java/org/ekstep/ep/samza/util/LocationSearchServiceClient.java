@@ -9,6 +9,7 @@ import javax.ws.rs.core.HttpHeaders;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.List;
 
 public class LocationSearchServiceClient {
     static Logger LOGGER = new Logger(LocationSearchServiceClient.class);
@@ -25,7 +26,7 @@ public class LocationSearchServiceClient {
         httpClient = new OkHttpClient();
     }
 
-    public String searchChannelLocationId(String channel) throws IOException {
+    public List<String> searchChannelLocationId(String channel) throws IOException {
         String body = new Gson().toJson(new ChannelSearchRequest(channel).toMap());
         Request request = new Request.Builder()
             .url(channelEndpoint).header(HttpHeaders.AUTHORIZATION, apiToken)
@@ -52,8 +53,8 @@ public class LocationSearchServiceClient {
         return null;
     }
 
-    public Location searchLocation(String locationId) throws IOException {
-        String body = new Gson().toJson(new LocationSearchRequest(locationId).toMap());
+    public Location searchLocation(List<String> locationIds) throws IOException {
+        String body = new Gson().toJson(new LocationSearchRequest(locationIds).toMap());
         Request request = new Request.Builder()
             .url(locationEndpoint).header(HttpHeaders.AUTHORIZATION, apiToken)
             .post(RequestBody.create(JSON_MEDIA_TYPE, body))
