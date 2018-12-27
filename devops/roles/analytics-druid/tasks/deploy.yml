@@ -1,0 +1,16 @@
+---
+# file: deploy.yml
+- name: Copy over unit file for druid role {{ druid_role }}
+  template: src=druid.conf dest=/etc/init/druid_{{ druid_role }}.conf
+        owner={{ ansible_user }} mode=0644
+  become: true
+
+- name: Copy over unit file for druid role {{ druid_role }}
+  template: src=druid.service dest=/lib/systemd/system/druid_{{ druid_role }}.service
+  become: true
+
+- name: Start druid {{ druid_role }} service
+  service: name=druid_{{ druid_role }} state=restarted
+  become: true
+
+
