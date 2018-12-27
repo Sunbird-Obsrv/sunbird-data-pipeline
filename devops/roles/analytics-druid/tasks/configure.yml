@@ -1,0 +1,55 @@
+---
+# file: configure.yml
+
+- name: Install htop
+  apt: name=htop update_cache=yes
+       state=present
+  become: yes
+
+- name: Install iotop
+  apt: name=iotop update_cache=yes
+       state=present
+  become: yes
+
+- name: Install nload
+  apt: name=nload update_cache=yes
+       state=present
+  become: yes
+
+- name: Create druid deploy directory
+  file: path=/opt/druid state=directory mode=0777
+        owner={{ ansible_user }}
+  become: yes
+
+- name: Create druid logging directory
+  file: path=/var/log/druid/ state=directory mode=0777
+        owner={{ ansible_user }}
+  become: yes
+
+- name: Download Druid version {{ druid_version }}
+  get_url: url=http://static.druid.io/artifacts/releases/druid-{{ druid_version }}-bin.tar.gz
+           dest=/opt/druid
+           checksum=sha256:{{ druid_checksum }}
+           mode=0777
+           force=no
+
+- name: Un-tar druid download
+  unarchive: src=/opt/druid/druid-{{ druid_version }}-bin.tar.gz dest=/opt/druid/ copy=no
+  become: yes
+
+- name: Change ownership of download path
+  file: path=/opt/druid owner={{ ansible_user }} recurse=yes mode=0777
+  become: yes
+
+#Druid Configurations
+
+- name: Copy common.properties for Druid node common
+  template: src=_common/common.runtime.properties dest=/opt/druid/druid-{{ druid_version }}/conf/druid/_common/
+        owner={{ ansible_user }} mode=0755
+  become: yes
+
+- name: Copy common.properties for Druid node common
+  template: src=_common/log4j2.xml dest=/opt/druid/druid-{{ druid_version }}/conf/druid/_common/
+        owner={{ ansible_user }} mode=0755
+  become: yes
+
