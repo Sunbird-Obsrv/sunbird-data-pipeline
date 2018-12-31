@@ -1,0 +1,15 @@
+[overlord]
+localhost
+
+[coordinator]
+localhost
+
+[historical]
+localhost
+
+[broker]
+localhost
+
+[middleManager]
+localhost
+
