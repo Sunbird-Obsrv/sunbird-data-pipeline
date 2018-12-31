@@ -3,6 +3,6 @@
 druid_version: "0.12.3"
 druid_role: "overlord"
 druid_checksum: "807581d54fa4c5a90eec2a230e2a7fc4c6daf18eb8136009bf36a775d793d6f6"
-druid_path: "/opt/druid/druid-{{ druid_version }}/"
+druid_path: "/data/druid-{{ druid_version }}/"
 zk_host: "druid-zookeeper.your-domain.co"
 pg_host: "druid-postgres.your-domain.co"
