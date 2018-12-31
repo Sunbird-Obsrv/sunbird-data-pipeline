@@ -3,8 +3,7 @@ Description=druid_{{druid_role}}_service
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/java `cat {{ druid_path }}/conf/druid/{{ druid_role }}/jvm.config | xargs` -cp {{ druid_path }}conf/druid/_common:{{ druid_path }}conf/druid/{{ druid_role }}:{{ druid_path }}/lib/* io.druid.cli.Main server {{ druid_role }}
-Type=forking
+ExecStart=/bin/sh -c "/usr/bin/java $(/bin/cat {{ druid_path }}conf/druid/{{ druid_role }}/jvm.config | /usr/bin/xargs) -cp {{ druid_path }}conf/druid/_common:{{ druid_path }}conf/druid/{{ druid_role }}:{{ druid_path }}lib/* io.druid.cli.Main server {{ druid_role }}"
 Restart=always
 
 [Install]
