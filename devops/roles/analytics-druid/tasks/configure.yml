@@ -1,5 +1,6 @@
 ---
 # file: configure.yml
+- include_vars: pg_pass.yml
 
 - name: Install htop
   apt: name=htop update_cache=yes
@@ -17,7 +18,7 @@
   become: yes
 
 - name: Create druid deploy directory
-  file: path=/opt/druid state=directory mode=0777
+  file: path=/data state=directory mode=0777
         owner={{ ansible_user }}
   become: yes
 
@@ -26,30 +27,86 @@
         owner={{ ansible_user }}
   become: yes
 
+- name: Create tmp dir only for historical nodes
+  file: path=/mnt/tmp state=directory mode=0755
+        owner={{ ansible_user }}
+  become: yes
+  when: druid_role == "historical" or druid_role == "middleManager"
+
+- name: Create tmp dir only for historical nodes
+  file: path=/mnt/persistent state=directory mode=0755
+        owner={{ ansible_user }}
+  become: yes
+  when: druid_role == "historical"
+
+- name: Create tmp dir only for historical nodes
+  file: path=/mnt/persistent/zk_druid state=directory mode=0755
+        owner={{ ansible_user }}
+  become: yes
+  when: druid_role == "historical"
+
+- name: Create tmp dir only for middleManager nodes
+  file: path=/mnt/druid/ state=directory mode=0755
+        owner={{ ansible_user }}
+  become: yes
+  when: druid_role == "middleManager"
+
+- name: Create tmp dir only for middleManager nodes
+  file: path=/mnt/druid/hadoop-tmp state=directory mode=0755
+        owner={{ ansible_user }}
+  become: yes
+  when: druid_role == "middleManager"
+
+- name: Create tmp dir only for middleManager nodes
+  file: path=/mnt/druid/task state=directory mode=0755
+        owner={{ ansible_user }}
+  become: yes
+  when: druid_role == "middleManager"
+
+- name: Create tmp dir only for middleManager nodes
+  file: path=/mnt/druid/segment_cache state=directory mode=0755
+        owner={{ ansible_user }}
+  become: yes
+  when: druid_role == "middleManager"
+
 - name: Download Druid version {{ druid_version }}
   get_url: url=http://static.druid.io/artifacts/releases/druid-{{ druid_version }}-bin.tar.gz
-           dest=/opt/druid
+           dest=/data
            checksum=sha256:{{ druid_checksum }}
            mode=0777
            force=no
 
 - name: Un-tar druid download
-  unarchive: src=/opt/druid/druid-{{ druid_version }}-bin.tar.gz dest=/opt/druid/ copy=no
+  unarchive: src=/data/druid-{{ druid_version }}-bin.tar.gz dest=/data/ copy=no
   become: yes
 
 - name: Change ownership of download path
-  file: path=/opt/druid owner={{ ansible_user }} recurse=yes mode=0777
+  file: path=/data owner={{ ansible_user }} recurse=yes mode=0777
   become: yes
 
-#Druid Configurations
+- name: Add hadoop azure jar for extensions
+  get_url: url=http://central.maven.org/maven2/org/apache/hadoop/hadoop-azure/2.7.3/hadoop-azure-2.7.3.jar
+           dest=/data/druid-0.12.3/extensions/druid-hdfs-storage/
+           mode=0777
 
-- name: Copy common.properties for Druid node common
-  template: src=_common/common.runtime.properties dest=/opt/druid/druid-{{ druid_version }}/conf/druid/_common/
+# Druid configurations:
+- name: Copy common.properties for Druid node {{ druid_role }}
+  template: src=_common/common.runtime.properties dest=/data/druid-{{ druid_version }}/conf/druid/_common/
         owner={{ ansible_user }} mode=0755
   become: yes
 
-- name: Copy common.properties for Druid node common
-  template: src=_common/log4j2.xml dest=/opt/druid/druid-{{ druid_version }}/conf/druid/_common/
+- name: Copy common.properties for Druid node {{ druid_role }}
+  template: src=_common/log4j2.xml dest=/data/druid-{{ druid_version }}/conf/druid/_common/
+        owner={{ ansible_user }} mode=0755
+  become: yes
+
+- name: Copy over specific configuration for Druid node {{ druid_role }}
+  template: src={{ druid_role }}/runtime.properties dest=/data/druid-{{ druid_version }}/conf/druid/{{ druid_role }}
+        owner={{ ansible_user }} mode=0755
+  become: yes
+
+- name: Copy over jvm configuration for Druid node {{ druid_role }}
+  template: src={{ druid_role }}/jvm.config dest=/data/druid-{{ druid_version }}/conf/druid/{{ druid_role }}
         owner={{ ansible_user }} mode=0755
   become: yes
 
