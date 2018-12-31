@@ -1,3 +1,7 @@
 # include deploy and configuration for druid role
 - include: configure.yml
   tags: configure
+- include: deploy.yml
+  tags: deploy
+- include: test.yml
+  tags: test
