@@ -32,11 +32,15 @@
   run_once: true
 
 - name: Create {{ env }}_geo_location_city table
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_geo_location_city(geoname_id INTEGER PRIMARY KEY, locale_code VARCHAR(3), continent_code VARCHAR(3), continent_name VARCHAR(100), country_iso_code VARCHAR(5), country_name VARCHAR(100), subdivision_1_iso_code VARCHAR(50), subdivision_1_name VARCHAR(100), subdivision_2_iso_code VARCHAR(50), subdivision_2_name VARCHAR(100), city_name VARCHAR(100), metro_code VARCHAR(10), time_zone VARCHAR(50), is_in_european_union SMALLINT)"
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_geo_location_city(geoname_id INTEGER UNIQUE, locale_code VARCHAR(3), continent_code VARCHAR(3), continent_name VARCHAR(100), country_iso_code VARCHAR(5), country_name VARCHAR(100), subdivision_1_iso_code VARCHAR(50), subdivision_1_name VARCHAR(100), subdivision_2_iso_code VARCHAR(50), subdivision_2_name VARCHAR(100), city_name VARCHAR(100), metro_code VARCHAR(10), time_zone VARCHAR(50), is_in_european_union SMALLINT)"
   run_once: true
 
 - name: Create {{ env }}_geo_location_city_ipv4 table
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_geo_location_city_ipv4(network_start_integer BIGINT, network_last_integer BIGINT, geoname_id INTEGER REFERENCES {{ env }}_geo_location_city (geoname_id), registered_country_geoname_id INTEGER, represented_country_geoname_id INTEGER, is_anonymous_proxy SMALLINT, is_satellite_provider SMALLINT, postal_code VARCHAR(50), latitude NUMERIC(9, 6), longitude NUMERIC(9, 6), accuracy_radius SMALLINT)"
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_geo_location_city_ipv4(network_start_integer BIGINT, network_last_integer BIGINT, geoname_id INTEGER, registered_country_geoname_id INTEGER, represented_country_geoname_id INTEGER, is_anonymous_proxy SMALLINT, is_satellite_provider SMALLINT, postal_code VARCHAR(50), latitude NUMERIC(9, 6), longitude NUMERIC(9, 6), accuracy_radius SMALLINT)"
+  run_once: true
+
+- name: Create index on geo_location_city_ipv4.geoname_id
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE INDEX CONCURRENTLY IF NOT EXISTS ind_geoname_id ON {{ env }}_geo_location_city_ipv4 (geoname_id);"
   run_once: true
 
 - name: Create index on network_start_integer
