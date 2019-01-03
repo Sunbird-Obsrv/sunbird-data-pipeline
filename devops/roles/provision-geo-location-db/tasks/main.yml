@@ -59,6 +59,10 @@
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "TRUNCATE TABLE {{ env }}_geo_location_city_ipv4 CASCADE"
   run_once: true
 
+- name: Truncate {{ env }}_geo_location_city table
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "TRUNCATE TABLE {{ env }}_geo_location_city CASCADE"
+  run_once: true
+
 - name: Load csv data into {{ env }}_geo_location_city_ipv4 table
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "\COPY {{ env }}_geo_location_city_ipv4 FROM '{{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}/{{ maxmind_db_geo_city_ip_range_filename }}' WITH CSV HEADER DELIMITER ','"
   run_once: true
