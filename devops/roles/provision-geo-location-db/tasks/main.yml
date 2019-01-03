@@ -47,12 +47,12 @@
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE INDEX CONCURRENTLY IF NOT EXISTS ind_network_last_integer ON {{ env }}_geo_location_city_ipv4 (network_last_integer);"
   run_once: true
 
-- name: Truncate {{ env }}_geo_location_city_ipv4 table
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "TRUNCATE TABLE {{ env }}_geo_location_city_ipv4"
+- name: Create index on country_iso_code
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE INDEX CONCURRENTLY IF NOT EXISTS ind_country_iso_code ON {{ env }}_geo_location_city (country_iso_code);"
   run_once: true
 
-- name: Truncate {{ env }}_geo_location_city table
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "TRUNCATE TABLE {{ env }}_geo_location_city"
+- name: Truncate {{ env }}_geo_location_city_ipv4 table
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "TRUNCATE TABLE {{ env }}_geo_location_city_ipv4 CASCADE"
   run_once: true
 
 - name: Load csv data into {{ env }}_geo_location_city_ipv4 table
