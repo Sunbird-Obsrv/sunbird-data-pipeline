@@ -1,6 +1,6 @@
 package org.ekstep.ep.samza.engine;
 
-import org.apache.samza.storage.kv.KeyValueStore;
+import org.ekstep.ep.samza.cache.CacheService;
 import org.ekstep.ep.samza.domain.Location;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.util.LocationCache;
@@ -10,11 +10,12 @@ import java.io.IOException;
 import java.util.List;
 
 public class LocationEngine {
-    private KeyValueStore<String, Location> locationStore;
+    private CacheService<String, Location> locationStore;
     private final LocationSearchServiceClient searchService;
     private final LocationCache locationCache;
+    private static Logger LOGGER = new Logger(LocationEngine.class);
 
-    public LocationEngine(KeyValueStore<String, Location> locationStore,
+    public LocationEngine(CacheService<String, Location> locationStore,
                           LocationSearchServiceClient searchService, LocationCache locationCache) {
         this.locationStore = locationStore;
         this.searchService = searchService;
@@ -25,6 +26,7 @@ public class LocationEngine {
         if (channel != null && !channel.isEmpty()) {
             Location loc = locationStore.get(channel);
             if (loc != null) {
+                LOGGER.info("","Retrieved location from LocationStore for Channel " + channel);
                 return loc;
             } else {
                 loc = loadChannelAndPopulateCache(channel);

@@ -11,7 +11,6 @@ import static org.mockito.Mockito.verify;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import org.apache.commons.lang.StringUtils;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
@@ -22,6 +21,7 @@ import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
+import org.ekstep.ep.samza.cache.CacheService;
 import org.ekstep.ep.samza.domain.Location;
 import org.ekstep.ep.samza.engine.LocationEngine;
 import org.ekstep.ep.samza.fixtures.EventFixture;
@@ -53,7 +53,8 @@ public class TelemetryLocationUpdaterTaskTest {
 	private LocationEngine locationEngine;
 	private LocationCache locationCacheMock;
 	private TelemetryLocationUpdaterTask telemetryLocationUpdaterTask;
-	private KeyValueStore<String, Location> locationStore;
+	private CacheService<String, Location> locationStoreCache;
+	private KeyValueStore<Object, Object> locationStoreMock;
 	private LocationSearchServiceClient searchService;
 
 	@SuppressWarnings("unchecked")
@@ -69,7 +70,8 @@ public class TelemetryLocationUpdaterTaskTest {
 		locationEngine = mock(LocationEngine.class);
 
 		locationCacheMock = Mockito.mock(LocationCache.class);
-		locationStore = mock(KeyValueStore.class);
+		locationStoreMock = Mockito.mock(KeyValueStore.class);
+		locationStoreCache = mock(CacheService.class);
 		searchService = mock(LocationSearchServiceClient.class);
 
 		stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
@@ -79,8 +81,8 @@ public class TelemetryLocationUpdaterTaskTest {
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
 
-		locationEngine = new LocationEngine(locationStore, searchService, locationCacheMock);
-		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStore, locationEngine);
+		locationEngine = new LocationEngine(locationStoreCache, searchService, locationCacheMock);
+		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStoreMock, locationEngine);
 	}
 
 	@Test
@@ -91,7 +93,7 @@ public class TelemetryLocationUpdaterTaskTest {
 		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
 				"0123221617357783046602")).toReturn(null);
 		Location loc = new Location("", "", "", "Karnataka", "");
-		stub(locationStore.get("0123221617357783046602")).toReturn(null);
+		stub(locationStoreCache.get("0123221617357783046602")).toReturn(null);
 		List<String> locationIds = new ArrayList<String>();
 		locationIds.add("loc1");
 		stub(searchService.searchChannelLocationId("0123221617357783046602")).toReturn(locationIds);
@@ -155,7 +157,7 @@ public class TelemetryLocationUpdaterTaskTest {
 		Location loc = new Location();
 		loc.setCity("");
 		loc.setState("Karnataka");
-		stub(locationStore.get("0123221617357783046602")).toReturn(null);
+		stub(locationStoreCache.get("0123221617357783046602")).toReturn(null);
 		stub(searchService.searchChannelLocationId("0123221617357783046602")).toReturn("loc1");
 		stub(searchService.searchLocation("loc1")).toReturn(loc);
 		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
@@ -185,7 +187,7 @@ public class TelemetryLocationUpdaterTaskTest {
 		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
 				"0123221617357783046602")).toReturn(null);
 		Location loc = new Location("IN", "India", "KA", "Karnataka", "Bangalore");
-		stub(locationStore.get("0123221617357783046602")).toReturn(loc);
+		stub(locationStoreCache.get("0123221617357783046602")).toReturn(loc);
 		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
 		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
@@ -217,7 +219,7 @@ public class TelemetryLocationUpdaterTaskTest {
 		Location loc = new Location("IN", "India", "KA", "Karnataka", "Bangalore");
 		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
 				"0123221617357783046602")).toReturn(loc);
-		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStore, locationEngine);
+		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStoreMock, locationEngine);
 		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
 		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {

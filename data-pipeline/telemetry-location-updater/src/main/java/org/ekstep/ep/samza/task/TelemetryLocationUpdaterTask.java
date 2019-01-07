@@ -19,6 +19,7 @@
 
 package org.ekstep.ep.samza.task;
 
+import com.google.gson.reflect.TypeToken;
 import org.apache.samza.config.Config;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
@@ -30,6 +31,8 @@ import org.apache.samza.task.StreamTask;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
 import org.apache.samza.task.WindowableTask;
+import org.ekstep.ep.samza.cache.CacheEntry;
+import org.ekstep.ep.samza.cache.CacheService;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Location;
@@ -46,8 +49,8 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 	private TelemetryLocationUpdaterService service;
 	private LocationEngine locationEngine;
 
-	public TelemetryLocationUpdaterTask(Config config, TaskContext context, KeyValueStore<String,
-			Location> locationStore, LocationEngine locationEngine) {
+	public TelemetryLocationUpdaterTask(Config config, TaskContext context,
+										KeyValueStore<Object, Object> locationStore, LocationEngine locationEngine) {
 		init(config, context, locationStore, locationEngine);
 	}
 
@@ -58,12 +61,12 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 	@SuppressWarnings("unchecked")
 	@Override
 	public void init(Config config, TaskContext context) {
-		init(config, context, (KeyValueStore<String, Location>) context.getStore("location-store"), locationEngine);
+		init(config, context, (KeyValueStore<Object, Object>) context.getStore("location-store"), locationEngine);
 	}
 
 	@SuppressWarnings("unchecked")
 	public void init(Config config, TaskContext context,
-					 KeyValueStore<String, Location> locationCacheStore, LocationEngine locationEngine) {
+					 KeyValueStore<Object, Object> locationCacheStore, LocationEngine locationEngine) {
 
 		this.config = new TelemetryLocationUpdaterConfig(config);
 		LocationSearchServiceClient searchServiceClient =
@@ -71,9 +74,15 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 						config.get("location.search.service.endpoint"),
 						config.get("search.service.authorization.token"));
 
+		metrics = new JobMetrics(context, this.config.jobName());
+		CacheService<String, Location> locationStore = locationCacheStore != null
+				? new CacheService<>(locationCacheStore, new TypeToken<CacheEntry<Location>>() {
+		}.getType(), metrics)
+				: new CacheService<>(context, "location-store", CacheEntry.class, metrics);
+
 		locationEngine =
 				locationEngine == null ?
-				new LocationEngine(locationCacheStore,
+				new LocationEngine(locationStore,
 						searchServiceClient, new LocationCache(config))
 				: locationEngine;
 		metrics = new JobMetrics(context, this.config.jobName());

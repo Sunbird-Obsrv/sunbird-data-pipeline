@@ -3,6 +3,7 @@ package org.ekstep.ep.samza.task;
 import static org.junit.Assert.assertNotNull;
 
 import org.apache.samza.storage.kv.KeyValueStore;
+import org.ekstep.ep.samza.cache.CacheService;
 import org.ekstep.ep.samza.domain.Location;
 import org.ekstep.ep.samza.engine.LocationEngine;
 import org.ekstep.ep.samza.util.LocationCache;
@@ -20,7 +21,7 @@ import java.util.List;
 
 public class LocationEngineTest {
 
-    private KeyValueStore<String, Location> locationStoreMock;
+    private CacheService<String, Location> locationStoreMock;
     private LocationSearchServiceClient searchServiceClientMock;
     private LocationCache locationCacheMock;
 
@@ -29,7 +30,7 @@ public class LocationEngineTest {
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() {
-        locationStoreMock = mock(KeyValueStore.class);
+        locationStoreMock = mock(CacheService.class);
         searchServiceClientMock = mock(LocationSearchServiceClient.class);
         locationCacheMock = mock(LocationCache.class);
         locationEngine = Mockito.spy(new LocationEngine(locationStoreMock, searchServiceClientMock, locationCacheMock));

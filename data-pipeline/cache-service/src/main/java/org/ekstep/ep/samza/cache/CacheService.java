@@ -45,6 +45,17 @@ public class CacheService<K, V> {
         return cacheEntry.getValue();
     }
 
+    public V get(K key) {
+        String value = (String) store.get(key);
+        if (value == null) {
+            metrics.incCacheMissCounter();
+            return null;
+        }
+        CacheEntry<V> cacheEntry = (CacheEntry<V>) new Gson().<V>fromJson(value, cachedValueType);
+        metrics.incCacheHitCounter();
+        return cacheEntry.getValue();
+    }
+
     public void put(K key, V value) {
         String valueJson = new Gson().toJson(new CacheEntry(value, new Date().getTime()));
         store.put(key, valueJson);
