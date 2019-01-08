@@ -13,17 +13,17 @@ public class LocationSearchResponse {
     private String ver;
     private String ts;
     private Map<String, Object> params;
-    private SearchResult result;
+    private SearchResponse result;
 
     public boolean successful() {
         return params != null && SUCCESS_RESPONSE_STATUS.equals(params.get("status"));
     }
 
     public Location value() {
-        if (result.loc.size() > 0) {
+        if (result.response.loc.size() > 0) {
             String state = "";
-            if(result.loc.get(0).type().equals("state")) {
-                state = result.loc.get(0).name();
+            if(result.response.loc.get(0).type().equals("state")) {
+                state = result.response.loc.get(0).name();
             }
             Location location = new Location("", "", "", state, "");
             return location;
@@ -37,6 +37,16 @@ public class LocationSearchResponse {
         @Override
         public String toString() {
             return "SearchResult{" + loc.stream().map(LocObject::toString).collect(Collectors.joining("|")) +" }";
+        }
+    }
+
+    private class SearchResponse {
+        private SearchResult response;
+
+        @Override
+        public String toString() {
+            return "Response{" + response +
+                    '}';
         }
     }
 
