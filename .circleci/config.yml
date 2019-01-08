@@ -7,15 +7,20 @@ jobs:
     steps:
       - checkout:
           path: ~/dp
+      
       - restore_cache:
           key: dependency-cache-{{ checksum "pom.xml" }}
+      
       - run: mvn -Dlog4j.configuration=./logs -Dcobertura.report.format=xml clean cobertura:cobertura package
-      - run: sudo apt update && sudo apt install jq
-      - run: wget -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r '.assets[0].browser_download_url')
-      - run: cd .. && find . -type f -name "coverage.xml" -exec java -jar ~/codacy-coverage-reporter-assembly-latest.jar report -l Java -r {} --partial \;
+      
       - save_cache:
           key: dependency-cache-{{ checksum "pom.xml" }}
           paths: ~/.m2
+          
+      - run: sudo apt update && sudo apt install jq
+      - run: wget -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r '.assets[0].browser_download_url')
+      - run: cd .. && find . -type f -name "coverage.xml" -exec java -jar ~/codacy-coverage-reporter-assembly-latest.jar report -l Java -r {} --partial \;
+      
              
 workflows:
   version: 2.1
