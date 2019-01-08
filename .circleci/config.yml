@@ -1,12 +1,19 @@
+
 version: 2.1
 jobs:
   ep-build:
-    docker:
-      - image: circleci/openjdk:8-jdk
+    working_directory: ~/dp/data-pipeline
+    machine: true
     steps:
-      - checkout
-      - run: mvn -f data-pipeline/pom.xml -Dlog4j.configuration=logs -Dcobertura.report.format=xml clean cobertura:cobertura package
-     
+      - checkout:
+          path: ~/dp
+      - restore_cache:
+          key: dependency-cache-{{ checksum "pom.xml" }}
+      - run: mvn -Dlog4j.configuration=./logs -Dcobertura.report.format=xml clean cobertura:cobertura package
+      - save_cache:
+          key: dependency-cache-{{ checksum "pom.xml" }}
+          paths: ~/.m2
+             
 workflows:
   version: 2.1
   build_and_test:
