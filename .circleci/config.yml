@@ -1,0 +1,14 @@
+version: 2.1
+jobs:
+  ep-build:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+      - run: mvn -f data-pipeline/pom.xml -Dlog4j.configuration=logs -Dcobertura.report.format=xml clean cobertura:cobertura package
+     
+workflows:
+  version: 2.1
+  build_and_test:
+    jobs:
+      - ep-build
