@@ -5,7 +5,7 @@ jobs:
     #working_directory: ~/dp/data-pipeline
     machine: true
     steps:
-      - checkout:
+      - checkout
           #path: ~/dp
       - restore_cache:
           key: dependency-cache-{{ checksum "pom.xml" }}
