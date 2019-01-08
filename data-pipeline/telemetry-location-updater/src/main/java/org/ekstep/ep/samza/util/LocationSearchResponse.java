@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class LocationSearchResponse {
-    public static final String SUCCESS_RESPONSE_STATUS = "successful";
+    public static final String SUCCESS_RESPONSE_STATUS = "success";
     private String id;
     private String ver;
     private String ts;
@@ -20,10 +20,10 @@ public class LocationSearchResponse {
     }
 
     public Location value() {
-        if (result.response.loc.size() > 0) {
+        if (result.response.size() > 0) {
             String state = "";
-            if(result.response.loc.get(0).type().equals("state")) {
-                state = result.response.loc.get(0).name();
+            if(result.response.get(0).type().equals("state")) {
+                state = result.response.get(0).name();
             }
             Location location = new Location("", "", "", state, "");
             return location;
@@ -31,28 +31,18 @@ public class LocationSearchResponse {
         return null;
     }
 
-    private class SearchResult {
-        private List<LocObject> loc;
-
-        @Override
-        public String toString() {
-            return "SearchResult{" + loc.stream().map(LocObject::toString).collect(Collectors.joining("|")) +" }";
-        }
-    }
-
     private class SearchResponse {
-        private SearchResult response;
+        private List<LocObject> response;
 
         @Override
         public String toString() {
-            return "Response{" + response +
-                    '}';
+            return "Response {" + response.stream().map(LocObject::toString).collect(Collectors.joining("|")) +"}";
         }
     }
 
     @Override
     public String toString() {
-        return result.toString();
+        return result != null ? result.toString() : "Incorrect response from LocationSearch API";
     }
 
 }

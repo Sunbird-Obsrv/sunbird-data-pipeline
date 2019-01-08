@@ -29,42 +29,51 @@ public class LocationSearchServiceClient {
     public List<String> searchChannelLocationId(String channel) throws IOException {
         String body = new Gson().toJson(new ChannelSearchRequest(channel).toMap());
         Request request = new Request.Builder()
-            .url(channelEndpoint).header(HttpHeaders.AUTHORIZATION, apiToken)
+            .url(channelEndpoint).header(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", apiToken))
             .post(RequestBody.create(JSON_MEDIA_TYPE, body))
             .build();
         Response response = httpClient.newCall(request).execute();
         String responseBody = response.body().string();
         try {
-            ChannelSearchResponse channelSearchResponse = new Gson().fromJson(responseBody, ChannelSearchResponse.class);
+            ChannelSearchResponse channelSearchResponse = parseChannelResponse(responseBody);
             if (!channelSearchResponse.successful()) {
-                LOGGER.info("SEARCH SERVICE RESPONSE UNSUCCESSFUL. RESPONSE: ", channelSearchResponse.toString());
+                LOGGER.info("ORG SEARCH SERVICE RESPONSE UNSUCCESSFUL. RESPONSE: ", channelSearchResponse.toString());
                 return null;
             }
             if (channelSearchResponse.value() != null) {
-                LOGGER.info("SEARCH SERVICE RESPONSE SUCCESSFUL. RESPONSE: ", channelSearchResponse.toString());
+                LOGGER.info("ORG SEARCH SERVICE RESPONSE SUCCESSFUL. RESPONSE: ", channelSearchResponse.toString());
                 return channelSearchResponse.value();
             }
         } catch (Exception ex) {
-            LOGGER.error("SEARCH RESPONSE PARSING FAILED. RESPONSE: {}", responseBody);
+            LOGGER.error("ORG SEARCH RESPONSE PARSING FAILED. RESPONSE: {}", responseBody);
             StringWriter sw = new StringWriter();
             ex.printStackTrace(new PrintWriter(sw));
-            LOGGER.error("Error trace when parsing Search Response: ", sw.toString());
+            LOGGER.error("Error trace when parsing Org Search Response: ", sw.toString());
         }
         return null;
+    }
+
+    public ChannelSearchResponse parseChannelResponse(String responseBody) {
+        return new Gson().fromJson(responseBody, ChannelSearchResponse.class);
+    }
+
+    public LocationSearchResponse parseLocationResponse(String responseBody) {
+        return new Gson().fromJson(responseBody, LocationSearchResponse.class);
     }
 
     public Location searchLocation(List<String> locationIds) throws IOException {
         String body = new Gson().toJson(new LocationSearchRequest(locationIds).toMap());
         Request request = new Request.Builder()
-            .url(locationEndpoint).header(HttpHeaders.AUTHORIZATION, apiToken)
+            .url(locationEndpoint).header(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", apiToken))
             .post(RequestBody.create(JSON_MEDIA_TYPE, body))
             .build();
         Response response = httpClient.newCall(request).execute();
-        String string = response.body().string();
-        LocationSearchResponse searchResponse = new Gson().fromJson(string, LocationSearchResponse.class);
+        String locationResponseBody = response.body().string();
+        LOGGER.info("Location Search Response: ", locationResponseBody);
+        LocationSearchResponse searchResponse = parseLocationResponse(locationResponseBody);
 
         if (!searchResponse.successful()) {
-            LOGGER.error("SEARCH SERVICE RESPONSE UNSUCCESSFUL. RESPONSE: {}", searchResponse.toString());
+            LOGGER.error("LOCATION SEARCH SERVICE RESPONSE UNSUCCESSFUL. RESPONSE: {}", searchResponse.toString());
             return null;
         }
 

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ChannelSearchResponse {
-    public static final String SUCCESS_RESPONSE_STATUS = "successful";
+    public static final String SUCCESS_RESPONSE_STATUS = "success";
     private String id;
     private String ver;
     private String ts;
@@ -17,21 +17,21 @@ public class ChannelSearchResponse {
     }
 
     public List<String> value() {
-        if (result.response.count > 0 && result.response.org.size() > 0) {
-            return result.response.org.get(0).locationIds();
+        if (result.response.count > 0 && result.response.content.size() > 0) {
+            return result.response.content.get(0).locationIds();
         }
         return null;
     }
 
     private class SearchResult {
 
-        private List<OrgObject> org;
+        private List<OrgObject> content;
         private Integer count;
 
         @Override
         public String toString() {
             return "SearchResult{" +
-                    "content=" + org +
+                    "content=" + content +
                     ", count=" + count +
                     '}';
         }

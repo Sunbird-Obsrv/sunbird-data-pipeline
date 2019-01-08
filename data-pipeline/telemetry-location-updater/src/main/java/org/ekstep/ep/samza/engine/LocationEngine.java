@@ -41,8 +41,11 @@ public class LocationEngine {
         List<String> locationIds = searchService.searchChannelLocationId(channel);
         if (locationIds != null) {
             loc = searchService.searchLocation(locationIds);
+            LOGGER.info("", "State information retrieved from Learner API: " + loc.getState());
         }
         if (loc != null && channel != null && !channel.isEmpty()) {
+            LOGGER.info( "",
+                    String.format("Adding State: %s data to Location Store for Channel: %s", loc.getState(), channel));
             locationStore.put(channel, loc);
         } else {
             loc = new Location("", "", "", "", "");

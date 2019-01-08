@@ -126,6 +126,7 @@ public class TelemetryLocationUpdaterTaskTest {
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
 		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
 				"0123221617357783046602")).toReturn(null);
+		stub(searchService.searchChannelLocationId("0123221617357783046602")).toReturn(null);
 		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
 		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {

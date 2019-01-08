@@ -249,6 +249,108 @@ public class EventFixture {
 			"}";
 	public static final String ANY_STRING = "Hey Samza, Whats Up?";
 	public static final String EMPTY_JSON = "{}";
+
+	public static final String CHANNEL_RESPONSE_BODY = "{\n" +
+			"    \"id\": \"api.org.search\",\n" +
+			"    \"ver\": \"v1\",\n" +
+			"    \"ts\": \"2019-01-08 06:40:12:316+0000\",\n" +
+			"    \"params\": {\n" +
+			"        \"resmsgid\": null,\n" +
+			"        \"msgid\": \"0f93ff40-582f-4599-a718-7bd898cd8b5d\",\n" +
+			"        \"err\": null,\n" +
+			"        \"status\": \"success\",\n" +
+			"        \"errmsg\": null\n" +
+			"    },\n" +
+			"    \"responseCode\": \"OK\",\n" +
+			"    \"result\": {\n" +
+			"        \"response\": {\n" +
+			"            \"count\": 1,\n" +
+			"            \"content\": [\n" +
+			"                {\n" +
+			"                    \"dateTime\": null,\n" +
+			"                    \"preferredLanguage\": \"English\",\n" +
+			"                    \"approvedBy\": null,\n" +
+			"                    \"channel\": \"ROOT_ORG\",\n" +
+			"                    \"description\": \"Andhra State Boardsssssss\",\n" +
+			"                    \"updatedDate\": \"2018-11-28 10:00:08:675+0000\",\n" +
+			"                    \"addressId\": null,\n" +
+			"                    \"provider\": null,\n" +
+			"                    \"locationId\": null,\n" +
+			"                    \"orgCode\": \"sunbird\",\n" +
+			"                    \"theme\": null,\n" +
+			"                    \"id\": \"ORG_001\",\n" +
+			"                    \"communityId\": null,\n" +
+			"                    \"isApproved\": null,\n" +
+			"                    \"email\": \"support_dev@sunbird.org\",\n" +
+			"                    \"slug\": \"sunbird\",\n" +
+			"                    \"identifier\": \"ORG_001\",\n" +
+			"                    \"thumbnail\": null,\n" +
+			"                    \"orgName\": \"Sunbird\",\n" +
+			"                    \"updatedBy\": \"1d7b85b0-3502-4536-a846-d3a51fd0aeea\",\n" +
+			"                    \"locationIds\": [\n" +
+			"                        \"969dd3c1-4e98-4c17-a994-559f2dc70e18\"\n" +
+			"                    ],\n" +
+			"                    \"externalId\": null,\n" +
+			"                    \"isRootOrg\": true,\n" +
+			"                    \"rootOrgId\": \"ORG_001\",\n" +
+			"                    \"approvedDate\": null,\n" +
+			"                    \"imgUrl\": null,\n" +
+			"                    \"homeUrl\": null,\n" +
+			"                    \"orgTypeId\": null,\n" +
+			"                    \"isDefault\": true,\n" +
+			"                    \"contactDetail\": \"[{\\\"phone\\\":\\\"213124234234\\\",\\\"email\\\":\\\"test@test.com\\\"},{\\\"phone\\\":\\\"+91213124234234\\\",\\\"email\\\":\\\"test1@test.com\\\"}]\",\n" +
+			"                    \"createdDate\": null,\n" +
+			"                    \"createdBy\": null,\n" +
+			"                    \"parentOrgId\": null,\n" +
+			"                    \"hashTagId\": \"b00bc992ef25f1a9a8d63291e20efc8d\",\n" +
+			"                    \"noOfMembers\": 5,\n" +
+			"                    \"status\": 1\n" +
+			"                }\n" +
+			"            ]\n" +
+			"        }\n" +
+			"    }\n" +
+			"}";
+
+	public static final String LOCATION_SEARCH_RESPONSE_BODY = "{\n" +
+			"    \"id\": \"api.location.search\",\n" +
+			"    \"ver\": \"v1\",\n" +
+			"    \"ts\": \"2019-01-08 06:10:57:676+0000\",\n" +
+			"    \"params\": {\n" +
+			"        \"resmsgid\": null,\n" +
+			"        \"msgid\": \"bddca208-34b5-4054-9a05-24eecfc12c99\",\n" +
+			"        \"err\": null,\n" +
+			"        \"status\": \"success\",\n" +
+			"        \"errmsg\": null\n" +
+			"    },\n" +
+			"    \"responseCode\": \"OK\",\n" +
+			"    \"result\": {\n" +
+			"        \"response\": [\n" +
+			"            {\n" +
+			"                \"code\": \"29\",\n" +
+			"                \"name\": \"Karnataka\",\n" +
+			"                \"id\": \"969dd3c1-4e98-4c17-a994-559f2dc70e18\",\n" +
+			"                \"type\": \"state\"\n" +
+			"            }\n" +
+			"        ]\n" +
+			"    }\n" +
+			"}";
+
+	public static final String LOCATION_SEARCH_UNSUCCESSFUL_RESPONSE = "{\n"+
+			"    \"id\": \"api.location.search\",\n"+
+			"    \"ver\": \"v1\",\n"+
+			"    \"ts\": \"2019-01-08 07:22:25:891+0000\",\n"+
+			"    \"params\": {\n"+
+			"        \"resmsgid\": null,\n"+
+			"        \"msgid\": \"15b23224-d7b5-4645-bbbe-3fd1172b4112\",\n"+
+			"        \"err\": null,\n"+
+			"        \"status\": \"success\",\n"+
+			"        \"errmsg\": null\n"+
+			"    },\n"+
+			"    \"responseCode\": \"OK\",\n"+
+			"    \"result\": {\n"+
+			"        \"response\": []\n"+
+			"    }\n"+
+			"}";
 	
 	public static Map<String, Object> getMap(String message) {
 		return (Map<String, Object>) new Gson().fromJson(message, Map.class);

@@ -1,12 +1,16 @@
 package org.ekstep.ep.samza.task;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertNotNull;
 
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.ekstep.ep.samza.cache.CacheService;
 import org.ekstep.ep.samza.domain.Location;
 import org.ekstep.ep.samza.engine.LocationEngine;
+import org.ekstep.ep.samza.fixtures.EventFixture;
+import org.ekstep.ep.samza.util.ChannelSearchResponse;
 import org.ekstep.ep.samza.util.LocationCache;
+import org.ekstep.ep.samza.util.LocationSearchResponse;
 import org.ekstep.ep.samza.util.LocationSearchServiceClient;
 import org.junit.Before;
 import org.junit.Test;
@@ -96,5 +100,39 @@ public class LocationEngineTest {
         assertEquals(resolvedLocation.getState(), "");
         assertEquals(resolvedLocation.getCity(), "");
         assertEquals(locationStoreMock.get(channel), resolvedLocation);
+    }
+
+    @Test
+    public void testChannelResponseBodyParsing() {
+        LocationSearchServiceClient client =
+                new LocationSearchServiceClient("test-channel-endpoint",
+                        "test-location-endpoint", "test-api-token");
+        ChannelSearchResponse response = client.parseChannelResponse(EventFixture.CHANNEL_RESPONSE_BODY);
+        assertTrue(response.successful());
+        assertEquals("969dd3c1-4e98-4c17-a994-559f2dc70e18", String.join("," , response.value()));
+
+    }
+
+    @Test
+    public void testSuccessfulLocationResponseBodyParsing() {
+        LocationSearchServiceClient client =
+                new LocationSearchServiceClient("test-channel-endpoint",
+                        "test-location-endpoint", "test-api-token");
+        LocationSearchResponse response = client.parseLocationResponse(EventFixture.LOCATION_SEARCH_RESPONSE_BODY);
+        assertTrue(response.successful());
+        assertEquals("Karnataka", response.value().getState());
+        System.out.println(response.toString());
+
+    }
+
+    @Test
+    public void testUnsuccessfulLocationResponseBodyParsing() {
+        LocationSearchServiceClient client =
+                new LocationSearchServiceClient("test-channel-endpoint",
+                        "test-location-endpoint", "test-api-token");
+        LocationSearchResponse response = client.parseLocationResponse(EventFixture.LOCATION_SEARCH_UNSUCCESSFUL_RESPONSE);
+        assertTrue(response.successful());
+        assertEquals("Response {}", response.toString());
+
     }
 }
