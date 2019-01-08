@@ -17,6 +17,9 @@ node('build-slave') {
        stage('Publish Test result'){
           cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/target/site/cobertura/coverage.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
         }
+       stage('Archving Artifact'){
+           archive('data-pipeline/distibution/target/distribution-0.0.1-distribution.tar.gz')
+       }
     }
 
     catch (err) {
