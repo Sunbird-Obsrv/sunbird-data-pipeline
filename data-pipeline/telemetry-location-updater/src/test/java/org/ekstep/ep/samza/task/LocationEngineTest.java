@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.task;
 
+import static junit.framework.TestCase.assertNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertNotNull;
 
@@ -133,6 +134,17 @@ public class LocationEngineTest {
         LocationSearchResponse response = client.parseLocationResponse(EventFixture.LOCATION_SEARCH_UNSUCCESSFUL_RESPONSE);
         assertTrue(response.successful());
         assertEquals("Response {}", response.toString());
+
+    }
+
+    @Test
+    public void testEmptyChannelResponseBodyParsing() {
+        LocationSearchServiceClient client =
+                new LocationSearchServiceClient("test-channel-endpoint",
+                        "test-location-endpoint", "test-api-token");
+        ChannelSearchResponse response = client.parseChannelResponse(EventFixture.CHANNEL_SEARCH_EMPTY_LOCATIONIDS_RESPONSE);
+        assertTrue(response.successful());
+        assertNull(response.value());
 
     }
 }

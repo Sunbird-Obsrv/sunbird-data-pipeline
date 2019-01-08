@@ -18,7 +18,8 @@ public class ChannelSearchResponse {
 
     public List<String> value() {
         if (result.response.count > 0 && result.response.content.size() > 0) {
-            return result.response.content.get(0).locationIds();
+            if (result.response.content.get(0).locationIds().isEmpty()) return null;
+            else return result.response.content.get(0).locationIds();
         }
         return null;
     }
