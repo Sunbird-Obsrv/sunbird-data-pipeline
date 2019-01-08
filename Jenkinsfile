@@ -11,14 +11,14 @@ node('build-slave') {
 
        stage('Build Assets'){
           sh ("mvn -f data-pipeline/pom.xml \
-                -Dlog4j.configuration=/home/ops/workspace/New_Build/Sunbird_EP_Upgrade_Build/logs \
+                -Dlog4j.configuration=$WORKSPACE/logs \
                 -Dcobertura.report.format=xml clean cobertura:cobertura package")
         }
        stage('Publish Test result'){
           cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/target/site/cobertura/coverage.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
         }
        stage('Archving Artifact'){
-           archive('data-pipeline/distibution/target/distribution-0.0.1-distribution.tar.gz')
+           archiveArtifacts("$WORKSPACE/data-pipeline/distibution/target/distribution-0.0.1-distribution.tar.gz")
        }
     }
 
