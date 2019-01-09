@@ -34,7 +34,8 @@
   apt:
     name: cassandra
     state: present
-    #update_cache: yes
+    update_cache: yes
+    allow_unauthenticated: yes
 
 - name: Cassandra | Update the cassandra configuration
   become: yes
