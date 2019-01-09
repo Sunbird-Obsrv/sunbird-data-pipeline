@@ -3,7 +3,7 @@
 node('build-slave') {
 
     try {
-        
+
        stage('Checkout'){
           checkout scm
           sh('git submodule update --init && git submodule update --init --recursive --remote')
