@@ -45,7 +45,7 @@ node() {
                 stage('deploy artifact'){
                     sh """
                        unzip ${artifact}
-                       mv learning-service.war devops
+                       mv analytics-api-1.0-dist.zip devops
                     """
                     ansiblePlaybook = "${currentWs}/devops/lpa_api_deploy.yml"
                     ansibleExtraArgs = ""
