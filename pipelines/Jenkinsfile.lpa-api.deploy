@@ -34,7 +34,7 @@ node() {
                                """.stripIndent().replace("\n", " ")
                         values.put('ansiblePlaybook', ansiblePlaybook)
                         values.put('ansibleExtraArgs', ansibleExtraArgs)
-                        ansible_playbook_run(values)
+//                        ansible_playbook_run(values)
                     }
                     else{
                         println(ANSI_BOLD + ANSI_YELLOW + '''\
