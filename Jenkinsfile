@@ -26,9 +26,4 @@ node('build-slave') {
         throw err
     }
 
-    // Keeping the artifacts for 2 Builds
-    // Can override in job config
-    script{
-        properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator',  artifactNumToKeepStr: '2']]]);
-    }
 }
