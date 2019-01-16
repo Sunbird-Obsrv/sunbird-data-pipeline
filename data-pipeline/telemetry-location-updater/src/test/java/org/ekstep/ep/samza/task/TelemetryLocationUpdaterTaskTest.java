@@ -27,10 +27,12 @@ import org.ekstep.ep.samza.engine.LocationEngine;
 import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.ekstep.ep.samza.util.LocationCache;
 import org.ekstep.ep.samza.util.LocationSearchServiceClient;
+import org.ekstep.ep.samza.util.UserLocationCache;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
+import org.mockito.internal.matchers.Any;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -51,11 +53,13 @@ public class TelemetryLocationUpdaterTaskTest {
 	private IncomingMessageEnvelope envelopeMock;
 	private Config configMock;
 	private LocationEngine locationEngine;
+	private LocationEngine locationEngineMock;
 	private LocationCache locationCacheMock;
 	private TelemetryLocationUpdaterTask telemetryLocationUpdaterTask;
 	private CacheService<String, Location> locationStoreCache;
 	private KeyValueStore<Object, Object> locationStoreMock;
 	private LocationSearchServiceClient searchService;
+	private UserLocationCache userLocationCacheMock;
 
 	@SuppressWarnings("unchecked")
 	@Before
@@ -67,12 +71,13 @@ public class TelemetryLocationUpdaterTaskTest {
 		coordinatorMock = mock(TaskCoordinator.class);
 		envelopeMock = mock(IncomingMessageEnvelope.class);
 		configMock = Mockito.mock(Config.class);
-		locationEngine = mock(LocationEngine.class);
+		locationEngineMock = mock(LocationEngine.class);
 
 		locationCacheMock = Mockito.mock(LocationCache.class);
 		locationStoreMock = Mockito.mock(KeyValueStore.class);
 		locationStoreCache = mock(CacheService.class);
 		searchService = mock(LocationSearchServiceClient.class);
+		userLocationCacheMock = mock(UserLocationCache.class);
 
 		stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
 		stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
@@ -81,7 +86,7 @@ public class TelemetryLocationUpdaterTaskTest {
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
 
-		locationEngine = new LocationEngine(locationStoreCache, searchService, locationCacheMock);
+		locationEngine = new LocationEngine(locationStoreCache, searchService, locationCacheMock, userLocationCacheMock);
 		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStoreMock, locationEngine);
 	}
 
@@ -220,7 +225,9 @@ public class TelemetryLocationUpdaterTaskTest {
 		Location loc = new Location("IN", "India", "KA", "Karnataka", "Bangalore");
 		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
 				"0123221617357783046602")).toReturn(loc);
-		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStoreMock, locationEngine);
+		stub(locationEngineMock.locationCache()).toReturn(locationCacheMock);
+
+		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStoreMock, locationEngineMock);
 		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
 		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
@@ -271,4 +278,90 @@ public class TelemetryLocationUpdaterTaskTest {
 			}
 		};
 	}
+
+	@Test
+	public void shouldSendEventsToSuccessTopicWithUserLocation() throws Exception {
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
+		Location loc1 = new Location("IN", "India", "KA", "Karnataka", "Bangalore");
+		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+				"0123221617357783046602")).toReturn(loc1);
+		Location loc2 = new Location(null, null, null, "Tamil Nadu", null, "Chennai");
+		String userId = "393407b1-66b1-4c86-9080-b2bce9842886";
+		stub(userLocationCacheMock.getLocationByUser(userId)).toReturn(loc2);
+		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStoreMock, locationEngine);
+		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
+		Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+			@Override
+			public boolean matches(Object o) {
+				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+				Map<String, Object> userloc = new Gson().fromJson(new Gson().toJson(outputEvent.get("userloc")), mapType);
+				assertEquals(outputEvent.get("ver"), "3.0");
+				assertEquals(userloc.get("state"), "Tamil Nadu");
+				assertEquals(userloc.get("district"), "Chennai");
+				return true;
+			}
+		}));
+	}
+
+	@Test
+	public void shouldNotAddUserLocationIfActorTypeIsNotUser() throws Exception {
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITH_ACTOR_AS_SYSTEM);
+		Location loc1 = new Location("IN", "India", "KA", "Karnataka", "Bangalore");
+		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+				"0123221617357783046602")).toReturn(loc1);
+		Location loc2 = new Location(null, null, null, "Tamil Nadu", null, "Chennai");
+		String userId = "393407b1-66b1-4c86-9080-b2bce9842886";
+		stub(userLocationCacheMock.getLocationByUser(userId)).toReturn(loc2);
+		stub(locationEngineMock.getLocation("0123221617357783046602")).toReturn(loc2);
+
+		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStoreMock, locationEngineMock);
+		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
+		Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+			@Override
+			public boolean matches(Object o) {
+				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+				Object userloc = outputEvent.get("userloc");
+				assertEquals(userloc, null);
+				return true;
+			}
+		}));
+	}
+
+	@Test
+	public void shouldFallbackToIPLocationIfUserLocationIsNotResolved() throws Exception {
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
+		Location loc1 = new Location("IN", "India", "KA", "Karnataka", null, "Mysore");
+		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+				"0123221617357783046602")).toReturn(null);
+		String userId = "393407b1-66b1-4c86-9080-b2bce9842886";
+		stub(userLocationCacheMock.getLocationByUser(userId)).toReturn(null);
+		stub(locationEngineMock.getLocation("0123221617357783046602")).toReturn(loc1);
+		stub(locationEngineMock.locationCache()).toReturn(locationCacheMock);
+
+		telemetryLocationUpdaterTask = new TelemetryLocationUpdaterTask(configMock, contextMock, locationStoreMock, locationEngineMock);
+		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
+		Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+
+		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+			@Override
+			public boolean matches(Object o) {
+				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+				Map<String, Object> userloc = new Gson().fromJson(new Gson().toJson(outputEvent.get("userloc")), mapType);
+				assertEquals(outputEvent.get("ver"), "3.0");
+				assertEquals(userloc.get("state"), "Karnataka");
+				assertEquals(userloc.get("district"), "Mysore");
+				return true;
+			}
+		}));
+	}
+
+
 }

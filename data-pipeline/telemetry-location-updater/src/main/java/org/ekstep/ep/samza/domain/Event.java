@@ -53,6 +53,16 @@ public class Event {
 		return eid.value();
 	}
 
+	public String actorid() {
+		NullableValue<String> actorid = telemetry.read("actor.id");
+		return actorid.value();
+	}
+
+	public String actortype() {
+		NullableValue<String> actortype = telemetry.read("actor.type");
+		return actortype.value();
+	}
+
 	@Override
 	public String toString() {
 		return "Event{" + "telemetry=" + telemetry + '}';
@@ -87,6 +97,13 @@ public class Event {
 			NullableValue<Long> timeInLong = telemetry.read(etsField);
 			return Double.valueOf(timeInLong.value());
 		}
+	}
+
+	public void addUserLocation(Location location) {
+		Map<String, String> userLoc = new HashMap<>();
+		userLoc.put("state", location.getState());
+		userLoc.put("district", location.getDistrict());
+		telemetry.add(path.userLoc(), userLoc);
 	}
 
 	public void addLocation(Location location) {

@@ -5,11 +5,7 @@ import org.apache.samza.config.Config;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Location;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.exceptions.JedisException;
-
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,38 +18,21 @@ public class LocationCache {
     private String cassandra_table;
     private Config config;
     private CassandraConnect cassandraConnetion;
-    private JedisPool jedisPool;
+    private RedisConnect redisConnect;
     private int locationDbKeyExpiryTimeInSeconds;
 
-    public LocationCache(Config config) {
+    public LocationCache(Config config, RedisConnect redisConnect) {
         this.config = config;
         this.cassandra_db = config.get("cassandra.keyspace", "device_db");
         this.cassandra_table = config.get("cassandra.device_profile_table", "device_profile");
-        String redis_host = config.get("redis.host", "localhost");
-        Integer redis_port = config.getInt("redis.port", 6379);
-        this.jedisPool = new JedisPool(buildPoolConfig(), redis_host, redis_port);
+        this.redisConnect = redisConnect;
         this.cassandraConnetion = new CassandraConnect(config);
         this.locationDbKeyExpiryTimeInSeconds = config.getInt("location.db.redis.key.expiry.seconds", 86400);
     }
 
-    private JedisPoolConfig buildPoolConfig() {
-        final JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxTotal(config.getInt("redis.connection.max", 20));
-        poolConfig.setMaxIdle(config.getInt("redis.connection.idle.max", 20));
-        poolConfig.setMinIdle(config.getInt("redis.connection.idle.min", 10));
-        poolConfig.setTestOnBorrow(true);
-        poolConfig.setTestOnReturn(true);
-        poolConfig.setTestWhileIdle(true);
-        poolConfig.setMinEvictableIdleTimeMillis(Duration.ofSeconds(config.getInt("redis.connection.minEvictableIdleTimeSeconds", 120)).toMillis());
-        poolConfig.setTimeBetweenEvictionRunsMillis(Duration.ofSeconds(config.getInt("redis.connection.timeBetweenEvictionRunsSeconds", 300)).toMillis());
-        poolConfig.setNumTestsPerEvictionRun(3);
-        poolConfig.setBlockWhenExhausted(true);
-        return poolConfig;
-    }
-
     public Location getLocationForDeviceId(String did, String channel) {
 
-        try (Jedis jedis = jedisPool.getResource()) {
+        try (Jedis jedis = redisConnect.getConnection()) {
             // Key will be device_id:channel
             String key = String.format("%s:%s", did, channel);
             Map<String, String> fields = jedis.hgetAll(key);
@@ -94,7 +73,7 @@ public class LocationCache {
     }
 
     public void addLocationToCache(String did, String channel, Location location) {
-        try (Jedis jedis = jedisPool.getResource()) {
+        try (Jedis jedis = redisConnect.getConnection()) {
             if(location.isLocationResolved()) {
                 // Key will be device_id:channel
                 String key = String.format("%s:%s", did, channel);

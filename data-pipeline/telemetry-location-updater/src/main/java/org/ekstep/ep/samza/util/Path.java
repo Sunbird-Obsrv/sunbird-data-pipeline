@@ -52,4 +52,6 @@ public class Path {
     public String edata(){
         return "edata";
     }
+
+    public String userLoc() { return "userloc"; }
 }

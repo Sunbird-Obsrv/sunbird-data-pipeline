@@ -9,10 +9,7 @@ import org.ekstep.ep.samza.cache.CacheService;
 import org.ekstep.ep.samza.domain.Location;
 import org.ekstep.ep.samza.engine.LocationEngine;
 import org.ekstep.ep.samza.fixtures.EventFixture;
-import org.ekstep.ep.samza.util.ChannelSearchResponse;
-import org.ekstep.ep.samza.util.LocationCache;
-import org.ekstep.ep.samza.util.LocationSearchResponse;
-import org.ekstep.ep.samza.util.LocationSearchServiceClient;
+import org.ekstep.ep.samza.util.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -29,7 +26,7 @@ public class LocationEngineTest {
     private CacheService<String, Location> locationStoreMock;
     private LocationSearchServiceClient searchServiceClientMock;
     private LocationCache locationCacheMock;
-
+    private UserLocationCache userLocationCacheMock;
     private LocationEngine locationEngine;
 
     @SuppressWarnings("unchecked")
@@ -38,7 +35,9 @@ public class LocationEngineTest {
         locationStoreMock = mock(CacheService.class);
         searchServiceClientMock = mock(LocationSearchServiceClient.class);
         locationCacheMock = mock(LocationCache.class);
-        locationEngine = Mockito.spy(new LocationEngine(locationStoreMock, searchServiceClientMock, locationCacheMock));
+        userLocationCacheMock = mock(UserLocationCache.class);
+        locationEngine = Mockito.spy(new LocationEngine(locationStoreMock, searchServiceClientMock,
+                locationCacheMock, userLocationCacheMock));
     }
 
     @Test
@@ -146,5 +145,15 @@ public class LocationEngineTest {
         assertTrue(response.successful());
         assertNull(response.value());
 
+    }
+
+    @Test
+    public void getUserLocationShouldReturnLocation() {
+        String userId = "58dcd631-fe97-4f48-b799-99c5c3e2a165";
+        Location location = new Location(null, null, null, "Karnataka", "Bengaluru");
+        when(userLocationCacheMock.getLocationByUser(userId)).thenReturn(location);
+        Location cacheLocation = locationEngine.getLocationByUser(userId);
+
+        verify(userLocationCacheMock, times(1)).getLocationByUser(userId);
     }
 }

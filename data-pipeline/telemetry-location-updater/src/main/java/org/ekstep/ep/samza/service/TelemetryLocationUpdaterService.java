@@ -28,23 +28,11 @@ public class TelemetryLocationUpdaterService {
 
 	public void process(TelemetryLocationUpdaterSource source, TelemetryLocationUpdaterSink sink) {
 		Event event = null;
-		Location location;
 		try {
 			event = source.getEvent();
-			String did = event.did();
-			String channel = event.channel();
-			if (did != null && !did.isEmpty()) {
-				location = locationEngine.locationCache().getLocationForDeviceId(event.did(), channel);
-
-				if (location != null) {
-					event = updateEvent(event, location, true);
-				} else {
-					// add default location from ORG search API
-					event = updateEventWithLocationFromChannel(event);
-				}
-			} else {
-				event = updateEventWithLocationFromChannel(event);
-			}
+			event = updateEventWithIPLocation(event);
+			// add user location details to the event
+			event = updateEventWithUserLocation(event);
 			sink.toSuccessTopic(event);
 		} catch(JsonSyntaxException e){
             LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
@@ -56,6 +44,47 @@ public class TelemetryLocationUpdaterService {
 					e);
 			sink.toErrorTopic(event, e.getMessage());
 		}
+	}
+
+	private Event updateEventWithIPLocation(Event event) throws IOException {
+		Location location;
+		String did = event.did();
+		String channel = event.channel();
+
+		if (did != null && !did.isEmpty()) {
+			location = locationEngine.locationCache().getLocationForDeviceId(event.did(), channel);
+
+			if (location != null) {
+				event = updateEvent(event, location, true);
+			} else {
+				// add default location from ORG search API
+				event = updateEventWithLocationFromChannel(event);
+			}
+		} else {
+			event = updateEventWithLocationFromChannel(event);
+		}
+		return event;
+	}
+
+	private Event updateEventWithUserLocation(Event event) throws IOException {
+		String actorId = event.actorid();
+		String actorType = event.actortype();
+		if (actorId != null && actorType.toUpperCase().equals("USER")) {
+			Location location = locationEngine.getLocationByUser(actorId);
+			if (location == null) {
+				location = locationEngine.getLocation(event.channel());
+				if(location == null) {
+					event.addUserLocation(new Location(null, null, null, "", null, ""));
+				} else {
+					event.addUserLocation(location);
+				}
+			} else {
+				if (location.getState() == null) location.setStateName("");
+				if (location.getDistrict() == null) location.setDistrict("");
+				event.addUserLocation(location);
+			}
+		}
+		return event;
 	}
 
 	private Event updateEventWithLocationFromChannel(Event event) throws IOException {

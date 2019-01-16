@@ -17,6 +17,11 @@ public class CassandraConnect {
         this.session = cluster.connect();
     }
 
+    public CassandraConnect(String host, Integer port) {
+        Cluster cluster = Cluster.builder().addContactPoint(host).withPort(port).build();
+        this.session = cluster.connect();
+    }
+
     public List<Row> execute(String query) {
         ResultSet rs = session.execute(query);
         return rs.all();
