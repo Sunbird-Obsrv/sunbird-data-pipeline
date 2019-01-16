@@ -21,7 +21,7 @@ node() {
             artifact_version = sh(returnStdout: true, script: 'jq -r .artifact_version metadata.json').trim()
             values.put('artifact_version', artifact_version)
             currentWs = sh(returnStdout: true, script: 'pwd').trim()
-            artifact= values.artifact_name + ":" + values.artifact_version
+            artifact = values.artifact_name + ":" + values.artifact_version
             ansiblePlaybook = "${currentWs}/devops/artifacts-upload.yml"
             ansibleExtraArgs = """\
                                --extra-vars "artifact=${artifact}
@@ -34,9 +34,11 @@ node() {
             ansible_playbook_run(values)
             archiveArtifacts artifacts: "dp_artifacts.zip:${values.artifact_version}", fingerprint: true, onlyIfSuccessful: true
             archiveArtifacts artifacts: 'metadata.json', onlyIfSuccessful: true
+            currentBuild.description = "${artifact_version}"
         }
     }
     catch (err) {
+        currentBuild.result = "FAILURE"
         throw err
     }
 }
