@@ -4,7 +4,7 @@ import com.datastax.driver.core.Row;
 import org.apache.samza.config.Config;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Location;
-
+import com.datastax.driver.core.querybuilder.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,42 +55,42 @@ public class UserLocationCache {
         List<String> locationIds = null;
 
         if (userId == null) return null;
-
         try {
-            String query1 = String.format("select locationids from %s.%s where id = '%s'", cassandra_db, cassandra_user_table, userId);
-            rows = cassandraConnection.execute(query1);
+            String selectLocationIds = QueryBuilder.select("locationids")
+                    .from(cassandra_db, cassandra_user_table)
+                    .where(QueryBuilder.eq("id", userId))
+                    .getQueryString();
+            rows = cassandraConnection.execute(selectLocationIds);
             if (rows.size() > 0) {
                 Row row = rows.get(0);
                 locationIds = row.getList("locationids", String.class);
             }
-        } catch (Exception ex) {
-            LOGGER.error("", "fetchUserLocation: Unable to fetch locationIds from User table", ex);
-        }
 
-        if (locationIds != null && !locationIds.isEmpty()) {
-            for (String loc: locationIds) {
-                try {
-                    String query2 = String.format("select * from %s.%s where id = '%s'", cassandra_db, cassandra_location_table, loc);
-                    rows = cassandraConnection.execute(query2);
-                    if (rows.size() > 0) {
-                        Row row = rows.get(0);
-                        String name = row.getString("name");
-                        String type = row.getString("type");
+            if (locationIds != null && !locationIds.isEmpty()) {
+                String selectLocations = QueryBuilder.select().all()
+                        .from(cassandra_db, cassandra_location_table)
+                        .where(QueryBuilder.in("id", locationIds)).getQueryString();
+                rows = cassandraConnection.execute(selectLocations);
+                if (rows.size() > 0) {
+                    rows.forEach(record -> {
+                        String name = record.getString("name");
+                        String type = record.getString("type");
                         if (type.toLowerCase().equals("state")) {
-                            location.setStateName(name);
-                        } else if(type.toLowerCase().equals("district")) {
+                            location.setState(name);
+                        } else if (type.toLowerCase().equals("district")) {
                             location.setDistrict(name);
                         }
-                    }
-                } catch (Exception ex) {
-                    LOGGER.error("", "fetchUserLocation: Unable to fetch location from location table", ex);
+                    });
                 }
+                addToCache(userId, location);
+                return location;
+            } else {
+                return null;
             }
-            addToCache(userId, location);
-            return location;
-        } else {
-            return null;
+        } catch (Exception ex) {
+            LOGGER.error("", "fetchUserLocation: Unable to fetch user location from cassandra!", ex);
         }
+        return null;
     }
 
     private void addToCache(String userId, Location location) {

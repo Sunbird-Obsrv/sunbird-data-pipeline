@@ -62,12 +62,12 @@ public class Location {
   }
   public String getDistrict() { return district; }
 
-  public void setStateName(String state) {
+  public void setState(String state) {
     this.state = state;
   }
-  public void setDistrict(String district) { this.district = district; }
-  public void setCityName(String city) {
-    this.city = city;
+
+  public void setDistrict(String district) {
+    this.district = district;
   }
 
   public Boolean isLocationResolved(){

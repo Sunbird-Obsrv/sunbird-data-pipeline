@@ -101,9 +101,11 @@ public class Event {
 
 	public void addUserLocation(Location location) {
 		Map<String, String> userLoc = new HashMap<>();
+		if (location.getState() == null) location.setState("");
+		if (location.getDistrict() == null) location.setDistrict("");
 		userLoc.put("state", location.getState());
 		userLoc.put("district", location.getDistrict());
-		telemetry.add(path.userLoc(), userLoc);
+		telemetry.add(path.userData(), userLoc);
 	}
 
 	public void addLocation(Location location) {
@@ -113,7 +115,7 @@ public class Event {
 		ldata.put("state_code", location.getStateCode());
 		ldata.put("state", location.getState());
 		ldata.put("city", location.getCity());
-		telemetry.add(path.ldata(), ldata);
+		telemetry.add(path.deviceData(), ldata);
 	}
 
 	public void removeEdataLoc() {

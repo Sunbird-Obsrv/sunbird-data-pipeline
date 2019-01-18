@@ -41,8 +41,8 @@ public class Path {
         return "mid";
     }
 
-    public String ldata(){
-        return "ldata";
+    public String deviceData(){
+        return "devicedata";
     }
 
     public String ver(){
@@ -53,5 +53,5 @@ public class Path {
         return "edata";
     }
 
-    public String userLoc() { return "userloc"; }
+    public String userData() { return "userdata"; }
 }
