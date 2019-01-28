@@ -36,7 +36,7 @@ public class LocationEngineTest {
         searchServiceClientMock = mock(LocationSearchServiceClient.class);
         locationCacheMock = mock(LocationCache.class);
         userLocationCacheMock = mock(UserLocationCache.class);
-        locationEngine = Mockito.spy(new LocationEngine(locationStoreMock, searchServiceClientMock,
+        locationEngine = spy(new LocationEngine(locationStoreMock, searchServiceClientMock,
                 locationCacheMock, userLocationCacheMock));
     }
 
@@ -152,8 +152,7 @@ public class LocationEngineTest {
         String userId = "58dcd631-fe97-4f48-b799-99c5c3e2a165";
         Location location = new Location(null, null, null, "Karnataka", "Bengaluru");
         when(userLocationCacheMock.getLocationByUser(userId)).thenReturn(location);
-        Location cacheLocation = locationEngine.getLocationByUser(userId);
-
+        locationEngine.getLocationByUser(userId);
         verify(userLocationCacheMock, times(1)).getLocationByUser(userId);
     }
 }

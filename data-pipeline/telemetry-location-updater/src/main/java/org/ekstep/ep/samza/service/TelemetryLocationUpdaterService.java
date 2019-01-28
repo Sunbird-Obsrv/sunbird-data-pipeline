@@ -17,12 +17,12 @@ import java.io.IOException;
 public class TelemetryLocationUpdaterService {
 	
 	private static Logger LOGGER = new Logger(TelemetryLocationUpdaterService.class);
-	private final TelemetryLocationUpdaterConfig config;
+	// private final TelemetryLocationUpdaterConfig config;
 	private LocationEngine locationEngine;
 
 
 	public TelemetryLocationUpdaterService(TelemetryLocationUpdaterConfig config, LocationEngine locationEngine) {
-		this.config = config;
+		// this.config = config;
 		this.locationEngine = locationEngine;
 	}
 
@@ -46,7 +46,8 @@ public class TelemetryLocationUpdaterService {
 		}
 	}
 
-	private Event updateEventWithIPLocation(Event event) {
+	private Event updateEventWithIPLocation(Event eventObj) {
+		Event event = eventObj;
 		Location location;
 		try {
 			String did = event.did();
@@ -78,12 +79,13 @@ public class TelemetryLocationUpdaterService {
 		}
 	}
 
-	private Event updateEventWithUserLocation(Event event) {
+	private Event updateEventWithUserLocation(Event eventObj) {
+		Event event = eventObj;
 		try {
 			String actorId = event.actorid();
 			String actorType = event.actortype();
 
-			if (actorId != null && actorType.toUpperCase().equals("USER")) {
+			if (actorId != null && actorType.equalsIgnoreCase("USER")) {
 				Location location = locationEngine.getLocationByUser(actorId);
 				if (location == null) {
 					location = locationEngine.getLocation(event.channel());
@@ -107,17 +109,17 @@ public class TelemetryLocationUpdaterService {
 		}
 	}
 
-	private Event updateEventWithLocationFromChannel(Event event) throws IOException {
-		Location location = locationEngine.getLocation(event.channel());
-		if (location != null && !location.getState().isEmpty()) {
-			event = updateEvent(event, location, true);
-		} else {
-			// add empty location
-			location = new Location("", "", "", "", "");
-			event = updateEvent(event, location, false);
-		}
-		return event;
-	}
+//	private Event updateEventWithLocationFromChannel(Event event) throws IOException {
+//		Location location = locationEngine.getLocation(event.channel());
+//		if (location != null && !location.getState().isEmpty()) {
+//			event = updateEvent(event, location, true);
+//		} else {
+//			// add empty location
+//			location = new Location("", "", "", "", "");
+//			event = updateEvent(event, location, false);
+//		}
+//		return event;
+//	}
 
 	public Event updateEvent(Event event, Location location, Boolean ldataFlag) {
 		event.addLocation(location);

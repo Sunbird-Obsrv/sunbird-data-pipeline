@@ -33,7 +33,6 @@ import org.junit.Test;
 import org.junit.Ignore;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
-import org.mockito.internal.matchers.Any;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -98,7 +97,7 @@ public class TelemetryLocationUpdaterTaskTest {
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITHOUT_DID);
 		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
 				"0123221617357783046602")).toReturn(null);
-		Location loc = new Location("", "", "", "", "");
+		// Location loc = new Location("", "", "", "", "");
 		stub(locationStoreCache.get("0123221617357783046602")).toReturn(null);
 		List<String> locationIds = new ArrayList<String>();
 		locationIds.add("loc1");

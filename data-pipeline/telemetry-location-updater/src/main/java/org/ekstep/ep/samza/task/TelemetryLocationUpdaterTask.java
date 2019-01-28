@@ -82,11 +82,6 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 		}.getType(), metrics)
 				: new CacheService<>(context, "location-store", CacheEntry.class, metrics);
 
-		CacheService<String, Location> userLocationStore = locationCacheStore != null
-				? new CacheService<>(locationCacheStore, new TypeToken<CacheEntry<Location>>() {
-		}.getType(), metrics)
-				: new CacheService<>(context, "location-store", CacheEntry.class, metrics);
-
 		locationEngine =
 				locationEngine == null ?
 				new LocationEngine(locationStore,

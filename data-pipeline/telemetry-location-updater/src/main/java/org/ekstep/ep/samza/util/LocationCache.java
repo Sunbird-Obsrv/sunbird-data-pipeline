@@ -16,13 +16,11 @@ public class LocationCache {
 
     private String cassandra_db;
     private String cassandra_table;
-    private Config config;
     private CassandraConnect cassandraConnetion;
     private RedisConnect redisConnect;
     private int locationDbKeyExpiryTimeInSeconds;
 
     public LocationCache(Config config, RedisConnect redisConnect) {
-        this.config = config;
         this.cassandra_db = config.get("cassandra.keyspace", "device_db");
         this.cassandra_table = config.get("cassandra.device_profile_table", "device_profile");
         this.redisConnect = redisConnect;

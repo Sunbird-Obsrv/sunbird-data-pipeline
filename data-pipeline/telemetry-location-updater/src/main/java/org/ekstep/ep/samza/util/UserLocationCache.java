@@ -18,14 +18,12 @@ public class UserLocationCache {
     private String cassandra_db;
     private String cassandra_user_table;
     private String cassandra_location_table;
-    private Config config;
     private RedisConnect redisConnect;
     private CassandraConnect cassandraConnection;
     private int locationDbKeyExpiryTimeInSeconds;
 
     public UserLocationCache(Config config, RedisConnect redisConnect, CassandraConnect cassandraConnect) {
         this.redisConnect = redisConnect;
-        this.config = config;
         this.cassandra_db = config.get("middleware.cassandra.keyspace", "sunbird");
         this.cassandra_user_table = config.get("middleware.cassandra.user_table", "user");
         this.cassandra_location_table = config.get("middleware.cassandra.location_table", "location");
