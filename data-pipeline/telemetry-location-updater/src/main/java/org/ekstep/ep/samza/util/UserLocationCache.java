@@ -37,6 +37,7 @@ public class UserLocationCache {
         if (userId == null) return null;
 
         try (Jedis jedis = redisConnect.getConnection()) {
+            jedis.select(1);
             Map<String, String> locationMap = jedis.hgetAll(userId);
             if (locationMap.isEmpty()) {
                 return fetchUserLocation(userId);
@@ -88,13 +89,14 @@ public class UserLocationCache {
                 return null;
             }
         } catch (Exception ex) {
-            LOGGER.error("", "fetchUserLocation: Unable to fetch user location from cassandra!", ex);
+            LOGGER.error("", "fetchUserLocation: Unable to fetch user location from cassandra! userId: " + userId, ex);
         }
         return null;
     }
 
     private void addToCache(String userId, Location location) {
         try (Jedis jedis = redisConnect.getConnection()) {
+            jedis.select(1);
             if(location.isStateDistrictResolved()) {
                 // Key will be userId
                 String key = userId;

@@ -46,49 +46,65 @@ public class TelemetryLocationUpdaterService {
 		}
 	}
 
-	private Event updateEventWithIPLocation(Event event) throws IOException {
+	private Event updateEventWithIPLocation(Event event) {
 		Location location;
-		String did = event.did();
-		String channel = event.channel();
+		try {
+			String did = event.did();
+			String channel = event.channel();
+			if (did != null && !did.isEmpty()) {
+				location = locationEngine.locationCache().getLocationForDeviceId(event.did(), channel);
 
-		if (did != null && !did.isEmpty()) {
-			location = locationEngine.locationCache().getLocationForDeviceId(event.did(), channel);
-
-			if (location != null) {
-				event = updateEvent(event, location, true);
+				if (location != null) {
+					event = updateEvent(event, location, true);
+				} else {
+					// add empty location
+					location = new Location("", "", "", "", "");
+					event = updateEvent(event, location, false);
+				}
 			} else {
 				// add empty location
 				location = new Location("", "", "", "", "");
 				event = updateEvent(event, location, false);
 			}
-		} else {
-			// add empty location
+			return event;
+		} catch(Exception ex) {
+			LOGGER.error(null,
+					format("EXCEPTION. RESOLVING IP LOCATION. EVENT: {0}, EXCEPTION:",
+							event),
+					ex);
 			location = new Location("", "", "", "", "");
 			event = updateEvent(event, location, false);
+			return event;
 		}
-		return event;
 	}
 
-	private Event updateEventWithUserLocation(Event event) throws IOException {
-		String actorId = event.actorid();
-		String actorType = event.actortype();
-		if (actorId != null && actorType.toUpperCase().equals("USER")) {
-			Location location = locationEngine.getLocationByUser(actorId);
-			if (location == null) {
-				location = locationEngine.getLocation(event.channel());
-				if(location == null) {
-					event.addUserLocation(new Location(null, null, null, "", null, ""));
-					event.setFlag(TelemetryLocationUpdaterConfig.getUserLocationJobFlag(), false);
+	private Event updateEventWithUserLocation(Event event) {
+		try {
+			String actorId = event.actorid();
+			String actorType = event.actortype();
+
+			if (actorId != null && actorType.toUpperCase().equals("USER")) {
+				Location location = locationEngine.getLocationByUser(actorId);
+				if (location == null) {
+					location = locationEngine.getLocation(event.channel());
+					if (location == null) {
+						event.addUserLocation(new Location(null, null, null, "", null, ""));
+					} else {
+						event.addUserLocation(location);
+					}
 				} else {
 					event.addUserLocation(location);
-					event.setFlag(TelemetryLocationUpdaterConfig.getUserLocationJobFlag(), true);
 				}
-			} else {
-				event.addUserLocation(location);
-				event.setFlag(TelemetryLocationUpdaterConfig.getUserLocationJobFlag(), true);
 			}
+			return event;
+		} catch(Exception ex) {
+			LOGGER.error(null,
+					format("EXCEPTION. RESOLVING USER LOCATION. EVENT: {0}, EXCEPTION:",
+							event),
+					ex);
+			event.addUserLocation(new Location(null, null, null, "", null, ""));
+			return event;
 		}
-		return event;
 	}
 
 	private Event updateEventWithLocationFromChannel(Event event) throws IOException {

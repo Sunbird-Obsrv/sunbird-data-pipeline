@@ -49,7 +49,7 @@ public class LocationEngine {
         List<String> locationIds = searchService.searchChannelLocationId(channel);
         if (locationIds != null) {
             loc = searchService.searchLocation(locationIds);
-            LOGGER.info("", "State information retrieved from Learner API: " + loc.getState());
+            // LOGGER.info("", "State information retrieved from Learner API: " + loc.getDistrict());
         }
         if (loc != null && channel != null && !channel.isEmpty()) {
             LOGGER.info( "",

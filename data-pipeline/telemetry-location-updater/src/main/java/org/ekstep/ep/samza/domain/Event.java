@@ -105,6 +105,13 @@ public class Event {
 		if (location.getDistrict() == null) location.setDistrict("");
 		userLoc.put("state", location.getState());
 		userLoc.put("district", location.getDistrict());
+		if (location.isStateDistrictResolved()) {
+			setFlag(TelemetryLocationUpdaterConfig.getUserLocationJobFlag(), true);
+		} else if(location.getDistrict().equals("") && location.getState().equals("")) {
+			setFlag(TelemetryLocationUpdaterConfig.getUserLocationJobFlag(), false);
+		} else {
+			setFlag(TelemetryLocationUpdaterConfig.getUserLocationJobFlag(), true);
+		}
 		telemetry.add(path.userData(), userLoc);
 	}
 
