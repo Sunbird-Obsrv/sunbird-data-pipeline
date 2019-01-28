@@ -38,8 +38,7 @@ import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Location;
 import org.ekstep.ep.samza.engine.LocationEngine;
 import org.ekstep.ep.samza.service.TelemetryLocationUpdaterService;
-import org.ekstep.ep.samza.util.LocationCache;
-import org.ekstep.ep.samza.util.LocationSearchServiceClient;
+import org.ekstep.ep.samza.util.*;
 
 public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, WindowableTask {
 
@@ -69,6 +68,9 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 					 KeyValueStore<Object, Object> locationCacheStore, LocationEngine locationEngine) {
 
 		this.config = new TelemetryLocationUpdaterConfig(config);
+
+		RedisConnect redisConnect = new RedisConnect(config);
+
 		LocationSearchServiceClient searchServiceClient =
 				new LocationSearchServiceClient(config.get("channel.search.service.endpoint"),
 						config.get("location.search.service.endpoint"),
@@ -83,7 +85,12 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 		locationEngine =
 				locationEngine == null ?
 				new LocationEngine(locationStore,
-						searchServiceClient, new LocationCache(config))
+						searchServiceClient, new LocationCache(config, redisConnect),
+						new UserLocationCache(
+								config,
+								redisConnect,
+								new CassandraConnect(config.get("middleware.cassandra.host", "127.0.0.1"), config.getInt("middleware.cassandra.port", 9042))
+						))
 				: locationEngine;
 		metrics = new JobMetrics(context, this.config.jobName());
 		service = new TelemetryLocationUpdaterService(this.config, locationEngine);
