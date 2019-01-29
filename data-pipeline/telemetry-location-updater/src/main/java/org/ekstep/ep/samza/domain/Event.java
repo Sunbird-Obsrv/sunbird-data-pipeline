@@ -117,9 +117,9 @@ public class Event {
 
 	public void addLocation(Location location) {
 		Map<String, String> ldata = new HashMap<>();
-		ldata.put("countryCode", location.getCountryCode());
+		ldata.put("countrycode", location.getCountryCode());
 		ldata.put("country", location.getCountry());
-		ldata.put("stateCode", location.getStateCode());
+		ldata.put("statecode", location.getStateCode());
 		ldata.put("state", location.getState());
 		ldata.put("city", location.getCity());
 		telemetry.add(path.deviceData(), ldata);
