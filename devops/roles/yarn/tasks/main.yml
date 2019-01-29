@@ -51,7 +51,7 @@
     group: hadoop
     creates: "{{hadoop_yarn_home}}"
     remote_src: yes
-	delegate_to: "{{ slave }}"
+  delegate_to: "{{ slave }}"
   with_items: "{{ yarn_slaves }}"
 
 
