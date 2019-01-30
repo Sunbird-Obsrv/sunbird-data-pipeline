@@ -78,7 +78,7 @@
 - name: Templating configs
   template: 
     src: "{{item[0]}}" 
-    dest: "{{hadoop_yarn_home}}/conf/{{item}}"
+    dest: "{{hadoop_yarn_home}}/conf/{{item[0]}}"
     owner: hduser 
     group: hadoop
   delegate_to: "{{ yarn_slaves }}"
