@@ -93,11 +93,10 @@
     dest: "{{hadoop_yarn_home}}/share/hadoop/hdfs/lib/"
     owner: hduser
     group: hadoop
-  with_items:
-    - clapper/grizzled-slf4j_2.10/1.0.1/grizzled-slf4j_2.10-1.0.1.jar
-    - apache/samza/samza-yarn_2.10/0.8.0/samza-yarn_2.10-0.8.0.jar
-    - apache/samza/samza-core_2.10/0.8.0/samza-core_2.10-0.8.0.jar
-  delegate_to: "{{ yarn_slaves }}"
+    delegate_to: "{{ yarn_slaves }}"
+  with_nested:
+    - [ 'clapper/grizzled-slf4j_2.10/1.0.1/grizzled-slf4j_2.10-1.0.1.jar', 'apache/samza/samza-yarn_2.10/0.8.0/samza-yarn_2.10-0.8.0.jar', 'apache/samza/samza-core_2.10/0.8.0/samza-core_2.10-0.8.0.jar' ]
+    - "{{ yarn_slaves }}"
 
 - name: Download and extract scala
   unarchive:
@@ -124,10 +123,9 @@
     src: "/usr/local/scala-{{scala_version}}/lib/{{item}}"
     dest: "{{hadoop_yarn_home}}/share/hadoop/hdfs/lib/"
     remote_src: true
-  with_items:
-    - scala-compiler.jar
-    - scala-library.jar
-  delegate_to: "{{ yarn_slaves }}"
+  with_nested:
+    - [ 'scala-compiler.jar', 'scala-library.jar' ]
+    - "{{ yarn_slaves }}"
 
 - name: Copy truncate_files.sh
   copy: 
