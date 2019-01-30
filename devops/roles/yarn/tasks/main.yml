@@ -77,17 +77,15 @@
 
 - name: Templating configs
   template: 
-    src: "{{item}}" 
+    src: "{{item[0]}}" 
     dest: "{{hadoop_yarn_home}}/conf/{{item}}"
     owner: hduser 
     group: hadoop
-  with_items:
-    - yarn-site.xml
-    - capacity-scheduler.xml   
-    - core-site.xml
-    - log4j.properties
-    - hadoop-env.sh
-  delegate_to: "{{ yarn_slaves }}"
+  delegate_to: "{{ yarn_slaves[1] }}"
+  with_nested:
+    - [ 'yarn-site.xml', 'capacity-scheduler.xml', 'core-site.xml', 'log4j.properties', 'hadoop-env.sh' ]
+    - "{{ yarn_slaves }}"
+
 
 - name: Downloading artifacts  
   get_url: 
