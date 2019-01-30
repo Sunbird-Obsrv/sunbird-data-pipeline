@@ -13,3 +13,11 @@ localhost
 [middleManager]
 localhost
 
+
+[druid]
+coordinator
+overlord
+broker
+historical
+middleManager
+

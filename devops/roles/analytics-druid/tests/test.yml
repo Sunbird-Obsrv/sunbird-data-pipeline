@@ -1,5 +1,13 @@
 ---
-- hosts: localhost
-  remote_user: root
+#YMl to run the druid role
+
+-
+  name: Install role druid
+  hosts: druid
   roles:
-    - /home/tibil/Revathi/roles/druid
+    - {role: druid_role,when: "'coordinator' in group_names",druid_role: 'coordinator' }
+    - {role: druid_role,when: "'overlord' in group_names",druid_role: 'overlord' }
+    - {role: druid_role,when: "'broker' in group_names",druid_role: 'broker' }
+    - {role: druid_role,when: "'historical' in group_names",druid_role: 'historical' }
+    - {role: druid_role,when: "'middleManager' in group_names",druid_role: 'middleManager' }
+   

@@ -1,8 +1,18 @@
 ---
 # file: main.yml
-druid_version: "0.12.3"
+druid_version: "0.13.0-incubating"
 druid_role: "overlord"
 druid_checksum: "807581d54fa4c5a90eec2a230e2a7fc4c6daf18eb8136009bf36a775d793d6f6"
-druid_path: "/data/druid-{{ druid_version }}/"
-zk_host: "druid-zookeeper.your-domain.co"
+druid_path: "/data/apache-druid-{{ druid_version }}/"
+zk_host: "13.0.0.4,13.0.0.5,13.0.0.6"
 pg_host: "druid-postgres.your-domain.co"
+pg_user: "druid"
+pg_pass: "druid"
+druid_hadoop_azure_jar_checksum: "cdabe2c2ef8cbaaf795de6f284250e826a411b1b"
+
+#azure config
+
+azure_account: "sunbirddevtelemetry"
+azure_key: "key"
+azure_container: "test-container"
+
