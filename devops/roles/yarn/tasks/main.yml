@@ -81,7 +81,7 @@
     dest: "{{hadoop_yarn_home}}/conf/{{item}}"
     owner: hduser 
     group: hadoop
-  delegate_to: "{{ yarn_slaves[1] }}"
+  delegate_to: "{{ yarn_slaves }}"
   with_nested:
     - [ 'yarn-site.xml', 'capacity-scheduler.xml', 'core-site.xml', 'log4j.properties', 'hadoop-env.sh' ]
     - "{{ yarn_slaves }}"
