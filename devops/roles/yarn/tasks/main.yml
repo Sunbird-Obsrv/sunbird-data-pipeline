@@ -89,7 +89,7 @@
 
 - name: Downloading artifacts  
   get_url: 
-    url: "http://search.maven.org/remotecontent?filepath=org/{{item}}"
+    url: "http://search.maven.org/remotecontent?filepath=org/{{item[0]}}"
     dest: "{{hadoop_yarn_home}}/share/hadoop/hdfs/lib/"
     owner: hduser
     group: hadoop
@@ -120,7 +120,7 @@
 
 - name: copying scala files
   copy:
-    src: "/usr/local/scala-{{scala_version}}/lib/{{item}}"
+    src: "/usr/local/scala-{{scala_version}}/lib/{{item[0]}}"
     dest: "{{hadoop_yarn_home}}/share/hadoop/hdfs/lib/"
     remote_src: true
   with_nested:
