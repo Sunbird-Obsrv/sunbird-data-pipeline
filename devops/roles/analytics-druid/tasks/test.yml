@@ -1,28 +1,28 @@
 ---
 # file: test.yml
 - name: Test that our port is allocated
-  wait_for: host={{ groups.coordinator[0] }} port=8081
+  wait_for: host={{ ansible_host }} port=8081
             connect_timeout=10 state=started
   when: druid_role == "coordinator" 
 
 
 - name: Test that our port is allocated
-  wait_for: host={{ groups.overload[0] }} port=8090
+  wait_for: host={{ ansible_host }} port=8090
             connect_timeout=10 state=started
   when: druid_role == "overlord" 
 
 - name: Test that our port is allocated
-  wait_for: host={{ groups.historical[0] }} port=8083
+  wait_for: host={{ ansible_host }} port=8083
             connect_timeout=10 state=started
   when: druid_role == "historical" 
 
 - name: Test that our port is allocated
-  wait_for: host={{ groups.broker[0] }} port=8082
+  wait_for: host={{ ansible_host }} port=8082
             connect_timeout=10 state=started
   when: druid_role == "broker" 
 
 - name: Test that our port is allocated
-  wait_for: host={{ groups.middleManager[0] }} port=8091
+  wait_for: host={{ ansible_host }} port=8091
             connect_timeout=10 state=started
   when: druid_role == "middleManager" 
 
