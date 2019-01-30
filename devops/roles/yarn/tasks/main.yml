@@ -62,7 +62,7 @@
     owner: hduser
     group: hadoop
     state: link
-  delegate_to: "{{ slave }}"
+  delegate_to: "{{ yarn_slaves }}"
   with_items: "{{ yarn_slaves }}"
 
 - name: creating conf dir
@@ -72,7 +72,7 @@
     group: hadoop 
     recurse: yes 
     state: directory
-  delegate_to: "{{ slave }}"
+  delegate_to: "{{ yarn_slaves }}"
   with_items: "{{ yarn_slaves }}"
 
 - name: Templating configs
@@ -87,7 +87,7 @@
     - core-site.xml
     - log4j.properties
     - hadoop-env.sh
-  delegate_to: "{{ slave }}"
+  delegate_to: "{{ yarn_slaves }}"
   with_items: "{{ yarn_slaves }}"
 
 - name: Downloading artifacts  
@@ -100,7 +100,7 @@
     - clapper/grizzled-slf4j_2.10/1.0.1/grizzled-slf4j_2.10-1.0.1.jar
     - apache/samza/samza-yarn_2.10/0.8.0/samza-yarn_2.10-0.8.0.jar
     - apache/samza/samza-core_2.10/0.8.0/samza-core_2.10-0.8.0.jar
-  delegate_to: "{{ slave }}"
+  delegate_to: "{{ yarn_slaves }}"
   with_items: "{{ yarn_slaves }}"
 
 - name: Download and extract scala
@@ -110,7 +110,7 @@
     owner: hduser
     group: hadoop
     remote_src: yes
-  delegate_to: "{{ slave }}"
+  delegate_to: "{{ yarn_slaves }}"
   with_items: "{{ yarn_slaves }}"
 
 - name: Creates symlink
@@ -120,7 +120,7 @@
     owner: hduser
     group: hadoop
     state: link
-  delegate_to: "{{ slave }}"
+  delegate_to: "{{ yarn_slaves }}"
   with_items: "{{ yarn_slaves }}"
 
 - name: copying scala files
@@ -131,7 +131,7 @@
   with_items:
     - scala-compiler.jar
     - scala-library.jar
-  delegate_to: "{{ slave }}"
+  delegate_to: "{{ yarn_slaves }}"
   with_items: "{{ yarn_slaves }}"
 
 - name: Copy truncate_files.sh
