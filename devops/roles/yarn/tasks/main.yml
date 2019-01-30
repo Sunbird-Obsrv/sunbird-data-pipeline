@@ -88,7 +88,6 @@
     - log4j.properties
     - hadoop-env.sh
   delegate_to: "{{ yarn_slaves }}"
-  with_items: "{{ yarn_slaves }}"
 
 - name: Downloading artifacts  
   get_url: 
