@@ -21,8 +21,10 @@ public class UserLocationCache {
     private RedisConnect redisConnect;
     private CassandraConnect cassandraConnection;
     private int locationDbKeyExpiryTimeInSeconds;
+    private Config config;
 
     public UserLocationCache(Config config, RedisConnect redisConnect, CassandraConnect cassandraConnect) {
+        this.config = config;
         this.redisConnect = redisConnect;
         this.cassandra_db = config.get("middleware.cassandra.keyspace", "sunbird");
         this.cassandra_user_table = config.get("middleware.cassandra.user_table", "user");
@@ -35,7 +37,7 @@ public class UserLocationCache {
         if (userId == null) return null;
 
         try (Jedis jedis = redisConnect.getConnection()) {
-            jedis.select(1);
+            jedis.select(config.getInt("redis.database.locationStore.id", 0));
             Map<String, String> locationMap = jedis.hgetAll(userId);
             if (locationMap.isEmpty()) {
                 return fetchUserLocation(userId);
@@ -57,8 +59,8 @@ public class UserLocationCache {
         try {
             String selectLocationIds = QueryBuilder.select("locationids")
                     .from(cassandra_db, cassandra_user_table)
-                    .where(QueryBuilder.eq("id", userId))
-                    .getQueryString();
+                    .where(QueryBuilder.eq("id", userId)).toString();
+
             rows = cassandraConnection.execute(selectLocationIds);
             if (rows.size() > 0) {
                 Row row = rows.get(0);
@@ -68,7 +70,7 @@ public class UserLocationCache {
             if (locationIds != null && !locationIds.isEmpty()) {
                 String selectLocations = QueryBuilder.select().all()
                         .from(cassandra_db, cassandra_location_table)
-                        .where(QueryBuilder.in("id", locationIds)).getQueryString();
+                        .where(QueryBuilder.in("id", locationIds)).toString();
                 rows = cassandraConnection.execute(selectLocations);
                 if (rows.size() > 0) {
                     rows.forEach(record -> {
@@ -94,13 +96,13 @@ public class UserLocationCache {
 
     private void addToCache(String userId, Location location) {
         try (Jedis jedis = redisConnect.getConnection()) {
-            jedis.select(1);
+            jedis.select(config.getInt("redis.database.locationStore.id", 0));
             if(location.isStateDistrictResolved()) {
                 // Key will be userId
                 String key = userId;
                 Map<String, String> values = new HashMap<>();
                 values.put("state", location.getState());
-                values.put("district", location.getCity());
+                values.put("district", location.getDistrict());
                 jedis.hmset(key, values);
                 jedis.expire(key, locationDbKeyExpiryTimeInSeconds);
             }
