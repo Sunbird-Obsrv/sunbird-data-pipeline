@@ -42,7 +42,11 @@ public class UserLocationCache {
             Map<String, String> locationMap = jedis.hgetAll(userId);
             if (locationMap.isEmpty()) {
                 Location location = fetchUserLocation(userId);
-                if(location != null) addToCache(userId, location);
+                if(location != null) {
+                    addToCache(userId, location);
+                } else {
+                    addToCache(userId, new Location("", "", "", "", "", ""));
+                }
                 return location;
             } else {
                 return new Location(null, null, null, locationMap.get("state"), null, locationMap.get("district"));

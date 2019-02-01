@@ -41,11 +41,11 @@ public class LocationCache {
                     String.format("SELECT device_id, country_code, country, state_code, state, city FROM %s.%s WHERE device_id = '%s' AND channel = '%s'",
                         cassandra_db, cassandra_table, did, channel);
                 rows = cassandraConnection.execute(query);
-                String countryCode = null;
-                String country = null;
-                String stateCode = null;
-                String state = null;
-                String city = null;
+                String countryCode = "";
+                String country = "";
+                String stateCode = "";
+                String state = "";
+                String city = "";
 
                 if (rows.size() > 0) {
                     Row row = rows.get(0);
