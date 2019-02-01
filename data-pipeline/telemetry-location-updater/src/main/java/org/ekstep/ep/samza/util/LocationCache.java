@@ -16,7 +16,7 @@ public class LocationCache {
 
     private String cassandra_db;
     private String cassandra_table;
-    private CassandraConnect cassandraConnetion;
+    private CassandraConnect cassandraConnection;
     private RedisConnect redisConnect;
     private int locationDbKeyExpiryTimeInSeconds;
 
@@ -24,13 +24,14 @@ public class LocationCache {
         this.cassandra_db = config.get("cassandra.keyspace", "device_db");
         this.cassandra_table = config.get("cassandra.device_profile_table", "device_profile");
         this.redisConnect = redisConnect;
-        this.cassandraConnetion = new CassandraConnect(config);
+        this.cassandraConnection = new CassandraConnect(config);
         this.locationDbKeyExpiryTimeInSeconds = config.getInt("location.db.redis.key.expiry.seconds", 86400);
     }
 
     public Location getLocationForDeviceId(String did, String channel) {
-
-        try (Jedis jedis = redisConnect.getConnection()) {
+        Jedis jedis = null;
+        try {
+            jedis = redisConnect.getConnection();
             // Key will be device_id:channel
             String key = String.format("%s:%s", did, channel);
             Map<String, String> fields = jedis.hgetAll(key);
@@ -39,12 +40,12 @@ public class LocationCache {
                 String query =
                     String.format("SELECT device_id, country_code, country, state_code, state, city FROM %s.%s WHERE device_id = '%s' AND channel = '%s'",
                         cassandra_db, cassandra_table, did, channel);
-                rows = cassandraConnetion.execute(query);
-                String countryCode = null;
-                String country = null;
-                String stateCode = null;
-                String state = null;
-                String city = null;
+                rows = cassandraConnection.execute(query);
+                String countryCode = "";
+                String country = "";
+                String stateCode = "";
+                String state = "";
+                String city = "";
 
                 if (rows.size() > 0) {
                     Row row = rows.get(0);
@@ -56,8 +57,8 @@ public class LocationCache {
                 }
 
                 Location location = new Location(countryCode, country, stateCode, state, city);
+                addLocationToCache(did, channel, location);
                 if (location.isLocationResolved()) {
-                    addLocationToCache(did, channel, location);
                     return location;
                 } else return null;
             } else {
@@ -67,25 +68,33 @@ public class LocationCache {
         } catch (JedisException ex) {
             LOGGER.error("", "GetLocationForDeviceId: Unable to get a resource from the redis connection pool ", ex);
             return null;
+        } finally {
+            if (jedis != null && jedis.isConnected()) {
+                jedis.close();
+            }
         }
     }
 
     public void addLocationToCache(String did, String channel, Location location) {
-        try (Jedis jedis = redisConnect.getConnection()) {
-            if(location.isLocationResolved()) {
-                // Key will be device_id:channel
-                String key = String.format("%s:%s", did, channel);
-                Map<String, String> values = new HashMap<>();
-                values.put("country_code", location.getCountryCode());
-                values.put("country", location.getCountry());
-                values.put("state_code", location.getStateCode());
-                values.put("state", location.getState());
-                values.put("city", location.getCity());
-                jedis.hmset(key, values);
-                jedis.expire(key, locationDbKeyExpiryTimeInSeconds);
-            }
+        Jedis jedis = null;
+        try {
+            jedis = redisConnect.getConnection();
+            // Key will be device_id:channel
+            String key = String.format("%s:%s", did, channel);
+            Map<String, String> values = new HashMap<>();
+            values.put("country_code", location.getCountryCode());
+            values.put("country", location.getCountry());
+            values.put("state_code", location.getStateCode());
+            values.put("state", location.getState());
+            values.put("city", location.getCity());
+            jedis.hmset(key, values);
+            jedis.expire(key, locationDbKeyExpiryTimeInSeconds);
         } catch (JedisException ex) {
             LOGGER.error("", "AddLocationToCache: Unable to get a resource from the redis connection pool ", ex);
+        } finally {
+            if (jedis != null && jedis.isConnected()) {
+                jedis.close();
+            }
         }
     }
 }
