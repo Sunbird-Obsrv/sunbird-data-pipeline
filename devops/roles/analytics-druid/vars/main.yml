@@ -1,18 +1,11 @@
 ---
 # file: main.yml
+
+#Druid Installation Path
+
+druid_directory: "/data"
 druid_version: "0.13.0-incubating"
-druid_role: "overlord"
+druid_url: "http://mirrors.estointernet.in/apache/incubator/druid/0.13.0-incubating/apache-druid-0.13.0-incubating-bin.tar.gz"
+druid_path: "{{ druid_directory }}/apache-druid-{{ druid_version }}/"
 druid_checksum: "807581d54fa4c5a90eec2a230e2a7fc4c6daf18eb8136009bf36a775d793d6f6"
-druid_path: "/data/apache-druid-{{ druid_version }}/"
-zk_host: "13.0.0.4,13.0.0.5,13.0.0.6"
-pg_host: "druid-postgres.your-domain.co"
-pg_user: "druid"
-pg_pass: "druid"
-druid_hadoop_azure_jar_checksum: "cdabe2c2ef8cbaaf795de6f284250e826a411b1b"
-
-#azure config
-
-azure_account: "sunbirddevtelemetry"
-azure_key: "key"
-azure_container: "test-container"
 

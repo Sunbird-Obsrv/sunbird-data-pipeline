@@ -45,15 +45,15 @@
   become: yes
   when: druid_role == "middlemanager"
 
-#- name: Download Druid version {{ druid_version }}
-#  get_url: url={{ druid_url }}
-#           dest={{ druid_directory }}
-#           mode=0777
-#           force=no
+- name: Download Druid version {{ druid_version }}
+  get_url: url={{ druid_url }}
+           dest={{ druid_directory }}
+           mode=0777
+           force=no
 
-#- name: Un-tar druid download
-#  unarchive: src={{ druid_path }}-bin.tar.gz dest={{ druid_directory }}copy=no
-#  become: yes
+- name: Un-tar druid download
+  unarchive: src={{ druid_path }}-bin.tar.gz dest={{ druid_directory }} copy=no
+  become: yes
 
 - name: Change ownership of download path
   file: path={{ druid_directory }} owner={{ ansible_user }} recurse=yes mode=0777
