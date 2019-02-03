@@ -5,7 +5,11 @@
   become: true
 
 - name: Start druid {{ druid_role }} service
-  service: name=druid_{{ druid_role }} state=restarted
+  systemd:
+    name: druid_{{ druid_role }}
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
   become: true
 
 
