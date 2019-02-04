@@ -5,18 +5,25 @@ import org.ekstep.ep.samza.core.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class ContentDataCache {
 
-    private static Logger LOGGER = new Logger(UserDataCache.class);
+    private static Logger LOGGER = new Logger(ContentDataCache.class);
 
     private RedisConnect redisConnect;
     private Integer contentDBIndex;
+    private List fieldsList;
 
     public ContentDataCache(Config config, RedisConnect redisConnect) {
 
+        List defaultList = new ArrayList<String>();
+        defaultList.add("name");
+        defaultList.add("objectType");
         this.contentDBIndex = config.getInt("redis.contentDB.index", 2);
+        this.fieldsList = config.getList("content.fields", defaultList);
         this.redisConnect = redisConnect;
     }
 
@@ -28,6 +35,7 @@ public class ContentDataCache {
             if (fields.isEmpty()) {
                 return null;
             } else {
+                fields.keySet().retainAll(fieldsList);
                 return fields;
             }
         } catch (JedisException ex) {

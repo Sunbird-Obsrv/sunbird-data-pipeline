@@ -27,10 +27,7 @@ import org.apache.samza.task.*;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.ContentDeNormalizationService;
-import org.ekstep.ep.samza.util.ContentDataCache;
-import org.ekstep.ep.samza.util.DeviceDataCache;
-import org.ekstep.ep.samza.util.RedisConnect;
-import org.ekstep.ep.samza.util.UserDataCache;
+import org.ekstep.ep.samza.util.*;
 
 public class ContentDeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
 
@@ -43,21 +40,41 @@ public class ContentDeNormalizationTask implements StreamTask, InitableTask, Win
     private JobMetrics metrics;
     private ContentDeNormalizationService service;
 
-    public ContentDeNormalizationTask(Config config, TaskContext context)  {
-        init(config, context);
+    public ContentDeNormalizationTask(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache)  {
+        init(config, context, deviceCache, userCache, contentCache);
     }
 
     public ContentDeNormalizationTask() {
 
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
     public void init(Config config, TaskContext context) {
+        init(config, context, deviceCache, userCache, contentCache);
+    }
+
+
+    public void init(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache) {
         this.config = new ContentDeNormalizationConfig(config);
         metrics = new JobMetrics(context, this.config.jobName());
         this.redisConnect = new RedisConnect(config);
-        this.deviceCache = new DeviceDataCache(config, this.redisConnect);
-        this.userCache = new UserDataCache(config, this.redisConnect);
-        this.contentCache = new ContentDataCache(config, this.redisConnect);
+
+        this.deviceCache =
+                deviceCache == null ?
+                        new DeviceDataCache(config, this.redisConnect)
+                        : deviceCache;
+
+        this.userCache =
+                userCache == null ?
+                        new UserDataCache(config, this.redisConnect)
+                        : userCache;
+
+        this.contentCache =
+                contentCache == null ?
+                        new ContentDataCache(config, this.redisConnect)
+                        : contentCache;
+
         service = new ContentDeNormalizationService(this.config, this.deviceCache, this.redisConnect, this.userCache, this.contentCache);
     }
 

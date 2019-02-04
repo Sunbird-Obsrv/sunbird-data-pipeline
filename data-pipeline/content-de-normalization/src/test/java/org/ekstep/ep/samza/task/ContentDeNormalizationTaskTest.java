@@ -1,0 +1,233 @@
+package org.ekstep.ep.samza.task;
+
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import org.apache.samza.config.Config;
+import org.apache.samza.metrics.Counter;
+import org.apache.samza.metrics.MetricsRegistry;
+import org.apache.samza.system.IncomingMessageEnvelope;
+import org.apache.samza.system.OutgoingMessageEnvelope;
+import org.apache.samza.task.MessageCollector;
+import org.apache.samza.task.TaskContext;
+import org.apache.samza.task.TaskCoordinator;
+import org.ekstep.ep.samza.fixtures.EventFixture;
+import org.ekstep.ep.samza.util.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentMatcher;
+import org.mockito.Mockito;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.stub;
+import static org.mockito.Mockito.verify;
+
+public class ContentDeNormalizationTaskTest {
+
+    private static final String SUCCESS_TOPIC = "telemetry.with_denorm";
+    private static final String FAILED_TOPIC = "telemetry.failed";
+    private static final String MALFORMED_TOPIC = "telemetry.malformed";
+
+    private MessageCollector collectorMock;
+    private TaskContext contextMock;
+    private MetricsRegistry metricsRegistry;
+    private Counter counter;
+    private TaskCoordinator coordinatorMock;
+    private IncomingMessageEnvelope envelopeMock;
+    private Config configMock;
+    private RedisConnect redisConnectMock;
+    private CassandraConnect cassandraConnectMock;
+    private ContentDeNormalizationTask contentDeNormalizationTask;
+    private DeviceDataCache deviceCacheMock;
+    private UserDataCache userCacheMock;
+    private ContentDataCache contentCacheMock;
+
+    @SuppressWarnings("unchecked")
+    @Before
+    public void setUp() {
+        collectorMock = mock(MessageCollector.class);
+        contextMock = mock(TaskContext.class);
+        metricsRegistry = Mockito.mock(MetricsRegistry.class);
+        counter = Mockito.mock(Counter.class);
+        coordinatorMock = mock(TaskCoordinator.class);
+        envelopeMock = mock(IncomingMessageEnvelope.class);
+        configMock = Mockito.mock(Config.class);
+        redisConnectMock = Mockito.mock(RedisConnect.class);
+        deviceCacheMock = Mockito.mock(DeviceDataCache.class);
+        userCacheMock = Mockito.mock(UserDataCache.class);
+        contentCacheMock = Mockito.mock(ContentDataCache.class);
+
+        stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
+        stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
+        stub(configMock.get("output.malformed.topic.name", MALFORMED_TOPIC)).toReturn(MALFORMED_TOPIC);
+
+        stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
+        stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
+
+        contentDeNormalizationTask = new ContentDeNormalizationTask(configMock, contextMock, deviceCacheMock, userCacheMock, contentCacheMock);
+    }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicIfDidIsNullWithUserContentEmptyData() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITHOUT_DID);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+                "0123221617357783046602")).toReturn(null);
+        stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
+        stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(null);
+        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertNull(outputEvent.get("devicedata"));
+                assertNull(outputEvent.get("userdata"));
+                assertNull(outputEvent.get("contentdata"));
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("device_data_retrieved"), null);
+                assertEquals(flags.get("user_data_retrieved"), false);
+                assertEquals(flags.get("content_data_retrieved"), false);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicIfDidIsNullWithUserContentData() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITHOUT_DID);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+                "0123221617357783046602")).toReturn(null);
+        Map user = new HashMap(); user.put("type", "Registered"); user.put("gradeList", "[4, 5]");
+        stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        Map content = new HashMap(); content.put("name", "content-1"); content.put("objectType", "Content"); content.put("contentType", "TextBook");
+        stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(content);
+        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertNull(outputEvent.get("devicedata"));
+                Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
+                assertEquals(userData.size(), 2);
+                Map<String, Object> contentData = new Gson().fromJson(outputEvent.get("contentdata").toString(), mapType);
+                assertEquals(contentData.size(), 3);
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("device_data_retrieved"), null);
+                assertEquals(flags.get("user_data_retrieved"), true);
+                assertEquals(flags.get("content_data_retrieved"), true);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicWithDeviceUserContentData() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
+        Map device = new HashMap(); device.put("os", "Android 6.0"); device.put("make", "Motorola XT1706"); device.put("agent", "Mozilla");
+        device.put("ver", "5.0"); device.put("system", "iPad"); device.put("platform", "AppleWebKit/531.21.10"); device.put("raw", "Mozilla/5.0 (X11 Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)");
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+                "0123221617357783046602")).toReturn(device);
+        Map user = new HashMap(); user.put("type", "Registered"); user.put("gradeList", "[4, 5]");
+        stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        Map content = new HashMap(); content.put("name", "content-1"); content.put("objectType", "Content"); content.put("contentType", "TextBook");
+        stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(content);
+        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertTrue(outputMessage.contains("\"agent\":\"Mozilla\""));
+                assertTrue(outputMessage.contains("\"ver\":\"5.0\""));
+                assertTrue(outputMessage.contains("\"system\":\"iPad\""));
+                assertTrue(outputMessage.contains("\"os\":\"Android 6.0\""));
+                assertTrue(outputMessage.contains("\"make\":\"Motorola XT1706\""));
+                assertTrue(outputMessage.contains("\"platform\":\"AppleWebKit/531.21.10\""));
+                assertTrue(outputMessage.contains("\"raw\":\"Mozilla/5.0 (X11 Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)\""));
+                Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
+                assertEquals(userData.size(), 2);
+                Map<String, Object> contentData = new Gson().fromJson(outputEvent.get("contentdata").toString(), mapType);
+                assertEquals(contentData.size(), 3);
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("device_data_retrieved"), true);
+                assertEquals(flags.get("user_data_retrieved"), true);
+                assertEquals(flags.get("content_data_retrieved"), true);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicIfDidAndContentIdIsNullWithUserData() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITHOUT_OBJECT);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+                "0123221617357783046602")).toReturn(null);
+        Map user = new HashMap(); user.put("type", "Registered"); user.put("gradeList", "[4, 5]");
+        stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(null);
+        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertNull(outputEvent.get("devicedata"));
+                assertNull(outputEvent.get("contentdata"));
+                Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
+                assertEquals(userData.size(), 2);
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("device_data_retrieved"), null);
+                assertEquals(flags.get("user_data_retrieved"), true);
+                assertEquals(flags.get("content_data_retrieved"), null);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicIfDidIsNullAndContentDataIsEmptyWithUserAsSystem() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITH_ACTOR_AS_SYSTEM);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+                "0123221617357783046602")).toReturn(null);
+        Map user = new HashMap(); user.put("type", "Registered"); user.put("gradeList", "[4, 5]");
+        stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(null);
+        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertNull(outputEvent.get("devicedata"));
+                assertNull(outputEvent.get("contentdata"));
+                assertNull(outputEvent.get("userdata"));
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("device_data_retrieved"), null);
+                assertEquals(flags.get("user_data_retrieved"), null);
+                assertEquals(flags.get("content_data_retrieved"), false);
+                return true;
+            }
+        }));
+    }
+}

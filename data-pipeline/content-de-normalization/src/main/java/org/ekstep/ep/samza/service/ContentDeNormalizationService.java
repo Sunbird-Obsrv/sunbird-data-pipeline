@@ -92,13 +92,15 @@ public class ContentDeNormalizationService {
         Map user;
         try {
             String userId = event.actorId();
+            String userType = event.actorType();
             if (userId != null && !userId.isEmpty()) {
-                user = userCache.getDataForUserId(userId);
-                if (user != null && !user.isEmpty()) {
-                    event.addUserData(user);
-                }
-                else {
-                    event.setFlag(ContentDeNormalizationConfig.getUserLocationJobFlag(), false);
+                if(!userType.equalsIgnoreCase("system")) {
+                    user = userCache.getDataForUserId(userId);
+                    if (user != null && !user.isEmpty()) {
+                        event.addUserData(user);
+                    } else {
+                        event.setFlag(ContentDeNormalizationConfig.getUserLocationJobFlag(), false);
+                    }
                 }
             }
             return event;

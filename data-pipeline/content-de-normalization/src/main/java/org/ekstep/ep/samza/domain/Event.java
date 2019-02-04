@@ -83,7 +83,7 @@ public class Event {
         NullableValue<Map<String, Object>> previousData = telemetry.read(path.contentData());
         Map<String, Object> contentData = previousData.isNull() ? new HashMap<>() : previousData.value();
         contentData.putAll(newData);
-        telemetry.add(path.userData(), contentData);
+        telemetry.add(path.contentData(), contentData);
         setFlag(ContentDeNormalizationConfig.getContentLocationJobFlag(), true);
     }
 
