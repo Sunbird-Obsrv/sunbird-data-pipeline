@@ -36,7 +36,7 @@ public class UserLocationCache {
     public Location getLocationByUser(String userId) {
         if (userId == null) return null;
         try(Jedis jedis = redisConnect.getConnection()) {
-            jedis.select(config.getInt("redis.database.userLocationStore.id", 0));
+            jedis.select(config.getInt("redis.database.userLocationStore.id", 1));
             Map<String, String> locationMap = jedis.hgetAll(userId);
             if (locationMap.isEmpty()) {
                 Location location = fetchUserLocation(userId);
@@ -101,7 +101,7 @@ public class UserLocationCache {
 
     private void addToCache(String userId, Location location) {
         try(Jedis jedis = redisConnect.getConnection()) {
-            jedis.select(config.getInt("redis.database.userLocationStore.id", 0));
+            jedis.select(config.getInt("redis.database.userLocationStore.id", 1));
             // Key will be userId
             String key = userId;
             Map<String, String> values = new HashMap<>();

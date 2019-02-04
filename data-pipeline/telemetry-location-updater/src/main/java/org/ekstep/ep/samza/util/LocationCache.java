@@ -32,7 +32,7 @@ public class LocationCache {
 
     public Location getLocationForDeviceId(String did, String channel) {
         try(Jedis jedis = redisConnect.getConnection()) {
-            jedis.select(config.getInt("redis.database.deviceLocationStore.id", 0));
+            jedis.select(config.getInt("redis.database.deviceLocationStore.id", 2));
             // Key will be device_id:channel
             String key = String.format("%s:%s", did, channel);
             Map<String, String> fields = jedis.hgetAll(key);
@@ -74,7 +74,7 @@ public class LocationCache {
 
     public void addLocationToCache(String did, String channel, Location location) {
         try(Jedis jedis = redisConnect.getConnection()) {
-            jedis.select(config.getInt("redis.database.deviceLocationStore.id", 0));
+            jedis.select(config.getInt("redis.database.deviceLocationStore.id", 2));
             // Key will be device_id:channel
             String key = String.format("%s:%s", did, channel);
             Map<String, String> values = new HashMap<>();
