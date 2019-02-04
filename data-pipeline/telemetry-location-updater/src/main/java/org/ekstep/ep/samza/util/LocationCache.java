@@ -75,15 +75,15 @@ public class LocationCache {
             // Key will be device_id:channel
             String key = String.format("%s:%s", did, channel);
             Map<String, String> values = new HashMap<>();
-            values.put("country_code", location.getCountryCode());
-            values.put("country", location.getCountry());
-            values.put("state_code", location.getStateCode());
-            values.put("state", location.getState());
-            values.put("city", location.getCity());
+            values.put("country_code", Location.getValueOrDefault(location.getCountryCode(), ""));
+            values.put("country", Location.getValueOrDefault(location.getCountry(), ""));
+            values.put("state_code", Location.getValueOrDefault(location.getStateCode(), ""));
+            values.put("state", Location.getValueOrDefault(location.getState(), ""));
+            values.put("city", Location.getValueOrDefault(location.getCity(), ""));
             jedis.hmset(key, values);
             jedis.expire(key, locationDbKeyExpiryTimeInSeconds);
         } catch (JedisException ex) {
-            LOGGER.error("", "AddLocationToCache: Unable to get a resource from the redis connection pool ", ex);
+            LOGGER.error("", "AddLocationToCache: Unable to get a resource from the redis connection pool or something wrong ", ex);
         }
     }
 }

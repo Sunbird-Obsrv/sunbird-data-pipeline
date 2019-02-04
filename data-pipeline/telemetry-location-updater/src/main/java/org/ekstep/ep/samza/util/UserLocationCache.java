@@ -105,8 +105,8 @@ public class UserLocationCache {
             // Key will be userId
             String key = userId;
             Map<String, String> values = new HashMap<>();
-            values.put("state", location.getState());
-            values.put("district", location.getDistrict());
+            values.put("state", Location.getValueOrDefault(location.getState(), ""));
+            values.put("district", Location.getValueOrDefault(location.getDistrict(), ""));
             jedis.hmset(key, values);
             jedis.expire(key, locationDbKeyExpiryTimeInSeconds);
         } catch (JedisException ex) {

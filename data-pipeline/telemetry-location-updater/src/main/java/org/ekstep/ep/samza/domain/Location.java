@@ -77,4 +77,8 @@ public class Location {
   public Boolean isStateDistrictResolved(){
     return this.state != null && !this.state.isEmpty() && this.district != null && !this.district.isEmpty();
   }
+
+  public static <T> T getValueOrDefault(T value, T defaultValue) {
+    return value == null ? defaultValue : value;
+  }
 }
