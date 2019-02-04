@@ -29,9 +29,7 @@ public class LocationCache {
     }
 
     public Location getLocationForDeviceId(String did, String channel) {
-        Jedis jedis = null;
-        try {
-            jedis = redisConnect.getConnection();
+        try(Jedis jedis = redisConnect.getConnection()) {
             // Key will be device_id:channel
             String key = String.format("%s:%s", did, channel);
             Map<String, String> fields = jedis.hgetAll(key);
@@ -68,17 +66,12 @@ public class LocationCache {
         } catch (JedisException ex) {
             LOGGER.error("", "GetLocationForDeviceId: Unable to get a resource from the redis connection pool ", ex);
             return null;
-        } finally {
-            if (jedis != null && jedis.isConnected()) {
-                jedis.close();
-            }
         }
     }
 
     public void addLocationToCache(String did, String channel, Location location) {
-        Jedis jedis = null;
-        try {
-            jedis = redisConnect.getConnection();
+        try(Jedis jedis = redisConnect.getConnection()) {
+
             // Key will be device_id:channel
             String key = String.format("%s:%s", did, channel);
             Map<String, String> values = new HashMap<>();
@@ -91,10 +84,6 @@ public class LocationCache {
             jedis.expire(key, locationDbKeyExpiryTimeInSeconds);
         } catch (JedisException ex) {
             LOGGER.error("", "AddLocationToCache: Unable to get a resource from the redis connection pool ", ex);
-        } finally {
-            if (jedis != null && jedis.isConnected()) {
-                jedis.close();
-            }
         }
     }
 }

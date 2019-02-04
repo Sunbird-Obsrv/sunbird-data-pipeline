@@ -34,10 +34,8 @@ public class UserLocationCache {
     }
 
     public Location getLocationByUser(String userId) {
-        Jedis jedis = null;
         if (userId == null) return null;
-        try {
-            jedis = redisConnect.getConnection();
+        try(Jedis jedis = redisConnect.getConnection()) {
             jedis.select(config.getInt("redis.database.locationStore.id", 0));
             Map<String, String> locationMap = jedis.hgetAll(userId);
             if (locationMap.isEmpty()) {
@@ -54,10 +52,6 @@ public class UserLocationCache {
         } catch (JedisException ex) {
             LOGGER.error("", "getLocationByUser: Unable to get a resource from the redis connection pool. userId: " + userId, ex);
             return null;
-        } finally {
-            if (jedis != null && jedis.isConnected()) {
-                jedis.close();
-            }
         }
     }
 
@@ -106,9 +100,7 @@ public class UserLocationCache {
     }
 
     private void addToCache(String userId, Location location) {
-        Jedis jedis = null;
-        try {
-            jedis = redisConnect.getConnection();
+        try(Jedis jedis = redisConnect.getConnection()) {
             jedis.select(config.getInt("redis.database.locationStore.id", 0));
             // Key will be userId
             String key = userId;
@@ -119,10 +111,6 @@ public class UserLocationCache {
             jedis.expire(key, locationDbKeyExpiryTimeInSeconds);
         } catch (JedisException ex) {
             LOGGER.error("", "AddLocationToCache: Unable to get connection from the redis connection pool. userId: " + userId, ex);
-        } finally {
-            if (jedis != null && jedis.isConnected()) {
-                jedis.close();
-            }
         }
     }
 }
