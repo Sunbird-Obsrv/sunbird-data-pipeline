@@ -19,8 +19,10 @@ public class LocationCache {
     private CassandraConnect cassandraConnection;
     private RedisConnect redisConnect;
     private int locationDbKeyExpiryTimeInSeconds;
+    private Config config;
 
     public LocationCache(Config config, RedisConnect redisConnect) {
+        this.config = config;
         this.cassandra_db = config.get("cassandra.keyspace", "device_db");
         this.cassandra_table = config.get("cassandra.device_profile_table", "device_profile");
         this.redisConnect = redisConnect;
@@ -30,6 +32,7 @@ public class LocationCache {
 
     public Location getLocationForDeviceId(String did, String channel) {
         try(Jedis jedis = redisConnect.getConnection()) {
+            jedis.select(config.getInt("redis.database.deviceLocationStore.id", 2));
             // Key will be device_id:channel
             String key = String.format("%s:%s", did, channel);
             Map<String, String> fields = jedis.hgetAll(key);
@@ -71,7 +74,7 @@ public class LocationCache {
 
     public void addLocationToCache(String did, String channel, Location location) {
         try(Jedis jedis = redisConnect.getConnection()) {
-
+            jedis.select(config.getInt("redis.database.deviceLocationStore.id", 2));
             // Key will be device_id:channel
             String key = String.format("%s:%s", did, channel);
             Map<String, String> values = new HashMap<>();
