@@ -47,6 +47,8 @@ public class Path {
 
     public String contentData(){ return "contentdata"; }
 
+    public String dialCodeData(){ return "dialcodedata"; }
+
     public String ver(){
         return "ver";
     }

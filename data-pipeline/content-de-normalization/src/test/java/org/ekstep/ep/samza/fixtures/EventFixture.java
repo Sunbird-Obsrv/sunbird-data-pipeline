@@ -230,6 +230,185 @@ public class EventFixture {
 			"    \"@timestamp\": \"2018-10-18T07:10:05.341Z\"\n" +
 			"}";
 
+	public static final String SEARCH_EVENT_WITHOUT_DIALCODE = "{\n" +
+			"    \"eid\": \"SEARCH\",\n" +
+			"    \"ets\": 1543688467595,\n" +
+			"    \"ver\": \"3.0\",\n" +
+			"    \"mid\": \"LP.1543688467595.c66eb854-82c4-4b73-8902-82209be643ed\",\n" +
+			"    \"actor\": {\n" +
+			"      \"id\": \"org.ekstep.learning.platform\",\n" +
+			"      \"type\": \"System\"\n" +
+			"    },\n" +
+			"    \"context\": {\n" +
+			"      \"channel\": \"in.ekstep\",\n" +
+			"      \"pdata\": {\n" +
+			"        \"id\": \"prod.ntp.learning.platform\",\n" +
+			"        \"pid\": \"search-service\",\n" +
+			"        \"ver\": \"1.0\"\n" +
+			"      },\n" +
+			"      \"env\": \"search\"\n" +
+			"    },\n" +
+			"    \"edata\": {\n" +
+			"      \"size\": 51,\n" +
+			"      \"query\": \"\",\n" +
+			"      \"filters\": {\n" +
+			"        \"contentType\": \"Course\",\n" +
+			"        \"objectType\": [\n" +
+			"          \"Content\",\n" +
+			"          \"ContentImage\"\n" +
+			"        ],\n" +
+			"        \"status\": [\n" +
+			"          \"Live\"\n" +
+			"        ],\n" +
+			"        \"channel\": {\n" +
+			"          \"ne\": [\n" +
+			"            \"0124433024890224640\",\n" +
+			"            \"0124446042259128320\",\n" +
+			"            \"0124487522476933120\",\n" +
+			"            \"0125840271570288640\",\n" +
+			"            \"0124453662635048969\"\n" +
+			"          ]\n" +
+			"        },\n" +
+			"        \"framework\": {},\n" +
+			"        \"mimeType\": {},\n" +
+			"        \"resourceType\": {}\n" +
+			"      },\n" +
+			"      \"sort\": {},\n" +
+			"      \"type\": \"content\",\n" +
+			"      \"topn\": [\n" +
+			"        {\n" +
+			"          \"identifier\": \"do_312461520193110016213245\"\n" +
+			"        }\n" +
+			"      ]\n" +
+			"    },\n" +
+			"    \"flags\": {\n" +
+			"      \"tv_processed\": true,\n" +
+			"      \"dd_processed\": true\n" +
+			"    },\n" +
+			"    \"type\": \"events\",\n" +
+			"    \"syncts\": 1543688467885,\n" +
+			"    \"@timestamp\": \"2018-12-01T18:21:07.885Z\",\n" +
+			"    \"ts\": \"2018-12-01T18:21:07.595+0000\"\n" +
+			"  }";
+
+	public static final String SEARCH_EVENT_WITH_DIALCODE_AS_STRING = "{\n" +
+			"    \"eid\": \"SEARCH\",\n" +
+			"    \"ets\": 1543688463694,\n" +
+			"    \"ver\": \"3.0\",\n" +
+			"    \"mid\": \"LP.1543688463694.670c6cf8-2cd2-45a7-b531-f212ac2847ec\",\n" +
+			"    \"actor\": {\n" +
+			"      \"id\": \"org.ekstep.learning.platform\",\n" +
+			"      \"type\": \"System\"\n" +
+			"    },\n" +
+			"    \"context\": {\n" +
+			"      \"channel\": \"in.ekstep\",\n" +
+			"      \"pdata\": {\n" +
+			"        \"id\": \"prod.ntp.learning.platform\",\n" +
+			"        \"pid\": \"search-service\",\n" +
+			"        \"ver\": \"1.0\"\n" +
+			"      },\n" +
+			"      \"env\": \"search\"\n" +
+			"    },\n" +
+			"    \"edata\": {\n" +
+			"      \"size\": 1,\n" +
+			"      \"query\": \"\",\n" +
+			"      \"filters\": {\n" +
+			"        \"dialcodes\": \"8ZEDTP\",\n" +
+			"        \"channel\": {\n" +
+			"          \"ne\": [\n" +
+			"            \"0124433024890224640\",\n" +
+			"            \"0124446042259128320\",\n" +
+			"            \"0124487522476933120\",\n" +
+			"            \"0125840271570288640\",\n" +
+			"            \"0124453662635048969\"\n" +
+			"          ]\n" +
+			"        },\n" +
+			"        \"framework\": {},\n" +
+			"        \"contentType\": {},\n" +
+			"        \"mimeType\": {},\n" +
+			"        \"resourceType\": {},\n" +
+			"        \"objectType\": [\n" +
+			"          \"Content\",\n" +
+			"          \"ContentImage\"\n" +
+			"        ]\n" +
+			"      },\n" +
+			"      \"sort\": {},\n" +
+			"      \"type\": \"content\",\n" +
+			"      \"topn\": [\n" +
+			"        {\n" +
+			"          \"identifier\": \"do_312531599251210240213439\"\n" +
+			"        }\n" +
+			"      ]\n" +
+			"    },\n" +
+			"    \"flags\": {\n" +
+			"      \"tv_processed\": true,\n" +
+			"      \"dd_processed\": true\n" +
+			"    },\n" +
+			"    \"type\": \"events\",\n" +
+			"    \"syncts\": 1543688463882,\n" +
+			"    \"@timestamp\": \"2018-12-01T18:21:03.882Z\",\n" +
+			"    \"ts\": \"2018-12-01T18:21:03.694+0000\"\n" +
+			"  }";
+
+	public static final String SEARCH_EVENT_WITH_DIALCODE_AS_LIST = "{\n" +
+			"    \"eid\": \"SEARCH\",\n" +
+			"    \"ets\": 1543688463694,\n" +
+			"    \"ver\": \"3.0\",\n" +
+			"    \"mid\": \"LP.1543688463694.670c6cf8-2cd2-45a7-b531-f212ac2847ec\",\n" +
+			"    \"actor\": {\n" +
+			"      \"id\": \"org.ekstep.learning.platform\",\n" +
+			"      \"type\": \"System\"\n" +
+			"    },\n" +
+			"    \"context\": {\n" +
+			"      \"channel\": \"in.ekstep\",\n" +
+			"      \"pdata\": {\n" +
+			"        \"id\": \"prod.ntp.learning.platform\",\n" +
+			"        \"pid\": \"search-service\",\n" +
+			"        \"ver\": \"1.0\"\n" +
+			"      },\n" +
+			"      \"env\": \"search\"\n" +
+			"    },\n" +
+			"    \"edata\": {\n" +
+			"      \"size\": 1,\n" +
+			"      \"query\": \"\",\n" +
+			"      \"filters\": {\n" +
+			"        \"dialcodes\": [\"8ZEDTP\", \"4ZEDTP\"],\n" +
+			"        \"channel\": {\n" +
+			"          \"ne\": [\n" +
+			"            \"0124433024890224640\",\n" +
+			"            \"0124446042259128320\",\n" +
+			"            \"0124487522476933120\",\n" +
+			"            \"0125840271570288640\",\n" +
+			"            \"0124453662635048969\"\n" +
+			"          ]\n" +
+			"        },\n" +
+			"        \"framework\": {},\n" +
+			"        \"contentType\": {},\n" +
+			"        \"mimeType\": {},\n" +
+			"        \"resourceType\": {},\n" +
+			"        \"objectType\": [\n" +
+			"          \"Content\",\n" +
+			"          \"ContentImage\"\n" +
+			"        ]\n" +
+			"      },\n" +
+			"      \"sort\": {},\n" +
+			"      \"type\": \"content\",\n" +
+			"      \"topn\": [\n" +
+			"        {\n" +
+			"          \"identifier\": \"do_312531599251210240213439\"\n" +
+			"        }\n" +
+			"      ]\n" +
+			"    },\n" +
+			"    \"flags\": {\n" +
+			"      \"tv_processed\": true,\n" +
+			"      \"dd_processed\": true\n" +
+			"    },\n" +
+			"    \"type\": \"events\",\n" +
+			"    \"syncts\": 1543688463882,\n" +
+			"    \"@timestamp\": \"2018-12-01T18:21:03.882Z\",\n" +
+			"    \"ts\": \"2018-12-01T18:21:03.694+0000\"\n" +
+			"  }";
+
 	public static final String ANY_STRING = "Hey Samza, Whats Up?";
 	public static final String EMPTY_JSON = "{}";
 

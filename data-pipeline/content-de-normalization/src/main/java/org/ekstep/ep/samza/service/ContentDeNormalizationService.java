@@ -6,10 +6,7 @@ import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.task.ContentDeNormalizationConfig;
 import org.ekstep.ep.samza.task.ContentDeNormalizationSink;
 import org.ekstep.ep.samza.task.ContentDeNormalizationSource;
-import org.ekstep.ep.samza.util.ContentDataCache;
-import org.ekstep.ep.samza.util.DeviceDataCache;
-import org.ekstep.ep.samza.util.RedisConnect;
-import org.ekstep.ep.samza.util.UserDataCache;
+import org.ekstep.ep.samza.util.*;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 import com.datastax.driver.core.Row;
@@ -26,13 +23,15 @@ public class ContentDeNormalizationService {
     private final DeviceDataCache deviceCache;
     private final UserDataCache userCache;
     private final ContentDataCache contentCache;
+    private final DialCodeDataCache dialcodeCache;
     private final RedisConnect redisConnect;
 
-    public ContentDeNormalizationService(ContentDeNormalizationConfig config, DeviceDataCache deviceCache, RedisConnect redisConnect, UserDataCache userCache, ContentDataCache contentCache) {
+    public ContentDeNormalizationService(ContentDeNormalizationConfig config, DeviceDataCache deviceCache, RedisConnect redisConnect, UserDataCache userCache, ContentDataCache contentCache, DialCodeDataCache dialcodeCache) {
         this.config = config;
         this.deviceCache = deviceCache;
         this.userCache = userCache;
         this.contentCache = contentCache;
+        this.dialcodeCache = dialcodeCache;
         this.redisConnect = redisConnect;
     }
 
@@ -46,6 +45,8 @@ public class ContentDeNormalizationService {
             event = updateEventWithUserData(event);
             // add content details to the event
             event = updateEventWithObjectData(event);
+            // add dialcode details to the event
+            event = updateEventWithDialCodeData(event);
             sink.toSuccessTopic(event);
         } catch(JsonSyntaxException e){
             LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
@@ -125,6 +126,30 @@ public class ContentDeNormalizationService {
                 }
                 else {
                     event.setFlag(ContentDeNormalizationConfig.getContentLocationJobFlag(), false);
+                }
+            }
+            return event;
+        } catch(Exception ex) {
+            LOGGER.error(null,
+                    format("EXCEPTION. EVENT: {0}, EXCEPTION:",
+                            event),
+                    ex);
+            return event;
+        }
+    }
+
+    private Event updateEventWithDialCodeData(Event event) {
+
+        List<Map> dailcodeData;
+        try {
+            List<String> dialcodes = event.dialCode();
+            if (dialcodes != null && !dialcodes.isEmpty()) {
+                dailcodeData = dialcodeCache.getDataForDialCodes(dialcodes);
+                if (dailcodeData != null && !dailcodeData.isEmpty()) {
+                    event.addDialCodeData(dailcodeData);
+                }
+                else {
+                    event.setFlag(ContentDeNormalizationConfig.getDialCodeLocationJobFlag(), false);
                 }
             }
             return event;

@@ -9,6 +9,7 @@ public class ContentDeNormalizationConfig {
     private static final String deviceDataJobFlag = "device_data_retrieved";
     private static final String userDataJobFlag = "user_data_retrieved";
     private static final String contentDataJobFlag = "content_data_retrieved";
+    private static final String dialCodeDataJobFlag = "dialcode_data_retrieved";
 
     private String successTopic;
     private String failedTopic;
@@ -57,7 +58,7 @@ public class ContentDeNormalizationConfig {
         return userDataJobFlag;
     }
 
-    public static String getContentLocationJobFlag() {
-        return contentDataJobFlag;
-    }
+    public static String getContentLocationJobFlag() { return contentDataJobFlag; }
+
+    public static String getDialCodeLocationJobFlag() { return dialCodeDataJobFlag; }
 }
