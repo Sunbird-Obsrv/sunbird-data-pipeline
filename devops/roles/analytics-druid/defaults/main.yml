@@ -1,22 +1,26 @@
 ---
 # Druid Template variables
 
+druid_directory: "/data"
+druid_version: "0.13.0-incubating"
+druid_url: "http://mirrors.estointernet.in/apache/incubator/druid/0.13.0-incubating/apache-druid-0.13.0-incubating-bin.tar.gz"
+druid_path: "{{ druid_directory }}/apache-druid-{{ druid_version }}/"
+druid_checksum: "807581d54fa4c5a90eec2a230e2a7fc4c6daf18eb8136009bf36a775d793d6f6"
+
 #Common Varibles
 
-druid_zookeeper_host: "172.17.0.4:2181"
-druid_postgres_host: "172.17.0.3"
+druid_zookeeper_host: "{{ groups['druid-zookeeper']|join(':2181,')}}:2181"
+druid_postgres_host: "{{ groups['druid-postgres'][0] }}"
+druid_postgres_port: 5432
 druid_postgres_user: "druid"
-#druid_postgres_pass: "secrets file"
+druid_postgres_pass: "{{ vault_druid_postgress_pass}}"
 
 druid_default_tmp_dir: "/var/tmp"
 druid_gc_logdir: "/var/gclog"
 druid_log_dir: "/var/log/druid/"
 
-#azure config
+#azure config in group vars
 
-azure_account: "sunbirddevtelemetry"
-#azure_key: "secrets file"
-azure_container: "test-container"
 
 #Druid Extensions
 
@@ -31,15 +35,16 @@ druid_community_extensions:
 # End of druid_extensions
 
 druid_indexing_logs_type: file
-druid_indexing_log_dir: var/druid/indexing-logs
+druid_indexing_log_dir: /var/druid/indexing-logs
 druid_indexing_storage_type : metadata
 druid_indexing_task_basedir : "{{ druid_path }}var/task"
+druid_indexing_queue_startDelay: PT30S
 
 druid_common_monitors: '"com.metamx.metrics.JvmMonitor","org.apache.druid.java.util.metrics.JvmMonitor"'
 druid_common_emitters: '"graphite", "logging"'
 
 #use 2004 if using pickle , which is default else use 2003 for plaintext refer to 'druid.emitter.graphite.protocol'
-druid_graphite_host: "172.17.0.4"
+druid_graphite_host: "{{ groups['graphite'][0] }}"
 druid_graphite_port : 2004
 druid_grpahite_prefix: "druid.test"
 druid_whitelist_filepath: "{{ druid_path }}whitelist"
@@ -52,6 +57,8 @@ druid_coordinator_port: 8081
 druid_coordinator_service : druid/coordinator
 
 druid_coordinator_heap_size: 128m
+druid_coordinator_startDelay: PT30S
+druid_coordinator_period: PT30S
 druid_coordinator_tmp_dir: "{{ druid_default_tmp_dir }}"
 druid_coordinator_gc_logfile: "{{ druid_gc_logdir }}/gc.log"
 
@@ -102,7 +109,7 @@ druid_historical_processing_threads: 2
 
 druid_historical_monitoring_monitors: '"org.apache.druid.server.metrics.HistoricalMetricsMonitor","com.metamx.metrics.JvmMonitor"'
 
-druid_historical_segmentcache_path: "{{ druid_path }}var/segmentstore"
+druid_historical_segmentcache_path: "/var/segmentstore"
 druid_historical_segmentcache_size: 10000000000
 
 druid_historical_server_maxsize: 10000000000
@@ -125,5 +132,5 @@ druid_middlemanager_peon_processing_bufferBytes: 25000000
 druid_middlemanager_peon_processing_threads: 2
 
 
-druid_middlemanager_peon_segmentcache_path: "{{ druid_path }}var/segment_cache"
+druid_middlemanager_peon_segmentcache_path: "/var/segment_cache"
 druid_middlemanager_peon_server_maxsize: 0

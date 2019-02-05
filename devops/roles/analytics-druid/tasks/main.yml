@@ -1,7 +1,4 @@
-# include deploy and configuration for druid role
+# include install and test for druid role
+- include_vars: "{{inventory_dir}}/secrets/{{env}}.yml"
 - include: install.yml
-  tags: install
-- include: deploy.yml
-  tags: deploy
 - include: test.yml
-  tags: test
