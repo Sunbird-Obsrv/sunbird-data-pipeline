@@ -36,12 +36,14 @@ public class ContentDeNormalizationTask implements StreamTask, InitableTask, Win
     private DeviceDataCache deviceCache;
     private UserDataCache userCache;
     private ContentDataCache contentCache;
+    private DialCodeDataCache dialcodeCache;
     private RedisConnect redisConnect;
+    private CassandraConnect cassandraConnect;
     private JobMetrics metrics;
     private ContentDeNormalizationService service;
 
-    public ContentDeNormalizationTask(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache)  {
-        init(config, context, deviceCache, userCache, contentCache);
+    public ContentDeNormalizationTask(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache, CassandraConnect cassandraConnect, DialCodeDataCache dialcodeCache)  {
+        init(config, context, deviceCache, userCache, contentCache, cassandraConnect, dialcodeCache);
     }
 
     public ContentDeNormalizationTask() {
@@ -51,18 +53,23 @@ public class ContentDeNormalizationTask implements StreamTask, InitableTask, Win
     @SuppressWarnings("unchecked")
     @Override
     public void init(Config config, TaskContext context) {
-        init(config, context, deviceCache, userCache, contentCache);
+        init(config, context, deviceCache, userCache, contentCache, cassandraConnect, dialcodeCache);
     }
 
 
-    public void init(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache) {
+    public void init(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache, CassandraConnect cassandraConnect, DialCodeDataCache dialcodeCache) {
         this.config = new ContentDeNormalizationConfig(config);
         metrics = new JobMetrics(context, this.config.jobName());
         this.redisConnect = new RedisConnect(config);
 
+        this.cassandraConnect =
+                cassandraConnect == null ?
+                        new CassandraConnect(config)
+                        : cassandraConnect;
+
         this.deviceCache =
                 deviceCache == null ?
-                        new DeviceDataCache(config, this.redisConnect)
+                        new DeviceDataCache(config, this.redisConnect, this.cassandraConnect)
                         : deviceCache;
 
         this.userCache =
@@ -75,7 +82,12 @@ public class ContentDeNormalizationTask implements StreamTask, InitableTask, Win
                         new ContentDataCache(config, this.redisConnect)
                         : contentCache;
 
-        service = new ContentDeNormalizationService(this.config, this.deviceCache, this.redisConnect, this.userCache, this.contentCache);
+        this.dialcodeCache =
+                dialcodeCache == null ?
+                        new DialCodeDataCache(config, this.redisConnect)
+                        : dialcodeCache;
+
+        service = new ContentDeNormalizationService(this.config, this.deviceCache, this.redisConnect, this.userCache, this.contentCache, this.dialcodeCache);
     }
 
     @Override

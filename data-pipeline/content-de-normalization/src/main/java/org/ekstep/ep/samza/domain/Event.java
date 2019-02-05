@@ -8,7 +8,9 @@ import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.task.ContentDeNormalizationConfig;
 import org.ekstep.ep.samza.util.Path;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Event {
@@ -63,6 +65,20 @@ public class Event {
         return actortype.value();
     }
 
+    public List<String> dialCode() {
+        NullableValue<Object> dialcode = telemetry.read("edata.filters.dialcodes");
+        List ids = new ArrayList();
+        if (dialcode != null) {
+            if (dialcode.value().getClass().equals(String.class)) {
+                ids.add(dialcode.value().toString());
+            }
+            else {
+                ids = ((List) dialcode.value());
+            }
+        }
+        return ids;
+    }
+
     public void addDeviceData(Map newData) {
         NullableValue<Map<String, Object>> previousData = telemetry.read(path.deviceData());
         Map<String, Object> deviceData = previousData.isNull() ? new HashMap<>() : previousData.value();
@@ -85,6 +101,11 @@ public class Event {
         contentData.putAll(newData);
         telemetry.add(path.contentData(), contentData);
         setFlag(ContentDeNormalizationConfig.getContentLocationJobFlag(), true);
+    }
+
+    public void addDialCodeData(List<Map> newData) {
+        telemetry.add(path.dialCodeData(), newData);
+        setFlag(ContentDeNormalizationConfig.getDialCodeLocationJobFlag(), true);
     }
 
     public void setFlag(String key, Object value) {

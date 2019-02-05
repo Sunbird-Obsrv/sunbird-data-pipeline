@@ -51,6 +51,7 @@ public class ContentDeNormalizationTaskTest {
     private DeviceDataCache deviceCacheMock;
     private UserDataCache userCacheMock;
     private ContentDataCache contentCacheMock;
+    private DialCodeDataCache dailcodeCacheMock;
 
     @SuppressWarnings("unchecked")
     @Before
@@ -63,9 +64,11 @@ public class ContentDeNormalizationTaskTest {
         envelopeMock = mock(IncomingMessageEnvelope.class);
         configMock = Mockito.mock(Config.class);
         redisConnectMock = Mockito.mock(RedisConnect.class);
+        cassandraConnectMock = Mockito.mock(CassandraConnect.class);
         deviceCacheMock = Mockito.mock(DeviceDataCache.class);
         userCacheMock = Mockito.mock(UserDataCache.class);
         contentCacheMock = Mockito.mock(ContentDataCache.class);
+        dailcodeCacheMock = Mockito.mock(DialCodeDataCache.class);
 
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
@@ -74,7 +77,7 @@ public class ContentDeNormalizationTaskTest {
         stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
 
-        contentDeNormalizationTask = new ContentDeNormalizationTask(configMock, contextMock, deviceCacheMock, userCacheMock, contentCacheMock);
+        contentDeNormalizationTask = new ContentDeNormalizationTask(configMock, contextMock, deviceCacheMock, userCacheMock, contentCacheMock, cassandraConnectMock, dailcodeCacheMock);
     }
 
     @Test
@@ -109,9 +112,9 @@ public class ContentDeNormalizationTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITHOUT_DID);
         stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
                 "0123221617357783046602")).toReturn(null);
-        Map user = new HashMap(); user.put("type", "Registered"); user.put("gradeList", "[4, 5]");
+        Map user = new HashMap(); user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
         stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
-        Map content = new HashMap(); content.put("name", "content-1"); content.put("objectType", "Content"); content.put("contentType", "TextBook");
+        Map content = new HashMap(); content.put("name", "content-1"); content.put("objecttype", "Content"); content.put("contenttype", "TextBook");
         stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(content);
         contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
@@ -142,9 +145,9 @@ public class ContentDeNormalizationTaskTest {
         device.put("ver", "5.0"); device.put("system", "iPad"); device.put("platform", "AppleWebKit/531.21.10"); device.put("raw", "Mozilla/5.0 (X11 Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)");
         stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
                 "0123221617357783046602")).toReturn(device);
-        Map user = new HashMap(); user.put("type", "Registered"); user.put("gradeList", "[4, 5]");
+        Map user = new HashMap(); user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
         stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
-        Map content = new HashMap(); content.put("name", "content-1"); content.put("objectType", "Content"); content.put("contentType", "TextBook");
+        Map content = new HashMap(); content.put("name", "content-1"); content.put("objecttype", "Content"); content.put("contenttype", "TextBook");
         stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(content);
         contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
@@ -208,7 +211,7 @@ public class ContentDeNormalizationTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITH_ACTOR_AS_SYSTEM);
         stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
                 "0123221617357783046602")).toReturn(null);
-        Map user = new HashMap(); user.put("type", "Registered"); user.put("gradeList", "[4, 5]");
+        Map user = new HashMap(); user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
         stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
         stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(null);
         contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
@@ -226,6 +229,115 @@ public class ContentDeNormalizationTaskTest {
                 assertEquals(flags.get("device_data_retrieved"), null);
                 assertEquals(flags.get("user_data_retrieved"), null);
                 assertEquals(flags.get("content_data_retrieved"), false);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicWithStringDialCodeData() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_DIALCODE_AS_STRING);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+                "0123221617357783046602")).toReturn(null);
+        stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
+        stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(null);
+        List ids = new ArrayList(); ids.add("8ZEDTP");
+        Map dataMap = new HashMap(); dataMap.put("identifier", "8ZEDTP"); dataMap.put("channel", "test-channel");
+        dataMap.put("status", "Draft");
+        List<Map> data = new ArrayList<>(); data.add(dataMap);
+        stub(dailcodeCacheMock.getDataForDialCodes(ids)).toReturn(data);
+        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertNull(outputEvent.get("devicedata"));
+                assertNull(outputEvent.get("contentdata"));
+                assertNull(outputEvent.get("userdata"));
+                List<Map<String, Object>> dialcodesList = new Gson().fromJson(outputEvent.get("dialcodedata").toString(), List.class);
+                assertEquals(dialcodesList.size(), 1);
+                Map data = dialcodesList.get(0);
+                assertEquals(data.size(), 3);
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("device_data_retrieved"), null);
+                assertEquals(flags.get("user_data_retrieved"), null);
+                assertEquals(flags.get("content_data_retrieved"), null);
+                assertEquals(flags.get("dialcode_data_retrieved"), true);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicWithListDialCodeData() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_DIALCODE_AS_LIST);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+                "0123221617357783046602")).toReturn(null);
+        stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
+        stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(null);
+        List ids = new ArrayList(); ids.add("8ZEDTP"); ids.add("4ZEDTP");
+        Map dataMap1 = new HashMap(); dataMap1.put("identifier", "8ZEDTP"); dataMap1.put("channel", "test-channel");
+        dataMap1.put("status", "Draft");
+        Map dataMap2 = new HashMap(); dataMap2.put("identifier", "4ZEDTP"); dataMap2.put("channel", "test-channel");
+        dataMap2.put("status", "Draft");
+        List<Map> data = new ArrayList<>(); data.add(dataMap1); data.add(dataMap2);
+        stub(dailcodeCacheMock.getDataForDialCodes(ids)).toReturn(data);
+        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertNull(outputEvent.get("devicedata"));
+                assertNull(outputEvent.get("contentdata"));
+                assertNull(outputEvent.get("userdata"));
+                List<Map<String, Object>> dialcodesList = new Gson().fromJson(outputEvent.get("dialcodedata").toString(), List.class);
+                assertEquals(dialcodesList.size(), 2);
+                Map data1 = dialcodesList.get(0);
+                assertEquals(data1.size(), 3);
+                Map data2 = dialcodesList.get(1);
+                assertEquals(data2.size(), 3);
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("device_data_retrieved"), null);
+                assertEquals(flags.get("user_data_retrieved"), null);
+                assertEquals(flags.get("content_data_retrieved"), null);
+                assertEquals(flags.get("dialcode_data_retrieved"), true);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicWithOutDialCodeData() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITHOUT_DIALCODE);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+                "0123221617357783046602")).toReturn(null);
+        stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
+        stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(null);
+//        List ids = new ArrayList(); ids.add("8ZEDTP"); ids.add("4ZEDTP");
+//        stub(dailcodeCacheMock.getDataForDialCodes(ids)).toReturn(null);
+        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertNull(outputEvent.get("devicedata"));
+                assertNull(outputEvent.get("contentdata"));
+                assertNull(outputEvent.get("userdata"));
+                assertNull(outputEvent.get("dialcodedata"));
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("device_data_retrieved"), null);
+                assertEquals(flags.get("user_data_retrieved"), null);
+                assertEquals(flags.get("content_data_retrieved"), null);
+                assertEquals(flags.get("dialcode_data_retrieved"), null);
                 return true;
             }
         }));
