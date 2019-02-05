@@ -1,49 +1,47 @@
 ---
 # file: install.yml
-- include_vars: all_pass.yml
+
 - name: Create druid deploy directory
   file: path={{ druid_directory }} state=directory mode=0777
         owner={{ ansible_user }}
-  become: yes
 
-- name: Create druid deploy directory
+- name: Create druid tmp dir for all nodes
   file: path={{ druid_default_tmp_dir }} state=directory mode=0777
         owner={{ ansible_user }}
-  become: yes
 
 - name: Create druid logging directory for all nodes
   file: path={{ druid_log_dir }} state=directory mode=0777
         owner={{ ansible_user }}
-  become: yes
+
+- name: Create gc dir for all nodes
+  file: path={{ druid_gc_logdir }} state=directory mode=0755
+        owner={{ ansible_user }}
 
 - name: Create tmp dir only for historical nodes
   file: path={{ druid_historical_tmp_dir }} state=directory mode=0755
         owner={{ ansible_user }}
-  become: yes
   when: druid_role == "historical"
 
-- name: Create gc dir for nodes
-  file: path={{ druid_gc_logdir }} state=directory mode=0755
-        owner={{ ansible_user }}
-  become: yes
-
-- name: Create tmp dir only for historical nodes
+- name: Create segment cache dir only for historical nodes
   file: path={{ druid_historical_segmentcache_path }} state=directory mode=0755
         owner={{ ansible_user }}
-  become: yes
   when: druid_role == "historical"
 
-- name: Create tmp dir only for middlemanager nodes
+- name: Create  indexing task dir  only for middlemanager nodes
   file: path={{ druid_indexing_task_basedir }} state=directory mode=0755
         owner={{ ansible_user }}
-  become: yes
   when: druid_role == "middlemanager"
 
-- name: Create tmp dir only for middlemanager nodes
+- name: Create peon segement cache dir only for middlemanager nodes
   file: path={{ druid_middlemanager_peon_segmentcache_path }} state=directory mode=0755
         owner={{ ansible_user }}
-  become: yes
   when: druid_role == "middlemanager"
+
+- name: Create indexing log dir only for middlemanager nodes
+  file: path={{ druid_indexing_log_dir }} state=directory mode=0755
+        owner={{ ansible_user }}
+  when: druid_role == "middlemanager"
+
 
 - name: Download Druid version {{ druid_version }}
   get_url: url={{ druid_url }}
@@ -52,12 +50,10 @@
            force=no
 
 - name: Un-tar druid download
-  unarchive: src={{ druid_path }}-bin.tar.gz dest={{ druid_directory }} copy=no
-  become: yes
+  unarchive: src={{ druid_path }}-bin.tar.gz dest={{ druid_directory }}copy=no
 
 - name: Change ownership of download path
   file: path={{ druid_directory }} owner={{ ansible_user }} recurse=yes mode=0777
-  become: yes
 
 - name: Execute command for extensions
   shell: /usr/bin/java -classpath "lib/*" -Ddruid.extensions.directory="{{ druid_path }}extensions" org.apache.druid.cli.Main tools pull-deps --no-default-hadoop -c "org.apache.druid.extensions.contrib:{{ item }}:{{ druid_version }}"
@@ -70,22 +66,18 @@
 - name: Copy common.properties for Druid node {{ druid_role }}
   template: src=_common/common.runtime.properties dest={{ druid_path }}conf/druid/_common/
         owner={{ ansible_user }} mode=0755
-  become: yes
 
 - name: Copy common.properties for Druid node {{ druid_role }}
   template: src=_common/log4j2.xml dest={{ druid_path }}conf/druid/_common/
         owner={{ ansible_user }} mode=0755
-  become: yes
 
 - name: Copy over specific configuration for Druid node {{ druid_role }}
   template: src={{ druid_role }}/runtime.properties dest={{ druid_path }}conf/druid/{{ service }}
         owner={{ ansible_user }} mode=0755
-  become: yes
 
 - name: Copy over jvm configuration for Druid node {{ druid_role }}
   template: src={{ druid_role }}/jvm.config dest={{ druid_path }}conf/druid/{{ service }}
         owner={{ ansible_user }} mode=0755
-  become: yes
 
 - name: Copy the graphite whitelist file
   copy:
@@ -94,3 +86,12 @@
     owner: "{{ ansible_user }}"
     mode: 755
 
+- name: Copy over systemd service file for druid role {{ druid_role }}
+  template: src=druid.service dest=/lib/systemd/system/druid_{{ druid_role }}.service
+
+- name: Start druid {{ druid_role }} service
+  systemd:
+    name: druid_{{ druid_role }}
+    state: started
+    daemon_reload: yes
+    enabled: yes

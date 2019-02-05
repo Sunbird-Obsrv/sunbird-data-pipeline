@@ -4,6 +4,7 @@
 -
   name: Install role druid
   hosts: druid
+  become: yes
   roles:
     - {role: analytics_druid,when: "'coordinator' in group_names",druid_role: 'coordinator', service: 'coordinator' }
     - {role: analytics_druid,when: "'overlord' in group_names",druid_role: 'overlord', service: 'overlord'}
