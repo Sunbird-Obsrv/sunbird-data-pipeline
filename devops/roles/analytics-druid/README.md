@@ -1,22 +1,38 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+Druid role to install and manage druid services
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+The following pre-requisites should be installed for this role
+
+java
+zookeeper - for management of current cluster state
+postgres - for meta storage
 
 Role Variables
 --------------
+defaults/main.yml
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Deploy directory for the druid package is mentioned in druid_path
+
+Common Variables: Contains the variables that are common to all druid services like zookeeper host, postgres host , log directories
+
+azure variables (used for deep storage) will be taken from groupvars if not specified in groups vars , the role will fail
+
+druid extenstions load list  can added to druid_extensions_list variable with comma seperated 
+
+druid third party extensions can be added to druid_community_extensions variable as array 
+
+Specific to each service(coordinator, overlord etc) variables has seperated 
+
 
 Dependencies
 ------------
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+zookeeper-upgrade
+postgres-provision
 
 Example Playbook
 ----------------
@@ -25,14 +41,5 @@ Including an example of how to use your role (for instance, with variables passe
 
     - hosts: servers
       roles:
-         - { role: username.rolename, x: 42 }
-
-License
--------
-
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+        - {role: druid_analytics,when: "'coordinator' in group_names",druid_role: 'coordinator', service: 'coordinator' }
+        - {role: druid_analytics,when: "'overlord' in group_names",druid_role: 'overlord', service: 'overlord'}
