@@ -3,7 +3,6 @@ package org.ekstep.ep.samza.task;
 import com.google.gson.Gson;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.ekstep.ep.samza.core.Logger;
-
 import java.util.Map;
 
 public class RedisUpdaterSource {
