@@ -26,13 +26,13 @@ import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
-import org.ekstep.ep.samza.service.ContentDeNormalizationService;
+import org.ekstep.ep.samza.service.DeNormalizationService;
 import org.ekstep.ep.samza.util.*;
 
-public class ContentDeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
+public class DeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
 
-    static Logger LOGGER = new Logger(ContentDeNormalizationTask.class);
-    private ContentDeNormalizationConfig config;
+    static Logger LOGGER = new Logger(DeNormalizationTask.class);
+    private DeNormalizationConfig config;
     private DeviceDataCache deviceCache;
     private UserDataCache userCache;
     private ContentDataCache contentCache;
@@ -40,13 +40,13 @@ public class ContentDeNormalizationTask implements StreamTask, InitableTask, Win
     private RedisConnect redisConnect;
     private CassandraConnect cassandraConnect;
     private JobMetrics metrics;
-    private ContentDeNormalizationService service;
+    private DeNormalizationService service;
 
-    public ContentDeNormalizationTask(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache, CassandraConnect cassandraConnect, DialCodeDataCache dialcodeCache)  {
+    public DeNormalizationTask(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache, CassandraConnect cassandraConnect, DialCodeDataCache dialcodeCache)  {
         init(config, context, deviceCache, userCache, contentCache, cassandraConnect, dialcodeCache);
     }
 
-    public ContentDeNormalizationTask() {
+    public DeNormalizationTask() {
 
     }
 
@@ -58,7 +58,7 @@ public class ContentDeNormalizationTask implements StreamTask, InitableTask, Win
 
 
     public void init(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache, CassandraConnect cassandraConnect, DialCodeDataCache dialcodeCache) {
-        this.config = new ContentDeNormalizationConfig(config);
+        this.config = new DeNormalizationConfig(config);
         metrics = new JobMetrics(context, this.config.jobName());
         this.redisConnect = new RedisConnect(config);
 
@@ -87,14 +87,14 @@ public class ContentDeNormalizationTask implements StreamTask, InitableTask, Win
                         new DialCodeDataCache(config, this.redisConnect)
                         : dialcodeCache;
 
-        service = new ContentDeNormalizationService(this.config, this.deviceCache, this.redisConnect, this.userCache, this.contentCache, this.dialcodeCache);
+        service = new DeNormalizationService(this.config, this.deviceCache, this.redisConnect, this.userCache, this.contentCache, this.dialcodeCache);
     }
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator taskCoordinator) {
         try {
-            ContentDeNormalizationSource source = new ContentDeNormalizationSource(envelope);
-            ContentDeNormalizationSink sink = new ContentDeNormalizationSink(collector, metrics, config);
+            DeNormalizationSource source = new DeNormalizationSource(envelope);
+            DeNormalizationSink sink = new DeNormalizationSink(collector, metrics, config);
 
             service.process(source, sink);
         } catch (Exception ex) {

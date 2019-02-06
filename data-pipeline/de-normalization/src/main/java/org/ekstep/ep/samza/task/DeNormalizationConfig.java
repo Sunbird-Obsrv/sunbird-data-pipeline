@@ -3,7 +3,7 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 
-public class ContentDeNormalizationConfig {
+public class DeNormalizationConfig {
 
     private final String JOB_NAME = "DeDuplication";
     private static final String deviceDataJobFlag = "device_data_retrieved";
@@ -18,7 +18,7 @@ public class ContentDeNormalizationConfig {
     private final String metricsTopic;
 
 
-    public ContentDeNormalizationConfig(Config config) {
+    public DeNormalizationConfig(Config config) {
         successTopic = config.get("output.success.topic.name", "telemetry.with_denorm");
         failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
