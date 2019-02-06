@@ -5,12 +5,12 @@ import org.ekstep.ep.samza.core.BaseSink;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.domain.Event;
 
-public class ContentDeNormalizationSink extends BaseSink {
+public class DeNormalizationSink extends BaseSink {
 
 	private JobMetrics metrics;
-	private ContentDeNormalizationConfig config;
+	private DeNormalizationConfig config;
 
-	public ContentDeNormalizationSink(MessageCollector collector, JobMetrics metrics, ContentDeNormalizationConfig config) {
+	public DeNormalizationSink(MessageCollector collector, JobMetrics metrics, DeNormalizationConfig config) {
 		super(collector);
 		this.metrics = metrics;
 		this.config = config;

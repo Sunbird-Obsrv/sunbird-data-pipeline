@@ -85,7 +85,7 @@
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>content-de-normalization</artifactId>
+            <artifactId>de-normalization</artifactId>
             <version>0.0.1</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>

@@ -3,30 +3,27 @@ package org.ekstep.ep.samza.service;
 import com.google.gson.JsonSyntaxException;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.task.ContentDeNormalizationConfig;
-import org.ekstep.ep.samza.task.ContentDeNormalizationSink;
-import org.ekstep.ep.samza.task.ContentDeNormalizationSource;
+import org.ekstep.ep.samza.task.DeNormalizationConfig;
+import org.ekstep.ep.samza.task.DeNormalizationSink;
+import org.ekstep.ep.samza.task.DeNormalizationSource;
 import org.ekstep.ep.samza.util.*;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.exceptions.JedisException;
-import com.datastax.driver.core.Row;
 
 import java.util.List;
 import java.util.Map;
 
 import static java.text.MessageFormat.format;
 
-public class ContentDeNormalizationService {
+public class DeNormalizationService {
 
-    static Logger LOGGER = new Logger(ContentDeNormalizationService.class);
-    private final ContentDeNormalizationConfig config;
+    static Logger LOGGER = new Logger(DeNormalizationService.class);
+    private final DeNormalizationConfig config;
     private final DeviceDataCache deviceCache;
     private final UserDataCache userCache;
     private final ContentDataCache contentCache;
     private final DialCodeDataCache dialcodeCache;
     private final RedisConnect redisConnect;
 
-    public ContentDeNormalizationService(ContentDeNormalizationConfig config, DeviceDataCache deviceCache, RedisConnect redisConnect, UserDataCache userCache, ContentDataCache contentCache, DialCodeDataCache dialcodeCache) {
+    public DeNormalizationService(DeNormalizationConfig config, DeviceDataCache deviceCache, RedisConnect redisConnect, UserDataCache userCache, ContentDataCache contentCache, DialCodeDataCache dialcodeCache) {
         this.config = config;
         this.deviceCache = deviceCache;
         this.userCache = userCache;
@@ -35,7 +32,7 @@ public class ContentDeNormalizationService {
         this.redisConnect = redisConnect;
     }
 
-    public void process(ContentDeNormalizationSource source, ContentDeNormalizationSink sink) {
+    public void process(DeNormalizationSource source, DeNormalizationSink sink) {
         Event event = null;
         try {
             event = source.getEvent();
@@ -75,7 +72,7 @@ public class ContentDeNormalizationService {
                     event.addDeviceData(device);
                 }
                 else {
-                    event.setFlag(ContentDeNormalizationConfig.getDeviceLocationJobFlag(), false);
+                    event.setFlag(DeNormalizationConfig.getDeviceLocationJobFlag(), false);
                 }
             }
             return event;
@@ -100,7 +97,7 @@ public class ContentDeNormalizationService {
                     if (user != null && !user.isEmpty()) {
                         event.addUserData(user);
                     } else {
-                        event.setFlag(ContentDeNormalizationConfig.getUserLocationJobFlag(), false);
+                        event.setFlag(DeNormalizationConfig.getUserLocationJobFlag(), false);
                     }
                 }
             }
@@ -125,7 +122,7 @@ public class ContentDeNormalizationService {
                     event.addContentData(content);
                 }
                 else {
-                    event.setFlag(ContentDeNormalizationConfig.getContentLocationJobFlag(), false);
+                    event.setFlag(DeNormalizationConfig.getContentLocationJobFlag(), false);
                 }
             }
             return event;
@@ -149,7 +146,7 @@ public class ContentDeNormalizationService {
                     event.addDialCodeData(dailcodeData);
                 }
                 else {
-                    event.setFlag(ContentDeNormalizationConfig.getDialCodeLocationJobFlag(), false);
+                    event.setFlag(DeNormalizationConfig.getDialCodeLocationJobFlag(), false);
                 }
             }
             return event;

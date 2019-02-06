@@ -2,10 +2,9 @@ package org.ekstep.ep.samza.domain;
 
 
 import com.google.gson.Gson;
-import org.apache.commons.lang.StringUtils;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
-import org.ekstep.ep.samza.task.ContentDeNormalizationConfig;
+import org.ekstep.ep.samza.task.DeNormalizationConfig;
 import org.ekstep.ep.samza.util.Path;
 
 import java.util.ArrayList;
@@ -68,7 +67,7 @@ public class Event {
     public List<String> dialCode() {
         NullableValue<Object> dialcode = telemetry.read("edata.filters.dialcodes");
         List ids = new ArrayList();
-        if (dialcode != null) {
+        if (dialcode != null && dialcode.value() != null) {
             if (dialcode.value().getClass().equals(String.class)) {
                 ids.add(dialcode.value().toString());
             }
@@ -84,7 +83,7 @@ public class Event {
         Map<String, Object> deviceData = previousData.isNull() ? new HashMap<>() : previousData.value();
         deviceData.putAll(newData);
         telemetry.add(path.deviceData(), deviceData);
-        setFlag(ContentDeNormalizationConfig.getDeviceLocationJobFlag(), true);
+        setFlag(DeNormalizationConfig.getDeviceLocationJobFlag(), true);
     }
 
     public void addUserData(Map newData) {
@@ -92,7 +91,7 @@ public class Event {
         Map<String, Object> userdata = previousData.isNull() ? new HashMap<>() : previousData.value();
         userdata.putAll(newData);
         telemetry.add(path.userData(), userdata);
-        setFlag(ContentDeNormalizationConfig.getUserLocationJobFlag(), true);
+        setFlag(DeNormalizationConfig.getUserLocationJobFlag(), true);
     }
 
     public void addContentData(Map newData) {
@@ -100,12 +99,12 @@ public class Event {
         Map<String, Object> contentData = previousData.isNull() ? new HashMap<>() : previousData.value();
         contentData.putAll(newData);
         telemetry.add(path.contentData(), contentData);
-        setFlag(ContentDeNormalizationConfig.getContentLocationJobFlag(), true);
+        setFlag(DeNormalizationConfig.getContentLocationJobFlag(), true);
     }
 
     public void addDialCodeData(List<Map> newData) {
         telemetry.add(path.dialCodeData(), newData);
-        setFlag(ContentDeNormalizationConfig.getDialCodeLocationJobFlag(), true);
+        setFlag(DeNormalizationConfig.getDialCodeLocationJobFlag(), true);
     }
 
     public void setFlag(String key, Object value) {
@@ -133,7 +132,7 @@ public class Event {
         telemetry.add("flags.denorm_processed", true);
     }
 
-    public void markFailure(String error, ContentDeNormalizationConfig config) {
+    public void markFailure(String error, DeNormalizationConfig config) {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.denorm_processed", false);
 

@@ -32,7 +32,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.stub;
 import static org.mockito.Mockito.verify;
 
-public class ContentDeNormalizationTaskTest {
+public class DeNormalizationTaskTest {
 
     private static final String SUCCESS_TOPIC = "telemetry.with_denorm";
     private static final String FAILED_TOPIC = "telemetry.failed";
@@ -47,7 +47,7 @@ public class ContentDeNormalizationTaskTest {
     private Config configMock;
     private RedisConnect redisConnectMock;
     private CassandraConnect cassandraConnectMock;
-    private ContentDeNormalizationTask contentDeNormalizationTask;
+    private DeNormalizationTask deNormalizationTask;
     private DeviceDataCache deviceCacheMock;
     private UserDataCache userCacheMock;
     private ContentDataCache contentCacheMock;
@@ -77,7 +77,7 @@ public class ContentDeNormalizationTaskTest {
         stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
 
-        contentDeNormalizationTask = new ContentDeNormalizationTask(configMock, contextMock, deviceCacheMock, userCacheMock, contentCacheMock, cassandraConnectMock, dailcodeCacheMock);
+        deNormalizationTask = new DeNormalizationTask(configMock, contextMock, deviceCacheMock, userCacheMock, contentCacheMock, cassandraConnectMock, dailcodeCacheMock);
     }
 
     @Test
@@ -87,7 +87,7 @@ public class ContentDeNormalizationTaskTest {
                 "0123221617357783046602")).toReturn(null);
         stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
         stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(null);
-        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
@@ -116,7 +116,7 @@ public class ContentDeNormalizationTaskTest {
         stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
         Map content = new HashMap(); content.put("name", "content-1"); content.put("objecttype", "Content"); content.put("contenttype", "TextBook");
         stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(content);
-        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
@@ -149,7 +149,7 @@ public class ContentDeNormalizationTaskTest {
         stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
         Map content = new HashMap(); content.put("name", "content-1"); content.put("objecttype", "Content"); content.put("contenttype", "TextBook");
         stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(content);
-        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
@@ -185,7 +185,7 @@ public class ContentDeNormalizationTaskTest {
         Map user = new HashMap(); user.put("type", "Registered"); user.put("gradeList", "[4, 5]");
         stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
         stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(null);
-        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
@@ -214,7 +214,7 @@ public class ContentDeNormalizationTaskTest {
         Map user = new HashMap(); user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
         stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
         stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(null);
-        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
@@ -246,7 +246,7 @@ public class ContentDeNormalizationTaskTest {
         dataMap.put("status", "Draft");
         List<Map> data = new ArrayList<>(); data.add(dataMap);
         stub(dailcodeCacheMock.getDataForDialCodes(ids)).toReturn(data);
-        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
@@ -285,7 +285,7 @@ public class ContentDeNormalizationTaskTest {
         dataMap2.put("status", "Draft");
         List<Map> data = new ArrayList<>(); data.add(dataMap1); data.add(dataMap2);
         stub(dailcodeCacheMock.getDataForDialCodes(ids)).toReturn(data);
-        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
@@ -321,7 +321,7 @@ public class ContentDeNormalizationTaskTest {
         stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(null);
 //        List ids = new ArrayList(); ids.add("8ZEDTP"); ids.add("4ZEDTP");
 //        stub(dailcodeCacheMock.getDataForDialCodes(ids)).toReturn(null);
-        contentDeNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override

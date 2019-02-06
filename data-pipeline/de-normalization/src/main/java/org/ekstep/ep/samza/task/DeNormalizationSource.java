@@ -7,12 +7,12 @@ import org.ekstep.ep.samza.domain.Event;
 
 import java.util.Map;
 
-public class ContentDeNormalizationSource {
-	static Logger LOGGER = new Logger(ContentDeNormalizationSource.class);
+public class DeNormalizationSource {
+	static Logger LOGGER = new Logger(DeNormalizationSource.class);
 
 	private IncomingMessageEnvelope envelope;
 
-	public ContentDeNormalizationSource(IncomingMessageEnvelope envelope) {
+	public DeNormalizationSource(IncomingMessageEnvelope envelope) {
 		this.envelope = envelope;
 	}
 
