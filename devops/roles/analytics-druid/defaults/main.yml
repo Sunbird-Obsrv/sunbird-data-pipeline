@@ -1,6 +1,7 @@
 ---
 # Druid Template variables
 
+druid_user: druid
 druid_directory: "/data"
 druid_version: "0.13.0-incubating"
 druid_url: "http://mirrors.estointernet.in/apache/incubator/druid/0.13.0-incubating/apache-druid-0.13.0-incubating-bin.tar.gz"
