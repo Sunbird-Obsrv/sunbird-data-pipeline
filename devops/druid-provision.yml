@@ -1,6 +1,6 @@
 -
   name: Install zookeeper cluster for druid
-  hosts: druid-zookeeper cluster
+  hosts: druid-zookeeper
   become: yes
   roles:
     - {role: zookeeper-upgrade }
@@ -17,8 +17,8 @@
   hosts: druid
   become: yes
   roles:
-    - {role: analytics_druid,when: "'coordinator' in group_names",druid_role: 'coordinator', service: 'coordinator' }
-    - {role: analytics_druid,when: "'overlord' in group_names",druid_role: 'overlord', service: 'overlord'}
-    - {role: analytics_druid,when: "'broker' in group_names",druid_role: 'broker', service: 'broker'}
-    - {role: analytics_druid,when: "'historical' in group_names",druid_role: 'historical', service: 'historical'}
-    - {role: analytics_druid,when: "'middlemanager' in group_names",druid_role: 'middlemanager',service: 'middleManager' }
+    - {role: analytics-druid,when: "'coordinator' in group_names",druid_role: 'coordinator', service: 'coordinator' }
+    - {role: analytics-druid,when: "'overlord' in group_names",druid_role: 'overlord', service: 'overlord'}
+    - {role: analytics-druid,when: "'broker' in group_names",druid_role: 'broker', service: 'broker'}
+    - {role: analytics-druid,when: "'historical' in group_names",druid_role: 'historical', service: 'historical'}
+    - {role: analytics-druid,when: "'middlemanager' in group_names",druid_role: 'middlemanager',service: 'middleManager' }
