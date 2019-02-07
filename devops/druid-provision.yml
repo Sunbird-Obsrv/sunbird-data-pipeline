@@ -1,9 +1,16 @@
 -
-  name: Install postgres
+  name: Install zookeeper cluster for druid
+  hosts: druid-zookeeper cluster
+  become: yes
+  roles:
+    - {role: zookeeper-upgrade }
+
+-
+  name: Install postgres on druid cluster
   hosts: druid-postgres
   become: yes
   roles:
-    - {role: postgres-db }
+    - {role: postgres-provision }
 
 -
   name: Install role druid
