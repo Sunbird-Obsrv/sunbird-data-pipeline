@@ -54,7 +54,7 @@
            force=no
 
 - name: Un-tar druid download
-  unarchive: src={{ druid_path }}-bin.tar.gz dest={{ druid_directory }}copy=no
+  unarchive: src={{ druid_folder }}-bin.tar.gz dest={{ druid_directory }} copy=no
 
 - name: Change ownership of download path
   file: path={{ druid_directory }} owner={{ druid_user }} recurse=yes mode=0777
