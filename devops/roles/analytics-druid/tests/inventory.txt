@@ -19,7 +19,7 @@ localhost
 [broker]
 localhost
 
-[middleManager]
+[middlemanager]
 localhost
 
 
