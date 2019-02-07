@@ -23,7 +23,7 @@ localhost
 localhost
 
 
-[druid]
+[druid:children]
 coordinator
 overlord
 broker
