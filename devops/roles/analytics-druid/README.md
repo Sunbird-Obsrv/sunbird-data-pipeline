@@ -9,7 +9,9 @@ Requirements
 The following pre-requisites should be installed for this role
 
 java
+
 zookeeper - for management of current cluster state
+
 postgres - for meta storage
 
 Role Variables
@@ -26,12 +28,13 @@ druid extenstions load list  can added to druid_extensions_list variable with co
 
 druid third party extensions can be added to druid_community_extensions variable as array 
 
-Specific to each service(coordinator, overlord etc) variables has seperated 
-
+Specific to each service(coordinator, overlord etc) variables has  beeen seperated and declared 
 
 Dependencies
 ------------
+
 zookeeper-upgrade
+
 postgres-provision
 
 Example Playbook
@@ -41,5 +44,5 @@ Including an example of how to use your role (for instance, with variables passe
 
     - hosts: servers
       roles:
-        - {role: druid_analytics,when: "'coordinator' in group_names",druid_role: 'coordinator', service: 'coordinator' }
-        - {role: druid_analytics,when: "'overlord' in group_names",druid_role: 'overlord', service: 'overlord'}
+        - {role: analytics-druid,when: "'coordinator' in group_names",druid_role: 'coordinator', service: 'coordinator' }
+        - {role: analytics-druid,when: "'overlord' in group_names",druid_role: 'overlord', service: 'overlord'}
