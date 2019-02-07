@@ -28,5 +28,5 @@ coordinator
 overlord
 broker
 historical
-middleManager
+middlemanager
 
