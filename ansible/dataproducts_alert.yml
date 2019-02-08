@@ -1,0 +1,9 @@
+---
+- hosts: influxdb
+  vars_files:
+    - ['{{inventory_dir}}/secrets/{{env}}.yml']
+  tasks:
+     - command: ./dataproducts_monitor.sh {{ env }} {{ SGUSER }} "{{ SGPASS }}" {{ influxdb }}
+       args:
+        chdir: /usr/local/bin
+       become: yes

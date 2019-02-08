@@ -1,0 +1,50 @@
+#!/bin/bash
+
+### Variables
+declare -a array
+IP=$1
+ENV=$2
+fail=failed
+succ=success
+threshold_value={{ throughput_threshold_value }}
+duration={{ influxdb_query_duration }}
+SGPASS=$3
+SGUSER=$4
+env=$5
+condition="=="
+fail_condition="-gt"
+noevent_matchpattern="null"
+succ_matchpattern="0"
+noevent_text="there is no events flowing"
+success_text="success events count is 0"
+failed_text="failed count exceeded the threshold value i.e $threshold_value"
+
+### Main script
+array=( TelemetryExtractor EsIndexer DeDuplication TelemetryValidator TelemetryLocationUpdater )
+
+### To get the success count and send the alert:
+
+query(){
+for i in "${array[@]}"
+ do
+    count=`curl -s 'http://'$IP':8086/query?' --data-urlencode "db=monitoring_events" --data-urlencode "q=SELECT sum("$1") FROM "pipeline_metrics" WHERE "env" =~ /$ENV/  AND "job_name" = '$i' AND time > now() - "$duration"m;" | jq '.results[0].series[0].values[0][1]'`
+    echo  $count
+ if [ "$count" "$2" "$3" ]; then
+    text=`echo "For $i $4 since last $duration minutes and the event count is $count"`
+    ./throughput_slack.sh critical "$text"
+    curl -d "{{ samza_alert_to_address }}&fromname='Samza-throughput-alerts'&fromname='Samza-throughput-alerts'&fromname='Samza-throughput-alerts'&fromname='Samza-throughput-alerts'&subject='[$env] [firing-1] - Throughput alerts for "$i"'&text=${text}&from={{ samza_alert_from_address }}&api_user=${SGUSER}&api_key=${SGPASS}" https://api.sendgrid.com/api/mail.send.json
+ fi
+done
+}
+
+### To check whether the events are flowing or not:
+
+query $succ $condition $noevent_matchpattern "$noevent_text"
+
+### To get the success count and send the alert if the count is equal to 0:
+
+query $succ $condition $succ_matchpattern "$success_text"
+
+### To get the failed count and send the alert if the count is gretaer than threshold_value:
+
+query $fail $fail_condition $threshold_value "$failed_text"

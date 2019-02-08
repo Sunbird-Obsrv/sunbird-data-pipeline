@@ -1,0 +1,7 @@
+- hosts: telemetry-search-cluster-kibana-node
+  become: yes
+  remote_user: ecosystem
+  roles:
+    - kibana-oauth-proxy
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"

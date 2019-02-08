@@ -1,0 +1,8 @@
+---
+- hosts: analytics-api
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
+  become: yes
+  become_user: "{{analytics_user}}"
+  roles:
+    - analytics-api-deploy
