@@ -1,27 +1,25 @@
 [druid-zookeeper]
-localhost
+172.29.0.2
+172.29.0.5
+172.29.0.4
 
 [druid-postgres]
-localhost
-
-[graphite]
-localhost
+172.29.0.2
 
 [overlord]
-localhost
+172.29.0.2
 
 [coordinator]
-localhost
+172.29.0.2
 
 [historical]
-localhost
+172.29.0.2
 
 [broker]
-localhost
+172.29.0.5
 
 [middlemanager]
-localhost
-
+172.29.0.4
 
 [druid:children]
 coordinator
@@ -29,4 +27,3 @@ overlord
 broker
 historical
 middlemanager
-
