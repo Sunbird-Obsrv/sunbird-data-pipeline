@@ -1,6 +1,15 @@
 ---
 # Druid Template variables
 
+zookeeper_group: "{{ groups['druid-zookeeper'] }}"
+
+postgresql_databases:
+ - name: druid
+postgresql_users:
+ - name: druid
+   password: druid
+postgres_address_space: 0.0.0.0/0
+
 druid_user: druid
 druid_directory: "/data"
 druid_version: "0.13.0-incubating"
@@ -23,6 +32,9 @@ druid_log_dir: "/var/log/druid/"
 
 #azure config in group vars
 
+azure_account: "sunbirddevtelemetry"
+azure_key: "test-key"
+azure_container: "test-container"
 
 #Druid Extensions
 
@@ -45,11 +57,6 @@ druid_indexing_queue_startDelay: PT30S
 druid_common_monitors: '"com.metamx.metrics.JvmMonitor","org.apache.druid.java.util.metrics.JvmMonitor"'
 druid_common_emitters: '"logging"'
 
-#use 2004 if using pickle , which is default else use 2003 for plaintext refer to 'druid.emitter.graphite.protocol'
-# will be added in future
-#druid_graphite_host: "{{ groups['graphite'][0] }}"
-#druid_graphite_port : 2004
-#druid_grpahite_prefix: "druid.test"
 druid_whitelist_filepath: "{{ druid_path }}whitelist"
 
 #End of Common variables
@@ -65,8 +72,6 @@ druid_coordinator_period: PT30S
 druid_coordinator_tmp_dir: "{{ druid_default_tmp_dir }}"
 druid_coordinator_gc_logfile: "{{ druid_gc_logdir }}/gc.log"
 
-
-
 #Overlord Configurations
 druid_overlord_port: 8090
 druid_overlord_service : druid/overlord
@@ -74,8 +79,6 @@ druid_overlord_service : druid/overlord
 druid_overlord_heap_size: 256m
 druid_overlord_tmp_dir: "{{ druid_default_tmp_dir }}"
 druid_overlord_gc_logfile: "{{ druid_gc_logdir }}/gc_overlord.log"
-
-
 
 # Broker Configurations
 druid_broker_port: 8082
