@@ -1,10 +1,13 @@
 package org.ekstep.ep.samza.service;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.sun.istack.internal.NotNull;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.task.RedisUpdaterSink;
 import org.ekstep.ep.samza.task.RedisUpdaterSource;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import org.ekstep.ep.samza.util.RedisConnect;
@@ -31,9 +34,7 @@ public class RedisUpdaterService {
         Map<String, Object> message = source.getMap();
         String nodeUniqueId = (String) message.get("nodeUniqueId");
         String objectType = (String) message.get("objectType");
-
         if (nodeUniqueId == null || objectType == null) return;
-
         LOGGER.info("", "processing event for nodeUniqueId: "+ nodeUniqueId);
         if(!nodeUniqueId.isEmpty() && objectType.equalsIgnoreCase("DialCode")) {
             updateDialCodeCache(message, sink);
@@ -44,17 +45,21 @@ public class RedisUpdaterService {
 
     private void updateDialCodeCache(Map<String, Object> message, RedisUpdaterSink sink) {
         String nodeUniqueId = (String) message.get("nodeUniqueId");
-
+        Map<String, Object> parsedData = null;
+        Gson gson = new Gson();
         try (Jedis jedis = redisConnect.getConnection()) {
             jedis.select(dialCodeStore);
-            Map<String, String> contentNode = jedis.hgetAll(nodeUniqueId);
-            if (contentNode == null) {
-                contentNode = new HashMap<>();
+            String contentNode = jedis.get(nodeUniqueId);
+            if(contentNode !=null){
+                Type type = new TypeToken<Map<String, Object>>(){}.getType();
+                parsedData = gson.fromJson(contentNode, type);
+            } else {
+                parsedData = new HashMap<>();
             }
-            Map<String, String> newProperties = extractProperties(message);
-            contentNode.forEach(newProperties::putIfAbsent);
+            Map<String, Object> newProperties = extractProperties(message);
+            parsedData.forEach(newProperties::putIfAbsent);
             if (newProperties.size() > 0) {
-                addToCache(nodeUniqueId, newProperties, dialCodeStore);
+                addToCache(nodeUniqueId,  gson.toJson(newProperties), dialCodeStore);
                 sink.success();
             }
         } catch(JedisException ex) {
@@ -66,16 +71,21 @@ public class RedisUpdaterService {
     @SuppressWarnings("unchecked")
     private void updateContentCache(Map<String, Object> message, RedisUpdaterSink sink) {
         String nodeUniqueId = (String) message.get("nodeUniqueId");
+        Map<String, Object> parsedData = null;
+        Gson gson = new Gson();
         try (Jedis jedis = redisConnect.getConnection()) {
             jedis.select(contentStore);
-            Map<String, String> contentNode = jedis.hgetAll(nodeUniqueId);
+            String contentNode = jedis.get(nodeUniqueId);
             if (contentNode == null) {
-                contentNode = new HashMap<>();
+                parsedData = new HashMap<>();
+            }else{
+                Type type = new TypeToken<Map<String, Object>>(){}.getType();
+                parsedData = gson.fromJson(contentNode, type);
             }
-            Map<String, String> newProperties = extractProperties(message);
-            contentNode.forEach(newProperties::putIfAbsent);
+            Map<String, Object> newProperties = extractProperties(message);
+            parsedData.forEach(newProperties::putIfAbsent);
             if (newProperties.size() > 0) {
-                addToCache(nodeUniqueId, newProperties, contentStore);
+                addToCache(nodeUniqueId, gson.toJson(newProperties), contentStore);
                 sink.success();
             }
         } catch(JedisException ex) {
@@ -85,8 +95,8 @@ public class RedisUpdaterService {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, String> extractProperties(Map<String, Object> message) {
-        Map<String, String> properties = new HashMap<>();
+    private Map<String, Object> extractProperties(Map<String, Object> message) {
+        Map<String, Object> properties = new HashMap<>();
         Map transactionData = (Map) message.get("transactionData");
         if (transactionData != null) {
             Map<String, Object> addedProperties = (Map<String, Object>) transactionData.get("properties");
@@ -110,11 +120,11 @@ public class RedisUpdaterService {
         return properties;
     }
 
-    private void addToCache(String key, Map<String, String> value, Integer db) {
-        if (key != null && !key.isEmpty() && value.size() > 0 && db != null) {
+    private void addToCache(String key, String value, Integer db) {
+        if (key != null && !key.isEmpty() && !value.isEmpty() && db != null) {
             try (Jedis jedis = redisConnect.getConnection()) {
                 jedis.select(db);
-                jedis.hmset(key, value);
+                jedis.set(key, value);
                 jedis.expire(key, config.getInt("location.db.redis.key.expiry.seconds", 86400));
             } catch(JedisException ex) {
                 LOGGER.error("", "addToCache: Exception when redis connect" + ex);

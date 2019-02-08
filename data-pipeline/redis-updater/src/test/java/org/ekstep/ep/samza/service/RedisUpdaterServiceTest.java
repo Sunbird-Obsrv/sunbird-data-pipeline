@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.service;
 
 import com.fiftyonred.mock_jedis.MockJedis;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.ekstep.ep.samza.service.Fixtures.EventFixture;
@@ -12,7 +13,10 @@ import org.junit.Before;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
+
+import java.lang.reflect.Type;
 import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -54,8 +58,14 @@ public class RedisUpdaterServiceTest {
         redisUpdaterService.process(source, redisUpdaterSinkMock);
 
         jedisMock.select(contentStoreId);
-        Map<String, String> cachedData = jedisMock.hgetAll(contentId);
-        assertEquals(5, cachedData.size());
+        String cachedData = jedisMock.get(contentId);
+        Map<String, Object> parsedData = null;
+        if (cachedData != null) {
+            Type type = new TypeToken<Map<String, Object>>() {
+            }.getType();
+            parsedData = gson.fromJson(cachedData, type);
+        }
+        assertEquals(5, parsedData.size());
         verify(redisUpdaterSinkMock, times(1)).success();
     }
 
@@ -79,14 +89,20 @@ public class RedisUpdaterServiceTest {
         redisUpdaterService.process(source, redisUpdaterSinkMock);
 
         jedisMock.select(contentStoreId);
-        Map<String, String> cachedData = jedisMock.hgetAll(contentId);
-        assertEquals(6, cachedData.size());
-        assertEquals("\"testbook1\"", cachedData.get("code"));
-        assertEquals("\"sunbird.portal\"", cachedData.get("channel"));
-        assertEquals("\"Live\"", cachedData.get("status"));
-        assertEquals("\"Default\"", cachedData.get("visibility"));
-        assertEquals("\"TestCollection\"", cachedData.get("description"));
-        assertEquals("", cachedData.get("ownershipType"));
+        String cachedData = jedisMock.get(contentId);
+        Map<String, Object> parsedData = null;
+        if (cachedData != null) {
+            Type type = new TypeToken<Map<String, Object>>() {
+            }.getType();
+            parsedData = gson.fromJson(cachedData, type);
+        }
+        assertEquals(6, parsedData.size());
+        assertEquals("\"testbook1\"", parsedData.get("code"));
+        assertEquals("\"sunbird.portal\"", parsedData.get("channel"));
+        assertEquals("\"Live\"", parsedData.get("status"));
+        assertEquals("\"Default\"", parsedData.get("visibility"));
+        assertEquals("\"TestCollection\"", parsedData.get("description"));
+        assertEquals("", parsedData.get("ownershipType"));
         verify(redisUpdaterSinkMock, times(2)).success();
     }
 
@@ -99,9 +115,7 @@ public class RedisUpdaterServiceTest {
         // Update Redis Cache with First Event
         when(envelopeMock.getMessage()).thenReturn(EventFixture.CONTENT_EVENT_EMPTY_NODE_UNIQUEID, EventFixture.CONTENT_EVENT_EMPTY_PROPERTIES);
         redisUpdaterService.process(source, redisUpdaterSinkMock);
-
         verify(redisUpdaterSinkMock, times(0)).success();
-
         redisUpdaterService.process(source, redisUpdaterSinkMock);
         verify(redisUpdaterSinkMock, times(0)).success();
         assertEquals(0, jedisMock.keys("*").size());
@@ -125,13 +139,19 @@ public class RedisUpdaterServiceTest {
         redisUpdaterService.process(source, redisUpdaterSinkMock);
 
         jedisMock.select(contentStoreId);
-        Map<String, String> cachedData = jedisMock.hgetAll(contentId);
-        assertEquals(5, cachedData.size());
-        assertEquals("\"testbook1\"", cachedData.get("code"));
-        assertEquals("\"in.ekstep\"", cachedData.get("channel"));
-        assertEquals("\"Draft\"", cachedData.get("status"));
-        assertEquals("\"TestCollection\"", cachedData.get("description"));
-        assertEquals("[\"createdBy\"]", cachedData.get("ownershipType"));
+        String cachedData = jedisMock.get(contentId);
+        Map<String, Object> parsedData = null;
+        if (cachedData != null) {
+            Type type = new TypeToken<Map<String, Object>>() {
+            }.getType();
+            parsedData = gson.fromJson(cachedData, type);
+        }
+        assertEquals(5, parsedData.size());
+        assertEquals("\"testbook1\"", parsedData.get("code"));
+        assertEquals("\"in.ekstep\"", parsedData.get("channel"));
+        assertEquals("\"Draft\"", parsedData.get("status"));
+        assertEquals("\"TestCollection\"", parsedData.get("description"));
+        assertEquals("[\"createdBy\"]", parsedData.get("ownershipType"));
         verify(redisUpdaterSinkMock, times(2)).success();
     }
 
@@ -144,13 +164,14 @@ public class RedisUpdaterServiceTest {
         Gson gson = new Gson();
         Map<String, Object> event = gson.fromJson(EventFixture.OBJECT_TYPE_DIAL_CODE_1, Map.class);
         String dialCode = (String) event.get("nodeUniqueId");
+        String objectType = (String) event.get("objectType");
+
 
         RedisUpdaterSource source = new RedisUpdaterSource(envelopeMock);
         redisUpdaterService.process(source, redisUpdaterSinkMock);
 
         jedisMock.select(dialCodeStoreId);
-        Map<String, String> cachedData = jedisMock.hgetAll(dialCode);
-        assertEquals(7, cachedData.size());
+        Map<String, String> cachedData;
         verify(redisUpdaterSinkMock, times(1)).success();
     }
 
@@ -178,14 +199,18 @@ public class RedisUpdaterServiceTest {
         Gson gson = new Gson();
         Map<String, Object> event = gson.fromJson(EventFixture.OBJECT_TYPE_CONCEPT_EVENT, Map.class);
         String conceptId = (String) event.get("nodeUniqueId");
-
         RedisUpdaterSource source = new RedisUpdaterSource(envelopeMock);
         redisUpdaterService.process(source, redisUpdaterSinkMock);
-
         jedisMock.select(contentStoreId);
-        Map<String, String> cachedData = jedisMock.hgetAll(conceptId);
-        assertEquals(1, cachedData.size());
-        assertEquals("\"English\"", cachedData.get("language"));
+        String cachedData = jedisMock.get(conceptId);
+        Map<String, Object> parsedData = null;
+        if (cachedData != null) {
+            Type type = new TypeToken<Map<String, Object>>() {
+            }.getType();
+            parsedData = gson.fromJson(cachedData, type);
+        }
+        assertEquals(1, parsedData.size());
+        assertEquals("\"English\"", parsedData.get("language"));
         verify(redisUpdaterSinkMock, times(1)).success();
     }
 }
