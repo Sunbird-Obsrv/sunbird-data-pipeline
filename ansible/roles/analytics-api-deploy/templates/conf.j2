@@ -1,5 +1,5 @@
 application.env="{{ env }}"
-spark.cassandra.connection.host={{groups['dp-cassandra'][0]}}
+spark.cassandra.connection.host="{{groups['dp-cassandra'][0]}}"
 service.search.url="{{lp_search}}"
 service.search.path="/v2/search"
 service.search.requestbody="""{"request":{"filters":{"objectType":["Content"],"contentType":["Story","Worksheet","Collection","Game"],"status":["Live"]},"limit":1000}}"""
