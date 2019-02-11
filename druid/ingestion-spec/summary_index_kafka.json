@@ -558,11 +558,11 @@
                         "name": "edata_env_summary_env"
                     },
                     {
-                        "type": "long",
+                        "type": "string",
                         "name": "edata_env_summary_count"
                     },
                     {
-                        "type": "double",
+                        "type": "string",
                         "name": "edata_env_summary_time_spent"
                     },
                     {
@@ -578,11 +578,11 @@
                         "name": "edata_page_summary_env"
                     },
                     {
-                        "type": "long",
+                        "type": "string",
                         "name": "edata_page_summary_visit_count"
                     },
                     {
-                        "type": "double",
+                        "type": "string",
                         "name": "edata_page_summary_time_spent"
                     },
                     {
@@ -590,7 +590,7 @@
                         "name": "edata_item_responses_item_id"
                     },
                     {
-                        "type": "double",
+                        "type": "string",
                         "name": "edata_item_responses_time_spent"
                     },
                     {
@@ -598,11 +598,11 @@
                         "name": "edata_item_responses_pass"
                     },
                     {
-                        "type": "long",
+                        "type": "string",
                         "name": "edata_item_responses_score"
                     },
                     {
-                        "type": "long",
+                        "type": "string",
                         "name": "edata_item_responses_max_score"
                     },
                     {

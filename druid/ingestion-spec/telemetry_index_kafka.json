@@ -709,7 +709,7 @@
               "name": "edata_visits_objver"
             },
             {
-              "type": "long",
+              "type": "string",
               "name": "edata_visits_index"
             },
             {
