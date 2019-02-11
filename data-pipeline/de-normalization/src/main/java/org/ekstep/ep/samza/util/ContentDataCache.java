@@ -1,11 +1,13 @@
 package org.ekstep.ep.samza.util;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.apache.samza.config.Config;
 import org.ekstep.ep.samza.core.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,16 +47,19 @@ public class ContentDataCache {
 
         try (Jedis jedis = redisConnect.getConnection()) {
             Gson gson = new Gson();
+            Map<String, Object> parsedData = null;
             Map contentMap = new HashMap();
             jedis.select(contentDBIndex);
-            Map<String, String> fields = jedis.hgetAll(contentId);
-            if (fields.isEmpty()) {
+            String contentNode = jedis.get(contentId);
+            if (contentNode == null) {
                 return null;
             } else {
-                fields.keySet().retainAll(fieldsList);
-                for (Map.Entry<String, String> entry : fields.entrySet())
-                {
-                    contentMap.put(entry.getKey().toLowerCase(), gson.fromJson(entry.getValue(), Object.class));
+                Type type = new TypeToken<Map<String, Object>>() {
+                }.getType();
+                parsedData = gson.fromJson(contentNode, type);
+                parsedData.keySet().retainAll(fieldsList);
+                for (Map.Entry<String, Object> entry : parsedData.entrySet()) {
+                    contentMap.put(entry.getKey().toLowerCase(), entry.getValue());
                 }
                 return contentMap;
             }

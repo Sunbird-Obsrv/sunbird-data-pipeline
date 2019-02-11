@@ -1,11 +1,13 @@
 package org.ekstep.ep.samza.util;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.apache.samza.config.Config;
 import org.ekstep.ep.samza.core.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +40,7 @@ public class DialCodeDataCache {
         List<Map> list = new ArrayList<>();
         for (String entry : dialcodes) {
             Map data = getDataForDialCode(entry);
-            if(data != null && !data.isEmpty()) {
+            if (data != null && !data.isEmpty()) {
                 list.add(data);
             }
         }
@@ -49,16 +51,20 @@ public class DialCodeDataCache {
 
         try (Jedis jedis = redisConnect.getConnection()) {
             Gson gson = new Gson();
+            Map<String, Object> parsedData = null;
             Map dialcodeMap = new HashMap();
             jedis.select(dialcodeDB);
-            Map<String, String> fields = jedis.hgetAll(dialcode);
-            if (fields.isEmpty()) {
+
+            String fields = jedis.get(dialcode);
+            if (fields == null) {
                 return null;
             } else {
-                fields.keySet().retainAll(fieldsList);
-                for (Map.Entry<String, String> entry : fields.entrySet())
-                {
-                    dialcodeMap.put(entry.getKey().toLowerCase().replace("_", ""), gson.fromJson(entry.getValue(), Object.class));
+                Type type = new TypeToken<Map<String, Object>>() {
+                }.getType();
+                parsedData = gson.fromJson(fields, type);
+                parsedData.keySet().retainAll(fieldsList);
+                for (Map.Entry<String, Object> entry : parsedData.entrySet()) {
+                    dialcodeMap.put(entry.getKey().toLowerCase().replace("_", ""), entry.getValue());
                 }
                 return dialcodeMap;
             }
