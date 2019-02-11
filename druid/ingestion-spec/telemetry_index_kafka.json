@@ -100,7 +100,7 @@
               "name": "edata_type",
               "expr": "$.edata.type"
             },
-             {
+            {
               "type": "path",
               "name": "edata_subtype",
               "expr": "$.edata.subtype"
@@ -115,12 +115,11 @@
               "name": "edata_pageid",
               "expr": "$.edata.pageid"
             },
-             {
+            {
               "type": "path",
               "name": "edata_uri",
               "expr": "$.edata.uri"
             },
-
             {
               "type": "path",
               "name": "edata_id",
@@ -421,7 +420,7 @@
               "name": "content_version",
               "expr": "$.contentdata.pkgversion"
             },
-             {
+            {
               "type": "path",
               "name": "content_last_submitted_on",
               "expr": "$.contentdata.lastsubmittedon"
@@ -453,11 +452,6 @@
             },
             {
               "type": "path",
-              "name": "user_name",
-              "expr": "$.userdata.name"
-            },
-            {
-              "type": "path",
               "name": "user_type",
               "expr": "$.userdata.type"
             },
@@ -486,27 +480,27 @@
               "name": "dialcode_batchcode",
               "expr": "$.dialcodedata.batchcode"
             },
-             {
+            {
               "type": "path",
               "name": "dialcode_publisher",
               "expr": "$.dialcodedata.publisher"
             },
-             {
+            {
               "type": "path",
               "name": "dialcode_generated_on",
               "expr": "$.dialcodedata.generatedon"
             },
-             {
+            {
               "type": "path",
               "name": "dialcode_published_on",
               "expr": "$.dialcodedata.publishedon"
             },
-             {
+            {
               "type": "path",
               "name": "dialcode_status",
               "expr": "$.dialcodedata.status"
             },
-             {
+            {
               "type": "path",
               "name": "dialcode_object_type",
               "expr": "$.dialcodedata.objecttype"
@@ -588,7 +582,7 @@
               "type": "string",
               "name": "edata_type"
             },
-             {
+            {
               "type": "string",
               "name": "edata_subtype"
             },
@@ -600,11 +594,10 @@
               "type": "string",
               "name": "edata_pageid"
             },
-             {
+            {
               "type": "string",
               "name": "edata_uri"
             },
-
             {
               "type": "string",
               "name": "edata_id"
@@ -842,7 +835,7 @@
               "type": "string",
               "name": "content_version"
             },
-             {
+            {
               "type": "long",
               "name": "content_last_submitted_on"
             },
@@ -862,10 +855,6 @@
             },
             {
               "name": "user_subject_list"
-            },
-            {
-              "type": "string",
-              "name": "user_name"
             },
             {
               "type": "string",
@@ -891,23 +880,23 @@
               "type": "string",
               "name": "dialcode_batchcode"
             },
-             {
+            {
               "type": "string",
               "name": "dialcode_publisher"
             },
-             {
+            {
               "type": "long",
               "name": "dialcode_generated_on"
             },
-             {
+            {
               "type": "long",
               "name": "dialcode_published_on"
             },
-             {
+            {
               "type": "string",
               "name": "dialcode_status"
             },
-             {
+            {
               "type": "string",
               "name": "dialcode_object_type"
             }
