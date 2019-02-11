@@ -630,7 +630,7 @@
             },
             {
               "type": "string",
-              "name": "edata_item_id",
+              "name": "edata_item_id"
             },
             {
               "type": "string",
@@ -654,7 +654,7 @@
             },
             {
               "type": "string",
-              "name": "edata_comments",
+              "name": "edata_comments"
             },
             {
               "type": "string",
@@ -885,31 +885,31 @@
             },
             {
               "type": "string",
-              "name": "dialcode_channel",
+              "name": "dialcode_channel"
             },
             {
               "type": "string",
-              "name": "dialcode_batchcode",
+              "name": "dialcode_batchcode"
             },
              {
               "type": "string",
-              "name": "dialcode_publisher",
+              "name": "dialcode_publisher"
             },
              {
               "type": "long",
-              "name": "dialcode_generated_on",
+              "name": "dialcode_generated_on"
             },
              {
               "type": "long",
-              "name": "dialcode_published_on",
+              "name": "dialcode_published_on"
             },
              {
               "type": "string",
-              "name": "dialcode_status",
+              "name": "dialcode_status"
             },
              {
               "type": "string",
-              "name": "dialcode_object_type",
+              "name": "dialcode_object_type"
             }
           ],
           "dimensionsExclusions": []
@@ -935,7 +935,8 @@
     },
     "taskCount": 2,
     "replicas": 1,
-    "taskDuration": "PT1800S"
+    "taskDuration": "PT3600S",
+    "useEarliestOffset": true
   },
   "tuningConfig": {
     "type": "kafka",

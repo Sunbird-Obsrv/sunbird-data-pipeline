@@ -820,9 +820,10 @@
         {
             "bootstrap.servers": "11.4.2.22:9092, 11.4.2.23:9092, 11.4.2.24:9092"
         },
-        "taskCount": 2,
+        "taskCount": 1,
         "replicas": 1,
-        "taskDuration": "PT1800S"
+        "taskDuration": "PT3600S",
+        "useEarliestOffset": true
     },
     "tuningConfig":
     {
