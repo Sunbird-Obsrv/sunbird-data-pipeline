@@ -266,7 +266,7 @@ config() {
 		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/usage-summary/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.updater.MEUsageUpdater","output":[{"to":"console","params":{"printEvent":false}}],"parallelization":10,"appName":"ME Usage Updater","deviceMapping":false}'
 		;;
 		"job-manager")
-		echo '{"jobsCount":17,"topic":"'$job_topic'","bootStrapServer":"'$brokerList'","zookeeperConnect":"'$zookeeper'","consumerGroup":"jobmanager","slackChannel":"#test_channel","slackUserName":"JobManager","tempBucket":"'$bucket'","tempFolder":"'$temp_folder'"}'
+		echo '{"jobsCount":16,"topic":"'$job_topic'","bootStrapServer":"'$brokerList'","zookeeperConnect":"'$zookeeper'","consumerGroup":"jobmanager","slackChannel":"#test_channel","slackUserName":"JobManager","tempBucket":"'$bucket'","tempFolder":"'$temp_folder'"}'
 		;;
 		"wfs")
 		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"unique/","endDate":"'$endDate'","delta":0}]},"filters":[{"name":"eid","operator":"NIN","value":["JOB_START","JOB_END"]}],"model":"org.ekstep.analytics.model.WorkflowSummary","modelParams":{"apiVersion":"v2"},"output":[{"to":"console","params":{"printEvent": false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$topic'"}}],"parallelization":8,"appName":"Workflow Summarizer","deviceMapping":true}'
