@@ -2,10 +2,13 @@ package org.ekstep.ep.samza.util;
 
 import com.datastax.driver.core.Row;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.apache.samza.config.Config;
 import org.ekstep.ep.samza.core.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
+
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,12 +38,13 @@ public class DeviceDataCache {
         try (Jedis jedis = redisConnect.getConnection()) {
             jedis.select(deviceDBIndex);
             Gson gson = new Gson();
+            Map<String, Object> parsedData = null;
             Map deviceMap = new HashMap();
             // Key will be device_id:channel
             String key = String.format("%s:%s", did, channel);
-            Map<String, String> fields = jedis.hgetAll(key);
+            String fields = jedis.get(key);
             List<Row> rows;
-            if (fields.isEmpty()) {
+            if (fields == null) {
                 String query =
                         String.format("SELECT device_id, device_spec, uaspec, first_access FROM %s.%s WHERE device_id = '%s' AND channel = '%s'",
                                 cassandra_db, cassandra_table, did, channel);
@@ -53,8 +57,10 @@ public class DeviceDataCache {
 
                 if (rows.size() > 0) {
                     Row row = rows.get(0);
-                    if(row.isNull("device_spec")) deviceSpec = new HashMap(); else deviceSpec = row.getMap("device_spec", String.class, String.class);
-                    if(row.isNull("uaspec")) uaSpec = new HashMap<String, String>(); else uaSpec = row.getMap("uaspec", String.class, String.class);
+                    if (row.isNull("device_spec")) deviceSpec = new HashMap();
+                    else deviceSpec = row.getMap("device_spec", String.class, String.class);
+                    if (row.isNull("uaspec")) uaSpec = new HashMap<String, String>();
+                    else uaSpec = row.getMap("uaspec", String.class, String.class);
                     first_access = row.getTimestamp("first_access").getTime();
                     eventFinalMap.putAll(deviceSpec);
                     eventFinalMap.put("uaspec", uaSpec);
@@ -62,15 +68,16 @@ public class DeviceDataCache {
                     for (Map.Entry<String, Object> propertyMap : eventFinalMap.entrySet()) {
                         redisFinalMap.put(propertyMap.getKey().toLowerCase(), gson.toJson(propertyMap.getValue()));
                     }
-                    addDataToCache(did, channel, redisFinalMap);
+                    addDataToCache(did, channel, gson.toJson(redisFinalMap));
                     return eventFinalMap;
-                }
-                else
+                } else
                     return null;
             } else {
-                for (Map.Entry<String, String> entry : fields.entrySet())
-                {
-                    deviceMap.put(entry.getKey(), gson.fromJson(entry.getValue(), Object.class));
+                Type type = new TypeToken<Map<String, Object>>() {
+                }.getType();
+                parsedData = gson.fromJson(fields, type);
+                for (Map.Entry<String, Object> entry : parsedData.entrySet()) {
+                    deviceMap.put(entry.getKey(), entry.getValue());
                 }
                 return deviceMap;
             }
@@ -81,16 +88,19 @@ public class DeviceDataCache {
 
     }
 
-    public void addDataToCache(String did, String channel, Map deviceData) {
-        try (Jedis jedis = redisConnect.getConnection()) {
-            jedis.select(deviceDBIndex);
-            // Key will be device_id:channel
-            String key = String.format("%s:%s", did, channel);
-            Map values = deviceData;
-            jedis.hmset(key, values);
-            jedis.expire(key, config.getInt("device.db.redis.key.expiry.seconds", 86400));
-        } catch (JedisException ex) {
-            LOGGER.error("", "AddDeviceDataToCache: Unable to get a resource from the redis connection pool ", ex);
+    public void addDataToCache(String did, String channel, String deviceData) {
+        if (deviceData != null) {
+
+            try (Jedis jedis = redisConnect.getConnection()) {
+                jedis.select(deviceDBIndex);
+                // Key will be device_id:channel
+                String key = String.format("%s:%s", did, channel);
+                //Map values = deviceData;
+                jedis.set(key, deviceData);
+                jedis.expire(key, config.getInt("device.db.redis.key.expiry.seconds", 86400));
+            } catch (JedisException ex) {
+                LOGGER.error("", "AddDeviceDataToCache: Unable to get a resource from the redis connection pool ", ex);
+            }
         }
     }
 }
