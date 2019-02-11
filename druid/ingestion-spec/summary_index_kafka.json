@@ -413,11 +413,7 @@
                         "name": "user_subject_list",
                         "expr": "$.userdata.subjectlist[*]"
                     },
-                    {
-                        "type": "path",
-                        "name": "user_name",
-                        "expr": "$.userdata.name"
-                    },
+
                     {
                         "type": "path",
                         "name": "user_type",
@@ -765,10 +761,7 @@
                     {
                         "name": "user_subject_list"
                     },
-                    {
-                        "type": "string",
-                        "name": "user_name"
-                    },
+
                     {
                         "type": "string",
                         "name": "user_type"
