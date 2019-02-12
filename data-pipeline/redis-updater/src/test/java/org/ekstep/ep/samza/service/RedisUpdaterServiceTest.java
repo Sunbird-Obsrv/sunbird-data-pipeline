@@ -15,6 +15,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -97,11 +98,11 @@ public class RedisUpdaterServiceTest {
             parsedData = gson.fromJson(cachedData, type);
         }
         assertEquals(6, parsedData.size());
-        assertEquals("\"testbook1\"", parsedData.get("code"));
-        assertEquals("\"sunbird.portal\"", parsedData.get("channel"));
-        assertEquals("\"Live\"", parsedData.get("status"));
-        assertEquals("\"Default\"", parsedData.get("visibility"));
-        assertEquals("\"TestCollection\"", parsedData.get("description"));
+        assertEquals("testbook1", parsedData.get("code"));
+        assertEquals("sunbird.portal", parsedData.get("channel"));
+        assertEquals("Live", parsedData.get("status"));
+        assertEquals("Default", parsedData.get("visibility"));
+        assertEquals("TestCollection", parsedData.get("description"));
         assertEquals("", parsedData.get("ownershipType"));
         verify(redisUpdaterSinkMock, times(2)).success();
     }
@@ -147,11 +148,14 @@ public class RedisUpdaterServiceTest {
             parsedData = gson.fromJson(cachedData, type);
         }
         assertEquals(5, parsedData.size());
-        assertEquals("\"testbook1\"", parsedData.get("code"));
-        assertEquals("\"in.ekstep\"", parsedData.get("channel"));
-        assertEquals("\"Draft\"", parsedData.get("status"));
-        assertEquals("\"TestCollection\"", parsedData.get("description"));
-        assertEquals("[\"createdBy\"]", parsedData.get("ownershipType"));
+        assertEquals("testbook1", parsedData.get("code"));
+        assertEquals("in.ekstep", parsedData.get("channel"));
+        assertEquals("Draft", parsedData.get("status"));
+
+        assertEquals("TestCollection", parsedData.get("description"));
+        ArrayList<String> list=new ArrayList<String>();
+        list.add("createdBy");
+        assertEquals(list, parsedData.get("ownershipType"));
         verify(redisUpdaterSinkMock, times(2)).success();
     }
 
@@ -210,7 +214,7 @@ public class RedisUpdaterServiceTest {
             parsedData = gson.fromJson(cachedData, type);
         }
         assertEquals(1, parsedData.size());
-        assertEquals("\"English\"", parsedData.get("language"));
+        assertEquals("English", parsedData.get("language"));
         verify(redisUpdaterSinkMock, times(1)).success();
     }
 }

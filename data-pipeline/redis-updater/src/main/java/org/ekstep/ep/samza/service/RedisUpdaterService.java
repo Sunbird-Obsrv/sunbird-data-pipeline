@@ -2,7 +2,6 @@ package org.ekstep.ep.samza.service;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.sun.istack.internal.NotNull;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.task.RedisUpdaterSink;
 import org.ekstep.ep.samza.task.RedisUpdaterSource;
@@ -111,7 +110,7 @@ public class RedisUpdaterService {
                             properties.put(propertyName, "");
                         else{
                             Gson gson = new Gson();
-                            properties.put(propertyName, gson.toJson(propertyNewValue));
+                            properties.put(propertyName, propertyNewValue);
                         }
                     }
                 }
