@@ -78,6 +78,53 @@ public class Event {
         return ids;
     }
 
+    public List<String> getKey(String type) {
+        List<String> keyList = new ArrayList<String>();
+        switch (type) {
+            case "device":
+                keyList.add(did());
+                return keyList;
+            case "user":
+                if(actorType().equalsIgnoreCase("system")) {
+                    keyList.add("");
+                    return keyList;
+                }
+                else {
+                    keyList.add(actorId());
+                    return keyList;
+                }
+            case "content":
+                keyList.add(objectID());
+                return keyList;
+            case "dialcode":
+                return dialCode();
+            default:
+                keyList.add("");
+                return keyList;
+
+        }
+    }
+
+    public void addMetaData(String type, List<Map> newData) {
+        switch (type) {
+            case "device":
+                addDeviceData(newData.get(0));
+                break;
+            case "user":
+                addUserData(newData.get(0));
+                break;
+            case "content":
+                addContentData(newData.get(0));
+                break;
+            case "dialcode":
+                addDialCodeData(newData);
+                break;
+            default:
+                break;
+
+        }
+    }
+
     public void addDeviceData(Map newData) {
         NullableValue<Map<String, Object>> previousData = telemetry.read(path.deviceData());
         Map<String, Object> deviceData = previousData.isNull() ? new HashMap<>() : previousData.value();
@@ -110,7 +157,7 @@ public class Event {
     public void setFlag(String key, Object value) {
         NullableValue<Map<String, Object>> telemetryFlag = telemetry.read(path.flags());
         Map<String, Object> flags = telemetryFlag.isNull() ? new HashMap<>() : telemetryFlag.value();
-        flags.put(key, value);
+        if (!key.isEmpty()) flags.put(key, value);
         telemetry.add(path.flags(), flags);
     }
 

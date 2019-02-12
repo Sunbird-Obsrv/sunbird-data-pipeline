@@ -8,7 +8,7 @@ import java.util.Map;
 
 import static java.text.MessageFormat.format;
 
-public class DeviceDataUpdater implements IEventUpdater {
+public class DeviceDataUpdater extends IEventUpdater {
     static Logger LOGGER = new Logger(DeviceDataUpdater.class);
     private DeviceDataCache deviceCache;
 

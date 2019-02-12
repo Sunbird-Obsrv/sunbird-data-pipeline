@@ -4,6 +4,7 @@ import com.google.gson.JsonSyntaxException;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.domain.EventUpdaterFactory;
+import org.ekstep.ep.samza.domain.IEventUpdater;
 import org.ekstep.ep.samza.task.DeNormalizationConfig;
 import org.ekstep.ep.samza.task.DeNormalizationSink;
 import org.ekstep.ep.samza.task.DeNormalizationSource;
@@ -30,13 +31,17 @@ public class DeNormalizationService {
         try {
             event = source.getEvent();
             // add content details to the event
-            event = eventUpdaterFactory.create("content-data-updater").update(event);
+            event = eventUpdaterFactory.getInstance("content-data-updater")
+                    .update(event, event.getKey("content").get(0));
             // add user details to the event
-            event = eventUpdaterFactory.create("user-data-updater").update(event);
+            event = eventUpdaterFactory.getInstance("user-data-updater")
+                    .update(event, event.getKey("user").get(0));
             // add device details to the event
-            event = eventUpdaterFactory.create("device-data-updater").update(event);
+            event = eventUpdaterFactory.getInstance("device-data-updater")
+                    .update(event);
             // add dialcode details to the event
-            event = eventUpdaterFactory.create("dialcode-data-updater").update(event);
+            event = eventUpdaterFactory.getInstance("dialcode-data-updater")
+                    .update(event, event.getKey("dialcode"));;
 
             sink.toSuccessTopic(event);
         } catch(JsonSyntaxException e){
