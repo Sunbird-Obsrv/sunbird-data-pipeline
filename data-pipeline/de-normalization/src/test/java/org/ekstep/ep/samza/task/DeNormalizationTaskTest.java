@@ -85,8 +85,8 @@ public class DeNormalizationTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITHOUT_DID);
         stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
                 "0123221617357783046602")).toReturn(null);
-        stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
-        stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(null);
+        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
+        stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
@@ -113,9 +113,9 @@ public class DeNormalizationTaskTest {
         stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
                 "0123221617357783046602")).toReturn(null);
         Map user = new HashMap(); user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
-        stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
         Map content = new HashMap(); content.put("name", "content-1"); content.put("objecttype", "Content"); content.put("contenttype", "TextBook");
-        stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(content);
+        stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(content);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
@@ -146,9 +146,9 @@ public class DeNormalizationTaskTest {
         stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
                 "0123221617357783046602")).toReturn(device);
         Map user = new HashMap(); user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
-        stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
         Map content = new HashMap(); content.put("name", "content-1"); content.put("objecttype", "Content"); content.put("contenttype", "TextBook");
-        stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(content);
+        stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(content);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
@@ -183,8 +183,8 @@ public class DeNormalizationTaskTest {
         stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
                 "0123221617357783046602")).toReturn(null);
         Map user = new HashMap(); user.put("type", "Registered"); user.put("gradeList", "[4, 5]");
-        stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
-        stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(null);
+        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
@@ -212,8 +212,8 @@ public class DeNormalizationTaskTest {
         stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
                 "0123221617357783046602")).toReturn(null);
         Map user = new HashMap(); user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
-        stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
-        stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(null);
+        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
@@ -239,13 +239,13 @@ public class DeNormalizationTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_DIALCODE_AS_STRING);
         stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
                 "0123221617357783046602")).toReturn(null);
-        stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
-        stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(null);
+        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
+        stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         List ids = new ArrayList(); ids.add("8ZEDTP");
         Map dataMap = new HashMap(); dataMap.put("identifier", "8ZEDTP"); dataMap.put("channel", "test-channel");
         dataMap.put("status", "Draft");
         List<Map> data = new ArrayList<>(); data.add(dataMap);
-        stub(dailcodeCacheMock.getDataForDialCodes(ids)).toReturn(data);
+        stub(dailcodeCacheMock.getData(ids)).toReturn(data);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
@@ -276,15 +276,15 @@ public class DeNormalizationTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_DIALCODE_AS_LIST);
         stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
                 "0123221617357783046602")).toReturn(null);
-        stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
-        stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(null);
+        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
+        stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         List ids = new ArrayList(); ids.add("8ZEDTP"); ids.add("4ZEDTP");
         Map dataMap1 = new HashMap(); dataMap1.put("identifier", "8ZEDTP"); dataMap1.put("channel", "test-channel");
         dataMap1.put("status", "Draft");
         Map dataMap2 = new HashMap(); dataMap2.put("identifier", "4ZEDTP"); dataMap2.put("channel", "test-channel");
         dataMap2.put("status", "Draft");
         List<Map> data = new ArrayList<>(); data.add(dataMap1); data.add(dataMap2);
-        stub(dailcodeCacheMock.getDataForDialCodes(ids)).toReturn(data);
+        stub(dailcodeCacheMock.getData(ids)).toReturn(data);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
@@ -317,8 +317,8 @@ public class DeNormalizationTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITHOUT_DIALCODE);
         stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
                 "0123221617357783046602")).toReturn(null);
-        stub(userCacheMock.getDataForUserId("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
-        stub(contentCacheMock.getDataForContentId("do_31249561779090227216256")).toReturn(null);
+        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
+        stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
 //        List ids = new ArrayList(); ids.add("8ZEDTP"); ids.add("4ZEDTP");
 //        stub(dailcodeCacheMock.getDataForDialCodes(ids)).toReturn(null);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);

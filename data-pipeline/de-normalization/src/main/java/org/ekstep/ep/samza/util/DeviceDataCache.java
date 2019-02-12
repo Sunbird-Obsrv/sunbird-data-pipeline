@@ -7,7 +7,6 @@ import org.apache.samza.config.Config;
 import org.ekstep.ep.samza.core.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
-
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +51,6 @@ public class DeviceDataCache {
                 Map<String, String> deviceSpec = null;
                 Map<String, String> uaSpec = null;
                 Long first_access = null;
-                Map<String, String> redisFinalMap = new HashMap();
                 Map<String, Object> eventFinalMap = new HashMap();
 
                 if (rows.size() > 0) {
@@ -65,10 +63,7 @@ public class DeviceDataCache {
                     eventFinalMap.putAll(deviceSpec);
                     eventFinalMap.put("uaspec", uaSpec);
                     eventFinalMap.put("firstaccess", first_access);
-                    for (Map.Entry<String, Object> propertyMap : eventFinalMap.entrySet()) {
-                        redisFinalMap.put(propertyMap.getKey().toLowerCase(), gson.toJson(propertyMap.getValue()));
-                    }
-                    addDataToCache(did, channel, gson.toJson(redisFinalMap));
+                    addDataToCache(did, channel, gson.toJson(eventFinalMap));
                     return eventFinalMap;
                 } else
                     return null;
