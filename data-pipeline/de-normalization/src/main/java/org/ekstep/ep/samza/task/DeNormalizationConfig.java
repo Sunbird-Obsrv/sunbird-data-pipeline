@@ -5,7 +5,7 @@ import org.apache.samza.config.Config;
 
 public class DeNormalizationConfig {
 
-    private final String JOB_NAME = "DeDuplication";
+    private final String JOB_NAME = "DeNormalization";
     private static final String deviceDataJobFlag = "device_data_retrieved";
     private static final String userDataJobFlag = "user_data_retrieved";
     private static final String contentDataJobFlag = "content_data_retrieved";
@@ -14,16 +14,14 @@ public class DeNormalizationConfig {
     private String successTopic;
     private String failedTopic;
     private String malformedTopic;
-    private String defaultChannel;
     private final String metricsTopic;
 
 
     public DeNormalizationConfig(Config config) {
-        successTopic = config.get("output.success.topic.name", "telemetry.with_denorm");
+        successTopic = config.get("output.success.topic.name", "telemetry.denorm");
         failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
         metricsTopic = config.get("output.metrics.topic.name", "pipeline_metrics");
-        defaultChannel = config.get("default.channel", "org.sunbird");
     }
 
     public String successTopic() {
@@ -38,16 +36,27 @@ public class DeNormalizationConfig {
         return malformedTopic;
     }
 
-    public String defaultChannel() {
-        return defaultChannel;
-    }
-
     public String metricsTopic() {
         return metricsTopic;
     }
 
     public String jobName() {
         return JOB_NAME;
+    }
+
+    public static String getJobFlag(String type) {
+        switch (type) {
+            case "device":
+                return deviceDataJobFlag;
+            case "user":
+                return userDataJobFlag;
+            case "content":
+                return contentDataJobFlag;
+            case "dialcode":
+                return dialCodeDataJobFlag;
+            default:
+                return "";
+        }
     }
 
     public static String getDeviceLocationJobFlag() {
