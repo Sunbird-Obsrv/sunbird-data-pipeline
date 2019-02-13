@@ -21,7 +21,7 @@ public class EventsRouterConfig {
         failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
         metricsTopic = config.get("output.metrics.topic.name", "telemetry.pipeline_metrics");
         telemetryEventsRouteTopic = config.get("router.events.telemetry.route.topic", "events.telemetry");
-        summaryRouteEvents = config.get("router.events.summary.route.events", "ME_");
+        summaryRouteEvents = config.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY");
         summaryEventsRouteTopic = config.get("router.events.summary.route.topic", "events.summary");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
         

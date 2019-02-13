@@ -27,14 +27,15 @@ public class EventsRouterService {
 			String summaryRouteEventPrefix = this.config.getSummaryRouteEvents();
 			if (eid.startsWith(summaryRouteEventPrefix)) {
 				sink.toSummaryEventsTopic(event);
+			} else if (eid.startsWith("ME_")) {
+				sink.incrementSkippedCount(event);
 			} else {
 				sink.toTelemetryEventsTopic(event);
 			}
-
-		} catch(JsonSyntaxException e){
-            LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
-            sink.toMalformedTopic(source.getMessage());
-        } catch (Exception e) {
+		} catch (JsonSyntaxException e) {
+			LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
+			sink.toMalformedTopic(source.getMessage());
+		} catch (Exception e) {
 			LOGGER.error(null,
 					format("EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO EXCEPTION TOPIC. EVENT: {0}, EXCEPTION:",
 							event),

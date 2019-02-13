@@ -38,4 +38,8 @@ public class EventsRouterSink extends BaseSink {
 		toTopic(config.getSummaryEventsRouteTopic(), event.did(), event.getJson());
 		metrics.incSuccessCounter();
 	}
+
+	public void incrementSkippedCount(Event event) {
+		metrics.incSkippedCounter();
+	}
 }
