@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class EventFixture {
 
-	public static final String SUMMARY_EVENT = "{\n" +
+	public static final String WORKFLOW_SUMMARY_EVENT = "{\n" +
 			"  \"eid\": \"ME_WORKFLOW_SUMMARY\",\n" +
 			"  \"ets\": 1548040103586,\n" +
 			"  \"syncts\": 1547991371195,\n" +
@@ -74,6 +74,7 @@ public class EventFixture {
 			"    }\n" +
 			"  }\n" +
 			"}";
+
 	public static final String ERROR_EVENT = "{\n" +
             "  \"did\": \"00b09a9e-6af9-4bb7-b102-57380b43ddc8\",\n" +
             "  \"mid\": \"43288930-e54a-230b-b56e-876gnm8712ok\",\n" +

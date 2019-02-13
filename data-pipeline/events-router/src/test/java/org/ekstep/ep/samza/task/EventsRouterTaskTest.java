@@ -8,8 +8,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.stub;
 import static org.mockito.Mockito.verify;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
@@ -24,9 +22,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
-
-import java.lang.reflect.Type;
-import java.util.Map;
 
 public class EventsRouterTaskTest {
 
@@ -67,10 +62,10 @@ public class EventsRouterTaskTest {
 	@Test
 	public void shouldRouteSummaryEventsToSummaryTopic() throws Exception {
 
-		stub(configMock.get("router.events.summary.route.events", "ME_")).toReturn("ME_");
+		stub(configMock.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY")).toReturn("ME_WORKFLOW_SUMMARY");
 		eventsRouterTask = new EventsRouterTask(configMock, contextMock);
 		
-		stub(envelopeMock.getMessage()).toReturn(EventFixture.SUMMARY_EVENT);
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.WORKFLOW_SUMMARY_EVENT);
 		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUMMARY_EVENTS_TOPIC)));
 	}
@@ -78,7 +73,7 @@ public class EventsRouterTaskTest {
 	@Test
 	public void shouldRouteTelemetryEventsToTelemetryTopic() throws Exception {
 
-		stub(configMock.get("router.events.summary.route.events", "ME_")).toReturn("ME_");
+		stub(configMock.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY")).toReturn("ME_WORKFLOW_SUMMARY");
 		eventsRouterTask = new EventsRouterTask(configMock, contextMock);
 		
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.START_EVENT);

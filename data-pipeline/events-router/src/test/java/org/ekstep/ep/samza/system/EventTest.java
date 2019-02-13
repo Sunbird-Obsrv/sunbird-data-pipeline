@@ -23,7 +23,7 @@ public class EventTest {
 	@Test
 	public void shouldReturnEid() {
 
-		Event event = new Event(EventFixture.getMap(EventFixture.SUMMARY_EVENT));
+		Event event = new Event(EventFixture.getMap(EventFixture.WORKFLOW_SUMMARY_EVENT));
 		Assert.assertEquals("ME_WORKFLOW_SUMMARY", event.eid());
 	}
 
