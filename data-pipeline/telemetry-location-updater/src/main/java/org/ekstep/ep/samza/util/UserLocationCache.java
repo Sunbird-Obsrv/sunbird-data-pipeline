@@ -21,8 +21,10 @@ public class UserLocationCache {
     private RedisConnect redisConnect;
     private CassandraConnect cassandraConnection;
     private int locationDbKeyExpiryTimeInSeconds;
+    private Config config;
 
     public UserLocationCache(Config config, RedisConnect redisConnect, CassandraConnect cassandraConnect) {
+        this.config = config;
         this.redisConnect = redisConnect;
         this.cassandra_db = config.get("middleware.cassandra.keyspace", "sunbird");
         this.cassandra_user_table = config.get("middleware.cassandra.user_table", "user");
@@ -33,17 +35,22 @@ public class UserLocationCache {
 
     public Location getLocationByUser(String userId) {
         if (userId == null) return null;
-
-        try (Jedis jedis = redisConnect.getConnection()) {
-            jedis.select(1);
+        try(Jedis jedis = redisConnect.getConnection()) {
+            jedis.select(config.getInt("redis.database.userLocationStore.id", 1));
             Map<String, String> locationMap = jedis.hgetAll(userId);
             if (locationMap.isEmpty()) {
-                return fetchUserLocation(userId);
+                Location location = fetchUserLocation(userId);
+                if(location != null) {
+                    addToCache(userId, location);
+                } else {
+                    addToCache(userId, new Location("", "", "", "", "", ""));
+                }
+                return location;
             } else {
                 return new Location(null, null, null, locationMap.get("state"), null, locationMap.get("district"));
             }
         } catch (JedisException ex) {
-            LOGGER.error("", "getLocationByUser: Unable to get a resource from the redis connection pool ", ex);
+            LOGGER.error("", "getLocationByUser: Unable to get a resource from the redis connection pool. userId: " + userId, ex);
             return null;
         }
     }
@@ -55,21 +62,22 @@ public class UserLocationCache {
 
         if (userId == null) return null;
         try {
-            String selectLocationIds = QueryBuilder.select("locationids")
+            String locationQuery = QueryBuilder.select("locationids")
                     .from(cassandra_db, cassandra_user_table)
                     .where(QueryBuilder.eq("id", userId))
-                    .getQueryString();
-            rows = cassandraConnection.execute(selectLocationIds);
+                    .toString();
+            rows = cassandraConnection.execute(locationQuery);
             if (rows.size() > 0) {
                 Row row = rows.get(0);
                 locationIds = row.getList("locationids", String.class);
             }
 
             if (locationIds != null && !locationIds.isEmpty()) {
-                String selectLocations = QueryBuilder.select().all()
+                String resolveLocation = QueryBuilder.select().all()
                         .from(cassandra_db, cassandra_location_table)
-                        .where(QueryBuilder.in("id", locationIds)).getQueryString();
-                rows = cassandraConnection.execute(selectLocations);
+                        .where(QueryBuilder.in("id", locationIds))
+                        .toString();
+                rows = cassandraConnection.execute(resolveLocation);
                 if (rows.size() > 0) {
                     rows.forEach(record -> {
                         String name = record.getString("name");
@@ -81,7 +89,6 @@ public class UserLocationCache {
                         }
                     });
                 }
-                addToCache(userId, location);
                 return location;
             } else {
                 return null;
@@ -93,19 +100,17 @@ public class UserLocationCache {
     }
 
     private void addToCache(String userId, Location location) {
-        try (Jedis jedis = redisConnect.getConnection()) {
-            jedis.select(1);
-            if(location.isStateDistrictResolved()) {
-                // Key will be userId
-                String key = userId;
-                Map<String, String> values = new HashMap<>();
-                values.put("state", location.getState());
-                values.put("district", location.getCity());
-                jedis.hmset(key, values);
-                jedis.expire(key, locationDbKeyExpiryTimeInSeconds);
-            }
+        try(Jedis jedis = redisConnect.getConnection()) {
+            jedis.select(config.getInt("redis.database.userLocationStore.id", 1));
+            // Key will be userId
+            String key = userId;
+            Map<String, String> values = new HashMap<>();
+            values.put("state", Location.getValueOrDefault(location.getState(), ""));
+            values.put("district", Location.getValueOrDefault(location.getDistrict(), ""));
+            jedis.hmset(key, values);
+            jedis.expire(key, locationDbKeyExpiryTimeInSeconds);
         } catch (JedisException ex) {
-            LOGGER.error("", "AddLocationToCache: Unable to get a resource from the redis connection pool ", ex);
+            LOGGER.error("", "AddLocationToCache: Unable to get connection from the redis connection pool. userId: " + userId, ex);
         }
     }
 }
