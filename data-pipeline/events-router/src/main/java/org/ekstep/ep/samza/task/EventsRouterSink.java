@@ -25,7 +25,7 @@ public class EventsRouterSink extends BaseSink {
 
 	public void toErrorTopic(Event event, String errorMessage) {
 		event.markFailure(errorMessage, config);
-		toTopic(config.failedTopic(), event.mid(), event.getJson());
+		toTopic(config.failedTopic(), event.did(), event.getJson());
 		metrics.incErrorCounter();
 	}
 
