@@ -124,7 +124,6 @@ public class RedisUpdaterService {
             try (Jedis jedis = redisConnect.getConnection()) {
                 jedis.select(db);
                 jedis.set(key, value);
-                jedis.expire(key, config.getInt("location.db.redis.key.expiry.seconds", 86400));
             } catch(JedisException ex) {
                 LOGGER.error("", "addToCache: Exception when redis connect" + ex);
             }
