@@ -59,7 +59,7 @@ public class DeviceDataCache {
                     else deviceSpec = row.getMap("device_spec", String.class, String.class);
                     if (row.isNull("uaspec")) uaSpec = new HashMap<String, String>();
                     else uaSpec = row.getMap("uaspec", String.class, String.class);
-                    if (row.isNull("first_access")) first_access = row.getTimestamp("first_access").getTime();
+                    if (!row.isNull("first_access")) first_access = row.getTimestamp("first_access").getTime();
                     eventFinalMap.putAll(deviceSpec);
                     eventFinalMap.put("uaspec", uaSpec);
                     if (first_access != null) eventFinalMap.put("firstaccess", first_access);
