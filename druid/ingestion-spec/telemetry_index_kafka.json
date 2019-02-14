@@ -453,7 +453,7 @@
             {
               "type": "path",
               "name": "user_type",
-              "expr": "$.userdata.type"
+              "expr": "$.userdata.usertype"
             },
             {
               "type": "path",
