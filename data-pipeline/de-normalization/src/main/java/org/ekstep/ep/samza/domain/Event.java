@@ -55,8 +55,8 @@ public class Event {
     }
 
     public String actorId() {
-        NullableValue<String> actorid = telemetry.read("actor.id");
-        return actorid.value();
+        NullableValue<String> actorid = telemetry.read("uid");
+        return actorid.isNull() ? telemetry.<String>read("actor.id").value() : actorid.value();
     }
 
     public String actorType() {
@@ -85,7 +85,7 @@ public class Event {
                 keyList.add(did());
                 return keyList;
             case "user":
-                if(actorType().equalsIgnoreCase("system")) {
+                if(actorType() != null && actorType().equalsIgnoreCase("system")) {
                     keyList.add("");
                     return keyList;
                 }
@@ -125,9 +125,24 @@ public class Event {
         }
     }
 
+    public Map addISOStateCodeToDeviceData(Map deviceData) {
+        // add new statecode field
+        String statecode = deviceData.get("statecode").toString();
+        if(statecode != null && !statecode.isEmpty()) {
+            String iso3166statecode = "IN-" + statecode;
+            deviceData.put("iso3166statecode", iso3166statecode);
+            return deviceData;
+        }
+        else return deviceData;
+    }
+
     public void addDeviceData(Map newData) {
         NullableValue<Map<String, Object>> previousData = telemetry.read(path.deviceData());
         Map<String, Object> deviceData = previousData.isNull() ? new HashMap<>() : previousData.value();
+        // add new statecode field
+        if(!deviceData.isEmpty()) {
+            deviceData = addISOStateCodeToDeviceData(deviceData);
+        }
         deviceData.putAll(newData);
         telemetry.add(path.deviceData(), deviceData);
         setFlag(DeNormalizationConfig.getDeviceLocationJobFlag(), true);

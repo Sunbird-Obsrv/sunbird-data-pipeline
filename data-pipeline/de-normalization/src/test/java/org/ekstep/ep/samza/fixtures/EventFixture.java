@@ -91,6 +91,138 @@ public class EventFixture {
 			"    \"@timestamp\": \"2018-10-18T07:10:05.341Z\"\n" +
 			"}";
 
+	public static final String INTERACT_EVENT_WITH_DEVICEDATA = "{\n" +
+			"    \"actor\": {\n" +
+			"        \"type\": \"User\",\n" +
+			"        \"id\": \"60c02e78-64f9-400c-be3f-d91256d58cf1\"\n" +
+			"    },\n" +
+			"    \"eid\": \"INTERACT\",\n" +
+			"    \"edata\": {\n" +
+			"        \"id\": \"draftContentId\",\n" +
+			"        \"type\": \"click\",\n" +
+			"        \"pageid\": \"DraftContent\"\n" +
+			"    },\n" +
+			"    \"ver\": \"3.0\",\n" +
+			"    \"ets\": 1.550139834456E12,\n" +
+			"    \"context\": {\n" +
+			"        \"uid\": \"60c02e78-64f9-400c-be3f-d91256d58cf1\",\n" +
+			"        \"pdata\": {\n" +
+			"            \"ver\": \"1.11.0\",\n" +
+			"            \"pid\": \"sunbird-portal\",\n" +
+			"            \"id\": \"staging.diksha.portal\"\n" +
+			"        },\n" +
+			"        \"channel\": \"0123221617357783046602\",\n" +
+			"        \"env\": \"workspace\",\n" +
+			"        \"did\": \"68dfc64a7751ad47617ac1a4e0531fb761ebea6f\",\n" +
+			"        \"sid\": \"7ALbNUfErYtkGqPdyK0kjfRSETJXdKp4\",\n" +
+			"        \"cdata\": [\n" +
+			"            \n" +
+			"        ],\n" +
+			"        \"rollup\": {\n" +
+			"            \"l1\": \"012550822176260096119\"\n" +
+			"        }\n" +
+			"    },\n" +
+			"    \"mid\": \"INTERACT:4b645cf3d2a587413603de219eece5ed\",\n" +
+			"    \"object\": {\n" +
+			"        \"ver\": \"1.0\",\n" +
+			"        \"id\": \"do_21269871962088243212780\",\n" +
+			"        \"type\": \"draft\",\n" +
+			"        \"rollup\": {\n" +
+			"            \n" +
+			"        }\n" +
+			"    },\n" +
+			"    \"tags\": [\n" +
+			"        \"012550822176260096119\"\n" +
+			"    ],\n" +
+			"    \"syncts\": 1.550140278251E12,\n" +
+			"    \"@timestamp\": \"2019-02-14T10:31:18.251Z\",\n" +
+			"    \"flags\": {\n" +
+			"        \"tv_processed\": true,\n" +
+			"        \"dd_processed\": true,\n" +
+			"        \"device_location_retrieved\": true,\n" +
+			"        \"user_location_retrieved\": false\n" +
+			"    },\n" +
+			"    \"type\": \"events\",\n" +
+			"    \"ts\": \"2019-02-14T10:23:54.456+0000\",\n" +
+			"    \"devicedata\": {\n" +
+			"        \"country\": \"India\",\n" +
+			"        \"city\": \"Bengaluru\",\n" +
+			"        \"countrycode\": \"IN\",\n" +
+			"        \"state\": \"Karnataka\",\n" +
+			"        \"statecode\": \"KA\"\n" +
+			"    },\n" +
+			"    \"userdata\": {\n" +
+			"        \"district\": \"\",\n" +
+			"        \"state\": \"\"\n" +
+			"    }\n" +
+			"}";
+
+    public static final String INTERACT_EVENT_WITH_EMPTY_LOC = "{\n" +
+            "    \"actor\": {\n" +
+            "        \"type\": \"User\",\n" +
+            "        \"id\": \"60c02e78-64f9-400c-be3f-d91256d58cf1\"\n" +
+            "    },\n" +
+            "    \"eid\": \"INTERACT\",\n" +
+            "    \"edata\": {\n" +
+            "        \"id\": \"draftContentId\",\n" +
+            "        \"type\": \"click\",\n" +
+            "        \"pageid\": \"DraftContent\"\n" +
+            "    },\n" +
+            "    \"ver\": \"3.0\",\n" +
+            "    \"ets\": 1.550139834456E12,\n" +
+            "    \"context\": {\n" +
+            "        \"uid\": \"60c02e78-64f9-400c-be3f-d91256d58cf1\",\n" +
+            "        \"pdata\": {\n" +
+            "            \"ver\": \"1.11.0\",\n" +
+            "            \"pid\": \"sunbird-portal\",\n" +
+            "            \"id\": \"staging.diksha.portal\"\n" +
+            "        },\n" +
+            "        \"channel\": \"0123221617357783046602\",\n" +
+            "        \"env\": \"workspace\",\n" +
+            "        \"did\": \"68dfc64a7751ad47617ac1a4e0531fb761ebea6f\",\n" +
+            "        \"sid\": \"7ALbNUfErYtkGqPdyK0kjfRSETJXdKp4\",\n" +
+            "        \"cdata\": [\n" +
+            "            \n" +
+            "        ],\n" +
+            "        \"rollup\": {\n" +
+            "            \"l1\": \"012550822176260096119\"\n" +
+            "        }\n" +
+            "    },\n" +
+            "    \"mid\": \"INTERACT:4b645cf3d2a587413603de219eece5ed\",\n" +
+            "    \"object\": {\n" +
+            "        \"ver\": \"1.0\",\n" +
+            "        \"id\": \"do_21269871962088243212780\",\n" +
+            "        \"type\": \"draft\",\n" +
+            "        \"rollup\": {\n" +
+            "            \n" +
+            "        }\n" +
+            "    },\n" +
+            "    \"tags\": [\n" +
+            "        \"012550822176260096119\"\n" +
+            "    ],\n" +
+            "    \"syncts\": 1.550140278251E12,\n" +
+            "    \"@timestamp\": \"2019-02-14T10:31:18.251Z\",\n" +
+            "    \"flags\": {\n" +
+            "        \"tv_processed\": true,\n" +
+            "        \"dd_processed\": true,\n" +
+            "        \"device_location_retrieved\": true,\n" +
+            "        \"user_location_retrieved\": false\n" +
+            "    },\n" +
+            "    \"type\": \"events\",\n" +
+            "    \"ts\": \"2019-02-14T10:23:54.456+0000\",\n" +
+            "    \"devicedata\": {\n" +
+            "        \"country\": \"\",\n" +
+            "        \"city\": \"\",\n" +
+            "        \"countrycode\": \"\",\n" +
+            "        \"state\": \"\",\n" +
+            "        \"statecode\": \"\"\n" +
+            "    },\n" +
+            "    \"userdata\": {\n" +
+            "        \"district\": \"\",\n" +
+            "        \"state\": \"\"\n" +
+            "    }\n" +
+            "}";
+
 	public static final String INTERACT_EVENT_WITHOUT_DID = "{\n" +
 			"    \"actor\": {\n" +
 			"        \"type\": \"User\",\n" +

@@ -23,9 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -338,6 +336,64 @@ public class DeNormalizationTaskTest {
                 assertEquals(flags.get("user_data_retrieved"), null);
                 assertEquals(flags.get("content_data_retrieved"), null);
                 assertEquals(flags.get("dialcode_data_retrieved"), null);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicWithExistingDeviceData() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITH_DEVICEDATA);
+        Map device = new HashMap(); device.put("os", "Android 6.0"); device.put("make", "Motorola XT1706"); device.put("agent", "Mozilla");
+        device.put("ver", "5.0"); device.put("system", "iPad"); device.put("platform", "AppleWebKit/531.21.10"); device.put("raw", "Mozilla/5.0 (X11 Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)");
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+                "0123221617357783046602")).toReturn(device);
+        Map user = new HashMap(); user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
+        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        Map content = new HashMap(); content.put("name", "content-1"); content.put("objecttype", "Content"); content.put("contenttype", "TextBook");
+        stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(content);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                assertTrue(outputMessage.contains("\"iso3166statecode\":\"IN-KA\""));
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("device_data_retrieved"), true);
+                assertEquals(flags.get("user_data_retrieved"), false);
+                assertEquals(flags.get("content_data_retrieved"), false);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicWithExistingEmptyStateCode() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITH_EMPTY_LOC);
+        Map device = new HashMap(); device.put("os", "Android 6.0"); device.put("make", "Motorola XT1706"); device.put("agent", "Mozilla");
+        device.put("ver", "5.0"); device.put("system", "iPad"); device.put("platform", "AppleWebKit/531.21.10"); device.put("raw", "Mozilla/5.0 (X11 Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)");
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+                "0123221617357783046602")).toReturn(device);
+        Map user = new HashMap(); user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
+        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        Map content = new HashMap(); content.put("name", "content-1"); content.put("objecttype", "Content"); content.put("contenttype", "TextBook");
+        stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(content);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                assertFalse(outputMessage.contains("\"iso3166statecode\":\"IN-KA\""));
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("device_data_retrieved"), true);
+                assertEquals(flags.get("user_data_retrieved"), false);
+                assertEquals(flags.get("content_data_retrieved"), false);
                 return true;
             }
         }));

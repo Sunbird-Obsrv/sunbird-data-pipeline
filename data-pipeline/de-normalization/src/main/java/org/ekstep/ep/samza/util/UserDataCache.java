@@ -9,7 +9,7 @@ public class UserDataCache extends DataCache {
     public UserDataCache(Config config, RedisConnect redisConnect) {
 
         List defaultList = new ArrayList<String>();
-        defaultList.add("type");
+        defaultList.add("usertype");
         defaultList.add("grade");
         defaultList.add("language");
         defaultList.add("subject");
