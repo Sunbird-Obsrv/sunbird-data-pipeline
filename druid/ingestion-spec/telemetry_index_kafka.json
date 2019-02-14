@@ -504,6 +504,11 @@
               "type": "path",
               "name": "dialcode_object_type",
               "expr": "$.dialcodedata.objecttype"
+            },
+            {
+              "type": "path",
+              "name": "device_loc_iso_state_code",
+              "expr": "$.devicedata.iso3166statecode"
             }
           ]
         },
@@ -899,6 +904,10 @@
             {
               "type": "string",
               "name": "dialcode_object_type"
+            },
+            {
+              "type": "string",
+              "name": "device_loc_iso_state_code"
             }
           ],
           "dimensionsExclusions": []

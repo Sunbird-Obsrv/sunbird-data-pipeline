@@ -433,6 +433,11 @@
                         "type": "path",
                         "name": "user_loc_block",
                         "expr": "$.userdata.block"
+                    },
+                    {
+                      "type": "path",
+                      "name": "device_loc_iso_state_code",
+                      "expr": "$.devicedata.iso3166statecode"
                     }]
                 },
                 "dimensionsSpec":
@@ -777,6 +782,10 @@
                     {
                         "type": "string",
                         "name": "user_loc_block"
+                    },
+                    {
+                      "type": "string",
+                      "name": "device_loc_iso_state_code"
                     }],
                     "dimensionsExclusions": []
                 },
