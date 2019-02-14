@@ -351,7 +351,7 @@
                     {
                         "type": "path",
                         "name": "content_language",
-                        "expr": "$.contentdata.content_language[*]"
+                        "expr": "$.contentdata.language[*]"
                     },
                     {
                         "type": "path",
