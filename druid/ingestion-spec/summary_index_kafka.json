@@ -808,10 +808,10 @@
     },
     "ioConfig":
     {
-        "topic": "ntpprod.events.summary",
+        "topic": "<env>.events.summary",
         "consumerProperties":
         {
-            "bootstrap.servers": "11.4.2.22:9092, 11.4.2.23:9092, 11.4.2.24:9092"
+            "bootstrap.servers": "broker_ip:broker_port"
         },
         "taskCount": 1,
         "replicas": 1,

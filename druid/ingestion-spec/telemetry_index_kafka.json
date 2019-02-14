@@ -918,9 +918,9 @@
     }
   },
   "ioConfig": {
-    "topic": "ntpprod.events.telemetry",
+    "topic": "<env>.events.telemetry",
     "consumerProperties": {
-      "bootstrap.servers": "11.4.2.22:9092, 11.4.2.23:9092, 11.4.2.24:9092"
+      "bootstrap.servers": "broker_ip:broker_port"
     },
     "taskCount": 2,
     "replicas": 1,
