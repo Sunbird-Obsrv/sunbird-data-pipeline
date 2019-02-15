@@ -41,7 +41,7 @@ public class EsIndexerConfig {
         esIndexNameSuffixDateTimeFieldPattern = config.get("esindex.name.suffix.datetime.field.pattern", "yyyy-MM-dd'T'HH:mm:ss");
         esIndexNameSuffixDateTimePattern = config.get("esindex.name.suffix.datetime.pattern", "yyyy.MM");
         
-        String indexMappingStr = config.get("indexer.stream.mapping", "{\"telemetry.sink\":\"default\",\"telemetry.log\":\"backend\",\"telemetry.failed\":\"failed-telemetry\"}");
+        String indexMappingStr = config.get("indexer.stream.mapping", "{\"telemetry.with_location\":\"default\",\"telemetry.log\":\"backend\",\"telemetry.failed\":\"failed-telemetry\"}");
         this.indexMapping = new Gson().fromJson(indexMappingStr, new TypeToken<Map<String, String>>() {}.getType());
     }
     

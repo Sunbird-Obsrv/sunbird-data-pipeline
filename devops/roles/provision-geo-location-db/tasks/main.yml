@@ -1,0 +1,96 @@
+- name: Remove previously downloaded files
+  # become_user: "{{ download_user }}"
+  file: path={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}/ state=absent
+
+- name: Remove previously downloaded files
+  # become_user: "{{ download_user }}"
+  file: path={{ maxmind_db_download_dir }}/geoip2-csv-converter-v1.0.0/ state=absent
+
+- name: Remove archive files
+  become: yes
+  file: path={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}.zip state=absent
+
+- name: Download Maxmind GeoCity database
+  get_url: url={{ maxmind_geocity_db_url }} dest={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}.zip force=no
+
+- name: Unarchive Maxmind GeoCity database
+  unarchive: src={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}.zip dest={{ maxmind_db_download_dir }} copy=no
+
+- name: Rename unzipped geocity directory
+  shell: mv {{ maxmind_db_download_dir }}/{{ maxmind_db_unarchived_dir_prefix }} {{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}
+  run_once: true
+
+- name: Download Maxmind GeoIP2 CSV Converter Program v1.0.0
+  get_url: url={{ maxmind_geoip2_csv_converter_url }} dest={{ maxmind_db_download_dir }}/{{ maxmind_db_converter_archive_filename }} force=no
+
+- name: Unarchive Maxmind GeoIP2 CSV Converter
+  become_user: "{{ download_user }}"
+  unarchive: src={{ maxmind_db_download_dir }}/{{ maxmind_db_converter_archive_filename }} dest={{ maxmind_db_download_dir }}/ copy=no
+
+- name: Convert IPV4 CSV database to IP Range database
+  shell: "cd {{ maxmind_db_download_dir }} && ./geoip2-csv-converter-v1.0.0/geoip2-csv-converter -block-file={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}/{{ maxmind_db_geo_city_blocks_filename }} -output-file={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}/{{ maxmind_db_geo_city_ip_range_filename }} -include-integer-range"
+  run_once: true
+
+- name: Create {{ env }}_geo_location_city_temp table
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_geo_location_city_temp(geoname_id INTEGER UNIQUE, locale_code VARCHAR(3), continent_code VARCHAR(3), continent_name VARCHAR(100), country_iso_code VARCHAR(5), country_name VARCHAR(100), subdivision_1_iso_code VARCHAR(50), subdivision_1_name VARCHAR(100), subdivision_2_iso_code VARCHAR(50), subdivision_2_name VARCHAR(100), city_name VARCHAR(100), metro_code VARCHAR(10), time_zone VARCHAR(50), is_in_european_union SMALLINT)"
+  run_once: true
+
+- name: Create {{ env }}_geo_location_city_ipv4_temp table
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_geo_location_city_ipv4_temp(network_start_integer BIGINT, network_last_integer BIGINT, geoname_id INTEGER, registered_country_geoname_id INTEGER, represented_country_geoname_id INTEGER, is_anonymous_proxy SMALLINT, is_satellite_provider SMALLINT, postal_code VARCHAR(50), latitude NUMERIC(9, 6), longitude NUMERIC(9, 6), accuracy_radius SMALLINT)"
+  run_once: true
+
+- name: Load csv data into {{ env }}_geo_location_city_temp table
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "\COPY {{ env }}_geo_location_city_temp FROM '{{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}/{{ maxmind_db_geo_city_locations_filename }}' WITH CSV HEADER DELIMITER ','"
+  run_once: true
+
+- name: Load csv data into {{ env }}_geo_location_city_ipv4_temp table
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "\COPY {{ env }}_geo_location_city_ipv4_temp FROM '{{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}/{{ maxmind_db_geo_city_ip_range_filename }}' WITH CSV HEADER DELIMITER ','"
+  run_once: true
+
+- name: Create {{ env }}_geo_location_city table
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_geo_location_city(geoname_id INTEGER UNIQUE, locale_code VARCHAR(3), continent_code VARCHAR(3), continent_name VARCHAR(100), country_iso_code VARCHAR(5), country_name VARCHAR(100), subdivision_1_iso_code VARCHAR(50), subdivision_1_name VARCHAR(100), subdivision_2_iso_code VARCHAR(50), subdivision_2_name VARCHAR(100), city_name VARCHAR(100), metro_code VARCHAR(10), time_zone VARCHAR(50), is_in_european_union SMALLINT)"
+  run_once: true
+
+- name: Create {{ env }}_geo_location_city_ipv4 table
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_geo_location_city_ipv4(network_start_integer BIGINT, network_last_integer BIGINT, geoname_id INTEGER, registered_country_geoname_id INTEGER, represented_country_geoname_id INTEGER, is_anonymous_proxy SMALLINT, is_satellite_provider SMALLINT, postal_code VARCHAR(50), latitude NUMERIC(9, 6), longitude NUMERIC(9, 6), accuracy_radius SMALLINT)"
+  run_once: true
+
+- name: Create index on geo_location_city_ipv4.geoname_id
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE INDEX CONCURRENTLY IF NOT EXISTS ind_geoname_id ON {{ env }}_geo_location_city_ipv4 (geoname_id);"
+  run_once: true
+
+- name: Create index on network_start_integer
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE INDEX CONCURRENTLY IF NOT EXISTS ind_network_start_integer ON {{ env }}_geo_location_city_ipv4 (network_start_integer);"
+  run_once: true
+
+- name: Create index on network_last_integer
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE INDEX CONCURRENTLY IF NOT EXISTS ind_network_last_integer ON {{ env }}_geo_location_city_ipv4 (network_last_integer);"
+  run_once: true
+
+- name: Create index on country_iso_code
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE INDEX CONCURRENTLY IF NOT EXISTS ind_country_iso_code ON {{ env }}_geo_location_city (country_iso_code);"
+  run_once: true
+
+- name: Truncate {{ env }}_geo_location_city_ipv4 table
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "TRUNCATE TABLE {{ env }}_geo_location_city_ipv4 CASCADE"
+  run_once: true
+
+- name: Truncate {{ env }}_geo_location_city table
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "TRUNCATE TABLE {{ env }}_geo_location_city CASCADE"
+  run_once: true
+
+- name: Load data from temporary table to {{ env }}_geo_location_city table
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "INSERT INTO {{ env }}_geo_location_city SELECT * FROM {{ env }}_geo_location_city_temp WHERE country_iso_code = 'IN'"
+  run_once: true
+
+- name: Load data from temporary table to {{ env }}_geo_location_city_ipv4 table
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "INSERT INTO {{ env }}_geo_location_city_ipv4 SELECT gip.* FROM {{ env }}_geo_location_city glc, {{ env }}_geo_location_city_ipv4_temp gip WHERE glc.geoname_id = gip.geoname_id"
+  run_once: true
+
+- name: Drop temporary table {{ env }}_geo_location_city_temp
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "DROP TABLE {{ env }}_geo_location_city_temp CASCADE"
+  run_once: true
+
+- name: Drop temporary table {{ env }}_geo_location_city_ipv4_temp
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "DROP TABLE {{ env }}_geo_location_city_ipv4_temp CASCADE"
+  run_once: true

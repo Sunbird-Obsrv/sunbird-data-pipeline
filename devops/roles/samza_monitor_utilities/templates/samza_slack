@@ -1,0 +1,18 @@
+#!/bin/sh
+
+MONIT_GROUP="[u'{{ env }}']"
+MONIT_IP="{{ __yarn_host__ }}"
+COLOR=$1
+DESCRIPTION=$2
+/usr/bin/curl \
+    -X POST \
+    -s \
+    --data-urlencode "payload={ \
+        \"channel\": \"#{{ samza_slack_channel }}\", \
+        \"username\": \"Samza-Monit-{{ env }}\", \
+        \"pretext\": \"$MONIT_IP | $MONIT_GROUP | $MONIT_DATE\", \
+        \"color\": \"$COLOR\", \
+        \"icon_emoji\": \":bangbang:\", \
+        \"text\": \"$DESCRIPTION\" \
+    }" \
+    {{ samza_alert_slack_url }}

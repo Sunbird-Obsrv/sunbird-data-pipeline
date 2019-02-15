@@ -1,0 +1,92 @@
+## Data products deployment ##
+- name: Copy Data Products
+  copy: src=batch-models-1.0.jar dest={{ analytics.home }}/models
+
+- name: Copy Framework Library
+  copy: src=analytics-framework-1.0.jar dest={{ analytics.home }}/models
+
+- name: Copy Job Manager
+  copy: src=job-manager-1.0-distribution.tar.gz dest={{ analytics.home }}
+
+- name: Unarchive Job Manager
+  unarchive: src={{ analytics.home }}/job-manager-1.0-distribution.tar.gz dest={{ analytics.home }} copy=no group={{ analytics_group }} owner={{ analytics_user }} creates={{ analytics.home }}/script
+
+- name: Copy configuration file
+  template: src=common.conf.j2 dest={{ analytics.home }}/models/{{ env }}.conf mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+
+- name: Copy log4j2 xml file
+  template: src=log4j2.xml.j2 dest={{ analytics.home }}/models/log4j2.xml mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+
+- name: Copy Python Library
+  copy: src=script.zip dest={{ analytics.home }}
+
+- name: Unarchive script
+  unarchive: src={{ analytics.home }}/script.zip dest={{ analytics.home }}/ copy=no group={{ analytics_group }} owner={{ analytics_user }} creates={{ analytics.home }}/script
+
+- name: move files
+  command: cp -r {{ analytics.home }}/script/GenieSearch  {{ analytics.home }}/scripts/
+
+- name: move files
+  command: cp -r {{ analytics.home }}/script/VidyavaniCnQ  {{ analytics.home }}/scripts/
+
+- name: move files
+  command: cp -r {{ analytics.home }}/script/vidyavaani  {{ analytics.home }}/scripts/
+
+- name: move files
+  command: cp -r {{ analytics.home }}/script/BusinessMetrics  {{ analytics.home }}/scripts/
+
+- name: Copy Scripts
+  template: src={{ item }}.j2 dest={{ analytics.home }}/scripts/{{ item }}.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  with_items: "{{ analytics.scripts }}"
+
+- name: Update model config
+  template: src=model-config.j2 dest={{ analytics.home }}/scripts/model-config.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  tags:
+    - update-config
+
+- name: Remove file
+  file: path={{ analytics.home }}/{{ item }} state=absent
+  with_items:
+    - script
+    - script.zip
+
+- name: Replace Working directory line
+  lineinfile: dest={{ analytics.home }}/scripts/vidyavaani/resources/config.properties regexp='^working_dir=' insertafter='^#working_dir=' line='working_dir=/mnt/data/analytics/content2vec' state=present
+
+- name: Copy submit-all-jobs ruby file
+  template: src=submit-all-jobs.rb.j2 dest={{ analytics.home }}/scripts/submit-all-jobs.rb mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  tags:
+    - update-config
+
+- name: Copy model-config.json file
+  template: src=model-config.json.j2 dest={{ analytics.home }}/scripts/model-config.json mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  tags:
+    - update-config
+
+- name: Clean cron jobs
+  command: crontab -r
+  ignore_errors: yes
+  tags:
+    - clean-cronjobs
+
+- name: Create daily cron jobs using submit-all-jobs
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="ruby {{ analytics.home }}/scripts/submit-all-jobs.rb"
+  with_dict: "{{ submit_jobs }}"
+  tags:
+    - cronjobs
+
+- name: Create start-jobmanager cron jobs
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/start-jobmanager.sh"
+  with_dict: "{{ start_jobmanager }}"
+  tags:
+    - cronjobs
+
+- name: Create video-streaming cron job
+  cron: name="{{env}}-video-streaming" minute=*/{{ video_stream_job_schedule }} job="{{ analytics.home }}/scripts/run-job.sh video-streaming"
+  tags:
+    - cronjobs
+
+- name: Update start jobmanager
+  template: src=start-jobmanager.j2 dest={{ analytics.home }}/scripts/start-jobmanager.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  tags:
+    - update-jobmanager-config

@@ -1,0 +1,5 @@
+---
+- include: common.yml
+- include: data_router.yml
+- include: data_aggregate.yml
+  when: aggregate

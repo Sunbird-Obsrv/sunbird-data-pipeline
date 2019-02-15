@@ -12,3 +12,15 @@ database.yml
 .idea
 tmp/
 kibana-auth/node_modules/
+
+# DevOps
+*.backup
+*.terrahelpbkp
+.terraform
+terraform.tfstate.*
+terraform.tfstate.*
+terraform.tfstate.*
+terraform.tfstate.*
+terraform.tfstate.*
+terraform.tfstate.*
+*.retry

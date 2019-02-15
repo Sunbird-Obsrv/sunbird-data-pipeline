@@ -1,0 +1,18 @@
+- name: Stop the secor service
+  command: "{{ sbin_path }}/secor {{ item.key }} stop"
+  async: 10
+  poll: 5
+  listen: "stop secor"
+  with_dict: "{{secor_service_name}}"
+
+- name: Delete the pid file
+  file: path={{ sbin_path }}/{{ item.key }}.pid state=absent
+  listen: "stop secor"
+  with_dict: "{{secor_service_name}}"
+
+- name: Start the secor service
+  command: "{{ sbin_path }}/secor {{ item.key }} start"
+  async: 20
+  poll: 5
+  listen: "start secor"
+  with_dict: "{{secor_service_name}}"

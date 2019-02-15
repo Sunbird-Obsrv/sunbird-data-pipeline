@@ -1,0 +1,35 @@
+require "ruby-kafka"
+require 'json'
+
+@log = File.open("{{ analytics.home }}/logs/logfile.log", 'a')
+@kafka = Kafka.new(["{{ brokerlist }}"])
+@topic = "{{ analytics_job_queue_topic }}"
+
+def log(message)
+    @log.write("#{Time.now.to_s}: #{message}\n")
+end
+
+def submit_all_jobs
+    #jobs = ["wfs", "ss", "data-exhaust", "monitor-job-summ"]
+    jobs = ["wfs", "ss", "is", "item-usage-summ", "usage-summary", "item-usage-metrics", "wfus", "ds", "dpu", "wfu", "workflow-usage-metrics", "portal-metrics", "dialcode-usage-summary", "etb-coverage-summary", "dialcode-usage-updater", "data-exhaust", "monitor-job-summ"]
+
+    log("Starting to submit #{jobs.count} jobs for processing")
+    file = File.read("{{ analytics.home }}/scripts/model-config.json")
+    file = file.gsub("$(date --date yesterday '+%Y-%m-%d')", `date --date yesterday '+%Y-%m-%d'`.strip)
+    file = file.gsub("$(date '+%Y-%m-%d')", `date "+%Y-%m-%d"`.strip)
+    config_hash = JSON.parse(file)
+    log("Config file loaded")
+    jobs.each do |job|
+        submit_job(job, config_hash[job])
+    end
+    log("Submitted #{jobs.count} jobs for processing")
+end
+
+def submit_job(job, config)
+    job_config =  {model: job, config: config}.to_json
+    log("message: #{job_config}")
+    @kafka.deliver_message(job_config, topic: @topic)
+    log("Submitted #{job} for processing")
+end
+
+submit_all_jobs

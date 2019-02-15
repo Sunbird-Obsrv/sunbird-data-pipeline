@@ -1,0 +1,58 @@
+input {
+	kafka {
+	        zk_connect => "{{zookeepers}}"
+	        group_id => "{{kafka_topic_prefix}}learning.events"
+	        topic_id => "{{kafka_topic_prefix}}{{learning_topics}}"
+	        reset_beginning => false
+	        consumer_threads => 1
+	        queue_size => 20
+	        rebalance_max_retries => 4
+	        rebalance_backoff_ms => 2000
+	        consumer_timeout_ms => -1
+	        consumer_restart_on_error => true
+	        consumer_restart_sleep_ms => 0
+	        decorate_events => false
+	        consumer_id => nil
+	        fetch_message_max_bytes => 1048576
+	        type => "events"
+	        add_field =>["learning","true"]
+    }
+}
+
+filter {
+  if [learning] == "true" and ![metadata][learning_index]{
+    if [context] and [context][date_range] and [context][date_range][to]{
+      if [context][granularity] == "CUMULATIVE"{
+        ruby {
+          code => "event['[metadata][learning_index]'] = 'cumulative'"
+        }
+      }
+      else{
+        ruby {
+          code => "event['[metadata][learning_index]'] = DateTime.strptime(event['[context][date_range][to]'].to_s,'%Q').to_time.strftime('%Y.%m')"
+        }
+      }
+
+    }
+  }
+}
+
+output {
+	if [type] == "events" and [learning] == "true" and [ready_to_index] != "true" and [retry] != "true" and [metadata][public] != "true" {
+      kafka {
+        bootstrap_servers => "{{kafka_brokers}}"
+        topic_id => "{{kafka_topic_prefix}}{{kafka_sink_topic}}"
+        compression_type => "none"
+        acks => "0"
+        value_serializer => "org.apache.kafka.common.serialization.StringSerializer"
+        metadata_fetch_timeout_ms => 10000
+        key_serializer => "org.apache.kafka.common.serialization.StringSerializer"
+        retries => 3
+        retry_backoff_ms => 100
+        metadata_max_age_ms => 600000
+        batch_size => 200
+        send_buffer_bytes => 102400
+        client_id => "logstash"
+    }
+  }
+}
