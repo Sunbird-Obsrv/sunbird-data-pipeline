@@ -387,6 +387,11 @@
             },
             {
               "type": "path",
+              "name": "content_media_type",
+              "expr": "$.contentdata.mediatype"
+            },
+            {
+              "type": "path",
               "name": "content_language",
               "expr": "$.contentdata.language[*]"
             },
@@ -464,11 +469,6 @@
               "type": "path",
               "name": "user_loc_district",
               "expr": "$.userdata.district"
-            },
-            {
-              "type": "path",
-              "name": "user_loc_block",
-              "expr": "$.userdata.block"
             },
             {
               "type": "path",
@@ -612,7 +612,7 @@
               "name": "edata_duration"
             },
             {
-              "type": "string",
+              "type": "integer",
               "name": "edata_index"
             },
             {
@@ -814,6 +814,10 @@
               "name": "content_type"
             },
             {
+              "type": "string",
+              "name": "content_media_type"
+            },
+            {
               "name": "content_language"
             },
             {
@@ -872,10 +876,6 @@
             {
               "type": "string",
               "name": "user_loc_district"
-            },
-            {
-              "type": "string",
-              "name": "user_loc_block"
             },
             {
               "type": "string",

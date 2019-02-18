@@ -23,7 +23,7 @@
                     },
                     {
                         "type": "root",
-                        "name": "syncts"
+                        "name": "ets"
                     },
                     {
                         "type": "root",
@@ -430,11 +430,6 @@
                         "expr": "$.userdata.district"
                     },
                     {
-                        "type": "path",
-                        "name": "user_loc_block",
-                        "expr": "$.userdata.block"
-                    },
-                    {
                       "type": "path",
                       "name": "device_loc_iso_state_code",
                       "expr": "$.devicedata.iso3166statecode"
@@ -460,11 +455,11 @@
                         "name": "uid"
                     },
                     {
-                        "type": "string",
+                        "type": "long",
                         "name": "context_date_range_from"
                     },
                     {
-                        "type": "string",
+                        "type": "long",
                         "name": "context_date_range_to"
                     },
                     {
@@ -710,6 +705,10 @@
                         "type": "string",
                         "name": "content_type"
                     },
+                     {
+                        "type": "string",
+                        "name": "content_media_type"
+                    },
                     {
                         "name": "content_language"
                     },
@@ -750,14 +749,6 @@
                         "name": "content_last_updated_on"
                     },
                     {
-                        "type": "string",
-                        "name": "user_first_name"
-                    },
-                    {
-                        "type": "string",
-                        "name": "user_last_name"
-                    },
-                    {
                         "name": "user_grade_list"
                     },
                     {
@@ -778,10 +769,6 @@
                     {
                         "type": "string",
                         "name": "user_loc_district"
-                    },
-                    {
-                        "type": "string",
-                        "name": "user_loc_block"
                     },
                     {
                       "type": "string",
