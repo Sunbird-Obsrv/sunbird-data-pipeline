@@ -612,7 +612,7 @@
               "name": "edata_duration"
             },
             {
-              "type": "integer",
+              "type": "long",
               "name": "edata_index"
             },
             {
