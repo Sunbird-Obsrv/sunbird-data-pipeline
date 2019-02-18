@@ -403,7 +403,7 @@
             {
               "type": "path",
               "name": "content_mimetype",
-              "expr": "$.contentdata.mimeType"
+              "expr": "$.contentdata.mimetype"
             },
             {
               "type": "path",
