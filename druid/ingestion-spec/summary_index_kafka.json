@@ -695,7 +695,7 @@
                         "name": "device_uaspec_raw"
                     },
                     {
-                        "type": "string",
+                        "type": "long",
                         "name": "device_first_access"
                     },
                     {
@@ -734,7 +734,7 @@
                         "name": "content_status"
                     },
                     {
-                        "type": "string",
+                        "type": "double",
                         "name": "content_version"
                     },
                     {
