@@ -787,12 +787,12 @@
         {
             "type": "longSum",
             "name": "total_interactions",
-            "fieldName": "interaction_count"
+            "fieldName": "edata_interaction_count"
         },
         {
             "type": "doubleSum",
             "name": "total_time_spent",
-            "fieldName": "time_spent"
+            "fieldName": "edata_time_spent"
         }],
         "granularitySpec":
         {
