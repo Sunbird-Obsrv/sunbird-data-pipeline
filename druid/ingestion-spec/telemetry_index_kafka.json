@@ -238,7 +238,7 @@
             {
               "type": "path",
               "name": "edata_filters_dialcodes",
-              "expr": "$.edata.filters.dialcodes[*]"
+              "expr": "$.edata.filters.dialcodes"
             },
             {
               "type": "path",
