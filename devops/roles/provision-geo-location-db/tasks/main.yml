@@ -6,6 +6,9 @@
   # become_user: "{{ download_user }}"
   file: path={{ maxmind_db_download_dir }}/geoip2-csv-converter-v1.0.0/ state=absent
 
+- name: Remove previously downloaded maxmind_custom_data_mapping.csv file
+  file: path={{ maxmind_db_download_dir }}/maxmind_custom_data_mapping.csv state=absent
+
 - name: Remove archive files
   become: yes
   file: path={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}.zip state=absent
@@ -47,8 +50,19 @@
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "\COPY {{ env }}_geo_location_city_ipv4_temp FROM '{{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}/{{ maxmind_db_geo_city_ip_range_filename }}' WITH CSV HEADER DELIMITER ','"
   run_once: true
 
+- name: Download maxmind_custom_data_mapping.csv file
+  get_url: url={{ maxmind_custom_data_mapping_url }} dest={{ maxmind_db_download_dir }}/maxmind_custom_data_mapping.csv force=no
+
+- name: Create {{ env }}_maxmind_custom_data_mapping table
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_maxmind_custom_data_mapping(geoname_id INTEGER UNIQUE, subdivision_1_custom_code VARCHAR(50), subdivision_1_custom_name VARCHAR(100), subdivision_2_custom_code VARCHAR(50), subdivision_2_custom_name VARCHAR(100))"
+  run_once: true
+
+- name: Load maxmind_custom_data_mapping.csv data into {{ env }}_maxmind_custom_data_mapping table
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "\COPY {{ env }}_maxmind_custom_data_mapping FROM '{{ maxmind_db_download_dir }}/maxmind_custom_data_mapping.csv' WITH CSV HEADER DELIMITER ','"
+  run_once: true
+
 - name: Create {{ env }}_geo_location_city table
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_geo_location_city(geoname_id INTEGER UNIQUE, locale_code VARCHAR(3), continent_code VARCHAR(3), continent_name VARCHAR(100), country_iso_code VARCHAR(5), country_name VARCHAR(100), subdivision_1_iso_code VARCHAR(50), subdivision_1_name VARCHAR(100), subdivision_2_iso_code VARCHAR(50), subdivision_2_name VARCHAR(100), city_name VARCHAR(100), metro_code VARCHAR(10), time_zone VARCHAR(50), is_in_european_union SMALLINT)"
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_geo_location_city(geoname_id INTEGER UNIQUE, locale_code VARCHAR(3), continent_code VARCHAR(3), continent_name VARCHAR(100), country_iso_code VARCHAR(5), country_name VARCHAR(100), subdivision_1_iso_code VARCHAR(50), subdivision_1_name VARCHAR(100), subdivision_2_iso_code VARCHAR(50), subdivision_2_name VARCHAR(100), city_name VARCHAR(100), metro_code VARCHAR(10), time_zone VARCHAR(50), is_in_european_union SMALLINT, subdivision_1_custom_code VARCHAR(50), subdivision_1_custom_name VARCHAR(100), subdivision_2_custom_code VARCHAR(50), subdivision_2_custom_name VARCHAR(100))"
   run_once: true
 
 - name: Create {{ env }}_geo_location_city_ipv4 table
@@ -79,8 +93,8 @@
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "TRUNCATE TABLE {{ env }}_geo_location_city CASCADE"
   run_once: true
 
-- name: Load data from temporary table to {{ env }}_geo_location_city table
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "INSERT INTO {{ env }}_geo_location_city SELECT * FROM {{ env }}_geo_location_city_temp WHERE country_iso_code = 'IN'"
+- name: Load data from temporary table and {{ env }}_maxmind_custom_data_mapping table to {{ env }}_geo_location_city table
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "INSERT INTO {{ env }}_geo_location_city SELECT glc.geoname_id, glc.locale_code, glc.continent_code, glc.continent_name, glc.country_iso_code, glc.country_name, glc.subdivision_1_iso_code, glc.subdivision_1_name, glc.subdivision_2_iso_code, glc.subdivision_2_name, glc.city_name, glc.metro_code, glc.time_zone, glc.is_in_european_union, mcd.subdivision_1_custom_code, mcd.subdivision_1_custom_name, mcd.subdivision_2_custom_code, mcd.subdivision_2_custom_name FROM {{ env }}_geo_location_city_temp glc LEFT JOIN {{ env }}_maxmind_custom_data_mapping mcd ON glc.geoname_id = mcd.geoname_id WHERE glc.country_iso_code = 'IN'"
   run_once: true
 
 - name: Load data from temporary table to {{ env }}_geo_location_city_ipv4 table
@@ -93,4 +107,8 @@
 
 - name: Drop temporary table {{ env }}_geo_location_city_ipv4_temp
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "DROP TABLE {{ env }}_geo_location_city_ipv4_temp CASCADE"
+  run_once: true
+
+- name: Drop table {{ env }}_maxmind_custom_data_mapping
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "DROP TABLE {{ env }}_maxmind_custom_data_mapping CASCADE"
   run_once: true
