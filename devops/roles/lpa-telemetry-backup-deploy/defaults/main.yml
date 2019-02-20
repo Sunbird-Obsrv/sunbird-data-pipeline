@@ -180,7 +180,7 @@ secor_service_name:
     partition_prefix_key: ""
     partition_prefix_mapping: "{}"
     output_file_pattern: "{partition}-{currentTimestamp}.json"
-    service_description: "De-Normalized Events Backup"
+    service_description: "Denormalized Events Backup"
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "50"
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
