@@ -78,6 +78,26 @@
             },
             {
               "type": "path",
+              "name": "context_rollup_l1",
+              "expr": "$.context.rollup.l1"
+            },
+            {
+              "type": "path",
+              "name": "context_rollup_l2",
+              "expr": "$.context.rollup.l2"
+            },
+            {
+              "type": "path",
+              "name": "context_rollup_l3",
+              "expr": "$.context.rollup.l3"
+            },
+            {
+              "type": "path",
+              "name": "context_rollup_l4",
+              "expr": "$.context.rollup.l4"
+            },
+            {
+              "type": "path",
               "name": "object_id",
               "expr": "$.object.id"
             },
@@ -90,6 +110,26 @@
               "type": "path",
               "name": "object_version",
               "expr": "$.object.ver"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l1",
+              "expr": "$.object.rollup.l1"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l2",
+              "expr": "$.object.rollup.l2"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l3",
+              "expr": "$.object.rollup.l3"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l4",
+              "expr": "$.object.rollup.l4"
             },
             {
               "type": "root",
@@ -570,6 +610,22 @@
             },
             {
               "type": "string",
+              "name": "context_rollup_l1"
+            },
+            {
+              "type": "string",
+              "name": "context_rollup_l2"
+            },
+            {
+              "type": "string",
+              "name": "context_rollup_l3"
+            },
+            {
+              "type": "string",
+              "name": "context_rollup_l4"
+            },
+            {
+              "type": "string",
               "name": "object_id"
             },
             {
@@ -579,6 +635,22 @@
             {
               "type": "string",
               "name": "object_version"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l1"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l2"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l3"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l4"
             },
             {
               "name": "tags"
