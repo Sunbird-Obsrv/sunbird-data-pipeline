@@ -160,7 +160,7 @@ public class LocationEngineTest {
      * It should return the custom location details from the cache
      */
     @Test
-    public void ShouldgetCustomLocationDetails() throws IOException {
+    public void shouldgetCustomLocationDetails() throws IOException {
         String channel = "0123221617357783046602";
         Location location = new Location("", "India", "KA", "Karnataka", "Banglore","Custom_Banglore", "Custom_karnataka","Custom_KA");
         stub(locationStoreMock.get(channel)).toReturn(location);
@@ -178,7 +178,7 @@ public class LocationEngineTest {
      * are not found in the database
      */
     @Test
-    public void ShouldPopulateEmptyValue() throws IOException {
+    public void shouldPopulateEmptyValue() throws IOException {
         String channel = "0123221617357783046602";
         Location location = new Location();
         doAnswer((loc) -> {
