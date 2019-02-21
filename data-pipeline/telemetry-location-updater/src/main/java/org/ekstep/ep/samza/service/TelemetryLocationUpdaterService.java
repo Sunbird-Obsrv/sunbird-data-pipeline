@@ -59,12 +59,12 @@ public class TelemetryLocationUpdaterService {
 					event = updateEvent(event, location, true);
 				} else {
 					// add empty location
-					location = new Location("", "", "", "", "", "","","");
+					location = new Location();
 					event = updateEvent(event, location, false);
 				}
 			} else {
 				// add empty location
-				location = new Location("", "", "", "", "","","","");
+				location = new Location();
 				event = updateEvent(event, location, false);
 			}
 			return event;
@@ -73,7 +73,7 @@ public class TelemetryLocationUpdaterService {
 					format("EXCEPTION. RESOLVING IP LOCATION. EVENT: {0}, EXCEPTION:",
 							event),
 					ex);
-			location = new Location("", "", "", "", "","","","");
+			location = new Location();
 			event = updateEvent(event, location, false);
 			return event;
 		}

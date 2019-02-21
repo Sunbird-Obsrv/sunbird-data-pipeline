@@ -83,7 +83,7 @@ public class LocationEngineTest {
     @Test
     public void shouldPopulateEmptyValuesInCacheIfLocationNotFound() throws IOException {
         String channel = "0123221617357783046602";
-        Location location = new Location("", "", "", "", "");
+        Location location = new Location();
         doAnswer((loc) -> {
             assertEquals(channel, loc.getArguments()[0]);
             assertEquals(location, loc.getArguments()[1]);
@@ -156,8 +156,11 @@ public class LocationEngineTest {
         verify(userLocationCacheMock, times(1)).getLocationByUser(userId);
     }
 
+    /**
+     * It should return the custom location details from the cache
+     */
     @Test
-    public void shouldReturnCustomLocationDetatilsFromCache() throws IOException {
+    public void ShouldgetCustomLocationDetails() throws IOException {
         String channel = "0123221617357783046602";
         Location location = new Location("", "India", "KA", "Karnataka", "Banglore","Custom_Banglore", "Custom_karnataka","Custom_KA");
         stub(locationStoreMock.get(channel)).toReturn(location);
@@ -169,10 +172,15 @@ public class LocationEngineTest {
         assertEquals(cacheLocation.getstateCodeCustom(), "Custom_KA");
         assertEquals(cacheLocation.getstateCustomName(), "Custom_karnataka");
     }
+
+    /**
+     * It should populate the empty values in the cache if the custom location details
+     * are not found in the database
+     */
     @Test
-    public void shouldPopulateEmptyValuesCustomLocationDetailsInCacheIfCustomLocationDetailsNotFound() throws IOException {
+    public void ShouldPopulateEmptyValue() throws IOException {
         String channel = "0123221617357783046602";
-        Location location = new Location("", "", "", "", "","","","");
+        Location location = new Location();
         doAnswer((loc) -> {
             assertEquals(channel, loc.getArguments()[0]);
             assertEquals(location, loc.getArguments()[1]);
