@@ -30,8 +30,8 @@ public class Location {
   private String stateCodeCustom;
   private String stateCustomName;
 
-  public Location(){
-     this.countryCode= this.country= this.stateCode=this.state=this.city=this.district=this.districtCustom=this.stateCodeCustom=this.stateCustomName ="";
+  public Location() {
+      this.countryCode = this.country = this.stateCode = this.state = this.city = this.district = this.districtCustom = this.stateCodeCustom = this.stateCustomName = "";
   }
   public Location(String countryCode, String country, String stateCode, String state, String city) {
     this.countryCode = countryCode;
