@@ -122,6 +122,9 @@ public class Event {
 		ldata.put("statecode", location.getStateCode());
 		ldata.put("state", location.getState());
 		ldata.put("city", location.getCity());
+		ldata.put("statecustomcode", location.getstateCodeCustom());
+		ldata.put("statecustomname", location.getstateCustomName());
+		ldata.put("districtcustom", location.getDistrictCustom());
 		telemetry.add(path.deviceData(), ldata);
 	}
 

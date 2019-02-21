@@ -155,4 +155,41 @@ public class LocationEngineTest {
         locationEngine.getLocationByUser(userId);
         verify(userLocationCacheMock, times(1)).getLocationByUser(userId);
     }
+
+    @Test
+    public void shouldReturnCustomLocationDetatilsFromCache() throws IOException {
+        String channel = "0123221617357783046602";
+        Location location = new Location("", "India", "KA", "Karnataka", "Banglore","Custom_Banglore", "Custom_karnataka","Custom_KA");
+        stub(locationStoreMock.get(channel)).toReturn(location);
+        Location cacheLocation = locationEngine.getLocation(channel);
+        assertNotNull(cacheLocation);
+        assertEquals(cacheLocation.getState(), "Karnataka");
+        assertEquals(cacheLocation.getCity(), "Banglore");
+        assertEquals(cacheLocation.getDistrictCustom(), "Custom_Banglore");
+        assertEquals(cacheLocation.getstateCodeCustom(), "Custom_KA");
+        assertEquals(cacheLocation.getstateCustomName(), "Custom_karnataka");
+    }
+    @Test
+    public void shouldPopulateEmptyValuesCustomLocationDetailsInCacheIfCustomLocationDetailsNotFound() throws IOException {
+        String channel = "0123221617357783046602";
+        Location location = new Location("", "", "", "", "","","","");
+        doAnswer((loc) -> {
+            assertEquals(channel, loc.getArguments()[0]);
+            assertEquals(location, loc.getArguments()[1]);
+            return null;
+        }).when(locationStoreMock).put(anyString(), any(Location.class));
+
+        doAnswer((loc) -> null).when(searchServiceClientMock).searchChannelLocationId(anyString());
+        doAnswer((loc) -> location).when(locationEngine).loadChannelAndPopulateCache(anyString());
+
+        stub(locationStoreMock.get(channel)).toReturn(location);
+
+        Location resolvedLocation = locationEngine.getLocation(channel);
+        assertEquals(resolvedLocation.getState(), "");
+        assertEquals(resolvedLocation.getCity(), "");
+        assertEquals(locationStoreMock.get(channel), resolvedLocation);
+        assertEquals(resolvedLocation.getDistrictCustom(), "");
+        assertEquals(resolvedLocation.getstateCodeCustom(), "");
+        assertEquals(resolvedLocation.getstateCustomName(), "");
+    }
 }

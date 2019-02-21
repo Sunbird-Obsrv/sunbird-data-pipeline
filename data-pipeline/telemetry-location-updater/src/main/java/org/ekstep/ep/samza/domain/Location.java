@@ -26,6 +26,9 @@ public class Location {
   private String state;
   private String city;
   private String district;
+  private String districtCustom;
+  private String stateCodeCustom;
+  private String stateCustomName;
 
   public Location(){}
   public Location(String countryCode, String country, String stateCode, String state, String city) {
@@ -45,6 +48,17 @@ public class Location {
     this.district = district;
   }
 
+  public Location (String countryCode, String country, String stateCode, String state, String city, String districtCustom, String stateCustomName, String stateCodeCustom){
+    this.countryCode = countryCode;
+    this.country = country;
+    this.stateCode = stateCode;
+    this.state = state;
+    this.city = city;
+    this.districtCustom = districtCustom;
+    this.stateCustomName = stateCustomName;
+    this.stateCodeCustom = stateCodeCustom;
+  }
+
   public String getCity(){
     return this.city;
   }
@@ -61,6 +75,9 @@ public class Location {
     return stateCode;
   }
   public String getDistrict() { return district; }
+  public String getDistrictCustom() {return districtCustom;}
+  public String getstateCustomName() {return stateCustomName;}
+  public String getstateCodeCustom() {return stateCodeCustom;}
 
   public void setState(String state) {
     this.state = state;
