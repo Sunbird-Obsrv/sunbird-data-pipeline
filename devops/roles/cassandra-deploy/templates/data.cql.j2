@@ -130,7 +130,6 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}content_db.content_usa
     m_total_interactions bigint,
     m_avg_interactions_min double,
     updated_date timestamp,
-    m_content_type text,
     PRIMARY KEY (d_period, d_tag, d_content_id, d_app_id, d_channel)
 );
 
@@ -703,6 +702,7 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.workflow_u
   m_device_ids blob,
   m_contents blob,
   m_updated_date timestamp,
+  m_content_type text,
   PRIMARY KEY (d_period, d_channel, d_app_id, d_tag, d_type, d_mode, d_device_id, d_content_id, d_user_id)
 );
 
