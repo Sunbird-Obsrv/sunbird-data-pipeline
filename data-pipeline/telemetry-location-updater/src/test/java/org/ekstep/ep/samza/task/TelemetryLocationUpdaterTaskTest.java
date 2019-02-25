@@ -220,7 +220,7 @@ public class TelemetryLocationUpdaterTaskTest {
 	@Test
 	public void shouldSendEventsToSuccessTopicWithLocation() throws Exception {
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
-		Location loc = new Location("IN", "India", "KA", "Karnataka", "Bangalore");
+		Location loc = new Location("IN", "India", "KA", "Karnataka", "Bangalore","Banglore-Custom","Karnatak-Custom","KA-Custom");
 		stub(locationCacheMock.getLocationForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
 				"0123221617357783046602")).toReturn(loc);
 		stub(locationEngineMock.locationCache()).toReturn(locationCacheMock);
@@ -241,6 +241,9 @@ public class TelemetryLocationUpdaterTaskTest {
 				assertEquals(context.get("statecode"), "KA");
 				assertEquals(context.get("state"), "Karnataka");
 				assertEquals(context.get("city"), "Bangalore");
+				assertEquals(context.get("statecustomcode"), "KA-Custom");
+				assertEquals(context.get("districtcustom"), "Banglore-Custom");
+				assertEquals(context.get("statecustomname"), "Karnatak-Custom");
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
 				assertEquals(flags.get("device_location_retrieved"), true);
 				return true;
