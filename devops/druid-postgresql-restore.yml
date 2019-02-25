@@ -1,0 +1,5 @@
+- hosts: localhost
+  roles:
+    -  role: 'druid-postgresql-restore'
+  become: true
+ 

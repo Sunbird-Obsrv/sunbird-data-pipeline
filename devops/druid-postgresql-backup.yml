@@ -1,0 +1,4 @@
+- hosts: localhost
+  become: yes
+  roles:
+    -  role: 'druid-postgresql-backup'
