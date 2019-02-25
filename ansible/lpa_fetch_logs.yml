@@ -1,0 +1,23 @@
+- hosts: spark
+  become: yes
+  become_user: "{{analytics_user}}"
+  roles:
+    - data-products-fetch-logs
+  serial: 1
+
+- hosts: analytics-api
+  become: yes
+  become_user: "{{analytics_user}}"
+  roles:
+    - analytics-api-fetch-logs
+  serial: 1
+
+- hosts: cassandra
+  roles:
+    - cassandra-fetch-logs
+  serial: 1
+
+- hosts: secor
+  roles:
+    - secor-fetch-logs
+  serial: 1

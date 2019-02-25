@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+export SPARK_HOME={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7
+export MODELS_HOME={{ analytics.home }}/models
+export DP_LOGS={{ analytics.home }}/logs/data-products
+export SERVICE_LOGS={{ analytics.home }}/logs/services
+export JM_HOME={{ analytics.home }}/job-manager
+
+export azure_storage_key={{ azure_storage_account }}
+export azure_storage_secret={{ azure_storage_secret }}
+
+export heap_conf_str={{ spark.heap_conf_str }}
+
+## Job to run daily
+cd {{ analytics.home }}/scripts
+source model-config.sh
+today=$(date "+%Y-%m-%d")
+job_config=$(config 'job-manager')
+
+echo "Starting the job manager" >> "$SERVICE_LOGS/$today-job-manager.log"
+echo "config: $job_config" >> "$SERVICE_LOGS/$today-job-manager.log"
+#nohup java $heap_conf_str -cp "$SPARK_HOME/jars/*:$MODELS_HOME/*" -Dconfig.file=$MODELS_HOME/{{ env }}.conf org.ekstep.analytics.job.JobManager --config "$job_config" >> $SERVICE_LOGS/$today-job-manager.log 2>&1 &
+nohup java $heap_conf_str -cp "$SPARK_HOME/jars/*:$MODELS_HOME/*:$JM_HOME/lib/*" -Dconfig.file=$MODELS_HOME/{{ env }}.conf org.ekstep.analytics.job.JobManager --config "$job_config" >> $SERVICE_LOGS/$today-job-manager.log 2>&1 &

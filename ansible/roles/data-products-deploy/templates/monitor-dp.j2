@@ -1,0 +1,152 @@
+#!/bin/bash
+
+log_file=$1
+#webhook_url="https://hooks.slack.com/services/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"
+
+
+total_jobs=`grep "BE_JOB_END" $log_file`
+comp_jobs=`grep "status\":\"SUCCESS" <<< "$total_jobs"`
+failed_jobs=`grep "status\":\"FAILED" <<< "$total_jobs"`
+
+today=$(date "+%Y-%m-%d")
+
+comp_num=0
+failed_num=0
+total_events=0
+total_time=0
+
+file_content="Model,Job Status,Input Events Count, Output Events Count,Time Taken(in Seconds),Date\n"
+job_status="COMPLETED"
+# Declaring Arrays
+declare -A input
+declare -A output
+warnings=""
+
+if [ "$comp_jobs" != "" ]; then
+	comp_num=`echo "$comp_jobs" | wc -l | bc`
+	while read -r line
+	do	
+	    model=`sed 's/.*model":"\(.*\)","ver.*/\1/' <<< "$line" | sed -e "s/org.ekstep.analytics.model.//g" | sed -e "s/org.ekstep.analytics.updater.//g"`
+		#message=`sed 's/.*message":"\(.*\)","class.*/\1/' <<< "$line"`
+
+		eventsIn=`sed 's/.*","inputEvents":\(.*\),"outputEvents":.*/\1/' <<< "$line"`
+		sub="BE_JOB_END"
+		if [ "${eventsIn/$sub}" != "$eventsIn" ] ; then
+  			eventsIn=0
+  		fi
+		events=`sed 's/.*"outputEvents":\(.*\),"timeTaken".*/\1/' <<< "$line"`
+		if [ "${events/$sub}" != "$events" ] ; then
+  			events=0
+  		fi
+		total_events=$((total_events + events))
+		time_taken=`sed 's/.*"timeTaken":\(.*\)},".*/\1/' <<< "$line"`
+		total_time=`echo $total_time + $time_taken | bc`		
+		event_date=`sed 's/.*{"date":"\(.*\)","inputEvents":.*/\1/' <<< "$line"`
+		if [ "${event_date/$sub}" != "$event_date" ] ; then
+  			event_date=""
+  		fi
+  		input+=( [$model]=$eventsIn )
+        output+=( [$model]=$events )
+		file_content+="$model,$job_status,$eventsIn,$events,$time_taken,$event_date\n"
+	done <<< "$comp_jobs"
+fi
+
+events="0"
+time_taken="0"
+job_status="FAILED"
+event_date=""
+
+if [ "$failed_jobs" != "" ]; then
+	failed_num=`echo "$failed_jobs" | wc -l | bc`
+	while read -r line
+	do
+		model=`sed 's/.*model":"\(.*\)","ver.*/\1/' <<< "$line" | sed -e "s/org.ekstep.analytics.model.//g" | sed -e "s/org.ekstep.analytics.updater.//g"`
+		#message=`grep -Po '(?<="localizedMessage":")[^"]*' <<< "$line"`
+		sub="BE_JOB_END"
+		eventsIn=`sed 's/.*","inputEvents":\(.*\)},".*/\1/' <<< "$line"`
+		if [ "${eventsIn/$sub}" != "$eventsIn" ] ; then
+  			eventsIn=0
+  		fi
+		event_date=`sed 's/.*"data":{"date":"\(.*\)","inputEvents".*/\1/' <<< "$line"`
+		if [ "${event_date/$sub}" != "$event_date" ] ; then
+  			event_date=""
+  		fi
+  		echo "$event_date"
+  		input+=( [$model]=$eventsIn )
+        output+=( [$model]=$events )
+		file_content+="$model,$job_status,$eventsIn,$events,$time_taken,$event_date\n"
+	done <<< "$failed_jobs"
+fi
+
+if [[ ${output["LearnerSessionSummaryModel"]} != ${input["ItemUsageSummaryModel"]} ]]; then
+	warnings+="Output of LearnerSessionSummaryModel NOT EQUALS to Input of ItemUsageSummaryModel\n"   
+fi
+
+if [[ ${output["GenieLaunchSummaryModel"]} != ${input["GenieUsageSummaryModel"]} ]]; then
+	warnings+="Output of GenieLaunchSummaryModel NOT EQUALS to Input of GenieUsageSummaryModel\n"    
+fi
+
+if [[ ${output["GenieFunnelModel"]} != ${input["GenieFunnelAggregatorModel"]} ]]; then
+	warnings+="Output of GenieFunnelModel NOT EQUALS to Input of GenieFunnelAggregatorModel\n"   
+fi
+
+if [[ ${output["GenieLaunchSummaryModel"]} != ${input["GenieStageSummaryModel"]} ]]; then
+	warnings+="Output of GenieLaunchSummaryModel NOT EQUALS to Input of GenieStageSummaryModel\n"   
+fi
+
+if [[ ${output["ItemUsageSummaryModel"]} != ${input["ItemSummaryModel"]} ]]; then
+	warnings+="Output of ItemUsageSummaryModel NOT EQUALS to Input of ItemSummaryModel\n"    
+fi
+
+if [[ ${output["LearnerSessionSummaryModel"]} != ${input["DeviceContentUsageSummaryModel"]} ]]; then
+	warnings+="Output of LearnerSessionSummaryModel NOT EQUALS to Input of DeviceContentUsageSummaryModel\n"    
+fi
+
+if [[ ${output["GenieLaunchSummaryModel"]} != ${input["DeviceUsageSummaryModel"]} ]]; then
+	warnings+="Output of GenieLaunchSummaryModel NOT EQUALS to Input of DeviceUsageSummaryModel\n"    
+fi
+
+if [[ ${output["GenieUsageSummaryModel"]} != ${input["UpdateGenieUsageDB"]} ]]; then
+	warnings+="Output of GenieUsageSummaryModel NOT EQUALS to Input of UpdateGenieUsageDB\n"    
+fi
+
+if [[ ${output["ItemSummaryModel"]} != ${input["UpdateItemSummaryDB"]} ]]; then
+	warnings+="Output of ItemSummaryModel NOT EQUALS to Input of UpdateItemSummaryDB\n"    
+fi
+
+if [[ ${output["ContentPopularitySummaryModel"]} != ${input["UpdateContentPopularityDB"]} ]]; then
+	warnings+="Output of ContentPopularitySummaryModel NOT EQUALS to Input of UpdateContentPopularityDB\n"    
+fi
+
+if [[ ${output["ContentUsageSummaryModel"]} != ${input["UpdateContentUsageDB"]} ]]; then
+	warnings+="Output of ContentUsageSummaryModel NOT EQUALS to Input of UpdateContentUsageDB\n"   
+fi
+
+echo -e $file_content > {{ analytics.home }}/scripts/monitor-data/dp-monitor-$today.csv
+
+
+echo "-------- Status Report --------"
+echo "Number of Completed Jobs: $comp_num"
+echo "Number of failed Jobs: $failed_num"
+echo "Total time taken: $total_time"
+echo "Total events generated: $total_events"
+
+
+if [[("$failed_num" > 0 && "$warnings" == "") ]]; then
+
+data='{"channel": "{{ channel }}", "username": "{{ dp_username }}", "text":"*Jobs | Monitoring Report | '$today'*\nNumber of Completed Jobs: `'$comp_num'` \nNumber of failed Jobs: `'$failed_num'` \nTotal time taken: `'$total_time'`\nTotal events generated: `'$total_events'`\n\nDetailed Report:\n```'$file_content'```\n\nError: ```'"Job Failed"'```", "icon_emoji": ":ghost:"}'
+
+elif [[("$warnings" == "" && "$failed_num" == 0)]]; then
+
+data='{"channel": "{{ channel }}", "username": "{{ dp_username }}", "text":"*Jobs | Monitoring Report | '$today'*\nNumber of Completed Jobs: `'$comp_num'` \nNumber of failed Jobs: `'$failed_num'` \nTotal time taken: `'$total_time'`\nTotal events generated: `'$total_events'`\n\nDetailed Report:\n```'$file_content'```\n\nMessage: ```'"Job Run Completed Successfully"'```", "icon_emoji": ":ghost:"}'
+
+elif [[("$warnings" != "" && "$failed_num" == 0)]]; then
+
+data='{"channel": "{{ channel }}", "username": "{{ dp_username }}", "text":"*Jobs | Monitoring Report | '$today'*\nNumber of Completed Jobs: `'$comp_num'` \nNumber of failed Jobs: `'$failed_num'` \nTotal time taken: `'$total_time'`\nTotal events generated: `'$total_events'`\n\nDetailed Report:\n```'$file_content'```\n\nWarnings: ```'$warnings'``` ", "icon_emoji": ":ghost:"}'
+
+else
+
+data='{"channel": "{{ channel }}", "username": "{{ dp_username }}", "text":"*Jobs | Monitoring Report | '$today'*\nNumber of Completed Jobs: `'$comp_num'` \nNumber of failed Jobs: `'$failed_num'` \nTotal time taken: `'$total_time'`\nTotal events generated: `'$total_events'`\n\nDetailed Report:\n```'$file_content'```\n\nError: ```'"Job Failed"'```\n\nWarnings:```'$warnings'```", "icon_emoji": ":ghost:"}'
+fi
+
+curl -X POST -H 'Content-Type: application/json' --data "$data" https://hooks.slack.com/services/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

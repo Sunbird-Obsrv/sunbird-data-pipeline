@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" packages="">
+	<Properties>
+		<Property name="baseDir">{{ analytics.home }}/scripts/logs</Property>
+		<Property name="REDir">{{ analytics.home }}/scripts/logs</Property>
+	</Properties>
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+		</Console>
+		<RollingFile name="RollingFileAppender" fileName="${baseDir}/joblog.log" filePattern="${baseDir}/joblog-%d{MM-dd-yyyy}-%i.log">
+			<PatternLayout>
+				<Pattern>%m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+			</Policies>
+			<DefaultRolloverStrategy>
+                <Delete basePath="${baseDir}/" maxDepth="1" testMode="false">
+                    <IfFileName glob="joblog-*.log" />
+                    <IfLastModified age="7d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+		</RollingFile>
+		<RollingFile name="RE-RollingFileAppender" fileName="${sys:REDir}/joblog.log" filePattern="${REDir}/joblog-%d{MM-dd-yyyy}-%i.log">
+			<PatternLayout>
+				<Pattern>%m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+			</Policies>
+			<DefaultRolloverStrategy>
+                <Delete basePath="${sys:REDir}/" maxDepth="1" testMode="false">
+                    <IfFileName glob="joblog-*.log" />
+                    <IfLastModified age="7d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+		</RollingFile>
+		<Async name="Async">
+			<AppenderRef ref="RollingFileAppender" />
+		</Async>
+	</Appenders>
+	<Loggers>
+		<Logger name="org.ekstep.analytics" level="info" additivity="false">
+			<AppenderRef ref="Async"/>
+		</Logger>
+		<Logger name="org.ekstep.analytics.model" level="debug" additivity="false">
+			<AppenderRef ref="RE-RollingFileAppender"/>
+		</Logger>
+		<Root level="error">
+			<AppenderRef ref="Console" />
+		</Root>
+	</Loggers>
+</Configuration>

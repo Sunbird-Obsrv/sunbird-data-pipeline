@@ -1,0 +1,54 @@
+---
+- name: Add ElasticSearch repo public signing key
+  apt_key: id=46095ACC8548582C1A2699A9D27D666CD88E42B4 url=https://packages.elastic.co/GPG-KEY-elasticsearch state=present
+  become: yes
+
+- apt_repository: repo='deb http://packages.elasticsearch.org/logstash/2.3/debian stable main' state=present
+  become: yes
+
+- name: Update
+  apt: update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
+  become: yes
+
+- name: Install logstash
+  apt: name=logstash state=latest
+  become: yes
+  
+- name: Stop logstash
+  service: name=logstash state=stopped
+  environment:
+    KILL_ON_STOP_TIMEOUT: 1
+  become: yes
+  
+- name: Create logstash conf directory
+  file: path={{logstash_config_loc}} state=directory
+  become: yes
+
+- name: Copy logstash file
+  template: src=logstash.conf{{item}} dest={{ logstash_config_loc }}/logstash.conf{{item}}
+  become: yes
+  with_items: "{{logstash_conf}}"
+
+- name: Creates symlink
+  command: bash -lc "ln -s /lib/x86_64-linux-gnu/libcrypt.so.1 /usr/lib/x86_64-linux-gnu/libcrypt.so"
+  become: yes
+  ignore_errors: yes
+
+
+- name: Copy logstash init.d file
+  copy: src=logstash.sh dest=/etc/init.d/logstash mode=755
+  become: true
+
+- name: Install plugins
+  command: bin/logstash-plugin install {{item}}
+  args:
+    chdir: "{{logstash_home}}"
+  with_items: "{{logstash_plugins}}"
+  become: yes
+  ignore_errors: yes
+  
+- name: Restart logstash
+  service: name=logstash state=restarted
+  become: yes
+  
+- include: add_cron.yml

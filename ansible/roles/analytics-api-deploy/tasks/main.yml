@@ -1,0 +1,60 @@
+- name: Copy API artifact
+  copy: 
+    src: analytics-api-1.0-dist.zip 
+    dest: "{{ analytics_api.root }}"
+
+- name: Status of the api service
+  command: "{{ sbin_path }}/api-service status"
+  register: api_status
+
+- name: Stop the api service
+  command: "{{ sbin_path }}/api-service stop"
+  when: "api_status.stdout.find('RUNNING') != -1"
+  async: 10
+  poll: 5
+
+- name: Delete the pid file
+  file: path={{ sbin_path }}/api-service.pid state=absent
+
+- name: Delete the play pid file
+  file: path={{ analytics_api.home }}/RUNNING_PID state=absent
+
+- name: Remove lib directory
+  file: 
+    path: "{{ analytics_api.home }}/lib" 
+    state: absent
+
+- name: Unarchive api artifact
+  unarchive: src={{ analytics_api.root }}/analytics-api-1.0-dist.zip dest={{ analytics_api.root }} copy=no group={{ analytics_user }} owner={{ analytics_user }}
+
+- name: Delete slf4j-log4j jar file
+  file: path={{ analytics_api.home }}/lib/org.slf4j.slf4j-log4j12-1.7.16.jar state=absent
+
+- name: Copy API configuration file
+  template: src=conf.j2 dest={{ analytics_api.root }}/{{ env }}.conf mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+
+- name: temporarly overriding the netty jar
+  get_url:
+    url: http://central.maven.org/maven2/io/netty/netty-all/4.0.37.Final/netty-all-4.0.37.Final.jar
+    dest: "{{ analytics_api.root }}/analytics-api-1.0/lib/"
+
+- name: Start the api service
+  command: "{{ sbin_path }}/api-service start"
+  async: 600
+  poll: 120
+
+- name: Check the API health status
+  uri:
+    url: http://localhost:9000/health
+  register: api_health_status
+
+- name: Print the health status to console
+  debug:
+    var: api_health_status
+
+#Update ConsumerChannel Cache
+- uri:
+    url: "http://{{ ansible_hostname }}:9000/refresh-cache/{{ consumer_channel_cache_type }}"
+    method: GET
+    return_content: yes
+  tags: refresh-cache

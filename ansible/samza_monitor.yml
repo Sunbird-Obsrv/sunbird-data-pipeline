@@ -1,0 +1,13 @@
+- hosts: samza-monitor
+  remote_user: hduser
+  become: yes
+  pre_tasks:
+    - service: name=monit state=stopped
+      become: yes
+      ignore_errors: yes
+  roles:
+    - samza-job-monitor
+  post_tasks:
+    - service: name=monit state=started
+      become: yes
+      ignore_errors: yes

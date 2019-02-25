@@ -1,0 +1,73 @@
+analytics_user: analytics
+analytics_group: analytics
+telemetry_converter_ver: 0.0.8
+
+bucket: "dev-data-store"
+brokerlist: "{{groups['processing-cluster-kafka'][0]}}:9092"
+zookeeper: "{{groups['processing-cluster-kafka'][0]}}:2181"
+dp_username: dp-monitor
+analytics_job_queue_topic: "{{ env }}.analytics.job_queue"
+datasetRawBucket: ekstep-data-sets-{{ env }}
+dataExhaustBucket: ekstep-public-{{ env }}
+dataExhaustPrefix: data-exhaust/
+consumptionRawPrefix: datasets/D001/4208ab995984d222b59299e5103d350a842d8d41/
+topic: "{{ env }}.telemetry.derived"
+learning_topic: "{{ env }}.learning.graph.events"
+analytics_metrics_topic: "{{ env }}.analytics_metrics"
+job_manager_tmp_dir: "transient-data"
+channel: dev-test
+
+
+cassandra_keyspace_prefix: '{{ env }}_'
+dp_dispatch_bucket_name: ekstep-dev-data-store
+data_exhaust_blob_name: sunbird1p7
+data_exhaust_s3_url: https://s3-ap-south-1.amazonaws.com
+
+business_metrics:
+  s3_path: "s3://ekstep-{{ env }}-data-store/business_metrics/"
+  env: "{{ env }}"
+
+spark:
+  home: "{{ analytics.home }}/spark-2.0.1-bin-hadoop2.7"
+  public_dns: 54.255.154.146
+  master:
+    url: spark://172.31.11.117:7077
+    host: 172.31.11.117
+  worker:
+    instances: 1
+    cores: 2
+    memory: 4g
+  driver:
+    memory: 3g
+  executor:
+    memory: 4g
+  driver_memory: 7g
+  executor_extraJavaOptions: -Dconfig.file=/mnt/data/analytics/models/{{ env }}.conf -Dlog4j.configurationFile=file:///mnt/data/analytics/models/log4j2.xml
+  driver_extraJavaOptions: -Dconfig.file=/mnt/data/analytics/models/{{ env }}.conf -Dlog4j.configurationFile=file:///mnt/data/analytics/models/log4j2.xml
+  executor_memory: 2g
+  heap_conf_str: -Xmx5120m
+
+submit_jobs:
+  submit-all-jobs:
+    hour: 3
+    minute: 05
+
+start_jobmanager:
+  job-manager:
+    hour: 3
+    minute: 00
+have_weekly_jobs: false
+
+video_stream_job_schedule: 10
+
+service:
+  search:
+    url: http://{{groups['search1'][0]}}:9000
+    path: /v3/search
+
+es_search_index: "compositesearch"
+analytics:
+   home: /mount/data/analytics
+   soft_path: /mount/data/analytics
+   paths: ['/home/analytics/sbin', '/mount/data/analytics', '/mount/data/analytics/logs', '/mount/data/analytics/logs/services', '/mount/data/analytics/logs/data-products', '/mount/data/analytics/logs/api-service', '/mount/data/analytics/api', '/mount/data/analytics/tmp', '/mount/data/analytics/scripts/monitor-data', '/mount/data/analytics/models' ]
+   scripts: ['model-config', 'replay-job', 'replay-updater', 'replay-utils', 'run-job', 'monitor-dp', 'generate-metrics', 'submit-job', 'start-jobmanager']

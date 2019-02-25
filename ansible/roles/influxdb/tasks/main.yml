@@ -1,0 +1,67 @@
+---
+#- name: Set hostname
+  #hostname: name={{ ansible_hostname }}
+
+- name: Import InfluxDB GPG signing key
+  apt_key: url=https://repos.influxdata.com/influxdb.key state=present
+
+- name: Add InfluxDB repository
+  apt_repository: repo='deb https://repos.influxdata.com/ubuntu trusty stable' state=present
+
+- name: Install InfluxDB packages
+  apt: name=influxdb state=present
+  notify: restart influxdb service
+
+- name: Replace InfluxDB cluster configuration
+  template:
+    dest: "/etc/influxdb/influxdb.conf"
+    owner: "{{ influxdb_user_name }}"
+    group: "{{ influxdb_group_name }}"
+    src: influxdb.conf.j2
+  notify: restart influxdb service
+
+- name: Ensure InfluxDB service is running and enabled
+  service:
+    name: "{{ influxdb_service_name }}"
+    state: started
+    enabled: true
+
+- name: Wait for InfluxDB to be up and running
+  wait_for: port=8086 timeout=60
+
+- name: Create monitoring_events database
+  command: /usr/bin/influx -execute "CREATE DATABASE {{ monitoring_db }}"
+
+- name: Check if influxdb_relay_deb_package_name is installed
+  command: dpkg-query -W {{ influxdb_relay_deb_package_name }}
+  register: influxdb_relay_deb_package_name
+  failed_when: influxdb_relay_deb_package_name.rc > 1
+  changed_when: influxdb_relay_deb_package_name.rc == 1
+
+- name: Download InfluxDB-Relay .deb package from S3
+  get_url:
+    url="{{ influxdb_relay_deb_link }}"
+    dest="/tmp/{{ influxdb_relay_deb_file }}"
+  when: influxdb_relay_deb_package_name.rc == 1
+
+- name: Install influxdb_relay_deb_package_name
+  apt: deb="/tmp/{{ influxdb_relay_deb_file }}"
+  when: influxdb_relay_deb_package_name.rc == 1
+
+- name: Replace InfluxDB Relay configuration
+  template:
+    dest: "/etc/influxdb-relay/influxdb-relay.conf"
+    owner: "{{ influxdb_user_name }}"
+    group: "{{ influxdb_group_name }}"
+    src: influxdb_relay.conf.j2
+
+- name: Restart InfluxDB-Relay
+  service:
+    name: "{{ influxdb_relay_service_name }}"
+    state: restarted
+    enabled: true
+  register: influxdb_relay_state
+
+- name: Wait for InfluxDB-Relay to be up and running
+  pause: seconds=3
+  when: influxdb_relay_state|changed

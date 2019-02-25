@@ -1,0 +1,12 @@
+---
+- name: Ensure depdency is installed (Ubuntu).
+  apt: name=apt-transport-https state=present
+
+- name: Download Kibana
+  get_url:
+    url: "https://artifacts.elastic.co/downloads/kibana/kibana-{{ kibana_version }}-amd64.deb"
+    dest: /tmp/kibana.deb
+
+- name: Install Kibana
+  apt: deb="/tmp/kibana.deb"
+

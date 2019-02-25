@@ -1,0 +1,55 @@
+## Bootstrap for spark ##
+
+- name: Add azure key to user profile
+  become: yes
+  become_user: "{{ analytics_user }}"
+  lineinfile: dest={{ analytics_user_home }}/.bashrc line='export azure_storage_key={{ azure_account_name }}'  state=present insertafter=EOF create=yes
+
+- name: Add azure secret to user profile
+  become: yes
+  become_user: "{{ analytics_user }}"
+  lineinfile: dest={{ analytics_user_home }}/.bashrc line='export azure_storage_secret={{ azure_storage_secret }}' state=present insertafter=EOF create=yes
+
+- name: Add azure key to environment
+  become: yes
+  lineinfile: dest=/etc/environment line='azure_storage_key={{ azure_account_name }}'  state=present insertafter=EOF create=yes
+
+- name: Add azure secret to environment
+  become: yes
+  lineinfile: dest=/etc/environment line='azure_storage_secret={{ azure_storage_secret }}' state=present insertafter=EOF create=yes
+
+- name: Install required python packages
+  become: yes
+  action: apt pkg={{ item }} state=present update_cache=yes
+  with_items:
+    - libffi-dev
+    - libssl-dev
+    - build-essential
+    - lzop
+    - curl
+
+- name: Install libraries for spark bootstrap
+  become: yes
+  action: apt pkg={{ item }} state=present update_cache=yes
+  with_items:
+    - build-essential
+    - git
+
+- name: Create directories for spark/data-products
+  become: yes
+  file: path={{ item }} owner={{ analytics_user }} group={{ analytics_group }} state=directory
+  with_items: "{{ analytics.paths }}"
+
+- name: Clone libfm from github
+  become: yes
+  become_user: "{{ analytics_user }}"
+  git: repo=https://github.com/srendle/libfm.git dest={{ analytics.home }}/libfm
+
+- name: Run make of libfm
+  become: yes
+  become_user: "{{ analytics_user }}"
+  command: make all chdir={{ analytics.home }}/libfm
+
+- name: Make a link for libfm
+  become: yes
+  file: src={{ analytics.home }}/libfm/bin/libFM dest=/usr/local/bin/libFM state=link

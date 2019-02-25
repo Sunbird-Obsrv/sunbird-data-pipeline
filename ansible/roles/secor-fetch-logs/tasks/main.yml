@@ -1,0 +1,7 @@
+- name: Fetch secor logs
+  sudo: no
+  synchronize: src="{{ item }}" dest="./secor/" mode=pull recursive=yes rsync_path=rsync
+  with_items:
+    - "/mount/secor/logs"
+  tags:
+    - fetch-logs
