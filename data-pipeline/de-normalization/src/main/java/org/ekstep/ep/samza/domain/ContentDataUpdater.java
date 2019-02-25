@@ -12,6 +12,8 @@ import static java.text.MessageFormat.format;
 
 public class ContentDataUpdater extends IEventUpdater {
 
+    DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ").withZoneUTC();
+
     ContentDataUpdater(ContentDataCache contentCache) {
         this.dataCache = contentCache;
         this.cacheType = "content";
@@ -46,7 +48,6 @@ public class ContentDataUpdater extends IEventUpdater {
     }
 
     public Long getTimestamp(String ts) {
-        DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ").withZoneUTC();
         try {
             return df.parseDateTime(ts).getMillis();
         } catch(Exception ex) {
