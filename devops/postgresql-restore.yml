@@ -1,0 +1,5 @@
+- hosts: druid-postgres
+  roles:
+    -  role: 'postgresql-restore'
+  become: yes
+ 
