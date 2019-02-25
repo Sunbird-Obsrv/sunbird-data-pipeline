@@ -1,4 +1,6 @@
 - hosts: druid-postgres
+  vars_files:
+    - "{{inventory_dir}}/secrets/dp_secrets.yml"
   roles:
     -  role: 'postgresql-restore'
   become: yes
