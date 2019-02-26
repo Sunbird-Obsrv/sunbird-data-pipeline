@@ -826,15 +826,15 @@
               "name": "device_mem"
             },
             {
-              "type": "long",
+              "type": "string",
               "name": "device_idisk"
             },
             {
-              "type": "long",
+              "type": "string",
               "name": "device_edisk"
             },
             {
-              "type": "long",
+              "type": "string",
               "name": "device_scrn"
             },
             {
