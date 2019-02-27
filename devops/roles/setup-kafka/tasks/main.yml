@@ -27,3 +27,9 @@
   when: kafka_id=="1" and item.retention_time is defined  
   tags:
     - processing-kafka
+
+- name: overriding default partition size
+  shell: "/opt/kafka_2.12-1.1.0/bin/kafka-topics.sh  --zookeeper localhost:2181 --alter --topic {{item}} --config max.message.bytes={{kafka_partition_override_size}}"
+  with_items:
+    - sunbirddev.telemetry.ingestion
+    - ntpprod.telemetry.ingest

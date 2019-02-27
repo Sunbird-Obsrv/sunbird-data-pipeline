@@ -1,4 +1,5 @@
 env: dev
+kafka_partition_override_size: 5242880
 
 ingestion_kafka_topics:
   - name: telemetry.ingest
