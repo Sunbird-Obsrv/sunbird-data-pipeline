@@ -65,7 +65,7 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>telemetry-extractor</artifactId>
-            <version>0.0.2</version>
+            <version>0.0.3</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
