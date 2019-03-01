@@ -1,0 +1,73 @@
+package org.ekstep.ep.samza.task;
+
+
+import org.apache.samza.config.Config;
+
+public class DeNormalizationConfig {
+
+    private final String JOB_NAME = "DeNormalization";
+    private static final String deviceDataJobFlag = "device_data_retrieved";
+    private static final String userDataJobFlag = "user_data_retrieved";
+    private static final String contentDataJobFlag = "content_data_retrieved";
+    private static final String dialCodeDataJobFlag = "dialcode_data_retrieved";
+
+    private String successTopic;
+    private String failedTopic;
+    private String malformedTopic;
+    private final String metricsTopic;
+
+
+    public DeNormalizationConfig(Config config) {
+        successTopic = config.get("output.success.topic.name", "telemetry.denorm");
+        failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
+        malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
+        metricsTopic = config.get("output.metrics.topic.name", "pipeline_metrics");
+    }
+
+    public String successTopic() {
+        return successTopic;
+    }
+
+    public String failedTopic() {
+        return failedTopic;
+    }
+
+    public String malformedTopic() {
+        return malformedTopic;
+    }
+
+    public String metricsTopic() {
+        return metricsTopic;
+    }
+
+    public String jobName() {
+        return JOB_NAME;
+    }
+
+    public static String getJobFlag(String type) {
+        switch (type) {
+            case "device":
+                return deviceDataJobFlag;
+            case "user":
+                return userDataJobFlag;
+            case "content":
+                return contentDataJobFlag;
+            case "dialcode":
+                return dialCodeDataJobFlag;
+            default:
+                return "";
+        }
+    }
+
+    public static String getDeviceLocationJobFlag() {
+        return deviceDataJobFlag;
+    }
+
+    public static String getUserLocationJobFlag() {
+        return userDataJobFlag;
+    }
+
+    public static String getContentLocationJobFlag() { return contentDataJobFlag; }
+
+    public static String getDialCodeLocationJobFlag() { return dialCodeDataJobFlag; }
+}

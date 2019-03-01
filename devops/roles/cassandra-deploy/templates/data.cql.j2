@@ -408,6 +408,12 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}device_db.device_profi
     avg_ts double,
     device_spec Map<text,text>,
     updated_date timestamp,
+    state text, 
+    state_code text, 
+    country text, 
+    country_code text, 
+    city text, 
+    uaspec Map<text,text>,
     PRIMARY KEY (device_id, channel)
 );
 
@@ -439,6 +445,7 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.job_reques
     err_message text,
     stage text,
     stage_status text,
+    job_name text,
     PRIMARY KEY (client_key, request_id)
 );
 
@@ -695,6 +702,7 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.workflow_u
   m_device_ids blob,
   m_contents blob,
   m_updated_date timestamp,
+  m_content_type text,
   PRIMARY KEY (d_period, d_channel, d_app_id, d_tag, d_type, d_mode, d_device_id, d_content_id, d_user_id)
 );
 
@@ -721,12 +729,5 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.workflow_u
     PRIMARY KEY (event_date)
 );
 
-
-ALTER TABLE {{ cassandra.keyspace_prefix }}platform_db.workflow_usage_summary_fact
-ADD (m_content_type text);
-
-ALTER TABLE {{ cassandra.keyspace_prefix }}platform_db.job_request
-ADD (job_name text);
-
 ALTER TABLE {{ cassandra.keyspace_prefix }}device_db.device_profile
-ADD (state text, state_code text, country text, country_code text, city text, uaspec Map<text,text>);
+ADD (state_custom text, state_code_custom text, district_custom text);

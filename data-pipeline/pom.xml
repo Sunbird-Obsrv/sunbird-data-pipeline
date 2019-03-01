@@ -33,6 +33,9 @@
 		<module>telemetry-extractor</module>
 		<module>telemetry-router</module>
 		<module>telemetry-location-updater</module>
+		<module>events-router</module>
+		<module>de-normalization</module>
+		<module>redis-updater</module>
 		<!--
 		<module>reverse-search</module>
 		<module>object-de-normalization</module>

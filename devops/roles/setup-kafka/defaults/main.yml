@@ -32,6 +32,15 @@ processing_kafka_topics:
   - name: telemetry.de_normalized
     num_of_partitions: 4
     replication_factor: 1
+  - name: events.telemetry
+    num_of_partitions: 2
+    replication_factor: 1
+  - name: events.summary
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: telemetry.denorm
+    num_of_partitions: 4
+    replication_factor: 1
   - name: telemetry.log
     num_of_partitions: 1
     replication_factor: 1

@@ -1,7 +1,0 @@
-data_dir: public-data-aggregate
-store_file_name: store.yml
-initial_aggregate_date: 2016-07-17 #YYYY-MM-dd format
-dataset_id: {dataset_id}
-resource_id: {resource_id}
-licence_key: {licensekey}
-dataset_aggregate_endpoint: http://localhost:8091/v1/datasets
