@@ -33,3 +33,4 @@
   with_items:
     - "{{env}}.telemetry.ingestion"
     - "{{env}}.telemetry.ingest"
+    - "{{env}}.telemetry.extractor.failed
