@@ -32,7 +32,8 @@ public class DeNormalizationService {
             event = source.getEvent();
             // add content details to the event
             event = eventUpdaterFactory.getInstance("content-data-updater")
-                    .update(event, event.getKey("content").get(0));
+                    .update(event);
+                    //.update(event, event.getKey("content").get(0));
             // add user details to the event
             event = eventUpdaterFactory.getInstance("user-data-updater")
                     .update(event, event.getKey("user").get(0));
