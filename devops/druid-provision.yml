@@ -15,7 +15,14 @@
     - {role: postgres-provision }
   vars:
     postgres_address_space: "0.0.0.0/0"
-
+    postgresql_databases:
+      - name: druid
+      - name: graphite
+    postgresql_users:
+      - name: druid
+        password: "{{ vault_druid_postgress_pass }}"
+      - name: graphite 
+        password: "{{ vault_druid_postgress_graphite_pass }}"  
 -
   name: Install role druid
   hosts: druid
