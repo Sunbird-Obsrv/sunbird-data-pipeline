@@ -3,13 +3,6 @@
 
 zookeeper_group: "{{ groups['druid-zookeeper'] }}"
 
-postgresql_databases:
- - name: druid
-postgresql_users:
- - name: druid
-   password: druid
-postgres_address_space: 0.0.0.0/0
-
 druid_user: druid
 druid_directory: "/data"
 druid_version: "0.13.0-incubating"
@@ -32,9 +25,11 @@ druid_log_dir: "/var/log/druid/"
 
 #azure config in group vars
 
-azure_account: "sunbirddevtelemetry"
-azure_key: "test-key"
-azure_container: "test-container"
+
+#Logging the indexing logs to azure
+
+druid_log_azure_container: "{{ azure_container }}"
+druid_log_azure_folder: "druidlogs"
 
 #Druid Extensions
 
@@ -48,7 +43,7 @@ druid_community_extensions:
 
 # End of druid_extensions
 
-druid_indexing_logs_type: file
+druid_indexing_logs_type: azure
 druid_indexing_log_dir: /var/druid/indexing-logs
 druid_indexing_storage_type : metadata
 druid_indexing_task_basedir : "{{ druid_path }}var/task"
