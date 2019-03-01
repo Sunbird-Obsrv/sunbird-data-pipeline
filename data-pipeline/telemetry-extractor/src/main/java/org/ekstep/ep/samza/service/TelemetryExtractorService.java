@@ -46,7 +46,14 @@ public class TelemetryExtractorService {
 						event.put("context", context);
 					}
 					json = new Gson().toJson(event);
-					sink.toSuccessTopic(json);
+					int eventSizeInBytes = json.getBytes("UTF-8").length;
+					if (eventSizeInBytes > 1048576) {
+						LOGGER.info("", String.format("Event with mid %s of size %d bytes is greater than %d. " +
+								"Sending to error topic", event.get("mid"), eventSizeInBytes, 1048576));
+						sink.toErrorTopic(json);
+					} else {
+						sink.toSuccessTopic(json);
+					}
 				} catch (Throwable t) {
 					LOGGER.info("", "Failed to send extracted event to success topic: " + t.getMessage());
 					sink.toErrorTopic(json);
