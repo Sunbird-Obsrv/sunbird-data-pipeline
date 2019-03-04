@@ -57,7 +57,7 @@ public class ContentDataUpdaterTest {
         Map eventMap = new HashMap();
         eventMap.put("object", objectMap);
         Event input = new Event(eventMap);
-        String output = contentDataUpdater.update(input).toString();
+        String output = contentDataUpdater.update(input, "test-content-1", true).toString();
         assertTrue(output.contains("lastsubmittedon=1549971335919"));
         assertTrue(output.contains("lastpublishedon=1549971335919"));
         assertTrue(output.contains("lastupdatedon=1549971335919"));
@@ -79,7 +79,7 @@ public class ContentDataUpdaterTest {
         Map eventMap = new HashMap();
         eventMap.put("object", objectMap);
         Event input = new Event(eventMap);
-        String output = contentDataUpdater.update(input).toString();
+        String output = contentDataUpdater.update(input, "test-content-1", true).toString();
         assertTrue(output.contains("lastsubmittedon=1549971335919"));
         assertTrue(output.contains("lastpublishedon=1.549971335919E12"));
         assertTrue(output.contains("lastupdatedon=1549971335919"));
@@ -101,7 +101,7 @@ public class ContentDataUpdaterTest {
         Map eventMap = new HashMap();
         eventMap.put("object", objectMap);
         Event input = new Event(eventMap);
-        String output = contentDataUpdater.update(input).toString();
+        String output = contentDataUpdater.update(input, "test-content-1", true).toString();
         assertTrue(output.contains("lastsubmittedon=0"));
         assertTrue(output.contains("lastpublishedon=0"));
         assertTrue(output.contains("lastupdatedon=0"));
