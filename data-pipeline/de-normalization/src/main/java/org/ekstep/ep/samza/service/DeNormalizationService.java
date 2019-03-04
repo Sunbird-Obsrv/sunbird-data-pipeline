@@ -4,14 +4,9 @@ import com.google.gson.JsonSyntaxException;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.domain.EventUpdaterFactory;
-import org.ekstep.ep.samza.domain.IEventUpdater;
 import org.ekstep.ep.samza.task.DeNormalizationConfig;
 import org.ekstep.ep.samza.task.DeNormalizationSink;
 import org.ekstep.ep.samza.task.DeNormalizationSource;
-import org.ekstep.ep.samza.util.*;
-
-import java.util.List;
-import java.util.Map;
 
 import static java.text.MessageFormat.format;
 
@@ -30,19 +25,26 @@ public class DeNormalizationService {
         Event event = null;
         try {
             event = source.getEvent();
-            // add content details to the event
-            event = eventUpdaterFactory.getInstance("content-data-updater")
-                    .update(event);
-                    //.update(event, event.getKey("content").get(0));
+
+            if("dialcode".equals(event.objectType())) {
+                // add dialcode details to the event where object.type = dialcode
+                event = eventUpdaterFactory.getInstance("dialcode-data-updater")
+                        .update(event, event.getKey("content").get(0), true);
+            }
+            else {
+                // add content details to the event
+                event = eventUpdaterFactory.getInstance("content-data-updater")
+                .update(event, event.getKey("content").get(0), true);
+            }
             // add user details to the event
             event = eventUpdaterFactory.getInstance("user-data-updater")
-                    .update(event, event.getKey("user").get(0));
+                    .update(event, event.getKey("user").get(0), false);
             // add device details to the event
             event = eventUpdaterFactory.getInstance("device-data-updater")
                     .update(event);
-            // add dialcode details to the event
+            // add dialcode details to the event only for SEARCH event
             event = eventUpdaterFactory.getInstance("dialcode-data-updater")
-                    .update(event, event.getKey("dialcode"));;
+                    .update(event, event.getKey("dialcode"), true);
 
             sink.toSuccessTopic(event);
         } catch(JsonSyntaxException e){
@@ -56,5 +58,4 @@ public class DeNormalizationService {
             sink.toErrorTopic(event, e.getMessage());
         }
     }
-
 }

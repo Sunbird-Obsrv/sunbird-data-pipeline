@@ -35,7 +35,7 @@ public abstract class DataCache {
                 parsedData = gson.fromJson(dataNode, type);
                 parsedData.keySet().retainAll(fieldsList);
                 for (Map.Entry<String, Object> entry : parsedData.entrySet()) {
-                    dataMap.put(entry.getKey().toLowerCase(), entry.getValue());
+                    dataMap.put(entry.getKey().toLowerCase().replace("_", ""), entry.getValue());
                 }
                 return dataMap;
             }

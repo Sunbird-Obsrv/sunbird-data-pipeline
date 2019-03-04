@@ -541,6 +541,71 @@ public class EventFixture {
 			"    \"ts\": \"2018-12-01T18:21:03.694+0000\"\n" +
 			"  }";
 
+	public static final String IMPRESSION_EVENT_WITH_DIALCODE_AS_OBJECT = "{\n" +
+			"    \"actor\": {\n" +
+			"        \"type\": \"User\",\n" +
+			"        \"id\": \"anonymous\"\n" +
+			"    },\n" +
+			"    \"eid\": \"IMPRESSION\",\n" +
+			"    \"edata\": {\n" +
+			"        \"visits\": [\n" +
+			"            \n" +
+			"        ],\n" +
+			"        \"type\": \"view\",\n" +
+			"        \"pageid\": \"dialcode\",\n" +
+			"        \"subtype\": \"pageexit\",\n" +
+			"        \"uri\": \"https://play.diksha.gov.in/dialpage/index.html?dialcode=977D3I\"\n" +
+			"    },\n" +
+			"    \"ver\": \"3.0\",\n" +
+			"    \"ets\": 1551278751866,\n" +
+			"    \"context\": {\n" +
+			"        \"uid\": \"anonymous\",\n" +
+			"        \"pdata\": {\n" +
+			"            \"ver\": \"1.7.1\",\n" +
+			"            \"pid\": \"sunbird-portal\",\n" +
+			"            \"id\": \"prod.diksha.portal\"\n" +
+			"        },\n" +
+			"        \"channel\": \"505c7c48ac6dc1edc9b08f21db5a571d\",\n" +
+			"        \"env\": \"public\",\n" +
+			"        \"did\": \"a49cfadff97c698c1766c71a42779d4e\",\n" +
+			"        \"sid\": \"5fd1cea0-3a9e-11e9-bed5-2f34fab96d07\",\n" +
+			"        \"cdata\": [\n" +
+			"            \n" +
+			"        ],\n" +
+			"        \"rollup\": {\n" +
+			"            \"l1\": \"505c7c48ac6dc1edc9b08f21db5a571d\"\n" +
+			"        }\n" +
+			"    },\n" +
+			"    \"mid\": \"IMPRESSION:bfd4026a4099370da57e3519cd3368c0\",\n" +
+			"    \"object\": {\n" +
+			"        \"ver\": \"1.0\",\n" +
+			"        \"id\": \"977D3I\",\n" +
+			"        \"type\": \"dialcode\",\n" +
+			"        \"rollup\": {\n" +
+			"            \n" +
+			"        }\n" +
+			"    },\n" +
+			"    \"tags\": [\n" +
+			"        \"505c7c48ac6dc1edc9b08f21db5a571d\"\n" +
+			"    ],\n" +
+			"    \"syncts\": 1550501698819,\n" +
+			"    \"@timestamp\": \"2019-02-18T14:54:58.819Z\",\n" +
+			"    \"flags\": {\n" +
+			"        \"tv_processed\": true,\n" +
+			"        \"dd_processed\": true,\n" +
+			"        \"ldata_retrieved\": false\n" +
+			"    },\n" +
+			"    \"type\": \"events\",\n" +
+			"    \"ts\": \"2019-02-27T14:45:51.866+0000\",\n" +
+			"    \"ldata\": {\n" +
+			"        \"country_code\": \"\",\n" +
+			"        \"country\": \"\",\n" +
+			"        \"city\": \"\",\n" +
+			"        \"state\": \"\",\n" +
+			"        \"state_code\": \"\"\n" +
+			"    }  \n" +
+			"}";
+
 	public static final String ANY_STRING = "Hey Samza, Whats Up?";
 	public static final String EMPTY_JSON = "{}";
 

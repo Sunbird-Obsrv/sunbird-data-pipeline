@@ -48,6 +48,13 @@ public class Event {
         else return null;
     }
 
+    public String objectType() {
+        if (objectFieldsPresent()) {
+            return telemetry.<String>read("object.type").value();
+        }
+        else return null;
+    }
+
     public boolean objectFieldsPresent() {
         String objectId = telemetry.<String>read("object.id").value();
         String objectType = telemetry.<String>read("object.type").value();

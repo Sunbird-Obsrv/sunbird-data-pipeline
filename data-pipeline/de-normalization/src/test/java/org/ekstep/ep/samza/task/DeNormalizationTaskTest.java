@@ -398,4 +398,40 @@ public class DeNormalizationTaskTest {
             }
         }));
     }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicWithDialCodeDataByObjectLookup() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.IMPRESSION_EVENT_WITH_DIALCODE_AS_OBJECT);
+        stub(deviceCacheMock.getDataForDeviceId("a49cfadff97c698c1766c71a42779d4e",
+                "505c7c48ac6dc1edc9b08f21db5a571d")).toReturn(null);
+        stub(userCacheMock.getData("anonymous")).toReturn(null);
+        stub(contentCacheMock.getData("977D3I")).toReturn(null);
+        Map dataMap = new HashMap(); dataMap.put("identifier", "977D3I"); dataMap.put("channel", "test-channel");
+        dataMap.put("status", "Draft");
+        stub(dailcodeCacheMock.getData("977D3I")).toReturn(dataMap);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertNull(outputEvent.get("devicedata"));
+                assertNull(outputEvent.get("contentdata"));
+                assertNull(outputEvent.get("userdata"));
+                List<Map<String, Object>> dialcodesList = new Gson().fromJson(outputEvent.get("dialcodedata").toString(), List.class);
+                assertEquals(dialcodesList.size(), 1);
+                Map data = dialcodesList.get(0);
+                assertEquals(data.size(), 3);
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("device_data_retrieved"), false);
+                assertEquals(flags.get("user_data_retrieved"), false);
+                assertEquals(flags.get("content_data_retrieved"), null);
+                assertEquals(flags.get("dialcode_data_retrieved"), true);
+                return true;
+            }
+        }));
+    }
+
 }
