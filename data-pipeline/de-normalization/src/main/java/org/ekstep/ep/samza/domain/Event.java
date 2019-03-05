@@ -82,6 +82,19 @@ public class Event {
                 ids = ((List) dialcode.value());
             }
         }
+        else {
+            NullableValue<Object> dialCode = telemetry.read("edata.filters.dialCodes");
+            if (dialCode != null && dialCode.value() != null) {
+                telemetry.add("edata.filters.dialcodes", dialCode.value());
+                telemetry.add("edata.filters.dialCodes", null);
+                if (dialCode.value().getClass().equals(String.class)) {
+                    ids.add(dialCode.value().toString());
+                }
+                else {
+                    ids = ((List) dialCode.value());
+                }
+            }
+        }
         return ids;
     }
 

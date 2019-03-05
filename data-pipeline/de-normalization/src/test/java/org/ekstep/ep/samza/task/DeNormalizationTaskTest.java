@@ -434,4 +434,30 @@ public class DeNormalizationTaskTest {
         }));
     }
 
+    @Test
+    public void shouldSendEventsToSuccessTopicWithStringDialCodeDataCamelCase() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_CAMELCASE_DIALCODE_AS_STRING);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+                "0123221617357783046602")).toReturn(null);
+        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
+        stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
+        List ids = new ArrayList(); ids.add("8ZEDTP");
+        Map dataMap = new HashMap(); dataMap.put("identifier", "8ZEDTP"); dataMap.put("channel", "test-channel");
+        dataMap.put("status", "Draft");
+        List<Map> data = new ArrayList<>(); data.add(dataMap);
+        stub(dailcodeCacheMock.getData(ids)).toReturn(data);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                assertEquals(outputMessage.contains("dialcodes"), true);
+                assertEquals(outputMessage.contains("dialCodes"), false);
+                return true;
+            }
+        }));
+    }
+
 }
