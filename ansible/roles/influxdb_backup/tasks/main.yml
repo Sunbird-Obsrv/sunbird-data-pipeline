@@ -15,5 +15,6 @@
 - name: Upload the backup to azure blob storage
   command: az storage blob upload --name "{{ influxdb_backup_file_name }}".zip --file "{{ influxdb_backup_dir }}/{{ influxdb_backup_file_name }}".zip --container-name {{ azure_influxdb_backup_container }}
   environment:
-    AZURE_STORAGE_ACCOUNT: "{{ azure_backup_account_name }}"
-    AZURE_STORAGE_KEY: "{{ azure_backup_storage_secret }}"
+    AZURE_STORAGE_ACCOUNT: "{{ backup_azure_storage_account_name }}"
+    AZURE_STORAGE_KEY: "{{ backup_azure_storage_access_key }}"
+

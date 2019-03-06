@@ -107,3 +107,10 @@ service:
 cassandra_hierarchy_store_prefix: "{{env}}_"
 data_exhaust_token: "{{dp_vault_data_exhaust_token}}"
 default_channel: "{{default_org_hash_id}}"
+
+#### backup storage secret
+backup_azure_storage_access_key: "{{dp_vault_azure_account_key}}"
+
+## es backup
+es_snapshot_host: "{{ groups['telemetry-search-cluster'][0] }}"
+snapshot_base_path: telemetrysearch
