@@ -46,7 +46,7 @@ public class ContentDataUpdaterTest {
         Map<String, Object> data = new HashMap();
         data.put("lastupdatedon", "2019-02-12T11:35:35.919+0000");
         data.put("lastsubmittedon", "2019-02-12T11:35:35.919+0000");
-        data.put("lastpublishedon", "2019-02-12T11:35:35.919+0000");
+        data.put("lastpublishedon", "2019-02-12T11:35:35.919");
         stub(redisConnectMock.getConnection()).toReturn(jedisMock);
         dataCacheMock = mock(ContentDataCache.class);
         contentDataUpdater = new ContentDataUpdater(dataCacheMock);
@@ -57,7 +57,7 @@ public class ContentDataUpdaterTest {
         Map eventMap = new HashMap();
         eventMap.put("object", objectMap);
         Event input = new Event(eventMap);
-        String output = contentDataUpdater.update(input).toString();
+        String output = contentDataUpdater.update(input, "test-content-1", true).toString();
         assertTrue(output.contains("lastsubmittedon=1549971335919"));
         assertTrue(output.contains("lastpublishedon=1549971335919"));
         assertTrue(output.contains("lastupdatedon=1549971335919"));
@@ -79,7 +79,7 @@ public class ContentDataUpdaterTest {
         Map eventMap = new HashMap();
         eventMap.put("object", objectMap);
         Event input = new Event(eventMap);
-        String output = contentDataUpdater.update(input).toString();
+        String output = contentDataUpdater.update(input, "test-content-1", true).toString();
         assertTrue(output.contains("lastsubmittedon=1549971335919"));
         assertTrue(output.contains("lastpublishedon=1.549971335919E12"));
         assertTrue(output.contains("lastupdatedon=1549971335919"));
@@ -101,7 +101,7 @@ public class ContentDataUpdaterTest {
         Map eventMap = new HashMap();
         eventMap.put("object", objectMap);
         Event input = new Event(eventMap);
-        String output = contentDataUpdater.update(input).toString();
+        String output = contentDataUpdater.update(input, "test-content-1", true).toString();
         assertTrue(output.contains("lastsubmittedon=0"));
         assertTrue(output.contains("lastpublishedon=0"));
         assertTrue(output.contains("lastupdatedon=0"));

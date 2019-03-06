@@ -48,6 +48,13 @@ public class Event {
         else return null;
     }
 
+    public String objectType() {
+        if (objectFieldsPresent()) {
+            return telemetry.<String>read("object.type").value();
+        }
+        else return null;
+    }
+
     public boolean objectFieldsPresent() {
         String objectId = telemetry.<String>read("object.id").value();
         String objectType = telemetry.<String>read("object.type").value();
@@ -73,6 +80,19 @@ public class Event {
             }
             else {
                 ids = ((List) dialcode.value());
+            }
+        }
+        else {
+            NullableValue<Object> dialCode = telemetry.read("edata.filters.dialCodes");
+            if (dialCode != null && dialCode.value() != null) {
+                telemetry.add("edata.filters.dialcodes", dialCode.value());
+                telemetry.add("edata.filters.dialCodes", null);
+                if (dialCode.value().getClass().equals(String.class)) {
+                    ids.add(dialCode.value().toString());
+                }
+                else {
+                    ids = ((List) dialCode.value());
+                }
             }
         }
         return ids;
