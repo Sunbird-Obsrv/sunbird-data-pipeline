@@ -46,7 +46,7 @@ public class ContentDataUpdaterTest {
         Map<String, Object> data = new HashMap();
         data.put("lastupdatedon", "2019-02-12T11:35:35.919+0000");
         data.put("lastsubmittedon", "2019-02-12T11:35:35.919+0000");
-        data.put("lastpublishedon", "2019-02-12T11:35:35.919+0000");
+        data.put("lastpublishedon", "2019-02-12T11:35:35.919");
         stub(redisConnectMock.getConnection()).toReturn(jedisMock);
         dataCacheMock = mock(ContentDataCache.class);
         contentDataUpdater = new ContentDataUpdater(dataCacheMock);

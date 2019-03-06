@@ -18,6 +18,7 @@ public abstract class IEventUpdater {
     DataCache dataCache;
     String cacheType;
     DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ").withZoneUTC();
+    DateTimeFormatter df1 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").withZoneUTC();
 
     public abstract Event update(Event event);
 
@@ -89,13 +90,23 @@ public abstract class IEventUpdater {
 
     }
 
-    public Long getTimestamp(String ts) {
+    public Long getTimestamp(String ts, DateTimeFormatter df) {
         try {
             return df.parseDateTime(ts).getMillis();
         } catch(Exception ex) {
+            ex.printStackTrace();
             return 0L;
         }
     }
+
+    public Long getConvertedTimestamp(String ts) {
+        Long epochTs = getTimestamp(ts, df);
+        if (epochTs == 0) {
+            epochTs = getTimestamp(ts, df1);
+        }
+        return epochTs;
+    }
+
 
     public Map getEpochConvertedContentDataMap(Map data) {
 
@@ -103,13 +114,13 @@ public abstract class IEventUpdater {
         Object lastUpdatedOn = data.get("lastupdatedon");
         Object lastPublishedOn = data.get("lastpublishedon");
         if (lastSubmittedOn instanceof String) {
-            lastSubmittedOn = getTimestamp(lastSubmittedOn.toString());
+            lastSubmittedOn = getConvertedTimestamp(lastSubmittedOn.toString());
         }
         if (lastUpdatedOn instanceof String) {
-            lastUpdatedOn = getTimestamp(lastUpdatedOn.toString());
+            lastUpdatedOn = getConvertedTimestamp(lastUpdatedOn.toString());
         }
         if (lastPublishedOn instanceof String) {
-            lastPublishedOn = getTimestamp(lastPublishedOn.toString());
+            lastPublishedOn = getConvertedTimestamp(lastPublishedOn.toString());
         }
         data.remove("lastsubmittedon");
         data.remove("lastupdatedon");
@@ -125,10 +136,10 @@ public abstract class IEventUpdater {
         Object generatedOn = data.get("generatedon");
         Object publishedOn = data.get("publishedon");
         if (generatedOn instanceof String) {
-            generatedOn = getTimestamp(generatedOn.toString());
+            generatedOn = getConvertedTimestamp(generatedOn.toString());
         }
         if (publishedOn instanceof String) {
-            publishedOn = getTimestamp(publishedOn.toString());
+            publishedOn = getConvertedTimestamp(publishedOn.toString());
         }
         data.remove("generatedon");
         data.remove("publishedon");
