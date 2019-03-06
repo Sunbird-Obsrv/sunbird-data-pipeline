@@ -33,10 +33,9 @@ public class RedisUpdaterService {
         Map<String, Object> message = source.getMap();
         String nodeUniqueId = (String) message.get("nodeUniqueId");
         String objectType = (String) message.get("objectType");
-        String channel = (String) message.get("channel");
         if (nodeUniqueId == null || objectType == null) return;
         LOGGER.info("", "processing event for nodeUniqueId: "+ nodeUniqueId);
-        if(!nodeUniqueId.isEmpty() && objectType.equalsIgnoreCase("DialCode") && channel != null) {
+        if(!nodeUniqueId.isEmpty() && objectType.equalsIgnoreCase("DialCode")) {
             updateDialCodeCache(message, sink);
         } else if (!nodeUniqueId.isEmpty()) {
             updateContentCache(message, sink);
@@ -45,10 +44,9 @@ public class RedisUpdaterService {
 
     private void updateDialCodeCache(Map<String, Object> message, RedisUpdaterSink sink) {
         String nodeUniqueId = (String) message.get("nodeUniqueId");
-        String channel = (String) message.get("channel");
         Map<String, Object> parsedData;
         Gson gson = new Gson();
-        String key = nodeUniqueId + ":" + channel;
+        String key = nodeUniqueId;
         try (Jedis jedis = redisConnect.getConnection()) {
             jedis.select(dialCodeStore);
             String contentNode = jedis.get(key);
