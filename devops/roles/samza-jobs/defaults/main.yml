@@ -9,3 +9,4 @@ es_router_additional_secondary_config: "{{object_denormalization_additional_conf
 lpdeploy: no
 dpdeploy: no
 telemetry_extractor_consumer_fetch_max_bytes: 5242880
+telemetry_extractor_container_memory_mb: 1024
