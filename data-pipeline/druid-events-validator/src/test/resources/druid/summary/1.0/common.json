@@ -1,0 +1,46 @@
+{
+  "type": "object",
+  "properties": {
+    "ets": {
+      "id": "http://api.ekstep.org/summary/ets",
+      "type": "number",
+      "format": "date-time"
+    },
+    "ver": {
+      "id": "http://api.ekstep.org/summary/ver",
+      "type": "string",
+      "enum": [
+        "1.0"
+      ]
+    },
+    "mid": {
+      "id": "http://api.ekstep.org/summary/mid",
+      "type": "string",
+      "minLength": 1
+    },
+    "context": {
+      "$ref": "http://localhost:7070/schemas/1.0/context.json"
+    },
+    "object": {
+      "$ref": "http://localhost:7070/schemas/1.0/object.json"
+    },
+    "dimensions": {
+      "$ref": "http://localhost:7070/schemas/1.0/dimension.json"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "devicedata": {
+      "$ref": "http://localhost:7070/schemas/1.0/devicedata.json"
+    },
+    "userdata": {
+      "$ref": "http://localhost:7070/schemas/1.0/userdata.json"
+    },
+    "contentdata": {
+      "$ref": "http://localhost:7070/schemas/1.0/contentdata.json"
+    }
+  }
+}

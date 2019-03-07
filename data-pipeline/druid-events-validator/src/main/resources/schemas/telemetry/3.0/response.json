@@ -1,0 +1,53 @@
+{
+  "id": "http://api.ekstep.org/telemetry/start",
+  "type": "object",
+  "required": [
+    "eid",
+    "ets",
+    "ver",
+    "mid",
+    "actor",
+    "context",
+    "edata"
+  ],
+  "allOf": [
+    {
+      "$ref": "resource:/schemas/telemetry/3.0/common.json"
+    },
+    {
+      "properties": {
+        "eid": {
+          "id": "http://api.ekstep.org/telemetry/eid",
+          "enum": [
+            "RESPONSE"
+          ]
+        },
+        "edata": {
+          "id": "http://api.ekstep.org/telemetry/edata",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "target",
+            "type",
+            "values"
+          ],
+          "properties": {
+            "type": {
+              "id": "http://api.ekstep.org/telemetry/type",
+              "type": "string"
+            },
+            "target": {
+              "$ref": "resource:/schemas/telemetry/3.0/target.json"
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

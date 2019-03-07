@@ -1,0 +1,32 @@
+{
+  "id": "http://api.ekstep.org/summary/me_workflow_summary",
+  "type": "object",
+  "required": [
+    "eid",
+    "ets",
+    "ver",
+    "syncts",
+    "mid",
+    "context",
+    "edata"
+  ],
+  "allOf": [
+    {
+      "$ref": "http://localhost:7070/schemas/1.0/common.json"
+    },
+    {
+      "properties": {
+        "eid": {
+          "id": "http://api.ekstep.org/summary/eid",
+          "enum": [
+            "ME_WORKFLOW_SUMMARY"
+          ]
+        },
+        "edata": {
+          "id": "http://api.ekstep.org/summary/edata",
+          "type": "object"
+        }
+      }
+    }
+  ]
+}

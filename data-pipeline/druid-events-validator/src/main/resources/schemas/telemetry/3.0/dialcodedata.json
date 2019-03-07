@@ -1,0 +1,33 @@
+{
+  "type": "object",
+  "properties": {
+    "channel": {
+      "id": "http://api.ekstep.org/telemetry/dialcodedata/channel",
+      "type": "string"
+    },
+    "batchcode": {
+      "id": "http://api.ekstep.org/telemetry/dialcodedata/batchcode",
+      "type": "string"
+    },
+    "publisher": {
+      "id": "http://api.ekstep.org/telemetry/dialcodedata/publisher",
+      "type": "string"
+    },
+    "generatedon": {
+      "id": "http://api.ekstep.org/telemetry/dialcodedata/generatedon",
+      "type": "number"
+    },
+    "publishedon": {
+      "id": "http://api.ekstep.org/telemetry/dialcodedata/publishedon",
+      "type": "number"
+    },
+    "status": {
+      "id": "http://api.ekstep.org/telemetry/contentdata/status",
+      "type": "string"
+    },
+    "objecttype": {
+      "id": "http://api.ekstep.org/telemetry/contentdata/objecttype",
+      "type": "string"
+    }
+  }
+}

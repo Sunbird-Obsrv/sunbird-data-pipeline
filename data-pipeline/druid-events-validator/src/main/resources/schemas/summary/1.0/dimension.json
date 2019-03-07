@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "properties": {
+    "channel": {
+      "id": "http://api.ekstep.org/summary/dimension/channel",
+      "type":"string"
+    },
+    "sid": {
+      "id": "http://api.ekstep.org/summary/dimension/sid",
+      "type": "string"
+    },
+    "did": {
+      "id": "http://api.ekstep.org/summary/dimension/did",
+      "type": "string"
+    },
+    "pdata": {
+      "$ref": "resource:/schemas/summary/1.0/dimension_pdata.json"
+    },
+    "type": {
+      "id": "http://api.ekstep.org/telemetry/dimension/type",
+      "type": "string"
+    },
+    "mode": {
+      "id": "http://api.ekstep.org/telemetry/dimension/mode",
+      "type": "string"
+    }
+  }
+}

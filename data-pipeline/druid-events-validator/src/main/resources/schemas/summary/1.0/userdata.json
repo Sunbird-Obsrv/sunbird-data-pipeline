@@ -1,0 +1,29 @@
+{
+  "type": "object",
+  "properties": {
+    "gradelist": {
+      "id": "http://api.ekstep.org/telemetry/userdata/gradelist",
+      "type": "array"
+    },
+    "languagelist": {
+      "id": "http://api.ekstep.org/telemetry/userdata/languagelist",
+      "type": "array"
+    },
+    "subjectlist": {
+      "id": "http://api.ekstep.org/telemetry/userdata/subjectlist",
+      "type": "array"
+    },
+    "usertype": {
+      "id": "http://api.ekstep.org/telemetry/userdata/usertype",
+      "type": "string"
+    },
+    "state": {
+      "id": "http://api.ekstep.org/telemetry/userdata/state",
+      "type": "string"
+    },
+    "district": {
+      "id": "http://api.ekstep.org/telemetry/userdata/district",
+      "type": "string"
+    }
+  }
+}
