@@ -1,5 +1,5 @@
 {
-  "id": "http://api.ekstep.org/summary/me_workflow_summary",
+  "id": "http://api.sunbird.org/summary/me_workflow_summary",
   "type": "object",
   "required": [
     "eid",
@@ -17,13 +17,13 @@
     {
       "properties": {
         "eid": {
-          "id": "http://api.ekstep.org/summary/eid",
+          "id": "http://api.sunbird.org/summary/eid",
           "enum": [
             "ME_WORKFLOW_SUMMARY"
           ]
         },
         "edata": {
-          "id": "http://api.ekstep.org/summary/edata",
+          "id": "http://api.sunbird.org/summary/edata",
           "type": "object"
         }
       }

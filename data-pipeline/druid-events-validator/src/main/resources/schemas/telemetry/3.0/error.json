@@ -1,5 +1,5 @@
 {
-  "id": "http://api.ekstep.org/telemetry/error",
+  "id": "http://api.sunbird.org/telemetry/error",
   "type": "object",
   "required": [
     "eid",
@@ -17,13 +17,13 @@
     {
       "properties": {
         "eid": {
-          "id": "http://api.ekstep.org/telemetry/eid",
+          "id": "http://api.sunbird.org/telemetry/eid",
           "enum": [
             "ERROR"
           ]
         },
         "edata": {
-          "id": "http://api.ekstep.org/telemetry/edata",
+          "id": "http://api.sunbird.org/telemetry/edata",
           "type": "object",
           "additionalProperties": false,
           "required": [
@@ -33,19 +33,19 @@
           ],
           "properties": {
             "err": {
-              "id": "http://api.ekstep.org/telemetry/edata/err",
+              "id": "http://api.sunbird.org/telemetry/edata/err",
               "type": "string"
             },
             "errtype": {
-              "id": "http://api.ekstep.org/telemetry/edata/errtype",
+              "id": "http://api.sunbird.org/telemetry/edata/errtype",
               "type": "string"
             },
             "stacktrace": {
-              "id": "http://api.ekstep.org/telemetry/edata/stacktrace",
+              "id": "http://api.sunbird.org/telemetry/edata/stacktrace",
               "type": "string"
             },
             "pageid": {
-              "id": "http://api.ekstep.org/telemetry/edata/pageid",
+              "id": "http://api.sunbird.org/telemetry/edata/pageid",
               "type": "string"
             },
             "object": {

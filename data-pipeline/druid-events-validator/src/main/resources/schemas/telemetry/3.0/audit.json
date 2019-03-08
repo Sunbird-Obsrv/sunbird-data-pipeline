@@ -1,5 +1,5 @@
 {
-  "id": "http://api.ekstep.org/telemetry/audit",
+  "id": "http://api.sunbird.org/telemetry/audit",
   "type": "object",
   "required": [
     "eid",
@@ -17,29 +17,29 @@
     {
       "properties": {
         "eid": {
-          "id": "http://api.ekstep.org/telemetry/eid",
+          "id": "http://api.sunbird.org/telemetry/eid",
           "enum": [
             "AUDIT"
           ]
         },
         "edata": {
-          "id": "http://api.ekstep.org/telemetry/edata",
+          "id": "http://api.sunbird.org/telemetry/edata",
           "type": "object",
           "additionalProperties": false,
           "properties": {
             "props": {
-              "id": "http://api.ekstep.org/telemetry/edata/props",
+              "id": "http://api.sunbird.org/telemetry/edata/props",
               "type": "array",
               "items": {
                 "type": "string"
               }
             },
             "state": {
-              "id": "http://api.ekstep.org/telemetry/edata/state",
+              "id": "http://api.sunbird.org/telemetry/edata/state",
               "type": "string"
             },
             "prevstate": {
-              "id": "http://api.ekstep.org/telemetry/edata/prevstate",
+              "id": "http://api.sunbird.org/telemetry/edata/prevstate",
               "type": "string"
             }
           }

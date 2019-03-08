@@ -1,5 +1,5 @@
 {
-  "id": "http://api.ekstep.org/telemetry/feedback",
+  "id": "http://api.sunbird.org/telemetry/feedback",
   "type": "object",
   "required": [
     "eid",
@@ -17,22 +17,22 @@
     {
       "properties": {
         "eid": {
-          "id": "http://api.ekstep.org/telemetry/eid",
+          "id": "http://api.sunbird.org/telemetry/eid",
           "enum": [
             "FEEDBACK"
           ]
         },
         "edata": {
-          "id": "http://api.ekstep.org/telemetry/edata",
+          "id": "http://api.sunbird.org/telemetry/edata",
           "type": "object",
           "additionalProperties": false,
           "properties": {
             "rating": {
-              "id": "http://api.ekstep.org/telemetry/edata/rating",
+              "id": "http://api.sunbird.org/telemetry/edata/rating",
               "type": "number"
             },
             "comments": {
-              "id": "http://api.ekstep.org/telemetry/edata/comments",
+              "id": "http://api.sunbird.org/telemetry/edata/comments",
               "type": "string"
             }
           }

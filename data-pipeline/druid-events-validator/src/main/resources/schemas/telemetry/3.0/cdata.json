@@ -4,11 +4,11 @@
         "type": "object",
         "properties": {
           "type": {
-            "id": "http://api.ekstep.org/telemetry/cdata/type",
+            "id": "http://api.sunbird.org/telemetry/cdata/type",
             "type": "string"
           },
           "id": {
-            "id": "http://api.ekstep.org/telemetry/cdata/id",
+            "id": "http://api.sunbird.org/telemetry/cdata/id",
             "type": "string"
           }
         },

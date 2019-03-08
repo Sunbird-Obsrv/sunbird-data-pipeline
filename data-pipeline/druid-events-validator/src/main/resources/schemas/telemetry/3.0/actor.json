@@ -2,11 +2,11 @@
   "type": "object",
   "properties": {
     "id": {
-      "id": "http://api.ekstep.org/telemetry/actor/id",
+      "id": "http://api.sunbird.org/telemetry/actor/id",
       "type": "string"
     },
     "type": {
-      "id": "http://api.ekstep.org/telemetry/actor/type",
+      "id": "http://api.sunbird.org/telemetry/actor/type",
       "type": "string"
     }
   },

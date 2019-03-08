@@ -1,5 +1,5 @@
 {
-  "id":"http://api.ekstep.org/summary/envelope",
+  "id":"http://api.sunbird.org/summary/envelope",
   "type":"object",
   "required":[
     "eid",
@@ -16,7 +16,7 @@
     {
       "properties":{
         "eid":{
-          "id":"http://api.ekstep.org/telemetry/mid",
+          "id":"http://api.sunbird.org/telemetry/mid",
           "type":"string",
           "minLength": 1
         }

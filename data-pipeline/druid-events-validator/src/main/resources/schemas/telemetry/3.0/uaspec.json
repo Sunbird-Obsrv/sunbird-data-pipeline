@@ -2,23 +2,23 @@
   "type": "object",
   "properties": {
     "agent": {
-      "id": "http://api.ekstep.org/telemetry/uaspec/agent",
+      "id": "http://api.sunbird.org/telemetry/uaspec/agent",
       "type": "string"
     },
     "ver": {
-      "id": "http://api.ekstep.org/telemetry/uaspec/ver",
+      "id": "http://api.sunbird.org/telemetry/uaspec/ver",
       "type": "string"
     },
     "system": {
-      "id": "http://api.ekstep.org/telemetry/uaspec/system",
+      "id": "http://api.sunbird.org/telemetry/uaspec/system",
       "type": "string"
     },
     "platform": {
-      "id": "http://api.ekstep.org/telemetry/uaspec/platform",
+      "id": "http://api.sunbird.org/telemetry/uaspec/platform",
       "type": "string"
     },
     "raw": {
-      "id": "http://api.ekstep.org/telemetry/uaspec/raw",
+      "id": "http://api.sunbird.org/telemetry/uaspec/raw",
       "type": "string"
     }
   }

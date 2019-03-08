@@ -2,7 +2,7 @@
   "type": "object",
   "properties": {
     "channel": {
-      "id": "http://api.ekstep.org/telemetry/context/channel",
+      "id": "http://api.sunbird.org/telemetry/context/channel",
       "type": "string",
       "minLength": 1
     },
@@ -10,19 +10,22 @@
       "$ref": "resource:/schemas/telemetry/3.0/pdata.json"
     },
     "env": {
-      "id": "http://api.ekstep.org/telemetry/context/env",
+      "id": "http://api.sunbird.org/telemetry/context/env",
       "type": "string"
     },
     "sid": {
-      "id": "http://api.ekstep.org/telemetry/context/sid",
+      "id": "http://api.sunbird.org/telemetry/context/sid",
       "type": "string"
     },
     "did": {
-      "id": "http://api.ekstep.org/telemetry/context/did",
+      "id": "http://api.sunbird.org/telemetry/context/did",
       "type": "string"
     },
     "cdata": {
       "$ref": "resource:/schemas/telemetry/3.0/cdata.json"
+    },
+    "rollup": {
+      "$ref": "resource:/schemas/telemetry/3.0/rollup.json"
     }
   },
   "required": [

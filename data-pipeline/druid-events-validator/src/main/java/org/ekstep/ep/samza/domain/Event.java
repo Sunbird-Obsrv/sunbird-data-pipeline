@@ -15,7 +15,6 @@ import com.google.gson.Gson;
 
 public class Event {
 
-    private DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZoneUTC();
     private final Telemetry telemetry;
 
     public Event(Map<String, Object> map) {
@@ -103,7 +102,6 @@ public class Event {
     }
 
     public boolean isSummaryEvent() {
-        NullableValue<String> eid = telemetry.read("eid");
-        return (!eid.isNull() && eid.value().startsWith("ME_"));
+        return eid() != null && eid().startsWith("ME_");
     }
 }

@@ -1,5 +1,5 @@
 {
-  "id": "http://api.ekstep.org/telemetry/impression",
+  "id": "http://api.sunbird.org/telemetry/impression",
   "type": "object",
   "required": [
     "eid",
@@ -17,13 +17,13 @@
     {
       "properties": {
         "eid": {
-          "id": "http://api.ekstep.org/telemetry/eid",
+          "id": "http://api.sunbird.org/telemetry/eid",
           "enum": [
             "IMPRESSION"
           ]
         },
         "edata": {
-          "id": "http://api.ekstep.org/telemetry/edata",
+          "id": "http://api.sunbird.org/telemetry/edata",
           "type": "object",
           "additionalProperties": false,
           "required": [
@@ -33,45 +33,45 @@
           ],
           "properties": {
             "type": {
-              "id": "http://api.ekstep.org/telemetry/edata/type",
+              "id": "http://api.sunbird.org/telemetry/edata/type",
               "type": "string"
             },
             "subtype": {
-              "id": "http://api.ekstep.org/telemetry/edata/subtype",
+              "id": "http://api.sunbird.org/telemetry/edata/subtype",
               "type": "string"
             },
             "pageid": {
-              "id": "http://api.ekstep.org/telemetry/edata/pageid",
+              "id": "http://api.sunbird.org/telemetry/edata/pageid",
               "type": "string"
             },
             "uri": {
-              "id": "http://api.ekstep.org/telemetry/edata/uri",
+              "id": "http://api.sunbird.org/telemetry/edata/uri",
               "type": "string"
             },
             "visits": {
-              "id": "http://api.ekstep.org/telemetry/edata/visits",
+              "id": "http://api.sunbird.org/telemetry/edata/visits",
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
                   "objid": {
-                    "id": "http://api.ekstep.org/telemetry/edata/visits/objid",
+                    "id": "http://api.sunbird.org/telemetry/edata/visits/objid",
                     "type": "string"
                   },
                   "objtype": {
-                    "id": "http://api.ekstep.org/telemetry/edata/visits/objtype",
+                    "id": "http://api.sunbird.org/telemetry/edata/visits/objtype",
                     "type": "string"
                   },
                   "objver": {
-                    "id": "http://api.ekstep.org/telemetry/edata/visits/objver",
+                    "id": "http://api.sunbird.org/telemetry/edata/visits/objver",
                     "type": "string"
                   },
                   "section": {
-                    "id": "http://api.ekstep.org/telemetry/edata/visits/section",
+                    "id": "http://api.sunbird.org/telemetry/edata/visits/section",
                     "type": "string"
                   },
                   "index": {
-                    "id": "http://api.ekstep.org/telemetry/edata/visits/index",
+                    "id": "http://api.sunbird.org/telemetry/edata/visits/index",
                     "type": "number"
                   }
                 },

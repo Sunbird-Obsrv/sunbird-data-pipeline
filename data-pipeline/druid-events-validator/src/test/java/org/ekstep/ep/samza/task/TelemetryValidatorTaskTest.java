@@ -93,7 +93,7 @@ public class TelemetryValidatorTaskTest {
     }
 
     @Test
-    public void shouldSendEventToFaildTopicIfInvalidDeviceData_CASE4() throws Exception {
+    public void shouldSendEventToSuccessTopicIfInvalidDeviceData_CASE4() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DEVICEDATA_CASE_4);
         telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));

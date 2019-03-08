@@ -4,11 +4,11 @@
         "type": "object",
         "properties": {
           "type": {
-            "id": "http://api.ekstep.org/summary/cdata/type",
+            "id": "http://api.sunbird.org/summary/cdata/type",
             "type": "string"
           },
           "id": {
-            "id": "http://api.ekstep.org/summary/cdata/id",
+            "id": "http://api.sunbird.org/summary/cdata/id",
             "type": "string"
           }
         },

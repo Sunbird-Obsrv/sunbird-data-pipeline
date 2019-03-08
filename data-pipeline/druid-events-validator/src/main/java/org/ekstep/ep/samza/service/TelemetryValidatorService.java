@@ -68,7 +68,7 @@ public class TelemetryValidatorService {
     private String getInvalidFieldName(String errorInfo) {
         String[] message = errorInfo.split("reports:");
         String[] fields = message[1].split(",");
-        String pointer[] = fields[3].split("\"pointer\":");
+        String[] pointer = fields[3].split("\"pointer\":");
         return pointer[1].substring(0, pointer[1].length() - 1);
     }
 }

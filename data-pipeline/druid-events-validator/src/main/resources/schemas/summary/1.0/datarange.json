@@ -2,11 +2,11 @@
   "type": "object",
   "properties": {
     "from": {
-      "id": "http://api.ekstep.org/summary/datarange/from",
+      "id": "http://api.sunbird.org/summary/datarange/from",
       "type": "number"
     },
     "to": {
-      "id": "http://api.ekstep.org/summary/datarange/to",
+      "id": "http://api.sunbird.org/summary/datarange/to",
       "type": "number"
     } 
   }

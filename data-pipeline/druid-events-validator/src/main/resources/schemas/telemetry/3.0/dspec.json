@@ -2,52 +2,52 @@
   "type": "object",
   "properties": {
     "os": {
-      "id": "http://api.ekstep.org/telemetry/dspec/os",
+      "id": "http://api.sunbird.org/telemetry/dspec/os",
       "type": "string"
     },
     "make": {
-      "id": "http://api.ekstep.org/telemetry/dspec/make",
+      "id": "http://api.sunbird.org/telemetry/dspec/make",
       "type": "string"
     },
     "id": {
-      "id": "http://api.ekstep.org/telemetry/dspec/id",
+      "id": "http://api.sunbird.org/telemetry/dspec/id",
       "type": "string"
     },
     "mem": {
-      "id": "http://api.ekstep.org/telemetry/dspec/mem",
+      "id": "http://api.sunbird.org/telemetry/dspec/mem",
       "type": "number",
       "minimum": -1
     },
     "idisk": {
-      "id": "http://api.ekstep.org/telemetry/dspec/idisk",
+      "id": "http://api.sunbird.org/telemetry/dspec/idisk",
       "type": "number",
       "minimum": -1
     },
     "edisk": {
-      "id": "http://api.ekstep.org/telemetry/dspec/edisk",
+      "id": "http://api.sunbird.org/telemetry/dspec/edisk",
       "type": "number",
       "minimum": -1
     },
     "scrn": {
-      "id": "http://api.ekstep.org/telemetry/dspec/scrn",
+      "id": "http://api.sunbird.org/telemetry/dspec/scrn",
       "type": "number",
       "minimum": -1
     },
     "camera": {
-      "id": "http://api.ekstep.org/telemetry/dspec/camera",
+      "id": "http://api.sunbird.org/telemetry/dspec/camera",
       "type": "string"
     },
     "cpu": {
-      "id": "http://api.ekstep.org/telemetry/dspec/cpu",
+      "id": "http://api.sunbird.org/telemetry/dspec/cpu",
       "type": "string"
     },
     "sims": {
-      "id": "http://api.ekstep.org/telemetry/dspec/sims",
+      "id": "http://api.sunbird.org/telemetry/dspec/sims",
       "type": "number",
       "minimum": -1
     },
     "cap": {
-      "id": "http://api.ekstep.org/telemetry/dspec/cap",
+      "id": "http://api.sunbird.org/telemetry/dspec/cap",
       "type": "array",
       "items": {
         "type": "string"

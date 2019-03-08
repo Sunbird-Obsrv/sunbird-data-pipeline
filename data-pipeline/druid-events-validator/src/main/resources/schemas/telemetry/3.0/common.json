@@ -2,19 +2,19 @@
   "type": "object",
   "properties": {
     "ets": {
-      "id": "http://api.ekstep.org/telemetry/ets",
+      "id": "http://api.sunbird.org/telemetry/ets",
       "type": "number",
       "format": "date-time"
     },
     "ver": {
-      "id": "http://api.ekstep.org/telemetry/ver",
+      "id": "http://api.sunbird.org/telemetry/ver",
       "type": "string",
       "enum": [
         "3.0"
       ]
     },
     "mid": {
-      "id": "http://api.ekstep.org/telemetry/mid",
+      "id": "http://api.sunbird.org/telemetry/mid",
       "type": "string",
       "minLength": 1
     },

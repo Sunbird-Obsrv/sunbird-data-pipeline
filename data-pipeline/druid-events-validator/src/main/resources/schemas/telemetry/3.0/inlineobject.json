@@ -8,27 +8,27 @@
   ],
   "properties": {
     "id": {
-      "id": "http://api.ekstep.org/telemetry/inlineobject/id",
+      "id": "http://api.sunbird.org/telemetry/inlineobject/id",
       "type": "string"
     },
     "type": {
-      "id": "http://api.ekstep.org/telemetry/inlineobject/type",
+      "id": "http://api.sunbird.org/telemetry/inlineobject/type",
       "type": "string"
     },
     "ver": {
-      "id": "http://api.ekstep.org/telemetry/inlineobject/ver",
+      "id": "http://api.sunbird.org/telemetry/inlineobject/ver",
       "type": "string"
     },
     "subtype": {
-      "id": "http://api.ekstep.org/telemetry/inlineobject/subtype",
+      "id": "http://api.sunbird.org/telemetry/inlineobject/subtype",
       "type": "string"
     },
     "name": {
-      "id": "http://api.ekstep.org/telemetry/inlineobject/name",
+      "id": "http://api.sunbird.org/telemetry/inlineobject/name",
       "type": "string"
     },
     "code": {
-      "id": "http://api.ekstep.org/telemetry/inlineobject/code",
+      "id": "http://api.sunbird.org/telemetry/inlineobject/code",
       "type": "string"
     },
     "parent": {

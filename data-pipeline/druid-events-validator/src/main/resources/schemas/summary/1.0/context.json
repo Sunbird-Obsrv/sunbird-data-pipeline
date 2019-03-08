@@ -5,7 +5,7 @@
       "$ref": "resource:/schemas/summary/1.0/pdata.json"
     },
     "granularity": {
-      "id": "http://api.ekstep.org/summary/context/granularity",
+      "id": "http://api.sunbird.org/summary/context/granularity",
       "type": "string"
     },
     "date_range": {
@@ -15,7 +15,7 @@
       "$ref": "resource:/schemas/summary/1.0/rollup.json"
     },
     "did": {
-      "id": "http://api.ekstep.org/summary/context/did",
+      "id": "http://api.sunbird.org/summary/context/did",
       "type": "string"
     },
     "cdata": {

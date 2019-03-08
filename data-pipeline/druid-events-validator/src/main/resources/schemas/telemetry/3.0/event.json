@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "http://api.ekstep.org/telemetry/event",
+  "id": "http://api.sunbird.org/telemetry/event",
   "type": "object",
   "oneOf": [{
       "$ref": "resource:/schemas/telemetry/3.0/start.json"
