@@ -1,7 +1,9 @@
 #!/bin/sh
-# This is a comment!
+#Command to run this script
+#./run.sh storage fromDate toDate path
+#Example: ./run.sh azure 2019-03-10 2019-03-10 raw/
+
 echo Started executing script
-#echo $script_dir
 export SPARK_HOME="" #Include the spark home path here
 export JOB_LOGS="$PWD/logs"
 export FETCHER_JAR_PATH="$PWD/target/data-fetcher-1.0.jar"
