@@ -26,27 +26,38 @@ public class DeNormalizationService {
         try {
             event = source.getEvent();
 
-            if("dialcode".equals(event.objectType())) {
-                // add dialcode details to the event where object.type = dialcode
-                event = eventUpdaterFactory.getInstance("dialcode-data-updater")
-                        .update(event, event.getKey("content").get(0), true);
+            // ignore past data (older than last 6 months)
+            if(event.isOlder()) {
+                LOGGER.error(null, "Ignoring as ets is older than 6 months");
+                sink.toFailedTopic(event, "older than 6 months");
             }
             else {
-                // add content details to the event
-                event = eventUpdaterFactory.getInstance("content-data-updater")
-                .update(event, event.getKey("content").get(0), true);
-            }
-            // add user details to the event
-            event = eventUpdaterFactory.getInstance("user-data-updater")
-                    .update(event, event.getKey("user").get(0), false);
-            // add device details to the event
-            event = eventUpdaterFactory.getInstance("device-data-updater")
-                    .update(event);
-            // add dialcode details to the event only for SEARCH event
-            event = eventUpdaterFactory.getInstance("dialcode-data-updater")
-                    .update(event, event.getKey("dialcode"), true);
+                // correct future dates
+                event.compareAndAlterEts();
 
-            sink.toSuccessTopic(event);
+                if ("dialcode".equals(event.objectType())) {
+                    // add dialcode details to the event where object.type = dialcode
+                    event = eventUpdaterFactory.getInstance("dialcode-data-updater")
+                            .update(event, event.getKey("content").get(0), true);
+                } else {
+                    // add content details to the event
+                    event = eventUpdaterFactory.getInstance("content-data-updater")
+                            .update(event, event.getKey("content").get(0), true);
+                }
+                // add user details to the event
+                event = eventUpdaterFactory.getInstance("user-data-updater")
+                        .update(event, event.getKey("user").get(0), false);
+                // add device details to the event
+                event = eventUpdaterFactory.getInstance("device-data-updater")
+                        .update(event);
+                // add dialcode details to the event only for SEARCH event
+                event = eventUpdaterFactory.getInstance("dialcode-data-updater")
+                        .update(event, event.getKey("dialcode"), true);
+
+                // Update version to 3.1
+                event.updateVersion();
+                sink.toSuccessTopic(event);
+            }
         } catch(JsonSyntaxException e){
             LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
             sink.toMalformedTopic(source.getMessage());

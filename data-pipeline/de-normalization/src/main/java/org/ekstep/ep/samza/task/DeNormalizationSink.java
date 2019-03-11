@@ -22,6 +22,12 @@ public class DeNormalizationSink extends BaseSink {
 		;
 	}
 
+	public void toFailedTopic(Event event, String failedMessage) {
+		event.markFailure(failedMessage, config);
+		toTopic(config.failedTopic(), event.did(), event.getJson());
+		metrics.incFailedCounter();
+	}
+
 	public void toMalformedTopic(String message) {
 		toTopic(config.malformedTopic(), null, message);
 		metrics.incErrorCounter();

@@ -6,15 +6,21 @@ import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.task.DeNormalizationConfig;
 import org.ekstep.ep.samza.util.Path;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class Event {
     private final Telemetry telemetry;
     private Path path;
+    DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd").withZoneUTC();
+    DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     public Event(Map<String, Object> map) {
         this.telemetry = new Telemetry(map);
@@ -29,6 +35,35 @@ public class Event {
         Gson gson = new Gson();
         String json = gson.toJson(getMap());
         return json;
+    }
+
+    public Long ets() {
+        NullableValue<Object> ets = telemetry.read("ets");
+        if(ets.value().getClass().equals(Double.class)) {
+            return ((Double) ets.value()).longValue();
+        }
+        return ((Long) ets.value());
+    }
+
+    public Long getEndTimestampOfDay(String date) {
+        Long ets = dateFormat.parseDateTime(date).plusHours(23).plusMinutes(59).plusSeconds(59).getMillis();
+        return ets;
+    }
+
+    public Long compareAndAlterEts() {
+        Long eventEts = ets();
+        Long currentMillis = new Date().getTime();
+        String currentDate = formatter.format(currentMillis);
+        Long currentEndEts = getEndTimestampOfDay(currentDate);
+        if(eventEts > currentEndEts) telemetry.add("ets", currentMillis);
+        return ets();
+    }
+
+    public Boolean isOlder() {
+        Long eventEts = ets();
+        Long last6MonthMillis = new DateTime().minusMonths(6).getMillis();
+        if(eventEts < last6MonthMillis) return true;
+        else return false;
     }
 
     public String did() {
@@ -194,6 +229,24 @@ public class Event {
         Map<String, Object> flags = telemetryFlag.isNull() ? new HashMap<>() : telemetryFlag.value();
         if (!key.isEmpty()) flags.put(key, value);
         telemetry.add(path.flags(), flags);
+    }
+
+    public Map<String, Object> getFlag() {
+        NullableValue<Map<String, Object>> telemetryFlag = telemetry.read(path.flags());
+        Map<String, Object> flags = telemetryFlag.isNull() ? new HashMap<>() : telemetryFlag.value();
+        return flags;
+    }
+
+    public void updateVersion() {
+        Map flags = getFlag();
+        Boolean yes = ((Boolean) flags.getOrDefault("dialcode_data_retrieved", false))
+                || ((Boolean) flags.getOrDefault("device_data_retrieved", false))
+                || ((Boolean) flags.getOrDefault("content_data_retrieved", false))
+                || ((Boolean) flags.getOrDefault("user_data_retrieved", false));
+        if (yes) {
+            telemetry.add(path.ver(), "3.1");
+        }
+
     }
 
     @Override
