@@ -2,7 +2,7 @@
 # This is a comment!
 echo Started executing script
 #echo $script_dir
-export SPARK_HOME="/Users/admin/opt/spark-2.0.1-bin-hadoop2.7"
+export SPARK_HOME="" #Include the spark home path here
 export JOB_LOGS="$PWD/logs"
 export FETCHER_JAR_PATH="$PWD/target/data-fetcher-1.0.jar"
 echo "Starting the job - $1" >> "$JOB_LOGS/$today-data-fetcher-output.log"
