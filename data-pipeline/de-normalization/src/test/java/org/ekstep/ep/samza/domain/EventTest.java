@@ -38,7 +38,7 @@ public class EventTest {
         Long ets = new DateTime().minusMonths(7).getMillis();
         eventMap.put("ets", ets);
         Event input = new Event(eventMap);
-        assertTrue(input.isOlder());
+        assertTrue(input.isOlder(6));
     }
 
     @Test
@@ -48,6 +48,6 @@ public class EventTest {
         Long ets = new DateTime().minusMonths(3).getMillis();
         eventMap.put("ets", ets);
         Event input = new Event(eventMap);
-        assertFalse(input.isOlder());
+        assertFalse(input.isOlder(6));
     }
 }

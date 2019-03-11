@@ -36,6 +36,7 @@ public class DeNormalizationTaskTest {
     private static final String SUCCESS_TOPIC = "telemetry.with_denorm";
     private static final String FAILED_TOPIC = "telemetry.failed";
     private static final String MALFORMED_TOPIC = "telemetry.malformed";
+    private static final Integer ignorePeriodInMonths = 6;
 
     private MessageCollector collectorMock;
     private TaskContext contextMock;
@@ -72,6 +73,7 @@ public class DeNormalizationTaskTest {
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
         stub(configMock.get("output.malformed.topic.name", MALFORMED_TOPIC)).toReturn(MALFORMED_TOPIC);
+        stub(configMock.getInt("telemetry.ignore.period.months", ignorePeriodInMonths)).toReturn(ignorePeriodInMonths);
 
         stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);

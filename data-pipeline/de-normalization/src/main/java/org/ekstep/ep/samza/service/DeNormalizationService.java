@@ -26,10 +26,10 @@ public class DeNormalizationService {
         try {
             event = source.getEvent();
 
-            // ignore past data (older than last 6 months)
-            if(event.isOlder()) {
-                LOGGER.error(null, "Ignoring as ets is older than 6 months");
-                sink.toFailedTopic(event, "older than 6 months");
+            // ignore past data (older than last X months)
+            if(event.isOlder(config.ignorePeriodInMonths())) {
+                LOGGER.error(null, "Ignoring as ets is older than N months");
+                sink.toFailedTopic(event, "older than " + config.ignorePeriodInMonths() +" months");
             }
             else {
                 // correct future dates

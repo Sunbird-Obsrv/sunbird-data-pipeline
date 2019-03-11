@@ -19,8 +19,8 @@ import java.util.*;
 public class Event {
     private final Telemetry telemetry;
     private Path path;
-    DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd").withZoneUTC();
-    DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    private DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd").withZoneUTC();
+    private DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     public Event(Map<String, Object> map) {
         this.telemetry = new Telemetry(map);
@@ -54,15 +54,15 @@ public class Event {
         Long eventEts = ets();
         Long currentMillis = new Date().getTime();
         String currentDate = formatter.format(currentMillis);
-        Long currentEndEts = getEndTimestampOfDay(currentDate);
-        if(eventEts > currentEndEts) telemetry.add("ets", currentMillis);
+        Long endTsOfCurrentDate = getEndTimestampOfDay(currentDate);
+        if(eventEts > endTsOfCurrentDate) telemetry.add("ets", currentMillis);
         return ets();
     }
 
-    public Boolean isOlder() {
+    public Boolean isOlder(Integer periodInMonths) {
         Long eventEts = ets();
-        Long last6MonthMillis = new DateTime().minusMonths(6).getMillis();
-        if(eventEts < last6MonthMillis) return true;
+        Long periodInMillis = new DateTime().minusMonths(periodInMonths).getMillis();
+        if(eventEts < periodInMillis) return true;
         else return false;
     }
 
@@ -239,11 +239,11 @@ public class Event {
 
     public void updateVersion() {
         Map flags = getFlag();
-        Boolean yes = ((Boolean) flags.getOrDefault("dialcode_data_retrieved", false))
+        Boolean telemetryDenormalised = (((Boolean) flags.getOrDefault("dialcode_data_retrieved", false))
                 || ((Boolean) flags.getOrDefault("device_data_retrieved", false))
                 || ((Boolean) flags.getOrDefault("content_data_retrieved", false))
-                || ((Boolean) flags.getOrDefault("user_data_retrieved", false));
-        if (yes) {
+                || ((Boolean) flags.getOrDefault("user_data_retrieved", false)));
+        if (telemetryDenormalised) {
             telemetry.add(path.ver(), "3.1");
         }
 
