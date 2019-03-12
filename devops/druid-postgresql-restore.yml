@@ -4,4 +4,6 @@
   roles:
     -  role: 'postgresql-restore'
   become: yes
+  vars:
+    postgresql_restore_gzip_file_name: "{{ file_name }}"
  
