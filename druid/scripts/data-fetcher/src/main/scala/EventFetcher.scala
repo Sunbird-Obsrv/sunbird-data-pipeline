@@ -13,16 +13,16 @@ object EventsFetcher {
     val arguments = args(0).split(" ")
     val env = System.getenv("env")
     val S3_SUMMARY_EVENTS_PATH = "wfs/"
-    val S3_RAW_TELEMETRY_EVENTS_PATH = "raw/"
+    val S3_TELEMETRY_EVENTS_PATH = "raw/"
     val AZURE_SUMMMARY_EVENTS_PATH = "derived/wfs/"
-    val AZURE_RAW_TELEMETRY_EVENTS_PATH = "raw/"
+    val AZURE_TELEMETRY_EVENTS_PATH = "unique/"
     var topic = ""
     var path = ""
     topic = if (arguments(3) == "summary") env + ".events.summary" else env + ".events.telemetry"
     println("Arguments are:" + arguments(0), arguments(1), arguments(2), arguments(3))
     val data: RDD[String] =
       if (arguments(0) == "s3") {
-        path = if (arguments(3) == "summary") S3_SUMMARY_EVENTS_PATH else S3_RAW_TELEMETRY_EVENTS_PATH
+        path = if (arguments(3) == "summary") S3_SUMMARY_EVENTS_PATH else S3_TELEMETRY_EVENTS_PATH
         println("Fetching from S3", path)
         sc.hadoopConfiguration.set("fs.s3n.awsAccessKeyId", System.getenv("aws_storage_key"));
         sc.hadoopConfiguration.set("fs.s3n.awsSecretAccessKey", System.getenv("aws_storage_secret"));
@@ -34,7 +34,7 @@ object EventsFetcher {
         data
       } else {
 
-        path = if (arguments(3) == "summary") AZURE_SUMMMARY_EVENTS_PATH else AZURE_RAW_TELEMETRY_EVENTS_PATH
+        path = if (arguments(3) == "summary") AZURE_SUMMMARY_EVENTS_PATH else AZURE_TELEMETRY_EVENTS_PATH
         println("azure", path)
         sc.hadoopConfiguration.set("fs.azure", "org.apache.hadoop.fs.azure.NativeAzureFileSystem")
         sc.hadoopConfiguration.set("fs.azure.account.key." + System.getenv("azure_storage_key") + ".blob.core.windows.net", System.getenv("azure_storage_secret"))
