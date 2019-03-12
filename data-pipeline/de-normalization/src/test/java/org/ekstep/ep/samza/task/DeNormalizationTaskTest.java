@@ -496,7 +496,7 @@ public class DeNormalizationTaskTest {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-                assertEquals(outputEvent.get("ver").toString(), "3.1");
+                assertEquals(outputEvent.get("ver").toString(), "2.2");
                 Long ets = new Gson().fromJson(outputEvent.get("ets").toString(), Long.class);
                 assertFalse(2530937155000L == ets);
                 return true;

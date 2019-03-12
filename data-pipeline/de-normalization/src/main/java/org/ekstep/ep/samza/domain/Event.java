@@ -244,9 +244,13 @@ public class Event {
                 || ((Boolean) flags.getOrDefault("content_data_retrieved", false))
                 || ((Boolean) flags.getOrDefault("user_data_retrieved", false)));
         if (telemetryDenormalised) {
-            telemetry.add(path.ver(), "3.1");
+            telemetry.add(path.ver(), getUpgradedVersion());
         }
+    }
 
+    public String getUpgradedVersion() {
+        Double updatedVer = Double.parseDouble(telemetry.read(path.ver()).value().toString()) + 0.1;
+        return updatedVer.toString();
     }
 
     @Override

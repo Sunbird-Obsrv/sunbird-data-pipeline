@@ -668,7 +668,7 @@ public class EventFixture {
 	public static final String SEARCH_EVENT_WITH_FUTURE_ETS = "{\n" +
 			"    \"eid\": \"SEARCH\",\n" +
 			"    \"ets\": 2530937155000,\n" +
-			"    \"ver\": \"3.0\",\n" +
+			"    \"ver\": \"2.1\",\n" +
 			"    \"mid\": \"LP.1543688463694.670c6cf8-2cd2-45a7-b531-f212ac2847ec\",\n" +
 			"    \"actor\": {\n" +
 			"      \"id\": \"org.ekstep.learning.platform\",\n" +

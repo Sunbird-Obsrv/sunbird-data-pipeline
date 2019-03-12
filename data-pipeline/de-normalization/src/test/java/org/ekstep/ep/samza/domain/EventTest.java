@@ -50,4 +50,24 @@ public class EventTest {
         Event input = new Event(eventMap);
         assertFalse(input.isOlder(6));
     }
+
+    @Test
+    public void shouldReturnLatestVersion() throws Exception {
+
+        Map eventMap = new HashMap();
+        eventMap.put("ver", "3.0");
+        Event input = new Event(eventMap);
+        String updatedVer = input.getUpgradedVersion();
+        assertTrue(updatedVer.equals("3.1"));
+    }
+
+    @Test
+    public void shouldReturnSummaryLatestVersion() throws Exception {
+
+        Map eventMap = new HashMap();
+        eventMap.put("ver", "2.1");
+        Event input = new Event(eventMap);
+        String updatedVer = input.getUpgradedVersion();
+        assertTrue(updatedVer.equals("2.2"));
+    }
 }
