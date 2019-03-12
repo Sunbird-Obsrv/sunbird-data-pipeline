@@ -1,0 +1,102 @@
+## Provision Spark ##
+
+- name: Download Apache Spark 2.0.1 hadoop 2.7
+  become: yes
+  become_user: "{{ analytics_user }}"
+  get_url: url={{ spark_url }} dest={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7.tgz force=no owner={{ analytics_user }} group={{ analytics_group }}
+
+- name: Unarchive Spark 2.0.1 hadoop 2.7
+  become: yes
+  become_user: "{{ analytics_user }}"
+  unarchive: src={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7.tgz dest={{ analytics.home }}/ copy=no owner={{ analytics_user }} group={{ analytics_group }} creates={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7
+
+- name: Download Scala 2.11.8
+  become: yes
+  become_user: "{{ analytics_user }}"
+  shell: wget -O {{ analytics.soft_path }}/scala-{{ scala_version }}.tgz https://downloads.lightbend.com/scala/{{ scala_version }}/scala-{{ scala_version }}.tgz
+
+- name: Unarchive Scala 2.11.8
+  become: yes
+  become_user: "{{ analytics_user }}"
+  unarchive: src={{ analytics.soft_path }}/scala-{{ scala_version }}.tgz dest={{ analytics.soft_path }}/ copy=no owner={{ analytics_user }} group={{ analytics_group }} creates={{ analytics.soft_path }}/scala-{{ scala_version }}
+
+- name: Remove Guava 14.0.1 from Spark jars folder
+  become: yes
+  become_user: "{{ analytics_user }}"
+  file: path={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7/jars/guava-14.0.1.jar state=absent
+
+- name: Download Guava 19.0 and copy to Spark jars folder
+  become: yes
+  become_user: "{{ analytics_user }}"
+  get_url: url={{ guava_url }} dest={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7/jars/guava-19.0.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
+
+- name: Remove jets3t 0.9.3 from Spark jars folder
+  become: yes
+  become_user: "{{ analytics_user }}"
+  file: path={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7/jars/jets3t-0.9.3.jar state=absent
+
+- name: Download jets3t 0.9.4 and copy to Spark jars folder
+  become: yes
+  become_user: "{{ analytics_user }}"
+  get_url: url={{ jets3t_url }} dest={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7/jars/jets3t-0.9.4.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
+
+- name: Download hadoop-aws 2.7.3 and copy to Spark jars folder
+  become: yes
+  become_user: "{{ analytics_user }}"
+  get_url: url={{ hadoop_aws_url }} dest={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7/jars/hadoop-aws-2.7.3.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
+
+- name: Remove java-xmlbuilder 1.0 from Spark jars folder
+  become: yes
+  become_user: "{{ analytics_user }}"
+  file: path={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7/jars/java-xmlbuilder-1.0.jar state=absent
+
+- name: Download java-xmlbuilder 1.1 in to Spark jars folder
+  become: yes
+  become_user: "{{ analytics_user }}"
+  get_url: url={{ java_xmlbuilder_url }} dest={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7/jars/java-xmlbuilder-1.1.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
+
+- name: Update spark default conf
+  become: yes
+  become_user: "{{ analytics_user }}"
+  template: src=spark-defaults.j2 dest={{ spark.home }}/conf/spark-defaults.conf mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+
+- name: Update spark env
+  become: yes
+  become_user: "{{ analytics_user }}"
+  template: src=spark-env.j2 dest={{ spark.home }}/conf/spark-env.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+
+- name: Copy Jets3t properties file
+  become: yes
+  become_user: "{{ analytics_user }}"
+  template: src=jets3t.j2 dest={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7/conf/jets3t.properties mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+
+
+## Provision DS ##
+- name: Install packages
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: installed
+    update_cache: true
+    cache_valid_time: 3600
+  with_items:
+    - gem
+    - ruby
+
+- name: Install ruby-kafka
+  become: yes
+  shell: gem install ruby-kafka
+
+- name: Download Kafka-2.11
+  become: yes
+  become_user: "{{ analytics_user }}"
+  get_url: url=http://downloads.mesosphere.com/kafka/assets/kafka_2.11-0.10.1.0.tgz dest={{ analytics.home }}/kafka_2.11-0.10.1.0.tgz force=no owner={{ analytics_user }} group={{ analytics_group }}
+  tags:
+    - kafka-provision
+
+- name: Unarchive Kafka  
+  become: yes
+  become_user: "{{ analytics_user }}"
+  unarchive: src={{ analytics.soft_path }}/kafka_2.11-0.10.1.0.tgz dest={{ analytics.home }}/ copy=no owner={{ analytics_user }} group={{ analytics_group }} creates={{ analytics.home }}/kafka_2.11-0.10.1.0
+  tags:
+    - kafka-provision

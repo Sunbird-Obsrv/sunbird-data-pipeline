@@ -1,0 +1,4554 @@
+{
+  "data-exhaust": {
+    "search": {
+      "type": "azure"
+    },
+    "model": "org.ekstep.analytics.model.DataExhaustJobModel",
+    "parallelization": 8,
+    "appName": "Data Exhaust",
+    "deviceMapping": false,
+    "modelParams": {
+      "shouldDelay": true,
+      "delayInMilis": 1800000
+    },
+    "exhaustConfig": {
+      "eks-consumption-raw": {
+        "events": [
+          "eks-consumption-raw"
+        ],
+        "eventConfig": {
+          "eks-consumption-raw": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "channel/"
+              }
+            },
+            "filterMapping": {
+              "tags": {
+                "name": "tags",
+                "operator": "IN"
+              },
+              "channel": {
+                "name": "context.channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "context.pdata.id",
+                "operator": "EQ"
+              }
+            }
+          }
+        }
+      },
+      "eks-consumption-summary": {
+        "events": [
+          "ME_SESSION_SUMMARY",
+          "ME_CONTENT_USAGE_SUMMARY",
+          "ME_GENIE_LAUNCH_SUMMARY",
+          "ME_ITEM_SUMMARY",
+          "ME_GENIE_USAGE_SUMMARY",
+          "ME_ITEM_USAGE_SUMMARY",
+          "ME_ASSET_SNAPSHOT_SUMMARY",
+          "ME_CONTENT_SNAPSHOT_SUMMARY",
+          "ME_DEVICE_USAGE_SUMMARY",
+          "ME_GENIE_SESSION_SUMMARY",
+          "ME_WORKFLOW_SUMMARY"
+        ],
+        "eventConfig": {
+          "ME_WORKFLOW_SUMMARY": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "derived/wfs/"
+              }
+            },
+            "filterMapping": {
+              "tags": {
+                "name": "genieTag",
+                "operator": "IN"
+              },
+              "channel": {
+                "name": "dimensions.channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            }
+          },
+          "ME_SESSION_SUMMARY": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "derived/ss/"
+              }
+            },
+            "filterMapping": {
+              "tags": {
+                "name": "genieTag",
+                "operator": "IN"
+              },
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": true,
+              "columnMappings": {
+                "context.granularity": {
+                  "hidden": true
+                },
+                "edata.eks.timeSpent": {
+                  "to": "Time spent on the content"
+                },
+                "edata.eks.screenSummary": {
+                  "hidden": true
+                },
+                "edata.eks.currentLevel": {
+                  "to": "Current Domain Level"
+                },
+                "edata.eks.syncDate": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Sync Date(IST)"
+                },
+                "edata.eks.timeDiff": {
+                  "hidden": true
+                },
+                "context.date_range.from": {
+                  "hidden": true
+                },
+                "edata.eks.start_time": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Content Start Time(IST)"
+                },
+                "uid": {
+                  "to": "Genie User ID"
+                },
+                "ets": {
+                  "hidden": true
+                },
+                "dimensions.group_user": {
+                  "to": "Is Group User"
+                },
+                "edata.eks.activitySummary": {
+                  "to": "Activity Summary"
+                },
+                "edata.eks.end_time": {
+                  "hidden": true
+                },
+                "edata.eks.eventsSummary": {
+                  "hidden": true
+                },
+                "eid": {
+                  "hidden": true
+                },
+                "ver": {
+                  "hidden": true
+                },
+                "edata.eks.levels": {
+                  "hidden": true
+                },
+                "context.pdata.id": {
+                  "hidden": true
+                },
+                "edata.eks.itemResponses": {
+                  "to": "edata.eks.itemResponses"
+                },
+                "dimensions.gdata.id": {
+                  "to": "Content ID"
+                },
+                "edata.eks.noOfLevelTransitions": {
+                  "to": "Number of Level Transitions"
+                },
+                "edata.eks.noOfAttempts": {
+                  "to": "Number of Attempts"
+                },
+                "tags": {
+                  "to": "Genie Tags"
+                },
+                "edata.eks.interruptTime": {
+                  "to": "Total interrupt time"
+                },
+                "syncts": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Sync time stamp(IST)"
+                },
+                "edata.eks.mimeType": {
+                  "hidden": true
+                },
+                "edata.eks.telemetryVersion": {
+                  "to": "Telemetry Version"
+                },
+                "context.pdata.ver": {
+                  "hidden": true
+                },
+                "dimensions.gdata.ver": {
+                  "hidden": true
+                },
+                "edata.eks.interactEventsPerMin": {
+                  "to": "Number of interactions per minute"
+                },
+                "edata.eks.contentType": {
+                  "to": "Content Type"
+                },
+                "context.pdata.model": {
+                  "hidden": true
+                },
+                "dimensions.anonymous_user": {
+                  "to": "Logged in User"
+                },
+                "dimensions.did": {
+                  "to": "Device ID"
+                },
+                "dimensions.loc": {
+                  "to": "Lat / Long"
+                },
+                "mid": {
+                  "to": "Session ID"
+                },
+                "edata.eks.noOfInteractEvents": {
+                  "to": "Number of Interact events in the content session"
+                },
+                "context.date_range.to": {
+                  "hidden": true
+                }
+              }
+            }
+          },
+          "ME_CONTENT_USAGE_SUMMARY": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "derived/cus/"
+              }
+            },
+            "filterMapping": {
+              "tags": {
+                "name": "genieTag",
+                "operator": "IN"
+              },
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": false,
+              "columnMappings": {}
+            }
+          },
+          "ME_GENIE_LAUNCH_SUMMARY": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "derived/gls/"
+              }
+            },
+            "filterMapping": {
+              "tags": {
+                "name": "genieTag",
+                "operator": "IN"
+              },
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": false,
+              "columnMappings": {}
+            }
+          },
+          "ME_ITEM_SUMMARY": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "derived/is/"
+              }
+            },
+            "filterMapping": {
+              "tags": {
+                "name": "genieTag",
+                "operator": "IN"
+              },
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": false,
+              "columnMappings": {}
+            }
+          },
+          "ME_GENIE_USAGE_SUMMARY": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "derived/genie-launch-summ/"
+              }
+            },
+            "filterMapping": {
+              "tags": {
+                "name": "genieTag",
+                "operator": "IN"
+              },
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": true,
+              "columnMappings": {
+                "context.granularity": {
+                  "hidden": true
+                },
+                "context.date_range.from": {
+                  "hidden": true
+                },
+                "uid": {
+                  "to": "UIDs"
+                },
+                "ets": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Event generation time(IST)"
+                },
+                "edata.eks.total_ts": {
+                  "to": "Total time (secs) per tag for the period"
+                },
+                "eid": {
+                  "hidden": true
+                },
+                "ver": {
+                  "hidden": true
+                },
+                "edata.eks.contents": {
+                  "to": "Update col header\tContent IDs of all contents used per tag for the period"
+                },
+                "context.pdata.id": {
+                  "hidden": true
+                },
+                "edata.eks.avg_ts_session": {
+                  "to": "Average time spent per Genie session"
+                },
+                "edata.eks.device_ids": {
+                  "to": "Device IDs per tag for the period"
+                },
+                "syncts": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Sync time(IST)"
+                },
+                "context.pdata.ver": {
+                  "hidden": true
+                },
+                "context.pdata.model": {
+                  "hidden": true
+                },
+                "dimensions.tag": {
+                  "to": "Tag name"
+                },
+                "edata.eks.total_sessions": {
+                  "to": "Total number of sessions per tag for the period"
+                },
+                "mid": {
+                  "to": "Unique Genie Session ID"
+                },
+                "context.date_range.to": {
+                  "hidden": true
+                },
+                "dimensions.period": {
+                  "to": "period"
+                }
+              }
+            }
+          },
+          "ME_ITEM_USAGE_SUMMARY": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "derived/item-usage-summ/"
+              }
+            },
+            "filterMapping": {
+              "tags": {
+                "name": "genieTag",
+                "operator": "IN"
+              },
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": false,
+              "columnMappings": {}
+            }
+          },
+          "ME_ASSET_SNAPSHOT_SUMMARY": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "derived/asset-snapshot/"
+              }
+            },
+            "filterMapping": {
+              "tags": {
+                "name": "genieTag",
+                "operator": "IN"
+              },
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": true,
+              "columnMappings": {
+                "context.granularity": {
+                  "hidden": true
+                },
+                "edata.eks.used_activities_count": {
+                  "to": "No. of activities that are part of lessons"
+                },
+                "edata.eks.used_templates_count": {
+                  "to": "No. of templates that are part of lessons"
+                },
+                "context.date_range.from": {
+                  "hidden": true
+                },
+                "uid": {
+                  "to": "uid"
+                },
+                "edata.eks.total_questions_count": {
+                  "to": "Total number of questions"
+                },
+                "ets": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Generation Time(IST)"
+                },
+                "edata.eks.used_audio_count": {
+                  "to": "No. of audio files that are being used"
+                },
+                "edata.eks.used_images_count": {
+                  "to": "No. of images that are being used"
+                },
+                "edata.eks.used_questions_count": {
+                  "to": "No. of questions that are being used"
+                },
+                "edata.eks.total_activities_count": {
+                  "to": "Total number of activities"
+                },
+                "eid": {
+                  "hidden": true
+                },
+                "ver": {
+                  "hidden": true
+                },
+                "context.pdata.id": {
+                  "hidden": true
+                },
+                "syncts": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Sync time(IST)"
+                },
+                "edata.eks.total_templates_count": {
+                  "to": "Total no. of templates"
+                },
+                "dimensions.partner_id": {
+                  "to": "Partner ID"
+                },
+                "context.pdata.ver": {
+                  "hidden": true
+                },
+                "edata.eks.total_images_count": {
+                  "to": "Total no. of images"
+                },
+                "context.pdata.model": {
+                  "hidden": true
+                },
+                "edata.eks.total_audio_count": {
+                  "to": "Total no. of audio files"
+                },
+                "mid": {
+                  "hidden": true
+                },
+                "context.date_range.to": {
+                  "hidden": true
+                }
+              }
+            }
+          },
+          "ME_CONTENT_SNAPSHOT_SUMMARY": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "derived/content-snapshot/"
+              }
+            },
+            "filterMapping": {
+              "tags": {
+                "name": "genieTag",
+                "operator": "IN"
+              },
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": true,
+              "columnMappings": {
+                "context.granularity": {
+                  "hidden": true
+                },
+                "context.date_range.from": {
+                  "hidden": true
+                },
+                "edata.eks.active_user_count": {
+                  "to": "No. of active authors on the portal"
+                },
+                "uid": {
+                  "to": "uid"
+                },
+                "ets": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Event generation time(IST)"
+                },
+                "dimensions.author_id": {
+                  "to": "Author ID"
+                },
+                "edata.eks.total_user_count": {
+                  "to": "Total number of registered authors on the portal"
+                },
+                "edata.eks.live_content_count": {
+                  "to": "Total number of content pieces live"
+                },
+                "eid": {
+                  "hidden": true
+                },
+                "ver": {
+                  "hidden": true
+                },
+                "context.pdata.id": {
+                  "hidden": true
+                },
+                "syncts": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Sync time(IST)"
+                },
+                "edata.eks.total_content_count": {
+                  "to": "Total number of content pieces"
+                },
+                "edata.eks.review_content_count": {
+                  "to": "Total number of content pieces pending review"
+                },
+                "dimensions.partner_id": {
+                  "to": "Partner ID"
+                },
+                "context.pdata.ver": {
+                  "hidden": true
+                },
+                "context.pdata.model": {
+                  "hidden": true
+                },
+                "mid": {
+                  "hidden": true
+                },
+                "context.date_range.to": {
+                  "hidden": true
+                }
+              }
+            }
+          },
+          "ME_DEVICE_USAGE_SUMMARY": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "derived/dus/"
+              }
+            },
+            "filterMapping": {
+              "tags": {
+                "name": "genieTag",
+                "operator": "IN"
+              },
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": true,
+              "columnMappings": {
+                "context.granularity": {
+                  "hidden": true
+                },
+                "edata.eks.total_play_time": {
+                  "to": "Total Play time on device"
+                },
+                "context.date_range.from": {
+                  "hidden": true
+                },
+                "edata.eks.start_time": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Time stamp of first Genie installation on device(IST)"
+                },
+                "uid": {
+                  "to": "uid"
+                },
+                "ets": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Event generation time(IST)"
+                },
+                "edata.eks.avg_num_launches": {
+                  "to": "Average num. of Genie launches per day"
+                },
+                "edata.eks.num_contents": {
+                  "to": "No. of content pieces available on device"
+                },
+                "edata.eks.play_start_time": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Time stamp when the device first started game play(IST)"
+                },
+                "edata.eks.end_time": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Time stamp when the device was last used(IST)"
+                },
+                "eid": {
+                  "hidden": true
+                },
+                "edata.eks.num_days": {
+                  "to": "Number of days since Genie installed before the timestamp indicating the last use"
+                },
+                "ver": {
+                  "hidden": true
+                },
+                "context.pdata.id": {
+                  "hidden": true
+                },
+                "edata.eks.mean_play_time": {
+                  "to": "Average play time on device"
+                },
+                "edata.eks.mean_play_time_interval": {
+                  "to": "Average time interval between game play on the device"
+                },
+                "edata.eks.last_played_on": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Time stamp when the device was last used for game play(IST)"
+                },
+                "edata.eks.avg_time": {
+                  "to": "Average time on Genie per day"
+                },
+                "edata.eks.last_played_content": {
+                  "to": "Last played content on device"
+                },
+                "syncts": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Sync time(IST)"
+                },
+                "context.pdata.ver": {
+                  "hidden": true
+                },
+                "context.pdata.model": {
+                  "hidden": true
+                },
+                "dimensions.did": {
+                  "to": "Device ID"
+                },
+                "edata.eks.num_sessions": {
+                  "to": "Total number of sessions from the device"
+                },
+                "mid": {
+                  "hidden": true
+                },
+                "context.date_range.to": {
+                  "hidden": true
+                }
+              }
+            }
+          },
+          "ME_GENIE_SESSION_SUMMARY": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "derived/cus/"
+              }
+            },
+            "filterMapping": {
+              "tags": {
+                "name": "genieTag",
+                "operator": "IN"
+              },
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": true,
+              "columnMappings": {
+                "context.granularity": {
+                  "hidden": true
+                },
+                "context.date_range.from": {
+                  "hidden": true
+                },
+                "edata.eks.content": {
+                  "to": "Content IDs of content used in Genie Session"
+                },
+                "edata.eks.timeSpent": {
+                  "to": "Time spent on Genie Session\t"
+                },
+                "uid": {
+                  "to": "uid"
+                },
+                "ets": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Event generation time(IST)"
+                },
+                "dimensions.group_user": {
+                  "to": "Is Group user?"
+                },
+                "edata.eks.contentCount": {
+                  "to": "Number of content pieces used"
+                },
+                "eid": {
+                  "hidden": true
+                },
+                "ver": {
+                  "hidden": true
+                },
+                "edata.eks.time_stamp": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Session End time stamp(IST)"
+                },
+                "context.pdata.id": {
+                  "hidden": true
+                },
+                "tags": {
+                  "to": "Genie tags"
+                },
+                "syncts": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Sync time(IST)"
+                },
+                "context.pdata.ver": {
+                  "hidden": true
+                },
+                "context.pdata.model": {
+                  "hidden": true
+                },
+                "dimensions.anonymous_user": {
+                  "to": "Logged in user?"
+                },
+                "dimensions.did": {
+                  "to": "Device ID"
+                },
+                "mid": {
+                  "to": "Unique Genie Session ID"
+                },
+                "context.date_range.to": {
+                  "hidden": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "eks-consumption-metrics": {
+        "events": [
+          "ME_CONTENT_USAGE_METRICS",
+          "ME_ITEM_USAGE_METRICS",
+          "ME_GENIE_USAGE_METRICS",
+          "ME_CONTENT_SNAPSHOT_METRICS",
+          "ME_CONCEPT_SNAPSHOT_METRICS",
+          "ME_ASSET_SNAPSHOT_METRICS"
+        ],
+        "eventConfig": {
+          "ME_CONTENT_USAGE_METRICS": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "eks-consumption-metrics/me_content_usage_metrics/"
+              }
+            },
+            "filterMapping": {
+              "tags": {
+                "name": "dimensions.tag",
+                "operator": "IN"
+              },
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": true,
+              "columnMappings": {
+                "ets": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Event generation Time(IST)"
+                },
+                "syncts": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Event sync time(IST)"
+                },
+                "eid": {
+                  "hidden": true
+                },
+                "dimensions.period": {
+                  "to": "Time period of the summary. For ex: Day or Week or Month represented by a number"
+                },
+                "dimensions.content_id": {
+                  "to": "Content ID"
+                },
+                "dimensions.tag": {
+                  "to": "tag"
+                },
+                "edata.eks.m_publish_date": {
+                  "to": "Date when the content is published"
+                },
+                "edata.eks.m_total_ts": {
+                  "to": "Total time spent"
+                },
+                "edata.eks.m_total_sessions": {
+                  "to": "Total number of sessions"
+                },
+                "edata.eks.m_avg_ts_session": {
+                  "to": "Average timespent per session"
+                },
+                "edata.eks.m_total_interactions": {
+                  "to": "Total interactions count"
+                },
+                "edata.eks.m_avg_interactions_min": {
+                  "to": "Average interactions per minute"
+                },
+                "edata.eks.m_total_devices": {
+                  "to": "Total number of devices"
+                },
+                "edata.eks.m_avg_sess_device": {
+                  "to": "Average sessions per device"
+                }
+              }
+            }
+          },
+          "ME_ITEM_USAGE_METRICS": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "eks-consumption-metrics/me_item_usage_metrics/"
+              }
+            },
+            "filterMapping": {
+              "tags": {
+                "name": "dimensions.tag",
+                "operator": "IN"
+              },
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": true,
+              "columnMappings": {
+                "ets": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Event generation Time(IST)"
+                },
+                "syncts": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Event sync time(IST)"
+                },
+                "eid": {
+                  "hidden": true
+                },
+                "dimensions.period": {
+                  "to": "Time period of the summary. For ex: Day or Week or Month represented by a number"
+                },
+                "dimensions.tag": {
+                  "to": "tag"
+                },
+                "dimensions.content_id": {
+                  "to": "Content ID"
+                },
+                "dimensions.item_id": {
+                  "to": "item id"
+                },
+                "edata.eks.m_total_ts": {
+                  "to": "Total time spent"
+                },
+                "edata.eks.m_total_count": {
+                  "to": "Total response count"
+                },
+                "edata.eks.m_correct_res_count": {
+                  "to": "Correct response count"
+                },
+                "edata.eks.m_inc_res_count": {
+                  "to": "Incorrect response count"
+                },
+                "edata.eks.m_correct_res": {
+                  "hidden": true
+                },
+                "edata.eks.m_incorrect_res": {
+                  "hidden": true
+                },
+                "edata.eks.m_top5_incorrect_res": {
+                  "to": "Top 5 Incorrect response"
+                },
+                "edata.eks.m_avg_ts": {
+                  "to": "Average time spent"
+                },
+                "edata.eks.m_top5_misconception_res": {
+                  "to": "Top 5 Misconception response"
+                }
+              }
+            }
+          },
+          "ME_GENIE_USAGE_METRICS": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "eks-consumption-metrics/me_genie_usage_metrics/"
+              }
+            },
+            "filterMapping": {
+              "tags": {
+                "name": "dimensions.tag",
+                "operator": "IN"
+              },
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": true,
+              "columnMappings": {
+                "ets": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Event generation Time(IST)"
+                },
+                "syncts": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Event sync time(IST)"
+                },
+                "eid": {
+                  "hidden": true
+                },
+                "dimensions.period": {
+                  "to": "Time period of the summary. For ex: Day or Week or Month represented by a number"
+                },
+                "dimensions.tag": {
+                  "to": "Device Tag"
+                },
+                "edata.eks.m_total_sessions": {
+                  "to": "Total number of sessions"
+                },
+                "edata.eks.m_total_ts": {
+                  "to": "Total time spent"
+                },
+                "edata.eks.m_avg_ts_session": {
+                  "to": "Average sessions per device"
+                },
+                "edata.eks.m_contents": {
+                  "hidden": true
+                },
+                "edata.eks.m_total_devices": {
+                  "to": "Total number of devices"
+                }
+              }
+            }
+          },
+          "ME_CONTENT_SNAPSHOT_METRICS": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "eks-consumption-metrics/me_content_snapshot_metrics/"
+              }
+            },
+            "filterMapping": {
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            }
+          },
+          "ME_CONCEPT_SNAPSHOT_METRICS": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "eks-consumption-metrics/me_concept_snapshot_metrics/"
+              }
+            },
+            "filterMapping": {
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            }
+          },
+          "ME_ASSET_SNAPSHOT_METRICS": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "eks-consumption-metrics/me_asset_snapshot_metrics/"
+              }
+            },
+            "filterMapping": {
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            }
+          }
+        }
+      },
+      "eks-creation-raw": {
+        "events": [
+          "eks-creation-raw"
+        ],
+        "eventConfig": {
+          "eks-creation-raw": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "unique/"
+              }
+            },
+            "filterMapping": {
+              "channel": {
+                "name": "context.channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "context.pdata.id",
+                "operator": "EQ"
+              }
+            }
+          }
+        }
+      },
+      "eks-creation-summary": {
+        "events": [
+          "ME_APP_SESSION_SUMMARY",
+          "ME_CE_SESSION_SUMMARY",
+          "ME_TEXTBOOK_SESSION_SUMMARY",
+          "ME_APP_USAGE_SUMMARY",
+          "ME_CE_USAGE_SUMMARY",
+          "ME_TEXTBOOK_USAGE_SUMMARY",
+          "ME_AUTHOR_USAGE_SUMMARY",
+          "ME_PUBLISH_PIPELINE_SUMMARY"
+        ],
+        "eventConfig": {
+          "ME_APP_SESSION_SUMMARY": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "derived/app-ss/"
+              }
+            },
+            "filterMapping": {
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": true,
+              "columnMappings": {
+                "context.granularity": {
+                  "hidden": true
+                },
+                "edata.eks.interact_events_per_min": {
+                  "to": "Average ineractions per minute"
+                },
+                "edata.eks.events_summary": {
+                  "to": "edata.eks.events_summary"
+                },
+                "dimensions.app_id": {
+                  "to": "Event Source"
+                },
+                "context.date_range.from": {
+                  "hidden": true
+                },
+                "edata.eks.start_time": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Start Time(IST)"
+                },
+                "uid": {
+                  "to": "User ID"
+                },
+                "edata.eks.page_summary": {
+                  "to": "Pages visited Summary"
+                },
+                "ets": {
+                  "hidden": true
+                },
+                "edata.eks.page_views_count": {
+                  "to": "Total pageviews in Session"
+                },
+                "edata.eks.end_time": {
+                  "hidden": true
+                },
+                "eid": {
+                  "hidden": true
+                },
+                "ver": {
+                  "hidden": true
+                },
+                "context.pdata.id": {
+                  "hidden": true
+                },
+                "edata.eks.ce_visits": {
+                  "to": "Number of Authoring tool visits"
+                },
+                "dimensions.sid": {
+                  "to": "Session ID"
+                },
+                "edata.eks.time_diff": {
+                  "to": "Session length "
+                },
+                "edata.eks.interact_events_count": {
+                  "to": "Number of Interactions"
+                },
+                "syncts": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Sync time(IST)"
+                },
+                "context.pdata.ver": {
+                  "hidden": true
+                },
+                "context.pdata.model": {
+                  "hidden": true
+                },
+                "edata.eks.time_spent": {
+                  "to": "Session length"
+                },
+                "dimensions.anonymous_user": {
+                  "to": "User Logged In"
+                },
+                "mid": {
+                  "to": "mid"
+                },
+                "edata.eks.env_summary": {
+                  "to": "Usage summary"
+                },
+                "edata.eks.first_visit": {
+                  "to": "First Time Visitor"
+                },
+                "context.date_range.to": {
+                  "hidden": true
+                }
+              }
+            }
+          },
+          "ME_CE_SESSION_SUMMARY": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "derived/ce-ss/"
+              }
+            },
+            "filterMapping": {
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": false,
+              "columnMappings": {}
+            }
+          },
+          "ME_TEXTBOOK_SESSION_SUMMARY": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "derived/textbook-ss/"
+              }
+            },
+            "filterMapping": {
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": false,
+              "columnMappings": {}
+            }
+          },
+          "ME_APP_USAGE_SUMMARY": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "derived/app-usage/"
+              }
+            },
+            "filterMapping": {
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": true,
+              "columnMappings": {
+                "edata.eks.avg_ts_session": {
+                  "to": "Average session duration per day"
+                },
+                "context.granularity": {
+                  "to": "Granularity"
+                },
+                "edata.eks.anon_total_sessions": {
+                  "to": "Time spent by non-registered users"
+                },
+                "edata.eks.unique_users": {
+                  "to": "Unique users list"
+                },
+                "dimensions.app_id": {
+                  "to": "Source"
+                },
+                "edata.eks.unique_users_count": {
+                  "to": "Unique users count"
+                },
+                "context.date_range.from": {
+                  "hidden": true
+                },
+                "edata.eks.total_pageviews_count": {
+                  "to": "Total Page Views per day"
+                },
+                "uid": {
+                  "to": "uid"
+                },
+                "edata.eks.ce_total_sessions": {
+                  "to": "Number of sessions where creation happened"
+                },
+                "edata.eks.anon_avg_ts_session": {
+                  "to": "Avg. session duration for non-registered users per day"
+                },
+                "ets": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Generation Time(IST)"
+                },
+                "edata.eks.total_ts": {
+                  "to": "Total time spent by visitors on Portal"
+                },
+                "edata.eks.ce_percent_sessions": {
+                  "to": "Percentage of visitors creating content"
+                },
+                "dimensions.author_id": {
+                  "to": "Author ID"
+                },
+                "eid": {
+                  "hidden": true
+                },
+                "ver": {
+                  "hidden": true
+                },
+                "context.pdata.id": {
+                  "hidden": true
+                },
+                "edata.eks.new_user_count": {
+                  "to": "Number of new users"
+                },
+                "syncts": {
+                  "to": "Event sync time(IST)",
+                  "mapFunc": "timestampToDateTime"
+                },
+                "edata.eks.percent_new_users_count": {
+                  "to": "Percentage of new visitors per day"
+                },
+                "context.pdata.ver": {
+                  "hidden": true
+                },
+                "context.pdata.model": {
+                  "hidden": true
+                },
+                "edata.eks.avg_pageviews": {
+                  "to": "Avg. pages per visit per day"
+                },
+                "edata.eks.total_sessions": {
+                  "to": "Total number of sessions"
+                },
+                "edata.eks.anon_total_ts": {
+                  "to": "Total time spent by non-registered users on Portal"
+                },
+                "mid": {
+                  "hidden": true
+                },
+                "dimensions.period": {
+                  "to": "dimensions.period"
+                },
+                "context.date_range.to": {
+                  "hidden": true
+                }
+              }
+            }
+          },
+          "ME_CE_USAGE_SUMMARY": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "derived/ce-usage/"
+              }
+            },
+            "filterMapping": {
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": false,
+              "columnMappings": {}
+            }
+          },
+          "ME_TEXTBOOK_USAGE_SUMMARY": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "derived/textbook-usage/"
+              }
+            },
+            "filterMapping": {
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": false,
+              "columnMappings": {}
+            }
+          },
+          "ME_AUTHOR_USAGE_SUMMARY": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "derived/author-usage-summary/"
+              }
+            },
+            "filterMapping": {
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": true,
+              "columnMappings": {
+                "uid": {
+                  "to": "Author ID"
+                },
+                "mid": {
+                  "hidden": true
+                },
+                "ets": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Event generation time(IST)"
+                },
+                "eid": {
+                  "hidden": true
+                },
+                "ver": {
+                  "hidden": true
+                },
+                "syncts": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Sync time(IST)"
+                },
+                "context.pdata.id": {
+                  "hidden": true
+                },
+                "context.pdata.ver": {
+                  "hidden": true
+                },
+                "context.pdata.model": {
+                  "hidden": true
+                },
+                "edata.eks.avg_ts_session": {
+                  "to": "Total number of seesion per day"
+                },
+                "edata.eks.total_ts": {
+                  "to": "Total time spent by author"
+                },
+                "edata.eks.ce_total_ts": {
+                  "to": "Total time spent on content editor by author"
+                },
+                "edata.eks.total_sessions": {
+                  "to": "No of sessions per Author"
+                },
+                "context.granularity": {
+                  "hidden": true
+                },
+                "edata.eks.ce_percent_ts": {
+                  "to": "Percentage of time spent browsing vs creating"
+                },
+                "edata.eks.ce_percent_sessions": {
+                  "to": "Percentage of sessions in which users log into content editor"
+                },
+                "edata.eks.ce_total_visits": {
+                  "to": "No of Content Editor visits per author"
+                },
+                "context.date_range.from": {
+                  "hidden": true
+                },
+                "context.date_range.to": {
+                  "hidden": true
+                }
+              }
+            }
+          },
+          "ME_PUBLISH_PIPELINE_SUMMARY": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "derived/publish-pipeline-summ/"
+              }
+            },
+            "filterMapping": {
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": true,
+              "columnMappings": {
+                "context.granularity": {
+                  "hidden": true
+                },
+                "context.date_range.from": {
+                  "hidden": true
+                },
+                "uid": {
+                  "hidden": true
+                },
+                "ets": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Event generation Time(IST)"
+                },
+                "eid": {
+                  "hidden": true
+                },
+                "ver": {
+                  "hidden": true
+                },
+                "context.pdata.id": {
+                  "hidden": true
+                },
+                "edata.eks.publish_pipeline_summary": {
+                  "to": "edata.eks.publish_pipeline_summary"
+                },
+                "syncts": {
+                  "to": "Event sync time(IST)",
+                  "mapFunc": "timestampToDateTime"
+                },
+                "context.pdata.ver": {
+                  "hidden": true
+                },
+                "context.pdata.model": {
+                  "hidden": true
+                },
+                "mid": {
+                  "hidden": true
+                },
+                "dimensions.period": {
+                  "to": "Date"
+                },
+                "context.date_range.to": {
+                  "hidden": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "eks-creation-metrics": {
+        "events": [
+          "ME_APP_USAGE_METRICS",
+          "ME_CE_USAGE_METRICS",
+          "ME_TEXTBOOK_CREATION_METRICS",
+          "ME_TEXTBOOK_SNAPSHOT_METRICS",
+          "ME_AUTHOR_USAGE_METRICS"
+        ],
+        "eventConfig": {
+          "ME_APP_USAGE_METRICS": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "eks-creation-metrics/me_app_usage_metrics/"
+              }
+            },
+            "filterMapping": {
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": true,
+              "columnMappings": {
+                "ets": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Event generation Time(IST)"
+                },
+                "syncts": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Event sync time(IST)"
+                },
+                "eid": {
+                  "hidden": true
+                },
+                "dimensions.period": {
+                  "to": "Time period of the summary. For ex: Day or Week or Month represented by a number"
+                },
+                "dimensions.author_id": {
+                  "to": "Author ID / All"
+                },
+                "dimensions.app_id": {
+                  "to": "App (EkStep portal currently)"
+                },
+                "edata.eks.anon_total_sessions": {
+                  "to": "Total anonymous sessions on portal"
+                },
+                "edata.eks.anon_total_ts": {
+                  "to": "Tota time spent (Anonymous) on portal"
+                },
+                "edata.eks.total_sessions": {
+                  "to": "Total number of portal sessions"
+                },
+                "edata.eks.total_ts": {
+                  "to": "Total time spent on portal"
+                },
+                "edata.eks.ce_total_sessions": {
+                  "to": "Total content editor sessions"
+                },
+                "edata.eks.ce_percent_sessions": {
+                  "to": "% of total sessions that are content editor sessions"
+                },
+                "edata.eks.total_pageviews_count": {
+                  "to": "Total pageviews on portal"
+                },
+                "edata.eks.unique_users": {
+                  "hidden": true
+                },
+                "edata.eks.unique_users_count": {
+                  "to": "Count of unique users on portal"
+                },
+                "edata.eks.avg_pageviews": {
+                  "to": "Avg. number of pageviews per session for specified period"
+                },
+                "edata.eks.avg_ts_session": {
+                  "to": "Avg. session length (time spent) per session for specified period"
+                },
+                "edata.eks.anon_avg_ts_session": {
+                  "to": "Avg. Anonymous session length (time spent) per session for specified period"
+                },
+                "edata.eks.new_user_count": {
+                  "to": "No. of new users on the app (portal) for the given time period"
+                },
+                "edata.eks.percent_new_users_count": {
+                  "to": "% of new users for the given time period"
+                }
+              }
+            }
+          },
+          "ME_CE_USAGE_METRICS": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "eks-creation-metrics/me_ce_usage_metrics/"
+              }
+            },
+            "filterMapping": {
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": true,
+              "columnMappings": {
+                "ets": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Event generation Time(IST)"
+                },
+                "syncts": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Event sync time(IST)"
+                },
+                "eid": {
+                  "hidden": true
+                },
+                "dimensions.period": {
+                  "to": "Time period of the summary. For ex: Day or Week or Month represented by a number"
+                },
+                "dimensions.content_id": {
+                  "to": "Content ID"
+                },
+                "edata.eks.unique_users_count": {
+                  "to": "Number of users who accessed the content piece via the editor"
+                },
+                "edata.eks.total_sessions": {
+                  "to": "Total number of sessions that accessed the content piece via the editor"
+                },
+                "edata.eks.total_ts": {
+                  "to": "Time spent on the content piece in the content editor"
+                },
+                "edata.eks.avg_ts_session": {
+                  "to": "Average session time on the editor"
+                },
+                "edata.eks.update_date": {
+                  "to": "Last updated timestamp of the content piece"
+                }
+              }
+            }
+          },
+          "ME_TEXTBOOK_CREATION_METRICS": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "eks-creation-metrics/me_textbook_creation_metrics/"
+              }
+            },
+            "filterMapping": {
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            }
+          },
+          "ME_TEXTBOOK_SNAPSHOT_METRICS": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "eks-creation-metrics/me_textbook_snapshot_metrics/"
+              }
+            },
+            "filterMapping": {
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            }
+          },
+          "ME_AUTHOR_USAGE_METRICS": {
+            "searchType": "azure",
+            "fetchConfig": {
+              "params": {
+                "bucket": "{{ bucket }}",
+                "prefix": "eks-creation-metrics/me_author_usage_metrics/"
+              }
+            },
+            "filterMapping": {
+              "channel": {
+                "name": "channel",
+                "operator": "EQ"
+              },
+              "app_id": {
+                "name": "dimensions.pdata.id",
+                "operator": "EQ"
+              }
+            },
+            "csvConfig": {
+              "auto_extract_column_names": true,
+              "columnMappings": {
+                "ets": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Event generation Time(IST)"
+                },
+                "syncts": {
+                  "mapFunc": "timestampToDateTime",
+                  "to": "Event sync time(IST)"
+                },
+                "eid": {
+                  "hidden": true
+                },
+                "dimensions.period": {
+                  "to": " Time period of the summary. For ex: Day or Week or Month represented by a number"
+                },
+                "dimensions.author_id": {
+                  "to": "Author ID /All"
+                },
+                "edata.eks.total_sessions": {
+                  "to": "Total number of portal sessions by author"
+                },
+                "edata.eks.total_ts": {
+                  "to": "Total time spent on portal by author"
+                },
+                "edata.eks.total_ce_ts": {
+                  "to": "Total time spent on content editor by author"
+                },
+                "edata.eks.total_ce_visit": {
+                  "to": "Number of content editor visits"
+                },
+                "edata.eks.percent_ce_sessions": {
+                  "to": "% of sessions that were spent on the editor"
+                },
+                "edata.eks.avg_ts_session": {
+                  "to": "Average time spent by author on portal per session"
+                },
+                "edata.eks.percent_ce_ts": {
+                  "to": "% time spent by author on content editor"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "content-lang-rel": {
+    "appName": "Content Language Relation Model",
+    "modelParams": {}
+  },
+  "content-asset-rel": {
+    "appName": "Content Asset Relation Model",
+    "modelParams": {}
+  },
+  "concept-lan-rel": {
+    "appName": "Concept Language Relation Model",
+    "modelParams": {}
+  },
+  "content-own-rel": {
+    "appName": "Author Relations Model",
+    "modelParams": {}
+  },
+  "re-enrichment-model": {
+    "appName": "Creation Recommendation Enrichment Model",
+    "modelParams": {}
+  },
+  "creation-reco": {
+    "appName": "Creation Recommendation Model",
+    "modelParams": {
+      "author_reco_limit": 5,
+      "lang_return_props": [
+        "name",
+        "code",
+        "isoCode"
+      ]
+    }
+  },
+  "concept-snapshot": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "derived/cus/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "appName": "Concept Snapshot Summarizer",
+    "modelParams": {},
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/concept-snapshot/$(date '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ]
+  },
+  "asset-snapshot": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "derived/cus/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "appName": "Asset Snapshot Summarizer",
+    "modelParams": {},
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/asset-snapshot/$(date '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ]
+  },
+  "lpu": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "valid/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.updater.LearnerProfileUpdater",
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Learner Profile Updater",
+    "deviceMapping": false
+  },
+  "lpc": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "unique/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.updater.LearnerProfileCreater",
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Learner Profile Updater",
+    "deviceMapping": false
+  },
+  "dsu": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "unique/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.DeviceSpecification",
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Device Specification Updater",
+    "deviceMapping": false
+  },
+  "ss": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "unique/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "filters": [
+      {
+        "name": "eid",
+        "operator": "NIN",
+        "value": ["JOB_START","JOB_END"]
+      }
+    ],
+    "model": "org.ekstep.analytics.model.LearnerSessionSummary",
+    "modelParams": {
+      "apiVersion": "v2"
+    },
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/ss/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Learner Session Summarizer",
+    "deviceMapping": true
+  },
+  "gls": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "unique/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.GenieLaunchSummary",
+    "modelParams": {
+      "apiVersion": "v2"
+    },
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/gls/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Genie Launch Summarizer",
+    "deviceMapping": false
+  },
+  "gss": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "unique/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.GenieUsageSessionSummary",
+    "modelParams": {
+      "apiVersion": "v2"
+    },
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/gss/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Genie Session Summarizer",
+    "deviceMapping": false
+  },
+  "css": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "unique/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.ContentSideloadingSummarizer",
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/css/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Content Sideloading Summarizer",
+    "deviceMapping": false
+  },
+  "cps": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "unique/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.ContentPopularitySummaryModel",
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/cps/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Content Popularity Summarizer",
+    "deviceMapping": false
+  },
+  "gfs": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "unique/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.GenieFunnelModel",
+    "modelParams": {
+      "apiVersion": "v2"
+    },
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/gfs/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Genie Funnel Model",
+    "deviceMapping": true
+  },
+  "eocfs": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "unique/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "filters": [
+      {
+        "name": "ver",
+        "operator": "NE",
+        "value": "3.0"
+      },
+      {
+        "name": "genieTag",
+        "operator": "NIN",
+        "value": [
+          "6c3791818e80b9d05fb975da1e972431d9f8c2a6"
+        ]
+      }
+    ],
+    "model": "org.ekstep.analytics.model.EOCRecommendationFunnelModel",
+    "modelParams": {
+      "apiVersion": "v2"
+    },
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/eocfs/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "EOC Recommendation Funnel",
+    "deviceMapping": true
+  },
+  "app-ss": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "unique/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "appName": "Portal Session Summarizer",
+    "modelParams": {
+      "idleTime": 600,
+      "appId": "EkstepPortal"
+    },
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/app-ss/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ]
+  },
+  "ce-ss": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "portal/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "appName": "Content Editor Session Summarizer",
+    "modelParams": {
+      "idleTime": 600
+    },
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/ce-ss/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ]
+  },
+  "publish-pipeline-summ": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "unique/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "appName": "Publish Pipeline Summary",
+    "modelParams": {},
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/publish-pipeline-summ/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ]
+  },
+  "textbook-snapshot-updater": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "cus/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "appName": "Textbook Snapshot Updater",
+    "modelParams": {
+      "periodType": "ALL",
+      "periodUpTo": 10
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ]
+  },
+  "obj-cache-updater": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "portal/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "appName": "App Object Cache Updater",
+    "modelParams": {},
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ]
+  },
+  "cus": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/ss/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.ContentUsageSummary",
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/cus/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Content Usage Summarizer",
+    "deviceMapping": false
+  },
+  "is": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/ss/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.ItemSummary",
+    "modelParams": {
+      "apiVersion": "v2"
+    },
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/is/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Item Summarizer",
+    "deviceMapping": false
+  },
+  "sts": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/ss/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.StageSummary",
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/sts/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Stage Summarizer",
+    "deviceMapping": true
+  },
+  "publish-pipeline-updater": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/publish-pipeline-summ/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "appName": "Publish Pipeline Updater",
+    "modelParams": {},
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ]
+  },
+  "gsts": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/gls/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.GenieStageSummaryModel",
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/gsts/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Genie Stage Summarizer",
+    "deviceMapping": false
+  },
+  "dcus": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/ss/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.DeviceContentUsageSummary",
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/dcus/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Device Content Usage Summarizer",
+    "deviceMapping": false
+  },
+  "cpu": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/cps/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.updater.UpdateContentPopularityDB",
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Content Popularity Updater",
+    "deviceMapping": false
+  },
+  "genie-launch-summ": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/gls/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.GenieUsageSummaryModel",
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/genie-launch-summ/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Genie Usage Summarizer",
+    "deviceMapping": false
+  },
+  "dus": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/gls/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.DeviceUsageSummary",
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/dus/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Device Usage Summarizer",
+    "deviceMapping": false
+  },
+  "item-usage-summ": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/is/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.ItemSummaryModel",
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/item-usage-summ/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Item Summarizer",
+    "deviceMapping": false
+  },
+  "cuu": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/cus/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.updater.ContentUsageUpdater",
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Content Usage Updater",
+    "deviceMapping": false
+  },
+  "usage-summary": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/ss/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.MEUsageSummary",
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/usage-summary/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "ME Usage Summarizer",
+    "deviceMapping": false
+  },
+  "genie-launch-metrics": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/genie-launch-summ/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.updater.UpdateGenieUsageDB",
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Genie Usage Updater",
+    "deviceMapping": false
+  },
+  "item-usage-metrics": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/item-usage-summ/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.updater.UpdateItemSummaryDB",
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Item Summary Updater",
+    "deviceMapping": false
+  },
+  "gfa": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/gfs/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.GenieFunnelAggregatorModel",
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/gfa/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Genie Funnel Aggregator Model",
+    "deviceMapping": true
+  },
+  "usage-updater": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/usage-summary/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.updater.MEUsageUpdater",
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "ME Usage Updater",
+    "deviceMapping": false
+  },
+  "cmu": {
+  "search": {
+    "type": "none"
+  },
+  "model": "org.ekstep.analytics.updater.ContentModelUpdater",
+  "modelParams": {
+    "date": "$(date '+%Y-%m-%d')",
+    "contentTypes": {
+      "Content": [
+        "Resource",
+        "Collection",
+        "TextBook",
+        "LessonPlan",
+        "Course",
+        "Template",
+        "Asset",
+        "Plugin",
+        "LessonPlanUnit",
+        "CourseUnit",
+        "TextBookUnit"
+      ]
+    }
+  },
+  "output": [
+    {
+      "to": "console",
+      "params": {
+        "printEvent": false
+      }
+    },
+    {
+      "to": "kafka",
+      "params": {
+        "brokerList": "{{ brokerlist }}",
+        "topic": "{{ learning_topic }}"
+      }
+    }
+  ],
+  "parallelization": 10,
+  "appName": "Content Model Updater",
+  "deviceMapping": false
+},
+  "precomp-views": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "unique/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.views.PrecomputedViews",
+    "modelParams": {
+      "apiVersion": "v2"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Pre-computed Views",
+    "deviceMapping": false
+  },
+  "asset-snapshot-updater": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/asset-snapshot/",
+          "endDate": "$(date '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.updater.UpdateAssetSnapshotDB",
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Asset Snapshot Updater",
+    "deviceMapping": false
+  },
+  "concept-snapshot-updater": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/concept-snapshot/",
+          "endDate": "$(date '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.updater.UpdateConceptSnapshotDB",
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Concept Snapshot Updater",
+    "deviceMapping": false
+  },
+  "app-usage": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/app-ss/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.PortalUsageSummaryModel",
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/app-usage/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Portal Usage Summary Model",
+    "deviceMapping": true
+  },
+  "ce-usage": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/ce-ss/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.ContentEditorUsageSummaryModel",
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/ce-usage/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Content Editor Usage Summary Model",
+    "deviceMapping": true
+  },
+  "content-recos": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/dus/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.EndOfContentRecommendationModel",
+    "modelParams": {
+      "method": "cosine",
+      "norm": "none",
+      "weight": 0.1,
+      "filterBlacklistedContents": false,
+      "num_bins_downloads": 10,
+      "num_bins_rating": 10,
+      "num_bins_interactions": 10,
+      "sorting_order": [
+        "rel.num_downloads",
+        "rel.avg_rating",
+        "eng.total_interactions",
+        "simi.score"
+      ]
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "End Of Content Recommendation Model",
+    "deviceMapping": false
+  },
+  "app-usage-updater": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/app-usage/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.updater.UpdatePortalUsageDB",
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Portal Usage Updater",
+    "deviceMapping": false
+  },
+  "ce-usage-updater": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/ce-usage/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.updater.UpdateContentEditorUsageDB",
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Content Editor Usage Updater",
+    "deviceMapping": false
+  },
+  "content-creation-metrics": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "portal/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.updater.UpdateContentCreationMetricsDB",
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Content Creation Metrics Updater",
+    "deviceMapping": false
+  },
+  "content-snapshot": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "cus/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "appName": "Content Snapshot Summarizer",
+    "modelParams": {
+      "active_user_days_limit": 30
+    },
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/content-snapshot/$(date '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ]
+  },
+  "content-snapshot-updater": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/content-snapshot/",
+          "endDate": "$(date '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.updater.UpdateContentSnapshotDB",
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Content Snapshot Updater",
+    "deviceMapping": false
+  },
+  "author-usage-summary": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/app-ss/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.AuthorUsageSummarizer",
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/author-usage-summary/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Author Usage Summary Model",
+    "deviceMapping": true
+  },
+  "textbook-ss": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "portal/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "filters": [
+      {
+        "name": "edata",
+        "operator": "ISNOTNULL"
+      }
+    ],
+    "appName": "Textbook Session Summarizer",
+    "modelParams": {
+      "idleTime": 600
+    },
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/textbook-ss/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ]
+  },
+  "author-usage-updater": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/author-usage-summary/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "appName": "Author Usage Updater",
+    "modelParams": {},
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ]
+  },
+  "textbook-usage": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/textbook-ss/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.TextbookUsageSummaryModel",
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/textbook-usage/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Textbook Usage Summary Model",
+    "deviceMapping": true
+  },
+  "textbook-usage-updater": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/textbook-usage/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.updater.UpdateTextbookUsageDB",
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Textbook Usage Updater",
+    "deviceMapping": true
+  },
+  "consumption-metrics": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "unique/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.updater.ConsumptionMetricsUpdater",
+    "modelParams": {
+      "periodType": "ALL",
+      "periodUpTo": 10
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Consumption Metrics Updater",
+    "deviceMapping": false
+  },
+  "creation-metrics": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "business_metrics/",
+          "endDate": "$(date '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.updater.CreationMetricsUpdater",
+    "modelParams": {},
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 10,
+    "appName": "Creation Metrics Updater",
+    "deviceMapping": false
+  },
+  "plugin-snapshot-updater": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/cus/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "appName": "Plugin Snapshot Metrics Updater",
+    "modelParams": {},
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ]
+  },
+  "template-snapshot-updater": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/cus/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "appName": "Template Snapshot Metrics Updater",
+    "modelParams": {},
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ]
+  },
+  "me-metrics": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/dus/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.job.consolidated.MetricsEventCreationJob",
+    "modelParams": {
+      "start_date": "$(date '+%Y-%m-%d')",
+      "end_date": "$(date '+%Y-%m-%d')"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "MetricsEventCreationJob",
+    "deviceMapping": false
+  },
+  "wfs": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "unique/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "filters": [
+      {
+        "name": "eid",
+        "operator": "NIN",
+        "value": ["JOB_START","JOB_END"]
+      }
+    ],
+    "model": "org.ekstep.analytics.model.WorkflowSummary",
+    "modelParams": {
+      "apiVersion": "v2"
+    },
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/wfs/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Workflow Summarizer",
+    "deviceMapping": true
+  },
+  "wfus": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/wfs/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.WorkflowUsageSummary",
+    "modelParams": {
+      "apiVersion": "v2"
+    },
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/wfus/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Workflow Usage Summarizer",
+    "deviceMapping": true
+  },
+  "wfu": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/wfus/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "appName": "Workflow Usage Updater",
+    "parallelization": 8,
+    "model": "org.ekstep.analytics.updater.UpdateWorkFlowUsageDB",
+    "modelParams": {},
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ]
+  },
+  "ds": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "unique/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        },
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/wfs/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.DeviceSummaryModel",
+    "modelParams": {
+      "apiVersion": "v2"
+    },
+    "output": [
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/device-summary/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Device Summarizer",
+    "deviceMapping": false
+  },
+  "dpu": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/device-summary/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.UpdateDeviceProfileDB",
+    "modelParams": {
+      "apiVersion": "v2"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Device Profile Updater",
+    "deviceMapping": false
+  },
+  "portal-metrics": {
+    "search": {
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.updater.UpdatePortalMetrics",
+    "modelParams": {
+      "bucket": "portal-metrics",
+      "key": "diksha-aggregate-metrics.json",
+      "dispatch": true,
+      "public":true
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "PortalMetricsUpdater",
+    "deviceMapping": false
+  },
+  "workflow-usage-metrics": {
+  "search": {
+    "type": "azure",
+    "queries": [
+      {
+        "bucket": "{{ bucket }}",
+        "prefix": "{{ job_manager_tmp_dir }}/wfus/",
+        "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+        "delta": 0,
+        "folder": "true"
+      }
+    ]
+  },
+  "model": "org.ekstep.analytics.updater.UpdateWorkFlowUsageMetricsMode",
+  "output": [
+    {
+      "to": "console",
+      "params": {
+        "printEvent": false
+      }
+    }
+  ],
+  "parallelization": 10,
+  "appName": "Workflow Usage Metrics Updater",
+  "deviceMapping": false
+},
+  "dialcode-usage-summary": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "unique/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.DialcodeUsageSummaryModel",
+    "modelParams": {},
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "azure",
+        "params": {
+          "bucket": "{{ bucket }}",
+          "key": "{{ job_manager_tmp_dir }}/dialus/$(date --date yesterday '+%Y-%m-%d')"
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Dialcode Usage Summarizer",
+    "deviceMapping": false
+  },
+  "dialcode-usage-updater": {
+    "search": {
+      "type": "azure",
+      "queries": [
+        {
+          "bucket": "{{ bucket }}",
+          "prefix": "{{ job_manager_tmp_dir }}/dialus/",
+          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+          "delta": 0,
+          "folder": "true"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.updater.UpdateDialcodeUsageDB",
+    "modelParams": {},
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ learning_topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Dialcode Usage Updater",
+    "deviceMapping": false
+  },
+  "etb-coverage-summary": {
+    "search": {
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.model.ETBCoverageSummaryModel",
+    "modelParams": {
+      "fromDate": "$(date --date yesterday '+%Y-%m-%d')",
+      "toDate": "$(date --date yesterday '+%Y-%m-%d')",
+      "sparkCassandraConnectionHost": "{{groups['lp-cassandra'][0]}}"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ learning_topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "ETB Coverage Model",
+    "deviceMapping": false
+  },
+  "video-streaming": {
+    "search": {
+      "type": "azure"
+    },
+    "model": "org.ekstep.analytics.job.VideoStreamingJob",
+    "modelParams": {
+      "maxIterations": 10
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Video Streaming Job",
+    "deviceMapping": false
+  },
+  "monitor-job-summ": {
+    "search": {
+      "type": "local",
+      "queries": [
+        {
+          "file": "{{ analytics.home }}/scripts/logs/joblog.log"
+        }
+      ]
+    },
+    "model": "org.ekstep.analytics.model.MonitorSummaryModel",
+    "modelParams": {
+      "pushMetrics": true,
+      "brokerList": "{{ brokerlist }}",
+      "topic": "{{ analytics_metrics_topic }}",
+      "model": [
+        {
+          "model": "ItemSummaryModel",
+          "category": "consumption",
+          "input_dependency": "LearnerSessionSummaryModel"
+        },
+        {
+          "model": "GenieUsageSummaryModel",
+          "category": "consumption",
+          "input_dependency": "GenieLaunchSummaryModel"
+        },
+        {
+          "model": "GenieStageSummaryModel",
+          "category": "consumption",
+          "input_dependency": "GenieLaunchSummaryModel"
+        },
+        {
+          "model": "ItemUsageSummaryModel",
+          "category": "consumption",
+          "input_dependency": "ItemSummaryModel"
+        },
+        {
+          "model": "DeviceContentUsageSummaryModel",
+          "category": "consumption",
+          "input_dependency": "LearnerSessionSummaryModel"
+        },
+        {
+          "model": "DeviceUsageSummaryModel",
+          "category": "consumption",
+          "input_dependency": "GenieLaunchSummaryModel"
+        },
+        {
+          "model": "UpdateGenieUsageDB",
+          "category": "consumption",
+          "input_dependency": "GenieUsageSummaryModel"
+        },
+        {
+          "model": "UpdateItemSummaryDB",
+          "category": "consumption",
+          "input_dependency": "ItemUsageSummaryModel"
+        },
+        {
+          "model": "UpdateContentUsageDB",
+          "category": "consumption",
+          "input_dependency": "ContentUsageSummaryModel"
+        },
+        {
+          "model": "UpdateMEUsageDB",
+          "category": "consumption",
+          "input_dependency": "UsageSummaryModel"
+        },
+        {
+          "model": "UpdateContentPopularityDB",
+          "category": "consumption",
+          "input_dependency": "ContentPopularitySummaryModel"
+        },
+        {
+          "model": "ContentUsageSummaryModel",
+          "category": "consumption",
+          "input_dependency": "LearnerSessionSummaryModel"
+        },
+        {
+          "model": "UsageSummaryModel",
+          "category": "consumption",
+          "input_dependency": "LearnerSessionSummaryModel"
+        },
+        {
+          "model": "UpdateLearnerProfileCreateDB",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "UpdateLearnerProfileUpdateDB",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "UpdateDeviceSpecificationDB",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "LearnerSessionSummaryModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "DeviceSummaryModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "UpdateDeviceProfileDB",
+          "category": "consumption",
+          "input_dependency": "DeviceSummaryModel"
+        },
+        {
+          "model": "GenieSessionSummaryModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "GenieLaunchSummaryModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "UpdateWorkFlowUsageDB",
+          "category": "consumption",
+          "input_dependency": "WorkFlowUsageSummaryModel"
+        },
+        {
+          "model": "ContentPopularitySummaryModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "EOCRecommendationFunnelModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "StageSummaryModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "GenieFunnelAggregatorModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "ContentSideloadingSummaryModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "GenieFunnelModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "UpdateContentModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "ConsumptionMetricsUpdater",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "PrecomputedViews",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "DataExhaustJob",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "AppUsageSummaryModel",
+          "category": "creation",
+          "input_dependency": "AppSessionSummaryModel"
+        },
+        {
+          "model": "ContentEditorUsageSummaryModel",
+          "category": "creation",
+          "input_dependency": "ContentEditorSessionSummaryModel"
+        },
+        {
+          "model": "TextbookUsageSummaryModel",
+          "category": "creation",
+          "input_dependency": "TextbookSessionSummaryModel"
+        },
+        {
+          "model": "UpdateAppUsageDB",
+          "category": "creation",
+          "input_dependency": "AppUsageSummaryModel"
+        },
+        {
+          "model": "UpdateContentEditorUsageDB",
+          "category": "creation",
+          "input_dependency": "ContentEditorUsageSummaryModel"
+        },
+        {
+          "model": "UpdateTextbookUsageDB",
+          "category": "creation",
+          "input_dependency": "TextbookUsageSummaryModel"
+        },
+        {
+          "model": "UpdateAuthorSummaryDB",
+          "category": "creation",
+          "input_dependency": "AuthorUsageSummaryModel"
+        },
+        {
+          "model": "UpdatePublishPipelineSummary",
+          "category": "creation",
+          "input_dependency": "PublishPipelineSummaryModel"
+        },
+        {
+          "model": "AppSessionSummaryModel",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "ContentEditorSessionSummaryModel",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "PublishPipelineSummaryModel",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "UpdateAppObjectCacheDB",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "UpdateContentCreationMetricsDB",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "AuthorUsageSummaryModel",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "TextbookSessionSummaryModel",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "UpdateCreationMetricsDB",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "UpdateConceptSnapshotDB",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "ContentSnapshotSummaryModel",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "ConceptSnapshotSummaryModel",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "UpdateContentSnapshotDB",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "AssetSnapshotSummaryModel",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "UpdateTextbookSnapshotDB",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "UpdateAssetSnapshotDB",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "ContentLanguageRelationModel",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "ConceptLanguageRelationModel",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "AuthorRelationsModel",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "CreationRecommendationEnrichmentModel",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "ContentAssetRelationModel",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "DeviceRecommendationTrainingModel",
+          "category": "recommendation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "DeviceRecommendationScoringModel",
+          "category": "recommendation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "ContentVectorsModel",
+          "category": "recommendation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "EndOfContentRecommendationModel",
+          "category": "recommendation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "CreationRecommendationModel",
+          "category": "recommendation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "UpdatePluginSnapshotDB",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "UpdateTemplateSnapshotDB",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "AppUsageMetricCreationModel",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "AssetSnapshotMetricCreationModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "CEUsageMetricCreationModel",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "ConceptSnapshotMetricCreationModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "ContentSnapshotMetricCreationModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "ContentUsageMetricCreationModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "GenieUsageMetricCreationModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "ItemUsageMetricCreationModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "TextbookSnapshotMetricCreationModel",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "TextbookUsageMetricCreationModel",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "AuthorUsageMetricCreationModel",
+          "category": "creation",
+          "input_dependency": "None"
+        },
+        {
+          "model": "WorkFlowSummaryModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "WorkFlowUsageSummaryModel",
+          "category": "consumption",
+          "input_dependency": "WorkFlowSummaryModel"
+        },
+        {
+          "model": "UpdatePortalMetrics",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "UpdateWorkFlowUsageMetricsModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "DialcodeUsageSummaryModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "ETBCoverageSummaryModel",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "UpdateDialcodeUsageDB",
+          "category": "consumption",
+          "input_dependency": "DialcodeUsageSummaryModel"
+        }
+      ]
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      },
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ topic }}"
+        }
+      }
+    ],
+    "appName": "TestMonitorSummarizer",
+    "deviceMapping": true
+  }
+  
+}

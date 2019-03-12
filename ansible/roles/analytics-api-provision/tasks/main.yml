@@ -1,0 +1,54 @@
+## Bootstrap for analytics-api ##
+
+- name: Add azure key and secret to user profile
+  become: yes
+  become_user: "{{ analytics_user }}"
+  lineinfile:
+    dest: "{{ analytics_user_home }}/.bashrc"
+    line: "{{item}}"
+    state: present
+    insertafter: EOF
+    create: yes
+  with_items:
+    - "export azure_storage_key={{ azure_account_name }}"
+    - "export azure_storage_secret={{ azure_storage_secret }}"
+  no_log: true
+
+- name: Add azure key to environment
+  become: yes
+  lineinfile:
+    dest: "{{ storage_provider_env }}"
+    line: "{{item}}"
+    state: present
+    insertafter: EOF
+    create: yes
+  with_items:
+    - "azure_storage_secret={{ azure_account_name }}"
+    - "azure_storage_key={{ azure_storage_key }}" 
+  no_log: true
+
+- name: Install libraries for spark bootstrap
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - build-essential
+    - git
+
+- name: Create directories for analytics API
+  file:
+    path: "{{ item }}"
+    owner: "{{ analytics_user }}"
+    group: "{{ analytics_group }}"
+    state: directory
+  with_items: "{{ analytics_api.paths }}"
+
+- name: Setup analytics API as service
+  template:
+    src: servicify-process.j2
+    dest: "{{ sbin_path }}/api-service"
+    mode: 0755
+    owner: "{{ analytics_user }}"
+    group: "{{ analytics_group }}"

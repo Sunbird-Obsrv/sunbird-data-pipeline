@@ -1,0 +1,19 @@
+#!/bin/bash
+
+### Variables
+
+env=$1
+SGUSER=$2
+SGPASS=$3
+IP=$4
+### Query from influxdb
+
+data=`curl -s 'http://'$IP':8086/query?' --data-urlencode "db=monitoring_events" --data-urlencode "q=SELECT * FROM analytics_metrics WHERE is_success =~ /false/ and time>now()-5h;" |  sed "s/\$env/\$env\n/g" | sed -e  s'/,//g; s/"/ /g' | grep Analytics | awk '{print $1 "-" $3}' | awk -F"-" '{print $2}'`
+
+### Sending the notification if any failure
+
+if ! [ -z "$data" ]; then
+text=`echo -e "The following data products jobs are failed: $data \n"`
+./dataproduct_slack.sh critical "$text"
+curl -d "{{ samza_alert_to_address }}&fromname='Dataproducts-alerts'&fromname='Dataproducts-alerts'&fromname='Dataproducts-alerts'&fromname='Dataproducts'&subject='[$env] [firing-1] - Dataproducts alerts'&text=${text}&from=alerts@open-sunbird.org&api_user=${SGUSER}&api_key=${SGPASS}" https://api.sendgrid.com/api/mail.send.json
+fi

@@ -1,0 +1,8 @@
+---
+
+- hosts: secor
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
+  become: yes
+  roles:
+     - secor-provision

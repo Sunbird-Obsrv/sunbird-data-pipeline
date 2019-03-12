@@ -1,0 +1,14 @@
+---
+- hosts: yarn-master
+  vars_files:
+    - ['{{inventory_dir}}/secrets/{{env}}.yml']
+  tasks:
+     - name: ping
+       ping: 
+     - command: ./samza_alerts.sh {{ SGUSER }} "{{ SGPASS }}" {{ env }}
+       args:
+        chdir: /home/hduser
+       become: yes
+       register: out
+ 
+     - debug: var=out.stdout_lines

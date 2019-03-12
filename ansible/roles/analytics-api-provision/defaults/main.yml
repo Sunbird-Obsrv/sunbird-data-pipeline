@@ -1,0 +1,20 @@
+analytics_user_home: /home/{{ analytics_user }}
+sbin_path: "{{ analytics_user_home }}/sbin"
+storage_provider_env: /etc/environment
+script_name: api-service
+script_dir: "{{ sbin_path }}"
+description: Analytics API service
+grep_key: play.core.server.ProdServerStart
+process: "/usr/bin/java"
+process_home: ""
+process_args: -- -cp '{{ analytics_api.home }}/lib/*' {{ analytics_api.service_args }} play.core.server.ProdServerStart {{ analytics_api.home }}
+app_home: "/mount/data/analytics/api/analytics-api-1.0"
+
+analytics_api:
+   root: "{{analytics.home}}/api"
+   home: "{{ analytics.home }}/api/analytics-api-1.0"
+   service_args: -Dconfig.file=/mount/data/analytics/api/{{ env }}.conf
+   paths: ['/home/analytics/sbin', '/mount/data/analytics', '/mount/data/analytics/logs', '/mount/data/analytics/logs/services', '/mount/data/analytics/logs/api-service', '/mount/data/analytics/api', '/mount/data/analytics/tmp', '/mount/data/analytics/scripts/monitor-data']
+
+analytics: 
+   home: /mount/data/analytics

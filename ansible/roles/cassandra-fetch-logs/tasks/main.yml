@@ -1,0 +1,31 @@
+- name: Fetch cassandra logs
+#  sudo: no
+  synchronize: src="{{ item }}" dest="./cassandra/" mode=pull recursive=yes rsync_path=rsync
+  with_items:
+    - "/var/log/cassandra"
+    - "/mount/data/analytics/logs"
+  tags:
+    - fetch-logs
+
+- name: Get cron job details on this instance
+  become: yes
+  become_user: "{{ analytics_user }}"
+  shell: "crontab -l"
+  register: jobs_list
+  tags:
+    - cronjobs
+
+- name: Print jobs_list to console
+  become: yes
+  become_user: "{{ analytics_user }}"
+  debug:
+    var: jobs_list
+  tags:
+    - cronjobs
+
+- name: Cql Query
+  become: yes
+  command: "cqlsh -e {{cql_query}}"
+  when: cql_query != "0"
+  tags:
+       - replay-job
