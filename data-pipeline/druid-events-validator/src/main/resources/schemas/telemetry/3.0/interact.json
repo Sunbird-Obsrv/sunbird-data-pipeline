@@ -1,0 +1,65 @@
+{
+  "id": "http://api.sunbird.org/telemetry/interact",
+  "type": "object",
+  "required": [
+    "eid",
+    "ets",
+    "ver",
+    "mid",
+    "actor",
+    "context",
+    "edata"
+  ],
+  "allOf": [
+    {
+      "$ref": "resource:/schemas/telemetry/3.0/common.json"
+    },
+    {
+      "properties": {
+        "eid": {
+          "id": "http://api.sunbird.org/telemetry/eid",
+          "enum": [
+            "INTERACT"
+          ]
+        },
+        "edata": {
+          "id": "http://api.sunbird.org/telemetry/edata",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "id"
+          ],
+          "properties": {
+            "type": {
+              "id": "http://api.sunbird.org/telemetry/edata/type",
+              "type": "string"
+            },
+            "subtype": {
+              "id": "http://api.sunbird.org/telemetry/edata/subtype",
+              "type": "string"
+            },
+            "id": {
+              "id": "http://api.sunbird.org/telemetry/edata/id",
+              "type": "string"
+            },
+            "pageid": {
+              "id": "http://api.sunbird.org/telemetry/edata/pageid",
+              "type": "string"
+            },
+            "target": {
+              "$ref": "resource:/schemas/telemetry/3.0/target.json"
+            },
+            "plugin": {
+              "$ref": "resource:/schemas/telemetry/3.0/plugin.json"
+            },
+            "extra": {
+              "id": "http://api.sunbird.org/telemetry/edata/extra",
+              "type": "object"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+---
+- name: submit all jobs too JobManager Queue
+  hosts: spark
+  vars_files:
+       - "{{inventory_dir}}/secrets.yml"
+  become: yes
+  become_user: "{{ analytics_user }}"
+  tasks:
+   - name: Submit all Jobs to JobManager Queue
+     shell: "ruby {{ analytics.home }}/scripts/submit-all-jobs.rb"
+     async: "{{ (pause_min * 60) }}"
+     poll: 0

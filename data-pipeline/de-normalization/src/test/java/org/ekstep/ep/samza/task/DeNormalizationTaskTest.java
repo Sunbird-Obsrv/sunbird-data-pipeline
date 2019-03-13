@@ -7,6 +7,7 @@ import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
+import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
@@ -35,6 +36,7 @@ public class DeNormalizationTaskTest {
     private static final String SUCCESS_TOPIC = "telemetry.with_denorm";
     private static final String FAILED_TOPIC = "telemetry.failed";
     private static final String MALFORMED_TOPIC = "telemetry.malformed";
+    private static final Integer ignorePeriodInMonths = 6;
 
     private MessageCollector collectorMock;
     private TaskContext contextMock;
@@ -71,6 +73,7 @@ public class DeNormalizationTaskTest {
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
         stub(configMock.get("output.malformed.topic.name", MALFORMED_TOPIC)).toReturn(MALFORMED_TOPIC);
+        stub(configMock.getInt("telemetry.ignore.period.months", ignorePeriodInMonths)).toReturn(ignorePeriodInMonths);
 
         stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
@@ -93,6 +96,7 @@ public class DeNormalizationTaskTest {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertEquals(outputEvent.get("ver").toString(), "3.0");
                 assertNull(outputEvent.get("devicedata"));
                 assertNull(outputEvent.get("userdata"));
                 assertNull(outputEvent.get("contentdata"));
@@ -122,6 +126,7 @@ public class DeNormalizationTaskTest {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertEquals(outputEvent.get("ver").toString(), "3.1");
                 assertNull(outputEvent.get("devicedata"));
                 Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
                 assertEquals(userData.size(), 2);
@@ -155,6 +160,7 @@ public class DeNormalizationTaskTest {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertEquals(outputEvent.get("ver").toString(), "3.1");
                 assertTrue(outputMessage.contains("\"agent\":\"Mozilla\""));
                 assertTrue(outputMessage.contains("\"ver\":\"5.0\""));
                 assertTrue(outputMessage.contains("\"system\":\"iPad\""));
@@ -191,6 +197,7 @@ public class DeNormalizationTaskTest {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertEquals(outputEvent.get("ver").toString(), "3.1");
                 assertNull(outputEvent.get("devicedata"));
                 assertNull(outputEvent.get("contentdata"));
                 Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
@@ -220,6 +227,7 @@ public class DeNormalizationTaskTest {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertEquals(outputEvent.get("ver").toString(), "3.0");
                 assertNull(outputEvent.get("devicedata"));
                 assertNull(outputEvent.get("contentdata"));
                 assertNull(outputEvent.get("userdata"));
@@ -252,6 +260,7 @@ public class DeNormalizationTaskTest {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertEquals(outputEvent.get("ver").toString(), "3.1");
                 assertNull(outputEvent.get("devicedata"));
                 assertNull(outputEvent.get("contentdata"));
                 assertNull(outputEvent.get("userdata"));
@@ -291,6 +300,7 @@ public class DeNormalizationTaskTest {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertEquals(outputEvent.get("ver").toString(), "3.1");
                 assertNull(outputEvent.get("devicedata"));
                 assertNull(outputEvent.get("contentdata"));
                 assertNull(outputEvent.get("userdata"));
@@ -327,6 +337,7 @@ public class DeNormalizationTaskTest {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertEquals(outputEvent.get("ver").toString(), "3.0");
                 assertNull(outputEvent.get("devicedata"));
                 assertNull(outputEvent.get("contentdata"));
                 assertNull(outputEvent.get("userdata"));
@@ -359,8 +370,9 @@ public class DeNormalizationTaskTest {
             public boolean matches(Object o) {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
-                assertTrue(outputMessage.contains("\"iso3166statecode\":\"IN-KA\""));
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertEquals(outputEvent.get("ver").toString(), "3.1");
+                assertTrue(outputMessage.contains("\"iso3166statecode\":\"IN-KA\""));
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
                 assertEquals(flags.get("device_data_retrieved"), true);
                 assertEquals(flags.get("user_data_retrieved"), false);
@@ -390,6 +402,7 @@ public class DeNormalizationTaskTest {
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
                 assertFalse(outputMessage.contains("\"iso3166statecode\":\"IN-KA\""));
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertEquals(outputEvent.get("ver").toString(), "3.1");
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
                 assertEquals(flags.get("device_data_retrieved"), true);
                 assertEquals(flags.get("user_data_retrieved"), false);
@@ -398,4 +411,127 @@ public class DeNormalizationTaskTest {
             }
         }));
     }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicWithDialCodeDataByObjectLookup() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.IMPRESSION_EVENT_WITH_DIALCODE_AS_OBJECT);
+        stub(deviceCacheMock.getDataForDeviceId("a49cfadff97c698c1766c71a42779d4e",
+                "505c7c48ac6dc1edc9b08f21db5a571d")).toReturn(null);
+        stub(userCacheMock.getData("anonymous")).toReturn(null);
+        stub(contentCacheMock.getData("977D3I")).toReturn(null);
+        Map dataMap = new HashMap(); dataMap.put("identifier", "977D3I"); dataMap.put("channel", "test-channel");
+        dataMap.put("status", "Draft");
+        stub(dailcodeCacheMock.getData("977D3I")).toReturn(dataMap);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertEquals(outputEvent.get("ver").toString(), "3.1");
+                assertNull(outputEvent.get("devicedata"));
+                assertNull(outputEvent.get("contentdata"));
+                assertNull(outputEvent.get("userdata"));
+                List<Map<String, Object>> dialcodesList = new Gson().fromJson(outputEvent.get("dialcodedata").toString(), List.class);
+                assertEquals(dialcodesList.size(), 1);
+                Map data = dialcodesList.get(0);
+                assertEquals(data.size(), 3);
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("device_data_retrieved"), false);
+                assertEquals(flags.get("user_data_retrieved"), false);
+                assertEquals(flags.get("content_data_retrieved"), null);
+                assertEquals(flags.get("dialcode_data_retrieved"), true);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicWithStringDialCodeDataCamelCase() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_CAMELCASE_DIALCODE_AS_STRING);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+                "0123221617357783046602")).toReturn(null);
+        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
+        stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
+        List ids = new ArrayList(); ids.add("8ZEDTP");
+        Map dataMap = new HashMap(); dataMap.put("identifier", "8ZEDTP"); dataMap.put("channel", "test-channel");
+        dataMap.put("status", "Draft");
+        List<Map> data = new ArrayList<>(); data.add(dataMap);
+        stub(dailcodeCacheMock.getData(ids)).toReturn(data);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertEquals(outputEvent.get("ver").toString(), "3.1");
+                assertEquals(outputMessage.contains("dialcodes"), true);
+                assertEquals(outputMessage.contains("dialCodes"), false);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicWithAlteredEts() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_FUTURE_ETS);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+                "0123221617357783046602")).toReturn(null);
+        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
+        stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
+        List ids = new ArrayList(); ids.add("8ZEDTP");
+        Map dataMap = new HashMap(); dataMap.put("identifier", "8ZEDTP"); dataMap.put("channel", "test-channel");
+        dataMap.put("status", "Draft");
+        List<Map> data = new ArrayList<>(); data.add(dataMap);
+        stub(dailcodeCacheMock.getData(ids)).toReturn(data);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertEquals(outputEvent.get("ver").toString(), "2.2");
+                Long ets = new Gson().fromJson(outputEvent.get("ets").toString(), Long.class);
+                assertFalse(2530937155000L == ets);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSendEventToFaildTopicIfEventIsOlder() throws Exception{
+
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_OLDER_ETS);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+                "0123221617357783046602")).toReturn(null);
+        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
+        stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
+        List ids = new ArrayList(); ids.add("8ZEDTP");
+        Map dataMap = new HashMap(); dataMap.put("identifier", "8ZEDTP"); dataMap.put("channel", "test-channel");
+        dataMap.put("status", "Draft");
+        List<Map> data = new ArrayList<>(); data.add(dataMap);
+        stub(dailcodeCacheMock.getData(ids)).toReturn(data);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+    }
+
+    public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
+        return new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                SystemStream systemStream = outgoingMessageEnvelope.getSystemStream();
+                assertEquals("kafka", systemStream.getSystem());
+                assertEquals(stream, systemStream.getStream());
+                return true;
+            }
+        };
+    }
+
 }

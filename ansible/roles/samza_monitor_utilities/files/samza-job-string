@@ -1,0 +1,10 @@
+EsIndexer_1
+TelemetryValidator_1
+composite-search-indexer_1
+audit-event-generator_1
+image-tagging_1
+publish-pipeline_1
+audit-history-indexer_1
+TelemetryRouter_1
+TelemetryExtractor_1
+DeDuplication_1

@@ -1,0 +1,59 @@
+input {
+	kafka {
+			zk_connect => "{{zookeepers}}"
+	        group_id => "{{kafka_topic_prefix}}analytics.metrics"
+	        topic_id => "{{kafka_topic_prefix}}analytics_metrics"
+	        reset_beginning => false
+	        consumer_threads => 1
+	        queue_size => 20
+	        rebalance_max_retries => 4
+	        rebalance_backoff_ms => 2000
+	        consumer_timeout_ms => -1
+	        consumer_restart_on_error => true
+	        consumer_restart_sleep_ms => 0
+	        decorate_events => false
+	        consumer_id => nil
+	        fetch_message_max_bytes => 1048576
+	        type => "analytics_metrics"
+    }
+}
+
+filter {
+	if [type] == 'analytics_metrics' {
+	    ruby {
+	        code => "event['success'].to_i == 1 ? event['is_success'] = 'true' : event['is_success'] = 'false'"
+	    }
+	}
+}
+
+output {
+	if [type] == 'analytics_metrics' { 
+		influxdb {
+			    allow_time_override => true
+			    send_as_tags => ["env","job_name", "is_success", "job_id"]
+			    data_points => { 
+			    	"env" => "{{env}}"
+			    	"job_name" => "%{[job_name]}"
+			    	"is_success" => "%{[is_success]}"
+			    	"job_id" => "%{[job_id]}"
+			    	"success" => "%{[success]}"
+			    	"number_of_input" => "%{[number_of_input]}"
+			    	"number_of_output" => "%{[number_of_output]}"
+			    	"time_spent" => "%{[time_spent]}"
+			    	"channel" => "%{[channel]}"
+			    	"tag" => "%{[tag]}"
+			    }
+			    coerce_values => {
+		      		"success" => "integer"
+		      		"number_of_input" => "integer"
+		      		"number_of_output" => "integer"
+		      		"time_spent" => "integer"
+				}
+			    host => "{{influxdb_host}}"
+			    port => "{{influxdb_port}}"
+			    db => "{{influxdb_db_source}}"
+			    measurement => "analytics_metrics"
+			    retention_policy => "autogen"
+		}
+	}
+}

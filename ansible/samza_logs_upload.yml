@@ -1,0 +1,9 @@
+---
+- hosts: yarn-slave
+  vars_files:
+   - ['{{inventory_dir}}/secrets.yml']
+  tasks:
+   - command: "./upload_samza_logs.sh {{CONTAINER_NAME_SAMZA}} {{ACCOUNT_NAME_SAMZA}} {{azure_backup_storage_secret}}"
+     args:
+       chdir: "{{script_path}}"
+     become: yes

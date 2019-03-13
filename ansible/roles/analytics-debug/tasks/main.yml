@@ -1,0 +1,8 @@
+- name: Fetch common logs
+  sudo: no
+  synchronize: src="{{ item }}" dest="./{{ hosts }}/" mode=pull recursive=yes
+  with_items:
+    - "/mnt/data/analytics/logs"
+    - "/mnt/data/analytics/scripts/logs/"
+  tags:
+    - fetch-logs

@@ -14,6 +14,7 @@ public class DeNormalizationConfig {
     private String successTopic;
     private String failedTopic;
     private String malformedTopic;
+    private Integer ignorePeriodInMonths;
     private final String metricsTopic;
 
 
@@ -22,6 +23,7 @@ public class DeNormalizationConfig {
         failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
         metricsTopic = config.get("output.metrics.topic.name", "pipeline_metrics");
+        ignorePeriodInMonths = config.getInt("telemetry.ignore.period.months", 6);
     }
 
     public String successTopic() {
@@ -38,6 +40,10 @@ public class DeNormalizationConfig {
 
     public String metricsTopic() {
         return metricsTopic;
+    }
+
+    public Integer ignorePeriodInMonths() {
+        return ignorePeriodInMonths;
     }
 
     public String jobName() {

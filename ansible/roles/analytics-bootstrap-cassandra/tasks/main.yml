@@ -1,0 +1,11 @@
+## Bootstrap for cassandra ##
+
+- name: Install required python packages
+  become: yes
+  action: apt pkg={{ item }} state=present update_cache=yes
+  with_items:
+    - libffi-dev
+    - libssl-dev
+    - build-essential
+    - lzop
+    - curl

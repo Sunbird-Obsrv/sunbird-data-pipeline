@@ -1,0 +1,129 @@
+application.env="{{ env }}"
+telemetry.version="2.1"
+default.parallelization="10"
+spark_output_temp_dir="/mount/data/analytics/tmp/"
+lp.url="{{lp_url}}"
+service.search.url="{{ service.search.url }}"
+service.search.path="{{ service.search.path }}"
+spark.cassandra.connection.host="{{groups['dp-cassandra'][0]}}"
+cassandra.keyspace_prefix="{{ cassandra_keyspace_prefix }}"
+cassandra.hierarchy_store_prefix="{{ cassandra_hierarchy_store_prefix }}"
+
+# Content to vec configurations
+
+pc_files_cache="s3"
+pc_dispatch_params="""{"bucket":"{{dp_dispatch_bucket_name}}"}"""
+pc_files_prefix="metrics/"
+
+metrics.dispatch.to="s3"
+metrics.dispatch.params="""{"bucket":"{{dp_dispatch_bucket_name}}"}"""
+metrics.consumption.dataset.id="eks-consumption-metrics/"
+metrics.creation.dataset.id="eks-creation-metrics/"
+
+lp.contentmodel.versionkey="jd5ECm/o0BXwQCe8PfZY1NoUkB9HN41QjA80p22MKyRIcP5RW4qHw8sZztCzv87M"
+
+# Neo4j
+neo4j.bolt.url=""
+neo4j.bolt.user=""
+neo4j.bolt.password=""
+
+# Log4j Kafka appender config
+log4j.appender.kafka.enable="false"
+log4j.appender.kafka.broker_host="{{groups['processing-cluster-kafka'][0]}}:9092"
+log4j.appender.kafka.topic="{{ env }}.telemetry.backend"
+
+# Kafka connection configuration
+kafka.consumer.brokerlist="{{groups['processing-cluster-kafka'][0]}}:9092"
+kafka.consumer.topic="{{ env }}.analytics.job_queue"
+no_of_jobs=42
+
+# Spark Driver
+spark.driver.memory=6g
+
+#Data Exhaust
+
+data_exhaust {
+	save_config {
+		save_type="azure"
+		bucket="{{data_exhaust_blob_name}}"
+		prefix="data-exhaust/"
+		public_s3_url="{{data_exhaust_s3_url}}"
+		local_path="/mount/data/analytics/{{ env }}/tmp/"
+	}
+	delete_source: "true"
+	package.enable: "true"
+}
+
+#Monitor Jobs
+
+monitor {
+	notification {
+		webhook_url = "{{ data_exhaust_webhook_url }}"
+		channel = "{{ data_exhaust_Channel }}"
+		token = "{{ data_exhaust_token }}"
+		slack = true
+        name = "{{ data_exhaust_name }}"
+	}
+}
+
+#App ID & Channel ID
+default.consumption.app.id="no_value"
+default.channel.id="in.ekstep"
+default.creation.app.id="no_value"
+
+metrics.creation.es.url="http://{{groups['telemetry-search-cluster-kibana-node'][0]}}:9200"
+metrics.creation.es.indexes="compositesearch"
+
+storage-service.request-signature-version="AWS4-HMAC-SHA256"
+s3service.region="ap-south-1"
+
+cloud_storage_type="azure"
+
+
+# Media Service Type
+media_service_type = "azure"
+
+azure_tenant="{{ media_service_azure_tenant }}"
+azure_subscription_id="{{ media_service_azure_subscription_id }}"
+azure_account_name="{{ media_service_azure_account_name }}"
+azure_resource_group_name="{{ media_service_azure_resource_group_name }}"
+azure_token_client_key="{{ media_service_azure_token_client_key }}" 
+azure_token_client_secret="{{ media_service_azure_token_client_secret }}"
+elasticsearch.service.endpoint="http://{{groups['composite-search-cluster'][0]}}:9200"
+elasticsearch.index.compositesearch.name="{{ es_search_index }}"
+
+org.search.api.url="{{ channelSearchServiceEndpoint }}"
+org.search.api.key="{{ searchServiceAuthorizationToken }}"
+
+# Azure Media Service Config
+azure {
+  location = "centralindia"
+  tenant = "tenant name"
+  subscription_id = "subscription id"
+
+  api {
+    endpoint="Media Service API End Point"
+    version = "2018-07-01"
+  }
+
+  account_name = "account name"
+  resource_group_name = "Resource Group Name"
+
+  transform {
+    default = "media_transform_default"
+    hls = "media_transform_hls"
+  }
+
+  stream {
+    base_url = "{{ stream_base_url }}"
+    endpoint_name = "default"
+    protocol = "Hls"
+    policy_name = "Predefined_ClearStreamingOnly"
+  }
+
+  token {
+    client_key = "client key"
+    client_secret = "client secret"
+  }
+}
+

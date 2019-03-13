@@ -1,0 +1,26 @@
+ft: false
+logstash_config_loc: /etc/logstash/conf.d
+logstash_home: /opt/logstash
+logstash_plugins:
+- logstash-output-influxdb
+logstash_conf:
+ - ".indexer.partner"
+ - ".indexer.learning"
+ - ".indexer.public"
+ - ".indexer.pipeline_metrics"
+ - ".indexer.analytics_metrics"
+kafka_topic_prefix: "{{ env }}."
+apt_cache_valid_time: 3600
+
+zookeepers: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+influxdb_host: "{{ groups['influxdb'][0] }}"
+influxdb_db_source: monitoring_events
+influxdb_port: 9096
+
+learning_topics: "telemetry.derived"
+kafka_brokers: "{{groups['processing-cluster-zookeepers']}}"
+kafka_sink_topic: "ecosystem.sink"
+
+private_exhaust_topic: "telemetry.private_exhaust"
+public_exhaust_topic: "telemetry.public_exhaust"
+public_data_exhaust_dir_prefix: 4208ab995984d222b59299e5103d350a842d8d41

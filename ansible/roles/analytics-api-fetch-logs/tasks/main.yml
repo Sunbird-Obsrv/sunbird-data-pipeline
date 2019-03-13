@@ -1,0 +1,6 @@
+- name: Fetch analytics API service logs
+  synchronize: src="{{ item }}" dest="./analytics-api/" mode=pull recursive=yes rsync_path=rsync
+  with_items:
+    - "/mount/data/analytics/logs"
+  tags:
+    - fetch-logs

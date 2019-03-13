@@ -1,0 +1,18 @@
+---
+
+- name: install the jq
+  apt:
+   name: jq
+   state: present 
+
+- name: copy the alert script
+  template: src=throughput_monitor dest=/usr/local/bin/throughput_monitor.sh mode=755
+
+- name: copy the slack script
+  template: src=throughput_slack dest=/usr/local/bin/throughput_slack.sh mode=755
+
+- name: Copy the dataproducts monitor script
+  template: src=dataproducts_monitor dest=/usr/local/bin/dataproducts_monitor.sh mode=755
+
+- name: Copy the throughput slack script
+  template: src=dataproduct_slack dest=/usr/local/bin/dataproduct_slack.sh mode=755

@@ -1,0 +1,7 @@
+## Role to submit all data products jobs to the Job Queue
+- name: Submit all Jobs to JobManager Queue
+  become: yes
+  become_user: "{{ user }}"
+  shell: "ruby {{ analytics.home }}/scripts/submit-all-jobs.rb"
+  async: "{{ (pause_min * 60) }}"
+  poll: 0

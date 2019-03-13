@@ -168,13 +168,11 @@ public class RedisUpdaterServiceTest {
         Gson gson = new Gson();
         Map<String, Object> event = gson.fromJson(EventFixture.OBJECT_TYPE_DIAL_CODE_1, Map.class);
         String dialCode = (String) event.get("nodeUniqueId");
-        String channel = (String) event.get("channel");
-
 
         RedisUpdaterSource source = new RedisUpdaterSource(envelopeMock);
         redisUpdaterService.process(source, redisUpdaterSinkMock);
         jedisMock.select(dialCodeStoreId);
-        String cachedData = jedisMock.get(dialCode + ":" + channel);
+        String cachedData = jedisMock.get(dialCode);
         Map<String, String> cachedObject = gson.fromJson(cachedData, Map.class);
         assertEquals(261351.0, cachedObject.get("dialcode_index"));
         assertEquals("YC9EP8", cachedObject.get("identifier"));

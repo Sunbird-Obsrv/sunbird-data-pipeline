@@ -1,0 +1,16 @@
+#!/bin/sh
+set_env="{{business_metrics.env}}"
+cd {{ analytics.home }}/scripts/BusinessMetrics
+#python template_usage_by_content.py $set_env >> $log_file_path
+python template_usage_by_items.py $set_env
+echo "template_usage_by_items completed."
+python concept_coverage_across_items.py $set_env
+echo "concept_coverage_across_items completed."
+python concept_coverage_across_content.py $set_env
+echo "concept_coverage_across_content completed."
+python asset_usage_in_content.py $set_env
+echo "asset_usage_in_content completed."
+aws s3 cp metrics/ {{business_metrics.s3_path}} --recursive --region ap-south-1
+echo "pushing metrics to s3 completed."
+rm -rf metrics/
+echo "Metrics generated and pushed to S3 successfully."
