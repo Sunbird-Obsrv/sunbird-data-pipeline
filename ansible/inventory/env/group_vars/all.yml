@@ -60,7 +60,8 @@ azure_storage_account: "{{dp_azure_account_name}}"
 azure_storage_key: "{{dp_vault_azure_account_key}}"
 
 
-
+analytics:
+  home: /mount/data/analytics
 analytics_user_home: /home/{{ analytics_user }}
 sbin_path: "{{ analytics_user_home }}/sbin"
 
