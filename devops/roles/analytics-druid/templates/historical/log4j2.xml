@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="INFO">
+<Configuration status="ERROR">
   <Appenders>
     <RollingFile name="File" fileName="{{ druid_log_dir }}/{{ druid_role }}.log" filePattern="{{ druid_log_dir }}/{{ druid_role }}.%i.log">
       <PatternLayout>
@@ -12,7 +12,7 @@
     </RollingFile>
   </Appenders>
   <Loggers>
-    <Root level="info">
+    <Root level="error">
       <AppenderRef ref="File"/>
     </Root>
   </Loggers>
