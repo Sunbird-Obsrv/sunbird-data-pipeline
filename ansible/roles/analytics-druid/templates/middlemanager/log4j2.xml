@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+   <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{ISO8601} %p [%t] %c - %m%n"/>
+    </Console>
+    <RollingFile name="File" fileName="{{ druid_log_dir }}/{{ druid_role }}.log" filePattern="{{ druid_log_dir }}/{{ druid_role }}.%i.log">
+      <PatternLayout>
+        <Pattern>"%d{ISO8601} %p [%t] %c - %m%n"</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="50 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="20"/>
+    </RollingFile>
+  </Appenders>
+  <Loggers>
+    <Root level="error">
+      <AppenderRef ref="File" level="error"/>
+    </Root>
+  <Root level="info">
+  <AppenderRef ref="Console" level="info"/>
+  </Root>	
+  </Loggers>
+</Configuration>
+
