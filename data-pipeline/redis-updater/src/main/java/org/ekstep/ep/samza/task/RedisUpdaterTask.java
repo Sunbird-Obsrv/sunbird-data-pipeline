@@ -50,7 +50,7 @@ public class RedisUpdaterTask implements StreamTask, InitableTask, WindowableTas
         metrics = new JobMetrics(context,JOB_NAME);
         redisConnect = new RedisConnect(config);
         service = new RedisUpdaterService(config, redisConnect);
-        metricsTopic = config.get("output.metrics.topic.name", "pipeline_metrics");
+        metricsTopic = config.get("output.metrics.topic.name");
     }
 
     @Override
