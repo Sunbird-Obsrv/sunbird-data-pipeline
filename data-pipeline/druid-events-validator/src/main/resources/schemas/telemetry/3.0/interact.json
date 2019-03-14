@@ -58,7 +58,7 @@
               "type": "object"
             },
             "duration": {
-              "id": "http://api.ekstep.org/telemetry/edata/duration",
+              "id": "http://api.sunbird.org/telemetry/edata/duration",
               "type": "number"
             }
           }
