@@ -56,6 +56,10 @@
             "extra": {
               "id": "http://api.sunbird.org/telemetry/edata/extra",
               "type": "object"
+            },
+            "duration": {
+              "id": "http://api.sunbird.org/telemetry/edata/duration",
+              "type": "number"
             }
           }
         }

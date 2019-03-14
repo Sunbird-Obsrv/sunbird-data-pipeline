@@ -25,6 +25,7 @@
         "edata": {
           "id": "http://api.sunbird.org/telemetry/edata",
           "type": "object"
+
         }
       }
     }
