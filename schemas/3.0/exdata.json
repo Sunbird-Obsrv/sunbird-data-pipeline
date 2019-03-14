@@ -25,7 +25,7 @@
         "edata": {
           "id": "http://api.ekstep.org/telemetry/edata",
           "type": "object",
-          "additionalProperties": false,
+          "additionalProperties": true,
           "properties": {
             "type": {
               "id": "http://api.ekstep.org/telemetry/edata/type",
