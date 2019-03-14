@@ -1,4 +1,0 @@
-host: 192.168.59.103
-username: root
-password: my-secret-pw
-database: ecosystem

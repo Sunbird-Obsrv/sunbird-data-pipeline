@@ -1,0 +1,44 @@
+#!/bin/bash
+
+### Variables
+declare -a array
+IP=$1
+ENV=$2
+fail=failed
+succ=success
+threshold_value=50
+duration=30
+SGPASS=$3
+SGUSER=$4
+env=$5
+
+### Main script
+array=( TelemetryExtractor EsIndexer DeDuplication TelemetryValidator )
+
+### To get the success count and send the alert:
+
+for i in "${array[@]}"
+ do
+    count=`curl -s 'http://'$IP':8086/query?' --data-urlencode "db=monitoring_events" --data-urlencode "q=SELECT sum("success") FROM "pipeline_metrics" WHERE "env" =~ /^$ENV$/  AND "job_name" = '$i' AND time > now() - 30m;" | awk -F',' '{print $NF}' |awk -F"]" '{print $1}'`
+    echo "success - $count"
+ if [[ "$count" -eq "0" ]] ; then
+   text=`echo "For "$i" no events since last $duration minutes"`
+   ./throughput_slack.sh critical "$text"
+   curl -d "to=kaliraja.ramasamy@tarento.com&to=devops@ekstep.org&fromname='Samza-alerts'&fromname='Samza-alerts'&subject='Throughput alerts $env'&text=${text}&from=alerts@open-sunbird.org&api_user=${SGUSER}&api_key=${SGPASS}" https://api.sendgrid.com/api/mail.send.json
+ fi
+
+done
+
+### To get the failed count and send the alert
+
+for i in "${array[@]}"
+ do
+    count=`curl -s 'http://'$IP':8086/query?' --data-urlencode "db=monitoring_events" --data-urlencode "q=SELECT sum("failed") FROM "pipeline_metrics" WHERE "env" =~ /^$ENV$/  AND "job_name" = '$i' AND time > now() - 30m;" | awk -F',' '{print $NF}' |awk -F"]" '{print $1}'`
+echo "failed - $count"
+ if [[ "$count" -gt "$threshold_value" ]] ; then
+   text=`echo "The failed count for "$i" exceeded the threshold value, i.e $threshold_value and the failed count is $count"`
+   ./throughput_slack.sh critical "$text"
+   curl -d "to=kaliraja.ramasamy@tarento.com&to=devops@ekstep.org&fromname='Samza-alerts'&fromname='Samza-alerts'&subject='Throughput alerts $env'&text=${text}&from=alerts@open-sunbird.org&api_user=${SGUSER}&api_key=${SGPASS}" https://api.sendgrid.com/api/mail.send.json
+ fi
+
+done

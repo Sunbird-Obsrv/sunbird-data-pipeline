@@ -1,0 +1,19 @@
+channel: "#monitor-perf-lpa"
+secor_username: secor-monitor
+kafka_url: https://archive.apache.org/dist/kafka/0.10.2.0/kafka_2.11-0.10.2.0.tgz
+
+# Override these config in groupvars
+# secor:
+#   properties: ['secor.azure', 'secor.common', 'secor', 'secor.partition', 'log4j']
+#   artifact_dir: /mount/secor
+#   s3:
+#     bucket: ""
+#     aws_key: ""
+#     aws_secret: ""
+#   azure:
+#     account_name: ""
+#     account_key: ""
+#     container_name: ""
+#   paths: ['/mount/secor', '/mount/secor/reports', '/mount/secor/logs', '/home/analytics/sbin', '/mount/data/analytics']
+#   channel: "#sunbird-dp-dev-alerts"
+#

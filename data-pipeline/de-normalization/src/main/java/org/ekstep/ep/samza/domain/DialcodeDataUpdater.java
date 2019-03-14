@@ -12,5 +12,4 @@ public class DialcodeDataUpdater extends IEventUpdater {
     public Event update(Event event) {
         return event;
     }
-
 }

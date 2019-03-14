@@ -83,7 +83,7 @@ public class LocationEngineTest {
     @Test
     public void shouldPopulateEmptyValuesInCacheIfLocationNotFound() throws IOException {
         String channel = "0123221617357783046602";
-        Location location = new Location("", "", "", "", "");
+        Location location = new Location();
         doAnswer((loc) -> {
             assertEquals(channel, loc.getArguments()[0]);
             assertEquals(location, loc.getArguments()[1]);
@@ -154,5 +154,50 @@ public class LocationEngineTest {
         when(userLocationCacheMock.getLocationByUser(userId)).thenReturn(location);
         locationEngine.getLocationByUser(userId);
         verify(userLocationCacheMock, times(1)).getLocationByUser(userId);
+    }
+
+    /**
+     * It should return the custom location details from the cache
+     */
+    @Test
+    public void shouldgetCustomLocationDetails() throws IOException {
+        String channel = "0123221617357783046602";
+        Location location = new Location("", "India", "KA", "Karnataka", "Banglore","Custom_Banglore", "Custom_karnataka","Custom_KA");
+        stub(locationStoreMock.get(channel)).toReturn(location);
+        Location cacheLocation = locationEngine.getLocation(channel);
+        assertNotNull(cacheLocation);
+        assertEquals(cacheLocation.getState(), "Karnataka");
+        assertEquals(cacheLocation.getCity(), "Banglore");
+        assertEquals(cacheLocation.getDistrictCustom(), "Custom_Banglore");
+        assertEquals(cacheLocation.getstateCodeCustom(), "Custom_KA");
+        assertEquals(cacheLocation.getstateCustomName(), "Custom_karnataka");
+    }
+
+    /**
+     * It should populate the empty values in the cache if the custom location details
+     * are not found in the database
+     */
+    @Test
+    public void shouldPopulateEmptyValue() throws IOException {
+        String channel = "0123221617357783046602";
+        Location location = new Location();
+        doAnswer((loc) -> {
+            assertEquals(channel, loc.getArguments()[0]);
+            assertEquals(location, loc.getArguments()[1]);
+            return null;
+        }).when(locationStoreMock).put(anyString(), any(Location.class));
+
+        doAnswer((loc) -> null).when(searchServiceClientMock).searchChannelLocationId(anyString());
+        doAnswer((loc) -> location).when(locationEngine).loadChannelAndPopulateCache(anyString());
+
+        stub(locationStoreMock.get(channel)).toReturn(location);
+
+        Location resolvedLocation = locationEngine.getLocation(channel);
+        assertEquals(resolvedLocation.getState(), "");
+        assertEquals(resolvedLocation.getCity(), "");
+        assertEquals(locationStoreMock.get(channel), resolvedLocation);
+        assertEquals(resolvedLocation.getDistrictCustom(), "");
+        assertEquals(resolvedLocation.getstateCodeCustom(), "");
+        assertEquals(resolvedLocation.getstateCustomName(), "");
     }
 }

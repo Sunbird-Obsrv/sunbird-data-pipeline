@@ -1,0 +1,13 @@
+analytics_user: analytics
+analytics_group: analytics
+analytics_user_home: /home/{{analytics_user}}
+sbin_path: "{{ analytics_user_home }}/sbin"
+
+channel: "#monitor-sunbirddev-lpa"
+secor_username: secor-monitor
+script_dir: "{{ sbin_path }}"
+
+secor:
+  properties: ['secor.common', 'secor', 'secor.partition']
+  artifact_dir: /mount/secor
+  channel: "#monitor-sunbirddev-lpa"

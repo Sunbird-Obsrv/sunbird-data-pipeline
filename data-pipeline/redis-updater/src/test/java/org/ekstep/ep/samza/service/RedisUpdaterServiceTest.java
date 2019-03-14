@@ -72,7 +72,7 @@ public class RedisUpdaterServiceTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shouldUpdateTheCacheIfDataExist() throws Exception {
+    public void shouldUpdateCacheIfDataExist() throws Exception {
         jedisMock.flushAll();
 
         // Update Redis Cache with First Event
@@ -108,7 +108,7 @@ public class RedisUpdaterServiceTest {
     }
 
     @Test
-    public void shouldNotAddToCacheIfKeyAndValueIsNullOrEmpty() throws Exception {
+    public void shouldNotAddToCacheIfKeyValueIsNullOrEmpty() throws Exception {
         jedisMock.flushAll();
         jedisMock.select(contentStoreId);
         RedisUpdaterSource source = new RedisUpdaterSource(envelopeMock);
@@ -124,7 +124,7 @@ public class RedisUpdaterServiceTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shouldNotReplaceTheCacheWhenMessagePropertiesAreEmpty() throws Exception {
+    public void shouldNotUpdateEmptyMessageProperties() throws Exception {
         jedisMock.flushAll();
         RedisUpdaterSource source = new RedisUpdaterSource(envelopeMock);
 
@@ -162,26 +162,31 @@ public class RedisUpdaterServiceTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void updateDialCodeToDialCodeCache() throws Exception {
+    public void updateDialCodeCache() throws Exception {
         jedisMock.flushAll();
         stub(envelopeMock.getMessage()).toReturn(EventFixture.OBJECT_TYPE_DIAL_CODE_1);
         Gson gson = new Gson();
         Map<String, Object> event = gson.fromJson(EventFixture.OBJECT_TYPE_DIAL_CODE_1, Map.class);
         String dialCode = (String) event.get("nodeUniqueId");
-        String objectType = (String) event.get("objectType");
-
 
         RedisUpdaterSource source = new RedisUpdaterSource(envelopeMock);
         redisUpdaterService.process(source, redisUpdaterSinkMock);
-
         jedisMock.select(dialCodeStoreId);
-        Map<String, String> cachedData;
+        String cachedData = jedisMock.get(dialCode);
+        Map<String, String> cachedObject = gson.fromJson(cachedData, Map.class);
+        assertEquals(261351.0, cachedObject.get("dialcode_index"));
+        assertEquals("YC9EP8", cachedObject.get("identifier"));
+        assertEquals("b00bc992ef25f1a9a8d63291e20efc8d", cachedObject.get("channel"));
+        assertEquals("do_112692236142379008136", cachedObject.get("batchcode"));
+        assertEquals("", cachedObject.get("publisher"));
+        assertEquals("2019-02-05T05:40:56.762", cachedObject.get("generated_on"));
+        assertEquals("Draft", cachedObject.get("status"));
         verify(redisUpdaterSinkMock, times(1)).success();
     }
 
 
     @Test
-    public void shouldHandleExceptionGracefullyWhenJedisConnectionFail() throws Exception {
+    public void shouldHandleJedisConnectionFail() throws Exception {
         jedisMock.flushAll();
         when(redisConnectMock.getConnection()).thenThrow(new JedisException("connection pool exhausted!"));
         when(envelopeMock.getMessage()).thenReturn(EventFixture.OBJECT_TYPE_DIAL_CODE_1, EventFixture.OBJECT_TYPE_CONTENT_EVENT_1);
@@ -196,7 +201,7 @@ public class RedisUpdaterServiceTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shouldAddOtherObjectTypeToCacheAlongWithContent() throws Exception {
+    public void shouldAddOtherObjectTypeToCache() throws Exception {
         jedisMock.flushAll();
         stub(envelopeMock.getMessage()).toReturn(EventFixture.OBJECT_TYPE_CONCEPT_EVENT);
 

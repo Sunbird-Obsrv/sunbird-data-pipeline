@@ -1,0 +1,10 @@
+- name: Stop logstash
+  service: name=logstash state=stopped
+  environment:
+    KILL_ON_STOP_TIMEOUT: 1
+  become: yes
+
+- name: Restart logstash
+  service: name=logstash state=restarted
+  become: yes
+

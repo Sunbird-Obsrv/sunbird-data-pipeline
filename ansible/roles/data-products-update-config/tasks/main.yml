@@ -1,0 +1,32 @@
+- name: Update model config
+  template: src=model-config.j2 dest={{ analytics.home }}/scripts/model-config.sh mode=755 owner={{ user }} group={{ group }}
+  tags:
+    - update-config
+
+- name: Copy submit-all-jobs ruby file
+  template: src=submit-all-jobs.rb.j2 dest={{ analytics.home }}/scripts/submit-all-jobs.rb mode=755 owner={{ user }} group={{ group }}
+  tags:
+    - update-submit-job
+
+- name: Copy model-config.json file
+  template: src=model-config.json.j2 dest={{ analytics.home }}/scripts/model-config.json mode=755 owner={{ user }} group={{ group }}
+  tags:
+    - update-config
+
+- name: Clean cron jobs
+  command: crontab -r
+  ignore_errors: yes
+  tags:
+    - cronjobs
+
+- name: Create daily cron jobs using submit-all-jobs
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="ruby {{ analytics.home }}/scripts/submit-all-jobs.rb"
+  with_dict: "{{ submit_jobs }}"
+  tags:
+    - cronjobs
+
+- name: Create start-jobmanager cron jobs
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/start-jobmanager.sh"
+  with_dict: "{{ start_jobmanager }}"
+  tags:
+    - cronjobs

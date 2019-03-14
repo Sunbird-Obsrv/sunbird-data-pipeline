@@ -1,0 +1,88 @@
+- name: create folder
+  command: mkdir test22
+
+- name: Fetch Spark/DataProducts logs
+  synchronize: src="{{ item }}" dest="./data-products/" mode=pull recursive=yes rsync_path=rsync
+  with_items:
+    - "{{ analytics.home }}/logs"
+    - "{{ analytics.home }}/scripts/logs/"
+  tags:
+    - fetch-logs
+
+- name: Check replay process is running
+  become: yes
+  become_user: "{{ analytics_user }}"
+  shell: "ps -ef | grep job.sh"
+  register: check_service
+  tags:
+    - fetch-logs
+
+- name: Print check_service to console
+  become: yes
+  become_user: "{{ analytics_user }}"
+  debug:
+    var: check_service
+  tags:
+    - fetch-logs
+
+- name: Get cron job details on this instance
+  become: yes
+  become_user: "{{ analytics_user }}"
+  shell: "crontab -l"
+  register: jobs_list
+  tags:
+    - cronjobs
+
+- name: Print jobs_list to console
+  become: yes
+  become_user: "{{ analytics_user }}"
+  debug:
+    var: jobs_list
+  tags:
+    - cronjobs
+
+- name: Replay Job
+  become: yes
+  become_user: "{{ analytics_user }}"
+  shell: "nohup {{ analytics.home }}/scripts/replay-job.sh {{ job_id }} {{ start_date }} {{ end_date }} &"
+  async: "{{ (pause_min * 60) }}"
+  poll: 0
+  tags:
+    - replay-job
+
+- name: Run Job
+  become: yes
+  become_user: "{{ analytics_user }}"
+  shell: "nohup {{ analytics.home }}/scripts/run-job.sh {{ job_id }} &"
+  async: "{{ (pause_min * 60) }}"
+  poll: 0
+  tags:
+    - run-job
+
+- name: Generate Metrics
+  become: yes
+  become_user: "{{ analytics_user }}"
+  shell: "nohup {{ analytics.home }}/scripts/generate-metrics.sh > {{ analytics.home }}/logs/business_metrics_result.log &"
+  async: "{{ (pause_min * 60) }}"
+  poll: 0
+  tags:
+    - generate-metrics
+
+- name: Submit Job
+  become: yes
+  become_user: "{{ analytics_user }}"
+  shell: "nohup /mnt/data/analytics/scripts/submit-job.sh {{ job_id }} &"
+  async: "{{ (pause_min * 60) }}"
+  poll: 0
+  tags:
+    - submit-job
+
+- name: Wait for one minutes
+  become: yes
+  become_user: "{{ analytics_user }}"
+  pause: minutes=1
+  tags:
+    - replay-job
+    - run-job
+    - generate-metrics
+

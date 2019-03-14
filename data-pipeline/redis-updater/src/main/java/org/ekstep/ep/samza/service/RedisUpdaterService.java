@@ -44,11 +44,12 @@ public class RedisUpdaterService {
 
     private void updateDialCodeCache(Map<String, Object> message, RedisUpdaterSink sink) {
         String nodeUniqueId = (String) message.get("nodeUniqueId");
-        Map<String, Object> parsedData = null;
+        Map<String, Object> parsedData;
         Gson gson = new Gson();
+        String key = nodeUniqueId;
         try (Jedis jedis = redisConnect.getConnection()) {
             jedis.select(dialCodeStore);
-            String contentNode = jedis.get(nodeUniqueId);
+            String contentNode = jedis.get(key);
             if(contentNode !=null){
                 Type type = new TypeToken<Map<String, Object>>(){}.getType();
                 parsedData = gson.fromJson(contentNode, type);
@@ -58,7 +59,7 @@ public class RedisUpdaterService {
             Map<String, Object> newProperties = extractProperties(message);
             parsedData.forEach(newProperties::putIfAbsent);
             if (newProperties.size() > 0) {
-                addToCache(nodeUniqueId,  gson.toJson(newProperties), dialCodeStore);
+                addToCache(key,  gson.toJson(newProperties), dialCodeStore);
                 sink.success();
             }
         } catch(JedisException ex) {
@@ -109,7 +110,6 @@ public class RedisUpdaterService {
                         if (propertyNewValue == null)
                             properties.put(propertyName, "");
                         else{
-                            Gson gson = new Gson();
                             properties.put(propertyName, propertyNewValue);
                         }
                     }

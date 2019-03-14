@@ -1,0 +1,37 @@
+---
+
+- name: Start yarn in master
+  hosts: yarn-master
+  var_files:
+    - "{{inventory_dir}}/secrets.yml"
+  become: yes
+  tasks:
+    - name: Start yarn resource manager
+      command: bash -lc "/usr/local/hadoop/sbin/yarn-daemon.sh start resourcemanager"
+      become_user: hduser
+
+    - name: Wait for resource manager to be started
+      command: bash -lc "ps aux | grep resourcemanager | grep -v grep"
+      register: result
+      until: "result.stdout.find('resourcemanager') != -1"
+      retries: 5
+      delay: 10 
+  tags: start-yarn-master
+
+- name: start yarn in slaves
+  hosts: yarn-slave
+  var_files:
+    - "{{inventory_dir}}/secrets.yml"
+  become: yes
+  tasks:
+    - name: Start yarn node manager
+      command: bash -lc "/usr/local/hadoop/sbin/yarn-daemon.sh start nodemanager" 
+      become_user: hduser
+      
+    - name: Wait for node manager to be started
+      command: bash -lc "ps aux | grep nodemanager | grep -v grep"
+      register: result
+      until: "result.stdout.find('nodemanager') != -1"
+      retries: 20
+      delay: 10  
+  tags: start-yarn-slave

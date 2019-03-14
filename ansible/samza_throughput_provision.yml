@@ -1,0 +1,5 @@
+---
+- hosts: influxdb
+  roles: 
+    - samza-throughput-provision
+  become: yes

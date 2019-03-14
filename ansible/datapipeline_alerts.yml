@@ -1,0 +1,17 @@
+---
+
+- hosts: yarn-slave
+  roles: 
+    - samza_monitor_utilities
+  become: yes
+ 
+- hosts: yarn-master
+  roles:
+    - samza_monitor_utilities
+  become: yes
+
+
+- hosts: influxdb
+  roles: 
+    - samza_monitor_utilities
+  become: yes

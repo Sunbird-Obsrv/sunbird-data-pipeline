@@ -1,0 +1,28 @@
+# TODO: Revert to 1 million once nginx metric cardinality is fixed
+max_series_per_database: 1000000
+
+# TODO: Revert to 100k once nginx metric cardinality is fixed
+max_values_per_tag: 100000
+influxdb_version: 1.6.0-1
+influxdb_udp_port: 8089
+influxdb_http_port: 8086
+influxdb: true
+influxdb_user_name: influxdb
+influxdb_group_name: influxdb
+influxdb_service_name: influxdb
+monitoring_db: monitoring_events
+influxdb_relay_udp_port: 9099
+influxdb_relay_http_port: 9096
+influxdb_relay_deb_link: https://s3.ap-south-1.amazonaws.com/ekstep-third-party-libraries/influxdb-relay/influxdb-relay_535181e_amd64.deb
+influxdb_relay_deb_file: influxdb-relay.deb
+influxdb_relay_deb_package_name: influxdb-relay
+influxdb_relay_udp_bind_address: ":{{ influxdb_relay_udp_port }}"
+influxdb_relay_http_bind_address: ":{{ influxdb_relay_http_port }}"
+influxdb_relay_conf: "/etc/influxdb-relay/influxdb-relay.conf"
+influxdb_relay_service_name: influxdb-relay
+#relay_name: influx_node1_relay
+
+host_name: "{{ ansible_hostname }}"
+relay_name: "{{ ansible_hostname }}-relay"
+nginx: true
+#host_name="monitor-influxdbi-1"

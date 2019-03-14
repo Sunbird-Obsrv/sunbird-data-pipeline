@@ -1,0 +1,21 @@
+---
+- name: Copy script to kill all running jobs
+  copy: src=kill_all_jobs.sh dest=/usr/local/hadoop/bin owner=hduser group=hadoop mode="u=rwx,g=rx,o=r"
+
+- name: Kill all jobs
+  command: bash -lc "./kill_all_jobs.sh"
+  args:
+    chdir: /usr/local/hadoop/bin
+  run_once: true
+  tags: kill_all_jobs
+
+- name: kill yarn resource manager
+  command: bash -lc "/usr/local/hadoop/sbin/yarn-daemon.sh stop resourcemanager" 
+  become_user: hduser
+
+- name: Wait for resourcemanager to be stopped
+  command: bash -lc "ps aux | grep resourcemanager | grep -v grep"
+  register: result
+  until: "result.stdout.find('resourcemanager') == -1"
+  retries: 20
+  delay: 10

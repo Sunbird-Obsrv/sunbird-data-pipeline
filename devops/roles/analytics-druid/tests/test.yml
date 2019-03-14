@@ -1,0 +1,25 @@
+---
+-
+  name: Install zookeeper cluster for druid
+  hosts: druid-zookeeper
+  become: yes
+  roles:
+    - {role: zookeeper-upgrade }
+
+-
+  name: Install postgres on druid cluster
+  hosts: druid-postgres
+  become: yes
+  roles:
+    - {role: postgres-provision }
+
+-
+  name: Install role druid
+  hosts: druid
+  become: yes
+  roles:
+    - {role: analytics-druid,when: "'coordinator' in group_names",druid_role: 'coordinator', service: 'coordinator' }
+    - {role: analytics-druid,when: "'overlord' in group_names",druid_role: 'overlord', service: 'overlord'}
+    - {role: analytics-druid,when: "'broker' in group_names",druid_role: 'broker', service: 'broker'}
+    - {role: analytics-druid,when: "'historical' in group_names",druid_role: 'historical', service: 'historical'}
+    - {role: analytics-druid,when: "'middlemanager' in group_names",druid_role: 'middlemanager',service: 'middleManager' }

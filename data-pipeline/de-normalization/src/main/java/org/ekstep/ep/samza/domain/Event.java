@@ -6,15 +6,21 @@ import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.task.DeNormalizationConfig;
 import org.ekstep.ep.samza.util.Path;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class Event {
     private final Telemetry telemetry;
     private Path path;
+    private DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd").withZoneUTC();
+    private DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     public Event(Map<String, Object> map) {
         this.telemetry = new Telemetry(map);
@@ -31,6 +37,35 @@ public class Event {
         return json;
     }
 
+    public Long ets() {
+        NullableValue<Object> ets = telemetry.read("ets");
+        if(ets.value().getClass().equals(Double.class)) {
+            return ((Double) ets.value()).longValue();
+        }
+        return ((Long) ets.value());
+    }
+
+    public Long getEndTimestampOfDay(String date) {
+        Long ets = dateFormat.parseDateTime(date).plusHours(23).plusMinutes(59).plusSeconds(59).getMillis();
+        return ets;
+    }
+
+    public Long compareAndAlterEts() {
+        Long eventEts = ets();
+        Long currentMillis = new Date().getTime();
+        String currentDate = formatter.format(currentMillis);
+        Long endTsOfCurrentDate = getEndTimestampOfDay(currentDate);
+        if(eventEts > endTsOfCurrentDate) telemetry.add("ets", currentMillis);
+        return ets();
+    }
+
+    public Boolean isOlder(Integer periodInMonths) {
+        Long eventEts = ets();
+        Long periodInMillis = new DateTime().minusMonths(periodInMonths).getMillis();
+        if(eventEts < periodInMillis) return true;
+        else return false;
+    }
+
     public String did() {
         NullableValue<String> did = telemetry.read("dimensions.did");
         return did.isNull() ? telemetry.<String>read("context.did").value() : did.value();
@@ -44,6 +79,13 @@ public class Event {
     public String objectID() {
         if (objectFieldsPresent()) {
             return telemetry.<String>read("object.id").value();
+        }
+        else return null;
+    }
+
+    public String objectType() {
+        if (objectFieldsPresent()) {
+            return telemetry.<String>read("object.type").value();
         }
         else return null;
     }
@@ -73,6 +115,19 @@ public class Event {
             }
             else {
                 ids = ((List) dialcode.value());
+            }
+        }
+        else {
+            NullableValue<Object> dialCode = telemetry.read("edata.filters.dialCodes");
+            if (dialCode != null && dialCode.value() != null) {
+                telemetry.add("edata.filters.dialcodes", dialCode.value());
+                telemetry.add("edata.filters.dialCodes", null);
+                if (dialCode.value().getClass().equals(String.class)) {
+                    ids.add(dialCode.value().toString());
+                }
+                else {
+                    ids = ((List) dialCode.value());
+                }
             }
         }
         return ids;
@@ -174,6 +229,28 @@ public class Event {
         Map<String, Object> flags = telemetryFlag.isNull() ? new HashMap<>() : telemetryFlag.value();
         if (!key.isEmpty()) flags.put(key, value);
         telemetry.add(path.flags(), flags);
+    }
+
+    public Map<String, Object> getFlag() {
+        NullableValue<Map<String, Object>> telemetryFlag = telemetry.read(path.flags());
+        Map<String, Object> flags = telemetryFlag.isNull() ? new HashMap<>() : telemetryFlag.value();
+        return flags;
+    }
+
+    public void updateVersion() {
+        Map flags = getFlag();
+        Boolean telemetryDenormalised = (((Boolean) flags.getOrDefault("dialcode_data_retrieved", false))
+                || ((Boolean) flags.getOrDefault("device_data_retrieved", false))
+                || ((Boolean) flags.getOrDefault("content_data_retrieved", false))
+                || ((Boolean) flags.getOrDefault("user_data_retrieved", false)));
+        if (telemetryDenormalised) {
+            telemetry.add(path.ver(), getUpgradedVersion());
+        }
+    }
+
+    public String getUpgradedVersion() {
+        Double updatedVer = Double.parseDouble(telemetry.read(path.ver()).value().toString()) + 0.1;
+        return updatedVer.toString();
     }
 
     @Override

@@ -1,0 +1,43 @@
+---
+- hosts: yarn
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Installaing python
+      raw: bash -c "test -e /usr/bin/python" || (apt update && apt install python -y)
+
+- hosts: yarn
+  become: yes
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
+  tasks:
+    - name: Create group
+      group: 
+        name: hadoop 
+        state: present
+    - name: Create user
+      user: 
+        name: hduser 
+        comment: "hduser" 
+        group: hadoop 
+        groups: sudo 
+        shell: /bin/bash
+
+- name: Install samza job server
+  hosts: "yarn-master"
+  become: yes
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
+  roles:
+    - java
+    - yarn
+    - samza-job-server
+
+- name: Install java on all yarn slaves
+  hosts: "yarn-slave"
+  become: yes
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
+  remote_user: hduser
+  roles:
+    - java

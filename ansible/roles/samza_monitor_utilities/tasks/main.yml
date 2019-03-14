@@ -1,0 +1,25 @@
+---
+
+- name: copy the backup script to yarn slaves
+  template: src=upload_samza_logs dest="{{script_path}}/upload_samza_logs.sh" mode=755
+  when: backup
+
+- name: Copy the string file
+  copy: src=samza-job-string dest=/home/hduser owner=hduser group=hadoop mode="u=rw,g=r,o=r"
+  when: samza-alert
+
+- name: copy the alert script
+  template: src=samza_alerts dest=/home/hduser/samza_alerts.sh mode=755
+  when: samza-alert
+
+- name: copy the slack script
+  template: src=samza_slack  dest=/usr/local/bin/samza_slack.sh mode=755
+  when: samza-alert
+
+- name: copy the alert script
+  template: src=throughput_monitor dest=/usr/local/bin/throughput_monitor.sh mode=755
+  when: throughput-alert
+
+- name: copy the slack script
+  template: src=throughput_slack dest=/usr/local/bin/throughput_slack.sh mode=755
+  when: throughput-alert

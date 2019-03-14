@@ -9,7 +9,7 @@ public class ContentDataUpdater extends IEventUpdater {
         this.cacheType = "content";
     }
 
-    public Event update(Event event) {
+    public Event update(Event event)  {
         return event;
     }
 

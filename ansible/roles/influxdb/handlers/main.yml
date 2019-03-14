@@ -1,0 +1,9 @@
+---
+  - name: restart influxdb service
+    service: name={{ influxdb_service_name }} state=restarted
+
+  - name: restart influxdb relay service
+    service: name={{ influxdb_relay_service_name }} state=restarted enabled=true
+
+  - name: restart nginx service
+    service: name=nginx state=restarted

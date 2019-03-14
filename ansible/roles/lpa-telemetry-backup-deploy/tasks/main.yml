@@ -1,0 +1,53 @@
+- name: Create service directory on EBS volume
+  file: 
+    path: "/mount/{{ item.key }}/logs" 
+    owner: "{{ analytics_user }}"
+    group: "{{ analytics_group }}"
+    state: directory
+    recurse: yes
+  with_dict: "{{ secor_service_name }}"
+
+- name: Cleanup secor lib directory
+  file:
+    path: "/mount/{{ item.key }}/lib"
+    owner: "{{ analytics_user }} group={{ analytics_group }}"
+    state: absent
+  with_dict: "{{ secor_service_name }}"
+  ignore_errors: true
+
+- name: Creating secor directory
+  file:
+    path: /mount/{{item.key}}
+    owner: "{{analytics_user}}"
+    group: "{{analytics_group}}"
+    state: directory
+  with_dict: "{{secor_service_name}}"
+
+- name: Unarchive secor libraries
+  unarchive:
+    src: "{{ analytics_user_home }}/secor-0.24-SNAPSHOT-bin.tar.gz"
+    dest: "/mount/{{ item.key }}"
+    copy: no
+    owner: "{{ analytics_user }}"
+    group: "{{ analytics_group }}"
+  with_dict: "{{secor_service_name}}"
+
+- name: Copy secor properties
+  template: "src={{ item.1 }}.j2 dest=/mount/{{ item.0 }}/{{ item.1 }}.properties mode=755 owner={{ analytics_user }} group={{ analytics_group }}"
+  with_nested:
+    - "{{ secor_service_name }}"
+    - "{{ secor.properties }}"
+
+- name: Create monitoring cron job
+  cron: "name={{ item.key }} minute={{ item.value.service_monitor_schedule_min }} hour={{ item.value.service_monitor_schedule_hr }}  job={{ sbin_path }}/monitor-secor.sh {{ item.key }} {{ item.value.service_description }}"
+  with_dict: "{{ secor_service_name }}"
+
+- name: Restarting jobs
+  become: yes
+  become_user: "{{ analytics_user }}"
+  debug: 
+    msg: "Trgiggering handlers"
+  changed_when: True
+  notify:
+    - "stop secor"
+    - "start secor"

@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+export SPARK_HOME={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7
+export MODELS_HOME={{ analytics.home }}/models
+export DP_LOGS={{ analytics.home }}/logs/data-products
+
+cd {{ analytics.home }}/scripts
+source model-config.sh
+source replay-utils.sh
+
+if [ -z "$job_config" ]; then job_config=$(config $1 '__endDate__'); fi
+start_date=$2
+end_date=$3
+backup_key=$1
+
+if [ "$1" == "gls-v1" ]
+	then
+	backup_key="gls"
+elif [ "$1" == "app-ss-v1" ] 
+	then
+	backup_key="app-ss"	
+fi
+
+backup $start_date $end_date {{ bucket }} "derived/$backup_key" "derived/backup-$backup_key" >> "$DP_LOGS/$end_date-$1-replay.log"
+if [ $? == 0 ]
+ 	then
+  	echo "Backup completed Successfully..." >> "$DP_LOGS/$end_date-$1-replay.log"
+  	echo "Running the $1 job replay..." >> "$DP_LOGS/$end_date-$1-replay.log"
+  	$SPARK_HOME/bin/spark-submit --master local[*] --jars $MODELS_HOME/analytics-framework-1.0.jar --class org.ekstep.analytics.job.ReplaySupervisor $MODELS_HOME/batch-models-1.0.jar --model "$1" --fromDate "$start_date" --toDate "$end_date" --config "$job_config" >> "$DP_LOGS/$end_date-$1-replay.log"
+else
+  	echo "Unable to take backup" >> "$DP_LOGS/$end_date-$1-replay.log"
+fi
+
+if [ $? == 0 ]
+	then
+	echo "$1 replay executed successfully" >> "$DP_LOGS/$end_date-$1-replay.log"
+	delete {{ bucket }} "derived/backup-$backup_key" >> "$DP_LOGS/$end_date-$1-replay.log"
+else
+	echo "$1 replay failed" >> "$DP_LOGS/$end_date-$1-replay.log"
+ 	rollback {{ bucket }} "derived/$backup_key" "backup-$backup_key" >> "$DP_LOGS/$end_date-$1-replay.log"
+ 	delete {{ bucket }} "derived/backup-$backup_key" >> "$DP_LOGS/$end_date-$1-replay.log"
+fi
