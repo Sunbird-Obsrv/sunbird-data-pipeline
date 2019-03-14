@@ -29,8 +29,8 @@ public class RedisUpdaterServiceTest {
     private RedisUpdaterService redisUpdaterService;
     private RedisUpdaterSink redisUpdaterSinkMock;
     private Config configMock;
-    private Integer contentStoreId = 2;
-    private Integer dialCodeStoreId = 3;
+    private Integer contentStoreId = 5;
+    private Integer dialCodeStoreId = 6;
 
     @Before
     public void setUp() {
