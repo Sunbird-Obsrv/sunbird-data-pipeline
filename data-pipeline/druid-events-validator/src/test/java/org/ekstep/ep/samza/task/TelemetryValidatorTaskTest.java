@@ -120,6 +120,16 @@ public class TelemetryValidatorTaskTest {
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
 
+    @Test
+    // Case sensitive dialcode keyword validation
+    public void shouldSendEventToFaildTopicIfInvalidDialCodeKeywordAppears() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DIALCODE_KEY);
+        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+    }
+
+
+
     public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
         return new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override

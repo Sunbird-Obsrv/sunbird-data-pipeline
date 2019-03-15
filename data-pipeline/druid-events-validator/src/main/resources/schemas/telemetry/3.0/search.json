@@ -40,10 +40,6 @@
               "id": "http://api.sunbird.org/telemetry/edata/query",
               "type": "string"
             },
-            "filters": {
-              "id": "http://api.sunbird.org/telemetry/edata/filters",
-              "type": "object"
-            },
             "sort": {
               "id": "http://api.sunbird.org/telemetry/edata/sort",
               "type": "object"
@@ -55,6 +51,9 @@
             "size": {
               "id": "http://api.sunbird.org/telemetry/edata/size",
               "type": "number"
+            },
+            "filters": {
+              "$ref": "resource:/schemas/telemetry/3.0/filter.json"
             },
             "topn": {
               "id": "http://api.sunbird.org/telemetry/edata/topn",
