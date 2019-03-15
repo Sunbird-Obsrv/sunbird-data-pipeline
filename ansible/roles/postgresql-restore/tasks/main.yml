@@ -2,10 +2,10 @@
   file: path="{{ postgresql_restore_dir }}" state=directory owner={{ postgresql_user }} group={{ postgresql_user }}
 
 - set_fact:
-    postgresql_restore_gzip_file_path: "{{ postgresql_restore_dir }}/{{ postgresql_restore_gzip_file_name }}"
+    postgresql_restore_gzip_file_path: "{{ postgresql_restore_dir }}/postgresql_backup_{{ postgresql_restore_gzip_file_date }}.sql.gz"
 
 - name: Download restore file from azure
-  command: az storage blob download --container-name {{ postgresql_restore_azure_container_name }} --name {{ postgresql_restore_gzip_file_name }} --file {{ postgresql_restore_gzip_file_path }}
+  command: az storage blob download --container-name {{ postgresql_restore_azure_container_name }} --name postgresql_backup_{{ postgresql_restore_gzip_file_date }}.sql.gz --file {{ postgresql_restore_gzip_file_path }}
   environment:
     AZURE_STORAGE_ACCOUNT: "{{ postgresql_restore_azure_storage_account_name }}"
     AZURE_STORAGE_KEY: "{{ postgresql_restore_azure_storage_access_key }}"
