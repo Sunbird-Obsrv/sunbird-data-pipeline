@@ -92,13 +92,6 @@
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>redis-updater</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <type>tar.gz</type>
-            <classifier>distribution</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>events-router</artifactId>
             <version>0.0.1</version>
             <type>tar.gz</type>
@@ -114,7 +107,7 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>redis-updater</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>0.0.1</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>

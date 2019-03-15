@@ -25,8 +25,8 @@ public class RedisUpdaterService {
     public RedisUpdaterService(Config config, RedisConnect redisConnect) {
         this.redisConnect = redisConnect;
         this.config = config;
-        this.contentStore = config.getInt("redis.database.contentStore.id", 2);
-        this.dialCodeStore = config.getInt("redis.database.dialCodeStore.id", 3);
+        this.contentStore = config.getInt("redis.database.contentStore.id", 5);
+        this.dialCodeStore = config.getInt("redis.database.dialCodeStore.id", 6);
     }
 
     public void process(RedisUpdaterSource source, RedisUpdaterSink sink) {
