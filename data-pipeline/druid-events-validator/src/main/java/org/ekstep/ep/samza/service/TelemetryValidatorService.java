@@ -34,7 +34,6 @@ public class TelemetryValidatorService {
             event = source.getEvent();
             File schemaFilePath = this.getFile(source);
             if (schemaFilePath == null) {
-                System.out.println("File not present");
                 LOGGER.info("SCHEMA FILE DOESN'T EXIST HENCE SKIPPING THE VALIDATION PROCESS AND SENDING TO SUCCESS TOPIC", event.mid());
                 event.markSkipped();
                 sink.toSuccessTopic(event);
@@ -45,13 +44,11 @@ public class TelemetryValidatorService {
             JsonSchema jsonSchema = jsonSchemaFactory.getJsonSchema(schemaJson);
             ProcessingReport report = jsonSchema.validate(eventJson);
             if (report.isSuccess()) {
-                System.out.println("Validation Success");
                 LOGGER.info("VALIDATION SUCCESS", event.mid());
                 event.markSuccess();
                 sink.toSuccessTopic(event);
             } else {
                 String fieldName = this.getInvalidFieldName(report.toString());
-                System.out.println("Validation failed" + fieldName);
                 LOGGER.error(null, "VALIDATION FAILED: " + report.toString());
                 sink.toFailedTopic(event, "Invalid field:" + fieldName);
             }
