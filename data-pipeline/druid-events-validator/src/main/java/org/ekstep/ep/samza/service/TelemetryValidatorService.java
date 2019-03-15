@@ -20,6 +20,9 @@ import com.google.gson.JsonSyntaxException;
 public class TelemetryValidatorService {
     static Logger LOGGER = new Logger(TelemetryValidatorService.class);
     private final TelemetryValidatorConfig config;
+    private static final String TELEMETRY_SCHEMA_BASE_PATH = "src/main/resources/schemas/telemetry";
+    private static final String SUMMARY_SCHEMA_BASE_PATH = "src/main/resources/schemas/summary";
+    private static final String DEFAULT_EVENT_SCHEMA_NAME = "envelope.json";
 
     public TelemetryValidatorService(TelemetryValidatorConfig config) {
         this.config = config;
@@ -27,16 +30,12 @@ public class TelemetryValidatorService {
 
     public void process(TelemetryValidatorSource source, TelemetryValidatorSink sink, JsonSchemaFactory jsonSchemaFactory) {
         Event event = null;
-        String schemaFile;
         try {
             event = source.getEvent();
-            String telemetrySchemaFilePath = MessageFormat.format("{0}/{1}/{2}", config.telemetrySchemaPath(), event.version(), event.schemaName());
-            String summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}/{2}", config.summarySchemaPath(), event.version(), event.schemaName());
-            schemaFile = event.isSummaryEvent() ? summaryEventSchemaFilepath : telemetrySchemaFilePath;
-            File schemaFilePath = new File(schemaFile);
-            if (!schemaFilePath.exists()) {
-                LOGGER.info("SCHEMA DOES NOT FOUND", schemaFile);
-                LOGGER.info("SKIP PROCESSING: SENDING TO SUCCESS", event.mid());
+            File schemaFilePath = this.getFile(source);
+            if (schemaFilePath == null) {
+                System.out.println("File not present");
+                LOGGER.info("SCHEMA FILE DOESN'T EXIST HENCE SKIPPING THE VALIDATION PROCESS AND SENDING TO SUCCESS TOPIC", event.mid());
                 event.markSkipped();
                 sink.toSuccessTopic(event);
                 return;
@@ -46,11 +45,13 @@ public class TelemetryValidatorService {
             JsonSchema jsonSchema = jsonSchemaFactory.getJsonSchema(schemaJson);
             ProcessingReport report = jsonSchema.validate(eventJson);
             if (report.isSuccess()) {
+                System.out.println("Validation Success");
                 LOGGER.info("VALIDATION SUCCESS", event.mid());
                 event.markSuccess();
                 sink.toSuccessTopic(event);
             } else {
                 String fieldName = this.getInvalidFieldName(report.toString());
+                System.out.println("Validation failed" + fieldName);
                 LOGGER.error(null, "VALIDATION FAILED: " + report.toString());
                 sink.toFailedTopic(event, "Invalid field:" + fieldName);
             }
@@ -70,5 +71,22 @@ public class TelemetryValidatorService {
         String[] fields = message[1].split(",");
         String[] pointer = fields[3].split("\"pointer\":");
         return pointer[1].substring(0, pointer[1].length() - 1);
+    }
+
+    private File getFile(TelemetryValidatorSource source) {
+        Event event = null;
+        event = source.getEvent();
+        String telemetrySchemaFilePath = MessageFormat.format("{0}/{1}/{2}", TELEMETRY_SCHEMA_BASE_PATH, event.version(), event.schemaName());
+        String summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}/{2}", SUMMARY_SCHEMA_BASE_PATH, event.version(), event.schemaName());
+        File schemaFilePath = new File(event.isSummaryEvent() ? summaryEventSchemaFilepath : telemetrySchemaFilePath);
+        if (!schemaFilePath.exists()) {
+            telemetrySchemaFilePath = MessageFormat.format("{0}/{1}/{2}", TELEMETRY_SCHEMA_BASE_PATH, event.version(), DEFAULT_EVENT_SCHEMA_NAME);
+            summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}/{2}", SUMMARY_SCHEMA_BASE_PATH, event.version(), DEFAULT_EVENT_SCHEMA_NAME);
+            File envelop = new File(event.isSummaryEvent() ? summaryEventSchemaFilepath : telemetrySchemaFilePath);
+            System.out.println("envelop.getAbsolutePath()" + envelop.getAbsolutePath());
+            return envelop.exists() ? envelop : null;
+        } else {
+            return schemaFilePath;
+        }
     }
 }
