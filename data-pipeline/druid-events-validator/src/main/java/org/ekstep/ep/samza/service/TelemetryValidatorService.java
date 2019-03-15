@@ -20,8 +20,8 @@ import com.google.gson.JsonSyntaxException;
 public class TelemetryValidatorService {
     static Logger LOGGER = new Logger(TelemetryValidatorService.class);
     private final TelemetryValidatorConfig config;
-    private static final String TELEMETRY_SCHEMA_BASE_PATH = "src/main/resources/schemas/telemetry";
-    private static final String SUMMARY_SCHEMA_BASE_PATH = "src/main/resources/schemas/summary";
+    //private static final String TELEMETRY_SCHEMA_BASE_PATH = "src/main/resources/schemas/telemetry";
+    //private static final String SUMMARY_SCHEMA_BASE_PATH = "src/main/resources/schemas/summary";
     private static final String DEFAULT_EVENT_SCHEMA_NAME = "envelope.json";
 
     public TelemetryValidatorService(TelemetryValidatorConfig config) {
@@ -73,14 +73,13 @@ public class TelemetryValidatorService {
     private File getFile(TelemetryValidatorSource source) {
         Event event = null;
         event = source.getEvent();
-        String telemetrySchemaFilePath = MessageFormat.format("{0}/{1}/{2}", TELEMETRY_SCHEMA_BASE_PATH, event.version(), event.schemaName());
-        String summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}/{2}", SUMMARY_SCHEMA_BASE_PATH, event.version(), event.schemaName());
+        String telemetrySchemaFilePath = MessageFormat.format("{0}/{1}/{2}", config.telemetrySchemaPath(), event.version(), event.schemaName());
+        String summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}/{2}", config.summarySchemaPath(), event.version(), event.schemaName());
         File schemaFilePath = new File(event.isSummaryEvent() ? summaryEventSchemaFilepath : telemetrySchemaFilePath);
         if (!schemaFilePath.exists()) {
-            telemetrySchemaFilePath = MessageFormat.format("{0}/{1}/{2}", TELEMETRY_SCHEMA_BASE_PATH, event.version(), DEFAULT_EVENT_SCHEMA_NAME);
-            summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}/{2}", SUMMARY_SCHEMA_BASE_PATH, event.version(), DEFAULT_EVENT_SCHEMA_NAME);
+            telemetrySchemaFilePath = MessageFormat.format("{0}/{1}/{2}", config.telemetrySchemaPath(), event.version(), DEFAULT_EVENT_SCHEMA_NAME);
+            summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}/{2}", config.summarySchemaPath(), event.version(), DEFAULT_EVENT_SCHEMA_NAME);
             File envelop = new File(event.isSummaryEvent() ? summaryEventSchemaFilepath : telemetrySchemaFilePath);
-            System.out.println("envelop.getAbsolutePath()" + envelop.getAbsolutePath());
             return envelop.exists() ? envelop : null;
         } else {
             return schemaFilePath;
