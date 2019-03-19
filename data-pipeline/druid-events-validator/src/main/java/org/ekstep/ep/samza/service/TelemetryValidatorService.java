@@ -21,6 +21,9 @@ public class TelemetryValidatorService {
     static Logger LOGGER = new Logger(TelemetryValidatorService.class);
     private final TelemetryValidatorConfig config;
     private static final String DEFAULT_EVENT_SCHEMA_FILE = "envelope.json";
+    private static final String TELEMETRY_EVENT_SCHEMA_BASE_PATH ="schemas/telemetry";
+    private static final String SUMMARY_EVENT_SCHEMA_BASE_PATH ="schemas/summary";
+
 
     public TelemetryValidatorService(TelemetryValidatorConfig config) {
         this.config = config;
@@ -74,13 +77,13 @@ public class TelemetryValidatorService {
         String telemetrySchemaFilePath;
         String summaryEventSchemaFilepath;
         StringBuilder sb = new StringBuilder();
-        telemetrySchemaFilePath = MessageFormat.format("{0}/{1}/{2}", "schemas/telemetry", event.version(), event.schemaName());
-        summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}/{2}", "schemas/summary", event.version(), event.schemaName());
+        telemetrySchemaFilePath = MessageFormat.format("{0}/{1}/{2}", TELEMETRY_EVENT_SCHEMA_BASE_PATH, event.version(), event.schemaName());
+        summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}/{2}", SUMMARY_EVENT_SCHEMA_BASE_PATH, event.version(), event.schemaName());
         InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream(event.isSummaryEvent() ? summaryEventSchemaFilepath : telemetrySchemaFilePath);
         BufferedReader br = null;
         if (is == null) {
-            telemetrySchemaFilePath = MessageFormat.format("{0}/{1}/{2}", "schemas/telemetry", event.version(), DEFAULT_EVENT_SCHEMA_FILE);
-            summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}/{2}", "schemas/summary", event.version(), DEFAULT_EVENT_SCHEMA_FILE);
+            telemetrySchemaFilePath = MessageFormat.format("{0}/{1}/{2}", TELEMETRY_EVENT_SCHEMA_BASE_PATH, event.version(), DEFAULT_EVENT_SCHEMA_FILE);
+            summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}/{2}", SUMMARY_EVENT_SCHEMA_BASE_PATH, event.version(), DEFAULT_EVENT_SCHEMA_FILE);
             is = ClassLoader.getSystemClassLoader().getResourceAsStream(event.isSummaryEvent() ? summaryEventSchemaFilepath : telemetrySchemaFilePath);
         }
         br = new BufferedReader(new InputStreamReader(is));
