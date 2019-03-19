@@ -28,10 +28,7 @@
                 <include>NOTICE*</include>
             </includes>
         </fileSet>
-        <fileSet>
-            <directory>${basedir}/src/main/resources/schemas</directory>
-            <outputDirectory>src/main/resources/schemas</outputDirectory>
-        </fileSet>
+
     </fileSets>
     <files>
         <file>
