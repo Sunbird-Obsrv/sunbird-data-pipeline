@@ -140,7 +140,6 @@ public class TelemetryEventsValidatorTaskTest {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DIALCODE_KEY);
         druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
-        verify(collectorMock).send(argThat(validateEvent(false, "")));
     }
 
 
