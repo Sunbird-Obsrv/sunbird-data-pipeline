@@ -36,6 +36,7 @@
 		<module>events-router</module>
 		<module>de-normalization</module>
 		<module>redis-updater</module>
+		<module>druid-events-validator</module>
 		<!--
 		<module>reverse-search</module>
 		<module>object-de-normalization</module>
