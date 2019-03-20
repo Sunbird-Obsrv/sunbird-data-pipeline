@@ -8,7 +8,7 @@ import org.elasticsearch.spark._
 import scala.collection.JavaConversions._
 import scala.collection.Map
 
-object ESToRedisIndexer {
+object ESRedisIndexer {
 
     private val config: Config = ConfigFactory.load
 

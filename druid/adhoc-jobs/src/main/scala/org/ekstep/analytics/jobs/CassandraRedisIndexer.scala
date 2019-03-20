@@ -8,7 +8,7 @@ import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
 
 
-object CassandraToRedisIndexer {
+object CassandraRedisIndexer {
 
    private val config: Config = ConfigFactory.load
 
@@ -34,7 +34,7 @@ object CassandraToRedisIndexer {
         val userData = sc.cassandraTable(userKeyspace, userTableName)
         val userMap = userData.map(f => f.toMap)
         val mappedData = userMap.map { obj =>
-            (obj(redisKeyProperty).asInstanceOf[String] , JSONUtils.serialize(obj))
+            (obj.getOrElse(redisKeyProperty, "").asInstanceOf[String] , JSONUtils.serialize(obj))
         }
         sc.toRedisKV(mappedData)
     }

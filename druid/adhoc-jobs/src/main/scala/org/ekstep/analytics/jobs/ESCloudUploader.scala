@@ -10,7 +10,7 @@ import org.apache.spark.sql.SparkSession
 import org.elasticsearch.spark._
 import org.sunbird.cloud.storage.factory.{StorageConfig, StorageServiceFactory}
 
-object ESToCloudUploader {
+object ESCloudUploader {
     private val now: Date = new Date()
     private val config: Config = ConfigFactory.load
     case class Source(timestamp: Long, data: String)
