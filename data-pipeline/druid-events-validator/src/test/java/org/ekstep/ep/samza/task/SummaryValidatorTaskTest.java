@@ -26,8 +26,6 @@ public class SummaryValidatorTaskTest {
     private static final String SUCCESS_TOPIC = "telemetry.denorm.valid";
     private static final String FAILED_TOPIC = "telemetry.failed";
     private static final String MALFORMED_TOPIC = "telemetry.malformed";
-    private static final String TELEMETRY_SCHEMA_PATH = "src/main/resources/schemas/telemetry";
-    private static final String SUMMARY_SCHEMA_PATH = "src/main/resources/schemas/summary";
     private MessageCollector collectorMock;
     private TaskContext contextMock;
     private MetricsRegistry metricsRegistry;
@@ -50,8 +48,6 @@ public class SummaryValidatorTaskTest {
         when(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).thenReturn(SUCCESS_TOPIC);
         when(configMock.get("output.failed.topic.name", FAILED_TOPIC)).thenReturn(FAILED_TOPIC);
         when(configMock.get("output.malformed.topic.name", MALFORMED_TOPIC)).thenReturn(MALFORMED_TOPIC);
-        when(configMock.get("telemetry.schema.path", TELEMETRY_SCHEMA_PATH)).thenReturn(TELEMETRY_SCHEMA_PATH);
-        when(configMock.get("summary.schema.path", SUMMARY_SCHEMA_PATH)).thenReturn(SUMMARY_SCHEMA_PATH);
         when(metricsRegistry.newCounter(anyString(), anyString())).thenReturn(counter);
         when(contextMock.getMetricsRegistry()).thenReturn(metricsRegistry);
         telemetryValidatorTask = new TelemetryValidatorTask(configMock, contextMock);

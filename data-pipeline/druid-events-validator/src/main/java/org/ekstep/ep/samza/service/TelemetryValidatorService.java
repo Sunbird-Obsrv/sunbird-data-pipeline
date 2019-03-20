@@ -7,7 +7,6 @@ import java.text.MessageFormat;
 
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.task.TelemetryValidatorConfig;
 import org.ekstep.ep.samza.task.TelemetryValidatorSink;
 import org.ekstep.ep.samza.task.TelemetryValidatorSource;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -19,21 +18,18 @@ import com.google.gson.JsonSyntaxException;
 
 public class TelemetryValidatorService {
     static Logger LOGGER = new Logger(TelemetryValidatorService.class);
-    private final TelemetryValidatorConfig config;
     private static final String DEFAULT_EVENT_SCHEMA_FILE = "envelope.json";
-    private static final String TELEMETRY_EVENT_SCHEMA_BASE_PATH ="schemas/telemetry";
-    private static final String SUMMARY_EVENT_SCHEMA_BASE_PATH ="schemas/summary";
+    private static final String TELEMETRY_EVENT_SCHEMA_BASE_PATH = "/schemas/telemetry";
+    private static final String SUMMARY_EVENT_SCHEMA_BASE_PATH = "/schemas/summary";
 
-
-    public TelemetryValidatorService(TelemetryValidatorConfig config) {
-        this.config = config;
+    public TelemetryValidatorService() {
     }
 
     public void process(TelemetryValidatorSource source, TelemetryValidatorSink sink, JsonSchemaFactory jsonSchemaFactory) {
         Event event = null;
         try {
             event = source.getEvent();
-            String schema = this.getFile(source);
+            String schema = getSchema(event);
             if (schema == null) {
                 LOGGER.info("SCHEMA FILE DOESN'T EXIST HENCE SKIPPING THE VALIDATION PROCESS AND SENDING TO SUCCESS TOPIC", event.mid());
                 event.markSkipped();
@@ -71,23 +67,21 @@ public class TelemetryValidatorService {
         return pointer[1].substring(0, pointer[1].length() - 1);
     }
 
-    private String getFile(TelemetryValidatorSource source) {
-        Event event = null;
-        event = source.getEvent();
+    private String getSchema(Event event) {
         String telemetrySchemaFilePath;
         String summaryEventSchemaFilepath;
         StringBuilder sb = new StringBuilder();
         telemetrySchemaFilePath = MessageFormat.format("{0}/{1}/{2}", TELEMETRY_EVENT_SCHEMA_BASE_PATH, event.version(), event.schemaName());
         summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}/{2}", SUMMARY_EVENT_SCHEMA_BASE_PATH, event.version(), event.schemaName());
-        InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream(event.isSummaryEvent() ? summaryEventSchemaFilepath : telemetrySchemaFilePath);
-        BufferedReader br = null;
+        InputStream is = this.getClass().getResourceAsStream(event.isSummaryEvent() ? summaryEventSchemaFilepath : telemetrySchemaFilePath);
+        BufferedReader br;
         if (is == null) {
             telemetrySchemaFilePath = MessageFormat.format("{0}/{1}/{2}", TELEMETRY_EVENT_SCHEMA_BASE_PATH, event.version(), DEFAULT_EVENT_SCHEMA_FILE);
             summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}/{2}", SUMMARY_EVENT_SCHEMA_BASE_PATH, event.version(), DEFAULT_EVENT_SCHEMA_FILE);
-            is = ClassLoader.getSystemClassLoader().getResourceAsStream(event.isSummaryEvent() ? summaryEventSchemaFilepath : telemetrySchemaFilePath);
+            is = this.getClass().getResourceAsStream(event.isSummaryEvent() ? summaryEventSchemaFilepath : telemetrySchemaFilePath);
         }
         br = new BufferedReader(new InputStreamReader(is));
-        String line = null;
+        String line;
         try {
             while ((line = br.readLine()) != null) {
                 sb.append(line + "\n");
