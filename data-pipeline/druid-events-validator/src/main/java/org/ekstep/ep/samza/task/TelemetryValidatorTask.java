@@ -50,7 +50,7 @@ public class TelemetryValidatorTask implements StreamTask, InitableTask, Windowa
     public void init(Config config, TaskContext context) {
         this.config = new TelemetryValidatorConfig(config);
         metrics = new JobMetrics(context, this.config.jobName());
-        service = new TelemetryValidatorService();
+        service = new TelemetryValidatorService(this.config);
     }
 
     @Override

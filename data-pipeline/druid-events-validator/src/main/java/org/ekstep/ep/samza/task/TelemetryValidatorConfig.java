@@ -6,6 +6,9 @@ import org.apache.samza.config.Config;
 public class TelemetryValidatorConfig {
 
     private final String JOB_NAME = "DruidEventsValidator";
+    private String telemetrySchemaPath;
+    private String summarySchemaPath;
+    private String defaultSchemafile;
     private String successTopic;
     private String failedTopic;
     private String malformedTopic;
@@ -16,6 +19,9 @@ public class TelemetryValidatorConfig {
         failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
         metricsTopic = config.get("output.metrics.topic.name", "telemetry.pipeline_metrics");
+        telemetrySchemaPath = config.get("telemetry.schema.path", "schemas/telemetry");
+        summarySchemaPath = config.get("summary.schema.path", "schemas/summary");
+        defaultSchemafile = config.get("event.schema.file","envelope.json");
     }
 
     public String successTopic() {
@@ -33,6 +39,12 @@ public class TelemetryValidatorConfig {
     public String metricsTopic() {
         return metricsTopic;
     }
+
+    public String telemetrySchemaPath() { return telemetrySchemaPath; }
+
+    public String summarySchemaPath() { return summarySchemaPath; }
+
+    public String defaultSchemafile(){return defaultSchemafile;}
 
     public String jobName() {
         return JOB_NAME;

@@ -26,6 +26,9 @@ public class TelemetryValidatorTaskTest {
     private static final String SUCCESS_TOPIC = "telemetry.denorm.valid";
     private static final String FAILED_TOPIC = "telemetry.failed";
     private static final String MALFORMED_TOPIC = "telemetry.malformed";
+    private static final String TELEMETRY_SCHEMA_PATH = "schemas/telemetry";
+    private static final String SUMMARY_SCHEMA_PATH = "schemas/summary";
+    private static final String DEFAULT_SCHEMA_NAME = "envelope.json";
     private MessageCollector collectorMock;
     private TaskContext contextMock;
     private MetricsRegistry metricsRegistry;
@@ -48,6 +51,9 @@ public class TelemetryValidatorTaskTest {
         when(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).thenReturn(SUCCESS_TOPIC);
         when(configMock.get("output.failed.topic.name", FAILED_TOPIC)).thenReturn(FAILED_TOPIC);
         when(configMock.get("output.malformed.topic.name", MALFORMED_TOPIC)).thenReturn(MALFORMED_TOPIC);
+        when(configMock.get("telemetry.schema.path", TELEMETRY_SCHEMA_PATH)).thenReturn(TELEMETRY_SCHEMA_PATH);
+        when(configMock.get("summary.schema.path", SUMMARY_SCHEMA_PATH)).thenReturn(SUMMARY_SCHEMA_PATH);
+        when(configMock.get("event.schema.file", DEFAULT_SCHEMA_NAME)).thenReturn(DEFAULT_SCHEMA_NAME);
         when(metricsRegistry.newCounter(anyString(), anyString())).thenReturn(counter);
         when(contextMock.getMetricsRegistry()).thenReturn(metricsRegistry);
         telemetryValidatorTask = new TelemetryValidatorTask(configMock, contextMock);
@@ -123,7 +129,6 @@ public class TelemetryValidatorTaskTest {
         telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
-
 
     public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
         return new ArgumentMatcher<OutgoingMessageEnvelope>() {
