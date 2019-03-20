@@ -6,6 +6,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
 
+import com.google.gson.Gson;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
@@ -20,6 +21,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
+
+import java.util.Map;
 
 public class TelemetryEventsValidatorTaskTest {
 
@@ -64,6 +67,7 @@ public class TelemetryEventsValidatorTaskTest {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.VALID_EVENT);
         druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(true, "")));
     }
 
     @Test
@@ -71,6 +75,7 @@ public class TelemetryEventsValidatorTaskTest {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_EVENT);
         druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(false, "contentdata/pkgversion")));
     }
 
     @Test
@@ -78,6 +83,7 @@ public class TelemetryEventsValidatorTaskTest {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DEVICEDATA_CASE_1);
         druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(false, "devicedata/firstaccess")));
     }
 
     @Test
@@ -85,6 +91,7 @@ public class TelemetryEventsValidatorTaskTest {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DEVICEDATA_CASE_2);
         druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(false, "devicedata/uaspec")));
     }
 
     @Test
@@ -92,6 +99,7 @@ public class TelemetryEventsValidatorTaskTest {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DEVICEDATA_CASE_3);
         druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(false, "devicedata/country")));
     }
 
     @Test
@@ -99,6 +107,7 @@ public class TelemetryEventsValidatorTaskTest {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DEVICEDATA_CASE_4);
         druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(true, "")));
     }
 
     @Test
@@ -106,6 +115,7 @@ public class TelemetryEventsValidatorTaskTest {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_CONTENTDATA);
         druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(false, "contentdata/language")));
     }
 
     @Test
@@ -113,6 +123,7 @@ public class TelemetryEventsValidatorTaskTest {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DIALCODEDATA);
         druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(false, "dialcodedata/status")));
     }
 
     @Test
@@ -120,6 +131,7 @@ public class TelemetryEventsValidatorTaskTest {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_USERDATA);
         druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(false, "userdata/gradelist")));
     }
 
     @Test
@@ -128,7 +140,9 @@ public class TelemetryEventsValidatorTaskTest {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DIALCODE_KEY);
         druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(false, "")));
     }
+
 
     public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
         return new ArgumentMatcher<OutgoingMessageEnvelope>() {
@@ -138,6 +152,25 @@ public class TelemetryEventsValidatorTaskTest {
                 SystemStream systemStream = outgoingMessageEnvelope.getSystemStream();
                 assertEquals("kafka", systemStream.getSystem());
                 assertEquals(stream, systemStream.getStream());
+                return true;
+            }
+        };
+    }
+
+    public ArgumentMatcher<OutgoingMessageEnvelope> validateEvent(final boolean dv_processed, final String field) {
+        return new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                Map<String, Object> event;
+                Map<String, Boolean> flags;
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String message = (String) outgoingMessageEnvelope.getMessage();
+                event = new Gson().fromJson(message, Map.class);
+                flags = new Gson().fromJson(event.get("flags").toString(), Map.class);
+                assertEquals(dv_processed, flags.get("dv_processed"));
+                if (!dv_processed) {
+                    assertEquals(true, event.get("metadata").toString().contains(field));
+                }
                 return true;
             }
         };

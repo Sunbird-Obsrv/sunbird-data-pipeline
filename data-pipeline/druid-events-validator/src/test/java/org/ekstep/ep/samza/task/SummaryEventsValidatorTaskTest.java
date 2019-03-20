@@ -6,6 +6,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
 
+import com.google.gson.Gson;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
@@ -20,6 +21,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
+
+import java.util.Map;
 
 public class SummaryEventsValidatorTaskTest {
 
@@ -65,6 +68,7 @@ public class SummaryEventsValidatorTaskTest {
         stub(envelopeMock.getMessage()).toReturn(SummaryV1.VALID_EVENT);
         druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(true, "")));
     }
 
     @Test
@@ -72,6 +76,7 @@ public class SummaryEventsValidatorTaskTest {
         stub(envelopeMock.getMessage()).toReturn(SummaryV1.INVALID_EVENT);
         druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(false, "dimensions")));
     }
 
     @Test
@@ -79,6 +84,7 @@ public class SummaryEventsValidatorTaskTest {
         stub(envelopeMock.getMessage()).toReturn(SummaryV1.INVALID_EVENT_CASE_1);
         druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(false, "tags")));
     }
 
     public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
@@ -89,6 +95,24 @@ public class SummaryEventsValidatorTaskTest {
                 SystemStream systemStream = outgoingMessageEnvelope.getSystemStream();
                 assertEquals("kafka", systemStream.getSystem());
                 assertEquals(stream, systemStream.getStream());
+                return true;
+            }
+        };
+    }
+    public ArgumentMatcher<OutgoingMessageEnvelope> validateEvent(final boolean dv_processed, final String field) {
+        return new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                Map<String, Object> event;
+                Map<String, Boolean> flags;
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String message = (String) outgoingMessageEnvelope.getMessage();
+                event = new Gson().fromJson(message, Map.class);
+                flags = new Gson().fromJson(event.get("flags").toString(), Map.class);
+                assertEquals(dv_processed, flags.get("dv_processed"));
+                if (!dv_processed) {
+                    assertEquals(true, event.get("metadata").toString().contains(field));
+                }
                 return true;
             }
         };
