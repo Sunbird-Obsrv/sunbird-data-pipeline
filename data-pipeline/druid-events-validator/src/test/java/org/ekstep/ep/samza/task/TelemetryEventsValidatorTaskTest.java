@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
-public class TelemetryValidatorTaskTest {
+public class TelemetryEventsValidatorTaskTest {
 
     private static final String SUCCESS_TOPIC = "telemetry.denorm.valid";
     private static final String FAILED_TOPIC = "telemetry.failed";
@@ -36,7 +36,7 @@ public class TelemetryValidatorTaskTest {
     private TaskCoordinator coordinatorMock;
     private IncomingMessageEnvelope envelopeMock;
     private Config configMock;
-    private TelemetryValidatorTask telemetryValidatorTask;
+    private DruidEventsValidatorTask druidEventsValidatorTask;
 
     @Before
     public void setUp() {
@@ -56,69 +56,69 @@ public class TelemetryValidatorTaskTest {
         when(configMock.get("event.schema.file", DEFAULT_SCHEMA_NAME)).thenReturn(DEFAULT_SCHEMA_NAME);
         when(metricsRegistry.newCounter(anyString(), anyString())).thenReturn(counter);
         when(contextMock.getMetricsRegistry()).thenReturn(metricsRegistry);
-        telemetryValidatorTask = new TelemetryValidatorTask(configMock, contextMock);
+        druidEventsValidatorTask = new DruidEventsValidatorTask(configMock, contextMock);
     }
 
     @Test
     public void shouldSendEventToSuccessTopicIfEventIsValid() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.VALID_EVENT);
-        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
 
     @Test
     public void shouldSendEventToFaildTopicIfEventIsNotValid() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_EVENT);
-        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
 
     @Test
     public void shouldSendEventToFaildTopicIfInvalidDeviceData_CASE1() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DEVICEDATA_CASE_1);
-        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
 
     @Test
     public void shouldSendEventToFaildTopicIfInvalidDeviceData_CASE2() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DEVICEDATA_CASE_2);
-        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
 
     @Test
     public void shouldSendEventToFaildTopicIfInvalidDeviceData_CASE3() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DEVICEDATA_CASE_3);
-        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
 
     @Test
     public void shouldSendEventToSuccessTopicIfInvalidDeviceData_CASE4() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DEVICEDATA_CASE_4);
-        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
 
     @Test
     public void shouldSendEventToFaildTopicIfInvalidContentData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_CONTENTDATA);
-        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
 
     @Test
     public void shouldSendEventToFaildTopicIfInvalidDialCodeData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DIALCODEDATA);
-        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
 
     @Test
     public void shouldSendEventToFaildTopicIfInvalidUserData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_USERDATA);
-        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
 
@@ -126,7 +126,7 @@ public class TelemetryValidatorTaskTest {
     // Case sensitive dialcode keyword validation
     public void shouldSendEventToFaildTopicIfInvalidDialCodeKeywordAppears() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DIALCODE_KEY);
-        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
 

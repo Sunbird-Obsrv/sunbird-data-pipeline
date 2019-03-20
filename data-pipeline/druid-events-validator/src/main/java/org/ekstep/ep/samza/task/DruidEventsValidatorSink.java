@@ -5,13 +5,13 @@ import org.ekstep.ep.samza.core.BaseSink;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.domain.Event;
 
-public class TelemetryValidatorSink extends BaseSink {
+public class DruidEventsValidatorSink extends BaseSink {
 
     private JobMetrics metrics;
-    private TelemetryValidatorConfig config;
+    private DruidEventsValidatorConfig config;
 
-    public TelemetryValidatorSink(MessageCollector collector, JobMetrics metrics,
-                                  TelemetryValidatorConfig config) {
+    public DruidEventsValidatorSink(MessageCollector collector, JobMetrics metrics,
+                                    DruidEventsValidatorConfig config) {
 
         super(collector);
         this.metrics = metrics;

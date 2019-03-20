@@ -4,12 +4,9 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
-import org.ekstep.ep.samza.task.TelemetryValidatorConfig;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import org.ekstep.ep.samza.task.DruidEventsValidatorConfig;
 
 import com.google.gson.Gson;
 
@@ -84,7 +81,7 @@ public class Event {
         telemetry.add("type", "events");
     }
 
-    public void markFailure(String error, TelemetryValidatorConfig config) {
+    public void markFailure(String error, DruidEventsValidatorConfig config) {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.dv_processed", false);
 

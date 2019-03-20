@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
-public class SummaryValidatorTaskTest {
+public class SummaryEventsValidatorTaskTest {
 
     private static final String SUCCESS_TOPIC = "telemetry.denorm.valid";
     private static final String FAILED_TOPIC = "telemetry.failed";
@@ -36,7 +36,7 @@ public class SummaryValidatorTaskTest {
     private TaskCoordinator coordinatorMock;
     private IncomingMessageEnvelope envelopeMock;
     private Config configMock;
-    private TelemetryValidatorTask telemetryValidatorTask;
+    private DruidEventsValidatorTask druidEventsValidatorTask;
 
     @Before
     public void setUp() {
@@ -57,27 +57,27 @@ public class SummaryValidatorTaskTest {
         when(configMock.get("summary.schema.path", SUMMARY_SCHEMA_PATH)).thenReturn(SUMMARY_SCHEMA_PATH);
         when(configMock.get("event.schema.file", DEFAULT_SCHEMA_NAME)).thenReturn(DEFAULT_SCHEMA_NAME);
 
-        telemetryValidatorTask = new TelemetryValidatorTask(configMock, contextMock);
+        druidEventsValidatorTask = new DruidEventsValidatorTask(configMock, contextMock);
     }
 
     @Test
     public void shouldSendEventToSuccessTopicIfEventIsValid() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(SummaryV1.VALID_EVENT);
-        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
 
     @Test
     public void shouldSendEventToFaildTopicIfEventIsNotValid() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(SummaryV1.INVALID_EVENT);
-        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
 
     @Test
     public void shouldSendEventToFaildTopicIfEventIsNotValid_CASE_1() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(SummaryV1.INVALID_EVENT_CASE_1);
-        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
 

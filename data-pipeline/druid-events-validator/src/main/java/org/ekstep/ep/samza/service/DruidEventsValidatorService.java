@@ -8,9 +8,9 @@ import java.text.MessageFormat;
 import com.google.common.io.ByteStreams;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.task.TelemetryValidatorConfig;
-import org.ekstep.ep.samza.task.TelemetryValidatorSink;
-import org.ekstep.ep.samza.task.TelemetryValidatorSource;
+import org.ekstep.ep.samza.task.DruidEventsValidatorConfig;
+import org.ekstep.ep.samza.task.DruidEventsValidatorSink;
+import org.ekstep.ep.samza.task.DruidEventsValidatorSource;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
@@ -18,15 +18,15 @@ import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.google.gson.JsonSyntaxException;
 
-public class TelemetryValidatorService {
-    static Logger LOGGER = new Logger(TelemetryValidatorService.class);
-    private final TelemetryValidatorConfig config;
+public class DruidEventsValidatorService {
+    static Logger LOGGER = new Logger(DruidEventsValidatorService.class);
+    private final DruidEventsValidatorConfig config;
 
-    public TelemetryValidatorService(TelemetryValidatorConfig config) {
+    public DruidEventsValidatorService(DruidEventsValidatorConfig config) {
         this.config = config;
     }
 
-    public void process(TelemetryValidatorSource source, TelemetryValidatorSink sink, JsonSchemaFactory jsonSchemaFactory) {
+    public void process(DruidEventsValidatorSource source, DruidEventsValidatorSink sink, JsonSchemaFactory jsonSchemaFactory) {
         Event event = null;
         try {
             event = source.getEvent();

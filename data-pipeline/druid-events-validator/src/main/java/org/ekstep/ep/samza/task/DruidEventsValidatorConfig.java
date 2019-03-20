@@ -3,7 +3,7 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 
-public class TelemetryValidatorConfig {
+public class DruidEventsValidatorConfig {
 
     private final String JOB_NAME = "DruidEventsValidator";
     private String telemetrySchemaPath;
@@ -14,7 +14,7 @@ public class TelemetryValidatorConfig {
     private String malformedTopic;
     private String metricsTopic;
 
-    public TelemetryValidatorConfig(Config config) {
+    public DruidEventsValidatorConfig(Config config) {
         successTopic = config.get("output.success.topic.name", "telemetry.denorm.valid");
         failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");

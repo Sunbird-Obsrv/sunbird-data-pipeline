@@ -28,36 +28,36 @@ import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
-import org.ekstep.ep.samza.service.TelemetryValidatorService;
+import org.ekstep.ep.samza.service.DruidEventsValidatorService;
 
-public class TelemetryValidatorTask implements StreamTask, InitableTask, WindowableTask {
+public class DruidEventsValidatorTask implements StreamTask, InitableTask, WindowableTask {
 
-    static Logger LOGGER = new Logger(TelemetryValidatorTask.class);
-    private TelemetryValidatorConfig config;
+    static Logger LOGGER = new Logger(DruidEventsValidatorTask.class);
+    private DruidEventsValidatorConfig config;
     private JobMetrics metrics;
-    private TelemetryValidatorService service;
+    private DruidEventsValidatorService service;
     private JsonSchemaFactory jsonSchemaFactory;
 
-    public TelemetryValidatorTask(Config config, TaskContext context) {
+    public DruidEventsValidatorTask(Config config, TaskContext context) {
         init(config, context);
     }
 
-    public TelemetryValidatorTask() {
+    public DruidEventsValidatorTask() {
 
     }
 
     @Override
     public void init(Config config, TaskContext context) {
-        this.config = new TelemetryValidatorConfig(config);
+        this.config = new DruidEventsValidatorConfig(config);
         metrics = new JobMetrics(context, this.config.jobName());
-        service = new TelemetryValidatorService(this.config);
+        service = new DruidEventsValidatorService(this.config);
     }
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector,
                         TaskCoordinator taskCoordinator) throws Exception {
-        TelemetryValidatorSource source = new TelemetryValidatorSource(envelope);
-        TelemetryValidatorSink sink = new TelemetryValidatorSink(collector, metrics, config);
+        DruidEventsValidatorSource source = new DruidEventsValidatorSource(envelope);
+        DruidEventsValidatorSink sink = new DruidEventsValidatorSink(collector, metrics, config);
         jsonSchemaFactory = JsonSchemaFactory.byDefault();
         service.process(source, sink, jsonSchemaFactory);
     }
