@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+  },
+  "anyOf": [
+    {
+      "not": {
+        "required": [
+          "dialCodes"
+        ]
+      }
+    }
+  ],
+  "additionalProperties": true
+}

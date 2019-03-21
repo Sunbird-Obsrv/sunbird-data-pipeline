@@ -8,12 +8,12 @@ import org.ekstep.ep.samza.domain.Event;
 
 import com.google.gson.Gson;
 
-public class TelemetryValidatorSource {
-    static Logger LOGGER = new Logger(TelemetryValidatorSource.class);
+public class DruidEventsValidatorSource {
+    static Logger LOGGER = new Logger(DruidEventsValidatorSource.class);
 
     private IncomingMessageEnvelope envelope;
 
-    public TelemetryValidatorSource(IncomingMessageEnvelope envelope) {
+    public DruidEventsValidatorSource(IncomingMessageEnvelope envelope) {
         this.envelope = envelope;
     }
 
