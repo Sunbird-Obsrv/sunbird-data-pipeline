@@ -1,22 +1,23 @@
 package org.ekstep.ep.samza.service;
 
-import static java.text.MessageFormat.format;
-
-import java.io.*;
-import java.text.MessageFormat;
-
-import com.google.common.io.ByteStreams;
-import org.ekstep.ep.samza.core.Logger;
-import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.task.DruidEventsValidatorConfig;
-import org.ekstep.ep.samza.task.DruidEventsValidatorSink;
-import org.ekstep.ep.samza.task.DruidEventsValidatorSource;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import com.google.common.io.ByteStreams;
 import com.google.gson.JsonSyntaxException;
+import org.ekstep.ep.samza.core.Logger;
+import org.ekstep.ep.samza.domain.Event;
+import org.ekstep.ep.samza.task.DruidEventsValidatorConfig;
+import org.ekstep.ep.samza.task.DruidEventsValidatorSink;
+import org.ekstep.ep.samza.task.DruidEventsValidatorSource;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.MessageFormat;
+
+import static java.text.MessageFormat.format;
 
 public class DruidEventsValidatorService {
     static Logger LOGGER = new Logger(DruidEventsValidatorService.class);
@@ -71,19 +72,26 @@ public class DruidEventsValidatorService {
     private String getSchema(Event event) {
         String telemetrySchemaFilePath;
         String summaryEventSchemaFilepath;
-        telemetrySchemaFilePath = MessageFormat.format("{0}/{1}/{2}", config.telemetrySchemaPath(), event.version(), event.schemaName());
-        summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}/{2}", config.summarySchemaPath(), event.version(), event.schemaName());
-        InputStream is = this.getClass().getClassLoader().getResourceAsStream(event.isSummaryEvent() ? summaryEventSchemaFilepath : telemetrySchemaFilePath);
-        if (is == null) {
-            telemetrySchemaFilePath = MessageFormat.format("{0}/{1}/{2}", config.telemetrySchemaPath(), event.version(), config.defaultSchemafile());
-            summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}/{2}", config.summarySchemaPath(), event.version(), config.defaultSchemafile());
-            is = this.getClass().getClassLoader().getResourceAsStream(event.isSummaryEvent() ? summaryEventSchemaFilepath : telemetrySchemaFilePath);
-        }
         String schema = "";
+        InputStream is = null;
         try {
+            telemetrySchemaFilePath = MessageFormat.format("{0}/{1}/{2}", config.telemetrySchemaPath(), event.version(), event.schemaName());
+            summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}/{2}", config.summarySchemaPath(), event.version(), event.schemaName());
+            is = this.getClass().getClassLoader().getResourceAsStream(event.isSummaryEvent() ? summaryEventSchemaFilepath : telemetrySchemaFilePath);
+            if (is == null) {
+                telemetrySchemaFilePath = MessageFormat.format("{0}/{1}/{2}", config.telemetrySchemaPath(), event.version(), config.defaultSchemafile());
+                summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}/{2}", config.summarySchemaPath(), event.version(), config.defaultSchemafile());
+                is = this.getClass().getClassLoader().getResourceAsStream(event.isSummaryEvent() ? summaryEventSchemaFilepath : telemetrySchemaFilePath);
+            }
             schema = new String(ByteStreams.toByteArray(is));
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(null, e.getMessage());
+        } finally {
+            try {
+                if (is != null) is.close();
+            } catch (IOException error) {
+                LOGGER.error(null, error.getMessage());
+            }
         }
         return schema;
     }
