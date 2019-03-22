@@ -2,7 +2,7 @@
   "type": "object",
   "properties": {
     "uaspec": {
-      "$ref": "resource:/schemas/summary/1.0/uaspec.json"
+      "$ref": "resource:/schemas/summary/uaspec.json"
     },
     "firstaccess": {
       "id": "http://api.sunbird.org/telemetry/devicedata/firstaccess",

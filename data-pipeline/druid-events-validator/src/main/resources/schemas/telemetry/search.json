@@ -12,7 +12,7 @@
   ],
   "allOf": [
     {
-      "$ref": "resource:/schemas/telemetry/3.0/common.json"
+      "$ref": "resource:/schemas/telemetry/common.json"
     },
     {
       "properties": {
@@ -53,7 +53,7 @@
               "type": "number"
             },
             "filters": {
-              "$ref": "resource:/schemas/telemetry/3.0/filter.json"
+              "$ref": "resource:/schemas/telemetry/filter.json"
             },
             "topn": {
               "id": "http://api.sunbird.org/telemetry/edata/topn",

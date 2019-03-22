@@ -75,12 +75,12 @@ public class DruidEventsValidatorService {
         String schema = "";
         InputStream is = null;
         try {
-            telemetrySchemaFilePath = MessageFormat.format("{0}/{1}/{2}", config.telemetrySchemaPath(), event.version(), event.schemaName());
-            summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}/{2}", config.summarySchemaPath(), event.version(), event.schemaName());
+            telemetrySchemaFilePath = MessageFormat.format("{0}/{1}", config.telemetrySchemaPath(), event.schemaName());
+            summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}", config.summarySchemaPath(), event.schemaName());
             is = this.getClass().getClassLoader().getResourceAsStream(event.isSummaryEvent() ? summaryEventSchemaFilepath : telemetrySchemaFilePath);
             if (is == null) {
-                telemetrySchemaFilePath = MessageFormat.format("{0}/{1}/{2}", config.telemetrySchemaPath(), event.version(), config.defaultSchemafile());
-                summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}/{2}", config.summarySchemaPath(), event.version(), config.defaultSchemafile());
+                telemetrySchemaFilePath = MessageFormat.format("{0}/{1}", config.telemetrySchemaPath(), config.defaultSchemafile());
+                summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}", config.summarySchemaPath(), config.defaultSchemafile());
                 is = this.getClass().getClassLoader().getResourceAsStream(event.isSummaryEvent() ? summaryEventSchemaFilepath : telemetrySchemaFilePath);
             }
             schema = new String(ByteStreams.toByteArray(is));

@@ -1,17 +1,9 @@
 {
-  "id":"http://api.sunbird.org/summary/envelope",
+  "id":"http://api.sunbird.org/telemetry/envelope",
   "type":"object",
-  "required":[
-    "eid",
-    "ets",
-    "ver",
-    "mid",
-    "context",
-    "edata"
-  ],
   "allOf":[
     {
-      "$ref":"resource:/schemas/summary/1.0/common.json"
+      "$ref":"resource:/schemas/telemetry/common.json"
     },
     {
       "properties":{
