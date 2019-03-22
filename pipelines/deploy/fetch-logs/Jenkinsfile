@@ -21,7 +21,7 @@ node() {
                 jobName = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-1].trim()
                 currentWs = sh(returnStdout: true, script: 'pwd').trim()
                 ansiblePlaybook = "${currentWs}/ansible/lpa_fetch_logs.yml"
-                ansibleExtraArgs = "--limit ${params.instance_name} --tags ${params.action} -vvv"
+                ansibleExtraArgs = "--limit ${params.instance_name} --tags ${params.action} --vault-password-file /var/lib/jenkins/secrets/vault-pass -vv"
                 values.put('currentWs', currentWs)
                 values.put('env', envDir)
                 values.put('module', module)
