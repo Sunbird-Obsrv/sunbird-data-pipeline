@@ -19,13 +19,13 @@
       "minLength": 1
     },
     "context": {
-      "$ref": "resource:/schemas/summary/1.0/context.json"
+      "$ref": "resource:/schemas/summary/context.json"
     },
     "object": {
-      "$ref": "resource:/schemas/summary/1.0/object.json"
+      "$ref": "resource:/schemas/summary/object.json"
     },
     "dimensions": {
-      "$ref": "resource:/schemas/summary/1.0/dimension.json"
+      "$ref": "resource:/schemas/summary/dimension.json"
     },
     "tags": {
       "type": "array",
@@ -34,13 +34,13 @@
       }
     },
     "devicedata": {
-      "$ref": "resource:/schemas/summary/1.0/devicedata.json"
+      "$ref": "resource:/schemas/summary/devicedata.json"
     },
     "userdata": {
-      "$ref": "resource:/schemas/summary/1.0/userdata.json"
+      "$ref": "resource:/schemas/summary/userdata.json"
     },
     "contentdata": {
-      "$ref": "resource:/schemas/summary/1.0/contentdata.json"
+      "$ref": "resource:/schemas/summary/contentdata.json"
     }
   }
 }

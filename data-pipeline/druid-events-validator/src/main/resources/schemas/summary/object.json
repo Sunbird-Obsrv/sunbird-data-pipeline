@@ -14,7 +14,7 @@
       "type": "string"
     },
     "rollup": {
-      "$ref": "resource:/schemas/summary/1.0/rollup.json"
+      "$ref": "resource:/schemas/summary/rollup.json"
     }
   }
 }

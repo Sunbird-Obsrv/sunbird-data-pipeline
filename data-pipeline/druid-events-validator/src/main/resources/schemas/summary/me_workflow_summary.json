@@ -12,7 +12,7 @@
   ],
   "allOf": [
     {
-      "$ref": "resource:/schemas/summary/1.0/common.json"
+      "$ref": "resource:/schemas/summary/common.json"
     },
     {
       "properties": {

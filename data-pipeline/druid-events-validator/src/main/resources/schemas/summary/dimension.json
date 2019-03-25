@@ -14,7 +14,7 @@
       "type": "string"
     },
     "pdata": {
-      "$ref": "resource:/schemas/summary/1.0/dimension_pdata.json"
+      "$ref": "resource:/schemas/summary/dimension_pdata.json"
     },
     "type": {
       "id": "http://api.sunbird.org/telemetry/dimension/type",
