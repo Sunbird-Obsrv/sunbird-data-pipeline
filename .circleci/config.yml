@@ -12,7 +12,7 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "pom.xml" }}
       
-      - run: mvn -Dlog4j.configuration=./logs -Dcobertura.report.format=xml clean cobertura:cobertura package
+      - run: mvn -Dlog4j.configuration=./logs -Dcobertura.report.format=xml clean cobertura:cobertura install
       
       - save_cache:
           key: dependency-cache-{{ checksum "pom.xml" }}
