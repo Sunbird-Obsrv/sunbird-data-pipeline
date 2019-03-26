@@ -1,0 +1,10 @@
+---
+- hosts: postgres
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
+  become: yes
+  roles:
+    - postgres-provision
+  # become_user: postgres
+  # roles:
+  #   - postgres

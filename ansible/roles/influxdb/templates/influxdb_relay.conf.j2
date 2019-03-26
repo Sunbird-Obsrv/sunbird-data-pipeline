@@ -1,0 +1,17 @@
+[[udp]]
+name = "{{ relay_name }}_udp"
+bind-addr = "{{ influxdb_relay_udp_bind_address }}"
+output = [
+  {% for item in groups['influxdb'] %}
+     { name="{{ host_name }}_relay_influxdb", location = "{{ hostvars[item].ansible_default_ipv4.address }}:8089", mtu=65536 },
+  {% endfor %}
+]
+
+[[http]]
+name = "{{ relay_name }}_http"
+bind-addr = "{{ influxdb_relay_http_bind_address }}"
+output = [
+  {% for item in groups['influxdb'] %}
+    { name="{{ host_name }}_relay_influxdb", location = "http://{{ hostvars[item].ansible_default_ipv4.address }}:8086/write", buffer-size-mb = 100, max-batch-kb = 50, max-delay-interval = "5s" },
+  {% endfor %}
+]

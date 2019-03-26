@@ -1,0 +1,18 @@
+---
+postgres:
+  db_url: "{{ groups['postgres'][0] }}"
+  db_username: analytics
+  db_name: analytics
+  db_password: "{{vault_postges_password}}"
+  db_tabel_name: "{{ env}}_consumer_channel_mapping"
+  db_admin_user: postgres
+  db_port: 5432
+
+
+pgdb_password: "{{vault_postges_password}}"
+db_admin_password: "{{vault_postgres_admin_password}}"
+
+consumer_id: id #mention the consumer ID
+channel: channel_id #Channel ID to map with the Consumer ID
+status: 1 #It should be either 1 or 0, 1-to activate, 0-to make it inactive
+created_by: analytics-team

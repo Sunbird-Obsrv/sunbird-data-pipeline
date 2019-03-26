@@ -247,6 +247,55 @@ public class EventFixture {
 			"    \"syncts\": 1539846605341,\n" +
 			"    \"@timestamp\": \"2018-10-18T07:10:05.341Z\"\n" +
 			"}";
+
+	public static final String INTERACT_EVENT_WITH_ACTOR_AS_SYSTEM = "{\n" +
+			"    \"actor\": {\n" +
+			"        \"type\": \"System\",\n" +
+			"        \"id\": \"393407b1-66b1-4c86-9080-b2bce9842886\"\n" +
+			"    },\n" +
+			"    \"eid\": \"INTERACT\",\n" +
+			"    \"edata\": {\n" +
+			"		 \"loc\":\"xyz\",\n" +
+			"        \"id\": \"ContentDetail\",\n" +
+			"        \"pageid\": \"ContentDetail\",\n" +
+			"        \"type\": \"TOUCH\",\n" +
+			"        \"subtype\": \"ContentDownload-Initiate\"\n" +
+			"    },\n" +
+			"    \"ver\": \"3.0\",\n" +
+			"    \"ets\": 1541574545180,\n" +
+			"    \"context\": {\n" +
+			"        \"pdata\": {\n" +
+			"            \"ver\": \"2.1.8\",\n" +
+			"            \"pid\": \"sunbird.app\",\n" +
+			"            \"id\": \"prod.diksha.app\"\n" +
+			"        },\n" +
+			"        \"channel\": \"0123221617357783046602\",\n" +
+			"        \"env\": \"sdk\",\n" +
+			"        \"cdata\": [\n" +
+			"            {\n" +
+			"                \"type\": \"qr\",\n" +
+			"                \"id\": \"K4KCXE\"\n" +
+			"            },\n" +
+			"            {\n" +
+			"                \"type\": \"API\",\n" +
+			"                \"id\": \"f3ac6610-d218-11e8-b2bb-1598ac1fcb99\"\n" +
+			"            }\n" +
+			"        ],\n" +
+			"        \"sid\": \"70ea93d0-e521-4030-934f-276e7194c225\"\n" +
+			"    },\n" +
+			"    \"mid\": \"e6a3bcd3-eb78-457b-8fc0-4acc94642ebf\",\n" +
+			"    \"object\": {\n" +
+			"        \"id\": \"do_31249561779090227216256\",\n" +
+			"        \"type\": \"Content\",\n" +
+			"        \"version\": \"\"\n" +
+			"    },\n" +
+			"    \"tags\": [\n" +
+			"        \n" +
+			"    ],\n" +
+			"    \"syncts\": 1539846605341,\n" +
+			"    \"@timestamp\": \"2018-10-18T07:10:05.341Z\"\n" +
+			"}";
+
 	public static final String ANY_STRING = "Hey Samza, Whats Up?";
 	public static final String EMPTY_JSON = "{}";
 

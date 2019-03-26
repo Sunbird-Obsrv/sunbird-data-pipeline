@@ -65,7 +65,7 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>telemetry-extractor</artifactId>
-            <version>0.0.2</version>
+            <version>0.0.5</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
@@ -79,7 +79,42 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>telemetry-location-updater</artifactId>
-            <version>0.0.4</version>
+            <version>0.0.8</version>
+            <type>tar.gz</type>
+            <classifier>distribution</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem.jobs</groupId>
+            <artifactId>de-normalization</artifactId>
+            <version>0.0.1</version>
+            <type>tar.gz</type>
+            <classifier>distribution</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem.jobs</groupId>
+            <artifactId>events-router</artifactId>
+            <version>0.0.1</version>
+            <type>tar.gz</type>
+            <classifier>distribution</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem.jobs</groupId>
+            <artifactId>de-normalization</artifactId>
+            <version>0.0.1</version>
+            <type>tar.gz</type>
+            <classifier>distribution</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem.jobs</groupId>
+            <artifactId>redis-updater</artifactId>
+            <version>0.0.1</version>
+            <type>tar.gz</type>
+            <classifier>distribution</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem.jobs</groupId>
+            <artifactId>events-router</artifactId>
+            <version>0.0.1</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>

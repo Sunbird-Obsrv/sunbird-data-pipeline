@@ -1,0 +1,6 @@
+---
+
+- hosts: "{{ remote }}"
+  roles: 
+    - samza_monitor_utilities
+  become: yes

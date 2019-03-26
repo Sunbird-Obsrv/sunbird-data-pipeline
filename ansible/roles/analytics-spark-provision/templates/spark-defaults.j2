@@ -1,0 +1,9 @@
+# Default system properties included when running spark-submit.
+# This is useful for setting default environmental settings.
+
+spark.master                     {{ spark.master.url }}
+spark.driver.memory              {{ spark.driver_memory }}
+spark.executor.extraJavaOptions  {{ spark.executor_extraJavaOptions }}
+spark.driver.extraJavaOptions    {{ spark.driver_extraJavaOptions }}
+spark.executor.memory            {{ spark.executor_memory }}
+spark.local.dir                  {{ analytics.home }}/tmp

@@ -1,0 +1,7 @@
+- hosts: cassandra
+  become: yes
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
+  roles:
+   - jre-1.8.0_144
+   - cassandra-new

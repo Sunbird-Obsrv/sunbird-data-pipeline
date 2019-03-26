@@ -6,7 +6,6 @@ initLimit={{ init_limit }}
 syncLimit={{ sync_limit }}
 
 
-{% for host in groups['zookeeper'] %}
+{% for host in zookeeper_group %}
 server.{{hostvars[host]['server_id']}}={{hostvars[host]['ansible_eth0']['ipv4']['address']}}:2888:3888
 {% endfor %}
-
