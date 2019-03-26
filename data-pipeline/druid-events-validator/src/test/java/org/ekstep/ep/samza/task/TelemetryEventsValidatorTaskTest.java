@@ -142,6 +142,34 @@ public class TelemetryEventsValidatorTaskTest {
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
 
+    @Test
+    // Should support for the both array and object type format for dialcodedata .
+    public void shouldSendToSuccessTopic() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.VALID_DIALCODETYPE);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(true, "")));
+    }
+
+    @Test
+    // When array of object properties is having invalid type ex: generatedon.
+    public void shouldSendToFailedTopic() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DIALCODETYPE_CASE_1);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(false, "generatedon")));
+    }
+
+    @Test
+    // When dialcodedata type is object and having invalid  property type ex: channel
+    public void shouldSendEventToFailedTopic() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DIALCODETYPE_CASE_2);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(false, "channel")));
+    }
+
+
 
     public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
         return new ArgumentMatcher<OutgoingMessageEnvelope>() {
