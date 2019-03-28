@@ -1,15 +1,11 @@
 package org.ekstep.ep.samza.task;
 
 import org.apache.samza.Partition;
-import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.Metric;
 import org.apache.samza.metrics.MetricsRegistry;
-import org.apache.samza.metrics.MetricsRegistryMap;
-import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.TaskContext;
-import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.fixtures.MetricsFixture;
 import org.junit.Assert;
@@ -35,7 +31,7 @@ public class JobMetricsTest {
 	public void setUp() {
 		contextMock = mock(TaskContext.class);
 		metricsRegistry = mock(MetricsRegistry.class);
-		counter = Mockito.mock(Counter.class);
+		counter = mock(Counter.class);
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
 
