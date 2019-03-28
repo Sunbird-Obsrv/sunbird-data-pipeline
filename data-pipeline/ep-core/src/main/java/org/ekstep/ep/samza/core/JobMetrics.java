@@ -25,7 +25,6 @@ public class JobMetrics {
     private final Counter cacheExpiredCount;
     private TaskContext context;
     private int partition;
-    private long consumer_lag;
     private HashMap<String,Long> offset_map= new HashMap<>();
     public JobMetrics(TaskContext context) {
         this(context,null);
@@ -80,7 +79,7 @@ public class JobMetrics {
 
     public long getConsumerLag(Map<String, ConcurrentHashMap<String, Metric>> container_registry) {
         try {
-            consumer_lag = 0;
+           long consumer_lag = 0;
             for (SystemStreamPartition s : context.getSystemStreamPartitions()) {
                 long log_end_offset = Long.valueOf(container_registry.get("org.apache.samza.system.kafka.KafkaSystemConsumerMetrics").
                         get(s.getSystem() + "-" + s.getStream() + "-" + s.getPartition().getPartitionId() + "-offset-change").toString());

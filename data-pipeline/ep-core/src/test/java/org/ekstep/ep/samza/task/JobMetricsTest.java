@@ -29,19 +29,13 @@ public class JobMetricsTest {
 	private TaskContext contextMock;
 	private MetricsRegistry metricsRegistry;
 	private Counter counter;
-	private TaskCoordinator coordinatorMock;
-	private IncomingMessageEnvelope envelopeMock;
-	private Config configMock;
 	private JobMetrics jobMetricsMock;
-    private MetricsRegistryMap metricsRegistryMap;
 
 	@Before
 	public void setUp() {
-		contextMock = Mockito.mock(TaskContext.class);
-		metricsRegistry = Mockito.mock(MetricsRegistry.class);
+		contextMock = mock(TaskContext.class);
+		metricsRegistry = mock(MetricsRegistry.class);
 		counter = Mockito.mock(Counter.class);
-		coordinatorMock = mock(TaskCoordinator.class);
-		configMock = Mockito.mock(Config.class);
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
 
