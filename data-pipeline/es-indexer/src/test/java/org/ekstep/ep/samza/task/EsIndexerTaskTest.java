@@ -81,7 +81,8 @@ public class EsIndexerTaskTest {
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
 		stub(envelopeMock.getOffset()).toReturn("2");
-		stub(envelopeMock.getSystemStreamPartition()).toReturn( new SystemStreamPartition("kafka","telemetry.denorm",new Partition(1)));
+        stub(streamMock.getPartition()).toReturn(mock(Partition.class));
+		stub(streamMock.getStream()).toReturn("inputtopic");
 
 		esIndexerPrimaryTask = new EsIndexerTask(configMock, contextMock, esServiceMock);
 	}
