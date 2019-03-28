@@ -60,5 +60,6 @@ public class DeDuplicationService {
 					e);
 			sink.toErrorTopic(event);
 		}
+		sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
 	}
 }

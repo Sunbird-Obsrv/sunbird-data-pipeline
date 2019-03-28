@@ -1,11 +1,13 @@
 package org.ekstep.ep.samza.task;
 
+import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.ekstep.ep.samza.core.BaseSink;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.domain.Event;
 
 import java.text.SimpleDateFormat;
+
 
 public class TelemetryLocationUpdaterSink extends BaseSink {
 
@@ -34,6 +36,9 @@ public class TelemetryLocationUpdaterSink extends BaseSink {
 		toTopic(config.malformedTopic(), null, message);
 		metrics.incErrorCounter();
 	}
-
+	public void setMetricsOffset(SystemStreamPartition systemStreamPartition, String offset)
+	{
+		metrics.setOffset(systemStreamPartition,offset);
+	}
 
 }
