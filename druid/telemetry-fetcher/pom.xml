@@ -72,6 +72,11 @@
             <artifactId>hadoop-aws</artifactId>
             <version>2.7.3</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.scopt</groupId>
+            <artifactId>scopt_2.11</artifactId>
+            <version>3.3.0</version>
+        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>src/main/scala</sourceDirectory>
