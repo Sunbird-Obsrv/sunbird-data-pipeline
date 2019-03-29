@@ -11,7 +11,6 @@ channel_data_exhaust_bucket: dev-data-store
 
 
 azure_account_name: "{{dp_azure_account_name}}"
-azure_backup_storage_secret: "{{dp_vault_azure_backup_storage_secret}}"
 secrets_path: '{{inventory_dir}}/secrets.yml'
 artifacts_container: "{{dp_vault_artifacts_container}}"
 azure_storage_secret: "{{dp_vault_azure_account_key}}"
@@ -109,6 +108,7 @@ data_exhaust_token: "{{dp_vault_data_exhaust_token}}"
 default_channel: "{{default_org_hash_id}}"
 
 #### backup storage secret
+backup_azure_storage_account_name: "{{dp_azure_account_name}}"
 backup_azure_storage_access_key: "{{dp_vault_azure_account_key}}"
 
 ## es backup
