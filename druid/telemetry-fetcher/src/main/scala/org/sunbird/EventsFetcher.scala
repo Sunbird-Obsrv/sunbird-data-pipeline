@@ -69,8 +69,8 @@ object EventsFetcher {
     val DEFAULT_DATA_STORE = "ekstep-prod-data-store"
     sc.hadoopConfiguration.set("fs.s3n.awsAccessKeyId", System.getenv("aws_storage_key"))
     sc.hadoopConfiguration.set("fs.s3n.awsSecretAccessKey", System.getenv("aws_storage_secret"))
-    val s3folder = Array(Query(Option(config.bucket.getOrElse(DEFAULT_DATA_STORE)), Option(config.prefix.getOrElse(DEFAULT_EVENTS_FOLDER_PATH)), Option(config.startDate.get), Option(config.endDate.get)))
-    val keys = S3DataFetcher.getObjectKeys(s3folder)
+    val s3folder = Query(Option(config.bucket.getOrElse(DEFAULT_DATA_STORE)), Option(config.prefix.getOrElse(DEFAULT_EVENTS_FOLDER_PATH)), Option(config.startDate.get), Option(config.endDate.get))
+    val keys = S3DataFetcher.getEvents(s3folder)
     val data = process(keys)
     dispatch(data, getTopic(config))
   }
@@ -83,8 +83,8 @@ object EventsFetcher {
     val DEFAULT_DATA_STORE = "telemetry-data-store"
     sc.hadoopConfiguration.set("fs.azure", "org.apache.hadoop.fs.azure.NativeAzureFileSystem")
     sc.hadoopConfiguration.set("fs.azure.account.key." + System.getenv("azure_storage_key") + ".blob.core.windows.net", System.getenv("azure_storage_secret"))
-    val azureFolder = Array(Query(Option(config.bucket.getOrElse(DEFAULT_DATA_STORE)), Option(config.prefix.getOrElse(DEFAULT_EVENTS_FOLDER_PATH)), Option(config.startDate.get), Option(config.endDate.get)))
-    val keys = AzureDataFetcher.getObjectKeys(azureFolder)
+    val azureFolder = Query(Option(config.bucket.getOrElse(DEFAULT_DATA_STORE)), Option(config.prefix.getOrElse(DEFAULT_EVENTS_FOLDER_PATH)), Option(config.startDate.get), Option(config.endDate.get))
+    val keys = AzureDataFetcher.getEvents(azureFolder)
     val data = process(keys)
     dispatch(data, getTopic(config))
   }

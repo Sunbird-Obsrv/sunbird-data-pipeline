@@ -11,13 +11,7 @@ class DataFetcherException(msg: String, ex: Exception = null) extends Exception(
 object S3DataFetcher {
   @transient val dateFormat: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd").withZoneUTC();
 
-  def getObjectKeys(queries: Array[Query]): Array[String] = {
-    val keys = for (query <- queries) yield {
-      getKeys(query)
-    }
-    keys.flatMap { x => x.map { x => x } }
-  }
-  private def getKeys(query: Query): Array[String] = {
+  def getEvents(query: Query): Array[String] = {
     search(query.bucket.get, query.prefix.get, query.startDate, query.endDate, query.datePattern.getOrElse("yyyy-MM-dd")).filterNot { x => x.isEmpty() }
   }
 

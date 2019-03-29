@@ -34,7 +34,7 @@ object KafkaProducer {
               if (null != recordMetadata) {
                 recordMetadata.checksum()
                 println(
-                  "message(" + record + ") sent to partition(" + recordMetadata.partition() +
+                  "message sent to partition(" + recordMetadata.partition() +
                     "), " +
                     "offset(" + recordMetadata.offset() + ") in " + elapsedTime + " ms");
               } else {
