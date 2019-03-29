@@ -6,12 +6,11 @@ import org.apache.spark.{SparkConf, SparkContext}
 case class Query(bucket: Option[String] = None, prefix: Option[String] = None, startDate: Option[String] = None, endDate: Option[String] = None, brokerList: Option[String] = None, topic: Option[String] = None, datePattern: Option[String] = None, eventType: Option[String] = None, service: Option[String] = None, env: Option[String] = None)
 
 object EventsFetcher {
-  val conf = new SparkConf().setAppName("app").setMaster("local[*]").set("spark.executor.memory", "1g")
+  val conf = new SparkConf().setAppName("app")
   val master = conf.getOption("spark.master")
   implicit val sc: SparkContext = new SparkContext(conf)
   if (master.isEmpty) conf.setMaster("local[*]")
   val DEFAULT_EVENTS_FOLDER_PATH = "raw/"
-  var topic = ""
 
   def main(args: Array[String]): Unit = {
     val result = executeCommands(args)
@@ -39,7 +38,7 @@ object EventsFetcher {
       opt[String]('e', "endDate") required() action { (x, c) =>
         c.copy(endDate = Some(x))
       }
-      opt[String]('s', "service") optional() action { (x, c) =>
+      opt[String]('c', "service") optional() action { (x, c) =>
         c.copy(service = Some(x))
       }
       opt[String]('t', "eventType") optional() action { (x, c) =>
