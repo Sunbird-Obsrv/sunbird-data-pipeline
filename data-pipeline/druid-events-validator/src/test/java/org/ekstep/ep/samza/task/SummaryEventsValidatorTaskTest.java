@@ -87,6 +87,25 @@ public class SummaryEventsValidatorTaskTest {
         verify(collectorMock).send(argThat(validateEvent(false, "tags")));
     }
 
+    @Test
+    // When other than `ME_WORKFLOW_SUMMARY` Event is passed then it should send that event to success topic
+    public void ShouldSendEventToSuccessTopic() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(SummaryV1.INVALID_SUMMARY);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(true, "")));
+    }
+
+    @Test
+    // uaspec object should validate
+    public void ShouldValidateUaspecObject() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(SummaryV1.UASPEC_SUMMARY);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(false, "platform")));
+    }
+
+
     public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
         return new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
