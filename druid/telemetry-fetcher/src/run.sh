@@ -78,5 +78,5 @@ today=$(date "+%Y-%m-%d-%h-%m")
 #export TELEMETRY_FETCHER_JAR_PATH="/Users/admin/Documents/sunbird-forked-repo/sunbird-data-pipeline/druid/telemetry-fetcher/target/telemetry-fetcher-1.0.jar"
 echo "Started executing the script to fetch the data from $STARTDATE to $ENDDATE date from the $SERVICE service with this $PREFIX location prefix "
 export JOB_LOGS="$PWD/logs"
-nohup $SPARK_HOME/bin/spark-submit --executor-memory $EXECUTORMEMORY --total-executor-cores $TOTAL_EXECUTRO_CORE --deploy-mode $DEPLOYEMODE --master $MASTER --class org.sunbird.EventsFetcher $TELEMETRY_FETCHER_JAR_PATH --startDate $STARTDATE --endDate $ENDDATE --env $ENV --service $SERVICE --eventType $EVENTTYPE --prefix $PREFIX >> "$JOB_LOGS/$today-events-fetcher-output.log"
+nohup $SPARK_HOME/bin/spark-submit --executor-memory $EXECUTORMEMORY --total-executor-cores $TOTAL_EXECUTOR_CORE --deploy-mode $DEPLOYEMODE --master $MASTER --class org.sunbird.EventsFetcher $TELEMETRY_FETCHER_JAR_PATH --startDate $STARTDATE --endDate $ENDDATE --env $ENV --service $SERVICE --eventType $EVENTTYPE --prefix $PREFIX >> "$JOB_LOGS/$today-events-fetcher-output.log"
 echo "Script execution completed please check the status in this $JOB_LOGS/$today-events-fetcher-output.log file"
