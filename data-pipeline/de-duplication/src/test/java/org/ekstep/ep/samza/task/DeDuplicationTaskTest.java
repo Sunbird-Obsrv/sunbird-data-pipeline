@@ -61,7 +61,8 @@ public class DeDuplicationTaskTest {
                 .toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
         stub(envelopeMock.getOffset()).toReturn("2");
-        stub(envelopeMock.getSystemStreamPartition()).toReturn( new SystemStreamPartition("kafka","input_topic",new Partition(0)));
+        stub(envelopeMock.getSystemStreamPartition())
+                .toReturn( new SystemStreamPartition("kafka","input.topic",new Partition(0)));
 
         deDuplicationTask = new DeDuplicationTask(configMock, contextMock, deDuplicationStoreMock, deDupEngineMock);
     }

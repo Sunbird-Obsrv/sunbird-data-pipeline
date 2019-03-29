@@ -64,7 +64,8 @@ public class TelemetryRouterTaskTest {
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
 		stub(envelopeMock.getOffset()).toReturn("2");
-		stub(envelopeMock.getSystemStreamPartition()).toReturn( new SystemStreamPartition("kafka","telemetry.denorm",new Partition(1)));
+		stub(envelopeMock.getSystemStreamPartition())
+				.toReturn( new SystemStreamPartition("kafka","input.topic",new Partition(1)));
 
 //		telemetryRouterTask = new TelemetryRouterTask(configMock, contextMock);
 	}

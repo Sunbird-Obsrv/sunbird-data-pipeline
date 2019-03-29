@@ -42,9 +42,9 @@ public class JobMetricsTest {
 
 		Set<SystemStreamPartition> systemStreamPartitions = new HashSet<>();
 		SystemStreamPartition systemStreamPartition =
-				new SystemStreamPartition("kafka", "telemetry.denorm1", new Partition(1));
+				new SystemStreamPartition("kafka", "inputtopic1", new Partition(1));
 		SystemStreamPartition systemStreamPartition1 =
-				new SystemStreamPartition("kafka", "telemetry.denorm", new Partition(1));
+				new SystemStreamPartition("kafka", "inputtopic2", new Partition(1));
 		systemStreamPartitions.add(systemStreamPartition);
 		systemStreamPartitions.add(systemStreamPartition1);
 		jobMetricsMock.setOffset(systemStreamPartition, "2");

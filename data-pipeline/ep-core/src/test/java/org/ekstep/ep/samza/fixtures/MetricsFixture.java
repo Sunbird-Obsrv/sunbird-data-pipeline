@@ -12,8 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MetricsFixture {
 	public static final String METRIC_EVENT = "{\n" +
 			"  \"org.apache.samza.system.kafka.KafkaSystemConsumerMetrics\": {\n" +
-			"  \"kafka-telemetry.denorm1-1-offset-change\": {\n" +
-			"      \"name\": \"kafka-telemetry.denorm1-1-offset-change\",\n" +
+			"    \"kafka-inputtopic1-1-offset-change\": {\n" +
+			"      \"name\": \"kafka-inputtopic1-1-offset-change\",\n" +
 			"      \"count\": {\n" +
 			"        \"value\": 6\n" +
 			"      }\n" +
@@ -21,21 +21,21 @@ public class MetricsFixture {
 			"  }\n" +
 			"}";
 
-	public static final String METRIC_EVENT_STREAM="{\n"+
-			"  \"org.apache.samza.system.kafka.KafkaSystemConsumerMetrics\": {\n"+
-			"  \"kafka-telemetry.denorm1-1-offset-change\": {\n"+
-			"      \"name\": \"kafka-telemetry.denorm1-1-offset-change\",\n"+
-			"      \"count\": {\n"+
-			"        \"value\": 6\n"+
-			"      }\n"+
-			"    },\n"+
-			"    \"kafka-telemetry.denorm-1-offset-change\": {\n"+
-			"      \"name\": \"kafka-telemetry.denorm-1-offset-change\",\n"+
-			"      \"count\": {\n"+
-			"        \"value\": 5\n"+
-			"      }\n"+
-			"    }\n"+
-			"  }\n"+
+	public static final String METRIC_EVENT_STREAM = "{\n" +
+			"  \"org.apache.samza.system.kafka.KafkaSystemConsumerMetrics\": {\n" +
+			"    \"kafka-inputtopic1-1-offset-change\": {\n" +
+			"      \"name\": \"kafka-inputtopic1-1-offset-change\",\n" +
+			"      \"count\": {\n" +
+			"        \"value\": 6\n" +
+			"      }\n" +
+			"    },\n" +
+			"    \"kafka-inputtopic2-1-offset-change\": {\n" +
+			"      \"name\": \"kafka-inputtopic2-1-offset-change\",\n" +
+			"      \"count\": {\n" +
+			"        \"value\": 5\n" +
+			"      }\n" +
+			"    }\n" +
+			"  }\n" +
 			"}";
 
 

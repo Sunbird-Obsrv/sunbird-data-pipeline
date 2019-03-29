@@ -73,7 +73,8 @@ public class JobMetrics {
     public void incCacheMissCounter() { cacheMissCount.inc();}
 
     public void setOffset(SystemStreamPartition systemStreamPartition, String offset) {
-        offsetMap.put(systemStreamPartition.getStream() + systemStreamPartition.getPartition().getPartitionId(),
+        String offsetMapKey=String.format("%s%s",systemStreamPartition.getStream(),systemStreamPartition.getPartition().getPartitionId());
+        offsetMap.put(offsetMapKey,
                 Long.valueOf(offset));
     }
 

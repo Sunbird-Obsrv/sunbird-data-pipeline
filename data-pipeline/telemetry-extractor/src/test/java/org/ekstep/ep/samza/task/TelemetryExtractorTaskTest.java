@@ -65,7 +65,7 @@ public class TelemetryExtractorTaskTest {
         stub(metricsRegistry.newCounter(anyString(), anyString()))
                 .toReturn(counter);
         stub(envelope.getOffset()).toReturn("2");
-        stub(envelope.getSystemStreamPartition()).toReturn( new SystemStreamPartition("kafka","telemetry.denorm",new Partition(1)));
+        stub(envelope.getSystemStreamPartition()).toReturn( new SystemStreamPartition("kafka","input.topic",new Partition(1)));
         stub(config.get("output.success.topic.name", "telemetry.raw")).toReturn(successTopic);
         stub(config.get("output.error.topic.name", "telemetry.extractor.failed")).toReturn(errorTopic);
         stub(config.get("default.channel", "01250894314817126443")).toReturn(defaultChannel);

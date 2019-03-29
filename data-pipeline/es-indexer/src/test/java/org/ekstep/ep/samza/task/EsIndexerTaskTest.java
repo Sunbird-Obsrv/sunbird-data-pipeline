@@ -82,7 +82,7 @@ public class EsIndexerTaskTest {
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
 		stub(envelopeMock.getOffset()).toReturn("2");
         stub(streamMock.getPartition()).toReturn(mock(Partition.class));
-		stub(streamMock.getStream()).toReturn("inputtopic");
+		stub(streamMock.getStream()).toReturn("input.topic");
 
 		esIndexerPrimaryTask = new EsIndexerTask(configMock, contextMock, esServiceMock);
 	}
