@@ -22,6 +22,7 @@ object EventsFetcher {
       }
     } else {
       println("Invalid arguments!!!!!!!!!, Terminating the process now.")
+      System.exit(0)
     }
   }
 
