@@ -6,7 +6,7 @@ import org.jets3t.service.security.AWSCredentials
 import org.joda.time.{Days, LocalDate}
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 
-class DataFetcherException(msg: String, ex: Exception = null) extends Exception(msg, ex) {}
+class DataFetcherException(msg: String, ex: Exception = null) extends Exception(msg, ex)
 
 object S3DataFetcher {
   @transient val dateFormat: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd").withZoneUTC();

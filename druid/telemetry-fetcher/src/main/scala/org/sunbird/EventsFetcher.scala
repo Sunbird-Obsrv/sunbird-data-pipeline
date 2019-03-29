@@ -96,7 +96,7 @@ object EventsFetcher {
     */
   def process[T](keys: Array[T])(implicit mf: Manifest[T], sc: SparkContext): RDD[T] = {
     if (null == keys || keys.length == 0) {
-      return sc.parallelize(Seq[T](), 10)
+      sc.parallelize(Seq[T](), 10)
     }
     sc.textFile(keys.mkString(","), 10).map { line => {
       line.asInstanceOf[T]
