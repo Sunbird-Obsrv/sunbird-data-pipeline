@@ -11,12 +11,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gson.reflect.TypeToken;
+import org.apache.samza.Partition;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
+import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
@@ -62,6 +64,8 @@ public class TelemetryExtractorTaskTest {
         stub(context.getMetricsRegistry()).toReturn(metricsRegistry);
         stub(metricsRegistry.newCounter(anyString(), anyString()))
                 .toReturn(counter);
+        stub(envelope.getOffset()).toReturn("2");
+        stub(envelope.getSystemStreamPartition()).toReturn( new SystemStreamPartition("kafka","input.topic",new Partition(1)));
         stub(config.get("output.success.topic.name", "telemetry.raw")).toReturn(successTopic);
         stub(config.get("output.error.topic.name", "telemetry.extractor.failed")).toReturn(errorTopic);
         stub(config.get("default.channel", "01250894314817126443")).toReturn(defaultChannel);

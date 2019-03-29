@@ -44,6 +44,7 @@ public class TelemetryLocationUpdaterService {
 					e);
 			sink.toErrorTopic(event, e.getMessage());
 		}
+		sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
 	}
 
 	private Event updateEventWithIPLocation(Event eventObj) {
