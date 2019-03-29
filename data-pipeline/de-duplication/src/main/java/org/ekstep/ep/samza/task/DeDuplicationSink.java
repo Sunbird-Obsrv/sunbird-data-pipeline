@@ -37,9 +37,9 @@ public class DeDuplicationSink extends BaseSink {
 		toTopic(config.failedTopic(), event.did(), event.getJson());
 		metrics.incErrorCounter();
 	}
-	public void setMetricsOffset(SystemStreamPartition systemStreamPartition, String offset)
-	{
-		metrics.setOffset(systemStreamPartition,offset);
+
+	public void setMetricsOffset(SystemStreamPartition systemStreamPartition, String offset) {
+		metrics.setOffset(systemStreamPartition, offset);
 	}
 
 

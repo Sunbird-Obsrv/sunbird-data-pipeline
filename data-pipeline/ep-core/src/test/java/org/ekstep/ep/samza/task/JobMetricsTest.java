@@ -11,7 +11,6 @@ import org.ekstep.ep.samza.fixtures.MetricsFixture;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -34,27 +33,28 @@ public class JobMetricsTest {
 		counter = mock(Counter.class);
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
-
-
 	}
 
 	@Test
 	public void shouldReturnConsumerLag() {
 
-		jobMetricsMock= new JobMetrics(contextMock,null);
+		jobMetricsMock = new JobMetrics(contextMock, null);
 
 		Set<SystemStreamPartition> systemStreamPartitions = new HashSet<>();
-		SystemStreamPartition systemStreamPartition= new SystemStreamPartition("kafka","telemetry.denorm1",new Partition(1));
-		SystemStreamPartition systemStreamPartition1= new SystemStreamPartition("kafka","telemetry.denorm",new Partition(1));
+		SystemStreamPartition systemStreamPartition =
+				new SystemStreamPartition("kafka", "telemetry.denorm1", new Partition(1));
+		SystemStreamPartition systemStreamPartition1 =
+				new SystemStreamPartition("kafka", "telemetry.denorm", new Partition(1));
 		systemStreamPartitions.add(systemStreamPartition);
 		systemStreamPartitions.add(systemStreamPartition1);
-		jobMetricsMock.setOffset(systemStreamPartition,"2");
-		jobMetricsMock.setOffset(systemStreamPartition1,"3");
+		jobMetricsMock.setOffset(systemStreamPartition, "2");
+		jobMetricsMock.setOffset(systemStreamPartition1, "3");
 
-		Map<String, ConcurrentHashMap<String, Metric>>  concurrentHashMap=  MetricsFixture.getMetricMap(MetricsFixture.METRIC_EVENT_STREAM);
+		Map<String, ConcurrentHashMap<String, Metric>> concurrentHashMap =
+				MetricsFixture.getMetricMap(MetricsFixture.METRIC_EVENT_STREAM);
 		when(contextMock.getSystemStreamPartitions()).thenReturn(systemStreamPartitions);
-		long consumer_lag= jobMetricsMock.getConsumerLag(concurrentHashMap);
-		Assert.assertEquals(4,consumer_lag);
+		long consumer_lag = jobMetricsMock.consumerLag(concurrentHashMap);
+		Assert.assertEquals(4, consumer_lag);
 
 	}
 }

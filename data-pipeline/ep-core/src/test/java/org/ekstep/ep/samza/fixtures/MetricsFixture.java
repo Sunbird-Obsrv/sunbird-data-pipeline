@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MetricsFixture {
-	public static final String METRIC_EVENT="{\n" +
+	public static final String METRIC_EVENT = "{\n" +
 			"  \"org.apache.samza.system.kafka.KafkaSystemConsumerMetrics\": {\n" +
 			"  \"kafka-telemetry.denorm1-1-offset-change\": {\n" +
 			"      \"name\": \"kafka-telemetry.denorm1-1-offset-change\",\n" +
@@ -39,11 +39,10 @@ public class MetricsFixture {
 			"}";
 
 
-	public static Map<String, ConcurrentHashMap<String, Metric>> getMetricMap(String message)
-	{
-		Type type = new TypeToken<Map<String, ConcurrentHashMap<String, Counter>>>(){}.getType();
-		return (Map<String,ConcurrentHashMap<String, Metric>>) new Gson().fromJson(message,type);
-
+	public static Map<String, ConcurrentHashMap<String, Metric>> getMetricMap(String message) {
+		Type type = new TypeToken<Map<String, ConcurrentHashMap<String, Counter>>>() {
+		}.getType();
+		return (Map<String, ConcurrentHashMap<String, Metric>>) new Gson().fromJson(message, type);
 	}
 
 

@@ -41,8 +41,8 @@ public class TelemetryRouterSink extends BaseSink {
 		toTopic(config.getSecondaryRouteTopic(), event.did(), event.getJson());
 		metrics.incSuccessCounter();
 	}
-	public void setMetricsOffset(SystemStreamPartition systemStreamPartition, String offset)
-	{
-		metrics.setOffset(systemStreamPartition,offset);
+
+	public void setMetricsOffset(SystemStreamPartition systemStreamPartition, String offset) {
+		metrics.setOffset(systemStreamPartition, offset);
 	}
 }

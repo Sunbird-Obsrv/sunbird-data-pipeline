@@ -25,7 +25,7 @@ public class JobMetrics {
     private final Counter cacheExpiredCount;
     private TaskContext context;
     private int partition;
-    private HashMap<String,Long> offset_map= new HashMap<>();
+    private HashMap<String,Long> offsetMap = new HashMap<>();
     public JobMetrics(TaskContext context) {
         this(context,null);
     }
@@ -40,7 +40,7 @@ public class JobMetrics {
         cacheMissCount = metricsRegistry.newCounter(getClass().getName(), "cache-miss-count");
         cacheExpiredCount = metricsRegistry.newCounter(getClass().getName(), "cache-expired-count");
         jobName = jName;
-        this.context=context;
+        this.context = context;
     }
 
     public void clear() {
@@ -72,29 +72,30 @@ public class JobMetrics {
 
     public void incCacheMissCounter() { cacheMissCount.inc();}
 
-    public void setOffset(SystemStreamPartition systemStreamPartition,String offset)
-    {
-       offset_map.put(systemStreamPartition.getStream()+systemStreamPartition.getPartition().getPartitionId(), Long.valueOf(offset));
+    public void setOffset(SystemStreamPartition systemStreamPartition, String offset) {
+        offsetMap.put(systemStreamPartition.getStream() + systemStreamPartition.getPartition().getPartitionId(),
+                Long.valueOf(offset));
     }
 
-    public long getConsumerLag(Map<String, ConcurrentHashMap<String, Metric>> container_registry) {
+    public long consumerLag(Map<String, ConcurrentHashMap<String, Metric>> containerMetricsRegistry) {
+        long consumerLag = 0;
         try {
-           long consumer_lag = 0;
-            for (SystemStreamPartition s : context.getSystemStreamPartitions()) {
-                long log_end_offset = Long.valueOf(container_registry.get("org.apache.samza.system.kafka.KafkaSystemConsumerMetrics").
-                        get(s.getSystem() + "-" + s.getStream() + "-" + s.getPartition().getPartitionId() + "-offset-change").toString());
-                long offset= offset_map.containsKey(s.getStream() + s.getPartition().getPartitionId()) ? offset_map.get(s.getStream() + s.getPartition().getPartitionId()) + 1 : 0;
-                consumer_lag = consumer_lag + (log_end_offset - offset);
-                partition = s.getPartition().getPartitionId();
+            for (SystemStreamPartition sysPartition : context.getSystemStreamPartitions()) {
+                String offsetChangeKey = String.format("%s-%s-%s-offset-change",
+                        sysPartition.getSystem(), sysPartition.getStream(), sysPartition.getPartition().getPartitionId());
+                long logEndOffset =
+                        Long.valueOf(containerMetricsRegistry.get("org.apache.samza.system.kafka.KafkaSystemConsumerMetrics")
+                                .get(offsetChangeKey).toString());
+                long offset = offsetMap.getOrDefault(sysPartition.getStream() +
+                        sysPartition.getPartition().getPartitionId(), 0L) + 1L;
+                consumerLag += logEndOffset - offset;
+                partition = sysPartition.getPartition().getPartitionId();
             }
-            return consumer_lag;
-        }catch (Exception e)
-        {
-            LOGGER.error(null,
-                    "EXCEPTION. WHEN COMPUTING CONSUMER LAG METRIC",
-                    e);
-            return 0;
+
+        } catch (Exception e) {
+            LOGGER.error(null, "EXCEPTION. WHEN COMPUTING CONSUMER LAG METRIC", e);
         }
+        return consumerLag;
     }
 
     public String collect() {
@@ -105,7 +106,8 @@ public class JobMetrics {
         metricsEvent.put("failed-message-count", failedMessageCount.getCount());
         metricsEvent.put("error-message-count", errorMessageCount.getCount());
         metricsEvent.put("skipped-message-count", skippedMessageCount.getCount());
-        metricsEvent.put("consumer_lag", getConsumerLag(((MetricsRegistryMap) context.getSamzaContainerContext().metricsRegistry).metrics()));
+        metricsEvent.put("consumer-lag",
+                consumerLag(((MetricsRegistryMap) context.getSamzaContainerContext().metricsRegistry).metrics()));
         metricsEvent.put("partition",partition);
         return new Gson().toJson(metricsEvent);
     }
