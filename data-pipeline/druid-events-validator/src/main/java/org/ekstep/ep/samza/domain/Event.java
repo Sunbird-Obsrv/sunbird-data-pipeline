@@ -99,6 +99,6 @@ public class Event {
     }
 
     public boolean isSummaryEvent() {
-        return eid() != null && eid().startsWith("ME_");
+        return eid() != null && eid().equals("ME_WORKFLOW_SUMMARY");
     }
 }
