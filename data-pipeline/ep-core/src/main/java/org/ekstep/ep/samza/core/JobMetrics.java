@@ -88,7 +88,7 @@ public class JobMetrics {
                         Long.valueOf(containerMetricsRegistry.get("org.apache.samza.system.kafka.KafkaSystemConsumerMetrics")
                                 .get(offsetChangeKey).toString());
                 long offset = offsetMap.getOrDefault(sysPartition.getStream() +
-                        sysPartition.getPartition().getPartitionId(), 0L) + 1L;
+                        sysPartition.getPartition().getPartitionId(), -1L) + 1L;
                 consumerLag += logEndOffset - offset;
                 partition = sysPartition.getPartition().getPartitionId();
             }
