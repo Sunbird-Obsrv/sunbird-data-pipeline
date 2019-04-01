@@ -1,0 +1,10 @@
+---
+- name: Copy the string file
+  copy: src=samza-job-string dest=/home/hduser owner=hduser group=hadoop mode="u=rw,g=r,o=r"
+  become: yes
+
+- name: copy the alert script
+  template: src=samza_alerts dest=/home/hduser/samza_alerts.sh mode=755
+
+- name: copy the slack script
+  template: src=samza_slack  dest=/usr/local/bin/samza_slack.sh mode=755

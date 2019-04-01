@@ -53,6 +53,16 @@ public class Event {
 		return eid.value();
 	}
 
+	public String actorid() {
+		NullableValue<String> actorid = telemetry.read("actor.id");
+		return actorid.value();
+	}
+
+	public String actortype() {
+		NullableValue<String> actortype = telemetry.read("actor.type");
+		return actortype.value();
+	}
+
 	@Override
 	public String toString() {
 		return "Event{" + "telemetry=" + telemetry + '}';
@@ -89,14 +99,33 @@ public class Event {
 		}
 	}
 
+	public void addUserLocation(Location location) {
+		Map<String, String> userLoc = new HashMap<>();
+		if (location.getState() == null) location.setState("");
+		if (location.getDistrict() == null) location.setDistrict("");
+		userLoc.put("state", location.getState());
+		userLoc.put("district", location.getDistrict());
+		if (location.isStateDistrictResolved()) {
+			setFlag(TelemetryLocationUpdaterConfig.getUserLocationJobFlag(), true);
+		} else if(location.getDistrict().equals("") && location.getState().equals("")) {
+			setFlag(TelemetryLocationUpdaterConfig.getUserLocationJobFlag(), false);
+		} else {
+			setFlag(TelemetryLocationUpdaterConfig.getUserLocationJobFlag(), true);
+		}
+		telemetry.add(path.userData(), userLoc);
+	}
+
 	public void addLocation(Location location) {
 		Map<String, String> ldata = new HashMap<>();
-		ldata.put("country_code", location.getCountryCode());
+		ldata.put("countrycode", location.getCountryCode());
 		ldata.put("country", location.getCountry());
-		ldata.put("state_code", location.getStateCode());
+		ldata.put("statecode", location.getStateCode());
 		ldata.put("state", location.getState());
 		ldata.put("city", location.getCity());
-		telemetry.add(path.ldata(), ldata);
+		ldata.put("statecustomcode", location.getstateCodeCustom());
+		ldata.put("statecustomname", location.getstateCustomName());
+		ldata.put("districtcustom", location.getDistrictCustom());
+		telemetry.add(path.deviceData(), ldata);
 	}
 
 	public void removeEdataLoc() {

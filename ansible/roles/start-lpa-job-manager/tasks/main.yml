@@ -1,0 +1,8 @@
+
+## Role to start LPA data products JOB Manager
+- name: Start JobManager
+  become: yes
+  become_user: "{{ user }}"
+  shell: "{{ analytics.home }}/scripts/start-jobmanager.sh"
+  async: "{{ (pause_min * 60) }}"
+  poll: 0

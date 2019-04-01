@@ -1,0 +1,6 @@
+---
+- include: common.yml
+  when: not ft
+
+- include: ft.yml
+  when: ft

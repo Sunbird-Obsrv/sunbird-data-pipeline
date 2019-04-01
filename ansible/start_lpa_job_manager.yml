@@ -1,0 +1,14 @@
+---
+- name: Start JobManager 
+  hosts: spark
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
+  become: yes
+  become_user: "{{ analytics_user }}"
+  tasks:
+    - name: start Jobmanager
+      shell: "{{ analytics.home }}/scripts/start-jobmanager.sh"
+      async: "{{ (pause_min * 60) }}"
+      poll: 0
+
+

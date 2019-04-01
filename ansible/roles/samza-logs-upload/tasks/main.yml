@@ -1,0 +1,2 @@
+- name: copy the backup script to yarn slaves
+  template: src=upload_samza_logs dest="{{script_path}}/upload_samza_logs.sh" mode=755

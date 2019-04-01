@@ -25,14 +25,48 @@ public class Location {
   private String stateCode;
   private String state;
   private String city;
+  private String district;
+  private String districtCustom;
+  private String stateCodeCustom;
+  private String stateCustomName;
 
-  public Location(){}
+  public Location() {
+    this.countryCode = "";
+    this.country = "";
+    this.stateCode = "";
+    this.state = "";
+    this.city = "";
+    this.district = "";
+    this.districtCustom = "";
+    this.stateCodeCustom = "";
+    this.stateCustomName = "";
+  }
   public Location(String countryCode, String country, String stateCode, String state, String city) {
     this.countryCode = countryCode;
     this.country = country;
     this.stateCode = stateCode;
     this.state = state;
     this.city = city;
+  }
+
+  public Location(String countryCode, String country, String stateCode, String state, String city, String district) {
+    this.countryCode = countryCode;
+    this.country = country;
+    this.stateCode = stateCode;
+    this.state = state;
+    this.city = city;
+    this.district = district;
+  }
+
+  public Location (String countryCode, String country, String stateCode, String state, String city, String districtCustom, String stateCustomName, String stateCodeCustom){
+    this.countryCode = countryCode;
+    this.country = country;
+    this.stateCode = stateCode;
+    this.state = state;
+    this.city = city;
+    this.districtCustom = districtCustom;
+    this.stateCustomName = stateCustomName;
+    this.stateCodeCustom = stateCodeCustom;
   }
 
   public String getCity(){
@@ -50,8 +84,28 @@ public class Location {
   public String getStateCode() {
     return stateCode;
   }
+  public String getDistrict() { return district; }
+  public String getDistrictCustom() {return districtCustom;}
+  public String getstateCustomName() {return stateCustomName;}
+  public String getstateCodeCustom() {return stateCodeCustom;}
+
+  public void setState(String state) {
+    this.state = state;
+  }
+
+  public void setDistrict(String district) {
+    this.district = district;
+  }
 
   public Boolean isLocationResolved(){
     return this.state != null && !this.state.isEmpty() && this.city != null && !this.city.isEmpty();
+  }
+
+  public Boolean isStateDistrictResolved(){
+    return this.state != null && !this.state.isEmpty() && this.district != null && !this.district.isEmpty();
+  }
+
+  public static <T> T getValueOrDefault(T value, T defaultValue) {
+    return value == null ? defaultValue : value;
   }
 }
