@@ -30,12 +30,16 @@ output {
 			    	"failed" => "%{[failed-message-count]}"
 			    	"error" => "%{[error-message-count]}"
 			    	"skipped" => "%{[skipped-message-count]}"
+                                "partition" => "%{[partition]}"
+                                "consumer_lag" => "%{[consumer-lag]}"
 			    }
 			    coerce_values => {
 		      		"success" => "integer"
 		      		"failed" => "integer"
 		      		"error" => "integer"
 		      		"skipped" => "integer"
+                                "partition" => "integer"
+                                "consumer_lag" => "integer"
 				}
 			    host => "{{influxdb_host}}"
 			    port => "{{influxdb_port}}"
