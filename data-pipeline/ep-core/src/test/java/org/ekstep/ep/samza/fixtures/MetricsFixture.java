@@ -15,7 +15,7 @@ public class MetricsFixture {
 			"    \"kafka-inputtopic1-1-offset-change\": {\n" +
 			"      \"name\": \"kafka-inputtopic1-1-offset-change\",\n" +
 			"      \"count\": {\n" +
-			"        \"value\": 6\n" +
+			"        \"value\": 0\n" +
 			"      }\n" +
 			"    }\n" +
 			"  }\n" +

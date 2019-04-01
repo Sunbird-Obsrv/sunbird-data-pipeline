@@ -57,4 +57,21 @@ public class JobMetricsTest {
 		Assert.assertEquals(4, consumer_lag);
 
 	}
+
+	@Test
+	public void shouldReturnConsumerLagWhenNoEvents() {
+
+		jobMetricsMock = new JobMetrics(contextMock, null);
+
+		Set<SystemStreamPartition> systemStreamPartitions = new HashSet<>();
+		SystemStreamPartition systemStreamPartition =
+				new SystemStreamPartition("kafka", "inputtopic1", new Partition(1));
+		systemStreamPartitions.add(systemStreamPartition);
+		Map<String, ConcurrentHashMap<String, Metric>> concurrentHashMap =
+				MetricsFixture.getMetricMap(MetricsFixture.METRIC_EVENT);
+		when(contextMock.getSystemStreamPartitions()).thenReturn(systemStreamPartitions);
+		long consumer_lag = jobMetricsMock.consumerLag(concurrentHashMap);
+		Assert.assertEquals(0, consumer_lag);
+
+	}
 }
