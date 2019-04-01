@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.task;
 
+import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.ekstep.ep.samza.core.BaseSink;
 import org.ekstep.ep.samza.core.JobMetrics;
@@ -37,6 +38,11 @@ public class DeNormalizationSink extends BaseSink {
 		event.markFailure(errorMessage, config);
 		toTopic(config.failedTopic(), event.did(), event.getJson());
 		metrics.incErrorCounter();
+	}
+
+	public void setMetricsOffset(SystemStreamPartition systemStreamPartition, String offset)
+	{
+		metrics.setOffset(systemStreamPartition,offset);
 	}
 
 }

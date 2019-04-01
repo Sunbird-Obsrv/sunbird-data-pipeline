@@ -68,5 +68,6 @@ public class DeNormalizationService {
                     e);
             sink.toErrorTopic(event, e.getMessage());
         }
+        sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
     }
 }

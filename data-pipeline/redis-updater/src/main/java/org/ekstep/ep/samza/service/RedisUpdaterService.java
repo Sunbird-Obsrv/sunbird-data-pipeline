@@ -40,6 +40,7 @@ public class RedisUpdaterService {
         } else if (!nodeUniqueId.isEmpty()) {
             updateContentCache(message, sink);
         }
+        sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
     }
 
     private void updateDialCodeCache(Map<String, Object> message, RedisUpdaterSink sink) {
@@ -92,6 +93,7 @@ public class RedisUpdaterService {
             sink.error();
             LOGGER.error("", "Exception when redis connect" + ex);
         }
+
     }
 
     @SuppressWarnings("unchecked")

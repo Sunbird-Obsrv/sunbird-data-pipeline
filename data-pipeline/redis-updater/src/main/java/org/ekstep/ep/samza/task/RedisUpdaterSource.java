@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.task;
 
 import com.google.gson.Gson;
 import org.apache.samza.system.IncomingMessageEnvelope;
+import org.apache.samza.system.SystemStreamPartition;
 import org.ekstep.ep.samza.core.Logger;
 import java.util.Map;
 
@@ -23,5 +24,7 @@ public class RedisUpdaterSource {
     public String getMessage() {
         return envelope.toString();
     }
+    public SystemStreamPartition getSystemStreamPartition() { return envelope.getSystemStreamPartition();}
+    public String getOffset() { return envelope.getOffset();}
 }
 

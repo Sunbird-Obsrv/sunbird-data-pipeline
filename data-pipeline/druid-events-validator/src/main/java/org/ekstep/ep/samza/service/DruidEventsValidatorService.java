@@ -60,6 +60,7 @@ public class DruidEventsValidatorService {
                     event), e);
             sink.toErrorTopic(event, e.getMessage());
         }
+        sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
     }
 
     private String getInvalidFieldName(String errorInfo) {
