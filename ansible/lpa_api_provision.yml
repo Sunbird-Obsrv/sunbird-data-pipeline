@@ -1,0 +1,9 @@
+---
+- hosts: analytics-api
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
+  become: yes
+  gather_facts: false
+  roles:
+   - analytics-bootstrap-always       
+   - analytics-api-provision

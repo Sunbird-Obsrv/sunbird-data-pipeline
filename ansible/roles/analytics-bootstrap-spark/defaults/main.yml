@@ -1,0 +1,11 @@
+analytics_user: analytics
+analytics_group: analytics
+analytics_user_home: /home/{{ analytics_user }}
+
+analytics:
+   home: /mount/data/analytics
+   paths: ['/home/analytics/sbin', '/mount/data/analytics', '/mount/data/analytics/logs', '/mount/data/analytics/logs/services', '/mount/data/analytics/logs/data-products', '/mount/data/analytics/logs/api-service', '/mount/data/analytics/api', '/mount/data/analytics/tmp', '/mount/data/analytics/scripts/monitor-data', '/mount/data/analytics/models' ]
+
+# analytics:
+#    home: /mount/data/analytics
+#    paths: ['/home/analytics/sbin', '/mount/data/analytics', '/mount/data/analytics/logs', '/mount/data/analytics/logs/services', '/mount/data/analytics/logs/data-products', '/mount/data/analytics/logs/api-service', '/mount/data/analytics/api', '/mount/data/analytics/tmp', '/mount/data/analytics/scripts/monitor-data', '/mount/data/analytics/models' ]

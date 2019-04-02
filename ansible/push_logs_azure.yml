@@ -1,0 +1,6 @@
+---
+- hosts: yarn-slave
+  become: yes
+  tasks:
+  - name: Copy the script
+    copy: src=resources/copy_azure.sh dest="{{script_path}}" owner=hduser group=hadoop mode="u=rwx,g=rx,o=r"

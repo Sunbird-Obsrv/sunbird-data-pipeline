@@ -1,0 +1,7 @@
+---
+- hosts: secor
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
+  become: yes
+  roles:
+    - lpa-telemetry-backup-deploy

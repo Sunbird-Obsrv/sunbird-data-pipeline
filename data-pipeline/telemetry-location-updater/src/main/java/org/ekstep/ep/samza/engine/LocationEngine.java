@@ -5,6 +5,7 @@ import org.ekstep.ep.samza.domain.Location;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.util.LocationCache;
 import org.ekstep.ep.samza.util.LocationSearchServiceClient;
+import org.ekstep.ep.samza.util.UserLocationCache;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,13 +14,16 @@ public class LocationEngine {
     private CacheService<String, Location> locationStore;
     private final LocationSearchServiceClient searchService;
     private final LocationCache locationCache;
+    private final UserLocationCache userLocationCache;
     private static Logger LOGGER = new Logger(LocationEngine.class);
 
     public LocationEngine(CacheService<String, Location> locationStore,
-                          LocationSearchServiceClient searchService, LocationCache locationCache) {
+                          LocationSearchServiceClient searchService, LocationCache locationCache,
+                          UserLocationCache userLocationCache) {
         this.locationStore = locationStore;
         this.searchService = searchService;
         this.locationCache = locationCache;
+        this.userLocationCache = userLocationCache;
     }
 
     public Location getLocation(String channel) throws IOException {
@@ -36,12 +40,16 @@ public class LocationEngine {
         return null;
     }
 
+    public Location getLocationByUser(String userId) {
+        return userLocationCache.getLocationByUser(userId);
+    }
+
     public Location loadChannelAndPopulateCache(String channel) throws IOException {
         Location loc = null;
         List<String> locationIds = searchService.searchChannelLocationId(channel);
         if (locationIds != null) {
             loc = searchService.searchLocation(locationIds);
-            LOGGER.info("", "State information retrieved from Learner API: " + loc.getState());
+            // LOGGER.info("", "State information retrieved from Learner API: " + loc.getDistrict());
         }
         if (loc != null && channel != null && !channel.isEmpty()) {
             LOGGER.info( "",

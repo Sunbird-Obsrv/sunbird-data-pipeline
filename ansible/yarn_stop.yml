@@ -1,0 +1,28 @@
+---
+- name: Stop yarn in master
+  var_files:
+    - "{{inventory_dir}}/secrets.yml"
+  hosts: yarn-master
+  become: yes
+  roles:
+    - stop-yarn-master
+  tags: stop-yarn-master
+
+- name: stop yarn in slaves
+  hosts: yarn-slave
+  var_files:
+    - "{{inventory_dir}}/secrets.yml"
+  become: yes
+  tasks:
+    - name: Stop yarn nodemanager
+      command: bash -lc "/usr/local/hadoop/sbin/yarn-daemon.sh stop nodemanager"
+      become_user: hduser
+      run_once: true
+
+    - name: Wait for nodemanager to be stopped
+      command: bash -lc "ps aux | grep nodemanager | grep -v grep"
+      register: result
+      until: "result.stdout.find('nodemanager') == -1"
+      retries: 20
+      delay: 10
+  tags: stop-yarn-slave

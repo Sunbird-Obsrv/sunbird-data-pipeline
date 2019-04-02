@@ -1,0 +1,5 @@
+---
+- hosts: yarn-master
+  roles:
+    - samza-jobs-alert
+  become: yes

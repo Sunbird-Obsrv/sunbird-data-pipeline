@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+export SPARK_HOME={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7
+export MODELS_HOME={{ analytics.home }}/models
+export DP_LOGS={{ analytics.home }}/logs/data-products
+## Job to run daily
+cd {{ analytics.home }}/scripts
+source model-config.sh
+today=$(date "+%Y-%m-%d")
+
+telemetry_converter_ver=0.0.8
+
+if [ -z "$2" ]; then job_config=$(config $1); else job_config="$2"; fi
+
+echo "Starting the job - $1" >> "$DP_LOGS/$today-job-execution.log"
+if [ "$1" == "data-exhaust" ]; then
+	nohup $SPARK_HOME/bin/spark-submit --master local[*] --jars $MODELS_HOME/analytics-framework-1.0.jar,$MODELS_HOME/ep-telemetry-reader-0.0.3.jar,$MODELS_HOME/ep-telemetry-converter-$telemetry_converter_ver.jar,$MODELS_HOME/ep-logger-0.0.1.jar --class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-1.0.jar --model "$1" --config "$job_config" >> "$DP_LOGS/$today-job-execution.log" 2>&1  
+else
+	nohup $SPARK_HOME/bin/spark-submit --master local[*] --jars $MODELS_HOME/analytics-framework-1.0.jar --class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-1.0.jar --model "$1" --config "$job_config" >> "$DP_LOGS/$today-job-execution.log" 2>&1
+fi
+echo "Job execution completed - $1" >> "$DP_LOGS/$today-job-execution.log"

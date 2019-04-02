@@ -1,0 +1,17 @@
+---
+- name: Clear logstash conf directory
+  file: path={{logstash_config_loc}} state=absent
+  become: yes
+
+- name: Create logstash conf directory
+  file: path={{logstash_config_loc}} state=directory
+  become: yes
+
+- name: Create logstash conf directory
+  file: path=/home/ecosystem/logstash state=directory
+
+- name: Copy logstash file
+  template: src=logstash.conf{{item}} dest={{ logstash_config_loc }}/logstash.conf{{item}}
+  become: yes
+  when: not revproxy
+  with_items: "{{logstash_conf}}"

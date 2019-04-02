@@ -1,0 +1,16 @@
+    
+- name: Create secor service
+  vars:
+    description: Secor service
+    script_dir: "{{ sbin_path }}"
+  template: src=secor-service.j2 dest={{ sbin_path }}/secor mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+
+- name: Copy monitoring script
+  template: src=monitor-secor.j2 dest={{ sbin_path }}/monitor-secor.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+
+- name: Copy secor libraries
+  copy: 
+    src: artifacts/target/secor-0.24-SNAPSHOT-bin.tar.gz 
+    dest: "{{ analytics_user_home }}" 
+    owner: "{{ analytics_user }}"
+    group: "{{ analytics_user }}"
