@@ -412,6 +412,21 @@
             },
             {
               "type": "path",
+              "name": "device_state_custom_code",
+              "expr": "$.devicedata.statecustomcode"
+            },
+            {
+              "type": "path",
+              "name": "device_state_custom_name",
+              "expr": "$.devicedata.statecustomname"
+            },
+            {
+              "type": "path",
+              "name": "device_district_custom",
+              "expr": "$.devicedata.districtcustom"
+            },
+            {
+              "type": "path",
               "name": "content_name",
               "expr": "$.contentdata.name"
             },
@@ -872,6 +887,18 @@
             {
               "type": "long",
               "name": "device_first_access"
+            },
+            {
+              "type": "string",
+              "name": "device_state_custom_code"
+            },
+            {
+              "type": "string",
+              "name": "device_state_custom_name"
+            },
+            {
+              "type": "string",
+              "name": "device_district_custom"
             },
             {
               "type": "string",
