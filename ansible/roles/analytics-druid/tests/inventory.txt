@@ -6,6 +6,9 @@
 [druid-postgres]
 172.29.0.2
 
+[druid-graphite]
+172.29.0.2
+
 [overlord]
 172.29.0.2
 

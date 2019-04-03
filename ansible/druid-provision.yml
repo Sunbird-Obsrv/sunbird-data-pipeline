@@ -10,6 +10,8 @@
 -
   name: Install postgres on druid cluster
   hosts: druid-postgres
+  vars_files:
+    - "{{inventory_dir}}/secrets/{{env}}.yml"
   become: yes
   roles:
     - {role: postgres-provision }
@@ -22,7 +24,14 @@
       - name: druid
         password: "{{ vault_druid_postgress_pass }}"
       - name: graphite 
-        password: "{{ vault_druid_postgress_graphite_pass }}"  
+        password: "{{ vault_druid_postgress_graphite_pass }}"
+
+- 
+  name : Install graphite on druid
+  hosts: druid-graphite
+  become: yes
+  roles:
+    - {role: druid_graphite}
 -
   name: Install role druid
   hosts: druid
