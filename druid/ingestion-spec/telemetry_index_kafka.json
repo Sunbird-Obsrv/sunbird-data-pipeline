@@ -412,17 +412,17 @@
             },
             {
               "type": "path",
-              "name": "device_state_custom_code",
+              "name": "device_loc_state_custom_code",
               "expr": "$.devicedata.statecustomcode"
             },
             {
               "type": "path",
-              "name": "device_state_custom_name",
+              "name": "device_loc_state_custom_name",
               "expr": "$.devicedata.statecustomname"
             },
             {
               "type": "path",
-              "name": "device_district_custom",
+              "name": "device_loc_district_custom",
               "expr": "$.devicedata.districtcustom"
             },
             {
@@ -890,15 +890,15 @@
             },
             {
               "type": "string",
-              "name": "device_state_custom_code"
+              "name": "device_loc_state_custom_code"
             },
             {
               "type": "string",
-              "name": "device_state_custom_name"
+              "name": "device_loc_state_custom_name"
             },
             {
               "type": "string",
-              "name": "device_district_custom"
+              "name": "device_loc_district_custom"
             },
             {
               "type": "string",
