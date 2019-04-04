@@ -340,7 +340,7 @@
                     },
                     {
                         "type": "path",
-                        "name": "device_loc_district_custom",
+                        "name": "device_loc_district",
                         "expr": "$.devicedata.districtcustom"
                     },
                     {
@@ -723,7 +723,7 @@
                     },
                     {
                         "type": "string",
-                        "name": "device_loc_district_custom"
+                        "name": "device_loc_district"
                     },
                     {
                         "type": "string",
