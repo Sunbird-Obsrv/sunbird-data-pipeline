@@ -44,7 +44,7 @@ node() {
                        mv analytics-api-1.0-dist.zip ansible
                     """
                     ansiblePlaybook = "${currentWs}/ansible/lpa_api_deploy.yml"
-                    ansibleExtraArgs = ""
+                    ansibleExtraArgs = " --vault-password-file /var/lib/jenkins/secrets/vault-pass"
                     values.put('ansiblePlaybook', ansiblePlaybook)
                     values.put('ansibleExtraArgs', ansibleExtraArgs)
                     println values

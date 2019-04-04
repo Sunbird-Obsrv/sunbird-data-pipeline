@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.task;
 
+import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.ekstep.ep.samza.core.BaseSink;
 import org.ekstep.ep.samza.core.JobMetrics;
@@ -39,5 +40,9 @@ public class TelemetryRouterSink extends BaseSink {
 	public void toSecondaryRoute(Event event) {
 		toTopic(config.getSecondaryRouteTopic(), event.did(), event.getJson());
 		metrics.incSuccessCounter();
+	}
+
+	public void setMetricsOffset(SystemStreamPartition systemStreamPartition, String offset) {
+		metrics.setOffset(systemStreamPartition, offset);
 	}
 }

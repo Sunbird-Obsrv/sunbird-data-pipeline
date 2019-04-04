@@ -34,7 +34,7 @@ under the License.
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>es-indexer</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.5</version>
     <packaging>jar</packaging>
     <name>ES Indexer</name>
     <description>
