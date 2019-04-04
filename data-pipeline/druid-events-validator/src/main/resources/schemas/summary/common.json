@@ -8,10 +8,7 @@
     },
     "ver": {
       "id": "http://api.sunbird.org/summary/ver",
-      "type": "string",
-      "enum": [
-        "1.0"
-      ]
+      "type": "string"
     },
     "mid": {
       "id": "http://api.sunbird.org/summary/mid",
