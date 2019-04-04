@@ -20,6 +20,6 @@ orphan_pid=`ps -ef | grep java | grep  -v  -E "$app_id|nodemanager|grep" | awk '
 if [ ! -z "$orphan_pid" ]
 then
     text="The following orphan processes [ $orphan_pid ] are running in $(hostname -i). Please have a look."
-    /usr/local/bin/samza_orphan_process_slack.sh critical "$text"
+    {{script_path}}/samza_orphan_process_slack.sh critical "$text"
     curl -d "{{ samza_alert_to_address }}&fromname='Samza-orphan-process-alert'&fromname='Samza-orphan-process-alert'&fromname='Samza-orphan-process-alert'&fromname='Samza-orphan-process-alert'&subject='[$env] [firing-1] - Samza orphan process alert'&text=${text}&from={{ samza_alert_from_address }}&api_user=${SGUSER}&api_key=${SGPASS}" https://api.sendgrid.com/api/mail.send.json
 fi
