@@ -3,6 +3,7 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class DeNormalizationConfig {
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
         metricsTopic = config.get("output.metrics.topic.name", "pipeline_metrics");
         ignorePeriodInMonths = config.getInt("telemetry.ignore.period.months", 6);
-        List<String> defaultSummaryEvents = new ArrayList<>();
+        List<String> defaultSummaryEvents = new ArrayList<String>();
         defaultSummaryEvents.add("ME_WORKFLOW_SUMMARY");
         summaryFilterEvents = config.getList("summary.filter.events", defaultSummaryEvents);
     }

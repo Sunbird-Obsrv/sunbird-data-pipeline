@@ -35,13 +35,13 @@ public class DeNormalizationService {
                 sink.toSuccessTopic(event);
             }
             else if (eid.startsWith("ME_")) {
-                LOGGER.info(null, "Ignoring as eid is other than WFS");
+                LOGGER.debug(null, "Ignoring as eid is other than WFS");
                 sink.incrementSkippedCount(event);
             }
             else {
                 // ignore past data (older than last X months)
                 if(event.isOlder(config.ignorePeriodInMonths())) {
-                    LOGGER.info(null, "Ignoring as ets is older than N months");
+                    LOGGER.debug(null, "Ignoring as ets is older than N months");
                     sink.toFailedTopic(event, "older than " + config.ignorePeriodInMonths() +" months");
                 }
                 else {
