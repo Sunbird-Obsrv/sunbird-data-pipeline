@@ -15,6 +15,10 @@
             },
             {
               "type": "root",
+              "name": "mid"
+            },
+            {
+              "type": "root",
               "name": "syncts"
             },
             {
@@ -577,6 +581,10 @@
             {
               "type": "string",
               "name": "eid"
+            },
+            {
+              "type": "string",
+              "name": "mid"
             },
             {
               "type": "long",
