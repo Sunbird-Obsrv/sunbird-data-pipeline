@@ -1,0 +1,15 @@
+#- name: copy the backup script to yarn slaves
+#  template: src=upload_samza_logs dest="{{script_path}}/upload_samza_logs.sh" mode=755
+
+#- name: copy the orphan process alert script to yarn slaves
+#  template: src=orphan_process dest="{{script_path}}/orphan_process" mode=755
+
+#- name: copy the orphan slack alert script to yarn slaves
+#  templates: src=orphan_slack
+
+- name: Copy the script to yarn slaves upload_samza_logs, orphan_process, orphan_slack.
+  template: src=${item.0} dest=${item.1} mode=755
+  with_items:
+     - [ 'upload_samza_logs', '{{script_path}}/upload_samza_logs.sh' ]
+     - [ 'orphan_process', '{{script_path}}/orphan_process' ]
+     - [ 'orphan_slack', '{{script_path}}/orphan_slack.sh' ]
