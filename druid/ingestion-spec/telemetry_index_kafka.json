@@ -517,6 +517,11 @@
             },
             {
               "type": "path",
+              "name": "user_roles",
+              "expr": "$.userdata.roles[*]"
+            },
+            {
+              "type": "path",
               "name": "user_loc_state",
               "expr": "$.userdata.state"
             },
@@ -967,6 +972,9 @@
             {
               "type": "string",
               "name": "user_type"
+            },
+            {
+              "name": "user_roles"
             },
             {
               "type": "string",
