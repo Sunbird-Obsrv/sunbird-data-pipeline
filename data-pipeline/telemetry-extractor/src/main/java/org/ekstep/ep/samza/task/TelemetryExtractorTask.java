@@ -23,12 +23,7 @@ import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.InitableTask;
-import org.apache.samza.task.MessageCollector;
-import org.apache.samza.task.StreamTask;
-import org.apache.samza.task.TaskContext;
-import org.apache.samza.task.TaskCoordinator;
-import org.apache.samza.task.WindowableTask;
+import org.apache.samza.task.*;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.TelemetryExtractorService;
@@ -62,12 +57,14 @@ public class TelemetryExtractorTask implements StreamTask, InitableTask, Windowa
 		String message = (String) envelope.getMessage();
 		TelemetryExtractorSink sink = new TelemetryExtractorSink(collector, metrics, config);
 
+
 		try {
 			service.process(message, sink);
 		} catch (Exception e) {
 			LOGGER.info("", "Failed to process events: " + e.getMessage());
 			sink.toErrorTopic(message);
 		}
+		metrics.setOffset(envelope.getSystemStreamPartition(),envelope.getOffset());
 	}
 
 	@Override

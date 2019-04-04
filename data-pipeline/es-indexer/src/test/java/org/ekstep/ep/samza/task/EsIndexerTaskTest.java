@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.task;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.apache.samza.Partition;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
@@ -79,6 +80,9 @@ public class EsIndexerTaskTest {
 
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
+		stub(envelopeMock.getOffset()).toReturn("2");
+        stub(streamMock.getPartition()).toReturn(mock(Partition.class));
+		stub(streamMock.getStream()).toReturn("input.topic");
 
 		esIndexerPrimaryTask = new EsIndexerTask(configMock, contextMock, esServiceMock);
 	}

@@ -41,6 +41,10 @@
             "prevstate": {
               "id": "http://api.ekstep.org/telemetry/edata/prevstate",
               "type": "string"
+            },
+            "duration": {
+              "id": "http://api.ekstep.org/telemetry/edata/duration",
+              "type": "number"
             }
           }
         }

@@ -10,12 +10,14 @@ import static org.mockito.Mockito.verify;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import org.apache.samza.Partition;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
+import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
@@ -61,6 +63,9 @@ public class TelemetryRouterTaskTest {
 
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
+		stub(envelopeMock.getOffset()).toReturn("2");
+		stub(envelopeMock.getSystemStreamPartition())
+				.toReturn( new SystemStreamPartition("kafka","input.topic",new Partition(1)));
 
 //		telemetryRouterTask = new TelemetryRouterTask(configMock, contextMock);
 	}

@@ -3,6 +3,12 @@
   hosts: "yarn-slave"
   become: yes
   tasks:
+   - name: remove the schema directory if already there.
+     file:
+       state: absent
+       path: "{{ telemetry_schema_directory }}/"
+     ignore_errors: yes
+     
    - name: cloning the telemetry schema repo
      git:
        repo: "{{schema_repo_url}}"
