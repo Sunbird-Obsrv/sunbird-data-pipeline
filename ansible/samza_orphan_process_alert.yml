@@ -1,0 +1,12 @@
+---
+- hosts: yarn-slave
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml']
+  tasks:
+     - command: ./samza_alerts.sh {{ SGUSER }} {{ SGPASS }} {{ env }}
+       args:
+        chdir: /home/hduser
+       become: yes
+       register: out
+ 
+     - debug: var=out.stdout_lines
