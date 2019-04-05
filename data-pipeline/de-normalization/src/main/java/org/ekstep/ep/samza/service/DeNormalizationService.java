@@ -30,6 +30,11 @@ public class DeNormalizationService {
             String eid = event.eid();
             List<String> summaryRouteEventPrefix = this.config.getSummaryFilterEvents();
 
+            if(eid.equals("ERROR")){
+                LOGGER.info(null,"ERROR event occurred and skipping processing");
+                return;
+            }
+
             if (summaryRouteEventPrefix.contains(eid)) {
                 event = getDenormalizedEvent(event);
                 sink.toSuccessTopic(event);

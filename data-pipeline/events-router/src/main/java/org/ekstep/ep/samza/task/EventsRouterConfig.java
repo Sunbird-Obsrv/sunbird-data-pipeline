@@ -16,6 +16,7 @@ public class EventsRouterConfig {
     private String summaryEventsRouteTopic;
     private String summaryRouteEvents;
     private String malformedTopic;
+    private String logEventsRouteTopic;
 
     public EventsRouterConfig(Config config) {
         failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
@@ -24,7 +25,7 @@ public class EventsRouterConfig {
         summaryRouteEvents = config.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY");
         summaryEventsRouteTopic = config.get("router.events.summary.route.topic", "events.summary");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
-        
+        logEventsRouteTopic = config.get("router.events.log.route.topic", "events.log");
     }
 
     public String getTelemetryEventsRouteTopic() {
@@ -66,4 +67,6 @@ public class EventsRouterConfig {
     public String jobName() {
         return JOB_NAME;
     }
+
+    public String getLogEventsRouteTopic() { return logEventsRouteTopic; }
 }

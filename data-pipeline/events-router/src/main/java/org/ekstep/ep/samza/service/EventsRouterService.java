@@ -29,7 +29,10 @@ public class EventsRouterService {
 				sink.toSummaryEventsTopic(event);
 			} else if (eid.startsWith("ME_")) {
 				sink.incrementSkippedCount(event);
-			} else {
+			}else if(eid.equals("LOG")){
+				sink.toLogEventsTopic(event);
+			}
+			else {
 				sink.toTelemetryEventsTopic(event);
 			}
 		} catch (JsonSyntaxException e) {

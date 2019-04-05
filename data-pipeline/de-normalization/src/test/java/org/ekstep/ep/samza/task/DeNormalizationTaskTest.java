@@ -586,4 +586,40 @@ public class DeNormalizationTaskTest {
         };
     }
 
+    @Test
+    public void shouldSendEventsToSuccessTopicForLogEvents() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.LOG_EVENT);
+        stub(deviceCacheMock.getDataForDeviceId("923c675274cfbf19fd0402fe4d2c37afd597f0ab",
+                "505c7c48ac6dc1edc9b08f21db5a571d")).toReturn(null);
+        Map user = new HashMap(); user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
+        stub(userCacheMock.getData("0b251080-3230-415e-a593-ab7c1fac7ae3")).toReturn(user);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                System.out.println(outputMessage);
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertEquals(outputEvent.get("ver").toString(), "3.1");
+                assertNull(outputEvent.get("devicedata"));
+                Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
+                assertEquals(userData.size(), 2);
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("device_data_retrieved"), null);
+                assertEquals(flags.get("user_data_retrieved"), true);
+                assertEquals(flags.get("content_data_retrieved"), null);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSkipProcessingForErrorEvents() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.ERROR_EVENT);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+
+    }
+
 }

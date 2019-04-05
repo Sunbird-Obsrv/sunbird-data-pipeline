@@ -284,6 +284,5 @@ public class Event {
         telemetry.add("metadata.denorm_error", error);
         telemetry.add("metadata.src", config.jobName());
     }
-
 }
 
