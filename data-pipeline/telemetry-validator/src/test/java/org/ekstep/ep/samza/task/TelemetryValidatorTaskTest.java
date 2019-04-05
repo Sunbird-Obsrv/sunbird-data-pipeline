@@ -46,12 +46,12 @@ public class TelemetryValidatorTaskTest {
     @Before
     public void setUp() {
         collectorMock = mock(MessageCollector.class);
-        TaskContext contextMock = Mockito.mock(TaskContext.class);
-        MetricsRegistry metricsRegistry = Mockito.mock(MetricsRegistry.class);
-        Counter counter = Mockito.mock(Counter.class);
+        TaskContext contextMock = mock(TaskContext.class);
+        MetricsRegistry metricsRegistry = mock(MetricsRegistry.class);
+        Counter counter = mock(Counter.class);
         coordinatorMock = mock(TaskCoordinator.class);
         envelopeMock = mock(IncomingMessageEnvelope.class);
-        Config configMock = Mockito.mock(Config.class);
+        Config configMock = mock(Config.class);
         
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
