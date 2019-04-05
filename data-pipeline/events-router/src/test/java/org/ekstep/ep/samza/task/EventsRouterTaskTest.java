@@ -29,6 +29,7 @@ public class EventsRouterTaskTest {
 	private static final String SUMMARY_EVENTS_TOPIC = "events.summary";
 	private static final String FAILED_TOPIC = "telemetry.failed";
 	private static final String MALFORMED_TOPIC = "telemetry.malformed";
+	private static final String LOG_EVENTS_TOPIC = "events.log";
 	
 	private MessageCollector collectorMock;
 	private TaskContext contextMock;
@@ -53,6 +54,7 @@ public class EventsRouterTaskTest {
 		stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
 		stub(configMock.get("router.events.summary.route.topic", SUMMARY_EVENTS_TOPIC)).toReturn(SUMMARY_EVENTS_TOPIC);
 		stub(configMock.get("output.malformed.topic.name", MALFORMED_TOPIC)).toReturn(MALFORMED_TOPIC);
+		stub(configMock.get("router.events.log.route.topic", LOG_EVENTS_TOPIC)).toReturn(LOG_EVENTS_TOPIC);
 
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
@@ -111,5 +113,15 @@ public class EventsRouterTaskTest {
 				return true;
 			}
 		};
+	}
+
+	@Test
+	public void shouldRouteLogEventsToLogEventsTopic() throws Exception {
+
+		stub(configMock.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY")).toReturn("ME_WORKFLOW_SUMMARY");
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.LOG_EVENT);
+		eventsRouterTask = new EventsRouterTask(configMock, contextMock);
+		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
+		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), LOG_EVENTS_TOPIC)));
 	}
 }
