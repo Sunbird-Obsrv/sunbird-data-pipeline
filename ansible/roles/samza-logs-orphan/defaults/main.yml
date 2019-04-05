@@ -1,5 +1,2 @@
 script_path: /home/hduser
-samza_alert_to_address: to=kaliraja.ramasamy@tarento.com&to=devops@ekstep.org&to=anandp@ilimi.in
-samza_alert_from_address: alerts@open-sunbird.org
-samza_slack_channel: samza-jobs-alerts-sb
-samza_alert_slack_url: https://hooks.slack.com/services/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
+samza_slack_channel: samza-alrt-{{env}}
