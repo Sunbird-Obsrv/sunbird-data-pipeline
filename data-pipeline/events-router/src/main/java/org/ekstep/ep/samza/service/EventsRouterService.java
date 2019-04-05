@@ -42,5 +42,6 @@ public class EventsRouterService {
 					e);
 			sink.toErrorTopic(event, e.getMessage());
 		}
+		sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
 	}
 }

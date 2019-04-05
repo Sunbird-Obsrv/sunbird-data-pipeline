@@ -27,11 +27,10 @@ public class DeNormalizationService {
             event = source.getEvent();
 
             // ignore past data (older than last X months)
-            if(event.isOlder(config.ignorePeriodInMonths())) {
+            if (event.isOlder(config.ignorePeriodInMonths())) {
                 LOGGER.error(null, "Ignoring as ets is older than N months");
-                sink.toFailedTopic(event, "older than " + config.ignorePeriodInMonths() +" months");
-            }
-            else {
+                sink.toFailedTopic(event, "older than " + config.ignorePeriodInMonths() + " months");
+            } else {
                 // correct future dates
                 event.compareAndAlterEts();
 
@@ -58,7 +57,7 @@ public class DeNormalizationService {
                 event.updateVersion();
                 sink.toSuccessTopic(event);
             }
-        } catch(JsonSyntaxException e){
+        } catch (JsonSyntaxException e) {
             LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
             sink.toMalformedTopic(source.getMessage());
         } catch (Exception e) {
@@ -68,5 +67,6 @@ public class DeNormalizationService {
                     e);
             sink.toErrorTopic(event, e.getMessage());
         }
+        sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
     }
 }

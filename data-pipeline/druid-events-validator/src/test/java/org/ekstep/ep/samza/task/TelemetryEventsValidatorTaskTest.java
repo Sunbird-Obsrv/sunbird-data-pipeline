@@ -7,12 +7,14 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
 
 import com.google.gson.Gson;
+import org.apache.samza.Partition;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
+import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
@@ -59,6 +61,9 @@ public class TelemetryEventsValidatorTaskTest {
         when(configMock.get("event.schema.file", DEFAULT_SCHEMA_NAME)).thenReturn(DEFAULT_SCHEMA_NAME);
         when(metricsRegistry.newCounter(anyString(), anyString())).thenReturn(counter);
         when(contextMock.getMetricsRegistry()).thenReturn(metricsRegistry);
+        stub(envelopeMock.getOffset()).toReturn("2");
+        stub(envelopeMock.getSystemStreamPartition())
+                .toReturn(new SystemStreamPartition("kafka", "telemetry.denorm", new Partition(1)));
         druidEventsValidatorTask = new DruidEventsValidatorTask(configMock, contextMock);
     }
 

@@ -8,12 +8,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.stub;
 import static org.mockito.Mockito.verify;
 
+import org.apache.samza.Partition;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
+import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
@@ -56,7 +58,9 @@ public class EventsRouterTaskTest {
 
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
-
+		stub(envelopeMock.getOffset()).toReturn("2");
+		stub(envelopeMock.getSystemStreamPartition())
+				.toReturn(new SystemStreamPartition("kafka", "telemetry.denorm.valid", new Partition(1)));
 	}
 
 	@Test
