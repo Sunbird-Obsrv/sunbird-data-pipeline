@@ -66,6 +66,11 @@ public class Event {
         else return false;
     }
 
+    public String eid() {
+        NullableValue<String> eid = telemetry.read("eid");
+        return eid.value();
+    }
+
     public String did() {
         NullableValue<String> did = telemetry.read("dimensions.did");
         return did.isNull() ? telemetry.<String>read("context.did").value() : did.value();
@@ -249,7 +254,7 @@ public class Event {
     }
 
     public String getUpgradedVersion() {
-        Double updatedVer = Double.parseDouble(telemetry.read(path.ver()).value().toString()) + 0.1;
+        BigDecimal updatedVer = BigDecimal.valueOf(Double.parseDouble(telemetry.read(path.ver()).value().toString())).add(BigDecimal.valueOf(0.1));
         return updatedVer.toString();
     }
 

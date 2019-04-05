@@ -76,6 +76,9 @@ public class DeNormalizationTaskTest {
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
         stub(configMock.get("output.malformed.topic.name", MALFORMED_TOPIC)).toReturn(MALFORMED_TOPIC);
         stub(configMock.getInt("telemetry.ignore.period.months", ignorePeriodInMonths)).toReturn(ignorePeriodInMonths);
+        List<String> defaultSummaryEvents = new ArrayList<>();
+        defaultSummaryEvents.add("ME_WORKFLOW_SUMMARY");
+        stub(configMock.getList("summary.filter.events", defaultSummaryEvents)).toReturn(defaultSummaryEvents);
 
         stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
@@ -525,6 +528,49 @@ public class DeNormalizationTaskTest {
         stub(dailcodeCacheMock.getData(ids)).toReturn(data);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+    }
+
+    @Test
+    public void shouldSendSummaryEventsToSuccessTopicWithDeviceUserData() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.WFS_EVENT);
+        Map device = new HashMap(); device.put("os", "Android 6.0"); device.put("make", "Motorola XT1706"); device.put("agent", "Mozilla");
+        device.put("ver", "5.0"); device.put("system", "iPad"); device.put("platform", "AppleWebKit/531.21.10"); device.put("raw", "Mozilla/5.0 (X11 Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)");
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
+                "0123221617357783046602")).toReturn(device);
+        Map user = new HashMap(); user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
+        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertEquals(outputEvent.get("ver").toString(), "1.2");
+                assertTrue(outputMessage.contains("\"agent\":\"Mozilla\""));
+                assertTrue(outputMessage.contains("\"ver\":\"5.0\""));
+                assertTrue(outputMessage.contains("\"system\":\"iPad\""));
+                assertTrue(outputMessage.contains("\"os\":\"Android 6.0\""));
+                assertTrue(outputMessage.contains("\"make\":\"Motorola XT1706\""));
+                assertTrue(outputMessage.contains("\"platform\":\"AppleWebKit/531.21.10\""));
+                assertTrue(outputMessage.contains("\"raw\":\"Mozilla/5.0 (X11 Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)\""));
+                Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
+                assertEquals(userData.size(), 2);
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("device_data_retrieved"), true);
+                assertEquals(flags.get("user_data_retrieved"), true);
+                assertEquals(flags.get("content_data_retrieved"), null);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSkipOtherSummaryEvent() throws Exception{
+
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.DEVICE_SUMMARY_EVENT);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
     }
 
     public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {

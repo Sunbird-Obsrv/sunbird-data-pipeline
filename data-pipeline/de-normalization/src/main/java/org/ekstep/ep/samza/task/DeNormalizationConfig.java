@@ -3,6 +3,10 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+
 public class DeNormalizationConfig {
 
     private final String JOB_NAME = "DeNormalization";
@@ -16,6 +20,7 @@ public class DeNormalizationConfig {
     private String malformedTopic;
     private Integer ignorePeriodInMonths;
     private final String metricsTopic;
+    private List<String> summaryFilterEvents;
 
 
     public DeNormalizationConfig(Config config) {
@@ -24,6 +29,9 @@ public class DeNormalizationConfig {
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
         metricsTopic = config.get("output.metrics.topic.name", "pipeline_metrics");
         ignorePeriodInMonths = config.getInt("telemetry.ignore.period.months", 6);
+        List<String> defaultSummaryEvents = new ArrayList<String>();
+        defaultSummaryEvents.add("ME_WORKFLOW_SUMMARY");
+        summaryFilterEvents = config.getList("summary.filter.events", defaultSummaryEvents);
     }
 
     public String successTopic() {
@@ -76,4 +84,8 @@ public class DeNormalizationConfig {
     public static String getContentLocationJobFlag() { return contentDataJobFlag; }
 
     public static String getDialCodeLocationJobFlag() { return dialCodeDataJobFlag; }
+
+    public List<String> getSummaryFilterEvents() {
+        return this.summaryFilterEvents;
+    }
 }

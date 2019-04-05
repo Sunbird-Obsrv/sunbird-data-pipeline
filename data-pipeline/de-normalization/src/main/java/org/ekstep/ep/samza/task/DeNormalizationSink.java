@@ -44,5 +44,8 @@ public class DeNormalizationSink extends BaseSink {
 		metrics.setOffset(systemStreamPartition, offset);
 	}
 
+	public void incrementSkippedCount(Event event) {
+		metrics.incSkippedCounter();
+	}
 
 }
