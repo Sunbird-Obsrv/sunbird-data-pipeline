@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.task;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
@@ -38,12 +39,8 @@ public class TelemetryValidatorTaskTest {
     private static final String MALFORMED_TOPIC = "telemetry.malformed";
     private static final String SCHEMA_PATH = "src/test/resources";
     private MessageCollector collectorMock;
-    // private TaskContext contextMock;
-    // private MetricsRegistry metricsRegistry;
-    // private Counter counter;
     private TaskCoordinator coordinatorMock;
     private IncomingMessageEnvelope envelopeMock;
-    // private Config configMock;
     private TelemetryValidatorTask telemetryValidatorTask;
     
     @Before
@@ -146,6 +143,27 @@ public class TelemetryValidatorTaskTest {
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
                 Map<String, Object> actorData = new Gson().fromJson(new Gson().toJson(outputEvent.get("actor")), mapType);
                 assertEquals("874ed8a5-782e-4f6c-8f36-e0288455901e", actorData.get("id"));
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldConvertDialcodesKeytoLowerCaseIfPresent() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_INCORRECT_DIALCODES_KEY);
+        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>() {}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                System.out.println(outputMessage);
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                Map<String, Object> edata = new Gson().fromJson(new Gson().toJson(outputEvent.get("edata")), mapType);
+                Map<String, Object> edataFilters = new Gson().fromJson(new Gson().toJson(edata.get("filters")), mapType);
+                assertTrue(edataFilters.containsKey("dialcodes"));
+                assertFalse(edataFilters.containsKey("dialCodes"));
                 return true;
             }
         }));

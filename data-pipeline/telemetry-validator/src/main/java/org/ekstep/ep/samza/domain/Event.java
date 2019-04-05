@@ -65,6 +65,11 @@ public class Event {
 		return pid.value();
 	}
 
+	public Object dialcodes() {
+		NullableValue<Object> dialcodes = telemetry.read("edata.filters.dialCodes");
+		return dialcodes.value();
+	}
+
 	public String schemaName() {
 		String eid = eid();
 		if (eid != null) {
@@ -108,6 +113,14 @@ public class Event {
 
 	public void updateActorId(String actorId) {
 		telemetry.add("actor.id", actorId);
+	}
+
+	public void correctDialCodeKey() {
+		NullableValue<Object> dialcodes = telemetry.read("edata.filters.dialCodes");
+		if (dialcodes != null && dialcodes.value() != null) {
+			telemetry.add("edata.filters.dialcodes", dialcodes.value());
+			telemetry.add("edata.filters.dialCodes", null);
+		}
 	}
 
 	public void updateDefaults(TelemetryValidatorConfig config) {

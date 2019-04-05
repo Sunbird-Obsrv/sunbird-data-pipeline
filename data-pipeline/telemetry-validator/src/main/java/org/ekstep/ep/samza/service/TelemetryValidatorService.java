@@ -29,11 +29,7 @@ public class TelemetryValidatorService {
     public void process(TelemetryValidatorSource source, TelemetryValidatorSink sink, JsonSchemaFactory jsonSchemaFactory) {
         Event event = null;
         try {
-        	event = source.getEvent();
-        	String eventActorId = event.actorId();
-        	if(eventActorId != null && !eventActorId.isEmpty() && eventActorId.startsWith("f:")) {
-        	    event.updateActorId(eventActorId.substring(eventActorId.lastIndexOf(":") + 1));
-            }
+        	event = dataCorrection(source.getEvent());
 
             if (event.pid() != null && !event.pid().isEmpty()
                     && event.pid().equalsIgnoreCase("learning-service")
@@ -79,6 +75,19 @@ public class TelemetryValidatorService {
             sink.toErrorTopic(event, e.getMessage());
         }
         sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
+    }
+
+    public Event dataCorrection(Event event) {
+        // Remove prefix from federated userIds
+        String eventActorId = event.actorId();
+        if(eventActorId != null && !eventActorId.isEmpty() && eventActorId.startsWith("f:")) {
+            event.updateActorId(eventActorId.substring(eventActorId.lastIndexOf(":") + 1));
+        }
+
+        if(event.eid() != null && event.eid().equalsIgnoreCase("SEARCH")) {
+            event.correctDialCodeKey();
+        }
+        return event;
     }
 
 }
