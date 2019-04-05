@@ -783,6 +783,182 @@ public class EventFixture {
 			"    \"ts\": \"2018-12-01T18:21:03.694+0000\"\n" +
 			"  }";
 
+	public static final String WFS_EVENT = "{\n" +
+			"    \"eid\": \"ME_WORKFLOW_SUMMARY\",\n" +
+			"    \"ets\": 1.554001624736E12,\n" +
+			"    \"syncts\": 1.553952011044E12,\n" +
+			"    \"ver\": \"1.1\",\n" +
+			"    \"mid\": \"8D7C477F841B6F82937BBC6F61E7C2FD\",\n" +
+			"    \"uid\": \"393407b1-66b1-4c86-9080-b2bce9842886\",\n" +
+			"    \"context\": {\n" +
+			"        \"pdata\": {\n" +
+			"            \"id\": \"AnalyticsDataPipeline\",\n" +
+			"            \"ver\": \"1.0\",\n" +
+			"            \"model\": \"WorkflowSummarizer\"\n" +
+			"        },\n" +
+			"        \"granularity\": \"SESSION\",\n" +
+			"        \"date_range\": {\n" +
+			"            \"from\": 1.553951969817E12,\n" +
+			"            \"to\": 1.553951999398E12\n" +
+			"        },\n" +
+			"        \"cdata\": [\n" +
+			"            \n" +
+			"        ]\n" +
+			"    },\n" +
+			"    \"dimensions\": {\n" +
+			"        \"did\": \"68dfc64a7751ad47617ac1a4e0531fb761ebea6f\",\n" +
+			"        \"pdata\": {\n" +
+			"            \"id\": \"prod.diksha.app\",\n" +
+			"            \"ver\": \"2.1.45\",\n" +
+			"            \"pid\": \"sunbird.app\"\n" +
+			"        },\n" +
+			"        \"sid\": \"4a58927b-ad4d-491e-a9e2-73b592a60a22\",\n" +
+			"        \"channel\": \"0123221617357783046602\",\n" +
+			"        \"type\": \"session\",\n" +
+			"        \"mode\": \"\"\n" +
+			"    },\n" +
+			"    \"edata\": {\n" +
+			"        \"eks\": {\n" +
+			"            \"interact_events_per_min\": 5.0,\n" +
+			"            \"start_time\": 1.553951969817E12,\n" +
+			"            \"interact_events_count\": 5.0,\n" +
+			"            \"item_responses\": [\n" +
+			"                \n" +
+			"            ],\n" +
+			"            \"end_time\": 1.553951999398E12,\n" +
+			"            \"events_summary\": [\n" +
+			"                {\n" +
+			"                    \"id\": \"START\",\n" +
+			"                    \"count\": 4.0\n" +
+			"                },\n" +
+			"                {\n" +
+			"                    \"id\": \"IMPRESSION\",\n" +
+			"                    \"count\": 4.0\n" +
+			"                },\n" +
+			"                {\n" +
+			"                    \"id\": \"INTERACT\",\n" +
+			"                    \"count\": 12.0\n" +
+			"                },\n" +
+			"                {\n" +
+			"                    \"id\": \"SHARE\",\n" +
+			"                    \"count\": 1.0\n" +
+			"                }\n" +
+			"            ],\n" +
+			"            \"page_summary\": [\n" +
+			"                {\n" +
+			"                    \"id\": \"dial-code-scan-result\",\n" +
+			"                    \"type\": \"view\",\n" +
+			"                    \"env\": \"home\",\n" +
+			"                    \"time_spent\": 4.46,\n" +
+			"                    \"visit_count\": 1.0\n" +
+			"                },\n" +
+			"                {\n" +
+			"                    \"id\": \"user-type-selection\",\n" +
+			"                    \"type\": \"search\",\n" +
+			"                    \"env\": \"home\",\n" +
+			"                    \"time_spent\": 6.08,\n" +
+			"                    \"visit_count\": 1.0\n" +
+			"                },\n" +
+			"                {\n" +
+			"                    \"id\": \"content-detail\",\n" +
+			"                    \"type\": \"detail\",\n" +
+			"                    \"env\": \"home\",\n" +
+			"                    \"time_spent\": 11.73,\n" +
+			"                    \"visit_count\": 1.0\n" +
+			"                },\n" +
+			"                {\n" +
+			"                    \"id\": \"qr-code-scanner\",\n" +
+			"                    \"type\": \"view\",\n" +
+			"                    \"env\": \"home\",\n" +
+			"                    \"time_spent\": 7.6,\n" +
+			"                    \"visit_count\": 1.0\n" +
+			"                }\n" +
+			"            ],\n" +
+			"            \"time_diff\": 29.58,\n" +
+			"            \"telemetry_version\": \"3.0\",\n" +
+			"            \"env_summary\": [\n" +
+			"                {\n" +
+			"                    \"env\": \"home\",\n" +
+			"                    \"time_spent\": 29.87,\n" +
+			"                    \"count\": 1.0\n" +
+			"                }\n" +
+			"            ],\n" +
+			"            \"time_spent\": 29.6\n" +
+			"        }\n" +
+			"    },\n" +
+			"    \"tags\": [\n" +
+			"        \n" +
+			"    ],\n" +
+			"    \"object\": {\n" +
+			"        \"id\": \"\",\n" +
+			"        \"type\": \"\"\n" +
+			"    },\n" +
+			"    \"ts\": \"2019-03-31T03:07:04.736+0000\",\n" +
+			"    \"devicedata\": {\n" +
+			"        \"country\": \"\",\n" +
+			"        \"city\": \"\",\n" +
+			"        \"countrycode\": \"\",\n" +
+			"        \"state\": \"\",\n" +
+			"        \"statecode\": \"\"\n" +
+			"    },\n" +
+			"    \"flags\": {\n" +
+			"        \"dv_processed\": false\n" +
+			"    }\n" +
+			"}";
+
+	public static final String DEVICE_SUMMARY_EVENT = "{\n" +
+			"    \"eid\": \"ME_DEVICE_SUMMARY\",\n" +
+			"    \"ets\": 1554174429447,\n" +
+			"    \"syncts\": 1554101904592,\n" +
+			"    \"ver\": \"1.0\",\n" +
+			"    \"mid\": \"3ACBFD49BAFC74832A44347FF4F1E611\",\n" +
+			"    \"context\": {\n" +
+			"      \"pdata\": {\n" +
+			"        \"id\": \"AnalyticsDataPipeline\",\n" +
+			"        \"ver\": \"1.0\",\n" +
+			"        \"model\": \"DeviceSummary\"\n" +
+			"      },\n" +
+			"      \"granularity\": \"DAY\",\n" +
+			"      \"date_range\": {\n" +
+			"        \"from\": 1554101897620,\n" +
+			"        \"to\": 1554101904209\n" +
+			"      }\n" +
+			"    },\n" +
+			"    \"dimensions\": {\n" +
+			"      \"did\": \"3f2b155788bef740fe741c92b8d80cac\",\n" +
+			"      \"channel\": \"01231711180382208027\"\n" +
+			"    },\n" +
+			"    \"edata\": {\n" +
+			"      \"eks\": {\n" +
+			"        \"firstAccess\": 1553574785315,\n" +
+			"        \"dial_stats\": {\n" +
+			"          \"total_count\": 0,\n" +
+			"          \"success_count\": 0,\n" +
+			"          \"failure_count\": 0\n" +
+			"        },\n" +
+			"        \"content_downloads\": 0,\n" +
+			"        \"contents_played\": 0,\n" +
+			"        \"total_ts\": 6,\n" +
+			"        \"total_launches\": 1,\n" +
+			"        \"unique_contents_played\": 0\n" +
+			"      }\n" +
+			"    },\n" +
+			"    \"ts\": \"2019-04-02T03:07:09.447+0000\",\n" +
+			"    \"devicedata\": {\n" +
+			"      \"statecustomcode\": \"\",\n" +
+			"      \"country\": \"\",\n" +
+			"      \"city\": \"\",\n" +
+			"      \"countrycode\": \"\",\n" +
+			"      \"state\": \"\",\n" +
+			"      \"statecode\": \"\",\n" +
+			"      \"districtcustom\": \"\",\n" +
+			"      \"statecustomname\": \"\"\n" +
+			"    },\n" +
+			"    \"flags\": {\n" +
+			"      \"device_location_retrieved\": true\n" +
+			"    }\n" +
+			"  }";
+
 	public static final String ANY_STRING = "Hey Samza, Whats Up?";
 	public static final String EMPTY_JSON = "{}";
 

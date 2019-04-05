@@ -39,4 +39,8 @@ public class DeNormalizationSink extends BaseSink {
 		metrics.incErrorCounter();
 	}
 
+	public void incrementSkippedCount(Event event) {
+		metrics.incSkippedCounter();
+	}
+
 }
