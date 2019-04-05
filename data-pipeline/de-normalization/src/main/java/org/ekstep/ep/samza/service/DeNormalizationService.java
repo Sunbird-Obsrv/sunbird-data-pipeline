@@ -29,7 +29,6 @@ public class DeNormalizationService {
             event = source.getEvent();
             String eid = event.eid();
             List<String> summaryRouteEventPrefix = this.config.getSummaryFilterEvents();
-
             if("ERROR".equals(eid)){
                 LOGGER.info(null,"Skipping as eid is ERROR");
                 sink.incrementSkippedCount(event);
