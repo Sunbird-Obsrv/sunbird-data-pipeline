@@ -80,6 +80,7 @@ public class DeNormalizationTaskTest {
         defaultSummaryEvents.add("ME_WORKFLOW_SUMMARY");
         stub(configMock.getList("summary.filter.events", defaultSummaryEvents)).toReturn(defaultSummaryEvents);
 
+        counter = new Counter("Counter");
         stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
         stub(envelopeMock.getOffset()).toReturn("2");
@@ -571,6 +572,7 @@ public class DeNormalizationTaskTest {
 
         stub(envelopeMock.getMessage()).toReturn(EventFixture.DEVICE_SUMMARY_EVENT);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        assertEquals(1, counter.getCount());
     }
 
     public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
@@ -619,7 +621,7 @@ public class DeNormalizationTaskTest {
     public void shouldSkipProcessingForErrorEvents() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.ERROR_EVENT);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-
+        assertEquals(1, counter.getCount());
     }
 
 }
