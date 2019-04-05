@@ -3,5 +3,5 @@
 - hosts: yarn-slave
   roles: 
     - bootstrap
-    - samza-logs-upload
+    - samza-logs-orphan
   become: yes

@@ -1,0 +1,6 @@
+- name: Copy the script to yarn slaves upload_samza_logs, orphan_process, orphan_slack.
+  template: src={{ item.src }} dest={{ item.dest }} mode=755
+  with_items:
+     - { src: 'upload_samza_logs', dest: '{{script_path}}/upload_samza_logs.sh' }
+     - { src: 'orphan_process', dest: '{{script_path}}/orphan_process_monitor.sh' }
+     - { src: 'orphan_slack', dest: '{{script_path}}/samza_orphan_process_slack.sh' }
