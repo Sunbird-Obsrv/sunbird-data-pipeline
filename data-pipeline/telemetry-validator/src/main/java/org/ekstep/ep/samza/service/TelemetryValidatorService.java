@@ -30,6 +30,10 @@ public class TelemetryValidatorService {
         Event event = null;
         try {
         	event = source.getEvent();
+        	String eventActorId = event.actorId();
+        	if(eventActorId != null && !eventActorId.isEmpty() && eventActorId.startsWith("f:")) {
+        	    event.updateActorId(eventActorId.substring(eventActorId.lastIndexOf(":") + 1));
+            }
 
             if (event.pid() != null && !event.pid().isEmpty()
                     && event.pid().equalsIgnoreCase("learning-service")
@@ -41,8 +45,8 @@ public class TelemetryValidatorService {
 
             String schemaFilePath = MessageFormat.format("{0}/{1}/{2}",config.schemaPath(), event.version(),event.schemaName());
             File schemaFile = new File(schemaFilePath);
-            	
-            if(!schemaFile.exists()){
+
+            if (!schemaFile.exists()) {
                 LOGGER.info("SCHEMA DOES NOT FOUND", schemaFilePath);
                 LOGGER.info("SKIP PROCESSING: SENDING TO SUCCESS", event.mid());
                 event.markSkipped();
@@ -56,7 +60,7 @@ public class TelemetryValidatorService {
             JsonSchema jsonSchema = jsonSchemaFactory.getJsonSchema(schemaJson);
             ProcessingReport report = jsonSchema.validate(eventJson);
 
-            if(report.isSuccess()){
+            if (report.isSuccess()) {
                 LOGGER.info("VALIDATION SUCCESS", event.mid());
                 event.markSuccess();
                 event.updateDefaults(config);
@@ -76,4 +80,5 @@ public class TelemetryValidatorService {
         }
         sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
     }
+
 }

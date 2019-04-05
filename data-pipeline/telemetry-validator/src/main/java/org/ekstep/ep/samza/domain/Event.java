@@ -28,8 +28,7 @@ public class Event {
 
 	public String getJson() {
 		Gson gson = new Gson();
-		String json = gson.toJson(getMap());
-		return json;
+		return gson.toJson(getMap());
 	}
 
 	public String getChecksum() {
@@ -48,6 +47,11 @@ public class Event {
 
 	public String mid() {
 		NullableValue<String> checksum = telemetry.read("mid");
+		return checksum.value();
+	}
+
+	public String actorId() {
+		NullableValue<String> checksum = telemetry.read("actor.id");
 		return checksum.value();
 	}
 
@@ -100,6 +104,10 @@ public class Event {
 	public void markSkipped() {
 		telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
 		telemetry.add("flags.tv_skipped", true);
+	}
+
+	public void updateActorId(String actorId) {
+		telemetry.add("actor.id", actorId);
 	}
 
 	public void updateDefaults(TelemetryValidatorConfig config) {

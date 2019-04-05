@@ -100,6 +100,10 @@ public class EventFixture {
             "      \"type\": \"correlationtype\"\n" +
             "    ";
 	public static final String VALID_GE_INTERACT_EVENT = "{\n" +
+            "\"actor\": {\n" +
+            "   \"type\": \"User\",\n" +
+            "   \"id\": \"f:5a8a3f2b-3409-42e0-9001-f913bc0fde31:874ed8a5-782e-4f6c-8f36-e0288455901e\"\n" +
+            "  }, \n" +
             "  \"cdata\": [],\n" +
             "  \"channel\": \"in.ekstep\",\n" +
             "  \"did\": \"0427fedf56eea1c8a127d876fd1907ffb245684f\",\n" +
