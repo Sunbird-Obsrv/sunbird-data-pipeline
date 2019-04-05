@@ -266,6 +266,21 @@
             },
             {
               "type": "path",
+              "name": "edata_plugin_id",
+              "expr": "$.edata.plugin.id"
+            },
+            {
+              "type": "path",
+              "name": "edata_plugin_ver",
+              "expr": "$.edata.plugin.ver"
+            },
+            {
+              "type": "path",
+              "name": "edata_plugin_category",
+              "expr": "$.edata.plugin.category"
+            },
+            {
+              "type": "path",
               "name": "edata_state",
               "expr": "$.edata.state"
             },
@@ -781,6 +796,18 @@
             {
               "type": "string",
               "name": "edata_items_to_type"
+            },
+            {
+              "type": "string",
+              "name": "edata_plugin_id"
+            },
+            {
+              "type": "string",
+              "name": "edata_plugin_ver"
+            },
+            {
+              "type": "string",
+              "name": "edata_plugin_category"
             },
             {
               "type": "string",
