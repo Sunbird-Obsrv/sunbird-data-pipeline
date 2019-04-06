@@ -16,6 +16,7 @@ config() {
 	analytics_home={{ analytics.home }}	
 	temp_folder={{ job_manager_tmp_dir }}
 	sparkCassandraConnectionHost="{{groups['lp-cassandra'][0]}}"
+	SunbirdPlatformCassandraConnectionHost="{{groups[''][0]}}"
 	
 	if [ -z "$2" ]; then endDate=$(date --date yesterday "+%Y-%m-%d"); else endDate=$2; fi
 	case "$1" in
@@ -266,7 +267,7 @@ config() {
 		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/usage-summary/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.updater.MEUsageUpdater","output":[{"to":"console","params":{"printEvent":false}}],"parallelization":10,"appName":"ME Usage Updater","deviceMapping":false}'
 		;;
 		"job-manager")
-		echo '{"jobsCount":17,"topic":"'$job_topic'","bootStrapServer":"'$brokerList'","zookeeperConnect":"'$zookeeper'","consumerGroup":"jobmanager","slackChannel":"#test_channel","slackUserName":"JobManager","tempBucket":"'$bucket'","tempFolder":"'$temp_folder'"}'
+		echo '{"jobsCount":18,"topic":"'$job_topic'","bootStrapServer":"'$brokerList'","zookeeperConnect":"'$zookeeper'","consumerGroup":"jobmanager","slackChannel":"#test_channel","slackUserName":"JobManager","tempBucket":"'$bucket'","tempFolder":"'$temp_folder'"}'
 		;;
 		"wfs")
 		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"unique/","endDate":"'$endDate'","delta":0}]},"filters":[{"name":"eid","operator":"NIN","value":["JOB_START","JOB_END"]}],"model":"org.ekstep.analytics.model.WorkflowSummary","modelParams":{"apiVersion":"v2"},"output":[{"to":"console","params":{"printEvent": false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$topic'"}}],"parallelization":8,"appName":"Workflow Summarizer","deviceMapping":true}'
@@ -299,6 +300,9 @@ config() {
 	   	"etb-coverage-summary")
 		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.model.ETBCoverageSummaryModel","modelParams":{"fromDate":"'$endDate'","toDate":"'$endDate'","sparkCassandraConnectionHost":"'$sparkCassandraConnectionHost'"},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$learning_topic'"}}],"parallelization":8,"appName":"ETB Coverage Model","deviceMapping":false}'
 	   	;;
+	   	"course-dashboard-metrics")
+		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.updater.UpdateCourseMetrics","modelParams":{"fromDate":"'$endDate'","toDate":"'$endDate'","sparkCassandraConnectionHost":"'$SunbirdPlatformCassandraConnectionHost'"},"output":[{"to":"console","params":{"printEvent":false}}],"parallelization":8,"appName":"Course Dashboard Metrics","deviceMapping":false}'
+		;;
 	   	"dialcode-usage-updater")
 		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/dialus/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.updater.UpdateDialcodeUsageDB","modelParams":{},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$learning_topic'"}}],"parallelization":8,"appName":"DialcodeUsageUpdater","deviceMapping":false}'
 		;;
