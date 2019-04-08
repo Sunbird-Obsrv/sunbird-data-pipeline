@@ -100,14 +100,14 @@ TIME_ZONE = 'UTC'
 # Authentication Configuration #
 #####################################
 ## LDAP / ActiveDirectory authentication setup
-{% if graphite_ldap_enabled is defined and graphite_ldap_enabled %}
-USE_LDAP_AUTH = True
-LDAP_URI = "{{ graphite_ldap_uri }}"
-LDAP_SEARCH_BASE = "{{ graphite_ldap_search_base }}"
-LDAP_BASE_USER = "{{ graphite_ldap_base_user }}"
-LDAP_BASE_PASS = "{{ graphite_ldap_base_pass }}"
-LDAP_USER_QUERY = "{{ graphite_ldap_user_query }}"
-{% else %}
+#{% if graphite_ldap_enabled is defined and graphite_ldap_enabled %}
+#USE_LDAP_AUTH = True
+#LDAP_URI = "{{ graphite_ldap_uri }}"
+#LDAP_SEARCH_BASE = "{{ graphite_ldap_search_base }}"
+#LDAP_BASE_USER = "{{ graphite_ldap_base_user }}"
+#LDAP_BASE_PASS = "{{ graphite_ldap_base_pass }}"
+#LDAP_USER_QUERY = "{{ graphite_ldap_user_query }}"
+#{% else %}
 #USE_LDAP_AUTH = True
 #LDAP_SERVER = "ldap.mycompany.com"
 #LDAP_PORT = 389
