@@ -17,6 +17,7 @@
       {"indices":"*","include_global_state":false}
     headers:
       Content-Type: "application/json"
+    timeout: 60
 
 - name: Print all snapshots
   uri:
@@ -38,4 +39,4 @@
   register: result
   until: result.json.snapshots[0].state == 'SUCCESS'
   retries: 300
-  delay: 10
+  delay: 15
