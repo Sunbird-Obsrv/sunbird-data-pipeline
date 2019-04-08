@@ -65,11 +65,6 @@ public class Event {
 		return pid.value();
 	}
 
-	public Object dialcodes() {
-		NullableValue<Object> dialcodes = telemetry.read("edata.filters.dialCodes");
-		return dialcodes.value();
-	}
-
 	public String schemaName() {
 		String eid = eid();
 		if (eid != null) {
