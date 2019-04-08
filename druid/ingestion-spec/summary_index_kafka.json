@@ -19,6 +19,10 @@
                     },
                     {
                         "type": "root",
+                        "name": "mid"
+                    },
+                    {
+                        "type": "root",
                         "name": "ver"
                     },
                     {
@@ -461,6 +465,10 @@
                     {
                         "type": "string",
                         "name": "eid"
+                    },
+                    {
+                        "type": "string",
+                        "name": "mid"
                     },
                     {
                         "type": "string",
