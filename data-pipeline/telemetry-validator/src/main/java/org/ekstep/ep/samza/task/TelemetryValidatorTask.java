@@ -32,7 +32,6 @@ import org.ekstep.ep.samza.service.TelemetryValidatorService;
 
 public class TelemetryValidatorTask implements StreamTask, InitableTask, WindowableTask {
 
-    static Logger LOGGER = new Logger(TelemetryValidatorTask.class);
     private TelemetryValidatorConfig config;
     private JobMetrics metrics;
     private TelemetryValidatorService service;

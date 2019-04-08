@@ -114,14 +114,14 @@ public class TelemetryLocationUpdaterTaskTest {
 				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-				assertEquals(outputEvent.get("ver"), "3.0");
+				assertEquals("3.0", outputEvent.get("ver"));
 				assertTrue(outputMessage.contains("\"countrycode\":\"\""));
 				assertTrue(outputMessage.contains("\"country\":\"\""));
 				assertTrue(outputMessage.contains("\"statecode\":\"\""));
 				assertTrue(outputMessage.contains("\"state\":\"\""));
 				assertTrue(outputMessage.contains("\"city\":\"\""));
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-				assertEquals(flags.get("device_location_retrieved"), false);
+				assertEquals(false, flags.get("device_location_retrieved"));
 				return true;
 			}
 		}));
@@ -143,14 +143,14 @@ public class TelemetryLocationUpdaterTaskTest {
 				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-				assertEquals(outputEvent.get("ver"), "3.0");
+				assertEquals("3.0", outputEvent.get("ver"));
 				assertTrue(outputMessage.contains("\"countrycode\":\"\""));
 				assertTrue(outputMessage.contains("\"country\":\"\""));
 				assertTrue(outputMessage.contains("\"statecode\":\"\""));
 				assertTrue(outputMessage.contains("\"state\":\"\""));
 				assertTrue(outputMessage.contains("\"city\":\"\""));
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-				assertEquals(flags.get("device_location_retrieved"), false);
+				assertEquals(false, flags.get("device_location_retrieved"));
 				return true;
 			}
 		}));
@@ -207,14 +207,14 @@ public class TelemetryLocationUpdaterTaskTest {
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
 				Map<String, Object> context = new Gson().fromJson(new Gson().toJson(outputEvent.get("devicedata")), mapType);
-				assertEquals(outputEvent.get("ver"), "3.0");
-				assertEquals(context.get("countrycode"), "IN");
-				assertEquals(context.get("country"), "India");
-				assertEquals(context.get("statecode"), "KA");
-				assertEquals(context.get("state"), "Karnataka");
-				assertEquals(context.get("city"), "Bangalore");
+				assertEquals("3.0", outputEvent.get("ver"));
+				assertEquals("IN", context.get("countrycode"));
+				assertEquals("India", context.get("country"));
+				assertEquals("KA", context.get("statecode"));
+				assertEquals("Karnataka", context.get("state"));
+				assertEquals("Bangalore", context.get("city"));
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-				assertEquals(flags.get("device_location_retrieved"), true);
+				assertEquals(true, flags.get("device_location_retrieved"));
 				Map<String, Object> edata = new Gson().fromJson(outputEvent.get("edata").toString(), mapType);
 				assertNull(edata.get("loc"));
 				return true;
@@ -241,17 +241,17 @@ public class TelemetryLocationUpdaterTaskTest {
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
 				Map<String, Object> context = new Gson().fromJson(outputEvent.get("devicedata").toString(), mapType);
-				assertEquals(outputEvent.get("ver"), "3.0");
-				assertEquals(context.get("countrycode"), "IN");
-				assertEquals(context.get("country"), "India");
-				assertEquals(context.get("statecode"), "KA");
-				assertEquals(context.get("state"), "Karnataka");
-				assertEquals(context.get("city"), "Bangalore");
-				assertEquals(context.get("statecustomcode"), "KA-Custom");
-				assertEquals(context.get("districtcustom"), "Banglore-Custom");
-				assertEquals(context.get("statecustomname"), "Karnatak-Custom");
+				assertEquals("3.0", outputEvent.get("ver"));
+				assertEquals("IN", context.get("countrycode"));
+				assertEquals("India", context.get("country"));
+				assertEquals("KA", context.get("statecode"));
+				assertEquals("Karnataka", context.get("state"));
+				assertEquals("Bangalore", context.get("city"));
+				assertEquals("KA-Custom", context.get("statecustomcode"));
+				assertEquals("Banglore-Custom", context.get("districtcustom"));
+				assertEquals("Karnatak-Custom", context.get("statecustomname"));
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-				assertEquals(flags.get("device_location_retrieved"), true);
+				assertEquals(true, flags.get("device_location_retrieved"));
 				return true;
 			}
 		}));
@@ -305,9 +305,9 @@ public class TelemetryLocationUpdaterTaskTest {
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
 				Map<String, Object> userloc = new Gson().fromJson(new Gson().toJson(outputEvent.get("userdata")), mapType);
-				assertEquals(outputEvent.get("ver"), "3.0");
-				assertEquals(userloc.get("state"), "Tamil Nadu");
-				assertEquals(userloc.get("district"), "Chennai");
+				assertEquals("3.0", outputEvent.get("ver"));
+				assertEquals("Tamil Nadu", userloc.get("state"));
+				assertEquals("Chennai", userloc.get("district"));
 				return true;
 			}
 		}));
@@ -333,8 +333,8 @@ public class TelemetryLocationUpdaterTaskTest {
 				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-				Object userloc = outputEvent.get("userdata");
-				assertEquals(userloc, null);
+				Object userlocdata = outputEvent.get("userdata");
+				assertNull(userlocdata);
 				return true;
 			}
 		}));
@@ -362,9 +362,9 @@ public class TelemetryLocationUpdaterTaskTest {
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
 				Map<String, Object> userloc = new Gson().fromJson(new Gson().toJson(outputEvent.get("userdata")), mapType);
-				assertEquals(outputEvent.get("ver"), "3.0");
-				assertEquals(userloc.get("state"), "Karnataka");
-				assertEquals(userloc.get("district"), "Mysore");
+				assertEquals("3.0", outputEvent.get("ver"));
+				assertEquals("Karnataka", userloc.get("state"));
+				assertEquals("Mysore", userloc.get("district"));
 				return true;
 			}
 		}));
