@@ -19,6 +19,10 @@
                     },
                     {
                         "type": "root",
+                        "name": "mid"
+                    },
+                    {
+                        "type": "root",
                         "name": "ver"
                     },
                     {
@@ -330,6 +334,21 @@
                     },
                     {
                         "type": "path",
+                        "name": "device_loc_state_custom_code",
+                        "expr": "$.devicedata.statecustomcode"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_loc_state_custom_name",
+                        "expr": "$.devicedata.statecustomname"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_loc_district",
+                        "expr": "$.devicedata.districtcustom"
+                    },
+                    {
+                        "type": "path",
                         "name": "content_name",
                         "expr": "$.contentdata.name"
                     },
@@ -421,6 +440,11 @@
                     },
                     {
                         "type": "path",
+                        "name": "user_roles",
+                        "expr": "$.userdata.roles[*]"
+                    },
+                    {
+                        "type": "path",
                         "name": "user_loc_state",
                         "expr": "$.userdata.state"
                     },
@@ -441,6 +465,10 @@
                     {
                         "type": "string",
                         "name": "eid"
+                    },
+                    {
+                        "type": "string",
+                        "name": "mid"
                     },
                     {
                         "type": "string",
@@ -695,6 +723,18 @@
                     },
                     {
                         "type": "string",
+                        "name": "device_loc_state_custom_code"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_loc_state_custom_name"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_loc_district"
+                    },
+                    {
+                        "type": "string",
                         "name": "content_name"
                     },
                     {
@@ -761,6 +801,9 @@
                     {
                         "type": "string",
                         "name": "user_type"
+                    },
+                    {
+                        "name": "user_roles"
                     },
                     {
                         "type": "string",
