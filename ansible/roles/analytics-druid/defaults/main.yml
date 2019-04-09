@@ -17,7 +17,7 @@ druid_zookeeper_host: "{{ groups['druid-zookeeper']|join(':2181,')}}:2181"
 druid_postgres_host: "{{ groups['druid-postgres'][0] }}"
 druid_postgres_port: 5432
 druid_postgres_user: "druid"
-druid_postgres_pass: "{{ vault_druid_postgress_pass}}"
+druid_postgres_pass: "{{ dp_vault_druid_postgress_pass }}"
 
 druid_default_tmp_dir: "/var/tmp"
 druid_gc_logdir: "/var/gclog"
@@ -25,10 +25,13 @@ druid_log_dir: "/var/log/druid/"
 
 #azure config in group vars
 
+azure_account_name: "{{ dp_azure_account_name }}"
+azure_storage_secret: "{{ dp_vault_azure_account_key }}"
+azure_container: "{{ secor_azure_container_name }}"
 
 #Logging the indexing logs to azure
 
-druid_log_azure_container: "{{ azure_container }}"
+druid_log_azure_container: "{{ secor_azure_container_name }}"
 druid_log_azure_folder: "druidlogs"
 
 #Druid Extensions
@@ -56,6 +59,7 @@ druid_graphite_host: "{{ groups['druid-graphite'][0] }}"
 druid_graphite_port : 2004
 druid_graphite_prefix: "druid.metric"
 druid_whitelist_filepath: "{{ druid_path }}whitelist"
+druid_postgress_graphite_pass: "{{ dp_vault_druid_postgress_graphite_pass }}"
 
 #End of Common variables
 
