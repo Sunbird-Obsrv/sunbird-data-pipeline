@@ -36,15 +36,28 @@ public class TelemetryExtractorService {
 			String syncTimestamp = df.print(syncts);
 			List<Map<String, Object>> events = (List<Map<String, Object>>) batchEvent.get("events");
 			for (Map<String, Object> event : events) {
-				event.put("syncts", syncts);
-				event.put("@timestamp", syncTimestamp);
-				Map<String, Object> context = (Map<String, Object>)event.get("context");
-				String channel = (String)context.get("channel");
-				if(StringUtils.isEmpty(channel)){
-					event.put("context", context);
+				String json = "";
+				try {
+					event.put("syncts", syncts);
+					event.put("@timestamp", syncTimestamp);
+					Map<String, Object> context = (Map<String, Object>) event.get("context");
+					String channel = (String) context.get("channel");
+					if (StringUtils.isEmpty(channel)) {
+						event.put("context", context);
+					}
+					json = new Gson().toJson(event);
+					int eventSizeInBytes = json.getBytes("UTF-8").length;
+					if (eventSizeInBytes > 1048576) {
+						LOGGER.info("", String.format("Event with mid %s of size %d bytes is greater than %d. " +
+								"Sending to error topic", event.get("mid"), eventSizeInBytes, 1048576));
+						sink.toErrorTopic(json);
+					} else {
+						sink.toSuccessTopic(json);
+					}
+				} catch (Throwable t) {
+					LOGGER.info("", "Failed to send extracted event to success topic: " + t.getMessage());
+					sink.toErrorTopic(json);
 				}
-				String json = new Gson().toJson(event);
-				sink.toSuccessTopic(json);
 			}
 			metrics.incSuccessCounter();
 			generateAuditEvent(batchEvent, syncts, syncTimestamp, sink, defaultChannel);
