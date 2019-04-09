@@ -31,9 +31,10 @@
   "query/cache/total/timeouts" :  [],
   "query/cache/total/errors" : [],
 
-  "ingest/events/thrownAway" :  ["dataSource"],
-  "ingest/events/unparseable" : ["dataSource"],
-  "ingest/events/processed" :  ["dataSource"],
+  "ingest/events/thrownAway" :  ["dataSource", "taskType"],
+  "ingest/events/unparseable" : ["dataSource", "taskType"],
+  "ingest/events/processed" : ["dataSource", "taskType"],
+  "ingest/events/duplicate" : ["dataSource", "taskType"],
   "ingest/rows/output" : ["dataSource"],
   "ingest/persist/count" : ["dataSource"],
   "ingest/persist/time" : ["dataSource"],
@@ -42,7 +43,8 @@
   "ingest/persist/failed" : ["dataSource"],
   "ingest/handoff/failed" : ["dataSource"],
   "ingest/merge/time" : ["dataSource"],
-  "ingest/merge/cpu" : ["dataSource"],
+  "ingest/kafka/lag" : ["dataSource"],
+   
 
   "task/run/time" :  ["dataSource", "taskType"],
   "segment/added/bytes" :  ["dataSource", "taskType"],
