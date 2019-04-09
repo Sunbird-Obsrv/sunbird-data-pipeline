@@ -1,5 +1,5 @@
 -
-  name: Install zookeeper cluster for druid
+  name: Install java and zookeeper cluster for druid
   hosts: druid-zookeeper
   become: yes
   roles:
