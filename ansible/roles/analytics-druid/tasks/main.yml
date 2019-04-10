@@ -1,4 +1,4 @@
 # include install and test for druid role
-- include_vars: "{{inventory_dir}}/secrets/{{env}}.yml"
+- include_vars: "{{inventory_dir}}/secrets.yml"
 - include: install.yml
 - include: test.yml
