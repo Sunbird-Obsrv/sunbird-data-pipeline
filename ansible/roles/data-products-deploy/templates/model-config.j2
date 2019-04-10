@@ -17,7 +17,7 @@ config() {
 	temp_folder={{ job_manager_tmp_dir }}
 	sparkCassandraConnectionHost="{{groups['lp-cassandra'][0]}}"
 	sunbirdPlatformCassandraHost="{{core_cassandra_host}}"
-	sunbirdPlatformElasticsearchHost="{{lp_composite_search}}"
+	sunbirdPlatformElasticsearchHost="{{sunbird_es_host}}"
 	
 	if [ -z "$2" ]; then endDate=$(date --date yesterday "+%Y-%m-%d"); else endDate=$2; fi
 	case "$1" in
