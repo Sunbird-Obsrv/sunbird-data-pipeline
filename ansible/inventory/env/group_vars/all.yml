@@ -23,6 +23,10 @@ monitor_yarn_url: "http://{{ resourcemanager }}:8088/ws/v1/cluster/apps?states=R
 artifact_azure_account_name: "{{dp_azure_account_name}}"
 artifact_azure_account_key: "{{dp_vault_azure_account_key}}"
 
+# Artifact upload and download vars
+artifact_azure_account_name: "{{dp_azure_account_name}}"
+artifact_azure_account_key: "{{dp_vault_azure_account_key}}"
+
 redis_host: "{{ groups['lp-redis'][0] }}"
 searchServiceAuthorizationToken: "{{ dp_search_service_authorization_token }}"
 
@@ -114,6 +118,7 @@ backup_azure_storage_access_key: "{{dp_vault_azure_account_key}}"
 ## es backup
 es_snapshot_host: "{{ groups['telemetry-search-cluster'][0] }}"
 snapshot_base_path: telemetrysearch
+
 
 # sunbird learner service
 sunbird_es_host: "{{groups['es']| join(',')}}"

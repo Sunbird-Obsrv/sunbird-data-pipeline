@@ -82,6 +82,9 @@ processing_kafka_overriden_topics:
   - name: system.command
     retention_time: 3600
     replication_factor: 1
+  - name: lms.audit.events
+    retention_time: 172800000
+    replication_factor: 1
 
 processing_kafka_topics:
   - name: system.command
@@ -164,5 +167,8 @@ processing_kafka_topics:
     num_of_partitions: 1
     replication_factor: 1
   - name: learning.events.failed
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: lms.audit.events
     num_of_partitions: 1
     replication_factor: 1

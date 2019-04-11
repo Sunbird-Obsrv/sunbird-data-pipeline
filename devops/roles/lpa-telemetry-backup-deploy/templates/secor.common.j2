@@ -156,7 +156,7 @@ kafka.rebalance.backoff.ms=
 kafka.socket.receive.buffer.bytes=
 
 # Kafka fetch max size (fetch.message.max.bytes)
-kafka.fetch.message.max.bytes=
+kafka.fetch.message.max.bytes=5242880
 
 # Kafka fetch min bytes (fetch.fetch.min.bytes)
 kafka.fetch.min.bytes=
@@ -360,7 +360,7 @@ secor.max.message.size.bytes=100000
 secor.upload.manager.class=com.pinterest.secor.uploader.AzureUploadManager
 
 #Set below property to your timezone, and partitions in s3 will be created as per timezone provided
-secor.parser.timezone=UTC
+secor.parser.timezone=Asia/Kolkata
 
 # Transformer class that transform message accordingly.
 secor.message.transformer.class=com.pinterest.secor.transformer.IdentityMessageTransformer
