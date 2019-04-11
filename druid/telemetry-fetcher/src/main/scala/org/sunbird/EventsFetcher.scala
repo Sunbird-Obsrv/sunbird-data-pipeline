@@ -140,7 +140,6 @@ object EventsFetcher {
   def verifyData(cloudData: RDD[String], config: Query): Unit = {
     import java.time.LocalDateTime
     val cloudDataCount = cloudData.count()
-    println("Cloud Data count" + cloudDataCount)
     val druidDataCount = getDataCountFromDruid(config.startDate.get, config.endDate.get, config.dataSource.get, config.eventType.get)
     val headerRecord = applicationConfig.getString("headers_field_labels").split(",")
     val values = Array(LocalDateTime.now().toString, cloudDataCount.toString, druidDataCount.toString, config.startDate.get, config.endDate.get, config.service.get, config.dataSource.get)
@@ -155,7 +154,6 @@ object EventsFetcher {
     } else {
       request = "{\n  \"query\":\"SELECT COUNT(*) AS TotalCount FROM \\\"" + dataSource + "\\\" where \\\"__time\\\" BETWEEN  TIMESTAMP " + "'" + fromSyncTs + " 00:00:00' and TIMESTAMP " + "'" + toSyncTs + " 00:00:00' \",\n  \"resultFormat\" : \"object\"\n}"
     }
-    println("Request Object is" + request)
     val apiURL = applicationConfig.getString("druid_host") + applicationConfig.getString("druid_port") + applicationConfig.getString("druid_base_path")
     val result = post(apiURL, request)
     val parsedData = JSON.parseFull(result)
