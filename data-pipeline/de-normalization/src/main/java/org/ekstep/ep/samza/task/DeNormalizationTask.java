@@ -43,8 +43,8 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     private JobMetrics metrics;
     private DeNormalizationService service;
 
-    public DeNormalizationTask(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache, CassandraConnect cassandraConnect, DialCodeDataCache dialcodeCache)  {
-        init(config, context, deviceCache, userCache, contentCache, cassandraConnect, dialcodeCache);
+    public DeNormalizationTask(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache, CassandraConnect cassandraConnect, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics)  {
+        init(config, context, deviceCache, userCache, contentCache, cassandraConnect, dialcodeCache, jobMetrics);
     }
 
     public DeNormalizationTask() {
@@ -54,13 +54,13 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     @SuppressWarnings("unchecked")
     @Override
     public void init(Config config, TaskContext context) {
-        init(config, context, deviceCache, userCache, contentCache, cassandraConnect, dialcodeCache);
+        init(config, context, deviceCache, userCache, contentCache, cassandraConnect, dialcodeCache, metrics);
     }
 
 
-    public void init(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache, CassandraConnect cassandraConnect, DialCodeDataCache dialcodeCache) {
+    public void init(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache, CassandraConnect cassandraConnect, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics) {
         this.config = new DeNormalizationConfig(config);
-        metrics = new JobMetrics(context, this.config.jobName());
+        this.metrics = jobMetrics == null ? new JobMetrics(context, this.config.jobName()) : jobMetrics;
         this.redisConnect = new RedisConnect(config);
 
         this.cassandraConnect =

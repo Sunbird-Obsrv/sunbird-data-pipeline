@@ -13,12 +13,14 @@ import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
+import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.ekstep.ep.samza.util.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -29,9 +31,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.stub;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class DeNormalizationTaskTest {
 
@@ -54,6 +54,7 @@ public class DeNormalizationTaskTest {
     private UserDataCache userCacheMock;
     private ContentDataCache contentCacheMock;
     private DialCodeDataCache dailcodeCacheMock;
+    private JobMetrics jobMetrics;
 
     @SuppressWarnings("unchecked")
     @Before
@@ -61,7 +62,7 @@ public class DeNormalizationTaskTest {
         collectorMock = mock(MessageCollector.class);
         contextMock = mock(TaskContext.class);
         metricsRegistry = Mockito.mock(MetricsRegistry.class);
-        counter = new Counter("Counter");
+        counter = Mockito.mock(Counter.class);
         coordinatorMock = mock(TaskCoordinator.class);
         envelopeMock = mock(IncomingMessageEnvelope.class);
         configMock = Mockito.mock(Config.class);
@@ -71,6 +72,7 @@ public class DeNormalizationTaskTest {
         userCacheMock = Mockito.mock(UserDataCache.class);
         contentCacheMock = Mockito.mock(ContentDataCache.class);
         dailcodeCacheMock = Mockito.mock(DialCodeDataCache.class);
+        jobMetrics = Mockito.mock(JobMetrics.class);
 
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
@@ -79,7 +81,6 @@ public class DeNormalizationTaskTest {
         List<String> defaultSummaryEvents = new ArrayList<>();
         defaultSummaryEvents.add("ME_WORKFLOW_SUMMARY");
         stub(configMock.getList("summary.filter.events", defaultSummaryEvents)).toReturn(defaultSummaryEvents);
-
         stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
         stub(envelopeMock.getOffset()).toReturn("2");
@@ -87,7 +88,7 @@ public class DeNormalizationTaskTest {
                 .toReturn(new SystemStreamPartition("kafka", "telemetry.with_location", new Partition(1)));
 
 
-        deNormalizationTask = new DeNormalizationTask(configMock, contextMock, deviceCacheMock, userCacheMock, contentCacheMock, cassandraConnectMock, dailcodeCacheMock);
+        deNormalizationTask = new DeNormalizationTask(configMock, contextMock, deviceCacheMock, userCacheMock, contentCacheMock, cassandraConnectMock, dailcodeCacheMock, jobMetrics);
     }
 
     @Test
@@ -570,8 +571,10 @@ public class DeNormalizationTaskTest {
     public void shouldSkipOtherSummaryEvent() throws Exception{
 
         stub(envelopeMock.getMessage()).toReturn(EventFixture.DEVICE_SUMMARY_EVENT);
+        Answer answer = new Answer();
+        doAnswer(answer).when(jobMetrics).incSkippedCounter();
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        assertEquals(1, counter.getCount());
+        assertEquals(true, answer.isSkipped);
     }
 
     public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
@@ -619,8 +622,21 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSkipProcessingForErrorEvents() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.ERROR_EVENT);
+        Answer answer = new Answer();
+        doAnswer(answer).when(jobMetrics).incSkippedCounter();
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        assertEquals(1, counter.getCount());
+        assertEquals(true, answer.isSkipped);
+    }
+
+    class Answer implements org.mockito.stubbing.Answer {
+
+        Boolean isSkipped = false;
+        @Override
+        public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+            isSkipped = true;
+            System.out.println("SkippedCounter is executed");
+            return null;
+        }
     }
 
 }
