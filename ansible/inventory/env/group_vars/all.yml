@@ -121,4 +121,4 @@ snapshot_base_path: telemetrysearch
 
 
 # sunbird learner service
-sunbird_es_host: "{{groups['es']| join(',')}}"
+sunbird_es_host: "{{groups['core-es']| join(',')}}"
