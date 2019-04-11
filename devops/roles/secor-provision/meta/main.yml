@@ -1,5 +1,0 @@
----
-dependencies:
-  - { role: analytics-bootstrap-always , become: yes }
-    
-  

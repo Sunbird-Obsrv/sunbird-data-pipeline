@@ -1,9 +1,0 @@
----
-- hosts: dp-yarn-slave
-  vars_files:
-    - "{{inventory_dir}}/secrets/dp_secrets.yml"	 	 
-  tasks:
-   - command: "./upload_samza_logs.sh {{CONTAINER_NAME_SAMZA}} {{ACCOUNT_NAME_SAMZA}} {{azure_account_key}}"
-     args:
-       chdir: "{{script_path}}"
-     become: yes
