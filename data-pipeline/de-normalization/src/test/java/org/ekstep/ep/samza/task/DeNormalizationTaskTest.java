@@ -19,7 +19,6 @@ import org.ekstep.ep.samza.util.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
 import java.lang.reflect.Type;
@@ -61,18 +60,18 @@ public class DeNormalizationTaskTest {
     public void setUp() {
         collectorMock = mock(MessageCollector.class);
         contextMock = mock(TaskContext.class);
-        metricsRegistry = Mockito.mock(MetricsRegistry.class);
-        counter = Mockito.mock(Counter.class);
+        metricsRegistry = mock(MetricsRegistry.class);
+        counter = mock(Counter.class);
         coordinatorMock = mock(TaskCoordinator.class);
         envelopeMock = mock(IncomingMessageEnvelope.class);
-        configMock = Mockito.mock(Config.class);
-        redisConnectMock = Mockito.mock(RedisConnect.class);
-        cassandraConnectMock = Mockito.mock(CassandraConnect.class);
-        deviceCacheMock = Mockito.mock(DeviceDataCache.class);
-        userCacheMock = Mockito.mock(UserDataCache.class);
-        contentCacheMock = Mockito.mock(ContentDataCache.class);
-        dailcodeCacheMock = Mockito.mock(DialCodeDataCache.class);
-        jobMetrics = Mockito.mock(JobMetrics.class);
+        configMock = mock(Config.class);
+        redisConnectMock = mock(RedisConnect.class);
+        cassandraConnectMock = mock(CassandraConnect.class);
+        deviceCacheMock = mock(DeviceDataCache.class);
+        userCacheMock = mock(UserDataCache.class);
+        contentCacheMock = mock(ContentDataCache.class);
+        dailcodeCacheMock = mock(DialCodeDataCache.class);
+        jobMetrics = mock(JobMetrics.class);
 
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
@@ -630,7 +629,7 @@ public class DeNormalizationTaskTest {
 
     class Answer implements org.mockito.stubbing.Answer {
 
-        Boolean isSkipped = false;
+        private Boolean isSkipped = false;
         @Override
         public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
             isSkipped = true;
