@@ -1,9 +1,0 @@
----
-
-- hosts: influxdb
-  vars_files:
-    - "{{inventory_dir}}/secrets/dp_secrets.yml"
-  become: yes
-  roles:
-    - azure-cli
-    - influxdb_backup

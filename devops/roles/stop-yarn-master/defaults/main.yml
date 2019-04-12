@@ -1,3 +1,0 @@
----
-samza_jobs_dir: /home/hduser/samza-jobs/{{env}}
-job_status_file: /home/hduser/samza-jobs/{{env}}/extract/job_status

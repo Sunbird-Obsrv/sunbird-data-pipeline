@@ -1,9 +1,0 @@
-
-aggregate: false
-ecosystem_user: ecosystem
-ecosystem_folder_temp: /home/{{ ecosystem_user }}
-ep_artifact: ep.tgz
-ecosystem_folder: /home/{{ ecosystem_user }}/Ecosystem-Platform
-ep_log_dir: /home/{{ ecosystem_user }}/logs
-
-
