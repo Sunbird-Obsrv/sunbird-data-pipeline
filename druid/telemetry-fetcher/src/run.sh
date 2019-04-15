@@ -1,76 +1,76 @@
 #!/bin/bash
-#Example : ./run.sh --startDate 2019-03-10 --endDate 2019-03-10 --env local --service azure --eventType summary --prefix derived/wfs/
+#Example : ./run.sh --executorMemory 20G --master local[8] --startDate 2019-03-10 --endDate 2019-03-11 --service azure --eventType summary --prefix telemetry-denormalized/raw/ --dataSource telemetry-events --verification true --bucket telemetry-data-store --topic dev.telemetry
 POSITIONAL=()
 while [[ $# -gt 0 ]]
 do
 key="$1"
 
 case $key in
-    -s|--startDate)
+    -s|--startDate)  # start date to fetch the data ex: (YYYY-MM-DD) 2019-03-10
     STARTDATE="$2"
     shift # past argument
     shift # past value
     ;;
-    -e|--endDate)
+    -e|--endDate)  # end date to fetch the data ex:(YYYY-MM-DD) 2019-03-11
     ENDDATE="$2"
     shift # past argument
     shift # past value
     ;;
-    -c|--service)
+    -c|--service) # service it can be either azure or s3
     SERVICE="$2"
     shift # past argument
     shift # past value
     ;;
-    -t|--eventType)
+    -t|--eventType)  # eventType it can be either "telemetry" or "summary"
     EVENTTYPE="$2"
     shift # past argument
     shift # past value
     ;;
-    -b|--bucket)
+    -b|--bucket) # Bucket it can be storage bucket name of s3 or azure
     BUCKET="$2"
     shift # past argument
     shift # past value
     ;;
 
-    -p|--prefix)
+    -p|--prefix) # Path of the folder ex: for summary - derived/wfs/  and for telemetry - raw/
     PREFIX="$2"
     shift # past argument
     shift # past value
     ;;
-    -m|--executorMemory)
+    -m|--executorMemory) # spark executor memory -ex: 20G
     EXECUTORMEMORY="$2"
     shift # past argument
     shift # past value
     ;;
-    -r|--master)
+    -r|--master) #spark cluster manager ex: local[*] || yarn || local[N]
     MASTER="$2"
     shift # past argument
     shift # past value
     ;;
-    -d|--deployeMode)
+    -d|--deployeMode) #which defines the spark deploy-mode ex: cluster || client
     DEPLOYEMODE="$2"
     shift # past argument
     shift # past value
     ;;
-    -x|--totalExecutor)
+    -x|--totalExecutor) # Which defines the Spark no'f executors
     TOTAL_EXECUTOR_CORE="$2"
     shift # past argument
     shift # past value
     ;;
 
-    -i|--topic)
+    -i|--topic) # To which topic the events should push ex: name of the topic
     TOPIC="$2"
     shift # past argument
     shift # past value
     ;;
 
-    -v|--verification)
+    -v|--verification) # When verification is true which generate the audit script else it will push the events to kafka
     VERIFICATION="$2"
     shift # past argument
     shift # past value
     ;;
 
-    -d|--dataSource)
+    -d|--dataSource) # Name of the druid data source
     DATASOURCE="$2"
     shift # past argument
     shift # past value
