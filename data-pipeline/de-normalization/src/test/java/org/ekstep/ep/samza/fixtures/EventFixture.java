@@ -962,6 +962,82 @@ public class EventFixture {
 	public static final String ANY_STRING = "Hey Samza, Whats Up?";
 	public static final String EMPTY_JSON = "{}";
 
+	public static final String LOG_EVENT = "{\n"+
+			"   \"@timestamp\":\"2019-03-20T00:00:01.176Z\",\n"+
+			"\"actor\":{\n"+
+			"\"id\":\"0b251080-3230-415e-a593-ab7c1fac7ae3\",\n"+
+			"\"type\":\"User\"\n"+
+			"},\n"+
+			"\"context\":{\n"+
+			"\"cdata\":[\n"+
+
+			"],\n"+
+			"\"channel\":\"505c7c48ac6dc1edc9b08f21db5a571d\",\n"+
+			/*"\"did\":\"923c675274cfbf19fd0402fe4d2c37afd597f0ab\",\n"+*/
+			"\"env\":\"home\",\n"+
+			"\"pdata\":{\n"+
+			"\"id\":\"prod.diksha.app\",\n"+
+			"\"pid\":\"sunbird.app\",\n"+
+			"\"ver\":\"2.1.45\"\n"+
+			"},\n"+
+			"\"sid\":\"57b5b7ea-93c5-48d6-ba51-f5f9a3570ffe\"\n"+
+			"},\n"+
+			"\"edata\":{\n"+
+			"\"level\":\"INFO\",\n"+
+			"\"message\":\"content-detail\",\n"+
+			"\"params\":[\n"+
+			"{\n"+
+			"\"PopupType\":\"automatic\"\n"+
+			"}\n"+
+			"],\n"+
+			"\"type\":\"view\"\n"+
+			"},\n"+
+			"\"eid\":\"LOG\",\n"+
+			"\"ets\":1.553039987481E12,\n"+
+			"\"flags\":{\n"+
+			"\"dd_processed\":true,\n"+
+			"\"tv_processed\":true\n"+
+			"},\n"+
+			"\"mid\":\"ca17e5bd-71d4-487a-92cd-0fb377e7a591\",\n"+
+			"\"syncts\":1.553040001176E12,\n"+
+			"\"tags\":[\n"+
+			"],\n"+
+			"\"type\":\"events\",\n"+
+			"\"ver\":\"3.0\"\n"+
+			"      }";
+
+	public static final String ERROR_EVENT = "{"+
+			"   \"eid\":\"ERROR\","+
+			"   \"ets\":1.553040097857E12,"+
+			"   \"ver\":\"3.0\","+
+			"   \"mid\":\"LP.1553040097857.bf0e4e15-014e-4a22-ba00-e02ff3c38784\","+
+			"   \"actor\":{"+
+			"      \"id\":\"e85bcfb5-a8c2-4e65-87a2-0ebb43b45f01\","+
+			"      \"type\":\"System\""+
+			"   },"+
+			"   \"context\":{"+
+			"      \"channel\":\"01235953109336064029450\","+
+			"      \"pdata\":{"+
+			"         \"id\":\"prod.ntp.learning.platform\","+
+			"         \"pid\":\"learning-service\","+
+			"         \"ver\":\"1.0\""+
+			"      },"+
+			"      \"env\":\"framework\""+
+			"   },"+
+			"   \"edata\":{"+
+			"      \"err\":\"ERR_DATA_NOT_FOUND\","+
+			"      \"stacktrace\":\"ERR_DATA_NOT_FOUND: Data not found with id : null\n\tat\","+
+			"      \"errtype\":\"system\""+
+			"   },"+
+			"   \"flags\":{"+
+			"      \"tv_processed\":true,"+
+			"      \"dd_processed\":true"+
+			"   },"+
+			"   \"type\":\"events\","+
+			"   \"syncts\":1.553040098435E12,"+
+			"   \"@timestamp\":\"2019-03-20T00:01:38.435Z\""+
+			"}"	;
+
 	public static Map<String, Object> getMap(String message) {
 		return (Map<String, Object>) new Gson().fromJson(message, Map.class);
 	}
