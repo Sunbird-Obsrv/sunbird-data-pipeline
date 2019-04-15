@@ -10,7 +10,7 @@
 
 - name: Copy secor libraries
   copy: 
-    src: artifacts/target/secor-0.24-SNAPSHOT-bin.tar.gz 
+    src: artifacts/target/secor-0.25-SNAPSHOT-bin.tar.gz 
     dest: "{{ analytics_user_home }}" 
     owner: "{{ analytics_user }}"
     group: "{{ analytics_user }}"
