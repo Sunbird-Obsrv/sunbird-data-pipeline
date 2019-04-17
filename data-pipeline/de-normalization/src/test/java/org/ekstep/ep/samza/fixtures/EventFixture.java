@@ -990,7 +990,7 @@ public class EventFixture {
 			"\"PopupType\":\"automatic\"\n"+
 			"}\n"+
 			"],\n"+
-			"\"type\":\"view\"\n"+
+			"\"type\":\"api_access\"\n"+
 			"},\n"+
 			"\"eid\":\"LOG\",\n"+
 			"\"ets\":1.553039987481E12,\n"+
@@ -1037,6 +1037,49 @@ public class EventFixture {
 			"   \"syncts\":1.553040098435E12,"+
 			"   \"@timestamp\":\"2019-03-20T00:01:38.435Z\""+
 			"}"	;
+
+    public static final String TEST_LOG_EVENT = "{\n"+
+            "   \"@timestamp\":\"2019-03-20T00:00:01.176Z\",\n"+
+            "\"actor\":{\n"+
+            "\"id\":\"0b251080-3230-415e-a593-ab7c1fac7ae3\",\n"+
+            "\"type\":\"User\"\n"+
+            "},\n"+
+            "\"context\":{\n"+
+            "\"cdata\":[\n"+
+
+            "],\n"+
+            "\"channel\":\"505c7c48ac6dc1edc9b08f21db5a571d\",\n"+
+            "\"env\":\"home\",\n"+
+            "\"pdata\":{\n"+
+            "\"id\":\"prod.diksha.app\",\n"+
+            "\"pid\":\"sunbird.app\",\n"+
+            "\"ver\":\"2.1.45\"\n"+
+            "},\n"+
+            "\"sid\":\"57b5b7ea-93c5-48d6-ba51-f5f9a3570ffe\"\n"+
+            "},\n"+
+            "\"edata\":{\n"+
+            "\"level\":\"INFO\",\n"+
+            "\"message\":\"content-detail\",\n"+
+            "\"params\":[\n"+
+            "{\n"+
+            "\"PopupType\":\"automatic\"\n"+
+            "}\n"+
+            "],\n"+
+            "\"type\":\"view\"\n"+
+            "},\n"+
+            "\"eid\":\"LOG\",\n"+
+            "\"ets\":1.553039987481E12,\n"+
+            "\"flags\":{\n"+
+            "\"dd_processed\":true,\n"+
+            "\"tv_processed\":true\n"+
+            "},\n"+
+            "\"mid\":\"ca17e5bd-71d4-487a-92cd-0fb377e7a591\",\n"+
+            "\"syncts\":1.553040001176E12,\n"+
+            "\"tags\":[\n"+
+            "],\n"+
+            "\"type\":\"events\",\n"+
+            "\"ver\":\"3.0\"\n"+
+            "      }";
 
 	public static Map<String, Object> getMap(String message) {
 		return (Map<String, Object>) new Gson().fromJson(message, Map.class);
