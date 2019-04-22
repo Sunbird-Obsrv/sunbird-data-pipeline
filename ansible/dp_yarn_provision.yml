@@ -40,4 +40,4 @@
     - "{{inventory_dir}}/secrets.yml"
   remote_user: hduser
   roles:
-    - java
+    - jdk-1.8.0_121
