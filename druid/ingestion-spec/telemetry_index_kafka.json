@@ -815,7 +815,7 @@
               "name": "edata_plugin_category"
             },
             {
-              "name": "edata_state"
+              "name": "edata_props"
             },
             {
               "type": "string",
