@@ -220,31 +220,6 @@
             },
             {
               "type": "path",
-              "name": "device_loc_state",
-              "expr": "$.devicedata.state"
-            },
-            {
-              "type": "path",
-              "name": "device_loc_state_code",
-              "expr": "$.devicedata.statecode"
-            },
-            {
-              "type": "path",
-              "name": "device_loc_city",
-              "expr": "$.devicedata.city"
-            },
-            {
-              "type": "path",
-              "name": "device_loc_country_code",
-              "expr": "$.devicedata.countrycode"
-            },
-            {
-              "type": "path",
-              "name": "device_loc_country",
-              "expr": "$.devicedata.country"
-            },
-            {
-              "type": "path",
               "name": "device_os",
               "expr": "$.devicedata.os"
             },
@@ -325,11 +300,6 @@
             },
             {
               "type": "path",
-              "name": "device_loc_iso_state_code",
-              "expr": "$.devicedata.iso3166statecode"
-            },
-            {
-              "type": "path",
               "name": "content_name",
               "expr": "$.contentdata.name"
             },
@@ -397,36 +367,6 @@
               "type": "path",
               "name": "content_last_updated_on",
               "expr": "$.contentdata.lastupdatedon"
-            },
-            {
-              "type": "path",
-              "name": "user_grade_list",
-              "expr": "$.userdata.gradelist[*]"
-            },
-            {
-              "type": "path",
-              "name": "user_language_list",
-              "expr": "$.userdata.languagelist[*]"
-            },
-            {
-              "type": "path",
-              "name": "user_subject_list",
-              "expr": "$.userdata.subjectlist[*]"
-            },
-            {
-              "type": "path",
-              "name": "user_type",
-              "expr": "$.userdata.usertype"
-            },
-            {
-              "type": "path",
-              "name": "user_loc_state",
-              "expr": "$.userdata.state"
-            },
-            {
-              "type": "path",
-              "name": "user_loc_district",
-              "expr": "$.userdata.district"
             }
           ]
         },
@@ -606,26 +546,6 @@
             },
             {
               "type": "string",
-              "name": "device_loc_state"
-            },
-            {
-              "type": "string",
-              "name": "device_loc_state_code"
-            },
-            {
-              "type": "string",
-              "name": "device_loc_city"
-            },
-            {
-              "type": "string",
-              "name": "device_loc_country_code"
-            },
-            {
-              "type": "string",
-              "name": "device_loc_country"
-            },
-            {
-              "type": "string",
               "name": "device_os"
             },
             {
@@ -690,10 +610,6 @@
             },
             {
               "type": "string",
-              "name": "device_loc_iso_state_code"
-            },
-            {
-              "type": "string",
               "name": "content_name"
             },
             {
@@ -746,27 +662,6 @@
             {
               "type": "long",
               "name": "content_last_updated_on"
-            },
-            {
-              "name": "user_grade_list"
-            },
-            {
-              "name": "user_language_list"
-            },
-            {
-              "name": "user_subject_list"
-            },
-            {
-              "type": "string",
-              "name": "user_type"
-            },
-            {
-              "type": "string",
-              "name": "user_loc_state"
-            },
-            {
-              "type": "string",
-              "name": "user_loc_district"
             }
           ]
         },

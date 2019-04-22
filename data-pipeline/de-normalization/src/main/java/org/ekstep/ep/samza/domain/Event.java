@@ -285,5 +285,9 @@ public class Event {
         telemetry.add("metadata.src", config.jobName());
     }
 
+    public String edataType() {
+            return telemetry.<String>read("edata.type").value();
+    }
+
 }
 

@@ -39,18 +39,18 @@ public class DeNormalizationService {
             if (summaryRouteEventPrefix.contains(eid)) {
                 event = getDenormalizedEvent(event);
                 sink.toSuccessTopic(event);
-            }
-            else if (eid.startsWith("ME_")) {
+            } else if (eid.startsWith("ME_")) {
                 LOGGER.debug(null, "Ignoring as eid is other than WFS");
                 sink.incrementSkippedCount(event);
-            }
-            else {
+            } else {
                 // ignore past data (older than last X months)
-                if(event.isOlder(config.ignorePeriodInMonths())) {
+                if (event.isOlder(config.ignorePeriodInMonths())) {
                     LOGGER.debug(null, "Ignoring as ets is older than N months");
-                    sink.toFailedTopic(event, "older than " + config.ignorePeriodInMonths() +" months");
-                }
-                else {
+                    sink.toFailedTopic(event, "older than " + config.ignorePeriodInMonths() + " months");
+                } else if ("LOG".equals(eid) && !"api_access".equalsIgnoreCase(event.edataType())) {
+                    LOGGER.debug(null, "Ignoring as edata_type is other than 'api_access' for LOG events");
+                    sink.incrementSkippedCount(event);
+                } else {
                     event = getDenormalizedEvent(event);
                     sink.toSuccessTopic(event);
                 }

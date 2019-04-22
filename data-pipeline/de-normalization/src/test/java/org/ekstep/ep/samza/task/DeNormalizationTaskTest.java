@@ -638,4 +638,13 @@ public class DeNormalizationTaskTest {
         }
     }
 
+    @Test
+    public void shouldSkipProcessingForEdataTypeOtherThanApiAccess(){
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.TEST_LOG_EVENT);
+        Answer answer = new Answer();
+        doAnswer(answer).when(jobMetrics).incSkippedCounter();
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        assertEquals(true, answer.isSkipped);
+    }
+
 }
