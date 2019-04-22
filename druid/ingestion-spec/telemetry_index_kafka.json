@@ -281,6 +281,11 @@
             },
             {
               "type": "path",
+              "name": "edata_props",
+              "expr": "$.edata.props[*]"
+            },
+            {
+              "type": "path",
               "name": "edata_state",
               "expr": "$.edata.state"
             },
@@ -808,6 +813,9 @@
             {
               "type": "string",
               "name": "edata_plugin_category"
+            },
+            {
+              "name": "edata_props"
             },
             {
               "type": "string",
