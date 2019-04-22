@@ -1,9 +1,9 @@
-#- name: Install PostgreSQL client
-#  apt: name={{ item }} update_cache=yes cache_valid_time=36000 state=installed
-#  with_items:
-#    - python-psycopg2
-#    - postgresql-client
-#  ignore_errors: yes
+- name: Install PostgreSQL client
+  apt: name={{ item }} update_cache=yes cache_valid_time=36000 state=installed
+  with_items:
+    - python-psycopg2
+    - postgresql-client
+  ignore_errors: yes
 
 - name: Ensure database is created
   postgresql_db: name="{{ postgres.db_name }}" \
