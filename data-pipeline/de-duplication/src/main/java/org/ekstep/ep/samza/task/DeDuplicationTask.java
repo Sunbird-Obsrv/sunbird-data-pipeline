@@ -37,7 +37,6 @@ public class DeDuplicationTask implements StreamTask, InitableTask, WindowableTa
 	private DeDuplicationConfig config;
 	private JobMetrics metrics;
 	private DeDuplicationService service;
-	private RedisConnect redisConnect;
 
 	public DeDuplicationTask(Config config, TaskContext context,
 							 DeDupEngine deDupEngine) {
@@ -70,11 +69,10 @@ public class DeDuplicationTask implements StreamTask, InitableTask, WindowableTa
 			DeDuplicationSink sink = new DeDuplicationSink(collector, metrics, config);
 
 			service.process(source, sink);
+		} catch (JedisException ex) {
+			LOGGER.info("", "Stopping samza job due to redis issue");
+			throw new JedisException(ex);
 		} catch (Exception ex) {
-			if (ex instanceof JedisException) {
-				LOGGER.info("", "Stopping samza job due to redis issue");
-				throw new JedisException(ex);
-			}
 			LOGGER.error("", "Deduplication failed: " + ex.getMessage());
 			Object event = envelope.getMessage();
 			if (event != null) {

@@ -40,7 +40,6 @@ public class DeDuplicationTaskTest {
     private IncomingMessageEnvelope envelopeMock;
     private Config configMock;
     private DeDuplicationTask deDuplicationTask;
-    private RedisConnect redisConnectMock;
     private DeDupEngine deDupEngineMock;
     private Jedis jedisMock = new MockJedis("duplicationtest");
     private int dupStoreId = 1;
@@ -54,7 +53,7 @@ public class DeDuplicationTaskTest {
         coordinatorMock = mock(TaskCoordinator.class);
         envelopeMock = mock(IncomingMessageEnvelope.class);
         configMock = Mockito.mock(Config.class);
-        redisConnectMock = mock(RedisConnect.class);
+        RedisConnect redisConnectMock = mock(RedisConnect.class);
         deDupEngineMock = mock(DeDupEngine.class);
         stub(redisConnectMock.getConnection()).toReturn(jedisMock);
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);

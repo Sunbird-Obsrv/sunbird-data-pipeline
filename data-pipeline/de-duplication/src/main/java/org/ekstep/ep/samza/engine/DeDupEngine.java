@@ -1,6 +1,5 @@
 package org.ekstep.ep.samza.engine;
 
-import org.ekstep.ep.samza.task.DeDuplicationConfig;
 import org.ekstep.ep.samza.util.RedisConnect;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
