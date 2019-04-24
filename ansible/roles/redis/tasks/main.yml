@@ -2,44 +2,43 @@
 # tasks file for redis
 - name: download redis zipfile
   become: yes
-  become_user: "{{learner_user}}"
-  get_url: url={{redis_tar_ball}} dest={{learner_user_home}}/redis-stable.tar.gz timeout=50 force=no owner={{learner_user}}
+  become_user: "{{analytics_user}}"
+  get_url: url={{redis_tar_ball}} dest={{analytics_user_home}}/redis-stable.tar.gz timeout=50 force=no owner={{analytics_user}}
 
 - name: unzip 
   become: yes
-  become_user: "{{learner_user}}"
-  unarchive: src={{learner_user_home}}/redis-stable.tar.gz dest={{learner_user_home}} copy=no group={{learner_user}} owner={{learner_user}} creates={{ redis_home }}
+  become_user: "{{analytics_user}}"
+  unarchive: src={{analytics_user_home}}/redis-stable.tar.gz dest={{analytics_user_home}} copy=no group={{analytics_user}} owner={{analytics_user}} creates={{ redis_home }}
 
 - name: Change ownership of redis installation
   become: yes
-  file: path={{ redis_home }} owner={{learner_user}} group={{learner_user}} state=directory recurse=yes
+  file: path={{ redis_home }} owner={{analytics_user}} group={{analytics_user}} state=directory recurse=yes
 
 - name: redis conf
   become: yes
-  template: src=redis.conf.j2 dest={{learner_user_home}}/redis-stable/redis.conf
+  template: src=redis.conf.j2 dest={{analytics_user_home}}/redis-stable/redis.conf
   
 
 - name: Go to the folder and run make
   become: yes
-  become_user: "{{learner_user}}"
+  become_user: "{{analytics_user}}"
   command: chdir={{ redis_home }} make
   
 - name: copy template
   become: yes
-  become_user: "{{learner_user}}"
-  template: src=stop_script.j2 dest={{ learner_user_home }}/stop_script.sh  group={{learner_user}} owner={{learner_user}} mode=0775
+  become_user: "{{analytics_user}}"
+  template: src=stop_script.j2 dest={{ analytics_user_home }}/stop_script.sh  group={{analytics_user}} owner={{analytics_user}} mode=0775
   
 - name: run script
   become: yes
-  become_user: "{{learner_user}}"
-  shell: sh {{ learner_user_home }}/stop_script.sh
+  become_user: "{{analytics_user}}"
+  shell: sh {{ analytics_user_home }}/stop_script.sh
   
 - name: start redis
   become: yes
-  become_user: "{{learner_user}}"
-  shell: nohup src/redis-server {{learner_user_home}}/redis-stable/redis.conf --protected-mode no &
+  become_user: "{{analytics_user}}"
+  shell: nohup src/redis-server {{analytics_user_home}}/redis-stable/redis.conf --protected-mode no &
   args:
-    chdir: "{{learner_user_home}}/redis-stable/"
+    chdir: "{{analytics_user_home}}/redis-stable/"
   async: 60
   poll: 60
-  

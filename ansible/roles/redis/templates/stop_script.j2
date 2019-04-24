@@ -7,5 +7,5 @@
 #************************************************
 if [ `ps -ef | grep redis | grep -v grep | wc -l` -ge 1 ]
 then 
-	"{{learner_user_home}}/redis-stable/src/redis-cli" SHUTDOWN SAVE
+	"{{analytics_user_home}}/redis-stable/src/redis-cli" SHUTDOWN SAVE
 fi
