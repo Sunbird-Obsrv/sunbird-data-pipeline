@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 public class JobMetrics {
-    static Logger LOGGER = new Logger(JobMetrics.class);
+    private static Logger LOGGER = new Logger(JobMetrics.class);
     private final String jobName;
     private final Counter successMessageCount;
     private final Counter failedMessageCount;
