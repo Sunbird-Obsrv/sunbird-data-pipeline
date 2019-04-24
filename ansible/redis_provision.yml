@@ -18,3 +18,4 @@
  roles:
    - redis
  serial: 1
+

@@ -50,3 +50,4 @@
     chdir: "{{analytics_user_home}}/redis-stable/"
   async: 60
   poll: 60
+
