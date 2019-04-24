@@ -24,7 +24,7 @@ public class DeDuplicationConfig {
         metricsTopic = config.get("output.metrics.topic.name", "pipeline_metrics");
         defaultChannel = config.get("default.channel", "org.sunbird");
         dupStore = config.getInt("redis.database.duplicationstore.id", 7);
-        expirySeconds = config.getInt("redis.database.key.expiry.seconds", 604800);
+        expirySeconds = config.getInt("redis.database.key.expiry.seconds", 1296000);
     }
 
     public String successTopic() {

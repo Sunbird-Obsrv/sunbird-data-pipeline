@@ -54,8 +54,7 @@ public class DeDuplicationService {
 			LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
 			sink.toMalformedEventsTopic(source.getMessage());
 		} catch (JedisException e) {
-			sink.error();
-			LOGGER.error("", "Exception when redis connect" + e);
+			sink.toErrorTopic(event);
 			throw new JedisException(e);
 
 		} catch (Exception e) {

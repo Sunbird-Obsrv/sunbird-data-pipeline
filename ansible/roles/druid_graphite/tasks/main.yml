@@ -1,0 +1,106 @@
+---
+- include_vars: "{{inventory_dir}}/secrets.yml"
+#Install apache
+- name: Lookup OS specific variables
+  include_vars: "{{ ansible_os_family }}_apache.yml"
+
+- name: Install apache packages for RedHat
+  yum: "name={{ item }} state=present"
+  with_items: "{{ apache_pkgs }}"
+  when: ansible_os_family == 'RedHat'
+
+- name: Install apache packages for Debian
+  apt: "name={{ item }} state=present update_cache=yes"
+  with_items: "{{ apache_pkgs }}"
+  when: ansible_os_family == 'Debian'
+
+#Install Graphite
+- name: Lookup OS specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Install Graphite Dependencies for Redhat
+  yum: "name={{ item }} state=present enablerepo=epel"
+  with_items: "{{ graphite_pkgs }}"
+  when: ansible_os_family == 'RedHat'
+
+
+- name: Install Graphite Dependencies for Debian
+  apt: "name={{ item }} state=present update_cache=yes"
+  with_items: "{{ graphite_pkgs }}"
+  when: ansible_os_family == 'Debian'
+
+
+- name: Create PIP requirements file
+  copy: src=opt/graphite/requirements.txt dest=/tmp/requirements.txt
+
+
+- name: Install Graphite from PIP
+  pip:
+    requirements: /tmp/requirements.txt
+    extra_args: "--no-binary=:all:"
+  environment:
+    PYTHONPATH: "/opt/graphite/lib:/opt/graphite/webapp"
+
+
+- name: Configure graphite apache vhost
+  template: "src=etc/apache/graphite.conf.j2 dest={{ apache_vhost_dest }}/{{ graphite_apache_vhost_name }}
+   owner={{ apache_user }} group={{ apache_user }} mode=0644"
+  notify:
+    - Reload apache
+
+
+- name: Remove the default apache vhost
+  file: "path={{ apache_vhost_dest }}/000-default.conf state=absent"
+  notify:
+    - Reload apache
+  when: ansible_os_family == 'Debian'
+
+
+- name: Configure Graphite webapp
+  template: src=opt/graphite/webapp/graphite/local_settings.py.j2
+    dest=/opt/graphite/webapp/graphite/local_settings.py mode=0644
+  notify:
+    - Reload apache
+
+
+- name: Configure graphite.wsgi
+  copy: src=opt/graphite/conf/graphite.wsgi dest=/opt/graphite/conf/graphite.wsgi mode=0644
+  notify:
+    - Reload apache
+
+
+- name: Include carbon-cache
+  include: carbon-cache.yml
+
+
+- name: Get directory permissions
+  stat: path=/opt/graphite
+  register: permissions
+
+- debug:
+    var: permissions
+
+
+- name: Set file permissions
+  command: "/bin/chown -R {{ apache_user }}:{{ apache_user }} /opt/graphite"
+  when: "permissions.stat.pw_name != apache_user"
+
+
+- name: Setup psqldb
+  command: /usr/bin/python manage.py syncdb --noinput chdir=/opt/graphite/webapp/graphite creates=/opt/graphite/storage/graphite.db
+  register: psql_setup
+  become_user: "{{ apache_user }}"
+
+
+- name: Wait for psql_setup to be setup
+  shell: sleep 3
+  when: psql_setup.changed
+
+
+- name: Start apache httpd
+  service: "name={{ apache_service }} state=started"
+
+- name: start grapihte host
+  command: a2ensite graphite.conf chdir=/etc/apache2/sites-available
+  notify: 
+    - Reload apache

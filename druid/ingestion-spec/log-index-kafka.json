@@ -1,0 +1,698 @@
+{
+  "type": "kafka",
+  "dataSchema": {
+    "dataSource": "telemetry-log-events",
+    "parser": {
+      "type": "string",
+      "parseSpec": {
+        "format": "json",
+        "flattenSpec": {
+          "useFieldDiscovery": false,
+          "fields": [
+            {
+              "type": "root",
+              "name": "eid"
+            },
+            {
+              "type": "root",
+              "name": "syncts"
+            },
+            {
+              "type": "root",
+              "name": "@timestamp"
+            },
+            {
+              "type": "root",
+              "name": "mid"
+            },
+            {
+              "type": "root",
+              "name": "ver"
+            },
+            {
+              "type": "path",
+              "name": "actor_id",
+              "expr": "$.actor.id"
+            },
+            {
+              "type": "path",
+              "name": "actor_type",
+              "expr": "$.actor.type"
+            },
+            {
+              "type": "path",
+              "name": "context_channel",
+              "expr": "$.context.channel"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_id",
+              "expr": "$.context.pdata.id"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_pid",
+              "expr": "$.context.pdata.pid"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_ver",
+              "expr": "$.context.pdata.ver"
+            },
+            {
+              "type": "path",
+              "name": "context_env",
+              "expr": "$.context.env"
+            },
+            {
+              "type": "path",
+              "name": "context_sid",
+              "expr": "$.context.sid"
+            },
+            {
+              "type": "path",
+              "name": "context_did",
+              "expr": "$.context.did"
+            },
+            {
+              "type": "path",
+              "name": "context_cdata_type",
+              "expr": "$.context.cdata[*].type"
+            },
+            {
+              "type": "path",
+              "name": "context_cdata_id",
+              "expr": "$.context.cdata[*].id"
+            },
+            {
+              "type": "path",
+              "name": "context_rollup_l1",
+              "expr": "$.context.rollup.l1"
+            },
+            {
+              "type": "path",
+              "name": "context_rollup_l2",
+              "expr": "$.context.rollup.l2"
+            },
+            {
+              "type": "path",
+              "name": "context_rollup_l3",
+              "expr": "$.context.rollup.l3"
+            },
+            {
+              "type": "path",
+              "name": "context_rollup_l4",
+              "expr": "$.context.rollup.l4"
+            },
+            {
+              "type": "path",
+              "name": "object_id",
+              "expr": "$.object.id"
+            },
+            {
+              "type": "path",
+              "name": "object_type",
+              "expr": "$.object.type"
+            },
+            {
+              "type": "path",
+              "name": "object_version",
+              "expr": "$.object.ver"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l1",
+              "expr": "$.object.rollup.l1"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l2",
+              "expr": "$.object.rollup.l2"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l3",
+              "expr": "$.object.rollup.l3"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l4",
+              "expr": "$.object.rollup.l4"
+            },
+            {
+              "type": "root",
+              "name": "tags"
+            },
+            {
+              "type": "path",
+              "name": "edata_type",
+              "expr": "$.edata.type"
+            },
+            {
+              "type": "path",
+              "name": "edata_level",
+              "expr": "$.edata.level"
+            },
+            {
+              "type": "path",
+              "name": "edata_message",
+              "expr": "$.edata.message"
+            },
+            {
+              "type": "path",
+              "name": "edata_pageid",
+              "expr": "$.edata.pageid"
+            },
+            {
+              "type": "path",
+              "name": "edata_params_rid",
+              "expr": "$.edata.params[*].rid"
+            },
+            {
+              "type": "path",
+              "name": "edata_params_uip",
+              "expr": "$.edata.params[*].uip"
+            },
+            {
+              "type": "path",
+              "name": "edata_params_title",
+              "expr": "$.edata.params[*].title"
+            },
+            {
+              "type": "path",
+              "name": "edata_params_category",
+              "expr": "$.edata.params[*].category"
+            },
+            {
+              "type": "path",
+              "name": "edata_params_url",
+              "expr": "$.edata.params[*].url"
+            },
+            {
+              "type": "path",
+              "name": "edata_params_size",
+              "expr": "$.edata.params[*].size"
+            },
+            {
+              "type": "path",
+              "name": "edata_params_duration",
+              "expr": "$.edata.params[*].duration"
+            },
+            {
+              "type": "path",
+              "name": "edata_params_status",
+              "expr": "$.edata.params[*].status"
+            },
+            {
+              "type": "path",
+              "name": "edata_params_protocol",
+              "expr": "$.edata.params[*].protocol"
+            },
+            {
+              "type": "path",
+              "name": "edata_params_method",
+              "expr": "$.edata.params[*].method"
+            },
+            {
+              "type": "path",
+              "name": "edata_params_req",
+              "expr": "$.edata.params[*].req"
+            },
+            {
+              "type": "path",
+              "name": "device_os",
+              "expr": "$.devicedata.os"
+            },
+            {
+              "type": "path",
+              "name": "device_make",
+              "expr": "$.devicedata.make"
+            },
+            {
+              "type": "path",
+              "name": "device_id",
+              "expr": "$.devicedata.id"
+            },
+            {
+              "type": "path",
+              "name": "device_mem",
+              "expr": "$.devicedata.mem"
+            },
+            {
+              "type": "path",
+              "name": "device_idisk",
+              "expr": "$.devicedata.idisk"
+            },
+            {
+              "type": "path",
+              "name": "device_edisk",
+              "expr": "$.devicedata.edisk"
+            },
+            {
+              "type": "path",
+              "name": "device_scrn",
+              "expr": "$.devicedata.scrn"
+            },
+            {
+              "type": "path",
+              "name": "device_camera",
+              "expr": "$.devicedata.camera"
+            },
+            {
+              "type": "path",
+              "name": "device_cpu",
+              "expr": "$.devicedata.cpu"
+            },
+            {
+              "type": "path",
+              "name": "device_sims",
+              "expr": "$.devicedata.sims"
+            },
+            {
+              "type": "path",
+              "name": "device_uaspec_agent",
+              "expr": "$.devicedata.uaspec.agent"
+            },
+            {
+              "type": "path",
+              "name": "device_uaspec_ver",
+              "expr": "$.devicedata.uaspec.ver"
+            },
+            {
+              "type": "path",
+              "name": "device_uaspec_system",
+              "expr": "$.devicedata.uaspec.system"
+            },
+            {
+              "type": "path",
+              "name": "device_uaspec_platform",
+              "expr": "$.devicedata.uaspec.platform"
+            },
+            {
+              "type": "path",
+              "name": "device_uaspec_raw",
+              "expr": "$.devicedata.uaspec.raw"
+            },
+            {
+              "type": "path",
+              "name": "device_first_access",
+              "expr": "$.devicedata.firstaccess"
+            },
+            {
+              "type": "path",
+              "name": "content_name",
+              "expr": "$.contentdata.name"
+            },
+            {
+              "type": "path",
+              "name": "content_object_type",
+              "expr": "$.contentdata.objecttype"
+            },
+            {
+              "type": "path",
+              "name": "content_type",
+              "expr": "$.contentdata.contenttype"
+            },
+            {
+              "type": "path",
+              "name": "content_media_type",
+              "expr": "$.contentdata.mediatype"
+            },
+            {
+              "type": "path",
+              "name": "content_language",
+              "expr": "$.contentdata.language[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_medium",
+              "expr": "$.contentdata.medium"
+            },
+            {
+              "type": "path",
+              "name": "content_mimetype",
+              "expr": "$.contentdata.mimetype"
+            },
+            {
+              "type": "path",
+              "name": "content_framework",
+              "expr": "$.contentdata.framework"
+            },
+            {
+              "type": "path",
+              "name": "content_board",
+              "expr": "$.contentdata.board"
+            },
+            {
+              "type": "path",
+              "name": "content_status",
+              "expr": "$.contentdata.status"
+            },
+            {
+              "type": "path",
+              "name": "content_version",
+              "expr": "$.contentdata.pkgversion"
+            },
+            {
+              "type": "path",
+              "name": "content_last_submitted_on",
+              "expr": "$.contentdata.lastsubmittedon"
+            },
+            {
+              "type": "path",
+              "name": "content_last_published_on",
+              "expr": "$.contentdata.lastpublishedon"
+            },
+            {
+              "type": "path",
+              "name": "content_last_updated_on",
+              "expr": "$.contentdata.lastupdatedon"
+            }
+          ]
+        },
+        "dimensionsSpec": {
+          "dimensions": [
+            {
+              "type": "string",
+              "name": "eid"
+            },
+            {
+              "type": "long",
+              "name": "syncts"
+            },
+            {
+              "type": "string",
+              "name": "@timestamp"
+            },
+            {
+              "type": "string",
+              "name": "mid"
+            },
+            {
+              "type": "string",
+              "name": "ver"
+            },
+            {
+              "type": "string",
+              "name": "actor_id"
+            },
+            {
+              "type": "string",
+              "name": "actor_type"
+            },
+            {
+              "type": "string",
+              "name": "context_channel"
+            },
+            {
+              "type": "string",
+              "name": "context_pdata_id"
+            },
+            {
+              "type": "string",
+              "name": "context_pdata_pid"
+            },
+            {
+              "type": "string",
+              "name": "context_pdata_ver"
+            },
+            {
+              "type": "string",
+              "name": "context_env"
+            },
+            {
+              "type": "string",
+              "name": "context_sid"
+            },
+            {
+              "type": "string",
+              "name": "context_did"
+            },
+            {
+              "type": "string",
+              "name": "context_cdata_type"
+            },
+            {
+              "type": "string",
+              "name": "context_cdata_id"
+            },
+            {
+              "type": "string",
+              "name": "context_rollup_l1"
+            },
+            {
+              "type": "string",
+              "name": "context_rollup_l2"
+            },
+            {
+              "type": "string",
+              "name": "context_rollup_l3"
+            },
+            {
+              "type": "string",
+              "name": "context_rollup_l4"
+            },
+            {
+              "type": "string",
+              "name": "object_id"
+            },
+            {
+              "type": "string",
+              "name": "object_type"
+            },
+            {
+              "type": "string",
+              "name": "object_version"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l1"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l2"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l3"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l4"
+            },
+            {
+              "type": "string",
+              "name": "tags"
+            },
+            {
+              "type": "string",
+              "name": "edata_type"
+            },
+            {
+              "type": "string",
+              "name": "edata_level"
+            },
+            {
+              "type": "string",
+              "name": "edata_message"
+            },
+            {
+              "type": "string",
+              "name": "edata_pageid"
+            },
+            {
+              "type": "string",
+              "name": "edata_params_rid"
+            },
+            {
+              "type": "string",
+              "name": "edata_params_uip"
+            },
+            {
+              "type": "string",
+              "name": "edata_params_title"
+            },
+            {
+              "type": "string",
+              "name": "edata_params_category"
+            },
+            {
+              "type": "string",
+              "name": "edata_params_url"
+            },
+            {
+              "type": "string",
+              "name": "edata_params_size"
+            },
+            {
+              "type": "string",
+              "name": "edata_params_duration"
+            },
+            {
+              "type": "string",
+              "name": "edata_params_status"
+            },
+            {
+              "type": "string",
+              "name": "edata_params_protocol"
+            },
+            {
+              "type": "string",
+              "name": "edata_params_method"
+            },
+            {
+              "type": "string",
+              "name": "edata_params_req"
+            },
+            {
+              "type": "string",
+              "name": "device_os"
+            },
+            {
+              "type": "string",
+              "name": "device_make"
+            },
+            {
+              "type": "string",
+              "name": "device_id"
+            },
+            {
+              "type": "long",
+              "name": "device_mem"
+            },
+            {
+              "type": "string",
+              "name": "device_idisk"
+            },
+            {
+              "type": "string",
+              "name": "device_edisk"
+            },
+            {
+              "type": "string",
+              "name": "device_scrn"
+            },
+            {
+              "type": "string",
+              "name": "device_camera"
+            },
+            {
+              "type": "string",
+              "name": "device_cpu"
+            },
+            {
+              "type": "long",
+              "name": "device_sims"
+            },
+            {
+              "type": "string",
+              "name": "device_uaspec_agent"
+            },
+            {
+              "type": "string",
+              "name": "device_uaspec_ver"
+            },
+            {
+              "type": "string",
+              "name": "device_uaspec_system"
+            },
+            {
+              "type": "string",
+              "name": "device_uaspec_platform"
+            },
+            {
+              "type": "string",
+              "name": "device_uaspec_raw"
+            },
+            {
+              "type": "long",
+              "name": "device_first_access"
+            },
+            {
+              "type": "string",
+              "name": "content_name"
+            },
+            {
+              "type": "string",
+              "name": "content_object_type"
+            },
+            {
+              "type": "string",
+              "name": "content_type"
+            },
+            {
+              "type": "string",
+              "name": "content_media_type"
+            },
+            {
+              "name": "content_language"
+            },
+            {
+              "type": "string",
+              "name": "content_medium"
+            },
+            {
+              "type": "string",
+              "name": "content_mimetype"
+            },
+            {
+              "type": "string",
+              "name": "content_framework"
+            },
+            {
+              "type": "string",
+              "name": "content_board"
+            },
+            {
+              "type": "string",
+              "name": "content_status"
+            },
+            {
+              "type": "double",
+              "name": "content_version"
+            },
+            {
+              "type": "long",
+              "name": "content_last_submitted_on"
+            },
+            {
+              "type": "long",
+              "name": "content_last_published_on"
+            },
+            {
+              "type": "long",
+              "name": "content_last_updated_on"
+            }
+          ]
+        },
+        "timestampSpec": {
+          "column": "ets",
+          "format": "auto"
+        }
+      }
+    },
+    "metricsSpec": [],
+    "granularitySpec": {
+      "type": "uniform",
+      "segmentGranularity": "day",
+      "queryGranularity": "none",
+      "rollup": false
+    }
+  },
+  "ioConfig": {
+    "topic": "<env>.events.log",
+    "consumerProperties": {
+      "bootstrap.servers": "broker_ip:broker_port"
+    },
+    "taskCount": 1,
+    "replicas": 1,
+    "taskDuration": "PT3600S",
+    "useEarliestOffset": true
+  },
+  "tuningConfig": {
+    "type": "kafka",
+    "reportParseExceptions": false,
+    "logParseExceptions": true,
+    "maxSavedParseExceptions": 10
+  }
+}

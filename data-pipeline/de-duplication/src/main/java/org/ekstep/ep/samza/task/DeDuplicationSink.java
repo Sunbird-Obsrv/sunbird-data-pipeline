@@ -38,10 +38,6 @@ public class DeDuplicationSink extends BaseSink {
         metrics.incErrorCounter();
     }
 
-    public void error() {
-        metrics.incErrorCounter();
-    }
-
     public void setMetricsOffset(SystemStreamPartition systemStreamPartition, String offset) {
         metrics.setOffset(systemStreamPartition, offset);
     }
