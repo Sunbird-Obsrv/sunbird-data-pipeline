@@ -3,7 +3,7 @@
   hosts: druid-zookeeper
   become: yes
   roles:
-    - {role: java}
+    - {role: jdk-1.8.0_121}
     - {role: zookeeper-upgrade}
   vars:
     zookeeper_group: "{{ groups['druid-zookeeper'] }}"
