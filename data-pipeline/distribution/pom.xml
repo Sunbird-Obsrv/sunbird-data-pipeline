@@ -101,13 +101,6 @@
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>de-normalization</artifactId>
-            <version>0.0.1</version>
-            <type>tar.gz</type>
-            <classifier>distribution</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>redis-updater</artifactId>
             <version>0.0.1</version>
             <type>tar.gz</type>
@@ -115,7 +108,7 @@
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>events-router</artifactId>
+            <artifactId>druid-events-validator</artifactId>
             <version>0.0.1</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
