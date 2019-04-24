@@ -1,6 +1,0 @@
----
-
-- include: 'rvm.yml'
-  tags: ['rvm_install', 'rvm']
-- include: 'rubies.yml'
-  tags: ['rvm_install_rubies', 'rvm']

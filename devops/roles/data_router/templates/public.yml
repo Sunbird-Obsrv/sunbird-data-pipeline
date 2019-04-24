@@ -1,8 +1,0 @@
----
-data_dir: {{ public_data_aggregate_dir }}
-store_file_name: store.yml
-initial_aggregate_date: {{ public_data_aggregate_initial_aggregate_date }}
-dataset_id: {{ public_data_aggregate_dataset_id }}
-resource_id: {{ public_data_aggregate_resource_id }}
-licence_key: {{ public_data_aggregate_licence_key }}
-dataset_aggregate_endpoint: {{ aggregate_data_api_endpoint }}

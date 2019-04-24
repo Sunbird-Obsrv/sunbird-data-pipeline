@@ -4090,6 +4090,29 @@
     "appName": "Video Streaming Job",
     "deviceMapping": false
   },
+  "course-dashboard-metrics": {
+    "search": {
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.updater.UpdateCourseMetrics",
+    "modelParams": {
+      "fromDate": "$(date --date yesterday '+%Y-%m-%d')",
+      "toDate": "$(date --date yesterday '+%Y-%m-%d')",
+      "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
+      "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Course Dashboard Metrics",
+    "deviceMapping": false
+  },
   "monitor-job-summ": {
     "search": {
       "type": "local",
