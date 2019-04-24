@@ -49,7 +49,7 @@ druid_community_extensions:
 druid_indexing_logs_type: azure
 druid_indexing_log_dir: /var/druid/indexing-logs
 druid_indexing_storage_type : metadata
-druid_indexing_task_basedir : "{{ druid_path }}var/task"
+druid_indexing_task_basedir : "/var/task"
 druid_indexing_queue_startDelay: PT30S
 
 druid_common_monitors: '"com.metamx.metrics.JvmMonitor","org.apache.druid.java.util.metrics.JvmMonitor"'
