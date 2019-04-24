@@ -3,7 +3,7 @@
  become: yes
  vars_files:
    - "{{inventory_dir}}/secrets.yml"
- tasks:
+ pre_tasks::
    - name: Create group
      group:
        name: analytics
@@ -15,8 +15,6 @@
        group: analytics
        groups: sudo
        shell: /bin/bash
-
-- hosts: redisall
  roles:
    - redis
  serial: 1
