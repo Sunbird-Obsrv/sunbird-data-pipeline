@@ -18,6 +18,14 @@
   become: yes
   template: src=redis.conf.j2 dest={{analytics_user_home}}/redis-stable/redis.conf
   
+- name: Install required utils
+  apt: name={{ item }} state=present 
+  become: yes
+  with_items:
+    - make
+    - gcc
+    - build-essential
+    - tcl8.5
 
 - name: Go to the folder and run make
   become: yes
