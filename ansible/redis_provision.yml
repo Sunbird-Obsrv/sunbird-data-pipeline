@@ -3,7 +3,7 @@
   become: yes
   vars_files:
     - "{{inventory_dir}}/secrets.yml"
-  pre_tasks::
+  pre_tasks:
     - name: Create group
       group:
         name: analytics
