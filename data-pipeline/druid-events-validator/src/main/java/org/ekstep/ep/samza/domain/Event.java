@@ -51,6 +51,10 @@ public class Event {
         NullableValue<String> eid = telemetry.read("eid");
         return eid.value();
     }
+    public String did() {
+        NullableValue<String> checksum = telemetry.read("context.did");
+        return checksum.value();
+    }
 
     public String pid() {
         NullableValue<String> pid = telemetry.read("context.pdata.pid");
