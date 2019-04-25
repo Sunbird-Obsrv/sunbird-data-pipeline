@@ -61,8 +61,8 @@ public class Event {
 		telemetry.add("metadata.src", config.jobName());
 	}
 
-	public void udpateTS(String value){
-		telemetry.add("context.did",value);
+	public void updateTs(String value){
+		telemetry.add("@timestamp",value);
 	}
 
 	public void setTimestamp() {

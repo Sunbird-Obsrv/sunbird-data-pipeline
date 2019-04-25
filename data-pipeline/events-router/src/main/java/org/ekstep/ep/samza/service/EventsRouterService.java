@@ -10,6 +10,7 @@ import org.ekstep.ep.samza.task.EventsRouterSource;
 
 import com.google.gson.JsonSyntaxException;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class EventsRouterService {
@@ -27,8 +28,9 @@ public class EventsRouterService {
 			event = source.getEvent();
 			String eid = event.eid();
 			if(event.mid().contains("TRACE")){
-				String value = event.did() +"TS:"+ new Date().getTime();
-				event.udpateTS(value);
+				SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+				String timeStamp  = simple.format(new Date());
+				event.updateTs(timeStamp);
 			}
 			String summaryRouteEventPrefix = this.config.getSummaryRouteEvents();
 			if (eid.startsWith(summaryRouteEventPrefix)) {
