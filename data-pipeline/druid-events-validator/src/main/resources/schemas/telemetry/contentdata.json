@@ -23,7 +23,15 @@
     },
     "medium": {
       "id": "http://api.sunbird.org/telemetry/contentdata/medium",
-      "type": "string"
+      "type": "array"
+    },
+    "gradelevel": {
+      "id": "http://api.sunbird.org/telemetry/contentdata/gradelevel",
+      "type": "array"
+    },
+    "subjects": {
+      "id": "http://api.sunbird.org/telemetry/contentdata/subjects",
+      "type": "array"
     },
     "mimetype": {
       "id": "http://api.sunbird.org/telemetry/contentdata/mimetype",
