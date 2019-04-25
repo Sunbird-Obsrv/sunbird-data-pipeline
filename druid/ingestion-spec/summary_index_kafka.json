@@ -375,7 +375,17 @@
                     {
                         "type": "path",
                         "name": "content_medium",
-                        "expr": "$.contentdata.medium"
+                        "expr": "$.contentdata.medium[*]"
+                    },
+                    {
+                        "type": "path",
+                        "name": "content_gradelevel",
+                        "expr": "$.contentdata.gradelevel[*]"
+                    },
+                    {
+                        "type": "path",
+                        "name": "content_subjects",
+                        "expr": "$.contentdata.subject[*]"
                     },
                     {
                         "type": "path",
@@ -432,7 +442,6 @@
                         "name": "user_subject_list",
                         "expr": "$.userdata.subjectlist[*]"
                     },
-
                     {
                         "type": "path",
                         "name": "user_type",
@@ -753,8 +762,13 @@
                         "name": "content_language"
                     },
                     {
-                        "type": "string",
                         "name": "content_medium"
+                    },
+                    {
+                        "name": "content_gradelevel"
+                    },
+                    {
+                        "name": "content_subjects"
                     },
                     {
                         "type": "string",
