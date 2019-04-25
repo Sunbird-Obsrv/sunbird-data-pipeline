@@ -61,6 +61,10 @@ public class Event {
 		telemetry.add("metadata.src", config.jobName());
 	}
 
+	public void updateTs(String value){
+		telemetry.add("@timestamp",value);
+	}
+
 	public void setTimestamp() {
 		Double ets = safelyParse(path.ets());
 		SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
