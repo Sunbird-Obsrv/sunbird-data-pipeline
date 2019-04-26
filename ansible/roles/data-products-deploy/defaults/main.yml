@@ -60,6 +60,11 @@ have_weekly_jobs: false
 
 video_stream_job_schedule: 10
 
+run_course_metrics_job:
+  course-dashboard-metrics:
+    hour: 2
+    minute: 00
+
 service:
   search:
     url: http://{{groups['search1'][0]}}:9000
