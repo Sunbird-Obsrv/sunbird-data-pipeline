@@ -1,0 +1,45 @@
+-
+  name: Install java and zookeeper cluster for druid
+  hosts: druid-zookeeper
+  become: yes
+  roles:
+    - {role: jdk-1.8.0_121}
+    - {role: zookeeper-upgrade}
+  vars:
+    zookeeper_group: "{{ groups['druid-zookeeper'] }}"
+
+-
+  name: Install postgres on druid cluster
+  hosts: druid-postgres
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
+  become: yes
+  roles:
+    - {role: postgres-provision }
+  vars:
+    postgres_address_space: "0.0.0.0/0"
+    postgresql_databases:
+      - name: druid
+      - name: graphite
+    postgresql_users:
+      - name: druid
+        password: "{{ dp_vault_druid_postgress_pass }}"
+      - name: graphite 
+        password: "{{ dp_vault_druid_postgress_graphite_pass }}"
+
+- 
+  name : Install graphite on druid
+  hosts: druid-graphite
+  become: yes
+  roles:
+    - {role: druid_graphite}
+-
+  name: Install role druid
+  hosts: druid
+  become: yes
+  roles:
+    - {role: analytics-druid, when: "'coordinator' in group_names", druid_role: 'coordinator', service: 'coordinator' }
+    - {role: analytics-druid, when: "'overlord' in group_names", druid_role: 'overlord', service: 'overlord'}
+    - {role: analytics-druid, when: "'broker' in group_names", druid_role: 'broker', service: 'broker'}
+    - {role: analytics-druid, when: "'historical' in group_names", druid_role: 'historical', service: 'historical'}
+    - {role: analytics-druid, when: "'middlemanager' in group_names", druid_role: 'middlemanager', service: 'middleManager' }

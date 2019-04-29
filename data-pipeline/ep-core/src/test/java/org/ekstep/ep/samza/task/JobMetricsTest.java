@@ -22,15 +22,13 @@ import static org.mockito.Mockito.*;
 public class JobMetricsTest {
 
 	private TaskContext contextMock;
-	private MetricsRegistry metricsRegistry;
-	private Counter counter;
 	private JobMetrics jobMetricsMock;
 
 	@Before
 	public void setUp() {
 		contextMock = mock(TaskContext.class);
-		metricsRegistry = mock(MetricsRegistry.class);
-		counter = mock(Counter.class);
+		MetricsRegistry metricsRegistry = mock(MetricsRegistry.class);
+		Counter counter = mock(Counter.class);
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
 	}

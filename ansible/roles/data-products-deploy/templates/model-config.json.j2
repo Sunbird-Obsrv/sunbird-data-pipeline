@@ -4099,7 +4099,7 @@
       "fromDate": "$(date --date yesterday '+%Y-%m-%d')",
       "toDate": "$(date --date yesterday '+%Y-%m-%d')",
       "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
-      "sparkElasticsearchConnectionHost": "{{lp_composite_search}}"
+      "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
     },
     "output": [
       {
@@ -4552,6 +4552,11 @@
           "model": "UpdateDialcodeUsageDB",
           "category": "consumption",
           "input_dependency": "DialcodeUsageSummaryModel"
+        },
+        {
+          "model": "CourseMetricsJob",
+          "category": "consumption",
+          "input_dependency": "None"
         }
       ]
     },
