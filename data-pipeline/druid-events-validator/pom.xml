@@ -15,7 +15,7 @@
     </parent>
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>druid-events-validator</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
     <packaging>jar</packaging>
     <name>druid-events-validator</name>
     <description>
