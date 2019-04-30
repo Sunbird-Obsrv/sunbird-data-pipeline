@@ -307,6 +307,12 @@ config() {
 	   	"dialcode-usage-updater")
 		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/dialus/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.updater.UpdateDialcodeUsageDB","modelParams":{},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$learning_topic'"}}],"parallelization":8,"appName":"DialcodeUsageUpdater","deviceMapping":false}'
 		;;
+		"telemetry-replay")
+        echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"unique/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.job.TelemetryReplayJob","modelParams":{},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$sinc_topic'"}}],"parallelization":8,"appName":"TelemetryReplayJob","deviceMapping":false}'
+        ;;
+        "summary-replay")
+        echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/wfs/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.job.TelemetryReplayJob","modelParams":{},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$sinc_topic'"}}],"parallelization":8,"appName":"TelemetryReplayJob","deviceMapping":false}'
+        ;;
 		"*")
 		echo "Unknown model code"
       	exit 1 # Command to come out of the program with status 1
