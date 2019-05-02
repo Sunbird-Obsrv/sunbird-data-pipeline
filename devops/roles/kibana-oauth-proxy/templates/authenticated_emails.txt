@@ -1,3 +1,0 @@
-{% for authenticated_email in kibana_authenticated_emails %}
-{{ authenticated_email }}
-{% endfor %}

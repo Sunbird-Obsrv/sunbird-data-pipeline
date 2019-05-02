@@ -30,6 +30,12 @@ processing_kafka_overriden_topics:
   - name: telemetry.with_location
     retention_time: 86400000
     replication_factor: 1
+  - name: telemetry.denorm
+    retention_time: 86400000
+    replication_factor: 1
+  - name: telemetry.denorm.valid
+    retention_time: 86400000
+    replication_factor: 1
   - name: telemetry.de_normalized
     retention_time: 21600000
     replication_factor: 1
@@ -66,6 +72,8 @@ processing_kafka_overriden_topics:
   - name: telemetry.derived
     retention_time: 21600000
     replication_factor: 1
+  - name: events.log
+    retention_time: 86400000
   # Error/Failed Topics
   - name: telemetry.failed
     retention_time: 86400000
@@ -109,6 +117,12 @@ processing_kafka_topics:
   - name: telemetry.with_location
     num_of_partitions: 8
     replication_factor: 1
+  - name: telemetry.denorm
+    num_of_partitions: 4
+    replication_factor: 1
+  - name: telemetry.denorm.valid
+    num_of_partitions: 2
+    replication_factor: 1
   - name: telemetry.de_normalized
     num_of_partitions: 4
     replication_factor: 1
@@ -117,6 +131,9 @@ processing_kafka_topics:
     replication_factor: 1
   - name: events.summary
     num_of_partitions: 4
+    replication_factor: 1
+  - name: events.log
+    num_of_partitions: 2
     replication_factor: 1
   - name: telemetry.log
     num_of_partitions: 1

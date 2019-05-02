@@ -1,6 +1,0 @@
----
-- hosts: localhost
-  vars_files:
-    - "{{inventory_dir}}/secrets/dp_secrets.yml"
-  roles:
-    - provision-geo-location-db

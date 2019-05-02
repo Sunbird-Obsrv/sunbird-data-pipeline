@@ -13,6 +13,7 @@ maxclinetconnection_limit: 200
 data_dir: /var/lib/zookeeper
 log_dir: /var/log/zookeeper
 client_port: "{{ zookeeper_port }}"
+zookeeper_group: "{{ groups['zookeeper'] }}"
 # List of dict (i.e. {zookeeper_hosts:[{host:,id:},{host:,id:},...]})
 # zookeeper_hosts:
 #   - host: "{{inventory_hostname}}" # the machine running

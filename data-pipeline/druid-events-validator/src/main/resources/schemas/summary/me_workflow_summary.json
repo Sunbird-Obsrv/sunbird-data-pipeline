@@ -1,0 +1,32 @@
+{
+  "id": "http://api.sunbird.org/summary/me_workflow_summary",
+  "type": "object",
+  "required": [
+    "eid",
+    "ets",
+    "ver",
+    "syncts",
+    "mid",
+    "context",
+    "edata"
+  ],
+  "allOf": [
+    {
+      "$ref": "resource:/schemas/summary/common.json"
+    },
+    {
+      "properties": {
+        "eid": {
+          "id": "http://api.sunbird.org/summary/eid",
+          "enum": [
+            "ME_WORKFLOW_SUMMARY"
+          ]
+        },
+        "edata": {
+          "id": "http://api.sunbird.org/summary/edata",
+          "type": "object"
+        }
+      }
+    }
+  ]
+}

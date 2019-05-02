@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "properties": {
+    "channel": {
+      "id": "http://api.sunbird.org/summary/dimension/channel",
+      "type":"string"
+    },
+    "sid": {
+      "id": "http://api.sunbird.org/summary/dimension/sid",
+      "type": "string"
+    },
+    "did": {
+      "id": "http://api.sunbird.org/summary/dimension/did",
+      "type": "string"
+    },
+    "pdata": {
+      "$ref": "resource:/schemas/summary/dimension_pdata.json"
+    },
+    "type": {
+      "id": "http://api.sunbird.org/telemetry/dimension/type",
+      "type": "string"
+    },
+    "mode": {
+      "id": "http://api.sunbird.org/telemetry/dimension/mode",
+      "type": "string"
+    }
+  }
+}

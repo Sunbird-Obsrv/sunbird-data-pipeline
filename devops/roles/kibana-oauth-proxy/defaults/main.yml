@@ -1,7 +1,0 @@
----
-kibana_proxy_url: 0.0.0.0:3000
-kibana_base_path: /dashboard
-kibana_authenticated_emails : ["ex@example.com"]
-kibana_port: 5601
-kibana_allowed_domains: ["example.com"]
-kibana_dashboard_url: "http://{{groups['telemetry-search-cluster-kibana-node'][0]}}:{{kibana_port}}"
