@@ -7,6 +7,6 @@
   become_user: "{{ analytics_user }}"
   tasks:
    - name: Submit all Jobs to JobManager Queue
-     shell: "ruby {{ analytics.home }}/scripts/submit-all-jobs.rb"
+     shell: "ruby /mount/data/analytics/scripts/submit-all-jobs.rb"
      async: "{{ (pause_min * 60) }}"
      poll: 0
