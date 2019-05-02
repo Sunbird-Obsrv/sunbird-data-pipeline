@@ -14,6 +14,7 @@ consumptionRawPrefix: datasets/D001/4208ab995984d222b59299e5103d350a842d8d41/
 topic: "{{ env }}.telemetry.derived"
 learning_topic: "{{ env }}.learning.graph.events"
 analytics_metrics_topic: "{{ env }}.analytics_metrics"
+sinc_topic: "{{ env }}.telemetry.sink"
 job_manager_tmp_dir: "transient-data"
 channel: dev-test
 
