@@ -7,32 +7,32 @@ import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.domain.Event;
 
 public class TelemetryValidatorSink extends BaseSink {
-    
+
     private JobMetrics metrics;
     private TelemetryValidatorConfig config;
 
     public TelemetryValidatorSink(MessageCollector collector, JobMetrics metrics,
                                   TelemetryValidatorConfig config) {
-        
-    	super(collector);
+
+        super(collector);
         this.metrics = metrics;
         this.config = config;
     }
 
     public void toSuccessTopic(Event event) {
-        toTopic(config.successTopic(), event.mid(), event.getJson());
+        toTopic(config.successTopic(), null, event.getJson());
         metrics.incSuccessCounter();
     }
 
     public void toFailedTopic(Event event, String failedMessage) {
-    	event.markFailure(failedMessage, config);
-    	toTopic(config.failedTopic(), event.mid(), event.getJson());
+        event.markFailure(failedMessage, config);
+        toTopic(config.failedTopic(), null, event.getJson());
         metrics.incFailedCounter();
     }
 
     public void toErrorTopic(Event event, String errorMessage) {
-    	event.markFailure(errorMessage, config);
-    	toTopic(config.failedTopic(), event.mid(), event.getJson());
+        event.markFailure(errorMessage, config);
+        toTopic(config.failedTopic(), null, event.getJson());
         metrics.incErrorCounter();
     }
 

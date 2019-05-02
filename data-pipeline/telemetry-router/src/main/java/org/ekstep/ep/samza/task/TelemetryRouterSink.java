@@ -13,7 +13,7 @@ public class TelemetryRouterSink extends BaseSink {
 	private JobMetrics metrics;
 	private TelemetryRouterConfig config;
 	private SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-	
+
 	public TelemetryRouterSink(MessageCollector collector, JobMetrics metrics, TelemetryRouterConfig config) {
 		super(collector);
 		this.metrics = metrics;
@@ -22,13 +22,13 @@ public class TelemetryRouterSink extends BaseSink {
 
 	public void toPrimaryRoute(Event event) {
 		event.setTimestamp();
-		toTopic(config.getPrimaryRouteTopic(), event.did(), event.getJson());
+		toTopic(config.getPrimaryRouteTopic(), null, event.getJson());
 		metrics.incSuccessCounter();
 	}
 
 	public void toErrorTopic(Event event, String errorMessage) {
 		event.markFailure(errorMessage, config);
-		toTopic(config.failedTopic(), event.mid(), event.getJson());
+		toTopic(config.failedTopic(), null, event.getJson());
 		metrics.incErrorCounter();
 	}
 
@@ -38,7 +38,7 @@ public class TelemetryRouterSink extends BaseSink {
 	}
 
 	public void toSecondaryRoute(Event event) {
-		toTopic(config.getSecondaryRouteTopic(), event.did(), event.getJson());
+		toTopic(config.getSecondaryRouteTopic(), null, event.getJson());
 		metrics.incSuccessCounter();
 	}
 
