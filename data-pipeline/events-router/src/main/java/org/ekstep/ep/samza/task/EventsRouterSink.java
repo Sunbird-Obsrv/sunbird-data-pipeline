@@ -6,13 +6,11 @@ import org.ekstep.ep.samza.core.BaseSink;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.domain.Event;
 
-import java.text.SimpleDateFormat;
-
 public class EventsRouterSink extends BaseSink {
 
 	private JobMetrics metrics;
 	private EventsRouterConfig config;
-	
+
 	public EventsRouterSink(MessageCollector collector, JobMetrics metrics, EventsRouterConfig config) {
 		super(collector);
 		this.metrics = metrics;
@@ -20,13 +18,13 @@ public class EventsRouterSink extends BaseSink {
 	}
 
 	public void toTelemetryEventsTopic(Event event) {
-		toTopic(config.getTelemetryEventsRouteTopic(), event.did(), event.getJson());
+		toTopic(config.getTelemetryEventsRouteTopic(), null, event.getJson());
 		metrics.incSuccessCounter();
 	}
 
 	public void toErrorTopic(Event event, String errorMessage) {
 		event.markFailure(errorMessage, config);
-		toTopic(config.failedTopic(), event.did(), event.getJson());
+		toTopic(config.failedTopic(), null, event.getJson());
 		metrics.incErrorCounter();
 	}
 
@@ -36,7 +34,7 @@ public class EventsRouterSink extends BaseSink {
 	}
 
 	public void toSummaryEventsTopic(Event event) {
-		toTopic(config.getSummaryEventsRouteTopic(), event.did(), event.getJson());
+		toTopic(config.getSummaryEventsRouteTopic(), null, event.getJson());
 		metrics.incSuccessCounter();
 	}
 
@@ -44,8 +42,8 @@ public class EventsRouterSink extends BaseSink {
 		metrics.incSkippedCounter();
 	}
 
-	public void toLogEventsTopic(Event event){
-		toTopic(config.getLogEventsRouteTopic(), event.did(), event.getJson());
+	public void toLogEventsTopic(Event event) {
+		toTopic(config.getLogEventsRouteTopic(), null, event.getJson());
 		metrics.incSuccessCounter();
 	}
 
