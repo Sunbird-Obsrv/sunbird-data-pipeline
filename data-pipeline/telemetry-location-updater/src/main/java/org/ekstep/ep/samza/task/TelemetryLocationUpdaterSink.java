@@ -14,7 +14,7 @@ public class TelemetryLocationUpdaterSink extends BaseSink {
 	private JobMetrics metrics;
 	private TelemetryLocationUpdaterConfig config;
 	private SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-	
+
 	public TelemetryLocationUpdaterSink(MessageCollector collector, JobMetrics metrics, TelemetryLocationUpdaterConfig config) {
 		super(collector);
 		this.metrics = metrics;
@@ -22,13 +22,13 @@ public class TelemetryLocationUpdaterSink extends BaseSink {
 	}
 
 	public void toSuccessTopic(Event event) {
-		toTopic(config.successTopic(), event.did(), event.getJson());
+		toTopic(config.successTopic(), null, event.getJson());
 		metrics.incSuccessCounter();
 	}
 
 	public void toErrorTopic(Event event, String errorMessage) {
 		event.markFailure(errorMessage, config);
-		toTopic(config.failedTopic(), event.did(), event.getJson());
+		toTopic(config.failedTopic(), null, event.getJson());
 		metrics.incErrorCounter();
 	}
 

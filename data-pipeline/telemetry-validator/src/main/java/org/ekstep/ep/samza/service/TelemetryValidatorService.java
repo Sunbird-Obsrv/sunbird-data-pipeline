@@ -31,14 +31,6 @@ public class TelemetryValidatorService {
         try {
         	event = dataCorrection(source.getEvent());
 
-            if (event.pid() != null && !event.pid().isEmpty()
-                    && event.pid().equalsIgnoreCase("learning-service")
-                    && event.eid().equalsIgnoreCase("LOG")) {
-                LOGGER.info("SKIP PROCESSING LEARNING-SERVICE EVENTS", event.mid());
-                event.markSkipped();
-                return;
-            }
-
             String schemaFilePath = MessageFormat.format("{0}/{1}/{2}",config.schemaPath(), event.version(),event.schemaName());
             File schemaFile = new File(schemaFilePath);
 

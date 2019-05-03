@@ -1,0 +1,4 @@
+analytics_user: analytics
+analytics_user_home: /home/{{analytics_user}}
+redis_home: "{{analytics_user_home}}/redis-stable"
+redis_tar_ball: http://download.redis.io/releases/redis-stable.tar.gz
