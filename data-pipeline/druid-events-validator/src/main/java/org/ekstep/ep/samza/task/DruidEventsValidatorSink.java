@@ -20,19 +20,19 @@ public class DruidEventsValidatorSink extends BaseSink {
     }
 
     public void toSuccessTopic(Event event) {
-        toTopic(config.successTopic(), null, event.getJson());
+        toTopic(config.successTopic(), event.mid(), event.getJson());
         metrics.incSuccessCounter();
     }
 
     public void toFailedTopic(Event event, String failedMessage) {
         event.markFailure(failedMessage, config);
-        toTopic(config.failedTopic(), null, event.getJson());
+        toTopic(config.failedTopic(), event.mid(), event.getJson());
         metrics.incFailedCounter();
     }
 
     public void toErrorTopic(Event event, String errorMessage) {
         event.markFailure(errorMessage, config);
-        toTopic(config.failedTopic(), null, event.getJson());
+        toTopic(config.failedTopic(), event.mid(), event.getJson());
         metrics.incErrorCounter();
     }
 
