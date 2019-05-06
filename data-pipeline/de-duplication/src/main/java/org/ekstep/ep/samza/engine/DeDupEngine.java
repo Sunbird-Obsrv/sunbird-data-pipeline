@@ -1,32 +1,22 @@
 package org.ekstep.ep.samza.engine;
 
-import org.ekstep.ep.samza.util.RedisConnect;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.exceptions.JedisException;
+import org.apache.samza.storage.kv.KeyValueStore;
 
 import java.util.Date;
 
 public class DeDupEngine {
 
+    private KeyValueStore<Object, Object> deDuplicationStore;
 
-    private RedisConnect redisConnect;
-
-    public DeDupEngine(RedisConnect redisConnect) {
-        this.redisConnect = redisConnect;
+    public DeDupEngine(KeyValueStore<Object, Object> deDuplicationStore) {
+        this.deDuplicationStore = deDuplicationStore;
     }
 
-    public boolean isUniqueEvent(String checksum, int store) throws JedisException {
-        try (Jedis jedis = redisConnect.getConnection()) {
-            jedis.select(store);
-            return jedis.get(checksum) == null;
-        }
+    public boolean isUniqueEvent(String checksum){
+        return deDuplicationStore.get(checksum) == null;
     }
 
-    public void storeChecksum(String checksum, int store, int expirySeconds) throws JedisException {
-        try (Jedis jedis = redisConnect.getConnection()) {
-            jedis.select(store);
-            jedis.set(checksum, new Date().toString());
-            jedis.expire(checksum, expirySeconds);
-        }
+    public void storeChecksum(String checksum){
+        deDuplicationStore.put(checksum, new Date().toString());
     }
 }
