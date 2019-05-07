@@ -32,7 +32,7 @@ public class EventFixture {
             "  },\n" +
             "  \"eid\": \"START\",\n" +
             "  \"gdata\": {\n" +
-            "    \"id\": \"genie.android\",\n" +
+            "    \"id\": \"ge			nie.android\",\n" +
             "    \"ver\": \"1.0\"\n" +
             "  },\n" +
             "  \"sid\": \"\",\n" +
