@@ -18,13 +18,13 @@ public class DeDuplicationSink extends BaseSink {
     }
 
     public void toSuccessTopic(Event event) {
-        toTopic(config.successTopic(), null, event.getJson());
+        toTopic(config.successTopic(), event.did(), event.getJson());
         metrics.incSuccessCounter();
         ;
     }
 
     public void toDuplicateTopic(Event event) {
-        toTopic(config.duplicateTopic(), null, event.getJson());
+        toTopic(config.duplicateTopic(), event.did(), event.getJson());
         metrics.incFailedCounter();
     }
 
@@ -34,7 +34,7 @@ public class DeDuplicationSink extends BaseSink {
     }
 
     public void toErrorTopic(Event event) {
-        toTopic(config.failedTopic(), null, event.getJson());
+        toTopic(config.failedTopic(), event.did(), event.getJson());
         metrics.incErrorCounter();
     }
 
