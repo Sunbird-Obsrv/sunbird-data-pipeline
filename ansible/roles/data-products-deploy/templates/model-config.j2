@@ -12,6 +12,7 @@ config() {
 	topic={{ topic }}
 	analyticsMetricsTopic={{ analytics_metrics_topic }}
 	learning_topic={{ learning_topic }}
+	sinkTopic={{ sink_topic }}
 	currentDate=$(date "+%Y-%m-%d");
 	analytics_home={{ analytics.home }}	
 	temp_folder={{ job_manager_tmp_dir }}
@@ -307,6 +308,12 @@ config() {
 	   	"dialcode-usage-updater")
 		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/dialus/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.updater.UpdateDialcodeUsageDB","modelParams":{},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$learning_topic'"}}],"parallelization":8,"appName":"DialcodeUsageUpdater","deviceMapping":false}'
 		;;
+		"telemetry-replay")
+        echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"unique/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.job.EventsReplayJob","modelParams":{},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$sinkTopic'"}}],"parallelization":8,"appName":"TelemetryReplayJob","deviceMapping":false}'
+        ;;
+        "summary-replay")
+        echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/wfs/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.job.EventsReplayJob","modelParams":{},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$sinkTopic'"}}],"parallelization":8,"appName":"SummaryReplayJob","deviceMapping":false}'
+        ;;
 		"*")
 		echo "Unknown model code"
       	exit 1 # Command to come out of the program with status 1

@@ -1,10 +1,13 @@
 package org.ekstep.ep.samza.fixtures;
 
 import com.google.gson.Gson;
+import org.joda.time.DateTime;
 
 import java.util.Map;
 
 public class EventFixture {
+
+	public static Long current_ets = new DateTime().getMillis();
 
 	public static final String UNPARSABLE_START_EVENT = "{\n" +
             "  \"did\": \"c270f15d-5230-4954-92aa-d239e4281cc4\",\n" +
@@ -42,7 +45,7 @@ public class EventFixture {
             "      \"type\": \"correlationtype\"\n" +
             "    ";
 
-	public static final String INTERACT_EVENT = "{\n" +
+	public static final String INTERACT_EVENT = String.format("{\n" +
 			"    \"actor\": {\n" +
 			"        \"type\": \"User\",\n" +
 			"        \"id\": \"393407b1-66b1-4c86-9080-b2bce9842886\"\n" +
@@ -56,7 +59,7 @@ public class EventFixture {
 			"        \"subtype\": \"ContentDownload-Initiate\"\n" +
 			"    },\n" +
 			"    \"ver\": \"3.0\",\n" +
-			"    \"ets\": 1541574545180,\n" +
+			"    \"ets\": %s,\n" +
 			"    \"context\": {\n" +
 			"        \"pdata\": {\n" +
 			"            \"ver\": \"2.1.8\",\n" +
@@ -89,9 +92,9 @@ public class EventFixture {
 			"    ],\n" +
 			"    \"syncts\": 1539846605341,\n" +
 			"    \"@timestamp\": \"2018-10-18T07:10:05.341Z\"\n" +
-			"}";
+			"}", current_ets);
 
-	public static final String INTERACT_EVENT_WITH_DEVICEDATA = "{\n" +
+	public static final String INTERACT_EVENT_WITH_DEVICEDATA = String.format("{\n" +
 			"    \"actor\": {\n" +
 			"        \"type\": \"User\",\n" +
 			"        \"id\": \"60c02e78-64f9-400c-be3f-d91256d58cf1\"\n" +
@@ -103,7 +106,7 @@ public class EventFixture {
 			"        \"pageid\": \"DraftContent\"\n" +
 			"    },\n" +
 			"    \"ver\": \"3.0\",\n" +
-			"    \"ets\": 1.550139834456E12,\n" +
+			"    \"ets\": %s,\n" +
 			"    \"context\": {\n" +
 			"        \"uid\": \"60c02e78-64f9-400c-be3f-d91256d58cf1\",\n" +
 			"        \"pdata\": {\n" +
@@ -155,9 +158,9 @@ public class EventFixture {
 			"        \"district\": \"\",\n" +
 			"        \"state\": \"\"\n" +
 			"    }\n" +
-			"}";
+			"}", current_ets);
 
-    public static final String INTERACT_EVENT_WITH_EMPTY_LOC = "{\n" +
+    public static final String INTERACT_EVENT_WITH_EMPTY_LOC = String.format("{\n" +
             "    \"actor\": {\n" +
             "        \"type\": \"User\",\n" +
             "        \"id\": \"60c02e78-64f9-400c-be3f-d91256d58cf1\"\n" +
@@ -169,7 +172,7 @@ public class EventFixture {
             "        \"pageid\": \"DraftContent\"\n" +
             "    },\n" +
             "    \"ver\": \"3.0\",\n" +
-            "    \"ets\": 1.550139834456E12,\n" +
+            "    \"ets\": %s,\n" +
             "    \"context\": {\n" +
             "        \"uid\": \"60c02e78-64f9-400c-be3f-d91256d58cf1\",\n" +
             "        \"pdata\": {\n" +
@@ -221,9 +224,9 @@ public class EventFixture {
             "        \"district\": \"\",\n" +
             "        \"state\": \"\"\n" +
             "    }\n" +
-            "}";
+            "}", current_ets);
 
-	public static final String INTERACT_EVENT_WITHOUT_DID = "{\n" +
+	public static final String INTERACT_EVENT_WITHOUT_DID = String.format("{\n" +
 			"    \"actor\": {\n" +
 			"        \"type\": \"User\",\n" +
 			"        \"id\": \"393407b1-66b1-4c86-9080-b2bce9842886\"\n" +
@@ -237,7 +240,7 @@ public class EventFixture {
 			"        \"subtype\": \"ContentDownload-Initiate\"\n" +
 			"    },\n" +
 			"    \"ver\": \"3.0\",\n" +
-			"    \"ets\": 1541574545180,\n" +
+			"    \"ets\": %s,\n" +
 			"    \"context\": {\n" +
 			"        \"pdata\": {\n" +
 			"            \"ver\": \"2.1.8\",\n" +
@@ -269,9 +272,9 @@ public class EventFixture {
 			"    ],\n" +
 			"    \"syncts\": 1539846605341,\n" +
 			"    \"@timestamp\": \"2018-10-18T07:10:05.341Z\"\n" +
-			"}";
+			"}", current_ets);
 
-	public static final String INTERACT_EVENT_WITH_ACTOR_AS_SYSTEM = "{\n" +
+	public static final String INTERACT_EVENT_WITH_ACTOR_AS_SYSTEM = String.format("{\n" +
 			"    \"actor\": {\n" +
 			"        \"type\": \"System\",\n" +
 			"        \"id\": \"393407b1-66b1-4c86-9080-b2bce9842886\"\n" +
@@ -285,7 +288,7 @@ public class EventFixture {
 			"        \"subtype\": \"ContentDownload-Initiate\"\n" +
 			"    },\n" +
 			"    \"ver\": \"3.0\",\n" +
-			"    \"ets\": 1541574545180,\n" +
+			"    \"ets\": %s,\n" +
 			"    \"context\": {\n" +
 			"        \"pdata\": {\n" +
 			"            \"ver\": \"2.1.8\",\n" +
@@ -317,9 +320,9 @@ public class EventFixture {
 			"    ],\n" +
 			"    \"syncts\": 1539846605341,\n" +
 			"    \"@timestamp\": \"2018-10-18T07:10:05.341Z\"\n" +
-			"}";
+			"}", current_ets);
 
-	public static final String INTERACT_EVENT_WITHOUT_OBJECT = "{\n" +
+	public static final String INTERACT_EVENT_WITHOUT_OBJECT = String.format("{\n" +
 			"    \"actor\": {\n" +
 			"        \"type\": \"User\",\n" +
 			"        \"id\": \"393407b1-66b1-4c86-9080-b2bce9842886\"\n" +
@@ -333,7 +336,7 @@ public class EventFixture {
 			"        \"subtype\": \"ContentDownload-Initiate\"\n" +
 			"    },\n" +
 			"    \"ver\": \"3.0\",\n" +
-			"    \"ets\": 1541574545180,\n" +
+			"    \"ets\": %s,\n" +
 			"    \"context\": {\n" +
 			"        \"pdata\": {\n" +
 			"            \"ver\": \"2.1.8\",\n" +
@@ -360,11 +363,11 @@ public class EventFixture {
 			"    ],\n" +
 			"    \"syncts\": 1539846605341,\n" +
 			"    \"@timestamp\": \"2018-10-18T07:10:05.341Z\"\n" +
-			"}";
+			"}", current_ets);
 
-	public static final String SEARCH_EVENT_WITHOUT_DIALCODE = "{\n" +
+	public static final String SEARCH_EVENT_WITHOUT_DIALCODE = String.format("{\n" +
 			"    \"eid\": \"SEARCH\",\n" +
-			"    \"ets\": 1543688467595,\n" +
+			"    \"ets\": %s,\n" +
 			"    \"ver\": \"3.0\",\n" +
 			"    \"mid\": \"LP.1543688467595.c66eb854-82c4-4b73-8902-82209be643ed\",\n" +
 			"    \"actor\": {\n" +
@@ -421,11 +424,11 @@ public class EventFixture {
 			"    \"syncts\": 1543688467885,\n" +
 			"    \"@timestamp\": \"2018-12-01T18:21:07.885Z\",\n" +
 			"    \"ts\": \"2018-12-01T18:21:07.595+0000\"\n" +
-			"  }";
+			"  }", current_ets);
 
-	public static final String SEARCH_EVENT_WITH_DIALCODE_AS_STRING = "{\n" +
+	public static final String SEARCH_EVENT_WITH_DIALCODE_AS_STRING = String.format("{\n" +
 			"    \"eid\": \"SEARCH\",\n" +
-			"    \"ets\": 1543688463694,\n" +
+			"    \"ets\": %s,\n" +
 			"    \"ver\": \"3.0\",\n" +
 			"    \"mid\": \"LP.1543688463694.670c6cf8-2cd2-45a7-b531-f212ac2847ec\",\n" +
 			"    \"actor\": {\n" +
@@ -480,11 +483,11 @@ public class EventFixture {
 			"    \"syncts\": 1543688463882,\n" +
 			"    \"@timestamp\": \"2018-12-01T18:21:03.882Z\",\n" +
 			"    \"ts\": \"2018-12-01T18:21:03.694+0000\"\n" +
-			"  }";
+			"  }", current_ets);
 
-	public static final String SEARCH_EVENT_WITH_DIALCODE_AS_LIST = "{\n" +
+	public static final String SEARCH_EVENT_WITH_DIALCODE_AS_LIST = String.format("{\n" +
 			"    \"eid\": \"SEARCH\",\n" +
-			"    \"ets\": 1543688463694,\n" +
+			"    \"ets\": %s,\n" +
 			"    \"ver\": \"3.0\",\n" +
 			"    \"mid\": \"LP.1543688463694.670c6cf8-2cd2-45a7-b531-f212ac2847ec\",\n" +
 			"    \"actor\": {\n" +
@@ -539,9 +542,9 @@ public class EventFixture {
 			"    \"syncts\": 1543688463882,\n" +
 			"    \"@timestamp\": \"2018-12-01T18:21:03.882Z\",\n" +
 			"    \"ts\": \"2018-12-01T18:21:03.694+0000\"\n" +
-			"  }";
+			"  }", current_ets);
 
-	public static final String IMPRESSION_EVENT_WITH_DIALCODE_AS_OBJECT = "{\n" +
+	public static final String IMPRESSION_EVENT_WITH_DIALCODE_AS_OBJECT = String.format("{\n" +
 			"    \"actor\": {\n" +
 			"        \"type\": \"User\",\n" +
 			"        \"id\": \"anonymous\"\n" +
@@ -557,7 +560,7 @@ public class EventFixture {
 			"        \"uri\": \"https://play.diksha.gov.in/dialpage/index.html?dialcode=977D3I\"\n" +
 			"    },\n" +
 			"    \"ver\": \"3.0\",\n" +
-			"    \"ets\": 1551278751866,\n" +
+			"    \"ets\": %s,\n" +
 			"    \"context\": {\n" +
 			"        \"uid\": \"anonymous\",\n" +
 			"        \"pdata\": {\n" +
@@ -604,11 +607,11 @@ public class EventFixture {
 			"        \"state\": \"\",\n" +
 			"        \"state_code\": \"\"\n" +
 			"    }  \n" +
-			"}";
+			"}", current_ets);
 
-	public static final String SEARCH_EVENT_WITH_CAMELCASE_DIALCODE_AS_STRING = "{\n" +
+	public static final String SEARCH_EVENT_WITH_CAMELCASE_DIALCODE_AS_STRING = String.format("{\n" +
 			"    \"eid\": \"SEARCH\",\n" +
-			"    \"ets\": 1543688463694,\n" +
+			"    \"ets\": %s,\n" +
 			"    \"ver\": \"3.0\",\n" +
 			"    \"mid\": \"LP.1543688463694.670c6cf8-2cd2-45a7-b531-f212ac2847ec\",\n" +
 			"    \"actor\": {\n" +
@@ -663,7 +666,7 @@ public class EventFixture {
 			"    \"syncts\": 1543688463882,\n" +
 			"    \"@timestamp\": \"2018-12-01T18:21:03.882Z\",\n" +
 			"    \"ts\": \"2018-12-01T18:21:03.694+0000\"\n" +
-			"  }";
+			"  }", current_ets);
 
 	public static final String SEARCH_EVENT_WITH_FUTURE_ETS = "{\n" +
 			"    \"eid\": \"SEARCH\",\n" +
@@ -783,9 +786,9 @@ public class EventFixture {
 			"    \"ts\": \"2018-12-01T18:21:03.694+0000\"\n" +
 			"  }";
 
-	public static final String WFS_EVENT = "{\n" +
+	public static final String WFS_EVENT = String.format("{\n" +
 			"    \"eid\": \"ME_WORKFLOW_SUMMARY\",\n" +
-			"    \"ets\": 1.554001624736E12,\n" +
+			"    \"ets\": %s,\n" +
 			"    \"syncts\": 1.553952011044E12,\n" +
 			"    \"ver\": \"1.1\",\n" +
 			"    \"mid\": \"8D7C477F841B6F82937BBC6F61E7C2FD\",\n" +
@@ -904,11 +907,11 @@ public class EventFixture {
 			"    \"flags\": {\n" +
 			"        \"dv_processed\": false\n" +
 			"    }\n" +
-			"}";
+			"}", current_ets);
 
-	public static final String DEVICE_SUMMARY_EVENT = "{\n" +
+	public static final String DEVICE_SUMMARY_EVENT = String.format("{\n" +
 			"    \"eid\": \"ME_DEVICE_SUMMARY\",\n" +
-			"    \"ets\": 1554174429447,\n" +
+			"    \"ets\": %s,\n" +
 			"    \"syncts\": 1554101904592,\n" +
 			"    \"ver\": \"1.0\",\n" +
 			"    \"mid\": \"3ACBFD49BAFC74832A44347FF4F1E611\",\n" +
@@ -957,12 +960,12 @@ public class EventFixture {
 			"    \"flags\": {\n" +
 			"      \"device_location_retrieved\": true\n" +
 			"    }\n" +
-			"  }";
+			"  }", current_ets);
 
 	public static final String ANY_STRING = "Hey Samza, Whats Up?";
 	public static final String EMPTY_JSON = "{}";
 
-	public static final String LOG_EVENT = "{\n"+
+	public static final String LOG_EVENT = String.format("{\n"+
 			"   \"@timestamp\":\"2019-03-20T00:00:01.176Z\",\n"+
 			"\"actor\":{\n"+
 			"\"id\":\"0b251080-3230-415e-a593-ab7c1fac7ae3\",\n"+
@@ -993,7 +996,7 @@ public class EventFixture {
 			"\"type\":\"api_access\"\n"+
 			"},\n"+
 			"\"eid\":\"LOG\",\n"+
-			"\"ets\":1.553039987481E12,\n"+
+			"\"ets\":%s2,\n"+
 			"\"flags\":{\n"+
 			"\"dd_processed\":true,\n"+
 			"\"tv_processed\":true\n"+
@@ -1004,11 +1007,11 @@ public class EventFixture {
 			"],\n"+
 			"\"type\":\"events\",\n"+
 			"\"ver\":\"3.0\"\n"+
-			"      }";
+			"      }", current_ets);
 
-	public static final String ERROR_EVENT = "{"+
+	public static final String ERROR_EVENT = String.format("{"+
 			"   \"eid\":\"ERROR\","+
-			"   \"ets\":1.553040097857E12,"+
+			"   \"ets\":%s,"+
 			"   \"ver\":\"3.0\","+
 			"   \"mid\":\"LP.1553040097857.bf0e4e15-014e-4a22-ba00-e02ff3c38784\","+
 			"   \"actor\":{"+
@@ -1036,9 +1039,9 @@ public class EventFixture {
 			"   \"type\":\"events\","+
 			"   \"syncts\":1.553040098435E12,"+
 			"   \"@timestamp\":\"2019-03-20T00:01:38.435Z\""+
-			"}"	;
+			"}", current_ets);
 
-    public static final String TEST_LOG_EVENT = "{\n"+
+    public static final String TEST_LOG_EVENT = String.format("{\n"+
             "   \"@timestamp\":\"2019-03-20T00:00:01.176Z\",\n"+
             "\"actor\":{\n"+
             "\"id\":\"0b251080-3230-415e-a593-ab7c1fac7ae3\",\n"+
@@ -1068,7 +1071,7 @@ public class EventFixture {
             "\"type\":\"view\"\n"+
             "},\n"+
             "\"eid\":\"LOG\",\n"+
-            "\"ets\":1.553039987481E12,\n"+
+            "\"ets\":%s,\n"+
             "\"flags\":{\n"+
             "\"dd_processed\":true,\n"+
             "\"tv_processed\":true\n"+
@@ -1079,7 +1082,7 @@ public class EventFixture {
             "],\n"+
             "\"type\":\"events\",\n"+
             "\"ver\":\"3.0\"\n"+
-            "      }";
+            "      }", current_ets);
 
 	public static Map<String, Object> getMap(String message) {
 		return (Map<String, Object>) new Gson().fromJson(message, Map.class);
