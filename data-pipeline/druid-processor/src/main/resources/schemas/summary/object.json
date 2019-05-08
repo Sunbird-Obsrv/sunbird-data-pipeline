@@ -1,0 +1,20 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "id": "http://api.sunbird.org/summary/object/id",
+      "type": "string"
+    },
+    "type": {
+      "id": "http://api.sunbird.org/summary/object/type",
+      "type": "string"
+    },
+    "ver": {
+      "id": "http://api.sunbird.org/summary/object/ver",
+      "type": "string"
+    },
+    "rollup": {
+      "$ref": "resource:/schemas/summary/rollup.json"
+    }
+  }
+}
