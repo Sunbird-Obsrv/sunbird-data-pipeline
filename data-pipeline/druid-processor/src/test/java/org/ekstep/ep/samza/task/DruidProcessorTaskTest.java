@@ -39,6 +39,10 @@ public class DruidProcessorTaskTest {
     private static final String MALFORMED_TOPIC = "telemetry.malformed";
     private static final Integer ignorePeriodInMonths = 6;
 
+    private static final String TELEMETRY_EVENTS_TOPIC = "events.telemetry";
+    private static final String SUMMARY_EVENTS_TOPIC = "events.summary";
+    private static final String LOG_EVENTS_TOPIC = "events.log";
+
     private MessageCollector collectorMock;
     private TaskContext contextMock;
     private MetricsRegistry metricsRegistry;
@@ -54,7 +58,8 @@ public class DruidProcessorTaskTest {
     private ContentDataCache contentCacheMock;
     private DialCodeDataCache dailcodeCacheMock;
     private JobMetrics jobMetrics;
-    private SchemaValidator schemaValidatorMock;
+    private SchemaValidator schemaValidator;
+    private DruidProcessorConfig schemaConfigMock;
 
     @SuppressWarnings("unchecked")
     @Before
@@ -72,13 +77,15 @@ public class DruidProcessorTaskTest {
         userCacheMock = mock(UserDataCache.class);
         contentCacheMock = mock(ContentDataCache.class);
         dailcodeCacheMock = mock(DialCodeDataCache.class);
-        schemaValidatorMock = mock(SchemaValidator.class);
         jobMetrics = mock(JobMetrics.class);
 
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
         stub(configMock.get("output.malformed.topic.name", MALFORMED_TOPIC)).toReturn(MALFORMED_TOPIC);
         stub(configMock.getInt("telemetry.ignore.period.months", ignorePeriodInMonths)).toReturn(ignorePeriodInMonths);
+        stub(configMock.get("router.events.telemetry.route.topic", TELEMETRY_EVENTS_TOPIC)).toReturn(TELEMETRY_EVENTS_TOPIC);
+        stub(configMock.get("router.events.summary.route.topic", SUMMARY_EVENTS_TOPIC)).toReturn(SUMMARY_EVENTS_TOPIC);
+        stub(configMock.get("router.events.log.route.topic", LOG_EVENTS_TOPIC)).toReturn(LOG_EVENTS_TOPIC);
         List<String> defaultSummaryEvents = new ArrayList<>();
         defaultSummaryEvents.add("ME_WORKFLOW_SUMMARY");
         stub(configMock.getList("summary.filter.events", defaultSummaryEvents)).toReturn(defaultSummaryEvents);
@@ -88,9 +95,14 @@ public class DruidProcessorTaskTest {
         stub(envelopeMock.getSystemStreamPartition())
                 .toReturn(new SystemStreamPartition("kafka", "telemetry.with_location", new Partition(1)));
 
+        schemaConfigMock = mock(DruidProcessorConfig.class);
+        stub(schemaConfigMock.telemetrySchemaPath()).toReturn("schemas/telemetry");
+        stub(schemaConfigMock.summarySchemaPath()).toReturn("schemas/summary");
+        stub(schemaConfigMock.defaultSchemafile()).toReturn("envelope.json");
+        schemaValidator = new SchemaValidator(schemaConfigMock);
 
         druidProcessorTask = new DruidProcessorTask(configMock, contextMock, deviceCacheMock, userCacheMock,
-                contentCacheMock, cassandraConnectMock, dailcodeCacheMock, schemaValidatorMock, jobMetrics);
+                contentCacheMock, cassandraConnectMock, dailcodeCacheMock, schemaValidator, jobMetrics);
     }
 
     @Test
@@ -648,6 +660,50 @@ public class DruidProcessorTaskTest {
         doAnswer(answer).when(jobMetrics).incSkippedCounter();
         druidProcessorTask.process(envelopeMock, collectorMock, coordinatorMock);
         assertEquals(true, answer.isSkipped);
+    }
+
+    @Test
+    public void shouldRouteSummaryEventsToSummaryTopic() throws Exception {
+
+        stub(configMock.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY")).toReturn("ME_WORKFLOW_SUMMARY");
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.WFS_EVENT);
+        druidProcessorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUMMARY_EVENTS_TOPIC)));
+    }
+
+    @Test
+    public void shouldRouteTelemetryEventsToTelemetryTopic() throws Exception {
+
+        stub(configMock.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY")).toReturn("ME_WORKFLOW_SUMMARY");
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
+        druidProcessorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), TELEMETRY_EVENTS_TOPIC)));
+
+    }
+
+    @Test
+    public void shouldSendEventToFailedTopicIfEventIsNotParseable() throws Exception {
+
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.UNPARSABLE_START_EVENT);
+        druidProcessorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), MALFORMED_TOPIC)));
+    }
+
+    @Test
+    public void shouldSendEventToMalformedTopicIfEventIsAnyRandomString() throws Exception {
+
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.ANY_STRING);
+        druidProcessorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), MALFORMED_TOPIC)));
+    }
+
+    @Test
+    public void shouldRouteLogEventsToLogEventsTopic() throws Exception {
+
+        stub(configMock.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY")).toReturn("ME_WORKFLOW_SUMMARY");
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.LOG_EVENT);
+        druidProcessorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), LOG_EVENTS_TOPIC)));
     }
 
 }

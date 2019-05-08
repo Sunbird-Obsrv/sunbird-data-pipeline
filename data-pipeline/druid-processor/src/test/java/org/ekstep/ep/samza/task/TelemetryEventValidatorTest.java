@@ -9,15 +9,13 @@ import org.ekstep.ep.samza.util.SchemaValidator;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.apache.samza.config.Config;
-
 import java.io.IOException;
 import java.util.Map;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.argThat;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.stub;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.mock;
 
 
@@ -29,120 +27,146 @@ public class TelemetryEventValidatorTest {
     @Before
     public void setUp() throws IOException, ProcessingException {
         configMock = mock(DruidProcessorConfig.class);
+        stub(configMock.telemetrySchemaPath()).toReturn("schemas/telemetry");
+        stub(configMock.summarySchemaPath()).toReturn("schemas/summary");
+        stub(configMock.defaultSchemafile()).toReturn("envelope.json");
         validator = new SchemaValidator(configMock);
     }
 
+    private Event convertJsonToEvent(String jsonEvent) {
+        Map<String, Object> jsonMap = (Map<String, Object>) new Gson().fromJson(jsonEvent, Map.class);
+        return new Event(jsonMap);
+    }
+
     @Test
-    public void shouldSendEventToSuccessTopicIfEventIsValid() throws Exception {
-        Map<String, Object> jsonMap = (Map<String, Object>) new Gson().fromJson(Telemetry.VALID_EVENT, Map.class);
-        Event event = new Event(jsonMap);
-        stub(configMock.telemetrySchemaPath()).toReturn("schemas/telemetry");
-        stub(configMock.telemetrySchemaPath()).toReturn("schemas/summary");
-        stub(configMock.telemetrySchemaPath()).toReturn("schemas/telemetry");
-        stub(configMock.defaultSchemafile()).toReturn("envelope.json");
+    public void validateValidEvent() throws Exception {
+        Event event = convertJsonToEvent(Telemetry.VALID_EVENT);
         ProcessingReport report = validator.validate(event);
         assertTrue(report.isSuccess());
     }
 
-    /*
     @Test
-    public void shouldSendEventToFaildTopicIfEventIsNotValid() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_EVENT);
-        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
-        verify(collectorMock).send(argThat(validateEvent(false, "contentdata/pkgversion")));
+    public void validateInvalidEvent() throws Exception {
+        Event event = convertJsonToEvent(Telemetry.INVALID_EVENT);
+        ProcessingReport report = validator.validate(event);
+        assertFalse(report.isSuccess());
     }
 
     @Test
-    public void shouldSendEventToFaildTopicIfInvalidDeviceData_CASE1() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DEVICEDATA_CASE_1);
-        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
-        verify(collectorMock).send(argThat(validateEvent(false, "devicedata/firstaccess")));
+    public void validateInvalidDeviceDataFirstAccessField() throws Exception {
+        Event event = convertJsonToEvent(Telemetry.INVALID_DEVICEDATA_CASE_1);
+        ProcessingReport report = validator.validate(event);
+        assertFalse(report.isSuccess());
+        String fieldName = validator.getInvalidFieldName(report.toString());
+        assertEquals("devicedata/firstaccess", fieldName);
     }
 
     @Test
-    public void shouldSendEventToFaildTopicIfInvalidDeviceData_CASE2() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DEVICEDATA_CASE_2);
-        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
-        verify(collectorMock).send(argThat(validateEvent(false, "devicedata/uaspec")));
+    public void validateInvalidDeviceDataUaspecField() throws Exception {
+
+        Event event = convertJsonToEvent(Telemetry.INVALID_DEVICEDATA_CASE_2);
+        ProcessingReport report = validator.validate(event);
+        assertFalse(report.isSuccess());
+        String fieldName = validator.getInvalidFieldName(report.toString());
+        assertEquals("devicedata/uaspec", fieldName);
+
     }
 
     @Test
-    public void shouldSendEventToFaildTopicIfInvalidDeviceData_CASE3() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DEVICEDATA_CASE_3);
-        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
-        verify(collectorMock).send(argThat(validateEvent(false, "devicedata/country")));
+    public void validateInvalidDeviceDataCountryField() throws Exception {
+
+        Event event = convertJsonToEvent(Telemetry.INVALID_DEVICEDATA_CASE_3);
+        ProcessingReport report = validator.validate(event);
+        assertFalse(report.isSuccess());
+        String fieldName = validator.getInvalidFieldName(report.toString());
+        assertEquals("devicedata/country", fieldName);
+
     }
 
     @Test
-    public void shouldSendEventToSuccessTopicIfInvalidDeviceData_CASE4() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DEVICEDATA_CASE_4);
-        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
-        verify(collectorMock).send(argThat(validateEvent(true, "")));
+    public void validateIncorrectFieldDataType() throws Exception {
+
+        Event event = convertJsonToEvent(Telemetry.INVALID_DEVICEDATA_CASE_4);
+        ProcessingReport report = validator.validate(event);
+        assertTrue(report.isSuccess());
+
     }
 
     @Test
-    public void shouldSendEventToFaildTopicIfInvalidContentData() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_CONTENTDATA);
-        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
-        verify(collectorMock).send(argThat(validateEvent(false, "contentdata/language")));
+    public void validateInvalidContentData() throws Exception {
+
+        Event event = convertJsonToEvent(Telemetry.INVALID_CONTENTDATA);
+        ProcessingReport report = validator.validate(event);
+        assertFalse(report.isSuccess());
+        String fieldName = validator.getInvalidFieldName(report.toString());
+        assertEquals("contentdata/language", fieldName);
+
     }
 
     @Test
-    public void shouldSendEventToFaildTopicIfInvalidDialCodeData() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DIALCODEDATA);
-        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
-        verify(collectorMock).send(argThat(validateEvent(false, "dialcodedata/status")));
+    public void validateInvalidDialCodeData() throws Exception {
+
+        Event event = convertJsonToEvent(Telemetry.INVALID_DIALCODEDATA);
+        ProcessingReport report = validator.validate(event);
+        assertFalse(report.isSuccess());
+        String fieldName = validator.getInvalidFieldName(report.toString());
+        assertEquals("dialcodedata/status", fieldName);
+
     }
 
     @Test
-    public void shouldSendEventToFaildTopicIfInvalidUserData() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_USERDATA);
-        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
-        verify(collectorMock).send(argThat(validateEvent(false, "userdata/gradelist")));
+    public void validateInvalidUserData() throws Exception {
+
+        Event event = convertJsonToEvent(Telemetry.INVALID_USERDATA);
+        ProcessingReport report = validator.validate(event);
+        assertFalse(report.isSuccess());
+        String fieldName = validator.getInvalidFieldName(report.toString());
+        assertEquals("userdata/gradelist", fieldName);
+
     }
 
     @Test
     // Case sensitive dialcode keyword validation
-    public void shouldSendEventToFaildTopicIfInvalidDialCodeKeywordAppears() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DIALCODE_KEY);
-        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+    public void validateInvalidDialCodeKeywordAppears() throws Exception {
+
+        Event event = convertJsonToEvent(Telemetry.INVALID_DIALCODE_KEY);
+        ProcessingReport report = validator.validate(event);
+        assertFalse(report.isSuccess());
+
     }
 
     @Test
     // Should support for the both array and object type format for dialcodedata .
-    public void shouldSendToSuccessTopic() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.VALID_DIALCODETYPE);
-        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
-        verify(collectorMock).send(argThat(validateEvent(true, "")));
+    public void validateValidDialcodeData() throws Exception {
+
+        Event event = convertJsonToEvent(Telemetry.VALID_DIALCODETYPE);
+        ProcessingReport report = validator.validate(event);
+        assertTrue(report.isSuccess());
+
     }
 
     @Test
     // When array of object properties is having invalid type ex: generatedon.
-    public void shouldSendToFailedTopic() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DIALCODETYPE_CASE_1);
-        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
-        verify(collectorMock).send(argThat(validateEvent(false, "generatedon")));
+    public void validateInvalidDataInArrayField() throws Exception {
+
+        Event event = convertJsonToEvent(Telemetry.INVALID_DIALCODETYPE_CASE_1);
+        ProcessingReport report = validator.validate(event);
+        assertFalse(report.isSuccess());
+        String fieldName = validator.getInvalidFieldName(report.toString());
+        assertEquals("dialcodedata/1/generatedon", fieldName);
+
     }
 
     @Test
     // When dialcodedata type is object and having invalid  property type ex: channel
-    public void shouldSendEventToFailedTopic() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DIALCODETYPE_CASE_2);
-        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
-        verify(collectorMock).send(argThat(validateEvent(false, "channel")));
+    public void validateInvalidDialCodeProperties() throws Exception {
+
+        Event event = convertJsonToEvent(Telemetry.INVALID_DIALCODETYPE_CASE_2);
+        ProcessingReport report = validator.validate(event);
+        assertFalse(report.isSuccess());
+        String fieldName = validator.getInvalidFieldName(report.toString());
+        assertEquals("dialcodedata/channel", fieldName);
+
     }
-    */
 
 }
