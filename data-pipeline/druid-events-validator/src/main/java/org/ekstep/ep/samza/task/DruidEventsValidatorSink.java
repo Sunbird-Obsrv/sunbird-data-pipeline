@@ -20,7 +20,7 @@ public class DruidEventsValidatorSink extends BaseSink {
     }
 
     public void toSuccessTopic(Event event) {
-        toTopic(config.successTopic(), event.did(), event.getJson());
+        toTopic(config.successTopic(), event.mid(), event.getJson());
         metrics.incSuccessCounter();
     }
 
