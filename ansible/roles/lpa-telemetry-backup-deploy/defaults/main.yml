@@ -186,7 +186,7 @@ secor_service_name:
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   load-test-raw-events-backup:
     consumer_group: "{{ env }}.telemetry.raw.secor.backup"
-    base_path: "load-test-raw-backup"
+    base_path: "load-test-raw-events-backup"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
     topic: "{{ env }}.telemetry.raw.secor"
@@ -204,7 +204,7 @@ secor_service_name:
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   load-test-uniqu-events-backup:
     consumer_group: "{{ env }}.telemetry.unique.secor.backup"
-    base_path: "load-test-raw-backup"
+    base_path: "load-test-unique-events-backup"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
     topic: "{{ env }}.telemetry.unique.secor"
@@ -222,7 +222,7 @@ secor_service_name:
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   load-test-events-backup:
       consumer_group: "{{ env }}.telemetry.events.secor.backup"
-      base_path: "load-test-raw-backup"
+      base_path: "load-test-events-backup"
       timestamp_key: "syncts"
       fallback_timestamp_key: "@timestamp"
       topic: "{{ env }}.telemetry.events.secor"
