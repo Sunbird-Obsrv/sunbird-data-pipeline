@@ -5,7 +5,7 @@ import org.apache.samza.config.Config;
 
 public class DeDuplicationConfig {
 
-    private final String JOB_NAME = "DeDuplicationPartitions";
+    private final String JOB_NAME = "DeDuplicationRedisBloom";
     private String successTopic;
     private String failedTopic;
     private String duplicateTopic;
