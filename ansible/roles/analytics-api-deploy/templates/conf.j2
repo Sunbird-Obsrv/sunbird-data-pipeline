@@ -48,13 +48,13 @@ device-register-dispatcher {
     parallelism-factor = 3.0
 
     # Min number of threads to cap factor-based parallelism number to
-    parallelism-min = 8
+    parallelism-min = 50
 
     # Max number of threads to cap factor-based parallelism number to
-    parallelism-max = 64
+    parallelism-max = 100
   }
   # Throughput for default Dispatcher, set to 1 for as fair as possible
-  throughput = 1
+  throughput = 20
 }
 
 default-dispatcher {
