@@ -22,6 +22,7 @@ events_router_yarn_container_count: 1
 denormalization_yarn_container_count: 1
 druid_events_validator_yarn_container_count: 1
 redis_updater_yarn_container_count: 1
+druidprocessor_yarn_container_count: 1
 
 # samza jobs checkpoint replication factor
 samza_checkpoint_replication_factor: 1

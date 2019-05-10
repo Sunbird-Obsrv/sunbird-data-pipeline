@@ -9,7 +9,7 @@ import java.util.List;
 
 public class DruidProcessorConfig {
 
-    private final String JOB_NAME = "DeNormalization";
+    private final String JOB_NAME = "DruidProcessor";
     private static final String deviceDataJobFlag = "device_data_retrieved";
     private static final String userDataJobFlag = "user_data_retrieved";
     private static final String contentDataJobFlag = "content_data_retrieved";
