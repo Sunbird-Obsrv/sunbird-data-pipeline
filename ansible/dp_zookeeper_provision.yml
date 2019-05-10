@@ -1,5 +1,5 @@
 ---
-- hosts: zookeeper
+- hosts: "{{remote}}"
   pre_tasks:
     - service: name=monit state=stopped
       become: yes
