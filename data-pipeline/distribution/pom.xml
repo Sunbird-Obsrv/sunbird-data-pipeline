@@ -92,6 +92,7 @@
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>de-normalization</artifactId>
@@ -106,6 +107,7 @@
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
+        -->
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>redis-updater</artifactId>
@@ -113,6 +115,7 @@
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>druid-events-validator</artifactId>
@@ -120,9 +123,17 @@
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
+        -->
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>de-duplication-partitions</artifactId>
+            <version>0.0.1</version>
+            <type>tar.gz</type>
+            <classifier>distribution</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem.jobs</groupId>
+            <artifactId>druid-processor</artifactId>
             <version>0.0.1</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
