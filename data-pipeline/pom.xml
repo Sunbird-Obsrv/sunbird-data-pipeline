@@ -41,7 +41,7 @@
 		<!-- <module>druid-events-validator</module> -->
 		<module>de-duplication-partitions</module>
 		<module>de-duplication-redisbloom</module>
-		<module>druid-processor</module>
+		<!-- <module>druid-processor</module> -->
 		<!--
 		<module>reverse-search</module>
 		<module>object-de-normalization</module>
