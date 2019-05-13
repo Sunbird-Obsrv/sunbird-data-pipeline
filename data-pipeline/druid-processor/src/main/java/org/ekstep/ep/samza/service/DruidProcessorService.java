@@ -32,6 +32,7 @@ public class DruidProcessorService {
         Event event = null;
         try {
             event = source.getEvent();
+            sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
             String eid = event.eid();
             List<String> summaryRouteEventPrefix = this.config.getSummaryFilterEvents();
 
@@ -87,7 +88,6 @@ public class DruidProcessorService {
                             event), e);
             sink.toErrorTopic(event, e.getMessage());
         }
-        sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
     }
 
     public Event getDenormalizedEvent(Event event) {

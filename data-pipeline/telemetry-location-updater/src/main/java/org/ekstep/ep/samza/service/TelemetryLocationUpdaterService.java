@@ -30,21 +30,21 @@ public class TelemetryLocationUpdaterService {
 		Event event = null;
 		try {
 			event = source.getEvent();
+			sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
 			event = updateEventWithIPLocation(event);
 			// add user location details to the event
 			event = updateEventWithUserLocation(event);
 			sink.toSuccessTopic(event);
-		} catch(JsonSyntaxException e){
-            LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
-            sink.toMalformedTopic(source.getMessage());
-        } catch (Exception e) {
+		} catch (JsonSyntaxException e) {
+			LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
+			sink.toMalformedTopic(source.getMessage());
+		} catch (Exception e) {
 			LOGGER.error(null,
 					format("EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO EXCEPTION TOPIC. EVENT: {0}, EXCEPTION:",
 							event),
 					e);
 			sink.toErrorTopic(event, e.getMessage());
 		}
-		sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
 	}
 
 	private Event updateEventWithIPLocation(Event eventObj) {

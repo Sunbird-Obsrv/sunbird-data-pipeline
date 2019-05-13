@@ -25,6 +25,7 @@ public class TelemetryRouterService {
 		Event event = null;
 		try {
 			event = source.getEvent();
+			sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
 			String eid = event.eid();
 			List<String> secondaryRouteEvents = this.config.getSecondaryRouteEvents();
 			if (secondaryRouteEvents.contains(eid)) {
@@ -43,6 +44,5 @@ public class TelemetryRouterService {
 					e);
 			sink.toErrorTopic(event, e.getMessage());
 		}
-		sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
 	}
 }
