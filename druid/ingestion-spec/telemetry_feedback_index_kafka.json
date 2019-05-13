@@ -712,7 +712,7 @@
     ],
     "granularitySpec": {
       "type": "uniform",
-      "segmentGranularity": "month",
+      "segmentGranularity": "day",
       "queryGranularity": "none",
       "rollup": true
     },
