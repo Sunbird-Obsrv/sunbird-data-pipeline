@@ -23,9 +23,10 @@ public class JobMetrics {
     private final Counter cacheHitCount;
     private final Counter cacheMissCount;
     private final Counter cacheExpiredCount;
-    private final Counter noDataCount;
+    private final Counter cacheEmptyValuesCount;
     private final Counter processedMessageCount;
     private final Counter unprocessedMessageCount;
+    private final Counter dbErrorCount;
     private TaskContext context;
     private int partition;
     private HashMap<String,Long> offsetMap = new HashMap<>();
@@ -41,10 +42,11 @@ public class JobMetrics {
         errorMessageCount = metricsRegistry.newCounter(getClass().getName(), "error-message-count");
         cacheHitCount = metricsRegistry.newCounter(getClass().getName(), "cache-hit-count");
         cacheMissCount = metricsRegistry.newCounter(getClass().getName(), "cache-miss-count");
-        noDataCount = metricsRegistry.newCounter(getClass().getName(), "no-data-count");
+        cacheEmptyValuesCount = metricsRegistry.newCounter(getClass().getName(), "cache-empty-values-count");
         cacheExpiredCount = metricsRegistry.newCounter(getClass().getName(), "cache-expired-count");
         processedMessageCount = metricsRegistry.newCounter(getClass().getName(), "processed-message-count");
         unprocessedMessageCount = metricsRegistry.newCounter(getClass().getName(), "unprocessed-message-count");
+        dbErrorCount = metricsRegistry.newCounter(getClass().getName(), "db-error-count");
         jobName = jName;
         this.context = context;
     }
@@ -54,12 +56,13 @@ public class JobMetrics {
         failedMessageCount.clear();
         skippedMessageCount.clear();
         errorMessageCount.clear();
-        noDataCount.clear();
+        cacheEmptyValuesCount.clear();
         cacheHitCount.clear();
         cacheMissCount.clear();
         cacheExpiredCount.clear();
         processedMessageCount.clear();
         unprocessedMessageCount.clear();
+        dbErrorCount.clear();
     }
 
     public void incSuccessCounter() {
@@ -84,11 +87,13 @@ public class JobMetrics {
 
     public void incCacheMissCounter() { cacheMissCount.inc();}
 
-    public void incNoDataCount() { noDataCount.inc(); }
+    public void incNoDataCount() { cacheEmptyValuesCount.inc(); }
 
     public void incProcessedMessageCount() { processedMessageCount.inc(); }
 
     public void incUnprocessedMessageCount() { unprocessedMessageCount.inc(); }
+
+    public void incDBErrorCount() { dbErrorCount.inc(); }
 
     public void setOffset(SystemStreamPartition systemStreamPartition, String offset) {
         String offsetMapKey=String.format("%s%s",systemStreamPartition.getStream(),systemStreamPartition.getPartition().getPartitionId());
@@ -130,9 +135,10 @@ public class JobMetrics {
         metricsEvent.put("partition",partition);
         metricsEvent.put("cache-hit-count", cacheHitCount.getCount());
         metricsEvent.put("cache-miss-count", cacheMissCount.getCount());
-        metricsEvent.put("no-data-count", noDataCount.getCount());
+        metricsEvent.put("cache-empty-values-count", cacheEmptyValuesCount.getCount());
         metricsEvent.put("processed-message-count", processedMessageCount.getCount());
         metricsEvent.put("unprocessed-message-count", unprocessedMessageCount.getCount());
+        metricsEvent.put("db-error-count", dbErrorCount.getCount());
         return new Gson().toJson(metricsEvent);
     }
 }
