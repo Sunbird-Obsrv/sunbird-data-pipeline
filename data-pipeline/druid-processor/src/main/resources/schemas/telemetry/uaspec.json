@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "properties": {
+    "agent": {
+      "id": "http://api.sunbird.org/telemetry/uaspec/agent",
+      "type": "string"
+    },
+    "ver": {
+      "id": "http://api.sunbird.org/telemetry/uaspec/ver",
+      "type": "string"
+    },
+    "system": {
+      "id": "http://api.sunbird.org/telemetry/uaspec/system",
+      "type": "string"
+    },
+    "platform": {
+      "id": "http://api.sunbird.org/telemetry/uaspec/platform",
+      "type": "string"
+    },
+    "raw": {
+      "id": "http://api.sunbird.org/telemetry/uaspec/raw",
+      "type": "string"
+    }
+  }
+}

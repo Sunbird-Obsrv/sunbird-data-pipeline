@@ -1,0 +1,70 @@
+{
+  "id": "http://api.sunbird.org/telemetry/search",
+  "type": "object",
+  "required": [
+    "eid",
+    "ets",
+    "ver",
+    "mid",
+    "actor",
+    "context",
+    "edata"
+  ],
+  "allOf": [
+    {
+      "$ref": "resource:/schemas/telemetry/common.json"
+    },
+    {
+      "properties": {
+        "eid": {
+          "id": "http://api.sunbird.org/telemetry/eid",
+          "enum": [
+            "SEARCH"
+          ]
+        },
+        "edata": {
+          "id": "http://api.sunbird.org/telemetry/edata",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "query",
+            "size",
+            "topn"
+          ],
+          "properties": {
+            "type": {
+              "id": "http://api.sunbird.org/telemetry/edata/type",
+              "type": "string"
+            },
+            "query": {
+              "id": "http://api.sunbird.org/telemetry/edata/query",
+              "type": "string"
+            },
+            "sort": {
+              "id": "http://api.sunbird.org/telemetry/edata/sort",
+              "type": "object"
+            },
+            "correlationid": {
+              "id": "http://api.sunbird.org/telemetry/edata/correlationid",
+              "type": "string"
+            },
+            "size": {
+              "id": "http://api.sunbird.org/telemetry/edata/size",
+              "type": "number"
+            },
+            "filters": {
+              "$ref": "resource:/schemas/telemetry/filter.json"
+            },
+            "topn": {
+              "id": "http://api.sunbird.org/telemetry/edata/topn",
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

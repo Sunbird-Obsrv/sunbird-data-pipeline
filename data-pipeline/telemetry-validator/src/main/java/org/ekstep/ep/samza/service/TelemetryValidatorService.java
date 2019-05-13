@@ -55,7 +55,8 @@ public class TelemetryValidatorService {
                 sink.toSuccessTopic(event);
             } else {
                 LOGGER.error(null, "VALIDATION FAILED: " + report.toString());
-                sink.toFailedTopic(event, "validation failed");
+                String fieldName = getInvalidFieldName(report.toString());
+                sink.toFailedTopic(event, String.format("validation failed. fieldname: %s", fieldName));
             }
         } catch(JsonSyntaxException e){
             LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
@@ -67,6 +68,13 @@ public class TelemetryValidatorService {
             sink.toErrorTopic(event, e.getMessage());
         }
         sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
+    }
+
+    public String getInvalidFieldName(String errorInfo) {
+        String[] message = errorInfo.split("reports:");
+        String[] fields = message[1].split(",");
+        String[] pointer = fields[3].split("\"pointer\":");
+        return pointer[1].substring(0, pointer[1].length() - 1);
     }
 
     public Event dataCorrection(Event event) {
