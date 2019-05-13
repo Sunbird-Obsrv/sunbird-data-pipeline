@@ -22,7 +22,7 @@ output {
 	if [type] == 'pipeline_metrics' { 
 		influxdb {
 			    allow_time_override => true
-			    send_as_tags => ["env","job_name"]
+			    send_as_tags => ["env","job_name", "partition"]
 			    data_points => { 
 			    	"env" => "{{env}}"
 			    	"job_name" => "%{[job-name]}"
@@ -30,8 +30,14 @@ output {
 			    	"failed" => "%{[failed-message-count]}"
 			    	"error" => "%{[error-message-count]}"
 			    	"skipped" => "%{[skipped-message-count]}"
-                                "partition" => "%{[partition]}"
-                                "consumer_lag" => "%{[consumer-lag]}"
+                    "partition" => "%{[partition]}"
+                    "consumer_lag" => "%{[consumer-lag]}"
+                    "cache_hit" => "%{[cache-hit-count]}"
+                    "cache_miss" => "%{[cache-miss-count]}"
+                    "cache_empty_values" => "%{[cache-empty-values-count]}"
+                    "processed" => "%{[processed-message-count]}"
+                    "unprocessed" => "%{[unprocessed-message-count]}"
+                    "db_error" => "%{[db-error-count]}"
 			    }
 			    coerce_values => {
 		      		"success" => "integer"

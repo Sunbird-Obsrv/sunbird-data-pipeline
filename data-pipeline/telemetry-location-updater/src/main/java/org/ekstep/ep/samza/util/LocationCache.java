@@ -49,6 +49,7 @@ public class LocationCache {
                     rows = cassandraConnection.execute(query);
                 } catch (QueryExecutionException ex) {
                     rows = Collections.emptyList();
+                    metrics.incDBErrorCount();
                     LOGGER.error("", "GetLocationForDeviceId: Cassandra query execution failure", ex);
                 }
 
