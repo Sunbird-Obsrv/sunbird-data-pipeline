@@ -2,7 +2,6 @@ package org.ekstep.ep.samza.service;
 
 import static java.text.MessageFormat.format;
 
-import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.domain.Location;
@@ -20,13 +19,11 @@ public class TelemetryLocationUpdaterService {
 	private static Logger LOGGER = new Logger(TelemetryLocationUpdaterService.class);
 	// private final TelemetryLocationUpdaterConfig config;
 	private LocationEngine locationEngine;
-	private JobMetrics metrics;
 
 
-	public TelemetryLocationUpdaterService(TelemetryLocationUpdaterConfig config, LocationEngine locationEngine, JobMetrics metrics) {
+	public TelemetryLocationUpdaterService(TelemetryLocationUpdaterConfig config, LocationEngine locationEngine) {
 		// this.config = config;
 		this.locationEngine = locationEngine;
-		this.metrics = metrics;
 	}
 
 	public void process(TelemetryLocationUpdaterSource source, TelemetryLocationUpdaterSink sink) {
@@ -66,12 +63,10 @@ public class TelemetryLocationUpdaterService {
 					location = new Location();
 					event = updateEvent(event, location, false);
 				}
-				metrics.incProcessedMessageCount();
 			} else {
 				// add empty location
 				location = new Location();
 				event = updateEvent(event, location, false);
-				metrics.incUnprocessedMessageCount();
 			}
 			return event;
 		} catch(Exception ex) {
@@ -81,7 +76,6 @@ public class TelemetryLocationUpdaterService {
 					ex);
 			location = new Location();
 			event = updateEvent(event, location, false);
-			metrics.incUnprocessedMessageCount();
 			return event;
 		}
 	}

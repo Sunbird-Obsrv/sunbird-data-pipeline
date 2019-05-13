@@ -81,7 +81,7 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>telemetry-location-updater</artifactId>
-            <version>0.1.5</version>
+            <version>0.1.4</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
