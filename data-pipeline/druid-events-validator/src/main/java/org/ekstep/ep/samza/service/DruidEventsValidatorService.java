@@ -31,6 +31,7 @@ public class DruidEventsValidatorService {
         Event event = null;
         try {
             event = source.getEvent();
+            sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
             String schema = getSchema(event);
             if (schema == null) {
                 LOGGER.info("SCHEMA FILE DOESN'T EXIST HENCE SKIPPING THE VALIDATION PROCESS AND SENDING TO SUCCESS TOPIC", event.mid());
