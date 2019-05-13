@@ -23,15 +23,6 @@
          distribution project builds AFTER that one...
     -->
     <dependencies>
-        <!--
-        <dependency>
-            <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>reverse-search</artifactId>
-            <version>0.4.9</version>
-            <type>tar.gz</type>
-            <classifier>distribution</classifier>
-        </dependency>
-        -->
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>de-duplication</artifactId>
@@ -46,24 +37,6 @@
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>object-de-normalization</artifactId>
-            <version>0.1.5</version>
-            <type>tar.gz</type>
-            <classifier>distribution</classifier>
-        </dependency>
-        -->
-        <!--
-        <dependency>
-            <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>es-indexer</artifactId>
-            <version>0.0.5</version>
-            <type>tar.gz</type>
-            <classifier>distribution</classifier>
-        </dependency>
-        -->
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>telemetry-validator</artifactId>
@@ -92,22 +65,6 @@
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>de-normalization</artifactId>
-            <version>0.0.5</version>
-            <type>tar.gz</type>
-            <classifier>distribution</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>events-router</artifactId>
-            <version>0.0.5</version>
-            <type>tar.gz</type>
-            <classifier>distribution</classifier>
-        </dependency>
-        -->
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>redis-updater</artifactId>
@@ -115,23 +72,6 @@
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>druid-events-validator</artifactId>
-            <version>0.0.5</version>
-            <type>tar.gz</type>
-            <classifier>distribution</classifier>
-        </dependency>
-        -->
-        <dependency>
-            <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>de-duplication-partitions</artifactId>
-            <version>0.0.1</version>
-            <type>tar.gz</type>
-            <classifier>distribution</classifier>
-        </dependency>
-        <!--
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>druid-processor</artifactId>
@@ -139,7 +79,6 @@
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
-        -->
     </dependencies>
 
     <build>
