@@ -4113,6 +4113,27 @@
     "appName": "Course Dashboard Metrics",
     "deviceMapping": false
   },
+  "content-rating-updater": {
+    "search": {
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.updater.UpdateContentRating",
+    "modelParams": {
+      "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+      "endDate": "$(date '+%Y-%m-%d')"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Content Rating Updater",
+    "deviceMapping": false
+  },
   "monitor-job-summ": {
     "search": {
       "type": "local",
@@ -4555,6 +4576,11 @@
         },
         {
           "model": "CourseMetricsJob",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "UpdateContentRating",
           "category": "consumption",
           "input_dependency": "None"
         }

@@ -137,3 +137,8 @@ course.metrics.cloud.objectKey="reports/"
 course.metrics.temp.dir="/mount/data/analytics/course-reports"
 course.metrics.cassandra.input.consistency="QUORUM"
 
+# content rating configurations
+druid.sql.host="http://{{druid_url}}:8082/druid/v2/sql/"
+druid.unique.content.query="{\"query\":\"SELECT DISTINCT \\\"object_id\\\" AS \\\"Id\\\"\\nFROM \\\"druid\\\".\\\"telemetry-feedback-events\\\" WHERE \\\"eid\\\" = 'FEEDBACK' AND \\\"syncts\\\" BETWEEN %d AND %d \"}"
+druid.content.rating.query="{\"query\": \"SELECT \\\"object_id\\\" AS ContentId, COUNT(*) AS \\\"Number of Ratings\\\", SUM(edata_rating) AS \\\"Total Ratings\\\", SUM(edata_rating)/COUNT(*) AS \\\"AverageRating\\\" FROM \\\"druid\\\".\\\"telemetry-feedback-events\\\" WHERE \\\"eid\\\" = 'FEEDBACK' GROUP BY \\\"object_id\\\"\"}"
+lp.system.update.base.url="http://{{lp_url}}:8080/learning-service/system/v3/content/update"
