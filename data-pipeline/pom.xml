@@ -21,7 +21,6 @@
 
 	<modules>
 		<module>ep-core</module>
-		<module>de-duplication</module>
 		<module>distribution</module>
 		<module>checksum-generator</module>
 		<module>search-service</module>
@@ -30,14 +29,11 @@
 		<module>es-client</module>
 		<module>telemetry-validator</module>
 		<module>telemetry-extractor</module>
+		<module>de-duplication</module>
 		<module>telemetry-router</module>
 		<module>telemetry-location-updater</module>
-		<module>redis-updater</module>
 		<module>druid-processor</module>
-		<!--
-		<module>reverse-search</module>
-		<module>object-de-normalization</module>
-		-->
+		<module>redis-updater</module>
 	</modules>
 
 	<properties>

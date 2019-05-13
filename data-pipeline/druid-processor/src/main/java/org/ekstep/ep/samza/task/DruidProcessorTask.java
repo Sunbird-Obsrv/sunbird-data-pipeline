@@ -101,7 +101,7 @@ public class DruidProcessorTask implements StreamTask, InitableTask, WindowableT
 
         this.schemaValidator = schemaValidator == null ? new SchemaValidator(this.config) : schemaValidator;
         service = new DruidProcessorService(this.config, new EventUpdaterFactory(this.contentCache,
-                this.userCache, this.deviceCache, this.dialcodeCache), schemaValidator);
+                this.userCache, this.deviceCache, this.dialcodeCache), this.schemaValidator);
     }
 
     @Override
