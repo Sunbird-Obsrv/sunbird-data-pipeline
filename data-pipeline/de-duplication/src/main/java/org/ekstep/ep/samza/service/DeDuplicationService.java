@@ -26,6 +26,7 @@ public class DeDuplicationService {
 
 		try {
 			event = source.getEvent();
+			sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
 			String checksum = event.getChecksum();
 
 			if (checksum == null) {
@@ -60,6 +61,5 @@ public class DeDuplicationService {
 					e);
 			sink.toErrorTopic(event);
 		}
-		sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
 	}
 }

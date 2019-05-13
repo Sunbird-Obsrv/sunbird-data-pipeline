@@ -26,6 +26,7 @@ public class EventsRouterService {
 		Event event = null;
 		try {
 			event = source.getEvent();
+			sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
 			String eid = event.eid();
 			if(event.mid().contains("TRACE")){
 				SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -53,6 +54,5 @@ public class EventsRouterService {
 					e);
 			sink.toErrorTopic(event, e.getMessage());
 		}
-		sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
 	}
 }
