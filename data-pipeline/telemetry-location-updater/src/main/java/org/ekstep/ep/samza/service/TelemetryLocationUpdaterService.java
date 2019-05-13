@@ -30,6 +30,7 @@ public class TelemetryLocationUpdaterService {
 		Event event = null;
 		try {
 			event = source.getEvent();
+			sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
 			event = updateEventWithIPLocation(event);
 			// add user location details to the event
 			event = updateEventWithUserLocation(event);
@@ -44,7 +45,6 @@ public class TelemetryLocationUpdaterService {
 					e);
 			sink.toErrorTopic(event, e.getMessage());
 		}
-		sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
 	}
 
 	private Event updateEventWithIPLocation(Event eventObj) {

@@ -29,9 +29,10 @@ public class TelemetryValidatorService {
     public void process(TelemetryValidatorSource source, TelemetryValidatorSink sink, JsonSchemaFactory jsonSchemaFactory) {
         Event event = null;
         try {
-        	event = dataCorrection(source.getEvent());
+            event = dataCorrection(source.getEvent());
+            sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
 
-            String schemaFilePath = MessageFormat.format("{0}/{1}/{2}",config.schemaPath(), event.version(),event.schemaName());
+            String schemaFilePath = MessageFormat.format("{0}/{1}/{2}", config.schemaPath(), event.version(), event.schemaName());
             File schemaFile = new File(schemaFilePath);
 
             if (!schemaFile.exists()) {
@@ -57,16 +58,15 @@ public class TelemetryValidatorService {
                 LOGGER.error(null, "VALIDATION FAILED: " + report.toString());
                 sink.toFailedTopic(event, "validation failed");
             }
-        } catch(JsonSyntaxException e){
+        } catch (JsonSyntaxException e) {
             LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
             sink.toMalformedEventsTopic(source.getMessage());
         } catch (Exception e) {
             LOGGER.error(null, format(
                     "EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO EXCEPTION TOPIC. EVENT: {0}, EXCEPTION:",
-                    event),e);
+                    event), e);
             sink.toErrorTopic(event, e.getMessage());
         }
-        sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
     }
 
     public Event dataCorrection(Event event) {

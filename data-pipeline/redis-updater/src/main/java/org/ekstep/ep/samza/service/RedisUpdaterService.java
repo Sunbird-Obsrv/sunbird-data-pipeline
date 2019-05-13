@@ -31,6 +31,7 @@ public class RedisUpdaterService {
 
     public void process(RedisUpdaterSource source, RedisUpdaterSink sink) {
         Map<String, Object> message = source.getMap();
+        sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
         String nodeUniqueId = (String) message.get("nodeUniqueId");
         String objectType = (String) message.get("objectType");
         if (nodeUniqueId == null || objectType == null) return;
@@ -40,7 +41,6 @@ public class RedisUpdaterService {
         } else if (!nodeUniqueId.isEmpty()) {
             updateContentCache(message, sink);
         }
-        sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
     }
 
     private void updateDialCodeCache(Map<String, Object> message, RedisUpdaterSink sink) {
