@@ -32,7 +32,10 @@
 		<module>de-duplication</module>
 		<module>telemetry-router</module>
 		<module>telemetry-location-updater</module>
-		<module>druid-processor</module>
+		<module>de-normalization</module>
+		<module>druid-events-validator</module>
+		<module>events-router</module>
+		<!-- <module>druid-processor</module> -->
 		<module>redis-updater</module>
 	</modules>
 
