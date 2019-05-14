@@ -315,7 +315,7 @@ config() {
         echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/wfs/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.job.EventsReplayJob","modelParams":{},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$sinkTopic'"}}],"parallelization":8,"appName":"SummaryReplayJob","deviceMapping":false}'
         ;;
         "content-rating-updater")
-		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.updater.UpdateContentRating","modelParams":{"startDate":"'$endDate'","endDate":"'$currentDate'"},"output":[{"to":"console","params":{"printEvent":false}}],"parallelization":8,"appName":"Content Rating Updater","deviceMapping":false}'
+		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.updater.UpdateContentRating","modelParams":{"startDate":"'$endDate'","endDate":"'$endDate'"},"output":[{"to":"console","params":{"printEvent":false}}],"parallelization":8,"appName":"Content Rating Updater","deviceMapping":false}'
 		;;
 		"*")
 		echo "Unknown model code"
