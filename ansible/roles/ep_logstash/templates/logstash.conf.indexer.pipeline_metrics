@@ -22,7 +22,7 @@ output {
 	if [type] == 'pipeline_metrics' { 
 		influxdb {
 			    allow_time_override => true
-			    send_as_tags => ["env","job_name", "partition"]
+			    send_as_tags => ["env","job_name"]
 			    data_points => { 
 			    	"env" => "{{env}}"
 			    	"job_name" => "%{[job-name]}"
