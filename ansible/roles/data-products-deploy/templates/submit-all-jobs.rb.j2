@@ -11,7 +11,7 @@ end
 
 def submit_all_jobs
     #jobs = ["wfs", "ss", "data-exhaust", "monitor-job-summ"]
-    jobs = ["wfs", "ss", "is", "item-usage-summ", "usage-summary", "item-usage-metrics", "wfus", "ds", "dpu", "workflow-usage-metrics", "portal-metrics", "dialcode-usage-summary", "dialcode-usage-updater", "etb-coverage-summary", "data-exhaust", "wfu", "monitor-job-summ"]
+    jobs = ["wfs", "ss", "is", "item-usage-summ", "usage-summary", "item-usage-metrics", "wfus", "ds", "dpu", "workflow-usage-metrics", "portal-metrics", "dialcode-usage-summary", "dialcode-usage-updater", "etb-coverage-summary", "content-rating-updater", "data-exhaust", "wfu", "monitor-job-summ"]
 
     log("Starting to submit #{jobs.count} jobs for processing")
     file = File.read("{{ analytics.home }}/scripts/model-config.json")
