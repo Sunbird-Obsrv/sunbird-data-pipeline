@@ -7,6 +7,7 @@ import org.ekstep.ep.samza.task.RedisUpdaterSink;
 import org.ekstep.ep.samza.task.RedisUpdaterSource;
 
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.ekstep.ep.samza.util.RedisConnect;
@@ -58,9 +59,10 @@ public class RedisUpdaterService {
                 parsedData = new HashMap<>();
             }
             Map<String, Object> newProperties = extractProperties(message);
-            parsedData.forEach(newProperties::putIfAbsent);
-            if (newProperties.size() > 0) {
-                addToCache(key,  gson.toJson(newProperties), dialCodeStore);
+            parsedData.putAll(newProperties);
+            if (parsedData.size() > 0) {
+                parsedData.values().removeAll(Collections.singleton(null));
+                addToCache(key,  gson.toJson(parsedData), dialCodeStore);
                 sink.success();
             }
         } catch(JedisException ex) {
@@ -84,9 +86,10 @@ public class RedisUpdaterService {
                 parsedData = gson.fromJson(contentNode, type);
             }
             Map<String, Object> newProperties = extractProperties(message);
-            parsedData.forEach(newProperties::putIfAbsent);
-            if (newProperties.size() > 0) {
-                addToCache(nodeUniqueId, gson.toJson(newProperties), contentStore);
+            parsedData.putAll(newProperties);
+            if (parsedData.size() > 0) {
+                parsedData.values().removeAll(Collections.singleton(null));
+                addToCache(nodeUniqueId, gson.toJson(parsedData), contentStore);
                 sink.success();
             }
         } catch(JedisException ex) {
@@ -106,13 +109,7 @@ public class RedisUpdaterService {
                     if (propertyMap != null && propertyMap.getKey() != null) {
                         String propertyName = propertyMap.getKey();
                         Object propertyNewValue = ((Map<String, Object>) propertyMap.getValue()).get("nv");
-                        // New value from transaction data is null,
-                        // then replace it with empty string
-                        if (propertyNewValue == null)
-                            properties.put(propertyName, "");
-                        else{
-                            properties.put(propertyName, propertyNewValue);
-                        }
+                        properties.put(propertyName, propertyNewValue);
                     }
                 }
             }
