@@ -97,13 +97,13 @@ public class RedisUpdaterServiceTest {
             }.getType();
             parsedData = gson.fromJson(cachedData, type);
         }
-        assertEquals(6, parsedData.size());
+        assertEquals(5, parsedData.size());
         assertEquals("testbook1", parsedData.get("code"));
         assertEquals("sunbird.portal", parsedData.get("channel"));
         assertEquals("Live", parsedData.get("status"));
         assertEquals("Default", parsedData.get("visibility"));
         assertEquals("TestCollection", parsedData.get("description"));
-        assertEquals("", parsedData.get("ownershipType"));
+        assertEquals(null, parsedData.get("ownershipType"));
         verify(redisUpdaterSinkMock, times(2)).success();
     }
 
@@ -178,7 +178,7 @@ public class RedisUpdaterServiceTest {
         assertEquals("YC9EP8", cachedObject.get("identifier"));
         assertEquals("b00bc992ef25f1a9a8d63291e20efc8d", cachedObject.get("channel"));
         assertEquals("do_112692236142379008136", cachedObject.get("batchcode"));
-        assertEquals("", cachedObject.get("publisher"));
+        assertEquals(null, cachedObject.get("publisher"));
         assertEquals("2019-02-05T05:40:56.762", cachedObject.get("generated_on"));
         assertEquals("Draft", cachedObject.get("status"));
         verify(redisUpdaterSinkMock, times(1)).success();
