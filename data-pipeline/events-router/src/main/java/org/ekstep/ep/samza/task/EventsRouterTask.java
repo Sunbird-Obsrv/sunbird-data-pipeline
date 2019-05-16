@@ -32,6 +32,8 @@ import org.apache.samza.task.WindowableTask;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.EventsRouterService;
+import org.ekstep.ep.samza.domain.DeDupEngine;
+import org.ekstep.ep.samza.util.RedisConnect;
 
 public class EventsRouterTask implements StreamTask, InitableTask, WindowableTask {
 
@@ -40,8 +42,8 @@ public class EventsRouterTask implements StreamTask, InitableTask, WindowableTas
 	private JobMetrics metrics;
 	private EventsRouterService service;
 
-	public EventsRouterTask(Config config, TaskContext context) {
-		init(config, context);
+	public EventsRouterTask(DeDupEngine deDupEngine, Config config, TaskContext context) {
+		init(config, context, deDupEngine);
 	}
 
 	public EventsRouterTask() {
@@ -53,7 +55,15 @@ public class EventsRouterTask implements StreamTask, InitableTask, WindowableTas
 		
 		this.config = new EventsRouterConfig(config);
 		metrics = new JobMetrics(context, this.config.jobName());
-		service = new EventsRouterService(this.config);
+		init(config, context, null);
+	}
+
+	private void init(Config config, TaskContext context, DeDupEngine deDupEngine) {
+		this.config = new EventsRouterConfig(config);
+		metrics = new JobMetrics(context, this.config.jobName());
+		deDupEngine = deDupEngine == null ? new DeDupEngine(new RedisConnect(config)) : deDupEngine;
+		service = new EventsRouterService(deDupEngine, this.config);
+
 	}
 
 	@Override

@@ -22,6 +22,18 @@ public class Event {
 		path = new Path();
 	}
 
+	public String getChecksum() {
+		String checksum = id();
+		if (checksum != null)
+			return checksum;
+		return mid();
+	}
+
+	public String id() {
+		NullableValue<String> checksum = telemetry.read("metadata.checksum");
+		return checksum.value();
+	}
+
 	public Map<String, Object> getMap() {
 		return telemetry.getMap();
 	}
@@ -85,6 +97,18 @@ public class Event {
 			NullableValue<Long> timeInLong = telemetry.read(etsField);
 			return Double.valueOf(timeInLong.value());
 		}
+	}
+
+	public void markSkipped() {
+		telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+		telemetry.add("flags.dd_dr_processed", false);
+		telemetry.add("flags.dd_dr_checksum_present", false);
+	}
+
+	public void markDuplicate() {
+		telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+		telemetry.add("flags.dd_dr_processed", false);
+		telemetry.add("flags.dd_dr_duplicate_event", true);
 	}
 
 }
