@@ -20,7 +20,7 @@ public class RedisConnect {
 
     private JedisPoolConfig buildPoolConfig() {
         final JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxTotal(config.getInt("redis.connection.max", 20));
+        poolConfig.setMaxTotal(config.getInt("redis.connection.max", 2));
         poolConfig.setMaxIdle(config.getInt("redis.connection.idle.max", 20));
         poolConfig.setMinIdle(config.getInt("redis.connection.idle.min", 10));
         poolConfig.setTestOnBorrow(true);
