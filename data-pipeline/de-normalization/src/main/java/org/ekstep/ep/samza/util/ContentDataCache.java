@@ -6,7 +6,7 @@ import java.util.List;
 
 public class ContentDataCache extends DataCache {
 
-    public ContentDataCache(Config config, RedisConnect redisConnect, LRUCache lruCache) {
+    public ContentDataCache(Config config, LRUCache lruCache) {
 
         List defaultList = new ArrayList<String>();
         defaultList.add("name");
@@ -23,9 +23,7 @@ public class ContentDataCache extends DataCache {
         defaultList.add("lastSubmittedOn");
         defaultList.add("lastUpdatedOn");
         defaultList.add("lastPublishedOn");
-        this.redisDBIndex = config.getInt("redis.contentDB.index", 2);
         this.fieldsList = config.getList("content.metadata.fields", defaultList);
-        this.redisConnect = redisConnect;
         this.lruCache = lruCache;
     }
 }

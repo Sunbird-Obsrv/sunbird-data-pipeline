@@ -6,8 +6,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.samza.config.Config;
 import org.ekstep.ep.samza.core.Logger;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.exceptions.JedisException;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
@@ -20,17 +18,13 @@ public class DeviceDataCache {
     private String cassandra_db;
     private String cassandra_table;
     private CassandraConnect cassandraConnetion;
-    private RedisConnect redisConnect;
-    private Integer deviceDBIndex;
     private Config config;
     private LRUCache lruCache;
 
-    public DeviceDataCache(Config config, RedisConnect redisConnect, CassandraConnect cassandraConnetion, LRUCache lruCache) {
+    public DeviceDataCache(Config config, CassandraConnect cassandraConnetion, LRUCache lruCache) {
         this.config = config;
         this.cassandra_db = config.get("cassandra.keyspace", "device_db");
         this.cassandra_table = config.get("cassandra.device_profile_table", "device_profile");
-        this.deviceDBIndex = config.getInt("redis.deviceDB.index", 0);
-        this.redisConnect = redisConnect;
         this.cassandraConnetion = cassandraConnetion;
         this.lruCache = lruCache;
     }
@@ -42,19 +36,18 @@ public class DeviceDataCache {
         String dataNode = null;
         dataNode = cache.getIfPresent(key);
         if(dataNode != null) {
-            System.out.println("fetching from LRU: " + key);
-            LOGGER.warn("", "fetching from LRU: " + key);
+            LOGGER.info("", "fetching from LRU: " + key);
             return parseData(dataNode);
         } else {
-            System.out.println("fetching from DB: " + key);
-            LOGGER.warn("", "fetching from DB: " + key);
+            LOGGER.info("", "fetching from DB: " + key);
 
             Map<String, Object> value = getFromDB(did, channel);
-            Gson gson = new Gson();
-            String data = gson.toJson(value);
-            System.out.println("DB data : "+ data);
-            cache.put(key, data);
-
+            if(value != null){
+                Gson gson = new Gson();
+                String data = gson.toJson(value);
+                LOGGER.info("", "DB data: " + data);
+                cache.put(key, data);
+            }
             return value;
         }
     }

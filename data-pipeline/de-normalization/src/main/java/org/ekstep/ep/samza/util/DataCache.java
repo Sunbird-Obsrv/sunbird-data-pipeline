@@ -17,8 +17,6 @@ public abstract class DataCache {
 
     private static Logger LOGGER = new Logger(DataCache.class);
 
-    RedisConnect redisConnect;
-    Integer redisDBIndex;
     List fieldsList;
     LRUCache lruCache;
 
@@ -29,8 +27,7 @@ public abstract class DataCache {
         dataNode = cache.getIfPresent(key);
         Map dataMap = new HashMap();
         if (dataNode != null) {
-            System.out.println("fetching from LRU: " + key);
-            LOGGER.warn("", "fetching from LRU: " + key);
+            LOGGER.info("", "fetching from LRU: " + key);
             dataMap = parseData(dataNode);
             return dataMap;
         }
