@@ -63,7 +63,6 @@ public class TelemetryExtractorTask implements StreamTask, InitableTask, Windowa
 			LOGGER.info("", "Failed to process events: " + e.getMessage());
 			sink.toErrorTopic(message);
 		}
-
 	}
 
 	@Override

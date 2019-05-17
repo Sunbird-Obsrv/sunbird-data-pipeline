@@ -29,8 +29,8 @@ public class EventsRouterService {
 	public void process(EventsRouterSource source, EventsRouterSink sink) {
 		Event event = null;
 		try {
+			sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
 			event = source.getEvent();
-
 			if(config.isDedupEnabled()) {
 				String checksum = event.getChecksum();
 
@@ -48,6 +48,7 @@ public class EventsRouterService {
 				deDupEngine.storeChecksum(checksum, config.dupStore(), config.getExpirySeconds());
 			}
 
+			
 			String eid = event.eid();
 			if(event.mid().contains("TRACE")){
 				SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -74,6 +75,5 @@ public class EventsRouterService {
 					e);
 			sink.toErrorTopic(event, e.getMessage());
 		}
-		sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
 	}
 }

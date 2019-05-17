@@ -12,8 +12,6 @@ public class DeDuplicationConfig {
     private String malformedTopic;
     private String defaultChannel;
     private final String metricsTopic;
-    private final int dupStore;
-    private int expirySeconds;
 
 
     public DeDuplicationConfig(Config config) {
@@ -23,8 +21,6 @@ public class DeDuplicationConfig {
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
         metricsTopic = config.get("output.metrics.topic.name", "pipeline_metrics");
         defaultChannel = config.get("default.channel", "org.sunbird");
-        dupStore = config.getInt("redis.database.duplicationstore.id", 7);
-        expirySeconds = config.getInt("redis.database.key.expiry.seconds", 1296000);
     }
 
     public String successTopic() {
@@ -53,13 +49,5 @@ public class DeDuplicationConfig {
 
     public String jobName() {
         return JOB_NAME;
-    }
-
-    public int dupStore() {
-        return dupStore;
-    }
-
-    public int getExpirySeconds() {
-        return expirySeconds;
     }
 }

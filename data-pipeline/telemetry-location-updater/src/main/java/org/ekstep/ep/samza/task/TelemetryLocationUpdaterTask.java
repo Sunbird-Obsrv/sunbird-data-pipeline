@@ -85,7 +85,7 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 		locationEngine =
 				locationEngine == null ?
 				new LocationEngine(locationStore,
-						searchServiceClient, new LocationCache(config, redisConnect),
+						searchServiceClient, new LocationCache(config, redisConnect, metrics),
 						new UserLocationCache(
 								config,
 								redisConnect,
@@ -93,7 +93,7 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 						))
 				: locationEngine;
 		metrics = new JobMetrics(context, this.config.jobName());
-		service = new TelemetryLocationUpdaterService(this.config, locationEngine);
+		service = new TelemetryLocationUpdaterService(this.config, locationEngine, metrics);
 	}
 
 	@Override
