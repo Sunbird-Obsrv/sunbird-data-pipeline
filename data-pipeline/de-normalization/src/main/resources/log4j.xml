@@ -34,7 +34,7 @@
      </layout>
   </appender>
   <root>
-    <priority value="info" />
+    <priority value="all" />
     <appender-ref ref="RollingAppender"/>
     <appender-ref ref="jmx" />
   </root>

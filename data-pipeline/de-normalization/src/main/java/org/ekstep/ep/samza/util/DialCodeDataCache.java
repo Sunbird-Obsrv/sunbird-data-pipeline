@@ -6,7 +6,7 @@ import java.util.List;
 
 public class DialCodeDataCache extends DataCache {
 
-    public DialCodeDataCache(Config config, RedisConnect redisConnect) {
+    public DialCodeDataCache(Config config, RedisConnect redisConnect, LRUCache lruCache) {
 
         List defaultList = new ArrayList<String>();
         defaultList.add("identifier");
@@ -19,5 +19,6 @@ public class DialCodeDataCache extends DataCache {
         this.redisDBIndex = config.getInt("redis.dialcodeDB.index", 3);
         this.redisConnect = redisConnect;
         this.fieldsList = config.getList("dialcode.metadata.fields", defaultList);
+        this.lruCache = lruCache;
     }
 }

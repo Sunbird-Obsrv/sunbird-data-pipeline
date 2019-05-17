@@ -6,7 +6,7 @@ import java.util.List;
 
 public class UserDataCache extends DataCache {
 
-    public UserDataCache(Config config, RedisConnect redisConnect) {
+    public UserDataCache(Config config, RedisConnect redisConnect, LRUCache lruCache) {
 
         List defaultList = new ArrayList<String>();
         defaultList.add("usertype");
@@ -16,5 +16,6 @@ public class UserDataCache extends DataCache {
         this.redisDBIndex = config.getInt("redis.userDB.index", 1);
         this.redisConnect = redisConnect;
         this.fieldsList = config.getList("user.metadata.fields", defaultList);
+        this.lruCache = lruCache;
     }
 }

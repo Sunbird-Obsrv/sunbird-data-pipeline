@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.util;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.ekstep.ep.samza.core.Logger;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.google.gson.*;
 
 public abstract class DataCache {
 
@@ -18,32 +20,54 @@ public abstract class DataCache {
     RedisConnect redisConnect;
     Integer redisDBIndex;
     List fieldsList;
+    LRUCache lruCache;
 
     public Map getData(String key) {
-
-        try (Jedis jedis = redisConnect.getConnection()) {
-            Gson gson = new Gson();
-            Map<String, Object> parsedData = null;
-            Map dataMap = new HashMap();
-            jedis.select(redisDBIndex);
-            String dataNode = jedis.get(key);
-            if (dataNode == null) {
-                return null;
-            } else {
-                Type type = new TypeToken<Map<String, Object>>() {
-                }.getType();
-                parsedData = gson.fromJson(dataNode, type);
-                parsedData.keySet().retainAll(fieldsList);
-                for (Map.Entry<String, Object> entry : parsedData.entrySet()) {
-                    dataMap.put(entry.getKey().toLowerCase().replace("_", ""), entry.getValue());
+        String dataNode = null;
+        Cache<String, String> cache = lruCache.getConnection();
+        // get from LRU cache if present;
+        dataNode = cache.getIfPresent(key);
+        Map dataMap = new HashMap();
+        if (dataNode != null) {
+            System.out.println("fetching from LRU: " + key);
+            LOGGER.warn("", "fetching from LRU: " + key);
+            dataMap = parseData(dataNode);
+            return dataMap;
+        } else {
+            System.out.println("fetching from Redis: " + key);
+            LOGGER.warn("", "fetching from Redis: " + key);
+            try (Jedis jedis = redisConnect.getConnection()) {
+                jedis.select(redisDBIndex);
+                dataNode = jedis.get(key);
+                if (dataNode == null) {
+                    return null;
+                } else {
+                    // put to LRU cache
+                    System.out.println("putting to LRU: " + key);
+                    LOGGER.warn("", "putting to LRU: " + key);
+                    cache.put(key, dataNode);
+                    dataMap = parseData(dataNode);
+                    return dataMap;
                 }
-                return dataMap;
+            } catch (JedisException ex) {
+                LOGGER.error("", "GetData: Unable to get a resource from the redis connection pool ", ex);
+                return null;
             }
-        } catch (JedisException ex) {
-            LOGGER.error("", "GetData: Unable to get a resource from the redis connection pool ", ex);
-            return null;
         }
+    }
 
+    private Map<String, Object> parseData(String value) {
+        Map dataMap = new HashMap();
+        Gson gson = new Gson();
+        Map<String, Object> data = null;
+        Type type = new TypeToken<Map<String, Object>>() {
+        }.getType();
+        data = gson.fromJson(value, type);
+        data.keySet().retainAll(fieldsList);
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            dataMap.put(entry.getKey().toLowerCase().replace("_", ""), entry.getValue());
+        }
+        return dataMap;
     }
 
     public List<Map> getData(List<String> keys) {
