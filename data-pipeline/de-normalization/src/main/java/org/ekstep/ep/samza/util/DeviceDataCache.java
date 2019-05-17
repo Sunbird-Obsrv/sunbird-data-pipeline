@@ -66,7 +66,6 @@ public class DeviceDataCache {
     }
 
     private Map<String, Object> getFromDB(String did, String channel) {
-        Gson gson = new Gson();
         List<Row> rows;
         String query =
                 String.format("SELECT device_id, device_spec, uaspec, first_access FROM %s.%s WHERE device_id = '%s' AND channel = '%s'",

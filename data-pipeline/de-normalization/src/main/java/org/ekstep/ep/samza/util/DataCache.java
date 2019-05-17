@@ -11,12 +11,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.google.gson.*;
 
 public abstract class DataCache {
 
     private static Logger LOGGER = new Logger(DataCache.class);
 
+    RedisConnect redisConnect;
+    Integer redisDBIndex;
     List fieldsList;
     LRUCache lruCache;
 
@@ -30,8 +31,25 @@ public abstract class DataCache {
             LOGGER.info("", "fetching from LRU: " + key);
             dataMap = parseData(dataNode);
             return dataMap;
+        } else {
+            LOGGER.info("", "fetching from Redis: " + key);
+            try (Jedis jedis = redisConnect.getConnection()) {
+                jedis.select(redisDBIndex);
+                dataNode = jedis.get(key);
+                if (dataNode == null) {
+                    return null;
+                } else {
+                    // put to LRU cache
+                    LOGGER.info("", "putting to LRU: " + key);
+                    cache.put(key, dataNode);
+                    dataMap = parseData(dataNode);
+                    return dataMap;
+                }
+            } catch (JedisException ex) {
+                LOGGER.error("", "GetData: Unable to get a resource from the redis connection pool ", ex);
+                return null;
+            }
         }
-        return null;
     }
 
     private Map<String, Object> parseData(String value) {

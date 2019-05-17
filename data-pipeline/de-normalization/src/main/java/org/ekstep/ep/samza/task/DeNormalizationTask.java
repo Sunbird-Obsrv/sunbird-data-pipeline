@@ -41,7 +41,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     private CassandraConnect cassandraConnect;
     private JobMetrics metrics;
     private DeNormalizationService service;
-    private LRUCache lruCache;
+    private RedisConnect redisConnect;
 
     public DeNormalizationTask(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache, CassandraConnect cassandraConnect, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics)  {
         init(config, context, deviceCache, userCache, contentCache, cassandraConnect, dialcodeCache, jobMetrics);
@@ -61,7 +61,8 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     public void init(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache, CassandraConnect cassandraConnect, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics) {
         this.config = new DeNormalizationConfig(config);
         this.metrics = jobMetrics == null ? new JobMetrics(context, this.config.jobName()) : jobMetrics;
-        this.lruCache = new LRUCache();
+        LRUCache lruCache = new LRUCache();
+        this.redisConnect = new RedisConnect(config);
 
         this.cassandraConnect =
                 cassandraConnect == null ?
@@ -75,17 +76,17 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
 
         this.userCache =
                 userCache == null ?
-                        new UserDataCache(config, lruCache)
+                        new UserDataCache(config, this.redisConnect, lruCache)
                         : userCache;
 
         this.contentCache =
                 contentCache == null ?
-                        new ContentDataCache(config, lruCache)
+                        new ContentDataCache(config, this.redisConnect, lruCache)
                         : contentCache;
 
         this.dialcodeCache =
                 dialcodeCache == null ?
-                        new DialCodeDataCache(config, lruCache)
+                        new DialCodeDataCache(config, this.redisConnect, lruCache)
                         : dialcodeCache;
 
         service = new DeNormalizationService(this.config, new EventUpdaterFactory(this.contentCache, this.userCache, this.deviceCache, this.dialcodeCache));
