@@ -74,7 +74,7 @@ public class DeDuplicationTaskTest {
     @Test
     public void ShouldSendEventToSuccessTopicIfEventIsUnique() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithChecksumJson());
-        when(deDupEngineMock.isUniqueEvent(anyString(), anyInt())).thenReturn(true);
+        when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
 
         deDuplicationTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
@@ -83,7 +83,7 @@ public class DeDuplicationTaskTest {
     @Test
     public void ShouldSendEventsToDuplicateTopicIfEventIsDuplicate() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithChecksumJson());
-        when(deDupEngineMock.isUniqueEvent(anyString(), anyInt())).thenReturn(false);
+        when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(false);
 
         deDuplicationTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), DUPLICATE_TOPIC)));
@@ -102,7 +102,7 @@ public class DeDuplicationTaskTest {
     public void ShouldSendEventsToFailedTopicForAnyUnhandledException() throws Exception {
 
         when(envelopeMock.getMessage()).thenReturn(EventFixture.EventWithChecksumJson());
-        when(deDupEngineMock.isUniqueEvent(anyString(), anyInt())).thenThrow(new Exception());
+        when(deDupEngineMock.isUniqueEvent(anyString())).thenThrow(new Exception());
 
         deDuplicationTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
@@ -112,10 +112,10 @@ public class DeDuplicationTaskTest {
     public void ShouldStoreChecksumIfEventIsUnique() throws Exception {
 
         when(envelopeMock.getMessage()).thenReturn(EventFixture.EventWithChecksumJson());
-        when(deDupEngineMock.isUniqueEvent(anyString(), anyInt())).thenReturn(true);
+        when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
 
         deDuplicationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(deDupEngineMock, times(1)).isUniqueEvent(anyString(), anyInt());
+        verify(deDupEngineMock, times(1)).isUniqueEvent(anyString());
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
 

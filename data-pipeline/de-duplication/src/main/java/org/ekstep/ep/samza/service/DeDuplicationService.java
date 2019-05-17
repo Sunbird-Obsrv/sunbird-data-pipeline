@@ -37,7 +37,7 @@ public class DeDuplicationService {
 				sink.toSuccessTopic(event);
 				return;
 			}
-			if (!deDupEngine.isUniqueEvent(checksum, config.dupStore())) {
+			if (!deDupEngine.isUniqueEvent(checksum)) {
 				LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
 				event.markDuplicate();
 				sink.toDuplicateTopic(event);
@@ -46,7 +46,7 @@ public class DeDuplicationService {
 
 			LOGGER.info(event.id(), "ADDING EVENT CHECKSUM TO STORE");
 
-			deDupEngine.storeChecksum(checksum, config.dupStore(), config.getExpirySeconds());
+			deDupEngine.storeChecksum(checksum, config.getExpirySeconds());
 			event.updateDefaults(config);
 			event.markSuccess();
 			sink.toSuccessTopic(event);
