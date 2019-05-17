@@ -12,7 +12,7 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>redis-updater</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.6</version>
     <dependencies>
         <dependency>
             <groupId>org.apache.samza</groupId>
