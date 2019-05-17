@@ -29,8 +29,8 @@ public class EventsRouterService {
 	public void process(EventsRouterSource source, EventsRouterSink sink) {
 		Event event = null;
 		try {
-			sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
 			event = source.getEvent();
+			sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
 			if(config.isDedupEnabled()) {
 				String checksum = event.getChecksum();
 
