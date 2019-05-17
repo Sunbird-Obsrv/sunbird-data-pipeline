@@ -46,31 +46,16 @@ public class DeviceDataCache {
             LOGGER.warn("", "fetching from LRU: " + key);
             return parseData(dataNode);
         } else {
-            System.out.println("fetching from Redis: " + key);
-            LOGGER.warn("", "fetching from Redis: " + key);
-            try (Jedis jedis = redisConnect.getConnection()) {
-                jedis.select(deviceDBIndex);
-                Gson gson = new Gson();
-                Map<String, Object> parsedData = null;
-                Map deviceMap = new HashMap();
-                // Key will be device_id:channel
+            System.out.println("fetching from DB: " + key);
+            LOGGER.warn("", "fetching from DB: " + key);
 
-                String fields = jedis.get(key);
-                List<Row> rows;
-                if (fields == null) {
-                    Map<String, Object> value = getFromDB(did, channel);
-                    return value;
-                } else {
-                    // put to LRU cache
-                    System.out.println("putting to LRU: " + key);
-                    LOGGER.warn("", "putting to LRU: " + key);
-                    cache.put(key, fields);
-                    return parseData(fields);
-                }
-            } catch (JedisException ex) {
-                LOGGER.error("", "GetDataForDeviceId: Unable to get a resource from the redis connection pool ", ex);
-                return null;
-            }
+            Map<String, Object> value = getFromDB(did, channel);
+            Gson gson = new Gson();
+            String data = gson.toJson(value);
+            System.out.println("DB data : "+ data);
+            cache.put(key, data);
+
+            return value;
         }
     }
 
@@ -109,25 +94,8 @@ public class DeviceDataCache {
             eventFinalMap.putAll(deviceSpec);
             eventFinalMap.put("uaspec", uaSpec);
             if (first_access != null) eventFinalMap.put("firstaccess", first_access);
-            addDataToCache(did, channel, gson.toJson(eventFinalMap));
             return eventFinalMap;
         } else
             return null;
-    }
-
-    public void addDataToCache(String did, String channel, String deviceData) {
-        if (deviceData != null) {
-
-            try (Jedis jedis = redisConnect.getConnection()) {
-                jedis.select(deviceDBIndex);
-                // Key will be device_id:channel
-                String key = String.format("%s:%s", did, channel);
-                //Map values = deviceData;
-                jedis.set(key, deviceData);
-                jedis.expire(key, config.getInt("device.db.redis.key.expiry.seconds", 86400));
-            } catch (JedisException ex) {
-                LOGGER.error("", "AddDeviceDataToCache: Unable to get a resource from the redis connection pool ", ex);
-            }
-        }
     }
 }

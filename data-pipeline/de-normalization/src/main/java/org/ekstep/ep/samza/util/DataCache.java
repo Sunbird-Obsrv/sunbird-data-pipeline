@@ -33,27 +33,8 @@ public abstract class DataCache {
             LOGGER.warn("", "fetching from LRU: " + key);
             dataMap = parseData(dataNode);
             return dataMap;
-        } else {
-            System.out.println("fetching from Redis: " + key);
-            LOGGER.warn("", "fetching from Redis: " + key);
-            try (Jedis jedis = redisConnect.getConnection()) {
-                jedis.select(redisDBIndex);
-                dataNode = jedis.get(key);
-                if (dataNode == null) {
-                    return null;
-                } else {
-                    // put to LRU cache
-                    System.out.println("putting to LRU: " + key);
-                    LOGGER.warn("", "putting to LRU: " + key);
-                    cache.put(key, dataNode);
-                    dataMap = parseData(dataNode);
-                    return dataMap;
-                }
-            } catch (JedisException ex) {
-                LOGGER.error("", "GetData: Unable to get a resource from the redis connection pool ", ex);
-                return null;
-            }
         }
+        return null;
     }
 
     private Map<String, Object> parseData(String value) {
