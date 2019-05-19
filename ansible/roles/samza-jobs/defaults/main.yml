@@ -50,6 +50,7 @@ middleware_cassandra_user_table: user
 middleware_cassandra_location_table: location
 telemetry_extractor_consumer_fetch_max_bytes: 5242880
 telemetry_extractor_container_memory_mb: 1024
+telemetry_extractor_messages_fetch_threshold: 3000
 
 content_metadata_fields: "name, objectType, contentType, mediaType, language, medium, subject, gradeLevel, mimeType, framework, board, status, pkgVersion, lastSubmittedOn, lastUpdatedOn, lastPublishedOn"
 user_metadata_fields: "usertype, grade, subject, language"
