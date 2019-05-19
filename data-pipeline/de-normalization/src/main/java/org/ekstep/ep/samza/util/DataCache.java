@@ -16,10 +16,10 @@ public abstract class DataCache {
 
     private static Logger LOGGER = new Logger(DataCache.class);
 
-    RedisConnect redisConnect;
-    Integer redisDBIndex;
-    List fieldsList;
-    LRUCache lruCache;
+    protected RedisConnect redisConnect;
+    protected Integer redisDBIndex;
+    protected List fieldsList;
+    protected LRUCache lruCache;
 
     public Map getData(String key) {
         String dataNode = null;
