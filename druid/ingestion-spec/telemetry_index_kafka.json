@@ -1089,7 +1089,7 @@
     "consumerProperties": {
       "bootstrap.servers": "broker_ip:broker_port"
     },
-    "taskCount": 2,
+    "taskCount": 1,
     "replicas": 1,
     "taskDuration": "PT3600S",
     "useEarliestOffset": true
