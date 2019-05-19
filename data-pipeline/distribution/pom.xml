@@ -40,7 +40,7 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>de-duplication</artifactId>
-            <version>0.4.1</version>
+            <version>0.4.2</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
@@ -61,14 +61,14 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>de-normalization</artifactId>
-            <version>0.0.6</version>
+            <version>0.0.7</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>events-router</artifactId>
-            <version>0.0.7</version>
+            <version>0.0.8</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
@@ -84,14 +84,14 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>redis-updater</artifactId>
-            <version>0.0.6</version>
+            <version>0.0.7</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>druid-events-validator</artifactId>
-            <version>0.0.6</version>
+            <version>0.0.7</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
