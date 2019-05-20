@@ -1,4 +1,3 @@
-broker_host: "{{ groups['broker'][0] }}"
 overlord_host: "{{ groups['overlord'][0] }}"
 remote_user: druid
 broker_port: 8082

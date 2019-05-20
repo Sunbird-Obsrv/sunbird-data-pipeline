@@ -1087,7 +1087,7 @@
   "ioConfig": {
     "topic": "{{env}}.events.telemetry",
     "consumerProperties": {
-      "bootstrap.servers": "{{broker_host}}:{{broker_port}}"
+      "bootstrap.servers": "{{kafka_brokers}}"
     },
     "taskCount": 1,
     "replicas": 1,
