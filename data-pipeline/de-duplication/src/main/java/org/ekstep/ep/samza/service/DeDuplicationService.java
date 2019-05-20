@@ -46,7 +46,7 @@ public class DeDuplicationService {
 
 			LOGGER.info(event.id(), "ADDING EVENT CHECKSUM TO STORE");
 
-			deDupEngine.storeChecksum(checksum, config.getExpirySeconds());
+			deDupEngine.storeChecksum(checksum);
 			event.updateDefaults(config);
 			event.markSuccess();
 			sink.toSuccessTopic(event);

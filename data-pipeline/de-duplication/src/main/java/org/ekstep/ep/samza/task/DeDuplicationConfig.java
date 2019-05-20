@@ -59,7 +59,7 @@ public class DeDuplicationConfig {
         return dupStore;
     }
 
-    public int getExpirySeconds() {
+    public int expirySeconds() {
         return expirySeconds;
     }
 }
