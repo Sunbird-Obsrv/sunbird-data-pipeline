@@ -1,0 +1,9 @@
+
+- name: Copy the schema file
+  template: src="{{item}}" dest="{{druid_home}}/{{item}}.json"
+  with_items: "{{druid_schema}}"
+
+- name: Start the task for druid ingestion
+  shell: 'curl -X POST -H "Content-Type:application/json" -d @{{druid_home}}/{{item}}.json http://{{overlord_host}}:8090/druid/indexer/v1/supervisor'
+  with_items: "{{druid_schema}}"
+  become_user: "{{remote_user}}" 

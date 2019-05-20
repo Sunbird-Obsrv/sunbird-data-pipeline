@@ -1,0 +1,9 @@
+broker_host: "{{ groups['broker'][0] }}"
+overlord_host: "{{ groups['overlord'][0] }}"
+remote_user: druid
+broker_port: 8082
+druid_home: /home/druid
+druid_schema:
+ - telemetry_index_kafka
+ - summary_index_kafka
+ - log_index_kafka
