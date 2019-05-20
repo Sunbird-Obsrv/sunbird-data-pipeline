@@ -22,7 +22,7 @@ public abstract class IEventUpdater {
 
     public abstract Event update(Event event);
 
-    public Event update(Event event, String key, Boolean convertionRequired) {
+    public Event update(Event event, String key, Boolean conversionRequired) {
         Map data;
         Map convertedData;
         List<Map> dataMap = new ArrayList<>();
@@ -30,7 +30,7 @@ public abstract class IEventUpdater {
             if (key != null && !key.isEmpty()) {
                 data = dataCache.getData(key);
                 if (data != null && !data.isEmpty()) {
-                    if(convertionRequired)
+                    if(conversionRequired)
                         convertedData = getConvertedData(data);
                     else
                         convertedData = data;
@@ -51,7 +51,7 @@ public abstract class IEventUpdater {
         }
     }
 
-    public Event update(Event event, List<String> keys, Boolean convertionRequired) {
+    public Event update(Event event, List<String> keys, Boolean conversionRequired) {
         List<Map> dataMap;
         List<Map> convertedDataMap = new ArrayList<>();
         try {
@@ -59,7 +59,7 @@ public abstract class IEventUpdater {
                 dataMap = dataCache.getData(keys);
                 if (dataMap != null && !dataMap.isEmpty()) {
                     for (Map entry : dataMap) {
-                        if(convertionRequired)
+                        if(conversionRequired)
                             convertedDataMap.add(getConvertedData(entry));
                         else
                             convertedDataMap.add(entry);

@@ -11,17 +11,16 @@ public class DeDupEngine {
     private Jedis jedis;
 
     public DeDupEngine(Jedis redisConnection, int store) {
-
         this.jedis = redisConnection;
         jedis.select(store);
     }
 
     public boolean isUniqueEvent(String checksum) throws JedisException {
-            return jedis.get(checksum) == null;
+        return jedis.get(checksum) == null;
     }
 
     public void storeChecksum(String checksum, int expirySeconds) throws JedisException {
-            jedis.set(checksum, new Date().toString());
-            jedis.expire(checksum, expirySeconds);
+        jedis.set(checksum, new Date().toString());
+        jedis.expire(checksum, expirySeconds);
     }
 }

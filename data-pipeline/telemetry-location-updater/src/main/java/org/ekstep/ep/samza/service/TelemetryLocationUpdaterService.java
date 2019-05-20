@@ -7,25 +7,21 @@ import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.domain.Location;
 import com.google.gson.JsonSyntaxException;
-import org.ekstep.ep.samza.engine.LocationEngine;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterConfig;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterSink;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterSource;
-
-import java.io.IOException;
-
+import org.ekstep.ep.samza.util.DeviceLocationCache;
+import redis.clients.jedis.exceptions.JedisException;
 
 public class TelemetryLocationUpdaterService {
 	
 	private static Logger LOGGER = new Logger(TelemetryLocationUpdaterService.class);
-	// private final TelemetryLocationUpdaterConfig config;
-	private LocationEngine locationEngine;
+	private DeviceLocationCache deviceLocationCache;
 	private JobMetrics metrics;
 
 
-	public TelemetryLocationUpdaterService(TelemetryLocationUpdaterConfig config, LocationEngine locationEngine, JobMetrics metrics) {
-		// this.config = config;
-		this.locationEngine = locationEngine;
+	public TelemetryLocationUpdaterService(DeviceLocationCache deviceLocationCache, JobMetrics metrics) {
+		this.deviceLocationCache = deviceLocationCache;
 		this.metrics = metrics;
 	}
 
@@ -34,9 +30,9 @@ public class TelemetryLocationUpdaterService {
 		try {
 			event = source.getEvent();
 			sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
+			// Add device location details to the event
 			event = updateEventWithIPLocation(event);
-			// add user location details to the event
-			event = updateEventWithUserLocation(event);
+			System.out.println("Event after location resolution = " + event);
 			sink.toSuccessTopic(event);
 		} catch (JsonSyntaxException e) {
 			LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
@@ -50,44 +46,31 @@ public class TelemetryLocationUpdaterService {
 		}
 	}
 
-	private Event updateEventWithIPLocation(Event eventObj) {
-		Event event = eventObj;
+	private Event updateEventWithIPLocation(Event event) {
+		String did = event.did();
 		Location location;
-		try {
-			String did = event.did();
-			String channel = event.channel();
-			if (did != null && !did.isEmpty()) {
-				location = locationEngine.locationCache().getLocationForDeviceId(event.did(), channel);
+		if (did != null && !did.isEmpty()) {
 
-				if (location != null) {
-					event = updateEvent(event, location, true);
-				} else {
-					// add empty location
-					location = new Location();
-					event = updateEvent(event, location, false);
-				}
-				metrics.incProcessedMessageCount();
+			location = deviceLocationCache.getLocationForDeviceId(event.did());
+			if (location != null) {
+				event = updateEvent(event, location, true);
 			} else {
 				// add empty location
-				location = new Location();
+				location = new Location(); // What is the need for empty location? Is it a requirement for druid validator spec?
 				event = updateEvent(event, location, false);
-				metrics.incUnprocessedMessageCount();
 			}
-			return event;
-		} catch(Exception ex) {
-			LOGGER.error(null,
-					format("EXCEPTION. RESOLVING IP LOCATION. EVENT: {0}, EXCEPTION:",
-							event),
-					ex);
+			metrics.incProcessedMessageCount();
+		} else {
+			// add empty location
 			location = new Location();
 			event = updateEvent(event, location, false);
-			metrics.incUnprocessedMessageCount();
-			return event;
+			metrics.incUnprocessedMessageCount(); // Isn't this skippedCount?
 		}
+		return event;
 	}
 
-	private Event updateEventWithUserLocation(Event eventObj) {
-		Event event = eventObj;
+	/*
+	private Event updateEventWithUserLocation(Event event) {
 		try {
 			String actorId = event.actorid();
 			String actorType = event.actortype();
@@ -95,12 +78,7 @@ public class TelemetryLocationUpdaterService {
 			if (actorId != null && actorType.equalsIgnoreCase("USER")) {
 				Location location = locationEngine.getLocationByUser(actorId);
 				if (location == null) {
-					location = locationEngine.getLocation(event.channel());
-					if (location == null) {
-						event.addUserLocation(new Location(null, null, null, "", null, ""));
-					} else {
-						event.addUserLocation(location);
-					}
+					event.addUserLocation(new Location(null, null, null, "", null, ""));
 				} else {
 					event.addUserLocation(location);
 				}
@@ -115,18 +93,7 @@ public class TelemetryLocationUpdaterService {
 			return event;
 		}
 	}
-
-//	private Event updateEventWithLocationFromChannel(Event event) throws IOException {
-//		Location location = locationEngine.getLocation(event.channel());
-//		if (location != null && !location.getState().isEmpty()) {
-//			event = updateEvent(event, location, true);
-//		} else {
-//			// add empty location
-//			location = new Location("", "", "", "", "");
-//			event = updateEvent(event, location, false);
-//		}
-//		return event;
-//	}
+	*/
 
 	public Event updateEvent(Event event, Location location, Boolean ldataFlag) {
 		event.addLocation(location);

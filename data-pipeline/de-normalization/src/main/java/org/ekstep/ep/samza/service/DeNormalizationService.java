@@ -83,7 +83,7 @@ public class DeNormalizationService {
         }
         // add user details to the event
         event = eventUpdaterFactory.getInstance("user-data-updater")
-                .update(event, event.getKey("user").get(0), false);
+                .update(event);
         // add device details to the event
         event = eventUpdaterFactory.getInstance("device-data-updater")
                 .update(event);

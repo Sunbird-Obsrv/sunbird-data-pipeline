@@ -21,9 +21,8 @@ public class DeviceDataUpdater extends IEventUpdater {
         Map device;
         try {
             String did = event.did();
-            String channel = event.channel();
             if (did != null && !did.isEmpty()) {
-                device = deviceCache.getDataForDeviceId(event.did(), channel);
+                device = deviceCache.getDataForDeviceId(event.did());
 
                 if (device != null && !device.isEmpty()) {
                     event.addDeviceData(device);

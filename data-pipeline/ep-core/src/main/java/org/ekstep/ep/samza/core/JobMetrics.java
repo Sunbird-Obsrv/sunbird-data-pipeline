@@ -26,6 +26,7 @@ public class JobMetrics {
     private final Counter cacheEmptyValuesCount;
     private final Counter processedMessageCount;
     private final Counter unprocessedMessageCount;
+    private final Counter dbHitCount;
     private final Counter dbErrorCount;
     private TaskContext context;
     private int partition;
@@ -46,6 +47,7 @@ public class JobMetrics {
         cacheExpiredCount = metricsRegistry.newCounter(getClass().getName(), "cache-expired-count");
         processedMessageCount = metricsRegistry.newCounter(getClass().getName(), "processed-message-count");
         unprocessedMessageCount = metricsRegistry.newCounter(getClass().getName(), "unprocessed-message-count");
+        dbHitCount = metricsRegistry.newCounter(getClass().getName(), "db-hit-count");
         dbErrorCount = metricsRegistry.newCounter(getClass().getName(), "db-error-count");
         jobName = jName;
         this.context = context;
@@ -62,6 +64,7 @@ public class JobMetrics {
         cacheExpiredCount.clear();
         processedMessageCount.clear();
         unprocessedMessageCount.clear();
+        dbHitCount.clear();
         dbErrorCount.clear();
     }
 
@@ -93,10 +96,15 @@ public class JobMetrics {
 
     public void incUnprocessedMessageCount() { unprocessedMessageCount.inc(); }
 
+    public void incDBHitCount() {
+        dbHitCount.inc();
+    }
+
     public void incDBErrorCount() { dbErrorCount.inc(); }
 
     public void setOffset(SystemStreamPartition systemStreamPartition, String offset) {
-        String offsetMapKey=String.format("%s%s",systemStreamPartition.getStream(),systemStreamPartition.getPartition().getPartitionId());
+        String offsetMapKey = String.format("%s%s", systemStreamPartition.getStream(),
+                systemStreamPartition.getPartition().getPartitionId());
         offsetMap.put(offsetMapKey,
                 Long.valueOf(offset));
     }
@@ -138,6 +146,7 @@ public class JobMetrics {
         metricsEvent.put("cache-empty-values-count", cacheEmptyValuesCount.getCount());
         metricsEvent.put("processed-message-count", processedMessageCount.getCount());
         metricsEvent.put("unprocessed-message-count", unprocessedMessageCount.getCount());
+        metricsEvent.put("db-hit-count", dbHitCount.getCount());
         metricsEvent.put("db-error-count", dbErrorCount.getCount());
         return new Gson().toJson(metricsEvent);
     }

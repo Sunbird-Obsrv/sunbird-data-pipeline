@@ -93,8 +93,7 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicIfDidIsNullWithUserContentEmptyData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITHOUT_DID);
-        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
-                "0123221617357783046602")).toReturn(null);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
         stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
@@ -121,11 +120,12 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicIfDidIsNullWithUserContentData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITHOUT_DID);
-        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
-                "0123221617357783046602")).toReturn(null);
-        Map user = new HashMap(); user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
-        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
-        Map content = new HashMap(); content.put("name", "content-1"); content.put("objecttype", "Content"); content.put("contenttype", "TextBook");
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
+        Map<String, Object> user = new HashMap<>();
+        user.put("type", "Registered"); user.put("gradelist", "[4, 5]"); user.put("state", "Karnataka"); user.put("district", "Bengaluru");
+        stub(userCacheMock.getUserData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        Map<String, Object> content = new HashMap<>();
+        content.put("name", "content-1"); content.put("objecttype", "Content"); content.put("contenttype", "TextBook");
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(content);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
@@ -138,7 +138,7 @@ public class DeNormalizationTaskTest {
                 assertEquals(outputEvent.get("ver").toString(), "3.1");
                 assertNull(outputEvent.get("devicedata"));
                 Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
-                assertEquals(userData.size(), 2);
+                assertEquals(userData.size(), 4);
                 Map<String, Object> contentData = new Gson().fromJson(outputEvent.get("contentdata").toString(), mapType);
                 assertEquals(contentData.size(), 3);
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
@@ -153,13 +153,15 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicWithDeviceUserContentData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
-        Map device = new HashMap(); device.put("os", "Android 6.0"); device.put("make", "Motorola XT1706"); device.put("agent", "Mozilla");
+        Map<String, Object> device = new HashMap<>();
+        device.put("os", "Android 6.0"); device.put("make", "Motorola XT1706"); device.put("agent", "Mozilla");
         device.put("ver", "5.0"); device.put("system", "iPad"); device.put("platform", "AppleWebKit/531.21.10"); device.put("raw", "Mozilla/5.0 (X11 Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)");
-        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
-                "0123221617357783046602")).toReturn(device);
-        Map user = new HashMap(); user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
-        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
-        Map content = new HashMap(); content.put("name", "content-1"); content.put("objecttype", "Content"); content.put("contenttype", "TextBook");
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(device);
+        Map<String, Object> user = new HashMap<>();
+        user.put("type", "Registered"); user.put("gradelist", "[4, 5]"); user.put("state", "Karnataka"); user.put("district", "Bengaluru");
+        stub(userCacheMock.getUserData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        Map<String, Object> content = new HashMap<>();
+        content.put("name", "content-1"); content.put("objecttype", "Content"); content.put("contenttype", "TextBook");
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(content);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
@@ -178,7 +180,7 @@ public class DeNormalizationTaskTest {
                 assertTrue(outputMessage.contains("\"platform\":\"AppleWebKit/531.21.10\""));
                 assertTrue(outputMessage.contains("\"raw\":\"Mozilla/5.0 (X11 Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)\""));
                 Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
-                assertEquals(userData.size(), 2);
+                assertEquals(userData.size(), 4);
                 Map<String, Object> contentData = new Gson().fromJson(outputEvent.get("contentdata").toString(), mapType);
                 assertEquals(contentData.size(), 3);
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
@@ -193,10 +195,10 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicIfDidAndContentIdIsNullWithUserData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITHOUT_OBJECT);
-        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
-                "0123221617357783046602")).toReturn(null);
-        Map user = new HashMap(); user.put("type", "Registered"); user.put("gradeList", "[4, 5]");
-        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
+        Map<String, Object> user = new HashMap<>();
+        user.put("type", "Registered"); user.put("gradeList", "[4, 5]");
+        stub(userCacheMock.getUserData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
@@ -206,15 +208,15 @@ public class DeNormalizationTaskTest {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-                assertEquals(outputEvent.get("ver").toString(), "3.1");
+                assertEquals("3.1", outputEvent.get("ver").toString());
                 assertNull(outputEvent.get("devicedata"));
                 assertNull(outputEvent.get("contentdata"));
                 Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
                 assertEquals(userData.size(), 2);
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-                assertEquals(flags.get("device_data_retrieved"), null);
-                assertEquals(flags.get("user_data_retrieved"), true);
-                assertEquals(flags.get("content_data_retrieved"), null);
+                assertNull(flags.get("device_data_retrieved"));
+                assertEquals(true, flags.get("user_data_retrieved"));
+                assertNull(flags.get("content_data_retrieved"));
                 return true;
             }
         }));
@@ -223,10 +225,10 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicIfDidIsNullAndContentDataIsEmptyWithUserAsSystem() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITH_ACTOR_AS_SYSTEM);
-        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
-                "0123221617357783046602")).toReturn(null);
-        Map user = new HashMap(); user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
-        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
+        Map<String, Object> user = new HashMap<>();
+        user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
+        stub(userCacheMock.getUserData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
@@ -236,14 +238,14 @@ public class DeNormalizationTaskTest {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-                assertEquals(outputEvent.get("ver").toString(), "3.0");
+                assertEquals("3.0", outputEvent.get("ver").toString());
                 assertNull(outputEvent.get("devicedata"));
                 assertNull(outputEvent.get("contentdata"));
                 assertNull(outputEvent.get("userdata"));
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-                assertEquals(flags.get("device_data_retrieved"), null);
-                assertEquals(flags.get("user_data_retrieved"), null);
-                assertEquals(flags.get("content_data_retrieved"), false);
+                assertNull(flags.get("device_data_retrieved"));
+                assertNull(flags.get("user_data_retrieved"));
+                assertEquals(false, flags.get("content_data_retrieved"));
                 return true;
             }
         }));
@@ -252,9 +254,8 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicWithStringDialCodeData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_DIALCODE_AS_STRING);
-        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
-                "0123221617357783046602")).toReturn(null);
-        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
+        stub(userCacheMock.getUserData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         List ids = new ArrayList(); ids.add("8ZEDTP");
         Map dataMap = new HashMap(); dataMap.put("identifier", "8ZEDTP"); dataMap.put("channel", "test-channel");
@@ -278,10 +279,10 @@ public class DeNormalizationTaskTest {
                 Map data = dialcodesList.get(0);
                 assertEquals(data.size(), 3);
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-                assertEquals(flags.get("device_data_retrieved"), null);
-                assertEquals(flags.get("user_data_retrieved"), null);
-                assertEquals(flags.get("content_data_retrieved"), null);
-                assertEquals(flags.get("dialcode_data_retrieved"), true);
+                assertNull(flags.get("device_data_retrieved"));
+                assertNull(flags.get("user_data_retrieved"));
+                assertNull(flags.get("content_data_retrieved"));
+                assertEquals(true, flags.get("dialcode_data_retrieved"));
                 return true;
             }
         }));
@@ -290,9 +291,8 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicWithListDialCodeData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_DIALCODE_AS_LIST);
-        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
-                "0123221617357783046602")).toReturn(null);
-        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
+        stub(userCacheMock.getUserData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         List ids = new ArrayList(); ids.add("8ZEDTP"); ids.add("4ZEDTP");
         Map dataMap1 = new HashMap(); dataMap1.put("identifier", "8ZEDTP"); dataMap1.put("channel", "test-channel");
@@ -320,10 +320,10 @@ public class DeNormalizationTaskTest {
                 Map data2 = dialcodesList.get(1);
                 assertEquals(data2.size(), 3);
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-                assertEquals(flags.get("device_data_retrieved"), null);
-                assertEquals(flags.get("user_data_retrieved"), null);
-                assertEquals(flags.get("content_data_retrieved"), null);
-                assertEquals(flags.get("dialcode_data_retrieved"), true);
+                assertNull(flags.get("device_data_retrieved"));
+                assertNull(flags.get("user_data_retrieved"));
+                assertNull(flags.get("content_data_retrieved"));
+                assertEquals(true, flags.get("dialcode_data_retrieved"));
                 return true;
             }
         }));
@@ -332,9 +332,8 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicWithOutDialCodeData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITHOUT_DIALCODE);
-        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
-                "0123221617357783046602")).toReturn(null);
-        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
+        stub(userCacheMock.getUserData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
 //        List ids = new ArrayList(); ids.add("8ZEDTP"); ids.add("4ZEDTP");
 //        stub(dailcodeCacheMock.getDataForDialCodes(ids)).toReturn(null);
@@ -352,10 +351,10 @@ public class DeNormalizationTaskTest {
                 assertNull(outputEvent.get("userdata"));
                 assertNull(outputEvent.get("dialcodedata"));
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-                assertEquals(flags.get("device_data_retrieved"), null);
-                assertEquals(flags.get("user_data_retrieved"), null);
-                assertEquals(flags.get("content_data_retrieved"), null);
-                assertEquals(flags.get("dialcode_data_retrieved"), null);
+                assertNull(flags.get("device_data_retrieved"));
+                assertNull(flags.get("user_data_retrieved"));
+                assertNull(flags.get("content_data_retrieved"));
+                assertNull(flags.get("dialcode_data_retrieved"));
                 return true;
             }
         }));
@@ -366,8 +365,7 @@ public class DeNormalizationTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITH_DEVICEDATA);
         Map device = new HashMap(); device.put("os", "Android 6.0"); device.put("make", "Motorola XT1706"); device.put("agent", "Mozilla");
         device.put("ver", "5.0"); device.put("system", "iPad"); device.put("platform", "AppleWebKit/531.21.10"); device.put("raw", "Mozilla/5.0 (X11 Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)");
-        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
-                "0123221617357783046602")).toReturn(device);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(device);
         Map user = new HashMap(); user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
         stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
         Map content = new HashMap(); content.put("name", "content-1"); content.put("objecttype", "Content"); content.put("contenttype", "TextBook");
@@ -396,8 +394,7 @@ public class DeNormalizationTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITH_EMPTY_LOC);
         Map device = new HashMap(); device.put("os", "Android 6.0"); device.put("make", "Motorola XT1706"); device.put("agent", "Mozilla");
         device.put("ver", "5.0"); device.put("system", "iPad"); device.put("platform", "AppleWebKit/531.21.10"); device.put("raw", "Mozilla/5.0 (X11 Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)");
-        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
-                "0123221617357783046602")).toReturn(device);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(device);
         Map user = new HashMap(); user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
         stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
         Map content = new HashMap(); content.put("name", "content-1"); content.put("objecttype", "Content"); content.put("contenttype", "TextBook");
@@ -424,9 +421,8 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicWithDialCodeDataByObjectLookup() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.IMPRESSION_EVENT_WITH_DIALCODE_AS_OBJECT);
-        stub(deviceCacheMock.getDataForDeviceId("a49cfadff97c698c1766c71a42779d4e",
-                "505c7c48ac6dc1edc9b08f21db5a571d")).toReturn(null);
-        stub(userCacheMock.getData("anonymous")).toReturn(null);
+        stub(deviceCacheMock.getDataForDeviceId("a49cfadff97c698c1766c71a42779d4e")).toReturn(null);
+        stub(userCacheMock.getUserData("anonymous")).toReturn(null);
         stub(contentCacheMock.getData("977D3I")).toReturn(null);
         Map dataMap = new HashMap(); dataMap.put("identifier", "977D3I"); dataMap.put("channel", "test-channel");
         dataMap.put("status", "Draft");
@@ -448,10 +444,10 @@ public class DeNormalizationTaskTest {
                 Map data = dialcodesList.get(0);
                 assertEquals(data.size(), 3);
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-                assertEquals(flags.get("device_data_retrieved"), false);
-                assertEquals(flags.get("user_data_retrieved"), false);
-                assertEquals(flags.get("content_data_retrieved"), null);
-                assertEquals(flags.get("dialcode_data_retrieved"), true);
+                assertEquals(false, flags.get("device_data_retrieved"));
+                assertEquals(false, flags.get("user_data_retrieved"));
+                assertNull(flags.get("content_data_retrieved"));
+                assertEquals(true, flags.get("dialcode_data_retrieved"));
                 return true;
             }
         }));
@@ -460,8 +456,7 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicWithStringDialCodeDataCamelCase() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_CAMELCASE_DIALCODE_AS_STRING);
-        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
-                "0123221617357783046602")).toReturn(null);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
         stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         List ids = new ArrayList(); ids.add("8ZEDTP");
@@ -488,8 +483,7 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicWithAlteredEts() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_FUTURE_ETS);
-        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
-                "0123221617357783046602")).toReturn(null);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
         stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         List ids = new ArrayList(); ids.add("8ZEDTP");
@@ -517,8 +511,7 @@ public class DeNormalizationTaskTest {
     public void shouldSendEventToFaildTopicIfEventIsOlder() throws Exception{
 
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_OLDER_ETS);
-        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
-                "0123221617357783046602")).toReturn(null);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(null);
         stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         List ids = new ArrayList(); ids.add("8ZEDTP");
@@ -533,12 +526,13 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendSummaryEventsToSuccessTopicWithDeviceUserData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.WFS_EVENT);
-        Map device = new HashMap(); device.put("os", "Android 6.0"); device.put("make", "Motorola XT1706"); device.put("agent", "Mozilla");
+        Map<String, Object> device = new HashMap<>();
+        device.put("os", "Android 6.0"); device.put("make", "Motorola XT1706"); device.put("agent", "Mozilla");
         device.put("ver", "5.0"); device.put("system", "iPad"); device.put("platform", "AppleWebKit/531.21.10"); device.put("raw", "Mozilla/5.0 (X11 Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)");
-        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f",
-                "0123221617357783046602")).toReturn(device);
-        Map user = new HashMap(); user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
-        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        stub(deviceCacheMock.getDataForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(device);
+        Map<String, Object> user = new HashMap<>();
+        user.put("type", "Registered"); user.put("gradelist", "[4, 5]"); user.put("state", "Karnataka"); user.put("district", "Bengaluru");
+        stub(userCacheMock.getUserData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
@@ -556,7 +550,7 @@ public class DeNormalizationTaskTest {
                 assertTrue(outputMessage.contains("\"platform\":\"AppleWebKit/531.21.10\""));
                 assertTrue(outputMessage.contains("\"raw\":\"Mozilla/5.0 (X11 Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)\""));
                 Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
-                assertEquals(userData.size(), 2);
+                assertEquals(userData.size(), 4);
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
                 assertEquals(flags.get("device_data_retrieved"), true);
                 assertEquals(flags.get("user_data_retrieved"), true);
@@ -592,10 +586,10 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicForLogEvents() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.LOG_EVENT);
-        stub(deviceCacheMock.getDataForDeviceId("923c675274cfbf19fd0402fe4d2c37afd597f0ab",
-                "505c7c48ac6dc1edc9b08f21db5a571d")).toReturn(null);
-        Map user = new HashMap(); user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
-        stub(userCacheMock.getData("0b251080-3230-415e-a593-ab7c1fac7ae3")).toReturn(user);
+        stub(deviceCacheMock.getDataForDeviceId("923c675274cfbf19fd0402fe4d2c37afd597f0ab")).toReturn(null);
+        Map<String, Object> user = new HashMap<>();
+        user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
+        stub(userCacheMock.getUserData("0b251080-3230-415e-a593-ab7c1fac7ae3")).toReturn(user);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
@@ -603,16 +597,15 @@ public class DeNormalizationTaskTest {
             public boolean matches(Object o) {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
-                System.out.println(outputMessage);
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
                 assertEquals(outputEvent.get("ver").toString(), "3.1");
                 assertNull(outputEvent.get("devicedata"));
                 Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
                 assertEquals(userData.size(), 2);
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-                assertEquals(flags.get("device_data_retrieved"), null);
-                assertEquals(flags.get("user_data_retrieved"), true);
-                assertEquals(flags.get("content_data_retrieved"), null);
+                assertNull(flags.get("device_data_retrieved"));
+                assertEquals(true, flags.get("user_data_retrieved"));
+                assertNull(flags.get("content_data_retrieved"));
                 return true;
             }
         }));
