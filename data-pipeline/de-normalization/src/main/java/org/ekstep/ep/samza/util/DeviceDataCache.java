@@ -1,7 +1,6 @@
 package org.ekstep.ep.samza.util;
 
 import com.datastax.driver.core.Row;
-import com.datastax.driver.core.exceptions.QueryExecutionException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.samza.config.Config;

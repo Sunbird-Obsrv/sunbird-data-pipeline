@@ -11,7 +11,6 @@ import org.ekstep.ep.samza.task.TelemetryLocationUpdaterConfig;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterSink;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterSource;
 import org.ekstep.ep.samza.util.DeviceLocationCache;
-import redis.clients.jedis.exceptions.JedisException;
 
 public class TelemetryLocationUpdaterService {
 	

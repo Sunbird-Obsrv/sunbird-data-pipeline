@@ -2,7 +2,6 @@ package org.ekstep.ep.samza.task;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -28,7 +27,6 @@ import org.ekstep.ep.samza.util.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
-import org.mockito.Mockito;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -44,21 +42,19 @@ public class TelemetryLocationUpdaterTaskTest {
 	private IncomingMessageEnvelope envelopeMock;
 	private DeviceLocationCache deviceLocationCacheMock;
 	private TelemetryLocationUpdaterTask telemetryLocationUpdaterTask;
-	private Config configMock;
-	private TaskContext contextMock;
 
 	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp() {
 		collectorMock = mock(MessageCollector.class);
-		contextMock = mock(TaskContext.class);
-		MetricsRegistry metricsRegistry = Mockito.mock(MetricsRegistry.class);
-		Counter counter = Mockito.mock(Counter.class);
+		TaskContext contextMock = mock(TaskContext.class);
+		MetricsRegistry metricsRegistry = mock(MetricsRegistry.class);
+		Counter counter = mock(Counter.class);
 		coordinatorMock = mock(TaskCoordinator.class);
 		envelopeMock = mock(IncomingMessageEnvelope.class);
-		configMock = Mockito.mock(Config.class);
+		Config configMock = mock(Config.class);
 
-		deviceLocationCacheMock = Mockito.mock(DeviceLocationCache.class);
+		deviceLocationCacheMock = mock(DeviceLocationCache.class);
 
 		stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
 		stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);

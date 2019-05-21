@@ -29,7 +29,7 @@ public class UserDataCache extends DataCache {
     private int locationDbKeyExpiryTimeInSeconds;
     private Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
     private Gson gson = new Gson();
-    private Config config;
+    private JobMetrics metrics;
 
     public UserDataCache(Config config, RedisConnect redisPool, CassandraConnect cassandraConnect, JobMetrics metrics) {
         List<String> defaultList = new ArrayList<>();
@@ -40,7 +40,7 @@ public class UserDataCache extends DataCache {
         defaultList.add("state");
         defaultList.add("district");
 
-        this.config = config;
+        this.metrics = metrics;
         this.fieldsList = config.getList("user.metadata.fields", defaultList);
         this.redisPool = redisPool;
         this.redisConnection = this.redisPool.getConnection();

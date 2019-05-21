@@ -16,10 +16,10 @@ public abstract class DataCache {
 
     private static Logger LOGGER = new Logger(DataCache.class);
 
-    RedisConnect redisConnect;
-    Jedis redisConnection;
+    protected RedisConnect redisConnect;
+    protected Jedis redisConnection;
     protected JobMetrics metrics;
-    List fieldsList;
+    protected List fieldsList;
     private Gson gson = new Gson();
 
     /*

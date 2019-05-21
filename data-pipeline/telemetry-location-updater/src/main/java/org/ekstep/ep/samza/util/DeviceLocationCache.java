@@ -1,7 +1,6 @@
 package org.ekstep.ep.samza.util;
 
 import com.datastax.driver.core.Row;
-import com.datastax.driver.core.exceptions.QueryExecutionException;
 import org.apache.samza.config.Config;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
