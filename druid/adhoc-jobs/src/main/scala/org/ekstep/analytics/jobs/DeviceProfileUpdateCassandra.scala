@@ -27,9 +27,9 @@ val deviceProfileDf = spark.read.format("org.apache.spark.sql.cassandra").option
 
 val windowUpdatedDate = Window.partitionBy($"device_id").orderBy($"updated_date".desc)
 
-val finalDf = deviceProfileDf.filter(deviceProfileDf("state").isNotNull).withColumn("rn", row_number.over(windowUpdatedDate)).where($"rn" === 1).drop("rn","channel")
+val deviceProfileTempDf = deviceProfileDf.filter(deviceProfileDf("state").isNotNull).withColumn("latest_updatedDate", row_number.over(windowUpdatedDate)).where($"latest_updatedDate" === 1).drop("latest_updatedDate","channel")
 
-finalDf.write.format("org.apache.spark.sql.cassandra").options(Map( "table" -> config.getString("cassandra.deviceprofileNewTable"), "keyspace" -> config.getString("cassandra.keyspace") )).mode(SaveMode.Append).save()
+deviceProfileTempDf.write.format("org.apache.spark.sql.cassandra").options(Map( "table" -> config.getString("cassandra.deviceprofileNewTable"), "keyspace" -> config.getString("cassandra.keyspace") )).mode(SaveMode.Append).save()
 
 }
 
