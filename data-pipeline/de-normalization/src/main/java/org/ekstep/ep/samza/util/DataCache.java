@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.util;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
@@ -17,10 +18,11 @@ public abstract class DataCache {
 
     RedisConnect redisConnect;
     Jedis redisConnection;
-    Integer redisDBIndex;
+    protected JobMetrics metrics;
     List fieldsList;
     private Gson gson = new Gson();
 
+    /*
     public Map getData(String key) {
 
         try {
@@ -44,12 +46,13 @@ public abstract class DataCache {
             return null;
         }
     }
+    */
 
-    /*
     public Map<String, Object> getData(String key) {
         Map<String, Object> cacheDataMap;
         try {
             cacheDataMap = getDataFromCache(key);
+            metrics.incCacheHitCounter();
         } catch (JedisException ex) {
             LOGGER.error("", "Exception when retrieving data from redis cache ", ex);
             redisConnect.resetConnection();
@@ -72,7 +75,6 @@ public abstract class DataCache {
         }
         return cacheData;
     }
-    */
 
     public List<Map> getData(List<String> keys) {
         List<Map> list = new ArrayList<>();

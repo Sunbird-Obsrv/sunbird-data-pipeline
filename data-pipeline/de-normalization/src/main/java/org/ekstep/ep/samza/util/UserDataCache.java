@@ -5,6 +5,7 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import org.apache.samza.config.Config;
+import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
@@ -30,7 +31,7 @@ public class UserDataCache extends DataCache {
     private Gson gson = new Gson();
     private Config config;
 
-    public UserDataCache(Config config, RedisConnect redisPool, CassandraConnect cassandraConnect) {
+    public UserDataCache(Config config, RedisConnect redisPool, CassandraConnect cassandraConnect, JobMetrics metrics) {
         List<String> defaultList = new ArrayList<>();
         defaultList.add("usertype");
         defaultList.add("grade");
@@ -59,6 +60,7 @@ public class UserDataCache extends DataCache {
             userDataMap = getUserDataFromCache(userId);
             if (!userDataMap.isEmpty()) {
                 userDataMap.keySet().retainAll(this.fieldsList);
+                metrics.incUserCacheHitCount();
             }
         } catch (JedisException ex) {
             redisPool.resetConnection();
@@ -71,20 +73,31 @@ public class UserDataCache extends DataCache {
             try {
                 userLocationMap = fetchFallbackUserLocationFromDB(userId);
             } catch (Exception ex) {
+                metrics.incUserDBErrorCount();
                 cassandraConnection.reconnect();
                 userLocationMap = fetchFallbackUserLocationFromDB(userId);
             }
 
             if (!userLocationMap.isEmpty()) {
+                metrics.incUserDbHitCount();
                 userDataMap.putAll(fetchFallbackUserLocationFromDB(userId));
                 addToCache(userId, gson.toJson(userDataMap));
             }
+        }
+
+        if(userDataMap == null || userDataMap.isEmpty()) {
+            metrics.incNoDataCount();
         }
         return userDataMap;
     }
 
     private Map<String, Object> getUserDataFromCache(String userId) {
-        return gson.fromJson(redisConnection.get(userId), mapType);
+        Map<String, Object> cacheData = new HashMap<>();
+        String data = redisConnection.get(userId);
+        if (data != null && !data.isEmpty()) {
+            cacheData = gson.fromJson(data, mapType);
+        }
+        return cacheData;
     }
 
     private Map<String, Object> fetchFallbackUserLocationFromDB(String userId) {

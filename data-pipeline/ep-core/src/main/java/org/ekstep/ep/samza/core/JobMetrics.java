@@ -28,6 +28,12 @@ public class JobMetrics {
     private final Counter unprocessedMessageCount;
     private final Counter dbHitCount;
     private final Counter dbErrorCount;
+    private final Counter deviceDbHitCount;
+    private final Counter deviceCacheHitCount;
+    private final Counter userDbHitCount;
+    private final Counter userCacheHitCount;
+    private final Counter deviceDbErrorCount;
+    private final Counter userDbErrorCount;
     private TaskContext context;
     private int partition;
     private HashMap<String,Long> offsetMap = new HashMap<>();
@@ -49,6 +55,12 @@ public class JobMetrics {
         unprocessedMessageCount = metricsRegistry.newCounter(getClass().getName(), "unprocessed-message-count");
         dbHitCount = metricsRegistry.newCounter(getClass().getName(), "db-hit-count");
         dbErrorCount = metricsRegistry.newCounter(getClass().getName(), "db-error-count");
+        deviceCacheHitCount = metricsRegistry.newCounter(getClass().getName(), "device-cache-hit-count");
+        userCacheHitCount = metricsRegistry.newCounter(getClass().getName(), "user-cache-hit-count");
+        deviceDbHitCount = metricsRegistry.newCounter(getClass().getName(), "device-db-hit-count");
+        userDbHitCount = metricsRegistry.newCounter(getClass().getName(), "user-db-hit-count");
+        deviceDbErrorCount = metricsRegistry.newCounter(getClass().getName(), "device-db-error-count");
+        userDbErrorCount = metricsRegistry.newCounter(getClass().getName(), "user-db-error-count");
         jobName = jName;
         this.context = context;
     }
@@ -66,6 +78,12 @@ public class JobMetrics {
         unprocessedMessageCount.clear();
         dbHitCount.clear();
         dbErrorCount.clear();
+        deviceDbHitCount.clear();
+        userDbHitCount.clear();
+        deviceCacheHitCount.clear();
+        userCacheHitCount.clear();
+        deviceDbErrorCount.clear();
+        userDbErrorCount.clear();
     }
 
     public void incSuccessCounter() {
@@ -101,6 +119,26 @@ public class JobMetrics {
     }
 
     public void incDBErrorCount() { dbErrorCount.inc(); }
+
+    public void incDeviceDBErrorCount() { deviceDbErrorCount.inc(); }
+
+    public void incUserDBErrorCount() { userDbErrorCount.inc(); }
+
+    public void incDeviceCacheHitCount() {
+        deviceCacheHitCount.inc();
+    }
+
+    public void incUserCacheHitCount() {
+        userCacheHitCount.inc();
+    }
+
+    public void incDeviceDbHitCount() {
+        deviceDbHitCount.inc();
+    }
+
+    public void incUserDbHitCount() {
+        userDbHitCount.inc();
+    }
 
     public void setOffset(SystemStreamPartition systemStreamPartition, String offset) {
         String offsetMapKey = String.format("%s%s", systemStreamPartition.getStream(),

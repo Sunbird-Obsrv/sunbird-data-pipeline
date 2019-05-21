@@ -1,12 +1,14 @@
 package org.ekstep.ep.samza.util;
 
 import org.apache.samza.config.Config;
+import org.ekstep.ep.samza.core.JobMetrics;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class DialCodeDataCache extends DataCache {
 
-    public DialCodeDataCache(Config config, RedisConnect redisConnect) {
+    public DialCodeDataCache(Config config, RedisConnect redisConnect, JobMetrics metrics) {
 
         List<String> defaultList = new ArrayList<>();
         defaultList.add("identifier");
@@ -21,5 +23,7 @@ public class DialCodeDataCache extends DataCache {
         this.redisConnection.select(config.getInt("redis.dialcodeDB.index", 3));
         // this.redisDBIndex = config.getInt("redis.dialcodeDB.index", 3);
         this.fieldsList = config.getList("dialcode.metadata.fields", defaultList);
+        this.metrics = metrics;
     }
+
 }

@@ -32,7 +32,7 @@ import org.ekstep.ep.samza.util.*;
 
 public class DeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
 
-    static Logger LOGGER = new Logger(DeNormalizationTask.class);
+    private static Logger LOGGER = new Logger(DeNormalizationTask.class);
     private DeNormalizationConfig config;
     private DeviceDataCache deviceCache;
     private UserDataCache userCache;
@@ -68,16 +68,16 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
         this.cassandraConnect = cassandraConnect == null ? new CassandraConnect(config): cassandraConnect;
 
         this.deviceCache =
-                deviceCache == null ? new DeviceDataCache(config, this.redisPool, this.cassandraConnect): deviceCache;
+                deviceCache == null ? new DeviceDataCache(config, this.redisPool, this.cassandraConnect, metrics): deviceCache;
 
         this.userCache =
-                userCache == null ? new UserDataCache(config, this.redisPool, this.cassandraConnect): userCache;
+                userCache == null ? new UserDataCache(config, this.redisPool, this.cassandraConnect, metrics): userCache;
 
         this.contentCache =
-                contentCache == null ? new ContentDataCache(config, this.redisPool) : contentCache;
+                contentCache == null ? new ContentDataCache(config, this.redisPool, metrics) : contentCache;
 
         this.dialcodeCache =
-                dialcodeCache == null ? new DialCodeDataCache(config, this.redisPool) : dialcodeCache;
+                dialcodeCache == null ? new DialCodeDataCache(config, this.redisPool, metrics) : dialcodeCache;
 
         service = new DeNormalizationService(this.config, new EventUpdaterFactory(this.contentCache, this.userCache, this.deviceCache, this.dialcodeCache));
     }

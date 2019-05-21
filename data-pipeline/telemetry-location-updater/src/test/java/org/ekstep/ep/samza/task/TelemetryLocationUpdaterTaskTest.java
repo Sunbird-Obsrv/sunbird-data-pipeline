@@ -227,7 +227,6 @@ public class TelemetryLocationUpdaterTaskTest {
 			public boolean matches(Object o) {
 				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
-				System.out.println(outputMessage);
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
 				Map<String, Object> context = new Gson().fromJson(outputEvent.get("devicedata").toString(), mapType);
 				assertEquals("3.0", outputEvent.get("ver"));

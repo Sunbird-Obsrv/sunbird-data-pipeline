@@ -55,6 +55,7 @@ public class DeviceLocationCache {
                 try {
                     location = getLocationFromDeviceProfileDB(did);
                 } catch (Exception ex) {
+                    metrics.incDBErrorCount();
                     cassandraConnection.reconnect();
                     location = getLocationFromDeviceProfileDB(did);
                 }
@@ -65,7 +66,7 @@ public class DeviceLocationCache {
             } else {
                 metrics.incNoDataCount();
             }
-            addLocationToCache(did, location); // This should be a safe call.
+            addLocationToCache(did, location);
         }
         return location;
     }

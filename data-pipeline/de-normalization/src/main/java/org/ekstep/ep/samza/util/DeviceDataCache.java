@@ -5,6 +5,7 @@ import com.datastax.driver.core.exceptions.QueryExecutionException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.samza.config.Config;
+import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
@@ -25,9 +26,11 @@ public class DeviceDataCache {
     private RedisConnect redisPool;
     private Jedis redisConnection;
     private Gson gson = new Gson();
+    private JobMetrics metrics;
 
-    public DeviceDataCache(Config config, RedisConnect redisPool, CassandraConnect cassandraConnetion) {
+    public DeviceDataCache(Config config, RedisConnect redisPool, CassandraConnect cassandraConnetion, JobMetrics metrics) {
         this.config = config;
+        this.metrics = metrics;
         this.redisPool = redisPool;
         this.redisConnection = this.redisPool.getConnection();
         redisConnection.select(config.getInt("redis.deviceDB.index", 0));
@@ -98,24 +101,23 @@ public class DeviceDataCache {
             }
 
             if(deviceDataMap != null && !deviceDataMap.isEmpty()) {
-                // metrics.incCacheHitCounter();
+                metrics.incDeviceCacheHitCount();
                 return deviceDataMap;
             } else {
                 try {
                     deviceDataMap = getDeviceDataFromDB(did);
                 } catch (Exception ex) {
+                    metrics.incDeviceDbHitCount();
                     cassandraConnetion.reconnect();
                     deviceDataMap = getDeviceDataFromDB(did);
                 }
             }
 
-            /*
             if(null != deviceDataMap) {
-                metrics.incDBHitCount();
+                metrics.incDeviceDbHitCount();
             } else {
                 metrics.incNoDataCount();
             }
-            */
 
             addDataToCache(did, gson.toJson(deviceDataMap));
         }
