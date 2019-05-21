@@ -107,7 +107,7 @@ public class DeviceDataCache {
                 try {
                     deviceDataMap = getDeviceDataFromDB(did);
                 } catch (Exception ex) {
-                    metrics.incDeviceDbHitCount();
+                    metrics.incDeviceDBErrorCount();
                     cassandraConnetion.reconnect();
                     deviceDataMap = getDeviceDataFromDB(did);
                 }
