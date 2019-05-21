@@ -6,3 +6,7 @@ druid_schema:
  - telemetry_index_kafka
  - summary_index_kafka
  - log_index_kafka
+event_types:
+ - telemetry-events
+ - summary-events
+ - telemetry-log-events
