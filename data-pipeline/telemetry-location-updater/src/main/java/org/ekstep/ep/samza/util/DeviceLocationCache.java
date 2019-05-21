@@ -43,12 +43,13 @@ public class DeviceLocationCache {
             try {
                 location = getLocationFromCache(did);
             } catch(JedisException ex) {
+                LOGGER.error(null, "Reconnecting with Redis store due to exception: ", ex);
                 redisConnect.resetConnection(); // Asumming your redis connection is stale which should not happen
                 this.redisConnection = redisConnect.getConnection(databaseIndex);
                 location = getLocationFromCache(did);
             }
 
-            if (null != location) {
+            if (null != location && location.isLocationResolved()) {
                 metrics.incCacheHitCounter();
                 return location;
             } else {
@@ -56,12 +57,13 @@ public class DeviceLocationCache {
                     location = getLocationFromDeviceProfileDB(did);
                 } catch (Exception ex) {
                     metrics.incDBErrorCount();
+                    LOGGER.error(null, "Reconnecting with Cassandra store due to exception: ", ex);
                     cassandraConnection.reconnect();
                     location = getLocationFromDeviceProfileDB(did);
                 }
             }
 
-            if(null != location) {
+            if(null != location && location.isLocationResolved()) {
                 metrics.incDBHitCount();
             } else {
                 metrics.incNoDataCount();
@@ -82,9 +84,7 @@ public class DeviceLocationCache {
                 String.format("SELECT device_id, country_code, country, state_code, state, city, state_custom, " +
                                 "state_code_custom, district_custom FROM %s.%s WHERE device_id = '%s'",
                         cassandra_db, cassandra_table, deviceId);
-
         rows = cassandraConnection.execute(query);
-
         Iterator<Row> iterator = rows.iterator();
         if (iterator.hasNext()) {
             Row result = iterator.next();
