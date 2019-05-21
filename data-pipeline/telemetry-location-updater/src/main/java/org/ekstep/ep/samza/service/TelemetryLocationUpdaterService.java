@@ -31,8 +31,7 @@ public class TelemetryLocationUpdaterService {
 			event = source.getEvent();
 			sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
 			// Add device location details to the event
-			event = updateEventWithIPLocation(event);
-			System.out.println("Event after location resolution = " + event);
+			updateEventWithIPLocation(event);
 			sink.toSuccessTopic(event);
 		} catch (JsonSyntaxException e) {
 			LOGGER.error(null, "INVALID EVENT: " + source.getMessage());

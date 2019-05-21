@@ -9,8 +9,10 @@ import org.apache.samza.config.Config;
 
 public class CassandraConnect {
     private Session session;
+    private Config config;
 
     public CassandraConnect(Config config) {
+        this.config = config;
         String host = config.get("cassandra.host", "127.0.0.1");
         Integer port = config.getInt("cassandra.port", 9042);
         Cluster cluster = Cluster.builder().addContactPoint(host).withPort(port).build();
@@ -25,5 +27,13 @@ public class CassandraConnect {
     public List<Row> execute(String query) {
         ResultSet rs = session.execute(query);
         return rs.all();
+    }
+
+    public void reconnect() {
+        this.session.close();
+        String host = config.get("cassandra.host", "127.0.0.1");
+        Integer port = config.getInt("cassandra.port", 9042);
+        Cluster cluster = Cluster.builder().addContactPoint(host).withPort(port).build();
+        this.session = cluster.connect();
     }
 }

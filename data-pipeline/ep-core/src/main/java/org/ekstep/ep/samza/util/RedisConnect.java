@@ -9,7 +9,7 @@ import java.time.Duration;
 
 
 public class RedisConnect {
-    private final JedisPool jedisPool;
+    private JedisPool jedisPool;
     private Config config;
 
     public RedisConnect(Config config) {
@@ -36,5 +36,11 @@ public class RedisConnect {
 
     public Jedis getConnection() {
         return jedisPool.getResource();
+    }
+
+    public void resetConnection() {
+        String redis_host = config.get("redis.host", "localhost");
+        Integer redis_port = config.getInt("redis.port", 6379);
+        this.jedisPool = new JedisPool(buildPoolConfig(), redis_host, redis_port);
     }
 }

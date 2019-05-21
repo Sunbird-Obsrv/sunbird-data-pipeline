@@ -19,10 +19,9 @@ public class DeviceDataCache {
     private String cassandra_db;
     private String cassandra_table;
     private CassandraConnect cassandraConnetion;
-    private RedisConnect redisConnect;
-    private Integer deviceDBIndex;
     private Config config;
     private Jedis redisConnection;
+    private Gson gson = new Gson();
 
     public DeviceDataCache(Config config, RedisConnect redisConnect, CassandraConnect cassandraConnetion) {
         this.config = config;
@@ -30,16 +29,12 @@ public class DeviceDataCache {
         redisConnection.select(config.getInt("redis.deviceDB.index", 0));
         this.cassandra_db = config.get("cassandra.keyspace", "device_db");
         this.cassandra_table = config.get("cassandra.device_profile_table", "device_profile");
-        // this.deviceDBIndex = config.getInt("redis.deviceDB.index", 0);
-        // this.redisConnect = redisConnect;
         this.cassandraConnetion = cassandraConnetion;
     }
 
     public Map getDataForDeviceId(String did) {
 
         try {
-            redisConnection.select(deviceDBIndex);
-            Gson gson = new Gson();
             Map<String, Object> parsedData = null;
             Map deviceMap = new HashMap();
             // Key will be device_id:channel
@@ -88,7 +83,6 @@ public class DeviceDataCache {
     public void addDataToCache(String did, String deviceData) {
         if (deviceData != null) {
             try {
-                redisConnection.select(deviceDBIndex);
                 redisConnection.set(did, deviceData);
                 redisConnection.expire(did, config.getInt("device.db.redis.key.expiry.seconds", 86400));
             } catch (JedisException ex) {

@@ -20,28 +20,20 @@ public class DeviceLocationCache {
     private CassandraConnect cassandraConnection;
     private int locationDbKeyExpiryTimeInSeconds;
     private int cacheUnresolvedLocationExpiryTimeInSeconds;
-    private Config config;
+    private RedisConnect redisConnect;
     private JobMetrics metrics;
     private Jedis redisConnection;
 
-    public DeviceLocationCache(Config config, JobMetrics metrics) {
-        this.config = config;
+    public DeviceLocationCache(Config config, RedisConnect redisConnect, JobMetrics metrics) {
         this.cassandra_db = config.get("cassandra.keyspace", "device_db");
         this.cassandra_table = config.get("cassandra.device_profile_table", "device_profile");
         this.cassandraConnection = new CassandraConnect(config);
-        this.redisConnection = new RedisConnect(config).getConnection();
+        this.redisConnect = redisConnect;
+        this.redisConnection = this.redisConnect.getConnection();
         redisConnection.select(config.getInt("redis.database.deviceLocationStore.id", 2));
         this.locationDbKeyExpiryTimeInSeconds = config.getInt("location.db.redis.key.expiry.seconds", 86400);
         this.cacheUnresolvedLocationExpiryTimeInSeconds = config.getInt("cache.unresolved.location.key.expiry.seconds", 3600);
         this.metrics = metrics;
-    }
-
-    private void reconnectRedis() {
-        this.redisConnection = new RedisConnect(config).getConnection();
-    }
-
-    private void reconnectCassandra() {
-        this.cassandraConnection = new CassandraConnect(config);
     }
 
     public Location getLocationForDeviceId(String did) {
@@ -51,7 +43,8 @@ public class DeviceLocationCache {
             try {
                 location = getLocationFromCache(did);
             } catch(JedisException ex) {
-                reconnectRedis(); // Asumming your redis connection is stale which should not happen
+                redisConnect.resetConnection(); // Asumming your redis connection is stale which should not happen
+                this.redisConnection = redisConnect.getConnection();
                 location = getLocationFromCache(did);
             }
 
@@ -62,7 +55,7 @@ public class DeviceLocationCache {
                 try {
                     location = getLocationFromDeviceProfileDB(did);
                 } catch (QueryExecutionException ex) {
-                    reconnectCassandra();
+                    cassandraConnection.reconnect();
                     location = getLocationFromDeviceProfileDB(did);
                 }
             }

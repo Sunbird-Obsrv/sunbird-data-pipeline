@@ -15,11 +15,11 @@ public class DeDupEngine {
     }
 
     public boolean isUniqueEvent(String checksum) throws JedisException {
-        return redisConnection.get(checksum) == null;
+        return redisConnection.exists(checksum);
     }
 
     public void storeChecksum(String checksum) throws JedisException {
-        redisConnection.set(checksum, new Date().toString());
+        redisConnection.set(checksum, "");
         redisConnection.expire(checksum, expirySeconds);
     }
 }

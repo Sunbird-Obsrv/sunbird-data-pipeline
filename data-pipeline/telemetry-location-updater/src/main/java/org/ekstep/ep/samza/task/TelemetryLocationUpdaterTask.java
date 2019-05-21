@@ -31,7 +31,6 @@ import org.apache.samza.task.TaskCoordinator;
 import org.apache.samza.task.WindowableTask;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
-import org.ekstep.ep.samza.engine.LocationEngine;
 import org.ekstep.ep.samza.service.TelemetryLocationUpdaterService;
 import org.ekstep.ep.samza.util.*;
 
@@ -41,8 +40,6 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 	private TelemetryLocationUpdaterConfig config;
 	private JobMetrics metrics;
 	private TelemetryLocationUpdaterService service;
-	// private RedisConnect redisConnect;
-	// private CassandraConnect cassandraConnect;
 	private DeviceLocationCache deviceLocationCache;
 
 	public TelemetryLocationUpdaterTask(Config config, TaskContext context, DeviceLocationCache deviceLocationCache) {
@@ -62,10 +59,8 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 
 		this.config = new TelemetryLocationUpdaterConfig(config);
 		this.metrics = new JobMetrics(context, this.config.jobName());
-		// this.redisConnect = redisConnect == null ? new RedisConnect(config): redisConnect;
-		// this.cassandraConnect = cassandraConnect == null ? new CassandraConnect(config): cassandraConnect;
 		this.deviceLocationCache = deviceLocationCache == null ?
-				new DeviceLocationCache(config, metrics): deviceLocationCache;
+				new DeviceLocationCache(config, new RedisConnect(config), metrics): deviceLocationCache;
 		this.service = new TelemetryLocationUpdaterService(this.deviceLocationCache, metrics);
 	}
 
