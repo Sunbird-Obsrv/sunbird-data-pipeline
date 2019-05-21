@@ -39,7 +39,7 @@ val deviceUpdatedDate = deviceTotalTimeSpent.withColumn("rn", row_number.over(wi
 
 val finalDf = deviceAccessMinMax.join(deviceUpdatedDate, deviceUpdatedDate("device_id_rn") === deviceAccessMinMax("device_id")).drop("device_id_rn")
 
-finalDf.write.format("org.apache.spark.sql.cassandra").options(Map( "table" -> config.getString("cassandra.deviceprofileOldTable"), "keyspace" -> config.getString("cassandra.keyspace") )).mode(SaveMode.Append).save()
+finalDf.write.format("org.apache.spark.sql.cassandra").options(Map( "table" -> config.getString("cassandra.deviceprofileNewTable"), "keyspace" -> config.getString("cassandra.keyspace") )).mode(SaveMode.Append).save()
 
 }
 
