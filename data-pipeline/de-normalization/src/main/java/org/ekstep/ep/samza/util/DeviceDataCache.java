@@ -26,13 +26,14 @@ public class DeviceDataCache {
     private Jedis redisConnection;
     private Gson gson = new Gson();
     private JobMetrics metrics;
+    private int databaseIndex;
 
     public DeviceDataCache(Config config, RedisConnect redisPool, CassandraConnect cassandraConnetion, JobMetrics metrics) {
         this.config = config;
         this.metrics = metrics;
+        this.databaseIndex = config.getInt("redis.deviceDB.index", 0);
         this.redisPool = redisPool;
-        this.redisConnection = this.redisPool.getConnection();
-        redisConnection.select(config.getInt("redis.deviceDB.index", 0));
+        this.redisConnection = this.redisPool.getConnection(databaseIndex);
         this.cassandra_db = config.get("cassandra.keyspace", "device_db");
         this.cassandra_table = config.get("cassandra.device_profile_table", "device_profile");
         this.cassandraConnetion = cassandraConnetion;
@@ -95,7 +96,7 @@ public class DeviceDataCache {
                 deviceDataMap = getDeviceDataFromCache(did);
             } catch(JedisException ex) {
                 redisPool.resetConnection();
-                this.redisConnection = redisPool.getConnection();
+                this.redisConnection = redisPool.getConnection(databaseIndex);
                 deviceDataMap = getDeviceDataFromCache(did);
             }
 

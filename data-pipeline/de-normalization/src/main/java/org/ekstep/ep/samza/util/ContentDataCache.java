@@ -25,10 +25,9 @@ public class ContentDataCache extends DataCache {
         defaultList.add("lastSubmittedOn");
         defaultList.add("lastUpdatedOn");
         defaultList.add("lastPublishedOn");
+        this.databaseIndex = config.getInt("redis.contentDB.index", 2);
         this.redisConnect = redisConnect;
-        this.redisConnection = this.redisConnect.getConnection();
-        this.redisConnection.select(config.getInt("redis.contentDB.index", 2));
-        // this.redisDBIndex = config.getInt("redis.contentDB.index", 2);
+        this.redisConnection = this.redisConnect.getConnection(databaseIndex);
         this.fieldsList = config.getList("content.metadata.fields", defaultList);
         this.metrics = metrics;
 

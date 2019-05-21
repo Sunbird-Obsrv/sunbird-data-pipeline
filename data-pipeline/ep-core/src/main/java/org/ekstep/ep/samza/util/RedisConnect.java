@@ -38,6 +38,12 @@ public class RedisConnect {
         return jedisPool.getResource();
     }
 
+    public Jedis getConnection(int database) {
+        Jedis conn = jedisPool.getResource();
+        conn.select(database);
+        return conn;
+    }
+
     public void resetConnection() {
         String redis_host = config.get("redis.host", "localhost");
         Integer redis_port = config.getInt("redis.port", 6379);

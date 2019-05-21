@@ -77,6 +77,8 @@ public class DeNormalizationTaskTest {
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
         stub(configMock.get("output.malformed.topic.name", MALFORMED_TOPIC)).toReturn(MALFORMED_TOPIC);
         stub(configMock.getInt("telemetry.ignore.period.months", ignorePeriodInMonths)).toReturn(ignorePeriodInMonths);
+        stub(configMock.get("middleware.cassandra.host", "127.0.0.1")).toReturn("127.0.0.1");
+        stub(configMock.get("middleware.cassandra.port", "9042")).toReturn("9042");
         List<String> defaultSummaryEvents = new ArrayList<>();
         defaultSummaryEvents.add("ME_WORKFLOW_SUMMARY");
         stub(configMock.getList("summary.filter.events", defaultSummaryEvents)).toReturn(defaultSummaryEvents);

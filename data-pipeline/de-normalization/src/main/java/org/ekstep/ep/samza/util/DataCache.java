@@ -17,6 +17,7 @@ public abstract class DataCache {
     private static Logger LOGGER = new Logger(DataCache.class);
 
     protected RedisConnect redisConnect;
+    protected int databaseIndex;
     protected Jedis redisConnection;
     protected JobMetrics metrics;
     protected List fieldsList;
@@ -56,7 +57,7 @@ public abstract class DataCache {
         } catch (JedisException ex) {
             LOGGER.error("", "Exception when retrieving data from redis cache ", ex);
             redisConnect.resetConnection();
-            redisConnection = redisConnect.getConnection();
+            redisConnection = redisConnect.getConnection(databaseIndex);
             cacheDataMap = getDataFromCache(key);
         }
         return cacheDataMap;

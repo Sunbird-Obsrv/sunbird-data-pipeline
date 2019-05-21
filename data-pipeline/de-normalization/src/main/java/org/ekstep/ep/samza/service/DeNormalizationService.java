@@ -24,9 +24,9 @@ public class DeNormalizationService {
     }
 
     public void process(DeNormalizationSource source, DeNormalizationSink sink) {
-        Event event = null;
+
         try {
-            event = source.getEvent();
+            Event event = source.getEvent();
             sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
             String eid = event.eid();
             List<String> summaryRouteEventPrefix = this.config.getSummaryFilterEvents();
@@ -59,12 +59,6 @@ public class DeNormalizationService {
         } catch(JsonSyntaxException e){
             LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
             sink.toMalformedTopic(source.getMessage());
-        } catch (Exception e) {
-            LOGGER.error(null,
-                    format("EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO EXCEPTION TOPIC. EVENT: {0}, EXCEPTION:",
-                            event),
-                    e);
-            sink.toErrorTopic(event, e.getMessage());
         }
     }
 

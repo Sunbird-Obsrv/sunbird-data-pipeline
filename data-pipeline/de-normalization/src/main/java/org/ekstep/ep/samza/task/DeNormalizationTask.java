@@ -30,6 +30,9 @@ import org.ekstep.ep.samza.domain.EventUpdaterFactory;
 import org.ekstep.ep.samza.service.DeNormalizationService;
 import org.ekstep.ep.samza.util.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
 
     private static Logger LOGGER = new Logger(DeNormalizationTask.class);
@@ -69,9 +72,12 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
 
         this.deviceCache =
                 deviceCache == null ? new DeviceDataCache(config, this.redisPool, this.cassandraConnect, metrics): deviceCache;
-
+        String test = config.get("middleware.cassandra.host", "127.0.0.1");
+        List<String> cassandraHosts = Arrays.asList(config.get("middleware.cassandra.host", "127.0.0.1").split(","));
         this.userCache =
-                userCache == null ? new UserDataCache(config, this.redisPool, this.cassandraConnect, metrics): userCache;
+                userCache == null ? new UserDataCache(config, this.redisPool,
+                        new CassandraConnect(cassandraHosts, config.getInt("middleware.cassandra.port", 9042)), metrics):
+                        userCache;
 
         this.contentCache =
                 contentCache == null ? new ContentDataCache(config, this.redisPool, metrics) : contentCache;
@@ -84,17 +90,9 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator taskCoordinator) {
-        try {
-            DeNormalizationSource source = new DeNormalizationSource(envelope);
-            DeNormalizationSink sink = new DeNormalizationSink(collector, metrics, config);
-            service.process(source, sink);
-        } catch (Exception ex) {
-            LOGGER.error("", "Denormalization failed: " + ex.getMessage());
-            Object event = envelope.getMessage();
-            if (event != null) {
-                LOGGER.info("", "FAILED_EVENT: " + event);
-            }
-        }
+        DeNormalizationSource source = new DeNormalizationSource(envelope);
+        DeNormalizationSink sink = new DeNormalizationSink(collector, metrics, config);
+        service.process(source, sink);
     }
 
     @Override

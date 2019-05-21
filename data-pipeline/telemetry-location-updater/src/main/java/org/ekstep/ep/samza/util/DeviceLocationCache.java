@@ -22,14 +22,15 @@ public class DeviceLocationCache {
     private RedisConnect redisConnect;
     private JobMetrics metrics;
     private Jedis redisConnection;
+    private int databaseIndex;
 
     public DeviceLocationCache(Config config, RedisConnect redisConnect, JobMetrics metrics) {
         this.cassandra_db = config.get("cassandra.keyspace", "device_db");
         this.cassandra_table = config.get("cassandra.device_profile_table", "device_profile");
+        this.databaseIndex = config.getInt("redis.database.deviceLocationStore.id", 2);
         this.cassandraConnection = new CassandraConnect(config);
         this.redisConnect = redisConnect;
-        this.redisConnection = this.redisConnect.getConnection();
-        redisConnection.select(config.getInt("redis.database.deviceLocationStore.id", 2));
+        this.redisConnection = this.redisConnect.getConnection(databaseIndex);
         this.locationDbKeyExpiryTimeInSeconds = config.getInt("location.db.redis.key.expiry.seconds", 86400);
         this.cacheUnresolvedLocationExpiryTimeInSeconds = config.getInt("cache.unresolved.location.key.expiry.seconds", 3600);
         this.metrics = metrics;
@@ -43,7 +44,7 @@ public class DeviceLocationCache {
                 location = getLocationFromCache(did);
             } catch(JedisException ex) {
                 redisConnect.resetConnection(); // Asumming your redis connection is stale which should not happen
-                this.redisConnection = redisConnect.getConnection();
+                this.redisConnection = redisConnect.getConnection(databaseIndex);
                 location = getLocationFromCache(did);
             }
 

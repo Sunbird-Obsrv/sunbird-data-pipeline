@@ -25,9 +25,8 @@ public class TelemetryLocationUpdaterService {
 	}
 
 	public void process(TelemetryLocationUpdaterSource source, TelemetryLocationUpdaterSink sink) {
-		Event event = null;
 		try {
-			event = source.getEvent();
+			Event event = source.getEvent();
 			sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
 			// Add device location details to the event
 			updateEventWithIPLocation(event);
@@ -35,12 +34,6 @@ public class TelemetryLocationUpdaterService {
 		} catch (JsonSyntaxException e) {
 			LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
 			sink.toMalformedTopic(source.getMessage());
-		} catch (Exception e) {
-			LOGGER.error(null,
-					format("EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO EXCEPTION TOPIC. EVENT: {0}, EXCEPTION:",
-							event),
-					e);
-			sink.toErrorTopic(event, e.getMessage());
 		}
 	}
 

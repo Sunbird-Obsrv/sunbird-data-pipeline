@@ -18,9 +18,9 @@ public class DialCodeDataCache extends DataCache {
         defaultList.add("generated_on");
         defaultList.add("published_on");
         defaultList.add("status");
+        this.databaseIndex = config.getInt("redis.dialcodeDB.index", 3);
         this.redisConnect = redisConnect;
-        this.redisConnection = this.redisConnect.getConnection();
-        this.redisConnection.select(config.getInt("redis.dialcodeDB.index", 3));
+        this.redisConnection = this.redisConnect.getConnection(databaseIndex);
         // this.redisDBIndex = config.getInt("redis.dialcodeDB.index", 3);
         this.fieldsList = config.getList("dialcode.metadata.fields", defaultList);
         this.metrics = metrics;

@@ -30,6 +30,7 @@ public class UserDataCache extends DataCache {
     private Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
     private Gson gson = new Gson();
     private JobMetrics metrics;
+    private int databaseIndex;
 
     public UserDataCache(Config config, RedisConnect redisPool, CassandraConnect cassandraConnect, JobMetrics metrics) {
         List<String> defaultList = new ArrayList<>();
@@ -42,9 +43,9 @@ public class UserDataCache extends DataCache {
 
         this.metrics = metrics;
         this.fieldsList = config.getList("user.metadata.fields", defaultList);
+        this.databaseIndex = config.getInt("redis.database.userLocationStore.id", 1);
         this.redisPool = redisPool;
-        this.redisConnection = this.redisPool.getConnection();
-        this.redisConnection.select(config.getInt("redis.database.userLocationStore.id", 1));
+        this.redisConnection = this.redisPool.getConnection(databaseIndex);
         this.cassandra_db = config.get("middleware.cassandra.keyspace", "sunbird");
         this.cassandra_user_table = config.get("middleware.cassandra.user_table", "user");
         this.cassandra_location_table = config.get("middleware.cassandra.location_table", "location");
@@ -64,7 +65,7 @@ public class UserDataCache extends DataCache {
             }
         } catch (JedisException ex) {
             redisPool.resetConnection();
-            redisConnection = redisPool.getConnection();
+            redisConnection = redisPool.getConnection(databaseIndex);
             userDataMap = getUserDataFromCache(userId);
         }
 

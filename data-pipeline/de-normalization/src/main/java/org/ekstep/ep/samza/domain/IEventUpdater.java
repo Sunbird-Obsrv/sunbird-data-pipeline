@@ -26,29 +26,20 @@ public abstract class IEventUpdater {
         Map data;
         Map convertedData;
         List<Map> dataMap = new ArrayList<>();
-        try {
-            if (key != null && !key.isEmpty()) {
-                data = dataCache.getData(key);
-                if (data != null && !data.isEmpty()) {
-                    if(conversionRequired)
-                        convertedData = getConvertedData(data);
-                    else
-                        convertedData = data;
-                    dataMap.add(convertedData);
-                    event.addMetaData(cacheType, dataMap);
-                }
-                else {
-                    event.setFlag(DeNormalizationConfig.getJobFlag(cacheType), false);
-                }
+        if (key != null && !key.isEmpty()) {
+            data = dataCache.getData(key);
+            if (data != null && !data.isEmpty()) {
+                if (conversionRequired)
+                    convertedData = getConvertedData(data);
+                else
+                    convertedData = data;
+                dataMap.add(convertedData);
+                event.addMetaData(cacheType, dataMap);
+            } else {
+                event.setFlag(DeNormalizationConfig.getJobFlag(cacheType), false);
             }
-            return event;
-        } catch(Exception ex) {
-            LOGGER.error(null,
-                    format("EXCEPTION. EVENT: {0}, EXCEPTION:",
-                            event),
-                    ex);
-            return event;
         }
+        return event;
     }
 
     public Event update(Event event, List<String> keys, Boolean conversionRequired) {
@@ -93,8 +84,7 @@ public abstract class IEventUpdater {
     public Long getTimestamp(String ts, DateTimeFormatter df) {
         try {
             return df.parseDateTime(ts).getMillis();
-        } catch(Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception ex) {
             return 0L;
         }
     }
