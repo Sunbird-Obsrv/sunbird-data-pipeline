@@ -731,3 +731,24 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.workflow_u
 
 ALTER TABLE {{ cassandra.keyspace_prefix }}device_db.device_profile
 ADD (state_custom text, state_code_custom text, district_custom text);
+
+CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}device_db.device_profile_temp (
+    device_id text,
+    first_access timestamp,
+    last_access timestamp,
+    total_ts double,
+    total_launches bigint,
+    avg_ts double,
+    device_spec Map<text,text>,
+    updated_date timestamp,
+    state text,
+    state_code text,
+    country text,
+    country_code text,
+    state_custom text,
+    state_code_custom text,
+    district_custom text
+    city text,
+    uaspec Map<text,text>,
+    PRIMARY KEY (device_id)
+);
