@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.util;
 
 import com.datastax.driver.core.Row;
+import com.datastax.driver.core.exceptions.QueryExecutionException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.samza.config.Config;
@@ -9,6 +10,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -20,18 +22,21 @@ public class DeviceDataCache {
     private String cassandra_table;
     private CassandraConnect cassandraConnetion;
     private Config config;
+    private RedisConnect redisPool;
     private Jedis redisConnection;
     private Gson gson = new Gson();
 
-    public DeviceDataCache(Config config, RedisConnect redisConnect, CassandraConnect cassandraConnetion) {
+    public DeviceDataCache(Config config, RedisConnect redisPool, CassandraConnect cassandraConnetion) {
         this.config = config;
-        this.redisConnection = redisConnect.getConnection();
+        this.redisPool = redisPool;
+        this.redisConnection = this.redisPool.getConnection();
         redisConnection.select(config.getInt("redis.deviceDB.index", 0));
         this.cassandra_db = config.get("cassandra.keyspace", "device_db");
         this.cassandra_table = config.get("cassandra.device_profile_table", "device_profile");
         this.cassandraConnetion = cassandraConnetion;
     }
 
+    /*
     public Map getDataForDeviceId(String did) {
 
         try {
@@ -54,7 +59,7 @@ public class DeviceDataCache {
                     Row row = rows.get(0);
                     if (row.isNull("device_spec")) deviceSpec = new HashMap<>();
                     else deviceSpec = row.getMap("device_spec", String.class, String.class);
-                    if (row.isNull("uaspec")) uaSpec = new HashMap<String, String>();
+                    if (row.isNull("uaspec")) uaSpec = new HashMap<>();
                     else uaSpec = row.getMap("uaspec", String.class, String.class);
                     if (!row.isNull("first_access")) first_access = row.getTimestamp("first_access").getTime();
                     eventFinalMap.putAll(deviceSpec);
@@ -77,6 +82,90 @@ public class DeviceDataCache {
             LOGGER.error("", "GetDataForDeviceId: Unable to get a resource from the redis connection pool ", ex);
             return null;
         }
+
+    }
+    */
+
+    public Map<String, Object> getDataForDeviceId(String did) {
+        Map<String, Object> deviceDataMap = null;
+        if(did != null && !did.isEmpty()) {
+            try {
+                deviceDataMap = getDeviceDataFromCache(did);
+            } catch(JedisException ex) {
+                redisPool.resetConnection();
+                this.redisConnection = redisPool.getConnection();
+                deviceDataMap = getDeviceDataFromCache(did);
+            }
+
+            if(deviceDataMap != null && !deviceDataMap.isEmpty()) {
+                // metrics.incCacheHitCounter();
+                return deviceDataMap;
+            } else {
+                try {
+                    deviceDataMap = getDeviceDataFromDB(did);
+                } catch (Exception ex) {
+                    cassandraConnetion.reconnect();
+                    deviceDataMap = getDeviceDataFromDB(did);
+                }
+            }
+
+            /*
+            if(null != deviceDataMap) {
+                metrics.incDBHitCount();
+            } else {
+                metrics.incNoDataCount();
+            }
+            */
+
+            addDataToCache(did, gson.toJson(deviceDataMap));
+        }
+        return deviceDataMap;
+    }
+
+    private Map<String, Object> getDeviceDataFromCache(String did) {
+        Map<String, Object> deviceMap = new HashMap<>();
+        String deviceData = redisConnection.get(did);
+        if (deviceData != null && !deviceData.isEmpty()) {
+            Type type = new TypeToken<Map<String, Object>>() {}.getType();
+            Map<String, Object> parsedData = gson.fromJson(deviceData, type);
+            for (Map.Entry<String, Object> entry : parsedData.entrySet()) {
+                deviceMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return deviceMap;
+    }
+
+    private Map<String, Object> getDeviceDataFromDB(String did) {
+        String query =
+                String.format("SELECT device_id, device_spec, uaspec, first_access FROM %s.%s WHERE device_id = '%s'",
+                        cassandra_db, cassandra_table, did);
+        List<Row> rows = cassandraConnetion.execute(query);
+        Map<String, String> deviceSpec;
+        Map<String, String> uaSpec;
+        Long first_access = null;
+        Map<String, Object> deviceDataMap = new HashMap<>();
+        Iterator<Row> iterator = rows.iterator();
+        if (iterator.hasNext()) {
+            Row row = iterator.next();
+            if (row.isNull("device_spec")) {
+                deviceSpec = new HashMap<>();
+            } else {
+                deviceSpec = row.getMap("device_spec", String.class, String.class);
+            }
+
+            if (row.isNull("uaspec")) {
+                uaSpec = new HashMap<>();
+            } else {
+                uaSpec = row.getMap("uaspec", String.class, String.class);
+            }
+
+            if (!row.isNull("first_access")) first_access = row.getTimestamp("first_access").getTime();
+            deviceDataMap.putAll(deviceSpec);
+            deviceDataMap.put("uaspec", uaSpec);
+            if (first_access != null) deviceDataMap.put("firstaccess", first_access);
+        }
+
+        return deviceDataMap;
 
     }
 

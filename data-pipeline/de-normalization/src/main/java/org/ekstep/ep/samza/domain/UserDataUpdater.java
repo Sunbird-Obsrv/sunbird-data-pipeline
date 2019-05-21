@@ -30,7 +30,7 @@ public class UserDataUpdater extends IEventUpdater {
             }
             return event;
         } catch (Exception ex) {
-            LOGGER.error(null, format("EXCEPTION WHEN DENORMALISING USER DATA. EVENT: {0}, EXCEPTION:", event), ex);
+            LOGGER.error(null, format("EXCEPTION WHEN DE-NORMALIZATION OF USER DATA. EVENT: {0}, EXCEPTION:", event), ex);
             return event;
         }
     }

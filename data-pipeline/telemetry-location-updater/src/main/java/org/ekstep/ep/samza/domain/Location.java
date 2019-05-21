@@ -156,7 +156,7 @@ public class Location {
   }
 
   public Boolean isLocationResolved(){
-    return this.state != null && !this.state.isEmpty() && this.city != null && !this.city.isEmpty();
+    return this.state != null && !this.state.isEmpty();
   }
 
   public Boolean isStateDistrictResolved(){

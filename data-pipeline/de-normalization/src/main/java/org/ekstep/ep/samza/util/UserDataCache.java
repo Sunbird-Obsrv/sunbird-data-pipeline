@@ -1,7 +1,6 @@
 package org.ekstep.ep.samza.util;
 
 import com.datastax.driver.core.Row;
-import com.datastax.driver.core.exceptions.QueryExecutionException;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -24,13 +23,14 @@ public class UserDataCache extends DataCache {
     private String cassandra_user_table;
     private String cassandra_location_table;
     private CassandraConnect cassandraConnection;
+    private RedisConnect redisPool;
     private Jedis redisConnection;
     private int locationDbKeyExpiryTimeInSeconds;
     private Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
     private Gson gson = new Gson();
     private Config config;
 
-    public UserDataCache(Config config, RedisConnect redisConnect, CassandraConnect cassandraConnect) {
+    public UserDataCache(Config config, RedisConnect redisPool, CassandraConnect cassandraConnect) {
         List<String> defaultList = new ArrayList<>();
         defaultList.add("usertype");
         defaultList.add("grade");
@@ -41,7 +41,8 @@ public class UserDataCache extends DataCache {
 
         this.config = config;
         this.fieldsList = config.getList("user.metadata.fields", defaultList);
-        this.redisConnection = redisConnect.getConnection();
+        this.redisPool = redisPool;
+        this.redisConnection = this.redisPool.getConnection();
         this.redisConnection.select(config.getInt("redis.database.userLocationStore.id", 1));
         this.cassandra_db = config.get("middleware.cassandra.keyspace", "sunbird");
         this.cassandra_user_table = config.get("middleware.cassandra.user_table", "user");
@@ -49,14 +50,6 @@ public class UserDataCache extends DataCache {
         this.cassandraConnection = cassandraConnect;
         this.locationDbKeyExpiryTimeInSeconds = config.getInt("location.db.redis.key.expiry.seconds", 86400);
 
-    }
-
-    private void reconnectRedis() {
-        this.redisConnection = new RedisConnect(config).getConnection();
-    }
-
-    private void reconnectCassandra() {
-        this.cassandraConnection = new CassandraConnect(config);
     }
 
     public Map<String, Object> getUserData(String userId) {
@@ -68,21 +61,22 @@ public class UserDataCache extends DataCache {
                 userDataMap.keySet().retainAll(this.fieldsList);
             }
         } catch (JedisException ex) {
-            reconnectRedis(); // Asumming your redis connection is stale which should not happen
+            redisPool.resetConnection();
+            redisConnection = redisPool.getConnection();
             userDataMap = getUserDataFromCache(userId);
         }
 
         Map<String, Object> userLocationMap;
         if (!userDataMap.containsKey("state")) {
             try {
-                userLocationMap = fetchFallbackUserLocation(userId);
-            } catch (QueryExecutionException ex) {
-                reconnectCassandra();
-                userLocationMap = fetchFallbackUserLocation(userId);
+                userLocationMap = fetchFallbackUserLocationFromDB(userId);
+            } catch (Exception ex) {
+                cassandraConnection.reconnect();
+                userLocationMap = fetchFallbackUserLocationFromDB(userId);
             }
 
             if (!userLocationMap.isEmpty()) {
-                userDataMap.putAll(fetchFallbackUserLocation(userId));
+                userDataMap.putAll(fetchFallbackUserLocationFromDB(userId));
                 addToCache(userId, gson.toJson(userDataMap));
             }
         }
@@ -93,7 +87,7 @@ public class UserDataCache extends DataCache {
         return gson.fromJson(redisConnection.get(userId), mapType);
     }
 
-    private Map<String, Object> fetchFallbackUserLocation(String userId) {
+    private Map<String, Object> fetchFallbackUserLocationFromDB(String userId) {
         // if (userId == null) return null;
         Map<String, Object> userLocation = new HashMap<>();
         try {
@@ -102,7 +96,7 @@ public class UserDataCache extends DataCache {
                 userLocation = getUserLocation(locationIds);
             }
         } catch (Exception ex) {
-            LOGGER.error("", "fetchFallbackUserLocation: Unable to fetch user location " +
+            LOGGER.error("", "fetchFallbackUserLocationFromDB: Unable to fetch user location " +
                     "from cassandra! userId: " + userId, ex);
         }
         return userLocation;

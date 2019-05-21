@@ -8,7 +8,7 @@ public class ContentDataCache extends DataCache {
 
     public ContentDataCache(Config config, RedisConnect redisConnect) {
 
-        List defaultList = new ArrayList<String>();
+        List<String> defaultList = new ArrayList<>();
         defaultList.add("name");
         defaultList.add("objectType");
         defaultList.add("contentType");
@@ -23,8 +23,11 @@ public class ContentDataCache extends DataCache {
         defaultList.add("lastSubmittedOn");
         defaultList.add("lastUpdatedOn");
         defaultList.add("lastPublishedOn");
-        this.redisDBIndex = config.getInt("redis.contentDB.index", 2);
-        this.fieldsList = config.getList("content.metadata.fields", defaultList);
         this.redisConnect = redisConnect;
+        this.redisConnection = this.redisConnect.getConnection();
+        this.redisConnection.select(config.getInt("redis.contentDB.index", 2));
+        // this.redisDBIndex = config.getInt("redis.contentDB.index", 2);
+        this.fieldsList = config.getList("content.metadata.fields", defaultList);
+
     }
 }

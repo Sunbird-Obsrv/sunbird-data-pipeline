@@ -9,7 +9,7 @@ import java.util.Map;
 import static java.text.MessageFormat.format;
 
 public class DeviceDataUpdater extends IEventUpdater {
-    static Logger LOGGER = new Logger(DeviceDataUpdater.class);
+    private static Logger LOGGER = new Logger(DeviceDataUpdater.class);
     private DeviceDataCache deviceCache;
 
     DeviceDataUpdater(DeviceDataCache deviceCache) {
@@ -17,26 +17,20 @@ public class DeviceDataUpdater extends IEventUpdater {
     }
 
     public Event update(Event event) {
-
-        Map device;
+        Map<String, Object> deviceData;
         try {
             String did = event.did();
             if (did != null && !did.isEmpty()) {
-                device = deviceCache.getDataForDeviceId(event.did());
-
-                if (device != null && !device.isEmpty()) {
-                    event.addDeviceData(device);
-                }
-                else {
+                deviceData = deviceCache.getDataForDeviceId(event.did());
+                if (deviceData != null && !deviceData.isEmpty()) {
+                    event.addDeviceData(deviceData);
+                } else {
                     event.setFlag(DeNormalizationConfig.getDeviceLocationJobFlag(), false);
                 }
             }
             return event;
-        } catch(Exception ex) {
-            LOGGER.error(null,
-                    format("EXCEPTION. EVENT: {0}, EXCEPTION:",
-                            event),
-                    ex);
+        } catch (Exception ex) {
+            LOGGER.error(null, format("EXCEPTION WHEN DE-NORMALIZATION OF DEVICE DATA. EVENT: {0}, EXCEPTION:", event), ex);
             return event;
         }
     }

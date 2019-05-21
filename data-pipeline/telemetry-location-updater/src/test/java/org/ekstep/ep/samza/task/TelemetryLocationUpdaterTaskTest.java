@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.task;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
@@ -85,11 +86,7 @@ public class TelemetryLocationUpdaterTaskTest {
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
 				assertEquals("3.0", outputEvent.get("ver"));
-				assertTrue(outputMessage.contains("\"countrycode\":\"\""));
-				assertTrue(outputMessage.contains("\"country\":\"\""));
-				assertTrue(outputMessage.contains("\"statecode\":\"\""));
-				assertTrue(outputMessage.contains("\"state\":\"\""));
-				assertTrue(outputMessage.contains("\"city\":\"\""));
+				assertFalse(outputEvent.containsKey("devicedata"));
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
 				assertEquals(false, flags.get("device_location_retrieved"));
 				return true;
@@ -230,6 +227,7 @@ public class TelemetryLocationUpdaterTaskTest {
 			public boolean matches(Object o) {
 				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+				System.out.println(outputMessage);
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
 				Map<String, Object> context = new Gson().fromJson(outputEvent.get("devicedata").toString(), mapType);
 				assertEquals("3.0", outputEvent.get("ver"));

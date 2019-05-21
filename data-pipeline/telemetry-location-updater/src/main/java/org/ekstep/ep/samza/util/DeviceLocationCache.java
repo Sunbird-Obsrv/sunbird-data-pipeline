@@ -54,7 +54,7 @@ public class DeviceLocationCache {
             } else {
                 try {
                     location = getLocationFromDeviceProfileDB(did);
-                } catch (QueryExecutionException ex) {
+                } catch (Exception ex) {
                     cassandraConnection.reconnect();
                     location = getLocationFromDeviceProfileDB(did);
                 }
@@ -86,7 +86,6 @@ public class DeviceLocationCache {
 
         Iterator<Row> iterator = rows.iterator();
         if (iterator.hasNext()) {
-            // metrics.incDBHitCount();
             Row result = iterator.next();
             String locationState = result.getString("state");
             if (locationState != null && !locationState.isEmpty()) {

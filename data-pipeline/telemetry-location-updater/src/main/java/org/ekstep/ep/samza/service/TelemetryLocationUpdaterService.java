@@ -47,22 +47,13 @@ public class TelemetryLocationUpdaterService {
 
 	private Event updateEventWithIPLocation(Event event) {
 		String did = event.did();
-		Location location;
+		Location location = null;
 		if (did != null && !did.isEmpty()) {
-
 			location = deviceLocationCache.getLocationForDeviceId(event.did());
-			if (location != null) {
-				event = updateEvent(event, location, true);
-			} else {
-				// add empty location
-				location = new Location(); // What is the need for empty location? Is it a requirement for druid validator spec?
-				event = updateEvent(event, location, false);
-			}
+			updateEvent(event, location);
 			metrics.incProcessedMessageCount();
 		} else {
-			// add empty location
-			location = new Location();
-			event = updateEvent(event, location, false);
+			event = updateEvent(event, location);
 			metrics.incUnprocessedMessageCount(); // Isn't this skippedCount?
 		}
 		return event;
@@ -94,10 +85,14 @@ public class TelemetryLocationUpdaterService {
 	}
 	*/
 
-	public Event updateEvent(Event event, Location location, Boolean ldataFlag) {
-		event.addLocation(location);
+	public Event updateEvent(Event event, Location location) {
 		event.removeEdataLoc();
-		event.setFlag(TelemetryLocationUpdaterConfig.getDeviceLocationJobFlag(), ldataFlag);
+		if (location != null && location.isLocationResolved()) {
+			event.addLocation(location);
+			event.setFlag(TelemetryLocationUpdaterConfig.getDeviceLocationJobFlag(), true);
+		} else {
+			event.setFlag(TelemetryLocationUpdaterConfig.getDeviceLocationJobFlag(), false);
+		}
 		return event;
 	}
 }

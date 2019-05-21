@@ -38,7 +38,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     private UserDataCache userCache;
     private ContentDataCache contentCache;
     private DialCodeDataCache dialcodeCache;
-    private RedisConnect redisConnect;
+    private RedisConnect redisPool;
     private CassandraConnect cassandraConnect;
     private JobMetrics metrics;
     private DeNormalizationService service;
@@ -63,21 +63,21 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     public void init(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache, CassandraConnect cassandraConnect, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics) {
         this.config = new DeNormalizationConfig(config);
         this.metrics = jobMetrics == null ? new JobMetrics(context, this.config.jobName()) : jobMetrics;
-        this.redisConnect = new RedisConnect(config);
+        this.redisPool = new RedisConnect(config);
 
         this.cassandraConnect = cassandraConnect == null ? new CassandraConnect(config): cassandraConnect;
 
         this.deviceCache =
-                deviceCache == null ? new DeviceDataCache(config, this.redisConnect, this.cassandraConnect): deviceCache;
+                deviceCache == null ? new DeviceDataCache(config, this.redisPool, this.cassandraConnect): deviceCache;
 
         this.userCache =
-                userCache == null ? new UserDataCache(config, this.redisConnect, this.cassandraConnect): userCache;
+                userCache == null ? new UserDataCache(config, this.redisPool, this.cassandraConnect): userCache;
 
         this.contentCache =
-                contentCache == null ? new ContentDataCache(config, this.redisConnect) : contentCache;
+                contentCache == null ? new ContentDataCache(config, this.redisPool) : contentCache;
 
         this.dialcodeCache =
-                dialcodeCache == null ? new DialCodeDataCache(config, this.redisConnect) : dialcodeCache;
+                dialcodeCache == null ? new DialCodeDataCache(config, this.redisPool) : dialcodeCache;
 
         service = new DeNormalizationService(this.config, new EventUpdaterFactory(this.contentCache, this.userCache, this.deviceCache, this.dialcodeCache));
     }
@@ -87,10 +87,9 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
         try {
             DeNormalizationSource source = new DeNormalizationSource(envelope);
             DeNormalizationSink sink = new DeNormalizationSink(collector, metrics, config);
-
             service.process(source, sink);
         } catch (Exception ex) {
-            LOGGER.error("", "DeNormalization failed: " + ex.getMessage());
+            LOGGER.error("", "Denormalization failed: " + ex.getMessage());
             Object event = envelope.getMessage();
             if (event != null) {
                 LOGGER.info("", "FAILED_EVENT: " + event);
