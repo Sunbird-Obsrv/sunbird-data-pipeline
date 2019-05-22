@@ -44,7 +44,7 @@ public class TelemetryEventsValidatorTaskTest {
     private DruidEventsValidatorTask druidEventsValidatorTask;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         collectorMock = mock(MessageCollector.class);
         contextMock = Mockito.mock(TaskContext.class);
         metricsRegistry = Mockito.mock(MetricsRegistry.class);

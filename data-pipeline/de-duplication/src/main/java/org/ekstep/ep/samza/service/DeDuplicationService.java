@@ -54,10 +54,6 @@ public class DeDuplicationService {
 		} catch (JsonSyntaxException e) {
 			LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
 			sink.toMalformedEventsTopic(source.getMessage());
-		} catch (JedisException e) {
-			sink.toErrorTopic(event);
-			throw new JedisException(e);
-
 		} catch (Exception e) {
 			event.markFailure(e.getMessage(), config);
 			LOGGER.error(null,

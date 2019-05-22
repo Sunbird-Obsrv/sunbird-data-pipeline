@@ -29,6 +29,7 @@ import org.apache.samza.task.*;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.DruidEventsValidatorService;
+import org.ekstep.ep.samza.util.SchemaValidator;
 
 public class DruidEventsValidatorTask implements StreamTask, InitableTask, WindowableTask {
 
@@ -37,8 +38,9 @@ public class DruidEventsValidatorTask implements StreamTask, InitableTask, Windo
     private JobMetrics metrics;
     private DruidEventsValidatorService service;
     private JsonSchemaFactory jsonSchemaFactory;
+    private SchemaValidator schemaValidator;
 
-    public DruidEventsValidatorTask(Config config, TaskContext context) {
+    public DruidEventsValidatorTask(Config config, TaskContext context) throws Exception {
         init(config, context);
     }
 
@@ -47,10 +49,11 @@ public class DruidEventsValidatorTask implements StreamTask, InitableTask, Windo
     }
 
     @Override
-    public void init(Config config, TaskContext context) {
+    public void init(Config config, TaskContext context) throws Exception {
         this.config = new DruidEventsValidatorConfig(config);
         metrics = new JobMetrics(context, this.config.jobName());
-        service = new DruidEventsValidatorService(this.config);
+        this.schemaValidator = schemaValidator == null ? new SchemaValidator(this.config) : schemaValidator;
+        service = new DruidEventsValidatorService(this.config, this.schemaValidator);
     }
 
     @Override

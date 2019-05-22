@@ -9,7 +9,6 @@ public class DialcodeDataUpdater extends IEventUpdater {
         this.cacheType = "dialcode";
     }
 
-    public Event update(Event event) {
-        return event;
+    public void update(Event event) {
     }
 }

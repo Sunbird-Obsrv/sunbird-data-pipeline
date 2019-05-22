@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class DataCache {
+public class DataCache {
 
     private static Logger LOGGER = new Logger(DataCache.class);
 
@@ -23,31 +23,9 @@ public abstract class DataCache {
     protected List fieldsList;
     private Gson gson = new Gson();
 
-    /*
-    public Map getData(String key) {
-
-        try {
-            Map<String, Object> parsedData;
-            Map dataMap = new HashMap();
-            String dataNode = redisConnection.get(key);
-            if (dataNode == null) {
-                return null;
-            } else {
-                Type type = new TypeToken<Map<String, Object>>() {
-                }.getType();
-                parsedData = gson.fromJson(dataNode, type);
-                parsedData.keySet().retainAll(fieldsList);
-                for (Map.Entry<String, Object> entry : parsedData.entrySet()) {
-                    dataMap.put(entry.getKey().toLowerCase().replace("_", ""), entry.getValue());
-                }
-                return dataMap;
-            }
-        } catch (JedisException ex) {
-            LOGGER.error("", "GetData: Unable to get a resource from the redis connection pool ", ex);
-            return null;
-        }
+    public DataCache(List fieldsList) {
+        this.fieldsList = fieldsList;
     }
-    */
 
     public Map<String, Object> getData(String key) {
         Map<String, Object> cacheDataMap;

@@ -31,12 +31,18 @@ public class CassandraConnect {
         for (String host : hosts) {
             builder.addContactPoint(host);
         }
+        // TODO: We need to check if the consistency level can be downgraded to ONE
         Cluster cluster = builder.withPort(port).withQueryOptions(new QueryOptions()
                 .setConsistencyLevel(ConsistencyLevel.QUORUM)).build();
         this.session = cluster.connect();
     }
 
-    public List<Row> execute(String query) {
+    public Row findOne(String query) {
+        ResultSet rs = session.execute(query);
+        return rs.one();
+    }
+
+    public List<Row> find(String query) {
         ResultSet rs = session.execute(query);
         return rs.all();
     }

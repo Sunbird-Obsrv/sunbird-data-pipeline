@@ -16,22 +16,17 @@ public class DeviceDataUpdater extends IEventUpdater {
         this.deviceCache = deviceCache;
     }
 
-    public Event update(Event event) {
+    public void update(Event event) {
         Map<String, Object> deviceData;
-        try {
-            String did = event.did();
-            if (did != null && !did.isEmpty()) {
-                deviceData = deviceCache.getDataForDeviceId(event.did());
-                if (deviceData != null && !deviceData.isEmpty()) {
-                    event.addDeviceData(deviceData);
-                } else {
-                    event.setFlag(DeNormalizationConfig.getDeviceLocationJobFlag(), false);
-                }
+        String did = event.did();
+        if (did != null && !did.isEmpty()) {
+            deviceData = deviceCache.getDataForDeviceId(event.did());
+            if (deviceData != null && !deviceData.isEmpty()) {
+                event.addDeviceData(deviceData);
+            } else {
+                event.setFlag(DeNormalizationConfig.getDeviceLocationJobFlag(), false);
             }
-            return event;
-        } catch (Exception ex) {
-            LOGGER.error(null, format("EXCEPTION WHEN DE-NORMALIZATION OF DEVICE DATA. EVENT: {0}, EXCEPTION:", event), ex);
-            return event;
         }
+
     }
 }

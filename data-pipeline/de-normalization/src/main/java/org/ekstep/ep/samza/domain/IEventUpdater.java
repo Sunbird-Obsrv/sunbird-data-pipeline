@@ -20,58 +20,21 @@ public abstract class IEventUpdater {
     DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ").withZoneUTC();
     DateTimeFormatter df1 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").withZoneUTC();
 
-    public abstract Event update(Event event);
+    public abstract void update(Event event);
 
-    public Event update(Event event, String key, Boolean conversionRequired) {
-        Map data;
-        Map convertedData;
-        List<Map> dataMap = new ArrayList<>();
+    public void update(Event event, String key) {
+
         if (key != null && !key.isEmpty()) {
-            data = dataCache.getData(key);
+            Map data = dataCache.getData(key);
             if (data != null && !data.isEmpty()) {
-                if (conversionRequired)
-                    convertedData = getConvertedData(data);
-                else
-                    convertedData = data;
-                dataMap.add(convertedData);
-                event.addMetaData(cacheType, dataMap);
+                event.addMetaData(cacheType, getConvertedData(data));
             } else {
                 event.setFlag(DeNormalizationConfig.getJobFlag(cacheType), false);
             }
         }
-        return event;
     }
 
-    public Event update(Event event, List<String> keys, Boolean conversionRequired) {
-        List<Map> dataMap;
-        List<Map> convertedDataMap = new ArrayList<>();
-        try {
-            if (keys != null && !keys.isEmpty()) {
-                dataMap = dataCache.getData(keys);
-                if (dataMap != null && !dataMap.isEmpty()) {
-                    for (Map entry : dataMap) {
-                        if(conversionRequired)
-                            convertedDataMap.add(getConvertedData(entry));
-                        else
-                            convertedDataMap.add(entry);
-                    }
-                    event.addMetaData(cacheType, convertedDataMap);
-                }
-                else {
-                    event.setFlag(DeNormalizationConfig.getJobFlag(cacheType), false);
-                }
-            }
-            return event;
-        } catch(Exception ex) {
-            LOGGER.error(null,
-                    format("EXCEPTION. EVENT: {0}, EXCEPTION:",
-                            event),
-                    ex);
-            return event;
-        }
-    }
-
-    public Map getConvertedData(Map data) {
+    private Map getConvertedData(Map data) {
         if("content".equals(cacheType))
             return getEpochConvertedContentDataMap(data);
         else if("dialcode".equals(cacheType))
@@ -81,7 +44,7 @@ public abstract class IEventUpdater {
 
     }
 
-    public Long getTimestamp(String ts, DateTimeFormatter df) {
+    private Long getTimestamp(String ts, DateTimeFormatter df) {
         try {
             return df.parseDateTime(ts).getMillis();
         } catch (Exception ex) {
@@ -89,7 +52,7 @@ public abstract class IEventUpdater {
         }
     }
 
-    public Long getConvertedTimestamp(String ts) {
+    private Long getConvertedTimestamp(String ts) {
         Long epochTs = getTimestamp(ts, df);
         if (epochTs == 0) {
             epochTs = getTimestamp(ts, df1);
@@ -98,7 +61,7 @@ public abstract class IEventUpdater {
     }
 
 
-    public Map getEpochConvertedContentDataMap(Map data) {
+    private Map getEpochConvertedContentDataMap(Map data) {
 
         Object lastSubmittedOn = data.get("lastsubmittedon");
         Object lastUpdatedOn = data.get("lastupdatedon");
@@ -112,16 +75,13 @@ public abstract class IEventUpdater {
         if (lastPublishedOn instanceof String) {
             lastPublishedOn = getConvertedTimestamp(lastPublishedOn.toString());
         }
-        data.remove("lastsubmittedon");
-        data.remove("lastupdatedon");
-        data.remove("lastpublishedon");
         data.put("lastsubmittedon", lastSubmittedOn);
         data.put("lastupdatedon", lastUpdatedOn);
         data.put("lastpublishedon", lastPublishedOn);
         return data;
     }
 
-    public Map getEpochConvertedDialcodeDataMap(Map data) {
+    private Map getEpochConvertedDialcodeDataMap(Map data) {
 
         Object generatedOn = data.get("generatedon");
         Object publishedOn = data.get("publishedon");
@@ -131,8 +91,6 @@ public abstract class IEventUpdater {
         if (publishedOn instanceof String) {
             publishedOn = getConvertedTimestamp(publishedOn.toString());
         }
-        data.remove("generatedon");
-        data.remove("publishedon");
         data.put("generatedon", generatedOn);
         data.put("publishedon", publishedOn);
         return data;

@@ -16,22 +16,16 @@ public class UserDataUpdater extends IEventUpdater {
         this.cacheType = "user";
     }
 
-    public Event update(Event event) {
+    public void update(Event event) {
         Map<String, Object> userCacheData;
-        try {
-            String userId = event.actorId();
-            if (userId != null && !userId.isEmpty() && !"system".equalsIgnoreCase(event.actorType())) {
-                userCacheData = userDataCache.getUserData(event.actorId());
-                if (userCacheData != null && !userCacheData.isEmpty()) {
-                    event.addUserData(userCacheData);
-                } else {
-                    event.setFlag(DeNormalizationConfig.getUserLocationJobFlag(), false);
-                }
+        String userId = event.actorId();
+        if (userId != null && !userId.isEmpty() && !"system".equalsIgnoreCase(event.actorType())) {
+            userCacheData = userDataCache.getUserData(event.actorId());
+            if (userCacheData != null && !userCacheData.isEmpty()) {
+                event.addUserData(userCacheData);
+            } else {
+                event.setFlag(DeNormalizationConfig.getUserLocationJobFlag(), false);
             }
-            return event;
-        } catch (Exception ex) {
-            LOGGER.error(null, format("EXCEPTION WHEN DE-NORMALIZATION OF USER DATA. EVENT: {0}, EXCEPTION:", event), ex);
-            return event;
         }
     }
 

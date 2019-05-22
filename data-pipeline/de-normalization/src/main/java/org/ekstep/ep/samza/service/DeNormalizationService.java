@@ -38,7 +38,7 @@ public class DeNormalizationService {
             }
 
             if (summaryRouteEventPrefix.contains(eid)) {
-                event = getDenormalizedEvent(event);
+                denormEvent(event);
                 sink.toSuccessTopic(event);
             } else if (eid.startsWith("ME_")) {
                 LOGGER.debug(null, "Ignoring as eid is other than WFS");
@@ -46,13 +46,14 @@ public class DeNormalizationService {
             } else {
                 // ignore past data (older than last X months)
                 if (event.isOlder(config.ignorePeriodInMonths())) {
+                    sink.incExpiredEventCount();
                     LOGGER.debug(null, "Ignoring as ets is older than N months");
                     sink.toFailedTopic(event, "older than " + config.ignorePeriodInMonths() + " months");
                 } else if ("LOG".equals(eid) && !"api_access".equalsIgnoreCase(event.edataType())) {
                     LOGGER.debug(null, "Ignoring as edata_type is other than 'api_access' for LOG events");
                     sink.incrementSkippedCount(event);
                 } else {
-                    event = getDenormalizedEvent(event);
+                    denormEvent(event);
                     sink.toSuccessTopic(event);
                 }
             }
@@ -62,31 +63,22 @@ public class DeNormalizationService {
         }
     }
 
-    public Event getDenormalizedEvent(Event event) {
+    private void denormEvent(Event event) {
+
         // correct future dates
         event.compareAndAlterEts();
 
         if ("dialcode".equals(event.objectType())) {
             // add dialcode details to the event where object.type = dialcode
-            event = eventUpdaterFactory.getInstance("dialcode-data-updater")
-                    .update(event, event.getKey("content").get(0), true);
+            eventUpdaterFactory.getInstance("dialcode-data-updater").update(event, event.getKey("content"));
         } else {
             // add content details to the event
-            event = eventUpdaterFactory.getInstance("content-data-updater")
-                    .update(event, event.getKey("content").get(0), true);
+            eventUpdaterFactory.getInstance("content-data-updater").update(event, event.getKey("content"));
         }
         // add user details to the event
-        event = eventUpdaterFactory.getInstance("user-data-updater")
-                .update(event);
-        // add device details to the event
-        event = eventUpdaterFactory.getInstance("device-data-updater")
-                .update(event);
-        // add dialcode details to the event only for SEARCH event
-        event = eventUpdaterFactory.getInstance("dialcode-data-updater")
-                .update(event, event.getKey("dialcode"), true);
+        eventUpdaterFactory.getInstance("user-data-updater").update(event);
 
-        // Update version to 3.1
-        event.updateVersion();
-        return event;
+        // add device details to the event
+        eventUpdaterFactory.getInstance("device-data-updater").update(event);
     }
 }

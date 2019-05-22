@@ -4,32 +4,17 @@ import org.apache.samza.config.Config;
 import org.ekstep.ep.samza.core.JobMetrics;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ContentDataCache extends DataCache {
 
-    public ContentDataCache(Config config, RedisConnect redisConnect, JobMetrics metrics) {
+    public ContentDataCache(Config config, JobMetrics metrics) {
 
-        List<String> defaultList = new ArrayList<>();
-        defaultList.add("name");
-        defaultList.add("objectType");
-        defaultList.add("contentType");
-        defaultList.add("mediaType");
-        defaultList.add("language");
-        defaultList.add("medium");
-        defaultList.add("mimeType");
-        defaultList.add("framework");
-        defaultList.add("board");
-        defaultList.add("status");
-        defaultList.add("pkgVersion");
-        defaultList.add("lastSubmittedOn");
-        defaultList.add("lastUpdatedOn");
-        defaultList.add("lastPublishedOn");
+        super(config.getList("content.metadata.fields", Arrays.asList("name", "objectType", "contentType", "mediaType", "language", "medium", "mimeType", "framework", "board", "status", "pkgVersion", "lastSubmittedOn", "lastUpdatedOn", "lastPublishedOn")));
         this.databaseIndex = config.getInt("redis.contentDB.index", 2);
-        this.redisConnect = redisConnect;
+        this.redisConnect = new RedisConnect(config);
         this.redisConnection = this.redisConnect.getConnection(databaseIndex);
-        this.fieldsList = config.getList("content.metadata.fields", defaultList);
         this.metrics = metrics;
-
     }
 }

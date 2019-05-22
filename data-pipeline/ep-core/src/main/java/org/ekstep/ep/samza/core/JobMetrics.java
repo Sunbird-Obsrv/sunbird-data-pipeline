@@ -34,6 +34,7 @@ public class JobMetrics {
     private final Counter userCacheHitCount;
     private final Counter deviceDbErrorCount;
     private final Counter userDbErrorCount;
+    private final Counter expiredEventCount;
     private TaskContext context;
     private int partition;
     private HashMap<String,Long> offsetMap = new HashMap<>();
@@ -61,6 +62,7 @@ public class JobMetrics {
         userDbHitCount = metricsRegistry.newCounter(getClass().getName(), "user-db-hit-count");
         deviceDbErrorCount = metricsRegistry.newCounter(getClass().getName(), "device-db-error-count");
         userDbErrorCount = metricsRegistry.newCounter(getClass().getName(), "user-db-error-count");
+        expiredEventCount = metricsRegistry.newCounter(getClass().getName(), "expired-event-count");
         jobName = jName;
         this.context = context;
     }
@@ -84,6 +86,7 @@ public class JobMetrics {
         userCacheHitCount.clear();
         deviceDbErrorCount.clear();
         userDbErrorCount.clear();
+        expiredEventCount.clear();
     }
 
     public void incSuccessCounter() {
@@ -139,6 +142,8 @@ public class JobMetrics {
     public void incUserDbHitCount() {
         userDbHitCount.inc();
     }
+
+    public void incExpiredEventCount() { expiredEventCount.inc(); }
 
     public void setOffset(SystemStreamPartition systemStreamPartition, String offset) {
         String offsetMapKey = String.format("%s%s", systemStreamPartition.getStream(),

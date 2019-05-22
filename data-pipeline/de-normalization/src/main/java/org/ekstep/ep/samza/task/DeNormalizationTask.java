@@ -41,15 +41,12 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     private UserDataCache userCache;
     private ContentDataCache contentCache;
     private DialCodeDataCache dialcodeCache;
-    private RedisConnect redisPool;
-    private CassandraConnect cassandraConnect;
     private JobMetrics metrics;
     private DeNormalizationService service;
 
     public DeNormalizationTask(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache,
-                               ContentDataCache contentCache, CassandraConnect cassandraConnect,
-                               DialCodeDataCache dialcodeCache, JobMetrics jobMetrics)  {
-        init(config, context, deviceCache, userCache, contentCache, cassandraConnect, dialcodeCache, jobMetrics);
+                               ContentDataCache contentCache, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics)  {
+        init(config, context, deviceCache, userCache, contentCache, dialcodeCache, jobMetrics);
     }
 
     public DeNormalizationTask() {
@@ -59,31 +56,18 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     @SuppressWarnings("unchecked")
     @Override
     public void init(Config config, TaskContext context) {
-        init(config, context, deviceCache, userCache, contentCache, cassandraConnect, dialcodeCache, metrics);
+        init(config, context, deviceCache, userCache, contentCache, dialcodeCache, metrics);
     }
 
 
-    public void init(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache, CassandraConnect cassandraConnect, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics) {
+    public void init(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics) {
+
         this.config = new DeNormalizationConfig(config);
         this.metrics = jobMetrics == null ? new JobMetrics(context, this.config.jobName()) : jobMetrics;
-        this.redisPool = new RedisConnect(config);
-
-        this.cassandraConnect = cassandraConnect == null ? new CassandraConnect(config): cassandraConnect;
-
-        this.deviceCache =
-                deviceCache == null ? new DeviceDataCache(config, this.redisPool, this.cassandraConnect, metrics): deviceCache;
-        String test = config.get("middleware.cassandra.host", "127.0.0.1");
-        List<String> cassandraHosts = Arrays.asList(config.get("middleware.cassandra.host", "127.0.0.1").split(","));
-        this.userCache =
-                userCache == null ? new UserDataCache(config, this.redisPool,
-                        new CassandraConnect(cassandraHosts, config.getInt("middleware.cassandra.port", 9042)), metrics):
-                        userCache;
-
-        this.contentCache =
-                contentCache == null ? new ContentDataCache(config, this.redisPool, metrics) : contentCache;
-
-        this.dialcodeCache =
-                dialcodeCache == null ? new DialCodeDataCache(config, this.redisPool, metrics) : dialcodeCache;
+        this.deviceCache = deviceCache == null ? new DeviceDataCache(config, metrics): deviceCache;
+        this.userCache = userCache == null ? new UserDataCache(config, metrics): userCache;
+        this.contentCache = contentCache == null ? new ContentDataCache(config, metrics) : contentCache;
+        this.dialcodeCache = dialcodeCache == null ? new DialCodeDataCache(config, metrics) : dialcodeCache;
 
         service = new DeNormalizationService(this.config, new EventUpdaterFactory(this.contentCache, this.userCache, this.deviceCache, this.dialcodeCache));
     }

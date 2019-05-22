@@ -6,25 +6,17 @@ import org.ekstep.ep.samza.util.DialCodeDataCache;
 import org.ekstep.ep.samza.util.UserDataCache;
 
 
-public class EventUpdaterFactory implements  AbstractFactory {
+public class EventUpdaterFactory implements AbstractFactory {
+
     private ContentDataUpdater contentDataUpdater;
     private UserDataUpdater userDataUpdater;
     private DialcodeDataUpdater dialCodeDataUpdater;
     private DeviceDataUpdater deviceDataUpdater;
 
-    private ContentDataCache contentDataCache;
-    private UserDataCache userDataCache;
-    private DialCodeDataCache dialCodeDataCache;
-    private DeviceDataCache deviceDataCache;
-
     public EventUpdaterFactory(ContentDataCache contentDataCache,
-                        UserDataCache userDataCache,
-                        DeviceDataCache deviceDataCache,
-                        DialCodeDataCache dialCodeDataCache) {
-        this.contentDataCache = contentDataCache;
-        this.userDataCache = userDataCache;
-        this.deviceDataCache = deviceDataCache;
-        this.dialCodeDataCache = dialCodeDataCache;
+                               UserDataCache userDataCache,
+                               DeviceDataCache deviceDataCache,
+                               DialCodeDataCache dialCodeDataCache) {
 
         this.contentDataUpdater = new ContentDataUpdater(contentDataCache);
         this.userDataUpdater = new UserDataUpdater(userDataCache);
@@ -36,21 +28,13 @@ public class EventUpdaterFactory implements  AbstractFactory {
 
         switch (type) {
             case "content-data-updater":
-                if (this.contentDataUpdater == null)
-                    return new ContentDataUpdater(contentDataCache);
-                else return this.contentDataUpdater;
+                return this.contentDataUpdater;
             case "user-data-updater":
-                if (this.userDataUpdater == null)
-                    return new UserDataUpdater(userDataCache);
-                else return this.userDataUpdater;
+                return this.userDataUpdater;
             case "device-data-updater":
-                if (this.deviceDataUpdater == null)
-                    return new DeviceDataUpdater(deviceDataCache);
-                else return this.deviceDataUpdater;
+                return this.deviceDataUpdater;
             case "dialcode-data-updater":
-                if (this.dialCodeDataUpdater == null)
-                    return new DialcodeDataUpdater(dialCodeDataCache);
-                else return this.dialCodeDataUpdater;
+                return this.dialCodeDataUpdater;
             default:
                 return null;
         }

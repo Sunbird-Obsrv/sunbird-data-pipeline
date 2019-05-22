@@ -71,9 +71,6 @@ public class DeDuplicationTask implements StreamTask, InitableTask, WindowableTa
 			DeDuplicationSink sink = new DeDuplicationSink(collector, metrics, config);
 
 			service.process(source, sink);
-		} catch (JedisException ex) {
-			LOGGER.error("", "Stopping samza job due to redis issue");
-			throw new JedisException(ex);
 		} catch (Exception ex) {
 			LOGGER.error("", "Deduplication failed: " + ex.getMessage());
 			Object event = envelope.getMessage();

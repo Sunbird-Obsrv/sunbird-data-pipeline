@@ -11,10 +11,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class UserDataCache extends DataCache {
 
@@ -27,29 +24,23 @@ public class UserDataCache extends DataCache {
     private RedisConnect redisPool;
     private Jedis redisConnection;
     private int locationDbKeyExpiryTimeInSeconds;
-    private Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+    private Type mapType = new TypeToken<Map<String, Object>>() {
+    }.getType();
     private Gson gson = new Gson();
     private JobMetrics metrics;
     private int databaseIndex;
 
-    public UserDataCache(Config config, RedisConnect redisPool, CassandraConnect cassandraConnect, JobMetrics metrics) {
-        List<String> defaultList = new ArrayList<>();
-        defaultList.add("usertype");
-        defaultList.add("grade");
-        defaultList.add("language");
-        defaultList.add("subject");
-        defaultList.add("state");
-        defaultList.add("district");
-
+    public UserDataCache(Config config, JobMetrics metrics) {
+        super(config.getList("user.metadata.fields", Arrays.asList("usertype", "grade", "language", "subject", "state", "district")));
         this.metrics = metrics;
-        this.fieldsList = config.getList("user.metadata.fields", defaultList);
         this.databaseIndex = config.getInt("redis.database.userLocationStore.id", 1);
-        this.redisPool = redisPool;
+        this.redisPool = new RedisConnect(config);
         this.redisConnection = this.redisPool.getConnection(databaseIndex);
         this.cassandra_db = config.get("middleware.cassandra.keyspace", "sunbird");
         this.cassandra_user_table = config.get("middleware.cassandra.user_table", "user");
         this.cassandra_location_table = config.get("middleware.cassandra.location_table", "location");
-        this.cassandraConnection = cassandraConnect;
+        List<String> cassandraHosts = Arrays.asList(config.get("middleware.cassandra.host", "127.0.0.1").split(","));
+        this.cassandraConnection = new CassandraConnect(cassandraHosts, config.getInt("middleware.cassandra.port", 9042));
         this.locationDbKeyExpiryTimeInSeconds = config.getInt("location.db.redis.key.expiry.seconds", 86400);
 
     }
@@ -81,12 +72,12 @@ public class UserDataCache extends DataCache {
 
             if (!userLocationMap.isEmpty()) {
                 metrics.incUserDbHitCount();
-                userDataMap.putAll(fetchFallbackUserLocationFromDB(userId));
+                userDataMap.putAll(userLocationMap);
                 addToCache(userId, gson.toJson(userDataMap));
             }
         }
 
-        if(userDataMap == null || userDataMap.isEmpty()) {
+        if (userDataMap == null || userDataMap.isEmpty()) {
             metrics.incNoDataCount();
         }
         return userDataMap;
@@ -104,14 +95,9 @@ public class UserDataCache extends DataCache {
     private Map<String, Object> fetchFallbackUserLocationFromDB(String userId) {
         // if (userId == null) return null;
         Map<String, Object> userLocation = new HashMap<>();
-        try {
-            List<String> locationIds = getUserOrgLocationIds(userId);
-            if (locationIds != null && !locationIds.isEmpty()) {
-                userLocation = getUserLocation(locationIds);
-            }
-        } catch (Exception ex) {
-            LOGGER.error("", "fetchFallbackUserLocationFromDB: Unable to fetch user location " +
-                    "from cassandra! userId: " + userId, ex);
+        List<String> locationIds = getUserOrgLocationIds(userId);
+        if (locationIds != null && !locationIds.isEmpty()) {
+            userLocation = getUserLocation(locationIds);
         }
         return userLocation;
     }
@@ -122,9 +108,8 @@ public class UserDataCache extends DataCache {
                 .from(cassandra_db, cassandra_user_table)
                 .where(QueryBuilder.eq("id", userId))
                 .toString();
-        List<Row> rows = cassandraConnection.execute(locationQuery);
-        if (rows.size() > 0) {
-            Row row = rows.get(0);
+        Row row = cassandraConnection.findOne(locationQuery);
+        if (null != row) {
             locationIds = row.getList("locationids", String.class);
         }
         return locationIds;
@@ -135,7 +120,7 @@ public class UserDataCache extends DataCache {
                 .from(cassandra_db, cassandra_location_table)
                 .where(QueryBuilder.in("id", locationIds))
                 .toString();
-        List<Row> rows = cassandraConnection.execute(resolveLocation);
+        List<Row> rows = cassandraConnection.find(resolveLocation);
         // Location location = new Location();
         Map<String, Object> result = new HashMap<>();
         if (rows.size() > 0) {

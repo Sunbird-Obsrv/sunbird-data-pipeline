@@ -24,12 +24,12 @@ public class DeviceLocationCache {
     private Jedis redisConnection;
     private int databaseIndex;
 
-    public DeviceLocationCache(Config config, RedisConnect redisConnect, JobMetrics metrics) {
+    public DeviceLocationCache(Config config, JobMetrics metrics) {
         this.cassandra_db = config.get("cassandra.keyspace", "device_db");
         this.cassandra_table = config.get("cassandra.device_profile_table", "device_profile");
         this.databaseIndex = config.getInt("redis.database.deviceLocationStore.id", 2);
         this.cassandraConnection = new CassandraConnect(config);
-        this.redisConnect = redisConnect;
+        this.redisConnect = new RedisConnect(config);
         this.redisConnection = this.redisConnect.getConnection(databaseIndex);
         this.locationDbKeyExpiryTimeInSeconds = config.getInt("location.db.redis.key.expiry.seconds", 86400);
         this.cacheUnresolvedLocationExpiryTimeInSeconds = config.getInt("cache.unresolved.location.key.expiry.seconds", 3600);
@@ -44,7 +44,7 @@ public class DeviceLocationCache {
                 location = getLocationFromCache(did);
             } catch(JedisException ex) {
                 LOGGER.error(null, "Reconnecting with Redis store due to exception: ", ex);
-                redisConnect.resetConnection(); // Asumming your redis connection is stale which should not happen
+                redisConnect.resetConnection();
                 this.redisConnection = redisConnect.getConnection(databaseIndex);
                 location = getLocationFromCache(did);
             }
@@ -78,16 +78,13 @@ public class DeviceLocationCache {
     }
 
     public Location getLocationFromDeviceProfileDB(String deviceId) {
-        List<Row> rows;
         Location location = new Location();
         String query =
                 String.format("SELECT device_id, country_code, country, state_code, state, city, state_custom, " +
                                 "state_code_custom, district_custom FROM %s.%s WHERE device_id = '%s'",
                         cassandra_db, cassandra_table, deviceId);
-        rows = cassandraConnection.execute(query);
-        Iterator<Row> iterator = rows.iterator();
-        if (iterator.hasNext()) {
-            Row result = iterator.next();
+        Row result = cassandraConnection.findOne(query);
+        if (null != result) {
             String locationState = result.getString("state");
             if (locationState != null && !locationState.isEmpty()) {
                 location.setCountryCode(result.getString("country_code"));

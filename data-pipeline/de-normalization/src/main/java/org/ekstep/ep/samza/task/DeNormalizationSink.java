@@ -48,4 +48,8 @@ public class DeNormalizationSink extends BaseSink {
 		metrics.incSkippedCounter();
 	}
 
+	public void incExpiredEventCount() {
+		metrics.incExpiredEventCount();
+	}
+
 }

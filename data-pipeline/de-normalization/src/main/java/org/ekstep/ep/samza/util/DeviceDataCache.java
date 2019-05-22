@@ -9,10 +9,7 @@ import org.ekstep.ep.samza.core.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DeviceDataCache {
 
@@ -20,7 +17,7 @@ public class DeviceDataCache {
 
     private String cassandra_db;
     private String cassandra_table;
-    private CassandraConnect cassandraConnetion;
+    private CassandraConnect cassandraConnection;
     private Config config;
     private RedisConnect redisPool;
     private Jedis redisConnection;
@@ -28,15 +25,15 @@ public class DeviceDataCache {
     private JobMetrics metrics;
     private int databaseIndex;
 
-    public DeviceDataCache(Config config, RedisConnect redisPool, CassandraConnect cassandraConnetion, JobMetrics metrics) {
+    public DeviceDataCache(Config config, JobMetrics metrics) {
         this.config = config;
         this.metrics = metrics;
         this.databaseIndex = config.getInt("redis.deviceDB.index", 0);
-        this.redisPool = redisPool;
+        this.redisPool = new RedisConnect(config);
         this.redisConnection = this.redisPool.getConnection(databaseIndex);
         this.cassandra_db = config.get("cassandra.keyspace", "device_db");
         this.cassandra_table = config.get("cassandra.device_profile_table", "device_profile");
-        this.cassandraConnetion = cassandraConnetion;
+        this.cassandraConnection = new CassandraConnect(config);
     }
 
     /*
@@ -108,7 +105,7 @@ public class DeviceDataCache {
                     deviceDataMap = getDeviceDataFromDB(did);
                 } catch (Exception ex) {
                     metrics.incDeviceDBErrorCount();
-                    cassandraConnetion.reconnect();
+                    cassandraConnection.reconnect();
                     deviceDataMap = getDeviceDataFromDB(did);
                 }
             }
@@ -141,14 +138,12 @@ public class DeviceDataCache {
         String query =
                 String.format("SELECT device_id, device_spec, uaspec, first_access FROM %s.%s WHERE device_id = '%s'",
                         cassandra_db, cassandra_table, did);
-        List<Row> rows = cassandraConnetion.execute(query);
+        Row row = cassandraConnection.findOne(query);
         Map<String, String> deviceSpec;
         Map<String, String> uaSpec;
         Long first_access = null;
         Map<String, Object> deviceDataMap = new HashMap<>();
-        Iterator<Row> iterator = rows.iterator();
-        if (iterator.hasNext()) {
-            Row row = iterator.next();
+        if (null != row) {
             if (row.isNull("device_spec")) {
                 deviceSpec = new HashMap<>();
             } else {

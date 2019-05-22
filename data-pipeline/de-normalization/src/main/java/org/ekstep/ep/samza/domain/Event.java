@@ -138,43 +138,34 @@ public class Event {
         return ids;
     }
 
-    public List<String> getKey(String type) {
-        List<String> keyList = new ArrayList<String>();
+    public String getKey(String type) {
         switch (type) {
             case "device":
-                keyList.add(did());
-                return keyList;
+                return did();
             case "user":
-                if(actorType() != null && actorType().equalsIgnoreCase("system")) {
-                    keyList.add("");
-                    return keyList;
+                if("system".equalsIgnoreCase(actorType())) {
+                    return "";
                 }
                 else {
-                    keyList.add(actorId());
-                    return keyList;
+                    return actorId();
                 }
             case "content":
-                keyList.add(objectID());
-                return keyList;
-            case "dialcode":
-                return dialCode();
+                return objectID();
             default:
-                keyList.add("");
-                return keyList;
-
+                return "";
         }
     }
 
-    public void addMetaData(String type, List<Map> newData) {
+    public void addMetaData(String type, Map newData) {
         switch (type) {
             case "device":
-                addDeviceData(newData.get(0));
+                addDeviceData(newData);
                 break;
             case "user":
-                addUserData(newData.get(0));
+                addUserData(newData);
                 break;
             case "content":
-                addContentData(newData.get(0));
+                addContentData(newData);
                 break;
             case "dialcode":
                 addDialCodeData(newData);
@@ -224,7 +215,7 @@ public class Event {
         setFlag(DeNormalizationConfig.getContentLocationJobFlag(), true);
     }
 
-    public void addDialCodeData(List<Map> newData) {
+    public void addDialCodeData(Map newData) {
         telemetry.add(path.dialCodeData(), newData);
         setFlag(DeNormalizationConfig.getDialCodeLocationJobFlag(), true);
     }
@@ -240,17 +231,6 @@ public class Event {
         NullableValue<Map<String, Object>> telemetryFlag = telemetry.read(path.flags());
         Map<String, Object> flags = telemetryFlag.isNull() ? new HashMap<>() : telemetryFlag.value();
         return flags;
-    }
-
-    public void updateVersion() {
-        Map flags = getFlag();
-        Boolean telemetryDenormalised = (((Boolean) flags.getOrDefault("dialcode_data_retrieved", false))
-                || ((Boolean) flags.getOrDefault("device_data_retrieved", false))
-                || ((Boolean) flags.getOrDefault("content_data_retrieved", false))
-                || ((Boolean) flags.getOrDefault("user_data_retrieved", false)));
-        if (telemetryDenormalised) {
-            telemetry.add(path.ver(), getUpgradedVersion());
-        }
     }
 
     public String getUpgradedVersion() {

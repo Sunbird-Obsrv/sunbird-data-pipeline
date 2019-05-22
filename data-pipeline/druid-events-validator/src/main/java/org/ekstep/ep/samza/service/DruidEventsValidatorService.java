@@ -12,6 +12,7 @@ import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.task.DruidEventsValidatorConfig;
 import org.ekstep.ep.samza.task.DruidEventsValidatorSink;
 import org.ekstep.ep.samza.task.DruidEventsValidatorSource;
+import org.ekstep.ep.samza.util.SchemaValidator;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,9 +23,11 @@ import static java.text.MessageFormat.format;
 public class DruidEventsValidatorService {
     static Logger LOGGER = new Logger(DruidEventsValidatorService.class);
     private final DruidEventsValidatorConfig config;
+    private final SchemaValidator schemaValidator;
 
-    public DruidEventsValidatorService(DruidEventsValidatorConfig config) {
+    public DruidEventsValidatorService(DruidEventsValidatorConfig config, SchemaValidator schemaValidator) {
         this.config = config;
+        this.schemaValidator = schemaValidator;
     }
 
     public void process(DruidEventsValidatorSource source, DruidEventsValidatorSink sink, JsonSchemaFactory jsonSchemaFactory) {
@@ -32,19 +35,8 @@ public class DruidEventsValidatorService {
         try {
             event = source.getEvent();
             sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
-            String schema = getSchema(event);
-            if (schema == null) {
-                LOGGER.info("SCHEMA FILE DOESN'T EXIST HENCE SKIPPING THE VALIDATION PROCESS AND SENDING TO SUCCESS TOPIC", event.mid());
-                event.markSkipped();
-                sink.toSuccessTopic(event);
-                return;
-            }
-            JsonNode schemaJson = JsonLoader.fromString(schema);
-            JsonNode eventJson = JsonLoader.fromString(event.getJson());
-            JsonSchema jsonSchema = jsonSchemaFactory.getJsonSchema(schemaJson);
-            ProcessingReport report = jsonSchema.validate(eventJson);
+            ProcessingReport report = schemaValidator.validate(event);
             if (report.isSuccess()) {
-                LOGGER.info("VALIDATION SUCCESS", event.mid());
                 event.markSuccess();
                 sink.toSuccessTopic(event);
             } else {
@@ -70,30 +62,4 @@ public class DruidEventsValidatorService {
         return pointer[1].substring(0, pointer[1].length() - 1);
     }
 
-    private String getSchema(Event event) {
-        String telemetrySchemaFilePath;
-        String summaryEventSchemaFilepath;
-        String schema = "";
-        InputStream is = null;
-        try {
-            telemetrySchemaFilePath = MessageFormat.format("{0}/{1}", config.telemetrySchemaPath(), event.schemaName());
-            summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}", config.summarySchemaPath(), event.schemaName());
-            is = this.getClass().getClassLoader().getResourceAsStream(event.isSummaryEvent() ? summaryEventSchemaFilepath : telemetrySchemaFilePath);
-            if (is == null) {
-                telemetrySchemaFilePath = MessageFormat.format("{0}/{1}", config.telemetrySchemaPath(), config.defaultSchemafile());
-                summaryEventSchemaFilepath = MessageFormat.format("{0}/{1}", config.summarySchemaPath(), config.defaultSchemafile());
-                is = this.getClass().getClassLoader().getResourceAsStream(event.isSummaryEvent() ? summaryEventSchemaFilepath : telemetrySchemaFilePath);
-            }
-            schema = new String(ByteStreams.toByteArray(is));
-        } catch (IOException e) {
-            LOGGER.error(null, e.getMessage());
-        } finally {
-            try {
-                if (is != null) is.close();
-            } catch (IOException error) {
-                LOGGER.error(null, error.getMessage());
-            }
-        }
-        return schema;
-    }
 }

@@ -46,36 +46,10 @@ public class TelemetryLocationUpdaterService {
 			metrics.incProcessedMessageCount();
 		} else {
 			event = updateEvent(event, location);
-			metrics.incUnprocessedMessageCount(); // Isn't this skippedCount?
+			metrics.incUnprocessedMessageCount();
 		}
 		return event;
 	}
-
-	/*
-	private Event updateEventWithUserLocation(Event event) {
-		try {
-			String actorId = event.actorid();
-			String actorType = event.actortype();
-
-			if (actorId != null && actorType.equalsIgnoreCase("USER")) {
-				Location location = locationEngine.getLocationByUser(actorId);
-				if (location == null) {
-					event.addUserLocation(new Location(null, null, null, "", null, ""));
-				} else {
-					event.addUserLocation(location);
-				}
-			}
-			return event;
-		} catch(Exception ex) {
-			LOGGER.error(null,
-					format("EXCEPTION. RESOLVING USER LOCATION. EVENT: {0}, EXCEPTION:",
-							event),
-					ex);
-			event.addUserLocation(new Location(null, null, null, "", null, ""));
-			return event;
-		}
-	}
-	*/
 
 	public Event updateEvent(Event event, Location location) {
 		event.removeEdataLoc();
