@@ -1,0 +1,16 @@
+input {
+    file {
+        path => "{{device_register_api_metrics_log_path}}"
+        start_position => "end"
+        sincedb_write_interval => 10
+    }
+}
+output {
+  kafka {
+    bootstrap_servers => "{{kafka_brokers}}"
+    topic_id => "{{kafka_topic_prefix}}pipeline_metrics"
+    codec => line {
+        format => "%{message}"
+    }
+  }
+}
