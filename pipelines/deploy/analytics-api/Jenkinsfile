@@ -52,6 +52,12 @@ node() {
                     archiveArtifacts artifacts: "${artifact}", fingerprint: true, onlyIfSuccessful: true
                     archiveArtifacts artifacts: 'metadata.json', onlyIfSuccessful: true
                     currentBuild.description = "${values.artifact_version}"
+                    ansiblePlaybook = "${currentWs}/ansible/analyticsapi_logstash.yml"
+                    ansibleExtraArgs = " --vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                    values.put('ansiblePlaybook', ansiblePlaybook)
+                    values.put('ansibleExtraArgs', ansibleExtraArgs)
+                    println values
+                    ansible_playbook_run(values)
                 }
             }
         }
