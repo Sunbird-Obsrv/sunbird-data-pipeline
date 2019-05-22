@@ -1,0 +1,16 @@
+
+- name: Copy the schema file
+  template: src="{{item}}" dest="{{druid_home}}/{{item}}.json"
+  with_items: "{{druid_schema}}"
+  tags: start-task
+
+- name: Start the task
+  shell: 'curl -X POST -H "Content-Type:application/json" -d @{{druid_home}}/{{item}}.json http://{{overlord_host}}:8090/druid/indexer/v1/supervisor'
+  with_items: "{{druid_schema}}"
+  become_user: "{{remote_user}}" 
+  tags: start-task
+
+- name: stop the task
+  shell: 'curl -X POST http://{{overlord_host}}:8090/druid/indexer/v1/supervisor/{{item}}/terminate'
+  with_items: "{{event_types}}"
+  tags: stop-task
