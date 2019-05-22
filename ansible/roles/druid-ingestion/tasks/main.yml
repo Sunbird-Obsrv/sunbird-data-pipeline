@@ -9,11 +9,6 @@
   with_items: "{{druid_schema}}"
   become_user: "{{remote_user}}" 
   tags: start-task
-  register: output
-
-- name: Printing the output
-  debug:
-    - var: output
 
 - name: stop the task
   shell: 'curl -X POST http://{{overlord_host}}:8090/druid/indexer/v1/supervisor/{{item}}/terminate'
