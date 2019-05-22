@@ -24,3 +24,6 @@ kafka_sink_topic: "ecosystem.sink"
 private_exhaust_topic: "telemetry.private_exhaust"
 public_exhaust_topic: "telemetry.public_exhaust"
 public_data_exhaust_dir_prefix: 4208ab995984d222b59299e5103d350a842d8d41
+
+#Device register API metrics
+device_register_api_metrics_log_path: "/mnt/data/analytics/logs/api-metrics"
