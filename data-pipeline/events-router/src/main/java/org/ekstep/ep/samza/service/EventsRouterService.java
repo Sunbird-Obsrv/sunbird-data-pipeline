@@ -38,14 +38,14 @@ public class EventsRouterService {
 					LOGGER.info(event.id(), "EVENT WITHOUT CHECKSUM & MID, PASSING THROUGH : {}", event);
 					event.markSkipped();
 				}
-				if (!deDupEngine.isUniqueEvent(checksum, config.dupStore())) {
+				if (!deDupEngine.isUniqueEvent(checksum)) {
 					LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
 					event.markDuplicate();
 					sink.toDuplicateTopic(event);
 					return;
 				}
 				LOGGER.info(event.id(), "ADDING EVENT CHECKSUM TO STORE");
-				deDupEngine.storeChecksum(checksum, config.dupStore(), config.getExpirySeconds());
+				deDupEngine.storeChecksum(checksum);
 			}
 
 			

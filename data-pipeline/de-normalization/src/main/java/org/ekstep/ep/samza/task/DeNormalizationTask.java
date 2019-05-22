@@ -30,20 +30,25 @@ import org.ekstep.ep.samza.domain.EventUpdaterFactory;
 import org.ekstep.ep.samza.service.DeNormalizationService;
 import org.ekstep.ep.samza.util.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
 
-    static Logger LOGGER = new Logger(DeNormalizationTask.class);
+    private static Logger LOGGER = new Logger(DeNormalizationTask.class);
     private DeNormalizationConfig config;
     private DeviceDataCache deviceCache;
     private UserDataCache userCache;
     private ContentDataCache contentCache;
     private DialCodeDataCache dialcodeCache;
-    private RedisConnect redisConnect;
+    private RedisConnect redisPool;
     private CassandraConnect cassandraConnect;
     private JobMetrics metrics;
     private DeNormalizationService service;
 
-    public DeNormalizationTask(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache, CassandraConnect cassandraConnect, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics)  {
+    public DeNormalizationTask(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache,
+                               ContentDataCache contentCache, CassandraConnect cassandraConnect,
+                               DialCodeDataCache dialcodeCache, JobMetrics jobMetrics)  {
         init(config, context, deviceCache, userCache, contentCache, cassandraConnect, dialcodeCache, jobMetrics);
     }
 
@@ -61,50 +66,33 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     public void init(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache, CassandraConnect cassandraConnect, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics) {
         this.config = new DeNormalizationConfig(config);
         this.metrics = jobMetrics == null ? new JobMetrics(context, this.config.jobName()) : jobMetrics;
-        this.redisConnect = new RedisConnect(config);
+        this.redisPool = new RedisConnect(config);
 
-        this.cassandraConnect =
-                cassandraConnect == null ?
-                        new CassandraConnect(config)
-                        : cassandraConnect;
+        this.cassandraConnect = cassandraConnect == null ? new CassandraConnect(config): cassandraConnect;
 
         this.deviceCache =
-                deviceCache == null ?
-                        new DeviceDataCache(config, this.redisConnect, this.cassandraConnect)
-                        : deviceCache;
-
+                deviceCache == null ? new DeviceDataCache(config, this.redisPool, this.cassandraConnect, metrics): deviceCache;
+        String test = config.get("middleware.cassandra.host", "127.0.0.1");
+        List<String> cassandraHosts = Arrays.asList(config.get("middleware.cassandra.host", "127.0.0.1").split(","));
         this.userCache =
-                userCache == null ?
-                        new UserDataCache(config, this.redisConnect)
-                        : userCache;
+                userCache == null ? new UserDataCache(config, this.redisPool,
+                        new CassandraConnect(cassandraHosts, config.getInt("middleware.cassandra.port", 9042)), metrics):
+                        userCache;
 
         this.contentCache =
-                contentCache == null ?
-                        new ContentDataCache(config, this.redisConnect)
-                        : contentCache;
+                contentCache == null ? new ContentDataCache(config, this.redisPool, metrics) : contentCache;
 
         this.dialcodeCache =
-                dialcodeCache == null ?
-                        new DialCodeDataCache(config, this.redisConnect)
-                        : dialcodeCache;
+                dialcodeCache == null ? new DialCodeDataCache(config, this.redisPool, metrics) : dialcodeCache;
 
         service = new DeNormalizationService(this.config, new EventUpdaterFactory(this.contentCache, this.userCache, this.deviceCache, this.dialcodeCache));
     }
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator taskCoordinator) {
-        try {
-            DeNormalizationSource source = new DeNormalizationSource(envelope);
-            DeNormalizationSink sink = new DeNormalizationSink(collector, metrics, config);
-
-            service.process(source, sink);
-        } catch (Exception ex) {
-            LOGGER.error("", "DeNormalization failed: " + ex.getMessage());
-            Object event = envelope.getMessage();
-            if (event != null) {
-                LOGGER.info("", "FAILED_EVENT: " + event);
-            }
-        }
+        DeNormalizationSource source = new DeNormalizationSource(envelope);
+        DeNormalizationSink sink = new DeNormalizationSink(collector, metrics, config);
+        service.process(source, sink);
     }
 
     @Override

@@ -88,7 +88,7 @@ public class EventsRouterConfig {
         return dupStore;
     }
 
-    public int getExpirySeconds() {
+    public int expirySeconds() {
         return expirySeconds;
     }
 }

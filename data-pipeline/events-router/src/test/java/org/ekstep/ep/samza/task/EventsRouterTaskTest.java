@@ -82,7 +82,7 @@ public class EventsRouterTaskTest {
 	public void shouldRouteSummaryEventsToSummaryTopic() throws Exception {
 
 		stub(configMock.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY")).toReturn("ME_WORKFLOW_SUMMARY");
-		when(deDupEngineMock.isUniqueEvent(anyString(), anyInt())).thenReturn(true);
+		when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
 		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.WORKFLOW_SUMMARY_EVENT);
 		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
@@ -93,7 +93,7 @@ public class EventsRouterTaskTest {
 	public void shouldRouteTelemetryEventsToTelemetryTopic() throws Exception {
 
 		stub(configMock.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY")).toReturn("ME_WORKFLOW_SUMMARY");
-		when(deDupEngineMock.isUniqueEvent(anyString(), anyInt())).thenReturn(true);
+		when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
 		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.START_EVENT);
 		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
@@ -105,7 +105,7 @@ public class EventsRouterTaskTest {
 	public void shouldSendEventToFailedTopicIfEventIsNotParseable() throws Exception {
 
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.UNPARSABLE_START_EVENT);
-		when(deDupEngineMock.isUniqueEvent(anyString(), anyInt())).thenReturn(true);
+		when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
 		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);
 		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), MALFORMED_TOPIC)));
@@ -115,7 +115,7 @@ public class EventsRouterTaskTest {
 	public void shouldSendEventToMalformedTopicIfEventIsAnyRandomString() throws Exception {
 
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.ANY_STRING);
-		when(deDupEngineMock.isUniqueEvent(anyString(), anyInt())).thenReturn(true);
+		when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
 		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);
 		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), MALFORMED_TOPIC)));
@@ -125,7 +125,7 @@ public class EventsRouterTaskTest {
 	public void shouldSendEventToDuplicateTopic() throws Exception {
 
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.START_EVENT);
-		when(deDupEngineMock.isUniqueEvent(anyString(), anyInt())).thenReturn(false);
+		when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(false);
 		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);
 		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), DUPLICATE_TOPIC)));
@@ -149,7 +149,7 @@ public class EventsRouterTaskTest {
 
 		stub(configMock.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY")).toReturn("ME_WORKFLOW_SUMMARY");
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.LOG_EVENT);
-		when(deDupEngineMock.isUniqueEvent(anyString(), anyInt())).thenReturn(true);
+		when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
 		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);
 		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), LOG_EVENTS_TOPIC)));

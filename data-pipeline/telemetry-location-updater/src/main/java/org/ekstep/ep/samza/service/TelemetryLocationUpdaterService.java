@@ -7,87 +7,52 @@ import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.domain.Location;
 import com.google.gson.JsonSyntaxException;
-import org.ekstep.ep.samza.engine.LocationEngine;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterConfig;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterSink;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterSource;
-
-import java.io.IOException;
-
+import org.ekstep.ep.samza.util.DeviceLocationCache;
 
 public class TelemetryLocationUpdaterService {
 	
 	private static Logger LOGGER = new Logger(TelemetryLocationUpdaterService.class);
-	// private final TelemetryLocationUpdaterConfig config;
-	private LocationEngine locationEngine;
+	private DeviceLocationCache deviceLocationCache;
 	private JobMetrics metrics;
 
 
-	public TelemetryLocationUpdaterService(TelemetryLocationUpdaterConfig config, LocationEngine locationEngine, JobMetrics metrics) {
-		// this.config = config;
-		this.locationEngine = locationEngine;
+	public TelemetryLocationUpdaterService(DeviceLocationCache deviceLocationCache, JobMetrics metrics) {
+		this.deviceLocationCache = deviceLocationCache;
 		this.metrics = metrics;
 	}
 
 	public void process(TelemetryLocationUpdaterSource source, TelemetryLocationUpdaterSink sink) {
-		Event event = null;
 		try {
-			event = source.getEvent();
+			Event event = source.getEvent();
 			sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
-			event = updateEventWithIPLocation(event);
-			// add user location details to the event
-			event = updateEventWithUserLocation(event);
+			// Add device location details to the event
+			updateEventWithIPLocation(event);
 			sink.toSuccessTopic(event);
 		} catch (JsonSyntaxException e) {
 			LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
 			sink.toMalformedTopic(source.getMessage());
-		} catch (Exception e) {
-			LOGGER.error(null,
-					format("EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO EXCEPTION TOPIC. EVENT: {0}, EXCEPTION:",
-							event),
-					e);
-			sink.toErrorTopic(event, e.getMessage());
 		}
 	}
 
-	private Event updateEventWithIPLocation(Event eventObj) {
-		Event event = eventObj;
-		Location location;
-		try {
-			String did = event.did();
-			String channel = event.channel();
-			if (did != null && !did.isEmpty()) {
-				location = locationEngine.locationCache().getLocationForDeviceId(event.did(), channel);
-
-				if (location != null) {
-					event = updateEvent(event, location, true);
-				} else {
-					// add empty location
-					location = new Location();
-					event = updateEvent(event, location, false);
-				}
-				metrics.incProcessedMessageCount();
-			} else {
-				// add empty location
-				location = new Location();
-				event = updateEvent(event, location, false);
-				metrics.incUnprocessedMessageCount();
-			}
-			return event;
-		} catch(Exception ex) {
-			LOGGER.error(null,
-					format("EXCEPTION. RESOLVING IP LOCATION. EVENT: {0}, EXCEPTION:",
-							event),
-					ex);
-			location = new Location();
-			event = updateEvent(event, location, false);
-			metrics.incUnprocessedMessageCount();
-			return event;
+	private Event updateEventWithIPLocation(Event event) {
+		String did = event.did();
+		Location location = null;
+		if (did != null && !did.isEmpty()) {
+			location = deviceLocationCache.getLocationForDeviceId(event.did());
+			updateEvent(event, location);
+			metrics.incProcessedMessageCount();
+		} else {
+			event = updateEvent(event, location);
+			metrics.incUnprocessedMessageCount(); // Isn't this skippedCount?
 		}
+		return event;
 	}
 
-	private Event updateEventWithUserLocation(Event eventObj) {
-		Event event = eventObj;
+	/*
+	private Event updateEventWithUserLocation(Event event) {
 		try {
 			String actorId = event.actorid();
 			String actorType = event.actortype();
@@ -95,12 +60,7 @@ public class TelemetryLocationUpdaterService {
 			if (actorId != null && actorType.equalsIgnoreCase("USER")) {
 				Location location = locationEngine.getLocationByUser(actorId);
 				if (location == null) {
-					location = locationEngine.getLocation(event.channel());
-					if (location == null) {
-						event.addUserLocation(new Location(null, null, null, "", null, ""));
-					} else {
-						event.addUserLocation(location);
-					}
+					event.addUserLocation(new Location(null, null, null, "", null, ""));
 				} else {
 					event.addUserLocation(location);
 				}
@@ -115,23 +75,16 @@ public class TelemetryLocationUpdaterService {
 			return event;
 		}
 	}
+	*/
 
-//	private Event updateEventWithLocationFromChannel(Event event) throws IOException {
-//		Location location = locationEngine.getLocation(event.channel());
-//		if (location != null && !location.getState().isEmpty()) {
-//			event = updateEvent(event, location, true);
-//		} else {
-//			// add empty location
-//			location = new Location("", "", "", "", "");
-//			event = updateEvent(event, location, false);
-//		}
-//		return event;
-//	}
-
-	public Event updateEvent(Event event, Location location, Boolean ldataFlag) {
-		event.addLocation(location);
+	public Event updateEvent(Event event, Location location) {
 		event.removeEdataLoc();
-		event.setFlag(TelemetryLocationUpdaterConfig.getDeviceLocationJobFlag(), ldataFlag);
+		if (location != null && location.isLocationResolved()) {
+			event.addLocation(location);
+			event.setFlag(TelemetryLocationUpdaterConfig.getDeviceLocationJobFlag(), true);
+		} else {
+			event.setFlag(TelemetryLocationUpdaterConfig.getDeviceLocationJobFlag(), false);
+		}
 		return event;
 	}
 }

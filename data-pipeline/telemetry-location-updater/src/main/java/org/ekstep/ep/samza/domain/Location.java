@@ -19,6 +19,9 @@
 
 package org.ekstep.ep.samza.domain;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Location {
   private String countryCode;
   private String country;
@@ -41,6 +44,33 @@ public class Location {
     this.stateCodeCustom = "";
     this.stateCustomName = "";
   }
+
+  public Map<String, String> toMap() {
+    Map<String, String> values = new HashMap<>();
+    values.put("country_code", Location.getValueOrDefault(this.countryCode, ""));
+    values.put("country", Location.getValueOrDefault(this.country, ""));
+    values.put("state_code", Location.getValueOrDefault(this.stateCode, ""));
+    values.put("state", Location.getValueOrDefault(this.state, ""));
+    values.put("city", Location.getValueOrDefault(this.city, ""));
+    values.put("district_custom", Location.getValueOrDefault(this.districtCustom, ""));
+    values.put("state_custom", Location.getValueOrDefault(this.stateCustomName, ""));
+    values.put("state_code_custom", Location.getValueOrDefault(this.stateCodeCustom, ""));
+    return values;
+  }
+
+  public Location fromMap(Map<String, String> map) {
+    Location location = new Location();
+    this.countryCode = map.getOrDefault("country_code", "");
+    this.country = map.getOrDefault("country", "");
+    this.stateCode = map.getOrDefault("state_code", "");
+    this.state = map.getOrDefault("state", "");
+    this.city = map.getOrDefault("city", "");
+    this.districtCustom = map.getOrDefault("district_custom", "");
+    this.stateCustomName = map.getOrDefault("state_custom", "");
+    this.stateCodeCustom = map.getOrDefault("state_code_custom", "");
+    return location;
+  }
+
   public Location(String countryCode, String country, String stateCode, String state, String city) {
     this.countryCode = countryCode;
     this.country = country;
@@ -97,8 +127,36 @@ public class Location {
     this.district = district;
   }
 
+  public void setCountryCode(String countryCode) {
+    this.countryCode = countryCode;
+  }
+
+  public void setCountry(String country) {
+    this.country = country;
+  }
+
+  public void setStateCode(String stateCode) {
+    this.stateCode = stateCode;
+  }
+
+  public void setCity(String city) {
+    this.city = city;
+  }
+
+  public void setDistrictCustom(String districtCustom) {
+    this.districtCustom = districtCustom;
+  }
+
+  public void setStateCodeCustom(String stateCodeCustom) {
+    this.stateCodeCustom = stateCodeCustom;
+  }
+
+  public void setStateCustomName(String stateCustomName) {
+    this.stateCustomName = stateCustomName;
+  }
+
   public Boolean isLocationResolved(){
-    return this.state != null && !this.state.isEmpty() && this.city != null && !this.city.isEmpty();
+    return this.state != null && !this.state.isEmpty();
   }
 
   public Boolean isStateDistrictResolved(){

@@ -7,21 +7,21 @@ import java.util.Date;
 
 public class DeDupEngine {
 
+    private Jedis redisConnection;
+    private int expirySeconds;
 
-    private Jedis jedis;
-
-    public DeDupEngine(Jedis redisConnection, int store) {
-
-        this.jedis = redisConnection;
-        jedis.select(store);
+    public DeDupEngine(Jedis redisConnection, int store, int expirySeconds) {
+        this.redisConnection = redisConnection;
+        this.redisConnection.select(store);
+        this.expirySeconds = expirySeconds;
     }
 
     public boolean isUniqueEvent(String checksum) throws JedisException {
-            return jedis.get(checksum) == null;
+        return redisConnection.exists(checksum);
     }
 
-    public void storeChecksum(String checksum, int expirySeconds) throws JedisException {
-            jedis.set(checksum, new Date().toString());
-            jedis.expire(checksum, expirySeconds);
+    public void storeChecksum(String checksum) throws JedisException {
+        redisConnection.set(checksum, "");
+        redisConnection.expire(checksum, expirySeconds);
     }
 }

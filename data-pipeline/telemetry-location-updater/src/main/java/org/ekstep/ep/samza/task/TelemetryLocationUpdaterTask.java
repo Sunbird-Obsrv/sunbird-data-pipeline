@@ -19,9 +19,7 @@
 
 package org.ekstep.ep.samza.task;
 
-import com.google.gson.reflect.TypeToken;
 import org.apache.samza.config.Config;
-import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
@@ -31,12 +29,8 @@ import org.apache.samza.task.StreamTask;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
 import org.apache.samza.task.WindowableTask;
-import org.ekstep.ep.samza.cache.CacheEntry;
-import org.ekstep.ep.samza.cache.CacheService;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
-import org.ekstep.ep.samza.domain.Location;
-import org.ekstep.ep.samza.engine.LocationEngine;
 import org.ekstep.ep.samza.service.TelemetryLocationUpdaterService;
 import org.ekstep.ep.samza.util.*;
 
@@ -46,59 +40,33 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 	private TelemetryLocationUpdaterConfig config;
 	private JobMetrics metrics;
 	private TelemetryLocationUpdaterService service;
-	private LocationEngine locationEngine;
+	private DeviceLocationCache deviceLocationCache;
 
-	public TelemetryLocationUpdaterTask(Config config, TaskContext context,
-										KeyValueStore<Object, Object> locationStore, LocationEngine locationEngine) {
-		init(config, context, locationStore, locationEngine);
+	public TelemetryLocationUpdaterTask(Config config, TaskContext context, DeviceLocationCache deviceLocationCache) {
+		init(config, context, deviceLocationCache);
 	}
 
-	public TelemetryLocationUpdaterTask() {
-
-	}
+	public TelemetryLocationUpdaterTask() {}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void init(Config config, TaskContext context) {
-		init(config, context, (KeyValueStore<Object, Object>) context.getStore("location-store"), locationEngine);
+		init(config, context, deviceLocationCache);
 	}
 
 	@SuppressWarnings("unchecked")
-	public void init(Config config, TaskContext context,
-					 KeyValueStore<Object, Object> locationCacheStore, LocationEngine locationEngine) {
+	public void init(Config config, TaskContext context, DeviceLocationCache deviceLocationCache) {
 
 		this.config = new TelemetryLocationUpdaterConfig(config);
-
-		RedisConnect redisConnect = new RedisConnect(config);
-
-		LocationSearchServiceClient searchServiceClient =
-				new LocationSearchServiceClient(config.get("channel.search.service.endpoint"),
-						config.get("location.search.service.endpoint"),
-						config.get("search.service.authorization.token"));
-
-		metrics = new JobMetrics(context, this.config.jobName());
-		CacheService<String, Location> locationStore = locationCacheStore != null
-				? new CacheService<>(locationCacheStore, new TypeToken<CacheEntry<Location>>() {
-		}.getType(), metrics)
-				: new CacheService<>(context, "location-store", CacheEntry.class, metrics);
-
-		locationEngine =
-				locationEngine == null ?
-				new LocationEngine(locationStore,
-						searchServiceClient, new LocationCache(config, redisConnect, metrics),
-						new UserLocationCache(
-								config,
-								redisConnect,
-								new CassandraConnect(config.get("middleware.cassandra.host", "127.0.0.1"), config.getInt("middleware.cassandra.port", 9042))
-						))
-				: locationEngine;
-		metrics = new JobMetrics(context, this.config.jobName());
-		service = new TelemetryLocationUpdaterService(this.config, locationEngine, metrics);
+		this.metrics = new JobMetrics(context, this.config.jobName());
+		this.deviceLocationCache = deviceLocationCache == null ?
+				new DeviceLocationCache(config, new RedisConnect(config), metrics): deviceLocationCache;
+		this.service = new TelemetryLocationUpdaterService(this.deviceLocationCache, metrics);
 	}
 
 	@Override
-	public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator taskCoordinator)
-			throws Exception {
+	public void process(IncomingMessageEnvelope envelope, MessageCollector collector,
+						TaskCoordinator taskCoordinator) throws Exception {
 
 		TelemetryLocationUpdaterSink sink = new TelemetryLocationUpdaterSink(collector, metrics, config);
 		TelemetryLocationUpdaterSource source = new TelemetryLocationUpdaterSource(envelope);

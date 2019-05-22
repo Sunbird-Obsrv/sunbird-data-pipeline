@@ -12,7 +12,7 @@ import redis.clients.jedis.exceptions.JedisException;
 import static java.text.MessageFormat.format;
 
 public class DeDuplicationService {
-	static Logger LOGGER = new Logger(DeDuplicationService.class);
+	private static Logger LOGGER = new Logger(DeDuplicationService.class);
 	private final DeDupEngine deDupEngine;
 	private final DeDuplicationConfig config;
 
@@ -46,7 +46,7 @@ public class DeDuplicationService {
 
 			LOGGER.info(event.id(), "ADDING EVENT CHECKSUM TO STORE");
 
-			deDupEngine.storeChecksum(checksum, config.getExpirySeconds());
+			deDupEngine.storeChecksum(checksum);
 			event.updateDefaults(config);
 			event.markSuccess();
 			sink.toSuccessTopic(event);

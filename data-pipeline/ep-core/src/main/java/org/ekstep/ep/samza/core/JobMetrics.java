@@ -26,7 +26,14 @@ public class JobMetrics {
     private final Counter cacheEmptyValuesCount;
     private final Counter processedMessageCount;
     private final Counter unprocessedMessageCount;
+    private final Counter dbHitCount;
     private final Counter dbErrorCount;
+    private final Counter deviceDbHitCount;
+    private final Counter deviceCacheHitCount;
+    private final Counter userDbHitCount;
+    private final Counter userCacheHitCount;
+    private final Counter deviceDbErrorCount;
+    private final Counter userDbErrorCount;
     private TaskContext context;
     private int partition;
     private HashMap<String,Long> offsetMap = new HashMap<>();
@@ -46,7 +53,14 @@ public class JobMetrics {
         cacheExpiredCount = metricsRegistry.newCounter(getClass().getName(), "cache-expired-count");
         processedMessageCount = metricsRegistry.newCounter(getClass().getName(), "processed-message-count");
         unprocessedMessageCount = metricsRegistry.newCounter(getClass().getName(), "unprocessed-message-count");
+        dbHitCount = metricsRegistry.newCounter(getClass().getName(), "db-hit-count");
         dbErrorCount = metricsRegistry.newCounter(getClass().getName(), "db-error-count");
+        deviceCacheHitCount = metricsRegistry.newCounter(getClass().getName(), "device-cache-hit-count");
+        userCacheHitCount = metricsRegistry.newCounter(getClass().getName(), "user-cache-hit-count");
+        deviceDbHitCount = metricsRegistry.newCounter(getClass().getName(), "device-db-hit-count");
+        userDbHitCount = metricsRegistry.newCounter(getClass().getName(), "user-db-hit-count");
+        deviceDbErrorCount = metricsRegistry.newCounter(getClass().getName(), "device-db-error-count");
+        userDbErrorCount = metricsRegistry.newCounter(getClass().getName(), "user-db-error-count");
         jobName = jName;
         this.context = context;
     }
@@ -62,7 +76,14 @@ public class JobMetrics {
         cacheExpiredCount.clear();
         processedMessageCount.clear();
         unprocessedMessageCount.clear();
+        dbHitCount.clear();
         dbErrorCount.clear();
+        deviceDbHitCount.clear();
+        userDbHitCount.clear();
+        deviceCacheHitCount.clear();
+        userCacheHitCount.clear();
+        deviceDbErrorCount.clear();
+        userDbErrorCount.clear();
     }
 
     public void incSuccessCounter() {
@@ -93,10 +114,35 @@ public class JobMetrics {
 
     public void incUnprocessedMessageCount() { unprocessedMessageCount.inc(); }
 
+    public void incDBHitCount() {
+        dbHitCount.inc();
+    }
+
     public void incDBErrorCount() { dbErrorCount.inc(); }
 
+    public void incDeviceDBErrorCount() { deviceDbErrorCount.inc(); }
+
+    public void incUserDBErrorCount() { userDbErrorCount.inc(); }
+
+    public void incDeviceCacheHitCount() {
+        deviceCacheHitCount.inc();
+    }
+
+    public void incUserCacheHitCount() {
+        userCacheHitCount.inc();
+    }
+
+    public void incDeviceDbHitCount() {
+        deviceDbHitCount.inc();
+    }
+
+    public void incUserDbHitCount() {
+        userDbHitCount.inc();
+    }
+
     public void setOffset(SystemStreamPartition systemStreamPartition, String offset) {
-        String offsetMapKey=String.format("%s%s",systemStreamPartition.getStream(),systemStreamPartition.getPartition().getPartitionId());
+        String offsetMapKey = String.format("%s%s", systemStreamPartition.getStream(),
+                systemStreamPartition.getPartition().getPartitionId());
         offsetMap.put(offsetMapKey,
                 Long.valueOf(offset));
     }
@@ -138,6 +184,7 @@ public class JobMetrics {
         metricsEvent.put("cache-empty-values-count", cacheEmptyValuesCount.getCount());
         metricsEvent.put("processed-message-count", processedMessageCount.getCount());
         metricsEvent.put("unprocessed-message-count", unprocessedMessageCount.getCount());
+        metricsEvent.put("db-hit-count", dbHitCount.getCount());
         metricsEvent.put("db-error-count", dbErrorCount.getCount());
         return new Gson().toJson(metricsEvent);
     }
