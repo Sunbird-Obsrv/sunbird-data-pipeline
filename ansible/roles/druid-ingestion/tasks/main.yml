@@ -13,7 +13,7 @@
 
 - name: Printing the output
   debug:
-    - msg: "{{output}}"
+    - var: output
 
 - name: stop the task
   shell: 'curl -X POST http://{{overlord_host}}:8090/druid/indexer/v1/supervisor/{{item}}/terminate'
