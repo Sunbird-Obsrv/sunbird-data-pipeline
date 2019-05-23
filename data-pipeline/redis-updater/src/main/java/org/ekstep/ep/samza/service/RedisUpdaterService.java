@@ -19,15 +19,18 @@ public class RedisUpdaterService {
 
     static Logger LOGGER = new Logger(RedisUpdaterService.class);
     private RedisConnect redisConnect;
-    private Config config;
-    private Integer contentStore;
-    private Integer dialCodeStore;
+    private Jedis dialCodeStoreConnection;
+    private Jedis contentStoreConnection;
+    private int dialCodeStoreDb;
+    private int contentStoreDb;
+    private Gson gson = new Gson();
 
     public RedisUpdaterService(Config config, RedisConnect redisConnect) {
         this.redisConnect = redisConnect;
-        this.config = config;
-        this.contentStore = config.getInt("redis.database.contentStore.id", 5);
-        this.dialCodeStore = config.getInt("redis.database.dialCodeStore.id", 6);
+        this.contentStoreDb = config.getInt("redis.database.contentStore.id", 5);
+        this.dialCodeStoreDb = config.getInt("redis.database.dialCodeStore.id", 6);
+        this.contentStoreConnection = redisConnect.getConnection(contentStoreDb);
+        this.dialCodeStoreConnection = redisConnect.getConnection(dialCodeStoreDb);
     }
 
     public void process(RedisUpdaterSource source, RedisUpdaterSink sink) {
@@ -46,14 +49,11 @@ public class RedisUpdaterService {
 
     private void updateDialCodeCache(Map<String, Object> message, RedisUpdaterSink sink) {
         String nodeUniqueId = (String) message.get("nodeUniqueId");
-        Map<String, Object> parsedData;
-        Gson gson = new Gson();
-        String key = nodeUniqueId;
-        try (Jedis jedis = redisConnect.getConnection()) {
-            jedis.select(dialCodeStore);
-            String contentNode = jedis.get(key);
-            if(contentNode !=null){
-                Type type = new TypeToken<Map<String, Object>>(){}.getType();
+        Map<String, Object> parsedData = null;
+        try {
+            String contentNode = dialCodeStoreConnection.get(nodeUniqueId);
+            if (contentNode != null) {
+                Type type = new TypeToken<Map<String, Object>>() {}.getType();
                 parsedData = gson.fromJson(contentNode, type);
             } else {
                 parsedData = new HashMap<>();
@@ -62,12 +62,15 @@ public class RedisUpdaterService {
             parsedData.putAll(newProperties);
             if (parsedData.size() > 0) {
                 parsedData.values().removeAll(Collections.singleton(null));
-                addToCache(key,  gson.toJson(parsedData), dialCodeStore);
+                addToCache(nodeUniqueId, gson.toJson(parsedData), dialCodeStoreConnection);
                 sink.success();
             }
-        } catch(JedisException ex) {
+        } catch (JedisException ex) {
             sink.error();
-            LOGGER.error("", "Exception when redis connect" + ex);
+            LOGGER.error("", "Exception when adding to dialcode redis cache", ex);
+            redisConnect.resetConnection();
+            redisConnect.getConnection(dialCodeStoreDb);
+            addToCache(nodeUniqueId, gson.toJson(parsedData), dialCodeStoreConnection);
         }
     }
 
@@ -75,26 +78,27 @@ public class RedisUpdaterService {
     private void updateContentCache(Map<String, Object> message, RedisUpdaterSink sink) {
         String nodeUniqueId = (String) message.get("nodeUniqueId");
         Map<String, Object> parsedData = null;
-        Gson gson = new Gson();
-        try (Jedis jedis = redisConnect.getConnection()) {
-            jedis.select(contentStore);
-            String contentNode = jedis.get(nodeUniqueId);
+        try {
+            String contentNode = contentStoreConnection.get(nodeUniqueId);
             if (contentNode == null) {
                 parsedData = new HashMap<>();
-            }else{
-                Type type = new TypeToken<Map<String, Object>>(){}.getType();
+            } else {
+                Type type = new TypeToken<Map<String, Object>>() {}.getType();
                 parsedData = gson.fromJson(contentNode, type);
             }
             Map<String, Object> newProperties = extractProperties(message);
             parsedData.putAll(newProperties);
             if (parsedData.size() > 0) {
                 parsedData.values().removeAll(Collections.singleton(null));
-                addToCache(nodeUniqueId, gson.toJson(parsedData), contentStore);
+                addToCache(nodeUniqueId, gson.toJson(parsedData), contentStoreConnection);
                 sink.success();
             }
-        } catch(JedisException ex) {
+        } catch (JedisException ex) {
             sink.error();
-            LOGGER.error("", "Exception when redis connect" + ex);
+            LOGGER.error("", "Exception when adding to content store redis cache", ex);
+            redisConnect.resetConnection();
+            redisConnect.getConnection(contentStoreDb);
+            addToCache(nodeUniqueId, gson.toJson(parsedData), contentStoreConnection);
         }
     }
 
@@ -117,14 +121,9 @@ public class RedisUpdaterService {
         return properties;
     }
 
-    private void addToCache(String key, String value, Integer db) {
-        if (key != null && !key.isEmpty() && !value.isEmpty() && db != null) {
-            try (Jedis jedis = redisConnect.getConnection()) {
-                jedis.select(db);
-                jedis.set(key, value);
-            } catch(JedisException ex) {
-                LOGGER.error("", "addToCache: Exception when redis connect" + ex);
-            }
+    private void addToCache(String key, String value, Jedis redisConnection) {
+        if (key != null && !key.isEmpty() && !value.isEmpty()) {
+            redisConnection.set(key, value);
         }
     }
 }

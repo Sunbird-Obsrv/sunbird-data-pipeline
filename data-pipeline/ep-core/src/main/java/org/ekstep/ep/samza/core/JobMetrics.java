@@ -23,6 +23,7 @@ public class JobMetrics {
     private final Counter cacheHitCount;
     private final Counter cacheMissCount;
     private final Counter cacheExpiredCount;
+    private final Counter cacheErrorCount;
     private final Counter cacheEmptyValuesCount;
     private final Counter processedMessageCount;
     private final Counter unprocessedMessageCount;
@@ -52,6 +53,7 @@ public class JobMetrics {
         cacheMissCount = metricsRegistry.newCounter(getClass().getName(), "cache-miss-count");
         cacheEmptyValuesCount = metricsRegistry.newCounter(getClass().getName(), "cache-empty-values-count");
         cacheExpiredCount = metricsRegistry.newCounter(getClass().getName(), "cache-expired-count");
+        cacheErrorCount = metricsRegistry.newCounter(getClass().getName(), "cache-error-count");
         processedMessageCount = metricsRegistry.newCounter(getClass().getName(), "processed-message-count");
         unprocessedMessageCount = metricsRegistry.newCounter(getClass().getName(), "unprocessed-message-count");
         dbHitCount = metricsRegistry.newCounter(getClass().getName(), "db-hit-count");
@@ -76,6 +78,7 @@ public class JobMetrics {
         cacheHitCount.clear();
         cacheMissCount.clear();
         cacheExpiredCount.clear();
+        cacheErrorCount.clear();
         processedMessageCount.clear();
         unprocessedMessageCount.clear();
         dbHitCount.clear();
@@ -108,6 +111,8 @@ public class JobMetrics {
     public void incCacheHitCounter() { cacheHitCount.inc(); }
 
     public void incCacheExpiredCounter() { cacheExpiredCount.inc();}
+
+    public void incCacheErrorCounter() { cacheErrorCount.inc(); }
 
     public void incCacheMissCounter() { cacheMissCount.inc();}
 

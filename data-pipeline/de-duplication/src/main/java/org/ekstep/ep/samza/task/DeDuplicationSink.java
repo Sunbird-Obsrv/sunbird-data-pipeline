@@ -20,7 +20,11 @@ public class DeDuplicationSink extends BaseSink {
     public void toSuccessTopic(Event event) {
         toTopic(config.successTopic(), event.did(), event.getJson());
         metrics.incSuccessCounter();
-        ;
+    }
+
+    public void toSuccessTopicIfRedisException(Event event) {
+        toTopic(config.successTopic(), event.did(), event.getJson());
+        metrics.incCacheErrorCounter();
     }
 
     public void toDuplicateTopic(Event event) {
