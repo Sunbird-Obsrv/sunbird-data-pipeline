@@ -80,6 +80,13 @@ public class Event {
         telemetry.add("type", "events");
     }
 
+    public void markRedisFailure() {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.dd_processed", false);
+        telemetry.add("flags.dd_redis_failure", true);
+        telemetry.add("type", "events");
+    }
+
     public void markFailure(String error, DeDuplicationConfig config) {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.dd_processed", false);

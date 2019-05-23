@@ -10,6 +10,7 @@ import org.ekstep.ep.samza.task.EventsRouterSink;
 import org.ekstep.ep.samza.task.EventsRouterSource;
 
 import com.google.gson.JsonSyntaxException;
+import redis.clients.jedis.exceptions.JedisException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -47,7 +48,6 @@ public class EventsRouterService {
 				LOGGER.info(event.id(), "ADDING EVENT CHECKSUM TO STORE");
 				deDupEngine.storeChecksum(checksum);
 			}
-
 			
 			String eid = event.eid();
 			if(event.mid().contains("TRACE")){
@@ -65,6 +65,9 @@ public class EventsRouterService {
 			} else {
 				sink.toTelemetryEventsTopic(event);
 			}
+		} catch (JedisException e) {
+			LOGGER.error(null, "Exception when retrieving data from redis: ", e);
+			throw e;
 		} catch (JsonSyntaxException e) {
 			LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
 			sink.toMalformedTopic(source.getMessage());

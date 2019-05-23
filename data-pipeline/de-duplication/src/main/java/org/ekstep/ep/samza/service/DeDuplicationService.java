@@ -51,16 +51,14 @@ public class DeDuplicationService {
 			event.markSuccess();
 			sink.toSuccessTopic(event);
 
+		} catch (JedisException e) {
+			LOGGER.error(null, "Exception when retrieving data from redis:  ", e);
+			event.updateDefaults(config);
+			event.markRedisFailure();
+			sink.toSuccessTopicIfRedisException(event);
 		} catch (JsonSyntaxException e) {
 			LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
 			sink.toMalformedEventsTopic(source.getMessage());
-		} catch (Exception e) {
-			event.markFailure(e.getMessage(), config);
-			LOGGER.error(null,
-					format("EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO EXCEPTION TOPIC. EVENT: {0}, EXCEPTION:",
-							event),
-					e);
-			sink.toErrorTopic(event);
 		}
 	}
 }
