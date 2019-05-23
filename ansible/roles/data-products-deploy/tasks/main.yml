@@ -96,3 +96,9 @@
   template: src=start-jobmanager.j2 dest={{ analytics.home }}/scripts/start-jobmanager.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
     - update-jobmanager-config
+
+- name: Update user redis cache
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="cd {{ analytics.home }} && adhoc-jobs-1.0/scripts/RedisUserDataIndexer.sh"
+  with_dict: "{{ update_user_redis_cache }}"
+  tags:
+    - cronjobs
