@@ -5,7 +5,9 @@ druid_schema:
  - telemetry_index_kafka
  - summary_index_kafka
  - log_index_kafka
+ - telemetry-feedback-events
 event_types:
  - telemetry-events
  - summary-events
  - telemetry-log-events
+ - telemetry-feedback-events
