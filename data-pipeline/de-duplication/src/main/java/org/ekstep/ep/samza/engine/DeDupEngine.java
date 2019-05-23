@@ -17,7 +17,7 @@ public class DeDupEngine {
     }
 
     public boolean isUniqueEvent(String checksum) throws JedisException {
-        return redisConnection.exists(checksum);
+        return !redisConnection.exists(checksum);
     }
 
     public void storeChecksum(String checksum) throws JedisException {
