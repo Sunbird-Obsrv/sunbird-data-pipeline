@@ -28,7 +28,7 @@ public class DeviceDataCache {
     public DeviceDataCache(Config config, JobMetrics metrics) {
         this.config = config;
         this.metrics = metrics;
-        this.databaseIndex = config.getInt("redis.deviceDB.index", 0);
+        this.databaseIndex = config.getInt("redis.deviceDB.index", 3);
         this.redisPool = new RedisConnect(config);
         this.redisConnection = this.redisPool.getConnection(databaseIndex);
         this.cassandra_db = config.get("cassandra.keyspace", "device_db");

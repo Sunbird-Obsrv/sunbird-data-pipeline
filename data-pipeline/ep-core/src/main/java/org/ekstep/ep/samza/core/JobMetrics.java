@@ -179,7 +179,6 @@ public class JobMetrics {
     }
 
     public String collect() {
-
         Map<String,Object> metricsEvent = new HashMap<>();
         metricsEvent.put("job-name", jobName);
         metricsEvent.put("success-message-count", successMessageCount.getCount());
@@ -191,11 +190,21 @@ public class JobMetrics {
         metricsEvent.put("partition",partition);
         metricsEvent.put("cache-hit-count", cacheHitCount.getCount());
         metricsEvent.put("cache-miss-count", cacheMissCount.getCount());
+        metricsEvent.put("cache-expired-count", cacheExpiredCount.getCount());
+        metricsEvent.put("cache-error-count", cacheErrorCount.getCount());
         metricsEvent.put("cache-empty-values-count", cacheEmptyValuesCount.getCount());
         metricsEvent.put("processed-message-count", processedMessageCount.getCount());
         metricsEvent.put("unprocessed-message-count", unprocessedMessageCount.getCount());
         metricsEvent.put("db-hit-count", dbHitCount.getCount());
         metricsEvent.put("db-error-count", dbErrorCount.getCount());
+        metricsEvent.put("device-cache-hit-count", deviceCacheHitCount.getCount());
+        metricsEvent.put("user-cache-hit-count", userCacheHitCount.getCount());
+        metricsEvent.put("device-db-hit-count", deviceDbHitCount.getCount());
+        metricsEvent.put("user-db-hit-count", userDbHitCount.getCount());
+        metricsEvent.put("device-db-error-count", deviceDbErrorCount.getCount());
+        metricsEvent.put("user-db-error-count", userDbErrorCount.getCount());
+        metricsEvent.put("expired-event-count", expiredEventCount.getCount());
+
         return new Gson().toJson(metricsEvent);
     }
 }

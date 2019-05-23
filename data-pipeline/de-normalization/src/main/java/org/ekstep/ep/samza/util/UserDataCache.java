@@ -33,7 +33,7 @@ public class UserDataCache extends DataCache {
     public UserDataCache(Config config, JobMetrics metrics) {
         super(config.getList("user.metadata.fields", Arrays.asList("usertype", "grade", "language", "subject", "state", "district")));
         this.metrics = metrics;
-        this.databaseIndex = config.getInt("redis.database.userLocationStore.id", 1);
+        this.databaseIndex = config.getInt("redis.userDB.index", 4);
         this.redisPool = new RedisConnect(config);
         this.redisConnection = this.redisPool.getConnection(databaseIndex);
         this.cassandra_db = config.get("middleware.cassandra.keyspace", "sunbird");
