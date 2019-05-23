@@ -567,37 +567,37 @@
             {
               "type": "path",
               "name": "dialcode_channel",
-              "expr": "$.dialcodedata[*].channel"
+              "expr": "$.dialcodedata.channel"
             },
             {
               "type": "path",
               "name": "dialcode_batchcode",
-              "expr": "$.dialcodedata[*].batchcode"
+              "expr": "$.dialcodedata.batchcode"
             },
             {
               "type": "path",
               "name": "dialcode_publisher",
-              "expr": "$.dialcodedata[*].publisher"
+              "expr": "$.dialcodedata.publisher"
             },
             {
               "type": "path",
               "name": "dialcode_generated_on",
-              "expr": "$.dialcodedata[*].generatedon"
+              "expr": "$.dialcodedata.generatedon"
             },
             {
               "type": "path",
               "name": "dialcode_published_on",
-              "expr": "$.dialcodedata[*].publishedon"
+              "expr": "$.dialcodedata.publishedon"
             },
             {
               "type": "path",
               "name": "dialcode_status",
-              "expr": "$.dialcodedata[*].status"
+              "expr": "$.dialcodedata.status"
             },
             {
               "type": "path",
               "name": "dialcode_object_type",
-              "expr": "$.dialcodedata[*].objecttype"
+              "expr": "$.dialcodedata.objecttype"
             },
             {
               "type": "path",
@@ -1043,24 +1043,31 @@
               "name": "user_loc_district"
             },
             {
+              "type": "string",
               "name": "dialcode_channel"
             },
             {
+              "type": "string",
               "name": "dialcode_batchcode"
             },
             {
+              "type": "string",
               "name": "dialcode_publisher"
             },
             {
+              "type": "long",
               "name": "dialcode_generated_on"
             },
             {
+              "type": "long",
               "name": "dialcode_published_on"
             },
             {
+              "type": "string",
               "name": "dialcode_status"
             },
             {
+              "type": "string",
               "name": "dialcode_object_type"
             },
             {
