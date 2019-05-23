@@ -17,7 +17,7 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>events-router</artifactId>
-    <version>0.0.9</version>
+    <version>0.1.0</version>
     <packaging>jar</packaging>
     <name>Events Router</name>
     <description>
