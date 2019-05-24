@@ -21,6 +21,7 @@ config() {
 	sunbirdPlatformElasticsearchHost="{{ sunbird_es_host }}"
 	
 	if [ -z "$2" ]; then endDate=$(date --date yesterday "+%Y-%m-%d"); else endDate=$2; fi
+	if [ ! -z "$3" ]; then sinkTopic=$3; fi
 	case "$1" in
 	  "ss")
 		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"unique/","endDate":"'$endDate'","delta":0}]},"filters":[{"name":"eid","operator":"NIN","value":["JOB_START","JOB_END"]}],"model":"org.ekstep.analytics.model.LearnerSessionSummary","modelParams":{"apiVersion":"v2"},"output":[{"to":"console","params":{"printEvent": false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$topic'"}}],"parallelization":8,"appName":"Learner Session Summarizer","deviceMapping":true}'

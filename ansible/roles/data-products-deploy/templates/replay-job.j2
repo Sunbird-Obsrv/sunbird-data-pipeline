@@ -7,7 +7,7 @@ cd {{ analytics.home }}/scripts
 source model-config.sh
 source replay-utils.sh
 
-if [ -z "$job_config" ]; then job_config=$(config $1 '__endDate__'); fi
+if [ -z "$job_config" ]; then job_config=$(config $1 '__endDate__' $4); fi
 start_date=$2
 end_date=$3
 backup_key=$1
