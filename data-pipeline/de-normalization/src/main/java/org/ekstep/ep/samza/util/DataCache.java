@@ -38,7 +38,7 @@ public class DataCache {
         return cacheDataMap;
     }
 
-    public Map<String, Object> getDataFromCache(String key) {
+    private Map<String, Object> getDataFromCache(String key) {
         Map<String, Object> cacheData = new HashMap<>();
         String dataNode = redisConnection.get(key);
         if(dataNode != null && !dataNode.isEmpty()) {
