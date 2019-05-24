@@ -19,7 +19,6 @@ config() {
 	sparkCassandraConnectionHost="{{groups['lp-cassandra'][0]}}"
 	sunbirdPlatformCassandraHost="{{ core_cassandra_host }}"
 	sunbirdPlatformElasticsearchHost="{{ sunbird_es_host }}"
-	inputBucket="{{ inputBucket }}"
 	
 	if [ -z "$2" ]; then endDate=$(date --date yesterday "+%Y-%m-%d"); else endDate=$2; fi
 	if [ ! -z "$3" ]; then sinkTopic=$3; fi

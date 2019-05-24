@@ -7,6 +7,14 @@ cd {{ analytics.home }}/scripts
 source model-config.sh
 source replay-utils.sh
 
+if [ "$1" == "telemetry-replay" ]
+    then
+    if [ ! $# -eq 5 ]
+        then
+        echo "Not suffecient arguments. killing process"
+        exit
+    fi
+fi
 if [ -z "$job_config" ]; then job_config=$(config $1 '__endDate__' $4 $5); fi
 start_date=$2
 end_date=$3

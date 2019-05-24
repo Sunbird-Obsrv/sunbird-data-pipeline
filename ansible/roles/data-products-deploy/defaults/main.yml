@@ -18,7 +18,6 @@ sink_topic: "{{ env }}.telemetry.sink"
 job_manager_tmp_dir: "transient-data"
 channel: dev-test
 druid_broker_host: "{{groups['broker'][0]}}"
-inputBucket: "unique/"
 
 cassandra_keyspace_prefix: '{{ env }}_'
 dp_dispatch_bucket_name: ekstep-dev-data-store
