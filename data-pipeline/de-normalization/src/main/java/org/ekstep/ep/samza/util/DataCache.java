@@ -7,10 +7,7 @@ import org.ekstep.ep.samza.core.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DataCache {
 
@@ -41,13 +38,14 @@ public class DataCache {
         return cacheDataMap;
     }
 
-    private Map<String, Object> getDataFromCache(String key) {
+    public Map<String, Object> getDataFromCache(String key) {
         Map<String, Object> cacheData = new HashMap<>();
         String dataNode = redisConnection.get(key);
         if(dataNode != null && !dataNode.isEmpty()) {
             Type type = new TypeToken<Map<String, Object>>() {}.getType();
             Map<String, Object> parsedData = gson.fromJson(dataNode, type);
             parsedData.keySet().retainAll(fieldsList);
+            parsedData.values().removeAll(Collections.singleton(""));
             for (Map.Entry<String, Object> entry : parsedData.entrySet()) {
                 cacheData.put(entry.getKey().toLowerCase().replace("_", ""), entry.getValue());
             }
