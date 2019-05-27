@@ -34,9 +34,7 @@ postgresql_locales:
   - 'en_US.UTF-8'
 
 # Databases to ensure exist.
-postgresql_databases:
-   - name: druid
-   - name: graphite
+postgresql_databases: []
 
 # - name: exampledb # required; the rest are optional
 #   lc_collate: # defaults to 'en_US.UTF-8'
@@ -52,11 +50,8 @@ postgresql_databases:
 #   state: # defaults to 'present'
 
 # Users to ensure exist.
-postgresql_users:
-    - name: druid
-      password: "{{ dp_vault_druid_postgress_pass }}"
-    - name: graphite 
-      password: "{{ dp_vault_druid_postgress_graphite_pass }}"
+postgresql_users: []
+
 # - name: jdoe #required; the rest are optional
 #   password: # defaults to not set
 #   encrypted: # defaults to not set
