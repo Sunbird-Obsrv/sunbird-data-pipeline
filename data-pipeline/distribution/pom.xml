@@ -33,7 +33,7 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>telemetry-validator</artifactId>
-            <version>0.1.6</version>
+            <version>0.1.7</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
@@ -61,7 +61,7 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>de-normalization</artifactId>
-            <version>0.0.8</version>
+            <version>0.0.9</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
