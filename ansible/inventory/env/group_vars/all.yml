@@ -130,3 +130,4 @@ overlord_host: "{{ groups['overlord'][0] }}"
 ### Datapipeline Custom monitoring related vars ###
 throughput_threshold_value: 1000
 influxdb_query_duration: 60
+influxdb: "{{ groups['influxdb'][0] }}"
