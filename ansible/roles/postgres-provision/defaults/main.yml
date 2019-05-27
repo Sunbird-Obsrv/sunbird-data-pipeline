@@ -35,6 +35,7 @@ postgresql_locales:
 
 # Databases to ensure exist.
 postgresql_databases: []
+
 # - name: exampledb # required; the rest are optional
 #   lc_collate: # defaults to 'en_US.UTF-8'
 #   lc_ctype: # defaults to 'en_US.UTF-8'
@@ -50,6 +51,7 @@ postgresql_databases: []
 
 # Users to ensure exist.
 postgresql_users: []
+
 # - name: jdoe #required; the rest are optional
 #   password: # defaults to not set
 #   encrypted: # defaults to not set

@@ -125,3 +125,9 @@ sunbird_es_host: "{{groups['core-es']| join(',')}}"
 
 ### Druid related vars
 overlord_host: "{{ groups['overlord'][0] }}"
+
+
+### Datapipeline Custom monitoring related vars ###
+influxdb: "{{ groups['influxdb'][0] }}"
+CONTAINER_NAME_SAMZA: samza-logs
+script_path: /usr/local/hadoop

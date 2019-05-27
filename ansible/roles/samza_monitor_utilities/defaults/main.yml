@@ -1,0 +1,2 @@
+samza_slack_channel: samza-alrt-{{env}}
+script_path: /usr/local/hadoop
