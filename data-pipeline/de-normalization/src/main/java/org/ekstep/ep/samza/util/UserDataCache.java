@@ -66,7 +66,7 @@ public class UserDataCache extends DataCache {
                 userLocationMap = fetchFallbackUserLocationFromDB(userId);
             } catch (Exception ex) {
                 metrics.incUserDBErrorCount();
-                cassandraConnection.reconnect();
+                cassandraConnection.reconnectCluster();
                 userLocationMap = fetchFallbackUserLocationFromDB(userId);
             }
 
