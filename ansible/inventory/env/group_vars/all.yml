@@ -128,4 +128,5 @@ overlord_host: "{{ groups['overlord'][0] }}"
 
 
 ### Datapipeline Custom monitoring related vars ###
-SGPASS: dp_vault_sendgrid_password
+throughput_threshold_value: 1000
+influxdb_query_duration: 60
