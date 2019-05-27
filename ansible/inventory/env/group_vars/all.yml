@@ -132,3 +132,4 @@ throughput_threshold_value: 1000
 influxdb_query_duration: 60
 influxdb: "{{ groups['influxdb'][0] }}"
 CONTAINER_NAME_SAMZA: samza-logs
+script_path: /usr/local/hadoop

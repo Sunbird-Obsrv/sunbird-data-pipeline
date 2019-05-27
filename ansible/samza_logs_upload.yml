@@ -5,5 +5,5 @@
   tasks:
    - command: "./upload_samza_logs.sh {{CONTAINER_NAME_SAMZA}} {{backup_azure_storage_account_name}} {{dp_vault_backup_azure_storage_secret}}"
      args:
-       chdir: /home/hduser
+       chdir: "{{script_path}}"
      become: yes
