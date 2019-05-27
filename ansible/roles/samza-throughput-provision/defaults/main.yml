@@ -1,1 +1,3 @@
 samza_slack_channel: samza-alrt-{{env}}
+throughput_threshold_value: 1000
+influxdb_query_duration: 60
