@@ -59,7 +59,6 @@ public class Location {
   }
 
   public Location fromMap(Map<String, String> map) {
-    Location location = new Location();
     this.countryCode = map.getOrDefault("country_code", "");
     this.country = map.getOrDefault("country", "");
     this.stateCode = map.getOrDefault("state_code", "");
@@ -68,7 +67,7 @@ public class Location {
     this.districtCustom = map.getOrDefault("district_custom", "");
     this.stateCustomName = map.getOrDefault("state_custom", "");
     this.stateCodeCustom = map.getOrDefault("state_code_custom", "");
-    return location;
+    return this;
   }
 
   public Location(String countryCode, String country, String stateCode, String state, String city) {
