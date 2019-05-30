@@ -219,7 +219,37 @@ public class EventFixture {
 			"\"type\":\"events\",\n"+
 			"\"ver\":\"3.0\"\n"+
 			"      }";
-	
+	public static final String TELEMETRY_ERROR_EVENT = "{"+
+			"   \"eid\":\"ERROR\","+
+			"   \"ets\":%s,"+
+			"   \"ver\":\"3.0\","+
+			"   \"mid\":\"LP.1553040097857.bf0e4e15-014e-4a22-ba00-e02ff3c38784\","+
+			"   \"actor\":{"+
+			"      \"id\":\"e85bcfb5-a8c2-4e65-87a2-0ebb43b45f01\","+
+			"      \"type\":\"System\""+
+			"   },"+
+			"   \"context\":{"+
+			"      \"channel\":\"01235953109336064029450\","+
+			"      \"pdata\":{"+
+			"         \"id\":\"prod.ntp.learning.platform\","+
+			"         \"pid\":\"learning-service\","+
+			"         \"ver\":\"1.0\""+
+			"      },"+
+			"      \"env\":\"framework\""+
+			"   },"+
+			"   \"edata\":{"+
+			"      \"err\":\"ERR_DATA_NOT_FOUND\","+
+			"      \"stacktrace\":\"ERR_DATA_NOT_FOUND: Data not found with id : null\n\tat\","+
+			"      \"errtype\":\"system\""+
+			"   },"+
+			"   \"flags\":{"+
+			"      \"tv_processed\":true,"+
+			"      \"dd_processed\":true"+
+			"   },"+
+			"   \"type\":\"events\","+
+			"   \"syncts\":1.553040098435E12,"+
+			"   \"@timestamp\":\"2019-03-20T00:01:38.435Z\""+
+			"}";
 	public static Map<String, Object> getMap(String message) {
 		return (Map<String, Object>) new Gson().fromJson(message, Map.class);
 	}

@@ -82,6 +82,8 @@ processing_kafka_overriden_topics:
     replication_factor: 1
   - name: events.log
     retention_time: 86400000
+  - name: events.error
+    retention_time: 86400000
   # Error/Failed Topics
   - name: telemetry.failed
     retention_time: 86400000
