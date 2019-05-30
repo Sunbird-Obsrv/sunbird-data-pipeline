@@ -57,4 +57,9 @@ public class EventsRouterSink extends BaseSink {
 	public void setMetricsOffset(SystemStreamPartition systemStreamPartition, String offset) {
 		metrics.setOffset(systemStreamPartition, offset);
 	}
+
+	public void toErrorEventsTopic(Event event){
+		toTopic(config.getErrorEventsRouteTopic(), event.did(), event.getJson());
+		metrics.incSuccessCounter();
+	}
 }

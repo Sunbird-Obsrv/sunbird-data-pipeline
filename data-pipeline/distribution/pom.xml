@@ -61,14 +61,14 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>de-normalization</artifactId>
-            <version>0.0.9</version>
+            <version>0.1.0</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>events-router</artifactId>
-            <version>0.1.0</version>
+            <version>0.1.1</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>

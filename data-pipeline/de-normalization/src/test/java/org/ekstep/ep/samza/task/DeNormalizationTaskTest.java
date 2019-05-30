@@ -610,21 +610,22 @@ public class DeNormalizationTaskTest {
     }
 
     @Test
-    public void shouldSkipProcessingForErrorEvents() throws Exception {
+    public void shouldPushToSuccessTopicForErrorEvents() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.ERROR_EVENT);
         Answer answer = new Answer();
-        doAnswer(answer).when(jobMetrics).incSkippedCounter();
+        doAnswer(answer).when(jobMetrics).incSuccessCounter();
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        assertEquals(true, answer.isSkipped);
+        assertEquals(true, answer.isSuccess);
     }
 
     class Answer implements org.mockito.stubbing.Answer {
 
         private Boolean isSkipped = false;
+        private Boolean isSuccess = false;
         @Override
         public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
             isSkipped = true;
-            System.out.println("SkippedCounter is executed");
+            isSuccess = true;
             return null;
         }
     }
