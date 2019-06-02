@@ -34,3 +34,18 @@
     - "{{env}}.telemetry.ingestion"
     - "{{env}}.telemetry.ingest"
     - "{{env}}.telemetry.extractor.failed"
+
+- name: overriding data pipeline downstream topic size
+  shell: "/opt/kafka/bin/kafka-topics.sh  --zookeeper localhost:2181 --alter --topic {{item}} --config max.message.bytes={{dp_downstream_kafka_max_message_bytes}}"
+  with_items:
+    - "{{env}}.telemetry.valid"
+    - "{{env}}.telemetry.unique"
+    - "{{env}}.telemetry.duplicate"
+    - "{{env}}.telemetry.sink"
+    - "{{env}}.telemetry.with_location"
+    - "{{env}}.telemetry.denorm"
+    - "{{env}}.telemetry.denorm.valid"
+    - "{{env}}.telemetry.log"
+    - "{{env}}.events.telemetry"
+    - "{{env}}.events.summary"
+    - "{{env}}.events.log"

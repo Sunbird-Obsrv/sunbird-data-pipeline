@@ -17,9 +17,9 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>telemetry-validator</artifactId>
-    <version>0.1.7</version>
+    <version>0.1.8</version>
     <packaging>jar</packaging>
-    <name>Telemetry Validator</name>
+    <name>TelemetryValidator</name>
     <description>
         Validating Event Against Schema
     </description>

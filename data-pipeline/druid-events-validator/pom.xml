@@ -15,9 +15,9 @@
     </parent>
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>druid-events-validator</artifactId>
-    <version>0.0.7</version>
+    <version>0.0.8</version>
     <packaging>jar</packaging>
-    <name>druid-events-validator</name>
+    <name>DruidEventsValidator</name>
     <description>
         Validating DeNormalised Events Against Schema
     </description>
