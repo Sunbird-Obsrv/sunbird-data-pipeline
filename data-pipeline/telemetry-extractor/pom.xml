@@ -17,7 +17,7 @@
     <artifactId>telemetry-extractor</artifactId>
     <version>0.0.9</version>
     <packaging>jar</packaging>
-    <name>Telemetry Extractor</name>
+    <name>TelemetryExtractor</name>
     <description>
         Stamp @timestmap in telemetry
     </description>
