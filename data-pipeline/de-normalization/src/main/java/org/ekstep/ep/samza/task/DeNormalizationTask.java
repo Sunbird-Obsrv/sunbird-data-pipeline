@@ -37,16 +37,15 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
 
     private static Logger LOGGER = new Logger(DeNormalizationTask.class);
     private DeNormalizationConfig config;
-    private DeviceDataCache deviceCache;
     private UserDataCache userCache;
     private ContentDataCache contentCache;
     private DialCodeDataCache dialcodeCache;
     private JobMetrics metrics;
     private DeNormalizationService service;
 
-    public DeNormalizationTask(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache,
+    public DeNormalizationTask(Config config, TaskContext context, UserDataCache userCache,
                                ContentDataCache contentCache, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics)  {
-        init(config, context, deviceCache, userCache, contentCache, dialcodeCache, jobMetrics);
+        init(config, context, userCache, contentCache, dialcodeCache, jobMetrics);
     }
 
     public DeNormalizationTask() {
@@ -56,20 +55,19 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     @SuppressWarnings("unchecked")
     @Override
     public void init(Config config, TaskContext context) {
-        init(config, context, deviceCache, userCache, contentCache, dialcodeCache, metrics);
+        init(config, context, userCache, contentCache, dialcodeCache, metrics);
     }
 
 
-    public void init(Config config, TaskContext context, DeviceDataCache deviceCache, UserDataCache userCache, ContentDataCache contentCache, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics) {
+    public void init(Config config, TaskContext context, UserDataCache userCache, ContentDataCache contentCache, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics) {
 
         this.config = new DeNormalizationConfig(config);
         this.metrics = jobMetrics == null ? new JobMetrics(context, this.config.jobName()) : jobMetrics;
-        this.deviceCache = deviceCache == null ? new DeviceDataCache(config, metrics): deviceCache;
         this.userCache = userCache == null ? new UserDataCache(config, metrics): userCache;
         this.contentCache = contentCache == null ? new ContentDataCache(config, metrics) : contentCache;
         this.dialcodeCache = dialcodeCache == null ? new DialCodeDataCache(config, metrics) : dialcodeCache;
 
-        service = new DeNormalizationService(this.config, new EventUpdaterFactory(this.contentCache, this.userCache, this.deviceCache, this.dialcodeCache));
+        service = new DeNormalizationService(this.config, new EventUpdaterFactory(this.contentCache, this.userCache, this.dialcodeCache));
     }
 
     @Override

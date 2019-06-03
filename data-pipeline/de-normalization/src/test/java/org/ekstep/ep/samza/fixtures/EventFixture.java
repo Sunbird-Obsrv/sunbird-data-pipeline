@@ -609,6 +609,136 @@ public class EventFixture {
 			"    }  \n" +
 			"}", current_ets);
 
+	public static final String IMPRESSION_EVENT_WITH_QR_AS_OBJECT = String.format("{\n" +
+			"    \"actor\": {\n" +
+			"        \"type\": \"User\",\n" +
+			"        \"id\": \"anonymous\"\n" +
+			"    },\n" +
+			"    \"eid\": \"IMPRESSION\",\n" +
+			"    \"edata\": {\n" +
+			"        \"visits\": [\n" +
+			"            \n" +
+			"        ],\n" +
+			"        \"type\": \"view\",\n" +
+			"        \"pageid\": \"dialcode\",\n" +
+			"        \"subtype\": \"pageexit\",\n" +
+			"        \"uri\": \"https://play.diksha.gov.in/dialpage/index.html?dialcode=977D3I\"\n" +
+			"    },\n" +
+			"    \"ver\": \"3.0\",\n" +
+			"    \"ets\": %s,\n" +
+			"    \"context\": {\n" +
+			"        \"uid\": \"anonymous\",\n" +
+			"        \"pdata\": {\n" +
+			"            \"ver\": \"1.7.1\",\n" +
+			"            \"pid\": \"sunbird.app\",\n" +
+			"            \"id\": \"prod.diksha.app\"\n" +
+			"        },\n" +
+			"        \"channel\": \"505c7c48ac6dc1edc9b08f21db5a571d\",\n" +
+			"        \"env\": \"public\",\n" +
+			"        \"did\": \"a49cfadff97c698c1766c71a42779d4e\",\n" +
+			"        \"sid\": \"5fd1cea0-3a9e-11e9-bed5-2f34fab96d07\",\n" +
+			"        \"cdata\": [\n" +
+			"            \n" +
+			"        ],\n" +
+			"        \"rollup\": {\n" +
+			"            \"l1\": \"505c7c48ac6dc1edc9b08f21db5a571d\"\n" +
+			"        }\n" +
+			"    },\n" +
+			"    \"mid\": \"IMPRESSION:bfd4026a4099370da57e3519cd3368c0\",\n" +
+			"    \"object\": {\n" +
+			"        \"ver\": \"1.0\",\n" +
+			"        \"id\": \"977D3I\",\n" +
+			"        \"type\": \"qr\",\n" +
+			"        \"rollup\": {\n" +
+			"            \n" +
+			"        }\n" +
+			"    },\n" +
+			"    \"tags\": [\n" +
+			"        \"505c7c48ac6dc1edc9b08f21db5a571d\"\n" +
+			"    ],\n" +
+			"    \"syncts\": 1550501698819,\n" +
+			"    \"@timestamp\": \"2019-02-18T14:54:58.819Z\",\n" +
+			"    \"flags\": {\n" +
+			"        \"tv_processed\": true,\n" +
+			"        \"dd_processed\": true,\n" +
+			"        \"ldata_retrieved\": false\n" +
+			"    },\n" +
+			"    \"type\": \"events\",\n" +
+			"    \"ts\": \"2019-02-27T14:45:51.866+0000\",\n" +
+			"    \"ldata\": {\n" +
+			"        \"country_code\": \"\",\n" +
+			"        \"country\": \"\",\n" +
+			"        \"city\": \"\",\n" +
+			"        \"state\": \"\",\n" +
+			"        \"state_code\": \"\"\n" +
+			"    }  \n" +
+			"}", current_ets);
+
+	public static final String IMPRESSION_EVENT_WITH_DIALCODE_CAMELCASE_AS_OBJECT = String.format("{\n" +
+			"    \"actor\": {\n" +
+			"        \"type\": \"User\",\n" +
+			"        \"id\": \"anonymous\"\n" +
+			"    },\n" +
+			"    \"eid\": \"IMPRESSION\",\n" +
+			"    \"edata\": {\n" +
+			"        \"visits\": [\n" +
+			"            \n" +
+			"        ],\n" +
+			"        \"type\": \"view\",\n" +
+			"        \"pageid\": \"dialcode\",\n" +
+			"        \"subtype\": \"pageexit\",\n" +
+			"        \"uri\": \"https://play.diksha.gov.in/dialpage/index.html?dialcode=977D3I\"\n" +
+			"    },\n" +
+			"    \"ver\": \"3.0\",\n" +
+			"    \"ets\": %s,\n" +
+			"    \"context\": {\n" +
+			"        \"uid\": \"anonymous\",\n" +
+			"        \"pdata\": {\n" +
+			"            \"ver\": \"1.7.1\",\n" +
+			"            \"pid\": \"sunbird-portal\",\n" +
+			"            \"id\": \"prod.diksha.portal\"\n" +
+			"        },\n" +
+			"        \"channel\": \"505c7c48ac6dc1edc9b08f21db5a571d\",\n" +
+			"        \"env\": \"public\",\n" +
+			"        \"did\": \"a49cfadff97c698c1766c71a42779d4e\",\n" +
+			"        \"sid\": \"5fd1cea0-3a9e-11e9-bed5-2f34fab96d07\",\n" +
+			"        \"cdata\": [\n" +
+			"            \n" +
+			"        ],\n" +
+			"        \"rollup\": {\n" +
+			"            \"l1\": \"505c7c48ac6dc1edc9b08f21db5a571d\"\n" +
+			"        }\n" +
+			"    },\n" +
+			"    \"mid\": \"IMPRESSION:bfd4026a4099370da57e3519cd3368c0\",\n" +
+			"    \"object\": {\n" +
+			"        \"ver\": \"1.0\",\n" +
+			"        \"id\": \"977D3I\",\n" +
+			"        \"type\": \"DialCode\",\n" +
+			"        \"rollup\": {\n" +
+			"            \n" +
+			"        }\n" +
+			"    },\n" +
+			"    \"tags\": [\n" +
+			"        \"505c7c48ac6dc1edc9b08f21db5a571d\"\n" +
+			"    ],\n" +
+			"    \"syncts\": 1550501698819,\n" +
+			"    \"@timestamp\": \"2019-02-18T14:54:58.819Z\",\n" +
+			"    \"flags\": {\n" +
+			"        \"tv_processed\": true,\n" +
+			"        \"dd_processed\": true,\n" +
+			"        \"ldata_retrieved\": false\n" +
+			"    },\n" +
+			"    \"type\": \"events\",\n" +
+			"    \"ts\": \"2019-02-27T14:45:51.866+0000\",\n" +
+			"    \"ldata\": {\n" +
+			"        \"country_code\": \"\",\n" +
+			"        \"country\": \"\",\n" +
+			"        \"city\": \"\",\n" +
+			"        \"state\": \"\",\n" +
+			"        \"state_code\": \"\"\n" +
+			"    }  \n" +
+			"}", current_ets);
+
 	public static final String SEARCH_EVENT_WITH_CAMELCASE_DIALCODE_AS_STRING = String.format("{\n" +
 			"    \"eid\": \"SEARCH\",\n" +
 			"    \"ets\": %s,\n" +
@@ -1083,6 +1213,63 @@ public class EventFixture {
             "\"type\":\"events\",\n"+
             "\"ver\":\"3.0\"\n"+
             "      }", current_ets);
+
+	public static final String AUDIT_EVENT = String.format("{\n" +
+			"    \"actor\": {\n" +
+			"        \"id\": \"393407b1-66b1-4c86-9080-b2bce9842886\",\n" +
+			"        \"type\": \"User\"\n" +
+			"    },\n" +
+			"    \"eid\": \"AUDIT\",\n" +
+			"    \"edata\": {\n" +
+			"        \"state\": \"Create\",\n" +
+			"        \"prevstate\": \"\"\n" +
+			"    },\n" +
+			"    \"ver\": \"3.0\",\n" +
+			"    \"metadata\": {\n" +
+			"        \"checksum\": \"AUDIT:18413285-6bb0-40ed-b9d1-44a184a3a625\",\n" +
+			"        \"source_eid\": \"GE_CREATE_USER\",\n" +
+			"        \"source_mid\": \"18413285-6bb0-40ed-b9d1-44a184a3a625\",\n" +
+			"        \"index_name\": \"telemetry-2019.06\",\n" +
+			"        \"index_type\": \"events_v1\"\n" +
+			"    },\n" +
+			"    \"@timestamp\": \"2019-06-02T17:21:35.546Z\",\n" +
+			"    \"ets\": 1559495257141,\n" +
+			"    \"context\": {\n" +
+			"        \"channel\": \"in.tnpilot\",\n" +
+			"        \"env\": \"Genie\",\n" +
+			"        \"sid\": \"54ff57dd-0f65-4001-90df-a2eed195bb86\",\n" +
+			"        \"did\": \"68dfc64a7751ad47617ac1a4e0531fb761ebea6f\",\n" +
+			"        \"pdata\": {\n" +
+			"            \"id\": \"tnpilot\",\n" +
+			"            \"pid\": \"tnpilot\",\n" +
+			"            \"ver\": \"1.0.25\"\n" +
+			"        },\n" +
+			"        \"cdata\": [\n" +
+			"            \n" +
+			"        ]\n" +
+			"    },\n" +
+			"    \"flags\": {\n" +
+			"        \"tv_processed\": true,\n" +
+			"        \"v2_converted\": true,\n" +
+			"        \"dd_processed\": true,\n" +
+			"        \"ldata_obtained\": false,\n" +
+			"        \"ldata_processed\": true,\n" +
+			"        \"odn_skipped\": true\n" +
+			"    },\n" +
+			"    \"mid\": \"AUDIT:18413285-6bb0-40ed-b9d1-44a184a3a625\",\n" +
+			"    \"object\": {\n" +
+			"        \"id\": \"393407b1-66b1-4c86-9080-b2bce9842886\",\n" +
+			"        \"type\": \"User\",\n" +
+			"        \"parent\": {\n" +
+			"            \n" +
+			"        }\n" +
+			"    },\n" +
+			"    \"tags\": [\n" +
+			"        \n" +
+			"    ],\n" +
+			"    \"type\": \"events\",\n" +
+			"    \"ts\": \"2019-06-02T17:07:37.141+0000\"\n" +
+			"}", current_ets);
 
 	public static Map<String, Object> getMap(String message) {
 		return (Map<String, Object>) new Gson().fromJson(message, Map.class);

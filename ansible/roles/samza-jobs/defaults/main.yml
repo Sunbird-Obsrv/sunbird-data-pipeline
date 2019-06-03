@@ -54,5 +54,5 @@ telemetry_extractor_container_memory_mb: 1024
 telemetry_extractor_messages_fetch_threshold: 3000
 
 content_metadata_fields: "name, objectType, contentType, mediaType, language, medium, subject, gradeLevel, mimeType, framework, board, status, pkgVersion, lastSubmittedOn, lastUpdatedOn, lastPublishedOn"
-user_metadata_fields: "usertype, grade, subject, language"
+user_metadata_fields: "usertype, grade, subject, language, state, district"
 dialcode_metadata_fields: "identifier, channel, batchcode, publisher, generated_on, published_on, status"
