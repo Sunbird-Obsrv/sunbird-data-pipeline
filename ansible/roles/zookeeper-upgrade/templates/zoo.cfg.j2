@@ -8,6 +8,6 @@ maxClientCnxns={{ maxclinetconnection_limit }}
 
 
 {% for host in zookeeper_group %}
-server.{{hostvars[ansible_host]['server_id']}}={{ ansible_host }}:2888:3888
+server.{{hostvars[host]['server_id']}}={{ ansible_host }}:2888:3888
 {% endfor %}
 
