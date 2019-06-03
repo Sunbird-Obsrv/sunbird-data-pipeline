@@ -5,7 +5,7 @@ import org.apache.samza.config.Config;
 public class TelemetryLocationUpdaterConfig {
 
     private final String JOB_NAME = "TelemetryLocationUpdater";
-    private static final String deviceLocationJobFlag = "device_location_retrieved";
+    private static final String deviceProfileJobFlag = "device_profile_retrieved";
     private static final String userLocationJobFlag = "user_location_retrieved";
 
     private String successTopic;
@@ -18,7 +18,7 @@ public class TelemetryLocationUpdaterConfig {
         failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
         metricsTopic = config.get("output.metrics.topic.name", "telemetry.pipeline_metrics");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
-        
+
     }
 
     public String successTopic() {
@@ -32,17 +32,17 @@ public class TelemetryLocationUpdaterConfig {
     public String metricsTopic() {
         return metricsTopic;
     }
-    
+
     public String malformedTopic() {
-    	return malformedTopic;
+        return malformedTopic;
     }
 
     public String jobName() {
         return JOB_NAME;
     }
 
-    public static String getDeviceLocationJobFlag() {
-        return deviceLocationJobFlag;
+    public static String getDeviceProfileJobFlag() {
+        return deviceProfileJobFlag;
     }
 
     public static String getUserLocationJobFlag() {

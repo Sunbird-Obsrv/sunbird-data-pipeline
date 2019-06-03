@@ -4,15 +4,13 @@ import com.datastax.driver.core.Row;
 import org.apache.samza.config.Config;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
-import org.ekstep.ep.samza.domain.Location;
+import org.ekstep.ep.samza.domain.DeviceProfile;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 
-import java.util.*;
+public class DeviceProfileCache {
 
-public class DeviceLocationCache {
-
-    private static Logger LOGGER = new Logger(DeviceLocationCache.class);
+    private static Logger LOGGER = new Logger(DeviceProfileCache.class);
 
     private String cassandra_db;
     private String cassandra_table;
@@ -24,7 +22,7 @@ public class DeviceLocationCache {
     private Jedis redisConnection;
     private int databaseIndex;
 
-    public DeviceLocationCache(Config config, JobMetrics metrics) {
+    public DeviceProfileCache(Config config, JobMetrics metrics) {
         this.cassandra_db = config.get("cassandra.keyspace", "device_db");
         this.cassandra_table = config.get("cassandra.device_profile_table", "device_profile");
         this.databaseIndex = config.getInt("redis.database.deviceLocationStore.id", 2);
@@ -36,74 +34,77 @@ public class DeviceLocationCache {
         this.metrics = metrics;
     }
 
-    public Location getLocationForDeviceId(String did) {
-        Location location = null;
+    public DeviceProfile getDeviceProfileForDeviceId(String did) {
+        DeviceProfile deviceProfile = null;
         if (did != null && !did.isEmpty()) {
             // Get location from redis. Safe retry once for redis connection loss or error
             try {
-                location = getLocationFromCache(did);
-            } catch(JedisException ex) {
+                deviceProfile = getDeviceProfileFromCache(did);
+            } catch (JedisException ex) {
                 LOGGER.error(null, "Reconnecting with Redis store due to exception: ", ex);
                 redisConnect.resetConnection();
                 this.redisConnection = redisConnect.getConnection(databaseIndex);
-                location = getLocationFromCache(did);
+                deviceProfile = getDeviceProfileFromCache(did);
             }
 
-            if (null != location && location.isLocationResolved()) {
+            if (null != deviceProfile && deviceProfile.isLocationResolved()) {
                 metrics.incCacheHitCounter();
-                return location;
+                return deviceProfile;
             } else {
                 try {
-                    location = getLocationFromDeviceProfileDB(did);
+                    deviceProfile = getDeviceProfileFromDeviceProfileDB(did);
                 } catch (Exception ex) {
                     metrics.incDBErrorCount();
                     LOGGER.error(null, "Reconnecting with Cassandra store due to exception: ", ex);
                     cassandraConnection.reconnect();
-                    location = getLocationFromDeviceProfileDB(did);
+                    deviceProfile = getDeviceProfileFromDeviceProfileDB(did);
                 }
             }
 
-            if(null != location && location.isLocationResolved()) {
+            if (null != deviceProfile && deviceProfile.isLocationResolved()) {
                 metrics.incDBHitCount();
             } else {
                 metrics.incNoDataCount();
             }
-            addLocationToCache(did, location);
+            addDeviceProfileToCache(did, deviceProfile);
         }
-        return location;
+        return deviceProfile;
     }
 
-    public Location getLocationFromCache(String deviceId) {
-        return new Location().fromMap(redisConnection.hgetAll(deviceId));
+    public DeviceProfile getDeviceProfileFromCache(String deviceId) {
+        return new DeviceProfile().fromMap(redisConnection.hgetAll(deviceId));
     }
 
-    public Location getLocationFromDeviceProfileDB(String deviceId) {
-        Location location = new Location();
+    public DeviceProfile getDeviceProfileFromDeviceProfileDB(String deviceId) {
+        DeviceProfile deviceProfile = new DeviceProfile();
         String query =
                 String.format("SELECT device_id, country_code, country, state_code, state, city, state_custom, " +
-                                "state_code_custom, district_custom FROM %s.%s WHERE device_id = '%s'",
+                                "state_code_custom, district_custom,device_id, device_spec, uaspec, first_access FROM %s.%s WHERE device_id = '%s'",
                         cassandra_db, cassandra_table, deviceId);
         Row result = cassandraConnection.findOne(query);
         if (null != result) {
             String locationState = result.getString("state");
             if (locationState != null && !locationState.isEmpty()) {
-                location.setCountryCode(result.getString("country_code"));
-                location.setCountry(result.getString("country"));
-                location.setStateCode(result.getString("state_code"));
-                location.setState(result.getString("state"));
-                location.setCity(result.getString("city"));
-                location.setDistrictCustom(result.getString("district_custom"));
-                location.setStateCustomName(result.getString("state_custom"));
-                location.setStateCodeCustom(result.getString("state_code_custom"));
+                deviceProfile.setCountryCode(result.getString("country_code"));
+                deviceProfile.setCountry(result.getString("country"));
+                deviceProfile.setStateCode(result.getString("state_code"));
+                deviceProfile.setState(result.getString("state"));
+                deviceProfile.setCity(result.getString("city"));
+                deviceProfile.setDistrictCustom(result.getString("district_custom"));
+                deviceProfile.setStateCustomName(result.getString("state_custom"));
+                deviceProfile.setStateCodeCustom(result.getString("state_code_custom"));
+                deviceProfile.setDevice_spec(result.getMap("device_spec", String.class, String.class));
+                deviceProfile.setUaspec(result.getMap("uaspec", String.class, String.class));
+                deviceProfile.setFirst_access(result.getTimestamp("first_access").getTime());
             }
         }
-        return location;
+        return deviceProfile;
     }
 
-    private void addLocationToCache(String did, Location location) {
+    private void addDeviceProfileToCache(String did, DeviceProfile deviceProfile) {
         try {
-            redisConnection.hmset(did, location.toMap());
-            redisConnection.expire(did, location.isLocationResolved() ?
+            redisConnection.hmset(did, deviceProfile.toMap());
+            redisConnection.expire(did, deviceProfile.isLocationResolved() ?
                     locationDbKeyExpiryTimeInSeconds : cacheUnresolvedLocationExpiryTimeInSeconds);
         } catch (JedisException ex) {
             LOGGER.error("", "AddLocationToCache: Unable to get a resource from the redis " +

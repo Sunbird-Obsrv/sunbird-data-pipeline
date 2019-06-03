@@ -1,17 +1,18 @@
 package org.ekstep.ep.samza.domain;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import org.ekstep.ep.samza.reader.NullableValue;
+import org.ekstep.ep.samza.reader.Telemetry;
+import org.ekstep.ep.samza.task.TelemetryLocationUpdaterConfig;
+import org.ekstep.ep.samza.util.Path;
+
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.gson.JsonObject;
-import org.ekstep.ep.samza.reader.NullableValue;
-import org.ekstep.ep.samza.reader.Telemetry;
-import org.ekstep.ep.samza.task.TelemetryLocationUpdaterConfig;
-
-import com.google.gson.Gson;
-import org.ekstep.ep.samza.util.Path;
 
 public class Event {
 
@@ -37,7 +38,7 @@ public class Event {
 		NullableValue<String> checksum = telemetry.read("mid");
 		return checksum.value();
 	}
-	
+
 	public String did() {
 		NullableValue<String> did = telemetry.read("dimensions.did");
 		return did.isNull() ? telemetry.<String>read("context.did").value() : did.value();
@@ -99,7 +100,7 @@ public class Event {
 		}
 	}
 
-	public void addUserLocation(Location location) {
+	public void addUserLocation(DeviceProfile location) {
 		Map<String, String> userLoc = new HashMap<>();
 		if (location.getState() == null) location.setState("");
 		if (location.getDistrict() == null) location.setDistrict("");
@@ -107,7 +108,7 @@ public class Event {
 		userLoc.put("district", location.getDistrict());
 		if (location.isStateDistrictResolved()) {
 			setFlag(TelemetryLocationUpdaterConfig.getUserLocationJobFlag(), true);
-		} else if(location.getDistrict().equals("") && location.getState().equals("")) {
+		} else if (location.getDistrict().equals("") && location.getState().equals("")) {
 			setFlag(TelemetryLocationUpdaterConfig.getUserLocationJobFlag(), false);
 		} else {
 			setFlag(TelemetryLocationUpdaterConfig.getUserLocationJobFlag(), true);
@@ -115,17 +116,35 @@ public class Event {
 		telemetry.add(path.userData(), userLoc);
 	}
 
-	public void addLocation(Location location) {
-		Map<String, String> ldata = new HashMap<>();
-		ldata.put("countrycode", location.getCountryCode());
-		ldata.put("country", location.getCountry());
-		ldata.put("statecode", location.getStateCode());
-		ldata.put("state", location.getState());
-		ldata.put("city", location.getCity());
-		ldata.put("statecustomcode", location.getstateCodeCustom());
-		ldata.put("statecustomname", location.getstateCustomName());
-		ldata.put("districtcustom", location.getDistrictCustom());
+	public void addDeviceProfile(DeviceProfile deviceProfile) {
+		Gson gson = new Gson();
+		Type type = new TypeToken<Map<String, Object>>() {
+		}.getType();
+		Map<String, Object> ldata = new HashMap<>();
+		ldata.put("countrycode", deviceProfile.getCountryCode());
+		ldata.put("country", deviceProfile.getCountry());
+		ldata.put("statecode", deviceProfile.getStateCode());
+		ldata.put("state", deviceProfile.getState());
+		ldata.put("city", deviceProfile.getCity());
+		ldata.put("statecustomcode", deviceProfile.getstateCodeCustom());
+		ldata.put("statecustomname", deviceProfile.getstateCustomName());
+		ldata.put("districtcustom", deviceProfile.getDistrictCustom());
+		ldata.put("device_spec", deviceProfile.getDevice_spec());
+		ldata.put("uaspec", deviceProfile.getUaspec());
+		ldata.put("first_access", deviceProfile.getFirst_access());
+		String iso3166statecode = addISOStateCodeToDeviceProfile(deviceProfile);
+		if (!iso3166statecode.isEmpty()) {
+			ldata.put("iso3166statecode", iso3166statecode);
+		}
 		telemetry.add(path.deviceData(), ldata);
+	}
+
+	public String addISOStateCodeToDeviceProfile(DeviceProfile deviceProfile) {
+		// add new statecode field
+		String statecode = deviceProfile.getStateCode();
+		if (statecode != null && !statecode.isEmpty()) {
+			return "IN-" + statecode;
+		} else return "";
 	}
 
 	public void removeEdataLoc() {

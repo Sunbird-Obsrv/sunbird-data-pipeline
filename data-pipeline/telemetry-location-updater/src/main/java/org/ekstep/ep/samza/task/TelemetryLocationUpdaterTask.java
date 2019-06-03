@@ -23,16 +23,11 @@ import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.InitableTask;
-import org.apache.samza.task.MessageCollector;
-import org.apache.samza.task.StreamTask;
-import org.apache.samza.task.TaskContext;
-import org.apache.samza.task.TaskCoordinator;
-import org.apache.samza.task.WindowableTask;
+import org.apache.samza.task.*;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.TelemetryLocationUpdaterService;
-import org.ekstep.ep.samza.util.*;
+import org.ekstep.ep.samza.util.DeviceProfileCache;
 
 public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, WindowableTask {
 
@@ -40,27 +35,28 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 	private TelemetryLocationUpdaterConfig config;
 	private JobMetrics metrics;
 	private TelemetryLocationUpdaterService service;
-	private DeviceLocationCache deviceLocationCache;
+	private DeviceProfileCache deviceProfileCache;
 
-	public TelemetryLocationUpdaterTask(Config config, TaskContext context, DeviceLocationCache deviceLocationCache) {
-		init(config, context, deviceLocationCache);
+	public TelemetryLocationUpdaterTask(Config config, TaskContext context, DeviceProfileCache deviceProfileCache) {
+		init(config, context, deviceProfileCache);
 	}
 
-	public TelemetryLocationUpdaterTask() {}
+	public TelemetryLocationUpdaterTask() {
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void init(Config config, TaskContext context) {
-		init(config, context, deviceLocationCache);
+		init(config, context, deviceProfileCache);
 	}
 
 	@SuppressWarnings("unchecked")
-	public void init(Config config, TaskContext context, DeviceLocationCache deviceLocationCache) {
+	public void init(Config config, TaskContext context, DeviceProfileCache deviceProfileCache) {
 
 		this.config = new TelemetryLocationUpdaterConfig(config);
 		this.metrics = new JobMetrics(context, this.config.jobName());
-		this.deviceLocationCache = deviceLocationCache == null ? new DeviceLocationCache(config, metrics): deviceLocationCache;
-		this.service = new TelemetryLocationUpdaterService(this.deviceLocationCache, metrics);
+		this.deviceProfileCache = deviceProfileCache == null ? new DeviceProfileCache(config, metrics) : deviceProfileCache;
+		this.service = new TelemetryLocationUpdaterService(this.deviceProfileCache, metrics);
 	}
 
 	@Override
