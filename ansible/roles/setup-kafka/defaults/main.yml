@@ -1,5 +1,6 @@
 env: dev
 kafka_partition_override_size: 5242880
+dp_downstream_kafka_max_message_bytes: 1572864
 
 ingestion_kafka_topics:
   - name: telemetry.ingest
@@ -10,6 +11,7 @@ ingestion_kafka_overriden_topics:
   - name: telemetry.ingest
     retention_time: 604800000
     replication_factor: 1
+    max_message_bytes: 5242880
 
 processing_kafka_overriden_topics:
   - name: telemetry.raw
@@ -72,6 +74,12 @@ processing_kafka_overriden_topics:
   - name: telemetry.derived
     retention_time: 21600000
     replication_factor: 1
+  - name: events.telemetry
+    retention_time: 86400000
+    replication_factor: 1
+  - name: events.summary
+    retention_time: 86400000
+    replication_factor: 1
   - name: events.log
     retention_time: 86400000
   # Error/Failed Topics
@@ -82,9 +90,6 @@ processing_kafka_overriden_topics:
     retention_time: 21600000
     replication_factor: 1
   - name: telemetry.extractor.failed
-    retention_time: 21600000
-    replication_factor: 1
-  - name: telemetry.indexer.failed
     retention_time: 21600000
     replication_factor: 1
   - name: system.command
