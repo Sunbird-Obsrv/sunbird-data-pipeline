@@ -100,22 +100,6 @@ public class Event {
 		}
 	}
 
-	public void addUserLocation(DeviceProfile location) {
-		Map<String, String> userLoc = new HashMap<>();
-		if (location.getState() == null) location.setState("");
-		if (location.getDistrict() == null) location.setDistrict("");
-		userLoc.put("state", location.getState());
-		userLoc.put("district", location.getDistrict());
-		if (location.isStateDistrictResolved()) {
-			setFlag(TelemetryLocationUpdaterConfig.getUserLocationJobFlag(), true);
-		} else if (location.getDistrict().equals("") && location.getState().equals("")) {
-			setFlag(TelemetryLocationUpdaterConfig.getUserLocationJobFlag(), false);
-		} else {
-			setFlag(TelemetryLocationUpdaterConfig.getUserLocationJobFlag(), true);
-		}
-		telemetry.add(path.userData(), userLoc);
-	}
-
 	public void addDeviceProfile(DeviceProfile deviceProfile) {
 		Gson gson = new Gson();
 		Type type = new TypeToken<Map<String, Object>>() {
@@ -129,9 +113,9 @@ public class Event {
 		ldata.put("statecustomcode", deviceProfile.getstateCodeCustom());
 		ldata.put("statecustomname", deviceProfile.getstateCustomName());
 		ldata.put("districtcustom", deviceProfile.getDistrictCustom());
-		ldata.put("device_spec", deviceProfile.getDevice_spec());
+		ldata.put("devicespec", deviceProfile.getDevicespec());
 		ldata.put("uaspec", deviceProfile.getUaspec());
-		ldata.put("first_access", deviceProfile.getFirst_access());
+		ldata.put("firstaccess", deviceProfile.getFirstaccess());
 		String iso3166statecode = addISOStateCodeToDeviceProfile(deviceProfile);
 		if (!iso3166statecode.isEmpty()) {
 			ldata.put("iso3166statecode", iso3166statecode);

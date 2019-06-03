@@ -253,7 +253,7 @@ public class TelemetryLocationUpdaterTaskTest {
 				assertTrue(outputMessage.contains("\"make\":\"Motorola XT1706\""));
 				assertTrue(outputMessage.contains("\"platform\":\"AppleWebKit/531.21.10\""));
 				assertTrue(outputMessage.contains("\"raw\":\"Mozilla/5.0 (X11 Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)\""));
-				assertTrue(outputMessage.contains("\"first_access\":1559484698000"));
+				assertTrue(outputMessage.contains("\"firstaccess\":1559484698000"));
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
 				assertEquals(true, flags.get("device_profile_retrieved"));
 				return true;

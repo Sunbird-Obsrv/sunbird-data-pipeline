@@ -93,9 +93,9 @@ public class DeviceProfileCache {
                 deviceProfile.setDistrictCustom(result.getString("district_custom"));
                 deviceProfile.setStateCustomName(result.getString("state_custom"));
                 deviceProfile.setStateCodeCustom(result.getString("state_code_custom"));
-                deviceProfile.setDevice_spec(result.getMap("device_spec", String.class, String.class));
+                deviceProfile.setDevicespec(result.getMap("device_spec", String.class, String.class));
                 deviceProfile.setUaspec(result.getMap("uaspec", String.class, String.class));
-                deviceProfile.setFirst_access(result.getTimestamp("first_access").getTime());
+                deviceProfile.setFirstaccess(result.getTimestamp("first_access").getTime());
             }
         }
         return deviceProfile;

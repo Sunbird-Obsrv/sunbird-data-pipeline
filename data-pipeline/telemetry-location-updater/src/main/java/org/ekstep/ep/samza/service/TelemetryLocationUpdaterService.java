@@ -35,7 +35,7 @@ public class TelemetryLocationUpdaterService {
 		}
 	}
 
-	private Event updateEventWithIPLocation(Event event) {
+	private void updateEventWithIPLocation(Event event) {
 		String did = event.did();
 		DeviceProfile deviceProfile = null;
 		if (did != null && !did.isEmpty()) {
@@ -43,13 +43,12 @@ public class TelemetryLocationUpdaterService {
 			updateEvent(event, deviceProfile);
 			metrics.incProcessedMessageCount();
 		} else {
-			event = updateEvent(event, deviceProfile);
+			updateEvent(event, deviceProfile);
 			metrics.incUnprocessedMessageCount();
 		}
-		return event;
 	}
 
-	public Event updateEvent(Event event, DeviceProfile deviceProfile) {
+	public void updateEvent(Event event, DeviceProfile deviceProfile) {
 		event.removeEdataLoc();
 		if (null != deviceProfile) {
 			event.addDeviceProfile(deviceProfile);
@@ -58,10 +57,17 @@ public class TelemetryLocationUpdaterService {
 			} else {
 				event.setFlag(TelemetryLocationUpdaterConfig.getDeviceProfileJobFlag(), false);
 			}
+			if (deviceProfile.isLocationResolved()) {
+				event.setFlag(TelemetryLocationUpdaterConfig.getDeviceLocationJobFlag(), true);
+			}
+			else
+			{
+				event.setFlag(TelemetryLocationUpdaterConfig.getDeviceLocationJobFlag(), false);
+			}
 		} else {
 			event.setFlag(TelemetryLocationUpdaterConfig.getDeviceProfileJobFlag(), false);
 		}
 
-		return event;
+
 	}
 }

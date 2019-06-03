@@ -37,8 +37,8 @@ public class DeviceProfile {
   private String stateCodeCustom;
   private String stateCustomName;
   private Map<String, String> uaspec;
-  private Map<String, String> device_spec;
-  private Long first_access;
+  private Map<String, String> devicespec;
+  private Long firstaccess;
   private Gson gson = new Gson();
 
   public DeviceProfile() {
@@ -52,8 +52,8 @@ public class DeviceProfile {
     this.stateCodeCustom = "";
     this.stateCustomName = "";
     this.uaspec = new HashMap<>();
-    this.device_spec = new HashMap<>();
-    this.first_access = 0L;
+    this.devicespec = new HashMap<>();
+    this.firstaccess = 0L;
   }
 
   public Map<String, String> toMap() {
@@ -67,8 +67,8 @@ public class DeviceProfile {
     values.put("state_custom", DeviceProfile.getValueOrDefault(this.stateCustomName, ""));
     values.put("state_code_custom", DeviceProfile.getValueOrDefault(this.stateCodeCustom, ""));
     values.put("uaspec", gson.toJson(DeviceProfile.getValueOrDefault(this.uaspec, new HashMap<>())));
-    values.put("device_spec", gson.toJson(DeviceProfile.getValueOrDefault(this.device_spec, new HashMap<>())));
-    values.put("first_access", DeviceProfile.getValueOrDefault(String.valueOf(this.first_access), ""));
+    values.put("devicespec", gson.toJson(DeviceProfile.getValueOrDefault(this.devicespec, new HashMap<>())));
+    values.put("firstaccess", DeviceProfile.getValueOrDefault(String.valueOf(this.firstaccess), ""));
     return values;
   }
 
@@ -84,8 +84,8 @@ public class DeviceProfile {
     this.stateCustomName = map.getOrDefault("state_custom", "");
     this.stateCodeCustom = map.getOrDefault("state_code_custom", "");
     this.uaspec = gson.fromJson(map.getOrDefault("uaspec", ""), type);
-    this.device_spec = gson.fromJson(map.getOrDefault("device_spec", ""), type);
-    this.first_access = Long.valueOf(map.getOrDefault("first_access", "0"));
+    this.devicespec = gson.fromJson(map.getOrDefault("devicespec", ""), type);
+    this.firstaccess = Long.valueOf(map.getOrDefault("firstaccess", "0"));
     return this;
   }
 
@@ -118,8 +118,8 @@ public class DeviceProfile {
     this.stateCustomName = stateCustomName;
     this.stateCodeCustom = stateCodeCustom;
     this.uaspec = uaspec;
-    this.device_spec = device_spec;
-    this.first_access = first_access;
+    this.devicespec = device_spec;
+    this.firstaccess = first_access;
   }
 
   public String getCity() {
@@ -162,12 +162,12 @@ public class DeviceProfile {
     return uaspec;
   }
 
-  public Map getDevice_spec() {
-    return device_spec;
+  public Map getDevicespec() {
+    return devicespec;
   }
 
-  public Long getFirst_access() {
-    return first_access;
+  public Long getFirstaccess() {
+    return firstaccess;
   }
 
   public void setState(String state) {
@@ -210,12 +210,12 @@ public class DeviceProfile {
     this.uaspec = uaspec;
   }
 
-  public void setDevice_spec(Map<String, String> device_spec) {
-    this.device_spec = device_spec;
+  public void setDevicespec(Map<String, String> devicespec) {
+    this.devicespec = devicespec;
   }
 
-  public void setFirst_access(Long first_access) {
-    this.first_access = first_access;
+  public void setFirstaccess(Long firstaccess) {
+    this.firstaccess = firstaccess;
   }
 
   public Boolean isLocationResolved() {
@@ -228,7 +228,7 @@ public class DeviceProfile {
 
   public Boolean isDeviceProfileResolved() {
 
-    return this.isLocationResolved() || (!this.uaspec.isEmpty() || !this.device_spec.isEmpty() || this.first_access > 0);
+    return this.isLocationResolved() || (!this.uaspec.isEmpty() || !this.devicespec.isEmpty() || this.firstaccess > 0);
   }
 
   public static <T> T getValueOrDefault(T value, T defaultValue) {
