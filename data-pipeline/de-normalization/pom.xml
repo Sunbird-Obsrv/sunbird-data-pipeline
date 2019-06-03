@@ -17,9 +17,9 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>de-normalization</artifactId>
-    <version>0.0.9</version>
+    <version>0.1.0</version>
     <packaging>jar</packaging>
-    <name>Denormaliser</name>
+    <name>De-normalizer</name>
     <description>
        Denormalise device, user and content data
     </description>

@@ -17,9 +17,9 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>de-duplication</artifactId>
-    <version>0.4.4</version>
+    <version>0.4.5</version>
     <packaging>jar</packaging>
-    <name>De Duplication</name>
+    <name>Deduplication</name>
     <description>
        Identifying Duplicate Events
     </description>
