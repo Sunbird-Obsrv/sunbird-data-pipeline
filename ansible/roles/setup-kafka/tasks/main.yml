@@ -31,7 +31,6 @@
 - name: overriding default partition size
   shell: "/opt/kafka_2.12-1.1.0/bin/kafka-topics.sh  --zookeeper localhost:2181 --alter --topic {{item}} --config max.message.bytes={{kafka_partition_override_size}}"
   with_items:
-    - "{{env}}.telemetry.ingestion"
     - "{{env}}.telemetry.ingest"
     - "{{env}}.telemetry.extractor.failed"
 
