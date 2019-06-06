@@ -145,6 +145,9 @@ processing_kafka_topics:
   - name: events.log
     num_of_partitions: 2
     replication_factor: 1
+  - name: events.error
+    num_of_partitions: 2
+    replication_factor: 1
   - name: telemetry.log
     num_of_partitions: 1
     replication_factor: 1
