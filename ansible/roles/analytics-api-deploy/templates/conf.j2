@@ -31,7 +31,7 @@ data_exhaust.dataset.default="eks-consumption-raw"
 data_exhaust.output_format="json"
 
 # Log4j Kafka appender config
-log4j.appender.kafka.enable="true"
+log4j.appender.kafka.enable="false"
 log4j.appender.kafka.broker_host="{{groups['processing-cluster-kafka'][0]}}:9092"
 log4j.appender.kafka.topic="{{env}}.telemetry.log"
 
