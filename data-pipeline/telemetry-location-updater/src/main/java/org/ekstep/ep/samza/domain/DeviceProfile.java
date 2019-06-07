@@ -40,6 +40,7 @@ public class DeviceProfile {
   private Map<String, String> devicespec;
   private Long firstaccess;
   private Gson gson = new Gson();
+  private Type type = new TypeToken<Map<String, Object>>() {}.getType();
 
   public DeviceProfile() {
     this.countryCode = "";
@@ -73,8 +74,6 @@ public class DeviceProfile {
   }
 
   public DeviceProfile fromMap(Map<String, String> map) {
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
     this.countryCode = map.getOrDefault("country_code", "");
     this.country = map.getOrDefault("country", "");
     this.stateCode = map.getOrDefault("state_code", "");

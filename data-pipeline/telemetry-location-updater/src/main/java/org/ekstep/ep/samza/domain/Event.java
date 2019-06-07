@@ -18,6 +18,9 @@ public class Event {
 
 	private final Telemetry telemetry;
 	private Path path;
+	private Gson gson = new Gson();
+	private Type type = new TypeToken<Map<String, Object>>() {
+	}.getType();
 
 	public Event(Map<String, Object> map) {
 		this.telemetry = new Telemetry(map);
@@ -101,9 +104,6 @@ public class Event {
 	}
 
 	public void addDeviceProfile(DeviceProfile deviceProfile) {
-		Gson gson = new Gson();
-		Type type = new TypeToken<Map<String, Object>>() {
-		}.getType();
 		Map<String, Object> ldata = new HashMap<>();
 		ldata.put("countrycode", deviceProfile.getCountryCode());
 		ldata.put("country", deviceProfile.getCountry());
