@@ -32,8 +32,8 @@ public class DeNormalizationService {
             List<String> summaryRouteEventPrefix = this.config.getSummaryFilterEvents();
 
             if("ERROR".equals(eid)){
-                LOGGER.debug(null,"Skipping as eid is ERROR");
-                sink.incrementSkippedCount(event);
+                LOGGER.debug(null,"Skipping denormalization as eid is ERROR");
+                sink.toSuccessTopic(event);
                 return;
             }
 
@@ -68,10 +68,13 @@ public class DeNormalizationService {
         // correct future dates
         event.compareAndAlterEts();
 
-        if ("dialcode".equals(event.objectType())) {
-            // add dialcode details to the event where object.type = dialcode
+        if ("dialcode".equalsIgnoreCase(event.objectType()) || "qr".equalsIgnoreCase(event.objectType())) {
+            // add dialcode details to the event where object.type = dialcode/qr
             eventUpdaterFactory.getInstance("dialcode-data-updater").update(event, event.getKey("content"));
-        } else {
+        } else if ("user".equalsIgnoreCase(event.objectType())) {
+            // skipping since it is same as user-denorm
+        }
+        else {
             // add content details to the event
             eventUpdaterFactory.getInstance("content-data-updater").update(event, event.getKey("content"));
         }
@@ -79,6 +82,6 @@ public class DeNormalizationService {
         eventUpdaterFactory.getInstance("user-data-updater").update(event);
 
         // add device details to the event
-        eventUpdaterFactory.getInstance("device-data-updater").update(event);
+//        eventUpdaterFactory.getInstance("device-data-updater").update(event);
     }
 }

@@ -21,6 +21,7 @@ public class EventsRouterConfig {
     private Boolean dedupEnabled;
     private final int dupStore;
     private int expirySeconds;
+    private String errorEventsRouteTopic;
 
     public EventsRouterConfig(Config config) {
         failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
@@ -34,6 +35,7 @@ public class EventsRouterConfig {
         dedupEnabled = config.getBoolean("dedup.enabled", true);
         dupStore = config.getInt("redis.database.duplicationstore.id", 8);
         expirySeconds = config.getInt("redis.database.key.expiry.seconds", 1296000);
+        errorEventsRouteTopic = config.get("router.events.error.route.topic", "events.error");
     }
 
     public String getTelemetryEventsRouteTopic() {
@@ -91,4 +93,6 @@ public class EventsRouterConfig {
     public int expirySeconds() {
         return expirySeconds;
     }
+
+    public String getErrorEventsRouteTopic() { return errorEventsRouteTopic; }
 }

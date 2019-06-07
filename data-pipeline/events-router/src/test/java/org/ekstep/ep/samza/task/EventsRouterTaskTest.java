@@ -35,6 +35,7 @@ public class EventsRouterTaskTest {
 	private static final String FAILED_TOPIC = "telemetry.failed";
 	private static final String MALFORMED_TOPIC = "telemetry.malformed";
 	private static final String LOG_EVENTS_TOPIC = "events.log";
+	private static final String ERROR_EVENTS_TOPIC = "events.error";
 	private static final String DUPLICATE_TOPIC = "telemetry.duplicate";
 	
 	private MessageCollector collectorMock;
@@ -69,6 +70,7 @@ public class EventsRouterTaskTest {
 		stub(configMock.get("router.events.log.route.topic", LOG_EVENTS_TOPIC)).toReturn(LOG_EVENTS_TOPIC);
 		stub(configMock.get("output.duplicate.topic.name", DUPLICATE_TOPIC)).toReturn(DUPLICATE_TOPIC);
 		stub(configMock.getBoolean("dedup.enabled", true)).toReturn(true);
+		stub(configMock.get("router.events.error.route.topic", ERROR_EVENTS_TOPIC)).toReturn(ERROR_EVENTS_TOPIC);
 
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
@@ -153,5 +155,16 @@ public class EventsRouterTaskTest {
 		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);
 		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), LOG_EVENTS_TOPIC)));
+	}
+
+	@Test
+	public void shouldRouteErrorEventsToErrorEventsTopic() throws Exception {
+
+		stub(configMock.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY")).toReturn("ME_WORKFLOW_SUMMARY");
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.TELEMETRY_ERROR_EVENT);
+		when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
+		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);
+		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
+		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), ERROR_EVENTS_TOPIC)));
 	}
 }
