@@ -2,14 +2,14 @@ package org.ekstep.ep.samza.service;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.apache.commons.lang.ArrayUtils;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.task.RedisUpdaterSink;
 import org.ekstep.ep.samza.task.RedisUpdaterSource;
 
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
 import org.ekstep.ep.samza.util.RedisConnect;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
@@ -24,6 +24,7 @@ public class RedisUpdaterService {
     private int dialCodeStoreDb;
     private int contentStoreDb;
     private Gson gson = new Gson();
+    private String[] contentModelListTypeFields;
 
     public RedisUpdaterService(Config config, RedisConnect redisConnect) {
         this.redisConnect = redisConnect;
@@ -31,6 +32,7 @@ public class RedisUpdaterService {
         this.dialCodeStoreDb = config.getInt("redis.database.dialCodeStore.id", 6);
         this.contentStoreConnection = redisConnect.getConnection(contentStoreDb);
         this.dialCodeStoreConnection = redisConnect.getConnection(dialCodeStoreDb);
+        this.contentModelListTypeFields = config.get("contentModel.fields.listType").split(",");
     }
 
     public void process(RedisUpdaterSource source, RedisUpdaterSink sink) {
@@ -62,6 +64,7 @@ public class RedisUpdaterService {
             parsedData.putAll(newProperties);
             if (parsedData.size() > 0) {
                 parsedData.values().removeAll(Collections.singleton(null));
+                parsedData.values().removeAll(Collections.singleton(""));
                 addToCache(nodeUniqueId, gson.toJson(parsedData), dialCodeStoreConnection);
                 sink.success();
             }
@@ -78,6 +81,7 @@ public class RedisUpdaterService {
     private void updateContentCache(Map<String, Object> message, RedisUpdaterSink sink) {
         String nodeUniqueId = (String) message.get("nodeUniqueId");
         Map<String, Object> parsedData = null;
+        Map<String, List<String>> listTypeFields = new HashMap();
         try {
             String contentNode = contentStoreConnection.get(nodeUniqueId);
             if (contentNode == null) {
@@ -87,9 +91,23 @@ public class RedisUpdaterService {
                 parsedData = gson.fromJson(contentNode, type);
             }
             Map<String, Object> newProperties = extractProperties(message);
+            for(Map.Entry<String,Object> entry : newProperties.entrySet()) {
+                if (ArrayUtils.indexOf(contentModelListTypeFields, entry.getKey()) != -1
+                        && entry.getValue() instanceof String
+                        && !((String) entry.getValue()).isEmpty()
+                ) {
+                    String str = (String) entry.getValue();
+                    List<String> value = toList(str);
+                    listTypeFields.put(entry.getKey(), value);
+                }
+            }
+            if (!listTypeFields.isEmpty()) {
+                newProperties.putAll(listTypeFields);
+            }
             parsedData.putAll(newProperties);
             if (parsedData.size() > 0) {
                 parsedData.values().removeAll(Collections.singleton(null));
+                parsedData.values().removeAll(Collections.singleton(""));
                 addToCache(nodeUniqueId, gson.toJson(parsedData), contentStoreConnection);
                 sink.success();
             }
@@ -99,6 +117,16 @@ public class RedisUpdaterService {
             redisConnect.resetConnection();
             redisConnect.getConnection(contentStoreDb);
             addToCache(nodeUniqueId, gson.toJson(parsedData), contentStoreConnection);
+        }
+    }
+
+    private List<String> toList(String value) {
+        if (value != null) {
+            List<String> val = new ArrayList<String>();
+            val.add(value);
+            return val;
+        } else {
+            return new ArrayList<String>();
         }
     }
 
