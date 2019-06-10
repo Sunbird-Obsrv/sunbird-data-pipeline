@@ -99,7 +99,7 @@ public class RedisUpdaterServiceTest {
         assertEquals(4, parsedData.size());
         assertEquals(parsedData.get("language") instanceof List, true);
         assertEquals(parsedData.get("subject") instanceof List, true);
-        assertEquals(parsedData.get("ageGroup") instanceof List, true);
+        assertEquals(parsedData.get("ageGroup") instanceof List, false);
         assertEquals(parsedData.get("ownershipType") instanceof List, true);
         verify(redisUpdaterSinkMock, times(1)).success();
     }
