@@ -15,8 +15,10 @@ import org.junit.Test;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 
+import javax.lang.model.type.ArrayType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -44,6 +46,8 @@ public class RedisUpdaterServiceTest {
         stub(configMock.getInt("redis.database.contentStore.id", contentStoreId)).toReturn(contentStoreId);
         stub(configMock.getInt("redis.database.dialCodeStore.id", dialCodeStoreId)).toReturn(dialCodeStoreId);
         stub(configMock.getInt("location.db.redis.key.expiry.seconds", 86400)).toReturn(86400);
+        stub(configMock.get("contentModel.fields.listType"))
+                .toReturn("gradeLevel,subject,medium,language");
         redisUpdaterService = new RedisUpdaterService(configMock, redisConnectMock);
         jedisMock.flushAll();
     }
@@ -68,6 +72,35 @@ public class RedisUpdaterServiceTest {
             parsedData = gson.fromJson(cachedData, type);
         }
         assertEquals(5, parsedData.size());
+        verify(redisUpdaterSinkMock, times(1)).success();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void handleStringToList() throws Exception {
+        jedisMock.flushAll();
+
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.INCORRECT_LIST_TYPE_FIELDS);
+        Gson gson = new Gson();
+        Map<String, Object> event = gson.fromJson(EventFixture.INCORRECT_LIST_TYPE_FIELDS, Map.class);
+        String contentId = (String) event.get("nodeUniqueId");
+        // initial data in cache
+        jedisMock.set(contentId, "{\"language\": \"English\"}");
+        RedisUpdaterSource source = new RedisUpdaterSource(envelopeMock);
+        redisUpdaterService.process(source, redisUpdaterSinkMock);
+
+        String cachedData = jedisMock.get(contentId);
+        Map<String, Object> parsedData = null;
+        if (cachedData != null) {
+            Type type = new TypeToken<Map<String, Object>>() {
+            }.getType();
+            parsedData = gson.fromJson(cachedData, type);
+        }
+        assertEquals(4, parsedData.size());
+        assertEquals(parsedData.get("language") instanceof List, true);
+        assertEquals(parsedData.get("subject") instanceof List, true);
+        assertEquals(parsedData.get("ageGroup") instanceof List, false);
+        assertEquals(parsedData.get("ownershipType") instanceof List, true);
         verify(redisUpdaterSinkMock, times(1)).success();
     }
 
@@ -216,7 +249,37 @@ public class RedisUpdaterServiceTest {
             parsedData = gson.fromJson(cachedData, type);
         }
         assertEquals(1, parsedData.size());
-        assertEquals("English", parsedData.get("language"));
+        ArrayList<String> str = new ArrayList<>();
+        str.add("English");
+        assertEquals(str, parsedData.get("language"));
+        verify(redisUpdaterSinkMock, times(1)).success();
+    }
+
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldNotAddEventIfItIsEmpty() throws Exception {
+        jedisMock.flushAll();
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.EMPTY_LANGUAGE_FIELD_EVENT);
+
+        Gson gson = new Gson();
+        Map<String, Object> event = gson.fromJson(EventFixture.EMPTY_LANGUAGE_FIELD_EVENT, Map.class);
+        String conceptId = (String) event.get("nodeUniqueId");
+        // initial data in cache
+        jedisMock.set(conceptId, "{\"language\": [\"English\"] }");
+
+        RedisUpdaterSource source = new RedisUpdaterSource(envelopeMock);
+        redisUpdaterService.process(source, redisUpdaterSinkMock);
+
+        String cachedData = jedisMock.get(conceptId);
+        Map<String, Object> parsedData = null;
+        if (cachedData != null) {
+            Type type = new TypeToken<Map<String, Object>>() {
+            }.getType();
+            parsedData = gson.fromJson(cachedData, type);
+        }
+        assertEquals(0, parsedData.size());
+        assertEquals(null, parsedData.get("language"));
         verify(redisUpdaterSinkMock, times(1)).success();
     }
 }
