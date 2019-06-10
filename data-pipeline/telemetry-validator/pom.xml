@@ -17,7 +17,7 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>telemetry-validator</artifactId>
-    <version>0.1.8</version>
+    <version>0.1.9</version>
     <packaging>jar</packaging>
     <name>TelemetryValidator</name>
     <description>
@@ -30,12 +30,7 @@
             <artifactId>samza-api</artifactId>
             <version>${samza.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.samza</groupId>
-            <artifactId>samza-core_2.10</artifactId>
-            <version>${samza.version}</version>
-        </dependency>
-        <dependency>
+         <dependency>
             <groupId>org.apache.samza</groupId>
             <artifactId>samza-log4j</artifactId>
             <version>${samza.version}</version>
@@ -48,26 +43,6 @@
             <version>${samza.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.samza</groupId>
-            <artifactId>samza-yarn_2.10</artifactId>
-            <version>${samza.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.samza</groupId>
-            <artifactId>samza-kv_2.10</artifactId>
-            <version>${samza.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.samza</groupId>
-            <artifactId>samza-kv-rocksdb_2.10</artifactId>
-            <version>${samza.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.samza</groupId>
-            <artifactId>samza-kafka_2.10</artifactId>
-            <version>${samza.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.11</artifactId>
             <version>${kafka.version}</version>
@@ -76,16 +51,6 @@
             <groupId>org.schwering</groupId>
             <artifactId>irclib</artifactId>
             <version>1.10</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.2</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>

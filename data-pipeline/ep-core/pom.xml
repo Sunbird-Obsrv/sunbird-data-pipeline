@@ -15,16 +15,6 @@
     <name>ep-core</name>
 
     <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.2</version>
-        </dependency>    
     	<dependency>
             <groupId>org.apache.samza</groupId>
             <artifactId>samza-api</artifactId>
@@ -32,13 +22,43 @@
         </dependency>
         <dependency>
             <groupId>org.apache.samza</groupId>
-            <artifactId>samza-core_2.10</artifactId>
+            <artifactId>samza-core_${scala.version}</artifactId>
+            <version>${samza.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.samza</groupId>
+            <artifactId>samza-yarn_${scala.version}</artifactId>
+            <version>${samza.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.samza</groupId>
+            <artifactId>samza-kafka_${scala.version}</artifactId>
+            <version>${samza.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.samza</groupId>
+            <artifactId>samza-kv_${scala.version}</artifactId>
+            <version>${samza.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.samza</groupId>
+            <artifactId>samza-kv-rocksdb_${scala.version}</artifactId>
             <version>${samza.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.15</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.15</version>
         </dependency>
         <dependency>
             <groupId>redis.clients</groupId>
