@@ -45,7 +45,7 @@ processing_kafka_overriden_topics:
     retention_time: 21600000
     replication_factor: 1
   - name: analytics.job_queue
-    retention_time: 86400000
+    retention_time: 28800000
     replication_factor: 1
   - name: learning.graph.events
     retention_time: 86400000
