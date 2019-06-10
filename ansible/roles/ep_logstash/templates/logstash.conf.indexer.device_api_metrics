@@ -3,14 +3,33 @@ input {
         path => "{{device_register_api_metrics_log_path}}"
         start_position => "end"
         sincedb_write_interval => 10
+        type => "device_register_api_metrics"
+    }
+    file {
+        path => "{{api_job_log_path}}"
+        start_position => "end"
+        sincedb_write_interval => 10
+        type => "api_job_logs"
     }
 }
 output {
-  kafka {
-    bootstrap_servers => "{{kafka_brokers}}"
-    topic_id => "{{kafka_topic_prefix}}pipeline_metrics"
-    codec => line {
+  if [type] == "device_register_api_metrics" {
+    kafka {
+      bootstrap_servers => "{{kafka_brokers}}"
+      topic_id => "{{kafka_topic_prefix}}.pipeline_metrics"
+      codec => line {
         format => "%{message}"
+      }
     }
+  } 
+
+  if [type] == "api_job_logs" {
+      kafka {
+        bootstrap_servers => "{{kafka_brokers}}"
+        topic_id => "{{kafka_topic_prefix}}.telemetry.log"
+        codec => line {
+          format => "%{message}"
+        }
+      }
   }
 }
