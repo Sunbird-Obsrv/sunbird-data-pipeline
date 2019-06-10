@@ -36,6 +36,16 @@
             <version>${samza.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.15</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.15</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.samza</groupId>
             <artifactId>samza-shell</artifactId>
             <classifier>dist</classifier>
@@ -51,16 +61,6 @@
             <groupId>org.schwering</groupId>
             <artifactId>irclib</artifactId>
             <version>1.10</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.2</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>

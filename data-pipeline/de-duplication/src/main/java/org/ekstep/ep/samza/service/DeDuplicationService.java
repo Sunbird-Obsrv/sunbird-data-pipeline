@@ -38,22 +38,17 @@ public class DeDuplicationService {
 				sink.toSuccessTopic(event);
 				return;
 			}
-			if(!(eid.equalsIgnoreCase("LOG") || eid.equalsIgnoreCase("ERROR"))) {
-				if (!deDupEngine.isUniqueEvent(checksum)) {
-					LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
-					event.markDuplicate();
-					sink.toDuplicateTopic(event);
-					return;
-				}
 
-				LOGGER.info(event.id(), "ADDING EVENT CHECKSUM TO STORE");
+			if (!deDupEngine.isUniqueEvent(checksum)) {
+				LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
+				event.markDuplicate();
+				sink.toDuplicateTopic(event);
+				return;
+			}
 
-				deDupEngine.storeChecksum(checksum);
-			}
-			else
-			{
-				LOGGER.info(event.id(), "SKIPPING DEDUP FOR LOG AND ERROR EVENT ");
-			}
+			LOGGER.info(event.id(), "ADDING EVENT CHECKSUM TO STORE");
+
+			deDupEngine.storeChecksum(checksum);
 			event.updateDefaults(config);
 			event.markSuccess();
 			sink.toSuccessTopic(event);
