@@ -17,7 +17,7 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>de-normalization</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <packaging>jar</packaging>
     <name>De-normalizer</name>
     <description>
@@ -30,11 +30,7 @@
             <artifactId>samza-api</artifactId>
             <version>${samza.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.samza</groupId>
-            <artifactId>samza-core_2.10</artifactId>
-            <version>${samza.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>org.apache.samza</groupId>
             <artifactId>samza-log4j</artifactId>
@@ -45,26 +41,6 @@
             <artifactId>samza-shell</artifactId>
             <classifier>dist</classifier>
             <type>tgz</type>
-            <version>${samza.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.samza</groupId>
-            <artifactId>samza-yarn_2.10</artifactId>
-            <version>${samza.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.samza</groupId>
-            <artifactId>samza-kv_2.10</artifactId>
-            <version>${samza.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.samza</groupId>
-            <artifactId>samza-kv-rocksdb_2.10</artifactId>
-            <version>${samza.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.samza</groupId>
-            <artifactId>samza-kafka_2.10</artifactId>
             <version>${samza.version}</version>
         </dependency>
         <dependency>
@@ -128,6 +104,11 @@
             <groupId>org.ekstep.ecosystem</groupId>
             <artifactId>ep-telemetry-reader</artifactId>
             <version>0.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
         </dependency>
         <dependency>
             <groupId>redis.clients</groupId>

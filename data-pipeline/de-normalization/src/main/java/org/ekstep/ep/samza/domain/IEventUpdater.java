@@ -6,11 +6,7 @@ import org.ekstep.ep.samza.util.DataCache;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-
-import static java.text.MessageFormat.format;
 
 public abstract class IEventUpdater {
 
