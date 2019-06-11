@@ -12,7 +12,7 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>redis-updater</artifactId>
-    <version>0.1.0</version>
+    <version>0.0.9</version>
     <name>RedisUpdater</name>
     <dependencies>
         <dependency>
