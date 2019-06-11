@@ -1,26 +1,24 @@
 package org.ekstep.ep.samza.service;
 
-import static java.text.MessageFormat.format;
-
+import com.google.gson.JsonSyntaxException;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
+import org.ekstep.ep.samza.domain.DeviceProfile;
 import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.domain.Location;
-import com.google.gson.JsonSyntaxException;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterConfig;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterSink;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterSource;
-import org.ekstep.ep.samza.util.DeviceLocationCache;
+import org.ekstep.ep.samza.util.DeviceProfileCache;
 
 public class TelemetryLocationUpdaterService {
-	
+
 	private static Logger LOGGER = new Logger(TelemetryLocationUpdaterService.class);
-	private DeviceLocationCache deviceLocationCache;
+	private DeviceProfileCache deviceProfileCache;
 	private JobMetrics metrics;
 
 
-	public TelemetryLocationUpdaterService(DeviceLocationCache deviceLocationCache, JobMetrics metrics) {
-		this.deviceLocationCache = deviceLocationCache;
+	public TelemetryLocationUpdaterService(DeviceProfileCache deviceLocationCache, JobMetrics metrics) {
+		this.deviceProfileCache = deviceLocationCache;
 		this.metrics = metrics;
 	}
 
@@ -37,28 +35,39 @@ public class TelemetryLocationUpdaterService {
 		}
 	}
 
-	private Event updateEventWithIPLocation(Event event) {
+	private void updateEventWithIPLocation(Event event) {
 		String did = event.did();
-		Location location = null;
+		DeviceProfile deviceProfile = null;
 		if (did != null && !did.isEmpty()) {
-			location = deviceLocationCache.getLocationForDeviceId(event.did());
-			updateEvent(event, location);
+			deviceProfile = deviceProfileCache.getDeviceProfileForDeviceId(event.did());
+			updateEvent(event, deviceProfile);
 			metrics.incProcessedMessageCount();
 		} else {
-			event = updateEvent(event, location);
+			updateEvent(event, deviceProfile);
 			metrics.incUnprocessedMessageCount();
 		}
-		return event;
 	}
 
-	public Event updateEvent(Event event, Location location) {
+	public void updateEvent(Event event, DeviceProfile deviceProfile) {
 		event.removeEdataLoc();
-		if (location != null && location.isLocationResolved()) {
-			event.addLocation(location);
-			event.setFlag(TelemetryLocationUpdaterConfig.getDeviceLocationJobFlag(), true);
+		if (null != deviceProfile) {
+			event.addDeviceProfile(deviceProfile);
+			if (deviceProfile.isDeviceProfileResolved()) {
+				event.setFlag(TelemetryLocationUpdaterConfig.getDeviceProfileJobFlag(), true);
+			} else {
+				event.setFlag(TelemetryLocationUpdaterConfig.getDeviceProfileJobFlag(), false);
+			}
+			if (deviceProfile.isLocationResolved()) {
+				event.setFlag(TelemetryLocationUpdaterConfig.getDeviceLocationJobFlag(), true);
+			}
+			else
+			{
+				event.setFlag(TelemetryLocationUpdaterConfig.getDeviceLocationJobFlag(), false);
+			}
 		} else {
-			event.setFlag(TelemetryLocationUpdaterConfig.getDeviceLocationJobFlag(), false);
+			event.setFlag(TelemetryLocationUpdaterConfig.getDeviceProfileJobFlag(), false);
 		}
-		return event;
+
+
 	}
 }
