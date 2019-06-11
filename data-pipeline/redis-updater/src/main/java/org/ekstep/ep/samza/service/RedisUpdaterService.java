@@ -24,7 +24,7 @@ public class RedisUpdaterService {
     private int dialCodeStoreDb;
     private int contentStoreDb;
     private Gson gson = new Gson();
-    private String[] contentModelListTypeFields;
+    private List<String> contentModelListTypeFields;
 
     public RedisUpdaterService(Config config, RedisConnect redisConnect) {
         this.redisConnect = redisConnect;
@@ -32,7 +32,7 @@ public class RedisUpdaterService {
         this.dialCodeStoreDb = config.getInt("redis.database.dialCodeStore.id", 6);
         this.contentStoreConnection = redisConnect.getConnection(contentStoreDb);
         this.dialCodeStoreConnection = redisConnect.getConnection(dialCodeStoreDb);
-        this.contentModelListTypeFields = config.get("contentModel.fields.listType").split(",");
+        this.contentModelListTypeFields = config.getList("contentModel.fields.listType", new ArrayList<>());
     }
 
     public void process(RedisUpdaterSource source, RedisUpdaterSink sink) {
@@ -92,13 +92,14 @@ public class RedisUpdaterService {
             }
             Map<String, Object> newProperties = extractProperties(message);
             for(Map.Entry<String,Object> entry : newProperties.entrySet()) {
-                if (ArrayUtils.indexOf(contentModelListTypeFields, entry.getKey()) != -1
+                if (contentModelListTypeFields.contains(entry.getKey())
                         && entry.getValue() instanceof String
                         && !((String) entry.getValue()).isEmpty()
                 ) {
                     String str = (String) entry.getValue();
                     List<String> value = toList(str);
                     listTypeFields.put(entry.getKey(), value);
+                    LOGGER.info("", "type cast to List for field: " + entry.getKey() + " ,nodeUniqueId: "+ nodeUniqueId);
                 }
             }
             if (!listTypeFields.isEmpty()) {
