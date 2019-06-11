@@ -339,6 +339,46 @@
                 "type": "path",
                 "name": "statusCode",
                 "expr": "$.data.statusCode"
+              },
+              {
+                "type": "path",
+                "name": "version",
+                "expr": "$.data.version"
+              },
+              {
+                "type": "path",
+                "name": "programId",
+                "expr": "$.data.programId"
+              },
+              {
+                "type": "path",
+                "name": "type",
+                "expr": "$.data.type"
+              },
+              {
+                "type": "path",
+                "name": "category",
+                "expr": "$.data.category"
+              },
+              {
+                "type": "path",
+                "name": "learningOutcome",
+                "expr": "$.data.learningOutcome[*]"
+              },
+              {
+                "type": "path",
+                "name": "qumlVersion",
+                "expr": "$.data.qumlVersion"
+              },
+              {
+                "type": "path",
+                "name": "bloomsLevel",
+                "expr": "$.data.bloomsLevel[*]"
+              },
+              {
+                "type": "path",
+                "name": "rejectComment",
+                "expr": "$.data.rejectComment"
               }
             ]
           },
@@ -511,6 +551,36 @@
               {
                 "type": "string",
                 "name": "topic"
+              },
+              {
+                "type": "long",
+                "name": "version"
+              },
+              {
+                "type": "string",
+                "name": "programId"
+              },
+              {
+                "type": "string",
+                "name": "type"
+              },
+              {
+                "type": "string",
+                "name": "category"
+              },
+              {
+                "name": "learningOutcome"
+              },
+              {
+                "type": "long",
+                "name": "qumlVersion"
+              },
+              {
+                "name": "bloomsLevel"
+              },
+              {
+                "type": "string",
+                "name": "rejectComment"
               }
             ],
             "dimensionsExclusions": []

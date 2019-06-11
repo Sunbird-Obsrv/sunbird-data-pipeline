@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+set -e
 # Configurations
 druidCoordinatorIP=""
 dataSourceName="content-model-snapshot"
@@ -30,11 +30,12 @@ printf "\n>>> submit ingestion task to Druid!\n"
 curl -X 'POST' -H 'Content-Type:application/json' -d @${ingestionSpecFilePath} http://${druidCoordinatorIP}:8090/druid/indexer/v1/task
 
 
-for segmentId in "${array[@]}"
+for index in "${!array[@]}"
 do
-    printf "\n>>> Disabling segment id: $segmentId \n"
+    val=( $(eval echo ${array[index]}) )
+    printf "\n>>> Disabling segment id: $val \n"
     # disable older segments
-    curl -X 'DELETE' -H 'Content-Type:application/json' http://${druidCoordinatorIP}:8081/druid/coordinator/v1/datasources/${dataSourceName}/segments/${segmentId}
+    curl -X 'DELETE' -H 'Content-Type:application/json' http://${druidCoordinatorIP}:8081/druid/coordinator/v1/datasources/${dataSourceName}/segments/$val
 done
 
 printf "\n>>> Deleting segments from interval $interval \n"
