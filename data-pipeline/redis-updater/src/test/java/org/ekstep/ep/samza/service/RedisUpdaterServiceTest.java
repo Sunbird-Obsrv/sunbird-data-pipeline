@@ -46,8 +46,15 @@ public class RedisUpdaterServiceTest {
         stub(configMock.getInt("redis.database.contentStore.id", contentStoreId)).toReturn(contentStoreId);
         stub(configMock.getInt("redis.database.dialCodeStore.id", dialCodeStoreId)).toReturn(dialCodeStoreId);
         stub(configMock.getInt("location.db.redis.key.expiry.seconds", 86400)).toReturn(86400);
-        stub(configMock.get("contentModel.fields.listType"))
-                .toReturn("gradeLevel,subject,medium,language");
+
+        List<String> defaultListValues = new ArrayList<>();
+        defaultListValues.add("gradeLevel");
+        defaultListValues.add("subject");
+        defaultListValues.add("medium");
+        defaultListValues.add("language");
+
+        stub(configMock.getList("contentModel.fields.listType", new ArrayList<>()))
+                .toReturn(defaultListValues);
         redisUpdaterService = new RedisUpdaterService(configMock, redisConnectMock);
         jedisMock.flushAll();
     }
