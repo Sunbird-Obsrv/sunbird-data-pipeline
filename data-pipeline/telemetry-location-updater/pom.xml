@@ -17,11 +17,11 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>telemetry-location-updater</artifactId>
-    <version>0.1.8</version>
+    <version>0.1.9</version>
     <packaging>jar</packaging>
     <name>TelemetryLocationUpdater</name>
     <description>
-        Updates State and District/City information for all telemetry events
+        Updates State District/City  and device information for all telemetry events
     </description>
 
     <dependencies>
