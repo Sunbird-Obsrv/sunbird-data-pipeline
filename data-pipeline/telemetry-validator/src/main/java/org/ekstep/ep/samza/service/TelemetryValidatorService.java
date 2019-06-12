@@ -73,7 +73,7 @@ public class TelemetryValidatorService {
     public String getInvalidFieldName(String errorInfo) {
         String[] message = errorInfo.split("reports:");
         String noFieldNameMsg = "unable to get the field name";
-        if (message.length > 0) {
+        if (message.length > 1) {
             String[] fields = message[1].split(",");
             if (fields.length > 2) {
                 String[] pointer = fields[3].split("\"pointer\":");
