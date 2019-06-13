@@ -17,7 +17,7 @@ import java.util.Date;
 
 public class EventsRouterService {
 	
-	static Logger LOGGER = new Logger(EventsRouterService.class);
+	private static Logger LOGGER = new Logger(EventsRouterService.class);
 	private final DeDupEngine deDupEngine;
 	private final EventsRouterConfig config;
 

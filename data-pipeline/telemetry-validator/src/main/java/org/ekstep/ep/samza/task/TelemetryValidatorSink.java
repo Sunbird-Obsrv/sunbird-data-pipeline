@@ -1,21 +1,18 @@
 package org.ekstep.ep.samza.task;
 
-import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.ekstep.ep.samza.core.BaseSink;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.domain.Event;
 
 public class TelemetryValidatorSink extends BaseSink {
-    
-    private JobMetrics metrics;
+
     private TelemetryValidatorConfig config;
 
     public TelemetryValidatorSink(MessageCollector collector, JobMetrics metrics,
                                   TelemetryValidatorConfig config) {
         
-    	super(collector);
-        this.metrics = metrics;
+    	super(collector, metrics);
         this.config = config;
     }
 
@@ -39,10 +36,6 @@ public class TelemetryValidatorSink extends BaseSink {
     public void toMalformedEventsTopic(String message) {
         toTopic(config.malformedTopic(), null, message);
         metrics.incFailedCounter();
-    }
-
-    public void setMetricsOffset(SystemStreamPartition systemStreamPartition, String offset) {
-        metrics.setOffset(systemStreamPartition, offset);
     }
 
 }

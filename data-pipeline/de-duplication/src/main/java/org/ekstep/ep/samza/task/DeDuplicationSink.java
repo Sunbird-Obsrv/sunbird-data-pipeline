@@ -1,6 +1,5 @@
 package org.ekstep.ep.samza.task;
 
-import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.ekstep.ep.samza.core.BaseSink;
 import org.ekstep.ep.samza.core.JobMetrics;
@@ -8,12 +7,10 @@ import org.ekstep.ep.samza.domain.Event;
 
 public class DeDuplicationSink extends BaseSink {
 
-    private JobMetrics metrics;
     private DeDuplicationConfig config;
 
     public DeDuplicationSink(MessageCollector collector, JobMetrics metrics, DeDuplicationConfig config) {
-        super(collector);
-        this.metrics = metrics;
+        super(collector, metrics);
         this.config = config;
     }
 
@@ -41,10 +38,5 @@ public class DeDuplicationSink extends BaseSink {
         toTopic(config.failedTopic(), event.did(), event.getJson());
         metrics.incErrorCounter();
     }
-
-    public void setMetricsOffset(SystemStreamPartition systemStreamPartition, String offset) {
-        metrics.setOffset(systemStreamPartition, offset);
-    }
-
 
 }

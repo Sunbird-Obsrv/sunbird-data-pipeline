@@ -1,6 +1,6 @@
 package org.ekstep.ep.samza.task;
 
-import org.apache.samza.system.SystemStreamPartition;
+// import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.ekstep.ep.samza.core.BaseSink;
 import org.ekstep.ep.samza.core.JobMetrics;
@@ -8,14 +8,14 @@ import org.ekstep.ep.samza.domain.Event;
 
 public class DruidEventsValidatorSink extends BaseSink {
 
-    private JobMetrics metrics;
+    // private JobMetrics metrics;
     private DruidEventsValidatorConfig config;
 
     public DruidEventsValidatorSink(MessageCollector collector, JobMetrics metrics,
                                     DruidEventsValidatorConfig config) {
 
-        super(collector);
-        this.metrics = metrics;
+        super(collector, metrics);
+        // this.metrics = metrics;
         this.config = config;
     }
 
@@ -41,7 +41,9 @@ public class DruidEventsValidatorSink extends BaseSink {
         metrics.incFailedCounter();
     }
 
+    /*
     public void setMetricsOffset(SystemStreamPartition systemStreamPartition, String offset) {
         metrics.setOffset(systemStreamPartition, offset);
     }
+    */
 }

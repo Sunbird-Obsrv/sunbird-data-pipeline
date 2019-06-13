@@ -156,8 +156,7 @@ public class JobMetrics {
     public void setOffset(SystemStreamPartition systemStreamPartition, String offset) {
         String offsetMapKey = String.format("%s%s", systemStreamPartition.getStream(),
                 systemStreamPartition.getPartition().getPartitionId());
-        offsetMap.put(offsetMapKey,
-                Long.valueOf(offset));
+        offsetMap.put(offsetMapKey, Long.valueOf(offset));
     }
 
     public long consumerLag(Map<String, ConcurrentHashMap<String, Metric>> containerMetricsRegistry) {

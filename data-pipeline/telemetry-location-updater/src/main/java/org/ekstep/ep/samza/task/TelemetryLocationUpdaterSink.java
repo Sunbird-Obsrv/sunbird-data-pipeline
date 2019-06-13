@@ -11,13 +11,11 @@ import java.text.SimpleDateFormat;
 
 public class TelemetryLocationUpdaterSink extends BaseSink {
 
-	private JobMetrics metrics;
 	private TelemetryLocationUpdaterConfig config;
 	private SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 	
 	public TelemetryLocationUpdaterSink(MessageCollector collector, JobMetrics metrics, TelemetryLocationUpdaterConfig config) {
-		super(collector);
-		this.metrics = metrics;
+		super(collector, metrics);
 		this.config = config;
 	}
 
@@ -35,10 +33,6 @@ public class TelemetryLocationUpdaterSink extends BaseSink {
 	public void toMalformedTopic(String message) {
 		toTopic(config.malformedTopic(), null, message);
 		metrics.incErrorCounter();
-	}
-
-	public void setMetricsOffset(SystemStreamPartition systemStreamPartition, String offset) {
-		metrics.setOffset(systemStreamPartition, offset);
 	}
 
 }
