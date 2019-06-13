@@ -1,15 +1,6 @@
 package org.ekstep.ep.samza.task;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.stub;
-import static org.mockito.Mockito.verify;
-
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import org.apache.samza.Partition;
@@ -24,13 +15,18 @@ import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.fixtures.EventFixture;
+import org.ekstep.ep.samza.util.TelemetrySchemaValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
-import org.mockito.Mockito;
 
 import java.lang.reflect.Type;
 import java.util.Map;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.*;
 
 public class TelemetryValidatorTaskTest {
 
@@ -38,34 +34,37 @@ public class TelemetryValidatorTaskTest {
     private static final String FAILED_TOPIC = "telemetry.failed";
     private static final String MALFORMED_TOPIC = "telemetry.malformed";
     private static final String SCHEMA_PATH = "src/test/resources";
+    private static final String SCHEMA_VERSION = "3.0";
     private MessageCollector collectorMock;
     private TaskCoordinator coordinatorMock;
     private IncomingMessageEnvelope envelopeMock;
     private TelemetryValidatorTask telemetryValidatorTask;
-    
+
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         collectorMock = mock(MessageCollector.class);
         TaskContext contextMock = mock(TaskContext.class);
         MetricsRegistry metricsRegistry = mock(MetricsRegistry.class);
+
         Counter counter = mock(Counter.class);
         coordinatorMock = mock(TaskCoordinator.class);
         envelopeMock = mock(IncomingMessageEnvelope.class);
         Config configMock = mock(Config.class);
-        
+
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
         stub(configMock.get("output.malformed.topic.name", MALFORMED_TOPIC)).toReturn(MALFORMED_TOPIC);
         stub(configMock.get("telemetry.schema.path", "/etc/samza-jobs/schemas")).toReturn(SCHEMA_PATH);
-        
+        stub(configMock.get("telemetry.schema.version", "3.0")).toReturn(SCHEMA_VERSION);
+        TelemetrySchemaValidator telemetrySchemaValidator = new TelemetrySchemaValidator(new TelemetryValidatorConfig(configMock));
         stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
         stub(envelopeMock.getOffset()).toReturn("2");
         stub(envelopeMock.getSystemStreamPartition())
-                .toReturn( new SystemStreamPartition("kafka","input.topic",new Partition(1)));
+                .toReturn(new SystemStreamPartition("kafka", "input.topic", new Partition(1)));
 
 
-        telemetryValidatorTask = new TelemetryValidatorTask(configMock, contextMock);
+        telemetryValidatorTask = new TelemetryValidatorTask(configMock, contextMock, telemetrySchemaValidator);
     }
 
     @Test
@@ -78,12 +77,12 @@ public class TelemetryValidatorTaskTest {
     }
     
     @Test
-    public void shouldSendEventToFaildTopicIfEventIsNotValid() throws Exception{
+    public void shouldSendEventToValidTopicIfSchemaNotFound() throws Exception{
     	
     	stub(envelopeMock.getMessage()).toReturn(EventFixture.INVALID_GE_ERROR_EVENT);
     	
     	telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
     
     @Test

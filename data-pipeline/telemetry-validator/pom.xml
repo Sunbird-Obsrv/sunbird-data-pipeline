@@ -17,7 +17,7 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>telemetry-validator</artifactId>
-    <version>0.1.9</version>
+    <version>0.2.0</version>
     <packaging>jar</packaging>
     <name>TelemetryValidator</name>
     <description>
