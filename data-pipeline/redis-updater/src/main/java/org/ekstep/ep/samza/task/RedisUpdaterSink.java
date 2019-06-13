@@ -1,14 +1,15 @@
 package org.ekstep.ep.samza.task;
 
-import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
+import org.ekstep.ep.samza.core.BaseSink;
 import org.ekstep.ep.samza.core.JobMetrics;
 
-public class RedisUpdaterSink {
+public class RedisUpdaterSink extends BaseSink {
 
     private JobMetrics metrics;
 
     public RedisUpdaterSink(MessageCollector collector, JobMetrics metrics) {
+        super(collector, metrics);
         this.metrics = metrics;
     }
 
@@ -22,10 +23,6 @@ public class RedisUpdaterSink {
 
     public void error() {
         metrics.incErrorCounter();
-    }
-
-    public void setMetricsOffset(SystemStreamPartition systemStreamPartition, String offset) {
-        metrics.setOffset(systemStreamPartition, offset);
     }
 }
 

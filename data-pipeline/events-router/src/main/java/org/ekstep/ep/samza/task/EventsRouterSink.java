@@ -10,12 +10,12 @@ import java.text.SimpleDateFormat;
 
 public class EventsRouterSink extends BaseSink {
 
-	private JobMetrics metrics;
+	// private JobMetrics metrics;
 	private EventsRouterConfig config;
 	
 	public EventsRouterSink(MessageCollector collector, JobMetrics metrics, EventsRouterConfig config) {
-		super(collector);
-		this.metrics = metrics;
+		super(collector, metrics);
+		// this.metrics = metrics;
 		this.config = config;
 	}
 
@@ -54,12 +54,9 @@ public class EventsRouterSink extends BaseSink {
 		metrics.incSuccessCounter();
 	}
 
-	public void setMetricsOffset(SystemStreamPartition systemStreamPartition, String offset) {
-		metrics.setOffset(systemStreamPartition, offset);
-	}
-
 	public void toErrorEventsTopic(Event event){
 		toTopic(config.getErrorEventsRouteTopic(), event.did(), event.getJson());
 		metrics.incSuccessCounter();
 	}
+
 }
