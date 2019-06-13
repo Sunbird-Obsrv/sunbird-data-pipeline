@@ -9,7 +9,7 @@ logstash_conf:
  - ".indexer.public"
  - ".indexer.pipeline_metrics"
  - ".indexer.analytics_metrics"
-kafka_topic_prefix: "{{ env }}."
+kafka_topic_prefix: "{{ env }}"
 apt_cache_valid_time: 3600
 
 zookeepers: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
@@ -27,3 +27,4 @@ public_data_exhaust_dir_prefix: 4208ab995984d222b59299e5103d350a842d8d41
 
 #Device register API metrics
 device_register_api_metrics_log_path: "/mount/data/analytics/logs/api-service/api-metrics.log"
+api_job_log_path: "/mount/data/analytics/logs/api-service/joblog.log"

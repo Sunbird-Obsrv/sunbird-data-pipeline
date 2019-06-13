@@ -7,6 +7,9 @@ import org.apache.samza.metrics.MetricsRegistry;
 import org.apache.samza.metrics.MetricsRegistryMap;
 import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.TaskContext;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -204,6 +207,7 @@ public class JobMetrics {
         metricsEvent.put("device-db-error-count", deviceDbErrorCount.getCount());
         metricsEvent.put("user-db-error-count", userDbErrorCount.getCount());
         metricsEvent.put("expired-event-count", expiredEventCount.getCount());
+        metricsEvent.put("metricts", new DateTime().getMillis());
 
         return new Gson().toJson(metricsEvent);
     }

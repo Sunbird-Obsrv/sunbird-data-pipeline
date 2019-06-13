@@ -28,6 +28,7 @@ public class DeDuplicationService {
 		try {
 			event = source.getEvent();
 			String checksum = event.getChecksum();
+			String eid = event.eid();
 			sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
 
 			if (checksum == null) {
@@ -37,6 +38,7 @@ public class DeDuplicationService {
 				sink.toSuccessTopic(event);
 				return;
 			}
+
 			if (!deDupEngine.isUniqueEvent(checksum)) {
 				LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
 				event.markDuplicate();

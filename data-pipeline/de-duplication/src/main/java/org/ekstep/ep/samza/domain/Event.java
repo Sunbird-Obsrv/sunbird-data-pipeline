@@ -51,6 +51,11 @@ public class Event {
         return checksum.value();
     }
 
+    public String eid() {
+        NullableValue<String> eid = telemetry.read("eid");
+        return eid.value();
+    }
+
     public void addEventType() {
         telemetry.add("type", "events");
     }
