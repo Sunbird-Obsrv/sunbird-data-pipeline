@@ -31,7 +31,7 @@ public class DeDuplicationConfig {
         dupStore = config.getInt("redis.database.duplicationstore.id", 7);
         expirySeconds = config.getInt("redis.database.key.expiry.seconds", 432000);
         serverEventEid = config.getList("server.events.skip.eid", Arrays.asList("AUDIT","SEARCH","ERROR","LOG"));
-        producerId = config.getList("producer.id", Arrays.asList("prod.diksha.app"));
+        producerId = config.getList("producer.skip.id", Arrays.asList("prod.diksha.app"));
     }
 
     public String successTopic() {
