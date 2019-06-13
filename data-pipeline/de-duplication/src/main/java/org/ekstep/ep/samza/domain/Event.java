@@ -51,9 +51,9 @@ public class Event {
         return checksum.value();
     }
 
-    public String contextId() {
-        NullableValue<String> contextId = telemetry.read("context.pdata.id");
-        return contextId.value();
+    public String producerId() {
+        NullableValue<String> producerId = telemetry.read("context.pdata.id");
+        return producerId.value();
     }
 
     public String eid() {
