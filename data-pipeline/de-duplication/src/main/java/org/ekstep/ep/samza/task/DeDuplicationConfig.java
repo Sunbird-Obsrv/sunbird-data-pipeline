@@ -3,6 +3,9 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DeDuplicationConfig {
 
     private final String JOB_NAME = "DeDuplication";
@@ -14,8 +17,8 @@ public class DeDuplicationConfig {
     private final String metricsTopic;
     private final int dupStore;
     private int expirySeconds;
-    private String serverEventEid;
-    private String producerId;
+    private List<String> serverEventEid;
+    private List<String> producerId;
 
 
     public DeDuplicationConfig(Config config) {
@@ -27,8 +30,8 @@ public class DeDuplicationConfig {
         defaultChannel = config.get("default.channel", "org.sunbird");
         dupStore = config.getInt("redis.database.duplicationstore.id", 7);
         expirySeconds = config.getInt("redis.database.key.expiry.seconds", 432000);
-        serverEventEid = config.get("server.events.skip.eid", "AUDIT,SEARCH,ERROR,LOG");
-        producerId = config.get("producer.id", "prod.diksha.app");
+        serverEventEid = config.getList("server.events.skip.eid", Arrays.asList("AUDIT","SEARCH","ERROR","LOG"));
+        producerId = config.getList("producer.id", Arrays.asList("prod.diksha.app"));
     }
 
     public String successTopic() {
@@ -67,11 +70,11 @@ public class DeDuplicationConfig {
         return expirySeconds;
     }
 
-    public String serverEventEid() {
+    public List<String> serverEventEid() {
         return serverEventEid;
     }
 
-    public String producerId() {
+    public List<String> producerId() {
         return producerId;
     }
 }

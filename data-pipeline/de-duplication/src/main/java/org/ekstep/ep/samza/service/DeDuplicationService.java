@@ -36,8 +36,8 @@ public class DeDuplicationService {
 				sink.toSuccessTopic(event);
 				return;
 			}
-			if (!((null != event.contextId() && event.contextId().equalsIgnoreCase(config.producerId()))
-					|| config.serverEventEid().equalsIgnoreCase(event.eid()))) {
+			if (!((null != event.contextId() && config.producerId().contains(event.contextId()))
+					|| config.serverEventEid().contains(event.eid()))) {
 				if (!deDupEngine.isUniqueEvent(checksum)) {
 					LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
 					event.markDuplicate();
