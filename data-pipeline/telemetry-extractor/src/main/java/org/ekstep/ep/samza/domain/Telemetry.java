@@ -3,7 +3,10 @@ package org.ekstep.ep.samza.domain;
 import com.google.gson.Gson;
 import org.ekstep.ep.samza.core.Logger;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Telemetry {
 
@@ -31,7 +34,7 @@ public class Telemetry {
 		try {
 			@SuppressWarnings("unchecked")
 			List<Map<String, Object>> events = (List<Map<String, Object>>) batchEvent.get("events");
-			
+
 			// TODO - Handle NPE if the batchEvent doesn't have 'ets'. Default 'ets' to System.currentTimeInMillis()
 			this.ets = ((Number) batchEvent.get("ets")).longValue();
 			this.syncts = syncts;
@@ -182,4 +185,5 @@ public class Telemetry {
 		Map<String, Object> map = toMap();
 		return new Gson().toJson(map);
 	}
+
 }

@@ -33,7 +33,7 @@ public class EventsRouterConfig {
         logEventsRouteTopic = config.get("router.events.log.route.topic", "events.log");
         dedupEnabled = config.getBoolean("dedup.enabled", true);
         dupStore = config.getInt("redis.database.duplicationstore.id", 8);
-        expirySeconds = config.getInt("redis.database.key.expiry.seconds", 1296000);
+        expirySeconds = config.getInt("redis.database.key.expiry.seconds", 86400);
     }
 
     public String getTelemetryEventsRouteTopic() {
