@@ -19,7 +19,6 @@
 
 package org.ekstep.ep.samza.task;
 
-import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
@@ -34,8 +33,6 @@ public class TelemetryValidatorTask implements StreamTask, InitableTask, Windowa
     private TelemetryValidatorConfig config;
     private JobMetrics metrics;
     private TelemetryValidatorService service;
-    private JsonSchemaFactory jsonSchemaFactory;
-    private TelemetrySchemaValidator telemetrySchemaValidator;
 
     public TelemetryValidatorTask(Config config, TaskContext context, TelemetrySchemaValidator telemetrySchemaValidator) throws Exception {
         init(config, context, telemetrySchemaValidator);
@@ -52,10 +49,10 @@ public class TelemetryValidatorTask implements StreamTask, InitableTask, Windowa
     }
 
 
-    public void init(Config config, TaskContext context, TelemetrySchemaValidator telemetrySchemaValidator) throws Exception {
+    public void init(Config config, TaskContext context, TelemetrySchemaValidator schemaValidator) throws Exception {
         this.config = new TelemetryValidatorConfig(config);
         metrics = new JobMetrics(context, this.config.jobName());
-        telemetrySchemaValidator = telemetrySchemaValidator == null ? new TelemetrySchemaValidator(this.config) : telemetrySchemaValidator;
+        TelemetrySchemaValidator telemetrySchemaValidator = schemaValidator == null ? new TelemetrySchemaValidator(this.config) : schemaValidator;
         service = new TelemetryValidatorService(this.config, telemetrySchemaValidator);
     }
 

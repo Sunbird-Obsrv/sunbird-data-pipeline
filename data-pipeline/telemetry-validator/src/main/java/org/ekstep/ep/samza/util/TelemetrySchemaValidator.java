@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class TelemetrySchemaValidator {
 
-    private Map<String, JsonSchema> schemaJsons = new HashMap<>();
+    private Map<String, JsonSchema> schemaJsonMap = new HashMap<>();
 
     public TelemetrySchemaValidator(TelemetryValidatorConfig config) throws IOException, ProcessingException {
 
@@ -25,12 +25,10 @@ public class TelemetrySchemaValidator {
 
         for (String schemaVersion : schemaVersions) {
             File schemaDirectory = new File(MessageFormat.format("{0}/{1}/", config.schemaPath(), schemaVersion));
-
             File[] schemaFiles = schemaDirectory.listFiles();
-
             for (File schemafile : schemaFiles) {
                 String schemaKey = String.format("%s-%s", schemaVersion, schemafile.getName());
-                schemaJsons.put(schemaKey, JsonSchemaFactory
+                schemaJsonMap.put(schemaKey, JsonSchemaFactory
                         .byDefault().getJsonSchema(JsonLoader.fromFile(schemafile)));
 
             }
@@ -38,16 +36,14 @@ public class TelemetrySchemaValidator {
 
     }
 
-    public boolean isSchemaFileExist(Event event) {
-        String schemaKey = String.format("%s-%s", event.version(), event.schemaName());
-        return schemaJsons.containsKey(schemaKey);
-
+    public boolean schemaFileExists(Event event) {
+        return schemaJsonMap.containsKey(String.format("%s-%s", event.version(), event.schemaName()));
     }
 
     public ProcessingReport validate(Event event) throws IOException, ProcessingException {
         JsonNode eventJson = JsonLoader.fromString(event.getJson());
         String schemaKey = String.format("%s-%s", event.version(), event.schemaName());
-        ProcessingReport report = schemaJsons.get(schemaKey).validate(eventJson);
+        ProcessingReport report = schemaJsonMap.get(schemaKey).validate(eventJson);
         return report;
     }
 

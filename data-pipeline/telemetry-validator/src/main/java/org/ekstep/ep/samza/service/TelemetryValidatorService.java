@@ -12,7 +12,7 @@ import org.ekstep.ep.samza.util.TelemetrySchemaValidator;
 import static java.text.MessageFormat.format;
 
 public class TelemetryValidatorService {
-    static Logger LOGGER = new Logger(TelemetryValidatorService.class);
+    private static Logger LOGGER = new Logger(TelemetryValidatorService.class);
     private final TelemetryValidatorConfig config;
     private TelemetrySchemaValidator telemetrySchemaValidator;
 
@@ -27,9 +27,9 @@ public class TelemetryValidatorService {
             event = dataCorrection(source.getEvent());
             sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
 
-            if (!telemetrySchemaValidator.isSchemaFileExist(event)) {
-                LOGGER.info("SCHEMA DOES NOT FOUND", event.eid());
-                LOGGER.info("SKIP PROCESSING: SENDING TO SUCCESS", event.mid());
+            if (!telemetrySchemaValidator.schemaFileExists(event)) {
+                LOGGER.info("SCHEMA NOT FOUND FOR EID: ", event.eid());
+                LOGGER.debug("SKIP PROCESSING: SENDING TO SUCCESS", event.mid());
                 event.markSkipped();
                 sink.toSuccessTopic(event);
                 return;
@@ -38,7 +38,7 @@ public class TelemetryValidatorService {
             ProcessingReport report = telemetrySchemaValidator.validate(event);
 
             if (report.isSuccess()) {
-                LOGGER.info("VALIDATION SUCCESS", event.mid());
+                LOGGER.debug("VALIDATION SUCCESS", event.mid());
                 event.markSuccess();
                 event.updateDefaults(config);
                 sink.toSuccessTopic(event);

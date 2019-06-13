@@ -21,7 +21,7 @@ public class TelemetryValidatorConfig {
         metricsTopic = config.get("output.metrics.topic.name", "telemetry.pipeline_metrics");
         defaultChannel = config.get("default.channel", "org.sunbird");
         schemaPath = config.get("telemetry.schema.path", "/etc/samza-jobs/schemas");
-        schema_version = config.get("telemetry.schema.version", "2.2,3.0");
+        schema_version = config.get("telemetry.schema.version", "3.0");
 
     }
 
