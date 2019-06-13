@@ -20,15 +20,14 @@
 package org.ekstep.ep.samza.task;
 
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import org.apache.samza.system.OutgoingMessageEnvelope;
-import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.StreamTask;
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
+import org.apache.samza.system.OutgoingMessageEnvelope;
+import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.core.JobMetrics;
-import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.TelemetryValidatorService;
+import org.ekstep.ep.samza.util.TelemetrySchemaValidator;
 
 public class TelemetryValidatorTask implements StreamTask, InitableTask, WindowableTask {
 
@@ -36,20 +35,28 @@ public class TelemetryValidatorTask implements StreamTask, InitableTask, Windowa
     private JobMetrics metrics;
     private TelemetryValidatorService service;
     private JsonSchemaFactory jsonSchemaFactory;
+    private TelemetrySchemaValidator telemetrySchemaValidator;
 
-    public TelemetryValidatorTask(Config config, TaskContext context) {
-        init(config, context);
+    public TelemetryValidatorTask(Config config, TaskContext context, TelemetrySchemaValidator telemetrySchemaValidator) throws Exception {
+        init(config, context, telemetrySchemaValidator);
     }
-    
+
     public TelemetryValidatorTask() {
-    	
+
     }
+
 
     @Override
-    public void init(Config config, TaskContext context) {
+    public void init(Config config, TaskContext context) throws Exception {
+        init(config, context, null);
+    }
+
+
+    public void init(Config config, TaskContext context, TelemetrySchemaValidator telemetrySchemaValidator) throws Exception {
         this.config = new TelemetryValidatorConfig(config);
-        metrics = new JobMetrics(context,this.config.jobName());
-        service = new TelemetryValidatorService(this.config);
+        metrics = new JobMetrics(context, this.config.jobName());
+        telemetrySchemaValidator = telemetrySchemaValidator == null ? new TelemetrySchemaValidator(this.config) : telemetrySchemaValidator;
+        service = new TelemetryValidatorService(this.config, telemetrySchemaValidator);
     }
 
     @Override
@@ -57,9 +64,8 @@ public class TelemetryValidatorTask implements StreamTask, InitableTask, Windowa
                         TaskCoordinator taskCoordinator) throws Exception {
         TelemetryValidatorSource source = new TelemetryValidatorSource(envelope);
         TelemetryValidatorSink sink = new TelemetryValidatorSink(collector, metrics, config);
-        jsonSchemaFactory = JsonSchemaFactory.byDefault();
-        
-        service.process(source, sink, jsonSchemaFactory);
+
+        service.process(source, sink);
     }
 
     @Override

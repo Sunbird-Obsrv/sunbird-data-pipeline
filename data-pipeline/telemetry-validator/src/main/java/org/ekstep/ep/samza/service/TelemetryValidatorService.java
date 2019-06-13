@@ -1,53 +1,41 @@
 package org.ekstep.ep.samza.service;
 
-import static java.text.MessageFormat.format;
-
-import java.io.File;
-import java.text.MessageFormat;
-
+import com.github.fge.jsonschema.core.report.ProcessingReport;
+import com.google.gson.JsonSyntaxException;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.task.TelemetryValidatorConfig;
 import org.ekstep.ep.samza.task.TelemetryValidatorSink;
 import org.ekstep.ep.samza.task.TelemetryValidatorSource;
+import org.ekstep.ep.samza.util.TelemetrySchemaValidator;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jackson.JsonLoader;
-import com.github.fge.jsonschema.core.report.ProcessingReport;
-import com.github.fge.jsonschema.main.JsonSchema;
-import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import com.google.gson.JsonSyntaxException;
+import static java.text.MessageFormat.format;
 
 public class TelemetryValidatorService {
     static Logger LOGGER = new Logger(TelemetryValidatorService.class);
     private final TelemetryValidatorConfig config;
+    private TelemetrySchemaValidator telemetrySchemaValidator;
 
-    public TelemetryValidatorService(TelemetryValidatorConfig config) {
+    public TelemetryValidatorService(TelemetryValidatorConfig config, TelemetrySchemaValidator telemetrySchemaValidator) {
         this.config = config;
+        this.telemetrySchemaValidator = telemetrySchemaValidator;
     }
 
-    public void process(TelemetryValidatorSource source, TelemetryValidatorSink sink, JsonSchemaFactory jsonSchemaFactory) {
+    public void process(TelemetryValidatorSource source, TelemetryValidatorSink sink) {
         Event event = null;
         try {
             event = dataCorrection(source.getEvent());
             sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
 
-            String schemaFilePath = MessageFormat.format("{0}/{1}/{2}", config.schemaPath(), event.version(), event.schemaName());
-            File schemaFile = new File(schemaFilePath);
-
-            if (!schemaFile.exists()) {
-                LOGGER.info("SCHEMA DOES NOT FOUND", schemaFilePath);
+            if (!telemetrySchemaValidator.isSchemaFileExist(event)) {
+                LOGGER.info("SCHEMA DOES NOT FOUND", event.eid());
                 LOGGER.info("SKIP PROCESSING: SENDING TO SUCCESS", event.mid());
                 event.markSkipped();
                 sink.toSuccessTopic(event);
                 return;
             }
 
-            JsonNode schemaJson = JsonLoader.fromFile(schemaFile);
-            JsonNode eventJson = JsonLoader.fromString(event.getJson());
-
-            JsonSchema jsonSchema = jsonSchemaFactory.getJsonSchema(schemaJson);
-            ProcessingReport report = jsonSchema.validate(eventJson);
+            ProcessingReport report = telemetrySchemaValidator.validate(event);
 
             if (report.isSuccess()) {
                 LOGGER.info("VALIDATION SUCCESS", event.mid());
@@ -86,11 +74,11 @@ public class TelemetryValidatorService {
     public Event dataCorrection(Event event) {
         // Remove prefix from federated userIds
         String eventActorId = event.actorId();
-        if(eventActorId != null && !eventActorId.isEmpty() && eventActorId.startsWith("f:")) {
+        if (eventActorId != null && !eventActorId.isEmpty() && eventActorId.startsWith("f:")) {
             event.updateActorId(eventActorId.substring(eventActorId.lastIndexOf(":") + 1));
         }
 
-        if(event.eid() != null && event.eid().equalsIgnoreCase("SEARCH")) {
+        if (event.eid() != null && event.eid().equalsIgnoreCase("SEARCH")) {
             event.correctDialCodeKey();
         }
         return event;
