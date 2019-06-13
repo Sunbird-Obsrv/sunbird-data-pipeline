@@ -16,8 +16,8 @@ public class TelemetryExtractorConfig {
 		errorTopic = config.get("output.error.topic.name", "telemetry.extractor.failed");
 		metricsTopic = config.get("output.metrics.topic.name", "pipeline_metrics");
 		defaultChannel = config.get("default.channel", "01250894314817126443");
-		dupStore = config.getInt("redis.database.duplicationstore.id", 7);
-		expirySeconds = config.getInt("redis.database.key.expiry.seconds", 1296000);
+		dupStore = config.getInt("redis.database.duplicationstore.id", 1);
+		expirySeconds = config.getInt("redis.database.key.expiry.seconds", 432000);
 	}
 
 	public String successTopic() {
