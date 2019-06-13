@@ -15,7 +15,7 @@
     </parent>
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>telemetry-extractor</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <packaging>jar</packaging>
     <name>TelemetryExtractor</name>
     <description>

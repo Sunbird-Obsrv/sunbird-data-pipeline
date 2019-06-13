@@ -43,6 +43,8 @@ public class DeDuplicationTaskTest {
     private DeDupEngine deDupEngineMock;
     private Jedis jedisMock = new MockJedis("duplicationtest");
     private int dupStoreId = 1;
+    private String SERVEREIDS = "AUDIT,SEARCH,ERROR,LOG";
+    private String PRODUCERID = "prod.diksha.app";
 
     @Before
     public void setUp() {
@@ -67,6 +69,9 @@ public class DeDuplicationTaskTest {
         stub(envelopeMock.getSystemStreamPartition())
                 .toReturn(new SystemStreamPartition("kafka", "input.topic", new Partition(0)));
         stub(configMock.getInt("redis.database.duplicationstore.id", dupStoreId)).toReturn(dupStoreId);
+        stub(configMock.get("server.events.skip.eid", "AUDIT,SEARCH,ERROR,LOG")).toReturn(SERVEREIDS);
+        stub(configMock.get("producer.id", "prod.diksha.app")).toReturn(PRODUCERID);
+
 
         deDuplicationTask = new DeDuplicationTask(configMock, contextMock, deDupEngineMock);
     }
@@ -74,6 +79,7 @@ public class DeDuplicationTaskTest {
     @Test
     public void ShouldSendEventToSuccessTopicIfEventIsUnique() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.EventWithChecksumJson());
+
         when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
 
         deDuplicationTask.process(envelopeMock, collectorMock, coordinatorMock);
