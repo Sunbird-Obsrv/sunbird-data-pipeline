@@ -414,6 +414,9 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}device_db.device_profi
     country_code text, 
     city text, 
     uaspec Map<text,text>,
+    state_custom text, 
+    state_code_custom text, 
+    district_custom text
     PRIMARY KEY (device_id, channel)
 );
 
@@ -730,7 +733,7 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.workflow_u
 );
 
 ALTER TABLE {{ cassandra.keyspace_prefix }}device_db.device_profile
-ADD (state_custom text, state_code_custom text, district_custom text);
+ADD (fcm_token text, producer_id text);
 
 CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}device_db.device_profile_temp (
     device_id text,
