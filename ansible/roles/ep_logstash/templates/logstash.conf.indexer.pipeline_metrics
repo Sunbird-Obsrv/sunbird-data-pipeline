@@ -59,6 +59,7 @@ output {
                     "cache_expired" => "%{[cache-expired-count]}"
                     "cache_error" => "%{[cache-error-count]}"
                     "user_db_hit" => "%{[user-db-hit-count]}"
+                    "duplicate" => "%{[duplicate-event-count]}"
                     "expired_event" => "%{[expired-event-count]}"
 			    }
 			    coerce_values => {
@@ -96,6 +97,7 @@ output {
                     "cache_expired" => "integer"
                     "cache_error" => "integer"
                     "expired_event" => "integer"
+                    "duplicate" => "integer"
 				}
 			    host => "{{influxdb_host}}"
 			    port => "{{influxdb_port}}"
