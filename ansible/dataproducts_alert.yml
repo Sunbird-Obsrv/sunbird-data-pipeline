@@ -1,7 +1,7 @@
 ---
 - hosts: influxdb
   vars_files:
-    - ['{{inventory_dir}}/secrets/{{env}}.yml']
+    - ['{{inventory_dir}}/secrets.yml']
   tasks:
      - command: ./dataproducts_monitor.sh {{ env }} {{ SGUSER }} "{{ SGPASS }}" {{ influxdb }}
        args:
