@@ -52,9 +52,9 @@ public class TelemetryExtractorService {
 						}
 						deDupEngine.storeChecksum(msgid);
 					}
-				} catch (JedisException e) {
+				} catch (JedisException ex) {
 					metrics.incSkippedCounter();
-					LOGGER.info(msgid, "Failed to connect to redis for batch  : " + e.getMessage());
+					LOGGER.error(msgid, "Failed to connect to redis for batch  : " + ex);
 				}
 			}
 
@@ -87,7 +87,7 @@ public class TelemetryExtractorService {
 			metrics.incSuccessCounter();
 			generateAuditEvent(batchEvent, syncts, syncTimestamp, sink, defaultChannel);
 		} catch (Exception ex) {
-			LOGGER.info("", "Failed to process events: " + ex.getMessage());
+			LOGGER.error("", "Failed to process events: " + ex);
 			sink.toErrorTopic(message);
 		}
 
