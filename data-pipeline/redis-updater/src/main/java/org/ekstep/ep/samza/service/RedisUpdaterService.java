@@ -72,8 +72,10 @@ public class RedisUpdaterService {
             sink.error();
             LOGGER.error("", "Exception when adding to dialcode redis cache", ex);
             redisConnect.resetConnection();
-            redisConnect.getConnection(dialCodeStoreDb);
-            addToCache(nodeUniqueId, gson.toJson(parsedData), dialCodeStoreConnection);
+            try (Jedis redisConn = redisConnect.getConnection(dialCodeStoreDb)) {
+                this.dialCodeStoreConnection = redisConn;
+                addToCache(nodeUniqueId, gson.toJson(parsedData), dialCodeStoreConnection);
+            }
         }
     }
 
@@ -116,18 +118,20 @@ public class RedisUpdaterService {
             sink.error();
             LOGGER.error("", "Exception when adding to content store redis cache", ex);
             redisConnect.resetConnection();
-            redisConnect.getConnection(contentStoreDb);
-            addToCache(nodeUniqueId, gson.toJson(parsedData), contentStoreConnection);
+            try (Jedis redisConn = redisConnect.getConnection(contentStoreDb)) {
+                this.contentStoreConnection = redisConn;
+                addToCache(nodeUniqueId, gson.toJson(parsedData), contentStoreConnection);
+            }
         }
     }
 
     private List<String> toList(String value) {
         if (value != null) {
-            List<String> val = new ArrayList<String>();
+            List<String> val = new ArrayList<>();
             val.add(value);
             return val;
         } else {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
     }
 

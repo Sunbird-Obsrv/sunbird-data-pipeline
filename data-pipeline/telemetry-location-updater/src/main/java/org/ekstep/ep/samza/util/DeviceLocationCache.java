@@ -8,8 +8,6 @@ import org.ekstep.ep.samza.domain.Location;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 
-import java.util.*;
-
 public class DeviceLocationCache {
 
     private static Logger LOGGER = new Logger(DeviceLocationCache.class);
@@ -45,8 +43,10 @@ public class DeviceLocationCache {
             } catch(JedisException ex) {
                 LOGGER.error(null, "Reconnecting with Redis store due to exception: ", ex);
                 redisConnect.resetConnection();
-                this.redisConnection = redisConnect.getConnection(databaseIndex);
-                location = getLocationFromCache(did);
+                try (Jedis redisConn = redisConnect.getConnection(databaseIndex)) {
+                    this.redisConnection = redisConn;
+                    location = getLocationFromCache(did);
+                }
             }
 
             if (null != location && location.isLocationResolved()) {
