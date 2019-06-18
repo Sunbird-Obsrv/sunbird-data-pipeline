@@ -9,7 +9,7 @@ import org.apache.samza.config.Config;
 public class EventsRouterConfig {
 
     private final String JOB_NAME = "EventsRouter";
-    
+
     private String failedTopic;
     private String duplicateTopic;
     private String metricsTopic;
@@ -34,7 +34,7 @@ public class EventsRouterConfig {
         logEventsRouteTopic = config.get("router.events.log.route.topic", "events.log");
         dedupEnabled = config.getBoolean("dedup.enabled", true);
         dupStore = config.getInt("redis.database.duplicationstore.id", 8);
-        expirySeconds = config.getInt("redis.database.key.expiry.seconds", 1296000);
+        expirySeconds = config.getInt("redis.database.key.expiry.seconds", 86400);
         errorEventsRouteTopic = config.get("router.events.error.route.topic", "events.error");
     }
 
@@ -73,7 +73,7 @@ public class EventsRouterConfig {
     public String metricsTopic() {
         return metricsTopic;
     }
-    
+
     public String malformedTopic() {
     	return malformedTopic;
     }

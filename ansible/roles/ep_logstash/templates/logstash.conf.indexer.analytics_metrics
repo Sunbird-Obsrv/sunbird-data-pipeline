@@ -1,8 +1,8 @@
 input {
 	kafka {
 			zk_connect => "{{zookeepers}}"
-	        group_id => "{{kafka_topic_prefix}}analytics.metrics"
-	        topic_id => "{{kafka_topic_prefix}}analytics_metrics"
+	        group_id => "{{kafka_topic_prefix}}.analytics.metrics"
+	        topic_id => "{{kafka_topic_prefix}}.analytics_metrics"
 	        reset_beginning => false
 	        consumer_threads => 1
 	        queue_size => 20
