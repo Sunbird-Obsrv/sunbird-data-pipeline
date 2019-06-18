@@ -48,6 +48,7 @@ public class TelemetryExtractorService {
 					if (params.containsKey("msgid") && null != params.get("msgid")) {
 						msgid = params.get("msgid").toString();
 						if (!deDupEngine.isUniqueEvent(msgid)) {
+						    LOGGER.info("", String.format("msgid: %s: DUPLICATE EVENT", msgid));
 							sink.toDuplicateTopic(addDuplicateFlag(batchEvent));
 							return;
 						}
