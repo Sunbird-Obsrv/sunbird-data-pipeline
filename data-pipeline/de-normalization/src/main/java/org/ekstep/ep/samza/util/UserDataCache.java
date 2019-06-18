@@ -59,8 +59,10 @@ public class UserDataCache extends DataCache {
             }
         } catch (JedisException ex) {
             redisPool.resetConnection();
-            redisConnection = redisPool.getConnection(databaseIndex);
-            userDataMap = getUserDataFromCache(userId);
+            try (Jedis redisConn = redisPool.getConnection(databaseIndex)) {
+                this.redisConnection = redisConn;
+                userDataMap = getUserDataFromCache(userId);
+            }
         }
 
         Map<String, Object> userLocationMap;

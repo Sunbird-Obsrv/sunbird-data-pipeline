@@ -14,7 +14,7 @@ import static java.text.MessageFormat.format;
 
 public class DeNormalizationService {
 
-    static Logger LOGGER = new Logger(DeNormalizationService.class);
+    private static Logger LOGGER = new Logger(DeNormalizationService.class);
     private final DeNormalizationConfig config;
     private final EventUpdaterFactory eventUpdaterFactory;
 

@@ -22,4 +22,8 @@ public class DeDupEngine {
         redisConnection.set(checksum, "");
         redisConnection.expire(checksum, expirySeconds);
     }
+
+    public Jedis getRedisConnection() {
+        return redisConnection;
+    }
 }
