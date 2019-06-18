@@ -1,9 +1,15 @@
 -
+  name: Install Java
+  hosts: druid
+  become: yes
+  roles: 
+    - jdk-1.8.0_121
+
+-
   name: Install java and zookeeper cluster for druid
   hosts: druid-zookeeper
   become: yes
   roles:
-    - {role: jdk-1.8.0_121}
     - {role: zookeeper-upgrade}
   vars:
     zookeeper_group: "{{ groups['druid-zookeeper'] }}"
