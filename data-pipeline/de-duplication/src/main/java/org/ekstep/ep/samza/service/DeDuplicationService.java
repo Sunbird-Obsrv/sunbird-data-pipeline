@@ -9,8 +9,6 @@ import org.ekstep.ep.samza.task.DeDuplicationSink;
 import org.ekstep.ep.samza.task.DeDuplicationSource;
 import redis.clients.jedis.exceptions.JedisException;
 
-import static java.text.MessageFormat.format;
-
 public class DeDuplicationService {
 	private static Logger LOGGER = new Logger(DeDuplicationService.class);
 	private final DeDupEngine deDupEngine;
@@ -22,7 +20,7 @@ public class DeDuplicationService {
 		this.config = config;
 	}
 
-	public void process(DeDuplicationSource source, DeDuplicationSink sink)  throws Exception {
+	public void process(DeDuplicationSource source, DeDuplicationSink sink) throws Exception {
 		Event event = null;
 
 		try {
@@ -38,17 +36,19 @@ public class DeDuplicationService {
 				sink.toSuccessTopic(event);
 				return;
 			}
+			if (!((null != event.producerId() && config.producerId().contains(event.producerId()))
+					|| config.serverEventEid().contains(event.eid()))) {
+				if (!deDupEngine.isUniqueEvent(checksum)) {
+					LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
+					event.markDuplicate();
+					sink.toDuplicateTopic(event);
+					return;
+				}
 
-			if (!deDupEngine.isUniqueEvent(checksum)) {
-				LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
-				event.markDuplicate();
-				sink.toDuplicateTopic(event);
-				return;
+				LOGGER.info(event.id(), "ADDING EVENT CHECKSUM TO STORE");
+
+				deDupEngine.storeChecksum(checksum);
 			}
-
-			LOGGER.info(event.id(), "ADDING EVENT CHECKSUM TO STORE");
-
-			deDupEngine.storeChecksum(checksum);
 			event.updateDefaults(config);
 			event.markSuccess();
 			sink.toSuccessTopic(event);

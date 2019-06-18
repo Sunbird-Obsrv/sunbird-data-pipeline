@@ -32,7 +32,7 @@ public class EventsRouterSink extends BaseSink {
 
 	public void toDuplicateTopic(Event event) {
 		toTopic(config.duplicateTopic(), event.did(), event.getJson());
-		metrics.incFailedCounter();
+		metrics.incDuplicateCounter();
 	}
 
 	public void toMalformedTopic(String message) {
