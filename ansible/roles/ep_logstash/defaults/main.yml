@@ -30,5 +30,5 @@ device_register_api_metrics_log_path: "/mount/data/analytics/logs/api-service/ap
 api_job_log_path: "/mount/data/analytics/logs/api-service/joblog.log"
 
 # client API error log
-crash_log_path: "/mount/data/analytics/logs/api-service/crash_logs.log"
+crash_log_path: "/mount/data/analytics/logs/api-service/crash-logs.log"
 logger_es: "{{ groups['log-es']|join(':9200,') }}"
