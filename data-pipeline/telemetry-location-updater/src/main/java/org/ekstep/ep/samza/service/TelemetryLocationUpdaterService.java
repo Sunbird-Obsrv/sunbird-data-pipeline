@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.service;
 
 import com.google.gson.JsonSyntaxException;
+
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.DeviceProfile;

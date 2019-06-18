@@ -43,8 +43,10 @@ public class DeviceProfileCache {
             } catch (JedisException ex) {
                 LOGGER.error(null, "Reconnecting with Redis store due to exception: ", ex);
                 redisConnect.resetConnection();
-                this.redisConnection = redisConnect.getConnection(databaseIndex);
-                deviceProfile = getDeviceProfileFromCache(did);
+                try (Jedis redisConn = redisConnect.getConnection(databaseIndex)) {
+                    this.redisConnection = redisConn;
+                    deviceProfile = getDeviceProfileFromCache(did);
+                }
             }
 
             if (null != deviceProfile && deviceProfile.isLocationResolved()) {
