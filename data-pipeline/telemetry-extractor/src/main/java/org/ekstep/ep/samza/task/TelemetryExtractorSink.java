@@ -23,4 +23,10 @@ public class TelemetryExtractorSink extends BaseSink {
 		toTopic(config.errorTopic(), null, message);
 	}
 
+	public void toDuplicateTopic(String message)
+	{
+		metrics.incDuplicateCounter();
+		toTopic(config.errorTopic(), null, message);
+	}
+
 }

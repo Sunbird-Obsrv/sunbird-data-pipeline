@@ -1,8 +1,8 @@
 input {
   kafka {
     zk_connect => "{{zookeepers}}"
-    group_id => "{{kafka_topic_prefix}}partners.events.201703"
-    topic_id => "{{kafka_topic_prefix}}{{private_exhaust_topic}}"
+    group_id => "{{kafka_topic_prefix}}.partners.events.201703"
+    topic_id => "{{kafka_topic_prefix}}.{{private_exhaust_topic}}"
     reset_beginning => false
     auto_offset_reset => "smallest"
     consumer_threads => 1

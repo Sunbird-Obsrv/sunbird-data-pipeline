@@ -1,18 +1,19 @@
 package org.ekstep.ep.samza.service;
 
-import java.util.List;
-import java.util.Map;
-
+import com.google.gson.Gson;
 import org.apache.commons.lang.StringUtils;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Telemetry;
 import org.ekstep.ep.samza.task.TelemetryExtractorConfig;
 import org.ekstep.ep.samza.task.TelemetryExtractorSink;
+import org.ekstep.ep.samza.util.DeDupEngine;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import com.google.gson.Gson;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TelemetryExtractorService {
 
@@ -20,10 +21,12 @@ public class TelemetryExtractorService {
 
 	private DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZoneUTC();
 	private JobMetrics metrics;
+	private DeDupEngine deDupEngine;
 	private String defaultChannel = "";
 
-	public TelemetryExtractorService(TelemetryExtractorConfig config, JobMetrics metrics) {
+	public TelemetryExtractorService(TelemetryExtractorConfig config, JobMetrics metrics, DeDupEngine deDupEngine) {
 		this.metrics = metrics;
+		this.deDupEngine = deDupEngine;
 		this.defaultChannel = config.defaultChannel();
 	}
 
@@ -34,6 +37,18 @@ public class TelemetryExtractorService {
 			Map<String, Object> batchEvent = (Map<String, Object>) new Gson().fromJson(message, Map.class);
 			long syncts = getSyncTS(batchEvent);
 			String syncTimestamp = df.print(syncts);
+			if (batchEvent.containsKey("params")) {
+				Map<String, Object> params = (Map<String, Object>) batchEvent.get("params");
+				if (params.containsKey("msgid")) {
+					String msgid = params.get("msgid").toString();
+					if (!deDupEngine.isUniqueEvent(msgid)) {
+						sink.toDuplicateTopic(addDuplicateFlag(batchEvent));
+						return;
+					}
+					deDupEngine.storeChecksum(msgid);
+				}
+
+			}
 			List<Map<String, Object>> events = (List<Map<String, Object>>) batchEvent.get("events");
 			for (Map<String, Object> event : events) {
 				String json = "";
@@ -82,14 +97,14 @@ public class TelemetryExtractorService {
 
 	/**
 	 * Create LOG event to audit telemetry sync
-	 * 
+	 *
 	 * @param eventSpec
 	 * @param syncts
 	 * @param syncTimestamp
 	 * @param sink
 	 */
 	private void generateAuditEvent(Map<String, Object> eventSpec, long syncts, String syncTimestamp,
-			TelemetryExtractorSink sink, String defaultChannel) {
+									TelemetryExtractorSink sink, String defaultChannel) {
 		try {
 			Telemetry v3spec = new Telemetry(eventSpec, syncts, syncTimestamp, defaultChannel);
 			String auditEvent = v3spec.toJson();
@@ -98,6 +113,13 @@ public class TelemetryExtractorService {
 			e.printStackTrace();
 			LOGGER.info("", "Failed to generate LOG event: " + e.getMessage());
 		}
+	}
+
+	public String addDuplicateFlag(Map<String, Object> batchEvent) {
+		Map<String, String> flags = new HashMap<>();
+		flags.put("extractor_duplicate", "true");
+		batchEvent.put("flags", flags);
+		return new Gson().toJson(batchEvent);
 	}
 
 }
