@@ -11,6 +11,12 @@ input {
         sincedb_write_interval => 10
         type => "api_job_logs"
     }
+    file {
+        path => "{{crash_log_path}}"
+        start_position => "end"
+        sincedb_write_interval => 10
+        type => "crash_logs"
+    }
 }
 output {
   if [type] == "device_register_api_metrics" {
@@ -30,6 +36,12 @@ output {
         codec => line {
           format => "%{message}"
         }
+      }
+  }
+
+  if [type] == "crash_logs" {
+      elasticsearch {
+        hosts => ["{{logger_es}}"]
       }
   }
 }
