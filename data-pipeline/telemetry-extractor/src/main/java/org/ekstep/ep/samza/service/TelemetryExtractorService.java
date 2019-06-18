@@ -40,13 +40,15 @@ public class TelemetryExtractorService {
 			Map<String, Object> batchEvent = (Map<String, Object>) new Gson().fromJson(message, Map.class);
 			long syncts = getSyncTS(batchEvent);
 			String syncTimestamp = df.print(syncts);
-			if (batchEvent.containsKey("params")) {
+
+			if (batchEvent.containsKey("params") && null != batchEvent.get("params")) {
 				String msgid = "";
 				try {
 					Map<String, Object> params = (Map<String, Object>) batchEvent.get("params");
-					if (params.containsKey("msgid")) {
+					if (params.containsKey("msgid") && null != params.get("msgid")) {
 						msgid = params.get("msgid").toString();
 						if (!deDupEngine.isUniqueEvent(msgid)) {
+						    LOGGER.info("", String.format("msgid: %s: DUPLICATE EVENT", msgid));
 							sink.toDuplicateTopic(addDuplicateFlag(batchEvent));
 							return;
 						}
@@ -54,7 +56,7 @@ public class TelemetryExtractorService {
 					}
 				} catch (JedisException ex) {
 					metrics.incSkippedCounter();
-					LOGGER.error(msgid, "Failed to connect to redis for batch  : " + ex);
+					LOGGER.error(msgid, " Error from redis store: ", ex);
 				}
 			}
 
@@ -87,7 +89,7 @@ public class TelemetryExtractorService {
 			metrics.incSuccessCounter();
 			generateAuditEvent(batchEvent, syncts, syncTimestamp, sink, defaultChannel);
 		} catch (Exception ex) {
-			LOGGER.error("", "Failed to process events: " + ex);
+			LOGGER.error("", "Failed to extract the event batch: ", ex);
 			sink.toErrorTopic(message);
 		}
 
@@ -121,7 +123,7 @@ public class TelemetryExtractorService {
 			sink.toSuccessTopic(auditEvent);
 		} catch (Exception e) {
 			e.printStackTrace();
-			LOGGER.info("", "Failed to generate LOG event: " + e.getMessage());
+			LOGGER.debug("", "Failed to generate LOG event: " + e.getMessage());
 		}
 	}
 
