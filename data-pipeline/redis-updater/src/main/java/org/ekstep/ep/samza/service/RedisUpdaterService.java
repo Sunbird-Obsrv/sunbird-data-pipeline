@@ -73,7 +73,8 @@ public class RedisUpdaterService {
             LOGGER.error("", "Exception when adding to dialcode redis cache", ex);
             redisConnect.resetConnection();
             redisConnect.getConnection(dialCodeStoreDb);
-            addToCache(nodeUniqueId, gson.toJson(parsedData), dialCodeStoreConnection);
+            if (null != parsedData)
+                addToCache(nodeUniqueId, gson.toJson(parsedData), dialCodeStoreConnection);
         }
     }
 
@@ -117,7 +118,8 @@ public class RedisUpdaterService {
             LOGGER.error("", "Exception when adding to content store redis cache", ex);
             redisConnect.resetConnection();
             redisConnect.getConnection(contentStoreDb);
-            addToCache(nodeUniqueId, gson.toJson(parsedData), contentStoreConnection);
+            if (null != parsedData)
+                addToCache(nodeUniqueId, gson.toJson(parsedData), contentStoreConnection);
         }
     }
 
@@ -151,7 +153,7 @@ public class RedisUpdaterService {
     }
 
     private void addToCache(String key, String value, Jedis redisConnection) {
-        if (key != null && !key.isEmpty() && !value.isEmpty()) {
+        if (key != null && !key.isEmpty() && null != value && !value.isEmpty()) {
             redisConnection.set(key, value);
         }
     }
