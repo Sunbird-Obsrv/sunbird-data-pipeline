@@ -84,7 +84,7 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>redis-updater</artifactId>
-            <version>0.1.2</version>
+            <version>0.1.3</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
