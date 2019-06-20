@@ -93,8 +93,11 @@ public class DeviceProfileCache {
                 deviceProfile.setDistrictCustom(result.getString("district_custom"));
                 deviceProfile.setStateCustomName(result.getString("state_custom"));
                 deviceProfile.setStateCodeCustom(result.getString("state_code_custom"));
+                if(!result.isNull("device_spec"))
                 deviceProfile.setDevicespec(result.getMap("device_spec", String.class, String.class));
+                if(!result.isNull("uaspec"))
                 deviceProfile.setUaspec(result.getMap("uaspec", String.class, String.class));
+                if(!result.isNull("first_access"))
                 deviceProfile.setFirstaccess(result.getTimestamp("first_access").getTime());
             }
         }
