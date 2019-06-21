@@ -221,52 +221,52 @@
             {
               "type": "path",
               "name": "device_os",
-              "expr": "$.devicedata.os"
+              "expr": "$.devicedata.devicespec.os"
             },
             {
               "type": "path",
               "name": "device_make",
-              "expr": "$.devicedata.make"
+              "expr": "$.devicedata.devicespec.make"
             },
             {
               "type": "path",
               "name": "device_id",
-              "expr": "$.devicedata.id"
+              "expr": "$.devicedata.devicespec.id"
             },
             {
               "type": "path",
               "name": "device_mem",
-              "expr": "$.devicedata.mem"
+              "expr": "$.devicedata.devicespec.mem"
             },
             {
               "type": "path",
               "name": "device_idisk",
-              "expr": "$.devicedata.idisk"
+              "expr": "$.devicedata.devicespec.idisk"
             },
             {
               "type": "path",
               "name": "device_edisk",
-              "expr": "$.devicedata.edisk"
+              "expr": "$.devicedata.devicespec.edisk"
             },
             {
               "type": "path",
               "name": "device_scrn",
-              "expr": "$.devicedata.scrn"
+              "expr": "$.devicedata.devicespec.scrn"
             },
             {
               "type": "path",
               "name": "device_camera",
-              "expr": "$.devicedata.camera"
+              "expr": "$.devicedata.devicespec.camera"
             },
             {
               "type": "path",
               "name": "device_cpu",
-              "expr": "$.devicedata.cpu"
+              "expr": "$.devicedata.devicespec.cpu"
             },
             {
               "type": "path",
               "name": "device_sims",
-              "expr": "$.devicedata.sims"
+              "expr": "$.devicedata.devicespec.sims"
             },
             {
               "type": "path",
