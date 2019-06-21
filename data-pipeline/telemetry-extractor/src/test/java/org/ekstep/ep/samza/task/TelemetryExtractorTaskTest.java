@@ -52,7 +52,8 @@ public class TelemetryExtractorTaskTest {
     private final String successTopic = "telemetry.raw";
     private final String errorTopic = "telemetry.extractor.failed";
     private final String defaultChannel = "01250894314817126443";
-    private Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+    private Type mapType = new TypeToken<Map<String, Object>>() {
+    }.getType();
     TelemetryExtractorTask task;
     private DeDupEngine deDupEngineMock;
 
@@ -70,13 +71,13 @@ public class TelemetryExtractorTaskTest {
         stub(metricsRegistry.newCounter(anyString(), anyString()))
                 .toReturn(counter);
         stub(envelope.getOffset()).toReturn("2");
-        stub(envelope.getSystemStreamPartition()).toReturn( new SystemStreamPartition("kafka","input.topic",new Partition(1)));
+        stub(envelope.getSystemStreamPartition()).toReturn(new SystemStreamPartition("kafka", "input.topic", new Partition(1)));
         stub(config.get("output.success.topic.name", "telemetry.raw")).toReturn(successTopic);
         stub(config.get("output.error.topic.name", "telemetry.extractor.failed")).toReturn(errorTopic);
         stub(config.get("default.channel", "01250894314817126443")).toReturn(defaultChannel);
         deDupEngineMock = mock(DeDupEngine.class);
-        task = new TelemetryExtractorTask(config, context,deDupEngineMock);
-        
+        task = new TelemetryExtractorTask(config, context, deDupEngineMock);
+
     }
 
     @Test
@@ -134,18 +135,18 @@ public class TelemetryExtractorTaskTest {
 
         String output = (String) envelope.getMessage();
         Map<String, Object> event = (Map<String, Object>) new Gson().fromJson(output, Map.class);
-        List<Map<String, Object>> edata = (List<Map<String, Object>>)((Map<String, Object>)event.get("edata")).get("params");
-        int event_count = ((Number)edata.get(0).get("events_count")).intValue();
+        List<Map<String, Object>> edata = (List<Map<String, Object>>) ((Map<String, Object>) event.get("edata")).get("params");
+        int event_count = ((Number) edata.get(0).get("events_count")).intValue();
         assertEquals(0, event_count);
 
-        Map<String, Object> context = (Map<String, Object>)event.get("context");
-        String channel = (String)context.get("channel");
+        Map<String, Object> context = (Map<String, Object>) event.get("context");
+        String channel = (String) context.get("channel");
         assertEquals("01250894314817126443", channel);
 
-        Map<String, String> padata = (Map<String, String>)context.get("pdata");
+        Map<String, String> padata = (Map<String, String>) context.get("pdata");
         assertEquals("pipeline", padata.get("id"));
     }
-    
+
     @Test
     public void specWithoutSyncts() throws Exception {
         String spec = EventFixture.getEventAsString("event_without_syncts");
@@ -160,7 +161,7 @@ public class TelemetryExtractorTaskTest {
         assertEquals("telemetry.raw", stream.getStream());
         assertEquals(true, output.contains("syncts"));
     }
-    
+
     @Test
     public void specDoesNotContainJsonData() throws Exception {
         String spec = EventFixture.getEventAsString("not_json_event");
@@ -173,11 +174,11 @@ public class TelemetryExtractorTaskTest {
         String output = (String) envelope.getMessage();
         assertEquals("kafka", stream.getSystem());
         assertEquals("telemetry.extractor.failed", stream.getStream());
-        List<String> events = (List<String>)((Map<String, Object>) new Gson().fromJson(output, Map.class)).get("events");
+        List<String> events = (List<String>) ((Map<String, Object>) new Gson().fromJson(output, Map.class)).get("events");
         String content = events.get(0);
         assertEquals("testing events", content);
     }
-    
+
     @Test
     public void specDoesNotContainEventsKey() throws Exception {
         String spec = EventFixture.getEventAsString("without_event_key");
@@ -193,7 +194,7 @@ public class TelemetryExtractorTaskTest {
         assertEquals("telemetry.extractor.failed", stream.getStream());
         assertEquals(false, output.contains("events"));
     }
-    
+
     @Test
     public void auditEventMetrics() throws Exception {
         String spec = EventFixture.getEventAsString("event1");

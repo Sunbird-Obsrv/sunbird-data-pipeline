@@ -45,6 +45,7 @@ public class RedisConnect {
     }
 
     public void resetConnection() {
+        this.jedisPool.close();
         String redis_host = config.get("redis.host", "localhost");
         Integer redis_port = config.getInt("redis.port", 6379);
         this.jedisPool = new JedisPool(buildPoolConfig(), redis_host, redis_port);
