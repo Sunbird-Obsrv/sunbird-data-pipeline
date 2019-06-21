@@ -71,6 +71,11 @@ update_user_redis_cache:
     hour: 3
     minute: 00
 
+index_content_model_druid:
+  index_content:
+    hour: 1
+    minute: 00
+
 service:
   search:
     url: http://{{groups['search1'][0]}}:9000
