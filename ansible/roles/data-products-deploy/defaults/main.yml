@@ -73,7 +73,7 @@ update_user_redis_cache:
 
 index_content_model_druid:
   index_content:
-    hour: 2
+    hour: 1
     minute: 00
 
 service:
