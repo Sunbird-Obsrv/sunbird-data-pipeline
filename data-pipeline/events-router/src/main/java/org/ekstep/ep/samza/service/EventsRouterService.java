@@ -69,6 +69,7 @@ public class EventsRouterService {
 			}
 		} catch (JedisException e) {
 			LOGGER.error(null, "Exception when retrieving data from redis: ", e);
+			deDupEngine.getRedisConnection().close();
 			throw e;
 		} catch (JsonSyntaxException e) {
 			LOGGER.error(null, "INVALID EVENT: " + source.getMessage());

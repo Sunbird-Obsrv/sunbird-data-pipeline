@@ -10,6 +10,7 @@ import org.ekstep.ep.samza.task.TelemetryExtractorSink;
 import org.ekstep.ep.samza.util.DeDupEngine;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import redis.clients.jedis.exceptions.JedisException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,11 +24,13 @@ public class TelemetryExtractorService {
 	private JobMetrics metrics;
 	private DeDupEngine deDupEngine;
 	private String defaultChannel = "";
+	private int rawIndividualEventMaxSize;
 
 	public TelemetryExtractorService(TelemetryExtractorConfig config, JobMetrics metrics, DeDupEngine deDupEngine) {
 		this.metrics = metrics;
 		this.deDupEngine = deDupEngine;
 		this.defaultChannel = config.defaultChannel();
+		this.rawIndividualEventMaxSize = config.rawIndividualEventMaxSize();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -37,18 +40,27 @@ public class TelemetryExtractorService {
 			Map<String, Object> batchEvent = (Map<String, Object>) new Gson().fromJson(message, Map.class);
 			long syncts = getSyncTS(batchEvent);
 			String syncTimestamp = df.print(syncts);
-			if (batchEvent.containsKey("params")) {
-				Map<String, Object> params = (Map<String, Object>) batchEvent.get("params");
-				if (params.containsKey("msgid")) {
-					String msgid = params.get("msgid").toString();
-					if (!deDupEngine.isUniqueEvent(msgid)) {
-						sink.toDuplicateTopic(addDuplicateFlag(batchEvent));
-						return;
-					}
-					deDupEngine.storeChecksum(msgid);
-				}
 
+			if (batchEvent.containsKey("params") && null != batchEvent.get("params")) {
+				String msgid = "";
+				try {
+					Map<String, Object> params = (Map<String, Object>) batchEvent.get("params");
+					if (params.containsKey("msgid") && null != params.get("msgid")) {
+						msgid = params.get("msgid").toString();
+						if (!deDupEngine.isUniqueEvent(msgid)) {
+						    LOGGER.info("", String.format("msgid: %s: DUPLICATE EVENT", msgid));
+							sink.toDuplicateTopic(addDuplicateFlag(batchEvent));
+							return;
+						}
+						deDupEngine.storeChecksum(msgid);
+					}
+				} catch (JedisException ex) {
+					metrics.incSkippedCounter();
+					LOGGER.error(msgid, " Error from redis store: ", ex);
+				}
 			}
+
+
 			List<Map<String, Object>> events = (List<Map<String, Object>>) batchEvent.get("events");
 			for (Map<String, Object> event : events) {
 				String json = "";
@@ -62,9 +74,9 @@ public class TelemetryExtractorService {
 					}
 					json = new Gson().toJson(event);
 					int eventSizeInBytes = json.getBytes("UTF-8").length;
-					if (eventSizeInBytes > 1048576) {
+					if (eventSizeInBytes > rawIndividualEventMaxSize) {
 						LOGGER.info("", String.format("Event with mid %s of size %d bytes is greater than %d. " +
-								"Sending to error topic", event.get("mid"), eventSizeInBytes, 1048576));
+								"Sending to error topic", event.get("mid"), eventSizeInBytes, rawIndividualEventMaxSize));
 						sink.toErrorTopic(json);
 					} else {
 						sink.toSuccessTopic(json);
@@ -77,7 +89,7 @@ public class TelemetryExtractorService {
 			metrics.incSuccessCounter();
 			generateAuditEvent(batchEvent, syncts, syncTimestamp, sink, defaultChannel);
 		} catch (Exception ex) {
-			LOGGER.info("", "Failed to process events: " + ex.getMessage());
+			LOGGER.error("", "Failed to extract the event batch: ", ex);
 			sink.toErrorTopic(message);
 		}
 
@@ -111,7 +123,7 @@ public class TelemetryExtractorService {
 			sink.toSuccessTopic(auditEvent);
 		} catch (Exception e) {
 			e.printStackTrace();
-			LOGGER.info("", "Failed to generate LOG event: " + e.getMessage());
+			LOGGER.debug("", "Failed to generate LOG event: " + e.getMessage());
 		}
 	}
 

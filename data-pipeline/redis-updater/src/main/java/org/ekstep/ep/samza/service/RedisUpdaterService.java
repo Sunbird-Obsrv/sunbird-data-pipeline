@@ -2,18 +2,16 @@ package org.ekstep.ep.samza.service;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.samza.config.Config;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.task.RedisUpdaterSink;
 import org.ekstep.ep.samza.task.RedisUpdaterSource;
-
-import java.lang.reflect.Type;
-import java.util.*;
-
 import org.ekstep.ep.samza.util.RedisConnect;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
-import org.apache.samza.config.Config;
+
+import java.lang.reflect.Type;
+import java.util.*;
 
 public class RedisUpdaterService {
 
@@ -55,7 +53,8 @@ public class RedisUpdaterService {
         try {
             String contentNode = dialCodeStoreConnection.get(nodeUniqueId);
             if (contentNode != null) {
-                Type type = new TypeToken<Map<String, Object>>() {}.getType();
+                Type type = new TypeToken<Map<String, Object>>() {
+                }.getType();
                 parsedData = gson.fromJson(contentNode, type);
             } else {
                 parsedData = new HashMap<>();
@@ -72,9 +71,11 @@ public class RedisUpdaterService {
             sink.error();
             LOGGER.error("", "Exception when adding to dialcode redis cache", ex);
             redisConnect.resetConnection();
-            redisConnect.getConnection(dialCodeStoreDb);
-            if (null != parsedData)
-                addToCache(nodeUniqueId, gson.toJson(parsedData), dialCodeStoreConnection);
+            try (Jedis redisConn = redisConnect.getConnection(dialCodeStoreDb)) {
+                this.dialCodeStoreConnection = redisConn;
+                if (null != parsedData)
+                    addToCache(nodeUniqueId, gson.toJson(parsedData), dialCodeStoreConnection);
+            }
         }
     }
 
@@ -117,19 +118,21 @@ public class RedisUpdaterService {
             sink.error();
             LOGGER.error("", "Exception when adding to content store redis cache", ex);
             redisConnect.resetConnection();
-            redisConnect.getConnection(contentStoreDb);
-            if (null != parsedData)
+            try (Jedis redisConn = redisConnect.getConnection(contentStoreDb)) {
+                this.contentStoreConnection = redisConn;
+                if (null != parsedData)
                 addToCache(nodeUniqueId, gson.toJson(parsedData), contentStoreConnection);
+            }
         }
     }
 
     private List<String> toList(String value) {
         if (value != null) {
-            List<String> val = new ArrayList<String>();
+            List<String> val = new ArrayList<>();
             val.add(value);
             return val;
         } else {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
     }
 

@@ -8,10 +8,10 @@ import org.ekstep.ep.samza.domain.DeviceProfile;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 
+
 public class DeviceProfileCache {
 
     private static Logger LOGGER = new Logger(DeviceProfileCache.class);
-
     private String cassandra_db;
     private String cassandra_table;
     private CassandraConnect cassandraConnection;
@@ -43,8 +43,10 @@ public class DeviceProfileCache {
             } catch (JedisException ex) {
                 LOGGER.error(null, "Reconnecting with Redis store due to exception: ", ex);
                 redisConnect.resetConnection();
-                this.redisConnection = redisConnect.getConnection(databaseIndex);
-                deviceProfile = getDeviceProfileFromCache(did);
+                try (Jedis redisConn = redisConnect.getConnection(databaseIndex)) {
+                    this.redisConnection = redisConn;
+                    deviceProfile = getDeviceProfileFromCache(did);
+                }
             }
 
             if (null != deviceProfile && deviceProfile.isLocationResolved()) {

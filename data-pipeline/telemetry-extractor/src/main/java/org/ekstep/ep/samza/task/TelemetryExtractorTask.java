@@ -67,13 +67,7 @@ public class TelemetryExtractorTask implements StreamTask, InitableTask, Windowa
 		String message = (String) envelope.getMessage();
 		TelemetryExtractorSink sink = new TelemetryExtractorSink(collector, metrics, config);
 		sink.setMetricsOffset(envelope.getSystemStreamPartition(), envelope.getOffset());
-		// metrics.setOffset(envelope.getSystemStreamPartition(), envelope.getOffset());
-		try {
-			service.process(message, sink);
-		} catch (Exception e) {
-			LOGGER.info("", "Failed to process events: " + e.getMessage());
-			sink.toErrorTopic(message);
-		}
+		service.process(message, sink);
 	}
 
 	@Override
