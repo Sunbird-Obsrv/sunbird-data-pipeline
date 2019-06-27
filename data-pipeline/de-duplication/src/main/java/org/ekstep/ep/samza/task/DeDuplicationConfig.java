@@ -17,8 +17,7 @@ public class DeDuplicationConfig {
     private final String metricsTopic;
     private final int dupStore;
     private int expirySeconds;
-    private List<String> serverEventEid;
-    private List<String> producerId;
+    private List<String> includedProducerPids;
 
 
     public DeDuplicationConfig(Config config) {
@@ -30,8 +29,8 @@ public class DeDuplicationConfig {
         defaultChannel = config.get("default.channel", "org.sunbird");
         dupStore = config.getInt("redis.database.duplicationstore.id", 7);
         expirySeconds = config.getInt("redis.database.key.expiry.seconds", 432000);
-        serverEventEid = config.getList("server.events.skip.eid", Arrays.asList("AUDIT","SEARCH","ERROR","LOG"));
-        producerId = config.getList("producer.skip.id", Arrays.asList("prod.diksha.app"));
+        includedProducerPids = config.getList("dedup.producer.include.pids", Arrays.asList("sunbird-portal"));
+
     }
 
     public String successTopic() {
@@ -70,11 +69,8 @@ public class DeDuplicationConfig {
         return expirySeconds;
     }
 
-    public List<String> serverEventEid() {
-        return serverEventEid;
+    public List<String> includedPids() {
+        return includedProducerPids;
     }
 
-    public List<String> producerId() {
-        return producerId;
-    }
 }

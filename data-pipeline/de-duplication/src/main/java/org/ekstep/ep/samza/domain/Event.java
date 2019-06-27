@@ -56,6 +56,11 @@ public class Event {
         return producerId.value();
     }
 
+    public final String producerPid() {
+        NullableValue<String> producerPid = telemetry.read("context.pdata.pid");
+        return producerPid.value();
+    }
+
     public String eid() {
         NullableValue<String> eid = telemetry.read("eid");
         return eid.value();

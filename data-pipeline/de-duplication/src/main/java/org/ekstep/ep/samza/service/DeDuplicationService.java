@@ -36,8 +36,8 @@ public class DeDuplicationService {
 				sink.toSuccessTopic(event);
 				return;
 			}
-			if (!((null != event.producerId() && config.producerId().contains(event.producerId()))
-					|| config.serverEventEid().contains(event.eid()))) {
+
+			if (isDupCheckRequired(event)) {
 				if (!deDupEngine.isUniqueEvent(checksum)) {
 					LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
 					event.markDuplicate();
@@ -63,4 +63,17 @@ public class DeDuplicationService {
 			sink.toMalformedEventsTopic(source.getMessage());
 		}
 	}
+
+	public boolean isDupCheckRequired(Event event) {
+
+		if (null != event.producerPid()) {
+			for (String pid : config.includedPids()) {
+				if (event.producerPid().contains(pid)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }
+
