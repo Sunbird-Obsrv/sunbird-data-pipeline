@@ -31,12 +31,6 @@ public class DeNormalizationService {
             String eid = event.eid();
             List<String> summaryRouteEventPrefix = this.config.getSummaryFilterEvents();
 
-            if("ERROR".equals(eid)){
-                LOGGER.debug(null,"Skipping denormalization as eid is ERROR");
-                sink.toSuccessTopic(event);
-                return;
-            }
-
             if (summaryRouteEventPrefix.contains(eid)) {
                 denormEvent(event);
                 sink.toSuccessTopic(event);
