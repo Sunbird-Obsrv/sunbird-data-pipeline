@@ -35,7 +35,6 @@ public class RedisUpdaterService {
 
     public void process(RedisUpdaterSource source, RedisUpdaterSink sink) {
         Map<String, Object> message = source.getMap();
-        sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
         String nodeUniqueId = (String) message.get("nodeUniqueId");
         String objectType = (String) message.get("objectType");
         if (nodeUniqueId == null || objectType == null) return;

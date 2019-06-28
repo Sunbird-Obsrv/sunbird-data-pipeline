@@ -1,11 +1,7 @@
 package org.ekstep.ep.samza.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
-import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import com.google.common.io.ByteStreams;
 import com.google.gson.JsonSyntaxException;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
@@ -14,14 +10,10 @@ import org.ekstep.ep.samza.task.DruidEventsValidatorSink;
 import org.ekstep.ep.samza.task.DruidEventsValidatorSource;
 import org.ekstep.ep.samza.util.SchemaValidator;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.MessageFormat;
-
 import static java.text.MessageFormat.format;
 
 public class DruidEventsValidatorService {
-    static Logger LOGGER = new Logger(DruidEventsValidatorService.class);
+    private static Logger LOGGER = new Logger(DruidEventsValidatorService.class);
     private final DruidEventsValidatorConfig config;
     private final SchemaValidator schemaValidator;
 
@@ -34,7 +26,6 @@ public class DruidEventsValidatorService {
         Event event = null;
         try {
             event = source.getEvent();
-            sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
             ProcessingReport report = schemaValidator.validate(event);
             if (report.isSuccess()) {
                 event.markSuccess();

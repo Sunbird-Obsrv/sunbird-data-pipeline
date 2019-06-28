@@ -26,7 +26,6 @@ public class TelemetryLocationUpdaterService {
 	public void process(TelemetryLocationUpdaterSource source, TelemetryLocationUpdaterSink sink) {
 		try {
 			Event event = source.getEvent();
-			sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
 			// Add device location details to the event
 			updateEventWithIPLocation(event);
 			sink.toSuccessTopic(event);

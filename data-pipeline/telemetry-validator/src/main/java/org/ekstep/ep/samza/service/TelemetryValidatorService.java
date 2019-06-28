@@ -25,8 +25,6 @@ public class TelemetryValidatorService {
         Event event = null;
         try {
             event = dataCorrection(source.getEvent());
-            sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
-
             if (!telemetrySchemaValidator.schemaFileExists(event)) {
                 LOGGER.info("SCHEMA NOT FOUND FOR EID: ", event.eid());
                 LOGGER.debug("SKIP PROCESSING: SENDING TO SUCCESS", event.mid());

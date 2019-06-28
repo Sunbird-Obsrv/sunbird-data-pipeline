@@ -40,8 +40,6 @@ public class JobMetrics {
     private final Counter duplicateEventCount;
     private TaskContext context;
     private int partition;
-    private HashMap<String, Long> offsetMap = new HashMap<>();
-
     public JobMetrics(TaskContext context) {
         this(context, null);
     }
@@ -181,31 +179,28 @@ public class JobMetrics {
         expiredEventCount.inc();
     }
 
-    public void setOffset(SystemStreamPartition systemStreamPartition, String offset) {
-        String offsetMapKey = String.format("%s%s", systemStreamPartition.getStream(),
-                systemStreamPartition.getPartition().getPartitionId());
-        offsetMap.put(offsetMapKey, Long.valueOf(offset));
-    }
-
     public long consumerLag(Map<String, ConcurrentHashMap<String, Metric>> containerMetricsRegistry) {
         long consumerLag = 0;
         try {
             for (SystemStreamPartition sysPartition : context.getSystemStreamPartitions()) {
-                String offsetChangeKey = String.format("%s-%s-%s-offset-change",
-                        sysPartition.getSystem(), sysPartition.getStream(), sysPartition.getPartition().getPartitionId());
-                long logEndOffset =
+                long highWatermarkOffsetForPartition =
                         Long.valueOf(containerMetricsRegistry.get("org.apache.samza.system.kafka.KafkaSystemConsumerMetrics")
-                                .get(offsetChangeKey).toString());
-                long offset = offsetMap.getOrDefault(sysPartition.getStream() +
-                        sysPartition.getPartition().getPartitionId(), -1L) + 1L;
-                consumerLag += logEndOffset - offset;
-                partition = sysPartition.getPartition().getPartitionId();
+                                .get(getSamzaMetricKey(sysPartition, "high-watermark")).toString());
+                long checkpointedOffsetForPartition = Long.valueOf(containerMetricsRegistry.get("org.apache.samza.checkpoint.OffsetManagerMetrics")
+                        .get(getSamzaMetricKey(sysPartition, "checkpointed-offset")).toString());
+                consumerLag += highWatermarkOffsetForPartition - checkpointedOffsetForPartition;
+                this.partition = sysPartition.getPartition().getPartitionId();
             }
 
         } catch (Exception e) {
             LOGGER.error(null, "EXCEPTION. WHEN COMPUTING CONSUMER LAG METRIC", e);
         }
         return consumerLag;
+    }
+
+    private String getSamzaMetricKey(SystemStreamPartition partition, String samzaMetricName) {
+        return String.format("%s-%s-%s-%s",
+                partition.getSystem(), partition.getStream(), partition.getPartition().getPartitionId(), samzaMetricName);
     }
 
     public String collect() {
