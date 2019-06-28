@@ -66,7 +66,6 @@ public class TelemetryExtractorTask implements StreamTask, InitableTask, Windowa
 
 		String message = (String) envelope.getMessage();
 		TelemetryExtractorSink sink = new TelemetryExtractorSink(collector, metrics, config);
-		sink.setMetricsOffset(envelope.getSystemStreamPartition(), envelope.getOffset());
 		service.process(message, sink);
 	}
 

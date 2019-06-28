@@ -26,9 +26,6 @@ public class DeDuplicationService {
 		try {
 			event = source.getEvent();
 			String checksum = event.getChecksum();
-			String eid = event.eid();
-			sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
-
 			if (checksum == null) {
 				LOGGER.info(event.id(), "EVENT WITHOUT CHECKSUM & MID, PASSING THROUGH : {}", event);
 				event.markSkipped();

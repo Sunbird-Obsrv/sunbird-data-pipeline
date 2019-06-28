@@ -4,16 +4,12 @@ import java.util.Map;
 
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
-import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
-
-import static java.text.MessageFormat.format;
 
 public class BaseSink {
 
 	private MessageCollector collector;
 	protected JobMetrics metrics;
-	private static Logger LOGGER = new Logger(BaseSink.class);
 	
 	public BaseSink(MessageCollector collector) {
 		this.collector = collector;
@@ -32,7 +28,4 @@ public class BaseSink {
 		collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", topic), mid, message));
 	}
 
-	public void setMetricsOffset(SystemStreamPartition systemStreamPartition, String offset) {
-		metrics.setOffset(systemStreamPartition, offset);
-	}
 }
