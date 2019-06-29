@@ -220,17 +220,17 @@
             },
             {
               "type": "path",
-              "name": "edata_params_",
+              "name": "edata_params_consumer_id",
               "expr": "$.edata.params[*].consumer_id"
             },
             {
               "type": "path",
-              "name": "edata_params_",
+              "name": "edata_params_ver",
               "expr": "$.edata.params[*].ver"
             },
             {
               "type": "path",
-              "name": "edata_params_",
+              "name": "edata_params_events_count",
               "expr": "$.edata.params[*].events_count"
             },
             {
