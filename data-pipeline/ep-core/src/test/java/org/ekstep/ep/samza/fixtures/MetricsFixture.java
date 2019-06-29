@@ -10,29 +10,40 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MetricsFixture {
-	public static final String METRIC_EVENT = "{\n" +
+
+	public static final String METRIC_EVENT_STREAM1 = "{\n" +
 			"  \"org.apache.samza.system.kafka.KafkaSystemConsumerMetrics\": {\n" +
-			"    \"kafka-inputtopic1-1-offset-change\": {\n" +
-			"      \"name\": \"kafka-inputtopic1-1-offset-change\",\n" +
+			"    \"kafka-inputtopic1-0-high-watermark\": {\n" +
+			"      \"name\": \"kafka-inputtopic1-0-high-watermark\",\n" +
 			"      \"count\": {\n" +
-			"        \"value\": 0\n" +
+			"        \"value\": 1000\n" +
+			"      }\n" +
+			"    }\n" +
+			"  }, \n" +
+			"  \"org.apache.samza.checkpoint.OffsetManagerMetrics\": {\n" +
+			"    \"kafka-inputtopic1-0-checkpointed-offset\": {\n" +
+			"      \"name\": \"kafka-inputtopic1-0-checkpointed-offset\",\n" +
+			"      \"count\": {\n" +
+			"        \"value\": 200\n" +
 			"      }\n" +
 			"    }\n" +
 			"  }\n" +
 			"}";
 
-	public static final String METRIC_EVENT_STREAM = "{\n" +
+	public static final String METRIC_EVENT_STREAM2 = "{\n" +
 			"  \"org.apache.samza.system.kafka.KafkaSystemConsumerMetrics\": {\n" +
-			"    \"kafka-inputtopic1-1-offset-change\": {\n" +
-			"      \"name\": \"kafka-inputtopic1-1-offset-change\",\n" +
+			"    \"kafka-inputtopic1-0-high-watermark\": {\n" +
+			"      \"name\": \"kafka-inputtopic1-0-high-watermark\",\n" +
 			"      \"count\": {\n" +
-			"        \"value\": 6\n" +
+			"        \"value\": 1000\n" +
 			"      }\n" +
-			"    },\n" +
-			"    \"kafka-inputtopic2-1-offset-change\": {\n" +
-			"      \"name\": \"kafka-inputtopic2-1-offset-change\",\n" +
+			"    }\n" +
+			"  }, \n" +
+			"  \"org.apache.samza.checkpoint.OffsetManagerMetrics\": {\n" +
+			"    \"kafka-inputtopic1-0-checkpointed-offset\": {\n" +
+			"      \"name\": \"kafka-inputtopic1-0-checkpointed-offset\",\n" +
 			"      \"count\": {\n" +
-			"        \"value\": 5\n" +
+			"        \"value\": 1000\n" +
 			"      }\n" +
 			"    }\n" +
 			"  }\n" +
@@ -40,8 +51,7 @@ public class MetricsFixture {
 
 
 	public static Map<String, ConcurrentHashMap<String, Metric>> getMetricMap(String message) {
-		Type type = new TypeToken<Map<String, ConcurrentHashMap<String, Counter>>>() {
-		}.getType();
+		Type type = new TypeToken<Map<String, ConcurrentHashMap<String, Counter>>>() {}.getType();
 		return (Map<String, ConcurrentHashMap<String, Metric>>) new Gson().fromJson(message, type);
 	}
 

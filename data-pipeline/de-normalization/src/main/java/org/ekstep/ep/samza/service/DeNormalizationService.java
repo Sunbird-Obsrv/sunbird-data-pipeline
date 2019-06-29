@@ -27,7 +27,6 @@ public class DeNormalizationService {
 
         try {
             Event event = source.getEvent();
-            sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
             String eid = event.eid();
             List<String> summaryRouteEventPrefix = this.config.getSummaryFilterEvents();
 

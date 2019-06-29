@@ -14,7 +14,7 @@ import com.google.gson.JsonSyntaxException;
 
 public class TelemetryRouterService {
 	
-	static Logger LOGGER = new Logger(TelemetryRouterService.class);
+	private static Logger LOGGER = new Logger(TelemetryRouterService.class);
 	private final TelemetryRouterConfig config;
 
 	public TelemetryRouterService(TelemetryRouterConfig config) {
@@ -25,7 +25,6 @@ public class TelemetryRouterService {
 		Event event = null;
 		try {
 			event = source.getEvent();
-			sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
 			String eid = event.eid();
 			List<String> secondaryRouteEvents = this.config.getSecondaryRouteEvents();
 			if (secondaryRouteEvents.contains(eid)) {
