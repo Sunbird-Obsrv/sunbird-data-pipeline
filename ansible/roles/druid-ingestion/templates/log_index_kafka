@@ -217,6 +217,26 @@
               "type": "path",
               "name": "edata_params_req",
               "expr": "$.edata.params[*].req"
+            },
+            {
+              "type": "path",
+              "name": "edata_params_",
+              "expr": "$.edata.params[*].consumer_id"
+            },
+            {
+              "type": "path",
+              "name": "edata_params_",
+              "expr": "$.edata.params[*].ver"
+            },
+            {
+              "type": "path",
+              "name": "edata_params_",
+              "expr": "$.edata.params[*].events_count"
+            },
+            {
+              "type": "path",
+              "name": "edata_params_",
+              "expr": "$.edata.params[*].sync_status"
             }
           ]
         },
@@ -371,15 +391,15 @@
               "name": "edata_params_url"
             },
             {
-              "type": "string",
+              "type": "double",
               "name": "edata_params_size"
             },
             {
-              "type": "string",
+              "type": "double",
               "name": "edata_params_duration"
             },
             {
-              "type": "string",
+              "type": "long",
               "name": "edata_params_status"
             },
             {
@@ -393,6 +413,22 @@
             {
               "type": "string",
               "name": "edata_params_req"
+            },
+            {
+              "type": "string",
+              "name": "edata_params_consumer_id"
+            },
+            {
+              "type": "string",
+              "name": "edata_params_ver"
+            },
+            {
+              "type": "string",
+              "name": "edata_params_events_count"
+            },
+            {
+              "type": "string",
+              "name": "edata_params_events_sync_status"
             }
           ]
         },

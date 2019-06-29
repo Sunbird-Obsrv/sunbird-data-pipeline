@@ -34,6 +34,8 @@ public class SummaryEventsValidatorTaskTest {
     private static final String TELEMETRY_SCHEMA_PATH = "schemas/telemetry";
     private static final String SUMMARY_SCHEMA_PATH = "schemas/summary";
     private static final String DEFAULT_SCHEMA_NAME = "envelope.json";
+    private static final String SEARCH_SCHEMA_NAME = "search.json";
+    private static final String LOG_SCHEMA_NAME = "log.json";
     private MessageCollector collectorMock;
     private TaskContext contextMock;
     private MetricsRegistry metricsRegistry;
@@ -64,7 +66,8 @@ public class SummaryEventsValidatorTaskTest {
         when(configMock.get("telemetry.schema.path", TELEMETRY_SCHEMA_PATH)).thenReturn(TELEMETRY_SCHEMA_PATH);
         when(configMock.get("summary.schema.path", SUMMARY_SCHEMA_PATH)).thenReturn(SUMMARY_SCHEMA_PATH);
         when(configMock.get("event.schema.file", DEFAULT_SCHEMA_NAME)).thenReturn(DEFAULT_SCHEMA_NAME);
-
+        when(configMock.get("search.schema.file",SEARCH_SCHEMA_NAME)).thenReturn(SEARCH_SCHEMA_NAME);
+        when(configMock.get("log.schema.file",LOG_SCHEMA_NAME)).thenReturn(LOG_SCHEMA_NAME);
         druidEventsValidatorTask = new DruidEventsValidatorTask(configMock, contextMock);
     }
 
