@@ -220,153 +220,23 @@
             },
             {
               "type": "path",
-              "name": "device_os",
-              "expr": "$.devicedata.devicespec.os"
+              "name": "edata_params_consumer_id",
+              "expr": "$.edata.params[*].consumer_id"
             },
             {
               "type": "path",
-              "name": "device_make",
-              "expr": "$.devicedata.devicespec.make"
+              "name": "edata_params_ver",
+              "expr": "$.edata.params[*].ver"
             },
             {
               "type": "path",
-              "name": "device_id",
-              "expr": "$.devicedata.devicespec.id"
+              "name": "edata_params_events_count",
+              "expr": "$.edata.params[*].events_count"
             },
             {
               "type": "path",
-              "name": "device_mem",
-              "expr": "$.devicedata.devicespec.mem"
-            },
-            {
-              "type": "path",
-              "name": "device_idisk",
-              "expr": "$.devicedata.devicespec.idisk"
-            },
-            {
-              "type": "path",
-              "name": "device_edisk",
-              "expr": "$.devicedata.devicespec.edisk"
-            },
-            {
-              "type": "path",
-              "name": "device_scrn",
-              "expr": "$.devicedata.devicespec.scrn"
-            },
-            {
-              "type": "path",
-              "name": "device_camera",
-              "expr": "$.devicedata.devicespec.camera"
-            },
-            {
-              "type": "path",
-              "name": "device_cpu",
-              "expr": "$.devicedata.devicespec.cpu"
-            },
-            {
-              "type": "path",
-              "name": "device_sims",
-              "expr": "$.devicedata.devicespec.sims"
-            },
-            {
-              "type": "path",
-              "name": "device_uaspec_agent",
-              "expr": "$.devicedata.uaspec.agent"
-            },
-            {
-              "type": "path",
-              "name": "device_uaspec_ver",
-              "expr": "$.devicedata.uaspec.ver"
-            },
-            {
-              "type": "path",
-              "name": "device_uaspec_system",
-              "expr": "$.devicedata.uaspec.system"
-            },
-            {
-              "type": "path",
-              "name": "device_uaspec_platform",
-              "expr": "$.devicedata.uaspec.platform"
-            },
-            {
-              "type": "path",
-              "name": "device_uaspec_raw",
-              "expr": "$.devicedata.uaspec.raw"
-            },
-            {
-              "type": "path",
-              "name": "device_first_access",
-              "expr": "$.devicedata.firstaccess"
-            },
-            {
-              "type": "path",
-              "name": "content_name",
-              "expr": "$.contentdata.name"
-            },
-            {
-              "type": "path",
-              "name": "content_object_type",
-              "expr": "$.contentdata.objecttype"
-            },
-            {
-              "type": "path",
-              "name": "content_type",
-              "expr": "$.contentdata.contenttype"
-            },
-            {
-              "type": "path",
-              "name": "content_media_type",
-              "expr": "$.contentdata.mediatype"
-            },
-            {
-              "type": "path",
-              "name": "content_language",
-              "expr": "$.contentdata.language[*]"
-            },
-            {
-              "type": "path",
-              "name": "content_medium",
-              "expr": "$.contentdata.medium"
-            },
-            {
-              "type": "path",
-              "name": "content_mimetype",
-              "expr": "$.contentdata.mimetype"
-            },
-            {
-              "type": "path",
-              "name": "content_framework",
-              "expr": "$.contentdata.framework"
-            },
-            {
-              "type": "path",
-              "name": "content_board",
-              "expr": "$.contentdata.board"
-            },
-            {
-              "type": "path",
-              "name": "content_status",
-              "expr": "$.contentdata.status"
-            },
-            {
-              "type": "path",
-              "name": "content_version",
-              "expr": "$.contentdata.pkgversion"
-            },
-            {
-              "type": "path",
-              "name": "content_last_submitted_on",
-              "expr": "$.contentdata.lastsubmittedon"
-            },
-            {
-              "type": "path",
-              "name": "content_last_published_on",
-              "expr": "$.contentdata.lastpublishedon"
-            },
-            {
-              "type": "path",
-              "name": "content_last_updated_on",
-              "expr": "$.contentdata.lastupdatedon"
+              "name": "edata_params_",
+              "expr": "$.edata.params[*].sync_status"
             }
           ]
         },
@@ -521,15 +391,15 @@
               "name": "edata_params_url"
             },
             {
-              "type": "string",
+              "type": "double",
               "name": "edata_params_size"
             },
             {
-              "type": "string",
+              "type": "double",
               "name": "edata_params_duration"
             },
             {
-              "type": "string",
+              "type": "long",
               "name": "edata_params_status"
             },
             {
@@ -546,122 +416,19 @@
             },
             {
               "type": "string",
-              "name": "device_os"
+              "name": "edata_params_consumer_id"
             },
             {
               "type": "string",
-              "name": "device_make"
+              "name": "edata_params_ver"
             },
             {
               "type": "string",
-              "name": "device_id"
-            },
-            {
-              "type": "long",
-              "name": "device_mem"
+              "name": "edata_params_events_count"
             },
             {
               "type": "string",
-              "name": "device_idisk"
-            },
-            {
-              "type": "string",
-              "name": "device_edisk"
-            },
-            {
-              "type": "string",
-              "name": "device_scrn"
-            },
-            {
-              "type": "string",
-              "name": "device_camera"
-            },
-            {
-              "type": "string",
-              "name": "device_cpu"
-            },
-            {
-              "type": "long",
-              "name": "device_sims"
-            },
-            {
-              "type": "string",
-              "name": "device_uaspec_agent"
-            },
-            {
-              "type": "string",
-              "name": "device_uaspec_ver"
-            },
-            {
-              "type": "string",
-              "name": "device_uaspec_system"
-            },
-            {
-              "type": "string",
-              "name": "device_uaspec_platform"
-            },
-            {
-              "type": "string",
-              "name": "device_uaspec_raw"
-            },
-            {
-              "type": "long",
-              "name": "device_first_access"
-            },
-            {
-              "type": "string",
-              "name": "content_name"
-            },
-            {
-              "type": "string",
-              "name": "content_object_type"
-            },
-            {
-              "type": "string",
-              "name": "content_type"
-            },
-            {
-              "type": "string",
-              "name": "content_media_type"
-            },
-            {
-              "name": "content_language"
-            },
-            {
-              "type": "string",
-              "name": "content_medium"
-            },
-            {
-              "type": "string",
-              "name": "content_mimetype"
-            },
-            {
-              "type": "string",
-              "name": "content_framework"
-            },
-            {
-              "type": "string",
-              "name": "content_board"
-            },
-            {
-              "type": "string",
-              "name": "content_status"
-            },
-            {
-              "type": "double",
-              "name": "content_version"
-            },
-            {
-              "type": "long",
-              "name": "content_last_submitted_on"
-            },
-            {
-              "type": "long",
-              "name": "content_last_published_on"
-            },
-            {
-              "type": "long",
-              "name": "content_last_updated_on"
+              "name": "edata_params_events_sync_status"
             }
           ]
         },

@@ -105,4 +105,12 @@ public class Event {
     public boolean isSummaryEvent() {
         return eid() != null && eid().equals("ME_WORKFLOW_SUMMARY");
     }
+
+    public boolean isSearchEvent() {
+        return "SEARCH".equalsIgnoreCase(eid());
+    }
+
+    public boolean isLogEvent() {
+        return "LOG".equalsIgnoreCase(eid());
+    }
 }

@@ -544,15 +544,6 @@ public class DeNormalizationTaskTest {
     }
 
     @Test
-    public void shouldSkipProcessingForEdataTypeOtherThanApiAccess(){
-        stub(envelopeMock.getMessage()).toReturn(EventFixture.TEST_LOG_EVENT);
-        Answer answer = new Answer();
-        doAnswer(answer).when(jobMetrics).incSkippedCounter();
-        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        assertEquals(true, answer.isSkipped);
-    }
-
-    @Test
     public void shouldSendEventsToSuccessTopicWithQRCodeDataByObjectLookup() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.IMPRESSION_EVENT_WITH_QR_AS_OBJECT);
         stub(userCacheMock.getUserData("anonymous")).toReturn(null);

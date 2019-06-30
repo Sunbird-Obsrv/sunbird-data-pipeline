@@ -34,6 +34,8 @@ public class TelemetryEventsValidatorTaskTest {
     private static final String TELEMETRY_SCHEMA_PATH = "schemas/telemetry";
     private static final String SUMMARY_SCHEMA_PATH = "schemas/summary";
     private static final String DEFAULT_SCHEMA_NAME = "envelope.json";
+    private static final String SEARCH_SCHEMA_NAME = "search.json";
+    private static final String LOG_SCHEMA_NAME = "log.json";
     private MessageCollector collectorMock;
     private TaskContext contextMock;
     private MetricsRegistry metricsRegistry;
@@ -59,6 +61,8 @@ public class TelemetryEventsValidatorTaskTest {
         when(configMock.get("telemetry.schema.path", TELEMETRY_SCHEMA_PATH)).thenReturn(TELEMETRY_SCHEMA_PATH);
         when(configMock.get("summary.schema.path", SUMMARY_SCHEMA_PATH)).thenReturn(SUMMARY_SCHEMA_PATH);
         when(configMock.get("event.schema.file", DEFAULT_SCHEMA_NAME)).thenReturn(DEFAULT_SCHEMA_NAME);
+        when(configMock.get("search.schema.file",SEARCH_SCHEMA_NAME)).thenReturn(SEARCH_SCHEMA_NAME);
+        when(configMock.get("log.schema.file",LOG_SCHEMA_NAME)).thenReturn(LOG_SCHEMA_NAME);
         when(metricsRegistry.newCounter(anyString(), anyString())).thenReturn(counter);
         when(contextMock.getMetricsRegistry()).thenReturn(metricsRegistry);
         stub(envelopeMock.getOffset()).toReturn("2");
@@ -172,6 +176,14 @@ public class TelemetryEventsValidatorTaskTest {
         druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
         verify(collectorMock).send(argThat(validateEvent(false, "channel")));
+    }
+
+    @Test
+    public void shouldSendLogEventToSuccessTopic() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.VALID_LOG_EVENT);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(true, "")));
     }
 
 

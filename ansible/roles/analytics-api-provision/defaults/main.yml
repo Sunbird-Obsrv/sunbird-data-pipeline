@@ -8,6 +8,7 @@ grep_key: play.core.server.ProdServerStart
 process: "/usr/bin/java"
 analytics_api_min_heap: 1g
 analytics_api_max_heap: 2g
+java_options: "-XX:+UseG1GC -XX:+UseStringDeduplication"
 process_home: ""
 process_args: -- -cp '{{ analytics_api.home }}/lib/*' {{ analytics_api.service_args }} play.core.server.ProdServerStart {{ analytics_api.home }}
 app_home: "/mount/data/analytics/api/analytics-api-1.0"
@@ -15,7 +16,7 @@ app_home: "/mount/data/analytics/api/analytics-api-1.0"
 analytics_api:
    root: "{{analytics.home}}/api"
    home: "{{ analytics.home }}/api/analytics-api-1.0"
-   service_args: -Dconfig.file=/mount/data/analytics/api/{{ env }}.conf -Xms{{analytics_api_min_heap}} -Xmx{{analytics_api_max_heap}}
+   service_args: -Dconfig.file=/mount/data/analytics/api/{{ env }}.conf -Xms{{analytics_api_min_heap}} -Xmx{{analytics_api_max_heap}} {{java_options}}
    paths: ['/home/analytics/sbin', '/mount/data/analytics', '/mount/data/analytics/logs', '/mount/data/analytics/logs/services', '/mount/data/analytics/logs/api-service', '/mount/data/analytics/api', '/mount/data/analytics/tmp', '/mount/data/analytics/scripts/monitor-data']
 
 analytics: 
