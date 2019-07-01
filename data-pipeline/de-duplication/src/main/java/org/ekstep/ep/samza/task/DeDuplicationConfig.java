@@ -3,7 +3,7 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DeDuplicationConfig {
@@ -29,7 +29,11 @@ public class DeDuplicationConfig {
         defaultChannel = config.get("default.channel", "org.sunbird");
         dupStore = config.getInt("redis.database.duplicationstore.id", 7);
         expirySeconds = config.getInt("redis.database.key.expiry.seconds", 432000);
-        includedProducerIds = config.getList("dedup.producer.include.ids", Arrays.asList("prod.diksha.portal"));
+        if (!config.get("dedup.producer.include.ids", "").isEmpty()) {
+            includedProducerIds = config.getList("dedup.producer.include.ids", new ArrayList<>());
+        } else {
+            includedProducerIds = new ArrayList<>();
+        }
 
     }
 

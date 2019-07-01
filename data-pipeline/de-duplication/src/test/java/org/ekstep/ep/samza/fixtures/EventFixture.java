@@ -24,7 +24,7 @@ public class EventFixture {
             "    \"pdata\": {\n" +
             "      \"ver\": \"1.14.5\",\n" +
             "      \"pid\": \"sunbird-portal.contentplayer\",\n" +
-            "      \"id\": \"prod.diksha.portal\"\n" +
+            "      \"id\": \"dev.diksha.portal\"\n" +
             "    },\n" +
             "    \"channel\": \"505c7c48ac6dc1edc9b08f21db5a571d\",\n" +
             "    \"env\": \"contentplayer\",\n" +

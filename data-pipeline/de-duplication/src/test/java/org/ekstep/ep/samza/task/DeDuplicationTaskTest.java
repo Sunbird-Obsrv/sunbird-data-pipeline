@@ -21,6 +21,7 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import redis.clients.jedis.Jedis;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
@@ -69,7 +70,8 @@ public class DeDuplicationTaskTest {
         stub(envelopeMock.getSystemStreamPartition())
                 .toReturn(new SystemStreamPartition("kafka", "input.topic", new Partition(0)));
         stub(configMock.getInt("redis.database.duplicationstore.id", dupStoreId)).toReturn(dupStoreId);
-        stub(configMock.getList("dedup.producer.include.ids", Arrays.asList("prod.diksha.portal"))).toReturn(Arrays.asList("prod.diksha.portal"));
+        when(configMock.get("dedup.producer.include.ids", "")).thenReturn("dev.diskha.portal");
+        stub(configMock.getList("dedup.producer.include.ids", new ArrayList<>())).toReturn(Arrays.asList("dev.diksha.portal"));
 
 
         deDuplicationTask = new DeDuplicationTask(configMock, contextMock, deDupEngineMock);
