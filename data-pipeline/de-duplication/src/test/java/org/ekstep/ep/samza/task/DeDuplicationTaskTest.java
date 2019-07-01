@@ -69,7 +69,7 @@ public class DeDuplicationTaskTest {
         stub(envelopeMock.getSystemStreamPartition())
                 .toReturn(new SystemStreamPartition("kafka", "input.topic", new Partition(0)));
         stub(configMock.getInt("redis.database.duplicationstore.id", dupStoreId)).toReturn(dupStoreId);
-        stub(configMock.getList("dedup.producer.include.pids", Arrays.asList("sunbird-portal"))).toReturn(Arrays.asList("sunbird-portal"));
+        stub(configMock.getList("dedup.producer.include.ids", Arrays.asList("prod.diksha.portal"))).toReturn(Arrays.asList("prod.diksha.portal"));
 
 
         deDuplicationTask = new DeDuplicationTask(configMock, contextMock, deDupEngineMock);

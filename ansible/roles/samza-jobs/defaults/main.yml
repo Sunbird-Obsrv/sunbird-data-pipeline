@@ -55,7 +55,7 @@ telemetry_extractor_messages_fetch_threshold: 3000
 consumer_fetch_max_bytes: 1572864
 producer_max_request_size_bytes: 1572864
 
-dedup_include_producer_pids: sunbird-portal
+dedup_include_producer_pids: "{{producer_id_env_prefix}}.diksha.portal"
 
 content_metadata_fields: "name, objectType, contentType, mediaType, language, medium, subject, gradeLevel, mimeType, framework, board, status, pkgVersion, lastSubmittedOn, lastUpdatedOn, lastPublishedOn"
 user_metadata_fields: "usertype, grade, subject, language, state, district"

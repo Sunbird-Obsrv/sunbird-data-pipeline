@@ -66,12 +66,8 @@ public class DeDuplicationService {
 
 	public boolean isDupCheckRequired(Event event) {
 
-		if (null != event.producerPid()) {
-			for (String pid : config.includedPids()) {
-				if (event.producerPid().contains(pid)) {
-					return true;
-				}
-			}
+		if (null != event.producerId() && config.includedids().contains(event.producerId())) {
+			return true;
 		}
 		return false;
 	}
