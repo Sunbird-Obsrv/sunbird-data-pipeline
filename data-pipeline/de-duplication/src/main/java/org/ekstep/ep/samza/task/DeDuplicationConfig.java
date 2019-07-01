@@ -73,7 +73,7 @@ public class DeDuplicationConfig {
         return expirySeconds;
     }
 
-    public List<String> includedids() {
+    public List<String> inclusiveProducerIds() {
         return includedProducerIds;
     }
 

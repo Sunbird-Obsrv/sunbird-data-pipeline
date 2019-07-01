@@ -65,7 +65,7 @@ public class DeDuplicationService {
 	}
 
 	public boolean isDupCheckRequired(Event event) {
-		return (config.includedids().isEmpty() || (null != event.producerId() && config.includedids().contains(event.producerId())));
+		return (config.inclusiveProducerIds().isEmpty() || (null != event.producerId() && config.inclusiveProducerIds().contains(event.producerId())));
 	}
 }
 
