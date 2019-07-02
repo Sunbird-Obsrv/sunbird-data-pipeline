@@ -391,15 +391,15 @@
               "name": "edata_params_url"
             },
             {
-              "type": "double",
+              "type": "string",
               "name": "edata_params_size"
             },
             {
-              "type": "double",
+              "type": "string",
               "name": "edata_params_duration"
             },
             {
-              "type": "long",
+              "type": "string",
               "name": "edata_params_status"
             },
             {
