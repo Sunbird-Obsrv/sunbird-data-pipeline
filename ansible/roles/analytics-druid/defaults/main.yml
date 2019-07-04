@@ -14,8 +14,9 @@ druid_checksum: "807581d54fa4c5a90eec2a230e2a7fc4c6daf18eb8136009bf36a775d793d6f
 #Common Varibles
 
 druid_zookeeper_host: "{{ groups['druid-zookeeper']|join(':2181,')}}:2181"
-druid_postgres_host: "{{ groups['druid-postgres'][0] }}"
-druid_postgres_port: 5432
+#druid_postgres_host: "{{ groups['druid-postgres'][0] }}"
+druid_postgres_host: "{{ postgres.db_url }}"
+druid_postgres_port: "{{ postgres.db_port }}"
 druid_postgres_user: "druid"
 druid_postgres_pass: "{{ dp_vault_druid_postgress_pass }}"
 

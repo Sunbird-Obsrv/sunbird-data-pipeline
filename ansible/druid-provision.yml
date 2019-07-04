@@ -14,24 +14,64 @@
   vars:
     zookeeper_group: "{{ groups['druid-zookeeper'] }}"
 
--
-  name: Install postgres on druid cluster
-  hosts: druid-postgres
-  vars_files:
-    - "{{inventory_dir}}/secrets.yml"
-  become: yes
-  roles:
-    - {role: postgres-provision }
+#-
+#  name: Install postgres on druid cluster
+#  hosts: druid-postgres
+#  vars_files:
+#    - "{{inventory_dir}}/secrets.yml"
+#  become: yes
+#  roles:
+#    - {role: postgres-provision }
+#  vars:
+#    postgres_address_space: "0.0.0.0/0"
+#    postgresql_databases:
+#      - name: druid
+#      - name: graphite
+#    postgresql_users:
+#      - name: druid
+#        password: "{{ dp_vault_druid_postgress_pass }}"
+#      - name: graphite 
+#        password: "{{ dp_vault_druid_postgress_graphite_pass }}"
+
+
+# Create postgres databases and users
+
+- hosts: localhost
+  gather_facts: no
   vars:
-    postgres_address_space: "0.0.0.0/0"
     postgresql_databases:
       - name: druid
       - name: graphite
     postgresql_users:
       - name: druid
+        db: druid
         password: "{{ dp_vault_druid_postgress_pass }}"
-      - name: graphite 
-        password: "{{ dp_vault_druid_postgress_graphite_pass }}"
+      - name: graphite
+        db: graphite
+        password: "{{ dp_vault_druid_postgress_graphite_pass }}"     
+  tasks:
+    - name: Ensure database is created
+      postgresql_db: name="{{ item.name }}" \
+                login_host="{{ postgres.db_url }}" \
+                port="{{ postgres.db_port }}" \
+                login_user="{{ postgres.db_admin_user }}" \
+                login_password="{{ postgres.db_admin_password }}" \
+                encoding='UTF-8' \
+                state=present
+      with_items: "{{ postgresql_databases }}"
+
+    - name: Ensure user has access to the database
+      postgresql_user: name="{{ item.name }}" \
+                  password="{{ item.password }}" \
+                  no_password_changes=true \
+                  priv=ALL \
+                  state=present \
+                  login_host="{{ postgres.db_url }}" \
+                  port="{{ postgres.db_port }}" \
+                  login_user="{{ postgres.db_admin_user }}" \
+                  login_password="{{ db_admin_password }}" \
+                  db="{{ item.db }}"
+      with_items: "{{ postgresql_users }}"
 
 - 
   name : Install graphite on druid
