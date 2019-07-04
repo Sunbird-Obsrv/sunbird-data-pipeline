@@ -38,6 +38,8 @@
 
 - hosts: local
   gather_facts: no
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
   vars:
     postgresql_databases:
       - name: druid
