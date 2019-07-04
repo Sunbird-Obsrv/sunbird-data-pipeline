@@ -175,9 +175,9 @@ DATABASES = {
     'default': {
         'NAME': 'graphite',
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'USER': 'graphite',
+        'USER': 'graphite@{{ postgres.db_url }}',
         'PASSWORD': '{{ dp_vault_druid_postgress_graphite_pass }}',
-        'HOST': '127.0.0.1',
+        'HOST': '{{ postgres.db_url }}',
         'PORT': '5432'
     }
 }
