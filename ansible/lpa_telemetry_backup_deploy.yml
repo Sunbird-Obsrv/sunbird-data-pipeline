@@ -10,6 +10,6 @@
   roles:
     - lpa-telemetry-backup-deploy  
   post_tasks:
-     service: name=monit state=started
-     become: yes
-     ignore_errors: true
+    - service: name=monit state=started
+      become: yes
+      ignore_errors: true
