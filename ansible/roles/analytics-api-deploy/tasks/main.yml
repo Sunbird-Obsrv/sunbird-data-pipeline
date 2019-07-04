@@ -1,9 +1,12 @@
+- name: checking the list of installed services
+  service_facts:
+
 - name: Stop the Monit service
   become: yes
   service:
     name: monit
     state: stopped
-  ignore_errors: yes
+  when: ansible_facts.services.monit is defined  
 
 - name: Status of the api service
   command: "{{ sbin_path }}/api-service status"
@@ -78,4 +81,4 @@
   service:
      name: monit
      state: started
-  ignore_errors: yes
+  when: ansible_facts.services.monit is defined

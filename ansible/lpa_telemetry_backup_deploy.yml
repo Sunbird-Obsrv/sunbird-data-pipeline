@@ -3,15 +3,19 @@
   vars_files:
     - "{{inventory_dir}}/secrets.yml"
   pre_tasks:
+    - name: populate service facts
+      service_facts:
+
     - name: Stop the monit
       service: name=monit state=stopped
       become: yes
-      ignore_errors: true
+      when: ansible_facts.services.monit is defined
   become: yes
+
   roles:
     - lpa-telemetry-backup-deploy  
   post_tasks:
     - name: Start the monit
       service: name=monit state=started
       become: yes
-      ignore_errors: true
+      when: ansible_facts.services.monit is defined
