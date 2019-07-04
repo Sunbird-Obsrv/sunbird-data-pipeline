@@ -1,4 +1,3 @@
-    
 - name: Create secor service
   vars:
     description: Secor service
@@ -8,9 +7,21 @@
 - name: Copy monitoring script
   template: src=monitor-secor.j2 dest={{ sbin_path }}/monitor-secor.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
 
+- name: Finding the old artifact name 
+  find:
+    paths: "{{ analytics_user_home }}"
+    patterns: secor-*-SNAPSHOT-bin.tar.gz
+  register: file_name
+
+- name: Remove the old artifacts
+  file: name="{{ item }}" state=absent
+  with_items: "{{ file_name.files[0].path }}"
+
 - name: Copy secor libraries
-  copy: 
-    src: artifacts/target/secor-0.25-SNAPSHOT-bin.tar.gz 
+  copy:
+    src: "{{ item }}"
     dest: "{{ analytics_user_home }}" 
     owner: "{{ analytics_user }}"
     group: "{{ analytics_user }}"
+  with_fileglob:
+    - "artifacts/target/secor-*-SNAPSHOT-bin.tar.gz"
