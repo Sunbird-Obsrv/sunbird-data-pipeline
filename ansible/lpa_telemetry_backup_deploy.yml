@@ -3,13 +3,15 @@
   vars_files:
     - "{{inventory_dir}}/secrets.yml"
   pre_tasks:
-    - service: name=monit state=stopped
+    - name: Stop the monit
+      service: name=monit state=stopped
       become: yes
       ignore_errors: true
   become: yes
   roles:
     - lpa-telemetry-backup-deploy  
   post_tasks:
-    - service: name=monit state=started
+    - name: Start the monit
+      service: name=monit state=started
       become: yes
       ignore_errors: true
