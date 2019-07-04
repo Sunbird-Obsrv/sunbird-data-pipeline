@@ -2,9 +2,6 @@
   vars_files:
        - "{{inventory_dir}}/secrets.yml"
   pre_tasks:
-    - service: name=monit state=stopped
-      become: yes
-      ignore_errors: true
     - name: Update
       apt: update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
       become: yes
