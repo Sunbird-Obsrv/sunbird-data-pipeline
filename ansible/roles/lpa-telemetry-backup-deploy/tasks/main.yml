@@ -1,3 +1,10 @@
+- name: stop monit
+  become: yes
+  service:
+    name: monit
+    state: stopped
+  ignore_errors: yes
+
 - name: Create service directory on EBS volume
   file: 
     path: "/mount/{{ item.key }}/logs" 
@@ -51,3 +58,10 @@
   notify:
     - "stop secor"
     - "start secor"
+
+- name: start monit
+  become: yes
+  service:
+    name: monit
+    state: started
+  ignore_errors: yes
