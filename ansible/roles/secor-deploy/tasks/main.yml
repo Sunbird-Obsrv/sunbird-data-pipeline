@@ -19,7 +19,7 @@
 
 - name: Copy secor libraries
   copy:
-    src: {{ item }}
+    src: "{{ item }}"
     dest: "{{ analytics_user_home }}" 
     owner: "{{ analytics_user }}"
     group: "{{ analytics_user }}"
