@@ -2,6 +2,14 @@
 - hosts: secor
   vars_files:
     - "{{inventory_dir}}/secrets.yml"
+  pre_tasks:
+    - service: name=monit state=stopped
+      become: yes
+      ignore_errors: true
   become: yes
   roles:
-    - lpa-telemetry-backup-deploy
+    - lpa-telemetry-backup-deploy  
+  post_tasks:
+     service: name=monit state=started
+     become: yes
+     ignore_errors: true
