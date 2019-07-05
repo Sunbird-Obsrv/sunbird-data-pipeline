@@ -50,13 +50,13 @@ spark:
 
 submit_jobs:
   submit-all-jobs:
-    hour: 3
-    minute: 05
+    hour: 00
+    minute: 35
 
 start_jobmanager:
   job-manager:
-    hour: 3
-    minute: 00
+    hour: 00
+    minute: 30
 have_weekly_jobs: false
 
 video_stream_job_schedule: 10
