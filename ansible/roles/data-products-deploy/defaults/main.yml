@@ -63,8 +63,8 @@ video_stream_job_schedule: 10
 
 run_course_metrics_job:
   course-dashboard-metrics:
-    hour: 2
-    minute: 00
+    hour: 21
+    minute: 30
 
 update_user_redis_cache:
   populate-user-cache:
