@@ -1,4 +1,13 @@
 ---
+- name: checking the list of installed services
+  service_facts:
+
+- name: stop monit
+  service: 
+     name: monit
+     state: stopped
+  when: ansible_facts.services.monit is defined     
+    
 - name: Add ElasticSearch repo public signing key
   apt_key: id=46095ACC8548582C1A2699A9D27D666CD88E42B4 url=https://packages.elastic.co/GPG-KEY-elasticsearch state=present
   become: yes
@@ -52,3 +61,9 @@
   become: yes
   
 - include: add_cron.yml
+
+- name: start monit
+  service: 
+    name: monit
+    state: started
+  when: ansible_facts.services.monit is defined

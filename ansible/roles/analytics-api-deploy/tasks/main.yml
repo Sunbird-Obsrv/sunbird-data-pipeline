@@ -1,7 +1,12 @@
-- name: Copy API artifact
-  copy: 
-    src: analytics-api-1.0-dist.zip 
-    dest: "{{ analytics_api.root }}"
+- name: checking the list of installed services
+  service_facts:
+
+- name: Stop the Monit service
+  become: yes
+  service:
+    name: monit
+    state: stopped
+  when: ansible_facts.services.monit is defined  
 
 - name: Status of the api service
   command: "{{ sbin_path }}/api-service status"
@@ -20,9 +25,18 @@
   file: path={{ analytics_api.home }}/RUNNING_PID state=absent
 
 - name: Remove lib directory
-  file: 
-    path: "{{ analytics_api.home }}/lib" 
+  file:
+    path: "{{ analytics_api.home }}/lib"
     state: absent
+
+- name: Remove the old artifacts
+  file:
+    path: "{{ analytics_api.root }}/analytics-api-1.0-dist.zip"
+
+- name: Copy API artifact
+  copy: 
+    src: analytics-api-1.0-dist.zip 
+    dest: "{{ analytics_api.root }}"
 
 - name: Unarchive api artifact
   unarchive: src={{ analytics_api.root }}/analytics-api-1.0-dist.zip dest={{ analytics_api.root }} copy=no group={{ analytics_user }} owner={{ analytics_user }}
@@ -61,3 +75,10 @@
     method: GET
     return_content: yes
   tags: refresh-cache
+
+- name: Start the Monit service
+  become: yes
+  service:
+     name: monit
+     state: started
+  when: ansible_facts.services.monit is defined
