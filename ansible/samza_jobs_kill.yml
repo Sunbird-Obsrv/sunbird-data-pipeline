@@ -1,0 +1,10 @@
+---
+- hosts: yarn-master
+  become: yes
+  tasks: 
+     - name: Get the running  jobs list
+       shell: /usr/local/hadoop/bin/yarn application --list | awk 'NR>2 {print $1 " " $2 " " $6 " " $7 " " $9}'  | column -t 
+       register: output
+     - name: Print the output
+       var: 
+        msg: output 
