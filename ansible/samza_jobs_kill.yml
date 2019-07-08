@@ -7,18 +7,18 @@
   - name: Get the application id to kill the app
     shell: /usr/local/hadoop/bin/yarn application --list | grep -i "{{item}}" | awk '{print $1}'
     with_items: "{{ job_names.split(',')|list}}"
-    register: output
+    register: appid
 
   - name: debugging the output
     debug:
       msg: "{{item.stdout}}"
     with_items:
-      - "{{ output['results'] }}"
+      - "{{ appid['results'] }}"
 
   - name: Kill the mentioned applications
     shell: /usr/local/hadoop/bin/yarn application -kill "{{item.stdout}}"
     with_items:
-      - "{{ output['results'] }}"
+      - "{{ appid['results'] }}"
     when: item.stdout != ""
 
   - name: Get the running jobs list
