@@ -123,6 +123,9 @@ druid_historical_segmentcache_size: 10000000000
 
 druid_historical_server_maxsize: 10000000000
 
+druid_historical_enable_cache: false
+druid_historical_cache_size: 3221225472
+druid_historical_cache_expiry: 3600000
 
 #Middle Manager
 
