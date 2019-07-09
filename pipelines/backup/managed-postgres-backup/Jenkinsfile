@@ -1,8 +1,6 @@
-package Deploy
-
 @Library('deploy-conf') _
 node() {
-    try {
+      try {  
         String ANSI_GREEN = "\u001B[32m"
         String ANSI_NORMAL = "\u001B[0m"
         String ANSI_BOLD = "\u001B[1m"
@@ -21,8 +19,8 @@ node() {
                 module = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-2].trim()
                 jobName = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-1].trim()
                 currentWs = sh(returnStdout: true, script: 'pwd').trim()
-                ansiblePlaybook = "${currentWs}/ansible/postgresql-restore.yml"
-                ansibleExtraArgs = "--extra-vars \"postgres_backup_filename=${params.postgres_backup_filename} postgres_user=${params.postgres_user} postgres_password=${params.postgres_password} postgres_hostname=${params.postgres_hostname}\" --vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                ansiblePlaybook = "${currentWs}/ansible/postgres-managed-service-backup.yml"
+                ansibleExtraArgs = "--tags postgres-azure-managed-service --vault-password-file /var/lib/jenkins/secrets/vault-pass"
                 values.put('currentWs', currentWs)
                 values.put('env', envDir)
                 values.put('module', module)
@@ -33,8 +31,9 @@ node() {
                 ansible_playbook_run(values)
             }
         }
-    }
-    catch (err) {
+      }           
+        catch (err) {
+        currentBuild.result = "FAILURE"
         throw err
     }
 }
