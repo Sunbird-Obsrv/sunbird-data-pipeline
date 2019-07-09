@@ -1,8 +1,6 @@
 #!/bin/bash
 
 log_file=$1
-#webhook_url="https://hooks.slack.com/services/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"
-
 
 total_jobs=`grep "BE_JOB_END" $log_file`
 comp_jobs=`grep "status\":\"SUCCESS" <<< "$total_jobs"`

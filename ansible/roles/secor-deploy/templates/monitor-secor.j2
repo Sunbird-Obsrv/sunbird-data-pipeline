@@ -60,5 +60,4 @@ echo -e $file_content > $output_fname
 
 data='{"channel": "{{ secor.channel }}", "username": "{{ secor_username }}", "text":"*'$title'*\nFiles Uploaded: `'$upload_count'` \n Warnings: `'$warn_count'` \n Errors: `'$errors_count'` \n", "icon_emoji": ":ghost:"}'
 #echo $data
-#curl -X POST -H 'Content-Type: application/json' --data "$data" https://hooks.slack.com/services/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
-curl -X POST -H 'Content-Type: application/json' --data "$data" https://hooks.slack.com/services/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
+curl -X POST -H 'Content-Type: application/json' --data "$data" "{{ data_exhaust_webhook_url }}"
