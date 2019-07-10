@@ -869,7 +869,7 @@
         "taskCount": 1,
         "replicas": 1,
         "taskDuration": "PT3600S",
-        "useEarliestOffset": true
+        "useEarliestOffset": false
     },
     "tuningConfig":
     {
