@@ -26,13 +26,14 @@ druid_log_dir: "/var/log/druid/"
 
 #azure config in group vars
 
+druid_azure_container_name: "telemetry-data-store"
 azure_account_name: "{{ dp_azure_account_name }}"
 azure_storage_secret: "{{ dp_vault_azure_account_key }}"
-azure_container: "{{ secor_azure_container_name }}"
+azure_container: "{{ druid_azure_container_name }}"
 
 #Logging the indexing logs to azure
 
-druid_log_azure_container: "{{ secor_azure_container_name }}"
+druid_log_azure_container: "{{ druid_azure_container_name }}"
 druid_log_azure_folder: "druidlogs"
 
 #Druid Extensions
