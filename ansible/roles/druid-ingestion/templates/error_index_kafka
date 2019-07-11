@@ -155,11 +155,6 @@
             },
             {
               "type": "path",
-              "name": "edata_stacktrace",
-              "expr": "$.edata.stacktrace"
-            },
-            {
-              "type": "path",
               "name": "edata_pageid",
               "expr": "$.edata.pageid"
             },
@@ -341,10 +336,6 @@
             {
               "type": "string",
               "name": "edata_errtype"
-            },
-            {
-              "type": "string",
-              "name": "edata_stacktrace"
             },
             {
               "type": "string",

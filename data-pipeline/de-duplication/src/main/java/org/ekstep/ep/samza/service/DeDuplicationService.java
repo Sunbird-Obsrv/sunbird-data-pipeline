@@ -26,9 +26,6 @@ public class DeDuplicationService {
 		try {
 			event = source.getEvent();
 			String checksum = event.getChecksum();
-			String eid = event.eid();
-			sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
-
 			if (checksum == null) {
 				LOGGER.info(event.id(), "EVENT WITHOUT CHECKSUM & MID, PASSING THROUGH : {}", event);
 				event.markSkipped();
@@ -36,8 +33,8 @@ public class DeDuplicationService {
 				sink.toSuccessTopic(event);
 				return;
 			}
-			if (!((null != event.producerId() && config.producerId().contains(event.producerId()))
-					|| config.serverEventEid().contains(event.eid()))) {
+
+			if (isDupCheckRequired(event)) {
 				if (!deDupEngine.isUniqueEvent(checksum)) {
 					LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
 					event.markDuplicate();
@@ -63,4 +60,9 @@ public class DeDuplicationService {
 			sink.toMalformedEventsTopic(source.getMessage());
 		}
 	}
+
+	public boolean isDupCheckRequired(Event event) {
+		return (config.inclusiveProducerIds().isEmpty() || (null != event.producerId() && config.inclusiveProducerIds().contains(event.producerId())));
+	}
 }
+

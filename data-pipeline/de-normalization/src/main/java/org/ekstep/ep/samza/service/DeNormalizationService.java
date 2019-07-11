@@ -27,7 +27,6 @@ public class DeNormalizationService {
 
         try {
             Event event = source.getEvent();
-            sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
             String eid = event.eid();
             List<String> summaryRouteEventPrefix = this.config.getSummaryFilterEvents();
 
@@ -49,9 +48,6 @@ public class DeNormalizationService {
                     sink.incExpiredEventCount();
                     LOGGER.debug(null, "Ignoring as ets is older than N months");
                     sink.toFailedTopic(event, "older than " + config.ignorePeriodInMonths() + " months");
-                } else if ("LOG".equals(eid) && !"api_access".equalsIgnoreCase(event.edataType())) {
-                    LOGGER.debug(null, "Ignoring as edata_type is other than 'api_access' for LOG events");
-                    sink.incrementSkippedCount(event);
                 } else {
                     denormEvent(event);
                     sink.toSuccessTopic(event);

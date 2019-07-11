@@ -15,7 +15,7 @@ import java.util.*;
 
 public class RedisUpdaterService {
 
-    static Logger LOGGER = new Logger(RedisUpdaterService.class);
+    private static Logger LOGGER = new Logger(RedisUpdaterService.class);
     private RedisConnect redisConnect;
     private Jedis dialCodeStoreConnection;
     private Jedis contentStoreConnection;
@@ -35,7 +35,6 @@ public class RedisUpdaterService {
 
     public void process(RedisUpdaterSource source, RedisUpdaterSink sink) {
         Map<String, Object> message = source.getMap();
-        sink.setMetricsOffset(source.getSystemStreamPartition(), source.getOffset());
         String nodeUniqueId = (String) message.get("nodeUniqueId");
         String objectType = (String) message.get("objectType");
         if (nodeUniqueId == null || objectType == null) return;
@@ -121,7 +120,7 @@ public class RedisUpdaterService {
             try (Jedis redisConn = redisConnect.getConnection(contentStoreDb)) {
                 this.contentStoreConnection = redisConn;
                 if (null != parsedData)
-                addToCache(nodeUniqueId, gson.toJson(parsedData), contentStoreConnection);
+                    addToCache(nodeUniqueId, gson.toJson(parsedData), contentStoreConnection);
             }
         }
     }
