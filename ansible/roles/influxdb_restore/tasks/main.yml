@@ -1,0 +1,45 @@
+---
+
+- name: Install unzip
+  apt:
+    name: unzip
+    update_cache:  yes
+    state: present
+
+- name: Download backup file
+  shell: "az storage blob download --container-name {{ influxdb_backup_azure_container_name }} --file {{ influxdb_restore_file_name }} --name {{ influxdb_restore_file_name }} --account-name {{ backup_azure_storage_account_name }} --account-key {{ backup_azure_storage_access_key }}"
+  args:
+    chdir: /tmp/
+
+- name: Unarchieve backup file
+  unarchive:
+    src: /tmp/{{ influxdb_restore_file_name }}
+    dest: /tmp
+    remote_src: yes
+
+- name: Drop db if exists
+  shell: "curl -XPOST "http://localhost:8086/query" --data-urlencode 'q=DROP DATABASE monitoring_events'"
+
+- name: Restore influxdb data
+  shell: influxd restore -portable influxdb_backup
+  args:
+    chdir: /tmp
+
+- name: Start influxdb
+  systemd:
+    name: influxdb
+    state: started
+
+- name: Verification step - analytics_metrics
+  shell: "curl http://localhost:8086/query?pretty=true --data-urlencode 'db=monitoring_events' --data-urlencode 'q=SELECT count(*) FROM analytics_metrics'"
+  register: analyticsmetrics
+
+- debug:
+    var: analyticsmetrics.stdout_lines
+
+- name: Verification step -  pipeline_metrics
+  shell: "curl http://localhost:8086/query?pretty=true --data-urlencode 'db=monitoring_events' --data-urlencode 'q=SELECT count(*) FROM pipeline_metrics'"
+  register: pipelinemetrics
+
+- debug:
+    var: pipelinemetrics.stdout_lines
