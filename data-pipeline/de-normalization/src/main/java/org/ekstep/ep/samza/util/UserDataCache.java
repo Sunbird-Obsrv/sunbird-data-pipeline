@@ -87,6 +87,12 @@ public class UserDataCache extends DataCache {
         if (userDataMap == null || userDataMap.isEmpty()) {
             metrics.incNoDataCount();
         }
+        userDataMap = getUserSigninLoginDetails(userDataMap);
+        return userDataMap;
+    }
+
+    private Map<String, Object> getUserSigninLoginDetails(Map<String, Object> userDataMap) {
+
         if (!userDataMap.containsKey("usersignintype")) {
             userDataMap.put("usersignintype", "Anonymous");
         }

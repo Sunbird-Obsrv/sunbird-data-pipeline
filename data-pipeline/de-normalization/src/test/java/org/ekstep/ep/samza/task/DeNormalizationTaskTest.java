@@ -136,10 +136,6 @@ public class DeNormalizationTaskTest {
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         String cachedData = jedisMock.get("393407b1-66b1-4c86-9080-b2bce9842886");
-        Map<String, Object> userData = null;
-        if (cachedData != null) {
-            userData = gson.fromJson(cachedData, type);
-        }
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -641,11 +637,6 @@ public class DeNormalizationTaskTest {
         jedisMock.set(user_id,"{\"subject\":[],\"grade\":[],\"usersignintype\":\"Self-Signed-In\",\"userlogintype\":\"student\"}");
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         String cachedData = jedisMock.get(user_id);
-
-        Map<String, Object> userData = null;
-        if (cachedData != null) {
-            userData = gson.fromJson(cachedData, type);
-        }
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override

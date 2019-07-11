@@ -33,7 +33,6 @@ public class RedisUpdaterServiceTest {
     private Jedis jedisMock = new MockJedis("test");
     private RedisUpdaterService redisUpdaterService;
     private RedisUpdaterSink redisUpdaterSinkMock;
-    private RedisUpdaterSource redisUpdaterSourceMock;
     private Config configMock;
     private Integer contentStoreId = 5;
     private Integer dialCodeStoreId = 6;
@@ -43,7 +42,6 @@ public class RedisUpdaterServiceTest {
     public void setUp() {
         redisConnectMock = mock(RedisConnect.class);
         redisUpdaterSinkMock = mock(RedisUpdaterSink.class);
-        redisUpdaterSourceMock = mock(RedisUpdaterSource.class);
         configMock = mock(Config.class);
         stub(redisConnectMock.getConnection(contentStoreId)).toReturn(jedisMock);
         stub(redisConnectMock.getConnection(dialCodeStoreId)).toReturn(jedisMock);

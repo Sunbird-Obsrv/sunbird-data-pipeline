@@ -57,7 +57,11 @@ public class RedisUpdaterService {
 
         if (auditTopic.equalsIgnoreCase(source.getSystemStreamPartition().getStream())) {
             Event event = source.getEvent();
-            updateUserCache(event);
+            String userId = event.userId();
+            if(null != userId)
+            {
+                updateUserCache(event,userId);
+            }
             return;
         } else {
             Map<String, Object> message = source.getMap();
@@ -153,30 +157,46 @@ public class RedisUpdaterService {
         }
     }
 
-    public void updateUserCache(Event event) {
-        String userId = event.userId();
-        if (userId != null) {
-            Map<String, Object> cacheData = new HashMap<>();
-            String signIn_type = null != event.getUserSignInType() ? event.getUserSignInType() : userSignInTypeDefault;
-            String loginIn_type = null != event.getUserLoginType() ? event.getUserLoginType() : userLoginInTypeDefault;
+    public void updateUserCache(Event event, String userId) {
+        Map<String, Object> cacheData = new HashMap<>();
+        try {
             String data = userDataStoreConnection.get(userId);
             if (data != null && !data.isEmpty()) {
                 cacheData = gson.fromJson(data, mapType);
             }
-            if (!(userSignInTypeDefault.equalsIgnoreCase(signIn_type) && userLoginInTypeDefault.equalsIgnoreCase(loginIn_type))) {
-                if (userSelfSignedInTypeList.contains(signIn_type)) {
-                    cacheData.put("usersignintype", "Self-Signed-In");
-                } else if (userValidatedTypeList.contains(signIn_type)) {
-                    cacheData.put("usersignintype", "Validated");
-                } else {
-                    cacheData.put("usersignintype", signIn_type);
-                }
-                cacheData.put("userlogintype", loginIn_type);
+                cacheData.putAll(getUserSignandLoginType(event));
+            if(!cacheData.isEmpty())
                 addToCache(userId, gson.toJson(cacheData), userDataStoreConnection);
-            }
 
+        } catch (JedisException ex) {
+            LOGGER.error("", "Exception when adding to user redis cache", ex);
+            redisConnect.resetConnection();
+            try (Jedis redisConn = redisConnect.getConnection(userStoreDb)) {
+                this.dialCodeStoreConnection = redisConn;
+                if (null != cacheData)
+                    addToCache(userId, gson.toJson(cacheData), userDataStoreConnection);
+            }
         }
     }
+
+    private Map<String,String> getUserSignandLoginType(Event event) {
+
+        Map<String,String> userData = new HashMap<>();
+        String signIn_type = null != event.getUserSignInType() ? event.getUserSignInType() : userSignInTypeDefault;
+        String loginIn_type = null != event.getUserLoginType() ? event.getUserLoginType() : userLoginInTypeDefault;
+        if (!(userSignInTypeDefault.equalsIgnoreCase(signIn_type) && userLoginInTypeDefault.equalsIgnoreCase(loginIn_type))) {
+            if (userSelfSignedInTypeList.contains(signIn_type)) {
+                userData.put("usersignintype", "Self-Signed-In");
+            } else if (userValidatedTypeList.contains(signIn_type)) {
+                userData.put("usersignintype", "Validated");
+            } else {
+                userData.put("usersignintype", signIn_type);
+            }
+            userData.put("userlogintype", loginIn_type);
+        }
+        return  userData;
+    }
+
 
     private List<String> toList(String value) {
         if (value != null) {
