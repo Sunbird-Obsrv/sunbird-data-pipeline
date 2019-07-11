@@ -18,7 +18,7 @@
     remote_src: yes
 
 - name: Drop db if exists
-  shell: "curl -XPOST "http://localhost:8086/query" --data-urlencode 'q=DROP DATABASE monitoring_events'"
+  shell: "curl -XPOST http://localhost:8086/query --data-urlencode 'q=DROP DATABASE monitoring_events'"
 
 - name: Restore influxdb data
   shell: influxd restore -portable influxdb_backup
