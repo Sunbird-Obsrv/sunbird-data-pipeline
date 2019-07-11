@@ -107,7 +107,6 @@ public class DeNormalizationTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITHOUT_DID);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -127,15 +126,11 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicIfDidIsNullWithUserContentData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITHOUT_DID);
-        Map<String, Object> user = new HashMap<>();
-        user.put("type", "Registered"); user.put("gradelist", "[4, 5]"); user.put("state", "Karnataka"); user.put("district", "Bengaluru");
         Map<String, Object> content = new HashMap<>();
         content.put("name", "content-1"); content.put("objecttype", "Content"); content.put("contenttype", "TextBook");
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(content);
         jedisMock.set("393407b1-66b1-4c86-9080-b2bce9842886","{\"grade\":[4,5],\"district\":\"Bengaluru\",\"type\":\"Registered\",\"state\":\"Karnataka\"}");
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
-        String cachedData = jedisMock.get("393407b1-66b1-4c86-9080-b2bce9842886");
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -241,7 +236,6 @@ public class DeNormalizationTaskTest {
         List<Map> data = new ArrayList<>(); data.add(dataMap);
         stub(dailcodeCacheMock.getData(ids)).toReturn(data);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -265,7 +259,6 @@ public class DeNormalizationTaskTest {
 
     public void shouldSendEventsToSuccessTopicWithListDialCodeData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_DIALCODE_AS_LIST);
-        //stub(userCacheMock.getUserData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         List ids = new ArrayList(); ids.add("8ZEDTP"); ids.add("4ZEDTP");
         Map dataMap1 = new HashMap(); dataMap1.put("identifier", "8ZEDTP"); dataMap1.put("channel", "test-channel");
@@ -303,10 +296,8 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicWithOutDialCodeData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITHOUT_DIALCODE);
-        //stub(userCacheMock.getUserData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -330,7 +321,6 @@ public class DeNormalizationTaskTest {
     public void shouldSendEventsToSuccessTopicWithOutAnyDenormData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITH_DEVICEDATA);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -349,7 +339,6 @@ public class DeNormalizationTaskTest {
     public void shouldSendEventsToSuccessTopicWithExistingEmptyStateCode() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITH_EMPTY_LOC);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -373,7 +362,6 @@ public class DeNormalizationTaskTest {
         dataMap.put("status", "Draft");
         stub(dailcodeCacheMock.getData("977D3I")).toReturn(dataMap);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -396,7 +384,6 @@ public class DeNormalizationTaskTest {
     //@Test
     public void shouldSendEventsToSuccessTopicWithStringDialCodeDataCamelCase() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_CAMELCASE_DIALCODE_AS_STRING);
-        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         List ids = new ArrayList(); ids.add("8ZEDTP");
         Map dataMap = new HashMap(); dataMap.put("identifier", "8ZEDTP"); dataMap.put("channel", "test-channel");
@@ -404,7 +391,6 @@ public class DeNormalizationTaskTest {
         List<Map> data = new ArrayList<>(); data.add(dataMap);
         stub(dailcodeCacheMock.getData(ids)).toReturn(data);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -424,7 +410,6 @@ public class DeNormalizationTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_FUTURE_ETS);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -453,7 +438,6 @@ public class DeNormalizationTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.WFS_EVENT);
         jedisMock.set("393407b1-66b1-4c86-9080-b2bce9842886","{\"grade\":[4,5],\"district\":\"Bengaluru\",\"type\":\"Registered\",\"state\":\"Karnataka\"}");
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -499,7 +483,6 @@ public class DeNormalizationTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.LOG_EVENT);
         jedisMock.set("0b251080-3230-415e-a593-ab7c1fac7ae3","{\"grade\":[4,5],\"type\":\"Registered\"}");
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -546,7 +529,6 @@ public class DeNormalizationTaskTest {
         dataMap.put("status", "Draft");
         stub(dailcodeCacheMock.getData("977D3I")).toReturn(dataMap);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -570,13 +552,11 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicWithDialCodeCamelCaseDataByObjectLookup() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.IMPRESSION_EVENT_WITH_DIALCODE_CAMELCASE_AS_OBJECT);
-        //stub(userCacheMock.getUserData("anonymous")).toReturn(null);
         stub(contentCacheMock.getData("977D3I")).toReturn(null);
         Map dataMap = new HashMap(); dataMap.put("identifier", "977D3I"); dataMap.put("channel", "test-channel");
         dataMap.put("status", "Draft");
         stub(dailcodeCacheMock.getData("977D3I")).toReturn(dataMap);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -600,17 +580,8 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendAUDITEventsToSuccessTopicWithUserData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.AUDIT_EVENT);
-        Map<String, Object> user = new HashMap<>();
-        user.put("type", "Registered"); user.put("gradelist", "[4, 5]"); user.put("state", "Karnataka"); user.put("district", "Bengaluru");
-        //stub(userCacheMock.getUserData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
         jedisMock.set("393407b1-66b1-4c86-9080-b2bce9842886","{\"grade\":[4,5],\"district\":\"Bengaluru\",\"type\":\"Registered\",\"state\":\"Karnataka\"}");
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        String cachedData = jedisMock.get("393407b1-66b1-4c86-9080-b2bce9842886");
-
-        Map<String, Object> userData = null;
-        if (cachedData != null) {
-            userData = gson.fromJson(cachedData, type);
-        }
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -631,13 +602,9 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldStampUserSigninAndLoginTypeForAllEvents() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.IMPRESSION_EVENT);
-        Map<String, Object> user = new HashMap<>();
-        user.put("type", "Registered"); user.put("gradelist", "[4, 5]"); user.put("state", "Karnataka"); user.put("district", "Bengaluru");
         String user_id="e9d73b7b-211a-43f4-8c01-cc9333757a9d";
         jedisMock.set(user_id,"{\"subject\":[],\"grade\":[],\"usersignintype\":\"Self-Signed-In\",\"userlogintype\":\"student\"}");
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        String cachedData = jedisMock.get(user_id);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
