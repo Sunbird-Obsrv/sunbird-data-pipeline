@@ -45,18 +45,13 @@ public class DeNormalizationTaskTest {
     private TaskCoordinator coordinatorMock;
     private IncomingMessageEnvelope envelopeMock;
     private Config configMock;
-    private RedisConnect redisConnectMock;
-    private CassandraConnect cassandraConnectMock;
     private DeNormalizationTask deNormalizationTask;
-    private UserDataCache userCacheMock;
+
     private ContentDataCache contentCacheMock;
     private DialCodeDataCache dailcodeCacheMock;
     private JobMetrics jobMetrics;
     private Jedis jedisMock = new MockJedis("test");
-    private Gson gson = new Gson();
     private Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
-    private Type type = new com.google.gson.reflect.TypeToken<Map<String, Object>>() {
-    }.getType();
 
     @SuppressWarnings("unchecked")
     @Before
@@ -68,9 +63,8 @@ public class DeNormalizationTaskTest {
         coordinatorMock = mock(TaskCoordinator.class);
         envelopeMock = mock(IncomingMessageEnvelope.class);
         configMock = mock(Config.class);
-        redisConnectMock = mock(RedisConnect.class);
-        cassandraConnectMock = mock(CassandraConnect.class);
-        userCacheMock = mock(UserDataCache.class);
+        RedisConnect redisConnectMock = mock(RedisConnect.class);
+        CassandraConnect cassandraConnectMock = mock(CassandraConnect.class);
 
         contentCacheMock = mock(ContentDataCache.class);
         dailcodeCacheMock = mock(DialCodeDataCache.class);
@@ -98,7 +92,7 @@ public class DeNormalizationTaskTest {
         stub(envelopeMock.getSystemStreamPartition())
                 .toReturn(new SystemStreamPartition("kafka", "telemetry.with_location", new Partition(1)));
 
-        userCacheMock = new UserDataCache(configMock,jobMetrics,cassandraConnectMock, redisConnectMock);
+        UserDataCache userCacheMock = new UserDataCache(configMock,jobMetrics,cassandraConnectMock, redisConnectMock);
         deNormalizationTask = new DeNormalizationTask(configMock, contextMock, userCacheMock , contentCacheMock, dailcodeCacheMock, jobMetrics,cassandraConnectMock, redisConnectMock);
     }
 
