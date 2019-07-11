@@ -3,21 +3,23 @@ package org.ekstep.ep.samza.service;
 import com.fiftyonred.mock_jedis.MockJedis;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.apache.samza.Partition;
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
+import org.apache.samza.system.SystemStreamPartition;
 import org.ekstep.ep.samza.service.Fixtures.EventFixture;
 import org.ekstep.ep.samza.task.RedisUpdaterSink;
 import org.ekstep.ep.samza.task.RedisUpdaterSource;
-import org.ekstep.ep.samza.util.*;
+import org.ekstep.ep.samza.util.RedisConnect;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 
-import javax.lang.model.type.ArrayType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -31,21 +33,33 @@ public class RedisUpdaterServiceTest {
     private Jedis jedisMock = new MockJedis("test");
     private RedisUpdaterService redisUpdaterService;
     private RedisUpdaterSink redisUpdaterSinkMock;
+    private RedisUpdaterSource redisUpdaterSourceMock;
     private Config configMock;
     private Integer contentStoreId = 5;
     private Integer dialCodeStoreId = 6;
+    private Integer userStoreId = 4;
 
     @Before
     public void setUp() {
         redisConnectMock = mock(RedisConnect.class);
         redisUpdaterSinkMock = mock(RedisUpdaterSink.class);
+        redisUpdaterSourceMock = mock(RedisUpdaterSource.class);
         configMock = mock(Config.class);
         stub(redisConnectMock.getConnection(contentStoreId)).toReturn(jedisMock);
         stub(redisConnectMock.getConnection(dialCodeStoreId)).toReturn(jedisMock);
+        stub(redisConnectMock.getConnection(userStoreId)).toReturn(jedisMock);
         envelopeMock = mock(IncomingMessageEnvelope.class);
         stub(configMock.getInt("redis.database.contentStore.id", contentStoreId)).toReturn(contentStoreId);
         stub(configMock.getInt("redis.database.dialCodeStore.id", dialCodeStoreId)).toReturn(dialCodeStoreId);
+        stub(configMock.getInt("redis.database.userStore.id", userStoreId)).toReturn(userStoreId);
         stub(configMock.getInt("location.db.redis.key.expiry.seconds", 86400)).toReturn(86400);
+        stub(configMock.get("input.audit.topic.name", "telemetry.audit")).toReturn("telemetry.audit");
+        stub(configMock.get("user_signin_type_default", "Anonymous")).toReturn("Anonymous");
+        stub(configMock.getList("user_selfsignedin_typeList", Arrays.asList("google", "self"))).toReturn(Arrays.asList("google", "self"));
+        stub(configMock.getList("user_validated_typeList", Arrays.asList("sso"))).toReturn(Arrays.asList("sso"));
+        stub(configMock.get("user_login_type_defalut", "NA")).toReturn("NA");
+        stub(envelopeMock.getSystemStreamPartition())
+                .toReturn(new SystemStreamPartition("kafka", "learning.graph.events", new Partition(0)));
 
         List<String> defaultListValues = new ArrayList<>();
         defaultListValues.add("gradeLevel");
@@ -191,7 +205,7 @@ public class RedisUpdaterServiceTest {
         assertEquals("Draft", parsedData.get("status"));
 
         assertEquals("TestCollection", parsedData.get("description"));
-        ArrayList<String> list=new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         list.add("createdBy");
         assertEquals(list, parsedData.get("ownershipType"));
         verify(redisUpdaterSinkMock, times(2)).success();
@@ -288,5 +302,51 @@ public class RedisUpdaterServiceTest {
         assertEquals(0, parsedData.size());
         assertEquals(null, parsedData.get("language"));
         verify(redisUpdaterSinkMock, times(1)).success();
+    }
+
+    @Test
+    public void shouldUpdateUserSignInDetailsinCacheFORAUDIT() {
+
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.AUDIT_EVENT_SIGINTYPE);
+        Gson gson = new Gson();
+        String userId = "89490534-126f-4f0b-82ac-3ff3e49f3468";
+        jedisMock.set(userId, "{\"channel\":\"dikshacustodian\",\"phoneverified\":false}");
+        RedisUpdaterSource source = new RedisUpdaterSource(envelopeMock);
+        stub(envelopeMock.getSystemStreamPartition())
+                .toReturn(new SystemStreamPartition("kafka", "telemetry.audit", new Partition(1)));
+        redisUpdaterService.process(source, redisUpdaterSinkMock);
+
+        String cachedData = jedisMock.get(userId);
+        Map<String, Object> parsedData = null;
+        if (cachedData != null) {
+            Type type = new TypeToken<Map<String, Object>>() {
+            }.getType();
+            parsedData = gson.fromJson(cachedData, type);
+        }
+        assertEquals("Self-Signed-In", parsedData.get("usersignintype"));
+        assertEquals("NA", parsedData.get("userlogintype"));
+    }
+
+    @Test
+    public void shouldUpdateUserLoginInTYpeDetailsinCacheFORAUDIT() {
+
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.AUDIT_EVENT_LOGININTYPE);
+        Gson gson = new Gson();
+        String userId = "3b46b4c9-3a10-439a-a2cb-feb5435b3a0d";
+        jedisMock.set(userId, "{\"channel\":\"dikshacustodian\",\"phoneverified\":false}");
+        RedisUpdaterSource source = new RedisUpdaterSource(envelopeMock);
+        stub(envelopeMock.getSystemStreamPartition())
+                .toReturn(new SystemStreamPartition("kafka", "telemetry.audit", new Partition(1)));
+        redisUpdaterService.process(source, redisUpdaterSinkMock);
+
+        String cachedData = jedisMock.get(userId);
+        Map<String, Object> parsedData = null;
+        if (cachedData != null) {
+            Type type = new TypeToken<Map<String, Object>>() {
+            }.getType();
+            parsedData = gson.fromJson(cachedData, type);
+        }
+        assertEquals("Anonymous", parsedData.get("usersignintype"));
+        assertEquals("student", parsedData.get("userlogintype"));
     }
 }

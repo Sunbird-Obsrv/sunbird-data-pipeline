@@ -33,17 +33,19 @@ public class UserDataCache extends DataCache {
     private JobMetrics metrics;
     private int databaseIndex;
 
-    public UserDataCache(Config config, JobMetrics metrics) {
-        super(config.getList("user.metadata.fields", Arrays.asList("usertype", "grade", "language", "subject", "state", "district")));
+
+    public UserDataCache(Config config, JobMetrics metrics, CassandraConnect cassandraConnect, RedisConnect redisConnect) {
+
+        super(config.getList("user.metadata.fields", Arrays.asList("usertype", "grade", "language", "subject", "state", "district", "usersignintype", "userlogintype")));
         this.metrics = metrics;
         this.databaseIndex = config.getInt("redis.userDB.index", 4);
-        this.redisPool = new RedisConnect(config);
+        this.redisPool = null == redisConnect ? new RedisConnect(config) : redisConnect;
         this.redisConnection = this.redisPool.getConnection(databaseIndex);
         this.cassandra_db = config.get("middleware.cassandra.keyspace", "sunbird");
         this.cassandra_user_table = config.get("middleware.cassandra.user_table", "user");
         this.cassandra_location_table = config.get("middleware.cassandra.location_table", "location");
         List<String> cassandraHosts = Arrays.asList(config.get("middleware.cassandra.host", "127.0.0.1").split(","));
-        this.cassandraConnection = new CassandraConnect(cassandraHosts, config.getInt("middleware.cassandra.port", 9042));
+        this.cassandraConnection = null == cassandraConnect ? new CassandraConnect(cassandraHosts, config.getInt("middleware.cassandra.port", 9042)) : cassandraConnect;
         this.locationDbKeyExpiryTimeInSeconds = config.getInt("location.db.redis.key.expiry.seconds", 86400);
 
     }
@@ -85,6 +87,11 @@ public class UserDataCache extends DataCache {
         if (userDataMap == null || userDataMap.isEmpty()) {
             metrics.incNoDataCount();
         }
+        if (!userDataMap.containsKey("usersignintype")) {
+            userDataMap.put("usersignintype", "Anonymous");
+        }
+        if (!userDataMap.containsKey("userlogintype"))
+            userDataMap.put("userlogintype", "NA");
         return userDataMap;
     }
 

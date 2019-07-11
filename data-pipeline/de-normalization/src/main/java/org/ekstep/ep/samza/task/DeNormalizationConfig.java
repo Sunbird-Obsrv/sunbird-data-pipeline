@@ -3,7 +3,6 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,11 +80,16 @@ public class DeNormalizationConfig {
         return userDataJobFlag;
     }
 
-    public static String getContentLocationJobFlag() { return contentDataJobFlag; }
+    public static String getContentLocationJobFlag() {
+        return contentDataJobFlag;
+    }
 
-    public static String getDialCodeLocationJobFlag() { return dialCodeDataJobFlag; }
+    public static String getDialCodeLocationJobFlag() {
+        return dialCodeDataJobFlag;
+    }
 
     public List<String> getSummaryFilterEvents() {
         return this.summaryFilterEvents;
     }
+
 }

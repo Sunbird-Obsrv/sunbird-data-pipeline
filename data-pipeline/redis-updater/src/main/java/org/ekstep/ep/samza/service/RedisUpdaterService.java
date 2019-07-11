@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.samza.config.Config;
 import org.ekstep.ep.samza.core.Logger;
+import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.task.RedisUpdaterSink;
 import org.ekstep.ep.samza.task.RedisUpdaterSource;
 import org.ekstep.ep.samza.util.RedisConnect;
@@ -19,30 +20,56 @@ public class RedisUpdaterService {
     private RedisConnect redisConnect;
     private Jedis dialCodeStoreConnection;
     private Jedis contentStoreConnection;
+    private Jedis userDataStoreConnection;
     private int dialCodeStoreDb;
     private int contentStoreDb;
+    private int userStoreDb;
+    private String auditTopic;
+    private String userSignInTypeDefault;
+    private String userLoginInTypeDefault;
+    private List<String> userSelfSignedInTypeList;
+    private List<String> userValidatedTypeList;
     private Gson gson = new Gson();
     private List<String> contentModelListTypeFields;
+    private Type mapType = new TypeToken<Map<String, Object>>() {
+    }.getType();
 
     public RedisUpdaterService(Config config, RedisConnect redisConnect) {
         this.redisConnect = redisConnect;
+        this.userStoreDb = config.getInt("redis.database.userStore.id", 4);
         this.contentStoreDb = config.getInt("redis.database.contentStore.id", 5);
         this.dialCodeStoreDb = config.getInt("redis.database.dialCodeStore.id", 6);
         this.contentStoreConnection = redisConnect.getConnection(contentStoreDb);
         this.dialCodeStoreConnection = redisConnect.getConnection(dialCodeStoreDb);
+        this.userDataStoreConnection = redisConnect.getConnection(userStoreDb);
+
         this.contentModelListTypeFields = config.getList("contentModel.fields.listType", new ArrayList<>());
+        this.auditTopic = config.get("input.audit.topic.name", "telemetry.audit");
+        this.userSignInTypeDefault = config.get("user_signin_type_default", "Anonymous");
+        this.userLoginInTypeDefault = config.get("user_login_type_defalut", "NA");
+        this.userSelfSignedInTypeList = config.getList("user_selfsignedin_typeList", Arrays.asList("google", "self"));
+        this.userValidatedTypeList = config.getList("user_validated_typeList", Arrays.asList("sso"));
+
+
     }
 
     public void process(RedisUpdaterSource source, RedisUpdaterSink sink) {
-        Map<String, Object> message = source.getMap();
-        String nodeUniqueId = (String) message.get("nodeUniqueId");
-        String objectType = (String) message.get("objectType");
-        if (nodeUniqueId == null || objectType == null) return;
-        LOGGER.info("", "processing event for nodeUniqueId: " + nodeUniqueId);
-        if (!nodeUniqueId.isEmpty() && objectType.equalsIgnoreCase("DialCode")) {
-            updateDialCodeCache(message, sink);
-        } else if (!nodeUniqueId.isEmpty()) {
-            updateContentCache(message, sink);
+
+        if (auditTopic.equalsIgnoreCase(source.getSystemStreamPartition().getStream())) {
+            Event event = source.getEvent();
+            updateUserCache(event);
+            return;
+        } else {
+            Map<String, Object> message = source.getMap();
+            String nodeUniqueId = (String) message.get("nodeUniqueId");
+            String objectType = (String) message.get("objectType");
+            if (nodeUniqueId == null || objectType == null) return;
+            LOGGER.info("", "processing event for nodeUniqueId: " + nodeUniqueId);
+            if (!nodeUniqueId.isEmpty() && objectType.equalsIgnoreCase("DialCode")) {
+                updateDialCodeCache(message, sink);
+            } else if (!nodeUniqueId.isEmpty()) {
+                updateContentCache(message, sink);
+            }
         }
     }
 
@@ -88,11 +115,12 @@ public class RedisUpdaterService {
             if (contentNode == null) {
                 parsedData = new HashMap<>();
             } else {
-                Type type = new TypeToken<Map<String, Object>>() {}.getType();
+                Type type = new TypeToken<Map<String, Object>>() {
+                }.getType();
                 parsedData = gson.fromJson(contentNode, type);
             }
             Map<String, Object> newProperties = extractProperties(message);
-            for(Map.Entry<String,Object> entry : newProperties.entrySet()) {
+            for (Map.Entry<String, Object> entry : newProperties.entrySet()) {
                 if (contentModelListTypeFields.contains(entry.getKey())
                         && entry.getValue() instanceof String
                         && !((String) entry.getValue()).isEmpty()
@@ -100,7 +128,7 @@ public class RedisUpdaterService {
                     String str = (String) entry.getValue();
                     List<String> value = toList(str);
                     listTypeFields.put(entry.getKey(), value);
-                    LOGGER.info("", "type cast to List for field: " + entry.getKey() + " ,nodeUniqueId: "+ nodeUniqueId);
+                    LOGGER.info("", "type cast to List for field: " + entry.getKey() + " ,nodeUniqueId: " + nodeUniqueId);
                 }
             }
             if (!listTypeFields.isEmpty()) {
@@ -122,6 +150,31 @@ public class RedisUpdaterService {
                 if (null != parsedData)
                     addToCache(nodeUniqueId, gson.toJson(parsedData), contentStoreConnection);
             }
+        }
+    }
+
+    public void updateUserCache(Event event) {
+        String userId = event.userId();
+        if (userId != null) {
+            Map<String, Object> cacheData = new HashMap<>();
+            String signIn_type = null != event.getUserSignInType() ? event.getUserSignInType() : userSignInTypeDefault;
+            String loginIn_type = null != event.getUserLoginType() ? event.getUserLoginType() : userLoginInTypeDefault;
+            String data = userDataStoreConnection.get(userId);
+            if (data != null && !data.isEmpty()) {
+                cacheData = gson.fromJson(data, mapType);
+            }
+            if (!(userSignInTypeDefault.equalsIgnoreCase(signIn_type) && userLoginInTypeDefault.equalsIgnoreCase(loginIn_type))) {
+                if (userSelfSignedInTypeList.contains(signIn_type)) {
+                    cacheData.put("usersignintype", "Self-Signed-In");
+                } else if (userValidatedTypeList.contains(signIn_type)) {
+                    cacheData.put("usersignintype", "Validated");
+                } else {
+                    cacheData.put("usersignintype", signIn_type);
+                }
+                cacheData.put("userlogintype", loginIn_type);
+                addToCache(userId, gson.toJson(cacheData), userDataStoreConnection);
+            }
+
         }
     }
 

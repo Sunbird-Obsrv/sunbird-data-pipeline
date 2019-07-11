@@ -24,6 +24,14 @@
     "district": {
       "id": "http://api.sunbird.org/telemetry/userdata/district",
       "type": "string"
+    },
+    "usersignintype": {
+      "id": "http://api.sunbird.org/telemetry/usersignintype/district",
+      "type": "string"
+    },
+    "userlogintype": {
+      "id": "http://api.sunbird.org/telemetry/userdata/userlogintype",
+      "type": "string"
     }
   }
 }

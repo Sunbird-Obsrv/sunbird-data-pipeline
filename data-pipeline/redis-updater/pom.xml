@@ -12,7 +12,7 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>redis-updater</artifactId>
-    <version>0.1.4</version>
+    <version>0.1.5</version>
     <name>RedisUpdater</name>
     <dependencies>
         <dependency>
@@ -73,6 +73,11 @@
             <groupId>org.ekstep.ecosystem</groupId>
             <artifactId>ep-core</artifactId>
             <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem</groupId>
+            <artifactId>ep-telemetry-reader</artifactId>
+            <version>0.0.3</version>
         </dependency>
         <dependency>
             <groupId>redis.clients</groupId>

@@ -32,6 +32,9 @@ processing_kafka_overriden_topics:
   - name: telemetry.with_location
     retention_time: 86400000
     replication_factor: 1
+  - name: telemetry.audit
+    retention_time: 86400000
+    replication_factor: 1
   - name: telemetry.denorm
     retention_time: 86400000
     replication_factor: 1
@@ -126,6 +129,9 @@ processing_kafka_topics:
     replication_factor: 1
   - name: telemetry.with_location
     num_of_partitions: 8
+    replication_factor: 1
+  - name: telemetry.audit
+    num_of_partitions: 2
     replication_factor: 1
   - name: telemetry.denorm
     num_of_partitions: 4

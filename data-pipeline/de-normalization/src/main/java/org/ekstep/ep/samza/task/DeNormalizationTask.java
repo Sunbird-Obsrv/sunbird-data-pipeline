@@ -30,9 +30,6 @@ import org.ekstep.ep.samza.domain.EventUpdaterFactory;
 import org.ekstep.ep.samza.service.DeNormalizationService;
 import org.ekstep.ep.samza.util.*;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class DeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
 
     private static Logger LOGGER = new Logger(DeNormalizationTask.class);
@@ -41,11 +38,13 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     private ContentDataCache contentCache;
     private DialCodeDataCache dialcodeCache;
     private JobMetrics metrics;
+    private CassandraConnect cassandraConnect;
+    private RedisConnect redisConnect;
     private DeNormalizationService service;
 
     public DeNormalizationTask(Config config, TaskContext context, UserDataCache userCache,
-                               ContentDataCache contentCache, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics)  {
-        init(config, context, userCache, contentCache, dialcodeCache, jobMetrics);
+                               ContentDataCache contentCache, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics, CassandraConnect cassandraConnect, RedisConnect redisConnect) {
+        init(config, context, userCache, contentCache, dialcodeCache, jobMetrics, cassandraConnect, redisConnect);
     }
 
     public DeNormalizationTask() {
@@ -55,15 +54,16 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     @SuppressWarnings("unchecked")
     @Override
     public void init(Config config, TaskContext context) {
-        init(config, context, userCache, contentCache, dialcodeCache, metrics);
+        init(config, context, userCache, contentCache, dialcodeCache, metrics, cassandraConnect, redisConnect);
     }
 
 
-    public void init(Config config, TaskContext context, UserDataCache userCache, ContentDataCache contentCache, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics) {
+    public void init(Config config, TaskContext context, UserDataCache userCache, ContentDataCache contentCache,
+                     DialCodeDataCache dialcodeCache, JobMetrics jobMetrics, CassandraConnect cassandraConnect, RedisConnect redisConnect) {
 
         this.config = new DeNormalizationConfig(config);
         this.metrics = jobMetrics == null ? new JobMetrics(context, this.config.jobName()) : jobMetrics;
-        this.userCache = userCache == null ? new UserDataCache(config, metrics): userCache;
+        this.userCache = userCache == null ? new UserDataCache(config, metrics, cassandraConnect, redisConnect) : userCache;
         this.contentCache = contentCache == null ? new ContentDataCache(config, metrics) : contentCache;
         this.dialcodeCache = dialcodeCache == null ? new DialCodeDataCache(config, metrics) : dialcodeCache;
 
