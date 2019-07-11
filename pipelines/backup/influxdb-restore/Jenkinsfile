@@ -20,7 +20,7 @@ node() {
                 module = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-2].trim()
                 jobName = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-1].trim()
                 ansiblePlaybook = "${currentWs}/ansible/influxdb_restore.yml"
-                ansibleExtraArgs = "--extra-vars \"influxdb_restore_file_name=${influxdb_restore_file_name}\" --extra-vars \"influxdb_host=${params.influxdb_host} --vault-password-file  /var/lib/jenkins/secrets/vault-pass"
+                ansibleExtraArgs = "--extra-vars \"influxdb_restore_file_name=${influxdb_restore_file_name}\" --extra-vars \"influxdb_host=${params.influxdb_host}\" --vault-password-file  /var/lib/jenkins/secrets/vault-pass"
                 values.put('currentWs', currentWs)
                 values.put('env', envDir)
                 values.put('module', module)
