@@ -52,12 +52,14 @@ public class RedisUpdaterServiceTest {
         stub(configMock.getInt("redis.database.userStore.id", userStoreId)).toReturn(userStoreId);
         stub(configMock.getInt("location.db.redis.key.expiry.seconds", 86400)).toReturn(86400);
         stub(configMock.get("input.audit.topic.name", "telemetry.audit")).toReturn("telemetry.audit");
-        stub(configMock.get("user_signin_type_default", "Anonymous")).toReturn("Anonymous");
-        stub(configMock.getList("user_selfsignedin_typeList", Arrays.asList("google", "self"))).toReturn(Arrays.asList("google", "self"));
-        stub(configMock.getList("user_validated_typeList", Arrays.asList("sso"))).toReturn(Arrays.asList("sso"));
-        stub(configMock.get("user_login_type_defalut", "NA")).toReturn("NA");
+        stub(configMock.get("user.signin.type.default", "Anonymous")).toReturn("Anonymous");
+        stub(configMock.getList("user.selfsignedin.typeList", Arrays.asList("google", "self"))).toReturn(Arrays.asList("google", "self"));
+        stub(configMock.getList("user.validated.typeList", Arrays.asList("sso"))).toReturn(Arrays.asList("sso"));
+        stub(configMock.get("user.login.type.default", "NA")).toReturn("NA");
         stub(envelopeMock.getSystemStreamPartition())
                 .toReturn(new SystemStreamPartition("kafka", "learning.graph.events", new Partition(0)));
+        stub(configMock.get("user.self-siginin.key", "Self-Signed-In")).toReturn("Self-Signed-In");
+        stub(configMock.get("user.valid.key", "Validated")).toReturn("Validated");
 
         List<String> defaultListValues = new ArrayList<>();
         defaultListValues.add("gradeLevel");

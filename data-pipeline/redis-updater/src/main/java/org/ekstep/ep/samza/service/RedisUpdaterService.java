@@ -29,6 +29,8 @@ public class RedisUpdaterService {
     private String userLoginInTypeDefault;
     private List<String> userSelfSignedInTypeList;
     private List<String> userValidatedTypeList;
+    private String  userSelfSignedKey;
+    private String  userValidatedKey;
     private Gson gson = new Gson();
     private List<String> contentModelListTypeFields;
     private Type mapType = new TypeToken<Map<String, Object>>() {
@@ -45,12 +47,12 @@ public class RedisUpdaterService {
 
         this.contentModelListTypeFields = config.getList("contentModel.fields.listType", new ArrayList<>());
         this.auditTopic = config.get("input.audit.topic.name", "telemetry.audit");
-        this.userSignInTypeDefault = config.get("user_signin_type_default", "Anonymous");
-        this.userLoginInTypeDefault = config.get("user_login_type_defalut", "NA");
-        this.userSelfSignedInTypeList = config.getList("user_selfsignedin_typeList", Arrays.asList("google", "self"));
-        this.userValidatedTypeList = config.getList("user_validated_typeList", Arrays.asList("sso"));
-
-
+        this.userSignInTypeDefault = config.get("user.signin.type.default", "Anonymous");
+        this.userLoginInTypeDefault = config.get("user.login.type.default", "NA");
+        this.userSelfSignedInTypeList = config.getList("user.selfsignedin.typeList", Arrays.asList("google", "self"));
+        this.userValidatedTypeList = config.getList("user.validated.typeList", Arrays.asList("sso"));
+        this.userSelfSignedKey = config.get("user.self-siginin.key", "Self-Signed-In");
+        this.userValidatedKey = config.get("user.valid.key", "Validated");
     }
 
     public void process(RedisUpdaterSource source, RedisUpdaterSink sink) {
@@ -186,9 +188,9 @@ public class RedisUpdaterService {
         String loginIn_type = null != event.getUserLoginType() ? event.getUserLoginType() : userLoginInTypeDefault;
         if (!(userSignInTypeDefault.equalsIgnoreCase(signIn_type) && userLoginInTypeDefault.equalsIgnoreCase(loginIn_type))) {
             if (userSelfSignedInTypeList.contains(signIn_type)) {
-                userData.put("usersignintype", "Self-Signed-In");
+                userData.put("usersignintype", userSelfSignedKey);
             } else if (userValidatedTypeList.contains(signIn_type)) {
-                userData.put("usersignintype", "Validated");
+                userData.put("usersignintype", userValidatedKey);
             } else {
                 userData.put("usersignintype", signIn_type);
             }

@@ -27,6 +27,8 @@ public class UserDataCache extends DataCache {
     private RedisConnect redisPool;
     private Jedis redisConnection;
     private int locationDbKeyExpiryTimeInSeconds;
+    private String userSignInTypeDefault;
+    private String userLoginInTypeDefault;
     private Type mapType = new TypeToken<Map<String, Object>>() {
     }.getType();
     private Gson gson = new Gson();
@@ -47,7 +49,8 @@ public class UserDataCache extends DataCache {
         List<String> cassandraHosts = Arrays.asList(config.get("middleware.cassandra.host", "127.0.0.1").split(","));
         this.cassandraConnection = null == cassandraConnect ? new CassandraConnect(cassandraHosts, config.getInt("middleware.cassandra.port", 9042)) : cassandraConnect;
         this.locationDbKeyExpiryTimeInSeconds = config.getInt("location.db.redis.key.expiry.seconds", 86400);
-
+        this.userSignInTypeDefault = config.get("user.signin.type.default", "Anonymous");
+        this.userLoginInTypeDefault = config.get("user.login.type.default", "NA");
     }
 
     public Map<String, Object> getUserData(String userId) {
@@ -94,10 +97,10 @@ public class UserDataCache extends DataCache {
     private Map<String, Object> getUserSigninLoginDetails(Map<String, Object> userDataMap) {
 
         if (!userDataMap.containsKey("usersignintype")) {
-            userDataMap.put("usersignintype", "Anonymous");
+            userDataMap.put("usersignintype", userSignInTypeDefault);
         }
         if (!userDataMap.containsKey("userlogintype"))
-            userDataMap.put("userlogintype", "NA");
+            userDataMap.put("userlogintype", userLoginInTypeDefault);
         return userDataMap;
     }
 

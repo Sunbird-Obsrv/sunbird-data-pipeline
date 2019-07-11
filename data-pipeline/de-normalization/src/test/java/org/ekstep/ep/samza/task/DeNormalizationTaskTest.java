@@ -91,6 +91,8 @@ public class DeNormalizationTaskTest {
         stub(envelopeMock.getOffset()).toReturn("2");
         stub(envelopeMock.getSystemStreamPartition())
                 .toReturn(new SystemStreamPartition("kafka", "telemetry.with_location", new Partition(1)));
+        stub(configMock.get("user.signin.type.default", "Anonymous")).toReturn("Anonymous");
+        stub(configMock.get("user.login.type.default", "NA")).toReturn("NA");
 
         UserDataCache userCacheMock = new UserDataCache(configMock,jobMetrics,cassandraConnectMock, redisConnectMock);
         deNormalizationTask = new DeNormalizationTask(configMock, contextMock, userCacheMock , contentCacheMock, dailcodeCacheMock, jobMetrics,cassandraConnectMock, redisConnectMock);

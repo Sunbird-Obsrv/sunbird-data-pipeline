@@ -60,3 +60,7 @@ dedup_include_env_producer_ids: ""
 content_metadata_fields: "name, objectType, contentType, mediaType, language, medium, subject, gradeLevel, mimeType, framework, board, status, pkgVersion, lastSubmittedOn, lastUpdatedOn, lastPublishedOn"
 user_metadata_fields: "usertype, grade, subject, language, state, district, usersignintype,userlogintype"
 dialcode_metadata_fields: "identifier, channel, batchcode, publisher, generated_on, published_on, status"
+
+user_signin_type_default : Anonymous
+user_login_type_default : NA
+
