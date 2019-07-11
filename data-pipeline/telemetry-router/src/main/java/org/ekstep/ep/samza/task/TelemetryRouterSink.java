@@ -8,7 +8,7 @@ import org.ekstep.ep.samza.domain.Event;
 public class TelemetryRouterSink extends BaseSink {
 
 	private TelemetryRouterConfig config;
-	
+
 	public TelemetryRouterSink(MessageCollector collector, JobMetrics metrics, TelemetryRouterConfig config) {
 		super(collector, metrics);
 		this.config = config;
@@ -34,6 +34,10 @@ public class TelemetryRouterSink extends BaseSink {
 	public void toSecondaryRoute(Event event) {
 		toTopic(config.getSecondaryRouteTopic(), event.did(), event.getJson());
 		metrics.incSuccessCounter();
+	}
+
+	public void toAuditRoute(Event event) {
+		toTopic(config.getAuditRouteTopic(), event.mid(), event.getJson());
 	}
 
 }

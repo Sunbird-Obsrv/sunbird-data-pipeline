@@ -386,6 +386,16 @@
             },
             {
               "type": "path",
+              "name": "user_signin_type",
+              "expr": "$.userdata.usersignintype"
+            },
+            {
+              "type": "path",
+              "name": "user_login_type",
+              "expr": "$.userdata.userlogintype"
+            },
+            {
+              "type": "path",
               "name": "device_loc_iso_state_code",
               "expr": "$.devicedata.iso3166statecode"
             }
@@ -688,6 +698,14 @@
             },
             {
               "type": "string",
+              "name": "user_signin_type"
+            },
+            {
+              "type": "string",
+              "name": "user_login_type"
+            },
+            {
+              "type": "string",
               "name": "device_loc_iso_state_code"
             }
           ],
@@ -701,8 +719,8 @@
     },
     "metricsSpec": [
       {
-        "type" : "count",
-        "name" : "count"
+        "type": "count",
+        "name": "count"
       },
       {
         "type": "longSum",

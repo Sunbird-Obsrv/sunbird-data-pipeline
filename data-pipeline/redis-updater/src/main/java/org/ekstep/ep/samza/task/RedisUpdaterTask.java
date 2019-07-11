@@ -19,11 +19,10 @@
 
 package org.ekstep.ep.samza.task;
 
-import org.apache.samza.system.OutgoingMessageEnvelope;
-import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.StreamTask;
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
+import org.apache.samza.system.OutgoingMessageEnvelope;
+import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
@@ -43,11 +42,12 @@ public class RedisUpdaterTask implements StreamTask, InitableTask, WindowableTas
         init(config, context);
     }
 
-    public RedisUpdaterTask() {}
+    public RedisUpdaterTask() {
+    }
 
     @Override
     public void init(Config config, TaskContext context) {
-        metrics = new JobMetrics(context,JOB_NAME);
+        metrics = new JobMetrics(context, JOB_NAME);
         redisConnect = new RedisConnect(config);
         service = new RedisUpdaterService(config, redisConnect);
         metricsTopic = config.get("output.metrics.topic.name");

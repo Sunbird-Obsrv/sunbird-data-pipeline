@@ -5,8 +5,6 @@ import org.ekstep.ep.samza.util.UserDataCache;
 
 import java.util.Map;
 
-import static java.text.MessageFormat.format;
-
 public class UserDataUpdater extends IEventUpdater {
 
     private UserDataCache userDataCache;
@@ -20,7 +18,7 @@ public class UserDataUpdater extends IEventUpdater {
         Map<String, Object> userCacheData;
         String userId = event.actorId();
         if (userId != null && !userId.isEmpty() && !"system".equalsIgnoreCase(event.actorType())) {
-            userCacheData = userDataCache.getUserData(event.actorId());
+            userCacheData = userDataCache.getUserData(userId);
             if (userCacheData != null && !userCacheData.isEmpty()) {
                 event.addUserData(userCacheData);
             } else {

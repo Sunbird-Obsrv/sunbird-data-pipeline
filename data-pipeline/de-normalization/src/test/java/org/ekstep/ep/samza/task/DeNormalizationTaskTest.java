@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.task;
 
+import com.fiftyonred.mock_jedis.MockJedis;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import org.apache.samza.Partition;
@@ -20,12 +21,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.invocation.InvocationOnMock;
+import redis.clients.jedis.Jedis;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
@@ -46,13 +45,13 @@ public class DeNormalizationTaskTest {
     private TaskCoordinator coordinatorMock;
     private IncomingMessageEnvelope envelopeMock;
     private Config configMock;
-    private RedisConnect redisConnectMock;
-    private CassandraConnect cassandraConnectMock;
     private DeNormalizationTask deNormalizationTask;
-    private UserDataCache userCacheMock;
+
     private ContentDataCache contentCacheMock;
     private DialCodeDataCache dailcodeCacheMock;
     private JobMetrics jobMetrics;
+    private Jedis jedisMock = new MockJedis("test");
+    private Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
 
     @SuppressWarnings("unchecked")
     @Before
@@ -64,19 +63,26 @@ public class DeNormalizationTaskTest {
         coordinatorMock = mock(TaskCoordinator.class);
         envelopeMock = mock(IncomingMessageEnvelope.class);
         configMock = mock(Config.class);
-        redisConnectMock = mock(RedisConnect.class);
-        cassandraConnectMock = mock(CassandraConnect.class);
-        userCacheMock = mock(UserDataCache.class);
+        RedisConnect redisConnectMock = mock(RedisConnect.class);
+        CassandraConnect cassandraConnectMock = mock(CassandraConnect.class);
+
         contentCacheMock = mock(ContentDataCache.class);
         dailcodeCacheMock = mock(DialCodeDataCache.class);
         jobMetrics = mock(JobMetrics.class);
+
 
         stub(configMock.get("output.success.topic.name", SUCCESS_TOPIC)).toReturn(SUCCESS_TOPIC);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
         stub(configMock.get("output.malformed.topic.name", MALFORMED_TOPIC)).toReturn(MALFORMED_TOPIC);
         stub(configMock.getInt("telemetry.ignore.period.months", ignorePeriodInMonths)).toReturn(ignorePeriodInMonths);
-        stub(configMock.get("middleware.cassandra.host", "127.0.0.1")).toReturn("127.0.0.1");
+        stub(configMock.getList("user.metadata.fields",
+                Arrays.asList("usertype", "grade", "language", "subject", "state", "district", "usersignintype", "userlogintype")))
+                .toReturn(Arrays.asList("usertype", "grade", "language", "subject", "state", "district", "usersignintype", "userlogintype"));
+        stub(configMock.get("middleware.cassandra.host", "127.0.0.1")).toReturn("");
         stub(configMock.get("middleware.cassandra.port", "9042")).toReturn("9042");
+        stub(configMock.get("middleware.cassandra.keyspace", "sunbird")).toReturn("sunbird");
+        stub(configMock.getInt("redis.userDB.index", 4)).toReturn(4);
+        stub(redisConnectMock.getConnection(4)).toReturn(jedisMock);
         List<String> defaultSummaryEvents = new ArrayList<>();
         defaultSummaryEvents.add("ME_WORKFLOW_SUMMARY");
         stub(configMock.getList("summary.filter.events", defaultSummaryEvents)).toReturn(defaultSummaryEvents);
@@ -85,18 +91,18 @@ public class DeNormalizationTaskTest {
         stub(envelopeMock.getOffset()).toReturn("2");
         stub(envelopeMock.getSystemStreamPartition())
                 .toReturn(new SystemStreamPartition("kafka", "telemetry.with_location", new Partition(1)));
+        stub(configMock.get("user.signin.type.default", "Anonymous")).toReturn("Anonymous");
+        stub(configMock.get("user.login.type.default", "NA")).toReturn("NA");
 
-
-        deNormalizationTask = new DeNormalizationTask(configMock, contextMock, userCacheMock, contentCacheMock, dailcodeCacheMock, jobMetrics);
+        UserDataCache userCacheMock = new UserDataCache(configMock,jobMetrics,cassandraConnectMock, redisConnectMock);
+        deNormalizationTask = new DeNormalizationTask(configMock, contextMock, userCacheMock , contentCacheMock, dailcodeCacheMock, jobMetrics,cassandraConnectMock, redisConnectMock);
     }
 
     @Test
     public void shouldSendEventsToSuccessTopicIfDidIsNullWithUserContentEmptyData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITHOUT_DID);
-        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -104,7 +110,6 @@ public class DeNormalizationTaskTest {
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
                 assertEquals(outputEvent.get("ver").toString(), "3.0");
-                assertNull(outputEvent.get("userdata"));
                 assertNull(outputEvent.get("contentdata"));
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
                 assertEquals(flags.get("user_data_retrieved"), false);
@@ -117,14 +122,11 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicIfDidIsNullWithUserContentData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITHOUT_DID);
-        Map<String, Object> user = new HashMap<>();
-        user.put("type", "Registered"); user.put("gradelist", "[4, 5]"); user.put("state", "Karnataka"); user.put("district", "Bengaluru");
-        stub(userCacheMock.getUserData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
         Map<String, Object> content = new HashMap<>();
         content.put("name", "content-1"); content.put("objecttype", "Content"); content.put("contenttype", "TextBook");
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(content);
+        jedisMock.set("393407b1-66b1-4c86-9080-b2bce9842886","{\"grade\":[4,5],\"district\":\"Bengaluru\",\"type\":\"Registered\",\"state\":\"Karnataka\"}");
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -133,7 +135,7 @@ public class DeNormalizationTaskTest {
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
                 assertEquals(outputEvent.get("ver").toString(), "3.0");
                 Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
-                assertEquals(userData.size(), 4);
+                assertEquals(userData.size(), 5);
                 Map<String, Object> contentData = new Gson().fromJson(outputEvent.get("contentdata").toString(), mapType);
                 assertEquals(contentData.size(), 3);
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
@@ -147,9 +149,7 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicWithUserContentData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
-        Map<String, Object> user = new HashMap<>();
-        user.put("type", "Registered"); user.put("gradelist", "[4, 5]"); user.put("state", "Karnataka"); user.put("district", "Bengaluru");
-        stub(userCacheMock.getUserData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        jedisMock.set("393407b1-66b1-4c86-9080-b2bce9842886","{\"grade\":[4,5],\"district\":\"Bengaluru\",\"state\":\"Karnataka\"}");
         Map<String, Object> content = new HashMap<>();
         content.put("name", "content-1"); content.put("objecttype", "Content"); content.put("contenttype", "TextBook");
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(content);
@@ -163,7 +163,7 @@ public class DeNormalizationTaskTest {
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
                 assertEquals(outputEvent.get("ver").toString(), "3.0");
                 Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
-                assertEquals(userData.size(), 4);
+                assertEquals(userData.size(), 5);
                 Map<String, Object> contentData = new Gson().fromJson(outputEvent.get("contentdata").toString(), mapType);
                 assertEquals(contentData.size(), 3);
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
@@ -177,9 +177,7 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicIfContentIdIsNullWithUserData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITHOUT_OBJECT);
-        Map<String, Object> user = new HashMap<>();
-        user.put("type", "Registered"); user.put("gradeList", "[4, 5]");
-        stub(userCacheMock.getUserData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        jedisMock.set("393407b1-66b1-4c86-9080-b2bce9842886","{\"grade\":[4,5],\"type\":\"Registered\"}");
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
@@ -192,7 +190,7 @@ public class DeNormalizationTaskTest {
                 assertEquals("3.0", outputEvent.get("ver").toString());
                 assertNull(outputEvent.get("contentdata"));
                 Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
-                assertEquals(userData.size(), 2);
+                assertEquals(userData.size(), 3);
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
                 assertEquals(true, flags.get("user_data_retrieved"));
                 assertNull(flags.get("content_data_retrieved"));
@@ -204,9 +202,7 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicIfContentDataIsEmptyWithUserAsSystem() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITH_ACTOR_AS_SYSTEM);
-        Map<String, Object> user = new HashMap<>();
-        user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
-        stub(userCacheMock.getUserData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        jedisMock.set("393407b1-66b1-4c86-9080-b2bce9842886","{\"grade\":[4,5],\"type\":\"Registered\"}");
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
@@ -229,7 +225,6 @@ public class DeNormalizationTaskTest {
 
     public void shouldSendEventsToSuccessTopicWithStringDialCodeData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_DIALCODE_AS_STRING);
-        stub(userCacheMock.getUserData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         List ids = new ArrayList(); ids.add("8ZEDTP");
         Map dataMap = new HashMap(); dataMap.put("identifier", "8ZEDTP"); dataMap.put("channel", "test-channel");
@@ -237,7 +232,6 @@ public class DeNormalizationTaskTest {
         List<Map> data = new ArrayList<>(); data.add(dataMap);
         stub(dailcodeCacheMock.getData(ids)).toReturn(data);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -246,7 +240,6 @@ public class DeNormalizationTaskTest {
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
                 assertEquals(outputEvent.get("ver").toString(), "3.0");
                 assertNull(outputEvent.get("contentdata"));
-                assertNull(outputEvent.get("userdata"));
                 List<Map<String, Object>> dialcodesList = new Gson().fromJson(outputEvent.get("dialcodedata").toString(), List.class);
                 assertEquals(dialcodesList.size(), 1);
                 Map data = dialcodesList.get(0);
@@ -262,7 +255,6 @@ public class DeNormalizationTaskTest {
 
     public void shouldSendEventsToSuccessTopicWithListDialCodeData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_DIALCODE_AS_LIST);
-        stub(userCacheMock.getUserData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         List ids = new ArrayList(); ids.add("8ZEDTP"); ids.add("4ZEDTP");
         Map dataMap1 = new HashMap(); dataMap1.put("identifier", "8ZEDTP"); dataMap1.put("channel", "test-channel");
@@ -300,10 +292,8 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicWithOutDialCodeData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITHOUT_DIALCODE);
-        stub(userCacheMock.getUserData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -327,7 +317,6 @@ public class DeNormalizationTaskTest {
     public void shouldSendEventsToSuccessTopicWithOutAnyDenormData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITH_DEVICEDATA);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -346,7 +335,6 @@ public class DeNormalizationTaskTest {
     public void shouldSendEventsToSuccessTopicWithExistingEmptyStateCode() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITH_EMPTY_LOC);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -365,13 +353,11 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicWithDialCodeLowerCaseDataByObjectLookup() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.IMPRESSION_EVENT_WITH_DIALCODE_AS_OBJECT);
-        stub(userCacheMock.getUserData("anonymous")).toReturn(null);
         stub(contentCacheMock.getData("977D3I")).toReturn(null);
         Map dataMap = new HashMap(); dataMap.put("identifier", "977D3I"); dataMap.put("channel", "test-channel");
         dataMap.put("status", "Draft");
         stub(dailcodeCacheMock.getData("977D3I")).toReturn(dataMap);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -380,7 +366,6 @@ public class DeNormalizationTaskTest {
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
                 assertEquals(outputEvent.get("ver").toString(), "3.0");
                 assertNull(outputEvent.get("contentdata"));
-                assertNull(outputEvent.get("userdata"));
                 Map data = new Gson().fromJson(outputEvent.get("dialcodedata").toString(), Map.class);
                 assertEquals(data.size(), 3);
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
@@ -395,7 +380,6 @@ public class DeNormalizationTaskTest {
     //@Test
     public void shouldSendEventsToSuccessTopicWithStringDialCodeDataCamelCase() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_CAMELCASE_DIALCODE_AS_STRING);
-        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         List ids = new ArrayList(); ids.add("8ZEDTP");
         Map dataMap = new HashMap(); dataMap.put("identifier", "8ZEDTP"); dataMap.put("channel", "test-channel");
@@ -403,7 +387,6 @@ public class DeNormalizationTaskTest {
         List<Map> data = new ArrayList<>(); data.add(dataMap);
         stub(dailcodeCacheMock.getData(ids)).toReturn(data);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -421,10 +404,8 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicWithAlteredEts() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_FUTURE_ETS);
-        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -443,7 +424,6 @@ public class DeNormalizationTaskTest {
     public void shouldSendEventToFaildTopicIfEventIsOlder() throws Exception{
 
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_OLDER_ETS);
-        stub(userCacheMock.getData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(null);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
@@ -452,11 +432,8 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendSummaryEventsToSuccessTopicWithUserData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.WFS_EVENT);
-        Map<String, Object> user = new HashMap<>();
-        user.put("type", "Registered"); user.put("gradelist", "[4, 5]"); user.put("state", "Karnataka"); user.put("district", "Bengaluru");
-        stub(userCacheMock.getUserData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        jedisMock.set("393407b1-66b1-4c86-9080-b2bce9842886","{\"grade\":[4,5],\"district\":\"Bengaluru\",\"type\":\"Registered\",\"state\":\"Karnataka\"}");
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -465,7 +442,7 @@ public class DeNormalizationTaskTest {
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
                 assertEquals(outputEvent.get("ver").toString(), "1.1");
                 Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
-                assertEquals(userData.size(), 4);
+                assertEquals(userData.size(), 5);
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
                 assertEquals(flags.get("user_data_retrieved"), true);
                 assertEquals(flags.get("content_data_retrieved"), null);
@@ -500,11 +477,8 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicForLogEvents() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.LOG_EVENT);
-        Map<String, Object> user = new HashMap<>();
-        user.put("type", "Registered"); user.put("gradelist", "[4, 5]");
-        stub(userCacheMock.getUserData("0b251080-3230-415e-a593-ab7c1fac7ae3")).toReturn(user);
+        jedisMock.set("0b251080-3230-415e-a593-ab7c1fac7ae3","{\"grade\":[4,5],\"type\":\"Registered\"}");
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -513,7 +487,7 @@ public class DeNormalizationTaskTest {
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
                 assertEquals(outputEvent.get("ver").toString(), "3.0");
                 Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
-                assertEquals(userData.size(), 2);
+                assertEquals(userData.size(), 3);
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
                 assertEquals(true, flags.get("user_data_retrieved"));
                 assertNull(flags.get("content_data_retrieved"));
@@ -546,13 +520,11 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicWithQRCodeDataByObjectLookup() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.IMPRESSION_EVENT_WITH_QR_AS_OBJECT);
-        stub(userCacheMock.getUserData("anonymous")).toReturn(null);
         stub(contentCacheMock.getData("977D3I")).toReturn(null);
         Map dataMap = new HashMap(); dataMap.put("identifier", "977D3I"); dataMap.put("channel", "test-channel");
         dataMap.put("status", "Draft");
         stub(dailcodeCacheMock.getData("977D3I")).toReturn(dataMap);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -576,13 +548,11 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendEventsToSuccessTopicWithDialCodeCamelCaseDataByObjectLookup() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.IMPRESSION_EVENT_WITH_DIALCODE_CAMELCASE_AS_OBJECT);
-        stub(userCacheMock.getUserData("anonymous")).toReturn(null);
         stub(contentCacheMock.getData("977D3I")).toReturn(null);
         Map dataMap = new HashMap(); dataMap.put("identifier", "977D3I"); dataMap.put("channel", "test-channel");
         dataMap.put("status", "Draft");
         stub(dailcodeCacheMock.getData("977D3I")).toReturn(dataMap);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -606,11 +576,31 @@ public class DeNormalizationTaskTest {
     @Test
     public void shouldSendAUDITEventsToSuccessTopicWithUserData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.AUDIT_EVENT);
-        Map<String, Object> user = new HashMap<>();
-        user.put("type", "Registered"); user.put("gradelist", "[4, 5]"); user.put("state", "Karnataka"); user.put("district", "Bengaluru");
-        stub(userCacheMock.getUserData("393407b1-66b1-4c86-9080-b2bce9842886")).toReturn(user);
+        jedisMock.set("393407b1-66b1-4c86-9080-b2bce9842886","{\"grade\":[4,5],\"district\":\"Bengaluru\",\"type\":\"Registered\",\"state\":\"Karnataka\"}");
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertEquals(outputEvent.get("ver").toString(), "3.0");
+                Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
+                assertEquals(userData.size(), 5);
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("user_data_retrieved"), true);
+                assertEquals(flags.get("content_data_retrieved"), null);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldStampUserSigninAndLoginTypeForAllEvents() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.IMPRESSION_EVENT);
+        String user_id="e9d73b7b-211a-43f4-8c01-cc9333757a9d";
+        jedisMock.set(user_id,"{\"subject\":[],\"grade\":[],\"usersignintype\":\"Self-Signed-In\",\"userlogintype\":\"student\"}");
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -620,6 +610,7 @@ public class DeNormalizationTaskTest {
                 assertEquals(outputEvent.get("ver").toString(), "3.0");
                 Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
                 assertEquals(userData.size(), 4);
+                assertEquals(userData.get("usersignintype"),"Self-Signed-In");
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
                 assertEquals(flags.get("user_data_retrieved"), true);
                 assertEquals(flags.get("content_data_retrieved"), null);

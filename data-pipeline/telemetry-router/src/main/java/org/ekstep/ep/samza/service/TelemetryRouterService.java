@@ -1,19 +1,18 @@
 package org.ekstep.ep.samza.service;
 
-import static java.text.MessageFormat.format;
-
-import java.util.List;
-
+import com.google.gson.JsonSyntaxException;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.task.TelemetryRouterConfig;
 import org.ekstep.ep.samza.task.TelemetryRouterSink;
 import org.ekstep.ep.samza.task.TelemetryRouterSource;
 
-import com.google.gson.JsonSyntaxException;
+import java.util.List;
+
+import static java.text.MessageFormat.format;
 
 public class TelemetryRouterService {
-	
+
 	private static Logger LOGGER = new Logger(TelemetryRouterService.class);
 	private final TelemetryRouterConfig config;
 
@@ -32,11 +31,14 @@ public class TelemetryRouterService {
 			} else {
 				sink.toPrimaryRoute(event);
 			}
+			if ("AUDIT".equalsIgnoreCase(eid)) {
+				sink.toAuditRoute(event);
+			}
 
-		} catch(JsonSyntaxException e){
-            LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
-            sink.toMalformedTopic(source.getMessage());
-        } catch (Exception e) {
+		} catch (JsonSyntaxException e) {
+			LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
+			sink.toMalformedTopic(source.getMessage());
+		} catch (Exception e) {
 			LOGGER.error(null,
 					format("EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO EXCEPTION TOPIC. EVENT: {0}, EXCEPTION:",
 							event),

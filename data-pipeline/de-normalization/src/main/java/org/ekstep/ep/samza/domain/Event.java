@@ -204,7 +204,10 @@ public class Event {
         Map<String, Object> userdata = previousData.isNull() ? new HashMap<>() : previousData.value();
         userdata.putAll(newData);
         telemetry.add(path.userData(), userdata);
+        if(newData.size()>2)
         setFlag(DeNormalizationConfig.getUserLocationJobFlag(), true);
+        else
+            setFlag(DeNormalizationConfig.getUserLocationJobFlag(), false);
     }
 
     public void addContentData(Map newData) {
