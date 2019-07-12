@@ -44,7 +44,6 @@ public class RedisUpdaterService {
         this.contentStoreConnection = redisConnect.getConnection(contentStoreDb);
         this.dialCodeStoreConnection = redisConnect.getConnection(dialCodeStoreDb);
         this.userDataStoreConnection = redisConnect.getConnection(userStoreDb);
-
         this.contentModelListTypeFields = config.getList("contentModel.fields.listType", new ArrayList<>());
         this.auditTopic = config.get("input.audit.topic.name", "telemetry.audit");
         this.userSignInTypeDefault = config.get("user.signin.type.default", "Anonymous");
@@ -59,7 +58,7 @@ public class RedisUpdaterService {
 
         if (auditTopic.equalsIgnoreCase(source.getSystemStreamPartition().getStream())) {
             Event event = source.getEvent();
-            String userId = event.userId();
+            String userId = event.objectUserId();
             if(null != userId)
             {
                 updateUserCache(event,userId);
