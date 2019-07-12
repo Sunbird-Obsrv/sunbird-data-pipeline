@@ -30,12 +30,24 @@ public class Event {
         return userId.value();
     }
 
+    public String objectUserId() {
+        NullableValue<String> objectType = telemetry.read("object.type");
+        if (null != objectType.value() && objectType.value().equalsIgnoreCase("User")) {
+            NullableValue<String> objectUserId = telemetry.read("object.id");
+            return objectUserId.value();
+        }
+        return null;
+    }
+
     public String getUserSignInType() {
         NullableValue<ArrayList<Map<String, String>>> cdata = telemetry.read("context.cdata");
         ArrayList<Map<String, String>> cdataList = cdata.value();
-        for (Map<String, String> cdataMap : cdataList) {
-            if (cdataMap.containsKey("type") && cdataMap.get("type").equalsIgnoreCase("SignupType"))
-                return cdataMap.get("id").toString();
+        if (null != cdataList && !cdataList.isEmpty()) {
+            for (Map<String, String> cdataMap : cdataList) {
+                if (cdataMap.containsKey("type") && cdataMap.get("type").equalsIgnoreCase("SignupType"))
+                    return cdataMap.get("id").toString();
+            }
+
         }
 
         return null;
@@ -44,11 +56,12 @@ public class Event {
     public String getUserLoginType() {
         NullableValue<ArrayList<Map<String, String>>> cdata = telemetry.read("context.cdata");
         ArrayList<Map<String, String>> cdataList = cdata.value();
-        for (Map<String, String> cdataMap : cdataList) {
-            if (cdataMap.containsKey("type") && cdataMap.get("type").equalsIgnoreCase("UserRole"))
-                return cdataMap.get("id").toString();
+        if (null != cdataList && !cdataList.isEmpty()) {
+            for (Map<String, String> cdataMap : cdataList) {
+                if (cdataMap.containsKey("type") && cdataMap.get("type").equalsIgnoreCase("UserRole"))
+                    return cdataMap.get("id").toString();
+            }
         }
-
         return null;
     }
 
