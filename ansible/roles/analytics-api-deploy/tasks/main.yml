@@ -2,11 +2,10 @@
   service_facts:
 
 - name: Stop the Monit service
-  become: yes
   service:
     name: monit
     state: stopped
-  when: ansible_facts.services.monit is defined  
+  when: ansible_facts.services.monit is defined
 
 - name: Status of the api service
   command: "{{ sbin_path }}/api-service status"
@@ -32,7 +31,8 @@
 - name: Remove the old artifacts
   file:
     path: "{{ analytics_api.root }}/analytics-api-1.0-dist.zip"
-
+    state: absent
+      
 - name: Copy API artifact
   copy: 
     src: analytics-api-1.0-dist.zip 
@@ -77,8 +77,7 @@
   tags: refresh-cache
 
 - name: Start the Monit service
-  become: yes
   service:
-     name: monit
-     state: started
+    name: monit
+    state: started
   when: ansible_facts.services.monit is defined
