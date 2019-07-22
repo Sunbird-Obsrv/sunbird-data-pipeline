@@ -3,6 +3,7 @@
 
 - name: Stop the Monit service
   become: yes
+  become_user: "{{ ansible_user_id }}"   
   service:
     name: monit
     state: stopped
@@ -78,6 +79,7 @@
 
 - name: Start the Monit service
   become: yes
+  become_user: "{{ ansible_user_id }}"  
   service:
      name: monit
      state: started
