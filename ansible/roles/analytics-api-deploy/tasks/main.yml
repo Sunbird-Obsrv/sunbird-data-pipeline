@@ -1,14 +1,3 @@
-- name: checking the list of installed services
-  service_facts:
-
-- name: Stop the Monit service
-  become: yes
-  become_user: "{{ ansible_user_id }}"   
-  service:
-    name: monit
-    state: stopped
-  when: ansible_facts.services.monit is defined  
-
 - name: Status of the api service
   command: "{{ sbin_path }}/api-service status"
   register: api_status
@@ -76,11 +65,3 @@
     method: GET
     return_content: yes
   tags: refresh-cache
-
-- name: Start the Monit service
-  become: yes
-  become_user: "{{ ansible_user_id }}"  
-  service:
-     name: monit
-     state: started
-  when: ansible_facts.services.monit is defined
