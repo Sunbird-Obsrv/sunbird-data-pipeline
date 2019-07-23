@@ -1,0 +1,37 @@
+# Logstash configuration 
+# Kafka(telemetry.log) -> Logstash -> Elasticsearch pipeline index error type events into(error-index) and log type events into(log-index).
+
+input {  
+    kafka {
+            bootstrap_servers => "{{bootstrap_server}}"
+            group_id => "{{kafka_topic_prefix}}.telemetry.log"
+            topics => ["{{kafka_topic_prefix}}.telemetry.log"]
+            auto_offset_reset=>"latest"
+            codec => "json"
+            consumer_threads => 1
+            decorate_events => false
+    }
+}
+
+output {
+
+    if  [eid] =="ERROR"{
+          elasticsearch {
+                codec => "json"
+                hosts => ["{{logger_es}}"]
+                index => "{{error_es_index}}"
+                document_type => "events"
+          }
+    }else if [eid] =="LOG" {
+          elasticsearch {
+            codec => "json"
+            hosts => ["{{logger_es}}"]
+            index => "{{log_es_index}}"
+            document_type => "events"
+          }
+        }
+}
+
+
+
+

@@ -9,7 +9,10 @@ logstash_conf:
  - ".indexer.public"
  - ".indexer.pipeline_metrics"
  - ".indexer.analytics_metrics"
+ - ".indexer.log_error.events"
 kafka_topic_prefix: "{{ env }}"
+error_es_index: "error-index"
+log_es_index: "log-index"  
 apt_cache_valid_time: 3600
 
 zookeepers: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
@@ -31,4 +34,4 @@ api_job_log_path: "/mount/data/analytics/logs/api-service/joblog.log"
 
 # client API error log
 crash_log_path: "/mount/data/analytics/logs/api-service/crash-logs.log"
-logger_es: "{{ groups['log-es']|join(':9200,') }}"
+logger_es: "{{ groups['log-es']|join(':9200,') }}:9200"
