@@ -115,22 +115,6 @@
         "userIdMod" : {
           "type" : "long"
         },
-        "platform" : {
-          "type" : "text",
-          "fields" : {
-            "raw" : {
-              "type" : "text",
-              "analyzer" : "keylower",
-              "fielddata" : true
-            }
-          },
-          "copy_to" : [
-            "all_fields"
-          ],
-          "analyzer" : "exp_index_analyzer",
-          "search_analyzer" : "exp_search_analyzer",
-          "fielddata" : true
-        },
         "extData" : {
           "type" : "text",
           "fields" : {

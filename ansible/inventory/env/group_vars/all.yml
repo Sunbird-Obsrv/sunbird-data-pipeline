@@ -100,6 +100,7 @@ postgres:
 postgres_address_space: 0.0.0.0/0 # Postgres trust address space
 
 lp_composite_search: "http://{{ groups['composite-search-cluster'][0] }}:9200" # Composite Cluster ip of LP
+lp_composite_search_host: "{{ groups['composite-search-cluster'][0] }}"
 lp_search: "http://{{ groups['search'][0] }}:9000"
 lp_url: http://{{ groups['learning'][0] }}:8080/learning-service
 service:
