@@ -4,25 +4,10 @@
     "index": {
       "number_of_shards": "5",
       "analysis": {
-        "filter": {
-          "mynGram": {
-            "token_chars": [
-              "letter",
-              "digit",
-              "whitespace",
-              "punctuation",
-              "symbol"
-            ],
-            "min_gram": "1",
-            "type": "ngram",
-            "max_gram": "20"
-          }
-        },
         "analyzer": {
           "exp_index_analyzer": {
             "filter": [
-              "lowercase",
-              "mynGram"
+              "lowercase"
             ],
             "type": "custom",
             "tokenizer": "standard"
