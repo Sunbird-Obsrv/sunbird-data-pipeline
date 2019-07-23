@@ -20,12 +20,16 @@ output {
                 codec => "json"
                 hosts => ["{{logger_es}}"]
                 index => "{{error_es_index}}"
+                template => "{{telemetry_mapping_file_path}}"
+                template_name => "telemetry"
                 document_type => "events"
           }
     }else if [eid] =="LOG" {
           elasticsearch {
             codec => "json"
             hosts => ["{{logger_es}}"]
+            template => "{{telemetry_mapping_file_path}}"
+            template_name => "telemetry"
             index => "{{log_es_index}}"
             document_type => "events"
           }

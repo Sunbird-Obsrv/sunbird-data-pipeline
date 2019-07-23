@@ -11,8 +11,9 @@ logstash_conf:
  - ".indexer.analytics_metrics"
  - ".indexer.log_error.events"
 kafka_topic_prefix: "{{ env }}"
-error_es_index: "error-index"
-log_es_index: "log-index"  
+error_es_index: "telemetry-error-events"
+log_es_index: "telemetry-log-events" 
+telemetry_mapping_file_path: "" 
 apt_cache_valid_time: 3600
 
 zookeepers: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
