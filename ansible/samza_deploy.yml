@@ -4,25 +4,29 @@
   vars:
     hadoop_version: 2.7.2
   become: yes
+  become_user: hduser
   pre_tasks:
     - name: Ensure yarn nodemanager is running
-      become_user: hduser
       shell: |
-         (ps aux | grep yarn-hduser-nodemanager | grep -v grep) || /usr/local/hadoop/sbin/yarn-daemon.sh --config /usr/local/hadoop-{{hadoop_version}}/conf/ start nodemanager || sleep 10
+         (ps aux | grep yarn-hduser-nodemanager | grep -v grep) \
+         || /usr/local/hadoop/sbin/yarn-daemon.sh --config /usr/local/hadoop-{{ hadoop_version }}/conf/ start nodemanager \
+         || sleep 10
 
     - name: install imagemagick
       apt: name=imagemagick state=present update_cache=yes
   roles:
-    - samza-jobs-additional-config    
+    - samza-jobs-additional-config
 
 - name: "Deploy Samza jobs"
   hosts: "yarn-master"
   become: yes
+  become_user: hduser
   vars_files:
-    - "{{inventory_dir}}/secrets.yml"
+    - "{{ inventory_dir }}/secrets.yml"
   pre_tasks:
     - name: Ensure yarn resource manager is running
-      command: bash -lc "(ps aux | grep yarn-hduser-resourcemanager | grep -v grep) || /usr/local/hadoop/sbin/yarn-daemon.sh --config /usr/local/hadoop-{{hadoop_version}}/conf/ start resourcemanager"
-      become_user: hduser    
+      shell: |
+        (ps aux | grep yarn-hduser-resourcemanager | grep -v grep) \
+        || /usr/local/hadoop/sbin/yarn-daemon.sh --config /usr/local/hadoop-{{ hadoop_version }}/conf/ start resourcemanager
   roles:
     - samza-jobs
