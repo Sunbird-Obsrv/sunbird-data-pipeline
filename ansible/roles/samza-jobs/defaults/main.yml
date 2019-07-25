@@ -64,3 +64,25 @@ dialcode_metadata_fields: "identifier, channel, batchcode, publisher, generated_
 user_signin_type_default : Anonymous
 user_login_type_default : NA
 
+
+###### samza apps file deletion vars to remove the tar.gz file under extract and env directory ###### 
+
+job_names:
+  DeDuplication_1:
+      job_file_name: 'de-duplication'
+  DeNormalization_1:
+      job_file_name: 'de-normalization'
+  DruidEventsValidator_1:
+      job_file_name: 'druid-events-validator'
+  EventsRouter_1:
+      job_file_name: 'events-router'
+  RedisUpdater_1:
+      job_file_name: 'redis-updater'
+  TelemetryExtractor_1:
+      job_file_name: 'telemetry-extractor'
+  TelemetryLocationUpdater_1:
+      job_file_name: 'telemetry-location-updater'
+  TelemetryRouter_1:
+      job_file_name: 'telemetry-router'
+  TelemetryValidator_1:
+      job_file_name: 'telemetry-validator'
