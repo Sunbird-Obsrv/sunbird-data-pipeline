@@ -1,17 +1,11 @@
 ---
-- name: print variables
-  debug:
-    msg: 
-      - "datasouce {{datasource}}"
-      - "druid_overlord_host {{druid_overlord_host}}"
-      - "weekday_compaction_window_lookback_days {{weekday_compaction_window_lookback_days}}"
-      - "weekend_compaction_window_lookback_days {{weekend_compaction_window_lookback_days}}"
-
 - name: Copy compaction template file
   template: src=segments_compaction.j2 dest=/tmp/segments_compaction.sh mode="o=rwx,g=rx,u=rx"
   delegate_to: localhost
 
 - name: Run the segments compaction for a datasource
-  command: bash -lc "./segments_compaction.sh -d {{datasource}} -s {{compaction_start_date}} -e {{compaction_end_date}}"
+  vars:
+    optional_args: "{{ '-s ' + compaction_start_date + ' -e ' + compaction_end_date if (compaction_start_date != '' and compaction_end_date != '') else '' }}"
+  command: bash -lc "./segments_compaction.sh -d {{datasource}} {{optional_args}}"
   args:
     chdir: "/tmp"
