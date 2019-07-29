@@ -3,7 +3,7 @@
 - hosts: localhost
   vars:
     - datasource: "telemetry-events"
-    - compaction_start_date: "{{ lookup('pipe','date -v-2d +%F') }}"
-    - compaction_end_date: "{{ lookup('pipe','date -v-1d +%F') }}"
+    - compaction_start_date: "{{ lookup('pipe','date +%F -d \"2 days ago\"') }}"
+    - compaction_end_date: "{{ lookup('pipe','date +%F -d \"1 days ago\"') }}"
   roles:
      - druid-compaction

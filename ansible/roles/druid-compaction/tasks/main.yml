@@ -1,6 +1,6 @@
 ---
 - name: Copy compaction template file
-  template: src=segments_compaction.j2 dest=/tmp/segments_compaction.sh mode="o=rwx,g=rx,u=rx"
+  template: src=segments_compaction.j2 dest=/tmp/segments_compaction.sh mode="u=rwx,g=rx,o=rx"
   delegate_to: localhost
 
 - name: Run the segments compaction for a datasource
