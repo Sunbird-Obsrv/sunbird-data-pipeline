@@ -1,5 +1,5 @@
 ---
-- name: "Start Nodemanagerif on Slaves if stopped and Copy Samza jobs additional configuration to slaves"
+- name: "Start Nodemanager on Slaves if stopped"
   hosts: "yarn-slave"
   vars:
     hadoop_version: 2.7.2
@@ -14,8 +14,6 @@
 
     - name: install imagemagick
       apt: name=imagemagick state=present update_cache=yes
-  roles:
-    - samza-jobs-additional-config
 
 - name: "Deploy Samza jobs"
   hosts: "yarn-master"
