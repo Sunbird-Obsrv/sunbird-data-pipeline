@@ -35,11 +35,13 @@
   run_once: true
 
 - name: install psycopg2
+  become: yes
   package:
     name: python-psycopg2
     state: present
 
 - name: Install postgres client to create schema from file
+  become: yes
   apt:
     name: postgresql-client
     state: present
