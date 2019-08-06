@@ -65,12 +65,11 @@
   "segment/dropQueue/count" : ["server"],
   "segment/size" : ["dataSource"],
   "segment/count" : ["dataSource"],
+  "segment/used" : ["dataSource"],
+  "segment/usedPercent" : ["dataSource"],
   "segment/overShadowed/count" : [],
 
   "segment/max" : [],
-  "segment/used" : ["dataSource", "tier", "priority"],
-  "segment/usedPercent" : ["dataSource", "tier", "priority"],
-
   "jvm/pool/committed" : ["poolKind", "poolName"],
   "jvm/pool/init" :["poolKind", "poolName"],
   "jvm/pool/max" : ["poolKind", "poolName"],
