@@ -4,7 +4,7 @@
   tasks:
     - name: find the selected samza app tar files path
       find:
-        paths: "{{ samza_tar_files_localpath }}/allfiles"
+        paths: "{{job_workspace}}/{{ samza_tar_files_localpath }}/allfiles"
         patterns: "{{ job_names['%s'|format(item)].job_file_name }}*"
         recurse: yes
       with_items: "{{ job_names_to_kill.split(',') }}"
