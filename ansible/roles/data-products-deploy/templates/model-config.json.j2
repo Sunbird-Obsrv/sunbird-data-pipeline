@@ -4134,6 +4134,29 @@
     "appName": "Content Rating Updater",
     "deviceMapping": false
   },
+  "daily-metrics-consumption-reports": {
+    "search": {
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.updater.DailyConsumptionReportModel",
+    "modelParams": {
+      "adhoc_scripts_dir": "/home/analytics/telemetryreports/scripts",
+      "adhoc_scripts_output_dir": "/mount/data/store",
+      "adhoc_scripts_virtualenv_dir": "/mount/venv",
+      "derived_summary_dir": "{{ job_manager_tmp_dir }}/wfs"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Daily metrics consumption reports",
+    "deviceMapping": false
+  },
   "monitor-job-summ": {
     "search": {
       "type": "local",
@@ -4583,6 +4606,11 @@
           "model": "UpdateContentRating",
           "category": "consumption",
           "input_dependency": "None"
+        },
+        {
+          "model": "DailyConsumptionReportModel",
+          "category": "consumption",
+          "input_dependency": "WorkFlowSummaryModel"
         }
       ]
     },

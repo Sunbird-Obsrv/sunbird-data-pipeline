@@ -19,6 +19,7 @@ config() {
 	sparkCassandraConnectionHost="{{groups['lp-cassandra'][0]}}"
 	sunbirdPlatformCassandraHost="{{ core_cassandra_host }}"
 	sunbirdPlatformElasticsearchHost="{{ sunbird_es_host }}"
+	jobManagerJobsCount="{{ analytics_jobs_count }}"
 	
 	if [ -z "$2" ]; then endDate=$(date --date yesterday "+%Y-%m-%d"); else endDate=$2; fi
 	if [ ! -z "$3" ]; then inputBucket=$3; fi
@@ -271,7 +272,7 @@ config() {
 		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/usage-summary/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.updater.MEUsageUpdater","output":[{"to":"console","params":{"printEvent":false}}],"parallelization":10,"appName":"ME Usage Updater","deviceMapping":false}'
 		;;
 		"job-manager")
-		echo '{"jobsCount":11,"topic":"'$job_topic'","bootStrapServer":"'$brokerList'","zookeeperConnect":"'$zookeeper'","consumerGroup":"jobmanager","slackChannel":"#test_channel","slackUserName":"JobManager","tempBucket":"'$bucket'","tempFolder":"'$temp_folder'"}'
+		echo '{"jobsCount":'$jobManagerJobsCount',"topic":"'$job_topic'","bootStrapServer":"'$brokerList'","zookeeperConnect":"'$zookeeper'","consumerGroup":"jobmanager","slackChannel":"#test_channel","slackUserName":"JobManager","tempBucket":"'$bucket'","tempFolder":"'$temp_folder'"}'
 		;;
 		"wfs")
 		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"unique/","endDate":"'$endDate'","delta":0}]},"filters":[{"name":"eid","operator":"NIN","value":["JOB_START","JOB_END"]}],"model":"org.ekstep.analytics.model.WorkflowSummary","modelParams":{"apiVersion":"v2"},"output":[{"to":"console","params":{"printEvent": false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$topic'"}}],"parallelization":8,"appName":"Workflow Summarizer","deviceMapping":true}'
@@ -320,6 +321,9 @@ config() {
 		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.updater.UpdateContentRating","modelParams":{"startDate":"'$endDate'","endDate":"'$endDate'"},"output":[{"to":"console","params":{"printEvent":false}}],"parallelization":8,"appName":"Content Rating Updater","deviceMapping":false}'
 		;;
 		"*")
+		"daily-metrics-consumption-reports")
+		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.DailyConsumptionReportModel","modelParams":{"startDate":"'$endDate'","endDate":"'$endDate'","adhoc_scripts_dir":"/home/analytics/telemetryreports/scripts","adhoc_scripts_output_dir":"/mount/data/store","adhoc_scripts_virtualenv_dir":"/mount/venv"},"output":[{"to":"console","params":{"printEvent":false}}],"parallelization":8,"appName":"DailyConsumptionReports"}'
+		;;
 		echo "Unknown model code"
       	exit 1 # Command to come out of the program with status 1
       	;;
