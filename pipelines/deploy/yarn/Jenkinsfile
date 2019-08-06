@@ -44,6 +44,7 @@ node() {
                        mv distribution-*.tar.gz ansible
                        rm -rf ansible/roles/samza-jobs/defaults/jobs
                        mkdir  ansible/roles/samza-jobs/defaults/jobs ansible/roles/samza-jobs/defaults/allfiles
+                       chmod 777 ansible/roles/samza-jobs/defaults/jobs
                        tar -xvf ansible/distribution-*.tar.gz -C ansible/roles/samza-jobs/defaults/allfiles/
 
                     """

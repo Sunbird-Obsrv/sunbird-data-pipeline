@@ -10,8 +10,10 @@
       with_items: "{{ job_names_to_kill.split(',') }}"
       register: existing_files
 
-    - name: Move the files to jobs folder
-      shell: mv "{{ item }}" "{{ samza_tar_files_localpath }}/jobs"
+    - name: Copy the selected samza app tar files to jobs folder
+      copy:
+       src: "{{ item }}"
+       dest: "{{job_workspace}}/{{ samza_tar_files_localpath }}/jobs"
       with_items:
          - "{{ existing_files | json_query('results[].files[].path') }}"
 
