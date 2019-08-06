@@ -43,8 +43,8 @@ node() {
                        unzip ${artifact}
                        mv distribution-*.tar.gz ansible
                        rm -rf ansible/roles/samza-jobs/defaults/jobs
-                       mkdir  ansible/roles/samza-jobs/defaults/jobs
-                       tar -xvf ansible/distribution-*.tar.gz -C ansible/roles/samza-jobs/defaults/jobs/
+                       mkdir  ansible/roles/samza-jobs/defaults/jobs ansible/roles/samza-jobs/defaults/allfiles
+                       tar -xvf ansible/distribution-*.tar.gz -C ansible/roles/samza-jobs/defaults/allfiles/
 
                     """
                     ansiblePlaybook = "${currentWs}/ansible/samza_deploy.yml"

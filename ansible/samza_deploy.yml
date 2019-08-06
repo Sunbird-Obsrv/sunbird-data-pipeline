@@ -1,4 +1,20 @@
 ---
+- name: Move the selected samza app tar files to another dir
+  hosts: localhost
+  tasks:
+    - name: find the selected samza app tar files path
+      find:
+        paths: "{{ samza_tar_files_localpath }}/allfiles"
+        patterns: "{{ job_names['%s'|format(item)].job_file_name }}*"
+        recurse: yes
+      with_items: "{{ job_names_to_kill.split(',') }}"
+      register: existing_files
+
+    - name: Move the files to jobs folder
+      shell: mv "{{ item }}" "{{ samza_tar_files_localpath }}/jobs"
+      with_items:
+         - "{{ existing_files | json_query('results[].files[].path') }}"
+
 - name: "Start Nodemanager on Slaves if stopped"
   hosts: "yarn-slave"
   vars:
