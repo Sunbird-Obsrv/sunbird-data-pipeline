@@ -46,7 +46,7 @@ spark:
   executor_extraJavaOptions: -Dconfig.file=/mnt/data/analytics/models/{{ env }}.conf -Dlog4j.configurationFile=file:///mnt/data/analytics/models/log4j2.xml
   driver_extraJavaOptions: -Dconfig.file=/mnt/data/analytics/models/{{ env }}.conf -Dlog4j.configurationFile=file:///mnt/data/analytics/models/log4j2.xml
   executor_memory: 2g
-  heap_conf_str: "-XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:G1ReservePercent=10 -Xms250m -Xmx5120m -XX:+UseStringDeduplication -XX:+UseCompressedOops"
+  heap_conf_str: "-XX:+UseG1GC -XX:MaxGCPauseMillis=100 -Xms250m -Xmx5120m -XX:+UseStringDeduplication -XX:+UseCompressedOops"
 
 submit_jobs:
   submit-all-jobs:
