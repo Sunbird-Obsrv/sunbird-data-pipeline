@@ -879,7 +879,7 @@
     },
     "taskCount": 1,
     "replicas": 1,
-    "taskDuration": "PT3600S",
+    "taskDuration": "PT14400S",
     "useEarliestOffset": false
   },
   "tuningConfig": {
