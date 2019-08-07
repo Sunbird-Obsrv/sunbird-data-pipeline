@@ -150,3 +150,19 @@ druid.sql.host="http://{{druid_broker_host}}:8082/druid/v2/sql/"
 druid.unique.content.query="{\"query\":\"SELECT DISTINCT \\\"object_id\\\" AS \\\"Id\\\"\\nFROM \\\"druid\\\".\\\"telemetry-feedback-events\\\" WHERE \\\"eid\\\" = 'FEEDBACK' AND \\\"__time\\\" BETWEEN TIMESTAMP '%s' AND TIMESTAMP '%s' \"}"
 druid.content.rating.query="{\"query\": \"SELECT \\\"object_id\\\" AS ContentId, COUNT(*) AS \\\"Number of Ratings\\\", SUM(edata_rating) AS \\\"Total Ratings\\\", SUM(edata_rating)/COUNT(*) AS \\\"AverageRating\\\" FROM \\\"druid\\\".\\\"telemetry-feedback-events\\\" WHERE \\\"eid\\\" = 'FEEDBACK' GROUP BY \\\"object_id\\\"\"}"
 lp.system.update.base.url="{{lp_url}}/system/v3/content/update"
+
+
+#Experiment Configuration
+api.openidconnect.token.url= "{{api_openidconnect_token_url}}"
+api.openidconnect.token.username = "{{openid_analytics_username}}"
+api.openidconnect.token.password = "{{openid_analytics_password}}"
+user.search.api.url = "{{ user_search_api_url }}"
+
+user.search.api.key="{{ user_search_service_authorizationtoken }}"
+user.search.limit = 10000
+
+device.profile.cassandra.keyspace = {{cassandra.keyspace_prefix}}device_db
+device.profile.cassandra.tableName = "device_profile"
+
+experiment.definition.cassandra.keyspace = {{cassandra.keyspace_prefix}}experiment_db
+experiment.definition.cassandra.tableName = "experiment_definition"
