@@ -24,6 +24,9 @@ druid_default_tmp_dir: "/var/tmp"
 druid_gc_logdir: "/var/gclog"
 druid_log_dir: "/var/log/druid/"
 
+#Writing request query logs to file 
+druid_request_logging_type: "file"
+
 #azure config in group vars
 
 druid_azure_container_name: "telemetry-data-store"
