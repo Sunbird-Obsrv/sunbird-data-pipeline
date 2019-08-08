@@ -128,8 +128,6 @@ azure {
 }
 
 # course metrics container in azure
-course.metrics.es.index.cbatchstats="cbatchstats"
-course.metrics.es.index.cbatch="cbatch"
 course.metrics.cassandra.sunbirdKeyspace="sunbird"
 course.metrics.cassandra.sunbirdCoursesKeyspace="sunbird_courses"
 course.metrics.cloud.provider="azure"
@@ -141,7 +139,7 @@ es.host="http://{{groups['core-es'][0]}}"
 es.port="9200"
 course.metrics.es.alias="cbatchstats"
 course.metrics.es.index.cbatchstats.prefix="cbatchstats-"
-course.metrics.es.index.cbatch="cbatch"
+course.metrics.es.index.cbatch="course-batch"
 
 
 # content rating configurations
