@@ -153,16 +153,7 @@ lp.system.update.base.url="{{lp_url}}/system/v3/content/update"
 
 
 #Experiment Configuration
-api.openidconnect.token.url= "{{api_openidconnect_token_url}}"
-api.openidconnect.token.username = "{{openid_analytics_username}}"
-api.openidconnect.token.password = "{{openid_analytics_password}}"
-user.search.api.url = "{{ user_search_api_url }}"
-
-user.search.api.key="{{ user_search_service_authorizationtoken }}"
+user.service.host = "{{ groups['swarm-bootstrap-manager][0]}}"
+user.search.api.url = "http://{{user.service.host}}:9000/private/user/v1/search"
 user.search.limit = 10000
 
-device.profile.cassandra.keyspace = {{cassandra.keyspace_prefix}}device_db
-device.profile.cassandra.tableName = "device_profile"
-
-experiment.definition.cassandra.keyspace = {{cassandra.keyspace_prefix}}experiment_db
-experiment.definition.cassandra.tableName = "experiment_definition"
