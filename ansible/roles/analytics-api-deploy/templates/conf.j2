@@ -235,3 +235,6 @@ elasticsearch.searchExperiment.matchQueryScore=9.0
 deviceRegisterAPI.experiment.enable=true
 experimentService.redisEmptyValueExpirySeconds=86400
 redis.experimentIndex=9
+
+druid.coordinator.host="http://{{groups['coordinator'][0]}}:8081/"
+druid.healthcheck.url="druid/coordinator/v1/loadstatus"
