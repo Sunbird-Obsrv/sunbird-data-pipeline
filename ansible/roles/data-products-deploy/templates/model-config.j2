@@ -61,7 +61,7 @@ config() {
 		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/wfus/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.updater.UpdateWorkFlowUsageDB","output":[{"to":"console","params":{"printEvent":false}}],"parallelization":10,"appName":"Workflow Usage Updater","deviceMapping":false}'
 		;;
 		"ds")
-		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"unique/","endDate":"'$endDate'","delta":0},{"bucket":"'$bucket'","prefix":"derived/wfs/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.model.DeviceSummaryModel","modelParams":{"apiVersion":"v2"},"output":[{"to":"console","params":{"printEvent": false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$topic'"}}],"parallelization":8,"appName":"Device Summarizer","deviceMapping":false}'
+		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"unique/","endDate":"'$endDate'","delta":0},{"bucket":"'$bucket'","prefix":"derived/wfs/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.model.DeviceSummaryModel","modelParams":{"apiVersion":"v2"},"output":[{"to":"console","params":{"printEvent": false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$topic'"}}],"parallelization":12,"appName":"Device Summarizer","deviceMapping":false}'
 	   	;;
 	   	"dpu")
 		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/device-summary/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.model.UpdateDeviceProfileDB","modelParams":{"apiVersion":"v2"},"output":[{"to":"console","params":{"printEvent": false}}],"parallelization":8,"appName":"Device Profile Updater","deviceMapping":false}'
