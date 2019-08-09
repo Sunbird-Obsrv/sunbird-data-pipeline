@@ -150,3 +150,10 @@ druid.sql.host="http://{{druid_broker_host}}:8082/druid/v2/sql/"
 druid.unique.content.query="{\"query\":\"SELECT DISTINCT \\\"object_id\\\" AS \\\"Id\\\"\\nFROM \\\"druid\\\".\\\"telemetry-feedback-events\\\" WHERE \\\"eid\\\" = 'FEEDBACK' AND \\\"__time\\\" BETWEEN TIMESTAMP '%s' AND TIMESTAMP '%s' \"}"
 druid.content.rating.query="{\"query\": \"SELECT \\\"object_id\\\" AS ContentId, COUNT(*) AS \\\"Number of Ratings\\\", SUM(edata_rating) AS \\\"Total Ratings\\\", SUM(edata_rating)/COUNT(*) AS \\\"AverageRating\\\" FROM \\\"druid\\\".\\\"telemetry-feedback-events\\\" WHERE \\\"eid\\\" = 'FEEDBACK' GROUP BY \\\"object_id\\\"\"}"
 lp.system.update.base.url="{{lp_url}}/system/v3/content/update"
+
+
+#Experiment Configuration
+user.service.host = "{{ groups['swarm-bootstrap-manager][0]}}"
+user.search.api.url = "http://{{user.service.host}}:9000/private/user/v1/search"
+user.search.limit = 10000
+

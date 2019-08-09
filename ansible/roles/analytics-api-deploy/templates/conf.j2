@@ -150,6 +150,10 @@ akka {
           router = smallest-mailbox-pool
           nr-of-instances = 5
         }
+        /expApiActor {
+          router = smallest-mailbox-pool
+          nr-of-instances = 1
+        }
     }
   }
 }
