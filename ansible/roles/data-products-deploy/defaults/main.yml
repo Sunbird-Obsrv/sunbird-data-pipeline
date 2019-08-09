@@ -43,6 +43,8 @@ spark:
   executor:
     memory: 4g
   driver_memory: 7g
+  memory_fraction: 0.3
+  storage_fraction: 0.6  
   executor_extraJavaOptions: -Dconfig.file=/mnt/data/analytics/models/{{ env }}.conf -Dlog4j.configurationFile=file:///mnt/data/analytics/models/log4j2.xml
   driver_extraJavaOptions: -Dconfig.file=/mnt/data/analytics/models/{{ env }}.conf -Dlog4j.configurationFile=file:///mnt/data/analytics/models/log4j2.xml
   executor_memory: 2g
