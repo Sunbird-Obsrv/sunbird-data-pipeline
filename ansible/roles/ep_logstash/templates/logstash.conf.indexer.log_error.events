@@ -16,6 +16,7 @@ input {
             consumer_restart_sleep_ms => 0
             decorate_events => false
             fetch_message_max_bytes => 1048576
+            codec => "json"
             
             
     }
