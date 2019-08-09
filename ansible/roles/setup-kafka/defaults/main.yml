@@ -107,7 +107,7 @@ processing_kafka_overriden_topics:
     retention_time: 172800000
     replication_factor: 1
   - name: user.cert.raw
-    retention_time: 172800000
+    retention_time: 1296000000
     replication_factor: 1
 
 
