@@ -38,6 +38,11 @@
   become: yes
   with_items: "{{logstash_conf}}"
 
+- name: Copy es mapping files
+  template: src=mapping/{{item}} dest={{ logstash_config_loc }}/files/{{item}}
+  become: yes
+  with_items: "{{es_mapping_file}}"  
+
 - name: Creates symlink
   command: bash -lc "ln -s /lib/x86_64-linux-gnu/libcrypt.so.1 /usr/lib/x86_64-linux-gnu/libcrypt.so"
   become: yes

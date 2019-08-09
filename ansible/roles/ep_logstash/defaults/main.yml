@@ -10,6 +10,9 @@ logstash_conf:
  - ".indexer.pipeline_metrics"
  - ".indexer.analytics_metrics"
  - ".indexer.log_error.events"
+
+es_mapping_file:
+ - "telemetry_mapping.json" 
 kafka_topic_prefix: "{{ env }}"
 error_es_index: "telemetry-error-events"
 log_es_index: "telemetry-log-events" 
