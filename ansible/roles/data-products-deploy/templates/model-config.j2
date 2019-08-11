@@ -96,13 +96,13 @@ config() {
         "content-rating-updater")
 		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.updater.UpdateContentRating","modelParams":{"startDate":"'$endDate'","endDate":"'$endDate'"},"output":[{"to":"console","params":{"printEvent":false}}],"parallelization":8,"appName":"Content Rating Updater","deviceMapping":false}'
 		;;
-		"*")
 		"daily-metrics-consumption-reports")
 		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.DailyConsumptionReportModel","modelParams":{"startDate":"'$endDate'","endDate":"'$endDate'","adhoc_scripts_dir":"/home/analytics/telemetryreports/scripts","adhoc_scripts_output_dir":"/mount/data/store","adhoc_scripts_virtualenv_dir":"/mount/venv"},"output":[{"to":"console","params":{"printEvent":false}}],"parallelization":8,"appName":"DailyConsumptionReports"}'
 		;;
-                "experiment")
+        "experiment")
 		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.model.ExperimentDefinitionModel","modelParams":{"sparkElasticsearchConnectionHost":"{{ lp_composite_search_host }}"},"output":[{"to":"elasticsearch","params":{"index":"experiment"}}],"parallelization":8,"appName":"Experiment-Definition","deviceMapping":false}'
-                ;;
+        ;;
+        "*")
 		echo "Unknown model code"
       	exit 1 # Command to come out of the program with status 1
       	;;
