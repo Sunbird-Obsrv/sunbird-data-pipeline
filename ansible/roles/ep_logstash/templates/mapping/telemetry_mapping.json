@@ -12,81 +12,81 @@
             "type": "date"
           },
           "@version": {
-            "type": "string"
+            "type": "keyword"
           },
           "eid": {
-            "type": "string"
+            "type": "keyword"
           },
           "ets": {
             "format": "strict_date_optional_time||epoch_millis",
             "type": "date"
           },
           "mid": {
-            "type": "string"
+            "type": "keyword"
           },
           "ts": {
             "format": "strict_date_optional_time||epoch_millis",
             "type": "date"
           },
           "ver": {
-            "type": "string"
+            "type": "keyword"
           },
           "actor": {
              "properties": {
                 "id": {
-                  "type": "string"
+                  "type": "keyword"
                 },
                 "type": {
-                  "type": "string"
+                  "type": "keyword"
                 }
              }
           },
           "edata": {
             "properties": {
               "comments": {
-                "type": "string"
+                "type": "keyword"
               },
               "correlationid": {
-                "type": "string"
+                "type": "keyword"
               },
               "duration": {
                 "type": "double"
               },
               "data": {
-                "type": "string"
+                "type": "keyword"
               },
               "dir": {
-                "type": "string"
+                "type": "keyword"
               },
               "errtype": {
-                "type": "string"
+                "type": "keyword"
               },
               "id": {
-                "type": "string"
+                "type": "keyword"
               },
               "level": {
-                "type": "string"
+                "type": "keyword"
               },
               "loc": {
-                "type": "string"
+                "type": "keyword"
               },
               "message": {
-                "type": "string"
+                "type": "keyword"
               },
               "mode": {
-                "type": "string"
+                "type": "keyword"
               },
               "pass": {
-                "type": "string"
+                "type": "keyword"
               },
               "prevstate": {
-                "type": "string"
+                "type": "keyword"
               },
               "pageid": {
-                "type": "string"
+                "type": "keyword"
               },
               "query": {
-                "type": "string"
+                "type": "keyword"
               },
               "rating": {
                 "type": "double"
@@ -98,36 +98,36 @@
                 "type": "double"
               },
               "state": {
-                "type": "string"
+                "type": "keyword"
               },
               "subtype": {
-                "type": "string"
+                "type": "keyword"
               },
               "type": {
-                "type": "string"
+                "type": "keyword"
               },
               "uri": {
-                "type": "string"
+                "type": "keyword"
               },
               "items": {
                 "type": "nested",
                 "properties": {
                   "id": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "ver": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "type": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "origin": {
                     "properties": {
                       "id": {
-                        "type": "string"
+                        "type": "keyword"
                       },
                       "type": {
-                        "type": "string"
+                        "type": "keyword"
                       }
                     }
                   }
@@ -136,7 +136,7 @@
               "item": {
                 "properties": {
                   "id": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "maxscore": {
                     "type": "long"
@@ -145,37 +145,37 @@
                     "type": "long"
                   },
                   "uri": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "desc": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "title": {
-                    "type": "string"
+                    "type": "keyword"
                   }
                 }
               },
               "target": {
                 "properties": {
                   "id": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "ver": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "type": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "category": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "parent": {
                     "properties": {
                       "id": {
-                        "type": "string"
+                        "type": "keyword"
                       },
                       "type": {
-                        "type": "string"
+                        "type": "keyword"
                       }
                     }
                   }
@@ -185,86 +185,86 @@
                 "type": "nested",
                 "properties": {
                   "objid": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "objtype": {
-                    "type": "string"
+                    "type": "keyword"
                   }
                 }
               },
               "plugin": {
                 "properties": {
                   "id": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "ver": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "category": {
-                    "type": "string"
+                    "type": "keyword"
                   }
                 }
               },
               "object": {
                 "properties": {
                   "id": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "type": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "subtype": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "ver": {
-                    "type": "string"
+                    "type": "keyword"
                   }
                 }
               },
               "uaspec": {
                 "properties": {
                   "agent": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "ver": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "system": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "platform": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "raw": {
-                    "type": "string"
+                    "type": "keyword"
                   }
                 }
               },
               "dspec": {
                 "properties": {
                    "camera": {
-                      "type": "string"
+                      "type": "keyword"
                     },
                     "cpu": {
-                      "type": "string"
+                      "type": "keyword"
                     },
                     "edisk": {
                       "type": "double"
                     },
                     "id": {
-                      "type": "string"
+                      "type": "keyword"
                     },
                     "idisk": {
                       "type": "double"
                     },
                     "make": {
-                      "type": "string"
+                      "type": "keyword"
                     },
                     "mem": {
                       "type": "double"
                     },
                     "os": {
-                      "type": "string"
+                      "type": "keyword"
                     },
                     "scrn": {
                       "type": "double"
@@ -279,43 +279,43 @@
           "context": {
             "properties": {
               "channel": {
-                "type": "string"
+                "type": "keyword"
               },
               "env": {
-                "type": "string"
+                "type": "keyword"
               },
               "sid": {
-                "type": "string"
+                "type": "keyword"
               },
               "did": {
-                "type": "string"
+                "type": "keyword"
               },
               "pdata": {
                 "properties": {
                   "id": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "pid": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "ver": {
-                    "type": "string"
+                    "type": "keyword"
                   }
                 }
               },
               "rollup": {
                 "properties": {
                   "l1": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "l2": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "l3": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "l4": {
-                    "type": "string"
+                    "type": "keyword"
                   }
                 }
               },
@@ -323,10 +323,10 @@
                 "type": "nested",
                 "properties": {
                   "type": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "id": {
-                    "type": "string"
+                    "type": "keyword"
                   }
                 }
               }
@@ -335,36 +335,36 @@
           "object": {
             "properties": {
               "id": {
-                "type": "string"
+                "type": "keyword"
               },
               "type": {
-                "type": "string"
+                "type": "keyword"
               },
               "subtype": {
-                "type": "string"
+                "type": "keyword"
               },
               "parentid": {
-                "type": "string"
+                "type": "keyword"
               },
               "parenttype": {
-                "type": "string"
+                "type": "keyword"
               },
               "ver": {
-                "type": "string"
+                "type": "keyword"
               },
               "rollup": {
                 "properties": {
                   "l1": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "l2": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "l3": {
-                    "type": "string"
+                    "type": "keyword"
                   },
                   "l4": {
-                    "type": "string"
+                    "type": "keyword"
                   }
                 }
               }
@@ -373,22 +373,22 @@
           "metadata": {
             "properties": {
               "source": {
-                "type": "string"
+                "type": "keyword"
               },
               "index_name": {
-                "type": "string"
+                "type": "keyword"
               },
               "index_type": {
-                "type": "string"
+                "type": "keyword"
               },
               "source_eid": {
-                "type": "string"
+                "type": "keyword"
               },
               "source_mid": {
-                "type": "string"
+                "type": "keyword"
               },
               "pump": {
-                "type": "string"
+                "type": "keyword"
               }
             }
           },
