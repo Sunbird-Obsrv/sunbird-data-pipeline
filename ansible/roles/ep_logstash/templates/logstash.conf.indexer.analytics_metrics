@@ -6,7 +6,7 @@ input {
             auto_offset_reset=>"latest"
             codec => "json"
             consumer_threads=>1
-            fetch_message_max_bytes=>"1048576"
+            fetch_max_bytes=>"1048576"
 	        type => "analytics_metrics"
             
     }
