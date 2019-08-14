@@ -6,7 +6,7 @@ input {
 
             bootstrap_servers => "{{bootstrap_server}}"
             topics => ["{{kafka_topic_prefix}}.telemetry.log"]
-            group_id => "{{kafka_topic_prefix}}.telemetry_log"
+            group_id => "{{kafka_topic_prefix}}.telemetry.log"
             auto_offset_reset=>"latest"
             codec => "json"
             consumer_threads=>2
