@@ -1,14 +1,14 @@
 input {
 	kafka {
+			
             bootstrap_servers => "{{bootstrap_server}}"
-            topics => ["{{kafka_topic_prefix}}.pipeline.metrics"]
+            topics => ["{{kafka_topic_prefix}}.pipeline_metrics"]
             group_id => "{{kafka_topic_prefix}}.pipeline.metrics"
             auto_offset_reset=>"latest"
             codec => "json"
             consumer_threads=>1
             fetch_max_bytes=>"1048576"
             type => "pipeline_metrics"
-
     }
 }
 
