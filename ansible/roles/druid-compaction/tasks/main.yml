@@ -1,0 +1,11 @@
+---
+- name: Copy compaction template file
+  template: src=segments_compaction.j2 dest=/tmp/segments_compaction.sh mode="u=rwx,g=rx,o=rx"
+  delegate_to: localhost
+
+- name: Run the segments compaction for a datasource
+  vars:
+    optional_args: "{{ '-s ' + compaction_start_date + ' -e ' + compaction_end_date if (compaction_start_date != '' and compaction_end_date != '') else '' }}"
+  command: bash -lc "./segments_compaction.sh -d {{datasource}} {{optional_args}}"
+  args:
+    chdir: "/tmp"

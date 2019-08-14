@@ -150,6 +150,10 @@ akka {
           router = smallest-mailbox-pool
           nr-of-instances = 5
         }
+        /expApiActor {
+          router = smallest-mailbox-pool
+          nr-of-instances = 1
+        }
     }
   }
 }
@@ -225,7 +229,7 @@ redis.connection.idle.min=1
 redis.connection.minEvictableIdleTimeSeconds=120
 redis.connection.timeBetweenEvictionRunsSeconds=300
 
-elasticsearch.host="{{lp_composite_search}}"
+elasticsearch.host="{{lp_composite_search_host}}"
 elasticsearch.port=9200
 
 # experiment service settings
@@ -235,3 +239,6 @@ elasticsearch.searchExperiment.matchQueryScore=9.0
 deviceRegisterAPI.experiment.enable=true
 experimentService.redisEmptyValueExpirySeconds=86400
 redis.experimentIndex=9
+
+druid.coordinator.host="http://{{groups['coordinator'][0]}}:8081/"
+druid.healthcheck.url="druid/coordinator/v1/loadstatus"

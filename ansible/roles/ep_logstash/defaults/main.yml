@@ -38,4 +38,5 @@ api_job_log_path: "/mount/data/analytics/logs/api-service/joblog.log"
 
 # client API error log
 crash_log_path: "/mount/data/analytics/logs/api-service/crash-logs.log"
-logger_es: "{{ groups['log-es']|join(':9200,') }}:9200"
+logger_es: "{{ groups['log-es']|join(':9200,') }}"
+logstash_version: '6.x'  

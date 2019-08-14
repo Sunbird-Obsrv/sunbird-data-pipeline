@@ -8,6 +8,7 @@ CREATE KEYSPACE IF NOT EXISTS {{ cassandra.keyspace_prefix }}creation_metrics_db
   'replication_factor': '{{ cassandra.replication_factor }}'
 };
 
+
 CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}learner_db.learnersnapshot (
 	learner_id text,
 	m_time_spent double,
@@ -733,5 +734,21 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.workflow_u
 
 ALTER TABLE {{ cassandra.keyspace_prefix }}device_db.device_profile
 ADD (fcm_token text, producer_id text);
+
+CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.experiment_definition (
+    exp_id text,
+    created_by text,
+    created_on timestamp,
+    criteria text,
+    exp_data text,
+    exp_description text,
+    exp_name text,
+    stats map<text, bigint>,
+    status text,
+    status_message text,
+    updated_by text,
+    updated_on timestamp,
+    PRIMARY KEY(exp_id)
+); 
 
 

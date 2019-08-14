@@ -1,6 +1,9 @@
 {
   "jetty/numOpenConnections" :[],
-  "query/time" : ["dataSource", "type"],
+  "query/time" : ["dataSource", "type"],    
+  "query/success/count" : [],
+  "query/failed/count" : [],
+  "query/interrupted/count" : [],
   "query/node/time" : ["server"],
   "query/node/ttfb" : ["server"],
   "query/intervalChunk/time" : [],
@@ -33,8 +36,7 @@
 
   "ingest/events/thrownAway" :  ["dataSource", "taskType"],
   "ingest/events/unparseable" : ["dataSource", "taskType"],
-  "ingest/events/processed" : ["dataSource", "taskType"],
-  "ingest/events/duplicate" : ["dataSource", "taskType"],
+  "ingest/events/processed" :  ["dataSource", "taskType"],
   "ingest/rows/output" : ["dataSource"],
   "ingest/persist/count" : ["dataSource"],
   "ingest/persist/time" : ["dataSource"],
@@ -43,8 +45,7 @@
   "ingest/persist/failed" : ["dataSource"],
   "ingest/handoff/failed" : ["dataSource"],
   "ingest/merge/time" : ["dataSource"],
-  "ingest/kafka/lag" : ["dataSource"],
-   
+  "ingest/merge/cpu" : ["dataSource"],
 
   "task/run/time" :  ["dataSource", "taskType"],
   "segment/added/bytes" :  ["dataSource", "taskType"],
@@ -68,8 +69,8 @@
   "segment/overShadowed/count" : [],
 
   "segment/max" : [],
-  "segment/used" : ["dataSource", "tier", "priority"],
-  "segment/usedPercent" : ["dataSource", "tier", "priority"],
+  "segment/used" : ["dataSource"],
+  "segment/usedPercent" : ["dataSource"],
 
   "jvm/pool/committed" : ["poolKind", "poolName"],
   "jvm/pool/init" :["poolKind", "poolName"],
@@ -85,7 +86,8 @@
   "jvm/gc/count" : ["gcName"],
   "jvm/gc/time" : ["gcName"],
 
-  "ingest/events/buffered" : ["serviceName, bufferCapacity"],
+  "ingest/events/buffered" : ["dataSource"],
+  "ingest/kafka/lag" : ["dataSource"],
 
   "sys/swap/free" : [],
   "sys/swap/max" : [],
