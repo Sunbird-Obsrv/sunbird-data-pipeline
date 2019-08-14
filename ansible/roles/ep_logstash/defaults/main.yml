@@ -20,6 +20,7 @@ telemetry_mapping_file_path: "{{ logstash_config_loc }}/mappings/telemetry_mappi
 apt_cache_valid_time: 3600
 
 zookeepers: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+bootstrap_servers: "{{groups['processing-cluster-kafka]']|join(':9092,')}}:9092"
 influxdb_host: "{{ groups['influxdb'][0] }}"
 influxdb_db_source: monitoring_events
 influxdb_port: 9096
