@@ -211,3 +211,6 @@ processing_kafka_topics:
   - name: lms.sso.events
     num_of_partitions: 4
     replication_factor: 1
+  - name: lms.user.account.merge
+    num_of_partitions: 1
+    replication_factor: 1
