@@ -1,5 +1,6 @@
 {
   "template" : "telemetry-*",
+  "index_patterns" : "telemetry-*",
   "settings" : {
     "number_of_shards" : 5
   },
