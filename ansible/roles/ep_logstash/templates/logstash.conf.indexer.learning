@@ -1,21 +1,15 @@
 input {
 	kafka {
-	        zk_connect => "{{zookeepers}}"
-	        group_id => "{{kafka_topic_prefix}}.learning.events"
-	        topic_id => "{{kafka_topic_prefix}}.{{learning_topics}}"
-	        reset_beginning => false
-	        consumer_threads => 1
-	        queue_size => 20
-	        rebalance_max_retries => 4
-	        rebalance_backoff_ms => 2000
-	        consumer_timeout_ms => -1
-	        consumer_restart_on_error => true
-	        consumer_restart_sleep_ms => 0
-	        decorate_events => false
-	        consumer_id => nil
-	        fetch_message_max_bytes => 1048576
-	        type => "events"
-	        add_field =>["learning","true"]
+          bootstrap_servers => "{{bootstrap_server}}"
+          topics => ["{{kafka_topic_prefix}}.{{learning_topics}}"]
+          group_id => "{{kafka_topic_prefix}}.learning.events"
+          auto_offset_reset=>"latest"
+          codec => "json"
+          consumer_threads=>1
+          fetch_max_bytes=>"1048576"
+          type => "events"
+          add_field =>["learning","true"]
+          decorate_events => false
     }
 }
 

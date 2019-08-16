@@ -4,9 +4,7 @@ logstash_home: /opt/logstash
 logstash_plugins:
 - logstash-output-influxdb
 logstash_conf:
- - ".indexer.partner"
  - ".indexer.learning"
- - ".indexer.public"
  - ".indexer.pipeline_metrics"
  - ".indexer.analytics_metrics"
  - ".indexer.log_error.events"
