@@ -14,9 +14,9 @@ input {
 output {
 	if [type] == 'pipeline_metrics' { 
 		influxdb {
-                allow_time_override => true
-                send_as_tags => ["env","job_name"]
-                data_points => { 
+            allow_time_override => true
+            send_as_tags => ["env","job_name"]
+            data_points => { 
                 "env" => "{{env}}"
                 "job_name" => "%{[job-name]}"
                 "success" => "%{[success-message-count]}"
@@ -54,7 +54,7 @@ output {
                 "user_db_hit" => "%{[user-db-hit-count]}"
                 "duplicate" => "%{[duplicate-event-count]}"
                 "expired_event" => "%{[expired-event-count]}"
-		    }
+	        }   
 		    coerce_values => {
                 "success" => "float"
                 "failed" => "float"
