@@ -14,15 +14,15 @@ input {
 output {
 	if [type] == 'pipeline_metrics' { 
 		influxdb {
-		    allow_time_override => true
-		    send_as_tags => ["env","job_name"]
-		    data_points => { 
-    	    	"env" => "{{env}}"
-    	    	"job_name" => "%{[job-name]}"
-    	    	"success" => "%{[success-message-count]}"
-    	    	"failed" => "%{[failed-message-count]}"
-    	    	"error" => "%{[error-message-count]}"
-    	    	"skipped" => "%{[skipped-message-count]}"
+                allow_time_override => true
+                send_as_tags => ["env","job_name"]
+                data_points => { 
+                "env" => "{{env}}"
+                "job_name" => "%{[job-name]}"
+                "success" => "%{[success-message-count]}"
+                "failed" => "%{[failed-message-count]}"
+                "error" => "%{[error-message-count]}"
+                "skipped" => "%{[skipped-message-count]}"
                 "partition" => "%{[partition]}"
                 "consumer_lag" => "%{[consumer-lag]}"
                 "cache_hit" => "%{[cache-hit-count]}"
@@ -56,10 +56,10 @@ output {
                 "expired_event" => "%{[expired-event-count]}"
 		    }
 		    coerce_values => {
-          		"success" => "float"
-          		"failed" => "float"
-          		"error" => "float"
-          		"skipped" => "float"
+                "success" => "float"
+                "failed" => "float"
+                "error" => "float"
+                "skipped" => "float"
                 "partition" => "float"
                 "consumer_lag" => "float"
                 "cache_hit" => "float"
