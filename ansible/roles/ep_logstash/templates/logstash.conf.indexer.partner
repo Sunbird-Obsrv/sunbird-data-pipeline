@@ -1,22 +1,22 @@
 input {
-  kafka {
-    zk_connect => "{{zookeepers}}"
-    group_id => "{{kafka_topic_prefix}}.partners.events.201703"
-    topic_id => "{{kafka_topic_prefix}}.{{private_exhaust_topic}}"
-    reset_beginning => false
-    auto_offset_reset => "smallest"
-    consumer_threads => 1
-    queue_size => 20
-    rebalance_max_retries => 4
-    rebalance_backoff_ms => 2000
-    consumer_timeout_ms => -1
-    consumer_restart_on_error => true
-    consumer_restart_sleep_ms => 0
-    decorate_events => false
-    consumer_id => nil
-    fetch_message_max_bytes => 1048576
-    type => "partner.events"
-  }
+    kafka {
+        zk_connect => "{{zookeepers}}"
+        group_id => "{{kafka_topic_prefix}}.partners.events.201703"
+        topic_id => "{{kafka_topic_prefix}}.{{private_exhaust_topic}}"
+        reset_beginning => false
+        auto_offset_reset => "smallest"
+        consumer_threads => 1
+        queue_size => 20
+        rebalance_max_retries => 4
+        rebalance_backoff_ms => 2000
+        consumer_timeout_ms => -1
+        consumer_restart_on_error => true
+        consumer_restart_sleep_ms => 0
+        decorate_events => false
+        consumer_id => nil
+        fetch_message_max_bytes => 1048576
+        type => "partner.events"
+      }
 }
 filter {
   if ![metadata][sync_timestamp] {
