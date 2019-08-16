@@ -57,7 +57,7 @@ output {
                     "expired_event" => "%{[expired-event-count]}"
 			    }
 			    coerce_values => {
-		      		"success" => "integer"
+		      		"success" => "float"
 		      		"failed" => "integer"
 		      		"error" => "integer"
 		      		"skipped" => "integer"
