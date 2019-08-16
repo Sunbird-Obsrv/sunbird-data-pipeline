@@ -1,14 +1,14 @@
 input {
 	kafka {
-        bootstrap_servers => "{{bootstrap_server}}"
-        topics => ["{{kafka_topic_prefix}}.analytics_metrics"]
-        group_id => "{{kafka_topic_prefix}}.analytics.metrics"
-        auto_offset_reset=>"latest"
-        codec => "json"
-        consumer_threads=>1
-        fetch_max_bytes=>"1048576"
-        type => "analytics_metrics"
-    }
+		bootstrap_servers => "{{bootstrap_server}}"
+		topics => ["{{kafka_topic_prefix}}.analytics_metrics"]
+		group_id => "{{kafka_topic_prefix}}.analytics.metrics"
+		auto_offset_reset=>"latest"
+		codec => "json"
+		consumer_threads=>1
+		fetch_max_bytes=>"1048576"
+		type => "analytics_metrics"
+	}
 }
 
 filter {
@@ -22,31 +22,31 @@ filter {
 output {
 	if [type] == 'analytics_metrics' { 
 		influxdb {
-		    allow_time_override => true
-		    send_as_tags => ["env","job_name", "is_success", "job_id"]
-		    data_points => { 
-		    	"env" => "{{env}}"
-		    	"job_name" => "%{[job_name]}"
-		    	"is_success" => "%{[is_success]}"
-		    	"job_id" => "%{[job_id]}"
-		    	"success" => "%{[success]}"
-		    	"number_of_input" => "%{[number_of_input]}"
-		    	"number_of_output" => "%{[number_of_output]}"
-		    	"time_spent" => "%{[time_spent]}"
-		    	"channel" => "%{[channel]}"
-		    	"tag" => "%{[tag]}"
-		    }
-		    coerce_values => {
-	      		"success" => "float"
-	      		"number_of_input" => "float"
-	      		"number_of_output" => "float"
-	      		"time_spent" => "float"
+			allow_time_override => true
+			send_as_tags => ["env","job_name", "is_success", "job_id"]
+			data_points => { 
+				"env" => "{{env}}"
+				"job_name" => "%{[job_name]}"
+				"is_success" => "%{[is_success]}"
+				"job_id" => "%{[job_id]}"
+				"success" => "%{[success]}"
+				"number_of_input" => "%{[number_of_input]}"
+				"number_of_output" => "%{[number_of_output]}"
+				"time_spent" => "%{[time_spent]}"
+				"channel" => "%{[channel]}"
+				"tag" => "%{[tag]}"
 			}
-		    host => "{{influxdb_host}}"
-		    port => "{{influxdb_port}}"
-		    db => "{{influxdb_db_source}}"
-		    measurement => "analytics_metrics"
-		    retention_policy => "autogen"
+			coerce_values => {
+				"success" => "float"
+				"number_of_input" => "float"
+				"number_of_output" => "float"
+				"time_spent" => "float"
+			}
+			host => "{{influxdb_host}}"
+			port => "{{influxdb_port}}"
+			db => "{{influxdb_db_source}}"
+			measurement => "analytics_metrics"
+			retention_policy => "autogen"
 		}
 	}
 }

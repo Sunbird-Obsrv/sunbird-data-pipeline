@@ -14,7 +14,7 @@ input {
 }
 
 output {
-	if  [eid] =="ERROR"{
+	if [eid] =="ERROR"{
 		elasticsearch {
 			codec => "json"
 			hosts => ["{{logger_es}}"]
