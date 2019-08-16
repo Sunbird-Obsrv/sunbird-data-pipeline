@@ -54,8 +54,8 @@ output {
                 "user_db_hit" => "%{[user-db-hit-count]}"
                 "duplicate" => "%{[duplicate-event-count]}"
                 "expired_event" => "%{[expired-event-count]}"
-	        }   
-		    coerce_values => {
+            }   
+            coerce_values => {
                 "success" => "float"
                 "failed" => "float"
                 "error" => "float"
@@ -91,12 +91,12 @@ output {
                 "cache_error" => "float"
                 "expired_event" => "float"
                 "duplicate" => "float"
-			}
-		    host => "{{influxdb_host}}"
-		    port => "{{influxdb_port}}"
-		    db => "{{influxdb_db_source}}"
-		    measurement => "pipeline_metrics"
-		    retention_policy => "autogen"
+            }
+            host => "{{influxdb_host}}"
+            port => "{{influxdb_port}}"
+            db => "{{influxdb_db_source}}"
+            measurement => "pipeline_metrics"
+            retention_policy => "autogen"
 		}
 	}
 }
