@@ -63,7 +63,7 @@ output {
 		      		"skipped" => "float"
                     "partition" => "float"
                     "consumer_lag" => "float"
-                    "cache_hit" => "integer"
+                    "cache_hit" => "float"
                     "cache_miss" => "float"
                     "cache_empty_values" => "float"
                     "processed" => "float"
