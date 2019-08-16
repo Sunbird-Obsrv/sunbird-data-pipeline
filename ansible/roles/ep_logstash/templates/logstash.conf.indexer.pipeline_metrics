@@ -1,23 +1,22 @@
 input {
 	kafka {
-			
-            bootstrap_servers => "{{bootstrap_server}}"
-            topics => ["{{kafka_topic_prefix}}.pipeline_metrics"]
-            group_id => "{{kafka_topic_prefix}}.pipeline.metrics"
-            auto_offset_reset=>"latest"
-            codec => "json"
-            consumer_threads=>1
-            fetch_max_bytes=>"1048576"
-            type => "pipeline_metrics"
+       bootstrap_servers => "{{bootstrap_server}}"
+       topics => ["{{kafka_topic_prefix}}.pipeline_metrics"]
+       group_id => "{{kafka_topic_prefix}}.pipeline.metrics"
+       auto_offset_reset=>"latest"
+       codec => "json"
+       consumer_threads=>1
+       fetch_max_bytes=>"1048576"
+       type => "pipeline_metrics"
     }
 }
 
 output {
 	if [type] == 'pipeline_metrics' { 
 		influxdb {
-			    allow_time_override => true
-			    send_as_tags => ["env","job_name"]
-			    data_points => { 
+		    allow_time_override => true
+		    send_as_tags => ["env","job_name"]
+		    data_points => { 
 			    	"env" => "{{env}}"
 			    	"job_name" => "%{[job-name]}"
 			    	"success" => "%{[success-message-count]}"
@@ -55,12 +54,12 @@ output {
                     "user_db_hit" => "%{[user-db-hit-count]}"
                     "duplicate" => "%{[duplicate-event-count]}"
                     "expired_event" => "%{[expired-event-count]}"
-			    }
-			    coerce_values => {
-		      		"success" => "float"
-		      		"failed" => "float"
-		      		"error" => "float"
-		      		"skipped" => "float"
+		     }
+		    coerce_values => {
+	      		"success" => "float"
+	      		"failed" => "float"
+	      		"error" => "float"
+	      		"skipped" => "float"
                     "partition" => "float"
                     "consumer_lag" => "float"
                     "cache_hit" => "float"
@@ -92,12 +91,12 @@ output {
                     "cache_error" => "float"
                     "expired_event" => "float"
                     "duplicate" => "float"
-				}
-			    host => "{{influxdb_host}}"
-			    port => "{{influxdb_port}}"
-			    db => "{{influxdb_db_source}}"
-			    measurement => "pipeline_metrics"
-			    retention_policy => "autogen"
+			}
+		    host => "{{influxdb_host}}"
+		    port => "{{influxdb_port}}"
+		    db => "{{influxdb_db_source}}"
+		    measurement => "pipeline_metrics"
+		    retention_policy => "autogen"
 		}
 	}
 }
