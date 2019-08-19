@@ -5,17 +5,17 @@ input {
 		group_id => "{{kafka_topic_prefix}}.analytics.metrics"
 		auto_offset_reset=>"latest"
 		codec => "json"
-		consumer_threads=>1
-		fetch_max_bytes=>"1048576"
+		consumer_threads => 1
+		fetch_max_bytes => "1048576"
 		type => "analytics_metrics"
 	}
 }
 
 filter {
 	if [type] == 'analytics_metrics' {
-	    ruby {
-	        code => "event['success'].to_i == 1 ? event['is_success'] = 'true' : event['is_success'] = 'false'"
-	    }
+		ruby {
+			code => "event['success'].to_i == 1 ? event['is_success'] = 'true' : event['is_success'] = 'false'"
+		}
 	}
 }
 

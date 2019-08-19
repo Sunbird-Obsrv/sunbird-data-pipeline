@@ -6,15 +6,15 @@ input {
 		bootstrap_servers => "{{bootstrap_server}}"
 		topics => ["{{kafka_topic_prefix}}.telemetry.log"]
 		group_id => "{{kafka_topic_prefix}}.telemetry.log"
-		auto_offset_reset=>"latest"
+		auto_offset_reset => "latest"
 		codec => "json"
-		consumer_threads=>1
-		fetch_max_bytes=>"1048576"
+		consumer_threads => 1
+		fetch_max_bytes => "1048576"
 	}
 }
 
 output {
-	if [eid] =="ERROR"{
+	if [eid] == "ERROR" {
 		elasticsearch {
 			codec => "json"
 			hosts => ["{{logger_es}}"]
@@ -24,7 +24,7 @@ output {
 			manage_template => true        
 			document_type => "events"
 		}
-	}else if [eid] =="LOG" {
+	}else if [eid] == "LOG" {
 		elasticsearch {
 			codec => "json"
 			hosts => ["{{logger_es}}"]
