@@ -33,20 +33,20 @@ filter {
 
 output {
 	if [type] == "events" and [learning] == "true" and [ready_to_index] != "true" and [retry] != "true" and [metadata][public] != "true" {
-			kafka {
-				bootstrap_servers => "{{kafka_brokers}}"
-				topic_id => "{{kafka_topic_prefix}}{{kafka_sink_topic}}"
-				compression_type => "none"
-				acks => "0"
-				value_serializer => "org.apache.kafka.common.serialization.StringSerializer"
-				metadata_fetch_timeout_ms => 10000
-				key_serializer => "org.apache.kafka.common.serialization.StringSerializer"
-				retries => 3
-				retry_backoff_ms => 100
-				metadata_max_age_ms => 600000
-				batch_size => 200
-				send_buffer_bytes => 102400
-				client_id => "logstash"
-		    }
+        kafka {
+            bootstrap_servers => "{{kafka_brokers}}"
+            topic_id => "{{kafka_topic_prefix}}{{kafka_sink_topic}}"
+            compression_type => "none"
+            acks => "0"
+            value_serializer => "org.apache.kafka.common.serialization.StringSerializer"
+            metadata_fetch_timeout_ms => 10000
+            key_serializer => "org.apache.kafka.common.serialization.StringSerializer"
+            retries => 3
+            retry_backoff_ms => 100
+            metadata_max_age_ms => 600000
+            batch_size => 200
+            send_buffer_bytes => 102400
+            client_id => "logstash"
+        }
 	}
 }
