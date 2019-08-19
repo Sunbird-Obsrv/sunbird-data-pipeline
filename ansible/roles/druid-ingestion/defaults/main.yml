@@ -7,9 +7,11 @@ druid_schema:
  - log_index_kafka
  - telemetry_feedback_index_kafka
  - error_index_kafka
+ - pipeline_metrics_index_kafka
 event_types:
  - telemetry-events
  - summary-events
  - telemetry-log-events
  - telemetry-feedback-events
  - telemetry-error-events
+ - pipeline-metrics
