@@ -186,7 +186,7 @@ secor_service_name:
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   pipeline-metrics-backup:
     consumer_group: "{{ env }}.pipeline_metrics"
-    base_path: "pipeline-metrics"
+    base_path: "data-pipeline-metrics"
     timestamp_key: "metricts"
     fallback_timestamp_key: "metricts"
     topic: "{{ env }}.pipeline_metrics"
