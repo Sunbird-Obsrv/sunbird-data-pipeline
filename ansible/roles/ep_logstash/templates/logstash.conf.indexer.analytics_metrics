@@ -14,7 +14,7 @@ input {
 filter {
 	if [type] == 'analytics_metrics' {
 		ruby {
-			code => "event.get('success').to_i == 1 ? event.get('success') = 'true' : event.get('success') = 'false'"
+			code => "event.get('success').to_i == 1 ? event.set('is_success', 'true') : event.set('is_success', 'false')"
 		}
 	}
 }
