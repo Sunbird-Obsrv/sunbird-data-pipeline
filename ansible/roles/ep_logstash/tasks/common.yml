@@ -50,9 +50,18 @@
 - name: Copy logstash file
   template: 
      src: "logstash.conf{{ item }}"
-     dest: "{{ logstash_config_loc }}/logstash.conf{{ item }}"
+     dest: "{{ logstash_config_loc }}/logstash.conf{{ item }}.conf"
   become: yes
   with_items: "{{ logstash_conf }}"
+
+- name: Create mapping dir 
+  file: path={{logstash_home}}/mappings state=directory
+  become: yes  
+
+- name: Copy es mapping files
+  template: src=mapping/{{item}} dest={{ logstash_home }}/mappings/{{item}}
+  become: yes
+  with_items: "{{es_mapping_file}}"  
 
 - name: Creates symlink
   command: bash -lc "ln -s /lib/x86_64-linux-gnu/libcrypt.so.1 /usr/lib/x86_64-linux-gnu/libcrypt.so"
