@@ -3,7 +3,7 @@ input {
 		bootstrap_servers => "{{bootstrap_server}}"
 		topics => ["{{kafka_topic_prefix}}.analytics_metrics"]
 		group_id => "{{kafka_topic_prefix}}.analytics.metrics"
-		auto_offset_reset=>"latest"
+		auto_offset_reset => "latest"
 		codec => "json"
 		consumer_threads => 1
 		fetch_max_bytes => "1048576"
