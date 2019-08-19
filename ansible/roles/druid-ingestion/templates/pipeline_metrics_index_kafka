@@ -11,6 +11,10 @@
           "fields": [
             {
               "type": "root",
+              "name": "job-name"
+            },
+            {
+              "type": "root",
               "name": "success-message-count"
             },
             {
@@ -24,7 +28,7 @@
             {
               "type": "root",
               "name": "skipped-message-count"
-            }
+            },
             {
               "type": "root",
               "name": "consumer-lag"
@@ -106,6 +110,10 @@
         "dimensionsSpec": {
           "dimensions": [
             {
+              "type": "string",
+              "name": "job-name"
+            },
+            {
               "type": "long",
               "name": "success-message-count"
             },
@@ -120,7 +128,7 @@
             {
               "type": "long",
               "name": "skipped-message-count"
-            }
+            },
             {
               "type": "long",
               "name": "consumer-lag"
@@ -196,7 +204,7 @@
             {
               "type": "long",
               "name": "duplicate-event-count"
-            }                       
+            }
           ],
           "dimensionsExclusions": []
         },
