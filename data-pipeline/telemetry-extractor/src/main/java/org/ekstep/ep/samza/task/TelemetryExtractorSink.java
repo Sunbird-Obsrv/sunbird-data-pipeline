@@ -14,12 +14,18 @@ public class TelemetryExtractorSink extends BaseSink {
 	}
 	
 	public void toSuccessTopic(String message) {
+		metrics.incSuccessCounter();
 		toTopic(config.successTopic(), null, message);
 	}
 	
 	
 	public void toErrorTopic(String message) {
 		metrics.incErrorCounter();
+		toTopic(config.errorTopic(), null, message);
+	}
+
+	public void sinkBatchErrorEvents(String message) {
+		metrics.incBatchErrorCounter();
 		toTopic(config.errorTopic(), null, message);
 	}
 
