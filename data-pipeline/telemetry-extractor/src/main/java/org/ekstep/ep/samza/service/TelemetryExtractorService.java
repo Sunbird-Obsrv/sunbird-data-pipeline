@@ -60,8 +60,8 @@ public class TelemetryExtractorService {
 				}
 			}
 
-
 			List<Map<String, Object>> events = (List<Map<String, Object>>) batchEvent.get("events");
+
 			for (Map<String, Object> event : events) {
 				String json = "";
 				try {
@@ -86,11 +86,11 @@ public class TelemetryExtractorService {
 					sink.toErrorTopic(json);
 				}
 			}
-			metrics.incSuccessCounter();
+			metrics.incBatchSuccessCounter();
 			generateAuditEvent(batchEvent, syncts, syncTimestamp, sink, defaultChannel);
 		} catch (Exception ex) {
 			LOGGER.error("", "Failed to extract the event batch: ", ex);
-			sink.toErrorTopic(message);
+			sink.sinkBatchErrorEvents(message);
 		}
 
 	}

@@ -31,6 +31,22 @@
             },
             {
               "type": "root",
+              "name": "batch-success-count"
+            },
+            {
+              "type": "root",
+              "name": "batch-error-count"
+            },
+            {
+              "type": "root",
+              "name": "primary-route-success-count"
+            },
+            {
+              "type": "root",
+              "name": "secondary-route-success-count"
+            },
+            {
+              "type": "root",
               "name": "consumer-lag"
             },
             {
@@ -124,6 +140,22 @@
             {
               "type": "long",
               "name": "error-message-count"
+            },
+            {
+              "type": "long",
+              "name": "batch-success-count"
+            },
+            {
+              "type": "long",
+              "name": "batch-error-count"
+            },
+            {
+              "type": "long",
+              "name": "primary-route-success-count"
+            },
+            {
+              "type": "long",
+              "name": "secondary-route-success-count"
             },
             {
               "type": "long",
