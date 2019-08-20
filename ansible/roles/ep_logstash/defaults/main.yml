@@ -8,13 +8,15 @@ logstash_conf:
  - ".indexer.pipeline_metrics"
  - ".indexer.analytics_metrics"
  - ".indexer.log_error.events"
+ - ".indexer.device_api_metrics"
 
 es_mapping_file:
  - "telemetry_mapping.json" 
+ - "crash-log-mapping.json"
 kafka_topic_prefix: "{{ env }}"
 error_es_index: "telemetry-error-events"
-log_es_index: "telemetry-log-events" 
-telemetry_mapping_file_path: "{{ logstash_home }}/mappings/telemetry_mapping.json" 
+log_es_index: "telemetry-log-events"
+telemetry_mapping_file_path: "{{ logstash_home }}/mappings/telemetry_mapping.json"
 apt_cache_valid_time: 3600
 
 zookeepers: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
@@ -38,4 +40,6 @@ api_job_log_path: "/mount/data/analytics/logs/api-service/joblog.log"
 # client API error log
 crash_log_path: "/mount/data/analytics/logs/api-service/crash-logs.log"
 logger_es: "{{ groups['log-es']|join(':9200,') }}"
-logstash_version: '6.x'  
+logstash_version: '6.x'
+crash_log_mapping_file_path: "{{ logstash_home }}/mappings/crash-log-mapping.json"
+crash_log_index : "crash-logs"
