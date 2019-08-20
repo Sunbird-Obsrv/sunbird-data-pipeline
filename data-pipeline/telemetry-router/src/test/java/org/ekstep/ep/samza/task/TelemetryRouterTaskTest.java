@@ -1,21 +1,15 @@
 package org.ekstep.ep.samza.task;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.stub;
-import static org.mockito.Mockito.verify;
-
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import org.apache.samza.Partition;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
+import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
@@ -28,13 +22,20 @@ import org.mockito.Mockito;
 import java.lang.reflect.Type;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.*;
+
 public class TelemetryRouterTaskTest {
 
 	private static final String PRIMARY_TOPIC = "telemetry.sink";
 	private static final String FAILED_TOPIC = "telemetry.failed";
 	private static final String SECONDARY_TOPIC = "telemetry.log";
 	private static final String MALFORMED_TOPIC = "telemetry.malformed";
-	
+	private static final String AUDIT_TOPIC = "telemetry.audit";
+
 	private MessageCollector collectorMock;
 	private TaskContext contextMock;
 	private MetricsRegistry metricsRegistry;
@@ -57,10 +58,14 @@ public class TelemetryRouterTaskTest {
 		stub(configMock.get("router.events.primary.route.topic", PRIMARY_TOPIC)).toReturn(PRIMARY_TOPIC);
 		stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
 		stub(configMock.get("router.events.secondary.route.topic", SECONDARY_TOPIC)).toReturn(SECONDARY_TOPIC);
+		stub(configMock.get("router.events.audit.route.topic", AUDIT_TOPIC)).toReturn(AUDIT_TOPIC);
 		stub(configMock.get("output.malformed.topic.name", MALFORMED_TOPIC)).toReturn(MALFORMED_TOPIC);
 
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
+		stub(envelopeMock.getOffset()).toReturn("2");
+		stub(envelopeMock.getSystemStreamPartition())
+				.toReturn(new SystemStreamPartition("kafka", "input.topic", new Partition(1)));
 
 //		telemetryRouterTask = new TelemetryRouterTask(configMock, contextMock);
 	}
@@ -70,46 +75,76 @@ public class TelemetryRouterTaskTest {
 
 		stub(configMock.get("router.events.secondary.route.events", "LOG,ERROR")).toReturn("LOG");
 		telemetryRouterTask = new TelemetryRouterTask(configMock, contextMock);
-		
+
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.LOG_EVENT);
 		telemetryRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SECONDARY_TOPIC)));
 	}
-	
+
 	@Test
 	public void shouldSendERROREventToPrimaryRoute() throws Exception {
 
 		stub(configMock.get("router.events.secondary.route.events", "LOG,ERROR")).toReturn("LOG");
 		telemetryRouterTask = new TelemetryRouterTask(configMock, contextMock);
-		
+
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.ERROR_EVENT);
 		telemetryRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), PRIMARY_TOPIC)));
-		
+
 	}
-	
+
 	@Test
 	public void shouldSendERROREventToSecondaryRoute() throws Exception {
 
 		stub(configMock.get("router.events.secondary.route.events", "LOG,ERROR")).toReturn("LOG,ERROR");
 		telemetryRouterTask = new TelemetryRouterTask(configMock, contextMock);
-		
+
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.ERROR_EVENT);
 		telemetryRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SECONDARY_TOPIC)));
-		
+
 	}
-	
+
 	@Test
 	public void shouldSendSTARTEventToPrimaryRoute() throws Exception {
 
 		stub(configMock.get("router.events.secondary.route.events", "LOG,ERROR")).toReturn("LOG");
 		telemetryRouterTask = new TelemetryRouterTask(configMock, contextMock);
-		
+
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.START_EVENT);
 		telemetryRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), PRIMARY_TOPIC)));
-		
+
+	}
+
+	@Test
+	public void shouldSendAUDITEventToAuditRoute() throws Exception {
+
+		stub(configMock.get("router.events.secondary.route.events", "LOG,ERROR")).toReturn("LOG");
+		telemetryRouterTask = new TelemetryRouterTask(configMock, contextMock);
+
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.AUDIT_EVENT);
+		telemetryRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
+
+		verify(collectorMock, times(2)).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+			int invocation = 0;
+
+			@Override
+			public boolean matches(Object o) {
+				invocation = invocation + 1;
+				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+				SystemStream systemStream = outgoingMessageEnvelope.getSystemStream();
+				if (invocation == 1) {
+					assertEquals("kafka", systemStream.getSystem());
+					assertEquals(PRIMARY_TOPIC, systemStream.getStream());
+				}
+				if (invocation == 2) {
+					assertEquals("kafka", systemStream.getSystem());
+					assertEquals(AUDIT_TOPIC, systemStream.getStream());
+				}
+				return true;
+			}
+		}));
 	}
 
 	@Test
@@ -118,7 +153,8 @@ public class TelemetryRouterTaskTest {
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.START_EVENT);
 		telemetryRouterTask = new TelemetryRouterTask(configMock, contextMock);
 		telemetryRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
-		Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+		Type mapType = new TypeToken<Map<String, Object>>() {
+		}.getType();
 		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
 			@Override
 			public boolean matches(Object o) {
@@ -157,6 +193,7 @@ public class TelemetryRouterTaskTest {
 				SystemStream systemStream = outgoingMessageEnvelope.getSystemStream();
 				assertEquals("kafka", systemStream.getSystem());
 				assertEquals(stream, systemStream.getStream());
+
 				return true;
 			}
 		};

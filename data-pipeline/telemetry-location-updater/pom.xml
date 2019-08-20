@@ -17,11 +17,11 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>telemetry-location-updater</artifactId>
-    <version>0.0.8</version>
+    <version>0.2.1</version>
     <packaging>jar</packaging>
-    <name>Telemetry Location Updater</name>
+    <name>TelemetryLocationUpdater</name>
     <description>
-        Updates State and District/City information for all telemetry events
+        Updates State District/City  and device information for all telemetry events
     </description>
 
     <dependencies>
@@ -32,39 +32,24 @@
         </dependency>
         <dependency>
             <groupId>org.apache.samza</groupId>
-            <artifactId>samza-core_2.10</artifactId>
+            <artifactId>samza-log4j</artifactId>
             <version>${samza.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.samza</groupId>
-            <artifactId>samza-log4j</artifactId>
-            <version>${samza.version}</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.15</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.15</version>
         </dependency>
         <dependency>
             <groupId>org.apache.samza</groupId>
             <artifactId>samza-shell</artifactId>
             <classifier>dist</classifier>
             <type>tgz</type>
-            <version>${samza.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.samza</groupId>
-            <artifactId>samza-yarn_2.10</artifactId>
-            <version>${samza.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.samza</groupId>
-            <artifactId>samza-kv_2.10</artifactId>
-            <version>${samza.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.samza</groupId>
-            <artifactId>samza-kv-rocksdb_2.10</artifactId>
-            <version>${samza.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.samza</groupId>
-            <artifactId>samza-kafka_2.10</artifactId>
             <version>${samza.version}</version>
         </dependency>
         <dependency>
@@ -76,16 +61,6 @@
             <groupId>org.schwering</groupId>
             <artifactId>irclib</artifactId>
             <version>1.10</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.2</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
@@ -183,6 +158,39 @@
                         <goals>
                             <goal>single</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.20</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.4</version>
+                <configuration>
+                    <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
+                    <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>jacoco-initialize</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>post-unit-test</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/coverage-reports/jacoco-ut</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

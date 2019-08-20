@@ -1,47 +1,110 @@
 input {
 	kafka {
-			zk_connect => "{{zookeepers}}"
-	        group_id => "{{kafka_topic_prefix}}pipeline.metrics"
-	        topic_id => "{{kafka_topic_prefix}}pipeline_metrics"
-	        reset_beginning => false
-	        consumer_threads => 1
-	        queue_size => 20
-	        rebalance_max_retries => 4
-	        rebalance_backoff_ms => 2000
-	        consumer_timeout_ms => -1
-	        consumer_restart_on_error => true
-	        consumer_restart_sleep_ms => 0
-	        decorate_events => false
-	        consumer_id => nil
-	        fetch_message_max_bytes => 1048576
-	        type => "pipeline_metrics"
-    }
+		bootstrap_servers => "{{bootstrap_server}}"
+		topics => ["{{kafka_topic_prefix}}.pipeline_metrics"]
+		group_id => "{{kafka_topic_prefix}}.pipeline.metrics"
+		auto_offset_reset => "latest"
+		codec => "json"
+		consumer_threads => 1
+		fetch_max_bytes => "1048576"
+		type => "pipeline_metrics"
+	}
 }
 
 output {
 	if [type] == 'pipeline_metrics' { 
 		influxdb {
-			    allow_time_override => true
-			    send_as_tags => ["env","job_name"]
-			    data_points => { 
-			    	"env" => "{{env}}"
-			    	"job_name" => "%{[job-name]}"
-			    	"success" => "%{[success-message-count]}"
-			    	"failed" => "%{[failed-message-count]}"
-			    	"error" => "%{[error-message-count]}"
-			    	"skipped" => "%{[skipped-message-count]}"
-			    }
-			    coerce_values => {
-		      		"success" => "integer"
-		      		"failed" => "integer"
-		      		"error" => "integer"
-		      		"skipped" => "integer"
-				}
-			    host => "{{influxdb_host}}"
-			    port => "{{influxdb_port}}"
-			    db => "{{influxdb_db_source}}"
-			    measurement => "pipeline_metrics"
-			    retention_policy => "autogen"
+			allow_time_override => true
+			send_as_tags => ["env","job_name"]
+			data_points => { 
+				"env" => "{{env}}"
+				"job_name" => "%{[job-name]}"
+				"success" => "%{[success-message-count]}"
+				"failed" => "%{[failed-message-count]}"
+				"error" => "%{[error-message-count]}"
+				"skipped" => "%{[skipped-message-count]}"
+				"batch-success" => "%{[batch-success-count]}"
+				"batch-error" => "%{[batch-error-count]}"
+				"primary-route-success" => "%{[primary-route-success-count]}"
+				"secondary-route-success" => "%{[secondary-route-success-count]}"
+				"partition" => "%{[partition]}"
+				"consumer_lag" => "%{[consumer-lag]}"
+				"cache_hit" => "%{[cache-hit-count]}"
+				"cache_miss" => "%{[cache-miss-count]}"
+				"cache_empty_values" => "%{[cache-empty-values-count]}"
+				"processed" => "%{[processed-message-count]}"
+				"unprocessed" => "%{[unprocessed-message-count]}"
+				"db_hit" => "%{[db-hit-count]}"
+				"db_error" => "%{[db-error-count]}"
+				"device_cache_hit" => "%{[device-cache-hit-count]}"
+				"device_db_hit" => "%{[device-db-hit-count]}"
+				"device_db_error" => "%{[device-db-error-count]}"
+				"user_cache_hit" => "%{[user-cache-hit-count]}"
+				"user_db_error" => "%{[user-db-error-count]}"
+				"location_db_hit" => "%{[location-db-hit-count]}"
+				"location_db_success" => "%{[location-db-success-count]}"
+				"location_db_miss" => "%{[location-db-miss-count]}"
+				"location_db_error" => "%{[location-db-error-count]}"
+				"device_db_save_success" => "%{[device-db-save-success-count]}"
+				"device_db_save_error" => "%{[device-db-save-error-count]}"
+				"api_calls" => "%{[api-calls]}"
+				"db_success" => "%{[db-success-count]}"
+				"total_count" => "%{[total-count]}"
+				"db_save_success" => "%{[db-save-success-count]}"
+				"db_save_error" => "%{[db-save-error-count]}"
+				"db_miss" => "%{[db-miss-count]}"
+				"cache_expired" => "%{[cache-expired-count]}"
+				"cache_error" => "%{[cache-error-count]}"
+				"user_db_hit" => "%{[user-db-hit-count]}"
+				"duplicate" => "%{[duplicate-event-count]}"
+				"expired_event" => "%{[expired-event-count]}"
+			}   
+			coerce_values => {
+				"success" => "float"
+				"failed" => "float"
+				"error" => "float"
+				"skipped" => "float"
+				"batch-success" => "float"
+				"batch-error" => "float"
+				"primary-route-success" => "float"
+				"secondary-route-success" => "float"
+				"partition" => "float"
+				"consumer_lag" => "float"
+				"cache_hit" => "float"
+				"cache_miss" => "float"
+				"cache_empty_values" => "float"
+				"processed" => "float"
+				"unprocessed" => "float"
+				"db_hit" => "float"
+				"db_error" => "float"
+				"device_cache_hit" => "float"
+				"device_db_hit" => "float"
+				"device_db_error" => "float"
+				"user_cache_hit" => "float"
+				"user_db_hit" => "float"
+				"user_db_error" => "float"
+				"location_db_hit" => "float"
+				"location_db_success" => "float"
+				"location_db_miss" => "float"
+				"location_db_error" => "float"
+				"device_db_save_success" => "float"
+				"device_db_save_error" => "float"
+				"api_calls" => "float"
+				"db_success" => "float"
+				"total_count" => "float"
+				"db_save_success" => "float"
+				"db_save_error" => "float"
+				"db_miss" => "float"
+				"cache_expired" => "float"
+				"cache_error" => "float"
+				"expired_event" => "float"
+				"duplicate" => "float"
+			}
+			host => "{{influxdb_host}}"
+			port => "{{influxdb_port}}"
+			db => "{{influxdb_db_source}}"
+			measurement => "pipeline_metrics"
+			retention_policy => "autogen"
 		}
 	}
 }

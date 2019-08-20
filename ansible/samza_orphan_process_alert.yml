@@ -1,0 +1,12 @@
+---
+- hosts: yarn-slave
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml']
+  tasks:
+     - command: ./orphan_process_monitor.sh {{ SGUSER }} {{ SGPASS }}
+       args:
+        chdir: /home/hduser
+       become: yes
+       register: out
+ 
+     - debug: var=out.stdout_lines

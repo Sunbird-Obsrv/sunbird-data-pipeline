@@ -1,0 +1,77 @@
+{
+  "type": [
+    "object",
+    "array"
+  ],
+  "properties": {
+    "channel": {
+      "id": "http://api.sunbird.org/telemetry/dialcodedata/channel",
+      "type": "string"
+    },
+    "identifier": {
+      "id": "http://api.sunbird.org/telemetry/dialcodedata/identifier",
+      "type": "string"
+    },
+    "batchcode": {
+      "id": "http://api.sunbird.org/telemetry/dialcodedata/batchcode",
+      "type": "string"
+    },
+    "publisher": {
+      "id": "http://api.sunbird.org/telemetry/dialcodedata/publisher",
+      "type": "string"
+    },
+    "generatedon": {
+      "id": "http://api.sunbird.org/telemetry/dialcodedata/generatedon",
+      "type": "number"
+    },
+    "publishedon": {
+      "id": "http://api.sunbird.org/telemetry/dialcodedata/publishedon",
+      "type": "number"
+    },
+    "status": {
+      "id": "http://api.sunbird.org/telemetry/contentdata/status",
+      "type": "string"
+    },
+    "objecttype": {
+      "id": "http://api.sunbird.org/telemetry/contentdata/objecttype",
+      "type": "string"
+    }
+  },
+  "items": {
+    "type": "object",
+    "properties": {
+      "channel": {
+        "id": "http://api.sunbird.org/telemetry/dialcodedata/channel",
+        "type": "string"
+      },
+      "identifier": {
+        "id": "http://api.sunbird.org/telemetry/dialcodedata/identifier",
+        "type": "string"
+      },
+      "batchcode": {
+        "id": "http://api.sunbird.org/telemetry/dialcodedata/batchcode",
+        "type": "string"
+      },
+      "publisher": {
+        "id": "http://api.sunbird.org/telemetry/dialcodedata/publisher",
+        "type": "string"
+      },
+      "generatedon": {
+        "id": "http://api.sunbird.org/telemetry/dialcodedata/generatedon",
+        "type": "number"
+      },
+      "publishedon": {
+        "id": "http://api.sunbird.org/telemetry/dialcodedata/publishedon",
+        "type": "number"
+      },
+      "status": {
+        "id": "http://api.sunbird.org/telemetry/contentdata/status",
+        "type": "string"
+      },
+      "objecttype": {
+        "id": "http://api.sunbird.org/telemetry/contentdata/objecttype",
+        "type": "string"
+      }
+    }
+  }
+}

@@ -44,6 +44,10 @@
               "id": "http://api.ekstep.org/telemetry/edata/pageid",
               "type": "string"
             },
+            "duration": {
+              "id": "http://api.ekstep.org/telemetry/edata/duration",
+              "type": "number"
+             },
             "uri": {
               "id": "http://api.ekstep.org/telemetry/edata/uri",
               "type": "string"

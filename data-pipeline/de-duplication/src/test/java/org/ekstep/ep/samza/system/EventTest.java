@@ -16,7 +16,7 @@ public class EventTest {
     public void shouldReturnChecksumIfPresent(){
 
         Event event = new Event(EventFixture.EventWithChecksumMap());
-        Assert.assertEquals("22e1430f2e5f339230dbf9595b060008", (String) event.getChecksum());
+        Assert.assertEquals("INTERACT:fd63ff6bd0eedf05cf57c0058588ae69", (String) event.getChecksum());
     }
 
     @Test

@@ -3,6 +3,9 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DeDuplicationConfig {
 
     private final String JOB_NAME = "DeDuplication";
@@ -12,6 +15,9 @@ public class DeDuplicationConfig {
     private String malformedTopic;
     private String defaultChannel;
     private final String metricsTopic;
+    private final int dupStore;
+    private int expirySeconds;
+    private List<String> includedProducerIds;
 
 
     public DeDuplicationConfig(Config config) {
@@ -21,6 +27,14 @@ public class DeDuplicationConfig {
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
         metricsTopic = config.get("output.metrics.topic.name", "pipeline_metrics");
         defaultChannel = config.get("default.channel", "org.sunbird");
+        dupStore = config.getInt("redis.database.duplicationstore.id", 7);
+        expirySeconds = config.getInt("redis.database.key.expiry.seconds", 432000);
+        if (!config.get("dedup.producer.include.ids", "").isEmpty()) {
+            includedProducerIds = config.getList("dedup.producer.include.ids", new ArrayList<>());
+        } else {
+            includedProducerIds = new ArrayList<>();
+        }
+
     }
 
     public String successTopic() {
@@ -50,4 +64,17 @@ public class DeDuplicationConfig {
     public String jobName() {
         return JOB_NAME;
     }
+
+    public int dupStore() {
+        return dupStore;
+    }
+
+    public int expirySeconds() {
+        return expirySeconds;
+    }
+
+    public List<String> inclusiveProducerIds() {
+        return includedProducerIds;
+    }
+
 }

@@ -23,15 +23,12 @@ import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.InitableTask;
-import org.apache.samza.task.MessageCollector;
-import org.apache.samza.task.StreamTask;
-import org.apache.samza.task.TaskContext;
-import org.apache.samza.task.TaskCoordinator;
-import org.apache.samza.task.WindowableTask;
+import org.apache.samza.task.*;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.TelemetryExtractorService;
+import org.ekstep.ep.samza.util.DeDupEngine;
+import org.ekstep.ep.samza.util.RedisConnect;
 
 public class TelemetryExtractorTask implements StreamTask, InitableTask, WindowableTask {
 
@@ -40,8 +37,8 @@ public class TelemetryExtractorTask implements StreamTask, InitableTask, Windowa
 	private TelemetryExtractorService service;
 	private JobMetrics metrics;
 
-	public TelemetryExtractorTask(Config config, TaskContext context) {
-		init(config, context);
+	public TelemetryExtractorTask(Config config, TaskContext context, DeDupEngine deDupEngine) {
+		init(config, context, deDupEngine);
 	}
 
 	public TelemetryExtractorTask() {
@@ -50,9 +47,17 @@ public class TelemetryExtractorTask implements StreamTask, InitableTask, Windowa
 
 	@Override
 	public void init(Config config, TaskContext context) {
+		init(config, context, null);
+	}
+
+
+	public void init(Config config, TaskContext context, DeDupEngine deDupEngine) {
 		this.config = new TelemetryExtractorConfig(config);
 		this.metrics = new JobMetrics(context, this.config.jobName());
-		this.service = new TelemetryExtractorService(this.config, this.metrics);
+		deDupEngine = deDupEngine == null ?
+				new DeDupEngine(new RedisConnect(config).getConnection(), this.config.dupStore(),
+						this.config.expirySeconds()) : deDupEngine;
+		this.service = new TelemetryExtractorService(this.config, this.metrics,deDupEngine);
 	}
 
 	@Override
@@ -61,13 +66,7 @@ public class TelemetryExtractorTask implements StreamTask, InitableTask, Windowa
 
 		String message = (String) envelope.getMessage();
 		TelemetryExtractorSink sink = new TelemetryExtractorSink(collector, metrics, config);
-
-		try {
-			service.process(message, sink);
-		} catch (Exception e) {
-			LOGGER.info("", "Failed to process events: " + e.getMessage());
-			sink.toErrorTopic(message);
-		}
+		service.process(message, sink);
 	}
 
 	@Override

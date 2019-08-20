@@ -20,7 +20,7 @@ success_text="success events count is 0"
 failed_text="failed count exceeded the threshold value i.e $threshold_value"
 
 ### Main script
-array=( TelemetryExtractor EsIndexer DeDuplication TelemetryValidator TelemetryLocationUpdater )
+array=( TelemetryExtractor DeDuplication TelemetryValidator TelemetryLocationUpdater )
 
 ### To get the success count and send the alert:
 

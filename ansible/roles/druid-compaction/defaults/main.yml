@@ -1,0 +1,4 @@
+weekday_compaction_window_lookback_days: 2
+weekend_compaction_window_lookback_days: 5
+druid_overlord_host: "{{groups['overlord'][0]}}"
+druid_overlord_port: 8090

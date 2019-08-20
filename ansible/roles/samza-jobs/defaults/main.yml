@@ -1,11 +1,7 @@
 ---
-samza_jobs_dir: /home/hduser/samza-jobs/{{env}}
-job_status_file: /home/hduser/samza-jobs/{{env}}/extract/job_status
+samza_jobs_dir: /home/hduser/samza-jobs/{{ env }}
+job_status_file: /home/hduser/samza-jobs/{{ env }}/extract/job_status
 yarn_path: /usr/local/hadoop/bin
-object_denormalization_additional_config_dir: /etc/samza-jobs/{{env}}
-object_denormalization_additional_config: "{{object_denormalization_additional_config_dir}}/object-denormalization-additional-config.json"
-es_router_additional_config: "{{object_denormalization_additional_config_dir}}/es-router-additional-config.json"
-es_router_additional_secondary_config: "{{object_denormalization_additional_config_dir}}/es-router-additional-secondary-config.json"
 lpdeploy: no
 dpdeploy: no
 hadoop_version: 2.7.2
@@ -19,9 +15,18 @@ telemetry_object_de_normalization_yarn_container_count: 1
 telemetry_es_indexer_yarn_container_count: 1
 telemetry_location_updater_yarn_container_count: 1
 events_router_yarn_container_count: 1
+denormalization_yarn_container_count: 1
+druid_events_validator_yarn_container_count: 1
+redis_updater_yarn_container_count: 1
+druidprocessor_yarn_container_count: 1
+
+# samza jobs checkpoint replication factor
+samza_checkpoint_replication_factor: 1
 
 max_iteration_count_for_samza_job: 2
-location_db_redis_key_expiry_seconds: 3600
+location_db_redis_key_expiry_seconds: 86400
+cache_unresolved_location_key_expiry_seconds: 3600
+redis_host: "{{ groups['redis'][0] }}"
 redis_port: 6379
 __yarn_port__: 8000
 delayInMilliSeconds: 60000
@@ -42,3 +47,15 @@ middleware_cassandra_user_table: user
 middleware_cassandra_location_table: location
 telemetry_extractor_consumer_fetch_max_bytes: 5242880
 telemetry_extractor_container_memory_mb: 1024
+telemetry_extractor_messages_fetch_threshold: 3000
+consumer_fetch_max_bytes: 1572864
+producer_max_request_size_bytes: 1572864
+
+dedup_include_env_producer_ids: ""
+
+content_metadata_fields: "name, objectType, contentType, mediaType, language, medium, subject, gradeLevel, mimeType, framework, board, status, pkgVersion, lastSubmittedOn, lastUpdatedOn, lastPublishedOn"
+user_metadata_fields: "usertype, grade, subject, language, state, district, usersignintype,userlogintype"
+dialcode_metadata_fields: "identifier, channel, batchcode, publisher, generated_on, published_on, status"
+
+user_signin_type_default : Anonymous
+user_login_type_default : NA

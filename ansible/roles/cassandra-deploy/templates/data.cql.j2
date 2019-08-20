@@ -8,6 +8,7 @@ CREATE KEYSPACE IF NOT EXISTS {{ cassandra.keyspace_prefix }}creation_metrics_db
   'replication_factor': '{{ cassandra.replication_factor }}'
 };
 
+
 CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}learner_db.learnersnapshot (
 	learner_id text,
 	m_time_spent double,
@@ -400,7 +401,6 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}device_db.device_conte
 
 CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}device_db.device_profile (
     device_id text,
-    channel text,
     first_access timestamp,
     last_access timestamp,
     total_ts double,
@@ -408,13 +408,16 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}device_db.device_profi
     avg_ts double,
     device_spec Map<text,text>,
     updated_date timestamp,
-    state text, 
-    state_code text, 
-    country text, 
-    country_code text, 
-    city text, 
+    state text,
+    state_code text,
+    country text,
+    country_code text,
+    state_custom text,
+    state_code_custom text,
+    district_custom text,
+    city text,
     uaspec Map<text,text>,
-    PRIMARY KEY (device_id, channel)
+    PRIMARY KEY (device_id)
 );
 
 CREATE KEYSPACE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db WITH replication = {
@@ -730,4 +733,22 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.workflow_u
 );
 
 ALTER TABLE {{ cassandra.keyspace_prefix }}device_db.device_profile
-ADD (state_custom text, state_code_custom text, district_custom text);
+ADD (fcm_token text, producer_id text);
+
+CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.experiment_definition (
+    exp_id text,
+    created_by text,
+    created_on timestamp,
+    criteria text,
+    exp_data text,
+    exp_description text,
+    exp_name text,
+    stats map<text, bigint>,
+    status text,
+    status_message text,
+    updated_by text,
+    updated_on timestamp,
+    PRIMARY KEY(exp_id)
+); 
+
+
