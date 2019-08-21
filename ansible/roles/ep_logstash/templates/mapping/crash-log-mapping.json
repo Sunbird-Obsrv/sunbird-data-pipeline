@@ -1,6 +1,6 @@
 {
-  "template": "logstash",
-  "index_patterns": "logstash-*",
+  "template": "crash-log",
+  "index_patterns": "crash-logs*",
   "settings": {
     "number_of_shards": 5
   },

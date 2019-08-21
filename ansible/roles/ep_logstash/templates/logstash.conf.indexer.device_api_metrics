@@ -44,7 +44,7 @@ output {
       elasticsearch {
         hosts => ["{{logger_es}}"]
         template => "{{crash_log_mapping_file_path}}"
-        template_name => "logstash"
+        template_name => "crash-log"
         index => "{{crash_log_index}}"
         manage_template => true
       }
