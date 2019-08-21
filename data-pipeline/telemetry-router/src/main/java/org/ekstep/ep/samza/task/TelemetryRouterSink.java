@@ -17,7 +17,7 @@ public class TelemetryRouterSink extends BaseSink {
 	public void toPrimaryRoute(Event event) {
 		event.setTimestamp();
 		toTopic(config.getPrimaryRouteTopic(), event.did(), event.getJson());
-		metrics.incSuccessCounter();
+		metrics.incPrimaryRouteSuccessCounter();
 	}
 
 	public void toErrorTopic(Event event, String errorMessage) {
@@ -33,7 +33,7 @@ public class TelemetryRouterSink extends BaseSink {
 
 	public void toSecondaryRoute(Event event) {
 		toTopic(config.getSecondaryRouteTopic(), event.did(), event.getJson());
-		metrics.incSuccessCounter();
+		metrics.incSecondaryRouteSuccessCounter();
 	}
 
 	public void toAuditRoute(Event event) {
