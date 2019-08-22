@@ -5,7 +5,7 @@
     "number_of_shards": 5
   },
   "mappings": {
-    "crash-logs": {
+    "logs": {
       "dynamic": false,
       "properties": {
         "context": {

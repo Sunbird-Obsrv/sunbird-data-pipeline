@@ -47,6 +47,7 @@ output {
         template_name => "crash-log"
         index => "{{crash_log_index}}"
         manage_template => true
+        document_type => "logs"
       }
   }
 }
