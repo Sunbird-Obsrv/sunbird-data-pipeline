@@ -1,0 +1,69 @@
+
+content_snapshot_path: "/tmp/content-snapshot/"
+content_snapshot_jar_path: "/Users/admin/Documents/sunbird-projects/sunbird-data-pipeline/druid/adhoc-jobs/target"
+redis:
+  host: "localhost"
+  port: "6379"
+  user:
+    index: "4"
+    source_key: "id"
+  content:
+    index: "5"
+    source_key: "identifier"
+    key_delimiter: ""
+  dialcode:
+    index: "6"
+    source_key: "identifier"
+    key_delimiter: ""
+  connection:
+    idle_max: 20
+    idle_min: 10
+    min_evict_idle_seconds: 120
+    time_evict_run_second: 300
+    max: 20
+  max_pipeline_size: "1000"
+  key_expiry_seconds: 3600
+
+elastic_search:
+  host: "localhost"
+  port: "9200"
+  content:
+    index: "compositesearch"
+    query: "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"status\":{\"query\":\"Live\"}}},{\"match\":{\"objectType\":{\"query\":\"Content\"}}}]}}}"
+  dialcode:
+    index: "dialcode"
+    query: "{\"query\":{\"match_all\":{}}}"
+  cloud:
+    index: "compositesearch"
+    query: "{\"query\":{\"match_all\":{}}}"
+  scroll_size: "1000"
+
+cloud_storage:
+  container: "telemetry-data-store"
+  object_key: "druid-content-snapshot/snapshot.txt"
+  provider: "azure"
+  account_name: ""
+  account_key: ""
+
+cassandra:
+  host: "localhost"
+  keyspace: "local"
+  user:
+    table: "user"
+  device_profile:
+    old_table: "device_profile"
+    new_table: "device_profile_temp"
+  spark_connection_host: "localhost"
+
+output_file_path: "/home/ops/tmp/compositeSearchBatchData"
+config_files: ["application","cassandraRedis","DeviceProfile","ESCloudUploader","ESContentIndexer","ESDialcodeIndexer"]
+script_files: ["DeviceProfileScripts.sh","RedisContentIndexer.sh","RedisDialcodeIndexer.sh","RedisUserDataIndexer.sh"]
+
+
+m
+
+
+
+
+
+

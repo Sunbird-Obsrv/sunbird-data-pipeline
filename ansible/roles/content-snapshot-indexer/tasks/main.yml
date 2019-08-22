@@ -1,0 +1,39 @@
+---
+- name: Create content-snapshot directory
+  file:
+    path: '{{ content_snapshot_path }}'
+    state: directory
+  become: yes
+
+- name: Create jars directory
+  file:
+    path: '{{ content_snapshot_path }}/jars'
+    state: directory
+  become: yes
+
+- name: Copy adhoc-jobs jar file
+  copy:
+    src: "{{ content_snapshot_jar_path }}/adhoc-jobs-1.0.jar"
+    dest: "{{ content_snapshot_path }}/jars/"
+
+- name: Create config directory
+  file:
+    path: '{{ content_snapshot_path }}/config'
+    state: directory
+  become: yes
+
+- name: Ensure copying all conf files from the template
+  template: src=conf/{{ item }}.j2 dest={{ content_snapshot_path }}/config/{{ item }}.conf mode=755
+  with_items: "{{ config_files }}"
+
+- name: Create scripts directory
+  file:
+    path: '{{ content_snapshot_path }}/scripts'
+    state: directory
+  become: yes
+
+- name: Ensure copying all conf files from the template
+  template: src=scripts/{{ item }} dest={{ content_snapshot_path }}/scripts/{{ item }} mode=755
+  with_items: "{{ script_files }}"
+
+

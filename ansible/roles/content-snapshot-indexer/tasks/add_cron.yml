@@ -1,0 +1,10 @@
+---
+- name: Copy empty.sh
+  copy: src=empty.sh dest=/empty.sh mode=755
+  sudo: yes
+  when: rerun | default(false) !=true
+
+- name: Add cron job
+  cron: name="Empty logstash.stdout" minute="0" job="/empty.sh"
+  sudo: yes
+  when: rerun | default(false) !=true

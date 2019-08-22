@@ -1,0 +1,6 @@
+- hosts: localhost
+  become: yes
+  #become_user: "{{analytics_user}}"
+  roles:
+  - content-snapshot-indexer
+  serial: 1
