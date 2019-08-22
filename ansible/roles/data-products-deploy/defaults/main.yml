@@ -18,7 +18,7 @@ sink_topic: "{{ env }}.telemetry.sink"
 job_manager_tmp_dir: "transient-data"
 channel: dev-test
 druid_broker_host: "{{groups['broker'][0]}}"
-analytics_job_list: '"wfs", "wfus", "workflow-usage-metrics", "portal-metrics", "dialcode-usage-summary", "dialcode-usage-updater", "etb-coverage-summary", "ds", "dpu", "data-exhaust", "monitor-job-summ"'
+analytics_job_list: '"wfs", "wfus", "workflow-usage-metrics", "portal-metrics", "dialcode-usage-summary", "dialcode-usage-updater", "etb-coverage-summary", "data-exhaust", "ds", "dpu", "monitor-job-summ"'
 analytics_jobs_count: 11
 
 cassandra_keyspace_prefix: '{{ env }}_'
