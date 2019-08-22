@@ -60,7 +60,7 @@ config_files: ["application","cassandraRedis","DeviceProfile","ESCloudUploader",
 script_files: ["DeviceProfileScripts.sh","RedisContentIndexer.sh","RedisDialcodeIndexer.sh","RedisUserDataIndexer.sh"]
 
 
-m
+
 
 
 
