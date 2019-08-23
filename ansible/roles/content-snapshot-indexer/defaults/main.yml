@@ -1,6 +1,8 @@
 
-content_snapshot_path: "/tmp/content-snapshot/"
-content_snapshot_jar_path: "/Users/admin/Documents/sunbird-projects/sunbird-data-pipeline/druid/adhoc-jobs/target"
+analytics_user: analytics
+analytics_group: analytics
+content_snapshot_path: "/home/content-snapshot/"
+content_snapshot_jar_path: ""
 redis:
   host: "localhost"
   port: "6379"
@@ -42,12 +44,12 @@ cloud_storage:
   container: "telemetry-data-store"
   object_key: "druid-content-snapshot/snapshot.txt"
   provider: "azure"
-  account_name: ""
-  account_key: ""
+  account_name: "{{ azure_storage_account }}"
+  account_key: "{{ azure_storage_secret }}"
 
 cassandra:
   host: "localhost"
-  keyspace: "local"
+  keyspace: '{{ env }}_'
   user:
     table: "user"
   device_profile:
