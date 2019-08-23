@@ -39,7 +39,7 @@ node() {
             stage('Archive artifacts'){
                 sh """
                         mkdir adhoc_jobs_artifacts
-                        cp adhoc-jobs/target/adhoc-jobs-1.0.jar adhoc_jobs_artifacts
+                        cp druid/adhoc-jobs/target/adhoc-jobs-1.0.jar adhoc_jobs_artifacts
                         zip -j adhoc_jobs_artifacts.zip:${artifact_version} adhoc_jobs_artifacts/*
                     """
                 archiveArtifacts artifacts: "adhoc_jobs_artifacts.zip:${artifact_version}", fingerprint: true, onlyIfSuccessful: true
@@ -55,3 +55,4 @@ node() {
     }
 
 }
+
