@@ -13,17 +13,20 @@
 
 - name: Copy adhoc-jobs jar file
   copy:
-    src: "{{ content_snapshot_jar_path }}/adhoc-jobs-1.0.jar"
+    src: "{{ content_snapshot_jar_path }}/{{ content_snapshot_jar_name }}"
     dest: "{{ content_snapshot_path }}/jars/"
 
 - name: Create config directory
   file:
-    path: '{{ content_snapshot_path }}/config'
+    path: "{{ content_snapshot_path }}/config"
     state: directory
   become: yes
 
-- name: Ensure copying all conf files from the template
-  template: src=conf/{{ item }}.j2 dest={{ content_snapshot_path }}/config/{{ item }}.conf mode=755
+- name: Ensure copying all conf files from the templates/conf folder
+  template:
+    src: "conf/{{ item }}.j2"
+    dest: "{{ content_snapshot_path }}/config/{{ item }}.conf"
+    mode: 755
   with_items: "{{ config_files }}"
 
 - name: Create scripts directory
@@ -32,8 +35,11 @@
     state: directory
   become: yes
 
-- name: Ensure copying all conf files from the template
-  template: src=scripts/{{ item }} dest={{ content_snapshot_path }}/scripts/{{ item }} mode=755
+- name: Ensure copying all script files from the templates/script dir
+  template:
+    src: "scripts/{{ item }}.j2"
+    dest: "{{ content_snapshot_path }}/scripts/{{ item }}.sh"
+    mode: 755
   with_items: "{{ script_files }}"
 
 

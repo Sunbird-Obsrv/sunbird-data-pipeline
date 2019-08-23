@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 set -e
 # Configurations
-druidCoordinatorIP=""
-dataSourceName="content-model-snapshot"
+druidCoordinatorIP="{{ druid.coordinator_host }}"
+dataSourceName="{{ druid.data_source }}"
 today=`date +%Y-%m-%d`
 interval="2019-01-01_$today"
 now=`date +%Y-%m-%d-%s`
 home=`echo $HOME`
-ingestionSpecFilePath="${home}/adhoc-jobs-1.0/druid_models/content_index_batch.json"
-jobJarPath="${home}/adhoc-jobs-1.0/adhoc-jobs-1.0.jar"
-jobConfPath="${home}/adhoc-jobs-1.0/resources/ESCloudUploader.conf"
+ingestionSpecFilePath="{{ druid.ingestion_spec_path }}"
+jobJarPath="{{ content_snapshot_jar_path }}{{ content_snapshot_jar_name }}"
+jobConfPath= "{{ job_config.es_cloud_uploader_path }}"
 
 # get list of segments from content model snapshot datasource
 bkpIFS="$IFS"

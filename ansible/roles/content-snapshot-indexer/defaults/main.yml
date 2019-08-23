@@ -1,10 +1,10 @@
-
 analytics_user: analytics
 analytics_group: analytics
-content_snapshot_path: "/home/content-snapshot/"
-content_snapshot_jar_path: ""
+content_snapshot_path: "/tmp/content-snapshot/"
+content_snapshot_jar_path: "/Users/admin/Documents/sunbird-projects/sunbird-data-pipeline/druid/adhoc-jobs/target/" # Add content snapshot jar file path.
+content_snapshot_jar_name: "adhoc-jobs-1.0.jar"
 redis:
-  host: "localhost"
+  host: "localhost" # Redis IP
   port: "6379"
   user:
     index: "4"
@@ -27,7 +27,7 @@ redis:
   key_expiry_seconds: 3600
 
 elastic_search:
-  host: "localhost"
+  host: "" # LP Elastic search IP Address
   port: "9200"
   content:
     index: "compositesearch"
@@ -41,25 +41,36 @@ elastic_search:
   scroll_size: "1000"
 
 cloud_storage:
-  container: "telemetry-data-store"
+  container: "telemetry-data-store" # Container is different in all env so override this.
   object_key: "druid-content-snapshot/snapshot.txt"
   provider: "azure"
   account_name: "{{ azure_storage_account }}"
   account_key: "{{ azure_storage_secret }}"
 
 cassandra:
-  host: "localhost"
+  host: "" ## LMS-Cassandra IP Address.
   keyspace: '{{ env }}_'
   user:
     table: "user"
   device_profile:
     old_table: "device_profile"
     new_table: "device_profile_temp"
-  spark_connection_host: "localhost"
+
+druid:
+  coordinator_host: ""
+  data_source: "content-model-snapshot"
+  ingestion_spec_path: "home/adhoc-jobs-1.0/druid_models/content_index_batch.json"
+
+job_config:
+  es_cloud_uploader_path: "{{ content_snapshot_path }}config/ESCloudUploader.conf"
+  es_content_indexer_path: "{{ content_snapshot_path }}config/ESContentIndexer.conf"
+  es_dialCode_indexer_path: "{{ content_snapshot_path }}config/ESDialcodeIndexer.conf"
+  device_profile_path: "{{ content_snapshot_path }}config/DeviceProfile.conf"
+  cassandra_redis_path: "{{ content_snapshot_path }}config/cassandraRedis.conf"
 
 output_file_path: "/home/ops/tmp/compositeSearchBatchData"
 config_files: ["application","cassandraRedis","DeviceProfile","ESCloudUploader","ESContentIndexer","ESDialcodeIndexer"]
-script_files: ["DeviceProfileScripts.sh","RedisContentIndexer.sh","RedisDialcodeIndexer.sh","RedisUserDataIndexer.sh"]
+script_files: ["DeviceProfileScripts","DruidContentIndexer","RedisContentIndexer","RedisDialcodeIndexer","RedisUserDataIndexer"]
 
 
 
