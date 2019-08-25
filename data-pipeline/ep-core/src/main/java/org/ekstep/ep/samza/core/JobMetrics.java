@@ -21,6 +21,10 @@ public class JobMetrics {
     private final Counter failedMessageCount;
     private final Counter skippedMessageCount;
     private final Counter errorMessageCount;
+    private final Counter batchSuccessCount;
+    private final Counter batchErrorCount;
+    private final Counter primaryRouteSuccessCount;
+    private final Counter secondaryRouteSuccessCount;
     private final Counter cacheHitCount;
     private final Counter cacheMissCount;
     private final Counter cacheExpiredCount;
@@ -50,6 +54,10 @@ public class JobMetrics {
         failedMessageCount = metricsRegistry.newCounter(getClass().getName(), "failed-message-count");
         skippedMessageCount = metricsRegistry.newCounter(getClass().getName(), "skipped-message-count");
         errorMessageCount = metricsRegistry.newCounter(getClass().getName(), "error-message-count");
+        batchSuccessCount = metricsRegistry.newCounter(getClass().getName(), "batch-success-count");
+        batchErrorCount = metricsRegistry.newCounter(getClass().getName(), "batch-error-count");
+        primaryRouteSuccessCount = metricsRegistry.newCounter(getClass().getName(), "primary-route-success-count");
+        secondaryRouteSuccessCount = metricsRegistry.newCounter(getClass().getName(), "secondary-route-success-count");
         cacheHitCount = metricsRegistry.newCounter(getClass().getName(), "cache-hit-count");
         cacheMissCount = metricsRegistry.newCounter(getClass().getName(), "cache-miss-count");
         cacheEmptyValuesCount = metricsRegistry.newCounter(getClass().getName(), "cache-empty-values-count");
@@ -76,6 +84,8 @@ public class JobMetrics {
         failedMessageCount.clear();
         skippedMessageCount.clear();
         errorMessageCount.clear();
+        batchSuccessCount.clear();
+        batchErrorCount.clear();
         cacheEmptyValuesCount.clear();
         cacheHitCount.clear();
         cacheMissCount.clear();
@@ -109,6 +119,22 @@ public class JobMetrics {
 
     public void incErrorCounter() {
         errorMessageCount.inc();
+    }
+
+    public void incBatchSuccessCounter() {
+        batchSuccessCount.inc();
+    }
+
+    public void incBatchErrorCounter() {
+        batchErrorCount.inc();
+    }
+
+    public void incPrimaryRouteSuccessCounter() {
+        primaryRouteSuccessCount.inc();
+    }
+
+    public void incSecondaryRouteSuccessCounter() {
+        secondaryRouteSuccessCount.inc();
     }
 
     public void incDuplicateCounter() {
@@ -209,6 +235,10 @@ public class JobMetrics {
         metricsEvent.put("success-message-count", successMessageCount.getCount());
         metricsEvent.put("failed-message-count", failedMessageCount.getCount());
         metricsEvent.put("error-message-count", errorMessageCount.getCount());
+        metricsEvent.put("batch-success-count", batchSuccessCount.getCount());
+        metricsEvent.put("batch-error-count", batchErrorCount.getCount());
+        metricsEvent.put("primary-route-success-count", primaryRouteSuccessCount.getCount());
+        metricsEvent.put("secondary-route-success-count", secondaryRouteSuccessCount.getCount());
         metricsEvent.put("skipped-message-count", skippedMessageCount.getCount());
         metricsEvent.put("consumer-lag",
                 consumerLag(((MetricsRegistryMap) context.getSamzaContainerContext().metricsRegistry).metrics()));

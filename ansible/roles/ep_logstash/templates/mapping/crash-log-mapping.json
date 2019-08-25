@@ -1,0 +1,83 @@
+{
+  "template": "crash-log",
+  "index_patterns": "crash-logs*",
+  "settings": {
+    "number_of_shards": 5
+  },
+  "mappings": {
+    "logs": {
+      "dynamic": false,
+      "properties": {
+        "context": {
+          "properties": {
+            "did": {
+              "type": "keyword"
+            },
+            "dspec": {
+              "properties": {
+                "os": {
+                  "type": "keyword"
+                },
+                "make": {
+                  "type": "keyword"
+                },
+                "mem": {
+                  "type": "double"
+                },
+                "idisk": {
+                  "type": "double"
+                },
+                "edisk": {
+                  "type": "double"
+                },
+                "scrn": {
+                  "type": "double"
+                },
+                "camera": {
+                  "type": "keyword"
+                },
+                "cpu": {
+                  "type": "keyword"
+                },
+                "sims": {
+                  "type": "keyword"
+                }
+              }
+            }
+          }
+        },
+        "pdata": {
+          "properties": {
+            "id": {
+              "type": "keyword"
+            },
+            "ver": {
+              "type": "keyword"
+            },
+            "pid": {
+              "type": "keyword"
+            }
+          }
+        },
+        "logs": {
+          "type": "nested",
+          "properties": {
+            "ts": {
+              "format": "strict_date_optional_time||epoch_millis",
+              "type": "date"
+            },
+            "log": {
+              "type": "keyword"
+            },
+            "appver": {
+              "type": "keyword"
+            },
+            "pageid": {
+              "type": "keyword"
+            }
+          }
+        }
+      }
+    }
+  }
+}

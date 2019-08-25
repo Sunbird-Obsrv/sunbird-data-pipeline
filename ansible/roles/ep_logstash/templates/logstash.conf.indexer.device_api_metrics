@@ -13,6 +13,7 @@ input {
     }
     file {
         path => "{{crash_log_path}}"
+        codec => "json"
         start_position => "end"
         sincedb_write_interval => 10
         type => "crash_logs"
@@ -42,6 +43,11 @@ output {
   if [type] == "crash_logs" {
       elasticsearch {
         hosts => ["{{logger_es}}"]
+        template => "{{crash_log_mapping_file_path}}"
+        template_name => "crash-log"
+        index => "{{crash_log_index}}"
+        manage_template => true
+        document_type => "logs"
       }
   }
 }
