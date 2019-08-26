@@ -18,8 +18,8 @@ sink_topic: "{{ env }}.telemetry.sink"
 job_manager_tmp_dir: "transient-data"
 channel: dev-test
 druid_broker_host: "{{groups['broker'][0]}}"
-analytics_job_list: '"wfs", "wfus", "workflow-usage-metrics", "portal-metrics", "dialcode-usage-summary", "dialcode-usage-updater", "etb-coverage-summary", "data-exhaust", "ds", "dpu", "monitor-job-summ"'
-analytics_jobs_count: 11
+analytics_job_list: '"wfs", "wfus", "workflow-usage-metrics", "portal-metrics", "dialcode-usage-summary", "dialcode-usage-updater", "etb-coverage-summary", "data-exhaust", "ds", "dpu", "pipeline-failed-events-audit", "pipeline-druid-events-audit", "pipeline-audit" ,"monitor-job-summ"'
+analytics_jobs_count: 14
 
 cassandra_keyspace_prefix: '{{ env }}_'
 dp_dispatch_bucket_name: ekstep-dev-data-store
