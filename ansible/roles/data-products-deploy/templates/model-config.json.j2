@@ -2449,9 +2449,11 @@
     },
     "output": [
       {
-        "to": "console",
+        "to": "slack",
         "params": {
-          "printEvent": false
+          "attachments": "true",
+          "channel": "{{ data_exhaust_Channel }}",
+          "userName": "Pipeline Audit"
         }
       }
     ]
@@ -2468,9 +2470,11 @@
      },
      "output": [
        {
-         "to": "console",
+         "to": "slack",
          "params": {
-           "printEvent": false
+            "attachments": "true",
+            "channel": "{{ data_exhaust_Channel }}",
+            "userName": "Pipeline Audit"
          }
        }
      ]
@@ -2487,10 +2491,12 @@
     },
     "output": [
       {
-        "to": "console",
-        "params": {
-          "printEvent": false
-        }
+       "to": "slack",
+       "params": {
+          "attachments": "true",
+          "channel": "{{ data_exhaust_Channel }}",
+          "userName": "Pipeline Audit"
+       }
       }
     ]
   }
