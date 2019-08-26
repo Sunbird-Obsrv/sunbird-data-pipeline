@@ -159,3 +159,21 @@ lp.system.update.base.url="{{lp_url}}/system/v3/content/update"
 user.search.api.url="http://{{swarm_manager_lb_ip}}:9000/private/user/v1/search"
 user.search.limit="10000"
 
+# pipeline auditing
+druid.pipeline_metrics.audit.query="{\"query\":\"SELECT \\\"job-name\\\", SUM(\\\"success-message-count\\\") AS \\\"success-message-count\\\", SUM(\\\"failed-message-count\\\") AS \\\"failed-message-count\\\", SUM(\\\"duplicate-event-count\\\") AS \\\"duplicate-event-count\\\", SUM(\\\"batch-success-count\\\") AS \\\"batch-success-count\\\", SUM(\\\"batch-error-count\\\") AS \\\"batch-error-count\\\", SUM(\\\"primary-route-success-count\\\") AS \\\"primary-route-success-count\\\", SUM(\\\"secondary-route-success-count\\\") AS \\\"secondary-route-success-count\\\" FROM \\\"druid\\\".\\\"pipeline-metrics\\\" WHERE \\\"job-name\\\" IN (%s) AND \\\"__time\\\" BETWEEN TIMESTAMP '%s' AND TIMESTAMP '%s' GROUP BY \\\"job-name\\\" \"}"
+druid.telemetryDatasource.count.query="{ \"query\": \"SELECT COUNT(*) AS \\\"total\\\" FROM \\\"druid\\\".\\\"telemetry-events\\\" WHERE TIME_FORMAT(MILLIS_TO_TIMESTAMP(\\\"syncts\\\"), 'yyyy-MM-dd HH:mm:ss.SSS', 'Asia/Kolkata') BETWEEN TIMESTAMP '%s' AND '%s' AND  \\\"__time\\\" BETWEEN TIMESTAMP '%s' AND TIMESTAMP '%s'\" }"
+druid.summaryDatasource.count.query="{\"query\": \"SELECT COUNT(*) AS \\\"total\\\" FROM \\\"druid\\\".\\\"summary-events\\\" WHERE \\\"__time\\\" BETWEEN TIMESTAMP '%s' AND TIMESTAMP '%s'\" }"
+
+#Pipeline Audit Jobs
+
+pipeline_audit {
+	notification {
+		webhook_url = "{{ data_exhaust_webhook_url }}"
+		channel = "{{ data_exhaust_Channel }}"
+		token = "{{ data_exhaust_token }}"
+		slack = true
+		name = "Pipeline Audit"
+	}
+}
+
+
