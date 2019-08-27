@@ -2445,7 +2445,7 @@
     "modelParams": {
       "startDate": "$(date --date yesterday '+%Y-%m-%d')",
       "endDate": "$(date '+%Y-%m-%d')",
-      "auditRules": "[{\"name\": \"PipelineFailedEventsAudit\", \"description\": \"Pipeline Failed events Audit\", \"threshold\": 20, \"model\": \"org.ekstep.analytics.audit.PipelineFailedEventsDailyAudit\", \"priority\": 1, \"search\": [{\"bucket\":\"'$bucket'\",\"prefix\":\"failed/\",\"endDate\":\"$(date '+%Y-%m-%d')\",\"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\", \"delta\":0}]}] }]"
+      "auditRules": "[{\"name\":\"PipelineFailedEventsAudit\",\"description\":\"Pipeline Failed events Audit\",\"threshold\":20,\"model\":\"org.ekstep.analytics.audit.PipelineFailedEventsDailyAudit\",\"priority\":1,\"search\":[{\"type\":\"azure\",\"queries\":[{\"bucket\":\"'$bucket'\",\"prefix\":\"failed/\",\"endDate\":\"$(date '+%Y-%m-%d')\",\"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\",\"delta\":0}]}]}]"
     },
     "output": [
       {
