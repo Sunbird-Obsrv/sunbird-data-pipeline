@@ -11,7 +11,7 @@
 
 - hosts: influxdb
   vars_files:
-    - ['{{inventory_dir}}/secrets/{{env}}.yml']
+    - ['{{inventory_dir}}/secrets.yml']
   tasks:
      - command: ./consumer_lag_monitor.sh {{ influxdb }} {{ env }} "{{ SGPASS }}" {{ SGUSER }}
        args:
