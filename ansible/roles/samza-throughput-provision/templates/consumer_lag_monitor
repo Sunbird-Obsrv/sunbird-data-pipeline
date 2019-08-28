@@ -12,6 +12,7 @@ env=$2
 condition="-gt"
 
 
+
 ### Main script
 array=( publish-pipeline )
 
