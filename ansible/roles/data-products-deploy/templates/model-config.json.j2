@@ -2445,7 +2445,7 @@
     "modelParams": {
       "startDate": "$(date --date yesterday '+%Y-%m-%d')",
       "endDate": "$(date '+%Y-%m-%d')",
-      "auditRules": "[{\"name\":\"PipelineFailedEventsAudit\",\"description\":\"Pipeline Failed events Audit\",\"threshold\":20,\"model\":\"org.ekstep.analytics.audit.PipelineFailedEventsDailyAudit\",\"priority\":1,\"search\":[{\"type\":\"azure\",\"queries\":[{\"bucket\":\"'$bucket'\",\"prefix\":\"failed/\",\"endDate\":\"$(date '+%Y-%m-%d')\",\"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\",\"delta\":0}]}]}]"
+      "auditRules": "[{\"name\":\"PipelineFailedEventsAudit\",\"description\":\"Pipeline Failed events Audit\",\"threshold\":20,\"model\":\"org.ekstep.analytics.audit.PipelineFailedEventsDailyAudit\",\"priority\":1,\"search\":[{\"type\":\"azure\",\"queries\":[{\"bucket\":\"{{ bucket }}\",\"prefix\":\"failed/\",\"endDate\":\"$(date '+%Y-%m-%d')\",\"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\",\"delta\":0}]}]}]"
     },
     "output": [
       {
@@ -2464,7 +2464,7 @@
      "modelParams": {
        "startDate": "$(date --date yesterday '+%Y-%m-%d')",
        "endDate": "$(date '+%Y-%m-%d')",
-       "auditRules": "[{\"name\": \"DruidVsPipelineEventsDailyAudit\", \"description\": \"Druid Vs Pipeline events Audit\", \"threshold\": 20, \"model\": \"org.ekstep.analytics.audit.DruidVsPipelineEventsDailyAudit\", \"priority\": 1,\n\"params\": { \"syncMinusDays\": 2, \"syncPlusDays\": 1 }, \"startDate\": \"'$endDate'\", \"endDate\": \"'$endDate'\",\n\"search\": [{\"type\": \"azure\", \"queries\": [{\"bucket\":\"'$bucket'\",\"prefix\":\"telemetry-denormalized/raw/\", \"endDate\":\"$(date '+%Y-%m-%d')\", \"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\", \"delta\":0}]},\n{\"type\": \"azure\", \"queries\": [{\"bucket\":\"'$bucket'\",\"prefix\":\"telemetry-denormalized/summary/\", \"endDate\":\"$(date '+%Y-%m-%d')\", \"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\", \"delta\":0}]}] }]"
+       "auditRules": "[{\"name\": \"DruidVsPipelineEventsDailyAudit\", \"description\": \"Druid Vs Pipeline events Audit\", \"threshold\": 20, \"model\": \"org.ekstep.analytics.audit.DruidVsPipelineEventsDailyAudit\", \"priority\": 1,\n\"params\": { \"syncMinusDays\": 2, \"syncPlusDays\": 1 }, \"startDate\": \"'$endDate'\", \"endDate\": \"'$endDate'\",\n\"search\": [{\"type\": \"azure\", \"queries\": [{\"bucket\":\"{{ bucket }}\",\"prefix\":\"telemetry-denormalized/raw/\", \"endDate\":\"$(date '+%Y-%m-%d')\", \"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\", \"delta\":0}]},\n{\"type\": \"azure\", \"queries\": [{\"bucket\":\"{{ bucket }}\",\"prefix\":\"telemetry-denormalized/summary/\", \"endDate\":\"$(date '+%Y-%m-%d')\", \"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\", \"delta\":0}]}] }]"
      },
      "output": [
        {
