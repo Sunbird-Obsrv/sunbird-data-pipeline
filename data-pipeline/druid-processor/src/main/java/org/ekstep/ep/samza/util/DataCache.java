@@ -32,6 +32,7 @@ public abstract class DataCache {
             } else {
                 Type type = new TypeToken<Map<String, Object>>() {
                 }.getType();
+
                 parsedData = gson.fromJson(dataNode, type);
                 parsedData.keySet().retainAll(fieldsList);
                 for (Map.Entry<String, Object> entry : parsedData.entrySet()) {

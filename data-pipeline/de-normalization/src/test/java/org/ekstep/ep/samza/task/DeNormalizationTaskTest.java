@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.task;
 
 import com.fiftyonred.mock_jedis.MockJedis;
+import com.google.common.base.Verify;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import org.apache.samza.Partition;
@@ -168,6 +169,87 @@ public class DeNormalizationTaskTest {
                 assertEquals(contentData.size(), 3);
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
                 assertEquals(flags.get("user_data_retrieved"), true);
+                assertEquals(flags.get("content_data_retrieved"), true);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicWithRollUpIdInCollectionData() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITH_OBJECT_ROLLUP);
+        jedisMock.set("393407b1-66b1-4c86-9080-b2bce9842886","{\"grade\":[4,5],\"district\":\"Bengaluru\",\"state\":\"Karnataka\"}");
+        Map<String, Object> collection = new HashMap<>();
+        collection.put("name", "collection-1");
+        collection.put("objecttype", "TextBook");
+        collection.put("contenttype", "TextBook");
+        stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(collection);
+        deNormalizationTask.process(envelopeMock,collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                Map<String, Object> collectionData = new Gson().fromJson(outputEvent.get("collectiondata").toString(), mapType);
+                assertEquals(collectionData.size(), 3);
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("collection_data_retrieved"), true);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicWithObjectIdInCollectionData() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITH_OBJECT_ROLLUP);
+        jedisMock.set("393407b1-66b1-4c86-9080-b2bce9842886","{\"grade\":[4,5],\"district\":\"Bengaluru\",\"state\":\"Karnataka\"}");
+        Map<String, Object> collection = new HashMap<>();
+        collection.put("name", "collection-1");
+        collection.put("objecttype", "TextBook");
+        collection.put("contenttype", "TextBook");
+        stub(contentCacheMock.getData("do_31277438304183091217888")).toReturn(collection);
+        deNormalizationTask.process(envelopeMock,collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                Map<String, Object> collectionData = new Gson().fromJson(outputEvent.get("contentdata").toString(), mapType);
+                assertEquals(collectionData.size(), 3);
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("collection_data_retrieved"), false);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicWithObjectIdEqualsRollUpIDInCollectionData() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITH_OBJECTID_EQUALS_ROLLUPID);
+        jedisMock.set("393407b1-66b1-4c86-9080-b2bce9842886","{\"grade\":[4,5],\"district\":\"Bengaluru\",\"state\":\"Karnataka\"}");
+        Map<String, Object> collection = new HashMap<>();
+        collection.put("name", "collection-1");
+        collection.put("objecttype", "TextBook");
+        collection.put("contenttype", "TextBook");
+        Map<String, Object> content = new HashMap<>();
+        content.put("name", "content-1"); content.put("objecttype", "Content"); content.put("contenttype", "TextBook");
+        stub(contentCacheMock.getData("do_31277438304183091217888")).toReturn(collection);
+        stub(contentCacheMock.getData("do_31277438304183091217888")).toReturn(content);
+        deNormalizationTask.process(envelopeMock,collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                Map<String, Object> collectionData = new Gson().fromJson(outputEvent.get("contentdata").toString(), mapType);
+                assertEquals(collectionData.size(), 3);
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
                 assertEquals(flags.get("content_data_retrieved"), true);
                 return true;
             }

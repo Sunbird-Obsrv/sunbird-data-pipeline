@@ -37,6 +37,14 @@
       "id": "http://api.sunbird.org/telemetry/contentdata/mimetype",
       "type": "string"
     },
+    "createdBy": {
+      "id": "http://api.sunbird.org/telemetry/contentdata/createdBy",
+      "type": "string"
+    },
+    "createdFor": {
+      "id": "http://api.sunbird.org/telemetry/contentdata/createdFor",
+      "type": "string"
+    },
     "framework": {
       "id": "http://api.sunbird.org/telemetry/contentdata/framework",
       "type": "string"
