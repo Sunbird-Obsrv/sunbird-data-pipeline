@@ -4,7 +4,6 @@ logstash_home: /usr/share/logstash
 logstash_plugins:
 - logstash-output-influxdb
 logstash_conf:
- - ".indexer.learning"
  - ".indexer.pipeline_metrics"
  - ".indexer.analytics_metrics"
  - ".indexer.log_error.events"
