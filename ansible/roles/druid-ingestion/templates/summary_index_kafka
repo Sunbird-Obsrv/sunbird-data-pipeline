@@ -403,6 +403,18 @@
               "name": "content_status",
               "expr": "$.contentdata.status"
             },
+            ,
+            {
+              "type": "path",
+              "name": "content_created_by",
+              "expr": "$.contentdata.createdBy"
+            },
+            ,
+            {
+              "type": "path",
+              "name": "content_created_for",
+              "expr": "$.contentdata.createdFor"
+            },
             {
               "type": "path",
               "name": "content_version",
@@ -422,6 +434,97 @@
               "type": "path",
               "name": "content_last_updated_on",
               "expr": "$.contentdata.lastupdatedon"
+            },
+            ,
+            {
+              "type": "path",
+              "name": "collection_name",
+              "expr": "$.collectiondata.name"
+            },
+            {
+              "type": "path",
+              "name": "collection_object_type",
+              "expr": "$.collectiondata.objecttype"
+            },
+            {
+              "type": "path",
+              "name": "collection_type",
+              "expr": "$.collectiondata.contenttype"
+            },
+            {
+              "type": "path",
+              "name": "collection_media_type",
+              "expr": "$.collectiondata.mediatype"
+            },
+            {
+              "type": "path",
+              "name": "collection_language",
+              "expr": "$.collectiondata.language[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_medium",
+              "expr": "$.collectiondata.medium[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_gradelevel",
+              "expr": "$.collectiondata.gradelevel[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_subjects",
+              "expr": "$.collectiondata.subject[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_mimetype",
+              "expr": "$.collectiondata.mimetype"
+            },
+            {
+              "type": "path",
+              "name": "collection_framework",
+              "expr": "$.collectiondata.framework"
+            },
+            {
+              "type": "path",
+              "name": "collection_board",
+              "expr": "$.collectiondata.board"
+            },
+            {
+              "type": "path",
+              "name": "collection_status",
+              "expr": "$.collectiondata.status"
+            },
+            {
+              "type": "path",
+              "name": "collection_version",
+              "expr": "$.collectiondata.pkgversion"
+            },
+            {
+              "type": "path",
+              "name": "collection_last_submitted_on",
+              "expr": "$.collectiondata.lastsubmittedon"
+            },
+            {
+              "type": "path",
+              "name": "collection_last_published_on",
+              "expr": "$.collectiondata.lastpublishedon"
+            },
+            {
+              "type": "path",
+              "name": "collection_last_updated_on",
+              "expr": "$.collectiondata.lastupdatedon"
+            },
+            {
+              "type": "path",
+              "name": "collection_created_by",
+              "expr": "$.collectiondata.createdBy"
+            },
+            {
+              "type": "path",
+              "name": "collection_created_for",
+              "expr": "$.collectiondata.createdFor"
             },
             {
               "type": "path",

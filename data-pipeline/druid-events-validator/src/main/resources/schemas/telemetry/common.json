@@ -12,6 +12,9 @@
     "contentdata": {
       "$ref": "resource:/schemas/telemetry/contentdata.json"
     },
+    "collectiondata": {
+      "$ref": "resource:/schemas/telemetry/collectiondata.json"
+    },
     "dialcodedata": {
       "$ref": "resource:/schemas/telemetry/dialcodedata.json"
     },
