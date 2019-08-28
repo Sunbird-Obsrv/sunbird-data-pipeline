@@ -18,7 +18,6 @@ array=( publish-pipeline )
 
 ### To get the consumer lag count and send the alert:
 
-query(){
 for i in "${array[@]}"
  do
     consumer_lag=`curl -s 'http://'$IP':8086/query?' --data-urlencode "db=monitoring_events" --data-urlencode "q=SELECT consumer_lag FROM "pipeline_metrics" WHERE "env" =~ /$ENV/  AND "job_name" = '$i' AND time > now() - "$duration"m;" | jq '.results[0].series[0].values[0][1]'`
@@ -29,4 +28,4 @@ for i in "${array[@]}"
     curl -d "{{ samza_alert_to_address }}&fromname='Consumer-lag-alerts'&fromname='consumer-lag-alerts'&fromname='consumer-lag-alerts'&fromname='consumer-lag-alerts'&subject='[$env] [firing-1] - consumer_lag alerts for "$i"'&text=${text}&from={{ samza_alert_from_address }}&api_user=${SGUSER}&api_key=${SGPASS}" https://api.sendgrid.com/api/mail.send.json
  fi
 done
-}
+
