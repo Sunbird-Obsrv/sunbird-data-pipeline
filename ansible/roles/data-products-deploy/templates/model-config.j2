@@ -100,7 +100,7 @@ config() {
 		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.updater.UpdateContentRating","modelParams":{"startDate":"'$endDate'","endDate":"'$endDate'"},"output":[{"to":"console","params":{"printEvent":false}}],"parallelization":8,"appName":"Content Rating Updater","deviceMapping":false}'
 		;;
 		"daily-metrics-consumption-reports")
-		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.DailyConsumptionReportModel","modelParams":{"startDate":"'$endDate'","endDate":"'$endDate'","adhoc_scripts_dir":"/home/analytics/telemetryreports/scripts","adhoc_scripts_output_dir":"/mount/data/store","adhoc_scripts_virtualenv_dir":"/mount/venv", "druid_broker_url": "'$druidBrokerUrl'"},"output":[{"to":"console","params":{"printEvent":false}}],"parallelization":8,"appName":"DailyConsumptionReports"}'
+		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.DailyConsumptionReportModel","modelParams":{"startDate":"'$endDate'","endDate":"'$endDate'","adhoc_scripts_dir":"/home/analytics/telemetryreports/scripts","adhoc_scripts_output_dir":"/mount/portal_data","adhoc_scripts_virtualenv_dir":"/mount/venv", "druid_broker_url": "'$druidBrokerUrl'"},"output":[{"to":"console","params":{"printEvent":false}}],"parallelization":8,"appName":"DailyConsumptionReports"}'
 		;;
         "experiment")
 		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.model.ExperimentDefinitionModel","modelParams":{"sparkElasticsearchConnectionHost":"{{ lp_composite_search_host }}"},"output":[{"to":"elasticsearch","params":{"index":"experiment"}}],"parallelization":8,"appName":"Experiment-Definition","deviceMapping":false}'
