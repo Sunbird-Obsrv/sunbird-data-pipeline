@@ -4,4 +4,5 @@ influxdb_query_duration: 60
 
 max_consumer_lag_count: 0
 consumer_lag_influxdb_query_duration: 10
-consumer_lag_slack_channel: "{{ samza_alert_slack_url }}"
+consumer_lag_slack_channel: consumer_lag-alrt-{{env}}
+consumer_lag_slack_webhook: "{{ samza_alert_slack_url }}"
