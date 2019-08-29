@@ -8,9 +8,6 @@ duration={{ consumer_lag_influxdb_query_duration }}
 SGPASS=$3
 SGUSER=$4
 env=$2
-condition="-gt"
-
-
 
 ### Main script
 array=( publish-pipeline )
