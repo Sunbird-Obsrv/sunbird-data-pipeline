@@ -88,9 +88,9 @@ public class Event {
         else return null;
     }
 
-    public String objectRollUpID() {
+    public String objectRollUpl1ID() {
         if(objectFieldsPresent()) {
-            if(objectRollUpFieldsPresent())
+            if(objectRollUpl1FieldsPresent())
                 return telemetry.<String>read("object.rollup.l1").value();
             else return null;
         }
@@ -107,19 +107,19 @@ public class Event {
     public boolean objectFieldsPresent() {
         String objectId = telemetry.<String>read("object.id").value();
         String objectType = telemetry.<String>read("object.type").value();
-        return objectId != null && objectType != null && !objectId.isEmpty() && !objectType.isEmpty();
+        return null != objectId && null != objectType && !objectId.isEmpty() && !objectType.isEmpty();
     }
 
-    public boolean objectRollUpFieldsPresent() {
+    public boolean objectRollUpl1FieldsPresent() {
         String objectrollUpl1 = telemetry.<String>read("object.rollup.l1").value();
-        return objectrollUpl1 != null  && !objectrollUpl1.isEmpty();
+        return null != objectrollUpl1  && !objectrollUpl1.isEmpty();
     }
 
-    public boolean objectIdEqualsRollUpId() {
-        if (objectID() == null || objectID().isEmpty())
+    public boolean objectIdEqualsRollUpl1Id() {
+        if (null == objectID() || objectID().isEmpty())
             return false;
          else
-            return objectID().equals(objectRollUpID());
+            return objectID().equals(objectRollUpl1ID());
     }
 
     public String actorId() {
@@ -173,7 +173,7 @@ public class Event {
             case "content":
                 return objectID();
             case "collection":
-                return objectRollUpID();
+                return objectRollUpl1ID();
             default:
                 return "";
         }
