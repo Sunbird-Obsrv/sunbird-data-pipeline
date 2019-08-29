@@ -16,3 +16,9 @@
 
 - name: Copy the throughput slack script
   template: src=dataproduct_slack dest=/usr/local/bin/dataproduct_slack.sh mode=755
+
+- name: Copy the consumer lag monitor script
+  template: src=consumer_lag_monitor dest=/usr/local/bin/consumer_lag_monitor.sh mode=755
+
+- name: Copy the throughput slack script
+  template: src=consumer_lag_slack dest=/usr/local/bin/consumer_lag_slack.sh mode=755
