@@ -109,15 +109,18 @@ public class Event {
     }
 
     public boolean objectRollUpl1FieldsPresent() {
-        String objectrollUpl1 = telemetry.<String>read("object.rollup.l1").value();
-        return null != objectrollUpl1  && !objectrollUpl1.isEmpty();
+        if(objectFieldsPresent()) {
+            String objectrollUpl1 = telemetry.<String>read("object.rollup.l1").value();
+            return null != objectrollUpl1 && !objectrollUpl1.isEmpty();
+        }
+        else return false;
     }
 
-    public boolean objectIdEqualsRollUpl1Id() {
-        if (!objectFieldsPresent() || !objectRollUpl1FieldsPresent())
-            return false;
+    public boolean objectIdNotEqualsRollUpl1Id() {
+        if (objectRollUpl1FieldsPresent() && !(objectID().equals(objectRollUpl1ID())))
+            return true;
          else
-            return objectID().equals(objectRollUpl1ID());
+            return false;
     }
 
     public String actorId() {
