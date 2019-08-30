@@ -1,7 +1,6 @@
 package org.ekstep.ep.samza.task;
 
 import com.fiftyonred.mock_jedis.MockJedis;
-import com.google.common.base.Verify;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import org.apache.samza.Partition;
@@ -176,6 +175,30 @@ public class DeNormalizationTaskTest {
     }
 
     @Test
+    public void shouldSendEventsToSuccessTopicWithoutRollUpID() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
+        jedisMock.set("393407b1-66b1-4c86-9080-b2bce9842886","{\"grade\":[4,5],\"district\":\"Bengaluru\",\"state\":\"Karnataka\"}");
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                System.out.println(outputMessage);
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertEquals(outputEvent.get("ver").toString(), "3.0");
+                Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
+                assertEquals(userData.size(), 5);
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("user_data_retrieved"), true);
+                assertEquals(flags.get("content_data_retrieved"), false);
+                return true;
+            }
+        }));
+    }
+
+    @Test
     public void shouldSendEventsToSuccessTopicWithRollUpIdInCollectionData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITH_OBJECT_ROLLUP);
         jedisMock.set("393407b1-66b1-4c86-9080-b2bce9842886","{\"grade\":[4,5],\"district\":\"Bengaluru\",\"state\":\"Karnataka\"}");
@@ -191,6 +214,7 @@ public class DeNormalizationTaskTest {
             public boolean matches(Object o) {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                System.out.println();
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
                 Map<String, Object> collectionData = new Gson().fromJson(outputEvent.get("collectiondata").toString(), mapType);
                 assertEquals(collectionData.size(), 3);
@@ -247,6 +271,7 @@ public class DeNormalizationTaskTest {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                System.out.println(outputEvent);
                 Map<String, Object> collectionData = new Gson().fromJson(outputEvent.get("contentdata").toString(), mapType);
                 assertEquals(collectionData.size(), 3);
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);

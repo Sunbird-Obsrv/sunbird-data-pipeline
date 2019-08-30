@@ -89,10 +89,8 @@ public class Event {
     }
 
     public String objectRollUpl1ID() {
-        if(objectFieldsPresent()) {
-            if(objectRollUpl1FieldsPresent())
+        if(objectFieldsPresent() && objectRollUpl1FieldsPresent()) {
                 return telemetry.<String>read("object.rollup.l1").value();
-            else return null;
         }
         else return null;
     }
@@ -116,7 +114,7 @@ public class Event {
     }
 
     public boolean objectIdEqualsRollUpl1Id() {
-        if (null == objectID() || objectID().isEmpty())
+        if (!objectFieldsPresent() || !objectRollUpl1FieldsPresent())
             return false;
          else
             return objectID().equals(objectRollUpl1ID());
