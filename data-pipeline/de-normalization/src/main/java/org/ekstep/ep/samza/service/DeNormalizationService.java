@@ -72,7 +72,7 @@ public class DeNormalizationService {
         else {
             // add content details to the event
             eventUpdaterFactory.getInstance("content-data-updater").update(event, event.getKey("content"));
-            if(!event.objectIdEqualsRollUpl1Id()) {
+            if(event.objectIdNotEqualsRollUpl1Id()) {
                 eventUpdaterFactory.getInstance("collection-data-updater").update(event, event.getKey("collection"));
             }
         }
