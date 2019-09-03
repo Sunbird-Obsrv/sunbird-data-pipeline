@@ -34,6 +34,7 @@ public_data_exhaust_dir_prefix: 4208ab995984d222b59299e5103d350a842d8d41
 #Device register API metrics
 device_register_api_metrics_log_path: "/mount/data/analytics/logs/api-service/api-metrics.log"
 api_job_log_path: "/mount/data/analytics/logs/api-service/joblog.log"
+device_log_path: "/mount/data/analytics/logs/api-service/device-profile.log"
 
 # client API error log
 crash_log_path: "/mount/data/analytics/logs/api-service/crash-logs.log"

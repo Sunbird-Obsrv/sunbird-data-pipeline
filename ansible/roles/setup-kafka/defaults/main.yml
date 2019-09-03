@@ -97,6 +97,9 @@ processing_kafka_overriden_topics:
   - name: telemetry.extractor.failed
     retention_time: 21600000
     replication_factor: 1
+  - name: device.profile
+    retention_time: 1296000000
+    replication_factor: 1
   - name: system.command
     retention_time: 3600
     replication_factor: 1
@@ -206,6 +209,9 @@ processing_kafka_topics:
     num_of_partitions: 1
     replication_factor: 1
   - name: learning.events.failed
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: device.profile
     num_of_partitions: 1
     replication_factor: 1
   - name: lms.audit.events

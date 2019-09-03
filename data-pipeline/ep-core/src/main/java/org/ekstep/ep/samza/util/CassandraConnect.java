@@ -3,6 +3,8 @@ package org.ekstep.ep.samza.util;
 import com.datastax.driver.core.*;
 
 import java.util.List;
+
+import com.datastax.driver.core.querybuilder.Insert;
 import org.apache.samza.config.Config;
 
 public class CassandraConnect {
@@ -45,6 +47,11 @@ public class CassandraConnect {
     public List<Row> find(String query) {
         ResultSet rs = session.execute(query);
         return rs.all();
+    }
+
+    public boolean upsert(Insert query) {
+        ResultSet rs = session.execute(query);
+        return rs.wasApplied();
     }
 
     public void reconnect() {

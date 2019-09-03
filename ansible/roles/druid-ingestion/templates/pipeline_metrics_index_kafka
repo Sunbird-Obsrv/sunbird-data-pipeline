@@ -120,6 +120,14 @@
             {
               "type": "root",
               "name": "duplicate-event-count"
+            },
+            {
+              "type": "root",
+              "name": "device_db_update"
+            },
+            {
+              "type": "root",
+              "name": "device_cache_update"
             }
           ]
         },
@@ -236,6 +244,14 @@
             {
               "type": "long",
               "name": "duplicate-event-count"
+            },
+            {
+              "type": "long",
+              "name": "device_db_update"
+            },
+            {
+              "type": "long",
+              "name": "device_cache_update"
             }
           ],
           "dimensionsExclusions": []
