@@ -88,6 +88,13 @@ public class Event {
         else return null;
     }
 
+    public String objectRollUpl1ID() {
+        if(objectFieldsPresent() && objectRollUpl1FieldsPresent()) {
+                return telemetry.<String>read("object.rollup.l1").value();
+        }
+        else return null;
+    }
+
     public String objectType() {
         if (objectFieldsPresent()) {
             return telemetry.<String>read("object.type").value();
@@ -98,7 +105,22 @@ public class Event {
     public boolean objectFieldsPresent() {
         String objectId = telemetry.<String>read("object.id").value();
         String objectType = telemetry.<String>read("object.type").value();
-        return objectId != null && objectType != null && !objectId.isEmpty() && !objectType.isEmpty();
+        return null != objectId && null != objectType && !objectId.isEmpty() && !objectType.isEmpty();
+    }
+
+    public boolean objectRollUpl1FieldsPresent() {
+        if(objectFieldsPresent()) {
+            String objectrollUpl1 = telemetry.<String>read("object.rollup.l1").value();
+            return null != objectrollUpl1 && !objectrollUpl1.isEmpty();
+        }
+        else return false;
+    }
+
+    public boolean objectIdNotEqualsRollUpl1Id() {
+        if (objectRollUpl1FieldsPresent() && !(objectID().equals(objectRollUpl1ID())))
+            return true;
+         else
+            return false;
     }
 
     public String actorId() {
@@ -151,6 +173,8 @@ public class Event {
                 }
             case "content":
                 return objectID();
+            case "collection":
+                return objectRollUpl1ID();
             default:
                 return "";
         }
@@ -170,6 +194,8 @@ public class Event {
             case "dialcode":
                 addDialCodeData(newData);
                 break;
+            case "collection":
+                addCollectionData(newData);
             default:
                 break;
 
@@ -216,6 +242,14 @@ public class Event {
         contentData.putAll(newData);
         telemetry.add(path.contentData(), contentData);
         setFlag(DeNormalizationConfig.getContentLocationJobFlag(), true);
+    }
+
+    public void addCollectionData(Map newData) {
+            NullableValue<Map<String, Object>> previousData = telemetry.read(path.collectionData());
+            Map<String, Object> collectionData = previousData.isNull() ? new HashMap<>() : previousData.value();
+            collectionData.putAll(newData);
+            telemetry.add(path.collectionData(), collectionData);
+            setFlag(DeNormalizationConfig.getCollectionLocationJobFlag(), true);
     }
 
     public void addDialCodeData(Map newData) {

@@ -38,6 +38,9 @@
     },
     "contentdata": {
       "$ref": "resource:/schemas/summary/contentdata.json"
+    },
+    "collectiondata": {
+      "$ref": "resource:/schemas/summary/collectiondata.json"
     }
   }
 }

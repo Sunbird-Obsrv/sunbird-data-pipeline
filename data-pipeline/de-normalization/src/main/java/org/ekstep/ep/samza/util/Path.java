@@ -49,6 +49,8 @@ public class Path {
 
     public String dialCodeData(){ return "dialcodedata"; }
 
+    public String collectionData() { return  "collectiondata"; }
+
     public String ver(){
         return "ver";
     }

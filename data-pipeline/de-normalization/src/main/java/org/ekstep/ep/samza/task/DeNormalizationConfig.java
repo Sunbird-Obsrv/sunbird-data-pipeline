@@ -13,6 +13,7 @@ public class DeNormalizationConfig {
     private static final String userDataJobFlag = "user_data_retrieved";
     private static final String contentDataJobFlag = "content_data_retrieved";
     private static final String dialCodeDataJobFlag = "dialcode_data_retrieved";
+    private static final String collectionDataJobFlag = "collection_data_retrieved";
 
     private String successTopic;
     private String failedTopic;
@@ -67,6 +68,8 @@ public class DeNormalizationConfig {
                 return contentDataJobFlag;
             case "dialcode":
                 return dialCodeDataJobFlag;
+            case "collection":
+                return collectionDataJobFlag;
             default:
                 return "";
         }
@@ -84,6 +87,7 @@ public class DeNormalizationConfig {
         return contentDataJobFlag;
     }
 
+    public static String getCollectionLocationJobFlag() { return collectionDataJobFlag; }
     public static String getDialCodeLocationJobFlag() {
         return dialCodeDataJobFlag;
     }
