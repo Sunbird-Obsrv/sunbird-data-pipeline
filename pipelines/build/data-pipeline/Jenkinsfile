@@ -46,7 +46,7 @@ node() {
                 sh """echo {\\"artifact_name\\" : \\"dp_artifacts.zip\\", \\"artifact_version\\" : \\"${artifact_version}\\", \\"node_name\\" : \\"${env.NODE_NAME}\\"} > metadata.json"""
                 archiveArtifacts artifacts: 'metadata.json', onlyIfSuccessful: true
                 currentBuild.result = "SUCCESS"
-                currentBuild.description = "Artifact: ${values.artifact_version}, Public: ${params.github_release_tag}"
+                currentBuild.description = "Artifact: ${artifact_version}, Public: ${params.github_release_tag}"
             }
         }
 
