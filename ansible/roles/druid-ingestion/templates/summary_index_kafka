@@ -912,6 +912,82 @@
               "name": "content_last_updated_on"
             },
             {
+              "type": "string",
+              "name": "content_created_by"
+            },
+            {
+              "type": "long",
+              "name": "content_created_for"
+            },
+            {
+              "type": "string",
+              "name": "collection_name"
+            },
+            {
+              "type": "string",
+              "name": "collection_object_type"
+            },
+            {
+              "type": "string",
+              "name": "collection_type"
+            },
+            {
+              "type": "string",
+              "name": "collection_media_type"
+            },
+            {
+              "name": "collection_language"
+            },
+            {
+              "name": "collection_medium"
+            },
+            {
+              "name": "collection_gradelevel"
+            },
+            {
+              "name": "collection_subjects"
+            },
+            {
+              "type": "string",
+              "name": "collection_mimetype"
+            },
+            {
+              "type": "string",
+              "name": "collection_framework"
+            },
+            {
+              "type": "string",
+              "name": "collection_board"
+            },
+            {
+              "type": "string",
+              "name": "collection_status"
+            },
+            {
+              "type": "double",
+              "name": "collection_version"
+            },
+            {
+              "type": "long",
+              "name": "collection_last_submitted_on"
+            },
+            {
+              "type": "long",
+              "name": "collection_last_published_on"
+            },
+            {
+              "type": "long",
+              "name": "collection_last_updated_on"
+            },
+            {
+              "type": "string",
+              "name": "collection_created_by"
+            },
+            {
+              "type": "long",
+              "name": "collection_created_for"
+            },
+            {
               "name": "user_grade_list"
             },
             {
