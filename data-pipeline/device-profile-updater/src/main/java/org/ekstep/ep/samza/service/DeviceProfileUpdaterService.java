@@ -37,14 +37,14 @@ public class DeviceProfileUpdaterService {
         this.deviceStoreDb = config.getInt("redis.database.deviceStore.id", 2);
         this.deviceStoreConnection = redisConnect.getConnection(deviceStoreDb);
         this.deviceTopic = config.get("input.device.topic.name", "device.profile");
-        this.cassandra_db = config.get("cassandra.keyspace","device_db");
-        this.cassandra_table = config.get("cassandra.device_profile_table","device_profile");
+        this.cassandra_db = config.get("cassandra.keyspace", "device_db");
+        this.cassandra_table = config.get("cassandra.device_profile_table", "device_profile");
 
     }
 
     public void process(DeviceProfileUpdaterSource source, DeviceProfileUpdaterSink sink) {
 
-        if(deviceTopic.equalsIgnoreCase(source.getSystemStreamPartition().getStream())) {
+        if (deviceTopic.equalsIgnoreCase(source.getSystemStreamPartition().getStream())) {
             Map<String, Object> message = source.getMap();
             updateDeviceProfileCache(message, sink);
         }
@@ -52,58 +52,43 @@ public class DeviceProfileUpdaterService {
 
     private void updateDeviceProfileCache(Map<String, Object> message, DeviceProfileUpdaterSink sink) {
         String deviceId = (String) message.get("device_id");
+        Map<String, String> deviceData = new HashMap<String, String>();
 
-        Map<String, String> parsedData = null;
+        for (Map.Entry<String, Object> entry : message.entrySet()) {
+            if (entry.getValue() instanceof String) {
+                deviceData.put(entry.getKey(), entry.getValue().toString());
+            }
+        }
+        if (deviceData.size() > 0) {
+            deviceData.values().removeAll(Collections.singleton(null));
+            deviceData.values().removeAll(Collections.singleton(""));
+            addDeviceDataToRedisCache(deviceId, deviceData, deviceStoreConnection);
+            sink.deviceCacheUpdateSuccess();
+            addDeviceDataToCassandra(deviceId, deviceData, cassandraConnection);
+            sink.deviceDBUpdateSuccess();
+            sink.success();
+        }
+
+    }
+
+    private void addDeviceDataToRedisCache(String deviceId, Map<String, String> deviceData, Jedis redisConnection) {
         try {
-            String deviceNode = deviceStoreConnection.get("device_id");
-            if(deviceNode != null) {
-                Type type = new TypeToken<Map<String, String>>() {
-                }.getType();
-                parsedData = gson.fromJson(deviceNode, type);
-            } else {
-                parsedData = new HashMap<String, String>();
+            if (deviceId != null && !deviceId.isEmpty() && null != deviceData && !deviceData.isEmpty()) {
+                redisConnection.hmset(deviceId, deviceData);
             }
-            Map<String,String> deviceData = new HashMap<String, String>();
-            for(Map.Entry<String, Object> entry: message.entrySet()) {
-
-                if(entry.getValue() instanceof String) {
-                    deviceData.put(entry.getKey(), entry.getValue().toString());
-                }
-
-            }
-
-            parsedData.putAll(deviceData);
-            if(parsedData.size() > 0) {
-                parsedData.values().removeAll(Collections.singleton(null));
-                parsedData.values().removeAll(Collections.singleton(""));
-                addDeviceDataToRedisCache(deviceId, parsedData, deviceStoreConnection);
-                sink.deviceCacheUpdateSuccess();
-                addDeviceDataToCassandra(deviceId, parsedData, cassandraConnection);
-                sink.deviceDBUpdateSuccess();
-                sink.success();
-            }
-
         } catch (JedisException ex) {
-            sink.error();
-            LOGGER.error("","Exception while adding to device redis cache", ex);
             redisConnect.resetConnection();
-            try(Jedis redisConn = redisConnect.getConnection(deviceStoreDb)) {
+            try (Jedis redisConn = redisConnect.getConnection(deviceStoreDb)) {
                 this.deviceStoreConnection = redisConn;
-                if(null != parsedData)
-                    addToRedisCache(deviceId, gson.toJson(parsedData), deviceStoreConnection);
+                if (null != deviceData)
+                    addToRedisCache(deviceId, gson.toJson(deviceData), deviceStoreConnection);
             }
         }
     }
 
-    private void addDeviceDataToRedisCache(String deviceId, Map<String, String> parsedData, Jedis redisConnection) {
-        if (deviceId != null && !deviceId.isEmpty() && null != parsedData && !parsedData.isEmpty()) {
-            redisConnection.hmset(deviceId, parsedData);
-        }
-    }
-
-    private void addDeviceDataToCassandra(String deviceId ,Map<String,String> parsedData, CassandraConnect cassandraConnection) {
-        if (deviceId != null && !deviceId.isEmpty() && null != parsedData && !parsedData.isEmpty()) {
-            Insert query = QueryBuilder.insertInto(cassandra_db, cassandra_table).values(new ArrayList<>(parsedData.keySet()) , new ArrayList<>(parsedData.values()));
+    private void addDeviceDataToCassandra(String deviceId, Map<String, String> deviceData, CassandraConnect cassandraConnection) {
+        if (deviceId != null && !deviceId.isEmpty() && null != deviceData && !deviceData.isEmpty()) {
+            Insert query = QueryBuilder.insertInto(cassandra_db, cassandra_table).values(new ArrayList<>(deviceData.keySet()), new ArrayList<>(deviceData.values()));
             boolean result = cassandraConnection.upsert(query);
         }
     }
