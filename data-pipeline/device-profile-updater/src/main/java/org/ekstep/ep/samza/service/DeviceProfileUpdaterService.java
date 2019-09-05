@@ -85,7 +85,7 @@ public class DeviceProfileUpdaterService {
         String deviceId = deviceData.get("device_id");
         if (null != deviceId && !deviceId.isEmpty() && null != deviceData && !deviceData.isEmpty()) {
             Insert query = QueryBuilder.insertInto(cassandra_db, cassandra_table).values(new ArrayList<>(deviceData.keySet()), new ArrayList<>(deviceData.values()));
-            boolean result = cassandraConnection.upsert(query);
+            cassandraConnection.upsert(query);
         }
     }
 
