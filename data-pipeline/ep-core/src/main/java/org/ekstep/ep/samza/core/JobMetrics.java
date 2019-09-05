@@ -42,6 +42,8 @@ public class JobMetrics {
     private final Counter userDbErrorCount;
     private final Counter expiredEventCount;
     private final Counter duplicateEventCount;
+    private final Counter deviceDBUpdateCount;
+    private final Counter deviceCacheUpdateCount;
     private TaskContext context;
     private int partition;
     public JobMetrics(TaskContext context) {
@@ -75,6 +77,8 @@ public class JobMetrics {
         userDbErrorCount = metricsRegistry.newCounter(getClass().getName(), "user-db-error-count");
         expiredEventCount = metricsRegistry.newCounter(getClass().getName(), "expired-event-count");
         duplicateEventCount = metricsRegistry.newCounter(getClass().getName(), "duplicate-event-count");
+        deviceDBUpdateCount = metricsRegistry.newCounter(getClass().getName(), "device-db-update-count");
+        deviceCacheUpdateCount = metricsRegistry.newCounter(getClass().getName(), "device-cache-update-count");
         jobName = jName;
         this.context = context;
     }
@@ -108,6 +112,10 @@ public class JobMetrics {
     public void incSuccessCounter() {
         successMessageCount.inc();
     }
+
+    public void deviceDBUpdateSuccess() { deviceDBUpdateCount.inc(); }
+
+    public void deviceCacheUpdateSuccess() { deviceCacheUpdateCount.inc(); }
 
     public void incFailedCounter() {
         failedMessageCount.inc();
@@ -261,6 +269,8 @@ public class JobMetrics {
         metricsEvent.put("expired-event-count", expiredEventCount.getCount());
         metricsEvent.put("duplicate-event-count", duplicateEventCount.getCount());
         metricsEvent.put("metricts", new DateTime().getMillis());
+        metricsEvent.put("device-db-update-count",deviceDBUpdateCount.getCount());
+        metricsEvent.put("device-cache-update-count",deviceCacheUpdateCount.getCount());
 
         return new Gson().toJson(metricsEvent);
     }

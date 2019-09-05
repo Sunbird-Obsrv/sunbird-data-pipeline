@@ -37,7 +37,8 @@
 		<module>events-router</module>
 		<!-- <module>druid-processor</module> -->
 		<module>redis-updater</module>
-	</modules>
+        <module>device-profile-updater</module>
+    </modules>
 
 	<properties>
 		<!-- maven specific properties -->
