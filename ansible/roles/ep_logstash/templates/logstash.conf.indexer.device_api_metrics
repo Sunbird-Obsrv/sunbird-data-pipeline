@@ -30,7 +30,7 @@ output {
   if [type] == "device_logs" {
       kafka {
         bootstrap_servers => "{{kafka_brokers}}"
-        topic_id => "{{kafka_topic_prefix}}.device.profile"
+        topic_id => "{{kafka_topic_prefix}}.events.device_profile"
         codec => line {
           format => "%{message}"
         }

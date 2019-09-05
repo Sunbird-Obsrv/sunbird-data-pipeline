@@ -123,11 +123,11 @@
             },
             {
               "type": "root",
-              "name": "device_db_update"
+              "name": "device-db-update-count"
             },
             {
               "type": "root",
-              "name": "device_cache_update"
+              "name": "device-cache-update-count"
             }
           ]
         },
@@ -247,11 +247,11 @@
             },
             {
               "type": "long",
-              "name": "device_db_update"
+              "name": "device-db-update-count"
             },
             {
               "type": "long",
-              "name": "device_cache_update"
+              "name": "device-cache-update-count"
             }
           ],
           "dimensionsExclusions": []
