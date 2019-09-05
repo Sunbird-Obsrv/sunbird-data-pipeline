@@ -269,6 +269,8 @@ public class JobMetrics {
         metricsEvent.put("expired-event-count", expiredEventCount.getCount());
         metricsEvent.put("duplicate-event-count", duplicateEventCount.getCount());
         metricsEvent.put("metricts", new DateTime().getMillis());
+        metricsEvent.put("device-db-update-count",deviceDBUpdateCount.getCount());
+        metricsEvent.put("device-cache-update-count",deviceCacheUpdateCount.getCount());
 
         return new Gson().toJson(metricsEvent);
     }
