@@ -20,7 +20,6 @@ input {
     }
     file {
         path => "{{device_log_path}}"
-        codec => "json"
         start_position => "end"
         sincedb_write_interval => 10
         type => "device_logs"
