@@ -86,6 +86,13 @@
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem.jobs</groupId>
+            <artifactId>device-profile-updater</artifactId>
+            <version>0.1.5</version>
+            <type>tar.gz</type>
+            <classifier>distribution</classifier>
+        </dependency>
     </dependencies>
 
     <build>
