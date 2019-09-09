@@ -92,6 +92,12 @@
   tags:
     - cronjobs
 
+- name: Create assessment-dashboard-metrics cron job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh assessment-dashboard-metrics"
+  with_dict: "{{ run_assessment_metrics_job }}"
+  tags:
+    - cronjobs
+
 - name: Update start jobmanager
   template: src=start-jobmanager.j2 dest={{ analytics.home }}/scripts/start-jobmanager.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:

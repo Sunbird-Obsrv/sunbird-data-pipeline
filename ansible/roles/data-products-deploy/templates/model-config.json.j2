@@ -2263,6 +2263,29 @@
     "appName": "Course Dashboard Metrics",
     "deviceMapping": false
   },
+  "assessment-dashboard-metrics": {
+    "search": {
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.job.AssessmentMetricsJob",
+    "modelParams": {
+      "fromDate": "$(date --date yesterday '+%Y-%m-%d')",
+      "toDate": "$(date --date yesterday '+%Y-%m-%d')",
+      "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
+      "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Assessment Dashboard Metrics",
+    "deviceMapping": false
+  },
   "content-rating-updater": {
     "search": {
       "type": "none"

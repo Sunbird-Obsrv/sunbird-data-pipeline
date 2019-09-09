@@ -72,6 +72,11 @@ run_course_metrics_job:
     hour: 21
     minute: 30
 
+run_assessment_metrics_job:
+  assessment-dashboard-metrics:
+    hour: 22
+    minute: 30
+
 update_user_redis_cache:
   populate-user-cache:
     hour: 3
