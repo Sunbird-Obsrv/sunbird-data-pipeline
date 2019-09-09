@@ -55,7 +55,6 @@ public class DeviceProfileUpdaterService {
             deviceData.values().removeAll(Collections.singleton("{}"));
             DeviceProfile deviceProfile = new DeviceProfile().fromMap(deviceData);
             addDeviceDataToCache(deviceData.get("device_id"), deviceProfile, deviceStoreConnection);
-            System.out.println(deviceData.get("device_spec"));
             sink.deviceCacheUpdateSuccess();
             addDeviceDataToDB(deviceData, cassandraConnection);
             sink.deviceDBUpdateSuccess();
