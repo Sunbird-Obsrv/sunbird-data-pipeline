@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.exceptions.JedisException;
 
 import java.lang.reflect.Type;
@@ -47,7 +48,7 @@ public class DeviceProfileServiceTest {
         stub(redisConnectMock.getConnection(deviceStoreId)).toReturn(deviceJedisMock);
         envelopeMock = mock(IncomingMessageEnvelope.class);
         stub(configMock.getInt("redis.database.deviceStore.id", deviceStoreId)).toReturn(deviceStoreId);
-        stub(configMock.get("input.device.topic.name","device.profile")).toReturn("device.profile");
+        stub(configMock.get("input.device.topic.name","device.profile")).toReturn("events_deviceprofile");
 
         stub(configMock.get("cassandra.keyspace")).toReturn("device_db");
         stub(configMock.get("cassandra.device_profile_table")).toReturn("device_profile");
@@ -63,7 +64,7 @@ public class DeviceProfileServiceTest {
     public void shouldupdateDeviceCacheToRedis() throws Exception {
         jedisMock.flushAll();
         stub(envelopeMock.getSystemStreamPartition())
-                .toReturn(new SystemStreamPartition("kafka", "device.profile", new Partition(0)));
+                .toReturn(new SystemStreamPartition("kafka", "events_deviceprofile", new Partition(0)));
         stub(envelopeMock.getMessage()).toReturn(EventFixture.DEVICE_PROFILE_DETAILS);
 
         Gson gson = new Gson();
