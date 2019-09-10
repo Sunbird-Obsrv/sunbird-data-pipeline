@@ -2291,9 +2291,10 @@
     "model": "org.ekstep.analytics.updater.DailyConsumptionReportModel",
     "modelParams": {
       "adhoc_scripts_dir": "/home/analytics/telemetryreports/scripts",
-      "adhoc_scripts_output_dir": "/mount/data/store",
+      "adhoc_scripts_output_dir": "/mount/portal_data",
       "adhoc_scripts_virtualenv_dir": "/mount/venv",
-      "derived_summary_dir": "{{ job_manager_tmp_dir }}/wfs"
+      "derived_summary_dir": "{{ job_manager_tmp_dir }}/wfs",
+      "druid_broker_url": "http://{{druid_broker_host}}:8082/"
     },
     "output": [
       {
@@ -2396,6 +2397,11 @@
           "model": "DailyConsumptionReportModel",
           "category": "consumption",
           "input_dependency": "WorkFlowSummaryModel"
+        },
+        {
+          "model": "AuditComputationModel",
+          "category": "consumption",
+          "input_dependency": "None"
         }
       ]
     },
@@ -2438,15 +2444,23 @@
     "deviceMapping": false
   },
   "pipeline-failed-events-audit": {
-      "search": {
-        "type": "none"
-      },
-      "model": "org.ekstep.analytics.model.AuditComputationModel",
-      "modelParams": {
+    "search": {
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.model.AuditComputationModel",
+    "modelParams": {
       "startDate": "$(date --date yesterday '+%Y-%m-%d')",
       "endDate": "$(date '+%Y-%m-%d')",
-      "auditRules": "[{\"name\": \"PipelineFailedEventsAudit\", \"description\": \"Pipeline Failed events Audit\", \"threshold\": 20, \"model\": \"org.ekstep.analytics.audit.PipelineFailedEventsDailyAudit\", \"priority\": 1, \"search\": [{\"bucket\":\"'$bucket'\",\"prefix\":\"failed/\",\"endDate\":\"$(date '+%Y-%m-%d')\",\"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\", \"delta\":0}]}] }]"
-    }
+      "auditRules": "[{\"name\":\"PipelineFailedEventsAudit\",\"description\":\"Pipeline Failed events Audit\",\"threshold\":20,\"model\":\"org.ekstep.analytics.audit.PipelineFailedEventsDailyAudit\",\"priority\":1,\"search\":[{\"type\":\"azure\",\"queries\":[{\"bucket\":\"{{ bucket }}\",\"prefix\":\"failed/\",\"endDate\":\"$(date '+%Y-%m-%d')\",\"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\",\"delta\":0}]}]}]"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ]
   },
   "pipeline-druid-events-audit": {
      "search": {
@@ -2456,8 +2470,16 @@
      "modelParams": {
        "startDate": "$(date --date yesterday '+%Y-%m-%d')",
        "endDate": "$(date '+%Y-%m-%d')",
-       "auditRules": "[{\"name\": \"DruidVsPipelineEventsDailyAudit\", \"description\": \"Druid Vs Pipeline events Audit\", \"threshold\": 20, \"model\": \"org.ekstep.analytics.audit.DruidVsPipelineEventsDailyAudit\", \"priority\": 1,\n\"params\": { \"syncMinusDays\": 2, \"syncPlusDays\": 1 }, \"startDate\": \"'$endDate'\", \"endDate\": \"'$endDate'\",\n\"search\": [{\"type\": \"azure\", \"queries\": [{\"bucket\":\"'$bucket'\",\"prefix\":\"telemetry-denormalized/raw/\", \"endDate\":\"$(date '+%Y-%m-%d')\", \"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\", \"delta\":0}]},\n{\"type\": \"azure\", \"queries\": [{\"bucket\":\"'$bucket'\",\"prefix\":\"telemetry-denormalized/summary/\", \"endDate\":\"$(date '+%Y-%m-%d')\", \"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\", \"delta\":0}]}] }]"
-     }
+       "auditRules": "[{\"name\": \"DruidVsPipelineEventsDailyAudit\", \"description\": \"Druid Vs Pipeline events Audit\", \"threshold\": 20, \"model\": \"org.ekstep.analytics.audit.DruidVsPipelineEventsDailyAudit\", \"priority\": 1,\n\"params\": { \"syncMinusDays\": 2, \"syncPlusDays\": 1 }, \"startDate\": \"$(date --date yesterday '+%Y-%m-%d')\", \"endDate\": \"$(date '+%Y-%m-%d')\",\n\"search\": [{\"type\": \"azure\", \"queries\": [{\"bucket\":\"{{ bucket }}\",\"prefix\":\"telemetry-denormalized/raw/\", \"endDate\":\"$(date '+%Y-%m-%d')\", \"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\", \"delta\":0}]},\n{\"type\": \"azure\", \"queries\": [{\"bucket\":\"{{ bucket }}\",\"prefix\":\"telemetry-denormalized/summary/\", \"endDate\":\"$(date '+%Y-%m-%d')\", \"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\", \"delta\":0}]}] }]"
+     },
+     "output": [
+       {
+         "to": "console",
+         "params": {
+           "printEvent": false
+         }
+       }
+     ]
   },
   "pipeline-audit": {
     "search": {
@@ -2468,6 +2490,14 @@
       "startDate": "$(date --date yesterday '+%Y-%m-%d')",
       "endDate": "$(date '+%Y-%m-%d')",
       "auditRules": "[{\"name\": \"PipelineAudit\", \"description\": \"PipelineAudit\", \"threshold\": 2.0, \"model\": \"org.ekstep.analytics.audit.PipelineDailyAudit\", \"priority\": 1, \"startDate\": \"$(date --date yesterday '+%Y-%m-%d')\", \"endDate\": \"$(date '+%Y-%m-%d')\"}]"
-    }
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ]
   }
 }

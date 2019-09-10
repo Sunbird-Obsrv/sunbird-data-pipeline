@@ -40,7 +40,13 @@
   environment:
     KILL_ON_STOP_TIMEOUT: 1
   become: yes
-  
+
+- name: Clean logstash conf directory
+  file:
+    state: absent
+    path: "{{logstash_config_loc}}/"
+  become: yes
+
 - name: Create logstash conf directory
   file: 
     path: "{{logstash_config_loc}}" 
