@@ -4,23 +4,42 @@
     path: '{{ content_snapshot_path }}'
     state: directory
   become: yes
+  tags: deploy
+
+
+- name: Ensure removing jars directory
+  file:
+    path: '{{ content_snapshot_path }}/jars'
+    state: absent
+  become: yes
+  tags: deploy
 
 - name: Create jars directory
   file:
     path: '{{ content_snapshot_path }}/jars'
     state: directory
   become: yes
+  tags: deploy
 
 - name: Copy adhoc-jobs jar file
   copy:
-    src: "{{ content_snapshot_jar_path }}/{{ content_snapshot_jar_name }}"
+    src: "{{ content_snapshot_jar_name }}"
     dest: "{{ content_snapshot_path }}/jars/"
+  tags: deploy
+
+- name: Ensure removing config directory
+  file:
+    path: '{{ content_snapshot_path }}/config'
+    state: absent
+  become: yes
+  tags: deploy
 
 - name: Create config directory
   file:
     path: "{{ content_snapshot_path }}/config"
     state: directory
   become: yes
+  tags: deploy
 
 - name: Ensure copying all conf files from the templates/conf folder
   template:
@@ -28,12 +47,21 @@
     dest: "{{ content_snapshot_path }}/config/{{ item }}.conf"
     mode: 755
   with_items: "{{ config_files }}"
+  tags: deploy
+
+- name: Ensure removing scripts directory
+  file:
+    path: '{{ content_snapshot_path }}/scripts'
+    state: absent
+  become: yes
+  tags: deploy
 
 - name: Create scripts directory
   file:
     path: '{{ content_snapshot_path }}/scripts'
     state: directory
   become: yes
+  tags: deploy
 
 - name: Ensure copying all script files from the templates/script dir
   template:
@@ -41,5 +69,16 @@
     dest: "{{ content_snapshot_path }}/scripts/{{ item }}.sh"
     mode: 755
   with_items: "{{ script_files }}"
+  tags: deploy
+
+- name: Run Script
+  become: yes
+  become_user: "{{ analytics_user }}"
+  shell: "nohup {{ content_snapshot_path }}/scripts/run-script.sh {{ job_id }} &"
+  async: "{{ (pause_min * 60) }}"
+  poll: 0
+  tags: run-script
+
+
 
 

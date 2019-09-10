@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+case "$script_name" in
+   "RedisUserDataIndexer") nohup {{ content_snapshot_path }}scripts/RedisUserDataIndexer.sh {{ job_id }} & 
+   ;;
+   "DruidContentIndexer")  nohup {{ content_snapshot_path }}scripts/DruidContentIndexer.sh {{ job_id }} &
+   ;;
+   "RedisContentIndexer")  nohup {{ content_snapshot_path }}scripts/RedisContentIndexer.sh {{ job_id }} &
+   ;;
+   "RedisDialcodeIndexer") nohup {{ content_snapshot_path }}scripts/RedisDialcodeIndexer.sh {{ job_id }} &
+   ;;
+   "DeviceProfileScripts") nohup {{ content_snapshot_path }}scripts/DeviceProfileScripts.sh {{ job_id }} &
+   ;;
+esac

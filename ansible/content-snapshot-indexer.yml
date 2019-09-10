@@ -1,4 +1,4 @@
-- hosts: localhost
+- hosts: spark
   vars_files:
   - "./inventory/env/secrets.yml"
   become: yes
@@ -6,3 +6,5 @@
   roles:
   - content-snapshot-indexer
   serial: 1
+  tags:
+  - deploy
