@@ -29,8 +29,7 @@ public class DeviceProfileUpdaterService {
     private String cassandra_db;
     private String cassandra_table;
     private Gson gson = new Gson();
-    private Type mapType = new TypeToken<Map<String, Object>>() {
-    }.getType();
+    private Type mapType = new TypeToken<Map<String, Object>>() { }.getType();
 
     public DeviceProfileUpdaterService(Config config, RedisConnect redisConnect, CassandraConnect cassandraConnection) {
         this.redisConnect = redisConnect;
@@ -68,6 +67,7 @@ public class DeviceProfileUpdaterService {
                 sink.deviceDBUpdateSuccess();
                 sink.success();
             }
+            else { sink.failed(); }
         }
 
     }

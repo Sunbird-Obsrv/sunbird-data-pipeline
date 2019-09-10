@@ -107,6 +107,8 @@ public class JobMetrics {
         userDbErrorCount.clear();
         expiredEventCount.clear();
         duplicateEventCount.clear();
+        deviceDBUpdateCount.clear();
+        deviceCacheUpdateCount.clear();
     }
 
     public void incSuccessCounter() {
