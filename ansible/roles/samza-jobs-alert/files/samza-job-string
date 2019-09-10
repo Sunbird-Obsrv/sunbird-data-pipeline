@@ -15,3 +15,4 @@ TelemetryRouter_1
 TelemetryExtractor_1      
 audit-event-generator_1   
 audit-history-indexer_1
+course-batch-updater_1
