@@ -54,6 +54,10 @@ public class CassandraConnect {
         return rs.wasApplied();
     }
 
+    public UserType getUDTType(String keyspace, String typeName) {
+        return session.getCluster().getMetadata().getKeyspace(keyspace).getUserType(typeName);
+    }
+
     public void reconnect() {
         this.session.close();
         String host = config.get("cassandra.host", "127.0.0.1");
