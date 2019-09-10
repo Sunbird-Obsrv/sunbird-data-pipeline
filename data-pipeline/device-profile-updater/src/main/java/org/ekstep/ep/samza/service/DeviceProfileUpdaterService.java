@@ -12,6 +12,8 @@ import org.ekstep.ep.samza.util.CassandraConnect;
 import org.ekstep.ep.samza.util.RedisConnect;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
+import java.lang.reflect.Type;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.*;
 
@@ -25,6 +27,7 @@ public class DeviceProfileUpdaterService {
     private String cassandra_db;
     private String cassandra_table;
     private Gson gson = new Gson();
+    private Type mapType = new TypeToken<Map<String, Object>>() { }.getType();
 
     public DeviceProfileUpdaterService(Config config, RedisConnect redisConnect, CassandraConnect cassandraConnection) {
         this.redisConnect = redisConnect;
@@ -66,14 +69,14 @@ public class DeviceProfileUpdaterService {
     private void addDeviceDataToCache(String deviceId, DeviceProfile deviceProfile, Jedis redisConnection) {
         try {
             if (null != deviceId && !deviceId.isEmpty() && null != deviceProfile) {
-                redisConnection.hmset(deviceId, deviceProfile.toMap());
+                addToCache(deviceId, deviceProfile, redisConnection);
             }
         } catch (JedisException ex) {
             redisConnect.resetConnection();
             try (Jedis redisConn = redisConnect.getConnection(deviceStoreDb)) {
                 this.deviceStoreConnection = redisConn;
                 if (null != deviceProfile)
-                    addToCache(deviceId, gson.toJson(deviceProfile), deviceStoreConnection);
+                    addToCache(deviceId, deviceProfile, deviceStoreConnection);
             }
         }
     }
@@ -95,24 +98,22 @@ public class DeviceProfileUpdaterService {
 
     private Map<String, String> parseuaSpec(String uaspec) {
         Map<String, String> parseSpec = new HashMap<String, String>();
-        parseSpec = gson.fromJson(uaspec, new com.google.common.reflect.TypeToken<Map<String, String>>() {
-        }.getType());
+        parseSpec = gson.fromJson(uaspec, mapType);
 
         return parseSpec;
     }
 
     private Map<String, String> parseDeviceSpec(String deviceSpec) {
         Map<String, String> parseSpec = new HashMap<String, String>();
-        parseSpec = gson.fromJson(deviceSpec, new com.google.common.reflect.TypeToken<Map<String, String>>() {
-        }.getType());
+        parseSpec = gson.fromJson(deviceSpec, mapType);
 
         return parseSpec;
     }
 
-    private void addToCache(String key, String value, Jedis redisConnection) {
-        if (null != key && !key.isEmpty() && null != value && !value.isEmpty()) {
-            redisConnection.set(key, value);
-            LOGGER.info(key, "Updated successfully");
+    private void addToCache(String deviceId, DeviceProfile deviceProfile, Jedis redisConnection) {
+        if (null != deviceId && !deviceId.isEmpty() && null != deviceId && !deviceId.isEmpty()) {
+            redisConnection.hmset(deviceId, deviceProfile.toMap());
+            LOGGER.info(deviceId, "Updated successfully");
         }
     }
 }
