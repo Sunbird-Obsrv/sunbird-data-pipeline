@@ -12,7 +12,9 @@ import org.ekstep.ep.samza.util.CassandraConnect;
 import org.ekstep.ep.samza.util.RedisConnect;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
+
 import java.lang.reflect.Type;
+
 import com.google.gson.reflect.TypeToken;
 
 import java.util.*;
@@ -27,7 +29,8 @@ public class DeviceProfileUpdaterService {
     private String cassandra_db;
     private String cassandra_table;
     private Gson gson = new Gson();
-    private Type mapType = new TypeToken<Map<String, Object>>() { }.getType();
+    private Type mapType = new TypeToken<Map<String, Object>>() {
+    }.getType();
 
     public DeviceProfileUpdaterService(Config config, RedisConnect redisConnect, CassandraConnect cassandraConnection) {
         this.redisConnect = redisConnect;
@@ -57,43 +60,39 @@ public class DeviceProfileUpdaterService {
             deviceData.values().removeAll(Collections.singleton(""));
             deviceData.values().removeAll(Collections.singleton("{}"));
             DeviceProfile deviceProfile = new DeviceProfile().fromMap(deviceData);
-            addDeviceDataToCache(deviceData.get("device_id"), deviceProfile, deviceStoreConnection);
-            sink.deviceCacheUpdateSuccess();
-            addDeviceDataToDB(deviceData, cassandraConnection);
-            sink.deviceDBUpdateSuccess();
-            sink.success();
+            String deviceId = deviceData.get("device_id");
+            if (null != deviceId && !deviceId.isEmpty()) {
+                addDeviceDataToCache(deviceId, deviceProfile, deviceStoreConnection);
+                sink.deviceCacheUpdateSuccess();
+                addDeviceDataToDB(deviceData, cassandraConnection);
+                sink.deviceDBUpdateSuccess();
+                sink.success();
+            }
         }
 
     }
 
     private void addDeviceDataToCache(String deviceId, DeviceProfile deviceProfile, Jedis redisConnection) {
         try {
-            if (null != deviceId && !deviceId.isEmpty() && null != deviceProfile) {
-                addToCache(deviceId, deviceProfile, redisConnection);
-            }
+            addToCache(deviceId, deviceProfile, redisConnection);
         } catch (JedisException ex) {
             redisConnect.resetConnection();
             try (Jedis redisConn = redisConnect.getConnection(deviceStoreDb)) {
                 this.deviceStoreConnection = redisConn;
-                if (null != deviceProfile)
-                    addToCache(deviceId, deviceProfile, deviceStoreConnection);
+                addToCache(deviceId, deviceProfile, deviceStoreConnection);
             }
         }
     }
 
     private void addDeviceDataToDB(Map<String, String> deviceData, CassandraConnect cassandraConnection) {
-        String deviceId = deviceData.get("device_id");
-
         Map<String, String> parseduaspec = null != deviceData.get("uaspec") ? parseuaSpec(deviceData.get("uaspec")) : null;
         deviceData.values().removeAll(Collections.singleton(deviceData.get("uaspec")));
         Map<String, String> parsedevicespec = null != deviceData.get("device_spec") ? parseDeviceSpec(deviceData.get("device_spec")) : null;
         deviceData.values().removeAll(Collections.singleton(deviceData.get("device_spec")));
 
-        if (null != deviceId && !deviceId.isEmpty() && null != deviceData && !deviceData.isEmpty()) {
-            Insert query = QueryBuilder.insertInto(cassandra_db, cassandra_table)
-                    .values(new ArrayList<>(deviceData.keySet()), new ArrayList<>(deviceData.values())).value("uaspec", parseduaspec).value("device_spec", parsedevicespec);
-            cassandraConnection.upsert(query);
-        }
+        Insert query = QueryBuilder.insertInto(cassandra_db, cassandra_table)
+                .values(new ArrayList<>(deviceData.keySet()), new ArrayList<>(deviceData.values())).value("uaspec", parseduaspec).value("device_spec", parsedevicespec);
+        cassandraConnection.upsert(query);
     }
 
     private Map<String, String> parseuaSpec(String uaspec) {
@@ -111,9 +110,7 @@ public class DeviceProfileUpdaterService {
     }
 
     private void addToCache(String deviceId, DeviceProfile deviceProfile, Jedis redisConnection) {
-        if (null != deviceId && !deviceId.isEmpty() && null != deviceId && !deviceId.isEmpty()) {
             redisConnection.hmset(deviceId, deviceProfile.toMap());
             LOGGER.info(deviceId, "Updated successfully");
-        }
     }
 }
