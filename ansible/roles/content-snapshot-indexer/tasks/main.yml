@@ -74,8 +74,7 @@
 - name: Run Script
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: "nohup {{ content_snapshot_path }}/scripts/run-script.sh {{ job_id }} &"
-  async: "{{ (pause_min * 60) }}"
+  shell: "nohup {{ content_snapshot_path }}/scripts/run-script.sh {{ script_to_run }} &"
   poll: 0
   tags: run-script
 
