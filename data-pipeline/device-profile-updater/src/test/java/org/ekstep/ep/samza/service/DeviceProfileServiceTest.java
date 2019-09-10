@@ -55,17 +55,17 @@ public class DeviceProfileServiceTest {
         stub(configMock.get("redis.database.deviceLocationStore.id")).toReturn("1");
         stub(configMock.get("location.db.redis.key.expiry.seconds")).toReturn("86400");
         stub(configMock.get("cache.unresolved.location.key.expiry.seconds")).toReturn("3600");
+        stub(envelopeMock.getSystemStreamPartition())
+                .toReturn(new SystemStreamPartition("kafka", "events_deviceprofile", new Partition(0)));
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.DEVICE_PROFILE_DETAILS);
         deviceProfileUpdaterService = new DeviceProfileUpdaterService(configMock, redisConnectMock, cassandraConnectMock);
 
         jedisMock.flushAll();
     }
 
     @Test
-    public void shouldupdateDeviceCacheToRedis() throws Exception {
+    public void shouldupdateCache() throws Exception {
         jedisMock.flushAll();
-        stub(envelopeMock.getSystemStreamPartition())
-                .toReturn(new SystemStreamPartition("kafka", "events_deviceprofile", new Partition(0)));
-        stub(envelopeMock.getMessage()).toReturn(EventFixture.DEVICE_PROFILE_DETAILS);
 
         Gson gson = new Gson();
         Map<String, Object> event = gson.fromJson(EventFixture.DEVICE_PROFILE_DETAILS, Map.class);
@@ -77,6 +77,15 @@ public class DeviceProfileServiceTest {
 
         String cachedData = jedisMock.get(device_id);
         assertEquals("232455", cachedData);
+        verify(deviceProfileUpdaterSinkMock, times(1)).deviceCacheUpdateSuccess();
+    }
+
+    @Test
+    public void shouldupdateDB() throws Exception {
+        DeviceProfileUpdaterSource source = new DeviceProfileUpdaterSource(envelopeMock);
+        deviceProfileUpdaterService.process(source, deviceProfileUpdaterSinkMock);
+
+        verify(deviceProfileUpdaterSinkMock, times(1)).deviceDBUpdateSuccess();
     }
 
 }

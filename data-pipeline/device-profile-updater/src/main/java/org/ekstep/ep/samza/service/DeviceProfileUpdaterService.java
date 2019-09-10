@@ -3,6 +3,7 @@ package org.ekstep.ep.samza.service;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import org.apache.samza.config.Config;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.DeviceProfile;
@@ -12,9 +13,7 @@ import org.ekstep.ep.samza.util.CassandraConnect;
 import org.ekstep.ep.samza.util.RedisConnect;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
-
 import java.lang.reflect.Type;
-
 import com.google.gson.reflect.TypeToken;
 
 import java.util.*;
@@ -42,8 +41,13 @@ public class DeviceProfileUpdaterService {
     }
 
     public void process(DeviceProfileUpdaterSource source, DeviceProfileUpdaterSink sink) {
-        Map<String, Object> message = source.getMap();
-        updateDeviceDetails(message, sink);
+        try {
+            Map<String, Object> message = source.getMap();
+            updateDeviceDetails(message, sink);
+        } catch (JsonSyntaxException e) {
+            LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
+            sink.toMalformedTopic(source.getMessage());
+        }
     }
 
     private void updateDeviceDetails(Map<String, Object> message, DeviceProfileUpdaterSink sink) {
@@ -85,9 +89,9 @@ public class DeviceProfileUpdaterService {
     }
 
     private void addDeviceDataToDB(Map<String, String> deviceData, CassandraConnect cassandraConnection) {
-        Map<String, String> parseduaspec = null != deviceData.get("uaspec") ? parseuaSpec(deviceData.get("uaspec")) : null;
+        Map<String, String> parseduaspec = null != deviceData.get("uaspec") ? parseSpec(deviceData.get("uaspec")) : null;
         deviceData.values().removeAll(Collections.singleton(deviceData.get("uaspec")));
-        Map<String, String> parsedevicespec = null != deviceData.get("device_spec") ? parseDeviceSpec(deviceData.get("device_spec")) : null;
+        Map<String, String> parsedevicespec = null != deviceData.get("device_spec") ? parseSpec(deviceData.get("device_spec")) : null;
         deviceData.values().removeAll(Collections.singleton(deviceData.get("device_spec")));
 
         Insert query = QueryBuilder.insertInto(cassandra_db, cassandra_table)
@@ -95,16 +99,9 @@ public class DeviceProfileUpdaterService {
         cassandraConnection.upsert(query);
     }
 
-    private Map<String, String> parseuaSpec(String uaspec) {
+    private Map<String, String> parseSpec(String spec) {
         Map<String, String> parseSpec = new HashMap<String, String>();
-        parseSpec = gson.fromJson(uaspec, mapType);
-
-        return parseSpec;
-    }
-
-    private Map<String, String> parseDeviceSpec(String deviceSpec) {
-        Map<String, String> parseSpec = new HashMap<String, String>();
-        parseSpec = gson.fromJson(deviceSpec, mapType);
+        parseSpec = gson.fromJson(spec, mapType);
 
         return parseSpec;
     }
