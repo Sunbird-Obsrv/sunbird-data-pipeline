@@ -1,7 +1,7 @@
 analytics_user: analytics
 analytics_group: analytics
 content_snapshot_path: "/mount/content-snapshot/"
-content_snapshot_jar_path: "/Users/admin/Documents/sunbird-projects/sunbird-data-pipeline/druid/adhoc-jobs/target/" # Add content snapshot jar file path.
+#content_snapshot_jar_path: "/Users/admin/Documents/sunbird-projects/sunbird-data-pipeline/druid/adhoc-jobs/target/" # Add content snapshot jar file path.
 content_snapshot_jar_name: "adhoc-jobs-1.0.jar"
 redis:
   host: "localhost" # Redis IP
@@ -70,7 +70,7 @@ job_config:
 
 output_file_path: "/home/ops/tmp/compositeSearchBatchData"
 config_files: ["application","cassandraRedis","DeviceProfile","ESCloudUploader","ESContentIndexer","ESDialcodeIndexer"]
-script_files: ["DeviceProfileScripts","DruidContentIndexer","RedisContentIndexer","RedisDialcodeIndexer","RedisUserDataIndexer"]
+script_files: ["DeviceProfileScripts","DruidContentIndexer","RedisContentIndexer","RedisDialcodeIndexer","RedisUserDataIndexer","run-script"]
 
 
 
