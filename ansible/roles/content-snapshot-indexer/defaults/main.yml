@@ -14,11 +14,11 @@ redis:
   content:
     index: "5"
     source_key: "identifier"
-    key_delimiter: ""
+    key_delimiter: '""'
   dialcode:
     index: "6"
     source_key: "identifier"
-    key_delimiter: ""
+    key_delimiter: '""'
   connection:
     idle_max: 20
     idle_min: 10
