@@ -24,6 +24,9 @@
   become_user: "{{ analytics_user }}"    
   tags: deploy
 
+- name: Unarchive adhoc job script
+  unarchive: adhoc-jobs-1.0-distribution.tar.gz dest={{ content_snapshot_path }}jars/ copy=no group={{ analytics_group }} owner={{ analytics_user }}
+
 - name: Copy adhoc-jobs jar file
   copy:
     src: "{{ content_snapshot_jar_name }}"
