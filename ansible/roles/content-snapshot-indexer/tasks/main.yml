@@ -10,7 +10,7 @@
 
 - name: Ensure removing jars directory
   file:
-    path: '{{ content_snapshot_path }}jars'
+    path: '{{ content_snapshot_path }}jars/'
     state: absent
   become_user: "{{ analytics_user }}"  
   tags: deploy
