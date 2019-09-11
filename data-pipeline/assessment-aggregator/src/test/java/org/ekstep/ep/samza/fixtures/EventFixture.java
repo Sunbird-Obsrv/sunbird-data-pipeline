@@ -1,7 +1,6 @@
 package org.ekstep.ep.samza.fixtures;
 
 import com.google.gson.Gson;
-import org.joda.time.DateTime;
 
 import java.util.Map;
 
