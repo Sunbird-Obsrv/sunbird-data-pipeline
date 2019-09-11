@@ -48,7 +48,7 @@ cloud_storage:
   account_key: "{{ azure_storage_secret }}"
 
 cassandra:
-  host: "" ## LMS-Cassandra IP Address.
+  host: "{{groups['dp-cassandra'][0]}}" ## LMS-Cassandra IP Address.
   keyspace: '{{ env }}_'
   user:
     table: "user"
@@ -57,7 +57,7 @@ cassandra:
     new_table: "device_profile_temp"
 
 druid:
-  coordinator_host: ""
+  coordinator_host: "{{gropus['coordinator'][0]}}"
   data_source: "content-model-snapshot"
   ingestion_spec_path: "home/adhoc-jobs-1.0/druid_models/content_index_batch.json"
 
