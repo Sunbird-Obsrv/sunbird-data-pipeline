@@ -2,7 +2,7 @@
   vars_files:
   - "./inventory/env/secrets.yml"
   become: yes
-  #become_user: "{{ analytics_user }}"
+  become_user: "{{ analytics_user }}"
   roles:
   - content-snapshot-indexer
   serial: 1
