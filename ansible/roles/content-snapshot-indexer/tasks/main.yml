@@ -10,7 +10,7 @@
 
 - name: Ensure removing jars directory
   file:
-    path: '{{ content_snapshot_path }}/jars'
+    path: '{{ content_snapshot_path }}jars'
     state: absent
   become: yes
   become_user: "{{ analytics_user }}"  
@@ -18,7 +18,7 @@
 
 - name: Create jars directory
   file:
-    path: '{{ content_snapshot_path }}/jars'
+    path: '{{ content_snapshot_path }}jars'
     state: directory
   become: yes
   become_user: "{{ analytics_user }}"    
@@ -27,14 +27,14 @@
 - name: Copy adhoc-jobs jar file
   copy:
     src: "{{ content_snapshot_jar_name }}"
-    dest: "{{ content_snapshot_path }}/jars/"
+    dest: "{{ content_snapshot_path }}jars/"
   become: yes
   become_user: "{{ analytics_user }}"    
   tags: deploy
 
 - name: Ensure removing config directory
   file:
-    path: '{{ content_snapshot_path }}/config'
+    path: '{{ content_snapshot_path }}config'
     state: absent
   become: yes
   become_user: "{{ analytics_user }}"    
@@ -42,7 +42,7 @@
 
 - name: Create config directory
   file:
-    path: "{{ content_snapshot_path }}/config"
+    path: "{{ content_snapshot_path }}config"
     state: directory
   become: yes
   become_user: "{{ analytics_user }}"    
@@ -51,14 +51,14 @@
 - name: Ensure copying all conf files from the templates/conf folder
   template:
     src: "conf/{{ item }}.j2"
-    dest: "{{ content_snapshot_path }}/config/{{ item }}.conf"
+    dest: "{{ content_snapshot_path }}config/{{ item }}.conf"
     mode: 755
   with_items: "{{ config_files }}"
   tags: deploy
 
 - name: Ensure removing scripts directory
   file:
-    path: '{{ content_snapshot_path }}/scripts'
+    path: '{{ content_snapshot_path }}scripts'
     state: absent
   become: yes
   become_user: "{{ analytics_user }}"  
@@ -66,7 +66,7 @@
 
 - name: Create scripts directory
   file:
-    path: '{{ content_snapshot_path }}/scripts'
+    path: '{{ content_snapshot_path }}scripts'
     state: directory
   become: yes
   become_user: "{{ analytics_user }}"  
@@ -75,7 +75,7 @@
 - name: Ensure copying all script files from the templates/script dir
   template:
     src: "scripts/{{ item }}.j2"
-    dest: "{{ content_snapshot_path }}/scripts/{{ item }}.sh"
+    dest: "{{ content_snapshot_path }}scripts/{{ item }}.sh"
     mode: 755
   with_items: "{{ script_files }}"
   tags: deploy
@@ -83,7 +83,7 @@
 - name: Run Script
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: "nohup {{ content_snapshot_path }}/scripts/run-script.sh {{ script_to_run }} &"
+  shell: "nohup {{ content_snapshot_path }}scripts/run-script.sh {{ script_to_run }} &"
   poll: 0
   tags: run-script
 
