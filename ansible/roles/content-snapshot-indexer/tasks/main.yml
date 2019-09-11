@@ -3,11 +3,12 @@
   file:
     path: '{{ content_snapshot_path }}'
     state: directory
+    mode: 0777
   become: yes
   become_user: "{{ analytics_user }}"
   tags: deploy
 
-- name: Copy artifcat
+- name: Copy distributed jar
   copy: src={{ content_snapshot_distribuction_name }} dest={{ content_snapshot_path }}
 
 - name: Ensure removing jars directory
@@ -21,7 +22,7 @@
   file:
     path: '{{ content_snapshot_path }}jars'
     state: directory
-    mode: 775
+    mode: 0777
   become: yes
   become_user: "{{ analytics_user }}"    
   tags: deploy
@@ -50,7 +51,7 @@
   file:
     path: "{{ content_snapshot_path }}config"
     state: directory
-    mode: 775
+    mode: 0777
   become: yes
   become_user: "{{ analytics_user }}"    
   tags: deploy
