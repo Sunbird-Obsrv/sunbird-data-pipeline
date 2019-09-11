@@ -1,14 +1,26 @@
 #!/usr/bin/env bash
 
 case "$script_name" in
-   "RedisUserDataIndexer") nohup {{ content_snapshot_path }}scripts/RedisUserDataIndexer.sh & 
+
+   "RedisUserDataIndexer") 
+      echo "Invoked RedisUserDataIndexer"
+      nohup {{ content_snapshot_path }}scripts/RedisUserDataIndexer.sh & 
    ;;
-   "DruidContentIndexer")  nohup {{ content_snapshot_path }}scripts/DruidContentIndexer.sh &
+   "DruidContentIndexer")
+      echo "Invoked DruidContentIndexer"
+     nohup {{ content_snapshot_path }}scripts/DruidContentIndexer.sh &
    ;;
-   "RedisContentIndexer")  nohup {{ content_snapshot_path }}scripts/RedisContentIndexer.sh &
+
+   "RedisContentIndexer")  
+      echo "Invoked RedisContentIndexer"
+      nohup {{ content_snapshot_path }}scripts/RedisContentIndexer.sh &
    ;;
-   "RedisDialcodeIndexer") nohup {{ content_snapshot_path }}scripts/RedisDialcodeIndexer.sh &
+   "RedisDialcodeIndexer") 
+      echo "Invoked RedisDialcodeIndexer"
+      nohup {{ content_snapshot_path }}scripts/RedisDialcodeIndexer.sh &
    ;;
-   "DeviceProfileScripts") nohup {{ content_snapshot_path }}scripts/DeviceProfileScripts.sh &
+   "DeviceProfileScripts") 
+       echo "Invoked DeviceProfileScripts"
+      nohup {{ content_snapshot_path }}scripts/DeviceProfileScripts.sh &
    ;;
 esac

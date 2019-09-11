@@ -4,8 +4,9 @@ content_snapshot_path: "/mount/data/analytics/content-snapshot/"
 content_snapshot_jar_path: "ansible/roles/content-snapshot-indexer/files/" # Add content snapshot jar file path.
 content_snapshot_jar_name: "adhoc-jobs-1.0.jar"
 content_snapshot_distribuction_name: "adhoc-jobs-1.0-distribution.tar.gz"
+spark_home: "/mount/data/analytics/spark-2.0.1-bin-hadoop2.7"
 redis:
-  host: "localhost" # Redis DP 
+  host: "{{groups['redis'][0]}}" # Redis DP IP 
   port: "6379"
   user:
     index: "4"
