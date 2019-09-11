@@ -11,14 +11,12 @@
   file:
     path: '{{ content_snapshot_path }}/jars'
     state: absent
-  become: yes
   tags: deploy
 
 - name: Create jars directory
   file:
     path: '{{ content_snapshot_path }}/jars'
     state: directory
-  become: yes
   tags: deploy
 
 - name: Copy adhoc-jobs jar file
@@ -31,14 +29,12 @@
   file:
     path: '{{ content_snapshot_path }}/config'
     state: absent
-  become: yes
   tags: deploy
 
 - name: Create config directory
   file:
     path: "{{ content_snapshot_path }}/config"
     state: directory
-  become: yes
   tags: deploy
 
 - name: Ensure copying all conf files from the templates/conf folder
