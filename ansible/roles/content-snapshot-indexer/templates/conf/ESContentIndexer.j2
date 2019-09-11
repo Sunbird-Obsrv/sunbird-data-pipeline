@@ -19,7 +19,7 @@ elasticsearch.host="{{ elastic_search.host }}"
 elasticsearch.port="{{ elastic_search.port }}"
 elasticsearch.scroll.size="{{ elastic_search.scroll_size }}"
 elasticsearch.index.source.keys=["{{ redis.content.source_key }}"] # this will be used as key for redis
-elasticsearch.index.source.keyDelimiter={{ redis.content.key_delimiter }}
+elasticsearch.index.source.keyDelimiter="{{ redis.content.key_delimiter }}"
 elasticsearch.query.index="{{ elastic_search.content.index }}"
 # query to fetch all 'Live' status contents of objectType 'Content'
 elasticsearch.query.jsonString="{{ elastic_search.content.query }}"

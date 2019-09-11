@@ -33,13 +33,13 @@ elastic_search:
   port: "9200"
   content:
     index: "compositesearch"
-    query: "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"status\":{\"query\":\"Live\"}}},{\"match\":{\"objectType\":{\"query\":\"Content\"}}}]}}}"
+    query: "{\"query\":{\"bool\":{\"must\":\"[{\\\"match\\\": {\\\"status\\\": {\\\"query\\\": \\\"Live\\\"}}}, {\\\"match\\\": {\\\"objectType\\\": {\\\"query\\\": \\\"Content\\\"}}}]\"}}}"
   dialcode:
     index: "dialcode"
-    query: "{\"query\":{\"match_all\":{}}}"
+    query: "\"{\\\"query\\\":{\\\"match_all\\\":{}}}\"
   cloud:
     index: "compositesearch"
-    query: "{\"query\":{\"match_all\":{}}}"
+    query: "\"{\\\"query\\\":{\\\"match_all\\\":{}}}\"
   scroll_size: "1000"
 
 cloud_storage:
