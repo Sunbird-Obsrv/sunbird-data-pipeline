@@ -19,5 +19,5 @@ elasticsearch.port="{{ elastic_search.port }}"
 elasticsearch.scroll.size="{{ elastic_search.scroll_size }}"
 elasticsearch.index.source.keys=["{{ redis.dialcode.source_key }}"] # this will be used as key for redis
 elasticsearch.index.source.keyDelimiter={{ redis.dialcode.key_delimiter }}
-elasticsearch.query.index="{{ elastic_search.dialcode.index }}"
+elasticsearch.query.index={{ elastic_search.dialcode.index }}
 elasticsearch.query.jsonString="{{ elastic_search.dialcode.query }}"
