@@ -1,6 +1,6 @@
 analytics_user: analytics
 analytics_group: analytics
-content_snapshot_path: "/mount/content-snapshot/"
+content_snapshot_path: "/mount/data/analytics/content-snapshot/"
 content_snapshot_jar_path: "ansible/roles/content-snapshot-indexer/files/" # Add content snapshot jar file path.
 content_snapshot_jar_name: "adhoc-jobs-1.0.jar"
 redis:
