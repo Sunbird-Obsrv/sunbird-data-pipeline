@@ -12,7 +12,7 @@ secor:
 secor_service_name:
   device-profile-backup:
     consumer_group: "{{ env }}.events.deviceprofile.backup"
-    base_path: "device-profile"
+    base_path: "device-profile-events"
     timestamp_key: "updated_date"
     fallback_timestamp_key: "updated_date"
     topic: "{{ env }}.events.deviceprofile"
@@ -20,7 +20,7 @@ secor_service_name:
     zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
     max_file_size: "100000000"
     max_file_age: "14400"
-    ostrich_port: "9989"
+    ostrich_port: "9988"
     partition_prefix_enabled: "false"
     partition_prefix_key: ""
     partition_prefix_mapping: "{}"

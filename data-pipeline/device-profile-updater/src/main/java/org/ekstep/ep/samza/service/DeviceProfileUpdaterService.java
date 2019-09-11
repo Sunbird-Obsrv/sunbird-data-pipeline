@@ -51,7 +51,7 @@ public class DeviceProfileUpdaterService {
     }
 
     private void updateDeviceDetails(Map<String, Object> message, DeviceProfileUpdaterSink sink) {
-        Map<String, String> deviceData = new HashMap<String, String>();
+        Map<String, String> deviceData = new HashMap<>();
 
         for (Map.Entry<String, Object> entry : message.entrySet()) {
             if (entry.getValue() instanceof String) {
@@ -95,12 +95,13 @@ public class DeviceProfileUpdaterService {
         deviceData.values().removeAll(Collections.singleton(deviceData.get("device_spec")));
 
         Insert query = QueryBuilder.insertInto(cassandra_db, cassandra_table)
-                .values(new ArrayList<>(deviceData.keySet()), new ArrayList<>(deviceData.values())).value("uaspec", parseduaspec).value("device_spec", parsedevicespec);
+                .values(new ArrayList<>(deviceData.keySet()), new ArrayList<>(deviceData.values()))
+                .value("uaspec", parseduaspec).value("device_spec", parsedevicespec);
         cassandraConnection.upsert(query);
     }
 
     private Map<String, String> parseSpec(String spec) {
-        Map<String, String> parseSpec = new HashMap<String, String>();
+        Map<String, String> parseSpec = new HashMap<>();
         parseSpec = gson.fromJson(spec, mapType);
 
         return parseSpec;
