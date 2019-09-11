@@ -12,6 +12,7 @@
   file:
     path: '{{ content_snapshot_path }}jars'
     state: absent
+    mode: 755
   become: yes
   become_user: "{{ analytics_user }}"  
   tags: deploy
@@ -20,6 +21,7 @@
   file:
     path: '{{ content_snapshot_path }}jars'
     state: directory
+    mode: 755
   become: yes
   become_user: "{{ analytics_user }}"    
   tags: deploy
@@ -28,6 +30,7 @@
   copy:
     src: "{{ content_snapshot_jar_name }}"
     dest: "{{ content_snapshot_path }}jars/"
+    mode: 755
   become: yes
   become_user: "{{ analytics_user }}"    
   tags: deploy
@@ -36,6 +39,7 @@
   file:
     path: '{{ content_snapshot_path }}config'
     state: absent
+    mode: 755
   become: yes
   become_user: "{{ analytics_user }}"    
   tags: deploy
@@ -44,6 +48,7 @@
   file:
     path: "{{ content_snapshot_path }}config"
     state: directory
+    mode: 755
   become: yes
   become_user: "{{ analytics_user }}"    
   tags: deploy
@@ -60,6 +65,7 @@
   file:
     path: '{{ content_snapshot_path }}scripts'
     state: absent
+    mode: 755
   become: yes
   become_user: "{{ analytics_user }}"  
   tags: deploy
@@ -68,6 +74,7 @@
   file:
     path: '{{ content_snapshot_path }}scripts'
     state: directory
+    mode: 755
   become: yes
   become_user: "{{ analytics_user }}"  
   tags: deploy
