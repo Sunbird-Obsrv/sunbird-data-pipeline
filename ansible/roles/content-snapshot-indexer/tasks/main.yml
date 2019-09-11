@@ -7,6 +7,8 @@
   become_user: "{{ analytics_user }}"
   tags: deploy
 
+- name: Copy artifcat
+  copy: src={{ content_snapshot_distribuction_name }} dest={{ content_snapshot_path }}
 
 - name: Ensure removing jars directory
   file:
@@ -26,7 +28,7 @@
 
 
 - name: Unarchive adhoc job script
-  unarchive: src={{ content_snapshot_distribuction_name }} dest={{ content_snapshot_path }}jars/ copy=no group={{ analytics_group }} owner={{ analytics_user }}
+  unarchive: src={{ content_snapshot_path }}{{ content_snapshot_distribuction_name }} dest={{ content_snapshot_path }}jars/ copy=no group={{ analytics_group }} owner={{ analytics_user }}
 
 - name: Copy adhoc-jobs jar file
   copy:
