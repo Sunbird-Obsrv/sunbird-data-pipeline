@@ -11,7 +11,7 @@ redis.max.pipeline.size="{{ redis.max_pipeline_size }}"
 
 
 #CassandraToRedis Config
-spark.cassandra.connection.host="{{ cassandra.host }}"
+spark.cassandra.connection.host="{{core_cassandra_host}}"
 cassandra.user.keyspace="{{ cassandra.keyspace }}"
 cassandra.user.table="{{ cassandra.user.table }}"
 redis.user.database.index="{{ redis.user.index }}"

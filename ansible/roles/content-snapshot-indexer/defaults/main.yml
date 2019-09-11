@@ -4,7 +4,7 @@ content_snapshot_path: "/mount/data/analytics/content-snapshot/"
 content_snapshot_jar_path: "ansible/roles/content-snapshot-indexer/files/" # Add content snapshot jar file path.
 content_snapshot_jar_name: "adhoc-jobs-1.0.jar"
 redis:
-  host: "localhost" # Redis IP
+  host: "localhost" # Redis DP 
   port: "6379"
   user:
     index: "4"
@@ -27,7 +27,7 @@ redis:
   key_expiry_seconds: 3600
 
 elastic_search:
-  host: "" # LP Elastic search IP Address
+  host: "{{groups['core-es'][0]}}" # LP Elastic search IP Address
   port: "9200"
   content:
     index: "compositesearch"

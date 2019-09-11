@@ -12,7 +12,6 @@
   file:
     path: '{{ content_snapshot_path }}jars'
     state: absent
-  become: yes
   become_user: "{{ analytics_user }}"  
   tags: deploy
 
@@ -38,7 +37,6 @@
   file:
     path: '{{ content_snapshot_path }}config'
     state: absent
-  become: yes
   become_user: "{{ analytics_user }}"    
   tags: deploy
 
@@ -65,7 +63,6 @@
   file:
     path: '{{ content_snapshot_path }}scripts'
     state: absent
-  become: yes
   become_user: "{{ analytics_user }}"  
   tags: deploy
 
