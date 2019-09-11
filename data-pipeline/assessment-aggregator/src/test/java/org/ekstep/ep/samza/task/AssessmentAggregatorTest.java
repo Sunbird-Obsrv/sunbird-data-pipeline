@@ -24,14 +24,14 @@ import static org.mockito.Mockito.stub;
 
 public class AssessmentAggregatorTest {
 
-    private Config config;
+
     private IncomingMessageEnvelope envelope;
     private DBUtil dbUtil;
 
     @Before
-    public void setup() {
+    public void setUp() {
 
-        config = mock(Config.class);
+        Config config = mock(Config.class);
         envelope = mock(IncomingMessageEnvelope.class);
 
         stub(envelope.getOffset()).toReturn("2");

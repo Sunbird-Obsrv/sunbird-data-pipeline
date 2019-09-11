@@ -35,9 +35,6 @@ public class AssessmentAggregatorTask implements StreamTask, InitableTask, Windo
     private AssessmentAggregatorService service;
     private AssessmentAggregatorConfig config;
 
-    public AssessmentAggregatorTask() {
-    }
-
     @Override
     public void init(Config config, TaskContext context) {
         this.config = new AssessmentAggregatorConfig(config);

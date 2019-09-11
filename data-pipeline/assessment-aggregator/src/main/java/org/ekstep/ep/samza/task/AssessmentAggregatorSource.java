@@ -2,7 +2,6 @@ package org.ekstep.ep.samza.task;
 
 import com.google.gson.Gson;
 import org.apache.samza.system.IncomingMessageEnvelope;
-import org.apache.samza.system.SystemStreamPartition;
 import org.ekstep.ep.samza.domain.BatchEvent;
 
 import java.util.Map;

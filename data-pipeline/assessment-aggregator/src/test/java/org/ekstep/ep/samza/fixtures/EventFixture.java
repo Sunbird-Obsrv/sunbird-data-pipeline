@@ -7,8 +7,6 @@ import java.util.Map;
 
 public class EventFixture {
 
-    public static Long current_ets = new DateTime().getMillis();
-
     public static final String BATCH_ASSESS_EVENT = "{\n" +
             "  \"courseId\": \"do_312712196780204032110117\",\n" +
             "  \"batchId\": \"01271220181664563270\",\n" +
