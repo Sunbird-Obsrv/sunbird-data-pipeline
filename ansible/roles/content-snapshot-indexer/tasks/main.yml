@@ -19,7 +19,7 @@
   file:
     path: '{{ content_snapshot_path }}jars'
     state: directory
-    mode: 755
+    mode: 775
   become: yes
   become_user: "{{ analytics_user }}"    
   tags: deploy
@@ -32,7 +32,7 @@
   copy:
     src: "{{ content_snapshot_jar_name }}"
     dest: "{{ content_snapshot_path }}jars/"
-    mode: 755
+    mode: 775
     owner: "{{ analytics_user }}" 
     group: "{{ analytics_group }}"
   tags: deploy
@@ -48,7 +48,7 @@
   file:
     path: "{{ content_snapshot_path }}config"
     state: directory
-    mode: 755
+    mode: 775
   become: yes
   become_user: "{{ analytics_user }}"    
   tags: deploy
@@ -57,7 +57,7 @@
   template:
     src: "conf/{{ item }}.j2"
     dest: "{{ content_snapshot_path }}config/{{ item }}.conf"
-    mode: 755
+    mode: 775
     owner: "{{ analytics_user }}" 
     group: "{{ analytics_group }}"
   with_items: "{{ config_files }}"
@@ -74,7 +74,7 @@
   file:
     path: '{{ content_snapshot_path }}scripts'
     state: directory
-    mode: 755
+    mode: 775
   become: yes
   become_user: "{{ analytics_user }}"  
   tags: deploy
@@ -83,7 +83,7 @@
   template:
     src: "scripts/{{ item }}.j2"
     dest: "{{ content_snapshot_path }}scripts/{{ item }}.sh"
-    mode: 755
+    mode: 775
     owner: "{{ analytics_user }}" 
     group: "{{ analytics_group }}"
   with_items: "{{ script_files }}"
