@@ -77,7 +77,7 @@
   file:
     path: '{{ content_snapshot_path }}scripts'
     state: directory
-    mode: 775
+    mode: 0777
   become: yes
   become_user: "{{ analytics_user }}"  
   tags: deploy
