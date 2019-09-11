@@ -30,8 +30,8 @@
     src: "{{ content_snapshot_jar_name }}"
     dest: "{{ content_snapshot_path }}jars/"
     mode: 755
-  become: yes
-  become_user: "{{ analytics_user }}"    
+    owner: "{{ analytics_user }}" 
+    group: "{{ analytics_group }}"
   tags: deploy
 
 - name: Ensure removing config directory
@@ -56,6 +56,8 @@
     src: "conf/{{ item }}.j2"
     dest: "{{ content_snapshot_path }}config/{{ item }}.conf"
     mode: 755
+    owner: "{{ analytics_user }}" 
+    group: "{{ analytics_group }}"
   with_items: "{{ config_files }}"
   tags: deploy
 
@@ -81,6 +83,8 @@
     src: "scripts/{{ item }}.j2"
     dest: "{{ content_snapshot_path }}scripts/{{ item }}.sh"
     mode: 755
+    owner: "{{ analytics_user }}" 
+    group: "{{ analytics_group }}"
   with_items: "{{ script_files }}"
   tags: deploy
 
