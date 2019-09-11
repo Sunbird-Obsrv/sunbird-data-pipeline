@@ -3,6 +3,7 @@ analytics_group: analytics
 content_snapshot_path: "/mount/data/analytics/content-snapshot/"
 content_snapshot_jar_path: "ansible/roles/content-snapshot-indexer/files/" # Add content snapshot jar file path.
 content_snapshot_jar_name: "adhoc-jobs-1.0.jar"
+content_snapshot_distribuction_name: "adhoc-jobs-1.0-distribution.tar.gz"
 redis:
   host: "localhost" # Redis DP 
   port: "6379"
