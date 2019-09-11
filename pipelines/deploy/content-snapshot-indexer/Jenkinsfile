@@ -24,8 +24,9 @@ node() {
                 stage('deploy artifact'){
                     sh """
                        unzip ${artifact}
+                       unzip adhoc-jobs-1.0-distribution.tar.gz
                        mv adhoc-jobs-1.0.jar ansible/roles/content-snapshot-indexer/files/
-                       mv druid_models/content_index_batch.json ansible/roles/content-snapshot-indexer/files/
+                       mv adhoc-jobs-1.0/druid_models/content_index_batch.json ansible/roles/content-snapshot-indexer/files/
                     """
                     ansiblePlaybook = "${currentWs}/ansible/content-snapshot-indexer.yml"
                     ansibleExtraArgs = " --tags ${invoke_type} --extra-vars \"script_to_run=${params.script_to_run}\" --vault-password-file /var/lib/jenkins/secrets/vault-pass"
