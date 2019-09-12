@@ -9,7 +9,7 @@ now=`date +%Y-%m-%d-%s`
 home=`echo $HOME`
 ingestionSpecFilePath="{{ druid.ingestion_spec_path }}"
 jobJarPath="{{ content_snapshot_jar_path }}{{ content_snapshot_jar_name }}"
-jobConfPath= "{{ job_config.es_cloud_uploader_path }}"
+jobConfPath="{{ job_config.es_cloud_uploader_path }}"
 
 # get list of segments from content model snapshot datasource
 bkpIFS="$IFS"
