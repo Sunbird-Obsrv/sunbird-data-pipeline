@@ -97,7 +97,7 @@
   become_user: "{{ analytics_user }}"
   shell: "nohup {{ content_snapshot_path }}scripts/run-script.sh {{ script_to_run }} &"
   poll: 0
-  tags: run-script
+  tags: execute-script
 
 
 
