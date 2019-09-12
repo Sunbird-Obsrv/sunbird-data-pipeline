@@ -27,6 +27,14 @@
   become_user: "{{ analytics_user }}"    
   tags: deploy
 
+- name: Create logs directory
+  file:
+    path: '{{ content_snapshot_path }}logs'
+    state: directory
+    mode: 0777
+  become: yes
+  become_user: "{{ analytics_user }}"    
+  tags: deploy
 
 - name: Unarchive adhoc job script
   unarchive: src={{ content_snapshot_path }}{{ content_snapshot_distribuction_name }} dest={{ content_snapshot_path }}jars/ copy=no group={{ analytics_group }} owner={{ analytics_user }}
@@ -95,7 +103,7 @@
 - name: Run Script
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: "nohup {{ content_snapshot_path }}scripts/run-script.sh {{ script_to_run }} &"
+  shell: "nohup {{ content_snapshot_path }}scripts/run-script.sh {{ script_to_run }} >> etl_logs.log &"
   poll: 0
   tags: execute-script
 
