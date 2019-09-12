@@ -6,17 +6,21 @@
     mode: 0777
   become: yes
   become_user: "{{ analytics_user }}"
-  tags: deploy
+  tags:
+    - deploy
 
 - name: Copy distributed jar
   copy: src={{ content_snapshot_distribuction_name }} dest={{ content_snapshot_path }}
-
+  tags:
+    - deploy
+  
 - name: Ensure removing jars directory
   file:
     path: '{{ content_snapshot_path }}jars/'
     state: absent
   become_user: "{{ analytics_user }}"  
-  tags: deploy
+  tags:
+    - deploy
 
 - name: Create jars directory
   file:
@@ -25,7 +29,8 @@
     mode: 0777
   become: yes
   become_user: "{{ analytics_user }}"    
-  tags: deploy
+  tags:
+    - deploy
 
 - name: Create logs directory
   file:
@@ -34,10 +39,13 @@
     mode: 0777
   become: yes
   become_user: "{{ analytics_user }}"    
-  tags: deploy
+  tags:
+    - deploy
 
 - name: Unarchive adhoc job script
   unarchive: src={{ content_snapshot_path }}{{ content_snapshot_distribuction_name }} dest={{ content_snapshot_path }}jars/ copy=no group={{ analytics_group }} owner={{ analytics_user }}
+  tags:
+    - deploy
 
 - name: Copy adhoc-jobs jar file
   copy:
@@ -46,14 +54,16 @@
     mode: 0777
     owner: "{{ analytics_user }}" 
     group: "{{ analytics_group }}"
-  tags: deploy
+  tags:
+    - deploy
 
 - name: Ensure removing config directory
   file:
     path: '{{ content_snapshot_path }}config'
     state: absent
   become_user: "{{ analytics_user }}"    
-  tags: deploy
+  tags:
+    - deploy
 
 - name: Create config directory
   file:
@@ -62,7 +72,8 @@
     mode: 0777
   become: yes
   become_user: "{{ analytics_user }}"    
-  tags: deploy
+  tags:
+    - deploy
 
 - name: Ensure copying all conf files from the templates/conf folder
   template:
@@ -72,14 +83,16 @@
     owner: "{{ analytics_user }}" 
     group: "{{ analytics_group }}"
   with_items: "{{ config_files }}"
-  tags: deploy
+  tags:
+    - deploy
 
 - name: Ensure removing scripts directory
   file:
     path: '{{ content_snapshot_path }}scripts'
     state: absent
   become_user: "{{ analytics_user }}"  
-  tags: deploy
+  tags:
+    - deploy
 
 - name: Create scripts directory
   file:
@@ -88,7 +101,8 @@
     mode: 0777
   become: yes
   become_user: "{{ analytics_user }}"  
-  tags: deploy
+  tags:
+    - deploy
 
 - name: Ensure copying all script files from the templates/script dir
   template:
@@ -98,14 +112,17 @@
     owner: "{{ analytics_user }}" 
     group: "{{ analytics_group }}"
   with_items: "{{ script_files }}"
-  tags: deploy
+  tags:
+    - deploy
 
 - name: Run Script
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: "nohup {{ content_snapshot_path }}scripts/run-script.sh {{ script_to_run }} >> etl_logs.log &"
+  shell: "nohup {{ content_snapshot_path }}scripts/run-script.sh {{ script_to_run }} >> {{ content_snapshot_path }}logs/{{ script_to_run }}.log &"
   poll: 0
-  tags: execute-script
+  async: 45
+  tags:
+    - execute-script
 
 
 
