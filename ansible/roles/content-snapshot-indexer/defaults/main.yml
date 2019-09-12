@@ -50,7 +50,7 @@ cloud_storage:
   account_key: "{{ azure_storage_secret }}"
 
 cassandra:
-  host: "{{groups['dp-cassandra'][0]}}" ## LMS-Cassandra IP Address.
+  host: "{{groups['lp-cassandra'][0]}}" ## LMS-Cassandra IP Address.
   keyspace: '{{ env }}_'
   user:
     table: "user"
