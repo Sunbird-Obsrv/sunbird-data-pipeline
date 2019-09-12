@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
 
-case "$script_name" in
+case "$1" in
 
-   "USER CACHE INDEXER") 
+   "USER_CACHE_INDEXER") 
       echo "Invoked RedisUserDataIndexer"
       nohup {{ content_snapshot_path }}scripts/RedisUserDataIndexer.sh & 
    ;;
-   "DRUID CONTENT INDEXER")
+   "DRUID_CONTENT_INDEXER")
       echo "Invoked DruidContentIndexer"
      nohup {{ content_snapshot_path }}scripts/DruidContentIndexer.sh &
    ;;
 
-   "CONTENT CACHE INDEXER")  
+   "CONTENT_CACHE_INDEXER")  
       echo "Invoked RedisContentIndexer"
       nohup {{ content_snapshot_path }}scripts/RedisContentIndexer.sh &
    ;;
-   "DIALCODE CACHE INDEXER") 
+   "DIALCODE_CACHE_INDEXER") 
       echo "Invoked RedisDialcodeIndexer"
       nohup {{ content_snapshot_path }}scripts/RedisDialcodeIndexer.sh &
    ;;
