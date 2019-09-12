@@ -51,7 +51,7 @@ cloud_storage:
 
 cassandra:
   host: "{{groups['lp-cassandra'][0]}}" ## LMS-Cassandra IP Address.
-  keyspace: '{{ env }}_'
+  keyspace: 'sunbird'
   user:
     table: "user"
   device_profile:
@@ -70,7 +70,7 @@ job_config:
   device_profile_path: "{{ content_snapshot_path }}config/DeviceProfile.conf"
   cassandra_redis_path: "{{ content_snapshot_path }}config/cassandraRedis.conf"
 
-output_file_path: "/home/ops/tmp/compositeSearchBatchData"
+output_file_path: "{{ content_snapshot_path }}compositeSearchBatchData"
 config_files: ["application","cassandraRedis","DeviceProfile","ESCloudUploader","ESContentIndexer","ESDialcodeIndexer"]
 script_files: ["DeviceProfileScripts","DruidContentIndexer","RedisContentIndexer","RedisDialcodeIndexer","RedisUserDataIndexer","run-script"]
 
