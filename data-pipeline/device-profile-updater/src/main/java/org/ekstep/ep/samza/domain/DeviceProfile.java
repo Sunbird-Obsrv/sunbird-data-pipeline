@@ -82,7 +82,7 @@ public class DeviceProfile {
     this.stateCodeCustom = map.getOrDefault("state_code_custom", "");
     this.uaspec = gson.fromJson(map.getOrDefault("uaspec", ""), type);
     this.devicespec = gson.fromJson(map.getOrDefault("device_spec", ""), type);
-    this.firstAccess = Long.valueOf(map.getOrDefault("firstaccess", "0"));
+    this.firstAccess = Long.valueOf(map.getOrDefault("first_access", "0"));
     return this;
   }
 
