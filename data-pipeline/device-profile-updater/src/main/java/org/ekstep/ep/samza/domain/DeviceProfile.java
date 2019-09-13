@@ -32,13 +32,12 @@ public class DeviceProfile {
   private String stateCode;
   private String state;
   private String city;
-  private String district;
   private String districtCustom;
   private String stateCodeCustom;
   private String stateCustomName;
   private Map<String, String> uaspec;
   private Map<String, String> devicespec;
-  private Long firstaccess;
+  private Long firstAccess;
   private Gson gson = new Gson();
   private Type type = new TypeToken<Map<String, Object>>() {}.getType();
 
@@ -48,13 +47,12 @@ public class DeviceProfile {
     this.stateCode = "";
     this.state = "";
     this.city = "";
-    this.district = "";
     this.districtCustom = "";
     this.stateCodeCustom = "";
     this.stateCustomName = "";
     this.uaspec = new HashMap<>();
     this.devicespec = new HashMap<>();
-    this.firstaccess = 0L;
+    this.firstAccess = 0L;
   }
 
   public Map<String, String> toMap() {
@@ -69,7 +67,7 @@ public class DeviceProfile {
     values.put("state_code_custom", DeviceProfile.getValueOrDefault(this.stateCodeCustom, ""));
     values.put("uaspec", gson.toJson(DeviceProfile.getValueOrDefault(this.uaspec, new HashMap<>())));
     values.put("devicespec", gson.toJson(DeviceProfile.getValueOrDefault(this.devicespec, new HashMap<>())));
-    values.put("firstaccess", DeviceProfile.getValueOrDefault(String.valueOf(this.firstaccess), ""));
+    values.put("firstaccess", DeviceProfile.getValueOrDefault(String.valueOf(this.firstAccess), ""));
     return values;
   }
 
@@ -84,7 +82,7 @@ public class DeviceProfile {
     this.stateCodeCustom = map.getOrDefault("state_code_custom", "");
     this.uaspec = gson.fromJson(map.getOrDefault("uaspec", ""), type);
     this.devicespec = gson.fromJson(map.getOrDefault("device_spec", ""), type);
-    this.firstaccess = Long.valueOf(map.getOrDefault("firstaccess", "0"));
+    this.firstAccess = Long.valueOf(map.getOrDefault("firstaccess", "0"));
     return this;
   }
 

@@ -9,7 +9,7 @@ public class DeviceProfileUpdaterSink extends BaseSink {
 
     public DeviceProfileUpdaterSink(MessageCollector collector, JobMetrics metrics, DeviceProfileUpdaterConfig config) {
         super(collector, metrics);
-        this.config=config;
+        this.config = config;
     }
 
     public void deviceDBUpdateSuccess() { metrics.deviceDBUpdateSuccess(); }

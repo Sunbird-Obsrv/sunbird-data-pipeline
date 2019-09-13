@@ -37,6 +37,7 @@ public class DeviceProfileServiceTest {
     private DeviceProfileUpdaterSink deviceProfileUpdaterSinkMock;
     private Config configMock;
     private Integer deviceStoreId = 2;
+    private Gson gson = new Gson();
 
     @Before
     public void setUp() {
@@ -66,11 +67,11 @@ public class DeviceProfileServiceTest {
     @Test
     public void shouldupdateCache() throws Exception {
         jedisMock.flushAll();
-
-        Gson gson = new Gson();
-        Map<String, Object> event = gson.fromJson(EventFixture.DEVICE_PROFILE_DETAILS, Map.class);
-        String device_id = (String) event.get("device_id");
-        jedisMock.set(device_id,"232455");
+        System.out.println(EventFixture.DEVICE_PROFILE_DETAILS);
+        Type mapType = new TypeToken<Map<String, String>>(){}.getType();
+        Map<String, String> event = gson.fromJson(EventFixture.DEVICE_PROFILE_DETAILS, mapType);
+        String device_id = event.get("device_id");
+        jedisMock.set(device_id, "232455");
 
         DeviceProfileUpdaterSource source = new DeviceProfileUpdaterSource(envelopeMock);
         deviceProfileUpdaterService.process(source, deviceProfileUpdaterSinkMock);
@@ -84,7 +85,6 @@ public class DeviceProfileServiceTest {
     public void shouldupdateDB() throws Exception {
         DeviceProfileUpdaterSource source = new DeviceProfileUpdaterSource(envelopeMock);
         deviceProfileUpdaterService.process(source, deviceProfileUpdaterSinkMock);
-
         verify(deviceProfileUpdaterSinkMock, times(1)).deviceDBUpdateSuccess();
     }
 
