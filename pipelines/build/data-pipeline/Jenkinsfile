@@ -28,12 +28,9 @@ node() {
         }
 
             stage('Build') {
-                // sh ("mvn -f data-pipeline/pom.xml \
-                // -Dlog4j.configuration=$WORKSPACE/logs \
-                // -Dcobertura.report.format=xml clean cobertura:cobertura package")
-                sh '''
-                mvn clean install -DskipTests
-                '''
+                sh ("mvn -f data-pipeline/pom.xml \
+                -Dlog4j.configuration=$WORKSPACE/logs \
+                -Dcobertura.report.format=xml clean cobertura:cobertura package")
             }
 
             stage('Publish_test_results') {

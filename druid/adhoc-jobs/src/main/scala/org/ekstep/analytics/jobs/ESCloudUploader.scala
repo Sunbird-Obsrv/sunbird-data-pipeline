@@ -47,12 +47,6 @@ object ESCloudUploader {
 
         // backup the output file to cloud
         val storageService = StorageServiceFactory.getStorageService(StorageConfig(config.getString("cloudStorage.provider"), config.getString("cloudStorage.accountName"), config.getString("cloudStorage.accountKey")))
-        println(config.getString("cloudStorage.provider"))
-        println(config.getString("cloudStorage.accountName"))
-        println(config.getString("cloudStorage.accountKey"))
-        println(config.getString("cloudStorage.container"))
-        println(config.getString("cloudStorage.objectKey"))
-
         storageService.upload(config.getString("cloudStorage.container"), outputFilePath + "/part-00000", config.getString("cloudStorage.objectKey"), isDirectory = Option(false))
         println("successfully backed up file to cloud!")
         System.exit(0)
