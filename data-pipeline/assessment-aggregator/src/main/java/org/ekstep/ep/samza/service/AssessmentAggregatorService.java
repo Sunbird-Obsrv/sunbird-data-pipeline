@@ -2,12 +2,13 @@ package org.ekstep.ep.samza.service;
 
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.UDTValue;
+import com.datastax.driver.core.exceptions.ConnectionException;
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Aggregate;
 import org.ekstep.ep.samza.domain.BatchEvent;
 import org.ekstep.ep.samza.domain.QuestionData;
+import org.ekstep.ep.samza.task.AssessmentAggregatorConfig;
 import org.ekstep.ep.samza.task.AssessmentAggregatorSink;
 import org.ekstep.ep.samza.task.AssessmentAggregatorSource;
 import org.ekstep.ep.samza.util.DBUtil;
@@ -26,29 +27,32 @@ public class AssessmentAggregatorService {
         this.dbUtil = dbUtil;
     }
 
-    public void process(AssessmentAggregatorSource source, AssessmentAggregatorSink sink) {
+    public void process(AssessmentAggregatorSource source, AssessmentAggregatorSink sink,
+                        AssessmentAggregatorConfig config) throws Exception {
         try {
             BatchEvent batchEvent = source.getEvent();
             Row assessment = dbUtil.getAssessmentFromDB(batchEvent);
-
             if (isBatchEventValid(batchEvent, assessment)) {
                 Long createdOn = null != assessment ? assessment.getTimestamp("created_on").getTime() : new DateTime().getMillis();
-                Aggregate assess = getAggregateData(batchEvent, createdOn);
+                Aggregate assess = getAggregateData(batchEvent, createdOn,sink);
                 dbUtil.updateAssessmentToDB(batchEvent, assess.getTotalMaxScore(), assess.getTotalScore(),
                         assess.getQuestionsList(), createdOn);
-                sink.success();
+                sink.batchSuccess();
 
             } else {
                 LOGGER.info(batchEvent.attemptId(), ": Batch Event older than last assessment time, skipping");
-                sink.skip();
+                sink.skip(batchEvent);
             }
-        } catch (JsonSyntaxException ex) {
+        } catch(ConnectionException ex) {
+            throw new Exception();
+        }
+        catch (Exception ex) {
             LOGGER.error("", "Failed to parse the batchEvent: ", ex);
-            sink.failed();
+            sink.fail(source.getMessage().toString());
         }
     }
 
-    public Aggregate getAggregateData(BatchEvent batchEvent, Long createdOn) {
+    public Aggregate getAggregateData(BatchEvent batchEvent, Long createdOn,AssessmentAggregatorSink sink) {
         int totalMaxScore = 0;
         int totalScore = 0;
         List<UDTValue> questionsList = new ArrayList<>();
@@ -60,6 +64,7 @@ public class AssessmentAggregatorService {
                 totalMaxScore += questionData.getItem().getMaxScore();
                 questionsList.add(dbUtil.getQuestion(questionData));
             }
+            sink.success();
         }
         return new Aggregate(totalScore, totalMaxScore, questionsList);
     }
@@ -68,7 +73,6 @@ public class AssessmentAggregatorService {
         boolean status = false;
         if (null != assessment) {
             Long last_attempted_on = assessment.getTimestamp("last_attempted_on").getTime();
-
             if (event.assessmentets() > last_attempted_on) {
                 status = true;
             }

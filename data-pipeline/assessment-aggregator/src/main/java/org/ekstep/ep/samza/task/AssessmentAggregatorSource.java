@@ -13,6 +13,11 @@ public class AssessmentAggregatorSource {
         this.envelope = envelope;
     }
 
+    public Object getMessage()
+    {
+        return envelope.getMessage();
+    }
+
     @SuppressWarnings("unchecked")
     public BatchEvent getEvent() {
         String message = (String) envelope.getMessage();

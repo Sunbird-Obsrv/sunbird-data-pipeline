@@ -39,19 +39,18 @@ public class AssessmentAggregatorTask implements StreamTask, InitableTask, Windo
     public void init(Config config, TaskContext context) {
         this.config = new AssessmentAggregatorConfig(config);
         metrics = new JobMetrics(context, this.config.jobName());
-        CassandraConnect cassandraConnect = new CassandraConnect(config.get("middleware.cassandra.host", "127.0.0.1"),
-                config.getInt("middleware.cassandra.port", 9042));
+        CassandraConnect cassandraConnect = new CassandraConnect(this.config.getCassandraHost(),
+                this.config.getCassandraPort());
         DBUtil dbUtil = new DBUtil(cassandraConnect, this.config);
-        service = new AssessmentAggregatorService(dbUtil);
+        this.service = new AssessmentAggregatorService(dbUtil);
     }
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector,
-                        TaskCoordinator taskCoordinator) {
+                        TaskCoordinator taskCoordinator) throws Exception {
         AssessmentAggregatorSource source = new AssessmentAggregatorSource(envelope);
-        AssessmentAggregatorSink sink = new AssessmentAggregatorSink(collector, metrics);
-
-        service.process(source, sink);
+        AssessmentAggregatorSink sink = new AssessmentAggregatorSink(collector, metrics, config);
+        service.process(source, sink, config);
     }
 
     @Override

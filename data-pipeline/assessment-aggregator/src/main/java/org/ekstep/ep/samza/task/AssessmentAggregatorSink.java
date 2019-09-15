@@ -3,23 +3,38 @@ package org.ekstep.ep.samza.task;
 import org.apache.samza.task.MessageCollector;
 import org.ekstep.ep.samza.core.BaseSink;
 import org.ekstep.ep.samza.core.JobMetrics;
+import org.ekstep.ep.samza.domain.BatchEvent;
+
+import java.util.HashMap;
 
 public class AssessmentAggregatorSink extends BaseSink {
 
-    public AssessmentAggregatorSink(MessageCollector collector, JobMetrics metrics) {
+    AssessmentAggregatorConfig config;
+    public AssessmentAggregatorSink(MessageCollector collector, JobMetrics metrics,
+                                    AssessmentAggregatorConfig config) {
         super(collector, metrics);
+        this.config =config;
+    }
+
+    public void batchSuccess() {
+        metrics.incBatchSuccessCounter();
     }
 
     public void success() {
         metrics.incSuccessCounter();
     }
 
-    public void failed() {
+    public void skip(BatchEvent batchEvent) {
+        batchEvent.markSkipped(batchEvent);
+        toTopic(config.failedTopic(), batchEvent.attemptId(), batchEvent.getJson());
+        metrics.incSkippedCounter();
+    }
+
+    public void fail(String message) {
+        toTopic(config.failedTopic(), null, message);
         metrics.incFailedCounter();
     }
 
-    public void skip() {
-        metrics.incSkippedCounter();
-    }
+
 }
 
