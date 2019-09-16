@@ -19,10 +19,10 @@ read -r -a array <<< ${segmentIds}
 IFS="$bkpIFS"
 
 # start the spark script to fetch Elasticsearch data and write it to a file and upload to cloud
-{{ spark_home }}/bin/spark-submit \
+nohup {{ spark_home }}/bin/spark-submit \
 --conf spark.driver.extraJavaOptions="-Dconfig.file=${jobConfPath}" \
 --class org.ekstep.analytics.jobs.ESCloudUploader \
-${jobJarPath} >> "${{ content_snapshot_path }}logs/$today-{{ script_to_run }}.log" 2>&1
+${jobJarPath} >> "${{ content_snapshot_path }}logs/$today-task-execution.log" 2>&1
 
 printf "\n>>> submit ingestion task to Druid!\n"
 
