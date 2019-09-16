@@ -18,6 +18,8 @@ IFS=',]['
 read -r -a array <<< ${segmentIds}
 IFS="$bkpIFS"
 
+echo "STARTED EXECUTING USER DRUID CONTENT INDEXER..."
+
 # start the spark script to fetch Elasticsearch data and write it to a file and upload to cloud
 nohup {{ spark_home }}/bin/spark-submit \
 --conf spark.driver.extraJavaOptions="-Dconfig.file=${jobConfPath}" \
