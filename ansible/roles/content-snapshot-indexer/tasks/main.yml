@@ -118,12 +118,15 @@
 - name: Run Script
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: "nohup {{ content_snapshot_path }}scripts/run-script.sh {{ script_to_run }} >> {{ content_snapshot_path }}logs/{{ script_to_run }}.log &"
+  shell: "sh {{ content_snapshot_path }}scripts/run-script.sh {{ script_to_run }}"
   register: command_result
   poll: 0
   async: 45
   tags:
     - execute-script
+
+- name: Ansible shell register result
+  debug: msg="{{ command_result }}"
 
 - name: Output of the script 
   debug: msg="{{ command_result.stdout }}" 
