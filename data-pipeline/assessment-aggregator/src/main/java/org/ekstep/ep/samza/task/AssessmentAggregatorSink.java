@@ -5,15 +5,14 @@ import org.ekstep.ep.samza.core.BaseSink;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.domain.BatchEvent;
 
-import java.util.HashMap;
-
 public class AssessmentAggregatorSink extends BaseSink {
 
-    AssessmentAggregatorConfig config;
+    private AssessmentAggregatorConfig config;
+
     public AssessmentAggregatorSink(MessageCollector collector, JobMetrics metrics,
                                     AssessmentAggregatorConfig config) {
         super(collector, metrics);
-        this.config =config;
+        this.config = config;
     }
 
     public void batchSuccess() {
@@ -35,6 +34,8 @@ public class AssessmentAggregatorSink extends BaseSink {
         metrics.incFailedCounter();
     }
 
-
+    public void incDBHits() {
+        metrics.incDBHitCount();
+    }
 }
 

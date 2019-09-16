@@ -39,8 +39,7 @@ public class AssessmentAggregatorTask implements StreamTask, InitableTask, Windo
     public void init(Config config, TaskContext context) {
         this.config = new AssessmentAggregatorConfig(config);
         metrics = new JobMetrics(context, this.config.jobName());
-        CassandraConnect cassandraConnect = new CassandraConnect(this.config.getCassandraHost(),
-                this.config.getCassandraPort());
+        CassandraConnect cassandraConnect = new CassandraConnect(this.config.getCassandraHost(),this.config.getCassandraPort());
         DBUtil dbUtil = new DBUtil(cassandraConnect, this.config);
         this.service = new AssessmentAggregatorService(dbUtil);
     }

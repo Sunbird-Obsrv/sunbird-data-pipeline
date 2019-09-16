@@ -2,7 +2,7 @@ package org.ekstep.ep.samza.service;
 
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.UDTValue;
-import com.datastax.driver.core.exceptions.ConnectionException;
+import com.datastax.driver.core.exceptions.DriverException;
 import com.google.gson.Gson;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Aggregate;
@@ -32,19 +32,22 @@ public class AssessmentAggregatorService {
         try {
             BatchEvent batchEvent = source.getEvent();
             Row assessment = dbUtil.getAssessmentFromDB(batchEvent);
+            sink.incDBHits();
             if (isBatchEventValid(batchEvent, assessment)) {
                 Long createdOn = null != assessment ? assessment.getTimestamp("created_on").getTime() : new DateTime().getMillis();
                 Aggregate assess = getAggregateData(batchEvent, createdOn,sink);
                 dbUtil.updateAssessmentToDB(batchEvent, assess.getTotalMaxScore(), assess.getTotalScore(),
                         assess.getQuestionsList(), createdOn);
+                sink.incDBHits();
                 sink.batchSuccess();
 
             } else {
                 LOGGER.info(batchEvent.attemptId(), ": Batch Event older than last assessment time, skipping");
                 sink.skip(batchEvent);
             }
-        } catch(ConnectionException ex) {
-            throw new Exception();
+        } catch(DriverException ex) {
+            LOGGER.error("", "Exception while fetching from db : "+ ex);
+            throw new DriverException(ex);
         }
         catch (Exception ex) {
             LOGGER.error("", "Failed to parse the batchEvent: ", ex);
@@ -81,6 +84,5 @@ public class AssessmentAggregatorService {
         }
         return status;
     }
-
 
 }
