@@ -118,7 +118,7 @@
 - name: Run Script
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: "sh {{ content_snapshot_path }}scripts/run-script.sh {{ script_to_run }}"
+  shell: "nohup {{ content_snapshot_path }}scripts/run-script.sh {{ script_to_run }} >> {{ content_snapshot_path }}logs/{{ script_to_run }}.log &"
   register: command_result
   poll: 0
   async: 45
@@ -130,10 +130,10 @@
   tags:
     - execute-script
 
-- name: Output of the script 
-  debug: msg="{{ command_result.stdout }}" 
-  tags:
-    - execute-script   
+#- name: Output of the script 
+#  debug: msg="{{ command_result.stdout }}" 
+#  tags:
+#    - execute-script   
 
 
 
