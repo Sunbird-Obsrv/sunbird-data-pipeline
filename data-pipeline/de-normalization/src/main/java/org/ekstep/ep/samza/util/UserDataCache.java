@@ -4,7 +4,6 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import org.apache.commons.collections.MapUtils;
 import org.apache.samza.config.Config;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
@@ -87,8 +86,7 @@ public class UserDataCache extends DataCache {
                 addToCache(userId, gson.toJson(userDataMap));
             }
         }
-
-        if (MapUtils.isEmpty(userDataMap) || userDataMap.size() <=2) {
+        if (userDataMap.size() <=2) {  //Since SigninType and LoginType are default values, incrementing no data metric only if other user details are not present
             metrics.incNoDataCount();
         }
         return userDataMap;
@@ -113,7 +111,7 @@ public class UserDataCache extends DataCache {
         return cacheData;
     }
 
-    public Map<String, Object> fetchFallbackUserLocationFromDB(String userId) {
+    private Map<String, Object> fetchFallbackUserLocationFromDB(String userId) {
         // if (userId == null) return null;
         Map<String, Object> userLocation = new HashMap<>();
         List<String> locationIds = getUserOrgLocationIds(userId);
