@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+#
+set -x
 
 home=`echo $HOME`
 jobJarPath="{{ content_snapshot_jar_path }}{{ content_snapshot_jar_name }}"
@@ -7,4 +9,4 @@ jobConfPath="{{ job_config.es_content_indexer_path }}"
 nohup {{ spark_home }}/bin/spark-submit \
 --conf spark.driver.extraJavaOptions="-Dconfig.file=${jobConfPath}" \
 --class org.ekstep.analytics.jobs.ESRedisIndexer \
-${jobJarPath} >> "${{ content_snapshot_path }}logs/$today-task-execution.log" 2>&1
+${jobJarPath} >> "{{ content_snapshot_path }}logs/$today-task-execution.log" 2>&1
