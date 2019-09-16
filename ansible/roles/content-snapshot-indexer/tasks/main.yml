@@ -127,6 +127,8 @@
 
 - name: Ansible shell register result
   debug: msg="{{ command_result }}"
+  tags:
+    - execute-script
 
 - name: Output of the script 
   debug: msg="{{ command_result.stdout }}" 
