@@ -4,6 +4,7 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import org.apache.commons.collections.MapUtils;
 import org.apache.samza.config.Config;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
@@ -87,7 +88,7 @@ public class UserDataCache extends DataCache {
             }
         }
 
-        if (null != userDataMap && userDataMap.isEmpty() && userDataMap.size() <=2) {
+        if (MapUtils.isEmpty(userDataMap) || userDataMap.size() <=2) {
             metrics.incNoDataCount();
         }
         return userDataMap;
