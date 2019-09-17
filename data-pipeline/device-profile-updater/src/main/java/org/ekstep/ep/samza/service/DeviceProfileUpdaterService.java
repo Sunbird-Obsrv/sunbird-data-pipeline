@@ -42,7 +42,7 @@ public class DeviceProfileUpdaterService {
 
     public void process(DeviceProfileUpdaterSource source, DeviceProfileUpdaterSink sink) {
         try {
-            Map<String, Object> message = source.getMap();
+            Map<String, String> message = source.getMap();
             updateDeviceDetails(message, sink);
         } catch (JsonSyntaxException e) {
             LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
@@ -50,25 +50,24 @@ public class DeviceProfileUpdaterService {
         }
     }
 
-    private void updateDeviceDetails(Map<String, Object> message, DeviceProfileUpdaterSink sink) {
-        Map<String, String> deviceData = new HashMap<>();
-
-        for (Map.Entry<String, Object> entry : message.entrySet()) {
-            if (entry.getValue() instanceof String) {
-                deviceData.put(entry.getKey(), entry.getValue().toString());
-            }
-        }
+    private void updateDeviceDetails(Map<String, String> deviceData, DeviceProfileUpdaterSink sink) {
         if (deviceData.size() > 0) {
-            deviceData.values().removeAll(Collections.singleton("null"));
+
             deviceData.values().removeAll(Collections.singleton(""));
             deviceData.values().removeAll(Collections.singleton("{}"));
+
             DeviceProfile deviceProfile = new DeviceProfile().fromMap(deviceData);
             String deviceId = deviceData.get("device_id");
             if (null != deviceId && !deviceId.isEmpty()) {
-                addDeviceDataToCache(deviceId, deviceProfile, deviceStoreConnection);
-                sink.deviceCacheUpdateSuccess();
-                addDeviceDataToDB(deviceData, cassandraConnection);
+
+                // Update device profile details in Cassandra DB
+                addDeviceDataToDB(deviceData);
                 sink.deviceDBUpdateSuccess();
+
+                // Update device profile details in Redis cache
+                addDeviceDataToCache(deviceId, deviceProfile);
+                sink.deviceCacheUpdateSuccess();
+
                 sink.success();
             }
             else { sink.failed(); }
@@ -76,9 +75,9 @@ public class DeviceProfileUpdaterService {
 
     }
 
-    private void addDeviceDataToCache(String deviceId, DeviceProfile deviceProfile, Jedis redisConnection) {
+    private void addDeviceDataToCache(String deviceId, DeviceProfile deviceProfile) {
         try {
-            addToCache(deviceId, deviceProfile, redisConnection);
+            addToCache(deviceId, deviceProfile, deviceStoreConnection);
         } catch (JedisException ex) {
             redisConnect.resetConnection();
             try (Jedis redisConn = redisConnect.getConnection(deviceStoreDb)) {
@@ -88,27 +87,42 @@ public class DeviceProfileUpdaterService {
         }
     }
 
-    private void addDeviceDataToDB(Map<String, String> deviceData, CassandraConnect cassandraConnection) {
+    private void addDeviceDataToDB(Map<String, String> deviceData) {
         Map<String, String> parseduaspec = null != deviceData.get("uaspec") ? parseSpec(deviceData.get("uaspec")) : null;
-        deviceData.values().removeAll(Collections.singleton(deviceData.get("uaspec")));
         Map<String, String> parsedevicespec = null != deviceData.get("device_spec") ? parseSpec(deviceData.get("device_spec")) : null;
-        deviceData.values().removeAll(Collections.singleton(deviceData.get("device_spec")));
+        Long firstAccess = Long.parseLong(deviceData.get("first_access"));
+        String deviceId = deviceData.get("device_id");
+        deviceData.remove("uaspec");
+        deviceData.remove("device_spec");
+        deviceData.remove("first_access");
 
         Insert query = QueryBuilder.insertInto(cassandra_db, cassandra_table)
-                .values(new ArrayList<>(deviceData.keySet()), new ArrayList<>(deviceData.values()))
-                .value("uaspec", parseduaspec).value("device_spec", parsedevicespec);
+                .values(new ArrayList<>(deviceData.keySet()), new ArrayList<>(deviceData.values()));
+
+        if (null != parseduaspec) { query.value("uaspec", parseduaspec);}
+        if (null != parsedevicespec) { query.value("device_spec", parsedevicespec); }
         cassandraConnection.upsert(query);
+
+        /**
+         * Update first_access only if it null in the device_profile database
+         */
+        String updateFirstAccessQuery = String.format("UPDATE %s.%s SET first_access = %d WHERE device_id = '%s' IF first_access = null",
+                cassandra_db, cassandra_table, firstAccess, deviceId);
+        cassandraConnection.upsert(updateFirstAccessQuery);
     }
 
     private Map<String, String> parseSpec(String spec) {
-        Map<String, String> parseSpec = new HashMap<>();
-        parseSpec = gson.fromJson(spec, mapType);
-
-        return parseSpec;
+        return gson.fromJson(spec, mapType);
     }
 
     private void addToCache(String deviceId, DeviceProfile deviceProfile, Jedis redisConnection) {
-            redisConnection.hmset(deviceId, deviceProfile.toMap());
-            LOGGER.info(deviceId, "Updated successfully");
+        Map<String, String> dmap = deviceProfile.toMap();
+        if (redisConnection.exists(deviceId)) {
+            dmap.remove("first_accesss");
+            redisConnection.hmset(deviceId, dmap);
+        } else {
+            redisConnection.hmset(deviceId, dmap);
+        }
+        LOGGER.debug(null, String.format("Device details for device id %s updated successfully", deviceId));
     }
 }

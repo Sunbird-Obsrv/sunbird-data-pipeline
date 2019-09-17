@@ -49,6 +49,11 @@ public class CassandraConnect {
         return rs.all();
     }
 
+    public boolean upsert(String query) {
+        ResultSet rs = session.execute(query);
+        return rs.wasApplied();
+    }
+
     public boolean upsert(Insert query) {
         ResultSet rs = session.execute(query);
         return rs.wasApplied();
