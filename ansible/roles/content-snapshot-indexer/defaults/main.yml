@@ -1,7 +1,7 @@
 analytics_user: analytics
 analytics_group: analytics
-content_snapshot_path: "/mount/data/analytics/content-snapshot/"
-content_snapshot_jar_path: "{{content_snapshot_path}}jars/" # Add content snapshot jar file path.
+content_snapshot_path: "/mount/data/analytics/content-snapshot"
+content_snapshot_jar_path: "{{content_snapshot_path}}/jars" # Add content snapshot jar file path.
 content_snapshot_jar_name: "adhoc-jobs-1.0.jar"
 content_snapshot_distribuction_name: "adhoc-jobs-1.0-distribution.tar.gz"
 spark_home: "/mount/data/analytics/spark-2.0.1-bin-hadoop2.7"
@@ -27,7 +27,7 @@ redis:
   key_expiry_seconds: 3600
 
 elastic_search:
-  host: "{{groups['core-es'][0]}}" # LP Elastic search IP Address
+  host: "{{ lp_composite_search_host }}" # compositesearch index
   port: "9200"
   content:
     index: "compositesearch"
@@ -59,16 +59,16 @@ cassandra:
 druid:
   coordinator_host: "{{groups['coordinator'][0]}}"
   data_source: "content-model-snapshot"
-  ingestion_spec_path: "{{ content_snapshot_path }}jars/adhoc-jobs-1.0/druid_models/content_index_batch.json"
+  ingestion_spec_path: "{{ content_snapshot_jar_path }}/adhoc-jobs-1.0/druid_models/content_index_batch.json"
 
 job_config:
-  es_cloud_uploader_path: "{{ content_snapshot_path }}config/ESCloudUploader.conf"
-  es_content_indexer_path: "{{ content_snapshot_path }}config/ESContentIndexer.conf"
-  es_dialCode_indexer_path: "{{ content_snapshot_path }}config/ESDialcodeIndexer.conf"
-  device_profile_path: "{{ content_snapshot_path }}config/DeviceProfile.conf"
-  cassandra_redis_path: "{{ content_snapshot_path }}config/cassandraRedis.conf"
+  es_cloud_uploader_path: "{{ content_snapshot_path }}/config/ESCloudUploader.conf"
+  es_content_indexer_path: "{{ content_snapshot_path }}/config/ESContentIndexer.conf"
+  es_dialCode_indexer_path: "{{ content_snapshot_path }}/config/ESDialcodeIndexer.conf"
+  device_profile_path: "{{ content_snapshot_path }}/config/DeviceProfile.conf"
+  cassandra_redis_path: "{{ content_snapshot_path }}/config/cassandraRedis.conf"
 
-output_file_path: "{{ content_snapshot_path }}compositeSearchBatchData"
+output_file_path: "{{ content_snapshot_path }}/compositeSearchBatchData"
 config_files: ["application","cassandraRedis","DeviceProfile","ESCloudUploader","ESContentIndexer","ESDialcodeIndexer"]
 script_files: ["DeviceProfileScripts","DruidContentIndexer","RedisContentIndexer","RedisDialcodeIndexer","RedisUserDataIndexer","run-script"]
 

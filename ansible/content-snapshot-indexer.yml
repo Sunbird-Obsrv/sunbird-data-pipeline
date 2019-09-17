@@ -1,6 +1,6 @@
 - hosts: spark
   vars_files:
-  - "./inventory/env/secrets.yml"
+  - "{{inventory_dir}}/secrets.yml"
   become: yes
   become_user: "{{ analytics_user }}"
   roles:

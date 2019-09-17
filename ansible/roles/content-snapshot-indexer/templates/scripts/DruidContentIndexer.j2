@@ -8,7 +8,7 @@ interval="2019-01-01_$today"
 now=`date +%Y-%m-%d-%s`
 home=`echo $HOME`
 ingestionSpecFilePath="{{ druid.ingestion_spec_path }}"
-jobJarPath="{{ content_snapshot_jar_path }}{{ content_snapshot_jar_name }}"
+jobJarPath="{{ content_snapshot_jar_path }}/{{ content_snapshot_jar_name }}"
 jobConfPath="{{ job_config.es_cloud_uploader_path }}"
 
 # get list of segments from content model snapshot datasource
@@ -24,7 +24,7 @@ echo "STARTED EXECUTING USER DRUID CONTENT INDEXER..."
 nohup {{ spark_home }}/bin/spark-submit \
 --conf spark.driver.extraJavaOptions="-Dconfig.file=${jobConfPath}" \
 --class org.ekstep.analytics.jobs.ESCloudUploader \
-${jobJarPath} >> "{{ content_snapshot_path }}logs/$today-task-execution.log" 2>&1
+${jobJarPath} >> "{{ content_snapshot_path }}/logs/$today-task-execution.log" 2>&1
 
 printf "\n>>> submit ingestion task to Druid!\n"
 
