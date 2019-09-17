@@ -93,7 +93,7 @@ public class DeviceProfileUpdaterService {
         Long firstAccess = Long.parseLong(deviceData.get("first_access"));
         Long lastUpdatedDate = Long.parseLong(deviceData.get("api_last_updated_on"));
         String deviceId = deviceData.get("device_id");
-        List<String> parsedKeys = new ArrayList<String>(Arrays.asList("uaspec", "device_spec", "first_access", "api_last_updated_on"));
+        List<String> parsedKeys = new ArrayList<>(Arrays.asList("uaspec", "device_spec", "first_access", "api_last_updated_on"));
         deviceData.keySet().removeAll(parsedKeys);
 
         Insert query = QueryBuilder.insertInto(cassandra_db, cassandra_table)
@@ -119,7 +119,7 @@ public class DeviceProfileUpdaterService {
     private void addToCache(String deviceId, DeviceProfile deviceProfile, Jedis redisConnection) {
         Map<String, String> dmap = deviceProfile.toMap();
         if (redisConnection.exists(deviceId)) {
-            dmap.remove("first_accesss");
+            dmap.remove("first_access");
             redisConnection.hmset(deviceId, dmap);
         } else {
             redisConnection.hmset(deviceId, dmap);
