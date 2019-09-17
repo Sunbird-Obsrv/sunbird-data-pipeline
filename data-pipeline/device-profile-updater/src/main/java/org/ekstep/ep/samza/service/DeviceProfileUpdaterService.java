@@ -91,13 +91,14 @@ public class DeviceProfileUpdaterService {
         Map<String, String> parseduaspec = null != deviceData.get("uaspec") ? parseSpec(deviceData.get("uaspec")) : null;
         Map<String, String> parsedevicespec = null != deviceData.get("device_spec") ? parseSpec(deviceData.get("device_spec")) : null;
         Long firstAccess = Long.parseLong(deviceData.get("first_access"));
+        Long lastUpdatedDate = Long.parseLong(deviceData.get("api_last_updated_on"));
         String deviceId = deviceData.get("device_id");
-        deviceData.remove("uaspec");
-        deviceData.remove("device_spec");
-        deviceData.remove("first_access");
+        List<String> parsedKeys = new ArrayList<>(Arrays.asList("uaspec", "device_spec", "first_access", "api_last_updated_on"));
+        deviceData.keySet().removeAll(parsedKeys);
 
         Insert query = QueryBuilder.insertInto(cassandra_db, cassandra_table)
-                .values(new ArrayList<>(deviceData.keySet()), new ArrayList<>(deviceData.values()));
+                .values(new ArrayList<>(deviceData.keySet()), new ArrayList<>(deviceData.values()))
+                .value("api_last_updated_on", lastUpdatedDate);
 
         if (null != parseduaspec) { query.value("uaspec", parseduaspec);}
         if (null != parsedevicespec) { query.value("device_spec", parsedevicespec); }
@@ -118,7 +119,7 @@ public class DeviceProfileUpdaterService {
     private void addToCache(String deviceId, DeviceProfile deviceProfile, Jedis redisConnection) {
         Map<String, String> dmap = deviceProfile.toMap();
         if (redisConnection.exists(deviceId)) {
-            dmap.remove("first_accesss");
+            dmap.remove("first_access");
             redisConnection.hmset(deviceId, dmap);
         } else {
             redisConnection.hmset(deviceId, dmap);
