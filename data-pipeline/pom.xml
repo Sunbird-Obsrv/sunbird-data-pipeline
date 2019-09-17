@@ -38,6 +38,7 @@
 		<!-- <module>druid-processor</module> -->
 		<module>redis-updater</module>
         <module>device-profile-updater</module>
+		<module>assessment-aggregator</module>
     </modules>
 
 	<properties>
