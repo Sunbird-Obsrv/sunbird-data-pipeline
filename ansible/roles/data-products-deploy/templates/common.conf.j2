@@ -145,6 +145,17 @@ course.metrics.es.alias="cbatchstats"
 course.metrics.es.index.cbatchstats.prefix="cbatchstats-"
 course.metrics.es.index.cbatch="course-batch"
 
+#Assessment report config
+assessment.metrics.temp.dir="/mount/data/analytics/assessment-report"
+assessment.metrics.cassandra.input.consistency="QUORUM"
+assessment.metrics.cloud.objectKey="assessment-reports/"
+assessment.metrics.cloud.provider="azure"
+assessment.metrics.content.index="compositesearch"
+es.scroll.size = 1000
+assessment.metrics.es.alias="cbatch-assessment"
+assessment.metrics.es.index.prefix="cbatch-assessment-"
+course.upload.reports.enabled=true
+course.es.index.enabled=true
 
 # content rating configurations
 
