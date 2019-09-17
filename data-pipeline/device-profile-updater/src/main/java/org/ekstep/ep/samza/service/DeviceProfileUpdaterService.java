@@ -91,13 +91,16 @@ public class DeviceProfileUpdaterService {
         Map<String, String> parseduaspec = null != deviceData.get("uaspec") ? parseSpec(deviceData.get("uaspec")) : null;
         Map<String, String> parsedevicespec = null != deviceData.get("device_spec") ? parseSpec(deviceData.get("device_spec")) : null;
         Long firstAccess = Long.parseLong(deviceData.get("first_access"));
+        Long lastUpdatedDate = Long.parseLong(deviceData.get("api_last_updated_on"));
         String deviceId = deviceData.get("device_id");
         deviceData.remove("uaspec");
         deviceData.remove("device_spec");
         deviceData.remove("first_access");
+        deviceData.remove("api_last_updated_on");
 
         Insert query = QueryBuilder.insertInto(cassandra_db, cassandra_table)
-                .values(new ArrayList<>(deviceData.keySet()), new ArrayList<>(deviceData.values()));
+                .values(new ArrayList<>(deviceData.keySet()), new ArrayList<>(deviceData.values()))
+                .value("api_last_updated_on", lastUpdatedDate);
 
         if (null != parseduaspec) { query.value("uaspec", parseduaspec);}
         if (null != parsedevicespec) { query.value("device_spec", parsedevicespec); }
