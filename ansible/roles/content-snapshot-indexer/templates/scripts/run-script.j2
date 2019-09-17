@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+echo "Executing the script $1"
+case "$1" in
+   "USER_CACHE_INDEXER") 
+      echo "Invoked RedisUserDataIndexer"
+      nohup {{ content_snapshot_path }}/scripts/RedisUserDataIndexer.sh & 
+   ;;
+   "DRUID_CONTENT_INDEXER")
+      echo "Invoked DruidContentIndexer"
+     nohup {{ content_snapshot_path }}/scripts/DruidContentIndexer.sh &
+   ;;
+
+   "CONTENT_CACHE_INDEXER")  
+      echo "Invoked RedisContentIndexer"
+      nohup {{ content_snapshot_path }}/scripts/RedisContentIndexer.sh &
+   ;;
+   "DIALCODE_CACHE_INDEXER") 
+      echo "Invoked RedisDialcodeIndexer"
+      nohup {{ content_snapshot_path }}/scripts/RedisDialcodeIndexer.sh &
+   ;;
+esac
