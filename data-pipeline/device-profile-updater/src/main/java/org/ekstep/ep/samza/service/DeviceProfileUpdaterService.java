@@ -119,7 +119,7 @@ public class DeviceProfileUpdaterService {
     private void addToCache(String deviceId, DeviceProfile deviceProfile, Jedis redisConnection) {
         Map<String, String> dmap = deviceProfile.toMap();
         if (redisConnection.exists(deviceId)) {
-            dmap.remove("first_access");
+            dmap.remove("firstaccess");
             redisConnection.hmset(deviceId, dmap);
         } else {
             redisConnection.hmset(deviceId, dmap);
