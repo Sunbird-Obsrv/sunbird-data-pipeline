@@ -93,10 +93,8 @@ public class DeviceProfileUpdaterService {
         Long firstAccess = Long.parseLong(deviceData.get("first_access"));
         Long lastUpdatedDate = Long.parseLong(deviceData.get("api_last_updated_on"));
         String deviceId = deviceData.get("device_id");
-        deviceData.remove("uaspec");
-        deviceData.remove("device_spec");
-        deviceData.remove("first_access");
-        deviceData.remove("api_last_updated_on");
+        List<String> parsedKeys = new ArrayList<String>(Arrays.asList("uaspec", "device_spec", "first_access", "api_last_updated_on"));
+        deviceData.keySet().removeAll(parsedKeys);
 
         Insert query = QueryBuilder.insertInto(cassandra_db, cassandra_table)
                 .values(new ArrayList<>(deviceData.keySet()), new ArrayList<>(deviceData.values()))
