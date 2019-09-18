@@ -69,9 +69,10 @@ public class UserDataCache extends DataCache {
                 userDataMap = getUserDataFromCache(userId);
             }
         }
-
+        userDataMap = getUserSigninLoginDetails(userDataMap);
         Map<String, Object> userLocationMap;
-        if (!userDataMap.containsKey("state")) {
+        if (!"Anonymous".equalsIgnoreCase(userDataMap.get("usersignintype").toString())
+                && !userDataMap.containsKey("state")) {
             try {
                 userLocationMap = fetchFallbackUserLocationFromDB(userId);
             } catch (Exception ex) {
@@ -81,27 +82,24 @@ public class UserDataCache extends DataCache {
             }
 
             if (!userLocationMap.isEmpty()) {
-                metrics.incUserDbHitCount();
                 userDataMap.putAll(userLocationMap);
                 addToCache(userId, gson.toJson(userDataMap));
             }
         }
-
-        if (userDataMap == null || userDataMap.isEmpty()) {
+        if (userDataMap.size() <=2) {  //Since SigninType and LoginType are default values, incrementing no data metric only if other user details are not present
             metrics.incNoDataCount();
         }
-        userDataMap = getUserSigninLoginDetails(userDataMap);
         return userDataMap;
     }
 
     private Map<String, Object> getUserSigninLoginDetails(Map<String, Object> userDataMap) {
-
-        if (!userDataMap.containsKey("usersignintype")) {
-            userDataMap.put("usersignintype", userSignInTypeDefault);
+        Map<String,Object> userMap = null!=userDataMap ? userDataMap : new HashMap<>();
+        if (!userMap.containsKey("usersignintype")) {
+            userMap.put("usersignintype", userSignInTypeDefault);
         }
-        if (!userDataMap.containsKey("userlogintype"))
-            userDataMap.put("userlogintype", userLoginInTypeDefault);
-        return userDataMap;
+        if (!userMap.containsKey("userlogintype"))
+            userMap.put("userlogintype", userLoginInTypeDefault);
+        return userMap;
     }
 
     private Map<String, Object> getUserDataFromCache(String userId) {
@@ -120,6 +118,7 @@ public class UserDataCache extends DataCache {
         if (locationIds != null && !locationIds.isEmpty()) {
             userLocation = getUserLocation(locationIds);
         }
+        metrics.incUserDbHitCount();
         return userLocation;
     }
 
@@ -133,6 +132,7 @@ public class UserDataCache extends DataCache {
         if (null != row) {
             locationIds = row.getList("locationids", String.class);
         }
+        metrics.incUserDbHitCount();
         return locationIds;
     }
 
