@@ -30,7 +30,7 @@ output {
       kafka {
         bootstrap_servers => "{{kafka_brokers}}"
         topic_id => "{{kafka_topic_prefix}}.events.deviceprofile"
-        codec => line {
+        codec => plain {
           format => "%{message}"
         }
       }
