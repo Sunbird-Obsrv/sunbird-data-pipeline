@@ -403,13 +403,11 @@
               "name": "content_status",
               "expr": "$.contentdata.status"
             },
-            ,
             {
               "type": "path",
               "name": "content_created_by",
               "expr": "$.contentdata.createdBy"
             },
-            ,
             {
               "type": "path",
               "name": "content_created_for",
@@ -435,7 +433,6 @@
               "name": "content_last_updated_on",
               "expr": "$.contentdata.lastupdatedon"
             },
-            ,
             {
               "type": "path",
               "name": "collection_name",
