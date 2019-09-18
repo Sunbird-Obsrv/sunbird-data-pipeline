@@ -116,7 +116,7 @@ public class Event {
         else return false;
     }
 
-    public boolean objectIdNotEqualsRollUpl1Id() {
+    public boolean checkObjectIdNotEqualsRollUpl1Id() {
         if (objectRollUpl1FieldsPresent() && !(objectID().equals(objectRollUpl1ID())))
             return true;
          else
