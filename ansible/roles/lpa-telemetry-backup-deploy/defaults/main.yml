@@ -242,7 +242,7 @@ secor_service_name:
     service_monitor_schedule_min: "50"
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   assess-events-backup:
-    consumer_group: "{{ env }}.telemetry_assess"
+    consumer_group: "{{ env }}.telemetry.assess"
     base_path: "telemetry-batch-assess"
     timestamp_key: "assessmentTs"
     fallback_timestamp_key: "assessmentTs"
