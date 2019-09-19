@@ -913,7 +913,6 @@
               "name": "content_created_by"
             },
             {
-              "type": "long",
               "name": "content_created_for"
             },
             {
@@ -981,7 +980,6 @@
               "name": "collection_created_by"
             },
             {
-              "type": "long",
               "name": "collection_created_for"
             },
             {

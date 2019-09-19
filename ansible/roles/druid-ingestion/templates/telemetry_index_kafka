@@ -1133,7 +1133,6 @@
               "name": "content_created_by"
             },
             {
-              "type": "string",
               "name": "content_created_for"
             },
             {
@@ -1201,7 +1200,6 @@
               "name": "collection_created_by"
             },
             {
-              "type": "string",
               "name": "collection_created_for"
             },
             {

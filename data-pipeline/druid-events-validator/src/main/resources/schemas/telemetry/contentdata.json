@@ -43,7 +43,7 @@
     },
     "createdFor": {
       "id": "http://api.sunbird.org/telemetry/contentdata/createdFor",
-      "type": "string"
+      "type": "array"
     },
     "framework": {
       "id": "http://api.sunbird.org/telemetry/contentdata/framework",
