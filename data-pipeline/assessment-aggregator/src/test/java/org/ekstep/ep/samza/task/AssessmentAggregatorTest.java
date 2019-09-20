@@ -62,9 +62,9 @@ public class AssessmentAggregatorTest {
                 (dbUtil);
         Aggregate assess = assessmentAggregatorService.getAggregateData(batchEvent, 1565198476000L,
                 mock(AssessmentAggregatorSink.class));
-        verify(dbUtil, times(2)).getQuestion(any(QuestionData.class));
-        assertEquals(11, assess.getTotalMaxScore());
-        assertEquals(5, assess.getTotalScore());
+        verify(dbUtil, times(4)).getQuestion(any(QuestionData.class));
+        assertEquals(4.0,assess.getTotalMaxScore(),0.001);
+        assertEquals(1.33,assess.getTotalScore(),0.001);
     }
 
     @Test

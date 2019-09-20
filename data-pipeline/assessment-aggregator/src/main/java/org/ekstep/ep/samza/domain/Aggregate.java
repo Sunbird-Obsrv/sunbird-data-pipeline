@@ -7,23 +7,23 @@ import java.util.List;
 
 public class Aggregate {
 
-    private int totalScore;
-    private int totalMaxScore;
+    private double totalScore;
+    private double totalMaxScore;
     private List<UDTValue> questionsList;
 
-    public Aggregate(int totalScore, int totalMaxScore, List<UDTValue> questionsList) {
+    public Aggregate(double totalScore, double totalMaxScore, List<UDTValue> questionsList) {
 
         this.totalScore = totalScore;
         this.totalMaxScore = totalMaxScore;
         this.questionsList = questionsList;
     }
 
-    public int getTotalScore() {
+    public double getTotalScore() {
         return totalScore;
     }
 
 
-    public int getTotalMaxScore() {
+    public double getTotalMaxScore() {
         return totalMaxScore;
     }
 

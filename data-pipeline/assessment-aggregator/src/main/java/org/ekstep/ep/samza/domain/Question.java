@@ -5,13 +5,13 @@ import java.util.Map;
 
 public class Question {
     private String id;
-    private int maxscore;
+    private double maxscore;
     private List<Map<String, Object>> params;
     private String title;
     private String type;
     private String desc;
 
-    public Question(String id, int maxscore, List<Map<String, Object>> params, String title, String type, String desc) {
+    public Question(String id, double maxscore, List<Map<String, Object>> params, String title, String type, String desc) {
         this.id = id;
         this.maxscore = maxscore;
         this.params = params;
@@ -24,7 +24,7 @@ public class Question {
         return id;
     }
 
-    public int getMaxScore() {
+    public double getMaxScore() {
         return maxscore;
     }
 
