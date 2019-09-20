@@ -62,6 +62,7 @@ public class BatchEvent {
 
     public void markSkipped(BatchEvent batchEvent) {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
         telemetry.add("flags.batch_aggregate_assess_skipped", true);
         telemetry.add("metadata.aggregate_assess", batchEvent.attemptId() +
                 " : skipping batch Event older than last batch assessment time");

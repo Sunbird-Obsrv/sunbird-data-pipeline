@@ -8,10 +8,10 @@ public class QuestionData {
 
     private List<Map<String, Object>> resvalues;
     private double duration;
-    private int score;
+    private double score;
     private Question item;
 
-    public QuestionData(List<Map<String, Object>> resvalues, double duration, int score, Question item) {
+    public QuestionData(List<Map<String, Object>> resvalues, double duration, double score, Question item) {
 
         this.resvalues = resvalues;
         this.duration = duration;
@@ -28,7 +28,7 @@ public class QuestionData {
         return duration;
     }
 
-    public int getScore() {
+    public double getScore() {
         return score;
     }
 

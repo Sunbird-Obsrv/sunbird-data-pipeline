@@ -35,7 +35,7 @@ public class AssessmentAggregatorService {
             sink.incDBHits();
             if (isBatchEventValid(batchEvent, assessment)) {
                 Long createdOn = null != assessment ? assessment.getTimestamp("created_on").getTime() : new DateTime().getMillis();
-                Aggregate assess = getAggregateData(batchEvent, createdOn,sink);
+                Aggregate assess = getAggregateData(batchEvent, createdOn, sink);
                 dbUtil.updateAssessmentToDB(batchEvent, assess.getTotalMaxScore(), assess.getTotalScore(),
                         assess.getQuestionsList(), createdOn);
                 sink.incDBHits();
@@ -45,19 +45,18 @@ public class AssessmentAggregatorService {
                 LOGGER.info(batchEvent.attemptId(), ": Batch Event older than last assessment time, skipping");
                 sink.skip(batchEvent);
             }
-        } catch(DriverException ex) {
-            LOGGER.error("", "Exception while fetching from db : "+ ex);
+        } catch (DriverException ex) {
+            LOGGER.error("", "Exception while fetching from db : " + ex);
             throw new DriverException(ex);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             LOGGER.error("", "Failed to parse the batchEvent: ", ex);
             sink.fail(source.getMessage().toString());
         }
     }
 
-    public Aggregate getAggregateData(BatchEvent batchEvent, Long createdOn,AssessmentAggregatorSink sink) {
-        int totalMaxScore = 0;
-        int totalScore = 0;
+    public Aggregate getAggregateData(BatchEvent batchEvent, Long createdOn, AssessmentAggregatorSink sink) {
+        double totalMaxScore = 0;
+        double totalScore = 0;
         List<UDTValue> questionsList = new ArrayList<>();
 
         for (Map<String, Object> event : batchEvent.assessEvents()) {

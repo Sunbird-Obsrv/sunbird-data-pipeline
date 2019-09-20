@@ -27,8 +27,8 @@ public class DBUtil {
 
     public UDTValue getQuestion(QuestionData questionData) {
         return questionType.newValue().setString("id", questionData.getItem().getId())
-                .setInt("max_score", questionData.getItem().getMaxScore())
-                .setInt("score", questionData.getScore())
+                .setDouble("max_score", questionData.getItem().getMaxScore())
+                .setDouble("score", questionData.getScore())
                 .setString("type", questionData.getItem().getType()).setString("title", questionData.getItem().getTitle())
                 .setList("resvalues", questionData.getResvalues())
                 .setList("params", questionData.getItem().getParams())
@@ -37,7 +37,7 @@ public class DBUtil {
 
     }
 
-    public void updateAssessmentToDB(BatchEvent batchEvent, int totalMaxScore, int totalScore,
+    public void updateAssessmentToDB(BatchEvent batchEvent, double totalMaxScore, double totalScore,
                                      List<UDTValue> questionsList, Long createdOn) {
 
         Insert query = QueryBuilder.insertInto(config.getCoursesKeyspace(), config.getAssessementTable())
