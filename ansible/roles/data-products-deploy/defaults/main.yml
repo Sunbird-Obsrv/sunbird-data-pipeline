@@ -18,8 +18,8 @@ sink_topic: "{{ env }}.telemetry.sink"
 job_manager_tmp_dir: "transient-data"
 channel: dev-test
 druid_broker_host: "{{groups['broker'][0]}}"
-analytics_job_list: '"wfs", "wfus", "workflow-usage-metrics", "portal-metrics", "dialcode-usage-summary", "dialcode-usage-updater", "etb-coverage-summary", "data-exhaust", "pipeline-failed-events-audit", "pipeline-druid-events-audit", "pipeline-audit", "ds", "dpu","monitor-job-summ"'
-analytics_jobs_count: 14
+analytics_job_list: '"wfs", "wfus", "workflow-usage-metrics", "portal-metrics", "dialcode-usage-summary", "dialcode-usage-updater", "etb-coverage-summary", "data-exhaust", "pipeline-failed-events-audit", "pipeline-druid-events-audit", "pipeline-audit", "ds", "dpu","course-dashboard-metrics","assessment-dashboard-metrics","monitor-job-summ"'
+analytics_jobs_count: 16
 
 cassandra_keyspace_prefix: '{{ env }}_'
 dp_dispatch_bucket_name: ekstep-dev-data-store
@@ -66,16 +66,6 @@ start_jobmanager:
 have_weekly_jobs: false
 
 video_stream_job_schedule: 10
-
-run_course_metrics_job:
-  course-dashboard-metrics:
-    hour: 21
-    minute: 30
-
-run_assessment_metrics_job:
-  assessment-dashboard-metrics:
-    hour: 22
-    minute: 30
 
 update_user_redis_cache:
   populate-user-cache:
