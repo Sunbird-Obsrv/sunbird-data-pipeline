@@ -13,7 +13,6 @@ import org.ekstep.ep.samza.util.RedisConnect;
 
 public class DeviceProfileUpdaterTask implements StreamTask, InitableTask, WindowableTask {
 
-    private final String JOB_NAME = "DeviceProfileUpdater";
     static Logger LOGGER = new Logger(DeviceProfileUpdaterTask.class);
     private JobMetrics metrics;
     private DeviceProfileUpdaterService service;
@@ -29,9 +28,9 @@ public class DeviceProfileUpdaterTask implements StreamTask, InitableTask, Windo
 
     @Override
     public void init(Config config, TaskContext context) {
-        metrics = new JobMetrics(context, JOB_NAME);
         redisConnect = new RedisConnect(config);
         this.config = new DeviceProfileUpdaterConfig(config);
+        metrics = new JobMetrics(context, this.config.jobName());
         cassandraConnect = new CassandraConnect(config);
         service = new DeviceProfileUpdaterService(config, redisConnect, cassandraConnect);
         metricsTopic = config.get("output.metrics.topic.name");
