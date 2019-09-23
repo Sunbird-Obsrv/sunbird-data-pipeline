@@ -13,7 +13,7 @@ import org.ekstep.ep.samza.util.RedisConnect;
 
 public class DeviceProfileUpdaterTask implements StreamTask, InitableTask, WindowableTask {
 
-    private final String JOB_NAME = "device-profile-updater";
+    private final String JOB_NAME = "DeviceProfileUpdater";
     static Logger LOGGER = new Logger(DeviceProfileUpdaterTask.class);
     private JobMetrics metrics;
     private DeviceProfileUpdaterService service;
