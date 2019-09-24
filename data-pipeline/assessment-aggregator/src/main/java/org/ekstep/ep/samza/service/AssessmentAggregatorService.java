@@ -20,7 +20,7 @@ public class AssessmentAggregatorService {
 
     private static Logger LOGGER = new Logger(AssessmentAggregatorService.class);
     private DBUtil dbUtil;
-
+    private Comparator<QuestionData> byEts = (QuestionData o1, QuestionData o2) -> Long.compare(o2.getEts(),o1.getEts());
     public AssessmentAggregatorService(DBUtil dbUtil) {
         this.dbUtil = dbUtil;
     }
@@ -89,6 +89,4 @@ public class AssessmentAggregatorService {
         }
         return status;
     }
-
-    private Comparator<QuestionData> byEts = (QuestionData o1, QuestionData o2) -> Long.compare(o2.getEts(),o1.getEts());
 }
