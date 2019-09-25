@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.domain;
 
 import com.datastax.driver.core.UDTValue;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 
@@ -9,15 +10,14 @@ public class Aggregate {
 
     private double totalScore;
     private double totalMaxScore;
-    private String grandTotal;
     private List<UDTValue> questionsList;
+    private DecimalFormat df = new DecimalFormat("###.##");
 
-    public Aggregate(double totalScore, double totalMaxScore, String grandTotal, List<UDTValue> questionsList) {
+    public Aggregate(double totalScore, double totalMaxScore, List<UDTValue> questionsList) {
 
         this.totalScore = totalScore;
         this.totalMaxScore = totalMaxScore;
         this.questionsList = questionsList;
-        this.grandTotal = grandTotal;
     }
 
     public double getTotalScore() {
@@ -30,7 +30,7 @@ public class Aggregate {
     }
 
     public String getGrandTotal() {
-        return grandTotal;
+        return String.format("%s/%s", df.format(totalScore), df.format(totalMaxScore));
     }
 
     public List<UDTValue> getQuestionsList() {

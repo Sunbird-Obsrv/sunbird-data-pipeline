@@ -14,7 +14,6 @@ import org.ekstep.ep.samza.task.AssessmentAggregatorSource;
 import org.ekstep.ep.samza.util.DBUtil;
 import org.joda.time.DateTime;
 
-import java.text.DecimalFormat;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
@@ -23,7 +22,6 @@ public class AssessmentAggregatorService {
     private static Logger LOGGER = new Logger(AssessmentAggregatorService.class);
     private DBUtil dbUtil;
     private Comparator<QuestionData> byEts = (QuestionData o1, QuestionData o2) -> Long.compare(o2.getEts(), o1.getEts());
-    private DecimalFormat df = new DecimalFormat("###.##");
 
     public AssessmentAggregatorService(DBUtil dbUtil) {
         this.dbUtil = dbUtil;
@@ -77,8 +75,7 @@ public class AssessmentAggregatorService {
             }
         }
         sink.success();
-        return new Aggregate(totalScore, totalMaxScore,
-                String.format("%s/%s", df.format(totalScore), df.format(totalMaxScore)), questionsList);
+        return new Aggregate(totalScore, totalMaxScore, questionsList);
     }
 
     public boolean isBatchEventValid(BatchEvent event, Row assessment) {
