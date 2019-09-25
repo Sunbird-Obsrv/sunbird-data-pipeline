@@ -2444,52 +2444,52 @@
     "deviceMapping": false
   },
   "pipeline-failed-events-audit": {
-      "search": {
-        "type": "none"
-      },
-      "model": "org.ekstep.analytics.model.AuditComputationModel",
-      "modelParams": {
-        "startDate": "$(date '+%Y-%m-%d')",
-        "endDate": "$(date '+%Y-%m-%d')",
-        "auditRules": "[{\"name\":\"PipelineFailedEventsAudit\",\"description\":\"Pipeline Failed events Audit\",\"threshold\":20,\"model\":\"org.ekstep.analytics.audit.PipelineFailedEventsDailyAudit\",\"priority\":1,\"search\":[{\"type\":\"azure\",\"queries\":[{\"bucket\":\"{{ bucket }}\",\"prefix\":\"failed/\",\"endDate\":\"$(date '+%Y-%m-%d')\",\"startDate\":\"$(date '+%Y-%m-%d')\",\"delta\":0}]}]}]"
-      },
-      "output": [
-        {
-          "to": "console",
-          "params": {
-            "printEvent": false
-          }
-        }
-      ]
+    "search": {
+      "type": "none"
     },
+    "model": "org.ekstep.analytics.model.AuditComputationModel",
+    "modelParams": {
+      "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+      "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+      "auditRules": "[{\"name\":\"PipelineFailedEventsAudit\",\"description\":\"Pipeline Failed events Audit\",\"threshold\":20,\"model\":\"org.ekstep.analytics.audit.PipelineFailedEventsDailyAudit\",\"priority\":1,\"search\":[{\"type\":\"azure\",\"queries\":[{\"bucket\":\"{{ bucket }}\",\"prefix\":\"failed/\",\"endDate\":\"$(date --date yesterday '+%Y-%m-%d')\",\"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\",\"delta\":0}]}]}]"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ]
+  },
   "pipeline-druid-events-audit": {
-      "search": {
-        "type": "none"
-      },
-      "model": "org.ekstep.analytics.model.AuditComputationModel",
-      "modelParams": {
-        "startDate": "$(date '+%Y-%m-%d')",
-        "endDate": "$(date '+%Y-%m-%d')",
-        "auditRules": "[{\"name\": \"DruidVsPipelineEventsDailyAudit\", \"description\": \"Druid Vs Pipeline events Audit\", \"threshold\": 20, \"model\": \"org.ekstep.analytics.audit.DruidVsPipelineEventsDailyAudit\", \"priority\": 1,\n\"params\": { \"syncMinusDays\": 2, \"syncPlusDays\": 1 }, \"startDate\": \"$(date '+%Y-%m-%d')\", \"endDate\": \"$(date '+%Y-%m-%d')\",\n\"search\": [{\"type\": \"azure\", \"queries\": [{\"bucket\":\"{{ bucket }}\",\"prefix\":\"telemetry-denormalized/raw/\", \"endDate\":\"$(date '+%Y-%m-%d')\", \"startDate\":\"$(date '+%Y-%m-%d')\", \"delta\":0}]},\n{\"type\": \"azure\", \"queries\": [{\"bucket\":\"{{ bucket }}\",\"prefix\":\"telemetry-denormalized/summary/\", \"endDate\":\"$(date '+%Y-%m-%d')\", \"startDate\":\"$(date '+%Y-%m-%d')\", \"delta\":0}]}] }]"
-      },
-      "output": [
-        {
-          "to": "console",
-          "params": {
-            "printEvent": false
-          }
-        }
-      ]
-    },
+       "search": {
+         "type": "none"
+       },
+       "model": "org.ekstep.analytics.model.AuditComputationModel",
+       "modelParams": {
+         "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+         "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+         "auditRules": "[{\"name\": \"DruidVsPipelineEventsDailyAudit\", \"description\": \"Druid Vs Pipeline events Audit\", \"threshold\": 20, \"model\": \"org.ekstep.analytics.audit.DruidVsPipelineEventsDailyAudit\", \"priority\": 1,\n\"params\": { \"syncMinusDays\": 2, \"syncPlusDays\": 1 }, \"startDate\": \"$(date --date yesterday '+%Y-%m-%d')\", \"endDate\": \"$(date --date yesterday '+%Y-%m-%d')\",\n\"search\": [{\"type\": \"azure\", \"queries\": [{\"bucket\":\"{{ bucket }}\",\"prefix\":\"telemetry-denormalized/raw/\", \"endDate\":\"$(date --date yesterday '+%Y-%m-%d')\", \"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\", \"delta\":0}]},\n{\"type\": \"azure\", \"queries\": [{\"bucket\":\"{{ bucket }}\",\"prefix\":\"telemetry-denormalized/summary/\", \"endDate\":\"$(date --date yesterday '+%Y-%m-%d')\", \"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\", \"delta\":0}]}] }]"
+       },
+       "output": [
+         {
+           "to": "console",
+           "params": {
+             "printEvent": false
+           }
+         }
+       ]
+     },
   "pipeline-audit": {
     "search": {
       "type": "none"
     },
     "model": "org.ekstep.analytics.model.AuditComputationModel",
     "modelParams": {
-      "startDate": "$(date '+%Y-%m-%d')",
-      "endDate": "$(date '+%Y-%m-%d')",
-      "auditRules": "[{\"name\": \"PipelineAudit\", \"description\": \"PipelineAudit\", \"threshold\": 2.0, \"model\": \"org.ekstep.analytics.audit.PipelineDailyAudit\", \"priority\": 1, \"startDate\": \"$(date '+%Y-%m-%d')\", \"endDate\": \"$(date '+%Y-%m-%d')\"}]"
+      "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+      "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+      "auditRules": "[{\"name\": \"PipelineAudit\", \"description\": \"PipelineAudit\", \"threshold\": 2.0, \"model\": \"org.ekstep.analytics.audit.PipelineDailyAudit\", \"priority\": 1, \"startDate\": \"$(date --date yesterday '+%Y-%m-%d')\", \"endDate\": \"$(date --date yesterday '+%Y-%m-%d')\"}]"
     },
     "output": [
       {
