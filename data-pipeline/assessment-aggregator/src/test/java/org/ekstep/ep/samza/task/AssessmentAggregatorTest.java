@@ -65,6 +65,7 @@ public class AssessmentAggregatorTest {
         verify(dbUtil, times(2)).getQuestion(any(QuestionData.class));
         assertEquals(2.0,assess.getTotalMaxScore(),0.001);
         assertEquals(1.33,assess.getTotalScore(),0.001);
+        assertEquals("1.33/2",assess.getGrandTotal());
     }
 
     @Test
