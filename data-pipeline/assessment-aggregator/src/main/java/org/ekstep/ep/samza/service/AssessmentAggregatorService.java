@@ -15,12 +15,14 @@ import org.ekstep.ep.samza.util.DBUtil;
 import org.joda.time.DateTime;
 
 import java.util.*;
+
 @SuppressWarnings("unchecked")
 public class AssessmentAggregatorService {
 
     private static Logger LOGGER = new Logger(AssessmentAggregatorService.class);
     private DBUtil dbUtil;
-    private Comparator<QuestionData> byEts = (QuestionData o1, QuestionData o2) -> Long.compare(o2.getEts(),o1.getEts());
+    private Comparator<QuestionData> byEts = (QuestionData o1, QuestionData o2) -> Long.compare(o2.getEts(), o1.getEts());
+
     public AssessmentAggregatorService(DBUtil dbUtil) {
         this.dbUtil = dbUtil;
     }
@@ -34,8 +36,7 @@ public class AssessmentAggregatorService {
             if (isBatchEventValid(batchEvent, assessment)) {
                 Long createdOn = null != assessment ? assessment.getTimestamp("created_on").getTime() : new DateTime().getMillis();
                 Aggregate assess = getAggregateData(batchEvent, createdOn, sink);
-                dbUtil.updateAssessmentToDB(batchEvent, assess.getTotalMaxScore(), assess.getTotalScore(),
-                        assess.getQuestionsList(), createdOn);
+                dbUtil.updateAssessmentToDB(batchEvent, assess, createdOn);
                 sink.incDBHits();
                 sink.batchSuccess();
 
@@ -57,7 +58,7 @@ public class AssessmentAggregatorService {
         double totalScore = 0;
         List<UDTValue> questionsList = new ArrayList<>();
         TreeSet<QuestionData> questionSet = new TreeSet(byEts);
-        HashMap<String,String> checkDuplicate = new HashMap();
+        HashMap<String, String> checkDuplicate = new HashMap();
         for (Map<String, Object> event : batchEvent.assessEvents()) {
             if (event.containsKey("edata")) {
                 QuestionData questionData = new Gson().fromJson(new Gson().toJson(event.get("edata")), QuestionData.class);
