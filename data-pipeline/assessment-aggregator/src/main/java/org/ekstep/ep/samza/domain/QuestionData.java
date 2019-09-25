@@ -10,6 +10,7 @@ public class QuestionData {
     private double duration;
     private double score;
     private Question item;
+    private long assessts;
 
     public QuestionData(List<Map<String, Object>> resvalues, double duration, double score, Question item) {
 
@@ -35,6 +36,15 @@ public class QuestionData {
     public Question getItem() {
         return item;
     }
+
+    public long getEts() {
+        return assessts;
+    }
+
+    public void setEts(long ets) {
+        this.assessts = ets;
+    }
+
 }
 
 

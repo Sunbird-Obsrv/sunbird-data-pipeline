@@ -37,12 +37,12 @@
       "id": "http://api.sunbird.org/telemetry/collectiondata/mimetype",
       "type": "string"
     },
-    "createdBy": {
-      "id": "http://api.sunbird.org/telemetry/collectiondata/createdBy",
+    "createdby": {
+      "id": "http://api.sunbird.org/telemetry/collectiondata/createdby",
       "type": "string"
     },
-    "createdFor": {
-      "id": "http://api.sunbird.org/telemetry/collectiondata/createdFor",
+    "createdfor": {
+      "id": "http://api.sunbird.org/telemetry/collectiondata/createdfor",
       "type": "array"
     },
     "framework": {

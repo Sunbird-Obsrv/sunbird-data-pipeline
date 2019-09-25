@@ -14,15 +14,13 @@ import org.ekstep.ep.samza.task.AssessmentAggregatorSource;
 import org.ekstep.ep.samza.util.DBUtil;
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
+@SuppressWarnings("unchecked")
 public class AssessmentAggregatorService {
 
     private static Logger LOGGER = new Logger(AssessmentAggregatorService.class);
     private DBUtil dbUtil;
-
+    private Comparator<QuestionData> byEts = (QuestionData o1, QuestionData o2) -> Long.compare(o2.getEts(),o1.getEts());
     public AssessmentAggregatorService(DBUtil dbUtil) {
         this.dbUtil = dbUtil;
     }
@@ -58,16 +56,24 @@ public class AssessmentAggregatorService {
         double totalMaxScore = 0;
         double totalScore = 0;
         List<UDTValue> questionsList = new ArrayList<>();
-
+        TreeSet<QuestionData> questionSet = new TreeSet(byEts);
+        HashMap<String,String> checkDuplicate = new HashMap();
         for (Map<String, Object> event : batchEvent.assessEvents()) {
             if (event.containsKey("edata")) {
                 QuestionData questionData = new Gson().fromJson(new Gson().toJson(event.get("edata")), QuestionData.class);
+                questionData.setEts(((Number) event.get("ets")).longValue());
+                questionSet.add(questionData);
+            }
+        }
+        for (QuestionData questionData : questionSet) {
+            if (!checkDuplicate.containsKey(questionData.getItem().getId())) {
                 totalScore += questionData.getScore();
                 totalMaxScore += questionData.getItem().getMaxScore();
                 questionsList.add(dbUtil.getQuestion(questionData));
+                checkDuplicate.put(questionData.getItem().getId(), "");
             }
-            sink.success();
         }
+        sink.success();
         return new Aggregate(totalScore, totalMaxScore, questionsList);
     }
 
@@ -83,5 +89,4 @@ public class AssessmentAggregatorService {
         }
         return status;
     }
-
 }

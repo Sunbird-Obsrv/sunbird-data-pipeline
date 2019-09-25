@@ -11,6 +11,7 @@ import org.ekstep.ep.samza.task.AssessmentAggregatorConfig;
 import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.List;
 
 
@@ -33,7 +34,8 @@ public class DBUtil {
                 .setList("resvalues", questionData.getResvalues())
                 .setList("params", questionData.getItem().getParams())
                 .setString("description", questionData.getItem().getDesc())
-                .setDecimal("duration", BigDecimal.valueOf(questionData.getDuration()));
+                .setDecimal("duration", BigDecimal.valueOf(questionData.getDuration()))
+                .setTimestamp("assess_ts",new Timestamp(questionData.getEts()));
 
     }
 
