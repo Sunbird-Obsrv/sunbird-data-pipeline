@@ -2612,7 +2612,7 @@
                         "rightField": "total_scans",
                         "rightFieldType": "FieldAccess"
                       },
-                      "fn": "function(total_failed_scans, total_scans) { return (total_failed_scans/total_scans) * 100}"
+                      "fn": "function(total_failed_scans, total_scans) { return (total_scans > 0) ? (total_failed_scans/total_scans) * 100 : 0 }"
                     }
                   ],
                   "descending": "false"
@@ -2646,7 +2646,7 @@
                     {
                       "type": "equals",
                       "dimension": "context_pdata_id",
-                      "value": "prod.diksha.app"
+                      "value": "{{ producer_env }}.diksha.app"
                     }
                   ],
                   "descending": "false"
@@ -2676,8 +2676,8 @@
                       "type": "in",
                       "dimension": "dimensions_pdata_id",
                       "values": [
-                        "prod.diksha.app",
-                        "prod.diksha.portal"
+                        "{{ producer_env }}.diksha.app",
+                        "{{ producer_env }}.diksha.portal"
                       ]
                     },
                     {
@@ -2712,7 +2712,7 @@
                     {
                       "type": "equals",
                       "dimension": "dimensions_pdata_id",
-                      "value": "prod.diksha.app"
+                      "value": "{{ producer_env }}.diksha.app"
                     },
                     {
                       "type": "equals",
@@ -2747,8 +2747,8 @@
                       "type": "in",
                       "dimension": "dimensions_pdata_id",
                       "values": [
-                        "prod.diksha.app",
-                        "prod.diksha.portal"
+                        "{{ producer_env }}.diksha.app",
+                        "{{ producer_env }}.diksha.portal"
                       ]
                     },
                     {
