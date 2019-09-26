@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+home=`echo $HOME`
+jobJarPath="{{ content_snapshot_jar_path }}/{{ content_snapshot_jar_name }}"
+jobConfPath="{{ job_config.cassandra_redis_path }}"
+today=$(date "+%Y-%m-%d")
+
+echo "STARTED EXECUTING USER CACHE INDEXER..."
+
+nohup {{ spark_home }}/bin/spark-submit \
+--conf spark.driver.extraJavaOptions="-Dconfig.file=${jobConfPath}" \
+--class org.ekstep.analytics.jobs.CassandraRedisIndexer \
+${jobJarPath} >> "{{ content_snapshot_path }}/logs/$today-task-execution.log" 2>&1

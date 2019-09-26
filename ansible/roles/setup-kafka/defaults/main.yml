@@ -87,6 +87,9 @@ processing_kafka_overriden_topics:
     retention_time: 86400000
   - name: events.error
     retention_time: 86400000
+  - name: telemetry.assess
+    retention_time: 604800000
+    replication_factor: 1
   # Error/Failed Topics
   - name: telemetry.failed
     retention_time: 86400000
@@ -96,6 +99,9 @@ processing_kafka_overriden_topics:
     replication_factor: 1
   - name: telemetry.extractor.failed
     retention_time: 21600000
+    replication_factor: 1
+  - name: events.deviceprofile
+    retention_time: 604800000
     replication_factor: 1
   - name: system.command
     retention_time: 3600
@@ -208,6 +214,9 @@ processing_kafka_topics:
   - name: learning.events.failed
     num_of_partitions: 1
     replication_factor: 1
+  - name: events.deviceprofile
+    num_of_partitions: 1
+    replication_factor: 1
   - name: lms.audit.events
     num_of_partitions: 1
     replication_factor: 1
@@ -215,5 +224,8 @@ processing_kafka_topics:
     num_of_partitions: 4
     replication_factor: 1
   - name: lms.user.account.merge
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: telemetry.assess
     num_of_partitions: 1
     replication_factor: 1

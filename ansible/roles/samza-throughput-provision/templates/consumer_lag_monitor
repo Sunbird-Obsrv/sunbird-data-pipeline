@@ -1,0 +1,27 @@
+#!/bin/bash
+
+### Variables
+declare -a array
+IP=$1
+max_consumer_lag={{ max_consumer_lag_count }}
+duration={{ consumer_lag_influxdb_query_duration }}
+SGPASS=$3
+SGUSER=$4
+env=$2
+
+### Main script
+array=( publish-pipeline )
+
+### To get the consumer lag count and send the alert:
+
+for i in "${array[@]}"
+ do
+    consumer_lag=`curl -s 'http://'$IP':8086/query?' --data-urlencode "db=monitoring_events" --data-urlencode "q=SELECT consumer_lag FROM "pipeline_metrics" WHERE "env" =~ /$env/  AND "job_name" = '$i' AND time > now() - "$duration"m;" | jq '.results[0].series[0].values[0][1]'`
+    echo  $consumer_lag
+ if [ "$consumer_lag" -gt "$max_consumer_lag" ]; then
+    text=`echo "For $i consumer_lag since last $duration minutes is $consumer_lag"`
+    ./consumer_lag_slack.sh critical "$text"
+    curl -d "{{ publish_pipeline_lag_alert_to_address }}&fromname='Consumer-lag-alerts'&fromname='consumer-lag-alerts'&fromname='consumer-lag-alerts'&fromname='consumer-lag-alerts'&subject='[$env] [firing-1] - consumer_lag alerts for "$i"'&text=${text}&from={{ samza_alert_from_address }}&api_user=${SGUSER}&api_key=${SGPASS}" https://api.sendgrid.com/api/mail.send.json
+ fi
+done
+

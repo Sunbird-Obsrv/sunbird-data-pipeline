@@ -1,0 +1,120 @@
+---
+- name: Create content-snapshot directory
+  file:
+    path: '{{ content_snapshot_path }}'
+    state: directory
+    mode: 0777
+  become: yes
+  tags:
+    - deploy
+
+- name: Copy distributed jar
+  copy: src={{ content_snapshot_distribuction_name }} dest={{ content_snapshot_path }}
+  tags:
+    - deploy
+  
+- name: Ensure removing jars directory
+  file:
+    path: "{{ content_snapshot_jar_path }}"
+    state: absent
+  tags:
+    - deploy
+
+- name: Create jars directory
+  file:
+    path: "{{ content_snapshot_jar_path }}"
+    state: directory
+    mode: 0777
+  become: yes
+  tags:
+    - deploy
+
+- name: Create logs directory
+  file:
+    path: '{{ content_snapshot_path }}/logs'
+    state: directory
+    mode: 0777
+  become: yes
+  tags:
+    - deploy
+
+- name: Unarchive adhoc job script
+  unarchive: src={{ content_snapshot_path }}/{{ content_snapshot_distribuction_name }} dest={{ content_snapshot_jar_path }} copy=no group={{ analytics_group }} owner={{ analytics_user }}
+  tags:
+    - deploy
+
+- name: Copy adhoc-jobs jar file
+  copy:
+    src: "{{ content_snapshot_jar_name }}"
+    dest: "{{ content_snapshot_jar_path }}"
+    mode: 0777
+    owner: "{{ analytics_user }}" 
+    group: "{{ analytics_group }}"
+  tags:
+    - deploy
+
+- name: Ensure removing config directory
+  file:
+    path: '{{ content_snapshot_path }}/config'
+    state: absent
+  tags:
+    - deploy
+
+- name: Create config directory
+  file:
+    path: "{{ content_snapshot_path }}/config"
+    state: directory
+    mode: 0777
+  become: yes
+  tags:
+    - deploy
+
+- name: Ensure copying all conf files from the templates/conf folder
+  template:
+    src: "conf/{{ item }}.j2"
+    dest: "{{ content_snapshot_path }}/config/{{ item }}.conf"
+    mode: 0777
+    owner: "{{ analytics_user }}" 
+    group: "{{ analytics_group }}"
+  with_items: "{{ config_files }}"
+  tags:
+    - deploy
+
+- name: Ensure removing scripts directory
+  file:
+    path: '{{ content_snapshot_path }}/scripts'
+    state: absent
+  become_user: "{{ analytics_user }}"  
+  tags:
+    - deploy
+
+- name: Create scripts directory
+  file:
+    path: '{{ content_snapshot_path }}/scripts'
+    state: directory
+    mode: 0777
+  become: yes
+  tags:
+    - deploy
+
+- name: Ensure copying all script files from the templates/script dir
+  template:
+    src: "scripts/{{ item }}.j2"
+    dest: "{{ content_snapshot_path }}/scripts/{{ item }}.sh"
+    mode: 0777
+    owner: "{{ analytics_user }}" 
+    group: "{{ analytics_group }}"
+  with_items: "{{ script_files }}"
+  tags:
+    - deploy
+
+- name: Run Script
+  become: yes
+  shell: "sh {{ content_snapshot_path }}/scripts/run-script.sh {{ script_to_run }} >> {{ content_snapshot_path }}/logs/{{ansible_date_time.date}}-shell-execution.log"
+  poll: 0
+  async: 45
+  tags:
+    - execute-script
+
+
+

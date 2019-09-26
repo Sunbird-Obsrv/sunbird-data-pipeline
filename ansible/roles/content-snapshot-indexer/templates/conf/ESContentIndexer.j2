@@ -1,0 +1,25 @@
+# redis
+redis.host="{{ redis.host }}"
+redis.port="{{ redis.port }}"
+redis.connection.max={{ redis.connection.max }}
+location.db.redis.key.expiry.seconds={{ redis.key_expiry_seconds }}
+redis.connection.idle.max={{ redis.connection.idle_max }}
+redis.connection.idle.min={{ redis.connection.idle_min }}
+redis.connection.minEvictableIdleTimeSeconds={{ redis.connection.min_evict_idle_seconds }}
+redis.connection.timeBetweenEvictionRunsSeconds={{ redis.connection.time_evict_run_second }}
+redis.max.pipeline.size="{{ redis.max_pipeline_size }}"
+
+# EStoRedis config, all values should be in string format
+
+redis.es.database.index="{{ redis.content.index}}"
+
+# to which Redis database (0 - 15) data should be indexed?
+
+elasticsearch.host="{{ elastic_search.host }}"
+elasticsearch.port="{{ elastic_search.port }}"
+elasticsearch.scroll.size="{{ elastic_search.scroll_size }}"
+elasticsearch.index.source.keys=["{{ redis.content.source_key }}"] # this will be used as key for redis
+elasticsearch.index.source.keyDelimiter=""
+elasticsearch.query.index="{{ elastic_search.content.index }}"
+# query to fetch all 'Live' status contents of objectType 'Content'
+elasticsearch.query.jsonString={{ elastic_search.content.query }}

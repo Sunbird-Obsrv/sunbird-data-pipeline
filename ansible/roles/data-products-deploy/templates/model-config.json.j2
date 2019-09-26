@@ -2263,6 +2263,29 @@
     "appName": "Course Dashboard Metrics",
     "deviceMapping": false
   },
+  "assessment-dashboard-metrics": {
+    "search": {
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.job.AssessmentMetricsJob",
+    "modelParams": {
+      "fromDate": "$(date --date yesterday '+%Y-%m-%d')",
+      "toDate": "$(date --date yesterday '+%Y-%m-%d')",
+      "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
+      "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Assessment Dashboard Metrics",
+    "deviceMapping": false
+  },
   "content-rating-updater": {
     "search": {
       "type": "none"
@@ -2291,9 +2314,10 @@
     "model": "org.ekstep.analytics.updater.DailyConsumptionReportModel",
     "modelParams": {
       "adhoc_scripts_dir": "/home/analytics/telemetryreports/scripts",
-      "adhoc_scripts_output_dir": "/mount/data/store",
+      "adhoc_scripts_output_dir": "/mount/portal_data",
       "adhoc_scripts_virtualenv_dir": "/mount/venv",
-      "derived_summary_dir": "{{ job_manager_tmp_dir }}/wfs"
+      "derived_summary_dir": "{{ job_manager_tmp_dir }}/wfs",
+      "druid_broker_url": "http://{{druid_broker_host}}:8082/"
     },
     "output": [
       {
@@ -2396,6 +2420,11 @@
           "model": "DailyConsumptionReportModel",
           "category": "consumption",
           "input_dependency": "WorkFlowSummaryModel"
+        },
+        {
+          "model": "AuditComputationModel",
+          "category": "consumption",
+          "input_dependency": "None"
         }
       ]
     },
@@ -2437,305 +2466,361 @@
     "appName": "Experiment-Definition",
     "deviceMapping": false
   },
-  "druid-query-processor": {
+  "pipeline-failed-events-audit": {
     "search": {
-        "type": "none"
-      },
-      "model": "org.ekstep.analytics.model.DruidQueryProcessingModel",
-      "modelParams": {
-        "reportConfig": {
-          "id": "data_metrics",
-          "queryType": "timeseries",
-          "dateRange": {
-            "staticInterval": "LastDay",
-            "granularity": "day"
-          },
-          "metrics": [
-            {
-              "metric": "totalSuccessfulScans",
-              "label": "Total Successful QR Scans",
-              "druidQuery": {
-                "queryType": "timeSeries",
-                "dataSource": "telemetry-events",
-                "intervals": "LastDay",
-                "aggregations": [
-                  {
-                    "name": "total_successful_scans",
-                    "type": "count",
-                    "fieldName": ""
-                  }
-                ],
-                "filters": [
-                  {
-                    "type": "isnotnull",
-                    "dimension": "edata_filters_dialcodes"
-                  },
-                  {
-                    "type": "equals",
-                    "dimension": "eid",
-                    "value": "SEARCH"
-                  },
-                  {
-                    "type": "greaterthan",
-                    "dimension": "edata_size",
-                    "value": 0
-                  }
-                ],
-                "descending": "false"
-              }
-            },
-            {
-              "metric": "totalPercentFailedScans",
-              "label": "Total Percent Failed QR Scans",
-              "druidQuery": {
-                "queryType": "timeSeries",
-                "dataSource": "telemetry-events",
-                "intervals": "LastDay",
-                "aggregations": [
-                  {
-                    "name": "total_failed_scans",
-                    "type": "javascript",
-                    "fieldName": "edata_size",
-                    "fnAggregate": "function(current, edata_size) { return current + (edata_size == 0 ? 1 : 0); }",
-                    "fnCombine": "function(partialA, partialB) { return partialA + partialB; }",
-                    "fnReset": "function () { return 0; }"
-                  },
-                  {
-                    "name": "total_scans",
-                    "type": "count",
-                    "fieldName": ""
-                  }
-                ],
-                "filters": [
-                  {
-                    "type": "isnotnull",
-                    "dimension": "edata_filters_dialcodes"
-                  },
-                  {
-                    "type": "equals",
-                    "dimension": "eid",
-                    "value": "SEARCH"
-                  }
-                ],
-                "postAggregation": [
-                  {
-                    "type": "javascript",
-                    "name": "total_percent_failed_scans",
-                    "fields": {
-                      "leftField": "total_failed_scans",
-                      "rightField": "total_scans",
-                      "rightFieldType": "FieldAccess"
-                    },
-                    "fn": "function(total_failed_scans, total_scans) { return (total_failed_scans/total_scans) * 100}"
-                  }
-                ],
-                "descending": "false"
-              }
-            },
-            {
-              "metric": "totalContentDownload",
-              "label": "Total Content Download",
-              "druidQuery": {
-                "queryType": "timeSeries",
-                "dataSource": "telemetry-events",
-                "intervals": "LastDay",
-                "aggregations": [
-                  {
-                    "name": "total_content_download",
-                    "type": "count",
-                    "fieldName": ""
-                  }
-                ],
-                "filters": [
-                  {
-                    "type": "equals",
-                    "dimension": "edata_subtype",
-                    "value": "ContentDownload-Success"
-                  },
-                  {
-                    "type": "equals",
-                    "dimension": "eid",
-                    "value": "INTERACT"
-                  },
-                  {
-                    "type": "equals",
-                    "dimension": "context_pdata_id",
-                    "value": "prod.diksha.app"
-                  }
-                ],
-                "descending": "false"
-              }
-            },
-            {
-              "metric": "totalContentPlayed",
-              "label": "Total Content Played",
-              "druidQuery": {
-                "queryType": "timeseries",
-                "dataSource": "summary-events",
-                "intervals": "LastDay",
-                "aggregations": [
-                  {
-                    "name": "total_content_plays",
-                    "type": "count",
-                    "fieldName": ""
-                  }
-                ],
-                "filters": [
-                  {
-                    "type": "equals",
-                    "dimension": "eid",
-                    "value": "ME_WORKFLOW_SUMMARY"
-                  },
-                  {
-                    "type": "in",
-                    "dimension": "dimensions_pdata_id",
-                    "values": [
-                      "prod.diksha.app",
-                      "prod.diksha.portal"
-                    ]
-                  },
-                  {
-                    "type": "equals",
-                    "dimension": "dimensions_type",
-                    "value": "content"
-                  },
-                  {
-                    "type": "equals",
-                    "dimension": "dimensions_mode",
-                    "value": "play"
-                  }
-                ],
-                "descending": "false"
-              }
-            },
-            {
-              "metric": "totalUniqueDevices",
-              "label": "Total Unique Devices",
-              "druidQuery": {
-                "queryType": "timeseries",
-                "dataSource": "summary-events",
-                "intervals": "LastDay",
-                "aggregations": [
-                  {
-                    "name": "total_unique_devices",
-                    "type": "cardinality",
-                    "fieldName": "dimensions_did"
-                  }
-                ],
-                "filters": [
-                  {
-                    "type": "equals",
-                    "dimension": "dimensions_pdata_id",
-                    "value": "prod.diksha.app"
-                  },
-                  {
-                    "type": "equals",
-                    "dimension": "dimensions_type",
-                    "value": "app"
-                  }
-                ],
-                "descending": "false"
-              }
-            },
-            {
-              "metric": "totalContentPlayedInHour",
-              "label": "Total Content Played In Hour",
-              "druidQuery": {
-                "queryType": "timeseries",
-                "dataSource": "summary-events",
-                "intervals": "LastDay",
-                "aggregations": [
-                  {
-                    "name": "sum__edata_time_spent",
-                    "type": "doubleSum",
-                    "fieldName": "edata_time_spent"
-                  }
-                ],
-                "filters": [
-                  {
-                    "type": "equals",
-                    "dimension": "eid",
-                    "value": "ME_WORKFLOW_SUMMARY"
-                  },
-                  {
-                    "type": "in",
-                    "dimension": "dimensions_pdata_id",
-                    "values": [
-                      "prod.diksha.app",
-                      "prod.diksha.portal"
-                    ]
-                  },
-                  {
-                    "type": "equals",
-                    "dimension": "dimensions_type",
-                    "value": "content"
-                  },
-                  {
-                    "type": "equals",
-                    "dimension": "dimensions_mode",
-                    "value": "play"
-                  }
-                ],
-                "postAggregation": [
-                  {
-                    "type": "arithmetic",
-                    "name": "total_time_spent_in_hours",
-                    "fields": {
-                      "leftField": "sum__edata_time_spent",
-                      "rightField": 3600,
-                      "rightFieldType": "constant"
-                    },
-                    "fn": "/"
-                  }
-                ],
-                "descending": "false"
-              }
-            }
-          ],
-          "labels": {
-            "total_content_download": "Total Content Downloads",
-            "total_successful_scans": "Number of successful QR Scans",
-            "total_percent_failed_scans": "Total Percent Failed Scans",
-            "total_unique_devices": "Total Unique Devices",
-            "total_time_spent_in_hours": "Total time spent in hours",
-            "total_failed_scans": "Number of failed QR Scans",
-            "total_scans": "Number of QR Scans",
-            "total_content_plays": "Total Content Played"
-          },
-          "output": [
-            {
-              "type": "csv",
-              "label": "scans",
-              "metrics": [
-                "total_successful_scans",
-                "total_percent_failed_scans",
-                "total_content_download",
-                "total_content_plays",
-                "total_unique_devices",
-                "total_time_spent_in_hours"
-              ],
-              "dims": [],
-              "fileParameters": [
-                "id",
-                "dims"
-              ]
-            }
-          ]
-        },
-        "bucket": "'$bucket'",
-        "key": "druid-reports/"
-      },
-      "output": [
-        {
-          "to": "console",
-          "params": {
-            "printEvent": false
-          }
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.model.AuditComputationModel",
+    "modelParams": {
+      "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+      "endDate": "$(date '+%Y-%m-%d')",
+      "auditRules": "[{\"name\":\"PipelineFailedEventsAudit\",\"description\":\"Pipeline Failed events Audit\",\"threshold\":20,\"model\":\"org.ekstep.analytics.audit.PipelineFailedEventsDailyAudit\",\"priority\":1,\"search\":[{\"type\":\"azure\",\"queries\":[{\"bucket\":\"{{ bucket }}\",\"prefix\":\"failed/\",\"endDate\":\"$(date '+%Y-%m-%d')\",\"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\",\"delta\":0}]}]}]"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
         }
-      ],
-      "parallelization": 8,
-      "appName": "Druid Query Processor",
-      "deviceMapping": false
+      }
+    ]
+  },
+  "pipeline-druid-events-audit": {
+     "search": {
+       "type": "none"
+     },
+     "model": "org.ekstep.analytics.model.AuditComputationModel",
+     "modelParams": {
+       "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+       "endDate": "$(date '+%Y-%m-%d')",
+       "auditRules": "[{\"name\": \"DruidVsPipelineEventsDailyAudit\", \"description\": \"Druid Vs Pipeline events Audit\", \"threshold\": 20, \"model\": \"org.ekstep.analytics.audit.DruidVsPipelineEventsDailyAudit\", \"priority\": 1,\n\"params\": { \"syncMinusDays\": 2, \"syncPlusDays\": 1 }, \"startDate\": \"$(date --date yesterday '+%Y-%m-%d')\", \"endDate\": \"$(date '+%Y-%m-%d')\",\n\"search\": [{\"type\": \"azure\", \"queries\": [{\"bucket\":\"{{ bucket }}\",\"prefix\":\"telemetry-denormalized/raw/\", \"endDate\":\"$(date '+%Y-%m-%d')\", \"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\", \"delta\":0}]},\n{\"type\": \"azure\", \"queries\": [{\"bucket\":\"{{ bucket }}\",\"prefix\":\"telemetry-denormalized/summary/\", \"endDate\":\"$(date '+%Y-%m-%d')\", \"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\", \"delta\":0}]}] }]"
+     },
+     "output": [
+       {
+         "to": "console",
+         "params": {
+           "printEvent": false
+         }
+       }
+     ]
+  },
+  "pipeline-audit": {
+    "search": {
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.model.AuditComputationModel",
+    "modelParams": {
+      "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+      "endDate": "$(date '+%Y-%m-%d')",
+      "auditRules": "[{\"name\": \"PipelineAudit\", \"description\": \"PipelineAudit\", \"threshold\": 2.0, \"model\": \"org.ekstep.analytics.audit.PipelineDailyAudit\", \"priority\": 1, \"startDate\": \"$(date --date yesterday '+%Y-%m-%d')\", \"endDate\": \"$(date '+%Y-%m-%d')\"}]"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ]
+  },
+  "druid-query-processor": {
+      "search": {
+          "type": "none"
+        },
+        "model": "org.ekstep.analytics.model.DruidQueryProcessingModel",
+        "modelParams": {
+          "reportConfig": {
+            "id": "data_metrics",
+            "queryType": "timeseries",
+            "dateRange": {
+              "staticInterval": "LastDay",
+              "granularity": "day"
+            },
+            "metrics": [
+              {
+                "metric": "totalSuccessfulScans",
+                "label": "Total Successful QR Scans",
+                "druidQuery": {
+                  "queryType": "timeSeries",
+                  "dataSource": "telemetry-events",
+                  "intervals": "LastDay",
+                  "aggregations": [
+                    {
+                      "name": "total_successful_scans",
+                      "type": "count",
+                      "fieldName": ""
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "type": "isnotnull",
+                      "dimension": "edata_filters_dialcodes"
+                    },
+                    {
+                      "type": "equals",
+                      "dimension": "eid",
+                      "value": "SEARCH"
+                    },
+                    {
+                      "type": "greaterthan",
+                      "dimension": "edata_size",
+                      "value": 0
+                    }
+                  ],
+                  "descending": "false"
+                }
+              },
+              {
+                "metric": "totalPercentFailedScans",
+                "label": "Total Percent Failed QR Scans",
+                "druidQuery": {
+                  "queryType": "timeSeries",
+                  "dataSource": "telemetry-events",
+                  "intervals": "LastDay",
+                  "aggregations": [
+                    {
+                      "name": "total_failed_scans",
+                      "type": "javascript",
+                      "fieldName": "edata_size",
+                      "fnAggregate": "function(current, edata_size) { return current + (edata_size == 0 ? 1 : 0); }",
+                      "fnCombine": "function(partialA, partialB) { return partialA + partialB; }",
+                      "fnReset": "function () { return 0; }"
+                    },
+                    {
+                      "name": "total_scans",
+                      "type": "count",
+                      "fieldName": ""
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "type": "isnotnull",
+                      "dimension": "edata_filters_dialcodes"
+                    },
+                    {
+                      "type": "equals",
+                      "dimension": "eid",
+                      "value": "SEARCH"
+                    }
+                  ],
+                  "postAggregation": [
+                    {
+                      "type": "javascript",
+                      "name": "total_percent_failed_scans",
+                      "fields": {
+                        "leftField": "total_failed_scans",
+                        "rightField": "total_scans",
+                        "rightFieldType": "FieldAccess"
+                      },
+                      "fn": "function(total_failed_scans, total_scans) { return (total_failed_scans/total_scans) * 100}"
+                    }
+                  ],
+                  "descending": "false"
+                }
+              },
+              {
+                "metric": "totalContentDownload",
+                "label": "Total Content Download",
+                "druidQuery": {
+                  "queryType": "timeSeries",
+                  "dataSource": "telemetry-events",
+                  "intervals": "LastDay",
+                  "aggregations": [
+                    {
+                      "name": "total_content_download",
+                      "type": "count",
+                      "fieldName": ""
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "type": "equals",
+                      "dimension": "edata_subtype",
+                      "value": "ContentDownload-Success"
+                    },
+                    {
+                      "type": "equals",
+                      "dimension": "eid",
+                      "value": "INTERACT"
+                    },
+                    {
+                      "type": "equals",
+                      "dimension": "context_pdata_id",
+                      "value": "prod.diksha.app"
+                    }
+                  ],
+                  "descending": "false"
+                }
+              },
+              {
+                "metric": "totalContentPlayed",
+                "label": "Total Content Played",
+                "druidQuery": {
+                  "queryType": "timeseries",
+                  "dataSource": "summary-events",
+                  "intervals": "LastDay",
+                  "aggregations": [
+                    {
+                      "name": "total_content_plays",
+                      "type": "count",
+                      "fieldName": ""
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "type": "equals",
+                      "dimension": "eid",
+                      "value": "ME_WORKFLOW_SUMMARY"
+                    },
+                    {
+                      "type": "in",
+                      "dimension": "dimensions_pdata_id",
+                      "values": [
+                        "prod.diksha.app",
+                        "prod.diksha.portal"
+                      ]
+                    },
+                    {
+                      "type": "equals",
+                      "dimension": "dimensions_type",
+                      "value": "content"
+                    },
+                    {
+                      "type": "equals",
+                      "dimension": "dimensions_mode",
+                      "value": "play"
+                    }
+                  ],
+                  "descending": "false"
+                }
+              },
+              {
+                "metric": "totalUniqueDevices",
+                "label": "Total Unique Devices",
+                "druidQuery": {
+                  "queryType": "timeseries",
+                  "dataSource": "summary-events",
+                  "intervals": "LastDay",
+                  "aggregations": [
+                    {
+                      "name": "total_unique_devices",
+                      "type": "cardinality",
+                      "fieldName": "dimensions_did"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "type": "equals",
+                      "dimension": "dimensions_pdata_id",
+                      "value": "prod.diksha.app"
+                    },
+                    {
+                      "type": "equals",
+                      "dimension": "dimensions_type",
+                      "value": "app"
+                    }
+                  ],
+                  "descending": "false"
+                }
+              },
+              {
+                "metric": "totalContentPlayedInHour",
+                "label": "Total Content Played In Hour",
+                "druidQuery": {
+                  "queryType": "timeseries",
+                  "dataSource": "summary-events",
+                  "intervals": "LastDay",
+                  "aggregations": [
+                    {
+                      "name": "sum__edata_time_spent",
+                      "type": "doubleSum",
+                      "fieldName": "edata_time_spent"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "type": "equals",
+                      "dimension": "eid",
+                      "value": "ME_WORKFLOW_SUMMARY"
+                    },
+                    {
+                      "type": "in",
+                      "dimension": "dimensions_pdata_id",
+                      "values": [
+                        "prod.diksha.app",
+                        "prod.diksha.portal"
+                      ]
+                    },
+                    {
+                      "type": "equals",
+                      "dimension": "dimensions_type",
+                      "value": "content"
+                    },
+                    {
+                      "type": "equals",
+                      "dimension": "dimensions_mode",
+                      "value": "play"
+                    }
+                  ],
+                  "postAggregation": [
+                    {
+                      "type": "arithmetic",
+                      "name": "total_time_spent_in_hours",
+                      "fields": {
+                        "leftField": "sum__edata_time_spent",
+                        "rightField": 3600,
+                        "rightFieldType": "constant"
+                      },
+                      "fn": "/"
+                    }
+                  ],
+                  "descending": "false"
+                }
+              }
+            ],
+            "labels": {
+              "total_content_download": "Total Content Downloads",
+              "total_successful_scans": "Number of successful QR Scans",
+              "total_percent_failed_scans": "Total Percent Failed Scans",
+              "total_unique_devices": "Total Unique Devices",
+              "total_time_spent_in_hours": "Total time spent in hours",
+              "total_failed_scans": "Number of failed QR Scans",
+              "total_scans": "Number of QR Scans",
+              "total_content_plays": "Total Content Played"
+            },
+            "output": [
+              {
+                "type": "csv",
+                "label": "scans",
+                "metrics": [
+                  "total_successful_scans",
+                  "total_percent_failed_scans",
+                  "total_content_download",
+                  "total_content_plays",
+                  "total_unique_devices",
+                  "total_time_spent_in_hours"
+                ],
+                "dims": [],
+                "fileParameters": [
+                  "id",
+                  "dims"
+                ]
+              }
+            ]
+          },
+          "bucket": "'$bucket'",
+          "key": "druid-reports/"
+        },
+        "output": [
+          {
+            "to": "console",
+            "params": {
+              "printEvent": false
+            }
+          }
+        ],
+        "parallelization": 8,
+        "appName": "Druid Query Processor",
+        "deviceMapping": false
   }
-  
 }

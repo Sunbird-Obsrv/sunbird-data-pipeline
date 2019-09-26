@@ -18,12 +18,15 @@ sink_topic: "{{ env }}.telemetry.sink"
 job_manager_tmp_dir: "transient-data"
 channel: dev-test
 druid_broker_host: "{{groups['broker'][0]}}"
-analytics_jobs_count: 11
+analytics_job_list: '"wfs", "wfus", "workflow-usage-metrics", "portal-metrics", "dialcode-usage-summary", "dialcode-usage-updater", "etb-coverage-summary", "data-exhaust", "pipeline-failed-events-audit", "pipeline-druid-events-audit", "pipeline-audit", "ds", "dpu", "monitor-job-summ"'
+analytics_jobs_count: 14
 
 cassandra_keyspace_prefix: '{{ env }}_'
 dp_dispatch_bucket_name: ekstep-dev-data-store
 data_exhaust_blob_name: sunbird1p7
 data_exhaust_s3_url: https://s3-ap-south-1.amazonaws.com
+
+heap_memory: "-Xmx5120m"
 
 business_metrics:
   s3_path: "s3://ekstep-{{ env }}-data-store/business_metrics/"
@@ -49,7 +52,7 @@ spark:
   executor_extraJavaOptions: -Dconfig.file=/mnt/data/analytics/models/{{ env }}.conf -Dlog4j.configurationFile=file:///mnt/data/analytics/models/log4j2.xml
   driver_extraJavaOptions: -Dconfig.file=/mnt/data/analytics/models/{{ env }}.conf -Dlog4j.configurationFile=file:///mnt/data/analytics/models/log4j2.xml
   executor_memory: 2g
-  heap_conf_str: '"-XX:+UseG1GC -XX:MaxGCPauseMillis=100 -Xms250m -Xmx5120m -XX:+UseStringDeduplication"'
+  heap_conf_str: '"-XX:+UseG1GC -XX:MaxGCPauseMillis=100 -Xms250m {{ heap_memory }} -XX:+UseStringDeduplication"'
 
 submit_jobs:
   submit-all-jobs:
@@ -63,11 +66,6 @@ start_jobmanager:
 have_weekly_jobs: false
 
 video_stream_job_schedule: 10
-
-run_course_metrics_job:
-  course-dashboard-metrics:
-    hour: 21
-    minute: 30
 
 update_user_redis_cache:
   populate-user-cache:

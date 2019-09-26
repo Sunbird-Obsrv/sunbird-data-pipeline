@@ -1,15 +1,11 @@
 package org.ekstep.ep.samza.util;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.samza.config.Config;
 import org.ekstep.ep.samza.core.JobMetrics;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class DialCodeDataCache extends DataCache {
-
 
 
     public DialCodeDataCache(Config config, JobMetrics metrics) {

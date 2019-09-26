@@ -297,8 +297,8 @@
               },
               {
                 "type": "path",
-                "name": "organization",
-                "expr": "$.data.organization"
+                "name": "organisation",
+                "expr": "$.data.organisation"
               },
               {
                 "type": "path",
@@ -522,7 +522,7 @@
               },
               {
                 "type": "string",
-                "name": "organization"
+                "name": "organisation"
               },
               {
                 "type": "string",
@@ -722,7 +722,8 @@
             "container": "telemetry-data-store",
             "path": "/druid-content-snapshot/snapshot.txt"
           }
-        ]
+        ],
+        "fetchTimeout": 120000
       }
     },
     "tuningConfig":{

@@ -1,0 +1,19 @@
+#!/bin/sh
+
+MONIT_GROUP="[u'influxdb']"
+MONIT_IP="{{ influxdb }}"
+MONIT_DATE=`date`
+COLOR=$1
+DESCRIPTION=$2
+/usr/bin/curl \
+    -X POST \
+    -s \
+    --data-urlencode "payload={ \
+        \"channel\": \"#{{ consumer_lag_slack_channel }}\", \
+        \"username\": \"Influxdb-{{ env }}\", \
+        \"pretext\": \"$MONIT_IP | $MONIT_GROUP | $MONIT_DATE\", \
+        \"color\": \"$COLOR\", \
+        \"icon_emoji\": \":bangbang:\", \
+        \"text\": \"$DESCRIPTION\" \
+    }" \
+    {{ consumer_lag_slack_webhook }}
