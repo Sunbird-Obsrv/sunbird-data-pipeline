@@ -2793,7 +2793,9 @@
                 "type": "csv",
                 "label": "scans",
                 "metrics": [
+                  "total_scans",
                   "total_successful_scans",
+                  "total_failed_scans"
                   "total_percent_failed_scans",
                   "total_content_download",
                   "total_content_plays",
@@ -2808,7 +2810,7 @@
               }
             ]
           },
-          "bucket": "'$bucket'",
+          "bucket": "{{ bucket }}",
           "key": "druid-reports/"
         },
         "output": [
