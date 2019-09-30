@@ -144,6 +144,7 @@ es.port="9200"
 course.metrics.es.alias="cbatchstats"
 course.metrics.es.index.cbatchstats.prefix="cbatchstats-"
 course.metrics.es.index.cbatch="course-batch"
+es.composite.host="{{groups['composite-search-cluster'][0]}}"
 
 #Assessment report config
 assessment.metrics.temp.dir="/mount/data/analytics/assessment-report"
@@ -187,4 +188,14 @@ pipeline_audit {
 	}
 }
 
+#Druid Query Processor
 
+druid = {
+	hosts = "{{druid_broker_host}}:8082"
+	secure = false
+	url = "/druid/v2/"
+	datasource = "telemetry-events"
+	response-parsing-timeout = 300000
+}
+druid.query.wait.time.mins=1
+druid.report.upload.wait.time.mins=1

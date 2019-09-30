@@ -406,12 +406,12 @@
             {
               "type": "path",
               "name": "content_created_by",
-              "expr": "$.contentdata.createdBy"
+              "expr": "$.contentdata.createdby"
             },
             {
               "type": "path",
               "name": "content_created_for",
-              "expr": "$.contentdata.createdFor"
+              "expr": "$.contentdata.createdfor"
             },
             {
               "type": "path",
@@ -516,12 +516,12 @@
             {
               "type": "path",
               "name": "collection_created_by",
-              "expr": "$.collectiondata.createdBy"
+              "expr": "$.collectiondata.createdby"
             },
             {
               "type": "path",
               "name": "collection_created_for",
-              "expr": "$.collectiondata.createdFor"
+              "expr": "$.collectiondata.createdfor"
             },
             {
               "type": "path",
@@ -913,7 +913,6 @@
               "name": "content_created_by"
             },
             {
-              "type": "long",
               "name": "content_created_for"
             },
             {
@@ -981,7 +980,6 @@
               "name": "collection_created_by"
             },
             {
-              "type": "long",
               "name": "collection_created_for"
             },
             {

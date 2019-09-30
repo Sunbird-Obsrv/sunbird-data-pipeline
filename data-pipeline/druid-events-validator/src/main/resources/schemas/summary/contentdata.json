@@ -29,6 +29,14 @@
       "id": "http://api.sunbird.org/telemetry/contentdata/gradelevel",
       "type": "array"
     },
+    "createdby": {
+      "id": "http://api.sunbird.org/telemetry/contentdata/createdby",
+      "type": "string"
+    },
+    "createdfor": {
+      "id": "http://api.sunbird.org/telemetry/contentdata/createdfor",
+      "type": "array"
+    },
     "subject": {
       "id": "http://api.sunbird.org/telemetry/contentdata/subject",
       "type": "array"

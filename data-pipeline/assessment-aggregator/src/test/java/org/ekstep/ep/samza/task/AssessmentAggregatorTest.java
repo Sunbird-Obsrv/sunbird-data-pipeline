@@ -63,8 +63,9 @@ public class AssessmentAggregatorTest {
         Aggregate assess = assessmentAggregatorService.getAggregateData(batchEvent, 1565198476000L,
                 mock(AssessmentAggregatorSink.class));
         verify(dbUtil, times(2)).getQuestion(any(QuestionData.class));
-        assertEquals(11, assess.getTotalMaxScore());
-        assertEquals(5, assess.getTotalScore());
+        assertEquals(2.0,assess.getTotalMaxScore(),0.001);
+        assertEquals(1.33,assess.getTotalScore(),0.001);
+        assertEquals("1.33/2",assess.getGrandTotal());
     }
 
     @Test
@@ -88,6 +89,21 @@ public class AssessmentAggregatorTest {
         AssessmentAggregatorSink sink = new AssessmentAggregatorSink(collector,mock(JobMetrics.class),new AssessmentAggregatorConfig(config));
         assessmentAggregatorService.process(assessmentAggregatorSource, sink,mock(AssessmentAggregatorConfig.class));
         verify(collector).send(argThat(validateOutputTopic(envelope.getMessage(), "telemetry.failed")));
+
+    }
+
+    @Test
+    public void shouldTakeLatestAssessEventInBatchWhenDuplicates() throws Exception {
+        String event = EventFixture.BATCH_DUPLICATE_QUESTION_EVENT;
+        BatchEvent batchEvent = new BatchEvent((Map<String, Object>) new Gson().fromJson(event, Map.class));
+        stub(envelope.getMessage()).toReturn(event);
+        AssessmentAggregatorService assessmentAggregatorService = new AssessmentAggregatorService
+                (dbUtil);
+        Aggregate assess=assessmentAggregatorService.getAggregateData(batchEvent, 1565198476000L,
+                mock(AssessmentAggregatorSink.class));
+        assertEquals(2,assess.getQuestionsList().size());
+        assertEquals(2.0,assess.getTotalMaxScore(),0.001);
+        assertEquals(2.0,assess.getTotalScore(),0.001);
 
     }
 
