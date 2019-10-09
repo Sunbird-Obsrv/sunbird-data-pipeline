@@ -8,6 +8,11 @@ service.search.limit="10"
 metrics.creation.es.url="{{lp_composite_search}}"
 metrics.creation.es.indexes="compositesearch"
 
+# Secret key
+# ~~~~~
+# The secret key is used to secure cryptographics functions.
+# If you deploy your application to several instances be sure to use the same key!
+play.http.secret.key="DFHdR74?tDvH2n`DAqk:RBl6NfkoO5tNYblTRmf3ZLcDIp5@oVjJM^ypkDOf2`<A"
 
 recommendation.enable=true
 recommendation.limit="10"
