@@ -67,6 +67,16 @@ have_weekly_jobs: false
 
 video_stream_job_schedule: 10
 
+run_course_metrics_job:
+  course-dashboard-metrics:
+    hour: 21
+    minute: 30
+
+run_assessment_metrics_job:
+  assessment-dashboard-metrics:
+    hour: 22
+    minute: 30    
+
 update_user_redis_cache:
   populate-user-cache:
     hour: 3
@@ -88,3 +98,6 @@ analytics:
   soft_path: /mount/data/analytics
   paths: ['/home/analytics/sbin', '/mount/data/analytics', '/mount/data/analytics/logs', '/mount/data/analytics/logs/services', '/mount/data/analytics/logs/data-products', '/mount/data/analytics/logs/api-service', '/mount/data/analytics/api', '/mount/data/analytics/tmp', '/mount/data/analytics/scripts/monitor-data', '/mount/data/analytics/models' ]
   scripts: ['model-config', 'replay-job', 'replay-updater', 'replay-utils', 'run-job', 'monitor-dp', 'generate-metrics', 'submit-job', 'start-jobmanager']
+
+
+producer_env: "dev"

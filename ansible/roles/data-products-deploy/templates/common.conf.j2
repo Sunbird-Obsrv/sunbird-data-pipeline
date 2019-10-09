@@ -188,4 +188,14 @@ pipeline_audit {
 	}
 }
 
+#Druid Query Processor
 
+druid = {
+	hosts = "{{druid_broker_host}}:8082"
+	secure = false
+	url = "/druid/v2/"
+	datasource = "telemetry-events"
+	response-parsing-timeout = 300000
+}
+druid.query.wait.time.mins=1
+druid.report.upload.wait.time.mins=1
