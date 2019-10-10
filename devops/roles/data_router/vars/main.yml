@@ -1,8 +1,0 @@
----
-private_data_aggregate_dataset_id: D002
-private_data_aggregate_dir: private-data-aggregate
-private_data_aggregate_initial_aggregate_date: 2017-03-31
-
-public_data_aggregate_dataset_id: D001
-public_data_aggregate_dir: public-data-aggregate
-public_data_aggregate_initial_aggregate_date: 2017-03-31

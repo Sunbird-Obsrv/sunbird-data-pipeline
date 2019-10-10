@@ -1,0 +1,879 @@
+{
+    "type": "kafka",
+    "dataSchema":
+    {
+        "dataSource": "summary-events",
+        "parser":
+        {
+            "type": "string",
+            "parseSpec":
+            {
+                "format": "json",
+                "flattenSpec":
+                {
+                    "useFieldDiscovery": false,
+                    "fields": [
+                    {
+                        "type": "root",
+                        "name": "eid"
+                    },
+                    {
+                        "type": "root",
+                        "name": "mid"
+                    },
+                    {
+                        "type": "root",
+                        "name": "ver"
+                    },
+                    {
+                        "type": "root",
+                        "name": "ets"
+                    },
+                    {
+                        "type": "root",
+                        "name": "uid"
+                    },
+                    {
+                        "type": "path",
+                        "name": "context_date_range_from",
+                        "expr": "$.context.date_range.from"
+                    },
+                    {
+                        "type": "path",
+                        "name": "context_date_range_to",
+                        "expr": "$.context.date_range.to"
+                    },
+                    {
+                        "type": "path",
+                        "name": "context_rollup_l1",
+                        "expr": "$.context.rollup.l1"
+                    },
+                    {
+                        "type": "path",
+                        "name": "context_rollup_l2",
+                        "expr": "$.context.rollup.l2"
+                    },
+                    {
+                        "type": "path",
+                        "name": "context_rollup_l3",
+                        "expr": "$.context.rollup.l3"
+                    },
+                    {
+                        "type": "path",
+                        "name": "context_rollup_l4",
+                        "expr": "$.context.rollup.l4"
+                    },
+                    {
+                        "type": "path",
+                        "name": "dimension_channel",
+                        "expr": "$.dimensions.channel"
+                    },
+                    {
+                        "type": "path",
+                        "name": "dimensions_did",
+                        "expr": "$.dimensions.did"
+                    },
+                    {
+                        "type": "path",
+                        "name": "dimensions_pdata_id",
+                        "expr": "$.dimensions.pdata.id"
+                    },
+                    {
+                        "type": "path",
+                        "name": "dimensions_pdata_pid",
+                        "expr": "$.dimensions.pdata.pid"
+                    },
+                    {
+                        "type": "path",
+                        "name": "dimensions_pdata_ver",
+                        "expr": "$.dimensions.pdata.ver"
+                    },
+                    {
+                        "type": "path",
+                        "name": "dimensions_sid",
+                        "expr": "$.dimensions.sid"
+                    },
+                    {
+                        "type": "path",
+                        "name": "dimensions_type",
+                        "expr": "$.dimensions.type"
+                    },
+                    {
+                        "type": "path",
+                        "name": "dimensions_mode",
+                        "expr": "$.dimensions.mode"
+                    },
+                    {
+                        "type": "path",
+                        "name": "object_id",
+                        "expr": "$.object.id"
+                    },
+                    {
+                        "type": "path",
+                        "name": "object_type",
+                        "expr": "$.object.type"
+                    },
+                    {
+                        "type": "path",
+                        "name": "object_version",
+                        "expr": "$.object.ver"
+                    },
+                    {
+                        "type": "path",
+                        "name": "object_rollup_l1",
+                        "expr": "$.object.rollup.l1"
+                    },
+                    {
+                        "type": "path",
+                        "name": "object_rollup_l2",
+                        "expr": "$.object.rollup.l2"
+                    },
+                    {
+                        "type": "path",
+                        "name": "object_rollup_l3",
+                        "expr": "$.object.rollup.l3"
+                    },
+                    {
+                        "type": "path",
+                        "name": "object_rollup_l4",
+                        "expr": "$.object.rollup.l4"
+                    },
+                    {
+                        "type": "root",
+                        "name": "tags"
+                    },
+                    {
+                        "type": "path",
+                        "name": "edata_time_spent",
+                        "expr": "$.edata.eks.time_spent"
+                    },
+                    {
+                        "type": "path",
+                        "name": "edata_time_difference",
+                        "expr": "$.edata.eks.time_diff"
+                    },
+                    {
+                        "type": "path",
+                        "name": "edata_interaction_count",
+                        "expr": "$.edata.eks.interact_events_count"
+                    },
+                    {
+                        "type": "path",
+                        "name": "edata_env_summary_env",
+                        "expr": "$.edata.eks.env_summary[*].env"
+                    },
+                    {
+                        "type": "path",
+                        "name": "edata_env_summary_count",
+                        "expr": "$.edata.eks.env_summary[*].count"
+                    },
+                    {
+                        "type": "path",
+                        "name": "edata_env_summary_time_spent",
+                        "expr": "$.edata.eks.env_summary[*].time_spent"
+                    },
+                    {
+                        "type": "path",
+                        "name": "edata_page_summary_id",
+                        "expr": "$.edata.eks.page_summary[*].id"
+                    },
+                    {
+                        "type": "path",
+                        "name": "edata_page_summary_type",
+                        "expr": "$.edata.eks.page_summary[*].type"
+                    },
+                    {
+                        "type": "path",
+                        "name": "edata_page_summary_env",
+                        "expr": "$.edata.eks.page_summary[*].env"
+                    },
+                    {
+                        "type": "path",
+                        "name": "edata_page_summary_visit_count",
+                        "expr": "$.edata.eks.page_summary[*].visit_count"
+                    },
+                    {
+                        "type": "path",
+                        "name": "edata_page_summary_time_spent",
+                        "expr": "$.edata.eks.page_summary[*].time_spent"
+                    },
+                    {
+                        "type": "path",
+                        "name": "edata_item_responses_item_id",
+                        "expr": "$.edata.eks.item_responses[*].itemId"
+                    },
+                    {
+                        "type": "path",
+                        "name": "edata_item_responses_time_spent",
+                        "expr": "$.edata.eks.item_responses[*].timeSpent"
+                    },
+                    {
+                        "type": "path",
+                        "name": "edata_item_responses_pass",
+                        "expr": "$.edata.eks.item_responses[*].pass"
+                    },
+                    {
+                        "type": "path",
+                        "name": "edata_item_responses_score",
+                        "expr": "$.edata.eks.item_responses[*].score"
+                    },
+                    {
+                        "type": "path",
+                        "name": "edata_item_responses_max_score",
+                        "expr": "$.edata.eks.item_responses[*].maxScore"
+                    },
+                    {
+                        "type": "path",
+                        "name": "edata_item_responses_timestamp",
+                        "expr": "$.edata.eks.item_responses[*].time_stamp"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_loc_state",
+                        "expr": "$.devicedata.state"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_loc_state_code",
+                        "expr": "$.devicedata.statecode"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_loc_city",
+                        "expr": "$.devicedata.city"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_loc_country_code",
+                        "expr": "$.devicedata.countrycode"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_loc_country",
+                        "expr": "$.devicedata.country"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_os",
+                        "expr": "$.devicedata.os"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_make",
+                        "expr": "$.devicedata.make"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_id",
+                        "expr": "$.devicedata.id"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_mem",
+                        "expr": "$.devicedata.mem"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_idisk",
+                        "expr": "$.devicedata.idisk"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_edisk",
+                        "expr": "$.devicedata.edisk"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_scrn",
+                        "expr": "$.devicedata.scrn"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_camera",
+                        "expr": "$.devicedata.camera"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_cpu",
+                        "expr": "$.devicedata.cpu"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_sims",
+                        "expr": "$.devicedata.sims"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_uaspec_agent",
+                        "expr": "$.devicedata.uaspec.agent"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_uaspec_ver",
+                        "expr": "$.devicedata.uaspec.ver"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_uaspec_system",
+                        "expr": "$.devicedata.uaspec.system"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_uaspec_platform",
+                        "expr": "$.devicedata.uaspec.platform"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_uaspec_raw",
+                        "expr": "$.devicedata.uaspec.raw"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_first_access",
+                        "expr": "$.devicedata.firstaccess"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_loc_state_custom_code",
+                        "expr": "$.devicedata.statecustomcode"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_loc_state_custom_name",
+                        "expr": "$.devicedata.statecustomname"
+                    },
+                    {
+                        "type": "path",
+                        "name": "device_loc_district",
+                        "expr": "$.devicedata.districtcustom"
+                    },
+                    {
+                        "type": "path",
+                        "name": "content_name",
+                        "expr": "$.contentdata.name"
+                    },
+                    {
+                        "type": "path",
+                        "name": "content_object_type",
+                        "expr": "$.contentdata.objecttype"
+                    },
+                    {
+                        "type": "path",
+                        "name": "content_type",
+                        "expr": "$.contentdata.contenttype"
+                    },
+                    {
+                        "type": "path",
+                        "name": "content_media_type",
+                        "expr": "$.contentdata.mediatype"
+                    },
+                    {
+                        "type": "path",
+                        "name": "content_language",
+                        "expr": "$.contentdata.language[*]"
+                    },
+                    {
+                        "type": "path",
+                        "name": "content_medium",
+                        "expr": "$.contentdata.medium[*]"
+                    },
+                    {
+                        "type": "path",
+                        "name": "content_gradelevel",
+                        "expr": "$.contentdata.gradelevel[*]"
+                    },
+                    {
+                        "type": "path",
+                        "name": "content_subjects",
+                        "expr": "$.contentdata.subject[*]"
+                    },
+                    {
+                        "type": "path",
+                        "name": "content_mimetype",
+                        "expr": "$.contentdata.mimetype"
+                    },
+                    {
+                        "type": "path",
+                        "name": "content_framework",
+                        "expr": "$.contentdata.framework"
+                    },
+                    {
+                        "type": "path",
+                        "name": "content_board",
+                        "expr": "$.contentdata.board"
+                    },
+                    {
+                        "type": "path",
+                        "name": "content_status",
+                        "expr": "$.contentdata.status"
+                    },
+                    {
+                        "type": "path",
+                        "name": "content_version",
+                        "expr": "$.contentdata.pkgversion"
+                    },
+                    {
+                        "type": "path",
+                        "name": "content_last_submitted_on",
+                        "expr": "$.contentdata.lastsubmittedon"
+                    },
+                    {
+                        "type": "path",
+                        "name": "content_last_published_on",
+                        "expr": "$.contentdata.lastpublishedon"
+                    },
+                    {
+                        "type": "path",
+                        "name": "content_last_updated_on",
+                        "expr": "$.contentdata.lastupdatedon"
+                    },
+                    {
+                        "type": "path",
+                        "name": "user_grade_list",
+                        "expr": "$.userdata.gradelist[*]"
+                    },
+                    {
+                        "type": "path",
+                        "name": "user_language_list",
+                        "expr": "$.userdata.languagelist[*]"
+                    },
+                    {
+                        "type": "path",
+                        "name": "user_subject_list",
+                        "expr": "$.userdata.subjectlist[*]"
+                    },
+                    {
+                        "type": "path",
+                        "name": "user_type",
+                        "expr": "$.userdata.usertype"
+                    },
+                    {
+                        "type": "path",
+                        "name": "user_roles",
+                        "expr": "$.userdata.roles[*]"
+                    },
+                    {
+                        "type": "path",
+                        "name": "user_loc_state",
+                        "expr": "$.userdata.state"
+                    },
+                    {
+                        "type": "path",
+                        "name": "user_loc_district",
+                        "expr": "$.userdata.district"
+                    },
+                    {
+                      "type": "path",
+                      "name": "device_loc_iso_state_code",
+                      "expr": "$.devicedata.iso3166statecode"
+                    }]
+                },
+                "dimensionsSpec":
+                {
+                    "dimensions": [
+                    {
+                        "type": "string",
+                        "name": "eid"
+                    },
+                    {
+                        "type": "string",
+                        "name": "mid"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ver"
+                    },
+                    {
+                        "type": "long",
+                        "name": "syncts"
+                    },
+                    {
+                        "type": "string",
+                        "name": "uid"
+                    },
+                    {
+                        "type": "long",
+                        "name": "context_date_range_from"
+                    },
+                    {
+                        "type": "long",
+                        "name": "context_date_range_to"
+                    },
+                    {
+                        "type": "string",
+                        "name": "context_rollup_l1"
+                    },
+                    {
+                        "type": "string",
+                        "name": "context_rollup_l2"
+                    },
+                    {
+                        "type": "string",
+                        "name": "context_rollup_l3"
+                    },
+                    {
+                        "type": "string",
+                        "name": "context_rollup_l4"
+                    },
+                    {
+                        "type": "string",
+                        "name": "dimension_channel"
+                    },
+                    {
+                        "type": "string",
+                        "name": "dimensions_did"
+                    },
+                    {
+                        "type": "string",
+                        "name": "dimensions_pdata_id"
+                    },
+                    {
+                        "type": "string",
+                        "name": "dimensions_pdata_pid"
+                    },
+                    {
+                        "type": "string",
+                        "name": "dimensions_pdata_ver"
+                    },
+                    {
+                        "type": "string",
+                        "name": "dimensions_sid"
+                    },
+                    {
+                        "type": "string",
+                        "name": "dimensions_type"
+                    },
+                    {
+                        "type": "string",
+                        "name": "dimensions_mode"
+                    },
+                    {
+                        "type": "string",
+                        "name": "object_id"
+                    },
+                    {
+                        "type": "string",
+                        "name": "object_type"
+                    },
+                    {
+                        "type": "string",
+                        "name": "object_version"
+                    },
+                    {
+                        "type": "string",
+                        "name": "object_rollup_l1"
+                    },
+                    {
+                        "type": "string",
+                        "name": "object_rollup_l2"
+                    },
+                    {
+                        "type": "string",
+                        "name": "object_rollup_l3"
+                    },
+                    {
+                        "type": "string",
+                        "name": "object_rollup_l4"
+                    },
+                    {
+                        "name": "tags"
+                    },
+                    {
+                        "type": "double",
+                        "name": "edata_time_spent"
+                    },
+                    {
+                        "type": "double",
+                        "name": "edata_time_difference"
+                    },
+                    {
+                        "type": "long",
+                        "name": "edata_interaction_count"
+                    },
+                    {
+                        "type": "string",
+                        "name": "edata_env_summary_env"
+                    },
+                    {
+                        "type": "string",
+                        "name": "edata_env_summary_count"
+                    },
+                    {
+                        "type": "string",
+                        "name": "edata_env_summary_time_spent"
+                    },
+                    {
+                        "type": "string",
+                        "name": "edata_page_summary_id"
+                    },
+                    {
+                        "type": "string",
+                        "name": "edata_page_summary_type"
+                    },
+                    {
+                        "type": "string",
+                        "name": "edata_page_summary_env"
+                    },
+                    {
+                        "type": "string",
+                        "name": "edata_page_summary_visit_count"
+                    },
+                    {
+                        "type": "string",
+                        "name": "edata_page_summary_time_spent"
+                    },
+                    {
+                        "type": "string",
+                        "name": "edata_item_responses_item_id"
+                    },
+                    {
+                        "type": "string",
+                        "name": "edata_item_responses_time_spent"
+                    },
+                    {
+                        "type": "string",
+                        "name": "edata_item_responses_pass"
+                    },
+                    {
+                        "type": "string",
+                        "name": "edata_item_responses_score"
+                    },
+                    {
+                        "type": "string",
+                        "name": "edata_item_responses_max_score"
+                    },
+                    {
+                        "type": "string",
+                        "name": "edata_item_responses_timestamp"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_loc_state"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_loc_state_code"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_loc_city"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_loc_country_code"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_loc_country"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_os"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_make"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_id"
+                    },
+                    {
+                        "type": "long",
+                        "name": "device_mem"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_idisk"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_edisk"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_scrn"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_camera"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_cpu"
+                    },
+                    {
+                        "type": "long",
+                        "name": "device_sims"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_uaspec_agent"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_uaspec_ver"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_uaspec_system"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_uaspec_platform"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_uaspec_raw"
+                    },
+                    {
+                        "type": "long",
+                        "name": "device_first_access"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_loc_state_custom_code"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_loc_state_custom_name"
+                    },
+                    {
+                        "type": "string",
+                        "name": "device_loc_district"
+                    },
+                    {
+                        "type": "string",
+                        "name": "content_name"
+                    },
+                    {
+                        "type": "string",
+                        "name": "content_object_type"
+                    },
+                    {
+                        "type": "string",
+                        "name": "content_type"
+                    },
+                     {
+                        "type": "string",
+                        "name": "content_media_type"
+                    },
+                    {
+                        "name": "content_language"
+                    },
+                    {
+                        "name": "content_medium"
+                    },
+                    {
+                        "name": "content_gradelevel"
+                    },
+                    {
+                        "name": "content_subjects"
+                    },
+                    {
+                        "type": "string",
+                        "name": "content_mimetype"
+                    },
+                    {
+                        "type": "string",
+                        "name": "content_framework"
+                    },
+                    {
+                        "type": "string",
+                        "name": "content_board"
+                    },
+                    {
+                        "type": "string",
+                        "name": "content_status"
+                    },
+                    {
+                        "type": "double",
+                        "name": "content_version"
+                    },
+                    {
+                        "type": "long",
+                        "name": "content_last_submitted_on"
+                    },
+                    {
+                        "type": "long",
+                        "name": "content_last_published_on"
+                    },
+                    {
+                        "type": "long",
+                        "name": "content_last_updated_on"
+                    },
+                    {
+                        "name": "user_grade_list"
+                    },
+                    {
+                        "name": "user_language_list"
+                    },
+                    {
+                        "name": "user_subject_list"
+                    },
+
+                    {
+                        "type": "string",
+                        "name": "user_type"
+                    },
+                    {
+                        "name": "user_roles"
+                    },
+                    {
+                        "type": "string",
+                        "name": "user_loc_state"
+                    },
+                    {
+                        "type": "string",
+                        "name": "user_loc_district"
+                    },
+                    {
+                      "type": "string",
+                      "name": "device_loc_iso_state_code"
+                    }],
+                    "dimensionsExclusions": []
+                },
+                "timestampSpec":
+                {
+                    "column": "syncts",
+                    "format": "auto"
+                }
+            }
+        },
+        "metricsSpec": [
+        {
+            "type": "longSum",
+            "name": "total_interactions",
+            "fieldName": "edata_interaction_count"
+        },
+        {
+            "type": "doubleSum",
+            "name": "total_time_spent",
+            "fieldName": "edata_time_spent"
+        }],
+        "granularitySpec":
+        {
+            "type": "uniform",
+            "segmentGranularity": "day",
+            "queryGranularity": "none",
+            "rollup": true
+        }
+    },
+    "ioConfig":
+    {
+        "topic": "<env>.events.summary",
+        "consumerProperties":
+        {
+            "bootstrap.servers": "broker_ip:broker_port"
+        },
+        "taskCount": 1,
+        "replicas": 1,
+        "taskDuration": "PT3600S",
+        "useEarliestOffset": true
+    },
+    "tuningConfig":
+    {
+        "type": "kafka",
+        "reportParseExceptions": false
+    }
+}

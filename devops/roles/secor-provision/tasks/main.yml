@@ -1,8 +1,0 @@
-## Secor Provision ##
-- name: Create secor directories
-  file: 
-    path: "{{ item }}" 
-    owner: "{{ analytics_user }}" 
-    group: "{{ analytics_group }}" 
-    state: directory
-  with_items: "{{ secor.paths }}"

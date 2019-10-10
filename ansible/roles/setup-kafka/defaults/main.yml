@@ -1,5 +1,6 @@
 env: dev
 kafka_partition_override_size: 5242880
+dp_downstream_kafka_max_message_bytes: 1572864
 
 ingestion_kafka_topics:
   - name: telemetry.ingest
@@ -10,6 +11,7 @@ ingestion_kafka_overriden_topics:
   - name: telemetry.ingest
     retention_time: 604800000
     replication_factor: 1
+    max_message_bytes: 5242880
 
 processing_kafka_overriden_topics:
   - name: telemetry.raw
@@ -30,6 +32,15 @@ processing_kafka_overriden_topics:
   - name: telemetry.with_location
     retention_time: 86400000
     replication_factor: 1
+  - name: telemetry.audit
+    retention_time: 86400000
+    replication_factor: 1
+  - name: telemetry.denorm
+    retention_time: 86400000
+    replication_factor: 1
+  - name: telemetry.denorm.valid
+    retention_time: 86400000
+    replication_factor: 1
   - name: telemetry.de_normalized
     retention_time: 21600000
     replication_factor: 1
@@ -37,7 +48,7 @@ processing_kafka_overriden_topics:
     retention_time: 21600000
     replication_factor: 1
   - name: analytics.job_queue
-    retention_time: 86400000
+    retention_time: 28800000
     replication_factor: 1
   - name: learning.graph.events
     retention_time: 86400000
@@ -66,6 +77,16 @@ processing_kafka_overriden_topics:
   - name: telemetry.derived
     retention_time: 21600000
     replication_factor: 1
+  - name: events.telemetry
+    retention_time: 86400000
+    replication_factor: 1
+  - name: events.summary
+    retention_time: 86400000
+    replication_factor: 1
+  - name: events.log
+    retention_time: 86400000
+  - name: events.error
+    retention_time: 86400000
   # Error/Failed Topics
   - name: telemetry.failed
     retention_time: 86400000
@@ -76,11 +97,17 @@ processing_kafka_overriden_topics:
   - name: telemetry.extractor.failed
     retention_time: 21600000
     replication_factor: 1
-  - name: telemetry.indexer.failed
-    retention_time: 21600000
-    replication_factor: 1
   - name: system.command
     retention_time: 3600
+    replication_factor: 1
+  - name: lms.audit.events
+    retention_time: 172800000
+    replication_factor: 1
+  - name: lms.sso.events
+    retention_time: 172800000
+    replication_factor: 1
+  - name: lms.user.account.merge
+    retention_time: 172800000
     replication_factor: 1
 
 processing_kafka_topics:
@@ -106,6 +133,15 @@ processing_kafka_topics:
   - name: telemetry.with_location
     num_of_partitions: 8
     replication_factor: 1
+  - name: telemetry.audit
+    num_of_partitions: 2
+    replication_factor: 1
+  - name: telemetry.denorm
+    num_of_partitions: 4
+    replication_factor: 1
+  - name: telemetry.denorm.valid
+    num_of_partitions: 2
+    replication_factor: 1
   - name: telemetry.de_normalized
     num_of_partitions: 4
     replication_factor: 1
@@ -114,6 +150,12 @@ processing_kafka_topics:
     replication_factor: 1
   - name: events.summary
     num_of_partitions: 4
+    replication_factor: 1
+  - name: events.log
+    num_of_partitions: 2
+    replication_factor: 1
+  - name: events.error
+    num_of_partitions: 2
     replication_factor: 1
   - name: telemetry.log
     num_of_partitions: 1
@@ -164,5 +206,14 @@ processing_kafka_topics:
     num_of_partitions: 1
     replication_factor: 1
   - name: learning.events.failed
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: lms.audit.events
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: lms.sso.events
+    num_of_partitions: 4
+    replication_factor: 1
+  - name: lms.user.account.merge
     num_of_partitions: 1
     replication_factor: 1

@@ -1,33 +1,73 @@
 ---
+- name: checking the list of installed services
+  service_facts:
+
+- name: stop monit
+  service: 
+     name: monit
+     state: stopped
+  when: ansible_facts.services.monit is defined     
+    
 - name: Add ElasticSearch repo public signing key
-  apt_key: id=46095ACC8548582C1A2699A9D27D666CD88E42B4 url=https://packages.elastic.co/GPG-KEY-elasticsearch state=present
+  apt_key:
+    id: 46095ACC8548582C1A2699A9D27D666CD88E42B4 
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch 
+    state: present
   become: yes
 
-- apt_repository: repo='deb http://packages.elasticsearch.org/logstash/2.3/debian stable main' state=present
+- name: add logstash repository
+  apt_repository: 
+    repo: 'deb https://artifacts.elastic.co/packages/{{ logstash_version }}/apt stable main' 
+    state: present
   become: yes
 
 - name: Update
-  apt: update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
+  apt: 
+   update_cache: yes 
+   cache_valid_time: "{{ apt_cache_valid_time }}"
   become: yes
 
 - name: Install logstash
-  apt: name=logstash state=latest
+  apt: 
+    name: logstash 
+    state: latest
   become: yes
   
 - name: Stop logstash
-  service: name=logstash state=stopped
+  service: 
+    name: logstash 
+    state: stopped
   environment:
     KILL_ON_STOP_TIMEOUT: 1
   become: yes
-  
+
+- name: Clean logstash conf directory
+  file:
+    state: absent
+    path: "{{logstash_config_loc}}/"
+  become: yes
+
 - name: Create logstash conf directory
-  file: path={{logstash_config_loc}} state=directory
+  file: 
+    path: "{{logstash_config_loc}}" 
+    state: directory
   become: yes
 
 - name: Copy logstash file
-  template: src=logstash.conf{{item}} dest={{ logstash_config_loc }}/logstash.conf{{item}}
+  template: 
+     src: "logstash.conf{{ item }}"
+     dest: "{{ logstash_config_loc }}/logstash.conf{{ item }}.conf"
   become: yes
-  with_items: "{{logstash_conf}}"
+  with_items: "{{ logstash_conf }}"
+
+- name: Create mapping dir 
+  file: path={{logstash_home}}/mappings state=directory
+  become: yes  
+
+- name: Copy es mapping files
+  template: src=mapping/{{item}} dest={{ logstash_home }}/mappings/{{item}}
+  become: yes
+  with_items: "{{es_mapping_file}}"  
 
 - name: Creates symlink
   command: bash -lc "ln -s /lib/x86_64-linux-gnu/libcrypt.so.1 /usr/lib/x86_64-linux-gnu/libcrypt.so"
@@ -36,19 +76,30 @@
 
 
 - name: Copy logstash init.d file
-  copy: src=logstash.sh dest=/etc/init.d/logstash mode=755
+  copy: 
+    src: logstash.sh 
+    dest: /etc/init.d/logstash mode=755
   become: true
 
 - name: Install plugins
   command: bin/logstash-plugin install {{item}}
   args:
-    chdir: "{{logstash_home}}"
-  with_items: "{{logstash_plugins}}"
+    chdir: "{{ logstash_home }}"
+  with_items: "{{ logstash_plugins }}"
   become: yes
   ignore_errors: yes
   
 - name: Restart logstash
-  service: name=logstash state=restarted
+  service: 
+     name: logstash 
+     state: restarted
   become: yes
   
 - include: add_cron.yml
+
+- name: start monit
+  service: 
+    name: monit
+    state: started
+  when: ansible_facts.services.monit is defined
+

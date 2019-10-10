@@ -2,7 +2,7 @@
   file: path="{{ postgresql_backup_dir }}" state=directory owner={{ postgresql_user }} group={{ postgresql_user }}
 
 - set_fact:
-    postgresql_backup_gzip_file_name: "postgresql_backup_{{ lookup('pipe', 'date +%Z-%Y-%m-%d-%H-%M-%S') }}.sql.gz"
+    postgresql_backup_gzip_file_name: "postgresql_backup_{{ lookup('pipe', 'date +%Y-%m-%d') }}.sql.gz"
 
 - set_fact:
     postgresql_backup_gzip_file_path: "{{ postgresql_backup_dir }}/{{ postgresql_backup_gzip_file_name }}"

@@ -1,10 +1,8 @@
 ---
 - hosts: yarn-master
   vars_files:
-    - ['{{inventory_dir}}/secrets/{{env}}.yml']
+    - ['{{inventory_dir}}/secrets.yml']
   tasks:
-     - name: ping
-       ping: 
      - command: ./samza_alerts.sh {{ SGUSER }} "{{ SGPASS }}" {{ env }}
        args:
         chdir: /home/hduser

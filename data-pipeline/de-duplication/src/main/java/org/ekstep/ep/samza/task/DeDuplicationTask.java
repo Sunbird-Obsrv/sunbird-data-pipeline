@@ -20,20 +20,16 @@
 package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
-import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.InitableTask;
-import org.apache.samza.task.MessageCollector;
-import org.apache.samza.task.StreamTask;
-import org.apache.samza.task.TaskContext;
-import org.apache.samza.task.TaskCoordinator;
-import org.apache.samza.task.WindowableTask;
+import org.apache.samza.task.*;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.engine.DeDupEngine;
 import org.ekstep.ep.samza.service.DeDuplicationService;
+import org.ekstep.ep.samza.util.RedisConnect;
+import redis.clients.jedis.exceptions.JedisException;
 
 public class DeDuplicationTask implements StreamTask, InitableTask, WindowableTask {
 
@@ -42,9 +38,9 @@ public class DeDuplicationTask implements StreamTask, InitableTask, WindowableTa
 	private JobMetrics metrics;
 	private DeDuplicationService service;
 
-	public DeDuplicationTask(Config config, TaskContext context, KeyValueStore<Object, Object> deDuplicationStore,
-			DeDupEngine deDupEngine) {
-		init(config, context, deDuplicationStore, deDupEngine);
+	public DeDuplicationTask(Config config, TaskContext context,
+							 DeDupEngine deDupEngine) {
+		init(config, context, deDupEngine);
 	}
 
 	public DeDuplicationTask() {
@@ -54,31 +50,25 @@ public class DeDuplicationTask implements StreamTask, InitableTask, WindowableTa
 	@SuppressWarnings("unchecked")
 	@Override
 	public void init(Config config, TaskContext context) {
-		init(config, context, (KeyValueStore<Object, Object>) context.getStore("de-duplication"), null);
+		init(config, context, null);
 	}
 
-	private void init(Config config, TaskContext context, KeyValueStore<Object, Object> deDuplicationStore,
-			DeDupEngine deDupEngine) {
+	private void init(Config config, TaskContext context,
+					  DeDupEngine deDupEngine) {
 		this.config = new DeDuplicationConfig(config);
 		metrics = new JobMetrics(context, this.config.jobName());
-		deDupEngine = deDupEngine == null ? new DeDupEngine(deDuplicationStore) : deDupEngine;
+		deDupEngine = deDupEngine == null ?
+				new DeDupEngine(new RedisConnect(config).getConnection(), this.config.dupStore(),
+						this.config.expirySeconds()) : deDupEngine;
 		service = new DeDuplicationService(deDupEngine, this.config);
+
 	}
 
 	@Override
-	public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator taskCoordinator) {
-		try {
-			DeDuplicationSource source = new DeDuplicationSource(envelope);
-			DeDuplicationSink sink = new DeDuplicationSink(collector, metrics, config);
-
-			service.process(source, sink);
-		} catch (Exception ex) {
-			LOGGER.error("", "Deduplication failed: " + ex.getMessage());
-			Object event = envelope.getMessage();
-			if (event != null) {
-				LOGGER.info("", "FAILED_EVENT: " + event);
-			}
-		}
+	public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator taskCoordinator) throws Exception {
+		DeDuplicationSource source = new DeDuplicationSource(envelope);
+		DeDuplicationSink sink = new DeDuplicationSink(collector, metrics, config);
+		service.process(source, sink);
 	}
 
 	@Override

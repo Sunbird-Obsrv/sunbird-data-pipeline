@@ -1,0 +1,1108 @@
+{
+  "type": "kafka",
+  "dataSchema": {
+    "dataSource": "telemetry-events",
+    "parser": {
+      "type": "string",
+      "parseSpec": {
+        "format": "json",
+        "flattenSpec": {
+          "useFieldDiscovery": false,
+          "fields": [
+            {
+              "type": "root",
+              "name": "eid"
+            },
+            {
+              "type": "root",
+              "name": "mid"
+            },
+            {
+              "type": "root",
+              "name": "syncts"
+            },
+            {
+              "type": "root",
+              "name": "@timestamp"
+            },
+            {
+              "type": "path",
+              "name": "actor_id",
+              "expr": "$.actor.id"
+            },
+            {
+              "type": "path",
+              "name": "actor_type",
+              "expr": "$.actor.type"
+            },
+            {
+              "type": "path",
+              "name": "context_channel",
+              "expr": "$.context.channel"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_id",
+              "expr": "$.context.pdata.id"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_pid",
+              "expr": "$.context.pdata.pid"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_ver",
+              "expr": "$.context.pdata.ver"
+            },
+            {
+              "type": "path",
+              "name": "context_env",
+              "expr": "$.context.env"
+            },
+            {
+              "type": "path",
+              "name": "context_sid",
+              "expr": "$.context.sid"
+            },
+            {
+              "type": "path",
+              "name": "context_did",
+              "expr": "$.context.did"
+            },
+            {
+              "type": "path",
+              "name": "context_cdata_type",
+              "expr": "$.context.cdata[*].type"
+            },
+            {
+              "type": "path",
+              "name": "context_cdata_id",
+              "expr": "$.context.cdata[*].id"
+            },
+            {
+              "type": "path",
+              "name": "context_rollup_l1",
+              "expr": "$.context.rollup.l1"
+            },
+            {
+              "type": "path",
+              "name": "context_rollup_l2",
+              "expr": "$.context.rollup.l2"
+            },
+            {
+              "type": "path",
+              "name": "context_rollup_l3",
+              "expr": "$.context.rollup.l3"
+            },
+            {
+              "type": "path",
+              "name": "context_rollup_l4",
+              "expr": "$.context.rollup.l4"
+            },
+            {
+              "type": "path",
+              "name": "object_id",
+              "expr": "$.object.id"
+            },
+            {
+              "type": "path",
+              "name": "object_type",
+              "expr": "$.object.type"
+            },
+            {
+              "type": "path",
+              "name": "object_version",
+              "expr": "$.object.ver"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l1",
+              "expr": "$.object.rollup.l1"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l2",
+              "expr": "$.object.rollup.l2"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l3",
+              "expr": "$.object.rollup.l3"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l4",
+              "expr": "$.object.rollup.l4"
+            },
+            {
+              "type": "root",
+              "name": "tags"
+            },
+            {
+              "type": "path",
+              "name": "edata_type",
+              "expr": "$.edata.type"
+            },
+            {
+              "type": "path",
+              "name": "edata_subtype",
+              "expr": "$.edata.subtype"
+            },
+            {
+              "type": "path",
+              "name": "edata_mode",
+              "expr": "$.edata.mode"
+            },
+            {
+              "type": "path",
+              "name": "edata_pageid",
+              "expr": "$.edata.pageid"
+            },
+            {
+              "type": "path",
+              "name": "edata_uri",
+              "expr": "$.edata.uri"
+            },
+            {
+              "type": "path",
+              "name": "edata_id",
+              "expr": "$.edata.id"
+            },
+            {
+              "type": "path",
+              "name": "edata_duration",
+              "expr": "$.edata.duration"
+            },
+            {
+              "type": "path",
+              "name": "edata_index",
+              "expr": "$.edata.index"
+            },
+            {
+              "type": "path",
+              "name": "edata_pass",
+              "expr": "$.edata.pass"
+            },
+            {
+              "type": "path",
+              "name": "edata_score",
+              "expr": "$.edata.score"
+            },
+            {
+              "type": "path",
+              "name": "edata_resvalues",
+              "expr": "$.edata.resvalues[*]"
+            },
+            {
+              "type": "path",
+              "name": "edata_item_id",
+              "expr": "$.edata.item.id"
+            },
+            {
+              "type": "path",
+              "name": "edata_item_title",
+              "expr": "$.edata.item.title"
+            },
+            {
+              "type": "path",
+              "name": "edata_item_maxscore",
+              "expr": "$.edata.item.maxscore"
+            },
+            {
+              "type": "path",
+              "name": "edata_target_id",
+              "expr": "$.edata.target.id"
+            },
+            {
+              "type": "path",
+              "name": "edata_target_type",
+              "expr": "$.edata.target.type"
+            },
+            {
+              "type": "path",
+              "name": "edata_rating",
+              "expr": "$.edata.rating"
+            },
+            {
+              "type": "path",
+              "name": "edata_comments",
+              "expr": "$.edata.comments"
+            },
+            {
+              "type": "path",
+              "name": "edata_dir",
+              "expr": "$.edata.dir"
+            },
+            {
+              "type": "path",
+              "name": "edata_items_id",
+              "expr": "$.edata.items[*].id"
+            },
+            {
+              "type": "path",
+              "name": "edata_items_type",
+              "expr": "$.edata.items[*].type"
+            },
+            {
+              "type": "path",
+              "name": "edata_items_origin_id",
+              "expr": "$.edata.items[*].origin.id"
+            },
+            {
+              "type": "path",
+              "name": "edata_items_origin_type",
+              "expr": "$.edata.items[*].origin.type"
+            },
+            {
+              "type": "path",
+              "name": "edata_items_to_id",
+              "expr": "$.edata.items[*].to.id"
+            },
+            {
+              "type": "path",
+              "name": "edata_items_to_type",
+              "expr": "$.edata.items[*].to.type"
+            },
+            {
+              "type": "path",
+              "name": "edata_plugin_id",
+              "expr": "$.edata.plugin.id"
+            },
+            {
+              "type": "path",
+              "name": "edata_plugin_ver",
+              "expr": "$.edata.plugin.ver"
+            },
+            {
+              "type": "path",
+              "name": "edata_plugin_category",
+              "expr": "$.edata.plugin.category"
+            },
+            {
+              "type": "path",
+              "name": "edata_props",
+              "expr": "$.edata.props[*]"
+            },
+            {
+              "type": "path",
+              "name": "edata_state",
+              "expr": "$.edata.state"
+            },
+            {
+              "type": "path",
+              "name": "edata_prevstate",
+              "expr": "$.edata.prevstate"
+            },
+            {
+              "type": "path",
+              "name": "edata_size",
+              "expr": "$.edata.size"
+            },
+            {
+              "type": "path",
+              "name": "edata_filters_dialcodes",
+              "expr": "$.edata.filters.dialcodes"
+            },
+            {
+              "type": "path",
+              "name": "edata_topn_identifier",
+              "expr": "$.edata.topn[*].identifier"
+            },
+            {
+              "type": "path",
+              "name": "edata_visits_objid",
+              "expr": "$.edata.visits[*].objid"
+            },
+            {
+              "type": "path",
+              "name": "edata_visits_objtype",
+              "expr": "$.edata.visits[*].objtype"
+            },
+            {
+              "type": "path",
+              "name": "edata_visits_objver",
+              "expr": "$.edata.visits[*].objver"
+            },
+            {
+              "type": "path",
+              "name": "edata_visits_index",
+              "expr": "$.edata.visits[*].index"
+            },
+            {
+              "type": "path",
+              "name": "device_loc_state",
+              "expr": "$.devicedata.state"
+            },
+            {
+              "type": "path",
+              "name": "device_loc_state_code",
+              "expr": "$.devicedata.statecode"
+            },
+            {
+              "type": "path",
+              "name": "device_loc_city",
+              "expr": "$.devicedata.city"
+            },
+            {
+              "type": "path",
+              "name": "device_loc_country_code",
+              "expr": "$.devicedata.countrycode"
+            },
+            {
+              "type": "path",
+              "name": "device_loc_country",
+              "expr": "$.devicedata.country"
+            },
+            {
+              "type": "path",
+              "name": "device_os",
+              "expr": "$.devicedata.os"
+            },
+            {
+              "type": "path",
+              "name": "device_make",
+              "expr": "$.devicedata.make"
+            },
+            {
+              "type": "path",
+              "name": "device_id",
+              "expr": "$.devicedata.id"
+            },
+            {
+              "type": "path",
+              "name": "device_mem",
+              "expr": "$.devicedata.mem"
+            },
+            {
+              "type": "path",
+              "name": "device_idisk",
+              "expr": "$.devicedata.idisk"
+            },
+            {
+              "type": "path",
+              "name": "device_edisk",
+              "expr": "$.devicedata.edisk"
+            },
+            {
+              "type": "path",
+              "name": "device_scrn",
+              "expr": "$.devicedata.scrn"
+            },
+            {
+              "type": "path",
+              "name": "device_camera",
+              "expr": "$.devicedata.camera"
+            },
+            {
+              "type": "path",
+              "name": "device_cpu",
+              "expr": "$.devicedata.cpu"
+            },
+            {
+              "type": "path",
+              "name": "device_sims",
+              "expr": "$.devicedata.sims"
+            },
+            {
+              "type": "path",
+              "name": "device_uaspec_agent",
+              "expr": "$.devicedata.uaspec.agent"
+            },
+            {
+              "type": "path",
+              "name": "device_uaspec_ver",
+              "expr": "$.devicedata.uaspec.ver"
+            },
+            {
+              "type": "path",
+              "name": "device_uaspec_system",
+              "expr": "$.devicedata.uaspec.system"
+            },
+            {
+              "type": "path",
+              "name": "device_uaspec_platform",
+              "expr": "$.devicedata.uaspec.platform"
+            },
+            {
+              "type": "path",
+              "name": "device_uaspec_raw",
+              "expr": "$.devicedata.uaspec.raw"
+            },
+            {
+              "type": "path",
+              "name": "device_first_access",
+              "expr": "$.devicedata.firstaccess"
+            },
+            {
+              "type": "path",
+              "name": "device_loc_state_custom_code",
+              "expr": "$.devicedata.statecustomcode"
+            },
+            {
+              "type": "path",
+              "name": "device_loc_state_custom_name",
+              "expr": "$.devicedata.statecustomname"
+            },
+            {
+              "type": "path",
+              "name": "device_loc_district",
+              "expr": "$.devicedata.districtcustom"
+            },
+            {
+              "type": "path",
+              "name": "content_name",
+              "expr": "$.contentdata.name"
+            },
+            {
+              "type": "path",
+              "name": "content_object_type",
+              "expr": "$.contentdata.objecttype"
+            },
+            {
+              "type": "path",
+              "name": "content_type",
+              "expr": "$.contentdata.contenttype"
+            },
+            {
+              "type": "path",
+              "name": "content_media_type",
+              "expr": "$.contentdata.mediatype"
+            },
+            {
+              "type": "path",
+              "name": "content_language",
+              "expr": "$.contentdata.language[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_medium",
+              "expr": "$.contentdata.medium[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_gradelevel",
+              "expr": "$.contentdata.gradelevel[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_subjects",
+              "expr": "$.contentdata.subject[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_mimetype",
+              "expr": "$.contentdata.mimetype"
+            },
+            {
+              "type": "path",
+              "name": "content_framework",
+              "expr": "$.contentdata.framework"
+            },
+            {
+              "type": "path",
+              "name": "content_board",
+              "expr": "$.contentdata.board"
+            },
+            {
+              "type": "path",
+              "name": "content_status",
+              "expr": "$.contentdata.status"
+            },
+            {
+              "type": "path",
+              "name": "content_version",
+              "expr": "$.contentdata.pkgversion"
+            },
+            {
+              "type": "path",
+              "name": "content_last_submitted_on",
+              "expr": "$.contentdata.lastsubmittedon"
+            },
+            {
+              "type": "path",
+              "name": "content_last_published_on",
+              "expr": "$.contentdata.lastpublishedon"
+            },
+            {
+              "type": "path",
+              "name": "content_last_updated_on",
+              "expr": "$.contentdata.lastupdatedon"
+            },
+            {
+              "type": "path",
+              "name": "user_grade_list",
+              "expr": "$.userdata.gradelist[*]"
+            },
+            {
+              "type": "path",
+              "name": "user_language_list",
+              "expr": "$.userdata.languagelist[*]"
+            },
+            {
+              "type": "path",
+              "name": "user_subject_list",
+              "expr": "$.userdata.subjectlist[*]"
+            },
+            {
+              "type": "path",
+              "name": "user_type",
+              "expr": "$.userdata.usertype"
+            },
+            {
+              "type": "path",
+              "name": "user_roles",
+              "expr": "$.userdata.roles[*]"
+            },
+            {
+              "type": "path",
+              "name": "user_loc_state",
+              "expr": "$.userdata.state"
+            },
+            {
+              "type": "path",
+              "name": "user_loc_district",
+              "expr": "$.userdata.district"
+            },
+            {
+              "type": "path",
+              "name": "dialcode_channel",
+              "expr": "$.dialcodedata.channel"
+            },
+            {
+              "type": "path",
+              "name": "dialcode_batchcode",
+              "expr": "$.dialcodedata.batchcode"
+            },
+            {
+              "type": "path",
+              "name": "dialcode_publisher",
+              "expr": "$.dialcodedata.publisher"
+            },
+            {
+              "type": "path",
+              "name": "dialcode_generated_on",
+              "expr": "$.dialcodedata.generatedon"
+            },
+            {
+              "type": "path",
+              "name": "dialcode_published_on",
+              "expr": "$.dialcodedata.publishedon"
+            },
+            {
+              "type": "path",
+              "name": "dialcode_status",
+              "expr": "$.dialcodedata.status"
+            },
+            {
+              "type": "path",
+              "name": "dialcode_object_type",
+              "expr": "$.dialcodedata.objecttype"
+            },
+            {
+              "type": "path",
+              "name": "device_loc_iso_state_code",
+              "expr": "$.devicedata.iso3166statecode"
+            }
+          ]
+        },
+        "dimensionsSpec": {
+          "dimensions": [
+            {
+              "type": "string",
+              "name": "eid"
+            },
+            {
+              "type": "string",
+              "name": "mid"
+            },
+            {
+              "type": "long",
+              "name": "syncts"
+            },
+            {
+              "type": "string",
+              "name": "@timestamp"
+            },
+            {
+              "type": "string",
+              "name": "actor_id"
+            },
+            {
+              "type": "string",
+              "name": "actor_type"
+            },
+            {
+              "type": "string",
+              "name": "context_channel"
+            },
+            {
+              "type": "string",
+              "name": "context_pdata_id"
+            },
+            {
+              "type": "string",
+              "name": "context_pdata_pid"
+            },
+            {
+              "type": "string",
+              "name": "context_pdata_ver"
+            },
+            {
+              "type": "string",
+              "name": "context_env"
+            },
+            {
+              "type": "string",
+              "name": "context_sid"
+            },
+            {
+              "type": "string",
+              "name": "context_did"
+            },
+            {
+              "name": "context_cdata_type"
+            },
+            {
+              "name": "context_cdata_id"
+            },
+            {
+              "type": "string",
+              "name": "context_rollup_l1"
+            },
+            {
+              "type": "string",
+              "name": "context_rollup_l2"
+            },
+            {
+              "type": "string",
+              "name": "context_rollup_l3"
+            },
+            {
+              "type": "string",
+              "name": "context_rollup_l4"
+            },
+            {
+              "type": "string",
+              "name": "object_id"
+            },
+            {
+              "type": "string",
+              "name": "object_type"
+            },
+            {
+              "type": "string",
+              "name": "object_version"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l1"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l2"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l3"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l4"
+            },
+            {
+              "name": "tags"
+            },
+            {
+              "type": "string",
+              "name": "edata_type"
+            },
+            {
+              "type": "string",
+              "name": "edata_subtype"
+            },
+            {
+              "type": "string",
+              "name": "edata_mode"
+            },
+            {
+              "type": "string",
+              "name": "edata_pageid"
+            },
+            {
+              "type": "string",
+              "name": "edata_uri"
+            },
+            {
+              "type": "string",
+              "name": "edata_id"
+            },
+            {
+              "type": "double",
+              "name": "edata_duration"
+            },
+            {
+              "type": "long",
+              "name": "edata_index"
+            },
+            {
+              "type": "string",
+              "name": "edata_pass"
+            },
+            {
+              "type": "double",
+              "name": "edata_score"
+            },
+            {
+              "name": "edata_resvalues"
+            },
+            {
+              "type": "string",
+              "name": "edata_item_id"
+            },
+            {
+              "type": "string",
+              "name": "edata_item_title"
+            },
+            {
+              "type": "double",
+              "name": "edata_item_maxscore"
+            },
+            {
+              "type": "string",
+              "name": "edata_target_id"
+            },
+            {
+              "type": "string",
+              "name": "edata_target_type"
+            },
+            {
+              "type": "long",
+              "name": "edata_rating"
+            },
+            {
+              "type": "string",
+              "name": "edata_comments"
+            },
+            {
+              "type": "string",
+              "name": "edata_dir"
+            },
+            {
+              "type": "string",
+              "name": "edata_items_id"
+            },
+            {
+              "type": "string",
+              "name": "edata_items_type"
+            },
+            {
+              "type": "string",
+              "name": "edata_items_origin_id"
+            },
+            {
+              "type": "string",
+              "name": "edata_items_origin_type"
+            },
+            {
+              "type": "string",
+              "name": "edata_items_to_id"
+            },
+            {
+              "type": "string",
+              "name": "edata_items_to_type"
+            },
+            {
+              "type": "string",
+              "name": "edata_plugin_id"
+            },
+            {
+              "type": "string",
+              "name": "edata_plugin_ver"
+            },
+            {
+              "type": "string",
+              "name": "edata_plugin_category"
+            },
+            {
+              "name": "edata_props"
+            },
+            {
+              "type": "string",
+              "name": "edata_state"
+            },
+            {
+              "type": "string",
+              "name": "edata_prevstate"
+            },
+            {
+              "type": "long",
+              "name": "edata_size"
+            },
+            {
+              "name": "edata_filters_dialcodes"
+            },
+            {
+              "type": "string",
+              "name": "edata_topn_identifier"
+            },
+            {
+              "type": "string",
+              "name": "edata_visits_objid"
+            },
+            {
+              "type": "string",
+              "name": "edata_visits_objtype"
+            },
+            {
+              "type": "string",
+              "name": "edata_visits_objver"
+            },
+            {
+              "type": "string",
+              "name": "edata_visits_index"
+            },
+            {
+              "type": "string",
+              "name": "device_loc_state"
+            },
+            {
+              "type": "string",
+              "name": "device_loc_state_code"
+            },
+            {
+              "type": "string",
+              "name": "device_loc_city"
+            },
+            {
+              "type": "string",
+              "name": "device_loc_country_code"
+            },
+            {
+              "type": "string",
+              "name": "device_loc_country"
+            },
+            {
+              "type": "string",
+              "name": "device_os"
+            },
+            {
+              "type": "string",
+              "name": "device_make"
+            },
+            {
+              "type": "string",
+              "name": "device_id"
+            },
+            {
+              "type": "long",
+              "name": "device_mem"
+            },
+            {
+              "type": "string",
+              "name": "device_idisk"
+            },
+            {
+              "type": "string",
+              "name": "device_edisk"
+            },
+            {
+              "type": "string",
+              "name": "device_scrn"
+            },
+            {
+              "type": "string",
+              "name": "device_camera"
+            },
+            {
+              "type": "string",
+              "name": "device_cpu"
+            },
+            {
+              "type": "long",
+              "name": "device_sims"
+            },
+            {
+              "type": "string",
+              "name": "device_uaspec_agent"
+            },
+            {
+              "type": "string",
+              "name": "device_uaspec_ver"
+            },
+            {
+              "type": "string",
+              "name": "device_uaspec_system"
+            },
+            {
+              "type": "string",
+              "name": "device_uaspec_platform"
+            },
+            {
+              "type": "string",
+              "name": "device_uaspec_raw"
+            },
+            {
+              "type": "long",
+              "name": "device_first_access"
+            },
+            {
+              "type": "string",
+              "name": "device_loc_state_custom_code"
+            },
+            {
+              "type": "string",
+              "name": "device_loc_state_custom_name"
+            },
+            {
+              "type": "string",
+              "name": "device_loc_district"
+            },
+            {
+              "type": "string",
+              "name": "content_name"
+            },
+            {
+              "type": "string",
+              "name": "content_object_type"
+            },
+            {
+              "type": "string",
+              "name": "content_type"
+            },
+            {
+              "type": "string",
+              "name": "content_media_type"
+            },
+            {
+              "name": "content_language"
+            },
+            {
+              "name": "content_medium"
+            },
+            {
+              "name": "content_gradelevel"
+            },
+            {
+              "name": "content_subjects"
+            },
+            {
+              "type": "string",
+              "name": "content_mimetype"
+            },
+            {
+              "type": "string",
+              "name": "content_framework"
+            },
+            {
+              "type": "string",
+              "name": "content_board"
+            },
+            {
+              "type": "string",
+              "name": "content_status"
+            },
+            {
+              "type": "double",
+              "name": "content_version"
+            },
+            {
+              "type": "long",
+              "name": "content_last_submitted_on"
+            },
+            {
+              "type": "long",
+              "name": "content_last_published_on"
+            },
+            {
+              "type": "long",
+              "name": "content_last_updated_on"
+            },
+            {
+              "name": "user_grade_list"
+            },
+            {
+              "name": "user_language_list"
+            },
+            {
+              "name": "user_subject_list"
+            },
+            {
+              "type": "string",
+              "name": "user_type"
+            },
+            {
+              "name": "user_roles"
+            },
+            {
+              "type": "string",
+              "name": "user_loc_state"
+            },
+            {
+              "type": "string",
+              "name": "user_loc_district"
+            },
+            {
+              "type": "string",
+              "name": "dialcode_channel"
+            },
+            {
+              "type": "string",
+              "name": "dialcode_batchcode"
+            },
+            {
+              "type": "string",
+              "name": "dialcode_publisher"
+            },
+            {
+              "type": "long",
+              "name": "dialcode_generated_on"
+            },
+            {
+              "type": "long",
+              "name": "dialcode_published_on"
+            },
+            {
+              "type": "string",
+              "name": "dialcode_status"
+            },
+            {
+              "type": "string",
+              "name": "dialcode_object_type"
+            },
+            {
+              "type": "string",
+              "name": "device_loc_iso_state_code"
+            }
+          ],
+          "dimensionsExclusions": []
+        },
+        "timestampSpec": {
+          "column": "ets",
+          "format": "auto"
+        }
+      }
+    },
+    "metricsSpec": [],
+    "granularitySpec": {
+      "type": "uniform",
+      "segmentGranularity": "day",
+      "queryGranularity": "none",
+      "rollup": false
+    }
+  },
+  "ioConfig": {
+    "topic": "<env>.events.telemetry",
+    "consumerProperties": {
+      "bootstrap.servers": "broker_ip:broker_port"
+    },
+    "taskCount": 1,
+    "replicas": 1,
+    "taskDuration": "PT3600S",
+    "useEarliestOffset": true
+  },
+  "tuningConfig": {
+    "type": "kafka",
+    "reportParseExceptions": false
+  }
+}

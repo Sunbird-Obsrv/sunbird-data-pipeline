@@ -1,0 +1,30 @@
+---
+- hosts: yarn-master
+  become: yes
+  gather_facts: false
+  tasks:
+
+  - name: Get the application id to kill the app
+    shell: /usr/local/hadoop/bin/yarn application --list | grep -i "{{item}}" | awk '{print $1}'
+    with_items: "{{ job_names.split(',')|list}}"
+    register: appid
+
+  - name: debugging the output
+    debug:
+      msg: "{{item.stdout}}"
+    with_items:
+      - "{{ appid['results'] }}"
+
+  - name: Kill the mentioned applications
+    shell: /usr/local/hadoop/bin/yarn application -kill "{{item.stdout}}"
+    with_items:
+      - "{{ appid['results'] }}"
+    when: item.stdout != ""
+
+  - name: Get the running jobs list
+    shell: /usr/local/hadoop/bin/yarn application --list | awk 'NR>2 {print $1 " " $2 " " $6 " " $7 " " $9}'  | column -t
+    register: running_jobs
+
+  - name: print the running jobs list after killing
+    debug:
+      var: running_jobs.stdout_lines

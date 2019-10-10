@@ -1,0 +1,20 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "id": "http://api.sunbird.org/summary/pdata/id",
+      "type": "string"
+    },
+    "pid": {
+      "id": "http://api.sunbird.org/summary/pdata/pid",
+      "type": "string"
+    },
+    "ver": {
+      "id": "http://api.sunbird.org/summary/pdata/ver",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id"
+  ]
+}

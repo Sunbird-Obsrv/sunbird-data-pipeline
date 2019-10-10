@@ -100,6 +100,10 @@ public class EventFixture {
             "      \"type\": \"correlationtype\"\n" +
             "    ";
 	public static final String VALID_GE_INTERACT_EVENT = "{\n" +
+            "\"actor\": {\n" +
+            "   \"type\": \"User\",\n" +
+            "   \"id\": \"f:5a8a3f2b-3409-42e0-9001-f913bc0fde31:874ed8a5-782e-4f6c-8f36-e0288455901e\"\n" +
+            "  }, \n" +
             "  \"cdata\": [],\n" +
             "  \"channel\": \"in.ekstep\",\n" +
             "  \"did\": \"0427fedf56eea1c8a127d876fd1907ffb245684f\",\n" +
@@ -149,6 +153,64 @@ public class EventFixture {
             "  \"flags\": {\n" +
             "    \"dd_processed\": true\n" +
             "  }\n" +
+            "}";
+
+	public static final String SEARCH_EVENT_WITH_INCORRECT_DIALCODES_KEY = "{\n" +
+            "  \"eid\": \"SEARCH\",\n" +
+            "  \"ets\": 1.554241415598E12,\n" +
+            "  \"ver\": \"3.0\",\n" +
+            "  \"mid\": \"LP.1554241415598.bff9398b-a827-41ec-b1c9-e569546174b1\",\n" +
+            "  \"actor\": {\n" +
+            "    \"id\": \"org.ekstep.learning.platform\",\n" +
+            "    \"type\": \"System\"\n" +
+            "  },\n" +
+            "  \"context\": {\n" +
+            "    \"channel\": \"in.ekstep\",\n" +
+            "    \"pdata\": {\n" +
+            "      \"id\": \"prod.ntp.learning.platform\",\n" +
+            "      \"pid\": \"search-service\",\n" +
+            "      \"ver\": \"1.0\"\n" +
+            "    },\n" +
+            "    \"env\": \"search\"\n" +
+            "  },\n" +
+            "  \"edata\": {\n" +
+            "    \"size\": 499413.0,\n" +
+            "    \"query\": \"\",\n" +
+            "    \"filters\": {\n" +
+            "      \"dialCodes\": [\n" +
+            "        \"ATAZRI\",\n" +
+            "        \"CGSX7D\"\n" +
+            "      ]\n" +
+            "    },\n" +
+            "    \"sort\": {\n" +
+            "      \n" +
+            "    },\n" +
+            "    \"type\": \"all\",\n" +
+            "    \"topn\": [\n" +
+            "      {\n" +
+            "        \"identifier\": \"do_31268582767737241615189\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"identifier\": \"do_31269107959395942417491\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"identifier\": \"do_31269108472948326417493\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"identifier\": \"do_31269113788995174417318\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"identifier\": \"do_31270597860728832015700\"\n" +
+            "      }\n" +
+            "    ]\n" +
+            "  },\n" +
+            "  \"flags\": {\n" +
+            "    \"tv_processed\": true,\n" +
+            "    \"dd_processed\": true\n" +
+            "  },\n" +
+            "  \"type\": \"events\",\n" +
+            "  \"syncts\": 1.55424141664E12,\n" +
+            "  \"@timestamp\": \"2019-04-02T21:43:36.640Z\"\n" +
             "}";
 
 	public static final String EVENT_WITH_EID_MISSING = "{\n" +

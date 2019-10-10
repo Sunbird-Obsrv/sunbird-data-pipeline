@@ -21,28 +21,29 @@
 
 	<modules>
 		<module>ep-core</module>
-		<module>de-duplication</module>
 		<module>distribution</module>
 		<module>checksum-generator</module>
 		<module>search-service</module>
 		<module>cache-service</module>
 		<module>ep-telemetry-reader</module>
-		<module>es-indexer</module>
 		<module>es-client</module>
 		<module>telemetry-validator</module>
 		<module>telemetry-extractor</module>
+		<module>de-duplication</module>
 		<module>telemetry-router</module>
 		<module>telemetry-location-updater</module>
-		<!--
-		<module>reverse-search</module>
-		<module>object-de-normalization</module>
-		-->
+		<module>de-normalization</module>
+		<module>druid-events-validator</module>
+		<module>events-router</module>
+		<!-- <module>druid-processor</module> -->
+		<module>redis-updater</module>
 	</modules>
 
 	<properties>
 		<!-- maven specific properties -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<samza.version>0.14.0</samza.version>
+		<samza.version>0.14.1</samza.version>
+		<scala.version>2.11</scala.version>
 		<kafka.version>1.1.0</kafka.version>
 		<jackson-jaxrs.version>1.9.13</jackson-jaxrs.version>
 		<samza.log.dir>/tmp</samza.log.dir>

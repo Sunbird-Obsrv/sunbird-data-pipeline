@@ -11,23 +11,23 @@ channel_data_exhaust_bucket: dev-data-store
 
 
 azure_account_name: "{{dp_azure_account_name}}"
-azure_backup_storage_secret: "{{dp_vault_azure_backup_storage_secret}}"
 secrets_path: '{{inventory_dir}}/secrets.yml'
 artifacts_container: "{{dp_vault_artifacts_container}}"
-artifacts_storage_account: "{{dp_azure_account_name}}"
-artifact_storage_key: "{{dp_vault_azure_account_key}}"
 azure_storage_secret: "{{dp_vault_azure_account_key}}"
 #monasca_log_level: ERROR
 resourcemanager: "{{ groups['yarn-master'][0] }}"
 yarn_slaves: "{{ groups['yarn-slave']}}"
 monitor_yarn_url: "http://{{ resourcemanager }}:8088/ws/v1/cluster/apps?states=RUNNING"
 
+# Artifact upload and download vars
+artifact_azure_account_name: "{{dp_azure_account_name}}"
+artifact_azure_account_key: "{{dp_vault_azure_account_key}}"
 
 # Artifact upload and download vars
 artifact_azure_account_name: "{{dp_azure_account_name}}"
 artifact_azure_account_key: "{{dp_vault_azure_account_key}}"
 
-redis_host: "{{ groups['lp-redis'][0] }}"
+redis_host: "{{ groups['redis'][0] }}"
 searchServiceAuthorizationToken: "{{ dp_search_service_authorization_token }}"
 
 
@@ -62,7 +62,6 @@ analytics_user: analytics
 analytics_group: analytics
 azure_storage_account: "{{dp_azure_account_name}}"
 azure_storage_key: "{{dp_vault_azure_account_key}}"
-
 
 
 analytics_user_home: /home/{{ analytics_user }}
@@ -101,6 +100,7 @@ postgres:
 postgres_address_space: 0.0.0.0/0 # Postgres trust address space
 
 lp_composite_search: "http://{{ groups['composite-search-cluster'][0] }}:9200" # Composite Cluster ip of LP
+lp_composite_search_host: "{{ groups['composite-search-cluster'][0] }}"
 lp_search: "http://{{ groups['search'][0] }}:9000"
 lp_url: http://{{ groups['learning'][0] }}:8080/learning-service
 service:
@@ -111,3 +111,46 @@ service:
 cassandra_hierarchy_store_prefix: "{{env}}_"
 data_exhaust_token: "{{dp_vault_data_exhaust_token}}"
 default_channel: "{{default_org_hash_id}}"
+
+#### backup storage secret
+backup_azure_storage_account_name: "{{dp_azure_account_name}}"
+backup_azure_storage_access_key: "{{dp_vault_azure_account_key}}"
+
+## es backup
+es_snapshot_host: "{{ groups['telemetry-search-cluster'][0] }}"
+snapshot_base_path: telemetrysearch
+
+
+# sunbird learner service
+sunbird_es_host: "{{groups['core-es']| join(',')}}"
+
+### Druid related vars
+overlord_host: "{{ groups['overlord'][0] }}"
+
+### Datapipeline Custom monitoring related vars ###
+influxdb: "{{ groups['influxdb'][0] }}"
+CONTAINER_NAME_SAMZA: samza-logs
+script_path: /usr/local/hadoop
+
+#### samza jobs deployment related vars ####
+samza_tar_files_localpath: roles/samza-jobs/defaults
+
+job_names:
+  DeDuplication_1:
+      job_file_name: 'de-duplication'
+  DeNormalization_1:
+      job_file_name: 'de-normalization'
+  DruidEventsValidator_1:
+      job_file_name: 'druid-events-validator'
+  EventsRouter_1:
+      job_file_name: 'events-router'
+  RedisUpdater_1:
+      job_file_name: 'redis-updater'
+  TelemetryExtractor_1:
+      job_file_name: 'telemetry-extractor'
+  TelemetryLocationUpdater_1:
+      job_file_name: 'telemetry-location-updater'
+  TelemetryRouter_1:
+      job_file_name: 'telemetry-router'
+  TelemetryValidator_1:
+      job_file_name: 'telemetry-validator'

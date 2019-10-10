@@ -1,0 +1,9 @@
+- hosts: druid-postgres
+  vars_files:
+    - "{{inventory_dir}}/secrets/dp_secrets.yml"
+  roles:
+    -  role: 'postgresql-restore'
+  become: yes
+  vars:
+    postgresql_restore_gzip_file_date: "{{ date }}"
+ 

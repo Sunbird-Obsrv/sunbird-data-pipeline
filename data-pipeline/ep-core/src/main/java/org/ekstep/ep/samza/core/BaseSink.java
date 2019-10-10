@@ -6,15 +6,18 @@ import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
 
-import static java.text.MessageFormat.format;
-
 public class BaseSink {
 
 	private MessageCollector collector;
-	private static Logger LOGGER = new Logger(BaseSink.class);
+	protected JobMetrics metrics;
 	
 	public BaseSink(MessageCollector collector) {
 		this.collector = collector;
+	}
+
+	public BaseSink(MessageCollector collector, JobMetrics metrics) {
+		this.collector = collector;
+		this.metrics = metrics;
 	}
 	
 	public void toTopic(String topic, String mid, String message) {
@@ -24,4 +27,5 @@ public class BaseSink {
 	public void toTopic(String topic, String mid, Map<String, Object> message) {
 		collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", topic), mid, message));
 	}
+
 }

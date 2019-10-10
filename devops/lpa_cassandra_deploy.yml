@@ -1,4 +1,0 @@
-- hosts: dp-cassandra
-  become: yes
-  roles:
-    - cassandra-deploy

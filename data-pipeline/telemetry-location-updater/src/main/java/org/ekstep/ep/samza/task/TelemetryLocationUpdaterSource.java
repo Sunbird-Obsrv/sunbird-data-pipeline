@@ -3,6 +3,7 @@ package org.ekstep.ep.samza.task;
 import java.util.Map;
 
 import org.apache.samza.system.IncomingMessageEnvelope;
+import org.apache.samza.system.SystemStreamPartition;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
 
@@ -30,4 +31,7 @@ public class TelemetryLocationUpdaterSource {
     public String getMessage() {
         return envelope.toString();
     }
+
+    public SystemStreamPartition getSystemStreamPartition() { return envelope.getSystemStreamPartition();}
+    public String getOffset() { return envelope.getOffset();}
 }
