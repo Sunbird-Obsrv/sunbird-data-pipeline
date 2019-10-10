@@ -52,6 +52,7 @@ public class EsIndexerService {
 			event.markFailed("Error", e.getMessage());
 			sink.toErrorTopic(event);
 		}
+		sink.setMetricsOffset(source.getSystemStreamPartition(),source.getOffset());
 	}
 
 	private boolean success(ClientResponse response) {

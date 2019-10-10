@@ -7,6 +7,8 @@ jobs:
       - checkout:
           path: ~/dp
       
+      - run: sleep 120
+      
       - restore_cache:
           key: dependency-cache-{{ checksum "pom.xml" }}
       

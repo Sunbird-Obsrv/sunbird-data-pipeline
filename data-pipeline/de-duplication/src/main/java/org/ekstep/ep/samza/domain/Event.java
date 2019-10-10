@@ -51,6 +51,21 @@ public class Event {
         return checksum.value();
     }
 
+    public String producerId() {
+        NullableValue<String> producerId = telemetry.read("context.pdata.id");
+        return producerId.value();
+    }
+
+    public final String producerPid() {
+        NullableValue<String> producerPid = telemetry.read("context.pdata.pid");
+        return producerPid.value();
+    }
+
+    public String eid() {
+        NullableValue<String> eid = telemetry.read("eid");
+        return eid.value();
+    }
+
     public void addEventType() {
         telemetry.add("type", "events");
     }
@@ -77,6 +92,13 @@ public class Event {
     public void markSuccess() {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.dd_processed", true);
+        telemetry.add("type", "events");
+    }
+
+    public void markRedisFailure() {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.dd_processed", false);
+        telemetry.add("flags.dd_redis_failure", true);
         telemetry.add("type", "events");
     }
 

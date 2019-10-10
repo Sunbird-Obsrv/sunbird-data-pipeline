@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.task;
 
+import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.ekstep.ep.samza.core.BaseSink;
 import org.ekstep.ep.samza.core.JobMetrics;
@@ -29,5 +30,9 @@ public class EsIndexerSink extends BaseSink {
 
     public void markSuccess() {
         metrics.incSuccessCounter();
+    }
+
+    public void setMetricsOffset(SystemStreamPartition systemStreamPartition, String offset) {
+        metrics.setOffset(systemStreamPartition, offset);
     }
 }

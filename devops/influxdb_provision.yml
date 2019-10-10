@@ -1,5 +1,0 @@
----
-- hosts: influxdb
-  roles:
-    - influxdb
-  become: yes

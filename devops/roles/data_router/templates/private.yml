@@ -1,7 +1,0 @@
----
-data_dir: {{ private_data_aggregate_dir }}
-store_file_name: {{ private_data_aggregate_dir }}
-initial_aggregate_date: {{ private_data_aggregate_initial_aggregate_date }}
-dataset_id: {{ private_data_aggregate_dataset_id }}
-dataset_aggregate_endpoint: {{ aggregate_data_api_endpoint }}
-get_partners_endpoint: {{ get_partners_endpoint }}

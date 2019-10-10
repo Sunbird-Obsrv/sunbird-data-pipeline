@@ -40,6 +40,10 @@ no_of_jobs=42
 # Spark Driver
 spark.driver.memory=6g
 
+spark.memory_fraction={{ spark.memory_fraction }}
+spark.storage_fraction={{ spark.storage_fraction }}
+spark.driver_memory="{{ spark.driver_memory }}" 
+
 #Data Exhaust
 
 data_exhaust {
@@ -126,4 +130,50 @@ azure {
     client_secret = "client secret"
   }
 }
+
+# course metrics container in azure
+course.metrics.cassandra.sunbirdKeyspace="sunbird"
+course.metrics.cassandra.sunbirdCoursesKeyspace="sunbird_courses"
+course.metrics.cloud.provider="azure"
+course.metrics.cloud.container="course-metrics"
+course.metrics.cloud.objectKey="reports/"
+course.metrics.temp.dir="/mount/data/analytics/course-reports"
+course.metrics.cassandra.input.consistency="QUORUM"
+es.host="http://{{groups['core-es'][0]}}"
+es.port="9200"
+course.metrics.es.alias="cbatchstats"
+course.metrics.es.index.cbatchstats.prefix="cbatchstats-"
+course.metrics.es.index.cbatch="course-batch"
+
+
+# content rating configurations
+
+druid.sql.host="http://{{druid_broker_host}}:8082/druid/v2/sql/"
+druid.unique.content.query="{\"query\":\"SELECT DISTINCT \\\"object_id\\\" AS \\\"Id\\\"\\nFROM \\\"druid\\\".\\\"telemetry-feedback-events\\\" WHERE \\\"eid\\\" = 'FEEDBACK' AND \\\"__time\\\" BETWEEN TIMESTAMP '%s' AND TIMESTAMP '%s' \"}"
+druid.content.rating.query="{\"query\": \"SELECT \\\"object_id\\\" AS ContentId, COUNT(*) AS \\\"Number of Ratings\\\", SUM(edata_rating) AS \\\"Total Ratings\\\", SUM(edata_rating)/COUNT(*) AS \\\"AverageRating\\\" FROM \\\"druid\\\".\\\"telemetry-feedback-events\\\" WHERE \\\"eid\\\" = 'FEEDBACK' GROUP BY \\\"object_id\\\"\"}"
+lp.system.update.base.url="{{lp_url}}/system/v3/content/update"
+
+
+#Experiment Configuration
+
+user.search.api.url="http://{{swarm_manager_lb_ip}}:9000/private/user/v1/search"
+user.search.limit="10000"
+
+# pipeline auditing
+druid.pipeline_metrics.audit.query="{\"query\":\"SELECT \\\"job-name\\\", SUM(\\\"success-message-count\\\") AS \\\"success-message-count\\\", SUM(\\\"failed-message-count\\\") AS \\\"failed-message-count\\\", SUM(\\\"duplicate-event-count\\\") AS \\\"duplicate-event-count\\\", SUM(\\\"batch-success-count\\\") AS \\\"batch-success-count\\\", SUM(\\\"batch-error-count\\\") AS \\\"batch-error-count\\\", SUM(\\\"primary-route-success-count\\\") AS \\\"primary-route-success-count\\\", SUM(\\\"secondary-route-success-count\\\") AS \\\"secondary-route-success-count\\\" FROM \\\"druid\\\".\\\"pipeline-metrics\\\" WHERE \\\"job-name\\\" IN (%s) AND \\\"__time\\\" BETWEEN TIMESTAMP '%s' AND TIMESTAMP '%s' GROUP BY \\\"job-name\\\" \"}"
+druid.telemetryDatasource.count.query="{ \"query\": \"SELECT COUNT(*) AS \\\"total\\\" FROM \\\"druid\\\".\\\"telemetry-events\\\" WHERE TIME_FORMAT(MILLIS_TO_TIMESTAMP(\\\"syncts\\\"), 'yyyy-MM-dd HH:mm:ss.SSS', 'Asia/Kolkata') BETWEEN TIMESTAMP '%s' AND '%s' AND  \\\"__time\\\" BETWEEN TIMESTAMP '%s' AND TIMESTAMP '%s'\" }"
+druid.summaryDatasource.count.query="{\"query\": \"SELECT COUNT(*) AS \\\"total\\\" FROM \\\"druid\\\".\\\"summary-events\\\" WHERE \\\"__time\\\" BETWEEN TIMESTAMP '%s' AND TIMESTAMP '%s'\" }"
+
+#Pipeline Audit Jobs
+
+pipeline_audit {
+	notification {
+		webhook_url = "{{ data_exhaust_webhook_url }}"
+		channel = "{{ data_exhaust_Channel }}"
+		token = "{{ data_exhaust_token }}"
+		slack = true
+		name = "Pipeline Audit"
+	}
+}
+
 

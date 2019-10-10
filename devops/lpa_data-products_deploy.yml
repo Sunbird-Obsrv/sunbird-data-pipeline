@@ -1,8 +1,0 @@
----
-- hosts: spark
-  vars_files:
-    - "{{inventory_dir}}/secrets/dp_secrets.yml"
-  become: yes
-  become_user: "{{ analytics_user }}"
-  roles:
-   - data-products-deploy

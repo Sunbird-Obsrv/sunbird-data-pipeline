@@ -12,6 +12,7 @@ public class TelemetryValidatorConfig {
     private String malformedTopic;
     private String defaultChannel;
     private String metricsTopic;
+    private String schema_version;
 
     public TelemetryValidatorConfig(Config config) {
         successTopic = config.get("output.success.topic.name", "telemetry.valid");
@@ -20,6 +21,8 @@ public class TelemetryValidatorConfig {
         metricsTopic = config.get("output.metrics.topic.name", "telemetry.pipeline_metrics");
         defaultChannel = config.get("default.channel", "org.sunbird");
         schemaPath = config.get("telemetry.schema.path", "/etc/samza-jobs/schemas");
+        schema_version = config.get("telemetry.schema.version", "3.0");
+
     }
 
     public String successTopic() {
@@ -42,7 +45,13 @@ public class TelemetryValidatorConfig {
         return defaultChannel;
     }
 
-    public String schemaPath() { return schemaPath; }
+    public String schemaPath() {
+        return schemaPath;
+    }
+
+    public String schemaVersion() {
+        return schema_version;
+    }
 
     public String jobName() {
         return JOB_NAME;

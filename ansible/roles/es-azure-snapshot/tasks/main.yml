@@ -17,6 +17,8 @@
       {"indices":"*","include_global_state":false}
     headers:
       Content-Type: "application/json"
+  async: 45000
+  poll: 10
 
 - name: Print all snapshots
   uri:

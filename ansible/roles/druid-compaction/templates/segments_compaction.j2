@@ -1,0 +1,104 @@
+#!/bin/bash -e
+
+weekday_compaction_window={{weekday_compaction_window_lookback_days}}
+weekend_compaction_window={{weekend_compaction_window_lookback_days}}
+druid_overlord_host={{druid_overlord_host}}
+druid_overlord_port={{druid_overlord_port}}
+
+function usage {
+  cat << USAGE
+USAGE: $0 [options]
+
+Options:
+--------
+  -h this help info
+  -s start date for compaction (in any format the date command can parse; default: current_date - 2)
+  -e end date for compaction (in any format the date command can parse; default: current_date - 1)
+  -d data source that needs to be run for compaction (mandatory)
+  -H Druid coordinator host
+  -P Druid coordinator port
+
+USAGE
+}
+
+
+while getopts "d:s:e:H:P:h" opt; do
+  case "${opt}" in
+    H)  druid_overlord_host="${OPTARG}"                         ;;
+    P)  druid_overlord_port="$OPTARG"                           ;;
+    s)  compaction_start_date="${OPTARG}"                       ;;
+    e)  compaction_end_date="${OPTARG}"                         ;;
+    d)  datasource="${OPTARG}"                                  ;;
+    h)
+      usage
+      exit 1
+      ;;
+  esac
+done
+shift $((OPTIND -1))
+
+check_mandatory_parameters() {
+  # datasource is a required argument for compaction task
+  if [ -z "$datasource" ]; then
+    echo "datasource parameter -d is required"
+    exit 1
+  fi
+
+  # start_date needs to be specified if end_date is specified
+  if [[ ( ! -z $compaction_end_date ) && ( -z $compaction_start_date )  ]]; then
+    echo "start_date needs to be specified if end_date is specified"
+    exit 1
+  fi
+
+  # start_date cannot be greater than end_date
+  if [[ ( ! -z $compaction_start_date ) && ( ! -z $compaction_end_date ) ]]; then
+    start_date=$(date -d "$compaction_start_date" +%s)
+    end_date=$(date -d "$compaction_end_date" +%s)
+
+    if [ $start_date -ge $end_date ]; then
+      echo "start_date cannot be greater than end_date"
+      exit 1
+    fi
+  fi
+
+  # Default the end_date to current_date - 1 if it is not passed
+  if [ -z "$compaction_end_date" ]; then
+    compaction_end_date=$(date +%F -d "yesterday")
+  fi
+
+  # Default the start_date based on whether the current date is a weekday or weekend
+  if [ -z "$compaction_start_date" ]; then
+    if [ $(date +%u) -lt 6 ]; then
+      compaction_start_date=$(date +%F -d "${weekday_compaction_window} days ago")
+    else
+      compaction_start_date=$(date +%F -d "${weekend_compaction_window} days ago")
+    fi
+  fi
+}
+
+echo "Checking mandatory parameters for the compaction task..."
+check_mandatory_parameters
+
+submit_compaction_task() {
+  compaction_task_url="http://${druid_overlord_host}:${druid_overlord_port}/druid/indexer/v1/task"
+  start_date=$(date -d "$compaction_start_date" +%s)
+  end_date=$(date -d "$compaction_end_date" +%s)
+  diff_days=$(( ( end_date - start_date )/(60*60*24) ))
+  loop_counter=0
+
+  while [ $loop_counter -lt $diff_days ]
+    do
+      current_timestamp=$(date +%s)
+      task_start_date=$(( $start_date + 86400 * $loop_counter ))
+      task_end_date=$(( $start_date + 86400 * ($loop_counter + 1) ))
+
+      echo "Submitting $datasource data source compaction task for $(date -d @"$task_start_date" +%F)"
+      compaction_task_id=compaction_${datasource}_$(date -d @"$task_start_date" +%F)_${current_timestamp}
+
+      compaction_task_payload="{\"type\": \"compact\",\"id\": \"${compaction_task_id}\",\"dataSource\": \"${datasource}\",\"interval\": \"$(date -d @"$task_start_date" +%F)/$(date -d @"$task_end_date" +%F)\"}"
+      curl -w "\n" ${compaction_task_url} -H 'content-type: application/json' -d ''"${compaction_task_payload}"''
+      loop_counter=$(( $loop_counter + 1 ))
+    done
+}
+
+submit_compaction_task

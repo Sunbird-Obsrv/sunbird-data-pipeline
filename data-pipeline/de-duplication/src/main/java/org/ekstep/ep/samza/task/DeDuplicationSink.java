@@ -7,34 +7,36 @@ import org.ekstep.ep.samza.domain.Event;
 
 public class DeDuplicationSink extends BaseSink {
 
-	private JobMetrics metrics;
-	private DeDuplicationConfig config;
+    private DeDuplicationConfig config;
 
-	public DeDuplicationSink(MessageCollector collector, JobMetrics metrics, DeDuplicationConfig config) {
-		super(collector);
-		this.metrics = metrics;
-		this.config = config;
-	}
+    public DeDuplicationSink(MessageCollector collector, JobMetrics metrics, DeDuplicationConfig config) {
+        super(collector, metrics);
+        this.config = config;
+    }
 
-	public void toSuccessTopic(Event event) {
-		toTopic(config.successTopic(), event.did(), event.getJson());
-		metrics.incSuccessCounter();
-		;
-	}
+    public void toSuccessTopic(Event event) {
+        toTopic(config.successTopic(), event.did(), event.getJson());
+        metrics.incSuccessCounter();
+    }
 
-	public void toDuplicateTopic(Event event) {
-		toTopic(config.duplicateTopic(), event.did(), event.getJson());
-		metrics.incFailedCounter();
-	}
+    public void toSuccessTopicIfRedisException(Event event) {
+        toTopic(config.successTopic(), event.did(), event.getJson());
+        metrics.incCacheErrorCounter();
+    }
 
-	public void toMalformedEventsTopic(String message) {
-		toTopic(config.malformedTopic(), null, message);
-		metrics.incFailedCounter();
-	}
+    public void toDuplicateTopic(Event event) {
+        toTopic(config.duplicateTopic(), event.did(), event.getJson());
+        metrics.incDuplicateCounter();
+    }
 
-	public void toErrorTopic(Event event) {
-		toTopic(config.failedTopic(), event.did(), event.getJson());
-		metrics.incErrorCounter();
-	}
+    public void toMalformedEventsTopic(String message) {
+        toTopic(config.malformedTopic(), null, message);
+        metrics.incFailedCounter();
+    }
+
+    public void toErrorTopic(Event event) {
+        toTopic(config.failedTopic(), event.did(), event.getJson());
+        metrics.incErrorCounter();
+    }
 
 }

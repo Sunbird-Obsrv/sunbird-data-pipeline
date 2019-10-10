@@ -1,0 +1,26 @@
+#!/bin/bash
+
+###-------------------------------------------------------------------
+### Created By: kaliraja
+### Description: Find the orphan process and send email, slack alert and kill the pid.
+###-------------------------------------------------------------------
+
+#!/bin/bash
+
+### Email credentials:
+SGUSER=$1
+SGPASS=$2
+env={{ env }}
+
+### Getting the running app id and finding the orphan process:
+app_id=`curl -s http://{{__yarn_host__}}:8088/ws/v1/cluster/apps |  jq -r '.apps.app[] | (select(.state == "RUNNING")| .id)' | xargs | sed 's/ /|/g'`
+orphan_pid=`ps -ef | grep java | grep  -v  -E "$app_id|nodemanager|grep" | awk '{print $2}'`
+
+### Sending the alert if orphan process there:
+if [ ! -z "$orphan_pid" ]
+then
+    kill -9 $orphan_pid
+    text="The following orphan processes [ $orphan_pid ] were running in $(hostname -i) and have killed the same"
+    {{script_path}}/samza_orphan_process_slack.sh critical "$text"
+    curl -d "{{ samza_alert_to_address }}&fromname='Samza-orphan-process-alert'&fromname='Samza-orphan-process-alert'&fromname='Samza-orphan-process-alert'&fromname='Samza-orphan-process-alert'&subject='[$env] [firing-1] - Samza orphan process alert'&text=${text}&from={{ samza_alert_from_address }}&api_user=${SGUSER}&api_key=${SGPASS}" https://api.sendgrid.com/api/mail.send.json
+fi

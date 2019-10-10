@@ -12,3 +12,8 @@
   apt:
     name: zip
     state: present
+
+- name: installing jq
+  apt:
+    name: jq
+    state: present 

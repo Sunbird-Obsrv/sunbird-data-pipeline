@@ -1,32 +1,32 @@
-#- name: Install PostgreSQL client
-#  apt: name={{ item }} update_cache=yes cache_valid_time=36000 state=installed
-#  with_items:
-#    - python-psycopg2
-#    - postgresql-client
-#  ignore_errors: yes
+- name: Install PostgreSQL client
+  apt: name={{ item }} update_cache=yes cache_valid_time=36000 state=installed
+  with_items:
+    - python-psycopg2
+    - postgresql-client
+  ignore_errors: yes
 
-#- name: Ensure database is created
-#  postgresql_db: name="{{ postgres.db_name }}" \
-#                login_host="{{ postgres.db_url }}" \
-#                port="{{ postgres.db_port }}" \
-#                login_user="{{ postgres.db_admin_user }}" \
-#                login_password="{{ db_admin_password }}" \
-#                encoding='UTF-8' \
-#                state=present
-#  tags: createdb
-#
-#- name: Ensure user has access to the database
-#  postgresql_user: name="{{ postgres.db_username }}" \
-#                  password="{{ pgdb_password }}" \
-#                  no_password_changes=true \
-#                  priv=ALL \
-#                  state=present \
-#                  login_host="{{ postgres.db_url }}" \
-#                  port="{{ postgres.db_port }}" \
-#                  login_user="{{ postgres.db_admin_user }}" \
-#                  login_password="{{ db_admin_password }}" \
-#                  db="{{ postgres.db_name }}"
-#  tags: createuser
+- name: Ensure database is created
+  postgresql_db: name="{{ postgres.db_name }}" \
+                login_host="{{ postgres.db_url }}" \
+                port="{{ postgres.db_port }}" \
+                login_user="{{ postgres.db_admin_user }}" \
+                login_password="{{ postgres.db_admin_password }}" \
+                encoding='UTF-8' \
+                state=present
+  tags: createdb
+
+- name: Ensure user has access to the database
+  postgresql_user: name="{{ postgres.db_username }}" \
+                  password="{{ postgres.db_password }}" \
+                  no_password_changes=true \
+                  priv=ALL \
+                  state=present \
+                  login_host="{{ postgres.db_url }}" \
+                  port="{{ postgres.db_port }}" \
+                  login_user="{{ postgres.db_admin_user }}" \
+                  login_password="{{ db_admin_password }}" \
+                  db="{{ postgres.db_name }}"
+  tags: createuser
 
 - name: update {{ env }}_consumer_channel_mapping
   shell: PGPASSWORD="{{ pgdb_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "insert into {{ env }}_consumer_channel_mapping (consumer_id, channel, status, created_by, created_on, updated_on) values ('{{ consumer_id }}', '{{ channel }}', {{ status }}, '{{created_by }}', current_timestamp, current_timestamp) on conflict on constraint {{ env }}_consumer_channel_mapping_pkey DO UPDATE set status=EXCLUDED.status, updated_on= current_timestamp"

@@ -150,6 +150,79 @@ public class EventFixture {
             "    \"dd_processed\": true\n" +
             "  }\n" +
             "}";
+
+	public static final String AUDIT_EVENT ="{\n" +
+			"  \"actor\": {\n" +
+			"    \"type\": \"Consumer\",\n" +
+			"    \"id\": \"89490534-126f-4f0b-82ac-3ff3e49f3468\"\n" +
+			"  },\n" +
+			"  \"eid\": \"AUDIT\",\n" +
+			"  \"edata\": {\n" +
+			"    \"state\": \"Create\",\n" +
+			"    \"props\": [\n" +
+			"      \"firstName\",\n" +
+			"      \"email\",\n" +
+			"      \"emailVerified\",\n" +
+			"      \"id\",\n" +
+			"      \"userId\",\n" +
+			"      \"createdBy\",\n" +
+			"      \"rootOrgId\",\n" +
+			"      \"channel\",\n" +
+			"      \"userType\",\n" +
+			"      \"roles\",\n" +
+			"      \"phoneVerified\",\n" +
+			"      \"isDeleted\",\n" +
+			"      \"createdDate\",\n" +
+			"      \"status\",\n" +
+			"      \"userName\",\n" +
+			"      \"loginId\",\n" +
+			"      \"externalIds\"\n" +
+			"    ]\n" +
+			"  },\n" +
+			"  \"ver\": \"3.0\",\n" +
+			"  \"ets\": 1561739260405,\n" +
+			"  \"context\": {\n" +
+			"    \"channel\": \"0126684405014528002\",\n" +
+			"    \"pdata\": {\n" +
+			"      \"pid\": \"learner-service\",\n" +
+			"      \"ver\": \"2.0.0\",\n" +
+			"      \"id\": \"prod.diksha.learning.service\"\n" +
+			"    },\n" +
+			"    \"env\": \"User\",\n" +
+			"    \"cdata\": [\n" +
+			"      {\n" +
+			"        \"type\": \"User\",\n" +
+			"        \"id\": \"cf2bdab7-0778-4b8e-bfa5-fa7df36a5d19\"\n" +
+			"      },\n" +
+			"      {\n" +
+			"        \"type\": \"SignupType\",\n" +
+			"        \"id\": \"google\"\n" +
+			"      },\n" +
+			"      {\n" +
+			"        \"type\": \"Source\",\n" +
+			"        \"id\": \"android\"\n" +
+			"      },\n" +
+			"      {\n" +
+			"        \"type\": \"Request\",\n" +
+			"        \"id\": \"a5f58660-99c1-11e9-8ef2-cdfa267be9f0\"\n" +
+			"      }\n" +
+			"    ],\n" +
+			"    \"rollup\": {\n" +
+			"      \"l1\": \"0126684405014528002\"\n" +
+			"    }\n" +
+			"  },\n" +
+			"  \"mid\": \"1561739260405.1ab659ef-25b5-4a26-bd94-ff2daef86b62\",\n" +
+			"  \"object\": {\n" +
+			"    \"type\": \"User\",\n" +
+			"    \"id\": \"cf2bdab7-0778-4b8e-bfa5-fa7df36a5d19\"\n" +
+			"  },\n" +
+			"  \"syncts\": 1561739269966,\n" +
+			"  \"@timestamp\": \"2019-06-28T16:27:49.966Z\",\n" +
+			"  \"flags\": {\n" +
+			"    \"tv_processed\": true\n" +
+			"  },\n" +
+			"  \"type\": \"events\"\n" +
+			"}";
 	
 	public static final String ANY_STRING = "Hey Samza, Whats Up?";
 	public static final String EMPTY_JSON = "{}";
