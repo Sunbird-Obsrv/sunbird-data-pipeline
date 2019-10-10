@@ -48,6 +48,10 @@
 - name: Unarchive api artifact
   unarchive: src={{ analytics_api.root }}/analytics-api-1.0-dist.zip dest={{ analytics_api.root }} copy=no group={{ analytics_user }} owner={{ analytics_user }}
   become_user: "{{analytics_user}}"
+    
+- name: Delete slf4j-log4j jar file
+  file: path={{ analytics_api.home }}/lib/org.slf4j.slf4j-log4j12-1.7.16.jar state=absent
+  become_user: "{{analytics_user}}"  
 
 - name: Copy API configuration file
   template: src=conf.j2 dest={{ analytics_api.root }}/{{ env }}.conf mode=755 owner={{ analytics_user }} group={{ analytics_group }}
