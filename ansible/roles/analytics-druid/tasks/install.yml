@@ -22,7 +22,7 @@
         owner={{ druid_user }}
 
 - name: Create tmp dir only for historical nodes
-  file: path={{ druid_historical_tmp_dir }} state=directory mode=0755
+  file: path={{ druid_historical_tmp_dir }} state=directory mode=0777
         owner={{ druid_user }}
   when: druid_role == "historical"
 
