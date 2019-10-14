@@ -109,7 +109,7 @@ druid_broker_processing_threads: 2
 druid_historical_port: 8083
 druid_historical_service: druid/historical
 
-druid_historical_heap_size: 128m
+druid_historical_heap_size: 1048m
 druid_historical_max_direct_size: 800m
 druid_historical_tmp_dir: "{{ druid_default_tmp_dir }}"
 druid_historical_gc_logfile: "{{ druid_gc_logdir }}/gc_historical.log"
@@ -137,7 +137,7 @@ druid_historical_cache_expiry: 3600000
 druid_middlemanager_port: 8091
 druid_middlemanager_service: druid/middlemanager
 
-druid_middlemanager_heap_size: 1048m
+druid_middlemanager_heap_size: 128m
 druid_middlemanager_tmp_dir: "{{ druid_default_tmp_dir }}"
 druid_middlemanager_gc_logdir: "{{ druid_gc_logdir }}/gc.log"
 
