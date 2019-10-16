@@ -65,6 +65,16 @@ public class Event {
         return null;
     }
 
+    public ArrayList<String> isMetaDataChanged() {
+        NullableValue<String> edata_state = telemetry.read("edata.state");
+        NullableValue<ArrayList<String>> edata_props = telemetry.read("edata.props");
+        ArrayList<String> edata_props_list = edata_props.value();
+        if(edata_state.value().equalsIgnoreCase("Update") && null != edata_props_list && !edata_props_list.isEmpty()) {
+           return edata_props_list;
+        }
+        else return null;
+    }
+
 
     @Override
     public String toString() {
