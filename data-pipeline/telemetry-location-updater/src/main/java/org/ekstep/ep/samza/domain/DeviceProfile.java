@@ -115,7 +115,8 @@ public class DeviceProfile {
 
   public DeviceProfile(String countryCode, String country, String stateCode, String state,
                        String city, String districtCustom, String stateCustomName,
-                       String stateCodeCustom, Map<String, String> uaspec, Map<String, String> device_spec, Long first_access) {
+                       String stateCodeCustom, Map<String, String> uaspec, Map<String, String> device_spec, Long first_access,
+                       String userDeclaredDistrict, String userDeclaredState) {
     this.countryCode = countryCode;
     this.country = country;
     this.stateCode = stateCode;
@@ -124,6 +125,8 @@ public class DeviceProfile {
     this.districtCustom = districtCustom;
     this.stateCustomName = stateCustomName;
     this.stateCodeCustom = stateCodeCustom;
+    this.userDeclaredState = userDeclaredState;
+    this.userDeclaredDistrict = userDeclaredDistrict;
     this.uaspec = uaspec;
     this.devicespec = device_spec;
     this.firstaccess = first_access;

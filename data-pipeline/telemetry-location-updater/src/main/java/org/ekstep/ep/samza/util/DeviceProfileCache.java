@@ -49,19 +49,19 @@ public class DeviceProfileCache {
                 }
             }
 
-            if (null != deviceProfile && deviceProfile.isLocationResolved()) {
-                metrics.incCacheHitCounter();
-                return deviceProfile;
-            } else {
-                try {
-                    deviceProfile = getDeviceProfileFromDeviceProfileDB(did);
-                } catch (Exception ex) {
-                    metrics.incDBErrorCount();
-                    LOGGER.error(null, "Reconnecting with Cassandra store due to exception: ", ex);
-                    cassandraConnection.reconnect();
-                    deviceProfile = getDeviceProfileFromDeviceProfileDB(did);
-                }
-            }
+//            if (null != deviceProfile && deviceProfile.isLocationResolved()) {
+//                metrics.incCacheHitCounter();
+//                return deviceProfile;
+//            } else {
+//                try {
+//                    deviceProfile = getDeviceProfileFromDeviceProfileDB(did);
+//                } catch (Exception ex) {
+//                    metrics.incDBErrorCount();
+//                    LOGGER.error(null, "Reconnecting with Cassandra store due to exception: ", ex);
+//                    cassandraConnection.reconnect();
+//                    deviceProfile = getDeviceProfileFromDeviceProfileDB(did);
+//                }
+//            }
 
             if (null != deviceProfile && deviceProfile.isLocationResolved()) {
                 metrics.incDBHitCount();
