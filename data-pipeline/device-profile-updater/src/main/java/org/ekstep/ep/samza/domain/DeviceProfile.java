@@ -35,6 +35,8 @@ public class DeviceProfile {
   private String districtCustom;
   private String stateCodeCustom;
   private String stateCustomName;
+  private String userDeclaredState;
+  private String userDeclaredDistrict;
   private Map<String, String> uaspec;
   private Map<String, String> devicespec;
   private Long firstAccess;
@@ -50,6 +52,8 @@ public class DeviceProfile {
     this.districtCustom = "";
     this.stateCodeCustom = "";
     this.stateCustomName = "";
+    this.userDeclaredState = "";
+    this.userDeclaredDistrict = "";
     this.uaspec = new HashMap<>();
     this.devicespec = new HashMap<>();
     this.firstAccess = 0L;
@@ -65,6 +69,8 @@ public class DeviceProfile {
     values.put("district_custom", DeviceProfile.getValueOrDefault(this.districtCustom, ""));
     values.put("state_custom", DeviceProfile.getValueOrDefault(this.stateCustomName, ""));
     values.put("state_code_custom", DeviceProfile.getValueOrDefault(this.stateCodeCustom, ""));
+    values.put("user_declared_state", DeviceProfile.getValueOrDefault(this.userDeclaredState, ""));
+    values.put("user_declared_district", DeviceProfile.getValueOrDefault(this.userDeclaredDistrict, ""));
     values.put("uaspec", gson.toJson(DeviceProfile.getValueOrDefault(this.uaspec, new HashMap<>())));
     values.put("devicespec", gson.toJson(DeviceProfile.getValueOrDefault(this.devicespec, new HashMap<>())));
     values.put("firstaccess", DeviceProfile.getValueOrDefault(String.valueOf(this.firstAccess), ""));
@@ -80,6 +86,8 @@ public class DeviceProfile {
     this.districtCustom = map.getOrDefault("district_custom", "");
     this.stateCustomName = map.getOrDefault("state_custom", "");
     this.stateCodeCustom = map.getOrDefault("state_code_custom", "");
+    this.userDeclaredState = map.getOrDefault("user_declared_state", "");
+    this.userDeclaredDistrict = map.getOrDefault("user_declared_district", "");
     this.uaspec = gson.fromJson(map.getOrDefault("uaspec", ""), type);
     this.devicespec = gson.fromJson(map.getOrDefault("device_spec", ""), type);
     this.firstAccess = Long.valueOf(map.getOrDefault("first_access", "0"));
