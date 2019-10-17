@@ -175,7 +175,6 @@ public class RedisUpdaterService {
     }
 
     public void updateUserCache(Event event, String userId) {
-        System.out.println(event);
         Map<String, Object> cacheData = new HashMap<>();
         try {
             String data = userDataStoreConnection.get(userId);
@@ -184,7 +183,29 @@ public class RedisUpdaterService {
             }
             cacheData.putAll(getUserSignandLoginType(event));
 
-            if( null != event.isMetaDataChanged() && !event.isMetaDataChanged().isEmpty()) {
+            if (!cacheData.isEmpty())
+                addToCache(userId, gson.toJson(cacheData), userDataStoreConnection);
+
+            String userDetailsFromCache = null;
+            try {
+                userDetailsFromCache = getUserDetailsFromCache(userId);
+            }
+            catch (JedisException ex) {
+                LOGGER.error(null, "Reconnecting with Redis store due to exception: ", ex);
+                redisConnect.resetConnection();
+                try(Jedis redisConn = redisConnect.getConnection(userStoreDb)) {
+                    this.userDataStoreConnection = redisConn;
+                    userDetailsFromCache = getUserDetailsFromCache(userId);
+                }
+            }
+            Map<String, Object> userCacheData = new HashMap<>();
+            if( null != userDetailsFromCache && !userDetailsFromCache.isEmpty()) {
+                userCacheData = gson.fromJson(userDetailsFromCache, mapType);
+            }
+
+            if( userCacheData.containsKey("usersignintype") && !"Anonymous".equals(userCacheData.get("usersignintype"))
+                    && null != event.isMetaDataChanged() && !event.isMetaDataChanged().isEmpty()) {
+
                 Map<String, Object> userMetadataInfoMap;
                 try {
                     userMetadataInfoMap = fetchFallbackUserMetadataFromDB(userId);
@@ -195,14 +216,13 @@ public class RedisUpdaterService {
                 }
 
                 if(!userMetadataInfoMap.isEmpty()) {
-                    cacheData.putAll(userMetadataInfoMap);
-                    System.out.println("cachedata after meta" + cacheData);
+                    userCacheData.putAll(userMetadataInfoMap);
                 }
 
-                if( event.isMetaDataChanged().contains("locationids") &&
-                        !"Anonymous".equalsIgnoreCase(cacheData.get("usersignintype").toString()) && null != cacheData.get("locationids"))
+                if( event.isMetaDataChanged().contains("locationIds") && null != userCacheData.get("locationids"))
                 {
-                    List<String> locationIds = (List<String>) cacheData.get("locationids");
+                    List<String> locationIds = (List<String>) userCacheData.get("locationids");
+
                     Map<String, Object> userLocationMap;
                     try {
                         userLocationMap = fetchFallbackUserLocationFromDB(userId, locationIds);
@@ -214,16 +234,13 @@ public class RedisUpdaterService {
                     }
 
                     if (!userLocationMap.isEmpty()) {
-                        cacheData.putAll(userLocationMap);
+                        userCacheData.putAll(userLocationMap);
                     }
-                    System.out.println("After location" + cacheData);
                 }
             }
 
-
-
-            if (!cacheData.isEmpty())
-                addToCache(userId, gson.toJson(cacheData), userDataStoreConnection);
+            if (!userCacheData.isEmpty())
+                addToCache(userId, gson.toJson(userCacheData), userDataStoreConnection);
 
         } catch (JedisException ex) {
             LOGGER.error("", "Exception when adding to user redis cache", ex);
@@ -254,6 +271,11 @@ public class RedisUpdaterService {
         return  userData;
     }
 
+    private String getUserDetailsFromCache(String userId) {
+        return userDataStoreConnection.get(userId);
+    }
+
+
     private Map<String, Object> fetchFallbackUserMetadataFromDB(String userId) {
         String MetadataQuery = QueryBuilder.select().all()
                 .from(cassandra_db, cassandra_user_table)
@@ -269,7 +291,6 @@ public class RedisUpdaterService {
                 result.put(row.getColumnDefinitions().getName(i),row.getObject(i));
             }
         }
-        System.out.println("1");
         metrics.incUserDbHitCount();
         return result;
     }

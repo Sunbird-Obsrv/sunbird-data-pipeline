@@ -133,62 +133,56 @@ public class EventFixture {
             "}";
 
     public static final String AUDIT_EVENT_METADATA_UPDATED = "{\n" +
-            "  \"actor\": {\n" +
-            "    \"type\": \"Consumer\",\n" +
-            "    \"id\": \"52226956-61d8-4c1b-b115-c660111866d34\"\n" +
-            "  },\n" +
             "  \"eid\": \"AUDIT\",\n" +
+            "  \"ets\": 1571297660511,\n" +
+            "  \"ver\": \"3.0\",\n" +
+            "  \"mid\": \"1571297660511.32f5024a-aa30-4c82-abd8-bb8d8914ed2d\",\n" +
+            "  \"actor\": {\n" +
+            "    \"id\": \"ef70da5a-bb99-4785-b970-1d6d6ee75aad\",\n" +
+            "    \"type\": \"User\"\n" +
+            "  },\n" +
+            "  \"context\": {\n" +
+            "    \"channel\": \"01285019302823526477\",\n" +
+            "    \"pdata\": {\n" +
+            "      \"id\": \"dev.sunbird.portal\",\n" +
+            "      \"pid\": \"learner-service\",\n" +
+            "      \"ver\": \"2.4.0\"\n" +
+            "    },\n" +
+            "    \"env\": \"User\",\n" +
+            "    \"did\": \"bfaf115f65a2086b062735885f4d2f1a\",\n" +
+            "    \"cdata\": [\n" +
+            "      {\n" +
+            "        \"id\": \"1b1392bc-39d8-6e47-d7d6-5781a2f1481a\",\n" +
+            "        \"type\": \"Request\"\n" +
+            "      }\n" +
+            "    ],\n" +
+            "    \"rollup\": {\n" +
+            "      \"l1\": \"01285019302823526477\"\n" +
+            "    }\n" +
+            "  },\n" +
+            "  \"object\": {\n" +
+            "    \"id\": \"52226956-61d8-4c1b-b115-c660111866d3\",\n" +
+            "    \"type\": \"User\"\n" +
+            "  },\n" +
             "  \"edata\": {\n" +
             "    \"state\": \"Update\",\n" +
             "    \"props\": [\n" +
             "      \"firstName\",\n" +
-            "      \"email\",\n" +
-            "      \"locationids\",\n" +
-            "      \"emailVerified\"\n" +
+            "      \"userId\",\n" +
+            "      \"id\",\n" +
+            "      \"externalIds\",\n" +
+            "      \"locationIds\",\n" +
+            "      \"updatedDate\",\n" +
+            "      \"updatedBy\"\n" +
             "    ]\n" +
             "  },\n" +
-            "  \"ver\": \"3.0\",\n" +
-            "  \"ets\": 1561739226844,\n" +
-            "  \"context\": {\n" +
-            "    \"channel\": \"0126684405014528002\",\n" +
-            "    \"pdata\": {\n" +
-            "      \"pid\": \"learner-service\",\n" +
-            "      \"ver\": \"2.0.0\",\n" +
-            "      \"id\": \"prod.diksha.learning.service\"\n" +
-            "    },\n" +
-            "    \"env\": \"User\",\n" +
-            "    \"cdata\": [\n" +
-            "      {\n" +
-            "        \"type\": \"User\",\n" +
-            "        \"id\": \"34881c3a-8b92-4a3c-a982-7f946137cb09\"\n" +
-            "      },\n" +
-            "      {\n" +
-            "        \"type\": \"SignupType\",\n" +
-            "        \"id\": \"google\"\n" +
-            "      },\n" +
-            "      {\n" +
-            "        \"type\": \"Source\",\n" +
-            "        \"id\": \"android\"\n" +
-            "      },\n" +
-            "      {\n" +
-            "        \"type\": \"Request\",\n" +
-            "        \"id\": \"91f3c280-99c1-11e9-956e-6b6ef71ed575\"\n" +
-            "      }\n" +
-            "    ],\n" +
-            "    \"rollup\": {\n" +
-            "      \"l1\": \"0126684405014528002\"\n" +
-            "    }\n" +
-            "  },\n" +
-            "  \"mid\": \"1561739226844.e0048ef8-a01e-4780-8c83-e571f28c53c8\",\n" +
-            "  \"object\": {\n" +
-            "    \"type\": \"User\",\n" +
-            "    \"id\": \"52226956-61d8-4c1b-b115-c660111866d3\"\n" +
-            "  },\n" +
-            "  \"syncts\": 1561739243532,\n" +
-            "  \"@timestamp\": \"2019-06-28T16:27:23.532Z\",\n" +
+            "  \"syncts\": 1571297660521,\n" +
+            "  \"@timestamp\": \"2019-10-17T07:34:20.521Z\",\n" +
             "  \"flags\": {\n" +
-            "    \"tv_processed\": true\n" +
+            "    \"tv_processed\": true,\n" +
+            "    \"dd_processed\": true\n" +
             "  },\n" +
-            "  \"type\": \"events\"\n" +
+            "  \"type\": \"events\",\n" +
+            "  \"ts\": \"2019-10-17T07:34:20.511+0000\"\n" +
             "}";
 }

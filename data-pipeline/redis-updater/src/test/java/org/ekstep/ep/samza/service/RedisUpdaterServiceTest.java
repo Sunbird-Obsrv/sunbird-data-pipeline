@@ -337,8 +337,6 @@ public class RedisUpdaterServiceTest {
             }.getType();
             parsedData = gson.fromJson(cachedData, type);
         }
-        System.out.println("parserd Data");
-        System.out.println(parsedData);
         assertEquals("Self-Signed-In", parsedData.get("usersignintype"));
         assertEquals("NA", parsedData.get("userlogintype"));
     }
@@ -367,11 +365,32 @@ public class RedisUpdaterServiceTest {
     }
 
     @Test
-    public void shouldUpdateCacheWithMetadataChangesAndLocationFORAUDIT() {
+    public void shouldNotUpdateCacheWithMetadataChangesAndLocationFORAUDIT() {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.AUDIT_EVENT_METADATA_UPDATED);
         Gson gson = new Gson();
         String userId = "52226956-61d8-4c1b-b115-c660111866d3";
         jedisMock.set(userId, "{\"channel\":\"dikshacustodian\",\"phoneverified\":false}");
+        RedisUpdaterSource source = new RedisUpdaterSource(envelopeMock);
+        stub(envelopeMock.getSystemStreamPartition()).toReturn(new SystemStreamPartition("kafka", "telemetry.audit", new Partition(1)));
+        redisUpdaterService.process(source, redisUpdaterSinkMock);
+
+        String cachedData = jedisMock.get(userId);
+        Map<String, Object> parsedData = null;
+        if (cachedData != null) {
+            Type type = new TypeToken<Map<String, Object>>() {
+            }.getType();
+            parsedData = gson.fromJson(cachedData, type);
+        }
+        assertEquals(parsedData.get("channel"), "dikshacustodian");
+        verify(cassandraConnectMock, times(0)).find(anyString());
+    }
+
+    @Test
+    public void shouldUpdateCacheWithMetadataChangesAndLocationFORAUDIT() {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.AUDIT_EVENT_METADATA_UPDATED);
+        Gson gson = new Gson();
+        String userId = "52226956-61d8-4c1b-b115-c660111866d3";
+        jedisMock.set(userId, "{\"channel\":\"dikshacustodian\",\"phoneverified\":false,\"usersignintype\":\"Self-Signed-In\",\"userlogintype\":\"NA\"}");
         RedisUpdaterSource source = new RedisUpdaterSource(envelopeMock);
         stub(envelopeMock.getSystemStreamPartition()).toReturn(new SystemStreamPartition("kafka", "telemetry.audit", new Partition(1)));
         redisUpdaterService.process(source, redisUpdaterSinkMock);
