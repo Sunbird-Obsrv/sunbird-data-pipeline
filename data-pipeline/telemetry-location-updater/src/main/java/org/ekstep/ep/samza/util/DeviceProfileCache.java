@@ -64,11 +64,11 @@ public class DeviceProfileCache {
 //            }
 
             if (null != deviceProfile && deviceProfile.isLocationResolved()) {
-                metrics.incDBHitCount();
+                metrics.incCacheHitCounter();
             } else {
                 metrics.incNoDataCount();
             }
-            addDeviceProfileToCache(did, deviceProfile);
+//            addDeviceProfileToCache(did, deviceProfile);
         }
         return deviceProfile;
     }
