@@ -49,26 +49,26 @@ public class DeviceProfileCache {
                 }
             }
 
-            if (null != deviceProfile && deviceProfile.isLocationResolved()) {
-                metrics.incCacheHitCounter();
-                return deviceProfile;
-            } else {
-                try {
-                    deviceProfile = getDeviceProfileFromDeviceProfileDB(did);
-                } catch (Exception ex) {
-                    metrics.incDBErrorCount();
-                    LOGGER.error(null, "Reconnecting with Cassandra store due to exception: ", ex);
-                    cassandraConnection.reconnect();
-                    deviceProfile = getDeviceProfileFromDeviceProfileDB(did);
-                }
-            }
+//            if (null != deviceProfile && deviceProfile.isLocationResolved()) {
+//                metrics.incCacheHitCounter();
+//                return deviceProfile;
+//            } else {
+//                try {
+//                    deviceProfile = getDeviceProfileFromDeviceProfileDB(did);
+//                } catch (Exception ex) {
+//                    metrics.incDBErrorCount();
+//                    LOGGER.error(null, "Reconnecting with Cassandra store due to exception: ", ex);
+//                    cassandraConnection.reconnect();
+//                    deviceProfile = getDeviceProfileFromDeviceProfileDB(did);
+//                }
+//            }
 
             if (null != deviceProfile && deviceProfile.isLocationResolved()) {
-                metrics.incDBHitCount();
+                metrics.incCacheHitCounter();
             } else {
                 metrics.incNoDataCount();
             }
-            addDeviceProfileToCache(did, deviceProfile);
+//            addDeviceProfileToCache(did, deviceProfile);
         }
         return deviceProfile;
     }
@@ -81,20 +81,27 @@ public class DeviceProfileCache {
         DeviceProfile deviceProfile = new DeviceProfile();
         String query =
                 String.format("SELECT device_id, country_code, country, state_code, state, city, state_custom, " +
-                                "state_code_custom, district_custom,device_id, device_spec, uaspec, first_access FROM %s.%s WHERE device_id = '%s'",
+                                "state_code_custom, district_custom,device_id, device_spec, uaspec, first_access, user_declared_state, user_declared_district FROM %s.%s WHERE device_id = '%s'",
                         cassandra_db, cassandra_table, deviceId);
         Row result = cassandraConnection.findOne(query);
         if (null != result) {
             String locationState = result.getString("state");
             if (locationState != null && !locationState.isEmpty()) {
-                deviceProfile.setCountryCode(result.getString("country_code"));
-                deviceProfile.setCountry(result.getString("country"));
-                deviceProfile.setStateCode(result.getString("state_code"));
-                deviceProfile.setState(result.getString("state"));
-                deviceProfile.setCity(result.getString("city"));
-                deviceProfile.setDistrictCustom(result.getString("district_custom"));
-                deviceProfile.setStateCustomName(result.getString("state_custom"));
-                deviceProfile.setStateCodeCustom(result.getString("state_code_custom"));
+                if(!result.isNull("user_declared_district"))
+                {
+                    deviceProfile.setUserDeclaredDistrict(result.getString("user_declared_district"));
+                    deviceProfile.setUserDeclaredState(result.getString("user_declared_state"));
+                }
+                else {
+                    deviceProfile.setCountryCode(result.getString("country_code"));
+                    deviceProfile.setCountry(result.getString("country"));
+                    deviceProfile.setStateCode(result.getString("state_code"));
+                    deviceProfile.setState(result.getString("state"));
+                    deviceProfile.setCity(result.getString("city"));
+                    deviceProfile.setDistrictCustom(result.getString("district_custom"));
+                    deviceProfile.setStateCustomName(result.getString("state_custom"));
+                    deviceProfile.setStateCodeCustom(result.getString("state_code_custom"));
+                }
                 if(!result.isNull("device_spec"))
                 deviceProfile.setDevicespec(result.getMap("device_spec", String.class, String.class));
                 if(!result.isNull("uaspec"))

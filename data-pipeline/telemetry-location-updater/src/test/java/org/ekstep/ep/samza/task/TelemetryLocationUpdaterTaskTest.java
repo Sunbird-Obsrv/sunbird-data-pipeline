@@ -225,7 +225,8 @@ public class TelemetryLocationUpdaterTaskTest {
 		DeviceProfile deviceProfile = new DeviceProfile
 				("IN", "India", "KA", "Karnataka",
 						"Bangalore", "Banglore-Custom", "Karnatak-Custom",
-						"KA-Custom", uaspec, device_spec, first_access);
+						"KA-Custom", uaspec, device_spec, first_access,"Bangalore",
+						"Karnataka");
 		stub(deviceProfileCacheMock.getDeviceProfileForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(deviceProfile);
 		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		Type mapType = new TypeToken<Map<String, Object>>() {
@@ -237,14 +238,16 @@ public class TelemetryLocationUpdaterTaskTest {
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
 				assertEquals("3.0", outputEvent.get("ver"));
-				assertTrue(outputMessage.contains("\"countrycode\":\"IN\""));
-				assertTrue(outputMessage.contains("\"country\":\"India\""));
-				assertTrue(outputMessage.contains("\"statecode\":\"KA\""));
-				assertTrue(outputMessage.contains("\"state\":\"Karnataka\""));
-				assertTrue(outputMessage.contains("\"city\":\"Bangalore\""));
-				assertTrue(outputMessage.contains("\"statecustomcode\":\"KA-Custom\""));
-				assertTrue(outputMessage.contains("\"districtcustom\":\"Banglore-Custom\""));
-				assertTrue(outputMessage.contains("\"statecustomname\":\"Karnatak-Custom\""));
+				assertFalse(outputMessage.contains("\"countrycode\":\"IN\""));
+				assertFalse(outputMessage.contains("\"country\":\"India\""));
+				assertFalse(outputMessage.contains("\"statecode\":\"KA\""));
+				assertFalse(outputMessage.contains("\"state\":\"Karnataka\""));
+				assertFalse(outputMessage.contains("\"city\":\"Bangalore\""));
+				assertFalse(outputMessage.contains("\"statecustomcode\":\"KA-Custom\""));
+				assertFalse(outputMessage.contains("\"districtcustom\":\"Banglore-Custom\""));
+				assertFalse(outputMessage.contains("\"statecustomname\":\"Karnatak-Custom\""));
+				assertTrue(outputMessage.contains("\"userDeclaredState\":\"Karnataka\""));
+				assertTrue(outputMessage.contains("\"userDeclaredDistrict\":\"Bangalore\""));
 				assertTrue(outputMessage.contains("\"iso3166statecode\":\"IN-KA\""));
 				assertTrue(outputMessage.contains("\"agent\":\"Mozilla\""));
 				assertTrue(outputMessage.contains("\"ver\":\"5.0\""));
