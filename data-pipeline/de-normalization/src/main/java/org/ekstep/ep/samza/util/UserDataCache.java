@@ -60,14 +60,25 @@ public class UserDataCache extends DataCache {
                 userDataMap = getUserDataFromCache(userId);
             }
         }
+        userDataMap = getUserSigninLoginDetails(userDataMap);
 
-            if (!userDataMap.isEmpty()) {
+        if (!userDataMap.isEmpty()) {
                 addToCache(userId, gson.toJson(userDataMap));
             }
         if (userDataMap.size() <=2) {  //Since SigninType and LoginType are default values, incrementing no data metric only if other user details are not present
             metrics.incNoDataCount();
         }
         return userDataMap;
+    }
+
+    private Map<String, Object> getUserSigninLoginDetails(Map<String, Object> userDataMap) {
+        Map<String,Object> userMap = null!=userDataMap ? userDataMap : new HashMap<>();
+        if (!userMap.containsKey("usersignintype")) {
+            userMap.put("usersignintype", userSignInTypeDefault);
+        }
+        if (!userMap.containsKey("userlogintype"))
+            userMap.put("userlogintype", userLoginInTypeDefault);
+        return userMap;
     }
 
     private Map<String, Object> getUserDataFromCache(String userId) {
