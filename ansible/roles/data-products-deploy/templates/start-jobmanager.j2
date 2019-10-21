@@ -18,24 +18,21 @@ today=$(date "+%Y-%m-%d")
 ## kill the process identifier if it is running.
 killProcess()
 {
-PID=$1	
-if [[ "" !=  "$PID" ]]; then
-  echo "Killing job manager process identifier $PID" >> "$SERVICE_LOGS/$today-job-manager.log"	
-  kill -9 $PID # Kill the process id
-fi
+    PID=$1
+    if [[ "" !=  "$PID" ]]; then
+        echo "Killing job manager process identifier $PID" >> "$SERVICE_LOGS/$today-job-manager.log"
+        kill -9 $PID # Kill the process id
+    fi
 }
 
 runJobManager()
 {
-## Job to run daily
-
-cd {{ analytics.home }}/scripts
-source model-config.sh
-job_config=$(config 'job-manager')
-echo "Starting the job manager" >> "$SERVICE_LOGS/$today-job-manager.log"
-echo "config: $job_config" >> "$SERVICE_LOGS/$today-job-manager.log"
-#nohup java $heap_conf_str -cp "$SPARK_HOME/jars/*:$MODELS_HOME/*" -Dconfig.file=$MODELS_HOME/{{ env }}.conf org.ekstep.analytics.job.JobManager --config "$job_config" >> $SERVICE_LOGS/$today-job-manager.log 2>&1 &
-nohup java $heap_conf_str -cp "$SPARK_HOME/jars/*:$MODELS_HOME/*:$JM_HOME/lib/*" -Dconfig.file=$MODELS_HOME/{{ env }}.conf org.ekstep.analytics.job.JobManager --config "$job_config" >> $SERVICE_LOGS/$today-job-manager.log 2>&1 &
+    cd {{ analytics.home }}/scripts
+    source model-config.sh
+    job_config=$(config 'job-manager')
+    echo "Starting the job manager" >> "$SERVICE_LOGS/$today-job-manager.log"
+    echo "config: $job_config" >> "$SERVICE_LOGS/$today-job-manager.log"
+    nohup java $heap_conf_str -cp "$SPARK_HOME/jars/*:$MODELS_HOME/*:$JM_HOME/lib/*" -Dconfig.file=$MODELS_HOME/{{ env }}.conf org.ekstep.analytics.job.JobManager --config "$job_config" >> $SERVICE_LOGS/$today-job-manager.log 2>&1 &
 }
 
 # Before starting Job Manager
@@ -43,18 +40,17 @@ nohup java $heap_conf_str -cp "$SPARK_HOME/jars/*:$MODELS_HOME/*:$JM_HOME/lib/*"
 # if yes, Then kill it first
 # if no, Just run the job manager
 export pidList=`ps aux | grep $process_name | grep -v grep  | awk '{print $2}'`
-echo "Job manager pid List are $pidList" >> "$SERVICE_LOGS/$today-job-manager.log"	
-
+echo "Job manager pid List are $pidList" >> "$SERVICE_LOGS/$today-job-manager.log"
 if [[ "" != "$pidList" ]]; then
-#Loop through job-manager pidList and kill the process
-#Exlude grep pid usign - grep -v grep
-	for pid in $pidList;
- 		do killProcess $pid ; 
-	done
-	runJobManager
+    #Loop through job-manager pidList and kill the process
+    #Exlude grep pid usign - grep -v grep
+    for pid in $pidList;
+    do killProcess $pid ;
+    done
+    runJobManager
 else
-	runJobManager
-
-fi	
+    runJobManager
+    
+fi
 
 
