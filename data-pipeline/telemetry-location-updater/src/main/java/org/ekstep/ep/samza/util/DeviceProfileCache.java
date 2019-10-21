@@ -7,6 +7,7 @@ import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.DeviceProfile;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
+import java.util.Map;
 
 
 public class DeviceProfileCache {
@@ -74,7 +75,10 @@ public class DeviceProfileCache {
     }
 
     public DeviceProfile getDeviceProfileFromCache(String deviceId) {
-        return new DeviceProfile().fromMap(redisConnection.hgetAll(deviceId));
+        Map<String,String> data = redisConnection.hgetAll(deviceId);
+        DeviceProfile deviceProfile= new DeviceProfile().fromMap(data);
+        if(data.size()>0) { return deviceProfile; }
+        else { return null; }
     }
 
     public DeviceProfile getDeviceProfileFromDeviceProfileDB(String deviceId) {

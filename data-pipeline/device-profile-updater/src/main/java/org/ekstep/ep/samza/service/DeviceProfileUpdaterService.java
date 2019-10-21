@@ -69,6 +69,7 @@ public class DeviceProfileUpdaterService {
                 sink.deviceCacheUpdateSuccess();
 
                 sink.success();
+                LOGGER.info(deviceId,"Updated successfully");
             }
             else { sink.failed(); }
         }

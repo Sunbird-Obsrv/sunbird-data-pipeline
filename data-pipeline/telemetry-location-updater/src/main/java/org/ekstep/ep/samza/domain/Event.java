@@ -106,8 +106,8 @@ public class Event {
 	public void addDeviceProfile(DeviceProfile deviceProfile) {
 		Map<String, Object> ldata = new HashMap<>();
 		if(!deviceProfile.getUserDeclaredDistrict().isEmpty()) {
-			ldata.put("userDeclaredState", deviceProfile.getUserDeclaredState());
-			ldata.put("userDeclaredDistrict", deviceProfile.getUserDeclaredDistrict());
+			ldata.put("state", deviceProfile.getUserDeclaredState());
+			ldata.put("districtcustom", deviceProfile.getUserDeclaredDistrict());
 		}
 		else {
 			ldata.put("countrycode", deviceProfile.getCountryCode());
