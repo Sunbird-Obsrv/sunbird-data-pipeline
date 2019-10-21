@@ -87,6 +87,11 @@ index_content_model_druid:
     hour: 1
     minute: 00
 
+run_druid-query_processor:
+  druid-query-processor:
+    hour: 04
+    minute: 30
+
 service:
   search:
     url: http://{{groups['search1'][0]}}:9000
