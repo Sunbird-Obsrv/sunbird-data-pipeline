@@ -13,8 +13,10 @@ export heap_conf_str={{ spark.heap_conf_str }}
 #Process Name
 export process_name=job-manager
 
+cd {{ analytics.home }}/scripts
+source model-config.sh
 today=$(date "+%Y-%m-%d")
-job_config=$(config 'job-manager')
+
 
 ## kill the process identifier if it is running.
 killProcess()
@@ -29,8 +31,6 @@ fi
 runJobManager()
 {
 ## Job to run daily
-cd {{ analytics.home }}/scripts
-source model-config.sh
 echo "Starting the job manager" >> "$SERVICE_LOGS/$today-job-manager.log"
 echo "config: $job_config" >> "$SERVICE_LOGS/$today-job-manager.log"
 #nohup java $heap_conf_str -cp "$SPARK_HOME/jars/*:$MODELS_HOME/*" -Dconfig.file=$MODELS_HOME/{{ env }}.conf org.ekstep.analytics.job.JobManager --config "$job_config" >> $SERVICE_LOGS/$today-job-manager.log 2>&1 &
