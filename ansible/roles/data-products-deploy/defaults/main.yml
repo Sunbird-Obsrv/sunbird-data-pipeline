@@ -87,7 +87,7 @@ index_content_model_druid:
     hour: 1
     minute: 00
 
-run_druid-query_processor:
+run_druid_query_processor:
   druid-query-processor:
     hour: 04
     minute: 30
