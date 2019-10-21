@@ -41,14 +41,16 @@ nohup java $heap_conf_str -cp "$SPARK_HOME/jars/*:$MODELS_HOME/*:$JM_HOME/lib/*"
 # check any running job Manager existes
 # if yes, Then kill it first
 # if no, Just run the job manager
-pidList = `ps aux | grep $process_name | grep -v grep  | awk '{print $2}'`
+export pidList= `ps aux | grep $process_name | grep -v grep  | awk '{print $2}'`
+echo "Job manager pid List are $pidList" >> "$SERVICE_LOGS/$today-job-manager.log"	
 
-if [[ "" != "$PID" ]]; then
+if [[ "" != "$pidList" ]]; then
 #Loop through job-manager pidList and kill the process
 #Exlude grep pid usign - grep -v grep
 	for pid in $pidList;
  		do killProcess $pid ; 
 	done
+	runJobManager
 else
 	runJobManager
 
