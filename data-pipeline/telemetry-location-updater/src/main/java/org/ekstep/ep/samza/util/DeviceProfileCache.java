@@ -76,8 +76,7 @@ public class DeviceProfileCache {
 
     public DeviceProfile getDeviceProfileFromCache(String deviceId) {
         Map<String,String> data = redisConnection.hgetAll(deviceId);
-        DeviceProfile deviceProfile= new DeviceProfile().fromMap(data);
-        if(data.size()>0) { return deviceProfile; }
+        if(data.size()>0) { return new DeviceProfile().fromMap(data); }
         else { return null; }
     }
 

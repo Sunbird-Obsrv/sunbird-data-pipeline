@@ -237,7 +237,6 @@ public class TelemetryLocationUpdaterTaskTest {
 				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-				System.out.println(outputMessage);
 				assertEquals("3.0", outputEvent.get("ver"));
 				assertFalse(outputMessage.contains("\"countrycode\":\"IN\""));
 				assertFalse(outputMessage.contains("\"country\":\"India\""));
