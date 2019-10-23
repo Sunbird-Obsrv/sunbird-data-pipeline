@@ -241,13 +241,11 @@ public class TelemetryLocationUpdaterTaskTest {
 				assertFalse(outputMessage.contains("\"countrycode\":\"IN\""));
 				assertFalse(outputMessage.contains("\"country\":\"India\""));
 				assertFalse(outputMessage.contains("\"statecode\":\"KA\""));
-				assertFalse(outputMessage.contains("\"state\":\"Karnataka\""));
 				assertFalse(outputMessage.contains("\"city\":\"Bangalore\""));
 				assertFalse(outputMessage.contains("\"statecustomcode\":\"KA-Custom\""));
-				assertFalse(outputMessage.contains("\"districtcustom\":\"Banglore-Custom\""));
 				assertFalse(outputMessage.contains("\"statecustomname\":\"Karnatak-Custom\""));
-				assertTrue(outputMessage.contains("\"userDeclaredState\":\"Karnataka\""));
-				assertTrue(outputMessage.contains("\"userDeclaredDistrict\":\"Bangalore\""));
+				assertTrue(outputMessage.contains("\"state\":\"Karnataka\""));
+				assertTrue(outputMessage.contains("\"districtcustom\":\"Bangalore\""));
 				assertTrue(outputMessage.contains("\"iso3166statecode\":\"IN-KA\""));
 				assertTrue(outputMessage.contains("\"agent\":\"Mozilla\""));
 				assertTrue(outputMessage.contains("\"ver\":\"5.0\""));
