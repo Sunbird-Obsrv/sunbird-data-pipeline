@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.service;
 
+import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.google.gson.Gson;
@@ -175,80 +176,55 @@ public class RedisUpdaterService {
     }
 
     public void updateUserCache(Event event, String userId) {
-        Map<String, Object> cacheData = new HashMap<>();
+        Map<String, Object> userSignInandLogInCacheData = new HashMap<>();
+        Map<String, Object> userCacheData = null;
         try {
             String data = userDataStoreConnection.get(userId);
             if (data != null && !data.isEmpty()) {
-                cacheData = gson.fromJson(data, mapType);
+                userSignInandLogInCacheData = gson.fromJson(data, mapType);
             }
-            cacheData.putAll(getUserSignandLoginType(event));
+            userSignInandLogInCacheData.putAll(getUserSignandLoginType(event));
 
-            if (!cacheData.isEmpty())
-                addToCache(userId, gson.toJson(cacheData), userDataStoreConnection);
+            if (!userSignInandLogInCacheData.isEmpty())
+                addToCache(userId, gson.toJson(userSignInandLogInCacheData), userDataStoreConnection);
 
-            String userDetailsFromCache = null;
             try {
-                userDetailsFromCache = getUserDetailsFromCache(userId);
+                userCacheData = getUserDetailsFromCache(userId);
             }
             catch (JedisException ex) {
                 LOGGER.error(null, "Reconnecting with Redis store due to exception: ", ex);
                 redisConnect.resetConnection();
                 try(Jedis redisConn = redisConnect.getConnection(userStoreDb)) {
                     this.userDataStoreConnection = redisConn;
-                    userDetailsFromCache = getUserDetailsFromCache(userId);
+                    userCacheData = getUserDetailsFromCache(userId);
                 }
             }
-            Map<String, Object> userCacheData = new HashMap<>();
-            if( null != userDetailsFromCache && !userDetailsFromCache.isEmpty()) {
-                userCacheData = gson.fromJson(userDetailsFromCache, mapType);
-            }
-
             if( userCacheData.containsKey("usersignintype") && !"Anonymous".equals(userCacheData.get("usersignintype"))
-                    && null != event.isMetaDataChanged() && !event.isMetaDataChanged().isEmpty()) {
+                    && null != event.checkIfUserMetadataChanged() && !event.checkIfUserMetadataChanged().isEmpty()) {
+                Map<String, Object> userMetadataInfoMapFromUserDB;
+                userMetadataInfoMapFromUserDB = getUserMetaDataInfoFromUserDB(userId);
+                if(!userMetadataInfoMapFromUserDB.isEmpty())
+                    userCacheData.putAll(userMetadataInfoMapFromUserDB);
 
-                Map<String, Object> userMetadataInfoMap;
-                try {
-                    userMetadataInfoMap = fetchFallbackUserMetadataFromDB(userId);
-                } catch (Exception ex) {
-                    metrics.incUserDBErrorCount();
-                    cassandraConnection.reconnectCluster();
-                    userMetadataInfoMap = fetchFallbackUserMetadataFromDB(userId);
-                }
-
-                if(!userMetadataInfoMap.isEmpty()) {
-                    userCacheData.putAll(userMetadataInfoMap);
-                }
-
-                if( event.isMetaDataChanged().contains("locationIds") && null != userCacheData.get("locationids"))
+                if( event.checkIfUserMetadataChanged().contains("locationIds") && null != userCacheData.get("locationids"))
                 {
                     List<String> locationIds = (List<String>) userCacheData.get("locationids");
+                    Map<String, Object> userLocationMapFromlocationDB;
+                    userLocationMapFromlocationDB = getLocationDetailsFromlocationDB(userId, locationIds);
 
-                    Map<String, Object> userLocationMap;
-                    try {
-                        userLocationMap = fetchFallbackUserLocationFromDB(userId, locationIds);
-                    } catch (Exception ex) {
-
-                        metrics.incUserDBErrorCount();
-                        cassandraConnection.reconnectCluster();
-                        userLocationMap = fetchFallbackUserLocationFromDB(userId, locationIds);
-                    }
-
-                    if (!userLocationMap.isEmpty()) {
-                        userCacheData.putAll(userLocationMap);
-                    }
+                    if (!userLocationMapFromlocationDB.isEmpty())
+                        userCacheData.putAll(userLocationMapFromlocationDB);
                 }
+                if (!userCacheData.isEmpty())
+                    addToCache(userId, gson.toJson(userCacheData), userDataStoreConnection);
             }
-
-            if (!userCacheData.isEmpty())
-                addToCache(userId, gson.toJson(userCacheData), userDataStoreConnection);
-
         } catch (JedisException ex) {
             LOGGER.error("", "Exception when adding to user redis cache", ex);
             redisConnect.resetConnection();
             try (Jedis redisConn = redisConnect.getConnection(userStoreDb)) {
-                this.dialCodeStoreConnection = redisConn;
-                if (null != cacheData)
-                    addToCache(userId, gson.toJson(cacheData), userDataStoreConnection);
+                this.userDataStoreConnection = redisConn;
+                if (null != userCacheData)
+                    addToCache(userId, gson.toJson(userCacheData), userDataStoreConnection);
             }
         }
 
@@ -271,10 +247,41 @@ public class RedisUpdaterService {
         return  userData;
     }
 
-    private String getUserDetailsFromCache(String userId) {
-        return userDataStoreConnection.get(userId);
+    private Map<String, Object> getUserDetailsFromCache(String userId) {
+
+        Map<String, Object> userCacheData = new HashMap<>();
+        String data = userDataStoreConnection.get(userId);
+        if( null != data && !data.isEmpty()) {
+            userCacheData = gson.fromJson(data, mapType);
+        }
+        return userCacheData;
     }
 
+    private Map<String, Object> getUserMetaDataInfoFromUserDB(String userId) {
+        Map<String, Object> userMetadataInfoMap = null;
+        try {
+            userMetadataInfoMap = fetchFallbackUserMetadataFromDB(userId);
+        } catch (Exception ex) {
+            metrics.incUserDBErrorCount();
+            cassandraConnection.reconnectCluster();
+            userMetadataInfoMap = fetchFallbackUserMetadataFromDB(userId);
+        }
+
+        return userMetadataInfoMap;
+    }
+
+    private Map<String, Object> getLocationDetailsFromlocationDB(String userId, List<String> locationIds) {
+        Map<String, Object> userLocationMap = null;
+        try {
+            userLocationMap = fetchFallbackUserLocationFromDB(userId, locationIds);
+        } catch (Exception ex) {
+
+            metrics.incUserDBErrorCount();
+            cassandraConnection.reconnectCluster();
+            userLocationMap = fetchFallbackUserLocationFromDB(userId, locationIds);
+        }
+        return userLocationMap;
+    }
 
     private Map<String, Object> fetchFallbackUserMetadataFromDB(String userId) {
         String MetadataQuery = QueryBuilder.select().all()
@@ -286,9 +293,10 @@ public class RedisUpdaterService {
         Map<String, Object> result = new HashMap<>();
         if(rowSet.size() > 0) {
             Row row= rowSet.get(0);
-            int count = row.getColumnDefinitions().size();
-            for(int i=0; i<count;i++){
-                result.put(row.getColumnDefinitions().getName(i),row.getObject(i));
+            ColumnDefinitions columnDefinitions = row.getColumnDefinitions();
+            int columnCount = columnDefinitions.size();
+            for(int i=0; i<columnCount;i++){
+                result.put(columnDefinitions.getName(i),row.getObject(i));
             }
         }
         metrics.incUserDbHitCount();

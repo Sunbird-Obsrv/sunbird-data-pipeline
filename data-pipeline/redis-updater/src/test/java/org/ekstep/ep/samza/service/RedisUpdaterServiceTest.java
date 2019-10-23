@@ -330,7 +330,6 @@ public class RedisUpdaterServiceTest {
         redisUpdaterService.process(source, redisUpdaterSinkMock);
 
         String cachedData = jedisMock.get(userId);
-        System.out.println(cachedData);
         Map<String, Object> parsedData = null;
         if (cachedData != null) {
             Type type = new TypeToken<Map<String, Object>>() {

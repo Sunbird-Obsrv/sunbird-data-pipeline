@@ -65,7 +65,7 @@ public class Event {
         return null;
     }
 
-    public ArrayList<String> isMetaDataChanged() {
+    public ArrayList<String> checkIfUserMetadataChanged() {
         NullableValue<String> edata_state = telemetry.read("edata.state");
         NullableValue<ArrayList<String>> edata_props = telemetry.read("edata.props");
         ArrayList<String> edata_props_list = edata_props.value();
