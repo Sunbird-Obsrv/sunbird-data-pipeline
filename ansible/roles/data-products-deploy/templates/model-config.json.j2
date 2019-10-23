@@ -2286,6 +2286,27 @@
     "appName": "Assessment Dashboard Metrics",
     "deviceMapping": false
   },
+  "admin-user-reports":{
+    "search": {
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.job.StateAdminReportJob",
+    "modelParams": {
+      "sparkCassandraConnectionHost": "'$sunbirdPlatformCassandraHost'",
+      "sparkElasticsearchConnectionHost": "'$sunbirdPlatformElasticsearchHost'"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Admin User Reports",
+    "deviceMapping": false
+  },
   "content-rating-updater": {
     "search": {
       "type": "none"
