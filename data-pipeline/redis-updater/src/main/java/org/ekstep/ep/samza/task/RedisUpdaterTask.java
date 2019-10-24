@@ -51,7 +51,6 @@ public class RedisUpdaterTask implements StreamTask, InitableTask, WindowableTas
     public void init(Config config, TaskContext context) {
         metrics = new JobMetrics(context, JOB_NAME);
         redisConnect = new RedisConnect(config);
-        cassandraConnect = new CassandraConnect(config);
         service = new RedisUpdaterService(config, redisConnect, cassandraConnect, metrics);
         metricsTopic = config.get("output.metrics.topic.name");
     }
