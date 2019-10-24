@@ -48,7 +48,6 @@ public class RedisUpdaterServiceTest {
         redisUpdaterSinkMock = mock(RedisUpdaterSink.class);
         configMock = mock(Config.class);
         cassandraConnectMock = mock(CassandraConnect.class);
-//        cassandraConnectMock = new CassandraConnect(Arrays.asList("localhost"),9042);
         jobMetricsMock = mock(JobMetrics.class);
 
         stub(redisConnectMock.getConnection(contentStoreId)).toReturn(jedisMock);

@@ -76,9 +76,8 @@ public class RedisUpdaterService {
         if (auditTopic.equalsIgnoreCase(source.getSystemStreamPartition().getStream())) {
             Event event = source.getEvent();
             String userId = event.objectUserId();
-            if(null != userId)
-            {
-                updateUserCache(event,userId);
+            if (null != userId) {
+                updateUserCache(event, userId);
             }
             return;
         } else {
@@ -184,28 +183,26 @@ public class RedisUpdaterService {
             }
             userCacheData.putAll(getUserSignandLoginType(event));
 
+            ArrayList<String> userUpdatedList = event.getUserMetdataUpdatedList();
+            if (userCacheData.containsKey("usersignintype") && !"Anonymous".equals(userCacheData.get("usersignintype"))
+                    && null != userUpdatedList && !userUpdatedList.isEmpty()) {
+
+                Map<String, Object> userMetadataInfoMap = getUserMetaDataInfoFromUserDB(userId);
+                if (!userMetadataInfoMap.isEmpty())
+                    userCacheData.putAll(userMetadataInfoMap);
+
+                if (userUpdatedList.contains("locationIds") && null != userCacheData.get("locationids")) {
+
+                    List<String> locationIds = (List<String>) userCacheData.get("locationids");
+                    Map<String, Object> userLocationMap = getLocationDetailsFromlocationDB(userId, locationIds);
+
+                    if (!userLocationMap.isEmpty())
+                        userCacheData.putAll(userLocationMap);
+                }
+            }
             if (!userCacheData.isEmpty())
                 addToCache(userId, gson.toJson(userCacheData), userDataStoreConnection);
 
-            if( userCacheData.containsKey("usersignintype") && !"Anonymous".equals(userCacheData.get("usersignintype"))
-                    && null != event.getUserMetdataUpdatedList() && !event.getUserMetdataUpdatedList().isEmpty()) {
-                Map<String, Object> userMetadataInfoMapFromUserDB;
-                userMetadataInfoMapFromUserDB = getUserMetaDataInfoFromUserDB(userId);
-                if(!userMetadataInfoMapFromUserDB.isEmpty())
-                    userCacheData.putAll(userMetadataInfoMapFromUserDB);
-                if( event.getUserMetdataUpdatedList().contains("locationIds") && null != userCacheData.get("locationids"))
-                {
-                    List<String> locationIds = (List<String>) userCacheData.get("locationids");
-                    Map<String, Object> userLocationMapFromlocationDB;
-                    userLocationMapFromlocationDB = getLocationDetailsFromlocationDB(userId, locationIds);
-
-                    if (!userLocationMapFromlocationDB.isEmpty())
-                        userCacheData.putAll(userLocationMapFromlocationDB);
-                }
-
-                if (!userCacheData.isEmpty())
-                    addToCache(userId, gson.toJson(userCacheData), userDataStoreConnection);
-            }
         } catch (JedisException ex) {
             LOGGER.error("", "Exception when adding to user redis cache", ex);
             redisConnect.resetConnection();
