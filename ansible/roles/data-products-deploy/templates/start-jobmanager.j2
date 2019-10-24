@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 export SPARK_HOME={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7
 export MODELS_HOME={{ analytics.home }}/models
 export DP_LOGS={{ analytics.home }}/logs/data-products
@@ -12,33 +11,31 @@ export azure_storage_secret={{ azure_storage_secret }}
 export heap_conf_str={{ spark.heap_conf_str }}
 today=$(date "+%Y-%m-%d")
 
-## kill the process identifier if it is running.
 kill_job_manager()
 {
-    kill $(ps aux | grep 'job-manager' | grep -v grep | awk '{print $2}')
+    kill "$(ps aux | grep 'job-manager' | grep -v grep | awk '{print $2}')"
     echo "Job manager kill is invoked" >> "$SERVICE_LOGS/$today-job-manager.log"
 }
 
 start_job_manager()
-{	
-	kill_job_manager
+{
+    kill_job_manager # Before starting the job, We are killing the job-manager
     cd {{ analytics.home }}/scripts
     source model-config.sh
     job_config=$(config 'job-manager')
     echo "Starting the job manager" >> "$SERVICE_LOGS/$today-job-manager.log"
     echo "config: $job_config" >> "$SERVICE_LOGS/$today-job-manager.log"
     nohup java $heap_conf_str -cp "$SPARK_HOME/jars/*:$MODELS_HOME/*:$JM_HOME/lib/*" -Dconfig.file=$MODELS_HOME/{{ env }}.conf org.ekstep.analytics.job.JobManager --config "$job_config" >> $SERVICE_LOGS/$today-job-manager.log 2>&1 &
+    
+    pid=$(ps aux | grep 'job-manager' | grep -v grep | awk '{print $2}') # Once Job is started just we are making whether job is running or not.
+    if [[ ! -z "$pid" ]]; then
+        echo "Job manager is started successfully" >> "$SERVICE_LOGS/$today-job-manager.log"
+    else
+        echo "Job manager fails to start" >> "$SERVICE_LOGS/$today-job-manager.log"
+    fi
 }
-
-is_job_manager_running()
-{
- pid=`ps aux | grep 'job-manager' | grep -v grep  | awk '{print $2}'`
- if [[ ! -z "$pid" ]]; then
- 	return true
- else
- 	return false
-}
-
-
-
-
+# Tasks
+# Kill the job-manager
+# Start the job-manager
+# Make sure whether is running or not.
+start_job_manager
