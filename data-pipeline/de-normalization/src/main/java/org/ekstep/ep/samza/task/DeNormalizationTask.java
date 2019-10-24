@@ -38,13 +38,12 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     private ContentDataCache contentCache;
     private DialCodeDataCache dialcodeCache;
     private JobMetrics metrics;
-    private CassandraConnect cassandraConnect;
     private RedisConnect redisConnect;
     private DeNormalizationService service;
 
     public DeNormalizationTask(Config config, TaskContext context, UserDataCache userCache,
-                               ContentDataCache contentCache, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics, CassandraConnect cassandraConnect, RedisConnect redisConnect) {
-        init(config, context, userCache, contentCache, dialcodeCache, jobMetrics, cassandraConnect, redisConnect);
+                               ContentDataCache contentCache, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics, RedisConnect redisConnect) {
+        init(config, context, userCache, contentCache, dialcodeCache, jobMetrics, redisConnect);
     }
 
     public DeNormalizationTask() {
@@ -54,16 +53,16 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
     @SuppressWarnings("unchecked")
     @Override
     public void init(Config config, TaskContext context) {
-        init(config, context, userCache, contentCache, dialcodeCache, metrics, cassandraConnect, redisConnect);
+        init(config, context, userCache, contentCache, dialcodeCache, metrics, redisConnect);
     }
 
 
     public void init(Config config, TaskContext context, UserDataCache userCache, ContentDataCache contentCache,
-                     DialCodeDataCache dialcodeCache, JobMetrics jobMetrics, CassandraConnect cassandraConnect, RedisConnect redisConnect) {
+                     DialCodeDataCache dialcodeCache, JobMetrics jobMetrics, RedisConnect redisConnect) {
 
         this.config = new DeNormalizationConfig(config);
         this.metrics = jobMetrics == null ? new JobMetrics(context, this.config.jobName()) : jobMetrics;
-        this.userCache = userCache == null ? new UserDataCache(config, metrics, cassandraConnect, redisConnect) : userCache;
+        this.userCache = userCache == null ? new UserDataCache(config, metrics, redisConnect) : userCache;
         this.contentCache = contentCache == null ? new ContentDataCache(config, metrics) : contentCache;
         this.dialcodeCache = dialcodeCache == null ? new DialCodeDataCache(config, metrics) : dialcodeCache;
         service = new DeNormalizationService(this.config, new EventUpdaterFactory(this.contentCache, this.userCache, this.dialcodeCache));

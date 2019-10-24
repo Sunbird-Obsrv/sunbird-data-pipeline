@@ -27,6 +27,7 @@ import org.apache.samza.task.*;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.RedisUpdaterService;
+import org.ekstep.ep.samza.util.CassandraConnect;
 import org.ekstep.ep.samza.util.RedisConnect;
 
 public class RedisUpdaterTask implements StreamTask, InitableTask, WindowableTask {
@@ -37,6 +38,7 @@ public class RedisUpdaterTask implements StreamTask, InitableTask, WindowableTas
     private RedisUpdaterService service;
     private String metricsTopic;
     private RedisConnect redisConnect;
+    private CassandraConnect cassandraConnect;
 
     public RedisUpdaterTask(Config config, TaskContext context) {
         init(config, context);
@@ -49,7 +51,8 @@ public class RedisUpdaterTask implements StreamTask, InitableTask, WindowableTas
     public void init(Config config, TaskContext context) {
         metrics = new JobMetrics(context, JOB_NAME);
         redisConnect = new RedisConnect(config);
-        service = new RedisUpdaterService(config, redisConnect);
+        cassandraConnect = new CassandraConnect(config);
+        service = new RedisUpdaterService(config, redisConnect, cassandraConnect, metrics);
         metricsTopic = config.get("output.metrics.topic.name");
     }
 
