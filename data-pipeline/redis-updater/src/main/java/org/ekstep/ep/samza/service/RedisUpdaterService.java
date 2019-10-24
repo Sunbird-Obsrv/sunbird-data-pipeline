@@ -193,7 +193,6 @@ public class RedisUpdaterService {
                 userMetadataInfoMapFromUserDB = getUserMetaDataInfoFromUserDB(userId);
                 if(!userMetadataInfoMapFromUserDB.isEmpty())
                     userCacheData.putAll(userMetadataInfoMapFromUserDB);
-
                 if( event.getUserMetdataUpdatedList().contains("locationIds") && null != userCacheData.get("locationids"))
                 {
                     List<String> locationIds = (List<String>) userCacheData.get("locationids");
@@ -203,6 +202,7 @@ public class RedisUpdaterService {
                     if (!userLocationMapFromlocationDB.isEmpty())
                         userCacheData.putAll(userLocationMapFromlocationDB);
                 }
+
                 if (!userCacheData.isEmpty())
                     addToCache(userId, gson.toJson(userCacheData), userDataStoreConnection);
             }
@@ -251,12 +251,12 @@ public class RedisUpdaterService {
     private Map<String, Object> getLocationDetailsFromlocationDB(String userId, List<String> locationIds) {
         Map<String, Object> userLocationMap = null;
         try {
-            userLocationMap = fetchFallbackUserLocationFromDB(userId, locationIds);
+            userLocationMap = fetchFallbackUserLocationFromDB(locationIds);
         } catch (Exception ex) {
 
             metrics.incUserDBErrorCount();
             cassandraConnection.reconnectCluster();
-            userLocationMap = fetchFallbackUserLocationFromDB(userId, locationIds);
+            userLocationMap = fetchFallbackUserLocationFromDB(locationIds);
         }
         return userLocationMap;
     }
@@ -282,7 +282,7 @@ public class RedisUpdaterService {
     }
 
 
-    private Map<String, Object> fetchFallbackUserLocationFromDB(String userId, List<String> locationIds) {
+    private Map<String, Object> fetchFallbackUserLocationFromDB(List<String> locationIds) {
         String userLocationQuery = QueryBuilder.select().all()
                                 .from(cassandra_db, cassandra_location_table)
                                 .where(QueryBuilder.in("id", locationIds))
@@ -300,6 +300,7 @@ public class RedisUpdaterService {
                 }
             });
         }
+        metrics.incUserDbHitCount();
         return result;
     }
 

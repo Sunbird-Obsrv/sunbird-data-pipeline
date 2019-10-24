@@ -66,16 +66,17 @@ public class Event {
     }
 
     public ArrayList<String> getUserMetdataUpdatedList() {
-        NullableValue<String> edata_state = telemetry.read("edata.state");
-        if(edata_state.value().equalsIgnoreCase("Update")) {
-            NullableValue<ArrayList<String>> edata_props = telemetry.read("edata.props");
-            if(null != edata_props) {
-                ArrayList<String> edata_props_list = edata_props.value();
-                if(null != edata_props_list && !edata_props_list.isEmpty()) {
-                    return edata_props_list;
-                } else return null;
-            } else return null;
-        } else return null;
+            NullableValue<String> edata_state = telemetry.read("edata.state");
+            if( null != edata_state.value() && edata_state.value().equalsIgnoreCase("Update")) {
+                NullableValue<ArrayList<String>> edata_props = telemetry.read("edata.props");
+                if(null != edata_props) {
+                    ArrayList<String> edata_props_list = edata_props.value();
+                    if(null != edata_props_list && !edata_props_list.isEmpty()) {
+                        return edata_props_list;
+                    }
+                }
+            }
+        return null;
     }
 
 
