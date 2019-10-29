@@ -158,5 +158,3 @@ job_names:
       job_file_name: 'device-profile-updater'
   AssessmentAggregator_1:
       job_file_name: 'assessment-aggregator'
-  DerivedDeDuplication_1:
-      job_file_name: 'derived-de-duplication'
