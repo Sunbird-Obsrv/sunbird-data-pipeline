@@ -34,7 +34,6 @@ public class RedisUpdaterService {
     private String cassandra_db;
     private String cassandra_user_table;
     private String cassandra_location_table;
-    private int locationDbKeyExpiryTimeInSeconds;
     private String auditTopic;
     private String userSignInTypeDefault;
     private String userLoginInTypeDefault;
