@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 
 public class DeDuplicationTaskTest {
 
-    private static final String SUCCESS_TOPIC = "telemetry.valid";
+    private static final String SUCCESS_TOPIC = "telemetry.derived.unique";
     private static final String FAILED_TOPIC = "telemetry.unique.fail";
     private static final String DUPLICATE_TOPIC = "telemetry.duplicate";
     private static final String MALFORMED_TOPIC = "telemetry.malformed";

@@ -21,14 +21,14 @@ public class DeDuplicationConfig {
 
 
     public DeDuplicationConfig(Config config) {
-        successTopic = config.get("output.success.topic.name", "telemetry.valid");
+        successTopic = config.get("output.success.topic.name", "telemetry.derived.unique");
         failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
         duplicateTopic = config.get("output.duplicate.topic.name", "telemetry.duplicate");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
         metricsTopic = config.get("output.metrics.topic.name", "pipeline_metrics");
         defaultChannel = config.get("default.channel", "org.sunbird");
-        dupStore = config.getInt("redis.database.duplicationstore.id", 7);
-        expirySeconds = config.getInt("redis.database.key.expiry.seconds", 432000);
+        dupStore = config.getInt("redis.database.duplicationstore.id", 11);
+        expirySeconds = config.getInt("redis.database.key.expiry.seconds", 604800);
         if (!config.get("dedup.producer.include.ids", "").isEmpty()) {
             includedProducerIds = config.getList("dedup.producer.include.ids", new ArrayList<>());
         } else {
