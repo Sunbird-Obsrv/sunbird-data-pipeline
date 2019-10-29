@@ -12,8 +12,8 @@ export heap_conf_str={{ spark.heap_conf_str }}
 today=$(date "+%Y-%m-%d")
 
 kill_job_manager()
-{	
-	echo "Job manager kill is invoking" >> "$SERVICE_LOGS/$today-job-manager.log"
+{
+    echo "Job manager kill is invoking" >> "$SERVICE_LOGS/$today-job-manager.log"
     kill $(ps aux | grep '[j]ob-manager' | awk '{print $2}') >> "$SERVICE_LOGS/$today-job-manager.log"
 }
 
