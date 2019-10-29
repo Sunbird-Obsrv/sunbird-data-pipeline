@@ -41,16 +41,6 @@
             },
             {
               "type": "path",
-              "name": "context_cdata_type",
-              "expr": "$.context.cdata[*].type"
-            },
-            {
-              "type": "path",
-              "name": "context_cdata_id",
-              "expr": "$.context.cdata[*].id"
-            },
-            {
-              "type": "path",
               "name": "context_rollup_l1",
               "expr": "$.context.rollup.l1"
             },
@@ -616,12 +606,6 @@
               "name": "context_date_range_to"
             },
             {
-              "name": "context_cdata_type"
-            },
-            {
-              "name": "context_cdata_id"
-            },
-            {
               "type": "string",
               "name": "context_rollup_l1"
             },
@@ -1038,7 +1022,7 @@
           "dimensionsExclusions": []
         },
         "timestampSpec": {
-          "column": "context_date_range_to",
+          "column": "syncts",
           "format": "auto"
         }
       }
