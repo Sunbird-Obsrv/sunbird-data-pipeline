@@ -7,9 +7,11 @@ import org.apache.samza.Partition;
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.SystemStreamPartition;
+import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.service.Fixtures.EventFixture;
 import org.ekstep.ep.samza.task.RedisUpdaterSink;
 import org.ekstep.ep.samza.task.RedisUpdaterSource;
+import org.ekstep.ep.samza.util.CassandraConnect;
 import org.ekstep.ep.samza.util.RedisConnect;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -29,7 +31,9 @@ import static org.mockito.Mockito.*;
 public class RedisUpdaterServiceTest {
 
     private RedisConnect redisConnectMock;
+    private CassandraConnect cassandraConnectMock;
     private IncomingMessageEnvelope envelopeMock;
+    private JobMetrics jobMetricsMock;
     private Jedis jedisMock = new MockJedis("test");
     private RedisUpdaterService redisUpdaterService;
     private RedisUpdaterSink redisUpdaterSinkMock;
@@ -43,6 +47,9 @@ public class RedisUpdaterServiceTest {
         redisConnectMock = mock(RedisConnect.class);
         redisUpdaterSinkMock = mock(RedisUpdaterSink.class);
         configMock = mock(Config.class);
+        cassandraConnectMock = mock(CassandraConnect.class);
+        jobMetricsMock = mock(JobMetrics.class);
+
         stub(redisConnectMock.getConnection(contentStoreId)).toReturn(jedisMock);
         stub(redisConnectMock.getConnection(dialCodeStoreId)).toReturn(jedisMock);
         stub(redisConnectMock.getConnection(userStoreId)).toReturn(jedisMock);
@@ -60,6 +67,11 @@ public class RedisUpdaterServiceTest {
                 .toReturn(new SystemStreamPartition("kafka", "learning.graph.events", new Partition(0)));
         stub(configMock.get("user.self-siginin.key", "Self-Signed-In")).toReturn("Self-Signed-In");
         stub(configMock.get("user.valid.key", "Validated")).toReturn("Validated");
+        stub(configMock.get("middleware.cassandra.host", "127.0.0.1")).toReturn("");
+        stub(configMock.get("middleware.cassandra.port", "9042")).toReturn("9042");
+        stub(configMock.get("middleware.cassandra.keyspace", "sunbird")).toReturn("sunbird");
+        stub(configMock.get("middleware.cassandra.user_table","user")).toReturn("user");
+        stub(configMock.get("middleware.cassandra.location_table","location")).toReturn("location");
 
         List<String> defaultListValues = new ArrayList<>();
         defaultListValues.add("gradeLevel");
@@ -69,7 +81,7 @@ public class RedisUpdaterServiceTest {
 
         stub(configMock.getList("contentModel.fields.listType", new ArrayList<>()))
                 .toReturn(defaultListValues);
-        redisUpdaterService = new RedisUpdaterService(configMock, redisConnectMock);
+        redisUpdaterService = new RedisUpdaterService(configMock, redisConnectMock, cassandraConnectMock, jobMetricsMock);
         jedisMock.flushAll();
     }
 
@@ -349,4 +361,48 @@ public class RedisUpdaterServiceTest {
         assertEquals("Anonymous", parsedData.get("usersignintype"));
         assertEquals("student", parsedData.get("userlogintype"));
     }
+
+    @Test
+    public void shouldNotUpdateCacheWithMetadataChangesAndLocationFORAUDIT() {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.AUDIT_EVENT_METADATA_UPDATED);
+        Gson gson = new Gson();
+        String userId = "52226956-61d8-4c1b-b115-c660111866d3";
+        jedisMock.set(userId, "{\"channel\":\"dikshacustodian\",\"phoneverified\":false}");
+        RedisUpdaterSource source = new RedisUpdaterSource(envelopeMock);
+        stub(envelopeMock.getSystemStreamPartition()).toReturn(new SystemStreamPartition("kafka", "telemetry.audit", new Partition(1)));
+        redisUpdaterService.process(source, redisUpdaterSinkMock);
+
+        String cachedData = jedisMock.get(userId);
+        Map<String, Object> parsedData = null;
+        if (cachedData != null) {
+            Type type = new TypeToken<Map<String, Object>>() {
+            }.getType();
+            parsedData = gson.fromJson(cachedData, type);
+        }
+        assertEquals(parsedData.get("channel"), "dikshacustodian");
+        verify(cassandraConnectMock, times(0)).find(anyString());
+    }
+
+    @Test
+    public void shouldUpdateCacheWithMetadataChangesAndLocationFORAUDIT() {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.AUDIT_EVENT_METADATA_UPDATED);
+        Gson gson = new Gson();
+        String userId = "52226956-61d8-4c1b-b115-c660111866d3";
+        jedisMock.set(userId, "{\"channel\":\"dikshacustodian\",\"phoneverified\":false,\"usersignintype\":\"Self-Signed-In\",\"userlogintype\":\"NA\"}");
+        RedisUpdaterSource source = new RedisUpdaterSource(envelopeMock);
+        stub(envelopeMock.getSystemStreamPartition()).toReturn(new SystemStreamPartition("kafka", "telemetry.audit", new Partition(1)));
+        redisUpdaterService.process(source, redisUpdaterSinkMock);
+
+        String cachedData = jedisMock.get(userId);
+        Map<String, Object> parsedData = null;
+        if (cachedData != null) {
+            Type type = new TypeToken<Map<String, Object>>() {
+            }.getType();
+            parsedData = gson.fromJson(cachedData, type);
+        }
+        assertEquals(parsedData.get("channel"), "dikshacustodian");
+        verify(cassandraConnectMock, times(1)).find(anyString());
+    }
+
+
 }
