@@ -30,14 +30,13 @@
               "name": "uid"
             },
             {
-              "type": "path",
-              "name": "context_date_range_from",
-              "expr": "$.context.date_range.from"
+              "type": "root",
+              "name": "syncts"
             },
             {
               "type": "path",
-              "name": "context_date_range_to",
-              "expr": "$.context.date_range.to"
+              "name": "context_date_range_from",
+              "expr": "$.context.date_range.from"
             },
             {
               "type": "path",
@@ -610,10 +609,6 @@
             {
               "type": "long",
               "name": "context_date_range_from"
-            },
-            {
-              "type": "long",
-              "name": "context_date_range_to"
             },
             {
               "name": "context_cdata_type"
