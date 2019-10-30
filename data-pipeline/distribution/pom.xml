@@ -46,6 +46,13 @@
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
+            <artifactId>derived-de-duplication</artifactId>
+            <version>0.0.1</version>
+            <type>tar.gz</type>
+            <classifier>distribution</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>telemetry-router</artifactId>
             <version>0.1.4</version>
             <type>tar.gz</type>
