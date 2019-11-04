@@ -3,8 +3,7 @@
 metrics_search_params_bucket: "dev-data-store"
 log4j_appender_kafka_topic: "{{env}}.telemetry.backend"
 
-# Every where the value is telemetry-data-store
-# Shall we change the value to telemetry-data-store in dev also?
+
 # What's the implication
 # Is it azure blob or s3 bucket??
 channel_data_exhaust_bucket: dev-data-store
