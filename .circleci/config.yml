@@ -22,6 +22,7 @@ jobs:
           name: sonar
           command: "mvn sonar:sonar -Dsonar.projectKey=harshavardhanc_sunbird-data-pipeline -Dsonar.organization=harshavardhanc -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=89ad7542e5dbb609cf9a525b2061162ee8957df2 -Dsonar.coverage.jacoco.xmlReportPaths=/home/circleci/dp/data-pipeline/telemetry-location-updater/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/telemetry-validator/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/de-duplication/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/redis-updater/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/events-router/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/telemetry-router/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/druid-events-validator/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/telemetry-extractor/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/de-normalization/target/coverage-reports/jacoco-ut/jacoco.xml"
 
+
 workflows:
   version: 2.1
   build_and_test:
