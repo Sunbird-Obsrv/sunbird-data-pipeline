@@ -56,6 +56,7 @@ public class DeviceProfileUpdaterService {
             deviceData.values().removeAll(Collections.singleton(""));
             deviceData.values().removeAll(Collections.singleton("{}"));
 
+            DeviceProfile deviceProfile = new DeviceProfile().fromMap(deviceData);
             String deviceId = deviceData.get("device_id");
             if (null != deviceId && !deviceId.isEmpty()) {
 
@@ -64,7 +65,7 @@ public class DeviceProfileUpdaterService {
                 sink.deviceDBUpdateSuccess();
 
                 // Update device profile details in Redis cache
-                addDeviceDataToCache(deviceId, deviceData);
+                addDeviceDataToCache(deviceId, deviceProfile);
                 sink.deviceCacheUpdateSuccess();
 
                 sink.success();
@@ -75,7 +76,7 @@ public class DeviceProfileUpdaterService {
 
     }
 
-    private void addDeviceDataToCache(String deviceId, Map<String, String> deviceProfile) {
+    private void addDeviceDataToCache(String deviceId, DeviceProfile deviceProfile) {
         try {
             addToCache(deviceId, deviceProfile, deviceStoreConnection);
         } catch (JedisException ex) {
@@ -88,6 +89,7 @@ public class DeviceProfileUpdaterService {
     }
 
     private void addDeviceDataToDB(Map<String, String> deviceData) {
+        System.out.println(deviceData+" To put in db");
         Map<String, String> parseduaspec = null != deviceData.get("uaspec") ? parseSpec(deviceData.get("uaspec")) : null;
         Map<String, String> parsedevicespec = null != deviceData.get("device_spec") ? parseSpec(deviceData.get("device_spec")) : null;
         Long firstAccess = Long.parseLong(deviceData.get("first_access"));
@@ -116,12 +118,16 @@ public class DeviceProfileUpdaterService {
         return gson.fromJson(spec, mapType);
     }
 
-    private void addToCache(String deviceId, Map<String, String> deviceProfile, Jedis redisConnection) {
+    private void addToCache(String deviceId, DeviceProfile deviceProfile, Jedis redisConnection) {
+        Map<String, String> deviceMap = deviceProfile.toMap();
+        deviceMap.values().removeAll(Collections.singleton(""));
+        deviceMap.values().removeAll(Collections.singleton("{}"));
+
         if (redisConnection.exists(deviceId)) {
-            deviceProfile.remove("firstaccess");
-            redisConnection.hmset(deviceId, deviceProfile);
+            deviceMap.remove("firstaccess");
+            redisConnection.hmset(deviceId, deviceMap);
         } else {
-            redisConnection.hmset(deviceId, deviceProfile);
+            redisConnection.hmset(deviceId, deviceMap);
         }
         LOGGER.debug(null, String.format("Device details for device id %s updated successfully", deviceId));
     }
