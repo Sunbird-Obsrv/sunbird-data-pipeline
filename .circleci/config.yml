@@ -9,7 +9,13 @@ jobs:
 
       - restore_cache:
           key: dependency-cache-{{ checksum "pom.xml" }}
-
+      
+      - run:
+          name: cmd
+          command: |
+             prbranch=$(curl -s https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/pulls/$CIRCLE_PR_NUMBER | jq .head.ref -r)
+             echo $prbranch
+             
       - run: mvn -Dlog4j.configuration=./logs -Dcobertura.report.format=xml clean cobertura:cobertura package
 
       - save_cache:
