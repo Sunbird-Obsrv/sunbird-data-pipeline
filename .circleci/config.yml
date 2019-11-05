@@ -21,6 +21,7 @@ jobs:
           command: |
              prnumber=$(echo $CI_PULL_REQUEST | awk -F'/' '{print $NF}')
              mvn verify sonar:sonar -Dsonar.pullrequest.key=$prnumber
+            
 workflows:
   version: 2.1
   build_and_test:
