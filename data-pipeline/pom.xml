@@ -36,7 +36,7 @@
 		<module>de-normalization</module>
 		<module>druid-events-validator</module>
 		<module>events-router</module>
-		 <module>druid-processor</module>
+		 <!--<module>druid-processor</module>-->
 		<module>redis-updater</module>
         <module>device-profile-updater</module>
 		<module>assessment-aggregator</module>
