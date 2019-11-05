@@ -36,7 +36,7 @@
 		<module>de-normalization</module>
 		<module>druid-events-validator</module>
 		<module>events-router</module>
-		<!-- <module>druid-processor</module> -->
+		 <!--<module>druid-processor</module>-->
 		<module>redis-updater</module>
         <module>device-profile-updater</module>
 		<module>assessment-aggregator</module>
@@ -51,6 +51,7 @@
 		<jackson-jaxrs.version>1.9.13</jackson-jaxrs.version>
 		<samza.log.dir>/tmp</samza.log.dir>
 		<samza.container.name>test-container</samza.container.name>
+		<argLine>-Xmx1G</argLine>
 	</properties>
 
 	<repositories>
@@ -88,6 +89,24 @@
 						<source>1.8</source>
 						<target>1.8</target>
 					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>0.8.2</version>
+					<executions>
+						<execution>
+							<id>pre-unit-test</id>
+							<goals>
+								<goal>prepare-agent</goal>
+							</goals>
+							<configuration>
+								<destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
+								<propertyName>surefireArgLine</propertyName>
+							</configuration>
+						</execution>
+
+					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>
