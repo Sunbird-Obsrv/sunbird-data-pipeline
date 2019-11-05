@@ -54,4 +54,8 @@ public class Path {
     }
 
     public String userData() { return "userdata"; }
+
+    public String derivedLocationData(){
+        return "derivedlocationdata";
+    }
 }

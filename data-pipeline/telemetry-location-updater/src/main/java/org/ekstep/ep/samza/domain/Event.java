@@ -105,20 +105,15 @@ public class Event {
 
 	public void addDeviceProfile(DeviceProfile deviceProfile) {
 		Map<String, Object> ldata = new HashMap<>();
-		if(!deviceProfile.getUserDeclaredDistrict().isEmpty()) {
-			ldata.put("state", deviceProfile.getUserDeclaredState());
-			ldata.put("districtcustom", deviceProfile.getUserDeclaredDistrict());
-		}
-		else {
-			ldata.put("countrycode", deviceProfile.getCountryCode());
-			ldata.put("country", deviceProfile.getCountry());
-			ldata.put("statecode", deviceProfile.getStateCode());
-			ldata.put("state", deviceProfile.getState());
-			ldata.put("city", deviceProfile.getCity());
-			ldata.put("statecustomcode", deviceProfile.getstateCodeCustom());
-			ldata.put("statecustomname", deviceProfile.getstateCustomName());
-			ldata.put("districtcustom", deviceProfile.getDistrictCustom());
-		}
+
+		ldata.put("countrycode", deviceProfile.getCountryCode());
+		ldata.put("country", deviceProfile.getCountry());
+		ldata.put("statecode", deviceProfile.getStateCode());
+		ldata.put("state", deviceProfile.getState());
+		ldata.put("city", deviceProfile.getCity());
+		ldata.put("statecustomcode", deviceProfile.getstateCodeCustom());
+		ldata.put("statecustomname", deviceProfile.getstateCustomName());
+		ldata.put("districtcustom", deviceProfile.getDistrictCustom());
 		ldata.put("devicespec", deviceProfile.getDevicespec());
 		ldata.put("uaspec", deviceProfile.getUaspec());
 		ldata.put("firstaccess", deviceProfile.getFirstaccess());
@@ -126,7 +121,20 @@ public class Event {
 		if (!iso3166statecode.isEmpty()) {
 			ldata.put("iso3166statecode", iso3166statecode);
 		}
+
+		Map<String, String> userDeclared = new HashMap<>();
+		userDeclared.put("state", deviceProfile.getUserDeclaredState());
+		userDeclared.put("district", deviceProfile.getUserDeclaredDistrict());
+		ldata.put("userdeclared", userDeclared);
 		telemetry.add(path.deviceData(), ldata);
+	}
+
+	public void addDerivedLocation(Map<String, String> derivedData) {
+		Map<String, Object> ldata = new HashMap<>();
+		ldata.put("state", derivedData.getOrDefault("state", ""));
+		ldata.put("district", derivedData.getOrDefault("district", ""));
+		ldata.put("type", derivedData.getOrDefault("type", ""));
+		telemetry.add(path.derivedLocationData(), ldata);
 	}
 
 	public String addISOStateCodeToDeviceProfile(DeviceProfile deviceProfile) {
