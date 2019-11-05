@@ -128,35 +128,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>-->
-                <!--<groupId>org.jacoco</groupId>-->
-                <!--<artifactId>jacoco-maven-plugin</artifactId>-->
-                <!--<version>0.7.9</version>-->
-                <!--<configuration>-->
-                    <!--<propertyName>jacoco.agent.argLine</propertyName>-->
-                <!--</configuration>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>jacoco-initialize</id>-->
-                        <!--<goals>-->
-                            <!--<goal>prepare-agent</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                    <!--<execution>-->
-                        <!--<id>jacoco-site-aggregate</id>-->
-                        <!--<phase>prepare-package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>report-aggregate</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
-            <!--<plugin>-->
-                <!--<artifactId>maven-surefire-plugin</artifactId>-->
-                <!--<configuration>-->
-                    <!--<argLine>-Xmx1G</argLine>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
