@@ -67,17 +67,27 @@ public class DeviceProfileServiceTest {
     @Test
     public void shouldupdateCache() throws Exception {
         jedisMock.flushAll();
-        System.out.println(EventFixture.DEVICE_PROFILE_DETAILS);
+
         Type mapType = new TypeToken<Map<String, String>>(){}.getType();
         Map<String, String> event = gson.fromJson(EventFixture.DEVICE_PROFILE_DETAILS, mapType);
         String device_id = event.get("device_id");
-        jedisMock.set(device_id, "232455");
+
+        jedisMock.hmset(device_id, event);
 
         DeviceProfileUpdaterSource source = new DeviceProfileUpdaterSource(envelopeMock);
         deviceProfileUpdaterService.process(source, deviceProfileUpdaterSinkMock);
 
-        String cachedData = jedisMock.get(device_id);
-        assertEquals("232455", cachedData);
+        Map<String,String> cachedData = jedisMock.hgetAll(device_id);
+        System.out.println(cachedData);
+
+        assertEquals("232455", cachedData.get("device_id"));
+        assertEquals("Bengaluru", cachedData.get("city"));
+        assertEquals("Karnataka", cachedData.get("state"));
+        assertEquals("dev.sunbird.portal", cachedData.get("producer_id"));
+        assertEquals("IN", cachedData.get("country_code"));
+        assertEquals("Bengaluru",cachedData.get("user_declared_district"));
+        assertEquals("Karnataka",cachedData.get("user_declared_state"));
+
         verify(deviceProfileUpdaterSinkMock, times(1)).deviceCacheUpdateSuccess();
     }
 
@@ -85,7 +95,19 @@ public class DeviceProfileServiceTest {
     public void shouldupdateDB() throws Exception {
         DeviceProfileUpdaterSource source = new DeviceProfileUpdaterSource(envelopeMock);
         deviceProfileUpdaterService.process(source, deviceProfileUpdaterSinkMock);
+
         verify(deviceProfileUpdaterSinkMock, times(1)).deviceDBUpdateSuccess();
+    }
+
+    @Test
+    public void shouldNotUpdateFordidNull() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.DEVICE_PROFILE_WITH_NO_DEVICE_ID);
+
+        DeviceProfileUpdaterSource source = new DeviceProfileUpdaterSource(envelopeMock);
+        deviceProfileUpdaterService.process(source, deviceProfileUpdaterSinkMock);
+
+        verify(deviceProfileUpdaterSinkMock, times(1)).failed();
+
     }
 
 }

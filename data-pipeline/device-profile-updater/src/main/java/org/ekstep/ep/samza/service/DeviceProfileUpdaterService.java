@@ -89,7 +89,6 @@ public class DeviceProfileUpdaterService {
     }
 
     private void addDeviceDataToDB(Map<String, String> deviceData) {
-        System.out.println(deviceData+" To put in db");
         Map<String, String> parseduaspec = null != deviceData.get("uaspec") ? parseSpec(deviceData.get("uaspec")) : null;
         Map<String, String> parsedevicespec = null != deviceData.get("device_spec") ? parseSpec(deviceData.get("device_spec")) : null;
         Long firstAccess = Long.parseLong(deviceData.get("first_access"));
