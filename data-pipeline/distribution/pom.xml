@@ -9,7 +9,9 @@
         <artifactId>jobs</artifactId>
         <version>0.0.1</version>
     </parent>
-
+    <properties>
+        <jacoco.plugin.version>0.8.2</jacoco.plugin.version>
+    </properties>
     <artifactId>distribution</artifactId>
 
     <packaging>pom</packaging>
@@ -124,6 +126,24 @@
                             <descriptors>
                                 <descriptor>src/main/assembly/src.xml</descriptor>
                             </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>report-aggregate</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report-aggregate</goal>
+                        </goals>
+                        <configuration>
+                            <dataFileIncludes>**/jacoco-unit.exec</dataFileIncludes>
+                            <outputDirectory>${project.reporting.outputDirectory}/jacoco-aggregate</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
