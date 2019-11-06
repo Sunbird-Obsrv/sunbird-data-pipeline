@@ -20,6 +20,9 @@
     },
     "userdata": {
       "$ref": "resource:/schemas/telemetry/userdata.json"
+    },
+    "derivedlocationdata": {
+      "$ref": "resource:/schemas/telemetry/derivedlocationdata.json"
     }
   }
 }

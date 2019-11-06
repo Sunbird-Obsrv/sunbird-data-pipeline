@@ -41,6 +41,9 @@
     },
     "collectiondata": {
       "$ref": "resource:/schemas/summary/collectiondata.json"
+    },
+    "derivedlocationdata": {
+      "$ref": "resource:/schemas/summary/derivedlocationdata.json"
     }
   }
 }

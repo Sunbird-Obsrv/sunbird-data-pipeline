@@ -186,6 +186,29 @@ public class TelemetryEventsValidatorTaskTest {
         verify(collectorMock).send(argThat(validateEvent(true, "")));
     }
 
+    @Test
+    public void shouldSendEventToSuccessTopicForValidUserDeclaredAndDerivedLocationData() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.VALID_USER_DECLARED_AND_DERIVED_LOCATION_EVENT);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(true, "")));
+    }
+
+    @Test
+    public void shouldSendEventToFaildTopicForInvalidDerivedLocationData() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.IVALID_DERIVED_LOCATION_EVENT);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(false, "derivedlocationdata/state")));
+    }
+
+    @Test
+    public void shouldSendEventToFaildTopicForInvalidUserDeclaredLocationData() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_USER_DECLARED_LOCATION_EVENT);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        verify(collectorMock).send(argThat(validateEvent(false, "devicedata/userdeclared/district")));
+    }
 
 
     public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {

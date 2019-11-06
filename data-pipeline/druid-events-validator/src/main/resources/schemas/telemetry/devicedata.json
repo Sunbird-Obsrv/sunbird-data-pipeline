@@ -83,6 +83,19 @@
     "districtcustom":{
       "id": "http://api.sunbird.org/telemetry/devicedata/districtcustom",
       "type": "string"
+    },
+    "userdeclared": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "id": "http://api.sunbird.org/telemetry/devicedata/userdeclared/state",
+          "type": "string"
+        },
+        "district": {
+          "id": "http://api.sunbird.org/telemetry/devicedata/userdeclared/district",
+          "type": "string"
+        }
+      }
     }
   }
 }
