@@ -379,8 +379,8 @@
             },
             {
               "type": "path",
-              "name": "derived_loc_type",
-              "expr": "$.derivedlocationdata.type"
+              "name": "derived_loc_from",
+              "expr": "$.derivedlocationdata.from"
             },
             {
               "type": "path",
@@ -907,7 +907,7 @@
             },
             {
               "type": "string",
-              "name": "derived_loc_type"
+              "name": "derived_loc_from"
             },
             {
               "type": "string",
