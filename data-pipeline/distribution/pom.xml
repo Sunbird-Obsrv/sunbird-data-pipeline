@@ -140,7 +140,9 @@
                             <goal>report-aggregate</goal>
                         </goals>
                         <configuration>
-                            <dataFileIncludes>**/jacoco-unit.exec</dataFileIncludes>
+                            <dataFileIncludes>
+                                <dataFileInclude>**/jacoco-unit.exec</dataFileInclude>
+                            </dataFileIncludes>
                             <outputDirectory>${project.reporting.outputDirectory}/jacoco-aggregate</outputDirectory>
                         </configuration>
                     </execution>
