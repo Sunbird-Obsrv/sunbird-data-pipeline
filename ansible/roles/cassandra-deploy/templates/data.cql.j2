@@ -89,6 +89,15 @@ CREATE KEYSPACE IF NOT EXISTS {{ cassandra.keyspace_prefix }}content_db WITH rep
   'replication_factor': '{{ cassandra.replication_factor }}'
 };
 
+CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}content_db.content_aggregates (
+	content_id text,
+        date int,
+        platform text,
+        metric text,
+        value double,
+        PRIMARY KEY (content_id, date, platform, metric)
+);
+
 CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}content_db.content_cumulative_summary (
 	content_id text,
 	start_date timestamp,
