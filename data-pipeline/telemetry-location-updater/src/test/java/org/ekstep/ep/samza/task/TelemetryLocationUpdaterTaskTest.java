@@ -156,7 +156,7 @@ public class TelemetryLocationUpdaterTaskTest {
 				Map<String, Object> derivedLocationData = new Gson().fromJson(new Gson().toJson(outputEvent.get("derivedlocationdata")), mapType);
 				assertEquals("Karnataka", derivedLocationData.get("state"));
 				assertEquals("Bengaluru", derivedLocationData.get("district"));
-				assertEquals("user-profile", derivedLocationData.get("type"));
+				assertEquals("user-profile", derivedLocationData.get("from"));
 
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
 				assertEquals(true, flags.get("device_profile_retrieved"));
@@ -199,7 +199,7 @@ public class TelemetryLocationUpdaterTaskTest {
 				Map<String, Object> derivedLocationData = new Gson().fromJson(new Gson().toJson(outputEvent.get("derivedlocationdata")), mapType);
 				assertEquals("Karnataka", derivedLocationData.get("state"));
 				assertEquals("Bangalore", derivedLocationData.get("district"));
-				assertEquals("user-declared", derivedLocationData.get("type"));
+				assertEquals("user-declared", derivedLocationData.get("from"));
 
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
 				assertEquals(true, flags.get("device_profile_retrieved"));
@@ -242,7 +242,7 @@ public class TelemetryLocationUpdaterTaskTest {
 				Map<String, Object> derivedLocationData = new Gson().fromJson(new Gson().toJson(outputEvent.get("derivedlocationdata")), mapType);
 				assertEquals("Karnataka", derivedLocationData.get("state"));
 				assertEquals("Banglore-Custom", derivedLocationData.get("district"));
-				assertEquals("device-profile", derivedLocationData.get("type"));
+				assertEquals("ip-resolved", derivedLocationData.get("from"));
 
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
 				assertEquals(true, flags.get("device_profile_retrieved"));

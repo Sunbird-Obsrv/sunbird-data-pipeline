@@ -130,11 +130,7 @@ public class Event {
 	}
 
 	public void addDerivedLocation(Map<String, String> derivedData) {
-		Map<String, Object> ldata = new HashMap<>();
-		ldata.put("state", derivedData.getOrDefault("state", ""));
-		ldata.put("district", derivedData.getOrDefault("district", ""));
-		ldata.put("type", derivedData.getOrDefault("type", ""));
-		telemetry.add(path.derivedLocationData(), ldata);
+		telemetry.add(path.derivedLocationData(), derivedData);
 	}
 
 	public String addISOStateCodeToDeviceProfile(DeviceProfile deviceProfile) {

@@ -11,6 +11,7 @@ import org.ekstep.ep.samza.task.TelemetryLocationUpdaterConfig;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterSink;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterSource;
 import org.ekstep.ep.samza.util.DeviceProfileCache;
+import org.ekstep.ep.samza.util.Path;
 import org.ekstep.ep.samza.util.RedisConnect;
 import redis.clients.jedis.Jedis;
 import com.google.gson.Gson;
@@ -29,6 +30,7 @@ public class TelemetryLocationUpdaterService {
 	private Jedis userDataStoreConnection;
 	private JobMetrics metrics;
 	private Gson gson = new Gson();
+	private Path path = new Path();
 	private Type mapType = new TypeToken<Map<String, Object>>() { }.getType();
 
 	public TelemetryLocationUpdaterService(DeviceProfileCache deviceLocationCache, JobMetrics metrics, RedisConnect redisConnect, Config config) {
@@ -50,15 +52,17 @@ public class TelemetryLocationUpdaterService {
 				// get device profile from cache
 				deviceProfile = deviceProfileCache.getDeviceProfileForDeviceId(did);
 
-				// check for user declared location if user profile is empty
+				// get user declared location if user profile is empty
 				if (derivedLocation.isEmpty()) {
 					derivedLocation = getUserDeclaredLocation(deviceProfile);
 				}
+				// get ip reso lved location if user declared location is empty
 				if (derivedLocation.isEmpty()) {
 					derivedLocation = getIpResolvedLocation(deviceProfile);
 				}
 				// Add derived location to telemetry
-				updateEventWithDerivedLocation(event, derivedLocation);
+				event.addDerivedLocation(derivedLocation);
+
 				// Add device profile details to the event
 				updateEvent(event, deviceProfile);
 				metrics.incProcessedMessageCount();
@@ -100,9 +104,9 @@ public class TelemetryLocationUpdaterService {
 		if (data != null && !data.isEmpty()) {
 			userCacheData = gson.fromJson(data, mapType);
 			if (!userCacheData.isEmpty() && userCacheData.containsKey("state") && !userCacheData.get("state").toString().isEmpty()){
-				locationData.put("state", userCacheData.get("state").toString());
-				locationData.put("district", userCacheData.getOrDefault("district", "").toString());
-				locationData.put("type", "user-profile");
+				locationData.put(path.stateKey(), userCacheData.get("state").toString());
+				locationData.put(path.districtKey(), userCacheData.getOrDefault("district", "").toString());
+				locationData.put(path.locDerivedFromKey(), "user-profile");
 			}
 		}
 			return locationData;
@@ -112,9 +116,9 @@ public class TelemetryLocationUpdaterService {
 		Map<String,String> data = deviceProfile.toMap();
 		Map<String, String> locationData = new HashMap<>();
 		if(!data.isEmpty() && data.containsKey("user_declared_state") && !data.get("user_declared_state").isEmpty()) {
-			locationData.put("state", data.get("user_declared_state").toString());
-			locationData.put("district", data.getOrDefault("user_declared_district", "").toString());
-			locationData.put("type", "user-declared");
+			locationData.put(path.stateKey(), data.get("user_declared_state").toString());
+			locationData.put(path.districtKey(), data.getOrDefault("user_declared_district", "").toString());
+			locationData.put(path.locDerivedFromKey(), "user-declared");
 		}
 		return locationData;
 	}
@@ -123,16 +127,12 @@ public class TelemetryLocationUpdaterService {
 		Map<String,String> data = deviceProfile.toMap();
 		Map<String, String> locationData = new HashMap<>();
 		if(!data.isEmpty() && data.containsKey("state")) {
-			locationData.put("state", data.get("state").toString());
-			locationData.put("district", data.getOrDefault("district_custom", "").toString());
-			locationData.put("type", "ip-resolved");
+			locationData.put(path.stateKey(), data.get("state").toString());
+			locationData.put(path.districtKey(), data.getOrDefault("district_custom", "").toString());
+			locationData.put(path.locDerivedFromKey(), "ip-resolved");
 			return locationData;
 		}
 		else { return locationData; }
-	}
-
-	private void updateEventWithDerivedLocation(Event event, Map<String, String> derivedLocationData) {
-		event.addDerivedLocation(derivedLocationData);
 	}
 
 	public void updateEvent(Event event, DeviceProfile deviceProfile) {
