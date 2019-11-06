@@ -190,7 +190,6 @@ public class RedisUpdaterService {
                     userCacheData.putAll(userMetadataInfoMap);
 
                 if (userUpdatedList.contains("locationIds") && null != userCacheData.get("locationids")) {
-
                     List<String> locationIds = (List<String>) userCacheData.get("locationids");
                     Map<String, Object> userLocationMap = getLocationDetailsFromlocationDB(locationIds);
                     if (!userLocationMap.isEmpty())
