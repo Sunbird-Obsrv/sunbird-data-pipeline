@@ -10,7 +10,7 @@
         <version>0.0.1</version>
     </parent>
     <properties>
-        <jacoco.plugin.version>0.8.2</jacoco.plugin.version>
+        <jacoco.plugin.version>0.8.5</jacoco.plugin.version>
     </properties>
     <artifactId>distribution</artifactId>
 
