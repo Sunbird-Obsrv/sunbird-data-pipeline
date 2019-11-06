@@ -19,7 +19,7 @@
     <artifactId>derived-de-duplication</artifactId>
     <version>0.0.1</version>
     <packaging>jar</packaging>
-    <name>DerviedDeduplication</name>
+    <name>DerivedDeduplication</name>
     <description>
        Identifying Derived Duplicate Events
     </description>

@@ -40,6 +40,11 @@
             },
             {
               "type": "path",
+              "name": "context_date_range_to",
+              "expr": "$.context.date_range.to"
+            },
+            {
+              "type": "path",
               "name": "context_cdata_type",
               "expr": "$.context.cdata[*].type"
             },
@@ -1028,10 +1033,6 @@
             {
               "type": "string",
               "name": "device_loc_iso_state_code"
-            },
-            {
-              "type": "long",
-              "name": "syncts"
             }
           ],
           "dimensionsExclusions": []
