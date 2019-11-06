@@ -9,8 +9,8 @@
       "id": "http://api.sunbird.org/telemetry/derivedlocationdata/district",
       "type": "string"
     },
-    "type":{
-      "id": "http://api.sunbird.org/telemetry/derivedlocationdata/type",
+    "from":{
+      "id": "http://api.sunbird.org/telemetry/derivedlocationdata/from",
       "type": "string"
     }
   }
