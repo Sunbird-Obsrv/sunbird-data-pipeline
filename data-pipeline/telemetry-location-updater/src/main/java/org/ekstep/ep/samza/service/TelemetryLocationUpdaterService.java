@@ -77,25 +77,35 @@ public class TelemetryLocationUpdaterService {
 
 	private Map<String, String> getLocationFromUserCache(Event event) {
 		String uid = event.actorid();
-		Map<String, Object> userCacheData;
-		Map<String, String> locationData = new HashMap<>();
+		Map<String, String> locationData;
 		try {
-			String data = userDataStoreConnection.get(uid);
-			if (data != null && !data.isEmpty()) {
-				userCacheData = gson.fromJson(data, mapType);
-				if (!userCacheData.isEmpty() && userCacheData.containsKey("state") && !userCacheData.get("state").toString().isEmpty()){
-					locationData.put("state", userCacheData.get("state").toString());
-					locationData.put("district", userCacheData.getOrDefault("district", "").toString());
-					locationData.put("type", "user-profile");
-				}
-			}
+			locationData = getLocationForUser(uid);
 			return locationData;
 		}
 		catch (JedisException ex) {
-			LOGGER.error("", "Exception when reading from user redis cache", ex);
-			// add retry logic
+			LOGGER.error(null, "Reconnecting with Redis store due to exception: ", ex);
+			redisConnect.resetConnection();
+			try (Jedis redisConn = redisConnect.getConnection(userStoreDb)) {
+				this.userDataStoreConnection = redisConn;
+				locationData = getLocationForUser(uid);
+			}
 			return locationData;
 		}
+	}
+
+	private Map<String, String> getLocationForUser(String uid) {
+		Map<String, Object> userCacheData;
+		Map<String, String> locationData = new HashMap<>();
+		String data = userDataStoreConnection.get(uid);
+		if (data != null && !data.isEmpty()) {
+			userCacheData = gson.fromJson(data, mapType);
+			if (!userCacheData.isEmpty() && userCacheData.containsKey("state") && !userCacheData.get("state").toString().isEmpty()){
+				locationData.put("state", userCacheData.get("state").toString());
+				locationData.put("district", userCacheData.getOrDefault("district", "").toString());
+				locationData.put("type", "user-profile");
+			}
+		}
+			return locationData;
 	}
 
 	private Map<String, String> getUserDeclaredLocation(DeviceProfile deviceProfile) {
