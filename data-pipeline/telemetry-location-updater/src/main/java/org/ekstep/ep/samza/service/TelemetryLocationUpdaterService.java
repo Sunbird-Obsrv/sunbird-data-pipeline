@@ -25,6 +25,7 @@ public class TelemetryLocationUpdaterService {
 	private static Logger LOGGER = new Logger(TelemetryLocationUpdaterService.class);
 	private DeviceProfileCache deviceProfileCache;
 	private int userStoreDb;
+	private RedisConnect redisConnect;
 	private Jedis userDataStoreConnection;
 	private JobMetrics metrics;
 	private Gson gson = new Gson();
@@ -34,7 +35,8 @@ public class TelemetryLocationUpdaterService {
 		this.deviceProfileCache = deviceLocationCache;
 		this.metrics = metrics;
 		this.userStoreDb = config.getInt("redis.database.userStore.id", 4);
-		this.userDataStoreConnection = redisConnect.getConnection(userStoreDb);
+		this.redisConnect = redisConnect;
+		this.userDataStoreConnection = this.redisConnect.getConnection(userStoreDb);
 	}
 
 	public void process(TelemetryLocationUpdaterSource source, TelemetryLocationUpdaterSink sink) {
@@ -81,13 +83,10 @@ public class TelemetryLocationUpdaterService {
 			String data = userDataStoreConnection.get(uid);
 			if (data != null && !data.isEmpty()) {
 				userCacheData = gson.fromJson(data, mapType);
-				if (!userCacheData.isEmpty()){
-					if(userCacheData.containsKey("state")) {
-						locationData.put("state", userCacheData.get("state").toString());
-						locationData.put("type", "user-profile");
-					}
-					if(userCacheData.containsKey("district"))
-						locationData.put("district", userCacheData.get("district").toString());
+				if (!userCacheData.isEmpty() && userCacheData.containsKey("state") && !userCacheData.get("state").toString().isEmpty()){
+					locationData.put("state", userCacheData.get("state").toString());
+					locationData.put("district", userCacheData.getOrDefault("district", "").toString());
+					locationData.put("type", "user-profile");
 				}
 			}
 			return locationData;
@@ -106,9 +105,8 @@ public class TelemetryLocationUpdaterService {
 			locationData.put("state", data.get("user_declared_state").toString());
 			locationData.put("district", data.getOrDefault("user_declared_district", "").toString());
 			locationData.put("type", "user-declared");
-			return locationData;
 		}
-		else { return locationData; }
+		return locationData;
 	}
 
 	private Map<String, String> getIpResolvedLocation(DeviceProfile deviceProfile) {
@@ -117,7 +115,7 @@ public class TelemetryLocationUpdaterService {
 		if(!data.isEmpty() && data.containsKey("state")) {
 			locationData.put("state", data.get("state").toString());
 			locationData.put("district", data.getOrDefault("district_custom", "").toString());
-			locationData.put("type", "device-profile");
+			locationData.put("type", "ip-resolved");
 			return locationData;
 		}
 		else { return locationData; }

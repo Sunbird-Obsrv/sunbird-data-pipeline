@@ -23,12 +23,12 @@ public class DeviceProfileCache {
     private Jedis redisConnection;
     private int databaseIndex;
 
-    public DeviceProfileCache(Config config, JobMetrics metrics) {
+    public DeviceProfileCache(Config config, JobMetrics metrics, RedisConnect redisConnect) {
         this.cassandra_db = config.get("cassandra.keyspace", "device_db");
         this.cassandra_table = config.get("cassandra.device_profile_table", "device_profile");
         this.databaseIndex = config.getInt("redis.database.deviceLocationStore.id", 2);
         this.cassandraConnection = new CassandraConnect(config);
-        this.redisConnect = new RedisConnect(config);
+        this.redisConnect = redisConnect;
         this.redisConnection = this.redisConnect.getConnection(databaseIndex);
         this.locationDbKeyExpiryTimeInSeconds = config.getInt("location.db.redis.key.expiry.seconds", 86400);
         this.cacheUnresolvedLocationExpiryTimeInSeconds = config.getInt("cache.unresolved.location.key.expiry.seconds", 3600);
