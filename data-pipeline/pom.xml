@@ -30,6 +30,7 @@
 		<module>telemetry-validator</module>
 		<module>telemetry-extractor</module>
 		<module>de-duplication</module>
+		<module>derived-de-duplication</module>
 		<module>telemetry-router</module>
 		<module>telemetry-location-updater</module>
 		<module>de-normalization</module>

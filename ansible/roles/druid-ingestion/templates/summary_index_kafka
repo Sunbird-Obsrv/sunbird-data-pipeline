@@ -30,6 +30,10 @@
               "name": "uid"
             },
             {
+              "type": "root",
+              "name": "syncts"
+            },
+            {
               "type": "path",
               "name": "context_date_range_from",
               "expr": "$.context.date_range.from"
@@ -38,6 +42,16 @@
               "type": "path",
               "name": "context_date_range_to",
               "expr": "$.context.date_range.to"
+            },
+            {
+              "type": "path",
+              "name": "context_cdata_type",
+              "expr": "$.context.cdata[*].type"
+            },
+            {
+              "type": "path",
+              "name": "context_cdata_id",
+              "expr": "$.context.cdata[*].id"
             },
             {
               "type": "path",
@@ -602,8 +616,10 @@
               "name": "context_date_range_from"
             },
             {
-              "type": "long",
-              "name": "context_date_range_to"
+              "name": "context_cdata_type"
+            },
+            {
+              "name": "context_cdata_id"
             },
             {
               "type": "string",
@@ -1022,7 +1038,7 @@
           "dimensionsExclusions": []
         },
         "timestampSpec": {
-          "column": "syncts",
+          "column": "context_date_range_to",
           "format": "auto"
         }
       }
