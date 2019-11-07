@@ -160,6 +160,7 @@ public class TelemetryLocationUpdaterTaskTest {
 
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
 				assertEquals(true, flags.get("device_profile_retrieved"));
+				assertEquals(true, flags.get("derived_location_retrieved"));
 				return true;
 			}
 		}));
@@ -203,6 +204,7 @@ public class TelemetryLocationUpdaterTaskTest {
 
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
 				assertEquals(true, flags.get("device_profile_retrieved"));
+				assertEquals(true, flags.get("derived_location_retrieved"));
 				return true;
 			}
 		}));
@@ -246,6 +248,58 @@ public class TelemetryLocationUpdaterTaskTest {
 
 				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
 				assertEquals(true, flags.get("device_profile_retrieved"));
+				assertEquals(true, flags.get("derived_location_retrieved"));
+				return true;
+			}
+		}));
+	}
+
+	@Test
+	public void shouldSendEventsToSuccessTopicWithOutDeviceProfile() throws Exception {
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
+		DeviceProfile deviceProfile = null;
+		stub(deviceProfileCacheMock.getDeviceProfileForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(deviceProfile);
+
+		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
+		Type mapType = new TypeToken<Map<String, Object>>() { }.getType();
+		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+			@Override
+			public boolean matches(Object o) {
+				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+				assertEquals(false, flags.get("device_profile_retrieved"));
+				assertEquals(false, flags.get("derived_location_retrieved"));
+				return true;
+			}
+		}));
+	}
+
+	@Test
+	public void shouldSendEventsToSuccessTopicWithOutDeviceProfileAndWithUserProfileLocationAsDerived() throws Exception {
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
+		DeviceProfile deviceProfile = null;
+		stub(deviceProfileCacheMock.getDeviceProfileForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(deviceProfile);
+
+		jedisMock.set("393407b1-66b1-4c86-9080-b2bce9842886","{\"grade\":[4,5],\"district\":\"Bengaluru\",\"type\":\"Registered\",\"state\":\"Karnataka\"}");
+		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
+		Type mapType = new TypeToken<Map<String, Object>>() { }.getType();
+		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+			@Override
+			public boolean matches(Object o) {
+				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+
+				Map<String, Object> derivedLocationData = new Gson().fromJson(new Gson().toJson(outputEvent.get("derivedlocationdata")), mapType);
+				assertEquals("Karnataka", derivedLocationData.get("state"));
+				assertEquals("Bengaluru", derivedLocationData.get("district"));
+				assertEquals("user-profile", derivedLocationData.get("from"));
+
+				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+				assertEquals(false, flags.get("device_profile_retrieved"));
+				assertEquals(true, flags.get("derived_location_retrieved"));
 				return true;
 			}
 		}));

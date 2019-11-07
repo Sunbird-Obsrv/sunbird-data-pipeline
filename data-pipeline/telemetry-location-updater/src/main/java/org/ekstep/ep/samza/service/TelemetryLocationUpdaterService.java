@@ -47,21 +47,30 @@ public class TelemetryLocationUpdaterService {
 			String did = event.did();
 			DeviceProfile deviceProfile = null;
 			if (did != null && !did.isEmpty()) {
-				// check for user profile
-				Map<String, String> derivedLocation = getLocationFromUserCache(event);
 				// get device profile from cache
 				deviceProfile = deviceProfileCache.getDeviceProfileForDeviceId(did);
 
-				// get user declared location if user profile is empty
-				if (derivedLocation.isEmpty()) {
-					derivedLocation = getUserDeclaredLocation(deviceProfile);
-				}
-				// get ip reso lved location if user declared location is empty
-				if (derivedLocation.isEmpty()) {
-					derivedLocation = getIpResolvedLocation(deviceProfile);
-				}
+				// check for user profile location
+				Map<String, String> derivedLocation = getLocationFromUserCache(event);
+
+				// get user declared location if user profile location is empty
+				if (derivedLocation.isEmpty()) derivedLocation = getUserDeclaredLocation(deviceProfile);
+				else metrics.incUserCacheHitCount();
+
+				// get ip resolved location if user declared location is empty
+				if (derivedLocation.isEmpty()) derivedLocation = getIpResolvedLocation(deviceProfile);
+				else metrics.incUserDeclaredHitCount();
+
 				// Add derived location to telemetry
-				event.addDerivedLocation(derivedLocation);
+				if(derivedLocation.isEmpty()) {
+					metrics.incNoCacheHitCount();
+					event.setFlag(TelemetryLocationUpdaterConfig.getDerivedLocationJobFlag(), false);
+				}
+				else {
+					metrics.incIpLocationHitCount();
+					event.addDerivedLocation(derivedLocation);
+					event.setFlag(TelemetryLocationUpdaterConfig.getDerivedLocationJobFlag(), true);
+				}
 
 				// Add device profile details to the event
 				updateEvent(event, deviceProfile);
@@ -88,12 +97,10 @@ public class TelemetryLocationUpdaterService {
 		}
 		catch (JedisException ex) {
 			LOGGER.error(null, "Reconnecting with Redis store due to exception: ", ex);
-			redisConnect.resetConnection();
-			try (Jedis redisConn = redisConnect.getConnection(userStoreDb)) {
-				this.userDataStoreConnection = redisConn;
-				locationData = getLocationForUser(uid);
+			try (Jedis conn = redisConnect.resetConnection(userStoreDb)) {
+				this.userDataStoreConnection = conn;
 			}
-			return locationData;
+			return getLocationForUser(uid);
 		}
 	}
 
@@ -113,26 +120,31 @@ public class TelemetryLocationUpdaterService {
 	}
 
 	private Map<String, String> getUserDeclaredLocation(DeviceProfile deviceProfile) {
-		Map<String,String> data = deviceProfile.toMap();
 		Map<String, String> locationData = new HashMap<>();
-		if(!data.isEmpty() && data.containsKey("user_declared_state") && !data.get("user_declared_state").isEmpty()) {
-			locationData.put(path.stateKey(), data.get("user_declared_state").toString());
-			locationData.put(path.districtKey(), data.getOrDefault("user_declared_district", "").toString());
-			locationData.put(path.locDerivedFromKey(), "user-declared");
+		if (null != deviceProfile) {
+			Map<String, String> data = deviceProfile.toMap();
+			if (!data.isEmpty() && data.containsKey("user_declared_state") && !data.get("user_declared_state").isEmpty()) {
+				locationData.put(path.stateKey(), data.get("user_declared_state").toString());
+				locationData.put(path.districtKey(), data.getOrDefault("user_declared_district", "").toString());
+				locationData.put(path.locDerivedFromKey(), "user-declared");
+			}
+			return locationData;
 		}
-		return locationData;
+		else return locationData;
 	}
 
 	private Map<String, String> getIpResolvedLocation(DeviceProfile deviceProfile) {
-		Map<String,String> data = deviceProfile.toMap();
 		Map<String, String> locationData = new HashMap<>();
-		if(!data.isEmpty() && data.containsKey("state")) {
-			locationData.put(path.stateKey(), data.get("state").toString());
-			locationData.put(path.districtKey(), data.getOrDefault("district_custom", "").toString());
-			locationData.put(path.locDerivedFromKey(), "ip-resolved");
+		if (null != deviceProfile) {
+			Map<String,String> data = deviceProfile.toMap();
+			if(!data.isEmpty() && data.containsKey("state")) {
+				locationData.put(path.stateKey(), data.get("state").toString());
+				locationData.put(path.districtKey(), data.getOrDefault("district_custom", "").toString());
+				locationData.put(path.locDerivedFromKey(), "ip-resolved");
+			}
 			return locationData;
 		}
-		else { return locationData; }
+		else return locationData;
 	}
 
 	public void updateEvent(Event event, DeviceProfile deviceProfile) {
