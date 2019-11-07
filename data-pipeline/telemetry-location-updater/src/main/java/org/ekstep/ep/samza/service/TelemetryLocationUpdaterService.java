@@ -55,11 +55,9 @@ public class TelemetryLocationUpdaterService {
 
 				// get user declared location if user profile location is empty
 				if (derivedLocation.isEmpty()) derivedLocation = getUserDeclaredLocation(deviceProfile);
-				else metrics.incUserCacheHitCount();
 
 				// get ip resolved location if user declared location is empty
 				if (derivedLocation.isEmpty()) derivedLocation = getIpResolvedLocation(deviceProfile);
-				else metrics.incUserDeclaredHitCount();
 
 				// Add derived location to telemetry
 				if(derivedLocation.isEmpty()) {
@@ -67,7 +65,8 @@ public class TelemetryLocationUpdaterService {
 					event.setFlag(TelemetryLocationUpdaterConfig.getDerivedLocationJobFlag(), false);
 				}
 				else {
-					metrics.incIpLocationHitCount();
+					// update derived location metrics
+					updateDerivedLocationMetrics(derivedLocation);
 					event.addDerivedLocation(derivedLocation);
 					event.setFlag(TelemetryLocationUpdaterConfig.getDerivedLocationJobFlag(), true);
 				}
@@ -116,7 +115,7 @@ public class TelemetryLocationUpdaterService {
 				locationData.put(path.locDerivedFromKey(), "user-profile");
 			}
 		}
-			return locationData;
+		return locationData;
 	}
 
 	private Map<String, String> getUserDeclaredLocation(DeviceProfile deviceProfile) {
@@ -128,9 +127,8 @@ public class TelemetryLocationUpdaterService {
 				locationData.put(path.districtKey(), data.getOrDefault("user_declared_district", "").toString());
 				locationData.put(path.locDerivedFromKey(), "user-declared");
 			}
-			return locationData;
 		}
-		else return locationData;
+		return locationData;
 	}
 
 	private Map<String, String> getIpResolvedLocation(DeviceProfile deviceProfile) {
@@ -142,9 +140,15 @@ public class TelemetryLocationUpdaterService {
 				locationData.put(path.districtKey(), data.getOrDefault("district_custom", "").toString());
 				locationData.put(path.locDerivedFromKey(), "ip-resolved");
 			}
-			return locationData;
 		}
-		else return locationData;
+		return locationData;
+	}
+
+	private void updateDerivedLocationMetrics(Map<String, String> derivedLocation) {
+		String derivedFrom = derivedLocation.get("from");
+		if("user-profile".equalsIgnoreCase(derivedFrom)) metrics.incUserCacheHitCount();
+		if("user-declared".equalsIgnoreCase(derivedFrom)) metrics.incUserDeclaredHitCount();
+		if("ip-resolved".equalsIgnoreCase(derivedFrom)) metrics.incIpLocationHitCount();
 	}
 
 	public void updateEvent(Event event, DeviceProfile deviceProfile) {
