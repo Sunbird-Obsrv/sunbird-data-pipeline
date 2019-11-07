@@ -60,6 +60,9 @@ output {
 				"expired_event" => "%{[expired-event-count]}"
 				"device_db_update" => "%{[device-db-update-count]}"
 				"device_cache_update" => "%{[device-cache-update-count]}"
+				"user_declared_location_hit" => "%{[user-declared-hit-count]}"
+				"ip_location_hit" => "%{[ip-location-hit-count]}"
+				"no_cache_hit" => "%{[no-cache-hit-count]}"
 			}   
 			coerce_values => {
 				"success" => "float"
@@ -103,6 +106,9 @@ output {
 				"duplicate" => "float"
 				"device_db_update" => "float"
 				"device_cache_update" => "float"
+				"user_declared_location_hit" => "float"
+				"ip_location_hit" => "float"
+				"no_cache_hit" => "float"
 			}
 			host => "{{influxdb_host}}"
 			port => "{{influxdb_port}}"

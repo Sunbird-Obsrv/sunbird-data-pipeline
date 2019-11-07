@@ -451,6 +451,31 @@
             },
             {
               "type": "path",
+              "name": "user_declared_state",
+              "expr": "$.devicedata.userdeclared.state"
+            },
+            {
+              "type": "path",
+              "name": "user_declared_district",
+              "expr": "$.devicedata.userdeclared.district"
+            },
+            {
+              "type": "path",
+              "name": "derived_loc_state",
+              "expr": "$.derivedlocationdata.state"
+            },
+            {
+              "type": "path",
+              "name": "derived_loc_district",
+              "expr": "$.derivedlocationdata.district"
+            },
+            {
+              "type": "path",
+              "name": "derived_loc_from",
+              "expr": "$.derivedlocationdata.from"
+            },
+            {
+              "type": "path",
               "name": "content_name",
               "expr": "$.contentdata.name"
             },
@@ -1067,6 +1092,26 @@
             {
               "type": "string",
               "name": "device_loc_district"
+            },
+            {
+              "type": "string",
+              "name": "user_declared_state"
+            },
+            {
+              "type": "string",
+              "name": "user_declared_district"
+            },
+            {
+              "type": "string",
+              "name": "derived_loc_state"
+            },
+            {
+              "type": "string",
+              "name": "derived_loc_district"
+            },
+            {
+              "type": "string",
+              "name": "derived_loc_from"
             },
             {
               "type": "string",

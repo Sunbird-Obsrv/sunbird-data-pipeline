@@ -6,7 +6,8 @@ public class TelemetryLocationUpdaterConfig {
 
     private final String JOB_NAME = "TelemetryLocationUpdater";
     private static final String deviceProfileJobFlag = "device_profile_retrieved";
-    private static final String deviceLocaionJobFlag = "device_location_retrieved";
+    private static final String deviceLocationJobFlag = "device_location_retrieved";
+    private static final String derivedLocationJobFlag = "derived_location_retrieved";
 
     private String successTopic;
     private String failedTopic;
@@ -41,11 +42,13 @@ public class TelemetryLocationUpdaterConfig {
         return JOB_NAME;
     }
 
-    public static String getDeviceProfileJobFlag() {
-        return deviceProfileJobFlag;
-    }
+    public static String getDeviceProfileJobFlag() { return deviceProfileJobFlag; }
 
     public static String getDeviceLocationJobFlag() {
-        return deviceLocaionJobFlag;
+        return deviceLocationJobFlag;
+    }
+
+    public static String getDerivedLocationJobFlag() {
+        return derivedLocationJobFlag;
     }
 }
