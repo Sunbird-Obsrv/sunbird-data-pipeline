@@ -5,10 +5,11 @@ zookeeper_group: "{{ groups['druid-zookeeper'] }}"
 
 druid_user: druid
 druid_directory: "/data"
-druid_version: "0.15.0-incubating"
-druid_url: "http://mirrors.estointernet.in/apache/incubator/druid/0.15.0-incubating/apache-druid-0.15.0-incubating-bin.tar.gz"
-druid_path: "{{ druid_directory }}/apache-druid-{{ druid_version }}/"
+druid_version: "0.16.0-incubating"
+druid_url: "http://mirrors.estointernet.in/apache/incubator/druid/0.16.0-incubating/apache-druid-0.16.0-incubating-bin.tar.gz"
 druid_folder: "{{ druid_directory }}/apache-druid-{{ druid_version }}"
+druid_symlink: "{{ druid_directory }}/druid"
+druid_path: "{{ druid_symlink }}/"
 druid_checksum: "807581d54fa4c5a90eec2a230e2a7fc4c6daf18eb8136009bf36a775d793d6f6"
 
 #Common Varibles
@@ -108,7 +109,7 @@ druid_broker_processing_threads: 2
 druid_historical_port: 8083
 druid_historical_service: druid/historical
 
-druid_historical_heap_size: 128m
+druid_historical_heap_size: 1048m
 druid_historical_max_direct_size: 800m
 druid_historical_tmp_dir: "{{ druid_default_tmp_dir }}"
 druid_historical_gc_logfile: "{{ druid_gc_logdir }}/gc_historical.log"

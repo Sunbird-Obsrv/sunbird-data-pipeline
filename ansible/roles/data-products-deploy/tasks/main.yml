@@ -104,7 +104,6 @@
   tags:
     - cronjobs
 
-
 - name: Update start jobmanager
   template: src=start-jobmanager.j2 dest={{ analytics.home }}/scripts/start-jobmanager.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:

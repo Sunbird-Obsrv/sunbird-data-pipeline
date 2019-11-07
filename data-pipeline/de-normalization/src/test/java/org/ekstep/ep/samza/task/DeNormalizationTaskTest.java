@@ -52,8 +52,6 @@ public class DeNormalizationTaskTest {
     private JobMetrics jobMetrics;
     private Jedis jedisMock = new MockJedis("test");
     private Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
-    private CassandraConnect cassandraConnectMock;
-
 
     @SuppressWarnings("unchecked")
     @Before
@@ -66,7 +64,6 @@ public class DeNormalizationTaskTest {
         envelopeMock = mock(IncomingMessageEnvelope.class);
         configMock = mock(Config.class);
         RedisConnect redisConnectMock = mock(RedisConnect.class);
-        cassandraConnectMock = mock(CassandraConnect.class);
         contentCacheMock = mock(ContentDataCache.class);
         dailcodeCacheMock = mock(DialCodeDataCache.class);
         jobMetrics = mock(JobMetrics.class);
@@ -79,9 +76,6 @@ public class DeNormalizationTaskTest {
         stub(configMock.getList("user.metadata.fields",
                 Arrays.asList("usertype", "grade", "language", "subject", "state", "district", "usersignintype", "userlogintype")))
                 .toReturn(Arrays.asList("usertype", "grade", "language", "subject", "state", "district", "usersignintype", "userlogintype"));
-        stub(configMock.get("middleware.cassandra.host", "127.0.0.1")).toReturn("");
-        stub(configMock.get("middleware.cassandra.port", "9042")).toReturn("9042");
-        stub(configMock.get("middleware.cassandra.keyspace", "sunbird")).toReturn("sunbird");
         stub(configMock.getInt("redis.userDB.index", 4)).toReturn(4);
         stub(redisConnectMock.getConnection(4)).toReturn(jedisMock);
         List<String> defaultSummaryEvents = new ArrayList<>();
@@ -95,8 +89,8 @@ public class DeNormalizationTaskTest {
         stub(configMock.get("user.signin.type.default", "Anonymous")).toReturn("Anonymous");
         stub(configMock.get("user.login.type.default", "NA")).toReturn("NA");
 
-        UserDataCache userCacheMock = new UserDataCache(configMock,jobMetrics,cassandraConnectMock, redisConnectMock);
-        deNormalizationTask = new DeNormalizationTask(configMock, contextMock, userCacheMock , contentCacheMock, dailcodeCacheMock, jobMetrics,cassandraConnectMock, redisConnectMock);
+        UserDataCache userCacheMock = new UserDataCache(configMock,jobMetrics, redisConnectMock);
+        deNormalizationTask = new DeNormalizationTask(configMock, contextMock, userCacheMock , contentCacheMock, dailcodeCacheMock, jobMetrics, redisConnectMock);
     }
 
     @Test
@@ -694,7 +688,12 @@ public class DeNormalizationTaskTest {
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
                 assertEquals(outputEvent.get("ver").toString(), "3.0");
                 Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
+                String jedisMockData = jedisMock.get("393407b1-66b1-4c86-9080-b2bce9842886");
                 assertEquals(userData.size(), 5);
+                assert jedisMockData.contains("grade");
+                assert jedisMockData.contains("district");
+                assert jedisMockData.contains("type");
+                assert jedisMockData.contains("state");
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
                 assertEquals(flags.get("user_data_retrieved"), true);
                 assertEquals(flags.get("content_data_retrieved"), null);
@@ -722,56 +721,6 @@ public class DeNormalizationTaskTest {
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
                 assertEquals(flags.get("user_data_retrieved"), true);
                 assertEquals(flags.get("content_data_retrieved"), null);
-                return true;
-            }
-        }));
-    }
-
-    @Test
-    public void shouldSkipCassandraCallifUserSignInTypeAnonymous() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(EventFixture.IMPRESSION_EVENT);
-        String user_id="e9d73b7b-211a-43f4-8c01-cc9333757a9d";
-        jedisMock.set(user_id,"{\"subject\":[],\"grade\":[],\"usersignintype\":\"Anonymous\",\"userlogintype\":\"student\"}");
-        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
-            @Override
-            public boolean matches(Object o) {
-                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
-                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
-                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-                assertEquals(outputEvent.get("ver").toString(), "3.0");
-                Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
-                assertEquals(userData.size(), 4);
-                assertEquals(userData.get("usersignintype"),"Anonymous");
-                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-                assertEquals(flags.get("user_data_retrieved"), true);
-                assertEquals(flags.get("content_data_retrieved"), null);
-                verify(cassandraConnectMock, times(0)).findOne(anyString());
-                return true;
-            }
-        }));
-    }
-
-    @Test
-    public void shouldHitCassandraCallifUserSignInTypeNotAnonymous() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(EventFixture.IMPRESSION_EVENT);
-        String user_id="e9d73b7b-211a-43f4-8c01-cc9333757a9d";
-        jedisMock.set(user_id,"{\"subject\":[],\"grade\":[],\"usersignintype\":\"Self-Signed-In\",\"userlogintype\":\"student\"}");
-        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
-            @Override
-            public boolean matches(Object o) {
-                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
-                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
-                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-                assertEquals(outputEvent.get("ver").toString(), "3.0");
-                Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
-                assertEquals(userData.size(), 4);
-                assertEquals(userData.get("usersignintype"),"Self-Signed-In");
-                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-                assertEquals(flags.get("user_data_retrieved"), true);
-                assertEquals(flags.get("content_data_retrieved"), null);
-                verify(cassandraConnectMock, times(1)).findOne(anyString());
                 return true;
             }
         }));
