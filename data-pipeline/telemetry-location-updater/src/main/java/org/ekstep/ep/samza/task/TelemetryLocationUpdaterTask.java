@@ -59,7 +59,7 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 		this.metrics = new JobMetrics(context, this.config.jobName());
 		this.redisConnect = redisConnect == null ? new RedisConnect(config) : redisConnect;
 		this.deviceProfileCache = deviceProfileCache == null ? new DeviceProfileCache(config, metrics, this.redisConnect) : deviceProfileCache;
-		this.service = new TelemetryLocationUpdaterService(this.deviceProfileCache, metrics, redisConnect, config);
+		this.service = new TelemetryLocationUpdaterService(this.deviceProfileCache, metrics, this.redisConnect, config);
 	}
 
 	@Override
