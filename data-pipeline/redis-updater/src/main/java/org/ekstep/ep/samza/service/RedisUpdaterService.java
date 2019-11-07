@@ -181,7 +181,6 @@ public class RedisUpdaterService {
                 userCacheData = gson.fromJson(data, mapType);
             }
             userCacheData.putAll(getUserSignandLoginType(event));
-
             ArrayList<String> userUpdatedList = event.getUserMetdataUpdatedList();
             if (userCacheData.containsKey("usersignintype") && !"Anonymous".equals(userCacheData.get("usersignintype"))
                     && null != userUpdatedList && !userUpdatedList.isEmpty()) {
@@ -191,14 +190,13 @@ public class RedisUpdaterService {
                     userCacheData.putAll(userMetadataInfoMap);
 
                 if (userUpdatedList.contains("locationIds") && null != userCacheData.get("locationids")) {
-
                     List<String> locationIds = (List<String>) userCacheData.get("locationids");
-                    Map<String, Object> userLocationMap = getLocationDetailsFromlocationDB(userId, locationIds);
-
+                    Map<String, Object> userLocationMap = getLocationDetailsFromlocationDB(locationIds);
                     if (!userLocationMap.isEmpty())
                         userCacheData.putAll(userLocationMap);
                 }
             }
+
             if (!userCacheData.isEmpty())
                 addToCache(userId, gson.toJson(userCacheData), userDataStoreConnection);
 
@@ -244,7 +242,7 @@ public class RedisUpdaterService {
         return userMetadataInfoMap;
     }
 
-    private Map<String, Object> getLocationDetailsFromlocationDB(String userId, List<String> locationIds) {
+    private Map<String, Object> getLocationDetailsFromlocationDB(List<String> locationIds) {
         Map<String, Object> userLocationMap = null;
         try {
             userLocationMap = fetchFallbackUserLocationFromDB(locationIds);
@@ -330,6 +328,7 @@ public class RedisUpdaterService {
     }
 
     private void addToCache(String key, String value, Jedis redisConnection) {
+
         if (key != null && !key.isEmpty() && null != value && !value.isEmpty()) {
             redisConnection.set(key, value);
         }

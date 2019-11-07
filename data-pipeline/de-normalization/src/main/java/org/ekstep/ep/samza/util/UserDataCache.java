@@ -62,9 +62,6 @@ public class UserDataCache extends DataCache {
         }
         userDataMap = getUserSigninLoginDetails(userDataMap);
 
-        if (!userDataMap.isEmpty()) {
-                addToCache(userId, gson.toJson(userDataMap));
-            }
         if (userDataMap.size() <=2) {  //Since SigninType and LoginType are default values, incrementing no data metric only if other user details are not present
             metrics.incNoDataCount();
         }
@@ -88,14 +85,5 @@ public class UserDataCache extends DataCache {
             cacheData = gson.fromJson(data, mapType);
         }
         return cacheData;
-    }
-
-    private void addToCache(String userId, String userData) {
-        try {
-            redisConnection.set(userId, userData);
-        } catch (JedisException ex) {
-            LOGGER.error("", "AddLocationToCache: Unable to get connection from the " +
-                    "redis connection pool. userId: " + userId, ex);
-        }
     }
 }

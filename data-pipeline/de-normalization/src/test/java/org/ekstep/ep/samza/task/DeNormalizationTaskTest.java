@@ -688,8 +688,12 @@ public class DeNormalizationTaskTest {
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
                 assertEquals(outputEvent.get("ver").toString(), "3.0");
                 Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
-                System.out.println(userData);
+                String jedisMockData = jedisMock.get("393407b1-66b1-4c86-9080-b2bce9842886");
                 assertEquals(userData.size(), 5);
+                assert jedisMockData.contains("grade");
+                assert jedisMockData.contains("district");
+                assert jedisMockData.contains("type");
+                assert jedisMockData.contains("state");
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
                 assertEquals(flags.get("user_data_retrieved"), true);
                 assertEquals(flags.get("content_data_retrieved"), null);

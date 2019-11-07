@@ -146,6 +146,11 @@ course.metrics.es.index.cbatchstats.prefix="cbatchstats-"
 course.metrics.es.index.cbatch="course-batch"
 es.composite.host="{{groups['composite-search-cluster'][0]}}"
 
+# State admin user reports
+# Uses azure only - course.metrics.cloud.provider
+admin.reports.cloud.container="reports"
+admin.metrics.cloud.objectKey="public/admin-user-reports/"
+
 #Assessment report config
 assessment.metrics.temp.dir="/mount/data/analytics/assessment-report"
 assessment.metrics.cassandra.input.consistency="QUORUM"
