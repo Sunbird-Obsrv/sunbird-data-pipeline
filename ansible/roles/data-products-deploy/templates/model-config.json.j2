@@ -2292,8 +2292,8 @@
     },
     "model": "org.ekstep.analytics.job.StateAdminReportJob",
     "modelParams": {
-      "sparkCassandraConnectionHost": "'$sunbirdPlatformCassandraHost'",
-      "sparkElasticsearchConnectionHost": "'$sunbirdPlatformElasticsearchHost'"
+      "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
+      "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
     },
     "output": [
       {
