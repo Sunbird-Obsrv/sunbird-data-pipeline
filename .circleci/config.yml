@@ -33,6 +33,10 @@ workflows:
    triggers:
     - schedule:
          cron: "*/5 * * * *"
+         filters:
+            branches:
+              only:
+                - amorphous-1-patch-1
    jobs:
      - ep-build:
           context: SonarCloud
