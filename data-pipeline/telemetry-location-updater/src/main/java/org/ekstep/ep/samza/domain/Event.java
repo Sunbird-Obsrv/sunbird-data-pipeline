@@ -105,14 +105,20 @@ public class Event {
 
 	public void addDeviceProfile(DeviceProfile deviceProfile) {
 		Map<String, Object> ldata = new HashMap<>();
-		ldata.put("countrycode", deviceProfile.getCountryCode());
-		ldata.put("country", deviceProfile.getCountry());
-		ldata.put("statecode", deviceProfile.getStateCode());
-		ldata.put("state", deviceProfile.getState());
-		ldata.put("city", deviceProfile.getCity());
-		ldata.put("statecustomcode", deviceProfile.getstateCodeCustom());
-		ldata.put("statecustomname", deviceProfile.getstateCustomName());
-		ldata.put("districtcustom", deviceProfile.getDistrictCustom());
+		if(!deviceProfile.getUserDeclaredDistrict().isEmpty()) {
+			ldata.put("state", deviceProfile.getUserDeclaredState());
+			ldata.put("districtcustom", deviceProfile.getUserDeclaredDistrict());
+		}
+		else {
+			ldata.put("countrycode", deviceProfile.getCountryCode());
+			ldata.put("country", deviceProfile.getCountry());
+			ldata.put("statecode", deviceProfile.getStateCode());
+			ldata.put("state", deviceProfile.getState());
+			ldata.put("city", deviceProfile.getCity());
+			ldata.put("statecustomcode", deviceProfile.getstateCodeCustom());
+			ldata.put("statecustomname", deviceProfile.getstateCustomName());
+			ldata.put("districtcustom", deviceProfile.getDistrictCustom());
+		}
 		ldata.put("devicespec", deviceProfile.getDevicespec());
 		ldata.put("uaspec", deviceProfile.getUaspec());
 		ldata.put("firstaccess", deviceProfile.getFirstaccess());
