@@ -49,4 +49,3 @@ workflows:
    jobs:
      - branch_build:
           context: SonarCloud
-#test
