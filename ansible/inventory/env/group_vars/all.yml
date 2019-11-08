@@ -15,8 +15,8 @@ secrets_path: '{{inventory_dir}}/secrets.yml'
 artifacts_container: "{{dp_vault_artifacts_container}}"
 azure_storage_secret: "{{dp_vault_azure_account_key}}"
 
-report_azure_account_name: "{{public_azure_account_name}}"
-report_azure_storage_secret: "{{public_vault_azure_account_key}}"
+report_azure_account_name: "{{report_azure_account_name}}"
+report_azure_storage_secret: "{{report_vault_azure_account_key}}"
 #monasca_log_level: ERROR
 resourcemanager: "{{ groups['yarn-master'][0] }}"
 yarn_slaves: "{{ groups['yarn-slave']}}"
