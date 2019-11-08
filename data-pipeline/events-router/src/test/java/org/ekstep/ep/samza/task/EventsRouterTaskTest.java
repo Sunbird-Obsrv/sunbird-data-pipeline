@@ -81,6 +81,19 @@ public class EventsRouterTaskTest {
 	}
 
 	@Test
+	public void shouldStoreChecksumForUniqueEvents() throws Exception {
+		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.START_EVENT);
+		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
+		DeDupEngine deDupEngine = new DeDupEngine(jedisMock, dupStoreId,60);
+		boolean isUnique = deDupEngine.isUniqueEvent("677009782");
+		deDupEngine.getRedisConnection();
+		deDupEngine.storeChecksum("678998676");
+
+		assertEquals(isUnique, true);
+	}
+
+	@Test
 	public void shouldRouteSummaryEventsToSummaryTopic() throws Exception {
 
 		stub(configMock.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY")).toReturn("ME_WORKFLOW_SUMMARY");
@@ -166,5 +179,15 @@ public class EventsRouterTaskTest {
 		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);
 		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), ERROR_EVENTS_TOPIC)));
+	}
+
+	@Test
+	public void shouldMarkEventFailureIfNullEid() throws Exception {
+		stub(configMock.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY")).toReturn("ME_WORKFLOW_SUMMARY");
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.EVENT_WITH_NULL_EID);
+		when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
+		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);
+		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
+		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
 	}
 }

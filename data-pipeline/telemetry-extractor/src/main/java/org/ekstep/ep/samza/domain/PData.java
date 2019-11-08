@@ -25,10 +25,6 @@ public class PData {
         this.id = id;
     }
 
-    public String getPid() {
-        return pid;
-    }
-
     public String getVer() {
         return ver;
     }

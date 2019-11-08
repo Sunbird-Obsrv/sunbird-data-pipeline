@@ -38,14 +38,5 @@ public class Target {
 	public void setType(String type) {
 		this.type = type;
 	}
-
-	public HashMap<String, String> getParent() {
-		return parent;
-	}
-
-	public void setParent(HashMap<String, String> parent) {
-		this.parent = parent;
-	}
-	
 	
 }

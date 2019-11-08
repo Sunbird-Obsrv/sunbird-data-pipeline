@@ -49,36 +49,4 @@ public class Context {
         }
 
     }
-
-    public String getChannel() {
-        return channel;
-    }
-
-    public String getEnv() {
-        return env;
-    }
-
-    public String getSid() {
-        return sid;
-    }
-
-    public String getDid() {
-        return did;
-    }
-
-    public Map<String, String> getpData() {
-        return pData;
-    }
-
-    public Rollup getRollUp() {
-        return rollUp;
-    }
-
-    public void setRollUp(Rollup rollUp) {
-        this.rollUp = rollUp;
-    }
-
-    public List<CData> getCData() {
-        return cData;
-    }
 }

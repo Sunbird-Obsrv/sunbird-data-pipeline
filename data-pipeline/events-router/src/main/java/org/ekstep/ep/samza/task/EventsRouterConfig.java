@@ -42,24 +42,12 @@ public class EventsRouterConfig {
 		return telemetryEventsRouteTopic;
 	}
 
-	public void setTelemetryEventsRouteTopic(String telemetryEventsRouteTopic) {
-		this.telemetryEventsRouteTopic = telemetryEventsRouteTopic;
-	}
-
 	public String getSummaryEventsRouteTopic() {
 		return summaryEventsRouteTopic;
 	}
 
-	public void setSummaryEventsRouteTopic(String summaryEventsRouteTopic) {
-		this.summaryEventsRouteTopic = summaryEventsRouteTopic;
-	}
-
 	public String getSummaryRouteEvents() {
 		return this.summaryRouteEvents;
-	}
-
-	public void setSummaryRouteEvents(String summaryRouteEvents) {
-		this.summaryRouteEvents = summaryRouteEvents;
 	}
 
     public String failedTopic() {

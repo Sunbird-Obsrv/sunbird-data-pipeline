@@ -43,15 +43,4 @@ public class TObject {
         this.ver = ver;
     }
 
-    public Rollup getRollUp() {
-        return rollUp;
-    }
-
-    public void setRollUp(Rollup rollUp) {
-        this.rollUp = rollUp;
-    }
-
-    public String getSubType() {
-        return subType;
-    }
 }

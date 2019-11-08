@@ -28,14 +28,5 @@ public class Plugin {
 	public void setVer(String ver) {
 		this.ver = ver;
 	}
-
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
-	}	
-	
 	
 }

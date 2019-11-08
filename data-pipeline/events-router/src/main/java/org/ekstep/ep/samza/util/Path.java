@@ -1,7 +1,7 @@
 package org.ekstep.ep.samza.util;
 
 public class Path {
-    public String loc(){
+   /* public String loc(){
         return "edata.loc";
     }
 
@@ -43,5 +43,5 @@ public class Path {
 
     public String ldata(){
         return "ldata";
-    }
+    }*/
 }

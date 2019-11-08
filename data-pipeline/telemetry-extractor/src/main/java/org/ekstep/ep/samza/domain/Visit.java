@@ -17,25 +17,4 @@ public class Visit {
         section = "";
         index = 0;
     }
-
-    public String getObjid() {
-        return objid;
-    }
-
-    public String getObjtype() {
-        return objtype;
-    }
-
-    public String getObjver() {
-        return objver;
-    }
-
-    public String getSection() {
-        return section;
-    }
-
-    public Integer getIndex() {
-        return index;
-    }
-
 }
