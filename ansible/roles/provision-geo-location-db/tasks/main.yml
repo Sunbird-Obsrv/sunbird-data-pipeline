@@ -8,6 +8,9 @@
 
 - name: Remove previously downloaded maxmind_custom_data_mapping.csv file
   file: path={{ maxmind_db_download_dir }}/maxmind_custom_data_mapping.csv state=absent
+  
+- name: Download maxmind_custom_data_mapping.csv file
+  get_url: url={{ maxmind_custom_data_mapping_url }} dest={{ maxmind_db_download_dir }}/maxmind_custom_data_mapping.csv force=no
 
 - name: Remove archive files
   become: yes
