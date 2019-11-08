@@ -42,7 +42,7 @@ workflows:
    triggers:
     - schedule:
          cron: "5 * * * *"
-          filters:
+         filters:
             branches:
               only:
                 - amorphous-1-patch-1
