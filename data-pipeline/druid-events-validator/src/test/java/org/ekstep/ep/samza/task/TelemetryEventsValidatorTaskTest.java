@@ -211,6 +211,21 @@ public class TelemetryEventsValidatorTaskTest {
     }
 
 
+    @Test
+    public void shouldAddInvalidEventToMalformedTopic() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_JSON);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), MALFORMED_TOPIC)));
+    }
+
+//    @Test
+//    public void shouldNotProcessTheEvent() throws Exception {
+//        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_JSON);
+//        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+//        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), MALFORMED_TOPIC)));
+//    }
+
+
     public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
         return new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override

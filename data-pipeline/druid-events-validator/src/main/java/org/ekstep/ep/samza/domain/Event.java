@@ -1,14 +1,12 @@
 package org.ekstep.ep.samza.domain;
 
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.google.gson.Gson;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 import org.ekstep.ep.samza.task.DruidEventsValidatorConfig;
 
-import com.google.gson.Gson;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Event {
 
@@ -28,15 +26,6 @@ public class Event {
         return json;
     }
 
-    public String getChecksum() {
-
-        String checksum = id();
-        if (checksum != null)
-            return checksum;
-
-        return mid();
-    }
-
     public String id() {
         NullableValue<String> checksum = telemetry.read("metadata.checksum");
         return checksum.value();
@@ -50,24 +39,6 @@ public class Event {
     public String eid() {
         NullableValue<String> eid = telemetry.read("eid");
         return eid.value();
-    }
-    public String did() {
-        NullableValue<String> checksum = telemetry.read("context.did");
-        return checksum.value();
-    }
-
-    public String pid() {
-        NullableValue<String> pid = telemetry.read("context.pdata.pid");
-        return pid.value();
-    }
-
-    public String schemaName() {
-        String eid = eid();
-        if (eid != null) {
-            return MessageFormat.format("{0}.json", eid.toLowerCase());
-        } else {
-            return "envelope.json";
-        }
     }
 
     public String version() {
@@ -95,11 +66,6 @@ public class Event {
             telemetry.add("metadata.src", config.jobName());
         }
 
-    }
-
-    public void markSkipped() {
-        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.dv_skipped", true);
     }
 
     public boolean isSummaryEvent() {
