@@ -14,6 +14,7 @@ import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
+import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.ekstep.ep.samza.util.TelemetrySchemaValidator;
 import org.junit.Before;
@@ -23,6 +24,7 @@ import org.mockito.ArgumentMatcher;
 import java.lang.reflect.Type;
 import java.util.Map;
 
+import static org.ekstep.ep.samza.fixtures.EventFixture.VALID_LOG_WITH_MISSING_CHANNEL;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
@@ -143,6 +145,83 @@ public class TelemetryValidatorTaskTest {
                 Map<String, Object> actorData = new Gson().fromJson(new Gson().toJson(outputEvent.get("actor")), mapType);
                 assertEquals("874ed8a5-782e-4f6c-8f36-e0288455901e", actorData.get("id"));
                 return true;
+            }
+        }));
+    }
+
+    @Test
+    public void whenInvalidEventisPassed() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.INVALID_EVENT);
+        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        Type mapType = new TypeToken<Map<String, Object>>() {}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                System.out.println(outputMessage);
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                Map<String, Object> flags = new Gson().fromJson(new Gson().toJson(outputEvent.get("flags")), mapType);
+                System.out.println("flags" + flags);
+                System.out.println(flags.get("tv_processed"));
+                assertEquals(false, flags.get("tv_processed"));
+                return  true;
+            }
+        }));
+    }
+
+    @Test
+    public void whenValidLogEventisPasses() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_LOG_EVENT);
+        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+    }
+
+    @Test
+    public void shouldUpdateTheDefaultChannelToValidEvent() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_LOG_WITH_MISSING_CHANNEL);
+        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+        Type mapType = new TypeToken<Map<String, Object>>() {}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                System.out.println(outputMessage);
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                Map<String, Object> flags = new Gson().fromJson(new Gson().toJson(outputEvent.get("flags")), mapType);
+                Map<String, Object> context = new Gson().fromJson(new Gson().toJson(outputEvent.get("context")), mapType);
+                System.out.println("flags" + flags);
+                System.out.println(flags.get("tv_processed"));
+                assertEquals(true, flags.get("tv_processed"));
+                //assertEquals("org.sunbird", context.get("channel"));
+                return  true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldUpdateTheDefaultsToValidEvent() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_LOG_WITH_MISSING_SYNCTS);
+        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+        Type mapType = new TypeToken<Map<String, Object>>() {}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                System.out.println(outputMessage);
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                Map<String, Object> flags = new Gson().fromJson(new Gson().toJson(outputEvent.get("flags")), mapType);
+                System.out.println("flags" + flags);
+                System.out.println(flags.get("tv_processed"));
+                assertEquals(true, flags.get("tv_processed"));
+                assertEquals(true, outputEvent.containsKey("@timestamp"));
+                assertEquals(true, outputEvent.containsKey("syncts"));
+                return  true;
             }
         }));
     }

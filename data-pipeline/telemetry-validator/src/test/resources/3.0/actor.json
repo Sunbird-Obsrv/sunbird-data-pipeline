@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "id": "http://api.ekstep.org/telemetry/actor/id",
+      "type": "string"
+    },
+    "type": {
+      "id": "http://api.ekstep.org/telemetry/actor/type",
+      "type": "string"
+    }
+  },
+  "required": [ "type", "id"]
+}
