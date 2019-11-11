@@ -131,12 +131,13 @@ azure {
   }
 }
 
+## Reports - Global config
+cloud.container.reports="reports"
+
 # course metrics container in azure
 course.metrics.cassandra.sunbirdKeyspace="sunbird"
 course.metrics.cassandra.sunbirdCoursesKeyspace="sunbird_courses"
-course.metrics.cloud.provider="azure"
-course.metrics.cloud.container="course-metrics"
-course.metrics.cloud.objectKey="reports/"
+course.metrics.cloud.objectKey="course-progress-reports/"
 course.metrics.temp.dir="/mount/data/analytics/course-reports"
 course.metrics.cassandra.input.consistency="QUORUM"
 es.host="http://{{groups['core-es'][0]}}"
@@ -149,13 +150,13 @@ es.composite.host="{{groups['composite-search-cluster'][0]}}"
 # State admin user reports
 # Uses azure only - course.metrics.cloud.provider
 admin.reports.cloud.container="reports"
-admin.metrics.cloud.objectKey="public/admin-user-reports/"
+admin.metrics.cloud.objectKey="admin-user-reports/"
+admin.metrics.temp.dir="/mount/data/analytics/admin-user-reports"
 
 #Assessment report config
 assessment.metrics.temp.dir="/mount/data/analytics/assessment-report"
 assessment.metrics.cassandra.input.consistency="QUORUM"
 assessment.metrics.cloud.objectKey="assessment-reports/"
-assessment.metrics.cloud.provider="azure"
 assessment.metrics.content.index="compositesearch"
 es.scroll.size = 1000
 assessment.metrics.es.alias="cbatch-assessment"
