@@ -50,4 +50,9 @@ public class RedisConnect {
         Integer redis_port = config.getInt("redis.port", 6379);
         this.jedisPool = new JedisPool(buildPoolConfig(), redis_host, redis_port);
     }
+
+    public Jedis resetConnection(int database) {
+        resetConnection();
+        return getConnection(database);
+    }
 }

@@ -128,6 +128,18 @@
             {
               "type": "root",
               "name": "device-cache-update-count"
+            },
+            {
+              "type": "root",
+              "name": "user-declared-hit-count"
+            },
+            {
+              "type": "root",
+              "name": "ip-location-hit-count"
+            },
+            {
+              "type": "root",
+              "name": "no-cache-hit-count"
             }
           ]
         },
@@ -252,6 +264,18 @@
             {
               "type": "long",
               "name": "device-cache-update-count"
+            },
+            {
+              "type": "long",
+              "name": "user-declared-hit-count"
+            },
+            {
+              "type": "long",
+              "name": "ip-location-hit-count"
+            },
+            {
+              "type": "long",
+              "name": "no-cache-hit-count"
             }
           ],
           "dimensionsExclusions": []

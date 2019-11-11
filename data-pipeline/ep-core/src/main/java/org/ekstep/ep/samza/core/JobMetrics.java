@@ -44,6 +44,9 @@ public class JobMetrics {
     private final Counter duplicateEventCount;
     private final Counter deviceDBUpdateCount;
     private final Counter deviceCacheUpdateCount;
+    private final Counter userDeclaredHitCount;
+    private final Counter ipLocationHitCount;
+    private final Counter noCacheHitCount;
     private TaskContext context;
     private int partition;
     public JobMetrics(TaskContext context) {
@@ -79,6 +82,9 @@ public class JobMetrics {
         duplicateEventCount = metricsRegistry.newCounter(getClass().getName(), "duplicate-event-count");
         deviceDBUpdateCount = metricsRegistry.newCounter(getClass().getName(), "device-db-update-count");
         deviceCacheUpdateCount = metricsRegistry.newCounter(getClass().getName(), "device-cache-update-count");
+        userDeclaredHitCount = metricsRegistry.newCounter(getClass().getName(), "user-declared-hit-count");
+        ipLocationHitCount = metricsRegistry.newCounter(getClass().getName(), "ip-location-hit-count");
+        noCacheHitCount = metricsRegistry.newCounter(getClass().getName(), "no-cache-hit-count");
         jobName = jName;
         this.context = context;
     }
@@ -109,6 +115,9 @@ public class JobMetrics {
         duplicateEventCount.clear();
         deviceDBUpdateCount.clear();
         deviceCacheUpdateCount.clear();
+        userDeclaredHitCount.clear();
+        ipLocationHitCount.clear();
+        noCacheHitCount.clear();
     }
 
     public void incSuccessCounter() {
@@ -215,6 +224,18 @@ public class JobMetrics {
         expiredEventCount.inc();
     }
 
+    public void incUserDeclaredHitCount() {
+        userDeclaredHitCount.inc();
+    }
+
+    public void incIpLocationHitCount() {
+        ipLocationHitCount.inc();
+    }
+
+    public void incNoCacheHitCount() {
+        noCacheHitCount.inc();
+    }
+
     public long consumerLag(Map<String, ConcurrentHashMap<String, Metric>> containerMetricsRegistry) {
         long consumerLag = 0;
         try {
@@ -273,6 +294,9 @@ public class JobMetrics {
         metricsEvent.put("metricts", new DateTime().getMillis());
         metricsEvent.put("device-db-update-count",deviceDBUpdateCount.getCount());
         metricsEvent.put("device-cache-update-count",deviceCacheUpdateCount.getCount());
+        metricsEvent.put("user-declared-hit-count",userDeclaredHitCount.getCount());
+        metricsEvent.put("ip-location-hit-count",ipLocationHitCount.getCount());
+        metricsEvent.put("no-cache-hit-count",noCacheHitCount.getCount());
 
         return new Gson().toJson(metricsEvent);
     }
