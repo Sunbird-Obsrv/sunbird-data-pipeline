@@ -88,80 +88,12 @@ public class Telemetry {
 		return String.format("%s:%s", eid, mid);
 	}
 
-	public HashMap<String, String> getMetadata() {
-		return metadata;
-	}
-
-	public void setMetadata(HashMap<String, String> metadata) {
-		this.metadata = metadata;
-	}
-
-	public long getEts() {
-		return ets;
-	}
-
-	public void setEts(long ets) {
-		this.ets = ets;
-	}
-
-	public String getMid() {
-		return mid;
-	}
-
-	public void setMid(String mid) {
-		this.mid = mid;
-	}
-
-	public String getEid() {
-		return eid;
-	}
-
-	public void setEid(String eid) {
-		this.eid = eid;
-	}
-
-	public String getVer() {
-		return ver;
-	}
-
-	public Actor getActor() {
-		return actor;
-	}
-
-	public void setActor(Actor actor) {
-		this.actor = actor;
-	}
-
 	public TObject getObject() {
 		return object;
 	}
 
 	public void setObject(TObject object) {
 		this.object = object;
-	}
-
-	public HashMap<String, Object> getEdata() {
-		return edata;
-	}
-
-	public void setEdata(HashMap<String, Object> edata) {
-		this.edata = edata;
-	}
-
-	public List<String> getTags() {
-		return tags;
-	}
-
-	public void setTags(List<String> tags) {
-		this.tags = tags;
-	}
-
-	public Context getContext() {
-		return context;
-	}
-
-	public void setContext(Context context) {
-		this.context = context;
 	}
 
 	public Map<String, Object> toMap() {

@@ -4,8 +4,6 @@ import java.util.Map;
 
 public class Actor {
     private String id = "";
-    private String type = "telemetry-sync";
-
     public Actor() {
 
     }
@@ -18,15 +16,8 @@ public class Actor {
         return id;
     }
 
-    public String getType() {
-        return type;
-    }
-
     public void setId(String id) {
         this.id = id;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
 }
