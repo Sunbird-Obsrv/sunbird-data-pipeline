@@ -208,7 +208,7 @@ public class TelemetryValidatorTaskTest {
     }
 
     /**
-     * When synctc and @timestamp fileds are missed, Then job should add these fileds to event.
+     * When synctc and @timestamp fields are missed, Then job should add these fileds to event.
      * @throws Exception
      */
     @Test

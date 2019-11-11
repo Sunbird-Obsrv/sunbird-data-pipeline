@@ -41,10 +41,6 @@ public class TelemetryValidatorConfig {
         return metricsTopic;
     }
 
-    public String defaultChannel() {
-        return defaultChannel;
-    }
-
     public String schemaPath() {
         return schemaPath;
     }

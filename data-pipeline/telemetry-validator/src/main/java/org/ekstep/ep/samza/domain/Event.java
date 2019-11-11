@@ -100,12 +100,6 @@ public class Event {
 	}
 
 	public void updateDefaults(TelemetryValidatorConfig config) {
-		String channelString = telemetry.<String>read("context.channel").value();
-		String channel = StringUtils.deleteWhitespace(channelString);
-		if (channel == null || channel.isEmpty()) {
-			telemetry.addFieldIfAbsent("context", new HashMap<String, Object>());
-			telemetry.add("context.channel", config.defaultChannel());
-		}
 		String atTimestamp = telemetry.getAtTimestamp();
 		String strSyncts = telemetry.getSyncts();
 		if (null == atTimestamp && null == strSyncts) {
