@@ -31,20 +31,6 @@ public class Event {
 		return gson.toJson(getMap());
 	}
 
-	public String getChecksum() {
-
-		String checksum = id();
-		if (checksum != null)
-			return checksum;
-
-		return mid();
-	}
-
-	public String id() {
-		NullableValue<String> checksum = telemetry.read("metadata.checksum");
-		return checksum.value();
-	}
-
 	public String mid() {
 		NullableValue<String> checksum = telemetry.read("mid");
 		return checksum.value();
@@ -58,11 +44,6 @@ public class Event {
 	public String eid() {
 		NullableValue<String> eid = telemetry.read("eid");
 		return eid.value();
-	}
-
-	public String pid() {
-		NullableValue<String> pid = telemetry.read("context.pdata.pid");
-		return pid.value();
 	}
 
 	public String schemaName() {

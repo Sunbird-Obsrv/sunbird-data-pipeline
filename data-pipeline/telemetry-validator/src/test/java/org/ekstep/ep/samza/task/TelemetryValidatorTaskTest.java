@@ -14,7 +14,6 @@ import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
-import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.fixtures.EventFixture;
 import org.ekstep.ep.samza.util.TelemetrySchemaValidator;
 import org.junit.Before;
@@ -24,7 +23,6 @@ import org.mockito.ArgumentMatcher;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-import static org.ekstep.ep.samza.fixtures.EventFixture.VALID_LOG_WITH_MISSING_CHANNEL;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
@@ -70,56 +68,56 @@ public class TelemetryValidatorTaskTest {
     }
 
     @Test
-    public void shouldSendEventToSuccessTopicIfEventIsValid() throws Exception{
-    	
-    	stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_GE_ERROR_EVENT);
-    	
-    	telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+    public void shouldSendEventToSuccessTopicIfEventIsValid() throws Exception {
+
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_GE_ERROR_EVENT);
+
+        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
-    
+
     @Test
-    public void shouldSendEventToValidTopicIfSchemaNotFound() throws Exception{
-    	
-    	stub(envelopeMock.getMessage()).toReturn(EventFixture.INVALID_GE_ERROR_EVENT);
-    	
-    	telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+    public void shouldSendEventToValidTopicIfSchemaNotFound() throws Exception {
+
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.INVALID_GE_ERROR_EVENT);
+
+        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
-    
+
     @Test
-    public void shouldSendEventToMalformedTopicIfEventIsNotParseable() throws Exception{
-    	
-    	stub(envelopeMock.getMessage()).toReturn(EventFixture.UNPARSABLE_GE_GENIE_UPDATE_EVENT);
-    	
-    	telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+    public void shouldSendEventToMalformedTopicIfEventIsNotParseable() throws Exception {
+
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.UNPARSABLE_GE_GENIE_UPDATE_EVENT);
+
+        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), MALFORMED_TOPIC)));
     }
-    
+
     @Test
-    public void shouldSendEventToMalformedTopicIfEventIsAnyRandomString() throws Exception{
-    	
-    	stub(envelopeMock.getMessage()).toReturn(EventFixture.ANY_STRING);
-    	
-    	telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+    public void shouldSendEventToMalformedTopicIfEventIsAnyRandomString() throws Exception {
+
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.ANY_STRING);
+
+        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), MALFORMED_TOPIC)));
     }
-    
+
     @Test
-    public void shouldSendEventToSuccessTopicIfEventIsEmptyJSON() throws Exception{
+    public void shouldSendEventToSuccessTopicIfEventIsEmptyJSON() throws Exception {
 
-    	stub(envelopeMock.getMessage()).toReturn(EventFixture.EMPTY_JSON);
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.EMPTY_JSON);
 
-    	telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
 
     @Test
-    public void shouldSendEventToSuccessTopicIfSchemaIsNotPresent() throws Exception{
-    	
-    	stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_GE_INTERACT_EVENT);
-    	
-    	telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+    public void shouldSendEventToSuccessTopicIfSchemaIsNotPresent() throws Exception {
+
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_GE_INTERACT_EVENT);
+
+        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
 
@@ -135,7 +133,8 @@ public class TelemetryValidatorTaskTest {
 
         stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_GE_INTERACT_EVENT);
         telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>() {}.getType();
+        Type mapType = new TypeToken<Map<String, Object>>() {
+        }.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -154,7 +153,8 @@ public class TelemetryValidatorTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INVALID_EVENT);
         telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
-        Type mapType = new TypeToken<Map<String, Object>>() {}.getType();
+        Type mapType = new TypeToken<Map<String, Object>>() {
+        }.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -166,62 +166,69 @@ public class TelemetryValidatorTaskTest {
                 System.out.println("flags" + flags);
                 System.out.println(flags.get("tv_processed"));
                 assertEquals(false, flags.get("tv_processed"));
-                return  true;
+                return true;
             }
         }));
     }
 
+    /**
+     * When valid log event is passed then it should push to success topic
+     *
+     * @throws Exception
+     */
     @Test
-    public void whenValidLogEventisPasses() throws Exception {
+    public void shouldAddTheValidEventToSuccessTopic() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_LOG_EVENT);
         telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
 
+    /**
+     * When channel field is not present in the context then it should push the event to failed topic
+     * @throws Exception
+     */
     @Test
-    public void shouldUpdateTheDefaultChannelToValidEvent() throws Exception {
+    public void shouldValidateTheChannelField() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_LOG_WITH_MISSING_CHANNEL);
         telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
-        Type mapType = new TypeToken<Map<String, Object>>() {}.getType();
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        Type mapType = new TypeToken<Map<String, Object>>() {
+        }.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
-                System.out.println(outputMessage);
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
                 Map<String, Object> flags = new Gson().fromJson(new Gson().toJson(outputEvent.get("flags")), mapType);
-                Map<String, Object> context = new Gson().fromJson(new Gson().toJson(outputEvent.get("context")), mapType);
-                System.out.println("flags" + flags);
-                System.out.println(flags.get("tv_processed"));
-                assertEquals(true, flags.get("tv_processed"));
-                //assertEquals("org.sunbird", context.get("channel"));
-                return  true;
+                assertEquals(false, flags.get("tv_processed"));
+                return true;
             }
         }));
     }
 
+    /**
+     * When synctc and @timestamp fileds are missed, Then job should add these fileds to event.
+     * @throws Exception
+     */
     @Test
     public void shouldUpdateTheDefaultsToValidEvent() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_LOG_WITH_MISSING_SYNCTS);
         telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
-        Type mapType = new TypeToken<Map<String, Object>>() {}.getType();
+        Type mapType = new TypeToken<Map<String, Object>>() {
+        }.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
-                System.out.println(outputMessage);
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
                 Map<String, Object> flags = new Gson().fromJson(new Gson().toJson(outputEvent.get("flags")), mapType);
-                System.out.println("flags" + flags);
-                System.out.println(flags.get("tv_processed"));
                 assertEquals(true, flags.get("tv_processed"));
                 assertEquals(true, outputEvent.containsKey("@timestamp"));
                 assertEquals(true, outputEvent.containsKey("syncts"));
-                return  true;
+                return true;
             }
         }));
     }
@@ -230,7 +237,8 @@ public class TelemetryValidatorTaskTest {
     public void shouldConvertDialcodesKeytoLowerCaseIfPresent() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_INCORRECT_DIALCODES_KEY);
         telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Type mapType = new TypeToken<Map<String, Object>>() {}.getType();
+        Type mapType = new TypeToken<Map<String, Object>>() {
+        }.getType();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
