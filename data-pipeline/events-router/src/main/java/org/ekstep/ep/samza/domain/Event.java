@@ -1,18 +1,12 @@
 package org.ekstep.ep.samza.domain;
 
 import org.ekstep.ep.samza.events.domain.Events;
-import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.task.EventsRouterConfig;
-import org.ekstep.ep.samza.util.Path;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Event extends Events {
-
-    private Path path;
 
     public Event(Map<String, Object> map) {
         super(map);

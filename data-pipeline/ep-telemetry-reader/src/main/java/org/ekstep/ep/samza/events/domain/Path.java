@@ -29,4 +29,39 @@ public class Path {
     }
 
     public String eid() { return "eid" ; }
+
+    public String deviceData(){ return "devicedata"; }
+
+    public String loc(){
+        return "edata.loc";
+    }
+
+    public String userData(){ return "userdata"; }
+
+    public String contentData(){ return "contentdata"; }
+
+    public String dialCodeData(){ return "dialcodedata"; }
+
+    public String collectionData() { return  "collectiondata"; }
+
+    public String ver(){
+        return "ver";
+    }
+
+    public String edata(){
+        return "edata";
+    }
+
+    public String checksum(){
+        return "metadata.checksum";
+    }
+
+
+    public String channel(){
+        return "channel";
+    }
+
+
+
+
 }

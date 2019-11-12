@@ -11,7 +11,7 @@ public abstract class Events {
 
     protected final Telemetry telemetry;
 
-    private Path path;
+    protected Path path;
 
     public Events(Map<String, Object> map) {
         this.telemetry = new Telemetry(map);
@@ -61,8 +61,8 @@ public abstract class Events {
     }
 
 
-    public void updateTs(String value){
-        telemetry.add("@timestamp",value);
+    public void updateTs(String value) {
+        telemetry.add("@timestamp", value);
     }
 
     public String pid() {
@@ -79,5 +79,49 @@ public abstract class Events {
         return producerId.value();
     }
 
+    public Long ets() {
+        NullableValue<Object> ets = telemetry.read("ets");
+        if (ets.value().getClass().equals(Double.class)) {
+            return ((Double) ets.value()).longValue();
+        }
+        return ((Long) ets.value());
+    }
+
+    public String channel() {
+        NullableValue<String> channel = telemetry.read("dimensions.channel");
+        return channel.isNull() ? telemetry.<String>read("context.channel").value() : channel.value();
+    }
+
+    public String actorId() {
+        NullableValue<String> actorid = telemetry.read("uid");
+        return actorid.isNull() ? telemetry.<String>read("actor.id").value() : actorid.value();
+    }
+
+    public String actorType() {
+        NullableValue<String> actortype = telemetry.read("actor.type");
+        return actortype.value();
+    }
+
+    public String objectID() {
+        if (objectFieldsPresent()) {
+            return telemetry.<String>read("object.id").value();
+        } else return null;
+    }
+
+    public String objectType() {
+        if (objectFieldsPresent()) {
+            return telemetry.<String>read("object.type").value();
+        } else return null;
+    }
+
+    public boolean objectFieldsPresent() {
+        String objectId = telemetry.<String>read("object.id").value();
+        String objectType = telemetry.<String>read("object.type").value();
+        return null != objectId && null != objectType && !objectId.isEmpty() && !objectType.isEmpty();
+    }
+
+    public String edataType() {
+        return telemetry.<String>read("edata.type").value();
+    }
 
 }
