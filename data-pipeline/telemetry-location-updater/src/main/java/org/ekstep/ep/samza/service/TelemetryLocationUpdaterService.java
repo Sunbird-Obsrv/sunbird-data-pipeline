@@ -88,7 +88,7 @@ public class TelemetryLocationUpdaterService {
 	}
 
 	private Map<String, String> getLocationFromUserCache(Event event) {
-		String uid = event.actorid();
+		String uid = event.actorId();
 		Map<String, String> locationData;
 		try {
 			locationData = getLocationForUser(uid);

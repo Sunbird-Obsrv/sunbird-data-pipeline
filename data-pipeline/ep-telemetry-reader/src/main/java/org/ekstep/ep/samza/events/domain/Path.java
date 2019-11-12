@@ -74,5 +74,7 @@ public class Path {
         return "channel";
     }
 
+    public String derivedLocationData(){ return "derivedlocationdata"; }
+
 
 }
