@@ -86,4 +86,9 @@ public class Event extends Events {
         }
 
     }
+
+    public String actorId() {
+        NullableValue<String> checksum = telemetry.read("actor.id");
+        return checksum.value();
+    }
 }

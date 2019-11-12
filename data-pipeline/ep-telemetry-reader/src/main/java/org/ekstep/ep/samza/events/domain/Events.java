@@ -103,6 +103,7 @@ public abstract class Events {
         return actorid.isNull() ? telemetry.<String>read("actor.id").value() : actorid.value();
     }
 
+
     public String actorType() {
         NullableValue<String> actortype = telemetry.read("actor.type");
         return actortype.value();
