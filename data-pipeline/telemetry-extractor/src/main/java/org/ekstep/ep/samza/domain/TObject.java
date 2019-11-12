@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.domain;
 
 import com.google.gson.annotations.SerializedName;
+
 import java.util.Map;
 
 public class TObject {
@@ -11,11 +12,11 @@ public class TObject {
 
     @SerializedName("subtype")
     private String subType;
-    
+
     public TObject(Map<String, Object> eventSpec) {
-    	
-    	this.id = (String)eventSpec.get("mid");
-    	this.type = "event";
+
+        this.id = (String) eventSpec.get("mid");
+        this.type = "event";
 
     }
 
@@ -35,23 +36,4 @@ public class TObject {
         this.type = type;
     }
 
-    public String getVer() {
-        return ver;
-    }
-
-    public void setVer(String ver) {
-        this.ver = ver;
-    }
-
-    public Rollup getRollUp() {
-        return rollUp;
-    }
-
-    public void setRollUp(Rollup rollUp) {
-        this.rollUp = rollUp;
-    }
-
-    public String getSubType() {
-        return subType;
-    }
 }
