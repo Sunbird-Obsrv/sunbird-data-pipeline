@@ -172,6 +172,43 @@ public class EventFixture {
 			"  },\n" +
 			"  \"type\": \"events\"\n" +
 			"}";
+	public static final String EVENT_WITH_NULL_EID = "{\n" +
+			"  \"actor\": {\n" +
+			"    \"type\": \"User\",\n" +
+			"    \"id\": \"3ae5dc29-17ea-4465-800e-a4361b9d9604\"\n" +
+			"  },\n" +
+			"  \"edata\": {\n" +
+			"    \"type\": \"app\"\n" +
+			"  },\n" +
+			"  \"ver\": \"3.0\",\n" +
+			"  \"ets\": 1548720004773,\n" +
+			"  \"context\": {\n" +
+			"    \"pdata\": {\n" +
+			"      \"ver\": \"2.1.30\",\n" +
+			"      \"pid\": \"sunbird.app\",\n" +
+			"      \"id\": \"prod.diksha.app\"\n" +
+			"    },\n" +
+			"    \"channel\": \"505c7c48ac6dc1edc9b08f21db5a571d\",\n" +
+			"    \"env\": \"home\",\n" +
+			"    \"did\": \"28b3576420784da6a7b556c1966c759fc793ac0d\",\n" +
+			"    \"sid\": \"042d7f61-225b-4e3f-9fe4-93f373368d8f\",\n" +
+			"    \"cdata\": []\n" +
+			"  },\n" +
+			"  \"mid\": \"b8b0f2ca-ce0a-427d-9c47-195eb5424071\",\n" +
+			"  \"object\": {\n" +
+			"    \"id\": \"\",\n" +
+			"    \"type\": \"\",\n" +
+			"    \"version\": \"\"\n" +
+			"  },\n" +
+			"  \"tags\": [],\n" +
+			"  \"syncts\": 1548720010819,\n" +
+			"  \"@timestamp\": \"2019-01-29T00:00:10.819Z\",\n" +
+			"  \"flags\": {\n" +
+			"    \"tv_processed\": true,\n" +
+			"    \"dd_processed\": true\n" +
+			"  },\n" +
+			"  \"type\": \"events\"\n" +
+			"}";
 	
 	public static final String ANY_STRING = "Hey Samza, Whats Up?";
 	public static final String EMPTY_JSON = "{}";
