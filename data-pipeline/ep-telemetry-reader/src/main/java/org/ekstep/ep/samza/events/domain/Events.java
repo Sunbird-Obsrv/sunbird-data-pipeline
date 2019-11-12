@@ -65,4 +65,14 @@ public abstract class Events {
         telemetry.add("@timestamp",value);
     }
 
+    public String pid() {
+        NullableValue<String> pid = telemetry.read("context.pdata.pid");
+        return pid.value();
+    }
+
+    public String version() {
+        return (String) telemetry.read("ver").value();
+    }
+
+
 }
