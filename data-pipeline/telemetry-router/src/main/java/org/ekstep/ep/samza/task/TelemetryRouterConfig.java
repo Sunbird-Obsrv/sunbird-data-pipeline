@@ -33,17 +33,11 @@ public class TelemetryRouterConfig {
         return primaryRouteTopic;
     }
 
-    public void setPrimaryRouteTopic(String primaryRouteTopic) {
-        this.primaryRouteTopic = primaryRouteTopic;
-    }
 
     public String getSecondaryRouteTopic() {
         return secondaryRouteTopic;
     }
 
-    public void setSecondaryRouteTopic(String secondaryRouteTopic) {
-        this.secondaryRouteTopic = secondaryRouteTopic;
-    }
 
     public List<String> getSecondaryRouteEvents() {
         String[] events = this.secondaryRouteEvents.split(",");
@@ -54,9 +48,6 @@ public class TelemetryRouterConfig {
         return auditRouteTopic;
     }
 
-    public void setSecondaryRouteEvents(String secondaryRouteEvents) {
-        this.secondaryRouteEvents = secondaryRouteEvents;
-    }
 
     public String failedTopic() {
         return failedTopic;
