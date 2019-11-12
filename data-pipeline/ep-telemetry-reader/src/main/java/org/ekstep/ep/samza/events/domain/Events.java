@@ -74,5 +74,10 @@ public abstract class Events {
         return (String) telemetry.read("ver").value();
     }
 
+    public String producerId() {
+        NullableValue<String> producerId = telemetry.read("context.pdata.id");
+        return producerId.value();
+    }
+
 
 }
