@@ -79,6 +79,12 @@ public abstract class Events {
         return producerId.value();
     }
 
+    public final String producerPid() {
+        NullableValue<String> producerPid = telemetry.read("context.pdata.pid");
+        return producerPid.value();
+    }
+
+
     public Long ets() {
         NullableValue<Object> ets = telemetry.read("ets");
         if (ets.value().getClass().equals(Double.class)) {
@@ -124,4 +130,7 @@ public abstract class Events {
         return telemetry.<String>read("edata.type").value();
     }
 
+    public void addEventType() {
+        telemetry.add("type", "events");
+    }
 }

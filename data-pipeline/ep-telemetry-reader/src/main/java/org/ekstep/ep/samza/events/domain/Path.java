@@ -2,66 +2,77 @@ package org.ekstep.ep.samza.events.domain;
 
 public class Path {
 
-    public String metadata(){
+    public String metadata() {
         return "metadata";
     }
 
-    public String flags(){ return "flags"; }
+    public String flags() {
+        return "flags";
+    }
 
-    public String dimensionsDid(){
+    public String dimensionsDid() {
         return "dimensions.did";
     }
 
-    public String contextDid(){
+    public String contextDid() {
         return "context.did";
     }
 
-    public String ets(){
+    public String ets() {
         return "ets";
     }
 
-    public String ts(){
+    public String ts() {
         return "ts";
     }
 
-    public String mid(){
+    public String mid() {
         return "mid";
     }
 
-    public String eid() { return "eid" ; }
+    public String eid() {
+        return "eid";
+    }
 
-    public String deviceData(){ return "devicedata"; }
+    public String deviceData() {
+        return "devicedata";
+    }
 
-    public String loc(){
+    public String loc() {
         return "edata.loc";
     }
 
-    public String userData(){ return "userdata"; }
+    public String userData() {
+        return "userdata";
+    }
 
-    public String contentData(){ return "contentdata"; }
+    public String contentData() {
+        return "contentdata";
+    }
 
-    public String dialCodeData(){ return "dialcodedata"; }
+    public String dialCodeData() {
+        return "dialcodedata";
+    }
 
-    public String collectionData() { return  "collectiondata"; }
+    public String collectionData() {
+        return "collectiondata";
+    }
 
-    public String ver(){
+    public String ver() {
         return "ver";
     }
 
-    public String edata(){
+    public String edata() {
         return "edata";
     }
 
-    public String checksum(){
+    public String checksum() {
         return "metadata.checksum";
     }
 
-
-    public String channel(){
+    public String channel() {
         return "channel";
     }
-
-
 
 
 }
