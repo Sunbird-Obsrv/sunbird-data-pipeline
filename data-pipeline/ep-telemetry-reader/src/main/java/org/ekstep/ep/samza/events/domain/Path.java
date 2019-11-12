@@ -74,7 +74,21 @@ public class Path {
         return "channel";
     }
 
-    public String derivedLocationData(){ return "derivedlocationdata"; }
+    public String derivedLocationData() {
+        return "derivedlocationdata";
+    }
+
+    public String stateKey() {
+        return "state";
+    }
+
+    public String districtKey() {
+        return "district";
+    }
+
+    public String locDerivedFromKey() {
+        return "from";
+    }
 
 
 }

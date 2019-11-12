@@ -7,11 +7,12 @@ import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.DeviceProfile;
 import org.ekstep.ep.samza.domain.Event;
+import org.ekstep.ep.samza.events.domain.Path;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterConfig;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterSink;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterSource;
 import org.ekstep.ep.samza.util.DeviceProfileCache;
-import org.ekstep.ep.samza.util.Path;
+
 import org.ekstep.ep.samza.util.RedisConnect;
 import redis.clients.jedis.Jedis;
 import com.google.gson.Gson;
