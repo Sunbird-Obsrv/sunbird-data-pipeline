@@ -1,4 +1,4 @@
-- name: Create service directory on EBS volume
+- name: Create service directory on instance volume
   file: 
     path: "/mount/{{ item.key }}/logs" 
     owner: "{{ analytics_user }}"
