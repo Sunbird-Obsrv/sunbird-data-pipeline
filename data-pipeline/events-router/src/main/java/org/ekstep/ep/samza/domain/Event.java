@@ -28,28 +28,6 @@ public class Event extends Events {
     }
 
 
-    public void setTimestamp() {
-        Double ets = safelyParse(path.ets());
-        SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-
-        if (ets != null) {
-            String updatedTs = simple.format(new Date(ets.longValue()));
-            telemetry.add(path.ts(), updatedTs);
-        } else {
-            telemetry.add(path.ts(), simple.format(new Date()));
-        }
-    }
-
-    private Double safelyParse(String etsField) {
-        try {
-            NullableValue<Double> time = telemetry.read(etsField);
-            return time.value();
-        } catch (ClassCastException e) {
-            NullableValue<Long> timeInLong = telemetry.read(etsField);
-            return Double.valueOf(timeInLong.value());
-        }
-    }
-
     public void markSkipped() {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.dd_dr_processed", false);
