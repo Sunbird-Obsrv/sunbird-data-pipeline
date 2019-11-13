@@ -20,6 +20,8 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -184,6 +186,37 @@ public class TelemetryRouterTaskTest {
 		telemetryRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), MALFORMED_TOPIC)));
 	}
+
+	@Test
+	public void shouldAddTodayDateIfETSIsNotPresent() throws Exception {
+		stub(configMock.get("router.events.secondary.route.events", "LOG,ERROR")).toReturn("LOG");
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.START_EVENT_WITHOUT_ETS);
+		telemetryRouterTask = new TelemetryRouterTask(configMock, contextMock);
+		telemetryRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
+		String simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date());
+		Type mapType = new TypeToken<Map<String, Object>>() {
+		}.getType();
+		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+			@Override
+			public boolean matches(Object o) {
+				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+				String updatedTS = outputEvent.get("ts").toString();
+				assertEquals(updatedTS.substring(0,updatedTS.indexOf(".")), simpleDateFormat.replace(simpleDateFormat.substring(updatedTS.indexOf("."), updatedTS.length()), ""));
+				return true;
+			}
+		}));
+	}
+
+	@Test
+	public void shouldSendEventsToErrorTopic() throws Exception {
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.INVALID_EVENT);
+		telemetryRouterTask = new TelemetryRouterTask(configMock, contextMock);
+		telemetryRouterTask.process(envelopeMock,collectorMock, coordinatorMock);
+		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+	}
+
 
 	public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
 		return new ArgumentMatcher<OutgoingMessageEnvelope>() {
