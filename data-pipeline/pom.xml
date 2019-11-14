@@ -40,6 +40,7 @@
 		<module>redis-updater</module>
         <module>device-profile-updater</module>
 		<module>assessment-aggregator</module>
+        <module>user-cache-updater</module>
     </modules>
 
 	<properties>
