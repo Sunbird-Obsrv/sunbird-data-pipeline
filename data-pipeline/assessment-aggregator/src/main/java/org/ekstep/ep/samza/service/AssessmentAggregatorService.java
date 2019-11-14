@@ -11,6 +11,7 @@ import org.ekstep.ep.samza.domain.QuestionData;
 import org.ekstep.ep.samza.task.AssessmentAggregatorConfig;
 import org.ekstep.ep.samza.task.AssessmentAggregatorSink;
 import org.ekstep.ep.samza.task.AssessmentAggregatorSource;
+import org.ekstep.ep.samza.util.CassandraConnect;
 import org.ekstep.ep.samza.util.DBUtil;
 import org.joda.time.DateTime;
 
@@ -23,12 +24,11 @@ public class AssessmentAggregatorService {
     private DBUtil dbUtil;
     private Comparator<QuestionData> byEts = (QuestionData o1, QuestionData o2) -> Long.compare(o2.getEts(), o1.getEts());
 
-    public AssessmentAggregatorService(DBUtil dbUtil) {
-        this.dbUtil = dbUtil;
+    public AssessmentAggregatorService(CassandraConnect cassandraConnect, AssessmentAggregatorConfig config) {
+        this.dbUtil = new DBUtil(cassandraConnect, config);
     }
 
-    public void process(AssessmentAggregatorSource source, AssessmentAggregatorSink sink,
-                        AssessmentAggregatorConfig config) throws Exception {
+    public void process(AssessmentAggregatorSource source, AssessmentAggregatorSink sink) throws Exception {
         try {
             BatchEvent batchEvent = source.getEvent();
             Row assessment = dbUtil.getAssessmentFromDB(batchEvent);
@@ -37,6 +37,9 @@ public class AssessmentAggregatorService {
                 Long createdOn = null != assessment ? assessment.getTimestamp("created_on").getTime() : new DateTime().getMillis();
                 Aggregate assess = getAggregateData(batchEvent, createdOn, sink);
                 dbUtil.updateAssessmentToDB(batchEvent, assess, createdOn);
+                LOGGER.info("", " Successfully Aggregated the batch event - batchid: " + batchEvent.batchId()
+                        + " ,userid: " + batchEvent.userId() + " ,couserid: " + batchEvent.courseId()
+                        + " ,contentid: " + batchEvent.contentId());
                 sink.incDBHits();
                 sink.batchSuccess();
 
