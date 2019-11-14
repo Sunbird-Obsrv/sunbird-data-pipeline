@@ -27,7 +27,6 @@ import org.apache.samza.task.*;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.service.AssessmentAggregatorService;
 import org.ekstep.ep.samza.util.CassandraConnect;
-import org.ekstep.ep.samza.util.DBUtil;
 
 public class AssessmentAggregatorTask implements StreamTask, InitableTask, WindowableTask {
 
@@ -35,13 +34,21 @@ public class AssessmentAggregatorTask implements StreamTask, InitableTask, Windo
     private AssessmentAggregatorService service;
     private AssessmentAggregatorConfig config;
 
+    public AssessmentAggregatorTask(Config config, TaskContext taskContext, CassandraConnect cassandraConnect) {
+        init(config, taskContext, cassandraConnect);
+    }
+
     @Override
     public void init(Config config, TaskContext context) {
+        init(config, context, null);
+    }
+
+    private void init(Config config, TaskContext context, CassandraConnect cassandraConnect) {
+
         this.config = new AssessmentAggregatorConfig(config);
         metrics = new JobMetrics(context, this.config.jobName());
-        CassandraConnect cassandraConnect = new CassandraConnect(this.config.getCassandraHost(),this.config.getCassandraPort());
-        DBUtil dbUtil = new DBUtil(cassandraConnect, this.config);
-        this.service = new AssessmentAggregatorService(dbUtil);
+        cassandraConnect = null != cassandraConnect ? cassandraConnect : new CassandraConnect(this.config.getCassandraHost(), this.config.getCassandraPort());
+        this.service = new AssessmentAggregatorService(cassandraConnect, this.config);
     }
 
     @Override
@@ -49,7 +56,7 @@ public class AssessmentAggregatorTask implements StreamTask, InitableTask, Windo
                         TaskCoordinator taskCoordinator) throws Exception {
         AssessmentAggregatorSource source = new AssessmentAggregatorSource(envelope);
         AssessmentAggregatorSink sink = new AssessmentAggregatorSink(collector, metrics, config);
-        service.process(source, sink, config);
+        service.process(source, sink);
     }
 
     @Override
