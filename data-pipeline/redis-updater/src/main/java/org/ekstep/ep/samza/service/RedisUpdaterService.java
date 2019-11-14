@@ -180,7 +180,7 @@ public class RedisUpdaterService {
             if (data != null && !data.isEmpty()) {
                 userCacheData = gson.fromJson(data, mapType);
             }
-            userCacheData.putAll(getUserSignandLoginType(event));
+            userCacheData.putAll(getUserSignandLoginType(event,userCacheData));
             ArrayList<String> userUpdatedList = event.getUserMetdataUpdatedList();
             if (userCacheData.containsKey("usersignintype") && !"Anonymous".equals(userCacheData.get("usersignintype"))
                     && null != userUpdatedList && !userUpdatedList.isEmpty()) {
@@ -212,7 +212,7 @@ public class RedisUpdaterService {
 
     }
 
-    private Map<String,String> getUserSignandLoginType(Event event) {
+    private Map<String,String> getUserSignandLoginType(Event event,Map<String,Object> userDataCache) {
         Map<String,String> userData = new HashMap<>();
         String signIn_type = null != event.getUserSignInType() ? event.getUserSignInType() : userSignInTypeDefault;
         String loginIn_type = null != event.getUserLoginType() ? event.getUserLoginType() : userLoginInTypeDefault;
@@ -221,7 +221,7 @@ public class RedisUpdaterService {
                 userData.put("usersignintype", userSelfSignedKey);
             } else if (userValidatedTypeList.contains(signIn_type)) {
                 userData.put("usersignintype", userValidatedKey);
-            } else {
+            } else if(!userDataCache.containsKey("usersignintype")) {
                 userData.put("usersignintype", signIn_type);
             }
             userData.put("userlogintype", loginIn_type);
