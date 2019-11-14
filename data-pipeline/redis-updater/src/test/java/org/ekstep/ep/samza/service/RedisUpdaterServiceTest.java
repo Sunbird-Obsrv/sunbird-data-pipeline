@@ -363,6 +363,29 @@ public class RedisUpdaterServiceTest {
     }
 
     @Test
+    public void shouldNotUpdateSiginIntypeWhenUpdatingLoginType() {
+
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.AUDIT_EVENT_LOGININTYPE);
+        Gson gson = new Gson();
+        String userId = "3b46b4c9-3a10-439a-a2cb-feb5435b3a0d";
+        jedisMock.set(userId, "{\"channel\":\"dikshacustodian\",\"phoneverified\":false,\"usersignintype\":google}");
+        RedisUpdaterSource source = new RedisUpdaterSource(envelopeMock);
+        stub(envelopeMock.getSystemStreamPartition())
+                .toReturn(new SystemStreamPartition("kafka", "telemetry.audit", new Partition(1)));
+        redisUpdaterService.process(source, redisUpdaterSinkMock);
+
+        String cachedData = jedisMock.get(userId);
+        Map<String, Object> parsedData = null;
+        if (cachedData != null) {
+            Type type = new TypeToken<Map<String, Object>>() {
+            }.getType();
+            parsedData = gson.fromJson(cachedData, type);
+        }
+        assertEquals("google", parsedData.get("usersignintype"));
+        assertEquals("student", parsedData.get("userlogintype"));
+    }
+
+    @Test
     public void shouldNotUpdateCacheWithMetadataChangesAndLocationFORAUDIT() {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.AUDIT_EVENT_METADATA_UPDATED);
         Gson gson = new Gson();
