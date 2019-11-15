@@ -104,20 +104,22 @@ public class TelemetryLocationUpdaterService {
 		}
 	}
 
-	private Map<String, String> getLocationForUser(String uid) {
-		Map<String, Object> userCacheData;
-		Map<String, String> locationData = new HashMap<>();
-		String data = userDataStoreConnection.get(uid);
-		if (data != null && !data.isEmpty()) {
-			userCacheData = gson.fromJson(data, mapType);
-			if (!userCacheData.isEmpty() && userCacheData.containsKey("state") && !userCacheData.get("state").toString().isEmpty()){
-				locationData.put(path.stateKey(), userCacheData.get("state").toString());
-				locationData.put(path.districtKey(), userCacheData.getOrDefault("district", "").toString());
-				locationData.put(path.locDerivedFromKey(), "user-profile");
-			}
-		}
-		return locationData;
-	}
+    private Map<String, String> getLocationForUser(String uid) {
+        Map<String, Object> userCacheData;
+        Map<String, String> locationData = new HashMap<>();
+        if (uid != null) {
+            String data = userDataStoreConnection.get(uid);
+            if (data != null && !data.isEmpty()) {
+                userCacheData = gson.fromJson(data, mapType);
+                if (!userCacheData.isEmpty() && userCacheData.containsKey("state") && !userCacheData.get("state").toString().isEmpty()) {
+                    locationData.put(path.stateKey(), userCacheData.get("state").toString());
+                    locationData.put(path.districtKey(), userCacheData.getOrDefault("district", "").toString());
+                    locationData.put(path.locDerivedFromKey(), "user-profile");
+                }
+            }
+        }
+        return locationData;
+    }
 
 	private Map<String, String> getUserDeclaredLocation(DeviceProfile deviceProfile) {
 		Map<String, String> locationData = new HashMap<>();
