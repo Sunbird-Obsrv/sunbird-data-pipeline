@@ -64,31 +64,6 @@ public class Event extends Events {
             return false;
     }
 
-
-    public List<String> dialCode() {
-        NullableValue<Object> dialcode = telemetry.read("edata.filters.dialcodes");
-        List ids = new ArrayList();
-        if (dialcode != null && dialcode.value() != null) {
-            if (dialcode.value().getClass().equals(String.class)) {
-                ids.add(dialcode.value().toString());
-            } else {
-                ids = ((List) dialcode.value());
-            }
-        } else {
-            NullableValue<Object> dialCode = telemetry.read("edata.filters.dialCodes");
-            if (dialCode != null && dialCode.value() != null) {
-                telemetry.add("edata.filters.dialcodes", dialCode.value());
-                telemetry.add("edata.filters.dialCodes", null);
-                if (dialCode.value().getClass().equals(String.class)) {
-                    ids.add(dialCode.value().toString());
-                } else {
-                    ids = ((List) dialCode.value());
-                }
-            }
-        }
-        return ids;
-    }
-
     public String getKey(String type) {
         switch (type) {
             case "device":
