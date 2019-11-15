@@ -20,7 +20,6 @@ public class Context {
     @SerializedName("cdata")
     private ArrayList<CData> cData = new ArrayList<>();
 
-    private Rollup rollUp;
 
     public Context(Map<String, Object> eventSpec, String defaultChannel) {
 

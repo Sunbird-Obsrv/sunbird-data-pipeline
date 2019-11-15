@@ -8,7 +8,6 @@ public class TObject {
     private String id;
     private String type;
     private String ver;
-    private Rollup rollUp;
 
     @SerializedName("subtype")
     private String subType;
