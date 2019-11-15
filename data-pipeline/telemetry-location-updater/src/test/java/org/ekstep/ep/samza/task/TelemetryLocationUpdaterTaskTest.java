@@ -306,6 +306,28 @@ public class TelemetryLocationUpdaterTaskTest {
 	}
 
 	@Test
+	public void shouldNotFailIfUserIdIsMissing() throws Exception {
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.DEVICE_SUMMARY);
+		DeviceProfile deviceProfile = null;
+		stub(deviceProfileCacheMock.getDeviceProfileForDeviceId("099988ce86c4dbb9a4057ff611d38427")).toReturn(deviceProfile);
+
+		telemetryLocationUpdaterTask.process(envelopeMock, collectorMock, coordinatorMock);
+		Type mapType = new TypeToken<Map<String, Object>>() { }.getType();
+		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+			@Override
+			public boolean matches(Object o) {
+				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+				Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+				assertEquals(false, flags.get("device_profile_retrieved"));
+				assertEquals(false, flags.get("derived_location_retrieved"));
+				return true;
+			}
+		}));
+	}
+
+	@Test
 	public void shouldSendEventToFailedTopicIfEventIsNotParseable() throws Exception {
 
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.UNPARSABLE_START_EVENT);
