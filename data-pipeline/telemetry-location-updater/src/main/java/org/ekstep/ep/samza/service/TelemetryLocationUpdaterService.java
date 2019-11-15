@@ -89,18 +89,20 @@ public class TelemetryLocationUpdaterService {
 
 	private Map<String, String> getLocationFromUserCache(Event event) {
 		String uid = event.actorid();
-		Map<String, String> locationData;
-		try {
-			locationData = getLocationForUser(uid);
-			return locationData;
-		}
-		catch (JedisException ex) {
-			LOGGER.error(null, "Reconnecting with Redis store due to exception: ", ex);
-			try (Jedis conn = redisConnect.resetConnection(userStoreDb)) {
-				this.userDataStoreConnection = conn;
+		Map<String, String> locationData = new HashMap<>();
+		if(null != uid) {
+			try {
+				locationData = getLocationForUser(uid);
+				return locationData;
+			} catch (JedisException ex) {
+				LOGGER.error(null, "Reconnecting with Redis store due to exception: ", ex);
+				try (Jedis conn = redisConnect.resetConnection(userStoreDb)) {
+					this.userDataStoreConnection = conn;
+				}
+				return getLocationForUser(uid);
 			}
-			return getLocationForUser(uid);
 		}
+		else return locationData;
 	}
 
 	private Map<String, String> getLocationForUser(String uid) {
