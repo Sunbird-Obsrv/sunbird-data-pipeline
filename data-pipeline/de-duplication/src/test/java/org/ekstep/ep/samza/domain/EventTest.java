@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.lang.reflect.Field;
-import java.util.List;
 import java.util.Map;
 
 public class EventTest {

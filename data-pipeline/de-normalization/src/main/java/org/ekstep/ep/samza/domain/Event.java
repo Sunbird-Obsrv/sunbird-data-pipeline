@@ -178,17 +178,6 @@ public class Event extends Events {
         return updatedVer.toString();
     }
 
-    public void markSkipped() {
-        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.denorm_processed", false);
-        telemetry.add("flags.denorm_checksum_present", false);
-    }
-
-    public void markSuccess() {
-        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.denorm_processed", true);
-    }
-
     public void markFailure(String error, DeNormalizationConfig config) {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.denorm_processed", false);
