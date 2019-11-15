@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.service;
 
 import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.Row;
+import com.datastax.driver.core.exceptions.DriverException;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -48,20 +49,19 @@ public class UserCacheUpdaterService {
         try {
             Event event = source.getEvent();
             String userId = event.objectUserId();
-            if (null != userId) {
+            if (null != userId ) {
                 updateUserCache(event, userId, sink);
             }
-            else { sink.error(); }
+            else { sink.markSkipped(); }
         } catch (JsonSyntaxException e) {
             LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
             sink.error();
         }
     }
 
-    public void updateUserCache(Event event, String userId, UserCacheUpdaterSink sink) {
+    public Map<String, Object> updateUserCache(Event event, String userId, UserCacheUpdaterSink sink) {
         Map<String, Object> userCacheData = new HashMap<>();
         try {
-
             String userState = event.getUserStateValue();
             if("Update".equals(userState)) {
                 String data = userDataStoreConnection.get(userId);
@@ -74,7 +74,8 @@ public class UserCacheUpdaterService {
                 if (userCacheData.containsKey("usersignintype") && !"Anonymous".equals(userCacheData.get("usersignintype"))
                         && null != userUpdatedList && !userUpdatedList.isEmpty()) {
 
-                    Map<String, Object> userMetadataInfoMap = getUserMetaDataInfoFromUserDB(userId);
+                    List<Row> userDetails = fetchFallbackDetailsFromDB(userId, userCacheUpdaterConfig.cassandra_user_table());
+                    Map<String, Object> userMetadataInfoMap = getUserMetaDataInfo(userDetails);
 
                     if (!userMetadataInfoMap.isEmpty())
                         userCacheData.putAll(userMetadataInfoMap);
@@ -82,7 +83,8 @@ public class UserCacheUpdaterService {
                     if (userUpdatedList.contains("id") && null != userCacheData.get("locationids")) {
                         List<String> locationIds = (List<String>) userCacheData.get("locationids");
 
-                        Map<String, Object> userLocationMap = getLocationDetailsFromlocationDB(userId, locationIds);
+                        List<Row> locationDetails = fetchFallbackDetailsFromDB(locationIds, userCacheUpdaterConfig.cassandra_location_table());
+                        Map<String, Object> userLocationMap = getLocationInfo(locationDetails);
 
                         if (!userLocationMap.isEmpty())
                             userCacheData.putAll(userLocationMap);
@@ -108,6 +110,7 @@ public class UserCacheUpdaterService {
                     redisConnect.addJsonToCache(userId, gson.toJson(userCacheData), userDataStoreConnection);
             }
         }
+        return userCacheData;
     }
 
     private Map<String, String> getUserSigninType(Event event) {
@@ -118,8 +121,6 @@ public class UserCacheUpdaterService {
                 userData.put("usersignintype", userCacheUpdaterConfig.getUserSelfSignedKey());
             } else if (userCacheUpdaterConfig.getUserValidatedTypeList().contains(signIn_type)) {
                 userData.put("usersignintype", userCacheUpdaterConfig.getUserValidatedKey());
-            } else {
-                userData.put("usersignintype", signIn_type);
             }
         }
         return userData;
@@ -133,66 +134,39 @@ public class UserCacheUpdaterService {
         return userData;
     }
 
-    private Map<String, Object> getUserMetaDataInfoFromUserDB(String userId) {
-
-        Map<String, Object> userMetadataInfoMap = null;
-        try {
-            userMetadataInfoMap = fetchFallbackUserMetadataFromDB(userId);
-        } catch (Exception ex) {
-            metrics.incUserDBErrorCount();
-            cassandraConnection.reconnectCluster();
-            userMetadataInfoMap = fetchFallbackUserMetadataFromDB(userId);
-        }
-
-        return userMetadataInfoMap;
-    }
-
-    private Map<String, Object> getLocationDetailsFromlocationDB(String userId, List<String> locationIds) {
-        Map<String, Object> userLocationMap = null;
-        try {
-            userLocationMap = fetchFallbackUserLocationFromDB(locationIds);
-        } catch (Exception ex) {
-
-            metrics.incUserDBErrorCount();
-            cassandraConnection.reconnectCluster();
-            userLocationMap = fetchFallbackUserLocationFromDB(locationIds);
-        }
-        return userLocationMap;
-    }
-
-    private Map<String, Object> fetchFallbackUserMetadataFromDB(String userId) {
-
-        String MetadataQuery = QueryBuilder.select().all()
-                .from(userCacheUpdaterConfig.cassandra_db(), userCacheUpdaterConfig.cassandra_user_table())
-                .where(QueryBuilder.eq("id", userId))
+    private <T> List<Row> fetchFallbackDetailsFromDB(T id, String table){
+        String metadataQuery = QueryBuilder.select().all()
+                .from(userCacheUpdaterConfig.cassandra_db(), table)
+                .where(QueryBuilder.eq("id", id))
                 .toString();
+        List<Row> rowSet= null;
+        try {
+            rowSet = cassandraConnection.find(metadataQuery);
+        } catch (DriverException ex) {
+            metrics.incUserDBErrorCount();
+            LOGGER.error("", "Exception while fetching from db : " + ex);
+        }
+        metrics.incUserDbHitCount();
+        return rowSet;
+    }
 
-        List<Row> rowSet = cassandraConnection.find(MetadataQuery);
+    public Map<String, Object> getUserMetaDataInfo(List<Row> userDetails) {
         Map<String, Object> result = new HashMap<>();
-        if(rowSet.size() > 0) {
-            Row row= rowSet.get(0);
+        if( null != userDetails && userDetails.size() > 0) {
+            Row row= userDetails.get(0);
             ColumnDefinitions columnDefinitions = row.getColumnDefinitions();
             int columnCount = columnDefinitions.size();
             for(int i=0; i<columnCount;i++){
                 result.put(columnDefinitions.getName(i),row.getObject(i));
             }
         }
-
-        metrics.incUserDbHitCount();
         return result;
     }
 
-
-    private Map<String, Object> fetchFallbackUserLocationFromDB(List<String> locationIds) {
-        String userLocationQuery = QueryBuilder.select().all()
-                .from(userCacheUpdaterConfig.cassandra_db(), userCacheUpdaterConfig.cassandra_location_table())
-                .where(QueryBuilder.in("id", locationIds))
-                .toString();
-        List<Row> row = cassandraConnection.find(userLocationQuery);
-
+    public Map<String, Object> getLocationInfo(List<Row> locationDetails) {
         Map<String, Object> result = new HashMap<>();
-        if(row.size() > 0) {
-            row.forEach(record -> {
+        if(locationDetails.size() > 0) {
+            locationDetails.forEach(record -> {
                 String name = record.getString("name");
                 String type = record.getString("type");
                 if(type.toLowerCase().equals("state")) {
@@ -202,7 +176,6 @@ public class UserCacheUpdaterService {
                 }
             });
         }
-        metrics.incUserDbHitCount();
         return result;
     }
 }

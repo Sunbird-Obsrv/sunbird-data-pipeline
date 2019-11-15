@@ -55,4 +55,10 @@ public class RedisConnect {
         resetConnection();
         return getConnection(database);
     }
+
+    public void addJsonToCache(String key, String value, Jedis redisConnection) {
+        if (key != null && !key.isEmpty() && null != value && !value.isEmpty()) {
+            redisConnection.set(key, value);
+        }
+    }
 }

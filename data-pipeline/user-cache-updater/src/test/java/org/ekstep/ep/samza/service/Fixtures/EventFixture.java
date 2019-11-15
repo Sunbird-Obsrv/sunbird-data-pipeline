@@ -4,6 +4,7 @@ public class EventFixture {
 
     public static final String AUDIT_EVENT = "{\"eid\":\"AUDIT\",\"ets\":1.573121861118E12,\"ver\":\"3.0\",\"mid\":\"1573121861118.40f9136b-1cc3-458d-a04a-4459606dfdd6\",\"actor\":{\"id\":\"627a431d-4f5c-4adc-812d-1f01c5588555\",\"type\":\"User\"},\"context\":{\"channel\":\"01285019302823526477\",\"pdata\":{\"id\":\"dev.sunbird.portal\",\"pid\":\"learner-service\",\"ver\":\"2.5.0\"},\"env\":\"User\",\"did\":\"2bcfc645e27e64625f7bad6ce282f9d0\",\"cdata\":[{\"id\":\"25cb0530-7c52-ecb1-cff2-6a14faab7910\",\"type\":\"SignupType\"}],\"rollup\":{\"l1\":\"01285019302823526477\"}},\"object\":{\"id\":\"627a431d-4f5c-4adc-812d-1f01c5588555\",\"type\":\"User\"},\"edata\":{\"state\":\"Update\",\"props\":[\"recoveryEmail\",\"recoveryPhone\",\"userId\",\"id\",\"externalIds\",\"updatedDate\",\"updatedBy\"]},\"syncts\":1.573121861125E12,\"@timestamp\":\"2019-11-07T10:17:41.125Z\",\"flags\":{\"tv_processed\":true,\"dd_processed\":true},\"type\":\"events\",\"ts\":\"2019-11-07T10:17:41.118+0000\"}";
     public static final String AUDIT_EVENT2 = "{\"eid\":\"AUDIT\",\"ets\":1.573121861118E12,\"ver\":\"3.0\",\"mid\":\"1573121861118.40f9136b-1cc3-458d-a04a-4459606df\",\"actor\":{\"id\":\"5609876543234567890987654345678\",\"type\":\"Request\"},\"context\":{\"channel\":\"01285019302823526477\",\"pdata\":{\"id\":\"dev.sunbird.portal\",\"pid\":\"learner-service\",\"ver\":\"2.5.0\"},\"env\":\"User\",\"did\":\"2bcfc645e27e64625f7bad6ce282f9d0\",\"cdata\":[{\"id\":\"25cb0530-7c52-ecb1-cff2-6a14faab7910\",\"type\":\"SignupType\"}],\"rollup\":{\"l1\":\"01285019302823526477\"}},\"object\":{\"id\":\"5609876543h2fd34h5678jf909876af54345678\"},\"edata\":{\"state\":\"Update\",\"props\":[\"recoveryEmail\",\"recoveryPhone\",\"userId\",\"id\",\"externalIds\",\"updatedDate\",\"updatedBy\"]},\"syncts\":1.573121861125E12,\"@timestamp\":\"2019-11-07T10:17:41.125Z\",\"flags\":{\"tv_processed\":true,\"dd_processed\":true},\"type\":\"events\",\"ts\":\"2019-11-07T10:17:41.118+0000\"}";
+    public static final String AUDIT_EVENT3 = "{\"eid\":\"AUDIT\",\"ets\":1.573121861118E12,\"ver\":\"3.0\",\"mid\":\"1573121861118.40f9136b-1cc3-458d-a04a-4459606df\",\"actor\":{\"id\":\"5609876543234567890987654345678\",\"type\":\"Request\"},\"context\":{\"channel\":\"01285019302823526477\",\"pdata\":{\"id\":\"dev.sunbird.portal\",\"pid\":\"learner-service\",\"ver\":\"2.5.0\"},\"env\":\"User\",\"did\":\"2bcfc645e27e64625f7bad6ce282f9d0\",\"rollup\":{\"l1\":\"01285019302823526477\"}},\"object\":{\"type\":\"User\",\"id\":\"5609876543h2fd34h5678jf909876af54345678\"},\"edata\":{\"state\":\"Create\",\"props\":[\"recoveryEmail\",\"recoveryPhone\",\"userId\",\"id\",\"externalIds\",\"updatedDate\",\"updatedBy\"]},\"syncts\":1.573121861125E12,\"@timestamp\":\"2019-11-07T10:17:41.125Z\",\"flags\":{\"tv_processed\":true,\"dd_processed\":true},\"type\":\"events\",\"ts\":\"2019-11-07T10:17:41.118+0000\"}";
 
     public static final String AUDIT_EVENT_SIGINTYPE="{\n" +
             "  \"actor\": {\n" +
@@ -77,6 +78,152 @@ public class EventFixture {
             "  },\n" +
             "  \"type\": \"events\"\n" +
             "}";
+
+    public static final String AUDIT_EVENT_SIGIN_TYPE="{\n" +
+            "  \"actor\": {\n" +
+            "    \"type\": \"Consumer\",\n" +
+            "    \"id\": \"89490534-126f-4f0b-82ac-3ff3e49f3468\"\n" +
+            "  },\n" +
+            "  \"eid\": \"AUDIT\",\n" +
+            "  \"edata\": {\n" +
+            "    \"state\": \"Created\",\n" +
+            "    \"props\": [\n" +
+            "      \"firstName\",\n" +
+            "      \"email\",\n" +
+            "      \"emailVerified\",\n" +
+            "      \"id\",\n" +
+            "      \"userId\",\n" +
+            "      \"createdBy\",\n" +
+            "      \"rootOrgId\",\n" +
+            "      \"channel\",\n" +
+            "      \"userType\",\n" +
+            "      \"roles\",\n" +
+            "      \"phoneVerified\",\n" +
+            "      \"isDeleted\",\n" +
+            "      \"createdDate\",\n" +
+            "      \"status\",\n" +
+            "      \"userName\",\n" +
+            "      \"loginId\",\n" +
+            "      \"externalIds\"\n" +
+            "    ]\n" +
+            "  },\n" +
+            "  \"ver\": \"3.0\",\n" +
+            "  \"ets\": 1561739226844,\n" +
+            "  \"context\": {\n" +
+            "    \"channel\": \"0126684405014528002\",\n" +
+            "    \"pdata\": {\n" +
+            "      \"pid\": \"learner-service\",\n" +
+            "      \"ver\": \"2.0.0\",\n" +
+            "      \"id\": \"prod.diksha.learning.service\"\n" +
+            "    },\n" +
+            "    \"env\": \"User\",\n" +
+            "    \"cdata\": [\n" +
+            "      {\n" +
+            "        \"type\": \"User\",\n" +
+            "        \"id\": \"34881c3a-8b92-4a3c-a982-7f946137cb09\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"type\": \"SignupType\",\n" +
+            "        \"id\": \"sso\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"type\": \"Source\",\n" +
+            "        \"id\": \"android\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"type\": \"Request\",\n" +
+            "        \"id\": \"91f3c280-99c1-11e9-956e-6b6ef71ed575\"\n" +
+            "      }\n" +
+            "    ],\n" +
+            "    \"rollup\": {\n" +
+            "      \"l1\": \"0126684405014528002\"\n" +
+            "    }\n" +
+            "  },\n" +
+            "  \"mid\": \"1561739226844.e0048ef8-a01e-4780-8c83-e571f28c53c8\",\n" +
+            "  \"object\": {\n" +
+            "    \"type\": \"User\",\n" +
+            "    \"id\": \"89490534-126f-4f0b-82ac-3ff3e49f3468\"\n" +
+            "  },\n" +
+            "  \"syncts\": 1561739243532,\n" +
+            "  \"@timestamp\": \"2019-06-28T16:27:23.532Z\",\n" +
+            "  \"flags\": {\n" +
+            "    \"tv_processed\": true\n" +
+            "  },\n" +
+            "  \"type\": \"events\"\n" +
+            "}";
+
+    public static final String AUDIT_EVENT_NULL_USERID ="{\n" +
+            "  \"actor\": {\n" +
+            "    \"type\": \"Consumer\",\n" +
+            "    \"id\": \"89490534-126f-4f0b-82ac-3ff3e49f3468\"\n" +
+            "  },\n" +
+            "  \"eid\": \"AUDIT\",\n" +
+            "  \"edata\": {\n" +
+            "    \"state\": \"Create\",\n" +
+            "    \"props\": [\n" +
+            "      \"firstName\",\n" +
+            "      \"email\",\n" +
+            "      \"emailVerified\",\n" +
+            "      \"id\",\n" +
+            "      \"userId\",\n" +
+            "      \"createdBy\",\n" +
+            "      \"rootOrgId\",\n" +
+            "      \"channel\",\n" +
+            "      \"userType\",\n" +
+            "      \"roles\",\n" +
+            "      \"phoneVerified\",\n" +
+            "      \"isDeleted\",\n" +
+            "      \"createdDate\",\n" +
+            "      \"status\",\n" +
+            "      \"userName\",\n" +
+            "      \"loginId\",\n" +
+            "      \"externalIds\"\n" +
+            "    ]\n" +
+            "  },\n" +
+            "  \"ver\": \"3.0\",\n" +
+            "  \"ets\": 1561739226844,\n" +
+            "  \"context\": {\n" +
+            "    \"channel\": \"0126684405014528002\",\n" +
+            "    \"pdata\": {\n" +
+            "      \"pid\": \"learner-service\",\n" +
+            "      \"ver\": \"2.0.0\",\n" +
+            "      \"id\": \"prod.diksha.learning.service\"\n" +
+            "    },\n" +
+            "    \"env\": \"User\",\n" +
+            "    \"cdata\": [\n" +
+            "      {\n" +
+            "        \"type\": \"User\",\n" +
+            "        \"id\": \"34881c3a-8b92-4a3c-a982-7f946137cb09\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"type\": \"SignupType\",\n" +
+            "        \"id\": \"sso\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"type\": \"Source\",\n" +
+            "        \"id\": \"android\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"type\": \"Request\",\n" +
+            "        \"id\": \"91f3c280-99c1-11e9-956e-6b6ef71ed575\"\n" +
+            "      }\n" +
+            "    ],\n" +
+            "    \"rollup\": {\n" +
+            "      \"l1\": \"0126684405014528002\"\n" +
+            "    }\n" +
+            "  },\n" +
+            "  \"mid\": \"1561739226844.e0048ef8-a01e-4780-8c83-e571f28c53c8\",\n" +
+            "  \"object\": {\n" +
+            "    \"type\": \"User\"\n" +
+            "  },\n" +
+            "  \"syncts\": 1561739243532,\n" +
+            "  \"@timestamp\": \"2019-06-28T16:27:23.532Z\",\n" +
+            "  \"flags\": {\n" +
+            "    \"tv_processed\": true\n" +
+            "  },\n" +
+            "  \"type\": \"events\"\n" +
+            "}";
+
     public static final String AUDIT_EVENT_SIGN_IN="{\n" +
             "  \"actor\": {\n" +
             "    \"type\": \"Consumer\",\n" +

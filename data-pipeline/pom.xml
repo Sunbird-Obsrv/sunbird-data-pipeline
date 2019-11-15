@@ -37,11 +37,11 @@
 		<module>druid-events-validator</module>
 		<module>events-router</module>
 		<!-- <module>druid-processor</module> -->
-		<module>redis-updater</module>
         <module>device-profile-updater</module>
 		<module>assessment-aggregator</module>
         <module>user-cache-updater</module>
-    </modules>
+		<module>content-cache-updater</module>
+	</modules>
 
 	<properties>
 		<!-- maven specific properties -->

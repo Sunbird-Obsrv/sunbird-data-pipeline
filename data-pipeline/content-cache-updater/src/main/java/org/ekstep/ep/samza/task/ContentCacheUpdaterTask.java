@@ -6,37 +6,34 @@ import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.core.JobMetrics;
-import org.ekstep.ep.samza.util.CassandraConnect;
 import org.ekstep.ep.samza.util.RedisConnect;
-import org.ekstep.ep.samza.service.UserCacheUpdaterService;
+import org.ekstep.ep.samza.service.ContentCacheUpdaterService;
 
-public class UserCacheUpdaterTask implements StreamTask, InitableTask, WindowableTask {
+public class ContentCacheUpdaterTask implements StreamTask, InitableTask, WindowableTask {
 
     private JobMetrics metrics;
-    private UserCacheUpdaterConfig config;
-    private UserCacheUpdaterService service;
+    private ContentCacheUpdaterService service;
     private String metricsTopic;
     private RedisConnect redisConnect;
-    private CassandraConnect cassandraConnect;
 
-    public UserCacheUpdaterTask(Config config, TaskContext context, CassandraConnect cassandraConnect, RedisConnect redisConnect) {
-        init(config, context, cassandraConnect, redisConnect);
+    private final String JOB_NAME = "ContentCacheUpdater";
+
+    public ContentCacheUpdaterTask(Config config, TaskContext context, RedisConnect redisConnect) {
+        init(config, context, redisConnect);
     }
 
-    public UserCacheUpdaterTask() {
+    public ContentCacheUpdaterTask() {
     }
 
     @Override
     public void init(Config config, TaskContext context) {
-        init(config, context, null, null);
+        init(config, context, null);
     }
 
-    public void init(Config config, TaskContext context, CassandraConnect cassandraConnect, RedisConnect redisConnect) {
-        this.config = new UserCacheUpdaterConfig(config);
-        metrics = new JobMetrics(context, this.config.jobName());
-        cassandraConnect = null != cassandraConnect ? cassandraConnect : new CassandraConnect(config);
+    public void init(Config config, TaskContext context, RedisConnect redisConnect) {
+        metrics = new JobMetrics(context, JOB_NAME);
         redisConnect = null != redisConnect? redisConnect: new RedisConnect(config);
-        service = new UserCacheUpdaterService(this.config, redisConnect, cassandraConnect, metrics);
+        service = new ContentCacheUpdaterService(config, redisConnect, metrics);
         metricsTopic = config.get("output.metrics.topic.name");
     }
 
@@ -44,8 +41,8 @@ public class UserCacheUpdaterTask implements StreamTask, InitableTask, Windowabl
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector,
                         TaskCoordinator taskCoordinator) throws Exception {
 
-        UserCacheUpdaterSource source = new UserCacheUpdaterSource(envelope);
-        UserCacheUpdaterSink sink = new UserCacheUpdaterSink(collector, metrics);
+        ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelope);
+        ContentCacheUpdaterSink sink = new ContentCacheUpdaterSink(collector, metrics);
         service.process(source, sink);
     }
 

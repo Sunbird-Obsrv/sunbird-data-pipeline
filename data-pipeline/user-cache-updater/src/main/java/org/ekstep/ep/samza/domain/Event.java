@@ -15,11 +15,11 @@ public class Event {
 
     public String objectUserId() {
         NullableValue<String> objectType = telemetry.read("object.type");
+        NullableValue<String> objectUserId = null;
         if (null != objectType.value() && objectType.value().equalsIgnoreCase("User")) {
-            NullableValue<String> objectUserId = telemetry.read("object.id");
-            return objectUserId.value();
+            objectUserId = telemetry.read("object.id");
         }
-        return null;
+        return objectUserId.value();
     }
 
     public String getUserSignInType() {
@@ -30,9 +30,7 @@ public class Event {
                 if (cdataMap.containsKey("type") && cdataMap.get("type").equalsIgnoreCase("SignupType"))
                     return cdataMap.get("id").toString();
             }
-
         }
-
         return null;
     }
 
@@ -69,15 +67,6 @@ public class Event {
         }
         return null;
     }
-
-
-    @Override
-    public String toString() {
-        return "Event{" +
-                "telemetry=" + telemetry +
-                '}';
-    }
-
 
 }
 
