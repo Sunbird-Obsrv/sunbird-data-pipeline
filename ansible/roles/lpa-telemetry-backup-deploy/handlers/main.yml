@@ -8,7 +8,6 @@
 - name: Delete the pid file
   file: path={{ sbin_path }}/{{ item.key }}.pid state=absent
   listen: "stop secor"
-  become_user: "{{ analytics_user }}"
   with_dict: "{{secor_service_name}}"
 
 - name: Start the secor service
