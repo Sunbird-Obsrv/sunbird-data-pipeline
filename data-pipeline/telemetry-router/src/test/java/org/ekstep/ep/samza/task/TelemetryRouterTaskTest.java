@@ -203,7 +203,8 @@ public class TelemetryRouterTaskTest {
 				String outputMessage = (String) outgoingMessageEnvelope.getMessage();
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
 				String updatedTS = outputEvent.get("ts").toString();
-				assertEquals(updatedTS.substring(0,updatedTS.indexOf(".")), simpleDateFormat.replace(simpleDateFormat.substring(updatedTS.indexOf("."), updatedTS.length()), ""));
+				assertNotNull(updatedTS);
+				assertEquals(updatedTS.substring(0,updatedTS.indexOf(".")), simpleDateFormat.substring(0,simpleDateFormat.indexOf(".")));
 				return true;
 			}
 		}));
