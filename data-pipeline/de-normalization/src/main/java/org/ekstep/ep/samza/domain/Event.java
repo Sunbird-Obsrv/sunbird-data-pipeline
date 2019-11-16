@@ -160,7 +160,6 @@ public class Event extends Events {
     }
 
     public void setFlag(String key, Object value) {
-        System.out.println("rs" + path.flags());
         NullableValue<Map<String, Object>> telemetryFlag = telemetry.read(path.flags());
         Map<String, Object> flags = telemetryFlag.isNull() ? new HashMap<>() : telemetryFlag.value();
         if (!key.isEmpty()) flags.put(key, value);

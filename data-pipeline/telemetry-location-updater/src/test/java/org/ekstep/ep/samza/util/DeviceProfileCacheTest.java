@@ -16,7 +16,6 @@ public class DeviceProfileCacheTest {
     public void shouldReturnNullWhenDeviceIdIsNotPresent() {
         cache = mock(DeviceProfileCache.class);
         stub(cache.getDeviceProfileFromCache("test")).toReturn(null);
-        System.out.println("cache.getDeviceProfileForDeviceId(\"564783-5439\");" + cache.getDeviceProfileForDeviceId("test"));
         Assert.assertEquals(cache.getDeviceProfileFromCache("564783-5439"), null);
     }
 
@@ -26,10 +25,7 @@ public class DeviceProfileCacheTest {
                 "Bengaluru", "TMK");
         cache = mock(DeviceProfileCache.class);
         stub(cache.getDeviceProfileFromCache("37654387-543534")).toReturn(profile);
-        System.out.println("cache.getDeviceProfileForDeviceId(\"test\");" + cache.getDeviceProfileForDeviceId("test"));
-
         DeviceProfile res = cache.getDeviceProfileFromCache("37654387-543534");
-
         Assert.assertEquals(res.getCountryCode(), "IN");
         Assert.assertEquals(res.getCountry(), "India");
         Assert.assertEquals(res.getStateCode(), "KA");
