@@ -160,11 +160,8 @@ public class TelemetryValidatorTaskTest {
             public boolean matches(Object o) {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
-                System.out.println(outputMessage);
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
                 Map<String, Object> flags = new Gson().fromJson(new Gson().toJson(outputEvent.get("flags")), mapType);
-                System.out.println("flags" + flags);
-                System.out.println(flags.get("tv_processed"));
                 assertEquals(false, flags.get("tv_processed"));
                 return true;
             }
@@ -244,7 +241,6 @@ public class TelemetryValidatorTaskTest {
             public boolean matches(Object o) {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
-                System.out.println(outputMessage);
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
                 Map<String, Object> edata = new Gson().fromJson(new Gson().toJson(outputEvent.get("edata")), mapType);
                 Map<String, Object> edataFilters = new Gson().fromJson(new Gson().toJson(edata.get("filters")), mapType);

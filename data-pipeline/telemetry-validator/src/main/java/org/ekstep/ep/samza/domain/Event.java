@@ -16,7 +16,6 @@ public class Event extends Events {
     private DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZoneUTC();
 
     public Event(Map<String, Object> map) {
-
         super(map);
     }
 
