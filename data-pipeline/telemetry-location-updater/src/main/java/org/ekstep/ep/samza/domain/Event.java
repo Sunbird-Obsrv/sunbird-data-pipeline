@@ -23,7 +23,6 @@ public class Event extends Events {
         super(map);
     }
 
-
     public void markFailure(String error, TelemetryLocationUpdaterConfig config) {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.tr_processed", false);
