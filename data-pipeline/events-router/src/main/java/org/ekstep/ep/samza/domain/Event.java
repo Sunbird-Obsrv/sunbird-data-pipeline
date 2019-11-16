@@ -21,7 +21,6 @@ public class Event extends Events {
         telemetry.add("metadata.src", config.jobName());
     }
 
-
     public void markSkipped() {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.dd_dr_processed", false);

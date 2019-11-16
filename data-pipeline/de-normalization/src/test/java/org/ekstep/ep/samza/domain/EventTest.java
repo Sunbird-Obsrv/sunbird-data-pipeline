@@ -1,14 +1,12 @@
 package org.ekstep.ep.samza.domain;
 
-import java.util.Map;
-import java.util.HashMap;
-
 import com.google.gson.Gson;
-import org.ekstep.ep.samza.reader.NullableValue;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
