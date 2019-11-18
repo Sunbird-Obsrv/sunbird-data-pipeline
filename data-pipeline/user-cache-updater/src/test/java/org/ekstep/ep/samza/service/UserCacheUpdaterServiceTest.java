@@ -119,11 +119,11 @@ public class UserCacheUpdaterServiceTest {
         verify(userCacheUpdaterSinkMock, times(1)).markSkipped();
     }
 
-    @Test
-    public void testlocation() throws Exception {
+    @Test(expected = DriverException.class)
+    public void shouldHandleCassandraException() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.AUDIT_EVENT_LOGININTYPE);
+        stub(redisConnectMock.readFromCache("3b46b4c9-3a10-439a-a2cb-feb5435b3a0d", jedisMock, 4)).toReturn("{\"usersignintype\":\"google\"}");
         UserCacheUpdaterSource source = new UserCacheUpdaterSource(envelopeMock);
-        jedisMock.set("3b46b4c9-3a10-439a-a2cb-feb5435b3a0d","{\"usersignintype\":\"google\"}");
         String metadataQuery = QueryBuilder.select().all()
                 .from("sunbird", "user")
                 .where(QueryBuilder.eq("id", "3b46b4c9-3a10-439a-a2cb-feb5435b3a0d"))
@@ -249,6 +249,7 @@ public class UserCacheUpdaterServiceTest {
     @Test
     public void shouldUpdateCacheWithMetadataChangesAndLocationFORAUDIT() {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.AUDIT_EVENT_METADATA_UPDATED);
+        stub(redisConnectMock.readFromCache("52226956-61d8-4c1b-b115-c660111866d3", jedisMock, 4)).toReturn("{\"channel\":\"dikshacustodian\",\"phoneverified\":false,\"usersignintype\":\"Self-Signed-In\",\"userlogintype\":\"NA\"}");
         Gson gson = new Gson();
         String userId = "52226956-61d8-4c1b-b115-c660111866d3";
         jedisMock.set(userId, "{\"channel\":\"dikshacustodian\",\"phoneverified\":false,\"usersignintype\":\"Self-Signed-In\",\"userlogintype\":\"NA\"}");

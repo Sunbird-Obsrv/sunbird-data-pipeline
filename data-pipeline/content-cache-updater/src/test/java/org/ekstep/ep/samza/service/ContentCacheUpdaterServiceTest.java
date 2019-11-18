@@ -97,7 +97,7 @@ public class ContentCacheUpdaterServiceTest {
 
         ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelopeMock);
         contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
-        Map<String,Object> contentData = contentCacheUpdaterService.updateContentCache(source.getMap(), contentCacheUpdaterSinkMock);
+        Map<String,Object> contentData = contentCacheUpdaterService.getCacheData(source.getMap(), "Content");
         jedisMock.set(contentId, contentData.toString());
 
         String cachedData = jedisMock.get(contentId);
@@ -108,6 +108,12 @@ public class ContentCacheUpdaterServiceTest {
             parsedData = gson.fromJson(cachedData, type);
         }
         assertEquals(5, parsedData.size());
+        assertEquals("in.ekstep", parsedData.get("channel"));
+        assertEquals("TestCollection", parsedData.get("description"));
+        assertEquals("testbook1", parsedData.get("code"));
+        assertEquals("Draft", parsedData.get("status"));
+        assertEquals(parsedData.get("ownershipType") instanceof List, true);
+        assertEquals(Arrays.asList("createdBy"), parsedData.get("ownershipType"));
     }
 
     @Test
@@ -121,7 +127,7 @@ public class ContentCacheUpdaterServiceTest {
         String contentId = (String) event.get("nodeUniqueId");
         ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelopeMock);
         contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
-        Map<String,Object> contentData = contentCacheUpdaterService.updateContentCache(source.getMap(), contentCacheUpdaterSinkMock);
+        Map<String,Object> contentData = contentCacheUpdaterService.getCacheData(source.getMap(), "Content");
         jedisMock.set(contentId, contentData.toString());
 
                 String cachedData = jedisMock.get(contentId);
@@ -131,13 +137,15 @@ public class ContentCacheUpdaterServiceTest {
             }.getType();
             parsedData = gson.fromJson(cachedData, type);
         }
-        System.out.println(parsedData);
         assertEquals(4, parsedData.size());
         assertEquals(parsedData.get("language") instanceof List, true);
+        assertEquals(Arrays.asList("Spanish"), parsedData.get("language"));
         assertEquals(parsedData.get("subject") instanceof List, true);
-        assertEquals(parsedData.get("ageGroup") instanceof List, false);
+        assertEquals(Arrays.asList("CS"), parsedData.get("subject"));
+        assertEquals(22.0, parsedData.get("ageGroup"));
         assertEquals(parsedData.get("ownershipType") instanceof List, true);
-        verify(contentCacheUpdaterSinkMock, times(3)).success();
+        assertEquals(Arrays.asList("createdBy"), parsedData.get("ownershipType"));
+        verify(contentCacheUpdaterSinkMock, times(1)).success();
     }
 
     @Test
@@ -158,7 +166,7 @@ public class ContentCacheUpdaterServiceTest {
 
         ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelopeMock);
         contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
-        Map<String,Object> contentData = contentCacheUpdaterService.updateContentCache(source.getMap(), contentCacheUpdaterSinkMock);
+        Map<String,Object> contentData = contentCacheUpdaterService.getCacheData(source.getMap(), "Content");
         jedisMock.set(contentId, contentData.toString());
         String cachedData = jedisMock.get(contentId);
         Map<String, Object> parsedData = null;
@@ -167,7 +175,6 @@ public class ContentCacheUpdaterServiceTest {
             }.getType();
             parsedData = gson.fromJson(cachedData, type);
         }
-        System.out.println(parsedData);
         assertEquals(4, parsedData.size());
         assertEquals("testbook1", parsedData.get("code"));
         assertEquals("sunbird.portal", parsedData.get("channel"));
@@ -203,7 +210,7 @@ public class ContentCacheUpdaterServiceTest {
         Gson gson = new Gson();
         Map<String, Object> event = gson.fromJson(EventFixture.CONTENT_EVENT_EMPTY_PROPERTIES, Map.class);
         String contentId = (String) event.get("nodeUniqueId");
-        Map<String,Object> contentData = contentCacheUpdaterService.updateContentCache(source.getMap(), contentCacheUpdaterSinkMock);
+        Map<String,Object> contentData = contentCacheUpdaterService.getCacheData(source.getMap(), "Content");
         jedisMock.set(contentId, contentData.toString());
 
         contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
@@ -232,11 +239,10 @@ public class ContentCacheUpdaterServiceTest {
 
         ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelopeMock);
         contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
-        Map<String,Object> dialCodeData = contentCacheUpdaterService.updateDialCodeCache(source.getMap(), contentCacheUpdaterSinkMock);
+        Map<String,Object> dialCodeData = contentCacheUpdaterService.getCacheData(source.getMap(), "DialCode");
         jedisMock.set(dialCode, gson.toJson(dialCodeData));
 
         String cachedData = jedisMock.get(dialCode);
-        System.out.println("cahced"+cachedData);
         Map<String, String> cachedObject = gson.fromJson(cachedData, Map.class);
         assertEquals(261351.0, cachedObject.get("dialcode_index"));
         assertEquals("YC9EP8", cachedObject.get("identifier"));
@@ -258,7 +264,7 @@ public class ContentCacheUpdaterServiceTest {
         String conceptId = (String) event.get("nodeUniqueId");
         ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelopeMock);
         contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
-        Map<String,Object> contentData = contentCacheUpdaterService.updateContentCache(source.getMap(), contentCacheUpdaterSinkMock);
+        Map<String,Object> contentData = contentCacheUpdaterService.getCacheData(source.getMap(), "Content");
         jedisMock.set(conceptId, contentData.toString());
 
         String cachedData = jedisMock.get(conceptId);
@@ -274,6 +280,16 @@ public class ContentCacheUpdaterServiceTest {
         assertEquals(str, parsedData.get("language"));
     }
 
+    @Test
+    public void shouldMarkEventSkippedForNonodeUniqueId() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.CONTENT_EVENT_EMPTY_NODE_UNIQUEID);
+        contentCacheUpdaterTask = new ContentCacheUpdaterTask(configMock, contextMock, redisConnectMock);
+        contentCacheUpdaterTask.process(envelopeMock, messageCollector, taskCoordinator);
+        ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelopeMock);
+        contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
+
+        verify(contentCacheUpdaterSinkMock, times(1)).markSkipped();
+    }
 
     @Test
     @SuppressWarnings("unchecked")
@@ -287,7 +303,7 @@ public class ContentCacheUpdaterServiceTest {
 
         ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelopeMock);
         contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
-        Map<String,Object> contentData = contentCacheUpdaterService.updateContentCache(source.getMap(), contentCacheUpdaterSinkMock);
+        Map<String,Object> contentData = contentCacheUpdaterService.getCacheData(source.getMap(), "Content");
         jedisMock.set(conceptId, contentData.toString());
 
         String cachedData = jedisMock.get(conceptId);

@@ -57,10 +57,6 @@ public class UserCacheUpdaterConfig {
 
     public String jobName() { return JOB_NAME; }
 
-    public String cassandra_middleware_host() { return cassandra_middleware_host; }
-
-    public int cassandra_middleware_port() { return cassandra_middleware_port; }
-
     public int userStoreDb() { return userStoreDb; }
 
 }

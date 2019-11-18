@@ -13,4 +13,6 @@ public class ContentCacheUpdaterSink extends BaseSink {
     public void success() {
         metrics.incSuccessCounter();
     }
+
+    public void markSkipped() { metrics.incSkippedCounter(); }
 }

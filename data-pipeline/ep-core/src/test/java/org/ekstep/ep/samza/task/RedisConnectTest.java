@@ -35,13 +35,24 @@ public class RedisConnectTest {
     }
 
     @Test
-    public void shouldAddJsonToCache() throws Exception {
-        redisConnectMock.addJsonToCache("85098674245678","{\"type\": \"User\", \"role\":\"student\"}", jedisMock);
+    public void shouldAddToCache() throws Exception {
+        redisConnectMock.addToCache("85098674245678","{\"type\": \"User\", \"role\":\"student\"}", jedisMock, 4);
         Gson gson = new Gson();
         String value = jedisMock.get("85098674245678");
         Map<String, Object> parsedData = gson.fromJson(value, type);
 
         assertEquals("User", parsedData.get("type"));
         assertEquals("student", parsedData.get("role"));
+    }
+
+    @Test
+    public void shouldReadFromCache() throws Exception {
+        jedisMock.set("409876459876345", "{\"type\": \"Request\", \"role\":\"teacher\"}");
+        Gson gson = new Gson();
+        String value = redisConnectMock.readFromCache("409876459876345", jedisMock, 4);
+        Map<String, Object> parsedData = gson.fromJson(value, type);
+
+        assertEquals("Request", parsedData.get("type"));
+        assertEquals("teacher", parsedData.get("role"));
     }
 }

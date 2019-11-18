@@ -7,7 +7,6 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-import org.apache.samza.config.Config;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
@@ -36,13 +35,12 @@ public class UserCacheUpdaterService {
     }.getType();
 
     public UserCacheUpdaterService(UserCacheUpdaterConfig config, RedisConnect redisConnect, CassandraConnect cassandraConnect, JobMetrics metrics) {
+        this.cassandraConnection = cassandraConnect;
         this.redisConnect = redisConnect;
         this.metrics = metrics;
         userCacheUpdaterConfig = config;
         this.userStoreDb = config.userStoreDb();
         this.userDataStoreConnection = redisConnect.getConnection(userStoreDb);
-        List<String> cassandraHosts = Arrays.asList(config.cassandra_middleware_host().split(","));
-        this.cassandraConnection = null == cassandraConnect ? new CassandraConnect(cassandraHosts, config.cassandra_middleware_port()) : cassandraConnect;
     }
 
     public void process(UserCacheUpdaterSource source, UserCacheUpdaterSink sink) {
@@ -61,76 +59,63 @@ public class UserCacheUpdaterService {
 
     public Map<String, Object> updateUserCache(Event event, String userId, UserCacheUpdaterSink sink) {
         Map<String, Object> userCacheData = new HashMap<>();
-        try {
-            String userState = event.getUserStateValue();
-            if("Update".equals(userState)) {
-                String data = userDataStoreConnection.get(userId);
-                if (data != null && !data.isEmpty()) {
-                    userCacheData = gson.fromJson(data, mapType);
+        String userState = event.getUserStateValue();
+        if("Update".equals(userState)) {
+            String data = redisConnect.readFromCache(userId, userDataStoreConnection, userStoreDb);
+            if (data != null && !data.isEmpty()) {
+                userCacheData = gson.fromJson(data, mapType);
+            }
+            userCacheData.putAll(getUserLoginType(event));
+            ArrayList<String> userUpdatedList = event.getUserMetdataUpdatedList();
+            if (userCacheData.containsKey("usersignintype") && !"Anonymous".equals(userCacheData.get("usersignintype"))
+                    && null != userUpdatedList && !userUpdatedList.isEmpty()) {
 
-                }
-                userCacheData.putAll(getUserLogininType(event));
-                ArrayList<String> userUpdatedList = event.getUserMetdataUpdatedList();
-                if (userCacheData.containsKey("usersignintype") && !"Anonymous".equals(userCacheData.get("usersignintype"))
-                        && null != userUpdatedList && !userUpdatedList.isEmpty()) {
+                List<Row> userDetails = fetchFallbackDetailsFromDB(userId, userCacheUpdaterConfig.cassandra_user_table());
+                Map<String, Object> userMetadataInfoMap = getUserMetaDataInfo(userDetails);
 
-                    List<Row> userDetails = fetchFallbackDetailsFromDB(userId, userCacheUpdaterConfig.cassandra_user_table());
-                    Map<String, Object> userMetadataInfoMap = getUserMetaDataInfo(userDetails);
+                if (!userMetadataInfoMap.isEmpty())
+                    userCacheData.putAll(userMetadataInfoMap);
 
-                    if (!userMetadataInfoMap.isEmpty())
-                        userCacheData.putAll(userMetadataInfoMap);
+                if (userUpdatedList.contains("id") && null != userCacheData.get("locationids")) {
+                    List<String> locationIds = (List<String>) userCacheData.get("locationids");
 
-                    if (userUpdatedList.contains("id") && null != userCacheData.get("locationids")) {
-                        List<String> locationIds = (List<String>) userCacheData.get("locationids");
+                    List<Row> locationDetails = fetchFallbackDetailsFromDB(locationIds, userCacheUpdaterConfig.cassandra_location_table());
+                    Map<String, Object> userLocationMap = getLocationInfo(locationDetails);
 
-                        List<Row> locationDetails = fetchFallbackDetailsFromDB(locationIds, userCacheUpdaterConfig.cassandra_location_table());
-                        Map<String, Object> userLocationMap = getLocationInfo(locationDetails);
-
-                        if (!userLocationMap.isEmpty())
-                            userCacheData.putAll(userLocationMap);
-                    }
+                    if (!userLocationMap.isEmpty())
+                        userCacheData.putAll(userLocationMap);
                 }
             }
-            else if("Create".equals(userState)) {
-                userCacheData.putAll(getUserSigninType(event));
-            }
+        }
+        else if("Create".equals(userState)) {
+            userCacheData.putAll(getUserSigninType(event));
+        }
 
-            if (!userCacheData.isEmpty()) {
-                redisConnect.addJsonToCache(userId, gson.toJson(userCacheData), userDataStoreConnection);
-                sink.success();
-            }
-
-        } catch (JedisException ex) {
-            sink.error();
-            LOGGER.error("", "Exception when adding to user redis cache", ex);
-            redisConnect.resetConnection();
-            try (Jedis redisConn = redisConnect.getConnection(userStoreDb)) {
-                this.userDataStoreConnection = redisConn;
-                if (null != userCacheData)
-                    redisConnect.addJsonToCache(userId, gson.toJson(userCacheData), userDataStoreConnection);
-            }
+        if (!userCacheData.isEmpty()) {
+            redisConnect.addToCache(userId, gson.toJson(userCacheData), userDataStoreConnection, userStoreDb);
+            sink.success();
         }
         return userCacheData;
     }
 
     private Map<String, String> getUserSigninType(Event event) {
         Map<String,String> userData = new HashMap<>();
-        String signIn_type = null != event.getUserSignInType() ? event.getUserSignInType() : userCacheUpdaterConfig.getUserSignInTypeDefault();
-        if (!(userCacheUpdaterConfig.getUserSignInTypeDefault().equalsIgnoreCase(signIn_type))) {
-            if (userCacheUpdaterConfig.getUserSelfSignedInTypeList().contains(signIn_type)) {
+        String signInType = null != event.getUserSignInType() ? event.getUserSignInType() : userCacheUpdaterConfig.getUserSignInTypeDefault();
+        if (!(userCacheUpdaterConfig.getUserSignInTypeDefault().equalsIgnoreCase(signInType))) {
+            if (userCacheUpdaterConfig.getUserSelfSignedInTypeList().contains(signInType)) {
                 userData.put("usersignintype", userCacheUpdaterConfig.getUserSelfSignedKey());
-            } else if (userCacheUpdaterConfig.getUserValidatedTypeList().contains(signIn_type)) {
+            } else if (userCacheUpdaterConfig.getUserValidatedTypeList().contains(signInType)) {
                 userData.put("usersignintype", userCacheUpdaterConfig.getUserValidatedKey());
             }
         }
         return userData;
     }
 
-    private Map<String, String> getUserLogininType(Event event) {
+    private Map<String, String> getUserLoginType(Event event) {
         Map<String,String> userData = new HashMap<>();
-        String loginIn_type = null != event.getUserLoginType() ? event.getUserLoginType() : userCacheUpdaterConfig.getUserLoginInTypeDefault();
-        if (!(userCacheUpdaterConfig.getUserLoginInTypeDefault().equalsIgnoreCase(loginIn_type)))
-            userData.put("userlogintype", loginIn_type);
+        String loginInType = null != event.getUserLoginType() ? event.getUserLoginType() : userCacheUpdaterConfig.getUserLoginInTypeDefault();
+        if (!(userCacheUpdaterConfig.getUserLoginInTypeDefault().equalsIgnoreCase(loginInType)))
+            userData.put("userlogintype", loginInType);
         return userData;
     }
 
@@ -145,6 +130,8 @@ public class UserCacheUpdaterService {
         } catch (DriverException ex) {
             metrics.incUserDBErrorCount();
             LOGGER.error("", "Exception while fetching from db : " + ex);
+            cassandraConnection.reconnectCluster();
+            rowSet = cassandraConnection.find(metadataQuery);
         }
         metrics.incUserDbHitCount();
         return rowSet;
