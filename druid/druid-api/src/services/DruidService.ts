@@ -1,25 +1,30 @@
 import async from "asyncawait/async";
-import * as await from "asyncawait/await";
-import {IValidationResponse} from "../models/ErrorResponse";
+import await from "asyncawait/await";
+import {IValidationResponse} from "../models/models";
+import {ILimits} from "../models/models";
 import { HttpService } from "./HttpService";
 import { ValidationService } from "./ValidationService";
 
 export class DruidService {
-    private limits: string;
+    private limits: ILimits;
     private httpService: HttpService;
-    constructor(limits: string, httpService: HttpService) {
+    constructor(limits: ILimits, httpService: HttpService) {
         this.limits = limits;
         this.httpService = httpService;
     }
 
     public validate() {
         return async((request: any, response: any, next: any) => {
-            const result: IValidationResponse = ValidationService.validate(request);
-            if (result.status) { next(); } else { response.send(result); }
+            const result: IValidationResponse = ValidationService.validate(request, this.limits);
+            if (result.status) { next(); } else { response.send(result); response.end(); }
         });
     }
 
-    public async fetch(query: any): Promise<any> {
-        return await this.httpService.fetch(query);
+    public fetch() {
+        return async(async (query: any) => {
+            const result = await this.httpService.fetch(query);
+            console.log("yes i..m");
+            return result;
+        });
     }
 }

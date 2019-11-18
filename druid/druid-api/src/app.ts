@@ -14,18 +14,19 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 const httpService = new HttpService(host, endPoint, port);
-const druidService = new DruidService(JSON.stringify(config.limits), httpService);
+const druidService = new DruidService(config.limits, httpService);
 
 app.post(endPoint, (requestObj, responseObj, next) => {
   druidService.validate()(requestObj.body, responseObj, next);
 }, (requestObj, responseObj) => {
-  druidService.fetch(requestObj.body)
+  druidService.fetch()(requestObj.body)
     .then((data) => {
-      console.log(data);
       responseObj.status(200).json(data);
+      responseObj.end();
     })
     .catch((err) => {
       responseObj.send(err);
+      responseObj.end();
     });
 });
 
