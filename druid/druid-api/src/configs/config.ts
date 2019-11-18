@@ -26,6 +26,10 @@ export const config = {
                 max_date_range: 7, // Maximum allowed date range, In days.
                 max_filter_dimensions: 50, // Maximum allowed dimensions
             },
+            select: {
+                max_date_range: 7, // Maximum allowed date range, In days.
+                max_filter_dimensions: 50, // Maximum allowed date range, In days.
+            },
             topN: {
                 max_date_range: 7, // Maximum allowed date range, In days.
                 max_filter_dimensions: 50, // Maximum allowed date range, In days.

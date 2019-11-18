@@ -16,32 +16,24 @@ export interface ICommon {
 }
 
 export interface IQueryRules {
-    groupBy: IGroupBy;
-    scan: IScan;
-    topN: ITopN;
+    groupBy: IRules;
+    scan: IRules;
+    topN: IRules;
+    select: IRules;
 }
 
-export interface IGroupBy {
-    max_date_range: number;
-    max_filter_dimensions: number;
-}
-
-export interface IScan {
-    max_date_range: number;
-    max_filter_dimensions: number;
-}
-
-export interface ITopN {
-    max_date_range: number;
-    max_filter_dimensions: number;
+export interface IRules {
+    max_date_range?: number;
+    max_filter_dimensions?: number;
 }
 
 export interface IQuery {
     queryType: string;
     dataSource: string;
-    dimensions: string[];
-    filter: any;
-    aggregations: any[];
-    postAggregations: any[];
-    limit: number;
+    dimensions?: string[];
+    filter?: any;
+    aggregations?: any[];
+    postAggregations?: any[];
+    limit?: number;
+    intervals?: string[];
 }
