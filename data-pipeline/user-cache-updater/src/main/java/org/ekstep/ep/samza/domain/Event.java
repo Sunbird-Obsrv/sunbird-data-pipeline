@@ -19,7 +19,7 @@ public class Event {
         if (null != objectType.value() && objectType.value().equalsIgnoreCase("User")) {
             objectUserId = telemetry.read("object.id");
         }
-        return objectUserId.value();
+        return null!=objectUserId ? objectUserId.value(): null;
     }
 
     public String getUserSignInType() {
