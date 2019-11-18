@@ -210,6 +210,17 @@ public class TelemetryEventsValidatorTaskTest {
         verify(collectorMock).send(argThat(validateEvent(false, "devicedata/userdeclared/district")));
     }
 
+    /**
+     * When Json exception occurs then it should send the event to malformed topic
+     * @throws Exception
+     */
+    @Test
+    public void shouldAddInvalidEventToMalformedTopic() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_JSON);
+        druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), MALFORMED_TOPIC)));
+    }
+
 
     public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
         return new ArgumentMatcher<OutgoingMessageEnvelope>() {

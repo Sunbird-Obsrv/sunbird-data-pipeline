@@ -7,11 +7,12 @@ import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.DeviceProfile;
 import org.ekstep.ep.samza.domain.Event;
+import org.ekstep.ep.samza.events.domain.Path;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterConfig;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterSink;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterSource;
 import org.ekstep.ep.samza.util.DeviceProfileCache;
-import org.ekstep.ep.samza.util.Path;
+
 import org.ekstep.ep.samza.util.RedisConnect;
 import redis.clients.jedis.Jedis;
 import com.google.gson.Gson;
@@ -88,7 +89,7 @@ public class TelemetryLocationUpdaterService {
 	}
 
 	private Map<String, String> getLocationFromUserCache(Event event) {
-		String uid = event.actorid();
+		String uid = event.actorId();
 		Map<String, String> locationData;
 		try {
 			locationData = getLocationForUser(uid);
@@ -103,20 +104,22 @@ public class TelemetryLocationUpdaterService {
 		}
 	}
 
-	private Map<String, String> getLocationForUser(String uid) {
-		Map<String, Object> userCacheData;
-		Map<String, String> locationData = new HashMap<>();
-		String data = userDataStoreConnection.get(uid);
-		if (data != null && !data.isEmpty()) {
-			userCacheData = gson.fromJson(data, mapType);
-			if (!userCacheData.isEmpty() && userCacheData.containsKey("state") && !userCacheData.get("state").toString().isEmpty()){
-				locationData.put(path.stateKey(), userCacheData.get("state").toString());
-				locationData.put(path.districtKey(), userCacheData.getOrDefault("district", "").toString());
-				locationData.put(path.locDerivedFromKey(), "user-profile");
-			}
-		}
-		return locationData;
-	}
+    private Map<String, String> getLocationForUser(String uid) {
+        Map<String, Object> userCacheData;
+        Map<String, String> locationData = new HashMap<>();
+        if (uid != null) {
+            String data = userDataStoreConnection.get(uid);
+            if (data != null && !data.isEmpty()) {
+                userCacheData = gson.fromJson(data, mapType);
+                if (!userCacheData.isEmpty() && userCacheData.containsKey("state") && !userCacheData.get("state").toString().isEmpty()) {
+                    locationData.put(path.stateKey(), userCacheData.get("state").toString());
+                    locationData.put(path.districtKey(), userCacheData.getOrDefault("district", "").toString());
+                    locationData.put(path.locDerivedFromKey(), "user-profile");
+                }
+            }
+        }
+        return locationData;
+    }
 
 	private Map<String, String> getUserDeclaredLocation(DeviceProfile deviceProfile) {
 		Map<String, String> locationData = new HashMap<>();

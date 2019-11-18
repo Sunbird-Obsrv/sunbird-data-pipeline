@@ -39,28 +39,18 @@ public class EventsRouterConfig {
     }
 
     public String getTelemetryEventsRouteTopic() {
-		return telemetryEventsRouteTopic;
-	}
+        return telemetryEventsRouteTopic;
+    }
 
-	public void setTelemetryEventsRouteTopic(String telemetryEventsRouteTopic) {
-		this.telemetryEventsRouteTopic = telemetryEventsRouteTopic;
-	}
 
-	public String getSummaryEventsRouteTopic() {
-		return summaryEventsRouteTopic;
-	}
+    public String getSummaryEventsRouteTopic() {
+        return summaryEventsRouteTopic;
+    }
 
-	public void setSummaryEventsRouteTopic(String summaryEventsRouteTopic) {
-		this.summaryEventsRouteTopic = summaryEventsRouteTopic;
-	}
 
-	public String getSummaryRouteEvents() {
-		return this.summaryRouteEvents;
-	}
-
-	public void setSummaryRouteEvents(String summaryRouteEvents) {
-		this.summaryRouteEvents = summaryRouteEvents;
-	}
+    public String getSummaryRouteEvents() {
+        return this.summaryRouteEvents;
+    }
 
     public String failedTopic() {
         return failedTopic;
@@ -75,16 +65,20 @@ public class EventsRouterConfig {
     }
 
     public String malformedTopic() {
-    	return malformedTopic;
+        return malformedTopic;
     }
 
     public String jobName() {
         return JOB_NAME;
     }
 
-    public String getLogEventsRouteTopic() { return logEventsRouteTopic; }
+    public String getLogEventsRouteTopic() {
+        return logEventsRouteTopic;
+    }
 
-    public Boolean isDedupEnabled() { return dedupEnabled; }
+    public Boolean isDedupEnabled() {
+        return dedupEnabled;
+    }
 
     public int dupStore() {
         return dupStore;
@@ -94,5 +88,7 @@ public class EventsRouterConfig {
         return expirySeconds;
     }
 
-    public String getErrorEventsRouteTopic() { return errorEventsRouteTopic; }
+    public String getErrorEventsRouteTopic() {
+        return errorEventsRouteTopic;
+    }
 }
