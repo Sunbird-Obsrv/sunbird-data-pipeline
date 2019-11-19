@@ -2,8 +2,6 @@ package org.ekstep.ep.samza.service;
 
 import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.Row;
-import com.datastax.driver.core.exceptions.DriverException;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -13,10 +11,8 @@ import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.task.UserCacheUpdaterSink;
 import org.ekstep.ep.samza.task.UserCacheUpdaterSource;
 import org.ekstep.ep.samza.task.UserCacheUpdaterConfig;
-import org.ekstep.ep.samza.util.CassandraConnect;
-import org.ekstep.ep.samza.util.RedisConnect;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.exceptions.JedisException;
+import org.ekstep.ep.samza.util.BaseCacheUpdater;
+import org.ekstep.ep.samza.util.BaseDBUpdater;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -24,9 +20,8 @@ import java.util.*;
 public class UserCacheUpdaterService {
 
     private static Logger LOGGER = new Logger(UserCacheUpdaterService.class);
-    private RedisConnect redisConnect;
-    private CassandraConnect cassandraConnection;
-    private Jedis userDataStoreConnection;
+    private BaseCacheUpdater baseCacheUpdater;
+    private BaseDBUpdater baseDBUpdater;
     private JobMetrics metrics;
     private UserCacheUpdaterConfig userCacheUpdaterConfig;
     private int userStoreDb;
@@ -34,13 +29,12 @@ public class UserCacheUpdaterService {
     private Type mapType = new TypeToken<Map<String, Object>>() {
     }.getType();
 
-    public UserCacheUpdaterService(UserCacheUpdaterConfig config, RedisConnect redisConnect, CassandraConnect cassandraConnect, JobMetrics metrics) {
-        this.cassandraConnection = cassandraConnect;
-        this.redisConnect = redisConnect;
+    public UserCacheUpdaterService(UserCacheUpdaterConfig config, BaseCacheUpdater baseCacheUpdater, BaseDBUpdater baseDBUpdater, JobMetrics metrics) {
+        this.baseDBUpdater = baseDBUpdater;
+        this.baseCacheUpdater = baseCacheUpdater;
         this.metrics = metrics;
         userCacheUpdaterConfig = config;
         this.userStoreDb = config.userStoreDb();
-        this.userDataStoreConnection = redisConnect.getConnection(userStoreDb);
     }
 
     public void process(UserCacheUpdaterSource source, UserCacheUpdaterSink sink) {
@@ -61,7 +55,7 @@ public class UserCacheUpdaterService {
         Map<String, Object> userCacheData = new HashMap<>();
         String userState = event.getUserStateValue();
         if("Update".equals(userState)) {
-            String data = redisConnect.readFromCache(userId, userDataStoreConnection, userStoreDb);
+            String data = baseCacheUpdater.readFromCache(userId, userStoreDb);
             if (data != null && !data.isEmpty()) {
                 userCacheData = gson.fromJson(data, mapType);
             }
@@ -69,8 +63,8 @@ public class UserCacheUpdaterService {
             ArrayList<String> userUpdatedList = event.getUserMetdataUpdatedList();
             if (userCacheData.containsKey("usersignintype") && !"Anonymous".equals(userCacheData.get("usersignintype"))
                     && null != userUpdatedList && !userUpdatedList.isEmpty()) {
-
-                List<Row> userDetails = fetchFallbackDetailsFromDB(userId, userCacheUpdaterConfig.cassandra_user_table());
+                List<Row> userDetails = baseDBUpdater.
+                        readFromCassandra(userCacheUpdaterConfig.cassandra_db(), userCacheUpdaterConfig.cassandra_user_table(), "id", userId);
                 Map<String, Object> userMetadataInfoMap = getUserMetaDataInfo(userDetails);
 
                 if (!userMetadataInfoMap.isEmpty())
@@ -79,7 +73,8 @@ public class UserCacheUpdaterService {
                 if (userUpdatedList.contains("id") && null != userCacheData.get("locationids")) {
                     List<String> locationIds = (List<String>) userCacheData.get("locationids");
 
-                    List<Row> locationDetails = fetchFallbackDetailsFromDB(locationIds, userCacheUpdaterConfig.cassandra_location_table());
+                    List<Row> locationDetails = baseDBUpdater.
+                            readFromCassandra(userCacheUpdaterConfig.cassandra_db(), userCacheUpdaterConfig.cassandra_location_table(), "id", locationIds);
                     Map<String, Object> userLocationMap = getLocationInfo(locationDetails);
 
                     if (!userLocationMap.isEmpty())
@@ -92,7 +87,7 @@ public class UserCacheUpdaterService {
         }
 
         if (!userCacheData.isEmpty()) {
-            redisConnect.addToCache(userId, gson.toJson(userCacheData), userDataStoreConnection, userStoreDb);
+            baseCacheUpdater.addToCache(userId, gson.toJson(userCacheData), userStoreDb);
             sink.success();
         }
         return userCacheData;
@@ -117,24 +112,6 @@ public class UserCacheUpdaterService {
         if (!(userCacheUpdaterConfig.getUserLoginInTypeDefault().equalsIgnoreCase(loginInType)))
             userData.put("userlogintype", loginInType);
         return userData;
-    }
-
-    private <T> List<Row> fetchFallbackDetailsFromDB(T id, String table){
-        String metadataQuery = QueryBuilder.select().all()
-                .from(userCacheUpdaterConfig.cassandra_db(), table)
-                .where(QueryBuilder.eq("id", id))
-                .toString();
-        List<Row> rowSet= null;
-        try {
-            rowSet = cassandraConnection.find(metadataQuery);
-        } catch (DriverException ex) {
-            metrics.incUserDBErrorCount();
-            LOGGER.error("", "Exception while fetching from db : " + ex);
-            cassandraConnection.reconnectCluster();
-            rowSet = cassandraConnection.find(metadataQuery);
-        }
-        metrics.incUserDbHitCount();
-        return rowSet;
     }
 
     public Map<String, Object> getUserMetaDataInfo(List<Row> userDetails) {

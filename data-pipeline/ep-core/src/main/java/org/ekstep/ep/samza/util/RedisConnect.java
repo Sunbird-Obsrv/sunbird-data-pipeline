@@ -59,26 +59,4 @@ public class RedisConnect {
         resetConnection();
         return getConnection(database);
     }
-
-    public void addToCache(String key, String value, Jedis redisConnection, int storeId) {
-        try {
-            if (key != null && !key.isEmpty() && null != value && !value.isEmpty()) {
-                redisConnection.set(key, value);
-            }
-        } catch(JedisException ex) {
-            redisConnection = resetConnection(storeId);
-            if (null != value)
-                redisConnection.set(key, value);
-        }
-    }
-
-    public String readFromCache(String key, Jedis redisConnection, int storeId) {
-        try {
-            return redisConnection.get(key);
-        }
-        catch (JedisException ex) {
-            redisConnection = resetConnection(storeId);
-            return redisConnection.get(key);
-        }
-    }
 }

@@ -7,6 +7,7 @@ import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.task.*;
 import org.ekstep.ep.samza.util.ContentCache;
 import org.ekstep.ep.samza.util.RedisConnect;
+import org.ekstep.ep.samza.util.BaseCacheUpdater;
 import redis.clients.jedis.Jedis;
 import org.apache.samza.config.Config;
 import redis.clients.jedis.exceptions.JedisException;
@@ -17,28 +18,29 @@ import java.util.*;
 public class ContentCacheUpdaterService {
 
     private static Logger LOGGER = new Logger(ContentCacheUpdaterService.class);
-    private RedisConnect redisConnect;
     private Jedis dialCodeStoreConnection;
     private Jedis contentStoreConnection;
+    private BaseCacheUpdater baseCacheUpdater;
     private JobMetrics metrics;
     private ContentCache contentCache;
     private int dialCodeStoreDb;
     private int contentStoreDb;
-    Jedis redisConnection;
     int storeId;
     private Gson gson = new Gson();
     Type mapType = new TypeToken<Map<String, Object>>() {
     }.getType();
     private List<String> contentModelListTypeFields;
+    private List<String> dateFields;
 
     public ContentCacheUpdaterService(Config config, RedisConnect redisConnect, JobMetrics metrics) {
-        this.redisConnect = redisConnect;
+        this.baseCacheUpdater = new BaseCacheUpdater(redisConnect);
         this.metrics = metrics;
         this.contentStoreDb = config.getInt("redis.database.contentStore.id", 5);
         this.dialCodeStoreDb = config.getInt("redis.database.dialCodeStore.id", 6);
         this.contentStoreConnection = redisConnect.getConnection(contentStoreDb);
         this.dialCodeStoreConnection = redisConnect.getConnection(dialCodeStoreDb);
         this.contentModelListTypeFields = config.getList("contentModel.fields.listType", new ArrayList<>());
+        this.dateFields = config.getList("date.fields.listType", new ArrayList<>());
     }
 
     public void process(ContentCacheUpdaterSource source, ContentCacheUpdaterSink sink) {
@@ -56,7 +58,7 @@ public class ContentCacheUpdaterService {
             parsedData = getCacheData(message, objectType);
         }
         if(null != parsedData) {
-            redisConnect.addToCache(nodeUniqueId, gson.toJson(parsedData), redisConnection, storeId);
+            baseCacheUpdater.addToCache(nodeUniqueId, gson.toJson(parsedData), storeId);
             sink.success();
         }
     }
@@ -72,13 +74,11 @@ public class ContentCacheUpdaterService {
         }
         Map<String, Object> newProperties = contentCache.extractProperties(message);
         if(objectType.equalsIgnoreCase("DialCode")) {
-            redisConnection=dialCodeStoreConnection;
             storeId=dialCodeStoreDb;
         }
         else {
-            redisConnection=contentStoreConnection;
             storeId=contentStoreDb;
-            Map<String, List<String>> listTypeFields = contentCache.convertType(newProperties, contentModelListTypeFields);
+            Map<String, Object> listTypeFields = contentCache.convertType(newProperties, contentModelListTypeFields, dateFields);
             if (!listTypeFields.isEmpty()) {
                 newProperties.putAll(listTypeFields);
             }

@@ -16,6 +16,7 @@ import org.ekstep.ep.samza.service.Fixtures.EventFixture;
 import org.ekstep.ep.samza.task.ContentCacheUpdaterSink;
 import org.ekstep.ep.samza.task.ContentCacheUpdaterSource;
 import org.ekstep.ep.samza.task.ContentCacheUpdaterTask;
+import org.ekstep.ep.samza.util.ContentCache;
 import org.ekstep.ep.samza.util.RedisConnect;
 import org.junit.Before;
 import org.junit.Test;
@@ -175,11 +176,13 @@ public class ContentCacheUpdaterServiceTest {
             }.getType();
             parsedData = gson.fromJson(cachedData, type);
         }
-        assertEquals(4, parsedData.size());
+        assertEquals(6, parsedData.size());
         assertEquals("testbook1", parsedData.get("code"));
         assertEquals("sunbird.portal", parsedData.get("channel"));
         assertEquals("Live", parsedData.get("status"));
         assertEquals("Default", parsedData.get("visibility"));
+        assertEquals("TestCollection", parsedData.get("description"));
+        assertEquals(Arrays.asList("createdBy"), parsedData.get("ownershipType"));
     }
 
     @Test
@@ -187,11 +190,7 @@ public class ContentCacheUpdaterServiceTest {
         jedisMock.flushAll();
 
         ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelopeMock);
-
-        // Update Redis Cache with First Event
         when(envelopeMock.getMessage()).thenReturn(EventFixture.CONTENT_EVENT_EMPTY_NODE_UNIQUEID, EventFixture.CONTENT_EVENT_EMPTY_PROPERTIES);
-        contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
-        verify(contentCacheUpdaterSinkMock, times(0)).success();
         contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
         assertEquals(0, jedisMock.keys("*").size());
     }
@@ -203,17 +202,13 @@ public class ContentCacheUpdaterServiceTest {
         ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelopeMock);
 
         // Update Redis Cache with First Event
-        when(envelopeMock.getMessage()).thenReturn(EventFixture.OBJECT_TYPE_CONTENT_EVENT_1, EventFixture.CONTENT_EVENT_EMPTY_PROPERTIES);
+        when(envelopeMock.getMessage()).thenReturn(EventFixture.CONTENT_EVENT_EMPTY_PROPERTIES);
         contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
 
         // Second event with empty properties
         Gson gson = new Gson();
         Map<String, Object> event = gson.fromJson(EventFixture.CONTENT_EVENT_EMPTY_PROPERTIES, Map.class);
         String contentId = (String) event.get("nodeUniqueId");
-        Map<String,Object> contentData = contentCacheUpdaterService.getCacheData(source.getMap(), "Content");
-        jedisMock.set(contentId, contentData.toString());
-
-        contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
 
         String cachedData = jedisMock.get(contentId);
         Map<String, Object> parsedData = null;

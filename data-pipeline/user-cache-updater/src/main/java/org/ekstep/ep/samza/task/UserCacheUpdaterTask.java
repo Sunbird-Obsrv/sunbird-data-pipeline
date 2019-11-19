@@ -8,6 +8,8 @@ import org.apache.samza.task.*;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.util.CassandraConnect;
 import org.ekstep.ep.samza.util.RedisConnect;
+import org.ekstep.ep.samza.util.BaseCacheUpdater;
+import org.ekstep.ep.samza.util.BaseDBUpdater;
 import org.ekstep.ep.samza.service.UserCacheUpdaterService;
 
 import java.util.*;
@@ -17,6 +19,8 @@ public class UserCacheUpdaterTask implements StreamTask, InitableTask, Windowabl
     private JobMetrics metrics;
     private UserCacheUpdaterConfig config;
     private UserCacheUpdaterService service;
+    private BaseCacheUpdater baseCacheUpdater;
+    private BaseDBUpdater baseDBUpdater;
     private String metricsTopic;
     private RedisConnect redisConnect;
     private CassandraConnect cassandraConnect;
@@ -36,10 +40,9 @@ public class UserCacheUpdaterTask implements StreamTask, InitableTask, Windowabl
     public void init(Config config, TaskContext context, CassandraConnect cassandraConnect, RedisConnect redisConnect) {
         this.config = new UserCacheUpdaterConfig(config);
         metrics = new JobMetrics(context, this.config.jobName());
-        List<String> cassandraHosts = Arrays.asList(config.get("middleware.cassandra.host", "127.0.0.1").split(","));
-        cassandraConnect = null != cassandraConnect ? cassandraConnect : new CassandraConnect(cassandraHosts, config.getInt("middleware..cassandra.port", 9042));
-        redisConnect = null != redisConnect? redisConnect: new RedisConnect(config);
-        service = new UserCacheUpdaterService(this.config, redisConnect, cassandraConnect, metrics);
+        baseCacheUpdater = new BaseCacheUpdater(redisConnect);
+        baseDBUpdater = new BaseDBUpdater(cassandraConnect);
+        service = new UserCacheUpdaterService(this.config, baseCacheUpdater, baseDBUpdater, metrics);
         metricsTopic = config.get("output.metrics.topic.name");
     }
 
