@@ -20,6 +20,7 @@ export interface IQueryRules {
     scan: IRules;
     topN: IRules;
     select: IRules;
+    timeseries: IRules;
 }
 
 export interface IRules {
@@ -27,13 +28,25 @@ export interface IRules {
     max_filter_dimensions?: number;
 }
 
+export interface IDimension { [name: string]: any; }
+
 export interface IQuery {
     queryType: string;
     dataSource: string;
+    dimension?: string;
     dimensions?: string[];
-    filter?: any;
+    filter?: IFilter;
     aggregations?: any[];
     postAggregations?: any[];
     limit?: number;
-    intervals?: string[];
+    intervals?: string[] | string;
+}
+
+export interface IFilter {
+    type?: string;
+    fields?: IFilter[];
+    field?: IFilter;
+    dimension?: string;
+    dimensions?: string[];
+
 }
