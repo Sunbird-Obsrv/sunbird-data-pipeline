@@ -179,8 +179,8 @@ play.server {
   }
 }
 
-play.modules.enabled+="MetricsModule"
 play.modules.enabled+="modules.ActorInjector"
+play.filters.enabled+="filter.RequestInterceptor"
 
 # body parser
 play.http.parser.maxMemoryBuffer=10M
