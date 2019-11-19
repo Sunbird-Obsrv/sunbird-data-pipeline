@@ -37,3 +37,5 @@ app.listen(config.apiPort, (err) => {
   }
   return console.log(`server is listening on ${config.apiPort}`);
 });
+
+export default app;

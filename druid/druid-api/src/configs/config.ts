@@ -36,7 +36,7 @@ export const config = {
             },
             timeseries: {
                 max_date_range: 7, // Maximum allowed date range, In days.
-                max_filter_dimensions: 10, // Maximum allowed date range, In days.
+                max_filter_dimensions: 7, // Maximum allowed date range, In days.
             },
             topN: {
                 max_date_range: 7, // Maximum allowed date range, In days.

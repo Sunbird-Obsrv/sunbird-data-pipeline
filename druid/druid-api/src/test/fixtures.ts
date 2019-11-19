@@ -1,0 +1,3 @@
+export class Fixtures {
+    public static VALID_REQ = '{"queryType":"timeseries","dataSource":"telemetry-events","aggregations":[{"type":"count","name":"count"}],"granularity":"all","postAggregations":[],"intervals":"2019-08-19T00:00:00+00:00/2019-11-19T00:00:00+00:00","filter":{"type":"and","fields":[{"type":"regex","dimension":"actor_id","pattern":"ANONYMOUS"},{"type":"and","fields":[{"type":"selector","dimension":"device_id","value":"2d994b152d314aca"},{"type":"selector","dimension":"device_id","value":"2d994b152d314aca"},{"type":"not","field":{"type":"selector","dimension":"device_id","value":"c17e3c16c707738d94b51f98fe24b6947a026706"}}]}]}}';
+}

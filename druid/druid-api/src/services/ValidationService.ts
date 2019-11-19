@@ -6,7 +6,7 @@ export class ValidationService {
         // If the limit is exceeded than than the config then set to default.
         const commonRulesValidationStatus: IValidationResponse = this.validateCommonRules(request, limits.common);
         if (commonRulesValidationStatus.status) {
-            console.log(request.queryType);
+            console.log(request);
             switch (request.queryType.toLowerCase()) {
                 case "groupby": return this.validateQueryTypes(request, limits.cardinalColumns,
                     limits.queryRules.groupBy);
