@@ -1,5 +1,6 @@
 import async from "asyncawait/async";
 import await from "asyncawait/await";
+import HttpStatus from "http-status-codes";
 import {IValidationResponse} from "../models/models";
 import {ILimits} from "../models/models";
 import {IQuery} from "../models/models";
@@ -17,14 +18,13 @@ export class DruidService {
     public validate() {
         return async((request: IQuery, response: any, next: any) => {
             const result: IValidationResponse = ValidationService.validate(request, this.limits);
-            if (result.status) { next(); } else { response.send(result); response.end(); }
+            if (result.status) { next(); } else { response.status(HttpStatus.BAD_REQUEST).send(result).end(); }
         });
     }
 
     public fetch() {
         return async(async (query: IQuery) => {
             const result = await this.httpService.fetch(query);
-            console.log("yes i..m");
             return result;
         });
     }

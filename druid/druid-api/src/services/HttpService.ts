@@ -6,14 +6,15 @@ export class HttpService {
     private port: number;
     private endPoint: string;
     private host: string;
-    constructor(host: string, endPoint: string, port = config.port) {
+    constructor(host: string, endPoint: string, port = config.druidPort) {
         this.port = port;
         this.endPoint = endPoint;
-        this.host = "http://11.2.1.20";
+        this.host = host;
     }
     public fetch(request: any): Promise<any> {
         return new Promise((resolve, reject) => {
             const URL = this.host + ":" + this.port + this.endPoint;
+            console.log("URL" + URL);
             axios({
                 data: request,
                 headers: { "Content-Type": "application/json" },

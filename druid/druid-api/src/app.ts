@@ -1,19 +1,16 @@
+import bodyParser from "body-parser";
 import express, { response } from "express";
+import HttpStatus from "http-status-codes";
 import { config } from "./configs/config";
 import { DruidService } from "./services/DruidService";
 import { HttpService } from "./services/HttpService";
 
 const app = express();
-import bodyParser from "body-parser";
-import { request } from "https";
-
-const port = config.port;
-const endPoint = config.endpoint;
-const host = config.host;
+const endPoint = config.apiEndPoint;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-const httpService = new HttpService(host, endPoint, port);
+const httpService = new HttpService(config.druidHost, config.druidEndPoint, config.druidPort);
 const druidService = new DruidService(config.limits, httpService);
 
 app.post(endPoint, (requestObj, responseObj, next) => {
@@ -21,10 +18,11 @@ app.post(endPoint, (requestObj, responseObj, next) => {
 }, (requestObj, responseObj) => {
   druidService.fetch()(requestObj.body)
     .then((data) => {
-      responseObj.status(200).json(data);
+      responseObj.status(HttpStatus.OK).json(data);
       responseObj.end();
     })
     .catch((err) => {
+      responseObj.status(HttpStatus.INTERNAL_SERVER_ERROR);
       responseObj.send(err);
       responseObj.end();
     });
@@ -33,9 +31,9 @@ app.post(endPoint, (requestObj, responseObj, next) => {
 /**
  * Listen the server to config.port
  */
-app.listen(port, (err) => {
+app.listen(config.apiPort, (err) => {
   if (err) {
     return console.error(err);
   }
-  return console.log(`server is listening on ${port}`);
+  return console.log(`server is listening on ${config.apiPort}`);
 });

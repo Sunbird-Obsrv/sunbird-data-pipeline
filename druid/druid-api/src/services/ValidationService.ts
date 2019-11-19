@@ -35,28 +35,28 @@ export class ValidationService {
         cardinalColumns: string[],
         queryRules: IRules = {}): IValidationResponse {
         const isValidDateRange = this.isValidDateRange(request.intervals, queryRules.max_date_range);
-        // tslint:disable-next-line:max-line-length
-
-        if (isValidDateRange) {
+        if (isValidDateRange.status) {
             // tslint:disable-next-line:max-line-length
-            return this.validateCardinalColumns(request, cardinalColumns, queryRules.max_filter_dimensions);
+            return this.validateCardinalColumns(request, cardinalColumns, queryRules.max_filter_dimensions, "filter");
         } else {
-            return {
-                error: undefined,
-                errorMessage: `Date Range(intervals) can not be more than "${queryRules.max_date_range}" for "${request.queryType}"`,
-                status: false,
-            };
+            return isValidDateRange;
         }
 
     }
 
     // tslint:disable-next-line:max-line-length
-    private static validateCardinalColumns(query: IQuery, dimension: string[], maxDimensions: number = 0): IValidationResponse {
+    private static validateCardinalColumns(query: IQuery, dimension: string[], maxDimensions: number = 0, where: string): IValidationResponse {
+        let cardianalDimensionsCountIs = 0;
         if (maxDimensions) {
-            const cardianalDimensionsCountIs: number = this.handleFilters(query.filter, dimension);
+            if (where === "filter") {
+                cardianalDimensionsCountIs = this.handleFilters(query.filter, dimension);
+            } else {
+                cardianalDimensionsCountIs = dimension.length;
+            }
             if (cardianalDimensionsCountIs > maxDimensions) {
                 return {
-                    error: undefined, errorMessage: `CardinalColumns can not more than "${maxDimensions}"`,
+                    error: undefined,
+                    errorMessage: `CardinalColumns [Dimensions] in the "${where}" can not more than "${maxDimensions}"`,
                     status: false,
                 };
             } else {
@@ -67,7 +67,8 @@ export class ValidationService {
 
         }
     }
-    private static isValidDateRange(dateRange: string[] | string = "", allowedDateRangeIs: number = 0): boolean {
+    // tslint:disable-next-line:max-line-length
+    private static isValidDateRange(dateRange: string[] | string = "", allowedDateRangeIs: number = 0): IValidationResponse {
         if (allowedDateRangeIs && !_.isEmpty(dateRange)) {
             const date = Array.isArray(dateRange) ? dateRange[0].split("/") : dateRange.split("/");
             const fromDate = new Date(date[0]);
@@ -77,9 +78,22 @@ export class ValidationService {
             // To calculate the no. of days between two dates
             const differenceInDays = differenceInTime / (1000 * 3600 * 24);
             console.log("differenceInDays" + differenceInDays);
-            return differenceInDays > allowedDateRangeIs ? false : true;
+            if (fromDate > toDate) {
+                return {
+                    // tslint:disable-next-line:max-line-length
+                    errorMessage: `Invalid date range, The end instant date must be greater than the start instant date`,
+                    status: false,
+                };
+            } else if (differenceInDays > allowedDateRangeIs) {
+                return {
+                    errorMessage: `Date Range(intervals) can not be more than "${allowedDateRangeIs}" day's"`,
+                    status: false,
+                };
+            } else {
+                return { status: true };
+            }
         } else {
-            return false;
+            return { status: false };
         }
     }
 
@@ -90,17 +104,8 @@ export class ValidationService {
         } else {
             request.limit = commonLimits.max_result_limit;
         }
-        if (request.dimensions && request.dimensions.length > commonLimits.max_dimensions) {
-            return {
-                error: undefined,
-                errorMessage: `Dimensions can not be more than "${commonLimits.max_dimensions}"`,
-                status: false,
-            };
-        } else {
-            return {
-                status: true,
-            };
-        }
+        // tslint:disable-next-line:max-line-length
+        if (request.dimensions) { return this.validateCardinalColumns(request, request.dimensions, commonLimits.max_dimensions, ""); } else { return { status: true }; }
     }
 
     private static handleFilters(requestFilter: IFilter = {}, cardinalColumns: string[]): number {
