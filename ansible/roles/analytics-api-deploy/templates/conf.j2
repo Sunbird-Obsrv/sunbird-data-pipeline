@@ -186,7 +186,7 @@ play.filters.enabled+="filter.RequestInterceptor"
 # ~~~~~
 # The secret key is used to secure cryptographics functions.
 # If you deploy your application to several instances be sure to use the same key!
-play.http.secret.key="DFHdR74?tDvH2n`DAqk:RBl6NfkoO5tNYblTRmf3ZLcDIp5@oVjJM^ypkDOf2`<A"
+play.http.secret.key="{{play.http.secret.key}}"
 
 # body parser
 play.http.parser.maxMemoryBuffer=10M
