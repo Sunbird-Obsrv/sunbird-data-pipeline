@@ -182,6 +182,12 @@ play.server {
 play.modules.enabled+="modules.ActorInjector"
 play.filters.enabled+="filter.RequestInterceptor"
 
+# Secret key
+# ~~~~~
+# The secret key is used to secure cryptographics functions.
+# If you deploy your application to several instances be sure to use the same key!
+play.http.secret.key="DFHdR74?tDvH2n`DAqk:RBl6NfkoO5tNYblTRmf3ZLcDIp5@oVjJM^ypkDOf2`<A"
+
 # body parser
 play.http.parser.maxMemoryBuffer=10M
 
