@@ -17,30 +17,34 @@ export const config = {
             "device_id",
         ],
         common: {
-            max_dimensions: 2, // Maximum number of high cardinal dimensions are allowed.
-            max_result_limit: 1000, // Allowed max result is 1000.
+            max_dimensions: 10, // Maximum number of high cardinal dimensions are allowed.
+            max_result_threshold: 1000, // Allowed max result is 1000.
         },
 
         queryRules: {
             groupBy: {
-                max_date_range: 7,
-                max_filter_dimensions: 2, // Maximum allowed date range, In days.
+                max_date_range: 30,
+                max_filter_dimensions: 50, // Maximum allowed date range, In days.
             },
             scan: {  // Query Type
-                max_date_range: 7, // Maximum allowed date range, In days.
-                max_filter_dimensions: 2, // Maximum allowed dimensions
+                max_date_range: 30, // Maximum allowed date range, In days.
+                max_filter_dimensions: 50, // Maximum allowed dimensions
+            },
+            search: {  // Query Type
+                max_date_range: 30, // Maximum allowed date range, In days.
+                max_filter_dimensions: 50, // Maximum allowed dimensions
             },
             select: {
-                max_date_range: 7, // Maximum allowed date range, In days.
-                max_filter_dimensions: 2, // Maximum allowed date range, In days.
+                max_date_range: 30, // Maximum allowed date range, In days.
+                max_filter_dimensions: 50, // Maximum allowed date range, In days.
             },
             timeseries: {
-                max_date_range: 7, // Maximum allowed date range, In days.
-                max_filter_dimensions: 7, // Maximum allowed date range, In days.
+                max_date_range: 30, // Maximum allowed date range, In days.
+                max_filter_dimensions: 50, // Maximum allowed date range, In days.
             },
             topN: {
-                max_date_range: 7, // Maximum allowed date range, In days.
-                max_filter_dimensions: 2, // Maximum allowed date range, In days.
+                max_date_range: 30, // Maximum allowed date range, In days.
+                max_filter_dimensions: 50, // Maximum allowed date range, In days.
             },
         },
     },

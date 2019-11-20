@@ -12,16 +12,15 @@ export class ValidationService {
                     limits.queryRules.groupBy);
                 case "topn": return this.validateQueryTypes(request, limits.cardinalColumns, limits.queryRules.topN);
                 case "scan": return this.validateQueryTypes(request, limits.cardinalColumns, limits.queryRules.scan);
-                case "groupby": return this.validateQueryTypes(request, limits.cardinalColumns, limits.queryRules.scan);
                 // tslint:disable-next-line:max-line-length
                 case "select": return this.validateQueryTypes(request, limits.cardinalColumns, limits.queryRules.select);
                 // tslint:disable-next-line:max-line-length
-                case "search": return this.validateQueryTypes(request, limits.cardinalColumns, limits.queryRules.select);
+                case "search": return this.validateQueryTypes(request, limits.cardinalColumns, limits.queryRules.search);
                 // tslint:disable-next-line:max-line-length
                 case "timeseries": return this.validateQueryTypes(request, limits.cardinalColumns, limits.queryRules.timeseries);
                 default: return {
                     error: undefined,
-                    errorMessage: `Dimensions can not be more than "${limits.common.max_dimensions}"`,
+                    errorMessage: `Unsupported query type"${request.queryType}"`,
                     status: false,
                 };
             }
@@ -50,6 +49,7 @@ export class ValidationService {
         if (maxDimensions) {
             if (where === "filter") {
                 cardianalDimensionsCountIs = this.handleFilters(query.filter, dimension);
+                console.log("CardinalDimsCountIs" + cardianalDimensionsCountIs);
             } else {
                 cardianalDimensionsCountIs = dimension.length;
             }
@@ -76,7 +76,7 @@ export class ValidationService {
             // To calculate the time difference of two dates
             const differenceInTime = fromDate.getTime() - toDate.getTime();
             // To calculate the no. of days between two dates
-            const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+            const differenceInDays = Math.abs(differenceInTime / (1000 * 3600 * 24));
             console.log("differenceInDays" + differenceInDays);
             if (fromDate > toDate) {
                 return {
@@ -93,16 +93,17 @@ export class ValidationService {
                 return { status: true };
             }
         } else {
-            return { status: false };
+            return { status: false, errorMessage: `Invalid date range, The date range is must` };
         }
     }
 
     private static validateCommonRules(request: IQuery, commonLimits: ICommon): IValidationResponse {
-        if (request.limit) {
-            request.limit = request.limit > commonLimits.max_result_limit
-                ? commonLimits.max_result_limit : (request.limit || commonLimits.max_result_limit);
+        console.log("threshold" + request.threshold);
+        if (request.threshold) {
+            request.threshold = request.threshold > commonLimits.max_result_threshold
+                ? commonLimits.max_result_threshold : (request.threshold || commonLimits.max_result_threshold);
         } else {
-            request.limit = commonLimits.max_result_limit;
+            request.threshold = commonLimits.max_result_threshold;
         }
         // tslint:disable-next-line:max-line-length
         if (request.dimensions) { return this.validateCardinalColumns(request, request.dimensions, commonLimits.max_dimensions, ""); } else { return { status: true }; }

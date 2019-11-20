@@ -12,7 +12,7 @@ export interface ILimits {
 
 export interface ICommon {
     max_dimensions: number;
-    max_result_limit: number;
+    max_result_threshold: number;
 }
 
 export interface IQueryRules {
@@ -21,6 +21,7 @@ export interface IQueryRules {
     topN: IRules;
     select: IRules;
     timeseries: IRules;
+    search: IRules;
 }
 
 export interface IRules {
@@ -38,7 +39,7 @@ export interface IQuery {
     filter?: IFilter;
     aggregations?: any[];
     postAggregations?: any[];
-    limit?: number;
+    threshold?: number;
     intervals?: string[] | string;
 }
 

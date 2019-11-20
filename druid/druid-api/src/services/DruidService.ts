@@ -1,9 +1,9 @@
 import async from "asyncawait/async";
 import await from "asyncawait/await";
 import HttpStatus from "http-status-codes";
-import {IValidationResponse} from "../models/models";
-import {ILimits} from "../models/models";
-import {IQuery} from "../models/models";
+import { IValidationResponse } from "../models/models";
+import { ILimits } from "../models/models";
+import { IQuery } from "../models/models";
 import { HttpService } from "./HttpService";
 import { ValidationService } from "./ValidationService";
 
@@ -24,8 +24,12 @@ export class DruidService {
 
     public fetch() {
         return async(async (query: IQuery) => {
-            const result = await this.httpService.fetch(query);
-            return result;
+            try {
+                const result = await this.httpService.fetch(query);
+                return result;
+            } catch (error) {
+                throw new Error("Unable to handle the query" + error);
+            }
         });
     }
 }
