@@ -13,7 +13,7 @@ export class ValidationService {
     public static validate(query: IQuery, limits: ILimits): IValidationResponse {
         // If the limit is exceeded than than the config then set to default.
         const commonRulesValidationStatus: IValidationResponse = this.validateCommonRules(query, limits.common);
-        if (commonRulesValidationStatus.status) {
+        if (commonRulesValidationStatus.isValid) {
             console.log(query);
             switch (query.queryType.toLowerCase()) {
                 case "groupby": return this.validateQueryTypes(query, limits.cardinalColumns,
@@ -29,7 +29,7 @@ export class ValidationService {
                 default: return {
                     error: undefined,
                     errorMessage: `Unsupported query type"${query.queryType}"`,
-                    status: false,
+                    isValid: false,
                 };
             }
         } else {
@@ -47,12 +47,12 @@ export class ValidationService {
         query: IQuery,
         cardinalColumns: string[],
         queryRules: IRules = {}): IValidationResponse {
-        const isValidDateRange = this.isValidDateRange(query.intervals, queryRules.max_date_range);
-        if (isValidDateRange.status) {
+        const dateRange = this.isValidDateRange(query.intervals, queryRules.max_date_range);
+        if (dateRange.isValid) {
             // tslint:disable-next-line:max-line-length
             return this.validateCardinalColumns(query, cardinalColumns, queryRules.max_filter_dimensions, "filter");
         } else {
-            return isValidDateRange;
+            return dateRange;
         }
 
     }
@@ -78,13 +78,13 @@ export class ValidationService {
                 return {
                     error: undefined,
                     errorMessage: `CardinalColumns [Dimensions] in the "${where}" can not more than "${maxDimensions}"`,
-                    status: false,
+                    isValid: false,
                 };
             } else {
-                return { status: true };
+                return { isValid: true };
             }
         } else {
-            return { status: true };
+            return { isValid: true };
 
         }
     }
@@ -109,18 +109,18 @@ export class ValidationService {
                 return {
                     // tslint:disable-next-line:max-line-length
                     errorMessage: `Invalid date range, The end instant date must be greater than the start instant date`,
-                    status: false,
+                    isValid: false,
                 };
             } else if (differenceInDays > allowedDateRangeIs) {
                 return {
                     errorMessage: `Date Range(intervals) can not be more than "${allowedDateRangeIs}" day's"`,
-                    status: false,
+                    isValid: false,
                 };
             } else {
-                return { status: true };
+                return { isValid: true };
             }
         } else {
-            return { status: false, errorMessage: `Invalid date range, The date range is must` };
+            return { isValid: false, errorMessage: `Invalid date range, The date range is must` };
         }
     }
 
@@ -138,7 +138,7 @@ export class ValidationService {
             query.threshold = commonLimits.max_result_threshold;
         }
         // tslint:disable-next-line:max-line-length
-        if (query.dimensions) { return this.validateCardinalColumns(query, query.dimensions, commonLimits.max_dimensions, ""); } else { return { status: true }; }
+        if (query.dimensions) { return this.validateCardinalColumns(query, query.dimensions, commonLimits.max_dimensions, ""); } else { return { isValid: true }; }
     }
 
     /**

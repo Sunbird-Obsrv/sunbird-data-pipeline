@@ -24,7 +24,7 @@ export class DruidService {
     public validate() {
         return async((request: IQuery, response: any, next: any) => {
             const result: IValidationResponse = ValidationService.validate(request, this.limits);
-            if (result.status) { next(); } else { response.status(HttpStatus.BAD_REQUEST).send(result).end(); }
+            if (result.isValid) { next(); } else { response.status(HttpStatus.BAD_REQUEST).send(result).end(); }
         });
     }
 
