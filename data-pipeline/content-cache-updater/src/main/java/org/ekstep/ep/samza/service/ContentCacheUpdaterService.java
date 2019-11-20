@@ -7,13 +7,12 @@ import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.task.*;
 import org.ekstep.ep.samza.util.ContentData;
 import org.ekstep.ep.samza.util.RedisConnect;
-import org.ekstep.ep.samza.util.BaseUpdater;
-import org.apache.samza.config.Config;
+import org.ekstep.ep.samza.core.BaseCacheUpdaterService;
 
 import java.lang.reflect.Type;
 import java.util.*;
 
-public class ContentCacheUpdaterService extends BaseUpdater {
+public class ContentCacheUpdaterService extends BaseCacheUpdaterService {
 
     private static Logger LOGGER = new Logger(ContentCacheUpdaterService.class);
     private JobMetrics metrics;

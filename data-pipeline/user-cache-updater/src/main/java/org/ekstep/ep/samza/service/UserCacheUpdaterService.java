@@ -11,14 +11,14 @@ import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.task.UserCacheUpdaterSink;
 import org.ekstep.ep.samza.task.UserCacheUpdaterSource;
 import org.ekstep.ep.samza.task.UserCacheUpdaterConfig;
-import org.ekstep.ep.samza.util.BaseUpdater;
 import org.ekstep.ep.samza.util.CassandraConnect;
 import org.ekstep.ep.samza.util.RedisConnect;
+import org.ekstep.ep.samza.core.BaseCacheUpdaterService;
 
 import java.lang.reflect.Type;
 import java.util.*;
 
-public class UserCacheUpdaterService extends BaseUpdater {
+public class UserCacheUpdaterService extends BaseCacheUpdaterService {
 
     private static Logger LOGGER = new Logger(UserCacheUpdaterService.class);
     private JobMetrics metrics;

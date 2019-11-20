@@ -18,7 +18,7 @@ import org.ekstep.ep.samza.task.UserCacheUpdaterConfig;
 import org.ekstep.ep.samza.task.UserCacheUpdaterSink;
 import org.ekstep.ep.samza.task.UserCacheUpdaterSource;
 import org.ekstep.ep.samza.task.UserCacheUpdaterTask;
-import org.ekstep.ep.samza.util.BaseUpdater;
+import org.ekstep.ep.samza.core.BaseCacheUpdaterService;
 import org.ekstep.ep.samza.util.CassandraConnect;
 import org.ekstep.ep.samza.util.RedisConnect;
 import org.junit.Before;
@@ -44,7 +44,7 @@ public class UserCacheUpdaterServiceTest {
     private MessageCollector messageCollector;
     private Jedis jedisMock = new MockJedis("test");
     private UserCacheUpdaterService userCacheUpdaterService;
-    private BaseUpdater baseUpdater;
+    private BaseCacheUpdaterService basecacheUpdater;
     private UserCacheUpdaterSink userCacheUpdaterSinkMock;
     private UserCacheUpdaterConfig userCacheUpdaterConfig;
     private MetricsRegistry metricsRegistry;

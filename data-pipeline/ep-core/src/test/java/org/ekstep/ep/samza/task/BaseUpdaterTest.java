@@ -1,10 +1,9 @@
 package org.ekstep.ep.samza.task;
 
 import com.datastax.driver.core.exceptions.DriverException;
+import org.ekstep.ep.samza.core.BaseCacheUpdaterService;
 import org.ekstep.ep.samza.util.CassandraConnect;
 import org.ekstep.ep.samza.util.RedisConnect;
-import org.ekstep.ep.samza.util.BaseUpdater;
-import org.apache.samza.config.Config;
 import redis.clients.jedis.Jedis;
 import com.fiftyonred.mock_jedis.MockJedis;
 import java.lang.reflect.Type;
@@ -24,7 +23,7 @@ public class BaseUpdaterTest {
 
     private RedisConnect redisConnectMock;
     private CassandraConnect cassandraConnectMock;
-    private BaseUpdater baseUpdater;
+    private BaseCacheUpdaterService baseUpdater;
     private Jedis jedisMock = new MockJedis("test");
     private static int storeId = 5;
     Gson gson = new Gson();
@@ -35,7 +34,7 @@ public class BaseUpdaterTest {
     public void setUp() {
         redisConnectMock = mock(RedisConnect.class);
         cassandraConnectMock = mock(CassandraConnect.class);
-        baseUpdater = new BaseUpdater(redisConnectMock, cassandraConnectMock);
+        baseUpdater = new BaseCacheUpdaterService(redisConnectMock, cassandraConnectMock);
 
         stub(redisConnectMock.getConnection(anyInt())).toReturn(jedisMock);
     }

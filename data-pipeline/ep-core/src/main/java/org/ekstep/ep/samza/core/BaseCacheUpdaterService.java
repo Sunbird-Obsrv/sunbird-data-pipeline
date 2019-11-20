@@ -1,4 +1,4 @@
-package org.ekstep.ep.samza.util;
+package org.ekstep.ep.samza.core;
 
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.exceptions.DriverException;
@@ -14,21 +14,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class BaseUpdater {
+public class BaseCacheUpdaterService {
 
     private RedisConnect redisConnect;
     private CassandraConnect cassandraConnect;
     private Jedis connection;
 
-    public BaseUpdater(RedisConnect redisConnect) {
+    public BaseCacheUpdaterService(RedisConnect redisConnect) {
         this.redisConnect = redisConnect;
     }
 
-    public BaseUpdater(CassandraConnect cassandraConnect){
+    public BaseCacheUpdaterService(CassandraConnect cassandraConnect){
         this.cassandraConnect = cassandraConnect;
     }
 
-    public BaseUpdater(RedisConnect redisConnect, CassandraConnect cassandraConnect) {
+    public BaseCacheUpdaterService(RedisConnect redisConnect, CassandraConnect cassandraConnect) {
         this.redisConnect = redisConnect;
         this.cassandraConnect = cassandraConnect;
     }
