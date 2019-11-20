@@ -2,7 +2,7 @@ export const config = {
     apiEndPoint: "/druid/v2/",
     apiPort: 8082,
     druidEndPoint: "/druid/v2/",
-    druidHost: "http://11.2.1.20",
+    druidHost: "http://localhost",
     druidPort: 8082,
     limits: {
         cardinalColumns: [ // High cardinal dimensions
