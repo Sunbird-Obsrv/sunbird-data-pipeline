@@ -1,6 +1,7 @@
 import axios from "axios";
 import * as requestService from "request";
 import { config } from "../configs/config";
+import { APILogger } from "./ApiLogger";
 
 /**
  * It provides the service to interact with the an external system.
@@ -17,7 +18,7 @@ export class HttpService {
     public fetch(query: any): Promise<any> {
         return new Promise((resolve, reject) => {
             const URL = this.host + ":" + this.port + this.endPoint;
-            console.log("URL" + URL);
+            APILogger.log("URL IS: " + URL);
             axios({
                 data: query,
                 headers: { "Content-Type": "application/json" },
@@ -26,7 +27,7 @@ export class HttpService {
             }).then((res) => {
                 resolve(res.data);
             }).catch((error) => {
-                console.error(error);
+                APILogger.error(error);
                 reject(error);
             });
         });

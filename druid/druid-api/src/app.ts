@@ -6,6 +6,7 @@ import bodyParser from "body-parser";
 import express, { response } from "express";
 import HttpStatus from "http-status-codes";
 import { config } from "./configs/config";
+import { APILogger } from "./services/ApiLogger";
 import { DruidService } from "./services/DruidService";
 import { HttpService } from "./services/HttpService";
 
@@ -38,15 +39,14 @@ app.post(endPoint, (requestObj, responseObj, next) => {
       responseObj.end();
     });
 });
-
 /**
  * Listen the server to config.port
  */
-app.listen(config.apiPort, (err) => {
+app.listen(config.apiPort, (err, res) => {
   if (err) {
-    return console.error(err);
+    return APILogger.error("Proxy API server is not running" + err);
   }
-  return console.log(`server is listening on ${config.apiPort}`);
+  APILogger.log(`server is listening on ${config.apiPort}`);
 });
 
 // Exporting app for the testing purpose.

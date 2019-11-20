@@ -22,7 +22,8 @@
         "http-status-codes": "^1.4.0",
         "lodash": "^4.17.15",
         "request": "^2.88.0",
-        "mocha": "^6.2.2"
+        "mocha": "^6.2.2",
+        "log4js": "^6.1.0"
     },
     "devDependencies": {
         "@types/axios": "0.14.0",
@@ -54,7 +55,6 @@
         "exclude": [
             "**/*.d.ts"
         ],
-
         "sourceMap": true,
         "instrument": true
     }

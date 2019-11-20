@@ -48,4 +48,10 @@ export const config = {
             },
         },
     },
+    log: {
+        backups: 5,
+        logFilePath: "logs/druid-proxy-api.log",
+        maxLogSize: 10485760,
+        pattern: "yyyy-MM-dd-hh",
+    },
 };

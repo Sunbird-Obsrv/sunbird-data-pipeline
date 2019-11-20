@@ -1,5 +1,6 @@
 import _ from "lodash";
 import { ICommon, IFilter, ILimits, IQuery, IRules, IValidationResponse } from "../models/models";
+import { APILogger } from "./ApiLogger";
 
 /**
  * Service to validate/filter/limits the user druid queries.
@@ -14,7 +15,6 @@ export class ValidationService {
         // If the limit is exceeded than than the config then set to default.
         const commonRulesValidationStatus: IValidationResponse = this.validateCommonRules(query, limits.common);
         if (commonRulesValidationStatus.isValid) {
-            console.log(query);
             switch (query.queryType.toLowerCase()) {
                 case "groupby": return this.validateQueryTypes(query, limits.cardinalColumns,
                     limits.queryRules.groupBy);
@@ -104,7 +104,7 @@ export class ValidationService {
             const differenceInTime = fromDate.getTime() - toDate.getTime();
             // To calculate the no. of days between two dates
             const differenceInDays = Math.abs(differenceInTime / (1000 * 3600 * 24));
-            console.log("differenceInDays" + differenceInDays);
+            APILogger.log("DATE Difference is: " + differenceInDays);
             if (fromDate > toDate) {
                 return {
                     // tslint:disable-next-line:max-line-length
@@ -130,7 +130,6 @@ export class ValidationService {
      * @param commonLimits ICommon - Generic config which is defined in the api config.
      */
     private static validateCommonRules(query: IQuery, commonLimits: ICommon): IValidationResponse {
-        console.log("threshold" + query.threshold);
         if (query.threshold) {
             query.threshold = query.threshold > commonLimits.max_result_threshold
                 ? commonLimits.max_result_threshold : (query.threshold || commonLimits.max_result_threshold);
@@ -167,6 +166,7 @@ export class ValidationService {
             };
             recursive(queryFilter.fields);
         }
+        APILogger.log("Total Cardinal Dims count is" + cardianalDimensionsCountIs);
         return cardianalDimensionsCountIs;
     }
     /**
@@ -177,6 +177,7 @@ export class ValidationService {
      */
     // tslint:disable-next-line:max-line-length
     private static getCardinalDimensionsCount(cardinalColumns: string[] = [], dimensions: string[] = []): number {
+        APILogger.log("Dims are " + dimensions);
         let count = 0;
         const result = _.countBy(dimensions);
         _.forEach(cardinalColumns, (dim, value) => {
