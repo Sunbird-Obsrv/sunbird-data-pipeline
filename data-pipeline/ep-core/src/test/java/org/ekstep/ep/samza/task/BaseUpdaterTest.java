@@ -1,7 +1,9 @@
 package org.ekstep.ep.samza.task;
 
+import com.datastax.driver.core.exceptions.DriverException;
+import org.ekstep.ep.samza.util.CassandraConnect;
 import org.ekstep.ep.samza.util.RedisConnect;
-import org.ekstep.ep.samza.util.BaseCacheUpdater;
+import org.ekstep.ep.samza.util.BaseUpdater;
 import org.apache.samza.config.Config;
 import redis.clients.jedis.Jedis;
 import com.fiftyonred.mock_jedis.MockJedis;
@@ -14,14 +16,15 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.stub;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 
 
-public class BaseCacheUpdaterTest {
+public class BaseUpdaterTest {
 
     private RedisConnect redisConnectMock;
-    private BaseCacheUpdater baseCacheUpdater;
+    private CassandraConnect cassandraConnectMock;
+    private BaseUpdater baseUpdater;
     private Jedis jedisMock = new MockJedis("test");
     private static int storeId = 5;
     Gson gson = new Gson();
@@ -31,14 +34,15 @@ public class BaseCacheUpdaterTest {
     @Before
     public void setUp() {
         redisConnectMock = mock(RedisConnect.class);
-        baseCacheUpdater = new BaseCacheUpdater(redisConnectMock);
+        cassandraConnectMock = mock(CassandraConnect.class);
+        baseUpdater = new BaseUpdater(redisConnectMock, cassandraConnectMock);
 
         stub(redisConnectMock.getConnection(anyInt())).toReturn(jedisMock);
     }
 
     @Test
     public void shouldAddToCache() {
-        baseCacheUpdater.addToCache("4569876545678","{\"role\":\"student\",\"type\":\"User\"}", storeId);
+        baseUpdater.addToCache("4569876545678","{\"role\":\"student\",\"type\":\"User\"}", storeId);
         String value = jedisMock.get("4569876545678");
         Map<String, Object> parsedData = gson.fromJson(value, type);
 
@@ -50,11 +54,18 @@ public class BaseCacheUpdaterTest {
     @Test
     public void shouldReadFromCache() {
         jedisMock.set("4569876545678","{\"role\":\"teacher\",\"type\":\"Request\"}");
-        String value = baseCacheUpdater.readFromCache("4569876545678", storeId);
+        String value = baseUpdater.readFromCache("4569876545678", storeId);
         Map<String, Object> parsedData = gson.fromJson(value, type);
 
         assertEquals("Request", parsedData.get("type"));
         assertEquals("teacher", parsedData.get("role"));
+    }
+
+        @Test(expected = DriverException.class)
+    public void shouldHandleCassandraException() throws Exception {
+
+        when(cassandraConnectMock.find(anyString())).thenThrow(new DriverException("Cassandra Exception"));
+        baseUpdater.readFromCassandra("sunbird","user","id","id");
     }
 
 }

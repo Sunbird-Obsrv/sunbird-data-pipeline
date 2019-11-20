@@ -7,20 +7,15 @@ import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.task.*;
 import org.ekstep.ep.samza.util.ContentCache;
 import org.ekstep.ep.samza.util.RedisConnect;
-import org.ekstep.ep.samza.util.BaseCacheUpdater;
-import redis.clients.jedis.Jedis;
+import org.ekstep.ep.samza.util.BaseUpdater;
 import org.apache.samza.config.Config;
-import redis.clients.jedis.exceptions.JedisException;
 
 import java.lang.reflect.Type;
 import java.util.*;
 
-public class ContentCacheUpdaterService {
+public class ContentCacheUpdaterService extends BaseUpdater {
 
     private static Logger LOGGER = new Logger(ContentCacheUpdaterService.class);
-    private Jedis dialCodeStoreConnection;
-    private Jedis contentStoreConnection;
-    private BaseCacheUpdater baseCacheUpdater;
     private JobMetrics metrics;
     private ContentCache contentCache;
     private int dialCodeStoreDb;
@@ -33,12 +28,10 @@ public class ContentCacheUpdaterService {
     private List<String> dateFields;
 
     public ContentCacheUpdaterService(Config config, RedisConnect redisConnect, JobMetrics metrics) {
-        this.baseCacheUpdater = new BaseCacheUpdater(redisConnect);
+        super(redisConnect);
         this.metrics = metrics;
         this.contentStoreDb = config.getInt("redis.database.contentStore.id", 5);
         this.dialCodeStoreDb = config.getInt("redis.database.dialCodeStore.id", 6);
-        this.contentStoreConnection = redisConnect.getConnection(contentStoreDb);
-        this.dialCodeStoreConnection = redisConnect.getConnection(dialCodeStoreDb);
         this.contentModelListTypeFields = config.getList("contentModel.fields.listType", new ArrayList<>());
         this.dateFields = config.getList("date.fields.listType", new ArrayList<>());
     }
@@ -58,7 +51,7 @@ public class ContentCacheUpdaterService {
             parsedData = getCacheData(message, objectType);
         }
         if(null != parsedData) {
-            baseCacheUpdater.addToCache(nodeUniqueId, gson.toJson(parsedData), storeId);
+            addToCache(nodeUniqueId, gson.toJson(parsedData), storeId);
             sink.success();
         }
     }
@@ -66,7 +59,7 @@ public class ContentCacheUpdaterService {
     public Map<String, Object> getCacheData(Map<String, Object> message, String objectType){
         String nodeUniqueId = (String) message.get("nodeUniqueId");
         Map<String, Object> parsedData = null;
-        String contentNode = contentStoreConnection.get(nodeUniqueId);
+        String contentNode = readFromCache(nodeUniqueId, contentStoreDb);
         if (contentNode != null) {
             parsedData = gson.fromJson(contentNode, mapType);
         } else {

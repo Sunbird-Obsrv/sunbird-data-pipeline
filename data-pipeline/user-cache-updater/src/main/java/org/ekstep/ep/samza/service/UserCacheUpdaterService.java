@@ -11,17 +11,16 @@ import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.task.UserCacheUpdaterSink;
 import org.ekstep.ep.samza.task.UserCacheUpdaterSource;
 import org.ekstep.ep.samza.task.UserCacheUpdaterConfig;
-import org.ekstep.ep.samza.util.BaseCacheUpdater;
-import org.ekstep.ep.samza.util.BaseDBUpdater;
+import org.ekstep.ep.samza.util.BaseUpdater;
+import org.ekstep.ep.samza.util.CassandraConnect;
+import org.ekstep.ep.samza.util.RedisConnect;
 
 import java.lang.reflect.Type;
 import java.util.*;
 
-public class UserCacheUpdaterService {
+public class UserCacheUpdaterService extends BaseUpdater {
 
     private static Logger LOGGER = new Logger(UserCacheUpdaterService.class);
-    private BaseCacheUpdater baseCacheUpdater;
-    private BaseDBUpdater baseDBUpdater;
     private JobMetrics metrics;
     private UserCacheUpdaterConfig userCacheUpdaterConfig;
     private int userStoreDb;
@@ -29,9 +28,8 @@ public class UserCacheUpdaterService {
     private Type mapType = new TypeToken<Map<String, Object>>() {
     }.getType();
 
-    public UserCacheUpdaterService(UserCacheUpdaterConfig config, BaseCacheUpdater baseCacheUpdater, BaseDBUpdater baseDBUpdater, JobMetrics metrics) {
-        this.baseDBUpdater = baseDBUpdater;
-        this.baseCacheUpdater = baseCacheUpdater;
+    public UserCacheUpdaterService(UserCacheUpdaterConfig config, RedisConnect redisConnect, CassandraConnect cassandraConnect, JobMetrics metrics) {
+        super(redisConnect, cassandraConnect);
         this.metrics = metrics;
         userCacheUpdaterConfig = config;
         this.userStoreDb = config.userStoreDb();
@@ -55,7 +53,7 @@ public class UserCacheUpdaterService {
         Map<String, Object> userCacheData = new HashMap<>();
         String userState = event.getUserStateValue();
         if("Update".equals(userState)) {
-            String data = baseCacheUpdater.readFromCache(userId, userStoreDb);
+            String data = readFromCache(userId, userStoreDb);
             if (data != null && !data.isEmpty()) {
                 userCacheData = gson.fromJson(data, mapType);
             }
@@ -63,8 +61,7 @@ public class UserCacheUpdaterService {
             ArrayList<String> userUpdatedList = event.getUserMetdataUpdatedList();
             if (userCacheData.containsKey("usersignintype") && !"Anonymous".equals(userCacheData.get("usersignintype"))
                     && null != userUpdatedList && !userUpdatedList.isEmpty()) {
-                List<Row> userDetails = baseDBUpdater.
-                        readFromCassandra(userCacheUpdaterConfig.cassandra_db(), userCacheUpdaterConfig.cassandra_user_table(), "id", userId);
+                List<Row> userDetails = readFromCassandra(userCacheUpdaterConfig.cassandra_db(), userCacheUpdaterConfig.cassandra_user_table(), "id", userId);
                 Map<String, Object> userMetadataInfoMap = getUserMetaDataInfo(userDetails);
 
                 if (!userMetadataInfoMap.isEmpty())
@@ -73,8 +70,7 @@ public class UserCacheUpdaterService {
                 if (userUpdatedList.contains("id") && null != userCacheData.get("locationids")) {
                     List<String> locationIds = (List<String>) userCacheData.get("locationids");
 
-                    List<Row> locationDetails = baseDBUpdater.
-                            readFromCassandra(userCacheUpdaterConfig.cassandra_db(), userCacheUpdaterConfig.cassandra_location_table(), "id", locationIds);
+                    List<Row> locationDetails = readFromCassandra(userCacheUpdaterConfig.cassandra_db(), userCacheUpdaterConfig.cassandra_location_table(), "id", locationIds);
                     Map<String, Object> userLocationMap = getLocationInfo(locationDetails);
 
                     if (!userLocationMap.isEmpty())
@@ -87,7 +83,7 @@ public class UserCacheUpdaterService {
         }
 
         if (!userCacheData.isEmpty()) {
-            baseCacheUpdater.addToCache(userId, gson.toJson(userCacheData), userStoreDb);
+            addToCache(userId, gson.toJson(userCacheData), userStoreDb);
             sink.success();
         }
         return userCacheData;

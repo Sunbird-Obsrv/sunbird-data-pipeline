@@ -1,7 +1,5 @@
 package org.ekstep.ep.samza.service;
 
-import com.datastax.driver.core.exceptions.DriverException;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.fiftyonred.mock_jedis.MockJedis;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -20,8 +18,7 @@ import org.ekstep.ep.samza.task.UserCacheUpdaterConfig;
 import org.ekstep.ep.samza.task.UserCacheUpdaterSink;
 import org.ekstep.ep.samza.task.UserCacheUpdaterSource;
 import org.ekstep.ep.samza.task.UserCacheUpdaterTask;
-import org.ekstep.ep.samza.util.BaseCacheUpdater;
-import org.ekstep.ep.samza.util.BaseDBUpdater;
+import org.ekstep.ep.samza.util.BaseUpdater;
 import org.ekstep.ep.samza.util.CassandraConnect;
 import org.ekstep.ep.samza.util.RedisConnect;
 import org.junit.Before;
@@ -47,8 +44,7 @@ public class UserCacheUpdaterServiceTest {
     private MessageCollector messageCollector;
     private Jedis jedisMock = new MockJedis("test");
     private UserCacheUpdaterService userCacheUpdaterService;
-    private BaseDBUpdater baseDBUpdatermock;
-    private BaseCacheUpdater baseCacheUpdatermock;
+    private BaseUpdater baseUpdater;
     private UserCacheUpdaterSink userCacheUpdaterSinkMock;
     private UserCacheUpdaterConfig userCacheUpdaterConfig;
     private MetricsRegistry metricsRegistry;
@@ -68,8 +64,6 @@ public class UserCacheUpdaterServiceTest {
         metricsRegistry = Mockito.mock(MetricsRegistry.class);
         taskCoordinator = mock(TaskCoordinator.class);
         messageCollector = mock(MessageCollector.class);
-        baseCacheUpdatermock = mock(BaseCacheUpdater.class);
-        baseDBUpdatermock = mock(BaseDBUpdater.class);
         counter = mock(Counter.class);
 
         stub(redisConnectMock.getConnection(userStoreId)).toReturn(jedisMock);
@@ -92,7 +86,7 @@ public class UserCacheUpdaterServiceTest {
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
 
         userCacheUpdaterConfig=new UserCacheUpdaterConfig(configMock);
-        userCacheUpdaterService = new UserCacheUpdaterService(userCacheUpdaterConfig, baseCacheUpdatermock, baseDBUpdatermock, jobMetricsMock);
+        userCacheUpdaterService = new UserCacheUpdaterService(userCacheUpdaterConfig, redisConnectMock, cassandraConnectMock, jobMetricsMock);
         jedisMock.flushAll();
     }
 
@@ -239,7 +233,6 @@ public class UserCacheUpdaterServiceTest {
     @Test
     public void shouldUpdateCacheWithMetadataChangesAndLocationFORAUDIT() {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.AUDIT_EVENT_METADATA_UPDATED);
-        stub(baseCacheUpdatermock.readFromCache("52226956-61d8-4c1b-b115-c660111866d3", 4)).toReturn("{\"channel\":\"dikshacustodian\",\"phoneverified\":false,\"usersignintype\":\"Self-Signed-In\",\"userlogintype\":\"NA\"}");
         Gson gson = new Gson();
         String userId = "52226956-61d8-4c1b-b115-c660111866d3";
         jedisMock.set(userId, "{\"channel\":\"dikshacustodian\",\"phoneverified\":false,\"usersignintype\":\"Self-Signed-In\",\"userlogintype\":\"NA\"}");
@@ -254,7 +247,10 @@ public class UserCacheUpdaterServiceTest {
             }.getType();
             parsedData = gson.fromJson(cachedData, type);
         }
+        assertEquals(4, parsedData.size());
         assertEquals(parsedData.get("channel"), "dikshacustodian");
-        verify(baseCacheUpdatermock, times(1)).readFromCache(anyString(), anyInt());
+        assertEquals(parsedData.get("phoneverified"), false);
+        assertEquals(parsedData.get("usersignintype"), "Self-Signed-In");
+        assertEquals(parsedData.get("userlogintype"), "NA");
     }
 }
