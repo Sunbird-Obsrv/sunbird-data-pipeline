@@ -14,7 +14,7 @@ chai.use(chaiHttp);
 describe("/POST druid/v2/", () => {
 
     beforeEach(() => {
-        nock("http://11.2.1.20:8082")
+        nock(config.druidHost + ":" + config.druidPort)
             .post(config.druidEndPoint)
             .reply(200, {});
     });

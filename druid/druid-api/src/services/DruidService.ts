@@ -7,6 +7,10 @@ import { IQuery } from "../models/models";
 import { HttpService } from "./HttpService";
 import { ValidationService } from "./ValidationService";
 
+/**
+ * DruidService which facilitate user query to filter and validate.
+ */
+
 export class DruidService {
     private limits: ILimits;
     private httpService: HttpService;
@@ -14,7 +18,9 @@ export class DruidService {
         this.limits = limits;
         this.httpService = httpService;
     }
-
+    /**
+     * Which acts as a proxy api Middleware to validate/filter the user query.
+     */
     public validate() {
         return async((request: IQuery, response: any, next: any) => {
             const result: IValidationResponse = ValidationService.validate(request, this.limits);
@@ -22,6 +28,9 @@ export class DruidService {
         });
     }
 
+    /**
+     * Which is used to fetch the result from the result from the external system.
+     */
     public fetch() {
         return async(async (query: IQuery) => {
             try {

@@ -1,12 +1,11 @@
 {
-    "name": "druid-api",
+    "name": "druid-proxy-api",
     "version": "1.0.0",
     "description": "",
     "main": "dist/app.js",
     "scripts": {
         "start": "tsc && node dist/app.js",
-        "test": "nyc mocha ./src/test/druidTestService.spec.ts --exit",
-        "test-with-coverage": " nyc report --reporter=html"
+        "test": "nyc mocha ./src/test/druidTestService.spec.ts --exit"
     },
     "keywords": [],
     "author": "Manjunath Davanam <manjunathd@ilimi.in>",

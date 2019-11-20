@@ -1,3 +1,7 @@
+/**
+ * @author Manjunatha Davanam <manjunathd@ilimi.in>
+ */
+
 import bodyParser from "body-parser";
 import express, { response } from "express";
 import HttpStatus from "http-status-codes";
@@ -10,7 +14,14 @@ const endPoint = config.apiEndPoint;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+/**
+ * Creating a HTTP Service Instance to invoke the external system.
+ */
 const httpService = new HttpService(config.druidHost, config.druidEndPoint, config.druidPort);
+
+/**
+ * Creating a DruidService Instance to facilitate to filter and validate the query.
+ */
 const druidService = new DruidService(config.limits, httpService);
 
 app.post(endPoint, (requestObj, responseObj, next) => {
@@ -38,4 +49,5 @@ app.listen(config.apiPort, (err) => {
   return console.log(`server is listening on ${config.apiPort}`);
 });
 
+// Exporting app for the testing purpose.
 export default app;
