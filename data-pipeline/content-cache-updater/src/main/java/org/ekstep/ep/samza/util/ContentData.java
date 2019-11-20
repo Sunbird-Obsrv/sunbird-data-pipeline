@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.util.*;
 import java.text.SimpleDateFormat;
 
-public class ContentCache {
+public class ContentData {
 
     public Map<String, Object> getParsedData(Map<String, Object> parsedData, Map<String, Object> newProperties) {
         parsedData.putAll(newProperties);

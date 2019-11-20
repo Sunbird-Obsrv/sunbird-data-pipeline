@@ -13,10 +13,11 @@ import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.service.Fixtures.EventFixture;
+import org.ekstep.ep.samza.task.ContentCacheConfig;
 import org.ekstep.ep.samza.task.ContentCacheUpdaterSink;
 import org.ekstep.ep.samza.task.ContentCacheUpdaterSource;
 import org.ekstep.ep.samza.task.ContentCacheUpdaterTask;
-import org.ekstep.ep.samza.util.ContentCache;
+import org.ekstep.ep.samza.util.ContentData;
 import org.ekstep.ep.samza.util.RedisConnect;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,6 +44,7 @@ public class ContentCacheUpdaterServiceTest {
     private ContentCacheUpdaterService contentCacheUpdaterService;
     private ContentCacheUpdaterSink contentCacheUpdaterSinkMock;
     private ContentCacheUpdaterTask contentCacheUpdaterTask;
+    private ContentCacheConfig contentCacheConfig;
     private TaskContext contextMock;
     private TaskCoordinator taskCoordinator;
     private MessageCollector messageCollector;
@@ -83,7 +85,8 @@ public class ContentCacheUpdaterServiceTest {
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
         stub(configMock.getList("contentModel.fields.listType", new ArrayList<>()))
                 .toReturn(defaultListValues);
-        contentCacheUpdaterService = new ContentCacheUpdaterService(configMock, redisConnectMock, jobMetricsMock);
+        contentCacheConfig = new ContentCacheConfig(configMock);
+        contentCacheUpdaterService = new ContentCacheUpdaterService(contentCacheConfig, redisConnectMock, jobMetricsMock);
         jedisMock.flushAll();
     }
 

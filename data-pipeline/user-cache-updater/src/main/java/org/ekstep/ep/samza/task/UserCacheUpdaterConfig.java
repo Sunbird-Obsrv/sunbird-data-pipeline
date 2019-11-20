@@ -18,8 +18,6 @@ public class UserCacheUpdaterConfig {
     private String cassandra_db;
     private String cassandra_user_table;
     private String cassandra_location_table;
-    private String cassandra_middleware_host;
-    private int cassandra_middleware_port;
     private int userStoreDb;
 
     public UserCacheUpdaterConfig(Config config) {
@@ -32,8 +30,6 @@ public class UserCacheUpdaterConfig {
         this.cassandra_db = config.get("middleware.cassandra.keyspace", "sunbird");
         this.cassandra_user_table = config.get("middleware.cassandra.user_table", "user");
         this.cassandra_location_table = config.get("middleware.cassandra.location_table", "location");
-        this.cassandra_middleware_host = config.get("middleware.cassandra.host", "127.0.0.1");
-        this.cassandra_middleware_port = config.getInt("middleware.cassandra.port", 9042);
         this.userStoreDb = config.getInt("redis.database.userStore.id", 4);
     }
 

@@ -5,7 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.task.*;
-import org.ekstep.ep.samza.util.ContentCache;
+import org.ekstep.ep.samza.util.ContentData;
 import org.ekstep.ep.samza.util.RedisConnect;
 import org.ekstep.ep.samza.util.BaseUpdater;
 import org.apache.samza.config.Config;
@@ -17,23 +17,17 @@ public class ContentCacheUpdaterService extends BaseUpdater {
 
     private static Logger LOGGER = new Logger(ContentCacheUpdaterService.class);
     private JobMetrics metrics;
-    private ContentCache contentCache;
-    private int dialCodeStoreDb;
-    private int contentStoreDb;
+    private ContentData contentData;
+    private ContentCacheConfig contentCacheConfig;
     int storeId;
     private Gson gson = new Gson();
     Type mapType = new TypeToken<Map<String, Object>>() {
     }.getType();
-    private List<String> contentModelListTypeFields;
-    private List<String> dateFields;
 
-    public ContentCacheUpdaterService(Config config, RedisConnect redisConnect, JobMetrics metrics) {
+    public ContentCacheUpdaterService(ContentCacheConfig config, RedisConnect redisConnect, JobMetrics metrics) {
         super(redisConnect);
         this.metrics = metrics;
-        this.contentStoreDb = config.getInt("redis.database.contentStore.id", 5);
-        this.dialCodeStoreDb = config.getInt("redis.database.dialCodeStore.id", 6);
-        this.contentModelListTypeFields = config.getList("contentModel.fields.listType", new ArrayList<>());
-        this.dateFields = config.getList("date.fields.listType", new ArrayList<>());
+        this.contentCacheConfig = config;
     }
 
     public void process(ContentCacheUpdaterSource source, ContentCacheUpdaterSink sink) {
@@ -46,7 +40,7 @@ public class ContentCacheUpdaterService extends BaseUpdater {
             return;
         }
         LOGGER.info("", "processing event for nodeUniqueId: " + nodeUniqueId);
-        contentCache = new ContentCache();
+        contentData = new ContentData();
         if (!nodeUniqueId.isEmpty()) {
             parsedData = getCacheData(message, objectType);
         }
@@ -59,23 +53,26 @@ public class ContentCacheUpdaterService extends BaseUpdater {
     public Map<String, Object> getCacheData(Map<String, Object> message, String objectType){
         String nodeUniqueId = (String) message.get("nodeUniqueId");
         Map<String, Object> parsedData = null;
-        String contentNode = readFromCache(nodeUniqueId, contentStoreDb);
+        Map<String, Object> newProperties = contentData.extractProperties(message);
+        String contentNode = null;
+
+        if(objectType.equalsIgnoreCase("DialCode")) {
+            storeId=contentCacheConfig.getdialCodeStoreDb();
+            contentNode = readFromCache(nodeUniqueId, storeId);
+        }
+        else {
+            storeId=contentCacheConfig.getContentStoreDb();
+            contentNode = readFromCache(nodeUniqueId, storeId);
+            Map<String, Object> listTypeFields = contentData.convertType(newProperties, contentCacheConfig.getContentModelListTypeFields(), contentCacheConfig.getDateFields());
+            if (!listTypeFields.isEmpty()) {
+                newProperties.putAll(listTypeFields);
+            }
+        }
         if (contentNode != null) {
             parsedData = gson.fromJson(contentNode, mapType);
         } else {
             parsedData = new HashMap<>();
         }
-        Map<String, Object> newProperties = contentCache.extractProperties(message);
-        if(objectType.equalsIgnoreCase("DialCode")) {
-            storeId=dialCodeStoreDb;
-        }
-        else {
-            storeId=contentStoreDb;
-            Map<String, Object> listTypeFields = contentCache.convertType(newProperties, contentModelListTypeFields, dateFields);
-            if (!listTypeFields.isEmpty()) {
-                newProperties.putAll(listTypeFields);
-            }
-        }
-        return contentCache.getParsedData(parsedData, newProperties);
+        return contentData.getParsedData(parsedData, newProperties);
     }
 }

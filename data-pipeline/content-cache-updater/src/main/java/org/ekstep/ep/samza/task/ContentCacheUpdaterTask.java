@@ -13,10 +13,9 @@ public class ContentCacheUpdaterTask implements StreamTask, InitableTask, Window
 
     private JobMetrics metrics;
     private ContentCacheUpdaterService service;
+    private ContentCacheConfig config;
     private String metricsTopic;
     private RedisConnect redisConnect;
-
-    private final String JOB_NAME = "ContentCacheUpdater";
 
     public ContentCacheUpdaterTask(Config config, TaskContext context, RedisConnect redisConnect) {
         init(config, context, redisConnect);
@@ -31,9 +30,10 @@ public class ContentCacheUpdaterTask implements StreamTask, InitableTask, Window
     }
 
     public void init(Config config, TaskContext context, RedisConnect redisConnect) {
-        metrics = new JobMetrics(context, JOB_NAME);
+        this.config = new ContentCacheConfig(config);
+        metrics = new JobMetrics(context, this.config.JOB_NAME());
         redisConnect = null != redisConnect? redisConnect: new RedisConnect(config);
-        service = new ContentCacheUpdaterService(config, redisConnect, metrics);
+        service = new ContentCacheUpdaterService(this.config, redisConnect, metrics);
         metricsTopic = config.get("output.metrics.topic.name");
     }
 
