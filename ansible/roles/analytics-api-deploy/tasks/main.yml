@@ -79,7 +79,7 @@
 
 #Update ConsumerChannel Cache
 - uri:
-    url: "http://{{ ansible_hostname }}:9000/refresh-cache/{{ consumer_channel_cache_type }}"
+    url: "http://localhost:9000/refresh-cache/{{ consumer_channel_cache_type }}"
     method: GET
     return_content: yes
   tags: refresh-cache
