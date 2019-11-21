@@ -4,7 +4,7 @@ import HttpStatus from "http-status-codes";
 import nock from "nock";
 import app from "../app";
 import { config } from "../configs/config";
-import { Fixtures } from "./Fixtures";
+import { Fixtures } from "./fixtures";
 
 const expect = chai.expect;
 
