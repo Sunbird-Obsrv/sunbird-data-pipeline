@@ -12,13 +12,11 @@ slack_web_hook: "{{ monit_alerts_slack_url }}"
 
 monit_logstash:
   app_name: logstash
-  grep_string: logstash
-  custom_start: systemctl start logstash.service
-  custom_stop: systemctl stop logstash.service
   retry: 3
   
 monit_yarn_master:
   app_name: resourcemanager
+  grep_string: resourcemanager
   custom_start: /usr/local/hadoop/sbin/yarn-daemon.sh start resourcemanager
   custom_stop: /usr/local/hadoop/bin/kill_jobs.sh && sleep 10 && bash /usr/local/hadoop/sbin/yarn-daemon.sh stop resourcemanager
   retry: 3
@@ -27,6 +25,7 @@ monit_yarn_master:
 
 monit_yarn_slave:
   app_name: nodemanager
+  grep_string: nodemanager
   custom_start: /usr/local/hadoop/sbin/yarn-daemon.sh start nodemanager
   timeout: 20
   custom_stop: /usr/local/hadoop/sbin/yarn-daemon.sh stop nodemanager
