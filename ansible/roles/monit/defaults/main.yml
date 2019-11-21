@@ -16,7 +16,7 @@ monit_logstash:
   custom_start: systemctl start logstash.service
   custom_stop: systemctl stop logstash.service
   retry: 3
-	  
+  
 monit_yarn_master:
   app_name: resourcemanager
   custom_start: /usr/local/hadoop/sbin/yarn-daemon.sh start resourcemanager
