@@ -1,0 +1,44 @@
+- hosts: analytics-api
+  become: yes
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml']
+  name: Installing and configuring monit
+  roles:
+    - { role: monit, service: 'monit_api-service' }
+  tags: analytics-api
+
+- hosts: cassandra
+  become: yes
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml']
+  name: Installing and configuring monit
+  roles:
+    - { role: monit, service: 'monit_cassandra-dp' }
+  tags: cassandra
+
+- hosts: influxdb
+  become: yes
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml']
+  name: Installing and configuring monit
+  roles:
+    - { role: monit, service: 'monit_influxdb' }
+  tags: influxdb
+
+- hosts: secor
+  become: yes
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml']
+  name: Installing and configuring monit
+  roles:
+    - { role: monit, service: 'monit_channel-telemetry-backup,monit_derived-telemetry-backup,monit_raw-telemetry-backup,monit_learning-events-backup,monit_ingestion-telemetry-backup,monit_unique-telemetry-backup,monit_failed-telemetry-backup' }
+  tags: secor
+
+- hosts: kafka-indexer:analytics-api
+  become: yes
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml']
+  name: Installing and configuring monit
+  roles:
+    - { role: monit, service: 'monit_logstash' }
+  tags: logstash
