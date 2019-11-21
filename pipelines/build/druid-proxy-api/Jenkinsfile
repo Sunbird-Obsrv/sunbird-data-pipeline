@@ -36,7 +36,7 @@ node() {
             stage('Archive artifacts'){
                 sh """
                         mkdir druid_proxy_api_artifacts
-                        cp druid/druid-api/dist/ druid_proxy_api_artifacts
+                        cp -r druid/druid-api/dist/* druid_proxy_api_artifacts
                         zip -j druid_proxy_api_artifacts.zip:${artifact_version} druid_proxy_api_artifacts/*
                     """
                 archiveArtifacts artifacts: "druid_proxy_api_artifacts.zip:${artifact_version}", fingerprint: true, onlyIfSuccessful: true
