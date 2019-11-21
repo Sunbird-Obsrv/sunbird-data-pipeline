@@ -26,6 +26,11 @@ export class ValidationService {
                 case "search": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.search);
                 // tslint:disable-next-line:max-line-length
                 case "timeseries": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.timeseries);
+                // tslint:disable-next-line:max-line-length
+                case "timeboundary": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.timeBoundary);
+                // tslint:disable-next-line:max-line-length
+                case "segmentmetadata": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.segmentMetadata);
+
                 default: return {
                     error: undefined,
                     errorMessage: `Unsupported query type"${query.queryType}"`,

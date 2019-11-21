@@ -123,4 +123,16 @@ describe("/POST druid/v2/", () => {
                 done();
             });
     });
+    // tslint:disable-next-line:max-line-length
+    it("Should take default threshold, When threshold is higher than the limit in the timeBoundary queryType", (done) => {
+        chai.request(app)
+            .post(config.apiEndPoint)
+            .send(JSON.parse(Fixtures.TIME_BOUNDARY_HIGH_THRESHOLD_QUERY))
+            .end((err, res) => {
+                res.should.have.status(HttpStatus.OK);
+                expect(res.body).not.equal(undefined);
+                expect(res.body.errorMessage).equal(undefined);
+                done();
+            });
+    });
 });
