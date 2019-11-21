@@ -13,4 +13,4 @@ COPY ./druid-proxy-api.zip  /home/sunbird/druid-proxy-api/
 RUN unzip /home/sunbird/druid-proxy-api/druid-proxy-api.zip
 RUN ls -all /home/sunbird/druid-proxy-api
 WORKDIR /home/sunbird/druid-proxy-api/druid-proxy-api/
-CMD ["node", "app.js", "&"]
+CMD ["node", "dist/app.js", "&"]

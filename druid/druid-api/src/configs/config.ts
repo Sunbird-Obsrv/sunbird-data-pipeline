@@ -1,9 +1,9 @@
 export const config = {
-    apiEndPoint: "/druid/v2/",
-    apiPort: 8082,
-    druidEndPoint: "/druid/v2/",
-    druidHost: "http://localhost",
-    druidPort: 8082,
+    apiEndPoint: process.env.druid_proxy_api_endPoint || "/druid/v2/",
+    apiPort: process.env.druid_proxy_api_port || 8082,
+    druidEndPoint: process.env.druid_proxy_api_endPoint || "/druid/v2/",
+    druidHost: process.env.druid_host || "http://localhost",
+    druidPort: process.env.druid_port || 8082,
     limits: {
         cardinalColumns: [ // High cardinal dimensions
             "context_sid", // Telemetry, context session id
