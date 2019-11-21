@@ -1,6 +1,0 @@
----
-node_version: 10.15.3 #Node version
-nvm_version: 0.7.0 #Nvm version
-analytics_user: analytics
-analytics_user_home: "/home/ {{ analytics_user }}"
-
