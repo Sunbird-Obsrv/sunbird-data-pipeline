@@ -6,9 +6,10 @@
 
 - name: Install node and set version
   shell: >
-    /bin/bash -c "source ~/.nvm/nvm.sh && nvm install {{ node_version }} && nvm alias default 10.15.3"
+    /bin/bash -c "source ~/.nvm/nvm.sh && nvm use --delete-prefix v10.15.3 --silent && npm config delete prefix && nvm install {{ node_version }} && nvm alias default 10.15.3"
     creates={{ analytics_user_home }}/.nvm/alias
 
-- name: Install PM2
-  shell: >
-    curl https://getpm2.com/install.sh | sh
+- name: Install pm2 globally
+  npm: name=pm2 state=present global=yes
+  sudo: yes
+  sudo_user: root
