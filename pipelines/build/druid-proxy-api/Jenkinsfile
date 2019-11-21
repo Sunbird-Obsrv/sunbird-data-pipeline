@@ -35,12 +35,12 @@ node() {
             }
             stage('Archive artifacts'){
                 sh """
-                        mkdir druid_proxy_api_artifacts
-                        cp -r druid/druid-api/dist/* druid_proxy_api_artifacts
-                        zip -j druid_proxy_api_artifacts.zip:${artifact_version} druid_proxy_api_artifacts/*
+                        mkdir druid-proxy-api
+                        cp -r druid/druid-api/dist/* druid-proxy-api
+                        zip -j druid-proxy-api.zip:${artifact_version} druid-proxy-api/*
                     """
-                archiveArtifacts artifacts: "druid_proxy_api_artifacts.zip:${artifact_version}", fingerprint: true, onlyIfSuccessful: true
-                sh """echo {\\"artifact_name\\" : \\"druid_proxy_api_artifacts.zip\\", \\"artifact_version\\" : \\"${artifact_version}\\", \\"node_name\\" : \\"${env.NODE_NAME}\\"} > metadata.json"""
+                archiveArtifacts artifacts: "druid-proxy-api.zip:${artifact_version}", fingerprint: true, onlyIfSuccessful: true
+                sh """echo {\\"artifact_name\\" : \\"druid-proxy-api.zip\\", \\"artifact_version\\" : \\"${artifact_version}\\", \\"node_name\\" : \\"${env.NODE_NAME}\\"} > metadata.json"""
                 archiveArtifacts artifacts: 'metadata.json', onlyIfSuccessful: true
                 currentBuild.result = "SUCCESS"
                 currentBuild.description = "Artifact: ${artifact_version}, Public: ${params.github_release_tag}"
