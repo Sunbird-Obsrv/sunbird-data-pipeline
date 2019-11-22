@@ -37,6 +37,7 @@ node('build-slave') {
                 sh """
                         cd druid/druid-api
                         pwd
+                        ls
                     """
                 sh('chmod 777 build.sh')
                 sh("./build.sh ${build_tag} ${env.NODE_NAME} ${hub_org}")
