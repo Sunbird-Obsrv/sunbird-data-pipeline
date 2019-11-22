@@ -12,6 +12,8 @@ slack_web_hook: "{{ monit_alerts_slack_url }}"
 
 monit_logstash:
   app_name: logstash
+  custom_start: /bin/systemctl start logstash.service
+  custom_stop: /bin/systemctl stop logstash.service
   retry: 3
   
 monit_yarn_master:
@@ -35,23 +37,17 @@ monit_yarn_slave:
 
 monit_kafka:
   app_name: kafka
-  custom_start: "/usr/sbin/service kafka start"
-  custom_stop: "/usr/sbin/service kafka stop"
+  custom_start: "/bin/systemctl start kafka.service"
+  custom_stop: "/bin/systemctl stop kafka.service"
   timeout: "30"
   retry: 3
 
 monit_zookeeper:
   app_name: zookeeper
-  custom_start: "/usr/sbin/service zookeeper start"
-  custom_stop: "/usr/sbin/service zookeeper stop"
+  custom_start: "/bin/systemctl start zookeeper.service"
+  custom_stop: "/bin/systemctl stop zookeeper.service"
   timeout: "30"
   retry: 3
-
-  #monit_logstash_ep:
-    #app_name: logstash
-    # custom_start: "/usr/sbin/service logstash start"
-    #custom_stop: "/usr/sbin/service logstash stop"
-    #retry: 3
 
 monit_api-service:
   app_name: "api-service"
@@ -75,6 +71,22 @@ monit_derived-telemetry-backup:
   custom_stop: /home/analytics/sbin/secor derived-telemetry-backup stop
   user: analytics
   pid_file: /home/analytics/sbin/derived-telemetry-backup.pid
+  retry: 3
+
+monit_extractor-failed-backup:
+  app_name: extractor-failed-backup
+  custom_start: /home/analytics/sbin/secor extractor-failed-backup start
+  custom_stop: /home/analytics/sbin/secor extractor-failed-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/extractor-failed-backup.pid
+  retry: 3
+
+monit_pipeline-metrics-backup:
+  app_name: pipeline-metrics-backup
+  custom_start: /home/analytics/sbin/secor pipeline-metrics-backup start
+  custom_stop: /home/analytics/sbin/secor pipeline-metrics-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/pipeline-metrics-backup.pid
   retry: 3
 
 monit_raw-telemetry-backup:
@@ -115,6 +127,38 @@ monit_failed-telemetry-backup:
   custom_stop: /home/analytics/sbin/secor failed-telemetry-backup stop
   user: analytics
   pid_file: /home/analytics/sbin/failed-telemetry-backup.pid
+  retry: 3
+
+monit_denorm-events-backup:
+  app_name: denorm-events-backup
+  custom_start: /home/analytics/sbin/secor denorm-events-backup start
+  custom_stop: /home/analytics/sbin/secor denorm-events-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/denorm-events-backup.pid
+  retry: 3
+
+monit_assess-events-backup:
+  app_name: assess-events-backup
+  custom_start: /home/analytics/sbin/secor assess-events-backup start
+  custom_stop: /home/analytics/sbin/secor assess-events-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/assess-events-backup.pid
+  retry: 3
+
+monit_device-profile-backup:
+  app_name: device-profile-backup
+  custom_start: /home/analytics/sbin/secor device-profile-backup start
+  custom_stop: /home/analytics/sbin/secor device-profile-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/device-profile-backup.pid
+  retry: 3
+
+monit_learning-failed-backup:
+  app_name: learning-failed-backup
+  custom_start: /home/analytics/sbin/secor learning-failed-backup start
+  custom_stop: /home/analytics/sbin/secor learning-failed-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/learning-failed-backup.pid
   retry: 3
 
 monit_cassandra-dp:
