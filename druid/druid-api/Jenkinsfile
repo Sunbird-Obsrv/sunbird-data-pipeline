@@ -35,11 +35,11 @@ node('build-slave') {
                 env.NODE_ENV = "build"
                 print "Environment will be : ${env.NODE_ENV}"
                 sh """
-                        cd druid/druid-api
+                        cd druid/druid-api && chmod 777 build.sh
                         pwd
                         ls
                     """
-                sh('chmod 777 build.sh')
+                //sh('chmod 777 ./build.sh')
                 sh("./build.sh ${build_tag} ${env.NODE_NAME} ${hub_org}")
             }
             stage('ArchiveArtifacts') {
