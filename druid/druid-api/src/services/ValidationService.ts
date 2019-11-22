@@ -1,4 +1,5 @@
 import _ from "lodash";
+import moment from "moment";
 import { ICommon, IFilter, ILimits, IQuery, IRules, IValidationResponse } from "../models/models";
 import { APILogger } from "./ApiLogger";
 
@@ -103,12 +104,11 @@ export class ValidationService {
     private static isValidDateRange(dateRange: string[] | string = "", allowedDateRangeIs: number = 0): IValidationResponse {
         if (allowedDateRangeIs && !_.isEmpty(dateRange)) {
             const date = Array.isArray(dateRange) ? dateRange[0].split("/") : dateRange.split("/");
-            const fromDate = new Date(date[0]);
-            const toDate = new Date(date[1]);
+            const fromDate = moment(date[0]);
+            const toDate = moment(date[1]);
             // To calculate the time difference of two dates
-            const differenceInTime = fromDate.getTime() - toDate.getTime();
+            const differenceInDays = Math.abs(fromDate.diff(toDate, "days"));
             // To calculate the no. of days between two dates
-            const differenceInDays = Math.abs(differenceInTime / (1000 * 3600 * 24));
             APILogger.log("DATE Difference is: " + differenceInDays);
             if (fromDate > toDate) {
                 return {
