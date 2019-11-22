@@ -40,8 +40,6 @@ check process {{vars[item].app_name}} matching {{vars[item].grep_string|default(
 {% if vars[item].retry is defined and vars[item].retry %}
   if {{vars[item].retry}} restarts within {{vars[item].retry}} cycles 
     then exec /usr/local/bin/slack.sh warning
-  if {{vars[item].retry+1}} restarts within {{vars[item].retry+1}} cycles 
-    then stop
 {% endif %}
 {% if vars[item].retry is defined and vars[item].retry and vars[item].pid_file is defined %}
   if {{vars[item].retry}} restarts within {{vars[item].retry}} cycles 
