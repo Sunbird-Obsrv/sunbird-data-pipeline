@@ -43,10 +43,7 @@ node('build-slave') {
                 sh("cd druid/druid-api && ./build.sh ${build_tag} ${env.NODE_NAME} ${hub_org}")
             }
             stage('ArchiveArtifacts') {
-            	sh """
-            		cd druid/druid-api && archiveArtifacts "metadata.json"
-            	"""
-                //archiveArtifacts "metadata.json"
+                archiveArtifacts "metadata.json"
                 currentBuild.description = "${build_tag}"
             }
         }
