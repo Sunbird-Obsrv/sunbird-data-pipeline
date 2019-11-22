@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 /**
  * Creating a HTTP Service Instance to invoke the external system.
  */
-const httpService = new HttpService(config.druidHost, config.druidEndPoint, config.druidPort);
+const httpService = new HttpService(config.druidHost, config.druidEndPoint, Number(config.druidPort));
 
 /**
  * Creating a DruidService Instance to facilitate to filter and validate the query.
@@ -42,7 +42,7 @@ app.post(endPoint, (requestObj, responseObj, next) => {
 /**
  * Listen the server to config.port
  */
-app.listen(config.apiPort, (err, res) => {
+app.listen(Number(config.apiPort), (err, res) => {
   if (err) {
     return APILogger.error("Proxy API server is not running" + err);
   }

@@ -10,7 +10,7 @@ export class HttpService {
     private port: number;
     private endPoint: string;
     private host: string;
-    constructor(host: string, endPoint: string, port = config.druidPort) {
+    constructor(host: string, endPoint: string, port = Number(config.druidPort)) {
         this.port = port;
         this.endPoint = endPoint;
         this.host = host;
