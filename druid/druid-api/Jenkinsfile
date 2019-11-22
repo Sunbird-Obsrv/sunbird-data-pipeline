@@ -36,8 +36,7 @@ node('build-slave') {
                 print "Environment will be : ${env.NODE_ENV}"
                 sh """
                         cd druid/druid-api && chmod 777 build.sh
-                        pwd
-                        ls
+                        cp druid/druid-api/metadata.json ../../
                     """
                 //sh('chmod 777 ./build.sh')
                 sh("cd druid/druid-api && ./build.sh ${build_tag} ${env.NODE_NAME} ${hub_org}")
