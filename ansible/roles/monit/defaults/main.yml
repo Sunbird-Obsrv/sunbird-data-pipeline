@@ -1,21 +1,16 @@
 ---
 user: root
-group: root 
+group: root
 slack_channel: "{{ monitor_alerts_slack_channel }}"
 slack_user: Monit
 slack_web_hook: "{{ monit_alerts_slack_url }}"
-
-#monit_logstash_ep:
-  #  app_name: logstash
-  #script_path: "/etc/init.d/logstash"
-  #retry: 3
 
 monit_logstash:
   app_name: logstash
   custom_start: /bin/systemctl start logstash.service
   custom_stop: /bin/systemctl stop logstash.service
   retry: 3
-  
+
 monit_yarn_master:
   app_name: resourcemanager
   grep_string: resourcemanager
@@ -181,13 +176,5 @@ monit_influxdb-relay:
   grep_string: influxdb-relay
   custom_start: "/usr/sbin/service influxdb-relay start"
   custom_stop: "/usr/sbin/service influxdb-relay stop"
-  timeout: "30"
-  retry: 3
-
-monit_kibana:
-  app_name: kibana
-  grep_string: /usr/share/kibana/bin/
-  custom_start: "/usr/sbin/service kibana start"
-  custom_stop: "/usr/sbin/service kibana stop"
   timeout: "30"
   retry: 3
