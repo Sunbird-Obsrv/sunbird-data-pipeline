@@ -39,7 +39,7 @@ node('build-slave') {
                         pwd
                         ls
                     """
-                sh('chmod 777 ./build.sh')
+                sh('chmod 777 build.sh')
                 sh("./build.sh ${build_tag} ${env.NODE_NAME} ${hub_org}")
             }
             stage('ArchiveArtifacts') {
