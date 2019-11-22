@@ -2,7 +2,7 @@
 # Build script
 set -o pipefail
 build_tag=$1
-name=telemetry-service
+name=druid-proxy-api
 node=$2
 org=$3
 
