@@ -140,7 +140,11 @@ akka {
         }
         /deviceRegisterServiceAPIActor {
           router = smallest-mailbox-pool
-            nr-of-instances = 20
+            nr-of-instances = 10
+        }
+        /deviceProfileServiceAPIActor {
+          router = smallest-mailbox-pool
+          nr-of-instances = 10
         }
         /clientLogAPIActor {
           router = smallest-mailbox-pool
