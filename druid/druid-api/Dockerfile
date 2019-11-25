@@ -1,16 +1,16 @@
-FROM node:8.11-alpine
+FROM circleci/node:8.11
+MAINTAINER "Manjunath Davanam" "manjunathd@ilimi.in"
+USER root
+WORKDIR /opt/druid-proxy-api/
+COPY ./ .
+RUN npm install
+RUN npm install -g typescript
+RUN tsc
+
+FROM node:8.11-slim
 MAINTAINER "Manjunath Davanam" "manjunathd@Ilimi.in"
-RUN apk update \
-    && apk add unzip \
-    && apk add curl \
-    && adduser -u 1001 -h /home/sunbird/ -D sunbird \
-    && apk add --update ca-certificates  \
-    && apk add --update ca-certificates openssl
-USER sunbird
 RUN mkdir -p /home/sunbird/druid-proxy-api
 WORKDIR /home/sunbird/druid-proxy-api
-COPY ./druid-proxy-api.zip  /home/sunbird/druid-proxy-api/
-RUN unzip /home/sunbird/druid-proxy-api/druid-proxy-api.zip
-RUN ls -all /home/sunbird/druid-proxy-api
-WORKDIR /home/sunbird/druid-proxy-api/druid-proxy-api/
-CMD ["node", "dist/app.js", "&"]
+COPY --from=0 /opt/druid-proxy-api /home/sunbird/druid-proxy-api
+WORKDIR /home/sunbird/druid-proxy-api/
+CMD ["node", "dist/app.js"]
