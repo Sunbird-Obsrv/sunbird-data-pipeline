@@ -17,24 +17,6 @@
 - name: Copy log4j2 xml file
   template: src=log4j2.xml.j2 dest={{ analytics.home }}/models/log4j2.xml mode=755 owner={{ analytics_user }} group={{ analytics_group }}
 
-- name: Copy Python Library
-  copy: src=script.zip dest={{ analytics.home }}
-
-- name: Unarchive script
-  unarchive: src={{ analytics.home }}/script.zip dest={{ analytics.home }}/ copy=no group={{ analytics_group }} owner={{ analytics_user }} creates={{ analytics.home }}/script
-
-- name: move files
-  command: cp -r {{ analytics.home }}/script/GenieSearch  {{ analytics.home }}/scripts/
-
-- name: move files
-  command: cp -r {{ analytics.home }}/script/VidyavaniCnQ  {{ analytics.home }}/scripts/
-
-- name: move files
-  command: cp -r {{ analytics.home }}/script/vidyavaani  {{ analytics.home }}/scripts/
-
-- name: move files
-  command: cp -r {{ analytics.home }}/script/BusinessMetrics  {{ analytics.home }}/scripts/
-
 - name: Copy Scripts
   template: src={{ item }}.j2 dest={{ analytics.home }}/scripts/{{ item }}.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   with_items: "{{ analytics.scripts }}"
