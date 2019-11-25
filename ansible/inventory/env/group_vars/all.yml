@@ -147,8 +147,6 @@ job_names:
       job_file_name: 'druid-events-validator'
   EventsRouter_1:
       job_file_name: 'events-router'
-  RedisUpdater_1:
-      job_file_name: 'redis-updater'
   TelemetryExtractor_1:
       job_file_name: 'telemetry-extractor'
   TelemetryLocationUpdater_1:
@@ -163,3 +161,7 @@ job_names:
       job_file_name: 'assessment-aggregator'
   DerivedDeDuplication_1:
       job_file_name: 'derived-de-duplication'
+  UserCacheUpdater_1:
+      job_file_name: 'user-cache-updater'
+  ContentCacheUpdater_1:
+      job_file_name: 'content-cache-updater'
