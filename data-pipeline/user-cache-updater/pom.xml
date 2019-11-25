@@ -151,12 +151,12 @@
                     </execution>
                     <execution>
                         <id>post-unit-test</id>
-                        <phase>test</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target/jacoco-report</outputDirectory>
+                            <outputDirectory>${basedir}/target/coverage-reports/jacoco-ut</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
