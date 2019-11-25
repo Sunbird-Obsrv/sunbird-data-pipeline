@@ -181,6 +181,7 @@ play.server {
 
 play.modules.enabled+="modules.ActorInjector"
 play.filters.enabled+="filter.RequestInterceptor"
+play.filters.enabled+=play.filters.hosts.AllowedHostsFilter
 
 # Secret key
 # ~~~~~
@@ -189,7 +190,9 @@ play.filters.enabled+="filter.RequestInterceptor"
 play.http.secret.key="{{dp_play_http_secret_key}}"
 
 play.filters.hosts {
-  # Allow requests to example.com, its subdomains, and localhost:9000.
+   # A list of valid hosts (e.g. "example.com") or suffixes of valid hosts (e.g. ".example.com")
+   # Note that ".example.com" will match example.com and any subdomain of example.com, with or without a trailing dot.
+   # "." matches all domains, and "" matches an empty or nonexistent host.
   allowed = ["."]
 }
 
