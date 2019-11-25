@@ -188,6 +188,11 @@ play.filters.enabled+="filter.RequestInterceptor"
 # If you deploy your application to several instances be sure to use the same key!
 play.http.secret.key="{{dp_play_http_secret_key}}"
 
+play.filters.hosts {
+  # Allow requests to example.com, its subdomains, and localhost:9000.
+  allowed = ["."]
+}
+
 # body parser
 play.http.parser.maxMemoryBuffer=10M
 
