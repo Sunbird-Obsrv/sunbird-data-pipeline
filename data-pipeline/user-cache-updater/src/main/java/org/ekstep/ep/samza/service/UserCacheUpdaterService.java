@@ -84,6 +84,7 @@ public class UserCacheUpdaterService extends BaseCacheUpdaterService {
 
         if (!userCacheData.isEmpty()) {
             addToCache(userId, gson.toJson(userCacheData), userStoreDb);
+            LOGGER.info(userId, "Updated in cache");
             sink.success();
         }
         return userCacheData;
