@@ -26,15 +26,6 @@
   tags:
     - update-config
 
-- name: Remove file
-  file: path={{ analytics.home }}/{{ item }} state=absent
-  with_items:
-    - script
-    - script.zip
-
-- name: Replace Working directory line
-  lineinfile: dest={{ analytics.home }}/scripts/vidyavaani/resources/config.properties regexp='^working_dir=' insertafter='^#working_dir=' line='working_dir=/mnt/data/analytics/content2vec' state=present
-
 - name: Copy submit-all-jobs ruby file
   template: src=submit-all-jobs.rb.j2 dest={{ analytics.home }}/scripts/submit-all-jobs.rb mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
