@@ -53,12 +53,13 @@ public class BaseUpdaterTest {
 
     @Test
     public void shouldReadFromCache() {
+        jedisMock.select(storeId);
         jedisMock.set("4569876545678","{\"role\":\"teacher\",\"type\":\"Request\"}");
         String value = baseUpdater.readFromCache("4569876545678", storeId);
         Map<String, Object> parsedData = gson.fromJson(value, type);
 
-//        assertEquals("Request", parsedData.get("type"));
-//        assertEquals("teacher", parsedData.get("role"));
+        assertEquals("Request", parsedData.get("type"));
+        assertEquals("teacher", parsedData.get("role"));
     }
 
         @Test(expected = DriverException.class)

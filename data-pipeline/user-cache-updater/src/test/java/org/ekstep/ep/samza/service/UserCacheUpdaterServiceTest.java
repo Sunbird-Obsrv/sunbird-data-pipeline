@@ -236,6 +236,7 @@ public class UserCacheUpdaterServiceTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.AUDIT_EVENT_METADATA_UPDATED);
         Gson gson = new Gson();
         String userId = "52226956-61d8-4c1b-b115-c660111866d3";
+        jedisMock.select(userStoreId);
         jedisMock.set(userId, "{\"channel\":\"dikshacustodian\",\"phoneverified\":false,\"usersignintype\":\"Self-Signed-In\",\"userlogintype\":\"NA\"}");
         UserCacheUpdaterSource source = new UserCacheUpdaterSource(envelopeMock);
         stub(envelopeMock.getSystemStreamPartition()).toReturn(new SystemStreamPartition("kafka", "telemetry.audit", new Partition(1)));
@@ -248,10 +249,10 @@ public class UserCacheUpdaterServiceTest {
             }.getType();
             parsedData = gson.fromJson(cachedData, type);
         }
-//        assertEquals(4, parsedData.size());
-//        assertEquals(parsedData.get("channel"), "dikshacustodian");
-//        assertEquals(parsedData.get("phoneverified"), false);
-//        assertEquals(parsedData.get("usersignintype"), "Self-Signed-In");
-//        assertEquals(parsedData.get("userlogintype"), "NA");
+        assertEquals(4, parsedData.size());
+        assertEquals(parsedData.get("channel"), "dikshacustodian");
+        assertEquals(parsedData.get("phoneverified"), false);
+        assertEquals(parsedData.get("usersignintype"), "Self-Signed-In");
+        assertEquals(parsedData.get("userlogintype"), "NA");
     }
 }
