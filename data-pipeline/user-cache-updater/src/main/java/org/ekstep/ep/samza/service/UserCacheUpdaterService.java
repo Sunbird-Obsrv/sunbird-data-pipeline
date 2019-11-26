@@ -70,7 +70,7 @@ public class UserCacheUpdaterService extends BaseCacheUpdaterService {
                 if (userUpdatedList.contains("id") && null != userCacheData.get("locationids")) {
                     List<String> locationIds = (List<String>) userCacheData.get("locationids");
 
-                    List<Row> locationDetails = readFromCassandra(userCacheUpdaterConfig.cassandra_db(), userCacheUpdaterConfig.cassandra_location_table(), "id", locationIds);
+                    List<Row> locationDetails = readLocationFromCassandra(userCacheUpdaterConfig.cassandra_db(), userCacheUpdaterConfig.cassandra_location_table(), "id", locationIds);
                     Map<String, Object> userLocationMap = getLocationInfo(locationDetails);
 
                     if (!userLocationMap.isEmpty())
