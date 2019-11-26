@@ -22,6 +22,7 @@ public class BaseCacheUpdaterService {
 
     public BaseCacheUpdaterService(RedisConnect redisConnect) {
         this.redisConnect = redisConnect;
+        connection = redisConnect.getConnection();
     }
 
     public BaseCacheUpdaterService(CassandraConnect cassandraConnect){
