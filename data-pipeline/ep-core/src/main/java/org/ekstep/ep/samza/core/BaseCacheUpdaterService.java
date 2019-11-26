@@ -30,12 +30,13 @@ public class BaseCacheUpdaterService {
 
     public BaseCacheUpdaterService(RedisConnect redisConnect, CassandraConnect cassandraConnect) {
         this.redisConnect = redisConnect;
+        connection = redisConnect.getConnection();
         this.cassandraConnect = cassandraConnect;
     }
 
     public void addToCache(String key, String value, int storeId) {
         try {
-            connection = redisConnect.getConnection(storeId);
+            connection.select(storeId);
             if (key != null && !key.isEmpty() && null != value && !value.isEmpty()) {
                 connection.set(key, value);
             }
@@ -48,7 +49,7 @@ public class BaseCacheUpdaterService {
 
     public String readFromCache(String key, int storeId) {
         try {
-            connection = redisConnect.getConnection(storeId);
+            connection.select(storeId);
             return connection.get(key);
         }
         catch (JedisException ex) {
@@ -68,7 +69,22 @@ public class BaseCacheUpdaterService {
         }
     }
 
-    public <T> List<Row> readFromCassandra(String keyspace, String table, String column, T value){
+    public List<Row> readLocationFromCassandra(String keyspace, String table, String column, List<String> locationIds) {
+        List<Row> rowSet = null;
+        String locationQuery = QueryBuilder.select().all()
+                .from(keyspace, table)
+                .where(QueryBuilder.in(column, locationIds))
+                .toString();
+        try {
+            rowSet = cassandraConnect.find(locationQuery);
+        } catch(DriverException ex) {
+            cassandraConnect.reconnectCluster();
+            rowSet = cassandraConnect.find(locationQuery);
+        }
+        return rowSet;
+    }
+
+    public List<Row> readFromCassandra(String keyspace, String table, String column, String value){
         List<Row> rowSet = null;
         String query = QueryBuilder.select().all()
                 .from(keyspace, table)
