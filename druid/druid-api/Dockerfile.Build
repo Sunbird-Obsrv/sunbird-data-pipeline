@@ -1,0 +1,12 @@
+FROM node:8.11-alpine
+MAINTAINER "Manjunath Davanam" "manjunathd@ilimi.in"
+RUN apk update \
+    && apk add zip \
+    && mkdir -p /opt/druid-proxy-api
+ADD src /opt/druid-proxy-api/
+WORKDIR /opt/druid-proxy-api/
+RUN npm install
+RUN npm install -g typescript
+RUN tsc
+WORKDIR /opt
+CMD ["zip", "-r", "druid-proxy-api.zip", "druid-proxy-api"]
