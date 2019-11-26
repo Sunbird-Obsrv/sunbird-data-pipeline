@@ -40,16 +40,14 @@ if [[ "$job_count_live" -ne "$job_count" ]]; then
       if ! grep -q $failed_job failed_jobs_details ; then
          echo "$failed_job" >> failed_jobs_details
       fi
-      if  [ "$failed_job_details" == "" ]; then
+      if [ "$failed_job_details" == "" ]; then
          text=`echo "The job is not running $i"`
-         echo $text
          /usr/local/bin/samza_slack.sh critical "$text"
-         curl -d "to=kaliraja.ramasamy@tarento.com&to=devops@ekstep.org&fromname='Samza-alerts'&fromname='Samza-alerts'&fromname='Samza-alerts'&fromname='Samza-alerts'&subject='[$env] [firing-1] - Samza jobs failure alert'&text=${text}&from=alerts@open-sunbird.org&api_user=${SGUSER}&api_key=${SGPASS}" https://api.sendgrid.com/api/mail.send.json
+         curl -d "{{ samza_alert_to_address }}&fromname='Samza-alerts'&fromname='Samza-alerts'&fromname='Samza-alerts'&fromname='Samza-alerts'&subject='[$env] [firing-1] - Samza jobs failure alert'&text=${text}&from={{ samza_alert_from_address }}&api_user=${SGUSER}&api_key=${SGPASS}" https://api.sendgrid.com/api/mail.send.json
          else
          text=`echo "The job is not running $failed_job_details" | sed 's/RUNNING/killed/g'`
-         echo $text
          /usr/local/bin/samza_slack.sh critical "$text"
-         curl -d "to=kaliraja.ramasamy@tarento.com&to=devops@ekstep.org&fromname='Samza-alerts'&fromname='Samza-alerts'&fromname='Samza-alerts'&fromname='Samza-alerts'&subject='[$env] [firing-1] - Samza jobs failure alert'&text=${text}&from=alerts@open-sunbird.org&api_user=${SGUSER}&api_key=${SGPASS}" https://api.sendgrid.com/api/mail.send.json
+         curl -d "{{ samza_alert_to_address }}&fromname='Samza-alerts'&fromname='Samza-alerts'&fromname='Samza-alerts'&fromname='Samza-alerts'&subject='[$env] [firing-1] - Samza jobs failure alert'&text=${text}&from={{ samza_alert_from_address }}&api_user=${SGUSER}&api_key=${SGPASS}" https://api.sendgrid.com/api/mail.send.json
       fi
     fi
    done
