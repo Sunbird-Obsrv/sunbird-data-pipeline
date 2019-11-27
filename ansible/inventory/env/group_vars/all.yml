@@ -165,3 +165,10 @@ job_names:
       job_file_name: 'user-cache-updater'
   ContentCacheUpdater_1:
       job_file_name: 'content-cache-updater'
+
+#Druid Proxy APi service
+
+druid_proxy_replicas: 1
+druid_proxy_reservation_memory: 300M
+druid_proxy_limit_memory: 300M
+sunbird_druid_broker_host: "http://{{ groups['broker'][0] }}"
