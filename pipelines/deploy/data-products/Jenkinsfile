@@ -27,7 +27,6 @@ node() {
                        mv batch-models-1.0.jar ansible
                        mv job-manager-1.0-distribution.tar.gz ansible
                        mv analytics-framework-1.0.jar ansible
-                       mv script.zip ansible
                     """
                     ansiblePlaybook = "${currentWs}/ansible/lpa_data-products_deploy.yml"
                     ansibleExtraArgs = " --vault-password-file /var/lib/jenkins/secrets/vault-pass"

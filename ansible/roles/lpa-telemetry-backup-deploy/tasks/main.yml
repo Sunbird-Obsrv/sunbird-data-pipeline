@@ -1,4 +1,4 @@
-- name: Create service directory on EBS volume
+- name: Create service directory on instance volume
   file: 
     path: "/mount/{{ item.key }}/logs" 
     owner: "{{ analytics_user }}"
@@ -41,6 +41,16 @@
 - name: Create monitoring cron job
   cron: "name={{ item.key }} minute={{ item.value.service_monitor_schedule_min }} hour={{ item.value.service_monitor_schedule_hr }}  job={{ sbin_path }}/monitor-secor.sh {{ item.key }} {{ item.value.service_description }}"
   with_dict: "{{ secor_service_name }}"
+
+- name: changing the permissions of the files and folders which may have permision as root
+  file:
+    dest: "{{item}}/"
+    owner: "{{ analytics_user }}"
+    group: "{{ analytics_user }}" 
+    recurse: yes
+  with_items:
+    - "{{ analytics_user_home }}"
+    - "/mount"
 
 - name: Restarting jobs
   become: yes
