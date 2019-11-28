@@ -38,7 +38,7 @@
     dest: "/etc/rsyslog.d/50-default.conf"
     regexp: '^#cron' 
     line: 'cron.*                          /var/log/cron.log'
-    user: "{{ redis_monitoring_user }}"
+    owner: "{{ redis_monitoring_user }}"
     backrefs: yes
 
 - name: logrotate config file changes
