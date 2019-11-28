@@ -30,6 +30,7 @@
   cron:
     name: "Redis dump rdb monitoring"
     hour: "{{ redis_dump_rdb_cron_hour }}"
+    minute: "{{ redis_dump_rdb_cron_minute }}"
     job: "{{ redis_home }}/check_redis_dump.sh"
     user: "{{ redis_monitoring_user }}"
     
