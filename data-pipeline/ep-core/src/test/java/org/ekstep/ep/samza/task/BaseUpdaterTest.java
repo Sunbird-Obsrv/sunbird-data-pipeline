@@ -90,6 +90,15 @@ public class BaseUpdaterTest {
     }
 
     @Test
+    public void shouldHandleNullOrEmptyClause() {
+        List<Row> nullClauseValue = baseUpdater.readFromCassandra("sunbird","user",null);
+        assertEquals(null, nullClauseValue);
+
+        List<Row> emptyClauseValue = baseUpdater.readFromCassandra("sunbird","user",QueryBuilder.eq("",""));
+                assertEquals(0, emptyClauseValue.size());
+    }
+
+    @Test
     public void shouldGetLocationDetailsFromDB() {
         List<String> locationIds = new ArrayList<>();
         locationIds.add("1f56a8458d78df90");
