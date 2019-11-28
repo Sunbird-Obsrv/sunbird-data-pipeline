@@ -17,5 +17,6 @@
         shell: /bin/bash
   roles:
     - redis
+    - redis-dump-monitoring
   serial: 1
 
