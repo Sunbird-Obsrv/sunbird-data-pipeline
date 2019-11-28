@@ -86,4 +86,17 @@ public class BaseUpdaterTest {
         baseUpdater.readLocationFromCassandra("sunbird", "location", "id", locationIds);
     }
 
+    @Test
+    public void shouldGetLocationDetailsFromDB() {
+        List<String> locationIds = new ArrayList<>();
+        locationIds.add("1f56a8458d78df90");
+        ArrayList location=new ArrayList(3);
+        location.add(0,"state-name");
+        location.add(1,"district-name");
+        stub(baseUpdater.readLocationFromCassandra("sunbird", "location", "id", locationIds)).toReturn(location);
+
+        List<Row> row = baseUpdater.readLocationFromCassandra("sunbird","location","id", locationIds);
+        assertEquals("state-name",row.get(0));
+        assertEquals("district-name",row.get(1));
+    }
 }
