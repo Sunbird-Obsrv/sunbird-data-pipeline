@@ -1,12 +1,19 @@
 package org.ekstep.ep.samza.task;
 
 import com.datastax.driver.core.exceptions.DriverException;
+import com.datastax.driver.core.querybuilder.Clause;
+import com.datastax.driver.core.querybuilder.Insert;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
 import org.ekstep.ep.samza.core.BaseCacheUpdaterService;
 import org.ekstep.ep.samza.util.CassandraConnect;
 import org.ekstep.ep.samza.util.RedisConnect;
 import redis.clients.jedis.Jedis;
 import com.fiftyonred.mock_jedis.MockJedis;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import com.datastax.driver.core.Row;
 import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -34,9 +41,12 @@ public class BaseUpdaterTest {
     public void setUp() {
         redisConnectMock = mock(RedisConnect.class);
         cassandraConnectMock = mock(CassandraConnect.class);
+        stub(redisConnectMock.getConnection()).toReturn(jedisMock);
+        new BaseCacheUpdaterService(redisConnectMock);
         baseUpdater = new BaseCacheUpdaterService(redisConnectMock, cassandraConnectMock);
 
         stub(redisConnectMock.getConnection(anyInt())).toReturn(jedisMock);
+        stub(redisConnectMock.getConnection()).toReturn(jedisMock);
     }
 
     @Test
@@ -52,6 +62,7 @@ public class BaseUpdaterTest {
 
     @Test
     public void shouldReadFromCache() {
+        jedisMock.select(storeId);
         jedisMock.set("4569876545678","{\"role\":\"teacher\",\"type\":\"Request\"}");
         String value = baseUpdater.readFromCache("4569876545678", storeId);
         Map<String, Object> parsedData = gson.fromJson(value, type);
@@ -60,11 +71,42 @@ public class BaseUpdaterTest {
         assertEquals("teacher", parsedData.get("role"));
     }
 
-        @Test(expected = DriverException.class)
+    @Test(expected = DriverException.class)
     public void shouldHandleCassandraException() throws Exception {
+        Clause userDataClause = QueryBuilder.eq("id","id");
 
         when(cassandraConnectMock.find(anyString())).thenThrow(new DriverException("Cassandra Exception"));
-        baseUpdater.readFromCassandra("sunbird","user","id","id");
+        baseUpdater.readFromCassandra("sunbird","user",userDataClause);
     }
 
+    @Test(expected = DriverException.class)
+    public void shouldHandleCassandraExceptionForLocationQuery() throws Exception {
+        List<String> locationIds = new ArrayList<>();
+        locationIds.add("1f56a8458d78df90");
+        Clause locationDataClause = QueryBuilder.in("id",locationIds);
+
+        when(cassandraConnectMock.find(anyString())).thenThrow(new DriverException("Cassandra Exception"));
+        baseUpdater.readFromCassandra("sunbird", "location", locationDataClause);
+    }
+
+    @Test
+    public void shouldHandleNullOrEmptyClause() {
+        List<Row> emptyClauseValue = baseUpdater.readFromCassandra("sunbird","user",QueryBuilder.eq("",""));
+        assertEquals(true, emptyClauseValue.isEmpty());
+    }
+
+    @Test
+    public void shouldGetLocationDetailsFromDB() {
+        List<String> locationIds = new ArrayList<>();
+        locationIds.add("1f56a8458d78df90");
+        ArrayList location=new ArrayList(3);
+        location.add(0,"state-name");
+        location.add(1,"district-name");
+        Clause locationDataClause = QueryBuilder.in("id",locationIds);
+        stub(baseUpdater.readFromCassandra("sunbird", "location", locationDataClause)).toReturn(location);
+
+        List<Row> row = baseUpdater.readFromCassandra("sunbird","location",locationDataClause);
+        assertEquals("state-name",row.get(0));
+        assertEquals("district-name",row.get(1));
+    }
 }

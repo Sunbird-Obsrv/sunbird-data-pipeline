@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.service;
 
+import com.datastax.driver.core.Row;
 import com.fiftyonred.mock_jedis.MockJedis;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -67,6 +68,7 @@ public class UserCacheUpdaterServiceTest {
         counter = mock(Counter.class);
 
         stub(redisConnectMock.getConnection(userStoreId)).toReturn(jedisMock);
+        stub(redisConnectMock.getConnection()).toReturn(jedisMock);
         envelopeMock = mock(IncomingMessageEnvelope.class);
         stub(configMock.getInt("redis.database.userStore.id", userStoreId)).toReturn(userStoreId);
         stub(configMock.getInt("location.db.redis.key.expiry.seconds", 86400)).toReturn(86400);
@@ -99,6 +101,32 @@ public class UserCacheUpdaterServiceTest {
         userCacheUpdaterService.process(source, userCacheUpdaterSinkMock);
 
         verify(userCacheUpdaterSinkMock, times(1)).error();
+    }
+
+    @Test
+    public void shouldAddLocationDetailsToCache() {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.AUDIT_EVENT_METADATA_UPDATED);
+        Gson gson = new Gson();
+        String userId = "52226956-61d8-4c1b-b115-c660111866d3";
+        jedisMock.select(userStoreId);
+        jedisMock.set(userId, "{\"channel\":\"dikshacustodian\",\"phoneverified\":false,\"usersignintype\":\"Self-Signed-In\",\"userlogintype\":\"NA\", \"locationids\":[\'8952478975387\']}");
+        UserCacheUpdaterSource source = new UserCacheUpdaterSource(envelopeMock);
+        stub(envelopeMock.getSystemStreamPartition()).toReturn(new SystemStreamPartition("kafka", "telemetry.audit", new Partition(1)));
+        userCacheUpdaterService.process(source, userCacheUpdaterSinkMock);
+
+        String cachedData = jedisMock.get(userId);
+        Map<String, Object> parsedData = null;
+        if (cachedData != null) {
+            Type type = new TypeToken<Map<String, Object>>() {
+            }.getType();
+            parsedData = gson.fromJson(cachedData, type);
+        }
+        assertEquals(5, parsedData.size());
+        assertEquals("dikshacustodian",parsedData.get("channel"));
+        assertEquals(false, parsedData.get("phoneverified"));
+        assertEquals("Self-Signed-In", parsedData.get("usersignintype"));
+        assertEquals( "NA", parsedData.get("userlogintype"));
+        assertEquals(Arrays.asList("8952478975387"), parsedData.get("locationids"));
     }
 
     @Test
@@ -209,13 +237,13 @@ public class UserCacheUpdaterServiceTest {
         userCacheUpdaterService.process(source, userCacheUpdaterSinkMock);
 
         String cachedData = jedisMock.get(userId);
-        Map<String, Object> parsedData = null;
+        Map<String, Object> parsedData = new HashMap<>();
         if (cachedData != null) {
             Type type = new TypeToken<Map<String, Object>>() {
             }.getType();
             parsedData = gson.fromJson(cachedData, type);
         }
-        assertEquals(parsedData.get("channel"), "dikshacustodian");
+        assertEquals(0, parsedData.size());
         verify(cassandraConnectMock, times(0)).find(anyString());
     }
 
@@ -235,6 +263,7 @@ public class UserCacheUpdaterServiceTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.AUDIT_EVENT_METADATA_UPDATED);
         Gson gson = new Gson();
         String userId = "52226956-61d8-4c1b-b115-c660111866d3";
+        jedisMock.select(userStoreId);
         jedisMock.set(userId, "{\"channel\":\"dikshacustodian\",\"phoneverified\":false,\"usersignintype\":\"Self-Signed-In\",\"userlogintype\":\"NA\"}");
         UserCacheUpdaterSource source = new UserCacheUpdaterSource(envelopeMock);
         stub(envelopeMock.getSystemStreamPartition()).toReturn(new SystemStreamPartition("kafka", "telemetry.audit", new Partition(1)));

@@ -11,6 +11,7 @@ import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
+import org.ekstep.ep.samza.core.BaseCacheUpdaterService;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.service.Fixtures.EventFixture;
 import org.ekstep.ep.samza.task.ContentCacheConfig;
@@ -68,6 +69,7 @@ public class ContentCacheUpdaterServiceTest {
 
         stub(redisConnectMock.getConnection(contentStoreId)).toReturn(jedisMock);
         stub(redisConnectMock.getConnection(dialCodeStoreId)).toReturn(jedisMock);
+        stub(redisConnectMock.getConnection()).toReturn(jedisMock);
         envelopeMock = mock(IncomingMessageEnvelope.class);
         stub(configMock.getInt("redis.database.contentStore.id", contentStoreId)).toReturn(contentStoreId);
         stub(configMock.getInt("redis.database.dialCodeStore.id", dialCodeStoreId)).toReturn(dialCodeStoreId);
@@ -86,6 +88,7 @@ public class ContentCacheUpdaterServiceTest {
         stub(configMock.getList("contentModel.fields.listType", new ArrayList<>()))
                 .toReturn(defaultListValues);
         contentCacheConfig = new ContentCacheConfig(configMock);
+        new BaseCacheUpdaterService(redisConnectMock);
         contentCacheUpdaterService = new ContentCacheUpdaterService(contentCacheConfig, redisConnectMock, jobMetricsMock);
         jedisMock.flushAll();
     }
@@ -128,6 +131,7 @@ public class ContentCacheUpdaterServiceTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INCORRECT_LIST_TYPE_FIELDS);
         Gson gson = new Gson();
         Map<String, Object> event = gson.fromJson(EventFixture.INCORRECT_LIST_TYPE_FIELDS, Map.class);
+        jedisMock.select(contentStoreId);
         String contentId = (String) event.get("nodeUniqueId");
         ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelopeMock);
         contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
