@@ -1,12 +1,18 @@
 package org.ekstep.ep.samza.task;
 
 import com.datastax.driver.core.exceptions.DriverException;
+import com.datastax.driver.core.querybuilder.Insert;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
 import org.ekstep.ep.samza.core.BaseCacheUpdaterService;
 import org.ekstep.ep.samza.util.CassandraConnect;
 import org.ekstep.ep.samza.util.RedisConnect;
 import redis.clients.jedis.Jedis;
 import com.fiftyonred.mock_jedis.MockJedis;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import com.datastax.driver.core.Row;
 import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -35,9 +41,11 @@ public class BaseUpdaterTest {
         redisConnectMock = mock(RedisConnect.class);
         cassandraConnectMock = mock(CassandraConnect.class);
         stub(redisConnectMock.getConnection()).toReturn(jedisMock);
+        new BaseCacheUpdaterService(redisConnectMock);
         baseUpdater = new BaseCacheUpdaterService(redisConnectMock, cassandraConnectMock);
 
         stub(redisConnectMock.getConnection(anyInt())).toReturn(jedisMock);
+        stub(redisConnectMock.getConnection()).toReturn(jedisMock);
     }
 
     @Test
@@ -62,11 +70,20 @@ public class BaseUpdaterTest {
         assertEquals("teacher", parsedData.get("role"));
     }
 
-        @Test(expected = DriverException.class)
+    @Test(expected = DriverException.class)
     public void shouldHandleCassandraException() throws Exception {
 
         when(cassandraConnectMock.find(anyString())).thenThrow(new DriverException("Cassandra Exception"));
         baseUpdater.readFromCassandra("sunbird","user","id","id");
+    }
+
+    @Test(expected = DriverException.class)
+    public void shouldHandleCassandraExceptionForLocationQuery() throws Exception {
+        List<String> locationIds = new ArrayList<>();
+        locationIds.add("1f56a8458d78df90");
+
+        when(cassandraConnectMock.find(anyString())).thenThrow(new DriverException("Cassandra Exception"));
+        baseUpdater.readLocationFromCassandra("sunbird", "location", "id", locationIds);
     }
 
 }
