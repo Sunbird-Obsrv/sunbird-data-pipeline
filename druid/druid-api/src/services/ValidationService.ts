@@ -14,6 +14,7 @@ export class ValidationService {
      */
     public static validate(query: IQuery, limits: ILimits): IValidationResponse {
         if (!_.isUndefined(limits) || !_.isEmpty(limits)) {
+            APILogger.warn(` Addling limits/rules for  ${limits.dataSource}`);
             // If the limit is exceeded than than the config then set to default.
             const commonRulesValidationStatus: IValidationResponse = this.validateCommonRules(query, limits.common);
             if (commonRulesValidationStatus.isValid) {
@@ -83,7 +84,6 @@ export class ValidationService {
         if (maxDimensions) {
             if (where === "filter") {
                 cardianalDimensionsCountIs = this.handleFilters(query.filter, dimension);
-                console.log("CardinalDimsCountIs" + cardianalDimensionsCountIs);
             } else {
                 cardianalDimensionsCountIs = dimension.length;
             }
@@ -189,7 +189,6 @@ export class ValidationService {
      */
     // tslint:disable-next-line:max-line-length
     private static getCardinalDimensionsCount(cardinalColumns: string[] = [], dimensions: string[] = []): number {
-        APILogger.log("Dims are " + dimensions);
         let count = 0;
         const result = _.countBy(dimensions);
         _.forEach(cardinalColumns, (dim, value) => {

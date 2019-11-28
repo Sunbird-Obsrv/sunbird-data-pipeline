@@ -39,7 +39,8 @@ export class DruidService {
                 const result = await this.httpService.fetch(query);
                 return result;
             } catch (error) {
-                throw new Error("Unable to handle the query" + error);
+                APILogger.log(`Failed to fetch the result ${error}`);
+                throw new Error("Unable to handle the query, Please try after some time.");
             }
         });
     }

@@ -30,12 +30,11 @@ app.post(endPoint, (requestObj, responseObj, next) => {
 }, (requestObj, responseObj) => {
   druidService.fetch()(requestObj.body)
     .then((data) => {
-      responseObj.status(HttpStatus.OK).json(data);
-      responseObj.end();
+       responseObj.status(HttpStatus.OK).json(data);
+       responseObj.end();
     })
     .catch((err) => {
-      responseObj.status(HttpStatus.INTERNAL_SERVER_ERROR);
-      responseObj.send(err);
+      responseObj.status(HttpStatus.INTERNAL_SERVER_ERROR).json(err.message);
       responseObj.end();
     });
 });

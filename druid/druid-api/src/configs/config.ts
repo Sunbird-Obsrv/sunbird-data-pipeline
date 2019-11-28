@@ -7,8 +7,6 @@ export const config = {
     limits: [{ // Keeping limits per data source.
         cardinalColumns: [ // High cardinal dimensions
             "context_sid", // Telemetry, context session id
-            "dimensions_did", // Summary, dimension device id
-            "dimensions_sid", // Summary, dimension session id
             "context_did", // Telemetry, context did
             "actor_id", // User id
             "object_id", // Content Id
@@ -58,10 +56,8 @@ export const config = {
     },
     {
         cardinalColumns: [ // High cardinal dimensions
-            "context_sid", // Telemetry, context session id
             "dimensions_did", // Summary, dimension device id
             "dimensions_sid", // Summary, dimension session id
-            "context_did", // Telemetry, context did
             "actor_id", // User id
             "object_id", // Content Id
             "syncts", // Sync Time Stamp
