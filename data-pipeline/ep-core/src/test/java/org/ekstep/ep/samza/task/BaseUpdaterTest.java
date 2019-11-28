@@ -1,6 +1,7 @@
 package org.ekstep.ep.samza.task;
 
 import com.datastax.driver.core.exceptions.DriverException;
+import com.datastax.driver.core.querybuilder.Clause;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import org.ekstep.ep.samza.core.BaseCacheUpdaterService;
@@ -72,18 +73,20 @@ public class BaseUpdaterTest {
 
     @Test(expected = DriverException.class)
     public void shouldHandleCassandraException() throws Exception {
+        Clause userDataClause = QueryBuilder.eq("id","id");
 
         when(cassandraConnectMock.find(anyString())).thenThrow(new DriverException("Cassandra Exception"));
-        baseUpdater.readFromCassandra("sunbird","user","id","id");
+        baseUpdater.readFromCassandra("sunbird","user",userDataClause);
     }
 
     @Test(expected = DriverException.class)
     public void shouldHandleCassandraExceptionForLocationQuery() throws Exception {
         List<String> locationIds = new ArrayList<>();
         locationIds.add("1f56a8458d78df90");
+        Clause locationDataClause = QueryBuilder.in("id",locationIds);
 
         when(cassandraConnectMock.find(anyString())).thenThrow(new DriverException("Cassandra Exception"));
-        baseUpdater.readLocationFromCassandra("sunbird", "location", "id", locationIds);
+        baseUpdater.readFromCassandra("sunbird", "location", locationDataClause);
     }
 
     @Test
@@ -93,9 +96,10 @@ public class BaseUpdaterTest {
         ArrayList location=new ArrayList(3);
         location.add(0,"state-name");
         location.add(1,"district-name");
-        stub(baseUpdater.readLocationFromCassandra("sunbird", "location", "id", locationIds)).toReturn(location);
+        Clause locationDataClause = QueryBuilder.in("id",locationIds);
+        stub(baseUpdater.readFromCassandra("sunbird", "location", locationDataClause)).toReturn(location);
 
-        List<Row> row = baseUpdater.readLocationFromCassandra("sunbird","location","id", locationIds);
+        List<Row> row = baseUpdater.readFromCassandra("sunbird","location",locationDataClause);
         assertEquals("state-name",row.get(0));
         assertEquals("district-name",row.get(1));
     }

@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.core;
 
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.exceptions.DriverException;
+import com.datastax.driver.core.querybuilder.Clause;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import org.apache.samza.config.Config;
@@ -70,26 +71,11 @@ public class BaseCacheUpdaterService {
         }
     }
 
-    public List<Row> readLocationFromCassandra(String keyspace, String table, String column, List<String> locationIds) {
-        List<Row> rowSet = null;
-        String locationQuery = QueryBuilder.select().all()
-                .from(keyspace, table)
-                .where(QueryBuilder.in(column, locationIds))
-                .toString();
-        try {
-            rowSet = cassandraConnect.find(locationQuery);
-        } catch(DriverException ex) {
-            cassandraConnect.reconnectCluster();
-            rowSet = cassandraConnect.find(locationQuery);
-        }
-        return rowSet;
-    }
-
-    public List<Row> readFromCassandra(String keyspace, String table, String column, String value){
+    public List<Row> readFromCassandra(String keyspace, String table, Clause clause) {
         List<Row> rowSet = null;
         String query = QueryBuilder.select().all()
                 .from(keyspace, table)
-                .where(QueryBuilder.eq(column, value))
+                .where(clause)
                 .toString();
         try {
             rowSet = cassandraConnect.find(query);
