@@ -20,7 +20,7 @@ send_alert () {
 	then
 	        echo "Send alert because of $status"
 		curl -d "to=$mailReceiver&fromname=$mailSender&subject=$mailSubject&text=$status&from=$mailSender&api_user=$mailApiUser&api_key=$mailApiKey" https://api.sendgrid.com/api/mail.send.json
-                curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"${status}\"}" $slackChannelURL
+                curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"Redis:[{{inventory_hostname}}] - ${status}\"}" $slackChannelURL
 		exit 0
 	else
 	        echo "Alert not required"
