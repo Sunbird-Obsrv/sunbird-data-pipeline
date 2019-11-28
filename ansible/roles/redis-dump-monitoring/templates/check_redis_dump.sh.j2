@@ -11,6 +11,7 @@ mailApiUser="{{ redis_dump_rdb_mail_sendgrid_username }}"  # Mail API User
 mailApiKey="{{ redis_dump_rdb_mail_sendgrid_password  }}"					# Mail API Key
 backupIntervalInSeconds={{ redis_dump_rdb_time_in_seconds }}			       		# Redis Backup Time Interval in seconds
 backupKeysRequiredToSave={{ redis_dump_rdb_keys_to_save_state }}
+slackChannelURL={{ redis_dump_rdb_slack_url }}
 redisDbStausFile="${redisDumpFolder}/redisDbStatus.txt"
 
 # Send alert logic
@@ -19,6 +20,7 @@ send_alert () {
 	then
 	        echo "Send alert because of $status"
 		curl -d "to=$mailReceiver&fromname=$mailSender&subject=$mailSubject&text=$status&from=$mailSender&api_user=$mailApiUser&api_key=$mailApiKey" https://api.sendgrid.com/api/mail.send.json
+                curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"${status}\"}" $slackChannelURL
 		exit 0
 	else
 	        echo "Alert not required"
