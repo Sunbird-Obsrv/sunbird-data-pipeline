@@ -2554,7 +2554,7 @@
             "id":"district_monthly",
             "queryType":"groupBy",
             "dateRange":{
-                "staticInterval":"LastMonth",
+                "staticInterval":"Last30Days",
                 "granularity":"month"
             },
             "metrics":[
@@ -2564,7 +2564,7 @@
                 "druidQuery":{
                     "queryType":"groupBy",
                     "dataSource":"telemetry-events",
-                    "intervals":"LastMonth",
+                    "intervals":"Last30Days",
                     "aggregations":[
                       {
                           "name":"total_unique_devices",
@@ -2587,8 +2587,8 @@
                           "type":"in",
                           "dimension":"dimensions_pdata_id",
                           "values":[
-                            "prod.diksha.portal",
-                            "prod.diksha.app"
+                            "{{ producer_env }}.sunbird.portal",
+                            "{{ producer_env }}.sunbird.app"
                           ]
                       },
                       {
@@ -2672,8 +2672,8 @@
                          "type":"in",
                          "dimension":"dimensions_pdata_id",
                          "values":[
-                           "prod.diksha.portal",
-                           "prod.diksha.app"
+                           "{{ producer_env }}.sunbird.portal",
+                           "{{ producer_env }}.sunbird.app"
                          ]
                       },
                       {
@@ -2716,7 +2716,7 @@
                       {
                          "type":"equals",
                          "dimension":"dimensions_pdata_id",
-                         "value":"prod.diksha.portal"
+                         "value":"{{ producer_env }}.sunbird.portal"
                       },
                       {
                          "type":"isnotnull",
@@ -2758,7 +2758,7 @@
                       {
                          "type":"equals",
                          "dimension":"dimensions_pdata_id",
-                         "value":"prod.diksha.app"
+                         "value":"{{ producer_env }}.sunbird.app"
                       },
                       {
                          "type":"isnotnull",
@@ -2801,8 +2801,8 @@
                         "type":"in",
                         "dimension":"dimensions_pdata_id",
                         "values":[
-                          "prod.diksha.portal",
-                          "prod.diksha.app"
+                          "{{ producer_env }}.sunbird.portal",
+                          "{{ producer_env }}.sunbird.app"
                         ]
                      },
                       {
@@ -2854,7 +2854,7 @@
                       {
                          "type":"equals",
                          "dimension":"dimensions_pdata_id",
-                         "value":"prod.diksha.portal"
+                         "value":"{{ producer_env }}.sunbird.portal"
                       },
                       {
                          "type":"equals",
@@ -2905,7 +2905,7 @@
                       {
                          "type":"equals",
                          "dimension":"dimensions_pdata_id",
-                         "value":"prod.diksha.app"
+                         "value":"{{ producer_env }}.sunbird.app"
                       },
                       {
                          "type":"equals",
@@ -2957,8 +2957,8 @@
                         "type":"in",
                         "dimension":"dimensions_pdata_id",
                         "values":[
-                          "prod.diksha.portal",
-                          "prod.diksha.app"
+                          "{{ producer_env }}.sunbird.portal",
+                          "{{ producer_env }}.sunbird.app"
                         ]
                       },
                       {
@@ -3011,7 +3011,7 @@
                       {
                          "type":"equals",
                          "dimension":"dimensions_pdata_id",
-                         "value":"prod.diksha.portal"
+                         "value":"{{ producer_env }}.sunbird.portal"
                       },
                       {
                          "type":"equals",
@@ -3063,7 +3063,7 @@
                       {
                          "type":"equals",
                          "dimension":"dimensions_pdata_id",
-                         "value":"prod.diksha.app"
+                         "value":"{{ producer_env }}.sunbird.app"
                       },
                       {
                          "type":"equals",
