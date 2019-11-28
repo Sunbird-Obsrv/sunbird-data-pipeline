@@ -122,11 +122,11 @@ public class UserCacheUpdaterServiceTest {
             parsedData = gson.fromJson(cachedData, type);
         }
         assertEquals(5, parsedData.size());
-        assertEquals(parsedData.get("channel"), "dikshacustodian");
-        assertEquals(parsedData.get("phoneverified"), false);
-        assertEquals(parsedData.get("usersignintype"), "Self-Signed-In");
-        assertEquals(parsedData.get("userlogintype"), "NA");
-        assertEquals(parsedData.get("locationids"), Arrays.asList("8952478975387"));
+        assertEquals("dikshacustodian",parsedData.get("channel"));
+        assertEquals(false, parsedData.get("phoneverified"));
+        assertEquals("Self-Signed-In", parsedData.get("usersignintype"));
+        assertEquals( "NA", parsedData.get("userlogintype"));
+        assertEquals(Arrays.asList("8952478975387"), parsedData.get("locationids"));
     }
 
     @Test
@@ -243,7 +243,7 @@ public class UserCacheUpdaterServiceTest {
             }.getType();
             parsedData = gson.fromJson(cachedData, type);
         }
-        assertEquals(parsedData.size(), 0);
+        assertEquals(0, parsedData.size());
         verify(cassandraConnectMock, times(0)).find(anyString());
     }
 

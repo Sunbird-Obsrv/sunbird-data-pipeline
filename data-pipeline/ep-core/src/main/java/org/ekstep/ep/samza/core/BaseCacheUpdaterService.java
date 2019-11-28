@@ -86,6 +86,6 @@ public class BaseCacheUpdaterService {
             }
             return rowSet;
         }
-        return null;
+        return new ArrayList<>();
     }
 }

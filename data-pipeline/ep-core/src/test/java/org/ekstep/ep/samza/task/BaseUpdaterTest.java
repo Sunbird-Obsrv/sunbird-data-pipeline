@@ -92,10 +92,10 @@ public class BaseUpdaterTest {
     @Test
     public void shouldHandleNullOrEmptyClause() {
         List<Row> nullClauseValue = baseUpdater.readFromCassandra("sunbird","user",null);
-        assertEquals(null, nullClauseValue);
+        assertEquals(true, nullClauseValue.isEmpty());
 
         List<Row> emptyClauseValue = baseUpdater.readFromCassandra("sunbird","user",QueryBuilder.eq("",""));
-                assertEquals(0, emptyClauseValue.size());
+        assertEquals(0, emptyClauseValue.size());
     }
 
     @Test

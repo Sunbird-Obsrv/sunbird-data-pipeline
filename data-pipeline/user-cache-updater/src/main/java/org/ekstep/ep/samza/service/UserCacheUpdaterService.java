@@ -130,7 +130,7 @@ public class UserCacheUpdaterService extends BaseCacheUpdaterService {
 
     public Map<String, Object> getLocationInfo(List<Row> locationDetails) {
         Map<String, Object> result = new HashMap<>();
-        if(null != locationDetails && locationDetails.size() > 0) {
+        if(null != locationDetails && !locationDetails.isEmpty()) {
             locationDetails.forEach(record -> {
                 String name = record.getString("name");
                 String type = record.getString("type");
