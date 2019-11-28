@@ -73,19 +73,16 @@ public class BaseCacheUpdaterService {
 
     public List<Row> readFromCassandra(String keyspace, String table, Clause clause) {
         List<Row> rowSet = null;
-        if(clause != null) {
-            String query = QueryBuilder.select().all()
-                    .from(keyspace, table)
-                    .where(clause)
-                    .toString();
-            try {
-                rowSet = cassandraConnect.find(query);
-            } catch(DriverException ex) {
-                cassandraConnect.reconnectCluster();
-                rowSet = cassandraConnect.find(query);
-            }
-            return rowSet;
+        String query = QueryBuilder.select().all()
+                .from(keyspace, table)
+                .where(clause)
+                .toString();
+        try {
+            rowSet = cassandraConnect.find(query);
+        } catch(DriverException ex) {
+            cassandraConnect.reconnectCluster();
+            rowSet = cassandraConnect.find(query);
         }
-        return new ArrayList<>();
+        return rowSet;
     }
 }
