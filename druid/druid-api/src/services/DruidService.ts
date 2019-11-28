@@ -26,7 +26,7 @@ export class DruidService {
         return async((query: IQuery, response: any, next: any) => {
             APILogger.log("User query is " + JSON.stringify(query));
             const result: IValidationResponse = ValidationService.validate(query, this.getLimits(query.dataSource));
-            if (result.isValid) { next(); } else { return response.status(HttpStatus.BAD_REQUEST).send(result).end(); }
+            if (result.isValid) { next(); } else { response.status(HttpStatus.BAD_REQUEST).send(result).end(); }
         });
     }
 
