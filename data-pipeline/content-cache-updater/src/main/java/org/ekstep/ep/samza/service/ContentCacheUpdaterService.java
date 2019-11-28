@@ -45,6 +45,7 @@ public class ContentCacheUpdaterService extends BaseCacheUpdaterService {
         }
         if(null != parsedData) {
             addToCache(nodeUniqueId, gson.toJson(parsedData), storeId);
+            LOGGER.info(nodeUniqueId, "Updated in cache for type "+objectType);
             sink.success();
         }
     }
