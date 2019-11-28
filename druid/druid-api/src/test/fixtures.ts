@@ -8,4 +8,5 @@ export class Fixtures {
     public static TIME_BOUNDARY_HIGH_THRESHOLD_QUERY = '{"queryType":"timeBoundary","dataSource":"telemetry-events","aggregations":[{"type":"count","name":"count"}],"granularity":"all","postAggregations":[],"intervals":"2019-11-13T00:00:00+00:00/2019-11-20T00:00:00+00:00","threshold":5000,"metric":"count","dimension":"actor_id"}';
     public static WITHOUT_THRESHOLD_QUERY = '{"queryType":"select","dataSource":"telemetry-events","aggregations":[{"type":"count","name":"count"}],"granularity":"all","postAggregations":[],"intervals":"2019-11-13T00:00:00+00:00/2019-11-20T00:00:00+00:00","metric":"count","dimension":"actor_id"}';
     public static WITHOUT_DATE_RANGE_QUERY = '{"queryType":"scan","dataSource":"telemetry-events","aggregations":[{"type":"count","name":"count"}],"granularity":"all","postAggregations":[],"metric":"count","dimension":"actor_id"}';
+    public static UNSUPPORTED_DATA_SOURCE = '{"queryType":"timeseries","dataSource":"invalid_data_source","aggregations":[{"type":"count","name":"count"}],"granularity":"all","postAggregations":[],"intervals": "2019-11-15T00:00:00+00:00/2019-11-22T00:00:00+00:00"}';
 }

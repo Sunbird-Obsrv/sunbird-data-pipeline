@@ -1,9 +1,9 @@
 import async from "asyncawait/async";
 import await from "asyncawait/await";
 import HttpStatus from "http-status-codes";
+import _ from "lodash";
 import { IValidationResponse } from "../models/models";
-import { ILimits } from "../models/models";
-import { IQuery } from "../models/models";
+import { IDataSourceLimits, ILimits, IQuery } from "../models/models";
 import { APILogger } from "./ApiLogger";
 import { HttpService } from "./HttpService";
 import { ValidationService } from "./ValidationService";
@@ -13,10 +13,10 @@ import { ValidationService } from "./ValidationService";
  */
 
 export class DruidService {
-    private limits: ILimits;
     private httpService: HttpService;
-    constructor(limits: ILimits, httpService: HttpService) {
-        this.limits = limits;
+    private dataSourceLimits: IDataSourceLimits;
+    constructor(dataSourceLimits: IDataSourceLimits, httpService: HttpService) {
+        this.dataSourceLimits = dataSourceLimits;
         this.httpService = httpService;
     }
     /**
@@ -25,8 +25,8 @@ export class DruidService {
     public validate() {
         return async((query: IQuery, response: any, next: any) => {
             APILogger.log("User query is " + JSON.stringify(query));
-            const result: IValidationResponse = ValidationService.validate(query, this.limits);
-            if (result.isValid) { next(); } else { response.status(HttpStatus.BAD_REQUEST).send(result).end(); }
+            const result: IValidationResponse = ValidationService.validate(query, this.getLimits(query.dataSource));
+            if (result.isValid) { next(); } else { return response.status(HttpStatus.BAD_REQUEST).send(result).end(); }
         });
     }
 
@@ -42,5 +42,12 @@ export class DruidService {
                 throw new Error("Unable to handle the query" + error);
             }
         });
+    }
+
+    /**
+     * Which returns the rules/limits for the particular dataSource.
+     */
+    public getLimits(dataSource: string): any {
+        return _.find(this.dataSourceLimits.limits, ["dataSource", dataSource]);
     }
 }

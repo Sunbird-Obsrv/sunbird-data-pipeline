@@ -135,4 +135,16 @@ describe("/POST druid/v2/", () => {
                 done();
             });
     });
+
+    it("Should allow user to query, When the limits are not found for particular data source", (done) => {
+        chai.request(app)
+            .post(config.apiEndPoint)
+            .send(JSON.parse(Fixtures.UNSUPPORTED_DATA_SOURCE))
+            .end((err, res) => {
+                res.should.have.status(HttpStatus.OK);
+                expect(res.body).not.equal(undefined);
+                expect(res.body.errorMessage).equal(undefined);
+                done();
+            });
+    });
 });

@@ -13,33 +13,40 @@ export class ValidationService {
      * @param limits ILimits - Limit/filter Configurations to validate the queries.
      */
     public static validate(query: IQuery, limits: ILimits): IValidationResponse {
-        // If the limit is exceeded than than the config then set to default.
-        const commonRulesValidationStatus: IValidationResponse = this.validateCommonRules(query, limits.common);
-        if (commonRulesValidationStatus.isValid) {
-            switch (query.queryType.toLowerCase()) {
-                case "groupby": return this.validateQueryTypes(query, limits.cardinalColumns,
-                    limits.queryRules.groupBy);
-                case "topn": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.topN);
-                case "scan": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.scan);
-                // tslint:disable-next-line:max-line-length
-                case "select": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.select);
-                // tslint:disable-next-line:max-line-length
-                case "search": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.search);
-                // tslint:disable-next-line:max-line-length
-                case "timeseries": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.timeseries);
-                // tslint:disable-next-line:max-line-length
-                case "timeboundary": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.timeBoundary);
-                // tslint:disable-next-line:max-line-length
-                case "segmentmetadata": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.segmentMetadata);
+        if (!_.isUndefined(limits) || !_.isEmpty(limits)) {
+            // If the limit is exceeded than than the config then set to default.
+            const commonRulesValidationStatus: IValidationResponse = this.validateCommonRules(query, limits.common);
+            if (commonRulesValidationStatus.isValid) {
+                switch (query.queryType.toLowerCase()) {
+                    case "groupby": return this.validateQueryTypes(query, limits.cardinalColumns,
+                        limits.queryRules.groupBy);
+                    case "topn": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.topN);
+                    case "scan": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.scan);
+                    // tslint:disable-next-line:max-line-length
+                    case "select": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.select);
+                    // tslint:disable-next-line:max-line-length
+                    case "search": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.search);
+                    // tslint:disable-next-line:max-line-length
+                    case "timeseries": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.timeseries);
+                    // tslint:disable-next-line:max-line-length
+                    case "timeboundary": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.timeBoundary);
+                    // tslint:disable-next-line:max-line-length
+                    case "segmentmetadata": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.segmentMetadata);
 
-                default: return {
-                    error: undefined,
-                    errorMessage: `Unsupported query type"${query.queryType}"`,
-                    isValid: false,
-                };
+                    default: return {
+                        error: undefined,
+                        errorMessage: `Unsupported query type"${query.queryType}"`,
+                        isValid: false,
+                    };
+                }
+            } else {
+                return commonRulesValidationStatus;
             }
         } else {
-            return commonRulesValidationStatus;
+            APILogger.warn(`Rules are not found, Hence allowing user to query ${query}`);
+            return {
+                isValid: true,
+            };
         }
     }
 
@@ -190,5 +197,4 @@ export class ValidationService {
         });
         return count;
     }
-
 }

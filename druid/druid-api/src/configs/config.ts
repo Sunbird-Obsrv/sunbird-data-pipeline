@@ -4,7 +4,7 @@ export const config = {
     druidEndPoint: process.env.druid_proxy_api_endPoint || "/druid/v2/",
     druidHost: process.env.druid_host || "http://localhost",
     druidPort: process.env.druid_port || 8082,
-    limits: {
+    limits: [{
         cardinalColumns: [ // High cardinal dimensions
             "context_sid", // Telemetry, context session id
             "dimensions_did", // Summary, dimension device id
@@ -20,7 +20,7 @@ export const config = {
             max_dimensions: 10, // Maximum number of high cardinal dimensions are allowed.
             max_result_threshold: 1000, // Allowed max result is 1000.
         },
-
+        dataSource: "telemetry-events",
         queryRules: {
             groupBy: {
                 max_date_range: 30,
@@ -55,7 +55,7 @@ export const config = {
                 max_filter_dimensions: 50, // Maximum allowed date range, In days.
             },
         },
-    },
+    }],
     log: {
         backups: 5,
         logFilePath: "logs/druid-proxy-api.log",
