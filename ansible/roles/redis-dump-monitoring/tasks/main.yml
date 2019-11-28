@@ -40,7 +40,6 @@
     line: 'cron.*                          /var/log/cron.log'
     user: "{{ redis_monitoring_user }}"
     backrefs: yes
-    job: "{{ redis_home }}/check_redis_dump.sh"
 
 - name: logrotate config file changes
   template:
