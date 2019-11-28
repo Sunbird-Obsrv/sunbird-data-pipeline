@@ -12,16 +12,16 @@
   file:
     path: "{{ redis_dump_rdb_log_file_location }}"
     state: touch
-    owner: "{{ analytics_user }}"
-    group: "{{ analytics_user }}"
+    owner: "{{ redis_monitoring_user }}"
+    group: "{{ redis_monitoring_user }}"
     mode: '0644'
 
 - name: Copy Redis monitoring file 
   template:
     src: "{{ item }}.j2"
     dest: "{{ redis_home }}/{{ item }}"
-    owner: "{{ analytics_user }}"
-    group: "{{ analytics_user  }}"
+    owner: "{{ redis_monitoring_user }}"
+    group: "{{ redis_monitoring_user  }}"
     mode: '0775'
   with_items:
     - check_redis_dump.sh
@@ -30,7 +30,7 @@
   cron:
     hour: "{{ redis_dump_rdb_cron_hour }}"
     job: "{{ redis_home }}/check_redis_dump.sh"
-    user: "{{ analytics_user }}"
+    user: "{{ redis_monitoring_user }}"
     
 - name: Enable logging for crontab
   become: yes
@@ -38,7 +38,7 @@
     dest: "/etc/rsyslog.d/50-default.conf"
     regexp: '^#cron' 
     line: 'cron.*                          /var/log/cron.log'
-    user: "{{ analytics_user }}"
+    user: "{{ redis_monitoring_user }}"
     backrefs: yes
     job: "{{ redis_home }}/check_redis_dump.sh"
 

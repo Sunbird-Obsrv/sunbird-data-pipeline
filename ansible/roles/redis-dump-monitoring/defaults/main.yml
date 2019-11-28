@@ -1,6 +1,6 @@
-analytics_user: analytics
-analytics_user_home: "/home/{{analytics_user}}"
-redis_home: "{{analytics_user_home}}/redis-stable"
+redis_monitoring_user: learning
+redis_monitoring_home: "/home/{{redis_monitoring_user}}"
+redis_home: "{{redis_monitoring_home}}/redis-stable"
 redis_dump_rdb_time_in_seconds: 900
 redis_dump_rdb_keys_to_save_state: 1
 redis_dump_rdb_log_file_location: "/var/log/redisdumprdbstate.log"
