@@ -11,5 +11,5 @@ redis_dump_rdb_mail_sendgrid_username:
 redis_dump_rdb_mail_sendgrid_password:
 redis_dump_rdb_slack_url:
 redis_dump_rdb_slack_channel:
-redis_dump_rdb_cron_hour: "*"
+redis_dump_rdb_cron_hour: "2"
 redis_dump_rdb_cron_minute: "*"
