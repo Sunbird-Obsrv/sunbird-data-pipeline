@@ -2627,7 +2627,19 @@
           },
           "bucket": "{{ bucket }}",
           "key": "druid-reports/"
-        }
+        },
+        "output": [
+          {
+            "to": "console",
+            "params": {
+              "printEvent": false
+            }
+          }
+        ],
+        "parallelization": 8,
+        "appName": "Druid Query Processor",
+        "deviceMapping": false
+    }
   },
 "district-weekly":{
     "search": {
@@ -3127,7 +3139,19 @@
       },
       "bucket": "{{ bucket }}",
       "key": "druid-reports/"
-    }
+    },
+        "output": [
+          {
+            "to": "console",
+            "params": {
+              "printEvent": false
+            }
+          }
+        ],
+        "parallelization": 8,
+        "appName": "Druid Query Processor",
+        "deviceMapping": false
+  }
 },
   "druid-query-processor": {
       "search": {
