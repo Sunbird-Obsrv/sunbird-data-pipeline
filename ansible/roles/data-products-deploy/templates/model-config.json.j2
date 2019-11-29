@@ -2555,7 +2555,7 @@
             "queryType":"groupBy",
             "dateRange":{
                 "staticInterval":"Last30Days",
-                "granularity":"month"
+                "granularity":"all"
             },
             "metrics":[
               {
@@ -2585,7 +2585,7 @@
                     "filters":[
                       {
                           "type":"in",
-                          "dimension":"dimensions_pdata_id",
+                          "dimension":"context_pdata_id",
                           "values":[
                             "{{ producer_env }}.sunbird.portal",
                             "{{ producer_env }}.sunbird.app"
@@ -2639,8 +2639,7 @@
         "parallelization": 8,
         "appName": "Druid Query Processor",
         "deviceMapping": false
-    }
-  },
+},
 "district-weekly":{
     "search": {
       "type": "none"
@@ -2652,7 +2651,7 @@
         "queryType":"groupBy",
         "dateRange":{
             "staticInterval":"Last7Days",
-            "granularity":"week"
+            "granularity":"all"
         },
         "metrics":[
             {
@@ -2682,7 +2681,7 @@
                    "filters":[
                       {
                          "type":"in",
-                         "dimension":"dimensions_pdata_id",
+                         "dimension":"context_pdata_id",
                          "values":[
                            "{{ producer_env }}.sunbird.portal",
                            "{{ producer_env }}.sunbird.app"
@@ -2727,7 +2726,7 @@
                    "filters":[
                       {
                          "type":"equals",
-                         "dimension":"dimensions_pdata_id",
+                         "dimension":"context_pdata_id",
                          "value":"{{ producer_env }}.sunbird.portal"
                       },
                       {
@@ -2769,7 +2768,7 @@
                    "filters":[
                       {
                          "type":"equals",
-                         "dimension":"dimensions_pdata_id",
+                         "dimension":"context_pdata_id",
                          "value":"{{ producer_env }}.sunbird.app"
                       },
                       {
@@ -2811,7 +2810,7 @@
                    "filters":[
                     {
                         "type":"in",
-                        "dimension":"dimensions_pdata_id",
+                        "dimension":"context_pdata_id",
                         "values":[
                           "{{ producer_env }}.sunbird.portal",
                           "{{ producer_env }}.sunbird.app"
@@ -2865,7 +2864,7 @@
                    "filters":[
                       {
                          "type":"equals",
-                         "dimension":"dimensions_pdata_id",
+                         "dimension":"context_pdata_id",
                          "value":"{{ producer_env }}.sunbird.portal"
                       },
                       {
@@ -2916,7 +2915,7 @@
                    "filters":[
                       {
                          "type":"equals",
-                         "dimension":"dimensions_pdata_id",
+                         "dimension":"context_pdata_id",
                          "value":"{{ producer_env }}.sunbird.app"
                       },
                       {
@@ -3151,7 +3150,6 @@
         "parallelization": 8,
         "appName": "Druid Query Processor",
         "deviceMapping": false
-  }
 },
   "druid-query-processor": {
       "search": {
