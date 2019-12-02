@@ -114,17 +114,10 @@ public class Telemetry {
         return map != null ? map.hashCode() : 0;
     }
 
-    public String getUID() {
-        return this.<String>read("uid").value();
-    }
-
     public String id() {
         return this.<String>read("metadata.checksum").value();
     }
 
-    public Date getTime() throws ParseException {
-        return getTime("ts", "yyyy-MM-dd'T'HH:mm:ss");
-    }
 
     public Date getTime(String key, String timePattern) throws ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(timePattern);
@@ -138,10 +131,6 @@ public class Telemetry {
         if (read(fieldName).isNull()) {
             add(fieldName, value);
         }
-    }
-
-    public String getChannel() {
-        return this.<String>read("channel").value();
     }
 
     public long getEts() throws TelemetryReaderException {
@@ -171,10 +160,4 @@ public class Telemetry {
         }
     }
 
-    public Map<String, Object> getEdata(){
-    	return this.<Map<String, Object>>read("edata.eks").value();
-    }
-    public String getJson(){
-        return new Gson().toJson(map);
-    }
 }
