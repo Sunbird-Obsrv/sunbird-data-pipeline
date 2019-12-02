@@ -224,6 +224,7 @@ public class TelemetryTest {
     @Test
     public void shouldThrowError(){
         Telemetry telemetry = new Telemetry(null);
+
         try {
             Assert.assertNull(telemetry.mustReadValue("invalidKey"));
         }catch (Exception e){
@@ -231,6 +232,30 @@ public class TelemetryTest {
         }
     }
 
+    @Test
+    public void shouldValidateTheNullableObject(){
+        Telemetry telemetry1 = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
+        Telemetry telemetry2 = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
+        NullableValue<Object> eid1 =  telemetry1.read("eid");
+        NullableValue<Object> eid2 =  telemetry2.read("eid");
+        Assert.assertTrue(eid1.equals(eid2));
+        System.out.println(eid1.equals(eid2));
+        Assert.assertNotNull(eid1.hashCode());
+        Assert.assertNotNull(eid1.toString());
+    }
 
+    @Test
+    public void shouldGetTheDefaultValue(){
+        Telemetry telemetry = new Telemetry(null);
+        NullableValue<Object> eid1 =  telemetry.read("eid");
+        Assert.assertEquals( eid1.valueOrDefault("START"), "START");
+    }
+
+    @Test
+    public void shouldGetTheActualValue(){
+        Telemetry telemetry = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
+        NullableValue<Object> eid1 =  telemetry.read("eid");
+        Assert.assertEquals( eid1.valueOrDefault("START"), "IMPRESSION");
+    }
 
 }
