@@ -10,6 +10,21 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 public class TelemetryTest {
+
+
+    @Test
+    public void shouldReadTheDefaultValue(){
+        Telemetry telemetry = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT_MISSING_FIELDS));
+        Assert.assertEquals( telemetry.readOrDefault("context.channel","in.sunbird").value(), "in.sunbird");
+    }
+
+    @Test
+    public void shouldReadTheActualValue(){
+        Telemetry telemetry = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
+        Assert.assertEquals( telemetry.readOrDefault("context.channel","in.sunbird").value(), "505c7c48ac6dc1edc9b08f21db5a571d");
+    }
+
+
     @Test
     public void shouldGetFirstStringValue() {
         Map hashMap = new HashMap<String, String>();

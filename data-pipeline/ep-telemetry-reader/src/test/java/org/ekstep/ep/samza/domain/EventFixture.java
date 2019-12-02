@@ -17,7 +17,6 @@ public class EventFixture {
             "    \"type\": \"User\"\n" +
             "  },\n" +
             "  \"context\": {\n" +
-            "    \"channel\": \"505c7c48ac6dc1edc9b08f21db5a571d\",\n" +
             "    \"pdata\": {\n" +
             "      \"id\": \"prod.diksha.portal\",\n" +
             "      \"ver\": \"2.0.0\",\n" +

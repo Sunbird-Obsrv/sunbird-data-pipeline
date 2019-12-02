@@ -1,9 +1,11 @@
 package org.ekstep.ep.samza.domain;
 
 import org.ekstep.ep.samza.events.domain.Events;
+import org.ekstep.ep.samza.reader.NullableValue;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class EventTest  {
@@ -123,6 +125,19 @@ public class EventTest  {
         Assert.assertNotNull(event.getChecksum());
     }
 
+    @Test
+    public void shouldGetTheStringObject() {
+        Event event = new Event(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
+        Assert.assertNotNull(event.toString());
+    }
+
+    @Test
+    public void shouldUpdateTheTSValue() {
+        Event event = new Event(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
+        event.updateTs("5468376530");
+        Assert.assertEquals(event.getData().value(), "5468376530");
+    }
+
 
 }
 
@@ -135,6 +150,11 @@ class Event extends Events {
     public Event(Map<String, Object> map) {
         super(map);
     }
+
+    public <T> NullableValue<T> getData() {
+        return telemetry.read("@timestamp");
+    }
+
 }
 
 
