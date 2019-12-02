@@ -203,16 +203,6 @@ public class TelemetryTest {
         Assert.assertNotNull(telemetry.id());
     }
 
-    @Test
-    public void shouldGetTheTimeStampValue(){
-        Telemetry telemetry = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
-        try{
-            System.out.println("ets" + telemetry.getTime("ets", "yyyy-MM-dd'T'HH:mm:ss"));
-            Assert.assertNotNull(telemetry.getTime("ets", "yyyy-MM-dd'T'HH:mm:ss"));
-        }catch (Exception e){
-            System.out.println("Unable to get the timestamp ");
-        }
-    }
 
     @Test
     public void CheckObjectsAreEqualOrNot(){

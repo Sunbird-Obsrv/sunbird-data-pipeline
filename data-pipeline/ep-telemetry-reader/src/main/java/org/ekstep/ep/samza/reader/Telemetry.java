@@ -1,7 +1,7 @@
 package org.ekstep.ep.samza.reader;
 
 
-import com.google.gson.Gson;
+import org.ekstep.ep.samza.core.Logger;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,8 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-
-import org.ekstep.ep.samza.core.Logger;
 
 import static java.text.MessageFormat.format;
 
@@ -117,15 +115,6 @@ public class Telemetry {
     public String id() {
         return this.<String>read("metadata.checksum").value();
     }
-
-
-    public Date getTime(String key, String timePattern) throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(timePattern);
-        String ts = this.<String>read(key).value();
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("IST"));
-        return simpleDateFormat.parse(ts);
-    }
-
 
     public <T> void addFieldIfAbsent(String fieldName, T value) {
         if (read(fieldName).isNull()) {
