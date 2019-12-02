@@ -1,87 +1,50 @@
 package org.ekstep.ep.samza.domain;
 
-import java.text.MessageFormat;
+import org.ekstep.ep.samza.events.domain.Events;
+import org.ekstep.ep.samza.reader.NullableValue;
+import org.ekstep.ep.samza.task.TelemetryRouterConfig;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ekstep.ep.samza.reader.NullableValue;
-import org.ekstep.ep.samza.reader.Telemetry;
-import org.ekstep.ep.samza.task.TelemetryRouterConfig;
+public class Event extends Events {
 
-import com.google.gson.Gson;
-import org.ekstep.ep.samza.util.Path;
 
-public class Event {
+    public Event(Map<String, Object> map) {
+        super(map);
+    }
 
-	private final Telemetry telemetry;
-	private Path path;
+    public void markFailure(String error, TelemetryRouterConfig config) {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags.tr_processed", false);
 
-	public Event(Map<String, Object> map) {
-		this.telemetry = new Telemetry(map);
-		path = new Path();
-	}
+        telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
+        telemetry.add("metadata.tr_error", error);
+        telemetry.add("metadata.src", config.jobName());
+    }
 
-	public Map<String, Object> getMap() {
-		return telemetry.getMap();
-	}
+    public void setTimestamp() {
+        Double ets = safelyParse(path.ets());
+        SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-	public String getJson() {
-		Gson gson = new Gson();
-		String json = gson.toJson(getMap());
-		return json;
-	}
+        if (ets != null) {
+            String updatedTs = simple.format(new Date(ets.longValue()));
+            telemetry.add(path.ts(), updatedTs);
+        } else {
+            telemetry.add(path.ts(), simple.format(new Date()));
+        }
+    }
 
-	public String mid() {
-		NullableValue<String> checksum = telemetry.read("mid");
-		return checksum.value();
-	}
-	
-	public String did() {
-		NullableValue<String> did = telemetry.read("dimensions.did");
-		return did.isNull() ? telemetry.<String>read("context.did").value() : did.value();
-	}
-
-	public String eid() {
-		NullableValue<String> eid = telemetry.read("eid");
-		return eid.value();
-	}
-
-	@Override
-	public String toString() {
-		return "Event{" + "telemetry=" + telemetry + '}';
-	}
-
-	public void markFailure(String error, TelemetryRouterConfig config) {
-		telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-		telemetry.add("flags.tr_processed", false);
-
-		telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
-		telemetry.add("metadata.tr_error", error);
-		telemetry.add("metadata.src", config.jobName());
-	}
-
-	public void setTimestamp() {
-		Double ets = safelyParse(path.ets());
-		SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-
-		if (ets != null) {
-			String updatedTs = simple.format(new Date(ets.longValue()));
-			telemetry.add(path.ts(), updatedTs);
-		} else {
-			telemetry.add(path.ts(), simple.format(new Date()));
-		}
-	}
-
-	private Double safelyParse(String etsField) {
-		try {
-			NullableValue<Double> time = telemetry.read(etsField);
-			return time.value();
-		} catch (ClassCastException e) {
-			NullableValue<Long> timeInLong = telemetry.read(etsField);
-			return Double.valueOf(timeInLong.value());
-		}
-	}
+    private Double safelyParse(String etsField) {
+        try {
+            NullableValue<Double> time = telemetry.read(etsField);
+            return time.value();
+        } catch (ClassCastException e) {
+            NullableValue<Long> timeInLong = telemetry.read(etsField);
+            return Double.valueOf(timeInLong.value());
+        }
+    }
 
 }

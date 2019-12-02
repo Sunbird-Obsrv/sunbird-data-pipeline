@@ -179,8 +179,22 @@ play.server {
   }
 }
 
-play.modules.enabled+="MetricsModule"
 play.modules.enabled+="modules.ActorInjector"
+play.filters.enabled+="filter.RequestInterceptor"
+play.filters.enabled+=play.filters.hosts.AllowedHostsFilter
+
+# Secret key
+# ~~~~~
+# The secret key is used to secure cryptographics functions.
+# If you deploy your application to several instances be sure to use the same key!
+play.http.secret.key="{{dp_play_http_secret_key}}"
+
+play.filters.hosts {
+   # A list of valid hosts (e.g. "example.com") or suffixes of valid hosts (e.g. ".example.com")
+   # Note that ".example.com" will match example.com and any subdomain of example.com, with or without a trailing dot.
+   # "." matches all domains, and "" matches an empty or nonexistent host.
+  allowed = ["."]
+}
 
 # body parser
 play.http.parser.maxMemoryBuffer=10M

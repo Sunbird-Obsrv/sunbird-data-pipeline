@@ -84,7 +84,7 @@
   template: src=_common/common.runtime.properties dest={{ druid_path }}conf/druid/_common/
         owner={{ druid_user }} mode=0755
 
-- name: Copy common.properties for Druid node {{ druid_role }}
+- name: Copy log4j2.xml for Druid node {{ druid_role }}
   template: src={{ druid_role }}/log4j2.xml dest={{ druid_path }}conf/druid/{{ service }}/
         owner={{ druid_user }} mode=0755
 

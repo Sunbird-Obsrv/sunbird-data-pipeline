@@ -1,81 +1,18 @@
 package org.ekstep.ep.samza.domain;
 
 
-import com.google.gson.Gson;
 import org.apache.commons.lang.StringUtils;
-import org.ekstep.ep.samza.reader.NullableValue;
-import org.ekstep.ep.samza.reader.Telemetry;
+import org.ekstep.ep.samza.events.domain.Events;
 import org.ekstep.ep.samza.task.DeDuplicationConfig;
-
 import java.util.HashMap;
 import java.util.Map;
 
-public class Event {
-    private final Telemetry telemetry;
+public class Event extends Events {
 
     public Event(Map<String, Object> map) {
-        this.telemetry = new Telemetry(map);
+        super(map);
     }
 
-    public Map<String, Object> getMap() {
-        return telemetry.getMap();
-    }
-
-    public String getJson() {
-        Gson gson = new Gson();
-        String json = gson.toJson(getMap());
-        return json;
-    }
-
-    public String getChecksum() {
-
-        String checksum = id();
-        if (checksum != null)
-            return checksum;
-
-        return mid();
-    }
-
-    public String id() {
-        NullableValue<String> checksum = telemetry.read("metadata.checksum");
-        return checksum.value();
-    }
-
-    public String mid() {
-        NullableValue<String> checksum = telemetry.read("mid");
-        return checksum.value();
-    }
-    
-    public String did() {
-        NullableValue<String> checksum = telemetry.read("context.did");
-        return checksum.value();
-    }
-
-    public String producerId() {
-        NullableValue<String> producerId = telemetry.read("context.pdata.id");
-        return producerId.value();
-    }
-
-    public final String producerPid() {
-        NullableValue<String> producerPid = telemetry.read("context.pdata.pid");
-        return producerPid.value();
-    }
-
-    public String eid() {
-        NullableValue<String> eid = telemetry.read("eid");
-        return eid.value();
-    }
-
-    public void addEventType() {
-        telemetry.add("type", "events");
-    }
-
-    @Override
-    public String toString() {
-        return "Event{" +
-                "telemetry=" + telemetry +
-                '}';
-    }
 
     public void markSkipped() {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
@@ -114,7 +51,7 @@ public class Event {
     public void updateDefaults(DeDuplicationConfig config) {
         String channelString = telemetry.<String>read("context.channel").value();
         String channel = StringUtils.deleteWhitespace(channelString);
-        if(channel == null || channel.isEmpty()) {
+        if (channel == null || channel.isEmpty()) {
             telemetry.addFieldIfAbsent("context", new HashMap<String, Object>());
             telemetry.add("context.channel", config.defaultChannel());
         }

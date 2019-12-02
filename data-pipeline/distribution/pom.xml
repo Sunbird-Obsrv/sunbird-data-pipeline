@@ -9,7 +9,9 @@
         <artifactId>jobs</artifactId>
         <version>0.0.1</version>
     </parent>
-
+    <properties>
+        <jacoco.plugin.version>0.8.5</jacoco.plugin.version>
+    </properties>
     <artifactId>distribution</artifactId>
 
     <packaging>pom</packaging>
@@ -88,7 +90,14 @@
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>redis-updater</artifactId>
+            <artifactId>user-cache-updater</artifactId>
+            <version>0.1.5</version>
+            <type>tar.gz</type>
+            <classifier>distribution</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem.jobs</groupId>
+            <artifactId>content-cache-updater</artifactId>
             <version>0.1.5</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
@@ -124,6 +133,26 @@
                             <descriptors>
                                 <descriptor>src/main/assembly/src.xml</descriptor>
                             </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>report-aggregate</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report-aggregate</goal>
+                        </goals>
+                        <configuration>
+                            <dataFileIncludes>
+                                <dataFileInclude>**/jacoco-unit.exec</dataFileInclude>
+                            </dataFileIncludes>
+                            <outputDirectory>${project.reporting.outputDirectory}/jacoco-aggregate</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

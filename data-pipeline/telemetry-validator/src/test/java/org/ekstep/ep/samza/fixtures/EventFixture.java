@@ -230,6 +230,262 @@ public class EventFixture {
             "    \"odn_error\":null\n" +
             "  }\n" +
             "}";
+
+    public static final String INVALID_EVENT = "{\n" +
+            "  \"actor\": {\n" +
+            "    \"type\": \"User\",\n" +
+            "    \"id\": \"393407b1-66b1-4c86-9080-b2bce9842886\"\n" +
+            "  },\n" +
+            "  \"eid\": \"LOG\",\n" +
+            "  \"edata\": {\n" +
+            "    \"id\": \"ContentDetail\",\n" +
+            "    \"pageid\": \"ContentDetail\",\n" +
+            "    \"type\": \"TOUCH\",\n" +
+            "    \"subtype\": \"ContentDownload-Initiate\"\n" +
+            "  },\n" +
+            "  \"ver\": \"3.0\",\n" +
+            "  \"ets\": \"1541574545180\",\n" +
+            "  \"context\": {\n" +
+            "    \"pdata\": {\n" +
+            "      \"ver\": \"2.1.8\",\n" +
+            "      \"pid\": \"sunbird.app\",\n" +
+            "      \"id\": \"prod.diksha.app\"\n" +
+            "    },\n" +
+            "    \"channel\": \"0123221617357783046602\",\n" +
+            "    \"env\": \"sdk\",\n" +
+            "    \"did\": \"68dfc64a7751ad47617ac1a4e0531fb761ebea6f\",\n" +
+            "    \"cdata\": [\n" +
+            "      {\n" +
+            "        \"type\": \"qr\",\n" +
+            "        \"id\": \"K4KCXE\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"type\": \"API\",\n" +
+            "        \"id\": \"f3ac6610-d218-11e8-b2bb-1598ac1fcb99\"\n" +
+            "      }\n" +
+            "    ],\n" +
+            "    \"sid\": \"70ea93d0-e521-4030-934f-276e7194c225\"\n" +
+            "  },\n" +
+            "  \"mid\": \"e6a3bcd3-eb78-457b-8fc0-4acc94642ebf\",\n" +
+            "  \"object\": {\n" +
+            "    \"id\": \"do_31249561779090227216256\",\n" +
+            "    \"type\": \"Content\",\n" +
+            "    \"version\": \"\"\n" +
+            "  },\n" +
+            "  \"tags\": [],\n" +
+            "  \"syncts\": 1539846605341,\n" +
+            "  \"@timestamp\": \"2018-10-18T07:10:05.341Z\",\n" +
+            "  \"derivedlocationdata\": {\n" +
+            "    \"district\": \"Bengaluru\",\n" +
+            "    \"state\": 1234,\n" +
+            "    \"from\": \"user-profile\"\n" +
+            "  },\n" +
+            "  \"devicedata\": {\n" +
+            "    \"statecustomcode\": \"KA-Custom\",\n" +
+            "    \"country\": \"India\",\n" +
+            "    \"iso3166statecode\": \"IN-KA\",\n" +
+            "    \"city\": \"Bangalore\",\n" +
+            "    \"countrycode\": \"IN\",\n" +
+            "    \"statecode\": \"KA\",\n" +
+            "    \"devicespec\": {\n" +
+            "      \"os\": \"Android 6.0\",\n" +
+            "      \"make\": \"Motorola XT1706\"\n" +
+            "    },\n" +
+            "    \"districtcustom\": \"Banglore-Custom\",\n" +
+            "    \"firstaccess\": 1559484698000,\n" +
+            "    \"uaspec\": {\n" +
+            "      \"agent\": \"Mozilla\",\n" +
+            "      \"ver\": \"5.0\",\n" +
+            "      \"system\": \"iPad\",\n" +
+            "      \"raw\": \"Mozilla/5.0 (X11 Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)\",\n" +
+            "      \"platform\": \"AppleWebKit/531.21.10\"\n" +
+            "    },\n" +
+            "    \"state\": \"Karnataka\",\n" +
+            "    \"statecustomname\": \"Karnatak-Custom\",\n" +
+            "    \"userdeclared\": {\n" +
+            "      \"district\": \"Bangalore\",\n" +
+            "      \"state\": \"Karnataka\"\n" +
+            "    }\n" +
+            "  }\n" +
+            "}";
+
+    public static final String  VALID_LOG_EVENT = "{\n" +
+            "  \"eid\": \"LOG\",\n" +
+            "  \"ets\": 1570817279146,\n" +
+            "  \"ver\": \"3.0\",\n" +
+            "  \"mid\": \"LOG:2a210813fac274656f194f9807ad8abf\",\n" +
+            "  \"actor\": {\n" +
+            "    \"id\": \"1\",\n" +
+            "    \"type\": \"service\"\n" +
+            "  },\n" +
+            "  \"context\": {\n" +
+            "    \"channel\": \"505c7c48ac6dc1edc9b08f21db5a571d\",\n" +
+            "    \"pdata\": {\n" +
+            "      \"id\": \"prod.diksha.content-service\",\n" +
+            "      \"ver\": \"1.0\",\n" +
+            "      \"pid\": \"sunbird-content-service\"\n" +
+            "    },\n" +
+            "    \"env\": \"content\",\n" +
+            "    \"sid\": \"\",\n" +
+            "    \"did\": \"1e465bed2138b8f2764d946492293e2b2f628789\",\n" +
+            "    \"cdata\": [],\n" +
+            "    \"rollup\": {}\n" +
+            "  },\n" +
+            "  \"object\": {\n" +
+            "    \"id\": \"do_312776645813747712111638\",\n" +
+            "    \"type\": \"content\",\n" +
+            "    \"ver\": \"\",\n" +
+            "    \"rollup\": {}\n" +
+            "  },\n" +
+            "  \"tags\": [],\n" +
+            "  \"edata\": {\n" +
+            "    \"type\": \"api_access\",\n" +
+            "    \"level\": \"INFO\",\n" +
+            "    \"message\": \"successful\",\n" +
+            "    \"params\": [\n" +
+            "      {\n" +
+            "        \"rid\": \"0ece8640-ec52-11e9-a3d6-697ee5684e40\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"title\": \"Content read api\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"category\": \"contentread\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"url\": \"content/read\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"method\": \"GET\"\n" +
+            "      }\n" +
+            "    ]\n" +
+            "  },\n" +
+            "  \"syncts\": 1570817431399,\n" +
+            "  \"@timestamp\": \"2019-10-11T18:10:31.399Z\",\n" +
+            "  \"flags\": {\n" +
+            "    \"tv_processed\": true,\n" +
+            "    \"dd_processed\": true\n" +
+            "  },\n" +
+            "  \"type\": \"events\"\n" +
+            "}";
+
+    public static final String VALID_LOG_WITH_MISSING_CHANNEL="{\n" +
+            "  \"eid\": \"LOG\",\n" +
+            "  \"ets\": 1570817279146,\n" +
+            "  \"ver\": \"3.0\",\n" +
+            "  \"mid\": \"LOG:2a210813fac274656f194f9807ad8abf\",\n" +
+            "  \"actor\": {\n" +
+            "    \"id\": \"1\",\n" +
+            "    \"type\": \"service\"\n" +
+            "  },\n" +
+            "  \"context\": {\n" +
+            "    \"pdata\": {\n" +
+            "      \"id\": \"prod.diksha.content-service\",\n" +
+            "      \"ver\": \"1.0\",\n" +
+            "      \"pid\": \"sunbird-content-service\"\n" +
+            "    },\n" +
+            "    \"env\": \"content\",\n" +
+            "    \"sid\": \"\",\n" +
+            "    \"did\": \"1e465bed2138b8f2764d946492293e2b2f628789\",\n" +
+            "    \"cdata\": [],\n" +
+            "    \"rollup\": {}\n" +
+            "  },\n" +
+            "  \"object\": {\n" +
+            "    \"id\": \"do_312776645813747712111638\",\n" +
+            "    \"type\": \"content\",\n" +
+            "    \"ver\": \"\",\n" +
+            "    \"rollup\": {}\n" +
+            "  },\n" +
+            "  \"tags\": [],\n" +
+            "  \"edata\": {\n" +
+            "    \"type\": \"api_access\",\n" +
+            "    \"level\": \"INFO\",\n" +
+            "    \"message\": \"successful\",\n" +
+            "    \"params\": [\n" +
+            "      {\n" +
+            "        \"rid\": \"0ece8640-ec52-11e9-a3d6-697ee5684e40\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"title\": \"Content read api\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"category\": \"contentread\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"url\": \"content/read\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"method\": \"GET\"\n" +
+            "      }\n" +
+            "    ]\n" +
+            "  },\n" +
+            "  \"syncts\": 1570817431399,\n" +
+            "  \"@timestamp\": \"2019-10-11T18:10:31.399Z\",\n" +
+            "  \"flags\": {\n" +
+            "    \"tv_processed\": true,\n" +
+            "    \"dd_processed\": true\n" +
+            "  },\n" +
+            "  \"type\": \"events\"\n" +
+            "}";
+
+    public static final String VALID_LOG_WITH_MISSING_SYNCTS="{\n" +
+            "  \"eid\": \"LOG\",\n" +
+            "  \"ets\": 1570817279146,\n" +
+            "  \"ver\": \"3.0\",\n" +
+            "  \"mid\": \"LOG:2a210813fac274656f194f9807ad8abf\",\n" +
+            "  \"actor\": {\n" +
+            "    \"id\": \"1\",\n" +
+            "    \"type\": \"service\"\n" +
+            "  },\n" +
+            "  \"context\": {\n" +
+            "    \"channel\": \"505c7c48ac6dc1edc9b08f21db5a571d\",\n" +
+            "    \"pdata\": {\n" +
+            "      \"id\": \"prod.diksha.content-service\",\n" +
+            "      \"ver\": \"1.0\",\n" +
+            "      \"pid\": \"sunbird-content-service\"\n" +
+            "    },\n" +
+            "    \"env\": \"content\",\n" +
+            "    \"sid\": \"\",\n" +
+            "    \"did\": \"1e465bed2138b8f2764d946492293e2b2f628789\",\n" +
+            "    \"cdata\": [],\n" +
+            "    \"rollup\": {}\n" +
+            "  },\n" +
+            "  \"object\": {\n" +
+            "    \"id\": \"do_312776645813747712111638\",\n" +
+            "    \"type\": \"content\",\n" +
+            "    \"ver\": \"\",\n" +
+            "    \"rollup\": {}\n" +
+            "  },\n" +
+            "  \"tags\": [],\n" +
+            "  \"edata\": {\n" +
+            "    \"type\": \"api_access\",\n" +
+            "    \"level\": \"INFO\",\n" +
+            "    \"message\": \"successful\",\n" +
+            "    \"params\": [\n" +
+            "      {\n" +
+            "        \"rid\": \"0ece8640-ec52-11e9-a3d6-697ee5684e40\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"title\": \"Content read api\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"category\": \"contentread\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"url\": \"content/read\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"method\": \"GET\"\n" +
+            "      }\n" +
+            "    ]\n" +
+            "  },\n" +
+            "  \"flags\": {\n" +
+            "    \"tv_processed\": true,\n" +
+            "    \"dd_processed\": true\n" +
+            "  },\n" +
+            "  \"type\": \"events\"\n" +
+            "}";
+
 	
 	public static final String ANY_STRING = "Hey Samza, Whats Up?";
 	public static final String EMPTY_JSON = "{}";

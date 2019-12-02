@@ -57,12 +57,6 @@
   template: src=conf.j2 dest={{ analytics_api.root }}/{{ env }}.conf mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   become_user: "{{analytics_user}}"
 
-- name: temporarly overriding the netty jar
-  get_url:
-    url: http://central.maven.org/maven2/io/netty/netty-all/4.0.37.Final/netty-all-4.0.37.Final.jar
-    dest: "{{ analytics_api.root }}/analytics-api-1.0/lib/"
-  become_user: "{{analytics_user}}"
-
 - name: Remove netty-all 4.0.29 from lib folder
   file: path={{ analytics_api.home }}/lib/io.netty.netty-all-4.0.29.Final.jar state=absent
   become_user: "{{analytics_user}}"
@@ -85,7 +79,7 @@
 
 #Update ConsumerChannel Cache
 - uri:
-    url: "http://{{ ansible_hostname }}:9000/refresh-cache/{{ consumer_channel_cache_type }}"
+    url: "http://localhost:9000/refresh-cache/{{ consumer_channel_cache_type }}"
     method: GET
     return_content: yes
   tags: refresh-cache

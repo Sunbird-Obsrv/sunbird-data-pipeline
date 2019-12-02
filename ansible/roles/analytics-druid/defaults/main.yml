@@ -151,3 +151,12 @@ druid_middlemanager_peon_processing_threads: 2
 
 druid_middlemanager_peon_segmentcache_path: "/var/segment_cache"
 druid_middlemanager_peon_server_maxsize: 0
+
+# Router configurations
+
+druid_router_heap_size: 1g
+druid_router_http_numConnections: 50
+druid_router_http_readTimeout: PT5M
+druid_router_http_numMaxThreads: 100
+druid_server_http_numThreads: 100
+druid_router_managementProxy_enabled: true
