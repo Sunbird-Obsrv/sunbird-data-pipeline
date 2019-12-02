@@ -3454,7 +3454,6 @@
         "deviceMapping": false
   },
   "audit-metrics-report": {
-  {
     "search": {
       "type": "none"
     },
@@ -3470,7 +3469,7 @@
                 "bucket": "{{ bucket }}",
                 "prefix": "telemetry-denormalized/raw/",
                 "startDate": "$(date --date yesterday '+%Y-%m-%d')",
-                "endDate": "$(date '+%Y-%m-%d')",
+                "endDate": "$(date --date yesterday '+%Y-%m-%d')",
               }
             ]
           },
@@ -3516,7 +3515,7 @@
                 "bucket": "{{ bucket }}",
                 "prefix": "failed/",
                 "startDate": "$(date --date yesterday '+%Y-%m-%d')",
-                "endDate": "$(date '+%Y-%m-%d')",
+                "endDate": "$(date --date yesterday '+%Y-%m-%d')",
               }
             ]
           }
@@ -3530,7 +3529,7 @@
                 "bucket": "{{ bucket }}",
                 "prefix": "unique/",
                 "startDate": "$(date --date yesterday '+%Y-%m-%d')",
-                "endDate": "$(date '+%Y-%m-%d')",
+                "endDate": "$(date --date yesterday '+%Y-%m-%d')",
               }
             ]
           }
@@ -3544,7 +3543,7 @@
                 "bucket": "{{ bucket }}",
                 "prefix": "raw/",
                 "startDate": "$(date --date yesterday '+%Y-%m-%d')",
-                "endDate": "$(date '+%Y-%m-%d')",
+                "endDate": "$(date --date yesterday '+%Y-%m-%d')",
               }
             ]
           }
@@ -3600,6 +3599,5 @@
     ],
     "parallelization": 8,
     "appName": "Metrics Audit"
-  }
   }
 }
