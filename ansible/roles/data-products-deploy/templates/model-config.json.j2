@@ -2554,7 +2554,7 @@
             "id":"district_monthly",
             "queryType":"groupBy",
             "dateRange":{
-                "staticInterval":"Last30Days",
+                "staticInterval":"LastMonth",
                 "granularity":"all"
             },
             "metrics":[
@@ -2564,7 +2564,7 @@
                 "druidQuery":{
                     "queryType":"groupBy",
                     "dataSource":"telemetry-events",
-                    "intervals":"Last30Days",
+                    "intervals":"LastMonth",
                     "aggregations":[
                       {
                           "name":"total_unique_devices",
@@ -2650,7 +2650,7 @@
         "id":"district_weekly",
         "queryType":"groupBy",
         "dateRange":{
-            "staticInterval":"Last7Days",
+            "staticInterval":"LastWeek",
             "granularity":"all"
         },
         "metrics":[
@@ -2660,7 +2660,7 @@
                 "druidQuery":{
                    "queryType":"groupBy",
                    "dataSource":"telemetry-events",
-                   "intervals":"Last7Days",
+                   "intervals":"LastWeek",
                    "aggregations":[
                       {
                          "name":"total_unique_devices",
@@ -2705,7 +2705,7 @@
                 "druidQuery":{
                    "queryType":"groupBy",
                    "dataSource":"telemetry-events",
-                   "intervals":"Last7Days",
+                   "intervals":"LastWeek",
                    "aggregations":[
                       {
                          "name":"total_unique_devices_on_portal",
@@ -2747,7 +2747,7 @@
                 "druidQuery":{
                    "queryType":"groupBy",
                    "dataSource":"telemetry-events",
-                   "intervals":"Last7Days",
+                   "intervals":"LastWeek",
                    "aggregations":[
                       {
                          "name":"total_unique_devices_on_app",
@@ -2789,7 +2789,7 @@
                 "druidQuery":{
                    "queryType":"groupBy",
                    "dataSource":"telemetry-events",
-                   "intervals":"Last7Days",
+                   "intervals":"LastWeek",
                    "aggregations":[
                       {
                          "name":"total_scans",
@@ -2843,7 +2843,7 @@
                 "druidQuery":{
                    "queryType":"groupBy",
                    "dataSource":"telemetry-events",
-                   "intervals":"Last7Days",
+                   "intervals":"LastWeek",
                    "aggregations":[
                       {
                          "name":"total_scans_on_portal",
@@ -2894,7 +2894,7 @@
                 "druidQuery":{
                    "queryType":"groupBy",
                    "dataSource":"telemetry-events",
-                   "intervals":"Last7Days",
+                   "intervals":"LastWeek",
                    "aggregations":[
                       {
                          "name":"total_scans_on_app",
@@ -2945,7 +2945,7 @@
                 "druidQuery":{
                    "queryType":"groupBy",
                    "dataSource":"summary-events",
-                   "intervals":"Last7Days",
+                   "intervals":"LastWeek",
                    "aggregations":[
                       {
                          "name":"total_content_plays",
@@ -3000,7 +3000,7 @@
                 "druidQuery":{
                    "queryType":"groupBy",
                    "dataSource":"summary-events",
-                   "intervals":"Last7Days",
+                   "intervals":"LastWeek",
                    "aggregations":[
                       {
                          "name":"total_content_plays_on_portal",
@@ -3052,7 +3052,7 @@
                 "druidQuery":{
                    "queryType":"groupBy",
                    "dataSource":"summary-events",
-                   "intervals":"Last7Days",
+                   "intervals":"LastWeek",
                    "aggregations":[
                       {
                          "name":"total_content_plays_on_app",
