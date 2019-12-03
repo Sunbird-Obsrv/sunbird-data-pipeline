@@ -131,7 +131,4 @@ public abstract class Events {
         return telemetry.<String>read("edata.type").value();
     }
 
-    public void addEventType() {
-        telemetry.add("type", "events");
-    }
 }
