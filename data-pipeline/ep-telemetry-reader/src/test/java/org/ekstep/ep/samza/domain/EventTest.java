@@ -138,6 +138,13 @@ public class EventTest  {
         Assert.assertEquals(event.getData().value(), "5468376530");
     }
 
+    @Test
+    public void shouldGetMidValueIfTheCheckSumIsNotPresent() {
+        Event event = new Event(EventFixture.getMap(EventFixture.IMPRESSION_EVENT_MISSING_FIELDS));
+
+        Assert.assertEquals(event.getChecksum(), "IMPRESSION:0093c96434557b2ead169c7156e95770");
+    }
+
 
 }
 
