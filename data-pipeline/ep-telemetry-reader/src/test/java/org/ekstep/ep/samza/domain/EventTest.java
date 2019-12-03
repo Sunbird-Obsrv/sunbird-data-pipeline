@@ -5,10 +5,9 @@ import org.ekstep.ep.samza.reader.NullableValue;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.HashMap;
 import java.util.Map;
 
-public class EventTest  {
+public class EventTest {
 
     @Test
     public void shouldReturnMid() {
@@ -149,8 +148,9 @@ public class EventTest  {
 }
 
 
-
-
+/**
+ * Creating a dummy event class to to test the base abstract class object
+ */
 
 class Event extends Events {
 

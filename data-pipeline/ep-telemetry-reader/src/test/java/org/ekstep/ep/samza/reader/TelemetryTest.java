@@ -13,15 +13,15 @@ public class TelemetryTest {
 
 
     @Test
-    public void shouldReadTheDefaultValue(){
+    public void shouldReadTheDefaultValue() {
         Telemetry telemetry = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT_MISSING_FIELDS));
-        Assert.assertEquals( telemetry.readOrDefault("context.channel","in.sunbird").value(), "in.sunbird");
+        Assert.assertEquals(telemetry.readOrDefault("context.channel", "in.sunbird").value(), "in.sunbird");
     }
 
     @Test
-    public void shouldReadTheActualValue(){
+    public void shouldReadTheActualValue() {
         Telemetry telemetry = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
-        Assert.assertEquals( telemetry.readOrDefault("context.channel","in.sunbird").value(), "505c7c48ac6dc1edc9b08f21db5a571d");
+        Assert.assertEquals(telemetry.readOrDefault("context.channel", "in.sunbird").value(), "505c7c48ac6dc1edc9b08f21db5a571d");
     }
 
 
@@ -174,38 +174,38 @@ public class TelemetryTest {
     }
 
     @Test
-    public void shouldGetTheTimeStamp(){
+    public void shouldGetTheTimeStamp() {
         Telemetry telemetry = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
         Assert.assertNotNull(telemetry.getAtTimestamp());
     }
 
     @Test
-    public void shouldGetTheSyncTS(){
+    public void shouldGetTheSyncTS() {
         Telemetry telemetry = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
         Assert.assertNotNull(telemetry.getSyncts());
     }
 
     @Test
-    public void shouldGetHashCodeValue(){
+    public void shouldGetHashCodeValue() {
         Telemetry telemetry = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
         Assert.assertNotNull(telemetry.hashCode());
     }
 
     @Test
-    public void shouldGetStringObject(){
+    public void shouldGetStringObject() {
         Telemetry telemetry = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
         Assert.assertNotNull(telemetry.toString());
     }
 
     @Test
-    public void shouldGetTheMetaDataValue(){
+    public void shouldGetTheMetaDataValue() {
         Telemetry telemetry = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
         Assert.assertNotNull(telemetry.id());
     }
 
 
     @Test
-    public void CheckObjectsAreEqualOrNot(){
+    public void CheckObjectsAreEqualOrNot() {
         Telemetry telemetry1 = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
         Telemetry telemetry2 = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
         String stringObj = new String();
@@ -214,35 +214,35 @@ public class TelemetryTest {
     }
 
     @Test
-    public void ShouldAddFieldIfNotPresent(){
+    public void ShouldAddFieldIfNotPresent() {
         Telemetry telemetry = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
-        telemetry.addFieldIfAbsent("error","Invalid Key");
+        telemetry.addFieldIfAbsent("error", "Invalid Key");
         Assert.assertEquals(telemetry.read("error").value(), "Invalid Key");
     }
 
     @Test
-    public void ShouldReturnNullIfTheKeyIsNotPresent(){
+    public void ShouldReturnNullIfTheKeyIsNotPresent() {
         Telemetry telemetry = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
         Assert.assertNull(telemetry.read("invalidKey").value());
     }
 
     @Test
-    public void shouldThrowError(){
+    public void shouldThrowError() {
         Telemetry telemetry = new Telemetry(null);
 
         try {
             Assert.assertNull(telemetry.mustReadValue("invalidKey"));
-        }catch (Exception e){
+        } catch (Exception e) {
             Assert.assertNotNull(e.getMessage());
         }
     }
 
     @Test
-    public void shouldValidateTheNullableObject(){
+    public void shouldValidateTheNullableObject() {
         Telemetry telemetry1 = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
         Telemetry telemetry2 = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
-        NullableValue<Object> eid1 =  telemetry1.read("eid");
-        NullableValue<Object> eid2 =  telemetry2.read("eid");
+        NullableValue<Object> eid1 = telemetry1.read("eid");
+        NullableValue<Object> eid2 = telemetry2.read("eid");
         Assert.assertTrue(eid1.equals(eid2));
         System.out.println(eid1.equals(eid2));
         Assert.assertNotNull(eid1.hashCode());
@@ -250,17 +250,17 @@ public class TelemetryTest {
     }
 
     @Test
-    public void shouldGetTheDefaultValue(){
+    public void shouldGetTheDefaultValue() {
         Telemetry telemetry = new Telemetry(null);
-        NullableValue<Object> eid1 =  telemetry.read("eid");
-        Assert.assertEquals( eid1.valueOrDefault("START"), "START");
+        NullableValue<Object> eid1 = telemetry.read("eid");
+        Assert.assertEquals(eid1.valueOrDefault("START"), "START");
     }
 
     @Test
-    public void shouldGetTheActualValue(){
+    public void shouldGetTheActualValue() {
         Telemetry telemetry = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
-        NullableValue<Object> eid1 =  telemetry.read("eid");
-        Assert.assertEquals( eid1.valueOrDefault("START"), "IMPRESSION");
+        NullableValue<Object> eid1 = telemetry.read("eid");
+        Assert.assertEquals(eid1.valueOrDefault("START"), "IMPRESSION");
     }
 
 }
