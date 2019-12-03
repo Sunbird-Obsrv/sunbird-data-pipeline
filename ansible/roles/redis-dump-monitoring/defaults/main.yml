@@ -1,4 +1,4 @@
-redis_monitoring_user: learning
+redis_monitoring_user: analytics
 redis_monitoring_home: "/home/{{redis_monitoring_user}}"
 redis_home: "{{redis_monitoring_home}}/redis-stable"
 redis_dump_rdb_time_in_seconds: 900
