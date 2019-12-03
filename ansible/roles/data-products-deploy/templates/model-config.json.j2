@@ -3108,7 +3108,7 @@
           "total_scans":"Total QR Scans",
           "total_scans_on_portal":"Total QR Scans on Portal",
           "total_scans_on_app":"Total QR Scans on App",
-          "total_content_plays":"Total of Content Plays",
+          "total_content_plays":"Total Content Plays",
           "total_content_plays_on_portal":"Total Content Plays on Portal",
           "total_content_plays_on_app":"Total Content Plays on App"
         },
@@ -3452,5 +3452,152 @@
         "parallelization": 8,
         "appName": "Druid Query Processor",
         "deviceMapping": false
+  },
+  "audit-metrics-report": {
+    "search": {
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.model.MetricsAuditJob",
+    "modelParams": {
+      "auditConfig": [
+        {
+          "name": "denorm",
+          "search": {
+            "type": "azure",
+            "queries": [
+              {
+                "bucket": "{{ bucket }}",
+                "prefix": "telemetry-denormalized/raw/",
+                "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+                "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+              }
+            ]
+          },
+          "filters": [
+            {
+              "name": "flags.user_data_retrieved",
+              "operator": "EQ",
+              "value": true
+            },
+            {
+              "name": "flags.content_data_retrieved",
+              "operator": "EQ",
+              "value": true
+            },
+            {
+              "name": "flags.device_data_retrieved",
+              "operator": "EQ",
+              "value": true
+            },
+            {
+              "name": "flags.dialcode_data_retrieved",
+              "operator": "EQ",
+              "value": true
+            },
+            {
+              "name": "flags.collection_data_retrieved",
+              "operator": "EQ",
+              "value": true
+            },
+            {
+              "name": "flags.derived_location_retrieved",
+              "operator": "EQ",
+              "value": true
+            }
+          ]
+        },
+        {
+          "name": "failed",
+          "search": {
+            "type": "azure",
+            "queries": [
+              {
+                "bucket": "{{ bucket }}",
+                "prefix": "failed/",
+                "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+                "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+              }
+            ]
+          }
+        },
+        {
+          "name": "unique",
+          "search": {
+            "type": "azure",
+            "queries": [
+              {
+                "bucket": "{{ bucket }}",
+                "prefix": "unique/",
+                "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+                "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+              }
+            ]
+          }
+        },
+        {
+          "name": "raw",
+          "search": {
+            "type": "azure",
+            "queries": [
+              {
+                "bucket": "{{ bucket }}",
+                "prefix": "raw/",
+                "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+                "endDate": "$(date --date yesterday '+%Y-%m-%d')",
+              }
+            ]
+          }
+        },
+        {
+          "name": "telemetry-count",
+          "search": {
+            "type": "druid",
+            "druidQuery": {
+              "queryType": "timeSeries",
+              "dataSource": "telemetry-events",
+              "intervals": "LastDay",
+              "aggregations": [
+                {
+                  "name": "total_count",
+                  "type": "count",
+                  "fieldName": "count"
+                }
+              ],
+              "descending": "false"
+            }
+          }
+        },
+        {
+          "name": "summary-count",
+          "search": {
+            "type": "druid",
+            "druidQuery": {
+              "queryType": "timeSeries",
+              "dataSource": "summary-events",
+              "intervals": "LastDay",
+              "aggregations": [
+                {
+                  "name": "total_count",
+                  "type": "count",
+                  "fieldName": "count"
+                }
+              ],
+              "descending": "false"
+            }
+          }
+        }
+      ]
+    },
+    "output": [
+      {
+        "to": "kafka",
+        "params": {
+          "brokerList": "{{ brokerlist }}",
+          "topic": "{{ metrics_topic }}"
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Metrics Audit"
   }
 }
