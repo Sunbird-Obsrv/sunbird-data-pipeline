@@ -1,9 +1,14 @@
 package org.ekstep.ep.samza.task;
 
+import com.google.gson.Gson;
 import org.apache.samza.Partition;
+import org.apache.samza.config.Config;
+import org.apache.samza.container.SamzaContainerContext;
+import org.apache.samza.container.TaskName;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.Metric;
 import org.apache.samza.metrics.MetricsRegistry;
+import org.apache.samza.metrics.MetricsRegistryMap;
 import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.TaskContext;
 import org.ekstep.ep.samza.core.JobMetrics;
@@ -12,6 +17,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -68,5 +74,63 @@ public class JobMetricsTest {
         Assert.assertEquals(0, consumer_lag);
     }
 
-
+    @Test
+    public void shouldCollectTheMetrics() {
+        Map<String, ConcurrentHashMap<String, Metric>> concurrentHashMap =
+                MetricsFixture.getMetricMap(MetricsFixture.METRIC_EVENT_STREAM2);
+        MetricsRegistryMap metricsRegistryMap = new MetricsRegistryMap("id");
+        TaskName taskName = new TaskName("task");
+        ArrayList<TaskName> list = new ArrayList<TaskName>();
+        list.add(taskName);
+        SamzaContainerContext samzaContainerContext = new SamzaContainerContext("id", mock(Config.class), list, metricsRegistryMap);
+        when(contextMock.getSamzaContainerContext()).thenReturn(samzaContainerContext);
+        when(contextMock.getMetricsRegistry()).thenReturn(samzaContainerContext.metricsRegistry);
+        metricsRegistryMap.metrics().put("org.apache.samza.system.kafka.KafkaSystemConsumerMetrics", concurrentHashMap.get("org.apache.samza.system.kafka.KafkaSystemConsumerMetrics"));
+        metricsRegistryMap.metrics().put("org.apache.samza.checkpoint.OffsetManagerMetrics", concurrentHashMap.get("org.apache.samza.checkpoint.OffsetManagerMetrics"));
+        jobMetricsMock = new JobMetrics(contextMock, "test-job");
+        jobMetricsMock.incSuccessCounter();
+        jobMetricsMock.deviceDBUpdateSuccess();
+        jobMetricsMock.deviceCacheUpdateSuccess();
+        jobMetricsMock.incFailedCounter();
+        jobMetricsMock.incSkippedCounter();
+        jobMetricsMock.incErrorCounter();
+        jobMetricsMock.incBatchSuccessCounter();
+        jobMetricsMock.incBatchErrorCounter();
+        jobMetricsMock.incPrimaryRouteSuccessCounter();
+        jobMetricsMock.incSecondaryRouteSuccessCounter();
+        jobMetricsMock.incDuplicateCounter();
+        jobMetricsMock.incCacheHitCounter();
+        jobMetricsMock.incCacheErrorCounter();
+        jobMetricsMock.incNoDataCount();
+        jobMetricsMock.incProcessedMessageCount();
+        jobMetricsMock.incUnprocessedMessageCount();
+        jobMetricsMock.incDBHitCount();
+        jobMetricsMock.incUserCacheHitCount();
+        jobMetricsMock.incExpiredEventCount();
+        jobMetricsMock.incUserDeclaredHitCount();
+        jobMetricsMock.incIpLocationHitCount();
+        jobMetricsMock.incNoCacheHitCount();
+        System.out.println(jobMetricsMock.collect());
+        Gson g = new Gson();
+        Map<String, Object> metrics = g.fromJson(jobMetricsMock.collect(), Map.class);
+        assert (metrics.get("job-name")).equals("test-job");
+        assert (metrics.get("cache-hit-count")).equals(1.0);
+        assert (metrics.get("db-hit-count")).equals(1.0);
+        assert (metrics.get("batch-error-count")).equals(1.0);
+        assert (metrics.get("success-message-count")).equals(1.0);
+        assert (metrics.get("user-db-hit-count")).equals(0.0);
+        assert (metrics.get("cache-empty-values-count")).equals(1.0);
+        assert (metrics.get("failed-message-count")).equals(1.0);
+        assert (metrics.get("unprocessed-message-count")).equals(1.0);
+        assert (metrics.get("expired-event-count")).equals(1.0);
+        assert (metrics.get("duplicate-event-count")).equals(1.0);
+        assert (metrics.get("processed-message-count")).equals(1.0);
+        assert (metrics.get("primary-route-success-count")).equals(1.0);
+        assert (metrics.get("batch-success-count")).equals(1.0);
+        assert (metrics.get("secondary-route-success-count")).equals(1.0);
+        assert (metrics.get("device-cache-update-count")).equals(1.0);
+        assert (metrics.get("cache-error-count")).equals(1.0);
+        assert (metrics.get("error-message-count")).equals(1.0);
+        assert (metrics.get("partition")).equals(0.0);
+    }
 }
