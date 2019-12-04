@@ -121,7 +121,6 @@ public class BaseUpdaterTest {
         Clause locationDataClause = QueryBuilder.in("id", map);
         stub(baseUpdater.readFromCassandra("sunbird", "location", locationDataClause)).toReturn(location);
         List<Row> row = baseUpdater.readFromCassandra("sunbird", "location", locationDataClause);
-        Assert.assertNotNull(row);
+        Assert.assertNotNull(row.get(0));
     }
-
 }
