@@ -15,7 +15,7 @@
     <name>ep-core</name>
 
     <dependencies>
-    	<dependency>
+        <dependency>
             <groupId>org.apache.samza</groupId>
             <artifactId>samza-api</artifactId>
             <version>${samza.version}</version>
