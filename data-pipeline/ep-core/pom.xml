@@ -107,6 +107,7 @@
                     <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
                     <excludes>
                         <exclude>org/ekstep/ep/samza/util/**/*</exclude>
+                        <exclude>org/ekstep/ep/samza/core/**/Logger.class</exclude>
                     </excludes>
                 </configuration>
                 <executions>
