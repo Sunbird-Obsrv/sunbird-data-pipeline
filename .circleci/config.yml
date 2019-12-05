@@ -21,4 +21,3 @@ workflows:
   build_and_test:
     jobs:
       - ep-build
-#testing quality gate
