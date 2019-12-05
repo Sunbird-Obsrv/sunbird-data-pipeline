@@ -23,7 +23,7 @@ const httpService = new HttpService(config.druidHost, config.druidEndPoint, Numb
 /**
  * Creating a DruidService Instance to facilitate to filter and validate the query.
  */
-const druidService = new DruidService(config.limits, httpService);
+const druidService = new DruidService({ limits: config.limits }, httpService);
 
 app.post(endPoint, (requestObj, responseObj, next) => {
   druidService.validate()(requestObj.body, responseObj, next);
@@ -34,8 +34,7 @@ app.post(endPoint, (requestObj, responseObj, next) => {
       responseObj.end();
     })
     .catch((err) => {
-      responseObj.status(HttpStatus.INTERNAL_SERVER_ERROR);
-      responseObj.send(err);
+      responseObj.status(HttpStatus.INTERNAL_SERVER_ERROR).json(err.message);
       responseObj.end();
     });
 });
