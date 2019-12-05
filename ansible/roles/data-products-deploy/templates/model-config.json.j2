@@ -3948,6 +3948,237 @@
     "appName": "Druid Query Processor",
     "deviceMapping": false
   },
+  "desktop-consumption-report": {
+    "id": "Desktop-Consumption-Daily-Reports",
+    "queryType": "groupBy",
+    "dateRange": {
+      "staticInterval": "LastDay",
+      "granularity": "day"
+    },
+    "metrics": [
+      {
+        "metric": "totalContentDownloadDesktop",
+        "label": "Total Content Download",
+        "druidQuery": {
+          "queryType": "groupBy",
+          "dataSource": "telemetry-events",
+          "intervals": "LastDay",
+          "granularity": "all",
+          "aggregations": [
+            {
+              "name": "total_content_download_on_desktop",
+              "type": "count",
+              "fieldName": "mid"
+            }
+          ],
+          "dimensions": [
+            {
+              "fieldName": "content_board",
+              "aliasName": "state"
+            }
+          ],
+          "filters": [
+            {
+              "type": "equals",
+              "dimension": "context_env",
+              "value": "downloadManager"
+            },
+            {
+              "type": "equals",
+              "dimension": "edata_state",
+              "value": "COMPLETED"
+            },
+            {
+              "type": "equals",
+              "dimension": "context_pdata_id",
+              "value": "{{ producer_env }}.diksha.desktop"
+            },
+            {
+              "type": "equals",
+              "dimension": "eid",
+              "value": "AUDIT"
+            }
+          ],
+          "descending": "false"
+        }
+      },
+      {
+        "metric": "totalContentPlayedDesktop",
+        "label": "Total time spent in hours",
+        "druidQuery": {
+          "queryType": "groupBy",
+          "dataSource": "summary-events",
+          "intervals": "LastDay",
+          "granularity": "all",
+          "aggregations": [
+            {
+              "name": "total_content_plays_on_desktop",
+              "type": "count",
+              "fieldName": "mid"
+            }
+          ],
+          "dimensions": [
+            {
+              "fieldName": "collection_board",
+              "aliasName": "state"
+            }
+          ],
+          "filters": [
+            {
+              "type": "equals",
+              "dimension": "eid",
+              "value": "ME_WORKFLOW_SUMMARY"
+            },
+            {
+              "type": "equals",
+              "dimension": "dimensions_mode",
+              "value": "play"
+            },
+            {
+              "type": "equals",
+              "dimension": "dimensions_type",
+              "value": "content"
+            },
+            {
+              "type": "equals",
+              "dimension": "dimensions_pdata_id",
+              "value": "{{ producer_env }}.diksha.desktop"
+            }
+          ],
+          "descending": "false"
+        }
+      },
+      {
+        "metric": "totalContentPlayedInHourOnDesktop",
+        "label": "Total Content Download",
+        "druidQuery": {
+          "queryType": "groupBy",
+          "dataSource": "summary-events",
+          "intervals": "LastDay",
+          "granularity": "all",
+          "aggregations": [
+            {
+              "name": "sum__edata_time_spent",
+              "type": "doubleSum",
+              "fieldName": "edata_time_spent"
+            }
+          ],
+          "dimensions": [
+            {
+              "fieldName": "collection_board",
+              "aliasName": "state"
+            }
+          ],
+          "filters": [
+            {
+              "type": "equals",
+              "dimension": "eid",
+              "value": "ME_WORKFLOW_SUMMARY"
+            },
+            {
+              "type": "equals",
+              "dimension": "dimensions_mode",
+              "value": "play"
+            },
+            {
+              "type": "equals",
+              "dimension": "dimensions_type",
+              "value": "content"
+            },
+            {
+              "type": "equals",
+              "dimension": "dimensions_pdata_id",
+              "value": "{{ producer_env }}.diksha.desktop"
+            }
+          ],
+          "postAggregation": [
+            {
+              "type": "arithmetic",
+              "name": "total_time_spent_in_hours_on_desktop",
+              "fields": {
+                "leftField": "sum__edata_time_spent",
+                "rightField": 3600,
+                "rightFieldType": "constant"
+              },
+              "fn": "/"
+            }
+          ],
+          "descending": "false"
+        }
+      },
+      {
+        "metric": "totalUniqueDevicesPlayedContentOnDesktop",
+        "label": "Total Unique Devices On Desktop that played content",
+        "druidQuery": {
+          "queryType": "groupBy",
+          "dataSource": "summary-events",
+          "intervals": "LastDay",
+          "granularity": "all",
+          "aggregations": [
+            {
+              "name": "total_unique_devices_on_desktop_played_content",
+              "type": "cardinality",
+              "fieldName": "dimensions_did"
+            }
+          ],
+          "dimensions": [
+            {
+              "fieldName": "collection_board",
+              "aliasName": "state"
+            }
+          ],
+          "filters": [
+            {
+              "type": "equals",
+              "dimension": "eid",
+              "value": "ME_WORKFLOW_SUMMARY"
+            },
+            {
+              "type": "equals",
+              "dimension": "dimensions_mode",
+              "value": "play"
+            },
+            {
+              "type": "equals",
+              "dimension": "dimensions_type",
+              "value": "content"
+            },
+            {
+              "type": "equals",
+              "dimension": "dimensions_pdata_id",
+              "value": "{{ producer_env }}.diksha.desktop"
+            }
+          ],
+          "descending": "false"
+        }
+      }
+    ],
+    "labels": {
+      "state": "State",
+      "total_content_plays_on_desktop": "Total Content Played",
+      "total_content_download_on_desktop": "Total Content Downloads",
+      "total_time_spent_in_hours_on_desktop": "Total time spent in hours",
+      "total_unique_devices_on_desktop_played_content": "Total Unique Devices On Desktop that played content"
+    },
+    "output": [
+      {
+        "type": "csv",
+        "label": "desktop",
+        "metrics": [
+          "total_content_download_on_desktop",
+          "total_time_spent_in_hours_on_desktop",
+          "total_content_plays_on_desktop",
+          "total_unique_devices_on_desktop_played_content"
+        ],
+        "dims": [
+          "state"
+        ],
+        "fileParameters": [
+          "dims"
+        ]
+      }
+    ]
+  },
   "audit-metrics-report": {
   "search": {
     "type": "none"
