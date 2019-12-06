@@ -15,7 +15,7 @@
     <name>ep-core</name>
 
     <dependencies>
-    	<dependency>
+        <dependency>
             <groupId>org.apache.samza</groupId>
             <artifactId>samza-api</artifactId>
             <version>${samza.version}</version>
@@ -105,6 +105,10 @@
                 <configuration>
                     <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
                     <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
+                    <excludes>
+                        <exclude>org/ekstep/ep/samza/util/**/*</exclude>
+                        <exclude>org/ekstep/ep/samza/core/**/Logger.class</exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>

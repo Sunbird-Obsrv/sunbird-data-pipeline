@@ -2554,7 +2554,7 @@
             "id":"district_monthly",
             "queryType":"groupBy",
             "dateRange":{
-                "staticInterval":"Last30Days",
+                "staticInterval":"LastMonth",
                 "granularity":"all"
             },
             "metrics":[
@@ -2564,7 +2564,7 @@
                 "druidQuery":{
                     "queryType":"groupBy",
                     "dataSource":"telemetry-events",
-                    "intervals":"Last30Days",
+                    "intervals":"LastMonth",
                     "aggregations":[
                       {
                           "name":"total_unique_devices",
@@ -2650,7 +2650,7 @@
         "id":"district_weekly",
         "queryType":"groupBy",
         "dateRange":{
-            "staticInterval":"Last7Days",
+            "staticInterval":"LastWeek",
             "granularity":"all"
         },
         "metrics":[
@@ -2660,7 +2660,7 @@
                 "druidQuery":{
                    "queryType":"groupBy",
                    "dataSource":"telemetry-events",
-                   "intervals":"Last7Days",
+                   "intervals":"LastWeek",
                    "aggregations":[
                       {
                          "name":"total_unique_devices",
@@ -2705,7 +2705,7 @@
                 "druidQuery":{
                    "queryType":"groupBy",
                    "dataSource":"telemetry-events",
-                   "intervals":"Last7Days",
+                   "intervals":"LastWeek",
                    "aggregations":[
                       {
                          "name":"total_unique_devices_on_portal",
@@ -2747,7 +2747,7 @@
                 "druidQuery":{
                    "queryType":"groupBy",
                    "dataSource":"telemetry-events",
-                   "intervals":"Last7Days",
+                   "intervals":"LastWeek",
                    "aggregations":[
                       {
                          "name":"total_unique_devices_on_app",
@@ -2789,7 +2789,7 @@
                 "druidQuery":{
                    "queryType":"groupBy",
                    "dataSource":"telemetry-events",
-                   "intervals":"Last7Days",
+                   "intervals":"LastWeek",
                    "aggregations":[
                       {
                          "name":"total_scans",
@@ -2843,7 +2843,7 @@
                 "druidQuery":{
                    "queryType":"groupBy",
                    "dataSource":"telemetry-events",
-                   "intervals":"Last7Days",
+                   "intervals":"LastWeek",
                    "aggregations":[
                       {
                          "name":"total_scans_on_portal",
@@ -2894,7 +2894,7 @@
                 "druidQuery":{
                    "queryType":"groupBy",
                    "dataSource":"telemetry-events",
-                   "intervals":"Last7Days",
+                   "intervals":"LastWeek",
                    "aggregations":[
                       {
                          "name":"total_scans_on_app",
@@ -2945,7 +2945,7 @@
                 "druidQuery":{
                    "queryType":"groupBy",
                    "dataSource":"summary-events",
-                   "intervals":"Last7Days",
+                   "intervals":"LastWeek",
                    "aggregations":[
                       {
                          "name":"total_content_plays",
@@ -3000,7 +3000,7 @@
                 "druidQuery":{
                    "queryType":"groupBy",
                    "dataSource":"summary-events",
-                   "intervals":"Last7Days",
+                   "intervals":"LastWeek",
                    "aggregations":[
                       {
                          "name":"total_content_plays_on_portal",
@@ -3052,7 +3052,7 @@
                 "druidQuery":{
                    "queryType":"groupBy",
                    "dataSource":"summary-events",
-                   "intervals":"Last7Days",
+                   "intervals":"LastWeek",
                    "aggregations":[
                       {
                          "name":"total_content_plays_on_app",
@@ -3744,7 +3744,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "values": "'$producerEnv'.diksha.app"
+                                "value": "'$producerEnv'.diksha.app"
                             },
                             {
                                 "type": "equals",
@@ -3795,7 +3795,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "values": "'$producerEnv'.diksha.portal"
+                                "value": "'$producerEnv'.diksha.portal"
                             },
                             {
                                 "type": "equals",
@@ -3846,7 +3846,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "values": "'$producerEnv'.diksha.desktop"
+                                "value": "'$producerEnv'.diksha.desktop"
                             },
                             {
                                 "type": "equals",
@@ -3949,150 +3949,192 @@
     "deviceMapping": false
   },
   "audit-metrics-report": {
-    "search": {
-      "type": "none"
-    },
-    "model": "org.ekstep.analytics.model.MetricsAuditJob",
-    "modelParams": {
-      "auditConfig": [
-        {
-          "name": "denorm",
-          "search": {
-            "type": "azure",
-            "queries": [
-              {
-                "bucket": "{{ bucket }}",
-                "prefix": "telemetry-denormalized/raw/",
-                "startDate": "$(date --date yesterday '+%Y-%m-%d')",
-                "endDate": "$(date --date yesterday '+%Y-%m-%d')"
-              }
-            ]
-          },
-          "filters": [
+  "search": {
+    "type": "none"
+  },
+  "model": "org.ekstep.analytics.model.MetricsAuditJob",
+  "modelParams": {
+    "auditConfig": [
+      {
+        "name": "denorm",
+        "search": {
+          "type": "azure",
+          "queries": [
             {
-              "name": "flags.user_data_retrieved",
-              "operator": "EQ",
-              "value": true
-            },
-            {
-              "name": "flags.content_data_retrieved",
-              "operator": "EQ",
-              "value": true
-            },
-            {
-              "name": "flags.device_data_retrieved",
-              "operator": "EQ",
-              "value": true
-            },
-            {
-              "name": "flags.dialcode_data_retrieved",
-              "operator": "EQ",
-              "value": true
-            },
-            {
-              "name": "flags.collection_data_retrieved",
-              "operator": "EQ",
-              "value": true
-            },
-            {
-              "name": "flags.derived_location_retrieved",
-              "operator": "EQ",
-              "value": true
+              "bucket": "{{ bucket }}",
+              "prefix": "telemetry-denormalized/raw/",
+              "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+              "endDate": "$(date --date yesterday '+%Y-%m-%d')"
             }
           ]
         },
-        {
-          "name": "failed",
-          "search": {
-            "type": "azure",
-            "queries": [
-              {
-                "bucket": "{{ bucket }}",
-                "prefix": "failed/",
-                "startDate": "$(date --date yesterday '+%Y-%m-%d')",
-                "endDate": "$(date --date yesterday '+%Y-%m-%d')"
-              }
-            ]
+        "filters": [
+          {
+            "name": "flags.user_data_retrieved",
+            "operator": "EQ",
+            "value": true
+          },
+          {
+            "name": "flags.content_data_retrieved",
+            "operator": "EQ",
+            "value": true
+          },
+          {
+            "name": "flags.device_data_retrieved",
+            "operator": "EQ",
+            "value": true
+          },
+          {
+            "name": "flags.dialcode_data_retrieved",
+            "operator": "EQ",
+            "value": true
+          },
+          {
+            "name": "flags.collection_data_retrieved",
+            "operator": "EQ",
+            "value": true
+          },
+          {
+            "name": "flags.derived_location_retrieved",
+            "operator": "EQ",
+            "value": true
           }
-        },
-        {
-          "name": "unique",
-          "search": {
-            "type": "azure",
-            "queries": [
-              {
-                "bucket": "{{ bucket }}",
-                "prefix": "unique/",
-                "startDate": "$(date --date yesterday '+%Y-%m-%d')",
-                "endDate": "$(date --date yesterday '+%Y-%m-%d')"
-              }
-            ]
-          }
-        },
-        {
-          "name": "raw",
-          "search": {
-            "type": "azure",
-            "queries": [
-              {
-                "bucket": "{{ bucket }}",
-                "prefix": "raw/",
-                "startDate": "$(date --date yesterday '+%Y-%m-%d')",
-                "endDate": "$(date --date yesterday '+%Y-%m-%d')"
-              }
-            ]
-          }
-        },
-        {
-          "name": "telemetry-count",
-          "search": {
-            "type": "druid",
-            "druidQuery": {
-              "queryType": "timeSeries",
-              "dataSource": "telemetry-events",
-              "intervals": "LastDay",
-              "aggregations": [
-                {
-                  "name": "total_count",
-                  "type": "count",
-                  "fieldName": "count"
-                }
-              ],
-              "descending": "false"
+        ]
+      },
+      {
+        "name": "failed",
+        "search": {
+          "type": "azure",
+          "queries": [
+            {
+              "bucket": "{{ bucket }}",
+              "prefix": "failed/",
+              "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+              "endDate": "$(date --date yesterday '+%Y-%m-%d')"
             }
-          }
-        },
-        {
-          "name": "summary-count",
-          "search": {
-            "type": "druid",
-            "druidQuery": {
-              "queryType": "timeSeries",
-              "dataSource": "summary-events",
-              "intervals": "LastDay",
-              "aggregations": [
-                {
-                  "name": "total_count",
-                  "type": "count",
-                  "fieldName": "count"
-                }
-              ],
-              "descending": "false"
+          ]
+        }
+      },
+      {
+        "name": "unique",
+        "search": {
+          "type": "azure",
+          "queries": [
+            {
+              "bucket": "{{ bucket }}",
+              "prefix": "unique/",
+              "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+              "endDate": "$(date --date yesterday '+%Y-%m-%d')"
             }
+          ]
+        }
+      },
+      {
+        "name": "raw",
+        "search": {
+          "type": "azure",
+          "queries": [
+            {
+              "bucket": "{{ bucket }}",
+              "prefix": "raw/",
+              "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+              "endDate": "$(date --date yesterday '+%Y-%m-%d')"
+            }
+          ]
+        }
+      },
+      {
+        "name": "channel-raw",
+        "search": {
+          "type": "azure",
+          "queries": [
+            {
+              "bucket": "{{ bucket }}",
+              "prefix": "channel/*/raw/",
+              "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+              "endDate": "$(date --date yesterday '+%Y-%m-%d')"
+            }
+          ]
+        }
+      },
+      {
+        "name": "channel-summary",
+        "search": {
+          "type": "azure",
+          "queries": [
+            {
+              "bucket": "{{ bucket }}",
+              "prefix": "channel/*/summary/",
+              "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+              "endDate": "$(date --date yesterday '+%Y-%m-%d')"
+            }
+          ]
+        }
+      },
+      {
+        "name": "derived",
+        "search": {
+          "type": "azure",
+          "queries": [
+            {
+              "bucket": "{{ bucket }}",
+              "prefix": "derived/wfs/",
+              "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+              "endDate": "$(date --date yesterday '+%Y-%m-%d')"
+            }
+          ]
+        }
+      },
+      {
+        "name": "telemetry-count",
+        "search": {
+          "type": "druid",
+          "druidQuery": {
+            "queryType": "timeSeries",
+            "dataSource": "telemetry-events",
+            "intervals": "LastDay",
+            "aggregations": [
+              {
+                "name": "total_count",
+                "type": "count",
+                "fieldName": "count"
+              }
+            ],
+            "descending": "false"
           }
         }
-      ]
-    },
-    "output": [
+      },
       {
-        "to": "kafka",
-        "params": {
-          "brokerList": "{{ brokerlist }}",
-          "topic": "{{ metrics_topic }}"
+        "name": "summary-count",
+        "search": {
+          "type": "druid",
+          "druidQuery": {
+            "queryType": "timeSeries",
+            "dataSource": "summary-events",
+            "intervals": "LastDay",
+            "aggregations": [
+              {
+                "name": "total_count",
+                "type": "count",
+                "fieldName": "count"
+              }
+            ],
+            "descending": "false"
+          }
         }
       }
-    ],
-    "parallelization": 8,
-    "appName": "Metrics Audit"
-  }
+    ]
+  },
+  "output": [
+    {
+      "to": "kafka",
+      "params": {
+        "brokerList": "{{ brokerlist }}",
+        "topic": "{{ metrics_topic }}"
+      }
+    }
+  ],
+  "parallelization": 8,
+  "appName": "Metrics Audit"
+}
 }
