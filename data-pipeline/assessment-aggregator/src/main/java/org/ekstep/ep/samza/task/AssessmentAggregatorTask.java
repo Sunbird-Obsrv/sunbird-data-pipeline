@@ -38,6 +38,10 @@ public class AssessmentAggregatorTask implements StreamTask, InitableTask, Windo
         init(config, taskContext, cassandraConnect);
     }
 
+    public AssessmentAggregatorTask() {
+
+    }
+
     @Override
     public void init(Config config, TaskContext context) {
         init(config, context, null);
