@@ -1,4 +1,20 @@
 version: 2.1
+
+commands:
+  notify_job_status:
+    steps:
+     - run:
+         name: On success
+         when: on_success
+         command: |
+             curl -X POST -u "${git_user}:${git_pass}" -d '{"body": "'@${CIRCLE_PR_USERNAME}' Build Success!" }' 'https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues/${CIRCLE_PR_NUMBER}/comments'
+             
+     - run:
+         name: On fail
+         when: on_fail
+         command: |
+              curl -X POST -u "${git_user}:${git_pass}" -d '{"body": "'@${CIRCLE_PR_USERNAME}' Build Failed, Please check" }' 'https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues/${CIRCLE_PR_NUMBER}/comments'
+
 jobs:
   ep-build:
     working_directory: ~/dp/data-pipeline
@@ -16,9 +32,11 @@ jobs:
           command: |
                  mvn verify -Dlog4j.configuration=./logs sonar:sonar -Dsonar.projectKey=project-sunbird_sunbird-data-pipeline -Dsonar.organization=project-sunbird -Dsonar.host.url=https://sonarcloud.io -Dsonar.coverage.jacoco.xmlReportPaths=/home/circleci/dp/data-pipeline/assessment-aggregator/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/content-cache-updater/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/de-normalization/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/de-duplication/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/derived-de-duplication/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/device-profile-updater/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/druid-events-validator/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/ep-core/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/ep-telemetry-reader/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/events-router/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/telemetry-extractor/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/telemetry-location-updater/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/telemetry-router/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/telemetry-validator/target/coverage-reports/jacoco-ut/jacoco.xml,/home/circleci/dp/data-pipeline/user-cache-updater/target/coverage-reports/jacoco-ut/jacoco.xml
 
+      - notify_job_status
+
 workflows:
   version: 2.1
   build_and_test:
     jobs:
       - ep-build
-#testing quality gate
+        #testing quality gate
