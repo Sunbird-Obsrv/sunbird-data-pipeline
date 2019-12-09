@@ -38,6 +38,7 @@ public class DeviceProfileServiceTest {
     private Config configMock;
     private Integer deviceStoreId = 2;
     private Gson gson = new Gson();
+    private Type mapType = new TypeToken<Map<String, Object>>() { }.getType();
 
     @Before
     public void setUp() {
@@ -110,4 +111,18 @@ public class DeviceProfileServiceTest {
 
     }
 
+    @Test
+    public void shouldNotUpdateFirstAccessifPresent() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.DEVICE_PROFILE_DETAILS);
+        Map<String, String> newDeviceData = gson.fromJson(EventFixture.DEVICE_PROFILE_DETAILS, mapType);
+        Map<String, String> deviceDetails = new HashMap<>();
+        deviceDetails.put("firstaccess","156990957889");
+        deviceJedisMock.hmset(newDeviceData.get("device_id"), deviceDetails);
+
+        DeviceProfileUpdaterSource source = new DeviceProfileUpdaterSource(envelopeMock);
+        deviceProfileUpdaterService.process(source, deviceProfileUpdaterSinkMock);
+
+        Map<String, String> data = deviceJedisMock.hgetAll(newDeviceData.get("device_id"));
+        assertEquals(deviceDetails.get("firstaccess"),"156990957889");
+    }
 }
