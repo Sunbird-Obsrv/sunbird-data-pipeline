@@ -1,0 +1,73 @@
+#!/bin/bash
+# Redis monitoring to send alert if it is not able to save state to dump.rdb
+
+redisDumpFolder="{{ redis_home }}"		   	# Redis Dump Folder Location
+scriptLogFile="{{ redis_dump_rdb_log_file_location }}"
+status=""					       	   	# Message to send over Mail Or slack
+mailSubject="Redis server {{ inventory_hostname }} dump.rdb issue"	# Mail Subject
+mailSender="{{ redis_dump_rdb_mail_sender }}"				# Mail Sender
+mailReceiver="{{ redis_dump_rdb_mail_receivers }}"	# Mail Receiver
+mailApiUser="{{ redis_dump_rdb_mail_sendgrid_username }}"  # Mail API User
+mailApiKey="{{ redis_dump_rdb_mail_sendgrid_password  }}"					# Mail API Key
+backupIntervalInSeconds={{ redis_dump_rdb_time_in_seconds }}			       		# Redis Backup Time Interval in seconds
+backupKeysRequiredToSave={{ redis_dump_rdb_keys_to_save_state }}
+slackChannelURL={{ redis_dump_rdb_slack_url }}
+redisDbStausFile="${redisDumpFolder}/redisDbStatus.txt"
+
+# Send alert logic
+send_alert () {
+	if [[ "$status" != "" ]];
+	then
+	        echo "Send alert because of $status"
+		curl -d "to=$mailReceiver&fromname=$mailSender&subject=$mailSubject&text=$status&from=$mailSender&api_user=$mailApiUser&api_key=$mailApiKey" https://api.sendgrid.com/api/mail.send.json
+                curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"Redis:[{{inventory_hostname}}] - ${status}\"}" $slackChannelURL
+		exit 0
+	else
+	        echo "Alert not required"
+	fi
+}
+
+# check if the file exists
+if [ ! -f "$redisDumpFolder/dump.rdb" ]; then
+    status=$(echo "$redisDumpFolder/dump.rdb Redis Dump file does not exist")
+    echo "[$(date)] $status" >> $scriptLogFile
+    send_alert
+fi
+
+# Get the timestamp of the redis Dump file and current timestamp and get the difference between the them
+backupDifference=$(echo "( $(date +%s) - $(stat -c %Y ${redisDumpFolder}/dump.rdb | cut -d' ' -f1) )" | bc)
+
+# Creating the keystatus file for the first time
+if [ ! -f "$redisDbStausFile" ]; 
+then
+	echo "0" > $redisDbStausFile
+fi
+
+keyCount=$(cat ${redisDbStausFile})
+redisExistingCount=$(echo "DBSIZE" | ${redisDumpFolder}/src/redis-cli  | cut -f2)
+
+# check redis connectivity
+if [ ! $redisExistingCount ];
+then
+	status=$(echo -e "$status Unable connect to Redis")
+	echo "[$(date)] $status" >> $scriptLogFile
+   	send_alert
+fi
+
+echo "[$(date)] Redis Existing Key count=$redisExistingCount" >> $scriptLogFile
+
+# get the number of new keys added
+keysDifference=$(echo "( $redisExistingCount - $keyCount )" | bc)
+
+# Check if the backup time exceeded and key count changed
+if [[ ( $backupDifference -gt $backupIntervalInSeconds )  && ( $redisExistingCount -gt $keyCount ) && ( $keysDifference -gt 0 ) ]];
+then
+	status=$(echo -e "$status Not able to write the state to dump.rdb in $backupIntervalInSeconds seconds and $keysDifference new keys have been inserted")
+	echo "[$(date)] $status" >> $scriptLogFile
+	send_alert
+else
+	echo "[$(date)] Redis is able to save the state in dump.rdb file" >> $scriptLogFile
+fi
+
+# Write the existing keys count to file for further testing
+echo "$redisExistingCount" > $redisDbStausFile
