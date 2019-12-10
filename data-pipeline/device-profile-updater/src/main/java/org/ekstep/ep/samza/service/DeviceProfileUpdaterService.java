@@ -121,13 +121,18 @@ public class DeviceProfileUpdaterService {
         Map<String, String> deviceMap = deviceProfile.toMap();
         deviceMap.values().removeAll(Collections.singleton(""));
         deviceMap.values().removeAll(Collections.singleton("{}"));
+        LOGGER.info(deviceId,"Profile: "+deviceMap);
         if (redisConnection.exists(deviceId)) {
+            LOGGER.info(deviceId,"Profile exists in redis: "+deviceMap);
             Map<String, String> data = redisConnection.hgetAll(deviceId);
+            LOGGER.info(deviceId,"Profile firstaccess value: "+data.get("firstaccess"));
             if(data.get("firstaccess") != null || !("0").equals(data.get("firstaccess"))) {
+                LOGGER.info(deviceId,"Profile has firstaccess: "+deviceMap);
                 deviceMap.remove("firstaccess");
             }
             redisConnection.hmset(deviceId, deviceMap);
         } else {
+            LOGGER.info(deviceId,"Profile does not have firstaccess: "+deviceMap);
             redisConnection.hmset(deviceId, deviceMap);
         }
         LOGGER.debug(null, String.format("Device details for device id %s updated successfully", deviceId));
