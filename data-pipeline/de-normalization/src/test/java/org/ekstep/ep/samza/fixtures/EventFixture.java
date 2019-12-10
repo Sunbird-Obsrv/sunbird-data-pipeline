@@ -1337,7 +1337,7 @@ public class EventFixture {
             "        \"index_type\": \"events_v1\"\n" +
             "    },\n" +
             "    \"@timestamp\": \"2019-06-02T17:21:35.546Z\",\n" +
-            "    \"ets\": 1559495257141,\n" +
+            "    \"ets\": 1923128704000,\n" +
             "    \"context\": {\n" +
             "        \"channel\": \"in.tnpilot\",\n" +
             "        \"env\": \"Genie\",\n" +
