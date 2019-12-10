@@ -123,6 +123,19 @@ public class DeviceProfileServiceTest {
         deviceProfileUpdaterService.process(source, deviceProfileUpdaterSinkMock);
 
         Map<String, String> data = deviceJedisMock.hgetAll(newDeviceData.get("device_id"));
-        assertEquals(deviceDetails.get("firstaccess"),"156990957889");
+        assertEquals("156990957889", data.get("firstaccess"));
+    }
+
+    @Test
+    public void shouldUpdateFirstAccessifNotPresent() {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.DEVICE_PROFILE_DETAILS);
+        Map<String, String> newDeviceData = gson.fromJson(EventFixture.DEVICE_PROFILE_DETAILS, mapType);
+        String deviceId = newDeviceData.get("device_id");
+
+        DeviceProfileUpdaterSource source = new DeviceProfileUpdaterSource(envelopeMock);
+        deviceProfileUpdaterService.process(source, deviceProfileUpdaterSinkMock);
+
+        Map<String, String> data = deviceJedisMock.hgetAll(deviceId);
+        assertEquals("1568377184000", data.get("firstaccess"));
     }
 }
