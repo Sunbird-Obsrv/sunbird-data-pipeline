@@ -140,7 +140,11 @@ akka {
         }
         /deviceRegisterServiceAPIActor {
           router = smallest-mailbox-pool
-            nr-of-instances = 20
+            nr-of-instances = 10
+        }
+        /deviceProfileServiceAPIActor {
+          router = smallest-mailbox-pool
+          nr-of-instances = 10
         }
         /clientLogAPIActor {
           router = smallest-mailbox-pool
@@ -237,7 +241,7 @@ redis.host="{{redis_host}}"
 #redis.host="localhost"
 redis.port=6379
 #redis.port=__redis_port__
-redis.connection.max=10
+redis.connection.max=20
 redis.connection.idle.max=2
 redis.connection.idle.min=1
 redis.connection.minEvictableIdleTimeSeconds=120
@@ -257,3 +261,5 @@ redis.deviceIndex=2
 
 druid.coordinator.host="http://{{groups['coordinator'][0]}}:8081/"
 druid.healthcheck.url="druid/coordinator/v1/loadstatus"
+
+device.api.enable.debug.log=true
