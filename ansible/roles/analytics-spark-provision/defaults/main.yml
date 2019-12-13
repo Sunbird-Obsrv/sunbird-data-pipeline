@@ -1,6 +1,7 @@
 analytics:
    home: /mount/data/analytics
    soft_path: /mount/data/analytics
+   base_path: /home/analytics 
 scala_version: 2.11.8
 spark:
   home: "{{ analytics.home }}/spark-2.0.1-bin-hadoop2.7"

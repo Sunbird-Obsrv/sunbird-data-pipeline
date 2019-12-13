@@ -100,3 +100,13 @@
   unarchive: src={{ analytics.soft_path }}/kafka_2.11-0.10.1.0.tgz dest={{ analytics.home }}/ copy=no owner={{ analytics_user }} group={{ analytics_group }} creates={{ analytics.home }}/kafka_2.11-0.10.1.0
   tags:
     - kafka-provision
+
+- name: source ruby script
+  become: yes
+  become_user: "{{ analytics_user }}"
+  shell: echo "source {{ analytics.base_path }}/.rvm/scripts/rvm" >> ~/.bashrc
+  args:
+    executable: /bin/bash
+
+
+
