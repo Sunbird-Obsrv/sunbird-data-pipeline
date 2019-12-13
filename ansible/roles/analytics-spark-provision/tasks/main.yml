@@ -104,7 +104,7 @@
 - name: source ruby script
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: export {{ analytics.base_path }}/.rvm/scripts/rvm
+  shell: echo "source {{ analytics.base_path }}/.rvm/scripts/rvm" >> ~/.bashrc
   args:
     executable: /bin/bash
 
