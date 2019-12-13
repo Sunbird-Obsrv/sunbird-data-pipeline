@@ -85,9 +85,7 @@
 
 - name: Install ruby-kafka
   become: yes
-  shell: gem install ruby-kafka && source {{ analytics.base_path }}/.rvm/scripts/rvm
-  args:
-    executable: /bin/bash
+  shell: gem install ruby-kafka
 
 - name: Download Kafka-2.11
   become: yes
@@ -102,3 +100,13 @@
   unarchive: src={{ analytics.soft_path }}/kafka_2.11-0.10.1.0.tgz dest={{ analytics.home }}/ copy=no owner={{ analytics_user }} group={{ analytics_group }} creates={{ analytics.home }}/kafka_2.11-0.10.1.0
   tags:
     - kafka-provision
+
+- name: source ruby script
+  become: yes
+  shell: source {{ analytics.base_path }}/.rvm/scripts/rvm
+  args:
+    chdir: "{{ analytics.home }}/scripts"
+    executable: /bin/bash
+
+
+
