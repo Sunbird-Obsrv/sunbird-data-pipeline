@@ -103,6 +103,7 @@
 
 - name: source ruby script
   become: yes
+  become_user: "{{ analytics_user }}"
   shell: source {{ analytics.base_path }}/.rvm/scripts/rvm
   args:
     chdir: "{{ analytics.home }}/scripts"
