@@ -85,7 +85,7 @@
 
 - name: Install ruby-kafka
   become: yes
-  shell: gem install ruby-kafka && source {{ analytics.home }}/.rvm/scripts/rvm
+  shell: gem install ruby-kafka && source {{ analytics.base_path }}/.rvm/scripts/rvm
 
 - name: Download Kafka-2.11
   become: yes
