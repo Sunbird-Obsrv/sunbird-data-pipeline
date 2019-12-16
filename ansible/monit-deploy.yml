@@ -60,3 +60,21 @@
   roles:
     - { role: monit, service: 'monit_yarn_slave' }
   tags: yarnslave
+
+- hosts: redis
+  become: yes
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml']
+  name: Installing and configuring monit
+  roles:
+    - { role: monit, service: 'monit_redis' }
+  tags: redis
+
+- hosts: processing-cluster-zookeepers
+  become: yes
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml']
+  name: Installing and configuring monit
+  roles:
+    - { role: monit, service: 'monit_zookeeper' }
+  tags: zookeeper  
