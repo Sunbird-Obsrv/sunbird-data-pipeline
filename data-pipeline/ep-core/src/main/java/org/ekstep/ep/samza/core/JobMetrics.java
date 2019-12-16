@@ -119,6 +119,8 @@ public class JobMetrics {
         userDeclaredHitCount.clear();
         ipLocationHitCount.clear();
         noCacheHitCount.clear();
+        primaryRouteSuccessCount.clear();
+        secondaryRouteSuccessCount.clear();
     }
 
     public void incSuccessCounter() {
