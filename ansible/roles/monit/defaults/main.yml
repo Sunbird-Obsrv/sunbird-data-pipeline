@@ -180,8 +180,8 @@ monit_influxdb-relay:
   retry: 3
 
 monit_redis:
-  app_name: redis
-  grep_string: redis
+  app_name: redis-server
+  grep_string: redis-server
   custom_start: "/bin/systemctl start redis"
   custom_stop: "/bin/systemctl stop redis"
   timeout: "30"
