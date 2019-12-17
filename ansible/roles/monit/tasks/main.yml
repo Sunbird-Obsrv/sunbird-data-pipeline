@@ -14,7 +14,8 @@
     - { src: 'files/monitrc', dest: '/etc/monit/monitrc', mode: '0700' }
     - { src: 'files/monit_bin', dest: '/usr/bin/monit', mode: '0755' }   
     - { src: 'files/monit_default', dest: '/etc/default/monit', mode: '0644' } 
-    - { src: 'files/force_kill', dest: '/usr/local/bin', mode: '0755' } 
+    - { src: 'files/force_kill', dest: '/usr/local/bin', mode: '0755' }
+    - { src: 'files/systemd', dest: '/lib/systemd/system/monit.service', mode: '0755' }
 
 - name: Softlinking monitrc for monit
   file:
@@ -22,9 +23,11 @@
     dest: /etc/monitrc
     state: link
 
-- name: starting monit at boot time
-  command: update-rc.d monit defaults
-
+- name: enable reload
+  systemd:
+    name: monit
+    enabled: yes
+    
 - name: Copy monit scripts to the destination
   template:
     src: monit_template
@@ -39,6 +42,6 @@
     mode: 0755
 
 - name: monit start or stop 
-  service:
+  systemd:
     name: monit
     state: "started"
