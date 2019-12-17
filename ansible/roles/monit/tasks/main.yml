@@ -44,4 +44,5 @@
 - name: monit start or stop 
   systemd:
     name: monit
+    daemon_reload: yes
     state: "started"
