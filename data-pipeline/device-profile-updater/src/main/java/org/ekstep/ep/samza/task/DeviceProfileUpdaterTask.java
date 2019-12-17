@@ -8,7 +8,7 @@ import org.apache.samza.task.*;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.DeviceProfileUpdaterService;
-import org.ekstep.ep.samza.util.CassandraConnect;
+import org.ekstep.ep.samza.util.PostgresConnect;
 import org.ekstep.ep.samza.util.RedisConnect;
 
 public class DeviceProfileUpdaterTask implements StreamTask, InitableTask, WindowableTask {
@@ -19,7 +19,7 @@ public class DeviceProfileUpdaterTask implements StreamTask, InitableTask, Windo
     private DeviceProfileUpdaterConfig config;
     private String metricsTopic;
     private RedisConnect redisConnect;
-    private CassandraConnect cassandraConnect;
+    private PostgresConnect postgresConnect;
 
     public DeviceProfileUpdaterTask(Config config, TaskContext context) { init(config, context); }
 
@@ -31,8 +31,8 @@ public class DeviceProfileUpdaterTask implements StreamTask, InitableTask, Windo
         redisConnect = new RedisConnect(config);
         this.config = new DeviceProfileUpdaterConfig(config);
         metrics = new JobMetrics(context, this.config.jobName());
-        cassandraConnect = new CassandraConnect(config);
-        service = new DeviceProfileUpdaterService(config, redisConnect, cassandraConnect);
+        postgresConnect = new PostgresConnect(config);
+        service = new DeviceProfileUpdaterService(config, redisConnect, postgresConnect);
         metricsTopic = config.get("output.metrics.topic.name");
     }
 

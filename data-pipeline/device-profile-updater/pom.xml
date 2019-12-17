@@ -69,6 +69,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.opentable.components</groupId>
+            <artifactId>otj-pg-embedded</artifactId>
+            <version>0.13.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.ekstep.ecosystem</groupId>
             <artifactId>ep-core</artifactId>
             <version>0.0.1</version>
