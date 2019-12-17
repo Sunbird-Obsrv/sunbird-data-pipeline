@@ -98,20 +98,22 @@ public class TelemetryLocationUpdaterTaskTest {
 	@Test
 	public void shouldSendEventsToSuccessTopicWithUserProfileLocationAsDerived() throws Exception {
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
-		Map uaspec = new HashMap();
-		Map device_spec = new HashMap();
+		// Map<String, String> uaspec = new HashMap<>();
+		Map<String, String> device_spec = new HashMap<>();
 		Long first_access = 1559484698000L;
 		device_spec.put("os", "Android 6.0");
 		device_spec.put("make", "Motorola XT1706");
+		/*
 		uaspec.put("agent", "Mozilla");
 		uaspec.put("ver", "5.0");
 		uaspec.put("system", "iPad");
 		uaspec.put("platform", "AppleWebKit/531.21.10");
 		uaspec.put("raw", "Mozilla/5.0 (X11 Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)");
+		*/
 		DeviceProfile deviceProfile = new DeviceProfile
 				("IN", "India", "KA", "Karnataka",
 						"Bangalore", "Banglore-Custom", "Karnatak-Custom",
-						"KA-Custom", uaspec, device_spec, first_access,"Bangalore",
+						"KA-Custom", device_spec, first_access,"Bangalore",
 						"Karnataka");
 		stub(deviceProfileCacheMock.getDeviceProfileForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(deviceProfile);
 
@@ -142,12 +144,14 @@ public class TelemetryLocationUpdaterTaskTest {
 				assertEquals("Android 6.0", deviceSpec.get("os"));
 				assertEquals("Motorola XT1706", deviceSpec.get("make"));
 
+				/*
 				Map<String, Object> uaSpec = new Gson().fromJson(new Gson().toJson(devicedata.get("uaspec")), mapType);
 				assertEquals("Mozilla", uaSpec.get("agent"));
 				assertEquals("5.0", uaSpec.get("ver"));
 				assertEquals("iPad", uaSpec.get("system"));
 				assertEquals("AppleWebKit/531.21.10", uaSpec.get("platform"));
 				assertEquals("Mozilla/5.0 (X11 Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)", uaSpec.get("raw"));
+				*/
 
 				Map<String, Object> userDeclared = new Gson().fromJson(new Gson().toJson(devicedata.get("userdeclared")), mapType);
 				assertEquals("Karnataka", userDeclared.get("state"));
@@ -172,7 +176,7 @@ public class TelemetryLocationUpdaterTaskTest {
 		DeviceProfile deviceProfile = new DeviceProfile
 				("IN", "India", "KA", "Karnataka",
 						"Bangalore", "Banglore-Custom", "Karnatak-Custom",
-						"KA-Custom", new HashMap<>(), new HashMap<>(), 0L,"Bangalore",
+						"KA-Custom", new HashMap<>(), 0L,"Bangalore",
 						"Karnataka");
 		stub(deviceProfileCacheMock.getDeviceProfileForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(deviceProfile);
 
@@ -188,10 +192,10 @@ public class TelemetryLocationUpdaterTaskTest {
 				Map<String, Object> devicedata = new Gson().fromJson(new Gson().toJson(outputEvent.get("devicedata")), mapType);
 
 				Map<String, Object> deviceSpec = new Gson().fromJson(new Gson().toJson(devicedata.get("devicespec")), mapType);
-				assertEquals(true, deviceSpec.isEmpty());
+				assertTrue(deviceSpec.isEmpty());
 
-				Map<String, Object> uaSpec = new Gson().fromJson(new Gson().toJson(devicedata.get("uaspec")), mapType);
-				assertEquals(true, uaSpec.isEmpty());
+				// Map<String, Object> uaSpec = new Gson().fromJson(new Gson().toJson(devicedata.get("uaspec")), mapType);
+				// assertEquals(true, uaSpec.isEmpty());
 
 				Map<String, Object> userDeclared = new Gson().fromJson(new Gson().toJson(devicedata.get("userdeclared")), mapType);
 				assertEquals("Karnataka", userDeclared.get("state"));
@@ -216,7 +220,7 @@ public class TelemetryLocationUpdaterTaskTest {
 		DeviceProfile deviceProfile = new DeviceProfile
 				("IN", "India", "KA", "Karnataka",
 						"Bangalore", "Banglore-Custom", "Karnatak-Custom",
-						"KA-Custom", new HashMap<>(), new HashMap<>(), 0L,"",
+						"KA-Custom", new HashMap<>(), 0L,"",
 						"");
 		stub(deviceProfileCacheMock.getDeviceProfileForDeviceId("68dfc64a7751ad47617ac1a4e0531fb761ebea6f")).toReturn(deviceProfile);
 
@@ -232,10 +236,10 @@ public class TelemetryLocationUpdaterTaskTest {
 				Map<String, Object> devicedata = new Gson().fromJson(new Gson().toJson(outputEvent.get("devicedata")), mapType);
 
 				Map<String, Object> deviceSpec = new Gson().fromJson(new Gson().toJson(devicedata.get("devicespec")), mapType);
-				assertEquals(true, deviceSpec.isEmpty());
+				assertTrue(deviceSpec.isEmpty());
 
-				Map<String, Object> uaSpec = new Gson().fromJson(new Gson().toJson(devicedata.get("uaspec")), mapType);
-				assertEquals(true, uaSpec.isEmpty());
+				// Map<String, Object> uaSpec = new Gson().fromJson(new Gson().toJson(devicedata.get("uaspec")), mapType);
+				// assertEquals(true, uaSpec.isEmpty());
 
 				Map<String, Object> userDeclared = new Gson().fromJson(new Gson().toJson(devicedata.get("userdeclared")), mapType);
 				assertEquals("", userDeclared.get("state"));
