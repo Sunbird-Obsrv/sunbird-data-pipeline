@@ -161,7 +161,6 @@ monit_cassandra-dp:
   app_name: "cassandra"
   custom_start: /bin/systemctl start cassandra
   custom_stop: /bin/systemctl stop cassandra
-  pid_file: /var/run/cassandra/cassandra.pid
   timeout: "20"
   retry: 3
 
