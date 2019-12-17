@@ -41,6 +41,7 @@ monit_zookeeper:
   app_name: zookeeper
   custom_start: "/bin/systemctl start zookeeper.service"
   custom_stop: "/bin/systemctl stop zookeeper.service"
+  pid_file: /var/run/zookeeper/zookeeper.pid
   timeout: "30"
   retry: 3
 
