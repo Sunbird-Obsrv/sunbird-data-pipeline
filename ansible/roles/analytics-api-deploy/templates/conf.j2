@@ -38,7 +38,7 @@ log4j.appender.kafka.topic="{{env}}.telemetry.log"
 cassandra.service.embedded.enable=false
 cassandra.keyspace_prefix="{{ cassandra.keyspace_prefix }}"
 
-device-register-controller {
+device-register-controller-dispatcher {
   type = "Dispatcher"
   executor = "fork-join-executor"
   fork-join-executor {
@@ -57,7 +57,7 @@ device-register-controller {
   throughput = 1
 }
 
-device-register-actor {
+device-register-actor-dispatcher {
   type = "Dispatcher"
   executor = "fork-join-executor"
   fork-join-executor {
@@ -73,6 +73,15 @@ device-register-actor {
     parallelism-max = 16
   }
   # Throughput for default Dispatcher, set to 1 for as fair as possible
+  throughput = 1
+}
+
+device-profile-actor-dispatcher {
+  type = "Dispatcher"
+  executor = "thread-pool-executor"
+  thread-pool-executor {
+    fixed-pool-size = 8
+  }
   throughput = 1
 }
 
@@ -138,12 +147,14 @@ akka {
           router = smallest-mailbox-pool
             nr-of-instances = 10
         }
-        /deviceRegisterServiceAPIActor {
+        /device-register-actor {
           router = smallest-mailbox-pool
-            nr-of-instances = 10
+          dispatcher = device-register-actor-dispatcher
+          nr-of-instances = 10
         }
-        /deviceProfileServiceAPIActor {
+        /device-profile-actor {
           router = smallest-mailbox-pool
+          dispatcher = device-profile-actor-dispatcher
           nr-of-instances = 10
         }
         /clientLogAPIActor {
@@ -241,7 +252,7 @@ redis.host="{{redis_host}}"
 #redis.host="localhost"
 redis.port=6379
 #redis.port=__redis_port__
-redis.connection.max=20
+redis.connection.max=64
 redis.connection.idle.max=2
 redis.connection.idle.min=1
 redis.connection.minEvictableIdleTimeSeconds=120
