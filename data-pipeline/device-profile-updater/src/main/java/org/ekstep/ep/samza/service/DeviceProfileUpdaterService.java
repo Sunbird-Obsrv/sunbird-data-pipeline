@@ -1,7 +1,5 @@
 package org.ekstep.ep.samza.service;
 
-import com.datastax.driver.core.querybuilder.Insert;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
@@ -99,11 +97,12 @@ public class DeviceProfileUpdaterService {
         List<String> parsedKeys = new ArrayList<>(Arrays.asList("uaspec", "device_spec", "first_access", "api_last_updated_on"));
         deviceData.keySet().removeAll(parsedKeys);
 
-        String columns = formatValues(deviceData.keySet(),",").concat(",api_last_updated_on");
-        String values = formatValues(deviceData.values(),"','").concat("','"+new Timestamp(lastUpdatedDate).toString());
+        deviceData.put("api_last_updated_on", new Timestamp(lastUpdatedDate).toString());
+        if (null != parseduaspec) { deviceData.put("uaspec", parseduaspec); }
+        if (null != parsedevicespec) { deviceData.put("device_spec", parsedevicespec); }
 
-        if (null != parseduaspec) { columns = columns.concat(",uaspec"); values = values.concat("','"+ parseduaspec); }
-        if (null != parsedevicespec) { columns = columns.concat(",device_spec"); values = values.concat("','"+ parsedevicespec);}
+        String columns = formatValues(deviceData.keySet(),",");
+        String values = formatValues(deviceData.values(),"','");
 
         String upsertQuery = String.format("INSERT INTO %s (%s) VALUES ('%s') ON CONFLICT(device_id) DO UPDATE SET (%s)=('%s');",postgres_table,columns,values,columns,values);
 
@@ -143,7 +142,6 @@ public class DeviceProfileUpdaterService {
     }
 
     private String formatValues(Collection<?> values, String delimiter) {
-        String s = values.stream().map(Object::toString).collect(Collectors.joining(delimiter));
-        return String.format("%s", s);
+        return values.stream().map(Object::toString).collect(Collectors.joining(delimiter));
     }
 }
