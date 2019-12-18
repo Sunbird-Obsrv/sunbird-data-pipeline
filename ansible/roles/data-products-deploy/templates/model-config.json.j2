@@ -2148,7 +2148,7 @@
     "search": {
       "type": "none"
     },
-    "model": "org.ekstep.analytics.job.StateAdminReportJob",
+    "model": "org.ekstep.analytics.job.report.StateAdminReportJob",
     "modelParams": {
       "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
       "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
@@ -2163,6 +2163,27 @@
     ],
     "parallelization": 8,
     "appName": "Admin User Reports",
+    "deviceMapping": false
+  },
+  "admin-geo-reports": {
+    "search": {
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.job.report.StateAdminGeoReportJob",
+    "modelParams": {
+      "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
+      "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Admin Geo Reports",
     "deviceMapping": false
   },
   "content-rating-updater": {
