@@ -22,7 +22,7 @@ public class DeviceProfileCacheTest {
     @Test
     public void shouldReturnProfileInfo() {
         DeviceProfile profile = new DeviceProfile("IN", "India", "KA", "Karnataka",
-                "Bengaluru", "TMK");
+                "Bengaluru");
         cache = mock(DeviceProfileCache.class);
         stub(cache.getDeviceProfileFromCache("37654387-543534")).toReturn(profile);
         DeviceProfile res = cache.getDeviceProfileFromCache("37654387-543534");

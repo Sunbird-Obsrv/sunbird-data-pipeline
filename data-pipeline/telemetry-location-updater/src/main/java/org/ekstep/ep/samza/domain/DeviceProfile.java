@@ -32,7 +32,6 @@ public class DeviceProfile {
   private String stateCode;
   private String state;
   private String city;
-  private String district;
   private String districtCustom;
   private String stateCodeCustom;
   private String stateCustomName;
@@ -49,7 +48,6 @@ public class DeviceProfile {
     this.stateCode = "";
     this.state = "";
     this.city = "";
-    this.district = "";
     this.districtCustom = "";
     this.stateCodeCustom = "";
     this.stateCustomName = "";
@@ -100,15 +98,6 @@ public class DeviceProfile {
     this.city = city;
   }
 
-  public DeviceProfile(String countryCode, String country, String stateCode, String state, String city, String district) {
-    this.countryCode = countryCode;
-    this.country = country;
-    this.stateCode = stateCode;
-    this.state = state;
-    this.city = city;
-    this.district = district;
-  }
-
   public DeviceProfile(String countryCode, String country, String stateCode, String state,
                        String city, String districtCustom, String stateCustomName,
                        String stateCodeCustom, Map<String, String> device_spec, Long first_access,
@@ -147,10 +136,6 @@ public class DeviceProfile {
     return stateCode;
   }
 
-  public String getDistrict() {
-    return district;
-  }
-
   public String getDistrictCustom() {
     return districtCustom;
   }
@@ -175,60 +160,8 @@ public class DeviceProfile {
     return firstaccess;
   }
 
-  public void setState(String state) {
-    this.state = state;
-  }
-
-  public void setDistrict(String district) {
-    this.district = district;
-  }
-
-  public void setCountryCode(String countryCode) {
-    this.countryCode = countryCode;
-  }
-
-  public void setCountry(String country) {
-    this.country = country;
-  }
-
-  public void setStateCode(String stateCode) {
-    this.stateCode = stateCode;
-  }
-
-  public void setCity(String city) {
-    this.city = city;
-  }
-
-  public void setDistrictCustom(String districtCustom) {
-    this.districtCustom = districtCustom;
-  }
-
-  public void setStateCodeCustom(String stateCodeCustom) {
-    this.stateCodeCustom = stateCodeCustom;
-  }
-
-  public void setStateCustomName(String stateCustomName) {
-    this.stateCustomName = stateCustomName;
-  }
-
-  public void setUserDeclaredState(String userDeclaredState) { this.userDeclaredState = userDeclaredState; }
-
-  public void setUserDeclaredDistrict(String userDeclaredDistrict) { this.userDeclaredDistrict = userDeclaredDistrict; }
-
-  public void setDevicespec(Map<String, String> devicespec) {
-    this.devicespec = devicespec;
-  }
-
-  public void setFirstaccess(Long firstaccess) {
-    this.firstaccess = firstaccess;
-  }
-
   public Boolean isLocationResolved() {
     return this.state != null && !this.state.isEmpty();
-  }
-
-  public Boolean isStateDistrictResolved() {
-    return this.state != null && !this.state.isEmpty() && this.district != null && !this.district.isEmpty();
   }
 
   public Boolean isDeviceProfileResolved() {
