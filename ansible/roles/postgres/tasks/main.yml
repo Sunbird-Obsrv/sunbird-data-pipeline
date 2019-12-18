@@ -38,6 +38,11 @@
   run_once: true
   tags: create
 
+- name: create {{ env }}_device_profile
+  shell: PGPASSWORD="{{ pgdb_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_consumer_channel_mapping(device_id text, api_last_updated_on timestamptz, avg_ts float, city text, country text, country_code text, device_spec json, district_custom text, fcm_token text, first_access timestamptz, last_access timestamptz, producer_id text, state text, state_code text, state_code_custom text, state_custom text, total_launches bigint, total_ts float, uaspec json, updated_date timestamptz, user_declared_district text, user_declared_state text, PRIMARY KEY(device_id))"
+  run_once: true
+  tags: create
+
 - name: create {{ env }}_consumer-channel-mapping
   shell: PGPASSWORD="{{ pgdb_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "select * from {{ env }}_consumer_channel_mapping"
   run_once: true
