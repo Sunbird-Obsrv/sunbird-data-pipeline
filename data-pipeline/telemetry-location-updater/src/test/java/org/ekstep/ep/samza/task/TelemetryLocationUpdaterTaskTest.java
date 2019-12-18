@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.task;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import org.apache.commons.lang.StringUtils;
 import org.apache.samza.Partition;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
@@ -307,6 +308,28 @@ public class TelemetryLocationUpdaterTaskTest {
 				return true;
 			}
 		}));
+	}
+
+	@Test
+	public void deviceProfileFromMapShouldNotFailForEmptyValues() {
+		Map<String, String> deviceProfileMap = new HashMap<>();
+		deviceProfileMap.put("user_declared_state", "Tamil Nadu");
+		deviceProfileMap.put("user_declared_district", "Tiruchirappalli");
+
+		DeviceProfile deviceProfile = new DeviceProfile().fromMap(deviceProfileMap);
+		assertEquals("Tamil Nadu", deviceProfile.getUserDeclaredState());
+		assertEquals("Tiruchirappalli", deviceProfile.getUserDeclaredDistrict());
+
+		assertEquals(0, deviceProfile.getDevicespec().size());
+		assertTrue(StringUtils.isEmpty(deviceProfile.getState()));
+		assertTrue(StringUtils.isEmpty(deviceProfile.getCity()));
+		assertTrue(StringUtils.isEmpty(deviceProfile.getDistrictCustom()));
+		assertTrue(StringUtils.isEmpty(deviceProfile.getstateCodeCustom()));
+		assertTrue(StringUtils.isEmpty(deviceProfile.getstateCustomName()));
+		assertEquals(0L, deviceProfile.getFirstaccess().longValue());
+
+		assertFalse(deviceProfile.isLocationResolved());
+		assertFalse(deviceProfile.isDeviceProfileResolved());
 	}
 
 	@Test

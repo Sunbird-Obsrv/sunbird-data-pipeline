@@ -162,6 +162,7 @@ public class TelemetryLocationUpdaterService {
 			} else {
 				event.setFlag(TelemetryLocationUpdaterConfig.getDeviceProfileJobFlag(), false);
 			}
+
 			if (deviceProfile.isLocationResolved()) {
 				event.setFlag(TelemetryLocationUpdaterConfig.getDeviceLocationJobFlag(), true);
 			} else {

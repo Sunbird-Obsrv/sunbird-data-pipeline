@@ -38,7 +38,6 @@ public class DeviceProfile {
   private String stateCustomName;
   private String userDeclaredState;
   private String userDeclaredDistrict;
-  // private Map<String, String> uaspec;
   private Map<String, String> devicespec;
   private Long firstaccess;
   private Gson gson = new Gson();
@@ -56,7 +55,6 @@ public class DeviceProfile {
     this.stateCustomName = "";
     this.userDeclaredState = "";
     this.userDeclaredDistrict = "";
-    // this.uaspec = new HashMap<>();
     this.devicespec = new HashMap<>();
     this.firstaccess = 0L;
   }
@@ -73,7 +71,6 @@ public class DeviceProfile {
     values.put("state_code_custom", DeviceProfile.getValueOrDefault(this.stateCodeCustom, ""));
     values.put("user_declared_state", DeviceProfile.getValueOrDefault(this.userDeclaredState, ""));
     values.put("user_declared_district", DeviceProfile.getValueOrDefault(this.userDeclaredDistrict, ""));
-    // values.put("uaspec", gson.toJson(DeviceProfile.getValueOrDefault(this.uaspec, new HashMap<>())));
     values.put("devicespec", gson.toJson(DeviceProfile.getValueOrDefault(this.devicespec, new HashMap<>())));
     values.put("firstaccess", DeviceProfile.getValueOrDefault(String.valueOf(this.firstaccess), ""));
     return values;
@@ -90,8 +87,7 @@ public class DeviceProfile {
     this.stateCodeCustom = map.getOrDefault("state_code_custom", "");
     this.userDeclaredState = map.getOrDefault("user_declared_state", "");
     this.userDeclaredDistrict = map.getOrDefault("user_declared_district", "");
-    // this.uaspec = gson.fromJson(map.getOrDefault("uaspec", ""), type);
-    this.devicespec = gson.fromJson(map.getOrDefault("devicespec", ""), type);
+    this.devicespec = gson.fromJson(map.getOrDefault("devicespec", "{}"), type);
     this.firstaccess = Long.valueOf(map.getOrDefault("firstaccess", "0"));
     return this;
   }
@@ -127,7 +123,6 @@ public class DeviceProfile {
     this.stateCodeCustom = stateCodeCustom;
     this.userDeclaredState = userDeclaredState;
     this.userDeclaredDistrict = userDeclaredDistrict;
-    // this.uaspec = uaspec;
     this.devicespec = device_spec;
     this.firstaccess = first_access;
   }
@@ -171,12 +166,6 @@ public class DeviceProfile {
   public String getUserDeclaredState() { return userDeclaredState; }
 
   public String getUserDeclaredDistrict() { return userDeclaredDistrict; }
-
-  /*
-  public Map<String, String> getUaspec() {
-    return uaspec;
-  }
-  */
 
   public Map getDevicespec() {
     return devicespec;
@@ -226,12 +215,6 @@ public class DeviceProfile {
 
   public void setUserDeclaredDistrict(String userDeclaredDistrict) { this.userDeclaredDistrict = userDeclaredDistrict; }
 
-  /*
-  public void setUaspec(Map<String, String> uaspec) {
-    this.uaspec = uaspec;
-  }
-  */
-
   public void setDevicespec(Map<String, String> devicespec) {
     this.devicespec = devicespec;
   }
@@ -249,7 +232,6 @@ public class DeviceProfile {
   }
 
   public Boolean isDeviceProfileResolved() {
-    // return this.isLocationResolved() || (!this.uaspec.isEmpty() || !this.devicespec.isEmpty() || this.firstaccess > 0);
     return this.isLocationResolved() || (!this.devicespec.isEmpty() || this.firstaccess > 0);
   }
 
