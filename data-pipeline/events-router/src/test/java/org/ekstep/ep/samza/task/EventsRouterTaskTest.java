@@ -1,8 +1,6 @@
 package org.ekstep.ep.samza.task;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
@@ -19,8 +17,8 @@ import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
-import org.ekstep.ep.samza.domain.DeDupEngine;
 import org.ekstep.ep.samza.fixtures.EventFixture;
+import org.ekstep.ep.samza.util.DeDupEngine;
 import org.ekstep.ep.samza.util.RedisConnect;
 import org.junit.Before;
 import org.junit.Test;

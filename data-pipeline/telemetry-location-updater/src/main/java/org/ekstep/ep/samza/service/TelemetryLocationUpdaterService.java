@@ -83,6 +83,7 @@ public class TelemetryLocationUpdaterService {
 				sink.toSuccessTopic(event);
 			}
 		} catch (JsonSyntaxException e) {
+			e.printStackTrace();
 			LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
 			sink.toMalformedTopic(source.getMessage());
 		}

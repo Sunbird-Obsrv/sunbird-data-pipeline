@@ -37,5 +37,13 @@ public class AssessmentAggregatorSink extends BaseSink {
     public void incDBHits() {
         metrics.incDBHitCount();
     }
+    
+    public void incDBInsertCount() {
+    	metrics.incDBInsertCount();
+    }
+    
+    public void incDBUpdateCount() {
+    	metrics.incDBUpdateCount();
+    }
 }
 

@@ -19,8 +19,6 @@ public class UserCacheUpdaterTask implements StreamTask, InitableTask, Windowabl
     private UserCacheUpdaterConfig config;
     private UserCacheUpdaterService service;
     private String metricsTopic;
-    private RedisConnect redisConnect;
-    private CassandraConnect cassandraConnect;
 
     public UserCacheUpdaterTask(Config config, TaskContext context, CassandraConnect cassandraConnect, RedisConnect redisConnect) {
         init(config, context, cassandraConnect, redisConnect);

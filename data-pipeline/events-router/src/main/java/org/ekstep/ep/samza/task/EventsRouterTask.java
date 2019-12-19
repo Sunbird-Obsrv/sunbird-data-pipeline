@@ -32,7 +32,7 @@ import org.apache.samza.task.WindowableTask;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.EventsRouterService;
-import org.ekstep.ep.samza.domain.DeDupEngine;
+import org.ekstep.ep.samza.util.DeDupEngine;
 import org.ekstep.ep.samza.util.RedisConnect;
 
 public class EventsRouterTask implements StreamTask, InitableTask, WindowableTask {

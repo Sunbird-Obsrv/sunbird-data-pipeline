@@ -15,7 +15,6 @@ public class ContentCacheUpdaterTask implements StreamTask, InitableTask, Window
     private ContentCacheUpdaterService service;
     private ContentCacheConfig config;
     private String metricsTopic;
-    private RedisConnect redisConnect;
 
     public ContentCacheUpdaterTask(Config config, TaskContext context, RedisConnect redisConnect) {
         init(config, context, redisConnect);

@@ -28,7 +28,6 @@ public class DataCache {
         Map<String, Object> cacheDataMap;
         try {
             cacheDataMap = getDataFromCache(key);
-            metrics.incCacheHitCounter();
         } catch (JedisException ex) {
             LOGGER.error("", "Exception when retrieving data from redis cache ", ex);
             redisConnect.resetConnection();
@@ -36,6 +35,9 @@ public class DataCache {
                 this.redisConnection = redisConn;
                 cacheDataMap = getDataFromCache(key);
             }
+        }
+        if (cacheDataMap != null && !cacheDataMap.isEmpty()) {
+        	metrics.incCacheHitCounter();
         }
         return cacheDataMap;
     }

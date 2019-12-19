@@ -17,7 +17,7 @@ public class DeDuplicationConfig {
     private final String metricsTopic;
     private final int dupStore;
     private int expirySeconds;
-    private List<String> includedProducerIds;
+    private List<String> includedProducerIds = new ArrayList<>();
 
 
     public DeDuplicationConfig(Config config) {
@@ -31,8 +31,6 @@ public class DeDuplicationConfig {
         expirySeconds = config.getInt("redis.database.key.expiry.seconds", 432000);
         if (!config.get("dedup.producer.include.ids", "").isEmpty()) {
             includedProducerIds = config.getList("dedup.producer.include.ids", new ArrayList<>());
-        } else {
-            includedProducerIds = new ArrayList<>();
         }
 
     }

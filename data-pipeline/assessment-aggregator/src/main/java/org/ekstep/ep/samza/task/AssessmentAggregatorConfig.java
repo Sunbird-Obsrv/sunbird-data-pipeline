@@ -18,7 +18,7 @@ public class AssessmentAggregatorConfig {
         coursesKeyspace = config.get("middleware.cassandra.courses_keyspace", "sunbird_courses");
         assessementTable = config.get("middleware.cassandra.aggregator_table", "assessment_aggregator");
         assessmentQuestionUDT = config.get("middleware.cassandra.question_type", "question");
-        failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
+        failedTopic = config.get("output.failed.topic.name", "telemetry.assess.failed");
         cassandraHost = config.get("middleware.cassandra.host", "127.0.0.1");
         cassandraPort = config.getInt("middleware.cassandra.port", 9042);
 

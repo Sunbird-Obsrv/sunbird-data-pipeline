@@ -69,4 +69,8 @@ public class AssessmentAggregatorTask implements StreamTask, InitableTask, Windo
         collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
         metrics.clear();
     }
+    
+    public JobMetrics getJobMetrics() {
+    	return this.metrics;
+    }
 }

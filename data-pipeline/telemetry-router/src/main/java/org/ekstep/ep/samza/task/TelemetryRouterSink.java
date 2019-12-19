@@ -38,6 +38,7 @@ public class TelemetryRouterSink extends BaseSink {
 
 	public void toAuditRoute(Event event) {
 		toTopic(config.getAuditRouteTopic(), event.mid(), event.getJson());
+		metrics.incAuditRouteSuccessCounter();
 	}
 
 }

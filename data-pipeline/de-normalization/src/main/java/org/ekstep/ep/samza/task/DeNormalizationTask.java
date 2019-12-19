@@ -50,7 +50,6 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
 
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void init(Config config, TaskContext context) {
         init(config, context, userCache, contentCache, dialcodeCache, metrics, redisConnect);

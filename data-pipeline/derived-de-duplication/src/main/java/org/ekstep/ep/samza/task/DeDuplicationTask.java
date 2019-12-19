@@ -26,10 +26,9 @@ import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
-import org.ekstep.ep.samza.engine.DeDupEngine;
 import org.ekstep.ep.samza.service.DeDuplicationService;
+import org.ekstep.ep.samza.util.DeDupEngine;
 import org.ekstep.ep.samza.util.RedisConnect;
-import redis.clients.jedis.exceptions.JedisException;
 
 public class DeDuplicationTask implements StreamTask, InitableTask, WindowableTask {
 
@@ -47,7 +46,6 @@ public class DeDuplicationTask implements StreamTask, InitableTask, WindowableTa
 
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void init(Config config, TaskContext context) {
 		init(config, context, null);

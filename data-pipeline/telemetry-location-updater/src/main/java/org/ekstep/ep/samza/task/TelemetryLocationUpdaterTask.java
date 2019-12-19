@@ -46,13 +46,11 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 	public TelemetryLocationUpdaterTask() {
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void init(Config config, TaskContext context) {
 		init(config, context, deviceProfileCache, redisConnect);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void init(Config config, TaskContext context, DeviceProfileCache deviceProfileCache, RedisConnect redisConnect) {
 
 		this.config = new TelemetryLocationUpdaterConfig(config);
