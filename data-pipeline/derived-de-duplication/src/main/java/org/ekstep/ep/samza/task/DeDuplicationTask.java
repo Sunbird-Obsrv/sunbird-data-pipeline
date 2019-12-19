@@ -56,8 +56,7 @@ public class DeDuplicationTask implements StreamTask, InitableTask, WindowableTa
 		this.config = new DeDuplicationConfig(config);
 		metrics = new JobMetrics(context, this.config.jobName());
 		deDupEngine = deDupEngine == null ?
-				new DeDupEngine(new RedisConnect(config).getConnection(), this.config.dupStore(),
-						this.config.expirySeconds()) : deDupEngine;
+				new DeDupEngine(new RedisConnect(config), this.config.dupStore(), this.config.expirySeconds()) : deDupEngine;
 		service = new DeDuplicationService(deDupEngine, this.config);
 
 	}

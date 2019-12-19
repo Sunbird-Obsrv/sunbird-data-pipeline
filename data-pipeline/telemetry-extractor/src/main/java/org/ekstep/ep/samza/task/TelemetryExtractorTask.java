@@ -55,8 +55,7 @@ public class TelemetryExtractorTask implements StreamTask, InitableTask, Windowa
 		this.config = new TelemetryExtractorConfig(config);
 		this.metrics = new JobMetrics(context, this.config.jobName());
 		deDupEngine = deDupEngine == null ?
-				new DeDupEngine(new RedisConnect(config).getConnection(), this.config.dupStore(),
-						this.config.expirySeconds()) : deDupEngine;
+				new DeDupEngine(new RedisConnect(config), this.config.dupStore(), this.config.expirySeconds()) : deDupEngine;
 		this.service = new TelemetryExtractorService(this.config, this.metrics,deDupEngine);
 	}
 

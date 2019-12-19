@@ -62,8 +62,7 @@ public class EventsRouterTask implements StreamTask, InitableTask, WindowableTas
 		this.config = new EventsRouterConfig(config);
 		metrics = new JobMetrics(context, this.config.jobName());
 		deDupEngine = deDupEngine == null ?
-				new DeDupEngine(new RedisConnect(config).getConnection(),
-						this.config.dupStore(), this.config.expirySeconds()) : deDupEngine;
+				new DeDupEngine(new RedisConnect(config), this.config.dupStore(), this.config.expirySeconds()) : deDupEngine;
 		service = new EventsRouterService(deDupEngine, this.config);
 
 	}

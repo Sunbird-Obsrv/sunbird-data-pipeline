@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.task.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -47,17 +48,35 @@ public class DeDupEngineTest {
 	@Test
     public void shouldVerifyDedupEngine() {
 		
-		Jedis jedis = redisConnect.getConnection();
-		DeDupEngine engine = new DeDupEngine(jedis, 1, 100);
+		DeDupEngine engine = new DeDupEngine(redisConnect, 1, 100);
 		
 		engine.storeChecksum("1234");
 		
 		assertTrue(engine.isUniqueEvent("2345"));
 		assertTrue(!engine.isUniqueEvent("1234"));
 		
-		Jedis jedis2 = engine.getRedisConnection();
-		assertNotNull(jedis2);
-		assertEquals(Long.valueOf(1), jedis2.getDB());
+		Jedis jedis = engine.getRedisConnection();
+		assertNotNull(jedis);
+		assertEquals(Long.valueOf(1), jedis.getDB());
+		
+		redisServer.stop();
+		try {
+			engine.storeChecksum("1234");
+		} catch(Exception ex) {
+			assertNotNull(ex);
+		}
+		
+		try {
+			assertTrue(engine.isUniqueEvent("2345"));
+		} catch(Exception ex) {
+			assertNotNull(ex);
+		} finally {
+			redisServer.start();
+			engine.storeChecksum("1234");
+			assertTrue(engine.isUniqueEvent("2345"));
+			assertTrue(!engine.isUniqueEvent("1234"));
+		}
+		
 	}
 
 }
