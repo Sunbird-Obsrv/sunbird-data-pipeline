@@ -21,18 +21,16 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
-import org.apache.samza.system.OutgoingMessageEnvelope;
-import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.*;
+import org.apache.samza.task.MessageCollector;
+import org.apache.samza.task.TaskContext;
+import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.core.JobMetrics;
-import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.TelemetryExtractorService;
 import org.ekstep.ep.samza.util.DeDupEngine;
 import org.ekstep.ep.samza.util.RedisConnect;
 
-public class TelemetryExtractorTask implements StreamTask, InitableTask, WindowableTask {
+public class TelemetryExtractorTask extends BaseSamzaTask {
 
-	static Logger LOGGER = new Logger(TelemetryExtractorTask.class);
 	private TelemetryExtractorConfig config;
 	private TelemetryExtractorService service;
 	private JobMetrics metrics;
@@ -57,6 +55,7 @@ public class TelemetryExtractorTask implements StreamTask, InitableTask, Windowa
 		deDupEngine = deDupEngine == null ?
 				new DeDupEngine(new RedisConnect(config), this.config.dupStore(), this.config.expirySeconds()) : deDupEngine;
 		this.service = new TelemetryExtractorService(this.config, this.metrics,deDupEngine);
+		this.initTask(config, metrics);
 	}
 
 	@Override
@@ -66,13 +65,6 @@ public class TelemetryExtractorTask implements StreamTask, InitableTask, Windowa
 		String message = (String) envelope.getMessage();
 		TelemetryExtractorSink sink = new TelemetryExtractorSink(collector, metrics, config);
 		service.process(message, sink);
-	}
-
-	@Override
-	public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-		String mEvent = metrics.collect();
-		collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
-		metrics.clear();
 	}
 
 }
