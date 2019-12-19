@@ -2,22 +2,19 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
-import org.apache.samza.system.OutgoingMessageEnvelope;
-import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.*;
+import org.apache.samza.task.MessageCollector;
+import org.apache.samza.task.TaskContext;
+import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.core.JobMetrics;
-import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.DeviceProfileUpdaterService;
 import org.ekstep.ep.samza.util.CassandraConnect;
 import org.ekstep.ep.samza.util.RedisConnect;
 
-public class DeviceProfileUpdaterTask implements StreamTask, InitableTask, WindowableTask {
+public class DeviceProfileUpdaterTask extends BaseSamzaTask {
 
-    static Logger LOGGER = new Logger(DeviceProfileUpdaterTask.class);
     private JobMetrics metrics;
     private DeviceProfileUpdaterService service;
     private DeviceProfileUpdaterConfig config;
-    private String metricsTopic;
     private RedisConnect redisConnect;
     private CassandraConnect cassandraConnect;
 
@@ -33,7 +30,7 @@ public class DeviceProfileUpdaterTask implements StreamTask, InitableTask, Windo
         metrics = new JobMetrics(context, this.config.jobName());
         cassandraConnect = new CassandraConnect(config);
         service = new DeviceProfileUpdaterService(config, redisConnect, cassandraConnect);
-        metricsTopic = config.get("output.metrics.topic.name");
+        this.initTask(config, metrics);
     }
 
     @Override
@@ -43,12 +40,6 @@ public class DeviceProfileUpdaterTask implements StreamTask, InitableTask, Windo
         DeviceProfileUpdaterSink sink = new DeviceProfileUpdaterSink(collector, metrics, config);
         service.process(source, sink);
     }
-
-    @Override
-    public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-        String mEvent = metrics.collect();
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", metricsTopic), mEvent));
-        metrics.clear();
-    }
+    
 }
 

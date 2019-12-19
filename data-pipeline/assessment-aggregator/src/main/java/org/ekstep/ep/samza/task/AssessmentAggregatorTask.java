@@ -21,14 +21,12 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
-import org.apache.samza.system.OutgoingMessageEnvelope;
-import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.service.AssessmentAggregatorService;
 import org.ekstep.ep.samza.util.CassandraConnect;
 
-public class AssessmentAggregatorTask implements StreamTask, InitableTask, WindowableTask {
+public class AssessmentAggregatorTask extends BaseSamzaTask {
 
     private JobMetrics metrics;
     private AssessmentAggregatorService service;
@@ -50,9 +48,10 @@ public class AssessmentAggregatorTask implements StreamTask, InitableTask, Windo
     private void init(Config config, TaskContext context, CassandraConnect cassandraConnect) {
 
         this.config = new AssessmentAggregatorConfig(config);
-        metrics = new JobMetrics(context, this.config.jobName());
+        this.metrics = new JobMetrics(context, this.config.jobName());
         cassandraConnect = null != cassandraConnect ? cassandraConnect : new CassandraConnect(this.config.getCassandraHost(), this.config.getCassandraPort());
         this.service = new AssessmentAggregatorService(cassandraConnect, this.config);
+        this.initTask(config, this.metrics);
     }
 
     @Override
@@ -63,13 +62,6 @@ public class AssessmentAggregatorTask implements StreamTask, InitableTask, Windo
         service.process(source, sink);
     }
 
-    @Override
-    public void window(MessageCollector collector, TaskCoordinator coordinator) {
-        String mEvent = metrics.collect();
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
-        metrics.clear();
-    }
-    
     public JobMetrics getJobMetrics() {
     	return this.metrics;
     }

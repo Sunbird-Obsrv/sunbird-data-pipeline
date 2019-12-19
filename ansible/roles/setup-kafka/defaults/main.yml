@@ -120,7 +120,10 @@ processing_kafka_overriden_topics:
     replication_factor: 1
   - name: telemetry.metrics
     retention_time: 604800000
-    replication_factor: 1  
+    replication_factor: 1
+  - name: telemetry.assess.failed
+    retention_time: 86400000
+    replication_factor: 1      
 
 processing_kafka_topics:
   - name: system.command
@@ -241,3 +244,6 @@ processing_kafka_topics:
   - name: telemetry.metrics
     num_of_partitions: 1
     replication_factor: 1
+  - name: telemetry.assess.failed
+    num_of_partitions: 1
+    replication_factor: 1  

@@ -1,24 +1,23 @@
 package org.ekstep.ep.samza.task;
 
-import org.apache.samza.config.Config;
-import org.apache.samza.system.IncomingMessageEnvelope;
-import org.apache.samza.system.OutgoingMessageEnvelope;
-import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.*;
-import org.ekstep.ep.samza.core.JobMetrics;
-import org.ekstep.ep.samza.util.CassandraConnect;
-import org.ekstep.ep.samza.util.RedisConnect;
-import org.ekstep.ep.samza.service.UserCacheUpdaterService;
-
 import java.util.Arrays;
 import java.util.List;
 
-public class UserCacheUpdaterTask implements StreamTask, InitableTask, WindowableTask {
+import org.apache.samza.config.Config;
+import org.apache.samza.system.IncomingMessageEnvelope;
+import org.apache.samza.task.MessageCollector;
+import org.apache.samza.task.TaskContext;
+import org.apache.samza.task.TaskCoordinator;
+import org.ekstep.ep.samza.core.JobMetrics;
+import org.ekstep.ep.samza.service.UserCacheUpdaterService;
+import org.ekstep.ep.samza.util.CassandraConnect;
+import org.ekstep.ep.samza.util.RedisConnect;
+
+public class UserCacheUpdaterTask extends BaseSamzaTask {
 
     private JobMetrics metrics;
     private UserCacheUpdaterConfig config;
     private UserCacheUpdaterService service;
-    private String metricsTopic;
 
     public UserCacheUpdaterTask(Config config, TaskContext context, CassandraConnect cassandraConnect, RedisConnect redisConnect) {
         init(config, context, cassandraConnect, redisConnect);
@@ -39,7 +38,7 @@ public class UserCacheUpdaterTask implements StreamTask, InitableTask, Windowabl
         cassandraConnect = null != cassandraConnect ? cassandraConnect : new CassandraConnect(cassandraHosts, config.getInt("middleware..cassandra.port", 9042));
         redisConnect = null != redisConnect? redisConnect: new RedisConnect(config);
         service = new UserCacheUpdaterService(this.config, redisConnect, cassandraConnect, metrics);
-        metricsTopic = config.get("output.metrics.topic.name");
+        this.initTask(config, metrics);
     }
 
     @Override
@@ -51,10 +50,4 @@ public class UserCacheUpdaterTask implements StreamTask, InitableTask, Windowabl
         service.process(source, sink);
     }
 
-    @Override
-    public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-        String mEvent = metrics.collect();
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", metricsTopic), mEvent));
-        metrics.clear();
-    }
 }
