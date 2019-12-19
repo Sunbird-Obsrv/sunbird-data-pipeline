@@ -129,6 +129,9 @@ public class JobMetrics {
         noCacheHitCount.clear();
         primaryRouteSuccessCount.clear();
         secondaryRouteSuccessCount.clear();
+        auditRouteSuccessCount.clear();
+        dbInsertCount.clear();
+        dbUpdateCount.clear();
     }
 
     public void incSuccessCounter() {
@@ -292,6 +295,9 @@ public class JobMetrics {
         metricsEvent.put("user-declared-hit-count", userDeclaredHitCount.getCount());
         metricsEvent.put("ip-location-hit-count", ipLocationHitCount.getCount());
         metricsEvent.put("no-cache-hit-count", noCacheHitCount.getCount());
+        metricsEvent.put("audit-route-success-count", auditRouteSuccessCount.getCount());
+        metricsEvent.put("db-insert-count", dbInsertCount.getCount());
+        metricsEvent.put("db-update-count", dbUpdateCount.getCount());
         return new Gson().toJson(metricsEvent);
     }
 }
