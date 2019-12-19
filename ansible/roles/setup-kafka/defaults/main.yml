@@ -122,7 +122,7 @@ processing_kafka_overriden_topics:
     retention_time: 604800000
     replication_factor: 1
   - name: telemetry.assess.failed
-    retention_time: 86400000
+    retention_time: 2592000000
     replication_factor: 1      
 
 processing_kafka_topics:
