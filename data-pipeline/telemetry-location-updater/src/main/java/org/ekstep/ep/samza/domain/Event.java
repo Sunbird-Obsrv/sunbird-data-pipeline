@@ -8,8 +8,6 @@ import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.task.TelemetryLocationUpdaterConfig;
 
 import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,7 +42,6 @@ public class Event extends Events {
         ldata.put("statecustomname", deviceProfile.getstateCustomName());
         ldata.put("districtcustom", deviceProfile.getDistrictCustom());
         ldata.put("devicespec", deviceProfile.getDevicespec());
-        ldata.put("uaspec", deviceProfile.getUaspec());
         ldata.put("firstaccess", deviceProfile.getFirstaccess());
         String iso3166statecode = addISOStateCodeToDeviceProfile(deviceProfile);
         if (!iso3166statecode.isEmpty()) {
@@ -83,5 +80,4 @@ public class Event extends Events {
         flags.put(key, value);
         telemetry.add(path.flags(), flags);
     }
-
 }

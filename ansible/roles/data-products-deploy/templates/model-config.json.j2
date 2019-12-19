@@ -2148,7 +2148,7 @@
     "search": {
       "type": "none"
     },
-    "model": "org.ekstep.analytics.job.StateAdminReportJob",
+    "model": "org.ekstep.analytics.job.report.StateAdminReportJob",
     "modelParams": {
       "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
       "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
@@ -2163,6 +2163,27 @@
     ],
     "parallelization": 8,
     "appName": "Admin User Reports",
+    "deviceMapping": false
+  },
+  "admin-geo-reports": {
+    "search": {
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.job.report.StateAdminGeoReportJob",
+    "modelParams": {
+      "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
+      "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Admin Geo Reports",
     "deviceMapping": false
   },
   "content-rating-updater": {
@@ -3304,8 +3325,8 @@
                   "type": "in",
                   "dimension": "dimensions_pdata_id",
                   "values": [
-                    "{{ producerEnv }}.diksha.app",
-                    "{{ producerEnv }}.diksha.portal"
+                    "{{ producer_env }}.diksha.app",
+                    "{{ producer_env }}.diksha.portal"
                   ]
                 }
               ],
@@ -3340,7 +3361,7 @@
                 {
                   "type": "equals",
                   "dimension": "context_pdata_id",
-                  "value": "{{ producerEnv }}.diksha.app"
+                  "value": "{{ producer_env }}.diksha.app"
                 }
               ],
               "descending": "false"
@@ -3374,7 +3395,7 @@
                 {
                   "type": "equals",
                   "dimension": "context_pdata_id",
-                  "value": "{{ producerEnv }}.diksha.portal"
+                  "value": "{{ producer_env }}.diksha.portal"
                 }
               ],
               "descending": "false"
@@ -3404,8 +3425,8 @@
                   "type": "in",
                   "dimension": "dimensions_pdata_id",
                   "values": [
-                    "{{ producerEnv }}.diksha.app",
-                    "{{ producerEnv }}.diksha.portal"
+                    "{{ producer_env }}.diksha.app",
+                    "{{ producer_env }}.diksha.portal"
                   ]
                 },
                 {
@@ -3445,7 +3466,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producerEnv }}.diksha.app"
+                  "value": "{{ producer_env }}.diksha.app"
                 },
                 {
                   "type": "equals",
@@ -3484,7 +3505,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producerEnv }}.diksha.portal"
+                  "value": "{{ producer_env }}.diksha.portal"
                 },
                 {
                   "type": "equals",
@@ -3519,8 +3540,8 @@
                   "type": "in",
                   "dimension": "dimensions_pdata_id",
                   "values": [
-                    "{{ producerEnv }}.diksha.app",
-                    "{{ producerEnv }}.diksha.portal"
+                    "{{ producer_env }}.diksha.app",
+                    "{{ producer_env }}.diksha.portal"
                   ]
                 },
                 {
@@ -3550,7 +3571,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producerEnv }}.diksha.app"
+                  "value": "{{ producer_env }}.diksha.app"
                 },
                 {
                   "type": "equals",
@@ -3579,7 +3600,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producerEnv }}.diksha.portal"
+                  "value": "{{ producer_env }}.diksha.portal"
                 },
                 {
                   "type": "equals",
@@ -3614,8 +3635,8 @@
                   "type": "in",
                   "dimension": "dimensions_pdata_id",
                   "values": [
-                    "{{ producerEnv }}.diksha.app",
-                    "{{ producerEnv }}.diksha.portal"
+                    "{{ producer_env }}.diksha.app",
+                    "{{ producer_env }}.diksha.portal"
                   ]
                 },
                 {
@@ -3667,7 +3688,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producerEnv }}.diksha.app"
+                  "value": "{{ producer_env }}.diksha.app"
                 },
                 {
                   "type": "equals",
@@ -3718,7 +3739,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producerEnv }}.diksha.portal"
+                  "value": "{{ producer_env }}.diksha.portal"
                 },
                 {
                   "type": "equals",
