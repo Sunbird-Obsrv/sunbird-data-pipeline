@@ -3399,9 +3399,13 @@
               ],
               "filters": [
                 {
-                  "type": "equals",
+                  "type": "in",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.app"
+                  "values": [
+                    "{{ producer_env }}.diksha.app",
+                    "{{ producer_env }}.diksha.portal",
+                    "{{ producer_env }}.diksha.desktop"
+                  ]
                 },
                 {
                   "type": "equals",
@@ -3467,13 +3471,9 @@
               ],
               "filters": [
                 {
-                  "type": "in",
+                  "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "values": [
-                    "{{ producer_env }}.diksha.app",
-                    "{{ producer_env }}.diksha.portal",
-                    "{{ producer_env }}.diksha.desktop"
-                  ]
+                  "value": "{{ producer_env }}.diksha.portal"
                 },
                 {
                   "type": "equals",
