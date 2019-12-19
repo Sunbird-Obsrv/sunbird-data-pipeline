@@ -62,7 +62,7 @@ public class DeviceProfileUpdaterService {
             if (null != deviceId && !deviceId.isEmpty()) {
 
                 // Update device profile details in Postgres DB
-                addDeviceDataToPostgres(deviceId, deviceData);
+                addDeviceDataToDB(deviceId, deviceData);
                 sink.deviceDBUpdateSuccess();
 
                 // Update device profile details in Redis cache
@@ -89,7 +89,7 @@ public class DeviceProfileUpdaterService {
         }
     }
 
-    private void addDeviceDataToPostgres(String deviceId, Map<String, String> deviceData) throws Exception {
+    private void addDeviceDataToDB(String deviceId, Map<String, String> deviceData) throws Exception {
         String parseduaspec = null != deviceData.get("uaspec") ? gson.fromJson(deviceData.get("uaspec"), JsonObject.class).toString() : null;
         String parsedevicespec = null != deviceData.get("device_spec") ?  gson.fromJson(deviceData.get("device_spec"), JsonObject.class).toString() : null;
         Long firstAccess = Long.parseLong(deviceData.get("first_access"));
