@@ -10,8 +10,6 @@ import org.ekstep.ep.samza.task.DeNormalizationSource;
 
 import java.util.List;
 
-import static java.text.MessageFormat.format;
-
 public class DeNormalizationService {
 
     private static Logger LOGGER = new Logger(DeNormalizationService.class);
@@ -53,6 +51,7 @@ public class DeNormalizationService {
                 }
             }
         } catch(JsonSyntaxException e){
+        	e.printStackTrace();
             LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
             sink.toMalformedTopic(source.getMessage());
         }

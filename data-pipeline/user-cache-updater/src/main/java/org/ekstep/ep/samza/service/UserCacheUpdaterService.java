@@ -43,9 +43,11 @@ public class UserCacheUpdaterService extends BaseCacheUpdaterService {
             String userId = event.objectUserId();
             if (null != userId ) {
                 updateUserCache(event, userId, sink);
+            } else { 
+            	sink.markSkipped(); 
             }
-            else { sink.markSkipped(); }
         } catch (JsonSyntaxException e) {
+        	e.printStackTrace();
             LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
             sink.error();
         }
@@ -90,6 +92,8 @@ public class UserCacheUpdaterService extends BaseCacheUpdaterService {
             addToCache(userId, gson.toJson(userCacheData), userStoreDb);
             LOGGER.info(userId, "Updated in cache");
             sink.success();
+        } else {
+        	sink.markSkipped();
         }
         return userCacheData;
     }

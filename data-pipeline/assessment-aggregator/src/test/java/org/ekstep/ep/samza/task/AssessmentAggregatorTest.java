@@ -30,7 +30,6 @@ import java.util.Date;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.*;
 
 public class AssessmentAggregatorTest {
@@ -42,6 +41,7 @@ public class AssessmentAggregatorTest {
     private TaskContext taskContext;
     private CassandraConnect cassandraConnect;
     private AssessmentAggregatorConfig config;
+    private Counter counter;
 
     @Before
     public void setUp() {
@@ -52,7 +52,7 @@ public class AssessmentAggregatorTest {
         taskCoordinator = mock(TaskCoordinator.class);
         taskContext = mock(TaskContext.class);
         MetricsRegistry metricsRegistry = Mockito.mock(MetricsRegistry.class);
-        Counter counter = Mockito.mock(Counter.class);
+        counter = Mockito.mock(Counter.class);
         stub(metricsRegistry.newCounter(anyString(), anyString()))
                 .toReturn(counter);
         stub(taskContext.getMetricsRegistry()).toReturn(metricsRegistry);
@@ -63,7 +63,7 @@ public class AssessmentAggregatorTest {
         stub(configMock.get("middleware.cassandra.courses_keyspace", "sunbird_courses")).toReturn("sunbird_courses");
         stub(configMock.get("middleware.cassandra.aggregator_table", "assessment_aggregator")).toReturn("assessment_aggregator");
         stub(configMock.get("middleware.cassandra.question_type", "question")).toReturn("question");
-        stub(configMock.get("output.failed.topic.name", "telemetry.failed")).toReturn("telemetry.failed");
+        stub(configMock.get("output.failed.topic.name", "telemetry.assess.failed")).toReturn("telemetry.assess.failed");
         UserType userType = mock(UserType.class);
         UDTValue udtValue = mock(UDTValue.class);
         when(udtValue.setString(anyString(), anyString())).thenReturn(udtValue);
@@ -90,8 +90,7 @@ public class AssessmentAggregatorTest {
                 (cassandraConnect, config);
         AssessmentAggregatorSink sink = new AssessmentAggregatorSink(collector,
                 new JobMetrics(taskContext, "AssessmentAggregator"), config);
-        Aggregate assess = assessmentAggregatorService.getAggregateData(batchEvent, 1565198476000L,
-                sink);
+        Aggregate assess = assessmentAggregatorService.getAggregateData(batchEvent, 1565198476000L);
         assertEquals(2.0, assess.getTotalMaxScore(), 0.001);
         assertEquals(1.33, assess.getTotalScore(), 0.001);
         assertEquals("1.33/2", assess.getGrandTotal());
@@ -101,16 +100,13 @@ public class AssessmentAggregatorTest {
     public void shouldSkipBatchIfAssessmentDateIsOlder() throws Exception {
 
         String event = EventFixture.BATCH_ASSESS__OLDER_EVENT;
-        BatchEvent batchEvent = new BatchEvent((Map<String, Object>) new Gson().fromJson(event, Map.class));
         stub(envelope.getMessage()).toReturn(event);
-        AssessmentAggregatorService assessmentAggregatorService = new AssessmentAggregatorService(cassandraConnect, config);
         Row row = mock(Row.class);
         stub(row.getTimestamp("last_attempted_on")).toReturn(new Date(1567444876000L));
         when(cassandraConnect.findOne(anyString())).thenReturn(row);
-        boolean status = assessmentAggregatorService.isBatchEventValid(batchEvent, row);
-        assertFalse(status);
         assessmentAggregatorTask.process(envelope, collector, taskCoordinator);
-        verify(collector).send(argThat(validateOutputTopic(envelope.getMessage(), "telemetry.failed")));
+        verify(collector).send(argThat(validateOutputTopic(envelope.getMessage(), "telemetry.assess.failed")));
+        verify(counter, times(2)).inc();
     }
 
     @Test
@@ -120,8 +116,7 @@ public class AssessmentAggregatorTest {
         AssessmentAggregatorSource assessmentAggregatorSource = new AssessmentAggregatorSource(envelope);
         AssessmentAggregatorSink sink = new AssessmentAggregatorSink(collector, mock(JobMetrics.class), config);
         assessmentAggregatorService.process(assessmentAggregatorSource, sink);
-        verify(collector).send(argThat(validateOutputTopic(envelope.getMessage(), "telemetry.failed")));
-
+        verify(collector).send(argThat(validateOutputTopic(envelope.getMessage(), "telemetry.assess.failed")));
     }
 
     @Test
@@ -131,8 +126,7 @@ public class AssessmentAggregatorTest {
         stub(envelope.getMessage()).toReturn(event);
         AssessmentAggregatorService assessmentAggregatorService = new AssessmentAggregatorService
                 (cassandraConnect, config);
-        Aggregate assess = assessmentAggregatorService.getAggregateData(batchEvent, 1565198476000L,
-                mock(AssessmentAggregatorSink.class));
+        Aggregate assess = assessmentAggregatorService.getAggregateData(batchEvent, 1565198476000L);
         assertEquals(2, assess.getQuestionsList().size());
         assertEquals(2.0, assess.getTotalMaxScore(), 0.001);
         assertEquals(2.0, assess.getTotalScore(), 0.001);

@@ -63,6 +63,9 @@ output {
 				"user_declared_location_hit" => "%{[user-declared-hit-count]}"
 				"ip_location_hit" => "%{[ip-location-hit-count]}"
 				"no_cache_hit" => "%{[no-cache-hit-count]}"
+				"audit_route_success" => "%{[audit-route-success-count]}"
+				"db_insert" => "%{[db-insert-count]}"
+				"db_update" => "%{[db-update-count]}"
 			}   
 			coerce_values => {
 				"success" => "float"
@@ -109,6 +112,9 @@ output {
 				"user_declared_location_hit" => "float"
 				"ip_location_hit" => "float"
 				"no_cache_hit" => "float"
+				"audit_route_success" => "float"
+				"db_insert" => "float"
+				"db_update" => "float"
 			}
 			host => "{{influxdb_host}}"
 			port => "{{influxdb_port}}"

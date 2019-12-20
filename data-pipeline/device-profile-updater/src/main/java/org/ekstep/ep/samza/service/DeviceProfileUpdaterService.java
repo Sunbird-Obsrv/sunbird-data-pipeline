@@ -46,7 +46,7 @@ public class DeviceProfileUpdaterService {
             Map<String, String> message = source.getMap();
             updateDeviceDetails(message, sink);
         } catch (JsonSyntaxException e) {
-            LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
+            LOGGER.error(null, "INVALID EVENT: " + source.getMessage(), e);
             sink.toMalformedTopic(source.getMessage());
         }
     }
