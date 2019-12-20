@@ -401,6 +401,8 @@ public class EventFixture {
 			"    }\n"+
 			"}";
 
+	public static final String DEVICE_SUMMARY = "{\"eid\":\"ME_DEVICE_SUMMARY\",\"ets\":1573607175904,\"syncts\":1573557231120,\"ver\":\"1.0\",\"mid\":\"2D03E6A051F77F4EEE1F48E4AD7FE575\",\"context\":{\"pdata\":{\"id\":\"AnalyticsDataPipeline\",\"ver\":\"1.0\",\"model\":\"DeviceSummary\"},\"granularity\":\"DAY\",\"date_range\":{\"from\":1573196386089,\"to\":1573196390938},\"channel\":\"b00bc992ef25f1a9a8d63291e20efc8d\"},\"dimensions\":{\"did\":\"099988ce86c4dbb9a4057ff611d38427\",\"channel\":\"b00bc992ef25f1a9a8d63291e20efc8d\"},\"edata\":{\"eks\":{\"firstAccess\":1573196380482,\"dial_stats\":{\"total_count\":0,\"success_count\":0,\"failure_count\":0},\"content_downloads\":0,\"contents_played\":0,\"total_ts\":4.85,\"total_launches\":1,\"unique_contents_played\":0}},\"flags\":{\"derived_dd_processed\":true},\"type\":\"events\",\"ts\":\"2019-11-13T01:06:15.904+0000\"}";
+
 	public static final String CHANNEL_SEARCH_EMPTY_LOCATIONIDS_RESPONSE = "{\n" +
 			"    \"id\": \"api.org.search\",\n" +
 			"    \"ver\": \"v1\",\n" +

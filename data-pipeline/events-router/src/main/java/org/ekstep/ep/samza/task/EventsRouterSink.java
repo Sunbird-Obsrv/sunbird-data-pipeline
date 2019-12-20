@@ -1,12 +1,9 @@
 package org.ekstep.ep.samza.task;
 
-import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.ekstep.ep.samza.core.BaseSink;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.domain.Event;
-
-import java.text.SimpleDateFormat;
 
 public class EventsRouterSink extends BaseSink {
 

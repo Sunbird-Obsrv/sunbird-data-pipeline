@@ -2,24 +2,24 @@
 # tasks file for redis
 - name: download redis zipfile
   become: yes
-  become_user: "{{analytics_user}}"
-  get_url: url={{redis_tar_ball}} dest={{analytics_user_home}}/redis-stable.tar.gz timeout=50 force=no owner={{analytics_user}}
+  become_user: "{{ redis_user }}"
+  get_url: url={{ redis_tar_ball }} dest={{ redis_dir }}/redis-stable.tar.gz timeout=50 force=no owner={{ redis_user }}
 
-- name: unzip 
+- name: unzip
   become: yes
-  become_user: "{{analytics_user}}"
-  unarchive: src={{analytics_user_home}}/redis-stable.tar.gz dest={{analytics_user_home}} copy=no group={{analytics_user}} owner={{analytics_user}} creates={{ redis_home }}
+  become_user: "{{ redis_user }}"
+  unarchive: src={{ redis_dir }}/redis-stable.tar.gz dest={{ redis_dir }} copy=no group={{ redis_user }} owner={{ redis_user }} creates={{ redis_home }}
 
 - name: Change ownership of redis installation
   become: yes
-  file: path={{ redis_home }} owner={{analytics_user}} group={{analytics_user}} state=directory recurse=yes
+  file: path={{ redis_home }} owner={{ redis_user }} group={{ redis_user }} state=directory recurse=yes
 
 - name: redis conf
   become: yes
-  template: src=redis.conf.j2 dest={{analytics_user_home}}/redis-stable/redis.conf
-  
+  template: src=redis.conf.j2 dest={{ redis_dir }}/redis-stable/redis.conf
+
 - name: Install required utils
-  apt: name={{ item }} state=present 
+  apt: name={{ item }} state=present
   become: yes
   with_items:
     - make
@@ -29,25 +29,24 @@
 
 - name: Go to the folder and run make
   become: yes
-  become_user: "{{analytics_user}}"
+  become_user: "{{ redis_user }}"
   command: chdir={{ redis_home }} make
-  
-- name: copy template
+
+- name: copy systemd script template
   become: yes
-  become_user: "{{analytics_user}}"
-  template: src=stop_script.j2 dest={{ analytics_user_home }}/stop_script.sh  group={{analytics_user}} owner={{analytics_user}} mode=0775
-  
-- name: run script
+  template:
+    src: systemd.j2
+    dest: /etc/systemd/system/redis.service
+    mode: 0755
+
+- name: enable redis systemd service
   become: yes
-  become_user: "{{analytics_user}}"
-  shell: sh {{ analytics_user_home }}/stop_script.sh
-  
+  systemd:
+    name: redis
+    enabled: yes
+
 - name: start redis
   become: yes
-  become_user: "{{analytics_user}}"
-  shell: nohup src/redis-server {{analytics_user_home}}/redis-stable/redis.conf --protected-mode no &
-  args:
-    chdir: "{{analytics_user_home}}/redis-stable/"
-  async: 60
-  poll: 60
-
+  systemd:
+    name: redis
+    state: restarted

@@ -1,8 +1,6 @@
 package org.ekstep.ep.samza.task;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
@@ -19,8 +17,8 @@ import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
-import org.ekstep.ep.samza.domain.DeDupEngine;
 import org.ekstep.ep.samza.fixtures.EventFixture;
+import org.ekstep.ep.samza.util.DeDupEngine;
 import org.ekstep.ep.samza.util.RedisConnect;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,6 +45,7 @@ public class EventsRouterTaskTest {
 	private Config configMock;
 	private EventsRouterTask eventsRouterTask;
 	private DeDupEngine deDupEngineMock;
+	private RedisConnect redisConnectMock;
 	private Jedis jedisMock = new MockJedis("duplicationtest");
 	private int dupStoreId = 1;
 
@@ -60,7 +59,7 @@ public class EventsRouterTaskTest {
 		envelopeMock = mock(IncomingMessageEnvelope.class);
 		configMock = Mockito.mock(Config.class);
 
-		RedisConnect redisConnectMock = mock(RedisConnect.class);
+		redisConnectMock = mock(RedisConnect.class);
 		deDupEngineMock = mock(DeDupEngine.class);
 		stub(redisConnectMock.getConnection()).toReturn(jedisMock);
 		stub(configMock.get("router.events.telemetry.route.topic", TELEMETRY_EVENTS_TOPIC)).toReturn(TELEMETRY_EVENTS_TOPIC);
@@ -108,7 +107,7 @@ public class EventsRouterTaskTest {
 		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.START_EVENT);
 		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
-		DeDupEngine deDupEngine = new DeDupEngine(jedisMock, dupStoreId,60);
+		DeDupEngine deDupEngine = new DeDupEngine(redisConnectMock, dupStoreId,60);
 		boolean isUnique = deDupEngine.isUniqueEvent("677009782");
 		deDupEngine.getRedisConnection();
 		deDupEngine.storeChecksum("678998676");

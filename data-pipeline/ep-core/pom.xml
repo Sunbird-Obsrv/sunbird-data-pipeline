@@ -89,6 +89,13 @@
             <type>jar</type>
             <scope>test</scope>
         </dependency>
+        <dependency>
+		    <groupId>it.ozimov</groupId>
+		    <artifactId>embedded-redis</artifactId>
+		    <version>0.7.1</version>
+		    <scope>test</scope>
+		</dependency>
+		        
     </dependencies>
 
     <build>
@@ -106,7 +113,7 @@
                     <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
                     <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
                     <excludes>
-                        <exclude>org/ekstep/ep/samza/util/**/*</exclude>
+                        <exclude>org/ekstep/ep/samza/util/**/CassandraConnect.class</exclude>
                         <exclude>org/ekstep/ep/samza/core/**/Logger.class</exclude>
                     </excludes>
                 </configuration>
