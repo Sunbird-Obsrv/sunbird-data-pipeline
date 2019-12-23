@@ -90,16 +90,19 @@ public class DeviceProfileUpdaterService {
     }
 
     private void addDeviceDataToDB(String deviceId, Map<String, String> deviceData) throws Exception {
-        String parseduaspec = null != deviceData.get("uaspec") ? gson.fromJson(deviceData.get("uaspec"), JsonObject.class).toString() : null;
-        String parsedevicespec = null != deviceData.get("device_spec") ?  gson.fromJson(deviceData.get("device_spec"), JsonObject.class).toString() : null;
         Long firstAccess = Long.parseLong(deviceData.get("first_access"));
         Long lastUpdatedDate = Long.parseLong(deviceData.get("api_last_updated_on"));
         List<String> parsedKeys = new ArrayList<>(Arrays.asList("uaspec", "device_spec", "first_access", "api_last_updated_on"));
         deviceData.keySet().removeAll(parsedKeys);
 
         deviceData.put("api_last_updated_on", new Timestamp(lastUpdatedDate).toString());
-        if (null != parseduaspec) { deviceData.put("uaspec", parseduaspec); }
-        if (null != parsedevicespec) { deviceData.put("device_spec", parsedevicespec); }
+
+        if(null != deviceData.get("uaspec")) {
+            deviceData.put("uaspec", gson.fromJson(deviceData.get("uaspec"), JsonObject.class).toString());
+        }
+        if(null != deviceData.get("device_spec")) {
+            deviceData.put("device_spec", gson.fromJson(deviceData.get("device_spec"), JsonObject.class).toString());
+        }
 
         String columns = formatValues(deviceData.keySet(),",");
         String values = formatValues(deviceData.values(),"','");

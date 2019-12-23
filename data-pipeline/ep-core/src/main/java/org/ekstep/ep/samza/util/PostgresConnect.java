@@ -1,10 +1,8 @@
 package org.ekstep.ep.samza.util;
 
 import org.apache.samza.config.Config;
-import org.postgresql.jdbc2.optional.ConnectionPool;
-
+import org.postgresql.ds.PGPoolingDataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class PostgresConnect {
@@ -25,8 +23,15 @@ public class PostgresConnect {
         port = config.getInt("postgres.port", 5432);
         try {
             Class.forName("org.postgresql.Driver");
-            connection = DriverManager.getConnection(String.format("jdbc:postgresql://%s:%d/%s",host, port, db),
-                    user, password);
+            PGPoolingDataSource source = new PGPoolingDataSource();
+            source.setDatabaseName(db);
+            source.setPassword(password);
+            source.setPortNumber(port);
+            source.setUser(user);
+            source.setServerName(host);
+            source.setMaxConnections(2);
+            connection = source.getConnection();
+
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {
@@ -41,8 +46,14 @@ public class PostgresConnect {
     public Connection resetConnection() throws SQLException, ClassNotFoundException {
         connection.close();
         Class.forName("org.postgresql.Driver");
-        connection = DriverManager.getConnection(String.format("jdbc:postgresql://%s:%d/%s", host, port, db),
-                user, password);
+        PGPoolingDataSource source = new PGPoolingDataSource();
+        source.setDatabaseName(db);
+        source.setPassword(password);
+        source.setPortNumber(port);
+        source.setUser(user);
+        source.setServerName(host);
+        source.setMaxConnections(2);
+        connection = source.getConnection();
         return connection;
     }
 }
