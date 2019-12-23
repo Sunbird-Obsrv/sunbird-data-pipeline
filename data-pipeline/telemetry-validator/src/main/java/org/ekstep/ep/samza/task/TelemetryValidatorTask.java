@@ -21,14 +21,14 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
-import org.apache.samza.system.OutgoingMessageEnvelope;
-import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.*;
+import org.apache.samza.task.MessageCollector;
+import org.apache.samza.task.TaskContext;
+import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.service.TelemetryValidatorService;
 import org.ekstep.ep.samza.util.TelemetrySchemaValidator;
 
-public class TelemetryValidatorTask implements StreamTask, InitableTask, WindowableTask {
+public class TelemetryValidatorTask extends BaseSamzaTask {
 
     private TelemetryValidatorConfig config;
     private JobMetrics metrics;
@@ -54,6 +54,7 @@ public class TelemetryValidatorTask implements StreamTask, InitableTask, Windowa
         metrics = new JobMetrics(context, this.config.jobName());
         TelemetrySchemaValidator telemetrySchemaValidator = schemaValidator == null ? new TelemetrySchemaValidator(this.config) : schemaValidator;
         service = new TelemetryValidatorService(this.config, telemetrySchemaValidator);
+        this.initTask(config, metrics);
     }
 
     @Override
@@ -64,11 +65,5 @@ public class TelemetryValidatorTask implements StreamTask, InitableTask, Windowa
 
         service.process(source, sink);
     }
-
-    @Override
-    public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-        String mEvent = metrics.collect();
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
-        metrics.clear();
-    }
+   
 }

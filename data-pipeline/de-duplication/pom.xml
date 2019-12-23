@@ -17,7 +17,7 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>de-duplication</artifactId>
-    <version>0.4.9</version>
+    <version>0.5.0</version>
     <packaging>jar</packaging>
     <name>Deduplication</name>
     <description>

@@ -21,7 +21,7 @@ public class BatchEvent {
         return gson.toJson(telemetry.getMap());
     }
 
-    public Long assessmentets() {
+    public Long assessmentEts() {
         NullableValue<Object> ets = telemetry.read("assessmentTs");
         if (ets.value().getClass().equals(Double.class)) {
             return ((Double) ets.value()).longValue();

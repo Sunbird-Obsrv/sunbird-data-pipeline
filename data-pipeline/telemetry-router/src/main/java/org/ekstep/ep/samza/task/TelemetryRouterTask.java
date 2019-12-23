@@ -21,19 +21,14 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
-import org.apache.samza.system.OutgoingMessageEnvelope;
-import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.InitableTask;
 import org.apache.samza.task.MessageCollector;
-import org.apache.samza.task.StreamTask;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
-import org.apache.samza.task.WindowableTask;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.TelemetryRouterService;
 
-public class TelemetryRouterTask implements StreamTask, InitableTask, WindowableTask {
+public class TelemetryRouterTask extends BaseSamzaTask {
 
 	static Logger LOGGER = new Logger(TelemetryRouterTask.class);
 	private TelemetryRouterConfig config;
@@ -54,6 +49,7 @@ public class TelemetryRouterTask implements StreamTask, InitableTask, Windowable
 		this.config = new TelemetryRouterConfig(config);
 		metrics = new JobMetrics(context, this.config.jobName());
 		service = new TelemetryRouterService(this.config);
+		this.initTask(config, metrics);
 	}
 
 	@Override
@@ -65,11 +61,4 @@ public class TelemetryRouterTask implements StreamTask, InitableTask, Windowable
 		service.process(source, sink);
 	}
 
-	@Override
-	public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-
-		String mEvent = metrics.collect();
-		collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
-		metrics.clear();
-	}
 }

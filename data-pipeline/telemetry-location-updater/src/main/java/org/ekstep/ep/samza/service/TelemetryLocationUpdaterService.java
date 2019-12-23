@@ -82,8 +82,8 @@ public class TelemetryLocationUpdaterService {
 				metrics.incUnprocessedMessageCount();
 				sink.toSuccessTopic(event);
 			}
-		} catch (JsonSyntaxException e) {
-			LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
+		} catch (JsonSyntaxException ex) {
+			LOGGER.error(null, "INVALID EVENT: " + source.getMessage(), ex);
 			sink.toMalformedTopic(source.getMessage());
 		}
 	}
@@ -163,6 +163,7 @@ public class TelemetryLocationUpdaterService {
 			} else {
 				event.setFlag(TelemetryLocationUpdaterConfig.getDeviceProfileJobFlag(), false);
 			}
+
 			if (deviceProfile.isLocationResolved()) {
 				event.setFlag(TelemetryLocationUpdaterConfig.getDeviceLocationJobFlag(), true);
 			} else {
@@ -171,7 +172,5 @@ public class TelemetryLocationUpdaterService {
 		} else {
 			event.setFlag(TelemetryLocationUpdaterConfig.getDeviceProfileJobFlag(), false);
 		}
-
-
 	}
 }

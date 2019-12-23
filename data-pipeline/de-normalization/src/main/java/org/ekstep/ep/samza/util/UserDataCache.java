@@ -1,7 +1,5 @@
 package org.ekstep.ep.samza.util;
 
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import org.apache.samza.config.Config;
@@ -13,7 +11,6 @@ import redis.clients.jedis.exceptions.JedisException;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class UserDataCache extends DataCache {
@@ -22,7 +19,6 @@ public class UserDataCache extends DataCache {
 
     private RedisConnect redisPool;
     private Jedis redisConnection;
-    private int locationDbKeyExpiryTimeInSeconds;
     private String userSignInTypeDefault;
     private String userLoginInTypeDefault;
     private Type mapType = new TypeToken<Map<String, Object>>() {
@@ -39,7 +35,6 @@ public class UserDataCache extends DataCache {
         this.databaseIndex = config.getInt("redis.userDB.index", 4);
         this.redisPool = null == redisConnect ? new RedisConnect(config) : redisConnect;
         this.redisConnection = this.redisPool.getConnection(databaseIndex);
-        this.locationDbKeyExpiryTimeInSeconds = config.getInt("location.db.redis.key.expiry.seconds", 86400);
         this.userSignInTypeDefault = config.get("user.signin.type.default", "Anonymous");
         this.userLoginInTypeDefault = config.get("user.login.type.default", "NA");
     }
@@ -49,10 +44,6 @@ public class UserDataCache extends DataCache {
         Map<String, Object> userDataMap;
         try {
             userDataMap = getUserDataFromCache(userId);
-            if (!userDataMap.isEmpty()) {
-                userDataMap.keySet().retainAll(this.fieldsList);
-                metrics.incUserCacheHitCount();
-            }
         } catch (JedisException ex) {
             redisPool.resetConnection();
             try (Jedis redisConn = redisPool.getConnection(databaseIndex)) {
@@ -60,9 +51,13 @@ public class UserDataCache extends DataCache {
                 userDataMap = getUserDataFromCache(userId);
             }
         }
+        if (null != userDataMap && !userDataMap.isEmpty()) {
+            userDataMap.keySet().retainAll(this.fieldsList);
+            metrics.incUserCacheHitCount();
+        }
         userDataMap = getUserSigninLoginDetails(userDataMap);
 
-        if (userDataMap.size() <=2) {  //Since SigninType and LoginType are default values, incrementing no data metric only if other user details are not present
+        if (userDataMap.size() <= 2) {  //Since SigninType and LoginType are default values, incrementing no data metric only if other user details are not present
             metrics.incNoDataCount();
         }
         return userDataMap;
