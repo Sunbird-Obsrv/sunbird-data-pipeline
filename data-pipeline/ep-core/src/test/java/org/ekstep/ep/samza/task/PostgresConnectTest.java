@@ -23,13 +23,13 @@ public class PostgresConnectTest {
     public void setUp() throws Exception {
         configMock = mock(Config.class);
 
-        EmbeddedPostgres.builder().setPort(5432).start();
+        EmbeddedPostgres.builder().setPort(5430).start();
 
         stub(configMock.get("postgres.user")).toReturn("postgres");
         stub(configMock.get("postgres.password")).toReturn("postgres");
         stub(configMock.get("postgres.db")).toReturn("postgres");
         stub(configMock.get("postgres.host","127.0.0.1")).toReturn("localhost");
-        stub(configMock.getInt("postgres.port", 5432)).toReturn(5432);
+        stub(configMock.getInt("postgres.port", 5432)).toReturn(5430);
 
         postgresConnect = new PostgresConnect(configMock);
     }
