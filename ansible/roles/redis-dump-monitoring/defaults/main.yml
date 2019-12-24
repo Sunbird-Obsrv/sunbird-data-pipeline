@@ -1,0 +1,14 @@
+redis_user: analytics
+redis_monitoring_home: "/home/{{redis_user}}"
+redis_home: "{{redis_monitoring_home}}/redis-stable"
+redis_dump_rdb_time_in_seconds: 900
+redis_dump_rdb_keys_to_save_state: 1
+redis_dump_rdb_log_file_location: "/var/log/redisdumprdbstate.log"
+redis_dump_rdb_log_file_log_rotate_backup: 14
+redis_dump_rdb_mail_sender: "monitoring@sunbirded.org"
+redis_dump_rdb_mail_receivers: "to=user1email&to=user2email"
+redis_dump_rdb_mail_sendgrid_username:
+redis_dump_rdb_mail_sendgrid_password:
+redis_dump_rdb_slack_url:
+redis_dump_rdb_cron_hour: "*"
+redis_dump_rdb_cron_minute: "*/15"

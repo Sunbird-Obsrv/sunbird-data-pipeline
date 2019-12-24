@@ -1,0 +1,62 @@
+---
+- name: Install required utils
+  apt: 
+    name: "{{ item }}" 
+    state: present 
+    update_cache: yes
+  become: yes
+  with_items:
+    - bc
+
+- name: create a log file for redis monitoring
+  file:
+    path: "{{ redis_dump_rdb_log_file_location }}"
+    state: touch
+    owner: "{{ redis_user }}"
+    group: "{{ redis_user }}"
+    mode: '0644'
+
+- name: Copy Redis monitoring file 
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ redis_home }}/{{ item }}"
+    owner: "{{ redis_user }}"
+    group: "{{ redis_user  }}"
+    mode: '0775'
+  with_items:
+    - check_redis_dump.sh
+
+- name: enable crontab for the redis monitoring logs
+  cron:
+    name: "Redis dump rdb monitoring"
+    hour: "{{ redis_dump_rdb_cron_hour }}"
+    minute: "{{ redis_dump_rdb_cron_minute }}"
+    job: "{{ redis_home }}/check_redis_dump.sh"
+    user: "{{ redis_user }}"
+    
+- name: Enable logging for crontab
+  become: yes
+  lineinfile: 
+    dest: "/etc/rsyslog.d/50-default.conf"
+    regexp: '^#cron' 
+    line: 'cron.*                          /var/log/cron.log'
+    owner: "{{ redis_user }}"
+    backrefs: yes
+
+- name: logrotate config file changes
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/logrotate.d/{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+  with_items:
+    - redisdumprdbstate.conf
+
+- name: restart the logrotate and crontab.
+  service:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+    - rsyslog
+    - cron

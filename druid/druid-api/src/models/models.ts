@@ -4,9 +4,13 @@ export interface IValidationResponse {
     "isValid": boolean;
 }
 
+export interface IDataSourceLimits {
+    limits: ILimits[];
+}
 export interface ILimits {
     cardinalColumns: string[];
     common: ICommon;
+    dataSource: string;
     queryRules: IQueryRules;
 }
 

@@ -11,15 +11,13 @@ public class TelemetryLocationUpdaterConfig {
 
     private String successTopic;
     private String failedTopic;
-    private String metricsTopic;
     private String malformedTopic;
 
     public TelemetryLocationUpdaterConfig(Config config) {
+    	
         successTopic = config.get("output.success.topic.name", "telemetry.with_loation");
         failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
-        metricsTopic = config.get("output.metrics.topic.name", "telemetry.pipeline_metrics");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
-
     }
 
     public String successTopic() {
@@ -28,10 +26,6 @@ public class TelemetryLocationUpdaterConfig {
 
     public String failedTopic() {
         return failedTopic;
-    }
-
-    public String metricsTopic() {
-        return metricsTopic;
     }
 
     public String malformedTopic() {

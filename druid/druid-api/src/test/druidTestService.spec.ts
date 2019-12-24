@@ -19,10 +19,10 @@ describe("/POST druid/v2/", () => {
             .reply(200, {});
     });
 
-    it("Should fetch the result from the druid, When valid request is passed", (done) => {
+    it("Should fetch the result from the druid telemetry data source, When valid request is passed", (done) => {
         chai.request(app)
             .post(config.apiEndPoint)
-            .send(JSON.parse(Fixtures.VALID_QUERY))
+            .send(JSON.parse(Fixtures.TELEMETRY_DATA_SOURCE_VALID_QUERY))
             .end((err, res) => {
                 res.should.have.status(HttpStatus.OK);
                 done();
@@ -135,4 +135,27 @@ describe("/POST druid/v2/", () => {
                 done();
             });
     });
+
+    it("Should allow user to query, When the limits are not found for particular data source", (done) => {
+        chai.request(app)
+            .post(config.apiEndPoint)
+            .send(JSON.parse(Fixtures.UNSUPPORTED_DATA_SOURCE))
+            .end((err, res) => {
+                res.should.have.status(HttpStatus.OK);
+                expect(res.body).not.equal(undefined);
+                expect(res.body.errorMessage).equal(undefined);
+                done();
+            });
+    });
+
+    it("Should fetch the result from the druid summary data source, When valid request is passed", (done) => {
+        chai.request(app)
+            .post(config.apiEndPoint)
+            .send(JSON.parse(Fixtures.SUMMARY_DATA_SOURCE_VALID_QUERY))
+            .end((err, res) => {
+                res.should.have.status(HttpStatus.OK);
+                done();
+            });
+    });
+
 });

@@ -1,9 +1,5 @@
 package org.ekstep.ep.samza.task;
 
-
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.samza.config.Config;
 
 public class EventsRouterConfig {
@@ -12,7 +8,6 @@ public class EventsRouterConfig {
 
     private String failedTopic;
     private String duplicateTopic;
-    private String metricsTopic;
     private String telemetryEventsRouteTopic;
     private String summaryEventsRouteTopic;
     private String summaryRouteEvents;
@@ -26,7 +21,6 @@ public class EventsRouterConfig {
     public EventsRouterConfig(Config config) {
         failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
         duplicateTopic = config.get("output.duplicate.topic.name", "telemetry.duplicate");
-        metricsTopic = config.get("output.metrics.topic.name", "telemetry.pipeline_metrics");
         telemetryEventsRouteTopic = config.get("router.events.telemetry.route.topic", "events.telemetry");
         summaryRouteEvents = config.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY");
         summaryEventsRouteTopic = config.get("router.events.summary.route.topic", "events.summary");
@@ -58,10 +52,6 @@ public class EventsRouterConfig {
 
     public String duplicateTopic() {
         return duplicateTopic;
-    }
-
-    public String metricsTopic() {
-        return metricsTopic;
     }
 
     public String malformedTopic() {

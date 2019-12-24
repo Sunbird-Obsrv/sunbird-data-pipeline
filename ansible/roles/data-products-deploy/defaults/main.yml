@@ -15,11 +15,12 @@ topic: "{{ env }}.telemetry.derived"
 learning_topic: "{{ env }}.learning.graph.events"
 analytics_metrics_topic: "{{ env }}.analytics_metrics"
 sink_topic: "{{ env }}.telemetry.sink"
+metrics_topic: "{{ env }}.telemetry.metrics"
 job_manager_tmp_dir: "transient-data"
 channel: dev-test
 druid_broker_host: "{{groups['broker'][0]}}"
-analytics_job_list: '"wfs", "wfus", "workflow-usage-metrics", "portal-metrics", "dialcode-usage-summary", "dialcode-usage-updater", "etb-coverage-summary", "data-exhaust", "pipeline-failed-events-audit", "pipeline-druid-events-audit", "pipeline-audit", "ds", "dpu", "monitor-job-summ"'
-analytics_jobs_count: 14
+analytics_job_list: '"wfs", "wfus", "workflow-usage-metrics", "portal-metrics", "ds", "dpu", "content-rating-updater", "druid-query-processor", "district-weekly", "district-monthly", "desktop-consumption-report", "course-dashboard-metrics", "assessment-dashboard-metrics", "admin-user-reports", "admin-geo-reports", "data-exhaust", "monitor-job-summ"'
+analytics_jobs_count: 17
 
 cassandra_keyspace_prefix: '{{ env }}_'
 dp_dispatch_bucket_name: ekstep-dev-data-store

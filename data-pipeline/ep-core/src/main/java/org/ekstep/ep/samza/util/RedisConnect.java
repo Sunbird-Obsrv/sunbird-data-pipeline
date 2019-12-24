@@ -4,9 +4,6 @@ import org.apache.samza.config.Config;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.exceptions.JedisDataException;
-import redis.clients.jedis.exceptions.JedisException;
-import com.google.gson.Gson;
 
 import java.time.Duration;
 
@@ -14,7 +11,6 @@ import java.time.Duration;
 public class RedisConnect {
     private JedisPool jedisPool;
     private Config config;
-    private Gson gson = new Gson();
 
     public RedisConnect(Config config) {
         this.config = config;

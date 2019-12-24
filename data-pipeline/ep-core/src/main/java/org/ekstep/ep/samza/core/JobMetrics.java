@@ -25,6 +25,7 @@ public class JobMetrics {
     private final Counter batchErrorCount;
     private final Counter primaryRouteSuccessCount;
     private final Counter secondaryRouteSuccessCount;
+    private final Counter auditRouteSuccessCount;
     private final Counter cacheHitCount;
     private final Counter cacheMissCount;
     private final Counter cacheExpiredCount;
@@ -47,8 +48,13 @@ public class JobMetrics {
     private final Counter userDeclaredHitCount;
     private final Counter ipLocationHitCount;
     private final Counter noCacheHitCount;
+    
+    private final Counter dbInsertCount;
+    private final Counter dbUpdateCount;
+    
     private TaskContext context;
     private int partition;
+
     public JobMetrics(TaskContext context) {
         this(context, null);
     }
@@ -63,6 +69,7 @@ public class JobMetrics {
         batchErrorCount = metricsRegistry.newCounter(getClass().getName(), "batch-error-count");
         primaryRouteSuccessCount = metricsRegistry.newCounter(getClass().getName(), "primary-route-success-count");
         secondaryRouteSuccessCount = metricsRegistry.newCounter(getClass().getName(), "secondary-route-success-count");
+        auditRouteSuccessCount = metricsRegistry.newCounter(getClass().getName(), "audit-route-success-count");
         cacheHitCount = metricsRegistry.newCounter(getClass().getName(), "cache-hit-count");
         cacheMissCount = metricsRegistry.newCounter(getClass().getName(), "cache-miss-count");
         cacheEmptyValuesCount = metricsRegistry.newCounter(getClass().getName(), "cache-empty-values-count");
@@ -85,6 +92,8 @@ public class JobMetrics {
         userDeclaredHitCount = metricsRegistry.newCounter(getClass().getName(), "user-declared-hit-count");
         ipLocationHitCount = metricsRegistry.newCounter(getClass().getName(), "ip-location-hit-count");
         noCacheHitCount = metricsRegistry.newCounter(getClass().getName(), "no-cache-hit-count");
+        dbInsertCount = metricsRegistry.newCounter(getClass().getName(), "db-insert-count");
+        dbUpdateCount = metricsRegistry.newCounter(getClass().getName(), "db-update-count");
         jobName = jName;
         this.context = context;
     }
@@ -118,15 +127,24 @@ public class JobMetrics {
         userDeclaredHitCount.clear();
         ipLocationHitCount.clear();
         noCacheHitCount.clear();
+        primaryRouteSuccessCount.clear();
+        secondaryRouteSuccessCount.clear();
+        auditRouteSuccessCount.clear();
+        dbInsertCount.clear();
+        dbUpdateCount.clear();
     }
 
     public void incSuccessCounter() {
         successMessageCount.inc();
     }
 
-    public void deviceDBUpdateSuccess() { deviceDBUpdateCount.inc(); }
+    public void deviceDBUpdateSuccess() {
+        deviceDBUpdateCount.inc();
+    }
 
-    public void deviceCacheUpdateSuccess() { deviceCacheUpdateCount.inc(); }
+    public void deviceCacheUpdateSuccess() {
+        deviceCacheUpdateCount.inc();
+    }
 
     public void incFailedCounter() {
         failedMessageCount.inc();
@@ -155,6 +173,10 @@ public class JobMetrics {
     public void incSecondaryRouteSuccessCounter() {
         secondaryRouteSuccessCount.inc();
     }
+    
+    public void incAuditRouteSuccessCounter() {
+        auditRouteSuccessCount.inc();
+    }
 
     public void incDuplicateCounter() {
         duplicateEventCount.inc();
@@ -164,16 +186,8 @@ public class JobMetrics {
         cacheHitCount.inc();
     }
 
-    public void incCacheExpiredCounter() {
-        cacheExpiredCount.inc();
-    }
-
     public void incCacheErrorCounter() {
         cacheErrorCount.inc();
-    }
-
-    public void incCacheMissCounter() {
-        cacheMissCount.inc();
     }
 
     public void incNoDataCount() {
@@ -192,32 +206,8 @@ public class JobMetrics {
         dbHitCount.inc();
     }
 
-    public void incDBErrorCount() {
-        dbErrorCount.inc();
-    }
-
-    public void incDeviceDBErrorCount() {
-        deviceDbErrorCount.inc();
-    }
-
-    public void incUserDBErrorCount() {
-        userDbErrorCount.inc();
-    }
-
-    public void incDeviceCacheHitCount() {
-        deviceCacheHitCount.inc();
-    }
-
     public void incUserCacheHitCount() {
         userCacheHitCount.inc();
-    }
-
-    public void incDeviceDbHitCount() {
-        deviceDbHitCount.inc();
-    }
-
-    public void incUserDbHitCount() {
-        userDbHitCount.inc();
     }
 
     public void incExpiredEventCount() {
@@ -234,6 +224,14 @@ public class JobMetrics {
 
     public void incNoCacheHitCount() {
         noCacheHitCount.inc();
+    }
+    
+    public void incDBInsertCount() {
+        dbInsertCount.inc();
+    }
+    
+    public void incDBUpdateCount() {
+        dbUpdateCount.inc();
     }
 
     public long consumerLag(Map<String, ConcurrentHashMap<String, Metric>> containerMetricsRegistry) {
@@ -292,12 +290,14 @@ public class JobMetrics {
         metricsEvent.put("expired-event-count", expiredEventCount.getCount());
         metricsEvent.put("duplicate-event-count", duplicateEventCount.getCount());
         metricsEvent.put("metricts", new DateTime().getMillis());
-        metricsEvent.put("device-db-update-count",deviceDBUpdateCount.getCount());
-        metricsEvent.put("device-cache-update-count",deviceCacheUpdateCount.getCount());
-        metricsEvent.put("user-declared-hit-count",userDeclaredHitCount.getCount());
-        metricsEvent.put("ip-location-hit-count",ipLocationHitCount.getCount());
-        metricsEvent.put("no-cache-hit-count",noCacheHitCount.getCount());
-
+        metricsEvent.put("device-db-update-count", deviceDBUpdateCount.getCount());
+        metricsEvent.put("device-cache-update-count", deviceCacheUpdateCount.getCount());
+        metricsEvent.put("user-declared-hit-count", userDeclaredHitCount.getCount());
+        metricsEvent.put("ip-location-hit-count", ipLocationHitCount.getCount());
+        metricsEvent.put("no-cache-hit-count", noCacheHitCount.getCount());
+        metricsEvent.put("audit-route-success-count", auditRouteSuccessCount.getCount());
+        metricsEvent.put("db-insert-count", dbInsertCount.getCount());
+        metricsEvent.put("db-update-count", dbUpdateCount.getCount());
         return new Gson().toJson(metricsEvent);
     }
 }

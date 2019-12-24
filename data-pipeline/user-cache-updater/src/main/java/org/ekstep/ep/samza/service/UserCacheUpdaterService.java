@@ -2,6 +2,8 @@ package org.ekstep.ep.samza.service;
 
 import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.Row;
+import com.datastax.driver.core.querybuilder.Clause;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -41,9 +43,11 @@ public class UserCacheUpdaterService extends BaseCacheUpdaterService {
             String userId = event.objectUserId();
             if (null != userId ) {
                 updateUserCache(event, userId, sink);
+            } else { 
+            	sink.markSkipped(); 
             }
-            else { sink.markSkipped(); }
         } catch (JsonSyntaxException e) {
+        	e.printStackTrace();
             LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
             sink.error();
         }
@@ -61,7 +65,8 @@ public class UserCacheUpdaterService extends BaseCacheUpdaterService {
             ArrayList<String> userUpdatedList = event.getUserMetdataUpdatedList();
             if (userCacheData.containsKey("usersignintype") && !"Anonymous".equals(userCacheData.get("usersignintype"))
                     && null != userUpdatedList && !userUpdatedList.isEmpty()) {
-                List<Row> userDetails = readFromCassandra(userCacheUpdaterConfig.cassandra_db(), userCacheUpdaterConfig.cassandra_user_table(), "id", userId);
+                Clause userDataClause = QueryBuilder.eq("id",userId);
+                List<Row> userDetails = readFromCassandra(userCacheUpdaterConfig.cassandra_db(), userCacheUpdaterConfig.cassandra_user_table(), userDataClause);
                 Map<String, Object> userMetadataInfoMap = getUserMetaDataInfo(userDetails);
 
                 if (!userMetadataInfoMap.isEmpty())
@@ -69,8 +74,9 @@ public class UserCacheUpdaterService extends BaseCacheUpdaterService {
 
                 if (userUpdatedList.contains("id") && null != userCacheData.get("locationids")) {
                     List<String> locationIds = (List<String>) userCacheData.get("locationids");
+                    Clause locationDataClause = QueryBuilder.in("id",locationIds);
 
-                    List<Row> locationDetails = readFromCassandra(userCacheUpdaterConfig.cassandra_db(), userCacheUpdaterConfig.cassandra_location_table(), "id", locationIds);
+                    List<Row> locationDetails = readFromCassandra(userCacheUpdaterConfig.cassandra_db(), userCacheUpdaterConfig.cassandra_location_table(), locationDataClause);
                     Map<String, Object> userLocationMap = getLocationInfo(locationDetails);
 
                     if (!userLocationMap.isEmpty())
@@ -86,6 +92,8 @@ public class UserCacheUpdaterService extends BaseCacheUpdaterService {
             addToCache(userId, gson.toJson(userCacheData), userStoreDb);
             LOGGER.info(userId, "Updated in cache");
             sink.success();
+        } else {
+        	sink.markSkipped();
         }
         return userCacheData;
     }
@@ -126,7 +134,7 @@ public class UserCacheUpdaterService extends BaseCacheUpdaterService {
 
     public Map<String, Object> getLocationInfo(List<Row> locationDetails) {
         Map<String, Object> result = new HashMap<>();
-        if(locationDetails.size() > 0) {
+        if(null != locationDetails && !locationDetails.isEmpty()) {
             locationDetails.forEach(record -> {
                 String name = record.getString("name");
                 String type = record.getString("type");

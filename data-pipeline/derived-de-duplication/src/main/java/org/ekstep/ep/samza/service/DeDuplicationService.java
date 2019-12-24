@@ -3,10 +3,11 @@ package org.ekstep.ep.samza.service;
 import com.google.gson.JsonSyntaxException;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.engine.DeDupEngine;
 import org.ekstep.ep.samza.task.DeDuplicationConfig;
 import org.ekstep.ep.samza.task.DeDuplicationSink;
 import org.ekstep.ep.samza.task.DeDuplicationSource;
+import org.ekstep.ep.samza.util.DeDupEngine;
+
 import redis.clients.jedis.exceptions.JedisException;
 
 public class DeDuplicationService {

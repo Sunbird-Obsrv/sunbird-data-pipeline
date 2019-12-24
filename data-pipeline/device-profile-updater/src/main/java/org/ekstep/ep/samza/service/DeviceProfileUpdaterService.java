@@ -45,7 +45,7 @@ public class DeviceProfileUpdaterService {
             Map<String, String> message = source.getMap();
             updateDeviceDetails(message, sink);
         } catch (JsonSyntaxException e) {
-            LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
+            LOGGER.error(null, "INVALID EVENT: " + source.getMessage(), e);
             sink.toMalformedTopic(source.getMessage());
         }
     }
@@ -121,9 +121,11 @@ public class DeviceProfileUpdaterService {
         Map<String, String> deviceMap = deviceProfile.toMap();
         deviceMap.values().removeAll(Collections.singleton(""));
         deviceMap.values().removeAll(Collections.singleton("{}"));
-
         if (redisConnection.exists(deviceId)) {
-            deviceMap.remove("firstaccess");
+            Map<String, String> data = redisConnection.hgetAll(deviceId);
+            if(data.get("firstaccess") != null && !("0").equals(data.get("firstaccess"))) {
+                deviceMap.remove("firstaccess");
+            }
             redisConnection.hmset(deviceId, deviceMap);
         } else {
             redisConnection.hmset(deviceId, deviceMap);
