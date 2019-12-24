@@ -4,10 +4,12 @@ import org.apache.samza.config.Config;
 import org.postgresql.ds.PGPoolingDataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class PostgresConnect {
     private Config config;
     private Connection connection;
+    private Statement statement;
     private String user;
     private String password;
     private String db;
@@ -41,6 +43,16 @@ public class PostgresConnect {
 
     public Connection getConnection() {
         return this.connection;
+    }
+
+    public Statement getStatement() throws Exception {
+        try {
+            statement = connection.createStatement();
+        } catch(SQLException ex) {
+            connection = resetConnection();
+            statement = connection.createStatement();
+        }
+        return statement;
     }
 
     public Connection resetConnection() throws SQLException, ClassNotFoundException {
