@@ -30,7 +30,6 @@ public class DeviceProfileUpdaterService {
     private int deviceStoreDb;
     private PostgresConnect postgresConnect;
     private String postgres_table;
-    private Statement statement;
     private Gson gson = new Gson();
     private Type mapType = new TypeToken<Map<String, Object>>() { }.getType();
 
@@ -113,9 +112,8 @@ public class DeviceProfileUpdaterService {
         String updateFirstAccessQuery = String.format("UPDATE %s SET first_access = '%s' WHERE device_id = '%s' AND first_access IS NULL",
                 postgres_table, new Timestamp(firstAccess).toString(), deviceId);
 
-        statement = postgresConnect.getStatement();
-        statement.execute(upsertQuery);
-        statement.execute(updateFirstAccessQuery);
+        postgresConnect.executeQuery(upsertQuery);
+        postgresConnect.executeQuery(updateFirstAccessQuery);
     }
 
     private void addToCache(String deviceId, DeviceProfile deviceProfile, Jedis redisConnection) {

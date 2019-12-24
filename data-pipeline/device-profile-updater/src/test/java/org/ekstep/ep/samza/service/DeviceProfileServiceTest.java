@@ -60,7 +60,6 @@ public class DeviceProfileServiceTest {
         stub(redisConnectMock.getConnection(deviceStoreId)).toReturn(deviceJedisMock);
         stub(postgresConnectMock.getConnection()).toReturn(connectionMock);
         stub(postgresConnectMock.resetConnection()).toReturn(connectionMock);
-        stub(postgresConnectMock.getStatement()).toReturn(statementMock);
         envelopeMock = mock(IncomingMessageEnvelope.class);
         stub(configMock.getInt("redis.database.deviceStore.id", deviceStoreId)).toReturn(deviceStoreId);
         stub(configMock.get("input.device.topic.name","device.profile")).toReturn("events_deviceprofile");

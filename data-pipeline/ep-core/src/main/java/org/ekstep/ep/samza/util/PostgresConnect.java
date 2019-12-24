@@ -33,6 +33,7 @@ public class PostgresConnect {
             source.setServerName(host);
             source.setMaxConnections(2);
             connection = source.getConnection();
+            statement = connection.createStatement();
 
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -45,14 +46,8 @@ public class PostgresConnect {
         return this.connection;
     }
 
-    public Statement getStatement() throws Exception {
-        try {
-            statement = connection.createStatement();
-        } catch(SQLException ex) {
-            connection = resetConnection();
-            statement = connection.createStatement();
-        }
-        return statement;
+    public boolean executeQuery(String query) throws Exception {
+        return statement.execute(query);
     }
 
     public Connection resetConnection() throws SQLException, ClassNotFoundException {

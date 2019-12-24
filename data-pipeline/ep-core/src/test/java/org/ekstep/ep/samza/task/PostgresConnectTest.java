@@ -39,7 +39,7 @@ public class PostgresConnectTest {
         connection = postgresConnect.getConnection();
         assertNotNull(connection);
 
-        Statement st = postgresConnect.getStatement();
+        Statement st = connection.createStatement();
         st.execute("CREATE TABLE device_table(id text PRIMARY KEY, channel text);");
         st.execute("INSERT INTO device_table(id,channel)  VALUES('12345','custchannel');");
 
