@@ -140,6 +140,18 @@
             {
               "type": "root",
               "name": "no-cache-hit-count"
+            },
+            {
+              "type": "root",
+              "name": "audit-route-success-count"
+            },
+            {
+              "type": "root",
+              "name": "db-insert-count"
+            },
+            {
+              "type": "root",
+              "name": "db-update-count"
             }
           ]
         },
@@ -276,6 +288,18 @@
             {
               "type": "long",
               "name": "no-cache-hit-count"
+            },
+            {
+              "type": "long",
+              "name": "audit-route-success-count"
+            },
+            {
+              "type": "long",
+              "name": "db-insert-count"
+            },
+            {
+              "type": "long",
+              "name": "db-update-count"
             }
           ],
           "dimensionsExclusions": []

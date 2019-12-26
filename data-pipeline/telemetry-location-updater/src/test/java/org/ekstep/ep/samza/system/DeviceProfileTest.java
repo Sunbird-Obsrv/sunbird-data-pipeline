@@ -18,7 +18,7 @@ public class DeviceProfileTest {
     public void shouldReturnValues() {
 
         DeviceProfile df = new DeviceProfile("IN", "India", "KA", "Karnatka", "Bengaluru");
-        DeviceProfile df2 = new DeviceProfile("IN", "India", "KA", "Karnatka", "Bengaluru", "TUMKUR");
+        DeviceProfile df2 = new DeviceProfile("IN", "India", "KA", "Karnatka", "Bengaluru");
         Assert.assertEquals("Bengaluru", df.getCity());
         Assert.assertEquals("India", df.getCountry());
         Assert.assertEquals("IN", df.getCountryCode());

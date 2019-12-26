@@ -55,6 +55,7 @@ public class TelemetryExtractorService {
 						deDupEngine.storeChecksum(msgid);
 					}
 				} catch (JedisException ex) {
+					ex.printStackTrace();
 					metrics.incSkippedCounter();
 					LOGGER.error(msgid, " Error from redis store: ", ex);
 				}
@@ -89,6 +90,7 @@ public class TelemetryExtractorService {
 			metrics.incBatchSuccessCounter();
 			generateAuditEvent(batchEvent, syncts, syncTimestamp, sink, defaultChannel);
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			LOGGER.error("", "Failed to extract the event batch: ", ex);
 			sink.sinkBatchErrorEvents(message);
 		}

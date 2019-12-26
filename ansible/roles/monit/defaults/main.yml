@@ -41,6 +41,7 @@ monit_zookeeper:
   app_name: zookeeper
   custom_start: "/bin/systemctl start zookeeper.service"
   custom_stop: "/bin/systemctl stop zookeeper.service"
+  pid_file: /var/run/zookeeper/zookeeper.pid
   timeout: "30"
   retry: 3
 
@@ -160,7 +161,7 @@ monit_cassandra-dp:
   app_name: "cassandra"
   custom_start: /bin/systemctl start cassandra
   custom_stop: /bin/systemctl stop cassandra
-  timeout: "30"
+  timeout: "20"
   retry: 3
 
 monit_influxdb:
@@ -176,5 +177,13 @@ monit_influxdb-relay:
   grep_string: influxdb-relay
   custom_start: "/usr/sbin/service influxdb-relay start"
   custom_stop: "/usr/sbin/service influxdb-relay stop"
+  timeout: "30"
+  retry: 3
+
+monit_redis:
+  app_name: redis-server
+  grep_string: redis-server
+  custom_start: "/bin/systemctl start redis"
+  custom_stop: "/bin/systemctl stop redis"
   timeout: "30"
   retry: 3

@@ -17,7 +17,6 @@ import org.joda.time.DateTime;
 
 import java.util.*;
 
-@SuppressWarnings("unchecked")
 public class AssessmentAggregatorService {
 
     private static Logger LOGGER = new Logger(AssessmentAggregatorService.class);
@@ -32,36 +31,51 @@ public class AssessmentAggregatorService {
         try {
             BatchEvent batchEvent = source.getEvent();
             Row assessment = dbUtil.getAssessmentFromDB(batchEvent);
-            sink.incDBHits();
-            if (isBatchEventValid(batchEvent, assessment)) {
-                Long createdOn = null != assessment ? assessment.getTimestamp("created_on").getTime() : new DateTime().getMillis();
-                Aggregate assess = getAggregateData(batchEvent, createdOn, sink);
-                dbUtil.updateAssessmentToDB(batchEvent, assess, createdOn);
-                LOGGER.info("", " Successfully Aggregated the batch event - batchid: " + batchEvent.batchId()
-                        + " ,userid: " + batchEvent.userId() + " ,couserid: " + batchEvent.courseId()
-                        + " ,contentid: " + batchEvent.contentId());
-                sink.incDBHits();
-                sink.batchSuccess();
-
-            } else {
-                LOGGER.info(batchEvent.attemptId(), ": Batch Event older than last assessment time, skipping");
-                sink.skip(batchEvent);
+            if (null != assessment) {
+            	sink.incDBHits();
             }
+            if (null != assessment) {
+                Long last_attempted_on = assessment.getTimestamp("last_attempted_on").getTime();
+                if (batchEvent.assessmentEts() > last_attempted_on) {
+                	saveAssessment(assessment, batchEvent);
+                	sink.incDBUpdateCount();
+                	sink.batchSuccess();
+                } else {
+                	LOGGER.info(batchEvent.attemptId(), ": Batch Event older than last assessment time, skipping");
+                    sink.skip(batchEvent);
+                }
+            } else {
+            	saveAssessment(assessment, batchEvent);
+            	sink.incDBInsertCount();
+            	sink.batchSuccess();
+            }
+            
         } catch (DriverException ex) {
+        	ex.printStackTrace();
             LOGGER.error("", "Exception while fetching from db : " + ex);
             throw new DriverException(ex);
         } catch (Exception ex) {
+        	ex.printStackTrace();
             LOGGER.error("", "Failed to parse the batchEvent: ", ex);
             sink.fail(source.getMessage().toString());
         }
     }
+    
+    public void saveAssessment(Row assessment, BatchEvent batchEvent) {
+    	Long createdOn = null != assessment ? assessment.getTimestamp("created_on").getTime() : new DateTime().getMillis();
+        Aggregate assess = getAggregateData(batchEvent, createdOn);
+        dbUtil.updateAssessmentToDB(batchEvent, assess, createdOn);
+        LOGGER.info("", " Successfully Aggregated the batch event - batchid: " + batchEvent.batchId()
+                + " ,userid: " + batchEvent.userId() + " ,couserid: " + batchEvent.courseId()
+                + " ,contentid: " + batchEvent.contentId());
+    }
 
-    public Aggregate getAggregateData(BatchEvent batchEvent, Long createdOn, AssessmentAggregatorSink sink) {
+    public Aggregate getAggregateData(BatchEvent batchEvent, Long createdOn) {
         double totalMaxScore = 0;
         double totalScore = 0;
         List<UDTValue> questionsList = new ArrayList<>();
-        TreeSet<QuestionData> questionSet = new TreeSet(byEts);
-        HashMap<String, String> checkDuplicate = new HashMap();
+        TreeSet<QuestionData> questionSet = new TreeSet<QuestionData>(byEts);
+        HashMap<String, String> checkDuplicate = new HashMap<String, String>();
         for (Map<String, Object> event : batchEvent.assessEvents()) {
             if (event.containsKey("edata")) {
                 QuestionData questionData = new Gson().fromJson(new Gson().toJson(event.get("edata")), QuestionData.class);
@@ -77,20 +91,7 @@ public class AssessmentAggregatorService {
                 checkDuplicate.put(questionData.getItem().getId(), "");
             }
         }
-        sink.success();
         return new Aggregate(totalScore, totalMaxScore, questionsList);
     }
-
-    public boolean isBatchEventValid(BatchEvent event, Row assessment) {
-        boolean status = false;
-        if (null != assessment) {
-            Long last_attempted_on = assessment.getTimestamp("last_attempted_on").getTime();
-            if (event.assessmentets() > last_attempted_on) {
-                status = true;
-            }
-        } else {
-            status = true;
-        }
-        return status;
-    }
+    
 }

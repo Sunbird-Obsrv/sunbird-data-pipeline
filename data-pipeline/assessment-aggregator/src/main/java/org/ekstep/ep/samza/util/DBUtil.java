@@ -47,7 +47,7 @@ public class DBUtil {
                 .value("batch_id", batchEvent.batchId()).value("user_id", batchEvent.userId())
                 .value("content_id", batchEvent.contentId()).value("attempt_id", batchEvent.attemptId())
                 .value("updated_on", new DateTime().getMillis()).value("created_on", createdOn)
-                .value("last_attempted_on", batchEvent.assessmentets()).value("total_score", aggregate.getTotalScore())
+                .value("last_attempted_on", batchEvent.assessmentEts()).value("total_score", aggregate.getTotalScore())
                 .value("total_max_score", aggregate.getTotalMaxScore()).value("question", aggregate.getQuestionsList())
                 .value("grand_total", aggregate.getGrandTotal());
 

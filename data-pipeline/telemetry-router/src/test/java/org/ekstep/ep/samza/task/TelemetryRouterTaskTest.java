@@ -193,7 +193,7 @@ public class TelemetryRouterTaskTest {
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.START_EVENT_WITHOUT_ETS);
 		telemetryRouterTask = new TelemetryRouterTask(configMock, contextMock);
 		telemetryRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
-		String simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date());
+		String simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").format(new Date());
 		Type mapType = new TypeToken<Map<String, Object>>() {
 		}.getType();
 		verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
@@ -204,7 +204,7 @@ public class TelemetryRouterTaskTest {
 				Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
 				String updatedTS = outputEvent.get("ts").toString();
 				assertNotNull(updatedTS);
-				assertEquals(updatedTS.substring(0,updatedTS.indexOf(".")), simpleDateFormat.substring(0,simpleDateFormat.indexOf(".")));
+				assertEquals(updatedTS.substring(0,updatedTS.indexOf(".")-3), simpleDateFormat);
 				return true;
 			}
 		}));

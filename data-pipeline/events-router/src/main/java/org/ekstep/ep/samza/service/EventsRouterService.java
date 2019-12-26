@@ -3,11 +3,11 @@ package org.ekstep.ep.samza.service;
 import static java.text.MessageFormat.format;
 
 import org.ekstep.ep.samza.core.Logger;
-import org.ekstep.ep.samza.domain.DeDupEngine;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.task.EventsRouterConfig;
 import org.ekstep.ep.samza.task.EventsRouterSink;
 import org.ekstep.ep.samza.task.EventsRouterSource;
+import org.ekstep.ep.samza.util.DeDupEngine;
 
 import com.google.gson.JsonSyntaxException;
 import redis.clients.jedis.exceptions.JedisException;
@@ -67,13 +67,16 @@ public class EventsRouterService {
 				sink.toTelemetryEventsTopic(event);
 			}
 		} catch (JedisException e) {
+			e.printStackTrace();
 			LOGGER.error(null, "Exception when retrieving data from redis: ", e);
 			deDupEngine.getRedisConnection().close();
 			throw e;
 		} catch (JsonSyntaxException e) {
+			e.printStackTrace();
 			LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
 			sink.toMalformedTopic(source.getMessage());
 		} catch (Exception e) {
+			e.printStackTrace();
 			LOGGER.error(null,
 					format("EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO EXCEPTION TOPIC. EVENT: {0}, EXCEPTION:",
 							event),

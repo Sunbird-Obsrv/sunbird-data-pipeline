@@ -21,18 +21,19 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
-import org.apache.samza.system.OutgoingMessageEnvelope;
-import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.*;
+import org.apache.samza.task.MessageCollector;
+import org.apache.samza.task.TaskContext;
+import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.core.JobMetrics;
-import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.EventUpdaterFactory;
 import org.ekstep.ep.samza.service.DeNormalizationService;
-import org.ekstep.ep.samza.util.*;
+import org.ekstep.ep.samza.util.ContentDataCache;
+import org.ekstep.ep.samza.util.DialCodeDataCache;
+import org.ekstep.ep.samza.util.RedisConnect;
+import org.ekstep.ep.samza.util.UserDataCache;
 
-public class DeNormalizationTask implements StreamTask, InitableTask, WindowableTask {
+public class DeNormalizationTask extends BaseSamzaTask {
 
-    private static Logger LOGGER = new Logger(DeNormalizationTask.class);
     private DeNormalizationConfig config;
     private UserDataCache userCache;
     private ContentDataCache contentCache;
@@ -50,7 +51,6 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
 
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void init(Config config, TaskContext context) {
         init(config, context, userCache, contentCache, dialcodeCache, metrics, redisConnect);
@@ -66,7 +66,7 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
         this.contentCache = contentCache == null ? new ContentDataCache(config, metrics) : contentCache;
         this.dialcodeCache = dialcodeCache == null ? new DialCodeDataCache(config, metrics) : dialcodeCache;
         service = new DeNormalizationService(this.config, new EventUpdaterFactory(this.contentCache, this.userCache, this.dialcodeCache));
-
+        this.initTask(config, metrics);
     }
 
     @Override
@@ -76,10 +76,4 @@ public class DeNormalizationTask implements StreamTask, InitableTask, Windowable
         service.process(source, sink);
     }
 
-    @Override
-    public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-        String mEvent = metrics.collect();
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
-        metrics.clear();
-    }
 }
