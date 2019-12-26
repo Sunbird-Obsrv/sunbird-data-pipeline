@@ -200,9 +200,10 @@ databases 16
 #
 #   save ""
 
-save 900 1
-save 300 10
-save 60 10000
+#save 900 1
+#save 300 10
+#save 60 10000
+save {{ redis_dump_rdb_time_in_seconds }} {{ redis_dump_rdb_keys_to_save_state }}
 
 # By default Redis will stop accepting writes if RDB snapshots are enabled
 # (at least one save point) and the latest background save failed.
