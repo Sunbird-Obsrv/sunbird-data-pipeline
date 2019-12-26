@@ -18,13 +18,13 @@ public class DeviceProfileUpdaterTask extends BaseSamzaTask {
     private RedisConnect redisConnect;
     private PostgresConnect postgresConnect;
 
-    public DeviceProfileUpdaterTask(Config config, TaskContext context) { init(config, context); }
+    public DeviceProfileUpdaterTask(Config config, TaskContext context) throws Exception { init(config, context); }
 
     public DeviceProfileUpdaterTask() {
     }
 
     @Override
-    public void init(Config config, TaskContext context) {
+    public void init(Config config, TaskContext context) throws Exception{
         redisConnect = new RedisConnect(config);
         this.config = new DeviceProfileUpdaterConfig(config);
         metrics = new JobMetrics(context, this.config.jobName());

@@ -46,7 +46,7 @@ public class PostgresConnect {
         return this.connection;
     }
 
-    public boolean execute(String query) throws Exception{
+    public boolean execute(String query) throws Exception {
         try {
             return statement.execute(query);
         } catch (SQLException ex) {
