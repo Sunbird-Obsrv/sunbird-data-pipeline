@@ -89,28 +89,35 @@ public class DeviceProfileUpdaterService {
     private void addDeviceDataToDB(String deviceId, Map<String, String> deviceData) throws Exception {
         Long firstAccess = Long.parseLong(deviceData.get("first_access"));
         Long lastUpdatedDate = Long.parseLong(deviceData.get("api_last_updated_on"));
-        List<String> parsedKeys = new ArrayList<>(Arrays.asList("uaspec", "device_spec", "first_access", "api_last_updated_on"));
+        List<String> parsedKeys = new ArrayList<>(Arrays.asList("first_access", "api_last_updated_on"));
         deviceData.keySet().removeAll(parsedKeys);
 
         deviceData.put("api_last_updated_on", new Timestamp(lastUpdatedDate).toString());
+        deviceData.put("updated_date", new Timestamp(System.currentTimeMillis()).toString());
 
         if(null != deviceData.get("uaspec")) {
-            deviceData.put("uaspec", gson.fromJson(deviceData.get("uaspec"), JsonObject.class).toString());
+            deviceData.replace("uaspec", gson.fromJson(deviceData.get("uaspec"), JsonObject.class).toString());
         }
         if(null != deviceData.get("device_spec")) {
-            deviceData.put("device_spec", gson.fromJson(deviceData.get("device_spec"), JsonObject.class).toString());
+            deviceData.replace("device_spec", gson.fromJson(deviceData.get("device_spec"), JsonObject.class).toString());
         }
 
         String columns = formatValues(deviceData.keySet(),",");
         String values = formatValues(deviceData.values(),"','");
 
         String upsertQuery = String.format("INSERT INTO %s (%s) VALUES ('%s') ON CONFLICT(device_id) DO UPDATE SET (%s)=('%s');",postgres_table,columns,values,columns,values);
+        postgresConnect.execute(upsertQuery);
 
         String updateFirstAccessQuery = String.format("UPDATE %s SET first_access = '%s' WHERE device_id = '%s' AND first_access IS NULL",
                 postgres_table, new Timestamp(firstAccess).toString(), deviceId);
-
-        postgresConnect.execute(upsertQuery);
         postgresConnect.execute(updateFirstAccessQuery);
+
+        if(null != deviceData.get("user_declared_state")) {
+            String updateUserDeclaredOnQuery = String.format("UPDATE %s SET user_declared_on = '%s' WHERE device_id = '%s' AND user_declared_on IS NULL",
+                    postgres_table, new Timestamp(lastUpdatedDate).toString(), deviceId);
+            postgresConnect.execute(updateUserDeclaredOnQuery);
+        }
+
     }
 
     private void addToCache(String deviceId, DeviceProfile deviceProfile, Jedis redisConnection) {

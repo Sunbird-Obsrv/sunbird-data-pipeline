@@ -39,10 +39,10 @@ public class PostgresConnectTest {
         connection = postgresConnect.getConnection();
         assertNotNull(connection);
 
-        Statement st = connection.createStatement();
-        st.execute("CREATE TABLE device_table(id text PRIMARY KEY, channel text);");
-        st.execute("INSERT INTO device_table(id,channel)  VALUES('12345','custchannel');");
+        postgresConnect.execute("CREATE TABLE device_table(id text PRIMARY KEY, channel text);");
+        postgresConnect.execute("INSERT INTO device_table(id,channel)  VALUES('12345','custchannel');");
 
+        Statement st = connection.createStatement();
         ResultSet rs = st.executeQuery("SELECT * FROM device_table where id='12345';");
         while(rs.next()) {
             assertEquals("12345", rs.getString("id"));
