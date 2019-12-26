@@ -16,8 +16,9 @@ public class PostgresConnect {
     private String host;
     private Integer port;
     private Integer maxConnections;
+    private PGPoolingDataSource source;
 
-    public PostgresConnect(Config config) {
+    public PostgresConnect(Config config) throws Exception {
         this.config = config;
         user = config.get("postgres.user");
         password = config.get("postgres.password");
@@ -25,21 +26,14 @@ public class PostgresConnect {
         host = config.get("postgres.host","127.0.0.1");
         port = config.getInt("postgres.port", 5432);
         maxConnections = config.getInt("postgres.maxConnections", 2);
-        try {
-            Class.forName("org.postgresql.Driver");
-            PGPoolingDataSource source = new PGPoolingDataSource();
-            setConnection(source);
-            connection = source.getConnection();
-            statement = connection.createStatement();
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        buildPoolConfig();
+        connection = source.getConnection();
+        statement = connection.createStatement();
     }
 
-    public void setConnection(PGPoolingDataSource source) {
+    public void buildPoolConfig() throws Exception {
+        Class.forName("org.postgresql.Driver");
+        source = new PGPoolingDataSource();
         source.setServerName(host);
         source.setPortNumber(port);
         source.setUser(user);
@@ -52,16 +46,21 @@ public class PostgresConnect {
         return this.connection;
     }
 
-    public boolean execute(String query) throws Exception {
-        return statement.execute(query);
+    public boolean execute(String query) throws Exception{
+        try {
+            return statement.execute(query);
+        } catch (SQLException ex) {
+            resetConnection();
+            return statement.execute(query);
+        }
     }
 
-    public Connection resetConnection() throws SQLException, ClassNotFoundException {
+    public Connection resetConnection() throws Exception {
         connection.close();
-        Class.forName("org.postgresql.Driver");
-        PGPoolingDataSource source = new PGPoolingDataSource();
-        setConnection(source);
+        source.close();
+        buildPoolConfig();
         connection = source.getConnection();
+        statement = connection.createStatement();
         return connection;
     }
 }
