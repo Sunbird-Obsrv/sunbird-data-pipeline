@@ -15,9 +15,6 @@ import redis.clients.jedis.exceptions.JedisException;
 import java.lang.reflect.Type;
 import com.google.gson.reflect.TypeToken;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -112,8 +109,8 @@ public class DeviceProfileUpdaterService {
         String updateFirstAccessQuery = String.format("UPDATE %s SET first_access = '%s' WHERE device_id = '%s' AND first_access IS NULL",
                 postgres_table, new Timestamp(firstAccess).toString(), deviceId);
 
-        postgresConnect.executeQuery(upsertQuery);
-        postgresConnect.executeQuery(updateFirstAccessQuery);
+        postgresConnect.execute(upsertQuery);
+        postgresConnect.execute(updateFirstAccessQuery);
     }
 
     private void addToCache(String deviceId, DeviceProfile deviceProfile, Jedis redisConnection) {

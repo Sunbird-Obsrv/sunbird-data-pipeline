@@ -15,6 +15,7 @@ public class PostgresConnect {
     private String db;
     private String host;
     private Integer port;
+    private Integer maxConnections;
 
     public PostgresConnect(Config config) {
         this.config = config;
@@ -23,15 +24,11 @@ public class PostgresConnect {
         db = config.get("postgres.db");
         host = config.get("postgres.host","127.0.0.1");
         port = config.getInt("postgres.port", 5432);
+        maxConnections = config.getInt("postgres.maxConnections", 2);
         try {
             Class.forName("org.postgresql.Driver");
             PGPoolingDataSource source = new PGPoolingDataSource();
-            source.setDatabaseName(db);
-            source.setPassword(password);
-            source.setPortNumber(port);
-            source.setUser(user);
-            source.setServerName(host);
-            source.setMaxConnections(2);
+            setConnection(source);
             connection = source.getConnection();
             statement = connection.createStatement();
 
@@ -42,11 +39,20 @@ public class PostgresConnect {
         }
     }
 
+    public void setConnection(PGPoolingDataSource source) {
+        source.setServerName(host);
+        source.setPortNumber(port);
+        source.setUser(user);
+        source.setPassword(password);
+        source.setDatabaseName(db);
+        source.setMaxConnections(maxConnections);
+    }
+
     public Connection getConnection() {
         return this.connection;
     }
 
-    public boolean executeQuery(String query) throws Exception {
+    public boolean execute(String query) throws Exception {
         return statement.execute(query);
     }
 
@@ -54,12 +60,7 @@ public class PostgresConnect {
         connection.close();
         Class.forName("org.postgresql.Driver");
         PGPoolingDataSource source = new PGPoolingDataSource();
-        source.setDatabaseName(db);
-        source.setPassword(password);
-        source.setPortNumber(port);
-        source.setUser(user);
-        source.setServerName(host);
-        source.setMaxConnections(2);
+        setConnection(source);
         connection = source.getConnection();
         return connection;
     }

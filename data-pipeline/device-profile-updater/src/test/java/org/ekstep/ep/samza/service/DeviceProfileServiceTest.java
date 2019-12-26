@@ -14,7 +14,6 @@ import org.ekstep.ep.samza.task.DeviceProfileUpdaterSource;
 import org.ekstep.ep.samza.task.DeviceProfileUpdaterSink;
 import org.ekstep.ep.samza.util.PostgresConnect;
 import org.ekstep.ep.samza.util.RedisConnect;
-import org.ekstep.ep.samza.util.CassandraConnect;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -94,8 +93,6 @@ public class DeviceProfileServiceTest {
                 "    user_declared_district TEXT,\n" +
                 "    user_declared_state TEXT)");
 
-        stub(configMock.get("cassandra.keyspace")).toReturn("device_db");
-        stub(configMock.get("cassandra.device_profile_table")).toReturn("device_profile");
         stub(configMock.get("redis.database.deviceLocationStore.id")).toReturn("1");
         stub(configMock.get("location.db.redis.key.expiry.seconds")).toReturn("86400");
         stub(configMock.get("cache.unresolved.location.key.expiry.seconds")).toReturn("3600");
