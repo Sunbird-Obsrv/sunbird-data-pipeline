@@ -129,6 +129,9 @@ public class DeviceProfileUpdaterService {
             if(data.get("firstaccess") != null && !("0").equals(data.get("firstaccess"))) {
                 deviceMap.remove("firstaccess");
             }
+            if(data.get("user_declared_on") == null) {
+                deviceMap.put("user_declared_on", String.valueOf(System.currentTimeMillis()));
+            }
             redisConnection.hmset(deviceId, deviceMap);
         } else {
             redisConnection.hmset(deviceId, deviceMap);
