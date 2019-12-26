@@ -56,11 +56,15 @@ public class PostgresConnect {
     }
 
     public Connection resetConnection() throws Exception {
-        connection.close();
-        source.close();
+        closeConnection();
         buildPoolConfig();
         connection = source.getConnection();
         statement = connection.createStatement();
         return connection;
+    }
+
+    public void closeConnection() throws Exception {
+        connection.close();
+        source.close();
     }
 }

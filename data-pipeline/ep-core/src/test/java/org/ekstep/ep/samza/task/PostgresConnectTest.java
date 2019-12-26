@@ -52,7 +52,7 @@ public class PostgresConnectTest {
         resetConnection = postgresConnect.resetConnection();
         assertNotNull(resetConnection);
 
-        connection.close();
+        postgresConnect.closeConnection();
     }
 
 }
