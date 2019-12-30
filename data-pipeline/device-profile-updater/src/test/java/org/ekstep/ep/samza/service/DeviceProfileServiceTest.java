@@ -14,12 +14,14 @@ import org.ekstep.ep.samza.task.DeviceProfileUpdaterSource;
 import org.ekstep.ep.samza.task.DeviceProfileUpdaterSink;
 import org.ekstep.ep.samza.util.PostgresConnect;
 import org.ekstep.ep.samza.util.RedisConnect;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.exceptions.JedisException;
+import redis.embedded.RedisServer;
 
 import java.lang.reflect.Type;
 import java.sql.*;
@@ -33,9 +35,9 @@ public class DeviceProfileServiceTest {
 
     private RedisConnect redisConnectMock;
     private PostgresConnect postgresConnectMock;
+    RedisServer redisServer;
     private IncomingMessageEnvelope envelopeMock;
-    private Jedis jedisMock = new MockJedis("test");
-    private Jedis deviceJedisMock = new MockJedis("device");
+    private Jedis jedisMock;
     private Connection connectionMock;
     private Statement statementMock;
     private Statement statement;
@@ -49,14 +51,14 @@ public class DeviceProfileServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        redisConnectMock = mock(RedisConnect.class);
         postgresConnectMock=mock(PostgresConnect.class);
 
         deviceProfileUpdaterSinkMock = mock(DeviceProfileUpdaterSink.class);
         configMock = mock(Config.class);
         connectionMock = mock(Connection.class);
         statementMock = mock(Statement.class);
-        stub(redisConnectMock.getConnection(deviceStoreId)).toReturn(deviceJedisMock);
+        redisServer = new RedisServer(6379);
+        redisServer.start();
         stub(postgresConnectMock.getConnection()).toReturn(connectionMock);
         stub(postgresConnectMock.resetConnection()).toReturn(connectionMock);
         envelopeMock = mock(IncomingMessageEnvelope.class);
@@ -93,16 +95,26 @@ public class DeviceProfileServiceTest {
                 "    user_declared_district TEXT,\n" +
                 "    user_declared_state TEXT)");
 
-        stub(configMock.get("redis.database.deviceLocationStore.id")).toReturn("1");
-        stub(configMock.get("location.db.redis.key.expiry.seconds")).toReturn("86400");
-        stub(configMock.get("cache.unresolved.location.key.expiry.seconds")).toReturn("3600");
+        stub(configMock.get("redis.host", "localhost")).toReturn("localhost");
+        stub(configMock.getInt("redis.port", 6379)).toReturn(6379);
+        stub(configMock.getInt("redis.connection.max", 2)).toReturn(2);
+        stub(configMock.getInt("redis.connection.idle.max", 2)).toReturn(2);
+        stub(configMock.getInt("redis.connection.idle.min", 1)).toReturn(1);
+        stub(configMock.getInt("redis.connection.minEvictableIdleTimeSeconds", 120)).toReturn(120);
+        stub(configMock.getInt("redis.connection.timeBetweenEvictionRunsSeconds", 300)).toReturn(300);
         stub(envelopeMock.getSystemStreamPartition())
                 .toReturn(new SystemStreamPartition("kafka", "events_deviceprofile", new Partition(0)));
         stub(envelopeMock.getMessage()).toReturn(EventFixture.DEVICE_PROFILE_DETAILS);
         stub(configMock.get("postgres.device_profile_table","device_profile")).toReturn("device_profile");
+        redisConnectMock = new RedisConnect(configMock);
+        jedisMock = redisConnectMock.getConnection(deviceStoreId);
         deviceProfileUpdaterService = new DeviceProfileUpdaterService(configMock, redisConnectMock, postgresConnectMock);
 
-        jedisMock.flushAll();
+    }
+
+    @After
+    public void tearDown() {
+        redisServer.stop();
     }
 
     @Test
@@ -159,12 +171,12 @@ public class DeviceProfileServiceTest {
         Map<String, String> newDeviceData = gson.fromJson(EventFixture.DEVICE_PROFILE_DETAILS, mapType);
         Map<String, String> deviceDetails = new HashMap<>();
         deviceDetails.put("firstaccess","156990957889");
-        deviceJedisMock.hmset(newDeviceData.get("device_id"), deviceDetails);
+        jedisMock.hmset(newDeviceData.get("device_id"), deviceDetails);
 
         DeviceProfileUpdaterSource source = new DeviceProfileUpdaterSource(envelopeMock);
         deviceProfileUpdaterService.process(source, deviceProfileUpdaterSinkMock);
 
-        Map<String, String> data = deviceJedisMock.hgetAll(newDeviceData.get("device_id"));
+        Map<String, String> data = jedisMock.hgetAll(newDeviceData.get("device_id"));
         assertEquals("156990957889", data.get("firstaccess"));
     }
 
@@ -178,7 +190,7 @@ public class DeviceProfileServiceTest {
         DeviceProfileUpdaterSource source = new DeviceProfileUpdaterSource(envelopeMock);
         deviceProfileUpdaterService.process(source, deviceProfileUpdaterSinkMock);
 
-        Map<String, String> data = deviceJedisMock.hgetAll(deviceId);
+        Map<String, String> data = jedisMock.hgetAll(deviceId);
         assertEquals("1568377184000", data.get("firstaccess"));
     }
 
@@ -217,5 +229,22 @@ public class DeviceProfileServiceTest {
         while(rs.next()) {
             assertEquals("2019-09-24 01:03:04.999", rs.getString(1));
         }
+    }
+
+    @Test
+    public void shouldAddUserDeclaredOnIfNotPresent() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.DEVICE_PROFILE_DETAILS);
+
+        Type mapType = new TypeToken<Map<String, String>>(){}.getType();
+        Map<String, String> event = gson.fromJson(EventFixture.DEVICE_PROFILE_DETAILS, mapType);
+        String device_id = event.get("device_id");
+
+        jedisMock.hmset(device_id, event);
+
+        DeviceProfileUpdaterSource source = new DeviceProfileUpdaterSource(envelopeMock);
+        deviceProfileUpdaterService.process(source, deviceProfileUpdaterSinkMock);
+
+        Map<String, String> data=jedisMock.hgetAll(device_id);
+        assertEquals("1568377184000", data.get("user_declared_on"));
     }
 }
