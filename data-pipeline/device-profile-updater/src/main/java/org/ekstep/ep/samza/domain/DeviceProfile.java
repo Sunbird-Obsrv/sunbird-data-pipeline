@@ -40,6 +40,7 @@ public class DeviceProfile {
   private Map<String, String> uaspec;
   private Map<String, String> devicespec;
   private Long firstAccess;
+  private Long user_declared_on;
   private Gson gson = new Gson();
   private Type type = new TypeToken<Map<String, Object>>() {}.getType();
 
@@ -57,6 +58,7 @@ public class DeviceProfile {
     this.uaspec = new HashMap<>();
     this.devicespec = new HashMap<>();
     this.firstAccess = 0L;
+    this.user_declared_on = 0L;
   }
 
   public Map<String, String> toMap() {
@@ -74,6 +76,7 @@ public class DeviceProfile {
     values.put("uaspec", gson.toJson(DeviceProfile.getValueOrDefault(this.uaspec, new HashMap<>())));
     values.put("devicespec", gson.toJson(DeviceProfile.getValueOrDefault(this.devicespec, new HashMap<>())));
     values.put("firstaccess", DeviceProfile.getValueOrDefault(String.valueOf(this.firstAccess), ""));
+    values.put("user_declared_on", DeviceProfile.getValueOrDefault(String.valueOf(this.user_declared_on), ""));
     return values;
   }
 
@@ -91,6 +94,7 @@ public class DeviceProfile {
     this.uaspec = gson.fromJson(map.getOrDefault("uaspec", ""), type);
     this.devicespec = gson.fromJson(map.getOrDefault("device_spec", ""), type);
     this.firstAccess = Long.valueOf(map.getOrDefault("first_access", "0"));
+    this.user_declared_on = Long.valueOf(map.getOrDefault("api_last_updated_on", "0"));
     return this;
   }
 
