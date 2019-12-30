@@ -2233,11 +2233,6 @@
           "input_dependency": "DeviceSummaryModel"
         },
         {
-          "model": "UpdateContentModel",
-          "category": "consumption",
-          "input_dependency": "None"
-        },
-        {
           "model": "DataExhaustJob",
           "category": "consumption",
           "input_dependency": "None"
@@ -2268,21 +2263,6 @@
           "input_dependency": "None"
         },
         {
-          "model": "DialcodeUsageSummaryModel",
-          "category": "consumption",
-          "input_dependency": "None"
-        },
-        {
-          "model": "ETBCoverageSummaryModel",
-          "category": "consumption",
-          "input_dependency": "None"
-        },
-        {
-          "model": "UpdateDialcodeUsageDB",
-          "category": "consumption",
-          "input_dependency": "DialcodeUsageSummaryModel"
-        },
-        {
           "model": "CourseMetricsJob",
           "category": "consumption",
           "input_dependency": "None"
@@ -2293,12 +2273,27 @@
           "input_dependency": "None"
         },
         {
-          "model": "DailyConsumptionReportModel",
+          "model": "DruidQueryProcessingModel",
           "category": "consumption",
-          "input_dependency": "WorkFlowSummaryModel"
+          "input_dependency": "None"
         },
         {
-          "model": "AuditComputationModel",
+          "model": "MetricsAuditJob",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "AssessmentMetricsJob",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "StateAdminReportJob",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "StateAdminGeoReportJob",
           "category": "consumption",
           "input_dependency": "None"
         }
