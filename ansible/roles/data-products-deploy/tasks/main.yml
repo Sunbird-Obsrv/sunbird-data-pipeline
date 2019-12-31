@@ -43,7 +43,7 @@
     - clean-cronjobs
 
 - name: Create daily cron jobs using submit-all-jobs
-  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="ruby {{ analytics.home }}/scripts/submit-all-jobs.rb"
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job='/bin/bash -lc "ruby {{ analytics.home }}/scripts/submit-all-jobs.rb"'
   with_dict: "{{ submit_jobs }}"
   tags:
     - cronjobs
