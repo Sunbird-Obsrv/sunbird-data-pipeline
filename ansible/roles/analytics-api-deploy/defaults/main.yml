@@ -15,3 +15,5 @@ consumer_channel_cache_type: ConsumerChannel
 
 analytics: 
    home: /mount/data/analytics
+
+dp_play_http_secret_key: ""
