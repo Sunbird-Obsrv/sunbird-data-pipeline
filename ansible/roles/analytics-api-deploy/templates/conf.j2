@@ -186,7 +186,8 @@ play.server {
 
 play.modules.enabled+="modules.ActorInjector"
 play.filters.enabled+="filter.RequestInterceptor"
-play.filters.enabled+=play.filters.hosts.AllowedHostsFilter
+play.filters.enabled+="play.filters.hosts.AllowedHostsFilter"
+play.filters.disabled+="play.filters.csrf.CSRFFilter"
 
 # Secret key
 # ~~~~~
