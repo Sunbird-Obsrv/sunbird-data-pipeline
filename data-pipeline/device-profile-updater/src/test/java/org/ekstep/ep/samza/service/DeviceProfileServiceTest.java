@@ -145,15 +145,6 @@ public class DeviceProfileServiceTest {
     }
 
     @Test
-    public void shouldupdateDB() throws Exception {
-        stub(connectionMock.createStatement()).toReturn(statementMock);
-        DeviceProfileUpdaterSource source = new DeviceProfileUpdaterSource(envelopeMock);
-        deviceProfileUpdaterService.process(source, deviceProfileUpdaterSinkMock);
-
-        verify(deviceProfileUpdaterSinkMock, times(1)).deviceDBUpdateSuccess();
-    }
-
-    @Test
     public void shouldNotUpdateFordidNull() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.DEVICE_PROFILE_WITH_NO_DEVICE_ID);
 
