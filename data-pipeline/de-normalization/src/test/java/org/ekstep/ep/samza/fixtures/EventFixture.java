@@ -1375,7 +1375,7 @@ public class EventFixture {
             "    \"ts\": \"2019-06-02T17:07:37.141+0000\"\n" +
             "}", current_ets);
 
-    public static String IMPRESSION_EVENT = "{\n" +
+    public static String IMPRESSION_EVENT = String.format("{\n" +
             "  \"actor\": {\n" +
             "    \"type\": \"User\",\n" +
             "    \"id\": \"e9d73b7b-211a-43f4-8c01-cc9333757a9d\"\n" +
@@ -1387,7 +1387,7 @@ public class EventFixture {
             "    \"uri\": \"splash\"\n" +
             "  },\n" +
             "  \"ver\": \"3.0\",\n" +
-            "  \"ets\": 1562146941511,\n" +
+            "  \"ets\": %s,\n" +
             "  \"context\": {\n" +
             "    \"pdata\": {\n" +
             "      \"pid\": \"sunbird.app\",\n" +
@@ -1413,7 +1413,7 @@ public class EventFixture {
             "    \"tv_processed\": true\n" +
             "  },\n" +
             "  \"type\": \"events\"\n" +
-            "}";
+            "}", current_ets);
 
     public static Map<String, Object> getMap(String message) {
         return (Map<String, Object>) new Gson().fromJson(message, Map.class);
