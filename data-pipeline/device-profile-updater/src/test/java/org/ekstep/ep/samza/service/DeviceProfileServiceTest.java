@@ -239,4 +239,20 @@ public class DeviceProfileServiceTest {
         Map<String, String> data=jedisMock.hgetAll(device_id);
         assertEquals("1568377184000", data.get("user_declared_on"));
     }
+
+    @Test
+    public void shouldNotAddUserDeclaredOnIfPresentInPostgres() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.DEVICE_PROFILE_DETAILS);
+
+        String query = String.format("INSERT INTO %s (device_id, user_declared_on) VALUES ('232455','2019-09-24 01:03:04.999');", postgres_table);
+        statement.execute(query);
+
+        DeviceProfileUpdaterSource source = new DeviceProfileUpdaterSource(envelopeMock);
+        deviceProfileUpdaterService.process(source, deviceProfileUpdaterSinkMock);
+
+        ResultSet rs=statement.executeQuery(String.format("SELECT user_declared_on FROM %s WHERE device_id='232455';", postgres_table));
+        while(rs.next()) {
+            assertEquals("2019-09-24 01:03:04.999", rs.getString(1));
+        }
+    }
 }
