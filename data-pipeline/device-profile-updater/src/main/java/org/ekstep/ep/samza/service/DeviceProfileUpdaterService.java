@@ -124,12 +124,15 @@ public class DeviceProfileUpdaterService {
         Map<String, String> deviceMap = deviceProfile.toMap();
         deviceMap.values().removeAll(Collections.singleton(""));
         deviceMap.values().removeAll(Collections.singleton("{}"));
+        if(deviceMap.get("user_declared_state") == null) {
+            deviceMap.remove("user_declared_on");
+        }
         if (redisConnection.exists(deviceId)) {
             Map<String, String> data = redisConnection.hgetAll(deviceId);
             if(data.get("firstaccess") != null && !("0").equals(data.get("firstaccess"))) {
                 deviceMap.remove("firstaccess");
             }
-            if(data.get("user_declared_on") != null && data.get("user_declared_state") != null) {
+            if(data.get("user_declared_on") != null && deviceMap.get("user_declared_on") != null) {
                 deviceMap.remove("user_declared_on");
             }
             redisConnection.hmset(deviceId, deviceMap);

@@ -241,6 +241,21 @@ public class DeviceProfileServiceTest {
     }
 
     @Test
+    public void shouldNotAddUserDeclaredOnIfStateIsNull() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.DEVICE_PROFILE_WITH_STATE_NULL);
+
+        Type mapType = new TypeToken<Map<String, String>>(){}.getType();
+        Map<String, String> event = gson.fromJson(EventFixture.DEVICE_PROFILE_WITH_STATE_NULL, mapType);
+        String device_id = event.get("device_id");
+
+        DeviceProfileUpdaterSource source = new DeviceProfileUpdaterSource(envelopeMock);
+        deviceProfileUpdaterService.process(source, deviceProfileUpdaterSinkMock);
+
+        Map<String, String> data=jedisMock.hgetAll(device_id);
+        assertEquals(null, data.get("user_declared_on"));
+    }
+
+    @Test
     public void shouldNotAddUserDeclaredOnIfPresentInPostgres() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.DEVICE_PROFILE_DETAILS);
 
