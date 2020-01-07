@@ -71,9 +71,20 @@
             <version>3.1.0</version>
         </dependency>
         <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.1-901.jdbc4</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.opentable.components</groupId>
+            <artifactId>otj-pg-embedded</artifactId>
+            <version>0.13.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -95,7 +106,7 @@
 		    <version>0.7.1</version>
 		    <scope>test</scope>
 		</dependency>
-		        
+
     </dependencies>
 
     <build>

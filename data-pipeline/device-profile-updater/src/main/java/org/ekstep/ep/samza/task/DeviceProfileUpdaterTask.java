@@ -7,7 +7,7 @@ import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.service.DeviceProfileUpdaterService;
-import org.ekstep.ep.samza.util.CassandraConnect;
+import org.ekstep.ep.samza.util.PostgresConnect;
 import org.ekstep.ep.samza.util.RedisConnect;
 
 public class DeviceProfileUpdaterTask extends BaseSamzaTask {
@@ -16,20 +16,20 @@ public class DeviceProfileUpdaterTask extends BaseSamzaTask {
     private DeviceProfileUpdaterService service;
     private DeviceProfileUpdaterConfig config;
     private RedisConnect redisConnect;
-    private CassandraConnect cassandraConnect;
+    private PostgresConnect postgresConnect;
 
-    public DeviceProfileUpdaterTask(Config config, TaskContext context) { init(config, context); }
+    public DeviceProfileUpdaterTask(Config config, TaskContext context) throws Exception { init(config, context); }
 
     public DeviceProfileUpdaterTask() {
     }
 
     @Override
-    public void init(Config config, TaskContext context) {
+    public void init(Config config, TaskContext context) throws Exception{
         redisConnect = new RedisConnect(config);
         this.config = new DeviceProfileUpdaterConfig(config);
         metrics = new JobMetrics(context, this.config.jobName());
-        cassandraConnect = new CassandraConnect(config);
-        service = new DeviceProfileUpdaterService(config, redisConnect, cassandraConnect);
+        postgresConnect = new PostgresConnect(config);
+        service = new DeviceProfileUpdaterService(config, redisConnect, postgresConnect);
         this.initTask(config, metrics);
     }
 
