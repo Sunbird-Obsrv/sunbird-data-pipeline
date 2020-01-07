@@ -83,6 +83,7 @@ public class DeviceProfileServiceTest {
                 "    fcm_token TEXT,\n" +
                 "    first_access TIMESTAMP,\n" +
                 "    last_access TIMESTAMP,\n" +
+                "    user_declared_on TIMESTAMP,\n" +
                 "    producer_id TEXT,\n" +
                 "    state TEXT,\n" +
                 "    state_code TEXT,\n" +
