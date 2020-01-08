@@ -10,10 +10,13 @@ import org.apache.samza.task.TaskCoordinator;
 import org.apache.samza.task.WindowableTask;
 import org.ekstep.ep.samza.core.JobMetrics;
 
+import java.util.List;
+
 abstract class BaseSamzaTask implements StreamTask, InitableTask, WindowableTask {
 	
 	protected JobMetrics metrics;
 	private String metricsTopic;
+	private List<String> metricsList;
 	
 	public BaseSamzaTask() {
 		
@@ -22,13 +25,14 @@ abstract class BaseSamzaTask implements StreamTask, InitableTask, WindowableTask
 	public void initTask(Config config, JobMetrics metrics) {
 		this.metrics = metrics;
 		this.metricsTopic = config.get("output.metrics.topic.name", "telemetry.pipeline_metrics");
+		this.metricsList = config.getList("pipeline.metrics.list");
 	}
 	
 
 	@Override
 	public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
 
-		String mEvent = metrics.collect();
+		String mEvent = metrics.collect(metricsList);
 		collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", this.metricsTopic), mEvent));
 		this.metrics.clear();
 	}

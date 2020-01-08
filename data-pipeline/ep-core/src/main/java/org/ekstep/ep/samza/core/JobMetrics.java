@@ -9,7 +9,9 @@ import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.TaskContext;
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,32 +30,34 @@ public class JobMetrics {
     private final Counter auditRouteSuccessCount;
     private final Counter cacheHitCount;
     private final Counter cacheMissCount;
-    private final Counter cacheExpiredCount;
+    // private final Counter cacheExpiredCount;
     private final Counter cacheErrorCount;
     private final Counter cacheEmptyValuesCount;
     private final Counter processedMessageCount;
     private final Counter unprocessedMessageCount;
     private final Counter dbHitCount;
-    private final Counter dbErrorCount;
-    private final Counter deviceDbHitCount;
-    private final Counter deviceCacheHitCount;
-    private final Counter userDbHitCount;
+    // private final Counter dbErrorCount;
+    // private final Counter deviceDbHitCount;
+    // private final Counter deviceCacheHitCount;
+    // private final Counter userDbHitCount;
     private final Counter userCacheHitCount;
-    private final Counter deviceDbErrorCount;
-    private final Counter userDbErrorCount;
+    // private final Counter deviceDbErrorCount;
+    // private final Counter userDbErrorCount;
     private final Counter expiredEventCount;
     private final Counter duplicateEventCount;
     private final Counter deviceDBUpdateCount;
     private final Counter deviceCacheUpdateCount;
     private final Counter userDeclaredHitCount;
     private final Counter ipLocationHitCount;
-    private final Counter noCacheHitCount;
+    // private final Counter noCacheHitCount;
     
     private final Counter dbInsertCount;
     private final Counter dbUpdateCount;
     
     private TaskContext context;
     private int partition;
+
+    private Map<String, Counter> metricCounterMap = new HashMap<>();
 
     public JobMetrics(TaskContext context) {
         this(context, null);
@@ -73,27 +77,52 @@ public class JobMetrics {
         cacheHitCount = metricsRegistry.newCounter(getClass().getName(), "cache-hit-count");
         cacheMissCount = metricsRegistry.newCounter(getClass().getName(), "cache-miss-count");
         cacheEmptyValuesCount = metricsRegistry.newCounter(getClass().getName(), "cache-empty-values-count");
-        cacheExpiredCount = metricsRegistry.newCounter(getClass().getName(), "cache-expired-count");
+        // cacheExpiredCount = metricsRegistry.newCounter(getClass().getName(), "cache-expired-count");
         cacheErrorCount = metricsRegistry.newCounter(getClass().getName(), "cache-error-count");
         processedMessageCount = metricsRegistry.newCounter(getClass().getName(), "processed-message-count");
         unprocessedMessageCount = metricsRegistry.newCounter(getClass().getName(), "unprocessed-message-count");
         dbHitCount = metricsRegistry.newCounter(getClass().getName(), "db-hit-count");
-        dbErrorCount = metricsRegistry.newCounter(getClass().getName(), "db-error-count");
-        deviceCacheHitCount = metricsRegistry.newCounter(getClass().getName(), "device-cache-hit-count");
+        // dbErrorCount = metricsRegistry.newCounter(getClass().getName(), "db-error-count");
+        // deviceCacheHitCount = metricsRegistry.newCounter(getClass().getName(), "device-cache-hit-count");
         userCacheHitCount = metricsRegistry.newCounter(getClass().getName(), "user-cache-hit-count");
-        deviceDbHitCount = metricsRegistry.newCounter(getClass().getName(), "device-db-hit-count");
-        userDbHitCount = metricsRegistry.newCounter(getClass().getName(), "user-db-hit-count");
-        deviceDbErrorCount = metricsRegistry.newCounter(getClass().getName(), "device-db-error-count");
-        userDbErrorCount = metricsRegistry.newCounter(getClass().getName(), "user-db-error-count");
+        // deviceDbHitCount = metricsRegistry.newCounter(getClass().getName(), "device-db-hit-count");
+        // userDbHitCount = metricsRegistry.newCounter(getClass().getName(), "user-db-hit-count");
+        // deviceDbErrorCount = metricsRegistry.newCounter(getClass().getName(), "device-db-error-count");
+        // userDbErrorCount = metricsRegistry.newCounter(getClass().getName(), "user-db-error-count");
         expiredEventCount = metricsRegistry.newCounter(getClass().getName(), "expired-event-count");
         duplicateEventCount = metricsRegistry.newCounter(getClass().getName(), "duplicate-event-count");
         deviceDBUpdateCount = metricsRegistry.newCounter(getClass().getName(), "device-db-update-count");
         deviceCacheUpdateCount = metricsRegistry.newCounter(getClass().getName(), "device-cache-update-count");
         userDeclaredHitCount = metricsRegistry.newCounter(getClass().getName(), "user-declared-hit-count");
         ipLocationHitCount = metricsRegistry.newCounter(getClass().getName(), "ip-location-hit-count");
-        noCacheHitCount = metricsRegistry.newCounter(getClass().getName(), "no-cache-hit-count");
+        // noCacheHitCount = metricsRegistry.newCounter(getClass().getName(), "no-cache-hit-count");
         dbInsertCount = metricsRegistry.newCounter(getClass().getName(), "db-insert-count");
         dbUpdateCount = metricsRegistry.newCounter(getClass().getName(), "db-update-count");
+
+        metricCounterMap.put("success-message-count", successMessageCount);
+        metricCounterMap.put("failed-message-count", failedMessageCount);
+        metricCounterMap.put("skipped-message-count", skippedMessageCount);
+        metricCounterMap.put("error-message-count", errorMessageCount);
+        metricCounterMap.put("batch-success-count", batchSuccessCount);
+        metricCounterMap.put("batch-error-count", batchErrorCount);
+        metricCounterMap.put("primary-route-success-count", primaryRouteSuccessCount);
+        metricCounterMap.put("secondary-route-success-count", secondaryRouteSuccessCount);
+        metricCounterMap.put("audit-route-success-count", auditRouteSuccessCount);
+        metricCounterMap.put("cache-hit-count", cacheHitCount);
+        metricCounterMap.put("cache-miss-count", cacheMissCount);
+        metricCounterMap.put("cache-hit-countcache-empty-values-count", cacheEmptyValuesCount);
+        metricCounterMap.put("cache-error-count", cacheErrorCount);
+        metricCounterMap.put("processed-message-count", processedMessageCount);
+        metricCounterMap.put("unprocessed-message-count", unprocessedMessageCount);
+        metricCounterMap.put("db-hit-count", dbHitCount);
+        metricCounterMap.put("expired-event-count", expiredEventCount);
+        metricCounterMap.put("duplicate-event-count", duplicateEventCount);
+        metricCounterMap.put("device-db-update-count", deviceDBUpdateCount);
+        metricCounterMap.put("device-cache-update-count", deviceCacheUpdateCount);
+        metricCounterMap.put("user-declared-hit-count", userDeclaredHitCount);
+        metricCounterMap.put("ip-location-hit-count", ipLocationHitCount);
+        metricCounterMap.put("db-insert-count", dbInsertCount);
+        metricCounterMap.put("db-update-count", dbUpdateCount);
         jobName = jName;
         this.context = context;
     }
@@ -108,25 +137,25 @@ public class JobMetrics {
         cacheEmptyValuesCount.clear();
         cacheHitCount.clear();
         cacheMissCount.clear();
-        cacheExpiredCount.clear();
+        // cacheExpiredCount.clear();
         cacheErrorCount.clear();
         processedMessageCount.clear();
         unprocessedMessageCount.clear();
         dbHitCount.clear();
-        dbErrorCount.clear();
-        deviceDbHitCount.clear();
-        userDbHitCount.clear();
-        deviceCacheHitCount.clear();
+        // dbErrorCount.clear();
+        // deviceDbHitCount.clear();
+        // userDbHitCount.clear();
+        // deviceCacheHitCount.clear();
         userCacheHitCount.clear();
-        deviceDbErrorCount.clear();
-        userDbErrorCount.clear();
+        // deviceDbErrorCount.clear();
+        // userDbErrorCount.clear();
         expiredEventCount.clear();
         duplicateEventCount.clear();
         deviceDBUpdateCount.clear();
         deviceCacheUpdateCount.clear();
         userDeclaredHitCount.clear();
         ipLocationHitCount.clear();
-        noCacheHitCount.clear();
+        // noCacheHitCount.clear();
         primaryRouteSuccessCount.clear();
         secondaryRouteSuccessCount.clear();
         auditRouteSuccessCount.clear();
@@ -186,11 +215,15 @@ public class JobMetrics {
         cacheHitCount.inc();
     }
 
+    public void incCacheMissCounter() {
+        cacheMissCount.inc();
+    }
+
     public void incCacheErrorCounter() {
         cacheErrorCount.inc();
     }
 
-    public void incNoDataCount() {
+    public void incEmptyCacheValueCounter() {
         cacheEmptyValuesCount.inc();
     }
 
@@ -222,10 +255,12 @@ public class JobMetrics {
         ipLocationHitCount.inc();
     }
 
+    /*
     public void incNoCacheHitCount() {
         noCacheHitCount.inc();
     }
-    
+    */
+
     public void incDBInsertCount() {
         dbInsertCount.inc();
     }
@@ -261,6 +296,7 @@ public class JobMetrics {
     public String collect() {
         Map<String, Object> metricsEvent = new HashMap<>();
         metricsEvent.put("job-name", jobName);
+        metricsEvent.put("partition", partition);
         metricsEvent.put("success-message-count", successMessageCount.getCount());
         metricsEvent.put("failed-message-count", failedMessageCount.getCount());
         metricsEvent.put("error-message-count", errorMessageCount.getCount());
@@ -269,35 +305,81 @@ public class JobMetrics {
         metricsEvent.put("primary-route-success-count", primaryRouteSuccessCount.getCount());
         metricsEvent.put("secondary-route-success-count", secondaryRouteSuccessCount.getCount());
         metricsEvent.put("skipped-message-count", skippedMessageCount.getCount());
-        metricsEvent.put("consumer-lag",
-                consumerLag(((MetricsRegistryMap) context.getSamzaContainerContext().metricsRegistry).metrics()));
-        metricsEvent.put("partition", partition);
         metricsEvent.put("cache-hit-count", cacheHitCount.getCount());
         metricsEvent.put("cache-miss-count", cacheMissCount.getCount());
-        metricsEvent.put("cache-expired-count", cacheExpiredCount.getCount());
+        // metricsEvent.put("cache-expired-count", cacheExpiredCount.getCount());
         metricsEvent.put("cache-error-count", cacheErrorCount.getCount());
         metricsEvent.put("cache-empty-values-count", cacheEmptyValuesCount.getCount());
         metricsEvent.put("processed-message-count", processedMessageCount.getCount());
         metricsEvent.put("unprocessed-message-count", unprocessedMessageCount.getCount());
         metricsEvent.put("db-hit-count", dbHitCount.getCount());
-        metricsEvent.put("db-error-count", dbErrorCount.getCount());
-        metricsEvent.put("device-cache-hit-count", deviceCacheHitCount.getCount());
+        // metricsEvent.put("db-error-count", dbErrorCount.getCount());
+        // metricsEvent.put("device-cache-hit-count", deviceCacheHitCount.getCount());
         metricsEvent.put("user-cache-hit-count", userCacheHitCount.getCount());
-        metricsEvent.put("device-db-hit-count", deviceDbHitCount.getCount());
-        metricsEvent.put("user-db-hit-count", userDbHitCount.getCount());
-        metricsEvent.put("device-db-error-count", deviceDbErrorCount.getCount());
-        metricsEvent.put("user-db-error-count", userDbErrorCount.getCount());
+        // metricsEvent.put("device-db-hit-count", deviceDbHitCount.getCount());
+        // metricsEvent.put("user-db-hit-count", userDbHitCount.getCount());
+        // metricsEvent.put("device-db-error-count", deviceDbErrorCount.getCount());
+        // metricsEvent.put("user-db-error-count", userDbErrorCount.getCount());
         metricsEvent.put("expired-event-count", expiredEventCount.getCount());
         metricsEvent.put("duplicate-event-count", duplicateEventCount.getCount());
-        metricsEvent.put("metricts", new DateTime().getMillis());
+
         metricsEvent.put("device-db-update-count", deviceDBUpdateCount.getCount());
         metricsEvent.put("device-cache-update-count", deviceCacheUpdateCount.getCount());
         metricsEvent.put("user-declared-hit-count", userDeclaredHitCount.getCount());
         metricsEvent.put("ip-location-hit-count", ipLocationHitCount.getCount());
-        metricsEvent.put("no-cache-hit-count", noCacheHitCount.getCount());
+        // metricsEvent.put("no-cache-hit-count", noCacheHitCount.getCount());
         metricsEvent.put("audit-route-success-count", auditRouteSuccessCount.getCount());
         metricsEvent.put("db-insert-count", dbInsertCount.getCount());
         metricsEvent.put("db-update-count", dbUpdateCount.getCount());
+
+        metricsEvent.put("consumer-lag",
+                consumerLag(((MetricsRegistryMap) context.getSamzaContainerContext().metricsRegistry).metrics()));
+        metricsEvent.put("metricts", new DateTime().getMillis());
         return new Gson().toJson(metricsEvent);
+    }
+
+    public String collect(List<String> metrics) {
+        Map<String, Object> metricsEvent = new HashMap<>();
+        metricsEvent.put("job-name", jobName);
+        metricsEvent.put("partition", partition);
+        metricsEvent.put("consumer-lag",
+                consumerLag(((MetricsRegistryMap) context.getSamzaContainerContext().metricsRegistry).metrics()));
+        metricsEvent.put("metricts", new DateTime().getMillis());
+        for (String metric: metrics) {
+            metricsEvent.put(metric, metricCounterMap.get(metric).getCount());
+        }
+        return new Gson().toJson(metricsEvent);
+    }
+
+    public String generateMetrics(List<String> metrics) {
+        Map<String, Object> metricsEvent = new HashMap<>();
+        metricsEvent.put("system", "samza");
+        metricsEvent.put("subsystem", "pipeline-metrics");
+        List<Map<String, Object>> dimsList = new ArrayList<>();
+        dimsList.add(createMap("job-name", jobName));
+        dimsList.add(createMap("partition", partition));
+
+        List<Map<String, Object>> metricsList = new ArrayList<>();
+        for (String metric: metrics) {
+            Map<String, Object> mMap = new HashMap<>();
+            mMap.put("id", metric);
+            mMap.put("value", metricCounterMap.get(metric).getCount());
+            metricsList.add(mMap);
+        }
+
+        metricsList.add(createMap("consumer-lag",
+                consumerLag(((MetricsRegistryMap) context.getSamzaContainerContext().metricsRegistry).metrics())));
+        metricsList.add(createMap("metricts", new DateTime().getMillis()));
+
+        metricsEvent.put("dimensions", dimsList);
+        metricsEvent.put("metrics", metricsList);
+        return new Gson().toJson(metricsEvent);
+    }
+
+    private Map<String, Object> createMap(String id, Object value) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", id);
+        map.put("value", value);
+        return map;
     }
 }

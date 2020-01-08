@@ -40,7 +40,7 @@ public class DeviceProfileCache {
             if (null != deviceProfile && deviceProfile.isLocationResolved()) {
                 metrics.incCacheHitCounter();
             } else {
-                metrics.incNoDataCount();
+                metrics.incEmptyCacheValueCounter();
             }
         }
         return deviceProfile;
