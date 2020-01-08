@@ -36,7 +36,7 @@
 		<module>assessment-aggregator</module>
         <module>user-cache-updater</module>
 		<module>content-cache-updater</module>
-		<module>events-flatten</module>
+		<module>events-flattener</module>
 	</modules>
 
 	<properties>
