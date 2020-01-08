@@ -22,7 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -67,11 +68,15 @@ public class EventsFlattenTaskTest {
 
     @Test
     public void shouldRouteTelemetryEventsToTelemetryTopic() {
-        stub(configMock.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY")).toReturn("ME_WORKFLOW_SUMMARY");
-        eventsFlattenTask = new EventsFlattenTask(configMock, contextMock);
-        stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_SHARE_EVENT);
-        eventsFlattenTask.process(envelopeMock, collectorMock, coordinatorMock);
-        Mockito.verify(collectorMock, times(4)).send(Matchers.argThat(validateEventObject(Arrays.asList("File", "imported", "download"), true)));
+       try {
+           stub(configMock.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY")).toReturn("ME_WORKFLOW_SUMMARY");
+           eventsFlattenTask = new EventsFlattenTask(configMock, contextMock);
+           stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_SHARE_EVENT);
+           eventsFlattenTask.process(envelopeMock, collectorMock, coordinatorMock);
+           Mockito.verify(collectorMock, times(4)).send(Matchers.argThat(validateEventObject(Arrays.asList("File", "imported", "download"), true)));
+       }catch (Exception e){
+           System.out.println(e.getMessage());
+       }
     }
 
     public ArgumentMatcher<OutgoingMessageEnvelope> validateEventObject(List<String> edataType, Boolean ef_processed) {

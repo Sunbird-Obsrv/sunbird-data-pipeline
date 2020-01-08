@@ -38,7 +38,6 @@ public class EventsFlattenService {
      */
     public void process(EventsFlattenSource source, EventsFlattenSink sink) {
         Event event = source.getEvent();
-
         if (event.eid().equals(config.getFlattenEventName())) {
             try {
                 this.toFlatten(event,getClonedEventObject(event), sink);

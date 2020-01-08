@@ -33,7 +33,7 @@ public class EventsFlattenTask extends BaseSamzaTask {
     private JobMetrics metrics;
     private EventsFlattenService service;
 
-    public EventsFlattenTask(Config config, TaskContext context) {
+    public EventsFlattenTask(Config config, TaskContext context) throws Exception {
         init(config, context);
     }
 

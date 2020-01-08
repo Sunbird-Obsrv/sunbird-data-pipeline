@@ -7,13 +7,11 @@
     <prerequisites>
         <maven>3.0.1</maven>
     </prerequisites>
-
     <parent>
         <groupId>org.ekstep.ecosystem</groupId>
         <artifactId>jobs</artifactId>
         <version>0.0.1</version>
     </parent>
-
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>events-flatten</artifactId>
     <version>0.0.1</version>
@@ -29,7 +27,7 @@
             <artifactId>samza-api</artifactId>
             <version>${samza.version}</version>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.apache.samza</groupId>
             <artifactId>samza-log4j</artifactId>
             <version>${samza.version}</version>
@@ -112,12 +110,6 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>18.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fiftyonred</groupId>
-            <artifactId>mock-jedis</artifactId>
-            <version>0.4.0</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
