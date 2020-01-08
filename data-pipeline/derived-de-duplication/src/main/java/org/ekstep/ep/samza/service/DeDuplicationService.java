@@ -30,7 +30,6 @@ public class DeDuplicationService {
 			if (checksum == null) {
 				LOGGER.info(event.id(), "EVENT WITHOUT CHECKSUM & MID, PASSING THROUGH : {}", event);
 				event.markSkipped();
-				event.updateDefaults(config);
 				sink.toSuccessTopic(event);
 				return;
 			}
@@ -47,13 +46,11 @@ public class DeDuplicationService {
 
 				deDupEngine.storeChecksum(checksum);
 			}
-			event.updateDefaults(config);
 			event.markSuccess();
 			sink.toSuccessTopic(event);
 
 		} catch (JedisException e) {
 			LOGGER.error(null, "Exception when retrieving data from redis:  ", e);
-			event.updateDefaults(config);
 			event.markRedisFailure();
 			sink.toSuccessTopicIfRedisException(event);
 		} catch (JsonSyntaxException e) {

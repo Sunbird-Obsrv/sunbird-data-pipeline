@@ -13,7 +13,6 @@ public class DeDuplicationConfig {
     private String failedTopic;
     private String duplicateTopic;
     private String malformedTopic;
-    private String defaultChannel;
     private final int dupStore;
     private int expirySeconds;
     private List<String> includedProducerIds;
@@ -24,7 +23,6 @@ public class DeDuplicationConfig {
         failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
         duplicateTopic = config.get("output.duplicate.topic.name", "telemetry.duplicate");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
-        defaultChannel = config.get("default.channel", "org.sunbird");
         dupStore = config.getInt("redis.database.duplicationstore.id", 11);
         expirySeconds = config.getInt("redis.database.key.expiry.seconds", 604800);
         if (!config.get("dedup.producer.include.ids", "").isEmpty()) {
@@ -49,10 +47,6 @@ public class DeDuplicationConfig {
 
     public String malformedTopic() {
         return malformedTopic;
-    }
-
-    public String defaultChannel() {
-        return defaultChannel;
     }
 
     public String jobName() {

@@ -17,6 +17,7 @@ abstract class BaseSamzaTask implements StreamTask, InitableTask, WindowableTask
 	protected JobMetrics metrics;
 	private String metricsTopic;
 	private List<String> metricsList;
+	private String prometheusMetricsTopic;
 	
 	public BaseSamzaTask() {
 		
@@ -25,6 +26,7 @@ abstract class BaseSamzaTask implements StreamTask, InitableTask, WindowableTask
 	public void initTask(Config config, JobMetrics metrics) {
 		this.metrics = metrics;
 		this.metricsTopic = config.get("output.metrics.topic.name", "telemetry.pipeline_metrics");
+		this.prometheusMetricsTopic = config.get("output.prometheus.metrics.topic.name", "telemetry.metrics");
 		this.metricsList = config.getList("pipeline.metrics.list");
 	}
 	
@@ -33,7 +35,9 @@ abstract class BaseSamzaTask implements StreamTask, InitableTask, WindowableTask
 	public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
 
 		String mEvent = metrics.collect(metricsList);
-		collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", this.metricsTopic), mEvent));
+		String prometheusMetricEvent = metrics.generateMetrics(metricsList);
+		collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", metricsTopic), mEvent));
+		collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", prometheusMetricsTopic), prometheusMetricEvent));
 		this.metrics.clear();
 	}
 }
