@@ -30,26 +30,18 @@ public class JobMetrics {
     private final Counter auditRouteSuccessCount;
     private final Counter cacheHitCount;
     private final Counter cacheMissCount;
-    // private final Counter cacheExpiredCount;
     private final Counter cacheErrorCount;
     private final Counter cacheEmptyValuesCount;
     private final Counter processedMessageCount;
     private final Counter unprocessedMessageCount;
     private final Counter dbHitCount;
-    // private final Counter dbErrorCount;
-    // private final Counter deviceDbHitCount;
-    // private final Counter deviceCacheHitCount;
-    // private final Counter userDbHitCount;
     private final Counter userCacheHitCount;
-    // private final Counter deviceDbErrorCount;
-    // private final Counter userDbErrorCount;
     private final Counter expiredEventCount;
     private final Counter duplicateEventCount;
     private final Counter deviceDBUpdateCount;
     private final Counter deviceCacheUpdateCount;
     private final Counter userDeclaredHitCount;
     private final Counter ipLocationHitCount;
-    // private final Counter noCacheHitCount;
     
     private final Counter dbInsertCount;
     private final Counter dbUpdateCount;
@@ -77,25 +69,17 @@ public class JobMetrics {
         cacheHitCount = metricsRegistry.newCounter(getClass().getName(), "cache-hit-count");
         cacheMissCount = metricsRegistry.newCounter(getClass().getName(), "cache-miss-count");
         cacheEmptyValuesCount = metricsRegistry.newCounter(getClass().getName(), "cache-empty-values-count");
-        // cacheExpiredCount = metricsRegistry.newCounter(getClass().getName(), "cache-expired-count");
         cacheErrorCount = metricsRegistry.newCounter(getClass().getName(), "cache-error-count");
         processedMessageCount = metricsRegistry.newCounter(getClass().getName(), "processed-message-count");
         unprocessedMessageCount = metricsRegistry.newCounter(getClass().getName(), "unprocessed-message-count");
         dbHitCount = metricsRegistry.newCounter(getClass().getName(), "db-hit-count");
-        // dbErrorCount = metricsRegistry.newCounter(getClass().getName(), "db-error-count");
-        // deviceCacheHitCount = metricsRegistry.newCounter(getClass().getName(), "device-cache-hit-count");
         userCacheHitCount = metricsRegistry.newCounter(getClass().getName(), "user-cache-hit-count");
-        // deviceDbHitCount = metricsRegistry.newCounter(getClass().getName(), "device-db-hit-count");
-        // userDbHitCount = metricsRegistry.newCounter(getClass().getName(), "user-db-hit-count");
-        // deviceDbErrorCount = metricsRegistry.newCounter(getClass().getName(), "device-db-error-count");
-        // userDbErrorCount = metricsRegistry.newCounter(getClass().getName(), "user-db-error-count");
         expiredEventCount = metricsRegistry.newCounter(getClass().getName(), "expired-event-count");
         duplicateEventCount = metricsRegistry.newCounter(getClass().getName(), "duplicate-event-count");
         deviceDBUpdateCount = metricsRegistry.newCounter(getClass().getName(), "device-db-update-count");
         deviceCacheUpdateCount = metricsRegistry.newCounter(getClass().getName(), "device-cache-update-count");
         userDeclaredHitCount = metricsRegistry.newCounter(getClass().getName(), "user-declared-hit-count");
         ipLocationHitCount = metricsRegistry.newCounter(getClass().getName(), "ip-location-hit-count");
-        // noCacheHitCount = metricsRegistry.newCounter(getClass().getName(), "no-cache-hit-count");
         dbInsertCount = metricsRegistry.newCounter(getClass().getName(), "db-insert-count");
         dbUpdateCount = metricsRegistry.newCounter(getClass().getName(), "db-update-count");
 
@@ -137,25 +121,17 @@ public class JobMetrics {
         cacheEmptyValuesCount.clear();
         cacheHitCount.clear();
         cacheMissCount.clear();
-        // cacheExpiredCount.clear();
         cacheErrorCount.clear();
         processedMessageCount.clear();
         unprocessedMessageCount.clear();
         dbHitCount.clear();
-        // dbErrorCount.clear();
-        // deviceDbHitCount.clear();
-        // userDbHitCount.clear();
-        // deviceCacheHitCount.clear();
         userCacheHitCount.clear();
-        // deviceDbErrorCount.clear();
-        // userDbErrorCount.clear();
         expiredEventCount.clear();
         duplicateEventCount.clear();
         deviceDBUpdateCount.clear();
         deviceCacheUpdateCount.clear();
         userDeclaredHitCount.clear();
         ipLocationHitCount.clear();
-        // noCacheHitCount.clear();
         primaryRouteSuccessCount.clear();
         secondaryRouteSuccessCount.clear();
         auditRouteSuccessCount.clear();
@@ -255,12 +231,6 @@ public class JobMetrics {
         ipLocationHitCount.inc();
     }
 
-    /*
-    public void incNoCacheHitCount() {
-        noCacheHitCount.inc();
-    }
-    */
-
     public void incDBInsertCount() {
         dbInsertCount.inc();
     }
@@ -307,19 +277,12 @@ public class JobMetrics {
         metricsEvent.put("skipped-message-count", skippedMessageCount.getCount());
         metricsEvent.put("cache-hit-count", cacheHitCount.getCount());
         metricsEvent.put("cache-miss-count", cacheMissCount.getCount());
-        // metricsEvent.put("cache-expired-count", cacheExpiredCount.getCount());
         metricsEvent.put("cache-error-count", cacheErrorCount.getCount());
         metricsEvent.put("cache-empty-values-count", cacheEmptyValuesCount.getCount());
         metricsEvent.put("processed-message-count", processedMessageCount.getCount());
         metricsEvent.put("unprocessed-message-count", unprocessedMessageCount.getCount());
         metricsEvent.put("db-hit-count", dbHitCount.getCount());
-        // metricsEvent.put("db-error-count", dbErrorCount.getCount());
-        // metricsEvent.put("device-cache-hit-count", deviceCacheHitCount.getCount());
         metricsEvent.put("user-cache-hit-count", userCacheHitCount.getCount());
-        // metricsEvent.put("device-db-hit-count", deviceDbHitCount.getCount());
-        // metricsEvent.put("user-db-hit-count", userDbHitCount.getCount());
-        // metricsEvent.put("device-db-error-count", deviceDbErrorCount.getCount());
-        // metricsEvent.put("user-db-error-count", userDbErrorCount.getCount());
         metricsEvent.put("expired-event-count", expiredEventCount.getCount());
         metricsEvent.put("duplicate-event-count", duplicateEventCount.getCount());
 
@@ -327,7 +290,6 @@ public class JobMetrics {
         metricsEvent.put("device-cache-update-count", deviceCacheUpdateCount.getCount());
         metricsEvent.put("user-declared-hit-count", userDeclaredHitCount.getCount());
         metricsEvent.put("ip-location-hit-count", ipLocationHitCount.getCount());
-        // metricsEvent.put("no-cache-hit-count", noCacheHitCount.getCount());
         metricsEvent.put("audit-route-success-count", auditRouteSuccessCount.getCount());
         metricsEvent.put("db-insert-count", dbInsertCount.getCount());
         metricsEvent.put("db-update-count", dbUpdateCount.getCount());
