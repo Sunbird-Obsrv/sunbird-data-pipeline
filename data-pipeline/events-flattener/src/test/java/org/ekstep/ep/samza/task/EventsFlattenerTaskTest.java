@@ -1,13 +1,11 @@
 package org.ekstep.ep.samza.task;
 
 import com.google.gson.Gson;
-import org.apache.samza.Partition;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
-import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
@@ -28,7 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
-public class EventsFlattenTaskTest {
+public class EventsFlattenerTaskTest {
 
     private static final String TELEMETRY_EVENTS_TOPIC = "events.telemetry";
     private static final String FAILED_TOPIC = "telemetry.failed";
@@ -42,7 +40,7 @@ public class EventsFlattenTaskTest {
     private TaskCoordinator coordinatorMock;
     private IncomingMessageEnvelope envelopeMock;
     private Config configMock;
-    private EventsFlattenTask eventsFlattenTask;
+    private EventsFlattenerTask eventsFlattenerTask;
 
     @Before
     public void setUp() {
@@ -61,22 +59,19 @@ public class EventsFlattenTaskTest {
 
         stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
-        stub(envelopeMock.getOffset()).toReturn("2");
-        stub(envelopeMock.getSystemStreamPartition())
-                .toReturn(new SystemStreamPartition("kafka", "telemetry.denorm.valid", new Partition(1)));
     }
 
     @Test
     public void shouldRouteTelemetryEventsToTelemetryTopic() {
-       try {
-           stub(configMock.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY")).toReturn("ME_WORKFLOW_SUMMARY");
-           eventsFlattenTask = new EventsFlattenTask(configMock, contextMock);
-           stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_SHARE_EVENT);
-           eventsFlattenTask.process(envelopeMock, collectorMock, coordinatorMock);
-           Mockito.verify(collectorMock, times(4)).send(Matchers.argThat(validateEventObject(Arrays.asList("File", "imported", "download"), true)));
-       }catch (Exception e){
-           System.out.println(e.getMessage());
-       }
+        try {
+            stub(configMock.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY")).toReturn("ME_WORKFLOW_SUMMARY");
+            eventsFlattenerTask = new EventsFlattenerTask(configMock, contextMock);
+            stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_SHARE_EVENT);
+            eventsFlattenerTask.process(envelopeMock, collectorMock, coordinatorMock);
+            Mockito.verify(collectorMock, times(4)).send(Matchers.argThat(validateEventObject(Arrays.asList("File", "imported", "download"), true)));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public ArgumentMatcher<OutgoingMessageEnvelope> validateEventObject(List<String> edataType, Boolean ef_processed) {

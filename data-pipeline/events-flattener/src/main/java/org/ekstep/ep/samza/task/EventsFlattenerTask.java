@@ -25,32 +25,33 @@ import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.core.JobMetrics;
-import org.ekstep.ep.samza.service.EventsFlattenService;
+import org.ekstep.ep.samza.service.EventsFlattenerService;
 
-public class EventsFlattenTask extends BaseSamzaTask {
+public class EventsFlattenerTask extends BaseSamzaTask {
 
-    private EventsFlattenConfig config;
+    private EventsFlattenerConfig config;
     private JobMetrics metrics;
-    private EventsFlattenService service;
+    private EventsFlattenerService service;
 
-    public EventsFlattenTask(Config config, TaskContext context) throws Exception {
+    public EventsFlattenerTask(Config config, TaskContext context) throws Exception {
         init(config, context);
     }
 
-    public EventsFlattenTask() { }
+    public EventsFlattenerTask() {
+    }
 
     @Override
     public void init(Config config, TaskContext context) {
-        this.config = new EventsFlattenConfig(config);
+        this.config = new EventsFlattenerConfig(config);
         metrics = new JobMetrics(context, this.config.jobName());
-        service = new EventsFlattenService(this.config);
+        service = new EventsFlattenerService(this.config);
         this.initTask(config, metrics);
     }
 
     @Override
     public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator taskCoordinator) {
-        EventsFlattenSink sink = new EventsFlattenSink(collector, metrics, config);
-        EventsFlattenSource source = new EventsFlattenSource(envelope);
+        EventsFlattenerSink sink = new EventsFlattenerSink(collector, metrics, config);
+        EventsFlattenerSource source = new EventsFlattenerSource(envelope);
         service.process(source, sink);
     }
 

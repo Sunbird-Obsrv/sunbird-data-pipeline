@@ -5,9 +5,9 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.task.EventsFlattenConfig;
-import org.ekstep.ep.samza.task.EventsFlattenSink;
-import org.ekstep.ep.samza.task.EventsFlattenSource;
+import org.ekstep.ep.samza.task.EventsFlattenerConfig;
+import org.ekstep.ep.samza.task.EventsFlattenerSink;
+import org.ekstep.ep.samza.task.EventsFlattenerSource;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -15,10 +15,10 @@ import java.util.Map;
 
 import static java.text.MessageFormat.format;
 
-public class EventsFlattenService {
+public class EventsFlattenerService {
 
-    private static Logger LOGGER = new Logger(EventsFlattenService.class);
-    private final EventsFlattenConfig config;
+    private static Logger LOGGER = new Logger(EventsFlattenerService.class);
+    private final EventsFlattenerConfig config;
     private static String IMPORTED_KEY = "imported";
     private static String DOWNLOAD_KEY = "download";
     private static String FLATTEN_EVENT_NAME = "SHARE_ITEM";
@@ -28,7 +28,7 @@ public class EventsFlattenService {
      *
      * @param config - Configurations of the EventsFlatten Samza job.
      */
-    public EventsFlattenService(EventsFlattenConfig config) {
+    public EventsFlattenerService(EventsFlattenerConfig config) {
         this.config = config;
     }
 
@@ -36,11 +36,11 @@ public class EventsFlattenService {
      * @param source
      * @param sink
      */
-    public void process(EventsFlattenSource source, EventsFlattenSink sink) {
+    public void process(EventsFlattenerSource source, EventsFlattenerSink sink) {
         Event event = source.getEvent();
         if (event.eid().equals(config.getFlattenEventName())) {
             try {
-                this.toFlatten(event,getClonedEventObject(event), sink);
+                this.toFlatten(event, getClonedEventObject(event), sink);
             } catch (JsonSyntaxException e) {
                 e.printStackTrace();
                 LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
@@ -64,7 +64,7 @@ public class EventsFlattenService {
      * @param orginalEvent - SHARE Event object.
      * @param sink         - Object to push the event to kafka sink
      */
-    private void toFlatten(Event orginalEvent, Event clonedEvent, EventsFlattenSink sink) {
+    private void toFlatten(Event orginalEvent, Event clonedEvent, EventsFlattenerSink sink) {
         String objectId = null;
         String eDataType = clonedEvent.edataType();
         Gson gson = new Gson();

@@ -5,12 +5,12 @@ import org.ekstep.ep.samza.core.BaseSink;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.domain.Event;
 
-public class EventsFlattenSink extends BaseSink {
+public class EventsFlattenerSink extends BaseSink {
 
     // private JobMetrics metrics;
-    private EventsFlattenConfig config;
+    private EventsFlattenerConfig config;
 
-    public EventsFlattenSink(MessageCollector collector, JobMetrics metrics, EventsFlattenConfig config) {
+    public EventsFlattenerSink(MessageCollector collector, JobMetrics metrics, EventsFlattenerConfig config) {
         super(collector, metrics);
         this.config = config;
     }

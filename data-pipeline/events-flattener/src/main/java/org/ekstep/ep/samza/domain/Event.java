@@ -1,7 +1,7 @@
 package org.ekstep.ep.samza.domain;
 
 import org.ekstep.ep.samza.events.domain.Events;
-import org.ekstep.ep.samza.task.EventsFlattenConfig;
+import org.ekstep.ep.samza.task.EventsFlattenerConfig;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +12,7 @@ public class Event extends Events {
         super(map);
     }
 
-    public void markFailure(String error, EventsFlattenConfig config) {
+    public void markFailure(String error, EventsFlattenerConfig config) {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags.ef_processed", false);
         telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
@@ -33,17 +33,17 @@ public class Event extends Events {
         telemetry.add("object.rollup.l1", rollupLevel1);
     }
 
-    public void updatedEventEdata(String edataType, Double size){
+    public void updatedEventEdata(String edataType, Double size) {
         telemetry.add("edata.type", edataType);
         telemetry.add("edata.size", size);
 
     }
 
-    public void removeItems(){
+    public void removeItems() {
         telemetry.add("edata.items", null);
     }
 
-    public  void renameEventIdTo(String eid){
+    public void renameEventIdTo(String eid) {
         telemetry.add("eid", eid);
     }
 

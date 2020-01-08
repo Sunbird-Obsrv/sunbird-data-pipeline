@@ -1,19 +1,18 @@
 package org.ekstep.ep.samza.task;
 
-import java.util.Map;
-
+import com.google.gson.Gson;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
 
-import com.google.gson.Gson;
+import java.util.Map;
 
-public class EventsFlattenSource {
-    static Logger LOGGER = new Logger(EventsFlattenSource.class);
+public class EventsFlattenerSource {
+    static Logger LOGGER = new Logger(EventsFlattenerSource.class);
 
     private IncomingMessageEnvelope envelope;
 
-    public EventsFlattenSource(IncomingMessageEnvelope envelope) {
+    public EventsFlattenerSource(IncomingMessageEnvelope envelope) {
         this.envelope = envelope;
     }
 
