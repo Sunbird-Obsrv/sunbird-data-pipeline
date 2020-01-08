@@ -1,30 +1,20 @@
 package org.ekstep.ep.samza.system;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
-import org.ekstep.ep.samza.domain.Event;
-import org.ekstep.ep.samza.fixtures.EventFixture;
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.util.Map;
-
 public class EventTest {
 	
-	@Test
-	public void shouldReturnEid() {
-
-		Event event = new Event(EventFixture.getMap(EventFixture.WORKFLOW_SUMMARY_EVENT));
-		Assert.assertEquals("ME_WORKFLOW_SUMMARY", event.eid());
-	}
-
-	@Test(expected = JsonSyntaxException.class)
-	public void shouldThrowException() {
-		new Gson().fromJson(EventFixture.UNPARSABLE_START_EVENT,
-				new TypeToken<Map<String, Object>>() {
-				}.getType());
-	}
+//	@Test
+//	public void shouldReturnEid() {
+//
+//		Event event = new Event(EventFixture.getMap(EventFixture.WORKFLOW_SUMMARY_EVENT));
+//		Assert.assertEquals("ME_WORKFLOW_SUMMARY", event.eid());
+//	}
+//
+//	@Test(expected = JsonSyntaxException.class)
+//	public void shouldThrowException() {
+//		new Gson().fromJson(EventFixture.UNPARSABLE_START_EVENT,
+//				new TypeToken<Map<String, Object>>() {
+//				}.getType());
+//	}
 
 //	@Test
 //	public void shouldAddSkipFlags() {

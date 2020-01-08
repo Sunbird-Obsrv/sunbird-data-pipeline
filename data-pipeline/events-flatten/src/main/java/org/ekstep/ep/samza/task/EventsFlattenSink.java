@@ -12,11 +12,11 @@ public class EventsFlattenSink extends BaseSink {
 
     public EventsFlattenSink(MessageCollector collector, JobMetrics metrics, EventsFlattenConfig config) {
         super(collector, metrics);
-        // this.metrics = metrics;
         this.config = config;
     }
 
     public void toSuccessTopic(Event event) {
+        event.markSuccess();
         toTopic(config.getSuccessTopic(), event.did(), event.getJson());
         metrics.incSuccessCounter();
     }

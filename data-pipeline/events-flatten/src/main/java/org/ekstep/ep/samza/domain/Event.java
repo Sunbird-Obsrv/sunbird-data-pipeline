@@ -22,7 +22,7 @@ public class Event extends Events {
 
     public void markSuccess() {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.dv_processed", true);
+        telemetry.add("flags.ef_processed", true);
         telemetry.add("type", "events");
     }
 
@@ -42,6 +42,7 @@ public class Event extends Events {
     public void removeItems(){
         telemetry.add("edata.items", null);
     }
+
     public  void renameEventIdTo(String eid){
         telemetry.add("eid", eid);
     }
