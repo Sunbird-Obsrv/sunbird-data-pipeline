@@ -6,6 +6,7 @@ import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
+import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
@@ -61,8 +62,11 @@ public class EventsFlattenerTaskTest {
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
     }
 
+    /**
+     * When share event having multiple edata items
+     */
     @Test
-    public void shouldRouteTelemetryEventsToTelemetryTopic() {
+    public void shouldFlattenTheShareEvent() {
         try {
             stub(configMock.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY")).toReturn("ME_WORKFLOW_SUMMARY");
             eventsFlattenerTask = new EventsFlattenerTask(configMock, contextMock);
@@ -72,6 +76,34 @@ public class EventsFlattenerTaskTest {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    /**
+     * When Event is other than "SHARE" Then it should route to success topic
+     */
+    @Test
+    public void shouldRouteToSuccessTopic() {
+        try {
+            stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_START_EVENT);
+            eventsFlattenerTask = new EventsFlattenerTask(configMock, contextMock);
+            eventsFlattenerTask.process(envelopeMock, collectorMock, coordinatorMock);
+            verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), TELEMETRY_EVENTS_TOPIC)));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
+        return new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                SystemStream systemStream = outgoingMessageEnvelope.getSystemStream();
+                assertEquals("kafka", systemStream.getSystem());
+                assertNotNull(outgoingMessageEnvelope.getMessage());
+                return true;
+            }
+        };
     }
 
     public ArgumentMatcher<OutgoingMessageEnvelope> validateEventObject(List<String> edataType, Boolean ef_processed) {
