@@ -87,6 +87,10 @@
   become: yes
   shell: gem install ruby-kafka
 
+- name: Install rvm
+  become: yes
+  shell: curl -sSL https://get.rvm.io | bash -s stable  
+
 - name: Download Kafka-2.11
   become: yes
   become_user: "{{ analytics_user }}"
