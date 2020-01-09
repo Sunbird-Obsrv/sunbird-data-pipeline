@@ -25,6 +25,7 @@ public class TelemetryRouterService {
 		try {
 			event = source.getEvent();
 			String eid = event.eid();
+			System.out.println("Event eid is" + eid);
 			List<String> secondaryRouteEvents = this.config.getSecondaryRouteEvents();
 			if (secondaryRouteEvents.contains(eid)) {
 				sink.toSecondaryRoute(event);
@@ -34,7 +35,9 @@ public class TelemetryRouterService {
 			if ("AUDIT".equalsIgnoreCase(eid)) {
 				sink.toAuditRoute(event);
 			}
+
 			if ("SHARE".equalsIgnoreCase(eid)) {
+				System.out.println("yes" + eid);
 				sink.toShareEventRouter(event);
 			}
 

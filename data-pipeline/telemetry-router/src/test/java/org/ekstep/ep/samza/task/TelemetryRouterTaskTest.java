@@ -37,6 +37,7 @@ public class TelemetryRouterTaskTest {
 	private static final String SECONDARY_TOPIC = "telemetry.log";
 	private static final String MALFORMED_TOPIC = "telemetry.malformed";
 	private static final String AUDIT_TOPIC = "telemetry.audit";
+	private static final String SHARE_EVENT_TOPIC = "telemetry.share";
 
 	private MessageCollector collectorMock;
 	private TaskContext contextMock;
@@ -62,6 +63,7 @@ public class TelemetryRouterTaskTest {
 		stub(configMock.get("router.events.secondary.route.topic", SECONDARY_TOPIC)).toReturn(SECONDARY_TOPIC);
 		stub(configMock.get("router.events.audit.route.topic", AUDIT_TOPIC)).toReturn(AUDIT_TOPIC);
 		stub(configMock.get("output.malformed.topic.name", MALFORMED_TOPIC)).toReturn(MALFORMED_TOPIC);
+		stub(configMock.get("router.events.share.route.topic", SHARE_EVENT_TOPIC)).toReturn(SHARE_EVENT_TOPIC);
 
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
@@ -143,6 +145,36 @@ public class TelemetryRouterTaskTest {
 				if (invocation == 2) {
 					assertEquals("kafka", systemStream.getSystem());
 					assertEquals(AUDIT_TOPIC, systemStream.getStream());
+				}
+				return true;
+			}
+		}));
+	}
+
+	@Test
+	public void shouldSendSHAREEventToShareEventRoute() throws Exception {
+
+		stub(configMock.get("router.events.secondary.route.events", "LOG,ERROR")).toReturn("LOG");
+		telemetryRouterTask = new TelemetryRouterTask(configMock, contextMock);
+
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.SHARE_EVENT);
+		telemetryRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
+
+		verify(collectorMock, times(2)).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+			int invocation = 0;
+
+			@Override
+			public boolean matches(Object o) {
+				invocation = invocation + 1;
+				OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+				SystemStream systemStream = outgoingMessageEnvelope.getSystemStream();
+				if (invocation == 1) {
+					assertEquals("kafka", systemStream.getSystem());
+					assertEquals(PRIMARY_TOPIC, systemStream.getStream());
+				}
+				if (invocation == 2) {
+					assertEquals("kafka", systemStream.getSystem());
+					assertEquals(SHARE_EVENT_TOPIC, systemStream.getStream());
 				}
 				return true;
 			}
