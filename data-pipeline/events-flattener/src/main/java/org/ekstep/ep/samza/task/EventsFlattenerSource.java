@@ -2,13 +2,11 @@ package org.ekstep.ep.samza.task;
 
 import com.google.gson.Gson;
 import org.apache.samza.system.IncomingMessageEnvelope;
-import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
 
 import java.util.Map;
 
 public class EventsFlattenerSource {
-    static Logger LOGGER = new Logger(EventsFlattenerSource.class);
 
     private IncomingMessageEnvelope envelope;
 
