@@ -92,6 +92,20 @@ public class EventsFlattenerTaskTest {
         }
     }
 
+
+    @Test
+    public void shouldRouteEventsToMalformedTopic() {
+        try {
+            stub(envelopeMock.getMessage()).toReturn(EventFixture.INVALID_SHARE_EVENT);
+            eventsFlattenerTask = new EventsFlattenerTask(configMock, contextMock);
+            eventsFlattenerTask.process(envelopeMock, collectorMock, coordinatorMock);
+            verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), MALFORMED_TOPIC)));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
     public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
         return new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
