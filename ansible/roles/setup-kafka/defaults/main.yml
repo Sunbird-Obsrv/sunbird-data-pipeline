@@ -123,7 +123,10 @@ processing_kafka_overriden_topics:
     replication_factor: 1
   - name: telemetry.assess.failed
     retention_time: 2592000000
-    replication_factor: 1      
+    replication_factor: 1
+  - name: telemetry.flattener
+    retention_time: 2592000000
+    replication_factor: 1        
 
 processing_kafka_topics:
   - name: system.command
@@ -246,4 +249,7 @@ processing_kafka_topics:
     replication_factor: 1
   - name: telemetry.assess.failed
     num_of_partitions: 1
-    replication_factor: 1  
+    replication_factor: 1
+  - name: telemetry.flattener
+    num_of_partitions: 1
+    replication_factor: 1    

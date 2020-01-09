@@ -68,7 +68,6 @@ public class EventsFlattenerTaskTest {
     @Test
     public void shouldFlattenTheShareEvent() {
         try {
-            stub(configMock.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY")).toReturn("ME_WORKFLOW_SUMMARY");
             eventsFlattenerTask = new EventsFlattenerTask(configMock, contextMock);
             stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_SHARE_EVENT);
             eventsFlattenerTask.process(envelopeMock, collectorMock, coordinatorMock);
