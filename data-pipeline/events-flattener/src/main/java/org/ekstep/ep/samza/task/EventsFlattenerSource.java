@@ -26,9 +26,4 @@ public class EventsFlattenerSource {
         return (Map<String, Object>) new Gson().fromJson(message, Map.class);
     }
 
-    public String getMessage() {
-        return envelope.toString();
-    }
-
-
 }
