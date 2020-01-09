@@ -13,7 +13,7 @@ public class EventsFlattenerConfig {
 
     public EventsFlattenerConfig(Config config) {
         failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
-        successTopic = config.get("output.success.topic.name", "telemetry.flattener");
+        successTopic = config.get("output.success.topic.name", "telemetry.sink");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
         flattenEventName = config.get("flatten.telemetry.event.name", "SHARE");
     }
