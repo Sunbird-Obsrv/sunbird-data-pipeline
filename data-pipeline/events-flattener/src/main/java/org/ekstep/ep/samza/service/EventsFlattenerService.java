@@ -1,7 +1,6 @@
 package org.ekstep.ep.samza.service;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
@@ -41,10 +40,6 @@ public class EventsFlattenerService {
         if (event.eid().equals(config.getFlattenEventName())) {
             try {
                 this.toFlatten(event, getClonedEventObject(event), sink);
-            } catch (JsonSyntaxException e) {
-                e.printStackTrace();
-                LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
-                sink.toMalformedTopic(source.getMessage());
             } catch (Exception e) {
                 e.printStackTrace();
                 LOGGER.error(null,

@@ -41,4 +41,9 @@ public class TelemetryRouterSink extends BaseSink {
 		metrics.incAuditRouteSuccessCounter();
 	}
 
+	public void toShareEventRouter(Event event) {
+		toTopic(config.getShareEventRouterTopic(), event.mid(), event.getJson());
+		metrics.incShareRouteSuccessCounter();
+	}
+
 }

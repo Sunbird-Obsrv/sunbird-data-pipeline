@@ -27,12 +27,6 @@ public class EventsFlattenerConfig {
         return failedTopic;
     }
 
-
-    public String getMalformedTopic() {
-        return malformedTopic;
-
-    }
-
     public String jobName() {
         return JOB_NAME;
     }

@@ -7,8 +7,6 @@ import org.ekstep.ep.samza.domain.Event;
 
 public class EventsFlattenerSink extends BaseSink {
 
-    private JobMetrics metrics;
-
     private EventsFlattenerConfig config;
 
     public EventsFlattenerSink(MessageCollector collector, JobMetrics metrics, EventsFlattenerConfig config) {
@@ -25,12 +23,6 @@ public class EventsFlattenerSink extends BaseSink {
     public void toErrorTopic(Event event, String errorMessage) {
         event.markFailure(errorMessage, config);
         toTopic(config.getFailedTopic(), event.did(), event.getJson());
-        metrics.incErrorCounter();
-    }
-
-
-    public void toMalformedTopic(String message) {
-        toTopic(config.getMalformedTopic(), null, message);
         metrics.incErrorCounter();
     }
 }

@@ -34,6 +34,9 @@ public class TelemetryRouterService {
 			if ("AUDIT".equalsIgnoreCase(eid)) {
 				sink.toAuditRoute(event);
 			}
+			if ("SHARE".equalsIgnoreCase(eid)) {
+				sink.toShareEventRouter(event);
+			}
 
 		} catch (JsonSyntaxException e) {
 			LOGGER.error(null, "INVALID EVENT: " + source.getMessage());

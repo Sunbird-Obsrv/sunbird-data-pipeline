@@ -94,12 +94,12 @@ public class EventsFlattenerTaskTest {
 
 
     @Test
-    public void shouldRouteEventsToMalformedTopic() {
+    public void shouldRouteEventsToErrorTopic() {
         try {
             stub(envelopeMock.getMessage()).toReturn(EventFixture.INVALID_SHARE_EVENT);
             eventsFlattenerTask = new EventsFlattenerTask(configMock, contextMock);
             eventsFlattenerTask.process(envelopeMock, collectorMock, coordinatorMock);
-            verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), MALFORMED_TOPIC)));
+            verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
