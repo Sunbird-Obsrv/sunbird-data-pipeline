@@ -26,7 +26,7 @@ public class JobMetrics {
     private final Counter primaryRouteSuccessCount;
     private final Counter secondaryRouteSuccessCount;
     private final Counter auditRouteSuccessCount;
-    private final Counter shareRouteSuccessCount;
+    private final Counter shareEventRouteSuccessCount;
     private final Counter cacheHitCount;
     private final Counter cacheMissCount;
     private final Counter cacheExpiredCount;
@@ -71,7 +71,7 @@ public class JobMetrics {
         primaryRouteSuccessCount = metricsRegistry.newCounter(getClass().getName(), "primary-route-success-count");
         secondaryRouteSuccessCount = metricsRegistry.newCounter(getClass().getName(), "secondary-route-success-count");
         auditRouteSuccessCount = metricsRegistry.newCounter(getClass().getName(), "audit-route-success-count");
-        shareRouteSuccessCount = metricsRegistry.newCounter(getClass().getName(), "share-route-success-count");
+        shareEventRouteSuccessCount = metricsRegistry.newCounter(getClass().getName(), "share-route-success-count");
         cacheHitCount = metricsRegistry.newCounter(getClass().getName(), "cache-hit-count");
         cacheMissCount = metricsRegistry.newCounter(getClass().getName(), "cache-miss-count");
         cacheEmptyValuesCount = metricsRegistry.newCounter(getClass().getName(), "cache-empty-values-count");
@@ -132,7 +132,7 @@ public class JobMetrics {
         primaryRouteSuccessCount.clear();
         secondaryRouteSuccessCount.clear();
         auditRouteSuccessCount.clear();
-        shareRouteSuccessCount.clear();
+        shareEventRouteSuccessCount.clear();
         dbInsertCount.clear();
         dbUpdateCount.clear();
     }
@@ -181,8 +181,8 @@ public class JobMetrics {
         auditRouteSuccessCount.inc();
     }
 
-    public void incShareRouteSuccessCounter() {
-        shareRouteSuccessCount.inc();
+    public void incShareEventRouteSuccessCounter() {
+        shareEventRouteSuccessCount.inc();
     }
 
     public void incDuplicateCounter() {
@@ -303,7 +303,7 @@ public class JobMetrics {
         metricsEvent.put("ip-location-hit-count", ipLocationHitCount.getCount());
         metricsEvent.put("no-cache-hit-count", noCacheHitCount.getCount());
         metricsEvent.put("audit-route-success-count", auditRouteSuccessCount.getCount());
-        metricsEvent.put("share-route-success-count", shareRouteSuccessCount.getCount());
+        metricsEvent.put("share-route-success-count", shareEventRouteSuccessCount.getCount());
         metricsEvent.put("db-insert-count", dbInsertCount.getCount());
         metricsEvent.put("db-update-count", dbUpdateCount.getCount());
         return new Gson().toJson(metricsEvent);
