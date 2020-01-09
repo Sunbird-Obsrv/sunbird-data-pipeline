@@ -29,16 +29,15 @@ public class TelemetryRouterService {
 			if (secondaryRouteEvents.contains(eid)) {
 				sink.toSecondaryRoute(event);
 			} else {
-				sink.toPrimaryRoute(event);
+				if ("SHARE".equalsIgnoreCase(eid)) {
+					sink.toShareEventRouter(event);
+				} else {
+					sink.toPrimaryRoute(event);
+				}
 			}
 			if ("AUDIT".equalsIgnoreCase(eid)) {
 				sink.toAuditRoute(event);
 			}
-
-			if ("SHARE".equalsIgnoreCase(eid)) {
-				sink.toShareEventRouter(event);
-			}
-
 		} catch (JsonSyntaxException e) {
 			LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
 			sink.toMalformedTopic(source.getMessage());
