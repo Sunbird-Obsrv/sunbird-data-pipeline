@@ -191,7 +191,7 @@ public class EventFixture {
 			"  \"ver\": \"3.0\",\n" +
 			"  \"eid\": \"SHARE\",\n" +
 			"  \"ets\": 1577278681178,\n" +
-			"  \"actor\": \n" +
+			"  \"actor\": {\n" +
 			"    \"type\": \"User\",\n" +
 			"    \"id\": \"7c3ea1bb-4da1-48d0-9cc0-c4f150554149\"\n" +
 			"  },\n" +
@@ -219,47 +219,7 @@ public class EventFixture {
 			"  \"edata\": {\n" +
 			"    \"dir\": \"In\",\n" +
 			"    \"type\": \"File\",\n" +
-			"    \"items\": [\n" +
-			"      {\n" +
-			"        \"origin\": {\n" +
-			"          \"id\": \"1b17c32bad61eb9e33df281eecc727590d739b2b\",\n" +
-			"          \"type\": \"Device\"\n" +
-			"        },\n" +
-			"        \"id\": \"do_312785709424099328114191\",\n" +
-			"        \"type\": \"CONTENT\",\n" +
-			"        \"ver\": \"1\",\n" +
-			"        \"params\": [\n" +
-			"          {\n" +
-			"            \"transfers\": 0,\n" +
-			"            \"size\": 21084308\n" +
-			"          }\n" +
-			"        ]\n" +
-			"      },\n" +
-			"      {\n" +
-			"        \"origin\": {\n" +
-			"          \"id\": \"1b17c32bad61eb9e33df281eecc727590d739b2b\",\n" +
-			"          \"type\": \"Device\"\n" +
-			"        },\n" +
-			"        \"id\": \"do_31277435209002188818711\",\n" +
-			"        \"type\": \"CONTENT\",\n" +
-			"        \"ver\": \"18\",\n" +
-			"        \"params\": [\n" +
-			"          {\n" +
-			"            \"transfers\": 12,\n" +
-			"            \"size\": \"123\"\n" +
-			"          }\n" +
-			"        ]\n" +
-			"      },\n" +
-			"      {\n" +
-			"        \"origin\": {\n" +
-			"          \"id\": \"1b17c32bad61eb9e33df281eecc727590d739b2b\",\n" +
-			"          \"type\": \"Device\"\n" +
-			"        },\n" +
-			"        \"id\": \"do_31278794857559654411554\",\n" +
-			"        \"type\": \"TextBook\",\n" +
-			"        \"ver\": \"1\"\n" +
-			"      }\n" +
-			"    ]\n" +
+			"    \"items\": \"test\"\n" +
 			"  },\n" +
 			"  \"object\": {\n" +
 			"    \"id\": \"do_312528116260749312248818\",\n" +
