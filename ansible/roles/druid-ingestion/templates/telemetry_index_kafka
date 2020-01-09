@@ -1186,7 +1186,7 @@
               "name": "content_created_for"
             },
             {
-            "name" : "content_play_progress"
+              "name" : "content_play_progress"
             },
             {
               "type": "string",
