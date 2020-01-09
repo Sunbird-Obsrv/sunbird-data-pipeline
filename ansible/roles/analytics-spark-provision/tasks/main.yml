@@ -89,6 +89,7 @@
 
 - name: Install rvm
   become: yes
+  become_user: "{{ analytics_user }}"
   shell: curl -sSL https://get.rvm.io | bash -s stable  
 
 - name: Download Kafka-2.11
