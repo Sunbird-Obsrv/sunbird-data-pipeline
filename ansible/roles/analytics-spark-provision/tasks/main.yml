@@ -83,19 +83,24 @@
     - gem
     - ruby
 
-- name: Install ruby-kafka
-  become: yes
-  shell: gem install ruby-kafka
-
 - name: Install rvm
   become: yes
   become_user: "{{ analytics_user }}"
   shell: curl -sSL https://get.rvm.io | bash -s stable  
 
-- name: Install ruby
+- name: Install latest ruby
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: rvm install ruby-2.2.10
+  shell: rvm install ruby-2.6
+
+- name: Set latest ruby as default
+  become: yes
+  become_user: "{{ analytics_user }}"
+  shell: rvm --default use ruby-2.6
+
+- name: Install ruby-kafka
+  become: yes
+  shell: gem install ruby-kafka
 
 - name: Download Kafka-2.11
   become: yes
