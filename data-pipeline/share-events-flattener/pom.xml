@@ -13,10 +13,10 @@
         <version>0.0.1</version>
     </parent>
     <groupId>org.ekstep.ecosystem.jobs</groupId>
-    <artifactId>events-flattener</artifactId>
+    <artifactId>share-events-flattener</artifactId>
     <version>0.0.1</version>
     <packaging>jar</packaging>
-    <name>Events Flattener</name>
+    <name>Share Events Flattener</name>
     <description>
         Events Flattener job to flatten the share events.
     </description>

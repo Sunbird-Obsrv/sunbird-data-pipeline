@@ -165,7 +165,7 @@ job_names:
       job_file_name: 'user-cache-updater'
   ContentCacheUpdater_1:
       job_file_name: 'content-cache-updater'
-  EventsFlattener_1:
+  ShareEventsFlattener_1:
       job_file_name: 'share-events-flattener'    
 
 #Druid Proxy APi service

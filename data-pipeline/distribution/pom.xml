@@ -118,7 +118,7 @@
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
-            <artifactId>events-flattener</artifactId>
+            <artifactId>share-events-flattener</artifactId>
             <version>0.0.1</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
