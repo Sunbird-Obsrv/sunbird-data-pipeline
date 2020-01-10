@@ -106,8 +106,10 @@
   shell: "{{ analytics.base_path }}/.rvm/bin/rvm --default use ruby-2.6"
 
 - name: Install ruby-kafka
-  become: yes
-  shell: gem install ruby-kafka
+  gem:
+     name: ruby-kafka
+   become: yes
+   become_user: "{{ analytics_user }}"
 
 - name: Download Kafka-2.11
   become: yes
