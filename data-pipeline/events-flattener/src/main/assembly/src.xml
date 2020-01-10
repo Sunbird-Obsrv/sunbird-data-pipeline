@@ -37,7 +37,7 @@
         <!-- filtered=true, so we do variable expansion so the yarn package path
           always points to the correct spot on any machine -->
         <file>
-            <source>${basedir}/src/main/config/events-flattener.properties</source>
+            <source>${basedir}/src/main/config/share-events-flattener.properties</source>
             <outputDirectory>config</outputDirectory>
             <filtered>true</filtered>
         </file>
