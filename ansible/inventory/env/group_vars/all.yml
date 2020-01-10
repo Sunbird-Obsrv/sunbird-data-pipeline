@@ -100,6 +100,9 @@ postgres:
   db_password: "{{dp_vault_pgdb_password}}"
   db_table_name: "{{env}}_consumer_channel_mapping"
   db_port: 5432
+  db_admin_user: analytics
+  db_admin_password: "{{dp_vault_pgdb_admin_password}}"
+
 postgres_address_space: 0.0.0.0/0 # Postgres trust address space
 
 lp_composite_search: "http://{{ groups['composite-search-cluster'][0] }}:9200" # Composite Cluster ip of LP
