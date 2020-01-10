@@ -94,16 +94,16 @@
   shell: echo "source {{ analytics.base_path }}/.rvm/scripts/rvm" >> ~/.bashrc
   args:
     executable: /bin/bash
-    
+
 - name: Install latest ruby
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: rvm install ruby-2.6
+  shell: {{ analytics.base_path }}/.rvm/bin/rvm install ruby-2.6
 
 - name: Set latest ruby as default
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: rvm --default use ruby-2.6
+  shell: {{ analytics.base_path }}/.rvm/bin/rvm --default use ruby-2.6
 
 - name: Install ruby-kafka
   become: yes
