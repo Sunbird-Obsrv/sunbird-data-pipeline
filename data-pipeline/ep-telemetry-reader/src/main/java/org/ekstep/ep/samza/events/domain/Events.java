@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import org.ekstep.ep.samza.reader.NullableValue;
 import org.ekstep.ep.samza.reader.Telemetry;
 
+import java.util.List;
 import java.util.Map;
 
 public abstract class Events {
@@ -130,5 +131,11 @@ public abstract class Events {
     public String edataType() {
         return telemetry.<String>read("edata.type").value();
     }
+
+    public List<Map<String, Object>> edataItems() {
+        return telemetry.<List<Map<String, Object>>>read("edata.items").value();
+    }
+
+
 
 }

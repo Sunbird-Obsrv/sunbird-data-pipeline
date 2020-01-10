@@ -1,7 +1,6 @@
 package org.ekstep.ep.samza.fixtures;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.util.Map;
 
@@ -332,6 +331,7 @@ public class EventFixture {
 
 	public static final String ANY_STRING = "Hey Samza, Whats Up?";
 	public static final String EMPTY_JSON = "{}";
+	public static final String SHARE_EVENT = "{\"ver\":\"3.0\",\"eid\":\"SHARE\",\"mid\":\"02ba33e5-15fe-4ec5-b360-3d03429fae84\",\"ets\":1577278681178,\"actor\":{\"type\":\"User\",\"id\":\"7c3ea1bb-4da1-48d0-9cc0-c4f150554149\"},\"context\":{\"cdata\":[{\"id\":\"1bfd99b0-2716-11ea-b7cc-13dec7acd2be\",\"type\":\"API\"},{\"id\":\"SearchResult\",\"type\":\"Section\"}],\"channel\":\"505c7c48ac6dc1edc9b08f21db5a571d\",\"pdata\":{\"id\":\"prod.diksha.app\",\"pid\":\"sunbird.app\",\"ver\":\"2.3.162\"},\"env\":\"app\",\"sid\":\"82e41d87-e33f-4269-aeae-d56394985599\",\"did\":\"1b17c32bad61eb9e33df281eecc727590d739b2b\"},\"edata\":{\"dir\":\"In\",\"type\":\"File\",\"items\":[{\"origin\":{\"id\":\"1b17c32bad61eb9e33df281eecc727590d739b2b\",\"type\":\"Device\"},\"id\":\"do_312785709424099328114191\",\"type\":\"CONTENT\",\"ver\":\"1\",\"params\":[{\"transfers\":0,\"size\":21084308}]},{\"origin\":{\"id\":\"1b17c32bad61eb9e33df281eecc727590d739b2b\",\"type\":\"Device\"},\"id\":\"do_31277435209002188818711\",\"type\":\"CONTENT\",\"ver\":\"18\",\"params\":[{\"transfers\":12,\"size\":\"123\"}]},{\"origin\":{\"id\":\"1b17c32bad61eb9e33df281eecc727590d739b2b\",\"type\":\"Device\"},\"id\":\"do_31278794857559654411554\",\"type\":\"TextBook\",\"ver\":\"1\"}]},\"object\":{\"id\":\"do_312528116260749312248818\",\"type\":\"TextBook\",\"version\":\"10\",\"rollup\":{}},\"syncts\":1577278682630,\"@timestamp\":\"2019-12-25T12:58:02.630Z\",\"flags\":{\"tv_processed\":true,\"dd_processed\":true},\"type\":\"events\"}";
 	
 	public static Map<String, Object> getMap(String message) {
 		return (Map<String, Object>) new Gson().fromJson(message, Map.class);

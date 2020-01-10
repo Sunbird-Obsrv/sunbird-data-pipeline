@@ -7,21 +7,18 @@
     <prerequisites>
         <maven>3.0.1</maven>
     </prerequisites>
-
     <parent>
         <groupId>org.ekstep.ecosystem</groupId>
         <artifactId>jobs</artifactId>
         <version>0.0.1</version>
     </parent>
-
-
     <groupId>org.ekstep.ecosystem.jobs</groupId>
-    <artifactId>telemetry-router</artifactId>
-    <version>0.1.6</version>
+    <artifactId>share-events-flattener</artifactId>
+    <version>0.0.1</version>
     <packaging>jar</packaging>
-    <name>TelemetryRouter</name>
+    <name>Share Events Flattener</name>
     <description>
-        Telemetry router based on event priority
+        Events Flattener job to flatten the share events.
     </description>
 
     <dependencies>
@@ -30,7 +27,7 @@
             <artifactId>samza-api</artifactId>
             <version>${samza.version}</version>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.apache.samza</groupId>
             <artifactId>samza-log4j</artifactId>
             <version>${samza.version}</version>
@@ -88,11 +85,6 @@
             <groupId>com.cedarsoftware</groupId>
             <artifactId>json-io</artifactId>
             <version>4.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.maps</groupId>
-            <artifactId>google-maps-services</artifactId>
-            <version>0.1.7</version>
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem</groupId>
