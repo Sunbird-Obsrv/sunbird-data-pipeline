@@ -71,7 +71,7 @@ public class EventsFlattenerTaskTest {
             eventsFlattenerTask = new EventsFlattenerTask(configMock, contextMock);
             stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_SHARE_EVENT);
             eventsFlattenerTask.process(envelopeMock, collectorMock, coordinatorMock);
-            Mockito.verify(collectorMock, times(4)).send(Matchers.argThat(validateEventObject(Arrays.asList("File", "imported", "download"), true)));
+            Mockito.verify(collectorMock, times(4)).send(Matchers.argThat(validateEventObject(Arrays.asList("File", "import", "download"), true)));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -86,24 +86,12 @@ public class EventsFlattenerTaskTest {
             stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_START_EVENT);
             eventsFlattenerTask = new EventsFlattenerTask(configMock, contextMock);
             eventsFlattenerTask.process(envelopeMock, collectorMock, coordinatorMock);
-            verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), TELEMETRY_EVENTS_TOPIC)));
+            verify(collectorMock, times(4)).send(argThat(validateOutputTopic(envelopeMock.getMessage(), TELEMETRY_EVENTS_TOPIC)));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
-
-    @Test
-    public void shouldRouteEventsToErrorTopic() {
-        try {
-            stub(envelopeMock.getMessage()).toReturn(EventFixture.INVALID_SHARE_EVENT);
-            eventsFlattenerTask = new EventsFlattenerTask(configMock, contextMock);
-            eventsFlattenerTask.process(envelopeMock, collectorMock, coordinatorMock);
-            verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
 
 
     public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {

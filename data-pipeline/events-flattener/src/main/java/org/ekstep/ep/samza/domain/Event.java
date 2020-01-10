@@ -1,7 +1,6 @@
 package org.ekstep.ep.samza.domain;
 
 import org.ekstep.ep.samza.events.domain.Events;
-import org.ekstep.ep.samza.task.EventsFlattenerConfig;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,14 +9,6 @@ public class Event extends Events {
 
     public Event(Map<String, Object> map) {
         super(map);
-    }
-
-    public void markFailure(String error, EventsFlattenerConfig config) {
-        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add("flags.ef_processed", false);
-        telemetry.addFieldIfAbsent("metadata", new HashMap<String, Object>());
-        telemetry.add("metadata.ef_error", error);
-        telemetry.add("metadata.src", config.jobName());
     }
 
     public void markSuccess() {
@@ -36,7 +27,6 @@ public class Event extends Events {
     public void updatedEventEdata(String edataType, Double size) {
         telemetry.add("edata.type", edataType);
         telemetry.add("edata.size", size);
-
     }
 
     public void removeItems() {

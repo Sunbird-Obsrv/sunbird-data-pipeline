@@ -12,13 +12,11 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-import static java.text.MessageFormat.format;
-
 public class EventsFlattenerService {
 
     private static Logger LOGGER = new Logger(EventsFlattenerService.class);
     private final EventsFlattenerConfig config;
-    private static String IMPORTED_KEY = "imported";
+    private static String IMPORT_KEY = "import";
     private static String DOWNLOAD_KEY = "download";
     private static String FLATTEN_EVENT_NAME = "SHARE_ITEM";
 
@@ -32,29 +30,29 @@ public class EventsFlattenerService {
     }
 
     /**
-     * @param source
-     * @param sink
+     * Listening to "telemetry.share" topic, Assuming only share events should produce
+     * From this "telemetry.share" topic.
+     *
+     * @param source - Producer - "telemetry.share" topic
+     * @param sink   - Consumer - "telemetry.sink"
      */
     public void process(EventsFlattenerSource source, EventsFlattenerSink sink) {
         Event event = source.getEvent();
-        if (event.eid().equals(config.getFlattenEventName())) {
-            try {
-                this.toFlatten(event, getClonedEventObject(event), sink);
-            } catch (Exception e) {
-                e.printStackTrace();
-                LOGGER.error(null,
-                        format("EXCEPTION. PASSING EVENT THROUGH AND ADDING IT TO EXCEPTION TOPIC. EVENT: {0}, EXCEPTION:",
-                                event),
-                        e);
-                sink.toErrorTopic(event, e.getMessage());
-            }
-        } else {
-            sink.toSuccessTopic(event);
-        }
+        // Flattening the "SHARE" Event to Multiple "SHARE_ITEM" Events
+        this.toFlatten(event, getClonedEventObject(event), sink);
+        // Adding Original "SHARE" Events to success topic
+        sink.toSuccessTopic(event);
     }
 
     /**
      * Method to flatten the SHARE EVENT Object to multiple share event.
+     * Events flattening constraints
+     *
+     * ================= Constraints===============================
+     * 1. If the Item list object has params.transfers = 0 then edata.type should be "download" else do not modify the edata.type value.
+     * 2. If the Item list object has params.transfers = > 0 then edata.type should be "import" else do not modify the edta.type value.
+     * 3. If the share event has object then move the object data to rollup l1, share event item.id, item.typ and item.ver should be in object properties
+     * ===============================================================
      *
      * @param orginalEvent - SHARE Event object.
      * @param sink         - Object to push the event to kafka sink
@@ -82,7 +80,7 @@ public class EventsFlattenerService {
                             eDataType = DOWNLOAD_KEY;
                         }
                         if (Double.parseDouble(transfers) > 0) {
-                            eDataType = IMPORTED_KEY;
+                            eDataType = IMPORT_KEY;
                         }
                         clonedEvent.updatedEventEdata(eDataType, Double.parseDouble(p.get("size")));
                     } else {
@@ -96,7 +94,6 @@ public class EventsFlattenerService {
             clonedEvent.removeItems();
             sink.toSuccessTopic(clonedEvent);
         }
-        sink.toSuccessTopic(orginalEvent);
     }
 
     /**

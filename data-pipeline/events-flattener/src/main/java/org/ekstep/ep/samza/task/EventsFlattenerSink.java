@@ -20,9 +20,4 @@ public class EventsFlattenerSink extends BaseSink {
         metrics.incSuccessCounter();
     }
 
-    public void toErrorTopic(Event event, String errorMessage) {
-        event.markFailure(errorMessage, config);
-        toTopic(config.getFailedTopic(), event.did(), event.getJson());
-        metrics.incErrorCounter();
-    }
 }
