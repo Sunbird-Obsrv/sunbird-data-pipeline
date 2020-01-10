@@ -95,7 +95,7 @@
 - name: Install ruby
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: rvm install "ruby-2.2.10"
+  shell: rvm install ruby-2.2.10
 
 - name: Download Kafka-2.11
   become: yes
