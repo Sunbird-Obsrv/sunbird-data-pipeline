@@ -6,14 +6,14 @@ public class EventsFlattenerConfig {
 
     private final String JOB_NAME = "SHARE_EVENTS_FLATTENER";
 
-    private String successTopic;
+    private String successEventTopic;
 
     public EventsFlattenerConfig(Config config) {
-        successTopic = config.get("output.success.topic.name", "telemetry.sink");
+        successEventTopic = config.get("output.success.topic.name", "telemetry.sink");
     }
 
     public String getSuccessTopic() {
-        return successTopic;
+        return successEventTopic;
     }
 
     public String jobName() {

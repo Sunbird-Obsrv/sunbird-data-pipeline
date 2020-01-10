@@ -47,11 +47,12 @@ public class EventsFlattenerService {
     /**
      * Method to flatten the SHARE EVENT Object to multiple share event.
      * Events flattening constraints
-     *
+     * <p>
      * ================= Constraints===============================
-     * 1. If the Item list object has params.transfers = 0 then edata.type should be "download" else do not modify the edata.type value.
-     * 2. If the Item list object has params.transfers = > 0 then edata.type should be "import" else do not modify the edta.type value.
-     * 3. If the share event has object then move the object data to rollup l1, share event item.id, item.typ and item.ver should be in object properties
+     * 1. If the Item list object as params.transfers = 0 then edata.type should be "download" else do not modify the edata.type value.
+     * 2. If the Item list object as params.transfers > 0 then edata.type should be "import" else do not modify the edta.type value.
+     * 3. If the Item list object as params.transfers = null then do not update the edata.type (Keep the orginal value ie., dir, type)
+     * 4. If the share event has object then move the object data to rollup l1, share event item.id, item.typ and item.ver should be in object properties
      * ===============================================================
      *
      * @param orginalEvent - SHARE Event object.
@@ -92,6 +93,7 @@ public class EventsFlattenerService {
             }
             clonedEvent.renameEventIdTo(FLATTEN_EVENT_NAME);
             clonedEvent.removeItems();
+            // Adding "SHARE_ITEM" Events to success topic
             sink.toSuccessTopic(clonedEvent);
         }
     }

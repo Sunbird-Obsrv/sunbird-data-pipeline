@@ -29,10 +29,8 @@ import static org.mockito.Mockito.*;
 
 public class EventsFlattenerTaskTest {
 
-    private static final String TELEMETRY_EVENTS_TOPIC = "events.telemetry";
+    private static final String TELEMETRY_EVENTS_TOPIC = "telemetry.sink";
     private static final String FAILED_TOPIC = "telemetry.failed";
-    private static final String MALFORMED_TOPIC = "telemetry.malformed";
-    private static final String EVENT_NAME = "SHARE";
 
     private MessageCollector collectorMock;
     private TaskContext contextMock;
@@ -55,8 +53,6 @@ public class EventsFlattenerTaskTest {
 
         stub(configMock.get("output.success.topic.name", TELEMETRY_EVENTS_TOPIC)).toReturn(TELEMETRY_EVENTS_TOPIC);
         stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
-        stub(configMock.get("output.malformed.topic.name", MALFORMED_TOPIC)).toReturn(MALFORMED_TOPIC);
-        stub(configMock.get("flatten.telemetry.event.name", EVENT_NAME)).toReturn(EVENT_NAME);
 
         stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
         stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
@@ -91,7 +87,6 @@ public class EventsFlattenerTaskTest {
             System.out.println(e.getMessage());
         }
     }
-
 
 
     public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
