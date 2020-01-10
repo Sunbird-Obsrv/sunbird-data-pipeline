@@ -76,7 +76,7 @@ public class EventsFlattenerService {
                 List<Map<String, String>> param = gson.fromJson(itemParams.toString(), type);
                 for (Map<String, String> p : param) {
                     String transfers = p.get("transfers");
-                    if (transfers != null || !transfers.isEmpty()) {
+                    if (transfers != null) {
                         if (Double.parseDouble(transfers) == 0) {
                             eDataType = DOWNLOAD_KEY;
                         }

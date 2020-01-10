@@ -73,6 +73,18 @@ public class EventsFlattenerTaskTest {
         }
     }
 
+    @Test
+    public void shouldFlattenTheEventWhenTransferIsNul() {
+        try {
+            eventsFlattenerTask = new EventsFlattenerTask(configMock, contextMock);
+            stub(envelopeMock.getMessage()).toReturn(EventFixture.INVALID_EVENT);
+            eventsFlattenerTask.process(envelopeMock, collectorMock, coordinatorMock);
+            Mockito.verify(collectorMock, times(4)).send(Matchers.argThat(validateEventObject(Arrays.asList("File", "import", "download"), true)));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     /**
      * When Event is other than "SHARE" Then it should route to success topic
      */
