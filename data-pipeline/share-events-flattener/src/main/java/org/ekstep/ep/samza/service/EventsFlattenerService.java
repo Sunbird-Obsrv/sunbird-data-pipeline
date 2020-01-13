@@ -69,8 +69,21 @@ public class EventsFlattenerService {
         if (clonedEvent.objectFieldsPresent()) {
             objectId = clonedEvent.objectID();
         }
+        String itemId = null;
+        String itemType = null;
+        String itemVerion = null;
+
         for (Map<String, Object> item : items) {
-            clonedEvent.updateEventObjectKey(item.get("id").toString(), item.get("type").toString(), item.get("ver").toString(), objectId);
+            if (item.get("id") != null) {
+                itemId = item.get("id").toString();
+            }
+            if (item.get("type") != null) {
+                itemType = item.get("type").toString();
+            }
+            if (item.get("ver") != null) {
+                itemVerion = item.get("ver").toString();
+            }
+            clonedEvent.updateEventObjectKey(itemId, itemType, itemVerion, objectId);
             Object itemParams = item.get("params");
             if (itemParams != null) {
                 List<Map<String, String>> param = gson.fromJson(itemParams.toString(), type);
