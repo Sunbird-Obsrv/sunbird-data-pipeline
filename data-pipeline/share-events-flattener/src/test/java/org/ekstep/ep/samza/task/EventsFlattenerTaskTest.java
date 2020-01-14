@@ -65,10 +65,23 @@ public class EventsFlattenerTaskTest {
     public void shouldFlattenTheShareEvent() {
         try {
             eventsFlattenerTask = new EventsFlattenerTask(configMock, contextMock);
+            stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_SHARE_EVENT_WITHOU_SIZE);
+            eventsFlattenerTask.process(envelopeMock, collectorMock, coordinatorMock);
+            Mockito.verify(collectorMock, times(2)).send(Matchers.argThat(validateEventObject(Arrays.asList("File", "import", "download"), true)));
+        } catch (Exception e) {
+           System.out.println(e.getMessage());
+        }
+    }
+
+    @Test
+    public void shouldFlattenTheShareEventWhenParamsHavingMultipleObject() {
+        try {
+            eventsFlattenerTask = new EventsFlattenerTask(configMock, contextMock);
             stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_SHARE_EVENT);
             eventsFlattenerTask.process(envelopeMock, collectorMock, coordinatorMock);
             Mockito.verify(collectorMock, times(4)).send(Matchers.argThat(validateEventObject(Arrays.asList("File", "import", "download"), true)));
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println(e.getMessage());
         }
     }
@@ -77,9 +90,9 @@ public class EventsFlattenerTaskTest {
     public void shouldFlattenTheEventWhenTransferIsNul() {
         try {
             eventsFlattenerTask = new EventsFlattenerTask(configMock, contextMock);
-            stub(envelopeMock.getMessage()).toReturn(EventFixture.INVALID_EVENT);
+            stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_SHARE_EVENT_WITHOU_SIZE);
             eventsFlattenerTask.process(envelopeMock, collectorMock, coordinatorMock);
-            Mockito.verify(collectorMock, times(4)).send(Matchers.argThat(validateEventObject(Arrays.asList("File", "import", "download"), true)));
+            Mockito.verify(collectorMock, times(2)).send(Matchers.argThat(validateEventObject(Arrays.asList("File", "import", "download"), true)));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -122,6 +135,7 @@ public class EventsFlattenerTaskTest {
                 Map<String, Object> shareEventEdata;
                 OutgoingMessageEnvelope flattenEvent = (OutgoingMessageEnvelope) o;
                 String message = (String) flattenEvent.getMessage();
+                System.out.println(message);
                 shareEvent = new Gson().fromJson(message, Map.class);
                 assertEquals(ef_processed, new Gson().fromJson(shareEvent.get("flags").toString(), Map.class).get("ef_processed"));
                 if (shareEvent.get("eid").equals("SHARE_ITEM")) {

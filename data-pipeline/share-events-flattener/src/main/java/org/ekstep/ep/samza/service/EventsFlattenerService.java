@@ -9,6 +9,7 @@ import org.ekstep.ep.samza.task.EventsFlattenerSink;
 import org.ekstep.ep.samza.task.EventsFlattenerSource;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -87,19 +88,21 @@ public class EventsFlattenerService {
             Object itemParams = item.get("params");
             if (itemParams != null) {
                 List<Map<String, String>> param = gson.fromJson(itemParams.toString(), type);
-                for (Map<String, String> p : param) {
-                    String transfers = p.get("transfers");
-                    if (transfers != null) {
-                        if (Double.parseDouble(transfers) == 0) {
-                            eDataType = DOWNLOAD_KEY;
-                        }
-                        if (Double.parseDouble(transfers) > 0) {
-                            eDataType = IMPORT_KEY;
-                        }
-                        clonedEvent.updatedEventEdata(eDataType, Double.parseDouble(p.get("size")));
-                    } else {
-                        clonedEvent.updatedEventEdata(orginalEvent.edataType(), null);
+                String paramTransfer = this.getValue(param, "transfers");
+                Long paramSize = null;
+                if (this.getValue(param, "size") != null) {
+                    paramSize = new BigDecimal(this.getValue(param, "size")).longValue();
+                }
+                if (paramTransfer != null) {
+                    if (Double.parseDouble(paramTransfer) == 0) {
+                        eDataType = DOWNLOAD_KEY;
                     }
+                    if (Double.parseDouble(paramTransfer) > 0) {
+                        eDataType = IMPORT_KEY;
+                    }
+                    clonedEvent.updatedEventEdata(eDataType, paramSize);
+                } else {
+                    clonedEvent.updatedEventEdata(orginalEvent.edataType(), paramSize);
                 }
             } else {
                 clonedEvent.updatedEventEdata(orginalEvent.edataType(), null);
@@ -121,4 +124,15 @@ public class EventsFlattenerService {
         String message = event.getJson();
         return new Event((Map<String, Object>) new Gson().fromJson(message, Map.class));
     }
+
+
+    private String getValue(final List<Map<String, String>> paramsList, final String name) {
+        for (Map<String, String> p : paramsList) {
+            if (p.get(name) != null) {
+                return p.get(name);
+            }
+        }
+        return null;
+    }
+
 }
