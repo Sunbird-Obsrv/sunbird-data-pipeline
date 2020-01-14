@@ -19,8 +19,8 @@ metrics_topic: "{{ env }}.telemetry.metrics"
 job_manager_tmp_dir: "transient-data"
 channel: dev-test
 druid_broker_host: "{{groups['broker'][0]}}"
-analytics_job_list: '"wfs", "wfus", "workflow-usage-metrics", "portal-metrics", "ds", "dpu", "druid-query-processor", "desktop-consumption-report", "assessment-dashboard-metrics", "admin-user-reports", "admin-geo-reports", "audit-metrics-report", "data-exhaust", "course-dashboard-metrics", "monitor-job-summ"'
-analytics_jobs_count: 15
+analytics_job_list: '"wfs", "wfus", "workflow-usage-metrics", "portal-metrics", "ds", "dpu", "druid-query-processor", "desktop-consumption-report", "audit-metrics-report", "data-exhaust", "monitor-job-summ"'
+analytics_jobs_count: 11
 
 cassandra_keyspace_prefix: '{{ env }}_'
 dp_dispatch_bucket_name: ekstep-dev-data-store
@@ -70,18 +70,23 @@ video_stream_job_schedule: 10
 
 run_course_metrics_job:
   course-dashboard-metrics:
-    hour: 21
+    hour: 03
     minute: 30
 
 run_assessment_metrics_job:
   assessment-dashboard-metrics:
-    hour: 22
+    hour: 04
     minute: 30
 
 run_admin_user_reports_job:
   admin-user-reports:
-    hour: 4
-    minute: 30
+    hour: 5
+    minute: 00
+
+run_admin_geo_reports_job:
+  admin-geo-reports:
+    hour: 5
+    minute: 30    
 
 update_user_redis_cache:
   populate-user-cache:
@@ -92,6 +97,19 @@ index_content_model_druid:
   index_content:
     hour: 1
     minute: 00
+
+run_district_weekly_job:
+  district-weekly:
+    hour: 03
+    minute: 30
+    weekday: 1
+
+run_district_monthly_job:
+  district-monthly:
+    hour: 04
+    minute: 30
+    day: 1
+    month: 1-12         
 
 service:
   search:
