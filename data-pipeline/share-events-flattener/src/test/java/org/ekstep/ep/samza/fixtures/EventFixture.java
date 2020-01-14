@@ -95,6 +95,65 @@ public class EventFixture {
 			"  },\n" +
 			"  \"type\": \"events\"\n" +
 			"}";
+	public static final String VALID_SHARE_EVENT_WHEN_EMPTY_SIZE = "{\n" +
+			"  \"eid\": \"SHARE\",\n" +
+			"  \"ets\": 1578979395120,\n" +
+			"  \"ver\": \"3.0\",\n" +
+			"  \"mid\": \"SHARE:6a68490ac9c8ffcb8f8b8e1e6da1f09c\",\n" +
+			"  \"actor\": {\n" +
+			"    \"id\": \"373e0438854402794e7fc5c3e2feb5361b267fedcd6dfbd102b07a2882932e3a\",\n" +
+			"    \"type\": \"User\"\n" +
+			"  },\n" +
+			"  \"context\": {\n" +
+			"    \"channel\": \"01231711180382208027\",\n" +
+			"    \"pdata\": {\n" +
+			"      \"id\": \"staging.diksha.desktop\",\n" +
+			"      \"ver\": \"1.0.3\",\n" +
+			"      \"pid\": \"desktop.app\"\n" +
+			"    },\n" +
+			"    \"env\": \"Content\",\n" +
+			"    \"sid\": \"d17137fd-224a-49bd-834c-0e9d7a21ca18\",\n" +
+			"    \"did\": \"373e0438854402794e7fc5c3e2feb5361b267fedcd6dfbd102b07a2882932e3a\",\n" +
+			"    \"cdata\": [],\n" +
+			"    \"rollup\": {\n" +
+			"      \"l1\": \"01231711180382208027\"\n" +
+			"    }\n" +
+			"  },\n" +
+			"  \"object\": {},\n" +
+			"  \"tags\": [\n" +
+			"    \"01231711180382208027\"\n" +
+			"  ],\n" +
+			"  \"edata\": {\n" +
+			"    \"dir\": \"Out\",\n" +
+			"    \"type\": \"File\",\n" +
+			"    \"items\": [\n" +
+			"      {\n" +
+			"        \"type\": \"TextBook\",\n" +
+			"        \"ver\": \"1\",\n" +
+			"        \"params\": [\n" +
+			"          {\n" +
+			"            \"transfers\": \"53\"\n" +
+			"          },\n" +
+			"          {\n" +
+			"            \"size\": \"\"\n" +
+			"          }\n" +
+			"        ],\n" +
+			"        \"origin\": {\n" +
+			"          \"id\": \"373e0438854402794e7fc5c3e2feb5361b267fedcd6dfbd102b07a2882932e3a\",\n" +
+			"          \"type\": \"Device\"\n" +
+			"        }\n" +
+			"      }\n" +
+			"    ]\n" +
+			"  },\n" +
+			"  \"syncts\": 1578979437523,\n" +
+			"  \"@timestamp\": \"2020-01-14T05:23:57.523Z\",\n" +
+			"  \"flags\": {\n" +
+			"    \"tv_processed\": true,\n" +
+			"    \"dd_processed\": true\n" +
+			"  },\n" +
+			"  \"type\": \"events\"\n" +
+			"}";
+
 
 	public static final String VALID_SHARE_EVENT_WITHOU_SIZE = "{\n" +
 			"  \"eid\": \"SHARE\",\n" +

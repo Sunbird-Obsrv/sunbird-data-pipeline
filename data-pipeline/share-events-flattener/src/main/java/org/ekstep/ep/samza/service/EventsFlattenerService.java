@@ -87,10 +87,10 @@ public class EventsFlattenerService {
             clonedEvent.updateEventObjectKey(itemId, itemType, itemVerion, objectId);
             Object itemParams = item.get("params");
             if (itemParams != null) {
-                List<Map<String, String>> param = gson.fromJson(itemParams.toString(), type);
+                List<Map<String, String>> param = gson.fromJson(gson.toJson(itemParams), type);
                 String paramTransfer = this.getValue(param, "transfers");
                 Long paramSize = null;
-                if (this.getValue(param, "size") != null) {
+                if (this.getValue(param, "size") != null && !this.getValue(param, "size").isEmpty()) {
                     paramSize = new BigDecimal(this.getValue(param, "size")).longValue();
                 }
                 if (paramTransfer != null) {
