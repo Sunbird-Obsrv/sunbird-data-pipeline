@@ -24,7 +24,7 @@ public class Event extends Events {
         telemetry.add("object.rollup.l1", rollupLevel1);
     }
 
-    public void updatedEventEdata(String edataType, Double size) {
+    public void updatedEventEdata(String edataType, Long size) {
         telemetry.add("edata.type", edataType);
         telemetry.add("edata.size", size);
     }
