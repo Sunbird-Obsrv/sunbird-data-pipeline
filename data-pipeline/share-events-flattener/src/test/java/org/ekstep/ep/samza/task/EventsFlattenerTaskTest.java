@@ -98,6 +98,18 @@ public class EventsFlattenerTaskTest {
         }
     }
 
+    @Test
+    public void shouldFlattenTheEventWhenSizeIsEmpty() {
+        try {
+            eventsFlattenerTask = new EventsFlattenerTask(configMock, contextMock);
+            stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_SHARE_EVENT_WHEN_EMPTY_SIZE);
+            eventsFlattenerTask.process(envelopeMock, collectorMock, coordinatorMock);
+            Mockito.verify(collectorMock, times(2)).send(Matchers.argThat(validateEventObject(Arrays.asList("File", "import", "download"), true)));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     /**
      * When Event is other than "SHARE" Then it should route to success topic
      */
@@ -139,11 +151,11 @@ public class EventsFlattenerTaskTest {
                 shareEvent = new Gson().fromJson(message, Map.class);
                 assertEquals(ef_processed, new Gson().fromJson(shareEvent.get("flags").toString(), Map.class).get("ef_processed"));
                 if (shareEvent.get("eid").equals("SHARE_ITEM")) {
-                    shareEventEdata = new Gson().fromJson(shareEvent.get("edata").toString(), Map.class);
+                    shareEventEdata = new Gson().fromJson(new Gson().toJson(shareEvent.get("edata")), Map.class);
                     assertEquals(true, edataType.contains(shareEventEdata.get("type")));
                     assertNull(shareEventEdata.get("items"));
                 } else {
-                    shareEventEdata = new Gson().fromJson(shareEvent.get("edata").toString(), Map.class);
+                    shareEventEdata = new Gson().fromJson(new Gson().toJson(shareEvent.get("edata")), Map.class);
                     assertNotNull(shareEventEdata.get("items"));
                 }
                 return true;
