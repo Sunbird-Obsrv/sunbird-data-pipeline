@@ -98,6 +98,18 @@ index_content_model_druid:
     hour: 1
     minute: 00
 
+run_district-weekly_job:
+  district-weekly:
+    hour: 03
+    minute: 30
+    weekday: 1
+
+run_district-monthly_job:
+  district-monthly:
+    hour: 04
+    minute: 30
+    month: 1         
+
 service:
   search:
     url: http://{{groups['search1'][0]}}:9000
