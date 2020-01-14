@@ -90,7 +90,7 @@
     - cronjobs
 
 - name: Create district-monthly cron job
-  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} month={{ item.value.month }}  job="{{ analytics.home }}/scripts/run-job.sh district-monthly"
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} month={{ item.value.month }} day={{ item.value.day }}  job="{{ analytics.home }}/scripts/run-job.sh district-monthly"
   with_dict: "{{ run_district_monthly_job }}"
   tags:
     - cronjobs                  

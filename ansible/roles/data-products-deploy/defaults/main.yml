@@ -98,17 +98,18 @@ index_content_model_druid:
     hour: 1
     minute: 00
 
-run_district-weekly_job:
+run_district_weekly_job:
   district-weekly:
     hour: 03
     minute: 30
     weekday: 1
 
-run_district-monthly_job:
+run_district_monthly_job:
   district-monthly:
     hour: 04
     minute: 30
-    month: 1         
+    day: 1
+    month: 1-12         
 
 service:
   search:
