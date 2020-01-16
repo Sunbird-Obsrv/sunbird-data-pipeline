@@ -45,7 +45,6 @@ public class AssessmentAggregatorTest {
 
     @Before
     public void setUp() {
-
         Config configMock = mock(Config.class);
         envelope = mock(IncomingMessageEnvelope.class);
         collector = mock(MessageCollector.class);
@@ -67,6 +66,7 @@ public class AssessmentAggregatorTest {
         UserType userType = mock(UserType.class);
         UDTValue udtValue = mock(UDTValue.class);
         when(udtValue.setString(anyString(), anyString())).thenReturn(udtValue);
+        when(udtValue.setString(any(), any())).thenReturn(udtValue);
         when(udtValue.setDouble(anyString(), anyDouble())).thenReturn(udtValue);
         when(udtValue.setDecimal(anyString(), any())).thenReturn(udtValue);
         when(udtValue.setList(anyString(), anyList())).thenReturn(udtValue);
@@ -132,6 +132,24 @@ public class AssessmentAggregatorTest {
         assertEquals(2.0, assess.getTotalScore(), 0.001);
 
     }
+
+    @Test
+    public void shouldUpdateCassandraWithArrayValues() throws Exception {
+
+        String event = EventFixture.QUESTION_EVENT_RES_VALUES;
+        BatchEvent batchEvent = new BatchEvent((Map<String, Object>) new Gson().fromJson(event, Map.class));
+        stub(envelope.getMessage()).toReturn(event);
+        assessmentAggregatorTask.process(envelope, collector, taskCoordinator);
+        AssessmentAggregatorService assessmentAggregatorService = new AssessmentAggregatorService
+                (cassandraConnect, config);
+        AssessmentAggregatorSink sink = new AssessmentAggregatorSink(collector,
+                new JobMetrics(taskContext, "AssessmentAggregator"), config);
+        Aggregate assess = assessmentAggregatorService.getAggregateData(batchEvent, new Date().getTime());
+        assertEquals(1.0, assess.getTotalMaxScore(), 0.001);
+        assertEquals(1.0, assess.getTotalScore(), 0.001);
+//        assertEquals("1/1", assess.getGrandTotal());
+    }
+
 
     private ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
         return new ArgumentMatcher<OutgoingMessageEnvelope>() {
