@@ -83,9 +83,33 @@
     - gem
     - ruby
 
-- name: Install ruby-kafka
+- name: Install rvm
   become: yes
-  shell: gem install ruby-kafka
+  become_user: "{{ analytics_user }}"
+  shell: curl -sSL https://get.rvm.io | bash -s stable  
+
+- name: source ruby script
+  become: yes
+  become_user: "{{ analytics_user }}"
+  shell: echo "source {{ analytics.base_path }}/.rvm/scripts/rvm" >> ~/.bashrc
+  args:
+    executable: /bin/bash
+
+- name: Install latest ruby
+  become: yes
+  become_user: "{{ analytics_user }}"
+  shell: "{{ analytics.base_path }}/.rvm/bin/rvm install ruby-2.6"
+
+- name: Set latest ruby as default
+  become: yes
+  become_user: "{{ analytics_user }}"
+  shell: "{{ analytics.base_path }}/.rvm/bin/rvm --default use ruby-2.6"
+
+- name: Install ruby-kafka
+  gem:
+     name: ruby-kafka
+  become: yes
+  become_user: "{{ analytics_user }}"
 
 - name: Download Kafka-2.11
   become: yes
@@ -101,12 +125,6 @@
   tags:
     - kafka-provision
 
-- name: source ruby script
-  become: yes
-  become_user: "{{ analytics_user }}"
-  shell: echo "source {{ analytics.base_path }}/.rvm/scripts/rvm" >> ~/.bashrc
-  args:
-    executable: /bin/bash
 
 
 

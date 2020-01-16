@@ -1220,6 +1220,304 @@ public class EventFixture {
             "    }\n" +
             "  ]\n" +
             "}";
+    public static final String QUESTION_EVENT_RES_VALUES = "{\n" +
+            "  \"assessmentTs\": 1578663044164,\n" +
+            "  \"userId\": \"50a9e3fc-d047-4fa5-a37b-67501b8933db\",\n" +
+            "  \"contentId\": \"do_3129323935897108481169\",\n" +
+            "  \"courseId\": \"do_3129323995959541761169\",\n" +
+            "  \"batchId\": \"0129324118211215362\",\n" +
+            "  \"attemptId\": \"702ae8b81e37c94448d1fa117678d68c\",\n" +
+            "  \"events\": [\n" +
+            "    {\n" +
+            "      \"eid\": \"ASSESS\",\n" +
+            "      \"ets\": 1578663044164,\n" +
+            "      \"ver\": \"3.0\",\n" +
+            "      \"mid\": \"ASSESS:0b5c1d06920337df9d662b69d53f48bf\",\n" +
+            "      \"actor\": {\n" +
+            "        \"id\": \"50a9e3fc-d047-4fa5-a37b-67501b8933db\",\n" +
+            "        \"type\": \"User\"\n" +
+            "      },\n" +
+            "      \"context\": {\n" +
+            "        \"channel\": \"0126684405014528002\",\n" +
+            "        \"pdata\": {\n" +
+            "          \"id\": \"prod.diksha.app\",\n" +
+            "          \"ver\": \"2.6.203\",\n" +
+            "          \"pid\": \"sunbird.app.contentplayer\"\n" +
+            "        },\n" +
+            "        \"env\": \"contentplayer\",\n" +
+            "        \"sid\": \"11059dcc-0a69-4d92-90b3-c1eb97f5f93b\",\n" +
+            "        \"did\": \"b9bdcb8cd7abc5bd7813bd65ec0b5084dc0dadd8\",\n" +
+            "        \"cdata\": [\n" +
+            "          {\n" +
+            "            \"id\": \"83f8c374dc0e4d91ec4c48d6e5d10b4c\",\n" +
+            "            \"type\": \"AttemptId\"\n" +
+            "          },\n" +
+            "          {\n" +
+            "            \"id\": \"streaming\",\n" +
+            "            \"type\": \"PlayerLaunch\"\n" +
+            "          },\n" +
+            "          {\n" +
+            "            \"id\": \"6a7809b4eccf75ae62b18c224a4cfeb5\",\n" +
+            "            \"type\": \"ContentSession\"\n" +
+            "          },\n" +
+            "          {\n" +
+            "            \"id\": \"48e8e20e8c6fbc660f4ca317497fa7a6\",\n" +
+            "            \"type\": \"PlaySession\"\n" +
+            "          }\n" +
+            "        ],\n" +
+            "        \"rollup\": {\n" +
+            "          \"l1\": \"0126684405014528002\"\n" +
+            "        }\n" +
+            "      },\n" +
+            "      \"object\": {\n" +
+            "        \"id\": \"do_3129323935897108481169\",\n" +
+            "        \"type\": \"Content\",\n" +
+            "        \"ver\": \"1\",\n" +
+            "        \"rollup\": {\n" +
+            "          \"l1\": \"do_3129323995959541761169\",\n" +
+            "          \"l2\": \"do_31293239986759270411495\"\n" +
+            "        }\n" +
+            "      },\n" +
+            "      \"tags\": [],\n" +
+            "      \"edata\": {\n" +
+            "        \"item\": {\n" +
+            "          \"id\": \"QMCQ02115\",\n" +
+            "          \"maxscore\": 1,\n" +
+            "          \"exlength\": 0,\n" +
+            "          \"params\": [\n" +
+            "            {\n" +
+            "              \"item\": {\n" +
+            "                \"keywords\": [\n" +
+            "                  \"mdd\"\n" +
+            "                ],\n" +
+            "                \"subject\": \"Mathematics\",\n" +
+            "                \"channel\": \"in.ekstep\",\n" +
+            "                \"language\": [\n" +
+            "                  \"English\"\n" +
+            "                ],\n" +
+            "                \"type\": \"ftb\",\n" +
+            "                \"editorState\": null,\n" +
+            "                \"body\": null,\n" +
+            "                \"question_audio\": \"\",\n" +
+            "                \"gradeLevel\": [\n" +
+            "                  \"Class 4\"\n" +
+            "                ],\n" +
+            "                \"appId\": \"prod.diksha.app\",\n" +
+            "                \"used_for\": \"worksheet\",\n" +
+            "                \"model\": {\n" +
+            "                  \"hintMsg\": \"Observe the key value and find the number of aircrafts which flies in the morning.\",\n" +
+            "                  \"numericLangId\": \"en\",\n" +
+            "                  \"langId\": \"en\",\n" +
+            "                  \"variables\": {\n" +
+            "                    \"$aircraft1\": \"random(100,100)\",\n" +
+            "                    \"$aircraft2\": \"random(70,70)\",\n" +
+            "                    \"$aircraft3\": \"random(80,80)\",\n" +
+            "                    \"$aircraft4\": \"random(30,30)\"\n" +
+            "                  },\n" +
+            "                  \"dropDowns\": [\n" +
+            "                    {\n" +
+            "                      \"identifier\": 1,\n" +
+            "                      \"options\": [\n" +
+            "                        {\n" +
+            "                          \"text\": \"OPT_1_0\",\n" +
+            "                          \"mh\": null,\n" +
+            "                          \"mmc\": [\n" +
+            "                            \"DH277\",\n" +
+            "                            \"DH278\"\n" +
+            "                          ],\n" +
+            "                          \"answer\": true,\n" +
+            "                          \"image\": null\n" +
+            "                        },\n" +
+            "                        {\n" +
+            "                          \"text\": \"OPT_1_1\",\n" +
+            "                          \"mh\": \"MH_1_1\",\n" +
+            "                          \"mmc\": [\n" +
+            "                            \"DH277\",\n" +
+            "                            \"DH278\"\n" +
+            "                          ],\n" +
+            "                          \"answer\": false,\n" +
+            "                          \"image\": null\n" +
+            "                        },\n" +
+            "                        {\n" +
+            "                          \"text\": \"OPT_1_2\",\n" +
+            "                          \"mh\": \"MH_1_2\",\n" +
+            "                          \"mmc\": [\n" +
+            "                            \"DH277\",\n" +
+            "                            \"DH278\"\n" +
+            "                          ],\n" +
+            "                          \"answer\": false,\n" +
+            "                          \"image\": null\n" +
+            "                        },\n" +
+            "                        {\n" +
+            "                          \"text\": \"OPT_1_3\",\n" +
+            "                          \"mh\": \"MH_1_3\",\n" +
+            "                          \"mmc\": [\n" +
+            "                            \"DH277\",\n" +
+            "                            \"DH278\"\n" +
+            "                          ],\n" +
+            "                          \"answer\": false,\n" +
+            "                          \"image\": null\n" +
+            "                        }\n" +
+            "                      ]\n" +
+            "                    },\n" +
+            "                    {\n" +
+            "                      \"identifier\": 2,\n" +
+            "                      \"options\": []\n" +
+            "                    },\n" +
+            "                    {\n" +
+            "                      \"identifier\": 3,\n" +
+            "                      \"options\": []\n" +
+            "                    },\n" +
+            "                    {\n" +
+            "                      \"identifier\": 4,\n" +
+            "                      \"options\": []\n" +
+            "                    }\n" +
+            "                  ],\n" +
+            "                  \"variablesProcessed\": true\n" +
+            "                },\n" +
+            "                \"state\": \"Verified\",\n" +
+            "                \"identifier\": \"QMCQ02115\",\n" +
+            "                \"level\": 2,\n" +
+            "                \"author\": \"funtoot\",\n" +
+            "                \"consumerId\": \"1762141d-8681-458b-9bd1-c6af98c0d989\",\n" +
+            "                \"solutions\": null,\n" +
+            "                \"portalOwner\": \"562\",\n" +
+            "                \"version\": 1,\n" +
+            "                \"i18n\": {\n" +
+            "                  \"en\": {\n" +
+            "                    \"HINT\": \"Hint\",\n" +
+            "                    \"MICROHINT\": \"Micro Hint\",\n" +
+            "                    \"SOLUTION\": \"Solution\",\n" +
+            "                    \"HELP\": \"Help\",\n" +
+            "                    \"REDUCE_FRACTION\": \"Check the solution again. Remove the common factors in the fraction and reduce it to its lowest term.\",\n" +
+            "                    \"MIXED_FRACTION\": \"Convert the mixed fraction to an improper fraction.\",\n" +
+            "                    \"IMPROPER_FRACTION\": \"Convert the improper fraction to an mixed fraction.\",\n" +
+            "                    \"LIKEFRACTIONADDITION_NUMERATOR\": \"Add the numerator of the given fractions correctly.\",\n" +
+            "                    \"LIKEFRACTIONADDITION_DENOMINATOR\": \"For addition of like fractions the denominator remains the same.\",\n" +
+            "                    \"LIKEFRACTIONADDITION_FULL\": \"Check the addition of the numerator. The denominator remains the same.\",\n" +
+            "                    \"UNLIKEFRACTIONADDITION_NUMERATOR\": \"First convert the unlike fractions to like fractions. Then add the numerator of the like fractions.\",\n" +
+            "                    \"UNLIKEFRACTIONADDITION_DENOMINATOR\": \"First find the least common factor and convert the unlike fractions to like fractions. The denominator of the solution is the denominator of the like fractions.\",\n" +
+            "                    \"UNLIKEFRACTIONADDITION_FULL\": \"Convert the given fractions to like fractions and then carefully do the addition.\",\n" +
+            "                    \"LIKEFRACTIONSUBTRACTION_NUMERATOR\": \"Subtract the numerator of the given fractions correctly.\",\n" +
+            "                    \"LIKEFRACTIONSUBTRACTION_DENOMINATOR\": \"For subtraction of like fractions the denominator remains the same as that of the question.\",\n" +
+            "                    \"LIKEFRACTIONSUBTRACTION_FULL\": \"Subtract the numerator of the fractions. Denominator remains the same.\",\n" +
+            "                    \"UNLIKEFRACTIONSUBTRACTION_NUMERATOR\": \"First convert the unlike fractions to like fractions. Then subtract the numerator of the like fractions.\",\n" +
+            "                    \"UNLIKEFRACTIONSUBTRACTION_DENOMINATOR\": \"First find the least common factor and convert the unlike fractions to like fractions. The denominator of the solution is the denominator of the like fractions.\",\n" +
+            "                    \"UNLIKEFRACTIONSUBTRACTION_FULL\": \"Convert the given fractions to like fractions and then carefully do the subtraction.\",\n" +
+            "                    \"LIKEMIXEDFRACTIONADDITION_WHOLE\": \"Add the whole number part of both the fractions carefully. Check for the conversion of the improper fraction to proper fractions in the solution.\",\n" +
+            "                    \"LIKEMIXEDFRACTIONADDITION_NUMERATOR\": \"Add the numerator of the like fractions. If the fractional part is an improper fraction, then convert it to a proper fraction.\",\n" +
+            "                    \"LIKEMIXEDFRACTIONADDITION_DENOMINATOR\": \"The denominator of the solution fraction does not change for like fractions.\",\n" +
+            "                    \"LIKEMIXEDFRACTIONADDITION_FULL\": \"Convert the mixed fractions to improper fractions and then add them. The final solution should again be as a mixed fraction.\",\n" +
+            "                    \"LIKEMIXEDFRACTIONSUBTRACTION_WHOLE\": \"Subtract the whole number part of both the fractions carefully.\",\n" +
+            "                    \"LIKEMIXEDFRACTIONSUBTRACTION_NUMERATOR\": \"Subtract the numerator of the like fractions.\",\n" +
+            "                    \"LIKEMIXEDFRACTIONSUBTRACTION_DENOMINATOR\": \"The denominator of the solution fraction does not change for like fractions.\",\n" +
+            "                    \"LIKEMIXEDFRACTIONSUBTRACTION_FULL\": \"Convert the mixed fractions to improper fractions and then subtract them. The final solution should again be as a mixed fraction.\",\n" +
+            "                    \"WHOLEANDPROPERFRACTIONADDITION_WHOLE\": \"The integer added becomes the whole number part of the mixed fraction.\",\n" +
+            "                    \"WHOLEANDPROPERFRACTIONADDITION_NUMERATOR\": \"The numerator of the solution fraction remains the same. \",\n" +
+            "                    \"WHOLEANDPROPERFRACTIONADDITION_DENOMINATOR\": \"The denominator of the solution fraction remains the same as given in the problem.\",\n" +
+            "                    \"WHOLEANDPROPERFRACTIONADDITION_FULL\": \"The integer and the proper fraction when added becomes the mixed fraction.\",\n" +
+            "                    \"WHOLEANDPROPERFRACTIONSUBTRACTION_WHOLE\": \"Convert the whole number to an equivalent fraction. Then find the difference between the like fractions.\",\n" +
+            "                    \"WHOLEANDPROPERFRACTIONSUBTRACTION_NUMERATOR\": \"First find the least common factor and convert them to difference between like fractions. Then subtract the numerators carefully.\",\n" +
+            "                    \"WHOLEANDPROPERFRACTIONSUBTRACTION_DENOMINATOR\": \"The denominator of the solution fraction remains the same as given in the problem. \",\n" +
+            "                    \"WHOLEANDPROPERFRACTIONSUBTRACTION_FULL\": \"When the proper fraction is subtracted from the integer becomes the mixed fraction.\",\n" +
+            "                    \"WHOLEANDFRACTIONMULTIPLICATION_NUMERATOR\": \"Multiply the numerator and the whole number carefully.\",\n" +
+            "                    \"WHOLEANDFRACTIONMULTIPLICATION_DENOMINATOR\": \"Multiply the denominators of the fractions carefully. \",\n" +
+            "                    \"WHOLEANDFRACTIONMULTIPLICATION_FULL\": \"Multiply the integer with the fraction.\",\n" +
+            "                    \"FRACTIONMULTIPLICATION_NUMERATOR\": \"Multiply the numerators of the fractions carefully.\",\n" +
+            "                    \"FRACTIONMULTIPLICATION_DENOMINATOR\": \"Multiply the denominators of the fractions carefully. \",\n" +
+            "                    \"FRACTIONMULTIPLICATION_FULL\": \"Multiply the numerators and denominators of the fractions.\",\n" +
+            "                    \"FRACTIONDIVISION\": \"First find the reciprocal of the divisor. Then multiply the fraction with the reciprocal of the divisor to get the solution.\",\n" +
+            "                    \"SELECT\": \"Select\",\n" +
+            "                    \"EXPRESSIONS\": \"$aircraft1=random(100,100)\\n$aircraft2=random(70,70)\\n$aircraft3=random(80,80)\\n$aircraft4=random(30,30)\",\n" +
+            "                    \"NO_HINT\": \"There is no hint for this question.\",\n" +
+            "                    \"NO_ANSWER\": \"Please answer.\",\n" +
+            "                    \"SOLUTION_ID\": \"a. The tallest bar shows the subject which is most liked by the students i.e., Social Studies. 40 students like Social Studiesb. There are 5 subjects mentioned in the graph, namely English, Mathematics, Hindi, Social Studies, and General Science.c. The shortest bar represents the subject which is least liked by the students i.e., Mathematics. Only 10 students like Mathematics.d. Number of students who like Hindi = 20Number of students who like Mathematics = 10We can clearly see that the number of students who like Hindi is double  that of Mathematics. Hence the statement is true.\",\n" +
+            "                    \"HINT_ID\": \"Observe the key value and find the number of aircrafts which flies in the morning.\",\n" +
+            "                    \"QUESTION_TEXT\": \"The pictograph represents the number of aircrafts flying from India to foreign countries at different timings. Airlines decided to fly $aircraft1 aircrafts in the morning. How many aircrafts should they fly more? __1__\",\n" +
+            "                    \"MH_1_3\": \"Find how many number of aircrafts to be added in the morning to make the count as $aircraft1.\",\n" +
+            "                    \"OPT_1_3\": \"$aircraft1\",\n" +
+            "                    \"MH_1_2\": \"According to the pictograph the number of aircrafts which flies in the afternoon is $aircraft3. Find how many number of aircrafts to be added in the morning to make the count as $aircraft1.\",\n" +
+            "                    \"OPT_1_2\": \"$aircraft3\",\n" +
+            "                    \"MH_1_1\": \"According to the pictograph the number of aircrafts which flies in the morning is $aircraft2. Find how many number of aircrafts to be added in the morning to make the count as $aircraft1.\",\n" +
+            "                    \"OPT_1_1\": \"$aircraft2\",\n" +
+            "                    \"OPT_1_0\": \"$aircraft4\"\n" +
+            "                  }\n" +
+            "                },\n" +
+            "                \"tags\": [\n" +
+            "                  \"mdd\"\n" +
+            "                ],\n" +
+            "                \"concepts\": [\n" +
+            "                  \"C421\"\n" +
+            "                ],\n" +
+            "                \"grade\": [\n" +
+            "                  \"4\"\n" +
+            "                ],\n" +
+            "                \"domain\": \"Numeracy\",\n" +
+            "                \"name\": \"QMCQ02115\",\n" +
+            "                \"bloomsTaxonomyLevel\": \"Understand\",\n" +
+            "                \"status\": \"Live\",\n" +
+            "                \"itemType\": \"UNIT\",\n" +
+            "                \"code\": \"QMCQ02115\",\n" +
+            "                \"qtype\": \"mdd\",\n" +
+            "                \"qlevel\": \"MEDIUM\",\n" +
+            "                \"flags\": \"{\\\"isZoomable\\\":true}\",\n" +
+            "                \"questionImage\": \"org.ekstep.funtoot.QMCQ02115.image.9074280266192281\",\n" +
+            "                \"media\": [\n" +
+            "                  {\n" +
+            "                    \"id\": \"org.ekstep.funtoot.QMCQ02115.image.9074280266192281\",\n" +
+            "                    \"src\": \"https://ekstep-public-prod.s3-ap-south-1.amazonaws.com/content/org.ekstep.funtoot.qmcq02115.image.9886103695997586/artifact/org.ekstep.funtoot.qmcq02115.image.9886103695997586_1514092203316.png\",\n" +
+            "                    \"type\": \"image\"\n" +
+            "                  }\n" +
+            "                ],\n" +
+            "                \"title\": \"\",\n" +
+            "                \"qid\": \"QMCQ02115\",\n" +
+            "                \"createdOn\": \"2017-12-24T05:10:03.956+0000\",\n" +
+            "                \"qindex\": 1,\n" +
+            "                \"lastUpdatedOn\": \"2018-08-16T14:08:14.323+0000\",\n" +
+            "                \"subLevel\": \"\",\n" +
+            "                \"question\": \"QUESTION_TEXT\",\n" +
+            "                \"versionKey\": \"1534428494323\",\n" +
+            "                \"framework\": \"NCF\",\n" +
+            "                \"answer\": {},\n" +
+            "                \"max_score\": 5,\n" +
+            "                \"sublevel\": 3,\n" +
+            "                \"template_id\": \"org.ekstep.funtoot.template.01\",\n" +
+            "                \"category\": \"MCQ\",\n" +
+            "                \"isSelected\": true,\n" +
+            "                \"$$hashKey\": \"object:1540\",\n" +
+            "                \"template\": \"funtoot.template.01\",\n" +
+            "                \"maxAttempts\": 2,\n" +
+            "                \"curAttempt\": 0\n" +
+            "              },\n" +
+            "              \"config\": {\n" +
+            "                \"count\": 1,\n" +
+            "                \"selectedConfig\": {},\n" +
+            "                \"title\": \"\",\n" +
+            "                \"type\": \"items\",\n" +
+            "                \"var\": \"item\"\n" +
+            "              }\n" +
+            "            }\n" +
+            "          ],\n" +
+            "          \"uri\": \"\",\n" +
+            "          \"mmc\": [],\n" +
+            "          \"mc\": [\n" +
+            "            null\n" +
+            "          ],\n" +
+            "          \"desc\": \"\"\n" +
+            "        },\n" +
+            "        \"index\": 1,\n" +
+            "        \"pass\": \"Yes\",\n" +
+            "        \"score\": 1,\n" +
+            "        \"resvalues\": [\n" +
+            "          {\n" +
+            "            \"1\": \"random(30,30)\"\n" +
+            "          }\n" +
+            "        ],\n" +
+            "        \"duration\": 6\n" +
+            "      }\n" +
+            "    }\n" +
+            "  ]\n" +
+            "}";
 
     public static Map<String, Object> getMap(String message) {
         return (Map<String, Object>) new Gson().fromJson(message, Map.class);
