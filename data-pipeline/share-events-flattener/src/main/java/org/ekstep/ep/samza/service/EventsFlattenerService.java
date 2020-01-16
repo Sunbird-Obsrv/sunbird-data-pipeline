@@ -12,6 +12,7 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class EventsFlattenerService {
 
@@ -110,6 +111,7 @@ public class EventsFlattenerService {
             clonedEvent.renameEventIdTo(FLATTEN_EVENT_NAME);
             clonedEvent.removeItems();
             // Adding "SHARE_ITEM" Events to success topic
+            clonedEvent.updateMid(this.getMid());
             sink.toSuccessTopic(clonedEvent);
         }
     }
@@ -133,6 +135,10 @@ public class EventsFlattenerService {
             }
         }
         return null;
+    }
+
+    private String getMid() {
+        return "SHARE_ITEM:" + UUID.randomUUID();
     }
 
 }

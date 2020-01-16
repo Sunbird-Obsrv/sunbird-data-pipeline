@@ -29,6 +29,10 @@ public class Event extends Events {
         telemetry.add("edata.size", size);
     }
 
+    public void updateMid(String mid){
+        telemetry.add("mid", mid);
+    }
+
     public void removeItems() {
         telemetry.add("edata.items", null);
     }
