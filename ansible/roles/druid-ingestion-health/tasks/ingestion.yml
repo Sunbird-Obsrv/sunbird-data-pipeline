@@ -1,0 +1,54 @@
+- set_fact:
+    failed_datasources: []
+
+- name: Get the ingestion stats
+  uri:
+    url: "{{ supervisor_stats_url }}"
+    method: GET
+    return_content: yes
+  register : ingestion_stats
+
+
+- name: Check the ingestion state
+  set_fact:
+    failed_datasources: "{{ failed_datasources }} + [ '{{ item.id }}' ]"
+  when :  item.state != "RUNNING"
+  with_items : "{{ ingestion_stats.content}}"
+
+- debug:
+    var: failed_datasources
+
+- name: Alert slack with failed ingestion
+  slack:
+    token: '{{ druid_slack_token }}'
+    msg: '{{ item }} ingestion is not running'
+    channel: '{{ druid_slack_channel  }}'
+    username: '{{ druid_slack_user }}'
+    color: 'danger'
+    icon_emoji: ':bangbang:'
+  with_items: "{{ failed_datasources }}"
+
+
+- name: Terminate Failed Ingestion Tasks
+  uri:
+    url: "http://{{ druid_overlord_host }}:{{ druid_overlord_port}}/druid/indexer/v1/supervisor/{{ item }}/terminate"
+    method: POST
+    return_content: yes
+  register : out
+  with_items: "{{ failed_datasources }}"
+
+- name: ReStart Failed Ingestion Tasks
+  shell : 'curl -X POST -H "Content-Type:application/json" -d @"{{druid_home}}"/{{ item }}.json http://"{{ druid_overlord_host }}":"{{ druid_overlord_port }}"/druid/indexer/v1/supervisor'
+  register : rt_out
+  with_items: "{{ failed_datasources }}"
+
+
+- name: Alert slack after restarting the ingestion
+  slack:
+    token: '{{ druid_slack_token }}'
+    msg: '{{ item }} ingestion restarted'
+    channel: '{{ druid_slack_channel  }}'
+    username: '{{ druid_slack_user }}'
+    color: 'good'
+    icon_emoji: ':bangbang:'
+  with_items: "{{ failed_datasources }}"

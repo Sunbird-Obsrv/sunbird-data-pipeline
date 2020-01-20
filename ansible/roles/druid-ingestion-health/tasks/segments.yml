@@ -1,0 +1,46 @@
+- name: Get the segment stats
+  uri:
+    url: "{{ segments_stats_url }}"
+    method: GET
+    return_content: yes
+  register : segment_stats
+
+- name: Check the segment percent
+  set_fact:
+    status: "Failed"
+  when: item.value < 95
+  with_dict: "{{ segment_stats.content }}" 
+
+- name: Alert slack with segments down
+  slack:
+    token: '{{ druid_slack_token }}'
+    msg: 'Segments down'
+    channel: '{{ druid_slack_channel  }}'
+    username: '{{ druid_slack_user }}'
+    color: 'danger'
+    icon_emoji: ':bangbang:'
+  when: status is defined and status  == "Failed"
+
+- name: Restart druid historical service
+  systemd:
+    name: druid_historical
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+  become: yes
+  when: status is defined and status  == "Failed"
+
+- name: Test that historical is up
+  wait_for: host={{ ansible_host }} port=8083  state=started
+  when: status is defined and status  == "Failed"
+
+- name: Alert slack once the historical is up
+  slack:
+    token: '{{ druid_slack_token }}'
+    msg: 'Back to running'
+    color: 'good'
+    channel: '{{ druid_slack_channel  }}'
+    username: '{{ druid_slack_user }}'
+    icon_emoji: ':bangbang:'
+  when: status is defined and status  == "Failed"
+
