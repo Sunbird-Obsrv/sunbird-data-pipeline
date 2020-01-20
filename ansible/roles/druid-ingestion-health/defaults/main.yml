@@ -1,8 +1,8 @@
 druid_path : "/data/druid"
-druid_overlord_host: 11.2.1.20
+druid_overlord_host: "{{ groups['overlord'][0] }}"
 druid_overlord_port: 8090
 druid_home: "/home/druid"
-druid_coordinator_host: 11.2.1.20
+druid_coordinator_host: "{{ groups['coordinator'][0] }}"
 druid_coordinator_port: 8081
 druid_slack_channel: "{{ druid_monit_slack_channel }}"
 druid_slack_token: "{{ druid_monit_slack_token }}"
