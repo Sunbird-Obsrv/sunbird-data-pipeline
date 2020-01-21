@@ -29,9 +29,9 @@ node() {
                             echo "batch-models-2.0.jar exist"
                             mv batch-models-2.0.jar ansible
                        fi
-                       if [ -f job-manager-2.0-distribution.tar.gz ]; then
-                            echo "job-manager-2.0-distribution.tar.gz exist"
-                            mv job-manager-2.0-distribution.tar.gz ansible
+                       if [ -f job-manager-2.0.jar ]; then
+                            echo "job-manager-2.0.jar exist"
+                            mv job-manager-2.0.jar ansible
                        fi
                        if [ -f analytics-framework-2.0.jar ]; then
                             echo "analytics-framework-2.0.jar exist"
