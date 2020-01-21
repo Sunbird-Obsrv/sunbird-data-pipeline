@@ -21,7 +21,9 @@
 
 - name: Copy configuration file
   template: src=common.conf.j2 dest={{ analytics.home }}/models/{{ env }}.conf mode=755 owner={{ analytics_user }} group={{ analytics_group }}
-  tags: [ dataproducts, framework ]
+  tags:
+    - dataproducts
+    - framework
 
 
 - name: Copy log4j2 xml file
