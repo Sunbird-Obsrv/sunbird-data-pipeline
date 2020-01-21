@@ -24,12 +24,22 @@ node() {
                 stage('deploy artifact'){
                     sh """
                        unzip ${artifact}
-                       mv batch-models-2.0.jar ansible
-                       mv job-manager-2.0-distribution.tar.gz ansible
-                       mv analytics-framework-2.0.jar ansible
+                      
+                       if [ -f batch-models-2.0.jar ]; then
+                            echo "batch-models-2.0.jar exist"
+                            mv batch-models-2.0.jar ansible
+                       fi
+                       if [ -f job-manager-2.0-distribution.tar.gz ]; then
+                            echo "job-manager-2.0-distribution.tar.gz exist"
+                            mv job-manager-2.0-distribution.tar.gz ansible
+                       fi
+                       if [ -f analytics-framework-2.0.jar ]; then
+                            echo "analytics-framework-2.0.jar exist"
+                            mv analytics-framework-2.0.jar ansible
+                       fi
                     """
                     ansiblePlaybook = "${currentWs}/ansible/lpa_data-products_deploy.yml"
-                    ansibleExtraArgs = " --tags ${params.action} --vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                    ansibleExtraArgs = " --tags ${params.module} --vault-password-file /var/lib/jenkins/secrets/vault-pass"
                     values.put('ansiblePlaybook', ansiblePlaybook)
                     values.put('ansibleExtraArgs', ansibleExtraArgs)
                     println "values are" + values
