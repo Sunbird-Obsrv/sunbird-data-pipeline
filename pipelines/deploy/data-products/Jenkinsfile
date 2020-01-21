@@ -24,15 +24,15 @@ node() {
                 stage('deploy artifact'){
                     sh """
                        unzip ${artifact}
-                       mv batch-models-1.0.jar ansible
-                       mv job-manager-1.0-distribution.tar.gz ansible
-                       mv analytics-framework-1.0.jar ansible
+                       mv batch-models-2.0.jar ansible
+                       mv job-manager-2.0-distribution.tar.gz ansible
+                       mv analytics-framework-2.0.jar ansible
                     """
                     ansiblePlaybook = "${currentWs}/ansible/lpa_data-products_deploy.yml"
-                    ansibleExtraArgs = " --vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                    ansibleExtraArgs = " --tags ${params.action} --vault-password-file /var/lib/jenkins/secrets/vault-pass"
                     values.put('ansiblePlaybook', ansiblePlaybook)
                     values.put('ansibleExtraArgs', ansibleExtraArgs)
-                    println values
+                    println "values are" + values
                     ansible_playbook_run(values)
                     currentBuild.result = "SUCCESS"
                     currentBuild.description = "Artifact: ${values.artifact_version}, Private: ${params.private_branch}, Public: ${params.branch_or_tag}"

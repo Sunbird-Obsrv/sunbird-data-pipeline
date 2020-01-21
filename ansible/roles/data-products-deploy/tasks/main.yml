@@ -3,7 +3,7 @@
   copy: src=batch-models-1.0.jar dest={{ analytics.home }}/models
 
 - name: Copy Framework Library
-  copy: src=analytics-framework-1.0.jar dest={{ analytics.home }}/models
+  copy: src=analytics-framework-2.0.jar dest={{ analytics.home }}/models
 
 - name: Copy Job Manager
   copy: src=job-manager-1.0-distribution.tar.gz dest={{ analytics.home }}
