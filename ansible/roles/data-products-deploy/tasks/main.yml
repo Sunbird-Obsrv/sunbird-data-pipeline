@@ -10,12 +10,12 @@
     - framework
 
 - name: Copy Job Manager
-  copy: src=job-manager-2.0-distribution.tar.gz dest={{ analytics.home }}
+  copy: src=job-manager-2.0.jar dest={{ analytics.home }}
   tags:
     - dataproducts
 
 - name: Unarchive Job Manager
-  unarchive: src={{ analytics.home }}/job-manager-1.0-distribution.tar.gz dest={{ analytics.home }} copy=no group={{ analytics_group }} owner={{ analytics_user }} creates={{ analytics.home }}/script
+  unarchive: src={{ analytics.home }}/job-manager-2.0.jar dest={{ analytics.home }} copy=no group={{ analytics_group }} owner={{ analytics_user }} creates={{ analytics.home }}/script
   tags:
     - dataproducts
 
