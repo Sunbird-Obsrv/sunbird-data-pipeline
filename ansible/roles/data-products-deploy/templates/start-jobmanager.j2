@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 export SPARK_HOME={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7
-export MODELS_HOME={{ analytics.home }}/models-2.0
+export MODELS_HOME={{ analytics.home }}/models-{{ model_version }}
 export DP_LOGS={{ analytics.home }}/logs/data-products
 export SERVICE_LOGS={{ analytics.home }}/logs/services
 export JM_HOME={{ analytics.home }}/job-manager
