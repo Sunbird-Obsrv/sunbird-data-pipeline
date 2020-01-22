@@ -56,7 +56,7 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>telemetry-router</artifactId>
-            <version>0.1.5</version>
+            <version>0.1.6</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
@@ -113,6 +113,13 @@
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>assessment-aggregator</artifactId>
             <version>0.0.2</version>
+            <type>tar.gz</type>
+            <classifier>distribution</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem.jobs</groupId>
+            <artifactId>share-events-flattener</artifactId>
+            <version>0.0.1</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>

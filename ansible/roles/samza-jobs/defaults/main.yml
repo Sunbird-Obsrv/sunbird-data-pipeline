@@ -22,6 +22,7 @@ druidprocessor_yarn_container_count: 1
 device_profile_updater_yarn_container_count: 1
 assessment_aggregator_yarn_container_count: 1
 telemetry_derived_de_duplication_yarn_container_count: 1
+events_flattener_yarn_container_count: 1
 
 
 # samza jobs checkpoint replication factor
@@ -44,11 +45,11 @@ tr_secondary_route_events: "LOG,ERROR"
 google_vision_tagging: false
 google_api_key: "123"
 cassandra_port: 9042
-postgres_password: {{postgres.db_password}}
-postgres_db: {{postgres.db_name}}
-postgres_user: {{postgres.db_username}}
-postgres_host: {{postgres.db_url}}
-postgres_port: {{postgres.db_port}}
+postgres_password: "{{ postgres.db_password }}"
+postgres_db: "{{ postgres.db_name }}"
+postgres_user: "{{ postgres.db_username }}"
+postgres_host: "{{ postgres.db_url }}"
+postgres_port: "{{ postgres.db_port }}"
 es_port: 9200
 
 middleware_cassandra_keyspace: sunbird

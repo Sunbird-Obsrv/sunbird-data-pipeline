@@ -64,6 +64,7 @@ output {
 				"ip_location_hit" => "%{[ip-location-hit-count]}"
 				"no_cache_hit" => "%{[no-cache-hit-count]}"
 				"audit_route_success" => "%{[audit-route-success-count]}"
+				"share_route_success" => "%{[share-route-success-count]}"
 				"db_insert" => "%{[db-insert-count]}"
 				"db_update" => "%{[db-update-count]}"
 			}   
@@ -113,6 +114,7 @@ output {
 				"ip_location_hit" => "float"
 				"no_cache_hit" => "float"
 				"audit_route_success" => "float"
+				"share_route_success" => "float"
 				"db_insert" => "float"
 				"db_update" => "float"
 			}

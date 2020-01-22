@@ -5,7 +5,7 @@
   roles:
     - analytics-bootstrap-always
     - analytics-bootstrap-spark
-    - at-ruby
+    #- at-ruby
     - analytics-spark-provision
     
 # running only spark provision to make changes in spark config.
