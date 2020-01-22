@@ -3,6 +3,7 @@ analytics:
    soft_path: /mount/data/analytics
    base_path: /home/analytics 
 scala_version: 2.11.8
+model_version: "2.0" 
 spark:
   home: "{{ analytics.home }}/spark-2.0.1-bin-hadoop2.7"
   public_dns: 54.255.154.146
@@ -18,8 +19,8 @@ spark:
   executor:
     memory: 4g
   driver_memory: 7g
-  executor_extraJavaOptions: -Dconfig.file=/mount/data/analytics/models/{{ env }}.conf -Dlog4j.configurationFile=file:////mount/data/analytics/models/log4j2.xml
-  driver_extraJavaOptions: -Dconfig.file=/mount/data/analytics/models/{{ env }}.conf -Dlog4j.configurationFile=file:////mount/data/analytics/models/log4j2.xml
+  executor_extraJavaOptions: -Dconfig.file=/mount/data/analytics/models-{{ model_version }}/{{ env }}.conf -Dlog4j.configurationFile=file:////mount/data/analytics/models-{{ model_version }}/log4j2.xml
+  driver_extraJavaOptions: -Dconfig.file=/mount/data/analytics/models-{{ model_version }}/{{ env }}.conf -Dlog4j.configurationFile=file:////mount/data/analytics/models-{{ model_version }}/log4j2.xml
   executor_memory: 2g
   heap_conf_str: -Xmx5120m
 
