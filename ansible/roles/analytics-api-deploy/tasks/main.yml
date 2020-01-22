@@ -35,18 +35,18 @@
 
 - name: Remove the old artifacts
   file:
-    path: "{{ analytics_api.root }}/analytics-api-2.0-dist.zip"
+    path: "{{ analytics_api.root }}/{{ artifact_name }}"
     state: absent
   become_user: "{{analytics_user}}"    
       
 - name: Copy API artifact
   copy: 
-    src: analytics-api-2.0-dist.zip 
+    src: "{{ artifact_name }}"
     dest: "{{ analytics_api.root }}"
   become_user: "{{analytics_user}}"
 
 - name: Unarchive api artifact
-  unarchive: src={{ analytics_api.root }}/analytics-api-2.0-dist.zip dest={{ analytics_api.root }} copy=no group={{ analytics_user }} owner={{ analytics_user }}
+  unarchive: src={{ analytics_api.root }}/{{ artifact_name }} dest={{ analytics_api.root }} copy=no group={{ analytics_user }} owner={{ analytics_user }}
   become_user: "{{analytics_user}}"
     
 - name: Delete slf4j-log4j jar file
