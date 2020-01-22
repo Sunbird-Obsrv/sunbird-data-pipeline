@@ -16,6 +16,7 @@ public class TelemetryRouterConfig {
     private String secondaryRouteEvents;
     private String malformedTopic;
     private String auditRouteTopic;
+    private String shareEventRouterTopic;
 
     public TelemetryRouterConfig(Config config) {
         failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
@@ -23,6 +24,7 @@ public class TelemetryRouterConfig {
         secondaryRouteEvents = config.get("router.events.secondary.route.events", "LOG,ERROR");
         secondaryRouteTopic = config.get("router.events.secondary.route.topic", "telemetry.log");
         auditRouteTopic = config.get("router.events.audit.route.topic", "telemetry.audit");
+        shareEventRouterTopic = config.get("router.events.share.route.topic", "telemetry.share");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
 
     }
@@ -44,6 +46,10 @@ public class TelemetryRouterConfig {
 
     public String getAuditRouteTopic() {
         return auditRouteTopic;
+    }
+
+    public String getShareEventRouterTopic() {
+        return shareEventRouterTopic;
     }
 
 

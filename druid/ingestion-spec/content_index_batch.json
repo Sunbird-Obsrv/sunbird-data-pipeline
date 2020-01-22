@@ -248,7 +248,7 @@
               {
                 "type": "path",
                 "name": "me_totalRatings",
-                "expr": "$.data.me_totalRatings"
+                "expr": "$.data.me_totalRatingsCount"
               },
               {
                 "type": "path",

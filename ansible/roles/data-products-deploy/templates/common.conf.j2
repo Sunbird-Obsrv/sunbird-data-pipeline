@@ -214,3 +214,9 @@ metric.producer.pid="dataproduct.metrics"
 push.metrics.kafka=true
 metric.kafka.broker="{{groups['processing-cluster-kafka'][0]}}:9092"
 metric.kafka.topic="{{ env }}.telemetry.metrics"
+
+//Postgres Config
+postgres.db="{{postgres.db_name}}"
+postgres.url="jdbc:postgresql://{{postgres.db_url}}:{{postgres.db_port}}/"
+postgres.user="{{postgres.db_username}}"
+postgres.pass="{{postgres.db_password}}"
