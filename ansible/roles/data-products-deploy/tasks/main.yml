@@ -1,25 +1,39 @@
 ## Data products deployment ##
 - name: Copy Data Products
-  copy: src=batch-models-1.0.jar dest={{ analytics.home }}/models
+  copy: src={{ analytics_batch_module_artifact }} dest={{ analytics.home }}/models
+  tags:
+    - dataproducts
 
 - name: Copy Framework Library
-  copy: src=analytics-framework-1.0.jar dest={{ analytics.home }}/models
+  copy: src={{ analytics_core_artifact }} dest={{ analytics.home }}/models
+  tags:
+    - framework
 
 - name: Copy Job Manager
-  copy: src=job-manager-1.0-distribution.tar.gz dest={{ analytics.home }}
+  copy: src={{ analytics_job_manager_artifact }} dest={{ analytics.home }}/models
+  tags:
+    - dataproducts
 
 - name: Unarchive Job Manager
-  unarchive: src={{ analytics.home }}/job-manager-1.0-distribution.tar.gz dest={{ analytics.home }} copy=no group={{ analytics_group }} owner={{ analytics_user }} creates={{ analytics.home }}/script
+  unarchive: src={{ analytics.home }}/{{ analytics_job_manager_artifact }} dest={{ analytics.home }} copy=no group={{ analytics_group }} owner={{ analytics_user }} creates={{ analytics.home }}/script
+  tags:
+    - dataproducts
 
 - name: Copy configuration file
   template: src=common.conf.j2 dest={{ analytics.home }}/models/{{ env }}.conf mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  tags:
+    - dataproducts
+    - framework
+
 
 - name: Copy log4j2 xml file
   template: src=log4j2.xml.j2 dest={{ analytics.home }}/models/log4j2.xml mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  tags: [ dataproducts, framework ]
 
 - name: Copy Scripts
   template: src={{ item }}.j2 dest={{ analytics.home }}/scripts/{{ item }}.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   with_items: "{{ analytics.scripts }}"
+  tags: [ dataproducts, framework ]
 
 - name: Update model config
   template: src=model-config.j2 dest={{ analytics.home }}/scripts/model-config.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}

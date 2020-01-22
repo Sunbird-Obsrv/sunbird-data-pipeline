@@ -27,7 +27,7 @@ start_job_manager()
     job_config=$(config 'job-manager')
     echo "Starting the job manager" >> "$SERVICE_LOGS/$today-job-manager.log"
     echo "config: $job_config" >> "$SERVICE_LOGS/$today-job-manager.log"
-    nohup java $heap_conf_str -cp "$SPARK_HOME/jars/*:$MODELS_HOME/*:$JM_HOME/lib/job-manager-1.0.jar" -Dconfig.file=$MODELS_HOME/{{ env }}.conf org.ekstep.analytics.job.JobManager --config "$job_config" >> $SERVICE_LOGS/$today-job-manager.log 2>&1 &
+    nohup java $heap_conf_str -cp "$SPARK_HOME/jars/*:$MODELS_HOME/*" -Dconfig.file=$MODELS_HOME/{{ env }}.conf org.ekstep.analytics.job.JobManager --config "$job_config" >> $SERVICE_LOGS/$today-job-manager.log 2>&1 &
     
     job_manager_pid=$(ps aux | grep '[j]ob-manager' | awk '{print $2}') # Once Job is started just we are making whether job is running or not.
     if [[ ! -z "$job_manager_pid" ]]; then
