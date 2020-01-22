@@ -107,3 +107,6 @@ analytics:
 
 
 producer_env: "dev"
+analytics_job_manager_artifact: "job-manager-2.0.jar"
+analytics_core_artifact: "analytics-framework-2.0.jar"
+analytics_batch_module_artifact: "batch-models-2.0.jar" 

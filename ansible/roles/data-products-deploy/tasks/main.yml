@@ -1,21 +1,21 @@
 ## Data products deployment ##
 - name: Copy Data Products
-  copy: src=batch-models-2.0.jar dest={{ analytics.home }}/models
+  copy: src={{ analytics_batch_module_artifact }} dest={{ analytics.home }}/models
   tags:
     - dataproducts
 
 - name: Copy Framework Library
-  copy: src=analytics-framework-2.0.jar dest={{ analytics.home }}/models
+  copy: src={{ analytics_core_artifact }} dest={{ analytics.home }}/models
   tags:
     - framework
 
 - name: Copy Job Manager
-  copy: src=job-manager-2.0.jar dest={{ analytics.home }}/models
+  copy: src={{ analytics_job_manager_artifact }} dest={{ analytics.home }}/models
   tags:
     - dataproducts
 
 - name: Unarchive Job Manager
-  unarchive: src={{ analytics.home }}/job-manager-2.0.jar dest={{ analytics.home }} copy=no group={{ analytics_group }} owner={{ analytics_user }} creates={{ analytics.home }}/script
+  unarchive: src={{ analytics.home }}/{{ analytics_job_manager_artifact }} dest={{ analytics.home }} copy=no group={{ analytics_group }} owner={{ analytics_user }} creates={{ analytics.home }}/script
   tags:
     - dataproducts
 
