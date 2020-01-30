@@ -26,7 +26,7 @@ spark:
   heap_conf_str: -Xmx5120m
 
 spark_url: https://archive.apache.org/dist/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz
-guava_url: http://central.maven.org/maven2/com/google/guava/guava/19.0/guava-19.0.jar
-jets3t_url: http://central.maven.org/maven2/net/java/dev/jets3t/jets3t/0.9.4/jets3t-0.9.4.jar
-hadoop_aws_url: http://central.maven.org/maven2/org/apache/hadoop/hadoop-aws/2.7.3/hadoop-aws-2.7.3.jar
-java_xmlbuilder_url: http://central.maven.org/maven2/com/jamesmurty/utils/java-xmlbuilder/1.1/java-xmlbuilder-1.1.jar
+guava_url: https://repo1.maven.org/maven2/com/google/guava/guava/19.0/guava-19.0.jar
+jets3t_url: https://repo1.maven.org/maven2/net/java/dev/jets3t/jets3t/0.9.4/jets3t-0.9.4.jar
+hadoop_aws_url: https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/2.7.3/hadoop-aws-2.7.3.jar
+java_xmlbuilder_url: https://repo1.maven.org/maven2/com/jamesmurty/utils/java-xmlbuilder/1.1/java-xmlbuilder-1.1.jar
