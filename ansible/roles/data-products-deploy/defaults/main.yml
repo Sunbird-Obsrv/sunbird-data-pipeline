@@ -26,6 +26,7 @@ cassandra_keyspace_prefix: '{{ env }}_'
 dp_dispatch_bucket_name: ekstep-dev-data-store
 data_exhaust_blob_name: sunbird1p7
 data_exhaust_s3_url: https://s3-ap-south-1.amazonaws.com
+spark_version: 2.4.4
 
 heap_memory: "-Xmx5120m"
 
@@ -34,7 +35,7 @@ business_metrics:
   env: "{{ env }}"
 
 spark:
-  home: "{{ analytics.home }}/spark-2.0.1-bin-hadoop2.7"
+  home: "{{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7"
   public_dns: 54.255.154.146
   master:
     url: spark://172.31.11.117:7077
