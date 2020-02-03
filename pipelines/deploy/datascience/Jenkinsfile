@@ -27,7 +27,7 @@ node() {
                        mv dataproducts.tar.gz ansible
                     """
                     ansiblePlaybook = "${currentWs}/ansible/portal.yml"
-                    ansibleExtraArgs = "--extra-vars \"date=$date\" --vault-password-file /var/lib/jenkins/secrets/vault-pass --tags common"
+                    ansibleExtraArgs = "--vault-password-file /var/lib/jenkins/secrets/vault-pass --tags common"
                     values.put('ansiblePlaybook', ansiblePlaybook)
                     values.put('ansibleExtraArgs', ansibleExtraArgs)
                     println values
