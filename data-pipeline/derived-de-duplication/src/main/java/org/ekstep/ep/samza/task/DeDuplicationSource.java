@@ -10,7 +10,7 @@ import org.ekstep.ep.samza.domain.Event;
 import com.google.gson.Gson;
 
 public class DeDuplicationSource {
-	static Logger LOGGER = new Logger(DeDuplicationSource.class);
+	private static Logger LOGGER = new Logger(DeDuplicationSource.class);
 
 	private IncomingMessageEnvelope envelope;
 

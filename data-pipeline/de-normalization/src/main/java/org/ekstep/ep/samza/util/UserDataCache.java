@@ -58,7 +58,7 @@ public class UserDataCache extends DataCache {
         userDataMap = getUserSigninLoginDetails(userDataMap);
 
         if (userDataMap.size() <= 2) {  //Since SigninType and LoginType are default values, incrementing no data metric only if other user details are not present
-            metrics.incNoDataCount();
+            metrics.incEmptyCacheValueCounter();
         }
         return userDataMap;
     }

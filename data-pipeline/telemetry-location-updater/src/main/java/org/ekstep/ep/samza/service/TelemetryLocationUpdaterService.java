@@ -62,7 +62,7 @@ public class TelemetryLocationUpdaterService {
 
 				// Add derived location to telemetry
 				if(derivedLocation.isEmpty()) {
-					metrics.incNoCacheHitCount();
+					metrics.incCacheMissCounter();
 					event.setFlag(TelemetryLocationUpdaterConfig.getDerivedLocationJobFlag(), false);
 				}
 				else {

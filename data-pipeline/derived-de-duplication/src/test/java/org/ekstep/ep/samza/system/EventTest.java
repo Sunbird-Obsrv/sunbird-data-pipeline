@@ -30,22 +30,7 @@ public class EventTest {
     public void shouldReturnNullIfChecksumAndMidAreAbsent(){
 
         Event event = new Event(EventFixture.EventWithoutChecksumFieldMap());
-        Assert.assertEquals(null, (String) event.getChecksum());
-    }
-
-    @Test
-    public void shouldAddChannelIfChannelIsAbsentNullOrEmpty(){
-        DeDuplicationConfig conf = mock(DeDuplicationConfig.class);
-        when(conf.defaultChannel()).thenReturn("in.ekstep");
-
-        Event event = new Event(EventFixture.EventWithMidMap());
-        event.updateDefaults(conf);
-        Assert.assertEquals("in.ekstep", ( (Map<String,Object>) event.getMap().get("context")).get("channel") );
-
-
-        Event event2 = new Event(EventFixture.EventWithEmptyChannel());
-        event2.updateDefaults(conf);
-        Assert.assertEquals("in.ekstep", ( (Map<String,Object>) event.getMap().get("context")).get("channel"));
+        Assert.assertNull(event.getChecksum());
     }
 }
 

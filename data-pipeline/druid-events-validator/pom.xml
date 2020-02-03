@@ -15,7 +15,7 @@
     </parent>
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>druid-events-validator</artifactId>
-    <version>0.1.3</version>
+    <version>0.1.4</version>
     <packaging>jar</packaging>
     <name>DruidEventsValidator</name>
     <description>
@@ -87,11 +87,13 @@
             <artifactId>json-io</artifactId>
             <version>4.0.0</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>com.google.maps</groupId>
             <artifactId>google-maps-services</artifactId>
             <version>0.1.7</version>
         </dependency>
+        -->
         <dependency>
             <groupId>org.ekstep.ecosystem</groupId>
             <artifactId>ep-core</artifactId>

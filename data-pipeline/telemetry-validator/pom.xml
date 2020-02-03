@@ -17,7 +17,7 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>telemetry-validator</artifactId>
-    <version>0.2.1</version>
+    <version>0.2.2</version>
     <packaging>jar</packaging>
     <name>TelemetryValidator</name>
     <description>
@@ -89,11 +89,13 @@
             <artifactId>json-io</artifactId>
             <version>4.0.0</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>com.google.maps</groupId>
             <artifactId>google-maps-services</artifactId>
             <version>0.1.7</version>
         </dependency>
+        -->
         <dependency>
             <groupId>org.ekstep.ecosystem</groupId>
             <artifactId>ep-core</artifactId>
@@ -113,6 +115,12 @@
             <groupId>com.github.java-json-tools</groupId>
             <artifactId>json-schema-validator</artifactId>
             <version>2.2.8</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>joda-time</groupId>
+                    <artifactId>joda-time</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

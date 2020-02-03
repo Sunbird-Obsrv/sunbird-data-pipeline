@@ -48,13 +48,5 @@ public class Event extends Events {
         telemetry.add("metadata.src", config.jobName());
     }
 
-    public void updateDefaults(DeDuplicationConfig config) {
-        String channelString = telemetry.<String>read("context.channel").value();
-        String channel = StringUtils.deleteWhitespace(channelString);
-        if (channel == null || channel.isEmpty()) {
-            telemetry.addFieldIfAbsent("context", new HashMap<String, Object>());
-            telemetry.add("context.channel", config.defaultChannel());
-        }
-    }
 }
 
