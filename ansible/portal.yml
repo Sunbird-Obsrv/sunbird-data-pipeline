@@ -1,0 +1,8 @@
+- hosts: spark
+  become: yes
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml', 'secrets/{{env}}.yml']
+  roles:
+    - portal-dashboard
+  environment:
+    API_KEY: "{{dp_search_service_authorization_token}}"
