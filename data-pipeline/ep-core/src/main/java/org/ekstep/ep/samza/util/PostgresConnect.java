@@ -21,7 +21,7 @@ public class PostgresConnect {
     public PostgresConnect(Config config) throws Exception {
         this.config = config;
         user = config.get("postgres.user");
-        password = config.get("postgres.password");
+        password = config.get("sensitive.postgres.password");
         db = config.get("postgres.db");
         host = config.get("postgres.host","127.0.0.1");
         port = config.getInt("postgres.port", 5432);
