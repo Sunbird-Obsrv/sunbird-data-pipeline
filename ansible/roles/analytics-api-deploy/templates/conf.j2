@@ -118,19 +118,7 @@ akka {
   actor {
     deployment {
 
-        /metricsApiActor {
-            router = smallest-mailbox-pool
-            nr-of-instances = 10
-        }
-        /jobApiActor {
-            router = smallest-mailbox-pool
-            nr-of-instances = 10
-        }
         /druid-health-actor  {
-            router = smallest-mailbox-pool
-            nr-of-instances = 10
-        }
-        /healthCheckAPIActor {
             router = smallest-mailbox-pool
             nr-of-instances = 10
         }
@@ -152,15 +140,11 @@ akka {
           router = smallest-mailbox-pool
           nr-of-instances = 4
         }
-        /experimentActor {
+        /experiment-actor {
           router = smallest-mailbox-pool
-          nr-of-instances = 5
+          nr-of-instances = 2
         }
-        /expApiActor {
-          router = smallest-mailbox-pool
-          nr-of-instances = 1
-        }
-        
+
     }
   }
 }
