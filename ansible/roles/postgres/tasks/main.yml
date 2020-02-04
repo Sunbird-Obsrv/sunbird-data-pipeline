@@ -28,15 +28,15 @@
                   db="{{ postgres.db_name }}"
   tags: createuser
 
-- name: update {{ env }}_consumer_channel_mapping
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "insert into {{ env }}_consumer_channel_mapping (consumer_id, channel, status, created_by, created_on, updated_on) values ('{{ consumer_id }}', '{{ channel }}', {{ status }}, '{{created_by }}', current_timestamp, current_timestamp) on conflict on constraint {{ env }}_consumer_channel_mapping_pkey DO UPDATE set status=EXCLUDED.status, updated_on= current_timestamp"
-  run_once: true
-  tags: insert
-
 - name: create {{ env }}_consumer-channel-mapping
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_consumer_channel_mapping(consumer_id text, channel text, status smallint, created_by text, created_on timestamptz, updated_on timestamptz, PRIMARY KEY(consumer_id, channel))"
   run_once: true
   tags: create
+
+- name: update {{ env }}_consumer_channel_mapping
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "insert into {{ env }}_consumer_channel_mapping (consumer_id, channel, status, created_by, created_on, updated_on) values ('{{ consumer_id }}', '{{ channel }}', {{ status }}, '{{created_by }}', current_timestamp, current_timestamp) on conflict on constraint {{ env }}_consumer_channel_mapping_pkey DO UPDATE set status=EXCLUDED.status, updated_on= current_timestamp"
+  run_once: true
+  tags: insert
 
 - name: create {{ env }}_device_profile
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_device_profile(device_id text, api_last_updated_on timestamptz, avg_ts float, city text, country text, country_code text, device_spec json, district_custom text, fcm_token text, first_access timestamptz, last_access timestamptz, producer_id text, state text, state_code text, state_code_custom text, state_custom text, total_launches bigint, total_ts float, uaspec json, updated_date timestamptz, user_declared_district text, user_declared_state text, user_declared_on timestamptz, PRIMARY KEY(device_id))"
