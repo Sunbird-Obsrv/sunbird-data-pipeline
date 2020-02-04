@@ -126,7 +126,7 @@ akka {
             router = smallest-mailbox-pool
             nr-of-instances = 10
         }
-        /recommendAPIActor {
+        /druid-health-actor  {
             router = smallest-mailbox-pool
             nr-of-instances = 10
         }
@@ -134,7 +134,7 @@ akka {
             router = smallest-mailbox-pool
             nr-of-instances = 10
         }
-        /tagServiceAPIActor {
+        /job-service-actor {
           router = smallest-mailbox-pool
             nr-of-instances = 10
         }
@@ -148,7 +148,7 @@ akka {
           dispatcher = device-profile-actor-dispatcher
           nr-of-instances = 10
         }
-        /clientLogAPIActor {
+        /client-log-actor {
           router = smallest-mailbox-pool
           nr-of-instances = 4
         }
@@ -160,6 +160,7 @@ akka {
           router = smallest-mailbox-pool
           nr-of-instances = 1
         }
+        
     }
   }
 }
