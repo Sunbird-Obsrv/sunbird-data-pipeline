@@ -1,5 +1,6 @@
 application.env="{{ env }}"
 spark.cassandra.connection.host={{groups['dp-cassandra'][0]}}
+spark.cassandra.connection.port="9042"
 service.search.url="{{lp_search}}"
 service.search.path="/v2/search"
 service.search.requestbody="""{"request":{"filters":{"objectType":["Content"],"contentType":["Story","Worksheet","Collection","Game"],"status":["Live"]},"limit":1000}}"""
@@ -265,3 +266,6 @@ druid.coordinator.host="http://{{groups['coordinator'][0]}}:8081/"
 druid.healthcheck.url="druid/coordinator/v1/loadstatus"
 
 device.api.enable.debug.log=true
+kafka.device.register.topic={{ env }}.events.deviceprofile
+kafka.metrics.event.topic={{ env }}.pipeline_metrics
+kafka.broker.list="{{groups['processing-cluster-kafka'][0]}}:9092"
