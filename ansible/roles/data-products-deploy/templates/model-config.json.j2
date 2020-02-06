@@ -3900,8 +3900,7 @@
           },
           "output": [{
             "type": "csv",
-            "dims": ["identifier", "channel", "name"],
-            "fileParameters": ["id", "dims"]
+            "dims": []
           }]
         },
         "esConfig": {
@@ -3916,6 +3915,7 @@
             }
         },
         "store": "azure",
+        "format":"csv",
         "key": "druid-reports/",
         "filePath": "druid-reports/",
         "container": {{ bucket }},
@@ -4019,12 +4019,12 @@
         "output": [{
           "type": "csv",
           "metrics": ["timespent"],
-          "dims": ["identifier", "channel", "name"],
-          "fileParameters": ["id", "dims"]
+          "dims": []
         }],
         "queryType": "groupBy"
       },
       "store": "azure",
+      "format":"csv",
       "key": "druid-reports/",
       "filePath": "druid-reports/",
       "container": {{ bucket }},
