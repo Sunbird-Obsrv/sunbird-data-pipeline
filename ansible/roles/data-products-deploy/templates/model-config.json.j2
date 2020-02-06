@@ -3918,7 +3918,7 @@
         "store": "azure",
         "key": "druid-reports/",
         "filePath": "druid-reports/",
-        "container": { bucket }},
+        "container": {{ bucket }},
         "folderPrefix": ["slug", "reportName"]
     },
     "output": [{
@@ -3989,7 +3989,7 @@
             }, {
               "type": "in",
               "dimension": "dimensions_pdata_id",
-              "values": ["dev.sunbird.app", "dev.sunbird.portal"]
+              "values": ["{{ producer_env }}.diksha.app", "{{ producer_env }}.diksha.portal"]
             }, {
               "type": "equals",
               "dimension": "dimensions_type",
@@ -4024,6 +4024,7 @@
         }],
         "queryType": "groupBy"
       },
+      "store": "azure",
       "key": "druid-reports/",
       "filePath": "druid-reports/",
       "container": {{ bucket }},
