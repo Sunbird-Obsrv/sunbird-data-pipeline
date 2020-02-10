@@ -45,6 +45,18 @@
   become_user: "{{ analytics_user }}"
   get_url: url={{ hadoop_aws_url }} dest={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/hadoop-aws-2.7.3.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
 
+- name: Download hadoop-azure 2.7.3 and copy to Spark jars folder
+  become: yes
+  become_user: "{{ analytics_user }}"
+  get_url: url={{ hadoop_azure_url }} dest={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/hadoop-azure-2.7.3.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
+
+
+- name: Download azure_storage 3.0.0 and copy to Spark jars folder
+  become: yes
+  become_user: "{{ analytics_user }}"
+  get_url: url={{ azure_storage }} dest={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/azure-storage-3.0.0.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
+
+
 - name: Remove java-xmlbuilder 1.0 from Spark jars folder
   become: yes
   become_user: "{{ analytics_user }}"
