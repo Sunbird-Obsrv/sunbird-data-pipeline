@@ -8,17 +8,17 @@
 - name: Check the segment percent
   set_fact:
     status: "Failed"
-  when: item.value < 95
-  with_dict: "{{ segment_stats.content }}" 
+  when: item.value != 100.0
+  with_dict: "{{ segment_stats.content }}"
 
 - name: Alert slack with segments down
   slack:
     token: '{{ druid_slack_token }}'
-    msg: 'Segments down'
+    msg: 'Segments down , restarting the services'
     channel: '{{ druid_slack_channel  }}'
     username: '{{ druid_slack_user }}'
     color: 'danger'
-    icon_emoji: ':bangbang:'
+    icon_emoji: ':heavy_exclamation_mark:'
   when: status is defined and status  == "Failed"
 
 - name: Restart druid historical service
@@ -30,17 +30,45 @@
   become: yes
   when: status is defined and status  == "Failed"
 
-- name: Test that historical is up
+- name: Check if historical is up
   wait_for: host={{ ansible_host }} port=8083  state=started
   when: status is defined and status  == "Failed"
 
-- name: Alert slack once the historical is up
+- name : Set the service status
+  set_fact:
+    service_status : "Running"
+  when: status is defined and status  == "Failed"
+
+- name: Get the segment stats after the restart
+  uri:
+    method: GET
+    url: "{{ segments_stats_url }}"
+    return_content: yes
+  register : segment_stats
+  when : service_status is defined and service_status == "Running"
+
+- name: Check the segment stats again after the restart
+  set_fact:
+    segment_status: "Failed"
+  with_dict: "{{ segment_stats.content }}"
+  when : service_status is defined and service_status == "Running" and item.value != 100.0
+
+- name: Alert slack once the historical is up and segments status is fine
   slack:
     token: '{{ druid_slack_token }}'
-    msg: 'Back to running'
+    msg: 'Back to running on node {{ansible_host}}'
     color: 'good'
     channel: '{{ druid_slack_channel  }}'
     username: '{{ druid_slack_user }}'
-    icon_emoji: ':bangbang:'
-  when: status is defined and status  == "Failed"
+    icon_emoji: ':white_check_mark:'
+  when: service_status is defined and service_status == "Running" and segment_status is not defined
 
+- name: Alert slack when segments down even after the restart
+  slack:
+    token: '{{ druid_slack_token }}'
+    msg: 'Segments down even after Restart'
+    color: 'danger'
+    channel: '{{ druid_slack_channel }}'
+    username: '{{ druid_slack_user }}'
+    icon_emoji: ':heavy_exclamation_mark:'
+  when: segment_status is defined and segment_status == "Failed"

@@ -1,3 +1,7 @@
 - include_vars: "{{inventory_dir}}/secrets.yml
 - include: segments.yml
+  tags:
+    - segment_health
 - include: ingestion.yml
+  tags:
+    - ingestion_health
