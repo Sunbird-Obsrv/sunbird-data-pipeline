@@ -3919,7 +3919,9 @@
         "key": "druid-reports/",
         "filePath": "druid-reports/",
         "container": {{ bucket }},
-        "folderPrefix": ["slug", "reportName"]
+        "folderPrefix": ["slug", "reportName"],
+        "sparkCassandraConnectionHost":"{{core_cassandra_host}}",
+        "sparkElasticsearchConnectionHost":"{{sunbird_es_host}}"
     },
     "output": [{
       "to": "console",
@@ -3935,7 +3937,7 @@
     "search": {
       "type": "none"
     },
-    "model": "org.ekstep.analytics.model.report.CourseConsumptionModel",
+    "model": "org.ekstep.analytics.model.report.CourseConsumptionJob",
     "modelParams": {
       "esConfig": {
         "request": {
@@ -4028,7 +4030,9 @@
       "key": "druid-reports/",
       "filePath": "druid-reports/",
       "container": {{ bucket }},
-      "folderPrefix": ["slug", "reportName"]
+      "folderPrefix": ["slug", "reportName"],
+      "sparkCassandraConnectionHost":"{{core_cassandra_host}}",
+      "sparkElasticsearchConnectionHost":"{{sunbird_es_host}}"
     },
     "output": [{
       "to": "console",
