@@ -11,6 +11,23 @@
   when: item.value != 100.0
   with_dict: "{{ segment_stats.content }}"
 
+- name: Get the retry_count
+  shell : cat {{druid_home }}/segment_retry_count
+  register : retry_count
+
+- name: Fail the job when segments down and when max retries reached
+  set_fact:
+   status : "Down"
+  when: status  is defined and status == "Failed" and retry_count.stdout == 3
+
+- name : Increment retry count
+  shell : echo "{{ retry_count.stdout | int  + 1}}" > /home/druid/segment_retry_count
+  when: status is defined and status  == "Failed"
+
+- name : Default retry count value to 0
+  shell : echo "0" > {{druid_home }}/segment_retry_count
+  when: status is not defined
+
 - name: Alert slack with segments down
   slack:
     token: '{{ druid_slack_token }}'
@@ -61,6 +78,10 @@
     channel: '{{ druid_slack_channel  }}'
     username: '{{ druid_slack_user }}'
     icon_emoji: ':white_check_mark:'
+  when: service_status is defined and service_status == "Running" and segment_status is not defined
+
+- name : Default retry count value to 0
+  shell : echo "0" > {{druid_home }}/segment_retry_count
   when: service_status is defined and service_status == "Running" and segment_status is not defined
 
 - name: Alert slack when segments down even after the restart
