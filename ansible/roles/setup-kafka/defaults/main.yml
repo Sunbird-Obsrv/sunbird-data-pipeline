@@ -56,6 +56,9 @@ processing_kafka_overriden_topics:
   - name: pipeline_metrics
     retention_time: 86400000
     replication_factor: 1
+  - name: prom.monitoring.metrics
+    retention_time: 604800000
+    replication_factor: 1
   - name: metrics
     retention_time: 604800000
     replication_factor: 1
@@ -252,4 +255,7 @@ processing_kafka_topics:
     replication_factor: 1
   - name: telemetry.share
     num_of_partitions: 1
-    replication_factor: 1    
+    replication_factor: 1
+  - name: prom.monitoring.metrics
+    num_of_partitions: 1
+    replication_factor: 1
