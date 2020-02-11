@@ -1,8 +1,8 @@
-- include_vars: "{{inventory_dir}}/secrets.yml
+- include_vars: "{{inventory_dir}}/secrets.yml"
 
 - name : Check for the segment retry file
   stat:
-    path: "{{druid_home }}/segment_retry_count"
+    path: "{{ druid_home }}/segment_retry_count"
   register: result
   tags:
     - segment_health

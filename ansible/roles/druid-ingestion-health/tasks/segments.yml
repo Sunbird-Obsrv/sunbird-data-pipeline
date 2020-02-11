@@ -12,7 +12,7 @@
   with_dict: "{{ segment_stats.content }}"
 
 - name: Get the retry_count
-  shell : cat {{druid_home }}/segment_retry_count
+  shell : cat "{{ druid_home }}/segment_retry_count"
   register : retry_count
 
 - name: Fail the job when segments down and when max retries reached
@@ -25,7 +25,7 @@
   when: status is defined and status  == "Failed"
 
 - name : Default retry count value to 0
-  shell : echo "0" > {{druid_home }}/segment_retry_count
+  shell : echo "0" > "{{druid_home }}/segment_retry_count"
   when: status is not defined
 
 - name: Alert slack with segments down
