@@ -2,7 +2,7 @@
 
 - name : Check for the segment retry file
   stat:
-    path: "{{druid_home }}/segment_retry_count"
+    path: "{{ druid_home }}/segment_retry_count"
   register: result
   tags:
     - segment_health
