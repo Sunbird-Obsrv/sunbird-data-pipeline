@@ -1,0 +1,6 @@
+---
+
+- hosts: historical
+  become: yes
+  roles:
+     - druid-ingestion-health
