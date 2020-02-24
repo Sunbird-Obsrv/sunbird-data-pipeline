@@ -37,7 +37,6 @@
 - name: Install required python modules
   become_user: "{{analytics_user}}"
   pip: 
-    name: "{{ item }}"
     virtualenv: "{{ virtualenv_path }}"
     virtualenv_python: "python3.6"
     requirements: "{{ replay_script_path }}/replay-scripts/{{ requirements_file }}"
