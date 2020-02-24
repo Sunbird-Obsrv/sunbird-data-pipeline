@@ -21,7 +21,7 @@
 - name: Activate venv
   become: yes
   pip:
-    name: "{{replay_script_path}}"
+    name: "{{ replay_script_path }}"
     virtualenv: "{{ virtualenv_path }}"
     virtualenv_python: "python3.6"
   tags:
