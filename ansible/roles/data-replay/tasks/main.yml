@@ -7,14 +7,14 @@
 - name: Copy the replay-scripts
   become: yes
   copy:
-    src: replay_script_artifacts.zip
+    src: "{{ artifact }}"
     dest: "{{ script_path }}"
     force: yes
   tags:
     - common
 
 - name: Unzip replay-scripts
-  shell: "cd {{ script_path }} && unzip replay_script_artifacts.zip"
+  shell: "cd {{ script_path }} && unzip {{ artifact }}"
   tags:
     - common
 
