@@ -31,7 +31,7 @@
 - name: Alert slack with segments down
   slack:
     token: '{{ druid_slack_token }}'
-    msg: 'Segments down , restarting the services'
+    msg: 'Segments down , restarting the historical service'
     channel: '{{ druid_slack_channel  }}'
     username: '{{ druid_slack_user }}'
     color: 'danger'
@@ -73,7 +73,7 @@
 - name: Alert slack once the historical is up and segments status is fine
   slack:
     token: '{{ druid_slack_token }}'
-    msg: 'Back to running on node {{ansible_host}}'
+    msg: 'Historial Service Back to running on node {{ansible_host}} and Segments up'
     color: 'good'
     channel: '{{ druid_slack_channel  }}'
     username: '{{ druid_slack_user }}'
@@ -90,6 +90,5 @@
     msg: 'Segments down even after Restart'
     color: 'danger'
     channel: '{{ druid_slack_channel }}'
-    username: '{{ druid_slack_user }}'
     icon_emoji: ':heavy_exclamation_mark:'
   when: segment_status is defined and segment_status == "Failed"
