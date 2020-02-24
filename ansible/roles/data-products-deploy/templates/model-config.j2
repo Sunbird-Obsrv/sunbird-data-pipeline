@@ -64,12 +64,6 @@ config() {
 		"video-streaming")
 		echo '{"search":{"type":"azure"},"model":"org.ekstep.analytics.job.VideoStreamingJob","modelParams":{"maxIterations":10},"output":[{"to":"console","params":{"printEvent":false}}],"parallelization":8,"appName":"Video Streaming Job","deviceMapping":false}'
 	   	;;
-	   	"portal-metrics")
-		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.updater.UpdatePortalMetrics","modelParams":{"bucket":"portal-metrics","key":"diksha-aggregate-metrics.json","dispatch":true, "public":true},"output":[{"to":"console","params":{"printEvent":false}}],"parallelization":8,"appName":"PortalMetricsUpdater","deviceMapping":false}'
-		;;
-		"workflow-usage-metrics")
-		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/wfus/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.updater.UpdateWorkFlowUsageMetricsMode","output":[{"to":"console","params":{"printEvent":false}}],"parallelization":10,"appName":"Workflow Metrics Updater","deviceMapping":false}'
-		;;
 	   	"course-dashboard-metrics")
 		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.updater.UpdateCourseMetrics","modelParams":{"fromDate":"$(date --date yesterday '+%Y-%m-%d')","toDate":"$(date --date yesterday '+%Y-%m-%d')","sparkCassandraConnectionHost":"'$sunbirdPlatformCassandraHost'","sparkElasticsearchConnectionHost":"'$sunbirdPlatformElasticsearchHost'"},"output":[{"to":"console","params":{"printEvent":false}}],"parallelization":8,"appName":"Course Dashboard Metrics","deviceMapping":false}'
 		;;

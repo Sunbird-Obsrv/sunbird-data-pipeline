@@ -19,8 +19,8 @@ metrics_topic: "{{ env }}.telemetry.metrics"
 job_manager_tmp_dir: "transient-data"
 channel: dev-test
 druid_broker_host: "{{groups['broker'][0]}}"
-analytics_job_list: '"wfs", "wfus", "workflow-usage-metrics", "portal-metrics", "ds", "dpu", "content-rating-updater", "druid-query-processor", "desktop-consumption-report", "audit-metrics-report", "course-enrollment-report", "data-exhaust", "monitor-job-summ"'
-analytics_jobs_count: 13
+analytics_job_list: '"wfs", "wfus", "ds", "dpu", "content-rating-updater", "druid-query-processor", "desktop-consumption-report", "audit-metrics-report","course-enrollment-report", "data-exhaust", "monitor-job-summ"'
+analytics_jobs_count: 11
 
 cassandra_keyspace_prefix: '{{ env }}_'
 dp_dispatch_bucket_name: ekstep-dev-data-store
