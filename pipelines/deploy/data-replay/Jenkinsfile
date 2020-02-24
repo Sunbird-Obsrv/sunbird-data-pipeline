@@ -26,7 +26,7 @@ node() {
                        mv ${artifact} ansible
                     """
                     ansiblePlaybook = "${currentWs}/ansible/data-replay.yml"
-                    ansibleExtraArgs = "--vault-password-file /var/lib/jenkins/secrets/vault-pass --tags common --extra-vars \"artifact ${artifact}\""
+                    ansibleExtraArgs = "--vault-password-file /var/lib/jenkins/secrets/vault-pass --tags common --extra-vars \"artifact=${artifact}\""
                     values.put('ansiblePlaybook', ansiblePlaybook)
                     values.put('ansibleExtraArgs', ansibleExtraArgs)
                     println values
