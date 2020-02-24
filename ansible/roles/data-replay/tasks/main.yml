@@ -35,7 +35,6 @@
 #     - common
 
 - name: Install required python modules
-  become_user: "{{analytics_user}}"
   pip: 
     virtualenv: "{{ virtualenv_path }}"
     virtualenv_python: "python3.6"
