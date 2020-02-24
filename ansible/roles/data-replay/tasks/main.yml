@@ -1,6 +1,6 @@
 - name: Create replay-scripts folder
   become: yes
-  shell: "mkdir {{ replay_script_path }}"
+  file: path={{ replay_script_path }} state=directory
   tags:
     - common
 
