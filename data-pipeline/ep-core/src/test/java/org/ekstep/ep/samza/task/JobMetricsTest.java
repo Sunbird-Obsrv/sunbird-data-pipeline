@@ -230,10 +230,9 @@ public class JobMetricsTest {
         Gson gson = new Gson();
         @SuppressWarnings("unchecked")
         MetricEvent metrics = gson.fromJson(metricsOutput, MetricEvent.class);
-        assertEquals("samza", metrics.getSystem());
-        assertEquals("pipeline-metrics", metrics.getSubsystem());
         assertEquals(8, metrics.getMetrics().size());
-        assertEquals(2, metrics.getDimensions().size());
+        assertEquals(4, metrics.getDimensions().size());
+
 
         List<Element> metricList = metrics.getMetrics();
         assertTrue(metricList.contains(new Element("success-message-count", 1.0)));
@@ -247,5 +246,7 @@ public class JobMetricsTest {
         List<Element> dimsList = metrics.getDimensions();
         assertTrue(dimsList.contains(new Element("job-name", "test-job")));
         assertTrue(dimsList.contains(new Element("partition", 0.0)));
+        assertTrue(dimsList.contains(new Element("system", "samza")));
+        assertTrue(dimsList.contains(new Element("subsystem", "pipeline-metrics")));
     }
 }
