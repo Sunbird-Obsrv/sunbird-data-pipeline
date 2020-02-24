@@ -40,8 +40,7 @@
     name: "{{ item }}"
     virtualenv: "{{ virtualenv_path }}"
     virtualenv_python: "python3.6"
-  with_items:
-    "{{ replay_script_path }}/replay-scripts/{{ requirements_file }}"
+    requirements: "{{ replay_script_path }}/replay-scripts/{{ requirements_file }}"
   tags:
     - common
 
