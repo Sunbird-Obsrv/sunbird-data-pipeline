@@ -9,6 +9,8 @@
     path: "{{ replay_script_path }}/replay_scripts"
     state: absent
   become_user: "{{analytics_user}}" 
+  tags:
+    - common
 
 - name: Copy the replay-scripts
   become_user: "{{analytics_user}}"
