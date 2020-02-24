@@ -15,10 +15,16 @@ node() {
         ansiColor('xterm') {
             stage('deploy'){
                 values = [:]
+                envDir = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-3].trim()
+                module = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-2].trim()
+                jobName = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-1].trim()
                 currentWs = sh(returnStdout: true, script: 'pwd').trim()
                 ansiblePlaybook = "${currentWs}/ansible/data-replay.yml"
                 ansibleExtraArgs = "--vault-password-file /var/lib/jenkins/secrets/vault-pass --tags replay --extra-vars \"container=${params.container} prefix=${params.prefix} start_date=${params.start_date} end_date=${params.end_date} delete_backups=${params.delete_backups}\""
                 values.put('currentWs', currentWs)
+                values.put('env', envDir)
+                values.put('module', module)
+                values.put('jobName', jobName)
                 values.put('ansiblePlaybook', ansiblePlaybook)
                 values.put('ansibleExtraArgs', ansibleExtraArgs)
                 println values
