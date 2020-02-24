@@ -90,6 +90,5 @@
     msg: 'Segments down even after Restart'
     color: 'danger'
     channel: '{{ druid_slack_channel }}'
-    username: '{{ druid_slack_user }}'
     icon_emoji: ':heavy_exclamation_mark:'
   when: segment_status is defined and segment_status == "Failed"
