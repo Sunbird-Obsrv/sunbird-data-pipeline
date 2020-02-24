@@ -1,4 +1,4 @@
-- name: Create replay-scripts folder
+- name: Create replay scripts folder
   file: path={{ replay_script_path }} state=directory owner={{ analytics_user }} group={{ analytics_group }}
   tags:
     - common
@@ -6,13 +6,12 @@
 - name: Remove script directory
   become_user: "{{analytics_user}}"
   file:
-    path: "{{ replay_script_path }}/replay_scripts"
+    path: "{{ replay_script_path }}/replay-scripts"
     state: absent
-  become_user: "{{analytics_user}}" 
   tags:
     - common
 
-- name: Copy the replay-scripts
+- name: Copy the replay scripts
   become_user: "{{analytics_user}}"
   copy:
     src: "{{ artifact }}"
@@ -25,7 +24,7 @@
   become_user: "{{analytics_user}}"
   shell: "cd {{ replay_script_path }} && unzip {{ artifact }}"
   tags:
-    - common   
+    - common
 
 # - name: Activate venv
 #   pip:
@@ -42,7 +41,7 @@
     virtualenv: "{{ virtualenv_path }}"
     virtualenv_python: "python3.6"
   with_items:
-    "{{ replay_script_path }}/replay_scripts/{{ requirements_file }}"
+    "{{ replay_script_path }}/replay-scripts/{{ requirements_file }}"
   tags:
     - common
 
