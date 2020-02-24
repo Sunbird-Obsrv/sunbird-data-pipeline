@@ -3,3 +3,4 @@ analytics_group: analytics
 replay_script_path: "/mount/data/replay/script"
 virtualenv_path: "/mount/venv"
 requirements_file: "requirements.txt"
+kafka_broker_list: "{{groups['processing-cluster-kafka'][0]}}:9092"
