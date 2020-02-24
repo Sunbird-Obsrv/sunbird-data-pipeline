@@ -3,6 +3,13 @@
   tags:
     - common
 
+- name: Remove script directory
+  become_user: "{{analytics_user}}"
+  file:
+    path: "{{ replay_script_path }}/replay_scripts"
+    state: absent
+  become_user: "{{analytics_user}}" 
+
 - name: Copy the replay-scripts
   become_user: "{{analytics_user}}"
   copy:
@@ -16,14 +23,7 @@
   become_user: "{{analytics_user}}"
   shell: "cd {{ replay_script_path }} && unzip {{ artifact }}"
   tags:
-    - common
-
-- name: Remove script directory
-  become_user: "{{analytics_user}}"
-  file:
-    path: "{{ replay_script_path }}/replay_scripts"
-    state: absent
-  become_user: "{{analytics_user}}"    
+    - common   
 
 # - name: Activate venv
 #   pip:
