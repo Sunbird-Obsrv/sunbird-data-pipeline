@@ -1,11 +1,9 @@
 - name: Create replay-scripts folder
-  become: yes
-  file: path={{ replay_script_path }} state=directory
+  file: path={{ replay_script_path }} state=directory owner={{ analytics_user }} group={{ analytics_group }}
   tags:
     - common
 
 - name: Copy the replay-scripts
-  become: yes
   copy:
     src: "{{ artifact }}"
     dest: "{{ replay_script_path }}"
@@ -19,7 +17,6 @@
     - common
 
 - name: Activate venv
-  become: yes
   pip:
     name: "{{ replay_script_path }}"
     virtualenv: "{{ virtualenv_path }}"
@@ -28,7 +25,6 @@
     - common
 
 - name: Install required python modules
-  become: yes
   pip: 
     name: "{{ item }}"
   with_items:

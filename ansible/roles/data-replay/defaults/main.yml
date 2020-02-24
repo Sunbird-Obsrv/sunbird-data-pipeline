@@ -1,3 +1,5 @@
-replay_script_path: "/mount/data/analytics/replay-script"
+analytics_user: analytics
+analytics_group: analytics
+replay_script_path: "/mount/data/replay/script"
 virtualenv_path: "/mount/venv"
 requirements_file: "requirements.txt"
