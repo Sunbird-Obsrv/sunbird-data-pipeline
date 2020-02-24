@@ -23,7 +23,7 @@ node() {
                 }
                 stage('deploy artifact'){
                     sh """
-                       mv replay_script_artifacts.zip ansible
+                       mv ${artifact} ansible
                     """
                     ansiblePlaybook = "${currentWs}/ansible/data-replay.yml"
                     ansibleExtraArgs = "--vault-password-file /var/lib/jenkins/secrets/vault-pass --tags common"
