@@ -4,6 +4,7 @@
     - common
 
 - name: Copy the replay-scripts
+  become_user: "{{analytics_user}}"
   copy:
     src: "{{ artifact }}"
     dest: "{{ replay_script_path }}"
@@ -12,9 +13,17 @@
     - common
 
 - name: Unzip replay-scripts
+  become_user: "{{analytics_user}}"
   shell: "cd {{ replay_script_path }} && unzip {{ artifact }}"
   tags:
     - common
+
+- name: Remove script directory
+  become_user: "{{analytics_user}}"
+  file:
+    path: "{{ replay_script_path }}/replay_scripts"
+    state: absent
+  become_user: "{{analytics_user}}"    
 
 # - name: Activate venv
 #   pip:
@@ -25,6 +34,7 @@
 #     - common
 
 - name: Install required python modules
+  become_user: "{{analytics_user}}"
   pip: 
     name: "{{ item }}"
     virtualenv: "{{ virtualenv_path }}"
