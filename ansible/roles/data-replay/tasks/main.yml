@@ -1,6 +1,6 @@
 - name: Create replay-scripts folder
   become: yes
-  shell: "mkdir {{ script_path }}"
+  shell: "mkdir {{ replay_script_path }}"
   tags:
     - common
 
@@ -8,20 +8,20 @@
   become: yes
   copy:
     src: "{{ artifact }}"
-    dest: "{{ script_path }}"
+    dest: "{{ replay_script_path }}"
     force: yes
   tags:
     - common
 
 - name: Unzip replay-scripts
-  shell: "cd {{ script_path }} && unzip {{ artifact }}"
+  shell: "cd {{ replay_script_path }} && unzip {{ artifact }}"
   tags:
     - common
 
 - name: Activate venv
   become: yes
   pip:
-    name: "{{script_path}}"
+    name: "{{replay_script_path}}"
     virtualenv: "{{ virtualenv_path }}"
     virtualenv_python: "python3.6"
   tags:
@@ -32,7 +32,7 @@
   pip: 
     name: "{{ item }}"
   with_items:
-    "{{ script_path }}/{{ requirements_file }}"
+    "{{ replay_script_path }}/{{ requirements_file }}"
   tags:
     - common
 
