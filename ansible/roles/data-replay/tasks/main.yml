@@ -16,17 +16,19 @@
   tags:
     - common
 
-- name: Activate venv
-  pip:
-    name: "{{ replay_script_path }}"
-    virtualenv: "{{ virtualenv_path }}"
-    virtualenv_python: "python3.6"
-  tags:
-    - common
+# - name: Activate venv
+#   pip:
+#     name: "{{ replay_script_path }}/replay_script_artifacts"
+#     virtualenv: "{{ virtualenv_path }}"
+#     virtualenv_python: "python3.6"
+#   tags:
+#     - common
 
 - name: Install required python modules
   pip: 
     name: "{{ item }}"
+    virtualenv: "{{ virtualenv_path }}"
+    virtualenv_python: "python3.6"
   with_items:
     "{{ replay_script_path }}/{{ requirements_file }}"
   tags:
