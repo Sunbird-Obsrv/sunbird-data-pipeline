@@ -323,9 +323,9 @@ public class JobMetrics {
 
     public String generateMetrics(List<String> metrics) {
         Map<String, Object> metricsEvent = new HashMap<>();
+        metricsEvent.put("system", "samza");
+        metricsEvent.put("subsystem", "pipeline-metrics");
         List<Map<String, Object>> dimsList = new ArrayList<>();
-        dimsList.add(createMap("system", "samza"));
-        dimsList.add(createMap("subsystem", "pipeline-metrics"));
         dimsList.add(createMap("job-name", jobName));
         dimsList.add(createMap("partition", partition));
 
