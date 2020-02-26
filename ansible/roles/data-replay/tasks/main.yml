@@ -1,9 +1,5 @@
 - name: Create replay scripts folder
   file: path={{ replay_script_path }} state=directory owner={{ analytics_user }} group={{ analytics_group }}
-  environment:
-    ENV: "{{ env }}"
-    SPARK_HOME: "{{ spark_home }}"
-    PATH: "$PATH:{{ spark_home }}/bin"
   tags:
     - common
 
@@ -51,5 +47,9 @@
   shell: "source {{ virtualenv_path }}/bin/activate && python {{ replay_script_path }}/replay-scripts/src/main/python/replay/data_replay.py {{ container }} {{ prefix }} {{ start_date }} {{ end_date }} {{ kafka_broker_list }} {{ delete_backups }} >> {{ replay_script_path }}/{{ end_date }}-data-replay.log"
   args:
     executable: /bin/bash
+  environment:
+    ENV: "{{ env }}"
+    SPARK_HOME: "{{ spark_home }}"
+    PATH: "$PATH:{{ spark_home }}/bin"
   tags:
     - replay
