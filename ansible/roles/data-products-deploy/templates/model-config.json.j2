@@ -2296,6 +2296,11 @@
           "model": "StateAdminGeoReportJob",
           "category": "consumption",
           "input_dependency": "None"
+        },
+        {
+          "model": "CourseEnrollmentJob",
+          "category": "consumption",
+          "input_dependency": "None"
         }
       ]
     },
@@ -3880,6 +3885,168 @@
     ],
     "parallelization": 8,
     "appName": "Druid Query Processor",
+    "deviceMapping": false
+  },
+  "course-enrollment-report":{
+    "search": {
+        "type": "none"
+      },
+      "model": "org.ekstep.analytics.model.report.CourseEnrollmentJob",
+      "modelParams": {
+        "reportConfig": {
+          "id": "tpd_metrics",
+          "metrics" : [],
+          "labels": {
+            "completionCount": "Completion Count",
+            "status": "Status",
+            "enrollmentCount": "Enrollment Count",
+            "courseName": "Course Name",
+            "batchName": "Batch Name"
+          },
+          "output": [{
+            "type": "csv",
+            "dims": []
+          }]
+        },
+        "esConfig": {
+        "request": {
+                "filters":{
+                    "objectType": ["Content"],
+                    "contentType": ["Course"],
+                    "identifier": [],
+                    "status": ["Live"]
+                },
+                "limit": 10000
+            }
+        },
+        "store": "azure",
+        "format":"csv",
+        "key": "druid-reports/",
+        "filePath": "druid-reports/",
+        "container": {{ bucket }},
+        "folderPrefix": ["slug", "reportName"],
+        "sparkCassandraConnectionHost":"{{core_cassandra_host}}",
+        "sparkElasticsearchConnectionHost":"{{sunbird_es_host}}"
+    },
+    "output": [{
+      "to": "console",
+      "params": {
+        "printEvent": false
+      }
+    }],
+    "parallelization": 8,
+    "appName": "TPD Course Enrollment Metrics Model",
+    "deviceMapping": false
+  },
+  "course-consumption-report":{
+    "search": {
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.model.report.CourseConsumptionJob",
+    "modelParams": {
+      "esConfig": {
+        "request": {
+          "filters": {
+            "objectType": ["Content"],
+            "contentType": ["Course"],
+            "identifier": [],
+            "status": ["Live"]
+          }
+        }
+      },
+      "reportConfig": {
+        "id": "tpd_metrics",
+        "labels": {
+          "date": "Date",
+          "status": "Batch Status",
+          "timespent": "Timespent in mins",
+          "courseName": "Course Name",
+          "batchName": "Batch Name"
+        },
+        "dateRange": {
+          "staticInterval": "LastDay",
+          "granularity": "all"
+        },
+        "metrics": [{
+          "metric": "totalCoursePlays",
+          "label": "Total Course Plays (in mins) ",
+          "druidQuery": {
+            "queryType": "groupBy",
+            "dataSource": "summary-events",
+            "intervals": "LastDay",
+            "aggregations": [{
+              "name": "sum__edata_time_spent",
+              "type": "doubleSum",
+              "fieldName": "edata_time_spent"
+            }],
+            "dimensions": [{
+              "fieldName": "object_rollup_l1",
+              "aliasName": "courseId"
+            }, {
+              "fieldName": "uid",
+              "aliasName": "userId"
+            }, {
+              "fieldName": "context_cdata_id",
+              "aliasName": "batchId"
+            }],
+            "filters": [{
+              "type": "equals",
+              "dimension": "eid",
+              "value": "ME_WORKFLOW_SUMMARY"
+            }, {
+              "type": "in",
+              "dimension": "dimensions_pdata_id",
+              "values": ["{{ producer_env }}.diksha.app", "{{ producer_env }}.diksha.portal"]
+            }, {
+              "type": "equals",
+              "dimension": "dimensions_type",
+              "value": "content"
+            }, {
+              "type": "equals",
+              "dimension": "dimensions_mode",
+              "value": "play"
+            }, {
+              "type": "equals",
+              "dimension": "context_cdata_type",
+              "value": "batch"
+            }],
+            "postAggregation": [{
+              "type": "arithmetic",
+              "name": "timespent",
+              "fields": {
+                "leftField": "sum__edata_time_spent",
+                "rightField": 60,
+                "rightFieldType": "constant"
+              },
+              "fn": "/"
+            }],
+            "descending": "false"
+          }
+        }],
+        "output": [{
+          "type": "csv",
+          "metrics": ["timespent"],
+          "dims": []
+        }],
+        "queryType": "groupBy"
+      },
+      "store": "azure",
+      "format":"csv",
+      "key": "druid-reports/",
+      "filePath": "druid-reports/",
+      "container": {{ bucket }},
+      "folderPrefix": ["slug", "reportName"],
+      "sparkCassandraConnectionHost":"{{core_cassandra_host}}",
+      "sparkElasticsearchConnectionHost":"{{sunbird_es_host}}"
+    },
+    "output": [{
+      "to": "console",
+      "params": {
+        "printEvent": false
+      }
+    }],
+    "parallelization": 8,
+    "appName": "TPD Course Consumption Metrics Model",
     "deviceMapping": false
   },
   "audit-metrics-report": {

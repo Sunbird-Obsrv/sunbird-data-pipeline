@@ -10,6 +10,8 @@ import org.apache.samza.task.TaskCoordinator;
 import org.apache.samza.task.WindowableTask;
 import org.ekstep.ep.samza.core.JobMetrics;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 abstract class BaseSamzaTask implements StreamTask, InitableTask, WindowableTask {
@@ -18,6 +20,8 @@ abstract class BaseSamzaTask implements StreamTask, InitableTask, WindowableTask
 	private String metricsTopic;
 	private List<String> metricsList;
 	private String prometheusMetricsTopic;
+	private List<String> defaultPipelineMetrics =
+			new ArrayList<>(Arrays.asList("success-message-count", "failed-message-count", "error-message-count", "skipped-message-count"));
 	
 	public BaseSamzaTask() {
 		
@@ -27,7 +31,7 @@ abstract class BaseSamzaTask implements StreamTask, InitableTask, WindowableTask
 		this.metrics = metrics;
 		this.metricsTopic = config.get("output.metrics.topic.name", "telemetry.pipeline_metrics");
 		this.prometheusMetricsTopic = config.get("output.prometheus.metrics.topic.name", "telemetry.metrics");
-		this.metricsList = config.getList("pipeline.metrics.list");
+		this.metricsList = config.getList("pipeline.metrics.list", defaultPipelineMetrics);
 	}
 	
 

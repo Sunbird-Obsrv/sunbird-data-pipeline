@@ -235,6 +235,7 @@ public class JobMetricsTest {
         assertEquals(8, metrics.getMetrics().size());
         assertEquals(2, metrics.getDimensions().size());
 
+
         List<Element> metricList = metrics.getMetrics();
         assertTrue(metricList.contains(new Element("success-message-count", 1.0)));
         assertTrue(metricList.contains(new Element("skipped-message-count", 1.0)));
