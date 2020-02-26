@@ -1,3 +1,13 @@
+- name: Add ENV to environment
+  become: yes
+  environment:
+    ENV: "{{ env }}"
+
+- name: Add SPARK_HOME to environment
+  become: yes
+  environment:
+    SPARK_HOME: "{{ spark_home }}"
+
 - name: Create replay scripts folder
   file: path={{ replay_script_path }} state=directory owner={{ analytics_user }} group={{ analytics_group }}
   tags:
