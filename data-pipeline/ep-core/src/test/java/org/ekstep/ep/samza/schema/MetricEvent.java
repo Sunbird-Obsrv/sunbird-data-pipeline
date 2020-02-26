@@ -1,11 +1,14 @@
 package org.ekstep.ep.samza.schema;
 
+import org.joda.time.DateTime;
+
 import java.util.List;
 
 public class MetricEvent {
 
     private String system;
     private String subsystem;
+    private Long metricts;
     private List<Element> metrics;
     private List<Element> dimensions;
 
@@ -23,6 +26,14 @@ public class MetricEvent {
 
     public void setSubsystem(String subsystem) {
         this.subsystem = subsystem;
+    }
+
+    public Long getMetricts() {
+        return metricts;
+    }
+
+    public void setMetricts(Long metricts) {
+        this.metricts = metricts;
     }
 
     public List<Element> getMetrics() {

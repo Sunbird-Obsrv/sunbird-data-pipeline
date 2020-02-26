@@ -325,6 +325,7 @@ public class JobMetrics {
         Map<String, Object> metricsEvent = new HashMap<>();
         metricsEvent.put("system", "samza");
         metricsEvent.put("subsystem", "pipeline-metrics");
+        metricsEvent.put("metricts", new DateTime().getMillis());
         List<Map<String, Object>> dimsList = new ArrayList<>();
         dimsList.add(createMap("job-name", jobName));
         dimsList.add(createMap("partition", partition));
@@ -339,7 +340,6 @@ public class JobMetrics {
 
         metricsList.add(createMap("consumer-lag",
                 consumerLag(((MetricsRegistryMap) context.getSamzaContainerContext().metricsRegistry).metrics())));
-        metricsList.add(createMap("metricts", new DateTime().getMillis()));
 
         metricsEvent.put("dimensions", dimsList);
         metricsEvent.put("metrics", metricsList);

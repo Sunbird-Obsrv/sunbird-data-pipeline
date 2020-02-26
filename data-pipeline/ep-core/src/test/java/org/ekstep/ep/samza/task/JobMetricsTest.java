@@ -19,6 +19,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -225,14 +226,15 @@ public class JobMetricsTest {
         jobMetricsMock.incBatchErrorCounter();
         jobMetricsMock.incDuplicateCounter();
         String metricsOutput = jobMetricsMock.generateMetrics(jobMetricList);
-        System.out.println(metricsOutput);
 
+        SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
         Gson gson = new Gson();
         @SuppressWarnings("unchecked")
         MetricEvent metrics = gson.fromJson(metricsOutput, MetricEvent.class);
         assertEquals("samza", metrics.getSystem());
         assertEquals("pipeline-metrics", metrics.getSubsystem());
-        assertEquals(8, metrics.getMetrics().size());
+        assertEquals(dt.format(new Date()), dt.format(new Date(metrics.getMetricts())));
+        assertEquals(7, metrics.getMetrics().size());
         assertEquals(2, metrics.getDimensions().size());
 
 
