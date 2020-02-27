@@ -31,8 +31,8 @@ druid_request_logging_type: "file"
 #azure config in group vars
 
 druid_azure_container_name: "telemetry-data-store"
-azure_account_name: "{{ sunbird_private_storage_account_name }}"
-azure_storage_secret: "{{ sunbird_private_storage_account_key }}"
+azure_account_name: "{{sunbird_private_storage_account_name}}"
+azure_storage_secret: "{{sunbird_private_storage_account_key}}"
 azure_container: "{{ druid_azure_container_name }}"
 
 #Logging the indexing logs to azure
