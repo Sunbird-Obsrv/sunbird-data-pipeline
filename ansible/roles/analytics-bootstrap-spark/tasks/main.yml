@@ -3,20 +3,20 @@
 - name: Add azure key to user profile
   become: yes
   become_user: "{{ analytics_user }}"
-  lineinfile: dest={{ analytics_user_home }}/.bashrc line='export azure_storage_key={{ azure_account_name }}'  state=present insertafter=EOF create=yes
+  lineinfile: dest={{ analytics_user_home }}/.bashrc line='export azure_storage_key={{ sunbird_private_storage_account_name }}'  state=present insertafter=EOF create=yes
 
 - name: Add azure secret to user profile
   become: yes
   become_user: "{{ analytics_user }}"
-  lineinfile: dest={{ analytics_user_home }}/.bashrc line='export azure_storage_secret={{ azure_storage_secret }}' state=present insertafter=EOF create=yes
+  lineinfile: dest={{ analytics_user_home }}/.bashrc line='export azure_storage_secret={{ sunbird_private_storage_account_key }}' state=present insertafter=EOF create=yes
 
 - name: Add azure key to environment
   become: yes
-  lineinfile: dest=/etc/environment line='azure_storage_key={{ azure_account_name }}'  state=present insertafter=EOF create=yes
+  lineinfile: dest=/etc/environment line='azure_storage_key={{ sunbird_private_storage_account_name }}'  state=present insertafter=EOF create=yes
 
 - name: Add azure secret to environment
   become: yes
-  lineinfile: dest=/etc/environment line='azure_storage_secret={{ azure_storage_secret }}' state=present insertafter=EOF create=yes
+  lineinfile: dest=/etc/environment line='azure_storage_secret={{ sunbird_private_storage_account_key }}' state=present insertafter=EOF create=yes
 
 - name: Install required python packages
   become: yes

@@ -10,8 +10,8 @@
     insertafter: EOF
     create: yes
   with_items:
-    - "export azure_storage_key={{ azure_account_name }}"
-    - "export azure_storage_secret={{ azure_storage_secret }}"
+    - "export azure_storage_key={{ sunbird_private_storage_account_name }}"
+    - "export azure_storage_secret={{ sunbird_private_storage_account_key }}"
   no_log: true
 
 - name: Add azure key to environment
@@ -23,8 +23,8 @@
     insertafter: EOF
     create: yes
   with_items:
-    - "azure_storage_secret={{ azure_account_name }}"
-    - "azure_storage_key={{ azure_storage_key }}" 
+    - "azure_storage_secret={{ sunbird_private_storage_account_name }}"
+    - "azure_storage_key={{ sunbird_private_storage_account_key }}" 
   no_log: true
 
 - name: Install libraries for spark bootstrap
