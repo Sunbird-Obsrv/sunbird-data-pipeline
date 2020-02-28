@@ -64,12 +64,12 @@ druid:
 job_config:
   es_cloud_uploader_path: "{{ content_snapshot_path }}/config/ESCloudUploader.conf"
   es_content_indexer_path: "{{ content_snapshot_path }}/config/ESContentIndexer.conf"
-  es_dialCode_indexer_path: "{{ content_snapshot_path }}/config/ESDialcodeIndexer.conf"
+  es_dialCode_indexer_path: "{{ content_snapshot_path }}/config/DialcodeRedisIndexer.conf"
   device_profile_path: "{{ content_snapshot_path }}/config/DeviceProfile.conf"
   cassandra_redis_path: "{{ content_snapshot_path }}/config/cassandraRedis.conf"
 
 output_file_path: "{{ content_snapshot_path }}/compositeSearchBatchData"
-config_files: ["application","cassandraRedis","DeviceProfile","ESCloudUploader","ESContentIndexer","ESDialcodeIndexer"]
+config_files: ["application","cassandraRedis","DeviceProfile","ESCloudUploader","ESContentIndexer", "DialcodeRedisIndexer"]
 script_files: ["DeviceProfileScripts","DruidContentIndexer","RedisContentIndexer","RedisDialcodeIndexer","RedisUserDataIndexer","run-script"]
 
 
