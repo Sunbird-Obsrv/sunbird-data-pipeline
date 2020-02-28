@@ -12,7 +12,11 @@ object CSVToRedisIndexer {
 
     def main(args: Array[String]): Unit = {
 
-        val filePath = "wasbs://dev-data-store@sunbirddevtelemetry.blob.core.windows.net/dialcode-data/dial_code.csv"
+        val container = config.getString("cloudStorage.container")
+        val dialCodeDataFile = config.getString("cloudStorage.dialCodeDataFile")
+        val cloudStorageAccount = config.getString("cloudStorage.accountName")
+
+        val filePath = s"wasbs://$container@$cloudStorageAccount.blob.core.windows.net/$dialCodeDataFile"
         val conf = new SparkConf()
           .setAppName("SparkCSVtoRedisIndexer")
           .setMaster("local[*]")
@@ -27,7 +31,7 @@ object CSVToRedisIndexer {
         val spark = SparkSession.builder.config(conf).getOrCreate()
 
         spark.sparkContext.hadoopConfiguration.set("fs.azure", "org.apache.hadoop.fs.azure.NativeAzureFileSystem")
-        spark.sparkContext.hadoopConfiguration.set("fs.azure.account.key." + config.getString("cloudStorage.accountName") + ".blob.core.windows.net", config.getString("cloudStorage.accountKey"))
+        spark.sparkContext.hadoopConfiguration.set("fs.azure.account.key." + cloudStorageAccount + ".blob.core.windows.net", config.getString("cloudStorage.accountKey"))
 
         val data = spark.read.option("header", "true").option("inferSchema", "true").csv(filePath).toJSON.rdd.map(f => f)
         val finalData = data.map(f => (getKey(f), f))
