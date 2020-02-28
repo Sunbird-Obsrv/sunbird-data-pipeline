@@ -98,6 +98,7 @@ public class DeNormalizationTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITHOUT_DID);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
         deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        //deNormalizationTask.invokeHttp();
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
@@ -324,6 +325,7 @@ public class DeNormalizationTaskTest {
             }
         }));
     }
+
 
     public void shouldSendEventsToSuccessTopicWithStringDialCodeData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_DIALCODE_AS_STRING);

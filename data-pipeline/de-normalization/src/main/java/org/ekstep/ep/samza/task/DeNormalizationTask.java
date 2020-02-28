@@ -75,5 +75,4 @@ public class DeNormalizationTask extends BaseSamzaTask {
         DeNormalizationSink sink = new DeNormalizationSink(collector, metrics, config);
         service.process(source, sink);
     }
-
 }

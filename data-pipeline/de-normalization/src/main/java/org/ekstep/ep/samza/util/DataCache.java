@@ -67,4 +67,8 @@ public class DataCache {
         }
         return list;
     }
+
+    public void insertData(String key, Map<String, Object> data){
+        String dataNode = redisConnection.get(key);
+    }
 }
