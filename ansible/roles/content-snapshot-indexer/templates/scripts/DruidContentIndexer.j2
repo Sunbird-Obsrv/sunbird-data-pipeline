@@ -10,6 +10,8 @@ home=`echo $HOME`
 ingestionSpecFilePath="{{ druid.ingestion_spec_path }}"
 jobJarPath="{{ content_snapshot_jar_path }}/{{ content_snapshot_jar_name }}"
 jobConfPath="{{ job_config.es_cloud_uploader_path }}"
+libs_path="{{ content_snapshot_path }}/adhoc-jobs-1.0"
+export SPARK_HOME="{{ spark_home }}"
 
 # get list of segments from content model snapshot datasource
 bkpIFS="$IFS"
@@ -21,10 +23,12 @@ IFS="$bkpIFS"
 echo "STARTED EXECUTING USER DRUID CONTENT INDEXER..."
 
 # start the spark script to fetch Elasticsearch data and write it to a file and upload to cloud
-nohup {{ spark_home }}/bin/spark-submit \
---conf spark.driver.extraJavaOptions="-Dconfig.file=${jobConfPath}" \
---class org.ekstep.analytics.jobs.ESCloudUploader \
-${jobJarPath} >> "{{ content_snapshot_path }}/logs/$today-task-execution.log" 2>&1
+#nohup {{ spark_home }}/bin/spark-submit \
+#--conf spark.driver.extraJavaOptions="-Dconfig.file=${jobConfPath}" \
+#--class org.ekstep.analytics.jobs.ESCloudUploader \
+#${jobJarPath} >> "{{ content_snapshot_path }}/logs/$today-task-execution.log" 2>&1
+
+nohup $SPARK_HOME/bin/spark-submit --conf spark.driver.extraJavaOptions="-Dconfig.file=${jobConfPath}"  --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ',')  --class org.ekstep.analytics.jobs.ESCloudUploader ${jobJarPath} >> "{{ content_snapshot_path }}/logs/$today-task-execution.log" 2>&1
 
 printf "\n>>> submit ingestion task to Druid!\n"
 
