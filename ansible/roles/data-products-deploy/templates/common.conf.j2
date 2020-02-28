@@ -214,7 +214,7 @@ druid.report.upload.wait.time.mins=1
 metric.producer.id="pipeline.monitoring"
 metric.producer.pid="dataproduct.metrics"
 push.metrics.kafka=true
-metric.kafka.broker="{{groups['processing-cluster-kafka'][0]}}:9092"
+metric.kafka.broker="{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
 metric.kafka.topic="{{ env }}.telemetry.metrics"
 
 //Postgres Config
