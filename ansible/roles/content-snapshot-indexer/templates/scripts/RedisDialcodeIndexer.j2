@@ -5,7 +5,6 @@ jobJarPath="{{ content_snapshot_jar_path }}/{{ content_snapshot_jar_name }}"
 jobConfPath="{{ job_config.es_dialCode_indexer_path }}"
 today=$(date "+%Y-%m-%d")
 libs_path="{{ content_snapshot_path }}/jars/adhoc-jobs-1.0"
-jobJarPath="{{ content_snapshot_jar_path }}/{{ content_snapshot_jar_name }}"
 export SPARK_HOME="{{ spark_home }}"
 
 echo "STARTED EXECUTING DIALCODE CACHE INDEXER..."
