@@ -105,6 +105,7 @@
     dest: "{{ content_snapshot_path }}/scripts/{{ item }}.sh"
     owner: "{{ analytics_user }}" 
     group: "{{ analytics_group }}"
+    mode: 777
   with_items: "{{ script_files }}"
   tags:
     - deploy
