@@ -13,7 +13,6 @@
 
 - name: Adding ENV Vars to spark servers environment.
   become: yes
-  become_user: "{{ analytics_user }}"
   lineinfile:
     path: '/etc/environment'
     line: 'export {{item.var}}={{item.value}}'
