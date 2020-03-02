@@ -8,12 +8,13 @@
     - deploy
 
 - name: Delete output dirs
+  become: yes
+  become_user: root
   file:
     path: "{{ output_file_path }}"
     state: absent
   tags:
-    - execute-script
-  become: yes    
+    - execute-script    
 
   
 - name: Copy distributed jar
