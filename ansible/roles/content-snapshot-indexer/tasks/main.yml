@@ -7,6 +7,15 @@
   tags:
     - deploy
 
+- name: Delete output dirs
+  file:
+    path: "{{ output_file_path }}"
+    state: absent
+  tags:
+    - execute-script
+  become: yes    
+
+  
 - name: Copy distributed jar
   copy: src={{ content_snapshot_distribuction_name }} dest={{ content_snapshot_path }}
   become: yes
