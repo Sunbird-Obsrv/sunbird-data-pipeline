@@ -38,6 +38,7 @@
     - deploy
 
 - name: Unarchive adhoc job script
+  become: yes
   unarchive: src={{ content_snapshot_path }}/{{ content_snapshot_distribuction_name }} dest={{ content_snapshot_jar_path }} copy=no group={{ analytics_group }} owner={{ analytics_user }}
   tags:
     - deploy
@@ -110,6 +111,7 @@
 
 - name: Run Script
   become: yes
+  become_user: "{{ analytics_user }}"
   shell: "sh {{ content_snapshot_path }}/scripts/run-script.sh {{ script_to_run }} >> {{ content_snapshot_path }}/logs/{{ansible_date_time.date}}-shell-execution.log"
   poll: 0
   async: 45
