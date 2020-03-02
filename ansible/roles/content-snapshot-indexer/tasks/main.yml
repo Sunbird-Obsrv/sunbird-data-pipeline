@@ -3,13 +3,13 @@
   file:
     path: '{{ content_snapshot_path }}'
     state: directory
-    mode: 0777
   become: yes
   tags:
     - deploy
 
 - name: Copy distributed jar
   copy: src={{ content_snapshot_distribuction_name }} dest={{ content_snapshot_path }}
+  become: yes
   tags:
     - deploy
   
@@ -19,12 +19,12 @@
     state: absent
   tags:
     - deploy
+  become: yes  
 
 - name: Create jars directory
   file:
     path: "{{ content_snapshot_jar_path }}"
     state: directory
-    mode: 0777
   become: yes
   tags:
     - deploy
@@ -33,7 +33,6 @@
   file:
     path: '{{ content_snapshot_path }}/logs'
     state: directory
-    mode: 0777
   become: yes
   tags:
     - deploy
@@ -44,16 +43,17 @@
     - deploy
 
 - name: Copy adhoc-jobs jar file
+  become: yes
   copy:
     src: "{{ content_snapshot_jar_name }}"
     dest: "{{ content_snapshot_jar_path }}"
-    mode: 0777
     owner: "{{ analytics_user }}" 
     group: "{{ analytics_group }}"
   tags:
     - deploy
 
 - name: Ensure removing config directory
+  become: yes
   file:
     path: '{{ content_snapshot_path }}/config'
     state: absent
@@ -64,16 +64,15 @@
   file:
     path: "{{ content_snapshot_path }}/config"
     state: directory
-    mode: 0777
   become: yes
   tags:
     - deploy
 
 - name: Ensure copying all conf files from the templates/conf folder
+  become: yes
   template:
     src: "conf/{{ item }}.j2"
     dest: "{{ content_snapshot_path }}/config/{{ item }}.conf"
-    mode: 0777
     owner: "{{ analytics_user }}" 
     group: "{{ analytics_group }}"
   with_items: "{{ config_files }}"
@@ -81,6 +80,7 @@
     - deploy
 
 - name: Ensure removing scripts directory
+  become: yes
   file:
     path: '{{ content_snapshot_path }}/scripts'
     state: absent
@@ -89,19 +89,19 @@
     - deploy
 
 - name: Create scripts directory
+  become: yes
   file:
     path: '{{ content_snapshot_path }}/scripts'
     state: directory
-    mode: 0777
   become: yes
   tags:
     - deploy
 
 - name: Ensure copying all script files from the templates/script dir
+  become: yes
   template:
     src: "scripts/{{ item }}.j2"
     dest: "{{ content_snapshot_path }}/scripts/{{ item }}.sh"
-    mode: 0777
     owner: "{{ analytics_user }}" 
     group: "{{ analytics_group }}"
   with_items: "{{ script_files }}"
