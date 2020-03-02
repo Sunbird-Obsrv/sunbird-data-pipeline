@@ -173,17 +173,17 @@
               {
                 "type": "path",
                 "name": "me_totalTimeSpentInApp",
-                "expr": "$.data.me_totalTimeSpent.app"
+                "expr": "$.data.me_totalTimeSpentInSec.app"
               },
               {
                 "type": "path",
                 "name": "me_totalTimeSpentInPortal",
-                "expr": "$.data.me_totalTimeSpent.portal"
+                "expr": "$.data.me_totalTimeSpentInSec.portal"
               },
               {
                 "type": "path",
                 "name": "me_totalTimeSpentInDesktop",
-                "expr": "$.data.me_totalTimeSpent.desktop"
+                "expr": "$.data.me_totalTimeSpentInSec.desktop"
               },
               {
                 "type": "path",
