@@ -6,6 +6,7 @@ import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
+
 import java.lang.reflect.Type;
 import java.util.*;
 
@@ -37,7 +38,7 @@ public class DataCache {
             }
         }
         if (cacheDataMap != null && !cacheDataMap.isEmpty()) {
-        	metrics.incCacheHitCounter();
+            metrics.incCacheHitCounter();
         }
         return cacheDataMap;
     }
@@ -45,8 +46,9 @@ public class DataCache {
     private Map<String, Object> getDataFromCache(String key) {
         Map<String, Object> cacheData = new HashMap<>();
         String dataNode = redisConnection.get(key);
-        if(dataNode != null && !dataNode.isEmpty()) {
-            Type type = new TypeToken<Map<String, Object>>() {}.getType();
+        if (dataNode != null && !dataNode.isEmpty()) {
+            Type type = new TypeToken<Map<String, Object>>() {
+            }.getType();
             Map<String, Object> parsedData = gson.fromJson(dataNode, type);
             parsedData.keySet().retainAll(fieldsList);
             parsedData.values().removeAll(Collections.singleton(""));
@@ -68,7 +70,16 @@ public class DataCache {
         return list;
     }
 
-    public void insertData(String key, Map<String, Object> data){
-        String dataNode = redisConnection.get(key);
+    public void insertData(String key, String data) {
+        try {
+            redisConnection.set(key, data);
+        } catch (JedisException ex) {
+            LOGGER.error("", "Exception when saving data to redis cache ", ex);
+            redisConnect.resetConnection();
+            redisConnection.set(key, data);
+        } finally {
+            metrics.incCacheHitCounter();
+        }
+
     }
 }

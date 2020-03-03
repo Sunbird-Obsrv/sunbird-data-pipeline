@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.ekstep.ep.samza.util.RestUtil.*;
+
 public abstract class IEventUpdater {
 
     static Logger LOGGER = new Logger(IEventUpdater.class);
@@ -105,7 +107,7 @@ public abstract class IEventUpdater {
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkNjNiMjgwZTQ1NDE0NDU4ODk4NzcwYzZhOGZiZjQ1MCJ9.Ji-22XcRrOiVy4dFAmE68wPxLkNmX4wKbTj_IB7fG6Y");
         try {
-            okhttp3.Response httpResponse = RestUtil.get("https://qa.ekstep.in/api/dialcode/v3/read/" + dialCode, headers);
+            okhttp3.Response httpResponse = get("https://qa.ekstep.in/api/dialcode/v3/read/" + dialCode, headers);
             String responseBody = httpResponse.body().string();
             System.out.println("res" + responseBody);
             return new Gson().fromJson(responseBody, Map.class);
