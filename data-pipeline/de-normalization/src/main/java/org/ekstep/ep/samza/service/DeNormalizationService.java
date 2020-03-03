@@ -7,6 +7,7 @@ import org.ekstep.ep.samza.domain.EventUpdaterFactory;
 import org.ekstep.ep.samza.task.DeNormalizationConfig;
 import org.ekstep.ep.samza.task.DeNormalizationSink;
 import org.ekstep.ep.samza.task.DeNormalizationSource;
+import org.ekstep.ep.samza.util.RestUtil;
 
 import java.util.List;
 
@@ -15,10 +16,12 @@ public class DeNormalizationService {
     private static Logger LOGGER = new Logger(DeNormalizationService.class);
     private final DeNormalizationConfig config;
     private final EventUpdaterFactory eventUpdaterFactory;
+    private final RestUtil restUtil;
 
-    public DeNormalizationService(DeNormalizationConfig config, EventUpdaterFactory eventUpdaterFactory) {
+    public DeNormalizationService(DeNormalizationConfig config, EventUpdaterFactory eventUpdaterFactory, RestUtil restUtil) {
         this.config = config;
         this.eventUpdaterFactory = eventUpdaterFactory;
+        this.restUtil = restUtil;
     }
 
     public void process(DeNormalizationSource source, DeNormalizationSink sink) {
@@ -64,7 +67,7 @@ public class DeNormalizationService {
 
         if ("dialcode".equalsIgnoreCase(event.objectType()) || "qr".equalsIgnoreCase(event.objectType())) {
             // add dialcode details to the event where object.type = dialcode/qr
-            eventUpdaterFactory.getInstance("dialcode-data-updater").update(event, event.getKey("content"));
+            eventUpdaterFactory.getInstance("dialcode-data-updater").update(event, event.getKey("content"), restUtil);
         } else if ("user".equalsIgnoreCase(event.objectType())) {
             // skipping since it is same as user-denorm
         }

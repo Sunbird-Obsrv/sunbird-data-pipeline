@@ -12,8 +12,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.ekstep.ep.samza.util.RestUtil.*;
-
 public abstract class IEventUpdater {
 
     static Logger LOGGER = new Logger(IEventUpdater.class);
@@ -25,18 +23,33 @@ public abstract class IEventUpdater {
     public abstract void update(Event event);
 
     public void update(Event event, String key) {
+
         if (key != null && !key.isEmpty()) {
             Map data = dataCache.getData(key);
             if (data != null && !data.isEmpty()) {
                 event.addMetaData(cacheType, getConvertedData(data));
             } else {
-                Map dialCodeMetaData = this.getDialCodeMetaData(key);
+                event.setFlag(DeNormalizationConfig.getJobFlag(cacheType), false);
+            }
+        }
+    }
+
+    public void update(Event event, String key, RestUtil restUtil) {
+        if (key != null && !key.isEmpty()) {
+            Map data = dataCache.getData(key);
+            System.out.println("cacheType" + cacheType);
+            if (data != null && !data.isEmpty()) {
+                event.addMetaData(cacheType, getConvertedData(data));
+            } else if (cacheType.equalsIgnoreCase("dialcode")) {
+                Map dialCodeMetaData = this.getDialCodeMetaData(key, restUtil);
                 if (dialCodeMetaData != null) {
                     event.addMetaData(cacheType, getConvertedData(dialCodeMetaData));
-                    dataCache.insertData(key, dialCodeMetaData);
+                    dataCache.insertData(key, new Gson().toJson(dialCodeMetaData));
                 } else {
                     event.setFlag(DeNormalizationConfig.getJobFlag(cacheType), false);
                 }
+            } else {
+                event.setFlag(DeNormalizationConfig.getJobFlag(cacheType), false);
             }
         }
     }
@@ -103,11 +116,11 @@ public abstract class IEventUpdater {
         return data;
     }
 
-    private Map<String, Object> getDialCodeMetaData(String dialCode) {
+    private Map<String, Object> getDialCodeMetaData(String dialCode, RestUtil restUtil) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkNjNiMjgwZTQ1NDE0NDU4ODk4NzcwYzZhOGZiZjQ1MCJ9.Ji-22XcRrOiVy4dFAmE68wPxLkNmX4wKbTj_IB7fG6Y");
         try {
-            okhttp3.Response httpResponse = get("https://qa.ekstep.in/api/dialcode/v3/read/" + dialCode, headers);
+            okhttp3.Response httpResponse = restUtil.get("https://qa.ekstep.in/api/dialcode/v3/read/" + dialCode, headers);
             String responseBody = httpResponse.body().string();
             System.out.println("res" + responseBody);
             return new Gson().fromJson(responseBody, Map.class);

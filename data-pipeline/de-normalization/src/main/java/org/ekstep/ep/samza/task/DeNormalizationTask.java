@@ -27,10 +27,7 @@ import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.domain.EventUpdaterFactory;
 import org.ekstep.ep.samza.service.DeNormalizationService;
-import org.ekstep.ep.samza.util.ContentDataCache;
-import org.ekstep.ep.samza.util.DialCodeDataCache;
-import org.ekstep.ep.samza.util.RedisConnect;
-import org.ekstep.ep.samza.util.UserDataCache;
+import org.ekstep.ep.samza.util.*;
 
 public class DeNormalizationTask extends BaseSamzaTask {
 
@@ -41,6 +38,7 @@ public class DeNormalizationTask extends BaseSamzaTask {
     private JobMetrics metrics;
     private RedisConnect redisConnect;
     private DeNormalizationService service;
+    private RestUtil restUtil;
 
     public DeNormalizationTask(Config config, TaskContext context, UserDataCache userCache,
                                ContentDataCache contentCache, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics, RedisConnect redisConnect) {
@@ -65,7 +63,7 @@ public class DeNormalizationTask extends BaseSamzaTask {
         this.userCache = userCache == null ? new UserDataCache(config, metrics, redisConnect) : userCache;
         this.contentCache = contentCache == null ? new ContentDataCache(config, metrics) : contentCache;
         this.dialcodeCache = dialcodeCache == null ? new DialCodeDataCache(config, metrics) : dialcodeCache;
-        service = new DeNormalizationService(this.config, new EventUpdaterFactory(this.contentCache, this.userCache, this.dialcodeCache));
+        service = new DeNormalizationService(this.config, new EventUpdaterFactory(this.contentCache, this.userCache, this.dialcodeCache), this.restUtil);
         this.initTask(config, metrics);
     }
 

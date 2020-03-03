@@ -727,4 +727,31 @@ public class DeNormalizationTaskTest {
             }
         }));
     }
+
+    @Test
+    public void shouldInvokeDialCodeAPICall() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.IMPRESSION_EVENT_WITH_DIALCODE_AS_OBJECT);
+        stub(contentCacheMock.getData("977D3I")).toReturn(null);
+        Map dataMap = new HashMap(); dataMap.put("identifier", "977D3I"); dataMap.put("channel", "test-channel");
+        dataMap.put("status", "Draft");
+        //stub(dailcodeCacheMock.getData("977D3I")).toReturn(dataMap);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+//                assertEquals(outputEvent.get("ver").toString(), "3.0");
+//                assertNull(outputEvent.get("contentdata"));
+//                Map data = new Gson().fromJson(outputEvent.get("dialcodedata").toString(), Map.class);
+//                assertEquals(data.size(), 3);
+//                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+//                assertEquals(false, flags.get("user_data_retrieved"));
+//                assertNull(flags.get("content_data_retrieved"));
+//                assertEquals(true, flags.get("dialcode_data_retrieved"));
+                return true;
+            }
+        }));
+    }
 }
