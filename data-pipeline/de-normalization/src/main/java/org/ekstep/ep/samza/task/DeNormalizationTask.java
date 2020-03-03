@@ -41,8 +41,8 @@ public class DeNormalizationTask extends BaseSamzaTask {
     private RestUtil restUtil;
 
     public DeNormalizationTask(Config config, TaskContext context, UserDataCache userCache,
-                               ContentDataCache contentCache, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics, RedisConnect redisConnect) {
-        init(config, context, userCache, contentCache, dialcodeCache, jobMetrics, redisConnect);
+                               ContentDataCache contentCache, DialCodeDataCache dialcodeCache, JobMetrics jobMetrics, RedisConnect redisConnect, RestUtil restUtil) {
+        init(config, context, userCache, contentCache, dialcodeCache, jobMetrics, redisConnect, restUtil);
     }
 
     public DeNormalizationTask() {
@@ -51,18 +51,19 @@ public class DeNormalizationTask extends BaseSamzaTask {
 
     @Override
     public void init(Config config, TaskContext context) {
-        init(config, context, userCache, contentCache, dialcodeCache, metrics, redisConnect);
+        init(config, context, userCache, contentCache, dialcodeCache, metrics, redisConnect, restUtil);
     }
 
 
     public void init(Config config, TaskContext context, UserDataCache userCache, ContentDataCache contentCache,
-                     DialCodeDataCache dialcodeCache, JobMetrics jobMetrics, RedisConnect redisConnect) {
+                     DialCodeDataCache dialcodeCache, JobMetrics jobMetrics, RedisConnect redisConnect, RestUtil restUtil) {
 
         this.config = new DeNormalizationConfig(config);
         this.metrics = jobMetrics == null ? new JobMetrics(context, this.config.jobName()) : jobMetrics;
         this.userCache = userCache == null ? new UserDataCache(config, metrics, redisConnect) : userCache;
         this.contentCache = contentCache == null ? new ContentDataCache(config, metrics) : contentCache;
         this.dialcodeCache = dialcodeCache == null ? new DialCodeDataCache(config, metrics) : dialcodeCache;
+        this.restUtil = restUtil;
         service = new DeNormalizationService(this.config, new EventUpdaterFactory(this.contentCache, this.userCache, this.dialcodeCache), this.restUtil);
         this.initTask(config, metrics);
     }

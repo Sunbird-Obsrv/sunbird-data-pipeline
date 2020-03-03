@@ -22,6 +22,7 @@ public class DeNormalizationConfig {
     private List<String> summaryFilterEvents;
     private String apiHost;
     private String dialCodeAPiEndPoint;
+    private String authorizationKey;
 
 
     public DeNormalizationConfig(Config config) {
@@ -34,6 +35,7 @@ public class DeNormalizationConfig {
         summaryFilterEvents = config.getList("summary.filter.events", defaultSummaryEvents);
         apiHost = config.get("dialcode.api.host","https://qa.ekstep.in");
         dialCodeAPiEndPoint = config.get("dialcode.api.endpoint","/api/dialcode/v3/read/");
+        authorizationKey = config.get("dialcode.api.authorizationkey","");
     }
 
     public String successTopic() {
@@ -93,9 +95,11 @@ public class DeNormalizationConfig {
     public List<String> getSummaryFilterEvents() {
         return this.summaryFilterEvents;
     }
-
     public String getDialCodeAPIUrl(String key){
         return apiHost.concat(dialCodeAPiEndPoint).concat(key);
+    }
+    public String getAuthorizationKey(){
+        return authorizationKey;
     }
 
 }

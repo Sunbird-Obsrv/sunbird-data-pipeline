@@ -39,7 +39,7 @@ public abstract class IEventUpdater {
     public void update(Event event, String key, RestUtil restUtil, String apiUrl) {
         if (key != null && !key.isEmpty()) {
             Map data = dataCache.getData(key);
-            System.out.println("cacheType" + cacheType);
+            System.out.println("Data Is" + data);
             if (data != null && !data.isEmpty()) {
                 event.addMetaData(cacheType, getConvertedData(data));
             } else {
@@ -48,6 +48,7 @@ public abstract class IEventUpdater {
                     event.addMetaData(cacheType, getConvertedData(dialCodeMetaData));
                     dataCache.insertData(key, new Gson().toJson(dialCodeMetaData));
                 } else {
+                    System.out.println("DialCodeData" + dialCodeMetaData);
                     event.setFlag(DeNormalizationConfig.getJobFlag(cacheType), false);
                 }
             }
@@ -118,14 +119,15 @@ public abstract class IEventUpdater {
 
     private Map<String, Object> getMetadata(String apiUrl, RestUtil restUtil) {
         Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkNjNiMjgwZTQ1NDE0NDU4ODk4NzcwYzZhOGZiZjQ1MCJ9.Ji-22XcRrOiVy4dFAmE68wPxLkNmX4wKbTj_IB7fG6Y");
+        
         try {
             okhttp3.Response httpResponse = restUtil.get(apiUrl, headers);
             //okhttp3.Response httpResponse = restUtil.get("https://qa.ekstep.in/api/dialcode/v3/read/" + dialCode, headers);
+            System.out.println("httpResponse" + httpResponse);
             String responseBody = httpResponse.body().string();
             System.out.println("res" + responseBody);
             return new Gson().fromJson(responseBody, Map.class);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("Exception" + e);
             return null;
         }
