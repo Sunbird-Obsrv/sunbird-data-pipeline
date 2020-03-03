@@ -14,6 +14,7 @@ public class DeNormalizationConfig {
     private static final String contentDataJobFlag = "content_data_retrieved";
     private static final String dialCodeDataJobFlag = "dialcode_data_retrieved";
     private static final String collectionDataJobFlag = "collection_data_retrieved";
+    private static String authorizationKey = "";
 
     private String successTopic;
     private String failedTopic;
@@ -22,7 +23,6 @@ public class DeNormalizationConfig {
     private List<String> summaryFilterEvents;
     private String apiHost;
     private String dialCodeAPiEndPoint;
-    private String authorizationKey;
 
 
     public DeNormalizationConfig(Config config) {
@@ -98,7 +98,7 @@ public class DeNormalizationConfig {
     public String getDialCodeAPIUrl(String key){
         return apiHost.concat(dialCodeAPiEndPoint).concat(key);
     }
-    public String getAuthorizationKey(){
+    public static String getAuthorizationKey(){
         return authorizationKey;
     }
 

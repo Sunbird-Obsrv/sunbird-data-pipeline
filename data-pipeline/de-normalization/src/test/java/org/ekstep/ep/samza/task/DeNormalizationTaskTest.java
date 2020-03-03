@@ -3,7 +3,7 @@ package org.ekstep.ep.samza.task;
 import com.fiftyonred.mock_jedis.MockJedis;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import okhttp3.Response;
+import okhttp3.*;
 import org.apache.samza.Partition;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.Counter;
@@ -97,13 +97,25 @@ public class DeNormalizationTaskTest {
                 .toReturn(new SystemStreamPartition("kafka", "telemetry.with_location", new Partition(1)));
         stub(configMock.get("user.signin.type.default", "Anonymous")).toReturn("Anonymous");
         stub(configMock.get("user.login.type.default", "NA")).toReturn("NA");
-        Map<String,String> headers=new HashMap<String,String>();
-         headers.put("Authorization","Bearer Afsdfs94flsdfh958436fhjdsjsdhfldsfjjdsbfk");
-         String mockResponse = "{\"id\":\"sunbird.dialcode.read\",\"ver\":\"3.0\",\"ts\":\"2020-03-03T09:09:50ZZ\",\"params\":{\"resmsgid\":\"fef4be15-b87e-421e-9e31-077bab44f0f2\",\"msgid\":null,\"err\":null,\"status\":\"successful\",\"errmsg\":null},\"responseCode\":\"OK\",\"result\":{\"dialcode\":{\"identifier\":\"977D3I\",\"channel\":\"0123221617357783046602\",\"publisher\":\"MHPUBLISHER\",\"batchCode\":\"MHPUBLISHER.20180402T112421\",\"status\":\"Draft\",\"generatedOn\":\"2018-04-02T11:24:22.366\",\"publishedOn\":null,\"metadata\":null}}}";
-         Response response = new Gson().fromJson(mockResponse, Response.class);
-
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Authorization", DeNormalizationConfig.getAuthorizationKey());
+        String mockResponse = "{\"id\":\"sunbird.dialcode.read\",\"ver\":\"3.0\",\"ts\":\"2020-03-03T09:09:50ZZ\",\"params\":{\"resmsgid\":\"fef4be15-b87e-421e-9e31-077bab44f0f2\",\"msgid\":null,\"err\":null,\"status\":\"successful\",\"errmsg\":null},\"responseCode\":\"OK\",\"result\":{\"dialcode\":{\"identifier\":\"977D3I\",\"channel\":\"0123221617357783046602\",\"publisher\":\"MHPUBLISHER\",\"batchCode\":\"MHPUBLISHER.20180402T112421\",\"status\":\"Draft\",\"generatedOn\":\"2018-04-02T11:24:22.366\",\"publishedOn\":null,\"metadata\":null}}}";
+        Request mockRequest = new Request.Builder()
+                .url("https://qa.ekstep.in/api/dialcode/v3/read/977D3I")
+                .header("Authorization", DeNormalizationConfig.getAuthorizationKey())
+                .build();
+        Response res = new Response.Builder()
+                .request(mockRequest)
+                .protocol(Protocol.HTTP_2)
+                .code(200) // status code
+                .message("")
+                .body(ResponseBody.create(
+                        MediaType.get("application/json; charset=utf-8"),
+                        mockResponse
+                ))
+                .build();
         try {
-            when(restUtilMock.get("https://qa.ekstep.in/api/dialcode/v3/read/S6B4X1", headers)).thenReturn(response);
+            stub(restUtilMock.get("https://qa.ekstep.in/api/dialcode/v3/read/977D3I", headers)).toReturn(res);
         } catch (Exception e) {
             System.out.println("Exception is" + e);
         }

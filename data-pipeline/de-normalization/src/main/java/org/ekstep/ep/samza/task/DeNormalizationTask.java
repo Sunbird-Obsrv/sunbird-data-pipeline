@@ -63,7 +63,7 @@ public class DeNormalizationTask extends BaseSamzaTask {
         this.userCache = userCache == null ? new UserDataCache(config, metrics, redisConnect) : userCache;
         this.contentCache = contentCache == null ? new ContentDataCache(config, metrics) : contentCache;
         this.dialcodeCache = dialcodeCache == null ? new DialCodeDataCache(config, metrics) : dialcodeCache;
-        this.restUtil = restUtil;
+        this.restUtil = restUtil == null ? new RestUtil() : restUtil;
         service = new DeNormalizationService(this.config, new EventUpdaterFactory(this.contentCache, this.userCache, this.dialcodeCache), this.restUtil);
         this.initTask(config, metrics);
     }

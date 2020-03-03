@@ -1,6 +1,8 @@
 package org.ekstep.ep.samza.domain;
 
 import com.google.gson.Gson;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.DeNormalizationService;
 import org.ekstep.ep.samza.task.DeNormalizationConfig;
@@ -119,11 +121,9 @@ public abstract class IEventUpdater {
 
     private Map<String, Object> getMetadata(String apiUrl, RestUtil restUtil) {
         Map<String, String> headers = new HashMap<>();
-        
+        headers.put("Authorization", DeNormalizationConfig.getAuthorizationKey());
         try {
             okhttp3.Response httpResponse = restUtil.get(apiUrl, headers);
-            //okhttp3.Response httpResponse = restUtil.get("https://qa.ekstep.in/api/dialcode/v3/read/" + dialCode, headers);
-            System.out.println("httpResponse" + httpResponse);
             String responseBody = httpResponse.body().string();
             System.out.println("res" + responseBody);
             return new Gson().fromJson(responseBody, Map.class);

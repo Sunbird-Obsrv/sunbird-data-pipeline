@@ -15,7 +15,7 @@ public class RestUtil {
      * @return - okhttp3.Response
      * @throws IOException
      */
-    public static okhttp3.Response get(String apiURL, Map<String, String> requestHeaders) throws IOException {
+    public okhttp3.Response get(String apiURL, Map<String, String> requestHeaders) throws IOException {
         OkHttpClient client = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder()
                 .url(apiURL)
