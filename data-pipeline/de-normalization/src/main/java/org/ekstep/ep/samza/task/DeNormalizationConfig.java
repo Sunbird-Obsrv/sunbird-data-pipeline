@@ -20,6 +20,8 @@ public class DeNormalizationConfig {
     private String malformedTopic;
     private Integer ignorePeriodInMonths;
     private List<String> summaryFilterEvents;
+    private String apiHost;
+    private String dialCodeAPiEndPoint;
 
 
     public DeNormalizationConfig(Config config) {
@@ -30,6 +32,8 @@ public class DeNormalizationConfig {
         List<String> defaultSummaryEvents = new ArrayList<String>();
         defaultSummaryEvents.add("ME_WORKFLOW_SUMMARY");
         summaryFilterEvents = config.getList("summary.filter.events", defaultSummaryEvents);
+        apiHost = config.get("dialcode.api.host","https://qa.ekstep.in");
+        dialCodeAPiEndPoint = config.get("dialcode.api.endpoint","/api/dialcode/v3/read/");
     }
 
     public String successTopic() {
@@ -88,6 +92,10 @@ public class DeNormalizationConfig {
 
     public List<String> getSummaryFilterEvents() {
         return this.summaryFilterEvents;
+    }
+
+    public String getDialCodeAPIUrl(String key){
+        return apiHost.concat(dialCodeAPiEndPoint).concat(key);
     }
 
 }

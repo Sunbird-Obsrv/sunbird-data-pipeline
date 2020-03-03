@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.service;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
@@ -9,7 +10,10 @@ import org.ekstep.ep.samza.task.DeNormalizationSink;
 import org.ekstep.ep.samza.task.DeNormalizationSource;
 import org.ekstep.ep.samza.util.RestUtil;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DeNormalizationService {
 
@@ -30,8 +34,8 @@ public class DeNormalizationService {
             String eid = event.eid();
             List<String> summaryRouteEventPrefix = this.config.getSummaryFilterEvents();
 
-            if("ERROR".equals(eid)){
-                LOGGER.debug(null,"Skipping denormalization as eid is ERROR");
+            if ("ERROR".equals(eid)) {
+                LOGGER.debug(null, "Skipping denormalization as eid is ERROR");
                 sink.toSuccessTopic(event);
                 return;
             }
@@ -53,8 +57,8 @@ public class DeNormalizationService {
                     sink.toSuccessTopic(event);
                 }
             }
-        } catch(JsonSyntaxException e){
-        	e.printStackTrace();
+        } catch (JsonSyntaxException e) {
+            e.printStackTrace();
             LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
             sink.toMalformedTopic(source.getMessage());
         }
@@ -67,14 +71,14 @@ public class DeNormalizationService {
 
         if ("dialcode".equalsIgnoreCase(event.objectType()) || "qr".equalsIgnoreCase(event.objectType())) {
             // add dialcode details to the event where object.type = dialcode/qr
-            eventUpdaterFactory.getInstance("dialcode-data-updater").update(event, event.getKey("content"), restUtil);
+            String key = event.getKey("content");
+            eventUpdaterFactory.getInstance("dialcode-data-updater").update(event, key, restUtil, config.getDialCodeAPIUrl(key));
         } else if ("user".equalsIgnoreCase(event.objectType())) {
             // skipping since it is same as user-denorm
-        }
-        else {
+        } else {
             // add content details to the event
             eventUpdaterFactory.getInstance("content-data-updater").update(event, event.getKey("content"));
-            if(event.checkObjectIdNotEqualsRollUpl1Id()) {
+            if (event.checkObjectIdNotEqualsRollUpl1Id()) {
                 eventUpdaterFactory.getInstance("collection-data-updater").update(event, event.getKey("collection"));
             }
         }
