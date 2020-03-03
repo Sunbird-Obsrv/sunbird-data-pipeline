@@ -51,6 +51,6 @@
     ENV: "{{ env }}"
     SPARK_HOME: "{{ spark_home }}"
     JAVA_HOME: "/opt/jdk1.8.0_121"
-    PATH: "$PATH:{{ spark_home }}/bin:/opt/jdk1.8.0_121/bin"
+    PATH: "{{ lookup('env','PATH') }}:{{ spark_home }}/bin:/opt/jdk1.8.0_121/bin"
   tags:
     - replay
