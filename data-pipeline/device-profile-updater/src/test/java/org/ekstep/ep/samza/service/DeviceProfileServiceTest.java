@@ -271,4 +271,17 @@ public class DeviceProfileServiceTest {
             assertEquals("2019-09-24 01:03:04.999", rs.getString(1));
         }
     }
+
+    @Test
+    public void shouldInsertSpecialCharactersifPresent() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.DEVICE_PROFILE_DETAILS_WITH_SPECIAL_CHAR);
+
+        DeviceProfileUpdaterSource source = new DeviceProfileUpdaterSource(envelopeMock);
+        deviceProfileUpdaterService.process(source, deviceProfileUpdaterSinkMock);
+
+        ResultSet rs=statement.executeQuery(String.format("SELECT user_declared_state FROM %s WHERE device_id='568089542';", postgres_table));
+        while(rs.next()) {
+            assertEquals("Karnataka's", rs.getString(1));
+        }
+    }
 }

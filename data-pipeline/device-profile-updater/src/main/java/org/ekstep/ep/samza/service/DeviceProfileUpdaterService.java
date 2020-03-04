@@ -103,9 +103,9 @@ public class DeviceProfileUpdaterService {
         PreparedStatement preparedStatement = postgresConnect.getConnection().prepareStatement(postgresQuery);
 
         preparedStatement.setTimestamp(1, new Timestamp(lastUpdatedDate));  // Adding api_last_updated_on as timestamp to index 1 of preparestatement
-        preparedStatement.setTimestamp(deviceData.values().size()+3, new Timestamp(lastUpdatedDate));   // Adding api_last_updated_on as timestamp to 4nd index after the map size(for on conflict value)
+        preparedStatement.setTimestamp(deviceData.values().size()+3, new Timestamp(lastUpdatedDate));   // Adding api_last_updated_on as timestamp to 3rd index after the map size(for on conflict value)
         preparedStatement.setTimestamp(2, new Timestamp(System.currentTimeMillis()));   // Adding updated_date as timestamp to index 2 of preparestatement
-        preparedStatement.setTimestamp(deviceData.values().size()+4, new Timestamp(System.currentTimeMillis()));    // Adding updated_date as timestamp to 4nd index after the map size(for on conflict value)
+        preparedStatement.setTimestamp(deviceData.values().size()+4, new Timestamp(System.currentTimeMillis()));    // Adding updated_date as timestamp to 4th index after the map size(for on conflict value)
 
         setPrepareStatement(preparedStatement,2, deviceData);   // Adding map values to preparestatement from index after the api_last_updated_on and updated_on
         setPrepareStatement(preparedStatement,deviceData.values().size()+4, deviceData);    // Adding map values from 4th index after map size as index(1-api_last_updated_on, 2-updated_on, (3-(size+2))map-values))
