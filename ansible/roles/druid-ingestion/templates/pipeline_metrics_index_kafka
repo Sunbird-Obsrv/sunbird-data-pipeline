@@ -152,6 +152,11 @@
             {
               "type": "root",
               "name": "db-update-count"
+            },
+            {
+              "type": "root",
+              "name": "share-route-success-count"
+
             }
           ]
         },
@@ -300,6 +305,10 @@
             {
               "type": "long",
               "name": "db-update-count"
+            },
+            {
+              "type": "long",
+              "name": "share-route-success-count"
             }
           ],
           "dimensionsExclusions": []
