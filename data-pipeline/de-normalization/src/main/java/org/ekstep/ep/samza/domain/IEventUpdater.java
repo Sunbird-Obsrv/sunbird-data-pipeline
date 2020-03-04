@@ -1,17 +1,15 @@
 package org.ekstep.ep.samza.domain;
 
 import com.google.gson.Gson;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
 import org.ekstep.ep.samza.core.Logger;
-import org.ekstep.ep.samza.service.DeNormalizationService;
 import org.ekstep.ep.samza.task.DeNormalizationConfig;
 import org.ekstep.ep.samza.util.DataCache;
 import org.ekstep.ep.samza.util.RestUtil;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,12 +43,11 @@ public abstract class IEventUpdater {
             if (data != null && !data.isEmpty()) {
                 event.addMetaData(cacheType, getConvertedData(data));
             } else {
-                Map dialCodeMetaData = this.getMetadata(apiUrl, restUtil);
+                Object dialCodeMetaData = this.getMetadata(apiUrl, restUtil, "dialcode");
                 if (dialCodeMetaData != null) {
-                    event.addMetaData(cacheType, getConvertedData(dialCodeMetaData));
+                    event.addMetaData(cacheType, getConvertedData((Map) dialCodeMetaData));
                     dataCache.insertData(key, new Gson().toJson(dialCodeMetaData));
                 } else {
-                    System.out.println("DialCodeData" + dialCodeMetaData);
                     event.setFlag(DeNormalizationConfig.getJobFlag(cacheType), false);
                 }
             }
@@ -119,19 +116,23 @@ public abstract class IEventUpdater {
         return data;
     }
 
-    private Map<String, Object> getMetadata(String apiUrl, RestUtil restUtil) {
+    private Object getMetadata(String apiUrl, RestUtil restUtil, String property) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", DeNormalizationConfig.getAuthorizationKey());
         try {
             okhttp3.Response httpResponse = restUtil.get(apiUrl, headers);
             String responseBody = httpResponse.body().string();
-            System.out.println("res" + responseBody);
-            return new Gson().fromJson(responseBody, Map.class);
+            Gson gson = new Gson();
+            Map<String, Object> response = gson.fromJson(
+                    responseBody, new TypeToken<HashMap<String, Object>>() {}.getType()
+            );
+             return gson.fromJson(gson.toJson(response.get("result")), Map.class).get(property);
         } catch (Exception e) {
             System.out.println("Exception" + e);
             return null;
         }
     }
+
 }
 
 

@@ -405,6 +405,7 @@ public class DeNormalizationTaskTest {
         }));
     }
 
+
     public void shouldSendEventsToSuccessTopicWithListDialCodeData() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.SEARCH_EVENT_WITH_DIALCODE_AS_LIST);
         stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(null);
@@ -805,17 +806,24 @@ public class DeNormalizationTaskTest {
         verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
             public boolean matches(Object o) {
+                Gson gson = new Gson();
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
-                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-//                assertEquals(outputEvent.get("ver").toString(), "3.0");
-//                assertNull(outputEvent.get("contentdata"));
-//                Map data = new Gson().fromJson(outputEvent.get("dialcodedata").toString(), Map.class);
-//                assertEquals(data.size(), 3);
-//                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-//                assertEquals(false, flags.get("user_data_retrieved"));
-//                assertNull(flags.get("content_data_retrieved"));
-//                assertEquals(true, flags.get("dialcode_data_retrieved"));
+                Map<String, Object> outputEvent = gson.fromJson(outputMessage, mapType);
+                System.out.println(outputEvent);
+                assertEquals(outputEvent.get("ver").toString(), "3.0");
+                assertNotNull(outputEvent.get("dialcodedata"));
+                Map<String, Boolean> flags = gson.fromJson(gson.toJson(outputEvent.get("flags")), Map.class);
+                Map<String, Object> dialCodeData = gson.fromJson(gson.toJson(outputEvent.get("dialcodedata")), Map.class);
+                assertEquals(dialCodeData.get("identifier"),"977D3I");
+                assertEquals(dialCodeData.get("channel"),"0123221617357783046602");
+                assertEquals(dialCodeData.get("publisher"),"MHPUBLISHER");
+                assertEquals(dialCodeData.get("batchCode"),"MHPUBLISHER.20180402T112421");
+                assertEquals(dialCodeData.get("status"),"Draft");
+                assertEquals(dialCodeData.get("generatedOn"),"2018-04-02T11:24:22.366");
+                assertEquals(false, flags.get("user_data_retrieved"));
+                assertNull(flags.get("content_data_retrieved"));
+                assertEquals(true, flags.get("dialcode_data_retrieved"));
                 return true;
             }
         }));
