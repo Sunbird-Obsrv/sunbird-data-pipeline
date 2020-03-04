@@ -590,7 +590,7 @@ public class EventFixture {
             "    \"object\": {\n" +
             "        \"ver\": \"1.0\",\n" +
             "        \"id\": \"977D3I\",\n" +
-            "        \"type\": \"dialcode\",\n" +
+            "        \"type\": \"qr\",\n" +
             "        \"rollup\": {\n" +
             "            \n" +
             "        }\n" +
