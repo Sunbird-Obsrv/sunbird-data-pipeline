@@ -1,0 +1,8 @@
+analytics_user: analytics
+analytics_group: analytics
+replay_script_path: "/mount/data"
+virtualenv_path: "/mount/venv"
+requirements_file: "requirements.txt"
+kafka_broker_list: "{{groups['processing-cluster-kafka'][0]}}:9092"
+spark_version: 2.4.4
+spark_home: "/mount/data/analytics/spark-{{ spark_version }}-bin-hadoop2.7"
