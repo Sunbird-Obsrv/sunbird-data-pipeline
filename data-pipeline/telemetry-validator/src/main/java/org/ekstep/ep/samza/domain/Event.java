@@ -64,10 +64,8 @@ public class Event extends Events {
     }
 
     public void correctDialCodeValue() {
-        NullableValue<String> dialcode = telemetry.read("object.id");
-        if (dialcode != null && dialcode.value() != null && !StringUtils.isAllUpperCase(dialcode.value())) {
-            telemetry.add("object.id", dialcode.value().toUpperCase());
-        }
+        String dialcode = telemetry.<String>read("object.id").value();
+        telemetry.add("object.id", dialcode.toUpperCase());
     }
 
     public void updateDefaults(TelemetryValidatorConfig config) {
