@@ -29,8 +29,8 @@ start() {
         fi
     else
         printf "%-50s" "Starting $prog ..."
-        export azure_storage_key="{{ azure_account_name }}"
-        export azure_storage_secret="{{ azure_storage_secret }}"
+        export azure_storage_key="{{sunbird_private_storage_account_name}}"
+        export azure_storage_secret="{{sunbird_private_storage_account_key}}"
         cd $APP_HOME
         if [ -z "$DAEMON_HOME" ]; then
             start-stop-daemon --start --quiet --background --no-close --name $prog --exec $DAEMON {{ process_args }} >$LOGS_HOME/services/$prog.log 2>&1
