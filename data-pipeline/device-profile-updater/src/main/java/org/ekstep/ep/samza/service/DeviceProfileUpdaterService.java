@@ -3,6 +3,7 @@ package org.ekstep.ep.samza.service;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.samza.config.Config;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.DeviceProfile;
@@ -10,11 +11,14 @@ import org.ekstep.ep.samza.task.DeviceProfileUpdaterSink;
 import org.ekstep.ep.samza.task.DeviceProfileUpdaterSource;
 import org.ekstep.ep.samza.util.PostgresConnect;
 import org.ekstep.ep.samza.util.RedisConnect;
+import org.postgresql.util.PGobject;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 import java.lang.reflect.Type;
 import com.google.gson.reflect.TypeToken;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -92,22 +96,22 @@ public class DeviceProfileUpdaterService {
         List<String> parsedKeys = new ArrayList<>(Arrays.asList("first_access", "api_last_updated_on"));
         deviceData.keySet().removeAll(parsedKeys);
 
-        deviceData.put("api_last_updated_on", new Timestamp(lastUpdatedDate).toString());
-        deviceData.put("updated_date", new Timestamp(System.currentTimeMillis()).toString());
-
-        if(null != deviceData.get("uaspec")) {
-            deviceData.replace("uaspec", gson.fromJson(deviceData.get("uaspec"), JsonObject.class).toString());
-        }
-        if(null != deviceData.get("device_spec")) {
-            deviceData.replace("device_spec", gson.fromJson(deviceData.get("device_spec"), JsonObject.class).toString());
-        }
-
         String columns = formatValues(deviceData.keySet(),",");
-        String values = formatValues(deviceData.values(),"','");
+        String values = formatPrepareStatement(deviceData.values().size(),"?,");
 
-        String upsertQuery = String.format("INSERT INTO %s (%s) VALUES ('%s') ON CONFLICT(device_id) DO UPDATE SET (%s)=('%s');",postgres_table,columns,values,columns,values);
-        postgresConnect.execute(upsertQuery);
+        String postgresQuery = String.format("INSERT INTO %s (api_last_updated_on,updated_date,%s) VALUES(?,?,%s?) ON CONFLICT(device_id) DO UPDATE SET (api_last_updated_on,updated_date,%s)=(?,?,%s?);",postgres_table, columns, values, columns, values);
+        PreparedStatement preparedStatement = postgresConnect.getConnection().prepareStatement(postgresQuery);
 
+        preparedStatement.setTimestamp(1, new Timestamp(lastUpdatedDate));  // Adding api_last_updated_on as timestamp to index 1 of preparestatement
+        preparedStatement.setTimestamp(deviceData.values().size()+3, new Timestamp(lastUpdatedDate));   // Adding api_last_updated_on as timestamp to 3rd index after the map size(for on conflict value)
+        preparedStatement.setTimestamp(2, new Timestamp(System.currentTimeMillis()));   // Adding updated_date as timestamp to index 2 of preparestatement
+        preparedStatement.setTimestamp(deviceData.values().size()+4, new Timestamp(System.currentTimeMillis()));    // Adding updated_date as timestamp to 4th index after the map size(for on conflict value)
+
+        setPrepareStatement(preparedStatement,2, deviceData);   // Adding map values to preparestatement from index after the api_last_updated_on and updated_on
+        setPrepareStatement(preparedStatement,deviceData.values().size()+4, deviceData);    // Adding map values from 4th index after map size as index(1-api_last_updated_on, 2-updated_on, 3-(size+2)map-values)
+
+        preparedStatement.executeUpdate();
+        preparedStatement.close();
         String updateFirstAccessQuery = String.format("UPDATE %s SET first_access = '%s' WHERE device_id = '%s' AND first_access IS NULL",
                 postgres_table, new Timestamp(firstAccess).toString(), deviceId);
         postgresConnect.execute(updateFirstAccessQuery);
@@ -145,4 +149,24 @@ public class DeviceProfileUpdaterService {
     private String formatValues(Collection<?> values, String delimiter) {
         return values.stream().map(Object::toString).collect(Collectors.joining(delimiter));
     }
+
+    private String formatPrepareStatement(Integer length, String delimiter) {
+        return StringUtils.repeat(delimiter,length-1);
+    }
+
+    private void setPrepareStatement(PreparedStatement preparedStatement, Integer index, Map<String, String> deviceData) throws SQLException {
+        for (String value : deviceData.values()) {
+            index++;
+            PGobject jsonObject = new PGobject();
+            try {
+                gson.fromJson(value, JsonObject.class);
+                jsonObject.setType("json");
+                jsonObject.setValue(gson.fromJson(value, JsonObject.class).toString());
+                preparedStatement.setObject(index, jsonObject);
+            } catch (ClassCastException ex) {
+                preparedStatement.setString(index, value);
+            }
+        }
+    }
+
 }
