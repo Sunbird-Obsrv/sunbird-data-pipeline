@@ -251,6 +251,45 @@ public class TelemetryValidatorTaskTest {
         }));
     }
 
+    @Test
+    public void shouldConvertDialcodeValueToUpperCaseIfPresentInLowerCase() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.IMPRESSION_EVENT_WITH_DIALCODE_OBJECT_IN_LOWERCASE);
+        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>() {
+        }.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                Map<String, Object> object = new Gson().fromJson(new Gson().toJson(outputEvent.get("object")), mapType);
+                assertFalse(object.get("id").toString().equals("977d3i"));
+                assertTrue(object.get("id").toString().equals("977D3I"));
+                return true;
+            }
+        }));
+    } @Test
+    public void shouldNotConvertDialcodeValueToUpperCaseIfNotPresentInLowerCase() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.IMPRESSION_EVENT_WITH_DIALCODE_OBJECT_IN_UPPERCASE);
+        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>() {
+        }.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                Map<String, Object> object = new Gson().fromJson(new Gson().toJson(outputEvent.get("object")), mapType);
+                assertTrue(object.get("id").toString().equals("977D3I"));
+                return true;
+            }
+        }));
+    }
+
+
+
     public ArgumentMatcher<OutgoingMessageEnvelope> validateOutputTopic(final Object message, final String stream) {
         return new ArgumentMatcher<OutgoingMessageEnvelope>() {
             @Override
