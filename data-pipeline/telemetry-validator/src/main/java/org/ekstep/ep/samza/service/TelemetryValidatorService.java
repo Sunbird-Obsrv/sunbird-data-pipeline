@@ -79,6 +79,10 @@ public class TelemetryValidatorService {
         if (event.eid() != null && event.eid().equalsIgnoreCase("SEARCH")) {
             event.correctDialCodeKey();
         }
+
+        if (event.objectFieldsPresent() && (event.objectType().equalsIgnoreCase("DialCode") || event.objectType().equalsIgnoreCase("qr"))) {
+            event.correctDialCodeValue();
+        }
         return event;
     }
 
