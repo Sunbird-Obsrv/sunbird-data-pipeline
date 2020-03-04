@@ -110,6 +110,7 @@ public class DeviceProfileUpdaterService {
         setPrepareStatement(preparedStatement,2, deviceData);
         setPrepareStatement(preparedStatement,deviceData.values().size()+4, deviceData);
 
+        preparedStatement.executeUpdate();
         String updateFirstAccessQuery = String.format("UPDATE %s SET first_access = '%s' WHERE device_id = '%s' AND first_access IS NULL",
                 postgres_table, new Timestamp(firstAccess).toString(), deviceId);
         postgresConnect.execute(updateFirstAccessQuery);
