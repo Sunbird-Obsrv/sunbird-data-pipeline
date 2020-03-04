@@ -48,3 +48,4 @@ object CSVToRedisIndexer {
         key.mkString
     }
 }
+

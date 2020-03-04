@@ -41,6 +41,7 @@ public class DeviceProfileServiceTest {
     private Connection connectionMock;
     private Statement statementMock;
     private Statement statement;
+    private Connection connection;
     private DeviceProfileUpdaterService deviceProfileUpdaterService;
     private DeviceProfileUpdaterSink deviceProfileUpdaterSinkMock;
     private Config configMock;
@@ -59,18 +60,18 @@ public class DeviceProfileServiceTest {
         statementMock = mock(Statement.class);
         redisServer = new RedisServer(6379);
         redisServer.start();
-        stub(postgresConnectMock.getConnection()).toReturn(connectionMock);
-        stub(postgresConnectMock.resetConnection()).toReturn(connectionMock);
         envelopeMock = mock(IncomingMessageEnvelope.class);
         stub(configMock.getInt("redis.database.deviceStore.id", deviceStoreId)).toReturn(deviceStoreId);
-        stub(configMock.get("input.device.topic.name","device.profile")).toReturn("events_deviceprofile");
+        stub(configMock.get("input.device.topic.name","device.profile")).toReturn("events.deviceprofile");
         postgres_table = "device_profile";
 
         EmbeddedPostgres pg = EmbeddedPostgres.start();
-        Connection con = pg.getPostgresDatabase().getConnection();
-        statement = con.createStatement();
+        connection = pg.getPostgresDatabase().getConnection();
+        statement = connection.createStatement();
 
         stub(connectionMock.createStatement()).toReturn(statement);
+        stub(postgresConnectMock.getConnection()).toReturn(connection);
+        stub(postgresConnectMock.resetConnection()).toReturn(connection);
         statement.execute("CREATE TABLE device_profile(\n" +
                 "   device_id text PRIMARY KEY,\n" +
                 "   api_last_updated_on TIMESTAMP,\n" +
@@ -268,6 +269,19 @@ public class DeviceProfileServiceTest {
         ResultSet rs=statement.executeQuery(String.format("SELECT user_declared_on FROM %s WHERE device_id='232455';", postgres_table));
         while(rs.next()) {
             assertEquals("2019-09-24 01:03:04.999", rs.getString(1));
+        }
+    }
+
+    @Test
+    public void shouldInsertSpecialCharactersifPresent() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.DEVICE_PROFILE_DETAILS_WITH_SPECIAL_CHAR);
+
+        DeviceProfileUpdaterSource source = new DeviceProfileUpdaterSource(envelopeMock);
+        deviceProfileUpdaterService.process(source, deviceProfileUpdaterSinkMock);
+
+        ResultSet rs=statement.executeQuery(String.format("SELECT user_declared_state FROM %s WHERE device_id='568089542';", postgres_table));
+        while(rs.next()) {
+            assertEquals("Karnataka's", rs.getString(1));
         }
     }
 }

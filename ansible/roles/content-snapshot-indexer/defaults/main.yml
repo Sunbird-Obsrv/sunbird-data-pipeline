@@ -69,7 +69,7 @@ job_config:
   cassandra_redis_path: "{{ content_snapshot_path }}/config/cassandraRedis.conf"
 
 output_file_path: "{{ content_snapshot_path }}/compositeSearchBatchData"
-config_files: ["application","cassandraRedis","DeviceProfile","ESCloudUploader","ESContentIndexer", "DialcodeRedisIndexer"]
+config_files: ["application","cassandraRedis","DeviceProfile","ESCloudUploader","ESContentIndexer","DialcodeRedisIndexer"]
 script_files: ["DeviceProfileScripts","DruidContentIndexer","RedisContentIndexer","RedisDialcodeIndexer","RedisUserDataIndexer","run-script"]
 
 
