@@ -63,6 +63,13 @@ public class Event extends Events {
         }
     }
 
+    public void correctDialCodeValue() {
+        NullableValue<String> dialcode = telemetry.read("object.id");
+        if (dialcode != null && dialcode.value() != null && !StringUtils.isAllUpperCase(dialcode.value())) {
+            telemetry.add("object.id", dialcode.value().toUpperCase());
+        }
+    }
+
     public void updateDefaults(TelemetryValidatorConfig config) {
         String channelString = telemetry.<String>read("context.channel").value();
         String channel = StringUtils.deleteWhitespace(channelString);
