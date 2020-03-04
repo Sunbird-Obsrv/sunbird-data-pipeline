@@ -73,8 +73,9 @@ public class DataCache {
     public void insertData(String key, String data) {
         try {
             redisConnection.set(key, data);
+            LOGGER.info("", String.format("Added dialcode %s and it's metadata %s to redis.", key, data));
         } catch (JedisException ex) {
-            LOGGER.error("", "Exception when saving data to redis cache ", ex);
+            LOGGER.error("", "Exception while saving data to redis cache ", ex);
             redisConnect.resetConnection();
             redisConnection.set(key, data);
         } finally {

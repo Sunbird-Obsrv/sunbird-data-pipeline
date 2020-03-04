@@ -902,6 +902,71 @@ public class EventFixture {
             "    \"ts\": \"2018-12-01T18:21:03.694+0000\"\n" +
             "  }", current_ets);
 
+    public static final String IMPRESSION_EVENT_WITH_INVALID_DIALCODE = String.format("{\n" +
+            "    \"actor\": {\n" +
+            "        \"type\": \"User\",\n" +
+            "        \"id\": \"anonymous\"\n" +
+            "    },\n" +
+            "    \"eid\": \"IMPRESSION\",\n" +
+            "    \"edata\": {\n" +
+            "        \"visits\": [\n" +
+            "            \n" +
+            "        ],\n" +
+            "        \"type\": \"view\",\n" +
+            "        \"pageid\": \"dialcode\",\n" +
+            "        \"subtype\": \"pageexit\",\n" +
+            "        \"uri\": \"https://play.diksha.gov.in/dialpage/index.html?dialcode=977D3I\"\n" +
+            "    },\n" +
+            "    \"ver\": \"3.0\",\n" +
+            "    \"ets\": %s,\n" +
+            "    \"context\": {\n" +
+            "        \"uid\": \"anonymous\",\n" +
+            "        \"pdata\": {\n" +
+            "            \"ver\": \"1.7.1\",\n" +
+            "            \"pid\": \"sunbird-portal\",\n" +
+            "            \"id\": \"prod.diksha.portal\"\n" +
+            "        },\n" +
+            "        \"channel\": \"505c7c48ac6dc1edc9b08f21db5a571d\",\n" +
+            "        \"env\": \"public\",\n" +
+            "        \"did\": \"a49cfadff97c698c1766c71a42779d4e\",\n" +
+            "        \"sid\": \"5fd1cea0-3a9e-11e9-bed5-2f34fab96d07\",\n" +
+            "        \"cdata\": [\n" +
+            "            \n" +
+            "        ],\n" +
+            "        \"rollup\": {\n" +
+            "            \"l1\": \"505c7c48ac6dc1edc9b08f21db5a571d\"\n" +
+            "        }\n" +
+            "    },\n" +
+            "    \"mid\": \"IMPRESSION:bfd4026a4099370da57e3519cd3368c0\",\n" +
+            "    \"object\": {\n" +
+            "        \"ver\": \"1.0\",\n" +
+            "        \"id\": \"test\",\n" +
+            "        \"type\": \"dialcode\",\n" +
+            "        \"rollup\": {\n" +
+            "            \n" +
+            "        }\n" +
+            "    },\n" +
+            "    \"tags\": [\n" +
+            "        \"505c7c48ac6dc1edc9b08f21db5a571d\"\n" +
+            "    ],\n" +
+            "    \"syncts\": 1550501698819,\n" +
+            "    \"@timestamp\": \"2019-02-18T14:54:58.819Z\",\n" +
+            "    \"flags\": {\n" +
+            "        \"tv_processed\": true,\n" +
+            "        \"dd_processed\": true,\n" +
+            "        \"ldata_retrieved\": false\n" +
+            "    },\n" +
+            "    \"type\": \"events\",\n" +
+            "    \"ts\": \"2019-02-27T14:45:51.866+0000\",\n" +
+            "    \"ldata\": {\n" +
+            "        \"country_code\": \"\",\n" +
+            "        \"country\": \"\",\n" +
+            "        \"city\": \"\",\n" +
+            "        \"state\": \"\",\n" +
+            "        \"state_code\": \"\"\n" +
+            "    }  \n" +
+            "}", current_ets);
+
     public static final String SEARCH_EVENT_WITH_FUTURE_ETS = "{\n" +
             "    \"eid\": \"SEARCH\",\n" +
             "    \"ets\": 2530937155000,\n" +
@@ -1418,4 +1483,6 @@ public class EventFixture {
     public static Map<String, Object> getMap(String message) {
         return (Map<String, Object>) new Gson().fromJson(message, Map.class);
     }
+    public static String VALID_DIAL_CODE_RESPONSE = "{\"id\":\"sunbird.dialcode.read\",\"ver\":\"3.0\",\"ts\":\"2020-03-03T09:09:50ZZ\",\"params\":{\"resmsgid\":\"fef4be15-b87e-421e-9e31-077bab44f0f2\",\"msgid\":null,\"err\":null,\"status\":\"successful\",\"errmsg\":null},\"responseCode\":\"OK\",\"result\":{\"dialcode\":{\"identifier\":\"977D3I\",\"channel\":\"0123221617357783046602\",\"publisher\":\"MHPUBLISHER\",\"batchCode\":\"MHPUBLISHER.20180402T112421\",\"status\":\"Draft\",\"generatedOn\":\"2018-04-02T11:24:22.366\",\"publishedOn\":null,\"metadata\":null}}}";
+    public static String INVALID_DIAL_CODE_RESPONSE = "{\"id\":\"sunbird.dialcode.read\",\"ver\":\"3.0\",\"ts\":\"2020-03-04T10:00:18ZZ\",\"params\":{\"resmsgid\":\"df4a320b-2cc9-4bc8-9273-dc4f82ee4b43\",\"msgid\":null,\"err\":\"ERR_DIALCODE_INFO\",\"status\":\"failed\",\"errmsg\":\"Dial Code Not Found With Id: S6B4X11\"},\"responseCode\":\"RESOURCE_NOT_FOUND\",\"result\":{}}";
 }

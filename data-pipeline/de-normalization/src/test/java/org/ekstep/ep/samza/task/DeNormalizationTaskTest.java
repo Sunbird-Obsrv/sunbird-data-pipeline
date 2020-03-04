@@ -97,31 +97,40 @@ public class DeNormalizationTaskTest {
                 .toReturn(new SystemStreamPartition("kafka", "telemetry.with_location", new Partition(1)));
         stub(configMock.get("user.signin.type.default", "Anonymous")).toReturn("Anonymous");
         stub(configMock.get("user.login.type.default", "NA")).toReturn("NA");
-        Map<String, String> headers = new HashMap<String, String>();
-        headers.put("Authorization", DeNormalizationConfig.getAuthorizationKey());
-        String mockResponse = "{\"id\":\"sunbird.dialcode.read\",\"ver\":\"3.0\",\"ts\":\"2020-03-03T09:09:50ZZ\",\"params\":{\"resmsgid\":\"fef4be15-b87e-421e-9e31-077bab44f0f2\",\"msgid\":null,\"err\":null,\"status\":\"successful\",\"errmsg\":null},\"responseCode\":\"OK\",\"result\":{\"dialcode\":{\"identifier\":\"977D3I\",\"channel\":\"0123221617357783046602\",\"publisher\":\"MHPUBLISHER\",\"batchCode\":\"MHPUBLISHER.20180402T112421\",\"status\":\"Draft\",\"generatedOn\":\"2018-04-02T11:24:22.366\",\"publishedOn\":null,\"metadata\":null}}}";
+        String validDialCodeUrl = "https://qa.ekstep.in/api/dialcode/v3/read/977D3I";
+        String inValidDialCodeUrl = "https://qa.ekstep.in/api/dialcode/v3/read/test";
+        createStub(validDialCodeUrl, createTestResponse(validDialCodeUrl, EventFixture.VALID_DIAL_CODE_RESPONSE));
+        createStub(inValidDialCodeUrl, createTestResponse(inValidDialCodeUrl, EventFixture.INVALID_DIAL_CODE_RESPONSE));
+        UserDataCache userCacheMock = new UserDataCache(configMock, jobMetrics, redisConnectMock);
+        deNormalizationTask = new DeNormalizationTask(configMock, contextMock, userCacheMock, contentCacheMock, dailcodeCacheMock, jobMetrics, redisConnectMock, restUtilMock);
+    }
+
+    public Response createTestResponse(String apiUrl, String response) {
         Request mockRequest = new Request.Builder()
-                .url("https://qa.ekstep.in/api/dialcode/v3/read/977D3I")
+                .url(apiUrl)
                 .header("Authorization", DeNormalizationConfig.getAuthorizationKey())
                 .build();
-        Response res = new Response.Builder()
+        return new Response.Builder()
                 .request(mockRequest)
                 .protocol(Protocol.HTTP_2)
                 .code(200) // status code
                 .message("")
                 .body(ResponseBody.create(
                         MediaType.get("application/json; charset=utf-8"),
-                        mockResponse
+                        response
                 ))
                 .build();
+
+    }
+
+    public void createStub(String apiUrl, Response response) {
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Authorization", DeNormalizationConfig.getAuthorizationKey());
         try {
-            stub(restUtilMock.get("https://qa.ekstep.in/api/dialcode/v3/read/977D3I", headers)).toReturn(res);
+            stub(restUtilMock.get(apiUrl, headers)).toReturn(response);
         } catch (Exception e) {
             System.out.println("Exception is" + e);
         }
-
-        UserDataCache userCacheMock = new UserDataCache(configMock, jobMetrics, redisConnectMock);
-        deNormalizationTask = new DeNormalizationTask(configMock, contextMock, userCacheMock, contentCacheMock, dailcodeCacheMock, jobMetrics, redisConnectMock, restUtilMock);
     }
 
     @Test
@@ -815,15 +824,39 @@ public class DeNormalizationTaskTest {
                 assertNotNull(outputEvent.get("dialcodedata"));
                 Map<String, Boolean> flags = gson.fromJson(gson.toJson(outputEvent.get("flags")), Map.class);
                 Map<String, Object> dialCodeData = gson.fromJson(gson.toJson(outputEvent.get("dialcodedata")), Map.class);
-                assertEquals(dialCodeData.get("identifier"),"977D3I");
-                assertEquals(dialCodeData.get("channel"),"0123221617357783046602");
-                assertEquals(dialCodeData.get("publisher"),"MHPUBLISHER");
-                assertEquals(dialCodeData.get("batchCode"),"MHPUBLISHER.20180402T112421");
-                assertEquals(dialCodeData.get("status"),"Draft");
-                assertEquals(dialCodeData.get("generatedOn"),"2018-04-02T11:24:22.366");
+                assertEquals(dialCodeData.get("identifier"), "977D3I");
+                assertEquals(dialCodeData.get("channel"), "0123221617357783046602");
+                assertEquals(dialCodeData.get("publisher"), "MHPUBLISHER");
+                assertEquals(dialCodeData.get("batchCode"), "MHPUBLISHER.20180402T112421");
+                assertEquals(dialCodeData.get("status"), "Draft");
+                assertEquals(dialCodeData.get("generatedOn"), "2018-04-02T11:24:22.366");
                 assertEquals(false, flags.get("user_data_retrieved"));
                 assertNull(flags.get("content_data_retrieved"));
                 assertEquals(true, flags.get("dialcode_data_retrieved"));
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void WhenDialCodeAPIReturnsResourceNotFound() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.IMPRESSION_EVENT_WITH_INVALID_DIALCODE);
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                Gson gson = new Gson();
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = gson.fromJson(outputMessage, mapType);
+                System.out.println(outputEvent);
+                assertEquals(outputEvent.get("ver").toString(), "3.0");
+                assertNull(outputEvent.get("dialcodedata"));
+                Map<String, Boolean> flags = gson.fromJson(gson.toJson(outputEvent.get("flags")), Map.class);
+                Map<String, Object> dialCodeData = gson.fromJson(gson.toJson(outputEvent.get("dialcodedata")), Map.class);
+                assertEquals(false, flags.get("user_data_retrieved"));
+                assertNull(flags.get("content_data_retrieved"));
+                assertEquals(false, flags.get("dialcode_data_retrieved"));
                 return true;
             }
         }));

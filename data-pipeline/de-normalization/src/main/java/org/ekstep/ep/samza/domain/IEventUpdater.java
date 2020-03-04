@@ -1,7 +1,6 @@
 package org.ekstep.ep.samza.domain;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.task.DeNormalizationConfig;
@@ -39,10 +38,10 @@ public abstract class IEventUpdater {
     public void update(Event event, String key, RestUtil restUtil, String apiUrl) {
         if (key != null && !key.isEmpty()) {
             Map data = dataCache.getData(key);
-            System.out.println("Data Is" + data);
             if (data != null && !data.isEmpty()) {
                 event.addMetaData(cacheType, getConvertedData(data));
             } else {
+                LOGGER.info("", String.format("Data is not found for this key %s hence invoking API", key));
                 Object dialCodeMetaData = this.getMetadata(apiUrl, restUtil, "dialcode");
                 if (dialCodeMetaData != null) {
                     event.addMetaData(cacheType, getConvertedData((Map) dialCodeMetaData));
@@ -124,11 +123,12 @@ public abstract class IEventUpdater {
             String responseBody = httpResponse.body().string();
             Gson gson = new Gson();
             Map<String, Object> response = gson.fromJson(
-                    responseBody, new TypeToken<HashMap<String, Object>>() {}.getType()
+                    responseBody, new TypeToken<HashMap<String, Object>>() {
+                    }.getType()
             );
-             return gson.fromJson(gson.toJson(response.get("result")), Map.class).get(property);
+            return gson.fromJson(gson.toJson(response.get("result")), Map.class).get(property);
         } catch (Exception e) {
-            System.out.println("Exception" + e);
+            LOGGER.error(null, "Exception while fetching metadata:  " + e);
             return null;
         }
     }
