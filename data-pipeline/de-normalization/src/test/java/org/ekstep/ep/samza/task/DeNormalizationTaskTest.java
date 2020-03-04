@@ -741,7 +741,7 @@ public class DeNormalizationTaskTest {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-                assertEquals(outputEvent.get("ver").toString(), "3.0");
+                assertEquals("3.0", outputEvent.get("ver").toString());
                 assertNull(outputEvent.get("contentdata"));
                 assertNull(outputEvent.get("userdata"));
                 Map data = new Gson().fromJson(outputEvent.get("dialcodedata").toString(), Map.class);
@@ -794,7 +794,7 @@ public class DeNormalizationTaskTest {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-                assertEquals(outputEvent.get("ver").toString(), "3.0");
+                assertEquals("3.0", outputEvent.get("ver").toString());
                 Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
                 assertEquals(userData.size(), 4);
                 assertEquals(userData.get("usersignintype"), "Self-Signed-In");
@@ -820,7 +820,7 @@ public class DeNormalizationTaskTest {
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
                 Map<String, Object> outputEvent = gson.fromJson(outputMessage, mapType);
                 System.out.println(outputEvent);
-                assertEquals(outputEvent.get("ver").toString(), "3.0");
+                assertEquals("3.0", outputEvent.get("ver").toString());
                 assertNotNull(outputEvent.get("dialcodedata"));
                 Map<String, Boolean> flags = gson.fromJson(gson.toJson(outputEvent.get("flags")), Map.class);
                 Map<String, Object> dialCodeData = gson.fromJson(gson.toJson(outputEvent.get("dialcodedata")), Map.class);
@@ -850,7 +850,7 @@ public class DeNormalizationTaskTest {
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
                 Map<String, Object> outputEvent = gson.fromJson(outputMessage, mapType);
                 System.out.println(outputEvent);
-                assertEquals(outputEvent.get("ver").toString(), "3.0");
+                assertEquals("3.0", outputEvent.get("ver").toString());
                 assertNull(outputEvent.get("dialcodedata"));
                 Map<String, Boolean> flags = gson.fromJson(gson.toJson(outputEvent.get("flags")), Map.class);
                 Map<String, Object> dialCodeData = gson.fromJson(gson.toJson(outputEvent.get("dialcodedata")), Map.class);

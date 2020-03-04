@@ -1,6 +1,5 @@
 package org.ekstep.ep.samza.service;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
@@ -10,10 +9,7 @@ import org.ekstep.ep.samza.task.DeNormalizationSink;
 import org.ekstep.ep.samza.task.DeNormalizationSource;
 import org.ekstep.ep.samza.util.RestUtil;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class DeNormalizationService {
 
