@@ -75,3 +75,6 @@ dialcode_metadata_fields: "identifier, channel, batchcode, publisher, generated_
 
 user_signin_type_default : Anonymous
 user_login_type_default : NA
+
+
+dedup_exclude_eids: "LOG,ERROR"

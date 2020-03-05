@@ -1,19 +1,18 @@
 package org.ekstep.ep.samza.service;
 
-import static java.text.MessageFormat.format;
-
+import com.google.gson.JsonSyntaxException;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.task.EventsRouterConfig;
 import org.ekstep.ep.samza.task.EventsRouterSink;
 import org.ekstep.ep.samza.task.EventsRouterSource;
 import org.ekstep.ep.samza.util.DeDupEngine;
-
-import com.google.gson.JsonSyntaxException;
 import redis.clients.jedis.exceptions.JedisException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static java.text.MessageFormat.format;
 
 public class EventsRouterService {
 	
@@ -34,18 +33,16 @@ public class EventsRouterService {
 			if(config.isDedupEnabled()) {
 				String checksum = event.getChecksum();
 
-				if (checksum == null) {
-					LOGGER.info(event.id(), "EVENT WITHOUT CHECKSUM & MID, PASSING THROUGH : {}", event);
-					event.markSkipped();
+				if (isDupCheckRequired(event)) {
+					if (!deDupEngine.isUniqueEvent(checksum)) {
+						LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
+						event.markDuplicate();
+						sink.toDuplicateTopic(event);
+						return;
+					}
+					LOGGER.info(event.id(), "ADDING EVENT CHECKSUM TO STORE");
+					deDupEngine.storeChecksum(checksum);
 				}
-				if (!deDupEngine.isUniqueEvent(checksum)) {
-					LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
-					event.markDuplicate();
-					sink.toDuplicateTopic(event);
-					return;
-				}
-				LOGGER.info(event.id(), "ADDING EVENT CHECKSUM TO STORE");
-				deDupEngine.storeChecksum(checksum);
 			}
 			
 			String eid = event.eid();
@@ -83,5 +80,9 @@ public class EventsRouterService {
 					e);
 			sink.toErrorTopic(event, e.getMessage());
 		}
+	}
+
+	public boolean isDupCheckRequired(Event event) {
+		return (config.exclusiveEids().isEmpty() || (null != event.eid() && !(config.exclusiveEids().contains(event.eid()))));
 	}
 }
