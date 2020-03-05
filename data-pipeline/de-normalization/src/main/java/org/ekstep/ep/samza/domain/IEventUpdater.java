@@ -42,10 +42,10 @@ public abstract class IEventUpdater {
                 event.addMetaData(cacheType, getConvertedData(data));
             } else {
                 LOGGER.info("", String.format("Data is not found for this key %s hence invoking API", key));
-                Object dialCodeMetaData = this.getMetadata(apiUrl, restUtil, "dialcode");
-                if (dialCodeMetaData != null) {
-                    event.addMetaData(cacheType, getConvertedData((Map) dialCodeMetaData));
-                    dataCache.insertData(key, new Gson().toJson(dialCodeMetaData));
+                Object metadata = this.getMetadata(apiUrl, restUtil, "dialcode");
+                if (metadata != null) {
+                    event.addMetaData(cacheType, getConvertedData((Map) metadata));
+                    dataCache.insertData(key, new Gson().toJson(metadata));
                 } else {
                     event.setFlag(DeNormalizationConfig.getJobFlag(cacheType), false);
                 }
