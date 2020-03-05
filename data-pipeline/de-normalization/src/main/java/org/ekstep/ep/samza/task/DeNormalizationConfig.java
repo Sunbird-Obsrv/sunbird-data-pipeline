@@ -33,7 +33,7 @@ public class DeNormalizationConfig {
         List<String> defaultSummaryEvents = new ArrayList<String>();
         defaultSummaryEvents.add("ME_WORKFLOW_SUMMARY");
         summaryFilterEvents = config.getList("summary.filter.events", defaultSummaryEvents);
-        apiHost = config.get("dialcode.api.host","https://qa.ekstep.in");
+        apiHost = config.get("dialcode.api.host","https://localhost");
         dialCodeAPiEndPoint = config.get("dialcode.api.endpoint","/api/dialcode/v3/read/");
         authorizationKey = config.get("dialcode.api.authorizationkey","");
     }

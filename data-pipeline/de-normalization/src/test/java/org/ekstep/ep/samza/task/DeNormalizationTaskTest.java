@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 public class DeNormalizationTaskTest {
 
     private static final String DIAL_CODE_API_ENDPOINT = "/api/dialcode/v3/read/";
-    private static final String DIAL_CODE_HOST = "https://qa.ekstep.in";
+    private static final String DIAL_CODE_HOST = "https://localhost";
     private static final String DIAL_CODE_API_KEY = "";
     private static final String SUCCESS_TOPIC = "telemetry.with_denorm";
     private static final String FAILED_TOPIC = "telemetry.failed";
@@ -97,8 +97,8 @@ public class DeNormalizationTaskTest {
                 .toReturn(new SystemStreamPartition("kafka", "telemetry.with_location", new Partition(1)));
         stub(configMock.get("user.signin.type.default", "Anonymous")).toReturn("Anonymous");
         stub(configMock.get("user.login.type.default", "NA")).toReturn("NA");
-        String validDialCodeUrl = "https://qa.ekstep.in/api/dialcode/v3/read/977D3I";
-        String inValidDialCodeUrl = "https://qa.ekstep.in/api/dialcode/v3/read/test";
+        String validDialCodeUrl = "https://localhost/api/dialcode/v3/read/977D3I";
+        String inValidDialCodeUrl = "https://localhost/api/dialcode/v3/read/test";
         createStub(validDialCodeUrl, createTestResponse(validDialCodeUrl, EventFixture.VALID_DIAL_CODE_RESPONSE));
         createStub(inValidDialCodeUrl, createTestResponse(inValidDialCodeUrl, EventFixture.INVALID_DIAL_CODE_RESPONSE));
         UserDataCache userCacheMock = new UserDataCache(configMock, jobMetrics, redisConnectMock);
