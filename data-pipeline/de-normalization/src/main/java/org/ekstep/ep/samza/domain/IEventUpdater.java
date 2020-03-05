@@ -129,6 +129,7 @@ public abstract class IEventUpdater {
             return gson.fromJson(gson.toJson(response.get("result")), Map.class).get(property);
         } catch (Exception e) {
             LOGGER.error(null, "Exception while fetching metadata:  " + e);
+            e.printStackTrace();
             return null;
         }
     }
