@@ -96,10 +96,11 @@ public class JobMetrics {
         metricCounterMap.put("audit-route-success-count", auditRouteSuccessCount);
         metricCounterMap.put("cache-hit-count", cacheHitCount);
         metricCounterMap.put("cache-miss-count", cacheMissCount);
-        metricCounterMap.put("cache-hit-countcache-empty-values-count", cacheEmptyValuesCount);
+        metricCounterMap.put("cache-empty-values-count", cacheEmptyValuesCount);
         metricCounterMap.put("cache-error-count", cacheErrorCount);
         metricCounterMap.put("processed-message-count", processedMessageCount);
         metricCounterMap.put("unprocessed-message-count", unprocessedMessageCount);
+        metricCounterMap.put("user-cache-hit-count", unprocessedMessageCount);
         metricCounterMap.put("db-hit-count", dbHitCount);
         metricCounterMap.put("expired-event-count", expiredEventCount);
         metricCounterMap.put("duplicate-event-count", duplicateEventCount);
@@ -268,44 +269,6 @@ public class JobMetrics {
     private String getSamzaMetricKey(SystemStreamPartition partition, String samzaMetricName) {
         return String.format("%s-%s-%s-%s",
                 partition.getSystem(), partition.getStream(), partition.getPartition().getPartitionId(), samzaMetricName);
-    }
-
-    public String collect() {
-        Map<String, Object> metricsEvent = new HashMap<>();
-        metricsEvent.put("job-name", jobName);
-        metricsEvent.put("partition", partition);
-        metricsEvent.put("success-message-count", successMessageCount.getCount());
-        metricsEvent.put("failed-message-count", failedMessageCount.getCount());
-        metricsEvent.put("error-message-count", errorMessageCount.getCount());
-        metricsEvent.put("batch-success-count", batchSuccessCount.getCount());
-        metricsEvent.put("batch-error-count", batchErrorCount.getCount());
-        metricsEvent.put("primary-route-success-count", primaryRouteSuccessCount.getCount());
-        metricsEvent.put("secondary-route-success-count", secondaryRouteSuccessCount.getCount());
-        metricsEvent.put("skipped-message-count", skippedMessageCount.getCount());
-        metricsEvent.put("cache-hit-count", cacheHitCount.getCount());
-        metricsEvent.put("cache-miss-count", cacheMissCount.getCount());
-        metricsEvent.put("cache-error-count", cacheErrorCount.getCount());
-        metricsEvent.put("cache-empty-values-count", cacheEmptyValuesCount.getCount());
-        metricsEvent.put("processed-message-count", processedMessageCount.getCount());
-        metricsEvent.put("unprocessed-message-count", unprocessedMessageCount.getCount());
-        metricsEvent.put("db-hit-count", dbHitCount.getCount());
-        metricsEvent.put("user-cache-hit-count", userCacheHitCount.getCount());
-        metricsEvent.put("expired-event-count", expiredEventCount.getCount());
-        metricsEvent.put("duplicate-event-count", duplicateEventCount.getCount());
-
-        metricsEvent.put("device-db-update-count", deviceDBUpdateCount.getCount());
-        metricsEvent.put("device-cache-update-count", deviceCacheUpdateCount.getCount());
-        metricsEvent.put("user-declared-hit-count", userDeclaredHitCount.getCount());
-        metricsEvent.put("ip-location-hit-count", ipLocationHitCount.getCount());
-        metricsEvent.put("audit-route-success-count", auditRouteSuccessCount.getCount());
-        metricsEvent.put("share-route-success-count", shareEventRouteSuccessCount.getCount());
-        metricsEvent.put("db-insert-count", dbInsertCount.getCount());
-        metricsEvent.put("db-update-count", dbUpdateCount.getCount());
-
-        metricsEvent.put("consumer-lag",
-                consumerLag(((MetricsRegistryMap) context.getSamzaContainerContext().metricsRegistry).metrics()));
-        metricsEvent.put("metricts", new DateTime().getMillis());
-        return new Gson().toJson(metricsEvent);
     }
 
     public String collect(List<String> metrics) {
