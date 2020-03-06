@@ -100,7 +100,7 @@ public class JobMetrics {
         metricCounterMap.put("cache-error-count", cacheErrorCount);
         metricCounterMap.put("processed-message-count", processedMessageCount);
         metricCounterMap.put("unprocessed-message-count", unprocessedMessageCount);
-        metricCounterMap.put("user-cache-hit-count", unprocessedMessageCount);
+        metricCounterMap.put("user-cache-hit-count", userCacheHitCount);
         metricCounterMap.put("db-hit-count", dbHitCount);
         metricCounterMap.put("expired-event-count", expiredEventCount);
         metricCounterMap.put("duplicate-event-count", duplicateEventCount);
