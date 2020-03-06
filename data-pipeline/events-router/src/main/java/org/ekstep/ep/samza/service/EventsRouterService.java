@@ -30,25 +30,19 @@ public class EventsRouterService {
 		Event event = null;
 		try {
 			event = source.getEvent();
-			if(config.isDedupEnabled()) {
+			if (config.isDedupEnabled() && isDupCheckRequired(event)) {
 				String checksum = event.getChecksum();
-
-				if (isDupCheckRequired(event)) {
-					if (!deDupEngine.isUniqueEvent(checksum)) {
-						LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
-						event.markDuplicate();
-						sink.toDuplicateTopic(event);
-						return;
-					}
-					LOGGER.info(event.id(), "ADDING EVENT CHECKSUM TO STORE");
-					deDupEngine.storeChecksum(checksum);
+				if (!deDupEngine.isUniqueEvent(checksum)) {
+					LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
+					event.markDuplicate();
+					sink.toDuplicateTopic(event);
+					return;
 				}
-				else
-				{
-					LOGGER.info(event.id(), "SKIPPING THE DUP CHECK");
-				}
+				LOGGER.info(event.id(), "ADDING EVENT CHECKSUM TO STORE");
+				deDupEngine.storeChecksum(checksum);
+			} else {
+				LOGGER.info(event.id(), "SKIPPING THE DEDUP CHECK");
 			}
-			
 			String eid = event.eid();
 			if(event.mid().contains("TRACE")){
 				SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -87,9 +81,6 @@ public class EventsRouterService {
 	}
 
 	public boolean isDupCheckRequired(Event event) {
-		if (config.exclusiveEids().isEmpty() || (null != event.eid() && !(config.exclusiveEids().contains(event.eid()))))
-			return true;
-		else
-			return false;
+		return (config.exclusiveEids().isEmpty() || (null != event.eid() && !(config.exclusiveEids().contains(event.eid()))));
 	}
 }
