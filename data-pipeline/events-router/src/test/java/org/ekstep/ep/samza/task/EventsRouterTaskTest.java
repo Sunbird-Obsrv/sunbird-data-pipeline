@@ -133,7 +133,7 @@ public class EventsRouterTaskTest {
 
 	@Test
 	public void shouldSendEventToFailedTopicIfEventIsNotParseable() throws Exception {
-
+		when(configMock.get("dedup.exclude.eids", "")).thenReturn("");
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.UNPARSABLE_START_EVENT);
 		when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
 		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);

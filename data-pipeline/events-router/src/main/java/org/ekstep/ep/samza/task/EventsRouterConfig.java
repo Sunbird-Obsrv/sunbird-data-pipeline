@@ -37,6 +37,10 @@ public class EventsRouterConfig {
         if (!config.get("dedup.exclude.eids", "").isEmpty()) {
             excludedEids = config.getList("dedup.exclude.eids", new ArrayList<>());
         }
+        else
+        {
+            excludedEids = new ArrayList<>();
+        }
     }
 
     public String getTelemetryEventsRouteTopic() {

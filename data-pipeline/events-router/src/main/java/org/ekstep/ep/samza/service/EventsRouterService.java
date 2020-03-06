@@ -43,6 +43,10 @@ public class EventsRouterService {
 					LOGGER.info(event.id(), "ADDING EVENT CHECKSUM TO STORE");
 					deDupEngine.storeChecksum(checksum);
 				}
+				else
+				{
+					LOGGER.info(event.id(), "SKIPPING THE DUP CHECK");
+				}
 			}
 			
 			String eid = event.eid();
@@ -83,6 +87,9 @@ public class EventsRouterService {
 	}
 
 	public boolean isDupCheckRequired(Event event) {
-		return (config.exclusiveEids().isEmpty() || (null != event.eid() && !(config.exclusiveEids().contains(event.eid()))));
+		if (config.exclusiveEids().isEmpty() || (null != event.eid() && !(config.exclusiveEids().contains(event.eid()))))
+			return true;
+		else
+			return false;
 	}
 }
