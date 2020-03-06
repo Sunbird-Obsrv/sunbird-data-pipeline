@@ -71,7 +71,6 @@ public class ContentCacheUpdaterService extends BaseCacheUpdaterService {
         updateDialCodeToCache((List) newProperties.get("dialcodes"), contentCacheConfig.getdialCodeStoreDb(), contentCacheConfig.getDialCodeAPIUrl());
         String contentNode = null;
         storeId = contentCacheConfig.getContentStoreDb();
-        System.out.println("storeid" + storeId);
         contentNode = readFromCache(nodeUniqueId, storeId);
         Map<String, Object> listTypeFields = contentData.convertType(newProperties, contentCacheConfig.getContentModelListTypeFields(), contentCacheConfig.getDateFields());
         if (!listTypeFields.isEmpty()) {
