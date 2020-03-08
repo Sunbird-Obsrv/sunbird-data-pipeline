@@ -66,7 +66,6 @@ public class ContentData {
         headers.put("Authorization", ContentCacheConfig.getAuthorizationKey());
         try {
             okhttp3.Response httpResponse = restUtil.get(apiUrl, headers);
-            System.out.println("httpResponse" + httpResponse);
             String responseBody = httpResponse.body().string();
             Gson gson = new Gson();
             Map<String, Object> response = gson.fromJson(
