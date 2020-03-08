@@ -368,9 +368,6 @@ public class ContentCacheUpdaterServiceTest {
         String conceptId = (String) event.get("nodeUniqueId");
         ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelopeMock);
         contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
-//        //jedisMock.set(conceptId, contentData.toString());
-//        //String cachedData = jedisMock.get(conceptId);
-//        Map<String, Object> parsedData = null;
     }
 
     @Test
@@ -383,5 +380,7 @@ public class ContentCacheUpdaterServiceTest {
         String conceptId = (String) event.get("nodeUniqueId");
         ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelopeMock);
         contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
+
+
     }
 }
