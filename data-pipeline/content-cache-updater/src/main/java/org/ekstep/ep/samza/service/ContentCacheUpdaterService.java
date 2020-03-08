@@ -87,15 +87,17 @@ public class ContentCacheUpdaterService extends BaseCacheUpdaterService {
     public void updateDialCodeToCache(List<String> dialCodeList, int storeId, String apiUrl) {
         if (null != dialCodeList) {
             dialCodeList.forEach(dialCode -> {
-                String metaData = readFromCache(dialCode, storeId);
-                if (null == metaData || metaData.isEmpty()) {
-                    LOGGER.info("", String.format("Invoking DialCode API to fetch the metadata for this dialCode( %s )", dialCode));
-                    Object dialCodeMetadata = contentData.getMetadata(apiUrl.concat(dialCode), this.restUtil, "dialcode");
-                    if (null != dialCodeMetadata) {
-                        LOGGER.info("", String.format("Inserting dialCode( %s ) metadata to cache system", dialCode));
-                        addToCache(dialCode, gson.toJson(dialCodeMetadata), storeId);
-                    } else {
-                        LOGGER.info("", String.format("API did not fetched any dialCode metadata!!! %s", dialCode));
+                if (!dialCode.isEmpty()) {
+                    String metaData = readFromCache(dialCode, storeId);
+                    if (null == metaData || metaData.isEmpty()) {
+                        LOGGER.info("", String.format("Invoking DialCode API to fetch the metadata for this dialCode( %s )", dialCode));
+                        Object dialCodeMetadata = contentData.getMetadata(apiUrl.concat(dialCode), this.restUtil, "dialcode");
+                        if (null != dialCodeMetadata) {
+                            LOGGER.info("", String.format("Inserting dialCode( %s ) metadata to cache system", dialCode));
+                            addToCache(dialCode, gson.toJson(dialCodeMetadata), storeId);
+                        } else {
+                            LOGGER.info("", String.format("API did not fetched any dialCode metadata!!! %s", dialCode));
+                        }
                     }
                 }
             });
