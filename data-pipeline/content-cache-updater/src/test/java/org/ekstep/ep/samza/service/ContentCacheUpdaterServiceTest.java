@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import okhttp3.*;
 import org.apache.samza.Partition;
 import org.apache.samza.config.Config;
+import org.apache.samza.metrics.Counter;
 import org.apache.samza.metrics.MetricsRegistry;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.SystemStreamPartition;
@@ -19,13 +20,11 @@ import org.ekstep.ep.samza.task.ContentCacheConfig;
 import org.ekstep.ep.samza.task.ContentCacheUpdaterSink;
 import org.ekstep.ep.samza.task.ContentCacheUpdaterSource;
 import org.ekstep.ep.samza.task.ContentCacheUpdaterTask;
-import org.ekstep.ep.samza.util.ContentData;
 import org.ekstep.ep.samza.util.RedisConnect;
 import org.ekstep.ep.samza.util.RestUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.apache.samza.metrics.Counter;
 import redis.clients.jedis.Jedis;
 
 import java.lang.reflect.Type;
@@ -33,7 +32,6 @@ import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 public class ContentCacheUpdaterServiceTest {
 
@@ -97,17 +95,17 @@ public class ContentCacheUpdaterServiceTest {
         new BaseCacheUpdaterService(redisConnectMock);
         String validDialCodeUrl = "https://localhost/api/dialcode/v3/read/E1L8W5";
         String inValidDialCodeUrl = "https://localhost/api/dialcode/v3/read/test";
-        createStub(validDialCodeUrl, createTestResponse(validDialCodeUrl, EventFixture.VALID_DIAL_CODE_RESPONSE, 200));
-        createStub(inValidDialCodeUrl, createTestResponse(inValidDialCodeUrl, EventFixture.INVALID_DIAL_CODE_RESPONSE, 404));
+        createStub(validDialCodeUrl, createTestResponse(validDialCodeUrl, EventFixture.VALID_DIAL_CODE_RESPONSE, 200, contentCacheConfig.getAuthorizationKey()), contentCacheConfig.getAuthorizationKey());
+        createStub(inValidDialCodeUrl, createTestResponse(inValidDialCodeUrl, EventFixture.INVALID_DIAL_CODE_RESPONSE, 404, contentCacheConfig.getAuthorizationKey()), contentCacheConfig.getAuthorizationKey());
         contentCacheUpdaterService = new ContentCacheUpdaterService(contentCacheConfig, redisConnectMock, jobMetricsMock, restUtilMock);
         jedisMock.flushAll();
     }
 
 
-    public Response createTestResponse(String apiUrl, String response, int status) {
+    public Response createTestResponse(String apiUrl, String response, int status, String authKey) {
         Request mockRequest = new Request.Builder()
                 .url(apiUrl)
-                .header("Authorization", ContentCacheConfig.getAuthorizationKey())
+                .header("Authorization", authKey)
                 .build();
         return new Response.Builder()
                 .request(mockRequest)
@@ -121,9 +119,9 @@ public class ContentCacheUpdaterServiceTest {
                 .build();
     }
 
-    public void createStub(String apiUrl, Response response) {
+    public void createStub(String apiUrl, Response response, String authKey) {
         Map<String, String> headers = new HashMap<String, String>();
-        headers.put("Authorization", ContentCacheConfig.getAuthorizationKey());
+        headers.put("Authorization", authKey);
         try {
             stub(restUtilMock.get(apiUrl, headers)).toReturn(response);
         } catch (Exception e) {
@@ -142,7 +140,7 @@ public class ContentCacheUpdaterServiceTest {
 
         ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelopeMock);
         contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
-        Map<String, Object> contentData = contentCacheUpdaterService.getCacheData(source.getMap(), "Content");
+        Map<String, Object> contentData = contentCacheUpdaterService.getCacheData(source.getMap());
         jedisMock.set(contentId, contentData.toString());
 
         String cachedData = jedisMock.get(contentId);
@@ -173,7 +171,7 @@ public class ContentCacheUpdaterServiceTest {
         String contentId = (String) event.get("nodeUniqueId");
         ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelopeMock);
         contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
-        Map<String, Object> contentData = contentCacheUpdaterService.getCacheData(source.getMap(), "Content");
+        Map<String, Object> contentData = contentCacheUpdaterService.getCacheData(source.getMap());
         jedisMock.set(contentId, contentData.toString());
 
         String cachedData = jedisMock.get(contentId);
@@ -212,7 +210,7 @@ public class ContentCacheUpdaterServiceTest {
 
         ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelopeMock);
         contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
-        Map<String, Object> contentData = contentCacheUpdaterService.getCacheData(source.getMap(), "Content");
+        Map<String, Object> contentData = contentCacheUpdaterService.getCacheData(source.getMap());
         jedisMock.set(contentId, contentData.toString());
         String cachedData = jedisMock.get(contentId);
         Map<String, Object> parsedData = null;
@@ -267,34 +265,6 @@ public class ContentCacheUpdaterServiceTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void updateDialCodeCache() throws Exception {
-        jedisMock.flushAll();
-
-        stub(envelopeMock.getMessage()).toReturn(EventFixture.OBJECT_TYPE_DIAL_CODE_1);
-        Gson gson = new Gson();
-        Map<String, Object> event = gson.fromJson(EventFixture.OBJECT_TYPE_DIAL_CODE_1, Map.class);
-        contentCacheUpdaterTask = new ContentCacheUpdaterTask(configMock, contextMock, redisConnectMock, restUtilMock);
-        contentCacheUpdaterTask.process(envelopeMock, messageCollector, taskCoordinator);
-        String dialCode = (String) event.get("nodeUniqueId");
-
-        ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelopeMock);
-        contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
-        Map<String, Object> dialCodeData = contentCacheUpdaterService.getCacheData(source.getMap(), "DialCode");
-        jedisMock.set(dialCode, gson.toJson(dialCodeData));
-
-        String cachedData = jedisMock.get(dialCode);
-        Map<String, String> cachedObject = gson.fromJson(cachedData, Map.class);
-        assertEquals(261351.0, cachedObject.get("dialcode_index"));
-        assertEquals("YC9EP8", cachedObject.get("identifier"));
-        assertEquals("b00bc992ef25f1a9a8d63291e20efc8d", cachedObject.get("channel"));
-        assertEquals("do_112692236142379008136", cachedObject.get("batchcode"));
-        assertEquals(null, cachedObject.get("publisher"));
-        assertEquals("2019-02-05T05:40:56.762", cachedObject.get("generated_on"));
-        assertEquals("Draft", cachedObject.get("status"));
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
     public void shouldAddOtherObjectTypeToCache() throws Exception {
         jedisMock.flushAll();
         stub(envelopeMock.getMessage()).toReturn(EventFixture.OBJECT_TYPE_CONCEPT_EVENT);
@@ -304,7 +274,7 @@ public class ContentCacheUpdaterServiceTest {
         String conceptId = (String) event.get("nodeUniqueId");
         ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelopeMock);
         contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
-        Map<String, Object> contentData = contentCacheUpdaterService.getCacheData(source.getMap(), "Content");
+        Map<String, Object> contentData = contentCacheUpdaterService.getCacheData(source.getMap());
         jedisMock.set(conceptId, contentData.toString());
 
         String cachedData = jedisMock.get(conceptId);
@@ -343,7 +313,7 @@ public class ContentCacheUpdaterServiceTest {
 
         ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelopeMock);
         contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
-        Map<String, Object> contentData = contentCacheUpdaterService.getCacheData(source.getMap(), "Content");
+        Map<String, Object> contentData = contentCacheUpdaterService.getCacheData(source.getMap());
         jedisMock.set(conceptId, contentData.toString());
 
         String cachedData = jedisMock.get(conceptId);

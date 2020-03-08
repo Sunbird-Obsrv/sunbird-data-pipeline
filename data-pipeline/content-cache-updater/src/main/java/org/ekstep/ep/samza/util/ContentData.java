@@ -61,9 +61,9 @@ public class ContentData {
         return result;
     }
 
-    public Object getMetadata(String apiUrl, RestUtil restUtil, String property) {
+    public Object getMetadata(String apiUrl, RestUtil restUtil,String authKey, String fieldName) {
         Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", ContentCacheConfig.getAuthorizationKey());
+        headers.put("Authorization", authKey);
         try {
             okhttp3.Response httpResponse = restUtil.get(apiUrl, headers);
             String responseBody = httpResponse.body().string();
@@ -72,7 +72,7 @@ public class ContentData {
                     responseBody, new TypeToken<HashMap<String, Object>>() {
                     }.getType()
             );
-            return gson.fromJson(gson.toJson(response.get("result")), Map.class).get(property);
+            return gson.fromJson(gson.toJson(response.get("result")), Map.class).get(fieldName);
         } catch (Exception e) {
             LOGGER.error(null, "Exception while fetching metadata:  " + e);
             e.printStackTrace();

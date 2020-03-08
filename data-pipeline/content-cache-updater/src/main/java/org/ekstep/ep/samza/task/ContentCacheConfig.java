@@ -15,7 +15,7 @@ public class ContentCacheConfig {
     private List<String> dateFields;
     private String apiHost;
     private String dialCodeAPiEndPoint;
-    private static String authorizationKey = "";
+    private String authorizationKey = "";
 
     public ContentCacheConfig(Config config) {
         this.contentStoreDb = config.getInt("redis.database.contentStore.id", 5);
@@ -40,7 +40,7 @@ public class ContentCacheConfig {
     public String getDialCodeAPIUrl(){
         return apiHost.concat(dialCodeAPiEndPoint);
     }
-    public static String getAuthorizationKey(){
-        return authorizationKey;
+    public String getAuthorizationKey(){
+        return this.authorizationKey;
     }
 }

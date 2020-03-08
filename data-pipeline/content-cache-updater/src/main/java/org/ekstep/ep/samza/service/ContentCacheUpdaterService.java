@@ -48,7 +48,7 @@ public class ContentCacheUpdaterService extends BaseCacheUpdaterService {
         LOGGER.info("", "processing event for nodeUniqueId: " + nodeUniqueId);
         contentData = new ContentData();
         if (!nodeUniqueId.isEmpty()) {
-            parsedData = getCacheData(message, objectType);
+            parsedData = getCacheData(message);
         }
         if (null != parsedData) {
             addToCache(nodeUniqueId, gson.toJson(parsedData), storeId);
@@ -57,7 +57,7 @@ public class ContentCacheUpdaterService extends BaseCacheUpdaterService {
         }
     }
 
-    public Map<String, Object> getCacheData(Map<String, Object> message, String objectType) {
+    public Map<String, Object> getCacheData(Map<String, Object> message) {
         String nodeUniqueId = (String) message.get("nodeUniqueId");
         Map<String, Object> parsedData = null;
         Map<String, Object> newProperties = contentData.extractProperties(message);
@@ -91,7 +91,7 @@ public class ContentCacheUpdaterService extends BaseCacheUpdaterService {
                     String metaData = readFromCache(dialCode, storeId);
                     if (null == metaData || metaData.isEmpty()) {
                         LOGGER.info("", String.format("Invoking DialCode API to fetch the metadata for this dialCode( %s )", dialCode));
-                        Object dialCodeMetadata = contentData.getMetadata(apiUrl.concat(dialCode), this.restUtil, "dialcode");
+                        Object dialCodeMetadata = contentData.getMetadata(apiUrl.concat(dialCode), this.restUtil, contentCacheConfig.getAuthorizationKey(), "dialcode");
                         if (null != dialCodeMetadata) {
                             LOGGER.info("", String.format("Inserting dialCode( %s ) metadata to cache system", dialCode));
                             addToCache(dialCode, gson.toJson(dialCodeMetadata), storeId);
