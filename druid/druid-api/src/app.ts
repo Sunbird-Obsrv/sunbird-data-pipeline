@@ -3,7 +3,7 @@
  */
 
 import bodyParser from "body-parser";
-import express, { response } from "express";
+import express from "express";
 import HttpStatus from "http-status-codes";
 import { config } from "./configs/config";
 import { APILogger } from "./services/ApiLogger";
@@ -11,9 +11,13 @@ import { DruidService } from "./services/DruidService";
 import { HttpService } from "./services/HttpService";
 
 const app = express();
+/**
+ * Proxy API EndPoint Lists
+ */
 const endPoint = config.apiEndPoint;
-const sqlQueryEndPoint = config.druidSqlEndPoint;
-const dataSourceEndPoint = config.druidDataSourceEndPoint;
+const sqlQueryEndPoint = config.apiSqlEndPoint;
+const dataSourceEndPoint = config.apiDataSourceEndPoint;
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -23,7 +27,10 @@ app.use(bodyParser.json());
 const druidService = new DruidService({ limits: config.limits }, HttpService);
 
 /**
- *
+ * API to query the data from the  External Source(druid)
+ * @param - endPoint - "/druid/v2"
+ * @param - requestObj - reqest object
+ * Method Type - POST
  */
 app.post(endPoint, (requestObj, responseObj, next) => {
   druidService.validate()(requestObj.body, responseObj, next);
@@ -40,7 +47,10 @@ app.post(endPoint, (requestObj, responseObj, next) => {
 });
 
 /**
- *
+ * API to query the data using "SQL" from the  External Source(druid) and this api validates the auth token.
+ * @param - endPoint - "/druid/v2/cql"
+ * @param - requestObj - reqest object
+ * Method Type - POST
  */
 app.post(sqlQueryEndPoint, (requestObj, responseObj, next) => {
   druidService.validateKey()(requestObj.headers.authorization, responseObj, next);
@@ -57,8 +67,9 @@ app.post(sqlQueryEndPoint, (requestObj, responseObj, next) => {
 });
 
 /**
- * Method to get
- *
+ * API to get the list of data source which are available
+ * @param - endPoint - "/druid/v2/datasource"
+ * Method Type - GET
  */
 app.get(dataSourceEndPoint, (requestObj, responseObj, next) => {
   druidService.fetch()(`${config.druidHost}:${config.druidPort}${config.druidDataSourceEndPoint}`, "GET", undefined)

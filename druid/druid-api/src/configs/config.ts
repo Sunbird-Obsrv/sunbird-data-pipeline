@@ -1,11 +1,23 @@
 export const config = {
-    apiEndPoint: process.env.druid_proxy_api_endPoint || "/druid/v2",
+
+    /**
+     * Proxy API End Points
+     */
+    apiEndPoint: process.env.druid_proxy_api_endPoint || "/druid/v2/",
+    // tslint:disable-next-line: object-literal-sort-keys
+    apiDataSourceEndPoint: process.env.druid_datasource_endPoint || "/druid/v2/datasources/",
+    apiSqlEndPoint: process.env.druid_sql_endPoint || "/druid/v2/sql/",
     apiPort: process.env.druid_proxy_api_port || 8082,
-    druidDataSourceEndPoint: process.env.druid_datasource_endPoint || "/druid/v2/datasources",
-    druidEndPoint: process.env.druid_proxy_api_endPoint || "/druid/v2",
+
+    /**
+     * Druid(External System) endpoints
+     */
+    druidDataSourceEndPoint: process.env.druid_datasource_endPoint || "/druid/v2/datasources/",
+    druidEndPoint: process.env.druid_proxy_api_endPoint || "/druid/v2/",
     druidHost: process.env.druid_host || "http://localhost",
     druidPort: process.env.druid_port || 8082,
-    druidSqlEndPoint: process.env.druid_sql_endPoint || "/druid/v2/sql",
+    druidSqlEndPoint: process.env.druid_sql_endPoint || "/druid/v2/sql/",
+
     // tslint:disable-next-line: max-line-length
     druidWhiteListedKeys: process.env.druid_whitlisted_auth_keys && process.env.druid_whitlisted_auth_keys.split(",") || ["2QyHp4q35lL9XzI3i5f1FVSYmtWeGvq2", "7rFRS7gycgpnbccA6GucQlAvq8a6aDkB"],
     limits: [{ // Keeping limits per data source.

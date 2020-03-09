@@ -4,7 +4,7 @@ import { AxiosRequestConfig } from "axios";
 import HttpStatus from "http-status-codes";
 import _ from "lodash";
 import { IValidationResponse } from "../models/models";
-import { IDataSourceLimits, ILimits, IQuery } from "../models/models";
+import { IDataSourceLimits, IQuery } from "../models/models";
 import { APILogger } from "./ApiLogger";
 import { HttpService } from "./HttpService";
 import { ValidationService } from "./ValidationService";
