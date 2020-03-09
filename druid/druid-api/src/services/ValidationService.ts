@@ -120,11 +120,13 @@ export class ValidationService {
             if (fromDate > toDate) {
                 return {
                     // tslint:disable-next-line:max-line-length
+                    error: "Query cancelled",
                     errorMessage: `Invalid date range, The end instant date must be greater than the start instant date`,
                     isValid: false,
                 };
             } else if (differenceInDays > allowedDateRangeIs) {
                 return {
+                    error: "Query cancelled",
                     errorMessage: `Date Range(intervals) can not be more than "${allowedDateRangeIs}" day's"`,
                     isValid: false,
                 };
@@ -132,7 +134,7 @@ export class ValidationService {
                 return { isValid: true };
             }
         } else {
-            return { isValid: false, errorMessage: `Invalid date range, The date range is must` };
+            return { error: "Query cancelled", isValid: false, errorMessage: `Invalid date range, The date range is must` };
         }
     }
 
