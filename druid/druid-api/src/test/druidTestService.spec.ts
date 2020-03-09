@@ -159,3 +159,55 @@ describe("/POST druid/v2/", () => {
     });
 
 });
+describe("/GET druid/v2/datasource", () => {
+    const response = ["summary-events", "telemetry-error-events", "content-model-snapshot", "telemetry-events-multi", "telemetry-cdata", "telemetry-rollup-theta5", "telemetry-events-test", "telemetry-rollup-test", "telemetry-events-old", "telemetry-feedback-events", "pipeline-metrics", "telemetry-lessqueryg", "telemetry-rollup-theta4"];
+    beforeEach(() => {
+        nock(config.druidHost + ":" + config.druidPort)
+            .get(config.druidDataSourceEndPoint)
+            .reply(200, response);
+    });
+
+    it("Should fetch the list of data source which are available, When get source api is inovked", (done) => {
+        chai.request(app)
+            .get(config.apiDataSourceEndPoint)
+            .end((err, res) => {
+                res.should.have.status(HttpStatus.OK);
+                expect(res.body).not.eq(undefined);
+                expect(res.body.length).eq(13);
+                done();
+            });
+    });
+});
+
+describe("/POST druid/v2/cql", () => {
+    // tslint:disable-next-line: max-line-length
+    const response = [{"contentId": "do_11272916574416076817226", "totalRatingsCount": 1, "Total Ratings": 5, "averageRating": 5}, {"contentId": "do_112768268386615296159", "totalRatingsCount": 1, "Total Ratings": 5, "averageRating": 5}, {"contentId": "do_112797193459564544172", "totalRatingsCount": 1, "Total Ratings": 5, "averageRating": 5}, {"contentId": "do_11283193441064550414", "totalRatingsCount": 4, "Total Ratings": 20, "averageRating": 5}, {"contentId": "do_1128862117518868481111", "totalRatingsCount": 4, "Total Ratings": 20, "averageRating": 5}, {"contentId": "domain_14461", "totalRatingsCount": 1, "Total Ratings": 5, "averageRating": 5}];
+    beforeEach(() => {
+        nock(config.druidHost + ":" + config.druidPort)
+            .post(config.druidSqlEndPoint)
+            .reply(200, response);
+    });
+
+    it("Should able to query the cql, When auth token is valid", (done) => {
+        chai.request(app)
+            .post(config.apiSqlEndPoint)
+            .set("authorization", "2QyHp4q35lL9XzI3i5f1FVSYmtWeGvq2")
+            .end((err, res) => {
+                res.should.have.status(HttpStatus.OK);
+                expect(res.body).not.eq(undefined);
+                done();
+            });
+    });
+
+    it("Should not able to query the cql, When auth token is invalid", (done) => {
+        chai.request(app)
+            .post(config.apiSqlEndPoint)
+            .set("authorization", "4KLJ3shdiohsnEnlfw")
+            .send(JSON.parse(Fixtures.VALID_CQL_QUERY))
+            .end((err, res) => {
+                res.should.have.status(HttpStatus.UNAUTHORIZED);
+                expect(res.body).not.eq(undefined);
+                done();
+            });
+    });
+});

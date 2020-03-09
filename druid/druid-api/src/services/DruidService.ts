@@ -52,7 +52,6 @@ export class DruidService {
                 return result;
             } catch (error) {
                 APILogger.log(`Failed to fetch the result ${error}`);
-                console.log("error" + error);
                 throw new Error("Unable to handle the query, Please try after some time.");
             }
         });

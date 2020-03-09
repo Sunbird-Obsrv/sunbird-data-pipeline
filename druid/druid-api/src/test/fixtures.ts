@@ -10,4 +10,5 @@ export class Fixtures {
     public static WITHOUT_THRESHOLD_QUERY = '{"queryType":"select","dataSource":"telemetry-events","aggregations":[{"type":"count","name":"count"}],"granularity":"all","postAggregations":[],"intervals":"2019-11-13T00:00:00+00:00/2019-11-20T00:00:00+00:00","metric":"count","dimension":"actor_id"}';
     public static WITHOUT_DATE_RANGE_QUERY = '{"queryType":"scan","dataSource":"telemetry-events","aggregations":[{"type":"count","name":"count"}],"granularity":"all","postAggregations":[],"metric":"count","dimension":"actor_id"}';
     public static UNSUPPORTED_DATA_SOURCE = '{"queryType":"timeseries","dataSource":"invalid_data_source","aggregations":[{"type":"count","name":"count"}],"granularity":"all","postAggregations":[],"intervals": "2019-11-15T00:00:00+00:00/2019-11-22T00:00:00+00:00"}';
+    public static VALID_CQL_QUERY = "{\"query\":\"SELECT \\\"object_id\\\" AS contentId, COUNT(*) AS \\\"totalRatingsCount\\\", SUM(edata_rating) AS \\\"Total Ratings\\\", SUM(edata_rating)/COUNT(*) AS \\\"averageRating\\\" FROM \\\"druid\\\".\\\"telemetry-feedback-events\\\" WHERE \\\"eid\\\" = 'FEEDBACK' GROUP BY \\\"object_id\\\"\"}";
 }
