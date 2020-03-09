@@ -1,10 +1,5 @@
 package org.ekstep.ep.samza.task;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.*;
-
 import com.fiftyonred.mock_jedis.MockJedis;
 import org.apache.samza.Partition;
 import org.apache.samza.config.Config;
@@ -25,6 +20,15 @@ import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.exceptions.JedisException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.*;
 
 public class EventsRouterTaskTest {
 
@@ -70,6 +74,8 @@ public class EventsRouterTaskTest {
 		stub(configMock.get("output.duplicate.topic.name", DUPLICATE_TOPIC)).toReturn(DUPLICATE_TOPIC);
 		stub(configMock.getBoolean("dedup.enabled", true)).toReturn(true);
 		stub(configMock.get("router.events.error.route.topic", ERROR_EVENTS_TOPIC)).toReturn(ERROR_EVENTS_TOPIC);
+		when(configMock.get("dedup.exclude.eids", "")).thenReturn("LOG");
+		stub(configMock.getList("dedup.exclude.eids", new ArrayList<>())).toReturn(Arrays.asList("LOG","ERROR"));
 
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
@@ -127,7 +133,7 @@ public class EventsRouterTaskTest {
 
 	@Test
 	public void shouldSendEventToFailedTopicIfEventIsNotParseable() throws Exception {
-
+		when(configMock.get("dedup.exclude.eids", "")).thenReturn("");
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.UNPARSABLE_START_EVENT);
 		when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
 		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);
@@ -152,6 +158,7 @@ public class EventsRouterTaskTest {
 		when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(false);
 		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);
 		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
+		verify(deDupEngineMock, times(1)).isUniqueEvent(any());
 		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), DUPLICATE_TOPIC)));
 	}
 
@@ -176,6 +183,7 @@ public class EventsRouterTaskTest {
 		when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
 		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);
 		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
+		verify(deDupEngineMock, times(0)).isUniqueEvent(any());
 		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), LOG_EVENTS_TOPIC)));
 	}
 
@@ -187,6 +195,41 @@ public class EventsRouterTaskTest {
 		when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
 		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);
 		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
+		verify(deDupEngineMock, times(0)).isUniqueEvent(any());
 		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), ERROR_EVENTS_TOPIC)));
 	}
+
+	@Test
+	public void shouldStampTimeStampforTraceEvent() throws Exception {
+
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.TRACE_EVENT);
+		when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
+		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);
+		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
+	}
+
+	@Test
+	public void shouldSkipsSummaryEvents() throws Exception {
+
+		stub(configMock.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY")).toReturn("ME_WORKFLOW_SUMMARY");
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.WORKFLOW_USAGE_EVENT);
+		when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
+		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);
+		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
+	}
+
+	@Test(expected = JedisException.class)
+	public void shouldCatchRedisException() throws Exception{
+
+		stub(configMock.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY")).toReturn("ME_WORKFLOW_SUMMARY");
+		stub(envelopeMock.getMessage()).toReturn(EventFixture.WORKFLOW_USAGE_EVENT);
+		Jedis jedismock = mock(Jedis.class);
+		when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
+		when(deDupEngineMock.getRedisConnection()).thenReturn(jedismock);
+		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);
+		when(deDupEngineMock.isUniqueEvent(any())).thenThrow(JedisException.class);
+		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
+
+	}
+
 }

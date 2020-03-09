@@ -1,7 +1,6 @@
 package org.ekstep.ep.samza.fixtures;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.util.Map;
 
@@ -287,6 +286,40 @@ public class EventFixture {
 			"   \"syncts\":1.553040098435E12,"+
 			"   \"@timestamp\":\"2019-03-20T00:01:38.435Z\""+
 			"}";
+
+	public static final String TRACE_EVENT = "{"+
+			"   \"eid\":\"TRACE\","+
+			"   \"ets\":%s,"+
+			"   \"ver\":\"3.0\","+
+			"   \"mid\":\"TRACE.bf0e4e15-014e-4a22-ba00-e02ff3c38784\","+
+			"   \"actor\":{"+
+			"      \"id\":\"e85bcfb5-a8c2-4e65-87a2-0ebb43b45f01\","+
+			"      \"type\":\"System\""+
+			"   },"+
+			"   \"context\":{"+
+			"      \"channel\":\"01235953109336064029450\","+
+			"      \"pdata\":{"+
+			"         \"id\":\"prod.ntp.learning.platform\","+
+			"         \"pid\":\"learning-service\","+
+			"         \"ver\":\"1.0\""+
+			"      },"+
+			"      \"env\":\"framework\""+
+			"   },"+
+			"   \"edata\":{"+
+			"      \"err\":\"ERR_DATA_NOT_FOUND\","+
+			"      \"stacktrace\":\"ERR_DATA_NOT_FOUND: Data not found with id : null\n\tat\","+
+			"      \"errtype\":\"system\""+
+			"   },"+
+			"   \"flags\":{"+
+			"      \"tv_processed\":true,"+
+			"      \"dd_processed\":true"+
+			"   },"+
+			"   \"type\":\"events\","+
+			"   \"syncts\":1.553040098435E12,"+
+			"   \"@timestamp\":\"2019-03-20T00:01:38.435Z\""+
+			"}";
+
+	public static final String WORKFLOW_USAGE_EVENT = "{\"eid\":\"ME_WORKFLOW_USAGE_SUMMARY\",\"ets\":1580174594135,\"syncts\":1580112438526,\"ver\":\"2.1\",\"mid\":\"7FA1DEB21833F00EE8AD66FF8AFF4589\",\"uid\":\"\",\"channel\":\"\",\"context\":{\"pdata\":{\"id\":\"AnalyticsDataPipeline\",\"ver\":\"1.0\",\"model\":\"WorkFlowUsageSummarizer\"},\"granularity\":\"DAY\",\"date_range\":{\"from\":1580108039040,\"to\":1580112356069}},\"dimensions\":{\"uid\":\"04b88827-87b1-40fd-a662-b1b97068d127\",\"did\":\"all\",\"pdata\":{\"id\":\"prod.diksha.app\",\"ver\":\"2.3.162\",\"pid\":\"sunbird.app\"},\"tag\":\"all\",\"period\":20200127,\"content_id\":\"all\",\"channel\":\"505c7c48ac6dc1edc9b08f21db5a571d\",\"type\":\"resource\",\"mode\":\"play\",\"content_type\":\"all\"},\"edata\":{\"eks\":{\"total_users_count\":0,\"total_devices_count\":1,\"total_content_count\":4,\"avg_ts_session\":4.88,\"total_sessions\":5,\"avg_interactions_min\":24.58,\"total_interactions\":10,\"avg_pageviews\":0.0,\"total_ts\":24.41,\"total_pageviews_count\":0}}}";
 	public static Map<String, Object> getMap(String message) {
 		return (Map<String, Object>) new Gson().fromJson(message, Map.class);
 	}
