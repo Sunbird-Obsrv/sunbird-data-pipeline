@@ -14,10 +14,8 @@ export class HttpService {
                 method,
                 url,
             }).then((res) => {
-                console.log("data" + res.data)
                 resolve(res.data);
             }).catch((error) => {
-                console.log("error is" + error)
                 APILogger.error(error);
                 reject(error);
             });
