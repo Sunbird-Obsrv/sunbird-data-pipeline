@@ -34,7 +34,7 @@ describe("/POST druid/v2/", () => {
             .post(config.apiEndPoint)
             .send(JSON.parse(Fixtures.MANY_DIMENSIONS_QUERY))
             .end((err, res) => {
-                res.should.have.status(HttpStatus.BAD_REQUEST);
+                res.should.have.status(HttpStatus.FORBIDDEN);
                 expect(res.body).not.equal(undefined);
                 expect(res.body.errorMessage).not.equal(undefined);
                 done();
@@ -46,7 +46,7 @@ describe("/POST druid/v2/", () => {
             .post(config.apiEndPoint)
             .send(JSON.parse(Fixtures.HIGH_DATE_RANGE_QUERY_IN_LIST))
             .end((err, res) => {
-                res.should.have.status(HttpStatus.BAD_REQUEST);
+                res.should.have.status(HttpStatus.FORBIDDEN);
                 expect(res.body).not.equal(undefined);
                 expect(res.body.errorMessage).not.equal(undefined);
                 done();
@@ -58,7 +58,7 @@ describe("/POST druid/v2/", () => {
             .post(config.apiEndPoint)
             .send(JSON.parse(Fixtures.HIGH_DATE_RANGE_QUERY_AS_STRING))
             .end((err, res) => {
-                res.should.have.status(HttpStatus.BAD_REQUEST);
+                res.should.have.status(HttpStatus.FORBIDDEN);
                 expect(res.body).not.equal(undefined);
                 expect(res.body.errorMessage).not.equal(undefined);
                 done();
@@ -70,7 +70,7 @@ describe("/POST druid/v2/", () => {
             .post(config.apiEndPoint)
             .send(JSON.parse(Fixtures.FILTER_WITH_HIGHT_CARDINAL_DIMS_QUERY))
             .end((err, res) => {
-                res.should.have.status(HttpStatus.BAD_REQUEST);
+                res.should.have.status(HttpStatus.FORBIDDEN);
                 expect(res.body).not.equal(undefined);
                 expect(res.body.errorMessage).not.equal(undefined);
                 done();
@@ -105,7 +105,7 @@ describe("/POST druid/v2/", () => {
             .post(config.apiEndPoint)
             .send(JSON.parse(Fixtures.WITHOUT_DATE_RANGE_QUERY))
             .end((err, res) => {
-                res.should.have.status(HttpStatus.BAD_REQUEST);
+                res.should.have.status(HttpStatus.FORBIDDEN);
                 expect(res.body).not.equal(undefined);
                 expect(res.body.errorMessage).not.equal(undefined);
                 done();
@@ -117,7 +117,7 @@ describe("/POST druid/v2/", () => {
             .post(config.apiEndPoint)
             .send(JSON.parse(Fixtures.WITHOUT_DATE_RANGE_QUERY))
             .end((err, res) => {
-                res.should.have.status(HttpStatus.BAD_REQUEST);
+                res.should.have.status(HttpStatus.FORBIDDEN);
                 expect(res.body).not.equal(undefined);
                 expect(res.body.errorMessage).not.equal(undefined);
                 done();

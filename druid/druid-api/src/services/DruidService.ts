@@ -28,7 +28,7 @@ export class DruidService {
             APILogger.log("User query is " + JSON.stringify(query));
             const result: IValidationResponse = ValidationService.validate(query, this.getLimits(query.dataSource));
             // tslint:disable-next-line: max-line-length
-            if (result.isValid) { next(); } else { response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result).end(); }
+            if (result.isValid) { next(); } else { response.status(HttpStatus.FORBIDDEN).send(result).end(); }
         });
     }
 

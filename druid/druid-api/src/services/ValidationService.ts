@@ -108,7 +108,7 @@ export class ValidationService {
             }
             if (cardianalDimensionsCountIs > maxDimensions) {
                 return {
-                    error: httpStatus,
+                    error: httpStatus["403_NAME"],
                     errorMessage: `CardinalColumns [Dimensions] in the "${where}" can not more than "${maxDimensions}"`,
                     isValid: false,
                 };
