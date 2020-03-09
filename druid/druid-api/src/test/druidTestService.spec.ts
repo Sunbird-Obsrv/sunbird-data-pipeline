@@ -181,7 +181,7 @@ describe("/GET druid/v2/datasource", () => {
 
 describe("/POST druid/v2/cql", () => {
     // tslint:disable-next-line: max-line-length
-    const response = [{"contentId": "do_11272916574416076817226", "totalRatingsCount": 1, "Total Ratings": 5, "averageRating": 5}, {"contentId": "do_112768268386615296159", "totalRatingsCount": 1, "Total Ratings": 5, "averageRating": 5}, {"contentId": "do_112797193459564544172", "totalRatingsCount": 1, "Total Ratings": 5, "averageRating": 5}, {"contentId": "do_11283193441064550414", "totalRatingsCount": 4, "Total Ratings": 20, "averageRating": 5}, {"contentId": "do_1128862117518868481111", "totalRatingsCount": 4, "Total Ratings": 20, "averageRating": 5}, {"contentId": "domain_14461", "totalRatingsCount": 1, "Total Ratings": 5, "averageRating": 5}];
+    const response = [{ "contentId": "do_11272916574416076817226", "totalRatingsCount": 1, "Total Ratings": 5, "averageRating": 5 }, { "contentId": "do_112768268386615296159", "totalRatingsCount": 1, "Total Ratings": 5, "averageRating": 5 }, { "contentId": "do_112797193459564544172", "totalRatingsCount": 1, "Total Ratings": 5, "averageRating": 5 }, { "contentId": "do_11283193441064550414", "totalRatingsCount": 4, "Total Ratings": 20, "averageRating": 5 }, { "contentId": "do_1128862117518868481111", "totalRatingsCount": 4, "Total Ratings": 20, "averageRating": 5 }, { "contentId": "domain_14461", "totalRatingsCount": 1, "Total Ratings": 5, "averageRating": 5 }];
     beforeEach(() => {
         nock(config.druidHost + ":" + config.druidPort)
             .post(config.druidSqlEndPoint)
