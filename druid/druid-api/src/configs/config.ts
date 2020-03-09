@@ -1,10 +1,12 @@
 export const config = {
     apiEndPoint: process.env.druid_proxy_api_endPoint || "/druid/v2",
     apiPort: process.env.druid_proxy_api_port || 8082,
-    druidEndPoint: process.env.druid_proxy_api_endPoint || "/druid/v2",
     druidDataSourceEndPoint: process.env.druid_datasource_endPoint || "/druid/v2/datasources",
-    druidHost: process.env.druid_host || "http://localhost",
+    druidEndPoint: process.env.druid_proxy_api_endPoint || "/druid/v2",
+    druidHost: process.env.druid_host || "http://11.2.1.20",
     druidPort: process.env.druid_port || 8082,
+    druidSqlEndPoint: process.env.druid_sql_endPoint || "/druid/v2/sql",
+    druidWhiteListedKeys: process.env.druid_cql_whitlisted_keys || ["2QyHp4q35lL9XzI3i5f1FVSYmtWeGvq2", "7rFRS7gycgpnbccA6GucQlAvq8a6aDkB"],
     limits: [{ // Keeping limits per data source.
         cardinalColumns: [ // High cardinal dimensions
             "context_sid", // Telemetry, context session id

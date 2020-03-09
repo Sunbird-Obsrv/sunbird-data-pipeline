@@ -1,5 +1,6 @@
 import async from "asyncawait/async";
 import await from "asyncawait/await";
+import { AxiosRequestConfig } from "axios";
 import HttpStatus from "http-status-codes";
 import _ from "lodash";
 import { IValidationResponse } from "../models/models";
@@ -7,7 +8,6 @@ import { IDataSourceLimits, ILimits, IQuery } from "../models/models";
 import { APILogger } from "./ApiLogger";
 import { HttpService } from "./HttpService";
 import { ValidationService } from "./ValidationService";
-import { AxiosRequestConfig } from "axios";
 
 /**
  * DruidService which facilitate user query to filter and validate.
@@ -27,7 +27,18 @@ export class DruidService {
         return async((query: IQuery, response: any, next: any) => {
             APILogger.log("User query is " + JSON.stringify(query));
             const result: IValidationResponse = ValidationService.validate(query, this.getLimits(query.dataSource));
+            // tslint:disable-next-line: max-line-length
             if (result.isValid) { next(); } else { response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result).end(); }
+        });
+    }
+
+    /**
+     * Which validates the api auth key which is present in the headers
+     */
+    public validateKey() {
+        return async((key: string = "", response: any, next: any) => {
+            const result: IValidationResponse = ValidationService.isValidKey(key);
+            if (result.isValid) { next(); } else { response.status(HttpStatus.UNAUTHORIZED).send(result).end(); }
         });
     }
 
@@ -41,7 +52,7 @@ export class DruidService {
                 return result;
             } catch (error) {
                 APILogger.log(`Failed to fetch the result ${error}`);
-                console.log("error" + error)
+                console.log("error" + error);
                 throw new Error("Unable to handle the query, Please try after some time.");
             }
         });

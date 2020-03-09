@@ -12,21 +12,19 @@ import { HttpService } from "./services/HttpService";
 
 const app = express();
 const endPoint = config.apiEndPoint;
+const sqlQueryEndPoint = config.druidSqlEndPoint;
 const dataSourceEndPoint = config.druidDataSourceEndPoint;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-/**
- * Creating a HTTP Service Instance to invoke the external system.
- */
-//const httpService = new HttpService(config.druidHost, config.druidEndPoint, Number(config.druidPort), "POST");
-//const druidDataSourceFetcher = new HttpService(config.druidHost, config.druidEndPoint, Number(config.druidPort), "POST");
 
 /**
  * Creating a DruidService Instance to facilitate to filter and validate the query.
  */
 const druidService = new DruidService({ limits: config.limits }, HttpService);
 
+/**
+ *
+ */
 app.post(endPoint, (requestObj, responseObj, next) => {
   druidService.validate()(requestObj.body, responseObj, next);
 }, (requestObj, responseObj) => {
@@ -36,12 +34,34 @@ app.post(endPoint, (requestObj, responseObj, next) => {
       responseObj.end();
     })
     .catch((err) => {
-      console.log("error" + err)
+      console.log("error" + err);
       responseObj.status(HttpStatus.INTERNAL_SERVER_ERROR).json(err.message);
       responseObj.end();
     });
 });
 
+/**
+ *
+ */
+app.post(sqlQueryEndPoint, (requestObj, responseObj, next) => {
+  druidService.validateKey()(requestObj.headers.authorization, responseObj, next);
+}, (requestObj, responseObj) => {
+  druidService.fetch()(`${config.druidHost}:${config.druidPort}${config.druidSqlEndPoint}`, "POST", requestObj.body)
+    .then((data) => {
+      responseObj.status(HttpStatus.OK).json(data);
+      responseObj.end();
+    })
+    .catch((err) => {
+      console.log("error" + err);
+      responseObj.status(HttpStatus.INTERNAL_SERVER_ERROR).json(err.message);
+      responseObj.end();
+    });
+});
+
+/**
+ * Method to get
+ *
+ */
 app.get(dataSourceEndPoint, (requestObj, responseObj, next) => {
   druidService.fetch()(`${config.druidHost}:${config.druidPort}${config.druidDataSourceEndPoint}`, "GET", undefined)
     .then((data) => {
@@ -50,9 +70,8 @@ app.get(dataSourceEndPoint, (requestObj, responseObj, next) => {
     }).catch((err) => {
       responseObj.status(HttpStatus.INTERNAL_SERVER_ERROR).json(err.message);
       responseObj.end();
-    })
-})
-
+    });
+});
 
 /**
  * Listen the server to config.port

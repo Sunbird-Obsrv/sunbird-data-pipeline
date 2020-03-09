@@ -1,5 +1,6 @@
 import _ from "lodash";
 import moment from "moment";
+import { config } from "../configs/config";
 import { ICommon, IFilter, ILimits, IQuery, IRules, IValidationResponse } from "../models/models";
 import { APILogger } from "./ApiLogger";
 
@@ -47,6 +48,23 @@ export class ValidationService {
             APILogger.warn(`Rules are not found, Hence allowing user to query ${query}`);
             return {
                 isValid: true,
+            };
+        }
+    }
+
+    /**
+     * Method to validate the authorization whitlisted kyes
+     * @param key - Authroization whitlisted key.
+     * @returns IValidationResponse  - Status of the authkey validation.
+     */
+    public static isValidKey(key: string): IValidationResponse {
+        if (config.druidWhiteListedKeys.includes(key)) {
+            return { isValid: true };
+        } else {
+            return {
+                error: "UnAuthrized",
+                errorMessage: `Invalid Authrozation key`,
+                isValid: false,
             };
         }
     }
@@ -121,6 +139,7 @@ export class ValidationService {
                 return {
                     // tslint:disable-next-line:max-line-length
                     error: "Query cancelled",
+                    // tslint:disable-next-line: max-line-length
                     errorMessage: `Invalid date range, The end instant date must be greater than the start instant date`,
                     isValid: false,
                 };
