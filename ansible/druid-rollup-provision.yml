@@ -42,14 +42,14 @@
     - "{{inventory_dir}}/secrets.yml"
   vars:
     postgresql_databases:
-      - name: rollup-druid
-      - name: rollup-graphite
+      - name: druid-rollup
+      - name: graphite-rollup
     postgresql_users:
       - name: druid
-        db: rollup-druid
+        db: druid-rollup
         password: "{{ dp_vault_druid_postgress_pass }}"
       - name: graphite
-        db: rollup-graphite
+        db: graphite-rollup
         password: "{{ dp_vault_druid_postgress_graphite_pass }}"     
   tasks:
     - name: Ensure database is created
@@ -92,4 +92,4 @@
     - {role: analytics-druid, when: "'druid-rollup-historical' in group_names", druid_role: 'historical', service: 'historical'}
     - {role: analytics-druid, when: "'druid-rollup-middlemanager' in group_names", druid_role: 'middlemanager', service: 'middleManager' }
   vars:
-    druid_postgres_db: "rollup-druid"
+    druid_postgres_db: "druid-rollup"
