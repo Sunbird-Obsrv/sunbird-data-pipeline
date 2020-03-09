@@ -35,7 +35,7 @@ export class ValidationService {
                     case "segmentmetadata": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.segmentMetadata);
 
                     default: return {
-                        error: undefined,
+                        error: "Query cancelled",
                         errorMessage: `Unsupported query type"${query.queryType}"`,
                         isValid: false,
                     };
@@ -89,7 +89,7 @@ export class ValidationService {
             }
             if (cardianalDimensionsCountIs > maxDimensions) {
                 return {
-                    error: undefined,
+                    error: "Query cancelled",
                     errorMessage: `CardinalColumns [Dimensions] in the "${where}" can not more than "${maxDimensions}"`,
                     isValid: false,
                 };

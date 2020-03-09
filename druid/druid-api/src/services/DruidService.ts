@@ -7,6 +7,7 @@ import { IDataSourceLimits, ILimits, IQuery } from "../models/models";
 import { APILogger } from "./ApiLogger";
 import { HttpService } from "./HttpService";
 import { ValidationService } from "./ValidationService";
+import { AxiosRequestConfig } from "axios";
 
 /**
  * DruidService which facilitate user query to filter and validate.
@@ -34,12 +35,13 @@ export class DruidService {
      * Which is used to fetch the result from the result from the external system.
      */
     public fetch() {
-        return async(async (query: IQuery) => {
+        return async(async (api: string, method: AxiosRequestConfig["method"], query?: IQuery) => {
             try {
-                const result = await this.httpService.fetch(query);
+                const result = await HttpService.fetch(api, method, query);
                 return result;
             } catch (error) {
                 APILogger.log(`Failed to fetch the result ${error}`);
+                console.log("error" + error)
                 throw new Error("Unable to handle the query, Please try after some time.");
             }
         });

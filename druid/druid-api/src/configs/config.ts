@@ -1,7 +1,8 @@
 export const config = {
-    apiEndPoint: process.env.druid_proxy_api_endPoint || "/druid/v2/",
+    apiEndPoint: process.env.druid_proxy_api_endPoint || "/druid/v2",
     apiPort: process.env.druid_proxy_api_port || 8082,
-    druidEndPoint: process.env.druid_proxy_api_endPoint || "/druid/v2/",
+    druidEndPoint: process.env.druid_proxy_api_endPoint || "/druid/v2",
+    druidDataSourceEndPoint: process.env.druid_datasource_endPoint || "/druid/v2/datasources",
     druidHost: process.env.druid_host || "http://localhost",
     druidPort: process.env.druid_port || 8082,
     limits: [{ // Keeping limits per data source.
