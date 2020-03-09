@@ -4,7 +4,7 @@ USER root
 WORKDIR /opt/druid-proxy-api/
 COPY ./ .
 RUN npm install
-RUN npm install -g typescript
+RUN npm install -g typescript@3.8.3
 RUN tsc
 
 FROM node:8.11-slim
