@@ -88,16 +88,20 @@ public class ContentCacheUpdaterService extends BaseCacheUpdaterService {
         if (null != dialCodeList) {
             dialCodeList.forEach(dialCode -> {
                 if (!dialCode.isEmpty()) {
+                    metrics.incDialCodesCount();
                     String metaData = readFromCache(dialCode, storeId);
                     if (null == metaData || metaData.isEmpty()) {
                         LOGGER.info("", String.format("Invoking DialCode API to fetch the metadata for this dialCode( %s )", dialCode));
                         Object dialCodeMetadata = contentData.getMetadata(apiUrl.concat(dialCode), this.restUtil, contentCacheConfig.getAuthorizationKey(), "dialcode");
                         if (null != dialCodeMetadata) {
+                            metrics.incDialCodesFromApiCount();
                             LOGGER.info("", String.format("Inserting dialCode( %s ) metadata to cache system", dialCode));
                             addToCache(dialCode, gson.toJson(dialCodeMetadata), storeId);
                         } else {
                             LOGGER.info("", String.format("API did not fetched any dialCode metadata!!! %s", dialCode));
                         }
+                    } else {
+                        metrics.incDialCodesFromCacheCount();
                     }
                 }
             });

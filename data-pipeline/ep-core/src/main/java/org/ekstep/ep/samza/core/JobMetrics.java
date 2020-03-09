@@ -46,7 +46,10 @@ public class JobMetrics {
     
     private final Counter dbInsertCount;
     private final Counter dbUpdateCount;
-    
+    private final Counter dialCodesCount;
+    private final Counter dialCodesFromApiCount;
+    private final Counter dialCodesFromCacheCount;
+
     private TaskContext context;
     private int partition;
 
@@ -84,6 +87,9 @@ public class JobMetrics {
         ipLocationHitCount = metricsRegistry.newCounter(getClass().getName(), "ip-location-hit-count");
         dbInsertCount = metricsRegistry.newCounter(getClass().getName(), "db-insert-count");
         dbUpdateCount = metricsRegistry.newCounter(getClass().getName(), "db-update-count");
+        dialCodesCount = metricsRegistry.newCounter(getClass().getName(),"dial-codes-count");
+        dialCodesFromApiCount = metricsRegistry.newCounter(getClass().getName(),"dial-codes-from-api-count");
+        dialCodesFromCacheCount = metricsRegistry.newCounter(getClass().getName(),"dial-codes-from-cache-count");
 
         metricCounterMap.put("success-message-count", successMessageCount);
         metricCounterMap.put("failed-message-count", failedMessageCount);
@@ -109,6 +115,9 @@ public class JobMetrics {
         metricCounterMap.put("ip-location-hit-count", ipLocationHitCount);
         metricCounterMap.put("db-insert-count", dbInsertCount);
         metricCounterMap.put("db-update-count", dbUpdateCount);
+        metricCounterMap.put("dial-codes-count", dialCodesCount);
+        metricCounterMap.put("dial-codes-from-api-count", dialCodesFromApiCount);
+        metricCounterMap.put("dial-codes-from-cache-count", dialCodesFromCacheCount);
         jobName = jName;
         this.context = context;
     }
@@ -140,6 +149,9 @@ public class JobMetrics {
         shareEventRouteSuccessCount.clear();
         dbInsertCount.clear();
         dbUpdateCount.clear();
+        dialCodesCount.clear();
+        dialCodesFromApiCount.clear();
+        dialCodesFromCacheCount.clear();
     }
 
     public void incSuccessCounter() {
@@ -246,6 +258,12 @@ public class JobMetrics {
         dbUpdateCount.inc();
     }
 
+    public void incDialCodesCount() { dialCodesCount.inc(); }
+
+    public void incDialCodesFromApiCount() { dialCodesFromApiCount.inc(); }
+
+    public void incDialCodesFromCacheCount() { dialCodesFromCacheCount.inc(); }
+
     public long consumerLag(Map<String, ConcurrentHashMap<String, Metric>> containerMetricsRegistry) {
         long consumerLag = 0;
         try {
@@ -301,6 +319,9 @@ public class JobMetrics {
         metricsEvent.put("share-route-success-count", shareEventRouteSuccessCount.getCount());
         metricsEvent.put("db-insert-count", dbInsertCount.getCount());
         metricsEvent.put("db-update-count", dbUpdateCount.getCount());
+        metricsEvent.put("dial-codes-count", dialCodesCount.getCount());
+        metricsEvent.put("dial-codes-from-api-count", dialCodesCount.getCount());
+        metricsEvent.put("dial-codes-from-cache-count", dialCodesCount.getCount());
 
         metricsEvent.put("consumer-lag",
                 consumerLag(((MetricsRegistryMap) context.getSamzaContainerContext().metricsRegistry).metrics()));
