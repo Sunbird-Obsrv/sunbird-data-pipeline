@@ -62,7 +62,7 @@ export class ValidationService {
             return { isValid: true };
         } else {
             return {
-                error: "UnAuthrized",
+                error: "UnAuthorized",
                 errorMessage: `Invalid Authrozation key`,
                 isValid: false,
             };

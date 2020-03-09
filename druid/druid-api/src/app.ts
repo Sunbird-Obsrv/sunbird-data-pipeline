@@ -34,7 +34,6 @@ app.post(endPoint, (requestObj, responseObj, next) => {
       responseObj.end();
     })
     .catch((err) => {
-      console.log("error" + err);
       responseObj.status(HttpStatus.INTERNAL_SERVER_ERROR).json(err.message);
       responseObj.end();
     });
@@ -52,7 +51,6 @@ app.post(sqlQueryEndPoint, (requestObj, responseObj, next) => {
       responseObj.end();
     })
     .catch((err) => {
-      console.log("error" + err);
       responseObj.status(HttpStatus.INTERNAL_SERVER_ERROR).json(err.message);
       responseObj.end();
     });
