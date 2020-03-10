@@ -37,9 +37,9 @@ export class ValidationService {
                     //case "segmentmetadata": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.segmentMetadata);
 
                     default: return {
-                        error: httpStatus["403_NAME"],
-                        errorMessage: `Unsupported query type"${query.queryType}"`,
-                        isValid: false,
+                       // error: httpStatus["403_NAME"],
+                       // errorMessage: `Unsupported query type"${query.queryType}"`,
+                        isValid: true,
                     };
                 }
             } else {
