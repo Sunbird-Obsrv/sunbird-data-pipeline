@@ -53,7 +53,8 @@ app.post(endPoint, (requestObj, responseObj, next) => {
  * Method Type - POST
  */
 app.post(sqlQueryEndPoint, (requestObj, responseObj, next) => {
-  druidService.validateKey()(requestObj.headers.authorization, responseObj, next);
+  //druidService.validateKey()(requestObj.headers.authorization, responseObj, next);
+  next();
 }, (requestObj, responseObj) => {
   druidService.fetch()(`${config.druidHost}:${config.druidPort}${config.druidSqlEndPoint}`, "POST", requestObj.body)
     .then((data) => {
