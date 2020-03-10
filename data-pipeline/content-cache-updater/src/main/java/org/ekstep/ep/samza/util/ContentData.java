@@ -65,8 +65,7 @@ public class ContentData {
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", authKey);
         try {
-            okhttp3.Response httpResponse = restUtil.get(apiUrl, headers);
-            String responseBody = httpResponse.body().string();
+            String responseBody = restUtil.get(apiUrl, headers);
             Gson gson = new Gson();
             Map<String, Object> response = gson.fromJson(
                     responseBody, new TypeToken<HashMap<String, Object>>() {

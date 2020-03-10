@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import redis.clients.jedis.Jedis;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.*;
 
@@ -58,7 +59,7 @@ public class ContentCacheUpdaterServiceTest {
 
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         redisConnectMock = mock(RedisConnect.class);
         contentCacheUpdaterSinkMock = mock(ContentCacheUpdaterSink.class);
         configMock = mock(Config.class);
@@ -102,12 +103,12 @@ public class ContentCacheUpdaterServiceTest {
     }
 
 
-    public Response createTestResponse(String apiUrl, String response, int status, String authKey) {
+    public String createTestResponse(String apiUrl, String response, int status, String authKey) throws IOException {
         Request mockRequest = new Request.Builder()
                 .url(apiUrl)
                 .header("Authorization", authKey)
                 .build();
-        return new Response.Builder()
+        return Objects.requireNonNull(new Response.Builder()
                 .request(mockRequest)
                 .protocol(Protocol.HTTP_2)
                 .code(status) // status code
@@ -116,14 +117,14 @@ public class ContentCacheUpdaterServiceTest {
                         MediaType.get("application/json; charset=utf-8"),
                         response
                 ))
-                .build();
+                .build().body()).string();
     }
 
-    public void createStub(String apiUrl, Response response, String authKey) {
+    public void createStub(String apiUrl, String response, String authKey) {
         Map<String, String> headers = new HashMap<String, String>();
         headers.put("Authorization", authKey);
         try {
-            stub(restUtilMock.get(apiUrl, headers)).toReturn(response);
+            when(restUtilMock.get(apiUrl, headers)).thenReturn(response);
         } catch (Exception e) {
             System.out.println("Exception is" + e);
         }

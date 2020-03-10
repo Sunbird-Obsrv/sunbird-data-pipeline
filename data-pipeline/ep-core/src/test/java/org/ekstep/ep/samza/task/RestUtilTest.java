@@ -1,5 +1,6 @@
 package org.ekstep.ep.samza.task;
 
+import com.mashape.unirest.http.exceptions.UnirestException;
 import okhttp3.Response;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -27,11 +28,11 @@ public class RestUtilTest {
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", "");
         try {
-            Response res = new RestUtil().get("http://127.0.0.1:3000/api/dialcode/v3/read/", headers);
+            String response = new RestUtil().get("http://127.0.0.1:3000/api/dialcode/v3/read/", headers);
             // TODO: Assertion are failing need to add
-            System.out.println("response is" + res.body());
-            assertNotNull(res.body());
-        } catch (IOException e) {
+            System.out.println("response is" + response);
+            assertNotNull(response);
+        } catch (UnirestException e) {
             System.out.println("Exception is" + e);
         } finally {
             server.shutdown();
