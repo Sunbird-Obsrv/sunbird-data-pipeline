@@ -118,6 +118,9 @@ public class JobMetricsTest {
         jobMetricsMock.incExpiredEventCount();
         jobMetricsMock.incUserDeclaredHitCount();
         jobMetricsMock.incIpLocationHitCount();
+        jobMetricsMock.incDialCodesCount();
+        jobMetricsMock.incDialCodesFromApiCount();
+        jobMetricsMock.incDialCodesFromCacheCount();
 
         String metricsJson = jobMetricsMock.collect();
         System.out.println(metricsJson);
@@ -141,6 +144,9 @@ public class JobMetricsTest {
         assertEquals(1.0, metrics.get("device-cache-update-count"));
         assertEquals(1.0, metrics.get("cache-error-count"));
         assertEquals(1.0, metrics.get("error-message-count"));
+        assertEquals(1.0, metrics.get("dial-codes-count"));
+        assertEquals(1.0, metrics.get("dial-codes-from-api-count"));
+        assertEquals(1.0, metrics.get("dial-codes-from-cache-count"));
         assertEquals(0.0, metrics.get("partition"));
         assertEquals(800.0, metrics.get("consumer-lag"));
     }

@@ -3,8 +3,6 @@ package org.ekstep.ep.samza.util;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.request.GetRequest;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 
 import java.io.IOException;
 import java.util.Map;
