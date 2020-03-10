@@ -24,22 +24,15 @@ export class DruidService {
      * Which acts as a proxy api Middleware to validate/filter the user query.
      */
     public validate() {
-        return async((query: IQuery, response: any, next: any) => {
-            APILogger.log("User query is " + JSON.stringify(query));
-            const result: IValidationResponse = ValidationService.validate(query, this.getLimits(query.dataSource));
-            // tslint:disable-next-line: max-line-length
-            if (result.isValid) { next(); } else { response.status(HttpStatus.FORBIDDEN).send(result).end(); }
-        });
-    }
-
-    /**
-     * Which validates the api auth key which is present in the headers
-     */
-    public validateKey() {
-        return async((key: string = "", response: any, next: any) => {
-            APILogger.log(`Auth Token is  ${key}`);
-            const result: IValidationResponse = ValidationService.isValidKey(key);
-            if (result.isValid) { next(); } else { response.status(HttpStatus.UNAUTHORIZED).send(result).end(); }
+        return async((requestObj: any, response: any, next: any, ...pathsToSkip: string[]) => {
+            const skipValidation = pathsToSkip.some((path) => path === requestObj.path);
+            if (skipValidation) {
+                next();
+            } else {
+                const query: IQuery = requestObj.body;
+                const result: IValidationResponse = ValidationService.validate(query, this.getLimits(query.dataSource));
+                if (result.isValid) { next(); } else { response.status(HttpStatus.FORBIDDEN).send(result).end(); }
+            }
         });
     }
 

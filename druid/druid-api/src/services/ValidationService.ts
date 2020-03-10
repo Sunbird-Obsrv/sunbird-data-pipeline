@@ -33,14 +33,7 @@ export class ValidationService {
                     case "timeseries": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.timeseries);
                     // tslint:disable-next-line:max-line-length
                     case "timeboundary": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.timeBoundary);
-                    // tslint:disable-next-line:max-line-length
-                    //case "segmentmetadata": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.segmentMetadata);
-
-                    default: return {
-                       // error: httpStatus["403_NAME"],
-                       // errorMessage: `Unsupported query type"${query.queryType}"`,
-                        isValid: true,
-                    };
+                    default: return { isValid: true };
                 }
             } else {
                 return commonRulesValidationStatus;
@@ -49,23 +42,6 @@ export class ValidationService {
             APILogger.warn(`Rules are not found, Hence allowing user to query ${query}`);
             return {
                 isValid: true,
-            };
-        }
-    }
-
-    /**
-     * Method to validate the authorization whitlisted kyes
-     * @param key - Authroization whitlisted key.
-     * @returns IValidationResponse  - Status of the authkey validation.
-     */
-    public static isValidKey(key: string): IValidationResponse {
-        if (config.druidWhiteListedKeys.includes(key)) {
-            return { isValid: true };
-        } else {
-            return {
-                error: httpStatus["401_NAME"],
-                errorMessage: httpStatus["401_MESSAGE"],
-                isValid: false,
             };
         }
     }
