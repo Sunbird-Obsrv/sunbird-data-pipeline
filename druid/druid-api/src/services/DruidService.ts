@@ -37,6 +37,7 @@ export class DruidService {
      */
     public validateKey() {
         return async((key: string = "", response: any, next: any) => {
+            APILogger.log(`Auth Token is  ${key}`);
             const result: IValidationResponse = ValidationService.isValidKey(key);
             if (result.isValid) { next(); } else { response.status(HttpStatus.UNAUTHORIZED).send(result).end(); }
         });

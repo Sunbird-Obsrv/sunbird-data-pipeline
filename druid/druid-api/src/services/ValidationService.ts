@@ -34,7 +34,7 @@ export class ValidationService {
                     // tslint:disable-next-line:max-line-length
                     case "timeboundary": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.timeBoundary);
                     // tslint:disable-next-line:max-line-length
-                    case "segmentmetadata": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.segmentMetadata);
+                    //case "segmentmetadata": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.segmentMetadata);
 
                     default: return {
                         error: httpStatus["403_NAME"],
