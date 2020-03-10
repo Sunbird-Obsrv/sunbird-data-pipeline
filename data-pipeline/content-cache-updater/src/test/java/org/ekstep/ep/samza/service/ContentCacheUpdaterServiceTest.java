@@ -95,9 +95,11 @@ public class ContentCacheUpdaterServiceTest {
         contentCacheConfig = new ContentCacheConfig(configMock);
         new BaseCacheUpdaterService(redisConnectMock);
         String validDialCodeUrl = "https://localhost/api/dialcode/v3/read/E1L8W5";
-        String inValidDialCodeUrl = "https://localhost/api/dialcode/v3/read/test";
+        String inValidDialCodeUrl_Case1 = "https://localhost/api/dialcode/v3/read/test";
+        String inValidDialCodeUrl_Case2 = "https://localhost/api/dialcode/v3/read/4328W56";
         createStub(validDialCodeUrl, createTestResponse(validDialCodeUrl, EventFixture.VALID_DIAL_CODE_RESPONSE, 200, contentCacheConfig.getAuthorizationKey()), contentCacheConfig.getAuthorizationKey());
-        createStub(inValidDialCodeUrl, createTestResponse(inValidDialCodeUrl, EventFixture.INVALID_DIAL_CODE_RESPONSE, 404, contentCacheConfig.getAuthorizationKey()), contentCacheConfig.getAuthorizationKey());
+        createStub(inValidDialCodeUrl_Case1, createTestResponse(inValidDialCodeUrl_Case1, EventFixture.INVALID_DIAL_CODE_RESPONSE, 404, contentCacheConfig.getAuthorizationKey()), contentCacheConfig.getAuthorizationKey());
+        createStub(inValidDialCodeUrl_Case2, createTestResponse(inValidDialCodeUrl_Case2, EventFixture.EMPTY_DIAL_CODE_RESPONSE, 200, contentCacheConfig.getAuthorizationKey()), contentCacheConfig.getAuthorizationKey());
         contentCacheUpdaterService = new ContentCacheUpdaterService(contentCacheConfig, redisConnectMock, jobMetricsMock, restUtilMock);
         jedisMock.flushAll();
     }
@@ -333,7 +335,6 @@ public class ContentCacheUpdaterServiceTest {
     public void shouldInvokeDialCodeAPICall() throws Exception {
         jedisMock.flushAll();
         stub(envelopeMock.getMessage()).toReturn(EventFixture.DIALCODE_LINKED_TEXTBOOK);
-
         Gson gson = new Gson();
         Map<String, Object> event = gson.fromJson(EventFixture.DIALCODE_LINKED_TEXTBOOK, Map.class);
         String conceptId = (String) event.get("nodeUniqueId");
@@ -351,7 +352,17 @@ public class ContentCacheUpdaterServiceTest {
         String conceptId = (String) event.get("nodeUniqueId");
         ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelopeMock);
         contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
+    }
 
-
+    @Test
+    @SuppressWarnings("unchecked")
+    public void WhenEmptyDialCodeAPIResponse() throws Exception {
+        jedisMock.flushAll();
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.EMPTY_DIALCODE_LINKED_TEXTBOOK);
+        Gson gson = new Gson();
+        Map<String, Object> event = gson.fromJson(EventFixture.EMPTY_DIALCODE_LINKED_TEXTBOOK, Map.class);
+        String conceptId = (String) event.get("nodeUniqueId");
+        ContentCacheUpdaterSource source = new ContentCacheUpdaterSource(envelopeMock);
+        contentCacheUpdaterService.process(source, contentCacheUpdaterSinkMock);
     }
 }
