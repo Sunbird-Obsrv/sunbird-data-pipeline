@@ -1,7 +1,6 @@
 package org.ekstep.ep.samza.task;
 
-import com.mashape.unirest.http.exceptions.UnirestException;
-import okhttp3.Response;
+import kong.unirest.UnirestException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.ekstep.ep.samza.util.RestUtil;
