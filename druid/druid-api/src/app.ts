@@ -83,6 +83,23 @@ app.get(dataSourceEndPoint, (requestObj, responseObj, next) => {
 });
 
 /**
+ * 
+ * 
+ */
+app.get(config.druidStatus, (requestObj, responseObj, next) => {
+  druidService.fetch()(`${config.druidHost}:${config.druidPort}${config.druidStatus}`, "GET", undefined)
+    .then((data) => {
+      responseObj.status(HttpStatus.OK).json(data);
+      responseObj.end();
+    }).catch((err) => {
+      responseObj.status(HttpStatus.INTERNAL_SERVER_ERROR).json(err.message);
+      responseObj.end();
+    });
+});
+
+
+
+/**
  * Listen the server to config.port
  */
 app.listen(Number(config.apiPort), (err, res) => {

@@ -17,6 +17,7 @@ export const config = {
     druidHost: process.env.druid_host || "http://localhost",
     druidPort: process.env.druid_port || 8082,
     druidSqlEndPoint: process.env.druid_sql_endPoint || "/druid/v2/sql/",
+    druidStatus: process.env.druid_status_endPoint || "/status/",
 
     // tslint:disable-next-line: max-line-length
     druidWhiteListedKeys: process.env.druid_whitlisted_auth_keys && process.env.druid_whitlisted_auth_keys.split(",") || ["2QyHp4q35lL9XzI3i5f1FVSYmtWeGvq2", "7rFRS7gycgpnbccA6GucQlAvq8a6aDkB"],
