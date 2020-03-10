@@ -49,10 +49,6 @@ export const config = {
                 max_date_range: 30, // Maximum allowed date range, In days.
                 max_filter_dimensions: 50, // Maximum allowed dimensions
             },
-            segmentMetadata: {
-                max_date_range: 30, // Maximum allowed date range, In days.
-                max_filter_dimensions: 50, // Maximum allowed date range, In days.
-            },
             select: {
                 max_date_range: 30, // Maximum allowed date range, In days.
                 max_filter_dimensions: 50, // Maximum allowed date range, In days.
@@ -98,10 +94,6 @@ export const config = {
             search: {  // Query Type
                 max_date_range: 30, // Maximum allowed date range, In days.
                 max_filter_dimensions: 50, // Maximum allowed dimensions
-            },
-            segmentMetadata: {
-                max_date_range: 30, // Maximum allowed date range, In days.
-                max_filter_dimensions: 50, // Maximum allowed date range, In days.
             },
             select: {
                 max_date_range: 30, // Maximum allowed date range, In days.
