@@ -1,8 +1,13 @@
 ## Data products deployment ##
-- name: Copy Data Products
+- name: Copy Core Data Products
   copy: src={{ analytics_batch_module_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
   tags:
     - dataproducts
+
+- name: Copy Ed Data Products
+  copy: src={{ analytics_batch_module_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
+  tags:
+    - ed-dataproducts
 
 - name: Copy Framework Library
   copy: src={{ analytics_core_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
@@ -13,98 +18,127 @@
   copy: src={{ analytics_job_manager_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
   tags:
     - dataproducts
+    - ed-dataproducts
 
 - name: Copy configuration file
   template: src=common.conf.j2 dest={{ analytics.home }}/models-{{ model_version }}/{{ env }}.conf mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
     - dataproducts
+    - ed-dataproducts
     - framework
-
 
 - name: Copy log4j2 xml file
   template: src=log4j2.xml.j2 dest={{ analytics.home }}/models-{{ model_version }}/log4j2.xml mode=755 owner={{ analytics_user }} group={{ analytics_group }}
-  tags: [ dataproducts, framework ]
+  tags: [ dataproducts, framework, ed-dataproducts ]
 
 - name: Copy Scripts
   template: src={{ item }}.j2 dest={{ analytics.home }}/scripts/{{ item }}.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   with_items: "{{ analytics.scripts }}"
-  tags: [ dataproducts, framework ]
+  tags: [ dataproducts, framework, ed-dataproducts ]
 
 - name: Update model config
   template: src=model-config.j2 dest={{ analytics.home }}/scripts/model-config.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
+    - dataproducts
     - update-config
+    - ed-dataproducts
 
 - name: Copy submit-all-jobs ruby file
   template: src=submit-all-jobs.rb.j2 dest={{ analytics.home }}/scripts/submit-all-jobs.rb mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
+    - dataproducts
     - update-config
+    - ed-dataproducts
 
 - name: Copy model-config.json file
   template: src=model-config.json.j2 dest={{ analytics.home }}/scripts/model-config.json mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
+    - dataproducts
     - update-config
+    - ed-dataproducts
 
 - name: Clean cron jobs
   command: crontab -r
   ignore_errors: yes
   tags:
+    - dataproducts
     - clean-cronjobs
+    - ed-dataproducts
 
 - name: Create daily cron jobs using submit-all-jobs
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job='/bin/bash -lc "ruby {{ analytics.home }}/scripts/submit-all-jobs.rb"'
   with_dict: "{{ submit_jobs }}"
   tags:
+    - dataproducts
     - cronjobs
+    - ed-dataproducts
 
 - name: Create start-jobmanager cron jobs
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/start-jobmanager.sh"
   with_dict: "{{ start_jobmanager }}"
   tags:
+    - dataproducts
     - cronjobs
+    - ed-dataproducts
 
 - name: Create video-streaming cron job
   cron: name="{{env}}-video-streaming" minute=*/{{ video_stream_job_schedule }} job="{{ analytics.home }}/scripts/run-job.sh video-streaming"
   tags:
+    - dataproducts
     - cronjobs
+    - ed-dataproducts
 
 - name: Create course-dashboard-metrics cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh course-dashboard-metrics"
   with_dict: "{{ run_course_metrics_job }}"
   tags:
+    - dataproducts
     - cronjobs
+    - ed-dataproducts
 
 - name: Create assessment-dashboard-metrics cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh assessment-dashboard-metrics"
   with_dict: "{{ run_assessment_metrics_job }}"
   tags:
     - cronjobs
+    - ed-dataproducts
+    - dataproducts
 
 - name: Create admin-user-reports cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh admin-user-reports"
   with_dict: "{{ run_admin_user_reports_job }}"
   tags:
     - cronjobs 
+    - dataproducts
+    - ed-dataproducts
     
 - name: Create admin-geo-reports cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh admin-geo-reports"
   with_dict: "{{ run_admin_geo_reports_job }}"
   tags:
-    - cronjobs 
+    - cronjobs
+    - ed-dataproducts
+    - dataproducts 
 
 - name: Create district-weekly cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} weekday={{ item.value.weekday }}  job="{{ analytics.home }}/scripts/run-job.sh district-weekly"
   with_dict: "{{ run_district_weekly_job }}"
   tags:
     - cronjobs
+    - dataproducts
+    - ed-dataproducts
 
 - name: Create district-monthly cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} month={{ item.value.month }} day={{ item.value.day }}  job="{{ analytics.home }}/scripts/run-job.sh district-monthly"
   with_dict: "{{ run_district_monthly_job }}"
   tags:
-    - cronjobs                  
+    - cronjobs
+    - dataproducts
+    - ed-dataproducts                  
 
 - name: Update start jobmanager
   template: src=start-jobmanager.j2 dest={{ analytics.home }}/scripts/start-jobmanager.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
     - update-jobmanager-config
+    - dataproducts
+    - ed-dataproducts
