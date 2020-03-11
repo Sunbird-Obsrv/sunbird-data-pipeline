@@ -2,6 +2,7 @@ package org.ekstep.ep.samza.util;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import kong.unirest.UnirestException;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.task.ContentCacheConfig;
 
@@ -61,7 +62,7 @@ public class ContentData {
         return result;
     }
 
-    public Object getMetadata(String apiUrl, RestUtil restUtil,String authKey, String fieldName) {
+    public Object getMetadata(String apiUrl, RestUtil restUtil, String authKey, String fieldName) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", authKey);
         try {
@@ -72,8 +73,8 @@ public class ContentData {
                     }.getType()
             );
             return gson.fromJson(gson.toJson(response.get("result")), Map.class).get(fieldName);
-        } catch (Exception e) {
-            LOGGER.error(null, "Exception while fetching metadata:  " + e);
+        } catch (NullPointerException e) {
+            LOGGER.error(null, "Exception while fetching metadata" + e);
             e.printStackTrace();
             return null;
         }

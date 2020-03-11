@@ -1,15 +1,14 @@
 package org.ekstep.ep.samza.util;
 
 
-
 import kong.unirest.GetRequest;
 import kong.unirest.Unirest;
 import kong.unirest.UnirestException;
 
-import java.io.IOException;
 import java.util.Map;
 
 public class RestUtil {
+
     /**
      * @param apiURL         - API Url
      * @param requestHeaders - Map<String, String> Request header parameters
