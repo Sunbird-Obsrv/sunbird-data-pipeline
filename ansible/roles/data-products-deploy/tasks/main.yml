@@ -18,7 +18,6 @@
   copy: src={{ analytics_job_manager_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
   tags:
     - dataproducts
-    - ed-dataproducts
 
 - name: Copy configuration file
   template: src=common.conf.j2 dest={{ analytics.home }}/models-{{ model_version }}/{{ env }}.conf mode=755 owner={{ analytics_user }} group={{ analytics_group }}
