@@ -33,8 +33,9 @@ if [ ! -z "$1" ]; then job_id=$(get_report_job_model_name $1); fi
 
 if [ -z "$2" ]; then job_config=$(config $1); else job_config="$2"; fi
 
-echo "Starting the job - $1" >> "$DP_LOGS/$today-job-execution.log"
 
-nohup $SPARK_HOME/bin/spark-submit --master local[*] --jars $MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/data-products-1.0.jar --class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-2.0.jar --model "job_id" --config "$job_config" >> "$DP_LOGS/$today-job-execution.log" 2>&1
+echo "Starting the job - $job_id" >> "$DP_LOGS/$today-job-execution.log"
+
+nohup $SPARK_HOME/bin/spark-submit --master local[*] --jars $MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/data-products-1.0.jar --class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-2.0.jar --model "$job_id" --config "$job_config" >> "$DP_LOGS/$today-job-execution.log" 2>&1
 
 echo "Job execution completed - $1" >> "$DP_LOGS/$today-job-execution.log"
