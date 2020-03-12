@@ -9,6 +9,11 @@
   tags:
     - ed-dataproducts
 
+- name: Unarchive Ed Data Products
+  unarchive: src={{ analytics_ed_dataporducts_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
+  tags:
+    - ed-dataproducts    
+
 - name: Copy Framework Library
   copy: src={{ analytics_core_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
   tags:
