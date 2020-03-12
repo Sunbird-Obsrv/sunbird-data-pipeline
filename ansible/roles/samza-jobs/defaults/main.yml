@@ -77,4 +77,9 @@ user_signin_type_default : Anonymous
 user_login_type_default : NA
 
 
+#Purpose: Content cache update job uses the dialcode api
+dialcode_api_host: "{{ dialcode_host }}"
+dialcode_api_endpoint: "{{ dialcode_endpoint }}"
+dialcode_api_auth_key: "{{ dialcode_api_key }}"
 dedup_exclude_eids: "LOG,ERROR"
+
