@@ -6,7 +6,7 @@
 
 - name: Unarchive Ed Data Products
   become: yes
-  unarchive: src={{ analytics_ed_dataporducts_artifact }} dest={{ analytics.home }}/models-{{ model_version }} copy=no group={{ analytics_group }} owner={{ analytics_user }}
+  unarchive: src={{ playbook_dir}}/{{ analytics_ed_dataporducts_artifact }} dest={{ analytics.home }}/models-{{ model_version }} copy=no group={{ analytics_group }} owner={{ analytics_user }}
   tags:
     - ed-dataproducts    
 
