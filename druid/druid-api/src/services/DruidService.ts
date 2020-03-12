@@ -42,7 +42,7 @@ export class DruidService {
     public fetch() {
         return async(async (api: string, method: AxiosRequestConfig["method"], query?: IQuery) => {
             try {
-                const result = await HttpService.fetch(api, method, query);
+                const result = await this.httpService.fetch(api, method, query);
                 return result;
             } catch (error) {
                 APILogger.log(`Failed to fetch the result ${error}`);

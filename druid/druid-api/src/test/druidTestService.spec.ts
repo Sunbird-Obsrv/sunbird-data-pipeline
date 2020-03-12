@@ -3,7 +3,7 @@ import chaiHttp from "chai-http";
 import HttpStatus from "http-status-codes";
 import nock from "nock";
 import app from "../app";
-import { config } from "../configs/config";
+import { config } from "./config";
 import { Fixtures } from "./fixtures";
 
 const expect = chai.expect;
@@ -191,21 +191,27 @@ describe("/POST druid/v2/cql", () => {
     it("Should able to query the cql, When auth token is valid", (done) => {
         chai.request(app)
             .post(config.apiSqlEndPoint)
-            .set("authorization", "2QyHp4q35lL9XzI3i5f1FVSYmtWeGvq2")
             .end((err, res) => {
                 res.should.have.status(HttpStatus.OK);
                 expect(res.body).not.eq(undefined);
                 done();
             });
     });
+});
 
-    it("Should not able to query the cql, When auth token is invalid", (done) => {
+describe("/POST druid/status", () => {
+    // tslint:disable-next-line: max-line-length
+    beforeEach(() => {
+        nock(config.druidHost + ":" + config.druidPort)
+            .get(config.druidStatus)
+            .reply(200, {});
+    });
+
+    it("Should able to query the cql, When auth token is valid", (done) => {
         chai.request(app)
-            .post(config.apiSqlEndPoint)
-            .set("authorization", "4KLJ3shdiohsnEnlfw")
-            .send(JSON.parse(Fixtures.VALID_CQL_QUERY))
+            .get(config.apiDruidStatus)
             .end((err, res) => {
-                res.should.have.status(HttpStatus.UNAUTHORIZED);
+                res.should.have.status(HttpStatus.OK);
                 expect(res.body).not.eq(undefined);
                 done();
             });

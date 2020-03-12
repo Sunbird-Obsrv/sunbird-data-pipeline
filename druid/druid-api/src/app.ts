@@ -15,27 +15,30 @@ const app = express();
  * Proxy API EndPoint Lists
  */
 const endPoint = config.apiEndPoint;
-const sqlQueryEndPoint = config.apiSqlEndPoint;
-const dataSourceEndPoint = config.apiDataSourceEndPoint;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 /**
+ * Creating a HTTP Service Instance to invoke the external system.
+ */
+const httpService = new HttpService(config.druidHost, Number(config.druidPort));
+
+/**
  * Creating a DruidService Instance to facilitate to filter and validate the query.
  */
-const druidService = new DruidService({ limits: config.limits }, HttpService);
+const druidService = new DruidService({ limits: config.limits }, httpService);
 
 /**
  * API to query the data from the  External Source(druid)
- * @param - endPoint - "/druid/v2"
+ * @param - endPoint - "/druid/v2/*"
  * @param - requestObj - reqest object
  * Method Type - POST
  */
-app.post(endPoint, (requestObj, responseObj, next) => {
+app.post(`${endPoint}/*`, (requestObj, responseObj, next) => {
   druidService.validate()(requestObj, responseObj, next, "/sql");
 }, (requestObj, responseObj) => {
-  druidService.fetch()(`${config.druidHost}:${config.druidPort}${requestObj.url}`, "POST", requestObj.body)
+  druidService.fetch()(requestObj.url, "POST", requestObj.body)
     .then((data) => {
       responseObj.status(HttpStatus.OK).json(data);
       responseObj.end();
@@ -51,9 +54,8 @@ app.post(endPoint, (requestObj, responseObj, next) => {
  * @param - endPoint - "/druid/v2/*"
  * Method Type - GET
  */
-app.get("/*", (requestObj, responseObj, next) => {
-  console.log("druid" + requestObj.url);
-  druidService.fetch()(`${config.druidHost}:${config.druidPort}${requestObj.url}`, "GET", undefined)
+app.get("/*", (requestObj, responseObj) => {
+  druidService.fetch()(requestObj.url, "GET", undefined)
     .then((data) => {
       responseObj.status(HttpStatus.OK).json(data);
       responseObj.end();
