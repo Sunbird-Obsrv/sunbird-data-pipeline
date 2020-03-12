@@ -20,7 +20,7 @@ job_manager_tmp_dir: "transient-data"
 channel: dev-test
 druid_broker_host: "{{groups['broker'][0]}}"
 
-analytics_job_list: '"wfs", "wfus", "ds", "dpu", "content-rating-updater", "daily-metrics", "desktop-consumption-report", "course-enrollment-report", "audit-metrics-report", "data-exhaust", "monitor-job-summ"'
+analytics_job_list: '"wfs", "assessment-dashboard-metrics"", "monitor-job-summ"'
 analytics_jobs_count: 11
 
 cassandra_keyspace_prefix: '{{ env }}_'
