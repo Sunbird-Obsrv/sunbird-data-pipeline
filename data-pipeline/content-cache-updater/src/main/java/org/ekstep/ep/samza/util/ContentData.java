@@ -29,7 +29,7 @@ public class ContentData {
             Map<String, Object> addedProperties = (Map<String, Object>) transactionData.get("properties");
             if (addedProperties != null && !addedProperties.isEmpty()) {
                 for (Map.Entry<String, Object> propertyMap : addedProperties.entrySet()) {
-                    if (propertyMap != null && propertyMap.getKey() != null && null != ((Map<String, Object>) propertyMap.getValue()).get("nv") && !((Map<String, Object>) propertyMap.getValue()).get("nv").toString().isEmpty()) {
+                    if (propertyMap != null && propertyMap.getKey() != null && null!=((Map<String, Object>) propertyMap.getValue()).get("nv") && !((Map<String, Object>) propertyMap.getValue()).get("nv").toString().isEmpty()) {
                         String propertyName = propertyMap.getKey();
                         Object propertyNewValue = ((Map<String, Object>) propertyMap.getValue()).get("nv");
                         properties.put(propertyName, propertyNewValue);
@@ -42,18 +42,17 @@ public class ContentData {
 
     public Map<String, Object> convertType(Map<String, Object> newProperties, List<String> contentModelListTypeFields, List<String> dateFields) {
         Map<String, Object> result = new HashMap();
-        for (String entry : contentModelListTypeFields) {
-            if (newProperties.containsKey(entry)
+        for(String entry: contentModelListTypeFields){
+            if(newProperties.containsKey(entry)
                     && newProperties.get(entry) instanceof String) {
                 String str = (String) newProperties.get(entry);
-                if (dateFields.contains(entry)) {
-                    try {
+                if(dateFields.contains(entry)) {
+                    try{
                         Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(str);
-                        result.put(entry, date.getTime());
-                    } catch (ParseException ex) {
-                        ex.printStackTrace();
-                    }
-                } else {
+                        result.put(entry,date.getTime());
+                    }catch (ParseException ex){ ex.printStackTrace();}
+                }
+                else {
                     List<String> value = Arrays.asList(str);
                     result.put(entry, value);
                 }
