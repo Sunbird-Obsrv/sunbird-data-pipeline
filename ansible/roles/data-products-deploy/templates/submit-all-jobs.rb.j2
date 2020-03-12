@@ -27,12 +27,14 @@ def submit_all_jobs
     config_hash = JSON.parse(file)
     log("Config file loaded")
     jobs.each do |job|
-    if report_jobs[job].nil?
-        submit_job(job, config_hash[job])
-    else
-        submit_job(report_jobs[job], config_hash[job])   
-    end
-    log("Submitted #{jobs.count} jobs for processing")
+        if report_jobs[job].nil?
+            submit_job(job, config_hash[job])
+        else
+            submit_job(report_jobs[job], config_hash[job])   
+        end
+
+        log("Submitted #{jobs.count} jobs for processing")
+    end    
 end
 
 def submit_job(job, config)
