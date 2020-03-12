@@ -24,7 +24,7 @@ node() {
                 stage('deploy artifact'){
                     sh """
                        unzip ${artifact}
-                       mv data-products-1.0.tar.gz ansible
+                       mv data-products-1.0-distribution.tar.gz ansible
                     """
                     ansiblePlaybook = "${currentWs}/ansible/lpa_data-products_deploy.yml"
                     ansibleExtraArgs = " --tags ${params.module} --vault-password-file /var/lib/jenkins/secrets/vault-pass"
