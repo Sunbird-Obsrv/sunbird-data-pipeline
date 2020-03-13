@@ -20,8 +20,8 @@ job_manager_tmp_dir: "transient-data"
 channel: dev-test
 druid_broker_host: "{{groups['broker'][0]}}"
 
-analytics_job_list: '"wfs", "wfus", "ds", "dpu", "content-rating-updater", "daily-metrics", "desktop-consumption-report", "course-enrollment-report", "audit-metrics-report", "data-exhaust", "monitor-job-summ"'
-analytics_jobs_count: 11
+analytics_job_list: '"wfs", "ds", "dpu", "content-rating-updater", "daily-metrics", "desktop-consumption-report", "course-enrollment-report", "audit-metrics-report", "data-exhaust", "monitor-job-summ"'
+analytics_jobs_count: 10
 
 cassandra_keyspace_prefix: '{{ env }}_'
 dp_dispatch_bucket_name: ekstep-dev-data-store
@@ -128,4 +128,5 @@ producer_env: "dev"
 analytics_job_manager_artifact: "job-manager-2.0.jar"
 analytics_core_artifact: "analytics-framework-2.0.jar"
 analytics_batch_module_artifact: "batch-models-2.0.jar"
+analytics_ed_dataporducts_artifact: "data-products-1.0-distribution.tar.gz"
 model_version: "2.0" 
