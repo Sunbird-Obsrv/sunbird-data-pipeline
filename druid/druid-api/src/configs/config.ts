@@ -1,9 +1,18 @@
 export const config = {
-    apiEndPoint: process.env.druid_proxy_api_endPoint || "/druid/v2/",
-    apiPort: process.env.druid_proxy_api_port || 8082,
-    druidEndPoint: process.env.druid_proxy_api_endPoint || "/druid/v2/",
+
+    /**
+     * Proxy API End Points
+     */
+     apiEndPoint: process.env.druid_proxy_api_endPoint || "/druid/v2",
+     apiPort: process.env.druid_proxy_api_port || 8082,
+
+    /**
+     * Druid(External System) endpoints
+     */
+    druidEndPoint: process.env.druid_proxy_api_endPoint || "/druid/v2",
     druidHost: process.env.druid_host || "http://localhost",
     druidPort: process.env.druid_port || 8082,
+
     limits: [{ // Keeping limits per data source.
         cardinalColumns: [ // High cardinal dimensions
             "context_sid", // Telemetry, context session id
@@ -31,10 +40,6 @@ export const config = {
             search: {  // Query Type
                 max_date_range: 30, // Maximum allowed date range, In days.
                 max_filter_dimensions: 50, // Maximum allowed dimensions
-            },
-            segmentMetadata: {
-                max_date_range: 30, // Maximum allowed date range, In days.
-                max_filter_dimensions: 50, // Maximum allowed date range, In days.
             },
             select: {
                 max_date_range: 30, // Maximum allowed date range, In days.
@@ -81,10 +86,6 @@ export const config = {
             search: {  // Query Type
                 max_date_range: 30, // Maximum allowed date range, In days.
                 max_filter_dimensions: 50, // Maximum allowed dimensions
-            },
-            segmentMetadata: {
-                max_date_range: 30, // Maximum allowed date range, In days.
-                max_filter_dimensions: 50, // Maximum allowed date range, In days.
             },
             select: {
                 max_date_range: 30, // Maximum allowed date range, In days.

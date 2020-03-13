@@ -26,7 +26,6 @@ export interface IQueryRules {
     select: IRules;
     timeseries: IRules;
     timeBoundary: IRules;
-    segmentMetadata: IRules;
     search: IRules;
 }
 

@@ -1,5 +1,7 @@
+import httpStatus from "http-status";
 import _ from "lodash";
 import moment from "moment";
+import { config } from "../configs/config";
 import { ICommon, IFilter, ILimits, IQuery, IRules, IValidationResponse } from "../models/models";
 import { APILogger } from "./ApiLogger";
 
@@ -31,14 +33,7 @@ export class ValidationService {
                     case "timeseries": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.timeseries);
                     // tslint:disable-next-line:max-line-length
                     case "timeboundary": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.timeBoundary);
-                    // tslint:disable-next-line:max-line-length
-                    case "segmentmetadata": return this.validateQueryTypes(query, limits.cardinalColumns, limits.queryRules.segmentMetadata);
-
-                    default: return {
-                        error: undefined,
-                        errorMessage: `Unsupported query type"${query.queryType}"`,
-                        isValid: false,
-                    };
+                    default: return { isValid: true };
                 }
             } else {
                 return commonRulesValidationStatus;
@@ -89,7 +84,7 @@ export class ValidationService {
             }
             if (cardianalDimensionsCountIs > maxDimensions) {
                 return {
-                    error: undefined,
+                    error: httpStatus["403_NAME"],
                     errorMessage: `CardinalColumns [Dimensions] in the "${where}" can not more than "${maxDimensions}"`,
                     isValid: false,
                 };
@@ -120,11 +115,14 @@ export class ValidationService {
             if (fromDate > toDate) {
                 return {
                     // tslint:disable-next-line:max-line-length
+                    error: httpStatus["403_NAME"],
+                    // tslint:disable-next-line: max-line-length
                     errorMessage: `Invalid date range, The end instant date must be greater than the start instant date`,
                     isValid: false,
                 };
             } else if (differenceInDays > allowedDateRangeIs) {
                 return {
+                    error: httpStatus["403_NAME"],
                     errorMessage: `Date Range(intervals) can not be more than "${allowedDateRangeIs}" day's"`,
                     isValid: false,
                 };
@@ -132,7 +130,7 @@ export class ValidationService {
                 return { isValid: true };
             }
         } else {
-            return { isValid: false, errorMessage: `Invalid date range, The date range is must` };
+            return { error: httpStatus["403_NAME"], isValid: false, errorMessage: `Invalid date range, The date range is must` };
         }
     }
 
