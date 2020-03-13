@@ -111,6 +111,10 @@ public class ContentCacheUpdaterService extends BaseCacheUpdaterService {
     }
 
     public List<String> getDialCodesAsList(Map<String, Object> dialCodesMap) {
-        return new ArrayList<>(dialCodesMap.keySet());
+        if (null != dialCodesMap) {
+            return new ArrayList<>(dialCodesMap.keySet());
+        } else {
+            return new ArrayList<>();
+        }
     }
 }
