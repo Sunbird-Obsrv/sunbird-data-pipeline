@@ -97,7 +97,13 @@ public class ContentCacheUpdaterServiceTest {
         String validDialCodeUrl = "https://localhost/api/dialcode/v3/read/E1L8W5";
         String inValidDialCodeUrl_Case1 = "https://localhost/api/dialcode/v3/read/test";
         String inValidDialCodeUrl_Case2 = "https://localhost/api/dialcode/v3/read/4328W56";
+        String validDialCodeUrl_case1 = "https://localhost/api/dialcode/v3/read/Z5A8W1";
+        String validDialCodeUrl_case2 = "https://localhost/api/dialcode/v3/read/H4D5Q9";
+        String validDialCodeUrl_case3 = "https://localhost/api/dialcode/v3/read/C1M7J9";
         createStub(validDialCodeUrl, createTestResponse(validDialCodeUrl, EventFixture.VALID_DIAL_CODE_RESPONSE, 200, contentCacheConfig.getAuthorizationKey()), contentCacheConfig.getAuthorizationKey());
+        createStub(validDialCodeUrl_case1, createTestResponse(validDialCodeUrl_case1, EventFixture.VALID_DIAL_CODE_RESPONSE, 200, contentCacheConfig.getAuthorizationKey()), contentCacheConfig.getAuthorizationKey());
+        createStub(validDialCodeUrl_case2, createTestResponse(validDialCodeUrl_case2, EventFixture.VALID_DIAL_CODE_RESPONSE, 200, contentCacheConfig.getAuthorizationKey()), contentCacheConfig.getAuthorizationKey());
+        createStub(validDialCodeUrl_case3, createTestResponse(validDialCodeUrl_case3, EventFixture.VALID_DIAL_CODE_RESPONSE, 200, contentCacheConfig.getAuthorizationKey()), contentCacheConfig.getAuthorizationKey());
         createStub(inValidDialCodeUrl_Case1, createTestResponse(inValidDialCodeUrl_Case1, EventFixture.INVALID_DIAL_CODE_RESPONSE, 404, contentCacheConfig.getAuthorizationKey()), contentCacheConfig.getAuthorizationKey());
         createStub(inValidDialCodeUrl_Case2, createTestResponse(inValidDialCodeUrl_Case2, EventFixture.EMPTY_DIAL_CODE_RESPONSE, 200, contentCacheConfig.getAuthorizationKey()), contentCacheConfig.getAuthorizationKey());
         contentCacheUpdaterService = new ContentCacheUpdaterService(contentCacheConfig, redisConnectMock, jobMetricsMock, restUtilMock);

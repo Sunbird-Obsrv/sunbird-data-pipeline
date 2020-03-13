@@ -13,6 +13,7 @@ import org.ekstep.ep.samza.util.RedisConnect;
 import org.ekstep.ep.samza.util.RestUtil;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +69,8 @@ public class ContentCacheUpdaterService extends BaseCacheUpdaterService {
          * 3. If not present in the redis
          *      1. Get the dialCode metadata using dialCode api and update to redis cache
          */
-        updateDialCodeToCache((List) newProperties.get("dialcodes"), contentCacheConfig.getdialCodeStoreDb(), contentCacheConfig.getDialCodeAPIUrl());
+        updateDialCodeToCache((List<String>) newProperties.get("dialcodes"), contentCacheConfig.getdialCodeStoreDb(), contentCacheConfig.getDialCodeAPIUrl());
+        updateDialCodeToCache(getDialCodesAsList(gson.fromJson((String) newProperties.get("reservedDialcodes"), Map.class)), contentCacheConfig.getdialCodeStoreDb(), contentCacheConfig.getDialCodeAPIUrl());
         String contentNode = null;
         storeId = contentCacheConfig.getContentStoreDb();
         contentNode = readFromCache(nodeUniqueId, storeId);
@@ -105,6 +107,14 @@ public class ContentCacheUpdaterService extends BaseCacheUpdaterService {
                     }
                 }
             });
+        }
+    }
+
+    public List<String> getDialCodesAsList(Map<String, Object> dialCodesMap) {
+        if (null != dialCodesMap) {
+            return new ArrayList<>(dialCodesMap.keySet());
+        } else {
+            return new ArrayList<>();
         }
     }
 }
