@@ -63,7 +63,7 @@ public class ContentData {
 
     public Object getMetadata(String apiUrl, RestUtil restUtil, String authKey, String fieldName) {
         Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", authKey);
+        headers.put("Authorization", "Bearer" + authKey);
         try {
             String responseBody = restUtil.get(apiUrl, headers);
             Gson gson = new Gson();
