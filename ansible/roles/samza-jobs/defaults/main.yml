@@ -33,6 +33,8 @@ location_db_redis_key_expiry_seconds: 86400
 cache_unresolved_location_key_expiry_seconds: 3600
 redis_host: "{{ groups['redis'][0] }}"
 redis_port: 6379
+denorm_redis_host: "{{ groups['redis'][0] }}"
+denorm_redis_port: 6379
 __yarn_port__: 8000
 delayInMilliSeconds: 60000
 retryTimeInMilliSeconds: 10000
