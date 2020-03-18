@@ -3923,7 +3923,7 @@
         "format":"csv",
         "key": "druid-reports/",
         "filePath": "druid-reports/",
-        "container": {{ bucket }},
+        "container": "{{ bucket }}",
         "folderPrefix": ["slug", "reportName"],
         "sparkCassandraConnectionHost":"{{core_cassandra_host}}",
         "sparkElasticsearchConnectionHost":"{{sunbird_es_host}}"
@@ -4034,7 +4034,7 @@
       "format":"csv",
       "key": "druid-reports/",
       "filePath": "druid-reports/",
-      "container": {{ bucket }},
+      "container": "{{ bucket }}",
       "folderPrefix": ["slug", "reportName"],
       "sparkCassandraConnectionHost":"{{core_cassandra_host}}",
       "sparkElasticsearchConnectionHost":"{{sunbird_es_host}}"
