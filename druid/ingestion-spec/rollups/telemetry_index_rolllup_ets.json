@@ -250,10 +250,6 @@
               "name": "edata_state"
             },
             {
-              "type": "string",
-              "name": "edata_type"
-            },
-            {
               "type": "long",
               "name": "edata_size"
             }
