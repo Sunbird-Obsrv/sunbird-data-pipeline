@@ -11,10 +11,6 @@
           "fields": [
             {
               "type": "root",
-              "name": "eid"
-            },
-            {
-              "type": "root",
               "name": "syncts"
             },
             {
@@ -31,6 +27,11 @@
               "type": "path",
               "name": "dimensions_type",
               "expr": "$.dimensions.type"
+            },
+            {
+              "type": "path",
+              "name": "dimensions_pdata_ver",
+              "expr": "$.dimensions.pdata.ver"
             },
             {
               "type": "path",
@@ -79,6 +80,16 @@
             },
             {
               "type": "path",
+              "name": "derived_loc_from",
+              "expr": "$.derivedlocationdata.from"
+            },
+            {
+              "type": "path",
+              "name": "device_first_access",
+              "expr": "$.devicedata.firstaccess"
+            },
+            {
+              "type": "path",
               "name": "collection_name",
               "expr": "$.collectiondata.name"
             },
@@ -118,10 +129,6 @@
           "dimensions": [
             {
               "type": "string",
-              "name": "eid"
-            },
-            {
-              "type": "string",
               "name": "dimensions_pdata_id"
             },
             {
@@ -131,6 +138,10 @@
             {
               "type": "string",
               "name": "dimensions_type"
+            },
+            {
+              "type": "string",
+              "name": "dimensions_pdata_ver"
             },
             {
               "type": "string",
@@ -170,6 +181,14 @@
             },
             {
               "type": "string",
+              "name": "derived_loc_from"
+            },
+            {
+              "type": "string",
+              "name": "device_first_access"
+            },
+            {
+              "type": "string",
               "name": "user_type"
             },
             {
@@ -196,6 +215,11 @@
           "format": "auto"
         }
       }
+    },
+    "transformSpec": {
+      "transforms": [
+         { "type": "expression", "name": "device_first_access", "expression": "timestamp_format(device_first_access, 'YYYY-MM-dd','Asia/Kolkata')" }
+      ]
     },
     "metricsSpec": [
       {

@@ -11,10 +11,6 @@
           "fields": [
             {
               "type": "root",
-              "name": "eid"
-            },
-            {
-              "type": "root",
               "name": "syncts"
             },
             {
@@ -34,8 +30,23 @@
             },
             {
               "type": "path",
+              "name": "dimensions_pdata_ver",
+              "expr": "$.dimensions.pdata.ver"
+            },
+            {
+              "type": "path",
               "name": "dimensions_mode",
               "expr": "$.dimensions.mode"
+            },
+            {
+              "type": "path",
+              "name": "content_name",
+              "expr": "$.contentdata.name"
+            },
+            {
+              "type": "path",
+              "name": "content_board",
+              "expr": "$.contentdata.board"
             },
             {
               "type": "path",
@@ -54,6 +65,11 @@
             },
             {
               "type": "path",
+              "name": "dialcode_channel",
+              "expr": "$.dialcodedata.channel"
+            },
+            {
+              "type": "path",
               "name": "derived_loc_state",
               "expr": "$.derivedlocationdata.state"
             },
@@ -69,23 +85,8 @@
             },
             {
               "type": "path",
-              "name": "content_name",
-              "expr": "$.contentdata.name"
-            },
-            {
-              "type": "path",
-              "name": "content_object_type",
-              "expr": "$.contentdata.objecttype"
-            },
-            {
-              "type": "path",
-              "name": "content_board",
-              "expr": "$.contentdata.board"
-            },
-            {
-              "type": "path",
-              "name": "content_status",
-              "expr": "$.contentdata.status"
+              "name": "device_first_access",
+              "expr": "$.devicedata.firstaccess"
             },
             {
               "type": "path",
@@ -114,16 +115,6 @@
             },
             {
               "type": "path",
-              "name": "edata_interaction_count",
-              "expr": "$.edata.eks.interact_events_count"
-            },
-            {
-              "type": "path",
-              "name": "edata_time_spent",
-              "expr": "$.edata.eks.time_spent"
-            },
-            {
-              "type": "path",
               "name": "dimensions_did",
               "expr": "$.dimensions.did"
             },
@@ -138,10 +129,6 @@
           "dimensions": [
             {
               "type": "string",
-              "name": "eid"
-            },
-            {
-              "type": "string",
               "name": "dimensions_pdata_id"
             },
             {
@@ -154,7 +141,19 @@
             },
             {
               "type": "string",
+              "name": "dimensions_pdata_ver"
+            },
+            {
+              "type": "string",
               "name": "dimensions_mode"
+            },
+            {
+              "type": "string",
+              "name": "content_name"
+            },
+            {
+              "type": "string",
+              "name": "content_board"
             },
             {
               "type": "string",
@@ -170,6 +169,10 @@
             },
             {
               "type": "string",
+              "name": "dialcode_channel"
+            },
+            {
+              "type": "string",
               "name": "derived_loc_state"
             },
             {
@@ -182,15 +185,7 @@
             },
             {
               "type": "string",
-              "name": "content_name"
-            },
-            {
-              "type": "string",
-              "name": "content_board"
-            },
-            {
-              "type": "string",
-              "name": "collection_board"
+              "name": "device_first_access"
             },
             {
               "type": "string",
@@ -199,6 +194,18 @@
             {
               "type": "string",
               "name": "user_signin_type"
+            },
+            {
+              "type": "string",
+              "name": "collection_name"
+            },
+            {
+              "type": "string",
+              "name": "collection_board"
+            },
+            {
+              "type": "string",
+              "name": "collection_type"
             }
           ],
           "dimensionsExclusions": []
@@ -208,6 +215,11 @@
           "format": "auto"
         }
       }
+    },
+    "transformSpec": {
+      "transforms": [
+         { "type": "expression", "name": "device_first_access", "expression": "timestamp_format(device_first_access, 'YYYY-MM-dd','Asia/Kolkata')" }
+      ]
     },
     "metricsSpec": [
       {
@@ -229,9 +241,9 @@
     }
   },
   "ioConfig": {
-    "topic": "ntpprod.events.summary",
+   "topic": "{{env}}.events.summary",
     "consumerProperties": {
-      "bootstrap.servers": "11.4.2.22:9092,11.4.2.23:9092,11.4.2.24:9092"
+      "bootstrap.servers": "{{kafka_brokers}}"
     },
     "taskCount": 1,
     "replicas": 1,
