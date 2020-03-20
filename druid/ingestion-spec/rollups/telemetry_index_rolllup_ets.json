@@ -30,6 +30,11 @@
             },
             {
               "type": "path",
+              "name": "context_pdata_ver",
+              "expr": "$.context.pdata.ver"
+            },
+            {
+              "type": "path",
               "name": "object_id",
               "expr": "$.object.id"
             },
@@ -67,6 +72,11 @@
               "type": "path",
               "name": "derived_loc_from",
               "expr": "$.derivedlocationdata.from"
+            },
+            {
+              "type": "path",
+              "name": "device_first_access",
+              "expr": "$.devicedata.firstaccess"
             },
             {
               "type": "path",
@@ -115,6 +125,16 @@
             },
             {
               "type": "path",
+              "name": "edata_type",
+              "expr": "$.edata.type"
+            },
+            {
+              "type": "path",
+              "name": "edata_size",
+              "expr": "$.edata.size"
+            },
+            {
+              "type": "path",
               "name": "edata_duration",
               "expr": "$.edata.duration"
             },
@@ -152,6 +172,10 @@
             {
               "type": "string",
               "name": "context_pdata_pid"
+            },
+            {
+              "type": "string",
+              "name": "context_pdata_ver"
             },
             {
               "type": "string",
@@ -211,6 +235,10 @@
             },
             {
               "type": "string",
+              "name": "edata_type"
+            },
+            {
+              "type": "string",
               "name": "edata_item_id"
             },
             {
@@ -220,6 +248,10 @@
             {
               "type": "string",
               "name": "edata_state"
+            },
+            {
+              "type": "long",
+              "name": "edata_size"
             }
           ],
           "dimensionsExclusions": []
@@ -229,6 +261,12 @@
           "format": "auto"
         }
       }
+    },
+ "transformSpec": {
+      "transforms": [
+         { "type": "expression", "name": "device_first_access", "expression": "timestamp_format(device_first_access, 'YYYY-MM-dd','Asia/Kolkata')" },
+         { "type": "expression", "name": "edata_size", "expression" : "if((edata_size>0),1,0)" }
+      ]
     },
     "metricsSpec": [
 	 {
