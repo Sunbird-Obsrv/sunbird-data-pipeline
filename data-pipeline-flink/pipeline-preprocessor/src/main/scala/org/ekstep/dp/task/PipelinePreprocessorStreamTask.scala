@@ -14,15 +14,14 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig) extends
   private val serialVersionUID = 146697324640926024L
   private val logger = LoggerFactory.getLogger(classOf[PipelinePreprocessorStreamTask])
 
-  def process() = {
+  def process(): Unit = {
 
     implicit val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
-    implicit val v3EventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
+    implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
     env.enableCheckpointing(config.checkpointingInterval)
 
     try {
-      val kafkaConsumer = createKafkaStreamConsumer(config.kafkaInputTopic)
-      kafkaConsumer.setStartFromEarliest()
+      val kafkaConsumer = createObjectStreamConsumer[Event](config.kafkaInputTopic)
 
       /**
         * Process functions
@@ -31,31 +30,18 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig) extends
         * 3. TelemetryRouterFunction
         */
 
-      val duplicationStream: SingleOutputStreamOperator[Event] =
-        env.addSource(kafkaConsumer, "telemetry-raw-events-consumer")
-          .process(new DeduplicationFunction(config)).name("Deduplication")
-          .setParallelism(2)
+       val validtionStream: SingleOutputStreamOperator[Event] =
+         env.addSource(kafkaConsumer, "telemetry-raw-events-consumer")
+           .process(new TelemetryValidationFunction(config)).name("TelemetryValidator")
+             .setParallelism(2)
 
-      val validtionStream: SingleOutputStreamOperator[Event] =
-        duplicationStream.getSideOutput(new OutputTag[Event]("unique-events"))
-          .process(new TelemetryValidationFunction(config)).name("TelemetryValidator")
-          .setParallelism(1)
-
-        /*
-      val validtionStream: SingleOutputStreamOperator[Event] =
-        env.addSource(kafkaConsumer, "telemetry-raw-events-consumer")
-          .process(new TelemetryValidationFunction(config)).name("TelemetryValidator")
-            .setParallelism(2)
-
-      val duplicationStream: SingleOutputStreamOperator[Event] =
-        validtionStream.getSideOutput(new OutputTag[Event]("valid-events"))
-          .process(new DeduplicationFunction(config)).name("Deduplication")
-          .setParallelism(2)
-      */
+       val duplicationStream: SingleOutputStreamOperator[Event] =
+         validtionStream.getSideOutput(new OutputTag[Event]("valid-events"))
+           .process(new DeduplicationFunction(config)).name("Deduplication")
+           .setParallelism(2)
 
       val routerStream: SingleOutputStreamOperator[Event] =
-        // duplicationStream.getSideOutput(new OutputTag[Event]("unique-events"))
-           validtionStream.getSideOutput(new OutputTag[Event]("valid-events"))
+        duplicationStream.getSideOutput(new OutputTag[Event]("unique-events"))
             .process(new TelemetryRouterFunction(config)).name("Router")
 
       /**

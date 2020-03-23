@@ -1,7 +1,5 @@
 package org.ekstep.dp.functions
 
-import java.util
-
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.apache.flink.streaming.api.scala.OutputTag
@@ -13,7 +11,6 @@ import org.slf4j.LoggerFactory
 
 class TelemetryValidationFunction(config: PipelinePreprocessorConfig)
                                  (implicit val eventTypeInfo: TypeInformation[Event])
-  // extends ProcessFunction[util.Map[String, AnyRef], Event] {
   extends ProcessFunction[Event, Event] {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[TelemetryValidationFunction])
@@ -23,13 +20,10 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig)
 
   lazy val schemaValidator: SchemaValidator = new SchemaValidator(config)
 
-  override def processElement(// inEvent: util.Map[String, AnyRef],
-                              event: Event,
-                              // ctx: ProcessFunction[util.Map[String, AnyRef], Event]#Context,
+  override def processElement(event: Event,
                               ctx: ProcessFunction[Event, Event]#Context,
                               out: Collector[Event]): Unit = {
 
-    // val event = new Event(inEvent)
     dataCorrection(event)
     try {
       if (!schemaValidator.schemaFileExists(event)) {

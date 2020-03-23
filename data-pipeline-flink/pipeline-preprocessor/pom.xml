@@ -9,8 +9,8 @@
     </prerequisites>
 
     <parent>
-        <groupId>org.ekstep.dp</groupId>
         <artifactId>pipeline-jobs</artifactId>
+        <groupId>org.ekstep.dp</groupId>
         <version>0.0.1</version>
     </parent>
 
@@ -22,16 +22,6 @@
     <description>
        Identifying Duplicate Events
     </description>
-
-    <!--
-    <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <scala.maj.version>2.11</scala.maj.version>
-        <scala.version>2.11.12</scala.version>
-        <encoding>UTF-8</encoding>
-    </properties>
-    -->
 
     <dependencies>
         <dependency>
@@ -57,14 +47,9 @@
             <version>4.0.0</version>
         </dependency>
         <dependency>
-            <groupId>com.google.maps</groupId>
-            <artifactId>google-maps-services</artifactId>
-            <version>0.1.7</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ekstep.ecosystem</groupId>
-            <artifactId>ep-core</artifactId>
-            <version>0.0.1</version>
+          <groupId>org.ekstep.dp</groupId>
+          <artifactId>dp-core</artifactId>
+          <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -76,18 +61,6 @@
             <artifactId>json-schema-validator</artifactId>
             <version>2.2.8</version>
         </dependency>
-        <dependency>
-            <groupId>org.ekstep.ecosystem</groupId>
-            <artifactId>ep-core</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-        <!--
-        <dependency>
-            <groupId>org.ekstep.ecosystem</groupId>
-            <artifactId>ep-telemetry-reader</artifactId>
-            <version>0.0.3</version>
-        </dependency>
-        -->
         <dependency>
             <groupId>com.fiftyonred</groupId>
             <artifactId>mock-jedis</artifactId>
@@ -119,16 +92,6 @@
                                     <exlude>org.apache.flink:flink-shaded-guava</exlude>
                                     -->
                                     <exclude>com.google.code.findbugs:jsr305</exclude>
-                                    <!--
-                                    <exclude>org.slf4j:*</exclude>
-                                    <exclude>log4j:*</exclude>
-                                    -->
-                                    <exclude>org.apache.samza:samza-core_2.11</exclude>
-                                    <exclude>org.apache.samza:samza-kafka_2.11</exclude>
-                                    <exclude>org.apache.samza:samza-yarn_2.11</exclude>
-                                    <exclude>org.apache.samza:samza-kv-rocksdb_2.11</exclude>
-                                    <exclude>org.apache.samza:samza-log4j</exclude>
-                                    <exclude>org.apache.hadoop:hadoop-hdfs</exclude>
                                 </excludes>
                             </artifactSet>
                             <filters>
@@ -175,26 +138,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.3</version>
-                <configuration>
-                    <descriptors>
-                        <descriptor>src/main/assembly/src.xml</descriptor>
-                    </descriptors>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            -->
 
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>

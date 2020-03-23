@@ -1,9 +1,8 @@
 package org.ekstep.dp.domain
 
 import java.util
-import java.util.HashMap
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.ekstep.dp.task.PipelinePreprocessorConfig
 import org.ekstep.ep.samza.events.domain.Events
 import org.joda.time.format.DateTimeFormat
