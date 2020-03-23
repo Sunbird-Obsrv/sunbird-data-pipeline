@@ -2,10 +2,6 @@ package org.ekstep.dp.task
 
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
-import org.apache.flink.runtime.state.StateBackend
-import org.apache.flink.runtime.state.filesystem.FsStateBackend
-import org.apache.flink.streaming.api.environment.CheckpointConfig
-import org.apache.flink.streaming.api.environment.CheckpointConfig.ExternalizedCheckpointCleanup
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.scala.OutputTag
@@ -17,15 +13,10 @@ class DeduplicationStreamTask(config: DeduplicationConfig) extends BaseStreamTas
 
   private val serialVersionUID = 146697324640926024L
 
-  def process() = {
-
+  def process(): Unit = {
     implicit val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
     implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
-    // val stateBackend: StateBackend = new FsStateBackend("wasbs://dev-data-store@sunbirddevprivate.blob.core.windows.net/flink-state-backend/DeduplicationJob", true)
-    // env.setStateBackend(stateBackend)
     env.enableCheckpointing(config.checkpointingInterval)
-    // val checkpointConfig: CheckpointConfig = env.getCheckpointConfig
-    // checkpointConfig.enableExternalizedCheckpoints(ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION)
 
     try {
       val kafkaConsumer = createKafkaStreamConsumer(config.kafkaInputTopic)

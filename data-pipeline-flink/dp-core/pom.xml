@@ -114,10 +114,6 @@
                 <configuration>
                     <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
                     <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
-                    <excludes>
-                        <exclude>org/ekstep/ep/samza/util/**/CassandraConnect.class</exclude>
-                        <exclude>org/ekstep/ep/samza/core/**/Logger.class</exclude>
-                    </excludes>
                 </configuration>
                 <executions>
                     <execution>

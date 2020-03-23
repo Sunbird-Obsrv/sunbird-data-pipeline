@@ -18,7 +18,6 @@ class DeduplicationFunction(config: DeduplicationConfig)(implicit val eventTypeI
 
   lazy val duplicateEventOutput: OutputTag[Event] = new OutputTag[Event](id = "duplicate-event")
   lazy val uniqueEventOuput: OutputTag[Event] = new OutputTag[Event](id = "unique-event")
-  // val metrics: OutputTag[String] = new OutputTag[String]("pipeline-metrics")
 
   lazy val redisConnect = new RedisConnect(config)
   lazy val dedupEngine = new DedupEngine(redisConnect, config.dedupStore, config.cacheExpirySeconds)

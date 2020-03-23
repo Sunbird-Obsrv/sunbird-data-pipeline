@@ -19,11 +19,6 @@ abstract class BaseStreamTask(config: BaseJobConfig) extends Serializable {
     new FlinkKafkaConsumer[util.Map[String, AnyRef]](kafkaTopic, new ConsumerStringDeserializationSchema, config.kafkaConsumerProperties)
   }
 
-  def createKafkaStreamProducer(kafkaTopic: String): FlinkKafkaProducer[String] = {
-    new FlinkKafkaProducer(kafkaTopic,
-      new ProducerStringSerializationSchema(kafkaTopic), config.kafkaProducerProperties, Semantic.AT_LEAST_ONCE)
-  }
-
   def createObjectStreamProducer[T <: Events](kafkaTopic: String)(implicit m: Manifest[T]): FlinkKafkaProducer[T] = {
     new FlinkKafkaProducer[T](kafkaTopic,
       new ProducerV3EventSerializationSchema[T](kafkaTopic), config.kafkaProducerProperties, Semantic.AT_LEAST_ONCE)
@@ -44,15 +39,6 @@ class ConsumerStringDeserializationSchema extends KafkaDeserializationSchema[uti
   }
 
   override def getProducedType: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
-}
-
-class ProducerStringSerializationSchema(topic: String) extends KafkaSerializationSchema[String] {
-
-  private val serialVersionUID = -4284080856874185929L
-
-  override def serialize(element: String, timestamp: java.lang.Long): ProducerRecord[Array[Byte], Array[Byte]] = {
-    new ProducerRecord[Array[Byte], Array[Byte]](topic, element.getBytes(StandardCharsets.UTF_8))
-  }
 }
 
 class ProducerV3EventSerializationSchema[T <: Events : Manifest](topic: String, key: Option[String] = None) extends KafkaSerializationSchema[T] {
