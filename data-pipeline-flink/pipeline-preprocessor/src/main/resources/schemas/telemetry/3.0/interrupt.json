@@ -1,0 +1,46 @@
+{
+  "id": "http://api.ekstep.org/telemetry/interrupt",
+  "type": "object",
+  "required": [
+    "eid",
+    "ets",
+    "ver",
+    "mid",
+    "actor",
+    "context",
+    "edata"
+  ],
+  "allOf": [
+    {
+      "$ref": "resource:/schemas/telemetry/3.0/common.json"
+    },
+    {
+      "properties": {
+        "eid": {
+          "id": "http://api.ekstep.org/telemetry/eid",
+          "enum": [
+            "INTERRUPT"
+          ]
+        },
+        "edata": {
+          "id": "http://api.ekstep.org/telemetry/edata",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "id": "http://api.ekstep.org/telemetry/edata/type",
+              "type": "string"
+            },
+            "pageid": {
+              "id": "http://api.ekstep.org/telemetry/edata/pageid",
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

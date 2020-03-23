@@ -1,0 +1,20 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "id": "http://api.ekstep.org/telemetry/object/id",
+      "type": "string"
+    },
+    "type": {
+      "id": "http://api.ekstep.org/telemetry/object/type",
+      "type": "string"
+    },
+    "ver": {
+      "id": "http://api.ekstep.org/telemetry/object/ver",
+      "type": "string"
+    },
+    "rollup": {
+      "$ref": "resource:/schemas/telemetry/3.0/rollup.json"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "id":"http://api.ekstep.org/telemetry/envelope",
+  "type":"object",
+  "required":[
+    "eid",
+    "ets",
+    "ver",
+    "mid",
+    "actor",
+    "context",
+    "edata"
+  ],
+  "allOf":[
+    {
+      "$ref":"resource:/schemas/telemetry/3.0/common.json"
+    },
+    {
+      "properties":{
+        "eid":{
+          "id":"http://api.ekstep.org/telemetry/mid",
+          "type":"string",
+          "minLength": 1
+        }
+      }
+    }
+  ]
+}
