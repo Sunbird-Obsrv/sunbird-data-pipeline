@@ -60,6 +60,21 @@
             },
             {
               "type": "path",
+              "name": "content_medium",
+              "expr": "$.contentdata.medium[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_gradelevel",
+              "expr": "$.contentdata.gradelevel[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_subject",
+              "expr": "$.contentdata.subject[*]"
+            },
+            {
+              "type": "path",
               "name": "derived_loc_state",
               "expr": "$.derivedlocationdata.state"
             },
@@ -92,6 +107,21 @@
               "type": "path",
               "name": "collection_board",
               "expr": "$.collectiondata.board"
+            },
+            {
+              "type": "path",
+              "name": "collection_medium",
+              "expr": "$.collectiondata.medium[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_subject",
+              "expr": "$.collectiondata.subject[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_gradelevel",
+              "expr": "$.collectiondata.gradelevel[*]"
             },
             {
               "type": "path",
@@ -198,6 +228,15 @@
               "name": "content_board"
             },
             {
+              "name": "content_medium"
+            },
+            {
+              "name": "content_gradelevel"
+            },
+            {
+              "name": "content_subject"
+            },
+            {
               "type": "string",
               "name": "derived_loc_state"
             },
@@ -220,6 +259,15 @@
             {
               "type": "string",
               "name": "collection_board"
+            },
+            {
+              "name": "collection_medium"
+            },
+            {
+              "name": "collection_gradelevel"
+            },
+            {
+              "name": "collection_subject"
             },
             {
               "type": "string",
