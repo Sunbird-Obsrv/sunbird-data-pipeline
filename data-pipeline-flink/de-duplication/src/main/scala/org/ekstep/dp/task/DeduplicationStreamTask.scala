@@ -19,7 +19,8 @@ class DeduplicationStreamTask(config: DeduplicationConfig) extends BaseStreamTas
     env.enableCheckpointing(config.checkpointingInterval)
 
     try {
-      val kafkaConsumer = createKafkaStreamConsumer(config.kafkaInputTopic)
+      val kafkaConsumer = createObjectStreamConsumer[Event](config.kafkaInputTopic)
+
       val dataStream: SingleOutputStreamOperator[Event] =
         env.addSource(kafkaConsumer, "kafka-telemetry-valid-consumer")
           .process(new DeduplicationFunction(config)).setParallelism(2)

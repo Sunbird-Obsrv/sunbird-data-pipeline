@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
 import java.util
 
 class DeduplicationFunction(config: DeduplicationConfig)(implicit val eventTypeInfo: TypeInformation[Event])
-  extends ProcessFunction[util.Map[String, AnyRef], Event] {
+  extends ProcessFunction[Event, Event] {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[DeduplicationFunction])
 
@@ -23,10 +23,10 @@ class DeduplicationFunction(config: DeduplicationConfig)(implicit val eventTypeI
   lazy val dedupEngine = new DedupEngine(redisConnect, config.dedupStore, config.cacheExpirySeconds)
 
   override def processElement(
-                               inEvent: util.Map[String, AnyRef],
-                               ctx: ProcessFunction[util.Map[String, AnyRef], Event]#Context,
+                               event: Event,
+                               ctx: ProcessFunction[Event, Event]#Context,
                                out: Collector[Event]): Unit = {
-    val event = new Event(inEvent)
+    
     val duplicationCheckRequired = isDuplicateCheckRequired(event)
     if (duplicationCheckRequired) {
       if (!dedupEngine.isUniqueEvent(event.mid)) {

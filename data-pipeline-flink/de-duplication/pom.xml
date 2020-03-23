@@ -23,16 +23,6 @@
        Identifying Duplicate Events
     </description>
 
-    <!--
-    <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <scala.maj.version>2.11</scala.maj.version>
-        <scala.version>2.11.12</scala.version>
-        <encoding>UTF-8</encoding>
-    </properties>
-    -->
-
     <dependencies>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -71,13 +61,6 @@
             <artifactId>gson</artifactId>
             <version>2.4</version>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.ekstep.ecosystem</groupId>
-            <artifactId>ep-telemetry-reader</artifactId>
-            <version>0.0.3</version>
-        </dependency>
-        -->
         <dependency>
             <groupId>com.fiftyonred</groupId>
             <artifactId>mock-jedis</artifactId>

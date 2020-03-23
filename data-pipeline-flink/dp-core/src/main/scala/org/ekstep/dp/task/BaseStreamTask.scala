@@ -3,6 +3,7 @@ package org.ekstep.dp.task
 import java.nio.charset.StandardCharsets
 import java.util
 
+import scala.reflect.{ClassTag, classTag}
 import com.google.gson.Gson
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
@@ -19,11 +20,28 @@ abstract class BaseStreamTask(config: BaseJobConfig) extends Serializable {
     new FlinkKafkaConsumer[util.Map[String, AnyRef]](kafkaTopic, new ConsumerStringDeserializationSchema, config.kafkaConsumerProperties)
   }
 
+  def createObjectStreamConsumer[T <: Events](kafkaTopic: String)(implicit m: Manifest[T]): FlinkKafkaConsumer[T] = {
+    new FlinkKafkaConsumer[T](kafkaTopic, new ConsumerObjectDeserializationSchema[T], config.kafkaConsumerProperties)
+  }
+
   def createObjectStreamProducer[T <: Events](kafkaTopic: String)(implicit m: Manifest[T]): FlinkKafkaProducer[T] = {
     new FlinkKafkaProducer[T](kafkaTopic,
       new ProducerV3EventSerializationSchema[T](kafkaTopic), config.kafkaProducerProperties, Semantic.AT_LEAST_ONCE)
   }
 
+}
+
+class ConsumerObjectDeserializationSchema[T <: Events](implicit ct: ClassTag[T]) extends KafkaDeserializationSchema[T] {
+
+  override def isEndOfStream(nextElement: T): Boolean = false
+
+  override def deserialize(record: ConsumerRecord[Array[Byte], Array[Byte]]): T = {
+    val parsedString = new String(record.value(), StandardCharsets.UTF_8)
+    val result = new Gson().fromJson(parsedString, new util.HashMap[String, AnyRef]().getClass)
+    ct.runtimeClass.getConstructor(classOf[util.Map[String, AnyRef]]).newInstance(result).asInstanceOf[T]
+  }
+
+  override def getProducedType: TypeInformation[T] = TypeExtractor.getForClass(classTag[T].runtimeClass).asInstanceOf[TypeInformation[T]]
 }
 
 class ConsumerStringDeserializationSchema extends KafkaDeserializationSchema[util.Map[String, AnyRef]] {
