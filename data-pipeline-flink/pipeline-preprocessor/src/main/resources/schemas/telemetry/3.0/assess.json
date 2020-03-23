@@ -1,0 +1,68 @@
+{
+  "id": "http://api.ekstep.org/telemetry/assess",
+  "type": "object",
+  "required": [
+    "eid",
+    "ets",
+    "ver",
+    "mid",
+    "actor",
+    "context",
+    "edata"
+  ],
+  "allOf": [
+    {
+      "$ref": "resource:/schemas/telemetry/3.0/common.json"
+    },
+    {
+      "properties": {
+        "eid": {
+          "id": "http://api.ekstep.org/telemetry/eid",
+          "enum": [
+            "ASSESS"
+          ]
+        },
+        "edata": {
+          "id": "http://api.ekstep.org/telemetry/edata",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "item",
+            "pass",
+            "score",
+            "resvalues",
+            "duration"
+          ],
+          "properties": {
+            "item": {
+              "$ref": "resource:/schemas/telemetry/3.0/question.json"
+            },
+            "index": {
+              "id": "http://api.ekstep.org/telemetry/edata/index",
+              "type": "number"
+            },
+            "pass": {
+              "id": "http://api.ekstep.org/telemetry/edata/pass",
+              "type": "string"
+            },
+            "score": {
+              "id": "http://api.ekstep.org/telemetry/edata/score",
+              "type": "number"
+            },
+            "resvalues": {
+              "id": "http://api.ekstep.org/telemetry/edata/resvalues",
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "duration": {
+              "id": "http://api.ekstep.org/telemetry/edata/duration",
+              "type": "number"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

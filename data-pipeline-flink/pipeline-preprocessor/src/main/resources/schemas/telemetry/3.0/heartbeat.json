@@ -1,0 +1,32 @@
+{
+  "id": "http://api.ekstep.org/telemetry/heartbeat",
+  "type": "object",
+  "required": [
+    "eid",
+    "ets",
+    "ver",
+    "mid",
+    "actor",
+    "context",
+    "edata"
+  ],
+  "allOf": [
+    {
+      "$ref": "resource:/schemas/telemetry/3.0/common.json"
+    },
+    {
+      "properties": {
+        "eid": {
+          "id": "http://api.ekstep.org/telemetry/eid",
+          "enum": [
+            "HEARTBEAT"
+          ]
+        },
+        "edata": {
+          "id": "http://api.ekstep.org/telemetry/edata",
+          "type": "object"
+        }
+      }
+    }
+  ]
+}
