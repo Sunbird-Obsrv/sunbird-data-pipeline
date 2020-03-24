@@ -284,4 +284,17 @@ public class DeviceProfileServiceTest {
             assertEquals("Karnataka's", rs.getString(1));
         }
     }
+
+    @Test
+    public void shouldInsertSpaceCharactersifPresent() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.DEVICE_PROFILE_DETAILS_WITH_SPACE_CHAR);
+
+        DeviceProfileUpdaterSource source = new DeviceProfileUpdaterSource(envelopeMock);
+        deviceProfileUpdaterService.process(source, deviceProfileUpdaterSinkMock);
+
+        ResultSet rs=statement.executeQuery(String.format("SELECT user_declared_district FROM %s WHERE device_id='test-did';", postgres_table));
+        while(rs.next()) {
+            assertEquals("BENGALURU URBAN SOUTH", rs.getString(1));
+        }
+    }
 }
