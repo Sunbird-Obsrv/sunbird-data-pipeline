@@ -379,7 +379,7 @@ public class EventFixture {
             "    \"type\": \"User\"\n" +
             "  },\n" +
             "  \"edata\": {\n" +
-            "    \"state\": \"Update\",\n" +
+            "    \"state\": \"Updated\",\n" +
             "    \"props\": [\n" +
             "      \"firstName\",\n" +
             "      \"userId\",\n" +
