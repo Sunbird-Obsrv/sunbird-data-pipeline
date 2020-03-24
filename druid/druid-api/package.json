@@ -25,7 +25,8 @@
         "request": "^2.88.0",
         "mocha": "^6.2.2",
         "log4js": "^6.1.0",
-        "moment": "^2.24.0"
+        "moment": "^2.24.0",
+        "http-status": "1.4.2"
     },
     "devDependencies": {
         "@types/axios": "0.14.0",

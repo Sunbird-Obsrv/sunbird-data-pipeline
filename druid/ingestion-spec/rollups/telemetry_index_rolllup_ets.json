@@ -1,7 +1,7 @@
 {
   "type": "kafka",
   "dataSchema": {
-    "dataSource": "summary-events-daily-rollup",
+    "dataSource": "telemetry-rollup-ets",
     "parser": {
       "type": "string",
       "parseSpec": {
@@ -14,28 +14,24 @@
               "name": "eid"
             },
             {
-              "type": "root",
-              "name": "syncts"
+              "type": "path",
+              "name": "context_channel",
+              "expr": "$.context.channel"
             },
             {
               "type": "path",
-              "name": "dimensions_pdata_id",
-              "expr": "$.dimensions.pdata.id"
+              "name": "context_pdata_id",
+              "expr": "$.context.pdata.id"
             },
             {
               "type": "path",
-              "name": "dimensions_pdata_pid",
-              "expr": "$.dimensions.pdata.pid"
+              "name": "context_pdata_pid",
+              "expr": "$.context.pdata.pid"
             },
             {
               "type": "path",
-              "name": "dimensions_type",
-              "expr": "$.dimensions.type"
-            },
-            {
-              "type": "path",
-              "name": "dimensions_mode",
-              "expr": "$.dimensions.mode"
+              "name": "context_pdata_ver",
+              "expr": "$.context.pdata.ver"
             },
             {
               "type": "path",
@@ -54,6 +50,16 @@
             },
             {
               "type": "path",
+              "name": "content_name",
+              "expr": "$.contentdata.name"
+            },
+            {
+              "type": "path",
+              "name": "content_board",
+              "expr": "$.contentdata.board"
+            },
+            {
+              "type": "path",
               "name": "derived_loc_state",
               "expr": "$.derivedlocationdata.state"
             },
@@ -69,23 +75,8 @@
             },
             {
               "type": "path",
-              "name": "content_name",
-              "expr": "$.contentdata.name"
-            },
-            {
-              "type": "path",
-              "name": "content_object_type",
-              "expr": "$.contentdata.objecttype"
-            },
-            {
-              "type": "path",
-              "name": "content_board",
-              "expr": "$.contentdata.board"
-            },
-            {
-              "type": "path",
-              "name": "content_status",
-              "expr": "$.contentdata.status"
+              "name": "device_first_access",
+              "expr": "$.devicedata.firstaccess"
             },
             {
               "type": "path",
@@ -104,6 +95,11 @@
             },
             {
               "type": "path",
+              "name": "dialcode_channel",
+              "expr": "$.dialcodedata.channel"
+            },
+            {
+              "type": "path",
               "name": "user_type",
               "expr": "$.userdata.usertype"
             },
@@ -114,13 +110,48 @@
             },
             {
               "type": "path",
-              "name": "edata_interaction_count",
-              "expr": "$.edata.eks.interact_events_count"
+              "name": "edata_item_id",
+              "expr": "$.edata.item.id"
             },
             {
               "type": "path",
-              "name": "edata_time_spent",
-              "expr": "$.edata.eks.time_spent"
+              "name": "edata_item_title",
+              "expr": "$.edata.item.title"
+            },
+            {
+              "type": "path",
+              "name": "edata_state",
+              "expr": "$.edata.state"
+            },
+            {
+              "type": "path",
+              "name": "edata_type",
+              "expr": "$.edata.type"
+            },
+            {
+              "type": "path",
+              "name": "edata_size",
+              "expr": "$.edata.size"
+            },
+            {
+              "type": "path",
+              "name": "edata_duration",
+              "expr": "$.edata.duration"
+            },
+            {
+              "type": "path",
+              "name": "edata_score",
+              "expr": "$.edata.score"
+            },
+            {
+              "type": "path",
+              "name": "edata_item_maxscore",
+              "expr": "$.edata.item.maxscore"
+            },
+            {
+              "type": "path",
+              "name": "edata_rating",
+              "expr": "$.edata.rating"
             }
           ]
         },
@@ -132,19 +163,19 @@
             },
             {
               "type": "string",
-              "name": "dimensions_pdata_id"
+              "name": "context_channel"
             },
             {
               "type": "string",
-              "name": "dimensions_pdata_pid"
+              "name": "context_pdata_id"
             },
             {
               "type": "string",
-              "name": "dimensions_type"
+              "name": "context_pdata_pid"
             },
             {
               "type": "string",
-              "name": "dimensions_mode"
+              "name": "context_pdata_ver"
             },
             {
               "type": "string",
@@ -160,6 +191,14 @@
             },
             {
               "type": "string",
+              "name": "content_name"
+            },
+            {
+              "type": "string",
+              "name": "content_board"
+            },
+            {
+              "type": "string",
               "name": "derived_loc_state"
             },
             {
@@ -172,15 +211,19 @@
             },
             {
               "type": "string",
-              "name": "content_name"
+              "name": "collection_name"
             },
             {
               "type": "string",
-              "name": "content_board"
+              "name": "collection_type"
             },
             {
               "type": "string",
               "name": "collection_board"
+            },
+            {
+              "type": "string",
+              "name": "dialcode_channel"
             },
             {
               "type": "string",
@@ -189,32 +232,68 @@
             {
               "type": "string",
               "name": "user_signin_type"
+            },
+            {
+              "type": "string",
+              "name": "edata_type"
+            },
+            {
+              "type": "string",
+              "name": "edata_item_id"
+            },
+            {
+              "type": "string",
+              "name": "edata_item_title"
+            },
+            {
+              "type": "string",
+              "name": "edata_state"
+            },
+            {
+              "type": "long",
+              "name": "edata_size"
             }
           ],
           "dimensionsExclusions": []
         },
         "timestampSpec": {
-          "column": "syncts",
+          "column": "ets",
           "format": "auto"
         }
       }
     },
+ "transformSpec": {
+      "transforms": [
+         { "type": "expression", "name": "device_first_access", "expression": "timestamp_format(device_first_access, 'YYYY-MM-dd','Asia/Kolkata')" },
+         { "type": "expression", "name": "edata_size", "expression" : "if((edata_size>0),1,0)" }
+      ]
+    },
     "metricsSpec": [
-      {
+	 {
         "name": "total_count",
         "type": "count"
       },
       {
-        "type": "longSum",
-        "name": "total_interactions",
-        "fieldName": "edata_interaction_count"
+        "type": "doubleSum",
+        "name": "total_edata_duration",
+        "fieldName": "edata_duration"
       },
       {
         "type": "doubleSum",
-        "name": "total_time_spent",
-        "fieldName": "edata_time_spent"
+        "name": "total_edata_rating",
+        "fieldName": "edata_rating"
+      },
+      {
+        "type": "doubleSum",
+        "name": "total_edata_score",
+        "fieldName": "edata_score"
+      },
+      {
+        "type": "doubleSum",
+        "name": "total_max_score",
+        "fieldName": "edata_item_maxscore"
       }
-    ],
+],
     "granularitySpec": {
       "type": "uniform",
       "segmentGranularity": "day",
@@ -223,7 +302,7 @@
     }
   },
   "ioConfig": {
-    "topic": "{{env}}.events.summary",
+    "topic": "{{env}}.events.telemetry",
     "consumerProperties": {
       "bootstrap.servers": "{{kafka_brokers}}"
     },

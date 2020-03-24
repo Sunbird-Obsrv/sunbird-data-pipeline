@@ -18,6 +18,7 @@ public class Event extends Events {
     }
 
     public void updateEventObjectKey(String objId, String type, String version, String rollupLevel1) {
+        telemetry.addFieldIfAbsent("object", new HashMap<String, String>());
         telemetry.add("object.id", objId);
         telemetry.add("object.type", type);
         telemetry.add("object.version", version);

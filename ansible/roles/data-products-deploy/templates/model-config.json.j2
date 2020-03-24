@@ -2029,29 +2029,6 @@
     "appName": "Device Profile Updater",
     "deviceMapping": false
   },
-  "portal-metrics": {
-    "search": {
-      "type": "none"
-    },
-    "model": "org.ekstep.analytics.updater.UpdatePortalMetrics",
-    "modelParams": {
-      "bucket": "portal-metrics",
-      "key": "diksha-aggregate-metrics.json",
-      "dispatch": true,
-      "public": true
-    },
-    "output": [
-      {
-        "to": "console",
-        "params": {
-          "printEvent": false
-        }
-      }
-    ],
-    "parallelization": 8,
-    "appName": "PortalMetricsUpdater",
-    "deviceMapping": false
-  },
   "workflow-usage-metrics": {
     "search": {
       "type": "azure",
@@ -2125,7 +2102,7 @@
     "search": {
       "type": "none"
     },
-    "model": "org.ekstep.analytics.job.AssessmentMetricsJob",
+    "model": "org.sunbird.analytics.job.report.AssessmentMetricsJob",
     "modelParams": {
       "fromDate": "$(date --date yesterday '+%Y-%m-%d')",
       "toDate": "$(date --date yesterday '+%Y-%m-%d')",
@@ -3923,7 +3900,7 @@
         "format":"csv",
         "key": "druid-reports/",
         "filePath": "druid-reports/",
-        "container": {{ bucket }},
+        "container": "{{ bucket }}",
         "folderPrefix": ["slug", "reportName"],
         "sparkCassandraConnectionHost":"{{core_cassandra_host}}",
         "sparkElasticsearchConnectionHost":"{{sunbird_es_host}}"
@@ -4034,7 +4011,7 @@
       "format":"csv",
       "key": "druid-reports/",
       "filePath": "druid-reports/",
-      "container": {{ bucket }},
+      "container": "{{ bucket }}",
       "folderPrefix": ["slug", "reportName"],
       "sparkCassandraConnectionHost":"{{core_cassandra_host}}",
       "sparkElasticsearchConnectionHost":"{{sunbird_es_host}}"

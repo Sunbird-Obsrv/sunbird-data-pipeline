@@ -156,7 +156,18 @@
             {
               "type": "root",
               "name": "share-route-success-count"
-
+            },
+            {
+              "type": "root",
+              "name": "dialcodes-count"
+            },
+            {
+              "type": "root",
+              "name": "dialcodes-api-hit"
+            },
+            {
+              "type": "root",
+              "name": "dialcodes-cache-hit"
             }
           ]
         },
@@ -309,6 +320,18 @@
             {
               "type": "long",
               "name": "share-route-success-count"
+            },
+            {
+              "type": "long",
+              "name": "dialcodes-count"
+            },
+            {
+              "type": "long",
+              "name": "dialcodes-api-hit"
+            },
+            {
+              "type": "long",
+              "name": "dialcodes-cache-hit"
             }
           ],
           "dimensionsExclusions": []

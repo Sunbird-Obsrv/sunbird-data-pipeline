@@ -1,7 +1,7 @@
 {
   "type": "kafka",
   "dataSchema": {
-    "dataSource": "telemetry-distinct-counts",
+    "dataSource": "summary-rollup-ets",
     "parser": {
       "type": "string",
       "parseSpec": {
@@ -10,23 +10,49 @@
           "useFieldDiscovery": false,
           "fields": [
             {
-              "type": "root",
-              "name": "eid"
+              "type": "path",
+              "name": "context_date_range_to",
+              "expr": "$.context.date_range.to"
             },
             {
               "type": "path",
-              "name": "context_channel",
-              "expr": "$.context.channel"
+              "name": "dimensions_pdata_id",
+              "expr": "$.dimensions.pdata.id"
             },
             {
               "type": "path",
-              "name": "context_pdata_id",
-              "expr": "$.context.pdata.id"
+              "name": "dimensions_pdata_pid",
+              "expr": "$.dimensions.pdata.pid"
             },
             {
               "type": "path",
-              "name": "context_pdata_pid",
-              "expr": "$.context.pdata.pid"
+              "name": "dimensions_type",
+              "expr": "$.dimensions.type"
+            },
+            {
+              "type": "path",
+              "name": "dimensions_pdata_ver",
+              "expr": "$.dimensions.pdata.ver"
+            },
+            {
+              "type": "path",
+              "name": "dimensions_pdata_ver",
+              "expr": "$.dimensions.pdata.ver"
+            },
+            {
+              "type": "path",
+              "name": "dimensions_mode",
+              "expr": "$.dimensions.mode"
+            },
+            {
+              "type": "path",
+              "name": "content_name",
+              "expr": "$.contentdata.name"
+            },
+            {
+              "type": "path",
+              "name": "content_board",
+              "expr": "$.contentdata.board"
             },
             {
               "type": "path",
@@ -40,48 +66,13 @@
             },
             {
               "type": "path",
-              "name": "edata_duration",
-              "expr": "$.edata.duration"
+              "name": "object_rollup_l1",
+              "expr": "$.object.rollup.l1"
             },
             {
               "type": "path",
-              "name": "edata_score",
-              "expr": "$.edata.score"
-            },
-            {
-              "type": "path",
-              "name": "edata_item_id",
-              "expr": "$.edata.item.id"
-            },
-            {
-              "type": "path",
-              "name": "edata_item_title",
-              "expr": "$.edata.item.title"
-            },
-            {
-              "type": "path",
-              "name": "edata_item_maxscore",
-              "expr": "$.edata.item.maxscore"
-            },
-            {
-              "type": "path",
-              "name": "edata_rating",
-              "expr": "$.edata.rating"
-            },
-            {
-              "type": "path",
-              "name": "edata_state",
-              "expr": "$.edata.state"
-            },
-            {
-              "type": "path",
-              "name": "edata_size",
-              "expr": "$.edata.size"
-            },
-            {
-              "type": "path",
-              "name": "edata_filters_dialcodes",
-              "expr": "$.edata.filters.dialcodes"
+              "name": "dialcode_channel",
+              "expr": "$.dialcodedata.channel"
             },
             {
               "type": "path",
@@ -97,16 +88,6 @@
               "type": "path",
               "name": "derived_loc_from",
               "expr": "$.derivedlocationdata.from"
-            },
-            {
-              "type": "path",
-              "name": "content_name",
-              "expr": "$.contentdata.name"
-            },
-            {
-              "type": "path",
-              "name": "content_board",
-              "expr": "$.contentdata.board"
             },
             {
               "type": "path",
@@ -135,18 +116,13 @@
             },
             {
               "type": "path",
-              "name": "dialcode_channel",
-              "expr": "$.dialcodedata.channel"
+              "name": "edata_interaction_count",
+              "expr": "$.edata.eks.interact_events_count"
             },
             {
               "type": "path",
-              "name": "context_did",
-              "expr": "$.context.did"
-            },
-            {
-              "type": "path",
-              "name": "actor_id",
-              "expr": "$.actor.id"
+              "name": "edata_time_spent",
+              "expr": "$.edata.eks.time_spent"
             }
           ]
         },
@@ -154,19 +130,31 @@
           "dimensions": [
             {
               "type": "string",
-              "name": "eid"
+              "name": "dimensions_pdata_id"
             },
             {
               "type": "string",
-              "name": "context_channel"
+              "name": "dimensions_pdata_pid"
             },
             {
               "type": "string",
-              "name": "context_pdata_id"
+              "name": "dimensions_type"
             },
             {
               "type": "string",
-              "name": "context_pdata_pid"
+              "name": "dimensions_pdata_ver"
+            },
+            {
+              "type": "string",
+              "name": "dimensions_mode"
+            },
+            {
+              "type": "string",
+              "name": "content_name"
+            },
+            {
+              "type": "string",
+              "name": "content_board"
             },
             {
               "type": "string",
@@ -182,15 +170,7 @@
             },
             {
               "type": "string",
-              "name": "edata_item_id"
-            },
-            {
-              "type": "string",
-              "name": "edata_item_title"
-            },
-            {
-              "type": "string",
-              "name": "edata_state"
+              "name": "dialcode_channel"
             },
             {
               "type": "string",
@@ -206,23 +186,7 @@
             },
             {
               "type": "string",
-              "name": "content_name"
-            },
-            {
-              "type": "string",
-              "name": "content_board"
-            },
-            {
-              "type": "string",
-              "name": "collection_name"
-            },
-            {
-              "type": "string",
-              "name": "collection_type"
-            },
-            {
-              "type": "string",
-              "name": "collection_board"
+              "name": "device_first_access"
             },
             {
               "type": "string",
@@ -234,43 +198,50 @@
             },
             {
               "type": "string",
-              "name": "dialcode_channel"
+              "name": "collection_name"
+            },
+            {
+              "type": "string",
+              "name": "collection_board"
+            },
+            {
+              "type": "string",
+              "name": "collection_type"
             }
           ],
           "dimensionsExclusions": []
         },
         "timestampSpec": {
-          "column": "ets",
+          "column": "context_date_range_to",
           "format": "auto"
         }
       }
     },
     "metricsSpec": [
       {
-        "type": "HLLSketchBuild",
-        "name": "unique_devices",
-        "fieldName": "context_did"
+        "name": "total_count",
+        "type": "count"
       },
       {
-        "type": "HLLSketchBuild",
-        "name": "unique_users",
-        "fieldName": "actor_id"
+        "type": "longSum",
+        "name": "total_interactions",
+        "fieldName": "edata_interaction_count"
       },
       {
-        "type": "HLLSketchBuild",
-        "name": "unique_content",
-        "fieldName": "object_id"
+        "type": "doubleSum",
+        "name": "total_time_spent",
+        "fieldName": "edata_time_spent"
       }
     ],
     "granularitySpec": {
       "type": "uniform",
       "segmentGranularity": "day",
       "queryGranularity": "day",
-      "rollup": false
+      "rollup": true
     }
   },
   "ioConfig": {
-    "topic": "{{env}}.events.telemetry",
+   "topic": "{{env}}.events.summary",
     "consumerProperties": {
       "bootstrap.servers": "{{kafka_brokers}}"
     },
