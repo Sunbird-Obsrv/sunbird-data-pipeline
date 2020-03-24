@@ -173,7 +173,7 @@ public class DeviceProfileUpdaterService {
         try {
             gson.fromJson(json, Object.class);
             Object jsonObjType = gson.fromJson(json, Object.class).getClass();
-            if(jsonObjType.equals(String.class) | jsonObjType.equals(Double.class)){
+            if(jsonObjType.equals(String.class) || jsonObjType.equals(Double.class)){
                 return false;
             }
             return true;
