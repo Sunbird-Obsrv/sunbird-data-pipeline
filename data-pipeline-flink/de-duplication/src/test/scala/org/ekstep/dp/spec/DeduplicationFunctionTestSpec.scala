@@ -57,9 +57,7 @@ class DeduplicationFunctionTestSpec extends FlatSpec with Matchers with BeforeAn
 
 
   "Unique events" should "be sent to unique SideOutput" in {
-
-    when(dedupEngine.isUniqueEvent("321a6f0c-10c6-4cdc-9893-207bb64fea50")).thenReturn(false)
-
+    
     val deduplicationFunction = new DeduplicationFunction(mockConfig)
     val harness = ProcessFunctionTestHarnesses.forProcessFunction(deduplicationFunction)
     val event = new Event(gson.fromJson[util.Map[String, AnyRef]](EventFixture.EVENT_WITH_MID, mapType))
@@ -78,10 +76,10 @@ class DeduplicationFunctionTestSpec extends FlatSpec with Matchers with BeforeAn
     val harness = ProcessFunctionTestHarnesses.forProcessFunction(deduplicationFunction)
     val event = new Event(gson.fromJson[util.Map[String, AnyRef]](EventFixture.EVENT_WITH_MID, mapType))
     harness.processElement(event, new Date().getTime)
-    val uniqueEventStream = harness.getSideOutput(new OutputTag("duplicate-events"))
-    uniqueEventStream.size() should be (1)
-    val uniqueEvent = uniqueEventStream.asScala.head.getValue
-    uniqueEvent.mid() should be ("321a6f0c-10c6-4cdc-9893-207bb64fea50")
+    val duplicateEventStream = harness.getSideOutput(new OutputTag("duplicate-events"))
+    duplicateEventStream.size() should be (1)
+    val duplicateEvent = duplicateEventStream.asScala.head.getValue
+    duplicateEvent.mid() should be ("321a6f0c-10c6-4cdc-9893-207bb64fea50")
   }
 
   override protected def afterAll(): Unit = {
