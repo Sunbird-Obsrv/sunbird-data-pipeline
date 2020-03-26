@@ -4026,6 +4026,71 @@
     "appName": "TPD Course Consumption Metrics Model",
     "deviceMapping": false
   },
+  "textbook-progress-report": {
+    "search": {
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.model.report.TextBookProgressModel",
+    "modelParams": {
+      "reportConfig": {
+        "id": "content_progress_metrics",
+        "metrics": [],
+        "labels": {
+          "board": "Board",
+          "medium": "Medium",
+          "gradeLevel": "Grade",
+          "subject": "Subject",
+          "resourceType": "Content Type",
+          "live": "Live",
+          "review": "Review",
+          "draft": "Draft",
+          "unlisted": "Limited Sharing",
+          "application_ecml": "Created on Diksha",
+          "vedio_youtube": "YouTube Content",
+          "video_mp4": "Uploaded Videos",
+          "application_pdf": "Text Content",
+          "application_html": "Uploaded Interactive Content",
+          "identifier": "Content ID",
+          "creator": "Created By",
+          "status": "Status",
+          "pkgVersion": "Number of times Published",
+          "lastPublishedOn": "Pending in current status since",
+          "pendingInCurrentStatus": "Pending in current status since"
+        },
+        "output": [
+          {
+            "type": "csv",
+            "dims": []
+          }
+        ]
+      },
+      "filter": {
+        "tenantId": "",
+        "slugName": ""
+      },
+      "store": "azure",
+      "format": "csv",
+      "key": "druid-reports/",
+      "filePath": "druid-reports/",
+      "container": "{{ bucket }}",
+      "folderPrefix": [
+        "slug",
+        "reportName"
+      ],
+      "sparkCassandraConnectionHost": "{{core_cassandra_host}}"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Textbook Progress Metrics Model",
+    "deviceMapping": false
+  },
   "audit-metrics-report": {
       "search": {
         "type": "none"
