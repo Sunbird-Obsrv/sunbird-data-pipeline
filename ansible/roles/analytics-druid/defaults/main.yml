@@ -114,6 +114,10 @@ druid_historical_max_direct_size: 800m
 druid_historical_tmp_dir: "{{ druid_default_tmp_dir }}"
 druid_historical_gc_logfile: "{{ druid_crash_logdir }}/historical.gc.log"
 druid_historical_heap_dump_file: "{{ druid_crash_logdir }}/historical.hprof"
+druid_broker_heap_dump_file : "{{ druid_crash_logdir }}/broker.hprof"
+druid_coordinator_heap_dump_file : "{{ druid_crash_logdir }}/coordinator.hprof"
+druid_overlord_heap_dump_file : "{{ druid_crash_logdir }}/overlord.hprof"
+druid_mm_heap_dump_file : "{{ druid_crash_logdir }}/middlemanager.hprof"
 
 druid_historical_http_numConnections: 5
 druid_historical_server_http_numThread: 25
@@ -144,7 +148,7 @@ druid_middlemanager_tmp_dir: "{{ druid_default_tmp_dir }}"
 druid_middlemanager_gc_logdir: "{{ druid_crash_logdir }}/gc.log"
 
 druid_middlemanager_worker_cap: 4
-druid_mm_java_opts_array: "-server -Xmx900m -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+PrintGCDetails -XX:+PrintGCTimeStamps"
+druid_mm_java_opts_array: "-server -Xmx900m -XX:+UseG1GC -XX:HeapDumpPath={{ druid_mm_heap_dump_file }} -XX:MaxGCPauseMillis=100 -XX:+PrintGCDetails -XX:+PrintGCTimeStamps"
 
 druid_middlemanager_peon_server_http_numThread: 25
 druid_middlemanager_peon_processing_bufferBytes: 25000000
@@ -154,7 +158,7 @@ druid_middlemanager_peon_processing_threads: 2
 druid_middlemanager_peon_segmentcache_path: "/var/segment_cache"
 druid_middlemanager_peon_server_maxsize: 0
 
-# Router configurations
+# Router configurations	
 
 druid_router_heap_size: 1g
 druid_router_http_numConnections: 50

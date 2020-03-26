@@ -7,7 +7,7 @@
 
 -
   name: Install java and zookeeper cluster for druid
-  hosts: druid-zookeeper
+  hosts: raw-zookeeper
   become: yes
   roles:
     - {role: zookeeper-upgrade}
@@ -86,11 +86,12 @@
   hosts: druid
   become: yes
   roles:
-    - {role: analytics-druid, when: "'coordinator' in group_names", druid_role: 'coordinator', service: 'coordinator' }
-    - {role: analytics-druid, when: "'overlord' in group_names", druid_role: 'overlord', service: 'overlord'}
-    - {role: analytics-druid, when: "'broker' in group_names", druid_role: 'broker', service: 'broker'}
-    - {role: analytics-druid, when: "'historical' in group_names", druid_role: 'historical', service: 'historical'}
-    - {role: analytics-druid, when: "'middlemanager' in group_names", druid_role: 'middlemanager', service: 'middleManager' }
+    - {role: analytics-druid, when: "'raw-coordinator' in group_names", druid_role: 'coordinator', service: 'coordinator' }
+    - {role: analytics-druid, when: "'raw-overlord' in group_names", druid_role: 'overlord', service: 'overlord'}
+    - {role: analytics-druid, when: "'raw-broker' in group_names", druid_role: 'broker', service: 'broker'}
+    - {role: analytics-druid, when: "'raw-historical' in group_names", druid_role: 'historical', service: 'historical'}
+    - {role: analytics-druid, when: "'raw-middlemanager' in group_names", druid_role: 'middlemanager', service: 'middleManager' }
   vars:
     druid_postgres_db: "druid"
-    druid_zookeeper_host: "{{ groups['druid-zookeeper']|join(':2181,')}}:2181"
+    druid_zookeeper_host: "{{ groups['raw-zookeeper']|join(':2181,')}}:2181"
+    druid_graphite_host: "{{ groups['raw-graphite'][0] }}"
