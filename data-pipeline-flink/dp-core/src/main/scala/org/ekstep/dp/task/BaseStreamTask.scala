@@ -16,6 +16,10 @@ import org.ekstep.ep.samza.events.domain.Events
 
 abstract class BaseStreamTask(config: BaseJobConfig) extends Serializable {
 
+  def createKafkaStreamConsumer(kafkaTopic: String): FlinkKafkaConsumer[util.Map[String, AnyRef]] = {
+    new FlinkKafkaConsumer[util.Map[String, AnyRef]](kafkaTopic, new ConsumerStringDeserializationSchema, config.kafkaConsumerProperties)
+  }
+
   def createObjectStreamConsumer[T <: Events](kafkaTopic: String)(implicit m: Manifest[T]): FlinkKafkaConsumer[T] = {
     new FlinkKafkaConsumer[T](kafkaTopic, new ConsumerObjectDeserializationSchema[T], config.kafkaConsumerProperties)
   }
@@ -25,6 +29,21 @@ abstract class BaseStreamTask(config: BaseJobConfig) extends Serializable {
       new ProducerObjectSerializationSchema[T](kafkaTopic), config.kafkaProducerProperties, Semantic.AT_LEAST_ONCE)
   }
 
+}
+
+class ConsumerStringDeserializationSchema extends KafkaDeserializationSchema[util.Map[String, AnyRef]] {
+
+  private val serialVersionUID = -3224825136576915426L
+
+  override def isEndOfStream(nextElement: util.Map[String, AnyRef]): Boolean = false
+
+  override def deserialize(record: ConsumerRecord[Array[Byte], Array[Byte]]): util.Map[String, AnyRef] = {
+    val parsedString = new String(record.value(), StandardCharsets.UTF_8)
+    val gson: Gson = new Gson()
+    gson.fromJson(parsedString, new util.HashMap[String, AnyRef]().getClass)
+  }
+
+  override def getProducedType: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
 }
 
 class ConsumerObjectDeserializationSchema[T <: Events](implicit ct: ClassTag[T]) extends KafkaDeserializationSchema[T] {
