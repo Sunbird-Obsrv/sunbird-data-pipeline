@@ -148,7 +148,7 @@ druid_middlemanager_tmp_dir: "{{ druid_default_tmp_dir }}"
 druid_middlemanager_gc_logdir: "{{ druid_crash_logdir }}/gc.log"
 
 druid_middlemanager_worker_cap: 4
-druid_mm_java_opts_array: "-server -Xmx900m -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+PrintGCDetails -XX:+PrintGCTimeStamps"
+druid_mm_java_opts_array: "-server -Xmx900m -XX:+UseG1GC -XX:HeapDumpPath={{ druid_mm_heap_dump_file }} -XX:MaxGCPauseMillis=100 -XX:+PrintGCDetails -XX:+PrintGCTimeStamps"
 
 druid_middlemanager_peon_server_http_numThread: 25
 druid_middlemanager_peon_processing_bufferBytes: 25000000
