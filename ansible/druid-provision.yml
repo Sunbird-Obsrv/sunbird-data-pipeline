@@ -1,6 +1,6 @@
 -
   name: Install Java
-  hosts: druid
+  hosts: druid-raw
   become: yes
   roles: 
     - jdk-1.8.0_121
@@ -83,7 +83,7 @@
     - {role: druid_graphite}
 -
   name: Install role druid
-  hosts: druid
+  hosts: druid-raw
   become: yes
   roles:
     - {role: analytics-druid, when: "'raw-coordinator' in group_names", druid_role: 'coordinator', service: 'coordinator' }
