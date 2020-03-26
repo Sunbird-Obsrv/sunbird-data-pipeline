@@ -12,7 +12,7 @@
   roles:
     - {role: zookeeper-upgrade}
   vars:
-    zookeeper_group: "{{ groups['druid-zookeeper'] }}"
+    zookeeper_group: "{{ groups['raw-zookeeper'] }}"
 
 #-
 #  name: Install postgres on druid cluster
@@ -77,7 +77,7 @@
 
 - 
   name : Install graphite on druid
-  hosts: druid-graphite
+  hosts: raw-graphite
   become: yes
   roles:
     - {role: druid_graphite}
@@ -91,3 +91,6 @@
     - {role: analytics-druid, when: "'broker' in group_names", druid_role: 'broker', service: 'broker'}
     - {role: analytics-druid, when: "'historical' in group_names", druid_role: 'historical', service: 'historical'}
     - {role: analytics-druid, when: "'middlemanager' in group_names", druid_role: 'middlemanager', service: 'middleManager' }
+  vars:
+    druid_postgres_db: "druid"
+    druid_zookeeper_host: "{{ groups['druid-zookeeper']|join(':2181,')}}:2181"
