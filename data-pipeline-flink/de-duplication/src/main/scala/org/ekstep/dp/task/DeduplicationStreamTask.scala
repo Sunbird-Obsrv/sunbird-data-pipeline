@@ -28,11 +28,11 @@ class DeduplicationStreamTask(config: DeduplicationConfig) extends BaseStreamTas
       /**
         * Separate sinks for duplicate events and unique events
         */
-      dataStream.getSideOutput(new OutputTag[Event]("unique-event"))
+      dataStream.getSideOutput(new OutputTag[Event]("unique-events"))
         .addSink(createObjectStreamProducer(config.kafkaSuccessTopic))
         .name("kafka-telemetry-unique-producer")
 
-      dataStream.getSideOutput(new OutputTag[Event]("duplicate-event"))
+      dataStream.getSideOutput(new OutputTag[Event]("duplicate-events"))
         .addSink(createObjectStreamProducer(config.kafkaDuplicateTopic))
         .name("kafka-telemetry-duplicate-producer")
 

@@ -9,15 +9,13 @@ import org.ekstep.dp.domain.Event
 import org.ekstep.dp.task.DeduplicationConfig
 import org.slf4j.LoggerFactory
 
-import java.util
-
 class DeduplicationFunction(config: DeduplicationConfig)(implicit val eventTypeInfo: TypeInformation[Event])
   extends ProcessFunction[Event, Event] {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[DeduplicationFunction])
 
-  lazy val duplicateEventOutput: OutputTag[Event] = new OutputTag[Event](id = "duplicate-event")
-  lazy val uniqueEventOuput: OutputTag[Event] = new OutputTag[Event](id = "unique-event")
+  lazy val duplicateEventOutput: OutputTag[Event] = new OutputTag[Event](id = "duplicate-events")
+  lazy val uniqueEventOuput: OutputTag[Event] = new OutputTag[Event](id = "unique-events")
 
   lazy val redisConnect = new RedisConnect(config)
   lazy val dedupEngine = new DedupEngine(redisConnect, config.dedupStore, config.cacheExpirySeconds)
