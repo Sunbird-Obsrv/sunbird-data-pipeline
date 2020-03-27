@@ -26,11 +26,10 @@ class DeduplicationFunction(config: DeduplicationConfig)(implicit val eventTypeI
                                event: util.Map[String, AnyRef],
                                context: ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]]#Context,
                                out: Collector[util.Map[String, AnyRef]]): Unit = {
-    val gson = new Gson();
+
     val duplicationCheckRequired = isDuplicateCheckRequired(event)
     if (duplicationCheckRequired) {
-      val params :Map[String, String] = gson.fromJson[Map[String, String]](gson.toJson(event.get("params")), Map.getClass)
-      val msgId = params("msgid");
+      val msgId = getMsgIdentifier(event)
       if (!dedupEngine.isUniqueEvent(msgId)) {
         logger.info(s"Duplicate Event message id: ${msgId}")
         context.output(duplicateEventOutput, event)
@@ -42,6 +41,12 @@ class DeduplicationFunction(config: DeduplicationConfig)(implicit val eventTypeI
     } else {
       context.output(uniqueEventOuput, event)
     }
+  }
+
+  def getMsgIdentifier(event: util.Map[String, AnyRef]): String = {
+    val gson = new Gson();
+    val params = event.get("params")
+    gson.fromJson(gson.toJson(params), (new util.LinkedHashMap[String, AnyRef]()).getClass).get("msgid").toString
   }
 
   def isDuplicateCheckRequired(event: util.Map[String, AnyRef]): Boolean = {

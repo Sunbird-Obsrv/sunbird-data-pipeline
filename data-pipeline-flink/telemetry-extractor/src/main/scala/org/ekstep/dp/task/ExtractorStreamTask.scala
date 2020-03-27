@@ -30,23 +30,15 @@ class ExtractorStreamTask(config: DeduplicationConfig) extends BaseStreamTask(co
           .process(new DeduplicationFunction(config))
           .setParallelism(2)
 
-      deDupStream.getSideOutput(new OutputTag[Event]("duplicate-events"))
-        .addSink(createObjectStreamProducer[Event](config.kafkaDuplicateTopic))
-        .name("kafka-telemetry-duplicate-producer")
-
-//      val extractedEventStream: SingleOutputStreamOperator[util.Map[String, AnyRef]] =
-//        deDupStream.getSideOutput(new OutputTag[util.Map[String, AnyRef]]("unique-events"))
-//          .process(new ExtractionFunction(config)).name("Extraction")
-//          .setParallelism(2)
-
-//      extractedEventStream.getSideOutput(new OutputTag[AnyRef]("raw-events"))
-//        .addSink(createObjectStreamProducer[Map[String, AnyRef]](config.kafkaSuccessTopic))
-//        .name("kafka-telemetry-raw-producer")
+      val extractionStream: SingleOutputStreamOperator[util.Map[String, AnyRef]] =
+        deDupStream.getSideOutput(new OutputTag[util.Map[String, AnyRef]]("valid-events"))
+          .process(new ExtractionFunction(config)).name("Extraction")
+          .setParallelism(2)
 
 
-//      extractedEventStream.getSideOutput(new OutputTag[Map[String, AnyRef]]("failed-events"))
-//        .addSink(createObjectStreamProducer[Map[String, AnyRef]](config.kafkaFailedTopic))
-//        .name("kafka-telemetry-raw-producer")
+
+
+
       env.execute("Telemetry Extractor")
     } catch {
       case ex: Exception =>
