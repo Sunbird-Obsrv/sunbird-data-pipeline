@@ -1,6 +1,7 @@
 package org.ekstep.dp.functions
 
 import org.apache.flink.api.common.typeinfo.TypeInformation
+import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.apache.flink.util.Collector
@@ -9,7 +10,7 @@ import org.ekstep.dp.task.PipelinePreprocessorConfig
 import org.ekstep.dp.util.SchemaValidator
 import org.slf4j.LoggerFactory
 
-class TelemetryValidationFunction(config: PipelinePreprocessorConfig)
+class TelemetryValidationFunction(config: PipelinePreprocessorConfig, @transient var schemaValidator: SchemaValidator = null)
                                  (implicit val eventTypeInfo: TypeInformation[Event])
   extends ProcessFunction[Event, Event] {
 
@@ -18,7 +19,16 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig)
   lazy val invalidEvents: OutputTag[Event] = new OutputTag[Event]("validation-falied-events")
   lazy val validEvents: OutputTag[Event] = new OutputTag[Event]("valid-events")
 
-  lazy val schemaValidator: SchemaValidator = new SchemaValidator(config)
+
+  override def open(parameters: Configuration): Unit = {
+    if (schemaValidator == null) {
+      schemaValidator = new SchemaValidator(config)
+    }
+  }
+
+  override def close(): Unit = super.close()
+
+  // lazy val schemaValidator: SchemaValidator = new SchemaValidator(config)
 
   override def processElement(event: Event,
                               ctx: ProcessFunction[Event, Event]#Context,

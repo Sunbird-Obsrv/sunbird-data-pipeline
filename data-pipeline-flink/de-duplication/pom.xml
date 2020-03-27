@@ -61,6 +61,12 @@
             <classifier>tests</classifier>
         </dependency>
         <dependency>
+            <groupId>io.flinkspector</groupId>
+            <artifactId>flinkspector-datastream_2.12</artifactId>
+            <version>0.9.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_2.12</artifactId>
             <version>3.0.6</version>

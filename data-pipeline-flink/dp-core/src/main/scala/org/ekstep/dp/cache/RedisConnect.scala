@@ -57,4 +57,8 @@ class RedisConnect(jobConfig: BaseJobConfig) extends java.io.Serializable {
     resetConnection()
     getConnection(database)
   }
+
+  def closePool(): Unit = {
+    this.jedisPool.close()
+  }
 }

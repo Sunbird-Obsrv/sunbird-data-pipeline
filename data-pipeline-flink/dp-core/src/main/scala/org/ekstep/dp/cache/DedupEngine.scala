@@ -7,7 +7,6 @@ import redis.clients.jedis.exceptions.JedisException
 class DedupEngine(redisConnect: RedisConnect, store: Int, expirySeconds: Int) extends Serializable {
 
   private val serialVersionUID = 6089562751616425354L
-
   private[this] var redisConnection: Jedis = redisConnect.getConnection
   redisConnection.select(store)
 
@@ -50,4 +49,8 @@ class DedupEngine(redisConnect: RedisConnect, store: Int, expirySeconds: Int) ex
   }
 
   def getRedisConnection: Jedis = redisConnection
+
+  def closeConnectionPool(): Unit = {
+    redisConnect.closePool()
+  }
 }
