@@ -66,17 +66,26 @@ class DeduplicationFunctionTestSpec extends FlatSpec with Matchers with BeforeAn
   //   // uniqueEvent.mid() should be ("321a6f0c-10c6-4cdc-9893-207bb64fea50")
   //  }
 
-//  "Duplicate events" should "be sent to uniq SideOutput" in {
-//
-//    implicit val eventTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
-//    when(dedupEngine.isUniqueEvent("321a6f0c-10c6-4cdc-9893-207bb64fea50")).thenReturn(true)
-//    val deduplicationFunction = new DeduplicationFunction(mockConfig)
-//    val harness = ProcessFunctionTestHarnesses.forProcessFunction(deduplicationFunction);
-//    val ress = gson.fromJson(EventFixture.EVENT_WITH_MID, (new util.LinkedHashMap[String, AnyRef]()).getClass);
-//    harness.processElement(ress, new Date().getTime)
-//    val uniquEvents = harness.getSideOutput(new OutputTag("unique-events"))
-//    uniquEvents.size() should be(1)
-//  }
+  "De-Dup" should "be sent to uniq SideOutput" in {
+    implicit val eventTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
+    when(dedupEngine.isUniqueEvent("321a6f0c-10c6-4cdc-9893-207bb64fea50")).thenReturn(true)
+    val deduplicationFunction = new DeduplicationFunction(mockConfig)
+    val harness = ProcessFunctionTestHarnesses.forProcessFunction(deduplicationFunction);
+    val ress = gson.fromJson(EventFixture.EVENT_WITH_MID, (new util.LinkedHashMap[String, AnyRef]()).getClass);
+    harness.processElement(ress, new Date().getTime)
+    val uniquEvents = harness.getSideOutput(new OutputTag("unique-events"))
+    uniquEvents.size() should be(1)
+  }
+  "De-Dup" should "be sent to duplicate SideOutput" in {
+    implicit val eventTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
+    when(dedupEngine.isUniqueEvent("321a6f0c-10c6-4cdc-9893-207bb64fea50")).thenReturn(false)
+    val deduplicationFunction = new DeduplicationFunction(mockConfig)
+    val harness = ProcessFunctionTestHarnesses.forProcessFunction(deduplicationFunction);
+    val ress = gson.fromJson(EventFixture.EVENT_WITH_MID, (new util.LinkedHashMap[String, AnyRef]()).getClass);
+    harness.processElement(ress, new Date().getTime)
+    val uniquEvents = harness.getSideOutput(new OutputTag("duplicate-events"))
+    uniquEvents.size() should be(1)
+  }
   "Extract events" should "be sent to extract SideOutput" in {
 
     implicit val eventTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])

@@ -18,10 +18,7 @@ class ExtractorStreamTask(config: DeduplicationConfig) extends BaseStreamTask(co
   def process(): Unit = {
     implicit val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
     implicit val eventTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
-    //implicit val eventTypeSting: TypeInformation[AnyRef] = TypeExtractor.getForClass(classOf[AnyRef])
-    implicit val eventTypeSting: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
     env.enableCheckpointing(config.checkpointingInterval)
-
     try {
       val kafkaConsumer = createKafkaStreamConsumer(config.kafkaInputTopic)
 
@@ -31,13 +28,21 @@ class ExtractorStreamTask(config: DeduplicationConfig) extends BaseStreamTask(co
           .setParallelism(2)
 
       val extractionStream: SingleOutputStreamOperator[util.Map[String, AnyRef]] =
-        deDupStream.getSideOutput(new OutputTag[util.Map[String, AnyRef]]("valid-events"))
+        deDupStream.getSideOutput(new OutputTag[util.Map[String, AnyRef]]("unique-events"))
           .process(new ExtractionFunction(config)).name("Extraction")
           .setParallelism(2)
 
+      deDupStream.getSideOutput(new OutputTag[util.Map[String, AnyRef]]("duplicate-events"))
+        .addSink(createKafkaStreamProducer(config.kafkaDuplicateTopic))
+        .name("kafka-telemetry-duplicate-producer")
 
+      extractionStream.getSideOutput(new OutputTag[util.Map[String, AnyRef]]("raw-events"))
+        .addSink(createKafkaStreamProducer(config.kafkaSuccessTopic))
+        .name("kafka-telemetry-invalid-events-producer")
 
-
+      extractionStream.getSideOutput(new OutputTag[util.Map[String, AnyRef]]("failed-events"))
+        .addSink(createKafkaStreamProducer(config.kafkaFailedTopic))
+        .name("kafka-telemetry-invalid-events-producer")
 
       env.execute("Telemetry Extractor")
     } catch {
@@ -45,7 +50,6 @@ class ExtractorStreamTask(config: DeduplicationConfig) extends BaseStreamTask(co
         ex.printStackTrace()
     }
   }
-
   def canEqual(other: Any): Boolean = other.isInstanceOf[ExtractorStreamTask]
 
   override def equals(other: Any): Boolean = other match {
