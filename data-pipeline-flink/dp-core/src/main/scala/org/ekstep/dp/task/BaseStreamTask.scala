@@ -32,7 +32,7 @@ abstract class BaseStreamTask(config: BaseJobConfig) extends Serializable {
 
   def createKafkaStreamProducer(kafkaTopic: String)(implicit m: Manifest[util.Map[String, AnyRef]]): FlinkKafkaProducer[util.Map[String, AnyRef]] = {
     new FlinkKafkaProducer[util.Map[String, AnyRef]](kafkaTopic,
-      new ProducerKafkaStream[util.Map[String, AnyRef]](kafkaTopic), config.kafkaProducerProperties, Semantic.AT_LEAST_ONCE)
+      new ProducerKafkaStreamSerializationSchema[util.Map[String, AnyRef]](kafkaTopic), config.kafkaProducerProperties, Semantic.AT_LEAST_ONCE)
   }
 }
 
@@ -74,12 +74,12 @@ class ProducerObjectSerializationSchema[T <: Events : Manifest](topic: String, k
     }.getOrElse(new ProducerRecord[Array[Byte], Array[Byte]](topic, element.getJson.getBytes(StandardCharsets.UTF_8)))
   }
 }
-class ProducerKafkaStream[T <: util.Map[String, AnyRef] : Manifest](topic: String, keys: Option[String] = None) extends KafkaSerializationSchema[T] {
+class ProducerKafkaStreamSerializationSchema[T <: util.Map[String, AnyRef] : Manifest](topic: String, keys: Option[String] = None) extends KafkaSerializationSchema[T] {
   private val serialVersionUID = 2429267667089621852L
-  override def serialize(element: T, timestamp: java.lang.Long): ProducerRecord[Array[Byte], Array[Byte]] = {
+  override def serialize(event: T, timestamp: java.lang.Long): ProducerRecord[Array[Byte], Array[Byte]] = {
     keys.map { kafkaKey =>
-      new ProducerRecord[Array[Byte], Array[Byte]](topic, kafkaKey.getBytes(StandardCharsets.UTF_8), new Gson().toJson(Map).getBytes(StandardCharsets.UTF_8))
-    }.getOrElse(new ProducerRecord[Array[Byte], Array[Byte]](topic, new Gson().toJson(Map).getBytes(StandardCharsets.UTF_8)))
+      new ProducerRecord[Array[Byte], Array[Byte]](topic, kafkaKey.getBytes(StandardCharsets.UTF_8), new Gson().toJson(event).getBytes(StandardCharsets.UTF_8))
+    }.getOrElse(new ProducerRecord[Array[Byte], Array[Byte]](topic, new Gson().toJson(event).getBytes(StandardCharsets.UTF_8)))
   }
 }
 

@@ -24,12 +24,12 @@ class ExtractorStreamTask(config: DeduplicationConfig) extends BaseStreamTask(co
       val deDupStream: SingleOutputStreamOperator[util.Map[String, AnyRef]] =
         env.addSource(kafkaConsumer, "telemetry-raw-events-consumer")
           .process(new DeduplicationFunction(config))
-          .setParallelism(2)
+          .setParallelism(1)
 
       val extractionStream: SingleOutputStreamOperator[util.Map[String, AnyRef]] =
         deDupStream.getSideOutput(new OutputTag[util.Map[String, AnyRef]]("unique-events"))
           .process(new ExtractionFunction(config)).name("Extraction")
-          .setParallelism(2)
+          .setParallelism(1)
 
       deDupStream.getSideOutput(new OutputTag[util.Map[String, AnyRef]]("duplicate-events"))
         .addSink(createKafkaStreamProducer(config.kafkaDuplicateTopic))
@@ -48,19 +48,6 @@ class ExtractorStreamTask(config: DeduplicationConfig) extends BaseStreamTask(co
       case ex: Exception =>
         ex.printStackTrace()
     }
-  }
-  def canEqual(other: Any): Boolean = other.isInstanceOf[ExtractorStreamTask]
-
-  override def equals(other: Any): Boolean = other match {
-    case that: ExtractorStreamTask =>
-      (that canEqual this) &&
-        serialVersionUID == that.serialVersionUID
-    case _ => false
-  }
-
-  override def hashCode(): Int = {
-    val state = Seq(serialVersionUID)
-    state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
   }
 }
 

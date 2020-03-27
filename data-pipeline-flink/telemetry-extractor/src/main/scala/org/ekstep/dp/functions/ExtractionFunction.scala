@@ -9,19 +9,14 @@ import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.apache.flink.util.Collector
 import org.ekstep.dp.task.DeduplicationConfig
-import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
-import org.slf4j.{Logger, LoggerFactory}
-
-import scala.collection.mutable
 
 class ExtractionFunction(config: DeduplicationConfig)(implicit val eventTypeInfo: TypeInformation[util.Map[String, AnyRef]]) extends ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]] {
-  val logger: Logger = LoggerFactory.getLogger(classOf[ExtractionFunction])
   lazy val rawEventOutPut: OutputTag[util.Map[String, AnyRef]] = new OutputTag[util.Map[String, AnyRef]](id = "raw-events")
   lazy val failedEventsOutPut: OutputTag[util.Map[String, AnyRef]] = new OutputTag[util.Map[String, AnyRef]](id = "failed-events")
-  val gson = new Gson();
-  private val df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZoneUTC
+  //private lazy val df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZoneUTC
 
   override def processElement(batchEvent: util.Map[String, AnyRef], context: ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]]#Context, collector: Collector[util.Map[String, AnyRef]]): Unit = {
+    val gson = new Gson();
     val events = getEventsList(batchEvent)
     val syncTS = batchEvent.getOrDefault("syncts", System.currentTimeMillis.toString)
     //val TimeStamp = df.parseLocalDate(syncTS.toString)
