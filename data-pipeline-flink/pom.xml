@@ -9,7 +9,7 @@
 		<maven>3.0.0</maven>
 	</prerequisites>
 
-	<groupId>org.ekstep.dp</groupId>
+	<groupId>org.sunbird.dp</groupId>
 	<artifactId>pipeline-jobs</artifactId>
 	<version>0.0.1</version>
 	<packaging>pom</packaging>
