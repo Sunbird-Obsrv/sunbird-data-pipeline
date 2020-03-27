@@ -7,13 +7,12 @@ import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.scala.OutputTag
-import org.ekstep.dp.domain.Event
 import org.ekstep.dp.functions.{DeduplicationFunction, ExtractionFunction}
 
 
 class ExtractorStreamTask(config: DeduplicationConfig) extends BaseStreamTask(config) {
 
-  private val serialVersionUID = 146697324640926024L
+  private val serialVersionUID = -7729362727131516112L
 
   def process(): Unit = {
     implicit val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment

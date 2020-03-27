@@ -27,8 +27,7 @@ class DeduplicationFunction(config: DeduplicationConfig)(implicit val eventTypeI
                                context: ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]]#Context,
                                out: Collector[util.Map[String, AnyRef]]): Unit = {
 
-    val duplicationCheckRequired = isDuplicateCheckRequired(event)
-    if (duplicationCheckRequired) {
+    if (config.isDuplicationCheckRequired) {
       val msgId = getMsgIdentifier(event)
       if (!dedupEngine.isUniqueEvent(msgId)) {
         logger.info(s"Duplicate Event message id: ${msgId}")
@@ -47,10 +46,5 @@ class DeduplicationFunction(config: DeduplicationConfig)(implicit val eventTypeI
     val gson = new Gson();
     val params = event.get("params")
     gson.fromJson(gson.toJson(params), (new util.LinkedHashMap[String, AnyRef]()).getClass).get("msgid").toString
-  }
-
-  def isDuplicateCheckRequired(event: util.Map[String, AnyRef]): Boolean = {
-    //config.includedProducersForDedup.contains(event.producerId())
-    true
   }
 }

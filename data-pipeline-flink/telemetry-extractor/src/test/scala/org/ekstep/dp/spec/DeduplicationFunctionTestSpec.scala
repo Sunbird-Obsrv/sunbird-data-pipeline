@@ -34,7 +34,7 @@ class DeduplicationFunctionTestSpec extends FlatSpec with Matchers with BeforeAn
   override protected def beforeAll(): Unit = {
     super.beforeAll()
 
-    when(mockConfig.includedProducersForDedup).thenReturn(List("sunbird.app", "sunbird.portal"))
+    when(mockConfig.isDuplicationCheckRequired).thenReturn(true)
     redisServer = new RedisServer(6340)
     redisServer.start()
 

@@ -16,7 +16,7 @@ class DeduplicationConfig extends BaseJobConfig {
   val kafkaSuccessTopic: String = config.getString("kafka.output.success.topic")
   val kafkaDuplicateTopic: String = config.getString("kafka.output.duplicate.topic")
   val kafkaFailedTopic: String = config.getString("kafka.output.malformed.topic")
-  val includedProducersForDedup: List[String] = config.getStringList("dedup.producer.included.ids").asScala.toList
   val rawEventSize:Long = config.getLong("kafka.event.max.size")
+  val isDuplicationCheckRequired: Boolean = config.getBoolean("dedup.validation.required")
 
 }
