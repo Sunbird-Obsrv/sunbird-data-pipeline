@@ -1,4 +1,4 @@
-package org.ekstep.dp.task
+package org.sunbird.dp.task
 
 import org.ekstep.dp.core.BaseJobConfig
 

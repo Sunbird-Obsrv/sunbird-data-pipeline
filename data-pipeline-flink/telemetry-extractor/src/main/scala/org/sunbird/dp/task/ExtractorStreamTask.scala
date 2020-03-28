@@ -1,4 +1,4 @@
-package org.ekstep.dp.task
+package org.sunbird.dp.task
 
 import java.util
 
@@ -7,7 +7,8 @@ import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.scala.OutputTag
-import org.ekstep.dp.functions.{DeduplicationFunction, ExtractionFunction}
+import org.ekstep.dp.task.BaseStreamTask
+import org.sunbird.dp.functions.{DeduplicationFunction, ExtractionFunction}
 
 
 class ExtractorStreamTask(config: DeduplicationConfig) extends BaseStreamTask(config) {

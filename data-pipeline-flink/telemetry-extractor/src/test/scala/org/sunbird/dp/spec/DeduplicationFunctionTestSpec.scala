@@ -1,4 +1,4 @@
-package org.ekstep.dp.spec
+package org.sunbird.dp.spec
 
 import java.util
 import java.util.Date
@@ -11,9 +11,9 @@ import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.apache.flink.streaming.util.ProcessFunctionTestHarnesses
 import org.ekstep.dp.cache.{DedupEngine, RedisConnect}
-import org.ekstep.dp.fixture.EventFixture
-import org.ekstep.dp.functions.{DeduplicationFunction, ExtractionFunction}
-import org.ekstep.dp.task.DeduplicationConfig
+import org.sunbird.dp.fixture.EventFixture
+import org.sunbird.dp.functions.{DeduplicationFunction, ExtractionFunction}
+import org.sunbird.dp.task.DeduplicationConfig
 import org.mockito.Mockito
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
@@ -95,7 +95,7 @@ class DeduplicationFunctionTestSpec extends FlatSpec with Matchers with BeforeAn
     val ress = gson.fromJson(EventFixture.EVENT_WITH_MID, (new util.LinkedHashMap[String, AnyRef]()).getClass);
     harness.processElement(ress, new Date().getTime)
     val extractedEvents = harness.getSideOutput(new OutputTag("raw-events"))
-    println(extractedEvents)
+    println(gson.toJson(extractedEvents))
     extractedEvents.size() should be(20)
   }
   override protected def afterAll(): Unit = {

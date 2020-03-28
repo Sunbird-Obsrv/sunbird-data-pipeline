@@ -6,7 +6,7 @@
     <version>0.0.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.ekstep.dp.jobs</groupId>
+  <groupId>org.sunbird.dp.jobs</groupId>
   <artifactId>telemetry-extractor</artifactId>
   <name>TelemetryExtractor</name>
   <version>0.0.1</version>
@@ -43,7 +43,7 @@
               </filters>
               <transformers>
                 <transformer>
-                  <mainClass>org.ekstep.dp.task.ExtractorStreamTask</mainClass>
+                  <mainClass>org.sunbird.dp.task.ExtractorStreamTask</mainClass>
                 </transformer>
                 <transformer>
                   <resource>reference.conf</resource>

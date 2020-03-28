@@ -1,4 +1,4 @@
-package org.ekstep.dp.functions
+package org.sunbird.dp.functions
 
 import java.util
 
@@ -8,8 +8,8 @@ import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.apache.flink.util.Collector
 import org.ekstep.dp.cache.{DedupEngine, RedisConnect}
-import org.ekstep.dp.task.DeduplicationConfig
 import org.slf4j.LoggerFactory
+import org.sunbird.dp.task.DeduplicationConfig
 
 class DeduplicationFunction(config: DeduplicationConfig)(implicit val eventTypeInfo: TypeInformation[util.Map[String, AnyRef]])
   extends ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]] {
