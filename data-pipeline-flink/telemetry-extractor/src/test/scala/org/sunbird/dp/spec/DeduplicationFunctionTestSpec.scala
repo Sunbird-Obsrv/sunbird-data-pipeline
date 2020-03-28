@@ -95,7 +95,8 @@ class DeduplicationFunctionTestSpec extends FlatSpec with Matchers with BeforeAn
     val ress = gson.fromJson(EventFixture.EVENT_WITH_MID, (new util.LinkedHashMap[String, AnyRef]()).getClass);
     harness.processElement(ress, new Date().getTime)
     val extractedEvents = harness.getSideOutput(new OutputTag("raw-events"))
-    println(gson.toJson(extractedEvents))
+    val log = harness.getSideOutput(new OutputTag("log-events"))
+    println(gson.toJson(log))
     extractedEvents.size() should be(20)
   }
   override protected def afterAll(): Unit = {
