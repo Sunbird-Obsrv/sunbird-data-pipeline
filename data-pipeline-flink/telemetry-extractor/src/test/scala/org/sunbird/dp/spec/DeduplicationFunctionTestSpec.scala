@@ -10,14 +10,14 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.apache.flink.streaming.util.ProcessFunctionTestHarnesses
-import org.ekstep.dp.cache.{DedupEngine, RedisConnect}
-import org.sunbird.dp.fixture.EventFixture
-import org.sunbird.dp.functions.{DeduplicationFunction, ExtractionFunction}
-import org.sunbird.dp.task.DeduplicationConfig
 import org.mockito.Mockito
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
+import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
+import org.sunbird.dp.fixture.EventFixture
+import org.sunbird.dp.functions.{DeduplicationFunction, ExtractionFunction}
+import org.sunbird.dp.task.DeduplicationConfig
 import redis.embedded.RedisServer
 
 class DeduplicationFunctionTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll with MockitoSugar {

@@ -8,9 +8,8 @@ import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.apache.flink.util.Collector
-import org.ekstep.dp.cache.RedisConnect
-import org.sunbird.dp.cache.DedupEngine
 import org.slf4j.LoggerFactory
+import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
 import org.sunbird.dp.task.DeduplicationConfig
 
 class DeduplicationFunction(config: DeduplicationConfig,  @transient var dedupEngine: DedupEngine = null)(implicit val eventTypeInfo: TypeInformation[util.Map[String, AnyRef]])

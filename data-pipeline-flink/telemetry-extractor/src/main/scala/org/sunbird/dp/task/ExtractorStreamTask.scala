@@ -7,7 +7,6 @@ import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.scala.OutputTag
-import org.ekstep.dp.task.BaseStreamTask
 import org.sunbird.dp.functions.{DeduplicationFunction, ExtractionFunction}
 
 
