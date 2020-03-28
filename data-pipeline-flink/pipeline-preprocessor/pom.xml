@@ -47,7 +47,7 @@
             <version>4.0.0</version>
         </dependency>
         <dependency>
-          <groupId>org.ekstep.dp</groupId>
+          <groupId>org.sunbird.dp</groupId>
           <artifactId>dp-core</artifactId>
           <version>0.0.1</version>
         </dependency>
@@ -108,7 +108,7 @@
                             </filters>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.ekstep.dp.task.PipelinePreprocessorStreamTask</mainClass>
+                                    <mainClass>org.sunbird.dp.task.PipelinePreprocessorStreamTask</mainClass>
                                 </transformer>
                                 <!-- append default configs -->
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
