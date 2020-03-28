@@ -9,7 +9,7 @@
     </prerequisites>
 
     <parent>
-        <groupId>org.ekstep.dp</groupId>
+        <groupId>org.sunbird.dp</groupId>
         <artifactId>pipeline-jobs</artifactId>
         <version>0.0.1</version>
     </parent>
@@ -83,7 +83,7 @@
             <version>0.1.7</version>
         </dependency>
         <dependency>
-            <groupId>org.ekstep.dp</groupId>
+            <groupId>org.sunbird.dp</groupId>
             <artifactId>dp-core</artifactId>
             <version>0.0.1</version>
         </dependency>

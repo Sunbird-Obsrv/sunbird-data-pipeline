@@ -39,7 +39,9 @@ public class TelemetryExtractorService {
 		try {
 			Map<String, Object> batchEvent = (Map<String, Object>) new Gson().fromJson(message, Map.class);
 			long syncts = getSyncTS(batchEvent);
+			System.out.println("syncTS" + syncts);
 			String syncTimestamp = df.print(syncts);
+			System.out.println("syncTimestamp" + syncTimestamp);
 
 			if (batchEvent.containsKey("params") && null != batchEvent.get("params")) {
 				String msgid = "";
@@ -122,6 +124,7 @@ public class TelemetryExtractorService {
 		try {
 			Telemetry v3spec = new Telemetry(eventSpec, syncts, syncTimestamp, defaultChannel);
 			String auditEvent = v3spec.toJson();
+			System.out.println("audit Event" + auditEvent);
 			sink.toSuccessTopic(auditEvent);
 		} catch (Exception e) {
 			e.printStackTrace();

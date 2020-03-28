@@ -4,14 +4,16 @@ import java.util
 
 import com.google.gson.Gson
 import org.apache.flink.api.common.typeinfo.TypeInformation
+import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.apache.flink.util.Collector
-import org.ekstep.dp.cache.{DedupEngine, RedisConnect}
+import org.ekstep.dp.cache.RedisConnect
+import org.sunbird.dp.cache.DedupEngine
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.task.DeduplicationConfig
 
-class DeduplicationFunction(config: DeduplicationConfig)(implicit val eventTypeInfo: TypeInformation[util.Map[String, AnyRef]])
+class DeduplicationFunction(config: DeduplicationConfig,  @transient var dedupEngine: DedupEngine = null)(implicit val eventTypeInfo: TypeInformation[util.Map[String, AnyRef]])
   extends ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]] {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[DeduplicationFunction])
@@ -19,8 +21,18 @@ class DeduplicationFunction(config: DeduplicationConfig)(implicit val eventTypeI
   lazy val duplicateEventOutput: OutputTag[util.Map[String, AnyRef]] = new OutputTag[util.Map[String, AnyRef]](id = "duplicate-events")
   lazy val uniqueEventOuput: OutputTag[util.Map[String, AnyRef]] = new OutputTag[util.Map[String, AnyRef]](id = "unique-events")
 
-  lazy val redisConnect = new RedisConnect(config)
-  lazy val dedupEngine = new DedupEngine(redisConnect, config.dedupStore, config.cacheExpirySeconds)
+  override def open(parameters: Configuration): Unit = {
+    if (dedupEngine == null) {
+      val redisConnect = new RedisConnect(config)
+      dedupEngine = new DedupEngine(redisConnect, config.dedupStore, config.cacheExpirySeconds)
+    }
+  }
+
+
+  override def close(): Unit = {
+    super.close()
+    dedupEngine.closeConnectionPool()
+  }
 
   override def processElement(
                                event: util.Map[String, AnyRef],
