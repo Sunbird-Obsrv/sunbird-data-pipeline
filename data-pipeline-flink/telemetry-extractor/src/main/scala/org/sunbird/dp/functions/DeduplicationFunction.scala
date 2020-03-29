@@ -10,9 +10,9 @@ import org.apache.flink.streaming.api.scala.OutputTag
 import org.apache.flink.util.Collector
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
-import org.sunbird.dp.task.DeduplicationConfig
+import org.sunbird.dp.task.ExtractionConfig
 
-class DeduplicationFunction(config: DeduplicationConfig,  @transient var dedupEngine: DedupEngine = null)(implicit val eventTypeInfo: TypeInformation[util.Map[String, AnyRef]])
+class DeduplicationFunction(config: ExtractionConfig, @transient var dedupEngine: DedupEngine = null)(implicit val eventTypeInfo: TypeInformation[util.Map[String, AnyRef]])
   extends ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]] {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[DeduplicationFunction])
@@ -27,7 +27,6 @@ class DeduplicationFunction(config: DeduplicationConfig,  @transient var dedupEn
     }
   }
 
-
   override def close(): Unit = {
     super.close()
     dedupEngine.closeConnectionPool()
@@ -36,16 +35,22 @@ class DeduplicationFunction(config: DeduplicationConfig,  @transient var dedupEn
   override def processElement(
                                event: util.Map[String, AnyRef],
                                context: ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]]#Context,
-                               out: Collector[util.Map[String, AnyRef]]): Unit = {
+                               out: Collector[util.Map[String, AnyRef]]
+                             ): Unit = {
 
     if (config.isDuplicationCheckRequired) {
       val msgId = getMsgIdentifier(event)
-      if (!dedupEngine.isUniqueEvent(msgId)) {
-        logger.info(s"Duplicate Event message id: ${msgId}")
-        context.output(duplicateEventOutput, event)
+      if (null != msgId) {
+        if (!dedupEngine.isUniqueEvent(msgId)) {
+          logger.info(s"Duplicate Event message id: ${msgId}")
+          context.output(duplicateEventOutput, event)
+        } else {
+          logger.info(s"Adding mid: ${msgId} to Redis")
+          dedupEngine.storeChecksum(msgId)
+          context.output(uniqueEventOuput, event)
+        }
       } else {
-        logger.info(s"Adding mid: ${msgId} to Redis")
-        dedupEngine.storeChecksum(msgId)
+        context.output(uniqueEventOuput, event)
         context.output(uniqueEventOuput, event)
       }
     } else {

@@ -4,7 +4,7 @@ import org.ekstep.dp.core.BaseJobConfig
 
 import scala.collection.JavaConverters._
 
-class DeduplicationConfig extends BaseJobConfig {
+class ExtractionConfig extends BaseJobConfig {
 
   private val serialVersionUID = 2905979434303791379L
 
@@ -15,7 +15,7 @@ class DeduplicationConfig extends BaseJobConfig {
   val kafkaInputTopic: String = config.getString("kafka.input.topic")
   val kafkaSuccessTopic: String = config.getString("kafka.output.success.topic")
   val kafkaDuplicateTopic: String = config.getString("kafka.output.duplicate.topic")
-  val kafkaFailedTopic: String = config.getString("kafka.output.malformed.topic")
+  val kafkaFailedTopic: String = config.getString("kafka.output.failed.topic")
   val rawEventSize:Long = config.getLong("kafka.event.max.size")
   val isDuplicationCheckRequired: Boolean = config.getBoolean("dedup.validation.required")
 

@@ -17,7 +17,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
 import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.functions.{DeduplicationFunction, ExtractionFunction}
-import org.sunbird.dp.task.DeduplicationConfig
+import org.sunbird.dp.task.ExtractionConfig
 import redis.embedded.RedisServer
 
 class DeduplicationFunctionTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll with MockitoSugar {
@@ -28,7 +28,7 @@ class DeduplicationFunctionTestSpec extends FlatSpec with Matchers with BeforeAn
   var redisServer: RedisServer = _
   var redisConnect: RedisConnect = _
   var dedupEngine: DedupEngine = _
-  val mockConfig: DeduplicationConfig = Mockito.spy(new DeduplicationConfig)
+  val mockConfig: ExtractionConfig = Mockito.spy(new ExtractionConfig)
   val mockBaseConfig: Config = mock[Config]
 
   override protected def beforeAll(): Unit = {
