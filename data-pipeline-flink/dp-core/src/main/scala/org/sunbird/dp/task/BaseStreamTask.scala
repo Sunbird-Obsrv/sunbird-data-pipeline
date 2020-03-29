@@ -1,74 +1,41 @@
 package org.sunbird.dp.task
 
-import java.nio.charset.StandardCharsets
 import java.util
 
-import com.google.gson.Gson
-import org.apache.flink.api.common.typeinfo.TypeInformation
-import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer.Semantic
-import org.apache.flink.streaming.connectors.kafka.{FlinkKafkaConsumer, FlinkKafkaProducer, KafkaDeserializationSchema, KafkaSerializationSchema}
-import org.apache.kafka.clients.consumer.ConsumerRecord
-import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.flink.streaming.connectors.kafka.{FlinkKafkaConsumer, FlinkKafkaProducer}
 import org.ekstep.dp.core.BaseJobConfig
 import org.sunbird.dp.domain.Events
+import org.sunbird.dp.serde._
 
-import scala.reflect.{ClassTag, classTag}
 
 abstract class BaseStreamTask(config: BaseJobConfig) extends Serializable {
 
-  def createKafkaStreamConsumer(kafkaTopic: String): FlinkKafkaConsumer[util.Map[String, AnyRef]] = {
-    new FlinkKafkaConsumer[util.Map[String, AnyRef]](kafkaTopic, new ConsumerStringDeserializationSchema, config.kafkaConsumerProperties)
+  def kafkaStringSchemaConsumer(kafkaTopic: String): FlinkKafkaConsumer[String] = {
+    new FlinkKafkaConsumer[String](kafkaTopic, new StringDeserializationSchema, config.kafkaConsumerProperties)
   }
 
-  def createObjectStreamConsumer[T <: Events](kafkaTopic: String)(implicit m: Manifest[T]): FlinkKafkaConsumer[T] = {
-    new FlinkKafkaConsumer[T](kafkaTopic, new ConsumerObjectDeserializationSchema[T], config.kafkaConsumerProperties)
+  def kafkaStringSchemaProducer(kafkaTopic: String): FlinkKafkaProducer[String] = {
+    new FlinkKafkaProducer[String](kafkaTopic, new StringSerializationSchema(kafkaTopic), config.kafkaConsumerProperties, Semantic.EXACTLY_ONCE)
   }
 
-  def createObjectStreamProducer[T <: Events](kafkaTopic: String)(implicit m: Manifest[T]): FlinkKafkaProducer[T] = {
+  def kafkaEventSchemaConsumer[T <: Events](kafkaTopic: String)(implicit m: Manifest[T]): FlinkKafkaConsumer[T] = {
+    new FlinkKafkaConsumer[T](kafkaTopic, new EventDeserializationSchema[T], config.kafkaConsumerProperties)
+  }
+
+  def kafkaEventSchemaProducer[T <: Events](kafkaTopic: String)(implicit m: Manifest[T]): FlinkKafkaProducer[T] = {
     new FlinkKafkaProducer[T](kafkaTopic,
-      new ProducerObjectSerializationSchema[T](kafkaTopic), config.kafkaProducerProperties, Semantic.AT_LEAST_ONCE)
+      new EventSerializationSchema[T](kafkaTopic), config.kafkaProducerProperties, Semantic.AT_LEAST_ONCE)
   }
 
-}
-
-class ConsumerStringDeserializationSchema extends KafkaDeserializationSchema[util.Map[String, AnyRef]] {
-
-  private val serialVersionUID = -3224825136576915426L
-
-  override def isEndOfStream(nextElement: util.Map[String, AnyRef]): Boolean = false
-
-  override def deserialize(record: ConsumerRecord[Array[Byte], Array[Byte]]): util.Map[String, AnyRef] = {
-    val parsedString = new String(record.value(), StandardCharsets.UTF_8)
-    val gson: Gson = new Gson()
-    gson.fromJson(parsedString, new util.HashMap[String, AnyRef]().getClass)
+  def kafkaMapSchemaConsumer(kafkaTopic: String): FlinkKafkaConsumer[util.Map[String, AnyRef]] = {
+    new FlinkKafkaConsumer[util.Map[String, AnyRef]](kafkaTopic, new MapDeserializationSchema, config.kafkaConsumerProperties)
   }
 
-  override def getProducedType: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
-}
-
-class ConsumerObjectDeserializationSchema[T <: Events](implicit ct: ClassTag[T]) extends KafkaDeserializationSchema[T] {
-  private val serialVersionUID = - 7339003654529835367L
-
-  override def isEndOfStream(nextElement: T): Boolean = false
-
-  override def deserialize(record: ConsumerRecord[Array[Byte], Array[Byte]]): T = {
-    val parsedString = new String(record.value(), StandardCharsets.UTF_8)
-    val result = new Gson().fromJson(parsedString, new util.HashMap[String, AnyRef]().getClass)
-    ct.runtimeClass.getConstructor(classOf[util.Map[String, AnyRef]]).newInstance(result).asInstanceOf[T]
+  def kafkaMapSchemaProducer(kafkaTopic: String): FlinkKafkaProducer[util.Map[String, AnyRef]] = {
+    new FlinkKafkaProducer[util.Map[String, AnyRef]](kafkaTopic, new MapSerializationSchema(kafkaTopic), config.kafkaConsumerProperties, Semantic.EXACTLY_ONCE)
   }
 
-  override def getProducedType: TypeInformation[T] = TypeExtractor.getForClass(classTag[T].runtimeClass).asInstanceOf[TypeInformation[T]]
-}
-
-class ProducerObjectSerializationSchema[T <: Events : Manifest](topic: String, key: Option[String] = None) extends KafkaSerializationSchema[T] {
-  private val serialVersionUID = -4284080856874185929L
-
-  override def serialize(element: T, timestamp: java.lang.Long): ProducerRecord[Array[Byte], Array[Byte]] = {
-    key.map { kafkaKey =>
-      new ProducerRecord[Array[Byte], Array[Byte]](topic, kafkaKey.getBytes(StandardCharsets.UTF_8), element.getJson.getBytes(StandardCharsets.UTF_8))
-    }.getOrElse(new ProducerRecord[Array[Byte], Array[Byte]](topic, element.getJson.getBytes(StandardCharsets.UTF_8)))
-  }
 }
 
 
