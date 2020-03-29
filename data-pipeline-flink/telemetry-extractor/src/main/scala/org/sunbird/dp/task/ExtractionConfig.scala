@@ -2,8 +2,6 @@ package org.sunbird.dp.task
 
 import org.ekstep.dp.core.BaseJobConfig
 
-import scala.collection.JavaConverters._
-
 class ExtractionConfig extends BaseJobConfig {
 
   private val serialVersionUID = 2905979434303791379L

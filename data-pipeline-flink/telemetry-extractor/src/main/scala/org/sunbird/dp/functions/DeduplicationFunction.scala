@@ -51,7 +51,6 @@ class DeduplicationFunction(config: ExtractionConfig, @transient var dedupEngine
         }
       } else {
         context.output(uniqueEventOuput, event)
-        context.output(uniqueEventOuput, event)
       }
     } else {
       context.output(uniqueEventOuput, event)
@@ -60,7 +59,14 @@ class DeduplicationFunction(config: ExtractionConfig, @transient var dedupEngine
 
   def getMsgIdentifier(event: util.Map[String, AnyRef]): String = {
     val gson = new Gson();
-    val params = event.get("params")
-    gson.fromJson(gson.toJson(params), (new util.LinkedHashMap[String, AnyRef]()).getClass).get("msgid").toString
+    val paramsObj = event.get("params")
+    if (null != paramsObj) {
+      val messageId = gson.fromJson(gson.toJson(paramsObj), (new util.LinkedHashMap[String, AnyRef]()).getClass).get("msgid")
+      if (null != messageId)
+        messageId.toString
+      else null
+    }
+    else null
+
   }
 }
