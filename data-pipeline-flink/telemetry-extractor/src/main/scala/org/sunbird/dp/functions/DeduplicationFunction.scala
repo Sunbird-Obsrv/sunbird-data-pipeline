@@ -21,12 +21,12 @@ class DeduplicationFunction(config: ExtractionConfig, @transient var dedupEngine
    * Tag to hold all duplicate batch events based on the msgId
    * (Note: De-dup validation only if batch event has "msgId" )
    */
-  lazy val duplicateEventOutput: OutputTag[util.Map[String, AnyRef]] = new OutputTag[util.Map[String, AnyRef]](id = "duplicate-events")
+  lazy val duplicateEventOutput: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = "duplicate-events")
 
   /**
    * OutPutTag to hold all unique batch events.
    */
-  lazy val uniqueEventOutput: OutputTag[util.Map[String, AnyRef]] = new OutputTag[util.Map[String, AnyRef]](id = "unique-events")
+  lazy val uniqueEventOutput: OutputTag[util.Map[String, AnyRef]] =  OutputTag[util.Map[String, AnyRef]](id = "unique-events")
 
   override def open(parameters: Configuration): Unit = {
     if (dedupEngine == null) {

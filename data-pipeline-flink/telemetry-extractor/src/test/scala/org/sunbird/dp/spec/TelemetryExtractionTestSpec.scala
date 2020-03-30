@@ -15,6 +15,7 @@ import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
 import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
+import org.sunbird.dp.domain.Constants
 import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.functions.{DeduplicationFunction, ExtractionFunction}
 import org.sunbird.dp.task.ExtractionConfig
@@ -64,7 +65,7 @@ class TelemetryExtractionTestSpec extends FlatSpec with Matchers with BeforeAndA
     val harness = ProcessFunctionTestHarnesses.forProcessFunction(deduplicationFunction);
     val eventData = gson.fromJson(EventFixture.EVENT_WITH_MESSAGE_ID, (new util.LinkedHashMap[String, AnyRef]()).getClass);
     harness.processElement(eventData, new Date().getTime)
-    val uniqueEvents = harness.getSideOutput(new OutputTag("unique-events"))
+    val uniqueEvents = harness.getSideOutput(new OutputTag(Constants.UNIQUE_EVENTS_OUTPUT_TAG))
     uniqueEvents.size() should be(1)
   }
   "De-Dup" should "be sent to duplicate SideOutput" in {
@@ -74,7 +75,7 @@ class TelemetryExtractionTestSpec extends FlatSpec with Matchers with BeforeAndA
     val harness = ProcessFunctionTestHarnesses.forProcessFunction(deduplicationFunction);
     val eventData = gson.fromJson(EventFixture.EVENT_WITH_MESSAGE_ID, (new util.LinkedHashMap[String, AnyRef]()).getClass);
     harness.processElement(eventData, new Date().getTime)
-    val uniqueEvents = harness.getSideOutput(new OutputTag("duplicate-events"))
+    val uniqueEvents = harness.getSideOutput(new OutputTag(Constants.DUPLICATE_EVENTS_OUTPUT_TAG))
     uniqueEvents.size() should be(1)
   }
 
@@ -85,7 +86,7 @@ class TelemetryExtractionTestSpec extends FlatSpec with Matchers with BeforeAndA
     val harness = ProcessFunctionTestHarnesses.forProcessFunction(deduplicationFunction);
     val eventData = gson.fromJson(EventFixture.EVENT_WITHOUT_MESSAGE_ID, (new util.LinkedHashMap[String, AnyRef]()).getClass);
     harness.processElement(eventData, new Date().getTime)
-    val uniqueEvents = harness.getSideOutput(new OutputTag("unique-events"))
+    val uniqueEvents = harness.getSideOutput(OutputTag(Constants.UNIQUE_EVENTS_OUTPUT_TAG))
     uniqueEvents.size() should be(1)
   }
 
@@ -97,8 +98,8 @@ class TelemetryExtractionTestSpec extends FlatSpec with Matchers with BeforeAndA
     val harness = ProcessFunctionTestHarnesses.forProcessFunction(extractFunction);
     val eventData = gson.fromJson(EventFixture.EVENT_WITH_MESSAGE_ID, (new util.LinkedHashMap[String, AnyRef]()).getClass);
     harness.processElement(eventData, new Date().getTime)
-    val extractedEvents = harness.getSideOutput(new OutputTag("raw-events"))
-    val log = harness.getSideOutput(new OutputTag("log-events"))
+    val extractedEvents = harness.getSideOutput(OutputTag(Constants.RAW_EVENTS_OUTPUT_TAG))
+    val log = harness.getSideOutput(new OutputTag(Constants.LOG_EVENTS_OUTPUT_TAG))
     log.size() should be(1)
     extractedEvents.size() should be(20)
   }
@@ -112,12 +113,11 @@ class TelemetryExtractionTestSpec extends FlatSpec with Matchers with BeforeAndA
     val harness = ProcessFunctionTestHarnesses.forProcessFunction(extractFunction);
     val eventData = gson.fromJson(EventFixture.EVENT_WITH_MESSAGE_ID, (new util.LinkedHashMap[String, AnyRef]()).getClass);
     harness.processElement(eventData, new Date().getTime)
-    val failedEvent = harness.getSideOutput(new OutputTag("failed-events"))
-    val log = harness.getSideOutput(new OutputTag("log-events"))
+    val failedEvent = harness.getSideOutput(new OutputTag(Constants.FAILED_EVENTS_OUTPUT_TAG))
+    val log = harness.getSideOutput(new OutputTag(Constants.LOG_EVENTS_OUTPUT_TAG))
     log.size() should be(1)
     failedEvent.size() should be(20)
   }
-
 
   override protected def afterAll(): Unit = {
     super.afterAll()

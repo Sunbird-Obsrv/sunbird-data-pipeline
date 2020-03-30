@@ -18,6 +18,8 @@ case class Params(ver: String, events_count: Int, sync_status: String)
 
 case class Pdata(ver: String, pid: String, id: String = "data-pipeline")
 
+case class  Object(id:String, ver: String, `type`:String, rollup: Option[Map[String, String]])
+
 case class LogEvent(actor: Actor,
                     eid: String,
                     edata: Edata,
@@ -26,7 +28,7 @@ case class LogEvent(actor: Actor,
                     ets: Long = System.currentTimeMillis(),
                     context: Context,
                     mid: String,
-                    `object`: Actor,
+                    `object`: Object,
                     tags: Seq[AnyRef]
                    )
 
@@ -47,7 +49,7 @@ object LogEventGeneration {
         pdata = Pdata("3.0", "telemetry-extractor", "data-pipeline"),
         cdata = null),
       mid = randomUUID().toString,
-      `object` = Actor("sunbird.telemetry", "event"),
+      `object` = Object(randomUUID().toString, "3.0", "telemetry-events", None),
       tags = null)
   }
 }
