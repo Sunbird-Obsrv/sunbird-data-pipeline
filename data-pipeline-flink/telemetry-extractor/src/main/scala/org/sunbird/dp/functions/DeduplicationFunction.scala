@@ -12,7 +12,8 @@ import org.slf4j.LoggerFactory
 import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
 import org.sunbird.dp.task.ExtractionConfig
 
-class DeduplicationFunction(config: ExtractionConfig, @transient var dedupEngine: DedupEngine = null)(implicit val eventTypeInfo: TypeInformation[util.Map[String, AnyRef]])
+class DeduplicationFunction(config: ExtractionConfig, @transient var dedupEngine: DedupEngine = null)
+                           (implicit val eventTypeInfo: TypeInformation[util.Map[String, AnyRef]])
   extends ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]] {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[DeduplicationFunction])
