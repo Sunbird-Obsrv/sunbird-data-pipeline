@@ -45,6 +45,9 @@ class TelemetryExtractionTestSpec extends FlatSpec with Matchers with BeforeAndA
     when(mockBaseConfig.getInt("redis.connection.idle.min")).thenReturn(1)
     when(mockBaseConfig.getInt("redis.connection.minEvictableIdleTimeSeconds")).thenReturn(120)
     when(mockBaseConfig.getInt("redis.connection.timeBetweenEvictionRunsSeconds")).thenReturn(300)
+    when(mockBaseConfig.getBoolean("task.dedup.validation.required")).thenReturn(true)
+    when(mockBaseConfig.getInt("task.dedup.parallelism")).thenReturn(1)
+    when(mockBaseConfig.getInt("task.extraction.parallelism")).thenReturn(1)
 
     when(mockConfig.config).thenReturn(mockBaseConfig)
     redisConnect = Mockito.spy(new RedisConnect(mockConfig))
