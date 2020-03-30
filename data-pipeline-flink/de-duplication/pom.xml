@@ -9,12 +9,12 @@
     </prerequisites>
 
     <parent>
-        <groupId>org.ekstep.dp</groupId>
+        <groupId>org.sunbird.dp</groupId>
         <artifactId>pipeline-jobs</artifactId>
         <version>0.0.1</version>
     </parent>
 
-    <groupId>org.ekstep.dp.jobs</groupId>
+    <groupId>org.sunbird.dp.jobs</groupId>
     <artifactId>de-duplication</artifactId>
     <version>0.0.1</version>
     <packaging>jar</packaging>
