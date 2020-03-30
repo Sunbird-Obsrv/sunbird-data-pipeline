@@ -29,6 +29,7 @@ class ExtractionFunction(config: ExtractionConfig)(implicit val eventTypeInfo: T
 
   /**
    * Method to process the events extraction from the batch
+   *
    * @param batchEvent - Batch of telemetry events
    * @param context
    * @param collector
@@ -46,11 +47,16 @@ class ExtractionFunction(config: ExtractionConfig)(implicit val eventTypeInfo: T
         context.output(extractedEventsOutPut, eventData)
       }
     })
+
+    /**
+     * Generating Audit events to compute the number of events in the batch.
+     */
     context.output(logEventOutPut, gson.fromJson(gson.toJson(LogEventGeneration.generate(eventsList.length, batchEvent)), (new util.HashMap[String, AnyRef]()).getClass))
   }
 
   /**
    * Method to get the events from the batch.
+   *
    * @param batchEvent - Batch of telemetry event.
    * @return Array[AnyRef] - List of telemetry events.
    */
@@ -63,7 +69,7 @@ class ExtractionFunction(config: ExtractionConfig)(implicit val eventTypeInfo: T
    * Method to update the "SyncTS", "@TimeStamp" fileds of batch events into Events Object
    *
    * @param batchEvent - Batch of Telemetry Events.
-   * @param event - Telemetry Event
+   * @param event      - Telemetry Event
    * @return - util.Map[String, AnyRef] Updated Telemetry Event
    */
   def updateEvent(batchEvent: util.Map[String, AnyRef], event: util.Map[String, AnyRef]): util.Map[String, AnyRef] = {
