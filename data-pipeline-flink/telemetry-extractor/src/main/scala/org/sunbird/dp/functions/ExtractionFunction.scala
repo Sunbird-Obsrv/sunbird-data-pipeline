@@ -13,9 +13,9 @@ import org.sunbird.dp.task.ExtractionConfig
 
 class ExtractionFunction(config: ExtractionConfig)(implicit val eventTypeInfo: TypeInformation[util.Map[String, AnyRef]]) extends ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]] {
   /**
-   * Raw event tag - Holding all extracted events to "raw-events" tag
+   * Extracted event tag - Holding all extracted events to "raw-events" tag
    */
-  lazy val rawEventOutPut: OutputTag[util.Map[String, AnyRef]] = new OutputTag[util.Map[String, AnyRef]](id = "raw-events")
+  lazy val extractedEventsOutPut: OutputTag[util.Map[String, AnyRef]] = new OutputTag[util.Map[String, AnyRef]](id = "raw-events")
 
   /**
    * Holding all failed events in the "failed-events" tag.
@@ -43,7 +43,7 @@ class ExtractionFunction(config: ExtractionConfig)(implicit val eventTypeInfo: T
       if (eventSize > config.eventMaxSize) {
         context.output(failedEventsOutPut, eventData)
       } else {
-        context.output(rawEventOutPut, eventData)
+        context.output(extractedEventsOutPut, eventData)
       }
     })
     context.output(logEventOutPut, gson.fromJson(gson.toJson(LogEventGeneration.generate(eventsList.length, batchEvent)), (new util.HashMap[String, AnyRef]()).getClass))
