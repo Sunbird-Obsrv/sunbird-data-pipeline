@@ -104,7 +104,7 @@ class TelemetryExtractionTestSpec extends FlatSpec with Matchers with BeforeAndA
 
     implicit val eventTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
     when(dedupEngine.isUniqueEvent("321a6f0c-10c6-4cdc-9893-207bb64fea50")).thenReturn(true)
-    when(mockConfig.rawEventSize).thenReturn(500L)
+    when(mockConfig.eventMaxSize).thenReturn(500L)
     val extractFunction = new ExtractionFunction(mockConfig)
     val harness = ProcessFunctionTestHarnesses.forProcessFunction(extractFunction);
     val eventData = gson.fromJson(EventFixture.EVENT_WITH_MESSAGE_ID, (new util.LinkedHashMap[String, AnyRef]()).getClass);

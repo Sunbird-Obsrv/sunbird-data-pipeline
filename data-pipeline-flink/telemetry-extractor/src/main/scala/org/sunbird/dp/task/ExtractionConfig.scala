@@ -14,7 +14,7 @@ class ExtractionConfig extends BaseJobConfig {
   val kafkaSuccessTopic: String = config.getString("kafka.output.success.topic")
   val kafkaDuplicateTopic: String = config.getString("kafka.output.duplicate.topic")
   val kafkaFailedTopic: String = config.getString("kafka.output.failed.topic")
-  val rawEventSize:Long = config.getLong("kafka.event.max.size")
+  val eventMaxSize:Long = config.getLong("kafka.event.max.size")
   val isDuplicationCheckRequired: Boolean = config.getBoolean("dedup.validation.required")
 
 }

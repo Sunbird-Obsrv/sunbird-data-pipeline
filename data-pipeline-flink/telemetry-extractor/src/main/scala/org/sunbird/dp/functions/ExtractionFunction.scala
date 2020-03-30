@@ -40,7 +40,7 @@ class ExtractionFunction(config: ExtractionConfig)(implicit val eventTypeInfo: T
       val eventJson = gson.toJson(event)
       val eventSize = eventJson.getBytes("UTF-8").length;
       val eventData = updateEvent(batchEvent, gson.fromJson(eventJson, (new util.HashMap[String, AnyRef]()).getClass))
-      if (eventSize > config.rawEventSize) {
+      if (eventSize > config.eventMaxSize) {
         context.output(failedEventsOutPut, eventData)
       } else {
         context.output(rawEventOutPut, eventData)
