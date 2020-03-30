@@ -1,6 +1,6 @@
-# Deduplication Flink
+# Telemetry Extraction Flink
 
-This job is used to de-duplicate data by running the job using Flink. It can be run either on Yarn or Kubernetes.
+This job is used to de-duplicate data and extract the events from the batch by running the job using Flink. It can be run either on Yarn or Kubernetes.
 
 ## Getting Started
 
