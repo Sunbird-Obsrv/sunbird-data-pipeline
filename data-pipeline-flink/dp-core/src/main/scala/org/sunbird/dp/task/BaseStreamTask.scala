@@ -16,7 +16,7 @@ abstract class BaseStreamTask(config: BaseJobConfig) extends Serializable {
   }
 
   def kafkaStringSchemaProducer(kafkaTopic: String): FlinkKafkaProducer[String] = {
-    new FlinkKafkaProducer[String](kafkaTopic, new StringSerializationSchema(kafkaTopic), config.kafkaConsumerProperties, Semantic.EXACTLY_ONCE)
+    new FlinkKafkaProducer[String](kafkaTopic, new StringSerializationSchema(kafkaTopic), config.kafkaConsumerProperties, Semantic.AT_LEAST_ONCE)
   }
 
   def kafkaEventSchemaConsumer[T <: Events](kafkaTopic: String)(implicit m: Manifest[T]): FlinkKafkaConsumer[T] = {
@@ -33,7 +33,7 @@ abstract class BaseStreamTask(config: BaseJobConfig) extends Serializable {
   }
 
   def kafkaMapSchemaProducer(kafkaTopic: String): FlinkKafkaProducer[util.Map[String, AnyRef]] = {
-    new FlinkKafkaProducer[util.Map[String, AnyRef]](kafkaTopic, new MapSerializationSchema(kafkaTopic), config.kafkaConsumerProperties, Semantic.EXACTLY_ONCE)
+    new FlinkKafkaProducer[util.Map[String, AnyRef]](kafkaTopic, new MapSerializationSchema(kafkaTopic), config.kafkaConsumerProperties, Semantic.AT_LEAST_ONCE)
   }
 
 }
