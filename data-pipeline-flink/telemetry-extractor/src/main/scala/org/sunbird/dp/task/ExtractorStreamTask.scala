@@ -24,7 +24,7 @@ class ExtractorStreamTask(config: ExtractionConfig) extends BaseStreamTask(confi
     env.enableCheckpointing(config.checkpointingInterval)
 
     try {
-      val kafkaConsumer = createKafkaStreamConsumer(config.kafkaInputTopic)
+      val kafkaConsumer = kafkaMapSchemaConsumer(config.kafkaInputTopic)
       /**
        * Invoke De-Duplication - Filter all duplicate batch events from the mobile app.
        * 1. Push all duplicate events to duplicate topic.
@@ -51,21 +51,21 @@ class ExtractorStreamTask(config: ExtractionConfig) extends BaseStreamTask(confi
        * Pushing all duplicate events to duplicate topic
        */
       deDupStream.getSideOutput(new OutputTag[util.Map[String, AnyRef]]("duplicate-events"))
-        .addSink(createKafkaStreamProducer(config.kafkaDuplicateTopic))
+        .addSink(kafkaMapSchemaProducer(config.kafkaDuplicateTopic))
         .name("kafka-telemetry-duplicate-producer")
 
       /**
        * Pushing all extracted events to raw topic
        */
       extractionStream.getSideOutput(new OutputTag[util.Map[String, AnyRef]]("raw-events"))
-        .addSink(createKafkaStreamProducer(config.kafkaSuccessTopic))
+        .addSink(kafkaMapSchemaProducer(config.kafkaSuccessTopic))
         .name("kafka-telemetry-raw-events-producer")
 
       /**
        * Pushing the audit events(LOG Events) to raw topic
        */
       extractionStream.getSideOutput(new OutputTag[util.Map[String, AnyRef]]("log-events"))
-        .addSink(createKafkaStreamProducer(config.kafkaSuccessTopic))
+        .addSink(kafkaMapSchemaProducer(config.kafkaSuccessTopic))
         .name("kafka-telemetry-raw-events-producer")
 
       /**
@@ -75,7 +75,7 @@ class ExtractorStreamTask(config: ExtractionConfig) extends BaseStreamTask(confi
        */
 
       extractionStream.getSideOutput(new OutputTag[util.Map[String, AnyRef]]("failed-events"))
-        .addSink(createKafkaStreamProducer(config.kafkaFailedTopic))
+        .addSink(kafkaMapSchemaProducer(config.kafkaFailedTopic))
         .name("kafka-telemetry-failed-events-producer")
 
       env.execute("Telemetry Extractor")

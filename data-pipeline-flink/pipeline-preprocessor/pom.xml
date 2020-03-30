@@ -9,12 +9,12 @@
     </prerequisites>
 
     <parent>
+        <groupId>org.sunbird.dp</groupId>
         <artifactId>pipeline-jobs</artifactId>
-        <groupId>org.ekstep.dp</groupId>
         <version>0.0.1</version>
     </parent>
 
-    <groupId>org.ekstep.dp.jobs</groupId>
+    <groupId>org.sunbird.dp.jobs</groupId>
     <artifactId>pipeline-preprocessor</artifactId>
     <version>0.0.1</version>
     <packaging>jar</packaging>
@@ -24,6 +24,11 @@
     </description>
 
     <dependencies>
+        <dependency>
+            <groupId>org.sunbird.dp</groupId>
+            <artifactId>dp-core</artifactId>
+            <version>0.0.1</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -45,11 +50,6 @@
             <groupId>com.cedarsoftware</groupId>
             <artifactId>json-io</artifactId>
             <version>4.0.0</version>
-        </dependency>
-        <dependency>
-          <groupId>org.sunbird.dp</groupId>
-          <artifactId>dp-core</artifactId>
-          <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>

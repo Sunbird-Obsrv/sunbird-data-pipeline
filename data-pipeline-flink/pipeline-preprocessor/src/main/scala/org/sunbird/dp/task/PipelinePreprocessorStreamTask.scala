@@ -21,7 +21,7 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig) extends
     env.enableCheckpointing(config.checkpointingInterval)
 
     try {
-      val kafkaConsumer = createObjectStreamConsumer[Event](config.kafkaInputTopic)
+      val kafkaConsumer = kafkaEventSchemaConsumer[Event](config.kafkaInputTopic)
 
       /**
         * Process functions
@@ -49,23 +49,23 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig) extends
         */
 
       validtionStream.getSideOutput(new OutputTag[Event]("validation-falied-events"))
-        .addSink(createObjectStreamProducer(config.kafkaFailedTopic))
+        .addSink(kafkaEventSchemaProducer(config.kafkaFailedTopic))
         .name("kafka-telemetry-invalid-events-producer")
 
       duplicationStream.getSideOutput(new OutputTag[Event]("duplicate-events"))
-        .addSink(createObjectStreamProducer[Event](config.kafkaDuplicateTopic))
+        .addSink(kafkaEventSchemaProducer[Event](config.kafkaDuplicateTopic))
         .name("kafka-telemetry-duplicate-producer")
 
       routerStream.getSideOutput(new OutputTag[Event]("primary-route-events"))
-          .addSink(createObjectStreamProducer[Event](config.kafkaPrimaryRouteTopic))
+          .addSink(kafkaEventSchemaProducer[Event](config.kafkaPrimaryRouteTopic))
         .name("kafka-primary-route-producer")
 
       routerStream.getSideOutput(new OutputTag[Event]("secondary-route-events"))
-        .addSink(createObjectStreamProducer[Event](config.kafkaSecondaryRouteTopic))
+        .addSink(kafkaEventSchemaProducer[Event](config.kafkaSecondaryRouteTopic))
         .name("kafka-secondary-route-producer")
 
       routerStream.getSideOutput(new OutputTag[Event]("audit-route-events"))
-        .addSink(createObjectStreamProducer[Event](config.kafkaAuditRouteTopic))
+        .addSink(kafkaEventSchemaProducer[Event](config.kafkaAuditRouteTopic))
         .name("kafka-audit-route-producer")
 
     } catch {
