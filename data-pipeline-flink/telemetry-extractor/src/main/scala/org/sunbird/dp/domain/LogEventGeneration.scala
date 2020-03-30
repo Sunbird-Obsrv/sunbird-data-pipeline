@@ -1,7 +1,12 @@
 package org.sunbird.dp.domain
 
+/**
+ * Service to Generate a LOG Events to know the number of events are processed
+ */
+
 import java.util
 import java.util.UUID.randomUUID
+
 
 case class Actor(id: String, `type`: String)
 
