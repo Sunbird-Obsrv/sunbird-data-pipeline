@@ -32,9 +32,9 @@ class ExtractorStreamTask(config: ExtractionConfig) extends BaseStreamTask(confi
        */
 
       val deDupStream: SingleOutputStreamOperator[util.Map[String, AnyRef]] =
-        env.addSource(kafkaConsumer, "telemetry-raw-events-consumer")
+        env.addSource(kafkaConsumer, "telemetry-ingest-events-consumer")
           .process(new DeduplicationFunction(config))
-          .setParallelism(1)
+          .setParallelism(config.deDupParallelism)
 
       /**
        * After - De-Duplication process.
@@ -45,7 +45,7 @@ class ExtractorStreamTask(config: ExtractionConfig) extends BaseStreamTask(confi
       val extractionStream: SingleOutputStreamOperator[util.Map[String, AnyRef]] =
         deDupStream.getSideOutput(new OutputTag[util.Map[String, AnyRef]]("unique-events"))
           .process(new ExtractionFunction(config)).name("Extraction")
-          .setParallelism(1)
+          .setParallelism(config.extractionParallelism)
 
       /**
        * Pushing all duplicate events to duplicate topic
@@ -62,7 +62,7 @@ class ExtractorStreamTask(config: ExtractionConfig) extends BaseStreamTask(confi
         .name("kafka-telemetry-raw-events-producer")
 
       /**
-       * Pushing the audit events(LOG Events) to raw topic
+       * Pushing the audit events(LOG Events/Audit Events) to raw topic
        */
       extractionStream.getSideOutput(new OutputTag[util.Map[String, AnyRef]]("log-events"))
         .addSink(kafkaMapSchemaProducer(config.kafkaSuccessTopic))
