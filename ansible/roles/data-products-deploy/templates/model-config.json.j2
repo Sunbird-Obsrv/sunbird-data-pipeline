@@ -3847,7 +3847,16 @@
               "dims"
             ]
           }
-        ]
+        ],
+        "mergeConfig": {
+          "frequency": "DAY",
+          "basePath": {{ spark_output_temp_dir }},
+          "rollup": 1,
+          "rollupAge": "ACADEMIC_YEAR",
+          "rollupCol": "Date",
+          "rollupRange": 1,
+          "reportPath": "daily_metrics.csv"
+        }
       },
       "bucket": "{{ bucket }}",
       "key": "druid-reports/"
