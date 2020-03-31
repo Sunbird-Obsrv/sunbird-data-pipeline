@@ -1,5 +1,6 @@
 analytics_user: analytics
 analytics_group: analytics
+spark_output_temp_dir: /mount/data/analytics/tmp/
 telemetry_converter_ver: 0.0.8
 
 bucket: "dev-data-store"
