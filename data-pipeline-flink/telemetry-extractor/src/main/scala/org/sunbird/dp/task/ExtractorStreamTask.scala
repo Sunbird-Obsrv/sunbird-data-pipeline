@@ -7,9 +7,7 @@ import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.scala.OutputTag
-import org.sunbird.dp.domain.{Constants, FlinkUtil}
-import org.sunbird.dp.functions.{DeduplicationFunction, ExtractionFunction}
-
+import org.sunbird.dp.functions.{ DeduplicationFunction, ExtractionFunction }
 
 class ExtractorStreamTask(config: ExtractionConfig) extends BaseStreamTask(config) {
 
@@ -43,19 +41,14 @@ class ExtractorStreamTask(config: ExtractionConfig) extends BaseStreamTask(confi
      */
 
     val extractionStream: SingleOutputStreamOperator[util.Map[String, AnyRef]] =
-      deDupStream.getSideOutput(new OutputTag[util.Map[String, AnyRef]](Constants.UNIQUE_EVENTS_OUTPUT_TAG))
+      deDupStream.getSideOutput(config.uniqueEventOutputTag)
         .process(new ExtractionFunction(config)).name("Extraction")
         .setParallelism(config.extractionParallelism)
 
-
-
-    FlinkUtil.registerOutPut(deDupStream, kafkaMapSchemaProducer(config.kafkaDuplicateTopic), Constants.DUPLICATE_EVENTS_OUTPUT_TAG)
-
-    FlinkUtil.registerOutPut(extractionStream, kafkaMapSchemaProducer(config.kafkaSuccessTopic), Constants.RAW_EVENTS_OUTPUT_TAG)
-
-    FlinkUtil.registerOutPut(extractionStream, kafkaMapSchemaProducer(config.kafkaSuccessTopic), Constants.LOG_EVENTS_OUTPUT_TAG)
-
-    FlinkUtil.registerOutPut(extractionStream, kafkaMapSchemaProducer(config.kafkaFailedTopic), Constants.FAILED_EVENTS_OUTPUT_TAG)
+    deDupStream.getSideOutput(config.duplicateEventOutputTag).addSink(kafkaMapSchemaProducer(config.kafkaDuplicateTopic)).name(s"kafka-telemetry-duplicate-events-producer")
+    extractionStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaMapSchemaProducer(config.kafkaSuccessTopic)).name(s"kafka-telemetry-raw-events-producer")
+    extractionStream.getSideOutput(config.logEventsOutputTag).addSink(kafkaMapSchemaProducer(config.kafkaSuccessTopic)).name(s"kafka-telemetry-log-events-producer")
+    extractionStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaMapSchemaProducer(config.kafkaFailedTopic)).name(s"kafka-telemetry-failed-events-producer")
 
     env.execute("Telemetry Extractor")
   }
