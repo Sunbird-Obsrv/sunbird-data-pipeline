@@ -26,3 +26,4 @@ terraform.tfstate.*
 *.retry
 target/
 *.iml
+**/.settings
