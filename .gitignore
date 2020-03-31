@@ -27,3 +27,4 @@ terraform.tfstate.*
 target/
 *.iml
 **/.settings
+dependency-reduced-pom.xml
