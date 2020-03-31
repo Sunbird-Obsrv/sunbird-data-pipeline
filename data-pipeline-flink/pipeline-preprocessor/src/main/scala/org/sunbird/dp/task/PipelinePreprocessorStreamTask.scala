@@ -8,6 +8,7 @@ import org.apache.flink.streaming.api.scala.OutputTag
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.functions.{DeduplicationFunction, TelemetryRouterFunction, TelemetryValidationFunction}
+import com.typesafe.config.ConfigFactory
 
 class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig) extends BaseStreamTask(config) {
 
@@ -80,8 +81,9 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig) extends
 }
 
 object PipelinePreprocessorStreamTask {
-  val config = new PipelinePreprocessorConfig
-  def apply(): PipelinePreprocessorStreamTask = new PipelinePreprocessorStreamTask(config)
+  val config = ConfigFactory.load().withFallback(ConfigFactory.systemEnvironment())
+  val preProcessConfig = new PipelinePreprocessorConfig(config)
+  def apply(): PipelinePreprocessorStreamTask = new PipelinePreprocessorStreamTask(preProcessConfig)
   def main(args: Array[String]): Unit = {
     PipelinePreprocessorStreamTask.apply().process()
   }

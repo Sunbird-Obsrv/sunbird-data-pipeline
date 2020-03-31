@@ -22,6 +22,11 @@
     <description>
         Batch Events Extraction
     </description>
+    
+    <properties>
+		<encoding>UTF-8</encoding>
+		<scoverage.plugin.version>1.4.0</scoverage.plugin.version>
+	</properties>
 
     <dependencies>
         <dependency>
@@ -106,6 +111,8 @@
     </dependencies>
 
     <build>
+    		<sourceDirectory>src/main/scala</sourceDirectory>
+		<testSourceDirectory>src/test/scala</testSourceDirectory>
         <plugins>
 
             <plugin>
@@ -212,39 +219,16 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.5</version>
-                <configuration>
-                    <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
-                    <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
-                    <excludes>
-                        <exclude>org/sunbird/dp/domain/**/*.class</exclude>
-                    </excludes>
-                </configuration>
-
-                <executions>
-                    <execution>
-                        <id>jacoco-initialize</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>post-unit-test</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${basedir}/target/coverage-reports/jacoco-ut</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
+			<plugin>
+				<groupId>org.scoverage</groupId>
+				<artifactId>scoverage-maven-plugin</artifactId>
+				<version>${scoverage.plugin.version}</version>
+				<configuration>
+					<scalaVersion>${scala.version}</scalaVersion>
+					<aggregate>true</aggregate>
+					<highlighting>true</highlighting>
+				</configuration>
+			</plugin>
         </plugins>
     </build>
 

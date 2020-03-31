@@ -3,8 +3,9 @@ package org.sunbird.dp.task
 import org.ekstep.dp.core.BaseJobConfig
 
 import scala.collection.JavaConverters._
+import com.typesafe.config.Config
 
-class DeduplicationConfig extends BaseJobConfig {
+class DeduplicationConfig(override val config: Config) extends BaseJobConfig(config) {
 
   private val serialVersionUID = 2905979434303791379L
 

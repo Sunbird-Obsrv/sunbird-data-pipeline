@@ -23,6 +23,7 @@ import org.sunbird.dp.task.DeduplicationConfig
 import redis.embedded.RedisServer
 
 import scala.collection.JavaConverters._
+import com.typesafe.config.ConfigFactory
 
 class DeduplicationFunctionTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll with MockitoSugar {
 
@@ -32,7 +33,7 @@ class DeduplicationFunctionTestSpec extends FlatSpec with Matchers with BeforeAn
   var redisServer: RedisServer = _
   var redisConnect: RedisConnect = _
   var dedupEngine: DedupEngine = _
-  val mockConfig: DeduplicationConfig = Mockito.spy(new DeduplicationConfig)
+  val mockConfig: DeduplicationConfig = Mockito.spy(new DeduplicationConfig(ConfigFactory.load()))
   val mockBaseConfig: Config = mock[Config]
 
   override protected def beforeAll(): Unit = {

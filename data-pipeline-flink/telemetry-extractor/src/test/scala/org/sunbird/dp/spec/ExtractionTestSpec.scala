@@ -19,6 +19,7 @@ import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.functions.{ DeduplicationFunction, ExtractionFunction }
 import org.sunbird.dp.task.ExtractionConfig
 import redis.embedded.RedisServer
+import com.typesafe.config.ConfigFactory
 
 class ExtractionTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll with MockitoSugar {
 
@@ -26,7 +27,7 @@ class ExtractionTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll w
   var redisServer: RedisServer = _
   var redisConnect: RedisConnect = _
   var dedupEngine: DedupEngine = _
-  val mockConfig: ExtractionConfig = Mockito.spy(new ExtractionConfig)
+  val mockConfig: ExtractionConfig = Mockito.spy(new ExtractionConfig(ConfigFactory.load()))
   val mockBaseConfig: Config = mock[Config]
 
   override protected def beforeAll(): Unit = {

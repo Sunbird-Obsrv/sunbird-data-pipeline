@@ -1,14 +1,21 @@
 package org.ekstep.dp.core
 
+import java.util
 import java.util.Properties
 import java.io.Serializable
 
 import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.kafka.clients.producer.ProducerConfig
+import org.apache.flink.streaming.api.functions.source.SourceFunction
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
 
-trait BaseJobConfig extends Serializable {
+import org.sunbird.dp.serde._
+import org.apache.flink.streaming.api.functions.sink.SinkFunction
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer.Semantic
 
-  val config: Config = ConfigFactory.load()
+class BaseJobConfig(val config: Config) extends Serializable {
+
   val kafkaBrokerServers: String = config.getString("kafka.broker-servers")
   val zookeeper: String = config.getString("kafka.zookeeper")
   val groupId: String = config.getString("kafka.groupId")

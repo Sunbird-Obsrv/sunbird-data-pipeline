@@ -5,8 +5,9 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.ekstep.dp.core.BaseJobConfig
 import org.apache.flink.streaming.api.scala.OutputTag
+import com.typesafe.config.Config
 
-class ExtractionConfig extends BaseJobConfig {
+class ExtractionConfig(override val config: Config) extends BaseJobConfig(config) {
 
   private val serialVersionUID = 2905979434303791379L
 
@@ -32,11 +33,11 @@ class ExtractionConfig extends BaseJobConfig {
   val LOG_EVENTS_OUTPUT_TAG = "log-events"
   val DUPLICATE_EVENTS_OUTPUT_TAG = "duplicate-events"
   
-  lazy val rawEventsOutputTag: OutputTag[String] = OutputTag[String](RAW_EVENTS_OUTPUT_TAG)
-  lazy val failedEventsOutputTag: OutputTag[String] = OutputTag[String](FAILED_EVENTS_OUTPUT_TAG)
-  lazy val logEventsOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](LOG_EVENTS_OUTPUT_TAG)
+  val rawEventsOutputTag: OutputTag[String] = OutputTag[String](RAW_EVENTS_OUTPUT_TAG)
+  val failedEventsOutputTag: OutputTag[String] = OutputTag[String](FAILED_EVENTS_OUTPUT_TAG)
+  val logEventsOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](LOG_EVENTS_OUTPUT_TAG)
 
-  lazy val duplicateEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = DUPLICATE_EVENTS_OUTPUT_TAG)
-  lazy val uniqueEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = UNIQUE_EVENTS_OUTPUT_TAG)
+  val duplicateEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = DUPLICATE_EVENTS_OUTPUT_TAG)
+  val uniqueEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = UNIQUE_EVENTS_OUTPUT_TAG)
 
 }

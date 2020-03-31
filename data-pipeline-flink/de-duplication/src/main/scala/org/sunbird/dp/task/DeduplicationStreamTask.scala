@@ -7,6 +7,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.functions.DeduplicationFunction
+import com.typesafe.config.ConfigFactory
 
 
 class DeduplicationStreamTask(config: DeduplicationConfig) extends BaseStreamTask(config) {
@@ -47,7 +48,7 @@ class DeduplicationStreamTask(config: DeduplicationConfig) extends BaseStreamTas
 }
 
 object DeduplicationStreamTask {
-  val config = new DeduplicationConfig
+  val config = new DeduplicationConfig(ConfigFactory.load())
   def apply(): DeduplicationStreamTask = new DeduplicationStreamTask(config)
   def main(args: Array[String]): Unit = {
     DeduplicationStreamTask.apply().process()
