@@ -1,4 +1,4 @@
-package org.ekstep.dp.cache
+package org.sunbird.dp.cache
 
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPool

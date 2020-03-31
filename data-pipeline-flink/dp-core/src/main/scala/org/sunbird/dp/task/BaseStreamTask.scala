@@ -8,7 +8,6 @@ import org.ekstep.dp.core.BaseJobConfig
 import org.sunbird.dp.domain.Events
 import org.sunbird.dp.serde._
 
-
 abstract class BaseStreamTask(config: BaseJobConfig) extends Serializable {
 
   def kafkaStringSchemaConsumer(kafkaTopic: String): FlinkKafkaConsumer[String] = {
@@ -35,7 +34,5 @@ abstract class BaseStreamTask(config: BaseJobConfig) extends Serializable {
   def kafkaMapSchemaProducer(kafkaTopic: String): FlinkKafkaProducer[util.Map[String, AnyRef]] = {
     new FlinkKafkaProducer[util.Map[String, AnyRef]](kafkaTopic, new MapSerializationSchema(kafkaTopic), config.kafkaConsumerProperties, Semantic.AT_LEAST_ONCE)
   }
-
 }
-
 

@@ -11,7 +11,7 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.apache.flink.streaming.util.ProcessFunctionTestHarnesses
-import org.ekstep.dp.cache.{DedupEngine, RedisConnect}
+import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
 import org.mockito.Mockito
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}

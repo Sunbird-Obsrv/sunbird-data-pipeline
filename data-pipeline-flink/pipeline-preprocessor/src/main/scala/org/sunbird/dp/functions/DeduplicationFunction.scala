@@ -5,7 +5,7 @@ import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.apache.flink.util.Collector
-import org.ekstep.dp.cache.{DedupEngine, RedisConnect}
+import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.task.PipelinePreprocessorConfig
