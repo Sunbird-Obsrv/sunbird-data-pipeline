@@ -33,12 +33,10 @@ class ExtractionFunction(config: ExtractionConfig)(implicit val stringTypeInfo: 
     val gson = new Gson()
     val eventsList = getEventsList(batchEvent)
     eventsList.forEach(event => {
-
       val syncts = batchEvent.get("syncts").asInstanceOf[Number].longValue()
       val eventData = updateEvent(event, syncts)
       val eventJson = gson.toJson(eventData)
       val eventSize = eventJson.getBytes("UTF-8").length
-
       if (eventSize > config.eventMaxSize) {
         context.output(config.failedEventsOutputTag, eventJson)
       } else {
@@ -60,7 +58,7 @@ class ExtractionFunction(config: ExtractionConfig)(implicit val stringTypeInfo: 
    * @return Array[AnyRef] - List of telemetry events.
    */
   def getEventsList(batchEvent: util.Map[String, AnyRef]): util.ArrayList[util.Map[String, AnyRef]] = {
-    batchEvent.get("events").asInstanceOf[util.ArrayList[util.Map[String, AnyRef]]]
+    Option(batchEvent.get("events")).getOrElse(new util.ArrayList[Any]).asInstanceOf[util.ArrayList[util.Map[String, AnyRef]]]
   }
 
   /**
