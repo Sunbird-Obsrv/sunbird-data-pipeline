@@ -6,7 +6,6 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
-import org.apache.flink.streaming.api.scala.OutputTag
 import org.sunbird.dp.functions.{ DeduplicationFunction, ExtractionFunction }
 
 class ExtractorStreamTask(config: ExtractionConfig) extends BaseStreamTask(config) {
@@ -15,7 +14,8 @@ class ExtractorStreamTask(config: ExtractionConfig) extends BaseStreamTask(confi
 
   def process(): Unit = {
     implicit val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
-    implicit val eventTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
+    implicit val mapTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
+    implicit val stringTypeInfo: TypeInformation[String] = TypeExtractor.getForClass(classOf[String])
 
     /**
      * Enabling the check point, It backup the cheeck point for every X(Default = 1Min) interval of time.
@@ -40,15 +40,16 @@ class ExtractorStreamTask(config: ExtractionConfig) extends BaseStreamTask(confi
      *  2. Generate Audit events (To know the number of events in the per batch)
      */
 
-    val extractionStream: SingleOutputStreamOperator[util.Map[String, AnyRef]] =
+    val extractionStream: SingleOutputStreamOperator[String] =
       deDupStream.getSideOutput(config.uniqueEventOutputTag)
         .process(new ExtractionFunction(config)).name("Extraction")
         .setParallelism(config.extractionParallelism)
 
     deDupStream.getSideOutput(config.duplicateEventOutputTag).addSink(kafkaMapSchemaProducer(config.kafkaDuplicateTopic)).name(s"kafka-telemetry-duplicate-events-producer")
-    extractionStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaMapSchemaProducer(config.kafkaSuccessTopic)).name(s"kafka-telemetry-raw-events-producer")
+
+    extractionStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaStringSchemaProducer(config.kafkaSuccessTopic)).name(s"kafka-telemetry-raw-events-producer")
     extractionStream.getSideOutput(config.logEventsOutputTag).addSink(kafkaMapSchemaProducer(config.kafkaSuccessTopic)).name(s"kafka-telemetry-log-events-producer")
-    extractionStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaMapSchemaProducer(config.kafkaFailedTopic)).name(s"kafka-telemetry-failed-events-producer")
+    extractionStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaStringSchemaProducer(config.kafkaFailedTopic)).name(s"kafka-telemetry-failed-events-producer")
 
     env.execute("Telemetry Extractor")
   }
