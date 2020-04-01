@@ -82,7 +82,7 @@ class ExtractionTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll w
 
     implicit val mapTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
     when(dedupEngine.isUniqueEvent("321a6f0c-10c6-4cdc-9893-207bb64fea50")).thenReturn(true)
-    val deduplicationFunction = new DeduplicationFunction(mockConfig)(mapTypeInfo)
+    val deduplicationFunction = new DeduplicationFunction(mockConfig, dedupEngine)(mapTypeInfo)
     val harness = ProcessFunctionTestHarnesses.forProcessFunction(deduplicationFunction);
     val eventData = gson.fromJson(EventFixture.EVENT_WITHOUT_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass)
     harness.processElement(eventData, new Date().getTime)
@@ -159,6 +159,7 @@ class ExtractionTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll w
   }
 
   "When Events Are Undefined in the Batch" should "fail the job" in {
+    
     implicit val stringTypeInfo: TypeInformation[String] = TypeExtractor.getForClass(classOf[String])
     when(mockConfig.eventMaxSize).thenReturn(500L)
     val extractFunction = new ExtractionFunction(mockConfig)(stringTypeInfo)
