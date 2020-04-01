@@ -2391,14 +2391,20 @@
               "total_unique_devices"
             ],
             "dims": [
-              "state"
+              "state","date"
             ],
             "fileParameters": [
               "id",
               "dims"
             ]
           }
-        ]
+        ],
+        "mergeConfig": {
+          "frequency": "MONTH",
+          "basePath": {{spark_output_temp_dir}},
+          "rollup": 0,
+          "reportPath": "district_monthly.csv"
+        }
       },
       "bucket": "{{ bucket }}",
       "key": "druid-reports/"
@@ -3154,14 +3160,23 @@
               "total_content_plays_on_app"
             ],
             "dims": [
-              "state"
+              "state","date"
             ],
             "fileParameters": [
               "id",
               "dims"
             ]
           }
-        ]
+        ],
+        "mergeConfig": {
+                "frequency": "WEEK",
+                "basePath": {{ spark_output_temp_dir }},
+                "rollup": 1,
+                "rollupAge": "ACADEMIC_YEAR",
+                "rollupCol": "Date",
+                "rollupRange": 1,
+                "reportPath": "district_weekly.csv"
+              }
       },
       "bucket": "{{ bucket }}",
       "key": "druid-reports/"
