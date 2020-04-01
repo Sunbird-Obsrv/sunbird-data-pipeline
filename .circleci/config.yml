@@ -14,7 +14,7 @@ jobs:
       - run:
           name: sonar
           command: |
-                mvn scoverage:report -Dlog4j.configuration=./logs sonar:sonar -Dsonar.projectKey=project-sunbird_sunbird-data-pipeline -Dsonar.organization=project-sunbird -Dsonar.host.url=https://sonarcloud.io -Dsonar.coverage.jacoco.xmlReportPaths=/home/circleci/dp/data-pipeline-flink/telemetry-extractor/target/scoverage.xml,/home/circleci/dp/data-pipeline-flink/de-duplication/target/coverage.xml,/home/circleci/dp/data-pipeline-flink/dp-core/target/coverage.xml,/home/circleci/dp/data-pipeline-flink/dp-telemetry-reader/targe/coverage.xml,/home/circleci/dp/data-pipeline-flink/pipeline-preprocessor/target/coverage.xml
+                mvn scoverage:report -Dlog4j.configuration=./logs sonar:sonar -Dsonar.projectKey=project-sunbird_sunbird-data-pipeline -Dsonar.organization=project-sunbird -Dsonar.host.url=https://sonarcloud.io -Dsonar.coverage.jacoco.xmlReportPaths=/home/circleci/dp/data-pipeline-flink/telemetry-extractor/target/scoverage.xml,/home/circleci/dp/data-pipeline-flink/de-duplication/target/coverage.xml,/home/circleci/dp/data-pipeline-flink/dp-core/target/coverage.xml,/home/circleci/dp/data-pipeline-flink/dp-telemetry-reader/targe/coverage.xml
 
 workflows:
   version: 2.1
