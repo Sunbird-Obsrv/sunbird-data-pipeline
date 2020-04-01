@@ -103,7 +103,10 @@ class ExtractionTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll w
     // All Extracted Events SyncTs should be same as Batch Event SyncTs
     extractedEventsList.forEach(event => {
       val eventObj = event.asInstanceOf[util.Map[String, AnyRef]].get("value").asInstanceOf[String]
-      val extractedEventSyncTs = gson.fromJson(eventObj, new util.LinkedHashMap[String, AnyRef]().getClass).get("syncts").asInstanceOf[Number].longValue()
+      val eventMap = gson.fromJson(eventObj, new util.LinkedHashMap[String, AnyRef]().getClass)
+      val extractedEventSyncTs = eventMap.get("syncts").asInstanceOf[Number].longValue()
+      val flags = eventMap.get("flags").asInstanceOf[util.Map[String, AnyRef]]
+      flags.get("ex_processed").asInstanceOf[Boolean] should be(true)
       batchEventSyncTs should be(extractedEventSyncTs)
     })
     // Log event size should be one
@@ -117,6 +120,8 @@ class ExtractionTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll w
     total_events should be(20.0)
     // Total Extracted events size should be 20
     extractedEvents.size() should be(20)
+
+
   }
 
   "Failed extracted events" should "be sent to failed SideOutput" in {
@@ -127,7 +132,6 @@ class ExtractionTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll w
     val harness = ProcessFunctionTestHarnesses.forProcessFunction(extractFunction)
     val eventData = gson.fromJson(EventFixture.EVENT_WITH_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass)
     harness.processElement(eventData, new Date().getTime)
-    val failedEvent = harness.getSideOutput(new OutputTag(mockConfig.FAILED_EVENTS_OUTPUT_TAG))
     val log = harness.getSideOutput(new OutputTag(mockConfig.LOG_EVENTS_OUTPUT_TAG))
     log.size() should be(1)
     val auditEventList = gson.fromJson(gson.toJson(log), (new util.ArrayList[AnyRef]()).getClass)
@@ -135,6 +139,11 @@ class ExtractionTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll w
       .asInstanceOf[util.Map[String, AnyRef]].get("edata")
       .asInstanceOf[util.Map[String, AnyRef]].get("params").asInstanceOf[util.ArrayList[util.Map[String, AnyRef]]].get(0).get("events_count").asInstanceOf[Double]
     total_events should be(20)
+
+    val failedEvent = gson.fromJson(gson.toJson(harness.getSideOutput(new OutputTag(mockConfig.FAILED_EVENTS_OUTPUT_TAG))), (new util.ArrayList[AnyRef]()).getClass)
+    getFlags(failedEvent) should be(false)
+    // Should get the falgs are present or not.
+    // ex_processed flag should be flase
     failedEvent.size() should be(20)
   }
 
@@ -159,7 +168,7 @@ class ExtractionTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll w
   }
 
   "When Events Are Undefined in the Batch" should "fail the job" in {
-    
+
     implicit val stringTypeInfo: TypeInformation[String] = TypeExtractor.getForClass(classOf[String])
     when(mockConfig.eventMaxSize).thenReturn(500L)
     val extractFunction = new ExtractionFunction(mockConfig)(stringTypeInfo)
@@ -184,8 +193,14 @@ class ExtractionTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll w
     total_events should be(0)
   }
 
+  def getFlags(failedEvent: util.ArrayList[AnyRef]): Boolean = {
+    gson.fromJson(Option(failedEvent.get(0)).map(x => x.asInstanceOf[util.Map[String, AnyRef]])
+      .get.get("value").toString, new util.LinkedHashMap[String, AnyRef]().getClass).get("flags").asInstanceOf[util.Map[String, Boolean]].get("ex_processed")
+  }
+
   override protected def afterAll(): Unit = {
     super.afterAll()
     redisServer.stop()
   }
+
 }
