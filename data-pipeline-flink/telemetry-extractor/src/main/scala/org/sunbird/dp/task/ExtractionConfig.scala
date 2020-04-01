@@ -40,4 +40,6 @@ class ExtractionConfig(override val config: Config) extends BaseJobConfig(config
   val duplicateEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = DUPLICATE_EVENTS_OUTPUT_TAG)
   val uniqueEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = UNIQUE_EVENTS_OUTPUT_TAG)
 
+  val jobName = "telemetry-extractor"
+
 }

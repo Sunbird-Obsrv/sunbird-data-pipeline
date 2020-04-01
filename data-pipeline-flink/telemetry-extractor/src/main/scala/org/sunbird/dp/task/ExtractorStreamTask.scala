@@ -62,7 +62,7 @@ class ExtractorStreamTask(config: ExtractionConfig, kafkaConnector: FlinkKafkaCo
     extractionStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaConnector.getRawSink(config.kafkaSuccessTopic)).name("kafka-telemetry-raw-events-producer")
     extractionStream.getSideOutput(config.logEventsOutputTag).addSink(kafkaConnector.getObjectSink(config.kafkaSuccessTopic)).name("kafka-telemetry-log-events-producer")
     extractionStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaConnector.getRawSink(config.kafkaFailedTopic)).name("kafka-telemetry-failed-events-producer")
-    env.execute("Telemetry Extractor")
+    env.execute(config.jobName)
   }
 }
 

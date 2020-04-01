@@ -17,7 +17,7 @@ import com.google.gson.reflect.TypeToken
 class ExtractionFunction(config: ExtractionConfig)(implicit val stringTypeInfo: TypeInformation[String])
   extends ProcessFunction[util.Map[String, AnyRef], String] {
 
-  val mapType: Type = new TypeToken[util.Map[String, AnyRef]](){}.getType
+  val mapType: Type = new TypeToken[util.Map[String, AnyRef]]() {}.getType
 
   /**
    * Method to process the events extraction from the batch
@@ -33,14 +33,14 @@ class ExtractionFunction(config: ExtractionConfig)(implicit val stringTypeInfo: 
     val gson = new Gson()
     val eventsList = getEventsList(batchEvent)
     eventsList.forEach(event => {
-      val syncts = batchEvent.get("syncts").asInstanceOf[Number].longValue()
-      val eventData = updateEvent(event, syncts)
+      val syncTs = Option(batchEvent.get("syncts")).getOrElse(System.currentTimeMillis()).asInstanceOf[Number].longValue()
+      val eventData = updateEvent(event, syncTs)
       val eventJson = gson.toJson(eventData)
       val eventSize = eventJson.getBytes("UTF-8").length
       if (eventSize > config.eventMaxSize) {
-        context.output(config.failedEventsOutputTag, eventJson)
+        context.output(config.failedEventsOutputTag, gson.toJson(markFailed(eventData)))
       } else {
-        context.output(config.rawEventsOutputTag, eventJson)
+        context.output(config.rawEventsOutputTag, gson.toJson(markSuccess(eventData)))
       }
     })
 
@@ -48,7 +48,7 @@ class ExtractionFunction(config: ExtractionConfig)(implicit val stringTypeInfo: 
      * Generating Audit events to compute the number of events in the batch.
      */
     context.output(config.logEventsOutputTag,
-      gson.fromJson(gson.toJson(generateAuditEvents(eventsList.size())), mapType))
+      gson.fromJson(gson.toJson(generateAuditEvents(eventsList.size(), batchEvent)), mapType))
   }
 
   /**
@@ -63,7 +63,8 @@ class ExtractionFunction(config: ExtractionConfig)(implicit val stringTypeInfo: 
 
   /**
    * Method to update the "SyncTS", "@TimeStamp" fileds of batch events into Events Object
-   * @param event - Extracted Raw Telemetry Event
+   *
+   * @param event  - Extracted Raw Telemetry Event
    * @param syncts - sync timestamp epoch to be updated in the events
    * @return - util.Map[String, AnyRef] Updated Telemetry Event
    */
@@ -77,20 +78,55 @@ class ExtractionFunction(config: ExtractionConfig)(implicit val stringTypeInfo: 
   /**
    * Method to Generate the LOG Event to Determine the Number of events has extracted.
    */
-  def generateAuditEvents(totalEvents: Int): LogEvent = {
+  def generateAuditEvents(totalEvents: Int, batchEvent: util.Map[String, AnyRef]): LogEvent = {
     LogEvent(
       actor = Actor("sunbird.telemetry", "telemetry-sync"),
       eid = "LOG",
-      edata = EData(level = "INFO", "telemetry_audit", message = "telemetry sync", Array(Params("3.0", totalEvents, "SUCCESS"), Params("3.0", totalEvents, "SUCCESS"))),
+      edata = EData(level = "INFO", "telemetry_audit", message = "telemetry sync", Array(Params("3.0", totalEvents, "SUCCESS"))),
       syncts = System.currentTimeMillis(),
       ets = System.currentTimeMillis(),
-      context = org.sunbird.dp.domain.Context(channel = "in.sunbird", env = "data-pipeline",
+      context = org.sunbird.dp.domain.Context(channel = Option(batchEvent.get("channel")).getOrElse("in.sunbird").toString, env = "data-pipeline",
         sid = UUID.randomUUID().toString,
-        did = UUID.randomUUID().toString,
+        did = Option(getValuesFromParams(batchEvent, "did")).getOrElse(UUID.randomUUID()).toString,
         pdata = Pdata(ver = "3.0", pid = "telemetry-extractor"),
         cdata = null),
-      mid = UUID.randomUUID().toString,
+      mid = Option(batchEvent.get("mid")).getOrElse(UUID.randomUUID()).toString,
       `object` = Object(UUID.randomUUID().toString, "3.0", "telemetry-events", None),
       tags = null)
   }
+
+  /**
+   * Method Mark the event as failure by adding (ex_processed -> false) and metadata.
+   */
+  def markFailed(event: util.Map[String, AnyRef]): util.Map[String, AnyRef] = {
+    val flags: util.HashMap[String, Boolean] = new util.HashMap[String, Boolean]()
+    flags.put("ex_processed", false)
+    val metaData: util.HashMap[String, AnyRef] = new util.HashMap[String, AnyRef]()
+    metaData.put("src", config.jobName)
+    metaData.put("ex_error", "Event size is Exceeded")
+    event.asInstanceOf[util.Map[String, AnyRef]].put("metadata", metaData.asInstanceOf[util.Map[String, AnyRef]])
+    event.asInstanceOf[util.Map[String, AnyRef]].put("flags", flags.asInstanceOf[util.Map[String, AnyRef]])
+    event
+  }
+
+  /**
+   * Method to mark the event as success by adding flags adding (ex_processed -> true)
+   * @param event
+   * @return
+   */
+  def markSuccess(event: util.Map[String, AnyRef]): util.Map[String, AnyRef] = {
+    val flags: util.HashMap[String, Boolean] = new util.HashMap[String, Boolean]()
+    flags.put("ex_processed", true)
+    event.put("flags", flags.asInstanceOf[util.Map[String, AnyRef]])
+    event
+  }
+
+  def getValuesFromParams(batchEvents: util.Map[String, AnyRef], key: String): String = {
+    val paramsObj = Option(batchEvents.get("params"))
+    val messageId = paramsObj.map {
+      params => params.asInstanceOf[util.Map[String, AnyRef]].get(key).asInstanceOf[String]
+    }
+    messageId.orNull
+  }
 }
+

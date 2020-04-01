@@ -34,7 +34,7 @@ class DeduplicationFunction(config: ExtractionConfig, @transient var dedupEngine
                               out: Collector[util.Map[String, AnyRef]]): Unit = {
 
     deDup[util.Map[String, AnyRef]](getMsgIdentifier(batchEvents), batchEvents, context,
-      config.uniqueEventOutputTag, config.duplicateEventOutputTag)(dedupEngine)
+      config.uniqueEventOutputTag, config.duplicateEventOutputTag, flagName = "ex_duplicate")(dedupEngine)
 
     def getMsgIdentifier(batchEvents: util.Map[String, AnyRef]): String = {
       val paramsObj = Option(batchEvents.get("params"))

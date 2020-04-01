@@ -44,7 +44,7 @@ class ExtractionStreamTaskTestSpec extends FlatSpec with Matchers with BeforeAnd
     super.beforeAll()
     redisServer = new RedisServer(6340)
     redisServer.start()
-    
+
     when(mockKafkaUtil.getObjectSource(extConfig.kafkaInputTopic)).thenReturn(new ExtractorEventSource)
     when(mockKafkaUtil.getObjectSink(extConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
     when(mockKafkaUtil.getObjectSink(extConfig.kafkaSuccessTopic)).thenReturn(new LogEventsSink)
@@ -64,7 +64,7 @@ class ExtractionStreamTaskTestSpec extends FlatSpec with Matchers with BeforeAnd
 
     val task = new ExtractorStreamTask(extConfig, mockKafkaUtil);
     task.process()
-    
+
     RawEventsSink.values.size() should be (40)
     FailedEventsSink.values.size() should be (0)
     DupEventsSink.values.size() should be (1)
