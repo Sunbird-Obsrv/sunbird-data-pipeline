@@ -1,13 +1,14 @@
 package org.sunbird.dp.core
 
+import java.util
+
+import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.cache.DedupEngine
-import org.apache.flink.streaming.api.functions.ProcessFunction
-import java.util
 
 trait BaseDeduplication {
-  
+
   private[this] val logger = LoggerFactory.getLogger(classOf[BaseDeduplication])
 
   def deDup[T](key: String,
@@ -15,7 +16,7 @@ trait BaseDeduplication {
                context: ProcessFunction[T, T]#Context,
                successOutputTag: OutputTag[T],
                duplicateOutputTag: OutputTag[T],
-               flagName:String
+               flagName: String
               )(implicit deDupEngine: DedupEngine): Unit = {
 
     if (null != key && !deDupEngine.isUniqueEvent(key)) {
