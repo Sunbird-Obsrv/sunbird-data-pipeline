@@ -33,8 +33,8 @@ class ExtractionFunction(config: ExtractionConfig)(implicit val stringTypeInfo: 
     val gson = new Gson()
     val eventsList = getEventsList(batchEvent)
     eventsList.forEach(event => {
-      val syncts = batchEvent.get("syncts").asInstanceOf[Number].longValue()
-      val eventData = updateEvent(event, syncts)
+      val syncTs = Option(batchEvent.get("syncts")).getOrElse(System.currentTimeMillis()).asInstanceOf[Number].longValue()
+      val eventData = updateEvent(event, syncTs)
       val eventJson = gson.toJson(eventData)
       val eventSize = eventJson.getBytes("UTF-8").length
       if (eventSize > config.eventMaxSize) {
@@ -70,7 +70,7 @@ class ExtractionFunction(config: ExtractionConfig)(implicit val stringTypeInfo: 
    */
   def updateEvent(event: util.Map[String, AnyRef], syncts: Long): util.Map[String, AnyRef] = {
     val timeStampString: String = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZoneUTC.print(syncts)
-    event.put("syncts", Option(syncts.asInstanceOf[AnyRef]).getOrElse(System.currentTimeMillis().asInstanceOf[AnyRef]))
+    event.put("syncts", syncts.asInstanceOf[AnyRef])
     event.put("@timestamp", timeStampString.asInstanceOf[AnyRef])
     event
   }
@@ -85,9 +85,9 @@ class ExtractionFunction(config: ExtractionConfig)(implicit val stringTypeInfo: 
       edata = EData(level = "INFO", "telemetry_audit", message = "telemetry sync", Array(Params("3.0", totalEvents, "SUCCESS"))),
       syncts = System.currentTimeMillis(),
       ets = System.currentTimeMillis(),
-      context = org.sunbird.dp.domain.Context(channel = "in.sunbird", env = "data-pipeline",
+      context = org.sunbird.dp.domain.Context(channel = Option(batchEvent.get("channel")).getOrElse("in.sunbird").toString, env = "data-pipeline",
         sid = UUID.randomUUID().toString,
-        did = Option(getDeviceId(batchEvent, "did")).getOrElse(UUID.randomUUID()).toString,
+        did = Option(getValuesFromParams(batchEvent, "did")).getOrElse(UUID.randomUUID()).toString,
         pdata = Pdata(ver = "3.0", pid = "telemetry-extractor"),
         cdata = null),
       mid = Option(batchEvent.get("mid")).getOrElse(UUID.randomUUID()).toString,
@@ -95,6 +95,9 @@ class ExtractionFunction(config: ExtractionConfig)(implicit val stringTypeInfo: 
       tags = null)
   }
 
+  /**
+   * Method Mark the event as failure by adding (ex_processed -> false) and metadata.
+   */
   def markFailed(event: util.Map[String, AnyRef]): util.Map[String, AnyRef] = {
     val flags: util.HashMap[String, Boolean] = new util.HashMap[String, Boolean]()
     flags.put("ex_processed", false)
@@ -106,6 +109,11 @@ class ExtractionFunction(config: ExtractionConfig)(implicit val stringTypeInfo: 
     event
   }
 
+  /**
+   * Method to mark the event as success by adding flags adding (ex_processed -> true)
+   * @param event
+   * @return
+   */
   def markSuccess(event: util.Map[String, AnyRef]): util.Map[String, AnyRef] = {
     val flags: util.HashMap[String, Boolean] = new util.HashMap[String, Boolean]()
     flags.put("ex_processed", true)
@@ -113,7 +121,7 @@ class ExtractionFunction(config: ExtractionConfig)(implicit val stringTypeInfo: 
     event
   }
 
-  def getDeviceId(batchEvents: util.Map[String, AnyRef], key: String): String = {
+  def getValuesFromParams(batchEvents: util.Map[String, AnyRef], key: String): String = {
     val paramsObj = Option(batchEvents.get("params"))
     val messageId = paramsObj.map {
       params => params.asInstanceOf[util.Map[String, AnyRef]].get(key).asInstanceOf[String]

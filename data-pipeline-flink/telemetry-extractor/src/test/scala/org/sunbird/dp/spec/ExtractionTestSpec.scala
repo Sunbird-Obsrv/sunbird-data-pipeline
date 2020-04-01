@@ -78,6 +78,7 @@ class ExtractionTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll w
     uniqueEvents.size() should be(1)
   }
 
+
   "Event" should "be sent to unique SideOutput when mid is not defined" in {
 
     implicit val mapTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
@@ -88,6 +89,52 @@ class ExtractionTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll w
     harness.processElement(eventData, new Date().getTime)
     val uniqueEvents = harness.getSideOutput(OutputTag(mockConfig.UNIQUE_EVENTS_OUTPUT_TAG))
     uniqueEvents.size() should be(1)
+  }
+
+  "Extracted telemetry events" should "Audit event should have proper did, mid, pdata and all extractted events should stamp with syncts " in {
+    implicit val stringTypeInfo: TypeInformation[String] = TypeExtractor.getForClass(classOf[String])
+    val extractFunction = new ExtractionFunction(mockConfig)(stringTypeInfo)
+    val harness = ProcessFunctionTestHarnesses.forProcessFunction(extractFunction)
+    val eventData = gson.fromJson(EventFixture.MISSING_FIELDS_BATCH, new util.LinkedHashMap[String, AnyRef]().getClass)
+
+    harness.processElement(eventData, new Date().getTime)
+    val extractedEvents = harness.getSideOutput(OutputTag(mockConfig.RAW_EVENTS_OUTPUT_TAG))
+    val extractedEventsList = gson.fromJson(gson.toJson(extractedEvents), (new util.ArrayList[util.Map[String, AnyRef]]()).getClass)
+    // All Extracted Events SyncTs should be same as Batch Event SyncTs
+    extractedEventsList.forEach(event => {
+      val eventObj = event.asInstanceOf[util.Map[String, AnyRef]].get("value").asInstanceOf[String]
+      val eventMap = gson.fromJson(eventObj, new util.LinkedHashMap[String, AnyRef]().getClass)
+      val extractedEventSyncTs = eventMap.get("syncts")
+      extractedEventSyncTs should not be(null)
+
+    })
+    // Log event size should be one
+    val log = harness.getSideOutput(new OutputTag(mockConfig.LOG_EVENTS_OUTPUT_TAG))
+    log.size() should be(1)
+    val auditEventList = gson.fromJson(gson.toJson(log), (new util.ArrayList[AnyRef]()).getClass)
+    val logEvents = Option(auditEventList.get(0)).map(x => x.asInstanceOf[util.Map[String, AnyRef]]).get.get("value")
+    val total_events_count = logEvents.asInstanceOf[util.Map[String, AnyRef]].get("edata")
+      .asInstanceOf[util.Map[String, AnyRef]].get("params").asInstanceOf[util.ArrayList[util.Map[String, AnyRef]]].get(0).get("events_count").asInstanceOf[Double]
+    // Total Events count in the batch should be 20 from the audit event
+    total_events_count should be(20.0)
+    val logEventsMap = gson.fromJson(gson.toJson(logEvents), new util.LinkedHashMap[String, AnyRef]().getClass)
+    val logEventContext = Option(logEventsMap.get("context").asInstanceOf[util.Map[String, AnyRef]])
+    val logEventDeviceId = logEventContext map {
+      event => event.get("did")
+    }
+    val channel = logEventContext map {
+      event => event.get("channel")
+    }
+    // log event mid should be batch event mid
+    logEventsMap.get("mid") should be("5734970")
+    // Log event device id should be batch event device id
+    logEventDeviceId.get should be("0958743690")
+    // Log event consumer id should be batch event channel
+    channel.get should be("98347593475834")
+    // Total Extracted events size should be 20
+    extractedEvents.size() should be(20)
+
+
   }
 
   "Extracted telemetry events" should "be sent to raw SideOutput and should validate the syncTs and EventsCount" in {
@@ -192,6 +239,8 @@ class ExtractionTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll w
     // Total Events in the batch should be Zero
     total_events should be(0)
   }
+
+
 
   def getFlags(failedEvent: util.ArrayList[AnyRef]): Boolean = {
     gson.fromJson(Option(failedEvent.get(0)).map(x => x.asInstanceOf[util.Map[String, AnyRef]])
