@@ -1,13 +1,11 @@
 package org.sunbird.dp.utils
 
 import java.util
-import java.util.{HashMap, Map}
 
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.cache.DedupEngine
-import org.sunbird.dp.domain.Events
 
 trait BaseDeduplication {
   def deDup[T](key: String, event: T, deDupEngine: DedupEngine, context: ProcessFunction[T, T],
