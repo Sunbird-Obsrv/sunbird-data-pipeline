@@ -2406,9 +2406,9 @@
           "reportPath": "district_monthly.csv"
         }
       },
-      "store": "azure",
-      "bucket": "{{ bucket }}",
-      "key": "druid-reports/"
+        "store": "azure",
+        "container": "{{ bucket }}",
+        "key": "druid-reports/"
     },
     "output": [
       {
@@ -2659,8 +2659,9 @@
           }
         ]
       },
-      "bucket": "{{ bucket }}",
-      "key": "druid-reports/"
+        "store": "azure",
+        "container": "{{ bucket }}",
+        "key": "druid-reports/"
     },
     "output": [
       {
@@ -3179,9 +3180,9 @@
                 "reportPath": "district_weekly.csv"
               }
       },
-      "store": "azure",
-      "bucket": "{{ bucket }}",
-      "key": "druid-reports/"
+        "store": "azure",
+        "container": "{{ bucket }}",
+        "key": "druid-reports/"
     },
     "output": [
       {
