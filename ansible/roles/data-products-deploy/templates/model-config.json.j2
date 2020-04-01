@@ -2401,11 +2401,12 @@
         ],
         "mergeConfig": {
           "frequency": "MONTH",
-          "basePath": {{spark_output_temp_dir}},
+          "basePath": {{ spark_output_temp_dir }},
           "rollup": 0,
           "reportPath": "district_monthly.csv"
         }
       },
+      "store": "azure",
       "bucket": "{{ bucket }}",
       "key": "druid-reports/"
     },
@@ -3178,6 +3179,7 @@
                 "reportPath": "district_weekly.csv"
               }
       },
+      "store": "azure",
       "bucket": "{{ bucket }}",
       "key": "druid-reports/"
     },
