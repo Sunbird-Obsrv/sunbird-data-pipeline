@@ -3,7 +3,6 @@ package org.sunbird.dp.functions
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
-import org.apache.flink.streaming.api.scala.OutputTag
 import org.apache.flink.util.Collector
 import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
 import org.slf4j.LoggerFactory
@@ -14,10 +13,6 @@ class DeduplicationFunction(config: PipelinePreprocessorConfig, @transient var d
   extends ProcessFunction[Event, Event] {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[DeduplicationFunction])
-
-  lazy val duplicateEventOutput: OutputTag[Event] = new OutputTag[Event](id = "duplicate-events")
-  lazy val uniqueEventOuput: OutputTag[Event] = new OutputTag[Event](id = "unique-events")
-
 
   override def open(parameters: Configuration): Unit = {
     if (dedupEngine == null) {
@@ -39,14 +34,14 @@ class DeduplicationFunction(config: PipelinePreprocessorConfig, @transient var d
       if (!dedupEngine.isUniqueEvent(event.mid)) {
         logger.info(s"Duplicate Event mid: ${event.mid}")
         event.markDuplicate()
-        ctx.output(duplicateEventOutput, event)
+        ctx.output(config.duplicateEventsOutputTag, event)
       } else {
         logger.info(s"Adding mid: ${event.mid} to Redis")
         dedupEngine.storeChecksum(event.mid)
-        ctx.output(uniqueEventOuput, event)
+        ctx.output(config.uniqueEventsOutputTag, event)
       }
     } else {
-      ctx.output(uniqueEventOuput, event)
+      ctx.output(config.uniqueEventsOutputTag, event)
     }
   }
 

@@ -4,7 +4,7 @@ import java.util
 
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer.Semantic
 import org.apache.flink.streaming.connectors.kafka.{FlinkKafkaConsumer, FlinkKafkaProducer}
-import org.ekstep.dp.core.BaseJobConfig
+import org.sunbird.dp.core.BaseJobConfig
 import org.sunbird.dp.domain.Events
 import org.sunbird.dp.serde._
 
