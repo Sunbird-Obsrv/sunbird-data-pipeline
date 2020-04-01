@@ -2651,13 +2651,23 @@
               "total_unique_devices_on_desktop_played_content"
             ],
             "dims": [
-              "state"
+              "state","date"
             ],
             "fileParameters": [
               "dims"
             ]
           }
-        ]
+        ],
+         "mergeConfig":
+         {
+           "frequency": "DAY",
+           "basePath": {{ spark_output_temp_dir }},
+           "rollup": 1,
+           "rollupAge": "ACADEMIC_YEAR",
+           "rollupCol": "Date",
+           "rollupRange": 1,
+           "reportPath": "desktop_consumption_report.csv"
+         }
       },
         "store": "azure",
         "container": "{{ bucket }}",
