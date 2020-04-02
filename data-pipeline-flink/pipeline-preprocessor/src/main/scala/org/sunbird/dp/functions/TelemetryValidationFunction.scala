@@ -3,7 +3,6 @@ package org.sunbird.dp.functions
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
-import org.apache.flink.streaming.api.scala.OutputTag
 import org.apache.flink.util.Collector
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.domain.Event
@@ -15,10 +14,6 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig, @transient
   extends ProcessFunction[Event, Event] {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[TelemetryValidationFunction])
-
-  lazy val invalidEvents: OutputTag[Event] = new OutputTag[Event]("validation-falied-events")
-  lazy val validEvents: OutputTag[Event] = new OutputTag[Event]("valid-events")
-
 
   override def open(parameters: Configuration): Unit = {
     if (schemaValidator == null) {
@@ -40,16 +35,16 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig, @transient
         logger.info(s"SCHEMA NOT FOUND FOR EID: ${event.eid}")
         logger.debug(s"SKIPPING EVENT ${event.mid} FROM VALIDATION")
         event.markSkipped()
-        ctx.output(validEvents, event)
+        ctx.output(config.validEventsOutputTag, event)
       } else {
         val validationReport = schemaValidator.validate(event)
         if (validationReport.isSuccess) {
           event.updateDefaults(config)
-          ctx.output(validEvents, event)
+          ctx.output(config.validEventsOutputTag, event)
         } else {
           val failedErrorMsg = schemaValidator.getInvalidFieldName(validationReport.toString)
           event.markValidationFailure(failedErrorMsg)
-          ctx.output(invalidEvents, event)
+          ctx.output(config.validationFailedEventsOutputTag, event)
         }
       }
     } catch {

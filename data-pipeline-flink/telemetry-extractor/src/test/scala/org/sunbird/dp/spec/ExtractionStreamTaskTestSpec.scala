@@ -2,26 +2,19 @@ package org.sunbird.dp.spec
 
 import java.util
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.typesafe.config.Config
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
-import org.apache.flink.streaming.api.scala.OutputTag
-import org.apache.flink.streaming.util.ProcessFunctionTestHarnesses
 import org.mockito.Mockito
 import org.mockito.Mockito._
 import org.scalatest.{ BeforeAndAfterAll, FlatSpec, Matchers }
-import org.sunbird.dp.cache.{ DedupEngine, RedisConnect }
 import org.sunbird.dp.fixture.EventFixture
-import org.sunbird.dp.functions.{ DeduplicationFunction, ExtractionFunction }
-import org.sunbird.dp.task.ExtractionConfig
 import redis.embedded.RedisServer
 import org.apache.flink.streaming.api.functions.sink.SinkFunction
 import org.apache.flink.runtime.testutils.MiniClusterResourceConfiguration
 import org.apache.flink.test.util.MiniClusterWithClientResource
 import org.scalatestplus.mockito.MockitoSugar
 import org.sunbird.dp.task.ExtractorStreamTask
-import org.sunbird.dp.core.FlinkKafkaConnector
 import org.apache.flink.streaming.api.functions.source.SourceFunction
 import org.apache.flink.streaming.api.functions.source.SourceFunction.SourceContext
 import org.sunbird.dp.task.ExtractionConfig
@@ -36,8 +29,8 @@ class ExtractionStreamTaskTestSpec extends FlatSpec with Matchers with BeforeAnd
     .setNumberTaskManagers(1)
     .build)
   var redisServer: RedisServer = _
-  val config = ConfigFactory.load("test.conf");
-  val extConfig: ExtractionConfig = new ExtractionConfig(config);
+  val config: Config = ConfigFactory.load("test.conf")
+  val extConfig: ExtractionConfig = new ExtractionConfig(config)
   val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
 
   override protected def beforeAll(): Unit = {
@@ -45,11 +38,11 @@ class ExtractionStreamTaskTestSpec extends FlatSpec with Matchers with BeforeAnd
     redisServer = new RedisServer(6340)
     redisServer.start()
 
-    when(mockKafkaUtil.getObjectSource(extConfig.kafkaInputTopic)).thenReturn(new ExtractorEventSource)
-    when(mockKafkaUtil.getObjectSink(extConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
-    when(mockKafkaUtil.getObjectSink(extConfig.kafkaSuccessTopic)).thenReturn(new LogEventsSink)
-    when(mockKafkaUtil.getRawSink(extConfig.kafkaSuccessTopic)).thenReturn(new RawEventsSink)
-    when(mockKafkaUtil.getRawSink(extConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
+    when(mockKafkaUtil.kafkaMapSource(extConfig.kafkaInputTopic)).thenReturn(new ExtractorEventSource)
+    when(mockKafkaUtil.kafkaMapSink(extConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
+    when(mockKafkaUtil.kafkaMapSink(extConfig.kafkaSuccessTopic)).thenReturn(new LogEventsSink)
+    when(mockKafkaUtil.kafkaStringSink(extConfig.kafkaSuccessTopic)).thenReturn(new RawEventsSink)
+    when(mockKafkaUtil.kafkaStringSink(extConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
 
     flinkCluster.before()
   }
