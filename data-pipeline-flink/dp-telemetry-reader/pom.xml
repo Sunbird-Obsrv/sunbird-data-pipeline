@@ -10,7 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
     <properties>
         <encoding>UTF-8</encoding>
-        <scoverage.plugin.version>1.4.0</scoverage.plugin.version>
     </properties>
     <artifactId>dp-telemetry-reader</artifactId>
     <version>0.0.1</version>
@@ -53,18 +52,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.20</version>
             </plugin>
-
-            <plugin>
-                <groupId>org.scoverage</groupId>
-                <artifactId>scoverage-maven-plugin</artifactId>
-                <version>${scoverage.plugin.version}</version>
-                <configuration>
-                    <scalaVersion>${scala.version}</scalaVersion>
-                    <aggregate>true</aggregate>
-                    <highlighting>true</highlighting>
-                </configuration>
-            </plugin>
-
         </plugins>
     </build>
 
