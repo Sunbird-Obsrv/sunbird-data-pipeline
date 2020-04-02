@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.job_name }}-jobmanager
+spec:
+  template:
+    metadata:
+      labels:
+        app: flink
+        component: {{ .Values.job_name }}-jobmanager
+    volumes:
+        - name: job-config
+          configMap:
+            name: {{ .Values.job_config }}
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: {{ .Values.job_name }}-jobmanager
+        image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
+        imagePullPolicy: Always
+        workingDir: /opt/flink
+        command: ["/opt/flink/standalone-job.sh"]
+        args: ["start-foreground",
+               "--job-classname={{ .Values.job_classname }}", 
+               "-Djobmanager.rpc.address={{ .Values.job_name }}-jobmanager",
+               "-Djobmanager.rpc.port=6123",
+               "-Dparallelism.default=1", 
+               "-Dblob.server.port=6124", 
+               "-Dqueryable-state.server.ports=6125",
+               "-Djobmanager.heap.size=1024m",
+               "-Dfs.azure.account.key.{{ .Values.azure_storage_account }}.blob.core.windows.net: {{ .Values.azure_storage_secret }}"]
+        ports:
+        - containerPort: 6123
+          name: rpc
+        - containerPort: 6124
+          name: blob
+        - containerPort: 6125
+          name: query
+        - containerPort: 8081
+          name: ui
