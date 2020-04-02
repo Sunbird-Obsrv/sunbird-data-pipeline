@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${JOB_NAME}-taskmanager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flink
+      component: ${JOB_NAME}-taskmanager
+  template:
+    metadata:
+      labels:
+        app: flink
+        component: ${JOB_NAME}-taskmanager
+    spec:
+      containers:
+      - name: ${JOB_NAME}-taskmanager
+        image: ${SUNBIRD_DATAPIPELINE_IMAGE}
+        workingDir: /opt/flink
+        command: ["/opt/flink/bin/taskmanager.sh"]
+        args: ["start-foreground",
+          "-Djobmanager.rpc.address=${JOB_NAME}-jobmanager",
+          "-Dtaskmanager.rpc.port=6122",
+          "-Dtaskmanager.heap.size=1024m",
+          "-Dfs.azure.account.key.{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net: ${AZURE_STORAGE_SECRET}"]
+        ports:
+        - containerPort: 6122
+          name: rpc
+        livenessProbe:
+          tcpSocket:
+            port: 6122
+          initialDelaySeconds: 30
+          periodSeconds: 60

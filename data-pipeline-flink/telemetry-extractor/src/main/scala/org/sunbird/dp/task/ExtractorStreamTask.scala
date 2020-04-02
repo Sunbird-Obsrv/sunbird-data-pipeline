@@ -26,12 +26,12 @@ import org.sunbird.dp.core.FlinkKafkaConnector
  * 		5.5 The events and audit event are then pushed to `raw` topic with appropriate flags. Increment the success counter by 1
  * 
  */
-class ExtractorStreamTask(config: ExtractionConfig, kafkaConnector: FlinkKafkaConnector) extends BaseStreamTask(config) {
+class ExtractorStreamTask(config: ExtractionConfig, kafkaConnector: FlinkKafkaConnector) {
 
   private val serialVersionUID = -7729362727131516112L
 
   def process(): Unit = {
-    implicit val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment();
+    implicit val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
     implicit val mapTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
     implicit val stringTypeInfo: TypeInformation[String] = TypeExtractor.getForClass(classOf[String])
     /**
@@ -45,7 +45,7 @@ class ExtractorStreamTask(config: ExtractionConfig, kafkaConnector: FlinkKafkaCo
      * 2. Push all unique events to unique topic.
      */
     val deDupStream: SingleOutputStreamOperator[util.Map[String, AnyRef]] =
-      env.addSource(kafkaConnector.getObjectSource(config.kafkaInputTopic), "telemetry-ingest-events-consumer")
+      env.addSource(kafkaConnector.kafkaMapSource(config.kafkaInputTopic), "telemetry-ingest-events-consumer")
         .process(new DeduplicationFunction(config))
         .setParallelism(config.deDupParallelism)
     /**
@@ -57,12 +57,13 @@ class ExtractorStreamTask(config: ExtractionConfig, kafkaConnector: FlinkKafkaCo
       deDupStream.getSideOutput(config.uniqueEventOutputTag)
         .process(new ExtractionFunction(config)).name("Extraction")
         .setParallelism(config.extractionParallelism)
-        
-    deDupStream.getSideOutput(config.duplicateEventOutputTag).addSink(kafkaConnector.getObjectSink(config.kafkaDuplicateTopic)).name("kafka-telemetry-duplicate-events-producer")
-    extractionStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaConnector.getRawSink(config.kafkaSuccessTopic)).name("kafka-telemetry-raw-events-producer")
-    extractionStream.getSideOutput(config.logEventsOutputTag).addSink(kafkaConnector.getObjectSink(config.kafkaSuccessTopic)).name("kafka-telemetry-log-events-producer")
-    extractionStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaConnector.getRawSink(config.kafkaFailedTopic)).name("kafka-telemetry-failed-events-producer")
-    env.execute(config.jobName)
+
+    deDupStream.getSideOutput(config.duplicateEventOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaDuplicateTopic)).name("kafka-telemetry-duplicate-events-producer")
+    extractionStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaSuccessTopic)).name("kafka-telemetry-raw-events-producer")
+    extractionStream.getSideOutput(config.logEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name("kafka-telemetry-log-events-producer")
+    extractionStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaFailedTopic)).name("kafka-telemetry-failed-events-producer")
+    env.execute("Telemetry Extractor")
+
   }
 }
 
@@ -71,8 +72,8 @@ object ExtractorStreamTask {
 
   def main(args: Array[String]): Unit = {
     val config = ConfigFactory.load().withFallback(ConfigFactory.systemEnvironment())
-    val eConfig = new ExtractionConfig(config);
-    val kafkaUtil = new FlinkKafkaConnector(eConfig);
+    val eConfig = new ExtractionConfig(config)
+    val kafkaUtil = new FlinkKafkaConnector(eConfig)
     val task = new ExtractorStreamTask(eConfig, kafkaUtil)
     task.process()
   }

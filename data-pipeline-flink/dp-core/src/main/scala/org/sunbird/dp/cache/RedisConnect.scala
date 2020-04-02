@@ -6,9 +6,8 @@ import redis.clients.jedis.JedisPoolConfig
 import java.time.Duration
 
 import com.typesafe.config.Config
-import org.ekstep.dp.core.BaseJobConfig
+import org.sunbird.dp.core.BaseJobConfig
 import org.slf4j.LoggerFactory
-
 
 class RedisConnect(jobConfig: BaseJobConfig) extends java.io.Serializable {
 
