@@ -15,7 +15,7 @@ jobs:
       - run:
           name: sonar
           command: |
-                 mvn -X sonar:sonar -Dlog4j.configuration=./logs sonar:sonar -Dsonar.projectKey=project-sunbird_sunbird-data-pipeline -Dsonar.organization=project-sunbird -Dsonar.host.url=https://sonarcloud.io -Dsonar.scala.coverage.reportPaths=/home/circleci/dp/data-pipeline-flink/telemetry-extractor/target/scoverage.xml
+                 mvn -X sonar:sonar -Dlog4j.configuration=./logs sonar:sonar -Dsonar.projectKey=project-sunbird_sunbird-data-pipeline -Dsonar.organization=project-sunbird -Dsonar.host.url=https://sonarcloud.io -Dsonar.scala.coverage.reportPaths=/home/circleci/dp/data-pipeline-flink/telemetry-extractor/target/scoverage.xml,/home/circleci/dp/data-pipeline-flink/dp-core/target/scoverage.xml
 
 workflows:
   version: 2.1
