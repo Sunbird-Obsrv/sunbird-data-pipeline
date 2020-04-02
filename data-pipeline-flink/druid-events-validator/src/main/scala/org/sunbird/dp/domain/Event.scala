@@ -6,20 +6,19 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
 
   private val jobName = "DruidValidator"
 
-  def markDuplicate(): Unit = {
-    telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])
-    telemetry.add("flags.dv_processed", false)
-    telemetry.add("flags.dv_duplicate_event", true)
-  }
-
-  def markSuccess(): Unit = {
+  def markValidationSuccess(): Unit = {
     telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])
     telemetry.add("flags.dv_processed", true)
   }
 
-  def markSkipped(): Unit = {
+  def markSkippedValidation(): Unit = {
     telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])
-    telemetry.add("flags.dv_skipped", true)
+    telemetry.add("flags.dv_validation_skipped", true)
+  }
+
+  def markSkippedDedup(): Unit = {
+    telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])
+    telemetry.add("flags.dv_dedup_skipped", true)
   }
 
   def markValidationFailure(errorMsg: String): Unit = {

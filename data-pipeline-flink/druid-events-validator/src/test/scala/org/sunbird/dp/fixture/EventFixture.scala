@@ -72,7 +72,7 @@ object EventFixture {
       |"object":{"id":"do_21268948156283289611498","type":"Content","ver":"2"},"flags":{"tv_processed":true,"dd_processed":true,
       |"device_location_retrieved":true,"user_location_retrieved":false,"content_data_retrieved":true,"user_data_retrieved":true,
       |"device_data_retrieved":true},"devicedata":{"statecustomcode":"KA","country":"India","city":"Banglore","countrycode":"IND",
-      |"state":"Karnataka","statecode":"","districtcustom":"","statecustomname":"","uaspec":{"platform":123,"ver":""},"firstaccess":1545920698694},
+      |"state":"Karnataka","statecode":"","districtcustom":"","statecustomname":"","uaspec":{"platform":"123","ver":""},"firstaccess":1545920698694},
       |"userdata":{"district":"","state":"","subject":["English"],"grade":["KG","Class 1","Class 2","Class 3","Class 4","Class 5",
       |"Class 6","Class 7","Class 8","Class 9","Class 10","Class 11","Class 12","Other"],"language":["English","Gujarati","Hindi"]},
       |"contentdata":{"pkgversion":1,"language":["Assamese"],"lastpublishedon":1499851249497,"contenttype":"Resource",
@@ -102,4 +102,13 @@ object EventFixture {
       |"@timestamp":"2019-03-20T00:01:38.435Z"}
     """.stripMargin
 
+  val VALID_SERACH_EVENT: String =
+    """
+      |{"eid":"SEARCH","ets":1577826509166,"ver":"3.0","mid":"LP.1577826509166.c5d13bb7-43c6-4174-9bbe-b06aed6758f2",
+      |"actor":{"id":"org.ekstep.learning.platform","type":"System"},"context":{"channel":"in.ekstep",
+      |"pdata":{"id":"dev.sunbird.learning.platform","pid":"search-service","ver":"1.0"},"env":"search"},
+      |"edata":{"size":112402,"query":"","filters":{},"sort":{},"type":"all","topn":[{"identifier":"do_11278295762528665612"},
+      |{"identifier":"domain_14443"},{"identifier":"do_11243460107708006418"},{"identifier":"tpd_medium_code"},
+      |{"identifier":"0128260921141493762"}]},"syncts":1577826509166}
+    """.stripMargin
 }

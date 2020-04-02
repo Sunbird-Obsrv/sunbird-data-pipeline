@@ -87,6 +87,7 @@ class DruidValidatorStreamTask(config: DruidValidatorConfig, kafkaConnector: Fli
 
 }
 
+// $COVERAGE-OFF$ Disabling scoverage as the below code can only be invoked within flink cluster
 object DruidValidatorStreamTask {
 
   def main(args: Array[String]): Unit = {
@@ -97,3 +98,4 @@ object DruidValidatorStreamTask {
       task.process()
   }
 }
+// $COVERAGE-ON$

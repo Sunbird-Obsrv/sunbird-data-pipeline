@@ -12,8 +12,6 @@ import com.google.common.io.ByteStreams
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.task.DruidValidatorConfig
-
-import scala.collection.mutable
 import scala.collection.JavaConverters._
 import scala.util.Try
 
@@ -38,13 +36,6 @@ class SchemaValidator(config: DruidValidatorConfig) extends java.io.Serializable
     private val searchEventJsonSchema = schemaFactory.getJsonSchema(JsonLoader.fromString(searchEventSchema))
 
     logger.info("Schema initialization completed for telemetry objects...")
-
-    def loadSchemaFiles(schemaDirPath: java.nio.file.Path): List[String] = {
-        val schemaFiles = Try(Files.newDirectoryStream(schemaDirPath)).map { stream =>
-            stream.iterator().asScala.toList.map(path => path.getFileName.toString)
-        }.getOrElse(List[String]())
-        schemaFiles
-    }
 
     @throws[IOException]
     @throws[ProcessingException]

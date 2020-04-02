@@ -14,7 +14,7 @@ class RouterFunction(config: DruidValidatorConfig, @transient var dedupEngine: D
                     (implicit val eventTypeInfo: TypeInformation[Event])
   extends ProcessFunction[Event, Event] with BaseDeduplication {
 
-    private[this] val logger = LoggerFactory.getLogger(classOf[DruidValidatorFunction])
+    private[this] val logger = LoggerFactory.getLogger(classOf[RouterFunction])
 
     override def open(parameters: Configuration): Unit = {
         if (dedupEngine == null) {
@@ -30,17 +30,21 @@ class RouterFunction(config: DruidValidatorConfig, @transient var dedupEngine: D
 
     override def processElement(event: Event,
                                 ctx: ProcessFunction[Event, Event]#Context,
-                                out: Collector[Event]): Unit = {
+                                collector: Collector[Event]): Unit = {
 
-        if (event.isLogEvent) ctx.output(config.logRouterOutputTag, event)
-        else if (event.isErrorEvent) ctx.output(config.errorRouterOutputTag, event)
-        else if (event.isSummaryEvent) {
-            deDup[Event](event.mid(), event, ctx,
-                config.summaryRouterOutputTag, config.duplicateEventOutputTag, flagName = "dv_duplicate")(dedupEngine)
+        if (event.isLogEvent) {
+            event.markSkippedDedup()
+            ctx.output(config.logRouterOutputTag, event)
+        }
+        else if (event.isErrorEvent) {
+            event.markSkippedDedup()
+            ctx.output(config.errorRouterOutputTag, event)
         }
         else {
+            val outputTag = if (event.isSummaryEvent) config.summaryRouterOutputTag else config.telemetryRouterOutputTag
+//            ctx.output(outputTag, event)
             deDup[Event](event.mid(), event, ctx,
-                config.telemetryRouterOutputTag, config.duplicateEventOutputTag, flagName = "dv_duplicate")(dedupEngine)
+                outputTag, config.duplicateEventOutputTag, flagName = "dv_duplicate")(dedupEngine)
         }
 
     }

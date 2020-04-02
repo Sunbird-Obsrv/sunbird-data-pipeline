@@ -21,14 +21,20 @@ class DruidValidatorFunction(config: DruidValidatorConfig)(implicit val eventTyp
                               ctx: ProcessFunction[Event, Event]#Context,
                               collector: Collector[Event]): Unit = {
 
-    println("inside validator")
-    val validationReport = schemaValidator.validate(event)
-    if (validationReport.isSuccess) {
+    if(event.isLogEvent) {
+      event.markSkippedValidation()
       ctx.output(config.validEventOutputTag, event)
-    } else {
-      val failedErrorMsg = schemaValidator.getInvalidFieldName(validationReport.toString)
-      event.markValidationFailure(failedErrorMsg)
-      ctx.output(config.invalidEventOutputTag, event)
+    }
+    else {
+      val validationReport = schemaValidator.validate(event)
+      if (validationReport.isSuccess) {
+        event.markValidationSuccess()
+        ctx.output(config.validEventOutputTag, event)
+      } else {
+        val failedErrorMsg = schemaValidator.getInvalidFieldName(validationReport.toString)
+        event.markValidationFailure(failedErrorMsg)
+        ctx.output(config.invalidEventOutputTag, event)
+      }
     }
   }
 }
