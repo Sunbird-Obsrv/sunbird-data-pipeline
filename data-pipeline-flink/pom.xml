@@ -17,7 +17,7 @@
 	<description>
 		Datapipeline Flink jobs for stream processing
 	</description>
-	<url>https://ekstep.org/</url>
+	<url>https://sunbird.org/</url>
 
 	<modules>
 		<module>dp-telemetry-reader</module>
@@ -33,7 +33,7 @@
 		<flink.version>1.10.0</flink.version>
 		<kafka.version>2.4.0</kafka.version>
 		<jackson-jaxrs.version>1.9.13</jackson-jaxrs.version>
-		<scoverage.plugin.version>1.4.0</scoverage.plugin.version>
+		<scoverage.plugin.version>1.1.1</scoverage.plugin.version>
 	</properties>
 
 	<repositories>
