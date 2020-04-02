@@ -4,12 +4,13 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
-import org.apache.flink.streaming.api.scala.OutputTag
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.functions.DeduplicationFunction
+import com.typesafe.config.ConfigFactory
+import org.sunbird.dp.core.FlinkKafkaConnector
 
 
-class DeduplicationStreamTask(config: DeduplicationConfig) extends BaseStreamTask(config) {
+class DeduplicationStreamTask(config: DeduplicationConfig, kafkaConnector: FlinkKafkaConnector) {
 
   private val serialVersionUID = 146697324640926024L
 
@@ -19,21 +20,21 @@ class DeduplicationStreamTask(config: DeduplicationConfig) extends BaseStreamTas
     env.enableCheckpointing(config.checkpointingInterval)
 
     try {
-      val kafkaConsumer = kafkaEventSchemaConsumer[Event](config.kafkaInputTopic)
+      val kafkaConsumer = kafkaConnector.kafkaEventSource[Event](config.kafkaInputTopic)
 
       val dataStream: SingleOutputStreamOperator[Event] =
         env.addSource(kafkaConsumer, "kafka-telemetry-valid-consumer")
-          .process(new DeduplicationFunction(config)).setParallelism(2)
+          .process(new DeduplicationFunction(config)).setParallelism(1)
 
       /**
         * Separate sinks for duplicate events and unique events
         */
-      dataStream.getSideOutput(new OutputTag[Event]("unique-events"))
-        .addSink(kafkaEventSchemaProducer(config.kafkaSuccessTopic))
+      dataStream.getSideOutput(config.uniqueEventsOutputTag)
+        .addSink(kafkaConnector.kafkaEventSink(config.kafkaSuccessTopic))
         .name("kafka-telemetry-unique-producer")
 
-      dataStream.getSideOutput(new OutputTag[Event]("duplicate-events"))
-        .addSink(kafkaEventSchemaProducer(config.kafkaDuplicateTopic))
+      dataStream.getSideOutput(config.uniqueEventsOutputTag)
+        .addSink(kafkaConnector.kafkaEventSink(config.kafkaDuplicateTopic))
         .name("kafka-telemetry-duplicate-producer")
 
       env.execute("DeduplicationFlinkJob")
@@ -47,9 +48,10 @@ class DeduplicationStreamTask(config: DeduplicationConfig) extends BaseStreamTas
 }
 
 object DeduplicationStreamTask {
-  val config = new DeduplicationConfig
-  def apply(): DeduplicationStreamTask = new DeduplicationStreamTask(config)
   def main(args: Array[String]): Unit = {
-    DeduplicationStreamTask.apply().process()
+    val config = ConfigFactory.load().withFallback(ConfigFactory.systemEnvironment())
+    val dedupConfig = new DeduplicationConfig(config)
+    val dedupTask: DeduplicationStreamTask = new DeduplicationStreamTask(dedupConfig, new FlinkKafkaConnector(dedupConfig))
+    dedupTask.process()
   }
 }

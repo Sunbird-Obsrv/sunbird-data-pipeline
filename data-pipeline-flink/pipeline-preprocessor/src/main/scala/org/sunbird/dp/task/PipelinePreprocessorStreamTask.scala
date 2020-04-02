@@ -4,12 +4,13 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
-import org.apache.flink.streaming.api.scala.OutputTag
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.functions.{DeduplicationFunction, TelemetryRouterFunction, TelemetryValidationFunction}
+import com.typesafe.config.ConfigFactory
+import org.sunbird.dp.core.FlinkKafkaConnector
 
-class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig) extends BaseStreamTask(config) {
+class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaConnector: FlinkKafkaConnector) {
 
   private val serialVersionUID = 146697324640926024L
   private val logger = LoggerFactory.getLogger(classOf[PipelinePreprocessorStreamTask])
@@ -21,7 +22,7 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig) extends
     env.enableCheckpointing(config.checkpointingInterval)
 
     try {
-      val kafkaConsumer = kafkaEventSchemaConsumer[Event](config.kafkaInputTopic)
+      val kafkaConsumer = kafkaConnector.kafkaEventSource[Event](config.kafkaInputTopic)
 
       /**
         * Process functions
@@ -36,37 +37,22 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig) extends
              .setParallelism(2)
 
        val duplicationStream: SingleOutputStreamOperator[Event] =
-         validtionStream.getSideOutput(new OutputTag[Event]("valid-events"))
+         validtionStream.getSideOutput(config.validEventsOutputTag)
            .process(new DeduplicationFunction(config)).name("Deduplication")
            .setParallelism(2)
 
       val routerStream: SingleOutputStreamOperator[Event] =
-        duplicationStream.getSideOutput(new OutputTag[Event]("unique-events"))
+        duplicationStream.getSideOutput(config.uniqueEventsOutputTag)
             .process(new TelemetryRouterFunction(config)).name("Router")
 
       /**
         * Sink for invalid events, duplicate events, log events, audit events and telemetry events
         */
-
-      validtionStream.getSideOutput(new OutputTag[Event]("validation-falied-events"))
-        .addSink(kafkaEventSchemaProducer(config.kafkaFailedTopic))
-        .name("kafka-telemetry-invalid-events-producer")
-
-      duplicationStream.getSideOutput(new OutputTag[Event]("duplicate-events"))
-        .addSink(kafkaEventSchemaProducer[Event](config.kafkaDuplicateTopic))
-        .name("kafka-telemetry-duplicate-producer")
-
-      routerStream.getSideOutput(new OutputTag[Event]("primary-route-events"))
-          .addSink(kafkaEventSchemaProducer[Event](config.kafkaPrimaryRouteTopic))
-        .name("kafka-primary-route-producer")
-
-      routerStream.getSideOutput(new OutputTag[Event]("secondary-route-events"))
-        .addSink(kafkaEventSchemaProducer[Event](config.kafkaSecondaryRouteTopic))
-        .name("kafka-secondary-route-producer")
-
-      routerStream.getSideOutput(new OutputTag[Event]("audit-route-events"))
-        .addSink(kafkaEventSchemaProducer[Event](config.kafkaAuditRouteTopic))
-        .name("kafka-audit-route-producer")
+      validtionStream.getSideOutput(config.validationFailedEventsOutputTag).addSink(kafkaConnector.kafkaEventSink(config.kafkaFailedTopic)).name("kafka-telemetry-invalid-events-producer")
+      duplicationStream.getSideOutput(config.duplicateEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaDuplicateTopic)).name("kafka-telemetry-duplicate-producer")
+      routerStream.getSideOutput(config.primaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
+      routerStream.getSideOutput(config.secondaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaSecondaryRouteTopic)).name("kafka-secondary-route-producer")
+      routerStream.getSideOutput(config.auditRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaAuditRouteTopic)).name("kafka-audit-route-producer")
 
     } catch {
       case ex: Exception =>
@@ -80,9 +66,11 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig) extends
 }
 
 object PipelinePreprocessorStreamTask {
-  val config = new PipelinePreprocessorConfig
-  def apply(): PipelinePreprocessorStreamTask = new PipelinePreprocessorStreamTask(config)
+
   def main(args: Array[String]): Unit = {
-    PipelinePreprocessorStreamTask.apply().process()
+    val config = ConfigFactory.load().withFallback(ConfigFactory.systemEnvironment())
+    val preProcessorConfig = new PipelinePreprocessorConfig(config)
+    val streamtask: PipelinePreprocessorStreamTask = new PipelinePreprocessorStreamTask(preProcessorConfig, new FlinkKafkaConnector(preProcessorConfig))
+    streamtask.process()
   }
 }

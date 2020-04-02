@@ -35,6 +35,7 @@
 		<flink.version>1.10.0</flink.version>
 		<kafka.version>2.4.0</kafka.version>
 		<jackson-jaxrs.version>1.9.13</jackson-jaxrs.version>
+		<scoverage.plugin.version>1.4.0</scoverage.plugin.version>
 	</properties>
 
 	<repositories>
@@ -71,6 +72,16 @@
 					<configuration>
 						<source>1.8</source>
 						<target>1.8</target>
+					</configuration>
+				</plugin>
+				<plugin>
+				<groupId>org.scoverage</groupId>
+					<artifactId>scoverage-maven-plugin</artifactId>
+					<version>${scoverage.plugin.version}</version>
+					<configuration>
+						<scalaVersion>${scala.version}</scalaVersion>
+						<aggregate>true</aggregate>
+						<highlighting>true</highlighting>
 					</configuration>
 				</plugin>
 			</plugins>

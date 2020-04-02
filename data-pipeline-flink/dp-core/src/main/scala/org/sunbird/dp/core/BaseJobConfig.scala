@@ -1,14 +1,13 @@
-package org.ekstep.dp.core
+package org.sunbird.dp.core
 
 import java.util.Properties
 import java.io.Serializable
 
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.Config
 import org.apache.kafka.clients.producer.ProducerConfig
 
-trait BaseJobConfig extends Serializable {
+class BaseJobConfig(val config: Config) extends Serializable {
 
-  val config: Config = ConfigFactory.load()
   val kafkaBrokerServers: String = config.getString("kafka.broker-servers")
   val zookeeper: String = config.getString("kafka.zookeeper")
   val groupId: String = config.getString("kafka.groupId")
