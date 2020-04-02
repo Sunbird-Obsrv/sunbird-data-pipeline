@@ -8,12 +8,12 @@ spec:
       labels:
         app: flink
         component: {{ .Values.job_name }}-jobmanager
-    volumes:
-        - name: job-config
-          configMap:
-            name: {{ .Values.job_config }}
     spec:
       restartPolicy: OnFailure
+      volumes:
+      - name: job-config
+        configMap:
+          name: {{ .Values.job_config }}
       containers:
       - name: {{ .Values.job_name }}-jobmanager
         image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
@@ -38,3 +38,6 @@ spec:
           name: query
         - containerPort: 8081
           name: ui
+        volumeMounts:
+          - name: job-config
+            mountPath: /opt/flink/conf/{{ .Values.job_name }}.conf

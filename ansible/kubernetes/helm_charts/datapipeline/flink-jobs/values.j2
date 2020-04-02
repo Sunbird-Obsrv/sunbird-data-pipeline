@@ -1,3 +1,18 @@
+### Flink data pipeline jobs configuration ###
+
+namespace: {{ namespace }}
+imagepullsecrets: {{ imagepullsecrets }}
+dockerhub: {{ dockerhub }}
+repository: {{ datapipeline_repository|default('data-pipeline') }}
+image_tag: {{ image_tag }}
+
+taskManagerReplicaCount: {{ task_manager_replica_count|default(1) }}
+
+job_name=telemetry-extractor
+job_classname=org.sunbird.dp.task.ExtractorStreamTask
+azure_storage_account=sunbirddevprivate
+azure_storage_secret=storage_account_secret
+
 telemetry-extractor-config: |
 kafka {
   input.topic = "{{env}}.telemetry.ingest"

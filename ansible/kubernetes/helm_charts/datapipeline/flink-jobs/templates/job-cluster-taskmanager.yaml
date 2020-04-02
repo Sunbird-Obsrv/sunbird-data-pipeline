@@ -20,14 +20,16 @@ spec:
           name: {{ .Values.job_config }}
       containers:
       - name: {{ .Values.job_name }}-taskmanager
-        image: ${SUNBIRD_DATAPIPELINE_IMAGE}
+        image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
+        imagePullPolicy: Always
         workingDir: /opt/flink
         command: ["/opt/flink/bin/taskmanager.sh"]
         args: ["start-foreground",
           "-Djobmanager.rpc.address={{ .Values.job_name }}-jobmanager",
           "-Dtaskmanager.rpc.port=6122",
           "-Dtaskmanager.heap.size=1024m",
-          "-Dfs.azure.account.key.{{ .Values.azure_storage_account }}.blob.core.windows.net: {{ .Values.azure_storage_secret }}"]
+          "-Dfs.azure.account.key.{{ .Values.azure_storage_account }}.blob.core.windows.net: {{ .Values.azure_storage_secret }}",
+          "-Dconfig.file=/opt/flink/conf/{{ .Values.job_name }}.conf"]
         ports:
         - containerPort: 6122
           name: rpc
@@ -36,3 +38,6 @@ spec:
             port: 6122
           initialDelaySeconds: 30
           periodSeconds: 60
+        volumeMounts:
+          - name: job-config
+            mountPath: /opt/flink/conf/{{ .Values.job_name }}.conf
