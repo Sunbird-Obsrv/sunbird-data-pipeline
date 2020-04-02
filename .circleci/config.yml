@@ -1,27 +1,16 @@
 version: 2.1
 jobs:
-  ep-build:
-    working_directory: ~/dp/data-pipeline-flink
-    machine: true
-    steps:
-      - checkout:
-          path: ~/dp
-      - restore_cache:
-          key: dependency-cache-{{ checksum "pom.xml" }}
-      - save_cache:
-          key: dependency-cache-{{ checksum "pom.xml" }}
-          paths: ~/.m2
-      - run:
-        name: data-pipeline-flink-build
-        command: mvn scoverage:report
-      - run:
-          name: sonar
-          command: |
-                 mvn -X sonar:sonar -Dsonar.projectKey=project-sunbird_sunbird-data-pipeline -Dsonar.organization=project-sunbird -Dsonar.host.url=https://sonarcloud.io -Dsonar.scala.coverage.reportPaths=/home/circleci/dp/data-pipeline-flink/telemetry-extractor/target/scoverage.xml,/home/circleci/dp/data-pipeline-flink/pipeline-preprocessor/target/scoverage.xml,/home/circleci/dp/data-pipeline-flink/dp-core/target/scoverage.xml
-
+    ep-build:
+        working_directory: ~/dp/data-pipeline-flink
+        machine: true
+        steps:
+            - {checkout: {path: ~/dp}}
+            - {restore_cache: {key: 'dependency-cache-{{ checksum "pom.xml" }}'}}
+            - {save_cache: {key: 'dependency-cache-{{ checksum "pom.xml" }}', paths: ~/.m2}}
+            - {run: null, name: data-pipeline-flink-build, command: 'mvn scoverage:report'}
+            - {run: {name: sonar, command: "mvn -X sonar:sonar -Dsonar.projectKey=project-sunbird_sunbird-data-pipeline -Dsonar.organization=project-sunbird -Dsonar.host.url=https://sonarcloud.io -Dsonar.scala.coverage.reportPaths=/home/circleci/dp/data-pipeline-flink/telemetry-extractor/target/scoverage.xml,/home/circleci/dp/data-pipeline-flink/pipeline-preprocessor/target/scoverage.xml,/home/circleci/dp/data-pipeline-flink/dp-core/target/scoverage.xml\n"}}
 workflows:
-  version: 2.1
-  build_and_test:
-    jobs:
-      - ep-build
-#testing quality gate
+    version: 2.1
+    build_and_test:
+        jobs:
+            - ep-build
