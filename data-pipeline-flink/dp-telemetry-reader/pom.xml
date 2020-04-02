@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <properties>
         <encoding>UTF-8</encoding>
-        <scoverage.plugin.version>1.1.0</scoverage.plugin.version>
+        <scoverage.plugin.version>1.4.0</scoverage.plugin.version>
     </properties>
     <artifactId>dp-telemetry-reader</artifactId>
     <version>0.0.1</version>
