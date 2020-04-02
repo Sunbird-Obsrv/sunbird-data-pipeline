@@ -5,51 +5,54 @@ import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.apache.flink.util.Collector
 import org.slf4j.LoggerFactory
+import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
+import org.sunbird.dp.core.BaseDeduplication
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.task.PipelinePreprocessorConfig
 import org.sunbird.dp.util.SchemaValidator
 
-class TelemetryValidationFunction(config: PipelinePreprocessorConfig, @transient var schemaValidator: SchemaValidator = null)
+class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
+                                  @transient var schemaValidator: SchemaValidator = null,
+                                  @transient var dedupEngine: DedupEngine = null)
                                  (implicit val eventTypeInfo: TypeInformation[Event])
-  extends ProcessFunction[Event, Event] {
+  extends ProcessFunction[Event, Event] with BaseDeduplication {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[TelemetryValidationFunction])
 
+
   override def open(parameters: Configuration): Unit = {
+    if (dedupEngine == null) {
+      val redisConnect = new RedisConnect(config)
+      dedupEngine = new DedupEngine(redisConnect, config.dedupStore, config.cacheExpirySeconds)
+    }
     if (schemaValidator == null) {
       schemaValidator = new SchemaValidator(config)
     }
   }
 
-  override def close(): Unit = super.close()
-
-  // lazy val schemaValidator: SchemaValidator = new SchemaValidator(config)
+  override def close(): Unit = {
+    super.close()
+    dedupEngine.closeConnectionPool()
+  }
 
   override def processElement(event: Event,
-                              ctx: ProcessFunction[Event, Event]#Context,
+                              context: ProcessFunction[Event, Event]#Context,
                               out: Collector[Event]): Unit = {
-
     dataCorrection(event)
-    try {
-      if (!schemaValidator.schemaFileExists(event)) {
-        logger.info(s"SCHEMA NOT FOUND FOR EID: ${event.eid}")
-        logger.debug(s"SKIPPING EVENT ${event.mid} FROM VALIDATION")
-        event.markSkipped()
-        ctx.output(config.validEventsOutputTag, event)
+    if (!schemaValidator.schemaFileExists(event)) {
+      logger.info(s"Schema not found, Skipping the: ${event.eid} from validation")
+      event.markSkipped()
+      deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag, flagName = "dd_processed")(dedupEngine)
+    } else {
+      val validationReport = schemaValidator.validate(event)
+      if (validationReport.isSuccess) {
+        event.updateDefaults(config)
+        deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag, flagName = "dd_processed")(dedupEngine)
       } else {
-        val validationReport = schemaValidator.validate(event)
-        if (validationReport.isSuccess) {
-          event.updateDefaults(config)
-          ctx.output(config.validEventsOutputTag, event)
-        } else {
-          val failedErrorMsg = schemaValidator.getInvalidFieldName(validationReport.toString)
-          event.markValidationFailure(failedErrorMsg)
-          ctx.output(config.validationFailedEventsOutputTag, event)
-        }
+        val failedErrorMsg = schemaValidator.getInvalidFieldName(validationReport.toString)
+        event.markValidationFailure(failedErrorMsg)
+        context.output(config.validationFailedEventsOutputTag, event)
       }
-    } catch {
-      case ex: Exception =>
-        logger.error("Error validating JSON event", ex)
     }
 
   }

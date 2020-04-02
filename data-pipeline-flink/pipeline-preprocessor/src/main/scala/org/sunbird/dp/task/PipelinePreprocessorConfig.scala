@@ -42,5 +42,6 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val primaryRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("primary-route-events")
   val secondaryRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("secondary-route-events")
   val auditRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("audit-route-events")
+  val shareRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("share-route-events")
 
 }
