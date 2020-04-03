@@ -15,9 +15,9 @@ class TelemetryRouterFunction(config: PipelinePreprocessorConfig)
       case "AUDIT" => ctx.output(config.auditRouteEventsOutputTag, event)
       case "SHARE" => ctx.output(config.shareRouteEventsOutputTag, event)
       case _ => if (config.secondaryRouteEids.contains(event.eid())) {
-        ctx.output(config.primaryRouteEventsOutputTag, event)
-      } else {
         ctx.output(config.secondaryRouteEventsOutputTag, event)
+      } else {
+        ctx.output(config.primaryRouteEventsOutputTag, event)
       }
     }
   }

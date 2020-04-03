@@ -23,13 +23,15 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
 
   // Kafka Topic Configuration
   val kafkaInputTopic: String = config.getString("kafka.input.topic")
-  val kafkaSuccessTopic: String = config.getString("kafka.output.success.topic")
-  val kafkaFailedTopic: String = config.getString("kafka.output.failed.topic")
-  val kafkaDuplicateTopic: String = config.getString("kafka.output.duplicate.topic")
+
   val kafkaPrimaryRouteTopic: String = config.getString("kafka.output.primary.route.topic")
   val kafkaSecondaryRouteTopic: String = config.getString("kafka.output.secondary.route.topic")
+
   val kafkaAuditRouteTopic: String = config.getString("kafka.output.audit.route.topic")
+
+  val kafkaFailedTopic: String = config.getString("kafka.output.failed.topic")
   val kafkaMalformedTopic: String = config.getString("kafka.output.malformed.topic")
+  val kafkaDuplicateTopic: String = config.getString("kafka.output.duplicate.topic")
 
   val secondaryRouteEids: List[String] = config.getStringList("router.secondary.routes.eid").asScala.toList
 
@@ -37,14 +39,17 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
 
   val includedProducersForDedup: List[String] = config.getStringList("dedup.producer.included.ids").asScala.toList
 
-  // Output Tags
-  val validEventsOutputTag: OutputTag[Event] = OutputTag[Event]("valid-events")
-  val uniqueEventsOutputTag: OutputTag[Event] = OutputTag[Event]("unique-events")
+  // Validation & dedup Stream out put tag
   val validationFailedEventsOutputTag: OutputTag[Event] = OutputTag[Event]("validation-failed-events")
+  val uniqueEventsOutputTag: OutputTag[Event] = OutputTag[Event]("unique-events")
   val duplicateEventsOutputTag: OutputTag[Event] = OutputTag[Event]("duplicate-events")
+
+  // Router stream out put tags
   val primaryRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("primary-route-events")
   val secondaryRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("secondary-route-events")
   val auditRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("audit-route-events")
+
+  // Share events out put tags
   val shareRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("share-route-events")
   val shareItemEventOutTag: OutputTag[String] = OutputTag[String]("share-route-events")
 
