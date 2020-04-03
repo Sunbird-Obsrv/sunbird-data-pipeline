@@ -71,7 +71,7 @@ class ExtractorStreamTask(config: ExtractionConfig, kafkaConnector: FlinkKafkaCo
 object ExtractorStreamTask {
 
   def main(args: Array[String]): Unit = {
-    val config = ConfigFactory.load().withFallback(ConfigFactory.systemEnvironment())
+    val config = ConfigFactory.load("telemetry-extractor.conf").withFallback(ConfigFactory.systemEnvironment())
     val eConfig = new ExtractionConfig(config)
     val kafkaUtil = new FlinkKafkaConnector(eConfig)
     val task = new ExtractorStreamTask(eConfig, kafkaUtil)
