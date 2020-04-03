@@ -1,6 +1,7 @@
 package org.sunbird.dp.domain
 
 import java.util
+import java.util.UUID
 
 import org.apache.commons.lang3.StringUtils
 import org.joda.time.format.DateTimeFormat
@@ -72,5 +73,14 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
     else if (atTimestamp != null) telemetry.addFieldIfAbsent("syncts", dateFormatter.parseMillis(atTimestamp))
     else if (strSyncts != null) telemetry.addFieldIfAbsent("@timestamp", strSyncts)
   }
+
+  def edataDir: String = telemetry.read[String]("edata.dir").value
+
+  def eventSyncTs: Long = telemetry.read[Long]("syncts").value.asInstanceOf[Number].longValue()
+
+  def eventContext: util.Map[String, AnyRef] = telemetry.read[util.Map[String, AnyRef]]("context").value.asInstanceOf[util.Map[String, AnyRef]]
+
+  def eventTags: Seq[AnyRef] = telemetry.read[Seq[AnyRef]]("tags").value.asInstanceOf[Seq[AnyRef]]
+
 
 }

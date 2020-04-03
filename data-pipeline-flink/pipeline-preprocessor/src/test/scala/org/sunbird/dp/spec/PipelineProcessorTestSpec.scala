@@ -18,7 +18,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.fixture.EventFixtures
-import org.sunbird.dp.functions.{TelemetryRouterFunction, TelemetryValidationFunction}
+import org.sunbird.dp.functions.{ShareEventsFlattener, TelemetryRouterFunction, TelemetryValidationFunction}
 import org.sunbird.dp.task.PipelinePreprocessorConfig
 import redis.embedded.RedisServer
 
@@ -76,7 +76,17 @@ class PipelineProcessorTestSpec extends FlatSpec with Matchers with BeforeAndAft
     val event = new Event(gson.fromJson[util.Map[String, AnyRef]](EventFixtures.EVENT_WITH_MID, mapType))
     harness.processElement(event, new Date().getTime)
     val validEvents = harness.getSideOutput(mockConfig.secondaryRouteEventsOutputTag)
-    println(validEvents)
+  }
+
+  "Flattening SHARE events" should "Should flatten the share events" in {
+
+    implicit val mapTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
+    val telemetryValidationFunc = new ShareEventsFlattener(mockConfig)(mapTypeInfo)
+    val harness = ProcessFunctionTestHarnesses.forProcessFunction(telemetryValidationFunc)
+    val mapType: Type = new TypeToken[util.Map[String, AnyRef]](){}.getType
+    val event = new Event(gson.fromJson[util.Map[String, AnyRef]](EventFixtures.SHARE_EVENT, mapType))
+    harness.processElement(event, new Date().getTime)
+    val validEvents = harness.getSideOutput(mockConfig.secondaryRouteEventsOutputTag)
   }
 
 

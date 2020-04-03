@@ -35,9 +35,7 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
     dedupEngine.closeConnectionPool()
   }
 
-  override def processElement(event: Event,
-                              context: ProcessFunction[Event, Event]#Context,
-                              out: Collector[Event]): Unit = {
+  override def processElement(event: Event, context: ProcessFunction[Event, Event]#Context, out: Collector[Event]): Unit = {
     dataCorrection(event)
     if (!schemaValidator.schemaFileExists(event)) {
       logger.info(s"Schema not found, Skipping the: ${event.eid} from validation")
@@ -54,7 +52,6 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
         context.output(config.validationFailedEventsOutputTag, event)
       }
     }
-
   }
 
   private def dataCorrection(event: Event): Event = {

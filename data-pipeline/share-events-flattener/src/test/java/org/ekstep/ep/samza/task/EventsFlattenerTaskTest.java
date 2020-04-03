@@ -78,6 +78,7 @@ public class EventsFlattenerTaskTest {
         try {
             eventsFlattenerTask = new EventsFlattenerTask(configMock, contextMock);
             stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_SHARE_EVENT);
+            System.out.println(envelopeMock.getMessage());
             eventsFlattenerTask.process(envelopeMock, collectorMock, coordinatorMock);
             Mockito.verify(collectorMock, times(4)).send(Matchers.argThat(validateEventObject(Arrays.asList("File", "import", "download"), true)));
         } catch (Exception e) {
