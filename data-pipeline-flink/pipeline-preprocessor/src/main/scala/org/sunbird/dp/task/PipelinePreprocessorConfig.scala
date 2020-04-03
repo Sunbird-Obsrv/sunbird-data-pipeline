@@ -14,6 +14,7 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   private val serialVersionUID = 2905979434303791379L
 
   implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
+  implicit val stringTypeInfo: TypeInformation[String] = TypeExtractor.getForClass(classOf[String])
 
   val schemaPath: String = config.getString("telemetry.schema.path")
 
@@ -43,5 +44,6 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val secondaryRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("secondary-route-events")
   val auditRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("audit-route-events")
   val shareRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("share-route-events")
+  val shareItemEventOutTag: OutputTag[String] = OutputTag[String]("share-route-events")
 
 }

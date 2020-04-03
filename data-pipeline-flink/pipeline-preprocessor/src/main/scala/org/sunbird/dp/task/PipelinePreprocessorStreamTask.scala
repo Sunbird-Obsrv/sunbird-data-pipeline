@@ -8,7 +8,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.core.FlinkKafkaConnector
 import org.sunbird.dp.domain.Event
-import org.sunbird.dp.functions.{TelemetryRouterFunction, TelemetryValidationFunction}
+import org.sunbird.dp.functions.{ShareEventsFlattener, TelemetryRouterFunction, TelemetryValidationFunction}
 
 class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaConnector: FlinkKafkaConnector) {
 
@@ -73,18 +73,22 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
         validationStream.getSideOutput(config.uniqueEventsOutputTag)
           .process(new TelemetryRouterFunction(config)).name("Router")
 
-//      val flattenerStream: SingleOutputStreamOperator[Event] =
-//        routerStream.getSideOutput(config.primaryRouteEventsOutputTag)
-//            .process(new ShareEventsFlattener(config)).name("Share Events Flattener")
+      val shareEventsFlattener: SingleOutputStreamOperator[Event] =
+        routerStream.getSideOutput(config.primaryRouteEventsOutputTag)
+            .process(new ShareEventsFlattener(config)).name("Share Events Flattener")
 
       /**
        * Sink for invalid events, duplicate events, log events, audit events and telemetry events
        */
       validationStream.getSideOutput(config.validationFailedEventsOutputTag).addSink(kafkaConnector.kafkaEventSink(config.kafkaFailedTopic)).name("kafka-telemetry-invalid-events-producer")
       validationStream.getSideOutput(config.duplicateEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaDuplicateTopic)).name("kafka-telemetry-duplicate-producer")
+
       routerStream.getSideOutput(config.primaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
       routerStream.getSideOutput(config.secondaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaSecondaryRouteTopic)).name("kafka-secondary-route-producer")
       routerStream.getSideOutput(config.auditRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaAuditRouteTopic)).name("kafka-audit-route-producer")
+
+      shareEventsFlattener.getSideOutput(config.shareItemEventOutTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
+      shareEventsFlattener.getSideOutput(config.primaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
 
     } catch {
       case ex: Exception =>

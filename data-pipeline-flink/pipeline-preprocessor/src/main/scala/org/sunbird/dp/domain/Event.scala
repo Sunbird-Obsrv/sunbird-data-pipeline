@@ -1,13 +1,10 @@
 package org.sunbird.dp.domain
 
 import java.util
-import java.util.UUID
 
 import org.apache.commons.lang3.StringUtils
 import org.joda.time.format.DateTimeFormat
 import org.sunbird.dp.task.PipelinePreprocessorConfig
-
-import scala.collection.mutable
 
 class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
 
@@ -41,9 +38,9 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
     }
   }
 
-  def markSkipped(): Unit = {
+  def markSkipped(flagName:String): Unit = {
     telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])
-    telemetry.add("flags.tv_skipped", true)
+    telemetry.add(s"flag.$flagName", true)
   }
 
   def markDuplicate(): Unit = {
@@ -52,9 +49,9 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
     telemetry.add("flags.dd_duplicate_event", true)
   }
 
-  def markSuccess(): Unit = {
+  def markSuccess(flagName: String): Unit = {
     telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])
-    telemetry.add("flags.dd_processed", true)
+    telemetry.add(s"flag.$flagName", true)
     telemetry.add("type", "events")
   }
 

@@ -39,7 +39,7 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
     dataCorrection(event)
     if (!schemaValidator.schemaFileExists(event)) {
       logger.info(s"Schema not found, Skipping the: ${event.eid} from validation")
-      event.markSkipped()
+      event.markSkipped("tv_processed") // Telemetry validation skipped
       deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag, flagName = "dd_processed")(dedupEngine)
     } else {
       val validationReport = schemaValidator.validate(event)
