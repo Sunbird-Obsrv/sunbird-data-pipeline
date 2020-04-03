@@ -4039,11 +4039,7 @@
             ],
             "mergeConfig": {
                 "frequency": "DAY",
-                "basePath": {
-                    {
-                        spark_output_temp_dir
-                    }
-                },
+                "basePath": {{ spark_output_temp_dir },
                 "rollup": 1,
                 "rollupAge": "ACADEMIC_YEAR",
                 "rollupCol": "Date",
@@ -4249,72 +4245,76 @@
     "deviceMapping": false
   },
   "textbook-progress-report": {
-    "search": {
-      "type": "none"
-    },
-    "model": "org.ekstep.analytics.model.report.TextBookProgressModel",
-    "modelParams": {
-      "reportConfig": {
-        "id": "content_progress_metrics",
-        "metrics": [],
-        "labels": {
-          "board": "Board",
-          "medium": "Medium",
-          "gradeLevel": "Grade",
-          "subject": "Subject",
-          "resourceType": "Content Type",
-          "live": "Live",
-          "review": "Review",
-          "draft": "Draft",
-          "unlisted": "Limited Sharing",
-          "application_ecml": "Created on Diksha",
-          "video_youtube": "YouTube Content",
-          "video_mp4": "Uploaded Videos",
-          "application_pdf": "Text Content",
-          "application_html": "Uploaded Interactive Content",
-          "identifier": "Content ID",
-          "creator": "Created By",
-          "createdOn": "Creation Date",
-          "lastPublishDate": "Last Publish Date",
-          "status": "Status",
-          "pkgVersion": "Number of times Published",
-          "lastPublishedOn": "Pending in current status since",
-          "pendingInCurrentStatus": "Pending in current status since"
-        },
-        "output": [
-          {
-            "type": "csv",
-            "dims": []
-          }
-        ]
+      "search": {
+        "type": "none"
       },
-      "filter": {
-        "tenantId": "",
-        "slugName": ""
-      },
-      "store": "azure",
-      "format": "csv",
-      "key": "druid-reports/",
-      "filePath": "druid-reports/",
-      "container": "{{ bucket }}",
-      "folderPrefix": [
-        "slug",
-        "reportName"
-      ],
-      "sparkCassandraConnectionHost": "{{core_cassandra_host}}"
-    },
-    "output": [
-      {
-        "to": "console",
-        "params": {
-          "printEvent": false
+      "model": "org.ekstep.analytics.model.report.TextBookProgressModel",
+      "modelParams": {
+        "reportConfig": {
+          "id": "content_progress_metrics",
+          "metrics": [],
+          "labels": {
+            "board": "Board",
+            "medium": "Medium",
+            "gradeLevel": "Grade",
+            "subject": "Subject",
+            "resourceType": "Content Type",
+            "live": "Live",
+            "review": "Review",
+            "draft": "Draft",
+            "unlisted": "Limited Sharing",
+            "application_ecml": "Created on Diksha",
+            "video_youtube": "YouTube Content",
+            "video_mp4": "Uploaded Videos",
+            "application_pdf": "Text Content",
+            "application_html": "Uploaded Interactive Content",
+            "identifier": "Content ID",
+            "creator": "Created By",
+            "createdOn": "Creation Date",
+            "lastPublishDate": "Last Publish Date",
+            "status": "Status",
+            "pkgVersion": "Number of times Published",
+            "lastPublishedOn": "Pending in current status since",
+            "pendingInCurrentStatus": "Pending in current status since"
+          },
+          "output": [{
+              "type": "csv",
+              "dims": []
+            }],
+          "mergeConfig": {
+          "frequency": "WEEK",
+          "basePath": {{ spark_output_temp_dir }},
+          "rollup": 0,
+          "reportPath": "content_progress_metrics.csv"
         }
-      }
-    ],
-    "parallelization": 8,
-    "appName": "Textbook Progress Metrics Model",
-    "deviceMapping": false
-  },
+        },
+        "filter": {
+          "tenantId": "",
+          "slugName": ""
+        },
+        "store": "azure",
+        "format": "csv",
+        "key": "druid-reports/",
+        "filePath": "druid-reports/",
+        "container": "{{ bucket }}",
+        "folderPrefix": [
+          "slug",
+          "reportName"
+        ],
+        "sparkCassandraConnectionHost": "{{core_cassandra_host}}"
+      },
+      "output": [
+        {
+          "to": "console",
+          "params": {
+            "printEvent": false
+          }
+        }
+      ],
+      "parallelization": 8,
+      "appName": "Textbook Progress Metrics Model",
+      "deviceMapping": false
+    },
   "audit-metrics-report": {
       "search": {
         "type": "none"
