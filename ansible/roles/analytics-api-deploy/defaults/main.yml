@@ -10,7 +10,7 @@ cassandra:
 
 geo_location_city: "{{ env }}_geo_location_city"
 geo_location_city_ipv4: "{{ env }}_geo_location_city_ipv4"
-report_config: "{{env}}__report_config"
+report_config: "{{env}}_report_config"
 default_channel_id: "in.ekstep"
 consumer_channel_cache_type: ConsumerChannel
 artifact_name: "analytics-api-2.0-dist.zip"
