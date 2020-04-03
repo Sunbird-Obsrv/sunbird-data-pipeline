@@ -3,7 +3,7 @@ package org.sunbird.dp.spec
 import java.util
 
 import com.google.gson.Gson
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.ConfigFactory
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.runtime.testutils.MiniClusterResourceConfiguration
@@ -12,7 +12,7 @@ import org.apache.flink.streaming.api.functions.source.SourceFunction
 import org.apache.flink.streaming.api.functions.source.SourceFunction.SourceContext
 import org.apache.flink.test.util.MiniClusterWithClientResource
 import org.mockito.Mockito
-import org.mockito.Mockito._
+import org.mockito.Mockito.when
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
 import org.sunbird.dp.core.FlinkKafkaConnector
@@ -30,8 +30,8 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
     .setNumberTaskManagers(1)
     .build)
   var redisServer: RedisServer = _
-  val config: Config = ConfigFactory.load("test.conf")
-  val ppConfig: PipelinePreprocessorConfig = new PipelinePreprocessorConfig(config)
+  val config = ConfigFactory.load("test.conf");
+  val ppConfig: PipelinePreprocessorConfig = new PipelinePreprocessorConfig(config);
   val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
 
   override protected def beforeAll(): Unit = {
@@ -44,12 +44,6 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
 
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
 
-    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
-    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaPrimaryRouteTopic)).thenReturn(new TelemetryPrimaryEventSink)
-    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaSecondaryRouteTopic)).thenReturn(new TelemetrySecondaryEventSink)
-    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaFailedTopic)).thenReturn(new TelemetryFailedEventsSink)
-    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaAuditRouteTopic)).thenReturn(new TelemetryAuditEventSink)
-    //    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaMalformedTopic)).thenReturn(new TelemetryFailedEventsSink)
 
     flinkCluster.before()
   }
@@ -156,7 +150,6 @@ class TelemetryAuditEventSink extends SinkFunction[Event] {
 object TelemetryAuditEventSink {
   val values: util.List[Event] = new util.ArrayList()
 }
-
 
 class DupEventsSink extends SinkFunction[Event] {
 

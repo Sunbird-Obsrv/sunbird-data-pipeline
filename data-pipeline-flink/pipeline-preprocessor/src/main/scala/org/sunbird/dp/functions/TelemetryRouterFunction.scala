@@ -11,6 +11,7 @@ class TelemetryRouterFunction(config: PipelinePreprocessorConfig)
   override def processElement(event: Event,
                               ctx: ProcessFunction[Event, Event]#Context,
                               out: Collector[Event]): Unit = {
+    println(event.eid())
     event.eid().toUpperCase() match {
       case "AUDIT" => ctx.output(config.auditRouteEventsOutputTag, event)
       case "SHARE" => ctx.output(config.shareRouteEventsOutputTag, event)
