@@ -31,7 +31,7 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
     }
   }
 
-  def isSummaryEvent: Boolean = eid != null && eid == "ME_WORKFLOW_SUMMARY"
+  def isSummaryEvent: Boolean = "ME_WORKFLOW_SUMMARY".equalsIgnoreCase(eid)
 
   def isSearchEvent: Boolean = "SEARCH".equalsIgnoreCase(eid)
 
