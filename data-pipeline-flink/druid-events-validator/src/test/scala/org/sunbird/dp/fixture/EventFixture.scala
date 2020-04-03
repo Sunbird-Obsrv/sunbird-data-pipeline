@@ -1,0 +1,114 @@
+package org.sunbird.dp.fixture
+
+object EventFixture {
+
+  val VALID_DENORM_TELEMETRY_EVENT: String =
+    """
+      |{"actor":{"type":"User","id":"4c4530df-0d4f-42a5-bd91-0366716c8c24"},"edata":{"id":"content-detail",
+      |"type":"OTHER","pageid":"content-detail","subtype":"detail","extra":{"values":[{"isDownloaded":true,
+      |"isUpdateAvailable":false}]}},"eid":"INTERACT","ver":"3.0","ets":1551344686294,
+      |"context":{"pdata":{"ver":"2.0.localstaging-debug","pid":"sunbird.app","id":"staging.sunbird.app"},
+      |"channel":"01231711180382208027","env":"home","did":"6c61348dc9841f27c96f4887b64ee1f777d74c38",
+      |"sid":"cef2d0be-83fc-4988-8ad9-1b72399e6d3a","cdata":[]},"mid":"3318a611-50fa-4ae9-9167-7b4390a62b9f",
+      |"object":{"id":"do_21228031946955980819","type":"Worksheet","version":"1.0",
+      |"rollup":{"l4":"do_21270636501657190413450","l1":"do_21270636097196032013440","l2":"do_21270636501655552013444",
+      |"l3":"do_21270636501657190413448"}},"tags":[],"syncts":1551344699388,"@timestamp":"2019-02-28T09:04:59.388Z",
+      |"flags":{"tv_processed":true,"dd_processed":true,"device_location_retrieved":true,"user_location_retrieved":false,
+      |"content_data_retrieved":true,"user_data_retrieved":true,"device_data_retrieved":true},"type":"events",
+      |"ts":"2019-02-28T09:04:46.294+0000","devicedata":{"statecustomcode":"","country":"","city":"","countrycode":"",
+      |"state":"","statecode":"","districtcustom":"","statecustomname":"","uaspec":{},"firstaccess":1545920698694},
+      |"userdata":{"district":"","state":"","subject":["English"],"grade":["KG","Class 1","Class 2","Class 3","Class 4",
+      |"Class 5","Class 6","Class 7","Class 8","Class 9","Class 10","Class 11","Class 12","Other"],"language":["English",
+      |"Gujarati","Hindi"]},"contentdata":{"pkgversion":1,"language":["Assamese"],"lastpublishedon":1499851249497,
+      |"contenttype":"Resource","lastupdatedon":1499851152176,"framework":"NCF","name":"Test review process",
+      |"mimetype":"application/vnd.ekstep.ecml-archive","objecttype":"Content","mediatype":"content","status":"Live"}}
+    """.stripMargin
+
+  val INVALID_DENORM_TELEMETRY_EVENT: String =
+    """
+      |{"actor":{"type":"User","id":"4c4530df-0d4f-42a5-bd91-0366716c8c24"},"edata":{"id":"content-detail",
+      |"type":"OTHER","pageid":"content-detail","subtype":"detail","extra":{"values":[{"isDownloaded":true,
+      |"isUpdateAvailable":false}]}},"eid":"INTERACT","ver":"3.0","ets":1551344686294,
+      |"context":{"pdata":{"ver":"2.0.localstaging-debug","pid":"sunbird.app","id":"staging.sunbird.app"},
+      |"channel":"01231711180382208027","env":"home","did":"6c61348dc9841f27c96f4887b64ee1f777d74c38",
+      |"sid":"cef2d0be-83fc-4988-8ad9-1b72399e6d3a","cdata":[]},"mid":"3318a611-50fa-4ae9-9167-7b4390a62b9f",
+      |"object":{"id":"do_21228031946955980819","type":"Worksheet","version":"1.0",
+      |"rollup":{"l4":"do_21270636501657190413450","l1":"do_21270636097196032013440","l2":"do_21270636501655552013444",
+      |"l3":"do_21270636501657190413448"}},"tags":[],"syncts":1551344699388,"@timestamp":"2019-02-28T09:04:59.388Z",
+      |"flags":{"tv_processed":true,"dd_processed":true,"device_location_retrieved":true,"user_location_retrieved":false,
+      |"content_data_retrieved":true,"user_data_retrieved":true,"device_data_retrieved":true},"type":"events",
+      |"ts":"2019-02-28T09:04:46.294+0000","devicedata":{"statecustomcode":"","country":"","city":"","countrycode":"",
+      |"state":"","statecode":"","districtcustom":"","statecustomname":"","uaspec":{},"firstaccess":1545920698694},
+      |"userdata":{"district":"","state":"","subject":["English"],"grade":["KG","Class 1","Class 2","Class 3","Class 4",
+      |"Class 5","Class 6","Class 7","Class 8","Class 9","Class 10","Class 11","Class 12","Other"],"language":["English",
+      |"Gujarati","Hindi"]},"contentdata":{"pkgversion":1,"language":["Assamese"],"lastpublishedon":1499851249497,
+      |"contenttype":"Resource","lastupdatedon":1499851152176,"framework":["NCF"],"name":"Test review process",
+      |"mimetype":"application/vnd.ekstep.ecml-archive","objecttype":"Content","mediatype":"content","status":"Live"}}
+    """.stripMargin
+
+  val VALID_DENORM_SUMMARY_EVENT: String =
+    """
+      |{"eid":"ME_WORKFLOW_SUMMARY","ets":1551409245701,"syncts":1551245418895,"ver":"1.0","mid":"4E12E343B0FD99D17490C1BD0DB69B4F",
+      |"uid":"8ec91293-21d8-4af3-aeaa-275b35dc8c98","context":{"pdata":{"id":"AnalyticsDataPipeline","ver":"1.0",
+      |"model":"WorkflowSummarizer"},"granularity":"SESSION","date_range":{"from":1551244161206,"to":1551245418814},"rollup":{},
+      |"cdata":[{"id":"9d282a8cbaf1546462a4851691b3bc00","type":"ContentSession"}]},"dimensions":{"did":"518bab62deac8129f563077b4f1ba516",
+      |"pdata":{"id":"staging.sunbird.portal","ver":"1.11.0","pid":"sunbird-portal.contenteditor.contentplayer"},"sid":"nlYPjt8_GoxB8LDtldOChvz7YH3odbKH",
+      |"channel":"0124784842112040965","type":"content","mode":"edit"},"edata":{"eks":{"interact_events_per_min":6.57,"start_time":1551244161206,
+      |"interact_events_count":63,"item_responses":[],"end_time":1551245418814,"events_summary":[{"id":"START","count":1},
+      |{"id":"IMPRESSION","count":21},{"id":"INTERACT","count":63},{"id":"END","count":1}],"page_summary":[{"id":"d9a95168-3e15-4aac-91e6-b8505116a497",
+      |"type":"workflow","env":"contentplayer","time_spent":193.83,"visit_count":1},{"id":"c0e843b3-ec91-42ed-8e21-21250d1cb205",
+      |"type":"workflow","env":"contentplayer","time_spent":15.07,"visit_count":1},{"id":"aaada2d5-6199-40d5-a85c-e2c778e8b18e",
+      |"type":"workflow","env":"contentplayer","time_spent":2.06,"visit_count":1},{"id":"5d710ee4-b589-49bb-ad1d-8c1d08e6a83a",
+      |"type":"workflow","env":"contentplayer","time_spent":17.33,"visit_count":1},{"id":"62481bee-3d01-4d5c-b0e9-50b837056604",
+      |"type":"workflow","env":"contentplayer","time_spent":12.75,"visit_count":1},{"id":"6cb0248e-b9ae-4beb-817a-0ec86b638d07",
+      |"type":"workflow","env":"contentplayer","time_spent":119.6,"visit_count":1},{"id":"36a9709b-e218-49b4-a19c-1a44947ab84d",
+      |"type":"workflow","env":"contentplayer","time_spent":113.67,"visit_count":1},{"id":"dcd4adc7-7959-45c5-8aa5-0a75b269850d",
+      |"type":"workflow","env":"contentplayer","time_spent":1365.73,"visit_count":1},{"id":"c40dd5a6-6375-42c7-8ce1-dba65a8a1826",
+      |"type":"workflow","env":"contentplayer","time_spent":5.36,"visit_count":1},{"id":"2b0278a0-6673-4ba0-9ba9-17b5bcc619d0",
+      |"type":"workflow","env":"contentplayer","time_spent":35.19,"visit_count":1},{"id":"244d4eee-17d4-4bad-8be3-0a8849dea53c",
+      |"type":"workflow","env":"contentplayer","time_spent":19.36,"visit_count":1},{"id":"5786c403-d267-4329-a61a-3dccc466a4ed",
+      |"type":"workflow","env":"contentplayer","time_spent":9.07,"visit_count":1}],"time_diff":1257.61,"telemetry_version":"3.0",
+      |"env_summary":[{"env":"contentplayer","time_spent":1909.02,"count":1}],"time_spent":575.19}},"tags":[],
+      |"object":{"id":"do_21268948156283289611498","type":"Content","ver":"2"},"flags":{"tv_processed":true,"dd_processed":true,
+      |"device_location_retrieved":true,"user_location_retrieved":false,"content_data_retrieved":true,"user_data_retrieved":true,
+      |"device_data_retrieved":true},"devicedata":{"statecustomcode":"KA","country":"India","city":"Banglore","countrycode":"IND",
+      |"state":"Karnataka","statecode":"","districtcustom":"","statecustomname":"","uaspec":{"platform":"123","ver":""},"firstaccess":1545920698694},
+      |"userdata":{"district":"","state":"","subject":["English"],"grade":["KG","Class 1","Class 2","Class 3","Class 4","Class 5",
+      |"Class 6","Class 7","Class 8","Class 9","Class 10","Class 11","Class 12","Other"],"language":["English","Gujarati","Hindi"]},
+      |"contentdata":{"pkgversion":1,"language":["Assamese"],"lastpublishedon":1499851249497,"contenttype":"Resource",
+      |"lastupdatedon":1499851152176,"framework":"NCF","name":"Test review process","mimetype":"application/vnd.ekstep.ecml-archive",
+      |"objecttype":"Content","mediatype":"content","status":"Live"}}
+    """.stripMargin
+
+  val VALID_LOG_EVENT: String =
+    """
+      |{"eid":"LOG","ets":1561717784892,"ver":"3.0","mid":"LP.1561717784892.1345e38d-f799-403f-93d9-1db71011627f",
+      |"actor":{"id":"org.ekstep.learning.platform","type":"System"},"context":{"channel":"505c7c48ac6dc1edc9b08f21db5a571d",
+      |"pdata":{"id":"sunbird.app","pid":"learning-service","ver":"1.0"},"env":"content",
+      |"did":"beea4401850780ee685120597a6428ab14ff47a2"},"edata":{"level":"INFO","type":"api_access","message":"",
+      |"params":[{"duration":5},{"protocol":"HTTP/1.1"},{"size":10350},{"method":"GET"},{"rid":"ekstep.content.find"},
+      |{"uip":"11.4.0.37"},{"url":"/learning-service/content/v3/read/do_31274885743485747215761"},{"status":200}]},
+      |"syncts":1561717784892,"flags":{"tv_processed":true,"dd_processed":true},"type":"events",
+      |"@timestamp":"2019-06-28T10:29:44.892Z"}
+    """.stripMargin
+
+  val VALID_ERROR_EVENT: String =
+    """
+      |{"eid":"ERROR","ets":1551344699388,"ver":"3.0","mid":"LP.1553040097857.bf0e4e15-014e-4a22-ba00-e02ff3c38784",
+      |"actor":{"id":"e85bcfb5-a8c2-4e65-87a2-0ebb43b45f01","type":"System"},"context":{"channel":"01235953109336064029450",
+      |"pdata":{"id":"prod.sunbird.learning.platform","pid":"learning-service","ver":"1.0"},"env":"framework"},
+      |"edata":{"err":"ERR_DATA_NOT_FOUND","stacktrace":"ERR_DATA_NOT_FOUND: Data not found with id : nullntat",
+      |"errtype":"system"},"flags":{"tv_processed":true,"dd_processed":true},"type":"events","syncts":1.553040098435E12,
+      |"@timestamp":"2019-03-20T00:01:38.435Z"}
+    """.stripMargin
+
+  val VALID_SERACH_EVENT: String =
+    """
+      |{"eid":"SEARCH","ets":1577826509166,"ver":"3.0","mid":"LP.1577826509166.c5d13bb7-43c6-4174-9bbe-b06aed6758f2",
+      |"actor":{"id":"org.ekstep.learning.platform","type":"System"},"context":{"channel":"in.ekstep",
+      |"pdata":{"id":"dev.sunbird.learning.platform","pid":"search-service","ver":"1.0"},"env":"search"},
+      |"edata":{"size":112402,"query":"","filters":{},"sort":{},"type":"all","topn":[{"identifier":"do_11278295762528665612"},
+      |{"identifier":"domain_14443"},{"identifier":"do_11243460107708006418"},{"identifier":"tpd_medium_code"},
+      |{"identifier":"0128260921141493762"}]},"syncts":1577826509166}
+    """.stripMargin
+}

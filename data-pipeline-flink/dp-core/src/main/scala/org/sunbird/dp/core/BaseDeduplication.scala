@@ -6,6 +6,7 @@ import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.cache.DedupEngine
+import org.sunbird.dp.domain.Events
 
 trait BaseDeduplication {
 
@@ -33,10 +34,14 @@ trait BaseDeduplication {
   }
 
   def markDuplicate[T](event: T, flagName: String): T = {
-    val flags: util.HashMap[String, Boolean] = new util.HashMap[String, Boolean]()
-    flags.put(flagName, true)
-    event.asInstanceOf[util.Map[String, AnyRef]].put("flags", flags.asInstanceOf[util.HashMap[String, AnyRef]])
-    event.asInstanceOf[T]
-
+      if(event.isInstanceOf[Events])  {
+          event.asInstanceOf[Events].updateFlags(flagName, true)
+      }
+      else {
+          val flags: util.HashMap[String, Boolean] = new util.HashMap[String, Boolean]()
+          flags.put(flagName, true)
+          event.asInstanceOf[util.Map[String, AnyRef]].put("flags", flags.asInstanceOf[util.HashMap[String, AnyRef]])
+      }
+      event.asInstanceOf[T]
   }
 }

@@ -1,0 +1,101 @@
+{
+  "type": "object",
+  "properties": {
+    "uaspec": {
+      "$ref": "resource:/schemas/telemetry/uaspec.json"
+    },
+    "firstaccess": {
+      "id": "http://api.sunbird.org/telemetry/devicedata/firstaccess",
+      "type": "number"
+    },
+    "state": {
+      "id": "http://api.sunbird.org/telemetry/devicedata/state",
+      "type": "string"
+    },
+    "statecode": {
+      "id": "http://api.sunbird.org/telemetry/devicedata/statecode",
+      "type": "string"
+    },
+    "city": {
+      "id": "http://api.sunbird.org/telemetry/devicedata/city",
+      "type": "string"
+    },
+    "countrycode": {
+      "id": "http://api.sunbird.org/telemetry/devicedata/countrycode",
+      "type": "string"
+    },
+    "country": {
+      "id": "http://api.sunbird.org/telemetry/devicedata/country",
+      "type": "string"
+    },
+    "os": {
+      "id": "http://api.sunbird.org/telemetry/devicedata/os",
+      "type": "string"
+    },
+    "make": {
+      "id": "http://api.sunbird.org/telemetry/devicedata/make",
+      "type": "string"
+    },
+    "id": {
+      "id": "http://api.sunbird.org/telemetry/devicedata/id",
+      "type": "string"
+    },
+    "mem": {
+      "id": "http://api.sunbird.org/telemetry/devicedata/mem",
+      "type": "string"
+    },
+    "idisk": {
+      "id": "http://api.sunbird.org/telemetry/devicedata/idisk",
+      "type": "string"
+    },
+    "edisk": {
+      "id": "http://api.sunbird.org/telemetry/devicedata/edisk",
+      "type": "string"
+    },
+    "scrn": {
+      "id": "http://api.sunbird.org/telemetry/devicedata/scrn",
+      "type": "string"
+    },
+    "camera": {
+      "id": "http://api.sunbird.org/telemetry/devicedata/camera",
+      "type": "string"
+    },
+    "cpu": {
+      "id": "http://api.sunbird.org/telemetry/devicedata/cpu",
+      "type": "string"
+    },
+    "sims": {
+      "id": "http://api.sunbird.org/telemetry/devicedata/sims",
+      "type": "string"
+    },
+    "iso3166statecode": {
+      "id": "http://api.sunbird.org/telemetry/devicedata/iso3166statecode",
+      "type": "string"
+    },
+    "statecustomcode":{
+      "id": "http://api.sunbird.org/telemetry/devicedata/statecustomcode",
+      "type": "string"
+    },
+    "statecustomname":{
+      "id": "http://api.sunbird.org/telemetry/devicedata/statecustomname",
+      "type": "string"
+    },
+    "districtcustom":{
+      "id": "http://api.sunbird.org/telemetry/devicedata/districtcustom",
+      "type": "string"
+    },
+    "userdeclared": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "id": "http://api.sunbird.org/telemetry/devicedata/userdeclared/state",
+          "type": "string"
+        },
+        "district": {
+          "id": "http://api.sunbird.org/telemetry/devicedata/userdeclared/district",
+          "type": "string"
+        }
+      }
+    }
+  }
+}
