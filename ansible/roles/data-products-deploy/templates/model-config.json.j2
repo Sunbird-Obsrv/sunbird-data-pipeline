@@ -3206,6 +3206,75 @@
     "appName": "Druid Query Processor",
     "deviceMapping": false
   },
+  "etb-metrics": {
+	"search": {
+		"type": "none"
+	},
+	"model": "org.ekstep.analytics.model.report.ETBMetricsJob",
+	"modelParams": {
+		"reportConfig": {
+			"id": "etb_metrics",
+			"metrics": [],
+			"labels": {
+				"date": "Date",
+				"identifier": "TextBook ID",
+				"name": "TextBook Name",
+				"medium": "Medium",
+				"gradeLevel": "Grade",
+				"subject": "Subject",
+				"createdOn": "Created On",
+				"lastUpdatedOn": "Last Updated On",
+				"totalQRCodes": "Total number of QR codes",
+				"contentLinkedQR": "Number of QR codes with atleast 1 linked content",
+				"withoutContentQR": "Number of QR codes with no linked content",
+				"withoutContentT1": "Term 1 QR Codes with no linked content",
+				"withoutContentT2": "Term 2 QR Codes with no linked content",
+				"status": "Status",
+				"totalContentLinked": "Total content linked",
+				"totalQRLinked": "Total QR codes linked to content",
+				"totalQRNotLinked": "Total number of QR codes with no linked content",
+				"leafNodesCount": "Total number of leaf nodes",
+				"leafNodeUnlinked": "Number of leaf nodes with no content"
+			},
+			"output": [{
+				"type": "csv",
+				"dims": ["identifier", "channel", "name"],
+				"fileParameters": ["id", "dims"]
+			}]
+		},
+		"esConfig": {
+			"request": {
+				"filters": {
+					"contentType": ["Textbook"],
+					"status": ["Live", "Review", "Draft"]
+				},
+				"sort_by": {
+					"createdOn": "desc"
+				},
+				"limit": 10000
+			}
+		},
+		"tenantConfig": {
+			"tenantId": "",
+			"slugName": ""
+		},
+		"store": "azure",
+		"format": "csv",
+		"key": "druid-reports/",
+		"filePath": "druid-reports/",
+		"container": "{{ bucket }}",
+		"folderPrefix": ["slug", "reportName"]
+	},
+	"output": [{
+		"to": "console",
+		"params": {
+			"printEvent": false
+		}
+	}],
+	"parallelization": 8,
+	"appName": "ETB Metrics Model",
+	"deviceMapping": false
+},
   "daily-metrics": {
     "search": {
         "type": "none"
@@ -4177,6 +4246,73 @@
     }],
     "parallelization": 8,
     "appName": "TPD Course Consumption Metrics Model",
+    "deviceMapping": false
+  },
+  "textbook-progress-report": {
+    "search": {
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.model.report.TextBookProgressModel",
+    "modelParams": {
+      "reportConfig": {
+        "id": "content_progress_metrics",
+        "metrics": [],
+        "labels": {
+          "board": "Board",
+          "medium": "Medium",
+          "gradeLevel": "Grade",
+          "subject": "Subject",
+          "resourceType": "Content Type",
+          "live": "Live",
+          "review": "Review",
+          "draft": "Draft",
+          "unlisted": "Limited Sharing",
+          "application_ecml": "Created on Diksha",
+          "video_youtube": "YouTube Content",
+          "video_mp4": "Uploaded Videos",
+          "application_pdf": "Text Content",
+          "application_html": "Uploaded Interactive Content",
+          "identifier": "Content ID",
+          "creator": "Created By",
+          "createdOn": "Creation Date",
+          "lastPublishDate": "Last Publish Date",
+          "status": "Status",
+          "pkgVersion": "Number of times Published",
+          "lastPublishedOn": "Pending in current status since",
+          "pendingInCurrentStatus": "Pending in current status since"
+        },
+        "output": [
+          {
+            "type": "csv",
+            "dims": []
+          }
+        ]
+      },
+      "filter": {
+        "tenantId": "",
+        "slugName": ""
+      },
+      "store": "azure",
+      "format": "csv",
+      "key": "druid-reports/",
+      "filePath": "druid-reports/",
+      "container": "{{ bucket }}",
+      "folderPrefix": [
+        "slug",
+        "reportName"
+      ],
+      "sparkCassandraConnectionHost": "{{core_cassandra_host}}"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Textbook Progress Metrics Model",
     "deviceMapping": false
   },
   "audit-metrics-report": {
