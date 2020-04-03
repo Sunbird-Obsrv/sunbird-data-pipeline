@@ -66,6 +66,17 @@ class DruidValidatorStreamTaskTestSpec  extends FlatSpec with Matchers with Befo
         DupEventsSink.values.size() should be (1)
         LogEventsSink.values.size() should be (1)
         ErrorEventsSink.values.size() should be (1)
+        
+        DupEventsSink.values.get(0).getFlags.get("dv_processed").booleanValue() should be(true)
+        DupEventsSink.values.get(0).getFlags.get("dv_duplicate").booleanValue() should be(true)
+
+        TelemetryEventsSink.values.get(0).getFlags.get("dv_processed").booleanValue() should be(true)
+
+        LogEventsSink.values.get(0).getFlags.get("dv_validation_skipped").booleanValue() should be(true)
+        LogEventsSink.values.get(0).getFlags.get("dv_dedup_skipped").booleanValue() should be(true)
+
+        FailedEventsSink.values.get(0).getFlags.get("dv_processed").booleanValue() should be(false)
+        FailedEventsSink.values.get(0).getFlags.get("dv_validation_failed").booleanValue() should be(true)
 
     }
 

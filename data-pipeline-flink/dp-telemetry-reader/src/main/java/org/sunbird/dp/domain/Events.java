@@ -135,7 +135,12 @@ public abstract class Events {
 
     public void updateFlags(String key, Boolean value) {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
-        telemetry.add(key, true);
+        telemetry.add("flags."+ key, value);
+    }
+
+    public Map<String, Boolean> getFlags() {
+        NullableValue<Map<String, Boolean>> flags = telemetry.read("flags");
+        return flags.value();
     }
 
 }
