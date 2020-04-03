@@ -7,6 +7,8 @@ import org.apache.commons.lang3.StringUtils
 import org.joda.time.format.DateTimeFormat
 import org.sunbird.dp.task.PipelinePreprocessorConfig
 
+import scala.collection.mutable
+
 class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
 
   private[this] val dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZoneUTC
@@ -78,9 +80,17 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
 
   def eventSyncTs: Long = telemetry.read[Long]("syncts").value.asInstanceOf[Number].longValue()
 
-  def eventContext: util.Map[String, AnyRef] = telemetry.read[util.Map[String, AnyRef]]("context").value.asInstanceOf[util.Map[String, AnyRef]]
+  def eventTags: Seq[AnyRef] = telemetry.read[Seq[AnyRef]]("tags").value
 
-  def eventTags: Seq[AnyRef] = telemetry.read[Seq[AnyRef]]("tags").value.asInstanceOf[Seq[AnyRef]]
+  def cdata: util.ArrayList[util.Map[String, AnyRef]] = telemetry.read[util.ArrayList[util.Map[String, AnyRef]]]("context.cdata").value
+
+  def eventPData: util.Map[String, AnyRef] = telemetry.read[util.Map[String, AnyRef]]("context.pdata").value
+
+  def sessionId: String = telemetry.read[String]("context.sid").value.toString
+
+  def env: String = telemetry.read[String]("context.env").value
+
+  def rollup: util.Map[String, AnyRef] = telemetry.read[util.Map[String, AnyRef]]("context.rollup").value
 
 
 }
