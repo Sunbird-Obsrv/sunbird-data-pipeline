@@ -12,6 +12,8 @@ class BaseJobConfig(val config: Config) extends Serializable {
   val zookeeper: String = config.getString("kafka.zookeeper")
   val groupId: String = config.getString("kafka.groupId")
   val checkpointingInterval: Int = config.getInt("task.checkpointing.interval")
+  val restartAttempts: Int = config.getInt("task.restart-strategy.attempts")
+  val delayBetweenAttempts: Long = config.getLong("task.restart-strategy.delay")
 
   val parallelism: Int = config.getInt("task.parallelism")
 
