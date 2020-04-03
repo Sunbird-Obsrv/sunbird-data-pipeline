@@ -30,23 +30,17 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
 
   def markValidationFailure(errorMsg: String): Unit = {
     telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])
-    telemetry.add("flags.tv_processed", false)
+    telemetry.add("flags.pp_validation_processed", false)
     telemetry.addFieldIfAbsent("metadata", new util.HashMap[String, AnyRef])
     if (null != errorMsg) {
-      telemetry.add("metadata.tv_error", errorMsg)
+      telemetry.add("metadata.validation_error", errorMsg)
       telemetry.add("metadata.src", jobName)
     }
   }
 
-  def markSkipped(flagName:String): Unit = {
+  def markSkipped(flagName: String): Unit = {
     telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])
     telemetry.add(s"flag.$flagName", true)
-  }
-
-  def markDuplicate(): Unit = {
-    telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])
-    telemetry.add("flags.dd_processed", false)
-    telemetry.add("flags.dd_duplicate_event", true)
   }
 
   def markSuccess(flagName: String): Unit = {

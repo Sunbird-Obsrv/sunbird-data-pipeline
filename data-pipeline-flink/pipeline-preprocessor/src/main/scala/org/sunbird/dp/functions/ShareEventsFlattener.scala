@@ -28,7 +28,7 @@ class ShareEventsFlattener(config: PipelinePreprocessorConfig)
         context.output(config.shareItemEventOutTag, new Gson().toJson(shareItemEvent))
       })
     })
-    shareEvent.markSuccess("share_event_flatten")
+    shareEvent.markSuccess("pp_share_event_processed")
     context.output(config.primaryRouteEventsOutputTag, shareEvent)
   }
   def generateShareItemEvents(event: Event,
