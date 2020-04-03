@@ -1,35 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.job_name }}-taskmanager
+  name: {{ .Release.Name }}-taskmanager
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: flink
-      component: {{ .Values.job_name }}-taskmanager
+      component: {{ .Release.Name }}-taskmanager
   template:
     metadata:
       labels:
         app: flink
-        component: {{ .Values.job_name }}-taskmanager
+        component: {{ .Release.Name }}-taskmanager
     spec:
       volumes:
       - name: job-config
         configMap:
           name: {{ .Values.job_config }}
       containers:
-      - name: {{ .Values.job_name }}-taskmanager
+      - name: {{ .Release.Name }}-taskmanager
         image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
         imagePullPolicy: Always
         workingDir: /opt/flink
         command: ["/opt/flink/bin/taskmanager.sh"]
+{{- $job-config-key := .Release.Name }}
         args: ["start-foreground",
-          "-Djobmanager.rpc.address={{ .Values.job_name }}-jobmanager",
+          "-Djobmanager.rpc.address={{ .Release.Name }}-jobmanager",
           "-Dtaskmanager.rpc.port=6122",
-          "-Dtaskmanager.heap.size=1024m",
+          "-Dtaskmanager.heap.size={{ index .Values $job-config-key.task_manager_heap_size }}",
           "-Dfs.azure.account.key.{{ .Values.azure_storage_account }}.blob.core.windows.net: {{ .Values.azure_storage_secret }}",
-          "-Dconfig.file=/opt/flink/conf/{{ .Values.job_name }}.conf"]
+          "-Dconfig.file=/opt/flink/conf/{{ .Release.Name }}.conf"]
         ports:
         - containerPort: 6122
           name: rpc
@@ -40,4 +41,4 @@ spec:
           periodSeconds: 60
         volumeMounts:
           - name: job-config
-            mountPath: /opt/flink/conf/{{ .Values.job_name }}.conf
+            mountPath: /opt/flink/conf/{{ .Release.Name }}.conf
