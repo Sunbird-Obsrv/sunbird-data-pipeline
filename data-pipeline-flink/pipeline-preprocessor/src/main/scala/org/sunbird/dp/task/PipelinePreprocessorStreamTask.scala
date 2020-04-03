@@ -53,60 +53,59 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
     implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
     env.enableCheckpointing(config.checkpointingInterval)
 
-    try {
-      val kafkaConsumer = kafkaConnector.kafkaEventSource[Event](config.kafkaInputTopic)
+    val kafkaConsumer = kafkaConnector.kafkaEventSource[Event](config.kafkaInputTopic)
 
-      /**
-       * Process functions
-       * 1. TelemetryValidationFunction
-       * 2. DeduplicationFunction
-       * 3. TelemetryRouterFunction
-       * 4. Share Events Flattener
-       */
+    /**
+     * Process functions
+     * 1. TelemetryValidationFunction & DeduplicationFunction
+     * 3. TelemetryRouterFunction
+     * 4. Share Events Flattener
+     */
 
-      val validationStream: SingleOutputStreamOperator[Event] =
-        env.addSource(kafkaConsumer, "telemetry-raw-events-consumer")
-          .process(new TelemetryValidationFunction(config)).name("TelemetryValidator")
-          .setParallelism(2)
+    val validationStream: SingleOutputStreamOperator[Event] =
+      env.addSource(kafkaConsumer, "telemetry-raw-events-consumer")
+        .process(new TelemetryValidationFunction(config)).name("TelemetryValidator")
+        .setParallelism(2)
 
-      val routerStream: SingleOutputStreamOperator[Event] =
-        validationStream.getSideOutput(config.uniqueEventsOutputTag)
-          .process(new TelemetryRouterFunction(config)).name("Router")
+    val routerStream: SingleOutputStreamOperator[Event] =
+      validationStream.getSideOutput(config.uniqueEventsOutputTag)
+        .process(new TelemetryRouterFunction(config)).name("Router")
 
-      val shareEventsFlattener: SingleOutputStreamOperator[Event] =
-        routerStream.getSideOutput(config.primaryRouteEventsOutputTag)
-            .process(new ShareEventsFlattener(config)).name("Share Events Flattener")
+    val shareEventsFlattener: SingleOutputStreamOperator[Event] =
+      routerStream.getSideOutput(config.primaryRouteEventsOutputTag)
+        .process(new ShareEventsFlattener(config)).name("Share Events Flattener")
 
-      /**
-       * Sink for invalid events, duplicate events, log events, audit events and telemetry events
-       */
-      validationStream.getSideOutput(config.validationFailedEventsOutputTag).addSink(kafkaConnector.kafkaEventSink(config.kafkaFailedTopic)).name("kafka-telemetry-invalid-events-producer")
-      validationStream.getSideOutput(config.duplicateEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaDuplicateTopic)).name("kafka-telemetry-duplicate-producer")
+    /**
+     * Sink for invalid events, duplicate events, log events, audit events and telemetry events
+     */
+    validationStream.getSideOutput(config.validationFailedEventsOutputTag).addSink(kafkaConnector.kafkaEventSink(config.kafkaFailedTopic)).name("kafka-telemetry-invalid-events-producer")
+    validationStream.getSideOutput(config.duplicateEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaDuplicateTopic)).name("kafka-telemetry-duplicate-producer")
 
-      routerStream.getSideOutput(config.primaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
-      routerStream.getSideOutput(config.secondaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaSecondaryRouteTopic)).name("kafka-secondary-route-producer")
-      routerStream.getSideOutput(config.auditRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaAuditRouteTopic)).name("kafka-audit-route-producer")
 
-      shareEventsFlattener.getSideOutput(config.shareItemEventOutTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
-      shareEventsFlattener.getSideOutput(config.primaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
+    routerStream.getSideOutput(config.primaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
+    routerStream.getSideOutput(config.secondaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaSecondaryRouteTopic)).name("kafka-secondary-route-producer")
+    routerStream.getSideOutput(config.auditRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaAuditRouteTopic)).name("kafka-audit-route-producer")
+    routerStream.getSideOutput(config.auditRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
 
-    } catch {
-      case ex: Exception =>
-        ex.printStackTrace()
-        logger.error("Error when processing stream: ", ex)
-    }
+    /**
+     * Pushing "SHARE and SHARE_ITEM" event into out put topic sink(next_streaming_process = denorm)
+     */
+    shareEventsFlattener.getSideOutput(config.shareItemEventOutTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
+    shareEventsFlattener.getSideOutput(config.primaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
 
-    env.execute("PipelinePreprocessorStreamJob")
+
+    env.execute(config.job_name)
   }
 
 }
 
 object PipelinePreprocessorStreamTask {
-
   def main(args: Array[String]): Unit = {
     val config = ConfigFactory.load().withFallback(ConfigFactory.systemEnvironment())
-    val preProcessorConfig = new PipelinePreprocessorConfig(config)
-    val streamtask: PipelinePreprocessorStreamTask = new PipelinePreprocessorStreamTask(preProcessorConfig, new FlinkKafkaConnector(preProcessorConfig))
-    streamtask.process()
+    val eConfig = new PipelinePreprocessorConfig(config)
+    val kafkaUtil = new FlinkKafkaConnector(eConfig)
+    val task = new PipelinePreprocessorStreamTask(eConfig, kafkaUtil)
+    task.process()
   }
+
 }

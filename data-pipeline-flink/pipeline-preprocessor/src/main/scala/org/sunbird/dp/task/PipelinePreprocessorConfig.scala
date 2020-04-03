@@ -1,13 +1,13 @@
 package org.sunbird.dp.task
 
-import org.sunbird.dp.core.BaseJobConfig
-
-import scala.collection.JavaConverters._
 import com.typesafe.config.Config
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.scala.OutputTag
+import org.sunbird.dp.core.BaseJobConfig
 import org.sunbird.dp.domain.Event
+
+import scala.collection.JavaConverters._
 
 class PipelinePreprocessorConfig(override val config: Config) extends BaseJobConfig(config) {
 
@@ -32,10 +32,12 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val kafkaMalformedTopic: String = config.getString("kafka.output.malformed.topic")
 
   val secondaryRouteEids: List[String] = config.getStringList("router.secondary.routes.eid").asScala.toList
+
   val defaultChannel: String = config.getString("default.channel")
 
   val includedProducersForDedup: List[String] = config.getStringList("dedup.producer.included.ids").asScala.toList
 
+  // Output Tags
   val validEventsOutputTag: OutputTag[Event] = OutputTag[Event]("valid-events")
   val uniqueEventsOutputTag: OutputTag[Event] = OutputTag[Event]("unique-events")
   val validationFailedEventsOutputTag: OutputTag[Event] = OutputTag[Event]("validation-failed-events")
@@ -45,5 +47,7 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val auditRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("audit-route-events")
   val shareRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("share-route-events")
   val shareItemEventOutTag: OutputTag[String] = OutputTag[String]("share-route-events")
+
+  val job_name = "PipelinePreprocessorStreamJob"
 
 }
