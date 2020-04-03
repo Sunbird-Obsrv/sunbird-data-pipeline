@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import org.sunbird.dp.reader.NullableValue;
 import org.sunbird.dp.reader.Telemetry;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Events {
@@ -130,6 +131,11 @@ public abstract class Events {
 
     public String edataType() {
         return telemetry.<String>read("edata.type").value();
+    }
+
+    public void updateFlags(String key, Boolean value) {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add(key, true);
     }
 
 }

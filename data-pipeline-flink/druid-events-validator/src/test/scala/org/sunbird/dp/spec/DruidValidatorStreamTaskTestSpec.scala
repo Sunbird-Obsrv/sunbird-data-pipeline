@@ -38,7 +38,6 @@ class DruidValidatorStreamTaskTestSpec  extends FlatSpec with Matchers with Befo
         redisServer = new RedisServer(6341)
         redisServer.start()
 
-        println("started redis server")
         when(mockKafkaUtil.kafkaEventSource[Event](druidValidatorConfig.kafkaInputTopic)).thenReturn(new DruidValidatorEventSource)
         when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
         when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaTelemetryRouteTopic)).thenReturn(new TelemetryEventsSink)
@@ -61,13 +60,13 @@ class DruidValidatorStreamTaskTestSpec  extends FlatSpec with Matchers with Befo
         val task = new DruidValidatorStreamTask(druidValidatorConfig, mockKafkaUtil);
         task.process()
 
-        println(TelemetryEventsSink.values.size(), SummaryEventsSink.values.size(), FailedEventsSink.values.size(), LogEventsSink.values.size(), ErrorEventsSink.values.size())
-//        TelemetryEventsSink.values.size() should be (2)
-//        SummaryEventsSink.values.size() should be (1)
-//        FailedEventsSink.values.size() should be (1)
-//        DupEventsSink.values.size() should be (1)
-//        LogEventsSink.values.size() should be (1)
-//        ErrorEventsSink.values.size() should be (1)
+        TelemetryEventsSink.values.size() should be (2)
+        SummaryEventsSink.values.size() should be (1)
+        FailedEventsSink.values.size() should be (1)
+        DupEventsSink.values.size() should be (1)
+        LogEventsSink.values.size() should be (1)
+        ErrorEventsSink.values.size() should be (1)
+
     }
 
 }
@@ -75,7 +74,6 @@ class DruidValidatorStreamTaskTestSpec  extends FlatSpec with Matchers with Befo
 class DruidValidatorEventSource  extends SourceFunction[Event] {
 
     override def run(ctx: SourceContext[Event]) {
-        println("inside DruidValidatorEventSource run")
         val gson = new Gson()
         val event1 = gson.fromJson(EventFixture.VALID_DENORM_TELEMETRY_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
         val event2 = gson.fromJson(EventFixture.INVALID_DENORM_TELEMETRY_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)

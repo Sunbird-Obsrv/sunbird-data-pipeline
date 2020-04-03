@@ -42,7 +42,6 @@ class RouterFunction(config: DruidValidatorConfig, @transient var dedupEngine: D
         }
         else {
             val outputTag = if (event.isSummaryEvent) config.summaryRouterOutputTag else config.telemetryRouterOutputTag
-//            ctx.output(outputTag, event)
             deDup[Event](event.mid(), event, ctx,
                 outputTag, config.duplicateEventOutputTag, flagName = "dv_duplicate")(dedupEngine)
         }

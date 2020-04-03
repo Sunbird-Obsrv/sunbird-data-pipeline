@@ -1,7 +1,5 @@
 package org.sunbird.dp.functions
 
-import java.util
-
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.apache.flink.util.Collector

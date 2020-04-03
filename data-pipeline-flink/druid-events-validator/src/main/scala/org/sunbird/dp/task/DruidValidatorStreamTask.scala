@@ -37,7 +37,6 @@ class DruidValidatorStreamTask(config: DruidValidatorConfig, kafkaConnector: Fli
   private val serialVersionUID = 146697324640926024L
 
   def process(): Unit = {
-      println("inside process")
       implicit val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
       implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
       env.enableCheckpointing(config.checkpointingInterval)
