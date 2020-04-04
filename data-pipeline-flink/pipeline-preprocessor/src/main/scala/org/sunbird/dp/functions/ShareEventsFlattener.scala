@@ -8,7 +8,7 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.apache.flink.util.Collector
 import org.slf4j.LoggerFactory
-import org.sunbird.dp.domain.{Actor, EData, Event, Object, ShareEvent}
+import org.sunbird.dp.domain.{Actor, EData, Event, Object, Rollup, ShareEvent}
 import org.sunbird.dp.task.PipelinePreprocessorConfig
 
 class ShareEventsFlattener(config: PipelinePreprocessorConfig)
@@ -26,7 +26,7 @@ class ShareEventsFlattener(config: PipelinePreprocessorConfig)
         val transfers = param.asInstanceOf[util.Map[String, AnyRef]].get("transfers").toString.toDouble
         val size = param.asInstanceOf[util.Map[String, AnyRef]].get("size").toString.toDouble
         val edataType = if (transfers == 0 || transfers <= 0) "download" else "import"
-        val shareItemEvent = generateShareItemEvents(shareEvent, Object(id = identifier, ver = version, `type` = contentType, Some(Map("l1" -> shareEvent.objectID()))), edataType, size)
+        val shareItemEvent = generateShareItemEvents(shareEvent, Object(id = identifier, ver = version, `type` = contentType, rollup = Rollup(shareEvent.objectID())), edataType, size)
         context.output(config.shareItemEventOutTag, new Gson().toJson(shareItemEvent))
       })
     })

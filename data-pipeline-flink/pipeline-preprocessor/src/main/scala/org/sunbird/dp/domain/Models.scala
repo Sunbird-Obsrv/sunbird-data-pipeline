@@ -14,10 +14,8 @@ case class Context(channel: String,
 case class EData(dir:String, `type`:String, size:Double)
 
 case class Params(ver: String, events_count: Int, sync_status: String)
-
-case class Pdata(ver: String, pid: String, id: String = "data-pipeline")
-
-case class Object(id: String, ver: String, `type`: String, rollup: Option[Map[String, String]])
+case class Rollup(l1: String)
+case class Object(id: String, ver: String, `type`: String, rollup: Rollup)
 
 case class ShareEvent(actor: Actor,
                       eid: String,
