@@ -65,14 +65,14 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
       val validationStream: SingleOutputStreamOperator[Event] =
         env.addSource(kafkaConsumer, "telemetry-raw-events-consumer")
           .process(new TelemetryValidationFunction(config)).name("TelemetryValidator")
-          .setParallelism(2)
+          .setParallelism(1)
 
       val routerStream: SingleOutputStreamOperator[Event] =
         validationStream.getSideOutput(config.uniqueEventsOutputTag)
           .process(new TelemetryRouterFunction(config)).name("Router")
 
       val shareEventsFlattener: SingleOutputStreamOperator[Event] =
-        routerStream.getSideOutput(config.primaryRouteEventsOutputTag)
+        routerStream.getSideOutput(config.shareRouteEventsOutputTag)
           .process(new ShareEventsFlattener(config)).name("Share Events Flattener")
 
       /**
@@ -93,9 +93,9 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
       /**
        * Pushing "SHARE and SHARE_ITEM" event into out put topic sink(next_streaming_process = denorm)
        */
-      //shareEventsFlattener.getSideOutput(config.shareItemEventOutTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
-      shareEventsFlattener.getSideOutput(config.primaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
 
+      shareEventsFlattener.getSideOutput(config.primaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
+      shareEventsFlattener.getSideOutput(config.shareItemEventOutTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
 
       env.execute(config.job_name)
     } catch {

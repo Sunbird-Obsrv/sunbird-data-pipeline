@@ -7,11 +7,13 @@ import com.google.gson.Gson
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.apache.flink.util.Collector
+import org.slf4j.LoggerFactory
 import org.sunbird.dp.domain.{Actor, EData, Event, Object, ShareEvent}
 import org.sunbird.dp.task.PipelinePreprocessorConfig
 
 class ShareEventsFlattener(config: PipelinePreprocessorConfig)
                           (implicit val eventTypeInfo: TypeInformation[Event]) extends ProcessFunction[Event, Event] {
+  private[this] val logger = LoggerFactory.getLogger(classOf[ShareEventsFlattener])
   override def processElement(shareEvent: Event,
                               context: ProcessFunction[Event, Event]#Context,
                               out: Collector[Event]): Unit = {

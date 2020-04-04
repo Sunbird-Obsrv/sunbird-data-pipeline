@@ -36,7 +36,6 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
   }
 
   override def processElement(event: Event, context: ProcessFunction[Event, Event]#Context, out: Collector[Event]): Unit = {
-    println("evet" + event)
     dataCorrection(event)
     if (!schemaValidator.schemaFileExists(event)) {
       logger.info(s"Schema not found, Skipping the: ${event.eid} from validation")
@@ -44,7 +43,6 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
       deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag, flagName = "pp_dedup_processed")(dedupEngine)
     } else {
       val validationReport = schemaValidator.validate(event)
-      println("validationReport" + validationReport)
       if (validationReport.isSuccess) {
         event.updateDefaults(config)
         deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag, flagName = "pp_dedup_processed")(dedupEngine)

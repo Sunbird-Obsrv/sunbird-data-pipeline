@@ -22,7 +22,7 @@
 	<modules>
 		<module>dp-telemetry-reader</module>
 		<module>dp-core</module>
-		<module>telemetry-extractor</module>
+		<module>pipeline-preprocessor</module>
 	</modules>
 
 	<properties>

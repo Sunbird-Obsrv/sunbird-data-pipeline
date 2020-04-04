@@ -43,6 +43,11 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
     when(mockKafkaUtil.kafkaEventSource[Event](ppConfig.kafkaInputTopic)).thenReturn(new PipeLineProcessorEventSource)
 
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
+    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaPrimaryRouteTopic)).thenReturn(new TelemetryPrimaryEventSink)
+    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaSecondaryRouteTopic)).thenReturn(new DupEventsSink)
+    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaFailedTopic)).thenReturn(new TelemetryFailedEventsSink)
+    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaAuditRouteTopic)).thenReturn(new TelemetryAuditEventSink)
+    when(mockKafkaUtil.kafkaStringSink(ppConfig.kafkaPrimaryRouteTopic)).thenReturn(new ShareItemEventSink)
 
 
     flinkCluster.before()
@@ -58,11 +63,6 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
 
     val task = new PipelinePreprocessorStreamTask(ppConfig, mockKafkaUtil);
     task.process()
-
-    //    RawEventsSink.values.size() should be (40)
-    //    FailedEventsSink.values.size() should be (0)
-    //    DupEventsSink.values.size() should be (1)
-    //    LogEventsSink.values.size() should be (2)
   }
 
 }

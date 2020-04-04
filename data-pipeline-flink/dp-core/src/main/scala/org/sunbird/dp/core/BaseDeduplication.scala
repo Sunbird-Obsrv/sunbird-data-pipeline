@@ -34,13 +34,10 @@ trait BaseDeduplication {
   }
 
   def markDuplicate[T](event: T, flagName: String): T = {
-    println("de-dup")
     if (event.isInstanceOf[Events]) {
-      println("yes is type of event")
       event.asInstanceOf[Events].updateFlags("flags." + flagName, true)
     }
     else {
-      println("not type if envet")
       val flags: util.HashMap[String, Boolean] = new util.HashMap[String, Boolean]()
       flags.put(flagName, true)
       event.asInstanceOf[util.Map[String, AnyRef]].put("flags", flags.asInstanceOf[util.HashMap[String, AnyRef]])
