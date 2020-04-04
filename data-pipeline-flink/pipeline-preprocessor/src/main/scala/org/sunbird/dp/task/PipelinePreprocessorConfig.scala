@@ -53,9 +53,9 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val shareRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("share-route-events")
   val shareItemEventOutTag: OutputTag[String] = OutputTag[String]("share-route-events")
 
-  val validationParallelism:Int = config.getInt("task.telemetry.validation.parallelism")
-  val routerParallelism:Int = config.getInt("task.telemetry.router.parallelism")
-  val shareEventsFlattnerParallelism:Int = config.getInt("task.share.events.flattener.parallelism")
+  val validationParallelism:Int = config.getInt("telemetry.validation.parallelism")
+  val routerParallelism:Int = config.getInt("telemetry.router.parallelism")
+  val shareEventsFlattnerParallelism:Int = config.getInt("share.events.flattener.parallelism")
 
   val job_name = "PipelinePreprocessorStreamJob"
 

@@ -90,7 +90,7 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
     routerStream.getSideOutput(config.auditRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
 
     /**
-     * Pushing "SHARE and SHARE_ITEM" event into out put topic sink(next_streaming_process = denorm)
+     * Pushing "SHARE and SHARE_ITEM" event into out put topic sink topic(next_streaming_process = denorm)
      */
 
     shareEventsFlattener.getSideOutput(config.primaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
@@ -110,4 +110,5 @@ object PipelinePreprocessorStreamTask {
     task.process()
   }
 }
+
 // $COVERAGE-ON$
