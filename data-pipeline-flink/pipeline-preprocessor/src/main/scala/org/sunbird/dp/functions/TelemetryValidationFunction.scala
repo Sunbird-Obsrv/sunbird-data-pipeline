@@ -39,13 +39,14 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
     dataCorrection(event)
     if (!schemaValidator.schemaFileExists(event)) {
       logger.info(s"Schema not found, Skipping the: ${event.eid} from validation")
-      event.markSkipped("pp_validation_processed") // Telemetry validation skipped
-      deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag, flagName = "pp_dedup_processed")(dedupEngine)
+      event.markSkipped(config.VALIDATION_FLAG_NAME) // Telemetry validation skipped
+      if (isDuplicateCheckRequired(event)) deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag, flagName = config.DE_DUP_FLAG_NAME)(dedupEngine)
     } else {
       val validationReport = schemaValidator.validate(event)
       if (validationReport.isSuccess) {
+        event.markSuccess(config.VALIDATION_FLAG_NAME)
         event.updateDefaults(config)
-        deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag, flagName = "pp_dedup_processed")(dedupEngine)
+        if (isDuplicateCheckRequired(event)) deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag, flagName = config.DE_DUP_FLAG_NAME)(dedupEngine)
       } else {
         val failedErrorMsg = schemaValidator.getInvalidFieldName(validationReport.toString)
         event.markValidationFailure(failedErrorMsg)
@@ -62,6 +63,10 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
     if (event.eid != null && event.eid.equalsIgnoreCase("SEARCH"))
       event.correctDialCodeKey()
     event
+  }
+
+  def isDuplicateCheckRequired(event: Event): Boolean = {
+    config.includedProducersForDedup.contains(event.producerId())
   }
 
 }

@@ -45,7 +45,7 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
 
   def markSuccess(flagName: String): Unit = {
     telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])
-    telemetry.add(s"flag.$flagName", true)
+    telemetry.add(s"flags.$flagName", true)
     telemetry.add("type", "events")
   }
 
