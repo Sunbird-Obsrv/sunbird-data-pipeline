@@ -43,7 +43,6 @@ class ContentDenormFunction(config: DenormalizationConfig)(implicit val mapTypeI
 
   override def processElement(event: Event, context: KeyedProcessFunction[String, Event, Event]#Context, metrics: Metrics): Unit = {
     
-    Console.println("ContentDenormFunction:processElement", event.getTelemetry.read("dialcodedata"), event.getTelemetry.read("flags"));
     val objectType = event.objectType();
     val objectId = event.objectID();
     if(!List("user","qr","dialcode").contains(objectType) && null != objectId) {

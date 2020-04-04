@@ -18,15 +18,6 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
   private[this] val df2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").withZoneUTC();
   private val jobName = "PipelinePreprocessor"
 
-  def markFailure(errorMsg: String, config: DenormalizationConfig): Unit = {
-
-    telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean]);
-    telemetry.add("flags.tr_processed", false);
-    telemetry.addFieldIfAbsent("metadata", new util.HashMap[String, AnyRef]);
-    telemetry.add("metadata.denorm_error", errorMsg);
-    telemetry.add("metadata.src", config.jobName);
-  }
-
   def addDeviceProfile(deviceProfile: DeviceProfile): Unit = {
 
     val iso3166statecode = addISOStateCodeToDeviceProfile(deviceProfile);
@@ -48,22 +39,28 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
   }
 
   def getUserProfileLocation(): Option[(String, String, String)] = {
-    if (!telemetry.read("userdata").isNull())
-      Some(telemetry.read[String]("userdata.state").value(), telemetry.read[String]("userdata.district").value(), "user-profile")
+
+    val userData: NullableValue[util.Map[String, AnyRef]] = telemetry.read(path.userData());
+    if (!userData.isNull())
+      Some(userData.value().get("state").asInstanceOf[String], userData.value().get("district").asInstanceOf[String], "user-profile")
     else
       None
   }
 
   def getUserDeclaredLocation(): Option[(String, String, String)] = {
-    if (!telemetry.read("devicedata").isNull() && !telemetry.read("devicedata.userdeclared").isNull())
-      Some(telemetry.read[String]("devicedata.userdeclared.state").value(), telemetry.read[String]("devicedata.userdeclared.district").value(), "user-declared")
-    else
+
+    val deviceData: NullableValue[Map[String, AnyRef]] = telemetry.read(path.deviceData());
+    if (!deviceData.isNull() && deviceData.value().get("userdeclared").nonEmpty) {
+      val userDeclared = deviceData.value().get("userdeclared").get.asInstanceOf[Map[String, String]]
+      Some(userDeclared.get("state").getOrElse(null), userDeclared.get("district").getOrElse(null), "user-declared")
+    } else
       None
   }
 
   def getIpLocation(): Option[(String, String, String)] = {
-    if (!telemetry.read("userdata").isNull())
-      Some(telemetry.read[String]("devicedata.state").value(), telemetry.read[String]("devicedata.district_custom").value(), "ip-resolved")
+    val deviceData: NullableValue[Map[String, AnyRef]] = telemetry.read(path.deviceData());
+    if (!deviceData.isNull())
+      Some(deviceData.value().get("state").get.asInstanceOf[String], deviceData.value().get("districtcustom").get.asInstanceOf[String], "ip-resolved")
     else
       None
   }
@@ -88,17 +85,13 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
   }
 
   def objectRollUpl1ID(): String = {
-    if (objectFieldsPresent() && objectRollUpl1FieldsPresent()) {
-      return telemetry.read[String]("object.rollup.l1").value();
-    } else return null;
+    telemetry.read[String]("object.rollup.l1").value();
   }
 
   def objectRollUpl1FieldsPresent(): Boolean = {
-    if (objectFieldsPresent()) {
-      val objectrollUpl1 = telemetry.read[String]("object.rollup.l1").value();
-      null != objectrollUpl1 && !objectrollUpl1.isEmpty();
-    }
-    false
+
+    val objectrollUpl1 = telemetry.read[String]("object.rollup.l1").value();
+    null != objectrollUpl1 && !objectrollUpl1.isEmpty();
   }
 
   def checkObjectIdNotEqualsRollUpl1Id(): Boolean = {
@@ -127,10 +120,7 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
 
   def addCollectionData(newData: Map[String, AnyRef]) {
     val convertedData = getEpochConvertedContentDataMap(newData);
-    val previousData: NullableValue[util.Map[String, AnyRef]] = telemetry.read(path.collectionData());
-    val collectionData = if (previousData.isNull()) new util.HashMap[String, AnyRef]() else previousData.value();
-    collectionData.putAll(convertedData.asJava);
-    telemetry.add(path.collectionData(), collectionData);
+    telemetry.add(path.collectionData(), convertedData);
     setFlag("coll_denorm", true);
   }
 
@@ -182,16 +172,15 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
     val epochTs = getTimestamp(ts, df);
     if (epochTs == 0) {
       getTimestamp(ts, df2);
+    } else {
+      epochTs;
     }
-    epochTs;
   }
 
   def setFlag(key: String, value: Boolean) {
     val telemetryFlag: NullableValue[util.Map[String, AnyRef]] = telemetry.read(path.flags());
     val flags = if (telemetryFlag.isNull()) new util.HashMap[String, AnyRef]() else telemetryFlag.value()
-    if (!key.isEmpty()) {
-      flags.put(key, value.asInstanceOf[AnyRef]);
-    }
+    flags.put(key, value.asInstanceOf[AnyRef]);
     telemetry.add(path.flags(), flags);
   }
 

@@ -28,7 +28,7 @@ class DeviceDenormFunction(config: DenormalizationConfig)(implicit val mapTypeIn
   val expired = "event-expired";
   
   override def getMetricsList(): List[String] = {
-    List(total, cacheHit, cacheMiss)
+    List(total, cacheHit, cacheMiss, expired)
   }
 
   override def open(parameters: Configuration): Unit = {

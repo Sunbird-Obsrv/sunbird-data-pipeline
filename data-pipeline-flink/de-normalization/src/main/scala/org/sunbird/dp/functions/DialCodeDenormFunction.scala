@@ -45,7 +45,7 @@ class DialCodeDenormFunction(config: DenormalizationConfig)(implicit val mapType
 
     if (null != event.objectType() && List("dialcode", "qr").contains(event.objectType().toLowerCase())) {
       metrics.incCounter(total);
-      val dialcodeData = dataCache.getWithRetry(event.objectID());
+      val dialcodeData = dataCache.getWithRetry(event.objectID().toUpperCase());
       if (dialcodeData.size > 0) {
         metrics.incCounter(cacheHit);
         event.addDialCodeData(dialcodeData)
