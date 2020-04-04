@@ -16,7 +16,7 @@
     <packaging>jar</packaging>
     <name>PipelinePreprocessor</name>
     <description>
-        Identifying Duplicate Events
+        Events Validation, Router and share Events flattener
     </description>
     <properties>
         <encoding>UTF-8</encoding>
