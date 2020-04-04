@@ -22,26 +22,26 @@ trait BaseDeduplication {
 
     if (null != key && !deDupEngine.isUniqueEvent(key)) {
       logger.info(s"Duplicate Event message id is found: $key")
-      context.output(duplicateOutputTag, markDuplicate(event, flagName))
+      context.output(duplicateOutputTag, updateFlag(event, flagName, value = true))
     } else {
       if (key != null) {
         logger.info(s"Adding key: $key to Redis")
         deDupEngine.storeChecksum(key)
       }
       logger.info(s"Pushing event to further process, key is: $key")
-      context.output(successOutputTag, event)
+      context.output(successOutputTag, updateFlag(event, flagName, value = false))
     }
   }
 
-  def markDuplicate[T](event: T, flagName: String): T = {
-      if(event.isInstanceOf[Events])  {
-          event.asInstanceOf[Events].updateFlags(flagName, true)
-      }
-      else {
-          val flags: util.HashMap[String, Boolean] = new util.HashMap[String, Boolean]()
-          flags.put(flagName, true)
-          event.asInstanceOf[util.Map[String, AnyRef]].put("flags", flags.asInstanceOf[util.HashMap[String, AnyRef]])
-      }
-      event.asInstanceOf[T]
+  def updateFlag[T](event: T, flagName: String, value: Boolean): T = {
+    if (event.isInstanceOf[Events]) {
+      event.asInstanceOf[Events].updateFlags(flagName, value)
+    }
+    else {
+      val flags: util.HashMap[String, Boolean] = new util.HashMap[String, Boolean]()
+      flags.put(flagName, value)
+      event.asInstanceOf[util.Map[String, AnyRef]].put("flags", flags.asInstanceOf[util.HashMap[String, AnyRef]])
+    }
+    event.asInstanceOf[T]
   }
 }

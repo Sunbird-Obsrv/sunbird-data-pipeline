@@ -28,30 +28,29 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
     }
   }
 
-  def markValidationFailure(errorMsg: String): Unit = {
+  def correctDialCodeValue(): Unit = {
+    val dialcode = telemetry.read[String]("object.id").value
+    telemetry.add("object.id", dialcode.toUpperCase)
+  }
+
+  def markValidationFailure(errorMsg: String, flagName: String): Unit = {
     telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])
-    telemetry.add("flags.tv_processed", false)
+    telemetry.add(s"flags.$flagName", false)
     telemetry.addFieldIfAbsent("metadata", new util.HashMap[String, AnyRef])
     if (null != errorMsg) {
-      telemetry.add("metadata.tv_error", errorMsg)
+      telemetry.add("metadata.validation_error", errorMsg)
       telemetry.add("metadata.src", jobName)
     }
   }
 
-  def markSkipped(): Unit = {
+  def markSkipped(flagName: String): Unit = {
     telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])
-    telemetry.add("flags.tv_skipped", true)
+    telemetry.add(s"flags.$flagName", true)
   }
 
-  def markDuplicate(): Unit = {
+  def markSuccess(flagName: String): Unit = {
     telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])
-    telemetry.add("flags.dd_processed", false)
-    telemetry.add("flags.dd_duplicate_event", true)
-  }
-
-  def markSuccess(): Unit = {
-    telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])
-    telemetry.add("flags.dd_processed", true)
+    telemetry.add(s"flags.$flagName", true)
     telemetry.add("type", "events")
   }
 
@@ -72,5 +71,22 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
     else if (atTimestamp != null) telemetry.addFieldIfAbsent("syncts", dateFormatter.parseMillis(atTimestamp))
     else if (strSyncts != null) telemetry.addFieldIfAbsent("@timestamp", strSyncts)
   }
+
+  def edataDir: String = telemetry.read[String]("edata.dir").value
+
+  def eventSyncTs: Long = telemetry.read[Long]("syncts").value.asInstanceOf[Number].longValue()
+
+  def eventTags: Seq[AnyRef] = telemetry.read[Seq[AnyRef]]("tags").value
+
+  def cdata: util.ArrayList[util.Map[String, AnyRef]] = telemetry.read[util.ArrayList[util.Map[String, AnyRef]]]("context.cdata").value
+
+  def eventPData: util.Map[String, AnyRef] = telemetry.read[util.Map[String, AnyRef]]("context.pdata").value
+
+  def sessionId: String = telemetry.read[String]("context.sid").value.toString
+
+  def env: String = telemetry.read[String]("context.env").value
+
+  def rollup: util.Map[String, AnyRef] = telemetry.read[util.Map[String, AnyRef]]("context.rollup").value
+
 
 }

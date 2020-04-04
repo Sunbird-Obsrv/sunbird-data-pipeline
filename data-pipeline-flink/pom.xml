@@ -22,8 +22,8 @@
 	<modules>
 		<module>dp-telemetry-reader</module>
 		<module>dp-core</module>
-		<module>de-duplication</module>
 		<module>telemetry-extractor</module>
+		<module>pipeline-preprocessor</module>
 		<module>druid-events-validator</module>
 	</modules>
 

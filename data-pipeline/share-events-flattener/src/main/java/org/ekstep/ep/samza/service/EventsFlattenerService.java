@@ -12,6 +12,7 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 public class EventsFlattenerService {
@@ -92,7 +93,7 @@ public class EventsFlattenerService {
                 String paramTransfer = this.getValue(param, "transfers");
                 Long paramSize = null;
                 if (this.getValue(param, "size") != null && !this.getValue(param, "size").isEmpty()) {
-                    paramSize = new BigDecimal(this.getValue(param, "size")).longValue();
+                    paramSize = new BigDecimal(Objects.requireNonNull(this.getValue(param, "size"))).longValue();
                 }
                 if (paramTransfer != null) {
                     if (Double.parseDouble(paramTransfer) == 0) {

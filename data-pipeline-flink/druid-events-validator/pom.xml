@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.sunbird.dp</groupId>
         <artifactId>pipeline-jobs</artifactId>
-        <version>0.0.1</version>
+        <version>1.0</version>
     </parent>
 
     <groupId>org.sunbird.dp.jobs</groupId>
@@ -33,6 +33,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sunbird.dp</groupId>
+            <artifactId>dp-core</artifactId>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -86,11 +91,6 @@
             <groupId>com.google.maps</groupId>
             <artifactId>google-maps-services</artifactId>
             <version>0.1.7</version>
-        </dependency>
-        <dependency>
-            <groupId>org.sunbird.dp</groupId>
-            <artifactId>dp-core</artifactId>
-            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
