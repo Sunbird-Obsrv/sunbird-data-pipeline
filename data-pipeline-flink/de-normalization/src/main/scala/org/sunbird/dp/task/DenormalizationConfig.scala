@@ -17,17 +17,14 @@ class DenormalizationConfig(override val config: Config) extends BaseJobConfig(c
   implicit val anyTypeInfo: TypeInformation[String] = TypeExtractor.getForClass(classOf[String])
 
   // Kafka Topics Configuration
-  val uniqueInputTopic: String = config.getString("kafka.unique.input.topic")
-  val derivedInputTopic: String = config.getString("kafka.derived.input.topic")
+  val inputTopic: String = config.getString("kafka.denorm.input.topic")
   val denormSuccessTopic: String = config.getString("kafka.output.success.topic")
   val failedTopic: String = config.getString("kafka.output.failed.topic")
-  val metricsTopic: String = config.getString("kafka.output.metrics.topic")
 
   val userStore: Int = config.getInt("redis.database.userstore.id")
   val contentStore: Int = config.getInt("redis.database.contentstore.id")
   val deviceStore: Int = config.getInt("redis.database.devicestore.id")
   val dialcodeStore: Int = config.getInt("redis.database.dialcodestore.id")
-  val metricsWindowSize: Int = 300;
 
   val deviceFields = List("country_code", "country", "state_code", "state", "city", "district_custom", "state_code_custom",
     "state_custom", "user_declared_state", "user_declared_district", "devicespec", "firstaccess")
@@ -54,7 +51,6 @@ class DenormalizationConfig(override val config: Config) extends BaseJobConfig(c
   val WITH_CONTENT_EVENTS = "with_content_events"
   val WITH_DIALCODE_EVENTS = "with_dialcode_events"
   val DENORM_EVENTS = "denorm_events"
-  val JOB_METRICS = "job_metrics"
 
   val withLocationEventsTag: OutputTag[Event] = OutputTag[Event](WITH_LOCATION_EVENTS)
   val withDeviceEventsTag: OutputTag[Event] = OutputTag[Event](WITH_DEVICE_EVENTS)
@@ -62,7 +58,6 @@ class DenormalizationConfig(override val config: Config) extends BaseJobConfig(c
   val withContentEventsTag: OutputTag[Event] = OutputTag[Event](WITH_CONTENT_EVENTS)
   val withDialCodeEventsTag: OutputTag[Event] = OutputTag[Event](WITH_DIALCODE_EVENTS)
   val denormEventsTag: OutputTag[Event] = OutputTag[Event](DENORM_EVENTS)
-  val metricOutputTag: OutputTag[String] = OutputTag[String](JOB_METRICS)
 
   val jobName = "de-normalization"
 

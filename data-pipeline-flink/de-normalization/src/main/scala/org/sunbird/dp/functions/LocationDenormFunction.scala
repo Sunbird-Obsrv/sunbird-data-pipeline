@@ -19,46 +19,21 @@ import org.apache.flink.streaming.api.functions.KeyedProcessFunction
 import org.apache.flink.metrics.Counter
 import org.apache.flink.metrics.SimpleCounter
 import collection.JavaConverters._
+import org.sunbird.dp.core.BaseJobConfig
+import org.sunbird.dp.core.BaseProcessFunction
+import org.sunbird.dp.core.Metrics
 
-trait JobMetrics {
-
-  def checkAndRegisterTimer[I, T](metrics: Metrics, context: KeyedProcessFunction[I, T, T]#Context, windowSize: Long) {
-    Option(metrics) match {
-      case None =>
-        context.timerService().registerEventTimeTimer(context.timestamp + windowSize)
-      case Some(current) =>
-      // Do Nothing
-    }
-  }
-
-  def getMetricsEvent(metrics: Map[String, Long]): String = {
-    (new Gson()).toJson(metrics.asJava);
-  }
-}
-
-trait BaseMetrics {}
-
-case class Metrics(val counter: Map[String, Counter]) extends Serializable {
-
-  def incCounter(metric: String) = counter.get(metric).get.inc()
-  def toMap(): Map[String, Long] = Map(counter.mapValues(f => f.getCount).toSeq: _*)
-}
-
-object Metrics {
-  def apply(metrics: List[String]): Metrics = {
-    val counters = Map[String, Counter]()
-    metrics.foreach(metric => counters.put(metric, new SimpleCounter))
-    new Metrics(counters)
-  }
-}
-
-class LocationDenormFunction(config: DenormalizationConfig)(implicit val mapTypeInfo: TypeInformation[Event]) extends KeyedProcessFunction[String, Event, Event] with JobMetrics {
+class LocationDenormFunction(config: DenormalizationConfig)(implicit val mapTypeInfo: TypeInformation[Event]) extends BaseProcessFunction[Event](config) {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[LocationDenormFunction])
-  lazy val state: ValueState[Metrics] = getRuntimeContext.getState(new ValueStateDescriptor[Metrics]("state", classOf[Metrics]))
+  
   val locTotal = "loc-total";
   val locCacheHit = "loc-cache-hit";
   val locCacheMiss = "loc-cache-miss";
+  
+  override def getMetricsList(): List[String] = {
+    List(locTotal, locCacheHit, locCacheMiss)
+  }
 
   override def open(parameters: Configuration): Unit = {
 
@@ -68,14 +43,9 @@ class LocationDenormFunction(config: DenormalizationConfig)(implicit val mapType
     super.close()
   }
 
-  override def processElement(event: Event, context: KeyedProcessFunction[String, Event, Event]#Context, out: Collector[Event]): Unit = {
+  override def processElement(event: Event, context: KeyedProcessFunction[String, Event, Event]#Context, metrics: Metrics): Unit = {
 
-    Console.println("context.timestamp", context.timestamp, context.getCurrentKey);
-    Console.println("LocationDenormFunction:processElement", event.getTelemetry.read("derivedlocationdata"), event.getTelemetry.read("flags"));
-    checkAndRegisterTimer(state.value(), context, config.metricsWindowSize);
-    val metrics = if (state.value() == null) Metrics.apply(List(locTotal, locCacheHit, locCacheMiss)) else state.value();
     metrics.incCounter(locTotal)
-
     val userProfileLocation = event.getUserProfileLocation();
     val userDeclaredLocation = event.getUserDeclaredLocation();
     val ipLocation = event.getIpLocation();
@@ -90,18 +60,6 @@ class LocationDenormFunction(config: DenormalizationConfig)(implicit val mapType
     }
 
     context.output(config.withLocationEventsTag, event);
-    Console.println("metrics", metrics);
-    state.update(metrics);
-  }
-
-  override def onTimer(timestamp: Long, ctx: KeyedProcessFunction[String, Event, Event]#OnTimerContext, out: Collector[Event]): Unit = {
-    Option(state.value) match {
-      case None => // ignore
-      case Some(metrics) => {
-        ctx.output(config.metricOutputTag, getMetricsEvent(metrics.toMap()))
-        state.clear
-      }
-    }
   }
 
   private def nonEmpty(loc: Option[(String, String, String)]): Boolean = {

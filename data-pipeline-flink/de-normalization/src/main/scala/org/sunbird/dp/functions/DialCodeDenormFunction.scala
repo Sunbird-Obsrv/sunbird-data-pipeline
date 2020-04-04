@@ -12,12 +12,23 @@ import org.sunbird.dp.task.DenormalizationConfig
 import org.sunbird.dp.core.BaseDeduplication
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.core.DataCache
+import org.sunbird.dp.core.BaseProcessFunction
+import org.sunbird.dp.core.Metrics
+import org.apache.flink.streaming.api.functions.KeyedProcessFunction
 
-class DialCodeDenormFunction(config: DenormalizationConfig)(implicit val mapTypeInfo: TypeInformation[Event]) extends ProcessFunction[Event, Event] {
+class DialCodeDenormFunction(config: DenormalizationConfig)(implicit val mapTypeInfo: TypeInformation[Event]) extends BaseProcessFunction[Event](config) {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[DialCodeDenormFunction])
 
   private var dataCache: DataCache = _;
+  
+  val total = "dialcode-total";
+  val cacheHit = "dialcode-cache-hit";
+  val cacheMiss = "dialcode-cache-miss";
+  
+  override def getMetricsList(): List[String] = {
+    List(total, cacheHit, cacheMiss)
+  }
 
   override def open(parameters: Configuration): Unit = {
 
@@ -30,14 +41,16 @@ class DialCodeDenormFunction(config: DenormalizationConfig)(implicit val mapType
     dataCache.close();
   }
 
-  override def processElement(event: Event, context: ProcessFunction[Event, Event]#Context, out: Collector[Event]): Unit = {
+  override def processElement(event: Event, context: KeyedProcessFunction[String, Event, Event]#Context, metrics: Metrics): Unit = {
 
-    Console.println("DialCodeDenormFunction:processElement", event.getTelemetry.read("userdata"), event.getTelemetry.read("flags"));
     if (null != event.objectType() && List("dialcode", "qr").contains(event.objectType().toLowerCase())) {
+      metrics.incCounter(total);
       val dialcodeData = dataCache.getWithRetry(event.objectID());
       if (dialcodeData.size > 0) {
+        metrics.incCounter(cacheHit);
         event.addDialCodeData(dialcodeData)
       } else {
+        metrics.incCounter(cacheMiss);
         event.setFlag("dialcode_denorm", false)
       }
     }

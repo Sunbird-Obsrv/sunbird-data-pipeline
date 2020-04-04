@@ -44,8 +44,7 @@ class DenormalizationStreamTaskTest extends FlatSpec with Matchers with BeforeAn
     redisServer = new RedisServer(6340)
     redisServer.start()
 
-    when(mockKafkaUtil.kafkaEventSource[Event](extConfig.uniqueInputTopic)).thenReturn(new UniqueEventSource)
-    when(mockKafkaUtil.kafkaEventSource[Event](extConfig.derivedInputTopic)).thenReturn(new DerivedEventSource)
+    when(mockKafkaUtil.kafkaEventSource[Event](extConfig.inputTopic)).thenReturn(new InputSource)
     when(mockKafkaUtil.kafkaEventSink[Event](extConfig.denormSuccessTopic)).thenReturn(new DenormEventsSink)
     when(mockKafkaUtil.kafkaStringSink(extConfig.metricsTopic)).thenReturn(new MetricsEventsSink)
 
@@ -72,18 +71,15 @@ class DenormalizationStreamTaskTest extends FlatSpec with Matchers with BeforeAn
 
 }
 
-class UniqueEventSource extends SourceFunction[Event] {
-
+class InputSource extends SourceFunction[Event] {
 
   override def run(ctx: SourceContext[Event]) {
 
-      Console.println("UniqueEventSource: run");
-      val gson = new Gson()
-      val eventMap1 = gson.fromJson(EventFixture.EVENT_WITH_MID, new util.HashMap[String, AnyRef]().getClass)
-      val event1 = new Event(eventMap1);
-      ctx.collect(event1);
-    //    ctx.collect(event1)
-    //    ctx.collect(event2)
+    Console.println("InputSource: run");
+    val gson = new Gson()
+    val eventMap1 = gson.fromJson(EventFixture.EVENT_WITH_MID, new util.HashMap[String, AnyRef]().getClass)
+    val event1 = new Event(eventMap1);
+    ctx.collect(event1);
   }
 
   override def cancel() = {

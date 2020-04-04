@@ -13,11 +13,23 @@ import org.sunbird.dp.core.BaseDeduplication
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.core.DataCache
 import org.sunbird.dp.domain.DeviceProfile
+import org.sunbird.dp.core.BaseProcessFunction
+import org.sunbird.dp.core.Metrics
+import org.apache.flink.streaming.api.functions.KeyedProcessFunction
 
-class DeviceDenormFunction(config: DenormalizationConfig)(implicit val mapTypeInfo: TypeInformation[Event]) extends ProcessFunction[Event, Event] {
+class DeviceDenormFunction(config: DenormalizationConfig)(implicit val mapTypeInfo: TypeInformation[Event]) extends BaseProcessFunction[Event](config) {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[DeviceDenormFunction])
   private var dataCache: DataCache = _;
+  
+  val total = "device-total";
+  val cacheHit = "device-cache-hit";
+  val cacheMiss = "device-cache-miss";
+  val expired = "event-expired";
+  
+  override def getMetricsList(): List[String] = {
+    List(total, cacheHit, cacheMiss)
+  }
 
   override def open(parameters: Configuration): Unit = {
 
@@ -29,20 +41,23 @@ class DeviceDenormFunction(config: DenormalizationConfig)(implicit val mapTypeIn
     super.close()
     dataCache.close();
   }
+  
 
-  override def processElement(event: Event, context: ProcessFunction[Event, Event]#Context, out: Collector[Event]): Unit = {
+  override def processElement(event: Event, context: KeyedProcessFunction[String, Event, Event]#Context, metrics: Metrics): Unit = {
 
-    Console.println("DeviceDenormFunction:processElement", event.getTelemetry.read("devicedata"), event.getTelemetry.read("flags"));
     if (event.isOlder(config.ignorePeriodInMonths)) { // Skip events older than configured value (default: 3 months)
-      // TODO: incExpiredEventCount
+      metrics.incCounter(expired)
     } else {
       event.compareAndAlterEts(); // Reset ets to today's date if we get future value
       val did = event.did();
       if (null != did && did.nonEmpty) {
+        metrics.incCounter(total)
         val deviceDetails = dataCache.hgetAllWithRetry(did)
         if(deviceDetails.size > 0) {
+          metrics.incCounter(cacheHit)
           event.addDeviceProfile(DeviceProfile.apply(deviceDetails))
         } else {
+          metrics.incCounter(cacheMiss)
           event.setFlag("device_denorm", false)
         }
       }

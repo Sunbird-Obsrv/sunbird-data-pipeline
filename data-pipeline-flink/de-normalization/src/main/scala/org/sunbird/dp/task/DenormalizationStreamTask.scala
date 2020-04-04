@@ -62,32 +62,27 @@ class DenormalizationStreamTask(config: DenormalizationConfig, kafkaConnector: F
   private val serialVersionUID = -7729362727131516112L
 
   def process(): Unit = {
+    
     implicit val env: StreamExecutionEnvironment = FlinkUtil.getExecutionContext(config);
     implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
 
-    val uniqueSource = kafkaConnector.kafkaEventSource[Event](config.uniqueInputTopic);
-    val derivedSource = kafkaConnector.kafkaEventSource[Event](config.derivedInputTopic);
-    processFromSource(uniqueSource, "telemetry-unique-events-consumer")
-    processFromSource(derivedSource, "derived-unique-events-consumer")
+    val source = kafkaConnector.kafkaEventSource[Event](config.inputTopic);
+    val deviceDenormStream = env.addSource(source, "denorm-consumer").keyBy(key => key.mid()).process(new DeviceDenormFunction(config)).setMaxParallelism(config.deviceDenormParallelism)
+    val userDenormStream = deviceDenormStream.getSideOutput(config.withDeviceEventsTag).keyBy(key => key.mid()).process(new UserDenormFunction(config)).setMaxParallelism(config.userDenormParallelism)
+    val dialCodeDenormStream = userDenormStream.getSideOutput(config.withUserEventsTag).keyBy(key => key.mid()).process(new DialCodeDenormFunction(config)).setMaxParallelism(config.dialcodeDenormParallelism)
+    val contentDenormStream = dialCodeDenormStream.getSideOutput(config.withDialCodeEventsTag).keyBy(key => key.mid()).process(new ContentDenormFunction(config)).setMaxParallelism(config.contentDenormParallelism)
+    val locDenormStream = contentDenormStream.getSideOutput(config.withContentEventsTag).keyBy(key => key.mid()).process(new LocationDenormFunction(config)).setMaxParallelism(config.locDenormParallelism)
+
+    locDenormStream.getSideOutput(config.withLocationEventsTag).addSink(kafkaConnector.kafkaEventSink(config.denormSuccessTopic)).name("telemetry-denorm-events-producer")
+    deviceDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name("telemetry-job-metrics-producer")
+    userDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name("telemetry-job-metrics-producer")
+    dialCodeDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name("telemetry-job-metrics-producer")
+    contentDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name("telemetry-job-metrics-producer")
+    locDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name("telemetry-job-metrics-producer")
 
     env.execute(config.jobName)
   }
 
-  private def processFromSource(source: SourceFunction[Event], sourceConsumerGrp: String)(implicit env: StreamExecutionEnvironment, eventTypeInfo: TypeInformation[Event]) {
-
-    val deviceDenormStream = env.addSource(source, sourceConsumerGrp).process(new DeviceDenormFunction(config)).setMaxParallelism(config.deviceDenormParallelism)
-    val userDenormStream = deviceDenormStream.getSideOutput(config.withDeviceEventsTag).process(new UserDenormFunction(config)).setMaxParallelism(config.userDenormParallelism)
-    val dialCodeDenormStream = userDenormStream.getSideOutput(config.withUserEventsTag).process(new DialCodeDenormFunction(config)).setMaxParallelism(config.dialcodeDenormParallelism)
-    val contentDenormStream = dialCodeDenormStream.getSideOutput(config.withDialCodeEventsTag).process(new ContentDenormFunction(config)).setMaxParallelism(config.contentDenormParallelism)
-    val locDenormStream = contentDenormStream.getSideOutput(config.withContentEventsTag).keyBy(key => key.mid()).process(new LocationDenormFunction(config)).setMaxParallelism(config.locDenormParallelism)
-    locDenormStream.getSideOutput(config.withLocationEventsTag).addSink(kafkaConnector.kafkaEventSink(config.denormSuccessTopic)).name("telemetry-denorm-events-producer")
-//    
-//    deviceDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name("telemetry-job-metrics-producer")
-//    userDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name("telemetry-job-metrics-producer")
-//    dialCodeDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name("telemetry-job-metrics-producer")
-//    contentDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name("telemetry-job-metrics-producer")
-    locDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name("telemetry-job-metrics-producer")
-  }
 }
 
 // $COVERAGE-OFF$ Disabling scoverage as the below code can only be invoked within flink cluster

@@ -12,12 +12,23 @@ import org.sunbird.dp.task.DenormalizationConfig
 import org.sunbird.dp.core.BaseDeduplication
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.core.DataCache
+import org.sunbird.dp.core.BaseProcessFunction
+import org.sunbird.dp.core.Metrics
+import org.apache.flink.streaming.api.functions.KeyedProcessFunction
 
-class UserDenormFunction(config: DenormalizationConfig)(implicit val mapTypeInfo: TypeInformation[Event]) extends ProcessFunction[Event, Event] {
+class UserDenormFunction(config: DenormalizationConfig)(implicit val mapTypeInfo: TypeInformation[Event]) extends BaseProcessFunction[Event](config) {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[UserDenormFunction])
 
   private var dataCache: DataCache = _;
+
+  val total = "user-total";
+  val cacheHit = "user-cache-hit";
+  val cacheMiss = "user-cache-miss";
+
+  override def getMetricsList(): List[String] = {
+    List(total, cacheHit, cacheMiss)
+  }
 
   override def open(parameters: Configuration): Unit = {
 
@@ -30,15 +41,18 @@ class UserDenormFunction(config: DenormalizationConfig)(implicit val mapTypeInfo
     dataCache.close();
   }
 
-  override def processElement(event: Event, context: ProcessFunction[Event, Event]#Context, out: Collector[Event]): Unit = {
+  override def processElement(event: Event, context: KeyedProcessFunction[String, Event, Event]#Context, metrics: Metrics): Unit = {
 
-    Console.println("UserDenormFunction", event.getTelemetry.read("devicedata"), event.getTelemetry.read("flags"));
     val actorId = event.actorId();
     val actorType = event.actorType()
     if (null != actorId && actorId.nonEmpty && !"anonymous".equalsIgnoreCase(actorId) && "user".equalsIgnoreCase(actorType)) {
+      metrics.incCounter(total)
       val userData = dataCache.getWithRetry(actorId);
-      if(userData.size == 0)
-        // TODO: Increment to noCacheHitCounter
+      if (userData.size == 0) {
+        metrics.incCounter(cacheMiss)
+      } else {
+        metrics.incCounter(cacheHit)
+      }
       if (!userData.contains("usersignintype"))
         userData.put("usersignintype", config.userSignInTypeDefault);
       if (!userData.contains("userlogintype"))
