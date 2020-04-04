@@ -24,6 +24,7 @@
 		<module>dp-core</module>
 		<module>telemetry-extractor</module>
 		<module>pipeline-preprocessor</module>
+		<module>druid-events-validator</module>
 	</modules>
 
 	<properties>

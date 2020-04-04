@@ -41,7 +41,7 @@ class ShareEventsFlattener(config: PipelinePreprocessorConfig)
     ShareEvent(
       Actor(event.actorId(), event.actorType()),
       "SHARE_ITEM",
-      EData(event.edataDir, event.edataType(), paramSize),
+      EData(event.edataDir, edataType, paramSize),
       ver = "3.0",
       syncts = event.eventSyncTs.asInstanceOf[Number].longValue,
       ets = event.ets(),

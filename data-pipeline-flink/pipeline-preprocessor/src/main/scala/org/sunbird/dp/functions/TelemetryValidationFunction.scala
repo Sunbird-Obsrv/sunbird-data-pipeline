@@ -44,11 +44,13 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
     } else {
       val validationReport = schemaValidator.validate(event)
       if (validationReport.isSuccess) {
+        logger.info(s"Telemetry schema validation is success: ${event.mid()}")
         event.markSuccess(config.VALIDATION_FLAG_NAME)
         event.updateDefaults(config)
         if (isDuplicateCheckRequired(event)) deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag, flagName = config.DE_DUP_FLAG_NAME)(dedupEngine)
       } else {
         val failedErrorMsg = schemaValidator.getInvalidFieldName(validationReport.toString)
+        logger.info(s"Telemetry schema validation is failed for: ${event.mid()} and error message is: ${validationReport.toString}")
         event.markValidationFailure(failedErrorMsg)
         context.output(config.validationFailedEventsOutputTag, event)
       }
