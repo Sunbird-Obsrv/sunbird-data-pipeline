@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "properties": {
+    "ver": {
+      "id": "http://api.sunbird.org/telemetry/ver",
+      "type": "string"
+
+    },
+    "devicedata": {
+      "$ref": "resource:/schemas/telemetry/devicedata.json"
+    },
+    "contentdata": {
+      "$ref": "resource:/schemas/telemetry/contentdata.json"
+    },
+    "collectiondata": {
+      "$ref": "resource:/schemas/telemetry/collectiondata.json"
+    },
+    "dialcodedata": {
+      "$ref": "resource:/schemas/telemetry/dialcodedata.json"
+    },
+    "userdata": {
+      "$ref": "resource:/schemas/telemetry/userdata.json"
+    },
+    "derivedlocationdata": {
+      "$ref": "resource:/schemas/telemetry/derivedlocationdata.json"
+    }
+  }
+}

@@ -34,14 +34,14 @@ trait BaseDeduplication {
   }
 
   def markDuplicate[T](event: T, flagName: String): T = {
-    if (event.isInstanceOf[Events]) {
-      event.asInstanceOf[Events].updateFlags("flags." + flagName, true)
-    }
-    else {
-      val flags: util.HashMap[String, Boolean] = new util.HashMap[String, Boolean]()
-      flags.put(flagName, true)
-      event.asInstanceOf[util.Map[String, AnyRef]].put("flags", flags.asInstanceOf[util.HashMap[String, AnyRef]])
-    }
-    event.asInstanceOf[T]
+      if(event.isInstanceOf[Events])  {
+          event.asInstanceOf[Events].updateFlags(flagName, true)
+      }
+      else {
+          val flags: util.HashMap[String, Boolean] = new util.HashMap[String, Boolean]()
+          flags.put(flagName, true)
+          event.asInstanceOf[util.Map[String, AnyRef]].put("flags", flags.asInstanceOf[util.HashMap[String, AnyRef]])
+      }
+      event.asInstanceOf[T]
   }
 }

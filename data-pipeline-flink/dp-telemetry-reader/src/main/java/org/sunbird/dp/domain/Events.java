@@ -142,4 +142,10 @@ public abstract class Events {
         telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
         telemetry.add("flags."+ key, value);
     }
+
+    public Map<String, Boolean> getFlags() {
+        NullableValue<Map<String, Boolean>> flags = telemetry.read("flags");
+        return flags.value();
+    }
+
 }

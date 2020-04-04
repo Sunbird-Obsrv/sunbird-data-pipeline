@@ -1,0 +1,60 @@
+### Flink data pipeline jobs configuration ###
+
+namespace: {{ namespace }}
+imagepullsecrets: {{ imagepullsecrets }}
+dockerhub: {{ dockerhub }}
+repository: {{ datapipeline_repository|default('data-pipeline') }}
+image_tag: {{ image_tag }}
+
+azure_storage_account={{ sunbird_private_storage_account_name }}
+azure_storage_secret={{ sunbird_private_storage_account_key }}
+
+telemetry-extractor:
+  job_name=telemetry-extractor
+  job_classname=org.sunbird.dp.task.ExtractorStreamTask
+  taskManagerReplicaCount: {{ task_manager_replica_count|default(1) }}
+  job_manager_heap_size=1024m
+  task_manager_heap_size=1024m
+  job_nodeport=30501
+  
+telemetry-extractor-config: |
+  kafka {
+    input.topic = "{{env}}.telemetry.ingest"
+    output.success.topic = "{{env}}.flink.telemetry.raw"
+    output.duplicate.topic = "{{env}}.flink.telemetry.duplicate"
+    output.failed.topic = "{{env}}.flink.telemetry.failed"
+    event.max.size = "1048576" # Max is only 1MB
+    groupId = "{{env}}.telemetry.extractor.group"
+    broker-servers = "{{ kafka_brokers }}"
+    zookeeper = "{{ zookeepers }}"
+  }
+
+  task {
+    parallelism = 1
+    checkpointing.interval = 60000
+    dedup {
+      parallelism = {{ telemetry_extractor_dedup_fn_parallelism }}
+    }
+    extraction {
+      parallelism = {{ telemetry_extractor_extractor_fn_parallelism }}
+    }
+
+    state-backend-container = "{{ dev-data-store }}"
+    state-backend-directory = "telemetry-extractor-job"
+  }
+
+  redis {
+    host = {{ redis_host }}
+    port = 6379
+    connection {
+      max = 2
+      idle.min = 1
+      idle.max = 2
+      minEvictableIdleTimeSeconds = 120
+      timeBetweenEvictionRunsSeconds = 300
+    }
+    database {
+      duplicationstore.id = 1
+      key.expiry.seconds = {{ telemetry_extractor_redis_expiry_seconds }}
+    }
+  }

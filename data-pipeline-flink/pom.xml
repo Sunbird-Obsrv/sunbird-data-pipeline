@@ -11,7 +11,7 @@
 
 	<groupId>org.sunbird.dp</groupId>
 	<artifactId>pipeline-jobs</artifactId>
-	<version>0.0.1</version>
+	<version>1.0</version>
 	<packaging>pom</packaging>
 	<name>Datapipeline Jobs</name>
 	<description>
@@ -22,6 +22,8 @@
 	<modules>
 		<module>dp-telemetry-reader</module>
 		<module>dp-core</module>
+		<module>telemetry-extractor</module>
+		<module>druid-events-validator</module>
 		<module>pipeline-preprocessor</module>
 	</modules>
 

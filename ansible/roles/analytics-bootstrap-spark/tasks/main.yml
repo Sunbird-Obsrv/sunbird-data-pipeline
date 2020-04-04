@@ -20,6 +20,12 @@
   with_items:
     - {var: 'azure_storage_key', value: '{{ sunbird_private_storage_account_name }}'}
     - {var: 'azure_storage_secret', value: '{{ sunbird_private_storage_account_key }}'}
+    - {var: 'AZURE_STORAGE_ACCOUNT', value: '{{ sunbird_private_storage_account_name }}'}
+    - {var: 'AZURE_STORAGE_ACCESS_KEY', value: '{{ sunbird_private_storage_account_key }}'}
+    - {var: 'GOOGLE_CREDENTIALS_PATH', value: '/home/analytics/credentials'}
+    - {var: 'STORAGE_PROVIDER', value: 'AZURE'}
+    - {var: 'ENV', value: '{{env}}'}
+    - {var: 'KAFKA_BROKER_HOST', value: "{{groups['processing-cluster-kafka'][0]}}:9092"}
 
 - name: Install required python packages
   become: yes
