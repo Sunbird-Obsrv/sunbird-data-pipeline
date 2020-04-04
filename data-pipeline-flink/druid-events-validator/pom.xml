@@ -35,6 +35,11 @@
             <version>3.9</version>
         </dependency>
         <dependency>
+            <groupId>org.sunbird.dp</groupId>
+            <artifactId>dp-core</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
@@ -86,11 +91,6 @@
             <groupId>com.google.maps</groupId>
             <artifactId>google-maps-services</artifactId>
             <version>0.1.7</version>
-        </dependency>
-        <dependency>
-            <groupId>org.sunbird.dp</groupId>
-            <artifactId>dp-core</artifactId>
-            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
