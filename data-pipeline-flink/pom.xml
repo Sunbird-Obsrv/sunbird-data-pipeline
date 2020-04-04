@@ -23,7 +23,6 @@
 		<module>dp-telemetry-reader</module>
 		<module>dp-core</module>
 		<module>telemetry-extractor</module>
-		<module>druid-events-validator</module>
 		<module>pipeline-preprocessor</module>
 	</modules>
 
