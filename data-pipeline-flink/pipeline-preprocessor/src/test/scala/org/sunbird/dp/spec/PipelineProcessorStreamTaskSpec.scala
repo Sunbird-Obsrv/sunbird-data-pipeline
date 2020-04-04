@@ -44,7 +44,7 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
 
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaPrimaryRouteTopic)).thenReturn(new TelemetryPrimaryEventSink)
-    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaSecondaryRouteTopic)).thenReturn(new DupEventsSink)
+    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaSecondaryRouteTopic)).thenReturn(new TelemetrySecondaryEventSink)
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaFailedTopic)).thenReturn(new TelemetryFailedEventsSink)
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaAuditRouteTopic)).thenReturn(new TelemetryAuditEventSink)
     when(mockKafkaUtil.kafkaStringSink(ppConfig.kafkaPrimaryRouteTopic)).thenReturn(new ShareItemEventSink)
@@ -62,7 +62,14 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
   "Pipline Processor job pipeline" should "process the events" in {
 
     val task = new PipelinePreprocessorStreamTask(ppConfig, mockKafkaUtil);
+
     task.process()
+    ShareItemEventSink.values.size() should be(2)
+    TelemetryPrimaryEventSink.values.size() should be(3)
+    TelemetryFailedEventsSink.values.size() should be(1)
+    DupEventsSink.values.size() should be(0)
+    TelemetryAuditEventSink.values.size() should be(0)
+    TelemetrySecondaryEventSink.values.size() should be(0)
   }
 
 }
