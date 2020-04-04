@@ -28,6 +28,11 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
     }
   }
 
+  def correctDialCodeValue(): Unit = {
+    val dialcode = telemetry.read[String]("object.id").value
+    telemetry.add("object.id", dialcode.toUpperCase)
+  }
+
   def markValidationFailure(errorMsg: String): Unit = {
     telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])
     telemetry.add("flags.pp_validation_processed", false)

@@ -62,6 +62,7 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
       event.updateActorId(eventActorId.substring(eventActorId.lastIndexOf(":") + 1))
     if (event.eid != null && event.eid.equalsIgnoreCase("SEARCH"))
       event.correctDialCodeKey()
+    if (event.objectFieldsPresent && (event.objectType.equalsIgnoreCase("DialCode") || event.objectType.equalsIgnoreCase("qr"))) event.correctDialCodeValue()
     event
   }
 
