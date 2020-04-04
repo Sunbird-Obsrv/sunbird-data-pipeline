@@ -65,11 +65,17 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
 
     task.process()
     ShareItemEventSink.values.size() should be(2)
-    TelemetryPrimaryEventSink.values.size() should be(3)
+    TelemetryPrimaryEventSink.values.size() should be(2)
     TelemetryFailedEventsSink.values.size() should be(1)
-    DupEventsSink.values.size() should be(0)
+    DupEventsSink.values.size() should be(1)
     TelemetryAuditEventSink.values.size() should be(0)
     TelemetrySecondaryEventSink.values.size() should be(0)
+
+    DupEventsSink.values.get(0).getFlags.get(ppConfig.DE_DUP_FLAG_NAME).booleanValue() should be(true)
+    TelemetryPrimaryEventSink.values.get(0).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(true)
+    TelemetryPrimaryEventSink.values.get(1).getFlags.get(ppConfig.SHARE_EVENTS_FLATTEN_FLAG_NAME).booleanValue() should be(true)
+    TelemetryPrimaryEventSink.values.get(1).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(true)
+    TelemetryFailedEventsSink.values.get(0).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(false)
   }
 
 }
@@ -82,10 +88,12 @@ class PipeLineProcessorEventSource extends SourceFunction[Event] {
     val event2 = gson.fromJson(EventFixtures.SHARE_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
     val event3 = gson.fromJson(EventFixtures.INVALID_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
     val event4 = gson.fromJson(EventFixtures.INVALID_EVENT_SCHEMA_DOESNT_EXISTS, new util.LinkedHashMap[String, AnyRef]().getClass)
+    val event5 = gson.fromJson(EventFixtures.DUPLICATE_SHARE_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
     ctx.collect(new Event(event1))
     ctx.collect(new Event(event2))
     ctx.collect(new Event(event3))
     ctx.collect(new Event(event4))
+    ctx.collect(new Event(event5))
   }
 
   override def cancel() = {
