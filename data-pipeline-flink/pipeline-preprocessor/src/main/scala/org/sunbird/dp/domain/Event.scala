@@ -33,9 +33,9 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
     telemetry.add("object.id", dialcode.toUpperCase)
   }
 
-  def markValidationFailure(errorMsg: String): Unit = {
+  def markValidationFailure(errorMsg: String, flagName: String): Unit = {
     telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])
-    telemetry.add("flags.pp_validation_processed", false)
+    telemetry.add(s"flags.$flagName", false)
     telemetry.addFieldIfAbsent("metadata", new util.HashMap[String, AnyRef])
     if (null != errorMsg) {
       telemetry.add("metadata.validation_error", errorMsg)
@@ -45,7 +45,7 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
 
   def markSkipped(flagName: String): Unit = {
     telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])
-    telemetry.add(s"flag.$flagName", true)
+    telemetry.add(s"flags.$flagName", true)
   }
 
   def markSuccess(flagName: String): Unit = {

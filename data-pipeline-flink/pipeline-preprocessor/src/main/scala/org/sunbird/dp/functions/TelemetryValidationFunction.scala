@@ -51,7 +51,7 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
       } else {
         val failedErrorMsg = schemaValidator.getInvalidFieldName(validationReport.toString)
         logger.info(s"Telemetry schema validation is failed for: ${event.mid()} and error message is: ${validationReport.toString}")
-        event.markValidationFailure(failedErrorMsg)
+        event.markValidationFailure(failedErrorMsg, config.VALIDATION_FLAG_NAME)
         context.output(config.validationFailedEventsOutputTag, event)
       }
     }
