@@ -76,6 +76,7 @@ public class JobMetricsTest {
         Assert.assertEquals(0, consumer_lag);
     }
 
+    /*
     @Test
     public void shouldCollectTheMetrics() {
         Map<String, ConcurrentHashMap<String, Metric>> concurrentHashMap =
@@ -150,6 +151,7 @@ public class JobMetricsTest {
         assertEquals(0.0, metrics.get("partition"));
         assertEquals(800.0, metrics.get("consumer-lag"));
     }
+    */
 
 
     @Test
