@@ -41,7 +41,7 @@ class UserDenormFunction(config: DenormalizationConfig)(implicit val mapTypeInfo
     dataCache.close();
   }
 
-  override def processElement(event: Event, context: KeyedProcessFunction[String, Event, Event]#Context, metrics: Metrics): Unit = {
+  override def processElement(event: Event, context: KeyedProcessFunction[Integer, Event, Event]#Context, metrics: Metrics): Unit = {
 
     val actorId = event.actorId();
     val actorType = event.actorType()

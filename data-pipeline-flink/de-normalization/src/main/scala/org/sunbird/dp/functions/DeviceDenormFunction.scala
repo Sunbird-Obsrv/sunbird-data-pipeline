@@ -43,7 +43,7 @@ class DeviceDenormFunction(config: DenormalizationConfig)(implicit val mapTypeIn
   }
   
 
-  override def processElement(event: Event, context: KeyedProcessFunction[String, Event, Event]#Context, metrics: Metrics): Unit = {
+  override def processElement(event: Event, context: KeyedProcessFunction[Integer, Event, Event]#Context, metrics: Metrics): Unit = {
 
     if (event.isOlder(config.ignorePeriodInMonths)) { // Skip events older than configured value (default: 3 months)
       metrics.incCounter(expired)

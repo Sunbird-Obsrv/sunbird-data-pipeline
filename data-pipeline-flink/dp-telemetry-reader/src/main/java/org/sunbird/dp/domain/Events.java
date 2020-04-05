@@ -11,14 +11,20 @@ public abstract class Events {
 
     protected Telemetry telemetry;
     protected Path path;
+    private Integer partition;
 
-    public Events(Map<String, Object> map) {
+    public Events(Map<String, Object> map, Integer partition) {
         this.telemetry = new Telemetry(map);
         this.path = new Path();
+        this.partition = partition;
     }
 
     public Telemetry getTelemetry() {
         return telemetry;
+    }
+    
+    public Integer getPartition() {
+    		return partition;
     }
 
     public String getChecksum() {
@@ -53,6 +59,11 @@ public abstract class Events {
 
     public String eid() {
         NullableValue<String> eid = telemetry.read("eid");
+        return eid.value();
+    }
+    
+    public Map<String, Object> flags() {
+        NullableValue<Map<String, Object>> eid = telemetry.read(path.flags());
         return eid.value();
     }
 

@@ -41,7 +41,7 @@ class DialCodeDenormFunction(config: DenormalizationConfig)(implicit val mapType
     dataCache.close();
   }
 
-  override def processElement(event: Event, context: KeyedProcessFunction[String, Event, Event]#Context, metrics: Metrics): Unit = {
+  override def processElement(event: Event, context: KeyedProcessFunction[Integer, Event, Event]#Context, metrics: Metrics): Unit = {
 
     if (null != event.objectType() && List("dialcode", "qr").contains(event.objectType().toLowerCase())) {
       metrics.incCounter(total);

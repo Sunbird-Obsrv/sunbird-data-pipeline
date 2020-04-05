@@ -37,7 +37,7 @@ class DeduplicationStreamTask(config: DeduplicationConfig, kafkaConnector: Flink
         .addSink(kafkaConnector.kafkaEventSink(config.kafkaDuplicateTopic))
         .name("kafka-telemetry-duplicate-producer")
 
-      env.execute("DeduplicationFlinkJob")
+      env.execute(config.jobName)
 
     } catch {
       case ex: Exception =>

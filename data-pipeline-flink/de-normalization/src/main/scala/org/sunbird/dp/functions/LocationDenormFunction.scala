@@ -43,7 +43,7 @@ class LocationDenormFunction(config: DenormalizationConfig)(implicit val mapType
     super.close()
   }
 
-  override def processElement(event: Event, context: KeyedProcessFunction[String, Event, Event]#Context, metrics: Metrics): Unit = {
+  override def processElement(event: Event, context: KeyedProcessFunction[Integer, Event, Event]#Context, metrics: Metrics): Unit = {
 
     metrics.incCounter(locTotal)
     val userProfileLocation = event.getUserProfileLocation();

@@ -12,7 +12,7 @@ import org.joda.time.format.DateTimeFormatter
 import scala.collection.mutable.Map
 import collection.JavaConverters._
 
-class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
+class Event(eventMap: util.Map[String, AnyRef], partition: Integer) extends Events(eventMap, partition) {
 
   private[this] val df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZoneUTC
   private[this] val df2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").withZoneUTC();

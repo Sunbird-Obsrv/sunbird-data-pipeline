@@ -67,11 +67,11 @@ class DenormalizationStreamTask(config: DenormalizationConfig, kafkaConnector: F
     implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
 
     val source = kafkaConnector.kafkaEventSource[Event](config.inputTopic);
-    val deviceDenormStream = env.addSource(source, "denorm-consumer").keyBy(key => "1").process(new DeviceDenormFunction(config))
-    val userDenormStream = deviceDenormStream.getSideOutput(config.withDeviceEventsTag).keyBy(key => "1").process(new UserDenormFunction(config))
-    val dialCodeDenormStream = userDenormStream.getSideOutput(config.withUserEventsTag).keyBy(key => "1").process(new DialCodeDenormFunction(config))
-    val contentDenormStream = dialCodeDenormStream.getSideOutput(config.withDialCodeEventsTag).keyBy(key => "1").process(new ContentDenormFunction(config))
-    val locDenormStream = contentDenormStream.getSideOutput(config.withContentEventsTag).keyBy(key => "1").process(new LocationDenormFunction(config))
+    val deviceDenormStream = env.addSource(source, "denorm-consumer").rebalance().keyBy(key => key.getPartition).process(new DeviceDenormFunction(config))
+    val userDenormStream = deviceDenormStream.getSideOutput(config.withDeviceEventsTag).keyBy(key => key.getPartition).process(new UserDenormFunction(config))
+    val dialCodeDenormStream = userDenormStream.getSideOutput(config.withUserEventsTag).keyBy(key => key.getPartition).process(new DialCodeDenormFunction(config))
+    val contentDenormStream = dialCodeDenormStream.getSideOutput(config.withDialCodeEventsTag).keyBy(key => key.getPartition).process(new ContentDenormFunction(config))
+    val locDenormStream = contentDenormStream.getSideOutput(config.withContentEventsTag).keyBy(key => key.getPartition).process(new LocationDenormFunction(config))
 
     locDenormStream.getSideOutput(config.withLocationEventsTag).addSink(kafkaConnector.kafkaEventSink(config.denormSuccessTopic)).name("telemetry-denorm-events-producer")
     deviceDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name("telemetry-job-metrics-producer")

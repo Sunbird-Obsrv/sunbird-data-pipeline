@@ -7,7 +7,7 @@ import org.sunbird.dp.core.BaseJobConfig
 import org.apache.flink.streaming.api.scala.OutputTag
 import com.typesafe.config.Config
 
-class ExtractionConfig(override val config: Config) extends BaseJobConfig(config) {
+class ExtractionConfig(override val config: Config) extends BaseJobConfig(config, "telemetry-extractor") {
 
   private val serialVersionUID = 2905979434303791379L
 
@@ -39,7 +39,5 @@ class ExtractionConfig(override val config: Config) extends BaseJobConfig(config
 
   val duplicateEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = DUPLICATE_EVENTS_OUTPUT_TAG)
   val uniqueEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = UNIQUE_EVENTS_OUTPUT_TAG)
-
-  val jobName = "telemetry-extractor"
 
 }

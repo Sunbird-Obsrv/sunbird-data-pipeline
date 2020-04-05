@@ -40,6 +40,7 @@ class DenormalizationStreamTaskTest extends FlatSpec with Matchers with BeforeAn
   val config = ConfigFactory.load("test.conf");
   val extConfig: DenormalizationConfig = new DenormalizationConfig(config);
   val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
+  val gson = new Gson();
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
@@ -58,7 +59,6 @@ class DenormalizationStreamTaskTest extends FlatSpec with Matchers with BeforeAn
   
   def setupRedisTestData() {
     
-    val gson = new Gson();
     val redisConnect = new RedisConnect(extConfig)
     
     // Insert device test data
@@ -85,9 +85,7 @@ class DenormalizationStreamTaskTest extends FlatSpec with Matchers with BeforeAn
     jedis.set("do_312526125187809280139353", EventFixture.contentCacheData2)
     jedis.set("do_312526125187809280139355", EventFixture.contentCacheData3)
     jedis.close();
-    
-    
-    
+
   }
 
   "Extraction job pipeline" should "extract events" in {
@@ -99,8 +97,80 @@ class DenormalizationStreamTaskTest extends FlatSpec with Matchers with BeforeAn
     task.process()
     Thread.sleep(extConfig.metricsWindowSize + 2000); // Wait for metrics to be triggered
     DenormEventsSink.values.size should be (10)
-    MetricsEventsSink.values.size() should be (5)
-    MetricsEventsSink.values.asScala.foreach(println(_))
+    DenormEventsSink.values.get("mid10") should be (None)
+    
+    var event = DenormEventsSink.values.get("mid1").get;
+    event.flags().get("device_denorm").asInstanceOf[Boolean] should be (false)
+    event.flags().get("user_denorm").asInstanceOf[Boolean] should be (true)
+    Option(event.flags().get("dialcode_denorm")) should be (None)
+    Option(event.flags().get("content_denorm")) should be (None)
+    Option(event.flags().get("location_denorm")) should be (None)
+    
+    event = DenormEventsSink.values.get("mid2").get;
+    event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
+    event.flags().get("user_denorm").asInstanceOf[Boolean] should be (true)
+    Option(event.flags().get("dialcode_denorm")) should be (None)
+    event.flags().get("content_denorm").asInstanceOf[Boolean] should be (true)
+    event.flags().get("loc_denorm").asInstanceOf[Boolean] should be (true)
+    Option(event.flags().get("coll_denorm")) should be (None)
+    
+    event = DenormEventsSink.values.get("mid3").get;
+    event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
+    event.flags().get("user_denorm").asInstanceOf[Boolean] should be (false)
+    event.flags().get("content_denorm").asInstanceOf[Boolean] should be (true)
+    event.flags().get("coll_denorm").asInstanceOf[Boolean] should be (true)
+    event.flags().get("loc_denorm").asInstanceOf[Boolean] should be (true)
+    
+    event = DenormEventsSink.values.get("mid4").get;
+    event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
+    event.flags().get("user_denorm").asInstanceOf[Boolean] should be (true)
+    event.flags().get("dialcode_denorm").asInstanceOf[Boolean] should be (true)
+    event.flags().get("content_denorm").asInstanceOf[Boolean] should be (false)
+    event.flags().get("loc_denorm").asInstanceOf[Boolean] should be (true)
+    Option(event.flags().get("coll_denorm")) should be (None)
+    
+    event = DenormEventsSink.values.get("mid5").get;
+    event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
+    event.flags().get("user_denorm").asInstanceOf[Boolean] should be (false)
+    event.flags().get("loc_denorm").asInstanceOf[Boolean] should be (true)
+    event.flags().get("dialcode_denorm").asInstanceOf[Boolean] should be (true)
+    Option(event.flags().get("content_denorm")) should be (None)
+    Option(event.flags().get("location_denorm")) should be (None)
+
+    // TODO: Complete the assertions
+    event = DenormEventsSink.values.get("mid6").get;
+    event = DenormEventsSink.values.get("mid7").get;
+    event = DenormEventsSink.values.get("mid8").get;
+    event = DenormEventsSink.values.get("mid9").get;
+    
+    MetricsEventsSink.values.size should be (5)
+    val metricsMap: scala.collection.mutable.Map[String, Double] = scala.collection.mutable.Map[String, Double]();
+    MetricsEventsSink.values.foreach(metricJson => {
+      val metricEvent = gson.fromJson(metricJson, new util.HashMap[String, AnyRef]().getClass);
+      val list = metricEvent.get("metrics").asInstanceOf[util.List[util.Map[String, AnyRef]]].asScala
+      for(metric <- list) {
+        metricsMap.put(metric.get("id").asInstanceOf[String], metric.get("value").asInstanceOf[Double])
+      }
+    })
+    
+    metricsMap.get("loc-cache-hit").get should be (7)
+    metricsMap.get("event-expired").get should be (1)
+    
+    metricsMap.get("content-cache-miss").get should be (3)
+    metricsMap.get("device-cache-miss").get should be (2)
+    metricsMap.get("dialcode-total").get should be (3)
+    metricsMap.get("dialcode-cache-miss").get should be (1)
+    metricsMap.get("content-total").get should be (7)
+    metricsMap.get("loc-cache-miss").get should be (3)
+    metricsMap.get("user-cache-miss").get should be (4)
+    metricsMap.get("dialcode-cache-hit").get should be (2)
+    
+    metricsMap.get("content-cache-hit").get should be (4)
+    metricsMap.get("loc-total").get should be (10)
+    metricsMap.get("device-cache-hit").get should be (7)
+    metricsMap.get("user-cache-hit").get should be (3)
+    metricsMap.get("user-total").get should be (7)
+    metricsMap.get("device-total").get should be (9)
 
   }
   
@@ -124,7 +194,7 @@ class InputSource extends SourceFunction[Event] {
     val gson = new Gson()
     EventFixture.telemetrEvents.foreach(f => {
       val eventMap = gson.fromJson(f, new util.HashMap[String, AnyRef]().getClass)
-      ctx.collect(new Event(eventMap));  
+      ctx.collect(new Event(eventMap, 0));  
     })
     
   }
@@ -165,11 +235,11 @@ class MetricsEventsSink extends SinkFunction[String] {
 
   override def invoke(value: String): Unit = {
     synchronized {
-      MetricsEventsSink.values.add(value)
+      MetricsEventsSink.values.append(value);
     }
   }
 }
 
 object MetricsEventsSink {
-  val values: util.List[String] = new util.ArrayList[String]()
+  val values: scala.collection.mutable.Buffer[String] = scala.collection.mutable.Buffer[String]()
 }

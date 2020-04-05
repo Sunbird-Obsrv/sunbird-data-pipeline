@@ -9,7 +9,7 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.scala.OutputTag
 
-class BaseJobConfig(val config: Config) extends Serializable {
+class BaseJobConfig(val config: Config, val jobName: String) extends Serializable {
 
   implicit val metricTypeInfo: TypeInformation[String] = TypeExtractor.getForClass(classOf[String])
 

@@ -9,7 +9,7 @@ import com.typesafe.config.Config
 import org.sunbird.dp.domain.Event
 import collection.JavaConversions._
 
-class DenormalizationConfig(override val config: Config) extends BaseJobConfig(config) {
+class DenormalizationConfig(override val config: Config) extends BaseJobConfig(config, "de-normalization") {
 
   private val serialVersionUID = 2905979434303791379L
 
@@ -58,7 +58,5 @@ class DenormalizationConfig(override val config: Config) extends BaseJobConfig(c
   val withContentEventsTag: OutputTag[Event] = OutputTag[Event](WITH_CONTENT_EVENTS)
   val withDialCodeEventsTag: OutputTag[Event] = OutputTag[Event](WITH_DIALCODE_EVENTS)
   val denormEventsTag: OutputTag[Event] = OutputTag[Event](DENORM_EVENTS)
-
-  val jobName = "de-normalization"
 
 }

@@ -41,7 +41,7 @@ class ContentDenormFunction(config: DenormalizationConfig)(implicit val mapTypeI
     dataCache.close();
   }
 
-  override def processElement(event: Event, context: KeyedProcessFunction[String, Event, Event]#Context, metrics: Metrics): Unit = {
+  override def processElement(event: Event, context: KeyedProcessFunction[Integer, Event, Event]#Context, metrics: Metrics): Unit = {
     
     val objectType = event.objectType();
     val objectId = event.objectID();

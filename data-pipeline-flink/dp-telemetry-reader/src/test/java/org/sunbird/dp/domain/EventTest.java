@@ -154,7 +154,7 @@ public class EventTest {
 class Event extends Events {
 
     public Event(Map<String, Object> map) {
-        super(map);
+        super(map, 0);
     }
 
     public <T> NullableValue<T> getData() {

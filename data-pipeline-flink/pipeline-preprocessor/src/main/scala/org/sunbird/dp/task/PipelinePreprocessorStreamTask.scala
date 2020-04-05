@@ -60,7 +60,7 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
         logger.error("Error when processing stream: ", ex)
     }
 
-    env.execute("PipelinePreprocessorStreamJob")
+    env.execute(config.jobName)
   }
 
 }
