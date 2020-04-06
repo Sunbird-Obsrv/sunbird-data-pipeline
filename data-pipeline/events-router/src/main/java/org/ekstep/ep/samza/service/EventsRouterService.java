@@ -30,7 +30,7 @@ public class EventsRouterService {
 		Event event = null;
 		try {
 			event = source.getEvent();
-			if (config.isDedupEnabled() && isDupCheckRequired(event)) {
+			if (config.isDedupEnabled() && isDupCheckRequired(event.eid())) {
 				String checksum = event.getChecksum();
 				if (!deDupEngine.isUniqueEvent(checksum)) {
 					LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
@@ -80,7 +80,7 @@ public class EventsRouterService {
 		}
 	}
 
-	public boolean isDupCheckRequired(Event event) {
-		return (config.exclusiveEids().isEmpty() || (null != event.eid() && !(config.exclusiveEids().contains(event.eid()))));
+	private boolean isDupCheckRequired(String eid) {
+		return (config.excludedEids().isEmpty() || (null != eid && !(config.excludedEids().contains(eid))));
 	}
 }

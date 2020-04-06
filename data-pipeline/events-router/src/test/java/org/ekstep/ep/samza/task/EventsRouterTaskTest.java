@@ -206,6 +206,7 @@ public class EventsRouterTaskTest {
 		when(deDupEngineMock.isUniqueEvent(anyString())).thenReturn(true);
 		eventsRouterTask = new EventsRouterTask(deDupEngineMock, configMock, contextMock);
 		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
+
 	}
 
 	@Test
