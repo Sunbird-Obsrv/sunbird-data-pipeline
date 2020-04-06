@@ -24,7 +24,7 @@ config() {
 	dataExhaustChannel="{{ data_exhaust_Channel }}"
 	pipelineAuditSlackUser="Pipeline Audit"
 	druidBrokerUrl="http://{{druid_broker_host}}:8082/"
-	producerEnv="{{ producer_env }}.sunbird"
+	producerEnv="{{ producer_env }}"
 	baseScriptPath="{{ spark_output_temp_dir }}"
 	
 	if [ -z "$2" ]; then endDate=$(date --date yesterday "+%Y-%m-%d"); else endDate=$2; fi
