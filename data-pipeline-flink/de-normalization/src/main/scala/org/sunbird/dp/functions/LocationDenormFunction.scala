@@ -35,14 +35,6 @@ class LocationDenormFunction(config: DenormalizationConfig)(implicit val mapType
     List(locTotal, locCacheHit, locCacheMiss)
   }
 
-  override def open(parameters: Configuration): Unit = {
-
-  }
-
-  override def close(): Unit = {
-    super.close()
-  }
-
   override def processElement(event: Event, context: KeyedProcessFunction[Integer, Event, Event]#Context, metrics: Metrics): Unit = {
 
     metrics.incCounter(locTotal)

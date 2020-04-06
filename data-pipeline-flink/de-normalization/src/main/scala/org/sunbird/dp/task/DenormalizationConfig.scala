@@ -39,12 +39,9 @@ class DenormalizationConfig(override val config: Config) extends BaseJobConfig(c
   val userSignInTypeDefault = if(config.hasPath("user.signin.type.default")) config.getString("user.signin.type.default") else "Anonymous";
   val userLoginInTypeDefault = if(config.hasPath("user.login.type.default")) config.getString("user.login.type.default") else "NA";
 
-//  val deviceDenormParallelism: Int = config.getInt("task.device.denorm.parallelism")
-//  val userDenormParallelism: Int = config.getInt("task.user.denorm.parallelism")
-//  val contentDenormParallelism: Int = config.getInt("task.content.denorm.parallelism")
-//  val locDenormParallelism: Int = config.getInt("task.loc.denorm.parallelism")
-//  val dialcodeDenormParallelism: Int = config.getInt("task.dialcode.denorm.parallelism")
-
+  val DENORM_EVENTS_PRODUCER = "telemetry-denorm-events-producer"
+  val JOB_METRICS_PRODUCER = "telemetry-job-metrics-producer"
+  
   val WITH_LOCATION_EVENTS = "with_location_events"
   val WITH_DEVICE_EVENTS = "with_device_events"
   val WITH_USER_EVENTS = "with_user_events"

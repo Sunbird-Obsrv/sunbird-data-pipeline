@@ -73,12 +73,12 @@ class DenormalizationStreamTask(config: DenormalizationConfig, kafkaConnector: F
     val contentDenormStream = dialCodeDenormStream.getSideOutput(config.withDialCodeEventsTag).keyBy(key => key.getPartition).process(new ContentDenormFunction(config))
     val locDenormStream = contentDenormStream.getSideOutput(config.withContentEventsTag).keyBy(key => key.getPartition).process(new LocationDenormFunction(config))
 
-    locDenormStream.getSideOutput(config.withLocationEventsTag).addSink(kafkaConnector.kafkaEventSink(config.denormSuccessTopic)).name("telemetry-denorm-events-producer")
-    deviceDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name("telemetry-job-metrics-producer")
-    userDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name("telemetry-job-metrics-producer")
-    dialCodeDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name("telemetry-job-metrics-producer")
-    contentDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name("telemetry-job-metrics-producer")
-    locDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name("telemetry-job-metrics-producer")
+    locDenormStream.getSideOutput(config.withLocationEventsTag).addSink(kafkaConnector.kafkaEventSink(config.denormSuccessTopic)).name(config.DENORM_EVENTS_PRODUCER)
+    deviceDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name(config.JOB_METRICS_PRODUCER)
+    userDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name(config.JOB_METRICS_PRODUCER)
+    dialCodeDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name(config.JOB_METRICS_PRODUCER)
+    contentDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name(config.JOB_METRICS_PRODUCER)
+    locDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name(config.JOB_METRICS_PRODUCER)
 
     env.execute(config.jobName)
   }

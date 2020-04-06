@@ -67,7 +67,7 @@ class Event(eventMap: util.Map[String, AnyRef], partition: Integer) extends Even
 
   def addDerivedLocation(derivedData: (String, String, String)) {
     val locMap = Map(path.stateKey() -> derivedData._1, path.districtKey() -> derivedData._2, path.locDerivedFromKey() -> derivedData._3)
-    telemetry.add(path.derivedLocationData(), derivedData);
+    telemetry.add(path.derivedLocationData(), locMap);
     setFlag("loc_denorm", true);
   }
 
