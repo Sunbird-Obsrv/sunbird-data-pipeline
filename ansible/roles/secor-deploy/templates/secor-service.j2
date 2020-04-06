@@ -1,97 +1,131 @@
 #!/bin/bash
 
-# chkconfig: 2345 95 05
-# description: {{ description }}
+# description: Linux script to start/stop/restart secor service
+USAGE="Usage: $0 <secor_process_name> {start|stop|restart|status}"
 
-# Source function library.
-. /lib/lsb/init-functions
+SECOR_INSTALL_DIR=/home/analytics/sbin
+SECOR_NAME=$1
+SECOR_PID="${SECOR_INSTALL_DIR}/$SECOR_NAME.pid"
 
-service_name=$1
-prog="$service_name"
-PIDFILE="{{ script_dir }}/$service_name.pid"
-DESC="Secor Service"
-GREP_KEY="$service_name"
-DAEMON=/usr/bin/java
-DAEMON_ARGS="-- -Xms256M -Xmx1000M -ea -Duser.timezone=UTC -Dsecor_group=$service_name -Dlog4j.configuration=log4j.properties -Dconfig=secor.partition.properties -cp secor-0.25-SNAPSHOT.jar:lib/* com.pinterest.secor.main.ConsumerMain"
-DAEMON_HOME="/mount/$service_name"
-SBIN_HOME="{{ script_dir }}"
-
-#echo "All value sets"
-
-start() {
-    if [ -f $PIDFILE ]; then
-        PID=`cat $PIDFILE`
-        if [ -z "`pgrep $PID`" ] && [ "$PID" != "`ps aux|grep -vE 'grep|runuser|bash'|grep -w "$GREP_KEY"|awk '{print $2}'`" ]; then
-            printf "%s\n" "Process dead but pidfile exists"
-        else
-            printf "$prog is already running!\n"
-        fi
-    else
-        printf "%-50s" "Starting $prog ..."
-        cd $DAEMON_HOME
-        start-stop-daemon --start --quiet --background --name $service_name -d $DAEMON_HOME --exec $DAEMON $DAEMON_ARGS >/mount/secor/logs/$service_name-service.log 2>&1
-        sleep 10
-        PID=`ps aux|grep -vE 'grep|runuser|bash'|grep -w "$GREP_KEY"|awk '{print $2}'`
-        if [ -z "$PID" ]; then
-            printf "[ \e[31mFAIL\033[0m ]\n"
-            exit 1
-        else
-            echo $PID > $PIDFILE
-            printf "[ \e[32mOK\033[0m ]\n"
-        fi
-    fi
+function check_if_process_is_alive() {
+  local pid
+  pid=$(cat ${SECOR_PID})
+  if ! kill -0 ${pid} >/dev/null 2>&1; then
+    echo "${SECOR_NAME} process died"
+   # print_log_for_ci
+    return 1
+  fi
 }
 
-stop() {
-    printf "%-50s" "Shutting down $prog:"
-    if [ -f $PIDFILE ]; then
-        PID=`cat $PIDFILE`
-        start-stop-daemon --stop --quiet --oknodo --pidfile $PIDFILE 2>/dev/null
-        sleep 5
-        PID=`ps aux|grep -vE 'grep|runuser|bash'|grep -w "$GREP_KEY"|awk '{print $2}'`
-        if [ ! -z "$PID" ]; then
-            printf "[ \e[31mFAIL\033[0m ]\n"
-            exit 1
-        else
-            rm -f $PIDFILE
-            printf "[ \e[32mOK\033[0m ]\n"
-        fi
-    else
-        printf "[ \e[32mNOT RUNNING\033[0m ]\n" 
+function start() {
+  local pid
+
+  if [[ -f "${SECOR_PID}" ]]; then
+    pid=$(cat ${SECOR_PID})
+    if kill -0 ${pid} >/dev/null 2>&1; then
+      echo "${SECOR_NAME} is already running"
+      return 0;
     fi
+  fi
+
+  cd /mount/$SECOR_NAME
+    nohup /usr/bin/java -Xms256M -Xmx1000M -ea -Duser.timezone=UTC -Dsecor_group=$SECOR_NAME -Dlog4j.configuration=log4j.properties -Dconfig=secor.partition.properties -cp secor-0.25-SNAPSHOT.jar:lib/* com.pinterest.secor.main.ConsumerMain > /mount/secor/logs/$SECOR_NAME-service.log 2>&1 &
+  pid=$!
+  sleep 1
+
+  if [[ -z "${pid}" ]]; then
+    echo "${SECOR_NAME} failed to start"
+    return 1;
+  else
+    echo "${SECOR_NAME} started"
+    echo ${pid} > ${SECOR_PID}
+  fi
+
+  sleep 1
+  check_if_process_is_alive
 }
 
-check_status() {
-    printf "%-50s" "Checking $prog ..."
-    if [ -f $PIDFILE ]; then
-        PID=`cat $PIDFILE`
-        if [ -z "`pgrep $PID`" ] && [ "$PID" != "`ps aux|grep -vE 'grep|runuser|bash'|grep -w "$GREP_KEY"|awk '{print $2}'`" ]; then
-            printf "%s\n" "Process dead but pidfile exists"
-        else
-            printf "[ \e[32mRUNNING\033[0m ]\n"
-        fi
+function wait_for_secor_to_die() {
+  local pid
+  local count
+  pid=$1
+  timeout=$2
+  count=0
+  timeoutTime=$(date "+%s")
+  let "timeoutTime+=$timeout"
+  currentTime=$(date "+%s")
+  forceKill=1
+
+  while [[ $currentTime -lt $timeoutTime ]]; do
+    $(kill ${pid} > /dev/null 2> /dev/null)
+    if kill -0 ${pid} > /dev/null 2>&1; then
+      sleep 1
     else
-        printf "[ \e[31mSTOPPED\033[0m ]\n"
+      forceKill=0
+      break
     fi
+    currentTime=$(date "+%s")
+  done
+
+  if [[ forceKill -ne 0 ]]; then
+    $(kill -9 ${pid} > /dev/null 2> /dev/null)
+  fi
 }
 
-case "$2" in
-    start)
-        start
-        ;;
-    stop)
-        stop
-        ;;
-    status)
-        check_status
-        ;;
-    restart)
-        stop
-        start
-        ;;
-    *)
-        echo "Usage: $prog {start|stop|status|restart}"
-        exit 1
-        ;;
+function stop() {
+  local pid
+
+  # secor daemon kill
+  if [[ ! -f "${SECOR_PID}" ]]; then
+    echo "${SECOR_NAME} is not running"
+  else
+    pid=$(cat ${SECOR_PID})
+    if [[ -z "${pid}" ]]; then
+      echo "${SECOR_NAME} is not running"
+    else
+      wait_for_secor_to_die $pid 40
+      $(rm -f ${SECOR_PID})
+      echo "${SECOR_NAME} stopped"
+    fi
+  fi
+}
+
+function find_secor_process() {
+  local pid
+
+  if [[ -f "${SECOR_PID}" ]]; then
+    pid=$(cat ${SECOR_PID})
+    if ! kill -0 ${pid} > /dev/null 2>&1; then
+      echo "${SECOR_NAME} running but process is dead"
+      return 1
+    else
+      echo "${SECOR_NAME} is running"
+    fi
+  else
+    echo "${SECOR_NAME} is not running"
+    return 1
+  fi
+}
+
+ function restart_secor() {
+  stop
+  sleep 2
+  start
+ }
+
+case "${2}" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  status)
+    find_secor_process
+    ;;
+  restart)
+    restart_secor
+    ;;
+  *)
+    echo ${USAGE}
 esac
-exit 0

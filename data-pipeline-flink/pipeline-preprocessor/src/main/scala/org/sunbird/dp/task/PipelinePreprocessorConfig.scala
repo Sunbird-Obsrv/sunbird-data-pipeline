@@ -9,7 +9,7 @@ import org.sunbird.dp.domain.Event
 
 import scala.collection.JavaConverters._
 
-class PipelinePreprocessorConfig(override val config: Config) extends BaseJobConfig(config) {
+class PipelinePreprocessorConfig(override val config: Config) extends BaseJobConfig(config, "pipeline-processor") {
 
   private val serialVersionUID = 2905979434303791379L
 
@@ -57,7 +57,6 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val routerParallelism:Int = config.getInt("telemetry.router.parallelism")
   val shareEventsFlattnerParallelism:Int = config.getInt("share.events.flattener.parallelism")
 
-  val job_name = "PipelinePreprocessorStreamJob"
   val VALIDATION_FLAG_NAME = "pp_validation_processed"
   val DE_DUP_FLAG_NAME = "pp_duplicate"
   val SHARE_EVENTS_FLATTEN_FLAG_NAME = "pp_share_event_processed"

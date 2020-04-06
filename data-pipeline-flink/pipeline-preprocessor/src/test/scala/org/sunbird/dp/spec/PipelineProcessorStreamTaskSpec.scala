@@ -89,11 +89,11 @@ class PipeLineProcessorEventSource extends SourceFunction[Event] {
     val event3 = gson.fromJson(EventFixtures.INVALID_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
     val event4 = gson.fromJson(EventFixtures.INVALID_EVENT_SCHEMA_DOESNT_EXISTS, new util.LinkedHashMap[String, AnyRef]().getClass)
     val event5 = gson.fromJson(EventFixtures.DUPLICATE_SHARE_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
-    ctx.collect(new Event(event1))
-    ctx.collect(new Event(event2))
-    ctx.collect(new Event(event3))
-    ctx.collect(new Event(event4))
-    ctx.collect(new Event(event5))
+    ctx.collect(new Event(event1, 0))
+    ctx.collect(new Event(event2, 0))
+    ctx.collect(new Event(event3, 0))
+    ctx.collect(new Event(event4, 0))
+    ctx.collect(new Event(event5, 0))
   }
 
   override def cancel() = {

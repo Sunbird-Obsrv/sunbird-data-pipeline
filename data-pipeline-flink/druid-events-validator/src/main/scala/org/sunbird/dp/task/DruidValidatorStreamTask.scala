@@ -80,7 +80,7 @@ class DruidValidatorStreamTask(config: DruidValidatorConfig, kafkaConnector: Fli
         .addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaFailedTopic))
         .name("kafka-telemetry-invalid-producer")
 
-      env.execute("DruidValidatorJob")
+      env.execute(config.jobName)
 
   }
 

@@ -2362,8 +2362,8 @@
                   "type": "in",
                   "dimension": "context_pdata_id",
                   "values": [
-                    "{{ producer_env }}.diksha.portal",
-                    "{{ producer_env }}.diksha.app"
+                    "{{ producer_env }}.portal",
+                    "{{ producer_env }}.app"
                   ]
                 },
                 {
@@ -2391,17 +2391,24 @@
               "total_unique_devices"
             ],
             "dims": [
-              "state"
+              "state","date"
             ],
             "fileParameters": [
               "id",
               "dims"
             ]
           }
-        ]
+        ],
+        "mergeConfig": {
+          "frequency": "MONTH",
+          "basePath": {{ spark_output_temp_dir }},
+          "rollup": 0,
+          "reportPath": "district_monthly.csv"
+        }
       },
-      "bucket": "{{ bucket }}",
-      "key": "druid-reports/"
+        "store": "azure",
+        "container": "{{ bucket }}",
+        "key": "druid-reports/"
     },
     "output": [
       {
@@ -2464,7 +2471,7 @@
                 {
                   "type": "equals",
                   "dimension": "context_pdata_id",
-                  "value": "{{ producer_env }}.diksha.desktop"
+                  "value": "{{ producer_env }}.desktop"
                 },
                 {
                   "type": "equals",
@@ -2515,7 +2522,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.desktop"
+                  "value": "{{ producer_env }}.desktop"
                 }
               ],
               "descending": "false"
@@ -2561,7 +2568,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.desktop"
+                  "value": "{{ producer_env }}.desktop"
                 }
               ],
               "postAggregation": [
@@ -2619,7 +2626,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.desktop"
+                  "value": "{{ producer_env }}.desktop"
                 }
               ],
               "descending": "false"
@@ -2644,16 +2651,27 @@
               "total_unique_devices_on_desktop_played_content"
             ],
             "dims": [
-              "state"
+              "state","date"
             ],
             "fileParameters": [
               "dims"
             ]
           }
-        ]
+        ],
+         "mergeConfig":
+         {
+           "frequency": "DAY",
+           "basePath": {{ spark_output_temp_dir }},
+           "rollup": 1,
+           "rollupAge": "ACADEMIC_YEAR",
+           "rollupCol": "Date",
+           "rollupRange": 1,
+           "reportPath": "desktop_consumption_report.csv"
+         }
       },
-      "bucket": "{{ bucket }}",
-      "key": "druid-reports/"
+        "store": "azure",
+        "container": "{{ bucket }}",
+        "key": "druid-reports/"
     },
     "output": [
       {
@@ -2710,8 +2728,8 @@
                   "type": "in",
                   "dimension": "context_pdata_id",
                   "values": [
-                    "{{ producer_env }}.diksha.portal",
-                    "{{ producer_env }}.diksha.app"
+                    "{{ producer_env }}.portal",
+                    "{{ producer_env }}.app"
                   ]
                 },
                 {
@@ -2754,7 +2772,7 @@
                 {
                   "type": "equals",
                   "dimension": "context_pdata_id",
-                  "value": "{{ producer_env }}.diksha.portal"
+                  "value": "{{ producer_env }}.portal"
                 },
                 {
                   "type": "isnotnull",
@@ -2796,7 +2814,7 @@
                 {
                   "type": "equals",
                   "dimension": "context_pdata_id",
-                  "value": "{{ producer_env }}.diksha.app"
+                  "value": "{{ producer_env }}.app"
                 },
                 {
                   "type": "isnotnull",
@@ -2839,8 +2857,8 @@
                   "type": "in",
                   "dimension": "context_pdata_id",
                   "values": [
-                    "{{ producer_env }}.diksha.portal",
-                    "{{ producer_env }}.diksha.app"
+                    "{{ producer_env }}.portal",
+                    "{{ producer_env }}.app"
                   ]
                 },
                 {
@@ -2892,7 +2910,7 @@
                 {
                   "type": "equals",
                   "dimension": "context_pdata_id",
-                  "value": "{{ producer_env }}.diksha.portal"
+                  "value": "{{ producer_env }}.portal"
                 },
                 {
                   "type": "equals",
@@ -2943,7 +2961,7 @@
                 {
                   "type": "equals",
                   "dimension": "context_pdata_id",
-                  "value": "{{ producer_env }}.diksha.app"
+                  "value": "{{ producer_env }}.app"
                 },
                 {
                   "type": "equals",
@@ -2995,8 +3013,8 @@
                   "type": "in",
                   "dimension": "dimensions_pdata_id",
                   "values": [
-                    "{{ producer_env }}.diksha.portal",
-                    "{{ producer_env }}.diksha.app"
+                    "{{ producer_env }}.portal",
+                    "{{ producer_env }}.app"
                   ]
                 },
                 {
@@ -3049,7 +3067,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.portal"
+                  "value": "{{ producer_env }}.portal"
                 },
                 {
                   "type": "equals",
@@ -3101,7 +3119,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.app"
+                  "value": "{{ producer_env }}.app"
                 },
                 {
                   "type": "equals",
@@ -3154,17 +3172,27 @@
               "total_content_plays_on_app"
             ],
             "dims": [
-              "state"
+              "state","date"
             ],
             "fileParameters": [
               "id",
               "dims"
             ]
           }
-        ]
+        ],
+        "mergeConfig": {
+                "frequency": "WEEK",
+                "basePath": {{ spark_output_temp_dir }},
+                "rollup": 1,
+                "rollupAge": "ACADEMIC_YEAR",
+                "rollupCol": "Date",
+                "rollupRange": 1,
+                "reportPath": "district_weekly.csv"
+              }
       },
-      "bucket": "{{ bucket }}",
-      "key": "druid-reports/"
+        "store": "azure",
+        "container": "{{ bucket }}",
+        "key": "druid-reports/"
     },
     "output": [
       {
@@ -3179,74 +3207,74 @@
     "deviceMapping": false
   },
   "etb-metrics": {
-	"search": {
-		"type": "none"
-	},
-	"model": "org.ekstep.analytics.model.report.ETBMetricsJob",
-	"modelParams": {
-		"reportConfig": {
-			"id": "etb_metrics",
-			"metrics": [],
-			"labels": {
-				"date": "Date",
-				"identifier": "TextBook ID",
-				"name": "TextBook Name",
-				"medium": "Medium",
-				"gradeLevel": "Grade",
-				"subject": "Subject",
-				"createdOn": "Created On",
-				"lastUpdatedOn": "Last Updated On",
-				"totalQRCodes": "Total number of QR codes",
-				"contentLinkedQR": "Number of QR codes with atleast 1 linked content",
-				"withoutContentQR": "Number of QR codes with no linked content",
-				"withoutContentT1": "Term 1 QR Codes with no linked content",
-				"withoutContentT2": "Term 2 QR Codes with no linked content",
-				"status": "Status",
-				"totalContentLinked": "Total content linked",
-				"totalQRLinked": "Total QR codes linked to content",
-				"totalQRNotLinked": "Total number of QR codes with no linked content",
-				"leafNodesCount": "Total number of leaf nodes",
-				"leafNodeUnlinked": "Number of leaf nodes with no content"
-			},
-			"output": [{
-				"type": "csv",
-				"dims": ["identifier", "channel", "name"],
-				"fileParameters": ["id", "dims"]
-			}]
-		},
-		"esConfig": {
-			"request": {
-				"filters": {
-					"contentType": ["Textbook"],
-					"status": ["Live", "Review", "Draft"]
-				},
-				"sort_by": {
-					"createdOn": "desc"
-				},
-				"limit": 10000
-			}
-		},
-		"tenantConfig": {
-			"tenantId": "",
-			"slugName": ""
-		},
-		"store": "azure",
-		"format": "csv",
-		"key": "druid-reports/",
-		"filePath": "druid-reports/",
-		"container": "{{ bucket }}",
-		"folderPrefix": ["slug", "reportName"]
-	},
-	"output": [{
-		"to": "console",
-		"params": {
-			"printEvent": false
-		}
-	}],
-	"parallelization": 8,
-	"appName": "ETB Metrics Model",
-	"deviceMapping": false
-},
+  "search": {
+    "type": "none"
+  },
+  "model": "org.ekstep.analytics.model.report.ETBMetricsJob",
+  "modelParams": {
+    "reportConfig": {
+      "id": "etb_metrics",
+      "metrics": [],
+      "labels": {
+        "date": "Date",
+        "identifier": "TextBook ID",
+        "name": "TextBook Name",
+        "medium": "Medium",
+        "gradeLevel": "Grade",
+        "subject": "Subject",
+        "createdOn": "Created On",
+        "lastUpdatedOn": "Last Updated On",
+        "totalQRCodes": "Total number of QR codes",
+        "contentLinkedQR": "Number of QR codes with atleast 1 linked content",
+        "withoutContentQR": "Number of QR codes with no linked content",
+        "withoutContentT1": "Term 1 QR Codes with no linked content",
+        "withoutContentT2": "Term 2 QR Codes with no linked content",
+        "status": "Status",
+        "totalContentLinked": "Total content linked",
+        "totalQRLinked": "Total QR codes linked to content",
+        "totalQRNotLinked": "Total number of QR codes with no linked content",
+        "leafNodesCount": "Total number of leaf nodes",
+        "leafNodeUnlinked": "Number of leaf nodes with no content"
+      },
+      "output": [{
+        "type": "csv",
+        "dims": ["identifier", "channel", "name"],
+        "fileParameters": ["id", "dims"]
+      }]
+    },
+    "esConfig": {
+      "request": {
+        "filters": {
+          "contentType": ["Textbook"],
+          "status": ["Live", "Review", "Draft"]
+        },
+        "sort_by": {
+          "createdOn": "desc"
+        },
+        "limit": 10000
+      }
+    },
+    "tenantConfig": {
+      "tenantId": "",
+      "slugName": ""
+    },
+    "store": "azure",
+    "format": "csv",
+    "key": "druid-reports/",
+    "filePath": "druid-reports/",
+    "container": "{{ bucket }}",
+    "folderPrefix": ["slug", "reportName"]
+  },
+  "output": [{
+    "to": "console",
+    "params": {
+      "printEvent": false
+    }
+  }],
+  "parallelization": 8,
+  "appName": "ETB Metrics Model",
+  "deviceMapping": false
+  },
   "daily-metrics": {
     "search": {
         "type": "none"
@@ -3389,8 +3417,8 @@
                                 "type": "in",
                                 "dimension": "dimensions_pdata_id",
                                 "values": [
-                                    "{{ producer_env }}.diksha.app",
-                                    "{{ producer_env }}.diksha.portal"
+                                    "{{ producer_env }}.app",
+                                    "{{ producer_env }}.portal"
                                 ]
                             }
                         ],
@@ -3427,8 +3455,8 @@
                                 "type": "in",
                                 "dimension": "dimensions_pdata_id",
                                 "values": [
-                                    "{{ producer_env }}.diksha.app",
-                                    "{{ producer_env }}.diksha.portal"
+                                    "{{ producer_env }}.app",
+                                    "{{ producer_env }}.portal"
                                 ]
                             },
                             {
@@ -3474,7 +3502,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "value": "{{ producer_env }}.diksha.app"
+                                "value": "{{ producer_env }}.app"
                             },
                             {
                                 "type": "equals",
@@ -3519,7 +3547,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "value": "{{ producer_env }}.diksha.portal"
+                                "value": "{{ producer_env }}.portal"
                             },
                             {
                                 "type": "equals",
@@ -3559,7 +3587,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "value": "{{ producer_env }}.diksha.app"
+                                "value": "{{ producer_env }}.app"
                             },
                             {
                                 "type": "equals",
@@ -3594,7 +3622,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "value": "{{ producer_env }}.diksha.app"
+                                "value": "{{ producer_env }}.app"
                             },
                             {
                                 "type": "equals",
@@ -3629,7 +3657,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "value": "{{ producer_env }}.diksha.app"
+                                "value": "{{ producer_env }}.app"
                             },
                             {
                                 "type": "equals",
@@ -3677,8 +3705,8 @@
                                 "type": "in",
                                 "dimension": "dimensions_pdata_id",
                                 "values": [
-                                    "{{ producer_env }}.diksha.app",
-                                    "{{ producer_env }}.diksha.portal"
+                                    "{{ producer_env }}.app",
+                                    "{{ producer_env }}.portal"
                                 ]
                             },
                             {
@@ -3719,7 +3747,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "value": "{{ producer_env }}.diksha.app"
+                                "value": "{{ producer_env }}.app"
                             },
                             {
                                 "type": "equals",
@@ -3759,7 +3787,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "value": "{{ producer_env }}.diksha.portal"
+                                "value": "{{ producer_env }}.portal"
                             },
                             {
                                 "type": "equals",
@@ -3805,8 +3833,8 @@
                                 "type": "in",
                                 "dimension": "dimensions_pdata_id",
                                 "values": [
-                                    "{{ producer_env }}.diksha.app",
-                                    "{{ producer_env }}.diksha.portal"
+                                    "{{ producer_env }}.app",
+                                    "{{ producer_env }}.portal"
                                 ]
                             },
                             {
@@ -3864,7 +3892,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "value": "{{ producer_env }}.diksha.app"
+                                "value": "{{ producer_env }}.app"
                             },
                             {
                                 "type": "equals",
@@ -3921,7 +3949,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "value": "{{ producer_env }}.diksha.portal"
+                                "value": "{{ producer_env }}.portal"
                             },
                             {
                                 "type": "equals",
@@ -4011,11 +4039,7 @@
             ],
             "mergeConfig": {
                 "frequency": "DAY",
-                "basePath": {
-                    {
-                        spark_output_temp_dir
-                    }
-                },
+                "basePath": {{ spark_output_temp_dir }},
                 "rollup": 1,
                 "rollupAge": "ACADEMIC_YEAR",
                 "rollupCol": "Date",
@@ -4037,55 +4061,74 @@
     ],
     "parallelization": 8,
     "appName": "Druid Query Processor",
-    "deviceMapping": false  
-},
+    "deviceMapping": false
+  },
   "course-enrollment-report":{
     "search": {
-        "type": "none"
-      },
-      "model": "org.ekstep.analytics.model.report.CourseEnrollmentJob",
-      "modelParams": {
-        "reportConfig": {
-          "id": "tpd_metrics",
-          "metrics" : [],
-          "labels": {
-            "completionCount": "Completion Count",
-            "status": "Status",
-            "enrollmentCount": "Enrollment Count",
-            "courseName": "Course Name",
-            "batchName": "Batch Name"
-          },
-          "output": [{
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.model.report.CourseEnrollmentJob",
+    "modelParams": {
+      "reportConfig": {
+        "id": "tpd_metrics",
+        "metrics": [],
+        "labels": {
+          "completionCount": "Completion Count",
+          "status": "Status",
+          "enrollmentCount": "Enrollment Count",
+          "courseName": "Course Name",
+          "batchName": "Batch Name"
+        },
+        "output": [
+          {
             "type": "csv",
             "dims": []
-          }]
-        },
-        "esConfig": {
+          }
+        ],
+        "mergeConfig": {
+          "frequency": "DAY",
+          "basePath": {{ spark_output_temp_dir }},
+          "rollup": 0,
+          "reportPath": "course_enrollment.csv"
+        }
+      },
+      "esConfig": {
         "request": {
-                "filters":{
-                    "objectType": ["Content"],
-                    "contentType": ["Course"],
-                    "identifier": [],
-                    "status": ["Live"]
-                },
-                "limit": 10000
-            }
-        },
-        "store": "azure",
-        "format":"csv",
-        "key": "druid-reports/",
-        "filePath": "druid-reports/",
-        "container": "{{ bucket }}",
-        "folderPrefix": ["slug", "reportName"],
-        "sparkCassandraConnectionHost":"{{core_cassandra_host}}",
-        "sparkElasticsearchConnectionHost":"{{sunbird_es_host}}"
+          "filters": {
+            "objectType": [
+              "Content"
+            ],
+            "contentType": [
+              "Course"
+            ],
+            "identifier": [],
+            "status": [
+              "Live"
+            ]
+          },
+          "limit": 10000
+        }
+      },
+      "store": "azure",
+      "format": "csv",
+      "key": "druid-reports/",
+      "filePath": "druid-reports/",
+      "container": "{{ bucket }}",
+      "folderPrefix": [
+        "slug",
+        "reportName"
+      ],
+      "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
+      "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
     },
-    "output": [{
-      "to": "console",
-      "params": {
-        "printEvent": false
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
       }
-    }],
+    ],
     "parallelization": 8,
     "appName": "TPD Course Enrollment Metrics Model",
     "deviceMapping": false
@@ -4148,7 +4191,7 @@
             }, {
               "type": "in",
               "dimension": "dimensions_pdata_id",
-              "values": ["{{ producer_env }}.diksha.app", "{{ producer_env }}.diksha.portal"]
+              "values": ["{{ producer_env }}.app", "{{ producer_env }}.portal"]
             }, {
               "type": "equals",
               "dimension": "dimensions_type",
@@ -4202,72 +4245,76 @@
     "deviceMapping": false
   },
   "textbook-progress-report": {
-    "search": {
-      "type": "none"
-    },
-    "model": "org.ekstep.analytics.model.report.TextBookProgressModel",
-    "modelParams": {
-      "reportConfig": {
-        "id": "content_progress_metrics",
-        "metrics": [],
-        "labels": {
-          "board": "Board",
-          "medium": "Medium",
-          "gradeLevel": "Grade",
-          "subject": "Subject",
-          "resourceType": "Content Type",
-          "live": "Live",
-          "review": "Review",
-          "draft": "Draft",
-          "unlisted": "Limited Sharing",
-          "application_ecml": "Created on Diksha",
-          "video_youtube": "YouTube Content",
-          "video_mp4": "Uploaded Videos",
-          "application_pdf": "Text Content",
-          "application_html": "Uploaded Interactive Content",
-          "identifier": "Content ID",
-          "creator": "Created By",
-          "createdOn": "Creation Date",
-          "lastPublishDate": "Last Publish Date",
-          "status": "Status",
-          "pkgVersion": "Number of times Published",
-          "lastPublishedOn": "Pending in current status since",
-          "pendingInCurrentStatus": "Pending in current status since"
-        },
-        "output": [
-          {
-            "type": "csv",
-            "dims": []
-          }
-        ]
+      "search": {
+        "type": "none"
       },
-      "filter": {
-        "tenantId": "",
-        "slugName": ""
-      },
-      "store": "azure",
-      "format": "csv",
-      "key": "druid-reports/",
-      "filePath": "druid-reports/",
-      "container": "{{ bucket }}",
-      "folderPrefix": [
-        "slug",
-        "reportName"
-      ],
-      "sparkCassandraConnectionHost": "{{core_cassandra_host}}"
-    },
-    "output": [
-      {
-        "to": "console",
-        "params": {
-          "printEvent": false
+      "model": "org.ekstep.analytics.model.report.TextBookProgressModel",
+      "modelParams": {
+        "reportConfig": {
+          "id": "content_progress_metrics",
+          "metrics": [],
+          "labels": {
+            "board": "Board",
+            "medium": "Medium",
+            "gradeLevel": "Grade",
+            "subject": "Subject",
+            "resourceType": "Content Type",
+            "live": "Live",
+            "review": "Review",
+            "draft": "Draft",
+            "unlisted": "Limited Sharing",
+            "application_ecml": "Created on Diksha",
+            "video_youtube": "YouTube Content",
+            "video_mp4": "Uploaded Videos",
+            "application_pdf": "Text Content",
+            "application_html": "Uploaded Interactive Content",
+            "identifier": "Content ID",
+            "creator": "Created By",
+            "createdOn": "Creation Date",
+            "lastPublishDate": "Last Publish Date",
+            "status": "Status",
+            "pkgVersion": "Number of times Published",
+            "lastPublishedOn": "Pending in current status since",
+            "pendingInCurrentStatus": "Pending in current status since"
+          },
+          "output": [{
+              "type": "csv",
+              "dims": []
+            }],
+          "mergeConfig": {
+          "frequency": "WEEK",
+          "basePath": {{ spark_output_temp_dir }},
+          "rollup": 0,
+          "reportPath": "content_progress_metrics.csv"
         }
-      }
-    ],
-    "parallelization": 8,
-    "appName": "Textbook Progress Metrics Model",
-    "deviceMapping": false
-  },
+        },
+        "filter": {
+          "tenantId": "",
+          "slugName": ""
+        },
+        "store": "azure",
+        "format": "csv",
+        "key": "druid-reports/",
+        "filePath": "druid-reports/",
+        "container": "{{ bucket }}",
+        "folderPrefix": [
+          "slug",
+          "reportName"
+        ],
+        "sparkCassandraConnectionHost": "{{core_cassandra_host}}"
+      },
+      "output": [
+        {
+          "to": "console",
+          "params": {
+            "printEvent": false
+          }
+        }
+      ],
+      "parallelization": 8,
+      "appName": "Textbook Progress Metrics Model",
+      "deviceMapping": false
+    },
   "audit-metrics-report": {
       "search": {
         "type": "none"
