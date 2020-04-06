@@ -2362,8 +2362,8 @@
                   "type": "in",
                   "dimension": "context_pdata_id",
                   "values": [
-                    "{{ producer_env }}.diksha.portal",
-                    "{{ producer_env }}.diksha.app"
+                    "{{ producerEnv }}.portal",
+                    "{{ producerEnv }}.app"
                   ]
                 },
                 {
@@ -2471,7 +2471,7 @@
                 {
                   "type": "equals",
                   "dimension": "context_pdata_id",
-                  "value": "{{ producer_env }}.diksha.desktop"
+                  "value": "{{ producerEnv }}.desktop"
                 },
                 {
                   "type": "equals",
@@ -2522,7 +2522,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.desktop"
+                  "value": "{{ producerEnv }}.desktop"
                 }
               ],
               "descending": "false"
@@ -2568,7 +2568,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.desktop"
+                  "value": "{{ producerEnv }}.desktop"
                 }
               ],
               "postAggregation": [
@@ -2626,7 +2626,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.desktop"
+                  "value": "{{ producerEnv }}.desktop"
                 }
               ],
               "descending": "false"
@@ -2728,8 +2728,8 @@
                   "type": "in",
                   "dimension": "context_pdata_id",
                   "values": [
-                    "{{ producer_env }}.diksha.portal",
-                    "{{ producer_env }}.diksha.app"
+                    "{{ producerEnv }}.portal",
+                    "{{ producerEnv }}.app"
                   ]
                 },
                 {
@@ -2772,7 +2772,7 @@
                 {
                   "type": "equals",
                   "dimension": "context_pdata_id",
-                  "value": "{{ producer_env }}.diksha.portal"
+                  "value": "{{ producerEnv }}.portal"
                 },
                 {
                   "type": "isnotnull",
@@ -2814,7 +2814,7 @@
                 {
                   "type": "equals",
                   "dimension": "context_pdata_id",
-                  "value": "{{ producer_env }}.diksha.app"
+                  "value": "{{ producerEnv }}.app"
                 },
                 {
                   "type": "isnotnull",
@@ -2857,8 +2857,8 @@
                   "type": "in",
                   "dimension": "context_pdata_id",
                   "values": [
-                    "{{ producer_env }}.diksha.portal",
-                    "{{ producer_env }}.diksha.app"
+                    "{{ producerEnv }}.portal",
+                    "{{ producerEnv }}.app"
                   ]
                 },
                 {
@@ -2910,7 +2910,7 @@
                 {
                   "type": "equals",
                   "dimension": "context_pdata_id",
-                  "value": "{{ producer_env }}.diksha.portal"
+                  "value": "{{ producerEnv }}.portal"
                 },
                 {
                   "type": "equals",
@@ -2961,7 +2961,7 @@
                 {
                   "type": "equals",
                   "dimension": "context_pdata_id",
-                  "value": "{{ producer_env }}.diksha.app"
+                  "value": "{{ producerEnv }}.app"
                 },
                 {
                   "type": "equals",
@@ -3013,8 +3013,8 @@
                   "type": "in",
                   "dimension": "dimensions_pdata_id",
                   "values": [
-                    "{{ producer_env }}.diksha.portal",
-                    "{{ producer_env }}.diksha.app"
+                    "{{ producerEnv }}.portal",
+                    "{{ producerEnv }}.app"
                   ]
                 },
                 {
@@ -3067,7 +3067,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.portal"
+                  "value": "{{ producerEnv }}.portal"
                 },
                 {
                   "type": "equals",
@@ -3119,7 +3119,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.app"
+                  "value": "{{ producerEnv }}.app"
                 },
                 {
                   "type": "equals",
@@ -3207,73 +3207,73 @@
     "deviceMapping": false
   },
   "etb-metrics": {
-	"search": {
-		"type": "none"
-	},
-	"model": "org.ekstep.analytics.model.report.ETBMetricsJob",
-	"modelParams": {
-		"reportConfig": {
-			"id": "etb_metrics",
-			"metrics": [],
-			"labels": {
-				"date": "Date",
-				"identifier": "TextBook ID",
-				"name": "TextBook Name",
-				"medium": "Medium",
-				"gradeLevel": "Grade",
-				"subject": "Subject",
-				"createdOn": "Created On",
-				"lastUpdatedOn": "Last Updated On",
-				"totalQRCodes": "Total number of QR codes",
-				"contentLinkedQR": "Number of QR codes with atleast 1 linked content",
-				"withoutContentQR": "Number of QR codes with no linked content",
-				"withoutContentT1": "Term 1 QR Codes with no linked content",
-				"withoutContentT2": "Term 2 QR Codes with no linked content",
-				"status": "Status",
-				"totalContentLinked": "Total content linked",
-				"totalQRLinked": "Total QR codes linked to content",
-				"totalQRNotLinked": "Total number of QR codes with no linked content",
-				"leafNodesCount": "Total number of leaf nodes",
-				"leafNodeUnlinked": "Number of leaf nodes with no content"
-			},
-			"output": [{
-				"type": "csv",
-				"dims": ["identifier", "channel", "name"],
-				"fileParameters": ["id", "dims"]
-			}]
-		},
-		"esConfig": {
-			"request": {
-				"filters": {
-					"contentType": ["Textbook"],
-					"status": ["Live", "Review", "Draft"]
-				},
-				"sort_by": {
-					"createdOn": "desc"
-				},
-				"limit": 10000
-			}
-		},
-		"tenantConfig": {
-			"tenantId": "",
-			"slugName": ""
-		},
-		"store": "azure",
-		"format": "csv",
-		"key": "druid-reports/",
-		"filePath": "druid-reports/",
-		"container": "{{ bucket }}",
-		"folderPrefix": ["slug", "reportName"]
-	},
-	"output": [{
-		"to": "console",
-		"params": {
-			"printEvent": false
-		}
-	}],
-	"parallelization": 8,
-	"appName": "ETB Metrics Model",
-	"deviceMapping": false
+  "search": {
+    "type": "none"
+  },
+  "model": "org.ekstep.analytics.model.report.ETBMetricsJob",
+  "modelParams": {
+    "reportConfig": {
+      "id": "etb_metrics",
+      "metrics": [],
+      "labels": {
+        "date": "Date",
+        "identifier": "TextBook ID",
+        "name": "TextBook Name",
+        "medium": "Medium",
+        "gradeLevel": "Grade",
+        "subject": "Subject",
+        "createdOn": "Created On",
+        "lastUpdatedOn": "Last Updated On",
+        "totalQRCodes": "Total number of QR codes",
+        "contentLinkedQR": "Number of QR codes with atleast 1 linked content",
+        "withoutContentQR": "Number of QR codes with no linked content",
+        "withoutContentT1": "Term 1 QR Codes with no linked content",
+        "withoutContentT2": "Term 2 QR Codes with no linked content",
+        "status": "Status",
+        "totalContentLinked": "Total content linked",
+        "totalQRLinked": "Total QR codes linked to content",
+        "totalQRNotLinked": "Total number of QR codes with no linked content",
+        "leafNodesCount": "Total number of leaf nodes",
+        "leafNodeUnlinked": "Number of leaf nodes with no content"
+      },
+      "output": [{
+        "type": "csv",
+        "dims": ["identifier", "channel", "name"],
+        "fileParameters": ["id", "dims"]
+      }]
+    },
+    "esConfig": {
+      "request": {
+        "filters": {
+          "contentType": ["Textbook"],
+          "status": ["Live", "Review", "Draft"]
+        },
+        "sort_by": {
+          "createdOn": "desc"
+        },
+        "limit": 10000
+      }
+    },
+    "tenantConfig": {
+      "tenantId": "",
+      "slugName": ""
+    },
+    "store": "azure",
+    "format": "csv",
+    "key": "druid-reports/",
+    "filePath": "druid-reports/",
+    "container": "{{ bucket }}",
+    "folderPrefix": ["slug", "reportName"]
+  },
+  "output": [{
+    "to": "console",
+    "params": {
+      "printEvent": false
+    }
+  }],
+  "parallelization": 8,
+  "appName": "ETB Metrics Model",
+  "deviceMapping": false
   },
   "daily-metrics": {
     "search": {
@@ -3417,8 +3417,8 @@
                                 "type": "in",
                                 "dimension": "dimensions_pdata_id",
                                 "values": [
-                                    "{{ producer_env }}.diksha.app",
-                                    "{{ producer_env }}.diksha.portal"
+                                    "{{ producerEnv }}.app",
+                                    "{{ producerEnv }}.portal"
                                 ]
                             }
                         ],
@@ -3455,8 +3455,8 @@
                                 "type": "in",
                                 "dimension": "dimensions_pdata_id",
                                 "values": [
-                                    "{{ producer_env }}.diksha.app",
-                                    "{{ producer_env }}.diksha.portal"
+                                    "{{ producerEnv }}.app",
+                                    "{{ producerEnv }}.portal"
                                 ]
                             },
                             {
@@ -3502,7 +3502,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "value": "{{ producer_env }}.diksha.app"
+                                "value": "{{ producerEnv }}.app"
                             },
                             {
                                 "type": "equals",
@@ -3547,7 +3547,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "value": "{{ producer_env }}.diksha.portal"
+                                "value": "{{ producerEnv }}.portal"
                             },
                             {
                                 "type": "equals",
@@ -3587,7 +3587,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "value": "{{ producer_env }}.diksha.app"
+                                "value": "{{ producerEnv }}.app"
                             },
                             {
                                 "type": "equals",
@@ -3622,7 +3622,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "value": "{{ producer_env }}.diksha.app"
+                                "value": "{{ producerEnv }}.app"
                             },
                             {
                                 "type": "equals",
@@ -3657,7 +3657,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "value": "{{ producer_env }}.diksha.app"
+                                "value": "{{ producerEnv }}.app"
                             },
                             {
                                 "type": "equals",
@@ -3705,8 +3705,8 @@
                                 "type": "in",
                                 "dimension": "dimensions_pdata_id",
                                 "values": [
-                                    "{{ producer_env }}.diksha.app",
-                                    "{{ producer_env }}.diksha.portal"
+                                    "{{ producerEnv }}.app",
+                                    "{{ producerEnv }}.portal"
                                 ]
                             },
                             {
@@ -3747,7 +3747,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "value": "{{ producer_env }}.diksha.app"
+                                "value": "{{ producerEnv }}.app"
                             },
                             {
                                 "type": "equals",
@@ -3787,7 +3787,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "value": "{{ producer_env }}.diksha.portal"
+                                "value": "{{ producerEnv }}.portal"
                             },
                             {
                                 "type": "equals",
@@ -3833,8 +3833,8 @@
                                 "type": "in",
                                 "dimension": "dimensions_pdata_id",
                                 "values": [
-                                    "{{ producer_env }}.diksha.app",
-                                    "{{ producer_env }}.diksha.portal"
+                                    "{{ producerEnv }}.app",
+                                    "{{ producerEnv }}.portal"
                                 ]
                             },
                             {
@@ -3892,7 +3892,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "value": "{{ producer_env }}.diksha.app"
+                                "value": "{{ producerEnv }}.app"
                             },
                             {
                                 "type": "equals",
@@ -3949,7 +3949,7 @@
                             {
                                 "type": "equals",
                                 "dimension": "dimensions_pdata_id",
-                                "value": "{{ producer_env }}.diksha.portal"
+                                "value": "{{ producerEnv }}.portal"
                             },
                             {
                                 "type": "equals",
@@ -4061,7 +4061,7 @@
     ],
     "parallelization": 8,
     "appName": "Druid Query Processor",
-    "deviceMapping": false  
+    "deviceMapping": false
   },
   "course-enrollment-report":{
     "search": {
@@ -4191,7 +4191,7 @@
             }, {
               "type": "in",
               "dimension": "dimensions_pdata_id",
-              "values": ["{{ producer_env }}.diksha.app", "{{ producer_env }}.diksha.portal"]
+              "values": ["{{ producerEnv }}.app", "{{ producerEnv }}.portal"]
             }, {
               "type": "equals",
               "dimension": "dimensions_type",
