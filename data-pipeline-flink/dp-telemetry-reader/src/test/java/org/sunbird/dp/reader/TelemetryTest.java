@@ -18,13 +18,13 @@ public class TelemetryTest {
     @Test
     public void shouldReadTheDefaultValue() {
         Telemetry telemetry = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT_MISSING_FIELDS));
-        Assert.assertEquals(telemetry.readOrDefault("context.channel", "in.sunbird").value(), "in.sunbird");
+        Assert.assertEquals("in.sunbird", telemetry.readOrDefault("context.channel", "in.sunbird").value());
     }
 
     @Test
     public void shouldReadTheActualValue() {
         Telemetry telemetry = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
-        Assert.assertEquals(telemetry.readOrDefault("context.channel", "in.sunbird").value(), "505c7c48ac6dc1edc9b08f21db5a571d");
+        Assert.assertEquals("505c7c48ac6dc1edc9b08f21db5a571d", telemetry.readOrDefault("context.channel", "in.sunbird").value());
     }
 
 
@@ -220,7 +220,7 @@ public class TelemetryTest {
     public void ShouldAddFieldIfNotPresent() {
         Telemetry telemetry = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
         telemetry.addFieldIfAbsent("error", "Invalid Key");
-        Assert.assertEquals(telemetry.read("error").value(), "Invalid Key");
+        Assert.assertEquals("Invalid Key", telemetry.read("error").value());
     }
 
     @Test
@@ -256,14 +256,14 @@ public class TelemetryTest {
     public void shouldGetTheDefaultValue() {
         Telemetry telemetry = new Telemetry(null);
         NullableValue<Object> eid1 = telemetry.read("eid");
-        Assert.assertEquals(eid1.valueOrDefault("START"), "START");
+        Assert.assertEquals("START", eid1.valueOrDefault("START"));
     }
 
     @Test
     public void shouldGetTheActualValue() {
         Telemetry telemetry = new Telemetry(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
         NullableValue<Object> eid1 = telemetry.read("eid");
-        Assert.assertEquals(eid1.valueOrDefault("START"), "IMPRESSION");
+        Assert.assertEquals("IMPRESSION", eid1.valueOrDefault("START"));
     }
 
 }

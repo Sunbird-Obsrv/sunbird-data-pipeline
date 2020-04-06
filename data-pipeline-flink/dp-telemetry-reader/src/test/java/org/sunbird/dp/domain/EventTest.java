@@ -133,22 +133,22 @@ public class EventTest {
     public void shouldUpdateTheTSValue() {
         Event event = new Event(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
         event.updateTs("5468376530");
-        Assert.assertEquals(event.getData().value(), "5468376530");
+        Assert.assertEquals("5468376530", event.getData().value());
     }
 
     @Test
     public void shouldGetMidValueIfTheCheckSumIsNotPresent() {
         Event event = new Event(EventFixture.getMap(EventFixture.IMPRESSION_EVENT_MISSING_FIELDS));
 
-        Assert.assertEquals(event.getChecksum(), "IMPRESSION:0093c96434557b2ead169c7156e95770");
+        Assert.assertEquals("IMPRESSION:0093c96434557b2ead169c7156e95770", event.getChecksum());
     }
 
     @Test
     public void shouldUpdateFlags() {
         Event event = new Event(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
         event.updateFlags("test_flag", true);
-        Assert.assertEquals(event.getFlags().size(), 1);
-        Assert.assertEquals(event.getFlags().get("test_flag"), true);
+        Assert.assertEquals(1, event.getFlags().size());
+        Assert.assertEquals(true, event.getFlags().get("test_flag"));
     }
 
 

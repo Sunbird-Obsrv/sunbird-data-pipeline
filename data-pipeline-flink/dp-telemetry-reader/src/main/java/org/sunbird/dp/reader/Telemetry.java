@@ -1,8 +1,5 @@
 package org.sunbird.dp.reader;
 
-
-// import org.ekstep.ep.samza.core.Logger;
-
 import org.sunbird.dp.util.Logger;
 
 import java.io.Serializable;
@@ -18,7 +15,7 @@ public class Telemetry implements Serializable {
     private static final long serialVersionUID = 8132821816689744470L;
 
     private Map<String, Object> map;
-    private Logger logger = new Logger(this.getClass());
+    private transient Logger logger = new Logger(this.getClass());
 
     public Telemetry(Map<String, Object> map) {
         this.map = map;
@@ -30,7 +27,7 @@ public class Telemetry implements Serializable {
             lastParent.addChild(value);
             return true;
         } catch (Exception e) {
-            logger.error("", format("Couldn't add value:{0} at  key: {0} for event:{1}", value, keyPath, map), e);
+            logger.error("", format("Could not add value:{0} at  key: {1} for event:{2}", value, keyPath, map), e);
         }
         return false;
     }
@@ -44,8 +41,8 @@ public class Telemetry implements Serializable {
             ParentType parentMap = lastParentMap(map, keyPath);
             return new NullableValue<>(parentMap.readChild());
         } catch (Exception e) {
-            logger.error("", format("Couldn't get key: {0} from event:{1}", keyPath, map), e);
-            return new NullableValue<T>(null);
+            logger.error("", format("Could not get key: {0} from event:{1}", keyPath, map), e);
+            return new NullableValue<>(null);
         }
     }
 
@@ -67,15 +64,14 @@ public class Telemetry implements Serializable {
         return val.value();
     }
 
-    private ParentType lastParentMap(Map<String, Object> map, String keyPath) {
+    @SuppressWarnings("unchecked")
+	private ParentType lastParentMap(Map<String, Object> map, String keyPath) {
         Object parent = map;
         String[] keys = keyPath.split("\\.");
         int lastIndex = keys.length - 1;
         if (keys.length > 1) {
             for (int i = 0; i < lastIndex && parent != null; i++) {
                 Object o;
-                // System.out.println("Keypath = " + keyPath);
-                // System.out.println("Parent instance = " + parent.getClass());
                 if (parent instanceof Map) {
                     o = new ParentMap((Map<String, Object>) parent, keys[i]).readChild();
                 } else if (parent instanceof List) {

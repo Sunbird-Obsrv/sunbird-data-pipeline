@@ -38,13 +38,13 @@ class Event(eventMap: util.Map[String, AnyRef], partition: Integer) extends Even
     deviceMap.putAll(ldata.asJava);
     userDeclaredMap.putAll(Map[String, String]("state" -> deviceProfile.userDeclaredState, "district" -> deviceProfile.userDeclaredDistrict).asJava);
     deviceMap.put("userdeclared", userDeclaredMap)
-    telemetry.add(path.deviceData(), deviceMap);
+    telemetry.add(Path.DEVICE_DATA, deviceMap);
     setFlag("device_denorm", true);
   }
 
   def getUserProfileLocation(): Option[(String, String, String)] = {
 
-    val userData: NullableValue[util.Map[String, AnyRef]] = telemetry.read(path.userData());
+    val userData: NullableValue[util.Map[String, AnyRef]] = telemetry.read(Path.USER_DATA);
     if (!userData.isNull())
       Some(userData.value().get("state").asInstanceOf[String], userData.value().get("district").asInstanceOf[String], "user-profile")
     else
@@ -53,7 +53,7 @@ class Event(eventMap: util.Map[String, AnyRef], partition: Integer) extends Even
 
   def getUserDeclaredLocation(): Option[(String, String, String)] = {
 
-    val deviceData: NullableValue[util.Map[String, AnyRef]] = telemetry.read(path.deviceData());
+    val deviceData: NullableValue[util.Map[String, AnyRef]] = telemetry.read(Path.DEVICE_DATA);
     if (!deviceData.isNull() && null != deviceData.value().get("userdeclared")) {
       val userDeclared = deviceData.value().get("userdeclared").asInstanceOf[util.Map[String, String]]
       Some(userDeclared.get("state"), userDeclared.get("district"), "user-declared")
@@ -62,7 +62,7 @@ class Event(eventMap: util.Map[String, AnyRef], partition: Integer) extends Even
   }
 
   def getIpLocation(): Option[(String, String, String)] = {
-    val deviceData: NullableValue[util.Map[String, AnyRef]] = telemetry.read(path.deviceData());
+    val deviceData: NullableValue[util.Map[String, AnyRef]] = telemetry.read(Path.DEVICE_DATA);
     if (!deviceData.isNull())
       Some(deviceData.value().get("state").asInstanceOf[String], deviceData.value().get("districtcustom").asInstanceOf[String], "ip-resolved")
     else
@@ -71,10 +71,10 @@ class Event(eventMap: util.Map[String, AnyRef], partition: Integer) extends Even
 
   def addDerivedLocation(derivedData: (String, String, String)) {
     val locMap = new util.HashMap[String, String]();
-    locMap.put(path.stateKey(), derivedData._1)
-    locMap.put(path.districtKey(), derivedData._2)
-    locMap.put(path.locDerivedFromKey(), derivedData._3)
-    telemetry.add(path.derivedLocationData(), locMap);
+    locMap.put(Path.STATE_KEY, derivedData._1)
+    locMap.put(Path.DISTRICT_KEY, derivedData._2)
+    locMap.put(Path.DERIVED_LOC_FROM, derivedData._3)
+    telemetry.add(Path.DERIVED_LOC_DATA, locMap);
     setFlag("loc_denorm", true);
   }
 
@@ -106,10 +106,10 @@ class Event(eventMap: util.Map[String, AnyRef], partition: Integer) extends Even
   }
 
   def addUserData(newData: Map[String, AnyRef]) {
-    val previousData: NullableValue[util.Map[String, AnyRef]] = telemetry.read(path.userData());
+    val previousData: NullableValue[util.Map[String, AnyRef]] = telemetry.read(Path.USER_DATA);
     val userdata = if (previousData.isNull()) new util.HashMap[String, AnyRef]() else previousData.value();
     userdata.putAll(newData.asJava);
-    telemetry.add(path.userData(), userdata);
+    telemetry.add(Path.USER_DATA, userdata);
     if (newData.size > 2)
       setFlag("user_denorm", true);
     else
@@ -118,10 +118,10 @@ class Event(eventMap: util.Map[String, AnyRef], partition: Integer) extends Even
 
   def addContentData(newData: Map[String, AnyRef]) {
     val convertedData = getEpochConvertedContentDataMap(newData);
-    val previousData: NullableValue[util.Map[String, AnyRef]] = telemetry.read(path.contentData());
+    val previousData: NullableValue[util.Map[String, AnyRef]] = telemetry.read(Path.CONTENT_DATA);
     val contentData = if (previousData.isNull()) new util.HashMap[String, AnyRef]() else previousData.value();
     contentData.putAll(convertedData.asJava);
-    telemetry.add(path.contentData(), contentData);
+    telemetry.add(Path.CONTENT_DATA, contentData);
     setFlag("content_denorm", true);
   }
 
@@ -129,7 +129,7 @@ class Event(eventMap: util.Map[String, AnyRef], partition: Integer) extends Even
     val collectionMap = new util.HashMap[String, AnyRef]();
     val convertedData = getEpochConvertedContentDataMap(newData);
     collectionMap.putAll(convertedData.asJava);
-    telemetry.add(path.collectionData(), collectionMap);
+    telemetry.add(Path.COLLECTION_DATA, collectionMap);
     setFlag("coll_denorm", true);
   }
 
@@ -153,7 +153,7 @@ class Event(eventMap: util.Map[String, AnyRef], partition: Integer) extends Even
   def addDialCodeData(newData: Map[String, AnyRef]) {
     val dialcodeMap = new util.HashMap[String, AnyRef]();
     dialcodeMap.putAll(getEpochConvertedDialcodeDataMap(newData).asJava);
-    telemetry.add(path.dialCodeData(), dialcodeMap);
+    telemetry.add(Path.DIALCODE_DATA, dialcodeMap);
     setFlag("dialcode_denorm", true);
   }
 
@@ -189,10 +189,10 @@ class Event(eventMap: util.Map[String, AnyRef], partition: Integer) extends Even
   }
 
   def setFlag(key: String, value: Boolean) {
-    val telemetryFlag: NullableValue[util.Map[String, AnyRef]] = telemetry.read(path.flags());
+    val telemetryFlag: NullableValue[util.Map[String, AnyRef]] = telemetry.read(Path.FLAGS);
     val flags = if (telemetryFlag.isNull()) new util.HashMap[String, AnyRef]() else telemetryFlag.value()
     flags.put(key, value.asInstanceOf[AnyRef]);
-    telemetry.add(path.flags(), flags);
+    telemetry.add(Path.FLAGS, flags);
   }
 
   def addISOStateCodeToDeviceProfile(deviceProfile: DeviceProfile): String = {

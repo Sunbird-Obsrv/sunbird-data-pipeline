@@ -1,16 +1,10 @@
 package org.sunbird.dp.reader;
 
-import org.sunbird.dp.util.Logger;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.util.List;
 import java.util.Map;
 
-// import org.ekstep.ep.samza.core.Logger;
-
 class ParentListOfMap implements ParentType {
-    //TODO#: Make this class more genic.
-    static Logger LOGGER = new Logger(ParentListOfMap.class);
+    
     List<Map<String, Object>> list;
     String childKey;
 
@@ -19,7 +13,8 @@ class ParentListOfMap implements ParentType {
         this.childKey = childKey;
     }
 
-    @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
     public <T> T readChild() {
         if (list == null) {
             return null;
@@ -41,6 +36,6 @@ class ParentListOfMap implements ParentType {
 
     @Override
     public void addChild(Object value) {
-        throw new NotImplementedException();
+        throw new RuntimeException("Not Implemented");
     }
 }

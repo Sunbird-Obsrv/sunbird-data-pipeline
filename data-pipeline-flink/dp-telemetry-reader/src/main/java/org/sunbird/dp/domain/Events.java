@@ -12,12 +12,10 @@ import java.util.Map;
 public abstract class Events {
 
     protected Telemetry telemetry;
-    protected Path path;
     private Integer partition;
 
     public Events(Map<String, Object> map, Integer partition) {
         this.telemetry = new Telemetry(map);
-        this.path = new Path();
         this.partition = partition;
     }
 
@@ -65,7 +63,7 @@ public abstract class Events {
     }
     
     public Map<String, Object> flags() {
-        NullableValue<Map<String, Object>> eid = telemetry.read(path.flags());
+        NullableValue<Map<String, Object>> eid = telemetry.read(Path.FLAGS);
         return eid.value();
     }
 

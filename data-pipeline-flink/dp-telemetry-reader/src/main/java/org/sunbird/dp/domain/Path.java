@@ -1,94 +1,30 @@
 package org.sunbird.dp.domain;
 
-public class Path {
+public final class Path {
 
-    public String metadata() {
-        return "metadata";
-    }
+	public static String METADATA = "metadata";
+	public static String FLAGS = "flags";
+	public static String DIMENSIONS_DID = "dimensions.did";
+	public static String CONTEXT_DID = "context.did";
+	public static String ETS = "ets";
+	public static String TS = "ts";
+	public static String MID = "mid";
+	public static String EID = "eid";
+	public static String DEVICE_DATA = "devicedata";
 
-    public String flags() {
-        return "flags";
-    }
+	public static String LOC = "edata.loc";
+	public static String USER_DATA = "userdata";
+	public static String CONTENT_DATA = "contentdata";
+	public static String DIALCODE_DATA = "dialcodedata";
+	public static String COLLECTION_DATA = "collectiondata";
+	public static String VER = "ver";
+	public static String EDATA = "edata";
 
-    public String dimensionsDid() {
-        return "dimensions.did";
-    }
-
-    public String contextDid() {
-        return "context.did";
-    }
-
-    public String ets() {
-        return "ets";
-    }
-
-    public String ts() {
-        return "ts";
-    }
-
-    public String mid() {
-        return "mid";
-    }
-
-    public String eid() {
-        return "eid";
-    }
-
-    public String deviceData() {
-        return "devicedata";
-    }
-
-    public String loc() {
-        return "edata.loc";
-    }
-
-    public String userData() {
-        return "userdata";
-    }
-
-    public String contentData() {
-        return "contentdata";
-    }
-
-    public String dialCodeData() {
-        return "dialcodedata";
-    }
-
-    public String collectionData() {
-        return "collectiondata";
-    }
-
-    public String ver() {
-        return "ver";
-    }
-
-    public String edata() {
-        return "edata";
-    }
-
-    public String checksum() {
-        return "metadata.checksum";
-    }
-
-    public String channel() {
-        return "channel";
-    }
-
-    public String derivedLocationData() {
-        return "derivedlocationdata";
-    }
-
-    public String stateKey() {
-        return "state";
-    }
-
-    public String districtKey() {
-        return "district";
-    }
-
-    public String locDerivedFromKey() {
-        return "from";
-    }
-
+	public static String CHECKSUM = "metadata.checksum";
+	public static String CHANNEL = "channel";
+	public static String DERIVED_LOC_DATA = "derivedlocationdata";
+	public static String STATE_KEY = "state";
+	public static String DISTRICT_KEY = "district";
+	public static String DERIVED_LOC_FROM = "from";
 
 }

@@ -23,9 +23,10 @@ class SchemaValidator(config: DruidValidatorConfig) extends java.io.Serializable
 
     logger.info("Initializing schema for telemetry objects...")
 
-    val telemetrySchemaPath: String = MessageFormat.format("{0}/{1}", config.telemetrySchemaPath, config.defaultSchemaFile)
-    val summaryEventSchemapath: String = MessageFormat.format("{0}/{1}", config.summarySchemaPath, config.summarySchemaFile)
-    val searchEventSchemaPath: String = MessageFormat.format("{0}/{1}", config.telemetrySchemaPath, config.searchSchemaFile)
+    val schemaFormat = "{0}/{1}";
+    val telemetrySchemaPath: String = MessageFormat.format(schemaFormat, config.telemetrySchemaPath, config.defaultSchemaFile)
+    val summaryEventSchemapath: String = MessageFormat.format(schemaFormat, config.summarySchemaPath, config.summarySchemaFile)
+    val searchEventSchemaPath: String = MessageFormat.format(schemaFormat, config.telemetrySchemaPath, config.searchSchemaFile)
 
     val telemetrySchema = new String(ByteStreams.toByteArray(this.getClass.getClassLoader.getResourceAsStream(telemetrySchemaPath)))
     val summarySchema = new String(ByteStreams.toByteArray(this.getClass.getClassLoader.getResourceAsStream(summaryEventSchemapath)))

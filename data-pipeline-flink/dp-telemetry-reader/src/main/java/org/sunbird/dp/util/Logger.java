@@ -54,7 +54,6 @@ public class Logger {
 
     public void error(String eventId, String s, Throwable throwable) {
         logger.error(logPrependedWithMetadata(eventId, s), throwable);
-        throwable.printStackTrace();
     }
 
     private String logPrependedWithMetadata(String eventId, String s) {
