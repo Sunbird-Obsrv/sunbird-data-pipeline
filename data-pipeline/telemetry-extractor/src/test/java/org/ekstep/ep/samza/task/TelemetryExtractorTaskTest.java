@@ -76,7 +76,7 @@ public class TelemetryExtractorTaskTest {
         stub(config.get("output.error.topic.name", "telemetry.extractor.failed")).toReturn(errorTopic);
         stub(config.get("default.channel", "01250894314817126443")).toReturn(defaultChannel);
         deDupEngineMock = mock(DeDupEngine.class);
-        task = new TelemetryExtractorTask(config, context, deDupEngineMock);
+            task = new TelemetryExtractorTask(config, context, deDupEngineMock);
 
     }
 
