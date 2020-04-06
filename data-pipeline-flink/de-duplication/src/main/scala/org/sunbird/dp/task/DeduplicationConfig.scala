@@ -9,7 +9,7 @@ import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.sunbird.dp.domain.Event
 
-class DeduplicationConfig(override val config: Config) extends BaseJobConfig(config) {
+class DeduplicationConfig(override val config: Config) extends BaseJobConfig(config, "de-duplication") {
 
   private val serialVersionUID = 2905979434303791379L
 

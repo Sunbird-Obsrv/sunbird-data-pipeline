@@ -2,7 +2,7 @@ package org.sunbird.dp.domain
 
 import java.util
 
-class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
+class Event(eventMap: util.Map[String, AnyRef], partition: Integer) extends Events(eventMap, partition) {
 
   def markDuplicate(): Unit = {
     telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])

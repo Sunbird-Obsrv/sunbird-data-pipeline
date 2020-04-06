@@ -96,7 +96,7 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
     shareEventsFlattener.getSideOutput(config.primaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
     shareEventsFlattener.getSideOutput(config.shareItemEventOutTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
 
-    env.execute(config.job_name)
+    env.execute(config.jobName)
   }
 }
 

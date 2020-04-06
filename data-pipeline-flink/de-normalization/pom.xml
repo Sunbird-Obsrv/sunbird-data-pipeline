@@ -4,6 +4,10 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <prerequisites>
+        <maven>3.0.1</maven>
+    </prerequisites>
+
     <parent>
         <groupId>org.sunbird.dp</groupId>
         <artifactId>pipeline-jobs</artifactId>
@@ -11,12 +15,12 @@
     </parent>
 
     <groupId>org.sunbird.dp.jobs</groupId>
-    <artifactId>telemetry-extractor</artifactId>
+    <artifactId>de-normalization</artifactId>
     <version>0.0.1</version>
     <packaging>jar</packaging>
-    <name>TelemetryExtractor</name>
+    <name>DeNormalizer</name>
     <description>
-        Batch Events Extraction
+        De-normalize the events
     </description>
     
     <properties>
@@ -125,6 +129,11 @@
                         <configuration>
                             <artifactSet>
                                 <excludes>
+                                    <!--
+                                    <exclude>org.apache.flink:force-shading</exclude>
+                                    <exlude>org.apache.flink:flink-shaded-netty</exlude>
+                                    <exlude>org.apache.flink:flink-shaded-guava</exlude>
+                                    -->
                                     <exclude>com.google.code.findbugs:jsr305</exclude>
                                 </excludes>
                             </artifactSet>
@@ -143,7 +152,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.sunbird.dp.task.ExtractorStreamTask</mainClass>
+                                    <mainClass>org.sunbird.dp.task.DenormalizationStreamTask</mainClass>
                                 </transformer>
                                 <!-- append default configs -->
                                 <transformer

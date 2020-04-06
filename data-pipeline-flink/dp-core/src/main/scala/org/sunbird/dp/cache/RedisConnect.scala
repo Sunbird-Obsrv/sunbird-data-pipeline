@@ -14,9 +14,9 @@ class RedisConnect(jobConfig: BaseJobConfig) extends java.io.Serializable {
   private val serialVersionUID = - 396824011996012513L
 
   val config: Config = jobConfig.config
-  val redis_host: String = Option(config.getString("redis.host")).getOrElse("localhost")
-  val redis_port: Int = Option(config.getInt("redis.port")).getOrElse(6379)
-  private var jedisPool = new JedisPool(buildPoolConfig, redis_host, redis_port)
+  val redisHost: String = Option(config.getString("redis.host")).getOrElse("localhost")
+  val redisPort: Int = Option(config.getInt("redis.port")).getOrElse(6379)
+  private var jedisPool = new JedisPool(buildPoolConfig, redisHost, redisPort)
   private val logger = LoggerFactory.getLogger(classOf[RedisConnect])
 
   private def buildPoolConfig = {
