@@ -36,7 +36,7 @@
 		<flink.version>1.10.0</flink.version>
 		<kafka.version>2.4.0</kafka.version>
 		<jackson-jaxrs.version>1.9.13</jackson-jaxrs.version>
-		<scoverage.plugin.version>1.3.0</scoverage.plugin.version>
+		<scoverage.plugin.version>1.4.0</scoverage.plugin.version>
 	</properties>
 
 	<repositories>
