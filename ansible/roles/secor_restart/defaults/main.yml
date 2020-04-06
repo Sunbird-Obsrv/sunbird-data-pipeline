@@ -1,0 +1,4 @@
+analytics_user: analytics
+analytics_group: analytics
+analytics_user_home: /home/{{analytics_user}}
+sbin_path: "{{ analytics_user_home }}/sbin"
