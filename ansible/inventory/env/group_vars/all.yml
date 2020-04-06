@@ -31,6 +31,7 @@ artifact_azure_account_name: "{{dp_azure_account_name}}"
 artifact_azure_account_key: "{{dp_vault_azure_account_key}}"
 
 redis_host: "{{ groups['redis'][0] }}"
+denorm_redis_host: "{{ groups['redis'][0] }}"
 searchServiceAuthorizationToken: "{{ dp_search_service_authorization_token }}"
 
 

@@ -1,22 +1,21 @@
 package org.ekstep.ep.samza.service;
 
-import static java.text.MessageFormat.format;
-
+import com.google.gson.JsonSyntaxException;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
 import org.ekstep.ep.samza.task.EventsRouterConfig;
 import org.ekstep.ep.samza.task.EventsRouterSink;
 import org.ekstep.ep.samza.task.EventsRouterSource;
 import org.ekstep.ep.samza.util.DeDupEngine;
-
-import com.google.gson.JsonSyntaxException;
 import redis.clients.jedis.exceptions.JedisException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static java.text.MessageFormat.format;
+
 public class EventsRouterService {
-	
+
 	private static Logger LOGGER = new Logger(EventsRouterService.class);
 	private final DeDupEngine deDupEngine;
 	private final EventsRouterConfig config;
@@ -31,13 +30,8 @@ public class EventsRouterService {
 		Event event = null;
 		try {
 			event = source.getEvent();
-			if(config.isDedupEnabled()) {
+			if (config.isDedupEnabled() && isDupCheckRequired(event)) {
 				String checksum = event.getChecksum();
-
-				if (checksum == null) {
-					LOGGER.info(event.id(), "EVENT WITHOUT CHECKSUM & MID, PASSING THROUGH : {}", event);
-					event.markSkipped();
-				}
 				if (!deDupEngine.isUniqueEvent(checksum)) {
 					LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
 					event.markDuplicate();
@@ -46,8 +40,9 @@ public class EventsRouterService {
 				}
 				LOGGER.info(event.id(), "ADDING EVENT CHECKSUM TO STORE");
 				deDupEngine.storeChecksum(checksum);
+			} else {
+				LOGGER.info(event.id(), "SKIPPING THE DEDUP CHECK");
 			}
-			
 			String eid = event.eid();
 			if(event.mid().contains("TRACE")){
 				SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -83,5 +78,9 @@ public class EventsRouterService {
 					e);
 			sink.toErrorTopic(event, e.getMessage());
 		}
+	}
+
+	public boolean isDupCheckRequired(Event event) {
+		return (config.exclusiveEids().isEmpty() || (null != event.eid() && !(config.exclusiveEids().contains(event.eid()))));
 	}
 }

@@ -2,6 +2,9 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EventsRouterConfig {
 
     private final String JOB_NAME = "EventsRouter";
@@ -17,6 +20,7 @@ public class EventsRouterConfig {
     private final int dupStore;
     private int expirySeconds;
     private String errorEventsRouteTopic;
+    private List<String> excludedEids = new ArrayList<>();
 
     public EventsRouterConfig(Config config) {
         failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
@@ -30,6 +34,13 @@ public class EventsRouterConfig {
         dupStore = config.getInt("redis.database.duplicationstore.id", 8);
         expirySeconds = config.getInt("redis.database.key.expiry.seconds", 86400);
         errorEventsRouteTopic = config.get("router.events.error.route.topic", "events.error");
+        if (!config.get("dedup.exclude.eids", "").isEmpty()) {
+            excludedEids = config.getList("dedup.exclude.eids", new ArrayList<>());
+        }
+        else
+        {
+            excludedEids = new ArrayList<>();
+        }
     }
 
     public String getTelemetryEventsRouteTopic() {
@@ -80,5 +91,9 @@ public class EventsRouterConfig {
 
     public String getErrorEventsRouteTopic() {
         return errorEventsRouteTopic;
+    }
+
+    public List<String> exclusiveEids() {
+        return excludedEids;
     }
 }
