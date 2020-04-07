@@ -77,7 +77,7 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val shareItemEventsMetircsCount = "share-item-success-count"
 
   // Producers
-  val jobMetricsProducer = ""
+  val jobMetricsProducer = "telemetry-job-metrics-producer"
   val primaryRouterProducer = "kafka-primary-route-producer"
   val secondaryRouterProducer = "kafka-secondary-route-producer"
   val auditRouterProducer = "kafka-audit-route-producer"
