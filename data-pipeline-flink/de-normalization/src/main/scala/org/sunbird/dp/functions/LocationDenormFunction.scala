@@ -7,10 +7,11 @@ import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.apache.flink.util.Collector
 import org.slf4j.LoggerFactory
-import org.sunbird.dp.cache.{ DedupEngine, RedisConnect }
+import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
 import org.sunbird.dp.task.DenormalizationConfig
-import org.sunbird.dp.core.BaseDeduplication
+import org.sunbird.dp.core._
 import org.sunbird.dp.domain.Event
+
 import scala.collection.mutable.Map
 import org.apache.flink.api.common.state.ValueState
 import org.apache.flink.api.common.state.ValueStateDescriptor
@@ -18,12 +19,10 @@ import com.google.gson.Gson
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction
 import org.apache.flink.metrics.Counter
 import org.apache.flink.metrics.SimpleCounter
-import collection.JavaConverters._
-import org.sunbird.dp.core.BaseJobConfig
-import org.sunbird.dp.core.BaseProcessFunction
-import org.sunbird.dp.core.Metrics
 
-class LocationDenormFunction(config: DenormalizationConfig)(implicit val mapTypeInfo: TypeInformation[Event]) extends BaseProcessFunction[Event](config) {
+import collection.JavaConverters._
+
+class LocationDenormFunction(config: DenormalizationConfig)(implicit val mapTypeInfo: TypeInformation[Event]) extends BaseProcessKeyedFunction[Event](config) {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[LocationDenormFunction])
   

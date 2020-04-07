@@ -7,16 +7,13 @@ import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.apache.flink.util.Collector
 import org.slf4j.LoggerFactory
-import org.sunbird.dp.cache.{ DedupEngine, RedisConnect }
+import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
 import org.sunbird.dp.task.DenormalizationConfig
-import org.sunbird.dp.core.BaseDeduplication
+import org.sunbird.dp.core._
 import org.sunbird.dp.domain.Event
-import org.sunbird.dp.core.DataCache
-import org.sunbird.dp.core.BaseProcessFunction
-import org.sunbird.dp.core.Metrics
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction
 
-class UserDenormFunction(config: DenormalizationConfig)(implicit val mapTypeInfo: TypeInformation[Event]) extends BaseProcessFunction[Event](config) {
+class UserDenormFunction(config: DenormalizationConfig)(implicit val mapTypeInfo: TypeInformation[Event]) extends BaseProcessKeyedFunction[Event](config) {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[UserDenormFunction])
 
