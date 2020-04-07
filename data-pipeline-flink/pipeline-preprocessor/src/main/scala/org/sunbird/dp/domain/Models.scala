@@ -1,4 +1,5 @@
 package org.sunbird.dp.domain
+
 import java.util
 
 case class Actor(id: String, `type`: String)
@@ -11,10 +12,12 @@ case class Context(channel: String,
                    cdata: util.ArrayList[util.Map[String, AnyRef]],
                    rollup: util.Map[String, AnyRef])
 
-case class EData(dir:String, `type`:String, size:Double)
+case class EData(dir: String, `type`: String, size: Double)
 
 case class Params(ver: String, events_count: Int, sync_status: String)
+
 case class Rollup(l1: String)
+
 case class Object(id: String, ver: String, `type`: String, rollup: Rollup)
 
 case class ShareEvent(actor: Actor,

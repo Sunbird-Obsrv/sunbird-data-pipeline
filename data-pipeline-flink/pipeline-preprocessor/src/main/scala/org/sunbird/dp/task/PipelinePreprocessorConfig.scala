@@ -30,7 +30,6 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val kafkaAuditRouteTopic: String = config.getString("kafka.output.audit.route.topic")
 
   val kafkaFailedTopic: String = config.getString("kafka.output.failed.topic")
-  val kafkaMalformedTopic: String = config.getString("kafka.output.malformed.topic")
   val kafkaDuplicateTopic: String = config.getString("kafka.output.duplicate.topic")
 
   val secondaryRouteEids: List[String] = config.getStringList("router.secondary.routes.eid").asScala.toList
@@ -53,12 +52,39 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val shareRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("share-route-events")
   val shareItemEventOutTag: OutputTag[String] = OutputTag[String]("share-route-events")
 
-  val validationParallelism:Int = config.getInt("telemetry.validation.parallelism")
-  val routerParallelism:Int = config.getInt("telemetry.router.parallelism")
-  val shareEventsFlattnerParallelism:Int = config.getInt("share.events.flattener.parallelism")
+  val validationParallelism: Int = config.getInt("telemetry.validation.parallelism")
+  val routerParallelism: Int = config.getInt("telemetry.router.parallelism")
+  val shareEventsFlattnerParallelism: Int = config.getInt("share.events.flattener.parallelism")
 
   val VALIDATION_FLAG_NAME = "pp_validation_processed"
   val DE_DUP_FLAG_NAME = "pp_duplicate"
   val SHARE_EVENTS_FLATTEN_FLAG_NAME = "pp_share_event_processed"
+
+  // Router job metrics
+  val primaryRouterMetricCount = "primary-route-success-count"
+  val secondaryRouterMetricCount = "secondary-route-success-count"
+  val auditEventRouterMetricCount = "audit-route-success-count"
+  val shareEventsRouterMetricCount = "share-route-success-count"
+
+
+  // Validation job metrics
+  val validationSuccessMetricsCount = "validation-success-message-count"
+  val validationFailureMetricsCount = "validation-failed-message-count"
+  val duplicationEventMetricsCount = "duplicate-event-count"
+  val uniqueEventsMetricsCount = "unique-event-count"
+  val validationSkipMetricsCount = "skipped-message-count"
+  // ShareEventsFlatten count
+  val shareItemEventsMetircsCount = "share-item-success-count"
+
+  // Producers
+  val jobMetricsProducer = "telemetry-job-metrics-producer"
+  val primaryRouterProducer = "kafka-primary-route-producer"
+  val secondaryRouterProducer = "kafka-secondary-route-producer"
+  val auditRouterProducer = "kafka-audit-route-producer"
+  val invalidEventProducer = "kafka-telemetry-invalid-events-producer"
+  val duplicateEventProducer = "kafka-telemetry-duplicate-producer"
+
+
+
 
 }
