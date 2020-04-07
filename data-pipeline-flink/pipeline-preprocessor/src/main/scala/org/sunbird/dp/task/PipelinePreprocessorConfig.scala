@@ -68,8 +68,8 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
 
 
   // Validation job metrics
-  val validationSuccessMetricsCount = "success-message-count"
-  val validationFailureMetricsCount = "failed-message-count"
+  val validationSuccessMetricsCount = "validation-success-message-count"
+  val validationFailureMetricsCount = "validation-failed-message-count"
   val duplicationEventMetricsCount = "duplicate-event-count"
   val uniqueEventsMetricsCount = "unique-event-count"
   val validationSkipMetricsCount = "skipped-message-count"

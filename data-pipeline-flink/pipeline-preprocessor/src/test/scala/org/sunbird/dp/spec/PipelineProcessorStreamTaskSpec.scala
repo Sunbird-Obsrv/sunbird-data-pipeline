@@ -81,15 +81,28 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
     TelemetryPrimaryEventSink.values.get(1).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(true)
     TelemetryFailedEventsSink.values.get(0).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(false)
 
-    MetricsEventsSink.values.size should be (3)
-    println("MetricsEventsSink" + MetricsEventsSink.values.size)
+    MetricsEventsSink.values.size should be(3)
     val metricsMap: scala.collection.mutable.Map[String, Double] = scala.collection.mutable.Map[String, Double]();
+
     MetricsEventsSink.values.foreach(metricJson => {
       val metricEvent = gson.fromJson(metricJson, new util.HashMap[String, AnyRef]().getClass);
       val list = metricEvent.get("metrics").asInstanceOf[util.List[util.Map[String, AnyRef]]]
-    })
-  }
+      list.forEach(metric =>{
+        metricsMap.put(metric.get("id").asInstanceOf[String], metric.get("value").asInstanceOf[Double])
+      })
 
+    })
+    metricsMap.get(ppConfig.validationSuccessMetricsCount).get should be (3.0)
+    metricsMap.get(ppConfig.validationFailureMetricsCount).get should be (1.0)
+    metricsMap.get(ppConfig.validationSkipMetricsCount).get should be (0.0)
+    metricsMap.get(ppConfig.primaryRouterMetricCount).get should be (1.0)
+    metricsMap.get(ppConfig.secondaryRouterMetricCount).get should be (0.0)
+    metricsMap.get(ppConfig.auditEventRouterMetricCount).get should be (0.0)
+    metricsMap.get(ppConfig.shareItemEventsMetircsCount).get should be (3.0)
+    metricsMap.get(ppConfig.shareEventsRouterMetricCount).get should be (1.0)
+    metricsMap.get("unique-event-count").get should be (1.0)
+    metricsMap.get("duplicate-event-count").get should be (5.0)
+  }
 }
 
 class PipeLineProcessorEventSource extends SourceFunction[Event] {

@@ -49,6 +49,7 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
       if (validationReport.isSuccess) {
         logger.info(s"Telemetry schema validation is success: ${event.mid()}")
         event.markSuccess(config.VALIDATION_FLAG_NAME)
+        metrics.incCounter(config.validationSuccessMetricsCount)
         event.updateDefaults(config)
         if (isDuplicateCheckRequired(event)) {
           deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag, flagName = config.DE_DUP_FLAG_NAME)(dedupEngine, metrics)
