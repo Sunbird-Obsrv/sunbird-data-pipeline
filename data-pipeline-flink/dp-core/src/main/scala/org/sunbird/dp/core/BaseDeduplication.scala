@@ -2,7 +2,7 @@ package org.sunbird.dp.core
 
 import java.util
 
-import org.apache.flink.streaming.api.functions.ProcessFunction
+import org.apache.flink.streaming.api.functions.{KeyedProcessFunction, ProcessFunction}
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.cache.DedupEngine
@@ -14,7 +14,7 @@ trait BaseDeduplication {
 
   def deDup[T](key: String,
                event: T,
-               context: ProcessFunction[T, T]#Context,
+               context: KeyedProcessFunction[Integer, T, T]#Context,
                successOutputTag: OutputTag[T],
                duplicateOutputTag: OutputTag[T],
                flagName: String
