@@ -64,7 +64,7 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
     val task = new PipelinePreprocessorStreamTask(ppConfig, mockKafkaUtil);
 
     task.process()
-    ShareItemEventSink.values.size() should be(2)
+    ShareItemEventSink.values.size() should be(3)
     TelemetryPrimaryEventSink.values.size() should be(2)
     TelemetryFailedEventsSink.values.size() should be(1)
     DupEventsSink.values.size() should be(1)
