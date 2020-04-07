@@ -5,19 +5,19 @@ import java.util.UUID
 
 import com.google.gson.Gson
 import org.apache.flink.api.common.typeinfo.TypeInformation
-import org.apache.flink.streaming.api.functions.ProcessFunction
-import org.apache.flink.util.Collector
+import org.apache.flink.streaming.api.functions.KeyedProcessFunction
 import org.slf4j.LoggerFactory
+import org.sunbird.dp.core.{BaseProcessFunction, Metrics}
 import org.sunbird.dp.domain.{Actor, EData, Event, Object, Rollup, ShareEvent}
 import org.sunbird.dp.task.PipelinePreprocessorConfig
 
 class ShareEventsFlattener(config: PipelinePreprocessorConfig)
-                          (implicit val eventTypeInfo: TypeInformation[Event]) extends ProcessFunction[Event, Event] {
+                          (implicit val eventTypeInfo: TypeInformation[Event]) extends BaseProcessFunction[Event](config) {
   private[this] val logger = LoggerFactory.getLogger(classOf[ShareEventsFlattener])
 
   override def processElement(shareEvent: Event,
-                              context: ProcessFunction[Event, Event]#Context,
-                              out: Collector[Event]): Unit = {
+                              context: KeyedProcessFunction[Integer, Event, Event]#Context,
+                              metrics: Metrics): Unit = {
     shareEvent.edataItems().forEach(items => {
       val version = items.get("ver").asInstanceOf[String]
       val identifier = items.get("id").asInstanceOf[String]
@@ -35,7 +35,7 @@ class ShareEventsFlattener(config: PipelinePreprocessorConfig)
         val shareItemEvent = generateShareItemEvents(shareEvent, Object(id = identifier, ver = version, `type` = contentType, rollup = Rollup(shareEvent.objectID())), edataType = Some(shareEvent.edataType()), paramSize = None)
         context.output(config.shareItemEventOutTag, new Gson().toJson(shareItemEvent))
       }
-
+      metrics.incCounter(config.shareItemEventsMetircsCount)
     })
     shareEvent.markSuccess(config.SHARE_EVENTS_FLATTEN_FLAG_NAME)
     context.output(config.primaryRouteEventsOutputTag, shareEvent)
@@ -58,5 +58,9 @@ class ShareEventsFlattener(config: PipelinePreprocessorConfig)
       eventObj,
       event.eventTags
     )
+  }
+
+  override def getMetricsList(): List[String] = {
+    List(config.shareItemEventsMetircsCount)
   }
 }

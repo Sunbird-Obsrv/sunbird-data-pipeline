@@ -61,16 +61,19 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
 
     val validationStream: SingleOutputStreamOperator[Event] =
       env.addSource(kafkaConsumer, "telemetry-raw-events-consumer")
+        .rebalance().keyBy(key => key.getPartition)
         .process(new TelemetryValidationFunction(config)).name("TelemetryValidator")
         .setParallelism(config.validationParallelism)
 
     val routerStream: SingleOutputStreamOperator[Event] =
       validationStream.getSideOutput(config.uniqueEventsOutputTag)
+        .keyBy(key => key.getPartition)
         .process(new TelemetryRouterFunction(config)).name("Telemetry Router")
         .setParallelism(config.routerParallelism)
 
     val shareEventsFlattener: SingleOutputStreamOperator[Event] =
       routerStream.getSideOutput(config.shareRouteEventsOutputTag)
+        .keyBy(key => key.getPartition)
         .process(new ShareEventsFlattener(config)).name("Share Events Flattener")
         .setParallelism(config.shareEventsFlattnerParallelism)
 

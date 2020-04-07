@@ -53,12 +53,32 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val shareRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("share-route-events")
   val shareItemEventOutTag: OutputTag[String] = OutputTag[String]("share-route-events")
 
-  val validationParallelism:Int = config.getInt("telemetry.validation.parallelism")
-  val routerParallelism:Int = config.getInt("telemetry.router.parallelism")
-  val shareEventsFlattnerParallelism:Int = config.getInt("share.events.flattener.parallelism")
+  val validationParallelism: Int = config.getInt("telemetry.validation.parallelism")
+  val routerParallelism: Int = config.getInt("telemetry.router.parallelism")
+  val shareEventsFlattnerParallelism: Int = config.getInt("share.events.flattener.parallelism")
 
   val VALIDATION_FLAG_NAME = "pp_validation_processed"
   val DE_DUP_FLAG_NAME = "pp_duplicate"
   val SHARE_EVENTS_FLATTEN_FLAG_NAME = "pp_share_event_processed"
+
+  // Router job metrics
+  val primaryRouterMetricCount = "primary-route-success-count"
+  val secondaryRouterMetricCount = "secondary-route-success-count"
+  val auditEventRouterMetricCount = "audit-route-success-count"
+  val shareEventsRouterMetricCount = "share-route-success-count"
+
+
+  // Validation job metrics
+  val validationSuccessMetricsCount = "success-message-count"
+  val validationFailureMetricsCount = "failed-message-count"
+  val duplicationEventMetricsCount = "duplicate-event-count"
+  val uniqueEventsMetricsCount = "unique-event-count"
+  val validationSkipMetricsCount = "skipped-message-count"
+
+  // ShareEventsFlatten count
+
+  val shareItemEventsMetircsCount = "share-item-success-count"
+
+
 
 }
