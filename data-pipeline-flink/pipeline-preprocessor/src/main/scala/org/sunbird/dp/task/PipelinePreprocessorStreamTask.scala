@@ -80,25 +80,31 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
     /**
      * Sink for invalid events, duplicate events, log events, audit events and telemetry events
      */
-    validationStream.getSideOutput(config.validationFailedEventsOutputTag).addSink(kafkaConnector.kafkaEventSink(config.kafkaFailedTopic)).name("kafka-telemetry-invalid-events-producer")
-    validationStream.getSideOutput(config.duplicateEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaDuplicateTopic)).name("kafka-telemetry-duplicate-producer")
+    validationStream.getSideOutput(config.validationFailedEventsOutputTag).addSink(kafkaConnector.kafkaEventSink(config.kafkaFailedTopic)).name(config.invalidEventProducer)
+    validationStream.getSideOutput(config.duplicateEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaDuplicateTopic)).name(config.duplicateEventProducer)
 
-    routerStream.getSideOutput(config.primaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
-    routerStream.getSideOutput(config.secondaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaSecondaryRouteTopic)).name("kafka-secondary-route-producer")
+    routerStream.getSideOutput(config.primaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name(config.primaryRouterProducer)
+    routerStream.getSideOutput(config.secondaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaSecondaryRouteTopic)).name(config.secondaryRouterProducer)
 
     /**
      * Pushing "AUDIT" event into both sink and audit topic
      */
-    routerStream.getSideOutput(config.auditRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaAuditRouteTopic)).name("kafka-audit-route-producer")
-    routerStream.getSideOutput(config.auditRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
+    routerStream.getSideOutput(config.auditRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaAuditRouteTopic)).name(config.auditRouterProducer)
+    routerStream.getSideOutput(config.auditRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name(config.primaryRouterProducer)
 
     /**
      * Pushing "SHARE and SHARE_ITEM" event into out put topic sink topic(next_streaming_process = denorm)
      */
 
-    shareEventsFlattener.getSideOutput(config.primaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
-    shareEventsFlattener.getSideOutput(config.shareItemEventOutTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaPrimaryRouteTopic)).name("kafka-primary-route-producer")
+    shareEventsFlattener.getSideOutput(config.primaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name(config.primaryRouterProducer)
+    shareEventsFlattener.getSideOutput(config.shareItemEventOutTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaPrimaryRouteTopic)).name(config.primaryRouterProducer)
 
+    /**
+     * Metrics pushing into kafka topic..
+     */
+    shareEventsFlattener.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name(config.jobMetricsProducer)
+    routerStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name(config.jobMetricsProducer)
+    validationStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name(config.jobMetricsProducer)
     env.execute(config.jobName)
   }
 }

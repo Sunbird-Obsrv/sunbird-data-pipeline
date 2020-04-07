@@ -30,7 +30,6 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val kafkaAuditRouteTopic: String = config.getString("kafka.output.audit.route.topic")
 
   val kafkaFailedTopic: String = config.getString("kafka.output.failed.topic")
-  val kafkaMalformedTopic: String = config.getString("kafka.output.malformed.topic")
   val kafkaDuplicateTopic: String = config.getString("kafka.output.duplicate.topic")
 
   val secondaryRouteEids: List[String] = config.getStringList("router.secondary.routes.eid").asScala.toList
@@ -74,10 +73,17 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val duplicationEventMetricsCount = "duplicate-event-count"
   val uniqueEventsMetricsCount = "unique-event-count"
   val validationSkipMetricsCount = "skipped-message-count"
-
   // ShareEventsFlatten count
-
   val shareItemEventsMetircsCount = "share-item-success-count"
+
+  // Producers
+  val jobMetricsProducer = ""
+  val primaryRouterProducer = "kafka-primary-route-producer"
+  val secondaryRouterProducer = "kafka-secondary-route-producer"
+  val auditRouterProducer = "kafka-audit-route-producer"
+  val invalidEventProducer = "kafka-telemetry-invalid-events-producer"
+  val duplicateEventProducer = "kafka-telemetry-duplicate-producer"
+
 
 
 
