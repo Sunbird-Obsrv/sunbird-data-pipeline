@@ -69,7 +69,7 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
     val task = new PipelinePreprocessorStreamTask(ppConfig, mockKafkaUtil);
 
     task.process()
-    Thread.sleep(ppConfig.metricsWindowSize + 10000); // Wait for metrics to be triggered
+    Thread.sleep(ppConfig.metricsWindowSize + 2000); // Wait for metrics to be triggered
     ShareItemEventSink.values.size() should be(3)
     TelemetryPrimaryEventSink.values.size() should be(2)
     TelemetryFailedEventsSink.values.size() should be(1)
@@ -83,7 +83,7 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
     TelemetryPrimaryEventSink.values.get(1).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(true)
     TelemetryFailedEventsSink.values.get(0).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(false)
 
-    MetricsEventsSink.values.size should be (5)
+    MetricsEventsSink.values.size should be (3)
     println("MetricsEventsSink" + MetricsEventsSink.values.size)
     val metricsMap: scala.collection.mutable.Map[String, Double] = scala.collection.mutable.Map[String, Double]();
     MetricsEventsSink.values.foreach(metricJson => {

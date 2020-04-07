@@ -8,6 +8,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.core.FlinkKafkaConnector
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.functions.{ShareEventsFlattener, TelemetryRouterFunction, TelemetryValidationFunction}
+import org.sunbird.dp.util.FlinkUtil
 
 class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaConnector: FlinkKafkaConnector) {
 
@@ -46,10 +47,8 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
   private val serialVersionUID = 146697324640926024L
 
   def process(): Unit = {
-    implicit val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
+    implicit val env: StreamExecutionEnvironment = FlinkUtil.getExecutionContext(config);
     implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
-    env.enableCheckpointing(config.checkpointingInterval)
-
     val kafkaConsumer = kafkaConnector.kafkaEventSource[Event](config.kafkaInputTopic)
 
     /**
