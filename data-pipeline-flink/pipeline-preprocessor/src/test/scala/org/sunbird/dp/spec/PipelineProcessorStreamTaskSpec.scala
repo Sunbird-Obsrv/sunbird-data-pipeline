@@ -31,7 +31,12 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
     .build)
   var redisServer: RedisServer = _
   val config = ConfigFactory.load("test.conf");
+  val gson = new Gson();
+
+
   val ppConfig: PipelinePreprocessorConfig = new PipelinePreprocessorConfig(config);
+  println("metricsWindowSize" + ppConfig.metricsWindowSize)
+
   val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
 
   override protected def beforeAll(): Unit = {
@@ -64,6 +69,7 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
     val task = new PipelinePreprocessorStreamTask(ppConfig, mockKafkaUtil);
 
     task.process()
+    Thread.sleep(ppConfig.metricsWindowSize + 10000); // Wait for metrics to be triggered
     ShareItemEventSink.values.size() should be(3)
     TelemetryPrimaryEventSink.values.size() should be(2)
     TelemetryFailedEventsSink.values.size() should be(1)
@@ -76,6 +82,14 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
     TelemetryPrimaryEventSink.values.get(1).getFlags.get(ppConfig.SHARE_EVENTS_FLATTEN_FLAG_NAME).booleanValue() should be(true)
     TelemetryPrimaryEventSink.values.get(1).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(true)
     TelemetryFailedEventsSink.values.get(0).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(false)
+
+    MetricsEventsSink.values.size should be (5)
+    println("MetricsEventsSink" + MetricsEventsSink.values.size)
+    val metricsMap: scala.collection.mutable.Map[String, Double] = scala.collection.mutable.Map[String, Double]();
+    MetricsEventsSink.values.foreach(metricJson => {
+      val metricEvent = gson.fromJson(metricJson, new util.HashMap[String, AnyRef]().getClass);
+      val list = metricEvent.get("metrics").asInstanceOf[util.List[util.Map[String, AnyRef]]]
+    })
   }
 
 }
