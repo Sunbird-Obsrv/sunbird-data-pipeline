@@ -25,7 +25,7 @@
 		<module>de-normalization</module>
 		<!--		<module>telemetry-extractor</module>--> <!-- Will enable this once pr merge is done-->
 		<module>pipeline-preprocessor</module>
-		<module>druid-events-validator</module>
+<!--		<module>druid-events-validator</module>-->
 	</modules>
 
 	<properties>
