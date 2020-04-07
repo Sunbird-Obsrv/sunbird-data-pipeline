@@ -35,8 +35,6 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
 
 
   val ppConfig: PipelinePreprocessorConfig = new PipelinePreprocessorConfig(config);
-  println("metricsWindowSize" + ppConfig.metricsWindowSize)
-
   val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
 
   override protected def beforeAll(): Unit = {
