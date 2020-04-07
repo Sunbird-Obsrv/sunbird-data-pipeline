@@ -62,7 +62,6 @@ class DruidValidatorStreamTaskTestSpec  extends FlatSpec with Matchers with Befo
 
         val task = new DruidValidatorStreamTask(druidValidatorConfig, mockKafkaUtil);
         task.process()
-        Thread.sleep(druidValidatorConfig.metricsWindowSize + 2000); // Wait for metrics to be triggered
 
         TelemetryEventsSink.values.size() should be (2)
         SummaryEventsSink.values.size() should be (1)
