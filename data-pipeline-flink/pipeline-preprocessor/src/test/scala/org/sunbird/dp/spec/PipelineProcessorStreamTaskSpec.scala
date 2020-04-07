@@ -48,7 +48,7 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaFailedTopic)).thenReturn(new TelemetryFailedEventsSink)
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaAuditRouteTopic)).thenReturn(new TelemetryAuditEventSink)
     when(mockKafkaUtil.kafkaStringSink(ppConfig.kafkaPrimaryRouteTopic)).thenReturn(new ShareItemEventSink)
-
+    when(mockKafkaUtil.kafkaStringSink(ppConfig.metricsTopic)).thenReturn(new MetricsEventsSink)
 
     flinkCluster.before()
   }
@@ -181,4 +181,17 @@ class DupEventsSink extends SinkFunction[Event] {
 
 object DupEventsSink {
   val values: util.List[Event] = new util.ArrayList()
+}
+
+class MetricsEventsSink extends SinkFunction[String] {
+
+  override def invoke(value: String): Unit = {
+    synchronized {
+      MetricsEventsSink.values.append(value);
+    }
+  }
+}
+
+object MetricsEventsSink {
+  val values: scala.collection.mutable.Buffer[String] = scala.collection.mutable.Buffer[String]()
 }
