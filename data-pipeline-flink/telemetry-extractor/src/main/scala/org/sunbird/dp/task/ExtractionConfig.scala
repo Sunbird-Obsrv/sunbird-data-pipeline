@@ -7,7 +7,7 @@ import org.sunbird.dp.core.BaseJobConfig
 import org.apache.flink.streaming.api.scala.OutputTag
 import com.typesafe.config.Config
 
-class ExtractionConfig(override val config: Config) extends BaseJobConfig(config) {
+class ExtractionConfig(override val config: Config) extends BaseJobConfig(config, "telemetry-extractor") {
 
   private val serialVersionUID = 2905979434303791379L
 
@@ -22,7 +22,7 @@ class ExtractionConfig(override val config: Config) extends BaseJobConfig(config
   val kafkaSuccessTopic: String = config.getString("kafka.output.success.topic")
   val kafkaDuplicateTopic: String = config.getString("kafka.output.duplicate.topic")
   val kafkaFailedTopic: String = config.getString("kafka.output.failed.topic")
-  val eventMaxSize:Long = config.getLong("kafka.event.max.size")
+  val eventMaxSize: Long = config.getLong("kafka.event.max.size")
   val isDuplicationCheckRequired: Boolean = config.getBoolean("task.dedup.validation.required")
   val deDupParallelism: Int = config.getInt("task.dedup.parallelism")
   val extractionParallelism: Int = config.getInt("task.extraction.parallelism")
@@ -39,7 +39,5 @@ class ExtractionConfig(override val config: Config) extends BaseJobConfig(config
 
   val duplicateEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = DUPLICATE_EVENTS_OUTPUT_TAG)
   val uniqueEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = UNIQUE_EVENTS_OUTPUT_TAG)
-
-  val jobName = "telemetry-extractor"
 
 }

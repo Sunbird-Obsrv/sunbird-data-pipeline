@@ -19,9 +19,11 @@ class EventDeserializationSchema[T <: Events](implicit ct: ClassTag[T]) extends 
   override def isEndOfStream(nextElement: T): Boolean = false
 
   override def deserialize(record: ConsumerRecord[Array[Byte], Array[Byte]]): T = {
+    
+    val partition = new Integer(record.partition());
     val parsedString = new String(record.value(), StandardCharsets.UTF_8)
     val result = new Gson().fromJson(parsedString, new util.HashMap[String, AnyRef]().getClass)
-    ct.runtimeClass.getConstructor(classOf[util.Map[String, AnyRef]]).newInstance(result).asInstanceOf[T]
+    ct.runtimeClass.getConstructor(classOf[util.Map[String, AnyRef]], classOf[Integer]).newInstance(result, partition).asInstanceOf[T]
   }
 
   override def getProducedType: TypeInformation[T] = TypeExtractor.getForClass(classTag[T].runtimeClass).asInstanceOf[TypeInformation[T]]

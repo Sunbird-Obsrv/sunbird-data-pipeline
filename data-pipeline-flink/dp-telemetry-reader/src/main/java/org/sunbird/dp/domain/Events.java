@@ -5,20 +5,28 @@ import com.google.gson.Gson;
 import org.sunbird.dp.reader.NullableValue;
 import org.sunbird.dp.reader.Telemetry;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class Events {
 
     protected Telemetry telemetry;
     protected Path path;
+    private Integer partition;
 
-    public Events(Map<String, Object> map) {
+    public Events(Map<String, Object> map, Integer partition) {
         this.telemetry = new Telemetry(map);
         this.path = new Path();
+        this.partition = partition;
     }
 
     public Telemetry getTelemetry() {
         return telemetry;
+    }
+    
+    public Integer getPartition() {
+    		return partition;
     }
 
     public String getChecksum() {
@@ -53,6 +61,11 @@ public abstract class Events {
 
     public String eid() {
         NullableValue<String> eid = telemetry.read("eid");
+        return eid.value();
+    }
+    
+    public Map<String, Object> flags() {
+        NullableValue<Map<String, Object>> eid = telemetry.read(path.flags());
         return eid.value();
     }
 
@@ -130,6 +143,20 @@ public abstract class Events {
 
     public String edataType() {
         return telemetry.<String>read("edata.type").value();
+    }
+
+    public List<Map<String, Object>> edataItems() {
+        return telemetry.<List<Map<String, Object>>>read("edata.items").value();
+    }
+
+    public void updateFlags(String key, Boolean value) {
+        telemetry.addFieldIfAbsent("flags", new HashMap<String, Boolean>());
+        telemetry.add("flags."+ key, value);
+    }
+
+    public Map<String, Boolean> getFlags() {
+        NullableValue<Map<String, Boolean>> flags = telemetry.read("flags");
+        return flags.value();
     }
 
 }

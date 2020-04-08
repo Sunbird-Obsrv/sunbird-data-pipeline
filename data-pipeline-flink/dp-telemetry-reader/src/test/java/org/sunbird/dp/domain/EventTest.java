@@ -143,6 +143,14 @@ public class EventTest {
         Assert.assertEquals(event.getChecksum(), "IMPRESSION:0093c96434557b2ead169c7156e95770");
     }
 
+    @Test
+    public void shouldUpdateFlags() {
+        Event event = new Event(EventFixture.getMap(EventFixture.IMPRESSION_EVENT));
+        event.updateFlags("test_flag", true);
+        Assert.assertEquals(event.getFlags().size(), 1);
+        Assert.assertEquals(event.getFlags().get("test_flag"), true);
+    }
+
 
 }
 
@@ -154,7 +162,7 @@ public class EventTest {
 class Event extends Events {
 
     public Event(Map<String, Object> map) {
-        super(map);
+        super(map, 0);
     }
 
     public <T> NullableValue<T> getData() {

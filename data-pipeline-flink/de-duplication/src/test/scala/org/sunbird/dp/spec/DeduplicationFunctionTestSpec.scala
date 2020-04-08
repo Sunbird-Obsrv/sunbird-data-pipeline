@@ -34,7 +34,7 @@ class DeduplicationFunctionTestSpec extends FlatSpec with Matchers with BeforeAn
     when(dedupEngine.isUniqueEvent("321a6f0c-10c6-4cdc-9893-207bb64fea50")).thenReturn(true)
 
     val deduplicationFunction = new DeduplicationFunction(dedupConfig, dedupEngine)
-    val event = new Event(gson.fromJson[util.Map[String, AnyRef]](EventFixture.EVENT_WITH_MID, mapType))
+    val event = new Event(gson.fromJson[util.Map[String, AnyRef]](EventFixture.EVENT_WITH_MID, mapType), 0)
 
     val harness = ProcessFunctionTestHarnesses.forProcessFunction(deduplicationFunction)
     harness.processElement(event, new Date().getTime)
@@ -49,7 +49,7 @@ class DeduplicationFunctionTestSpec extends FlatSpec with Matchers with BeforeAn
     when(dedupEngine.isUniqueEvent("321a6f0c-10c6-4cdc-9893-207bb64fea50")).thenReturn(false)
 
     val deduplicationFunction = new DeduplicationFunction(dedupConfig, dedupEngine)
-    val event = new Event(gson.fromJson[util.Map[String, AnyRef]](EventFixture.EVENT_WITH_MID, mapType))
+    val event = new Event(gson.fromJson[util.Map[String, AnyRef]](EventFixture.EVENT_WITH_MID, mapType), 0)
 
     val harness = ProcessFunctionTestHarnesses.forProcessFunction(deduplicationFunction)
     harness.processElement(event, new Date().getTime)
@@ -64,7 +64,7 @@ class DeduplicationFunctionTestSpec extends FlatSpec with Matchers with BeforeAn
   }
 
   "Duplicate check required " should "return true if producer id is defined in the inclusion list" in {
-    val event = new Event(gson.fromJson[util.Map[String, AnyRef]](EventFixture.EVENT_WITH_MID, mapType))
+    val event = new Event(gson.fromJson[util.Map[String, AnyRef]](EventFixture.EVENT_WITH_MID, mapType), 0)
     val deduplicationFunction = new DeduplicationFunction(dedupConfig, dedupEngine)
     val isDuplicationCheckRequired = deduplicationFunction.isDuplicateCheckRequired(event)
     isDuplicationCheckRequired should be (true)
@@ -72,7 +72,7 @@ class DeduplicationFunctionTestSpec extends FlatSpec with Matchers with BeforeAn
 
   "Duplicate check required " should "return false if producer id is not defined in the inclusion list" in {
 
-    val event = new Event(gson.fromJson[util.Map[String, AnyRef]](EventFixture.NON_INCLUDED_PDATA_ID_EVENT, mapType))
+    val event = new Event(gson.fromJson[util.Map[String, AnyRef]](EventFixture.NON_INCLUDED_PDATA_ID_EVENT, mapType), 0)
     val deduplicationFunction = new DeduplicationFunction(dedupConfig, dedupEngine)
     val isDuplicationCheckRequired = deduplicationFunction.isDuplicateCheckRequired(event)
     isDuplicationCheckRequired should be (false)

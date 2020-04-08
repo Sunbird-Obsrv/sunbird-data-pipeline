@@ -37,7 +37,7 @@ class DeduplicationStreamTask(config: DeduplicationConfig, kafkaConnector: Flink
         .addSink(kafkaConnector.kafkaEventSink(config.kafkaDuplicateTopic))
         .name("kafka-telemetry-duplicate-producer")
 
-      env.execute("DeduplicationFlinkJob")
+      env.execute(config.jobName)
 
     } catch {
       case ex: Exception =>
@@ -49,7 +49,7 @@ class DeduplicationStreamTask(config: DeduplicationConfig, kafkaConnector: Flink
 
 object DeduplicationStreamTask {
   def main(args: Array[String]): Unit = {
-    val config = ConfigFactory.load().withFallback(ConfigFactory.systemEnvironment())
+    val config = ConfigFactory.load("de-duplication.conf").withFallback(ConfigFactory.systemEnvironment())
     val dedupConfig = new DeduplicationConfig(config)
     val dedupTask: DeduplicationStreamTask = new DeduplicationStreamTask(dedupConfig, new FlinkKafkaConnector(dedupConfig))
     dedupTask.process()
