@@ -31,6 +31,9 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
     .build)
   var redisServer: RedisServer = _
   val config = ConfigFactory.load("test.conf");
+  val gson = new Gson();
+
+
   val ppConfig: PipelinePreprocessorConfig = new PipelinePreprocessorConfig(config);
   val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
 
@@ -48,7 +51,7 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaFailedTopic)).thenReturn(new TelemetryFailedEventsSink)
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaAuditRouteTopic)).thenReturn(new TelemetryAuditEventSink)
     when(mockKafkaUtil.kafkaStringSink(ppConfig.kafkaPrimaryRouteTopic)).thenReturn(new ShareItemEventSink)
-
+    when(mockKafkaUtil.kafkaStringSink(ppConfig.metricsTopic)).thenReturn(new MetricsEventsSink)
 
     flinkCluster.before()
   }
@@ -64,7 +67,8 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
     val task = new PipelinePreprocessorStreamTask(ppConfig, mockKafkaUtil);
 
     task.process()
-    ShareItemEventSink.values.size() should be(2)
+    Thread.sleep(ppConfig.metricsWindowSize + 2000); // Wait for metrics to be triggered
+    ShareItemEventSink.values.size() should be(3)
     TelemetryPrimaryEventSink.values.size() should be(2)
     TelemetryFailedEventsSink.values.size() should be(1)
     DupEventsSink.values.size() should be(1)
@@ -76,8 +80,29 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
     TelemetryPrimaryEventSink.values.get(1).getFlags.get(ppConfig.SHARE_EVENTS_FLATTEN_FLAG_NAME).booleanValue() should be(true)
     TelemetryPrimaryEventSink.values.get(1).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(true)
     TelemetryFailedEventsSink.values.get(0).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(false)
-  }
 
+    MetricsEventsSink.values.size should be(3)
+    val metricsMap: scala.collection.mutable.Map[String, Double] = scala.collection.mutable.Map[String, Double]();
+
+    MetricsEventsSink.values.foreach(metricJson => {
+      val metricEvent = gson.fromJson(metricJson, new util.HashMap[String, AnyRef]().getClass);
+      val list = metricEvent.get("metrics").asInstanceOf[util.List[util.Map[String, AnyRef]]]
+      list.forEach(metric =>{
+        metricsMap.put(metric.get("id").asInstanceOf[String], metric.get("value").asInstanceOf[Double])
+      })
+
+    })
+    metricsMap.get(ppConfig.validationSuccessMetricsCount).get should be (3.0)
+    metricsMap.get(ppConfig.validationFailureMetricsCount).get should be (1.0)
+    metricsMap.get(ppConfig.validationSkipMetricsCount).get should be (0.0)
+    metricsMap.get(ppConfig.primaryRouterMetricCount).get should be (1.0)
+    metricsMap.get(ppConfig.secondaryRouterMetricCount).get should be (0.0)
+    metricsMap.get(ppConfig.auditEventRouterMetricCount).get should be (0.0)
+    metricsMap.get(ppConfig.shareItemEventsMetircsCount).get should be (3.0)
+    metricsMap.get(ppConfig.shareEventsRouterMetricCount).get should be (1.0)
+    metricsMap.get("unique-event-count").get should be (1.0)
+    metricsMap.get("duplicate-event-count").get should be (5.0)
+  }
 }
 
 class PipeLineProcessorEventSource extends SourceFunction[Event] {
@@ -181,4 +206,17 @@ class DupEventsSink extends SinkFunction[Event] {
 
 object DupEventsSink {
   val values: util.List[Event] = new util.ArrayList()
+}
+
+class MetricsEventsSink extends SinkFunction[String] {
+
+  override def invoke(value: String): Unit = {
+    synchronized {
+      MetricsEventsSink.values.append(value);
+    }
+  }
+}
+
+object MetricsEventsSink {
+  val values: scala.collection.mutable.Buffer[String] = scala.collection.mutable.Buffer[String]()
 }
