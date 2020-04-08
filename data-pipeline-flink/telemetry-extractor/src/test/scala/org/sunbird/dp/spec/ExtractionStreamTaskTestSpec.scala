@@ -20,6 +20,7 @@ import org.apache.flink.streaming.api.functions.source.SourceFunction.SourceCont
 import org.sunbird.dp.task.ExtractionConfig
 import com.typesafe.config.ConfigFactory
 import org.sunbird.dp.core.FlinkKafkaConnector
+import collection.JavaConverters._
 
 class ExtractionStreamTaskTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll with MockitoSugar {
 
@@ -32,6 +33,7 @@ class ExtractionStreamTaskTestSpec extends FlatSpec with Matchers with BeforeAnd
   val config: Config = ConfigFactory.load("test.conf")
   val extConfig: ExtractionConfig = new ExtractionConfig(config)
   val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
+  val gson = new Gson();
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
@@ -40,9 +42,10 @@ class ExtractionStreamTaskTestSpec extends FlatSpec with Matchers with BeforeAnd
 
     when(mockKafkaUtil.kafkaMapSource(extConfig.kafkaInputTopic)).thenReturn(new ExtractorEventSource)
     when(mockKafkaUtil.kafkaMapSink(extConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
-    when(mockKafkaUtil.kafkaMapSink(extConfig.kafkaSuccessTopic)).thenReturn(new LogEventsSink)
-    when(mockKafkaUtil.kafkaStringSink(extConfig.kafkaSuccessTopic)).thenReturn(new RawEventsSink)
-    when(mockKafkaUtil.kafkaStringSink(extConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
+//    when(mockKafkaUtil.kafkaMapSink(extConfig.kafkaSuccessTopic)).thenReturn(new LogEventsSink)
+    when(mockKafkaUtil.kafkaMapSink(extConfig.kafkaSuccessTopic)).thenReturn(new RawEventsSink)
+    when(mockKafkaUtil.kafkaMapSink(extConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
+    when(mockKafkaUtil.kafkaStringSink(extConfig.metricsTopic)).thenReturn(new MetricsEventsSink)
 
     flinkCluster.before()
   }
@@ -57,11 +60,29 @@ class ExtractionStreamTaskTestSpec extends FlatSpec with Matchers with BeforeAnd
 
     val task = new ExtractorStreamTask(extConfig, mockKafkaUtil);
     task.process()
+//    Thread.sleep(extConfig.metricsWindowSize + 2000); // Wait for metrics to be triggered
 
-    RawEventsSink.values.size() should be (40)
+    RawEventsSink.values.size() should be (42) // 40 events + 2 log events generated for auditing
     FailedEventsSink.values.size() should be (0)
     DupEventsSink.values.size() should be (1)
-    LogEventsSink.values.size() should be (2)
+//    LogEventsSink.values.size() should be (2)
+
+    MetricsEventsSink.values.size should be (2)
+    val metricsMap: scala.collection.mutable.Map[String, Double] = scala.collection.mutable.Map[String, Double]();
+    MetricsEventsSink.values.foreach(metricJson => {
+      val metricEvent = gson.fromJson(metricJson, new util.HashMap[String, AnyRef]().getClass);
+      val list = metricEvent.get("metrics").asInstanceOf[util.List[util.Map[String, AnyRef]]].asScala
+      for(metric <- list) {
+        metricsMap.put(metric.get("id").asInstanceOf[String], metric.get("value").asInstanceOf[Double])
+      }
+    })
+
+    metricsMap.get("processed-batch-messages-count").get should be (3)
+    metricsMap.get("success-messages-count").get should be (40)
+    metricsMap.get("failed-messages-count").get should be (0)
+    metricsMap.get("log-events-generated-count").get should be (2)
+    metricsMap.get("unique-event-count").get should be (1)
+    metricsMap.get("duplicate-event-count").get should be (1)
   }
 
 }
@@ -70,11 +91,11 @@ class ExtractorEventSource extends SourceFunction[util.Map[String, AnyRef]] {
 
   override def run(ctx: SourceContext[util.Map[String, AnyRef]]) {
     val gson = new Gson()
-    val event1 = gson.fromJson(EventFixture.EVENT_WITH_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass)
-    val event2 = gson.fromJson(EventFixture.EVENT_WITHOUT_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass)
-    ctx.collect(event1)
-    ctx.collect(event1)
-    ctx.collect(event2)
+    val event1 = gson.fromJson(EventFixture.EVENT_WITH_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala ++ Map("partition" -> 0.asInstanceOf[AnyRef])
+    val event2 = gson.fromJson(EventFixture.EVENT_WITHOUT_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala ++ Map("partition" -> 0.asInstanceOf[AnyRef])
+    ctx.collect(event1.asJava)
+    ctx.collect(event1.asJava)
+    ctx.collect(event2.asJava)
   }
 
   override def cancel() = {
@@ -83,9 +104,9 @@ class ExtractorEventSource extends SourceFunction[util.Map[String, AnyRef]] {
 
 }
 
-class RawEventsSink extends SinkFunction[String] {
+class RawEventsSink extends SinkFunction[util.Map[String, AnyRef]] {
 
-  override def invoke(value: String): Unit = {
+  override def invoke(value: util.Map[String, AnyRef]): Unit = {
     synchronized {
       RawEventsSink.values.add(value)
     }
@@ -93,12 +114,12 @@ class RawEventsSink extends SinkFunction[String] {
 }
 
 object RawEventsSink {
-  val values: util.List[String] = new util.ArrayList()
+  val values: util.List[util.Map[String, AnyRef]] = new util.ArrayList()
 }
 
-class FailedEventsSink extends SinkFunction[String] {
+class FailedEventsSink extends SinkFunction[util.Map[String, AnyRef]] {
 
-  override def invoke(value: String): Unit = {
+  override def invoke(value: util.Map[String, AnyRef]): Unit = {
     synchronized {
       FailedEventsSink.values.add(value)
     }
@@ -106,7 +127,7 @@ class FailedEventsSink extends SinkFunction[String] {
 }
 
 object FailedEventsSink {
-  val values: util.List[String] = new util.ArrayList()
+  val values: util.List[util.Map[String, AnyRef]] = new util.ArrayList()
 }
 
 class LogEventsSink extends SinkFunction[util.Map[String, AnyRef]] {
@@ -133,4 +154,17 @@ class DupEventsSink extends SinkFunction[util.Map[String, AnyRef]] {
 
 object DupEventsSink {
   val values: util.List[util.Map[String, AnyRef]] = new util.ArrayList()
+}
+
+class MetricsEventsSink extends SinkFunction[String] {
+
+  override def invoke(value: String): Unit = {
+    synchronized {
+      MetricsEventsSink.values.append(value);
+    }
+  }
+}
+
+object MetricsEventsSink {
+  val values: scala.collection.mutable.Buffer[String] = scala.collection.mutable.Buffer[String]()
 }

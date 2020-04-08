@@ -20,6 +20,7 @@ import org.sunbird.dp.core.FlinkKafkaConnector
 import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.task.{DruidValidatorConfig, DruidValidatorStreamTask}
 import redis.embedded.RedisServer
+import collection.JavaConverters._
 
 class DruidValidatorStreamTaskTestSpec  extends FlatSpec with Matchers with BeforeAndAfterAll with MockitoSugar {
 
@@ -32,6 +33,7 @@ class DruidValidatorStreamTaskTestSpec  extends FlatSpec with Matchers with Befo
     val config = ConfigFactory.load("test.conf");
     val druidValidatorConfig: DruidValidatorConfig = new DruidValidatorConfig(config);
     val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
+    val gson = new Gson();
 
     override protected def beforeAll(): Unit = {
         super.beforeAll()
@@ -45,6 +47,7 @@ class DruidValidatorStreamTaskTestSpec  extends FlatSpec with Matchers with Befo
         when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaLogRouteTopic)).thenReturn(new LogEventsSink)
         when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaErrorRouteTopic)).thenReturn(new ErrorEventsSink)
         when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
+        when(mockKafkaUtil.kafkaStringSink(druidValidatorConfig.metricsTopic)).thenReturn(new MetricsEventsSink)
 
         flinkCluster.before()
     }
@@ -78,6 +81,29 @@ class DruidValidatorStreamTaskTestSpec  extends FlatSpec with Matchers with Befo
         FailedEventsSink.values.get(0).getFlags.get("dv_processed").booleanValue() should be(false)
         FailedEventsSink.values.get(0).getFlags.get("dv_validation_failed").booleanValue() should be(true)
 
+        MetricsEventsSink.values.size should be (2)
+        val metricsMap: scala.collection.mutable.Map[String, Double] = scala.collection.mutable.Map[String, Double]();
+        MetricsEventsSink.values.foreach(metricJson => {
+            val metricEvent = gson.fromJson(metricJson, new util.HashMap[String, AnyRef]().getClass);
+            val list = metricEvent.get("metrics").asInstanceOf[util.List[util.Map[String, AnyRef]]].asScala
+            for(metric <- list) {
+                metricsMap.put(metric.get("id").asInstanceOf[String], metric.get("value").asInstanceOf[Double])
+            }
+        })
+
+        metricsMap.get("processed-message-count").get should be (7)
+        metricsMap.get("validation-success-message-count").get should be (5)
+        metricsMap.get("validation-skipped-message-count").get should be (1)
+        metricsMap.get("validation-failed-message-count").get should be (1)
+
+        metricsMap.get("dedup-skipped-count").get should be (2)
+        metricsMap.get("duplicate-event-count").get should be (1)
+        metricsMap.get("unique-event-count").get should be (3)
+
+        metricsMap.get("log-route-success-count").get should be (1)
+        metricsMap.get("error-route-success-count").get should be (1)
+        metricsMap.get("summary-route-success-count").get should be (1)
+        metricsMap.get("telemetry-route-success-count").get should be (3)
     }
 
 }
@@ -183,4 +209,17 @@ class DupEventsSink extends SinkFunction[Event] {
 
 object DupEventsSink {
     val values: util.List[Event] = new util.ArrayList()
+}
+
+class MetricsEventsSink extends SinkFunction[String] {
+
+    override def invoke(value: String): Unit = {
+        synchronized {
+            MetricsEventsSink.values.append(value);
+        }
+    }
+}
+
+object MetricsEventsSink {
+    val values: scala.collection.mutable.Buffer[String] = scala.collection.mutable.Buffer[String]()
 }
