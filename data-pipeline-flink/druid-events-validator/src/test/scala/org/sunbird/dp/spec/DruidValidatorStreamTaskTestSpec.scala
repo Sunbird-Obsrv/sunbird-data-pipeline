@@ -97,6 +97,9 @@ class DruidValidatorStreamTaskTestSpec  extends FlatSpec with Matchers with Befo
         metricsMap.get("validation-failed-message-count").get should be (1)
 
         metricsMap.get("dedup-skipped-count").get should be (2)
+        metricsMap.get("duplicate-event-count").get should be (1)
+        metricsMap.get("unique-event-count").get should be (3)
+
         metricsMap.get("log-route-success-count").get should be (1)
         metricsMap.get("error-route-success-count").get should be (1)
         metricsMap.get("summary-route-success-count").get should be (1)

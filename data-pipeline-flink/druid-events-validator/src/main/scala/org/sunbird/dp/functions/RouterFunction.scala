@@ -29,7 +29,8 @@ class RouterFunction(config: DruidValidatorConfig, @transient var dedupEngine: D
     }
 
     override def getMetricsList(): List[String] = {
-        List(config.skipDedupMetricCount, config.logRouterMetricCount, config.errorRouterMetricCount, config.telemetryRouterMetricCount, config.summaryRouterMetricCount)
+        List(config.skipDedupMetricCount, config.logRouterMetricCount, config.errorRouterMetricCount,
+            config.telemetryRouterMetricCount, config.summaryRouterMetricCount) ::: getDeDupMetrics
     }
 
     override def processElement(event: Event, ctx: KeyedProcessFunction[Integer, Event, Event]#Context, metrics: Metrics): Unit = {
@@ -55,7 +56,7 @@ class RouterFunction(config: DruidValidatorConfig, @transient var dedupEngine: D
                 config.telemetryRouterOutputTag
             }
             deDup[Event](event.mid(), event, ctx,
-                outputTag, config.duplicateEventOutputTag, flagName = "dv_duplicate")(dedupEngine)
+                outputTag, config.duplicateEventOutputTag, flagName = "dv_duplicate")(dedupEngine, metrics)
         }
 
     }

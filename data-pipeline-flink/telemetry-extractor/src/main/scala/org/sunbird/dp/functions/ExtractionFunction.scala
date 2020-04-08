@@ -5,7 +5,7 @@ import java.util
 
 import com.google.gson.Gson
 import org.apache.flink.api.common.typeinfo.TypeInformation
-import org.apache.flink.streaming.api.functions.ProcessFunction
+import org.apache.flink.streaming.api.functions.{KeyedProcessFunction, ProcessFunction}
 import org.apache.flink.util.Collector
 import org.joda.time.format.DateTimeFormat
 import org.sunbird.dp.task.ExtractionConfig
@@ -13,22 +13,30 @@ import org.sunbird.dp.domain._
 import java.util.UUID
 
 import com.google.gson.reflect.TypeToken
+import org.sunbird.dp.core.{BaseProcessFunction, Metrics}
 
 class ExtractionFunction(config: ExtractionConfig)(implicit val stringTypeInfo: TypeInformation[String])
-  extends ProcessFunction[util.Map[String, AnyRef], String] {
+  extends BaseProcessFunction[util.Map[String, AnyRef]](config) {
 
   val mapType: Type = new TypeToken[util.Map[String, AnyRef]]() {}.getType
+
+  val successCount = "success-messages-count"
+  val failedCount = "failed-messages-count"
+  val logCount = "log-events-generated-count"
+
+  override def getMetricsList(): List[String] = {
+    List(successCount, logCount, failedCount)
+  }
 
   /**
    * Method to process the events extraction from the batch
    *
    * @param batchEvent - Batch of telemetry events
    * @param context
-   * @param collector
    */
   override def processElement(batchEvent: util.Map[String, AnyRef],
-                              context: ProcessFunction[util.Map[String, AnyRef], String]#Context,
-                              collector: Collector[String]): Unit = {
+                              context: KeyedProcessFunction[Integer, util.Map[String, AnyRef], util.Map[String, AnyRef]]#Context,
+                              metrics: Metrics): Unit = {
 
     val gson = new Gson()
     val eventsList = getEventsList(batchEvent)
@@ -38,9 +46,11 @@ class ExtractionFunction(config: ExtractionConfig)(implicit val stringTypeInfo: 
       val eventJson = gson.toJson(eventData)
       val eventSize = eventJson.getBytes("UTF-8").length
       if (eventSize > config.eventMaxSize) {
-        context.output(config.failedEventsOutputTag, gson.toJson(markFailed(eventData)))
+        metrics.incCounter(failedCount)
+        context.output(config.failedEventsOutputTag, eventData)
       } else {
-        context.output(config.rawEventsOutputTag, gson.toJson(markSuccess(eventData)))
+        metrics.incCounter(successCount)
+        context.output(config.rawEventsOutputTag, eventData)
       }
     })
 
@@ -49,6 +59,7 @@ class ExtractionFunction(config: ExtractionConfig)(implicit val stringTypeInfo: 
      */
     context.output(config.logEventsOutputTag,
       gson.fromJson(gson.toJson(generateAuditEvents(eventsList.size(), batchEvent)), mapType))
+    metrics.incCounter(logCount)
   }
 
   /**

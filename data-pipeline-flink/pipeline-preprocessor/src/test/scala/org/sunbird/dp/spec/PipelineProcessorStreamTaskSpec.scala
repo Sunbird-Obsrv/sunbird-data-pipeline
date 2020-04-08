@@ -100,8 +100,8 @@ class PipelineProcessorStreamTaskSpec extends FlatSpec with Matchers with Before
     metricsMap.get(ppConfig.auditEventRouterMetricCount).get should be (0.0)
     metricsMap.get(ppConfig.shareItemEventsMetircsCount).get should be (3.0)
     metricsMap.get(ppConfig.shareEventsRouterMetricCount).get should be (1.0)
-    metricsMap.get("unique-event-count").get should be (1.0)
-    metricsMap.get("duplicate-event-count").get should be (5.0)
+    metricsMap.get("unique-event-count").get should be (2)
+    metricsMap.get("duplicate-event-count").get should be (4)
   }
 }
 
