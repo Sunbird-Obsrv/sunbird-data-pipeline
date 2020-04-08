@@ -1,7 +1,6 @@
 package org.sunbird.dp.core
 
 import java.util
-
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.slf4j.LoggerFactory
@@ -11,8 +10,8 @@ import org.sunbird.dp.domain.Events
 trait BaseDeduplication {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[BaseDeduplication])
-  val uniqueEventMetricCount = "duplicate-event-count"
-  val duplicateEventMetricCount = "unique-event-count"
+  val uniqueEventMetricCount = "unique-event-count"
+  val duplicateEventMetricCount = "duplicate-event-count"
 
   def deDup[T](key: String,
                event: T,

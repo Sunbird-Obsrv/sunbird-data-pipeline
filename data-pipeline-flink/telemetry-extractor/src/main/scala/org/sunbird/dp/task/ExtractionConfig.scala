@@ -33,8 +33,8 @@ class ExtractionConfig(override val config: Config) extends BaseJobConfig(config
   val LOG_EVENTS_OUTPUT_TAG = "log-events"
   val DUPLICATE_EVENTS_OUTPUT_TAG = "duplicate-events"
   
-  val rawEventsOutputTag: OutputTag[String] = OutputTag[String](RAW_EVENTS_OUTPUT_TAG)
-  val failedEventsOutputTag: OutputTag[String] = OutputTag[String](FAILED_EVENTS_OUTPUT_TAG)
+  val rawEventsOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](RAW_EVENTS_OUTPUT_TAG)
+  val failedEventsOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](FAILED_EVENTS_OUTPUT_TAG)
   val logEventsOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](LOG_EVENTS_OUTPUT_TAG)
 
   val duplicateEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = DUPLICATE_EVENTS_OUTPUT_TAG)
