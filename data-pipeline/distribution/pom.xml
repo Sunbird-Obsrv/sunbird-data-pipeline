@@ -62,6 +62,13 @@
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
+            <artifactId>telemetry-redacter</artifactId>
+            <version>0.0.1</version>
+            <type>tar.gz</type>
+            <classifier>distribution</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>telemetry-location-updater</artifactId>
             <version>0.2.3</version>
             <type>tar.gz</type>
