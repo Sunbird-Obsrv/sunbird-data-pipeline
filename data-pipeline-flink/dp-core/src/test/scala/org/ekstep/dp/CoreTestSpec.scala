@@ -16,7 +16,7 @@ import org.sunbird.dp.serde._
 import redis.clients.jedis.exceptions.{JedisConnectionException, JedisException}
 import redis.embedded.RedisServer
 
-class CacheTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll with MockitoSugar {
+class CoreTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll with MockitoSugar {
   var redisServer: RedisServer = _
   val EVENT_WITH_MID: String =
     """{"actor":{"type":"User","id":"bc3be7ae-ad2b-4dee-ac4c-220c7db146b2"},"eid":"INTERACT",
@@ -128,10 +128,12 @@ class CacheTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll with M
     val dedupTag: OutputTag[String] = OutputTag[String]("test-de-dup-tag")
     val uniqueTag: OutputTag[String] = OutputTag[String]("test-unique-tag")
     // deDup.deDup[String]("key-1","test",null, dedupTag, uniqueTag, "test")(dedupEngine, JobMetrics.apply(List("success-count")))
-
-
   }
-
+  "BaseJobConfig" should "able to get the kafka producer properties" in {
+    val config = ConfigFactory.load("test.conf");
+    val bsConfig: BaseJobConfig = new BaseJobConfig(config, "base-job");
+    bsConfig.kafkaProducerProperties
+  }
   "StringSerialization" should "Able to serialize the data" in {
     val topic: String = "topic-test"
     val partition: Int = 0
