@@ -107,6 +107,95 @@ public class EventFixture {
       "        ],\n" +
       "        \"duration\": 4\n" +
       "      }\n" +
+      "    }";
+  
+  public static final String ASSESS_EVENT_WITHOUT_QID = "{" +
+      "      \"eid\": \"ASSESS\",\n" +
+      "      \"ets\": 1568891738245,\n" +
+      "      \"ver\": \"3.1\",\n" +
+      "      \"mid\": \"ASSESS:135815023ec32a430632ba5d7f84fe18\",\n" +
+      "      \"actor\": {\n" +
+      "        \"id\": \"ff1c4bdf-27e2-49bc-a53f-6e304bb3a87f\",\n" +
+      "        \"type\": \"User\"\n" +
+      "      },\n" +
+      "      \"context\": {\n" +
+      "        \"channel\": \"0124784842112040965\",\n" +
+      "        \"pdata\": {\n" +
+      "          \"id\": \"staging.diksha.portal\",\n" +
+      "          \"ver\": \"2.4.0\",\n" +
+      "          \"pid\": \"sunbird-portal.contentplayer\"\n" +
+      "        },\n" +
+      "        \"env\": \"contentplayer\",\n" +
+      "        \"sid\": \"wqmQpaYc9mRD6jdU6NOWuBTEyGMPXFEe\",\n" +
+      "        \"did\": \"a08946e8b72abfeeff6642f245d470cb\",\n" +
+      "        \"cdata\": [\n" +
+      "          {\n" +
+      "            \"id\": \"do_2128415652377067521127\",\n" +
+      "            \"type\": \"course\"\n" +
+      "          },\n" +
+      "          {\n" +
+      "            \"type\": \"batch\",\n" +
+      "            \"id\": \"012846671379595264119\"\n" +
+      "          },\n" +
+      "          {\n" +
+      "            \"id\": \"f3ec2acf4360e93172b9234e29e38be4\",\n" +
+      "            \"type\": \"ContentSession\"\n" +
+      "          }\n" +
+      "        ],\n" +
+      "        \"rollup\": {\n" +
+      "          \"l1\": \"0124784842112040965\"\n" +
+      "        }\n" +
+      "      },\n" +
+      "      \"object\": {\n" +
+      "        \"id\": \"do_212686723743318016173\",\n" +
+      "        \"type\": \"Content\",\n" +
+      "        \"ver\": \"1\",\n" +
+      "        \"rollup\": {\n" +
+      "          \"l1\": \"do_2128415652377067521127\",\n" +
+      "          \"l2\": \"do_2128415660716359681128\"\n" +
+      "        }\n" +
+      "      },\n" +
+      "      \"tags\": [\n" +
+      "        \"0124784842112040965\"\n" +
+      "      ],\n" +
+      "      \"edata\": {\n" +
+      "        \"item\": {\n" +
+      "          \"maxscore\": 1,\n" +
+      "          \"type\": \"mcq\",\n" +
+      "          \"exlength\": 0,\n" +
+      "          \"params\": [\n" +
+      "            {\n" +
+      "              \"1\": \"{\\\"text\\\":\\\"World Health Organizaton\\\\n\\\"}\"\n" +
+      "            },\n" +
+      "            {\n" +
+      "              \"2\": \"{\\\"text\\\":\\\"Work Heavy Organization\\\\n\\\"}\"\n" +
+      "            },\n" +
+      "            {\n" +
+      "              \"3\": \"{\\\"text\\\":\\\"Work hell Organization\\\\n\\\"}\"\n" +
+      "            },\n" +
+      "            {\n" +
+      "              \"4\": \"{\\\"text\\\":\\\"None of The above\\\\n\\\"}\"\n" +
+      "            },\n" +
+      "            {\n" +
+      "              \"answer\": \"{\\\"correct\\\":[\\\"1\\\"]}\"\n" +
+      "            }\n" +
+      "          ],\n" +
+      "          \"uri\": \"\",\n" +
+      "          \"title\": \"What is the Full form of WHO..?\\n\",\n" +
+      "          \"mmc\": [],\n" +
+      "          \"mc\": [],\n" +
+      "          \"desc\": \"\"\n" +
+      "        },\n" +
+      "        \"index\": 1,\n" +
+      "        \"pass\": \"No\",\n" +
+      "        \"score\": 0,\n" +
+      "        \"resvalues\": [\n" +
+      "          {\n" +
+      "            \"2\": \"{\\\"text\\\":\\\"Work Heavy Organization\\\\n\\\"}\"\n" +
+      "          }\n" +
+      "        ],\n" +
+      "        \"duration\": 4\n" +
+      "      }\n" +
       "    }"; 
       
 

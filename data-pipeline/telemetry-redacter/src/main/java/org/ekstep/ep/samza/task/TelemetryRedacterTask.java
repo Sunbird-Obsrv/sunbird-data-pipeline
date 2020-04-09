@@ -27,6 +27,8 @@ import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.TelemetryRedacterService;
+import org.ekstep.ep.samza.util.QuestionDataCache;
+import org.ekstep.ep.samza.util.RedisConnect;
 
 public class TelemetryRedacterTask extends BaseSamzaTask {
 
@@ -34,6 +36,7 @@ public class TelemetryRedacterTask extends BaseSamzaTask {
 	private TelemetryRedacterConfig config;
 	private JobMetrics metrics;
 	private TelemetryRedacterService service;
+	private RedisConnect redisConnect;
 
 	public TelemetryRedacterTask(Config config, TaskContext context) {
 		init(config, context);
@@ -46,9 +49,10 @@ public class TelemetryRedacterTask extends BaseSamzaTask {
 	@Override
 	public void init(Config config, TaskContext context) {
 		
+	  this.redisConnect = new RedisConnect(config);
 		this.config = new TelemetryRedacterConfig(config);
 		metrics = new JobMetrics(context, this.config.jobName());
-		service = new TelemetryRedacterService();
+		service = new TelemetryRedacterService(new QuestionDataCache(config, redisConnect), metrics);
 		this.initTask(config, metrics);
 	}
 

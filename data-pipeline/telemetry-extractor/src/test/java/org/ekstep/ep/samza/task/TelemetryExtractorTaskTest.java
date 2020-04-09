@@ -77,7 +77,7 @@ public class TelemetryExtractorTaskTest {
         stub(envelope.getOffset()).toReturn("2");
         stub(envelope.getSystemStreamPartition()).toReturn(new SystemStreamPartition("kafka", "input.topic", new Partition(1)));
         stub(config.get("output.success.topic.name", "telemetry.raw")).toReturn(successTopic);
-        stub(config.get("output.assess.topic.name", "telemetry.assess.raw")).toReturn("telemetry.assess.raw");
+        stub(config.get("output.assess.topic.name", "telemetry.assess.redact")).toReturn("telemetry.assess.redact");
         stub(config.get("output.error.topic.name", "telemetry.extractor.failed")).toReturn(errorTopic);
         stub(config.get("default.channel", "01250894314817126443")).toReturn(defaultChannel);
         stub(config.get("default.channel", "01250894314817126443")).toReturn(defaultChannel);
@@ -101,7 +101,7 @@ public class TelemetryExtractorTaskTest {
                     assertEquals("ASSESS:6ac822896cd8a1736d55806c13ada64c", event.get("mid"));
                     
                     assertEquals("kafka", stream.getSystem());
-                    assertEquals("telemetry.assess.raw", stream.getStream());
+                    assertEquals("telemetry.assess.redact", stream.getStream());
                 } else {
                   assertEquals("kafka", stream.getSystem());
                   assertEquals("telemetry.raw", stream.getStream());

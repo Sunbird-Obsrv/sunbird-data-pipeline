@@ -16,7 +16,12 @@ public class TelemetryRedacterSink extends BaseSink {
 
   public void toRedactedRoute(Event event) {
     toTopic(config.getRedactedRouteTopic(), event.did(), event.getJson());
-    metrics.incPrimaryRouteSuccessCounter();
+    metrics.incSuccessCounter();
+  }
+  
+  public void toNonRedactedRoute(Event event) {
+    toTopic(config.getNonRedactedRouteTopic(), event.did(), event.getJson());
+    metrics.incAssessRouteSuccessCounter();
   }
 
   public void toErrorTopic(String message) {

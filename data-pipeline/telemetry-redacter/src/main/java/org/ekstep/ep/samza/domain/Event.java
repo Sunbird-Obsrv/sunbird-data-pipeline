@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ekstep.ep.samza.events.domain.Events;
+import org.ekstep.ep.samza.reader.NullableValue;
 
 public class Event extends Events {
 
@@ -14,6 +15,11 @@ public class Event extends Events {
 
   public void clearUserInput() {
     telemetry.add("edata.resvalues", new ArrayList<>());
+  }
+  
+  public String questionId() {
+    NullableValue<String> itemId = telemetry.<String>read("edata.item.id");
+    return itemId.isNull() ? null : itemId.value();
   }
 
   public List<Object> readResValues() {
