@@ -67,6 +67,7 @@ output {
 				"share_route_success" => "%{[share-route-success-count]}"
 				"db_insert" => "%{[db-insert-count]}"
 				"db_update" => "%{[db-update-count]}"
+				"assess_route_success" => "%{[assess-route-success-count]}"
 			}   
 			coerce_values => {
 				"success" => "float"
@@ -117,6 +118,7 @@ output {
 				"share_route_success" => "float"
 				"db_insert" => "float"
 				"db_update" => "float"
+				"assess_route_success" => "float"
 			}
 			host => "{{influxdb_host}}"
 			port => "{{influxdb_port}}"
