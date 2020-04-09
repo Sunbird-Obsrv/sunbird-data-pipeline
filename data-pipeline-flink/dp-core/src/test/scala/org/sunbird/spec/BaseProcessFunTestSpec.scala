@@ -17,7 +17,7 @@ import scala.concurrent.Future
 
 class SimpleFlinkKafkaTest extends WordSpec with Matchers with EmbeddedKafka {
 
-  "runs with embedded kafka on arbitrary available ports" should {
+  "run the flink job with embedded kafka to process the events " should {
 
     val EVENT_WITH_MESSAGE_ID: String =
       """
@@ -49,13 +49,10 @@ class SimpleFlinkKafkaTest extends WordSpec with Matchers with EmbeddedKafka {
           createCustomTopic(bsConfig.kafkaOutPutTopic)
           createCustomTopic(bsConfig.kafkaMetricsOutPutTopic)
           publishStringMessageToKafka(bsConfig.kafkaInputTopic, EVENT_WITH_MESSAGE_ID)
-          
+
           Future {
             env.execute("TestFlinkProcess Job")
           }
-          println("yesss")
-          Thread.sleep(1000)
-          println("Input Message is " + consumeFirstStringMessageFrom(bsConfig.kafkaInputTopic))
           println("Output Message is" + consumeFirstStringMessageFrom(bsConfig.kafkaOutPutTopic))
         }
       } catch {

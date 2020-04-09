@@ -29,7 +29,9 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
   def kafkaConsumerProperties: Properties = {
     val properties = new Properties()
     properties.setProperty("bootstrap.servers", kafkaBrokerServers)
+    properties.setProperty("zookeeper.connect", zookeeper)
     properties.setProperty("group.id", groupId)
+    properties.setProperty("auto.offset.reset", "earliest")
     properties
   }
 
