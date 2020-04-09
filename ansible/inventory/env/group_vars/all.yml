@@ -157,6 +157,8 @@ job_names:
       job_file_name: 'telemetry-location-updater'
   TelemetryRouter_1:
       job_file_name: 'telemetry-router'
+  TelemetryRedacter_1:
+      job_file_name: 'telemetry-redacter'
   TelemetryValidator_1:
       job_file_name: 'telemetry-validator'
   DeviceProfileUpdater_1:
