@@ -1,28 +1,27 @@
 package org.sunbird.dp.functions
 
 import java.util
-import java.util.UUID
 
-import com.google.gson.Gson
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction
 import org.apache.flink.streaming.api.scala.OutputTag
-import org.slf4j.LoggerFactory
-import org.sunbird.dp.core.{BaseJobConfig, BaseProcessFunction, Metrics}
+import org.sunbird.dp.core.{BaseDeduplication, BaseJobConfig, BaseProcessFunction, Metrics}
 
-class TestStreamFunc(config: BaseJobConfig)
-                    (implicit val eventTypeInfo: TypeInformation[String]) extends BaseProcessFunction[String](config) {
-  val testMetrics = "test-success-metric"
-
-  override def processElement(event: String,
-                              context: KeyedProcessFunction[Integer, String, String]#Context,
-                              metrics: Metrics): Unit = {
-    val testStreamTag: OutputTag[String] = OutputTag[String]("test-stream-tag")
-    context.output(testStreamTag, "")
-    metrics.incCounter(testMetrics)
-  }
+class TestStreamFunc(config: BaseJobConfig)(implicit val mapTypeInfo: TypeInformation[util.Map[String, AnyRef]])
+  extends BaseProcessFunction[util.Map[String, AnyRef]](config) {
+  val totalProcessedCount = "processed-messages-count"
 
   override def getMetricsList(): List[String] = {
-    List(testMetrics)
+    List(totalProcessedCount)
+  }
+
+  lazy val testMapStreamTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]]("test-stream-tag")
+
+  override def processElement(event: util.Map[String, AnyRef],
+                              context: KeyedProcessFunction[Integer, util.Map[String, AnyRef], util.Map[String, AnyRef]]#Context,
+                              metrics: Metrics): Unit = {
+    println("========Yes==========")
+    metrics.incCounter(totalProcessedCount)
+    context.output(testMapStreamTag, event)
   }
 }
