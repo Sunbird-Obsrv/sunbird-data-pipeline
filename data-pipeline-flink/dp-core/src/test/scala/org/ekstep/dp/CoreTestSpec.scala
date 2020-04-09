@@ -10,11 +10,13 @@ import org.apache.flink.streaming.api.scala.OutputTag
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
 import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
-import org.sunbird.dp.core.{BaseDeduplication, BaseJobConfig, DataCache, JobMetrics}
+import org.sunbird.dp.core.{BaseDeduplication, BaseJobConfig, DataCache, FlinkKafkaConnector, JobMetrics}
 import org.sunbird.dp.domain.Events
 import org.sunbird.dp.serde._
 import redis.clients.jedis.exceptions.{JedisConnectionException, JedisException}
 import redis.embedded.RedisServer
+
+import scala.collection.mutable
 
 class CoreTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll with MockitoSugar {
   var redisServer: RedisServer = _
@@ -69,14 +71,16 @@ class CoreTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll with Mo
     reConnectionStatus.isConnected should be(false)
   }
 
-  "De-DupEngine" should "Able to detect the key is unique or not" in {
+  "De-DupEngine" should "Able to detect the key is unique or not" in intercept[JedisConnectionException]  {
     val config = ConfigFactory.load("test.conf");
     val bsConfig: BaseJobConfig = new BaseJobConfig(config, "base-job");
     val redisConnection = new RedisConnect(bsConfig)
+
     val dedupEngine = new DedupEngine(redisConnection, 2, 200)
     dedupEngine.isUniqueEvent("key-1") should be(true)
     dedupEngine.storeChecksum("key-1")
     dedupEngine.isUniqueEvent("key-1") should be(false)
+
   }
 
   it should "Able to reConnect when the jedis exception thrown" in intercept[JedisException] {
@@ -162,6 +166,26 @@ class CoreTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll with Mo
     val metrics = JobMetrics.apply(List("success-count"))
     metrics.incCounter("success-count")
   }
+
+  "JobMetrics" should "Get the metrics events" in {
+    val config = ConfigFactory.load("test.conf");
+    val bsConfig: BaseJobConfig = new BaseJobConfig(config, "base-job");
+    val metircs = mutable.Map("success-count" ->475L)
+    val metrics = new JobMetrics {}
+    val metricsEvents = metrics.getMetricsEvent(metircs, System.currentTimeMillis(), bsConfig, 0)
+    metricsEvents should not be(null)
+  }
+
+  "KafkaConnector" should "Able top process the kafka message" in {
+    val config = ConfigFactory.load("test.conf");
+    val bsConfig: BaseJobConfig = new BaseJobConfig(config, "base-job");
+    val kfConnector = new FlinkKafkaConnector(bsConfig)
+    kfConnector.kafkaStringSource("test")
+    kfConnector.kafkaStringSink("test")
+    kfConnector.kafkaEventSink("test")
+    kfConnector.kafkaEventSource("test")
+  }
+
 }
 
 class Event(eventMap: util.Map[String, AnyRef], partition: Integer) extends Events(eventMap, partition) {
