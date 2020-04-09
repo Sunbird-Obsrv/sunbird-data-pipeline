@@ -23,6 +23,7 @@ device_profile_updater_yarn_container_count: 1
 assessment_aggregator_yarn_container_count: 1
 telemetry_derived_de_duplication_yarn_container_count: 1
 events_flattener_yarn_container_count: 1
+telemetry_redacter_yarn_container_count: 1
 
 
 # samza jobs checkpoint replication factor

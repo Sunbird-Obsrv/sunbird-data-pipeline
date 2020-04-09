@@ -157,6 +157,11 @@
               "type": "root",
               "name": "share-route-success-count"
 
+            },
+            {
+              "type": "root",
+              "name": "assess-route-success-count"
+
             }
           ]
         },
@@ -309,6 +314,10 @@
             {
               "type": "long",
               "name": "share-route-success-count"
+            },
+            {
+              "type": "long",
+              "name": "assess-route-success-count"
             }
           ],
           "dimensionsExclusions": []
