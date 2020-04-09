@@ -26,39 +26,43 @@ class SimpleFlinkKafkaTest extends WordSpec with Matchers with EmbeddedKafka {
 
     "work" in {
 
-      val inputTopic = "telemetry.event.input"
-      val outPutTopic = "telemetry.event.output"
+      try {
+        val config = ConfigFactory.load("test.conf");
+        val bsConfig = new BaseProcessTestConfig(config)
 
-      val userDefinedConfig = EmbeddedKafkaConfig(kafkaPort = 0, zooKeeperPort = 0)
-      val config = ConfigFactory.load("test.conf");
-      val bsConfig = new BaseProcessTestConfig(config)
+        val kafkaConnector = new FlinkKafkaConnector(bsConfig)
 
-      val kafkaConnector = new FlinkKafkaConnector(bsConfig)
+        implicit val env: StreamExecutionEnvironment = FlinkUtil.getExecutionContext(bsConfig)
+        val userDefinedConfig = EmbeddedKafkaConfig(kafkaPort = 9092, zooKeeperPort = 2181)
 
-      implicit val env: StreamExecutionEnvironment = FlinkUtil.getExecutionContext(bsConfig)
+        val mapStream: SingleOutputStreamOperator[util.Map[String, AnyRef]] =
+          env.addSource(kafkaConnector.kafkaMapSource(bsConfig.kafkaInputTopic), "telemetry-raw-events-consumer")
+            .rebalance().keyBy(key => key.get("partition").asInstanceOf[Integer])
+            .process(new TestStreamFunc(bsConfig)).name("TestFun")
 
-      val mapStream: SingleOutputStreamOperator[util.Map[String, AnyRef]] =
-        env.addSource(kafkaConnector.kafkaMapSource(bsConfig.kafkaInputTopic), "telemetry-raw-events-consumer")
-          .rebalance().keyBy(key => key.get("partition").asInstanceOf[Integer])
-          .process(new TestStreamFunc(bsConfig)).name("TestFun")
+        mapStream.getSideOutput(bsConfig.eventOutPutTag)
+          .addSink(kafkaConnector.kafkaMapSink(bsConfig.kafkaOutPutTopic))
+          .name("kafka-telemetry-failed-events-producer")
 
-      mapStream.getSideOutput(bsConfig.eventOutPutTag)
-        .addSink(kafkaConnector.kafkaMapSink(bsConfig.kafkaOutPutTopic))
-        .name("kafka-telemetry-failed-events-producer")
-
-      withRunningKafkaOnFoundPort(userDefinedConfig) { implicit actualConfig =>
-        createCustomTopic(bsConfig.kafkaInputTopic)
-        createCustomTopic(bsConfig.kafkaOutPutTopic)
-        createCustomTopic(bsConfig.kafkaMetricsOutPutTopic)
-        publishStringMessageToKafka(bsConfig.kafkaInputTopic, EVENT_WITH_MESSAGE_ID)
-        Future {
-          env.execute("TestFlinkProcess Job")
+        withRunningKafkaOnFoundPort(userDefinedConfig) { implicit actualConfig =>
+          createCustomTopic(bsConfig.kafkaInputTopic)
+          createCustomTopic(bsConfig.kafkaOutPutTopic)
+          createCustomTopic(bsConfig.kafkaMetricsOutPutTopic)
+          publishStringMessageToKafka(bsConfig.kafkaInputTopic, EVENT_WITH_MESSAGE_ID)
+          
+          Future {
+            env.execute("TestFlinkProcess Job")
+          }
+          println("yesss")
+          Thread.sleep(1000)
+          println("Input Message is " + consumeFirstStringMessageFrom(bsConfig.kafkaInputTopic))
+          println("Output Message is" + consumeFirstStringMessageFrom(bsConfig.kafkaOutPutTopic))
         }
-        println("yesss")
-        Thread.sleep(1000)
-        println("Input Message is " + consumeFirstStringMessageFrom(bsConfig.kafkaInputTopic))
-        println("Output Message is" + consumeFirstStringMessageFrom(bsConfig.kafkaOutPutTopic))
+      } catch {
+        case ex: Exception =>
+          ex.printStackTrace()
       }
     }
   }
+
 }
