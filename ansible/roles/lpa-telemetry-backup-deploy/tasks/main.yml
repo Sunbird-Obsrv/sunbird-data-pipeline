@@ -39,8 +39,15 @@
     - "{{ secor.properties }}"
 
 - name: Create monitoring cron job
-  cron: "name={{ item.key }} minute={{ item.value.service_monitor_schedule_min }} hour={{ item.value.service_monitor_schedule_hr }}  job={{ sbin_path }}/monitor-secor.sh {{ item.key }} {{ item.value.service_description }}"
+  become: yes
+  become_user: "{{ analytics_user }}"
+  cron: 
+    name: "{{ item.key }}"
+    minute: "{{ item.value.service_monitor_schedule_min }}" 
+    hour: "{{ item.value.service_monitor_schedule_hr }}"
+    job: "{{ sbin_path }}/monitor-secor.sh {{ item.key }} {{ item.value.service_description }}"
   with_dict: "{{ secor_service_name }}"
+
 
 - name: changing the permissions of the files and folders which may have permision as root
   file:
