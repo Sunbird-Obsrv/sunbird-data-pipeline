@@ -28,6 +28,7 @@ public class JobMetrics {
     private final Counter primaryRouteSuccessCount;
     private final Counter secondaryRouteSuccessCount;
     private final Counter auditRouteSuccessCount;
+    private final Counter assessRouteSuccessCount;
     private final Counter shareEventRouteSuccessCount;
     private final Counter cacheHitCount;
     private final Counter cacheMissCount;
@@ -70,6 +71,7 @@ public class JobMetrics {
         primaryRouteSuccessCount = metricsRegistry.newCounter(getClass().getName(), "primary-route-success-count");
         secondaryRouteSuccessCount = metricsRegistry.newCounter(getClass().getName(), "secondary-route-success-count");
         auditRouteSuccessCount = metricsRegistry.newCounter(getClass().getName(), "audit-route-success-count");
+        assessRouteSuccessCount = metricsRegistry.newCounter(getClass().getName(), "assess-route-success-count");
         shareEventRouteSuccessCount = metricsRegistry.newCounter(getClass().getName(), "share-route-success-count");
         cacheHitCount = metricsRegistry.newCounter(getClass().getName(), "cache-hit-count");
         cacheMissCount = metricsRegistry.newCounter(getClass().getName(), "cache-miss-count");
@@ -100,12 +102,14 @@ public class JobMetrics {
         metricCounterMap.put("primary-route-success-count", primaryRouteSuccessCount);
         metricCounterMap.put("secondary-route-success-count", secondaryRouteSuccessCount);
         metricCounterMap.put("audit-route-success-count", auditRouteSuccessCount);
+        metricCounterMap.put("assess-route-success-count", assessRouteSuccessCount);
         metricCounterMap.put("cache-hit-count", cacheHitCount);
         metricCounterMap.put("cache-miss-count", cacheMissCount);
-        metricCounterMap.put("cache-hit-countcache-empty-values-count", cacheEmptyValuesCount);
+        metricCounterMap.put("cache-empty-values-count", cacheEmptyValuesCount);
         metricCounterMap.put("cache-error-count", cacheErrorCount);
         metricCounterMap.put("processed-message-count", processedMessageCount);
         metricCounterMap.put("unprocessed-message-count", unprocessedMessageCount);
+        metricCounterMap.put("user-cache-hit-count", userCacheHitCount);
         metricCounterMap.put("db-hit-count", dbHitCount);
         metricCounterMap.put("expired-event-count", expiredEventCount);
         metricCounterMap.put("duplicate-event-count", duplicateEventCount);
@@ -146,6 +150,7 @@ public class JobMetrics {
         primaryRouteSuccessCount.clear();
         secondaryRouteSuccessCount.clear();
         auditRouteSuccessCount.clear();
+        assessRouteSuccessCount.clear();
         shareEventRouteSuccessCount.clear();
         dbInsertCount.clear();
         dbUpdateCount.clear();
@@ -197,6 +202,10 @@ public class JobMetrics {
     public void incAuditRouteSuccessCounter() {
         auditRouteSuccessCount.inc();
     }
+    
+    public void incAssessRouteSuccessCounter() {
+      assessRouteSuccessCount.inc();
+  }
 
     public void incShareEventRouteSuccessCounter() {
         shareEventRouteSuccessCount.inc();

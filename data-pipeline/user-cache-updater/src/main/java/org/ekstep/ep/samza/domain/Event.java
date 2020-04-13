@@ -59,10 +59,10 @@ public class Event {
 
     public String getUserStateValue() {
         NullableValue<String> edata_state = telemetry.read("edata.state");
-        if( null != edata_state.value() && edata_state.value().equalsIgnoreCase("Create")) {
+        if( null != edata_state.value() && edata_state.value().equalsIgnoreCase("Create") || edata_state.value().equalsIgnoreCase("Created")) {
             return "Create";
         }
-        else if( null != edata_state.value() && edata_state.value().equalsIgnoreCase("Update")) {
+        else if( null != edata_state.value() && edata_state.value().equalsIgnoreCase("Update") || edata_state.value().equalsIgnoreCase("Updated")) {
             return "Update";
         }
         return null;

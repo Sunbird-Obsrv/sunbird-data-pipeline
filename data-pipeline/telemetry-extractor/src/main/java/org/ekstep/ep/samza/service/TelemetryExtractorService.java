@@ -25,7 +25,8 @@ public class TelemetryExtractorService {
 	private DeDupEngine deDupEngine;
 	private String defaultChannel = "";
 	private int rawIndividualEventMaxSize;
-
+	private String assessEvent = "ASSESS";
+	
 	public TelemetryExtractorService(TelemetryExtractorConfig config, JobMetrics metrics, DeDupEngine deDupEngine) {
 		this.metrics = metrics;
 		this.deDupEngine = deDupEngine;
@@ -70,6 +71,7 @@ public class TelemetryExtractorService {
 					event.put("@timestamp", syncTimestamp);
 					Map<String, Object> context = (Map<String, Object>) event.get("context");
 					String channel = (String) context.get("channel");
+					String eid = (String) event.get("eid");
 					if (StringUtils.isEmpty(channel)) {
 						event.put("context", context);
 					}
@@ -80,7 +82,11 @@ public class TelemetryExtractorService {
 								"Sending to error topic", event.get("mid"), eventSizeInBytes, rawIndividualEventMaxSize));
 						sink.toErrorTopic(json);
 					} else {
-						sink.toSuccessTopic(json);
+					  if (assessEvent.equalsIgnoreCase(eid)) {
+	            sink.toAssessTopic(json);
+	          } else {
+	            sink.toSuccessTopic(json);
+	          }
 					}
 				} catch (Throwable t) {
 					LOGGER.info("", "Failed to send extracted event to success topic: " + t.getMessage());

@@ -16,7 +16,7 @@ public class EventsRouterConfig {
     private String summaryRouteEvents;
     private String malformedTopic;
     private String logEventsRouteTopic;
-    private Boolean dedupEnabled;
+    private boolean dedupEnabled;
     private final int dupStore;
     private int expirySeconds;
     private String errorEventsRouteTopic;
@@ -37,8 +37,7 @@ public class EventsRouterConfig {
         if (!config.get("dedup.exclude.eids", "").isEmpty()) {
             excludedEids = config.getList("dedup.exclude.eids", new ArrayList<>());
         }
-        else
-        {
+        else {
             excludedEids = new ArrayList<>();
         }
     }
@@ -93,7 +92,7 @@ public class EventsRouterConfig {
         return errorEventsRouteTopic;
     }
 
-    public List<String> exclusiveEids() {
+    public List<String> excludedEids() {
         return excludedEids;
     }
 }

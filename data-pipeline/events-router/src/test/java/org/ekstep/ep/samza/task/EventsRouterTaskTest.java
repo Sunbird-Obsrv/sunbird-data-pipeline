@@ -39,7 +39,7 @@ public class EventsRouterTaskTest {
 	private static final String LOG_EVENTS_TOPIC = "events.log";
 	private static final String ERROR_EVENTS_TOPIC = "events.error";
 	private static final String DUPLICATE_TOPIC = "telemetry.duplicate";
-	
+
 	private MessageCollector collectorMock;
 	private TaskContext contextMock;
 	private MetricsRegistry metricsRegistry;
@@ -95,7 +95,7 @@ public class EventsRouterTaskTest {
 		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUMMARY_EVENTS_TOPIC)));
 	}
-	
+
 	@Test
 	public void shouldRouteTelemetryEventsToTelemetryTopic() throws Exception {
 
@@ -105,7 +105,7 @@ public class EventsRouterTaskTest {
 		stub(envelopeMock.getMessage()).toReturn(EventFixture.START_EVENT);
 		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
 		verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), TELEMETRY_EVENTS_TOPIC)));
-		
+
 	}
 
 	@Test
@@ -231,5 +231,4 @@ public class EventsRouterTaskTest {
 		eventsRouterTask.process(envelopeMock, collectorMock, coordinatorMock);
 
 	}
-
 }

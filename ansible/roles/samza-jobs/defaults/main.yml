@@ -23,6 +23,7 @@ device_profile_updater_yarn_container_count: 1
 assessment_aggregator_yarn_container_count: 1
 telemetry_derived_de_duplication_yarn_container_count: 1
 events_flattener_yarn_container_count: 1
+telemetry_redacter_yarn_container_count: 1
 
 
 # samza jobs checkpoint replication factor
@@ -33,8 +34,8 @@ location_db_redis_key_expiry_seconds: 86400
 cache_unresolved_location_key_expiry_seconds: 3600
 redis_host: "{{ groups['redis'][0] }}"
 redis_port: 6379
-denorm_redis_host: "{{ groups['redis'][0] }}"
-denorm_redis_port: 6379
+metadata_redis_host: "{{ groups['redis'][0] }}"
+metadata_redis_port: 6379
 __yarn_port__: 8000
 delayInMilliSeconds: 60000
 retryTimeInMilliSeconds: 10000
@@ -78,10 +79,8 @@ dialcode_metadata_fields: "identifier, channel, batchcode, publisher, generated_
 user_signin_type_default : Anonymous
 user_login_type_default : NA
 
-
 #Purpose: Content cache update job uses the dialcode api
 dialcode_api_host: "{{ dialcode_host }}"
 dialcode_api_endpoint: "{{ dialcode_endpoint }}"
 dialcode_api_auth_key: "{{ dialcode_api_key }}"
 dedup_exclude_eids: "LOG,ERROR"
-

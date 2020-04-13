@@ -93,6 +93,12 @@ processing_kafka_overriden_topics:
   - name: telemetry.assess
     retention_time: 604800000
     replication_factor: 1
+  - name: telemetry.assess.redact
+    retention_time: 86400000
+    replication_factor: 1
+  - name: telemetry.assess.raw
+    retention_time: 86400000
+    replication_factor: 1
   - name: telemetry.derived.unique
     retention_time: 21600000
     replication_factor: 1
@@ -242,6 +248,12 @@ processing_kafka_topics:
     num_of_partitions: 1
     replication_factor: 1
   - name: telemetry.assess
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: telemetry.assess.redact
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: telemetry.assess.raw
     num_of_partitions: 1
     replication_factor: 1
   - name: telemetry.derived.unique

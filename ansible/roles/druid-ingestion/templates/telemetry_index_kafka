@@ -731,11 +731,6 @@
             },
             {
               "type": "path",
-              "name": "dialcode_status",
-              "expr": "$.dialcodedata.status"
-            },
-            {
-              "type": "path",
               "name": "dialcode_object_type",
               "expr": "$.dialcodedata.objecttype"
             },
@@ -1306,10 +1301,6 @@
             {
               "type": "long",
               "name": "dialcode_published_on"
-            },
-            {
-              "type": "string",
-              "name": "dialcode_status"
             },
             {
               "type": "string",
