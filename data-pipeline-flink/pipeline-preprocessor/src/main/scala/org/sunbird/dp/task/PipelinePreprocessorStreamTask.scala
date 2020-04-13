@@ -103,7 +103,7 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
 // $COVERAGE-OFF$ Disabling scoverage as the below code can only be invoked within flink cluster
 object PipelinePreprocessorStreamTask {
   def main(args: Array[String]): Unit = {
-    val config = ConfigFactory.load().withFallback(ConfigFactory.systemEnvironment())
+    val config = ConfigFactory.load("pipeline-preprocessor.conf").withFallback(ConfigFactory.systemEnvironment())
     val eConfig = new PipelinePreprocessorConfig(config)
     val kafkaUtil = new FlinkKafkaConnector(eConfig)
     val task = new PipelinePreprocessorStreamTask(eConfig, kafkaUtil)
