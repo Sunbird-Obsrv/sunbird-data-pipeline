@@ -1,51 +1,54 @@
 package org.sunbird.dp.spec
 
 import java.util
+
 import com.google.gson.Gson
 import com.typesafe.config.Config
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.mockito.Mockito
 import org.mockito.Mockito._
-import org.scalatest.{ BeforeAndAfterAll, FlatSpec, Matchers }
 import org.sunbird.dp.fixture.EventFixture
 import redis.embedded.RedisServer
 import org.apache.flink.streaming.api.functions.sink.SinkFunction
 import org.apache.flink.runtime.testutils.MiniClusterResourceConfiguration
 import org.apache.flink.test.util.MiniClusterWithClientResource
-import org.scalatestplus.mockito.MockitoSugar
-import org.sunbird.dp.task.ExtractorStreamTask
+import org.sunbird.dp.task.TelemetryExtractorStreamTask
 import org.apache.flink.streaming.api.functions.source.SourceFunction
 import org.apache.flink.streaming.api.functions.source.SourceFunction.SourceContext
-import org.sunbird.dp.task.ExtractionConfig
+import org.sunbird.dp.task.TelemetryExtractorConfig
 import com.typesafe.config.ConfigFactory
+import org.ekstep.dp.{BaseMetricsReporter, BaseTestSpec}
 import org.sunbird.dp.core.FlinkKafkaConnector
+
 import collection.JavaConverters._
 
-class ExtractionStreamTaskTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll with MockitoSugar {
+class ExtractionStreamTaskTestSpec extends BaseTestSpec {
 
   implicit val mapTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
+
   val flinkCluster = new MiniClusterWithClientResource(new MiniClusterResourceConfiguration.Builder()
+    .setConfiguration(testConfiguration())
     .setNumberSlotsPerTaskManager(1)
     .setNumberTaskManagers(1)
     .build)
+
   var redisServer: RedisServer = _
   val config: Config = ConfigFactory.load("test.conf")
-  val extConfig: ExtractionConfig = new ExtractionConfig(config)
+  val extractorConfig: TelemetryExtractorConfig = new TelemetryExtractorConfig(config)
   val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
-  val gson = new Gson();
+  val gson = new Gson()
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
     redisServer = new RedisServer(6340)
     redisServer.start()
+    BaseMetricsReporter.gaugeMetrics.clear()
 
-    when(mockKafkaUtil.kafkaMapSource(extConfig.kafkaInputTopic)).thenReturn(new ExtractorEventSource)
-    when(mockKafkaUtil.kafkaMapSink(extConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
-//    when(mockKafkaUtil.kafkaMapSink(extConfig.kafkaSuccessTopic)).thenReturn(new LogEventsSink)
-    when(mockKafkaUtil.kafkaMapSink(extConfig.kafkaSuccessTopic)).thenReturn(new RawEventsSink)
-    when(mockKafkaUtil.kafkaMapSink(extConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
-    when(mockKafkaUtil.kafkaStringSink(extConfig.metricsTopic)).thenReturn(new MetricsEventsSink)
+    when(mockKafkaUtil.kafkaMapSource(extractorConfig.kafkaInputTopic)).thenReturn(new ExtractorEventSource)
+    when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
+    when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaSuccessTopic)).thenReturn(new RawEventsSink)
+    when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
 
     flinkCluster.before()
   }
@@ -58,31 +61,19 @@ class ExtractionStreamTaskTestSpec extends FlatSpec with Matchers with BeforeAnd
 
   "Extraction job pipeline" should "extract events" in {
 
-    val task = new ExtractorStreamTask(extConfig, mockKafkaUtil);
+    val task = new TelemetryExtractorStreamTask(extractorConfig, mockKafkaUtil)
     task.process()
-//    Thread.sleep(extConfig.metricsWindowSize + 2000); // Wait for metrics to be triggered
-
     RawEventsSink.values.size() should be (42) // 40 events + 2 log events generated for auditing
     FailedEventsSink.values.size() should be (0)
     DupEventsSink.values.size() should be (1)
-//    LogEventsSink.values.size() should be (2)
 
-    MetricsEventsSink.values.size should be (2)
-    val metricsMap: scala.collection.mutable.Map[String, Double] = scala.collection.mutable.Map[String, Double]();
-    MetricsEventsSink.values.foreach(metricJson => {
-      val metricEvent = gson.fromJson(metricJson, new util.HashMap[String, AnyRef]().getClass);
-      val list = metricEvent.get("metrics").asInstanceOf[util.List[util.Map[String, AnyRef]]].asScala
-      for(metric <- list) {
-        metricsMap.put(metric.get("id").asInstanceOf[String], metric.get("value").asInstanceOf[Double])
-      }
-    })
+    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.totalBatchEventCount}").getValue() should be (3)
+    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.successEventCount}").getValue() should be (40)
+    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.unique-event-count").getValue() should be (1)
+    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.duplicate-event-count").getValue() should be (1)
+    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.failedEventCount}").getValue() should be (0)
+    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.auditEventCount}").getValue() should be (2)
 
-    metricsMap.get("processed-batch-messages-count").get should be (3)
-    metricsMap.get("success-messages-count").get should be (40)
-    metricsMap.get("failed-messages-count").get should be (0)
-    metricsMap.get("log-events-generated-count").get should be (2)
-    metricsMap.get("unique-event-count").get should be (1)
-    metricsMap.get("duplicate-event-count").get should be (1)
   }
 
 }
@@ -98,9 +89,7 @@ class ExtractorEventSource extends SourceFunction[util.Map[String, AnyRef]] {
     ctx.collect(event2.asJava)
   }
 
-  override def cancel() = {
-
-  }
+  override def cancel() = {}
 
 }
 
@@ -154,17 +143,4 @@ class DupEventsSink extends SinkFunction[util.Map[String, AnyRef]] {
 
 object DupEventsSink {
   val values: util.List[util.Map[String, AnyRef]] = new util.ArrayList()
-}
-
-class MetricsEventsSink extends SinkFunction[String] {
-
-  override def invoke(value: String): Unit = {
-    synchronized {
-      MetricsEventsSink.values.append(value);
-    }
-  }
-}
-
-object MetricsEventsSink {
-  val values: scala.collection.mutable.Buffer[String] = scala.collection.mutable.Buffer[String]()
 }

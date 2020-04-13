@@ -13,20 +13,14 @@ public abstract class Events {
 
     protected Telemetry telemetry;
     protected Path path;
-    private Integer partition;
 
-    public Events(Map<String, Object> map, Integer partition) {
+    public Events(Map<String, Object> map) {
         this.telemetry = new Telemetry(map);
         this.path = new Path();
-        this.partition = partition;
     }
 
     public Telemetry getTelemetry() {
         return telemetry;
-    }
-    
-    public Integer getPartition() {
-    		return partition;
     }
 
     public String getChecksum() {

@@ -13,9 +13,9 @@ class DedupEngine(redisConnect: RedisConnect, store: Int, expirySeconds: Int) ex
   @throws[JedisException]
   def isUniqueEvent(checksum: String): Boolean = {
     var unique = false
-    try
+    try {
       unique = !redisConnection.exists(checksum)
-    catch {
+    } catch {
       case ex: JedisException =>
         ex.printStackTrace()
         val redisConn = redisConnect.getConnection(this.store)

@@ -11,43 +11,41 @@ import org.apache.flink.streaming.api.functions.source.SourceFunction.SourceCont
 import org.apache.flink.test.util.MiniClusterWithClientResource
 import org.mockito.Mockito
 import org.mockito.Mockito._
-import org.scalatest.BeforeAndAfterAll
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
-import org.scalatestplus.mockito.MockitoSugar
 import org.sunbird.dp.core.FlinkKafkaConnector
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.task.DenormalizationConfig
 import org.sunbird.dp.task.DenormalizationStreamTask
-
 import com.google.gson.Gson
-import com.typesafe.config.ConfigFactory
-
+import com.typesafe.config.{Config, ConfigFactory}
+import org.ekstep.dp.{BaseMetricsReporter, BaseTestSpec}
 import redis.embedded.RedisServer
-import org.joda.time.DateTime
 import org.sunbird.dp.cache.RedisConnect
-import collection.JavaConverters._
 
-class DenormalizationStreamTaskTest extends FlatSpec with Matchers with BeforeAndAfterAll with MockitoSugar {
+class DenormalizationStreamTaskTest extends BaseTestSpec {
 
   implicit val mapTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
+
   val flinkCluster = new MiniClusterWithClientResource(new MiniClusterResourceConfiguration.Builder()
-    .setNumberSlotsPerTaskManager(2)
+    .setConfiguration(testConfiguration())
+    .setNumberSlotsPerTaskManager(1)
     .setNumberTaskManagers(1)
     .build)
+
   var redisServer: RedisServer = _
-  val config = ConfigFactory.load("test.conf");
-  val extConfig: DenormalizationConfig = new DenormalizationConfig(config);
+  val config: Config = ConfigFactory.load("test.conf")
+  val denormConfig: DenormalizationConfig = new DenormalizationConfig(config)
   val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
-  val gson = new Gson();
+  val gson = new Gson()
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
     redisServer = new RedisServer(6340)
     redisServer.start()
 
-    setupRedisTestData();
+    BaseMetricsReporter.gaugeMetrics.clear()
+
+    setupRedisTestData()
     flinkCluster.before()
   }
 
@@ -56,57 +54,56 @@ class DenormalizationStreamTaskTest extends FlatSpec with Matchers with BeforeAn
     redisServer.stop()
     flinkCluster.after()
   }
-  
+
   def setupRedisTestData() {
-    
-    val redisConnect = new RedisConnect(extConfig)
-    
+
+    val redisConnect = new RedisConnect(denormConfig)
+
     // Insert device test data
-    var jedis = redisConnect.getConnection(extConfig.deviceStore)
+    var jedis = redisConnect.getConnection(denormConfig.deviceStore)
     jedis.hmset("264d679186d4b0734d858d4e18d4d31e", gson.fromJson(EventFixture.deviceCacheData1, new util.HashMap[String, String]().getClass))
     jedis.hmset("45f32f48592cb9bcf26bef9178b7bd20abe24932", gson.fromJson(EventFixture.deviceCacheData2, new util.HashMap[String, String]().getClass))
-    jedis.close();
-    
+    jedis.close()
+
     // Insert user test data
-    jedis = redisConnect.getConnection(extConfig.userStore)
+    jedis = redisConnect.getConnection(denormConfig.userStore)
     jedis.set("b7470841-7451-43db-b5c7-2dcf4f8d3b23", EventFixture.userCacheData1)
     jedis.set("610bab7d-1450-4e54-bf78-c7c9b14dbc81", EventFixture.userCacheData2)
-    jedis.close();
-    
+    jedis.close()
+
     // Insert dialcode test data
-    jedis = redisConnect.getConnection(extConfig.dialcodeStore)
+    jedis = redisConnect.getConnection(denormConfig.dialcodeStore)
     jedis.set("GWNI38", EventFixture.dialcodeCacheData1)
     jedis.set("PCZKA3", EventFixture.dialcodeCacheData2)
-    jedis.close();
-    
+    jedis.close()
+
     // Insert content test data
-    jedis = redisConnect.getConnection(extConfig.contentStore)
+    jedis = redisConnect.getConnection(denormConfig.contentStore)
     jedis.set("do_31249064359802470412856", EventFixture.contentCacheData1)
     jedis.set("do_312526125187809280139353", EventFixture.contentCacheData2)
     jedis.set("do_312526125187809280139355", EventFixture.contentCacheData3)
-    jedis.close();
+    jedis.close()
 
   }
 
-  "Extraction job pipeline" should "extract events" in {
+  "De-normalization pipeline" should "denormalize content, user, device and location metadata" in {
 
-    when(mockKafkaUtil.kafkaEventSource[Event](extConfig.inputTopic)).thenReturn(new InputSource)
-    when(mockKafkaUtil.kafkaEventSink[Event](extConfig.denormSuccessTopic)).thenReturn(new DenormEventsSink)
-    when(mockKafkaUtil.kafkaStringSink(extConfig.metricsTopic)).thenReturn(new MetricsEventsSink)
-    val task = new DenormalizationStreamTask(extConfig, mockKafkaUtil);
+    when(mockKafkaUtil.kafkaEventSource[Event](denormConfig.inputTopic)).thenReturn(new InputSource)
+    when(mockKafkaUtil.kafkaEventSink[Event](denormConfig.denormSuccessTopic)).thenReturn(new DenormEventsSink)
+
+    val task = new DenormalizationStreamTask(denormConfig, mockKafkaUtil)
     task.process()
-    Thread.sleep(extConfig.metricsWindowSize + 2000); // Wait for metrics to be triggered
     DenormEventsSink.values.size should be (10)
     DenormEventsSink.values.get("mid10") should be (None)
-    
-    var event = DenormEventsSink.values.get("mid1").get;
+
+    var event = DenormEventsSink.values("mid1")
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (false)
     event.flags().get("user_denorm").asInstanceOf[Boolean] should be (true)
     Option(event.flags().get("dialcode_denorm")) should be (None)
     Option(event.flags().get("content_denorm")) should be (None)
     Option(event.flags().get("location_denorm")) should be (None)
     
-    event = DenormEventsSink.values.get("mid2").get;
+    event = DenormEventsSink.values("mid2")
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
     event.flags().get("user_denorm").asInstanceOf[Boolean] should be (true)
     Option(event.flags().get("dialcode_denorm")) should be (None)
@@ -114,14 +111,14 @@ class DenormalizationStreamTaskTest extends FlatSpec with Matchers with BeforeAn
     event.flags().get("loc_denorm").asInstanceOf[Boolean] should be (true)
     Option(event.flags().get("coll_denorm")) should be (None)
     
-    event = DenormEventsSink.values.get("mid3").get;
+    event = DenormEventsSink.values("mid3")
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
     event.flags().get("user_denorm").asInstanceOf[Boolean] should be (false)
     event.flags().get("content_denorm").asInstanceOf[Boolean] should be (true)
     event.flags().get("coll_denorm").asInstanceOf[Boolean] should be (true)
     event.flags().get("loc_denorm").asInstanceOf[Boolean] should be (true)
     
-    event = DenormEventsSink.values.get("mid4").get;
+    event = DenormEventsSink.values("mid4")
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
     event.flags().get("user_denorm").asInstanceOf[Boolean] should be (true)
     event.flags().get("dialcode_denorm").asInstanceOf[Boolean] should be (true)
@@ -129,7 +126,7 @@ class DenormalizationStreamTaskTest extends FlatSpec with Matchers with BeforeAn
     event.flags().get("loc_denorm").asInstanceOf[Boolean] should be (true)
     Option(event.flags().get("coll_denorm")) should be (None)
     
-    event = DenormEventsSink.values.get("mid5").get;
+    event = DenormEventsSink.values("mid5")
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
     event.flags().get("user_denorm").asInstanceOf[Boolean] should be (false)
     event.flags().get("loc_denorm").asInstanceOf[Boolean] should be (true)
@@ -138,45 +135,43 @@ class DenormalizationStreamTaskTest extends FlatSpec with Matchers with BeforeAn
     Option(event.flags().get("location_denorm")) should be (None)
 
     // TODO: Complete the assertions
-    event = DenormEventsSink.values.get("mid6").get;
-    event = DenormEventsSink.values.get("mid7").get;
-    event = DenormEventsSink.values.get("mid8").get;
-    event = DenormEventsSink.values.get("mid9").get;
-    
-    MetricsEventsSink.values.size should be (5)
-    val metricsMap: scala.collection.mutable.Map[String, Double] = scala.collection.mutable.Map[String, Double]();
-    MetricsEventsSink.values.foreach(metricJson => {
-      val metricEvent = gson.fromJson(metricJson, new util.HashMap[String, AnyRef]().getClass);
-      val list = metricEvent.get("metrics").asInstanceOf[util.List[util.Map[String, AnyRef]]].asScala
-      for(metric <- list) {
-        metricsMap.put(metric.get("id").asInstanceOf[String], metric.get("value").asInstanceOf[Double])
-      }
-    })
-    
-    metricsMap.get("loc-cache-hit").get should be (7)
-    metricsMap.get("event-expired").get should be (1)
-    
-    metricsMap.get("content-cache-miss").get should be (3)
-    metricsMap.get("device-cache-miss").get should be (2)
-    metricsMap.get("dialcode-total").get should be (3)
-    metricsMap.get("dialcode-cache-miss").get should be (1)
-    metricsMap.get("content-total").get should be (7)
-    metricsMap.get("loc-cache-miss").get should be (3)
-    metricsMap.get("user-cache-miss").get should be (4)
-    metricsMap.get("dialcode-cache-hit").get should be (2)
-    
-    metricsMap.get("content-cache-hit").get should be (4)
-    metricsMap.get("loc-total").get should be (10)
-    metricsMap.get("device-cache-hit").get should be (7)
-    metricsMap.get("user-cache-hit").get should be (3)
-    metricsMap.get("user-total").get should be (7)
-    metricsMap.get("device-total").get should be (9)
+    event = DenormEventsSink.values("mid6")
+    event = DenormEventsSink.values("mid7")
+    event = DenormEventsSink.values("mid8")
+    event = DenormEventsSink.values("mid9")
+
+    // Location Denorm Metrics Assertion
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.locCacheHit}").getValue() should be (7)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.locCacheMiss}").getValue() should be (3)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.locTotal}").getValue() should be (10)
+
+    // Content Denorm Metrics Assertion
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.contentCacheHit}").getValue() should be (4)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.contentCacheMiss}").getValue() should be (3)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.contentTotal}").getValue() should be (7)
+
+    // User Denorm Metrics Assertion
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.userCacheHit}").getValue() should be (3)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.userCacheMiss}").getValue() should be (4)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.userTotal}").getValue() should be (7)
+
+    // Dialcode Denorm Metrics Assertion
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.dialcodeCacheHit}").getValue() should be (2)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.dialcodeCacheMiss}").getValue() should be (1)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.dialcodeTotal}").getValue() should be (3)
+
+    // Device Denorm Metrics Assertion
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.deviceCacheHit}").getValue() should be (7)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.deviceCacheMiss}").getValue() should be (2)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.deviceTotal}").getValue() should be (9)
+
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.eventsExpired}").getValue() should be (1)
 
   }
   
   it should " test the optional fields in denorm config " in {
-    val config = ConfigFactory.load("test2.conf");
-    val extConfig: DenormalizationConfig = new DenormalizationConfig(config);
+    val config = ConfigFactory.load("test2.conf")
+    val extConfig: DenormalizationConfig = new DenormalizationConfig(config)
     extConfig.ignorePeriodInMonths should be (6)
     extConfig.userLoginInTypeDefault should be ("Google")
     extConfig.userSignInTypeDefault should be ("Default")
@@ -190,56 +185,33 @@ class DenormalizationStreamTaskTest extends FlatSpec with Matchers with BeforeAn
 class InputSource extends SourceFunction[Event] {
 
   override def run(ctx: SourceContext[Event]) {
-
     val gson = new Gson()
     EventFixture.telemetrEvents.foreach(f => {
       val eventMap = gson.fromJson(f, new util.HashMap[String, AnyRef]().getClass)
-      ctx.collect(new Event(eventMap, 0));  
+      ctx.collect(new Event(eventMap))
     })
-    
   }
 
-  override def cancel() = {
-
-  }
-
+  override def cancel() = {}
 }
 
 class DerivedEventSource extends SourceFunction[Event] {
-
   override def run(ctx: SourceContext[Event]) {
     val gson = new Gson()
-    
   }
 
-  override def cancel() = {
-
-  }
-
+  override def cancel() = {}
 }
 
 class DenormEventsSink extends SinkFunction[Event] {
 
   override def invoke(value: Event): Unit = {
     synchronized {
-      DenormEventsSink.values.put(value.mid(), value);
+      DenormEventsSink.values.put(value.mid(), value)
     }
   }
 }
 
 object DenormEventsSink {
   val values: scala.collection.mutable.Map[String, Event] = scala.collection.mutable.Map[String, Event]()
-}
-
-class MetricsEventsSink extends SinkFunction[String] {
-
-  override def invoke(value: String): Unit = {
-    synchronized {
-      MetricsEventsSink.values.append(value);
-    }
-  }
-}
-
-object MetricsEventsSink {
-  val values: scala.collection.mutable.Buffer[String] = scala.collection.mutable.Buffer[String]()
 }

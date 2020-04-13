@@ -2,10 +2,9 @@ package org.sunbird.dp.domain
 
 import java.util
 import com.google.gson.Gson
-import org.joda.time.DateTime
 
 object Models {
-  val gson = new Gson();
+  val gson = new Gson()
 }
 
 class DeviceProfile(val countryCode: String, val country: String, val stateCode: String, val state: String, val city: String, 
