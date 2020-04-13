@@ -133,11 +133,6 @@ class CoreTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll with Mo
     val uniqueTag: OutputTag[String] = OutputTag[String]("test-unique-tag")
     // deDup.deDup[String]("key-1","test",null, dedupTag, uniqueTag, "test")(dedupEngine, JobMetrics.apply(List("success-count")))
   }
-  "BaseJobConfig" should "able to get the kafka producer properties" in {
-    val config = ConfigFactory.load("test.conf");
-    val bsConfig: BaseJobConfig = new BaseJobConfig(config, "base-job");
-    bsConfig.kafkaProducerProperties
-  }
   "StringSerialization" should "Able to serialize the data" in {
     val topic: String = "topic-test"
     val partition: Int = 0
@@ -175,17 +170,6 @@ class CoreTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll with Mo
     val metricsEvents = metrics.getMetricsEvent(metircs, System.currentTimeMillis(), bsConfig, 0)
     metricsEvents should not be(null)
   }
-
-  "KafkaConnector" should "Able top process the kafka message" in {
-    val config = ConfigFactory.load("test.conf");
-    val bsConfig: BaseJobConfig = new BaseJobConfig(config, "base-job");
-    val kfConnector = new FlinkKafkaConnector(bsConfig)
-    kfConnector.kafkaStringSource("test")
-    kfConnector.kafkaStringSink("test")
-    kfConnector.kafkaEventSink("test")
-    kfConnector.kafkaEventSource("test")
-  }
-
 }
 
 class Event(eventMap: util.Map[String, AnyRef], partition: Integer) extends Events(eventMap, partition) {

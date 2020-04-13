@@ -18,8 +18,6 @@
         <encoding>UTF-8</encoding>
         <scoverage.plugin.version>1.3.0</scoverage.plugin.version>
     </properties>
-
-
     <dependencies>
         <dependency>
             <groupId>org.apache.flink</groupId>
@@ -42,7 +40,6 @@
             <version>2.0.0</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_${scala.version}</artifactId>

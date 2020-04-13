@@ -12,8 +12,8 @@ class BaseProcessTestConfig(override val config: Config) extends BaseJobConfig(c
   private val serialVersionUID = -2349318979085017498L
   implicit val mapTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
   val eventOutPutTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]]("test-stream-tag")
-  val kafkaInputTopic: String = config.getString("kafka.input.topic")
-  val kafkaOutPutTopic: String = config.getString("kafka.output.topic")
+  val kafkaInputTopic: String = config.getString("kafka.map.input.topic")
+  val kafkaOutPutTopic: String = config.getString("kafka.map.output.topic")
   val kafkaMetricsOutPutTopic: String = config.getString("kafka.output.metrics.topic")
 
 }
