@@ -30,7 +30,7 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
     val properties = new Properties()
     properties.setProperty("bootstrap.servers", kafkaBrokerServers)
     properties.setProperty("group.id", groupId)
-    properties.setProperty("auto.offset.reset", "earliest") // Uncomment this line to run the test flink job
+    //properties.setProperty("auto.offset.reset", "earliest") // Uncomment this line to run the test flink job
     properties
   }
 
