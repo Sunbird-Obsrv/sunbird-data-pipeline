@@ -11,9 +11,13 @@ import org.sunbird.dp.core.BaseJobConfig
 class BaseProcessTestConfig(override val config: Config) extends BaseJobConfig(config, "Test-job") {
   private val serialVersionUID = -2349318979085017498L
   implicit val mapTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
-  val eventOutPutTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]]("test-stream-tag")
-  val kafkaInputTopic: String = config.getString("kafka.map.input.topic")
-  val kafkaOutPutTopic: String = config.getString("kafka.map.output.topic")
+  implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
+  val mapOutPutTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]]("test-stream-tag")
+  val eventOutPutTag: OutputTag[Event] = OutputTag[Event]("test-stream-tag")
+  val kafkaMapInputTopic: String = config.getString("kafka.map.input.topic")
+  val kafkaMapOutPutTopic: String = config.getString("kafka.map.output.topic")
+  val kafkaEventInputTopic: String = config.getString("kafka.event.input.topic")
+  val kafkaEventOutPutTopic: String = config.getString("kafka.event.output.topic")
   val kafkaMetricsOutPutTopic: String = config.getString("kafka.output.metrics.topic")
 
 }
