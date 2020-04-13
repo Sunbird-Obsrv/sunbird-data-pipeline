@@ -86,7 +86,7 @@ class DenormalizationStreamTaskTest extends BaseTestSpec {
 
   }
 
-  "Extraction job pipeline" should "extract events" in {
+  "De-normalization pipeline" should "denormalize content, user, device and location metadata" in {
 
     when(mockKafkaUtil.kafkaEventSource[Event](denormConfig.inputTopic)).thenReturn(new InputSource)
     when(mockKafkaUtil.kafkaEventSink[Event](denormConfig.denormSuccessTopic)).thenReturn(new DenormEventsSink)

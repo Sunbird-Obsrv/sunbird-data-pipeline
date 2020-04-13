@@ -21,14 +21,13 @@ case class Metrics(metrics: ConcurrentHashMap[String, AtomicLong]) {
 trait JobMetrics {
   def registerMetrics(metrics: List[String]): Metrics = {
     val metricMap = new ConcurrentHashMap[String, AtomicLong]()
-    metrics.map { metric =>
-        metricMap.put(metric, new AtomicLong(0L))
-    }
+    metrics.map { metric => metricMap.put(metric, new AtomicLong(0L)) }
     Metrics(metricMap)
   }
 }
 
-abstract class BaseProcessFunction[T, R](config: BaseJobConfig) extends ProcessFunction[T, R] with JobMetrics {
+abstract class BaseProcessFunction[T, R](config: BaseJobConfig) extends ProcessFunction[T, R] with BaseDeduplication with JobMetrics {
+
   private val metrics: Metrics = registerMetrics(metricsList())
 
   override def open(parameters: Configuration): Unit = {

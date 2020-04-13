@@ -14,7 +14,7 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
                                   @transient var schemaValidator: SchemaValidator = null,
                                   @transient var dedupEngine: DedupEngine = null)
                                  (implicit val eventTypeInfo: TypeInformation[Event])
-  extends BaseProcessFunction[Event, Event](config = config) with BaseDeduplication {
+  extends BaseProcessFunction[Event, Event](config) {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[TelemetryValidationFunction])
 

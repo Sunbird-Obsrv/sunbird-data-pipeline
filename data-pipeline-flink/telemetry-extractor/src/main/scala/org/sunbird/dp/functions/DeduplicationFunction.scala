@@ -12,9 +12,13 @@ import org.sunbird.dp.core.{BaseDeduplication, BaseProcessFunction, Metrics}
 
 class DeduplicationFunction(config: TelemetryExtractorConfig, @transient var dedupEngine: DedupEngine = null)
                            (implicit val mapTypeInfo: TypeInformation[util.Map[String, AnyRef]])
-  extends BaseProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]](config) with BaseDeduplication {
+  extends BaseProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]](config) {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[DeduplicationFunction])
+
+  override def metricsList(): List[String] = {
+    List(config.totalBatchEventCount) ::: deduplicationMetrics
+  }
 
   override def open(parameters: Configuration): Unit = {
     super.open(parameters)
@@ -27,10 +31,6 @@ class DeduplicationFunction(config: TelemetryExtractorConfig, @transient var ded
   override def close(): Unit = {
     super.close()
     dedupEngine.closeConnectionPool()
-  }
-
-  override def metricsList(): List[String] = {
-    List(config.totalBatchEventCount) ::: deduplicationMetrics
   }
 
   override def processElement(batchEvents: util.Map[String, AnyRef],
