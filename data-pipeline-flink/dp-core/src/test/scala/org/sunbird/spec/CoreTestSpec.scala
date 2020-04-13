@@ -104,7 +104,7 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
 
   "BaseDedup" should "Should able to deDup the event" in {
     val deDup = new BaseDeduplication {}
-    val metrics = deDup.getDeDupMetrics()
+    val metrics = deDup.deduplicationMetrics
     metrics.size should be(2)
     val event = new util.HashMap[String, AnyRef]()
     event.put("country_code", "IN")
@@ -136,7 +136,7 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     import org.apache.kafka.clients.consumer.ConsumerRecord
     val cRecord: ConsumerRecord[Array[Byte], Array[Byte]] = new ConsumerRecord[Array[Byte], Array[Byte]](topic, partition, offset, key, value)
     stringDeSerialization.deserialize(cRecord)
-    val event = new Event(new Gson().fromJson(EVENT_WITH_MID, new util.LinkedHashMap[String, AnyRef]().getClass), 0)
+    val event = new Event(new Gson().fromJson(EVENT_WITH_MID, new util.LinkedHashMap[String, AnyRef]().getClass))
     eventSerialization.serialize(event, System.currentTimeMillis())
     eventDeSerialization.getProducedType
     stringSerialization.serialize("test", System.currentTimeMillis())
@@ -145,19 +145,19 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     map.put("country_code", "IN")
     map.put("country", "INDIA")
     mapSerialization.serialize(map, System.currentTimeMillis())
-    val metrics = JobMetrics.apply(List("success-count"))
-    metrics.incCounter("success-count")
+    //val metrics = JobMetrics.apply(List("success-count"))
+    //metrics.incCounter("success-count")
   }
 
-  "JobMetrics" should "Get the metrics events" in {
-    val config = ConfigFactory.load("test.conf");
-    val bsConfig: BaseJobConfig = new BaseJobConfig(config, "base-job");
-    val metircs = mutable.Map("success-count" ->475L)
-    val metrics = new JobMetrics {}
-    val metricsEvents = metrics.getMetricsEvent(metircs, System.currentTimeMillis(), bsConfig, 0)
-    metricsEvents should not be(null)
-  }
+//  "JobMetrics" should "Get the metrics events" in {
+//    val config = ConfigFactory.load("test.conf");
+//    val bsConfig: BaseJobConfig = new BaseJobConfig(config, "base-job");
+//    val metircs = mutable.Map("success-count" ->475L)
+//    val metrics = new JobMetrics {}
+//    val metricsEvents = metrics.getMetricsEvent(metircs, System.currentTimeMillis(), bsConfig, 0)
+//    metricsEvents should not be(null)
+//  }
 }
 
-class Event(eventMap: util.Map[String, AnyRef], partition: Integer) extends Events(eventMap, partition) {
+class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
 }

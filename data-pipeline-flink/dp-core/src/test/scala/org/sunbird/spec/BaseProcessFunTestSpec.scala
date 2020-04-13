@@ -35,16 +35,16 @@ class SimpleFlinkKafkaTest extends BaseSpec with Matchers with EmbeddedKafka {
       val kafkaConnector = new FlinkKafkaConnector(bsConfig)
 
       implicit val env: StreamExecutionEnvironment = FlinkUtil.getExecutionContext(bsConfig)
-      val userDefinedConfig = EmbeddedKafkaConfig(kafkaPort = 9092, zooKeeperPort = 2181)
+      val userDefinedConfig = EmbeddedKafkaConfig(kafkaPort = 9092, zooKeeperPort = 2182)
 
       val mapStream: SingleOutputStreamOperator[util.Map[String, AnyRef]] =
         env.addSource(kafkaConnector.kafkaMapSource(bsConfig.kafkaMapInputTopic), "telemetry-raw-events-consumer")
-          .rebalance().keyBy(key => key.get("partition").asInstanceOf[Integer])
+          .rebalance()
           .process(new TestMapStreamFunc(bsConfig)).name("TestFun")
 
       val eventStream = env.addSource(kafkaConnector.kafkaEventSource[Event](bsConfig.kafkaEventInputTopic), "kafka-telemetry-denorm-consumer")
-        .rebalance().keyBy(key => key.getPartition)
-        .process(new TestEventStreamFunc(bsConfig)).name("DruidValidator")
+        .rebalance()
+        .process[Event](new TestEventStreamFunc(bsConfig)).name("DruidValidator")
 
       mapStream.getSideOutput(bsConfig.mapOutPutTag)
         .addSink(kafkaConnector.kafkaMapSink(bsConfig.kafkaMapOutPutTopic))
@@ -63,11 +63,13 @@ class SimpleFlinkKafkaTest extends BaseSpec with Matchers with EmbeddedKafka {
         publishStringMessageToKafka(bsConfig.kafkaMapInputTopic, EVENT_WITH_MESSAGE_ID)
         publishStringMessageToKafka(bsConfig.kafkaEventInputTopic, SHARE_EVENT)
 
+        //env.execute("Test FlinkProcess Job")
         Future {
-          env.execute("TestFlinkProcess Job")
+          env.execute("Test FlinkProcess Job")
         }
         println("Output from Map process func" + consumeFirstStringMessageFrom(bsConfig.kafkaMapOutPutTopic))
         println("Output from Event process func" + consumeFirstStringMessageFrom(bsConfig.kafkaEventOutPutTopic))
+
       }
     } catch {
       case ex: Exception =>

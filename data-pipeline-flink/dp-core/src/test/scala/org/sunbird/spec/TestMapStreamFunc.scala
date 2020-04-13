@@ -3,22 +3,22 @@ package org.sunbird.spec
 import java.util
 
 import org.apache.flink.api.common.typeinfo.TypeInformation
-import org.apache.flink.streaming.api.functions.KeyedProcessFunction
+import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.sunbird.dp.core.{BaseProcessFunction, Metrics}
 
 
-class TestMapStreamFunc(config: BaseProcessTestConfig)(implicit val mapTypeInfo: TypeInformation[util.Map[String, AnyRef]])
-  extends BaseProcessFunction[util.Map[String, AnyRef]](config) {
-  val totalProcessedCount = "processed-messages-count"
+class TestMapStreamFunc(config: BaseProcessTestConfig)(implicit val stringTypeInfo: TypeInformation[String])
+  extends BaseProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]](config) {
 
-  override def getMetricsList(): List[String] = {
-    List(totalProcessedCount)
+  override def metricsList(): List[String] = {
+    val metrics = List(config.processedEventCount)
+    metrics
   }
   override def processElement(event: util.Map[String, AnyRef],
-                              context: KeyedProcessFunction[Integer, util.Map[String, AnyRef], util.Map[String, AnyRef]]#Context,
+                              context: ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]]#Context,
                               metrics: Metrics): Unit = {
-    metrics.incCounter(totalProcessedCount)
-    println("========invoked the teststream function=========")
+    metrics.incCounter(config.processedEventCount)
+    println("========invoked the MapStream function=========")
     context.output(config.mapOutPutTag, event)
   }
 }

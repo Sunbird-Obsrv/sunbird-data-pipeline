@@ -2,17 +2,16 @@ package org.sunbird.spec
 
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
-import org.apache.flink.streaming.api.functions.KeyedProcessFunction
+import org.apache.flink.streaming.api.functions.{KeyedProcessFunction, ProcessFunction}
 import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
 import org.sunbird.dp.core.{BaseDeduplication, BaseProcessFunction, Metrics}
 
 
 class TestEventStreamFunc(config: BaseProcessTestConfig, @transient var dedupEngine: DedupEngine = null)(implicit val mapTypeInfo: TypeInformation[Event])
-  extends BaseProcessFunction[Event](config) with BaseDeduplication {
-  val totalProcessedCount = "processed-messages-count"
+  extends BaseProcessFunction[Event, Event](config) with BaseDeduplication {
 
-  override def getMetricsList(): List[String] = {
-    List(totalProcessedCount)::: getDeDupMetrics()
+  override def metricsList(): List[String] = {
+    List(config.processedEventCount) ::: deduplicationMetrics
   }
 
   override def open(parameters: Configuration): Unit = {
@@ -28,14 +27,14 @@ class TestEventStreamFunc(config: BaseProcessTestConfig, @transient var dedupEng
   }
 
   override def processElement(event: Event,
-                              context: KeyedProcessFunction[Integer, Event, Event]#Context,
+                              context: ProcessFunction[Event, Event]#Context,
                               metrics: Metrics): Unit = {
     try {
 
       deDup[Event](event.mid(), event, context, config.eventOutPutTag, config.eventOutPutTag, flagName = "test-dedup")(dedupEngine, metrics)
       println("========invoked the eventStream function=========")
       context.output(config.eventOutPutTag, event)
-      metrics.incCounter(totalProcessedCount)
+      metrics.incCounter(config.processedEventCount)
     } catch {
       case ex: Exception =>
         ex.printStackTrace()

@@ -21,5 +21,6 @@ class BaseProcessTestConfig(override val config: Config) extends BaseJobConfig(c
   val kafkaMetricsOutPutTopic: String = config.getString("kafka.output.metrics.topic")
   val dedupStore: Int = config.getInt("redis.database.duplicationstore.id")
   val cacheExpirySeconds: Int = config.getInt("redis.database.key.expiry.seconds")
+  val processedEventCount = "processed-event-count"
 
 }
