@@ -7,6 +7,7 @@ public class TelemetryExtractorConfig {
 	private final String JOB_NAME = "TelemetryExtractor";
 	private final String errorTopic;
 	private String successTopic;
+	private String assessTopic;
 	private String defaultChannel;
 	private final int dupStore;
 	private int expirySeconds;
@@ -14,6 +15,7 @@ public class TelemetryExtractorConfig {
 
 	public TelemetryExtractorConfig(Config config) {
 		successTopic = config.get("output.success.topic.name", "telemetry.raw");
+		assessTopic = config.get("output.assess.topic.name", "telemetry.assess.redact");
 		errorTopic = config.get("output.error.topic.name", "telemetry.extractor.failed");
 		defaultChannel = config.get("default.channel", "01250894314817126443");
 		dupStore = config.getInt("redis.database.duplicationstore.id", 1);
@@ -24,6 +26,10 @@ public class TelemetryExtractorConfig {
 	public String successTopic() {
 		return successTopic;
 	}
+	
+	public String assessTopic() {
+    return assessTopic;
+  }
 
 	public String errorTopic() {
 		return errorTopic;

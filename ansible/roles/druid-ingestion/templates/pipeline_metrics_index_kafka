@@ -168,6 +168,10 @@
             {
               "type": "root",
               "name": "dialcodes-cache-hit"
+            },
+            {
+              "type": "root",
+              "name": "assess-route-success-count"
             }
           ]
         },
@@ -332,6 +336,10 @@
             {
               "type": "long",
               "name": "dialcodes-cache-hit"
+            },
+            {
+              "type": "long",
+              "name": "assess-route-success-count"
             }
           ],
           "dimensionsExclusions": []
