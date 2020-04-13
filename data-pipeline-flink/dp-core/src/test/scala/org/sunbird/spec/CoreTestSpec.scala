@@ -7,19 +7,17 @@ import com.typesafe.config.ConfigFactory
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.scala.OutputTag
-import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
+import org.scalatest.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
-import org.sunbird.dp.core.{BaseDeduplication, BaseJobConfig, DataCache, FlinkKafkaConnector, JobMetrics}
+import org.sunbird.dp.core.{BaseDeduplication, BaseJobConfig, DataCache, JobMetrics}
 import org.sunbird.dp.domain.Events
 import org.sunbird.dp.serde._
 import redis.clients.jedis.exceptions.{JedisConnectionException, JedisException}
-import redis.embedded.RedisServer
 
 import scala.collection.mutable
 
-class CoreTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll with MockitoSugar {
-  var redisServer: RedisServer = _
+class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
   val EVENT_WITH_MID: String =
     """{"actor":{"type":"User","id":"bc3be7ae-ad2b-4dee-ac4c-220c7db146b2"},"eid":"INTERACT",
       |"edata":{"type":"OTHER","subtype":"sheen-animation-ended","id":"library","pageid":"library","extra":{"pos":[]}},
@@ -30,17 +28,6 @@ class CoreTestSpec extends FlatSpec with Matchers with BeforeAndAfterAll with Mo
       |"mid":"321a6f0c-10c6-4cdc-9893-207bb64fea50","type":"events","object":{"id":"","type":"",
       |"version":"","rollup":{}}}""".stripMargin
 
-  override def beforeAll() {
-    super.beforeAll()
-    redisServer = new RedisServer(6341)
-    redisServer.start()
-    redisServer
-  }
-
-  override protected def afterAll(): Unit = {
-    super.afterAll()
-    redisServer.stop()
-  }
 
   "RedisConnection" should "Able to connect to redis" in {
     val config = ConfigFactory.load("test.conf");
