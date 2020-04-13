@@ -7,7 +7,7 @@ import org.sunbird.dp.core.BaseJobConfig
 import org.apache.flink.streaming.api.scala.OutputTag
 import com.typesafe.config.Config
 
-class ExtractionConfig(override val config: Config) extends BaseJobConfig(config, "telemetry-extractor") {
+class TelemetryExtractorConfig(override val config: Config) extends BaseJobConfig(config, "telemetry-extractor") {
 
   private val serialVersionUID = 2905979434303791379L
 
@@ -32,6 +32,12 @@ class ExtractionConfig(override val config: Config) extends BaseJobConfig(config
   val FAILED_EVENTS_OUTPUT_TAG = "failed-events"
   val LOG_EVENTS_OUTPUT_TAG = "log-events"
   val DUPLICATE_EVENTS_OUTPUT_TAG = "duplicate-events"
+
+  // Metric List
+  val successEventCount = "success-event-count"
+  val failedEventCount = "failed-event-count"
+  val auditEventCount = "audit-event-count"
+  val totalBatchEventCount = "batch-event-count"
   
   val rawEventsOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](RAW_EVENTS_OUTPUT_TAG)
   val failedEventsOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](FAILED_EVENTS_OUTPUT_TAG)

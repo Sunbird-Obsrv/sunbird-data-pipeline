@@ -7,9 +7,10 @@ import com.typesafe.config.Config
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
-import org.apache.flink.streaming.api.scala.OutputTag
 
 class BaseJobConfig(val config: Config, val jobName: String) extends Serializable {
+
+  private val serialVersionUID = - 4515020556926788923L
 
   implicit val metricTypeInfo: TypeInformation[String] = TypeExtractor.getForClass(classOf[String])
 
@@ -19,11 +20,6 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
   val checkpointingInterval: Int = config.getInt("task.checkpointing.interval")
   val restartAttempts: Int = config.getInt("task.restart-strategy.attempts")
   val delayBetweenAttempts: Long = config.getLong("task.restart-strategy.delay")
-  val metricsWindowSize: Int = config.getInt("task.metrics.window.size");
-  val metricsTopic: String = config.getString("kafka.output.metrics.topic")
-  val JOB_METRICS = "job_metrics"
-  val metricOutputTag: OutputTag[String] = new OutputTag[String](JOB_METRICS)
-
   val parallelism: Int = config.getInt("task.parallelism")
 
   def kafkaConsumerProperties: Properties = {
@@ -42,5 +38,4 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
     properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy")
     properties
   }
-
 }
