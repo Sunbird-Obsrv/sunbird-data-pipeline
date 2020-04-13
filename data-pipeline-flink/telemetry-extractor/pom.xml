@@ -89,6 +89,13 @@
             <version>0.0.1</version>
         </dependency>
         <dependency>
+          <groupId>org.sunbird.dp</groupId>
+          <artifactId>dp-core</artifactId>
+          <version>0.0.1</version>
+          <type>test-jar</type>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.4</version>
@@ -108,9 +115,8 @@
 
     <build>
     		<sourceDirectory>src/main/scala</sourceDirectory>
-		<testSourceDirectory>src/test/scala</testSourceDirectory>
+		    <testSourceDirectory>src/test/scala</testSourceDirectory>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -143,7 +149,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.sunbird.dp.task.ExtractorStreamTask</mainClass>
+                                    <mainClass>org.sunbird.dp.task.TelemetryExtractorStreamTask</mainClass>
                                 </transformer>
                                 <!-- append default configs -->
                                 <transformer

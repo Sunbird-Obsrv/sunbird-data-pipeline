@@ -45,13 +45,13 @@ class DruidValidatorStreamTask(config: DruidValidatorConfig, kafkaConnector: Fli
         * Perform validation
         */
       val dataStream = env.addSource(kafkaConnector.kafkaEventSource[Event](config.kafkaInputTopic), "kafka-telemetry-denorm-consumer")
-        .rebalance().keyBy(key => key.getPartition)
+        .rebalance()
         .process(new DruidValidatorFunction(config)).name("DruidValidator")
         .setParallelism(config.validatorParallelism)
 
       val routerStream: SingleOutputStreamOperator[Event] =
         dataStream.getSideOutput(config.validEventOutputTag)
-          .rebalance().keyBy(key => key.getPartition)
+          .rebalance()
           .process(new RouterFunction(config)).name("Router")
           .setParallelism(config.routerParallelism)
 

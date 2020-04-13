@@ -8,10 +8,10 @@ import org.apache.flink.api.common.restartstrategy.RestartStrategies
 object FlinkUtil {
 
   def getExecutionContext(config: BaseJobConfig): StreamExecutionEnvironment = {
-    val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment();
+    val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
     env.enableCheckpointing(config.checkpointingInterval)
     env.setStreamTimeCharacteristic(TimeCharacteristic.IngestionTime)
     env.setRestartStrategy(RestartStrategies.fixedDelayRestart(config.restartAttempts, config.delayBetweenAttempts))
-    env;
+    env
   }
 }

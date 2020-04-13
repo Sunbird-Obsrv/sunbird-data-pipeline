@@ -8,6 +8,7 @@ import org.sunbird.dp.domain.Event
 import org.sunbird.dp.functions.DeduplicationFunction
 import com.typesafe.config.ConfigFactory
 import org.sunbird.dp.core.FlinkKafkaConnector
+import org.sunbird.dp.util.FlinkUtil
 
 
 class DeduplicationStreamTask(config: DeduplicationConfig, kafkaConnector: FlinkKafkaConnector) {
@@ -15,27 +16,20 @@ class DeduplicationStreamTask(config: DeduplicationConfig, kafkaConnector: Flink
   private val serialVersionUID = 146697324640926024L
 
   def process(): Unit = {
-    implicit val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
+    implicit val env: StreamExecutionEnvironment = FlinkUtil.getExecutionContext(config)
     implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
-    env.enableCheckpointing(config.checkpointingInterval)
 
     try {
       val kafkaConsumer = kafkaConnector.kafkaEventSource[Event](config.kafkaInputTopic)
 
       val dataStream: SingleOutputStreamOperator[Event] =
-        env.addSource(kafkaConsumer, "kafka-telemetry-valid-consumer")
-          .process(new DeduplicationFunction(config)).setParallelism(1)
+        env.addSource(kafkaConsumer, "kafka-telemetry-valid-consumer").process(new DeduplicationFunction(config)).setParallelism(1)
 
       /**
         * Separate sinks for duplicate events and unique events
         */
-      dataStream.getSideOutput(config.uniqueEventsOutputTag)
-        .addSink(kafkaConnector.kafkaEventSink(config.kafkaSuccessTopic))
-        .name("kafka-telemetry-unique-producer")
-
-      dataStream.getSideOutput(config.uniqueEventsOutputTag)
-        .addSink(kafkaConnector.kafkaEventSink(config.kafkaDuplicateTopic))
-        .name("kafka-telemetry-duplicate-producer")
+      dataStream.getSideOutput(config.uniqueEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaSuccessTopic)).name("kafka-telemetry-unique-producer")
+      dataStream.getSideOutput(config.duplicateEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaDuplicateTopic)).name("kafka-telemetry-duplicate-producer")
 
       env.execute(config.jobName)
 

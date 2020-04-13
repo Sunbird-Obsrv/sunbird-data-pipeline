@@ -1,56 +1,48 @@
 package org.sunbird.dp.functions
 
-import java.util
 
 import org.apache.flink.api.common.typeinfo.TypeInformation
-import org.apache.flink.configuration.Configuration
-import org.apache.flink.streaming.api.functions.ProcessFunction
-import org.apache.flink.util.Collector
 import org.slf4j.LoggerFactory
-import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
 import org.sunbird.dp.task.DenormalizationConfig
 import org.sunbird.dp.core._
 import org.sunbird.dp.domain.Event
+import org.apache.flink.streaming.api.functions.ProcessFunction
 
-import scala.collection.mutable.Map
-import org.apache.flink.api.common.state.ValueState
-import org.apache.flink.api.common.state.ValueStateDescriptor
-import com.google.gson.Gson
-import org.apache.flink.streaming.api.functions.KeyedProcessFunction
-import org.apache.flink.metrics.Counter
-import org.apache.flink.metrics.SimpleCounter
-
-import collection.JavaConverters._
-
-class LocationDenormFunction(config: DenormalizationConfig)(implicit val mapTypeInfo: TypeInformation[Event]) extends BaseProcessKeyedFunction[Event](config) {
+class LocationDenormFunction(config: DenormalizationConfig)(implicit val mapTypeInfo: TypeInformation[Event])
+  extends BaseProcessFunction[Event, Event](config) {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[LocationDenormFunction])
-  
-  val locTotal = "loc-total";
-  val locCacheHit = "loc-cache-hit";
-  val locCacheMiss = "loc-cache-miss";
-  
-  override def getMetricsList(): List[String] = {
-    List(locTotal, locCacheHit, locCacheMiss)
+
+  override def metricsList(): List[String] = {
+    List(config.locTotal, config.locCacheHit, config.locCacheMiss)
   }
 
-  override def processElement(event: Event, context: KeyedProcessFunction[Integer, Event, Event]#Context, metrics: Metrics): Unit = {
+  override def processElement(event: Event,
+                              context: ProcessFunction[Event, Event]#Context,
+                              metrics: Metrics): Unit = {
 
-    metrics.incCounter(locTotal)
-    val userProfileLocation = event.getUserProfileLocation();
-    val userDeclaredLocation = event.getUserDeclaredLocation();
-    val ipLocation = event.getIpLocation();
+    metrics.incCounter(config.locTotal)
+    val userProfileLocation = event.getUserProfileLocation()
+    val userDeclaredLocation = event.getUserDeclaredLocation()
+    val ipLocation = event.getIpLocation()
 
-    val declaredLocation = if (nonEmpty(userProfileLocation)) userProfileLocation else if (nonEmpty(userDeclaredLocation)) userDeclaredLocation else ipLocation;
+    val declaredLocation = if (nonEmpty(userProfileLocation)) userProfileLocation
+    else if (nonEmpty(userDeclaredLocation)) userDeclaredLocation else ipLocation
 
     if (nonEmpty(declaredLocation)) {
       event.addDerivedLocation(declaredLocation.get)
-      metrics.incCounter(locCacheHit)
+      metrics.incCounter(config.locCacheHit)
     } else {
-      metrics.incCounter(locCacheMiss)
+      metrics.incCounter(config.locCacheMiss)
     }
 
-    context.output(config.withLocationEventsTag, event);
+    /*
+    println("loc-cache-hit = " + metrics.get(config.locCacheHit))
+    println("loc-cache-miss = " + metrics.get(config.locCacheMiss))
+    println("loc-total = " + metrics.get(config.locTotal))
+    */
+
+    context.output(config.withLocationEventsTag, event)
   }
 
   private def nonEmpty(loc: Option[(String, String, String)]): Boolean = {

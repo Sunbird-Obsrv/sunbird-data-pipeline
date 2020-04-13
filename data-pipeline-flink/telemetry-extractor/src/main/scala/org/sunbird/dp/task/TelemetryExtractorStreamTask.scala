@@ -4,7 +4,6 @@ import java.util
 
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
-import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.functions.{DeduplicationFunction, ExtractionFunction}
 import com.typesafe.config.ConfigFactory
@@ -27,7 +26,7 @@ import org.sunbird.dp.util.FlinkUtil
  * 		5.5 The events and audit event are then pushed to `raw` topic with appropriate flags. Increment the success counter by 1
  * 
  */
-class ExtractorStreamTask(config: ExtractionConfig, kafkaConnector: FlinkKafkaConnector) {
+class TelemetryExtractorStreamTask(config: TelemetryExtractorConfig, kafkaConnector: FlinkKafkaConnector) {
 
   private val serialVersionUID = -7729362727131516112L
 
@@ -43,7 +42,7 @@ class ExtractorStreamTask(config: ExtractionConfig, kafkaConnector: FlinkKafkaCo
      */
     val deDupStream =
       env.addSource(kafkaConnector.kafkaMapSource(config.kafkaInputTopic), "telemetry-ingest-events-consumer")
-        .rebalance().keyBy(key => key.get("partition").asInstanceOf[Integer])
+        .rebalance()
         .process(new DeduplicationFunction(config))
         .setParallelism(config.deDupParallelism)
     /**
@@ -53,7 +52,6 @@ class ExtractorStreamTask(config: ExtractionConfig, kafkaConnector: FlinkKafkaCo
      */
     val extractionStream =
       deDupStream.getSideOutput(config.uniqueEventOutputTag)
-        .rebalance().keyBy(key => key.get("partition").asInstanceOf[Integer])
         .process(new ExtractionFunction(config)).name("Extraction")
         .setParallelism(config.extractionParallelism)
 
@@ -62,22 +60,19 @@ class ExtractorStreamTask(config: ExtractionConfig, kafkaConnector: FlinkKafkaCo
     extractionStream.getSideOutput(config.logEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name("kafka-telemetry-log-events-producer")
     extractionStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaFailedTopic)).name("kafka-telemetry-failed-events-producer")
 
-    deDupStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name("kafka-metrics-producer")
-    extractionStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name("kafka-metrics-producer")
-
     env.execute("Telemetry Extractor")
 
   }
 }
 
 // $COVERAGE-OFF$ Disabling scoverage as the below code can only be invoked within flink cluster
-object ExtractorStreamTask {
+object TelemetryExtractorStreamTask {
 
   def main(args: Array[String]): Unit = {
     val config = ConfigFactory.load("telemetry-extractor.conf").withFallback(ConfigFactory.systemEnvironment())
-    val eConfig = new ExtractionConfig(config)
+    val eConfig = new TelemetryExtractorConfig(config)
     val kafkaUtil = new FlinkKafkaConnector(eConfig)
-    val task = new ExtractorStreamTask(eConfig, kafkaUtil)
+    val task = new TelemetryExtractorStreamTask(eConfig, kafkaUtil)
     task.process()
   }
 }

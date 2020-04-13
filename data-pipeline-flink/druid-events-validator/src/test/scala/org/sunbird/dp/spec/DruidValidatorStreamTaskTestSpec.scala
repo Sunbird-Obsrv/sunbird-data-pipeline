@@ -91,19 +91,19 @@ class DruidValidatorStreamTaskTestSpec  extends FlatSpec with Matchers with Befo
             }
         })
 
-        metricsMap.get("processed-message-count").get should be (7)
-        metricsMap.get("validation-success-message-count").get should be (5)
-        metricsMap.get("validation-skipped-message-count").get should be (1)
-        metricsMap.get("validation-failed-message-count").get should be (1)
+        metricsMap("processed-message-count") should be (7)
+        metricsMap("validation-success-message-count") should be (5)
+        metricsMap("validation-skipped-message-count") should be (1)
+        metricsMap("validation-failed-message-count") should be (1)
 
-        metricsMap.get("dedup-skipped-count").get should be (2)
-        metricsMap.get("duplicate-event-count").get should be (1)
-        metricsMap.get("unique-event-count").get should be (3)
+        metricsMap("dedup-skipped-count") should be (2)
+        metricsMap("duplicate-event-count") should be (1)
+        metricsMap("unique-event-count") should be (3)
 
-        metricsMap.get("log-route-success-count").get should be (1)
-        metricsMap.get("error-route-success-count").get should be (1)
-        metricsMap.get("summary-route-success-count").get should be (1)
-        metricsMap.get("telemetry-route-success-count").get should be (3)
+        metricsMap("log-route-success-count") should be (1)
+        metricsMap("error-route-success-count") should be (1)
+        metricsMap("summary-route-success-count") should be (1)
+        metricsMap("telemetry-route-success-count") should be (3)
     }
 
 }
@@ -118,13 +118,13 @@ class DruidValidatorEventSource  extends SourceFunction[Event] {
         val event4 = gson.fromJson(EventFixture.VALID_LOG_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
         val event5 = gson.fromJson(EventFixture.VALID_ERROR_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
         val event6 = gson.fromJson(EventFixture.VALID_SERACH_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
-        ctx.collect(new Event(event1, 0))
-        ctx.collect(new Event(event2, 0))
-        ctx.collect(new Event(event3, 0))
-        ctx.collect(new Event(event4, 0))
-        ctx.collect(new Event(event5, 0))
-        ctx.collect(new Event(event1, 0))
-        ctx.collect(new Event(event6, 0))
+        ctx.collect(new Event(event1))
+        ctx.collect(new Event(event2))
+        ctx.collect(new Event(event3))
+        ctx.collect(new Event(event4))
+        ctx.collect(new Event(event5))
+        ctx.collect(new Event(event1))
+        ctx.collect(new Event(event6))
     }
 
     override def cancel() = {

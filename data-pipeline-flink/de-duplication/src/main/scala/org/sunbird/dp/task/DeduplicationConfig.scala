@@ -22,10 +22,9 @@ class DeduplicationConfig(override val config: Config) extends BaseJobConfig(con
   val kafkaInputTopic: String = config.getString("kafka.input.topic")
   val kafkaSuccessTopic: String = config.getString("kafka.output.success.topic")
   val kafkaDuplicateTopic: String = config.getString("kafka.output.duplicate.topic")
-  val kafkaMalformedTopic: String = config.getString("kafka.output.malformed.topic")
   val includedProducersForDedup: List[String] = config.getStringList("dedup.producer.included.ids").asScala.toList
 
   val uniqueEventsOutputTag: OutputTag[Event] = OutputTag[Event]("unique-events")
-  val duplicateEventsOutputTag: OutputTag[Event] = OutputTag[Event]("duplicate-evemts")
+  val duplicateEventsOutputTag: OutputTag[Event] = OutputTag[Event]("duplicate-events")
 
 }
