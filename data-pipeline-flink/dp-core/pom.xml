@@ -143,7 +143,7 @@
                 <configuration>
                     <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
                     <junitxml>.</junitxml>
-                    <filereports>dp-duplication-testsuite.txt</filereports>
+                    <filereports>dp-core-testsuite.txt</filereports>
                 </configuration>
                 <executions>
                     <execution>
