@@ -51,12 +51,6 @@ class ContentDenormFunction(config: DenormalizationConfig)(implicit val mapTypeI
       if(event.checkObjectIdNotEqualsRollUpl1Id()) {
         event.addCollectionData(dataCache.getWithRetry(event.objectRollUpl1ID()))
       }
-
-      /*
-      println("content-cache-hit = " + metrics.get(config.contentCacheHit))
-      println("content-cache-miss = " + metrics.get(config.contentCacheMiss))
-      println("content-total = " + metrics.get(config.contentTotal))
-      */
     }
     
     context.output(config.withContentEventsTag, event)

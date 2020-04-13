@@ -36,12 +36,6 @@ class LocationDenormFunction(config: DenormalizationConfig)(implicit val mapType
       metrics.incCounter(config.locCacheMiss)
     }
 
-    /*
-    println("loc-cache-hit = " + metrics.get(config.locCacheHit))
-    println("loc-cache-miss = " + metrics.get(config.locCacheMiss))
-    println("loc-total = " + metrics.get(config.locTotal))
-    */
-
     context.output(config.withLocationEventsTag, event)
   }
 
