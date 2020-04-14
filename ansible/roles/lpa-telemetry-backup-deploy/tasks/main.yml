@@ -38,6 +38,10 @@
     - "{{ secor_service_name }}"
     - "{{ secor.properties }}"
 
+- name: Clean cron jobs
+  command: crontab -r
+  ignore_errors: yes
+
 - name: Create monitoring cron job
   become: yes
   become_user: "{{ analytics_user }}"
