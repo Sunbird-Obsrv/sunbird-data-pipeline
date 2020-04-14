@@ -8,9 +8,11 @@ import net.manub.embeddedkafka.{EmbeddedKafka, EmbeddedKafkaConfig}
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.scala._
+import org.apache.kafka.common.serialization.{StringDeserializer, StringSerializer}
 import org.scalatest.Matchers
 import org.sunbird.dp.core.FlinkKafkaConnector
 import org.sunbird.dp.util.FlinkUtil
+import scala.concurrent.duration._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -65,16 +67,20 @@ class SimpleFlinkKafkaTest extends BaseSpec with Matchers with EmbeddedKafka {
         createCustomTopic(bsConfig.kafkaMetricsOutPutTopic)
         publishStringMessageToKafka(bsConfig.kafkaMapInputTopic, EVENT_WITH_MESSAGE_ID)
         publishStringMessageToKafka(bsConfig.kafkaEventInputTopic, SHARE_EVENT)
+        implicit val serializer = new StringSerializer()
+        implicit val deserializer = new StringDeserializer()
         Future {
           env.execute("Test FlinkProcess Job")
         }
-        val mapEvent = consumeFirstStringMessageFrom(bsConfig.kafkaMapOutPutTopic)
-        val telemetryEvent = consumeFirstStringMessageFrom(bsConfig.kafkaEventOutPutTopic)
-        //consumeNumberStringMessagesFrom(bsConfig.kafkaEventOutPutTopic, 10, true)
-        val event = new Event(gson.fromJson(gson.toJson(telemetryEvent), new util.LinkedHashMap[String, AnyRef]().getClass))
+        val events = consumeNumberMessagesFromTopics(Set(bsConfig.kafkaEventOutPutTopic, bsConfig.kafkaMapOutPutTopic),
+          2, false,
+          60.seconds, true)
+        println("events are" + events)
+        events.size should be(2)
+        events.get(bsConfig.kafkaMapOutPutTopic) should not be (null)
+        events.get(bsConfig.kafkaEventOutPutTopic) should not be (null)
+        val event = new Event(gson.fromJson(gson.toJson(events.get(bsConfig.kafkaMapOutPutTopic)), new util.LinkedHashMap[String, AnyRef]().getClass))
         event.mid() should be("02ba33e5-15fe-4ec5-b32")
-        println("Output from Map process func" + mapEvent)
-        println("Output from Event process func" + telemetryEvent)
       }
     } catch {
       case ex: Exception =>
