@@ -62,8 +62,6 @@ class SimpleFlinkKafkaTest extends BaseSpec with Matchers with EmbeddedKafka {
         createCustomTopic(bsConfig.kafkaMetricsOutPutTopic)
         publishStringMessageToKafka(bsConfig.kafkaMapInputTopic, EVENT_WITH_MESSAGE_ID)
         publishStringMessageToKafka(bsConfig.kafkaEventInputTopic, SHARE_EVENT)
-
-        //env.execute("Test FlinkProcess Job")
         Future {
           env.execute("Test FlinkProcess Job")
         }
