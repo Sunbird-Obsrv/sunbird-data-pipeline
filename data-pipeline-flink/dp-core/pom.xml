@@ -31,6 +31,11 @@
             <artifactId>flink-connector-kafka_${scala.version}</artifactId>
             <version>${flink.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.4</version>
+        </dependency>
         <!--
         <dependency>
             <groupId>org.apache.flink</groupId>
@@ -38,11 +43,11 @@
             <version>${flink.version}</version>
         </dependency>
         -->
-        <dependency>
-            <groupId>org.sunbird.dp</groupId>
-            <artifactId>dp-telemetry-reader</artifactId>
-            <version>0.0.1</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.sunbird.dp</groupId>-->
+<!--            <artifactId>dp-telemetry-reader</artifactId>-->
+<!--            <version>0.0.1</version>-->
+<!--        </dependency>-->
         <!--
         <dependency>
             <groupId>com.google.code.gson</groupId>

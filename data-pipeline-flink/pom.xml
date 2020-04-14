@@ -20,7 +20,7 @@
 	<url>https://sunbird.org/</url>
 
 	<modules>
-		<module>dp-telemetry-reader</module>
+<!--		<module>dp-telemetry-reader</module>-->
 		<module>dp-core</module>
 		<module>de-normalization</module>
 		<module>telemetry-extractor</module>

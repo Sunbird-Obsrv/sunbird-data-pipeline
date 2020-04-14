@@ -7,7 +7,7 @@ import com.google.gson.Gson
 import org.sunbird.dp.reader.Telemetry
 
 
-abstract class Events(val map: util.Map[String, AnyRef]) {
+abstract class Events(val map: util.Map[String, Any]) {
 
   protected var telemetry: Telemetry = new Telemetry(map)
 
@@ -23,7 +23,7 @@ abstract class Events(val map: util.Map[String, AnyRef]) {
 
   def id: String = telemetry.read(keyPath = "metadata.checksum").value
 
-  def getMap: util.Map[String, AnyRef] = telemetry.getMap
+  def getMap: util.Map[String, Any] = telemetry.getMap
 
   def getJson: String = new Gson().toJson(getMap)
 
