@@ -145,18 +145,7 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     map.put("country_code", "IN")
     map.put("country", "INDIA")
     mapSerialization.serialize(map, System.currentTimeMillis())
-    //val metrics = JobMetrics.apply(List("success-count"))
-    //metrics.incCounter("success-count")
   }
-
-//  "JobMetrics" should "Get the metrics events" in {
-//    val config = ConfigFactory.load("test.conf");
-//    val bsConfig: BaseJobConfig = new BaseJobConfig(config, "base-job");
-//    val metircs = mutable.Map("success-count" ->475L)
-//    val metrics = new JobMetrics {}
-//    val metricsEvents = metrics.getMetricsEvent(metircs, System.currentTimeMillis(), bsConfig, 0)
-//    metricsEvents should not be(null)
-//  }
 }
 
 class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {

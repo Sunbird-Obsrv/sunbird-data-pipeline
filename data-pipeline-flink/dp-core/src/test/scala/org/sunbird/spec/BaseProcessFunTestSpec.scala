@@ -12,11 +12,10 @@ import org.apache.kafka.common.serialization.{StringDeserializer, StringSerializ
 import org.scalatest.Matchers
 import org.sunbird.dp.core.FlinkKafkaConnector
 import org.sunbird.dp.util.FlinkUtil
-import scala.concurrent.duration._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import scala.concurrent.duration._
 
 
 class SimpleFlinkKafkaTest extends BaseSpec with Matchers with EmbeddedKafka {
