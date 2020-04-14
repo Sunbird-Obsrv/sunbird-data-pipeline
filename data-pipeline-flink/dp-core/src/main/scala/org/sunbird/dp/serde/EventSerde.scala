@@ -19,22 +19,19 @@ class EventDeserializationSchema[T <: Events](implicit ct: ClassTag[T]) extends 
   override def isEndOfStream(nextElement: T): Boolean = false
 
   override def deserialize(record: ConsumerRecord[Array[Byte], Array[Byte]]): T = {
-    
-    val partition = new Integer(record.partition());
     val parsedString = new String(record.value(), StandardCharsets.UTF_8)
     val result = new Gson().fromJson(parsedString, new util.HashMap[String, AnyRef]().getClass)
-    ct.runtimeClass.getConstructor(classOf[util.Map[String, AnyRef]], classOf[Integer]).newInstance(result, partition).asInstanceOf[T]
+    ct.runtimeClass.getConstructor(classOf[util.Map[String, AnyRef]]).newInstance(result).asInstanceOf[T]
   }
 
   override def getProducedType: TypeInformation[T] = TypeExtractor.getForClass(classTag[T].runtimeClass).asInstanceOf[TypeInformation[T]]
 }
 
-class EventSerializationSchema[T <: Events : Manifest](topic: String, key: Option[String] = None) extends KafkaSerializationSchema[T] {
+class EventSerializationSchema[T <: Events : Manifest](topic: String) extends KafkaSerializationSchema[T] {
   private val serialVersionUID = -4284080856874185929L
 
   override def serialize(element: T, timestamp: java.lang.Long): ProducerRecord[Array[Byte], Array[Byte]] = {
-    key.map { kafkaKey =>
-      new ProducerRecord[Array[Byte], Array[Byte]](topic, kafkaKey.getBytes(StandardCharsets.UTF_8), element.getJson.getBytes(StandardCharsets.UTF_8))
-    }.getOrElse(new ProducerRecord[Array[Byte], Array[Byte]](topic, element.getJson.getBytes(StandardCharsets.UTF_8)))
+    new ProducerRecord[Array[Byte], Array[Byte]](topic, element.kafkaKey().getBytes(StandardCharsets.UTF_8),
+      element.getJson.getBytes(StandardCharsets.UTF_8))
   }
 }

@@ -11,6 +11,10 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
   private[this] val dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZoneUTC
   private val jobName = "PipelinePreprocessor"
 
+  override def kafkaKey(): String = {
+    did()
+  }
+
   def schemaName: String = {
     if (eid != null) s"${eid.toLowerCase}.json"
     else "envelope.json"
