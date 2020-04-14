@@ -106,6 +106,17 @@ public class TelemetryRedacterTaskTest {
     telemetryRedacterTask.process(envelopeMock, collectorMock, coordinatorMock);
     verify(collectorMock, times(2)).send(argThat(validateRedactedTopic(true)));
   }
+  
+  @Test
+  public void shouldRedactEventAndSendToRawTopic2() throws Exception {
+
+    Jedis jedis = redisConnect.getConnection(5);
+    jedis.set("do_21299463432309145612386", "{\"questionType\":\"Registration\"}");
+    jedis.close();
+    stub(envelopeMock.getMessage()).toReturn(EventFixture.RESPONSE_EVENT);
+    telemetryRedacterTask.process(envelopeMock, collectorMock, coordinatorMock);
+    verify(collectorMock, times(2)).send(argThat(validateRedactedTopic(true)));
+  }
 
   @Test
   public void shouldNotRedactEventAndSendToRawTopic1() throws Exception {

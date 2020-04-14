@@ -96,15 +96,18 @@ public class TelemetryExtractorTaskTest {
                 SystemStream stream = envelope.getSystemStream();
                 Map<String, Object> event = new Gson().fromJson(message, Map.class);
                 System.out.println("Eid" + event.get("eid"));
+                
                 if ("ASSESS".equals(event.get("eid"))) {
-                    
                     assertEquals("ASSESS:6ac822896cd8a1736d55806c13ada64c", event.get("mid"));
-                    
+                    assertEquals("kafka", stream.getSystem());
+                    assertEquals("telemetry.assess.redact", stream.getStream());
+                } else if ("RESPONSE".equals(event.get("eid"))) {
+                    assertEquals("RESPONSE:17d97e7cba61bd7c996d3ae71b9706ef", event.get("mid"));
                     assertEquals("kafka", stream.getSystem());
                     assertEquals("telemetry.assess.redact", stream.getStream());
                 } else {
-                  assertEquals("kafka", stream.getSystem());
-                  assertEquals("telemetry.raw", stream.getStream());
+                    assertEquals("kafka", stream.getSystem());
+                    assertEquals("telemetry.raw", stream.getStream());
                 }
                 return true;
             }
@@ -139,7 +142,7 @@ public class TelemetryExtractorTaskTest {
         MessageCollector collectorMock = mock(MessageCollector.class);
         
         task.process(envelope, collectorMock, coordinator);
-        verify(collectorMock, times(22)).send(argThat(validateEventObject()));
+        verify(collectorMock, times(23)).send(argThat(validateEventObject()));
     }
     
     @Test

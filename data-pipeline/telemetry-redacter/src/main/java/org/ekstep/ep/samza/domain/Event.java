@@ -14,16 +14,29 @@ public class Event extends Events {
   }
 
   public void clearUserInput() {
-    telemetry.add("edata.resvalues", new ArrayList<>());
+    if ("ASSESS".equals(eid())) {
+      telemetry.add("edata.resvalues", new ArrayList<>());
+    } else {
+      telemetry.add("edata.values", new ArrayList<>());
+    }
   }
-  
+
   public String questionId() {
-    NullableValue<String> itemId = telemetry.<String>read("edata.item.id");
-    return itemId.isNull() ? null : itemId.value();
+    if ("ASSESS".equals(eid())) {
+      NullableValue<String> itemId = telemetry.<String>read("edata.item.id");
+      return itemId.isNull() ? null : itemId.value();
+    } else {
+      NullableValue<String> itemId = telemetry.<String>read("edata.target.id");
+      return itemId.isNull() ? null : itemId.value();
+    }
   }
 
   public List<Object> readResValues() {
-    return telemetry.<List<Object>>read("edata.resvalues").value();
+    if ("ASSESS".equals(eid())) {
+      return telemetry.<List<Object>>read("edata.resvalues").value();
+    } else {
+      return telemetry.<List<Object>>read("edata.values").value();
+    }
   }
 
 }
