@@ -2,6 +2,7 @@ package org.sunbird.spec
 
 import java.util
 
+import com.google.gson.Gson
 import com.typesafe.config.ConfigFactory
 import net.manub.embeddedkafka.{EmbeddedKafka, EmbeddedKafkaConfig}
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator
@@ -13,6 +14,7 @@ import org.sunbird.dp.util.FlinkUtil
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 
 class SimpleFlinkKafkaTest extends BaseSpec with Matchers with EmbeddedKafka {
@@ -25,12 +27,13 @@ class SimpleFlinkKafkaTest extends BaseSpec with Matchers with EmbeddedKafka {
 
     val SHARE_EVENT: String =
       """
-        |{"ver":"3.0","eid":"SHARE","ets":1577278681178,"actor":{"type":"User","id":"7c3ea1bb-4da1-48d0-9cc0-c4f150554149"},"context":{"channel":"505c7c48ac6dc1edc9b08f21db5a571d","pdata":{"id":"prod.sunbird.desktop","pid":"sunbird.app","ver":"2.3.162"},"env":"app","sid":"82e41d87-e33f-4269-aeae-d56394985599","did":"1b17c32bad61eb9e33df281eecc727590d739b2b"},"edata":{"dir":"In","type":"File","items":[{"origin":{"id":"1b17c32bad61eb9e33df281eecc727590d739b2b","type":"Device"},"id":"do_312785709424099328114191","type":"CONTENT","ver":"1","params":[{"transfers":0,"size":21084308}]},{"origin":{"id":"1b17c32bad61eb9e33df281eecc727590d739b2b","type":"Device"},"id":"do_31277435209002188818711","type":"CONTENT","ver":"18","params":[{"transfers":12,"size":"123"}]},{"origin":{"id":"1b17c32bad61eb9e33df281eecc727590d739b2b","type":"Device"},"id":"do_31278794857559654411554","type":"TextBook","ver":"1"}]},"object":{"id":"do_312528116260749312248818","type":"TextBook","version":"10","rollup":{}},"mid":"02ba33e5-15fe-4ec5-b32.1084308E760-3d03429fae84","syncts":1577278682630,"@timestamp":"2019-12-25T12:58:02.630Z","type":"events"}
+        |{"ver":"3.0","eid":"SHARE","ets":1577278681178,"actor":{"type":"User","id":"7c3ea1bb-4da1-48d0-9cc0-c4f150554149"},"context":{"channel":"505c7c48ac6dc1edc9b08f21db5a571d","pdata":{"id":"prod.sunbird.desktop","pid":"sunbird.app","ver":"2.3.162"},"env":"app","sid":"82e41d87-e33f-4269-aeae-d56394985599","did":"1b17c32bad61eb9e33df281eecc727590d739b2b"},"edata":{"dir":"In","type":"File","items":[{"origin":{"id":"1b17c32bad61eb9e33df281eecc727590d739b2b","type":"Device"},"id":"do_312785709424099328114191","type":"CONTENT","ver":"1","params":[{"transfers":0,"size":21084308}]},{"origin":{"id":"1b17c32bad61eb9e33df281eecc727590d739b2b","type":"Device"},"id":"do_31277435209002188818711","type":"CONTENT","ver":"18","params":[{"transfers":12,"size":"123"}]},{"origin":{"id":"1b17c32bad61eb9e33df281eecc727590d739b2b","type":"Device"},"id":"do_31278794857559654411554","type":"TextBook","ver":"1"}]},"object":{"id":"do_312528116260749312248818","type":"TextBook","version":"10","rollup":{}},"mid":"02ba33e5-15fe-4ec5-b32","syncts":1577278682630,"@timestamp":"2019-12-25T12:58:02.630Z","type":"events"}
         |""".stripMargin
 
     try {
       val config = ConfigFactory.load("test.conf");
       val bsConfig = new BaseProcessTestConfig(config)
+      val gson = new Gson()
 
       val kafkaConnector = new FlinkKafkaConnector(bsConfig)
 
@@ -40,11 +43,11 @@ class SimpleFlinkKafkaTest extends BaseSpec with Matchers with EmbeddedKafka {
       val mapStream: SingleOutputStreamOperator[util.Map[String, AnyRef]] =
         env.addSource(kafkaConnector.kafkaMapSource(bsConfig.kafkaMapInputTopic), "telemetry-raw-events-consumer")
           .rebalance()
-          .process(new TestMapStreamFunc(bsConfig)).name("TestFun")
+          .process(new TestMapStreamFunc(bsConfig)).name("TestMapStream")
 
       val eventStream = env.addSource(kafkaConnector.kafkaEventSource[Event](bsConfig.kafkaEventInputTopic), "kafka-telemetry-denorm-consumer")
         .rebalance()
-        .process[Event](new TestEventStreamFunc(bsConfig)).name("DruidValidator")
+        .process[Event](new TestEventStreamFunc(bsConfig)).name("TestEventStream")
 
       mapStream.getSideOutput(bsConfig.mapOutPutTag)
         .addSink(kafkaConnector.kafkaMapSink(bsConfig.kafkaMapOutPutTopic))
@@ -65,9 +68,13 @@ class SimpleFlinkKafkaTest extends BaseSpec with Matchers with EmbeddedKafka {
         Future {
           env.execute("Test FlinkProcess Job")
         }
-        println("Output from Map process func" + consumeFirstStringMessageFrom(bsConfig.kafkaMapOutPutTopic))
-        println("Output from Event process func" + consumeFirstStringMessageFrom(bsConfig.kafkaEventOutPutTopic))
-
+        val mapEvent = consumeFirstStringMessageFrom(bsConfig.kafkaMapOutPutTopic)
+        val telemetryEvent = consumeFirstStringMessageFrom(bsConfig.kafkaEventOutPutTopic)
+        //consumeNumberStringMessagesFrom(bsConfig.kafkaEventOutPutTopic, 10, true)
+        val event = new Event(gson.fromJson(gson.toJson(telemetryEvent), new util.LinkedHashMap[String, AnyRef]().getClass))
+        event.mid() should be("02ba33e5-15fe-4ec5-b32")
+        println("Output from Map process func" + mapEvent)
+        println("Output from Event process func" + telemetryEvent)
       }
     } catch {
       case ex: Exception =>

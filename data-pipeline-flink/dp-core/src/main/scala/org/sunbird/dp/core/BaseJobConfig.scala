@@ -21,12 +21,13 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
   val restartAttempts: Int = config.getInt("task.restart-strategy.attempts")
   val delayBetweenAttempts: Long = config.getLong("task.restart-strategy.delay")
   val parallelism: Int = config.getInt("task.parallelism")
+  val kafkaOffsetReset: String = if (config.hasPath("kafka.offsetReset")) config.getString("kafka.offsetReset") else "latest" // Kafka auto offset reset "latest" is the default value
 
   def kafkaConsumerProperties: Properties = {
     val properties = new Properties()
     properties.setProperty("bootstrap.servers", kafkaBrokerServers)
     properties.setProperty("group.id", groupId)
-    properties.setProperty("auto.offset.reset", "earliest") // Uncomment this line to run the test flink job
+    properties.setProperty("auto.offset.reset", kafkaOffsetReset)
     properties
   }
 
