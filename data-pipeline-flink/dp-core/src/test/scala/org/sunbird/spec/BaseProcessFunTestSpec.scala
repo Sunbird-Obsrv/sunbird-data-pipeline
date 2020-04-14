@@ -72,14 +72,15 @@ class SimpleFlinkKafkaTest extends BaseSpec with Matchers with EmbeddedKafka {
         Future {
           env.execute("Test FlinkProcess Job")
         }
-        val events = consumeNumberMessagesFromTopics(Set(bsConfig.kafkaEventOutPutTopic, bsConfig.kafkaMapOutPutTopic),
+        val events = consumeNumberMessagesFromTopics(
+          Set(bsConfig.kafkaEventOutPutTopic, bsConfig.kafkaMapOutPutTopic),
           2, false,
           60.seconds, true)
         println("events are" + events)
         events.size should be(2)
         events.get(bsConfig.kafkaMapOutPutTopic) should not be (null)
         events.get(bsConfig.kafkaEventOutPutTopic) should not be (null)
-        val event = new Event(gson.fromJson(gson.toJson(events.get(bsConfig.kafkaMapOutPutTopic)), new util.LinkedHashMap[String, AnyRef]().getClass))
+        val event = new Event(gson.fromJson(events.get(bsConfig.kafkaEventOutPutTopic).get.head, new util.LinkedHashMap[String, AnyRef]().getClass))
         event.mid() should be("02ba33e5-15fe-4ec5-b32")
       }
     } catch {
