@@ -35,7 +35,7 @@ class SimpleFlinkKafkaTest extends BaseSpec with Matchers with EmbeddedKafka {
       val kafkaConnector = new FlinkKafkaConnector(bsConfig)
 
       implicit val env: StreamExecutionEnvironment = FlinkUtil.getExecutionContext(bsConfig)
-      val userDefinedConfig = EmbeddedKafkaConfig(kafkaPort = 9092, zooKeeperPort = 2182)
+      val kafkaConfig = EmbeddedKafkaConfig(kafkaPort = 9092, zooKeeperPort = 2182)
 
       val mapStream: SingleOutputStreamOperator[util.Map[String, AnyRef]] =
         env.addSource(kafkaConnector.kafkaMapSource(bsConfig.kafkaMapInputTopic), "telemetry-raw-events-consumer")
@@ -54,7 +54,7 @@ class SimpleFlinkKafkaTest extends BaseSpec with Matchers with EmbeddedKafka {
         .addSink(kafkaConnector.kafkaEventSink[Event](bsConfig.kafkaEventOutPutTopic))
         .name("Event-Producer")
 
-      withRunningKafkaOnFoundPort(userDefinedConfig) { implicit actualConfig =>
+      withRunningKafkaOnFoundPort(kafkaConfig) { implicit actualConfig =>
         createCustomTopic(bsConfig.kafkaMapInputTopic)
         createCustomTopic(bsConfig.kafkaMapOutPutTopic)
         createCustomTopic(bsConfig.kafkaEventInputTopic)
