@@ -11,7 +11,7 @@ class TestEventStreamFunc(config: BaseProcessTestConfig, @transient var dedupEng
   extends BaseProcessFunction[Event, Event](config) with BaseDeduplication {
 
   override def metricsList(): List[String] = {
-    List(config.processedEventCount) ::: deduplicationMetrics
+    List(config.telemetryEventCount) ::: deduplicationMetrics
   }
 
   override def open(parameters: Configuration): Unit = {
@@ -34,7 +34,7 @@ class TestEventStreamFunc(config: BaseProcessTestConfig, @transient var dedupEng
       deDup[Event](event.mid(), event, context, config.eventOutPutTag, config.eventOutPutTag, flagName = "test-dedup")(dedupEngine, metrics)
       println("========invoked the eventStream function=========")
       context.output(config.eventOutPutTag, event)
-      metrics.incCounter(config.processedEventCount)
+      metrics.incCounter(config.telemetryEventCount)
     } catch {
       case ex: Exception =>
         ex.printStackTrace()

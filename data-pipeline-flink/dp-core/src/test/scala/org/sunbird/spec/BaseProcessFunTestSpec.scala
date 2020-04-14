@@ -42,43 +42,62 @@ class SimpleFlinkKafkaTest extends BaseSpec with Matchers with EmbeddedKafka {
       val kafkaConfig = EmbeddedKafkaConfig(kafkaPort = 9092, zooKeeperPort = 2182)
 
       val mapStream: SingleOutputStreamOperator[util.Map[String, AnyRef]] =
-        env.addSource(kafkaConnector.kafkaMapSource(bsConfig.kafkaMapInputTopic), "telemetry-raw-events-consumer")
+        env.addSource(kafkaConnector.kafkaMapSource(bsConfig.kafkaMapInputTopic), "map-event-consumer")
           .rebalance()
-          .process(new TestMapStreamFunc(bsConfig)).name("TestMapStream")
+          .process(new TestMapStreamFunc(bsConfig)).name("TestMapEventStream")
 
-      val eventStream = env.addSource(kafkaConnector.kafkaEventSource[Event](bsConfig.kafkaEventInputTopic), "kafka-telemetry-denorm-consumer")
+      val eventStream = env.addSource(kafkaConnector.kafkaEventSource[Event](bsConfig.kafkaEventInputTopic), "telemetry-event-consumer")
         .rebalance()
-        .process[Event](new TestEventStreamFunc(bsConfig)).name("TestEventStream")
+        .process[Event](new TestEventStreamFunc(bsConfig)).name("TestTelemetryEventStream")
+
+      val stringStream = env.addSource(kafkaConnector.kafkaStringSource(bsConfig.kafkaEventInputTopic), "string-event-consumer")
+        .rebalance()
+        .process(new TestStringStreamFunc(bsConfig)).name("TestStringEventStream")
 
       mapStream.getSideOutput(bsConfig.mapOutPutTag)
         .addSink(kafkaConnector.kafkaMapSink(bsConfig.kafkaMapOutPutTopic))
-        .name("kafka-telemetry-failed-events-producer")
+        .name("kafka-map-event-producer")
 
       eventStream.getSideOutput(bsConfig.eventOutPutTag)
         .addSink(kafkaConnector.kafkaEventSink[Event](bsConfig.kafkaEventOutPutTopic))
         .name("Event-Producer")
 
+      stringStream.getSideOutput(bsConfig.stringOutPutTag)
+        .addSink(kafkaConnector.kafkaStringSink(bsConfig.kafkaStringOutputTopic))
+        .name("String-Producer")
+
       withRunningKafkaOnFoundPort(kafkaConfig) { implicit actualConfig =>
         createCustomTopic(bsConfig.kafkaMapInputTopic)
         createCustomTopic(bsConfig.kafkaMapOutPutTopic)
+
         createCustomTopic(bsConfig.kafkaEventInputTopic)
         createCustomTopic(bsConfig.kafkaEventOutPutTopic)
+
+        createCustomTopic(bsConfig.kafkaStringInputTopic)
+        createCustomTopic(bsConfig.kafkaStringOutputTopic)
+
         createCustomTopic(bsConfig.kafkaMetricsOutPutTopic)
+
         publishStringMessageToKafka(bsConfig.kafkaMapInputTopic, EVENT_WITH_MESSAGE_ID)
         publishStringMessageToKafka(bsConfig.kafkaEventInputTopic, SHARE_EVENT)
+        publishStringMessageToKafka(bsConfig.kafkaStringInputTopic, SHARE_EVENT)
+
         implicit val serializer = new StringSerializer()
         implicit val deserializer = new StringDeserializer()
         Future {
           env.execute("Test FlinkProcess Job")
         }
         val events = consumeNumberMessagesFromTopics(
-          Set(bsConfig.kafkaEventOutPutTopic, bsConfig.kafkaMapOutPutTopic),
-          2, false,
-          60.seconds, true)
+          Set(bsConfig.kafkaEventOutPutTopic,
+            bsConfig.kafkaMapOutPutTopic,
+            bsConfig.kafkaStringOutputTopic),
+          number = 3, autoCommit = false,
+          timeout = 60.seconds, resetTimeoutOnEachMessage = true)
         println("events are" + events)
-        events.size should be(2)
+        events.size should be(3)
         events.get(bsConfig.kafkaMapOutPutTopic) should not be (null)
         events.get(bsConfig.kafkaEventOutPutTopic) should not be (null)
+        events.get(bsConfig.kafkaStringOutputTopic) should not be (null)
         val event = new Event(gson.fromJson(events.get(bsConfig.kafkaEventOutPutTopic).get.head, new util.LinkedHashMap[String, AnyRef]().getClass))
         event.mid() should be("02ba33e5-15fe-4ec5-b32")
       }
