@@ -3,9 +3,6 @@ package org.sunbird.dp.reader;
 import org.sunbird.dp.domain.EventFixture;
 import org.junit.Assert;
 import org.junit.Test;
-import org.sunbird.dp.reader.NullableValue;
-import org.sunbird.dp.reader.Telemetry;
-import org.sunbird.dp.reader.TelemetryReaderException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +27,7 @@ public class TelemetryTest {
 
     @Test
     public void shouldGetFirstStringValue() {
-        Map hashMap = new HashMap<String, String>();
+        Map<String, Object> hashMap = new HashMap<>();
         hashMap.put("key1", "value1");
         Telemetry telemetry = new Telemetry(hashMap);
         NullableValue nullableValue = telemetry.read("key1");
@@ -40,8 +37,8 @@ public class TelemetryTest {
 
     @Test
     public void shouldGetFirstMapValue() {
-        Map hashMap = new HashMap<String, Object>();
-        HashMap<String, String> nestedObject = new HashMap<String, String>();
+        Map<String, Object> hashMap = new HashMap<>();
+        HashMap<String, String> nestedObject = new HashMap<>();
         nestedObject.put("key2", "get");
         hashMap.put("key1", nestedObject);
         Telemetry telemetry = new Telemetry(hashMap);
@@ -52,8 +49,8 @@ public class TelemetryTest {
 
     @Test
     public void shouldGetOneNestedStringValue() {
-        Map hashMap = new HashMap<String, Object>();
-        HashMap<String, String> nestedObject = new HashMap<String, String>();
+        Map<String, Object> hashMap = new HashMap();
+        HashMap<String, String> nestedObject = new HashMap();
         nestedObject.put("key2", "get");
         hashMap.put("key1", nestedObject);
         Telemetry telemetry = new Telemetry(hashMap);
@@ -64,9 +61,9 @@ public class TelemetryTest {
 
     @Test
     public void shouldGetOneNestedMapValue() {
-        Map hashMap = new HashMap<String, Object>();
-        HashMap<String, Object> nestedObject = new HashMap<String, Object>();
-        HashMap<String, String> otherNestedObject = new HashMap<String, String>();
+        Map<String, Object> hashMap = new HashMap<>();
+        HashMap<String, Object> nestedObject = new HashMap<>();
+        HashMap<String, String> otherNestedObject = new HashMap<>();
         otherNestedObject.put("key3", "get");
         nestedObject.put("key2", otherNestedObject);
         hashMap.put("key1", nestedObject);
@@ -78,9 +75,9 @@ public class TelemetryTest {
 
     @Test
     public void shouldGetTwoNestedValue() {
-        Map hashMap = new HashMap<String, Object>();
-        HashMap<String, Object> nestedObject = new HashMap<String, Object>();
-        HashMap<String, String> otherNestedObject = new HashMap<String, String>();
+        Map<String, Object> hashMap = new HashMap<>();
+        HashMap<String, Object> nestedObject = new HashMap<>();
+        HashMap<String, String> otherNestedObject = new HashMap<>();
         otherNestedObject.put("key3", "get");
         nestedObject.put("key2", otherNestedObject);
         hashMap.put("key1", nestedObject);
@@ -92,38 +89,38 @@ public class TelemetryTest {
 
     @Test
     public void shouldGetNullValueForMissingKey() {
-        Map hashMap = new HashMap<String, Object>();
+        Map<String, Object> hashMap = new HashMap<>();
         hashMap.put("key1", "get");
         Telemetry telemetry = new Telemetry(hashMap);
         NullableValue nullableValue = telemetry.read("invalidKey");
-        assertEquals(null, nullableValue.value());
+        assertNull(nullableValue.value());
         assertTrue(nullableValue.isNull());
     }
 
     @Test
     public void shouldNotFailWhenReadingWrongNesting() {
-        Map hashMap = new HashMap<String, Object>();
+        Map<String, Object> hashMap = new HashMap<>();
         hashMap.put("key1", "get");
         Telemetry telemetry = new Telemetry(hashMap);
         NullableValue nullableValue = telemetry.read("key1.invalidKey");
-        assertEquals(null, nullableValue.value());
+        assertNull(nullableValue.value());
         assertTrue(nullableValue.isNull());
     }
 
     @Test
     public void shouldGetNullValueForBothMissingNestedKey() {
-        Map hashMap = new HashMap<String, Object>();
+        Map<String, Object> hashMap = new HashMap<>();
         hashMap.put("key1", "get");
         Telemetry telemetry = new Telemetry(hashMap);
         NullableValue nullableValue = telemetry.read("invalidKey1.invalidKey2");
-        assertEquals(null, nullableValue.value());
+        assertNull(nullableValue.value());
         assertTrue(nullableValue.isNull());
     }
 
     @Test
     public void shouldAddValue() {
-        Map hashMap = new HashMap<String, Object>();
-        HashMap<String, String> nestedMap = new HashMap<String, String>();
+        Map<String, Object> hashMap = new HashMap<>();
+        HashMap<String, String> nestedMap = new HashMap<>();
         Telemetry telemetry = new Telemetry(hashMap);
         telemetry.add("key", nestedMap);
         assertEquals(nestedMap, telemetry.getMap().get("key"));
@@ -131,9 +128,9 @@ public class TelemetryTest {
 
     @Test
     public void shouldOverrideValue() {
-        Map hashMap = new HashMap<String, Object>();
-        HashMap<String, String> nestedMap = new HashMap<String, String>();
-        HashMap<String, String> overrideNestedMap = new HashMap<String, String>();
+        Map<String, Object> hashMap = new HashMap<>();
+        HashMap<String, String> nestedMap = new HashMap<>();
+        HashMap<String, String> overrideNestedMap = new HashMap<>();
         hashMap.put("key", nestedMap);
         Telemetry telemetry = new Telemetry(hashMap);
         telemetry.add("key", overrideNestedMap);
@@ -142,10 +139,10 @@ public class TelemetryTest {
 
     @Test
     public void shouldAddNestedValue() {
-        Map hashMap = new HashMap<String, Object>();
-        HashMap<String, String> nestedMap = new HashMap<String, String>();
+        Map<String, Object> hashMap = new HashMap<>();
+        HashMap<String, String> nestedMap = new HashMap<>();
         hashMap.put("key", nestedMap);
-        HashMap<String, String> otherNestedMap = new HashMap<String, String>();
+        HashMap<String, String> otherNestedMap = new HashMap<>();
         Telemetry telemetry = new Telemetry(hashMap);
         telemetry.add("key.nested", otherNestedMap);
         assertEquals(otherNestedMap, telemetry.read("key.nested").value());
@@ -153,8 +150,8 @@ public class TelemetryTest {
 
     @Test
     public void shouldNotAddWhenKeysDoesNotExists() {
-        Map hashMap = new HashMap<String, Object>();
-        HashMap<String, String> nestedMap = new HashMap<String, String>();
+        Map<String, Object> hashMap = new HashMap<>();
+        HashMap<String, String> nestedMap = new HashMap<>();
         Telemetry telemetry = new Telemetry(hashMap);
         telemetry.add("invalidKey.nested", nestedMap);
         assertFalse(telemetry.getMap().containsKey("invalidKey"));
@@ -163,16 +160,14 @@ public class TelemetryTest {
     @Test
     public void shouldGetTheEts() {
         double ets = 12334534;
-        Map hashMap = new HashMap<String, Object>();
+        Map<String, Object> hashMap = new HashMap<>();
         hashMap.put("ets", ets);
-        HashMap<String, String> nestedMap = new HashMap<String, String>();
         Telemetry telemetry = new Telemetry(hashMap);
         try {
             assertEquals(12334534, telemetry.getEts());
         } catch (TelemetryReaderException e) {
 
         }
-
         assertFalse(telemetry.getMap().containsKey("invalidKey"));
     }
 

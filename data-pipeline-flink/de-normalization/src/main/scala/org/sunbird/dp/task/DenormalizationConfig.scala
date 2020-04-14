@@ -33,11 +33,11 @@ class DenormalizationConfig(override val config: Config) extends BaseJobConfig(c
   val userFields = List("usertype", "grade", "language", "subject", "state", "district", "usersignintype", "userlogintype")
   val dialcodeFields = List("identifier", "channel", "batchcode", "publisher", "generated_on", "published_on", "status")
   
-  val ignorePeriodInMonths:Int = if(config.hasPath("telemetry.ignore.period.months")) config.getInt("telemetry.ignore.period.months") else 3;
-  val summaryFilterEvents: List[String] = if(config.hasPath("summary.filter.events")) config.getStringList("summary.filter.events").toList else List("ME_WORKFLOW_SUMMARY");
+  val ignorePeriodInMonths:Int = if(config.hasPath("telemetry.ignore.period.months")) config.getInt("telemetry.ignore.period.months") else 3
+  val summaryFilterEvents: List[String] = if(config.hasPath("summary.filter.events")) config.getStringList("summary.filter.events").toList else List("ME_WORKFLOW_SUMMARY")
   
-  val userSignInTypeDefault = if(config.hasPath("user.signin.type.default")) config.getString("user.signin.type.default") else "Anonymous";
-  val userLoginInTypeDefault = if(config.hasPath("user.login.type.default")) config.getString("user.login.type.default") else "NA";
+  val userSignInTypeDefault: String = if (config.hasPath("user.signin.type.default")) config.getString("user.signin.type.default") else "Anonymous"
+  val userLoginInTypeDefault: String = if (config.hasPath("user.login.type.default")) config.getString("user.login.type.default") else "NA"
 
   val DENORM_EVENTS_PRODUCER = "telemetry-denorm-events-producer"
   val JOB_METRICS_PRODUCER = "telemetry-job-metrics-producer"
@@ -55,5 +55,31 @@ class DenormalizationConfig(override val config: Config) extends BaseJobConfig(c
   val withContentEventsTag: OutputTag[Event] = OutputTag[Event](WITH_CONTENT_EVENTS)
   val withDialCodeEventsTag: OutputTag[Event] = OutputTag[Event](WITH_DIALCODE_EVENTS)
   val denormEventsTag: OutputTag[Event] = OutputTag[Event](DENORM_EVENTS)
+
+  // Device Denorm Metrics
+  val deviceTotal = "device-total"
+  val deviceCacheHit = "device-cache-hit"
+  val deviceCacheMiss = "device-cache-miss"
+  val eventsExpired = "events-expired"
+
+  // User Denorm Metrics
+  val userTotal = "user-total"
+  val userCacheHit = "user-cache-hit"
+  val userCacheMiss = "user-cache-miss"
+
+  // Dialcode Denorm Metrics
+  val dialcodeTotal = "dialcode-total"
+  val dialcodeCacheHit = "dialcode-cache-hit"
+  val dialcodeCacheMiss = "dialcode-cache-miss"
+
+  // Content Denorm Metrics
+  val contentTotal = "content-total"
+  val contentCacheHit = "content-cache-hit"
+  val contentCacheMiss = "content-cache-miss"
+
+  // Location Denorm Metrics
+  val locTotal = "loc-total"
+  val locCacheHit = "loc-cache-hit"
+  val locCacheMiss = "loc-cache-miss"
 
 }

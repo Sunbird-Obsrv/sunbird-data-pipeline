@@ -3,7 +3,7 @@ package org.sunbird.dp.spec
 import java.util
 
 import com.google.gson.Gson
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.runtime.testutils.MiniClusterResourceConfiguration
@@ -11,34 +11,41 @@ import org.apache.flink.streaming.api.functions.sink.SinkFunction
 import org.apache.flink.streaming.api.functions.source.SourceFunction
 import org.apache.flink.streaming.api.functions.source.SourceFunction.SourceContext
 import org.apache.flink.test.util.MiniClusterWithClientResource
+import org.ekstep.dp.{BaseMetricsReporter, BaseTestSpec}
 import org.mockito.Mockito
 import org.mockito.Mockito.when
 import org.sunbird.dp.domain.Event
-import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
-import org.scalatestplus.mockito.MockitoSugar
 import org.sunbird.dp.core.FlinkKafkaConnector
 import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.task.{DruidValidatorConfig, DruidValidatorStreamTask}
 import redis.embedded.RedisServer
 
-class DruidValidatorStreamTaskTestSpec  extends FlatSpec with Matchers with BeforeAndAfterAll with MockitoSugar {
+
+class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
 
     implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
+
     val flinkCluster = new MiniClusterWithClientResource(new MiniClusterResourceConfiguration.Builder()
+      .setConfiguration(testConfiguration())
       .setNumberSlotsPerTaskManager(1)
       .setNumberTaskManagers(1)
       .build)
+
     var redisServer: RedisServer = _
-    val config = ConfigFactory.load("test.conf");
-    val druidValidatorConfig: DruidValidatorConfig = new DruidValidatorConfig(config);
+    val config: Config = ConfigFactory.load("test.conf")
+    val druidValidatorConfig: DruidValidatorConfig = new DruidValidatorConfig(config)
     val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
+    val gson = new Gson()
 
     override protected def beforeAll(): Unit = {
         super.beforeAll()
-        redisServer = new RedisServer(6341)
+        redisServer = new RedisServer(6340)
         redisServer.start()
 
+        BaseMetricsReporter.gaugeMetrics.clear()
+
         when(mockKafkaUtil.kafkaEventSource[Event](druidValidatorConfig.kafkaInputTopic)).thenReturn(new DruidValidatorEventSource)
+
         when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
         when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaTelemetryRouteTopic)).thenReturn(new TelemetryEventsSink)
         when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaSummaryRouteTopic)).thenReturn(new SummaryEventsSink)
@@ -55,9 +62,9 @@ class DruidValidatorStreamTaskTestSpec  extends FlatSpec with Matchers with Befo
         flinkCluster.after()
     }
 
-    "Druid Validator job pipeline" should "validates events" in {
+    "Druid Validator job pipeline" should "validate events and route events to respective kafka topics" in {
 
-        val task = new DruidValidatorStreamTask(druidValidatorConfig, mockKafkaUtil);
+        val task = new DruidValidatorStreamTask(druidValidatorConfig, mockKafkaUtil)
         task.process()
 
         TelemetryEventsSink.values.size() should be (2)
@@ -78,6 +85,20 @@ class DruidValidatorStreamTaskTestSpec  extends FlatSpec with Matchers with Befo
         FailedEventsSink.values.get(0).getFlags.get("dv_processed").booleanValue() should be(false)
         FailedEventsSink.values.get(0).getFlags.get("dv_validation_failed").booleanValue() should be(true)
 
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.processedMetricsCount}").getValue() should be (7)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationSuccessMetricsCount}").getValue() should be (5)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationSkipMetricsCount}").getValue() should be (1)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationFailureMetricsCount}").getValue() should be (1)
+
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.skipDedupMetricCount}").getValue() should be (2)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.duplicate-event-count").getValue() should be (1)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.unique-event-count").getValue() should be (3)
+
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.logRouterMetricCount}").getValue() should be (1)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.errorRouterMetricCount}").getValue() should be (1)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.summaryRouterMetricCount}").getValue() should be (1)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.telemetryRouterMetricCount}").getValue() should be (3)
+
     }
 
 }
@@ -92,13 +113,13 @@ class DruidValidatorEventSource  extends SourceFunction[Event] {
         val event4 = gson.fromJson(EventFixture.VALID_LOG_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
         val event5 = gson.fromJson(EventFixture.VALID_ERROR_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
         val event6 = gson.fromJson(EventFixture.VALID_SERACH_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
-        ctx.collect(new Event(event1, 0))
-        ctx.collect(new Event(event2, 0))
-        ctx.collect(new Event(event3, 0))
-        ctx.collect(new Event(event4, 0))
-        ctx.collect(new Event(event5, 0))
-        ctx.collect(new Event(event1, 0))
-        ctx.collect(new Event(event6, 0))
+        ctx.collect(new Event(event1))
+        ctx.collect(new Event(event2))
+        ctx.collect(new Event(event3))
+        ctx.collect(new Event(event4))
+        ctx.collect(new Event(event5))
+        ctx.collect(new Event(event1))
+        ctx.collect(new Event(event6))
     }
 
     override def cancel() = {

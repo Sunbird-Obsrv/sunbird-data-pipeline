@@ -6,49 +6,58 @@ import java.util
 import com.google.gson.Gson
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.streaming.api.functions.ProcessFunction
-import org.apache.flink.util.Collector
 import org.joda.time.format.DateTimeFormat
-import org.sunbird.dp.task.ExtractionConfig
+import org.sunbird.dp.task.TelemetryExtractorConfig
 import org.sunbird.dp.domain._
 import java.util.UUID
 
 import com.google.gson.reflect.TypeToken
+import org.sunbird.dp.core.{BaseProcessFunction, Metrics}
 
-class ExtractionFunction(config: ExtractionConfig)(implicit val stringTypeInfo: TypeInformation[String])
-  extends ProcessFunction[util.Map[String, AnyRef], String] {
+class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTypeInfo: TypeInformation[String])
+  extends BaseProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]](config) {
 
-  val mapType: Type = new TypeToken[util.Map[String, AnyRef]]() {}.getType
+  val mapType: Type = new TypeToken[util.Map[String, AnyRef]](){}.getType
+
+  override def metricsList(): List[String] = {
+    List(config.successEventCount, config.auditEventCount, config.failedEventCount)
+  }
+
 
   /**
    * Method to process the events extraction from the batch
    *
    * @param batchEvent - Batch of telemetry events
    * @param context
-   * @param collector
    */
   override def processElement(batchEvent: util.Map[String, AnyRef],
-                              context: ProcessFunction[util.Map[String, AnyRef], String]#Context,
-                              collector: Collector[String]): Unit = {
+                              context: ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]]#Context,
+                              metrics: Metrics): Unit = {
 
     val gson = new Gson()
     val eventsList = getEventsList(batchEvent)
     eventsList.forEach(event => {
-      val syncTs = Option(batchEvent.get("syncts")).getOrElse(System.currentTimeMillis()).asInstanceOf[Number].longValue()
+      val syncTs = Option(event.get("syncts")).getOrElse(System.currentTimeMillis()).asInstanceOf[Number].longValue()
       val eventData = updateEvent(event, syncTs)
       val eventJson = gson.toJson(eventData)
       val eventSize = eventJson.getBytes("UTF-8").length
       if (eventSize > config.eventMaxSize) {
-        context.output(config.failedEventsOutputTag, gson.toJson(markFailed(eventData)))
+        metrics.incCounter(config.failedEventCount)
+        context.output(config.failedEventsOutputTag, eventData)
       } else {
-        context.output(config.rawEventsOutputTag, gson.toJson(markSuccess(eventData)))
+        metrics.incCounter(config.successEventCount)
+        context.output(config.rawEventsOutputTag, eventData)
       }
     })
+
+    // println("success count = " + metrics.get(successCount))
 
     /**
      * Generating Audit events to compute the number of events in the batch.
      */
     context.output(config.logEventsOutputTag,
       gson.fromJson(gson.toJson(generateAuditEvents(eventsList.size(), batchEvent)), mapType))
+    metrics.incCounter(config.auditEventCount)
   }
 
   /**

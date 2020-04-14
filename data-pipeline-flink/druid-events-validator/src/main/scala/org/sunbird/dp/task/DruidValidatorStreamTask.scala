@@ -10,6 +10,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.core.FlinkKafkaConnector
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.functions.{DruidValidatorFunction, RouterFunction}
+import org.sunbird.dp.util.FlinkUtil
 
 /**
   * Druid Validator stream task does the following pipeline processing in a sequence:
@@ -37,47 +38,40 @@ class DruidValidatorStreamTask(config: DruidValidatorConfig, kafkaConnector: Fli
   private val serialVersionUID = 146697324640926024L
 
   def process(): Unit = {
-      implicit val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
+      implicit val env: StreamExecutionEnvironment = FlinkUtil.getExecutionContext(config)
       implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
-      env.enableCheckpointing(config.checkpointingInterval)
+
       /**
         * Perform validation
         */
-      val dataStream: SingleOutputStreamOperator[Event] =
-        env.addSource(kafkaConnector.kafkaEventSource[Event](config.kafkaInputTopic), "kafka-telemetry-denorm-consumer")
-          .process(new DruidValidatorFunction(config)).name("DruidValidator")
-          .setParallelism(config.validatorParallelism)
+      val dataStream = env.addSource(kafkaConnector.kafkaEventSource[Event](config.kafkaInputTopic), "kafka-telemetry-denorm-consumer")
+        .rebalance()
+        .process(new DruidValidatorFunction(config)).name("DruidValidator")
+        .setParallelism(config.validatorParallelism)
 
-      val routerStream: SingleOutputStreamOperator[Event] =
-        dataStream.getSideOutput(config.validEventOutputTag)
+      val routerStream: SingleOutputStreamOperator[Event] = dataStream.getSideOutput(config.validEventOutputTag)
           .process(new RouterFunction(config)).name("Router")
           .setParallelism(config.routerParallelism)
 
       /**
         * Separate sinks for valid telemetry events, valid summary events, valid error events, valid log events and invalid events
         */
-      routerStream.getSideOutput(config.telemetryRouterOutputTag)
-        .addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaTelemetryRouteTopic))
+      routerStream.getSideOutput(config.telemetryRouterOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaTelemetryRouteTopic))
         .name("kafka-telemetry-router-producer")
 
-      routerStream.getSideOutput(config.summaryRouterOutputTag)
-        .addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaSummaryRouteTopic))
+      routerStream.getSideOutput(config.summaryRouterOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaSummaryRouteTopic))
         .name("kafka-summary-router-producer")
 
-      routerStream.getSideOutput(config.logRouterOutputTag)
-        .addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaLogRouteTopic))
+      routerStream.getSideOutput(config.logRouterOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaLogRouteTopic))
         .name("kafka-log-router-producer")
 
-      routerStream.getSideOutput(config.errorRouterOutputTag)
-        .addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaErrorRouteTopic))
+      routerStream.getSideOutput(config.errorRouterOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaErrorRouteTopic))
         .name("kafka-error-router-producer")
 
-      routerStream.getSideOutput(config.duplicateEventOutputTag)
-        .addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaDuplicateTopic))
+      routerStream.getSideOutput(config.duplicateEventOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaDuplicateTopic))
         .name("kafka-telemetry-duplicate-producer")
 
-      dataStream.getSideOutput(config.invalidEventOutputTag)
-        .addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaFailedTopic))
+      dataStream.getSideOutput(config.invalidEventOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaFailedTopic))
         .name("kafka-telemetry-invalid-producer")
 
       env.execute(config.jobName)
@@ -90,9 +84,9 @@ class DruidValidatorStreamTask(config: DruidValidatorConfig, kafkaConnector: Fli
 object DruidValidatorStreamTask {
 
   def main(args: Array[String]): Unit = {
-      val config = ConfigFactory.load().withFallback(ConfigFactory.systemEnvironment())
-      val druidValidatorConfig = new DruidValidatorConfig(config);
-      val kafkaUtil = new FlinkKafkaConnector(druidValidatorConfig);
+      val config = ConfigFactory.load("druid-events-validator.conf").withFallback(ConfigFactory.systemEnvironment())
+      val druidValidatorConfig = new DruidValidatorConfig(config)
+      val kafkaUtil = new FlinkKafkaConnector(druidValidatorConfig)
       val task = new DruidValidatorStreamTask(druidValidatorConfig, kafkaUtil)
       task.process()
   }

@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils
 import org.joda.time.format.DateTimeFormat
 import org.sunbird.dp.task.PipelinePreprocessorConfig
 
-class Event(eventMap: util.Map[String, AnyRef], partition: Integer) extends Events(eventMap, partition) {
+class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
 
   private[this] val dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZoneUTC
   private val jobName = "PipelinePreprocessor"

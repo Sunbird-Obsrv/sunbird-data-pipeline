@@ -18,11 +18,11 @@ class DruidValidatorConfig(override val config: Config) extends BaseJobConfig(co
   val validatorParallelism: Int = config.getInt("task.validator.parallelism")
   val routerParallelism: Int = config.getInt("task.router.parallelism")
 
-  val telemetrySchemaPath: String = config.getString("denorm.telemetry.schema.path")
-  val summarySchemaPath: String = config.getString("denorm.summary.schema.path")
-  val defaultSchemaFile: String = config.getString("default.schema.file")
-  val searchSchemaFile: String = config.getString("search.schema.file")
-  val summarySchemaFile: String = config.getString("summary.schema.file")
+  val telemetrySchemaPath: String = config.getString("schema.path.telemetry")
+  val summarySchemaPath: String = config.getString("schema.path.summary")
+  val defaultSchemaFile: String = config.getString("schema.file.default")
+  val searchSchemaFile: String = config.getString("schema.file.search")
+  val summarySchemaFile: String = config.getString("schema.file.summary")
 
   // Kafka Topics Configuration
   val kafkaInputTopic: String = config.getString("kafka.input.topic")
@@ -48,5 +48,18 @@ class DruidValidatorConfig(override val config: Config) extends BaseJobConfig(co
   lazy val errorRouterOutputTag: OutputTag[Event] = OutputTag[Event](id = ERROR_ROUTER_OUTPUT_TAG)
   lazy val invalidEventOutputTag: OutputTag[Event] = OutputTag[Event](id = INVALID_EVENTS_OUTPUT_TAG)
   lazy val duplicateEventOutputTag: OutputTag[Event] = OutputTag[Event](id = DUPLICATE_EVENTS_OUTPUT_TAG)
+
+  // Router job metrics
+  val logRouterMetricCount = "log-route-success-count"
+  val errorRouterMetricCount = "error-route-success-count"
+  val summaryRouterMetricCount = "summary-route-success-count"
+  val telemetryRouterMetricCount = "telemetry-route-success-count"
+  val skipDedupMetricCount = "dedup-skipped-count"
+
+  // Validation job metrics
+  val processedMetricsCount = "processed-message-count"
+  val validationSuccessMetricsCount = "validation-success-message-count"
+  val validationFailureMetricsCount = "validation-failed-message-count"
+  val validationSkipMetricsCount = "validation-skipped-message-count"
 
 }

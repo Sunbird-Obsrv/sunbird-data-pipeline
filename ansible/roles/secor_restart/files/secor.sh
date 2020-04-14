@@ -1,0 +1,131 @@
+#!/bin/bash
+
+# description: Linux script to start/stop/restart secor service
+USAGE="Usage: $0 <secor_process_name> {start|stop|restart|status}"
+
+SECOR_INSTALL_DIR=/home/analytics/sbin
+SECOR_NAME=$1
+SECOR_PID="${SECOR_INSTALL_DIR}/$SECOR_NAME.pid"
+
+function check_if_process_is_alive() {
+  local pid
+  pid=$(cat ${SECOR_PID})
+  if ! kill -0 ${pid} >/dev/null 2>&1; then
+    echo "${SECOR_NAME} process died"
+   # print_log_for_ci
+    return 1
+  fi
+}
+
+function start() {
+  local pid
+
+  if [[ -f "${SECOR_PID}" ]]; then
+    pid=$(cat ${SECOR_PID})
+    if kill -0 ${pid} >/dev/null 2>&1; then
+      echo "${SECOR_NAME} is already running"
+      return 0;
+    fi
+  fi
+
+  cd /mount/$SECOR_NAME
+    nohup /usr/bin/java -Xms256M -Xmx1000M -ea -Duser.timezone=UTC -Dsecor_group=$SECOR_NAME -Dlog4j.configuration=log4j.properties -Dconfig=secor.partition.properties -cp secor-0.25-SNAPSHOT.jar:lib/* com.pinterest.secor.main.ConsumerMain > /mount/secor/logs/$SECOR_NAME-service.log 2>&1 &
+  pid=$!
+  sleep 1
+
+  if [[ -z "${pid}" ]]; then
+    echo "${SECOR_NAME} failed to start"
+    return 1;
+  else
+    echo "${SECOR_NAME} started"
+    echo ${pid} > ${SECOR_PID}
+  fi
+
+  sleep 1
+  check_if_process_is_alive
+}
+
+function wait_for_secor_to_die() {
+  local pid
+  local count
+  pid=$1
+  timeout=$2
+  count=0
+  timeoutTime=$(date "+%s")
+  let "timeoutTime+=$timeout"
+  currentTime=$(date "+%s")
+  forceKill=1
+
+  while [[ $currentTime -lt $timeoutTime ]]; do
+    $(kill ${pid} > /dev/null 2> /dev/null)
+    if kill -0 ${pid} > /dev/null 2>&1; then
+      sleep 1
+    else
+      forceKill=0
+      break
+    fi
+    currentTime=$(date "+%s")
+  done
+
+  if [[ forceKill -ne 0 ]]; then
+    $(kill -9 ${pid} > /dev/null 2> /dev/null)
+  fi
+}
+
+function stop() {
+  local pid
+
+  # secor daemon kill
+  if [[ ! -f "${SECOR_PID}" ]]; then
+    echo "${SECOR_NAME} is not running"
+  else
+    pid=$(cat ${SECOR_PID})
+    if [[ -z "${pid}" ]]; then
+      echo "${SECOR_NAME} is not running"
+    else
+      wait_for_secor_to_die $pid 40
+      $(rm -f ${SECOR_PID})
+      echo "${SECOR_NAME} stopped"
+    fi
+  fi
+}
+
+function find_secor_process() {
+  local pid
+
+  if [[ -f "${SECOR_PID}" ]]; then
+    pid=$(cat ${SECOR_PID})
+    if ! kill -0 ${pid} > /dev/null 2>&1; then
+      echo "${SECOR_NAME} running but process is dead"
+      return 1
+    else
+      echo "${SECOR_NAME} is running"
+    fi
+  else
+    echo "${SECOR_NAME} is not running"
+    return 1
+  fi
+}
+
+ function restart_secor() {
+  stop
+  sleep 2
+  start
+ }
+
+case "${2}" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  status)
+    find_secor_process
+    ;;
+  restart)
+    restart_secor
+    ;;
+  *)
+    echo ${USAGE}
+esac
