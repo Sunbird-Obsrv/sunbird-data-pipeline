@@ -23,6 +23,10 @@ public abstract class Events {
         return telemetry;
     }
 
+    public String kafkaKey() {
+        return mid();
+    }
+
     public String getChecksum() {
         String checksum = id();
         if (checksum != null)
