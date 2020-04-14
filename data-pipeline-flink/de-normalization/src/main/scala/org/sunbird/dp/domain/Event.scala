@@ -15,6 +15,10 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
   private[this] val df2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").withZoneUTC()
   private val jobName = "PipelinePreprocessor"
 
+  override def kafkaKey(): String = {
+    did()
+  }
+
   def addDeviceProfile(deviceProfile: DeviceProfile): Unit = {
 
     val deviceMap = new util.HashMap[String, Object]()
