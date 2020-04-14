@@ -10,12 +10,10 @@ import org.apache.flink.streaming.api.scala.OutputTag
 import org.scalatest.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
-import org.sunbird.dp.core.{BaseDeduplication, BaseJobConfig, DataCache, JobMetrics}
+import org.sunbird.dp.core.{BaseDeduplication, BaseJobConfig, DataCache}
 import org.sunbird.dp.domain.Events
 import org.sunbird.dp.serde._
 import redis.clients.jedis.exceptions.{JedisConnectionException, JedisException}
-
-import scala.collection.mutable
 
 class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
   val EVENT_WITH_MID: String =
