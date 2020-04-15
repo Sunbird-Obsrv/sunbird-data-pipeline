@@ -27,7 +27,7 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
     Option(parentMap.readChild.getOrElse(null).asInstanceOf[T])
   } catch {
     case ex: Exception =>
-      println(s"Could not read the object from $keyPath and $map")
+      println(s"Could not read the object from $keyPath")
       Option(null.asInstanceOf[T])
   }
 
