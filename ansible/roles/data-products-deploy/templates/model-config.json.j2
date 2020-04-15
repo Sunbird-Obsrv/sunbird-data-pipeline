@@ -2255,6 +2255,26 @@
           "input_dependency": "None"
         },
         {
+          "model": "DistrictMonthlyJob",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "DesktopConsumptionDailyMetricsJob",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "DistrictWeeklyJob",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "ConsumptionDailyMetricsJob",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
           "model": "MetricsAuditJob",
           "category": "consumption",
           "input_dependency": "None"
@@ -2325,6 +2345,7 @@
     },
     "model": "org.ekstep.analytics.model.DruidQueryProcessingModel",
     "modelParams": {
+      "modelName":"DistrictMonthlyJob"
       "reportConfig": {
         "id": "district_monthly",
         "queryType": "groupBy",
@@ -2421,6 +2442,7 @@
     },
     "model": "org.ekstep.analytics.model.DruidQueryProcessingModel",
     "modelParams": {
+      "modelName":"DesktopConsumptionDailyMetricsJob"
       "reportConfig": {
         "id": "Desktop-Consumption-Daily-Reports",
         "queryType": "groupBy",
@@ -2673,6 +2695,7 @@
     },
     "model": "org.ekstep.analytics.model.DruidQueryProcessingModel",
     "modelParams": {
+      "modelName":"DistrictWeeklyJob"
       "reportConfig": {
         "id": "district_weekly",
         "queryType": "groupBy",
@@ -3253,6 +3276,7 @@
     },
     "model": "org.ekstep.analytics.model.DruidQueryProcessingModel",
     "modelParams": {
+      "modelName":"ConsumptionDailyMetricsJob"
       "reportConfig": {
         "id": "ETB-Consumption-Daily-Reports",
         "queryType": "timeseries",
