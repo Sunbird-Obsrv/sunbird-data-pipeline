@@ -33,13 +33,7 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
   }
 
   def readOrDefault[T](keyPath: String, defaultValue: T): T = {
-    val value = read(keyPath)
-    if (null != value) {
-      value.asInstanceOf[T]
-    } else {
-      defaultValue.asInstanceOf[T]
-    }
-
+     read(keyPath).getOrElse(defaultValue).asInstanceOf[T]
   }
 
   @throws[TelemetryReaderException]
@@ -48,14 +42,6 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
       val eid = read("eid")
       throw new TelemetryReaderException(s"keyPath is not available in the $eid ")
     })
-//    val readValue = read(keyPath)
-//    if (null == readValue) {
-//      val eid = read("eid")
-//      throw new TelemetryReaderException(s"keyPath is not available in the $eid ")
-//    } else {
-//      readValue.getOrElse(null)
-//    }
-//    null.asInstanceOf[T]
   }
 
   private def lastParentMap(map: util.Map[String, Any], keyPath: String): ParentType = {
@@ -118,7 +104,7 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
 
   def getSyncts: String = {
     val simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-    val timeStamp = read("syncts")
+    val timeStamp = read[Long]("syncts").getOrElse(simpleDateFormat.format(new Date(System.currentTimeMillis().longValue)))
     if (timeStamp.isInstanceOf[Number]) {
       simpleDateFormat.format(new Date(timeStamp.asInstanceOf[Number].longValue))
     } else {

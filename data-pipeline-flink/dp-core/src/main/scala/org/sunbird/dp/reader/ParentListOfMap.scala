@@ -5,15 +5,9 @@ import java.util.{List, Map}
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException
 
-
 import scala.collection.JavaConversions._
 
-object ParentListOfMap {
 
-  //TODO#: Make this class more genic.
-  //var LOGGER: Logger = new Logger(classOf[ParentListOfMap])
-
-}
 
 class ParentListOfMap(var list: List[Map[String, Any]], var childKey: String)
   extends ParentType {
