@@ -59,9 +59,22 @@ class TelemetryEventReaderSpec extends BaseSpec with Matchers with MockitoSugar 
     val eventMap = gson.fromJson(EventFixture.SAMPLE_EVENT_2, new util.LinkedHashMap[String, Any]().getClass)
     val telemetryReader: Telemetry = new Telemetry(eventMap)
     val actorName = telemetryReader.read[String]("actor.id.name").getOrElse(null)
-    val userKey = telemetryReader.read[String]("user").getOrElse(null)
     actorName should be(null)
+
+    val userKey = telemetryReader.read[String]("user").getOrElse(null)
     userKey should be(null)
+
+    val syncTs = telemetryReader.getSyncts
+    syncTs should not be(null)
+    syncTs should be(1577278682630L)
+
+    val timeStamp = telemetryReader.getAtTimestamp
+    timeStamp should not be(null)
+    timeStamp should be("2019-12-25T12:58:02.630Z")
+
+    telemetryReader.getEts should be(1577278681178L)
+
+    telemetryReader.readOrDefault("context.id", "context_id") should be("context_id")
   }
 
 }

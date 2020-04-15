@@ -27,34 +27,6 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
       |"version":"","rollup":{}}}""".stripMargin
 
 
-//  "Telemetry" should "Able to parse the object" in {
-//    val gson = new Gson()
-//    val event1 = gson.fromJson(EVENT_WITH_MID, new util.LinkedHashMap[String, Any]().getClass)
-//    val event = new Event(event1)
-//
-//    println("event.did()" + event.did())
-//    //println("telemetry.read(\"eid\").value" + telemetry.read("eid").value)
-//    println("event.mid()" + event.eid())
-//    println("event.mid()" + event.edataType())
-//    println("event.mid()" + event.edataType())
-//
-//    println("===>" + event.channel())
-//    println("===>" + event.objectType())
-//    println("===>" + event.getTimeStamp())
-//    println("objectFieldsPresent" + event.objectFieldsPresent)
-//    println("channel" + event.channel())
-//    println("did" + event.did())
-//    println("did" + event.ets())
-//    println("acto" + event.did())
-//    println("acto" + event.eid())
-//
-//    println("acto" + event.channel())
-//    val la = event.markSuccess("test")
-//    println("la" + gson.toJson(event))
-//
-//  }
-
-
   "RedisConnection" should "Able to connect to redis" in {
     val config = ConfigFactory.load("test.conf");
     val bsConfig: BaseJobConfig = new BaseJobConfig(config, "base-job");

@@ -21,7 +21,7 @@ abstract class Events(val map: util.Map[String, Any]) {
     mid
   }
 
-  def id(): String = telemetry.read[String](keyPath = EventsPath.CHANNEL_PATH).getOrElse(null)
+  def id(): String = telemetry.read[String](keyPath = EventsPath.CHECKSUM_PATH).getOrElse(null)
 
   def getMap(): util.Map[String, Any] = telemetry.getMap
 

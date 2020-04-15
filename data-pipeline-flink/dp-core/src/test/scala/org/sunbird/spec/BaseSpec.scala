@@ -8,13 +8,13 @@ class BaseSpec extends FlatSpec with BeforeAndAfterAll{
 
   override def beforeAll() {
     super.beforeAll()
-    //redisServer = new RedisServer(6341)
-    //redisServer.start()
+    redisServer = new RedisServer(6341)
+    redisServer.start()
   }
 
   override protected def afterAll(): Unit = {
     super.afterAll()
-    //redisServer.stop()
+    redisServer.stop()
   }
 
 }

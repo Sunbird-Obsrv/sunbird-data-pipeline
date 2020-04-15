@@ -38,8 +38,6 @@ object EventsPath {
 
   val CHECKSUM_PATH = "metadata.checksum"
 
-  val CHANNEL_PATH = "channel"
-
   val DERIVED_LOCATION_PATH = "derivedlocationdata"
 
   val STATE_KEY_PATH = "state"
