@@ -24,7 +24,7 @@ public class DeDuplicationConfig {
         duplicateTopic = config.get("output.duplicate.topic.name", "telemetry.duplicate");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
         dupStore = config.getInt("redis.database.duplicationstore.id", 11);
-        expirySeconds = config.getInt("redis.database.key.expiry.seconds", 604800);
+        expirySeconds = config.getInt("redis.database.key.expiry.seconds", 86400);
         if (!config.get("dedup.producer.include.ids", "").isEmpty()) {
             includedProducerIds = config.getList("dedup.producer.include.ids", new ArrayList<>());
         } else {
