@@ -13,9 +13,10 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
     try {
       val lastParent = lastParentMap(map, keyPath)
       lastParent.addChild(value)
-      return true
+      true
     } catch {
-      case e: Exception =>
+      case ex: Exception =>
+        println(s"Could not add the value to keypath $keyPath and $value")
     }
     false
   }
@@ -43,18 +44,18 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
 
   @throws[TelemetryReaderException]
   def mustReadValue[T](keyPath: String): T = {
-    //    read(keyPath).getOrElse({
-    //     val eid = read("eid")
-    //      throw new TelemetryReaderException(s"keyPath is not available in the $eid ")
-    //    })
-    //    val readValue = read(keyPath)
-    //    if (null == readValue) {
-    //      val eid = read("eid")
-    //      throw new TelemetryReaderException(s"keyPath is not available in the $eid ")
-    //    } else {
-    //      readValue.getOrElse(null)
-    //    }
-    null.asInstanceOf[T]
+    read(keyPath).getOrElse({
+      val eid = read("eid")
+      throw new TelemetryReaderException(s"keyPath is not available in the $eid ")
+    })
+//    val readValue = read(keyPath)
+//    if (null == readValue) {
+//      val eid = read("eid")
+//      throw new TelemetryReaderException(s"keyPath is not available in the $eid ")
+//    } else {
+//      readValue.getOrElse(null)
+//    }
+//    null.asInstanceOf[T]
   }
 
   private def lastParentMap(map: util.Map[String, Any], keyPath: String): ParentType = {
@@ -102,7 +103,7 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
 
   @throws[TelemetryReaderException]
   def getEts: Long = {
-     mustReadValue[Double]("ets").toLong
+    mustReadValue[Double]("ets").toLong
   }
 
   def getAtTimestamp: String = {
@@ -125,3 +126,7 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
     }
   }
 }
+
+class TelemetryReaderException(val message: String) extends Exception(message) {
+}
+
