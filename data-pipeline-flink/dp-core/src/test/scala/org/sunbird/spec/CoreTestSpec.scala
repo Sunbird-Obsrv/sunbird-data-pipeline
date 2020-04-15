@@ -31,19 +31,24 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     val gson = new Gson()
     val event1 = gson.fromJson(EVENT_WITH_MID, new util.LinkedHashMap[String, Any]().getClass)
    val event = new Event(event1)
-//    println("event.mid()" + event.mid())
-//   //println("telemetry.read(\"eid\").value" + telemetry.read("eid").value)
-//    println("event.mid()" + event.eid())
-//    println("event.mid()" + event.edataType())
-//    println("event.mid()" + event.edataType())
 
-    //println("===>" + event.channel())
-    //println("===>" + event.objectType())
-    //println("===>" + event.getTimeStamp())
-    //println("objectFieldsPresent" + event.objectFieldsPresent)
-//    println("did" + event.channel())
-//    println("did" + event.ets())
-    println("acto" + event.actorId())
+    println("event.mid()" + event.mid())
+   //println("telemetry.read(\"eid\").value" + telemetry.read("eid").value)
+    println("event.mid()" + event.eid())
+    println("event.mid()" + event.edataType())
+    println("event.mid()" + event.edataType())
+
+    println("===>" + event.channel())
+    println("===>" + event.objectType())
+    println("===>" + event.getTimeStamp())
+    println("objectFieldsPresent" + event.objectFieldsPresent)
+    println("did" + event.channel())
+    println("did" + event.ets())
+    println("acto" + event.did())
+    println("acto" + event.eid())
+    println("acto" + event.channel())
+    val la = event.markSuccess("test")
+    println("la" + gson.toJson(event))
 
   }
 
@@ -168,4 +173,9 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
 }
 
 class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
+  def markSuccess(flagName: String): Unit = {
+    telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])
+    telemetry.add(s"flags.$flagName", true)
+    telemetry.add("type", "events")
+  }
 }

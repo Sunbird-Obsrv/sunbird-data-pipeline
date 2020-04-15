@@ -1,16 +1,11 @@
 package org.sunbird.dp.reader
 
-//import org.sunbird.dp.util.Logger
+
+import java.util.{List, Map}
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException
 
-import java.util.List
 
-import java.util.Map
-
-import ParentListOfMap._
-
-//remove if not needed
 import scala.collection.JavaConversions._
 
 object ParentListOfMap {
@@ -28,9 +23,7 @@ class ParentListOfMap(var list: List[Map[String, Any]], var childKey: String)
       null
     }
     for (itemsObject <- list) {
-      if (!(itemsObject.isInstanceOf[Map[_, _]])) {
-        //continue
-      }
+      if (!(itemsObject.isInstanceOf[Map[_, _]])) {}
       val items: Map[String, Any] = itemsObject.asInstanceOf[Map[String, Any]]
       if (items.containsKey(childKey)) {
         val o: AnyRef = items.get(childKey).asInstanceOf[AnyRef]
@@ -45,7 +38,5 @@ class ParentListOfMap(var list: List[Map[String, Any]], var childKey: String)
   override def addChild(value: Any): Unit = {
     throw new NotImplementedException()
   }
-
 }
 
-// import org.ekstep.ep.samza.core.Logger;

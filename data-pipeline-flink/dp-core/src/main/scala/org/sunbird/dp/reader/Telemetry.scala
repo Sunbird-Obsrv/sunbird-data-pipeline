@@ -1,16 +1,13 @@
 package org.sunbird.dp.reader
 
 import java.io.Serializable
-import java.text.MessageFormat.format
 import java.text.SimpleDateFormat
 import java.util
-import java.util.{Date, List, Map}
-import java.util.logging.Logger
+import java.util.Date
 
 
 @SerialVersionUID(8132821816689744470L)
 class Telemetry(var map: util.Map[String, Any]) extends Serializable {
-  // private val logger = new Logger(this.getClass)
 
   def add(keyPath: String, value: Any): Boolean = {
     try {
@@ -19,38 +16,45 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
       return true
     } catch {
       case e: Exception =>
-      //logger.error("", format("Couldn't add value:{0} at  key: {0} for event:{1}", value, keyPath, map), e)
     }
     false
   }
 
   def getMap: util.Map[String, Any] = map
 
-  def read[T](keyPath: String): NullableValue[T] = try {
+  def read[T](keyPath: String): Option[T] = try {
     val parentMap = lastParentMap(map, keyPath)
-    val child = parentMap.readChild
-    var res = child.getOrElse(null).asInstanceOf[T]
-    new NullableValue[T](res)
+    Option(parentMap.readChild.getOrElse(null).asInstanceOf[T])
   } catch {
-    case e: Exception =>
-     println("erro" + e.printStackTrace())
-      //logger.error("", format("Couldn't get key: {0} from event:{1}", keyPath, map), e)
-      new NullableValue[T](null.asInstanceOf[T])
+    case ex: Exception =>
+      println(s"Could not read the object from $keyPath and $map")
+      Option(null.asInstanceOf[T])
   }
 
-  def readOrDefault[T](keyPath: String, defaultValue: T): NullableValue[T] = if (read(keyPath).isNull()) new NullableValue[T](defaultValue)
-  else read(keyPath).asInstanceOf[NullableValue[T]]
+  def readOrDefault[T](keyPath: String, defaultValue: T): T = {
+    val value = read(keyPath)
+    if (null != value) {
+      value.asInstanceOf[T]
+    } else {
+      defaultValue.asInstanceOf[T]
+    }
+
+  }
 
   @throws[TelemetryReaderException]
   def mustReadValue[T](keyPath: String): T = {
-    val readValue = read(keyPath)
-    if (readValue.isNull()) {
-      val eid = read("eid")
-      var message = keyPath + " is not available in the event"
-      if (!eid.isNull) message = keyPath + " is not available in " + eid.value
-      throw new TelemetryReaderException(message)
-    }
-    readValue.value
+    //    read(keyPath).getOrElse({
+    //     val eid = read("eid")
+    //      throw new TelemetryReaderException(s"keyPath is not available in the $eid ")
+    //    })
+    //    val readValue = read(keyPath)
+    //    if (null == readValue) {
+    //      val eid = read("eid")
+    //      throw new TelemetryReaderException(s"keyPath is not available in the $eid ")
+    //    } else {
+    //      readValue.getOrElse(null)
+    //    }
+    null.asInstanceOf[T]
   }
 
   private def lastParentMap(map: util.Map[String, Any], keyPath: String): ParentType = {
@@ -63,7 +67,7 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
         while ( {
           i < lastIndex && parent != null
         }) {
-          var result:  util.Map[String, Any] = null
+          var result: util.Map[String, Any] = null
           if (parent.isInstanceOf[util.Map[_, _]]) {
             val res = new ParentMap(parent, keys(i))
             val res2 = res.readChild
@@ -74,7 +78,7 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
             val res2 = res.readChild
             result = res2.getOrElse(null)
           } else {
-            result = new NullParent(parent, keys(i)).readChild.getOrElse(null)
+            result = null
           }
           parent = result
           i += 1
@@ -87,33 +91,21 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
       else if (parent.isInstanceOf[util.List[_]]) {
         new ParentListOfMap(parent.asInstanceOf[util.List[util.Map[String, Any]]], lastKeyInPath)
       } else {
-        new NullParent(parent, lastKeyInPath)
+        null
       }
     } catch {
       case ex: Exception =>
-//        ex.printStackTrace()
         println("error===" + ex.printStackTrace())
-       null
+        null
     }
   }
 
   override def toString: String = "Telemetry{" + "map=" + map + '}'
 
-  override def equals(o: Any): Boolean = {
-    if (this.equals(o)) return true
-    if (o == null || (this.getClass ne o.getClass)) return false
-    val telemetry = o.asInstanceOf[Telemetry]
-    if (map != null) map == telemetry.map
-    else telemetry.map == null
-  }
-
-  override def hashCode: Int = if (map != null) map.hashCode
-  else 0
-
-  def id: String = this.read[String]("metadata.checksum").value
+  def id: String = this.read[String]("metadata.checksum").getOrElse(null)
 
   def addFieldIfAbsent[T](fieldName: String, value: T): Unit = {
-    if (read(fieldName).isNull()) add(fieldName, value.asInstanceOf[AnyRef])
+    if (null != read(fieldName)) add(fieldName, value.asInstanceOf[T])
   }
 
   @throws[TelemetryReaderException]
@@ -123,23 +115,22 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
   }
 
   def getAtTimestamp: String = {
-    val timestamp = this.read("@timestamp")
-    val values =  timestamp.value.asInstanceOf[String]
     val simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-    if (values.isInstanceOf[Number]) {
-      val date = new Date(values.asInstanceOf[Number].longValue)
-      simpleDateFormat.format(date)
+    val timeStamp = read("@timestamp")
+    if (timeStamp.isInstanceOf[Number]) {
+      simpleDateFormat.format(new Date(timeStamp.asInstanceOf[Number].longValue))
+    } else {
+      timeStamp.toString
     }
-    else this.read[String]("@timestamp").value
   }
 
   def getSyncts: String = {
-    val timestamp = this.read("syncts").value.asInstanceOf[Number]
     val simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-    if (timestamp.isInstanceOf[Number]) {
-      val date = new Date(timestamp.asInstanceOf[Number].longValue)
-      simpleDateFormat.format(date)
+    val timeStamp = read("syncts")
+    if (timeStamp.isInstanceOf[Number]) {
+      simpleDateFormat.format(new Date(timeStamp.asInstanceOf[Number].longValue))
+    } else {
+      timeStamp.toString
     }
-    else this.read[String]("syncts").value
   }
 }
