@@ -71,9 +71,9 @@ abstract class Events(val map: util.Map[String, Any]) {
     telemetry.read(EventsPath.ACTOR_TYPE_PATH).getOrElse(null)
   }
 
-  def objectID(): String = if (objectFieldsPresent) telemetry.read[String](keyPath = EventsPath.ACTOR_ID_PATH).getOrElse(null) else null
+  def objectID(): String = if (objectFieldsPresent) telemetry.read[String](keyPath = EventsPath.OBJECT_ID_PATH).getOrElse(null) else null
 
-  def objectType(): String = if (objectFieldsPresent) telemetry.read[String](keyPath = EventsPath.ACTOR_TYPE_PATH).getOrElse(null) else null
+  def objectType(): String = if (objectFieldsPresent) telemetry.read[String](keyPath = EventsPath.OBJECT_TYPEPATH).getOrElse(null) else null
 
   def objectFieldsPresent(): Boolean = {
     val objectId = telemetry.read[String](keyPath = EventsPath.OBJECT_ID_PATH).getOrElse(null)
