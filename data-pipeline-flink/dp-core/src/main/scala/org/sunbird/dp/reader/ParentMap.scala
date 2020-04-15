@@ -14,10 +14,10 @@ object ParentMap {
 }
 
 class ParentMap private[reader](var map: util.Map[String, Any], var childKey: String) extends ParentType {
-  override def readChild[T >: Null]: T = {
+  override def readChild[T]: Option[T] = {
     if (map != null && map.containsKey(childKey) && map.get(childKey) != null) {
       val child = map.get(childKey)
-      return child.asInstanceOf[T]
+      return Some(child.asInstanceOf[T])
     }
     null
   }

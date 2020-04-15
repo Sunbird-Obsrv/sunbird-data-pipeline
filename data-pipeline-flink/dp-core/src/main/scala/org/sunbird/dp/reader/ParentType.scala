@@ -1,7 +1,7 @@
 package org.sunbird.dp.reader
 
 trait ParentType {
-  def readChild[T]: T
+  def readChild[T]: Option[T]
 
   def addChild(value: Any): Unit
 }

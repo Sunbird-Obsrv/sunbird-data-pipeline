@@ -23,7 +23,7 @@ object ParentListOfMap {
 class ParentListOfMap(var list: List[Map[String, Any]], var childKey: String)
   extends ParentType {
 
-  override def readChild[T >: Null](): T = {
+  override def readChild[T]: Option[T] = {
     if (list == null) {
       null
     }
@@ -35,7 +35,7 @@ class ParentListOfMap(var list: List[Map[String, Any]], var childKey: String)
       if (items.containsKey(childKey)) {
         val o: AnyRef = items.get(childKey).asInstanceOf[AnyRef]
         if (o.isInstanceOf[List[_]] && o.asInstanceOf[List[_]].size > 0) {
-          o.asInstanceOf[List[_]].get(0).asInstanceOf[T]
+          Some(o.asInstanceOf[List[_]].get(0).asInstanceOf[T])
         }
       }
     }

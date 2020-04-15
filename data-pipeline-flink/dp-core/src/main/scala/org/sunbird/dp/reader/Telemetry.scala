@@ -29,7 +29,7 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
 
   def read[T <: Any](keyPath: String): NullableValue[T] = try {
     val parentMap = lastParentMap(map, keyPath)
-    new NullableValue[T](parentMap.readChild)
+    new NullableValue[T](parentMap.readChild.get.asInstanceOf[T])
   } catch {
     case e: Exception =>
       //logger.error("", format("Couldn't get key: {0} from event:{1}", keyPath, map), e)
@@ -61,9 +61,9 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
         i < lastIndex && parent != null
       }) {
         var o = null
-        if (parent.isInstanceOf[util.Map[_, _]]) o = new ParentMap(parent, keys(i)).readChild
-        else if (parent.isInstanceOf[util.List[_]]) o = new ParentListOfMap(parent.asInstanceOf[util.List[util.Map[String, Any]]], keys(i)).readChild
-        else o = new NullParent(parent, keys(i)).readChild
+        if (parent.isInstanceOf[util.Map[_, _]]) o = new ParentMap(parent, keys(i)).readChild.get
+        else if (parent.isInstanceOf[util.List[_]]) o = new ParentListOfMap(parent.asInstanceOf[util.List[util.Map[String, Any]]], keys(i)).readChild.get
+        else o = new NullParent(parent, keys(i)).readChild.get
         parent = o
         i += 1
       }

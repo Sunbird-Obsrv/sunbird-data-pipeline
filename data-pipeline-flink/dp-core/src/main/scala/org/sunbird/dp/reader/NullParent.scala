@@ -10,9 +10,9 @@ object NullParent {
 }
 
 class NullParent private[reader](var parent: Any, var childKey: String) extends ParentType {
-  override def readChild[T]: T = {
+  override def readChild[T]: Option[T] = {
     //NullParent.LOGGER.warn(null, MessageFormat.format("NULL PARENT READ CHILD INVOKED FOR PARENT: {0}, CHILD KEY: {1}", parent, childKey))
-    null.asInstanceOf[T]
+    Some(null.asInstanceOf[T])
   }
 
   override def addChild(value: Any): Unit = {
