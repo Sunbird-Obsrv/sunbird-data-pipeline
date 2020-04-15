@@ -69,14 +69,10 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
         }) {
           var result: util.Map[String, Any] = null
           if (parent.isInstanceOf[util.Map[_, _]]) {
-            val res = new ParentMap(parent, keys(i))
-            val res2 = res.readChild
-            result = res2.getOrElse(null)
+            result = new ParentMap(parent, keys(i)).readChild.getOrElse(null)
           }
           else if (parent.isInstanceOf[util.List[_]]) {
-            val res = new ParentListOfMap(parent.asInstanceOf[util.List[util.Map[String, Any]]], keys(i))
-            val res2 = res.readChild
-            result = res2.getOrElse(null)
+            result = new ParentListOfMap(parent.asInstanceOf[util.List[util.Map[String, Any]]], keys(i)).readChild.getOrElse(null)
           } else {
             result = null
           }
@@ -88,14 +84,10 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
       if (parent.isInstanceOf[util.Map[_, _]]) {
         new ParentMap(parent, lastKeyInPath)
       }
-      else if (parent.isInstanceOf[util.List[_]]) {
-        new ParentListOfMap(parent.asInstanceOf[util.List[util.Map[String, Any]]], lastKeyInPath)
-      } else {
-        null
-      }
+      else if (parent.isInstanceOf[util.List[_]]) new ParentListOfMap(parent.asInstanceOf[util.List[util.Map[String, Any]]], lastKeyInPath)
+      else null
     } catch {
       case ex: Exception =>
-        println("error===" + ex.printStackTrace())
         null
     }
   }
