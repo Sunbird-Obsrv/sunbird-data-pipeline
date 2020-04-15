@@ -19,6 +19,8 @@ public class EventFixture {
       + "  \"uid\": \"\",\n" + "  \"ver\": \"2.0\",\n" + "  \"cdata\": [\n" + "    {\n"
       + "      \"id\": \"correlationid\",\n" + "      \"type\": \"correlationtype\"\n" + "    ";
   
+  public static final String RESPONSE_EVENT = "{\"eid\":\"RESPONSE\",\"ets\":1586759864200,\"ver\":\"3.0\",\"mid\":\"RESPONSE:17d97e7cba61bd7c996d3ae71b9706ef\",\"actor\":{\"id\":\"c5b5732b-b8d6-44ad-bf52-d8f7fc513ac3\",\"type\":\"User\"},\"context\":{\"channel\":\"0126825293972439041\",\"pdata\":{\"id\":\"preprod.diksha.portal\",\"ver\":\"2.8.7\",\"pid\":\"sunbird-portal.contentplayer\"},\"env\":\"contentplayer\",\"sid\":\"zSizgfO7mzdZ--MhlGCzszgdNhKW6MCp\",\"did\":\"a915339fbca0afddbf537a1792f01791\",\"cdata\":[{\"id\":\"28d1f55313c9c14df8ea86ca1dc73a92\",\"type\":\"ContentSession\"},{\"id\":\"fed7932935f2223870beb120bf58aeed\",\"type\":\"PlaySession\"}],\"rollup\":{\"l1\":\"0126825293972439041\"}},\"object\":{\"id\":\"do_2129946748092334081914\",\"type\":\"Content\",\"ver\":\"2\",\"rollup\":{}},\"tags\":[\"0126825293972439041\"],\"edata\":{\"target\":{\"id\":\"do_21299463432309145612386\",\"ver\":\"1.0\",\"type\":\"AssessmentItem\"},\"type\":\"CHOOSE\",\"values\":[{\"option0\":\"text\"}]}}";
+  
   public static final String ASSESS_EVENT = "{" +
       "      \"eid\": \"ASSESS\",\n" +
       "      \"ets\": 1568891738245,\n" +

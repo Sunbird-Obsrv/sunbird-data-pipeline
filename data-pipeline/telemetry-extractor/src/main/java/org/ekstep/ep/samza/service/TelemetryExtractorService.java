@@ -12,6 +12,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import redis.clients.jedis.exceptions.JedisException;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class TelemetryExtractorService {
 	private DeDupEngine deDupEngine;
 	private String defaultChannel = "";
 	private int rawIndividualEventMaxSize;
-	private String assessEvent = "ASSESS";
+	private List<String> assessEvents = Arrays.asList("ASSESS", "RESPONSE");
 	
 	public TelemetryExtractorService(TelemetryExtractorConfig config, JobMetrics metrics, DeDupEngine deDupEngine) {
 		this.metrics = metrics;
@@ -82,7 +83,7 @@ public class TelemetryExtractorService {
 								"Sending to error topic", event.get("mid"), eventSizeInBytes, rawIndividualEventMaxSize));
 						sink.toErrorTopic(json);
 					} else {
-					  if (assessEvent.equalsIgnoreCase(eid)) {
+					  if (assessEvents.contains(eid)) {
 	            sink.toAssessTopic(json);
 	          } else {
 	            sink.toSuccessTopic(json);
