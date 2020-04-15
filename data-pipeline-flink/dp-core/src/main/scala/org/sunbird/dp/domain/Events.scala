@@ -10,7 +10,6 @@ import org.sunbird.dp.reader.Telemetry
 abstract class Events(val map: util.Map[String, Any]) {
 
   protected var telemetry: Telemetry = new Telemetry(map)
-  protected var path: Path = new Path()
 
   def getTelemetry: Telemetry = telemetry
 
