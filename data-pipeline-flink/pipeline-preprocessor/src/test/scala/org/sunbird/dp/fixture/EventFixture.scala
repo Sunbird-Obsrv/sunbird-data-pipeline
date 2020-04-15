@@ -33,4 +33,14 @@ object EventFixtures {
       |
       |{"ver":"3.0","eid":"SHARE_ITEM","ets":1577278681178,"actor":{"type":"User","id":"7c3ea1bb-4da1-48d0-9cc0-c4f150554149"},"edata":{"dir":"In","type":"File","items":[{"origin":{"id":"1b17c32bad61eb9e33df281eecc727590d739b2b","type":"Device"},"id":"do_312785709424099328114191","type":"CONTENT","ver":"1","params":[{"transfers":0,"size":21084308}]},{"origin":{"id":"1b17c32bad61eb9e33df281eecc727590d739b2b","type":"Device"},"id":"do_31277435209002188818711","type":"CONTENT","ver":"18","params":[{"transfers":12,"size":"123"}]},{"origin":{"id":"1b17c32bad61eb9e33df281eecc727590d739b2b","type":"Device"},"id":"do_31278794857559654411554","type":"TextBook","ver":"1"}]},"object":{"id":"do_312528116260749312248818","type":"TextBook","version":"10","rollup":{}},"mid":"02ba33efff5-15fe-4ec5-b32.1084308E760-3d03ff429fae84","syncts":1577278682630,"@timestamp":"2019-12-25T12:58:02.630Z","type":"events"}
       |""".stripMargin
+
+  val TELEMETRY_AUDIT_EVENT: String =
+    """
+      |{"ver":"3.0","eid":"AUDIT","ets":1580495389750,"actor":{"type":"System","id":"77ae3fd0-5d27-44e1-ab40-dbc3f723d3ed"},"context":{"cdata":[{"id":"student","type":"UserRole"}],"env":"sdk","channel":"505c7c48ac6dc1edc9b08f21db5a571d","pdata":{"id":"prod.diksha.app","pid":"sunbird.app","ver":"2.6.204"},"sid":"73756d52-2b20-456d-a83f-6f18389f2fa5","did":"8b5538ac75796b7701c9ff02be785035bb245a2e"},"edata":{"state":"Updated","props":["medium","board","grade","syllabus","gradeValue"]},"object":{"id":"77ae3fd0-5d27-44e1-ab40-dbc3f723d3ed","type":"User","version":"","rollup":{}},"mid":"7e46a186-83ef-493b-8e45-814150f9cff9","syncts":1580495403199,"@timestamp":"2020-01-31T18:30:03.199Z","type":"events"}
+      |""".stripMargin
+
+  val TELEMETRY_LOG_EVENT: String =
+    """
+      |{"eid":"LOG","ets":1.580495430158E12,"ver":"3.0","mid":"LP.1580495430158.23ffa945-18b5-4185-b347-5bc355fafaed","actor":{"id":"org.ekstep.learning.platform","type":"System"},"context":{"channel":"in.ekstep","pdata":{"id":"prod.ntp.learning.platform","pid":"search-service","ver":"1.0"},"env":"search"},"edata":{"level":"INFO","type":"api_access","message":"","params":[{"duration":46.0},{"protocol":"HTTP"},{"size":438707.0},{"method":"POST"},{"rid":"ekstep.composite-search.search"},{"uip":"11.4.0.39"},{"url":"/v3/search"},{"status":200.0}]},"syncts":1.580495430158E12,"type":"events","@timestamp":"2020-01-31T18:30:30.158Z"}
+      |""".stripMargin
 }

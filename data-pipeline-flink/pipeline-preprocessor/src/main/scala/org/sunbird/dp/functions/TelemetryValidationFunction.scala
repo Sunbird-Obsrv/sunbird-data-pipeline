@@ -20,7 +20,7 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
 
   override def metricsList(): List[String] = {
     List(config.validationFailureMetricsCount, config.validationSkipMetricsCount,
-      config.validationSuccessMetricsCount, config.duplicationEventMetricsCount) ::: deduplicationMetrics
+      config.validationSuccessMetricsCount, config.duplicationSkippedEventMetricsCount) ::: deduplicationMetrics
   }
 
   override def open(parameters: Configuration): Unit = {
@@ -63,7 +63,10 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
         event.updateDefaults(config)
         if (isDuplicateCheckRequired(event)) {
           deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag, flagName = config.DE_DUP_FLAG_NAME)(dedupEngine, metrics)
-          metrics.incCounter(config.duplicationEventMetricsCount)
+        } else {
+          event.markSkipped(config.DE_DUP_SKIP_FLAG_NAME)
+          context.output(config.uniqueEventsOutputTag, event)
+          metrics.incCounter(config.duplicationSkippedEventMetricsCount)
         }
       } else {
         val failedErrorMsg = schemaValidator.getInvalidFieldName(validationReport.toString)
