@@ -65,4 +65,5 @@ object EventsPath {
   val OBJECT_PATH = "object"
   val OBJECT_ID_PATH = s"$OBJECT_PATH.id"
   val OBJECT_TYPEPATH = s"$OBJECT_PATH.type"
+  val OBJECT_ROLLUP_L1 = s"$OBJECT_PATH.rollup.l1"
 }
