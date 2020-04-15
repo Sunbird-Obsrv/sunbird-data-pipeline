@@ -23,17 +23,17 @@ node() {
             }
         }
 
-            stage('Build') {
+       //     stage 'Build'
                 sh ("mvn -f data-pipeline/pom.xml \
                 -Dlog4j.configuration=$WORKSPACE/logs \
                 -Dcobertura.report.format=xml clean cobertura:cobertura package")
-            }
+            
 
-            stage('Publish_test_results') {
+     //       stage Publish_test_results
                cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/target/site/cobertura/coverage.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false 
-            }
+            
 
-            stage('Archive artifacts'){
+     //       stage Archive artifacts
                 sh """
                         mkdir dp_artifacts
                         cp data-pipeline/distribution/target/distribution-0.0.1-distribution.tar.gz dp_artifacts
@@ -44,7 +44,7 @@ node() {
                 archiveArtifacts artifacts: 'metadata.json', onlyIfSuccessful: true
                 currentBuild.result = "SUCCESS"
                 currentBuild.description = "Artifact: ${artifact_version}, Public: ${params.github_release_tag}"
-            }
+            
             currentBuild.result = "SUCCESS"    
             slack_notify(currentBuild.result, tag_name)
             email_notify()  
