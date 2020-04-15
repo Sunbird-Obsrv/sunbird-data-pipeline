@@ -97,13 +97,12 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
   def id: String = this.read[String]("metadata.checksum").getOrElse(null)
 
   def addFieldIfAbsent[T](fieldName: String, value: T): Unit = {
-    if (null != read(fieldName)) add(fieldName, value.asInstanceOf[T])
+    if (null == read(fieldName).getOrElse(null)) add(fieldName, value.asInstanceOf[T])
   }
 
   @throws[TelemetryReaderException]
   def getEts: Long = {
-    val ets = this.mustReadValue[Double]("ets")
-    ets.toLong
+     mustReadValue[Double]("ets").toLong
   }
 
   def getAtTimestamp: String = {

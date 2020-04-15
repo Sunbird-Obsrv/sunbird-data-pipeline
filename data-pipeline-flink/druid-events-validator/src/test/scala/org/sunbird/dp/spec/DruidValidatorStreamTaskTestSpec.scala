@@ -66,7 +66,6 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
 
         val task = new DruidValidatorStreamTask(druidValidatorConfig, mockKafkaUtil)
         task.process()
-
         TelemetryEventsSink.values.size() should be (2)
         SummaryEventsSink.values.size() should be (1)
         FailedEventsSink.values.size() should be (1)
