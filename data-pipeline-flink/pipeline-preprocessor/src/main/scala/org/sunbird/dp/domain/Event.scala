@@ -6,13 +6,13 @@ import org.apache.commons.lang3.StringUtils
 import org.joda.time.format.DateTimeFormat
 import org.sunbird.dp.task.PipelinePreprocessorConfig
 
-class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
+class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
 
   private[this] val dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZoneUTC
   private val jobName = "PipelinePreprocessor"
 
   override def kafkaKey(): String = {
-    did()
+    did
   }
 
   def schemaName: String = {
