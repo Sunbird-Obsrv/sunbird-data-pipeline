@@ -10,6 +10,7 @@ import org.sunbird.dp.reader.Telemetry
 abstract class Events(val map: util.Map[String, Any]) {
 
   protected var telemetry: Telemetry = new Telemetry(map)
+  protected var path: Path = new Path()
 
   def getTelemetry: Telemetry = telemetry
 
@@ -21,13 +22,13 @@ abstract class Events(val map: util.Map[String, Any]) {
     mid
   }
 
-  def id(): String = telemetry.read(keyPath = "metadata.checksum").value
+  def id(): String = telemetry.read[String](keyPath = "metadata.checksum").value
 
   def getMap(): util.Map[String, Any] = telemetry.getMap
 
   def getJson(): String = new Gson().toJson(getMap)
 
-  def mid(): String = telemetry.read("mid").value
+  def mid(): String = telemetry.read[String]("mid").value
 
 
   def did(): String = {
@@ -36,9 +37,9 @@ abstract class Events(val map: util.Map[String, Any]) {
     else did.value
   }
 
-  def eid(): String = telemetry.read("eid").value
+  def eid(): String = telemetry.read[String]("eid").value
 
-  def flags(): util.Map[String, AnyRef] = telemetry.read("flags").value
+  def flags(): util.Map[String, AnyRef] = telemetry.read[util.Map[String, AnyRef]]("flags").value
 
   override def toString: String = "Event{" + "telemetry=" + telemetry + '}'
 
@@ -67,7 +68,7 @@ abstract class Events(val map: util.Map[String, Any]) {
   }
 
   def actorId(): String = {
-    val actorid = telemetry.read("uid")
+    val actorid = telemetry.read[String]("uid")
     if (actorid.isNull) telemetry.read[String]("actor.id").value
     else actorid.value
   }
@@ -99,4 +100,5 @@ abstract class Events(val map: util.Map[String, Any]) {
   }
 
   def getFlags(): util.Map[String, Boolean] = telemetry.read("flags").value
+  def getTimeStamp() = telemetry.getAtTimestamp
 }

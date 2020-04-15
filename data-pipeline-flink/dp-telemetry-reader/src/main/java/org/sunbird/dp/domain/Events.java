@@ -61,6 +61,10 @@ public abstract class Events {
         NullableValue<String> eid = telemetry.read("eid");
         return eid.value();
     }
+    public Object context() {
+        NullableValue<Object> context = telemetry.read("context");
+        return context.value();
+    }
     
     public Map<String, Object> flags() {
         NullableValue<Map<String, Object>> eid = telemetry.read(path.flags());

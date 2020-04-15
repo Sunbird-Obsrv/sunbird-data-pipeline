@@ -76,6 +76,7 @@ public class Telemetry implements Serializable {
                 Object o;
                 // System.out.println("Keypath = " + keyPath);
                 // System.out.println("Parent instance = " + parent.getClass());
+                System.out.println("key[i8]" + keys[i]);
                 if (parent instanceof Map) {
                     o = new ParentMap((Map<String, Object>) parent, keys[i]).readChild();
                 } else if (parent instanceof List) {
@@ -86,6 +87,7 @@ public class Telemetry implements Serializable {
                 parent = o;
             }
         }
+        System.out.println(keys[lastIndex]);
         String lastKeyInPath = keys[lastIndex];
         if (parent instanceof Map) {
             return new ParentMap((Map<String, Object>) parent, lastKeyInPath);

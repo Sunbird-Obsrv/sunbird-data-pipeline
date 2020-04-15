@@ -3,13 +3,12 @@ package org.sunbird.dp.reader
 class NullableValue[T](values: T) {
   def value: T = values
 
-  def isNull: Boolean = {
-    println("isNull")
-    values.equals(null)
+  def isNull(): Boolean = {
+    values == null
   }
 
   def valueOrDefault(defaultValue: T): T = {
-    if (isNull) return defaultValue
+    if (isNull()) return defaultValue
     value
   }
 

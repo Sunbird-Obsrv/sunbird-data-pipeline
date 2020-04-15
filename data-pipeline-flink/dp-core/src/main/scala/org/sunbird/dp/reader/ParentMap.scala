@@ -19,7 +19,7 @@ class ParentMap private[reader](var map: util.Map[String, Any], var childKey: St
       val child = map.get(childKey)
       return Some(child.asInstanceOf[T])
     }
-    null
+    None
   }
 
   override def addChild(value: Any): Unit = {

@@ -39,7 +39,7 @@ class ParentListOfMap(var list: List[Map[String, Any]], var childKey: String)
         }
       }
     }
-    null
+    None
   }
 
   override def addChild(value: Any): Unit = {

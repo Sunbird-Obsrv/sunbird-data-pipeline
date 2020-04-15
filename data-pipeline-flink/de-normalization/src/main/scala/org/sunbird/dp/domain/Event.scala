@@ -9,7 +9,7 @@ import org.joda.time.format.DateTimeFormatter
 import scala.collection.mutable.Map
 import collection.JavaConverters._
 
-class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
+class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
 
   private[this] val df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZoneUTC
   private[this] val df2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").withZoneUTC()
@@ -47,7 +47,7 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
 
     val userData: NullableValue[util.Map[String, AnyRef]] = telemetry.read(path.userData())
     if (!userData.isNull())
-      Some(userData.value().get("state").asInstanceOf[String], userData.value().get("district").asInstanceOf[String], "user-profile")
+      Some(userData.value.get("state").asInstanceOf[String], userData.value.get("district").asInstanceOf[String], "user-profile")
     else
       None
   }
@@ -55,8 +55,8 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
   def getUserDeclaredLocation(): Option[(String, String, String)] = {
 
     val deviceData: NullableValue[util.Map[String, AnyRef]] = telemetry.read(path.deviceData())
-    if (!deviceData.isNull() && null != deviceData.value().get("userdeclared")) {
-      val userDeclared = deviceData.value().get("userdeclared").asInstanceOf[util.Map[String, String]]
+    if (!deviceData.isNull() && null != deviceData.value.get("userdeclared")) {
+      val userDeclared = deviceData.value.get("userdeclared").asInstanceOf[util.Map[String, String]]
       Some(userDeclared.get("state"), userDeclared.get("district"), "user-declared")
     } else
       None
@@ -65,7 +65,7 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
   def getIpLocation(): Option[(String, String, String)] = {
     val deviceData: NullableValue[util.Map[String, AnyRef]] = telemetry.read(path.deviceData())
     if (!deviceData.isNull())
-      Some(deviceData.value().get("state").asInstanceOf[String], deviceData.value().get("districtcustom").asInstanceOf[String], "ip-resolved")
+      Some(deviceData.value.get("state").asInstanceOf[String], deviceData.value.get("districtcustom").asInstanceOf[String], "ip-resolved")
     else
       None
   }
@@ -93,12 +93,12 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
   }
 
   def objectRollUpl1ID(): String = {
-    telemetry.read[String]("object.rollup.l1").value()
+    telemetry.read[String]("object.rollup.l1").value
   }
 
   def objectRollUpl1FieldsPresent(): Boolean = {
 
-    val objectrollUpl1 = telemetry.read[String]("object.rollup.l1").value()
+    val objectrollUpl1 = telemetry.read[String]("object.rollup.l1").value
     null != objectrollUpl1 && !objectrollUpl1.isEmpty()
   }
 
@@ -108,7 +108,7 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
 
   def addUserData(newData: Map[String, AnyRef]) {
     val previousData: NullableValue[util.Map[String, AnyRef]] = telemetry.read(path.userData())
-    val userdata = if (previousData.isNull()) new util.HashMap[String, AnyRef]() else previousData.value()
+    val userdata = if (previousData.isNull()) new util.HashMap[String, AnyRef]() else previousData.value
     userdata.putAll(newData.asJava)
     telemetry.add(path.userData(), userdata)
     if (newData.size > 2)
@@ -120,7 +120,7 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
   def addContentData(newData: Map[String, AnyRef]) {
     val convertedData = getEpochConvertedContentDataMap(newData)
     val previousData: NullableValue[util.Map[String, AnyRef]] = telemetry.read(path.contentData())
-    val contentData = if (previousData.isNull()) new util.HashMap[String, AnyRef]() else previousData.value()
+    val contentData = if (previousData.isNull()) new util.HashMap[String, AnyRef]() else previousData.value
     contentData.putAll(convertedData.asJava)
     telemetry.add(path.contentData(), contentData)
     setFlag("content_denorm", true)
@@ -191,7 +191,7 @@ class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
 
   def setFlag(key: String, value: Boolean) {
     val telemetryFlag: NullableValue[util.Map[String, AnyRef]] = telemetry.read(path.flags())
-    val flags = if (telemetryFlag.isNull()) new util.HashMap[String, AnyRef]() else telemetryFlag.value()
+    val flags = if (telemetryFlag.isNull()) new util.HashMap[String, AnyRef]() else telemetryFlag.value
     flags.put(key, value.asInstanceOf[AnyRef])
     telemetry.add(path.flags(), flags)
   }
