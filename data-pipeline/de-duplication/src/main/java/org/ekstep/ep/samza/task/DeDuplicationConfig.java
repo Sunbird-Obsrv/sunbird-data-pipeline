@@ -26,7 +26,7 @@ public class DeDuplicationConfig {
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
         defaultChannel = config.get("default.channel", "org.sunbird");
         dupStore = config.getInt("redis.database.duplicationstore.id", 7);
-        expirySeconds = config.getInt("redis.database.key.expiry.seconds", 432000);
+        expirySeconds = config.getInt("redis.database.key.expiry.seconds", 86400);
         if (!config.get("dedup.producer.include.ids", "").isEmpty()) {
             includedProducerIds = config.getList("dedup.producer.include.ids", new ArrayList<>());
         }
