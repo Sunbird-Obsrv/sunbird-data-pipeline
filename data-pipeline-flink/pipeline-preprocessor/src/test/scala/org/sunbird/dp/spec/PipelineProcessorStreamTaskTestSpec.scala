@@ -74,8 +74,8 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     DupEventsSink.values.size() should be(1)
     TelemetryAuditEventSink.values.size() should be(1)
     TelemetrySecondaryEventSink.values.size() should be(1)
-
-    DupEventsSink.values.get(0).getFlags.get(ppConfig.DE_DUP_FLAG_NAME).booleanValue() should be(true)
+   // println("TelemetryPrimaryEventSink.values.get(0)" + TelemetryPrimaryEventSink.values)
+    DupEventsSink.values.get(0).getFlags.get(ppConfig.DE_DUP_FLAG_NAME).booleanValue() should be(false)
     TelemetryPrimaryEventSink.values.get(0).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(true)
     TelemetryPrimaryEventSink.values.get(1).getFlags.get(ppConfig.SHARE_EVENTS_FLATTEN_FLAG_NAME).booleanValue() should be(true)
     TelemetryPrimaryEventSink.values.get(1).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(true)

@@ -25,16 +25,16 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
   }
 
   def correctDialCodeKey(): Unit = {
-    val dialcodes = telemetry.read("edata.filters.dialCodes")
-    if (dialcodes != null && dialcodes.value != null) {
-      telemetry.add("edata.filters.dialcodes", dialcodes.value)
+    val dialcodes = telemetry.read("edata.filters.dialCodes").getOrElse(null)
+    if (dialcodes != null && dialcodes != null) {
+      telemetry.add("edata.filters.dialcodes", dialcodes)
       telemetry.add("edata.filters.dialCodes", null)
     }
   }
 
   def correctDialCodeValue(): Unit = {
-    val dialcode = telemetry.read[String]("object.id").value
-    telemetry.add("object.id", dialcode.toUpperCase)
+    val dialcode = telemetry.read[String]("object.id").getOrElse(null)
+    if(dialcode != null ) telemetry.add("object.id", dialcode.toUpperCase)
   }
 
   def markValidationFailure(errorMsg: String, flagName: String): Unit = {
@@ -59,7 +59,7 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
   }
 
   def updateDefaults(config: PipelinePreprocessorConfig): Unit = {
-    val channelString = telemetry.read[String]("context.channel").value
+    val channelString = telemetry.read[String]("context.channel").getOrElse(null)
     val channel = StringUtils.deleteWhitespace(channelString)
     if (channel == null || channel.isEmpty) {
       telemetry.addFieldIfAbsent("context", new util.HashMap[String, AnyRef])
@@ -76,21 +76,21 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
     else if (strSyncts != null) telemetry.addFieldIfAbsent("@timestamp", strSyncts)
   }
 
-  def edataDir: String = telemetry.read[String]("edata.dir").value
+  def edataDir: String = telemetry.read[String]("edata.dir").getOrElse(null)
 
-  def eventSyncTs: Long = telemetry.read[Long]("syncts").value.asInstanceOf[Number].longValue()
+  def eventSyncTs: Long = telemetry.read[Long]("syncts").getOrElse(System.currentTimeMillis()).asInstanceOf[Number].longValue()
 
-  def eventTags: Seq[AnyRef] = telemetry.read[Seq[AnyRef]]("tags").value
+  def eventTags: Seq[AnyRef] = telemetry.read[Seq[AnyRef]]("tags").getOrElse(null)
 
-  def cdata: util.ArrayList[util.Map[String, AnyRef]] = telemetry.read[util.ArrayList[util.Map[String, AnyRef]]]("context.cdata").value
+  def cdata: util.ArrayList[util.Map[String, AnyRef]] = telemetry.read[util.ArrayList[util.Map[String, AnyRef]]]("context.cdata").getOrElse(null)
 
-  def eventPData: util.Map[String, AnyRef] = telemetry.read[util.Map[String, AnyRef]]("context.pdata").value
+  def eventPData: util.Map[String, AnyRef] = telemetry.read[util.Map[String, AnyRef]]("context.pdata").getOrElse(null)
 
-  def sessionId: String = telemetry.read[String]("context.sid").value.toString
+  def sessionId: String = telemetry.read[String]("context.sid").getOrElse(null)
 
-  def env: String = telemetry.read[String]("context.env").value
+  def env: String = telemetry.read[String]("context.env").getOrElse(null)
 
-  def rollup: util.Map[String, AnyRef] = telemetry.read[util.Map[String, AnyRef]]("context.rollup").value
+  def rollup: util.Map[String, AnyRef] = telemetry.read[util.Map[String, AnyRef]]("context.rollup").getOrElse(null)
 
 
 }
