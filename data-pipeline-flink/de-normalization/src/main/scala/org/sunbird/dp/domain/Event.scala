@@ -45,28 +45,25 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
   def getUserProfileLocation(): Option[(String, String, String)] = {
 
     val userData: util.Map[String, AnyRef] = telemetry.read(EventsPath.USERDATA_PATH).getOrElse(null)
-    if (null != userData)
-      Some(userData.get("state").asInstanceOf[String], userData.get("district").asInstanceOf[String], "user-profile")
-    else
-      None
+    Option(userData).map(user => {
+      Some(user.get("state").asInstanceOf[String], user.get("district").asInstanceOf[String], "user-profile")
+    }).getOrElse(None)
   }
 
   def getUserDeclaredLocation(): Option[(String, String, String)] = {
-
     val deviceData: util.Map[String, AnyRef] = telemetry.read(EventsPath.DEVICE_DATA_PATH).getOrElse(null)
-    if (null != deviceData && null != deviceData.get("userdeclared")) {
-      val userDeclared = deviceData.get("userdeclared").asInstanceOf[util.Map[String, String]]
-      Some(userDeclared.get("state"), userDeclared.get("district"), "user-declared")
-    } else
-      None
+    Option(deviceData).map(device => {
+      val userDeclaredData = device.get("userdeclared").asInstanceOf[util.Map[String, String]]
+      Some(userDeclaredData.get("state"), userDeclaredData.get("district"), "user-declared")
+    }).getOrElse(None)
   }
 
   def getIpLocation(): Option[(String, String, String)] = {
     val deviceData: util.Map[String, AnyRef] = telemetry.read(EventsPath.DEVICE_DATA_PATH).getOrElse(null)
-    if (null != deviceData)
-      Some(deviceData.get("state").asInstanceOf[String], deviceData.get("districtcustom").asInstanceOf[String], "ip-resolved")
-    else
-      None
+    Option(deviceData).map(device => {
+      Some(device.get("state").asInstanceOf[String], device.get("districtcustom").asInstanceOf[String], "ip-resolved")
+    }).getOrElse(None)
+
   }
 
   def addDerivedLocation(derivedData: (String, String, String)) {
@@ -187,10 +184,9 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
   }
 
   def setFlag(key: String, value: Boolean) {
-    val telemetryFlag: util.Map[String, AnyRef] = telemetry.read(EventsPath.FLAGS_PATH).getOrElse(null)
-    val flags = if (null == telemetryFlag) new util.HashMap[String, AnyRef]() else telemetryFlag
-    flags.put(key, value.asInstanceOf[AnyRef])
-    telemetry.add(EventsPath.FLAGS_PATH, flags)
+    val telemetryFlag: util.Map[String, AnyRef] = telemetry.read(EventsPath.FLAGS_PATH).getOrElse(new util.HashMap[String, AnyRef]())
+    telemetryFlag.put(key, value.asInstanceOf[AnyRef])
+    telemetry.add(EventsPath.FLAGS_PATH, telemetryFlag)
   }
 
   def addISOStateCodeToDeviceProfile(deviceProfile: DeviceProfile): String = {
