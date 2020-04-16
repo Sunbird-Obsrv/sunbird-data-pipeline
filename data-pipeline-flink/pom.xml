@@ -22,8 +22,8 @@
 	<modules>
 		<module>dp-core</module>
 		<module>de-normalization</module>
-<!--		<module>telemetry-extractor</module>-->
-<!--		<module>pipeline-preprocessor</module>-->
+		<module>telemetry-extractor</module>
+		<module>pipeline-preprocessor</module>
 		<module>druid-events-validator</module>
 	</modules>
 
