@@ -6,7 +6,7 @@ import com.google.gson.Gson
 import org.scalatest.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import org.sunbird.dp.domain.EventsPath
-import org.sunbird.dp.reader.Telemetry
+import org.sunbird.dp.reader.{Telemetry, TelemetryReaderException}
 import org.sunbird.fixture.EventFixture
 
 class TelemetryEventReaderSpec extends BaseSpec with Matchers with MockitoSugar {
@@ -42,6 +42,15 @@ class TelemetryEventReaderSpec extends BaseSpec with Matchers with MockitoSugar 
     telemetryEvent.edataItems() should not be (null)
     telemetryEvent.edataItems().size() should be(3)
 
+    telemetryEvent.updateTs("9543785")
+    telemetryEvent.getTimeStamp() should be("9543785")
+    telemetryEvent.getTelemetry.isInstanceOf[Telemetry] should be(true)
+
+    telemetryEvent.toString should not be(null)
+    telemetryEvent.id should be(null)
+    telemetryEvent.getChecksum should be("02ba33e5-15fe-4ec5-b32.1084308E760-3d03429fae84")
+
+
     // Update
     val telemetryReader: Telemetry = new Telemetry(eventMap)
     telemetryReader.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])
@@ -53,9 +62,11 @@ class TelemetryEventReaderSpec extends BaseSpec with Matchers with MockitoSugar 
     val producerPid = telemetryReader.read[String](EventsPath.CONTEXT_P_DATA_PID_PATH).getOrElse(null)
     producerPid should not be(null)
     producerPid should be("sunbird.app")
+
+
   }
 
-  it should "Not fail when the particular key/nested key or value is not found" in {
+  it should "Not fail when the particular key/nested key or value is not found" in intercept[TelemetryReaderException]{
     val eventMap = gson.fromJson(EventFixture.SAMPLE_EVENT_2, new util.LinkedHashMap[String, Any]().getClass)
     val telemetryReader: Telemetry = new Telemetry(eventMap)
     val actorName = telemetryReader.read[String]("actor.id.name").getOrElse(null)
@@ -71,8 +82,13 @@ class TelemetryEventReaderSpec extends BaseSpec with Matchers with MockitoSugar 
     timeStamp should not be(null)
 
     telemetryReader.getEts should be(1577278681178L)
-    telemetryReader.readOrDefault("context.id", "context_id") should be("context_id")
+    telemetryReader.readOrDefault(s"${EventsPath.CONTEXT_PATH}.id", "context_id") should be("context_id")
     telemetryReader.readOrDefault(EventsPath.CONTEXT_CHANNEL_PATH, "context_id") should be("505c7c48ac6dc1edc9b08f21db5a571d")
+
+    // Should throw an exception when mustRead value doesn't find any value for the key
+    telemetryReader.mustReadValue("eidd")
+    telemetryReader.id should be(null)
+    telemetryReader.toString should not be(null)
   }
 
 }
