@@ -26,7 +26,7 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
 
   def correctDialCodeKey(): Unit = {
     val dialcodes = telemetry.read(s"${EventsPath.EDTA_FILTERS}.dialCodes").getOrElse(null)
-    if (dialcodes != null && dialcodes != null) {
+    if (dialcodes != null) {
       telemetry.add(s"${EventsPath.EDTA_FILTERS}.dialcodes", dialcodes)
       telemetry.add(s"${EventsPath.EDTA_FILTERS}.dialCodes", null)
     }
