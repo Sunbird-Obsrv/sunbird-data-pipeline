@@ -3258,8 +3258,7 @@
 				"reportPath": "dialcode_counts.csv"
 			}
 		},
-		"dialcodeConfig": {
-			"reportConfig": {
+		"dialcodeReportConfig": {
 				"id": "etb_metrics",
 				"metrics": [],
 				"labels": {},
@@ -3277,13 +3276,6 @@
 					"rollupCol": "Date",
 					"rollupRange": 1
 				}
-			},
-			"store": "azure",
-			"format": "csv",
-			"key": "druid-reports/",
-			"filePath": "druid-reports/",
-			"container": "{{ bucket }}",
-			"folderPrefix": ["slug", "reportName"]
 		},
 		"etbFileConfig": {
 			"bucket": "reports",
