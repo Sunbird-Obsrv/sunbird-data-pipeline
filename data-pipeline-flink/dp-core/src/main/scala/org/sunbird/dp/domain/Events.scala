@@ -91,5 +91,5 @@ abstract class Events(val map: util.Map[String, Any]) {
 
   def getFlags(): util.Map[String, Boolean] = telemetry.read(keyPath = EventsPath.FLAGS_PATH).getOrElse(null)
 
-  def getTimeStamp() = telemetry.getAtTimestamp
+  def getTimeStamp():String = telemetry.getAtTimestamp
 }
