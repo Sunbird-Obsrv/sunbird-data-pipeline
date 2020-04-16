@@ -86,7 +86,7 @@ class TelemetryEventReaderSpec extends BaseSpec with Matchers with MockitoSugar 
     telemetryReader.readOrDefault(EventsPath.CONTEXT_CHANNEL_PATH, "context_id") should be("505c7c48ac6dc1edc9b08f21db5a571d")
 
     // Should throw an exception when mustRead value doesn't find any value for the key
-    telemetryReader.mustReadValue("eidd")
+    telemetryReader.mustReadValue("invlid_key")
     telemetryReader.id should be(null)
     telemetryReader.toString should not be(null)
   }
