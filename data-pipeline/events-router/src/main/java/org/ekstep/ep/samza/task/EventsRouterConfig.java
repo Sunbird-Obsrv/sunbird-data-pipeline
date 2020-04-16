@@ -32,7 +32,7 @@ public class EventsRouterConfig {
         logEventsRouteTopic = config.get("router.events.log.route.topic", "events.log");
         dedupEnabled = config.getBoolean("dedup.enabled", true);
         dupStore = config.getInt("redis.database.duplicationstore.id", 8);
-        expirySeconds = config.getInt("redis.database.key.expiry.seconds", 86400);
+        expirySeconds = config.getInt("redis.database.key.expiry.seconds", 28800);
         errorEventsRouteTopic = config.get("router.events.error.route.topic", "events.error");
         if (!config.get("dedup.exclude.eids", "").isEmpty()) {
             excludedEids = config.getList("dedup.exclude.eids", new ArrayList<>());
