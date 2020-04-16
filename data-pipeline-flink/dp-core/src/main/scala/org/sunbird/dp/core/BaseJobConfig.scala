@@ -21,11 +21,14 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
   val restartAttempts: Int = config.getInt("task.restart-strategy.attempts")
   val delayBetweenAttempts: Long = config.getLong("task.restart-strategy.delay")
   val parallelism: Int = config.getInt("task.parallelism")
+  // Only for Tests
+  val kafkaAutoOffsetReset: Option[String] = if (config.hasPath("kafka.auto.offset.reset")) Option(config.getString("kafka.auto.offset.reset")) else None
 
   def kafkaConsumerProperties: Properties = {
     val properties = new Properties()
     properties.setProperty("bootstrap.servers", kafkaBrokerServers)
     properties.setProperty("group.id", groupId)
+    kafkaAutoOffsetReset.map { properties.setProperty("auto.offset.reset", _) }
     properties
   }
 
