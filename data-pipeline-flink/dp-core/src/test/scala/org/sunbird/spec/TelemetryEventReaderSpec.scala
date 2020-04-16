@@ -46,7 +46,7 @@ class TelemetryEventReaderSpec extends BaseSpec with Matchers with MockitoSugar 
     telemetryEvent.getTimeStamp() should be("9543785")
     telemetryEvent.getTelemetry.isInstanceOf[Telemetry] should be(true)
 
-    telemetryEvent.toString should not be(null)
+    telemetryEvent.toString should not be (null)
     telemetryEvent.id should be(null)
     telemetryEvent.getChecksum should be("02ba33e5-15fe-4ec5-b32.1084308E760-3d03429fae84")
 
@@ -60,13 +60,13 @@ class TelemetryEventReaderSpec extends BaseSpec with Matchers with MockitoSugar 
 
     // Nested
     val producerPid = telemetryReader.read[String](EventsPath.CONTEXT_P_DATA_PID_PATH).getOrElse(null)
-    producerPid should not be(null)
+    producerPid should not be (null)
     producerPid should be("sunbird.app")
 
 
   }
 
-  it should "Not fail when the particular key/nested key or value is not found" in intercept[TelemetryReaderException]{
+  it should "Not fail when the particular key/nested key or value is not found" in intercept[TelemetryReaderException] {
     val eventMap = gson.fromJson(EventFixture.SAMPLE_EVENT_2, new util.LinkedHashMap[String, Any]().getClass)
     val telemetryReader: Telemetry = new Telemetry(eventMap)
     val actorName = telemetryReader.read[String]("actor.id.name").getOrElse(null)
@@ -76,10 +76,10 @@ class TelemetryEventReaderSpec extends BaseSpec with Matchers with MockitoSugar 
     userKey should be(null)
 
     val syncTs = telemetryReader.getSyncts
-    syncTs should not be(null)
+    syncTs should not be (null)
 
     val timeStamp = telemetryReader.getAtTimestamp
-    timeStamp should not be(null)
+    timeStamp should not be (null)
 
     telemetryReader.getEts should be(1577278681178L)
     telemetryReader.readOrDefault(s"${EventsPath.CONTEXT_PATH}.id", "context_id") should be("context_id")
@@ -88,7 +88,19 @@ class TelemetryEventReaderSpec extends BaseSpec with Matchers with MockitoSugar 
     // Should throw an exception when mustRead value doesn't find any value for the key
     telemetryReader.mustReadValue("invlid_key")
     telemetryReader.id should be(null)
-    telemetryReader.toString should not be(null)
+    telemetryReader.toString should not be (null)
   }
+
+  it should "Take the default value when the timestamp and ets are not defined" in {
+    // When ets and @timeStamp is null
+    val eventMap = gson.fromJson(EventFixture.SAMPLE_EVENT_3, new util.LinkedHashMap[String, Any]().getClass)
+    val telemetryReader: Telemetry = new Telemetry(eventMap)
+    telemetryReader.read("ets") should not be (null)
+    telemetryReader.read("@timestamp") should not be (null)
+    telemetryReader.getSyncts should not be (null)
+    telemetryReader.getAtTimestamp should not be (null)
+    telemetryReader.id should be(null)
+  }
+
 
 }
