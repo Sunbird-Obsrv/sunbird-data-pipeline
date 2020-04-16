@@ -66,14 +66,11 @@ class TelemetryEventReaderSpec extends BaseSpec with Matchers with MockitoSugar 
 
     val syncTs = telemetryReader.getSyncts
     syncTs should not be(null)
-    syncTs should be("2019-12-25T18:28:02.630Z")
 
     val timeStamp = telemetryReader.getAtTimestamp
     timeStamp should not be(null)
-    timeStamp should be("2019-12-25T12:58:02.630Z")
 
     telemetryReader.getEts should be(1577278681178L)
-
     telemetryReader.readOrDefault("context.id", "context_id") should be("context_id")
     telemetryReader.readOrDefault(EventsPath.CONTEXT_CHANNEL_PATH, "context_id") should be("505c7c48ac6dc1edc9b08f21db5a571d")
   }
