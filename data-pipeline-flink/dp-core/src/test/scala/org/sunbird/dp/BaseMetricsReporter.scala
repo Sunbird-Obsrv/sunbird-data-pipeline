@@ -1,4 +1,4 @@
-package org.ekstep.dp
+package org.sunbird.dp
 
 import org.apache.flink.api.scala.metrics.ScalaGauge
 import org.apache.flink.metrics.reporter.MetricReporter
