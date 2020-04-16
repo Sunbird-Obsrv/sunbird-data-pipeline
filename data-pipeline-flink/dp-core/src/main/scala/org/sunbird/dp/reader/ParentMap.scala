@@ -3,12 +3,6 @@ package org.sunbird.dp.reader
 //import org.sunbird.dp.util.Logger
 
 import java.util
-import java.util.Map
-import java.util.logging.Logger
-
-
-// import org.ekstep.ep.samza.core.Logger;
-
 object ParentMap {
   //private[reader] val LOGGER = new Logger(classOf[ParentMap])
 }
