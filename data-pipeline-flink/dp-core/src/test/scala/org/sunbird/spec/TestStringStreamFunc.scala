@@ -16,7 +16,6 @@ class TestStringStreamFunc(config: BaseProcessTestConfig)(implicit val stringTyp
                               context: ProcessFunction[String, String]#Context,
                               metrics: Metrics): Unit = {
     metrics.incCounter(config.stringEventCount)
-    println("========invoked the String function=========")
-    context.output(config.stringOutPutTag, event)
+    context.output(config.stringOutputTag, event)
   }
 }

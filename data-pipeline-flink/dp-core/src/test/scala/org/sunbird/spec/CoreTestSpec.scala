@@ -3,7 +3,7 @@ package org.sunbird.spec
 import java.util
 
 import com.google.gson.Gson
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.scala.OutputTag
@@ -27,17 +27,16 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
       |"version":"","rollup":{}}}""".stripMargin
 
 
-  "RedisConnection" should "Able to connect to redis" in {
-    val config = ConfigFactory.load("test.conf");
-    val bsConfig: BaseJobConfig = new BaseJobConfig(config, "base-job");
+  val config: Config = ConfigFactory.load("base-test.conf")
+  val bsConfig: BaseJobConfig = new BaseJobConfig(config, "base-job")
+
+  "RedisConnect functionality" should "be able to connect to redis" in {
     val redisConnection = new RedisConnect(bsConfig)
     val status = redisConnection.getConnection(2)
     status.isConnected should be(true)
   }
 
-  it should "Able to reset the redis connection" in {
-    val config = ConfigFactory.load("test.conf");
-    val bsConfig: BaseJobConfig = new BaseJobConfig(config, "base-job");
+  it should "be able to reset the redis connection" in {
     val redisConnection = new RedisConnect(bsConfig)
     val status = redisConnection.getConnection(2)
     status.isConnected should be(true)
@@ -45,22 +44,17 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     resetStatus.isConnected should be(true)
   }
 
-  it should "Able to close the redis connection" in intercept[JedisConnectionException] {
-    val config = ConfigFactory.load("test.conf");
-    val bsConfig: BaseJobConfig = new BaseJobConfig(config, "base-job");
+  it should "be able to close the redis connection" in intercept[JedisConnectionException] {
     val redisConnection = new RedisConnect(bsConfig)
     val status = redisConnection.getConnection(2)
     status.isConnected should be(true)
-    redisConnection.closePool
+    redisConnection.closePool()
     val reConnectionStatus = redisConnection.getConnection(2)
     reConnectionStatus.isConnected should be(false)
   }
 
-  "De-DupEngine" should "Able to detect the key is unique or not" in {
-    val config = ConfigFactory.load("test.conf");
-    val bsConfig: BaseJobConfig = new BaseJobConfig(config, "base-job");
+  "DedupEngine functionality" should "be able to identify if the key is unique or duplicate" in {
     val redisConnection = new RedisConnect(bsConfig)
-
     val dedupEngine = new DedupEngine(redisConnection, 2, 200)
     dedupEngine.isUniqueEvent("key-1") should be(true)
     dedupEngine.storeChecksum("key-1")
@@ -68,17 +62,14 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
 
   }
 
-  it should "Able to reConnect when the jedis exception thrown" in intercept[JedisException] {
-    val config = ConfigFactory.load("test.conf");
-    val bsConfig: BaseJobConfig = new BaseJobConfig(config, "base-job");
+  it should "be able to reconnect when a jedis exception is thrown" in intercept[JedisException] {
     val redisConnection = new RedisConnect(bsConfig)
     redisConnection.closePool()
     val dedupEngine = new DedupEngine(redisConnection, 0, 4309535)
     dedupEngine.isUniqueEvent("event-id-3") should be(true)
   }
-  "DataCache" should "hgetAllWithRetry method should bble to get the map data" in {
-    val config = ConfigFactory.load("test.conf");
-    val bsConfig: BaseJobConfig = new BaseJobConfig(config, "base-job");
+
+  "DataCache hgetAllWithRetry function" should "be able to retrieve the map data from Redis" in {
     val redisConnection = new RedisConnect(bsConfig)
     val map = new util.HashMap[String, String]()
     map.put("country_code", "IN")
@@ -95,12 +86,12 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     val hGetResponse2 = dataCache.getMultipleWithRetry(List("56934dufhksjd8947hdskj"))
     hGetResponse2.size should be(1)
     hGetResponse.size should be(2)
-    hGetResponse.get("country_code").get should be("IN")
-    hGetResponse.get("country").get should be("INDIA")
+    hGetResponse("country_code") should be("IN")
+    hGetResponse("country") should be("INDIA")
     dataCache.close()
   }
 
-  "BaseDedup" should "Should able to deDup the event" in {
+  "BaseDedup functionality" should "be able to identify if an event is unique or duplicate" in {
     val deDup = new BaseDeduplication {}
     val metrics = deDup.deduplicationMetrics
     metrics.size should be(2)
@@ -108,17 +99,15 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     event.put("country_code", "IN")
     event.put("country", "INDIA")
     deDup.updateFlag[util.Map[String, AnyRef]](event, "test-failed", true)
-    val config = ConfigFactory.load("test.conf");
-    val bsConfig: BaseJobConfig = new BaseJobConfig(config, "base-job");
     val redisConnection = new RedisConnect(bsConfig)
     val dedupEngine = new DedupEngine(redisConnection, 2, 200)
     dedupEngine.storeChecksum("key-1")
     implicit val stringTypeInfo: TypeInformation[String] = TypeExtractor.getForClass(classOf[String])
     val dedupTag: OutputTag[String] = OutputTag[String]("test-de-dup-tag")
     val uniqueTag: OutputTag[String] = OutputTag[String]("test-unique-tag")
-    // deDup.deDup[String]("key-1","test",null, dedupTag, uniqueTag, "test")(dedupEngine, JobMetrics.apply(List("success-count")))
   }
-  "StringSerialization" should "Able to serialize the data" in {
+
+  "StringSerialization functionality" should "be able to serialize the input data as String" in {
     val topic: String = "topic-test"
     val partition: Int = 0
     val offset: Long = 1
@@ -146,5 +135,4 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
   }
 }
 
-class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
-}
+class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {}

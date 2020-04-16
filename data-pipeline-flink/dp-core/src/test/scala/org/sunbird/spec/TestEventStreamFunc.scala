@@ -2,13 +2,14 @@ package org.sunbird.spec
 
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
-import org.apache.flink.streaming.api.functions.{KeyedProcessFunction, ProcessFunction}
+import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
-import org.sunbird.dp.core.{BaseDeduplication, BaseProcessFunction, Metrics}
+import org.sunbird.dp.core.{BaseProcessFunction, Metrics}
 
 
-class TestEventStreamFunc(config: BaseProcessTestConfig, @transient var dedupEngine: DedupEngine = null)(implicit val mapTypeInfo: TypeInformation[Event])
-  extends BaseProcessFunction[Event, Event](config) with BaseDeduplication {
+class TestEventStreamFunc(config: BaseProcessTestConfig, @transient var dedupEngine: DedupEngine = null)
+                         (implicit val mapTypeInfo: TypeInformation[Event])
+  extends BaseProcessFunction[Event, Event](config) {
 
   override def metricsList(): List[String] = {
     List(config.telemetryEventCount) ::: deduplicationMetrics
@@ -30,10 +31,8 @@ class TestEventStreamFunc(config: BaseProcessTestConfig, @transient var dedupEng
                               context: ProcessFunction[Event, Event]#Context,
                               metrics: Metrics): Unit = {
     try {
-
-      deDup[Event](event.mid(), event, context, config.eventOutPutTag, config.eventOutPutTag, flagName = "test-dedup")(dedupEngine, metrics)
-      println("========invoked the eventStream function=========")
-      context.output(config.eventOutPutTag, event)
+      deDup[Event](event.mid(), event, context, config.eventOutputTag, config.duplicateEventOutputTag, flagName = "test-dedup")(dedupEngine, metrics)
+      context.output(config.eventOutputTag, event)
       metrics.incCounter(config.telemetryEventCount)
     } catch {
       case ex: Exception =>

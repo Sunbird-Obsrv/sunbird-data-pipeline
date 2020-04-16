@@ -18,7 +18,7 @@ import org.apache.flink.streaming.api.functions.source.SourceFunction
 import org.apache.flink.streaming.api.functions.source.SourceFunction.SourceContext
 import org.sunbird.dp.task.TelemetryExtractorConfig
 import com.typesafe.config.ConfigFactory
-import org.ekstep.dp.{BaseMetricsReporter, BaseTestSpec}
+import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import org.sunbird.dp.core.FlinkKafkaConnector
 
 import collection.JavaConverters._
@@ -41,7 +41,7 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
-    redisServer = new RedisServer(6340)
+    redisServer = new RedisServer(6341)
     redisServer.start()
     BaseMetricsReporter.gaugeMetrics.clear()
 

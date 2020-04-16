@@ -3,12 +3,12 @@ package org.sunbird.spec
 import org.scalatest.{BeforeAndAfterAll, FlatSpec}
 import redis.embedded.RedisServer
 
-class BaseSpec extends FlatSpec with BeforeAndAfterAll{
+class BaseSpec extends FlatSpec with BeforeAndAfterAll {
   var redisServer: RedisServer = _
 
   override def beforeAll() {
     super.beforeAll()
-    redisServer = new RedisServer(6341)
+    redisServer = new RedisServer(6340)
     redisServer.start()
   }
 
