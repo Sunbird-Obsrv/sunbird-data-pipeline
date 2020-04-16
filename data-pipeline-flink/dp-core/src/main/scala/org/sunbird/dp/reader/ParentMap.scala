@@ -1,6 +1,5 @@
 package org.sunbird.dp.reader
 
-//import org.sunbird.dp.util.Logger
 
 import java.util
 object ParentMap {

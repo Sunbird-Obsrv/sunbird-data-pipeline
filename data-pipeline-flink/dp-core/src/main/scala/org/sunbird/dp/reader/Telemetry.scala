@@ -33,7 +33,7 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
   }
 
   def readOrDefault[T](keyPath: String, defaultValue: T): T = {
-     read(keyPath).getOrElse(defaultValue).asInstanceOf[T]
+    read(keyPath).getOrElse(defaultValue).asInstanceOf[T]
   }
 
   @throws[TelemetryReaderException]
@@ -55,22 +55,15 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
           i < lastIndex && parent != null
         }) {
           var result: util.Map[String, Any] = null
-          if (parent.isInstanceOf[util.Map[_, _]]) {
-            result = new ParentMap(parent, keys(i)).readChild.getOrElse(null)
-          }
-          else if (parent.isInstanceOf[util.List[_]]) {
-            result = new ParentListOfMap(parent.asInstanceOf[util.List[util.Map[String, Any]]], keys(i)).readChild.getOrElse(null)
-          } else {
-            result = null
-          }
+          if (parent.isInstanceOf[util.Map[_, _]]) result = new ParentMap(parent, keys(i)).readChild.getOrElse(null)
+          else if (parent.isInstanceOf[util.List[_]]) result = new ParentListOfMap(parent.asInstanceOf[util.List[util.Map[String, Any]]], keys(i)).readChild.getOrElse(null)
+          else result = null
           parent = result
           i += 1
         }
       }
       val lastKeyInPath = keys(lastIndex)
-      if (parent.isInstanceOf[util.Map[_, _]]) {
-        new ParentMap(parent, lastKeyInPath)
-      }
+      if (parent.isInstanceOf[util.Map[_, _]]) new ParentMap(parent, lastKeyInPath)
       else if (parent.isInstanceOf[util.List[_]]) new ParentListOfMap(parent.asInstanceOf[util.List[util.Map[String, Any]]], lastKeyInPath)
       else null
     } catch {
