@@ -2,9 +2,6 @@ package org.sunbird.dp.reader
 
 
 import java.util
-object ParentMap {
-  //private[reader] val LOGGER = new Logger(classOf[ParentMap])
-}
 
 class ParentMap private[reader](var map: util.Map[String, Any], var childKey: String) extends ParentType {
   override def readChild[T]: Option[T] = {
