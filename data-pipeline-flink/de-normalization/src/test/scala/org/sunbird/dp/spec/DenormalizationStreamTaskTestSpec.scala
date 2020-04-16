@@ -18,11 +18,11 @@ import org.sunbird.dp.task.DenormalizationConfig
 import org.sunbird.dp.task.DenormalizationStreamTask
 import com.google.gson.Gson
 import com.typesafe.config.{Config, ConfigFactory}
-import org.ekstep.dp.{BaseMetricsReporter, BaseTestSpec}
+import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import redis.embedded.RedisServer
 import org.sunbird.dp.cache.RedisConnect
 
-class DenormalizationStreamTaskTest extends BaseTestSpec {
+class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
 
   implicit val mapTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
 
@@ -40,7 +40,7 @@ class DenormalizationStreamTaskTest extends BaseTestSpec {
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
-    redisServer = new RedisServer(6340)
+    redisServer = new RedisServer(6341)
     redisServer.start()
 
     BaseMetricsReporter.gaugeMetrics.clear()

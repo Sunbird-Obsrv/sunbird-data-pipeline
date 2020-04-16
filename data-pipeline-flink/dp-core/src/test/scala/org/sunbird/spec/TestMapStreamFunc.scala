@@ -11,14 +11,12 @@ class TestMapStreamFunc(config: BaseProcessTestConfig)(implicit val stringTypeIn
   extends BaseProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]](config) {
 
   override def metricsList(): List[String] = {
-    val metrics = List(config.mapEventCount)
-    metrics
+    List(config.mapEventCount)
   }
   override def processElement(event: util.Map[String, AnyRef],
                               context: ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]]#Context,
                               metrics: Metrics): Unit = {
     metrics.incCounter(config.mapEventCount)
-    println("========invoked the MapStream function=========")
-    context.output(config.mapOutPutTag, event)
+    context.output(config.mapOutputTag, event)
   }
 }

@@ -11,9 +11,9 @@ import org.apache.flink.streaming.api.functions.sink.SinkFunction
 import org.apache.flink.streaming.api.functions.source.SourceFunction
 import org.apache.flink.streaming.api.functions.source.SourceFunction.SourceContext
 import org.apache.flink.test.util.MiniClusterWithClientResource
-import org.ekstep.dp.{BaseMetricsReporter, BaseTestSpec}
 import org.mockito.Mockito
 import org.mockito.Mockito.when
+import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.core.FlinkKafkaConnector
 import org.sunbird.dp.fixture.EventFixture
