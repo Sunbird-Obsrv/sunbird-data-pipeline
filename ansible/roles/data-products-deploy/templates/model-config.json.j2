@@ -2383,8 +2383,8 @@
                   "type": "in",
                   "dimension": "context_pdata_id",
                   "values": [
-                    "{{ producer_env }}.diksha.portal",
-                    "{{ producer_env }}.diksha.app"
+                    "{{ producer_env }}.portal",
+                    "{{ producer_env }}.app"
                   ]
                 },
                 {
@@ -2421,7 +2421,8 @@
           }
         ]
       },
-      "bucket": "{{ bucket }}",
+      "store": "azure",
+      "container": "{{ bucket }}",
       "key": "druid-reports/"
     },
     "output": [
@@ -2486,7 +2487,7 @@
                 {
                   "type": "equals",
                   "dimension": "context_pdata_id",
-                  "value": "{{ producer_env }}.diksha.desktop"
+                  "value": "{{ producer_env }}.desktop"
                 },
                 {
                   "type": "equals",
@@ -2537,7 +2538,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.desktop"
+                  "value": "{{ producer_env }}.desktop"
                 }
               ],
               "descending": "false"
@@ -2583,7 +2584,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.desktop"
+                  "value": "{{ producer_env }}.desktop"
                 }
               ],
               "postAggregation": [
@@ -2641,7 +2642,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.desktop"
+                  "value": "{{ producer_env }}.desktop"
                 }
               ],
               "descending": "false"
@@ -2674,7 +2675,8 @@
           }
         ]
       },
-      "bucket": "{{ bucket }}",
+      "store": "azure",
+      "container": "{{ bucket }}",
       "key": "druid-reports/"
     },
     "output": [
@@ -2733,8 +2735,8 @@
                   "type": "in",
                   "dimension": "context_pdata_id",
                   "values": [
-                    "{{ producer_env }}.diksha.portal",
-                    "{{ producer_env }}.diksha.app"
+                    "{{ producer_env }}.portal",
+                    "{{ producer_env }}.app"
                   ]
                 },
                 {
@@ -2777,7 +2779,7 @@
                 {
                   "type": "equals",
                   "dimension": "context_pdata_id",
-                  "value": "{{ producer_env }}.diksha.portal"
+                  "value": "{{ producer_env }}.portal"
                 },
                 {
                   "type": "isnotnull",
@@ -2819,7 +2821,7 @@
                 {
                   "type": "equals",
                   "dimension": "context_pdata_id",
-                  "value": "{{ producer_env }}.diksha.app"
+                  "value": "{{ producer_env }}.app"
                 },
                 {
                   "type": "isnotnull",
@@ -2862,8 +2864,8 @@
                   "type": "in",
                   "dimension": "context_pdata_id",
                   "values": [
-                    "{{ producer_env }}.diksha.portal",
-                    "{{ producer_env }}.diksha.app"
+                    "{{ producer_env }}.portal",
+                    "{{ producer_env }}.app"
                   ]
                 },
                 {
@@ -2915,7 +2917,7 @@
                 {
                   "type": "equals",
                   "dimension": "context_pdata_id",
-                  "value": "{{ producer_env }}.diksha.portal"
+                  "value": "{{ producer_env }}.portal"
                 },
                 {
                   "type": "equals",
@@ -2966,7 +2968,7 @@
                 {
                   "type": "equals",
                   "dimension": "context_pdata_id",
-                  "value": "{{ producer_env }}.diksha.app"
+                  "value": "{{ producer_env }}.app"
                 },
                 {
                   "type": "equals",
@@ -3018,8 +3020,8 @@
                   "type": "in",
                   "dimension": "dimensions_pdata_id",
                   "values": [
-                    "{{ producer_env }}.diksha.portal",
-                    "{{ producer_env }}.diksha.app"
+                    "{{ producer_env }}.portal",
+                    "{{ producer_env }}.app"
                   ]
                 },
                 {
@@ -3072,7 +3074,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.portal"
+                  "value": "{{ producer_env }}.portal"
                 },
                 {
                   "type": "equals",
@@ -3124,7 +3126,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.app"
+                  "value": "{{ producer_env }}.app"
                 },
                 {
                   "type": "equals",
@@ -3186,7 +3188,8 @@
           }
         ]
       },
-      "bucket": "{{ bucket }}",
+      "store": "azure",
+      "container": "{{ bucket }}",
       "key": "druid-reports/"
     },
     "output": [
@@ -3395,8 +3398,8 @@
                   "type": "in",
                   "dimension": "dimensions_pdata_id",
                   "values": [
-                    "{{ producer_env }}.diksha.app",
-                    "{{ producer_env }}.diksha.portal"
+                    "{{ producer_env }}.app",
+                    "{{ producer_env }}.portal"
                   ]
                 }
               ],
@@ -3427,8 +3430,8 @@
                   "type": "in",
                   "dimension": "dimensions_pdata_id",
                   "values": [
-                    "{{ producer_env }}.diksha.app",
-                    "{{ producer_env }}.diksha.portal"
+                    "{{ producer_env }}.app",
+                    "{{ producer_env }}.portal"
                   ]
                 },
                 {
@@ -3468,7 +3471,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.app"
+                  "value": "{{ producer_env }}.app"
                 },
                 {
                   "type": "equals",
@@ -3507,7 +3510,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.portal"
+                  "value": "{{ producer_env }}.portal"
                 },
                 {
                   "type": "equals",
@@ -3541,7 +3544,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.app"
+                  "value": "{{ producer_env }}.app"
                 },
                 {
                   "type": "equals",
@@ -3570,7 +3573,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.app"
+                  "value": "{{ producer_env }}.app"
                 },
                 {
                   "type": "equals",
@@ -3599,7 +3602,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.app"
+                  "value": "{{ producer_env }}.app"
                 },
                 {
                   "type": "equals",
@@ -3641,8 +3644,8 @@
                   "type": "in",
                   "dimension": "dimensions_pdata_id",
                   "values": [
-                    "{{ producer_env }}.diksha.app",
-                    "{{ producer_env }}.diksha.portal"
+                    "{{ producer_env }}.app",
+                    "{{ producer_env }}.portal"
                   ]
                 },
                 {
@@ -3677,7 +3680,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.app"
+                  "value": "{{ producer_env }}.app"
                 },
                 {
                   "type": "equals",
@@ -3711,7 +3714,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.portal"
+                  "value": "{{ producer_env }}.portal"
                 },
                 {
                   "type": "equals",
@@ -3751,8 +3754,8 @@
                   "type": "in",
                   "dimension": "dimensions_pdata_id",
                   "values": [
-                    "{{ producer_env }}.diksha.app",
-                    "{{ producer_env }}.diksha.portal"
+                    "{{ producer_env }}.app",
+                    "{{ producer_env }}.portal"
                   ]
                 },
                 {
@@ -3804,7 +3807,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.app"
+                  "value": "{{ producer_env }}.app"
                 },
                 {
                   "type": "equals",
@@ -3855,7 +3858,7 @@
                 {
                   "type": "equals",
                   "dimension": "dimensions_pdata_id",
-                  "value": "{{ producer_env }}.diksha.portal"
+                  "value": "{{ producer_env }}.portal"
                 },
                 {
                   "type": "equals",
@@ -3942,7 +3945,8 @@
           }
         ]
       },
-      "bucket": "{{ bucket }}",
+      "store": "azure",
+      "container": "{{ bucket }}",
       "key": "druid-reports/"
     },
     "output": [
@@ -4066,7 +4070,7 @@
             }, {
               "type": "in",
               "dimension": "dimensions_pdata_id",
-              "values": ["{{ producer_env }}.diksha.app", "{{ producer_env }}.diksha.portal"]
+              "values": ["{{ producer_env }}.app", "{{ producer_env }}.portal"]
             }, {
               "type": "equals",
               "dimension": "dimensions_type",
