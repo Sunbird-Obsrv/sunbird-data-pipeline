@@ -1,17 +1,19 @@
 package org.sunbird.dp.functions
 
 import org.apache.flink.api.common.typeinfo.TypeInformation
-import org.apache.flink.streaming.api.functions.KeyedProcessFunction
+import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.core.{BaseProcessFunction, Metrics}
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.task.PipelinePreprocessorConfig
 
 class TelemetryRouterFunction(config: PipelinePreprocessorConfig)
-                             (implicit val eventTypeInfo: TypeInformation[Event]) extends BaseProcessFunction[Event](config) {
+                             (implicit val eventTypeInfo: TypeInformation[Event])
+  extends BaseProcessFunction[Event, Event](config) {
+
   private[this] val logger = LoggerFactory.getLogger(classOf[TelemetryRouterFunction])
 
-  override def getMetricsList(): List[String] = {
+  override def metricsList(): List[String] = {
     List(config.primaryRouterMetricCount,
       config.secondaryRouterMetricCount,
       config.auditEventRouterMetricCount,
@@ -19,7 +21,7 @@ class TelemetryRouterFunction(config: PipelinePreprocessorConfig)
   }
 
   override def processElement(event: Event,
-                              ctx: KeyedProcessFunction[Integer, Event, Event]#Context,
+                              ctx: ProcessFunction[Event, Event]#Context,
                               metrics: Metrics): Unit = {
 
 

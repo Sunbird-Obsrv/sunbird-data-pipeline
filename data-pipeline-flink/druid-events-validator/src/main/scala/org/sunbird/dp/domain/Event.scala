@@ -2,10 +2,10 @@ package org.sunbird.dp.domain
 
 import java.util
 
-class Event(eventMap: util.Map[String, AnyRef], partition: Integer) extends Events(eventMap, partition) {
+class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
 
   private val jobName = "DruidValidator"
-
+  
   def markValidationSuccess(): Unit = {
     this.updateFlags("dv_processed", true)
   }

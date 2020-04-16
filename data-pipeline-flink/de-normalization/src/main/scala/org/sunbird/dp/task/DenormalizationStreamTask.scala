@@ -1,24 +1,16 @@
 package org.sunbird.dp.task
 
-import java.util
-
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
-import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import com.typesafe.config.ConfigFactory
 import org.sunbird.dp.core.FlinkKafkaConnector
 import org.sunbird.dp.domain.Event
-import org.apache.flink.streaming.api.scala.DataStream
-import org.sunbird.dp.functions.DeviceDenormFunction
 import org.sunbird.dp.functions.DeviceDenormFunction
 import org.sunbird.dp.functions.UserDenormFunction
 import org.sunbird.dp.functions.DialCodeDenormFunction
 import org.sunbird.dp.functions.ContentDenormFunction
 import org.sunbird.dp.functions.LocationDenormFunction
-import org.apache.flink.streaming.api.functions.source.SourceFunction
-import org.apache.flink.streaming.api.TimeCharacteristic
-import org.apache.flink.api.common.restartstrategy.RestartStrategies
 import org.sunbird.dp.util.FlinkUtil
 
 /**
@@ -63,22 +55,17 @@ class DenormalizationStreamTask(config: DenormalizationConfig, kafkaConnector: F
 
   def process(): Unit = {
     
-    implicit val env: StreamExecutionEnvironment = FlinkUtil.getExecutionContext(config);
+    implicit val env: StreamExecutionEnvironment = FlinkUtil.getExecutionContext(config)
     implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
 
-    val source = kafkaConnector.kafkaEventSource[Event](config.inputTopic);
-    val deviceDenormStream = env.addSource(source, "denorm-consumer").rebalance().keyBy(key => key.getPartition).process(new DeviceDenormFunction(config))
-    val userDenormStream = deviceDenormStream.getSideOutput(config.withDeviceEventsTag).keyBy(key => key.getPartition).process(new UserDenormFunction(config))
-    val dialCodeDenormStream = userDenormStream.getSideOutput(config.withUserEventsTag).keyBy(key => key.getPartition).process(new DialCodeDenormFunction(config))
-    val contentDenormStream = dialCodeDenormStream.getSideOutput(config.withDialCodeEventsTag).keyBy(key => key.getPartition).process(new ContentDenormFunction(config))
-    val locDenormStream = contentDenormStream.getSideOutput(config.withContentEventsTag).keyBy(key => key.getPartition).process(new LocationDenormFunction(config))
+    val source = kafkaConnector.kafkaEventSource[Event](config.inputTopic)
+    val deviceDenormStream = env.addSource(source, "denorm-consumer").rebalance().process(new DeviceDenormFunction(config))
+    val userDenormStream = deviceDenormStream.getSideOutput(config.withDeviceEventsTag).process(new UserDenormFunction(config))
+    val dialCodeDenormStream = userDenormStream.getSideOutput(config.withUserEventsTag).process(new DialCodeDenormFunction(config))
+    val contentDenormStream = dialCodeDenormStream.getSideOutput(config.withDialCodeEventsTag).process(new ContentDenormFunction(config))
+    val locDenormStream = contentDenormStream.getSideOutput(config.withContentEventsTag).process(new LocationDenormFunction(config))
 
     locDenormStream.getSideOutput(config.withLocationEventsTag).addSink(kafkaConnector.kafkaEventSink(config.denormSuccessTopic)).name(config.DENORM_EVENTS_PRODUCER)
-    deviceDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name(config.JOB_METRICS_PRODUCER)
-    userDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name(config.JOB_METRICS_PRODUCER)
-    dialCodeDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name(config.JOB_METRICS_PRODUCER)
-    contentDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name(config.JOB_METRICS_PRODUCER)
-    locDenormStream.getSideOutput(config.metricOutputTag).addSink(kafkaConnector.kafkaStringSink(config.metricsTopic)).name(config.JOB_METRICS_PRODUCER)
 
     env.execute(config.jobName)
   }
@@ -89,9 +76,9 @@ class DenormalizationStreamTask(config: DenormalizationConfig, kafkaConnector: F
 object DenormalizationStreamTask {
 
   def main(args: Array[String]): Unit = {
-    val config = ConfigFactory.load().withFallback(ConfigFactory.systemEnvironment())
-    val eConfig = new DenormalizationConfig(config);
-    val kafkaUtil = new FlinkKafkaConnector(eConfig);
+    val config = ConfigFactory.load("de-normalization.conf").withFallback(ConfigFactory.systemEnvironment())
+    val eConfig = new DenormalizationConfig(config)
+    val kafkaUtil = new FlinkKafkaConnector(eConfig)
     val task = new DenormalizationStreamTask(eConfig, kafkaUtil)
     task.process()
   }

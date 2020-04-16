@@ -2,10 +2,10 @@ package org.sunbird.dp.functions
 
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
-import org.apache.flink.streaming.api.functions.KeyedProcessFunction
+import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
-import org.sunbird.dp.core.{BaseDeduplication, BaseProcessFunction, Metrics}
+import org.sunbird.dp.core._
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.task.PipelinePreprocessorConfig
 import org.sunbird.dp.util.SchemaValidator
@@ -14,16 +14,17 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
                                   @transient var schemaValidator: SchemaValidator = null,
                                   @transient var dedupEngine: DedupEngine = null)
                                  (implicit val eventTypeInfo: TypeInformation[Event])
-  extends BaseProcessFunction[Event](config = config) with BaseDeduplication {
+  extends BaseProcessFunction[Event, Event](config) {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[TelemetryValidationFunction])
 
-  override def getMetricsList(): List[String] = {
+  override def metricsList(): List[String] = {
     List(config.validationFailureMetricsCount, config.validationSkipMetricsCount,
-      config.validationSuccessMetricsCount, config.duplicationEventMetricsCount) ::: getDeDupMetrics
+      config.validationSuccessMetricsCount, config.duplicationSkippedEventMetricsCount) ::: deduplicationMetrics
   }
 
   override def open(parameters: Configuration): Unit = {
+    super.open(parameters)
     if (dedupEngine == null) {
       val redisConnect = new RedisConnect(config)
       dedupEngine = new DedupEngine(redisConnect, config.dedupStore, config.cacheExpirySeconds)
@@ -38,12 +39,21 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
     dedupEngine.closeConnectionPool()
   }
 
-  override def processElement(event: Event, context: KeyedProcessFunction[Integer, Event, Event]#Context, metrics: Metrics): Unit = {
+  override def processElement(event: Event,
+                              context: ProcessFunction[Event, Event]#Context,
+                              metrics: Metrics): Unit = {
+
     dataCorrection(event)
+
     if (!schemaValidator.schemaFileExists(event)) {
       logger.info(s"Schema not found, Skipping the: ${event.eid} from validation")
       event.markSkipped(config.VALIDATION_FLAG_NAME) // Telemetry validation skipped
-      if (isDuplicateCheckRequired(event)) deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag, flagName = config.DE_DUP_FLAG_NAME)(dedupEngine, metrics)
+
+      if (isDuplicateCheckRequired(event)) {
+        deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag,
+          flagName = config.DE_DUP_FLAG_NAME)(dedupEngine, metrics)
+      }
+
     } else {
       val validationReport = schemaValidator.validate(event)
       if (validationReport.isSuccess) {
@@ -53,7 +63,10 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
         event.updateDefaults(config)
         if (isDuplicateCheckRequired(event)) {
           deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag, flagName = config.DE_DUP_FLAG_NAME)(dedupEngine, metrics)
-          metrics.incCounter(config.duplicationEventMetricsCount)
+        } else {
+          event.markSkipped(config.DE_DUP_SKIP_FLAG_NAME)
+          context.output(config.uniqueEventsOutputTag, event)
+          metrics.incCounter(config.duplicationSkippedEventMetricsCount)
         }
       } else {
         val failedErrorMsg = schemaValidator.getInvalidFieldName(validationReport.toString)

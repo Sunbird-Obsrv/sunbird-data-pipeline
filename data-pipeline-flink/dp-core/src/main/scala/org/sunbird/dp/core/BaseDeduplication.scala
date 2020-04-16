@@ -1,7 +1,8 @@
 package org.sunbird.dp.core
 
 import java.util
-import org.apache.flink.streaming.api.functions.KeyedProcessFunction
+
+import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.cache.DedupEngine
@@ -15,7 +16,7 @@ trait BaseDeduplication {
 
   def deDup[T](key: String,
                event: T,
-               context: KeyedProcessFunction[Integer, T, T]#Context,
+               context: ProcessFunction[T, T]#Context,
                successOutputTag: OutputTag[T],
                duplicateOutputTag: OutputTag[T],
                flagName: String
@@ -39,8 +40,7 @@ trait BaseDeduplication {
   def updateFlag[T](event: T, flagName: String, value: Boolean): T = {
     if (event.isInstanceOf[Events]) {
       event.asInstanceOf[Events].updateFlags(flagName, value)
-    }
-    else {
+    } else {
       val flags: util.HashMap[String, Boolean] = new util.HashMap[String, Boolean]()
       flags.put(flagName, value)
       event.asInstanceOf[util.Map[String, AnyRef]].put("flags", flags.asInstanceOf[util.HashMap[String, AnyRef]])
@@ -48,7 +48,7 @@ trait BaseDeduplication {
     event.asInstanceOf[T]
   }
 
-  def getDeDupMetrics(): List[String] = {
+  def deduplicationMetrics: List[String] = {
     List(uniqueEventMetricCount, duplicateEventMetricCount)
   }
 }
