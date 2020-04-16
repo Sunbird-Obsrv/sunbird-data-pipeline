@@ -187,7 +187,7 @@ class InputSource extends SourceFunction[Event] {
   override def run(ctx: SourceContext[Event]) {
     val gson = new Gson()
     EventFixture.telemetrEvents.foreach(f => {
-      val eventMap = gson.fromJson(f, new util.HashMap[String, AnyRef]().getClass)
+      val eventMap = gson.fromJson(f, new util.HashMap[String, Any]().getClass)
       ctx.collect(new Event(eventMap))
     })
   }

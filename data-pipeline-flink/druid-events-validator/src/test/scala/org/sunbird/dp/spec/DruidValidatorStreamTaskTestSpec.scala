@@ -66,7 +66,6 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
 
         val task = new DruidValidatorStreamTask(druidValidatorConfig, mockKafkaUtil)
         task.process()
-
         TelemetryEventsSink.values.size() should be (2)
         SummaryEventsSink.values.size() should be (1)
         FailedEventsSink.values.size() should be (1)
@@ -107,12 +106,12 @@ class DruidValidatorEventSource  extends SourceFunction[Event] {
 
     override def run(ctx: SourceContext[Event]) {
         val gson = new Gson()
-        val event1 = gson.fromJson(EventFixture.VALID_DENORM_TELEMETRY_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
-        val event2 = gson.fromJson(EventFixture.INVALID_DENORM_TELEMETRY_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
-        val event3 = gson.fromJson(EventFixture.VALID_DENORM_SUMMARY_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
-        val event4 = gson.fromJson(EventFixture.VALID_LOG_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
-        val event5 = gson.fromJson(EventFixture.VALID_ERROR_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
-        val event6 = gson.fromJson(EventFixture.VALID_SERACH_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
+        val event1 = gson.fromJson(EventFixture.VALID_DENORM_TELEMETRY_EVENT, new util.LinkedHashMap[String, Any]().getClass)
+        val event2 = gson.fromJson(EventFixture.INVALID_DENORM_TELEMETRY_EVENT, new util.LinkedHashMap[String, Any]().getClass)
+        val event3 = gson.fromJson(EventFixture.VALID_DENORM_SUMMARY_EVENT, new util.LinkedHashMap[String, Any]().getClass)
+        val event4 = gson.fromJson(EventFixture.VALID_LOG_EVENT, new util.LinkedHashMap[String, Any]().getClass)
+        val event5 = gson.fromJson(EventFixture.VALID_ERROR_EVENT, new util.LinkedHashMap[String, Any]().getClass)
+        val event6 = gson.fromJson(EventFixture.VALID_SERACH_EVENT, new util.LinkedHashMap[String, Any]().getClass)
         ctx.collect(new Event(event1))
         ctx.collect(new Event(event2))
         ctx.collect(new Event(event3))
