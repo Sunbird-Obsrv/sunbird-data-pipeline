@@ -48,7 +48,7 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
     if (!schemaValidator.schemaFileExists(event)) {
       logger.info(s"Schema not found, Skipping the: ${event.eid} from validation")
       event.markSkipped(config.VALIDATION_FLAG_NAME) // Telemetry validation skipped
-      if (isDuplicateCheckRequired(event)) {
+      if (isDuplicateCheckRequired(event.producerId())) {
         deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag,
           flagName = config.DE_DUP_FLAG_NAME)(dedupEngine, metrics)
       }
@@ -60,7 +60,8 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
         event.markSuccess(config.VALIDATION_FLAG_NAME)
         metrics.incCounter(config.validationSuccessMetricsCount)
         event.updateDefaults(config)
-        if (isDuplicateCheckRequired(event)) {
+
+        if (isDuplicateCheckRequired(event.producerId())) {
           deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag, flagName = config.DE_DUP_FLAG_NAME)(dedupEngine, metrics)
         } else {
           event.markSkipped(config.DE_DUP_SKIP_FLAG_NAME)
@@ -80,16 +81,16 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
 
   private def dataCorrection(event: Event): Event = {
     // Remove prefix from federated userIds
-    val eventActorId = event.actorId
+    val eventActorId = event.actorId()
     if (eventActorId != null && !eventActorId.isEmpty && eventActorId.startsWith("f:"))
       event.updateActorId(eventActorId.substring(eventActorId.lastIndexOf(":") + 1))
-    if (event.eid != null && event.eid.equalsIgnoreCase("SEARCH"))
+    if (event.eid != null && event.eid().equalsIgnoreCase("SEARCH"))
       event.correctDialCodeKey()
-    if (event.objectFieldsPresent && (event.objectType.equalsIgnoreCase("DialCode") || event.objectType.equalsIgnoreCase("qr"))) event.correctDialCodeValue()
+    if (event.objectFieldsPresent && (event.objectType().equalsIgnoreCase("DialCode") || event.objectType().equalsIgnoreCase("qr"))) event.correctDialCodeValue()
     event
   }
 
-  def isDuplicateCheckRequired(event: Event): Boolean = {
-    config.includedProducersForDedup.contains(event.producerId())
+  def isDuplicateCheckRequired(producerId: String): Boolean = {
+    config.includedProducersForDedup.contains(producerId)
   }
 }
