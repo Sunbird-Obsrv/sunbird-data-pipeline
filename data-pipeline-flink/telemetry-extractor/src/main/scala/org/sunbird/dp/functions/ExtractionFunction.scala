@@ -43,14 +43,12 @@ class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTy
       val eventSize = eventJson.getBytes("UTF-8").length
       if (eventSize > config.eventMaxSize) {
         metrics.incCounter(config.failedEventCount)
-        context.output(config.failedEventsOutputTag, eventData)
+        context.output(config.failedEventsOutputTag, markFailed(eventData))
       } else {
         metrics.incCounter(config.successEventCount)
-        context.output(config.rawEventsOutputTag, eventData)
+        context.output(config.rawEventsOutputTag, markSuccess(eventData))
       }
     })
-
-    // println("success count = " + metrics.get(successCount))
 
     /**
      * Generating Audit events to compute the number of events in the batch.
