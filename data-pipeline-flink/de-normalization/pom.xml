@@ -126,7 +126,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.2.1</version>
                 <executions>
                     <!-- Run shade goal on package phase -->
                     <execution>
@@ -135,13 +135,9 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
                             <artifactSet>
                                 <excludes>
-                                    <!--
-                                    <exclude>org.apache.flink:force-shading</exclude>
-                                    <exlude>org.apache.flink:flink-shaded-netty</exlude>
-                                    <exlude>org.apache.flink:flink-shaded-guava</exlude>
-                                    -->
                                     <exclude>com.google.code.findbugs:jsr305</exclude>
                                 </excludes>
                             </artifactSet>
@@ -157,6 +153,16 @@
                                     </excludes>
                                 </filter>
                             </filters>
+                            <relocations>
+                                <relocation>
+                                    <pattern>org.sunbird.dp.domain</pattern>
+                                    <shadedPattern>org.sunbird.dp.denorm.domain</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.sunbird.dp.functions</pattern>
+                                    <shadedPattern>org.sunbird.dp.denorm.functions</shadedPattern>
+                                </relocation>
+                            </relocations>
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">

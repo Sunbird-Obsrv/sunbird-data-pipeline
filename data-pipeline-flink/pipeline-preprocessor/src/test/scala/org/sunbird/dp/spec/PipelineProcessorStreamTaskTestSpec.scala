@@ -40,7 +40,7 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
-    redisServer = new RedisServer(6340)
+    redisServer = new RedisServer(6341)
     redisServer.start()
 
     BaseMetricsReporter.gaugeMetrics.clear()
@@ -121,6 +121,7 @@ class PipeLineProcessorEventSource extends SourceFunction[Event] {
 class ShareItemEventSink extends SinkFunction[String] {
 
   override def invoke(value: String): Unit = {
+    println("SHARE_EVENT = " + value)
     synchronized {
       ShareItemEventSink.values.add(value)
     }

@@ -39,7 +39,7 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
 
     override protected def beforeAll(): Unit = {
         super.beforeAll()
-        redisServer = new RedisServer(6340)
+        redisServer = new RedisServer(6341)
         redisServer.start()
 
         BaseMetricsReporter.gaugeMetrics.clear()
