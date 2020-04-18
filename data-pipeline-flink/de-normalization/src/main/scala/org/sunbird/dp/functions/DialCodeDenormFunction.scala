@@ -4,9 +4,9 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.slf4j.LoggerFactory
-import org.sunbird.dp.cache.RedisConnect
+import org.sunbird.dp.core.cache.{DataCache, RedisConnect}
 import org.sunbird.dp.task.DenormalizationConfig
-import org.sunbird.dp.core._
+import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 import org.sunbird.dp.domain.Event
 
 class DialCodeDenormFunction(config: DenormalizationConfig)(implicit val mapTypeInfo: TypeInformation[Event])

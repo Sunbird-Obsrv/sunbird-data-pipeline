@@ -1,11 +1,12 @@
 package org.sunbird.dp.task
 
 import java.util
+
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
-import org.sunbird.dp.core.BaseJobConfig
 import org.apache.flink.streaming.api.scala.OutputTag
 import com.typesafe.config.Config
+import org.sunbird.dp.core.job.BaseJobConfig
 
 class TelemetryExtractorConfig(override val config: Config) extends BaseJobConfig(config, "telemetry-extractor") {
 

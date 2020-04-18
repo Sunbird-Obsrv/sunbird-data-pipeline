@@ -15,8 +15,8 @@ import org.mockito.Mockito
 import org.mockito.Mockito.when
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import org.sunbird.dp.domain.Event
-import org.sunbird.dp.core.FlinkKafkaConnector
 import org.sunbird.dp.fixture.EventFixture
+import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.task.{DruidValidatorConfig, DruidValidatorStreamTask}
 import redis.embedded.RedisServer
 

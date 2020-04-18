@@ -1,12 +1,14 @@
-package org.sunbird.dp.core
+package org.sunbird.dp.core.cache
 
 import java.util
-import org.slf4j.LoggerFactory
-import org.sunbird.dp.cache.RedisConnect
-import redis.clients.jedis.Jedis
+
 import com.google.gson.Gson
-import collection.JavaConverters._
+import org.slf4j.LoggerFactory
+import org.sunbird.dp.core.job.BaseJobConfig
+import redis.clients.jedis.Jedis
 import redis.clients.jedis.exceptions.JedisException
+
+import scala.collection.JavaConverters._
 import scala.collection.mutable.Map
 
 class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val dbIndex: Int, val fields: List[String]) {

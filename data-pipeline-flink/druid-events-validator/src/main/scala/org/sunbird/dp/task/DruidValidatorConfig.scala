@@ -5,7 +5,7 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.sunbird.dp.domain.Event
 import org.apache.flink.streaming.api.scala.OutputTag
-import org.sunbird.dp.core.BaseJobConfig
+import org.sunbird.dp.core.job.BaseJobConfig
 
 class DruidValidatorConfig(override val config: Config) extends BaseJobConfig(config, "druid-validator") {
 

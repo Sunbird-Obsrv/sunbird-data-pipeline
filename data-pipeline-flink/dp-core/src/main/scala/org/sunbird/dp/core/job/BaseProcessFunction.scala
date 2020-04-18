@@ -1,4 +1,4 @@
-package org.sunbird.dp.core
+package org.sunbird.dp.core.job
 
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong

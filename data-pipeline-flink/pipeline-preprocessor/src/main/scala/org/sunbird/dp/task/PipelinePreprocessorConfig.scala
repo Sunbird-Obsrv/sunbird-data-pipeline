@@ -4,7 +4,7 @@ import com.typesafe.config.Config
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.scala.OutputTag
-import org.sunbird.dp.core.BaseJobConfig
+import org.sunbird.dp.core.job.BaseJobConfig
 import org.sunbird.dp.domain.Event
 
 import scala.collection.JavaConverters._

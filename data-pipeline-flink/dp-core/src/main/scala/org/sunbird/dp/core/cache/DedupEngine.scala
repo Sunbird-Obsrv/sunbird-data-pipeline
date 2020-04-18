@@ -1,4 +1,4 @@
-package org.sunbird.dp.cache
+package org.sunbird.dp.core.cache
 
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.exceptions.JedisException

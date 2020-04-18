@@ -5,10 +5,10 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
-import org.sunbird.dp.core.FlinkKafkaConnector
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.functions.{ShareEventsFlattenerFunction, TelemetryRouterFunction, TelemetryValidationFunction}
-import org.sunbird.dp.util.FlinkUtil
+import org.sunbird.dp.core.job.FlinkKafkaConnector
+import org.sunbird.dp.core.util.FlinkUtil
 
 /**
   * Telemetry Pipeline processor stream task does the following pipeline processing in a sequence:

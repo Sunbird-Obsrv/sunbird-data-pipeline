@@ -1,4 +1,4 @@
-package org.sunbird.dp.reader
+package org.sunbird.dp.core.reader
 
 trait ParentType {
   def readChild[T]: Option[T]

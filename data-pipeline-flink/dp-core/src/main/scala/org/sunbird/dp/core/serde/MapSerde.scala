@@ -1,4 +1,4 @@
-package org.sunbird.dp.serde
+package org.sunbird.dp.core.serde
 
 import java.nio.charset.StandardCharsets
 import java.util

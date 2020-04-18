@@ -1,19 +1,16 @@
 package org.sunbird.dp.util
 
 import java.io.IOException
-import java.nio.file.{FileSystems, Files, Paths}
 import java.text.MessageFormat
 
 import com.github.fge.jackson.JsonLoader
-import com.github.fge.jsonschema.core.report.ProcessingReport
-import com.github.fge.jsonschema.main.{JsonSchema, JsonSchemaFactory}
 import com.github.fge.jsonschema.core.exceptions.ProcessingException
+import com.github.fge.jsonschema.core.report.ProcessingReport
+import com.github.fge.jsonschema.main.JsonSchemaFactory
 import com.google.common.io.ByteStreams
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.task.DruidValidatorConfig
-import scala.collection.JavaConverters._
-import scala.util.Try
 
 class SchemaValidator(config: DruidValidatorConfig) extends java.io.Serializable {
 

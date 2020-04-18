@@ -1,12 +1,12 @@
-package org.sunbird.dp.core
+package org.sunbird.dp.core.job
 
 import java.util
 
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.slf4j.LoggerFactory
-import org.sunbird.dp.cache.DedupEngine
-import org.sunbird.dp.domain.Events
+import org.sunbird.dp.core.cache.DedupEngine
+import org.sunbird.dp.core.domain.Events
 
 trait BaseDeduplication {
 

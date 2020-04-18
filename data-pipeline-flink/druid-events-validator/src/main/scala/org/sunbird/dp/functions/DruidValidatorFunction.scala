@@ -3,7 +3,7 @@ package org.sunbird.dp.functions
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.slf4j.LoggerFactory
-import org.sunbird.dp.core.{BaseProcessFunction, Metrics}
+import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.task.DruidValidatorConfig
 import org.sunbird.dp.util.SchemaValidator

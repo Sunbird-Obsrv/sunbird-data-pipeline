@@ -4,6 +4,7 @@ import java.util
 
 import org.apache.commons.lang3.StringUtils
 import org.joda.time.format.DateTimeFormat
+import org.sunbird.dp.core.domain.{Events, EventsPath}
 import org.sunbird.dp.task.PipelinePreprocessorConfig
 
 class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {

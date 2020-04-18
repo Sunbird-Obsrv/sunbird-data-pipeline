@@ -1,4 +1,4 @@
-package org.sunbird.dp.reader
+package org.sunbird.dp.core.reader
 
 
 import java.util

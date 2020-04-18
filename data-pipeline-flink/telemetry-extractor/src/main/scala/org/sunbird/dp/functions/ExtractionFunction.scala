@@ -12,7 +12,7 @@ import org.sunbird.dp.domain._
 import java.util.UUID
 
 import com.google.gson.reflect.TypeToken
-import org.sunbird.dp.core.{BaseProcessFunction, Metrics}
+import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 
 class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTypeInfo: TypeInformation[String])
   extends BaseProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]](config) {

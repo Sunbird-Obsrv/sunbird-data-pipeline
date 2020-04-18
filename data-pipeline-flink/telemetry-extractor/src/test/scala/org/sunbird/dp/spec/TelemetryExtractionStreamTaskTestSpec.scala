@@ -18,8 +18,8 @@ import org.apache.flink.streaming.api.functions.source.SourceFunction
 import org.apache.flink.streaming.api.functions.source.SourceFunction.SourceContext
 import org.sunbird.dp.task.TelemetryExtractorConfig
 import com.typesafe.config.ConfigFactory
+import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
-import org.sunbird.dp.core.FlinkKafkaConnector
 
 import collection.JavaConverters._
 

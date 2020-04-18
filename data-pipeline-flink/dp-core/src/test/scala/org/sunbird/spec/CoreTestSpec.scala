@@ -9,10 +9,10 @@ import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.scalatest.Matchers
 import org.scalatestplus.mockito.MockitoSugar
-import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
-import org.sunbird.dp.core.{BaseDeduplication, BaseJobConfig, DataCache}
-import org.sunbird.dp.domain.Events
-import org.sunbird.dp.serde._
+import org.sunbird.dp.core.cache.{DataCache, DedupEngine, RedisConnect}
+import org.sunbird.dp.core.domain.Events
+import org.sunbird.dp.core.job.{BaseDeduplication, BaseJobConfig}
+import org.sunbird.dp.core.serde._
 import org.sunbird.fixture.EventFixture
 import redis.clients.jedis.exceptions.{JedisConnectionException, JedisException}
 

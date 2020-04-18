@@ -4,6 +4,7 @@ import java.util
 
 import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
+import org.sunbird.dp.core.domain.{Events, EventsPath}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.Map

@@ -1,4 +1,4 @@
-package org.sunbird.dp.domain
+package org.sunbird.dp.core.domain
 
 object EventsPath {
   val METADATA_PATH = "metadata"

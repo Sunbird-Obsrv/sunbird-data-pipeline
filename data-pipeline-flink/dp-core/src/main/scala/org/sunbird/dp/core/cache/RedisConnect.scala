@@ -1,4 +1,4 @@
-package org.sunbird.dp.cache
+package org.sunbird.dp.core.cache
 
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPool
@@ -6,8 +6,8 @@ import redis.clients.jedis.JedisPoolConfig
 import java.time.Duration
 
 import com.typesafe.config.Config
-import org.sunbird.dp.core.BaseJobConfig
 import org.slf4j.LoggerFactory
+import org.sunbird.dp.core.job.BaseJobConfig
 
 class RedisConnect(jobConfig: BaseJobConfig) extends java.io.Serializable {
 

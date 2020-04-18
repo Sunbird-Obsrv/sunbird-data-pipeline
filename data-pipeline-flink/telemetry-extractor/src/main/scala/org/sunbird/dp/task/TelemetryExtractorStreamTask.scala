@@ -7,8 +7,8 @@ import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.functions.{DeduplicationFunction, ExtractionFunction}
 import com.typesafe.config.ConfigFactory
-import org.sunbird.dp.core.FlinkKafkaConnector
-import org.sunbird.dp.util.FlinkUtil
+import org.sunbird.dp.core.job.FlinkKafkaConnector
+import org.sunbird.dp.core.util.FlinkUtil
 
 /**
  * Extraction stream task does the following pipeline processing in a sequence:

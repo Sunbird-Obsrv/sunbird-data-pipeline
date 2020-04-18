@@ -4,8 +4,8 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.slf4j.LoggerFactory
-import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
-import org.sunbird.dp.core._
+import org.sunbird.dp.core.cache.{DedupEngine, RedisConnect}
+import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.task.DruidValidatorConfig
 

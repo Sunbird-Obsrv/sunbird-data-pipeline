@@ -1,4 +1,4 @@
-package org.sunbird.dp.serde
+package org.sunbird.dp.core.serde
 
 import java.nio.charset.StandardCharsets
 import java.util
@@ -9,7 +9,7 @@ import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.connectors.kafka.{KafkaDeserializationSchema, KafkaSerializationSchema}
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.producer.ProducerRecord
-import org.sunbird.dp.domain.Events
+import org.sunbird.dp.core.domain.Events
 
 import scala.reflect.{ClassTag, classTag}
 

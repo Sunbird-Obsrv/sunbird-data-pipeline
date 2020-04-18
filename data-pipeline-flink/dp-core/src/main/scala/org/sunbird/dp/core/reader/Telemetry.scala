@@ -1,4 +1,4 @@
-package org.sunbird.dp.reader
+package org.sunbird.dp.core.reader
 
 import java.io.Serializable
 import java.text.SimpleDateFormat

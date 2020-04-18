@@ -1,4 +1,4 @@
-package org.sunbird.dp.core
+package org.sunbird.dp.core.job
 
 import java.util.Properties
 import java.io.Serializable

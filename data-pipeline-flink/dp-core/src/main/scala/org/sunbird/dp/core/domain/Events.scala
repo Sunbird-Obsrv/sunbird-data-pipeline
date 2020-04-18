@@ -1,11 +1,9 @@
-package org.sunbird.dp.domain
-
+package org.sunbird.dp.core.domain
 
 import java.util
 
 import com.google.gson.Gson
-import org.sunbird.dp.reader.Telemetry
-
+import org.sunbird.dp.core.reader.Telemetry
 
 abstract class Events(val map: util.Map[String, Any]) {
 

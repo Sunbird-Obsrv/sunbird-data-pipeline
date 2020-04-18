@@ -4,14 +4,14 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import com.typesafe.config.ConfigFactory
-import org.sunbird.dp.core.FlinkKafkaConnector
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.functions.DeviceDenormFunction
 import org.sunbird.dp.functions.UserDenormFunction
 import org.sunbird.dp.functions.DialCodeDenormFunction
 import org.sunbird.dp.functions.ContentDenormFunction
 import org.sunbird.dp.functions.LocationDenormFunction
-import org.sunbird.dp.util.FlinkUtil
+import org.sunbird.dp.core.job.FlinkKafkaConnector
+import org.sunbird.dp.core.util.FlinkUtil
 
 /**
  * Denormalization stream task does the following pipeline processing in a sequence:
