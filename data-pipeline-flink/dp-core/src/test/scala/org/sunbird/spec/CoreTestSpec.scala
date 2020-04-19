@@ -132,4 +132,8 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
     telemetry.add(s"flags.$flagName", true)
     telemetry.add("type", "events")
   }
+
+  override def kafkaKey(): String = {
+    did()
+  }
 }

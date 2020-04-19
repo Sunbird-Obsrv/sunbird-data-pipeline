@@ -14,7 +14,7 @@ class TestStringStreamFunc(config: BaseProcessTestConfig)(implicit val stringTyp
   override def processElement(event: String,
                               context: ProcessFunction[String, String]#Context,
                               metrics: Metrics): Unit = {
-    metrics.incCounter(config.stringEventCount)
     context.output(config.stringOutputTag, event)
+    metrics.incCounter(config.stringEventCount)
   }
 }

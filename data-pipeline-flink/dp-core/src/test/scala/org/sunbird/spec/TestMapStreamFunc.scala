@@ -16,7 +16,7 @@ class TestMapStreamFunc(config: BaseProcessTestConfig)(implicit val stringTypeIn
   override def processElement(event: util.Map[String, AnyRef],
                               context: ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]]#Context,
                               metrics: Metrics): Unit = {
-    metrics.incCounter(config.mapEventCount)
     context.output(config.mapOutputTag, event)
+    metrics.incCounter(config.mapEventCount)
   }
 }

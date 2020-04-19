@@ -17,8 +17,6 @@ import org.sunbird.dp.core.util.FlinkUtil
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.concurrent.duration._
-
 
 class BaseProcessFunctionTestSpec extends BaseSpec with Matchers {
 
@@ -60,6 +58,16 @@ class BaseProcessFunctionTestSpec extends BaseSpec with Matchers {
       |"@timestamp":"2019-12-25T12:58:02.630Z","type":"events"}
       |""".stripMargin
 
+  val EVENT_WITHOUT_DID: String =
+    """
+      |{"actor":{"id":"org.ekstep.learning.platform","type":"User"},"eid":"LOG","edata":{"level":"ERROR","type":"system",
+      |"message":"Exception Occured While Reading event from kafka topic : sunbirddev.system.command. Exception is :
+      |java.lang.IllegalStateException: This consumer has already been closed."},"ver":"3.0","syncts":1.586994119534E12,
+      |"ets":1.586994119534E12,"context":{"channel":"in.ekstep","pdata":{"id":"dev.sunbird.learning.platform",
+      |"pid":"learning-service","ver":"1.0"},"env":"system"},"flags":{"pp_duplicate_skipped":true,"pp_validation_processed":true},
+      |"mid":"LP.1586994119534.4bfe9b31-216d-46ea-8e60-d7ea1b1a103c","type":"events"}
+    """.stripMargin
+
   val customKafkaConsumerProperties: Map[String, String] =
     Map[String, String]("auto.offset.reset" -> "earliest", "group.id" -> "test-event-schema-group")
   implicit val embeddedKafkaConfig: EmbeddedKafkaConfig =
@@ -76,6 +84,8 @@ class BaseProcessFunctionTestSpec extends BaseSpec with Matchers {
     EmbeddedKafka.start()(embeddedKafkaConfig)
     createTestTopics(bsConfig.testTopics)
 
+    publishStringMessageToKafka(bsConfig.kafkaEventInputTopic, SHARE_EVENT)
+    publishStringMessageToKafka(bsConfig.kafkaEventInputTopic, EVENT_WITHOUT_DID)
     publishStringMessageToKafka(bsConfig.kafkaEventInputTopic, SHARE_EVENT)
     publishStringMessageToKafka(bsConfig.kafkaMapInputTopic, EVENT_WITH_MESSAGE_ID)
     publishStringMessageToKafka(bsConfig.kafkaStringInputTopic, SHARE_EVENT)
@@ -105,6 +115,10 @@ class BaseProcessFunctionTestSpec extends BaseSpec with Matchers {
       .addSink(kafkaConnector.kafkaEventSink[Event](bsConfig.kafkaEventOutputTopic))
       .name("Event-Producer")
 
+    eventStream.getSideOutput(bsConfig.duplicateEventOutputTag)
+      .addSink(kafkaConnector.kafkaEventSink[Event](bsConfig.kafkaEventDuplicateTopic))
+      .name("Duplicate-Event-Producer")
+
     val mapStream =
       env.addSource(kafkaConnector.kafkaMapSource(bsConfig.kafkaMapInputTopic), "map-event-consumer")
         .process(new TestMapStreamFunc(bsConfig)).name("TestMapEventStream")
@@ -125,31 +139,26 @@ class BaseProcessFunctionTestSpec extends BaseSpec with Matchers {
       env.execute("TestSerDeFunctionality")
     }
 
-    val events = consumeNumberMessagesFromTopics(
-      Set(bsConfig.kafkaEventOutputTopic, bsConfig.kafkaMapOutputTopic, bsConfig.kafkaStringOutputTopic),
-      number = 3, autoCommit = false,
-      timeout = 30.seconds, resetTimeoutOnEachMessage = false)
+    val eventSchemaMessages = consumeNumberMessagesFrom[String](bsConfig.kafkaEventOutputTopic, 2)
+    val eventSchemaDuplicates = consumeNumberMessagesFrom[String](bsConfig.kafkaEventDuplicateTopic, 1)
+    val mapSchemaMessages = consumeNumberMessagesFrom[String](bsConfig.kafkaMapOutputTopic, 1)
+    val stringSchemaMessages = consumeNumberMessagesFrom[String](bsConfig.kafkaStringOutputTopic, 1)
 
-    events.size should be(3)
+    eventSchemaMessages.size should be (2)
+    eventSchemaDuplicates.size should be (1)
+    mapSchemaMessages.size should be (1)
+    stringSchemaMessages.size should be (1)
 
-    events(bsConfig.kafkaMapOutputTopic).size should be (0)
-    events(bsConfig.kafkaEventOutputTopic).size should be (2)
-    events(bsConfig.kafkaStringOutputTopic).size should be (1)
+    retrieveMid(mapSchemaMessages.head) should be ("56c0c430-748b-11e8-ae77-cd19397ca6b0")
+    retrieveMid(eventSchemaDuplicates.head) should be ("02ba33e5-15fe-4ec5-b32")
+    retrieveMid(stringSchemaMessages.head) should be ("02ba33e5-15fe-4ec5-b32")
+    retrieveMid(eventSchemaMessages.head) should be ("02ba33e5-15fe-4ec5-b32")
+    retrieveMid(eventSchemaMessages.last) should be ("LP.1586994119534.4bfe9b31-216d-46ea-8e60-d7ea1b1a103c")
 
-    val eventSchemaMessage = new Event(gson.fromJson(events(bsConfig.kafkaEventOutputTopic).head,
-      new util.HashMap[String, AnyRef]().getClass))
-    eventSchemaMessage.mid() should be ("02ba33e5-15fe-4ec5-b32")
+  }
 
-    /*
-    val mapSchemaMessage = new Event(gson.fromJson(events(bsConfig.kafkaMapOutputTopic).head,
-      new util.HashMap[String, AnyRef]().getClass))
-    mapSchemaMessage.mid() should be ("56c0c430-748b-11e8-ae77-cd19397ca6b0")*/
-
-    val stringSchemaMessage = new Event(gson.fromJson(events(bsConfig.kafkaStringOutputTopic).head,
-      new util.HashMap[String, AnyRef]().getClass))
-    stringSchemaMessage.mid() should be ("02ba33e5-15fe-4ec5-b32")
-
-
+  def retrieveMid(message: String): String = {
+    new Event(gson.fromJson(message, new util.HashMap[String, AnyRef]().getClass)).mid()
   }
 
 }

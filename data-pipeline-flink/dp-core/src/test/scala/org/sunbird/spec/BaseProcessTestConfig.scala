@@ -22,6 +22,7 @@ class BaseProcessTestConfig(override val config: Config) extends BaseJobConfig(c
   val kafkaMapOutputTopic: String = config.getString("kafka.map.output.topic")
   val kafkaEventInputTopic: String = config.getString("kafka.event.input.topic")
   val kafkaEventOutputTopic: String = config.getString("kafka.event.output.topic")
+  val kafkaEventDuplicateTopic: String = config.getString("kafka.event.duplicate.topic")
   val kafkaStringInputTopic: String = config.getString("kafka.string.input.topic")
   val kafkaStringOutputTopic: String = config.getString("kafka.string.output.topic")
 

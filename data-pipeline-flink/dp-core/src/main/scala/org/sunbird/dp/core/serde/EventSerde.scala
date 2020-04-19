@@ -31,7 +31,7 @@ class EventSerializationSchema[T <: Events : Manifest](topic: String) extends Ka
   private val serialVersionUID = -4284080856874185929L
 
   override def serialize(element: T, timestamp: java.lang.Long): ProducerRecord[Array[Byte], Array[Byte]] = {
-    new ProducerRecord[Array[Byte], Array[Byte]](topic, element.kafkaKey.getBytes(StandardCharsets.UTF_8),
-      element.getJson.getBytes(StandardCharsets.UTF_8))
+    new ProducerRecord[Array[Byte], Array[Byte]](topic, Option(element.kafkaKey()).map(_.getBytes(StandardCharsets.UTF_8)).orNull,
+      element.getJson().getBytes(StandardCharsets.UTF_8))
   }
 }
