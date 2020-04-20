@@ -14,50 +14,50 @@ import org.sunbird.dp.validator.task.DruidValidatorConfig
 
 class SchemaValidator(config: DruidValidatorConfig) extends java.io.Serializable {
 
-    private val serialVersionUID = 8780940932759659175L
-    private[this] val logger = LoggerFactory.getLogger(classOf[SchemaValidator])
-    private val schemaFactory = JsonSchemaFactory.byDefault
+  private val serialVersionUID = 8780940932759659175L
+  private[this] val logger = LoggerFactory.getLogger(classOf[SchemaValidator])
+  private val schemaFactory = JsonSchemaFactory.byDefault
 
-    logger.info("Initializing schema for telemetry objects...")
+  logger.info("Initializing schema for telemetry objects...")
+  val pattern = "{0}/{1}"
+  val telemetrySchemaPath: String = MessageFormat.format(pattern, config.telemetrySchemaPath, config.defaultSchemaFile)
+  val summaryEventSchemapath: String = MessageFormat.format(pattern, config.summarySchemaPath, config.summarySchemaFile)
+  val searchEventSchemaPath: String = MessageFormat.format(pattern, config.telemetrySchemaPath, config.searchSchemaFile)
 
-    val telemetrySchemaPath: String = MessageFormat.format("{0}/{1}", config.telemetrySchemaPath, config.defaultSchemaFile)
-    val summaryEventSchemapath: String = MessageFormat.format("{0}/{1}", config.summarySchemaPath, config.summarySchemaFile)
-    val searchEventSchemaPath: String = MessageFormat.format("{0}/{1}", config.telemetrySchemaPath, config.searchSchemaFile)
+  val telemetrySchema = new String(ByteStreams.toByteArray(this.getClass.getClassLoader.getResourceAsStream(telemetrySchemaPath)))
+  val summarySchema = new String(ByteStreams.toByteArray(this.getClass.getClassLoader.getResourceAsStream(summaryEventSchemapath)))
+  val searchEventSchema = new String(ByteStreams.toByteArray(this.getClass.getClassLoader.getResourceAsStream(searchEventSchemaPath)))
 
-    val telemetrySchema = new String(ByteStreams.toByteArray(this.getClass.getClassLoader.getResourceAsStream(telemetrySchemaPath)))
-    val summarySchema = new String(ByteStreams.toByteArray(this.getClass.getClassLoader.getResourceAsStream(summaryEventSchemapath)))
-    val searchEventSchema = new String(ByteStreams.toByteArray(this.getClass.getClassLoader.getResourceAsStream(searchEventSchemaPath)))
+  private val telemetryJsonSchema = schemaFactory.getJsonSchema(JsonLoader.fromString(telemetrySchema))
+  private val summaryJsonSchema = schemaFactory.getJsonSchema(JsonLoader.fromString(summarySchema))
+  private val searchEventJsonSchema = schemaFactory.getJsonSchema(JsonLoader.fromString(searchEventSchema))
 
-    private val telemetryJsonSchema = schemaFactory.getJsonSchema(JsonLoader.fromString(telemetrySchema))
-    private val summaryJsonSchema = schemaFactory.getJsonSchema(JsonLoader.fromString(summarySchema))
-    private val searchEventJsonSchema = schemaFactory.getJsonSchema(JsonLoader.fromString(searchEventSchema))
+  logger.info("Schema initialization completed for telemetry objects...")
 
-    logger.info("Schema initialization completed for telemetry objects...")
+  @throws[IOException]
+  @throws[ProcessingException]
+  def validate(event: Event): ProcessingReport = {
+    val eventJson = JsonLoader.fromString(event.getJson)
+    val report = if (event.isSearchEvent) searchEventJsonSchema.validate(eventJson)
+    else if (event.isSummaryEvent) summaryJsonSchema.validate(eventJson)
+    else telemetryJsonSchema.validate(eventJson)
+    report
+  }
 
-    @throws[IOException]
-    @throws[ProcessingException]
-    def validate(event: Event): ProcessingReport = {
-        val eventJson = JsonLoader.fromString(event.getJson)
-        val report = if (event.isSearchEvent) searchEventJsonSchema.validate(eventJson)
-            else if (event.isSummaryEvent) summaryJsonSchema.validate(eventJson)
-            else telemetryJsonSchema.validate(eventJson)
-        report
+  def getInvalidFieldName(errorInfo: String): String = {
+    val message = errorInfo.split("reports:")
+    val defaultValidationErrMsg = "Unable to obtain field name for failed validation"
+    if (message.length > 1) {
+      val fields = message(1).split(",")
+      if (fields.length > 2) {
+        val pointer = fields(3).split("\"pointer\":")
+        pointer(1).substring(0, pointer(1).length - 1)
+      } else {
+        defaultValidationErrMsg
+      }
+    } else {
+      defaultValidationErrMsg
     }
-
-    def getInvalidFieldName(errorInfo: String): String = {
-        val message = errorInfo.split("reports:")
-        val defaultValidationErrMsg = "Unable to obtain field name for failed validation"
-        if (message.length > 1) {
-            val fields = message(1).split(",")
-            if (fields.length > 2) {
-                val pointer = fields(3).split("\"pointer\":")
-                pointer(1).substring(0, pointer(1).length - 1)
-            } else {
-                defaultValidationErrMsg
-            }
-        } else {
-            defaultValidationErrMsg
-        }
-    }
+  }
 
 }

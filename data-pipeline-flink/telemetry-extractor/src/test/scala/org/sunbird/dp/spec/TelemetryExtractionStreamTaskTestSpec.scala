@@ -62,20 +62,22 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
 
     val task = new TelemetryExtractorStreamTask(extractorConfig, mockKafkaUtil)
     task.process()
-    RawEventsSink.values.size() should be (42) // 40 events + 2 log events generated for auditing
-    FailedEventsSink.values.size() should be (0)
+    RawEventsSink.values.size() should be (40) // 38 events + 2 log events generated for auditing
+    FailedEventsSink.values.size() should be (2)
     DupEventsSink.values.size() should be (1)
 
     val rawEvent = gson.fromJson(gson.toJson(RawEventsSink.values.get(0)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
     val dupEvent = gson.fromJson(gson.toJson(DupEventsSink.values.get(0)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
+    val failedEvent = gson.fromJson(gson.toJson(FailedEventsSink.values.get(0)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
     rawEvent("flags").asInstanceOf[util.Map[String, Boolean]].get("ex_processed") should be(true)
     dupEvent("flags").asInstanceOf[util.Map[String, Boolean]].get("extractor_duplicate") should be(true)
+    failedEvent("flags").asInstanceOf[util.Map[String, Boolean]].get("ex_processed") should be(false)
 
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.totalBatchEventCount}").getValue() should be (3)
-    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.successEventCount}").getValue() should be (40)
+    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.successEventCount}").getValue() should be (38)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.unique-event-count").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.duplicate-event-count").getValue() should be (1)
-    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.failedEventCount}").getValue() should be (0)
+    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.failedEventCount}").getValue() should be (2)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.auditEventCount}").getValue() should be (2)
 
   }

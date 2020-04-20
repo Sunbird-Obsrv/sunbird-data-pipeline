@@ -14,8 +14,6 @@ case class Context(channel: String,
 
 case class EData(dir: String, `type`: String, size: Double)
 
-case class Params(ver: String, events_count: Int, sync_status: String)
-
 case class Rollup(l1: String)
 
 case class Object(id: String, ver: String, `type`: String, rollup: Rollup)
