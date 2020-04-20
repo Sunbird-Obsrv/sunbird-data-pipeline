@@ -3,7 +3,7 @@ package org.sunbird.dp.fixture
 object EventFixtures {
 
   val EVENT_WITH_MID: String =
-    """{"actor":{"type":"User","id":"bc3be7ae-ad2b-4dee-ac4c-220c7db146b2"},"eid":"INTERACT",
+    """{"actor":{"type":"User","id":"f:bc3be7ae-ad2b-4dee-ac4c-220c7db146b2"},"eid":"INTERACT",
       |"edata":{"type":"OTHER","subtype":"sheen-animation-ended","id":"library","pageid":"library","extra":{"pos":[]}},
       |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":1.579143065071E12,
       |"context":{"cdata":[],"env":"home","channel":"505c7c48ac6dc1edc9b08f21db5a571d",
@@ -43,4 +43,19 @@ object EventFixtures {
     """
       |{"eid":"LOG","ets":1.580495430158E12,"ver":"3.0","mid":"LP.1580495430158.23ffa945-18b5-4185-b347-5bc355fafaed","actor":{"id":"org.ekstep.learning.platform","type":"System"},"context":{"channel":"in.ekstep","pdata":{"id":"prod.ntp.learning.platform","pid":"search-service","ver":"1.0"},"env":"search"},"edata":{"level":"INFO","type":"api_access","message":"","params":[{"duration":46.0},{"protocol":"HTTP"},{"size":438707.0},{"method":"POST"},{"rid":"ekstep.composite-search.search"},{"uip":"11.4.0.39"},{"url":"/v3/search"},{"status":200.0}]},"syncts":1.580495430158E12,"type":"events","@timestamp":"2020-01-31T18:30:30.158Z"}
       |""".stripMargin
+
+
+  val DIALCODE_EVENT: String =
+    """{"actor":{"type":"User","id":"610bab7d-1450-4e54-bf78-c7c9b14dbc81"},"eid":"INTERACT",
+      |"edata":{"type":"OTHER","subtype":"sheen-animation-ended","id":"library","pageid":"library","extra":{"pos":[]}},
+      |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":1.579143065071E12,
+      |"context":{"cdata":[],"env":"home","channel":"505c7c48ac6dc1edc9b08f21db5a571d",
+      |"pdata":{"id":"sunbird.app","pid":"sunbird.app","ver":"2.3.144"},"sid":"df936f82-e982-41ec-8412-70d414458272",
+      |"did":"45f32f48592cb9bcf26bef9178b7bd20abe24932"},"flags":{"dd_processed":true},
+      |"mid":"mid4","type":"events","object":{"id":"GWNI38","type":"DialCode",
+      |"version":"","rollup":{}}}""".stripMargin
+
+  val SEARCH_EVENT : String =
+    """
+      |{"eid":"SEARCH","ets":1577826509166,"ver":"3.0","mid":"LP.1577826509166.c5d13bb7-43c6-4174-9bbe-b06aed6758f2","actor":{"id":"org.ekstep.learning.platform","type":"System"},"context":{"channel":"in.ekstep","pdata":{"id":"dev.sunbird.learning.platform","pid":"search-service","ver":"1.0"},"env":"search"},"edata":{"size":112402,"query":"","filters":{"dialCodes":"WGHSK"},"sort":{},"type":"all","topn":[{"identifier":"do_11278295762528665612"},{"identifier":"domain_14443"},{"identifier":"do_11243460107708006418"},{"identifier":"tpd_medium_code"},{"identifier":"0128260921141493762"}]},"syncts":1577826509166}""".stripMargin
 }
