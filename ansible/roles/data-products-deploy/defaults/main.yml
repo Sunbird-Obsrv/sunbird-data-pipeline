@@ -116,7 +116,7 @@ run_district_monthly_job:
 
 service:
   search:
-    url: http://{{groups['search1'][0]}}:9000
+    url: http://{{private_ingressgateway_ip}}/search
     path: /v3/search
 
 es_search_index: "compositesearch"
