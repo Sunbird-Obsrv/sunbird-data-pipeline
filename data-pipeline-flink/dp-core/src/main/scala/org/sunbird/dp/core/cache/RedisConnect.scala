@@ -47,9 +47,9 @@ class RedisConnect(jobConfig: BaseJobConfig) extends java.io.Serializable {
 
   def resetConnection(): Unit = {
     this.jedisPool.close()
-    val redis_host = Option(config.getString("redis.host")).getOrElse("localhost")
-    val redis_port = Option(config.getInt("redis.port")).getOrElse(6379)
-    this.jedisPool = new JedisPool(buildPoolConfig, redis_host, redis_port)
+    val redisHost = Option(config.getString("redis.host")).getOrElse("localhost")
+    val redisPort = Option(config.getInt("redis.port")).getOrElse(6379)
+    this.jedisPool = new JedisPool(buildPoolConfig, redisHost, redisPort)
   }
 
   def resetConnection(database: Int): Jedis = {
