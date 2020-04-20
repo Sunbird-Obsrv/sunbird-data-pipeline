@@ -6,6 +6,7 @@ require 'json'
 @topic = "{{ analytics_job_queue_topic }}"
 @report_list_jobs_url = "{{ report_list_jobs_url }}"
 @submit_jobs_auth_token = "{{ submit_jobs_auth_token }}"
+@submit_jobs_command = "source /mount/venv/bin/activate && dataproducts submit_druid_jobs --report_list_jobs_url #{@report_list_jobs_url} --auth_token #{@submit_jobs_auth_token}"
 
 def log(message)
     @log.write("#{Time.now.to_s}: #{message}\n")
@@ -32,7 +33,7 @@ def submit_all_jobs
     jobs.each do |job|
         if job == "monitor-job-summ"
             log("python")
-            system('/bin/bash -l -c "source /mount/venv/bin/activate && dataproducts submit_druid_jobs --report_list_jobs_url @report_list_jobs_url --auth_token @submit_jobs_auth_token"')
+            system('/bin/bash -l -c "'+ @submit_jobs_command +'"')
             submit_job(job, config_hash[job])
         elsif report_jobs[job].nil?
             submit_job(job, config_hash[job])
