@@ -121,7 +121,6 @@ class PipeLineProcessorEventSource extends SourceFunction[Event] {
 class ShareItemEventSink extends SinkFunction[String] {
 
   override def invoke(value: String): Unit = {
-    println("SHARE_EVENT = " + value)
     synchronized {
       ShareItemEventSink.values.add(value)
     }

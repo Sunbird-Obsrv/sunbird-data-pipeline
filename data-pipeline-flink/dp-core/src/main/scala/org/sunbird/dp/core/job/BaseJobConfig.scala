@@ -17,12 +17,16 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
   val kafkaBrokerServers: String = config.getString("kafka.broker-servers")
   val zookeeper: String = config.getString("kafka.zookeeper")
   val groupId: String = config.getString("kafka.groupId")
-  val checkpointingInterval: Int = config.getInt("task.checkpointing.interval")
   val restartAttempts: Int = config.getInt("task.restart-strategy.attempts")
   val delayBetweenAttempts: Long = config.getLong("task.restart-strategy.delay")
   val parallelism: Int = config.getInt("task.parallelism")
   // Only for Tests
   val kafkaAutoOffsetReset: Option[String] = if (config.hasPath("kafka.auto.offset.reset")) Option(config.getString("kafka.auto.offset.reset")) else None
+
+  // Checkpointing config
+  val checkpointingInterval: Int = config.getInt("task.checkpointing.interval")
+  val enableDistributedCheckpointing: Option[Boolean] = if (config.hasPath("job")) Option(config.getBoolean("job.enable.distributed.checkpointing")) else None
+  val checkpointingBaseUrl: Option[String] = if (config.hasPath("job")) Option(config.getString("job.statebackend.base.url")) else None
 
   def kafkaConsumerProperties: Properties = {
     val properties = new Properties()
