@@ -122,7 +122,6 @@
     		<sourceDirectory>src/main/scala</sourceDirectory>
 		    <testSourceDirectory>src/test/scala</testSourceDirectory>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -153,20 +152,10 @@
                                     </excludes>
                                 </filter>
                             </filters>
-                            <relocations>
-                                <relocation>
-                                    <pattern>org.sunbird.dp.domain</pattern>
-                                    <shadedPattern>org.sunbird.dp.denorm.domain</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.sunbird.dp.functions</pattern>
-                                    <shadedPattern>org.sunbird.dp.denorm.functions</shadedPattern>
-                                </relocation>
-                            </relocations>
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.sunbird.dp.task.DenormalizationStreamTask</mainClass>
+                                    <mainClass>org.sunbird.dp.denorm.task.DenormalizationStreamTask</mainClass>
                                 </transformer>
                                 <!-- append default configs -->
                                 <transformer

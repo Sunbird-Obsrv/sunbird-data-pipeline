@@ -152,24 +152,10 @@
                                     </excludes>
                                 </filter>
                             </filters>
-                            <relocations>
-                                <relocation>
-                                    <pattern>org.sunbird.dp.domain</pattern>
-                                    <shadedPattern>org.sunbird.dp.preprocessor.domain</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.sunbird.dp.functions</pattern>
-                                    <shadedPattern>org.sunbird.dp.preprocessor.functions</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.sunbird.dp.util</pattern>
-                                    <shadedPattern>org.sunbird.dp.preprocessor.util</shadedPattern>
-                                </relocation>
-                            </relocations>
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.sunbird.dp.task.PipelinePreprocessorStreamTask</mainClass>
+                                    <mainClass>org.sunbird.dp.preprocessor.task.PipelinePreprocessorStreamTask</mainClass>
                                 </transformer>
                                 <!-- append default configs -->
                                 <transformer

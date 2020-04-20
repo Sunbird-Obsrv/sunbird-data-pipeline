@@ -148,20 +148,10 @@
                                     </excludes>
                                 </filter>
                             </filters>
-                            <relocations>
-                                <relocation>
-                                    <pattern>org.sunbird.dp.domain</pattern>
-                                    <shadedPattern>org.sunbird.dp.extractor.domain</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.sunbird.dp.functions</pattern>
-                                    <shadedPattern>org.sunbird.dp.extractor.functions</shadedPattern>
-                                </relocation>
-                            </relocations>
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.sunbird.dp.task.TelemetryExtractorStreamTask</mainClass>
+                                    <mainClass>org.sunbird.dp.extractor.task.TelemetryExtractorStreamTask</mainClass>
                                 </transformer>
                                 <!-- append default configs -->
                                 <transformer

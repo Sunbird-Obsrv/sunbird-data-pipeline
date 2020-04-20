@@ -11,9 +11,7 @@ import org.apache.flink.streaming.api.functions.source.SourceFunction.SourceCont
 import org.apache.flink.test.util.MiniClusterWithClientResource
 import org.mockito.Mockito
 import org.mockito.Mockito._
-import org.sunbird.dp.domain.Event
 import org.sunbird.dp.fixture.EventFixture
-import org.sunbird.dp.task.DenormalizationConfig
 import org.sunbird.dp.task.DenormalizationStreamTask
 import com.google.gson.Gson
 import com.typesafe.config.{Config, ConfigFactory}
@@ -21,6 +19,8 @@ import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import redis.embedded.RedisServer
 import org.sunbird.dp.core.cache.RedisConnect
 import org.sunbird.dp.core.job.FlinkKafkaConnector
+import org.sunbird.dp.denorm.domain.Event
+import org.sunbird.dp.denorm.task.{DenormalizationConfig, DenormalizationStreamTask}
 
 class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
 

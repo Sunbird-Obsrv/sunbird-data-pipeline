@@ -16,9 +16,9 @@ import org.apache.flink.test.util.MiniClusterWithClientResource
 import org.sunbird.dp.task.TelemetryExtractorStreamTask
 import org.apache.flink.streaming.api.functions.source.SourceFunction
 import org.apache.flink.streaming.api.functions.source.SourceFunction.SourceContext
-import org.sunbird.dp.task.TelemetryExtractorConfig
 import com.typesafe.config.ConfigFactory
 import org.sunbird.dp.core.job.FlinkKafkaConnector
+import org.sunbird.dp.extractor.task.{TelemetryExtractorConfig, TelemetryExtractorStreamTask}
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 
 import collection.JavaConverters._

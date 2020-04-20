@@ -158,23 +158,9 @@
                                     </excludes>
                                 </filter>
                             </filters>
-                            <relocations>
-                                <relocation>
-                                    <pattern>org.sunbird.dp.domain</pattern>
-                                    <shadedPattern>org.sunbird.dp.druid.validator.domain</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.sunbird.dp.functions</pattern>
-                                    <shadedPattern>org.sunbird.dp.druid.validator.functions</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.sunbird.dp.util</pattern>
-                                    <shadedPattern>org.sunbird.dp.druid.validator.util</shadedPattern>
-                                </relocation>
-                            </relocations>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.sunbird.dp.task.DruidValidatorStreamTask</mainClass>
+                                    <mainClass>org.sunbird.dp.validator.task.DruidValidatorStreamTask</mainClass>
                                 </transformer>
                                 <!-- append default configs -->
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">

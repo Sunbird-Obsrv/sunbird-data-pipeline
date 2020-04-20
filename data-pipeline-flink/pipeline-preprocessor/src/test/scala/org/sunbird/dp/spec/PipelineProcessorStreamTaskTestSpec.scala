@@ -14,10 +14,11 @@ import org.apache.flink.test.util.MiniClusterWithClientResource
 import org.mockito.Mockito
 import org.mockito.Mockito.when
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
-import org.sunbird.dp.domain.Event
 import org.sunbird.dp.fixture.EventFixtures
 import org.sunbird.dp.core.job.FlinkKafkaConnector
-import org.sunbird.dp.task.{PipelinePreprocessorConfig, PipelinePreprocessorStreamTask}
+import org.sunbird.dp.preprocessor.domain.Event
+import org.sunbird.dp.preprocessor.task.{PipelinePreprocessorConfig, PipelinePreprocessorStreamTask}
+import org.sunbird.dp.task.PipelinePreprocessorStreamTask
 import redis.embedded.RedisServer
 
 class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
