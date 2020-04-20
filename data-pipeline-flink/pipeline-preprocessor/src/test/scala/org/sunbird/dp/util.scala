@@ -29,7 +29,7 @@ class TestSchemaValidator extends FlatSpec with Matchers {
     val outErrMsg1 = schemaValidator.getInvalidFieldName(errMsgWithoutReportData)
     outErrMsg1 should be("Unable to obtain field name for failed validation")
 
-    val errMsgWithoutPointer =
+    val errMsgWithPointer =
       """
         |--- BEGIN MESSAGES ---
         |error: instance failed to match all required schemas (matched only 1 out of 2)
@@ -44,7 +44,26 @@ class TestSchemaValidator extends FlatSpec with Matchers {
         |---  END MESSAGES  ---
             """.stripMargin
 
-    val outErrMsg2 = schemaValidator.getInvalidFieldName(errMsgWithoutPointer)
+    val outErrMsg2 = schemaValidator.getInvalidFieldName(errMsgWithPointer)
     outErrMsg2 should not be(null)
+
+
+    val errMsgWithoutPointer =
+      """
+        |--- BEGIN MESSAGES ---
+        |error: instance failed to match all required schemas (matched only 1 out of 2)
+        |    level: "error"
+        |    schema: {"loadingURI":"#","pointer":""}
+        |    instance: {"pointer":""}
+        |    domain: "validation"
+        |    keyword: "allOf"
+        |    matched: 1
+        |    nrSchemas: 2
+        |    reports: {"/allOf/0":[{"level":"error"}]}
+        |---  END MESSAGES  ---
+            """.stripMargin
+
+    val outErrMsg3 = schemaValidator.getInvalidFieldName(errMsgWithoutPointer)
+    outErrMsg3 should be("Unable to obtain field name for failed validation")
   }
 }
