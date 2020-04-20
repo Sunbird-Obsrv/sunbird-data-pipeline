@@ -8,7 +8,6 @@ import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.FlinkUtil
 import org.sunbird.dp.denorm.domain.Event
 import org.sunbird.dp.denorm.functions._
-import org.sunbird.dp.functions._
 
 /**
  * Denormalization stream task does the following pipeline processing in a sequence:

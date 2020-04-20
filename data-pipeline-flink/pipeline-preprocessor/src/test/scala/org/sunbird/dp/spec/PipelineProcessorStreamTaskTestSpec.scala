@@ -18,7 +18,6 @@ import org.sunbird.dp.fixture.EventFixtures
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.preprocessor.domain.Event
 import org.sunbird.dp.preprocessor.task.{PipelinePreprocessorConfig, PipelinePreprocessorStreamTask}
-import org.sunbird.dp.task.PipelinePreprocessorStreamTask
 import redis.embedded.RedisServer
 
 class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {

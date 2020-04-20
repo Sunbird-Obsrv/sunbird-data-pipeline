@@ -8,8 +8,8 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
-import org.sunbird.dp.domain._
-import org.sunbird.dp.preprocessor.domain.{Actor, Context, EData, Event, Object, Rollup, ShareEvent}
+import org.sunbird.dp.preprocessor.domain.{Actor, EData, Event, Object, Rollup, ShareEvent}
+import org.sunbird.dp.preprocessor.domain.{Context => EventContext}
 import org.sunbird.dp.preprocessor.task.PipelinePreprocessorConfig
 
 class ShareEventsFlattenerFunction(config: PipelinePreprocessorConfig)
@@ -59,7 +59,7 @@ class ShareEventsFlattenerFunction(config: PipelinePreprocessorConfig)
       ver = "3.0",
       syncts = event.eventSyncTs.asInstanceOf[Number].longValue,
       ets = event.ets(),
-      context = Context(event.channel(), event.env, event.sessionId, event.did(), event.eventPData, event.cdata, event.rollup),
+      context = EventContext(event.channel(), event.env, event.sessionId, event.did(), event.eventPData, event.cdata, event.rollup),
       mid = event.mid() + "-" + UUID.randomUUID().toString,
       eventObj,
       event.eventTags

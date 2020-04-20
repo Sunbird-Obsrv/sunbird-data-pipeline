@@ -8,7 +8,6 @@ import org.sunbird.dp.core.cache.{DataCache, RedisConnect}
 import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 import org.sunbird.dp.denorm.domain.{DeviceProfile, Event}
 import org.sunbird.dp.denorm.task.DenormalizationConfig
-import org.sunbird.dp.domain.DeviceProfile
 
 class DeviceDenormFunction(config: DenormalizationConfig)(implicit val mapTypeInfo: TypeInformation[Event])
   extends BaseProcessFunction[Event, Event](config) {

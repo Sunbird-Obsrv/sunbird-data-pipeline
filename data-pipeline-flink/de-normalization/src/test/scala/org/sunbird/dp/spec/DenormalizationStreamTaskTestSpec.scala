@@ -12,7 +12,6 @@ import org.apache.flink.test.util.MiniClusterWithClientResource
 import org.mockito.Mockito
 import org.mockito.Mockito._
 import org.sunbird.dp.fixture.EventFixture
-import org.sunbird.dp.task.DenormalizationStreamTask
 import com.google.gson.Gson
 import com.typesafe.config.{Config, ConfigFactory}
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}

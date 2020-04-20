@@ -10,8 +10,8 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.joda.time.format.DateTimeFormat
 import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
-import org.sunbird.dp.domain._
 import org.sunbird.dp.extractor.domain._
+import org.sunbird.dp.extractor.domain.{Context => EventContext}
 import org.sunbird.dp.extractor.task.TelemetryExtractorConfig
 
 class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTypeInfo: TypeInformation[String])
@@ -92,7 +92,7 @@ class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTy
       edata = EData(level = "INFO", "telemetry_audit", message = "telemetry sync", Array(Params("3.0", totalEvents, "SUCCESS"))),
       syncts = System.currentTimeMillis(),
       ets = System.currentTimeMillis(),
-      context = Context(channel = Option(batchEvent.get("channel")).getOrElse("in.sunbird").toString, env = "data-pipeline",
+      context = EventContext(channel = Option(batchEvent.get("channel")).getOrElse("in.sunbird").toString, env = "data-pipeline",
         sid = UUID.randomUUID().toString,
         did = Option(getValuesFromParams(batchEvent, "did")).getOrElse(UUID.randomUUID()).toString,
         pdata = Pdata(ver = "3.0", pid = "telemetry-extractor"),

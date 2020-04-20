@@ -7,7 +7,6 @@ import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.FlinkUtil
-import org.sunbird.dp.functions.RouterFunction
 import org.sunbird.dp.validator.domain.Event
 import org.sunbird.dp.validator.functions.{DruidValidatorFunction, RouterFunction}
 
