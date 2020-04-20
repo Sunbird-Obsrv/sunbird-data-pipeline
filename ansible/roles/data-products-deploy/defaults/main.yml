@@ -22,8 +22,8 @@ druid_broker_host: "{{groups['broker'][0]}}"
 hierarchySearchServiceUrl: "{{ proto }}://{{ domain_name }}/api/course"
 hierarchySearchServicEndpoint: /v1/hierarchy/
 
-analytics_job_list: '"wfs", "ds", "dpu", "content-rating-updater", "daily-metrics", "desktop-consumption-report", "course-enrollment-report", "etb-metrics", "audit-metrics-report", "monitor-job-summ"'
-analytics_jobs_count: 10
+analytics_job_list: '"wfs", "ds", "dpu", "content-rating-updater", "course-enrollment-report", "etb-metrics", "audit-metrics-report", "monitor-job-summ"'
+analytics_jobs_count: 8
 
 cassandra_keyspace_prefix: '{{ env }}_'
 dp_dispatch_bucket_name: ekstep-dev-data-store
