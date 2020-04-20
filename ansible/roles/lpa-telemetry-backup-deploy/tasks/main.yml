@@ -49,7 +49,7 @@
     name: "{{ item.key }}"
     minute: "{{ item.value.service_monitor_schedule_min }}" 
     hour: "{{ item.value.service_monitor_schedule_hr }}"
-    job: "{{ sbin_path }}/monitor-secor.sh {{ item.key }} {{ item.value.service_description }}"
+    job: "{{ sbin_path }}/monitor-secor.sh {{ item.key }} {{ item.key }}"
   with_dict: "{{ secor_service_name }}"
 
 

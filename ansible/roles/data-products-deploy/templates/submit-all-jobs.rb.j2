@@ -4,6 +4,9 @@ require 'json'
 @log = File.open("{{ analytics.home }}/logs/logfile.log", 'a')
 @kafka = Kafka.new(["{{ brokerlist }}"])
 @topic = "{{ analytics_job_queue_topic }}"
+@report_list_jobs_url = "{{ report_list_jobs_url }}"
+@submit_jobs_auth_token = "{{ submit_jobs_auth_token }}"
+@submit_jobs_command = "source /mount/venv/bin/activate && dataproducts submit_druid_jobs --report_list_jobs_url #{@report_list_jobs_url} --auth_token #{@submit_jobs_auth_token}"
 
 def log(message)
     @log.write("#{Time.now.to_s}: #{message}\n")
@@ -28,7 +31,11 @@ def submit_all_jobs
     config_hash = JSON.parse(file)
     log("Config file loaded")
     jobs.each do |job|
-        if report_jobs[job].nil?
+        if job == "monitor-job-summ"
+            log("python")
+            system('/bin/bash -l -c "'+ @submit_jobs_command +'"')
+            submit_job(job, config_hash[job])
+        elsif report_jobs[job].nil?
             submit_job(job, config_hash[job])
         else
             submit_job(report_jobs[job], config_hash[job])   
