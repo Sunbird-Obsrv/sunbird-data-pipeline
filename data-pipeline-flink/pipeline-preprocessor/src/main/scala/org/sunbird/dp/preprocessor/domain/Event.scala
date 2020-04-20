@@ -66,15 +66,8 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
       telemetry.addFieldIfAbsent(EventsPath.CONTEXT_PATH, new util.HashMap[String, AnyRef])
       telemetry.add(EventsPath.CONTEXT_CHANNEL_PATH, config.defaultChannel)
     }
-    val atTimestamp = telemetry.getAtTimestamp
-    val strSyncts = telemetry.getSyncts
-    if (null == atTimestamp && null == strSyncts) {
-      val syncts = System.currentTimeMillis
-      telemetry.addFieldIfAbsent(EventsPath.SYNC_TS_PATH, syncts)
-      telemetry.addFieldIfAbsent(EventsPath.TIMESTAMP, dateFormatter.print(syncts))
-    }
-    else if (atTimestamp != null) telemetry.addFieldIfAbsent(EventsPath.SYNC_TS_PATH, dateFormatter.parseMillis(atTimestamp))
-    else if (strSyncts != null) telemetry.addFieldIfAbsent(EventsPath.TIMESTAMP, strSyncts)
+    telemetry.addFieldIfAbsent(EventsPath.SYNC_TS_PATH, dateFormatter.parseMillis(telemetry.getAtTimestamp))
+    telemetry.addFieldIfAbsent(EventsPath.TIMESTAMP, telemetry.getSyncts)
   }
 
   def edataDir: String = telemetry.read[String](EventsPath.EDATA_DIR_PATH).getOrElse(null)
