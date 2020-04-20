@@ -41,6 +41,8 @@ class TelemetryEventReaderSpec extends BaseSpec with Matchers with MockitoSugar 
     // read
     telemetryEvent.edataItems() should not be (null)
     telemetryEvent.edataItems().size() should be(3)
+    telemetryEvent.kafkaKey() should be("02ba33e5-15fe-4ec5-b32.1084308E760-3d03429fae84")
+
 
     telemetryEvent.updateTs("9543785")
     telemetryEvent.getTimeStamp() should be("9543785")
