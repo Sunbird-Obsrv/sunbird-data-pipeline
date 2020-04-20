@@ -67,6 +67,11 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
     FailedEventsSink.values.size() should be (0)
     DupEventsSink.values.size() should be (1)
 
+    val rawEvent = gson.fromJson(gson.toJson(RawEventsSink.values.get(0)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
+    val dupEvent = gson.fromJson(gson.toJson(DupEventsSink.values.get(0)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
+    rawEvent.get("flags").get.asInstanceOf[util.Map[String, Boolean]].get("ex_processed") should be(true)
+    dupEvent.get("flags").get.asInstanceOf[util.Map[String, Boolean]].get("extractor_duplicate") should be(true)
+
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.totalBatchEventCount}").getValue() should be (3)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.successEventCount}").getValue() should be (40)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.unique-event-count").getValue() should be (1)
@@ -82,8 +87,8 @@ class ExtractorEventSource extends SourceFunction[util.Map[String, AnyRef]] {
 
   override def run(ctx: SourceContext[util.Map[String, AnyRef]]) {
     val gson = new Gson()
-    val event1 = gson.fromJson(EventFixture.EVENT_WITH_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala ++ Map("partition" -> 0.asInstanceOf[AnyRef])
-    val event2 = gson.fromJson(EventFixture.EVENT_WITHOUT_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala ++ Map("partition" -> 0.asInstanceOf[AnyRef])
+    val event1 = gson.fromJson(EventFixture.EVENT_WITH_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
+    val event2 = gson.fromJson(EventFixture.EVENT_WITHOUT_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
     ctx.collect(event1.asJava)
     ctx.collect(event1.asJava)
     ctx.collect(event2.asJava)

@@ -2,7 +2,7 @@ package org.sunbird.dp.domain
 
 import java.util
 
-class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {
+class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
 
   private val jobName = "DruidValidator"
   

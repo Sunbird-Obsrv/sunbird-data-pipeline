@@ -13,19 +13,10 @@ import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
 import org.sunbird.dp.core.{BaseDeduplication, BaseJobConfig, DataCache}
 import org.sunbird.dp.domain.Events
 import org.sunbird.dp.serde._
+import org.sunbird.fixture.EventFixture
 import redis.clients.jedis.exceptions.{JedisConnectionException, JedisException}
 
 class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
-  val EVENT_WITH_MID: String =
-    """{"actor":{"type":"User","id":"bc3be7ae-ad2b-4dee-ac4c-220c7db146b2"},"eid":"INTERACT",
-      |"edata":{"type":"OTHER","subtype":"sheen-animation-ended","id":"library","pageid":"library","extra":{"pos":[]}},
-      |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":1.579143065071E12,
-      |"context":{"cdata":[],"env":"home","channel":"505c7c48ac6dc1edc9b08f21db5a571d",
-      |"pdata":{"id":"prod.diksha.portal","pid":"sunbird.app","ver":"2.3.144"},"sid":"df936f82-e982-41ec-8412-70d414458272",
-      |"did":"758e054a400f20f7677f2def76427dc13ad1f837"},
-      |"mid":"321a6f0c-10c6-4cdc-9893-207bb64fea50","type":"events","object":{"id":"","type":"",
-      |"version":"","rollup":{}}}""".stripMargin
-
 
   val config: Config = ConfigFactory.load("base-test.conf")
   val bsConfig: BaseJobConfig = new BaseJobConfig(config, "base-job")
@@ -123,7 +114,7 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     import org.apache.kafka.clients.consumer.ConsumerRecord
     val cRecord: ConsumerRecord[Array[Byte], Array[Byte]] = new ConsumerRecord[Array[Byte], Array[Byte]](topic, partition, offset, key, value)
     stringDeSerialization.deserialize(cRecord)
-    val event = new Event(new Gson().fromJson(EVENT_WITH_MID, new util.LinkedHashMap[String, AnyRef]().getClass))
+    val event = new Event(new Gson().fromJson(EventFixture.SAMPLE_EVENT_1, new util.LinkedHashMap[String, AnyRef]().getClass))
     eventSerialization.serialize(event, System.currentTimeMillis())
     eventDeSerialization.getProducedType
     stringSerialization.serialize("test", System.currentTimeMillis())
@@ -135,4 +126,10 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
   }
 }
 
-class Event(eventMap: util.Map[String, AnyRef]) extends Events(eventMap) {}
+class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
+  def markSuccess(flagName: String): Unit = {
+    telemetry.addFieldIfAbsent("flags", new util.HashMap[String, Boolean])
+    telemetry.add(s"flags.$flagName", true)
+    telemetry.add("type", "events")
+  }
+}

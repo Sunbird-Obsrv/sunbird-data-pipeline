@@ -74,7 +74,6 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     DupEventsSink.values.size() should be(1)
     TelemetryAuditEventSink.values.size() should be(1)
     TelemetrySecondaryEventSink.values.size() should be(1)
-
     DupEventsSink.values.get(0).getFlags.get(ppConfig.DE_DUP_FLAG_NAME).booleanValue() should be(true)
     TelemetryPrimaryEventSink.values.get(0).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(true)
     TelemetryPrimaryEventSink.values.get(1).getFlags.get(ppConfig.SHARE_EVENTS_FLATTEN_FLAG_NAME).booleanValue() should be(true)
@@ -99,13 +98,13 @@ class PipeLineProcessorEventSource extends SourceFunction[Event] {
 
   override def run(ctx: SourceContext[Event]) {
     val gson = new Gson()
-    val event1 = gson.fromJson(EventFixtures.EVENT_WITH_MID, new util.LinkedHashMap[String, AnyRef]().getClass)
-    val event2 = gson.fromJson(EventFixtures.SHARE_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
-    val event3 = gson.fromJson(EventFixtures.INVALID_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
-    val event4 = gson.fromJson(EventFixtures.INVALID_EVENT_SCHEMA_DOESNT_EXISTS, new util.LinkedHashMap[String, AnyRef]().getClass)
-    val event5 = gson.fromJson(EventFixtures.DUPLICATE_SHARE_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
-    val event6 = gson.fromJson(EventFixtures.TELEMETRY_AUDIT_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
-    val event7 = gson.fromJson(EventFixtures.TELEMETRY_LOG_EVENT, new util.LinkedHashMap[String, AnyRef]().getClass)
+    val event1 = gson.fromJson(EventFixtures.EVENT_WITH_MID, new util.LinkedHashMap[String, Any]().getClass)
+    val event2 = gson.fromJson(EventFixtures.SHARE_EVENT, new util.LinkedHashMap[String, Any]().getClass)
+    val event3 = gson.fromJson(EventFixtures.INVALID_EVENT, new util.LinkedHashMap[String, Any]().getClass)
+    val event4 = gson.fromJson(EventFixtures.INVALID_EVENT_SCHEMA_DOESNT_EXISTS, new util.LinkedHashMap[String, Any]().getClass)
+    val event5 = gson.fromJson(EventFixtures.DUPLICATE_SHARE_EVENT, new util.LinkedHashMap[String, Any]().getClass)
+    val event6 = gson.fromJson(EventFixtures.TELEMETRY_AUDIT_EVENT, new util.LinkedHashMap[String, Any]().getClass)
+    val event7 = gson.fromJson(EventFixtures.TELEMETRY_LOG_EVENT, new util.LinkedHashMap[String, Any]().getClass)
     ctx.collect(new Event(event1))
     ctx.collect(new Event(event2))
     ctx.collect(new Event(event3))
