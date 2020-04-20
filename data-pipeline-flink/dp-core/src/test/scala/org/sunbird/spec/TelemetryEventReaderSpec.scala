@@ -5,8 +5,8 @@ import java.util
 import com.google.gson.Gson
 import org.scalatest.Matchers
 import org.scalatestplus.mockito.MockitoSugar
-import org.sunbird.dp.domain.EventsPath
-import org.sunbird.dp.reader.{Telemetry, TelemetryReaderException}
+import org.sunbird.dp.core.domain.EventsPath
+import org.sunbird.dp.core.reader.{Telemetry, TelemetryReaderException}
 import org.sunbird.fixture.EventFixture
 
 class TelemetryEventReaderSpec extends BaseSpec with Matchers with MockitoSugar {

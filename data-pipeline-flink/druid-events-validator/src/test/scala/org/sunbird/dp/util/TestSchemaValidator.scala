@@ -2,7 +2,8 @@ package org.sunbird.dp.util
 
 import com.typesafe.config.ConfigFactory
 import org.scalatest.{FlatSpec, Matchers}
-import org.sunbird.dp.task.DruidValidatorConfig
+import org.sunbird.dp.validator.task.DruidValidatorConfig
+import org.sunbird.dp.validator.util.SchemaValidator
 
 class TestSchemaValidator extends FlatSpec with Matchers {
 

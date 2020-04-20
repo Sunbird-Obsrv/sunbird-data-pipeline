@@ -3,8 +3,8 @@ package org.sunbird.spec
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
-import org.sunbird.dp.cache.{DedupEngine, RedisConnect}
-import org.sunbird.dp.core.{BaseProcessFunction, Metrics}
+import org.sunbird.dp.core.cache.{DedupEngine, RedisConnect}
+import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 
 
 class TestEventStreamFunc(config: BaseProcessTestConfig, @transient var dedupEngine: DedupEngine = null)
@@ -32,8 +32,6 @@ class TestEventStreamFunc(config: BaseProcessTestConfig, @transient var dedupEng
                               metrics: Metrics): Unit = {
     try {
       deDup[Event](event.mid(), event, context, config.eventOutputTag, config.duplicateEventOutputTag, flagName = "test-dedup")(dedupEngine, metrics)
-      context.output(config.eventOutputTag, event)
-      metrics.incCounter(config.telemetryEventCount)
     } catch {
       case ex: Exception =>
         ex.printStackTrace()

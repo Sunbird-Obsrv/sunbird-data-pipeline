@@ -14,10 +14,10 @@ import org.apache.flink.test.util.MiniClusterWithClientResource
 import org.mockito.Mockito
 import org.mockito.Mockito.when
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
-import org.sunbird.dp.domain.Event
-import org.sunbird.dp.core.FlinkKafkaConnector
 import org.sunbird.dp.fixture.EventFixture
-import org.sunbird.dp.task.{DruidValidatorConfig, DruidValidatorStreamTask}
+import org.sunbird.dp.core.job.FlinkKafkaConnector
+import org.sunbird.dp.validator.domain.Event
+import org.sunbird.dp.validator.task.{DruidValidatorConfig, DruidValidatorStreamTask}
 import redis.embedded.RedisServer
 
 
@@ -39,7 +39,7 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
 
     override protected def beforeAll(): Unit = {
         super.beforeAll()
-        redisServer = new RedisServer(6340)
+        redisServer = new RedisServer(6341)
         redisServer.start()
 
         BaseMetricsReporter.gaugeMetrics.clear()

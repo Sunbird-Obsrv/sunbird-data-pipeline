@@ -4,7 +4,7 @@ import java.util
 
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.streaming.api.functions.ProcessFunction
-import org.sunbird.dp.core.{BaseProcessFunction, Metrics}
+import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 
 
 class TestMapStreamFunc(config: BaseProcessTestConfig)(implicit val stringTypeInfo: TypeInformation[String])
@@ -16,7 +16,7 @@ class TestMapStreamFunc(config: BaseProcessTestConfig)(implicit val stringTypeIn
   override def processElement(event: util.Map[String, AnyRef],
                               context: ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]]#Context,
                               metrics: Metrics): Unit = {
-    metrics.incCounter(config.mapEventCount)
     context.output(config.mapOutputTag, event)
+    metrics.incCounter(config.mapEventCount)
   }
 }

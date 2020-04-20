@@ -13,13 +13,12 @@ import redis.embedded.RedisServer
 import org.apache.flink.streaming.api.functions.sink.SinkFunction
 import org.apache.flink.runtime.testutils.MiniClusterResourceConfiguration
 import org.apache.flink.test.util.MiniClusterWithClientResource
-import org.sunbird.dp.task.TelemetryExtractorStreamTask
 import org.apache.flink.streaming.api.functions.source.SourceFunction
 import org.apache.flink.streaming.api.functions.source.SourceFunction.SourceContext
-import org.sunbird.dp.task.TelemetryExtractorConfig
 import com.typesafe.config.ConfigFactory
+import org.sunbird.dp.core.job.FlinkKafkaConnector
+import org.sunbird.dp.extractor.task.{TelemetryExtractorConfig, TelemetryExtractorStreamTask}
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
-import org.sunbird.dp.core.FlinkKafkaConnector
 
 import collection.JavaConverters._
 
@@ -69,8 +68,8 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
 
     val rawEvent = gson.fromJson(gson.toJson(RawEventsSink.values.get(0)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
     val dupEvent = gson.fromJson(gson.toJson(DupEventsSink.values.get(0)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
-    rawEvent.get("flags").get.asInstanceOf[util.Map[String, Boolean]].get("ex_processed") should be(true)
-    dupEvent.get("flags").get.asInstanceOf[util.Map[String, Boolean]].get("extractor_duplicate") should be(true)
+    rawEvent("flags").asInstanceOf[util.Map[String, Boolean]].get("ex_processed") should be(true)
+    dupEvent("flags").asInstanceOf[util.Map[String, Boolean]].get("extractor_duplicate") should be(true)
 
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.totalBatchEventCount}").getValue() should be (3)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.successEventCount}").getValue() should be (40)
