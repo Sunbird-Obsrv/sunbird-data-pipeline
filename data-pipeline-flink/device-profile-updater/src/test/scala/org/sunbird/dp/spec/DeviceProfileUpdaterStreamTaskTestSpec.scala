@@ -18,6 +18,7 @@ import org.sunbird.dp.extractor.task.DeviceProfileUpdaterStreamTask
 import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import redis.embedded.RedisServer
+import com.opentable.db.postgres.embedded.EmbeddedPostgres
 
 import scala.collection.JavaConverters._
 
@@ -41,6 +42,7 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
     super.beforeAll()
     redisServer = new RedisServer(6341)
     redisServer.start()
+    EmbeddedPostgres.builder.setPort(5430).start() // Use the same port 5430 which is defined in the base-test.conf
     BaseMetricsReporter.gaugeMetrics.clear()
 
     when(mockKafkaUtil.kafkaMapSource(deviceProfileUpdaterConfig.kafkaInputTopic)).thenReturn(new DeviceProfileUpdaterEventSource)
@@ -53,7 +55,7 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
     flinkCluster.after()
   }
 
-  "Extraction job pipeline" should "extract events" in {
+  "DeviceProfileUpdater " should "Update the both redis and postgres" in {
 
     val task = new DeviceProfileUpdaterStreamTask(deviceProfileUpdaterConfig, mockKafkaUtil)
     task.process()

@@ -28,6 +28,17 @@ class DeviceProfileUpdaterConfig(override val config: Config) extends BaseJobCon
   val failedEventCount = "failed-event-count"
 
 
+  //Postgress
+
+  val postgresUser = config.getString("postgres.user")
+  val postgresPassword = config.getString("postgres.password")
+  val postgresTable = config.getString("postgres.table")
+  val postgresDb = config.getString("postgres.database")
+  val postgresHost = config.getString("postgres.host")
+  val postgresPort = config.getInt("postgres.port")
+  val postgresMaxConnections = config.getInt("postgres.maxConnections")
+
+
   //val uniqueEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = UNIQUE_EVENTS_OUTPUT_TAG)
 
 }
