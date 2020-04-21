@@ -25,6 +25,7 @@
 		<module>telemetry-extractor</module>
 		<module>pipeline-preprocessor</module>
 		<module>druid-events-validator</module>
+		<module>content-cache-updater</module>
 	</modules>
 
 	<properties>

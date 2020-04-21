@@ -56,7 +56,7 @@ class BaseProcessFunctionTestSpec extends BaseSpec with Matchers {
       |{"origin":{"id":"1b17c32bad61eb9e33df281eecc727590d739b2b","type":"Device"},"id":"do_31277435209002188818711",
       |"type":"CONTENT","ver":"18","params":[{"transfers":12,"size":"123"}]},{"origin":{"id":"1b17c32bad61eb9e33df281eecc727590d739b2b",
       |"type":"Device"},"id":"do_31278794857559654411554","type":"TextBook","ver":"1"}]},"object":{"id":"do_312528116260749312248818",
-      |"type":"TextBook","version":"10","rollup":{}},"mid":"02ba33e5-15fe-4ec5-b32","syncts":1577278682630,
+      |"type":"TextBook","version":"10","rollup":{}},"mid":"02ba33e5-15fe-4ec5-b32","syncts":1577278682630,request.timeout.ms = 50000
       |"@timestamp":"2019-12-25T12:58:02.630Z","type":"events"}
       |""".stripMargin
 
@@ -74,8 +74,13 @@ class BaseProcessFunctionTestSpec extends BaseSpec with Matchers {
     super.beforeAll()
 
     EmbeddedKafka.start()(embeddedKafkaConfig)
-    createTestTopics(bsConfig.testTopics)
+    try {
+      createTestTopics(bsConfig.testTopics)
+    } catch{
+      case ex: Exception => {
 
+      }
+    }
     publishStringMessageToKafka(bsConfig.kafkaEventInputTopic, SHARE_EVENT)
     publishStringMessageToKafka(bsConfig.kafkaMapInputTopic, EVENT_WITH_MESSAGE_ID)
     publishStringMessageToKafka(bsConfig.kafkaStringInputTopic, SHARE_EVENT)
