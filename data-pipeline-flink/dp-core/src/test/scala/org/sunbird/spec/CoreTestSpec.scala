@@ -3,6 +3,7 @@ package org.sunbird.spec
 import java.util
 
 import com.google.gson.Gson
+import com.google.gson.internal.LinkedTreeMap
 import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
@@ -13,6 +14,7 @@ import org.sunbird.dp.core.cache.{DataCache, DedupEngine, RedisConnect}
 import org.sunbird.dp.core.domain.Events
 import org.sunbird.dp.core.job.{BaseDeduplication, BaseJobConfig}
 import org.sunbird.dp.core.serde._
+import org.sunbird.dp.core.util.RestUtil
 import org.sunbird.fixture.EventFixture
 import redis.clients.jedis.exceptions.{JedisConnectionException, JedisException}
 
@@ -123,6 +125,23 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     map.put("country_code", "IN")
     map.put("country", "INDIA")
     mapSerialization.serialize(map, System.currentTimeMillis())
+  }
+
+  "DataCache setWithRetry function" should "be able to set the data from Redis" in {
+    val redisConnection = new RedisConnect(bsConfig)
+    val dataCache = new DataCache(bsConfig, new RedisConnect(bsConfig), 4, List("identifier"))
+    dataCache.init()
+    dataCache.setWithRetry("key", "{\"test\": \"value\"}")
+    redisConnection.getConnection(4).get("key") should equal("{\"test\": \"value\"}")
+
+
+  }
+
+  "RestUtil functionality" should "be able to return response" in {
+    val restUtil = new RestUtil()
+    val url = "https://httpbin.org/json";
+    val response = restUtil.get[LinkedTreeMap[String, Object]](url);
+    response should not be (null);
   }
 }
 

@@ -84,4 +84,21 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
     }
   }
 
+    def setWithRetry(key: String, value: String): Unit = {
+        try {
+            set(key, value);
+        } catch {
+            case ex: JedisException =>
+                logger.error("Exception when update data to redis cache", ex)
+                redisConnect.resetConnection();
+                this.redisConnection = redisConnect.getConnection(dbIndex);
+                set(key, value)
+        }
+    }
+
+    private def set(key: String, value: String): Unit = {
+        redisConnection.set(key, value)
+    }
+
+
 }

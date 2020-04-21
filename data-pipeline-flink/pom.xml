@@ -25,6 +25,7 @@
 		<module>pipeline-preprocessor</module>
 		<module>de-normalization</module>
 		<module>druid-events-validator</module>
+		<module>content-cache-updater</module>
 	</modules>
 
 	<properties>
