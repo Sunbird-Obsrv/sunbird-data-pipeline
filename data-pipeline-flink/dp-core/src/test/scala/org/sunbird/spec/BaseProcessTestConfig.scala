@@ -6,7 +6,7 @@ import com.typesafe.config.Config
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.scala.OutputTag
-import org.sunbird.dp.core.BaseJobConfig
+import org.sunbird.dp.core.job.BaseJobConfig
 
 class BaseProcessTestConfig(override val config: Config) extends BaseJobConfig(config, "Test-job") {
   private val serialVersionUID = -2349318979085017498L
@@ -22,6 +22,7 @@ class BaseProcessTestConfig(override val config: Config) extends BaseJobConfig(c
   val kafkaMapOutputTopic: String = config.getString("kafka.map.output.topic")
   val kafkaEventInputTopic: String = config.getString("kafka.event.input.topic")
   val kafkaEventOutputTopic: String = config.getString("kafka.event.output.topic")
+  val kafkaEventDuplicateTopic: String = config.getString("kafka.event.duplicate.topic")
   val kafkaStringInputTopic: String = config.getString("kafka.string.input.topic")
   val kafkaStringOutputTopic: String = config.getString("kafka.string.output.topic")
 

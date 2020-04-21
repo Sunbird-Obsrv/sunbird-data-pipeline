@@ -5,8 +5,8 @@ import java.util
 import com.google.gson.Gson
 import org.scalatest.Matchers
 import org.scalatestplus.mockito.MockitoSugar
-import org.sunbird.dp.domain.EventsPath
-import org.sunbird.dp.reader.{Telemetry, TelemetryReaderException}
+import org.sunbird.dp.core.domain.EventsPath
+import org.sunbird.dp.core.reader.{Telemetry, TelemetryReaderException}
 import org.sunbird.fixture.EventFixture
 
 class TelemetryEventReaderSpec extends BaseSpec with Matchers with MockitoSugar {
@@ -41,6 +41,8 @@ class TelemetryEventReaderSpec extends BaseSpec with Matchers with MockitoSugar 
     // read
     telemetryEvent.edataItems() should not be (null)
     telemetryEvent.edataItems().size() should be(3)
+    telemetryEvent.kafkaKey() should be("1b17c32bad61eb9e33df281eecc727590d739b2b")
+
 
     telemetryEvent.updateTs("9543785")
     telemetryEvent.getTimeStamp() should be("9543785")

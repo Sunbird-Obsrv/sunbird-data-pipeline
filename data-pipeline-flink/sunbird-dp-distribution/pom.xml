@@ -22,7 +22,19 @@
         </dependency>
         <dependency>
             <groupId>org.sunbird.dp.jobs</groupId>
-            <artifactId>de-duplication</artifactId>
+            <artifactId>pipeline-preprocessor</artifactId>
+            <version>0.0.1</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.sunbird.dp.jobs</groupId>
+            <artifactId>de-normalization</artifactId>
+            <version>0.0.1</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.sunbird.dp.jobs</groupId>
+            <artifactId>druid-events-validator</artifactId>
             <version>0.0.1</version>
             <type>jar</type>
         </dependency>
