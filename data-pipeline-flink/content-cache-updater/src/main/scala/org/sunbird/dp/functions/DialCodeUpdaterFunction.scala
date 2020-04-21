@@ -10,7 +10,7 @@ import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.core.cache.{DataCache, RedisConnect}
 import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
-import org.sunbird.dp.core.util.RestUtil
+import org.sunbird.dp.core.util.{DialCodeResult, RestUtil}
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.task.ContentCacheUpdaterConfig
 
@@ -42,14 +42,19 @@ class DialCodeUpdaterFunction(config: ContentCacheUpdaterConfig, restUtil: RestU
         import scala.collection.JavaConverters._
         val gson = new Gson()
         val properties = event.extractProperties()
-        val dialCodes = properties.getOrElse("dialcodes", null).asInstanceOf[util.ArrayList[String]].asScala
-        val reservedDialCodes = properties.getOrElse("reservedDialCodes", null).asInstanceOf[util.ArrayList[String]].asScala
-        val dialCodesList = (if (null == dialCodes) List.empty else dialCodes) ++ (if (null == reservedDialCodes) List.empty else reservedDialCodes)
+        val dialCodesList = properties.filter(p => p._1.equals("dialcodes") || p._1.equals("reservedDialCodes")).flatMap(f => {
+            if (f._2.isInstanceOf[util.ArrayList[String]]) {
+                f._2.asInstanceOf[util.ArrayList[String]].asScala
+            }
+            else {
+                List.empty[String]
+            }
+        }).filter(p => !p.isEmpty)
+
         val headers = Map("Authorization" -> ("Bearer " + config.dialCodeApiToken))
         dialCodesList.foreach(dc => {
             if (dataCache.getWithRetry(dc).isEmpty) {
-                val result = restUtil.get[util.LinkedHashMap[String, Object]](config.dialCodeApiUrl + dc, Some(headers))
-                  .get("result").asInstanceOf[util.LinkedHashMap[String, Object]]
+                val result = restUtil.get[DialCodeResult](config.dialCodeApiUrl + dc, Some(headers)).result
                 if (!result.isEmpty && result.containsKey("dialcode")) {
                     metrics.incCounter(config.dialCodeApiHit)
                     dataCache.setWithRetry(dc, gson.toJson(result.get("dialcode")))

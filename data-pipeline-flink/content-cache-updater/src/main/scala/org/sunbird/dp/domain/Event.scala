@@ -12,26 +12,25 @@ class Event(eventMap: util.Map[String, Any], partition: Integer) extends Events(
 
     private val jobName = "ContentCacheUpdater"
 
-    def extractProperties(): Map[String, Object] = {
+    def extractProperties(): Map[String, Any] = {
 
         val gson = new Gson()
-        val transactionMap = eventMap.getOrDefault("transactionData", null).asInstanceOf[LinkedTreeMap[String, Object]]
-        if (null != transactionMap) {
-            val properties = transactionMap.getOrDefault("properties", null).asInstanceOf[LinkedTreeMap[String, Object]]
-            val finalProperties = gson.fromJson(gson.toJson(properties),
-                new TypeToken[util.HashMap[String, Object]]() {}.getType).asInstanceOf[util.HashMap[String, Object]]
-            import scala.collection.JavaConverters._
-            val myScalaMap = finalProperties.asScala.toMap
-            myScalaMap.map(value => {
-                val newValue = gson.fromJson(gson.toJson(value._2),
-                    new TypeToken[util.HashMap[String, Object]]() {}.getType).asInstanceOf[util.HashMap[String, Object]]
-                val finalValue = newValue.asScala
-                (value._1, if (finalValue.contains("nv")) finalValue("nv") else null)
 
-            })
+        val transactionMap = telemetry.read[util.HashMap[String, Any]]("transactionData")
+
+        if (null != transactionMap.getOrElse(null)) {
+
+            val properties = telemetry.read[LinkedTreeMap[String, Any]]("transactionData.properties")
+            var finalProperties = Map.empty[String,Any]
+            properties.getOrElse(new LinkedTreeMap[String, Any]()).entrySet().forEach {
+                entry =>
+                    finalProperties = finalProperties + (entry.getKey ->
+                        entry.getValue.asInstanceOf[LinkedTreeMap[String, Any]].getOrDefault("nv", None))
+            }
+            finalProperties
         }
-        else {
-            Map.empty[String, Object]
+            else {
+            Map.empty[String, Any]
         }
     }
 

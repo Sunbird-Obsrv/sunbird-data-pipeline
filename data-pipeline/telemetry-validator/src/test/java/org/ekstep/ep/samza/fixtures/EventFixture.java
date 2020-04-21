@@ -117,6 +117,7 @@ public class EventFixture {
             "      \"tid\": \"\",\n" +
             "      \"type\": \"OTHER\",\n" +
             "      \"uri\": \"\",\n" +
+			"      \"check\": \"\",\n" +
             "      \"values\": [\n" +
             "        {\n" +
             "          \"SizeOfFileInKB\": \"0.81\"\n" +
