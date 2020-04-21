@@ -23,7 +23,7 @@ spec:
           "-Djobmanager.rpc.address=${JOB_NAME}-jobmanager",
           "-Dtaskmanager.rpc.port=6122",
           "-Dtaskmanager.heap.size=1024m",
-          "-Dfs.azure.account.key.{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net: ${AZURE_STORAGE_SECRET}"]
+          "-Dfs.azure.account.key.${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net: ${AZURE_STORAGE_SECRET}"]
         ports:
         - containerPort: 6122
           name: rpc
