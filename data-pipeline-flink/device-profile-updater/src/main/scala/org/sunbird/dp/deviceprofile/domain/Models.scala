@@ -1,4 +1,4 @@
-package org.sunbird.dp.extractor.domain
+package org.sunbird.dp.deviceprofile.domain
 
 case class Actor(id: String, `type`: String)
 

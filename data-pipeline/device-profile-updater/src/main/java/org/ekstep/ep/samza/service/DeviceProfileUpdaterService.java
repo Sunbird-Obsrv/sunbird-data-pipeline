@@ -92,14 +92,15 @@ public class DeviceProfileUpdaterService {
 
     private void addDeviceDataToDB(String deviceId, Map<String, String> deviceData) throws Exception {
         Long firstAccess = Long.parseLong(deviceData.get("first_access"));
+        //
         Long lastUpdatedDate = Long.parseLong(deviceData.get("api_last_updated_on"));
         List<String> parsedKeys = new ArrayList<>(Arrays.asList("first_access", "api_last_updated_on"));
         deviceData.keySet().removeAll(parsedKeys);
-
+        System.out.println("deviceData" + deviceData.keySet());
         String columns = formatValues(deviceData.keySet(),",");
         String values = formatPrepareStatement(deviceData.values().size(),"?,");
-
         String postgresQuery = String.format("INSERT INTO %s (api_last_updated_on,updated_date,%s) VALUES(?,?,%s?) ON CONFLICT(device_id) DO UPDATE SET (api_last_updated_on,updated_date,%s)=(?,?,%s?);",postgres_table, columns, values, columns, values);
+        System.out.println("postgresQuery" + postgresQuery);
         PreparedStatement preparedStatement = postgresConnect.getConnection().prepareStatement(postgresQuery);
 
         preparedStatement.setTimestamp(1, new Timestamp(lastUpdatedDate));  // Adding api_last_updated_on as timestamp to index 1 of preparestatement
@@ -119,6 +120,7 @@ public class DeviceProfileUpdaterService {
         if(null != deviceData.get("user_declared_state")) {
             String updateUserDeclaredOnQuery = String.format("UPDATE %s SET user_declared_on = '%s' WHERE device_id = '%s' AND user_declared_on IS NULL",
                     postgres_table, new Timestamp(lastUpdatedDate).toString(), deviceId);
+            System.out.println("updateUserDeclaredOnQuery" + updateUserDeclaredOnQuery);
             postgresConnect.execute(updateUserDeclaredOnQuery);
         }
 

@@ -2,18 +2,12 @@ package org.sunbird.dp.deviceprofile.functions
 
 import java.lang.reflect.Type
 import java.util
-import java.util.UUID
 
-import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.streaming.api.functions.ProcessFunction
-import org.joda.time.format.DateTimeFormat
 import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 import org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterConfig
-import org.sunbird.dp.extractor.domain._
-import org.sunbird.dp.extractor.domain.{Context => EventContext}
-import org.sunbird.dp.extractor.task.TelemetryExtractorConfig
 
 class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig)(implicit val stringTypeInfo: TypeInformation[String])
   extends BaseProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]](config) {

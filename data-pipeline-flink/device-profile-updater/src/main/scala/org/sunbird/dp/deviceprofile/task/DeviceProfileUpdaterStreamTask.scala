@@ -54,7 +54,7 @@ class DeviceProfileUpdaterStreamTask(config: DeviceProfileUpdaterConfig, kafkaCo
 object TelemetryExtractorStreamTask {
 
   def main(args: Array[String]): Unit = {
-    val config = ConfigFactory.load("telemetry-extractor.conf").withFallback(ConfigFactory.systemEnvironment())
+    val config = ConfigFactory.load("device-profile-updater.conf").withFallback(ConfigFactory.systemEnvironment())
     val eConfig = new DeviceProfileUpdaterConfig(config)
     val kafkaUtil = new FlinkKafkaConnector(eConfig)
     val task = new DeviceProfileUpdaterStreamTask(eConfig, kafkaUtil)
