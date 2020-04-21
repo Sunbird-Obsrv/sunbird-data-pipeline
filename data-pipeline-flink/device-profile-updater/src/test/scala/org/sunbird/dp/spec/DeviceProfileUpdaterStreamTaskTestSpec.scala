@@ -1,0 +1,83 @@
+package org.sunbird.dp.spec
+
+import java.util
+
+import com.google.gson.Gson
+import com.typesafe.config.{Config, ConfigFactory}
+import org.apache.flink.api.common.typeinfo.TypeInformation
+import org.apache.flink.api.java.typeutils.TypeExtractor
+import org.apache.flink.runtime.testutils.MiniClusterResourceConfiguration
+import org.apache.flink.streaming.api.functions.sink.SinkFunction
+import org.apache.flink.streaming.api.functions.source.SourceFunction
+import org.apache.flink.streaming.api.functions.source.SourceFunction.SourceContext
+import org.apache.flink.test.util.MiniClusterWithClientResource
+import org.mockito.Mockito
+import org.mockito.Mockito._
+import org.sunbird.dp.core.job.FlinkKafkaConnector
+import org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterConfig
+import org.sunbird.dp.extractor.task.DeviceProfileUpdaterStreamTask
+import org.sunbird.dp.fixture.EventFixture
+import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
+import redis.embedded.RedisServer
+
+import scala.collection.JavaConverters._
+
+class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
+
+  implicit val mapTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
+
+  val flinkCluster = new MiniClusterWithClientResource(new MiniClusterResourceConfiguration.Builder()
+    .setConfiguration(testConfiguration())
+    .setNumberSlotsPerTaskManager(1)
+    .setNumberTaskManagers(1)
+    .build)
+
+  var redisServer: RedisServer = _
+  val config: Config = ConfigFactory.load("test.conf")
+  val deviceProfileUpdaterConfig: DeviceProfileUpdaterConfig = new DeviceProfileUpdaterConfig(config)
+  val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
+  val gson = new Gson()
+
+  override protected def beforeAll(): Unit = {
+    super.beforeAll()
+    redisServer = new RedisServer(6341)
+    redisServer.start()
+    BaseMetricsReporter.gaugeMetrics.clear()
+
+    when(mockKafkaUtil.kafkaMapSource(deviceProfileUpdaterConfig.kafkaInputTopic)).thenReturn(new DeviceProfileUpdaterEventSource)
+    flinkCluster.before()
+  }
+
+  override protected def afterAll(): Unit = {
+    super.afterAll()
+    redisServer.stop()
+    flinkCluster.after()
+  }
+
+  "Extraction job pipeline" should "extract events" in {
+
+    val task = new DeviceProfileUpdaterStreamTask(deviceProfileUpdaterConfig, mockKafkaUtil)
+    task.process()
+    BaseMetricsReporter.gaugeMetrics(s"${deviceProfileUpdaterConfig.jobName}.${deviceProfileUpdaterConfig.successCount}").getValue() should be(0)
+    BaseMetricsReporter.gaugeMetrics(s"${deviceProfileUpdaterConfig.jobName}.${deviceProfileUpdaterConfig.failedEventCount}").getValue() should be(0)
+    BaseMetricsReporter.gaugeMetrics(s"${deviceProfileUpdaterConfig.jobName}.${deviceProfileUpdaterConfig.cacheHitCount}").getValue() should be(0)
+    BaseMetricsReporter.gaugeMetrics(s"${deviceProfileUpdaterConfig.jobName}.${deviceProfileUpdaterConfig.deviceDbHitCount}").getValue() should be(0)
+
+  }
+
+}
+
+class DeviceProfileUpdaterEventSource extends SourceFunction[util.Map[String, AnyRef]] {
+
+  override def run(ctx: SourceContext[util.Map[String, AnyRef]]) {
+    val gson = new Gson()
+    val event1 = gson.fromJson(EventFixture.EVENT_WITH_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
+    val event2 = gson.fromJson(EventFixture.EVENT_WITHOUT_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
+    ctx.collect(event1.asJava)
+    ctx.collect(event1.asJava)
+    ctx.collect(event2.asJava)
+  }
+
+  override def cancel() = {}
+
+}

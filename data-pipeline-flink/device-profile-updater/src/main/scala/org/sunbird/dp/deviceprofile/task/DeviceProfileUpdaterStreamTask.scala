@@ -29,14 +29,14 @@ class DeviceProfileUpdaterStreamTask(config: DeviceProfileUpdaterConfig, kafkaCo
       env.addSource(kafkaConnector.kafkaMapSource(config.kafkaInputTopic), "telemetry-ingest-events-consumer")
         .rebalance()
         .process(new DeviceProfileUpdaterFunction(config))
-        .setParallelism(config.deDupParallelism)
+        .setParallelism(config.deviceProfileParallelism)
     env.execute("Device profile updater")
 
   }
 }
 
 // $COVERAGE-OFF$ Disabling scoverage as the below code can only be invoked within flink cluster
-object TelemetryExtractorStreamTask {
+object DeviceProfileUpdaterStreamTask {
 
   def main(args: Array[String]): Unit = {
     val config = ConfigFactory.load("device-profile-updater.conf").withFallback(ConfigFactory.systemEnvironment())

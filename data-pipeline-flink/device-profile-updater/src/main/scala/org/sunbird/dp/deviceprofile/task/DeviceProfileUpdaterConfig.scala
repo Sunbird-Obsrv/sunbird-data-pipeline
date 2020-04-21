@@ -8,7 +8,7 @@ import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.sunbird.dp.core.job.BaseJobConfig
 
-class DeviceProfileUpdaterConfig(override val config: Config) extends BaseJobConfig(config, "telemetry-extractor") {
+class DeviceProfileUpdaterConfig(override val config: Config) extends BaseJobConfig(config, jobName = "device-profile-updater") {
 
   private val serialVersionUID = 2905979434303791379L
 
@@ -24,6 +24,9 @@ class DeviceProfileUpdaterConfig(override val config: Config) extends BaseJobCon
   // Metric List
   val deviceDbHitCount = "success-event-count"
   val cacheHitCount = "failed-event-count"
+  val successCount = "success-event-count"
+  val failedEventCount = "failed-event-count"
+
 
   //val uniqueEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = UNIQUE_EVENTS_OUTPUT_TAG)
 

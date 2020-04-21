@@ -150,7 +150,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.sunbird.dp.extractor.task.TelemetryExtractorStreamTask</mainClass>
+                                    <mainClass>org.sunbird.dp.extractor.task.DeviceProfileUpdaterStreamTask</mainClass>
                                 </transformer>
                                 <!-- append default configs -->
                                 <transformer
@@ -206,7 +206,7 @@
                 <configuration>
                     <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
                     <junitxml>.</junitxml>
-                    <filereports>dp-duplication-testsuite.txt</filereports>
+                    <filereports>device-profile-updater-testsuite.txt</filereports>
                 </configuration>
                 <executions>
                     <execution>

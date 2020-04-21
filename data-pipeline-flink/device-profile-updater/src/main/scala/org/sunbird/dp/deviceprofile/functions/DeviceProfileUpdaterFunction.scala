@@ -15,19 +15,22 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig)(implicit 
   val mapType: Type = new TypeToken[util.Map[String, AnyRef]]() {}.getType
 
   override def metricsList(): List[String] = {
-    List(config.successEventCount, config.auditEventCount, config.failedEventCount)
+    List(config.deviceDbHitCount, config.cacheHitCount, config.failedEventCount, config.failedEventCount)
   }
 
 
   /**
-   * Method to process the events extraction from the batch
+   * Method to write the device profile events into redis and postgres
    *
-   * @param batchEvent - Batch of telemetry events
+   * @param event - Device profile events
    * @param context
    */
-  override def processElement(batchEvent: util.Map[String, AnyRef],
+  override def processElement(event: util.Map[String, AnyRef],
                               context: ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]]#Context,
                               metrics: Metrics): Unit = {
+
+
+    println("Events are " + event)
 
 
   }
