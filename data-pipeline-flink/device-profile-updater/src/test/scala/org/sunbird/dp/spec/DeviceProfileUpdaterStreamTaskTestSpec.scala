@@ -7,7 +7,6 @@ import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.runtime.testutils.MiniClusterResourceConfiguration
-import org.apache.flink.streaming.api.functions.sink.SinkFunction
 import org.apache.flink.streaming.api.functions.source.SourceFunction
 import org.apache.flink.streaming.api.functions.source.SourceFunction.SourceContext
 import org.apache.flink.test.util.MiniClusterWithClientResource
@@ -71,11 +70,10 @@ class DeviceProfileUpdaterEventSource extends SourceFunction[util.Map[String, An
 
   override def run(ctx: SourceContext[util.Map[String, AnyRef]]) {
     val gson = new Gson()
-    val event1 = gson.fromJson(EventFixture.EVENT_WITH_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
-    val event2 = gson.fromJson(EventFixture.EVENT_WITHOUT_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
-    ctx.collect(event1.asJava)
-    ctx.collect(event1.asJava)
-    ctx.collect(event2.asJava)
+    EventFixture.deviceProfileEvents.foreach(event => {
+      val eventMap = gson.fromJson(event, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
+      ctx.collect(eventMap.asJava)
+    })
   }
 
   override def cancel() = {}
