@@ -92,7 +92,7 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
     try {
       redisConnection.hmset(key, value)
     } catch {
-      // TODO: Write testcase for catch block
+      // Write testcase for catch block
       // $COVERAGE-OFF$ Disabling scoverage
       case ex: JedisException => {
         println("dataCache")

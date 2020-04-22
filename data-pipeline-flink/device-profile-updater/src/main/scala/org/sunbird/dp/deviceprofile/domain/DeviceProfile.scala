@@ -14,21 +14,6 @@ object DeviceProfile {
 }
 
 class DeviceProfile() {
-  this.countryCode = ""
-  this.country = ""
-  this.stateCode = ""
-  this.state = ""
-  this.city = ""
-  this.districtCustom = ""
-  this.stateCodeCustom = ""
-  this.stateCustomName = ""
-  this.userDeclaredState = ""
-  this.userDeclaredDistrict = ""
-  this.uaspec = new util.HashMap[String, String]
-  this.devicespec = new util.HashMap[String, String]
-  this.firstAccess = 0L
-  this.user_declared_on = 0L
-  this.api_last_updated_on = 0L
   private var countryCode: String = null
   private var country: String = null
   private var stateCode: String = null
@@ -46,6 +31,22 @@ class DeviceProfile() {
   private var api_last_updated_on: Long = 0L
   private val gson = new Gson
   private val `type` = new TypeToken[util.HashMap[String, String]]() {}.getType
+
+  this.countryCode = ""
+  this.country = ""
+  this.stateCode = ""
+  this.state = ""
+  this.city = ""
+  this.districtCustom = ""
+  this.stateCodeCustom = ""
+  this.stateCustomName = ""
+  this.userDeclaredState = ""
+  this.userDeclaredDistrict = ""
+  this.uaspec = new util.HashMap[String, String]
+  this.devicespec = new util.HashMap[String, String]
+  this.firstAccess = 0L
+  this.user_declared_on = 0L
+  this.api_last_updated_on = 0L
 
   def toMap(config: DeviceProfileUpdaterConfig): util.Map[String, String] = {
     val values = new util.HashMap[String, String]
