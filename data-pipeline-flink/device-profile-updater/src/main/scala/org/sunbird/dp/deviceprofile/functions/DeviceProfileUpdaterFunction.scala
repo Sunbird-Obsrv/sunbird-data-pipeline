@@ -12,6 +12,7 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.postgresql.util.PGobject
+import org.slf4j.LoggerFactory
 import org.sunbird.dp.core.cache.{DataCache, RedisConnect}
 import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 import org.sunbird.dp.core.util.{PostgresConnect, PostgresConnectionConfig}
@@ -29,7 +30,7 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
   extends BaseProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]](config) {
 
   val mapType: Type = new TypeToken[util.Map[String, AnyRef]]() {}.getType
-
+  private[this] val logger = LoggerFactory.getLogger(classOf[DeviceProfileUpdaterFunction])
 
   override def metricsList(): List[String] = {
     List(config.deviceDbHitCount, config.cacheHitCount, config.failedEventCount, config.successCount)
@@ -70,7 +71,7 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
                               context: ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]]#Context,
                               metrics: Metrics): Unit = {
     if (event.size() > 0) {
-      val deviceId = event.get("device_id").asInstanceOf[String]
+      val deviceId = event.get(config.deviceId).asInstanceOf[String]
       if (null != deviceId && !deviceId.isEmpty) {
         event.values.removeAll(Collections.singleton(""))
         event.values.removeAll(Collections.singleton("{}"))
@@ -122,6 +123,7 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
       val updateUserDeclaredOnQuery = String.format("UPDATE %s SET user_declared_on = '%s' WHERE device_id = '%s' AND user_declared_on IS NULL", config.postgresTable, new Timestamp(lastUpdatedDate).toString, deviceId)
       postgresConnect.execute(updateUserDeclaredOnQuery)
     }
+    logger.info(s"Device ID: $deviceId Updated the postgres device profile table")
   }
 
   private def addDeviceDataToCache(deviceId: String, deviceProfile: DeviceProfile): util.Map[String, String] = {
@@ -137,10 +139,12 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
       if (userDeclaredOn != null && deviceMap.get(config.userDeclaredOn) != null) deviceMap.remove(config.userDeclaredOn)
       val updatedDeviceMap = updatedMissingFields(deviceMap, redisData)
       dataCache.hmSet(deviceId, updatedDeviceMap.asInstanceOf[util.Map[String, String]])
+      logger.info(s"Device ID: $deviceId is present in the redis and required fields into redis")
       updatedDeviceMap
     }
     else {
       dataCache.hmSet(deviceId, deviceMap.asInstanceOf[util.Map[String, String]])
+      logger.info(s"Device ID: $deviceId does not exists in the redis and all fields into redis")
       deviceMap
     }
   }

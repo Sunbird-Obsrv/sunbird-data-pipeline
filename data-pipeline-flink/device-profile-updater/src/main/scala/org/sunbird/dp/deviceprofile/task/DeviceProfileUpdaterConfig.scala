@@ -54,6 +54,7 @@ class DeviceProfileUpdaterConfig(override val config: Config) extends BaseJobCon
   val firstAccess = "firstaccess"
   val userDeclaredOn = "user_declared_on"
   val apiLastUpdatedOn = "api_last_updated_on"
+  val deviceId = "device_id"
 
   val fields = List(countryCode, country, stateCode, state, city, districtCustom, stateCustom, stateCustomCode,
     userDeclaredDistrict, uaSpec, deviceSpec, firstAccess, userDeclaredOn, apiLastUpdatedOn
