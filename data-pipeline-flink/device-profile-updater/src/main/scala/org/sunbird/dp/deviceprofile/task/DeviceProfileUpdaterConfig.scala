@@ -22,8 +22,8 @@ class DeviceProfileUpdaterConfig(override val config: Config) extends BaseJobCon
   val deviceProfileParallelism: Int = config.getInt("task.deviceprofile.parallelism")
 
   // Metric List
-  val deviceDbHitCount = "success-event-count"
-  val cacheHitCount = "failed-event-count"
+  val deviceDbHitCount = "device-db-update-count"
+  val cacheHitCount = "device-cache-update-count"
   val successCount = "success-event-count"
   val failedEventCount = "failed-event-count"
 

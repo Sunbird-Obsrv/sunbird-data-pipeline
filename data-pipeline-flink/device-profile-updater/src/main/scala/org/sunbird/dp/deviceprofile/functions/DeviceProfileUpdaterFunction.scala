@@ -29,7 +29,7 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
 
 
   override def metricsList(): List[String] = {
-    List(config.deviceDbHitCount, config.cacheHitCount, config.failedEventCount, config.failedEventCount)
+    List(config.deviceDbHitCount, config.cacheHitCount, config.failedEventCount, config.successCount)
   }
 
 
@@ -74,9 +74,9 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
         val deviceProfile = new DeviceProfile().fromMap(event.asInstanceOf[util.Map[String, String]])
         addDeviceDataToDB(deviceId, event.asInstanceOf[util.Map[String, String]])
         addDeviceDataToCache(deviceId, deviceProfile)
+        metrics.incCounter(config.successCount)
         metrics.incCounter(config.deviceDbHitCount)
         metrics.incCounter(config.cacheHitCount)
-        metrics.incCounter(config.successCount)
       } else {
         metrics.incCounter(config.failedEventCount)
       }
@@ -132,7 +132,6 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
 
   @throws[SQLException]
   private def setPrepareStatement(preparedStatement: PreparedStatement, index: Int, deviceData: util.Map[String, String]): Unit = {
-    println("setPrepare")
     import scala.collection.JavaConversions._
     val gson = new Gson()
 
