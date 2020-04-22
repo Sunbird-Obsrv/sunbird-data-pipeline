@@ -6,6 +6,7 @@ metadata:
     app: flink
     component: {{ .Release.Name }}-jobmanager
 spec:
+  type: ClusterIP
   ports:
   - name: rpc
     port: 6123
@@ -13,12 +14,11 @@ spec:
     port: 6124
   - name: query
     port: 6125
-    nodePort: 30025
   - name: ui
     port: 8081
 {{- $job-config-key := .Release.Name }}
     nodePort: {{ index .Values $job-config-key.job_nodeport }}
-  type: NodePort
+  
   selector:
     app: flink
     component: {{ .Release.Name }}-jobmanager
