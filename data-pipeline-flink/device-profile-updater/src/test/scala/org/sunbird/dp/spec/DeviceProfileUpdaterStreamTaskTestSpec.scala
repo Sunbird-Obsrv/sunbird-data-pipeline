@@ -138,7 +138,7 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
     val rs = postgresConnect.executeQuery(String.format("SELECT user_declared_on FROM %s WHERE device_id='232455';", deviceProfileUpdaterConfig.postgresTable))
     while ( {
       rs.next
-    }) assertEquals("1970-01-19 14:29:02.087", rs.getString(1))
+    }) assertEquals("2019-09-13 17:49:44", rs.getString(1))
   }
 }
 

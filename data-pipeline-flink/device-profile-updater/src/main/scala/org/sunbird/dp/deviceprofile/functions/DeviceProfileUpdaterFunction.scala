@@ -103,9 +103,9 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
 
     preparedStatement.setTimestamp(deviceData.values.size + 4, new Timestamp(System.currentTimeMillis)) // Adding updated_date as timestamp to 4th index after the map size(for on conflict value)
 
-    setPrepareStatement(preparedStatement, 2, deviceData.asInstanceOf[util.Map[String, String]]) // Adding map values to preparestatement from index after the api_last_updated_on and updated_on
+    setPrepareStatement(preparedStatement, 2, deviceData.asInstanceOf[util.Map[String, AnyRef]]) // Adding map values to preparestatement from index after the api_last_updated_on and updated_on
 
-    setPrepareStatement(preparedStatement, deviceData.values().size() + 4, deviceData.asInstanceOf[util.Map[String, String]])
+    setPrepareStatement(preparedStatement, deviceData.values().size() + 4, deviceData.asInstanceOf[util.Map[String, AnyRef]])
 
     preparedStatement.executeUpdate
     preparedStatement.close()
@@ -140,23 +140,20 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
   }
 
   @throws[SQLException]
-  private def setPrepareStatement(preparedStatement: PreparedStatement, index: Int, deviceData: util.Map[String, String]): Unit = {
-
+  private def setPrepareStatement(preparedStatement: PreparedStatement, index: Int, deviceData: util.Map[String, AnyRef]): Unit = {
     val gson = new Gson()
-
     var count = index
     for (value <- deviceData.values()) {
       count += 1
       val jsonObject = new PGobject
       try {
-        gson.fromJson(value, classOf[JsonObject])
+        gson.fromJson(String.valueOf(value), classOf[JsonObject])
         jsonObject.setType("json")
-        jsonObject.setValue(gson.fromJson(value, classOf[JsonObject]).toString)
+        jsonObject.setValue(gson.fromJson(String.valueOf(value), classOf[JsonObject]).toString)
         preparedStatement.setObject(count, jsonObject)
       } catch {
         case ex: ClassCastException =>
-          //ex.printStackTrace()
-          preparedStatement.setString(count, value)
+        preparedStatement.setString(count, String.valueOf(value))
       }
     }
   }
