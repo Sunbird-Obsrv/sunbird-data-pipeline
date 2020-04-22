@@ -1,9 +1,10 @@
 package org.sunbird.dp.spec
 
-import java.sql.{ResultSet, Timestamp}
+import java.sql.Timestamp
 import java.util
 
 import com.google.gson.Gson
+import com.opentable.db.postgres.embedded.EmbeddedPostgres
 import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
@@ -11,18 +12,17 @@ import org.apache.flink.runtime.testutils.MiniClusterResourceConfiguration
 import org.apache.flink.streaming.api.functions.source.SourceFunction
 import org.apache.flink.streaming.api.functions.source.SourceFunction.SourceContext
 import org.apache.flink.test.util.MiniClusterWithClientResource
+import org.junit.Assert.assertEquals
 import org.mockito.Mockito
 import org.mockito.Mockito._
+import org.sunbird.dp.core.cache.RedisConnect
 import org.sunbird.dp.core.job.FlinkKafkaConnector
+import org.sunbird.dp.core.util.{PostgresConnect, PostgresConnectionConfig}
 import org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterConfig
 import org.sunbird.dp.extractor.task.DeviceProfileUpdaterStreamTask
 import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import redis.embedded.RedisServer
-import com.opentable.db.postgres.embedded.EmbeddedPostgres
-import org.junit.Assert.assertEquals
-import org.sunbird.dp.core.cache.{DataCache, RedisConnect}
-import org.sunbird.dp.core.util.{PostgresConnect, PostgresConnectionConfig}
 
 import scala.collection.JavaConverters._
 

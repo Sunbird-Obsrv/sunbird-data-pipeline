@@ -74,7 +74,7 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
       if (null != deviceId && !deviceId.isEmpty) {
         event.values.removeAll(Collections.singleton(""))
         event.values.removeAll(Collections.singleton("{}"))
-        val deviceProfile = new DeviceProfile().fromMap(event.asInstanceOf[util.Map[String, String]])
+        val deviceProfile = new DeviceProfile().fromMap(event.asInstanceOf[util.Map[String, String]], config)
         val cacheData = addDeviceDataToCache(deviceId, deviceProfile)
         addDeviceDataToDB(deviceId, event.asInstanceOf[util.Map[String, String]])
         metrics.incCounter(config.successCount)
@@ -119,7 +119,7 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
   }
 
   private def addDeviceDataToCache(deviceId: String, deviceProfile: DeviceProfile): util.Map[String, String] = {
-    val deviceMap = deviceProfile.toMap
+    val deviceMap = deviceProfile.toMap(config)
     deviceMap.values.removeAll(Collections.singleton(""))
     deviceMap.values.removeAll(Collections.singleton("{}"))
     if (deviceMap.get("user_declared_state") == null) deviceMap.remove("user_declared_on")

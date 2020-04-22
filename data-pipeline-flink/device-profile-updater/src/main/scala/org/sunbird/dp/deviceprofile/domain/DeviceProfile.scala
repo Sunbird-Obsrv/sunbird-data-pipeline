@@ -5,6 +5,7 @@ import java.util
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterConfig
 
 
 object DeviceProfile {
@@ -46,42 +47,42 @@ class DeviceProfile() {
   private val gson = new Gson
   private val `type` = new TypeToken[util.HashMap[String, String]]() {}.getType
 
-  def toMap: util.Map[String, String] = {
+  def toMap(config: DeviceProfileUpdaterConfig): util.Map[String, String] = {
     val values = new util.HashMap[String, String]
-    values.put("country_code", DeviceProfile.getValueOrDefault(this.countryCode, ""))
-    values.put("country", DeviceProfile.getValueOrDefault(this.country, ""))
-    values.put("state_code", DeviceProfile.getValueOrDefault(this.stateCode, ""))
-    values.put("state", DeviceProfile.getValueOrDefault(this.state, ""))
-    values.put("city", DeviceProfile.getValueOrDefault(this.city, ""))
-    values.put("district_custom", DeviceProfile.getValueOrDefault(this.districtCustom, ""))
-    values.put("state_custom", DeviceProfile.getValueOrDefault(this.stateCustomName, ""))
-    values.put("state_code_custom", DeviceProfile.getValueOrDefault(this.stateCodeCustom, ""))
-    values.put("user_declared_state", DeviceProfile.getValueOrDefault(this.userDeclaredState, ""))
-    values.put("user_declared_district", DeviceProfile.getValueOrDefault(this.userDeclaredDistrict, ""))
-    values.put("uaspec", gson.toJson(DeviceProfile.getValueOrDefault(this.uaspec, new util.HashMap[String, String])))
-    values.put("devicespec", gson.toJson(DeviceProfile.getValueOrDefault(this.devicespec, new util.HashMap[String, String])))
-    values.put("firstaccess", DeviceProfile.getValueOrDefault(String.valueOf(this.firstAccess), ""))
-    values.put("user_declared_on", DeviceProfile.getValueOrDefault(String.valueOf(this.user_declared_on), ""))
-    values.put("api_last_updated_on", DeviceProfile.getValueOrDefault(String.valueOf(this.api_last_updated_on), ""))
+    values.put(config.countryCode, DeviceProfile.getValueOrDefault(this.countryCode, ""))
+    values.put(config.country, DeviceProfile.getValueOrDefault(this.country, ""))
+    values.put(config.stateCode, DeviceProfile.getValueOrDefault(this.stateCode, ""))
+    values.put(config.state, DeviceProfile.getValueOrDefault(this.state, ""))
+    values.put(config.city, DeviceProfile.getValueOrDefault(this.city, ""))
+    values.put(config.districtCustom, DeviceProfile.getValueOrDefault(this.districtCustom, ""))
+    values.put(config.stateCustom, DeviceProfile.getValueOrDefault(this.stateCustomName, ""))
+    values.put(config.stateCustomCode, DeviceProfile.getValueOrDefault(this.stateCodeCustom, ""))
+    values.put(config.userDeclaredState, DeviceProfile.getValueOrDefault(this.userDeclaredState, ""))
+    values.put(config.userDeclaredDistrict, DeviceProfile.getValueOrDefault(this.userDeclaredDistrict, ""))
+    values.put(config.uaSpec, gson.toJson(DeviceProfile.getValueOrDefault(this.uaspec, new util.HashMap[String, String])))
+    values.put(config.deviceSpec, gson.toJson(DeviceProfile.getValueOrDefault(this.devicespec, new util.HashMap[String, String])))
+    values.put(config.firstAccess, DeviceProfile.getValueOrDefault(String.valueOf(this.firstAccess), ""))
+    values.put(config.userDeclaredOn, DeviceProfile.getValueOrDefault(String.valueOf(this.user_declared_on), ""))
+    values.put(config.apiLastUpdatedOn, DeviceProfile.getValueOrDefault(String.valueOf(this.api_last_updated_on), ""))
     values
   }
 
-  def fromMap(map: util.Map[String, String]): DeviceProfile = {
-    this.countryCode = map.getOrDefault("country_code", null)
-    this.country = map.getOrDefault("country", "")
-    this.stateCode = map.getOrDefault("state_code", "")
-    this.state = map.getOrDefault("state", "")
-    this.city = map.getOrDefault("city", "")
-    this.districtCustom = map.getOrDefault("district_custom", "")
-    this.stateCustomName = map.getOrDefault("state_custom", "")
-    this.stateCodeCustom = String.valueOf(map.getOrDefault("state_code_custom", ""))
-    this.userDeclaredState = map.getOrDefault("user_declared_state", "")
-    this.userDeclaredDistrict = map.getOrDefault("user_declared_district", "")
-    this.uaspec = gson.fromJson(map.getOrDefault("uaspec", ""), `type`)
+  def fromMap(map: util.Map[String, String], config: DeviceProfileUpdaterConfig): DeviceProfile = {
+    this.countryCode = map.getOrDefault(config.countryCode, null)
+    this.country = map.getOrDefault(config.country, "")
+    this.stateCode = map.getOrDefault(config.stateCode, "")
+    this.state = map.getOrDefault(config.state, "")
+    this.city = map.getOrDefault(config.city, "")
+    this.districtCustom = map.getOrDefault(config.districtCustom, "")
+    this.stateCustomName = map.getOrDefault(config.stateCustom, "")
+    this.stateCodeCustom = String.valueOf(map.getOrDefault(config.stateCustomCode, ""))
+    this.userDeclaredState = map.getOrDefault(config.userDeclaredState, "")
+    this.userDeclaredDistrict = map.getOrDefault(config.userDeclaredDistrict, "")
+    this.uaspec = gson.fromJson(map.getOrDefault(config.uaSpec, ""), `type`)
     this.devicespec = gson.fromJson(map.getOrDefault("device_spec", ""), `type`)
     this.firstAccess = map.getOrDefault("first_access", "0").asInstanceOf[Number].longValue()
-    this.user_declared_on = map.getOrDefault("api_last_updated_on", "0").asInstanceOf[Number].longValue()
-    this.api_last_updated_on = map.getOrDefault("api_last_updated_on", "0").asInstanceOf[Number].longValue()
+    this.user_declared_on = map.getOrDefault(config.apiLastUpdatedOn, "0").asInstanceOf[Number].longValue()
+    this.api_last_updated_on = map.getOrDefault(config.apiLastUpdatedOn, "0").asInstanceOf[Number].longValue()
     this
   }
 }

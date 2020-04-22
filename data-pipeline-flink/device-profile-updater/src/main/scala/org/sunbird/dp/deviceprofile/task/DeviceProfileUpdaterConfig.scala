@@ -48,6 +48,7 @@ class DeviceProfileUpdaterConfig(override val config: Config) extends BaseJobCon
   val stateCustom = "state_custom"
   val stateCustomCode = "state_code_custom"
   val userDeclaredDistrict = "user_declared_district"
+  val userDeclaredState = "user_declared_state"
   val uaSpec = "uaspec"
   val deviceSpec = "devicespec"
   val firstAccess = "firstaccess"
