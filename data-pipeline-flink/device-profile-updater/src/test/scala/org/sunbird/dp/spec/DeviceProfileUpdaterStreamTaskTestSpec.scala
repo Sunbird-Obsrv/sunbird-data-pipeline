@@ -58,7 +58,10 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
     postgresConnect = new PostgresConnect(postgresConfig)
     //val connection = postgresConnect.getConnection
 
-    //postgresConnect.execute("CREATE TABLE device_table(id text PRIMARY KEY, channel text);")
+    //postgresConnect.execute("CREATE TABLE device_table(device_id text, api_last_updated_on timestamptz, avg_ts float, city text, country text, country_code text, device_spec json, district_custom text, fcm_token text, first_access timestamptz, last_access timestamptz, producer_id text, state text, state_code text, state_code_custom text, state_custom text, total_launches bigint, total_ts float, uaspec json, updated_date timestamptz, user_declared_district text, user_declared_state text, user_declared_on timestamptz, PRIMARY KEY(device_id)")
+    //postgresConnect.execute("CREATE TABLE IF NOT EXISTS device_table(device_id text PRIMARY KEY, api_last_updated_on timestamptz, avg_ts float, city text,country text, country_code text, device_spec json, district_custom text, fcm_token text, first_access timestamptz, last_access timestamptz, producer_id text, state text, state_code text, state_code_custom text, state_custom text, total_launches bigint, total_ts float, uaspec json, updated_date timestamptz, user_declared_district text, user_declared_state text, user_declared_on timestamptz);")
+
+    postgresConnect.execute("CREATE TABLE IF NOT EXISTS device_profile(\n" + "   device_id text PRIMARY KEY,\n" + "   api_last_updated_on TIMESTAMP,\n" + "    avg_ts float,\n" + "    city TEXT,\n" + "    country TEXT,\n" + "    country_code TEXT,\n" + "    device_spec json,\n" + "    district_custom TEXT,\n" + "    fcm_token TEXT,\n" + "    first_access TIMESTAMP,\n" + "    last_access TIMESTAMP,\n" + "    user_declared_on TIMESTAMP,\n" + "    producer_id TEXT,\n" + "    state TEXT,\n" + "    state_code TEXT,\n" + "    state_code_custom TEXT,\n" + "    state_custom TEXT,\n" + "    total_launches bigint,\n" + "    total_ts float,\n" + "    uaspec json,\n" + "    updated_date TIMESTAMP,\n" + "    user_declared_district TEXT,\n" + "    user_declared_state TEXT)")
 
     when(mockKafkaUtil.kafkaMapSource(deviceProfileUpdaterConfig.kafkaInputTopic)).thenReturn(new DeviceProfileUpdaterEventSource)
     flinkCluster.before()

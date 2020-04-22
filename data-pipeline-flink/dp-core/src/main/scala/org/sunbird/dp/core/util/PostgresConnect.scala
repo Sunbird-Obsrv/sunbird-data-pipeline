@@ -49,6 +49,7 @@ class PostgresConnect(config: PostgresConnectionConfig) {
   def execute(query: String): Boolean = try statement.execute(query)
   catch {
     case ex: SQLException =>
+      ex.printStackTrace()
       resetConnection
       statement.execute(query)
   }

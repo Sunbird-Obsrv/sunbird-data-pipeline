@@ -84,4 +84,21 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
     }
   }
 
+  def isExists(key: String): Boolean = {
+    this.redisConnection.exists(key)
+  }
+
+  def hmSet(key: String, value: util.Map[String, String]): Unit = {
+    try {
+      redisConnection.hmset(key, value)
+    } catch {
+      case ex: JedisException => {
+        logger.error("Exception when inserting data to redis cache", ex)
+        redisConnect.resetConnection()
+        this.redisConnection = redisConnect.getConnection(dbIndex)
+        this.redisConnection.hmset(key, value)
+      }
+    }
+  }
+
 }
