@@ -39,7 +39,24 @@ class DeviceProfileUpdaterConfig(override val config: Config) extends BaseJobCon
   val postgresMaxConnections = config.getInt("postgres.maxConnections")
 
 
-  val fields = List()
+  val countryCode = "country_code"
+  val country = "country"
+  val stateCode = "state_code"
+  val state = "state"
+  val city = "city"
+  val districtCustom = "district_custom"
+  val stateCustom = "state_custom"
+  val stateCustomCode = "state_code_custom"
+  val userDeclaredDistrict = "user_declared_district"
+  val uaSpec = "uaspec"
+  val deviceSpec = "devicespec"
+  val firstAccess = "firstaccess"
+  val userDeclaredOn = "user_declared_on"
+  val apiLastUpdatedOn = "api_last_updated_on"
+
+  val fields = List(countryCode, country, stateCode, state, city, districtCustom, stateCustom, stateCustomCode,
+    userDeclaredDistrict, uaSpec, deviceSpec, firstAccess, userDeclaredOn, apiLastUpdatedOn
+  )
 
 
 }
