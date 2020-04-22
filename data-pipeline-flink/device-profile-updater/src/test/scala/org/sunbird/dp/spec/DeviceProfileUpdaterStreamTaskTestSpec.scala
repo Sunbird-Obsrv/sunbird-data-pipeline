@@ -99,7 +99,7 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
     BaseMetricsReporter.gaugeMetrics(s"${deviceProfileUpdaterConfig.jobName}.${deviceProfileUpdaterConfig.cacheHitCount}").getValue() should be(3)
     BaseMetricsReporter.gaugeMetrics(s"${deviceProfileUpdaterConfig.jobName}.${deviceProfileUpdaterConfig.deviceDbHitCount}").getValue() should be(3)
     redisTableAssertion()
-    //postgresTableDataAssertion()
+    postgresTableDataAssertion()
 
   }
 
