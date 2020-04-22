@@ -96,11 +96,9 @@ public class DeviceProfileUpdaterService {
         Long lastUpdatedDate = Long.parseLong(deviceData.get("api_last_updated_on"));
         List<String> parsedKeys = new ArrayList<>(Arrays.asList("first_access", "api_last_updated_on"));
         deviceData.keySet().removeAll(parsedKeys);
-        System.out.println("deviceData" + deviceData.keySet());
         String columns = formatValues(deviceData.keySet(),",");
         String values = formatPrepareStatement(deviceData.values().size(),"?,");
         String postgresQuery = String.format("INSERT INTO %s (api_last_updated_on,updated_date,%s) VALUES(?,?,%s?) ON CONFLICT(device_id) DO UPDATE SET (api_last_updated_on,updated_date,%s)=(?,?,%s?);",postgres_table, columns, values, columns, values);
-        System.out.println("postgresQuery" + postgresQuery);
         PreparedStatement preparedStatement = postgresConnect.getConnection().prepareStatement(postgresQuery);
 
         preparedStatement.setTimestamp(1, new Timestamp(lastUpdatedDate));  // Adding api_last_updated_on as timestamp to index 1 of preparestatement
