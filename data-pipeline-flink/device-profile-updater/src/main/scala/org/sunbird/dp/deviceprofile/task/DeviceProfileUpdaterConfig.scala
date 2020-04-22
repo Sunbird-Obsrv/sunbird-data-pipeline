@@ -39,6 +39,7 @@ class DeviceProfileUpdaterConfig(override val config: Config) extends BaseJobCon
   val postgresMaxConnections = config.getInt("postgres.maxConnections")
 
 
-  //val uniqueEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = UNIQUE_EVENTS_OUTPUT_TAG)
+  val fields = List()
+
 
 }
