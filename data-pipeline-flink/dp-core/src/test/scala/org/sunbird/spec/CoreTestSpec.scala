@@ -124,6 +124,26 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     map.put("country", "INDIA")
     mapSerialization.serialize(map, System.currentTimeMillis())
   }
+
+  "DataCache" should "be able to add the data into redis" in {
+    val redisConnection = new RedisConnect(bsConfig)
+    val deviceData = new util.HashMap[String, String]()
+    deviceData.put("country_code", "IN")
+    deviceData.put("country", "INDIA")
+
+    val deviceFields = List("country_code", "country", "state_code", "st" +
+      "ate", "city", "district_custom", "state_code_custom",
+      "state_custom", "user_declared_state", "user_declared_district", "devicespec", "firstaccess")
+    val dataCache = new DataCache(bsConfig, redisConnection, 2, deviceFields)
+    dataCache.init()
+    dataCache.isExists("device_10") should be(false)
+    dataCache.hmSet("device_1", deviceData)
+    val redisData = dataCache.hgetAllWithRetry("device_1")
+    redisData.size should be(2)
+    redisData should not be(null)
+    redisConnection.closePool()
+    dataCache.hmSet("device_1", deviceData)
+  }
 }
 
 class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
