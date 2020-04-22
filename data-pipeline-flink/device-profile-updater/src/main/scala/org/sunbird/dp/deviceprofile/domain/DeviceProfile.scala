@@ -14,18 +14,18 @@ object DeviceProfile {
 }
 
 class DeviceProfile() {
-  private var countryCode: String = null
-  private var country: String = null
-  private var stateCode: String = null
-  private var state: String = null
-  private var city: String = null
-  private var districtCustom: String = null
-  private var stateCodeCustom: String = null
-  private var stateCustomName: String = null
-  private var userDeclaredState: String = null
-  private var userDeclaredDistrict: String = null
-  private var uaspec: util.HashMap[String, String] = null
-  private var devicespec: util.HashMap[String, String] = null
+  private var countryCode: String = _
+  private var country: String = _
+  private var stateCode: String = _
+  private var state: String = _
+  private var city: String = _
+  private var districtCustom: String = _
+  private var stateCodeCustom: String = _
+  private var stateCustomName: String = _
+  private var userDeclaredState: String = _
+  private var userDeclaredDistrict: String = _
+  private var uaspec: util.HashMap[String, String] = _
+  private var devicespec: util.HashMap[String, String] = _
   private var firstAccess: Long = 0L
   private var user_declared_on: Long = 0L
   private var api_last_updated_on: Long = 0L

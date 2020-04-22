@@ -118,7 +118,6 @@ public class DeviceProfileUpdaterService {
         if(null != deviceData.get("user_declared_state")) {
             String updateUserDeclaredOnQuery = String.format("UPDATE %s SET user_declared_on = '%s' WHERE device_id = '%s' AND user_declared_on IS NULL",
                     postgres_table, new Timestamp(lastUpdatedDate).toString(), deviceId);
-            System.out.println("updateUserDeclaredOnQuery" + updateUserDeclaredOnQuery);
             postgresConnect.execute(updateUserDeclaredOnQuery);
         }
 
