@@ -10,9 +10,11 @@ import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.core.cache.{DataCache, RedisConnect}
 import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
-import org.sunbird.dp.core.util.{DialCodeResult, RestUtil}
+import org.sunbird.dp.core.util.RestUtil
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.task.ContentCacheUpdaterConfig
+
+case class DialCodeResult(result : util.HashMap[String,Any])
 
 class DialCodeUpdaterFunction(config: ContentCacheUpdaterConfig, restUtil: RestUtil)
                              (implicit val mapTypeInfo: TypeInformation[Event]) extends BaseProcessFunction[Event, Event](config) {
@@ -54,7 +56,7 @@ class DialCodeUpdaterFunction(config: ContentCacheUpdaterConfig, restUtil: RestU
         val headers = Map("Authorization" -> ("Bearer " + config.dialCodeApiToken))
         dialCodesList.foreach(dc => {
             if (dataCache.getWithRetry(dc).isEmpty) {
-                val result = restUtil.get[DialCodeResult](config.dialCodeApiUrl + dc, Some(headers)).result
+                val result = gson.fromJson[DialCodeResult](restUtil.get(config.dialCodeApiUrl + dc, Some(headers)),classOf[DialCodeResult]).result
                 if (!result.isEmpty && result.containsKey("dialcode")) {
                     metrics.incCounter(config.dialCodeApiHit)
                     dataCache.setWithRetry(dc, gson.toJson(result.get("dialcode")))

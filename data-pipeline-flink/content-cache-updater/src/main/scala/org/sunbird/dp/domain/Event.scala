@@ -7,7 +7,7 @@ import com.google.gson.internal.LinkedTreeMap
 import com.google.gson.reflect.TypeToken
 import org.sunbird.dp.core.domain.Events
 
-class Event(eventMap: util.Map[String, Any], partition: Integer) extends Events(eventMap) {
+class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
 
 
     private val jobName = "ContentCacheUpdater"

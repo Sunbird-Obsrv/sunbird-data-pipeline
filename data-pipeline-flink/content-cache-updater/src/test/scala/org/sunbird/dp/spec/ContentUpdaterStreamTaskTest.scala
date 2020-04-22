@@ -3,8 +3,6 @@ package org.sunbird.dp.spec
 import java.util
 
 import com.google.gson.Gson
-import com.google.gson.internal.LinkedTreeMap
-import com.google.gson.reflect.TypeToken
 import com.typesafe.config.ConfigFactory
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
@@ -17,9 +15,10 @@ import org.mockito.{ArgumentMatchers, Mockito}
 import org.mockito.Mockito._
 import org.sunbird.dp.core.cache.RedisConnect
 import org.sunbird.dp.core.job.FlinkKafkaConnector
-import org.sunbird.dp.core.util.{DialCodeResult, RestUtil}
+import org.sunbird.dp.core.util.RestUtil
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.fixture.EventFixture
+import org.sunbird.dp.functions.DialCodeResult
 import org.sunbird.dp.task.{ContentCacheUpdaterConfig, ContentCacheUpdaterStreamTask}
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import redis.embedded.RedisServer
@@ -27,6 +26,7 @@ import redis.embedded.RedisServer
 class ContentUpdaterStreamTaskTest extends BaseTestSpec {
 
     implicit val mapTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
+    implicit val mockRestUtil: RestUtil = mock[RestUtil](Mockito.withSettings().serializable())
     val flinkCluster = new MiniClusterWithClientResource(new MiniClusterResourceConfiguration.Builder()
       .setConfiguration(testConfiguration())
       .setNumberSlotsPerTaskManager(1)
@@ -36,8 +36,8 @@ class ContentUpdaterStreamTaskTest extends BaseTestSpec {
     val config = ConfigFactory.load("test.conf");
     val contentConfig: ContentCacheUpdaterConfig = new ContentCacheUpdaterConfig(config);
     val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
-    val mockRestUtil: RestUtil = mock[RestUtil](Mockito.withSettings().serializable())
-    //val mockRestUtil = new RestUtil()
+
+    //  val mockRestUtil = new RestUtil()
     val gson = new Gson()
 
     override protected def beforeAll(): Unit = {
@@ -75,9 +75,9 @@ class ContentUpdaterStreamTaskTest extends BaseTestSpec {
         val invalid_json = "{\"id\":\"sunbird.dialcode.read\",\"ver\":\"3.0\",\"ts\":\"2020-04-21T02:51:39ZZ\",\"params\":{\"resmsgid\":\"4544fce4-efee-4ee2-8816-fdb3f60ac492\",\"msgid\":null,\"err\":null,\"status\":\"successful\",\"errmsg\":null},\"responseCode\":\"OK\",\"result\":{\"status\":\"No dialcodeFound\"}}"
         val dialCodeMap = gson.fromJson(json, classOf[DialCodeResult])
         val invaliddialCodeMap = gson.fromJson(invalid_json, classOf[DialCodeResult])
-        when(mockRestUtil.get(ArgumentMatchers.contains("X3J6W1"), Option(ArgumentMatchers.any()))).thenReturn(DialCodeResult(dialCodeMap.result))
-        when(mockRestUtil.get(ArgumentMatchers.contains("X3J6W2"), Option(ArgumentMatchers.any()))).thenReturn(DialCodeResult(invaliddialCodeMap.result))
-        when(mockRestUtil.get(ArgumentMatchers.contains("X3J6W3"), Option(ArgumentMatchers.any()))).thenReturn(DialCodeResult(invaliddialCodeMap.result))
+        when(mockRestUtil.get(ArgumentMatchers.contains("X3J6W1"), Option(ArgumentMatchers.any()))).thenReturn(json)
+        when(mockRestUtil.get(ArgumentMatchers.contains("X3J6W2"), Option(ArgumentMatchers.any()))).thenReturn(invalid_json)
+        when(mockRestUtil.get(ArgumentMatchers.contains("X3J6W3"), Option(ArgumentMatchers.any()))).thenReturn(invalid_json)
         val task = new ContentCacheUpdaterStreamTask(contentConfig, mockKafkaUtil, mockRestUtil)
 
         task.process()
@@ -104,13 +104,13 @@ class ContentDialCodeSource extends SourceFunction[Event] {
         val event5 = gson.fromJson(EventFixture.invalid_dialcocedata, new util.LinkedHashMap[String, Any]().getClass)
         val event6 = gson.fromJson(EventFixture.reserved_dialcocedata, new util.LinkedHashMap[String, Any]().getClass)
         val event7 = gson.fromJson(EventFixture.dialcodedata2, new util.LinkedHashMap[String, Any]().getClass)
-        ctx.collect(new Event(event1, 0))
-        ctx.collect(new Event(event2, 0))
-        ctx.collect(new Event(event3, 0))
-        ctx.collect(new Event(event4, 0))
-        ctx.collect(new Event(event5, 0))
-        ctx.collect(new Event(event6, 0))
-        ctx.collect(new Event(event7, 0))
+        ctx.collect(new Event(event1))
+        ctx.collect(new Event(event2))
+        ctx.collect(new Event(event3))
+        ctx.collect(new Event(event4))
+        ctx.collect(new Event(event5))
+        ctx.collect(new Event(event6))
+        ctx.collect(new Event(event7))
 
     }
 

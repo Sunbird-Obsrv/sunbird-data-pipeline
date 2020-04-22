@@ -14,7 +14,7 @@ import org.sunbird.dp.core.cache.{DataCache, DedupEngine, RedisConnect}
 import org.sunbird.dp.core.domain.Events
 import org.sunbird.dp.core.job.{BaseDeduplication, BaseJobConfig}
 import org.sunbird.dp.core.serde._
-import org.sunbird.dp.core.util.{DialCodeResult, RestUtil}
+import org.sunbird.dp.core.util.{RestUtil}
 import org.sunbird.fixture.EventFixture
 import redis.clients.jedis.exceptions.{JedisConnectionException, JedisException}
 
@@ -140,7 +140,8 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
   "RestUtil functionality" should "be able to return response" in {
     val restUtil = new RestUtil()
     val url = "https://httpbin.org/json";
-    val response = restUtil.get[Any](url);
+    val response = restUtil.get(url);
+    response should not be null
   }
 }
 

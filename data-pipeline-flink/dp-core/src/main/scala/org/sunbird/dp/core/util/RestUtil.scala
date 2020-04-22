@@ -5,15 +5,14 @@ import java.util
 
 import com.google.gson.Gson
 import org.apache.http.client.methods.{HttpGet, HttpRequestBase}
-import org.apache.http.impl.client.{BasicResponseHandler, HttpClients}
+import org.apache.http.impl.client.HttpClients
 
 import scala.io.Source
-
 case class DialCodeResult(result : util.HashMap[String,Any])
 
 class RestUtil extends Serializable {
 
-    def get[T](url: String, headers: Option[Map[String, String]] = None): T = {
+    def get(url: String, headers: Option[Map[String, String]] = None) : String = {
         val httpClient = HttpClients.createDefault()
         lazy val gson = new Gson()
         val request = new HttpGet(url)
@@ -25,15 +24,14 @@ class RestUtil extends Serializable {
             val entity = httpResponse.getEntity
             val inputStream = entity.getContent
             val content = Source.fromInputStream(inputStream, "UTF-8").getLines.mkString
-            inputStream.close
-            gson.fromJson(content, DialCodeResult.getClass)
+            inputStream.close()
+            content
 
         } finally {
             httpClient.close()
         }
 
         }
-
 
 
 }

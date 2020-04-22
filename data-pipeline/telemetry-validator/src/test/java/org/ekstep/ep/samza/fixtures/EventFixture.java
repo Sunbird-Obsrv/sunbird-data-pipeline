@@ -117,7 +117,6 @@ public class EventFixture {
             "      \"tid\": \"\",\n" +
             "      \"type\": \"OTHER\",\n" +
             "      \"uri\": \"\",\n" +
-			"      \"check\": \"\",\n" +
             "      \"values\": [\n" +
             "        {\n" +
             "          \"SizeOfFileInKB\": \"0.81\"\n" +
@@ -619,7 +618,7 @@ public class EventFixture {
 
 	public static final String ANY_STRING = "Hey Samza, Whats Up?";
 	public static final String EMPTY_JSON = "{}";
-	
+
     public static Map<String, Object> validGeErrorEventMap() {
         return new Gson().fromJson(VALID_GE_ERROR_EVENT, new TypeToken<Map<String, Object>>() {
         }.getType());
