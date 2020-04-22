@@ -17,8 +17,8 @@ import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 import org.sunbird.dp.core.util.{PostgresConnect, PostgresConnectionConfig}
 import org.sunbird.dp.deviceprofile.domain.DeviceProfile
 import org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterConfig
-import scala.collection.JavaConversions._
 
+import scala.collection.JavaConversions._
 import scala.collection.mutable
 
 
@@ -88,8 +88,8 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
 
   def addDeviceDataToDB(deviceId: String, deviceData: util.Map[String, String]): Unit = {
     val firstAccess: Long = deviceData.get("first_access").asInstanceOf[Number].longValue()
-    val lastUpdatedDate: Long = deviceData.get("api_last_updated_on").asInstanceOf[Number].longValue()
-    val parsedKeys = new util.ArrayList[String](util.Arrays.asList("first_access", "api_last_updated_on"))
+    val lastUpdatedDate: Long = deviceData.get(config.apiLastUpdatedOn).asInstanceOf[Number].longValue()
+    val parsedKeys = new util.ArrayList[String](util.Arrays.asList("first_access", config.apiLastUpdatedOn))
     deviceData.keySet.removeAll(parsedKeys)
     val columns = String.join(",", deviceData.keySet())
     val values = StringUtils.repeat("?,", deviceData.values.size - 1);
@@ -112,7 +112,7 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
     val updateFirstAccessQuery = String.format("UPDATE %s SET first_access = '%s' WHERE device_id = '%s' AND first_access IS NULL", config.postgresTable, new Timestamp(firstAccess).toString, deviceId)
     postgresConnect.execute(updateFirstAccessQuery)
 
-    if (null != deviceData.get("user_declared_state")) {
+    if (null != deviceData.get(config.userDeclaredState)) {
       val updateUserDeclaredOnQuery = String.format("UPDATE %s SET user_declared_on = '%s' WHERE device_id = '%s' AND user_declared_on IS NULL", config.postgresTable, new Timestamp(lastUpdatedDate).toString, deviceId)
       postgresConnect.execute(updateUserDeclaredOnQuery)
     }
@@ -122,13 +122,13 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
     val deviceMap = deviceProfile.toMap(config)
     deviceMap.values.removeAll(Collections.singleton(""))
     deviceMap.values.removeAll(Collections.singleton("{}"))
-    if (deviceMap.get("user_declared_state") == null) deviceMap.remove("user_declared_on")
+    if (deviceMap.get(config.userDeclaredState) == null) deviceMap.remove(config.userDeclaredOn)
     if (dataCache.isExists(deviceId)) {
       val redisData = dataCache.hgetAllWithRetry(deviceId)
-      val firstAccess = redisData.get("firstaccess")
-      val userDeclaredOn = redisData.get("user_declared_on")
-      if (firstAccess != null && !("0" == firstAccess)) deviceMap.remove("firstaccess")
-      if (userDeclaredOn != null && deviceMap.get("user_declared_on") != null) deviceMap.remove("user_declared_on")
+      val firstAccess = redisData.get(config.firstAccess)
+      val userDeclaredOn = redisData.get(config.userDeclaredOn)
+      if (firstAccess != null && !("0" == firstAccess)) deviceMap.remove(config.firstAccess)
+      if (userDeclaredOn != null && deviceMap.get(config.userDeclaredOn) != null) deviceMap.remove(config.userDeclaredOn)
       val updatedDeviceMap = updatedMissingFields(deviceMap, redisData)
       dataCache.hmSet(deviceId, updatedDeviceMap.asInstanceOf[util.Map[String, String]])
       updatedDeviceMap
