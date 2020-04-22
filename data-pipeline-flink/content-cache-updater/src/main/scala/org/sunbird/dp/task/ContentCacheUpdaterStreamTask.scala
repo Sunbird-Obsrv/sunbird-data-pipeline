@@ -5,7 +5,7 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.core.job.FlinkKafkaConnector
-import org.sunbird.dp.core.util.{FlinkUtil, RestUtil}
+import org.sunbird.dp.core.util.FlinkUtil
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.functions.{ContentUpdaterFunction, DialCodeUpdaterFunction}
 
@@ -34,7 +34,7 @@ import org.sunbird.dp.functions.{ContentUpdaterFunction, DialCodeUpdaterFunction
   * 		9.1 Retry once from redis on any redis connection issues
   * 		9.2 Stop the job from proceeding further if there are any redis connection issues
   */
-class ContentCacheUpdaterStreamTask(config: ContentCacheUpdaterConfig, kafkaConnector: FlinkKafkaConnector, restUtil: RestUtil) {
+class ContentCacheUpdaterStreamTask(config: ContentCacheUpdaterConfig, kafkaConnector: FlinkKafkaConnector) {
 
   private val serialVersionUID = -7729362727131516112L
 
@@ -45,7 +45,7 @@ class ContentCacheUpdaterStreamTask(config: ContentCacheUpdaterConfig, kafkaConn
     val source = kafkaConnector.kafkaEventSource[Event](config.inputTopic)
 
     val dialCodeUpdaterStream = env.addSource(source, "learning-graph-events-consumer")
-      .rebalance().process(new DialCodeUpdaterFunction(config,restUtil))
+      .rebalance().process(new DialCodeUpdaterFunction(config))
 
        dialCodeUpdaterStream.getSideOutput(config.withDialCodeEventsTag)
       .process(new ContentUpdaterFunction(config))
@@ -62,8 +62,7 @@ object ContentCacheUpdaterStreamTask {
     val config = ConfigFactory.load("content-cache-updater.conf").withFallback(ConfigFactory.systemEnvironment())
     val eConfig = new ContentCacheUpdaterConfig(config)
     val kafkaUtil = new FlinkKafkaConnector(eConfig)
-    val restUtil = new RestUtil()
-    val task = new ContentCacheUpdaterStreamTask(eConfig, kafkaUtil, restUtil)
+    val task = new ContentCacheUpdaterStreamTask(eConfig, kafkaUtil)
     task.process()
   }
 }

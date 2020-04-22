@@ -3,7 +3,6 @@ package org.sunbird.dp.functions
 import java.util
 
 import com.google.gson.Gson
-import com.google.gson.internal.LinkedTreeMap
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
@@ -14,15 +13,15 @@ import org.sunbird.dp.core.util.RestUtil
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.task.ContentCacheUpdaterConfig
 
-case class DialCodeResult(result : util.HashMap[String,Any])
+case class DialCodeResult(result: util.HashMap[String, Any])
 
-class DialCodeUpdaterFunction(config: ContentCacheUpdaterConfig, restUtil: RestUtil)
+class DialCodeUpdaterFunction(config: ContentCacheUpdaterConfig)
                              (implicit val mapTypeInfo: TypeInformation[Event]) extends BaseProcessFunction[Event, Event](config) {
 
     private[this] val logger = LoggerFactory.getLogger(classOf[DialCodeUpdaterFunction])
 
     private var dataCache: DataCache = _
-
+    private val restUtil = new RestUtil()
 
     override def metricsList(): List[String] = {
         List(config.dialCodeCacheHit, config.dialCodeApiMissHit, config.dialCodeApiHit)
@@ -44,23 +43,22 @@ class DialCodeUpdaterFunction(config: ContentCacheUpdaterConfig, restUtil: RestU
         import scala.collection.JavaConverters._
         val gson = new Gson()
         val properties = event.extractProperties()
-        val dialCodesList = properties.filter(p => p._1.equals("dialcodes") || p._1.equals("reservedDialCodes")).flatMap(f => {
-            if (f._2.isInstanceOf[util.ArrayList[String]]) {
-                f._2.asInstanceOf[util.ArrayList[String]].asScala
-            }
-            else {
-                List.empty[String]
+        val dialCodesList = properties.filter(p => config.dialCodeProperties.contains(p._1)).flatMap(f => {
+            f._2 match {
+                case a: util.ArrayList[String] => a.asScala
+                case _ => List.empty
             }
         }).filter(p => !p.isEmpty)
 
         val headers = Map("Authorization" -> ("Bearer " + config.dialCodeApiToken))
         dialCodesList.foreach(dc => {
             if (dataCache.getWithRetry(dc).isEmpty) {
-                val result = gson.fromJson[DialCodeResult](restUtil.get(config.dialCodeApiUrl + dc, Some(headers)),classOf[DialCodeResult]).result
+                val result = gson.fromJson[DialCodeResult](restUtil.get(config.dialCodeApiUrl + dc, Some(headers)), classOf[DialCodeResult]).result
                 if (!result.isEmpty && result.containsKey("dialcode")) {
                     metrics.incCounter(config.dialCodeApiHit)
                     dataCache.setWithRetry(dc, gson.toJson(result.get("dialcode")))
                     metrics.incCounter(config.dialCodeCacheHit)
+                    logger.info(dc + " updated successfully")
                 }
                 else {
                     metrics.incCounter(config.dialCodeApiMissHit)
