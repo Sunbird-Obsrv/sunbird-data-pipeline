@@ -2,6 +2,8 @@ package org.sunbird.dp.spec
 
 import java.util
 
+import com.google.gson.Gson
+import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.runtime.testutils.MiniClusterResourceConfiguration
@@ -11,15 +13,13 @@ import org.apache.flink.streaming.api.functions.source.SourceFunction.SourceCont
 import org.apache.flink.test.util.MiniClusterWithClientResource
 import org.mockito.Mockito
 import org.mockito.Mockito._
-import org.sunbird.dp.fixture.EventFixture
-import com.google.gson.Gson
-import com.typesafe.config.{Config, ConfigFactory}
-import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
-import redis.embedded.RedisServer
 import org.sunbird.dp.core.cache.RedisConnect
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.denorm.domain.Event
 import org.sunbird.dp.denorm.task.{DenormalizationConfig, DenormalizationStreamTask}
+import org.sunbird.dp.fixture.EventFixture
+import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
+import redis.embedded.RedisServer
 
 class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
 
@@ -96,6 +96,8 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     DenormEventsSink.values.get("mid10") should be (None)
 
     var event = DenormEventsSink.values("mid1")
+    event.kafkaKey() should be ("758e054a400f20f7677f2def76427dc13ad1f837")
+
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (false)
     event.flags().get("user_denorm").asInstanceOf[Boolean] should be (true)
     Option(event.flags().get("dialcode_denorm")) should be (None)
