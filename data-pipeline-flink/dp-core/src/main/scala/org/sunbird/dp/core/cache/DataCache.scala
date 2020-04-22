@@ -6,7 +6,7 @@ import com.google.gson.Gson
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.core.job.BaseJobConfig
 import redis.clients.jedis.Jedis
-import redis.clients.jedis.exceptions.JedisException
+import redis.clients.jedis.exceptions.{JedisConnectionException, JedisException}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.Map
@@ -24,6 +24,10 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
   def close() {
     this.redisConnection.close()
     redisConnect.closePool()
+  }
+
+  def closeConnection() {
+    this.redisConnection.close()
   }
 
   def hgetAllWithRetry(key: String): Map[String, String] = {
@@ -88,7 +92,7 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
         try {
             set(key, value);
         } catch {
-            case ex: JedisException =>
+          case ex @ (_ : JedisConnectionException | _ : JedisException) =>
                 logger.error("Exception when update data to redis cache", ex)
                 redisConnect.resetConnection();
                 this.redisConnection = redisConnect.getConnection(dbIndex);
