@@ -38,6 +38,7 @@ class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTy
     val eventsList = getEventsList(batchEvent)
     val syncTs = Option(batchEvent.get("syncts")).getOrElse(System.currentTimeMillis()).asInstanceOf[Number].longValue()
     eventsList.forEach(event => {
+      val eventId = event.get("eid").asInstanceOf[String]
       val eventData = updateEvent(event, syncTs)
       val eventJson = gson.toJson(eventData)
       val eventSize = eventJson.getBytes("UTF-8").length
@@ -46,7 +47,10 @@ class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTy
         context.output(config.failedEventsOutputTag, markFailed(eventData))
       } else {
         metrics.incCounter(config.successEventCount)
-        context.output(config.rawEventsOutputTag, markSuccess(eventData))
+        if (config.redactEventsList.contains(eventId))
+            context.output(config.assessRedactEventsOutputTag, markSuccess(eventData))
+        else
+            context.output(config.rawEventsOutputTag, markSuccess(eventData))
       }
     })
 
