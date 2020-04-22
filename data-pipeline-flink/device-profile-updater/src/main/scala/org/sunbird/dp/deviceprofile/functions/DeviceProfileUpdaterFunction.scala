@@ -28,12 +28,11 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
   override def open(parameters: Configuration): Unit = {
     super.open(parameters)
     if (dataCache == null) {
-      println("yess")
       val redisConnect = new RedisConnect(config)
       dataCache = new DataCache(config, redisConnect, config.deviceDbStore, null)
+      dataCache.init()
     }
     if (postgresConnect == null) {
-      println("yesffpost")
       postgresConnect = new PostgresConnect(PostgresConnectionConfig(
         user = config.postgresUser,
         password = config.postgresPassword,
@@ -48,7 +47,7 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
   override def close(): Unit = {
     super.close()
     dataCache.close()
-    postgresConnect.closeConnection()
+   // postgresConnect.closeConnection()
   }
 
   /**

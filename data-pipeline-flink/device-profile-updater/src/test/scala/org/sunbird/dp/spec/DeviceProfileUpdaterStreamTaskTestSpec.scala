@@ -42,7 +42,7 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
-    redisServer = new RedisServer(6341)
+    redisServer = new RedisServer(6340)
     redisServer.start()
     EmbeddedPostgres.builder.setPort(deviceProfileUpdaterConfig.postgresPort).start() // Use the same port 5430 which is defined in the base-test.conf
     BaseMetricsReporter.gaugeMetrics.clear()
@@ -68,7 +68,7 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
     super.afterAll()
     redisServer.stop()
     flinkCluster.after()
-    postgresConnect.closeConnection()
+    //postgresConnect.closeConnection()
 
   }
 
