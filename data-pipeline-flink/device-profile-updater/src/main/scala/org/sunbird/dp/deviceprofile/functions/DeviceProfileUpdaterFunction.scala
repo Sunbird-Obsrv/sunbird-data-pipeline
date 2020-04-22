@@ -18,7 +18,7 @@ import org.sunbird.dp.core.util.{PostgresConnect, PostgresConnectionConfig}
 import org.sunbird.dp.deviceprofile.domain.DeviceProfile
 import org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterConfig
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 
@@ -149,7 +149,7 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
   private def setPrepareStatement(preparedStatement: PreparedStatement, index: Int, deviceData: util.Map[String, AnyRef]): Unit = {
     val gson = new Gson()
     var count = index
-    for (value <- deviceData.values()) {
+    deviceData.values().forEach(value => {
       count += 1
       val jsonObject = new PGobject
       try {
@@ -161,7 +161,7 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
         case ex: ClassCastException =>
           preparedStatement.setString(count, String.valueOf(value))
       }
-    }
+    })
   }
 
   def updatedMissingFields(deviceMap: util.Map[String, String], redisData: mutable.Map[String, String]): util.Map[String, String] = {
