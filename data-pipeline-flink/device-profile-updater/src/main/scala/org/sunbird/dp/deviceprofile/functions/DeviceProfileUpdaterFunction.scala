@@ -93,7 +93,11 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
     deviceData.keySet.removeAll(parsedKeys)
     val columns = String.join(",", deviceData.keySet())
     val values = StringUtils.repeat("?,", deviceData.values.size - 1);
+    /**
+     * Inserting data into postgres
+     */
     val postgresQuery = String.format("INSERT INTO %s (api_last_updated_on,updated_date,%s) VALUES(?,?,%s?) ON CONFLICT(device_id) DO UPDATE SET (api_last_updated_on,updated_date,%s)=(?,?,%s?);", config.postgresTable, columns, values, columns, values)
+
     val preparedStatement = postgresConnect.getConnection.prepareStatement(postgresQuery)
     preparedStatement.setTimestamp(1, new Timestamp(lastUpdatedDate)) // Adding api_last_updated_on as timestamp to index 1 of preparestatement
 
@@ -109,10 +113,12 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
 
     preparedStatement.executeUpdate
     preparedStatement.close()
+    // Update first_access column if the first_access is null
     val updateFirstAccessQuery = String.format("UPDATE %s SET first_access = '%s' WHERE device_id = '%s' AND first_access IS NULL", config.postgresTable, new Timestamp(firstAccess).toString, deviceId)
     postgresConnect.execute(updateFirstAccessQuery)
 
     if (null != deviceData.get(config.userDeclaredState)) {
+      // Updating user_declared_on column
       val updateUserDeclaredOnQuery = String.format("UPDATE %s SET user_declared_on = '%s' WHERE device_id = '%s' AND user_declared_on IS NULL", config.postgresTable, new Timestamp(lastUpdatedDate).toString, deviceId)
       postgresConnect.execute(updateUserDeclaredOnQuery)
     }
@@ -153,7 +159,7 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
         preparedStatement.setObject(count, jsonObject)
       } catch {
         case ex: ClassCastException =>
-        preparedStatement.setString(count, String.valueOf(value))
+          preparedStatement.setString(count, String.valueOf(value))
       }
     }
   }
