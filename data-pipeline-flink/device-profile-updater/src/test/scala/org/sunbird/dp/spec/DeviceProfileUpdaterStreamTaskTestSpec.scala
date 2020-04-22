@@ -1,5 +1,6 @@
 package org.sunbird.dp.spec
 
+import java.sql.{ResultSet, Timestamp}
 import java.util
 
 import com.google.gson.Gson
@@ -19,6 +20,7 @@ import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import redis.embedded.RedisServer
 import com.opentable.db.postgres.embedded.EmbeddedPostgres
+import org.junit.Assert.assertEquals
 import org.sunbird.dp.core.util.{PostgresConnect, PostgresConnectionConfig}
 
 import scala.collection.JavaConverters._
@@ -56,12 +58,24 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
       maxConnections = deviceProfileUpdaterConfig.postgresMaxConnections
     )
     postgresConnect = new PostgresConnect(postgresConfig)
-    //val connection = postgresConnect.getConnection
-
-    //postgresConnect.execute("CREATE TABLE device_table(device_id text, api_last_updated_on timestamptz, avg_ts float, city text, country text, country_code text, device_spec json, district_custom text, fcm_token text, first_access timestamptz, last_access timestamptz, producer_id text, state text, state_code text, state_code_custom text, state_custom text, total_launches bigint, total_ts float, uaspec json, updated_date timestamptz, user_declared_district text, user_declared_state text, user_declared_on timestamptz, PRIMARY KEY(device_id)")
-    //postgresConnect.execute("CREATE TABLE IF NOT EXISTS device_table(device_id text PRIMARY KEY, api_last_updated_on timestamptz, avg_ts float, city text,country text, country_code text, device_spec json, district_custom text, fcm_token text, first_access timestamptz, last_access timestamptz, producer_id text, state text, state_code text, state_code_custom text, state_custom text, total_launches bigint, total_ts float, uaspec json, updated_date timestamptz, user_declared_district text, user_declared_state text, user_declared_on timestamptz);")
-
     postgresConnect.execute("CREATE TABLE IF NOT EXISTS device_profile(\n" + "   device_id text PRIMARY KEY,\n" + "   api_last_updated_on TIMESTAMP,\n" + "    avg_ts float,\n" + "    city TEXT,\n" + "    country TEXT,\n" + "    country_code TEXT,\n" + "    device_spec json,\n" + "    district_custom TEXT,\n" + "    fcm_token TEXT,\n" + "    first_access TIMESTAMP,\n" + "    last_access TIMESTAMP,\n" + "    user_declared_on TIMESTAMP,\n" + "    producer_id TEXT,\n" + "    state TEXT,\n" + "    state_code TEXT,\n" + "    state_code_custom TEXT,\n" + "    state_custom TEXT,\n" + "    total_launches bigint,\n" + "    total_ts float,\n" + "    uaspec json,\n" + "    updated_date TIMESTAMP,\n" + "    user_declared_district TEXT,\n" + "    user_declared_state TEXT)")
+    val updateQuery = String.format("UPDATE %s SET user_declared_on = '%s' WHERE device_id = '%s'", deviceProfileUpdaterConfig.postgresTable, new Timestamp(1587542087).toString, "232455")
+    val truncateQuery = String.format("TRUNCATE TABLE  %s RESTART IDENTITY", deviceProfileUpdaterConfig.postgresTable)
+    postgresConnect.execute(truncateQuery)
+    postgresConnect.execute(updateQuery)
+    val result1 = postgresConnect.executeQuery("SELECT * from device_profile where device_id='232455'")
+    while ( {
+      result1.next
+    }) {
+      assertEquals("Bengaluru", result1.getString("city"))
+      assertEquals("Karnataka", result1.getString("state"))
+      assertEquals("India", result1.getString("country"))
+      assertEquals("IN", result1.getString("country_code"))
+      assertEquals("dev.sunbird.portal", result1.getString("producer_id"))
+      assertEquals("Bengaluru", result1.getString("user_declared_district"))
+      assertEquals("Karnataka", result1.getString("user_declared_state"))
+      assertEquals("1970-01-19 14:29:02.087", result1.getString("user_declared_on"))
+    }
 
     when(mockKafkaUtil.kafkaMapSource(deviceProfileUpdaterConfig.kafkaInputTopic)).thenReturn(new DeviceProfileUpdaterEventSource)
     flinkCluster.before()
@@ -84,6 +98,40 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
     BaseMetricsReporter.gaugeMetrics(s"${deviceProfileUpdaterConfig.jobName}.${deviceProfileUpdaterConfig.failedEventCount}").getValue() should be(1)
     BaseMetricsReporter.gaugeMetrics(s"${deviceProfileUpdaterConfig.jobName}.${deviceProfileUpdaterConfig.cacheHitCount}").getValue() should be(3)
     BaseMetricsReporter.gaugeMetrics(s"${deviceProfileUpdaterConfig.jobName}.${deviceProfileUpdaterConfig.deviceDbHitCount}").getValue() should be(3)
+
+    // Should get the all device details from the postgres
+    val result1 = postgresConnect.executeQuery("SELECT * from device_profile where device_id='232455'")
+    while ( {
+      result1.next
+    }) {
+      assertEquals("Bengaluru", result1.getString("city"))
+      assertEquals("Karnataka", result1.getString("state"))
+      assertEquals("India", result1.getString("country"))
+      assertEquals("IN", result1.getString("country_code"))
+      assertEquals("dev.sunbird.portal", result1.getString("producer_id"))
+      assertEquals("Bengaluru", result1.getString("user_declared_district"))
+      assertEquals("Karnataka", result1.getString("user_declared_state"))
+    }
+
+    // When the value is stored with special characters
+    val result2 = postgresConnect.executeQuery(String.format("SELECT user_declared_state FROM %s WHERE device_id='568089542';", deviceProfileUpdaterConfig.postgresTable))
+    while ( {
+      result2.next
+    }) {
+      assertEquals("Karnataka's", result2.getString(1))
+    }
+
+    // Should not addUserDeclared on if it is already present in the postgres
+
+    //val query: String = String.format("INSERT INTO %s (device_id, user_declared_on) VALUES ('232455','2019-09-24 01:03:04.999');", deviceProfileUpdaterConfig.postgresTable)
+    //println(query)
+    //postgresConnect.execute(query)
+
+    val rs = postgresConnect.executeQuery(String.format("SELECT user_declared_on FROM %s WHERE device_id='232455';", deviceProfileUpdaterConfig.postgresTable))
+    while ( {
+      rs.next
+    }) assertEquals("2019-09-24 01:03:04.999", rs.getString(1))
+
 
   }
 

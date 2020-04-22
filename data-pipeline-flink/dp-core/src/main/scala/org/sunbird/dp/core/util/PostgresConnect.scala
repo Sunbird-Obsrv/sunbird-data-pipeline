@@ -1,6 +1,6 @@
 package org.sunbird.dp.core.util
 
-import java.sql.{Connection, SQLException}
+import java.sql.{Connection, ResultSet, SQLException}
 
 import org.postgresql.ds.PGPoolingDataSource
 
@@ -53,6 +53,8 @@ class PostgresConnect(config: PostgresConnectionConfig) {
       resetConnection
       statement.execute(query)
   }
+
+  def executeQuery(query:String):ResultSet = statement.executeQuery(query)
 }
 
 
