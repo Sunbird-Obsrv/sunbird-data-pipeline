@@ -5,6 +5,9 @@ sbin_path: "{{ analytics_user_home }}/sbin"
 azure_container_name: "{{secor_azure_container_name}}"
 azure_account_key: "{{sunbird_private_storage_account_key}}"
 
+ingestion-kafka-cluster: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
+ingestion-zookeeper-cluster: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
+
 secor:
   properties: ['secor.azure', 'secor.common', 'secor', 'secor.partition', 'log4j']
   artifact_dir: /mount/secor
@@ -86,8 +89,8 @@ secor_service_name:
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "50"
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
-  ingestion-telemetry-backup:
-    consumer_group: "{{ env }}.telemetry.ingestion.backup"
+  ingest-telemetry-backup:
+    consumer_group: "{{ env }}.telemetry.ingest.backup"
     base_path: "ingest"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
@@ -101,7 +104,7 @@ secor_service_name:
     partition_prefix_key: ""
     partition_prefix_mapping: "{}"
     output_file_pattern: "{partition}-{currentTimestamp}.json"
-    service_description: "Ingestion Telemetry Backup"
+    service_description: "Processing cluster Ingestion Backup"
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "54"
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
@@ -278,4 +281,23 @@ secor_service_name:
     service_description: "Telemetry raw assess events backup"
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "50"
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+  ingestion-cluster-telemetry-backup:
+    consumer_group: "{{ env }}.telemetry.ingestion.backup"
+    base_path: "ingestion-telemetry"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env }}.telemetry.ingestion"
+    kafka_broker_host: "{{ ingestion-kafka-cluster }}"
+    zookeeper_quorum: "{{ ingestion-zookeeper-cluster }}"
+    max_file_size: "100000000"
+    max_file_age: "14400"
+    ostrich_port: "9985"
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    service_description: "Ingestion cluster Telemetry Backup"
+    service_monitor_schedule_hr: "23"
+    service_monitor_schedule_min: "54"
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
