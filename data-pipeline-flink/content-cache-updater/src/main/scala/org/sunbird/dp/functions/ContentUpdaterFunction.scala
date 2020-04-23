@@ -18,6 +18,7 @@ class ContentUpdaterFunction(config: ContentCacheUpdaterConfig)(implicit val map
     private[this] val logger = LoggerFactory.getLogger(classOf[ContentUpdaterFunction])
 
     private var dataCache: DataCache = _
+    private lazy val gson = new Gson()
 
     override def metricsList(): List[String] = {
         List(config.contentCacheHit)
@@ -36,20 +37,22 @@ class ContentUpdaterFunction(config: ContentCacheUpdaterConfig)(implicit val map
     }
 
     override def processElement(event: Event, context: ProcessFunction[Event, Event]#Context, metrics: Metrics): Unit = {
-        val gson = new Gson()
         import collection.JavaConverters._
         val nodeUniqueId = event.getNodeUniqueId()
         val redisData = dataCache.getWithRetry(nodeUniqueId)
-        val finalProperties = event.extractProperties().filter(p => null != p._2)
-        val newProperties = finalProperties.map(map => {
-            if (config.contentDateFields.contains(map._1))
-                (map._1, new SimpleDateFormat(config.contentDateFormat).parse(map._2.toString).getTime)
-            else if (config.contentListFields.contains(map._1))
-                (map._1, List(map._2.toString))
+        val finalProperties = event.extractProperties().filter(property => null != property._2)
+
+        val newProperties = finalProperties.map { case (property, nv) => {
+            if (config.contentDateFields.contains(property))
+                (property, new SimpleDateFormat(config.contentDateFormat).parse(nv.toString).getTime)
+            else if (config.contentListFields.contains(property))
+                (property, List(nv.toString))
             else
-                (map._1, map._2)
-        })
+                (property, nv)
+        }
+        }
         redisData ++= newProperties.asInstanceOf[Map[String, AnyRef]]
+
         if (redisData.nonEmpty) {
             dataCache.setWithRetry(event.getNodeUniqueId(), gson.toJson(redisData.asJava))
             metrics.incCounter(config.contentCacheHit)

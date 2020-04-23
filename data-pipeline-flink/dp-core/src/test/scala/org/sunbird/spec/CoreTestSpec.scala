@@ -126,9 +126,10 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     mapSerialization.serialize(map, System.currentTimeMillis())
   }
 
-  "DataCache setWithRetry function" should "be able to set the data from Redis" in {
+
+    "DataCache setWithRetry function" should "be able to set the data from Redis" in {
     val redisConnection = new RedisConnect(bsConfig)
-    val dataCache = new DataCache(bsConfig, new RedisConnect(bsConfig), 4, List("identifier"))
+    val dataCache = new DataCache(bsConfig, redisConnection, 4, List("identifier"))
     dataCache.init()
     dataCache.closeConnection()
     dataCache.setWithRetry("key", "{\"test\": \"value\"}")

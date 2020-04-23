@@ -12,7 +12,7 @@ import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 import org.sunbird.dp.core.util.RestUtil
 import org.sunbird.dp.domain.Event
 import org.sunbird.dp.task.ContentCacheUpdaterConfig
-
+import scala.collection.JavaConverters._
 case class DialCodeResult(result: util.HashMap[String, Any])
 
 class DialCodeUpdaterFunction(config: ContentCacheUpdaterConfig)
@@ -22,6 +22,8 @@ class DialCodeUpdaterFunction(config: ContentCacheUpdaterConfig)
 
     private var dataCache: DataCache = _
     private val restUtil = new RestUtil()
+    private lazy val headers = Map("Authorization" -> String.format("%s %s","Bearer",config.dialCodeApiToken))
+    private lazy val gson = new Gson()
 
     override def metricsList(): List[String] = {
         List(config.dialCodeCacheHit, config.dialCodeApiMissHit, config.dialCodeApiHit)
@@ -39,21 +41,17 @@ class DialCodeUpdaterFunction(config: ContentCacheUpdaterConfig)
     }
 
     override def processElement(event: Event, context: ProcessFunction[Event, Event]#Context, metrics: Metrics): Unit = {
-
-        import scala.collection.JavaConverters._
-        val gson = new Gson()
         val properties = event.extractProperties()
         val dialCodesList = properties.filter(p => config.dialCodeProperties.contains(p._1)).flatMap(f => {
             f._2 match {
-                case a: util.ArrayList[String] => a.asScala
+                case list: util.ArrayList[String] => list.asScala
                 case _ => List.empty
             }
-        }).filter(p => !p.isEmpty)
+        }).filter(list => !list.isEmpty)
 
-        val headers = Map("Authorization" -> ("Bearer " + config.dialCodeApiToken))
         dialCodesList.foreach(dc => {
             if (dataCache.getWithRetry(dc).isEmpty) {
-                val result = gson.fromJson[DialCodeResult](restUtil.get(config.dialCodeApiUrl + dc, Some(headers)), classOf[DialCodeResult]).result
+                val result = gson.fromJson[DialCodeResult](restUtil.get(String.format("%s%s",config.dialCodeApiUrl, dc), Some(headers)), classOf[DialCodeResult]).result
                 if (!result.isEmpty && result.containsKey("dialcode")) {
                     metrics.incCounter(config.dialCodeApiHit)
                     dataCache.setWithRetry(dc, gson.toJson(result.get("dialcode")))

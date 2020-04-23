@@ -14,7 +14,6 @@ class RestUtil extends Serializable {
 
     def get(url: String, headers: Option[Map[String, String]] = None) : String = {
         val httpClient = HttpClients.createDefault()
-        lazy val gson = new Gson()
         val request = new HttpGet(url)
         headers.getOrElse(Map()).foreach {
             case (headerName, headerValue) => request.addHeader(headerName, headerValue)

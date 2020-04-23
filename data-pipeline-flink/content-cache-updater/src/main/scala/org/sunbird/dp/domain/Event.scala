@@ -8,25 +8,14 @@ import org.sunbird.dp.core.domain.Events
 class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
 
     private val jobName = "ContentCacheUpdater"
-
+    import scala.collection.JavaConverters._
     def extractProperties(): Map[String, Any] = {
-
-        val transactionMap = telemetry.read[util.HashMap[String, Any]]("transactionData")
-
-        if (null != transactionMap.getOrElse(null)) {
-
-            val properties = telemetry.read[LinkedTreeMap[String, Any]]("transactionData.properties")
-            var finalProperties = Map.empty[String, Any]
-            properties.getOrElse(new LinkedTreeMap[String, Any]()).entrySet().forEach {
-                entry =>
-                    finalProperties = finalProperties + (entry.getKey ->
-                      entry.getValue.asInstanceOf[LinkedTreeMap[String, Any]].getOrDefault("nv", None))
-            }
-            finalProperties
-        }
-        else {
-            Map.empty[String, Any]
-        }
+        val properties = telemetry.read[LinkedTreeMap[String, Any]]("transactionData.properties")
+        properties.map { propertySet =>
+            propertySet.asScala.map {
+                case (key, value) => key -> value.asInstanceOf[LinkedTreeMap[String, Any]].getOrDefault("nv", None)
+            }.toMap
+        }.getOrElse(Map.empty[String, Any])
     }
 
 
