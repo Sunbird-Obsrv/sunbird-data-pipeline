@@ -174,10 +174,8 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
 
   def updatedMissingFields(deviceMap: util.Map[String, String], redisData: mutable.Map[String, String]): util.Map[String, String] = {
     deviceMap.forEach((k, v) => {
-      if (!redisData.contains(k)) {
-        if (null != v && !v.isEmpty) {
-          redisData.put(k, v)
-        }
+      if (!redisData.contains(k) && null != v && !v.isEmpty) {
+        redisData.put(k, v)
       }
     })
     mapAsJavaMap(redisData)
