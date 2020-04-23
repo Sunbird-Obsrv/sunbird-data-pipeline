@@ -88,21 +88,50 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
     }
   }
 
-    def setWithRetry(key: String, value: String): Unit = {
-        try {
-            set(key, value);
-        } catch {
-          case ex @ (_ : JedisConnectionException | _ : JedisException) =>
-                logger.error("Exception when update data to redis cache", ex)
-                redisConnect.resetConnection();
-                this.redisConnection = redisConnect.getConnection(dbIndex);
-                set(key, value)
-        }
-    }
+  def isExists(key: String): Boolean = {
+    redisConnection.exists(key)
+  }
 
-    private def set(key: String, value: String): Unit = {
-        redisConnection.set(key, value)
+  def hmSet(key: String, value: util.Map[String, String]): Unit = {
+    try {
+      redisConnection.hmset(key, value)
+    } catch {
+      // Write testcase for catch block
+      // $COVERAGE-OFF$ Disabling scoverage
+      case ex: JedisException => {
+        println("dataCache")
+        logger.error("Exception when inserting data to redis cache", ex)
+        redisConnect.resetConnection()
+        this.redisConnection = redisConnect.getConnection(dbIndex)
+        this.redisConnection.hmset(key, value)
+      }
     }
+  }
+
+
+
+  def setWithRetry(key: String, value: String): Unit = {
+    try {
+      set(key, value);
+    } catch {
+      case ex @ (_ : JedisConnectionException | _ : JedisException) =>
+        logger.error("Exception when update data to redis cache", ex)
+        redisConnect.resetConnection();
+        this.redisConnection = redisConnect.getConnection(dbIndex);
+        set(key, value)
+    }
+  }
+
+  private def set(key: String, value: String): Unit = {
+    redisConnection.set(key, value)
+  }
+
+
+
 
 
 }
+
+
+// $COVERAGE-ON$
+

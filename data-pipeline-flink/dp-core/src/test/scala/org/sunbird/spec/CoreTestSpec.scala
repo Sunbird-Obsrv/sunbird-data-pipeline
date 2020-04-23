@@ -9,11 +9,11 @@ import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.scalatest.Matchers
 import org.scalatestplus.mockito.MockitoSugar
+import org.sunbird.dp.contentupdater.core.util.RestUtil
 import org.sunbird.dp.core.cache.{DataCache, DedupEngine, RedisConnect}
 import org.sunbird.dp.core.domain.Events
 import org.sunbird.dp.core.job.{BaseDeduplication, BaseJobConfig}
 import org.sunbird.dp.core.serde._
-import org.sunbird.dp.core.util.RestUtil
 import org.sunbird.fixture.EventFixture
 import redis.clients.jedis.exceptions.{JedisConnectionException, JedisException}
 
@@ -126,8 +126,28 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     mapSerialization.serialize(map, System.currentTimeMillis())
   }
 
+  "DataCache" should "be able to add the data into redis" in {
+    val redisConnection = new RedisConnect(bsConfig)
+    val deviceData = new util.HashMap[String, String]()
+    deviceData.put("country_code", "IN")
+    deviceData.put("country", "INDIA")
 
-    "DataCache setWithRetry function" should "be able to set the data from Redis" in {
+    val deviceFields = List("country_code", "country", "state_code", "st" +
+      "ate", "city", "district_custom", "state_code_custom",
+      "state_custom", "user_declared_state", "user_declared_district", "devicespec", "firstaccess")
+    val dataCache = new DataCache(bsConfig, redisConnection, 2, deviceFields)
+    dataCache.init()
+    dataCache.isExists("device_10") should be(false)
+    dataCache.hmSet("device_1", deviceData)
+    val redisData = dataCache.hgetAllWithRetry("device_1")
+    redisData.size should be(2)
+    redisData should not be (null)
+    redisConnection.closePool()
+    dataCache.hmSet("device_1", deviceData)
+
+  }
+
+  "DataCache setWithRetry function" should "be able to set the data from Redis" in {
     val redisConnection = new RedisConnect(bsConfig)
     val dataCache = new DataCache(bsConfig, redisConnection, 4, List("identifier"))
     dataCache.init()
@@ -154,4 +174,5 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
   override def kafkaKey(): String = {
     did()
   }
+
 }
