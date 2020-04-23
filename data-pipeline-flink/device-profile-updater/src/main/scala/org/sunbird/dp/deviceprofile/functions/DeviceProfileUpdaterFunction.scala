@@ -128,8 +128,6 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
 
   private def addDeviceDataToCache(deviceId: String, deviceProfile: DeviceProfile): util.Map[String, String] = {
     val deviceMap = deviceProfile.toMap(config)
-    deviceMap.values.removeAll(Collections.singleton(""))
-    deviceMap.values.removeAll(Collections.singleton("{}"))
     if (deviceMap.get(config.userDeclaredState) == null) deviceMap.remove(config.userDeclaredOn)
     if (dataCache.isExists(deviceId)) {
       val redisData = dataCache.hgetAllWithRetry(deviceId)
@@ -177,7 +175,9 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
   def updatedMissingFields(deviceMap: util.Map[String, String], redisData: mutable.Map[String, String]): util.Map[String, String] = {
     deviceMap.forEach((k, v) => {
       if (!redisData.contains(k)) {
-        redisData.put(k, v)
+        if (null != v && !v.isEmpty) {
+          redisData.put(k, v)
+        }
       }
     })
     mapAsJavaMap(redisData)
