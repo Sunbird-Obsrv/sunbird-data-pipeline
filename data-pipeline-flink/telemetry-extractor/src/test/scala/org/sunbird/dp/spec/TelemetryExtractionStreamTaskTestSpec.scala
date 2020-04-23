@@ -16,6 +16,7 @@ import org.apache.flink.test.util.MiniClusterWithClientResource
 import org.apache.flink.streaming.api.functions.source.SourceFunction
 import org.apache.flink.streaming.api.functions.source.SourceFunction.SourceContext
 import com.typesafe.config.ConfigFactory
+import org.sunbird.dp.core.cache.RedisConnect
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.extractor.task.{TelemetryExtractorConfig, TelemetryExtractorStreamTask}
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
@@ -48,7 +49,9 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaSuccessTopic)).thenReturn(new RawEventsSink)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
+    when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaAssessRawTopic)).thenReturn(new AssessRawEventsSink)
 
+    setupRedisTestData
     flinkCluster.before()
   }
 
@@ -57,14 +60,27 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
     redisServer.stop()
     flinkCluster.after()
   }
+  def setupRedisTestData() {
+
+    val redisConnect = new RedisConnect(extractorConfig)
+
+    // Insert content test data
+    val jedis = redisConnect.getConnection(extractorConfig.contentStore)
+    jedis.set("do_21299582901864857613016", EventFixture.contentCacheData1)
+    jedis.set("do_312526125187809280139355", EventFixture.contentCacheData2)
+    jedis.close()
+
+  }
 
   "Extraction job pipeline" should "extract events" in {
 
     val task = new TelemetryExtractorStreamTask(extractorConfig, mockKafkaUtil)
     task.process()
-    RawEventsSink.values.size() should be (40) // 38 events + 2 log events generated for auditing
+
+    RawEventsSink.values.size() should be (45) // 43 events + 2 log events generated for auditing
     FailedEventsSink.values.size() should be (2)
     DupEventsSink.values.size() should be (1)
+    AssessRawEventsSink.values.size() should be (2)
 
     val rawEvent = gson.fromJson(gson.toJson(RawEventsSink.values.get(0)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
     val dupEvent = gson.fromJson(gson.toJson(DupEventsSink.values.get(0)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
@@ -73,13 +89,23 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
     dupEvent("flags").asInstanceOf[util.Map[String, Boolean]].get("extractor_duplicate") should be(true)
     failedEvent("flags").asInstanceOf[util.Map[String, Boolean]].get("ex_processed") should be(false)
 
+    // Assertions for redactor logic
+    val responseEventWithoutValues = gson.fromJson(gson.toJson(RawEventsSink.values.get(39)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
+    responseEventWithoutValues.get("edata").get.asInstanceOf[util.Map[String, AnyRef]].get("values").asInstanceOf[util.ArrayList[AnyRef]].size should be (0)
+    val assessEventWithoutResValues = gson.fromJson(gson.toJson(RawEventsSink.values.get(40)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
+    assessEventWithoutResValues.get("edata").get.asInstanceOf[util.Map[String, AnyRef]].get("resvalues").asInstanceOf[util.ArrayList[AnyRef]].size should be (0)
+    val assessEventWithResValues = gson.fromJson(gson.toJson(RawEventsSink.values.get(42)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
+    assessEventWithResValues.get("edata").get.asInstanceOf[util.Map[String, AnyRef]].get("resvalues").asInstanceOf[util.ArrayList[AnyRef]].size should be (1)
+
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.totalBatchEventCount}").getValue() should be (3)
-    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.successEventCount}").getValue() should be (38)
+    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.successEventCount}").getValue() should be (43)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.unique-event-count").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.duplicate-event-count").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.failedEventCount}").getValue() should be (2)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.auditEventCount}").getValue() should be (2)
-
+    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.skippedEventCount}").getValue() should be (1)
+    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.cacheHitCount}").getValue() should be (2)
+    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.cacheMissCount}").getValue() should be (2)
   }
 
 }
@@ -148,5 +174,18 @@ class DupEventsSink extends SinkFunction[util.Map[String, AnyRef]] {
 }
 
 object DupEventsSink {
+  val values: util.List[util.Map[String, AnyRef]] = new util.ArrayList()
+}
+
+class AssessRawEventsSink extends SinkFunction[util.Map[String, AnyRef]] {
+
+  override def invoke(value: util.Map[String, AnyRef]): Unit = {
+    synchronized {
+        AssessRawEventsSink.values.add(value)
+    }
+  }
+}
+
+object AssessRawEventsSink {
   val values: util.List[util.Map[String, AnyRef]] = new util.ArrayList()
 }

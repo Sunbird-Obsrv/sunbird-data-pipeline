@@ -8,7 +8,7 @@ import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.FlinkUtil
-import org.sunbird.dp.extractor.functions.{DeduplicationFunction, ExtractionFunction}
+import org.sunbird.dp.extractor.functions.{DeduplicationFunction, ExtractionFunction, RedactorFunction}
 
 /**
  * Extraction stream task does the following pipeline processing in a sequence:
@@ -26,6 +26,19 @@ import org.sunbird.dp.extractor.functions.{DeduplicationFunction, ExtractionFunc
  * 		5.5 The events and audit event are then pushed to `raw` topic with appropriate flags. Increment the success counter by 1
  * 
  */
+/**
+  * Telemetry Extractor stream task enhancements:
+  * 1. ExtractionFunction:
+  *     1.1 Route ASSESS and RESPONSE evets to assess-redact-events output tag
+  *     1.2 Route all other events to raw-events output tag
+  * 2. RedactorFunction:
+  *     2.1 Reads from assess-redact-events ouput tag
+  *     2.2 If questionType = Registration,
+  *         2.2.1 Send it to assess-raw-events output tag
+  *         2.2.2 Remove resvalues for ASSESS events and values for RESPONSE events
+  *     2.3 Send it to raw-events output tag
+  * 3. raw-events are pushed to telemetry.raw topic and assess-raw-events are pushed to telemetry.assess.raw topic
+  */
 class TelemetryExtractorStreamTask(config: TelemetryExtractorConfig, kafkaConnector: FlinkKafkaConnector) {
 
   private val serialVersionUID = -7729362727131516112L
@@ -55,11 +68,17 @@ class TelemetryExtractorStreamTask(config: TelemetryExtractorConfig, kafkaConnec
         .process(new ExtractionFunction(config)).name("Extraction")
         .setParallelism(config.extractionParallelism)
 
+    val redactorStream =
+      extractionStream.getSideOutput(config.assessRedactEventsOutputTag)
+        .process(new RedactorFunction(config)).name("Redactor")
+        .setParallelism(config.redactorParallelism)
+
     deDupStream.getSideOutput(config.duplicateEventOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaDuplicateTopic)).name("extractor-duplicate-events")
     extractionStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name("extractor-raw-events")
     extractionStream.getSideOutput(config.logEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name("extractor-audit-events")
     extractionStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaFailedTopic)).name("extractor-failed-events")
-
+    redactorStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name("assess-events")
+    redactorStream.getSideOutput(config.assessRawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaAssessRawTopic)).name("assess-raw-events")
     env.execute("Telemetry Extractor")
 
   }
