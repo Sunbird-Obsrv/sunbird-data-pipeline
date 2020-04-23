@@ -155,11 +155,11 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
     redisResponseData.get("api_last_updated_on") should be("1568377184000")
     redisResponseData.get("country") should be("India")
     redisResponseData.get("country_code") should be("IN")
-    redisResponseData.get("user_declared_district") should be("Bengaluru")
+    redisResponseData.get("user_declared_district") should be("Bengaluru's")
     redisResponseData.get("uaspec") should be("{\"agent\":\"Chrome\",\"ver\":\"76.0.3809.132\",\"system\":\"Mac OSX\",\"raw\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36\"}")
     redisResponseData.get("city") should be("Bengaluru")
-    redisResponseData.get("district_custom") should be("Karnataka")
-    redisResponseData.get("user_declared_state") should be("Karnataka")
+    redisResponseData.get("district_custom") should be("Karnataka,s")
+    redisResponseData.get("user_declared_state") should be("Karnataka,'s")
     redisResponseData.get("state") should be("Karnataka")
     redisResponseData.get("state_code") should be("KA")
     redisResponseData.get("devicespec") should be("{\"os\":\"Android 6.0\",\"cpu\":\"abi: armeabi-v7a ARMv7 Processor rev 4 (v7l)\",\"make\":\"Motorola XT1706\"}")
@@ -181,8 +181,8 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
       assertEquals("India", result1.getString("country"))
       assertEquals("IN", result1.getString("country_code"))
       assertEquals("dev.sunbird.portal", result1.getString("producer_id"))
-      assertEquals("Bengaluru", result1.getString("user_declared_district"))
-      assertEquals("Karnataka", result1.getString("user_declared_state"))
+      assertEquals("Bengaluru's", result1.getString("user_declared_district"))
+      assertEquals("Karnataka,'s", result1.getString("user_declared_state"))
     }
 
     // When the value is stored with special characters

@@ -17,11 +17,11 @@ object EventFixture {
       |  "state_code_custom": 29,
       |  "state_code": "KA",
       |  "state_custom": "Karnataka",
-      |  "district_custom": "Karnataka",
+      |  "district_custom": "Karnataka,s",
       |  "first_access": 1568377184000,
       |  "api_last_updated_on": 1568377184000,
-      |  "user_declared_district": "Bengaluru",
-      |  "user_declared_state": "Karnataka"
+      |  "user_declared_district": "Bengaluru's",
+      |  "user_declared_state": "Karnataka,'s"
       |}""".stripMargin,
 
     """

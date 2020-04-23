@@ -6,7 +6,7 @@ import java.util
 import java.util.Collections
 
 import com.google.gson.reflect.TypeToken
-import com.google.gson.{Gson, JsonObject}
+import com.google.gson.{Gson, JsonObject, JsonSyntaxException}
 import org.apache.commons.lang3.StringUtils
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
@@ -70,6 +70,8 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
   override def processElement(event: util.Map[String, AnyRef],
                               context: ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]]#Context,
                               metrics: Metrics): Unit = {
+
+
     if (event.size() > 0) {
       val deviceId = event.get(config.deviceId).asInstanceOf[String]
       if (null != deviceId && !deviceId.isEmpty) {
@@ -77,7 +79,7 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
         event.values.removeAll(Collections.singleton("{}"))
         val deviceProfile = new DeviceProfile().fromMap(event.asInstanceOf[util.Map[String, String]], config)
         val cacheData = addDeviceDataToCache(deviceId, deviceProfile)
-        addDeviceDataToDB(deviceId, event.asInstanceOf[util.Map[String, String]])
+        addDeviceDataToDB(deviceId, updatedEvent(cacheData, event.asInstanceOf[util.Map[String, String]]))
         metrics.incCounter(config.successCount)
         metrics.incCounter(config.deviceDbHitCount)
         metrics.incCounter(config.cacheHitCount)
@@ -88,7 +90,7 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
   }
 
   def addDeviceDataToDB(deviceId: String, deviceData: util.Map[String, String]): Unit = {
-    val firstAccess: Long = deviceData.get("first_access").asInstanceOf[Number].longValue()
+    val firstAccess: Long = deviceData.get("first_access").toLong
     val lastUpdatedDate: Long = deviceData.get(config.apiLastUpdatedOn).asInstanceOf[Number].longValue()
     val parsedKeys = new util.ArrayList[String](util.Arrays.asList("first_access", config.apiLastUpdatedOn))
     deviceData.keySet.removeAll(parsedKeys)
@@ -157,16 +159,22 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
       count += 1
       val jsonObject = new PGobject
       try {
-        gson.fromJson(String.valueOf(value), classOf[JsonObject])
         jsonObject.setType("json")
-        jsonObject.setValue(gson.fromJson(String.valueOf(value), classOf[JsonObject]).toString)
+        jsonObject.setValue(gson.fromJson(value.toString, classOf[JsonObject]).toString)
         preparedStatement.setObject(count, jsonObject)
       } catch {
-        case ex: ClassCastException =>
-          preparedStatement.setString(count, String.valueOf(value))
+        case ex @ (_: JsonSyntaxException | _: ClassCastException) =>
+          preparedStatement.setString(count, value.toString)
       }
     })
   }
+
+  /**
+   * Updating the Missing fields.
+   * UseCase:- While inserting device profile events into redis it should insert only missing fields,
+   * By comparing with the existing redis data.
+   *
+   */
 
   def updatedMissingFields(deviceMap: util.Map[String, String], redisData: mutable.Map[String, String]): util.Map[String, String] = {
     deviceMap.forEach((k, v) => {
@@ -175,6 +183,16 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
       }
     })
     mapAsJavaMap(redisData)
+  }
+
+  /**
+   * Updating the redis data into postgres
+   * UseCase:- If the firstAccess is present in only redis but not in the postgres.
+   * Then it should updated the postgres with redis data.
+   */
+  def updatedEvent(redisData: util.Map[String, String], deviceProfileEvent: util.Map[String, String]): util.Map[String, String] = {
+    deviceProfileEvent.put("first_access", redisData.get(config.firstAccess))
+    deviceProfileEvent
   }
 }
 
