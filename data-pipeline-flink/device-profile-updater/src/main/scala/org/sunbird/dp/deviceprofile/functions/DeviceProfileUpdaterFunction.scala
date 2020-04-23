@@ -137,7 +137,7 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
       val redisData = dataCache.hgetAllWithRetry(deviceId)
       val firstAccess = redisData.get(config.firstAccess)
       val userDeclaredOn = redisData.get(config.userDeclaredOn)
-      if (firstAccess != null && !("0" == firstAccess)) deviceMap.remove(config.firstAccess)
+      if (firstAccess != null && "0" != firstAccess) deviceMap.remove(config.firstAccess)
       if (userDeclaredOn != null && deviceMap.get(config.userDeclaredOn) != null) deviceMap.remove(config.userDeclaredOn)
       val updatedDeviceMap = updatedMissingFields(deviceMap, redisData)
       dataCache.hmSet(deviceId, updatedDeviceMap.asInstanceOf[util.Map[String, String]])
