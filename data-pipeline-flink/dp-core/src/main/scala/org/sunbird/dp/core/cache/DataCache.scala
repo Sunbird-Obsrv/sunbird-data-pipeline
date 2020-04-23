@@ -6,7 +6,7 @@ import com.google.gson.Gson
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.core.job.BaseJobConfig
 import redis.clients.jedis.Jedis
-import redis.clients.jedis.exceptions.JedisException
+import redis.clients.jedis.exceptions.{JedisConnectionException, JedisException}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.Map
@@ -102,6 +102,22 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
         this.redisConnection.hmset(key, value)
       }
     }
+  }
+
+  def setWithRetry(key: String, value: String): Unit = {
+    try {
+      set(key, value);
+    } catch {
+      case ex @ (_ : JedisConnectionException | _ : JedisException) =>
+        logger.error("Exception when update data to redis cache", ex)
+        redisConnect.resetConnection();
+        this.redisConnection = redisConnect.getConnection(dbIndex);
+        set(key, value)
+    }
+  }
+
+   def set(key: String, value: String): Unit = {
+    redisConnection.set(key, value)
   }
 
 }
