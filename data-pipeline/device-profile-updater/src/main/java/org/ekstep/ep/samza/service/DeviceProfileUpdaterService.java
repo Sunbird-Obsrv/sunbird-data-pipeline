@@ -92,13 +92,12 @@ public class DeviceProfileUpdaterService {
 
     private void addDeviceDataToDB(String deviceId, Map<String, String> deviceData) throws Exception {
         Long firstAccess = Long.parseLong(deviceData.get("first_access"));
+        //
         Long lastUpdatedDate = Long.parseLong(deviceData.get("api_last_updated_on"));
         List<String> parsedKeys = new ArrayList<>(Arrays.asList("first_access", "api_last_updated_on"));
         deviceData.keySet().removeAll(parsedKeys);
-
         String columns = formatValues(deviceData.keySet(),",");
         String values = formatPrepareStatement(deviceData.values().size(),"?,");
-
         String postgresQuery = String.format("INSERT INTO %s (api_last_updated_on,updated_date,%s) VALUES(?,?,%s?) ON CONFLICT(device_id) DO UPDATE SET (api_last_updated_on,updated_date,%s)=(?,?,%s?);",postgres_table, columns, values, columns, values);
         PreparedStatement preparedStatement = postgresConnect.getConnection().prepareStatement(postgresQuery);
 

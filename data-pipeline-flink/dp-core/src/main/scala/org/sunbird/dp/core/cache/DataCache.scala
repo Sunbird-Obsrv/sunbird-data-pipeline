@@ -84,4 +84,25 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
     }
   }
 
+  def isExists(key: String): Boolean = {
+    redisConnection.exists(key)
+  }
+
+  def hmSet(key: String, value: util.Map[String, String]): Unit = {
+    try {
+      redisConnection.hmset(key, value)
+    } catch {
+      // Write testcase for catch block
+      // $COVERAGE-OFF$ Disabling scoverage
+      case ex: JedisException => {
+        println("dataCache")
+        logger.error("Exception when inserting data to redis cache", ex)
+        redisConnect.resetConnection()
+        this.redisConnection = redisConnect.getConnection(dbIndex)
+        this.redisConnection.hmset(key, value)
+      }
+    }
+  }
+
 }
+// $COVERAGE-ON$
