@@ -72,20 +72,18 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
                               metrics: Metrics): Unit = {
 
 
-    if (event.size() > 0) {
-      val deviceId = event.get(config.deviceId).asInstanceOf[String]
-      if (null != deviceId && !deviceId.isEmpty) {
-        event.values.removeAll(Collections.singleton(""))
-        event.values.removeAll(Collections.singleton("{}"))
-        val deviceProfile = new DeviceProfile().fromMap(event.asInstanceOf[util.Map[String, String]], config)
-        val cacheData = addDeviceDataToCache(deviceId, deviceProfile)
-        addDeviceDataToDB(deviceId, updatedEvent(cacheData, event.asInstanceOf[util.Map[String, String]]))
-        metrics.incCounter(config.successCount)
-        metrics.incCounter(config.deviceDbHitCount)
-        metrics.incCounter(config.cacheHitCount)
-      } else {
-        metrics.incCounter(config.failedEventCount)
-      }
+    val deviceId = event.get(config.deviceId).asInstanceOf[String]
+    if (null != deviceId && !deviceId.isEmpty) {
+      event.values.removeAll(Collections.singleton(""))
+      event.values.removeAll(Collections.singleton("{}"))
+      val deviceProfile = new DeviceProfile().fromMap(event.asInstanceOf[util.Map[String, String]], config)
+      val cacheData = addDeviceDataToCache(deviceId, deviceProfile)
+      addDeviceDataToDB(deviceId, updatedEvent(cacheData, event.asInstanceOf[util.Map[String, String]]))
+      metrics.incCounter(config.successCount)
+      metrics.incCounter(config.deviceDbHitCount)
+      metrics.incCounter(config.cacheHitCount)
+    } else {
+      metrics.incCounter(config.failedEventCount)
     }
   }
 
@@ -163,7 +161,7 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
         jsonObject.setValue(gson.fromJson(value.toString, classOf[JsonObject]).toString)
         preparedStatement.setObject(count, jsonObject)
       } catch {
-        case ex @ (_: JsonSyntaxException | _: ClassCastException) =>
+        case ex@(_: JsonSyntaxException | _: ClassCastException) =>
           preparedStatement.setString(count, value.toString)
       }
     })

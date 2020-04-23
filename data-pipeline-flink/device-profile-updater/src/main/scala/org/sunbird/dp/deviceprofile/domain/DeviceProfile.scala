@@ -27,8 +27,8 @@ class DeviceProfile() {
   private var uaspec: util.HashMap[String, String] = _
   private var devicespec: util.HashMap[String, String] = _
   private var firstAccess: Long = 0L
-  private var user_declared_on: Long = 0L
-  private var api_last_updated_on: Long = 0L
+  private var userDeclaredOn: Long = 0L
+  private var apiLastUpdatedOn: Long = 0L
   private val gson = new Gson
   private val `type` = new TypeToken[util.HashMap[String, String]]() {}.getType
 
@@ -45,8 +45,8 @@ class DeviceProfile() {
   this.uaspec = new util.HashMap[String, String]
   this.devicespec = new util.HashMap[String, String]
   this.firstAccess = 0L
-  this.user_declared_on = 0L
-  this.api_last_updated_on = 0L
+  this.userDeclaredOn = 0L
+  this.apiLastUpdatedOn = 0L
 
   def toMap(config: DeviceProfileUpdaterConfig): util.Map[String, String] = {
     val values = new util.HashMap[String, String]
@@ -63,8 +63,8 @@ class DeviceProfile() {
     values.put(config.uaSpec, gson.toJson(DeviceProfile.getValueOrDefault(this.uaspec, new util.HashMap[String, String])))
     values.put(config.deviceSpec, gson.toJson(DeviceProfile.getValueOrDefault(this.devicespec, new util.HashMap[String, String])))
     values.put(config.firstAccess, DeviceProfile.getValueOrDefault(String.valueOf(this.firstAccess), ""))
-    values.put(config.userDeclaredOn, DeviceProfile.getValueOrDefault(String.valueOf(this.user_declared_on), ""))
-    values.put(config.apiLastUpdatedOn, DeviceProfile.getValueOrDefault(String.valueOf(this.api_last_updated_on), ""))
+    values.put(config.userDeclaredOn, DeviceProfile.getValueOrDefault(String.valueOf(this.userDeclaredOn), ""))
+    values.put(config.apiLastUpdatedOn, DeviceProfile.getValueOrDefault(String.valueOf(this.apiLastUpdatedOn), ""))
     values
   }
 
@@ -82,8 +82,8 @@ class DeviceProfile() {
     this.uaspec = gson.fromJson(map.getOrDefault(config.uaSpec, ""), `type`)
     this.devicespec = gson.fromJson(map.getOrDefault("device_spec", ""), `type`)
     this.firstAccess = map.getOrDefault("first_access", "0").asInstanceOf[Number].longValue()
-    this.user_declared_on = map.getOrDefault(config.apiLastUpdatedOn, "0").asInstanceOf[Number].longValue()
-    this.api_last_updated_on = map.getOrDefault(config.apiLastUpdatedOn, "0").asInstanceOf[Number].longValue()
+    this.userDeclaredOn = map.getOrDefault(config.apiLastUpdatedOn, "0").asInstanceOf[Number].longValue()
+    this.apiLastUpdatedOn = map.getOrDefault(config.apiLastUpdatedOn, "0").asInstanceOf[Number].longValue()
     this
   }
 }
