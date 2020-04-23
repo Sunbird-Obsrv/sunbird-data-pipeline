@@ -58,7 +58,7 @@ public class DeviceProfileServiceTest {
         configMock = mock(Config.class);
         connectionMock = mock(Connection.class);
         statementMock = mock(Statement.class);
-        redisServer = new RedisServer(6371);
+        redisServer = new RedisServer(6379);
         redisServer.start();
         envelopeMock = mock(IncomingMessageEnvelope.class);
         stub(configMock.getInt("redis.database.deviceStore.id", deviceStoreId)).toReturn(deviceStoreId);
