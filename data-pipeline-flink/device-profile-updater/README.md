@@ -1,6 +1,6 @@
-# Telemetry Extraction Flink
+# Device Profile Updater
 
-This job is used to de-duplicate data and extract the events from the batch by running the job using Flink. It can be run either on Yarn or Kubernetes.
+This job is used to write the device profile events into postgres and redis cache database by running the job using Flink. It can be run either on Yarn or Kubernetes.
 
 ## Getting Started
 
