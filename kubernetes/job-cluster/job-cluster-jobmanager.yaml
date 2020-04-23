@@ -14,7 +14,7 @@ spec:
       - name: ${JOB_NAME}-jobmanager
         image: ${SUNBIRD_DATAPIPELINE_IMAGE}
         workingDir: /opt/flink
-        command: ["/opt/flink/standalone-job.sh"]
+        command: ["/opt/flink/bin/standalone-job.sh"]
         args: ["start-foreground",
                "--job-classname=${JOB_CLASSNAME}", 
                "-Djobmanager.rpc.address=${JOB_NAME}-jobmanager",
@@ -23,7 +23,7 @@ spec:
                "-Dblob.server.port=6124", 
                "-Dqueryable-state.server.ports=6125",
                "-Djobmanager.heap.size=1024m",
-               "-Dfs.azure.account.key.{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net: ${AZURE_STORAGE_SECRET}"]
+               "-Dfs.azure.account.key.${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net: ${AZURE_STORAGE_SECRET}"]
         ports:
         - containerPort: 6123
           name: rpc

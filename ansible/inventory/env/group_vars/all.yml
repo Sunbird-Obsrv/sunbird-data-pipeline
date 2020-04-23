@@ -113,7 +113,7 @@ lp_search: "http://{{ groups['search'][0] }}:9000"
 lp_url: http://{{ groups['learning'][0] }}:8080/learning-service
 service:
   search:
-    url: http://{{groups['search'][0]}}:9000
+    url: http://{{private_ingressgateway_ip}}/search
     path: /v3/search
 
 cassandra_hierarchy_store_prefix: "{{env}}_"

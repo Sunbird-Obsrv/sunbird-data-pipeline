@@ -19,7 +19,7 @@ spec:
         image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
         imagePullPolicy: Always
         workingDir: /opt/flink
-        command: ["/opt/flink/standalone-job.sh"]
+        command: ["/opt/flink/bin/standalone-job.sh"]
 {{- $job-config-key := .Release.Name }}
         args: ["start-foreground",
                "--job-classname={{ index .Values $job-config-key.job_classname }}", 
