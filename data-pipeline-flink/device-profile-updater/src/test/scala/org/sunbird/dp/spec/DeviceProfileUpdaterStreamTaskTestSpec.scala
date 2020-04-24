@@ -19,7 +19,7 @@ import org.sunbird.dp.core.cache.RedisConnect
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.{PostgresConnect, PostgresConnectionConfig}
 import org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterConfig
-import org.sunbird.dp.extractor.task.DeviceProfileUpdaterStreamTask
+import org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterStreamTask
 import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import redis.clients.jedis.Jedis
