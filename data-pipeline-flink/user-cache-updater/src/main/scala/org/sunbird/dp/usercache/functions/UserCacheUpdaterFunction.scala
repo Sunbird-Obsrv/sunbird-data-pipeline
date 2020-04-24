@@ -1,4 +1,4 @@
-package org.sunbird.dp.denorm.functions
+package org.sunbird.dp.usercache.functions
 
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
@@ -6,13 +6,13 @@ import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.core.cache.{DataCache, RedisConnect}
 import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
-import org.sunbird.dp.denorm.domain.Event
-import org.sunbird.dp.denorm.task.DenormalizationConfig
+import org.sunbird.dp.usercache.domain.Event
+import org.sunbird.dp.usercache.task.UserCacheUpdaterConfig
 
-class UserDenormFunction(config: DenormalizationConfig)(implicit val mapTypeInfo: TypeInformation[Event])
+class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapTypeInfo: TypeInformation[Event])
   extends BaseProcessFunction[Event, Event](config) {
 
-  private[this] val logger = LoggerFactory.getLogger(classOf[UserDenormFunction])
+  private[this] val logger = LoggerFactory.getLogger(classOf[UserCacheUpdaterFunction])
   private var dataCache: DataCache = _
 
   override def metricsList(): List[String] = {
@@ -34,24 +34,7 @@ class UserDenormFunction(config: DenormalizationConfig)(implicit val mapTypeInfo
                               context: ProcessFunction[Event, Event]#Context,
                               metrics: Metrics): Unit = {
 
-    val actorId = event.actorId()
-    val actorType = event.actorType()
-    if (null != actorId && actorId.nonEmpty && !"anonymous".equalsIgnoreCase(actorId) && "user".equalsIgnoreCase(actorType)) {
-      metrics.incCounter(config.userTotal)
-      val userData = dataCache.getWithRetry(actorId)
+    println("Events" + event)
 
-      if (userData.isEmpty) {
-        metrics.incCounter(config.userCacheMiss)
-      } else {
-        metrics.incCounter(config.userCacheHit)
-      }
-      if (!userData.contains("usersignintype"))
-        userData.put("usersignintype", config.userSignInTypeDefault)
-      if (!userData.contains("userlogintype"))
-        userData.put("userlogintype", config.userLoginInTypeDefault)
-      event.addUserData(userData)
-    }
-
-    context.output(config.withUserEventsTag, event)
   }
 }
