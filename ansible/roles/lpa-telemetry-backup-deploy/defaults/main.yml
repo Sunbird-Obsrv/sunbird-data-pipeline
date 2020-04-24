@@ -89,8 +89,8 @@ secor_service_name:
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "50"
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
-  ingest-telemetry-backup:
-    consumer_group: "{{ env }}.telemetry.ingest.backup"
+  ingestion-telemetry-backup:
+    consumer_group: "{{ env }}.telemetry.ingestion.backup"
     base_path: "ingest"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
