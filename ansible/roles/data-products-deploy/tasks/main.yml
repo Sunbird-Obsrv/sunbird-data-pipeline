@@ -120,6 +120,14 @@
     - ed-dataproducts
     - dataproducts 
 
+- name: Create assessment-aggregator reports cron job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="/bin/bash {{ analytics.home }}/adhoc-scripts/run_exporter.sh > /home/analytics/output.log"
+  with_dict: "{{ run_assessment_aggregator_report_job }}"
+  tags:
+    - cronjobs
+    - ed-dataproducts
+    - dataproducts     
+
 #- name: Create district-weekly cron job
 #  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} weekday={{ item.value.weekday }}  job="{{ analytics.home }}/scripts/run-job.sh district-weekly"
 #  with_dict: "{{ run_district_weekly_job }}"

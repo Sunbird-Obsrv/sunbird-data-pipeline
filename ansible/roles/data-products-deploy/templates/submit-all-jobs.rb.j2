@@ -2,7 +2,7 @@ require "ruby-kafka"
 require 'json'
 
 @log = File.open("{{ analytics.home }}/logs/logfile.log", 'a')
-@kafka = Kafka.new(["{{ brokerlist }}"])
+@kafka = Kafka.new(["{{ kafka_broker }}"])
 @topic = "{{ analytics_job_queue_topic }}"
 @report_list_jobs_url = "{{ report_list_jobs_url }}"
 @submit_jobs_auth_token = "{{ submit_jobs_auth_token }}"
