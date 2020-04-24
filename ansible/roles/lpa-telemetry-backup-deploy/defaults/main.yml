@@ -5,8 +5,8 @@ sbin_path: "{{ analytics_user_home }}/sbin"
 azure_container_name: "{{secor_azure_container_name}}"
 azure_account_key: "{{sunbird_private_storage_account_key}}"
 
-ingestion-kafka-cluster: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
-ingestion-zookeeper-cluster: "{{groups['processing-cluster-kafka']|join(':2181,')}}:2181"
+ingestion_kafka_cluster: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
+ingestion_zookeeper_cluster: "{{groups['processing-cluster-kafka']|join(':2181,')}}:2181"
 
 secor:
   properties: ['secor.azure', 'secor.common', 'secor', 'secor.partition', 'log4j']
@@ -288,8 +288,8 @@ secor_service_name:
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
     topic: "{{ env }}.telemetry.ingestion"
-    kafka_broker_host: "{{ ingestion-kafka-cluster }}"
-    zookeeper_quorum: "{{ ingestion-zookeeper-cluster }}"
+    kafka_broker_host: "{{ ingestion_kafka_cluster }}"
+    zookeeper_quorum: "{{ ingestion_zookeeper_cluster }}"
     max_file_size: "100000000"
     max_file_age: "14400"
     ostrich_port: "9985"
