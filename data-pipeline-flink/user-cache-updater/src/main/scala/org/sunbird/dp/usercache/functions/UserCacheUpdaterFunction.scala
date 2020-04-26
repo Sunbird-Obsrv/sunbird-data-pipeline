@@ -115,7 +115,7 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
 
   def extractUserMetaData(userDetails: util.List[Row]): util.Map[String, AnyRef] = {
     val result: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]()
-    if (null != userDetails && userDetails.size > 0) {
+    if (null != userDetails && !userDetails.isEmpty) {
       val row: Row = userDetails.get(0)
       val columnDefinitions = row.getColumnDefinitions()
       val columnCount = columnDefinitions.size
