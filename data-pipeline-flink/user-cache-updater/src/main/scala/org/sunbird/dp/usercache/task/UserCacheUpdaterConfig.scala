@@ -1,5 +1,8 @@
 package org.sunbird.dp.usercache.task
 
+import java.util
+import java.util.Arrays
+
 import com.typesafe.config.Config
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
@@ -26,18 +29,34 @@ class UserCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(
   val DENORM_EVENTS_PRODUCER = "telemetry-denorm-events-producer"
   val JOB_METRICS_PRODUCER = "telemetry-job-metrics-producer"
 
+  val creatorCodes = List("Create", "Created")
+  val updaterCodes = List("Update", "Updated")
+
   // Device Denorm Metrics
   val deviceTotal = "device-total"
   val deviceCacheHit = "device-cache-hit"
   val deviceCacheMiss = "device-cache-miss"
 
   // User Denorm Metrics
-  val userTotal = "user-total"
   val userCacheHit = "user-cache-hit"
   val userCacheMiss = "user-cache-miss"
+  val skipCount = "skipped-message-count"
+  val successCount = "success-message-count"
+  val dbHitCount ="db-hit-count"
 
   val locTotal = "loc-total"
   val locCacheHit = "loc-cache-hit"
   val locCacheMiss = "loc-cache-miss"
+
+
+  val userSelfSignedInTypeList = List("google", "self")
+  val userValidatedTypeList = List("sso")
+  val userSelfSignedKey = "Self-Signed-In"
+
+
+  // cassandra
+  val keySpace = ""
+  val locationTable = ""
+  val userTable = ""
 
 }
