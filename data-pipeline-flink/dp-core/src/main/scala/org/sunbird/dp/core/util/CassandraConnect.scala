@@ -5,7 +5,7 @@ import java.util
 import com.datastax.driver.core.{Cluster, ResultSet, Row, UserType}
 
 
-class CassandraUtil(host: String,port: Int) {
+class CassandraConnect(host: String,port: Int) {
 
 
   val cluster = {
