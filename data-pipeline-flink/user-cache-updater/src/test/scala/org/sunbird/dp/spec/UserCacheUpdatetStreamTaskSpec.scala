@@ -19,6 +19,7 @@ import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.usercache.domain.Event
 import org.sunbird.dp.usercache.task.UserCacheUpdaterConfig
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
+import org.sunbird.spec.EmbeddedCassandra
 import redis.embedded.RedisServer
 
 class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
@@ -39,8 +40,9 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
-    redisServer = new RedisServer(6340)
+    redisServer = new RedisServer(6341)
     redisServer.start()
+    //EmbeddedCassandra.startJob()
 
     BaseMetricsReporter.gaugeMetrics.clear()
 
@@ -52,6 +54,7 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     super.afterAll()
     redisServer.stop()
     flinkCluster.after()
+   // EmbeddedCassandra.closeJob()
   }
 
   def setupRedisTestData() {
