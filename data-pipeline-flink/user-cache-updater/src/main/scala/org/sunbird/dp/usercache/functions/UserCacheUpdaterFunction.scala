@@ -16,8 +16,6 @@ import org.sunbird.dp.core.util.CassandraConnect
 import org.sunbird.dp.usercache.domain.Event
 import org.sunbird.dp.usercache.task.UserCacheUpdaterConfig
 
-import scala.collection.mutable
-
 class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapTypeInfo: TypeInformation[Event])
   extends BaseProcessFunction[Event, Event](config) {
 
@@ -44,7 +42,7 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
   override def processElement(event: Event, context: ProcessFunction[Event, Event]#Context, metrics: Metrics): Unit = {
     Option(event.getId).map(id => {
       Option(event.getState).map(name => {
-        val userData: mutable.Map[String, String] = name.toUpperCase match {
+        val userData: util.Map[String, AnyRef] = name.toUpperCase match {
           case "CREATE" | "CREATED" => createAction(id, event, metrics)
           case "UPDATE" | "UPDATED" => updateAction(id, event, metrics)
         }
@@ -58,8 +56,8 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
     }).getOrElse(metrics.incCounter(config.skipCount))
   }
 
-  def createAction(userId: String, event: Event, metrics: Metrics): mutable.Map[String, String] = {
-    val userData = mutable.Map[String, String]()
+  def createAction(userId: String, event: Event, metrics: Metrics): util.Map[String, AnyRef] = {
+    val userData: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]()
     Option(event.getUserSignInType(cDataType = "SignupType")).map(signInType => {
       if (config.userSelfSignedInTypeList.contains(signInType)) {
         userData.put("usersignintype", config.userSelfSignedKey)
@@ -71,31 +69,34 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
     userData
   }
 
-  def updateAction(userId: String, event: Event, metrics: Metrics): mutable.Map[String, String] = {
-    val redisData: mutable.Map[String, AnyRef] = dataCache.getWithRetry(userId)
-    val userData = mutable.Map[String, String]()
+  def updateAction(userId: String, event: Event, metrics: Metrics): util.Map[String, AnyRef] = {
+    val userCacheData: util.Map[String, AnyRef] = dataCache.getWithRetry(userId).asInstanceOf[util.Map[String, AnyRef]]
 
     Option(event.getUserSignInType("UserRole")).map(loginType => {
-      userData.put("userlogintype", loginType)
+      userCacheData.put("userlogintype", loginType)
     })
-    val userMetaData = event.userMetaData()
-    if (null != userMetaData && !userMetaData.isEmpty() && redisData.contains("usersignintype") && ("Anonymous" != redisData.get("usersignintype"))) {
+    val userMetaDataList = event.userMetaData()
+    if (null != userMetaDataList && !userMetaDataList.isEmpty() && userCacheData.containsKey("usersignintype") && ("Anonymous" != userCacheData.get("usersignintype"))) {
 
       // Get the user details from the cassandra table
-      val userDetails: mutable.Map[String, AnyRef] = extractUserMetaData(readFromCassandra(
+      val userDetails: util.Map[String, AnyRef] = extractUserMetaData(readFromCassandra(
         keyspace = config.keySpace,
         table = config.userTable,
         QueryBuilder.eq("id", userId),
         metrics)
       )
+      userCacheData.putAll(userDetails)
+
       // Fetching the location details from the cassandra table
-      val locationDetails: mutable.Map[String, AnyRef] = extractLocationMetaData(readFromCassandra(
+      val locationDetails: util.Map[String, AnyRef] = extractLocationMetaData(readFromCassandra(
         keyspace = config.keySpace,
         table = config.locationTable,
-        clause = QueryBuilder.in("id", userData.get("locationids").asInstanceOf[List[String]]),
+        clause = QueryBuilder.in("id", userCacheData.get("locationids").asInstanceOf[List[String]]),
         metrics))
+
+      userCacheData.putAll(locationDetails)
     }
-    userData
+    userCacheData
 
   }
 
@@ -112,8 +113,8 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
     rowSet
   }
 
-  def extractUserMetaData(userDetails: util.List[Row]): mutable.Map[String, AnyRef] = {
-    val result = mutable.Map[String, AnyRef]()
+  def extractUserMetaData(userDetails: util.List[Row]): util.Map[String, AnyRef] = {
+    val result: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]()
     if (null != userDetails && userDetails.size > 0) {
       val row: Row = userDetails.get(0)
       val columnDefinitions = row.getColumnDefinitions()
@@ -125,8 +126,8 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
     result
   }
 
-  def extractLocationMetaData(locationDetails: util.List[Row]): mutable.Map[String, AnyRef] = {
-    val result = mutable.Map[String, AnyRef]()
+  def extractLocationMetaData(locationDetails: util.List[Row]): util.Map[String, AnyRef] = {
+    val result: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]()
     locationDetails.forEach((record: Row) => {
       def foo(record: Row): Any = {
         record.getString("type").toLowerCase match {

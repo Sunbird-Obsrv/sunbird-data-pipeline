@@ -45,21 +45,13 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     super.beforeAll()
     println("******Starting the Embedded Cassandra*******")
     EmbeddedCassandraServerHelper.startEmbeddedCassandra(80000L)
-    println("Host" + EmbeddedCassandraServerHelper.getHost)
-    println("Port" + EmbeddedCassandraServerHelper.getRpcPort)
-    println("Port1" + EmbeddedCassandraServerHelper.getNativeTransportPort)
-
     val cassandraUtil = new CassandraConnect(userCacheConfig.cassandraHost, userCacheConfig.cassandraPort)
     val session = cassandraUtil.session
     val dataLoader = new CQLDataLoader(session);
-//   // val path = getClass.getResource("/test.cql").getPath
-//   // println("path" + path)
-//    val query = "CREATE TABLE IF NOT EXISTS learner_db.learnercontentsummary(\n\tlearner_id text,\n\tcontent_id text,\n\ttime_spent double,\n\tinteractions_per_min double,\n\tnum_of_sessions_played int,\n\tupdated_date timestamp,\n\tPRIMARY KEY (learner_id, content_id)\n);"
     val keySpaceQuery = s"CREATE KEYSPACE ${userCacheConfig.keySpace}\nWITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};"
-
     session.execute(keySpaceQuery)
     dataLoader.load(new FileCQLDataSet("/Users/manju/Documents/Ekstep/Github/sunbird-data-pipeline/data-pipeline-flink/user-cache-updater/src/test/scala/org/sunbird/dp/spec/test.cql", true, true));
-    redisServer = new RedisServer(6341)
+    redisServer = new RedisServer(6340)
     redisServer.start()
     BaseMetricsReporter.gaugeMetrics.clear()
 
