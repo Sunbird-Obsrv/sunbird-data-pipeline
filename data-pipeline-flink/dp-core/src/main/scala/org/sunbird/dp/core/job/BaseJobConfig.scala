@@ -28,6 +28,10 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
   val enableDistributedCheckpointing: Option[Boolean] = if (config.hasPath("job")) Option(config.getBoolean("job.enable.distributed.checkpointing")) else None
   val checkpointingBaseUrl: Option[String] = if (config.hasPath("job")) Option(config.getString("job.statebackend.base.url")) else None
 
+  // cassandra
+  val cassandraPort : Int = config.getInt("cassandra.port")
+  val cassandraHost :String =  config.getString("cassandra.host")
+
   def kafkaConsumerProperties: Properties = {
     val properties = new Properties()
     properties.setProperty("bootstrap.servers", kafkaBrokerServers)
