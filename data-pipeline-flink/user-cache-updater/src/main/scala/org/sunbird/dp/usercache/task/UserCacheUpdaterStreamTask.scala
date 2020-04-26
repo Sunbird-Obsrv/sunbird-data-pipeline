@@ -20,7 +20,7 @@ class UserCacheUpdaterStreamTask(config: UserCacheUpdaterConfig, kafkaConnector:
     implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
 
     val source = kafkaConnector.kafkaEventSource[Event](config.inputTopic)
-    env.addSource(source, "user-cache-consumer").rebalance().process(new UserCacheUpdaterFunction(config))
+    env.addSource(source, config.userCacheConsumer).rebalance().process(new UserCacheUpdaterFunction(config))
     env.execute(config.jobName)
   }
 

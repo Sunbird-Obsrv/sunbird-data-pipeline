@@ -39,7 +39,7 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
-    redisServer = new RedisServer(6341)
+    redisServer = new RedisServer(6340)
     redisServer.start()
 
     BaseMetricsReporter.gaugeMetrics.clear()
