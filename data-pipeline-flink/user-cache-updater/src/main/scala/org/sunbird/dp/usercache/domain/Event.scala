@@ -1,10 +1,8 @@
 package org.sunbird.dp.usercache.domain
 
 import java.util
-import java.util.{ArrayList, Map}
 
 import org.sunbird.dp.core.domain.Events
-import org.sunbird.dp.usercache.task.UserCacheUpdaterConfig
 
 class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
 
