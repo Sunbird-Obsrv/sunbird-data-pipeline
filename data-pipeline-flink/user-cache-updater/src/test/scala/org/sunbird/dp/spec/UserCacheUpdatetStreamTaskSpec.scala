@@ -18,10 +18,9 @@ import org.mockito.Mockito._
 import org.sunbird.dp.core.cache.RedisConnect
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.CassandraConnect
-import org.sunbird.dp.usercache.task.UserCacheUpdaterStreamTask
 import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.usercache.domain.Event
-import org.sunbird.dp.usercache.task.UserCacheUpdaterConfig
+import org.sunbird.dp.usercache.task.{UserCacheUpdaterConfig, UserCacheUpdaterStreamTask}
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import redis.clients.jedis.Jedis
 import redis.embedded.RedisServer
