@@ -20,7 +20,7 @@ class UserCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(
   val userCacheConsumer = "user-cache-updater-consumer"
 
 
-  // User Denorm Metrics
+  // User cache updater job metrics
   val userCacheHit = "user-cache-hit"
   val userCacheMiss = "user-cache-miss"
   val skipCount = "skipped-message-count"
@@ -37,8 +37,11 @@ class UserCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(
 
   // cassandra
   val keySpace = config.getString("cassandra.keyspace")
-  val locationTable = config.getString("cassandra.table.location.name")
-  val userTable = config.getString("cassandra.table.user.name")
+  val locationTable = config.getString("cassandra.table.location")
+  val userTable = config.getString("cassandra.table.user")
+  val cassandraHost :String =  config.getString("cassandra.host")
+  val cassandraPort :Int =  config.getInt("cassandra.port")
+
 
 
   // constants
