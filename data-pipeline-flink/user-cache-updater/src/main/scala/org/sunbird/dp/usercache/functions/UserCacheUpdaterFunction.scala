@@ -27,7 +27,7 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
   private var cassandraConnect: CassandraConnect = _
 
   override def metricsList(): List[String] = {
-    List(config.dbHitCount, config.userCacheHit, config.userCacheMiss, config.skipCount, config.successCount)
+    List(config.dbHitCount, config.userCacheHit, config.skipCount, config.successCount)
   }
 
   override def open(parameters: Configuration): Unit = {

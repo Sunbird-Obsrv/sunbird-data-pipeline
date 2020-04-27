@@ -86,7 +86,6 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
      * Metrics Assertions
      */
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheHit}").getValue() should be(5)
-    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheMiss}").getValue() should be(0)
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbHitCount}").getValue() should be(4)
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.skipCount}").getValue() should be(4)
 

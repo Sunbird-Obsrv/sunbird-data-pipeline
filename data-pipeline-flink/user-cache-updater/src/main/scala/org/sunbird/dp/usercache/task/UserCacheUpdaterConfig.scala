@@ -22,7 +22,6 @@ class UserCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(
 
   // User cache updater job metrics
   val userCacheHit = "user-cache-hit"
-  val userCacheMiss = "user-cache-miss"
   val skipCount = "skipped-message-count"
   val successCount = "success-message-count"
   val dbHitCount = "db-hit-count"
