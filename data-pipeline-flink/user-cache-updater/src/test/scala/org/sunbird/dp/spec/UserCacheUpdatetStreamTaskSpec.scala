@@ -50,7 +50,7 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     val cassandraUtil = new CassandraConnect(userCacheConfig.cassandraHost, userCacheConfig.cassandraPort)
     val session = cassandraUtil.session
     val dataLoader = new CQLDataLoader(session);
-    dataLoader.load(new FileCQLDataSet("/Users/manju/Documents/Ekstep/Github/sunbird-data-pipeline/data-pipeline-flink/user-cache-updater/src/test/scala/org/sunbird/dp/spec/test.cql", true, true));
+    dataLoader.load(new FileCQLDataSet(getClass.getResource("/data.cql").getPath, true, true));
     redisServer = new RedisServer(6340)
     redisServer.start()
     BaseMetricsReporter.gaugeMetrics.clear()

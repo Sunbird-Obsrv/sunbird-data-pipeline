@@ -42,7 +42,7 @@ class UserCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(
   val cassandraHost :String =  config.getString("cassandra.host")
   val cassandraPort :Int =  config.getInt("cassandra.port")
 
-  val userCacheParallelism = config.getInt("usercache.updater.parallelism")
+  val userCacheParallelism = config.getInt("task.usercache.updater.parallelism")
 
 
 
