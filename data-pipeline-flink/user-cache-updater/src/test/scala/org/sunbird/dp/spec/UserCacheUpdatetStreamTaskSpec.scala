@@ -137,8 +137,8 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
 
 
     val emptyProps = jedis.get("user-5")
-    println("probs" + emptyProps)
-
+    val emptyPropsMap: util.Map[String, AnyRef] = gson.fromJson(emptyProps, new util.LinkedHashMap[String, AnyRef]().getClass)
+    emptyPropsMap.get(userCacheConfig.userLoginTypeKey) should be("25cb0530-7c52-ecb1-cff2-6a14faab7910")
 
   }
 

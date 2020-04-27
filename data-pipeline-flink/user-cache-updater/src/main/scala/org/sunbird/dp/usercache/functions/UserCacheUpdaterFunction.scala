@@ -71,7 +71,7 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
    */
   def createAction(userId: String, event: Event, metrics: Metrics): mutable.Map[String, AnyRef] = {
     val userData: mutable.Map[String, AnyRef] = mutable.Map[String, AnyRef]()
-    Option(event.getUserSignInType(cDataType = "SignupType")).map(signInType => {
+    Option(event.getContextDataId(cDataType = "SignupType")).map(signInType => {
       if (config.userSelfSignedInTypeList.contains(signInType)) {
         userData.put(config.userSignInTypeKey, config.userSelfSignedKey)
       }
@@ -90,7 +90,7 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
   def updateAction(userId: String, event: Event, metrics: Metrics): mutable.Map[String, AnyRef] = {
     val userCacheData: mutable.Map[String, AnyRef] = dataCache.getWithRetry(userId)
 
-    Option(event.getUserSignInType("UserRole")).map(loginType => {
+    Option(event.getContextDataId(cDataType = "UserRole")).map(loginType => {
       userCacheData.put(config.userLoginTypeKey, loginType)
     })
     val userMetaDataList = event.userMetaData()
@@ -125,7 +125,6 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
     try rowSet = cassandraConnect.find(query)
     catch {
       case ex: DriverException =>
-        // $COVERAGE-OFF$ Disabling scoverage as the below code need to test with when cassandra is off
         cassandraConnect.reconnect()
         rowSet = cassandraConnect.find(query)
     }
@@ -163,4 +162,3 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
   }
 
 }
-// $COVERAGE-ON$

@@ -19,7 +19,7 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
     telemetry.read[String]("edata.state").getOrElse(null)
   }
 
-  def getUserSignInType(cDataType: String): String = {
+  def getContextDataId(cDataType: String): String = {
     val cdata = telemetry.read[util.ArrayList[util.Map[String, AnyRef]]]("context.cdata").getOrElse(null)
     var signInType: String = null
     if (null != cdata && !cdata.isEmpty) {
@@ -27,7 +27,6 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
         if (cdataMap.get("type").asInstanceOf[String].equalsIgnoreCase(cDataType)) signInType = cdataMap.get("id").toString else signInType
       })
     }
-    println("signInType" + signInType)
     signInType
   }
 
