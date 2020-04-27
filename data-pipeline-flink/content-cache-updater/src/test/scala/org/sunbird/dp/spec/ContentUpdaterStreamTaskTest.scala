@@ -93,7 +93,7 @@ class ContentUpdaterStreamTaskTest extends BaseTestSpec {
         val task = new ContentCacheUpdaterStreamTask(contentConfig, mockKafkaUtil)
         task.process()
         BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.dialCodeApiHit}").getValue() should be(1)
-        BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.contentCacheHit}").getValue() should be(5)
+        BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.contentCacheHit}").getValue() should be(6)
         BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.dialCodeApiMissHit}").getValue() should be(1)
         BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.dialCodeCacheHit}").getValue() should be(2)
         val redisConnect = new RedisConnect(contentConfig)
@@ -116,6 +116,7 @@ class ContentDialCodeSource extends SourceFunction[Event] {
         val event6 = gson.fromJson(EventFixture.reserved_dialcocedata, new util.LinkedHashMap[String, Any]().getClass)
         val event7 = gson.fromJson(EventFixture.dialcodedata2, new util.LinkedHashMap[String, Any]().getClass)
         val event8 = gson.fromJson(EventFixture.invalid_data, new util.LinkedHashMap[String, Any]().getClass)
+        val event9 = gson.fromJson(EventFixture.empty_dialcode, new util.LinkedHashMap[String, Any]().getClass)
         ctx.collect(new Event(event1))
         ctx.collect(new Event(event2))
         ctx.collect(new Event(event3))
@@ -124,6 +125,7 @@ class ContentDialCodeSource extends SourceFunction[Event] {
         ctx.collect(new Event(event6))
         ctx.collect(new Event(event7))
         ctx.collect(new Event(event8))
+        ctx.collect(new Event(event9))
 
     }
 

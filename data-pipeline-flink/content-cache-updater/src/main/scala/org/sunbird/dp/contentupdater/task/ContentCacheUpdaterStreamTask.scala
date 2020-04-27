@@ -44,11 +44,11 @@ class ContentCacheUpdaterStreamTask(config: ContentCacheUpdaterConfig, kafkaConn
     implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
     val source = kafkaConnector.kafkaEventSource[Event](config.inputTopic)
 
-    val dialCodeUpdaterStream = env.addSource(source, "learning-graph-events-consumer")
-      .rebalance().process(new DialCodeUpdaterFunction(config))
+    val contentUpdaterStream =  env.addSource(source, "learning-graph-events-consumer")
+      .rebalance().process(new ContentUpdaterFunction(config))
 
-       dialCodeUpdaterStream.getSideOutput(config.withDialCodeEventsTag)
-         .process(new ContentUpdaterFunction(config))
+     contentUpdaterStream.getSideOutput(config.withContentDailCodeEventsTag).rebalance()
+       .process(new DialCodeUpdaterFunction(config))
 
     env.execute(config.jobName)
   }

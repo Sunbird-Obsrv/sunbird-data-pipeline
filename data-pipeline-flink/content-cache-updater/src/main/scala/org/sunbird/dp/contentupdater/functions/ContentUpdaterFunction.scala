@@ -58,5 +58,7 @@ class ContentUpdaterFunction(config: ContentCacheUpdaterConfig)(implicit val map
             metrics.incCounter(config.contentCacheHit)
             logger.info(nodeUniqueId + " Updated Successfully")
         }
+        if(finalProperties.filter(p => config.dialCodeProperties.contains(p._1)).nonEmpty)
+        context.output(config.withContentDailCodeEventsTag, event)
     }
 }
