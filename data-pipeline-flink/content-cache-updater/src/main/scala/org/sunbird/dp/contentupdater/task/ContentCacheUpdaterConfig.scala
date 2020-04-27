@@ -39,6 +39,7 @@ class ContentCacheUpdaterConfig(override val config: Config) extends BaseJobConf
   val dialCodeCacheHit = "dial-codes-cache-hit-count"
   val dialCodeApiHit = "dial-codes-api-hit-count"
   val dialCodeApiMissHit = "dial-codes-api-miss-count"
+  val totaldialCodeCount = "total-dial-code-count"
 
   val contentDateFormat = "yyyy-MM-dd'T'HH:mm:ss"
 

@@ -27,7 +27,7 @@ class DialCodeUpdaterFunction(config: ContentCacheUpdaterConfig)
     private lazy val gson = new Gson()
 
     override def metricsList(): List[String] = {
-        List(config.dialCodeCacheHit, config.dialCodeApiMissHit, config.dialCodeApiHit)
+        List(config.dialCodeCacheHit, config.dialCodeApiMissHit, config.dialCodeApiHit, config.totaldialCodeCount)
     }
 
     override def open(parameters: Configuration): Unit = {
@@ -51,6 +51,7 @@ class DialCodeUpdaterFunction(config: ContentCacheUpdaterConfig)
         }).filter(list => !list.isEmpty)
 
         dialCodesList.foreach(dc => {
+            metrics.incCounter(config.totaldialCodeCount)
             if (dataCache.getWithRetry(dc).isEmpty) {
                 val result = gson.fromJson[DialCodeResult](restUtil.get(String.format("%s%s",config.dialCodeApiUrl, dc), Some(headers)), classOf[DialCodeResult]).result
                 if (!result.isEmpty && result.containsKey("dialcode")) {

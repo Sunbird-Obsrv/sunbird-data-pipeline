@@ -1,6 +1,7 @@
 package org.sunbird.dp.contentupdater.functions
 
 import java.text.SimpleDateFormat
+import java.util
 
 import com.google.gson.Gson
 import org.apache.flink.api.common.typeinfo.TypeInformation
@@ -47,10 +48,13 @@ class ContentUpdaterFunction(config: ContentCacheUpdaterConfig)(implicit val map
             if (config.contentDateFields.contains(property))
                 (property, new SimpleDateFormat(config.contentDateFormat).parse(nv.toString).getTime)
             else if (config.contentListFields.contains(property))
-                (property, List(nv.toString))
-            else
+                (property, nv match {
+                    case _: String => List(nv)
+                    case _: util.ArrayList[String] => nv
+                })
+                else
                 (property, nv)
-        }
+        }.filter(map => None!= map._2)
         redisData ++= newProperties.asInstanceOf[Map[String, AnyRef]]
 
         if (redisData.nonEmpty) {
