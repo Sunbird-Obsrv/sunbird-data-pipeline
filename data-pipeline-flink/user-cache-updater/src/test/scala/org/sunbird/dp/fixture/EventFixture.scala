@@ -2,8 +2,8 @@ package org.sunbird.dp.fixture
 
 object EventFixture {
 
-  val userCacheData1 = """{"usersignintype":"Validated","usertype":"TEACHER"}"""
-  val userCacheData2 = """{"channel":"KV123","phoneverified":false,"createdby":"c8e51123-61a3-454d-beb0-2202450b0096","subject":["English"],"email":"BJAguqy3GaJECrYqDUPjeducVxa5J9ZsW9A8qc7YHelkV7KbgkCKW10quCbhpgxbh2t4toXC8uXW\\ngiguS+8ucwzbmgPm7q7YSYz26SfpHnzBo/0Vh3TWqr2MOq9LlX6gT6a+wzaAmCWueMEdPmZuRg==","username":"I+CyiN6Bx0GCRm9lkA3xn5uNBm0AODhxeDwJebxxBfuGJ5V2v1R8v1PEQsP+V+y9sAFcM2WtaMLj\\n91hpzBq0PFcQTq6OSPQOm0sySPXTDzyLvm1cKaLwzvJ6fzLLs9nKT6a+wzaAmCWueMEdPmZuRg==","firstname":"A512","framework":{},"userid":"610bab7d-1450-4e54-bf78-c7c9b14dbc81","usertype":"TEACHER","rootorgid":"0126978705345576967","id":"610bab7d-1450-4e54-bf78-c7c9b14dbc81","language":[],"grade":[],"roles":["BOOK_REVIEWER"],"status":1,"webpages":[],"createddate":"2019-04-11 08:58:16:512+0000","emailverified":true,"isdeleted":false,"locationids":[],"maskedemail":"a5**@yopmail.com","profilevisibility":{},"loginid":"I+CyiN6Bx0GCRm9lkA3xnx2W8+QgN39Y0We3KjR98O8hD6YjyoCirIBDsWHGwRf65PY/Cx+pFFK1\\nIz1VinIaKgDnSQwkl7ajzQjjRTzQbKOyHsAXkJgo9I5l7ulEYVXRT6a+wzaAmCWueMEdPmZuRg==","usersignintype":"Self-Signed-In","userlogintype":"Student","state":"Telangana","district":"Hyderabad"}"""
+  val userCacheData3 = """{"usersignintype":"Validated","usertype":"TEACHER"}"""
+  val userCacheData4 = """{"channel":"KV123","phoneverified":false,"createdby":"c8e51123-61a3-454d-beb0-2202450b0096","subject":["English"],"email":"BJAguqy3GaJECrYqDUPjeducVxa5J9ZsW9A8qc7YHelkV7KbgkCKW10quCbhpgxbh2t4toXC8uXW\\ngiguS+8ucwzbmgPm7q7YSYz26SfpHnzBo/0Vh3TWqr2MOq9LlX6gT6a+wzaAmCWueMEdPmZuRg==","username":"I+CyiN6Bx0GCRm9lkA3xn5uNBm0AODhxeDwJebxxBfuGJ5V2v1R8v1PEQsP+V+y9sAFcM2WtaMLj\\n91hpzBq0PFcQTq6OSPQOm0sySPXTDzyLvm1cKaLwzvJ6fzLLs9nKT6a+wzaAmCWueMEdPmZuRg==","firstname":"A512","framework":{},"userid":"610bab7d-1450-4e54-bf78-c7c9b14dbc81","usertype":"TEACHER","rootorgid":"0126978705345576967","id":"610bab7d-1450-4e54-bf78-c7c9b14dbc81","language":[],"grade":[],"roles":["BOOK_REVIEWER"],"status":1,"webpages":[],"createddate":"2019-04-11 08:58:16:512+0000","emailverified":true,"isdeleted":false,"locationids":["location-1","location-2","location-3"],"maskedemail":"a5**@yopmail.com","profilevisibility":{},"loginid":"I+CyiN6Bx0GCRm9lkA3xnx2W8+QgN39Y0We3KjR98O8hD6YjyoCirIBDsWHGwRf65PY/Cx+pFFK1\\nIz1VinIaKgDnSQwkl7ajzQjjRTzQbKOyHsAXkJgo9I5l7ulEYVXRT6a+wzaAmCWueMEdPmZuRg==","usersignintype":"Self-Signed-In","userlogintype":"Student","state":"Telangana","district":"Hyderabad"}"""
 
   val telemetrEvents: List[String] = List(
 
@@ -15,28 +15,46 @@ object EventFixture {
      *
      */
     """
-      |{"actor":{"type":"Consumer","id":"89490534-126f-4f0b-82ac-3ff3e49f3468"},"eid":"AUDIT","edata":{"state":"Created","props":["firstName","email","emailVerified","id","userId","createdBy","rootOrgId","channel","userType","roles","phoneVerified","isDeleted","createdDate","status","userName","loginId","externalIds"]},"ver":"3.0","ets":1561739226844,"context":{"channel":"0126684405014528002","pdata":{"pid":"learner-service","ver":"2.0.0","id":"prod.diksha.learning.service"},"env":"User","cdata":[{"type":"User","id":"34881c3a-8b92-4a3c-a982-7f946137cb09"},{"type":"SignupType","id":"sso"},{"type":"Source","id":"android"},{"type":"Request","id":"91f3c280-99c1-11e9-956e-6b6ef71ed575"}],"rollup":{"l1":"0126684405014528002"}},"mid":"1561739226844.e0048ef8-a01e-4780-8c83-e571f28c53c8","object":{"type":"User","id":"89490534-126f-4f0b-82ac-3ff3e49f3468"},"syncts":1561739243532,"@timestamp":"2019-06-28T16:27:23.532Z","flags":{"tv_processed":true},"type":"events"}""".stripMargin,
+      |{"actor":{"type":"Consumer","id":"89490534-126f-4f0b-82ac-3ff3e49f3468"},"eid":"AUDIT","edata":{"state":"Created","props":["firstName","email","emailVerified","id","userId","createdBy","rootOrgId","channel","userType","roles","phoneVerified","isDeleted","createdDate","status","userName","loginId","externalIds"]},"ver":"3.0","ets":1561739226844,"context":{"channel":"0126684405014528002","pdata":{"pid":"learner-service","ver":"2.0.0","id":"prod.diksha.learning.service"},"env":"User","cdata":[{"type":"User","id":"34881c3a-8b92-4a3c-a982-7f946137cb09"},{"type":"SignupType","id":"sso"},{"type":"Source","id":"android"},{"type":"Request","id":"91f3c280-99c1-11e9-956e-6b6ef71ed575"}],"rollup":{"l1":"0126684405014528002"}},"mid":"1561739226844.e0048ef8-a01e-4780-8c83-e571f28c53c8","object":{"type":"User","id":"user-1"},"syncts":1561739243532,"@timestamp":"2019-06-28T16:27:23.532Z","flags":{"tv_processed":true},"type":"events"}""".stripMargin,
 
     /**
      * UserId = user-2
-     *  EData state is "create"
-     *  User SignupType is "google"
-     *  It should able to insert The Map(usersignintype, Self-Signed-In)
+     * EData state is "create"
+     * User SignupType is "google"
+     * It should able to insert The Map(usersignintype, Self-Signed-In)
      */
 
 
     """
-      |{"actor":{"type":"Consumer","id":"89490534-126f-4f0b-82ac-3ff3e49f3468"},"eid":"AUDIT","edata":{"state":"create","props":["firstName","email","emailVerified","id","userId","createdBy","rootOrgId","channel","userType","roles","phoneVerified","isDeleted","createdDate","status","userName","loginId","externalIds"]},"ver":"3.0","ets":1561739226844,"context":{"channel":"0126684405014528002","pdata":{"pid":"learner-service","ver":"2.0.0","id":"prod.diksha.learning.service"},"env":"User","cdata":[{"type":"User","id":"34881c3a-8b92-4a3c-a982-7f946137cb09"},{"type":"SignupType","id":"google"},{"type":"Source","id":"android"},{"type":"Request","id":"91f3c280-99c1-11e9-956e-6b6ef71ed575"}],"rollup":{"l1":"0126684405014528002"}},"mid":"1561739226844.e0048ef8-a01e-4780-8c83-e571f28c53c8","object":{"type":"User","id":"user-2"},"syncts":1561739243532,"@timestamp":"2019-06-28T16:27:23.532Z","flags":{"tv_processed":true},"type":"events"}""".stripMargin,
+      |{"actor":{"type":"Consumer","id":"89490534-126f-4f0b-82ac-3ff3e49f3468"},"eid":"AUDIT","edata":{"state":"create","props":["firstName","email","emailVerified","id","userId","createdBy","rootOrgId","channel","userType","roles","phoneVerified","isDeleted","createdDate","status","userName","loginId","externalIds"]},"ver":"3.0","ets":1561739226844,"context":{"channel":"0126684405014528002","pdata":{"pid":"learner-service","ver":"2.0.0","id":"prod.diksha.learning.service"},"env":"User","cdata":[{"type":"User","id":"user-2"},{"type":"SignupType","id":"google"},{"type":"Source","id":"android"},{"type":"Request","id":"91f3c280-99c1-11e9-956e-6b6ef71ed575"}],"rollup":{"l1":"0126684405014528002"}},"mid":"1561739226844.e0048ef8-a01e-4780-8c83-e571f28c53c8","object":{"type":"User","id":"user-2"},"syncts":1561739243532,"@timestamp":"2019-06-28T16:27:23.532Z","flags":{"tv_processed":true},"type":"events"}""".stripMargin,
 
     /**
      * User-Id :user-3
      * Edata.state is update
      *
      */
-
-
     """
       |{"eid":"AUDIT","ets":1573121861118,"ver":"3.0","mid":"1573121861118.40f9136b-1cc3-458d-a04a-4459606df","actor":{"id":"5609876543234567890987654345678","type":"Request"},"context":{"channel":"01285019302823526477","pdata":{"id":"dev.sunbird.portal","pid":"learner-service","ver":"2.5.0"},"env":"User","did":"user-3","cdata":[{"id":"25cb0530-7c52-ecb1-cff2-6a14faab7910","type":"SignupType"}],"rollup":{"l1":"01285019302823526477"}},"object":{"id":"user-3", "type":"user"},"edata":{"state":"Update","props":["recoveryEmail","recoveryPhone","userId","id","externalIds","updatedDate","updatedBy"]},"syncts":1573121861125,"@timestamp":"2019-11-07T10:17:41.125Z","flags":{"tv_processed":true,"dd_processed":true},"type":"events","ts":"2019-11-07T10:17:41.118+0000"}
+      |
+      |""".stripMargin,
+
+    /**
+     * UseId-Id: user-4
+     * Location id's are defined in the events and also loaded into redis db
+     */
+
+    """
+      |{"eid":"AUDIT","ets":1573121861118,"ver":"3.0","mid":"1573121861118.40f9136b-1cc3-458d-a04a-4459606df","actor":{"id":"5609876543234567890987654345678","type":"Request"},"context":{"channel":"01285019302823526477","pdata":{"id":"dev.sunbird.portal","pid":"learner-service","ver":"2.5.0"},"env":"User","did":"user-3","cdata":[{"id":"25cb0530-7c52-ecb1-cff2-6a14faab7910","type":"SignupType"}],"rollup":{"l1":"01285019302823526477"}},"object":{"id":"user-4","type":"user"},"edata":{"state":"Updated","props":["recoveryEmail","recoveryPhone","userId","id","externalIds","updatedDate","updatedBy","locationIds"]},"syncts":1573121861125,"@timestamp":"2019-11-07T10:17:41.125Z","flags":{"tv_processed":true,"dd_processed":true},"type":"events","ts":"2019-11-07T10:17:41.118+0000"}
+      |
+      |""".stripMargin,
+
+
+    /**
+     * User Id - user-5
+     * Props are not defined
+     */
+    """
+      |{"eid":"AUDIT","ets":1573121861118,"ver":"3.0","mid":"1573121861118.40f9136b-1cc3-458d-a04a-4459606df","actor":{"id":"5609876543234567890987654345678","type":"Request"},"context":{"channel":"01285019302823526477","pdata":{"id":"dev.sunbird.portal","pid":"learner-service","ver":"2.5.0"},"env":"User","did":"user-5","cdata":[{"id":"25cb0530-7c52-ecb1-cff2-6a14faab7910","type":"UserRole"}],"rollup":{"l1":"01285019302823526477"}},"object":{"id":"user-4","type":"user"},"edata":{"state":"Updated"},"syncts":1573121861125,"@timestamp":"2019-11-07T10:17:41.125Z","flags":{"tv_processed":true,"dd_processed":true},"type":"events","ts":"2019-11-07T10:17:41.118+0000"}
       |
       |""".stripMargin
 

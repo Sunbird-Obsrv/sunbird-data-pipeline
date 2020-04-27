@@ -29,7 +29,7 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
   val checkpointingBaseUrl: Option[String] = if (config.hasPath("job")) Option(config.getString("job.statebackend.base.url")) else None
 
   // cassandra
-  val cassandraPort : Int = config.getInt("cassandra.port")
+ val cassandraPort : Int = config.getInt("cassandra.port")
   val cassandraHost :String =  config.getString("cassandra.host")
 
   def kafkaConsumerProperties: Properties = {

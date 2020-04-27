@@ -1,3 +1,5 @@
+CREATE KEYSPACE sunbird WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};
+
 CREATE TABLE sunbird.user (
     id text PRIMARY KEY,
     avatar text,
@@ -103,3 +105,7 @@ CREATE TABLE sunbird.location (
 );
 
 CREATE INDEX inx_loc_code ON sunbird.location (code);
+
+INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-1','ft0507020006', 'KARNATAKA', 'state');
+INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-2','0f5f0702000f6', 'KARNATAKA', 'state');
+INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-3','g0507020f00f6', 'TUMKUR', 'district');

@@ -50,10 +50,8 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     val cassandraUtil = new CassandraConnect(userCacheConfig.cassandraHost, userCacheConfig.cassandraPort)
     val session = cassandraUtil.session
     val dataLoader = new CQLDataLoader(session);
-    val keySpaceQuery = s"CREATE KEYSPACE ${userCacheConfig.keySpace}\nWITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};"
-    session.execute(keySpaceQuery)
     dataLoader.load(new FileCQLDataSet("/Users/manju/Documents/Ekstep/Github/sunbird-data-pipeline/data-pipeline-flink/user-cache-updater/src/test/scala/org/sunbird/dp/spec/test.cql", true, true));
-    redisServer = new RedisServer(6340)
+    redisServer = new RedisServer(6341)
     redisServer.start()
     BaseMetricsReporter.gaugeMetrics.clear()
     val redisConnect = new RedisConnect(userCacheConfig)
@@ -62,8 +60,6 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     setupRedisTestData(jedis)
     flinkCluster.before()
   }
-
-  //CREATE KEYSPACE ${userCacheConfig.keySpace}\nWITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3}
 
   override protected def afterAll(): Unit = {
     super.afterAll()
@@ -75,8 +71,8 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
 
 
     // Insert user test data
-    jedis.set("user-3", EventFixture.userCacheData1)
-    jedis.set("610bab7d-1450-4e54-bf78-c7c9b14dbc81", EventFixture.userCacheData2)
+    jedis.set("user-3", EventFixture.userCacheData3)
+    jedis.set("user-4", EventFixture.userCacheData4)
     jedis.close()
   }
 
@@ -90,9 +86,9 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     /**
      * Metrics Assertions
      */
-    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheHit}").getValue() should be(2)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheHit}").getValue() should be(5)
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheMiss}").getValue() should be(0)
-    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbHitCount}").getValue() should be(0)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbHitCount}").getValue() should be(4)
 
     /**
      * UserId = 89490534-126f-4f0b-82ac-3ff3e49f3468
@@ -101,7 +97,7 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
      * It should able to insert The Map(usersignintype, Validated)
      */
 
-    val ssoUser = jedis.get("89490534-126f-4f0b-82ac-3ff3e49f3468")
+    val ssoUser = jedis.get("user-1")
     ssoUser should not be (null)
     val ssoUserMap: util.Map[String, AnyRef] = gson.fromJson(ssoUser, new util.LinkedHashMap[String, AnyRef]().getClass)
     ssoUserMap.get("usersignintype") should be("Validated")
@@ -113,16 +109,35 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
      * It should able to insert The Map(usersignintype, Self-Signed-In)
      */
     val googleUser = jedis.get("user-2")
-    googleUser should not be(null)
-    val googleUserMap : util.Map[String, AnyRef] = gson.fromJson(googleUser, new util.LinkedHashMap[String, AnyRef]().getClass)
+    googleUser should not be (null)
+    val googleUserMap: util.Map[String, AnyRef] = gson.fromJson(googleUser, new util.LinkedHashMap[String, AnyRef]().getClass)
     googleUserMap.get("usersignintype") should be("Self-Signed-In")
 
 
-    // When action is Update
-
+    // When action is Update and location id's are empty
 
     val userInfo = jedis.get("user-3")
-    println("userInfo" + userInfo)
+    val userInfoMap: util.Map[String, AnyRef] = gson.fromJson(userInfo, new util.LinkedHashMap[String, AnyRef]().getClass)
+    userInfoMap.get("createdby") should be("MANJU")
+    userInfoMap.get("location") should be("Banglore")
+    userInfoMap.get("maskedphone") should be("******181")
+
+    // When action is Updated and location ids are present
+    val locationInfo = jedis.get("user-4")
+    val locationInfoMap: util.Map[String, AnyRef] = gson.fromJson(locationInfo, new util.LinkedHashMap[String, AnyRef]().getClass)
+
+    // Initially, in the redis for the user-4 is loaded with location details
+    // State - Telangana & District - Hyderabad
+    // Now it should be bellow assertions
+    locationInfoMap.get("state") should be("KARNATAKA")
+    locationInfoMap.get("district") should be("TUMKUR")
+
+
+
+
+    val emptyProps = jedis.get("user-5")
+    println("probs" + emptyProps)
+
 
   }
 
@@ -134,7 +149,9 @@ class InputSource extends SourceFunction[Event] {
     val gson = new Gson()
     EventFixture.telemetrEvents.foreach(f => {
       val eventMap = gson.fromJson(f, new util.HashMap[String, Any]().getClass)
-      ctx.collect(new Event(eventMap))
+      val event = new Event(eventMap)
+      event.kafkaKey()
+      ctx.collect(event)
     })
   }
 

@@ -16,6 +16,7 @@ import org.sunbird.dp.core.util.CassandraConnect
 import org.sunbird.dp.usercache.domain.Event
 import org.sunbird.dp.usercache.task.UserCacheUpdaterConfig
 
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapTypeInfo: TypeInformation[Event])
@@ -49,7 +50,7 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
           case "UPDATE" | "UPDATED" => updateAction(id, event, metrics)
         }
         if (!userData.isEmpty) {
-          dataCache.setWithRetry(id, new Gson().toJson(userData))
+          dataCache.setWithRetry(id, new Gson().toJson(mapAsJavaMap(userData)))
           metrics.incCounter(config.successCount)
           metrics.incCounter(config.userCacheHit)
         } else {
@@ -63,10 +64,10 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
     val userData: mutable.Map[String, AnyRef] = mutable.Map[String, AnyRef]()
     Option(event.getUserSignInType(cDataType = "SignupType")).map(signInType => {
       if (config.userSelfSignedInTypeList.contains(signInType)) {
-        userData.put("usersignintype", config.userSelfSignedKey)
+        userData.put(config.userSignInTypeKey, config.userSelfSignedKey)
       }
       if (config.userValidatedTypeList.contains(signInType)) {
-        userData.put("usersignintype", "Validated")
+        userData.put(config.userSignInTypeKey, config.userValidatedKey)
       }
     }).getOrElse(null)
     userData
@@ -76,30 +77,30 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
     val userCacheData: mutable.Map[String, AnyRef] = dataCache.getWithRetry(userId)
 
     Option(event.getUserSignInType("UserRole")).map(loginType => {
-      userCacheData.put("userlogintype", loginType)
+      userCacheData.put(config.userLoginTypeKey, loginType)
     })
     val userMetaDataList = event.userMetaData()
-    if (!userMetaDataList.isEmpty() && userCacheData.contains("usersignintype") && ("Anonymous" != userCacheData.get("usersignintype"))) {
+    if (!userMetaDataList.isEmpty() && userCacheData.contains(config.userSignInTypeKey) && ("Anonymous" != userCacheData.get(config.userSignInTypeKey))) {
+
       // Get the user details from the cassandra table
-      val userDetails: mutable.Map[String, AnyRef] = extractUserMetaData(readFromCassandra(
+      val userDetails: mutable.Map[String, AnyRef] = userCacheData.++(extractUserMetaData(readFromCassandra(
         keyspace = config.keySpace,
         table = config.userTable,
         QueryBuilder.eq("id", userId),
         metrics)
-      ).++(userCacheData)
+      ))
 
       // Fetching the location details from the cassandra table
-      val updatedUserDetails: mutable.Map[String, AnyRef] = extractLocationMetaData(readFromCassandra(
+      val updatedUserDetails: mutable.Map[String, AnyRef] = userDetails.++(extractLocationMetaData(readFromCassandra(
         keyspace = config.keySpace,
         table = config.locationTable,
         clause = QueryBuilder.in("id", userDetails.get("locationids").getOrElse(new util.ArrayList()).asInstanceOf[util.ArrayList[String]]),
         metrics)
-      ).++(userDetails)
-      println("updatedUserDetails" + updatedUserDetails)
-
+      ))
+      logger.info(s"User details ( $userId ) are fetched from the db's and updating the redis now.")
       updatedUserDetails
-
     } else {
+      logger.info(s"Skipping the event update from databases since event Does not have user properties or user sigin in type is Anonymous ")
       userCacheData
     }
   }
@@ -142,6 +143,7 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
 
       foo(record)
     })
+
     result
   }
 

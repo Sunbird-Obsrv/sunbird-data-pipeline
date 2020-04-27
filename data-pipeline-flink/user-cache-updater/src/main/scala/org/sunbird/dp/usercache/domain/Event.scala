@@ -21,13 +21,14 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
 
   def getUserSignInType(cDataType: String): String = {
     val cdata = telemetry.read[util.ArrayList[util.Map[String, AnyRef]]]("context.cdata").getOrElse(null)
-    var singType: String = null
+    var signInType: String = null
     if (null != cdata && !cdata.isEmpty) {
       cdata.forEach(cdataMap => {
-        if (cdataMap.get("type").asInstanceOf[String].equalsIgnoreCase(cDataType)) singType = cdataMap.get("id").toString else singType
+        if (cdataMap.get("type").asInstanceOf[String].equalsIgnoreCase(cDataType)) signInType = cdataMap.get("id").toString else signInType
       })
     }
-    singType
+    println("signInType" + signInType)
+    signInType
   }
 
   def userMetaData():util.ArrayList[String] = {
