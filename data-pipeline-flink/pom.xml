@@ -26,6 +26,7 @@
 		<module>de-normalization</module>
 		<module>druid-events-validator</module>
 		<module>device-profile-updater</module>
+		<module>content-cache-updater</module>
 	</modules>
 
 	<properties>
