@@ -1,4 +1,4 @@
-package org.sunbird.dp.denorm.task
+package org.sunbird.dp.usercache.task
 
 import com.typesafe.config.ConfigFactory
 import org.apache.flink.api.common.typeinfo.TypeInformation
@@ -8,7 +8,6 @@ import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.FlinkUtil
 import org.sunbird.dp.usercache.domain.Event
 import org.sunbird.dp.usercache.functions.UserCacheUpdaterFunction
-import org.sunbird.dp.usercache.task.UserCacheUpdaterConfig
 
 class UserCacheUpdaterStreamTask(config: UserCacheUpdaterConfig, kafkaConnector: FlinkKafkaConnector) {
 
