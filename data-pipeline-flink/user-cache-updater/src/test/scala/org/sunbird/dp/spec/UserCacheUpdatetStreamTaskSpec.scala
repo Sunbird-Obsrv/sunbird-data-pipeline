@@ -23,6 +23,7 @@ import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.usercache.domain.Event
 import org.sunbird.dp.usercache.task.UserCacheUpdaterConfig
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
+import redis.clients.jedis.Jedis
 import redis.embedded.RedisServer
 
 class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
@@ -40,6 +41,7 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
   val userCacheConfig: UserCacheUpdaterConfig = new UserCacheUpdaterConfig(config)
   val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
   val gson = new Gson()
+  var jedis: Jedis = _
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
@@ -54,10 +56,14 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     redisServer = new RedisServer(6340)
     redisServer.start()
     BaseMetricsReporter.gaugeMetrics.clear()
+    val redisConnect = new RedisConnect(userCacheConfig)
 
-    setupRedisTestData()
+    jedis = redisConnect.getConnection(userCacheConfig.userStore)
+    setupRedisTestData(jedis)
     flinkCluster.before()
   }
+
+  //CREATE KEYSPACE ${userCacheConfig.keySpace}\nWITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3}
 
   override protected def afterAll(): Unit = {
     super.afterAll()
@@ -65,14 +71,11 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     flinkCluster.after()
   }
 
-  def setupRedisTestData() {
+  def setupRedisTestData(jedis: Jedis) {
 
-    val redisConnect = new RedisConnect(userCacheConfig)
-
-    var jedis = redisConnect.getConnection(userCacheConfig.userStore)
 
     // Insert user test data
-    jedis.set("b7470841-7451-43db-b5c7-2dcf4f8d3b23", EventFixture.userCacheData1)
+    jedis.set("user-3", EventFixture.userCacheData1)
     jedis.set("610bab7d-1450-4e54-bf78-c7c9b14dbc81", EventFixture.userCacheData2)
     jedis.close()
   }
@@ -85,11 +88,41 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     task.process()
 
     /**
-     * User Cache Assertion
+     * Metrics Assertions
      */
-    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheHit}").getValue() should be(0)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheHit}").getValue() should be(2)
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheMiss}").getValue() should be(0)
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbHitCount}").getValue() should be(0)
+
+    /**
+     * UserId = 89490534-126f-4f0b-82ac-3ff3e49f3468
+     * EData state is "Created"
+     * User SignupType is "sso"
+     * It should able to insert The Map(usersignintype, Validated)
+     */
+
+    val ssoUser = jedis.get("89490534-126f-4f0b-82ac-3ff3e49f3468")
+    ssoUser should not be (null)
+    val ssoUserMap: util.Map[String, AnyRef] = gson.fromJson(ssoUser, new util.LinkedHashMap[String, AnyRef]().getClass)
+    ssoUserMap.get("usersignintype") should be("Validated")
+
+    /**
+     * UserId = user-2
+     * EData state is "Created"
+     * User SignupType is "google"
+     * It should able to insert The Map(usersignintype, Self-Signed-In)
+     */
+    val googleUser = jedis.get("user-2")
+    googleUser should not be(null)
+    val googleUserMap : util.Map[String, AnyRef] = gson.fromJson(googleUser, new util.LinkedHashMap[String, AnyRef]().getClass)
+    googleUserMap.get("usersignintype") should be("Self-Signed-In")
+
+
+    // When action is Update
+
+
+    val userInfo = jedis.get("user-3")
+    println("userInfo" + userInfo)
 
   }
 

@@ -16,6 +16,8 @@ import org.sunbird.dp.core.util.CassandraConnect
 import org.sunbird.dp.usercache.domain.Event
 import org.sunbird.dp.usercache.task.UserCacheUpdaterConfig
 
+import scala.collection.mutable
+
 class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapTypeInfo: TypeInformation[Event])
   extends BaseProcessFunction[Event, Event](config) {
 
@@ -24,7 +26,7 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
   private var cassandraConnect: CassandraConnect = _
 
   override def metricsList(): List[String] = {
-    List(config.dbHitCount, config.userCacheHit, config.userCacheMiss, config.skipCount)
+    List(config.dbHitCount, config.userCacheHit, config.userCacheMiss, config.skipCount, config.successCount)
   }
 
   override def open(parameters: Configuration): Unit = {
@@ -42,13 +44,14 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
   override def processElement(event: Event, context: ProcessFunction[Event, Event]#Context, metrics: Metrics): Unit = {
     Option(event.getId).map(id => {
       Option(event.getState).map(name => {
-        val userData: util.Map[String, AnyRef] = name.toUpperCase match {
+        val userData: mutable.Map[String, AnyRef] = name.toUpperCase match {
           case "CREATE" | "CREATED" => createAction(id, event, metrics)
           case "UPDATE" | "UPDATED" => updateAction(id, event, metrics)
         }
         if (!userData.isEmpty) {
           dataCache.setWithRetry(id, new Gson().toJson(userData))
           metrics.incCounter(config.successCount)
+          metrics.incCounter(config.userCacheHit)
         } else {
           metrics.incCounter(config.skipCount)
         }
@@ -56,8 +59,8 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
     }).getOrElse(metrics.incCounter(config.skipCount))
   }
 
-  def createAction(userId: String, event: Event, metrics: Metrics): util.Map[String, AnyRef] = {
-    val userData: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]()
+  def createAction(userId: String, event: Event, metrics: Metrics): mutable.Map[String, AnyRef] = {
+    val userData: mutable.Map[String, AnyRef] = mutable.Map[String, AnyRef]()
     Option(event.getUserSignInType(cDataType = "SignupType")).map(signInType => {
       if (config.userSelfSignedInTypeList.contains(signInType)) {
         userData.put("usersignintype", config.userSelfSignedKey)
@@ -69,35 +72,36 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
     userData
   }
 
-  def updateAction(userId: String, event: Event, metrics: Metrics): util.Map[String, AnyRef] = {
-    val userCacheData: util.Map[String, AnyRef] = dataCache.getWithRetry(userId).asInstanceOf[util.Map[String, AnyRef]]
+  def updateAction(userId: String, event: Event, metrics: Metrics): mutable.Map[String, AnyRef] = {
+    val userCacheData: mutable.Map[String, AnyRef] = dataCache.getWithRetry(userId)
 
     Option(event.getUserSignInType("UserRole")).map(loginType => {
       userCacheData.put("userlogintype", loginType)
     })
     val userMetaDataList = event.userMetaData()
-    if (null != userMetaDataList && !userMetaDataList.isEmpty() && userCacheData.containsKey("usersignintype") && ("Anonymous" != userCacheData.get("usersignintype"))) {
-
+    if (!userMetaDataList.isEmpty() && userCacheData.contains("usersignintype") && ("Anonymous" != userCacheData.get("usersignintype"))) {
       // Get the user details from the cassandra table
-      val userDetails: util.Map[String, AnyRef] = extractUserMetaData(readFromCassandra(
+      val userDetails: mutable.Map[String, AnyRef] = extractUserMetaData(readFromCassandra(
         keyspace = config.keySpace,
         table = config.userTable,
         QueryBuilder.eq("id", userId),
         metrics)
-      )
-      userCacheData.putAll(userDetails)
+      ).++(userCacheData)
 
       // Fetching the location details from the cassandra table
-      val locationDetails: util.Map[String, AnyRef] = extractLocationMetaData(readFromCassandra(
+      val updatedUserDetails: mutable.Map[String, AnyRef] = extractLocationMetaData(readFromCassandra(
         keyspace = config.keySpace,
         table = config.locationTable,
-        clause = QueryBuilder.in("id", userCacheData.get("locationids").asInstanceOf[List[String]]),
-        metrics))
+        clause = QueryBuilder.in("id", userDetails.get("locationids").getOrElse(new util.ArrayList()).asInstanceOf[util.ArrayList[String]]),
+        metrics)
+      ).++(userDetails)
+      println("updatedUserDetails" + updatedUserDetails)
 
-      userCacheData.putAll(locationDetails)
+      updatedUserDetails
+
+    } else {
+      userCacheData
     }
-    userCacheData
-
   }
 
   def readFromCassandra(keyspace: String, table: String, clause: Clause, metrics: Metrics): util.List[Row] = {
@@ -113,8 +117,8 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
     rowSet
   }
 
-  def extractUserMetaData(userDetails: util.List[Row]): util.Map[String, AnyRef] = {
-    val result: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]()
+  def extractUserMetaData(userDetails: util.List[Row]): mutable.Map[String, AnyRef] = {
+    val result: mutable.Map[String, AnyRef] = mutable.Map[String, AnyRef]()
     if (null != userDetails && !userDetails.isEmpty) {
       val row: Row = userDetails.get(0)
       val columnDefinitions = row.getColumnDefinitions()
@@ -126,8 +130,8 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
     result
   }
 
-  def extractLocationMetaData(locationDetails: util.List[Row]): util.Map[String, AnyRef] = {
-    val result: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]()
+  def extractLocationMetaData(locationDetails: util.List[Row]): mutable.Map[String, AnyRef] = {
+    val result: mutable.Map[String, AnyRef] = mutable.Map[String, AnyRef]()
     locationDetails.forEach((record: Row) => {
       def foo(record: Row): Any = {
         record.getString("type").toLowerCase match {

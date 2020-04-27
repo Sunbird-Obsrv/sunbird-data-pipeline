@@ -31,7 +31,7 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
   }
 
   def userMetaData():util.ArrayList[String] = {
-    telemetry.read[util.ArrayList[String]]("edata.props").getOrElse(null)
+    telemetry.read[util.ArrayList[String]]("edata.props").getOrElse(new util.ArrayList[String]())
   }
 
 }

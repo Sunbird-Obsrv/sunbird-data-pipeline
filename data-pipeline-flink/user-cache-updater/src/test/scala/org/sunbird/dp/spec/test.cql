@@ -70,3 +70,36 @@ CREATE INDEX inx_u_loginid ON sunbird.user (loginid);
 CREATE INDEX inx_u_status ON sunbird.user (status);
 CREATE INDEX inx_u_username ON sunbird.user (username);
 CREATE INDEX inx_u_phone ON sunbird.user (phone);
+
+INSERT INTO sunbird.user (
+    id,
+    avatar,
+    channel ,
+    countrycode,
+    createdby,
+    createddate,
+    currentlogintime,
+    dob,
+    email,
+    emailverified,
+    firstname,
+    flagsvalue,
+    gender,
+    lastname,
+    location,
+    maskedemail,
+    maskedphone,
+    password,
+    phone,
+    phoneverified
+)VALUES ('user-3', 'VOS','sunbird', 'IN','MANJU','24-apr-2020','24-apr-2020','24-08-1993','manjunathd@ilimi.in',true,'Manjunath', 1, 'Male','Davanam','Banglore','********gmail.com','******181', '*******','4682647342',true);
+
+CREATE TABLE sunbird.location (
+    id text PRIMARY KEY,
+    code text,
+    name text,
+    parentid text,
+    type text
+);
+
+CREATE INDEX inx_loc_code ON sunbird.location (code);
