@@ -9,6 +9,7 @@ import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.scalatest.Matchers
 import org.scalatestplus.mockito.MockitoSugar
+import org.sunbird.dp.contentupdater.core.util.RestUtil
 import org.sunbird.dp.core.cache.{DataCache, DedupEngine, RedisConnect}
 import org.sunbird.dp.core.domain.Events
 import org.sunbird.dp.core.job.{BaseDeduplication, BaseJobConfig}
@@ -144,6 +145,22 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     redisConnection.closePool()
     dataCache.hmSet("device_1", deviceData)
   }
+
+  "DataCache setWithRetry function" should "be able to set the data from Redis" in {
+    val redisConnection = new RedisConnect(bsConfig)
+    val dataCache = new DataCache(bsConfig, redisConnection, 4, List("identifier"))
+    dataCache.init()
+    dataCache.setWithRetry("key", "{\"test\": \"value\"}")
+    redisConnection.getConnection(4).get("key") should equal("{\"test\": \"value\"}")
+  }
+
+  "RestUtil functionality" should "be able to return response" in {
+    val restUtil = new RestUtil()
+    val url = "https://httpbin.org/json";
+    val response = restUtil.get(url);
+    response should not be null
+  }
+
 }
 
 class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {

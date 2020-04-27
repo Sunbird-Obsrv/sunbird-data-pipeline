@@ -1,17 +1,13 @@
 package org.sunbird.dp.extractor.functions
 
-import java.lang.reflect.Type
 import java.util
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.sunbird.dp.core.cache.{DataCache, RedisConnect}
 import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 import org.sunbird.dp.extractor.task.TelemetryExtractorConfig
 import org.apache.flink.configuration.Configuration
-import redis.clients.jedis.Jedis
 
 import scala.collection.mutable.Map
 
@@ -47,12 +43,11 @@ class RedactorFunction(config: TelemetryExtractorConfig, @transient var dataCach
         }
         else {
             val questionData = getQuestionData(questionId)
-            if (questionData.size == 0) {
+            if (questionData.isEmpty) {
                 metrics.incCounter(config.cacheMissCount)
-            }
-            else {
+            } else {
                 metrics.incCounter(config.cacheHitCount)
-                if (questionData.contains("questiontype") && "Registration".equalsIgnoreCase(questionData.get("questiontype").get.asInstanceOf[String]))
+                if (questionData.contains("questiontype") && "Registration".equalsIgnoreCase(questionData("questiontype").asInstanceOf[String]))
                     redact = true
             }
         }
