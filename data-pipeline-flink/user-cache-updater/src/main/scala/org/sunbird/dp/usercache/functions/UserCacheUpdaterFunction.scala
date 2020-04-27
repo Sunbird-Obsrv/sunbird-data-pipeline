@@ -48,6 +48,11 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
         val userData: mutable.Map[String, AnyRef] = name.toUpperCase match {
           case "CREATE" | "CREATED" => createAction(id, event, metrics)
           case "UPDATE" | "UPDATED" => updateAction(id, event, metrics)
+          case _ => {
+            logger.info(s"Invalid event state name either it should be(Create/Created/Update/Updated) but found $name for ${event.mid()}")
+            metrics.incCounter(config.skipCount)
+            mutable.Map[String, AnyRef]()
+          }
         }
         if (!userData.isEmpty) {
           dataCache.setWithRetry(id, new Gson().toJson(mapAsJavaMap(userData)))
@@ -60,6 +65,10 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
     }).getOrElse(metrics.incCounter(config.skipCount))
   }
 
+
+  /**
+   * When Edata.State is Create/Created then insert the user data into redis in string formate
+   */
   def createAction(userId: String, event: Event, metrics: Metrics): mutable.Map[String, AnyRef] = {
     val userData: mutable.Map[String, AnyRef] = mutable.Map[String, AnyRef]()
     Option(event.getUserSignInType(cDataType = "SignupType")).map(signInType => {
@@ -72,6 +81,11 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
     }).getOrElse(null)
     userData
   }
+
+  /**
+   * When edata.state is update/updated then update the user metadta
+   * information by reading from the cassandra
+   */
 
   def updateAction(userId: String, event: Event, metrics: Metrics): mutable.Map[String, AnyRef] = {
     val userCacheData: mutable.Map[String, AnyRef] = dataCache.getWithRetry(userId)
@@ -111,6 +125,7 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
     try rowSet = cassandraConnect.find(query)
     catch {
       case ex: DriverException =>
+        // $COVERAGE-OFF$ Disabling scoverage as the below code need to test with when cassandra is off
         cassandraConnect.reconnect()
         rowSet = cassandraConnect.find(query)
     }
@@ -136,8 +151,8 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
     locationDetails.forEach((record: Row) => {
       def foo(record: Row): Any = {
         record.getString("type").toLowerCase match {
-          case "state" => result.put("state", record.getString("name"))
-          case "district" => result.put("district", record.getString("name"))
+          case config.stateKey => result.put(config.stateKey, record.getString("name"))
+          case config.districtKey => result.put(config.districtKey, record.getString("name"))
         }
       }
 
@@ -148,3 +163,4 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
   }
 
 }
+// $COVERAGE-ON$

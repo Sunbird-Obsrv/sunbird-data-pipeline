@@ -54,9 +54,40 @@ object EventFixture {
      * Props are not defined
      */
     """
-      |{"eid":"AUDIT","ets":1573121861118,"ver":"3.0","mid":"1573121861118.40f9136b-1cc3-458d-a04a-4459606df","actor":{"id":"5609876543234567890987654345678","type":"Request"},"context":{"channel":"01285019302823526477","pdata":{"id":"dev.sunbird.portal","pid":"learner-service","ver":"2.5.0"},"env":"User","did":"user-5","cdata":[{"id":"25cb0530-7c52-ecb1-cff2-6a14faab7910","type":"UserRole"}],"rollup":{"l1":"01285019302823526477"}},"object":{"id":"user-4","type":"user"},"edata":{"state":"Updated"},"syncts":1573121861125,"@timestamp":"2019-11-07T10:17:41.125Z","flags":{"tv_processed":true,"dd_processed":true},"type":"events","ts":"2019-11-07T10:17:41.118+0000"}
+      |{"eid":"AUDIT","ets":1573121861118,"ver":"3.0","mid":"1573121861118.40f9136b-1cc3-458d-a04a-4459606df","actor":{"id":"5609876543234567890987654345678","type":"Request"},"context":{"channel":"01285019302823526477","pdata":{"id":"dev.sunbird.portal","pid":"learner-service","ver":"2.5.0"},"env":"User","did":"user-5","cdata":[{"id":"25cb0530-7c52-ecb1-cff2-6a14faab7910","type":"UserRole"}],"rollup":{"l1":"01285019302823526477"}},"object":{"id":"user-5","type":"user"},"edata":{"state":"Updated"},"syncts":1573121861125,"@timestamp":"2019-11-07T10:17:41.125Z","flags":{"tv_processed":true,"dd_processed":true},"type":"events","ts":"2019-11-07T10:17:41.118+0000"}
       |
-      |""".stripMargin
+      |""".stripMargin,
+
+
+    /**
+     * AUDIT Event with object type as content. (not related to user)
+     * Props are not defined - Skip Count should incr (skipCount =+ 1)
+     */
+    """
+      |{"eid":"AUDIT","ets":1573121861118,"ver":"3.0","mid":"1573121861118.40f9136b-1cc3-458d-a04a-4459606df","actor":{"id":"5609876543234567890987654345678","type":"Request"},"context":{"channel":"01285019302823526477","pdata":{"id":"dev.sunbird.portal","pid":"learner-service","ver":"2.5.0"},"env":"User","did":"user-5","cdata":[{"id":"25cb0530-7c52-ecb1-cff2-6a14faab7910","type":"UserRole"}],"rollup":{"l1":"01285019302823526477"}},"object":{"id":"do_r8r8rew97we9r8","type":"content"},"edata":{"state":"Updated"},"syncts":1573121861125,"@timestamp":"2019-11-07T10:17:41.125Z","flags":{"tv_processed":true,"dd_processed":true},"type":"events","ts":"2019-11-07T10:17:41.118+0000"}
+      |
+      |""".stripMargin,
+
+    /**
+     * AUDIT Event, But having invalid state(other than create/update)
+     *
+     */
+
+    """
+      |
+      |{"eid":"AUDIT","ets":1573121861118,"ver":"3.0","mid":"1573121861118.40f9136b-1cc3-458d-a04a-4459606df","actor":{"id":"5609876543234567890987654345678","type":"Request"},"context":{"channel":"01285019302823526477","pdata":{"id":"dev.sunbird.portal","pid":"learner-service","ver":"2.5.0"},"env":"User","did":"user-5","cdata":[{"id":"25cb0530-7c52-ecb1-cff2-6a14faab7910","type":"UserRole"}],"rollup":{"l1":"01285019302823526477"}},"object":{"id":"user-4","type":"user"},"edata":{"state":"wrongState"},"syncts":1573121861125,"@timestamp":"2019-11-07T10:17:41.125Z","flags":{"tv_processed":true,"dd_processed":true},"type":"events","ts":"2019-11-07T10:17:41.118+0000"}
+      |""".stripMargin,
+
+
+  /**
+   * AUDIT Event, But having without state id null
+   *
+   */
+
+  """
+    |
+    |{"eid":"AUDIT","ets":1573121861118,"ver":"3.0","mid":"1573121861118.40f9136b-1cc3-458d-a04a-4459606df","actor":{"id":"5609876543234567890987654345678","type":"Request"},"context":{"channel":"01285019302823526477","pdata":{"id":"dev.sunbird.portal","pid":"learner-service","ver":"2.5.0"},"env":"User","did":"user-5","cdata":[{"id":"25cb0530-7c52-ecb1-cff2-6a14faab7910","type":"UserRole"}],"rollup":{"l1":"01285019302823526477"}},"object":{"id":"user-4","type":"user"},"edata":{},"syncts":1573121861125,"@timestamp":"2019-11-07T10:17:41.125Z","flags":{"tv_processed":true,"dd_processed":true},"type":"events","ts":"2019-11-07T10:17:41.118+0000"}
+    |""".stripMargin
 
 
 

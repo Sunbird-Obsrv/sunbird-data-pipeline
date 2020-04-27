@@ -45,6 +45,8 @@ class UserCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(
 
   val userSignInTypeKey = "usersignintype"
   val userLoginTypeKey = "userlogintype"
+  val stateKey = "state"
+  val districtKey = "district"
 
 
 }

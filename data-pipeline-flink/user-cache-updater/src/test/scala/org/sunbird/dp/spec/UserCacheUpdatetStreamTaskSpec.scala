@@ -51,7 +51,7 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     val session = cassandraUtil.session
     val dataLoader = new CQLDataLoader(session);
     dataLoader.load(new FileCQLDataSet("/Users/manju/Documents/Ekstep/Github/sunbird-data-pipeline/data-pipeline-flink/user-cache-updater/src/test/scala/org/sunbird/dp/spec/test.cql", true, true));
-    redisServer = new RedisServer(6341)
+    redisServer = new RedisServer(6340)
     redisServer.start()
     BaseMetricsReporter.gaugeMetrics.clear()
     val redisConnect = new RedisConnect(userCacheConfig)
@@ -89,6 +89,7 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheHit}").getValue() should be(5)
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheMiss}").getValue() should be(0)
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbHitCount}").getValue() should be(4)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.skipCount}").getValue() should be(4)
 
     /**
      * UserId = 89490534-126f-4f0b-82ac-3ff3e49f3468
