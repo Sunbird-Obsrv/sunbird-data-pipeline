@@ -3,7 +3,6 @@ package org.sunbird.dp.usercache.functions
 import java.util
 
 import com.datastax.driver.core.Row
-import com.datastax.driver.core.exceptions.DriverException
 import com.datastax.driver.core.querybuilder.{Clause, QueryBuilder}
 import com.google.gson.Gson
 import org.apache.flink.api.common.typeinfo.TypeInformation
@@ -27,7 +26,7 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
   private var cassandraConnect: CassandraUtil = _
 
   override def metricsList(): List[String] = {
-    List(config.dbHitCount, config.dbMissCount, config.userCacheHit, config.skipCount, config.successCount)
+    List(config.dbReadSuccessCount, config.dbReadMissCount, config.userCacheHit, config.skipCount, config.successCount, config.totalEventsCount)
   }
 
   override def open(parameters: Configuration): Unit = {
@@ -43,6 +42,7 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
   }
 
   override def processElement(event: Event, context: ProcessFunction[Event, Event]#Context, metrics: Metrics): Unit = {
+    metrics.incCounter(config.totalEventsCount)
     Option(event.getId).map(id => {
       Option(event.getState).map(name => {
         val userData: mutable.Map[String, AnyRef] = name.toUpperCase match {
@@ -124,10 +124,10 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
     val query = QueryBuilder.select.all.from(keyspace, table).where(clause).toString
     rowSet = cassandraConnect.find(query)
     if (null != rowSet && !rowSet.isEmpty) {
-      metrics.incCounter(config.dbHitCount)
+      metrics.incCounter(config.dbReadSuccessCount)
       rowSet
     } else {
-      metrics.incCounter(config.dbMissCount)
+      metrics.incCounter(config.dbReadMissCount)
       new util.ArrayList[Row]()
     }
 

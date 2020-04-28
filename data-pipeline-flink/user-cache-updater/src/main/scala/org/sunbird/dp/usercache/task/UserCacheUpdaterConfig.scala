@@ -24,8 +24,9 @@ class UserCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(
   val userCacheHit = "user-cache-hit"
   val skipCount = "skipped-message-count"
   val successCount = "success-message-count"
-  val dbHitCount = "db-hit-count"
-  val dbMissCount = "db-miss-count"
+  val dbReadSuccessCount = "db-read-success-count"
+  val dbReadMissCount = "db-read-miss-count"
+  val totalEventsCount ="total-audit-events-count"
 
   val userSelfSignedInTypeList = config.getStringList("user.self.signin.types")
   val userValidatedTypeList = config.getStringList("user.validated.types")
