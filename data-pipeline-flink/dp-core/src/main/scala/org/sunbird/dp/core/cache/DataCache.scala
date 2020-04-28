@@ -116,7 +116,7 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
     }
   }
 
-   def set(key: String, value: String): Unit = {
+  def set(key: String, value: String): Unit = {
     redisConnection.set(key, value)
   }
 

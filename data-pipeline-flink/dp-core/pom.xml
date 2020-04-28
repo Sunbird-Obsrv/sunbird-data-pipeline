@@ -61,6 +61,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.cassandraunit</groupId>
+            <artifactId>cassandra-unit</artifactId>
+            <version>3.1.1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>net.manub</groupId>
             <artifactId>scalatest-embedded-kafka_${scala.version}</artifactId>
             <version>2.0.0</version>
