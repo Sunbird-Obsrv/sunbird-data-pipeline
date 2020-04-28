@@ -1,3 +1,5 @@
+kafka_broker: "{{groups['processing-cluster-kafka'][0]}}:9092"
+
 analytics:
    home: /mount/data/analytics
 analytics_api:

@@ -33,7 +33,7 @@ data_exhaust.output_format="json"
 
 # Log4j Kafka appender config
 log4j.appender.kafka.enable="false"
-log4j.appender.kafka.broker_host="{{groups['processing-cluster-kafka'][0]}}:9092"
+log4j.appender.kafka.broker_host="{{ kafka_broker }}"
 log4j.appender.kafka.topic="{{env}}.telemetry.log"
 
 cassandra.service.embedded.enable=false
@@ -254,4 +254,4 @@ druid.healthcheck.url="druid/coordinator/v1/loadstatus"
 device.api.enable.debug.log=true
 kafka.device.register.topic={{ env }}.events.deviceprofile
 kafka.metrics.event.topic={{ env }}.pipeline_metrics
-kafka.broker.list="{{groups['processing-cluster-kafka'][0]}}:9092"
+kafka.broker.list="{{ kafka_broker }}"
