@@ -34,7 +34,7 @@ import org.sunbird.dp.core.util.FlinkUtil
   *       6.8 Increment db-update-count
   * 6. Common
   * 	  7.1 Retry once from connection issues from DB
-  * 	  7.2 Stop the job from proceeding further if there are any DB issues
+  * 	  7.2 Stop the job from procee  ding further if there are any DB issues
   */
 class AssessmentAggregatorStreamTask(config: AssessmentAggregatorConfig, kafkaConnector: FlinkKafkaConnector) {
 
@@ -48,7 +48,7 @@ class AssessmentAggregatorStreamTask(config: AssessmentAggregatorConfig, kafkaCo
         val aggregatorStream: SingleOutputStreamOperator[Event] = env.addSource(source, "telemetry-assess")
           .rebalance()
           .process(new AssessmentAggregatorFunction(config))
-          .name("Assessemnt Aggreagator")
+          .name("AssessmentAggregator")
           .setParallelism(config.assessAggregatorParallelism)
         aggregatorStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaFailedTopic)).name("assess-failed-events")
         env.execute("AssessmentAggregator")

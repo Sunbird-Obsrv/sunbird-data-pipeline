@@ -21,7 +21,8 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
     val kafkaFailedTopic: String = config.getString("kafka.failed.topic")
 
     // Metric List
-    val dbHitCount = "db-update-count"
+    val dbUpdateCount = "db-update-count"
+    val dbReadCount = "db-read-count"
     val batchSuccessCount = "batch-success-event-count"
     val failedEventCount = "failed-event-count"
     val skippedEventCount = "skipped-event-count"

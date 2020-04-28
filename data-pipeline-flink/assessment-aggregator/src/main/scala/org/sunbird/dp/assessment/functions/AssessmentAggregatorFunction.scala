@@ -44,7 +44,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
     var questionType: UserType = _
     private val df = new DecimalFormat("0.0#")
 
-    override def metricsList() = List(config.dbHitCount, config.failedEventCount, config.batchSuccessCount, config.skippedEventCount)
+    override def metricsList() = List(config.dbUpdateCount, config.dbReadCount, config.failedEventCount, config.batchSuccessCount, config.skippedEventCount)
 
 
     override def open(parameters: Configuration): Unit = {
@@ -79,7 +79,6 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
             var totalScore = 0.0
             var totalMaxScore = 0.0
             val assessment = getAssessment(event)
-            metrics.incCounter(config.dbHitCount)
             val assessEvents = event.assessEvents.asScala
 
             val sortAndFilteredEvents = assessEvents.map(event => {
@@ -97,13 +96,15 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
 
             if (null == assessment) {
                 saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList), new DateTime().getMillis)
-                metrics.incCounter(config.dbHitCount)
+                metrics.incCounter(config.dbUpdateCount)
                 metrics.incCounter(config.batchSuccessCount)
             }
             else {
+                metrics.incCounter(config.dbReadCount)
                 if (event.assessmentEts > assessment.getTimestamp("last_attempted_on").getTime) {
-                    saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList), assessment.getTimestamp("created_on").getTime)
-                    metrics.incCounter(config.dbHitCount)
+                    saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList),
+                        assessment.getTimestamp("created_on").getTime)
+                    metrics.incCounter(config.dbUpdateCount)
                     metrics.incCounter(config.batchSuccessCount)
                 }
                 else {
