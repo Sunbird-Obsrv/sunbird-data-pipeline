@@ -4,6 +4,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <prerequisites>
+        <maven>3.0.1</maven>
+    </prerequisites>
     <parent>
         <groupId>org.sunbird.dp</groupId>
         <artifactId>pipeline-jobs</artifactId>
@@ -136,6 +139,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
                             <artifactSet>
                                 <excludes>
                                     <exclude>com.google.code.findbugs:jsr305</exclude>
@@ -154,9 +158,10 @@
                                 </filter>
                             </filters>
                             <transformers>
+
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.sunbird.dp.extractor.task.DeviceProfileUpdaterStreamTask</mainClass>
+                                    <mainClass>org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterStreamTask</mainClass>
                                 </transformer>
                                 <!-- append default configs -->
                                 <transformer

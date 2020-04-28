@@ -1,4 +1,4 @@
-package org.sunbird.dp.extractor.task
+package org.sunbird.dp.deviceprofile.task
 
 import java.util
 
@@ -9,7 +9,6 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.FlinkUtil
 import org.sunbird.dp.deviceprofile.functions.DeviceProfileUpdaterFunction
-import org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterConfig
 
 
 class DeviceProfileUpdaterStreamTask(config: DeviceProfileUpdaterConfig, kafkaConnector: FlinkKafkaConnector) {
