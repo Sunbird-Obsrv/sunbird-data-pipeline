@@ -32,11 +32,6 @@ class CassandraUtil(host: String,port: Int) {
     rs.wasApplied
   }
 
-  def upsert(query: Insert): Boolean = {
-    val rs = session.execute(query)
-    rs.wasApplied
-  }
-
   def getUDTType(keyspace: String, typeName: String): UserType = session.getCluster.getMetadata.getKeyspace(keyspace).getUserType(typeName)
 
   def reconnect(): Unit = {

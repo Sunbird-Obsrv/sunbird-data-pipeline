@@ -50,6 +50,7 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     val session = cassandraUtil.session
     val dataLoader = new CQLDataLoader(session);
     dataLoader.load(new FileCQLDataSet(getClass.getResource("/data.cql").getPath, true, true));
+    testCassandraUtil(cassandraUtil)
     redisServer = new RedisServer(6340)
     redisServer.start()
     BaseMetricsReporter.gaugeMetrics.clear()
@@ -138,6 +139,12 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     val emptyPropsMap: util.Map[String, AnyRef] = gson.fromJson(emptyProps, new util.LinkedHashMap[String, AnyRef]().getClass)
     emptyPropsMap.get(userCacheConfig.userLoginTypeKey) should be("25cb0530-7c52-ecb1-cff2-6a14faab7910")
 
+  }
+  def testCassandraUtil(cassandraUtil: CassandraUtil): Unit ={
+    cassandraUtil.reconnect()
+    val response = cassandraUtil.findOne("SELECT * FROM sunbird.location;")
+    response should not be(null)
+    cassandraUtil.getUDTType("sunbird","test") should not be(not)
   }
 
 }
