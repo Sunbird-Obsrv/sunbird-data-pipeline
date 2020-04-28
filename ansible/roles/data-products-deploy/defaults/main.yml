@@ -20,7 +20,7 @@ metrics_topic: "{{ env }}.telemetry.metrics"
 job_manager_tmp_dir: "transient-data"
 channel: dev-test
 druid_broker_host: "{{groups['broker'][0]}}"
-druid_rollup_broker_host: "{{groups['rollup-broker'][0]}}"
+druid_rollup_broker_host: "{{groups['broker'][0]}}"
 hierarchySearchServiceUrl: "{{ proto }}://{{ domain_name }}/api/course"
 hierarchySearchServicEndpoint: /v1/hierarchy/
 
