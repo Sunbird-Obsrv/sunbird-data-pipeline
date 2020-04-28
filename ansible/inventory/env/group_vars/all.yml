@@ -47,9 +47,8 @@ env_name: "{{env}}"
 kafka_brokers: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
 zookeepers: "{{groups['zookeeper']|join(':2181,')}}:2181"
 # Ingestion cluster
-ingestion_zookeepers: "{{ groups['ingestion-cluster-zookeepers']|join(':2181,')}}:2181"
-
-
+ingestion_kafka_brokers: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
+ingestion_zookeepers: "{{groups['zookeeper']|join(':2181,')}}:2181"
 
 telemetry_schema_directory: /etc/{{env}}/telemetry
 telemetry_schema_path: /etc/{{env}}/telemetry/schemas
