@@ -144,6 +144,8 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     cassandraUtil.reconnect()
     val response = cassandraUtil.findOne("SELECT * FROM sunbird.location;")
     response should not be(null)
+    val upsert = cassandraUtil.findOne("SELECT * FROM sunbird.location;")
+    upsert should not be(null)
     cassandraUtil.getUDTType("sunbird","test") should not be(not)
   }
 
