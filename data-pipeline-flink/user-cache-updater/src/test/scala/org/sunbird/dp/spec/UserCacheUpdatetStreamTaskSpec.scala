@@ -17,7 +17,7 @@ import org.mockito.Mockito
 import org.mockito.Mockito._
 import org.sunbird.dp.core.cache.RedisConnect
 import org.sunbird.dp.core.job.FlinkKafkaConnector
-import org.sunbird.dp.core.util.CassandraConnect
+import org.sunbird.dp.core.util.CassandraUtil
 import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.usercache.domain.Event
 import org.sunbird.dp.usercache.task.{UserCacheUpdaterConfig, UserCacheUpdaterStreamTask}
@@ -46,7 +46,7 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     super.beforeAll()
     println("******Starting the Embedded Cassandra*******")
     EmbeddedCassandraServerHelper.startEmbeddedCassandra(80000L)
-    val cassandraUtil = new CassandraConnect(userCacheConfig.cassandraHost, userCacheConfig.cassandraPort)
+    val cassandraUtil = new CassandraUtil(userCacheConfig.cassandraHost, userCacheConfig.cassandraPort)
     val session = cassandraUtil.session
     val dataLoader = new CQLDataLoader(session);
     dataLoader.load(new FileCQLDataSet(getClass.getResource("/data.cql").getPath, true, true));

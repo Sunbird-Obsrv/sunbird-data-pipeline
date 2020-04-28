@@ -12,7 +12,7 @@ import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.core.cache.{DataCache, RedisConnect}
 import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
-import org.sunbird.dp.core.util.CassandraConnect
+import org.sunbird.dp.core.util.CassandraUtil
 import org.sunbird.dp.usercache.domain.Event
 import org.sunbird.dp.usercache.task.UserCacheUpdaterConfig
 
@@ -24,7 +24,7 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
 
   private[this] val logger = LoggerFactory.getLogger(classOf[UserCacheUpdaterFunction])
   private var dataCache: DataCache = _
-  private var cassandraConnect: CassandraConnect = _
+  private var cassandraConnect: CassandraUtil = _
 
   override def metricsList(): List[String] = {
     List(config.dbHitCount, config.userCacheHit, config.skipCount, config.successCount)
@@ -34,7 +34,7 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
     super.open(parameters)
     dataCache = new DataCache(config, new RedisConnect(config), config.userStore, config.userFields)
     dataCache.init()
-    cassandraConnect = new CassandraConnect(config.cassandraHost, config.cassandraPort)
+    cassandraConnect = new CassandraUtil(config.cassandraHost, config.cassandraPort)
   }
 
   override def close(): Unit = {
