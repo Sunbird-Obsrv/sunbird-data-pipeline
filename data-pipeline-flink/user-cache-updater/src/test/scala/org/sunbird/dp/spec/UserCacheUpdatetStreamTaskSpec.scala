@@ -87,8 +87,10 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
      * Metrics Assertions
      */
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheHit}").getValue() should be(5)
-    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbHitCount}").getValue() should be(4)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbHitCount}").getValue() should be(2)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbMissCount}").getValue() should be(2)
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.skipCount}").getValue() should be(4)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.successCount}").getValue() should be(5)
 
     /**
      * UserId = 89490534-126f-4f0b-82ac-3ff3e49f3468
@@ -133,20 +135,23 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     locationInfoMap.get("district") should be("TUMKUR")
 
 
-
-
     val emptyProps = jedis.get("user-5")
     val emptyPropsMap: util.Map[String, AnyRef] = gson.fromJson(emptyProps, new util.LinkedHashMap[String, AnyRef]().getClass)
     emptyPropsMap.get(userCacheConfig.userLoginTypeKey) should be("25cb0530-7c52-ecb1-cff2-6a14faab7910")
 
   }
-  def testCassandraUtil(cassandraUtil: CassandraUtil): Unit ={
+
+  def testCassandraUtil(cassandraUtil: CassandraUtil): Unit = {
     cassandraUtil.reconnect()
     val response = cassandraUtil.findOne("SELECT * FROM sunbird.location;")
-    response should not be(null)
+    response should not be (null)
     val upsert = cassandraUtil.upsert("SELECT * FROM sunbird.location;")
     upsert should be(true)
-    cassandraUtil.getUDTType("sunbird","test") should not be(not)
+    cassandraUtil.getUDTType("sunbird", "test") should not be (not)
+    cassandraUtil.close()
+    val onSessionClose = cassandraUtil.find("SELECT * FROM sunbird.location;");
+    onSessionClose should not be (null)
+
   }
 
 }

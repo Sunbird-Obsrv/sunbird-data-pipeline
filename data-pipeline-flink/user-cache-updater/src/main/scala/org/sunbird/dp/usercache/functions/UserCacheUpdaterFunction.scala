@@ -27,7 +27,7 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
   private var cassandraConnect: CassandraUtil = _
 
   override def metricsList(): List[String] = {
-    List(config.dbHitCount, config.userCacheHit, config.skipCount, config.successCount)
+    List(config.dbHitCount, config.dbMissCount, config.userCacheHit, config.skipCount, config.successCount)
   }
 
   override def open(parameters: Configuration): Unit = {
@@ -122,14 +122,15 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
   def readFromCassandra(keyspace: String, table: String, clause: Clause, metrics: Metrics): util.List[Row] = {
     var rowSet: util.List[Row] = null
     val query = QueryBuilder.select.all.from(keyspace, table).where(clause).toString
-    try rowSet = cassandraConnect.find(query)
-    catch {
-      case ex: DriverException =>
-        cassandraConnect.reconnect()
-        rowSet = cassandraConnect.find(query)
+    rowSet = cassandraConnect.find(query)
+    if (null != rowSet && !rowSet.isEmpty) {
+      metrics.incCounter(config.dbHitCount)
+      rowSet
+    } else {
+      metrics.incCounter(config.dbMissCount)
+      new util.ArrayList[Row]()
     }
-    metrics.incCounter(config.dbHitCount)
-    rowSet
+
   }
 
   def extractUserMetaData(userDetails: util.List[Row]): mutable.Map[String, AnyRef] = {
@@ -148,16 +149,11 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
   def extractLocationMetaData(locationDetails: util.List[Row]): mutable.Map[String, AnyRef] = {
     val result: mutable.Map[String, AnyRef] = mutable.Map[String, AnyRef]()
     locationDetails.forEach((record: Row) => {
-      def foo(record: Row): Any = {
-        record.getString("type").toLowerCase match {
-          case config.stateKey => result.put(config.stateKey, record.getString("name"))
-          case config.districtKey => result.put(config.districtKey, record.getString("name"))
-        }
+      record.getString("type").toLowerCase match {
+        case config.stateKey => result.put(config.stateKey, record.getString("name"))
+        case config.districtKey => result.put(config.districtKey, record.getString("name"))
       }
-
-      foo(record)
     })
-
     result
   }
 

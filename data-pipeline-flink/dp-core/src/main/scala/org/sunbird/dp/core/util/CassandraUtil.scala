@@ -3,9 +3,10 @@ package org.sunbird.dp.core.util
 import java.util
 
 import com.datastax.driver.core._
+import com.datastax.driver.core.exceptions.DriverException
 import com.datastax.driver.core.querybuilder.Insert
 
-class CassandraUtil(host: String,port: Int) {
+class CassandraUtil(host: String, port: Int) {
 
 
   val cluster = {
@@ -23,8 +24,14 @@ class CassandraUtil(host: String,port: Int) {
   }
 
   def find(query: String): util.List[Row] = {
-    val rs: ResultSet = session.execute(query)
-    rs.all
+    try {
+      val rs: ResultSet = session.execute(query)
+      rs.all
+    } catch {
+      case ex: DriverException =>
+        this.reconnect()
+        this.find(query)
+    }
   }
 
   def upsert(query: String): Boolean = {
@@ -38,6 +45,10 @@ class CassandraUtil(host: String,port: Int) {
     this.session.close()
     val cluster: Cluster = Cluster.builder.addContactPoint(host).withPort(port).build
     this.session = cluster.connect
+  }
+
+  def close(): Unit = {
+    this.session.close()
   }
 
 }
