@@ -22,23 +22,25 @@ import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 import org.sunbird.dp.core.util.CassandraUtil
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable
 
 case class Question(id: String, maxscore: Double, params: util.List[LinkedTreeMap[String, Any]], title: String, `type`: String, desc: String)
 
 case class QuestionData(resvalues: util.List[LinkedTreeMap[String, Any]], duration: Double, score: Double, item: Question)
 
+case class AssessEvent(ets: Double, edata: QuestionData)
+
 
 case class Aggregate(totalScore: Double, totalMaxScore: Double, grandTotal: String, questionsList: List[UDTValue])
 
 
-class AssessementAggregatorFunction(config: AssessmentAggregatorConfig,
-                                    @transient var cassandraUtil: CassandraUtil = null
-                                   )(implicit val mapTypeInfo: TypeInformation[Event])
+class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
+                                   @transient var cassandraUtil: CassandraUtil = null
+                                  )(implicit val mapTypeInfo: TypeInformation[Event])
   extends BaseProcessFunction[Event, Event](config) {
 
     val mapType: Type = new TypeToken[util.Map[String, AnyRef]]() {}.getType
-    private[this] val logger = LoggerFactory.getLogger(classOf[AssessementAggregatorFunction])
+    private[this] val logger = LoggerFactory.getLogger(classOf[AssessmentAggregatorFunction])
     var questionType: UserType = _
     private val df = new DecimalFormat("0.0#")
 
@@ -49,8 +51,6 @@ class AssessementAggregatorFunction(config: AssessmentAggregatorConfig,
         super.open(parameters)
 
         cassandraUtil = new CassandraUtil(config.dbHost, config.dbPort)
-
-
         questionType = cassandraUtil.getUDTType(config.dbKeyspace, config.dbudtType)
     }
 
@@ -58,10 +58,10 @@ class AssessementAggregatorFunction(config: AssessmentAggregatorConfig,
         super.close()
     }
 
-        def getListValues(values : util.List[LinkedTreeMap[String, Any]]) = {
+    def getListValues(values: util.List[LinkedTreeMap[String, Any]]): mutable.Buffer[util.Map[String, Any]] = {
         values.asScala.map { res =>
             res.asScala.map {
-                case (key, value) => key -> (if(null!= value && !value.isInstanceOf[String]) new Gson().toJson(value) else value)
+                case (key, value) => key -> (if (null != value && !value.isInstanceOf[String]) new Gson().toJson(value) else value)
             }.toMap.asJava
         }
     }
@@ -79,31 +79,34 @@ class AssessementAggregatorFunction(config: AssessmentAggregatorConfig,
             var totalScore = 0.0
             var totalMaxScore = 0.0
             val assessment = getAssessment(event)
+            metrics.incCounter(config.dbHitCount)
             val assessEvents = event.assessEvents.asScala
-            var itemList = new ListBuffer[String]()
-            val result = assessEvents.sortWith(_.get("ets").asInstanceOf[Double] > _.get("ets").asInstanceOf[Double]).map(event => {
-                val questionData = new Gson().fromJson(new Gson().toJson(event.get("edata")), classOf[QuestionData])
-                if(!itemList.contains(questionData.item.id)) {
-                    itemList += questionData.item.id
-                    totalScore = totalScore + questionData.score
-                    totalMaxScore = totalMaxScore + questionData.item.maxscore
-                    getQuestion(questionData, event.get("ets").asInstanceOf[Double].longValue())
-                }else{
 
-                        null
-                    }
-            }).filter(p => null!=p)
+            val sortAndFilteredEvents = assessEvents.map(event => {
+                AssessEvent(event.get("ets").asInstanceOf[Double], new Gson().fromJson(new Gson().toJson(event.get("edata")),
+                    classOf[QuestionData]))
+            }).sortWith(_.ets > _.ets).groupBy(_.edata.item.id).map(_._2.head)
+
+            val result = sortAndFilteredEvents.map(event => {
+                totalScore = totalScore + event.edata.score
+                totalMaxScore = totalMaxScore + event.edata.item.maxscore
+                getQuestion(event.edata, event.ets.longValue())
+            })
 
             val grandTotal = String.format("%s/%s", df.format(totalScore), df.format(totalMaxScore))
+
             if (null == assessment) {
-                saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList))
-                logger.info("Updated the assessment " + event.batchId)
+                saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList), new DateTime().getMillis)
+                metrics.incCounter(config.dbHitCount)
+                metrics.incCounter(config.batchSuccessCount)
             }
             else {
                 val last_attempted_on = assessment.getTimestamp("last_attempted_on").getTime
+                val created_on = assessment.getTimestamp("created_on").getTime
                 if (event.assessmentEts > last_attempted_on) {
-                    saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList))
-                    logger.info("Updated the  assessment " + event.batchId)
+                    saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList), created_on)
+                    metrics.incCounter(config.dbHitCount)
+                    metrics.incCounter(config.batchSuccessCount)
                 }
                 else {
                     metrics.incCounter(config.skippedEventCount)
@@ -111,9 +114,10 @@ class AssessementAggregatorFunction(config: AssessmentAggregatorConfig,
             }
         } catch {
             case ex: Exception =>
-
-                event.markFailed(ex.getMessage,"failed")
+                logger.info("Assessment Failed with exception :", ex)
+                event.markFailed(ex.getMessage)
                 context.output(config.failedEventsOutputTag, event)
+                metrics.incCounter(config.failedEventCount)
         }
     }
 
@@ -132,16 +136,19 @@ class AssessementAggregatorFunction(config: AssessmentAggregatorConfig,
     }
 
 
-    def saveAssessment(batchEvent: Event, aggregate: Aggregate): Unit = {
+    def saveAssessment(batchEvent: Event, aggregate: Aggregate, createdOn: Long): Unit = {
         val query = QueryBuilder.insertInto(config.dbKeyspace, config.dbTable)
           .value("course_id", batchEvent.courseId).value("batch_id", batchEvent.batchId).value("user_id", batchEvent.userId)
           .value("content_id", batchEvent.contentId).value("attempt_id", batchEvent.attemptId)
-          .value("updated_on", new DateTime().getMillis).value("created_on", new DateTime().getMillis)
+          .value("updated_on", new DateTime().getMillis).value("created_on", createdOn)
           .value("last_attempted_on", batchEvent.assessmentEts).value("total_score", aggregate.totalScore)
           .value("total_max_score", aggregate.totalMaxScore)
-          .value("question", aggregate.questionsList.asJava).value("grand_total", aggregate.grandTotal)
+          .value("question", aggregate.questionsList.asJava).value("grand_total", aggregate.grandTotal).toString
 
         cassandraUtil.upsert(query)
+        logger.info("Successfully Aggregated the batch event - batchid: "
+          + batchEvent.batchId + " ,userid: " + batchEvent.userId + " ,couserid: "
+          + batchEvent.courseId + " ,contentid: " + batchEvent.contentId, "attempid" + batchEvent.attemptId)
     }
 
     def getQuestion(questionData: QuestionData, assessTs: Long): UDTValue =

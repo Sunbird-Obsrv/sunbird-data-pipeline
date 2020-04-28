@@ -40,10 +40,9 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
     telemetry.read("events").get
   }
 
-  def markFailed(errorMsg: String, flagName: String): Unit = {
+  def markFailed(errorMsg: String): Unit = {
     telemetry.addFieldIfAbsent(EventsPath.FLAGS_PATH, new util.HashMap[String, Boolean])
-    telemetry.add(s"${EventsPath.FLAGS_PATH}.$flagName", false)
-    telemetry.addFieldIfAbsent("metadata", new util.HashMap[String, AnyRef])
+      telemetry.addFieldIfAbsent("metadata", new util.HashMap[String, AnyRef])
     telemetry.add("metadata.validation_error", errorMsg)
     telemetry.add("metadata.src", jobName)
 
