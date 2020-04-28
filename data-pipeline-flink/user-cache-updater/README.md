@@ -53,7 +53,7 @@ kubectl create -f sunbird-data-pipeline/kubernetes/taskmanager-deployment.yaml
 kubectl port-forward deployment/flink-jobmanager 8081:8081
 
 # Submit the de-duplication job to the Kubernetes single node cluster flink-cluster
-./bin/flink run -m localhost:8081 <data-pipeline-src-dir>/de-normalization/target/de-normalization-0.0.1.jar
+./bin/flink run -m localhost:8081 <data-pipeline-src-dir>/user-cache-updater/target/user-cache-updater-0.0.1.jar
 
 # Commands to delete the pods created in the cluster
 kubectl delete deployment/flink-jobmanager
