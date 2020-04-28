@@ -60,7 +60,7 @@ class AssessmentAggregatorStreamTask(config: AssessmentAggregatorConfig, kafkaCo
 
 // $COVERAGE-OFF$ Disabling scoverage as the below code can only be invoked within flink cluster
 object AssessmentAggregatorStreamTask {
-    {
+    def main(args: Array[String]): Unit = {
         val config = ConfigFactory.load("assessment-aggregator.conf").withFallback(ConfigFactory.systemEnvironment())
         val eConfig = new AssessmentAggregatorConfig(config)
         val kafkaUtil = new FlinkKafkaConnector(eConfig)

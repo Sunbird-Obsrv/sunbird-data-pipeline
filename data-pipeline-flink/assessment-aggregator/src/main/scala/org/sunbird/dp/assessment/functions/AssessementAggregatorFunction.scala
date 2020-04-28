@@ -101,10 +101,8 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
                 metrics.incCounter(config.batchSuccessCount)
             }
             else {
-                val last_attempted_on = assessment.getTimestamp("last_attempted_on").getTime
-                val created_on = assessment.getTimestamp("created_on").getTime
-                if (event.assessmentEts > last_attempted_on) {
-                    saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList), created_on)
+                if (event.assessmentEts > assessment.getTimestamp("last_attempted_on").getTime) {
+                    saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList), assessment.getTimestamp("created_on").getTime)
                     metrics.incCounter(config.dbHitCount)
                     metrics.incCounter(config.batchSuccessCount)
                 }

@@ -57,6 +57,7 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
         val dataLoader = new CQLDataLoader(session);
         dataLoader.load(new FileCQLDataSet(getClass.getResource("/test.cql").getPath, true, true));
         // Clear the metrics
+        testCassandraUtil(cassandraUtil)
         BaseMetricsReporter.gaugeMetrics.clear()
 
         flinkCluster.before()
@@ -95,7 +96,11 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
         assert(test_row2.getDouble("total_max_score") == 4.0)
     }
 
-
+    def testCassandraUtil(cassandraUtil: CassandraUtil): Unit ={
+        cassandraUtil.reconnect()
+        val response = cassandraUtil.find("SELECT * FROM sunbird_courses.assessment_aggregator;")
+        response should not be(null)
+    }
 }
 
 class AssessmentAggreagatorEventSource extends SourceFunction[Event] {
