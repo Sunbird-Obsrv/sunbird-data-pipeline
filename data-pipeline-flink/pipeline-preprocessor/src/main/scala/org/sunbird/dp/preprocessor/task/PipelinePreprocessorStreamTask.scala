@@ -84,7 +84,7 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
      * Routing LOG & ERROR Events to "event.log" & "events.error" topic respectively.
      */
     routerStream.getSideOutput(config.logEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaLogRouteTopic)).name(config.logRouterProducer)
-    routerStream.getSideOutput(config.logEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaErrorRouteTopic)).name(config.errorRouterProducer)
+    routerStream.getSideOutput(config.errorEventOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaErrorRouteTopic)).name(config.errorRouterProducer)
 
     /**
      * Pushing "AUDIT" event into both sink and audit topic
