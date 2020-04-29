@@ -15,9 +15,11 @@ class TelemetryRouterFunction(config: PipelinePreprocessorConfig)
 
   override def metricsList(): List[String] = {
     List(config.primaryRouterMetricCount,
-      config.secondaryRouterMetricCount,
+      config.logEventsRouterMetricsCount,
+      config.errorEventsRouterMetricsCount,
       config.auditEventRouterMetricCount,
-      config.shareEventsRouterMetricCount)
+      config.shareEventsRouterMetricCount
+    )
   }
 
   override def processElement(event: Event,
@@ -32,13 +34,14 @@ class TelemetryRouterFunction(config: PipelinePreprocessorConfig)
       case "SHARE" =>
         ctx.output(config.shareRouteEventsOutputTag, event)
         metrics.incCounter(metric = config.shareEventsRouterMetricCount)
-      case _ => if (config.secondaryRouteEids.contains(event.eid())) {
-        ctx.output(config.secondaryRouteEventsOutputTag, event)
-        metrics.incCounter(metric = config.secondaryRouterMetricCount)
-      } else {
-        ctx.output(config.primaryRouteEventsOutputTag, event)
+      case "LOG" =>
+        ctx.output(config.logEventsOutputTag, event)
+        metrics.incCounter(metric = config.logEventsRouterMetricsCount)
+      case "ERROR" =>
+        ctx.output(config.errorEventOutputTag, event)
+        metrics.incCounter(metric = config.errorEventsRouterMetricsCount)
+      case _ => ctx.output(config.primaryRouteEventsOutputTag, event)
         metrics.incCounter(metric = config.primaryRouterMetricCount)
-      }
     }
   }
 }
