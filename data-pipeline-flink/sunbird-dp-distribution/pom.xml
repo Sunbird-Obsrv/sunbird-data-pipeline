@@ -17,37 +17,49 @@
         <dependency>
             <groupId>org.sunbird.dp.jobs</groupId>
             <artifactId>telemetry-extractor</artifactId>
-            <version>0.0.1</version>
+            <version>1.0.0</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.sunbird.dp.jobs</groupId>
             <artifactId>pipeline-preprocessor</artifactId>
-            <version>0.0.1</version>
+            <version>1.0.0</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.sunbird.dp.jobs</groupId>
             <artifactId>de-normalization</artifactId>
-            <version>0.0.1</version>
+            <version>1.0.0</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.sunbird.dp.jobs</groupId>
             <artifactId>druid-events-validator</artifactId>
-            <version>0.0.1</version>
+            <version>1.0.0</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.sunbird.dp.jobs</groupId>
             <artifactId>device-profile-updater</artifactId>
-            <version>0.0.1</version>
+            <version>1.0.0</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.sunbird.dp.jobs</groupId>
             <artifactId>user-cache-updater</artifactId>
-            <version>0.0.1</version>
+            <version>1.0.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.sunbird.dp.jobs</groupId>
+            <artifactId>content-cache-updater</artifactId>
+            <version>1.0.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.sunbird.dp.jobs</groupId>
+            <artifactId>assessment-aggregator</artifactId>
+            <version>1.0.0</version>
             <type>jar</type>
         </dependency>
     </dependencies>
