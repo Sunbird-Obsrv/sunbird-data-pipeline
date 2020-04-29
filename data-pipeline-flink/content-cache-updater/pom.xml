@@ -16,7 +16,7 @@
 
     <groupId>org.sunbird.dp.jobs</groupId>
     <artifactId>content-cache-updater</artifactId>
-    <version>0.0.1</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>ContentCacheUpdater</name>
     <description>
@@ -91,12 +91,12 @@
         <dependency>
             <groupId>org.sunbird.dp</groupId>
             <artifactId>dp-core</artifactId>
-            <version>0.0.1</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.sunbird.dp</groupId>
             <artifactId>dp-core</artifactId>
-            <version>0.0.1</version>
+            <version>1.0.0</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>

@@ -1,6 +1,6 @@
 package org.sunbird.dp.preprocessor.util
 
-import java.io.IOException
+import java.io.{File, IOException}
 import java.nio.file.{FileSystems, Files, Paths}
 
 import com.github.fge.jackson.JsonLoader
@@ -15,6 +15,7 @@ import org.sunbird.dp.preprocessor.task.PipelinePreprocessorConfig
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 import scala.util.Try
 
 class SchemaValidator(config: PipelinePreprocessorConfig) extends java.io.Serializable {
@@ -52,11 +53,22 @@ class SchemaValidator(config: PipelinePreprocessorConfig) extends java.io.Serial
 
   logger.info("Schema initialization completed for telemetry objects...")
 
-  def loadSchemaFiles(schemaDirPath: java.nio.file.Path): List[String] = {
-    val schemaFiles = Try(Files.newDirectoryStream(schemaDirPath)).map { stream =>
-      stream.iterator().asScala.toList.map(path => path.getFileName.toString)
-    }.getOrElse(List[String]())
-    schemaFiles
+  def loadSchemaFiles(schemaDirPath: java.nio.file.Path): ListBuffer[String] = {
+    var eventSchemaList = new ListBuffer[String]() += "3.0/envelope.json"
+    Try(Files.newDirectoryStream(schemaDirPath)).map { stream =>
+      stream.iterator().asScala.toList.map(path => {
+        val file = new File(path.toUri)
+        if (file.isDirectory()) {
+            file.listFiles().map(subDirFile => {
+            eventSchemaList += s"${path.getFileName.toString}/${subDirFile.getName}"
+          })
+        } else {
+          eventSchemaList += path.getFileName.toString
+        }
+      })
+    }.getOrElse(eventSchemaList)
+
+    eventSchemaList
   }
 
   def schemaFileExists(event: Event): Boolean = schemaJsonMap.contains(event.schemaName)

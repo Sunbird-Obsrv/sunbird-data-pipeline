@@ -49,7 +49,8 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
 
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaPrimaryRouteTopic)).thenReturn(new TelemetryPrimaryEventSink)
-    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaSecondaryRouteTopic)).thenReturn(new TelemetrySecondaryEventSink)
+    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaLogRouteTopic)).thenReturn(new TelemetryLogEventSink)
+    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaErrorRouteTopic)).thenReturn(new TelemetryErrorEventSink)
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaFailedTopic)).thenReturn(new TelemetryFailedEventsSink)
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaAuditRouteTopic)).thenReturn(new TelemetryAuditEventSink)
     when(mockKafkaUtil.kafkaStringSink(ppConfig.kafkaPrimaryRouteTopic)).thenReturn(new ShareItemEventSink)
@@ -69,27 +70,28 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     task.process()
 
     ShareItemEventSink.values.size() should be(3)
-    TelemetryPrimaryEventSink.values.size() should be(5)
-    TelemetryFailedEventsSink.values.size() should be(1)
+    TelemetryPrimaryEventSink.values.size() should be(6)
+    TelemetryFailedEventsSink.values.size() should be(2)
     DupEventsSink.values.size() should be(1)
     TelemetryAuditEventSink.values.size() should be(1)
-    TelemetrySecondaryEventSink.values.size() should be(1)
+    TelemetryLogEventSink.values.size() should be(1)
     DupEventsSink.values.get(0).getFlags.get(ppConfig.DE_DUP_FLAG_NAME).booleanValue() should be(true)
     TelemetryPrimaryEventSink.values.get(0).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(true)
     TelemetryPrimaryEventSink.values.get(1).getFlags.get(ppConfig.SHARE_EVENTS_FLATTEN_FLAG_NAME).booleanValue() should be(true)
     TelemetryPrimaryEventSink.values.get(1).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(true)
     TelemetryFailedEventsSink.values.get(0).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(false)
 
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSuccessMetricsCount}").getValue() should be (7)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationFailureMetricsCount}").getValue() should be (1)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSkipMetricsCount}").getValue() should be (0)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.primaryRouterMetricCount}").getValue() should be (3)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.secondaryRouterMetricCount}").getValue() should be (1)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSuccessMetricsCount}").getValue() should be (8)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationFailureMetricsCount}").getValue() should be (2)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSkipMetricsCount}").getValue() should be (2)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.primaryRouterMetricCount}").getValue() should be (4)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.logEventsRouterMetricsCount}").getValue() should be (1)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.errorEventsRouterMetricsCount}").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.auditEventRouterMetricCount}").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.shareItemEventsMetircsCount}").getValue() should be (3)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.shareEventsRouterMetricCount}").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.duplicationSkippedEventMetricsCount}").getValue() should be (4)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.unique-event-count").getValue() should be (2)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.unique-event-count").getValue() should be (4)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.duplicate-event-count").getValue() should be (1)
   }
 }
@@ -107,6 +109,9 @@ class PipeLineProcessorEventSource extends SourceFunction[Event] {
     val event7 = gson.fromJson(EventFixtures.TELEMETRY_LOG_EVENT, new util.LinkedHashMap[String, Any]().getClass)
     val event8 = gson.fromJson(EventFixtures.DIALCODE_EVENT, new util.LinkedHashMap[String, Any]().getClass)
     val event9 = gson.fromJson(EventFixtures.SEARCH_EVENT, new util.LinkedHashMap[String, Any]().getClass)
+    val event10 = gson.fromJson(EventFixtures.DIFFERENT_VERSION_EVENT, new util.LinkedHashMap[String, Any]().getClass)
+    val event11 = gson.fromJson(EventFixtures.EVENT_WITHOUT_EID, new util.LinkedHashMap[String, Any]().getClass)
+    val event12 = gson.fromJson(EventFixtures.VALID_ERROR_EVENT, new util.LinkedHashMap[String, Any]().getClass)
     ctx.collect(new Event(event1))
     ctx.collect(new Event(event2))
     ctx.collect(new Event(event3))
@@ -116,6 +121,9 @@ class PipeLineProcessorEventSource extends SourceFunction[Event] {
     ctx.collect(new Event(event7))
     ctx.collect(new Event(event8))
     ctx.collect(new Event(event9))
+    ctx.collect(new Event(event10))
+    ctx.collect(new Event(event11))
+    ctx.collect(new Event(event12))
   }
 
   override def cancel() = {}
@@ -163,16 +171,29 @@ object TelemetryPrimaryEventSink {
 }
 
 
-class TelemetrySecondaryEventSink extends SinkFunction[Event] {
+class TelemetryLogEventSink extends SinkFunction[Event] {
 
   override def invoke(value: Event): Unit = {
     synchronized {
-      TelemetrySecondaryEventSink.values.add(value)
+      TelemetryLogEventSink.values.add(value)
     }
   }
 }
 
-object TelemetrySecondaryEventSink {
+object TelemetryLogEventSink {
+  val values: util.List[Event] = new util.ArrayList()
+}
+
+class TelemetryErrorEventSink extends SinkFunction[Event] {
+
+  override def invoke(value: Event): Unit = {
+    synchronized {
+      TelemetryErrorEventSink.values.add(value)
+    }
+  }
+}
+
+object TelemetryErrorEventSink {
   val values: util.List[Event] = new util.ArrayList()
 }
 

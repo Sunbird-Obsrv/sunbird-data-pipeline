@@ -16,7 +16,7 @@ class DruidValidatorFunction(config: DruidValidatorConfig)(implicit val eventTyp
   lazy val schemaValidator: SchemaValidator = new SchemaValidator(config)
 
   override def metricsList(): List[String] = {
-    List(config.processedMetricsCount, config.validationSkipMetricsCount, config.validationSuccessMetricsCount,
+    List(config.processedMetricsCount, config.validationSuccessMetricsCount,
       config.validationFailureMetricsCount)
   }
 
@@ -25,23 +25,16 @@ class DruidValidatorFunction(config: DruidValidatorConfig)(implicit val eventTyp
                               metrics: Metrics): Unit = {
 
     metrics.incCounter(config.processedMetricsCount)
-    if(event.isLogEvent) {
-      event.markSkippedValidation()
-      metrics.incCounter(config.validationSkipMetricsCount)
+    val validationReport = schemaValidator.validate(event)
+    if (validationReport.isSuccess) {
+      event.markValidationSuccess()
+      metrics.incCounter(config.validationSuccessMetricsCount)
       ctx.output(config.validEventOutputTag, event)
-    }
-    else {
-      val validationReport = schemaValidator.validate(event)
-      if (validationReport.isSuccess) {
-        event.markValidationSuccess()
-        metrics.incCounter(config.validationSuccessMetricsCount)
-        ctx.output(config.validEventOutputTag, event)
-      } else {
-        val failedErrorMsg = schemaValidator.getInvalidFieldName(validationReport.toString)
-        event.markValidationFailure(failedErrorMsg)
-        metrics.incCounter(config.validationFailureMetricsCount)
-        ctx.output(config.invalidEventOutputTag, event)
-      }
+    } else {
+      val failedErrorMsg = schemaValidator.getInvalidFieldName(validationReport.toString)
+      event.markValidationFailure(failedErrorMsg)
+      metrics.incCounter(config.validationFailureMetricsCount)
+      ctx.output(config.invalidEventOutputTag, event)
     }
   }
 }

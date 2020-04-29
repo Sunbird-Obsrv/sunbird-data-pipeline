@@ -80,28 +80,6 @@ object EventFixture {
       |"objecttype":"Content","mediatype":"content","status":"Live"}}
     """.stripMargin
 
-  val VALID_LOG_EVENT: String =
-    """
-      |{"eid":"LOG","ets":1561717784892,"ver":"3.0","mid":"LP.1561717784892.1345e38d-f799-403f-93d9-1db71011627f",
-      |"actor":{"id":"org.ekstep.learning.platform","type":"System"},"context":{"channel":"505c7c48ac6dc1edc9b08f21db5a571d",
-      |"pdata":{"id":"sunbird.app","pid":"learning-service","ver":"1.0"},"env":"content",
-      |"did":"beea4401850780ee685120597a6428ab14ff47a2"},"edata":{"level":"INFO","type":"api_access","message":"",
-      |"params":[{"duration":5},{"protocol":"HTTP/1.1"},{"size":10350},{"method":"GET"},{"rid":"ekstep.content.find"},
-      |{"uip":"11.4.0.37"},{"url":"/learning-service/content/v3/read/do_31274885743485747215761"},{"status":200}]},
-      |"syncts":1561717784892,"flags":{"tv_processed":true,"dd_processed":true},"type":"events",
-      |"@timestamp":"2019-06-28T10:29:44.892Z"}
-    """.stripMargin
-
-  val VALID_ERROR_EVENT: String =
-    """
-      |{"eid":"ERROR","ets":1551344699388,"ver":"3.0","mid":"LP.1553040097857.bf0e4e15-014e-4a22-ba00-e02ff3c38784",
-      |"actor":{"id":"e85bcfb5-a8c2-4e65-87a2-0ebb43b45f01","type":"System"},"context":{"channel":"01235953109336064029450",
-      |"pdata":{"id":"prod.sunbird.learning.platform","pid":"learning-service","ver":"1.0"},"env":"framework"},
-      |"edata":{"err":"ERR_DATA_NOT_FOUND","stacktrace":"ERR_DATA_NOT_FOUND: Data not found with id : nullntat",
-      |"errtype":"system"},"flags":{"tv_processed":true,"dd_processed":true},"type":"events","syncts":1.553040098435E12,
-      |"@timestamp":"2019-03-20T00:01:38.435Z"}
-    """.stripMargin
-
   val VALID_SERACH_EVENT: String =
     """
       |{"eid":"SEARCH","ets":1577826509166,"ver":"3.0","mid":"LP.1577826509166.c5d13bb7-43c6-4174-9bbe-b06aed6758f2",

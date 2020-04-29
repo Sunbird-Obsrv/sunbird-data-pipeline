@@ -25,14 +25,12 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val kafkaInputTopic: String = config.getString("kafka.input.topic")
 
   val kafkaPrimaryRouteTopic: String = config.getString("kafka.output.primary.route.topic")
-  val kafkaSecondaryRouteTopic: String = config.getString("kafka.output.secondary.route.topic")
-
+  val kafkaLogRouteTopic: String = config.getString("kafka.output.log.route.topic")
+  val kafkaErrorRouteTopic: String = config.getString("kafka.output.error.route.topic")
   val kafkaAuditRouteTopic: String = config.getString("kafka.output.audit.route.topic")
 
   val kafkaFailedTopic: String = config.getString("kafka.output.failed.topic")
   val kafkaDuplicateTopic: String = config.getString("kafka.output.duplicate.topic")
-
-  val secondaryRouteEids: List[String] = config.getStringList("router.secondary.routes.eid").asScala.toList
 
   val defaultChannel: String = config.getString("default.channel")
 
@@ -45,8 +43,11 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
 
   // Router stream out put tags
   val primaryRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("primary-route-events")
-  val secondaryRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("secondary-route-events")
+
+  // Audit, Log & Error Events output tag
   val auditRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("audit-route-events")
+  val logEventsOutputTag: OutputTag[Event] = OutputTag[Event]("log-route-events")
+  val errorEventOutputTag: OutputTag[Event] = OutputTag[Event]("error-route-events")
 
   // Share events out put tags
   val shareRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("share-route-events")
@@ -63,9 +64,10 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
 
   // Router job metrics
   val primaryRouterMetricCount = "primary-route-success-count"
-  val secondaryRouterMetricCount = "secondary-route-success-count"
   val auditEventRouterMetricCount = "audit-route-success-count"
   val shareEventsRouterMetricCount = "share-route-success-count"
+  val logEventsRouterMetricsCount = "log-route-success-count"
+  val errorEventsRouterMetricsCount = "error-route-success-count"
 
 
   // Validation job metrics
@@ -75,12 +77,14 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val duplicationSkippedEventMetricsCount = "duplicate-skipped-event-count"
   val uniqueEventsMetricsCount = "unique-event-count"
   val validationSkipMetricsCount = "validation-skipped-event-count"
+
   // ShareEventsFlatten count
   val shareItemEventsMetircsCount = "share-item-event-success-count"
 
   // Producers
   val primaryRouterProducer = "preprocessor-primary-route"
-  val secondaryRouterProducer = "preprocessor-secondary-route"
+  val logRouterProducer = "preprocessor-log-route"
+  val errorRouterProducer = "preprocessor-error-route"
   val auditRouterProducer = "preprocessor-audit-route"
   val invalidEventProducer = "preprocessor-invalid-events"
   val duplicateEventProducer = "preprocessor-duplicate-events"
