@@ -75,7 +75,7 @@ class TestSchemaValidator extends FlatSpec with Matchers {
   it should "get the default envelope.json shcema when eid is not present and it should get the valid kafka id" in {
     val gson = new Gson()
     val event = new Event(gson.fromJson(EventFixtures.EVENT_WITHOUT_EID, new util.LinkedHashMap[String, Any]().getClass))
-    event.schemaName should be ("envelope.json")
+    event.schemaName should be ("3.0/envelope.json")
     event.kafkaKey() should be("1b17c32bad61eb9e33df281eecc727590d739b2b")
   }
 
