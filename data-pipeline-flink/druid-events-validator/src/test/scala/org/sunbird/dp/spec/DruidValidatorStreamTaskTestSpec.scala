@@ -13,11 +13,11 @@ import org.apache.flink.streaming.api.functions.source.SourceFunction.SourceCont
 import org.apache.flink.test.util.MiniClusterWithClientResource
 import org.mockito.Mockito
 import org.mockito.Mockito.when
-import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
-import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.core.job.FlinkKafkaConnector
+import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.validator.domain.Event
 import org.sunbird.dp.validator.task.{DruidValidatorConfig, DruidValidatorStreamTask}
+import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import redis.embedded.RedisServer
 
 
@@ -49,8 +49,6 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
         when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
         when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaTelemetryRouteTopic)).thenReturn(new TelemetryEventsSink)
         when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaSummaryRouteTopic)).thenReturn(new SummaryEventsSink)
-        when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaLogRouteTopic)).thenReturn(new LogEventsSink)
-        when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaErrorRouteTopic)).thenReturn(new ErrorEventsSink)
         when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
 
         flinkCluster.before()
@@ -70,31 +68,22 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
         SummaryEventsSink.values.size() should be (1)
         FailedEventsSink.values.size() should be (1)
         DupEventsSink.values.size() should be (1)
-        LogEventsSink.values.size() should be (1)
-        ErrorEventsSink.values.size() should be (1)
 
         DupEventsSink.values.get(0).getFlags.get("dv_processed").booleanValue() should be(true)
         DupEventsSink.values.get(0).getFlags.get("dv_duplicate").booleanValue() should be(true)
 
         TelemetryEventsSink.values.get(0).getFlags.get("dv_processed").booleanValue() should be(true)
 
-        LogEventsSink.values.get(0).getFlags.get("dv_validation_skipped").booleanValue() should be(true)
-        LogEventsSink.values.get(0).getFlags.get("dv_dedup_skipped").booleanValue() should be(true)
-
         FailedEventsSink.values.get(0).getFlags.get("dv_processed").booleanValue() should be(false)
         FailedEventsSink.values.get(0).getFlags.get("dv_validation_failed").booleanValue() should be(true)
 
-        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.processedMetricsCount}").getValue() should be (7)
-        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationSuccessMetricsCount}").getValue() should be (5)
-        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationSkipMetricsCount}").getValue() should be (1)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.processedMetricsCount}").getValue() should be (5)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationSuccessMetricsCount}").getValue() should be (4)
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationFailureMetricsCount}").getValue() should be (1)
 
-        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.skipDedupMetricCount}").getValue() should be (2)
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.duplicate-event-count").getValue() should be (1)
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.unique-event-count").getValue() should be (3)
 
-        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.logRouterMetricCount}").getValue() should be (1)
-        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.errorRouterMetricCount}").getValue() should be (1)
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.summaryRouterMetricCount}").getValue() should be (1)
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.telemetryRouterMetricCount}").getValue() should be (3)
 
@@ -109,16 +98,12 @@ class DruidValidatorEventSource  extends SourceFunction[Event] {
         val event1 = gson.fromJson(EventFixture.VALID_DENORM_TELEMETRY_EVENT, new util.LinkedHashMap[String, Any]().getClass)
         val event2 = gson.fromJson(EventFixture.INVALID_DENORM_TELEMETRY_EVENT, new util.LinkedHashMap[String, Any]().getClass)
         val event3 = gson.fromJson(EventFixture.VALID_DENORM_SUMMARY_EVENT, new util.LinkedHashMap[String, Any]().getClass)
-        val event4 = gson.fromJson(EventFixture.VALID_LOG_EVENT, new util.LinkedHashMap[String, Any]().getClass)
-        val event5 = gson.fromJson(EventFixture.VALID_ERROR_EVENT, new util.LinkedHashMap[String, Any]().getClass)
-        val event6 = gson.fromJson(EventFixture.VALID_SERACH_EVENT, new util.LinkedHashMap[String, Any]().getClass)
+        val event4 = gson.fromJson(EventFixture.VALID_SERACH_EVENT, new util.LinkedHashMap[String, Any]().getClass)
         ctx.collect(new Event(event1))
         ctx.collect(new Event(event2))
         ctx.collect(new Event(event3))
         ctx.collect(new Event(event4))
-        ctx.collect(new Event(event5))
         ctx.collect(new Event(event1))
-        ctx.collect(new Event(event6))
     }
 
     override def cancel() = {
@@ -163,32 +148,6 @@ class FailedEventsSink extends SinkFunction[Event] {
 }
 
 object FailedEventsSink {
-    val values: util.List[Event] = new util.ArrayList()
-}
-
-class LogEventsSink extends SinkFunction[Event] {
-
-    override def invoke(value: Event): Unit = {
-        synchronized {
-            LogEventsSink.values.add(value)
-        }
-    }
-}
-
-object LogEventsSink {
-    val values: util.List[Event] = new util.ArrayList()
-}
-
-class ErrorEventsSink extends SinkFunction[Event] {
-
-    override def invoke(value:Event): Unit = {
-        synchronized {
-            ErrorEventsSink.values.add(value)
-        }
-    }
-}
-
-object ErrorEventsSink {
     val values: util.List[Event] = new util.ArrayList()
 }
 

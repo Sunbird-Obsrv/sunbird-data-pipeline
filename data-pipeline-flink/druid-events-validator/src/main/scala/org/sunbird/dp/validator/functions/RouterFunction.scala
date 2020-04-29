@@ -13,53 +13,38 @@ class RouterFunction(config: DruidValidatorConfig, @transient var dedupEngine: D
                     (implicit val eventTypeInfo: TypeInformation[Event])
   extends BaseProcessFunction[Event, Event](config) {
 
-    private[this] val logger = LoggerFactory.getLogger(classOf[RouterFunction])
+  private[this] val logger = LoggerFactory.getLogger(classOf[RouterFunction])
 
-    override def metricsList(): List[String] = {
-        List(config.skipDedupMetricCount, config.logRouterMetricCount, config.errorRouterMetricCount,
-            config.telemetryRouterMetricCount, config.summaryRouterMetricCount) ::: deduplicationMetrics
+  override def metricsList(): List[String] = {
+    List(config.telemetryRouterMetricCount, config.summaryRouterMetricCount) ::: deduplicationMetrics
+  }
+
+  override def open(parameters: Configuration): Unit = {
+    super.open(parameters)
+    if (dedupEngine == null) {
+      val redisConnect = new RedisConnect(config)
+      dedupEngine = new DedupEngine(redisConnect, config.dedupStore, config.cacheExpirySeconds)
     }
+  }
 
-    override def open(parameters: Configuration): Unit = {
-        super.open(parameters)
-        if (dedupEngine == null) {
-            val redisConnect = new RedisConnect(config)
-            dedupEngine = new DedupEngine(redisConnect, config.dedupStore, config.cacheExpirySeconds)
-        }
+  override def close(): Unit = {
+    super.close()
+    dedupEngine.closeConnectionPool()
+  }
+
+  override def processElement(event: Event,
+                              ctx: ProcessFunction[Event, Event]#Context,
+                              metrics: Metrics): Unit = {
+
+    val outputTag = if (event.isSummaryEvent) {
+      metrics.incCounter(config.summaryRouterMetricCount)
+      config.summaryRouterOutputTag
+    } else {
+      metrics.incCounter(config.telemetryRouterMetricCount)
+      config.telemetryRouterOutputTag
     }
+    deDup[Event](event.mid(), event, ctx,
+      outputTag, config.duplicateEventOutputTag, flagName = "dv_duplicate")(dedupEngine, metrics)
 
-    override def close(): Unit = {
-        super.close()
-        dedupEngine.closeConnectionPool()
-    }
-
-    override def processElement(event: Event,
-                                ctx: ProcessFunction[Event, Event]#Context,
-                                metrics: Metrics): Unit = {
-
-        if (event.isLogEvent) {
-            event.markSkippedDedup()
-            metrics.incCounter(config.skipDedupMetricCount)
-            metrics.incCounter(config.logRouterMetricCount)
-            ctx.output(config.logRouterOutputTag, event)
-
-        } else if (event.isErrorEvent) {
-            event.markSkippedDedup()
-            metrics.incCounter(config.skipDedupMetricCount)
-            metrics.incCounter(config.errorRouterMetricCount)
-            ctx.output(config.errorRouterOutputTag, event)
-
-        } else {
-            val outputTag = if (event.isSummaryEvent) {
-                metrics.incCounter(config.summaryRouterMetricCount)
-                config.summaryRouterOutputTag
-            } else {
-                metrics.incCounter(config.telemetryRouterMetricCount)
-                config.telemetryRouterOutputTag
-            }
-            deDup[Event](event.mid(), event, ctx,
-                outputTag, config.duplicateEventOutputTag, flagName = "dv_duplicate")(dedupEngine, metrics)
-        }
-
-    }
+  }
 }
