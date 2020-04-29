@@ -37,6 +37,8 @@ class DeviceDenormFunction(config: DenormalizationConfig)(implicit val mapTypeIn
 
     if (event.isOlder(config.ignorePeriodInMonths)) { // Skip events older than configured value (default: 3 months)
       metrics.incCounter(config.eventsExpired)
+      event.setFlag("device_denorm", value = false)
+      context.output(config.failedEventTag, event)
     } else {
       event.compareAndAlterEts() // Reset ets to today's date if we get future value
       val did = event.did()

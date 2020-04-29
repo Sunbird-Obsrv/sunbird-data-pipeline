@@ -48,6 +48,7 @@ class DenormalizationConfig(override val config: Config) extends BaseJobConfig(c
   val WITH_CONTENT_EVENTS = "with_content_events"
   val WITH_DIALCODE_EVENTS = "with_dialcode_events"
   val DENORM_EVENTS = "denorm_events"
+  val FAILED_EVENTS = "failed_events"
 
   val withLocationEventsTag: OutputTag[Event] = OutputTag[Event](WITH_LOCATION_EVENTS)
   val withDeviceEventsTag: OutputTag[Event] = OutputTag[Event](WITH_DEVICE_EVENTS)
@@ -55,6 +56,7 @@ class DenormalizationConfig(override val config: Config) extends BaseJobConfig(c
   val withContentEventsTag: OutputTag[Event] = OutputTag[Event](WITH_CONTENT_EVENTS)
   val withDialCodeEventsTag: OutputTag[Event] = OutputTag[Event](WITH_DIALCODE_EVENTS)
   val denormEventsTag: OutputTag[Event] = OutputTag[Event](DENORM_EVENTS)
+  val failedEventTag: OutputTag[Event] = OutputTag[Event](FAILED_EVENTS)
 
   // Device Denorm Metrics
   val deviceTotal = "device-total"

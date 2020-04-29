@@ -62,7 +62,7 @@ class DenormalizationStreamTask(config: DenormalizationConfig, kafkaConnector: F
     val locDenormStream = contentDenormStream.getSideOutput(config.withContentEventsTag).process(new LocationDenormFunction(config))
 
     locDenormStream.getSideOutput(config.withLocationEventsTag).addSink(kafkaConnector.kafkaEventSink(config.denormSuccessTopic)).name(config.DENORM_EVENTS_PRODUCER)
-
+    deviceDenormStream.getSideOutput(config.failedEventTag).addSink(kafkaConnector.kafkaEventSink(config.failedTopic)).name(config.DENORM_EVENTS_PRODUCER)
     env.execute(config.jobName)
   }
 

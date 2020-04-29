@@ -89,6 +89,7 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
 
     when(mockKafkaUtil.kafkaEventSource[Event](denormConfig.inputTopic)).thenReturn(new InputSource)
     when(mockKafkaUtil.kafkaEventSink[Event](denormConfig.denormSuccessTopic)).thenReturn(new DenormEventsSink)
+    when(mockKafkaUtil.kafkaEventSink[Event](denormConfig.failedTopic)).thenReturn(new DenormFailedEventSink)
 
     val task = new DenormalizationStreamTask(denormConfig, mockKafkaUtil)
     task.process()
@@ -140,6 +141,11 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     event = DenormEventsSink.values("mid7")
     event = DenormEventsSink.values("mid8")
     event = DenormEventsSink.values("mid9")
+
+
+    DenormFailedEventSink.values .size should be(1)
+    val failedEvent = DenormFailedEventSink.values("mid10")
+    failedEvent.flags().get("device_denorm").asInstanceOf[Boolean] should be (false)
 
     // Location Denorm Metrics Assertion
     BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.locCacheHit}").getValue() should be (7)
@@ -214,5 +220,18 @@ class DenormEventsSink extends SinkFunction[Event] {
 }
 
 object DenormEventsSink {
+  val values: scala.collection.mutable.Map[String, Event] = scala.collection.mutable.Map[String, Event]()
+}
+
+class DenormFailedEventSink extends SinkFunction[Event] {
+
+  override def invoke(value: Event): Unit = {
+    synchronized {
+      DenormFailedEventSink.values.put(value.mid(), value)
+    }
+  }
+}
+
+object DenormFailedEventSink {
   val values: scala.collection.mutable.Map[String, Event] = scala.collection.mutable.Map[String, Event]()
 }
