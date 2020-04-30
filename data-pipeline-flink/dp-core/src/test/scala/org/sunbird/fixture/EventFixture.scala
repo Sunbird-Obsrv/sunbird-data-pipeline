@@ -80,7 +80,7 @@ object EventFixture {
       |                      checkpointing.dir = "flink-jobs"
       |                    }
       |                  }
-      |                  base.url = "hdfs://test.com"
+      |                  base.url = "hdfs://testpath"
       |                }
       |              }
       |""".stripMargin
