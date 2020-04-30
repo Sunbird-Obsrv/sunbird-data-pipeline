@@ -1862,17 +1862,13 @@
     },
     "filters": [
       {
-        "name": "eid",
-        "operator": "NIN",
-        "value": [
-          "JOB_START",
-          "JOB_END"
-        ]
-      }
+        "name": "actor",
+        "operator": "ISNOTNULL"
     ],
     "model": "org.ekstep.analytics.model.WorkflowSummary",
     "modelParams": {
-      "apiVersion": "v2"
+      "apiVersion": "v2",
+      "parallelization": 32
     },
     "output": [
       {
@@ -1890,7 +1886,7 @@
         }
       }
     ],
-    "parallelization": 8,
+    "parallelization": 32,
     "appName": "Workflow Summarizer",
     "deviceMapping": true
   },

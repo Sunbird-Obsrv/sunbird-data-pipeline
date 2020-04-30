@@ -3,7 +3,7 @@ analytics_group: analytics
 telemetry_converter_ver: 0.0.8
 
 bucket: "dev-data-store"
-kafka_broker: "{{groups['processing-cluster-kafka'][0]}}:9092"
+kafka_broker_host: "{{groups['processing-cluster-kafka'][0]}}:9092"
 brokerlist: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
 zookeeper: "{{groups['processing-cluster-kafka']|join(':2181,')}}:2181"
 dp_username: dp-monitor
@@ -24,7 +24,7 @@ druid_rollup_broker_host: "{{groups['broker'][0]}}"
 hierarchySearchServiceUrl: "{{ proto }}://{{ domain_name }}/api/course"
 hierarchySearchServicEndpoint: /v1/hierarchy/
 
-analytics_job_list: '"wfs", "ds", "dpu", "content-rating-updater", "course-enrollment-report", "etb-metrics", "audit-metrics-report", "monitor-job-summ"'
+analytics_job_list: '"wfs", "ds", "dpu", "content-rating-updater", "audit-metrics-report", "monitor-job-summ"'
 analytics_jobs_count: 8
 
 cassandra_keyspace_prefix: '{{ env }}_'
