@@ -115,10 +115,10 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     val key: Array[Byte] = null
     val value: Array[Byte] = Array[Byte](1)
     val stringDeSerialization = new StringDeserializationSchema()
-    val stringSerialization = new StringSerializationSchema(topic)
+    val stringSerialization = new StringSerializationSchema(topic, Some("kafka-key"))
     val eventSerialization = new EventSerializationSchema[Events](topic)
     val eventDeSerialization = new EventDeserializationSchema[Events]
-    val mapSerialization: MapSerializationSchema = new MapSerializationSchema(topic)
+    val mapSerialization: MapSerializationSchema = new MapSerializationSchema(topic, Some("kafka-key"))
     val mapDeSerialization = new MapDeserializationSchema()
     import org.apache.kafka.clients.consumer.ConsumerRecord
     val cRecord: ConsumerRecord[Array[Byte], Array[Byte]] = new ConsumerRecord[Array[Byte], Array[Byte]](topic, partition, offset, key, value)
