@@ -8,21 +8,15 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.scala.OutputTag
-import org.mockito.Mock
 import org.scalatest.Matchers
-import org.mockito.ArgumentMatcher
-import org.mockito.invocation.InvocationOnMock
-
 import org.scalatestplus.mockito.MockitoSugar
 import org.sunbird.dp.contentupdater.core.util.RestUtil
-import org.sunbird.dp.core.cache
 import org.sunbird.dp.core.cache.{DataCache, DedupEngine, RedisConnect}
 import org.sunbird.dp.core.domain.Events
 import org.sunbird.dp.core.job.{BaseDeduplication, BaseJobConfig}
 import org.sunbird.dp.core.serde._
 import org.sunbird.dp.core.util.FlinkUtil
 import org.sunbird.fixture.EventFixture
-import redis.clients.jedis.Jedis
 import redis.clients.jedis.exceptions.{JedisConnectionException, JedisException}
 
 class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {

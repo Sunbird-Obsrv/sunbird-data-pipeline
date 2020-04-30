@@ -2,7 +2,6 @@ package org.sunbird.spec
 
 import com.typesafe.config.{Config, ConfigFactory}
 import org.junit.Assert.{assertEquals, assertNotNull}
-import org.postgresql.util.PSQLException
 import org.scalatest.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import org.sunbird.dp.core.util.{PostgresConnect, PostgresConnectionConfig}
