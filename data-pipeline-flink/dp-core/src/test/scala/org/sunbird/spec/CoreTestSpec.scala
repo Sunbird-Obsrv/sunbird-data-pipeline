@@ -47,20 +47,24 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     reConnectionStatus.isConnected should be(false)
   }
 
-  "DedupEngine functionality" should "be able to identify if the key is unique or duplicate" in {
+  "DedupEngine functionality" should "be able to identify if the key is unique or duplicate & it should able throw jedis excption for invalid action" in  intercept[JedisException] {
     val redisConnection = new RedisConnect(bsConfig)
     val dedupEngine = new DedupEngine(redisConnection, 2, 200)
     dedupEngine.getRedisConnection should not be (null)
     dedupEngine.isUniqueEvent("key-1") should be(true)
     dedupEngine.storeChecksum("key-1")
     dedupEngine.isUniqueEvent("key-1") should be(false)
+    dedupEngine.isUniqueEvent(null)
   }
 
-  it should "be able to reconnect when a jedis exception is thrown" in intercept[JedisException] {
+  it should "be able to reconnect when a jedis exception for invalid action is thrown" in intercept[JedisException] {
     val redisConnection = new RedisConnect(bsConfig)
     redisConnection.closePool()
     val dedupEngine = new DedupEngine(redisConnection, 0, 4309535)
     dedupEngine.isUniqueEvent("event-id-3") should be(true)
+    dedupEngine.closeConnectionPool()
+    dedupEngine.storeChecksum(null)
+    dedupEngine.getRedisConnection should not be(null)
   }
 
   "DataCache hgetAllWithRetry function" should "be able to retrieve the map data from Redis" in {
