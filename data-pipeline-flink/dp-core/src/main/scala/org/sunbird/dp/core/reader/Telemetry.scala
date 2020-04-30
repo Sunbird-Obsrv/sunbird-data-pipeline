@@ -56,7 +56,6 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
         }) {
           var result: util.Map[String, Any] = null
           if (parent.isInstanceOf[util.Map[_, _]]) result = new ParentMap(parent, keys(i)).readChild.getOrElse(null)
-          else result = null
           parent = result
           i += 1
         }
