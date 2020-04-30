@@ -59,7 +59,6 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
 
   it should "be able to reconnect when a jedis exception for invalid action is thrown" in intercept[JedisException] {
     val redisConnection = new RedisConnect(bsConfig)
-    redisConnection.closePool()
     val dedupEngine = new DedupEngine(redisConnection, 0, 4309535)
     dedupEngine.isUniqueEvent("event-id-3") should be(true)
     dedupEngine.closeConnectionPool()
