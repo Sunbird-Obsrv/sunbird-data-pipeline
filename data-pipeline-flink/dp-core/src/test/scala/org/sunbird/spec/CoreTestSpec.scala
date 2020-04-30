@@ -61,7 +61,6 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     val redisConnection = new RedisConnect(bsConfig)
     val dedupEngine = new DedupEngine(redisConnection, 0, 4309535)
     dedupEngine.isUniqueEvent("event-id-3") should be(true)
-    dedupEngine.closeConnectionPool()
     dedupEngine.storeChecksum(null)
     dedupEngine.getRedisConnection should not be(null)
   }
