@@ -17,7 +17,7 @@ import org.sunbird.dp.core.job.{BaseDeduplication, BaseJobConfig}
 import org.sunbird.dp.core.serde._
 import org.sunbird.dp.core.util.FlinkUtil
 import org.sunbird.fixture.EventFixture
-import redis.clients.jedis.exceptions.{JedisConnectionException, JedisException}
+import redis.clients.jedis.exceptions.{JedisConnectionException, JedisDataException, JedisException}
 
 class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
 
@@ -128,7 +128,7 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     mapSerialization.serialize(map, System.currentTimeMillis())
   }
 
-  "DataCache" should "be able to add the data into redis" in {
+  "DataCache" should "be able to add the data into redis" in intercept[JedisDataException]{
     val redisConnection = new RedisConnect(bsConfig)
     val deviceData = new util.HashMap[String, String]()
     deviceData.put("country_code", "IN")
@@ -146,6 +146,15 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     redisData should not be (null)
     redisConnection.closePool()
     dataCache.hmSet("device_1", deviceData)
+    dataCache.getWithRetry(null)
+  }
+
+
+  "DataCache" should "thorw an jedis exception when invalid action happen" in  intercept[JedisDataException]{
+    val redisConnection = new RedisConnect(bsConfig)
+    val dataCache = new DataCache(bsConfig, redisConnection, 2, List())
+    dataCache.init()
+    dataCache.hgetAllWithRetry(null)
   }
 
   "DataCache setWithRetry function" should "be able to set the data from Redis" in {
