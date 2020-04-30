@@ -197,6 +197,6 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
   }
 
   override def kafkaKey(): String = {
-    super.did()
+    super.kafkaKey()
   }
 }
