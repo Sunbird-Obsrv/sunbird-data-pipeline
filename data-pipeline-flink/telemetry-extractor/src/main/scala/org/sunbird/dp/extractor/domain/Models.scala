@@ -6,7 +6,7 @@ case class Context(channel: String, env: String, sid: String, did: String, pdata
 
 case class EData(level: String = "INFO", `type`: String, message: String, params: Array[Params])
 
-case class Params(ver: String, events_count: Int, sync_status: String)
+case class Params(ver: String, `events_count`: Int, `sync_status`: String)
 
 case class Pdata(ver: String, pid: String, id: String = "data-pipeline")
 
