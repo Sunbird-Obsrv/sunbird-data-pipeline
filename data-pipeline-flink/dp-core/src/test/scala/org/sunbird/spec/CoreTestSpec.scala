@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.scalatest.Matchers
 import org.scalatestplus.mockito.MockitoSugar
@@ -14,6 +15,7 @@ import org.sunbird.dp.core.cache.{DataCache, DedupEngine, RedisConnect}
 import org.sunbird.dp.core.domain.Events
 import org.sunbird.dp.core.job.{BaseDeduplication, BaseJobConfig}
 import org.sunbird.dp.core.serde._
+import org.sunbird.dp.core.util.FlinkUtil
 import org.sunbird.fixture.EventFixture
 import redis.clients.jedis.exceptions.{JedisConnectionException, JedisException}
 
@@ -161,6 +163,12 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     response should not be null
   }
 
+  "FilnkUtil" should "get the flink util context" in {
+    val flinkConfig: BaseJobConfig = new BaseJobConfig(ConfigFactory.load("test.conf"), "base-job")
+    val context:StreamExecutionEnvironment = FlinkUtil.getExecutionContext(flinkConfig)
+    context should not be(null)
+  }
+
 }
 
 class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
@@ -171,6 +179,6 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
   }
 
   override def kafkaKey(): String = {
-    did()
+    super.did()
   }
 }

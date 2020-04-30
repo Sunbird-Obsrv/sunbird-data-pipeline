@@ -85,12 +85,7 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
 
   def getAtTimestamp: String = {
     val simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-    val timeStamp = read("@timestamp").getOrElse(simpleDateFormat.format(new Date(System.currentTimeMillis().longValue)))
-    if (timeStamp.isInstanceOf[Number]) {
-      simpleDateFormat.format(new Date(timeStamp.asInstanceOf[Number].longValue))
-    } else {
-      timeStamp.toString
-    }
+    read[String]("@timestamp").getOrElse(simpleDateFormat.format(new Date(System.currentTimeMillis().longValue)))
   }
 
   def getSyncts: String = {
