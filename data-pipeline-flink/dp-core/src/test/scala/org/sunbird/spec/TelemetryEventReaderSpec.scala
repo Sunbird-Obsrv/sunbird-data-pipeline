@@ -104,7 +104,7 @@ class TelemetryEventReaderSpec extends BaseSpec with Matchers with MockitoSugar 
     telemetryReader.id should be(null)
   }
 
-  it "throw an exception while adding invalid key & values into telemetry event" {
+  it should "throw an exception while adding invalid key & values into telemetry event" in {
     val eventMap = gson.fromJson(EventFixture.SAMPLE_EVENT_3, new util.LinkedHashMap[String, Any]().getClass)
     val telemetryReader: Telemetry = new Telemetry(eventMap)
     telemetryReader.add(null, null)

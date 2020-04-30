@@ -8,15 +8,21 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.scala.OutputTag
+import org.mockito.Mock
 import org.scalatest.Matchers
+import org.mockito.ArgumentMatcher
+import org.mockito.invocation.InvocationOnMock
+
 import org.scalatestplus.mockito.MockitoSugar
 import org.sunbird.dp.contentupdater.core.util.RestUtil
+import org.sunbird.dp.core.cache
 import org.sunbird.dp.core.cache.{DataCache, DedupEngine, RedisConnect}
 import org.sunbird.dp.core.domain.Events
 import org.sunbird.dp.core.job.{BaseDeduplication, BaseJobConfig}
 import org.sunbird.dp.core.serde._
 import org.sunbird.dp.core.util.FlinkUtil
 import org.sunbird.fixture.EventFixture
+import redis.clients.jedis.Jedis
 import redis.clients.jedis.exceptions.{JedisConnectionException, JedisException}
 
 class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
@@ -50,10 +56,10 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
   "DedupEngine functionality" should "be able to identify if the key is unique or duplicate" in {
     val redisConnection = new RedisConnect(bsConfig)
     val dedupEngine = new DedupEngine(redisConnection, 2, 200)
+    dedupEngine.getRedisConnection should not be (null)
     dedupEngine.isUniqueEvent("key-1") should be(true)
     dedupEngine.storeChecksum("key-1")
     dedupEngine.isUniqueEvent("key-1") should be(false)
-
   }
 
   it should "be able to reconnect when a jedis exception is thrown" in intercept[JedisException] {
@@ -143,7 +149,7 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     dataCache.hmSet("device_1", deviceData)
     val redisData = dataCache.hgetAllWithRetry("device_1")
     redisData.size should be(2)
-    redisData should not be(null)
+    redisData should not be (null)
     redisConnection.closePool()
     dataCache.hmSet("device_1", deviceData)
   }
@@ -165,8 +171,8 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
 
   "FilnkUtil" should "get the flink util context" in {
     val flinkConfig: BaseJobConfig = new BaseJobConfig(ConfigFactory.load("test.conf"), "base-job")
-    val context:StreamExecutionEnvironment = FlinkUtil.getExecutionContext(flinkConfig)
-    context should not be(null)
+    val context: StreamExecutionEnvironment = FlinkUtil.getExecutionContext(flinkConfig)
+    context should not be (null)
   }
 
 }
