@@ -80,7 +80,7 @@ class TelemetryExtractorStreamTask(config: TelemetryExtractorConfig, kafkaConnec
     extractionStream.getSideOutput(config.logEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name(config.extractorAuditEventsProducer).uid(config.extractorAuditEventsProducer)
     extractionStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaFailedTopic)).name(config.extractorFailedEventsProducer).uid(config.extractorFailedEventsProducer)
     redactorStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name(config.assessEventsProducer).uid(config.assessEventsProducer)
-    redactorStream.getSideOutput(config.assessRawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaAssessRawTopic)).name(config.assessRawEventsProducer).uid(config.assessEventsProducer)
+    redactorStream.getSideOutput(config.assessRawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaAssessRawTopic)).name(config.assessRawEventsProducer).uid(config.assessRawEventsProducer)
     env.execute(config.jobName)
 
   }

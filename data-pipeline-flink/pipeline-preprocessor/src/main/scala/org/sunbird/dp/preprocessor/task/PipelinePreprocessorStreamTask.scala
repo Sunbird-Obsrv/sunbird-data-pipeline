@@ -90,7 +90,7 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
      * Pushing "AUDIT" event into both sink and audit topic
      */
     routerStream.getSideOutput(config.auditRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaAuditRouteTopic)).name(config.auditRouterProducer).uid(config.auditRouterProducer)
-    routerStream.getSideOutput(config.auditRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name(config.primaryRouterProducer).uid(config.primaryRouterProducer)
+    routerStream.getSideOutput(config.auditRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name(config.auditEventsPrimaryRouteProducer).uid(config.auditEventsPrimaryRouteProducer)
 
     /**
      * Pushing all the events to unique topic (next stream = denorm) , except LOG, ERROR, AUDIT Events,
@@ -101,8 +101,8 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
      * Pushing "SHARE and SHARE_ITEM" event into out put topic unique topic(next_streaming_process = denorm)
      */
 
-    shareEventsFlattener.getSideOutput(config.primaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name(config.primaryRouterProducer).uid(config.primaryRouterProducer)
-    shareEventsFlattener.getSideOutput(config.shareItemEventOutTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaPrimaryRouteTopic)).name(config.primaryRouterProducer).uid(config.primaryRouterProducer)
+    shareEventsFlattener.getSideOutput(config.primaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name(config.shareEventsPrimaryRouteProducer).uid(config.shareEventsPrimaryRouteProducer)
+    shareEventsFlattener.getSideOutput(config.shareItemEventOutTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaPrimaryRouteTopic)).name(config.shareItemsPrimaryRouterProducer).uid(config.shareItemsPrimaryRouterProducer)
 
     env.execute(config.jobName)
   }

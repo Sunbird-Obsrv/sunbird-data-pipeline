@@ -16,7 +16,7 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
       true
     } catch {
       case ex: Exception =>
-        println(s"Could not add the value to keypath $keyPath and $value")
+        // println(s"Could not add the value to keypath $keyPath and $value")
     }
     false
   }
@@ -25,15 +25,15 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
 
   def read[T](keyPath: String): Option[T] = try {
     val parentMap = lastParentMap(map, keyPath)
-    Option(parentMap.readChild.getOrElse(null).asInstanceOf[T])
+    Option(parentMap.readChild.orNull.asInstanceOf[T])
   } catch {
     case ex: Exception =>
-      println(s"Could not able to read the object from $keyPath")
+      // println(s"Could not able to read the object from $keyPath")
       Option(null.asInstanceOf[T])
   }
 
   def readOrDefault[T](keyPath: String, defaultValue: T): T = {
-    read(keyPath).getOrElse(defaultValue).asInstanceOf[T]
+    read(keyPath).getOrElse(defaultValue)
   }
 
   @throws[TelemetryReaderException]
@@ -55,7 +55,7 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
           i < lastIndex && parent != null
         }) {
           var result: util.Map[String, Any] = null
-          if (parent.isInstanceOf[util.Map[_, _]]) result = new ParentMap(parent, keys(i)).readChild.getOrElse(null)
+          if (parent.isInstanceOf[util.Map[_, _]]) result = new ParentMap(parent, keys(i)).readChild.orNull
           parent = result
           i += 1
         }
@@ -71,10 +71,10 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
 
   override def toString: String = "Telemetry{" + "map=" + map + '}'
 
-  def id: String = this.read[String]("metadata.checksum").getOrElse(null)
+  def id: String = this.read[String]("metadata.checksum").orNull
 
   def addFieldIfAbsent[T](fieldName: String, value: T): Unit = {
-    if (null == read(fieldName).getOrElse(null)) add(fieldName, value.asInstanceOf[T])
+    if (null == read(fieldName).orNull) add(fieldName, value.asInstanceOf[T])
   }
 
   @throws[TelemetryReaderException]

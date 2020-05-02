@@ -87,12 +87,15 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val shareEventsFlattenerFunction = "ShareEventsFlattenerFunction"
 
   // Producers
-  val primaryRouterProducer = "preprocessor-primary-route-sink"
-  val logRouterProducer = "preprocessor-log-route-sink"
-  val errorRouterProducer = "preprocessor-error-route-sink"
-  val auditRouterProducer = "preprocessor-audit-route-sink"
-  val invalidEventProducer = "preprocessor-invalid-events-sink"
-  val duplicateEventProducer = "preprocessor-duplicate-events-sink"
+  val primaryRouterProducer = "primary-route-sink"
+  val auditEventsPrimaryRouteProducer = "audit-events-primary-route-sink"
+  val shareEventsPrimaryRouteProducer = "share-events-primary-route-sink"
+  val shareItemsPrimaryRouterProducer = "share-items-primary-route-sink"
+  val logRouterProducer = "log-route-sink"
+  val errorRouterProducer = "error-route-sink"
+  val auditRouterProducer = "audit-route-sink"
+  val invalidEventProducer = "invalid-events-sink"
+  val duplicateEventProducer = "duplicate-events-sink"
 
   val defaultSchemaFile = "envelope.json"
 
