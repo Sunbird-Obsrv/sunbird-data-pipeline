@@ -6,7 +6,9 @@ import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.sunbird.dp.core.job.BaseJobConfig
 import org.sunbird.dp.usercache.domain.Event
 
-class UserCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(config, "user-cache-updater") {
+import java.util.{List => JList}
+
+class UserCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(config, "UserCacheUpdaterJob") {
 
   private val serialVersionUID = 2905979434303791379L
 
@@ -16,9 +18,7 @@ class UserCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(
   val inputTopic: String = config.getString("kafka.denorm.input.topic")
   val userFields = List("usertype", "grade", "language", "subject", "state", "district", "usersignintype", "userlogintype","locationids")
 
-
   val userCacheConsumer = "user-cache-updater-consumer"
-
 
   // User cache updater job metrics
   val userCacheHit = "user-cache-hit"
@@ -28,24 +28,22 @@ class UserCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(
   val dbReadMissCount = "db-read-miss-count"
   val totalEventsCount ="total-audit-events-count"
 
-  val userSelfSignedInTypeList = config.getStringList("user.self.signin.types")
-  val userValidatedTypeList = config.getStringList("user.validated.types")
-  val userSelfSignedKey = config.getString("user.self.signin.key")
-  val userValidatedKey = config.getString("user.valid.key")
+  val userSelfSignedInTypeList: JList[String] = config.getStringList("user.self.signin.types")
+  val userValidatedTypeList: JList[String] = config.getStringList("user.validated.types")
+  val userSelfSignedKey: String = config.getString("user.self.signin.key")
+  val userValidatedKey: String = config.getString("user.valid.key")
 
   // Redis
   val userStore: Int = config.getInt("redis.database.userstore.id")
 
   // cassandra
-  val keySpace = config.getString("cassandra.keyspace")
-  val locationTable = config.getString("cassandra.table.location")
-  val userTable = config.getString("cassandra.table.user")
-  val cassandraHost :String =  config.getString("cassandra.host")
-  val cassandraPort :Int =  config.getInt("cassandra.port")
+  val keySpace: String = config.getString("cassandra.keyspace")
+  val locationTable: String = config.getString("cassandra.table.location")
+  val userTable: String = config.getString("cassandra.table.user")
+  val cassandraHost: String =  config.getString("cassandra.host")
+  val cassandraPort: Int =  config.getInt("cassandra.port")
 
-  val userCacheParallelism = config.getInt("task.usercache.updater.parallelism")
-
-
+  val userCacheParallelism: Int = config.getInt("task.usercache.updater.parallelism")
 
   // constants
 
@@ -54,5 +52,7 @@ class UserCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(
   val stateKey = "state"
   val districtKey = "district"
 
+  // Functions
+  val userCacheUpdaterFunction = "UserCacheUpdaterFunction"
 
 }

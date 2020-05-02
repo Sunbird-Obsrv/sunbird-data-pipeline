@@ -57,6 +57,7 @@ class TelemetryExtractorStreamTask(config: TelemetryExtractorConfig, kafkaConnec
       env.addSource(kafkaConnector.kafkaMapSource(config.kafkaInputTopic), "telemetry-ingest-events-consumer")
         .rebalance()
         .process(new DeduplicationFunction(config))
+        .name("ExtractorDeduplicationFn").uid("ExtractorDeduplicationFn")
         .setParallelism(config.deDupParallelism)
     /**
      * After - De-Duplication process.
@@ -65,21 +66,22 @@ class TelemetryExtractorStreamTask(config: TelemetryExtractorConfig, kafkaConnec
      */
     val extractionStream =
       deDupStream.getSideOutput(config.uniqueEventOutputTag)
-        .process(new ExtractionFunction(config)).name("Extraction")
+        .process(new ExtractionFunction(config))
+        .name(config.extractionFunction).uid(config.extractionFunction)
         .setParallelism(config.extractionParallelism)
 
     val redactorStream =
       extractionStream.getSideOutput(config.assessRedactEventsOutputTag)
-        .process(new RedactorFunction(config)).name("Redactor")
+        .process(new RedactorFunction(config)).name(config.redactorFunction).uid(config.redactorFunction)
         .setParallelism(config.redactorParallelism)
 
-    deDupStream.getSideOutput(config.duplicateEventOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaDuplicateTopic)).name("extractor-duplicate-events")
-    extractionStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name("extractor-raw-events")
-    extractionStream.getSideOutput(config.logEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name("extractor-audit-events")
-    extractionStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaFailedTopic)).name("extractor-failed-events")
-    redactorStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name("assess-events")
-    redactorStream.getSideOutput(config.assessRawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaAssessRawTopic)).name("assess-raw-events")
-    env.execute("Telemetry Extractor")
+    deDupStream.getSideOutput(config.duplicateEventOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaDuplicateTopic)).name(config.extractorDuplicateProducer).uid(config.extractorDuplicateProducer)
+    extractionStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name(config.extractorRawEventsProducer).uid(config.extractorRawEventsProducer)
+    extractionStream.getSideOutput(config.logEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name(config.extractorAuditEventsProducer).uid(config.extractorAuditEventsProducer)
+    extractionStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaFailedTopic)).name(config.extractorFailedEventsProducer).uid(config.extractorFailedEventsProducer)
+    redactorStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name(config.assessEventsProducer).uid(config.assessEventsProducer)
+    redactorStream.getSideOutput(config.assessRawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaAssessRawTopic)).name(config.assessRawEventsProducer).uid(config.assessEventsProducer)
+    env.execute(config.jobName)
 
   }
 }

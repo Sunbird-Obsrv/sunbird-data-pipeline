@@ -9,11 +9,11 @@ import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 import org.sunbird.dp.validator.domain.Event
 import org.sunbird.dp.validator.task.DruidValidatorConfig
 
-class RouterFunction(config: DruidValidatorConfig, @transient var dedupEngine: DedupEngine = null)
-                    (implicit val eventTypeInfo: TypeInformation[Event])
+class DruidRouterFunction(config: DruidValidatorConfig, @transient var dedupEngine: DedupEngine = null)
+                         (implicit val eventTypeInfo: TypeInformation[Event])
   extends BaseProcessFunction[Event, Event](config) {
 
-  private[this] val logger = LoggerFactory.getLogger(classOf[RouterFunction])
+  private[this] val logger = LoggerFactory.getLogger(classOf[DruidRouterFunction])
 
   override def metricsList(): List[String] = {
     List(config.telemetryRouterMetricCount, config.summaryRouterMetricCount) ::: deduplicationMetrics

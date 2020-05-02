@@ -45,15 +45,16 @@ class AssessmentAggregatorStreamTask(config: AssessmentAggregatorConfig, kafkaCo
         implicit val mapTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
         val source = kafkaConnector.kafkaEventSource[Event](config.kafkaInputTopic)
 
-        val aggregatorStream: SingleOutputStreamOperator[Event] = env.addSource(source, "telemetry-assess")
-          .rebalance()
-          .process(new AssessmentAggregatorFunction(config))
-          .name("AssessmentAggregator")
-          .setParallelism(config.assessAggregatorParallelism)
-        aggregatorStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaFailedTopic)).name("assess-failed-events")
-        env.execute("AssessmentAggregator")
+        val aggregatorStream: SingleOutputStreamOperator[Event] =
+            env.addSource(source, "telemetry-assess")
+              .rebalance()
+              .process(new AssessmentAggregatorFunction(config))
+              .name(config.assessmentAggregatorFunction).uid(config.assessmentAggregatorFunction)
+              .setParallelism(config.assessAggregatorParallelism)
 
-
+        aggregatorStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaFailedTopic))
+          .name(config.assessFailedEventsSink).uid(config.assessFailedEventsSink)
+        env.execute(config.jobName)
     }
 }
 

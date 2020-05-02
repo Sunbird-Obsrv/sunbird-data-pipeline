@@ -7,7 +7,7 @@ import org.apache.flink.streaming.api.scala.OutputTag
 import org.sunbird.dp.contentupdater.domain.Event
 import org.sunbird.dp.core.job.BaseJobConfig
 
-class ContentCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(config, "content-cache-updater") {
+class ContentCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(config, "ContentCacheUpdaterJob") {
 
   private val serialVersionUID = 2905979434303791379L
 
@@ -44,4 +44,9 @@ class ContentCacheUpdaterConfig(override val config: Config) extends BaseJobConf
   val contentDateFormat = "yyyy-MM-dd'T'HH:mm:ss"
 
   val dialCodeProperties = List("dialcodes","reservedDialCodes")
+
+  // Functions
+  val contentUpdaterFunction = "ContentUpdaterFunction"
+  val dialcodeUpdaterFunction = "DialcodeUpdaterFunction"
+
 }

@@ -9,7 +9,7 @@ import org.sunbird.dp.denorm.domain.Event
 
 import scala.collection.JavaConversions._
 
-class DenormalizationConfig(override val config: Config) extends BaseJobConfig(config, "de-normalization") {
+class DenormalizationConfig(override val config: Config) extends BaseJobConfig(config, "DenormalizationJob") {
 
   private val serialVersionUID = 2905979434303791379L
 
@@ -40,8 +40,7 @@ class DenormalizationConfig(override val config: Config) extends BaseJobConfig(c
   val userLoginInTypeDefault: String = if (config.hasPath("user.login.type.default")) config.getString("user.login.type.default") else "NA"
 
   val DENORM_EVENTS_PRODUCER = "telemetry-denorm-events-producer"
-  val JOB_METRICS_PRODUCER = "telemetry-job-metrics-producer"
-  
+
   val WITH_LOCATION_EVENTS = "with_location_events"
   val WITH_DEVICE_EVENTS = "with_device_events"
   val WITH_USER_EVENTS = "with_user_events"
@@ -81,5 +80,12 @@ class DenormalizationConfig(override val config: Config) extends BaseJobConfig(c
   val locTotal = "loc-total"
   val locCacheHit = "loc-cache-hit"
   val locCacheMiss = "loc-cache-miss"
+
+  // Functions
+  val deviceDenormFunction = "DeviceDenormFunction"
+  val userDenormFunction = "UserDenormFunction"
+  val dialcodeDenormFunction = "DialcodeDenormFunction"
+  val contentDenormFunction = "ContentDenormFunction"
+  val locationDenormFunction = "LocationDenormFunction"
 
 }

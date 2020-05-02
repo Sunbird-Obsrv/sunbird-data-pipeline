@@ -7,7 +7,7 @@ import org.apache.flink.streaming.api.scala.OutputTag
 import org.sunbird.dp.assessment.domain.Event
 import org.sunbird.dp.core.job.BaseJobConfig
 
-class AssessmentAggregatorConfig(override val config: Config) extends BaseJobConfig(config, jobName = "device-profile-updater") {
+class AssessmentAggregatorConfig(override val config: Config) extends BaseJobConfig(config, jobName = "AssessmentAggregatorJob") {
 
     private val serialVersionUID = 2905979434303791379L
 
@@ -30,15 +30,20 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
 
     //Cassandra
 
-    val dbTable = config.getString("cassandra.table")
-    val dbKeyspace = config.getString("cassandra.keyspace")
-    val dbHost = config.getString("cassandra.host")
-    val dbPort = config.getInt("cassandra.port")
-    val dbudtType = config.getString("cassandra.questionudttype")
+    val dbTable: String = config.getString("cassandra.table")
+    val dbKeyspace: String = config.getString("cassandra.keyspace")
+    val dbHost: String = config.getString("cassandra.host")
+    val dbPort: Int = config.getInt("cassandra.port")
+    val dbudtType: String = config.getString("cassandra.questionudttype")
 
     val FAILED_EVENTS_OUTPUT_TAG = "failed-events"
 
     val failedEventsOutputTag: OutputTag[Event] = OutputTag[Event]("assess-failed-events")
 
+    // Functions
+    val assessmentAggregatorFunction = "AssessmentAggregatorFunction"
+
+    // Producers
+    val assessFailedEventsSink = "assess-failed-events-sink"
 
 }

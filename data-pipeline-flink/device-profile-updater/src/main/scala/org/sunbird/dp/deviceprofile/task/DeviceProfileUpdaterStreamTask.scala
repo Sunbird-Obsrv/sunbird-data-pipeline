@@ -28,6 +28,7 @@ class DeviceProfileUpdaterStreamTask(config: DeviceProfileUpdaterConfig, kafkaCo
       env.addSource(kafkaConnector.kafkaMapSource(config.kafkaInputTopic), "telemetry-ingest-events-consumer")
         .rebalance()
         .process(new DeviceProfileUpdaterFunction(config))
+        .name(config.deviceProfileUpdaterFunction).uid(config.deviceProfileUpdaterFunction)
         .setParallelism(config.deviceProfileParallelism)
     env.execute("Device profile updater")
 

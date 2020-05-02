@@ -9,7 +9,7 @@ import org.sunbird.dp.preprocessor.domain.Event
 
 import scala.collection.JavaConverters._
 
-class PipelinePreprocessorConfig(override val config: Config) extends BaseJobConfig(config, "pipeline-processor") {
+class PipelinePreprocessorConfig(override val config: Config) extends BaseJobConfig(config, "PipelinePreprocessorJob") {
 
   private val serialVersionUID = 2905979434303791379L
 
@@ -81,13 +81,18 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   // ShareEventsFlatten count
   val shareItemEventsMetircsCount = "share-item-event-success-count"
 
+  // Functions
+  val telemetryValidationFunction = "TelemetryValidationFunction"
+  val telemetryRouterFunction = "TelemetryRouterFunction"
+  val shareEventsFlattenerFunction = "ShareEventsFlattenerFunction"
+
   // Producers
-  val primaryRouterProducer = "preprocessor-primary-route"
-  val logRouterProducer = "preprocessor-log-route"
-  val errorRouterProducer = "preprocessor-error-route"
-  val auditRouterProducer = "preprocessor-audit-route"
-  val invalidEventProducer = "preprocessor-invalid-events"
-  val duplicateEventProducer = "preprocessor-duplicate-events"
+  val primaryRouterProducer = "preprocessor-primary-route-sink"
+  val logRouterProducer = "preprocessor-log-route-sink"
+  val errorRouterProducer = "preprocessor-error-route-sink"
+  val auditRouterProducer = "preprocessor-audit-route-sink"
+  val invalidEventProducer = "preprocessor-invalid-events-sink"
+  val duplicateEventProducer = "preprocessor-duplicate-events-sink"
 
   val defaultSchemaFile = "envelope.json"
 

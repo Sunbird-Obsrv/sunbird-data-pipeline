@@ -46,9 +46,11 @@ class ContentCacheUpdaterStreamTask(config: ContentCacheUpdaterConfig, kafkaConn
 
     val contentUpdaterStream =  env.addSource(source, "learning-graph-events-consumer")
       .rebalance().process(new ContentUpdaterFunction(config))
+        .name(config.contentUpdaterFunction).uid(config.contentUpdaterFunction)
 
      contentUpdaterStream.getSideOutput(config.withContentDailCodeEventsTag).rebalance()
        .process(new DialCodeUpdaterFunction(config))
+         .name(config.dialcodeUpdaterFunction).uid(config.dialcodeUpdaterFunction)
 
     env.execute(config.jobName)
   }

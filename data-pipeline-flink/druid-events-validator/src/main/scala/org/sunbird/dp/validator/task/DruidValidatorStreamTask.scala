@@ -8,7 +8,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.FlinkUtil
 import org.sunbird.dp.validator.domain.Event
-import org.sunbird.dp.validator.functions.{DruidValidatorFunction, RouterFunction}
+import org.sunbird.dp.validator.functions.{DruidValidatorFunction, DruidRouterFunction}
 
 /**
  * Druid Validator stream task does the following pipeline processing in a sequence:
@@ -44,27 +44,27 @@ class DruidValidatorStreamTask(config: DruidValidatorConfig, kafkaConnector: Fli
      */
     val dataStream = env.addSource(kafkaConnector.kafkaEventSource[Event](config.kafkaInputTopic), "kafka-telemetry-denorm-consumer")
       .rebalance()
-      .process(new DruidValidatorFunction(config)).name("DruidValidator")
+      .process(new DruidValidatorFunction(config)).name(config.druidValidatorFunction).uid(config.druidValidatorFunction)
       .setParallelism(config.validatorParallelism)
 
     val routerStream: SingleOutputStreamOperator[Event] = dataStream.getSideOutput(config.validEventOutputTag)
-      .process(new RouterFunction(config)).name("Router")
+      .process(new DruidRouterFunction(config)).name(config.druidRouterFunction).uid(config.druidRouterFunction)
       .setParallelism(config.routerParallelism)
 
     /**
      * Separate sinks for valid telemetry events, valid summary events, valid error events, valid log events and invalid events
      */
     routerStream.getSideOutput(config.telemetryRouterOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaTelemetryRouteTopic))
-      .name("kafka-telemetry-router-producer")
+      .name(config.telemetryEventsProducer).uid(config.telemetryEventsProducer)
 
     routerStream.getSideOutput(config.summaryRouterOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaSummaryRouteTopic))
-      .name("kafka-summary-router-producer")
+      .name(config.summaryEventsProducer).uid(config.summaryEventsProducer)
 
     routerStream.getSideOutput(config.duplicateEventOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaDuplicateTopic))
-      .name("kafka-telemetry-duplicate-producer")
+      .name(config.druidDuplicateEventsProducer).uid(config.druidDuplicateEventsProducer)
 
     dataStream.getSideOutput(config.invalidEventOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaFailedTopic))
-      .name("kafka-telemetry-invalid-producer")
+      .name(config.druidInvalidEventsProducer).uid(config.druidInvalidEventsProducer)
 
     env.execute(config.jobName)
 
