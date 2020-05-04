@@ -91,7 +91,7 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.shareItemEventsMetircsCount}").getValue() should be (3)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.shareEventsRouterMetricCount}").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.duplicationSkippedEventMetricsCount}").getValue() should be (5)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.unique-event-count").getValue() should be (5)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.unique-event-count").getValue() should be (4)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.duplicate-event-count").getValue() should be (1)
   }
 }
