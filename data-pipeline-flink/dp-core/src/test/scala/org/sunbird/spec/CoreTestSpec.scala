@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.scalatest.Matchers
 import org.scalatestplus.mockito.MockitoSugar
@@ -14,8 +15,9 @@ import org.sunbird.dp.core.cache.{DataCache, DedupEngine, RedisConnect}
 import org.sunbird.dp.core.domain.Events
 import org.sunbird.dp.core.job.{BaseDeduplication, BaseJobConfig}
 import org.sunbird.dp.core.serde._
+import org.sunbird.dp.core.util.FlinkUtil
 import org.sunbird.fixture.EventFixture
-import redis.clients.jedis.exceptions.{JedisConnectionException, JedisException}
+import redis.clients.jedis.exceptions.{JedisConnectionException, JedisDataException, JedisException}
 
 class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
 
@@ -45,20 +47,22 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     reConnectionStatus.isConnected should be(false)
   }
 
-  "DedupEngine functionality" should "be able to identify if the key is unique or duplicate" in {
+  "DedupEngine functionality" should "be able to identify if the key is unique or duplicate & it should able throw jedis excption for invalid action" in  intercept[JedisException] {
     val redisConnection = new RedisConnect(bsConfig)
     val dedupEngine = new DedupEngine(redisConnection, 2, 200)
+    dedupEngine.getRedisConnection should not be (null)
     dedupEngine.isUniqueEvent("key-1") should be(true)
     dedupEngine.storeChecksum("key-1")
     dedupEngine.isUniqueEvent("key-1") should be(false)
-
+    dedupEngine.isUniqueEvent(null)
   }
 
-  it should "be able to reconnect when a jedis exception is thrown" in intercept[JedisException] {
+  it should "be able to reconnect when a jedis exception for invalid action is thrown" in intercept[JedisException] {
     val redisConnection = new RedisConnect(bsConfig)
-    redisConnection.closePool()
     val dedupEngine = new DedupEngine(redisConnection, 0, 4309535)
     dedupEngine.isUniqueEvent("event-id-3") should be(true)
+    dedupEngine.storeChecksum(null)
+    dedupEngine.getRedisConnection should not be(null)
   }
 
   "DataCache hgetAllWithRetry function" should "be able to retrieve the map data from Redis" in {
@@ -107,10 +111,10 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     val key: Array[Byte] = null
     val value: Array[Byte] = Array[Byte](1)
     val stringDeSerialization = new StringDeserializationSchema()
-    val stringSerialization = new StringSerializationSchema(topic)
+    val stringSerialization = new StringSerializationSchema(topic, Some("kafka-key"))
     val eventSerialization = new EventSerializationSchema[Events](topic)
     val eventDeSerialization = new EventDeserializationSchema[Events]
-    val mapSerialization: MapSerializationSchema = new MapSerializationSchema(topic)
+    val mapSerialization: MapSerializationSchema = new MapSerializationSchema(topic, Some("kafka-key"))
     val mapDeSerialization = new MapDeserializationSchema()
     import org.apache.kafka.clients.consumer.ConsumerRecord
     val cRecord: ConsumerRecord[Array[Byte], Array[Byte]] = new ConsumerRecord[Array[Byte], Array[Byte]](topic, partition, offset, key, value)
@@ -126,7 +130,7 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     mapSerialization.serialize(map, System.currentTimeMillis())
   }
 
-  "DataCache" should "be able to add the data into redis" in {
+  "DataCache" should "be able to add the data into redis" in intercept[JedisDataException]{
     val redisConnection = new RedisConnect(bsConfig)
     val deviceData = new util.HashMap[String, String]()
     deviceData.put("country_code", "IN")
@@ -141,9 +145,18 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     dataCache.hmSet("device_1", deviceData)
     val redisData = dataCache.hgetAllWithRetry("device_1")
     redisData.size should be(2)
-    redisData should not be(null)
+    redisData should not be (null)
     redisConnection.closePool()
     dataCache.hmSet("device_1", deviceData)
+    dataCache.getWithRetry(null)
+  }
+
+
+  "DataCache" should "thorw an jedis exception when invalid action happen" in  intercept[JedisDataException]{
+    val redisConnection = new RedisConnect(bsConfig)
+    val dataCache = new DataCache(bsConfig, redisConnection, 2, List())
+    dataCache.init()
+    dataCache.hgetAllWithRetry(null)
   }
 
   "DataCache setWithRetry function" should "be able to set the data from Redis" in {
@@ -161,6 +174,18 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     response should not be null
   }
 
+  "FilnkUtil" should "get the flink util context" in {
+    val config = ConfigFactory.empty()
+    config.entrySet()
+
+    val customConf =
+      ConfigFactory.parseString(EventFixture.customConfig)
+
+    val flinkConfig: BaseJobConfig = new BaseJobConfig(customConf, "base-job")
+    val context: StreamExecutionEnvironment = FlinkUtil.getExecutionContext(flinkConfig)
+    context should not be (null)
+  }
+
 }
 
 class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
@@ -171,6 +196,6 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
   }
 
   override def kafkaKey(): String = {
-    did()
+    super.kafkaKey()
   }
 }

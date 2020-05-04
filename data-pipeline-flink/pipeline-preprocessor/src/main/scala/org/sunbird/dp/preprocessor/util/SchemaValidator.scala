@@ -29,7 +29,7 @@ class SchemaValidator(config: PipelinePreprocessorConfig) extends java.io.Serial
     val schamaMap = new mutable.HashMap[String, JsonSchema]()
     val schemaFactory = JsonSchemaFactory.byDefault
     val schemaUrl = this.getClass.getClassLoader.getResource(s"${config.schemaPath}").toURI
-
+    // $COVERAGE-OFF$ Disabling code coverage for below code, It can be testable only incase of jar
     val schemaFiles = if (schemaUrl.getScheme.equalsIgnoreCase("jar")) {
       val fileSystem = FileSystems.newFileSystem(schemaUrl, Map[String, AnyRef]().asJava)
       val files = loadSchemaFiles(fileSystem.getPath(s"${config.schemaPath}"))
@@ -85,3 +85,4 @@ class SchemaValidator(config: PipelinePreprocessorConfig) extends java.io.Serial
     }
   }
 }
+// $COVERAGE-ON$
