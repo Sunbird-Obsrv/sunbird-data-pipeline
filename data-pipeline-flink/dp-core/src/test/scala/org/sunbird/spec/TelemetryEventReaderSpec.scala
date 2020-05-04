@@ -41,7 +41,7 @@ class TelemetryEventReaderSpec extends BaseSpec with Matchers with MockitoSugar 
     // read
     telemetryEvent.edataItems() should not be (null)
     telemetryEvent.edataItems().size() should be(3)
-    telemetryEvent.kafkaKey() should be("1b17c32bad61eb9e33df281eecc727590d739b2b")
+    telemetryEvent.kafkaKey() should be("02ba33e5-15fe-4ec5-b32.1084308E760-3d03429fae84")
 
 
     telemetryEvent.updateTs("9543785")
@@ -102,6 +102,13 @@ class TelemetryEventReaderSpec extends BaseSpec with Matchers with MockitoSugar 
     telemetryReader.getSyncts should not be (null)
     telemetryReader.getAtTimestamp should not be (null)
     telemetryReader.id should be(null)
+  }
+
+  it should "not able to add null values into telemetry" in {
+    val eventMap = gson.fromJson(EventFixture.SAMPLE_EVENT_3, new util.LinkedHashMap[String, Any]().getClass)
+    val telemetryReader: Telemetry = new Telemetry(eventMap)
+    telemetryReader.add(null, null) should be(false)
+
   }
 
 

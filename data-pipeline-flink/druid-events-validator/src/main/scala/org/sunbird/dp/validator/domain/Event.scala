@@ -12,14 +12,6 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
     this.updateFlags("dv_processed", true)
   }
 
-  def markSkippedValidation(): Unit = {
-    this.updateFlags("dv_validation_skipped", true)
-  }
-
-  def markSkippedDedup(): Unit = {
-    this.updateFlags("dv_dedup_skipped", true)
-  }
-
   def markValidationFailure(errorMsg: String): Unit = {
     this.updateFlags("dv_processed", false)
     this.updateFlags("dv_validation_failed", true)
@@ -33,9 +25,5 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
   def isSummaryEvent: Boolean = "ME_WORKFLOW_SUMMARY".equalsIgnoreCase(eid)
 
   def isSearchEvent: Boolean = "SEARCH".equalsIgnoreCase(eid)
-
-  def isLogEvent: Boolean = "LOG".equalsIgnoreCase(eid)
-
-  def isErrorEvent: Boolean = "ERROR".equalsIgnoreCase(eid)
 
 }
