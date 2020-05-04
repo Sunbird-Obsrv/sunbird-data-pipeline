@@ -57,17 +57,13 @@ class SchemaValidator(config: PipelinePreprocessorConfig) extends java.io.Serial
     var eventSchemaList = new ListBuffer[String]() += "3.0/envelope.json"
     Try(Files.newDirectoryStream(schemaDirPath)).map { stream =>
       stream.iterator().asScala.toList.map(path => {
-        val file = new File(path.toUri)
-        if (file.isDirectory()) {
-            file.listFiles().map(subDirFile => {
-            eventSchemaList += s"${path.getFileName.toString}/${subDirFile.getName}"
+        Try(Files.newDirectoryStream(path)).map { subDir =>
+          subDir.iterator().asScala.toList.map(subDirFile => {
+            eventSchemaList += s"${path.getFileName.toString}${subDirFile.getFileName.toString}"
           })
-        } else {
-          eventSchemaList += path.getFileName.toString
         }
       })
     }.getOrElse(eventSchemaList)
-
     eventSchemaList
   }
 
@@ -96,5 +92,4 @@ class SchemaValidator(config: PipelinePreprocessorConfig) extends java.io.Serial
       defaultValidationErrMsg
     }
   }
-
 }

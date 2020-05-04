@@ -51,6 +51,8 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
       if (isDuplicateCheckRequired(event.producerId())) {
         deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag,
           flagName = config.DE_DUP_FLAG_NAME)(dedupEngine, metrics)
+      } else {
+        context.output(config.uniqueEventsOutputTag, event)
       }
     } else {
       val validationReport = schemaValidator.validate(event)
@@ -59,7 +61,6 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
         event.markSuccess(config.VALIDATION_FLAG_NAME)
         metrics.incCounter(config.validationSuccessMetricsCount)
         event.updateDefaults(config)
-
         if (isDuplicateCheckRequired(event.producerId())) {
           deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag, flagName = config.DE_DUP_FLAG_NAME)(dedupEngine, metrics)
         } else {
