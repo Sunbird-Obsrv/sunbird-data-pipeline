@@ -17,8 +17,8 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
   }
 
   def schemaName: String = {
-    if (eid != null) s"${version()}/${eid.toLowerCase}.json"
-    else "3.0/envelope.json" // Default envelop.json to validate the all the version of events
+    if (eid != null) s"${eid.toLowerCase}.json"
+    else "envelope.json"
   }
 
   def updateActorId(actorId: String): Unit = {

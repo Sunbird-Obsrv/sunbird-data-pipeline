@@ -84,5 +84,10 @@ object EventFixtures {
       |"@timestamp":"2019-03-20T00:01:38.435Z"}
     """.stripMargin
 
+  val ASSESS_EVENT_NEWER_VERSION:String =
+    """
+      |{"eid":"ASSESS","ets":1586431492513,"ver":"3.1","mid":"ASSESS:12159f2827880221eef12a6be9560379:test","actor":{"id":"6e89dba6-10d6-4044-9105-b80ce7f56b38","type":"User"},"context":{"channel":"01275678925675724817","pdata":{"id":"preprod.diksha.app","ver":"2.8.260preproduction","pid":"sunbird.app.contentplayer"},"env":"contentplayer","sid":"0cbc018c","did":"b9bdcb8cd7abc5bd7813bd65ec0b5084dc0dadd8","cdata":[]},"object":{"id":"do_212995828601487360194","type":"Content","ver":"2"},"tags":[],"edata":{"item":{"id":"do_21299582901864857613016","maxscore":1,"type":"ftb","exlength":0,"params":[{"eval":"order"}],"uri":"","title":"Registration","mmc":[],"mc":[],"desc":""},"index":1,"pass":"Yes","score":1,"resvalues":[{"1":"{\"text\":\"NARENDRA MODI\"}"}],"duration":2},"syncts":1586431504608,"@timestamp":"2020-04-09T11:25:04.608Z"}
+      |""".stripMargin
+
 
 }

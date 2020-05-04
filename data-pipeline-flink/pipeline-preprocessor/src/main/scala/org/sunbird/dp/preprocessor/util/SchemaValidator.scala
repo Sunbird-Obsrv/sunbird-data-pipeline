@@ -52,23 +52,11 @@ class SchemaValidator(config: PipelinePreprocessorConfig) extends java.io.Serial
 
   logger.info("Schema initialization completed for telemetry objects...")
 
-  def loadSchemaFiles(schemaDirPath: java.nio.file.Path): ListBuffer[String] = {
-    var eventSchemaList = new ListBuffer[String]() += "3.0/envelope.json" // Default envelop.json file from 3.0 version to validate all version of events(3.0 above)
-    Try(Files.newDirectoryStream(schemaDirPath)).map { stream =>
-      stream.iterator().asScala.toList.map(path => {
-        Try(Files.newDirectoryStream(path)).map { subDir =>
-          subDir.iterator().asScala.toList.map(subDirFile => {
-            // $COVERAGE-OFF$ Disabling the below if condition since "path.getFileName.toString" return "3.0/" only incase of jar
-            if (path.getFileName.toString.contains("/")) {
-              eventSchemaList += s"${path.getFileName.toString}${subDirFile.getFileName.toString}"
-            } else {
-              eventSchemaList += s"${path.getFileName.toString}/${subDirFile.getFileName.toString}"
-            }
-          })
-        }
-      })
-    }.getOrElse(eventSchemaList)
-    eventSchemaList
+  def loadSchemaFiles(schemaDirPath: java.nio.file.Path): List[String] = {
+    val schemaFiles = Try(Files.newDirectoryStream(schemaDirPath)).map { stream =>
+      stream.iterator().asScala.toList.map(path => path.getFileName.toString)
+    }.getOrElse(List[String]())
+    schemaFiles
   }
 
   def schemaFileExists(event: Event): Boolean = schemaJsonMap.contains(event.schemaName)
@@ -97,4 +85,3 @@ class SchemaValidator(config: PipelinePreprocessorConfig) extends java.io.Serial
     }
   }
 }
-// $COVERAGE-ON$

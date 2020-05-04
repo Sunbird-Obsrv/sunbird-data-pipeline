@@ -70,7 +70,7 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     task.process()
 
     ShareItemEventSink.values.size() should be(3)
-    TelemetryPrimaryEventSink.values.size() should be(7)
+    TelemetryPrimaryEventSink.values.size() should be(8)
     TelemetryFailedEventsSink.values.size() should be(2)
     DupEventsSink.values.size() should be(1)
     TelemetryAuditEventSink.values.size() should be(1)
@@ -81,17 +81,17 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     TelemetryPrimaryEventSink.values.get(1).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(true)
     TelemetryFailedEventsSink.values.get(0).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(false)
 
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSuccessMetricsCount}").getValue() should be (8)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSuccessMetricsCount}").getValue() should be (10)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationFailureMetricsCount}").getValue() should be (2)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSkipMetricsCount}").getValue() should be (2)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.primaryRouterMetricCount}").getValue() should be (5)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSkipMetricsCount}").getValue() should be (1)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.primaryRouterMetricCount}").getValue() should be (6)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.logEventsRouterMetricsCount}").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.errorEventsRouterMetricsCount}").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.auditEventRouterMetricCount}").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.shareItemEventsMetircsCount}").getValue() should be (3)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.shareEventsRouterMetricCount}").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.duplicationSkippedEventMetricsCount}").getValue() should be (4)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.unique-event-count").getValue() should be (4)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.unique-event-count").getValue() should be (5)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.duplicate-event-count").getValue() should be (1)
   }
 }
@@ -112,6 +112,7 @@ class PipeLineProcessorEventSource extends SourceFunction[Event] {
     val event10 = gson.fromJson(EventFixtures.DIFFERENT_VERSION_EVENT, new util.LinkedHashMap[String, Any]().getClass)
     val event11 = gson.fromJson(EventFixtures.EVENT_WITHOUT_EID, new util.LinkedHashMap[String, Any]().getClass)
     val event12 = gson.fromJson(EventFixtures.VALID_ERROR_EVENT, new util.LinkedHashMap[String, Any]().getClass)
+    val event13 = gson.fromJson(EventFixtures.ASSESS_EVENT_NEWER_VERSION, new util.LinkedHashMap[String, Any]().getClass)
     ctx.collect(new Event(event1))
     ctx.collect(new Event(event2))
     ctx.collect(new Event(event3))
@@ -124,6 +125,7 @@ class PipeLineProcessorEventSource extends SourceFunction[Event] {
     ctx.collect(new Event(event10))
     ctx.collect(new Event(event11))
     ctx.collect(new Event(event12))
+    ctx.collect(new Event(event13))
   }
 
   override def cancel() = {}
