@@ -70,7 +70,7 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     task.process()
 
     ShareItemEventSink.values.size() should be(3)
-    TelemetryPrimaryEventSink.values.size() should be(6)
+    TelemetryPrimaryEventSink.values.size() should be(7)
     TelemetryFailedEventsSink.values.size() should be(2)
     DupEventsSink.values.size() should be(1)
     TelemetryAuditEventSink.values.size() should be(1)
@@ -84,7 +84,7 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSuccessMetricsCount}").getValue() should be (8)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationFailureMetricsCount}").getValue() should be (2)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSkipMetricsCount}").getValue() should be (2)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.primaryRouterMetricCount}").getValue() should be (4)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.primaryRouterMetricCount}").getValue() should be (5)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.logEventsRouterMetricsCount}").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.errorEventsRouterMetricsCount}").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.auditEventRouterMetricCount}").getValue() should be (1)
