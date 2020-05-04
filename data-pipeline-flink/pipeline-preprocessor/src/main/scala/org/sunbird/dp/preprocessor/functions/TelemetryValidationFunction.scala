@@ -1,5 +1,6 @@
 package org.sunbird.dp.preprocessor.functions
 
+import com.github.fge.jsonschema.core.report.ProcessingReport
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
@@ -52,15 +53,19 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
         deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag,
           flagName = config.DE_DUP_FLAG_NAME)(dedupEngine, metrics)
       } else {
-        context.output(config.uniqueEventsOutputTag, event)
+        val validationReport = schemaValidator.validate(event, false)
+        if (validationReport.isSuccess) {
+          onValidationSuccess(event, metrics)
+          context.output(config.uniqueEventsOutputTag, event)
+        } else {
+          onValidationFailure(event, metrics, validationReport)
+          context.output(config.validationFailedEventsOutputTag, event)
+        }
       }
     } else {
-      val validationReport = schemaValidator.validate(event)
+      val validationReport = schemaValidator.validate(event, true)
       if (validationReport.isSuccess) {
-        logger.info(s"Telemetry schema validation is success: ${event.mid()}")
-        event.markSuccess(config.VALIDATION_FLAG_NAME)
-        metrics.incCounter(config.validationSuccessMetricsCount)
-        event.updateDefaults(config)
+        onValidationSuccess(event, metrics)
         if (isDuplicateCheckRequired(event.producerId())) {
           deDup[Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag, flagName = config.DE_DUP_FLAG_NAME)(dedupEngine, metrics)
         } else {
@@ -69,11 +74,8 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
           metrics.incCounter(config.duplicationSkippedEventMetricsCount)
         }
       } else {
-        val failedErrorMsg = schemaValidator.getInvalidFieldName(validationReport.toString)
-        logger.info(s"Telemetry schema validation is failed for: ${event.mid()} and error message is: ${validationReport.toString}")
-        event.markValidationFailure(failedErrorMsg, config.VALIDATION_FLAG_NAME)
+        onValidationFailure(event, metrics, validationReport)
         context.output(config.validationFailedEventsOutputTag, event)
-        metrics.incCounter(config.validationFailureMetricsCount)
 
       }
     }
@@ -92,5 +94,19 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
 
   def isDuplicateCheckRequired(producerId: String): Boolean = {
     config.includedProducersForDedup.contains(producerId)
+  }
+
+  def onValidationSuccess(event: Event, metrics: Metrics): Unit = {
+    logger.info(s"Telemetry schema validation is success: ${event.mid()}")
+    event.markSuccess(config.VALIDATION_FLAG_NAME)
+    metrics.incCounter(config.validationSuccessMetricsCount)
+    event.updateDefaults(config)
+  }
+
+  def onValidationFailure(event: Event, metrics: Metrics, validationReport: ProcessingReport): Unit = {
+    val failedErrorMsg = schemaValidator.getInvalidFieldName(validationReport.toString)
+    logger.info(s"Telemetry schema validation is failed for: ${event.mid()} and error message is: ${validationReport.toString}")
+    event.markValidationFailure(failedErrorMsg, config.VALIDATION_FLAG_NAME)
+    metrics.incCounter(config.validationFailureMetricsCount)
   }
 }

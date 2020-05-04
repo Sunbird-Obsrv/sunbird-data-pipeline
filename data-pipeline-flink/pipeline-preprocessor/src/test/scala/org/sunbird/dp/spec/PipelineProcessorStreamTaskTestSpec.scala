@@ -70,29 +70,45 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     task.process()
 
     ShareItemEventSink.values.size() should be(3)
-    TelemetryPrimaryEventSink.values.size() should be(8)
+    TelemetryPrimaryEventSink.values.size() should be(7)
     TelemetryFailedEventsSink.values.size() should be(2)
     DupEventsSink.values.size() should be(1)
     TelemetryAuditEventSink.values.size() should be(1)
     TelemetryLogEventSink.values.size() should be(1)
-    DupEventsSink.values.get(0).getFlags.get(ppConfig.DE_DUP_FLAG_NAME).booleanValue() should be(true)
-    TelemetryPrimaryEventSink.values.get(0).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(true)
-    TelemetryPrimaryEventSink.values.get(1).getFlags.get(ppConfig.SHARE_EVENTS_FLATTEN_FLAG_NAME).booleanValue() should be(true)
-    TelemetryPrimaryEventSink.values.get(1).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(true)
-    TelemetryFailedEventsSink.values.get(0).getFlags.get(ppConfig.VALIDATION_FLAG_NAME).booleanValue() should be(false)
+    TelemetryErrorEventSink.values.size() should be(1)
 
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSuccessMetricsCount}").getValue() should be (10)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationFailureMetricsCount}").getValue() should be (2)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSkipMetricsCount}").getValue() should be (1)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.primaryRouterMetricCount}").getValue() should be (6)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.logEventsRouterMetricsCount}").getValue() should be (1)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.errorEventsRouterMetricsCount}").getValue() should be (1)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.auditEventRouterMetricCount}").getValue() should be (1)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.shareItemEventsMetircsCount}").getValue() should be (3)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.shareEventsRouterMetricCount}").getValue() should be (1)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.duplicationSkippedEventMetricsCount}").getValue() should be (5)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.unique-event-count").getValue() should be (4)
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.duplicate-event-count").getValue() should be (1)
+    /**
+     * * 1. primary-route-success-count -> 04
+     * * 2. audit-route-success-count -> 01
+     * * 3. share-route-success-count ->
+     * * 4. log-route-success-count -> 01
+     * * 5. error-route-success-count -> 01
+     * * 6. validation-success-event-count -> 07
+     * * 7. validation-failed-event-count -> 01
+     *
+     * * 8. duplicate-event-count -> 01
+     * * 9. duplicate-skipped-event-count ->  04
+     * * 10. unique-event-count -> 07
+     * *
+     * * 12. share-item-event-success-count ->
+     */
+
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.primaryRouterMetricCount}").getValue() should be(5)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.shareItemEventsMetircsCount}").getValue() should be(3)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.auditEventRouterMetricCount}").getValue() should be(1)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.shareEventsRouterMetricCount}").getValue() should be(1)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.logEventsRouterMetricsCount}").getValue() should be(1)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.errorEventsRouterMetricsCount}").getValue() should be(1)
+
+
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSuccessMetricsCount}").getValue() should be(9)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationFailureMetricsCount}").getValue() should be(2)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSkipMetricsCount}").getValue() should be(3)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.duplicationSkippedEventMetricsCount}").getValue() should be(6)
+
+
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.unique-event-count").getValue() should be(2)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.duplicate-event-count").getValue() should be(1)
   }
 }
 
@@ -100,19 +116,18 @@ class PipeLineProcessorEventSource extends SourceFunction[Event] {
 
   override def run(ctx: SourceContext[Event]) {
     val gson = new Gson()
-    val event1 = gson.fromJson(EventFixtures.EVENT_WITH_MID, new util.LinkedHashMap[String, Any]().getClass)
-    val event2 = gson.fromJson(EventFixtures.SHARE_EVENT, new util.LinkedHashMap[String, Any]().getClass)
-    val event3 = gson.fromJson(EventFixtures.INVALID_EVENT, new util.LinkedHashMap[String, Any]().getClass)
-    val event4 = gson.fromJson(EventFixtures.INVALID_EVENT_SCHEMA_DOESNT_EXISTS, new util.LinkedHashMap[String, Any]().getClass)
-    val event5 = gson.fromJson(EventFixtures.DUPLICATE_SHARE_EVENT, new util.LinkedHashMap[String, Any]().getClass)
-    val event6 = gson.fromJson(EventFixtures.TELEMETRY_AUDIT_EVENT, new util.LinkedHashMap[String, Any]().getClass)
-    val event7 = gson.fromJson(EventFixtures.TELEMETRY_LOG_EVENT, new util.LinkedHashMap[String, Any]().getClass)
-    val event8 = gson.fromJson(EventFixtures.DIALCODE_EVENT, new util.LinkedHashMap[String, Any]().getClass)
-    val event9 = gson.fromJson(EventFixtures.SEARCH_EVENT, new util.LinkedHashMap[String, Any]().getClass)
-    val event10 = gson.fromJson(EventFixtures.DIFFERENT_VERSION_EVENT, new util.LinkedHashMap[String, Any]().getClass)
-    val event11 = gson.fromJson(EventFixtures.EVENT_WITHOUT_EID, new util.LinkedHashMap[String, Any]().getClass)
-    val event12 = gson.fromJson(EventFixtures.VALID_ERROR_EVENT, new util.LinkedHashMap[String, Any]().getClass)
-    val event13 = gson.fromJson(EventFixtures.ASSESS_EVENT_NEWER_VERSION, new util.LinkedHashMap[String, Any]().getClass)
+    val event1 = gson.fromJson(EventFixtures.EVENT_1, new util.LinkedHashMap[String, Any]().getClass)
+    val event2 = gson.fromJson(EventFixtures.EVENT_2, new util.LinkedHashMap[String, Any]().getClass)
+    val event3 = gson.fromJson(EventFixtures.EVENT_3, new util.LinkedHashMap[String, Any]().getClass)
+    val event4 = gson.fromJson(EventFixtures.EVENT_4, new util.LinkedHashMap[String, Any]().getClass)
+    val event5 = gson.fromJson(EventFixtures.EVENT_5, new util.LinkedHashMap[String, Any]().getClass)
+    val event6 = gson.fromJson(EventFixtures.EVENT_6, new util.LinkedHashMap[String, Any]().getClass)
+    val event7 = gson.fromJson(EventFixtures.EVENT_7, new util.LinkedHashMap[String, Any]().getClass)
+    val event8 = gson.fromJson(EventFixtures.EVENT_8, new util.LinkedHashMap[String, Any]().getClass)
+    val event9 = gson.fromJson(EventFixtures.EVENT_9, new util.LinkedHashMap[String, Any]().getClass)
+    val event10 = gson.fromJson(EventFixtures.EVENT_10, new util.LinkedHashMap[String, Any]().getClass)
+    val event11 = gson.fromJson(EventFixtures.EVENT_11, new util.LinkedHashMap[String, Any]().getClass)
+    val event12 = gson.fromJson(EventFixtures.EVENT_12, new util.LinkedHashMap[String, Any]().getClass)
     ctx.collect(new Event(event1))
     ctx.collect(new Event(event2))
     ctx.collect(new Event(event3))
@@ -125,7 +140,6 @@ class PipeLineProcessorEventSource extends SourceFunction[Event] {
     ctx.collect(new Event(event10))
     ctx.collect(new Event(event11))
     ctx.collect(new Event(event12))
-    ctx.collect(new Event(event13))
   }
 
   override def cancel() = {}

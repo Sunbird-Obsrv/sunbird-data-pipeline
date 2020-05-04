@@ -63,9 +63,9 @@ class SchemaValidator(config: PipelinePreprocessorConfig) extends java.io.Serial
 
   @throws[IOException]
   @throws[ProcessingException]
-  def validate(event: Event): ProcessingReport = {
+  def validate(event: Event, isSchemaPresent:Boolean): ProcessingReport = {
     val eventJson = JsonLoader.fromString(event.getJson)
-    val report = schemaJsonMap(event.schemaName).validate(eventJson)
+    val report = if(isSchemaPresent) schemaJsonMap(event.schemaName).validate(eventJson) else schemaJsonMap(config.defaultSchemaFile).validate(eventJson)
     report
   }
 
