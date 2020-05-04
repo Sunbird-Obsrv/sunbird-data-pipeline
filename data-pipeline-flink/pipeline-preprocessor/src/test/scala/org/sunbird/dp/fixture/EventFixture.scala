@@ -22,7 +22,7 @@ object EventFixtures {
    *
    * EVENT - 9 -> SCHEMA Not Found, DeDup not required, Send to Primary Topic -
    *
-   * EVENT - 10 -> Duplicate Interact Event, Dedup required, send to duplicate topic (validationSuccess = 1 + 1 + 1 +1 +1 + 1 + 1, unique-events=1 + 1 , DuplicateEvent =1, validationFailure= 1, ValidationSkip = 1, primaryRouter = 4, errorEventsRouter = 1, auditEventRouter = 1, logEventsRouter = 1, shareItemEvents = 3, de-dupSkip = 0+ 1 + 1 + 1 + 1) // Note PrimarySink = PrimaryRouter + ShareItem
+   * EVENT - 10 -> SCHEMA Not found and invalid event
    *
    *
    *
@@ -82,11 +82,11 @@ object EventFixtures {
       |{"eid":"ASSESS","ets":1586431492513,"ver":"3.1","mid":"ASSESS:12159f2827880221eef12a6be9560379:test","actor":{"id":"6e89dba6-10d6-4044-9105-b80ce7f56b38","type":"User"},"context":{"channel":"01275678925675724817","pdata":{"id":"sunbird.dev.app","ver":"2.8.260preproduction","pid":"sunbird.app.contentplayer"},"env":"contentplayer","sid":"0cbc018c","did":"b9bdcb8cd7abc5bd7813bd65ec0b5084dc0dadd8","cdata":[]},"object":{"id":"do_212995828601487360194","type":"Content","ver":"2"},"tags":[],"edata":{"item":{"id":"do_21299582901864857613016","maxscore":1,"type":"ftb","exlength":0,"params":[{"eval":"order"}],"uri":"","title":"Registration","mmc":[],"mc":[],"desc":""},"index":1,"pass":"Yes","score":1,"resvalues":[{"1":"{\"text\":\"NARENDRA MODI\"}"}],"duration":2},"syncts":1586431504608,"@timestamp":"2020-04-09T11:25:04.608Z"}
       |""".stripMargin
 
-
+  // Invalid
   val EVENT_7: String =
     """
       |
-      |{"ver":3.0,"eid":"SHARE","ets":1577278681178,"actor":{"type":"User","id":"7c3ea1bb-4da1-48d0-9cc0-c4f150554149"},"edata":{"dir":"In","type":"File","items":[{"origin":{"id":"1b17c32bad61eb9e33df281eecc727590d739b2b","type":"Device"},"id":"do_312785709424099328114191","type":"CONTENT","ver":"1","params":[{"transfers":0,"size":21084308}]},{"origin":{"id":"1b17c32bad61eb9e33df281eecc727590d739b2b","type":"Device"},"id":"do_31277435209002188818711","type":"CONTENT","ver":"18","params":[{"transfers":12,"size":"123"}]},{"origin":{"id":"1b17c32bad61eb9e33df281eecc727590d739b2b","type":"Device"},"id":"do_31278794857559654411554","type":"TextBook","ver":"1"}]},"object":{"id":"do_312528116260749312248818","type":"TextBook","version":"10","rollup":{}},"mid":"02ba33efff5-15fe-4ec5-b32.1084308E760-3d03ff429fae84","syncts":1577278682630,"@timestamp":"2019-12-25T12:58:02.630Z","type":"events"}
+      |{"ver":3,"eid":"START","ets":"1577278681178","object":{"id":"do_312528116260749312248818","type":"TextBook","version":"10","rollup":{}},"mid":"02ba33efff5-15fe-4ec5-b32.1084308E760-3d03ff429fae84","syncts":1577278682630,"@timestamp":"2019-12-25T12:58:02.630Z","type":"events"}
       |""".stripMargin
 
   val EVENT_8 =
@@ -102,6 +102,7 @@ object EventFixtures {
       |
       |""".stripMargin
 
+  //Invalid
   val EVENT_10 =
     """
       |{"ver":"3.0","eid":"NO_EID","ets":1577278681178,"actor":{"type":"User","id":"7c3ea1bb-4da1-48d0-9cc0-c4f150554149"}}
@@ -109,7 +110,7 @@ object EventFixtures {
       |""".stripMargin
 
 
-  val EVENT_11 = EVENT_1
+  val EVENT_11 = EVENT_1 // Duplicate Event
 
   val EVENT_12 =
     """
