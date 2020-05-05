@@ -151,6 +151,16 @@
             },
             {
               "type": "path",
+              "name": "edata_commentid",
+              "expr": "$.edata.commentid"
+            },
+            {
+              "type": "path",
+              "name": "edata_commenttxt",
+              "expr": "$.edata.commenttxt"
+            },
+            {
+              "type": "path",
               "name": "device_loc_state",
               "expr": "$.devicedata.state"
             },
@@ -515,6 +525,14 @@
             {
               "type": "string",
               "name": "edata_comments"
+            },
+            {
+              "type": "string",
+              "name": "edata_commentid"
+            },
+            {
+              "type": "string",
+              "name": "edata_commenttxt"
             },
             {
               "type": "string",
