@@ -1083,7 +1083,7 @@
           "dimensionsExclusions": []
         },
         "timestampSpec": {
-          "column": "context_date_range_to",
+          "column": "syncts",
           "format": "auto"
         }
       }
