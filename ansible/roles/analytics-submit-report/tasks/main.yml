@@ -1,8 +1,8 @@
-- name: Update model config
+- name: Update report config
   template: src=config.json.j2 dest={{ analytics.home }}/scripts/config.json mode=755 owner={{ analytics_user }} group={{ analytics_group }}
 
 
-- name: Update model config
+- name: Update run job config
   template: src=druid-report-job.j2 dest={{ analytics.home }}/scripts/druid-report-job.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
 
 
