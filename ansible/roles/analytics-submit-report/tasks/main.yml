@@ -1,0 +1,14 @@
+- name: Update model config
+  template: src=config.json.j2 dest={{ analytics.home }}/scripts/config.json mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+
+
+- name: Update model config
+  template: src=druid-report-job.j2 dest={{ analytics.home }}/scripts/druid-report-job.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+
+
+- name: Run Druid Report Job
+  become: yes
+  become_user: "{{ analytics_user }}"
+  shell: "nohup {{ analytics.home }}/scripts/druid-report-job.sh &"
+  async: "{{ (pause_min * 60) }}"
+  poll: 0
