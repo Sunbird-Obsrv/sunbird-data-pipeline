@@ -53,6 +53,11 @@
   run_once: true
   tags: create
 
+- name: create report_summary
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS report_summary(id varchar(40) NOT NULL PRIMARY KEY, reportid varchar(40) NOT NULL, chartid text, createdon timestamptz NOT NULL DEFAULT now(), createdby varchar(50) NOT NULL, summary text NOT NULL)"
+  run_once: true
+  tags: create
+
 - name: create {{ env }}_consumer-channel-mapping
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "select * from {{ env }}_consumer_channel_mapping"
   run_once: true
