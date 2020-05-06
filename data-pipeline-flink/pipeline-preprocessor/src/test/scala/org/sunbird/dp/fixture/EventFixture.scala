@@ -36,10 +36,10 @@ object EventFixtures {
    * 3. share-route-success-count -> 01
    * 4. log-route-success-count -> 01
    * 5. error-route-success-count -> 01
-   * 6. validation-success-event-count -> 09
+   * 6. validation-success-event-count -> 10
    * 7. validation-failed-event-count -> 02
    * 8. duplicate-event-count -> 01
-   * 9. duplicate-skipped-event-count ->  06
+   * 9. duplicate-skipped-event-count ->  07
    * 10. unique-event-count -> 02
    * 11. validation-skipped-event-count -> 03
    *
@@ -117,9 +117,6 @@ object EventFixtures {
       |{"eid":"SEARCH","ets":1577826509166,"ver":"3.0","mid":"LP.1577826509166.c5d13bb7-43c6-4174-9bbe-b06aed6758f2","actor":{"id":"org.ekstep.learning.platform","type":"System"},"context":{"channel":"in.ekstep","pdata":{"id":"dev.sunbird.learning.platform","pid":"search-service","ver":"1.0"},"env":"search"},"edata":{"size":112402,"query":"","filters":{"dialCodes":"WGHSK"},"sort":{},"type":"all","topn":[{"identifier":"do_11278295762528665612"},{"identifier":"domain_14443"},{"identifier":"do_11243460107708006418"},{"identifier":"tpd_medium_code"},{"identifier":"0128260921141493762"}]},"syncts":1577826509166}
       |
       |""".stripMargin
-
-
-
 
 
   val EVENT_WITHOUT_EID: String =
