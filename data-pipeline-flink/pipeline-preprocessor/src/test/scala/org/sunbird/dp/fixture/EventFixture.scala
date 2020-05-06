@@ -30,7 +30,7 @@ object EventFixtures {
    *
    * 1) Total Events Pushed = 12 (3skipped,  7success, 2 failed)
    *
-   * 1. primary-route-success-count -> 07 (Note: Primary Router = PrimaryRoute = PrimaryRoute(5) + Audit(1) + Share(1) + shareItemEvent(3))
+   * 1. primary-route-success-count -> 07
    * 2. share-item-event-success-count -> 03
    * 2. audit-route-success-count -> 01
    * 3. share-route-success-count -> 01

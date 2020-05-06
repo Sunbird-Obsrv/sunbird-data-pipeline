@@ -1,4 +1,5 @@
 package org.sunbird.dp.preprocessor.functions
+
 import com.github.fge.jsonschema.core.report.ProcessingReport
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
@@ -9,16 +10,20 @@ import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 import org.sunbird.dp.preprocessor.domain.Event
 import org.sunbird.dp.preprocessor.task.PipelinePreprocessorConfig
 import org.sunbird.dp.preprocessor.util.SchemaValidator
+
 class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
                                   @transient var schemaValidator: SchemaValidator = null,
                                   @transient var dedupEngine: DedupEngine = null)
                                  (implicit val eventTypeInfo: TypeInformation[Event])
   extends BaseProcessFunction[Event, Event](config) {
   private[this] val logger = LoggerFactory.getLogger(classOf[TelemetryValidationFunction])
+
   override def metricsList(): List[String] = {
-    List(config.validationFailureMetricsCount, config.validationSkipMetricsCount,
-      config.validationSuccessMetricsCount, config.duplicationSkippedEventMetricsCount) ::: deduplicationMetrics
+    List(config.validationFailureMetricsCount,
+      config.validationSuccessMetricsCount,
+      config.duplicationSkippedEventMetricsCount) ::: deduplicationMetrics
   }
+
   override def open(parameters: Configuration): Unit = {
     super.open(parameters)
     if (dedupEngine == null) {
@@ -29,19 +34,22 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
       schemaValidator = new SchemaValidator(config)
     }
   }
+
   override def close(): Unit = {
     super.close()
     dedupEngine.closeConnectionPool()
   }
+
   override def processElement(event: Event,
                               context: ProcessFunction[Event, Event]#Context,
                               metrics: Metrics): Unit = {
     dataCorrection(event)
-    val isSchemaPresent:Boolean = schemaValidator.schemaFileExists(event)
-    if (!isSchemaPresent) onValidationSkip(event, metrics)
+    val isSchemaPresent: Boolean = schemaValidator.schemaFileExists(event)
+    if (!isSchemaPresent) onValidationSkip(event)
     val validationReport = schemaValidator.validate(event, isSchemaPresent = isSchemaPresent)
     if (validationReport.isSuccess) onValidationSuccess(event, metrics, context) else onValidationFailure(event, metrics, context, validationReport)
   }
+
   private def dataCorrection(event: Event): Event = {
     // Remove prefix from federated userIds
     val eventActorId = event.actorId()
@@ -52,9 +60,11 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
     if (event.objectFieldsPresent && (event.objectType().equalsIgnoreCase("DialCode") || event.objectType().equalsIgnoreCase("qr"))) event.correctDialCodeValue()
     event
   }
+
   def isDuplicateCheckRequired(producerId: String): Boolean = {
     config.includedProducersForDedup.contains(producerId)
   }
+
   def onValidationSuccess(event: Event, metrics: Metrics, context: ProcessFunction[Event, Event]#Context): Unit = {
     logger.info(s"Telemetry schema validation is success: ${event.mid()}")
     event.markSuccess(config.VALIDATION_FLAG_NAME)
@@ -68,6 +78,7 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
       metrics.incCounter(config.duplicationSkippedEventMetricsCount)
     }
   }
+
   def onValidationFailure(event: Event, metrics: Metrics, context: ProcessFunction[Event, Event]#Context, validationReport: ProcessingReport): Unit = {
     val failedErrorMsg = schemaValidator.getInvalidFieldName(validationReport.toString)
     logger.info(s"Telemetry schema validation is failed for: ${event.mid()} and error message is: ${validationReport.toString}")
@@ -75,9 +86,9 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
     metrics.incCounter(config.validationFailureMetricsCount)
     context.output(config.validationFailedEventsOutputTag, event)
   }
-  def onValidationSkip(event: Event, metrics: Metrics): Unit = {
+
+  def onValidationSkip(event: Event): Unit = {
     logger.info(s"Schema not found, Skipping the: ${event.eid} from validation")
     event.markSkipped(config.VALIDATION_FLAG_NAME) // Telemetry validation skipped
-    metrics.incCounter(config.validationSkipMetricsCount)
   }
 }
