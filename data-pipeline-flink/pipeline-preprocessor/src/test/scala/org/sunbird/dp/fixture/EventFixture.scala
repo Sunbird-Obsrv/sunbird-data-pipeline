@@ -28,15 +28,15 @@ object EventFixtures {
    *
    * ****************************END METRICS_RESULT****************************
    *
-   * 1) Total Events Pushed = 12
+   * 1) Total Events Pushed = 12 (3skipped,  7success, 2 failed)
    *
-   * 1. primary-route-success-count -> 05 (Note: Primary Router = PrimaryRoute = PrimaryRoute + shareItemEvent)
+   * 1. primary-route-success-count -> 07 (Note: Primary Router = PrimaryRoute = PrimaryRoute + Audit + Share + shareItemEvent)
    * 2. share-item-event-success-count -> 03
    * 2. audit-route-success-count -> 01
    * 3. share-route-success-count -> 01
    * 4. log-route-success-count -> 01
    * 5. error-route-success-count -> 01
-   * 6. validation-success-event-count -> 10
+   * 6. validation-success-event-count -> 10(skip + success)
    * 7. validation-failed-event-count -> 02
    * 8. duplicate-event-count -> 01
    * 9. duplicate-skipped-event-count ->  07
