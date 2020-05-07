@@ -68,6 +68,8 @@ output {
 				"db_insert" => "%{[db-insert-count]}"
 				"db_update" => "%{[db-update-count]}"
 				"assess_route_success" => "%{[assess-route-success-count]}"
+				"log_route_success" => "%{[log-route-success-count]}"
+				"error_route_success" => "%{[error-route-success-count]}"
 			}   
 			coerce_values => {
 				"success" => "float"
@@ -119,6 +121,8 @@ output {
 				"db_insert" => "float"
 				"db_update" => "float"
 				"assess_route_success" => "float"
+				"log_route_success" => "float"
+				"error_route_success" => "float"
 			}
 			host => "{{influxdb_host}}"
 			port => "{{influxdb_port}}"
