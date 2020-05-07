@@ -51,7 +51,7 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
 
   // Share events out put tags
   val shareRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("share-route-events")
-  val shareItemEventOutTag: OutputTag[String] = OutputTag[String]("share-route-events")
+  val shareItemEventOutputTag: OutputTag[String] = OutputTag[String]("share-item-events")
 
   val validationParallelism: Int = config.getInt("task.telemetry.validation.parallelism")
   val routerParallelism: Int = config.getInt("task.telemetry.router.parallelism")
@@ -80,6 +80,9 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
 
   // ShareEventsFlatten count
   val shareItemEventsMetircsCount = "share-item-event-success-count"
+
+  // Consumers
+  val pipelinePreprocessorConsumer = "pipeline-preprocessor-consumer"
 
   // Functions
   val telemetryValidationFunction = "TelemetryValidationFunction"

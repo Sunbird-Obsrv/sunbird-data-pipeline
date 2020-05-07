@@ -16,9 +16,8 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
       true
     } catch {
       case ex: Exception =>
-        // println(s"Could not add the value to keypath $keyPath and $value")
+        false
     }
-    false
   }
 
   def getMap: util.Map[String, Any] = map
@@ -28,8 +27,7 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
     Option(parentMap.readChild.orNull.asInstanceOf[T])
   } catch {
     case ex: Exception =>
-      // println(s"Could not able to read the object from $keyPath")
-      Option(null.asInstanceOf[T])
+      None
   }
 
   def readOrDefault[T](keyPath: String, defaultValue: T): T = {
@@ -98,6 +96,5 @@ class Telemetry(var map: util.Map[String, Any]) extends Serializable {
   }
 }
 
-class TelemetryReaderException(val message: String) extends Exception(message) {
-}
+class TelemetryReaderException(val message: String) extends Exception(message) {}
 

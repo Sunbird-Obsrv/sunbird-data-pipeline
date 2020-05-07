@@ -81,6 +81,9 @@ class DenormalizationConfig(override val config: Config) extends BaseJobConfig(c
   val locCacheHit = "loc-cache-hit"
   val locCacheMiss = "loc-cache-miss"
 
+  // Consumers
+  val denormalizationConsumer = "denormalization-consumer"
+
   // Functions
   val deviceDenormFunction = "DeviceDenormFunction"
   val userDenormFunction = "UserDenormFunction"

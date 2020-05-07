@@ -46,7 +46,7 @@ class AssessmentAggregatorStreamTask(config: AssessmentAggregatorConfig, kafkaCo
         val source = kafkaConnector.kafkaEventSource[Event](config.kafkaInputTopic)
 
         val aggregatorStream: SingleOutputStreamOperator[Event] =
-            env.addSource(source, "telemetry-assess")
+            env.addSource(source, config.assessmentAggConsumer).uid(config.assessmentAggConsumer)
               .rebalance()
               .process(new AssessmentAggregatorFunction(config))
               .name(config.assessmentAggregatorFunction).uid(config.assessmentAggregatorFunction)

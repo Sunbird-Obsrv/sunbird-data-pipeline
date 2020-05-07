@@ -45,6 +45,9 @@ class ContentCacheUpdaterConfig(override val config: Config) extends BaseJobConf
 
   val dialCodeProperties = List("dialcodes","reservedDialCodes")
 
+  // Consumers
+  val contentCacheConsumer = "content-cache-consumer"
+
   // Functions
   val contentUpdaterFunction = "ContentUpdaterFunction"
   val dialcodeUpdaterFunction = "DialcodeUpdaterFunction"

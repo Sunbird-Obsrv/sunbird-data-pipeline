@@ -25,11 +25,11 @@ class DeviceProfileUpdaterStreamTask(config: DeviceProfileUpdaterConfig, kafkaCo
      * 1. Push all duplicate events to duplicate topic.
      * 2. Push all unique events to unique topic.
      */
-      env.addSource(kafkaConnector.kafkaMapSource(config.kafkaInputTopic), "telemetry-ingest-events-consumer")
-        .rebalance()
-        .process(new DeviceProfileUpdaterFunction(config))
-        .name(config.deviceProfileUpdaterFunction).uid(config.deviceProfileUpdaterFunction)
-        .setParallelism(config.deviceProfileParallelism)
+    env.addSource(kafkaConnector.kafkaMapSource(config.kafkaInputTopic), config.deviceProfileConsumer)
+      .uid(config.deviceProfileConsumer).rebalance()
+      .process(new DeviceProfileUpdaterFunction(config))
+      .name(config.deviceProfileUpdaterFunction).uid(config.deviceProfileUpdaterFunction)
+      .setParallelism(config.deviceProfileParallelism)
     env.execute("Device profile updater")
 
   }

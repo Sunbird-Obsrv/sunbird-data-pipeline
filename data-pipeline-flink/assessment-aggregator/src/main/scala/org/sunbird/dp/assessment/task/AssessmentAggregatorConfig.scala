@@ -40,6 +40,9 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
 
     val failedEventsOutputTag: OutputTag[Event] = OutputTag[Event]("assess-failed-events")
 
+    // Consumers
+    val assessmentAggConsumer = "assessment-agg-consumer"
+
     // Functions
     val assessmentAggregatorFunction = "AssessmentAggregatorFunction"
 

@@ -18,8 +18,6 @@ class UserCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(
   val inputTopic: String = config.getString("kafka.denorm.input.topic")
   val userFields = List("usertype", "grade", "language", "subject", "state", "district", "usersignintype", "userlogintype","locationids")
 
-  val userCacheConsumer = "user-cache-updater-consumer"
-
   // User cache updater job metrics
   val userCacheHit = "user-cache-hit"
   val skipCount = "skipped-message-count"
@@ -46,11 +44,13 @@ class UserCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(
   val userCacheParallelism: Int = config.getInt("task.usercache.updater.parallelism")
 
   // constants
-
   val userSignInTypeKey = "usersignintype"
   val userLoginTypeKey = "userlogintype"
   val stateKey = "state"
   val districtKey = "district"
+
+  // Consumers
+  val userCacheConsumer = "user-cache-consumer"
 
   // Functions
   val userCacheUpdaterFunction = "UserCacheUpdaterFunction"

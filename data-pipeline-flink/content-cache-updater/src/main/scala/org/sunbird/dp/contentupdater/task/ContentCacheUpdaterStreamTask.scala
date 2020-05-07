@@ -44,7 +44,8 @@ class ContentCacheUpdaterStreamTask(config: ContentCacheUpdaterConfig, kafkaConn
     implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
     val source = kafkaConnector.kafkaEventSource[Event](config.inputTopic)
 
-    val contentUpdaterStream =  env.addSource(source, "learning-graph-events-consumer")
+    val contentUpdaterStream =
+      env.addSource(source, config.contentCacheConsumer).uid(config.contentCacheConsumer)
       .rebalance().process(new ContentUpdaterFunction(config))
         .name(config.contentUpdaterFunction).uid(config.contentUpdaterFunction)
 

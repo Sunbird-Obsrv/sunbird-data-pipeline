@@ -42,7 +42,9 @@ class DruidValidatorStreamTask(config: DruidValidatorConfig, kafkaConnector: Fli
     /**
      * Perform validation
      */
-    val dataStream = env.addSource(kafkaConnector.kafkaEventSource[Event](config.kafkaInputTopic), "kafka-telemetry-denorm-consumer")
+    val dataStream =
+      env.addSource(kafkaConnector.kafkaEventSource[Event](config.kafkaInputTopic), config.druidValidatorConsumer)
+      .uid(config.druidValidatorConsumer)
       .rebalance()
       .process(new DruidValidatorFunction(config)).name(config.druidValidatorFunction).uid(config.druidValidatorFunction)
       .setParallelism(config.validatorParallelism)

@@ -60,6 +60,9 @@ class TelemetryExtractorConfig(override val config: Config) extends BaseJobConfi
   val duplicateEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = DUPLICATE_EVENTS_OUTPUT_TAG)
   val uniqueEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = UNIQUE_EVENTS_OUTPUT_TAG)
 
+  // Consumers
+  val telemetryExtractorConsumer = "telemetry-extractor-consumer"
+
   // Functions
   val extractionFunction = "ExtractionFucntion"
   val redactorFunction = "RedactorFunction"

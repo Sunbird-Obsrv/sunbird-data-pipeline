@@ -58,6 +58,9 @@ class DeviceProfileUpdaterConfig(override val config: Config) extends BaseJobCon
     userDeclaredDistrict, uaSpec, deviceSpec, firstAccess, userDeclaredOn, apiLastUpdatedOn
   )
 
+  // Consumers
+  val deviceProfileConsumer = "device-profile-consumer"
+
   // Functions
   val deviceProfileUpdaterFunction = "DeviceProfileUpdaterFunction"
 

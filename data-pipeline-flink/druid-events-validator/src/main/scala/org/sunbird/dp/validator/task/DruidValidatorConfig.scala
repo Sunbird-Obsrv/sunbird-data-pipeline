@@ -52,6 +52,9 @@ class DruidValidatorConfig(override val config: Config) extends BaseJobConfig(co
   val validationSuccessMetricsCount = "validation-success-message-count"
   val validationFailureMetricsCount = "validation-failed-message-count"
 
+  // Consumers
+  val druidValidatorConsumer = "druid-validator-consumer"
+
   // Functions
   val druidValidatorFunction = "DruidValidatorFunction"
   val druidRouterFunction = "DruidRouterFunction"

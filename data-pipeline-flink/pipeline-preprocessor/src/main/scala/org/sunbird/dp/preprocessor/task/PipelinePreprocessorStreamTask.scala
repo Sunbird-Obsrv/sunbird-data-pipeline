@@ -59,7 +59,7 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
      */
 
     val validationStream: SingleOutputStreamOperator[Event] =
-      env.addSource(kafkaConsumer, "telemetry-raw-events-consumer")
+      env.addSource(kafkaConsumer, config.pipelinePreprocessorConsumer).uid(config.pipelinePreprocessorConsumer)
         .rebalance()
         .process(new TelemetryValidationFunction(config)).name(config.telemetryValidationFunction).uid(config.telemetryValidationFunction)
         .setParallelism(config.validationParallelism)
@@ -102,7 +102,7 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
      */
 
     shareEventsFlattener.getSideOutput(config.primaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name(config.shareEventsPrimaryRouteProducer).uid(config.shareEventsPrimaryRouteProducer)
-    shareEventsFlattener.getSideOutput(config.shareItemEventOutTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaPrimaryRouteTopic)).name(config.shareItemsPrimaryRouterProducer).uid(config.shareItemsPrimaryRouterProducer)
+    shareEventsFlattener.getSideOutput(config.shareItemEventOutputTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaPrimaryRouteTopic)).name(config.shareItemsPrimaryRouterProducer).uid(config.shareItemsPrimaryRouterProducer)
 
     env.execute(config.jobName)
   }
