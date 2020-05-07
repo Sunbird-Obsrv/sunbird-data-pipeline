@@ -212,7 +212,7 @@ public class JobMetrics {
     }
 
     public void incErrorRouteSuccessCounter() {
-        errorRouteSuccessCount.clear();
+        errorRouteSuccessCount.inc();
     }
     
     public void incAuditRouteSuccessCounter() {
