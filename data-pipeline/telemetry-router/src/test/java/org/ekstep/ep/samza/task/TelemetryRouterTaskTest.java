@@ -67,7 +67,7 @@ public class TelemetryRouterTaskTest {
 		stub(configMock.get("output.malformed.topic.name", MALFORMED_TOPIC)).toReturn(MALFORMED_TOPIC);
 		stub(configMock.get("router.events.share.route.topic", SHARE_EVENT_TOPIC)).toReturn(SHARE_EVENT_TOPIC);
 		stub(configMock.get("router.events.log.topic.name", LOG_TOPIC)).toReturn(LOG_TOPIC);
-		stub(configMock.get("router.events.topic.name", ERROR_TOPIC)).toReturn(ERROR_TOPIC);
+		stub(configMock.get("router.events.error.topic.name", ERROR_TOPIC)).toReturn(ERROR_TOPIC);
 
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
