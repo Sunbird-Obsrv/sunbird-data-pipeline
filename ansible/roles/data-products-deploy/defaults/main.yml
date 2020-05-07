@@ -24,7 +24,7 @@ druid_rollup_broker_host: "{{groups['broker'][0]}}"
 hierarchySearchServiceUrl: "{{ proto }}://{{ domain_name }}/api/course"
 hierarchySearchServicEndpoint: /v1/hierarchy/
 
-analytics_job_list: '"wfs", "ds", "dpu", "content-rating-updater", "audit-metrics-report", "monitor-job-summ"'
+analytics_job_list: '"ds", "dpu", "content-rating-updater", "audit-metrics-report", "monitor-job-summ"'
 analytics_jobs_count: 8
 
 cassandra_keyspace_prefix: '{{ env }}_'
@@ -71,6 +71,15 @@ start_jobmanager:
 have_weekly_jobs: false
 
 video_stream_job_schedule: 10
+
+run_wfs_job:
+  wfs:
+    hour: 00
+    minute: 30
+run_monitor_job:    
+  monitor-job-summ:
+    hour: 03
+    minute: 00
 
 run_course_metrics_job:
   course-dashboard-metrics:
