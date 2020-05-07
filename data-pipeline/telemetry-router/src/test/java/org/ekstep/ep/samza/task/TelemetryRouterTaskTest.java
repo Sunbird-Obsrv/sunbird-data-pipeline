@@ -79,7 +79,7 @@ public class TelemetryRouterTaskTest {
 	}
 
 	@Test
-	public void shouldSendLOGEventToSecondaryRoute() throws Exception {
+	public void shouldSendLOGEventToLogEventsRoute() throws Exception {
 
 		stub(configMock.get("router.events.secondary.route.events", "LOG,ERROR")).toReturn("LOG");
 		telemetryRouterTask = new TelemetryRouterTask(configMock, contextMock);
@@ -102,7 +102,7 @@ public class TelemetryRouterTaskTest {
 	}
 
 	@Test
-	public void shouldSendERROREventToSecondaryRoute() throws Exception {
+	public void shouldSendERROREventToErrorEventsRoute() throws Exception {
 
 		stub(configMock.get("router.events.secondary.route.events", "LOG,ERROR")).toReturn("LOG,ERROR");
 		telemetryRouterTask = new TelemetryRouterTask(configMock, contextMock);

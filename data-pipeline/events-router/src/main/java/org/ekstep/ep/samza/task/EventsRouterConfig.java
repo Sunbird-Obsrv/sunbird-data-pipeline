@@ -15,11 +15,9 @@ public class EventsRouterConfig {
     private String summaryEventsRouteTopic;
     private String summaryRouteEvents;
     private String malformedTopic;
-    private String logEventsRouteTopic;
     private boolean dedupEnabled;
     private final int dupStore;
     private int expirySeconds;
-    private String errorEventsRouteTopic;
     private List<String> excludedEids = new ArrayList<>();
 
     public EventsRouterConfig(Config config) {
@@ -29,11 +27,9 @@ public class EventsRouterConfig {
         summaryRouteEvents = config.get("router.events.summary.route.events", "ME_WORKFLOW_SUMMARY");
         summaryEventsRouteTopic = config.get("router.events.summary.route.topic", "events.summary");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
-        logEventsRouteTopic = config.get("router.events.log.route.topic", "events.log");
         dedupEnabled = config.getBoolean("dedup.enabled", true);
         dupStore = config.getInt("redis.database.duplicationstore.id", 8);
         expirySeconds = config.getInt("redis.database.key.expiry.seconds", 28800);
-        errorEventsRouteTopic = config.get("router.events.error.route.topic", "events.error");
         if (!config.get("dedup.exclude.eids", "").isEmpty()) {
             excludedEids = config.getList("dedup.exclude.eids", new ArrayList<>());
         }
@@ -72,10 +68,6 @@ public class EventsRouterConfig {
         return JOB_NAME;
     }
 
-    public String getLogEventsRouteTopic() {
-        return logEventsRouteTopic;
-    }
-
     public Boolean isDedupEnabled() {
         return dedupEnabled;
     }
@@ -86,10 +78,6 @@ public class EventsRouterConfig {
 
     public int expirySeconds() {
         return expirySeconds;
-    }
-
-    public String getErrorEventsRouteTopic() {
-        return errorEventsRouteTopic;
     }
 
     public List<String> excludedEids() {
