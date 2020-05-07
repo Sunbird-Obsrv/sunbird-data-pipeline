@@ -28,8 +28,8 @@ public class TelemetryRouterConfig {
         auditRouteTopic = config.get("router.events.audit.route.topic", "telemetry.audit");
         shareEventRouterTopic = config.get("router.events.share.route.topic", "telemetry.share");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
-        logRouteTopic = config.get("output.log.topic.name","telemetry.log");
-        errorRouteTopic = config.get("output.error.topic.name","telemetry.error");
+        logRouteTopic = config.get("router.events.log.topic.name","events.log");
+        errorRouteTopic = config.get("router.events.error.topic.name","events.error");
 
     }
 

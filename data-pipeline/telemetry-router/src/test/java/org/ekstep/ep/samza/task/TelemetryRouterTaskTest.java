@@ -38,8 +38,8 @@ public class TelemetryRouterTaskTest {
 	private static final String MALFORMED_TOPIC = "telemetry.malformed";
 	private static final String AUDIT_TOPIC = "telemetry.audit";
 	private static final String SHARE_EVENT_TOPIC = "telemetry.share";
-	private static final String LOG_TOPIC = "telemetry.log";
-	private static final String ERROR_TOPIC = "telemetry.error";
+	private static final String LOG_TOPIC = "events.log";
+	private static final String ERROR_TOPIC = "events.error";
 
 	private MessageCollector collectorMock;
 	private TaskContext contextMock;
@@ -66,8 +66,8 @@ public class TelemetryRouterTaskTest {
 		stub(configMock.get("router.events.audit.route.topic", AUDIT_TOPIC)).toReturn(AUDIT_TOPIC);
 		stub(configMock.get("output.malformed.topic.name", MALFORMED_TOPIC)).toReturn(MALFORMED_TOPIC);
 		stub(configMock.get("router.events.share.route.topic", SHARE_EVENT_TOPIC)).toReturn(SHARE_EVENT_TOPIC);
-		stub(configMock.get("output.log.topic.name", LOG_TOPIC)).toReturn(LOG_TOPIC);
-		stub(configMock.get("output.error.topic.name", ERROR_TOPIC)).toReturn(ERROR_TOPIC);
+		stub(configMock.get("router.events.log.topic.name", LOG_TOPIC)).toReturn(LOG_TOPIC);
+		stub(configMock.get("router.events.topic.name", ERROR_TOPIC)).toReturn(ERROR_TOPIC);
 
 		stub(metricsRegistry.newCounter(anyString(), anyString())).toReturn(counter);
 		stub(contextMock.getMetricsRegistry()).toReturn(metricsRegistry);
