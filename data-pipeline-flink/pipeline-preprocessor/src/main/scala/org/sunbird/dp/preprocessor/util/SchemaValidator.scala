@@ -40,7 +40,6 @@ class SchemaValidator(config: PipelinePreprocessorConfig) extends java.io.Serial
     }
 
     logger.info(s"Loaded ${schemaFiles.size} telemetry schema files...")
-
     schemaFiles.map { schemaFile =>
       val schemaJson =
         new String(ByteStreams.toByteArray(
@@ -53,31 +52,20 @@ class SchemaValidator(config: PipelinePreprocessorConfig) extends java.io.Serial
 
   logger.info("Schema initialization completed for telemetry objects...")
 
-  def loadSchemaFiles(schemaDirPath: java.nio.file.Path): ListBuffer[String] = {
-    var eventSchemaList = new ListBuffer[String]() += "3.0/envelope.json"
-    Try(Files.newDirectoryStream(schemaDirPath)).map { stream =>
-      stream.iterator().asScala.toList.map(path => {
-        val file = new File(path.toUri)
-        if (file.isDirectory()) {
-            file.listFiles().map(subDirFile => {
-            eventSchemaList += s"${path.getFileName.toString}/${subDirFile.getName}"
-          })
-        } else {
-          eventSchemaList += path.getFileName.toString
-        }
-      })
-    }.getOrElse(eventSchemaList)
-
-    eventSchemaList
+  def loadSchemaFiles(schemaDirPath: java.nio.file.Path): List[String] = {
+    val schemaFiles = Try(Files.newDirectoryStream(schemaDirPath)).map { stream =>
+      stream.iterator().asScala.toList.map(path => path.getFileName.toString)
+    }.getOrElse(List[String]())
+    schemaFiles
   }
 
   def schemaFileExists(event: Event): Boolean = schemaJsonMap.contains(event.schemaName)
 
   @throws[IOException]
   @throws[ProcessingException]
-  def validate(event: Event): ProcessingReport = {
+  def validate(event: Event, isSchemaPresent:Boolean): ProcessingReport = {
     val eventJson = JsonLoader.fromString(event.getJson)
-    val report = schemaJsonMap(event.schemaName).validate(eventJson)
+    val report = if(isSchemaPresent) schemaJsonMap(event.schemaName).validate(eventJson) else schemaJsonMap(config.defaultSchemaFile).validate(eventJson)
     report
   }
 
@@ -96,6 +84,5 @@ class SchemaValidator(config: PipelinePreprocessorConfig) extends java.io.Serial
       defaultValidationErrMsg
     }
   }
-
 }
 // $COVERAGE-ON$

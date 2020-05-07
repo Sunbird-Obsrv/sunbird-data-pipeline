@@ -89,6 +89,8 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val invalidEventProducer = "preprocessor-invalid-events"
   val duplicateEventProducer = "preprocessor-duplicate-events"
 
+  val defaultSchemaFile = "envelope.json"
+
 
 
 

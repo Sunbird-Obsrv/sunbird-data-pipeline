@@ -49,6 +49,10 @@
       "items": {
         "type": "string"
       }
+    },
+    "type": {
+      "id": "http://api.ekstep.org/telemetry/question/type",
+      "type": "string"
     }
   }
 }

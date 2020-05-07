@@ -31,9 +31,11 @@ class TelemetryRouterFunction(config: PipelinePreprocessorConfig)
       case "AUDIT" =>
         ctx.output(config.auditRouteEventsOutputTag, event)
         metrics.incCounter(metric = config.auditEventRouterMetricCount)
+        metrics.incCounter(metric = config.primaryRouterMetricCount) // Since we are are sinking the AUDIT Event into primary router topic
       case "SHARE" =>
         ctx.output(config.shareRouteEventsOutputTag, event)
         metrics.incCounter(metric = config.shareEventsRouterMetricCount)
+        metrics.incCounter(metric = config.primaryRouterMetricCount) // // Since we are are sinking the SHARE Event into primary router topic
       case "LOG" =>
         ctx.output(config.logEventsOutputTag, event)
         metrics.incCounter(metric = config.logEventsRouterMetricsCount)

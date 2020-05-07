@@ -10,7 +10,8 @@
       "id": "http://api.ekstep.org/telemetry/ver",
       "type": "string",
       "enum": [
-        "3.0"
+        "3.0",
+        "3.1"
       ]
     },
     "mid": {
