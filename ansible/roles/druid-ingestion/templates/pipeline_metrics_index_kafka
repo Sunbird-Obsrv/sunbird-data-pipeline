@@ -172,6 +172,14 @@
             {
               "type": "root",
               "name": "assess-route-success-count"
+            },
+            {
+              "type": "root",
+              "name": "log-route-success-count"
+            },
+            {
+              "type": "root",
+              "name": "error-route-success-count"
             }
           ]
         },
@@ -340,6 +348,14 @@
             {
               "type": "long",
               "name": "assess-route-success-count"
+            },
+            {
+              "type": "long",
+              "name": "log-route-success-count"
+            },
+            {
+              "type": "long",
+              "name": "error-route-success-count"
             }
           ],
           "dimensionsExclusions": []
