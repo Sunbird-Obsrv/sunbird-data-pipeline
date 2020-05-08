@@ -52,9 +52,9 @@ class ContentUpdaterFunction(config: ContentCacheUpdaterConfig)(implicit val map
                     case _: String => List(nv)
                     case _: util.ArrayList[String] => nv
                 })
-                else
+            else
                 (property, nv)
-        }.filter(map => None!= map._2)
+        }.filter(map => None != map._2)
         redisData ++= newProperties.asInstanceOf[Map[String, AnyRef]]
 
         if (redisData.nonEmpty) {
@@ -62,7 +62,8 @@ class ContentUpdaterFunction(config: ContentCacheUpdaterConfig)(implicit val map
             metrics.incCounter(config.contentCacheHit)
             logger.info(nodeUniqueId + " Updated Successfully")
         }
-        if(finalProperties.filter(p => config.dialCodeProperties.contains(p._1)).nonEmpty)
-        context.output(config.withContentDailCodeEventsTag, event)
+
+        if (finalProperties.exists(p => config.dialCodeProperties.contains(p._1)))
+            context.output(config.withContentDailCodeEventsTag, event)
     }
 }

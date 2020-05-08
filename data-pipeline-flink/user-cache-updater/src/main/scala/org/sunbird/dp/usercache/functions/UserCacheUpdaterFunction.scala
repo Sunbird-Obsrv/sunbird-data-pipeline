@@ -78,7 +78,7 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
       if (config.userValidatedTypeList.contains(signInType)) {
         userData.put(config.userSignInTypeKey, config.userValidatedKey)
       }
-    }).getOrElse(null)
+    }).orNull
     userData
   }
 

@@ -18,11 +18,15 @@ object FlinkUtil {
     /**
       * Use Blob storage as distributed state backend if enabled
       */
-    if (config.enableDistributedCheckpointing.isDefined) {
-      val stateBackend: StateBackend = new FsStateBackend(s"${config.checkpointingBaseUrl.getOrElse("")}/${config.jobName}", true)
-      env.setStateBackend(stateBackend)
-      val checkpointConfig: CheckpointConfig = env.getCheckpointConfig
-      checkpointConfig.enableExternalizedCheckpoints(ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION)
+
+    config.enableDistributedCheckpointing match {
+      case Some(true) => {
+        val stateBackend: StateBackend = new FsStateBackend(s"${config.checkpointingBaseUrl.getOrElse("")}/${config.jobName}", true)
+        env.setStateBackend(stateBackend)
+        val checkpointConfig: CheckpointConfig = env.getCheckpointConfig
+        checkpointConfig.enableExternalizedCheckpoints(ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION)
+      }
+      case _ => // Do nothing
     }
 
     env.setStreamTimeCharacteristic(TimeCharacteristic.IngestionTime)

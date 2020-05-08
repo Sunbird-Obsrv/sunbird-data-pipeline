@@ -59,12 +59,10 @@ class DialCodeUpdaterFunction(config: ContentCacheUpdaterConfig)
                     dataCache.setWithRetry(dc, gson.toJson(result.get("dialcode")))
                     metrics.incCounter(config.dialCodeCacheHit)
                     logger.info(dc + " updated successfully")
-                }
-                else {
+                } else {
                     metrics.incCounter(config.dialCodeApiMissHit)
                 }
-            }
-            else {
+            } else {
                 metrics.incCounter(config.dialCodeCacheHit)
             }
         })

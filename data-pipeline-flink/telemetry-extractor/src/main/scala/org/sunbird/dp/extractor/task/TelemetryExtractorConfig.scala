@@ -9,7 +9,7 @@ import org.apache.flink.streaming.api.scala.OutputTag
 import org.sunbird.dp.core.job.BaseJobConfig
 import scala.collection.JavaConverters._
 
-class TelemetryExtractorConfig(override val config: Config) extends BaseJobConfig(config, "telemetry-extractor") {
+class TelemetryExtractorConfig(override val config: Config) extends BaseJobConfig(config, "TelemetryExtractorJob") {
 
   private val serialVersionUID = 2905979434303791379L
 
@@ -59,5 +59,20 @@ class TelemetryExtractorConfig(override val config: Config) extends BaseJobConfi
 
   val duplicateEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = DUPLICATE_EVENTS_OUTPUT_TAG)
   val uniqueEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = UNIQUE_EVENTS_OUTPUT_TAG)
+
+  // Consumers
+  val telemetryExtractorConsumer = "telemetry-extractor-consumer"
+
+  // Functions
+  val extractionFunction = "ExtractionFucntion"
+  val redactorFunction = "RedactorFunction"
+
+  // Producers
+  val extractorDuplicateProducer = "extractor-duplicate-events-sink"
+  val extractorRawEventsProducer = "extractor-raw-events-sink"
+  val extractorAuditEventsProducer = "extractor-audit-events-sink"
+  val extractorFailedEventsProducer = "extractor-failed-events-sink"
+  val assessEventsProducer = "assess-events-sink"
+  val assessRawEventsProducer = "assess-raw-events-sink"
 
 }

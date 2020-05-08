@@ -7,7 +7,7 @@ import org.apache.flink.streaming.api.scala.OutputTag
 import org.sunbird.dp.core.job.BaseJobConfig
 import org.sunbird.dp.validator.domain.Event
 
-class DruidValidatorConfig(override val config: Config) extends BaseJobConfig(config, "druid-validator") {
+class DruidValidatorConfig(override val config: Config) extends BaseJobConfig(config, "DruidValidatorJob") {
 
   private val serialVersionUID = 2905979434303791379L
   implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
@@ -51,5 +51,18 @@ class DruidValidatorConfig(override val config: Config) extends BaseJobConfig(co
   val processedMetricsCount = "processed-message-count"
   val validationSuccessMetricsCount = "validation-success-message-count"
   val validationFailureMetricsCount = "validation-failed-message-count"
+
+  // Consumers
+  val druidValidatorConsumer = "druid-validator-consumer"
+
+  // Functions
+  val druidValidatorFunction = "DruidValidatorFunction"
+  val druidRouterFunction = "DruidRouterFunction"
+
+  // Producers
+  val telemetryEventsProducer = "telemetry-events-sink"
+  val summaryEventsProducer = "summary-events-sink"
+  val druidDuplicateEventsProducer = "druid-duplicate-events-sink"
+  val druidInvalidEventsProducer = "druid-invalid-events-sink"
 
 }

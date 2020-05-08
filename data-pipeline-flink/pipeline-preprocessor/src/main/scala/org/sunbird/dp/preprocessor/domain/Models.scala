@@ -2,7 +2,7 @@ package org.sunbird.dp.preprocessor.domain
 
 import java.util
 
-case class Actor(id: String, `type`: String)
+case class ActorObject(id: String, `type`: String)
 
 case class Context(channel: String,
                    env: String,
@@ -16,9 +16,9 @@ case class EData(dir: String, `type`: String, size: Double)
 
 case class Rollup(l1: String)
 
-case class Object(id: String, ver: String, `type`: String, rollup: Rollup)
+case class EventObject(id: String, ver: String, `type`: String, rollup: Rollup)
 
-case class ShareEvent(actor: Actor,
+case class ShareEvent(actor: ActorObject,
                       eid: String,
                       edata: EData,
                       ver: String = "3.0",
@@ -26,6 +26,6 @@ case class ShareEvent(actor: Actor,
                       ets: Long = System.currentTimeMillis(),
                       context: Context,
                       mid: String,
-                      `object`: Object,
-                      tags: Seq[AnyRef]
+                      `object`: EventObject,
+                      tags: util.List[AnyRef]
                      )

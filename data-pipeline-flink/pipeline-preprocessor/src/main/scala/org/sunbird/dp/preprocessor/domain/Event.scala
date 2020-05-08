@@ -13,11 +13,11 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
   private val jobName = "PipelinePreprocessor"
 
   override def kafkaKey(): String = {
-    did
+    did()
   }
 
   def schemaName: String = {
-    if (eid != null) s"${eid.toLowerCase}.json"
+    if (eid != null) s"${eid().toLowerCase}.json"
     else "envelope.json"
   }
 
@@ -70,21 +70,21 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
     telemetry.addFieldIfAbsent(EventsPath.TIMESTAMP, telemetry.getSyncts)
   }
 
-  def edataDir: String = telemetry.read[String](EventsPath.EDATA_DIR_PATH).getOrElse(null)
+  def edataDir: String = telemetry.read[String](EventsPath.EDATA_DIR_PATH).orNull
 
   def eventSyncTs: Long = telemetry.read[Long](EventsPath.SYNC_TS_PATH).getOrElse(System.currentTimeMillis()).asInstanceOf[Number].longValue()
 
-  def eventTags: Seq[AnyRef] = telemetry.read[Seq[AnyRef]](EventsPath.TAGS_PATH).getOrElse(null)
+  def eventTags: util.List[AnyRef] = telemetry.read[util.List[AnyRef]](EventsPath.TAGS_PATH).orNull
 
-  def cdata: util.ArrayList[util.Map[String, AnyRef]] = telemetry.read[util.ArrayList[util.Map[String, AnyRef]]](EventsPath.CONTEXT_CDATA).getOrElse(null)
+  def cdata: util.ArrayList[util.Map[String, AnyRef]] = telemetry.read[util.ArrayList[util.Map[String, AnyRef]]](EventsPath.CONTEXT_CDATA).orNull
 
-  def eventPData: util.Map[String, AnyRef] = telemetry.read[util.Map[String, AnyRef]](EventsPath.CONTEXT_P_DATA_PATH).getOrElse(null)
+  def eventPData: util.Map[String, AnyRef] = telemetry.read[util.Map[String, AnyRef]](EventsPath.CONTEXT_P_DATA_PATH).orNull
 
-  def sessionId: String = telemetry.read[String](EventsPath.CONTEXT_SID_PATH).getOrElse(null)
+  def sessionId: String = telemetry.read[String](EventsPath.CONTEXT_SID_PATH).orNull
 
-  def env: String = telemetry.read[String](EventsPath.CONTEXT_ENV_PATH).getOrElse(null)
+  def env: String = telemetry.read[String](EventsPath.CONTEXT_ENV_PATH).orNull
 
-  def rollup: util.Map[String, AnyRef] = telemetry.read[util.Map[String, AnyRef]](EventsPath.CONTEXT_ROLLUP_PATH).getOrElse(null)
+  def rollup: util.Map[String, AnyRef] = telemetry.read[util.Map[String, AnyRef]](EventsPath.CONTEXT_ROLLUP_PATH).orNull
 
 
 }

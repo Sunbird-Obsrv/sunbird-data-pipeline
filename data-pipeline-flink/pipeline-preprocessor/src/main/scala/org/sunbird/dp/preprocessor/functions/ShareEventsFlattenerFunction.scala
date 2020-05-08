@@ -8,9 +8,11 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
-import org.sunbird.dp.preprocessor.domain.{Actor, EData, Event, Object, Rollup, ShareEvent}
+import org.sunbird.dp.preprocessor.domain.{ActorObject, EData, Event, EventObject, Rollup, ShareEvent}
 import org.sunbird.dp.preprocessor.domain.{Context => EventContext}
 import org.sunbird.dp.preprocessor.task.PipelinePreprocessorConfig
+
+import scala.util.Try
 
 class ShareEventsFlattenerFunction(config: PipelinePreprocessorConfig)
                                   (implicit val eventTypeInfo: TypeInformation[Event])
@@ -30,15 +32,18 @@ class ShareEventsFlattenerFunction(config: PipelinePreprocessorConfig)
 
       if (paramsList.size > 0) {
         paramsList.getOrElse(new util.ArrayList[util.Map[String, AnyRef]]()).forEach(param => {
-          val transfers = param.asInstanceOf[util.Map[String, AnyRef]].get("transfers").toString.toDouble
-          val size = param.asInstanceOf[util.Map[String, AnyRef]].get("size").toString.toDouble
-          val edataType = if (transfers == 0 || transfers <= 0) "download" else "import"
-          val shareItemEvent = generateShareItemEvents(shareEvent, Object(id = identifier, ver = version, `type` = contentType, rollup = Rollup(shareEvent.objectID())), Some(edataType), Some(size))
-          context.output(config.shareItemEventOutTag, new Gson().toJson(shareItemEvent))
+          val shareEventParams = param.asInstanceOf[util.Map[String, Any]]
+          val transfers = Try(shareEventParams.get("transfers").toString.toDouble).getOrElse(0d)
+          val size = Try(shareEventParams.get("size").toString.toDouble).getOrElse(0d)
+          val edataType = if (transfers == 0) "download" else "import"
+          val shareItemEvent = generateShareItemEvents(shareEvent, EventObject(id = identifier, ver = version,
+            `type` = contentType, rollup = Rollup(shareEvent.objectID())), Some(edataType), Some(size))
+          context.output(config.shareItemEventOutputTag, new Gson().toJson(shareItemEvent))
         })
       } else {
-        val shareItemEvent = generateShareItemEvents(shareEvent, Object(id = identifier, ver = version, `type` = contentType, rollup = Rollup(shareEvent.objectID())), edataType = Some(shareEvent.edataType()), paramSize = None)
-        context.output(config.shareItemEventOutTag, new Gson().toJson(shareItemEvent))
+        val shareItemEvent = generateShareItemEvents(shareEvent, EventObject(id = identifier, ver = version,
+          `type` = contentType, rollup = Rollup(shareEvent.objectID())), edataType = Some(shareEvent.edataType()))
+        context.output(config.shareItemEventOutputTag, new Gson().toJson(shareItemEvent))
       }
       metrics.incCounter(config.shareItemEventsMetircsCount)
     })
@@ -48,12 +53,12 @@ class ShareEventsFlattenerFunction(config: PipelinePreprocessorConfig)
   }
 
   def generateShareItemEvents(event: Event,
-                              eventObj: Object,
+                              eventObj: EventObject,
                               edataType: Option[String],
-                              paramSize: Option[Double]
+                              paramSize: Option[Double] = None
                              ): ShareEvent = {
     ShareEvent(
-      Actor(event.actorId(), event.actorType()),
+      ActorObject(event.actorId(), event.actorType()),
       "SHARE_ITEM",
       EData(event.edataDir, edataType.orNull, paramSize.getOrElse(0)),
       ver = "3.0",

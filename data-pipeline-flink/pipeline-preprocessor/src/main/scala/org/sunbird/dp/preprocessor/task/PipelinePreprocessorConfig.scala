@@ -9,7 +9,7 @@ import org.sunbird.dp.preprocessor.domain.Event
 
 import scala.collection.JavaConverters._
 
-class PipelinePreprocessorConfig(override val config: Config) extends BaseJobConfig(config, "pipeline-processor") {
+class PipelinePreprocessorConfig(override val config: Config) extends BaseJobConfig(config, "PipelinePreprocessorJob") {
 
   private val serialVersionUID = 2905979434303791379L
 
@@ -51,7 +51,7 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
 
   // Share events out put tags
   val shareRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("share-route-events")
-  val shareItemEventOutTag: OutputTag[String] = OutputTag[String]("share-route-events")
+  val shareItemEventOutputTag: OutputTag[String] = OutputTag[String]("share-item-events")
 
   val validationParallelism: Int = config.getInt("task.telemetry.validation.parallelism")
   val routerParallelism: Int = config.getInt("task.telemetry.router.parallelism")
@@ -81,13 +81,24 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   // ShareEventsFlatten count
   val shareItemEventsMetircsCount = "share-item-event-success-count"
 
+  // Consumers
+  val pipelinePreprocessorConsumer = "pipeline-preprocessor-consumer"
+
+  // Functions
+  val telemetryValidationFunction = "TelemetryValidationFunction"
+  val telemetryRouterFunction = "TelemetryRouterFunction"
+  val shareEventsFlattenerFunction = "ShareEventsFlattenerFunction"
+
   // Producers
-  val primaryRouterProducer = "preprocessor-primary-route"
-  val logRouterProducer = "preprocessor-log-route"
-  val errorRouterProducer = "preprocessor-error-route"
-  val auditRouterProducer = "preprocessor-audit-route"
-  val invalidEventProducer = "preprocessor-invalid-events"
-  val duplicateEventProducer = "preprocessor-duplicate-events"
+  val primaryRouterProducer = "primary-route-sink"
+  val auditEventsPrimaryRouteProducer = "audit-events-primary-route-sink"
+  val shareEventsPrimaryRouteProducer = "share-events-primary-route-sink"
+  val shareItemsPrimaryRouterProducer = "share-items-primary-route-sink"
+  val logRouterProducer = "log-route-sink"
+  val errorRouterProducer = "error-route-sink"
+  val auditRouterProducer = "audit-route-sink"
+  val invalidEventProducer = "invalid-events-sink"
+  val duplicateEventProducer = "duplicate-events-sink"
 
   val defaultSchemaFile = "envelope.json"
 

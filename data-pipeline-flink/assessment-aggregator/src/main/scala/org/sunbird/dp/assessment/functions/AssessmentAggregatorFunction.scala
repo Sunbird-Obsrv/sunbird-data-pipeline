@@ -49,7 +49,6 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
 
     override def open(parameters: Configuration): Unit = {
         super.open(parameters)
-
         cassandraUtil = new CassandraUtil(config.dbHost, config.dbPort)
         questionType = cassandraUtil.getUDTType(config.dbKeyspace, config.dbudtType)
     }
