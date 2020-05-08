@@ -4,6 +4,7 @@ spark_output_temp_dir: /mount/data/analytics/tmp/
 telemetry_converter_ver: 0.0.8
 
 bucket: "dev-data-store"
+kafka_broker_host: "{{groups['processing-cluster-kafka'][0]}}:9092"
 brokerlist: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
 zookeeper: "{{groups['processing-cluster-kafka']|join(':2181,')}}:2181"
 dp_username: dp-monitor
@@ -20,11 +21,12 @@ metrics_topic: "{{ env }}.telemetry.metrics"
 job_manager_tmp_dir: "transient-data"
 channel: dev-test
 druid_broker_host: "{{groups['broker'][0]}}"
+druid_rollup_broker_host: "{{groups['broker'][0]}}"
 hierarchySearchServiceUrl: "{{ proto }}://{{ domain_name }}/api/course"
 hierarchySearchServicEndpoint: /v1/hierarchy/
 
-analytics_job_list: '"wfs", "ds", "dpu", "content-rating-updater", "daily-metrics", "desktop-consumption-report", "course-enrollment-report", "etb-metrics", "audit-metrics-report", "monitor-job-summ"'
-analytics_jobs_count: 10
+analytics_job_list: '"wfs", "ds", "dpu", "content-rating-updater", "audit-metrics-report", "monitor-job-summ"'
+analytics_jobs_count: 8
 
 cassandra_keyspace_prefix: '{{ env }}_'
 dp_dispatch_bucket_name: ekstep-dev-data-store
@@ -71,25 +73,45 @@ have_weekly_jobs: false
 
 video_stream_job_schedule: 10
 
+run_wfs_job:
+  wfs:
+    hour: 00
+    minute: 30
+run_monitor_job:    
+  monitor-job-summ:
+    hour: 03
+    minute: 00
+
 run_course_metrics_job:
   course-dashboard-metrics:
-    hour: 03
-    minute: 30
+    hour: 18
+    minute: 45
 
 run_assessment_metrics_job:
   assessment-dashboard-metrics:
-    hour: 04
-    minute: 30
+    hour: 19
+    minute: 45
 
 run_admin_user_reports_job:
-  admin-user-reports:
-    hour: 5
-    minute: 00
+  admin-user-reports-3AMIST:
+    hour: 21
+    minute: 30
+  admin-user-reports-2PMIST:
+    hour: 8
+    minute: 30  
 
 run_admin_geo_reports_job:
-  admin-geo-reports:
-    hour: 5
-    minute: 30    
+  admin-geo-reports-4AMIST:
+    hour: 22
+    minute: 30
+  admin-geo-reports-3PMIST:
+    hour: 9
+    minute: 30     
+
+run_assessment_aggregator_report_job:
+  assessment-aggregator-report:
+    hour: 20
+    minute: 30
 
 update_user_redis_cache:
   populate-user-cache:
@@ -133,3 +155,6 @@ analytics_core_artifact: "analytics-framework-2.0.jar"
 analytics_batch_module_artifact: "batch-models-2.0.jar"
 analytics_ed_dataporducts_artifact: "data-products-1.0-distribution.tar.gz"
 model_version: "2.0" 
+
+submit_jobs_auth_token: ""
+report_list_jobs_url: "http://{{groups['analytics-api'][0]}}:9000/"

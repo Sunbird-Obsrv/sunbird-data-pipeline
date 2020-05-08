@@ -236,6 +236,16 @@
             },
             {
               "type": "path",
+              "name": "edata_commentid",
+              "expr": "$.edata.commentid"
+            },
+            {
+              "type": "path",
+              "name": "edata_commenttxt",
+              "expr": "$.edata.commenttxt"
+            },
+            {
+              "type": "path",
               "name": "edata_dir",
               "expr": "$.edata.dir"
             },
@@ -731,11 +741,6 @@
             },
             {
               "type": "path",
-              "name": "dialcode_status",
-              "expr": "$.dialcodedata.status"
-            },
-            {
-              "type": "path",
               "name": "dialcode_object_type",
               "expr": "$.dialcodedata.objecttype"
             },
@@ -923,6 +928,14 @@
             {
               "type": "string",
               "name": "edata_comments"
+            },
+            {
+              "type": "string",
+              "name": "edata_commentid"
+            },
+            {
+              "type": "string",
+              "name": "edata_commenttxt"
             },
             {
               "type": "string",
@@ -1306,10 +1319,6 @@
             {
               "type": "long",
               "name": "dialcode_published_on"
-            },
-            {
-              "type": "string",
-              "name": "dialcode_status"
             },
             {
               "type": "string",

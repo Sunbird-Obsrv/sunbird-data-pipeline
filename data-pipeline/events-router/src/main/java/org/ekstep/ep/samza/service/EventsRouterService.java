@@ -15,7 +15,7 @@ import java.util.Date;
 import static java.text.MessageFormat.format;
 
 public class EventsRouterService {
-	
+
 	private static Logger LOGGER = new Logger(EventsRouterService.class);
 	private final DeDupEngine deDupEngine;
 	private final EventsRouterConfig config;
@@ -30,7 +30,7 @@ public class EventsRouterService {
 		Event event = null;
 		try {
 			event = source.getEvent();
-			if (config.isDedupEnabled() && isDupCheckRequired(event)) {
+			if (config.isDedupEnabled() && isDupCheckRequired(event.eid())) {
 				String checksum = event.getChecksum();
 				if (!deDupEngine.isUniqueEvent(checksum)) {
 					LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
@@ -54,10 +54,6 @@ public class EventsRouterService {
 				sink.toSummaryEventsTopic(event);
 			} else if (eid.startsWith("ME_")) {
 				sink.incrementSkippedCount(event);
-			} else if ("LOG".equals(eid)) {
-				sink.toLogEventsTopic(event);
-			} else if ("ERROR".equals(eid)) {
-				sink.toErrorEventsTopic(event);
 			} else {
 				sink.toTelemetryEventsTopic(event);
 			}
@@ -80,7 +76,7 @@ public class EventsRouterService {
 		}
 	}
 
-	public boolean isDupCheckRequired(Event event) {
-		return (config.exclusiveEids().isEmpty() || (null != event.eid() && !(config.exclusiveEids().contains(event.eid()))));
+	private boolean isDupCheckRequired(String eid) {
+		return (config.excludedEids().isEmpty() || (null != eid && !(config.excludedEids().contains(eid))));
 	}
 }

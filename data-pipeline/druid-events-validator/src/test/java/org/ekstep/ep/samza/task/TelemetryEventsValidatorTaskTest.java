@@ -132,7 +132,7 @@ public class TelemetryEventsValidatorTaskTest {
         stub(envelopeMock.getMessage()).toReturn(TelemetryV3.INVALID_DIALCODEDATA);
         druidEventsValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
-        verify(collectorMock).send(argThat(validateEvent(false, "dialcodedata/status")));
+        verify(collectorMock).send(argThat(validateEvent(false, "dialcodedata/objecttype")));
     }
 
     @Test

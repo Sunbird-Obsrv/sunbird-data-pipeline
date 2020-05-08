@@ -28,10 +28,6 @@
       "id": "http://api.sunbird.org/telemetry/dialcodedata/publishedon",
       "type": "number"
     },
-    "status": {
-      "id": "http://api.sunbird.org/telemetry/contentdata/status",
-      "type": "string"
-    },
     "objecttype": {
       "id": "http://api.sunbird.org/telemetry/contentdata/objecttype",
       "type": "string"
@@ -63,10 +59,6 @@
       "publishedon": {
         "id": "http://api.sunbird.org/telemetry/dialcodedata/publishedon",
         "type": "number"
-      },
-      "status": {
-        "id": "http://api.sunbird.org/telemetry/contentdata/status",
-        "type": "string"
       },
       "objecttype": {
         "id": "http://api.sunbird.org/telemetry/contentdata/objecttype",
