@@ -98,9 +98,8 @@ public class TelemetryLocationUpdaterService {
 		}
 		catch (JedisException ex) {
 			LOGGER.error(null, "Reconnecting with Redis store due to exception: ", ex);
-			try (Jedis conn = redisConnect.resetConnection(userStoreDb)) {
-				this.userDataStoreConnection = conn;
-			}
+			this.userDataStoreConnection.close();
+			this.userDataStoreConnection = redisConnect.getConnection(userStoreDb);
 			return getLocationForUser(uid);
 		}
 	}

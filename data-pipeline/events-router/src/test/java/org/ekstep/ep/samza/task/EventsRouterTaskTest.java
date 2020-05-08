@@ -64,6 +64,7 @@ public class EventsRouterTaskTest {
 		redisConnectMock = mock(RedisConnect.class);
 		deDupEngineMock = mock(DeDupEngine.class);
 		stub(redisConnectMock.getConnection()).toReturn(jedisMock);
+		stub(redisConnectMock.getConnection()).toReturn(jedisMock);
 		stub(configMock.get("router.events.telemetry.route.topic", TELEMETRY_EVENTS_TOPIC)).toReturn(TELEMETRY_EVENTS_TOPIC);
 		stub(configMock.get("output.failed.topic.name", FAILED_TOPIC)).toReturn(FAILED_TOPIC);
 		stub(configMock.get("router.events.summary.route.topic", SUMMARY_EVENTS_TOPIC)).toReturn(SUMMARY_EVENTS_TOPIC);

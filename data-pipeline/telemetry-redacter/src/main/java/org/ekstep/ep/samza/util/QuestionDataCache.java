@@ -47,11 +47,10 @@ public class QuestionDataCache {
       cacheDataMap = getDataFromCache(key);
     } catch (JedisException ex) {
       LOGGER.error("", "Exception when retrieving data from redis cache ", ex);
-      redisPool.resetConnection();
-      try (Jedis redisConn = redisPool.getConnection(databaseIndex)) {
-        this.redisConnection = redisConn;
-        cacheDataMap = getDataFromCache(key);
-      }
+      this.redisConnection.close();
+      this.redisConnection.close();
+      this.redisConnection = redisPool.getConnection(databaseIndex);
+      cacheDataMap = getDataFromCache(key);
     }
     return cacheDataMap;
   }
