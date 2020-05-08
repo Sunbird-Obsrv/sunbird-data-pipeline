@@ -75,64 +75,64 @@ public class EventFixture {
 			"}";
 
 	public static final String ERROR_EVENT = "{\n" +
-            "  \"did\": \"00b09a9e-6af9-4bb7-b102-57380b43ddc8\",\n" +
-            "  \"mid\": \"43288930-e54a-230b-b56e-876gnm8712ok\",\n" +
-            "  \"eid\": \"ERROR\",\n" +
-            "  \"gdata\": {\n" +
-            "    \"id\": \"genie.android\",\n" +
-            "    \"ver\": \"2.2.15\"\n" +
-            "  },\n" +
-            "  \"pdata\": {\n" +
-            "    \"id\": \"genie\",\n" +
-            "    \"ver\": \"2.0\"\n" +
-            "  },\n" +
-            "  \"sid\": \"\",\n" +
-            "  \"ets\": 1454064092546,\n" +
-            "  \"uid\": \"\",\n" +
-            "  \"ver\": \"2.2\",\n" +
-            "  \"channel\": \"in.ekstep\",\n" +
-            "  \"cdata\": [\n" +
-            "    {\n" +
-            "      \"id\": \"correlationid\",\n" +
-            "      \"type\": \"correlationtype\"\n" +
-            "    }\n" +
-            "  ]\n" +
-            "}";
+			"  \"did\": \"00b09a9e-6af9-4bb7-b102-57380b43ddc8\",\n" +
+			"  \"mid\": \"43288930-e54a-230b-b56e-876gnm8712ok\",\n" +
+			"  \"eid\": \"ERROR\",\n" +
+			"  \"gdata\": {\n" +
+			"    \"id\": \"genie.android\",\n" +
+			"    \"ver\": \"2.2.15\"\n" +
+			"  },\n" +
+			"  \"pdata\": {\n" +
+			"    \"id\": \"genie\",\n" +
+			"    \"ver\": \"2.0\"\n" +
+			"  },\n" +
+			"  \"sid\": \"\",\n" +
+			"  \"ets\": 1454064092546,\n" +
+			"  \"uid\": \"\",\n" +
+			"  \"ver\": \"2.2\",\n" +
+			"  \"channel\": \"in.ekstep\",\n" +
+			"  \"cdata\": [\n" +
+			"    {\n" +
+			"      \"id\": \"correlationid\",\n" +
+			"      \"type\": \"correlationtype\"\n" +
+			"    }\n" +
+			"  ]\n" +
+			"}";
 	public static final String UNPARSABLE_START_EVENT = "{\n" +
-            "  \"did\": \"c270f15d-5230-4954-92aa-d239e4281cc4\",\n" +
-            "  \"mid\": \"43288930-e54a-230b-b56e-876gnm8712ok\",\n" +
-            "  \"edata\": {\n" +
-            "    \"eks\": {\n" +
-            "      \"mode\": \"WIFI\",\n" +
-            "      \"ver\": \"12\",\n" +
-            "      \"size\": 12.67,\n" +
-            "      \"err\": \"\",\n" +
-            "      \"referrer\": [\n" +
-            "        {\n" +
-            "          \"action\": \"INSTALL\",\n" +
-            "          \"utmsource\": \"Ekstep\",\n" +
-            "          \"utmmedium\": \"Portal\",\n" +
-            "          \"utmterm\": \"December 2016\",\n" +
-            "          \"utmcontent\": \"Ramayana\",\n" +
-            "          \"utmcampaign\": \"Epics of India\"\n" +
-            "        }\n" +
-            "      ]\n" +
-            "    }\n" +
-            "  },\n" +
-            "  \"eid\": \"START\",\n" +
-            "  \"gdata\": {\n" +
-            "    \"id\": \"genie.android\",\n" +
-            "    \"ver\": \"1.0\"\n" +
-            "  },\n" +
-            "  \"sid\": \"\",\n" +
-            "  \"ets\": 1454064092546,\n" +
-            "  \"uid\": \"\",\n" +
-            "  \"ver\": \"2.0\",\n" +
-            "  \"cdata\": [\n" +
-            "    {\n" +
-            "      \"id\": \"correlationid\",\n" +
-            "      \"type\": \"correlationtype\"\n" +
-            "    ";
+			"  \"did\": \"c270f15d-5230-4954-92aa-d239e4281cc4\",\n" +
+			"  \"mid\": \"43288930-e54a-230b-b56e-876gnm8712ok\",\n" +
+			"  \"edata\": {\n" +
+			"    \"eks\": {\n" +
+			"      \"mode\": \"WIFI\",\n" +
+			"      \"ver\": \"12\",\n" +
+			"      \"size\": 12.67,\n" +
+			"      \"err\": \"\",\n" +
+			"      \"referrer\": [\n" +
+			"        {\n" +
+			"          \"action\": \"INSTALL\",\n" +
+			"          \"utmsource\": \"Ekstep\",\n" +
+			"          \"utmmedium\": \"Portal\",\n" +
+			"          \"utmterm\": \"December 2016\",\n" +
+			"          \"utmcontent\": \"Ramayana\",\n" +
+			"          \"utmcampaign\": \"Epics of India\"\n" +
+			"        }\n" +
+			"      ]\n" +
+			"    }\n" +
+			"  },\n" +
+			"  \"eid\": \"START\",\n" +
+			"  \"gdata\": {\n" +
+			"    \"id\": \"genie.android\",\n" +
+			"    \"ver\": \"1.0\"\n" +
+			"  },\n" +
+			"  \"sid\": \"\",\n" +
+			"  \"ets\": 1454064092546,\n" +
+			"  \"uid\": \"\",\n" +
+			"  \"ver\": \"2.0\",\n" +
+			"  \"cdata\": [\n" +
+			"    {\n" +
+			"      \"id\": \"correlationid\",\n" +
+			"      \"type\": \"correlationtype\"\n" +
+			"    ";
 	public static final String START_EVENT = "{\n" +
 			"  \"actor\": {\n" +
 			"    \"type\": \"User\",\n" +
@@ -208,7 +208,7 @@ public class EventFixture {
 			"  },\n" +
 			"  \"type\": \"events\"\n" +
 			"}";
-	
+
 	public static final String ANY_STRING = "Hey Samza, Whats Up?";
 	public static final String EMPTY_JSON = "{}";
 
@@ -323,5 +323,5 @@ public class EventFixture {
 	public static Map<String, Object> getMap(String message) {
 		return (Map<String, Object>) new Gson().fromJson(message, Map.class);
 	}
-	
+
 }

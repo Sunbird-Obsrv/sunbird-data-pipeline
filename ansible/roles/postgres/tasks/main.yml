@@ -48,6 +48,16 @@
   run_once: true
   tags: create
 
+- name: create report
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS report(reportid varchar(40) NOT NULL PRIMARY KEY, title text NOT NULL, description text NOT NULL, authorizedroles jsonb NOT NULL, status varchar(8) NOT NULL CHECK (status IN ('live', 'draft', 'retired')) DEFAULT 'draft', type varchar(8) NOT NULL CHECK (type in ('public', 'private')) DEFAULT 'private', reportaccessurl text NOT NULL UNIQUE, createdon timestamptz NOT NULL DEFAULT now(), updatedon timestamptz NOT NULL DEFAULT now(), createdby varchar(50) NOT NULL, reportconfig jsonb NOT NULL, templateurl text, slug varchar(10) NOT NULL, reportgenerateddate timestamptz NOT NULL DEFAULT now(), reportduration jsonb NOT NULL DEFAULT jsonb_build_object('startDate', now()::timestamptz, 'endDate', now()::timestamptz), tags jsonb NOT NULL, updatefrequency text NOT NULL)"
+  run_once: true
+  tags: create
+
+- name: create report_summary
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS report_summary(id varchar(40) NOT NULL PRIMARY KEY, reportid varchar(40) NOT NULL, chartid text, createdon timestamptz NOT NULL DEFAULT now(), createdby varchar(50) NOT NULL, summary text NOT NULL)"
+  run_once: true
+  tags: create
+
 - name: create {{ env }}_consumer-channel-mapping
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "select * from {{ env }}_consumer_channel_mapping"
   run_once: true

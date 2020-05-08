@@ -33,7 +33,7 @@ data_exhaust.output_format="json"
 
 # Log4j Kafka appender config
 log4j.appender.kafka.enable="false"
-log4j.appender.kafka.broker_host="{{groups['processing-cluster-kafka'][0]}}:9092"
+log4j.appender.kafka.broker_host="{{ kafka_broker }}"
 log4j.appender.kafka.topic="{{env}}.telemetry.log"
 
 cassandra.service.embedded.enable=false
@@ -204,7 +204,6 @@ postgres.table.geo_location_city.name="{{ geo_location_city }}"
 postgres.table.geo_location_city_ipv4.name="{{ geo_location_city_ipv4 }}"
 postgres.table.report_config.name="{{ report_config }}"
 
-
 default.channel="{{ default_channel }}"
 
 elasticsearch.service.endpoint="http://{{groups['composite-search-cluster'][0]}}:9200"
@@ -227,7 +226,7 @@ cloud_storage_type="azure"
 metrics.time.interval.min=30
 cache.refresh.time.interval.min=1440
 
-redis.host="{{denorm_redis_host}}"
+redis.host="{{metadata_redis_host}}"
 #redis.host="localhost"
 redis.port=6379
 #redis.port=__redis_port__
@@ -255,4 +254,4 @@ druid.healthcheck.url="druid/coordinator/v1/loadstatus"
 device.api.enable.debug.log=true
 kafka.device.register.topic={{ env }}.events.deviceprofile
 kafka.metrics.event.topic={{ env }}.pipeline_metrics
-kafka.broker.list="{{groups['processing-cluster-kafka'][0]}}:9092"
+kafka.broker.list="{{ kafka_broker }}"

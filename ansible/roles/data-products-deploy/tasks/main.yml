@@ -61,15 +61,28 @@
   command: crontab -r
   ignore_errors: yes
   tags:
-    - dataproducts
+    - default-jobs
+    - wfs-prod
     - clean-cronjobs
     - ed-dataproducts
+
+- name: Create daily cron jobs for wfs
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh wfs"
+  with_dict: "{{ run_wfs_job }}"
+  tags:
+    - wfs-prod
+
+- name: Create daily cron jobs for monitor job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh monitor-job-summ"
+  with_dict: "{{ run_monitor_job }}"
+  tags:
+    - wfs-prod
 
 - name: Create daily cron jobs using submit-all-jobs
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job='/bin/bash -lc "ruby {{ analytics.home }}/scripts/submit-all-jobs.rb"'
   with_dict: "{{ submit_jobs }}"
   tags:
-    - dataproducts
+    - default-jobs
     - cronjobs
     - ed-dataproducts
 
@@ -77,14 +90,14 @@
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/start-jobmanager.sh"
   with_dict: "{{ start_jobmanager }}"
   tags:
-    - dataproducts
+    - default-jobs
     - cronjobs
     - ed-dataproducts
 
 - name: Create video-streaming cron job
   cron: name="{{env}}-video-streaming" minute=*/{{ video_stream_job_schedule }} job="{{ analytics.home }}/scripts/run-job.sh video-streaming"
   tags:
-    - dataproducts
+    - default-jobs
     - cronjobs
     - ed-dataproducts
 
@@ -92,7 +105,7 @@
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh course-dashboard-metrics"
   with_dict: "{{ run_course_metrics_job }}"
   tags:
-    - dataproducts
+    - default-jobs
     - cronjobs
     - ed-dataproducts
 
@@ -102,14 +115,14 @@
   tags:
     - cronjobs
     - ed-dataproducts
-    - dataproducts
+    - default-jobs
 
 - name: Create admin-user-reports cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh admin-user-reports"
   with_dict: "{{ run_admin_user_reports_job }}"
   tags:
     - cronjobs 
-    - dataproducts
+    - default-jobs
     - ed-dataproducts
     
 - name: Create admin-geo-reports cron job
@@ -118,23 +131,31 @@
   tags:
     - cronjobs
     - ed-dataproducts
-    - dataproducts 
+    - default-jobs 
 
-- name: Create district-weekly cron job
-  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} weekday={{ item.value.weekday }}  job="{{ analytics.home }}/scripts/run-job.sh district-weekly"
-  with_dict: "{{ run_district_weekly_job }}"
+- name: Create assessment-aggregator reports cron job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="/bin/bash {{ analytics.home }}/adhoc-scripts/run_exporter.sh > /home/analytics/output.log"
+  with_dict: "{{ run_assessment_aggregator_report_job }}"
   tags:
     - cronjobs
-    - dataproducts
     - ed-dataproducts
+    - default-jobs     
 
-- name: Create district-monthly cron job
-  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} month={{ item.value.month }} day={{ item.value.day }}  job="{{ analytics.home }}/scripts/run-job.sh district-monthly"
-  with_dict: "{{ run_district_monthly_job }}"
-  tags:
-    - cronjobs
-    - dataproducts
-    - ed-dataproducts                  
+#- name: Create district-weekly cron job
+#  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} weekday={{ item.value.weekday }}  job="{{ analytics.home }}/scripts/run-job.sh district-weekly"
+#  with_dict: "{{ run_district_weekly_job }}"
+#  tags:
+#    - cronjobs
+#    - default-jobs
+#    - ed-dataproducts
+
+#- name: Create district-monthly cron job
+#  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} month={{ item.value.month }} day={{ item.value.day }}  job="{{ analytics.home }}/scripts/run-job.sh district-monthly"
+#  with_dict: "{{ run_district_monthly_job }}"
+#  tags:
+#    - cronjobs
+#    - default-jobs
+#    - ed-dataproducts
 
 - name: Update start jobmanager
   template: src=start-jobmanager.j2 dest={{ analytics.home }}/scripts/start-jobmanager.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}

@@ -210,6 +210,8 @@ druid = {
 	datasource = "telemetry-events"
 	response-parsing-timeout = 300000
 }
+druid.rollup.host="{{druid_rollup_broker_host}}"
+druid.rollup.port=8082
 druid.query.wait.time.mins=1
 druid.report.upload.wait.time.mins=1
 

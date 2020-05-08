@@ -62,6 +62,13 @@
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
+            <artifactId>telemetry-redacter</artifactId>
+            <version>0.0.1</version>
+            <type>tar.gz</type>
+            <classifier>distribution</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>telemetry-location-updater</artifactId>
             <version>0.2.3</version>
             <type>tar.gz</type>
@@ -98,21 +105,21 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>content-cache-updater</artifactId>
-            <version>0.0.3</version>
+            <version>0.0.4</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>device-profile-updater</artifactId>
-            <version>0.1.7</version>
+            <version>0.1.8</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>assessment-aggregator</artifactId>
-            <version>0.0.3</version>
+            <version>0.0.4</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>

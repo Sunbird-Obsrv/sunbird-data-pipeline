@@ -157,14 +157,27 @@ public class DeviceProfileUpdaterService {
         for (String value : deviceData.values()) {
             index++;
             PGobject jsonObject = new PGobject();
-            try {
-                gson.fromJson(value, JsonObject.class);
+            if(isJson(value)) {
                 jsonObject.setType("json");
                 jsonObject.setValue(gson.fromJson(value, JsonObject.class).toString());
                 preparedStatement.setObject(index, jsonObject);
-            } catch (ClassCastException ex) {
+            }
+            else {
                 preparedStatement.setString(index, value);
             }
+        }
+    }
+
+    public boolean isJson(String json) {
+        try {
+            gson.fromJson(json, Object.class);
+            Object jsonObjType = gson.fromJson(json, Object.class).getClass();
+            if(jsonObjType.equals(String.class) || jsonObjType.equals(Double.class)){
+                return false;
+            }
+            return true;
+        } catch (JsonSyntaxException ex) {
+            return false;
         }
     }
 

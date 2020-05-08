@@ -45,42 +45,43 @@ public class TelemetryLocationUpdaterService {
 	public void process(TelemetryLocationUpdaterSource source, TelemetryLocationUpdaterSink sink) {
 		try {
 			Event event = source.getEvent();
-			String did = event.did();
-			DeviceProfile deviceProfile = null;
-			if (did != null && !did.isEmpty()) {
-				// get device profile from cache
-				deviceProfile = deviceProfileCache.getDeviceProfileForDeviceId(did);
+			// Temporary fix for skipping pipeline metrics
+			if (null != event.eid()) {
+				String did = event.did();
+				DeviceProfile deviceProfile = null;
+				if (did != null && !did.isEmpty()) {
+					// get device profile from cache
+					deviceProfile = deviceProfileCache.getDeviceProfileForDeviceId(did);
 
-				// check for user profile location
-				Map<String, String> derivedLocation = getLocationFromUserCache(event);
+					// check for user profile location
+					Map<String, String> derivedLocation = getLocationFromUserCache(event);
 
-				// get user declared location if user profile location is empty
-				if (derivedLocation.isEmpty()) derivedLocation = getUserDeclaredLocation(deviceProfile);
+					// get user declared location if user profile location is empty
+					if (derivedLocation.isEmpty()) derivedLocation = getUserDeclaredLocation(deviceProfile);
 
-				// get ip resolved location if user declared location is empty
-				if (derivedLocation.isEmpty()) derivedLocation = getIpResolvedLocation(deviceProfile);
+					// get ip resolved location if user declared location is empty
+					if (derivedLocation.isEmpty()) derivedLocation = getIpResolvedLocation(deviceProfile);
 
-				// Add derived location to telemetry
-				if(derivedLocation.isEmpty()) {
-					metrics.incCacheMissCounter();
-					event.setFlag(TelemetryLocationUpdaterConfig.getDerivedLocationJobFlag(), false);
+					// Add derived location to telemetry
+					if (derivedLocation.isEmpty()) {
+						metrics.incCacheMissCounter();
+						event.setFlag(TelemetryLocationUpdaterConfig.getDerivedLocationJobFlag(), false);
+					} else {
+						// update derived location metrics
+						updateDerivedLocationMetrics(derivedLocation);
+						event.addDerivedLocation(derivedLocation);
+						event.setFlag(TelemetryLocationUpdaterConfig.getDerivedLocationJobFlag(), true);
+					}
+
+					// Add device profile details to the event
+					updateEvent(event, deviceProfile);
+					metrics.incProcessedMessageCount();
+					sink.toSuccessTopic(event);
+				} else {
+					updateEvent(event, deviceProfile);
+					metrics.incUnprocessedMessageCount();
+					sink.toSuccessTopic(event);
 				}
-				else {
-					// update derived location metrics
-					updateDerivedLocationMetrics(derivedLocation);
-					event.addDerivedLocation(derivedLocation);
-					event.setFlag(TelemetryLocationUpdaterConfig.getDerivedLocationJobFlag(), true);
-				}
-
-				// Add device profile details to the event
-				updateEvent(event, deviceProfile);
-				metrics.incProcessedMessageCount();
-				sink.toSuccessTopic(event);
-			}
-			else {
-				updateEvent(event, deviceProfile);
-				metrics.incUnprocessedMessageCount();
-				sink.toSuccessTopic(event);
 			}
 		} catch (JsonSyntaxException ex) {
 			LOGGER.error(null, "INVALID EVENT: " + source.getMessage(), ex);
