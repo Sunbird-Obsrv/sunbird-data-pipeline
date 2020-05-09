@@ -82,11 +82,9 @@ public class DeviceProfileUpdaterService {
         try {
             addToCache(deviceId, deviceProfile, deviceStoreConnection);
         } catch (JedisException ex) {
-            redisConnect.resetConnection();
-            try (Jedis redisConn = redisConnect.getConnection(deviceStoreDb)) {
-                this.deviceStoreConnection = redisConn;
-                addToCache(deviceId, deviceProfile, deviceStoreConnection);
-            }
+            this.deviceStoreConnection.close();
+            this.deviceStoreConnection = redisConnect.getConnection(deviceStoreDb);
+            addToCache(deviceId, deviceProfile, deviceStoreConnection);
         }
     }
 

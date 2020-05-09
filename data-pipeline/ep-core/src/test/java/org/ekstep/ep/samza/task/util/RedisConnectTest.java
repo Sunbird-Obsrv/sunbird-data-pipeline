@@ -44,30 +44,18 @@ public class RedisConnectTest {
 	
 	@Test
     public void shouldVerifyRedisConnect() {
-		Jedis jedis = redisConnect.getConnection();
+		Jedis jedis = redisConnect.getConnection(0);
 		assertEquals(Long.valueOf(0), jedis.getDB());
 		assertNotNull(jedis);
 		jedis.close();
 		
-		jedis = redisConnect.getConnection(1);
+		jedis = redisConnect.getConnection(1, 0);
 		assertNotNull(jedis);
 		assertEquals(Long.valueOf(1), jedis.getDB());
 		jedis.set("key", "value");
 		assertEquals("value", jedis.get("key"));
 		jedis.close();
 		
-		redisConnect.resetConnection();
-		jedis = redisConnect.getConnection();
-		assertEquals(Long.valueOf(0), jedis.getDB());
-		assertNotNull(jedis);
-		jedis.close();
-		
-		jedis = redisConnect.resetConnection(1);
-		assertNotNull(jedis);
-		assertEquals(Long.valueOf(1), jedis.getDB());
-		jedis.set("key", "value");
-		assertEquals("value", jedis.get("key"));
-		jedis.close();
 	}
 
 }
