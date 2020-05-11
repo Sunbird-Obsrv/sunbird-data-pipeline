@@ -1,6 +1,9 @@
 package org.ekstep.ep.samza.service;
 
 import com.google.gson.Gson;
+
+import redis.clients.jedis.exceptions.JedisException;
+
 import org.apache.commons.lang.StringUtils;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
@@ -91,6 +94,11 @@ public class TelemetryExtractorService {
       }
       metrics.incBatchSuccessCounter();
       generateAuditEvent(batchEvent, syncts, syncTimestamp, sink, defaultChannel);
+    } catch (JedisException e) {
+      e.printStackTrace();
+      LOGGER.error(null, "Exception when retrieving data from redis: ", e);
+      deDupEngine.getRedisConnection().close();
+      throw e;
     } catch (Exception ex) {
       ex.printStackTrace();
       LOGGER.error("", "Failed to extract the event batch: ", ex);
