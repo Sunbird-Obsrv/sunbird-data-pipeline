@@ -23,7 +23,6 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
 
   def close() {
     this.redisConnection.close()
-    redisConnection.close()
   }
 
   def hgetAllWithRetry(key: String): Map[String, String] = {
@@ -32,7 +31,7 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
     } catch {
       case ex: JedisException =>
         logger.error("Exception when retrieving data from redis cache", ex)
-        redisConnection.close()
+        this.redisConnection.close()
         this.redisConnection = redisConnect.getConnection(dbIndex)
         hgetAll(key)
     }
@@ -56,7 +55,7 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
     } catch {
       case ex: JedisException =>
         logger.error("Exception when retrieving data from redis cache", ex)
-        redisConnection.close()
+        this.redisConnection.close()
         this.redisConnection = redisConnect.getConnection(dbIndex)
         get(key)
     }
@@ -97,7 +96,7 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
       case ex: JedisException => {
         println("dataCache")
         logger.error("Exception when inserting data to redis cache", ex)
-        redisConnection.close()
+        this.redisConnection.close()
         this.redisConnection = redisConnect.getConnection(dbIndex)
         this.redisConnection.hmset(key, value)
       }
@@ -110,7 +109,7 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
     } catch {
       case ex@(_: JedisConnectionException | _: JedisException) =>
         logger.error("Exception when update data to redis cache", ex)
-        redisConnection.close()
+        this.redisConnection.close()
         this.redisConnection = redisConnect.getConnection(dbIndex);
         set(key, value)
     }
