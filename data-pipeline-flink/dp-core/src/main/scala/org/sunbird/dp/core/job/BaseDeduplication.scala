@@ -7,6 +7,7 @@ import org.apache.flink.streaming.api.scala.OutputTag
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.core.cache.DedupEngine
 import org.sunbird.dp.core.domain.Events
+import redis.clients.jedis.exceptions.JedisException
 
 trait BaseDeduplication {
 
@@ -21,19 +22,25 @@ trait BaseDeduplication {
                duplicateOutputTag: OutputTag[T],
                flagName: String
               )(implicit deDupEngine: DedupEngine, metrics: Metrics): Unit = {
-
-    if (null != key && !deDupEngine.isUniqueEvent(key)) {
-      logger.info(s"Duplicate Event message id is found: $key")
-      metrics.incCounter(duplicateEventMetricCount)
-      context.output(duplicateOutputTag, updateFlag(event, flagName, value = true))
-    } else {
-      if (key != null) {
-        logger.info(s"Adding key: $key to Redis")
-        deDupEngine.storeChecksum(key)
-        metrics.incCounter(uniqueEventMetricCount)
+    try {
+      if (null != key && !deDupEngine.isUniqueEvent(key)) {
+        logger.info(s"Duplicate Event message id is found: $key")
+        metrics.incCounter(duplicateEventMetricCount)
+        context.output(duplicateOutputTag, updateFlag(event, flagName, value = true))
+      } else {
+        if (key != null) {
+          logger.info(s"Adding key: $key to Redis")
+          deDupEngine.storeChecksum(key)
+          metrics.incCounter(uniqueEventMetricCount)
+        }
+        logger.info(s"Pushing event to further process, key is: $key")
+        context.output(successOutputTag, updateFlag(event, flagName, value = false))
       }
-      logger.info(s"Pushing event to further process, key is: $key")
-      context.output(successOutputTag, updateFlag(event, flagName, value = false))
+    } catch {
+      case ex: JedisException =>
+        ex.printStackTrace()
+        deDupEngine.getRedisConnection.close()
+        throw ex // Stopping all de-dup jobs
     }
   }
 
