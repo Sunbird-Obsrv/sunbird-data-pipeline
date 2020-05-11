@@ -16,6 +16,7 @@ class RedisConnect(jobConfig: BaseJobConfig) extends java.io.Serializable {
 
 
   private def getConnection(backoffTimeInMillis: Long): Jedis = {
+    val defaultTimeOut = 30000
     val redisHost: String = Option(config.getString("redis.host")).getOrElse("localhost")
     val redisPort = Option(config.getInt("redis.port")).getOrElse(6379)
     if (backoffTimeInMillis > 0) try Thread.sleep(backoffTimeInMillis)
@@ -24,7 +25,7 @@ class RedisConnect(jobConfig: BaseJobConfig) extends java.io.Serializable {
         e.printStackTrace()
     }
     logger.info("Obtaining new Redis connection...")
-    new Jedis(redisHost, redisPort, 30000)
+    new Jedis(redisHost, redisPort, defaultTimeOut)
   }
 
 
