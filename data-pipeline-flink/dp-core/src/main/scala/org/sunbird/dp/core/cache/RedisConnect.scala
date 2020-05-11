@@ -3,6 +3,7 @@ package org.sunbird.dp.core.cache
 import com.typesafe.config.Config
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.core.job.BaseJobConfig
+import redis.clients.jedis.Jedis
 
 class RedisConnect(jobConfig: BaseJobConfig) extends java.io.Serializable {
 
@@ -13,8 +14,6 @@ class RedisConnect(jobConfig: BaseJobConfig) extends java.io.Serializable {
   val redisPort: Int = Option(config.getInt("redis.port")).getOrElse(6379)
   private val logger = LoggerFactory.getLogger(classOf[RedisConnect])
 
-
-  import redis.clients.jedis.Jedis
 
   private def getConnection(backoffTimeInMillis: Long): Jedis = {
     val redisHost: String = Option(config.getString("redis.host")).getOrElse("localhost")
@@ -28,15 +27,12 @@ class RedisConnect(jobConfig: BaseJobConfig) extends java.io.Serializable {
     new Jedis(redisHost, redisPort, 30000)
   }
 
-  import redis.clients.jedis.Jedis
 
   def getConnection(db: Int, backoffTimeInMillis: Long): Jedis = {
     val jedis: Jedis = getConnection(backoffTimeInMillis)
     jedis.select(db)
     jedis
   }
-
-  import redis.clients.jedis.Jedis
 
   def getConnection(db: Int): Jedis = {
     val jedis = getConnection(db, backoffTimeInMillis = 0)
