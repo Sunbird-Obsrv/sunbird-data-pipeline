@@ -18,9 +18,9 @@ class DedupEngine(redisConnect: RedisConnect, store: Int, expirySeconds: Int) ex
     } catch {
       case ex: JedisException =>
         ex.printStackTrace()
-        redisConnection.close()
-        redisConnection = redisConnect.getConnection(this.store, backoffTimeInMillis = 10000)
-        unique = !redisConnection.exists(checksum)
+        this.redisConnection.close()
+        this.redisConnection = redisConnect.getConnection(this.store, backoffTimeInMillis = 10000)
+        unique = !this.redisConnection.exists(checksum)
     }
     unique
   }
@@ -32,10 +32,10 @@ class DedupEngine(redisConnect: RedisConnect, store: Int, expirySeconds: Int) ex
     catch {
       case ex: JedisException =>
         ex.printStackTrace()
-        redisConnection.close()
-        redisConnection = redisConnect.getConnection(this.store, backoffTimeInMillis = 10000)
-        redisConnection.select(this.store)
-        redisConnection.setex(checksum, expirySeconds, "")
+        this.redisConnection.close()
+        this.redisConnection = redisConnect.getConnection(this.store, backoffTimeInMillis = 10000)
+        this.redisConnection.select(this.store)
+        this.redisConnection.setex(checksum, expirySeconds, "")
     }
   }
 
