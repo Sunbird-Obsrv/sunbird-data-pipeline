@@ -9,7 +9,7 @@
    report_config: "{{ config.result.config | to_json }}"
 
 - name: Update report config
-  template: src=report_config.json.j2 dest={{ analytics.home }}/scripts/config.json mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  template: src=config.json.j2 dest={{ analytics.home }}/scripts/report_config.json mode=755 owner={{ analytics_user }} group={{ analytics_group }}
 
 
 - name: Update run job config
