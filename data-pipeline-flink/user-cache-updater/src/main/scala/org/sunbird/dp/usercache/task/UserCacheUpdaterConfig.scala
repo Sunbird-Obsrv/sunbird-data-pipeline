@@ -15,7 +15,7 @@ class UserCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(
   implicit val mapTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
 
   // Kafka Topics Configuration
-  val inputTopic: String = config.getString("kafka.denorm.input.topic")
+  val inputTopic: String = config.getString("kafka.input.topic")
   val userFields = List("usertype", "grade", "language", "subject", "state", "district", "usersignintype", "userlogintype","locationids")
 
   // User cache updater job metrics
