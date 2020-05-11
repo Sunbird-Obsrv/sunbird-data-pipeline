@@ -21,4 +21,4 @@
   become_user: "{{ analytics_user }}"
   shell: "nohup {{ analytics.home }}/scripts/druid-report-job.sh &"
   async: "{{ (pause_min * 60) }}"
-  poll: 0"
+  poll: 0
