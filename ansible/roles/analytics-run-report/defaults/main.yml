@@ -1,4 +1,4 @@
-analytics_user: analytics	
+analytics_user: analytics
 analytics_group: analytics
 analytics:
   home: /mount/data/analytics
