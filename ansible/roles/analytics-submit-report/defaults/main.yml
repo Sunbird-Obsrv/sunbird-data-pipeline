@@ -1,10 +1,1 @@
-analytics_user: analytics
-analytics_group: analytics
-
-analytics:
-  home: /mount/data/analytics
-
-model_version: "2.0" 
-spark_version: "2.4.4"
-
-pause_min: 0
+analytics_host: "{{ groups['analytics-api'][0] }}"
