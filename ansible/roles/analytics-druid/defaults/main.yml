@@ -22,6 +22,7 @@ druid_postgres_user: "druid@{{ postgres.db_url }}"
 druid_postgres_pass: "{{ dp_vault_druid_postgress_pass }}"
 
 druid_default_tmp_dir: "/var/tmp"
+druid_gc_logdir: "/var/log/druid/crash_logs"
 druid_crash_logdir: "/var/log/druid/crash_logs"
 druid_log_dir: "/var/log/druid/"
 
@@ -88,7 +89,7 @@ druid_overlord_heap_size: 256m
 druid_overlord_tmp_dir: "{{ druid_default_tmp_dir }}"
 druid_overlord_gc_logfile: "{{ druid_crash_logdir }}/gc_overlord.log"
 
-# Broker Configurations
+# Configurations Broker
 druid_broker_port: 8082
 druid_broker_service: druid/broker
 
