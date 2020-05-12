@@ -5,7 +5,6 @@ import com.datastax.driver.core.exceptions.DriverException;
 import com.datastax.driver.core.querybuilder.Clause;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
-import org.apache.samza.config.Config;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 import org.ekstep.ep.samza.util.RedisConnect;
@@ -43,7 +42,7 @@ public class BaseCacheUpdaterService {
                 connection.set(key, value);
             }
         } catch(JedisException ex) {
-            connection = redisConnect.resetConnection(storeId);
+            connection = redisConnect.getConnection(storeId);
             if (null != value)
                 connection.set(key, value);
         }
@@ -55,7 +54,7 @@ public class BaseCacheUpdaterService {
             return connection.get(key);
         }
         catch (JedisException ex) {
-            connection = redisConnect.resetConnection(storeId);
+            connection = redisConnect.getConnection(storeId);
             return connection.get(key);
         }
     }
