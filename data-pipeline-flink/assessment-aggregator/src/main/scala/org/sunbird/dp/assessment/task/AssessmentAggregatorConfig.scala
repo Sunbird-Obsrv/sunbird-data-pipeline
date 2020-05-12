@@ -30,11 +30,11 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
 
     //Cassandra
 
-    val dbTable: String = config.getString("cassandra.table")
-    val dbKeyspace: String = config.getString("cassandra.keyspace")
-    val dbHost: String = config.getString("cassandra.host")
-    val dbPort: Int = config.getInt("cassandra.port")
-    val dbudtType: String = config.getString("cassandra.questionudttype")
+    val dbTable: String = config.getString("lms-cassandra.table")
+    val dbKeyspace: String = config.getString("lms-cassandra.keyspace")
+    val dbHost: String = config.getString("lms-cassandra.host")
+    val dbPort: Int = config.getInt("lms-cassandra.port")
+    val dbudtType: String = config.getString("lms-cassandra.questionudttype")
 
     val FAILED_EVENTS_OUTPUT_TAG = "failed-events"
 
