@@ -7,6 +7,7 @@ import com.typesafe.config.Config
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
+import org.apache.kafka.clients.consumer.ConsumerConfig
 
 class BaseJobConfig(val config: Config, val jobName: String) extends Serializable {
 
@@ -33,6 +34,7 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
     val properties = new Properties()
     properties.setProperty("bootstrap.servers", kafkaBrokerServers)
     properties.setProperty("group.id", groupId)
+    properties.setProperty(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed")
     kafkaAutoOffsetReset.map { properties.setProperty("auto.offset.reset", _) }
     properties
   }

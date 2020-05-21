@@ -29,6 +29,16 @@
             <version>${flink.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>2.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.1</version>
+        </dependency>
+        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.4</version>
@@ -41,7 +51,7 @@
         <dependency>
             <groupId>com.datastax.cassandra</groupId>
             <artifactId>cassandra-driver-core</artifactId>
-            <version>3.1.0</version>
+            <version>3.7.0</version>
         </dependency>
         <dependency>
             <groupId>postgresql</groupId>
@@ -61,12 +71,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.cassandraunit</groupId>
-            <artifactId>cassandra-unit</artifactId>
-            <version>3.1.1.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>net.manub</groupId>
             <artifactId>scalatest-embedded-kafka_${scala.version}</artifactId>
             <version>2.0.0</version>
@@ -77,11 +81,6 @@
             <artifactId>kafka_${scala.version}</artifactId>
             <version>2.4.1</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <version>2.4.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
@@ -115,24 +114,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>2.10.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.datastax.cassandra</groupId>
-            <artifactId>cassandra-driver-core</artifactId>
-            <version>3.7.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.cassandraunit</groupId>
             <artifactId>cassandra-unit</artifactId>
             <version>3.1.1.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

@@ -17,7 +17,7 @@ class DenormalizationConfig(override val config: Config) extends BaseJobConfig(c
   implicit val anyTypeInfo: TypeInformation[String] = TypeExtractor.getForClass(classOf[String])
 
   // Kafka Topics Configuration
-  val inputTopic: String = config.getString("kafka.denorm.input.topic")
+  val inputTopic: String = config.getString("kafka.input.topic")
   val denormSuccessTopic: String = config.getString("kafka.output.success.topic")
   val failedTopic: String = config.getString("kafka.output.failed.topic")
 

@@ -84,12 +84,12 @@ run_monitor_job:
 
 run_course_metrics_job:
   course-dashboard-metrics:
-    hour: 18
+    hour: 19
     minute: 45
 
 run_assessment_metrics_job:
   assessment-dashboard-metrics:
-    hour: 19
+    hour: 20
     minute: 45
 
 run_admin_user_reports_job:
@@ -110,8 +110,8 @@ run_admin_geo_reports_job:
 
 run_assessment_aggregator_report_job:
   assessment-aggregator-report:
-    hour: 20
-    minute: 30
+    hour: 18
+    minute: 35
 
 update_user_redis_cache:
   populate-user-cache:

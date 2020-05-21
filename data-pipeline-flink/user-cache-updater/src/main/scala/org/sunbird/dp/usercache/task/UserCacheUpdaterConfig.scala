@@ -15,7 +15,7 @@ class UserCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(
   implicit val mapTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
 
   // Kafka Topics Configuration
-  val inputTopic: String = config.getString("kafka.denorm.input.topic")
+  val inputTopic: String = config.getString("kafka.input.topic")
   val userFields = List("usertype", "grade", "language", "subject", "state", "district", "usersignintype", "userlogintype","locationids")
 
   // User cache updater job metrics
@@ -34,12 +34,12 @@ class UserCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(
   // Redis
   val userStore: Int = config.getInt("redis.database.userstore.id")
 
-  // cassandra
-  val keySpace: String = config.getString("cassandra.keyspace")
-  val locationTable: String = config.getString("cassandra.table.location")
-  val userTable: String = config.getString("cassandra.table.user")
-  val cassandraHost: String =  config.getString("cassandra.host")
-  val cassandraPort: Int =  config.getInt("cassandra.port")
+  // lms-cassandra
+  val keySpace: String = config.getString("lms-cassandra.keyspace")
+  val locationTable: String = config.getString("lms-cassandra.table.location")
+  val userTable: String = config.getString("lms-cassandra.table.user")
+  val cassandraHost: String =  config.getString("lms-cassandra.host")
+  val cassandraPort: Int =  config.getInt("lms-cassandra.port")
 
   val userCacheParallelism: Int = config.getInt("task.usercache.updater.parallelism")
 
