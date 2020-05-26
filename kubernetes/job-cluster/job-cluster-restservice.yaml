@@ -2,31 +2,16 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ${JOB_NAME}-jobmanager-rest
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
   - name: rest
     nodePort: ${REST_SERVICE_PORT}
-    port: 12000
+    port: 80
     protocol: TCP
-    # port: 8081
     targetPort: 8081
   selector:
     app: flink
     component: ${JOB_NAME}-jobmanager
-
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   namespace: flink-namespace
-#   name: flink-jobmanager-rest
-# spec:
-#   type: LoadBalancer
-#   ports:
-#   - name: rest
-#     port: 12000
-#     protocol: TCP
-#     targetPort: 8081
-#   selector:
-#     app: flink
-#     component: jobmanager

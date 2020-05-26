@@ -17,13 +17,17 @@ spec:
       containers:
       - name: ${JOB_NAME}-taskmanager
         image: ${SUNBIRD_DATAPIPELINE_IMAGE}
+        imagePullPolicy: Always
         workingDir: /opt/flink
         command: ["/opt/flink/bin/taskmanager.sh"]
         args: ["start-foreground",
+          "-Dfs.azure.account.key.${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net=${AZURE_STORAGE_SECRET}",
+          "-Dweb.submit.enable=false",
+          "-Dmetrics.reporter.prom.class=org.apache.flink.metrics.prometheus.PrometheusReporter",
+          "-Dmetrics.reporter.prom.port=9251-9260",
           "-Djobmanager.rpc.address=${JOB_NAME}-jobmanager",
           "-Dtaskmanager.rpc.port=6122",
-          "-Dtaskmanager.heap.size=1024m",
-          "-Dfs.azure.account.key.${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net: ${AZURE_STORAGE_SECRET}"]
+          "-Dtaskmanager.heap.size=1024m"]
         ports:
         - containerPort: 6122
           name: rpc

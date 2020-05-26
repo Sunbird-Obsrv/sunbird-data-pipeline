@@ -13,17 +13,21 @@ spec:
       containers:
       - name: ${JOB_NAME}-jobmanager
         image: ${SUNBIRD_DATAPIPELINE_IMAGE}
+        imagePullPolicy: Always
         workingDir: /opt/flink
         command: ["/opt/flink/bin/standalone-job.sh"]
         args: ["start-foreground",
                "--job-classname=${JOB_CLASSNAME}", 
+               "-Dfs.azure.account.key.${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net=${AZURE_STORAGE_SECRET}",
+               "-Dweb.submit.enable=false",
+               "-Dmetrics.reporter.prom.class=org.apache.flink.metrics.prometheus.PrometheusReporter",
+               "-Dmetrics.reporter.prom.port=9250",
                "-Djobmanager.rpc.address=${JOB_NAME}-jobmanager",
                "-Djobmanager.rpc.port=6123",
                "-Dparallelism.default=1", 
                "-Dblob.server.port=6124", 
                "-Dqueryable-state.server.ports=6125",
-               "-Djobmanager.heap.size=1024m",
-               "-Dfs.azure.account.key.${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net: ${AZURE_STORAGE_SECRET}"]
+               "-Djobmanager.heap.size=1024m"]
         ports:
         - containerPort: 6123
           name: rpc
