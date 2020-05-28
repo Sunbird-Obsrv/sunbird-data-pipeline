@@ -45,7 +45,7 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
     redisServer.start()
     BaseMetricsReporter.gaugeMetrics.clear()
 
-    when(mockKafkaUtil.kafkaMapSource(extractorConfig.kafkaInputTopic)).thenReturn(new ExtractorEventSource)
+    when(mockKafkaUtil.kafkaStringSource(extractorConfig.kafkaInputTopic)).thenReturn(new ExtractorEventSource)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaSuccessTopic)).thenReturn(new RawEventsSink)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
@@ -110,15 +110,17 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
 
 }
 
-class ExtractorEventSource extends SourceFunction[util.Map[String, AnyRef]] {
+class ExtractorEventSource extends SourceFunction[String] {
 
-  override def run(ctx: SourceContext[util.Map[String, AnyRef]]) {
+  override def run(ctx: SourceContext[String]) {
     val gson = new Gson()
-    val event1 = gson.fromJson(EventFixture.EVENT_WITH_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
-    val event2 = gson.fromJson(EventFixture.EVENT_WITHOUT_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
-    ctx.collect(event1.asJava)
-    ctx.collect(event1.asJava)
-    ctx.collect(event2.asJava)
+    //val event1 = gson.fromJson(EventFixture.EVENT_WITH_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
+    //val event2 = gson.fromJson(EventFixture.EVENT_WITHOUT_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
+    val event1 = gson.toJson(EventFixture.EVENT_WITH_MESSAGE_ID)
+    val event2 = gson.toJson(EventFixture.EVENT_WITHOUT_MESSAGE_ID)
+    ctx.collect(event1)
+    ctx.collect(event1)
+    ctx.collect(event2)
   }
 
   override def cancel() = {}

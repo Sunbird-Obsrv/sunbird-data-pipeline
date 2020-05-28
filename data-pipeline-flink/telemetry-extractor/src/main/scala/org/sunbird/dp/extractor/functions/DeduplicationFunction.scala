@@ -37,7 +37,7 @@ class DeduplicationFunction(config: TelemetryExtractorConfig, @transient var ded
   override def processElement(batchEvents: String,
                               context: ProcessFunction[String, String]#Context,
                               metrics: Metrics): Unit = {
-
+    println("event" + batchEvents)
     metrics.incCounter(config.totalBatchEventCount)
     deDup[String](getMsgIdentifier(batchEvents), batchEvents, context,
       config.uniqueEventOutputTag, config.duplicateEventOutputTag, flagName = "extractor_duplicate")(dedupEngine, metrics)

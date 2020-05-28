@@ -15,7 +15,7 @@ import org.sunbird.dp.extractor.domain.{Context => EventContext}
 import org.sunbird.dp.extractor.task.TelemetryExtractorConfig
 
 class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTypeInfo: TypeInformation[String])
-  extends BaseProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]](config) {
+  extends BaseProcessFunction[String, util.Map[String, AnyRef]](config) {
 
   val mapType: Type = new TypeToken[util.Map[String, AnyRef]](){}.getType
 
@@ -27,14 +27,15 @@ class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTy
   /**
    * Method to process the events extraction from the batch
    *
-   * @param batchEvent - Batch of telemetry events
+   * @param event - Batch of telemetry events
    * @param context
    */
-  override def processElement(batchEvent: util.Map[String, AnyRef],
-                              context: ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]]#Context,
+  override def processElement(event: String,
+                              context: ProcessFunction[String, util.Map[String, AnyRef]]#Context,
                               metrics: Metrics): Unit = {
 
     val gson = new Gson()
+    val batchEvent = new Gson().toJson(event, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]]
     val eventsList = getEventsList(batchEvent)
     val syncTs = Option(batchEvent.get("syncts")).getOrElse(System.currentTimeMillis()).asInstanceOf[Number].longValue()
     eventsList.forEach(event => {

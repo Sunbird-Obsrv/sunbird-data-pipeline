@@ -54,7 +54,7 @@ class TelemetryExtractorStreamTask(config: TelemetryExtractorConfig, kafkaConnec
      * 2. Push all unique events to unique topic.
      */
     val deDupStream =
-      env.addSource(kafkaConnector.kafkaMapSource(config.kafkaInputTopic), config.telemetryExtractorConsumer).uid(config.telemetryExtractorConsumer)
+      env.addSource(kafkaConnector.kafkaStringSource(config.kafkaInputTopic), config.telemetryExtractorConsumer).uid(config.telemetryExtractorConsumer)
         .rebalance()
         .process(new DeduplicationFunction(config))
         .name("ExtractorDeduplicationFn").uid("ExtractorDeduplicationFn")
@@ -75,7 +75,7 @@ class TelemetryExtractorStreamTask(config: TelemetryExtractorConfig, kafkaConnec
         .process(new RedactorFunction(config)).name(config.redactorFunction).uid(config.redactorFunction)
         .setParallelism(config.redactorParallelism)
 
-    deDupStream.getSideOutput(config.duplicateEventOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaDuplicateTopic)).name(config.extractorDuplicateProducer).uid(config.extractorDuplicateProducer)
+    deDupStream.getSideOutput(config.duplicateEventOutputTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaDuplicateTopic)).name(config.extractorDuplicateProducer).uid(config.extractorDuplicateProducer)
     extractionStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name(config.extractorRawEventsProducer).uid(config.extractorRawEventsProducer)
     extractionStream.getSideOutput(config.logEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name(config.extractorAuditEventsProducer).uid(config.extractorAuditEventsProducer)
     extractionStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaFailedTopic)).name(config.extractorFailedEventsProducer).uid(config.extractorFailedEventsProducer)
