@@ -57,8 +57,8 @@ class TelemetryExtractorConfig(override val config: Config) extends BaseJobConfi
   val failedEventsOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](FAILED_EVENTS_OUTPUT_TAG)
   val logEventsOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](LOG_EVENTS_OUTPUT_TAG)
 
-  val duplicateEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = DUPLICATE_EVENTS_OUTPUT_TAG)
-  val uniqueEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = UNIQUE_EVENTS_OUTPUT_TAG)
+  val duplicateEventOutputTag: OutputTag[String] = OutputTag[String](id = DUPLICATE_EVENTS_OUTPUT_TAG)
+  val uniqueEventOutputTag: OutputTag[String] = OutputTag[String](id = UNIQUE_EVENTS_OUTPUT_TAG)
 
   // Consumers
   val telemetryExtractorConsumer = "telemetry-extractor-consumer"
