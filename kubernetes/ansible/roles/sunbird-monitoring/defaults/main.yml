@@ -1,0 +1,10 @@
+---
+# defaults file for sunbird-monitoring
+fullnameOverride: sunbird-monitoring
+monitoring_stack:
+  - prometheus-operator
+
+namespace: monitoring
+
+env: dev
+kubernetes_cluster_name: kubernetes-dp
