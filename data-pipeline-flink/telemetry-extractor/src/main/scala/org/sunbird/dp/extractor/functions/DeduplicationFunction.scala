@@ -37,13 +37,16 @@ class DeduplicationFunction(config: TelemetryExtractorConfig, @transient var ded
   override def processElement(batchEvents: String,
                               context: ProcessFunction[String, String]#Context,
                               metrics: Metrics): Unit = {
-    println("event" + batchEvents)
     metrics.incCounter(config.totalBatchEventCount)
-    deDup[String](getMsgIdentifier(batchEvents), batchEvents, context,
-      config.uniqueEventOutputTag, config.duplicateEventOutputTag, flagName = "extractor_duplicate")(dedupEngine, metrics)
+    deDup[String](getMsgIdentifier(batchEvents),
+      batchEvents,
+      context,
+      config.uniqueEventOutputTag,
+      config.duplicateEventOutputTag,
+      flagName = "extractor_duplicate")(dedupEngine, metrics)
 
     def getMsgIdentifier(batchEvents: String): String = {
-      val event = new Gson().toJson(batchEvents, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]]
+      val event = new Gson().fromJson(batchEvents, new util.LinkedHashMap[String, AnyRef]().getClass)
       val paramsObj = Option(event.get("params"))
       val messageId = paramsObj.map {
         params => params.asInstanceOf[util.Map[String, AnyRef]].get("msgid").asInstanceOf[String]

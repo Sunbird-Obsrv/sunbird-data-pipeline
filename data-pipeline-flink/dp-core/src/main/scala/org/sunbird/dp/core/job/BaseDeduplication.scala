@@ -2,6 +2,7 @@ package org.sunbird.dp.core.job
 
 import java.util
 
+import com.google.gson.Gson
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.slf4j.LoggerFactory
@@ -25,7 +26,8 @@ trait BaseDeduplication {
     if (null != key && !deDupEngine.isUniqueEvent(key)) {
       logger.info(s"Duplicate Event message id is found: $key")
       metrics.incCounter(duplicateEventMetricCount)
-      context.output(duplicateOutputTag, updateFlag(event, flagName, value = true))
+      val updatedEvent = updateFlag(event, flagName, value = true)
+      context.output(duplicateOutputTag, updatedEvent)
     } else {
       if (key != null) {
         logger.info(s"Adding key: $key to Redis")
@@ -33,19 +35,30 @@ trait BaseDeduplication {
         metrics.incCounter(uniqueEventMetricCount)
       }
       logger.info(s"Pushing event to further process, key is: $key")
-      context.output(successOutputTag, updateFlag(event, flagName, value = false))
+      val updatedEvent = updateFlag(event, flagName, value = false)
+      context.output(successOutputTag, updatedEvent)
     }
   }
 
   def updateFlag[T](event: T, flagName: String, value: Boolean): T = {
+    val flags: util.HashMap[String, Boolean] = new util.HashMap[String, Boolean]()
+    flags.put(flagName, value)
     if (event.isInstanceOf[Events]) {
       event.asInstanceOf[Events].updateFlags(flagName, value)
-    } else {
-      val flags: util.HashMap[String, Boolean] = new util.HashMap[String, Boolean]()
-      flags.put(flagName, value)
-      event.asInstanceOf[util.Map[String, AnyRef]].put("flags", flags.asInstanceOf[util.HashMap[String, AnyRef]])
     }
-    event.asInstanceOf[T]
+    if (event.isInstanceOf[String]) {
+      val upda = event.toString
+      var event2 = new Gson().fromJson(upda, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]]
+      event2.put("flags", flags.asInstanceOf[util.HashMap[String, AnyRef]])
+      new Gson().toJson(event2).asInstanceOf[T]
+//      val k = new Gson().fromJson(event.toString, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]]
+//        .put("flags", flags.asInstanceOf[util.HashMap[String, AnyRef]])
+//      k.asInstanceOf[T]
+
+    } else {
+      event.asInstanceOf[util.Map[String, AnyRef]].put("flags", flags.asInstanceOf[util.HashMap[String, AnyRef]])
+      event.asInstanceOf[T]
+    }
   }
 
   def deduplicationMetrics: List[String] = {

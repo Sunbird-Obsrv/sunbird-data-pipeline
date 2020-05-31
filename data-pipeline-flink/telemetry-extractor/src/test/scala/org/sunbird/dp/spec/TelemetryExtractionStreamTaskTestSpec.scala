@@ -46,7 +46,7 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
     BaseMetricsReporter.gaugeMetrics.clear()
 
     when(mockKafkaUtil.kafkaStringSource(extractorConfig.kafkaInputTopic)).thenReturn(new ExtractorEventSource)
-    when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
+    when(mockKafkaUtil.kafkaStringSink(extractorConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaSuccessTopic)).thenReturn(new RawEventsSink)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaAssessRawTopic)).thenReturn(new AssessRawEventsSink)
@@ -114,10 +114,8 @@ class ExtractorEventSource extends SourceFunction[String] {
 
   override def run(ctx: SourceContext[String]) {
     val gson = new Gson()
-    //val event1 = gson.fromJson(EventFixture.EVENT_WITH_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
-    //val event2 = gson.fromJson(EventFixture.EVENT_WITHOUT_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
-    val event1 = gson.toJson(EventFixture.EVENT_WITH_MESSAGE_ID)
-    val event2 = gson.toJson(EventFixture.EVENT_WITHOUT_MESSAGE_ID)
+    val event1 = EventFixture.EVENT_WITH_MESSAGE_ID
+    val event2 = EventFixture.EVENT_WITHOUT_MESSAGE_ID
     ctx.collect(event1)
     ctx.collect(event1)
     ctx.collect(event2)
@@ -166,9 +164,9 @@ object LogEventsSink {
   val values: util.List[util.Map[String, AnyRef]] = new util.ArrayList()
 }
 
-class DupEventsSink extends SinkFunction[util.Map[String, AnyRef]] {
+class DupEventsSink extends SinkFunction[String] {
 
-  override def invoke(value: util.Map[String, AnyRef]): Unit = {
+  override def invoke(value: String): Unit = {
     synchronized {
       DupEventsSink.values.add(value)
     }
@@ -176,7 +174,7 @@ class DupEventsSink extends SinkFunction[util.Map[String, AnyRef]] {
 }
 
 object DupEventsSink {
-  val values: util.List[util.Map[String, AnyRef]] = new util.ArrayList()
+  val values: util.List[String] = new util.ArrayList()
 }
 
 class AssessRawEventsSink extends SinkFunction[util.Map[String, AnyRef]] {
