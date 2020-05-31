@@ -13,7 +13,7 @@ import org.sunbird.dp.extractor.task.TelemetryExtractorConfig
 
 class DeduplicationFunction(config: TelemetryExtractorConfig, @transient var dedupEngine: DedupEngine = null)
                            (implicit val stringTypeInfo: TypeInformation[String])
-  extends BaseProcessFunction[String, String](config) {
+  extends BaseProcessFunction[String, util.Map[String, AnyRef]](config) {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[DeduplicationFunction])
 
@@ -35,10 +35,10 @@ class DeduplicationFunction(config: TelemetryExtractorConfig, @transient var ded
   }
 
   override def processElement(batchEvents: String,
-                              context: ProcessFunction[String, String]#Context,
+                              context: ProcessFunction[String, util.Map[String, AnyRef]]#Context,
                               metrics: Metrics): Unit = {
     metrics.incCounter(config.totalBatchEventCount)
-    deDup[String](getMsgIdentifier(batchEvents),
+    deDup[String, util.Map[String, AnyRef]](getMsgIdentifier(batchEvents),
       batchEvents,
       context,
       config.uniqueEventOutputTag,

@@ -15,7 +15,7 @@ import org.sunbird.dp.extractor.domain.{Context => EventContext}
 import org.sunbird.dp.extractor.task.TelemetryExtractorConfig
 
 class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTypeInfo: TypeInformation[String])
-  extends BaseProcessFunction[String, util.Map[String, AnyRef]](config) {
+  extends BaseProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]](config) {
 
   val mapType: Type = new TypeToken[util.Map[String, AnyRef]](){}.getType
 

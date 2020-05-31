@@ -31,7 +31,7 @@ class TestEventStreamFunc(config: BaseProcessTestConfig, @transient var dedupEng
                               context: ProcessFunction[Event, Event]#Context,
                               metrics: Metrics): Unit = {
     try {
-      deDup[Event](event.mid(), event, context, config.eventOutputTag, config.duplicateEventOutputTag, flagName = "test-dedup")(dedupEngine, metrics)
+      deDup[Event, Event](event.mid(), event, context, config.eventOutputTag, config.duplicateEventOutputTag, flagName = "test-dedup")(dedupEngine, metrics)
     } catch {
       case ex: Exception =>
         ex.printStackTrace()
