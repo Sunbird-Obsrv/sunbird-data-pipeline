@@ -40,7 +40,6 @@ class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTy
     eventsList.forEach(event => {
 
       val eventId = event.get("eid").asInstanceOf[String]
-      println("eid" + eventId)
       val eventData = updateEvent(event, syncTs)
       val eventJson = gson.toJson(eventData)
       val eventSize = eventJson.getBytes("UTF-8").length

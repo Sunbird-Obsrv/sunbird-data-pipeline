@@ -14,7 +14,7 @@ trait BaseDeduplication {
   private[this] val logger = LoggerFactory.getLogger(classOf[BaseDeduplication])
   val uniqueEventMetricCount = "unique-event-count"
   val duplicateEventMetricCount = "duplicate-event-count"
-
+  lazy val gson = new Gson()
   def deDup[T, R](key: String,
                   event: T,
                   context: ProcessFunction[T, R]#Context,
@@ -26,8 +26,7 @@ trait BaseDeduplication {
     if (null != key && !deDupEngine.isUniqueEvent(key)) {
       logger.info(s"Duplicate Event message id is found: $key")
       metrics.incCounter(duplicateEventMetricCount)
-      val data = updateFlag[T, R](event, flagName, value = true)
-      context.output(duplicateOutputTag, data)
+      context.output(duplicateOutputTag, updateFlag[T, R](event, flagName, value = true))
     } else {
       if (key != null) {
         logger.info(s"Adding key: $key to Redis")
@@ -35,8 +34,7 @@ trait BaseDeduplication {
         metrics.incCounter(uniqueEventMetricCount)
       }
       logger.info(s"Pushing event to further process, key is: $key")
-      val d = updateFlag[T, R](event, flagName, value = false)
-      context.output(successOutputTag, d)
+      context.output(successOutputTag, updateFlag[T, R](event, flagName, value = false))
     }
   }
 
@@ -47,9 +45,9 @@ trait BaseDeduplication {
       event.asInstanceOf[Events].updateFlags(flagName, value)
     }
     if (event.isInstanceOf[String]) {
-      val evntdata = new Gson().fromJson(event.toString, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]]
-      evntdata.asInstanceOf[util.Map[String, AnyRef]].put("flags", flags.asInstanceOf[util.HashMap[String, AnyRef]])
-      evntdata.asInstanceOf[R]
+      val eventMap = gson.fromJson(event.toString, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]]
+      eventMap.put("flags", flags.asInstanceOf[util.HashMap[String, AnyRef]])
+      eventMap.asInstanceOf[R]
     } else {
       event.asInstanceOf[util.Map[String, AnyRef]].put("flags", flags.asInstanceOf[util.HashMap[String, AnyRef]])
       event.asInstanceOf[R]
