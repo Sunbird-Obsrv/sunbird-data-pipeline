@@ -39,7 +39,6 @@ class DeduplicationFunction(config: TelemetryExtractorConfig, @transient var ded
                               context: ProcessFunction[String, util.Map[String, AnyRef]]#Context,
                               metrics: Metrics): Unit = {
     try {
-
       deDup[String, util.Map[String, AnyRef]](getMsgIdentifier(batchEvents),
         batchEvents,
         context,

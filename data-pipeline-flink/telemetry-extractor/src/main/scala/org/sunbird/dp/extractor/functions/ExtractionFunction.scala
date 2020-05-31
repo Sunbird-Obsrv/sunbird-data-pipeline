@@ -38,7 +38,6 @@ class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTy
     val eventsList = getEventsList(batchEvent)
     val syncTs = Option(batchEvent.get("syncts")).getOrElse(System.currentTimeMillis()).asInstanceOf[Number].longValue()
     eventsList.forEach(event => {
-
       val eventId = event.get("eid").asInstanceOf[String]
       val eventData = updateEvent(event, syncTs)
       val eventJson = gson.toJson(eventData)

@@ -15,6 +15,7 @@ trait BaseDeduplication {
   val uniqueEventMetricCount = "unique-event-count"
   val duplicateEventMetricCount = "duplicate-event-count"
   lazy val gson = new Gson()
+
   def deDup[T, R](key: String,
                   event: T,
                   context: ProcessFunction[T, R]#Context,
@@ -43,8 +44,8 @@ trait BaseDeduplication {
     flags.put(flagName, value)
     if (event.isInstanceOf[Events]) {
       event.asInstanceOf[Events].updateFlags(flagName, value)
-    }
-    if (event.isInstanceOf[String]) {
+      event.asInstanceOf[R]
+    } else if (event.isInstanceOf[String]) {
       val eventMap = gson.fromJson(event.toString, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]]
       eventMap.put("flags", flags.asInstanceOf[util.HashMap[String, AnyRef]])
       eventMap.asInstanceOf[R]
