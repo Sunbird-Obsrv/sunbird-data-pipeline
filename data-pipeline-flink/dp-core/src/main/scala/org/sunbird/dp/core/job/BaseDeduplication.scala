@@ -14,7 +14,7 @@ trait BaseDeduplication {
   private[this] val logger = LoggerFactory.getLogger(classOf[BaseDeduplication])
   val uniqueEventMetricCount = "unique-event-count"
   val duplicateEventMetricCount = "duplicate-event-count"
-  lazy val gson = new Gson()
+  private lazy val gson = new Gson()
 
   def deDup[T, R](key: String,
                   event: T,
