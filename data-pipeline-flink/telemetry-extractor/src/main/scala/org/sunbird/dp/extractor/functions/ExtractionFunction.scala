@@ -6,6 +6,7 @@ import java.util.UUID
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.google.gson.stream.MalformedJsonException
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.joda.time.format.DateTimeFormat
@@ -17,7 +18,7 @@ import org.sunbird.dp.extractor.task.TelemetryExtractorConfig
 class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTypeInfo: TypeInformation[String])
   extends BaseProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]](config) {
 
-  val mapType: Type = new TypeToken[util.Map[String, AnyRef]](){}.getType
+  val mapType: Type = new TypeToken[util.Map[String, AnyRef]]() {}.getType
 
   override def metricsList(): List[String] = {
     List(config.successEventCount, config.auditEventCount, config.failedEventCount)
@@ -27,18 +28,19 @@ class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTy
   /**
    * Method to process the events extraction from the batch
    *
-   * @param event - Batch of telemetry events
+   * @param batchEvent - Batch of telemetry events
    * @param context
    */
   override def processElement(batchEvent: util.Map[String, AnyRef],
                               context: ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]]#Context,
                               metrics: Metrics): Unit = {
-
     val gson = new Gson()
     val eventsList = getEventsList(batchEvent)
     val syncTs = Option(batchEvent.get("syncts")).getOrElse(System.currentTimeMillis()).asInstanceOf[Number].longValue()
     eventsList.forEach(event => {
+
       val eventId = event.get("eid").asInstanceOf[String]
+      println("eid" + eventId)
       val eventData = updateEvent(event, syncTs)
       val eventJson = gson.toJson(eventData)
       val eventSize = eventJson.getBytes("UTF-8").length
@@ -48,9 +50,9 @@ class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTy
       } else {
         metrics.incCounter(config.successEventCount)
         if (config.redactEventsList.contains(eventId))
-            context.output(config.assessRedactEventsOutputTag, markSuccess(eventData))
+          context.output(config.assessRedactEventsOutputTag, markSuccess(eventData))
         else
-            context.output(config.rawEventsOutputTag, markSuccess(eventData))
+          context.output(config.rawEventsOutputTag, markSuccess(eventData))
       }
     })
 
@@ -60,6 +62,7 @@ class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTy
     context.output(config.logEventsOutputTag,
       gson.fromJson(gson.toJson(generateAuditEvents(eventsList.size(), batchEvent)), mapType))
     metrics.incCounter(config.auditEventCount)
+
   }
 
   /**
@@ -122,6 +125,7 @@ class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTy
 
   /**
    * Method to mark the event as success by adding flags adding (ex_processed -> true)
+   *
    * @param event
    * @return
    */

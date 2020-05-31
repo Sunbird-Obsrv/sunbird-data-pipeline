@@ -33,7 +33,7 @@ class TelemetryExtractorConfig(override val config: Config) extends BaseJobConfi
 
   val redactEventsList: List[String] = config.getStringList("redact.events.list").asScala.toList
   val contentStore: Int = config.getInt("redis.database.contentstore.id")
-  
+
   val UNIQUE_EVENTS_OUTPUT_TAG = "unique-events"
   val RAW_EVENTS_OUTPUT_TAG = "raw-events"
   val ASSESS_REDACT_EVENTS_OUTPUT_TAG = "assess-redact-events"
@@ -45,12 +45,13 @@ class TelemetryExtractorConfig(override val config: Config) extends BaseJobConfi
   // Metric List
   val successEventCount = "success-event-count"
   val failedEventCount = "failed-event-count"
+  val failedBatchCount = "failed-batch-count"
+  val successBatchCount = "success-batch-count"
   val auditEventCount = "audit-event-count"
-  val totalBatchEventCount = "batch-event-count"
   val cacheMissCount = "cache-miss-count"
   val cacheHitCount = "cache-hit-count"
   val skippedEventCount = "skipped-event-count"
-  
+
   val rawEventsOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](RAW_EVENTS_OUTPUT_TAG)
   val assessRawEventsOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](ASSESS_RAW_EVENTS_OUTPUT_TAG)
   val assessRedactEventsOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](ASSESS_REDACT_EVENTS_OUTPUT_TAG)

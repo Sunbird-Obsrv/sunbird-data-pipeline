@@ -97,7 +97,8 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
     val assessEventWithResValues = gson.fromJson(gson.toJson(RawEventsSink.values.get(42)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
     assessEventWithResValues.get("edata").get.asInstanceOf[util.Map[String, AnyRef]].get("resvalues").asInstanceOf[util.ArrayList[AnyRef]].size should be (1)
 
-    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.totalBatchEventCount}").getValue() should be (3)
+    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.successBatchCount}").getValue() should be (3)
+    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.failedBatchCount}").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.successEventCount}").getValue() should be (43)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.unique-event-count").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.duplicate-event-count").getValue() should be (1)
@@ -116,9 +117,11 @@ class ExtractorEventSource extends SourceFunction[String] {
     val gson = new Gson()
     val event1 = EventFixture.EVENT_WITH_MESSAGE_ID
     val event2 = EventFixture.EVENT_WITHOUT_MESSAGE_ID
+    val event3 = EventFixture.INVALID_BATCH_EVENT
     ctx.collect(event1)
     ctx.collect(event1)
     ctx.collect(event2)
+    ctx.collect(event3)
   }
 
   override def cancel() = {}

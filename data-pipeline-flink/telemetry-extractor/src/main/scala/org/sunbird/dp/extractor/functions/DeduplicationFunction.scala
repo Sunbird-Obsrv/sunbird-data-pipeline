@@ -2,7 +2,8 @@ package org.sunbird.dp.extractor.functions
 
 import java.util
 
-import com.google.gson.Gson
+import com.google.gson.{Gson, JsonSyntaxException}
+import com.google.gson.stream.MalformedJsonException
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
@@ -18,7 +19,7 @@ class DeduplicationFunction(config: TelemetryExtractorConfig, @transient var ded
   private[this] val logger = LoggerFactory.getLogger(classOf[DeduplicationFunction])
 
   override def metricsList(): List[String] = {
-    List(config.totalBatchEventCount) ::: deduplicationMetrics
+    List(config.successBatchCount, config.failedBatchCount) ::: deduplicationMetrics
   }
 
   override def open(parameters: Configuration): Unit = {
@@ -37,13 +38,21 @@ class DeduplicationFunction(config: TelemetryExtractorConfig, @transient var ded
   override def processElement(batchEvents: String,
                               context: ProcessFunction[String, util.Map[String, AnyRef]]#Context,
                               metrics: Metrics): Unit = {
-    metrics.incCounter(config.totalBatchEventCount)
-    deDup[String, util.Map[String, AnyRef]](getMsgIdentifier(batchEvents),
-      batchEvents,
-      context,
-      config.uniqueEventOutputTag,
-      config.duplicateEventOutputTag,
-      flagName = "extractor_duplicate")(dedupEngine, metrics)
+    try {
+
+      deDup[String, util.Map[String, AnyRef]](getMsgIdentifier(batchEvents),
+        batchEvents,
+        context,
+        config.uniqueEventOutputTag,
+        config.duplicateEventOutputTag,
+        flagName = "extractor_duplicate")(dedupEngine, metrics)
+      metrics.incCounter(config.successBatchCount)
+    } catch {
+      case ex: JsonSyntaxException => {
+        println(ex.getMessage)
+        metrics.incCounter(config.failedBatchCount)
+      }
+    }
 
     def getMsgIdentifier(batchEvents: String): String = {
       val event = new Gson().fromJson(batchEvents, new util.LinkedHashMap[String, AnyRef]().getClass)

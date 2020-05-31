@@ -27,7 +27,6 @@ trait BaseDeduplication {
       logger.info(s"Duplicate Event message id is found: $key")
       metrics.incCounter(duplicateEventMetricCount)
       val data = updateFlag[T, R](event, flagName, value = true)
-      println("data" + data)
       context.output(duplicateOutputTag, data)
     } else {
       if (key != null) {
@@ -37,7 +36,6 @@ trait BaseDeduplication {
       }
       logger.info(s"Pushing event to further process, key is: $key")
       val d = updateFlag[T, R](event, flagName, value = false)
-      println("d" + d)
       context.output(successOutputTag, d)
     }
   }
