@@ -15,18 +15,20 @@ trait BaseDeduplication {
   val uniqueEventMetricCount = "unique-event-count"
   val duplicateEventMetricCount = "duplicate-event-count"
 
-  def deDup[I, O](key: String,
-                  event: I,
-                  context: ProcessFunction[I, O]#Context,
-                  successOutputTag: OutputTag[O],
-                  duplicateOutputTag: OutputTag[O],
+  def deDup[T, R](key: String,
+                  event: T,
+                  context: ProcessFunction[T, R]#Context,
+                  successOutputTag: OutputTag[R],
+                  duplicateOutputTag: OutputTag[R],
                   flagName: String
                  )(implicit deDupEngine: DedupEngine, metrics: Metrics): Unit = {
 
     if (null != key && !deDupEngine.isUniqueEvent(key)) {
       logger.info(s"Duplicate Event message id is found: $key")
       metrics.incCounter(duplicateEventMetricCount)
-      context.output(duplicateOutputTag, updateFlag(event, flagName, value = true))
+      val data = updateFlag[T, R](event, flagName, value = true)
+      println("data" + data)
+      context.output(duplicateOutputTag, data)
     } else {
       if (key != null) {
         logger.info(s"Adding key: $key to Redis")
@@ -34,23 +36,25 @@ trait BaseDeduplication {
         metrics.incCounter(uniqueEventMetricCount)
       }
       logger.info(s"Pushing event to further process, key is: $key")
-      context.output(successOutputTag, updateFlag(event, flagName, value = false))
+      val d = updateFlag[T, R](event, flagName, value = false)
+      println("d" + d)
+      context.output(successOutputTag, d)
     }
   }
 
-  def updateFlag[T](event: T, flagName: String, value: Boolean): T = {
+  def updateFlag[T, R](event: T, flagName: String, value: Boolean): R = {
     val flags: util.HashMap[String, Boolean] = new util.HashMap[String, Boolean]()
     flags.put(flagName, value)
     if (event.isInstanceOf[Events]) {
       event.asInstanceOf[Events].updateFlags(flagName, value)
     }
     if (event.isInstanceOf[String]) {
-      val eventMap = new Gson().fromJson(event.toString, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].
-      put("flags", flags.asInstanceOf[util.HashMap[String, AnyRef]])
-      new Gson().toJson(eventMap).asInstanceOf[T]
+      val evntdata = new Gson().fromJson(event.toString, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]]
+      evntdata.asInstanceOf[util.Map[String, AnyRef]].put("flags", flags.asInstanceOf[util.HashMap[String, AnyRef]])
+      evntdata.asInstanceOf[R]
     } else {
       event.asInstanceOf[util.Map[String, AnyRef]].put("flags", flags.asInstanceOf[util.HashMap[String, AnyRef]])
-      event.asInstanceOf[T]
+      event.asInstanceOf[R]
     }
   }
 

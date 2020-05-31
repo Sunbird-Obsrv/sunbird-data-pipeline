@@ -46,7 +46,7 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
     BaseMetricsReporter.gaugeMetrics.clear()
 
     when(mockKafkaUtil.kafkaStringSource(extractorConfig.kafkaInputTopic)).thenReturn(new ExtractorEventSource)
-    when(mockKafkaUtil.kafkaStringSink(extractorConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
+    when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaSuccessTopic)).thenReturn(new RawEventsSink)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaAssessRawTopic)).thenReturn(new AssessRawEventsSink)
@@ -164,9 +164,9 @@ object LogEventsSink {
   val values: util.List[util.Map[String, AnyRef]] = new util.ArrayList()
 }
 
-class DupEventsSink extends SinkFunction[String] {
+class DupEventsSink extends SinkFunction[util.Map[String, AnyRef]] {
 
-  override def invoke(value: String): Unit = {
+  override def invoke(value: util.Map[String, AnyRef]): Unit = {
     synchronized {
       DupEventsSink.values.add(value)
     }
@@ -174,7 +174,7 @@ class DupEventsSink extends SinkFunction[String] {
 }
 
 object DupEventsSink {
-  val values: util.List[String] = new util.ArrayList()
+  val values: util.List[util.Map[String, AnyRef]] = new util.ArrayList()
 }
 
 class AssessRawEventsSink extends SinkFunction[util.Map[String, AnyRef]] {
