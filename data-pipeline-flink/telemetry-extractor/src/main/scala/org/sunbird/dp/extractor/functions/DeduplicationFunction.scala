@@ -48,7 +48,6 @@ class DeduplicationFunction(config: TelemetryExtractorConfig, @transient var ded
       metrics.incCounter(config.successBatchCount)
     } catch {
       case ex: JsonSyntaxException => {
-        println(ex.getMessage)
         metrics.incCounter(config.failedBatchCount)
       }
     }
