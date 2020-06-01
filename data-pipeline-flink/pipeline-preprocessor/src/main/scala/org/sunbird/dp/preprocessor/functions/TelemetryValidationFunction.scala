@@ -43,7 +43,6 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
   override def processElement(event: Event,
                               context: ProcessFunction[Event, Event]#Context,
                               metrics: Metrics): Unit = {
-    dataCorrection(event)
     val isSchemaPresent: Boolean = schemaValidator.schemaFileExists(event)
     if (!isSchemaPresent) onValidationSkip(event)
     val validationReport = schemaValidator.validate(event, isSchemaPresent = isSchemaPresent)
@@ -67,6 +66,7 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
 
   def onValidationSuccess(event: Event, metrics: Metrics, context: ProcessFunction[Event, Event]#Context): Unit = {
     logger.info(s"Telemetry schema validation is success: ${event.mid()}")
+    dataCorrection(event)
     event.markSuccess(config.VALIDATION_FLAG_NAME)
     metrics.incCounter(config.validationSuccessMetricsCount)
     event.updateDefaults(config)
