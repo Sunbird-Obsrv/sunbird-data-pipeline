@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory
 import org.sunbird.dp.core.cache.{DedupEngine, RedisConnect}
 import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 import org.sunbird.dp.extractor.task.TelemetryExtractorConfig
+import redis.clients.jedis.exceptions.JedisException
 
 class DeduplicationFunction(config: TelemetryExtractorConfig, @transient var dedupEngine: DedupEngine = null)
                            (implicit val stringTypeInfo: TypeInformation[String])
@@ -46,6 +47,11 @@ class DeduplicationFunction(config: TelemetryExtractorConfig, @transient var ded
         flagName = "extractor_duplicate")(dedupEngine, metrics)
       metrics.incCounter(config.successBatchCount)
     } catch {
+      case jedisEx: JedisException => {
+        logger.info("Exception when retrieving data from redis: ", jedisEx.getMessage)
+        dedupEngine.getRedisConnection.close()
+        throw jedisEx
+      }
       case ex: Exception => {
         metrics.incCounter(config.failedBatchCount)
       }
