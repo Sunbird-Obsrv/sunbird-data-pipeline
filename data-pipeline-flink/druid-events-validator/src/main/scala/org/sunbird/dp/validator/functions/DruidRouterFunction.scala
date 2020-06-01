@@ -43,7 +43,7 @@ class DruidRouterFunction(config: DruidValidatorConfig, @transient var dedupEngi
       metrics.incCounter(config.telemetryRouterMetricCount)
       config.telemetryRouterOutputTag
     }
-    deDup[Event](event.mid(), event, ctx,
+    deDup[Event, Event](event.mid(), event, ctx,
       outputTag, config.duplicateEventOutputTag, flagName = "dv_duplicate")(dedupEngine, metrics)
 
   }
