@@ -48,7 +48,7 @@ class DeduplicationFunction(config: TelemetryExtractorConfig, @transient var ded
       metrics.incCounter(config.successBatchCount)
     } catch {
       case jedisEx: JedisException => {
-        logger.info("Exception when retrieving data from redis: ", jedisEx.getMessage)
+        logger.info("Exception when retrieving data from redis " + jedisEx.getMessage)
         dedupEngine.getRedisConnection.close()
         throw jedisEx
       }
