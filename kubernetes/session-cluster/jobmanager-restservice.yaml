@@ -6,7 +6,7 @@ spec:
   type: NodePort
   ports:
   - name: rest
-    nodePort: 30509
+    #nodePort: 30504
     port: 8081
     protocol: TCP
     # port: 8081
