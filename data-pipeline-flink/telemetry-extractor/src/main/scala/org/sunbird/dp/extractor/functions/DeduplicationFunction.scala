@@ -2,8 +2,7 @@ package org.sunbird.dp.extractor.functions
 
 import java.util
 
-import com.google.gson.{Gson, JsonSyntaxException}
-import com.google.gson.stream.MalformedJsonException
+import com.google.gson.Gson
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
@@ -47,7 +46,7 @@ class DeduplicationFunction(config: TelemetryExtractorConfig, @transient var ded
         flagName = "extractor_duplicate")(dedupEngine, metrics)
       metrics.incCounter(config.successBatchCount)
     } catch {
-      case ex: JsonSyntaxException => {
+      case ex: Exception => {
         metrics.incCounter(config.failedBatchCount)
       }
     }
