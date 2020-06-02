@@ -91,16 +91,16 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
 
     // Assertions for redactor logic
     val responseEventWithoutValues = gson.fromJson(gson.toJson(RawEventsSink.values.get(39)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
-    responseEventWithoutValues.get("edata").get.asInstanceOf[util.Map[String, AnyRef]].get("values").asInstanceOf[util.ArrayList[AnyRef]].size should be (0)
+    responseEventWithoutValues("edata").asInstanceOf[util.Map[String, AnyRef]].get("values").asInstanceOf[util.ArrayList[AnyRef]].size should be (0)
     val assessEventWithoutResValues = gson.fromJson(gson.toJson(RawEventsSink.values.get(40)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
-    assessEventWithoutResValues.get("edata").get.asInstanceOf[util.Map[String, AnyRef]].get("resvalues").asInstanceOf[util.ArrayList[AnyRef]].size should be (0)
+    assessEventWithoutResValues("edata").asInstanceOf[util.Map[String, AnyRef]].get("resvalues").asInstanceOf[util.ArrayList[AnyRef]].size should be (0)
     val assessEventWithResValues = gson.fromJson(gson.toJson(RawEventsSink.values.get(42)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
-    assessEventWithResValues.get("edata").get.asInstanceOf[util.Map[String, AnyRef]].get("resvalues").asInstanceOf[util.ArrayList[AnyRef]].size should be (1)
+    assessEventWithResValues("edata").asInstanceOf[util.Map[String, AnyRef]].get("resvalues").asInstanceOf[util.ArrayList[AnyRef]].size should be (1)
 
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.successBatchCount}").getValue() should be (3)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.failedBatchCount}").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.successEventCount}").getValue() should be (43)
-    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.unique-event-count").getValue() should be (1)
+    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.unique-event-count").getValue() should be (2)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.duplicate-event-count").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.failedEventCount}").getValue() should be (2)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.auditEventCount}").getValue() should be (2)
