@@ -7,4 +7,35 @@ monitoring_stack:
 namespace: monitoring
 
 env: dev
-kubernetes_cluster_name: kubernetes-dp
+kubernetes_cluster_name: kubernetes-dp-{{ env }}
+
+monitor_alerts_mail_from_email: "{{ alert_from_address }}"
+monitor_alerts_mail_server_host: "{{ sendgrid_host }}" 
+monitor_alerts_mail_server_port: 587
+monitor_alerts_mail_server_username: "{{ SGUSER }}" 
+monitor_alerts_mail_server_password: "{{ SGPASS }}" 
+monitor_alerts_slack_url: 
+monitor_alerts_slack_channel: 
+
+default_critical_mailing_list: "{{ default_mailing_list }}"
+default_fatal_mailing_list: "{{ default_mailing_list }}"
+default_mailing_list: kaliraja.ramasamy@tarento.com
+
+
+alert_teams:
+  - team: analytics_team
+    group: groupname
+    alerts_mailing_list: "{{ default_mailing_list }}"
+    services:
+      - druidzookeeper.*
+      - druidpostgres.*
+      - overlord.*
+      - coordinator.*
+      - historical.*
+      - broker.*
+      - middle-Manager.*
+    severity_mailing_filter: 
+      - severity: critical
+        alerts_mailing_list: "{{ default_mailing_list }}"
+      - severity: fatal
+        alerts_mailing_list: "{{ default_mailing_list }}"
