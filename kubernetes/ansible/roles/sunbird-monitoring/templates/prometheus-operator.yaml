@@ -107,9 +107,6 @@ alertmanager:
       group_interval: 5m
       repeat_interval: 4h
       routes:
-      - receiver: slack
-        continue: true
-      {% for item in alert_teams %}
       # Comment to ensure proper indentation while templating
       - match_re:
           {{ item.group }}: "{{ item.services | join('|') }}"
