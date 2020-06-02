@@ -38,8 +38,7 @@ public class TelemetryValidatorService {
                 LOGGER.debug("VALIDATION SUCCESS", event.mid());
                 event.markSuccess();
                 event.updateDefaults(config);
-                event = dataCorrection(event);
-                sink.toSuccessTopic(event);
+                sink.toSuccessTopic(dataCorrection(event));
             } else {
                 LOGGER.error(null, "VALIDATION FAILED: " + report.toString());
                 String fieldName = getInvalidFieldName(report.toString());
