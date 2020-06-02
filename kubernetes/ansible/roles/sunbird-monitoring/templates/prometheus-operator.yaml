@@ -108,7 +108,8 @@ alertmanager:
       repeat_interval: 4h
       routes:
       # Comment to ensure proper indentation while templating
-        # Comment to ensure proper indentation while templating
+      # Comment to ensure proper indentation while templating
+      {% for item in alert_teams %}
         {% if item.severity_mailing_filter is defined and item.severity_mailing_filter|length %}
         routes:
         {% for filter in item.severity_mailing_filter %}
@@ -118,6 +119,7 @@ alertmanager:
           receiver: "{{ item.team }}_{{ filter.severity }}"
         {% endfor %}
         {% endif %}
+        {% endfor %}
       # Comment to ensure proper indentation while templating
       - match:
           owner:
@@ -125,6 +127,7 @@ alertmanager:
 
     receivers:
       # Comment to ensure proper indentation while templating
+      {% for item in alert_teams %}
       - name: "{{ item.team }}"
         email_configs:
           - send_resolved: true
@@ -144,6 +147,7 @@ alertmanager:
               subject: '[{{ kubernetes_cluster_name }}] {% raw %}{{ .GroupLabels.alertname }}{% endraw %}'
       {% endfor %}
       {% endif %}
+      {% endfor %}
       # Comment to ensure proper indentation while templating
       - name: {{env}}_devops_team
         email_configs:
