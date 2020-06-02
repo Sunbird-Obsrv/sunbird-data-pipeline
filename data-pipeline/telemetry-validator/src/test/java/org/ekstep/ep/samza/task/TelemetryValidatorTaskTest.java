@@ -142,7 +142,7 @@ public class TelemetryValidatorTaskTest {
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
                 Map<String, Object> actorData = new Gson().fromJson(new Gson().toJson(outputEvent.get("actor")), mapType);
-                assertEquals("874ed8a5-782e-4f6c-8f36-e0288455901e", actorData.get("id"));
+                assertEquals("f:5a8a3f2b-3409-42e0-9001-f913bc0fde31:874ed8a5-782e-4f6c-8f36-e0288455901e", actorData.get("id"));
                 return true;
             }
         }));
