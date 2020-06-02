@@ -45,7 +45,7 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
     redisServer.start()
     BaseMetricsReporter.gaugeMetrics.clear()
 
-    when(mockKafkaUtil.kafkaMapSource(extractorConfig.kafkaInputTopic)).thenReturn(new ExtractorEventSource)
+    when(mockKafkaUtil.kafkaStringSource(extractorConfig.kafkaInputTopic)).thenReturn(new ExtractorEventSource)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaSuccessTopic)).thenReturn(new RawEventsSink)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
@@ -91,15 +91,16 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
 
     // Assertions for redactor logic
     val responseEventWithoutValues = gson.fromJson(gson.toJson(RawEventsSink.values.get(39)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
-    responseEventWithoutValues.get("edata").get.asInstanceOf[util.Map[String, AnyRef]].get("values").asInstanceOf[util.ArrayList[AnyRef]].size should be (0)
+    responseEventWithoutValues("edata").asInstanceOf[util.Map[String, AnyRef]].get("values").asInstanceOf[util.ArrayList[AnyRef]].size should be (0)
     val assessEventWithoutResValues = gson.fromJson(gson.toJson(RawEventsSink.values.get(40)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
-    assessEventWithoutResValues.get("edata").get.asInstanceOf[util.Map[String, AnyRef]].get("resvalues").asInstanceOf[util.ArrayList[AnyRef]].size should be (0)
+    assessEventWithoutResValues("edata").asInstanceOf[util.Map[String, AnyRef]].get("resvalues").asInstanceOf[util.ArrayList[AnyRef]].size should be (0)
     val assessEventWithResValues = gson.fromJson(gson.toJson(RawEventsSink.values.get(42)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
-    assessEventWithResValues.get("edata").get.asInstanceOf[util.Map[String, AnyRef]].get("resvalues").asInstanceOf[util.ArrayList[AnyRef]].size should be (1)
+    assessEventWithResValues("edata").asInstanceOf[util.Map[String, AnyRef]].get("resvalues").asInstanceOf[util.ArrayList[AnyRef]].size should be (1)
 
-    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.totalBatchEventCount}").getValue() should be (3)
+    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.successBatchCount}").getValue() should be (3)
+    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.failedBatchCount}").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.successEventCount}").getValue() should be (43)
-    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.unique-event-count").getValue() should be (1)
+    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.unique-event-count").getValue() should be (2)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.duplicate-event-count").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.failedEventCount}").getValue() should be (2)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.auditEventCount}").getValue() should be (2)
@@ -110,15 +111,17 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
 
 }
 
-class ExtractorEventSource extends SourceFunction[util.Map[String, AnyRef]] {
+class ExtractorEventSource extends SourceFunction[String] {
 
-  override def run(ctx: SourceContext[util.Map[String, AnyRef]]) {
+  override def run(ctx: SourceContext[String]) {
     val gson = new Gson()
-    val event1 = gson.fromJson(EventFixture.EVENT_WITH_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
-    val event2 = gson.fromJson(EventFixture.EVENT_WITHOUT_MESSAGE_ID, new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
-    ctx.collect(event1.asJava)
-    ctx.collect(event1.asJava)
-    ctx.collect(event2.asJava)
+    val event1 = EventFixture.EVENT_WITH_MESSAGE_ID
+    val event2 = EventFixture.EVENT_WITHOUT_MESSAGE_ID
+    val event3 = EventFixture.INVALID_BATCH_EVENT
+    ctx.collect(event1)
+    ctx.collect(event1)
+    ctx.collect(event2)
+    ctx.collect(event3)
   }
 
   override def cancel() = {}

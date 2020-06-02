@@ -94,7 +94,7 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     val event = new util.HashMap[String, AnyRef]()
     event.put("country_code", "IN")
     event.put("country", "INDIA")
-    deDup.updateFlag[util.Map[String, AnyRef]](event, "test-failed", true)
+    deDup.updateFlag[util.Map[String, AnyRef], util.Map[String, AnyRef]](event, "test-failed", true)
     val redisConnection = new RedisConnect(bsConfig)
     val dedupEngine = new DedupEngine(redisConnection, 2, 200)
     dedupEngine.storeChecksum("key-1")

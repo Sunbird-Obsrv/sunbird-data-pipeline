@@ -11,7 +11,7 @@ jobs:
       - save_cache:
           key: dependency-cache-{{ checksum "pom.xml" }}
           paths: ~/.m2
-      - run: mvn clean -X scoverage:report
+      - run: mvn clean scoverage:report
       - run:
           name: sonar
           command: |

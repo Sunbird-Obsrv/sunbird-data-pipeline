@@ -36,7 +36,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<scala.version>2.12</scala.version>
 		<scala.maj.version>2.12.11</scala.maj.version>
-		<flink.version>1.10.0</flink.version>
+		<flink.version>1.10.1</flink.version>
 		<kafka.version>2.4.0</kafka.version>
 		<jackson-jaxrs.version>1.9.13</jackson-jaxrs.version>
 		<scoverage.plugin.version>1.4.0</scoverage.plugin.version>
