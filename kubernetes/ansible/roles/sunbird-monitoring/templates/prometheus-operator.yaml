@@ -124,7 +124,6 @@ alertmanager:
           receiver: "{{ item.team }}_{{ filter.severity }}"
         {% endfor %}
         {% endif %}
-      {% endfor %}
       # Comment to ensure proper indentation while templating
       - match:
           owner:
