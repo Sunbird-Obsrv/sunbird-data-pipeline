@@ -106,49 +106,8 @@ alertmanager:
       group_wait: 30s
       group_interval: 5m
       repeat_interval: 4h
-      routes:
-      # Comment to ensure proper indentation while templating
-      # Comment to ensure proper indentation while templating
-      {% for item in alert_teams %}
-        {% if item.severity_mailing_filter is defined and item.severity_mailing_filter|length %}
-        routes:
-        {% for filter in item.severity_mailing_filter %}
-        # Comment to ensure proper indentation while templating
-        - match:
-            severity: "{{ filter.severity }}"
-          receiver: "{{ item.team }}_{{ filter.severity }}"
-        {% endfor %}
-        {% endif %}
-        {% endfor %}
-      # Comment to ensure proper indentation while templating
-      - match:
-          owner:
-        receiver: {{env}}_devops_team
 
     receivers:
-      # Comment to ensure proper indentation while templating
-      {% for item in alert_teams %}
-      - name: "{{ item.team }}"
-        email_configs:
-          - send_resolved: true
-            to: '{{ item.alerts_mailing_list }}'
-            html: '{% raw %}{{ template "email.default.html" . }}{% endraw %}'
-            headers:
-              subject: '[{{ kubernetes_cluster_name }}] {% raw %}{{ .GroupLabels.alertname }}{% endraw %}'
-      {% if item.severity_mailing_filter is defined and item.severity_mailing_filter|length %}
-      {% for filter in item.severity_mailing_filter %}
-      # Comment to ensure proper indentation while templating
-      - name: "{{ item.team }}_{{ filter.severity }}"
-        email_configs:
-          - send_resolved: true
-            to: '{{ filter.alerts_mailing_list }}'
-            html: '{% raw %}{{ template "email.default.html" . }}{% endraw %}'
-            headers:
-              subject: '[{{ kubernetes_cluster_name }}] {% raw %}{{ .GroupLabels.alertname }}{% endraw %}'
-      {% endfor %}
-      {% endif %}
-      {% endfor %}
-      # Comment to ensure proper indentation while templating
       - name: {{env}}_devops_team
         email_configs:
           - send_resolved: true
