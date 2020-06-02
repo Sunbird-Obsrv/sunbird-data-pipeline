@@ -22,8 +22,9 @@ public class TelemetryValidatorService {
     }
 
     public void process(TelemetryValidatorSource source, TelemetryValidatorSink sink) {
-        Event event = source.getEvent();
+        Event event = null;
         try {
+            event = source.getEvent();
             if (!telemetrySchemaValidator.schemaFileExists(event)) {
                 LOGGER.info("SCHEMA NOT FOUND FOR EID: ", event.eid());
                 LOGGER.debug("SKIP PROCESSING: SENDING TO SUCCESS", event.mid());
