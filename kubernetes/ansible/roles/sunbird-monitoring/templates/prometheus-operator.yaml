@@ -108,9 +108,6 @@ alertmanager:
       repeat_interval: 4h
       routes:
       # Comment to ensure proper indentation while templating
-      - match_re:
-          {{ item.group }}: "{{ item.services | join('|') }}"
-        receiver: "{{ item.team }}"
         # Comment to ensure proper indentation while templating
         {% if item.severity_mailing_filter is defined and item.severity_mailing_filter|length %}
         routes:
