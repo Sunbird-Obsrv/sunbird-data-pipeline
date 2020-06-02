@@ -147,7 +147,6 @@ alertmanager:
               subject: '[{{ kubernetes_cluster_name }}] {% raw %}{{ .GroupLabels.alertname }}{% endraw %}'
       {% endfor %}
       {% endif %}
-      {% endfor %}
       # Comment to ensure proper indentation while templating
       - name: {{env}}_devops_team
         email_configs:
