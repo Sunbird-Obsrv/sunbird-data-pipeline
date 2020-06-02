@@ -29,7 +29,7 @@ public class TelemetryValidatorService {
                 LOGGER.info("SCHEMA NOT FOUND FOR EID: ", event.eid());
                 LOGGER.debug("SKIP PROCESSING: SENDING TO SUCCESS", event.mid());
                 event.markSkipped();
-                sink.toSuccessTopic(event);
+                sink.toSuccessTopic(dataCorrection(event));
                 return;
             }
 
