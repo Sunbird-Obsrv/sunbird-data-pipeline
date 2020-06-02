@@ -25,16 +25,16 @@ trait BaseDeduplication {
                  )(implicit deDupEngine: DedupEngine, metrics: Metrics): Unit = {
 
     if (null != key && !deDupEngine.isUniqueEvent(key)) {
-      logger.info(s"Duplicate Event message id is found: $key")
+      logger.debug(s"Event with mid: $key is duplicate")
       metrics.incCounter(duplicateEventMetricCount)
       context.output(duplicateOutputTag, updateFlag[T, R](event, flagName, value = true))
     } else {
       if (key != null) {
-        logger.info(s"Adding key: $key to Redis")
+        logger.debug(s"Adding mid: $key to Redis")
         deDupEngine.storeChecksum(key)
-        metrics.incCounter(uniqueEventMetricCount)
       }
-      logger.info(s"Pushing event to further process, key is: $key")
+      metrics.incCounter(uniqueEventMetricCount)
+      logger.debug(s"Pushing the event with mid: $key for further processing")
       context.output(successOutputTag, updateFlag[T, R](event, flagName, value = false))
     }
   }
