@@ -5,7 +5,7 @@ monitoring_stack:
   - prometheus-operator
 
 namespace: monitoring
-
+flink_namespace: flink-dev
 env: dev
 kubernetes_cluster_name: kubernetes-dp-{{ env }}
 
