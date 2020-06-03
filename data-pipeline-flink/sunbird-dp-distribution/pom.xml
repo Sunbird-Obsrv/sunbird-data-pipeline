@@ -110,8 +110,8 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <repository>docker.io/anandp504/sunbird-datapipeline</repository>
-                            <tag>${project.version}</tag>
+                            <repository>datapipeline</repository>
+                            <tag>${release-version}</tag>
                         </configuration>
                     </plugin>
                 </plugins>
