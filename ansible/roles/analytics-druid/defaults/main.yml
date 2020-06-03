@@ -49,7 +49,6 @@ druid_extensions_list : '"druid-azure-extensions", "graphite-emitter", "postgres
 
 druid_community_extensions:
   - graphite-emitter
-  - druid-azure-extensions
 
 # End of druid_extensions
 
