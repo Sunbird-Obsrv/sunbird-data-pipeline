@@ -41,6 +41,7 @@ object EventFixture {
       |              kafka.output.metrics.topic = "pipeline_metrics"
       |              task {
       |                parallelism = 2
+      |                consumer.parallelism = 1
       |                checkpointing.interval = 60000
       |                metrics.window.size = 100 # 3 min
       |                restart-strategy.attempts = 1 # retry once

@@ -178,8 +178,7 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     val config = ConfigFactory.empty()
     config.entrySet()
 
-    val customConf =
-      ConfigFactory.parseString(EventFixture.customConfig)
+    val customConf = ConfigFactory.parseString(EventFixture.customConfig)
 
     val flinkConfig: BaseJobConfig = new BaseJobConfig(customConf, "base-job")
     val context: StreamExecutionEnvironment = FlinkUtil.getExecutionContext(flinkConfig)

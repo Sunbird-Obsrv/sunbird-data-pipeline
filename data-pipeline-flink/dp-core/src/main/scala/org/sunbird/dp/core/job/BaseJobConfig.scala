@@ -21,6 +21,7 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
   val restartAttempts: Int = config.getInt("task.restart-strategy.attempts")
   val delayBetweenAttempts: Long = config.getLong("task.restart-strategy.delay")
   val parallelism: Int = config.getInt("task.parallelism")
+  val kafkaConsumerParallelism: Int = config.getInt("task.consumer.parallelism")
   // Only for Tests
   val kafkaAutoOffsetReset: Option[String] = if (config.hasPath("kafka.auto.offset.reset")) Option(config.getString("kafka.auto.offset.reset")) else None
 

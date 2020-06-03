@@ -28,6 +28,7 @@ class TelemetryExtractorConfig(override val config: Config) extends BaseJobConfi
   val kafkaAssessRawTopic: String = config.getString("kafka.output.assess.raw.topic")
   val eventMaxSize: Long = config.getLong("kafka.event.max.size")
 
+  override val kafkaConsumerParallelism: Int = config.getInt("task.consumer.parallelism")
   val deDupParallelism: Int = config.getInt("task.dedup.parallelism")
   val extractionParallelism: Int = config.getInt("task.extraction.parallelism")
   val redactorParallelism: Int = config.getInt("task.redactor.parallelism")
