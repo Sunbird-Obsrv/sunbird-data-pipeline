@@ -41,6 +41,7 @@ object EventFixture {
       |  }
       |}
       |
+<<<<<<< HEAD
       |kafka.output.metrics.topic = "pipeline_metrics"
       |task {
       |  parallelism = 2
