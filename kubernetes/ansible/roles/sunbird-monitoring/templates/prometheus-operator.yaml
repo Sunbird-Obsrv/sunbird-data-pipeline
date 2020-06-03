@@ -15,67 +15,67 @@ prometheus:
       - job_name: 'telemetry-extractor-jobmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['telemetry-extractor-jobmanager.flink-dev-namespace.svc.cluster.local:9250']
+          - targets: ['telemetry-extractor-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
       - job_name: 'telemetry-extractor-taskmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['telemetry-extractor-taskmanager.flink-dev-namespace.svc.cluster.local:9251']
+          - targets: ['telemetry-extractor-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
       - job_name: 'pipeline-preprocessor-jobmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['pipeline-preprocessor-jobmanager.flink-dev-namespace.svc.cluster.local:9250']
+          - targets: ['pipeline-preprocessor-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
       - job_name: 'pipeline-preprocessor-taskmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['pipeline-preprocessor-taskmanager.flink-dev-namespace.svc.cluster.local:9251']
+          - targets: ['pipeline-preprocessor-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
       - job_name: 'de-normalization-jobmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['de-normalization-jobmanager.flink-dev-namespace.svc.cluster.local:9250']
+          - targets: ['de-normalization-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
       - job_name: 'de-normalization-taskmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['de-normalization-taskmanager.flink-dev-namespace.svc.cluster.local:9251']
+          - targets: ['de-normalization-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
       - job_name: 'druid-validator-jobmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['druid-validator-jobmanager.flink-dev-namespace.svc.cluster.local:9250']
+          - targets: ['druid-validator-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
       - job_name: 'druid-validator-taskmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['druid-validator-taskmanager.flink-dev-namespace.svc.cluster.local:9251']
+          - targets: ['druid-validator-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
       - job_name: 'device-profile-updater-jobmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['device-profile-updater-jobmanager.flink-dev-namespace.svc.cluster.local:9250']
+          - targets: ['device-profile-updater-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
       - job_name: 'device-profile-updater-taskmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['device-profile-updater-taskmanager.flink-dev-namespace.svc.cluster.local:9251']
+          - targets: ['device-profile-updater-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
       - job_name: 'content-cache-updater-jobmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['content-cache-updater-jobmanager.flink-dev-namespace.svc.cluster.local:9250']
+          - targets: ['content-cache-updater-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
       - job_name: 'content-cache-updater-taskmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['content-cache-updater-taskmanager.flink-dev-namespace.svc.cluster.local:9251']
+          - targets: ['content-cache-updater-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
       - job_name: 'user-cache-updater-jobmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['user-cache-updater-jobmanager.flink-dev-namespace.svc.cluster.local:9250']
+          - targets: ['user-cache-updater-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
       - job_name: 'user-cache-updater-taskmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['user-cache-updater-taskmanager.flink-dev-namespace.svc.cluster.local:9251']
+          - targets: ['user-cache-updater-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
       - job_name: 'assessment-aggregator-jobmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['assessment-aggregator-jobmanager.flink-dev-namespace.svc.cluster.local:9250']
+          - targets: ['assessment-aggregator-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
       - job_name: 'assessment-aggregator-taskmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['assessment-aggregator-taskmanager.flink-dev-namespace.svc.cluster.local:9251']
+          - targets: ['assessment-aggregator-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
     additionalScrapeConfigsExternal: true
     retention: "{{ prometheus_retention_time | d('90d') }}"
     externalLabels:
