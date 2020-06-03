@@ -15,67 +15,67 @@ prometheus:
       - job_name: 'telemetry-extractor-jobmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['telemetry-extractor-jobmanager.flink-namespace.svc.cluster.local:9250']
+          - targets: ['telemetry-extractor-jobmanager.flink-{{ env }}-namespace.svc.cluster.local:9250']
       - job_name: 'telemetry-extractor-taskmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['telemetry-extractor-taskmanager.flink-namespace.svc.cluster.local:9251']
+          - targets: ['telemetry-extractor-taskmanager.flink-{{ env }}-namespace.svc.cluster.local:9251']
       - job_name: 'pipeline-preprocessor-jobmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['pipeline-preprocessor-jobmanager.flink-namespace.svc.cluster.local:9250']
+          - targets: ['pipeline-preprocessor-jobmanager.flink-{{ env }}-namespace.svc.cluster.local:9250']
       - job_name: 'pipeline-preprocessor-taskmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['pipeline-preprocessor-taskmanager.flink-namespace.svc.cluster.local:9251']
+          - targets: ['pipeline-preprocessor-taskmanager.flink-{{ env }}-namespace.svc.cluster.local:9251']
       - job_name: 'de-normalization-jobmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['de-normalization-jobmanager.flink-namespace.svc.cluster.local:9250']
+          - targets: ['de-normalization-jobmanager.flink-{{ env }}-namespace.svc.cluster.local:9250']
       - job_name: 'de-normalization-taskmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['de-normalization-taskmanager.flink-namespace.svc.cluster.local:9251']
+          - targets: ['de-normalization-taskmanager.flink-{{ env }}-namespace.svc.cluster.local:9251']
       - job_name: 'druid-validator-jobmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['druid-validator-jobmanager.flink-namespace.svc.cluster.local:9250']
+          - targets: ['druid-validator-jobmanager.flink-{{ env }}-namespace.svc.cluster.local:9250']
       - job_name: 'druid-validator-taskmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['druid-validator-taskmanager.flink-namespace.svc.cluster.local:9251']
+          - targets: ['druid-validator-taskmanager.flink-{{ env }}-namespace.svc.cluster.local:9251']
       - job_name: 'device-profile-updater-jobmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['device-profile-updater-jobmanager.flink-namespace.svc.cluster.local:9250']
+          - targets: ['device-profile-updater-jobmanager.flink-{{ env }}-namespace.svc.cluster.local:9250']
       - job_name: 'device-profile-updater-taskmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['device-profile-updater-taskmanager.flink-namespace.svc.cluster.local:9251']
+          - targets: ['device-profile-updater-taskmanager.flink-{{ env }}-namespace.svc.cluster.local:9251']
       - job_name: 'content-cache-updater-jobmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['content-cache-updater-jobmanager.flink-namespace.svc.cluster.local:9250']
+          - targets: ['content-cache-updater-jobmanager.flink-{{ env }}-namespace.svc.cluster.local:9250']
       - job_name: 'content-cache-updater-taskmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['content-cache-updater-taskmanager.flink-namespace.svc.cluster.local:9251']
+          - targets: ['content-cache-updater-taskmanager.flink-{{ env }}-namespace.svc.cluster.local:9251']
       - job_name: 'user-cache-updater-jobmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['user-cache-updater-jobmanager.flink-namespace.svc.cluster.local:9250']
+          - targets: ['user-cache-updater-jobmanager.flink-{{ env }}-namespace.svc.cluster.local:9250']
       - job_name: 'user-cache-updater-taskmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['user-cache-updater-taskmanager.flink-namespace.svc.cluster.local:9251']
+          - targets: ['user-cache-updater-taskmanager.flink-{{ env }}-namespace.svc.cluster.local:9251']
       - job_name: 'assessment-aggregator-jobmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['assessment-aggregator-jobmanager.flink-namespace.svc.cluster.local:9250']
+          - targets: ['assessment-aggregator-jobmanager.flink-{{ env }}-namespace.svc.cluster.local:9250']
       - job_name: 'assessment-aggregator-taskmanager-metrics'
         scrape_interval: 30s
         static_configs:
-          - targets: ['assessment-aggregator-taskmanager.flink-namespace.svc.cluster.local:9251']
+          - targets: ['assessment-aggregator-taskmanager.flink-{{ env }}-namespace.svc.cluster.local:9251']
     additionalScrapeConfigsExternal: true
     retention: "{{ prometheus_retention_time | d('90d') }}"
     externalLabels:
@@ -99,7 +99,6 @@ alertmanager:
       smtp_smarthost: "{{ monitor_alerts_mail_server_host }}:{{ monitor_alerts_mail_server_port}}"
       smtp_auth_username: "{{ monitor_alerts_mail_server_username }}"
       smtp_auth_password: "{{ monitor_alerts_mail_server_password }}"
-
     route:
       receiver: '{{env}}_devops_team'
       group_by: ['alertname']
@@ -107,51 +106,10 @@ alertmanager:
       group_interval: 5m
       repeat_interval: 4h
       routes:
-      {% for item in alert_teams %}
-      # Comment to ensure proper indentation while templating
-      - match_re:
-          {{ item.group }}: "{{ item.services | join('|') }}"
-        receiver: "{{ item.team }}"
-        # Comment to ensure proper indentation while templating
-        {% if item.severity_mailing_filter is defined and item.severity_mailing_filter|length %}
-        routes:
-        {% for filter in item.severity_mailing_filter %}
-        # Comment to ensure proper indentation while templating
-        - match:
-            severity: "{{ filter.severity }}"
-          receiver: "{{ item.team }}_{{ filter.severity }}"
-        {% endfor %}
-        {% endif %}
-      {% endfor %}
-      # Comment to ensure proper indentation while templating
       - match:
           owner:
         receiver: {{env}}_devops_team
-
     receivers:
-      {% for item in alert_teams %}
-      # Comment to ensure proper indentation while templating
-      - name: "{{ item.team }}"
-        email_configs:
-          - send_resolved: true
-            to: '{{ item.alerts_mailing_list }}'
-            html: '{% raw %}{{ template "email.default.html" . }}{% endraw %}'
-            headers:
-              subject: '[{{ kubernetes_cluster_name }}] {% raw %}{{ .GroupLabels.alertname }}{% endraw %}'
-      {% if item.severity_mailing_filter is defined and item.severity_mailing_filter|length %}
-      {% for filter in item.severity_mailing_filter %}
-      # Comment to ensure proper indentation while templating
-      - name: "{{ item.team }}_{{ filter.severity }}"
-        email_configs:
-          - send_resolved: true
-            to: '{{ filter.alerts_mailing_list }}'
-            html: '{% raw %}{{ template "email.default.html" . }}{% endraw %}'
-            headers:
-              subject: '[{{ kubernetes_cluster_name }}] {% raw %}{{ .GroupLabels.alertname }}{% endraw %}'
-      {% endfor %}
-      {% endif %}
-      {% endfor %}
-      # Comment to ensure proper indentation while templating
       - name: {{env}}_devops_team
         email_configs:
           - send_resolved: true

@@ -19,7 +19,7 @@ monitor_alerts_slack_channel:
 
 default_critical_mailing_list: "{{ default_mailing_list }}"
 default_fatal_mailing_list: "{{ default_mailing_list }}"
-default_mailing_list: kaliraja.ramasamy@tarento.com
+default_mailing_list: kaliraja.ramasamy@tarento.com, anandp@ilimi.in, manjunathd@ilimi.in
 
 lp_process_exporter_team_mailing_list: "{{ default_mailing_list }}"
 lp_process_exporter_team_mailing_list_critical: "{{ default_critical_mailing_list }}"
