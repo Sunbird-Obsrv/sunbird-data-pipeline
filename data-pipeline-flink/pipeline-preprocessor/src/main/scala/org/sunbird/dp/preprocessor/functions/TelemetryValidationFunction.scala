@@ -71,11 +71,11 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
     metrics.incCounter(config.validationSuccessMetricsCount)
     event.updateDefaults(config)
     if (isDuplicateCheckRequired(event.producerId())) {
-      deDup[Event, Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag, flagName = config.DE_DUP_FLAG_NAME)(dedupEngine, metrics)
+      deDup[Event, Event](event.mid(), event, context, config.uniqueEventsOutputTag, config.duplicateEventsOutputTag, flagName = config.DEDUP_FLAG_NAME)(dedupEngine, metrics)
     } else {
-      event.markSkipped(config.DE_DUP_SKIP_FLAG_NAME)
+      event.markSkipped(config.DEDUP_SKIP_FLAG_NAME)
       context.output(config.uniqueEventsOutputTag, event)
-      metrics.incCounter(config.duplicationSkippedEventMetricsCount)
+      metrics.incCounter(uniqueEventMetricCount)
     }
   }
 
