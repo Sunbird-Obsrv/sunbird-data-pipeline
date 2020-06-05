@@ -80,7 +80,7 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
 
     RawEventsSink.values.size() should be (45) // 43 events + 2 log events generated for auditing
     FailedEventsSink.values.size() should be (2)
-    FailedBatchEventsSink.values.size() should be (0)
+    FailedBatchEventsSink.values.size() should be (1)
     DupEventsSink.values.size() should be (1)
     AssessRawEventsSink.values.size() should be (2)
 
