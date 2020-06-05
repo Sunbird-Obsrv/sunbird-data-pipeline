@@ -17,6 +17,7 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
 
   val kafkaBrokerServers: String = config.getString("kafka.broker-servers")
   val zookeeper: String = config.getString("kafka.zookeeper")
+  val kafkaProducerMaxRequestSize: Int = config.getInt("kafka.producer.max-request-size")
   val groupId: String = config.getString("kafka.groupId")
   val restartAttempts: Int = config.getInt("task.restart-strategy.attempts")
   val delayBetweenAttempts: Long = config.getLong("task.restart-strategy.delay")
@@ -46,6 +47,7 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
     properties.put(ProducerConfig.LINGER_MS_CONFIG, new Integer(10))
     properties.put(ProducerConfig.BATCH_SIZE_CONFIG, new Integer(16384 * 4))
     properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy")
+    properties.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, new Integer(kafkaProducerMaxRequestSize))
     properties
   }
 }
