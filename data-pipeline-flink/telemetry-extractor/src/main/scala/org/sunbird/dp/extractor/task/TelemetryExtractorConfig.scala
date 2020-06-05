@@ -72,6 +72,7 @@ class TelemetryExtractorConfig(override val config: Config) extends BaseJobConfi
 
   // Producers
   val extractorDuplicateProducer = "extractor-duplicate-events-sink"
+  val extractorBatchFailedEventsProducer = "extractor-batch-failed-events-sink"
   val extractorRawEventsProducer = "extractor-raw-events-sink"
   val extractorAuditEventsProducer = "extractor-audit-events-sink"
   val extractorFailedEventsProducer = "extractor-failed-events-sink"
