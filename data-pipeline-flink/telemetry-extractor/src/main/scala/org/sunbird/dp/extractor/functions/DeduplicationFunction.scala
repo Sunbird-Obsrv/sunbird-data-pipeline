@@ -54,6 +54,7 @@ class DeduplicationFunction(config: TelemetryExtractorConfig, @transient var ded
       }
       case ex: Exception => {
         metrics.incCounter(config.failedBatchCount)
+        context.output(config.failedBatchEventOutputTag, batchEvents)
       }
     }
 
