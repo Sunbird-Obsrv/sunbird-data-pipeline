@@ -44,44 +44,55 @@ class TelemetryExtractorStreamTask(config: TelemetryExtractorConfig, kafkaConnec
   private val serialVersionUID = -7729362727131516112L
 
   def process(): Unit = {
-    implicit val env: StreamExecutionEnvironment = FlinkUtil.getExecutionContext(config)
-    implicit val mapTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
-    implicit val stringTypeInfo: TypeInformation[String] = TypeExtractor.getForClass(classOf[String])
+    try {
+      implicit val env: StreamExecutionEnvironment = FlinkUtil.getExecutionContext(config)
+      implicit val mapTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
+      implicit val stringTypeInfo: TypeInformation[String] = TypeExtractor.getForClass(classOf[String])
 
-    /**
-     * Invoke De-Duplication - Filter all duplicate batch events from the mobile app.
-     * 1. Push all duplicate events to duplicate topic.
-     * 2. Push all unique events to unique topic.
-     */
-    val deDupStream =
-      env.addSource(kafkaConnector.kafkaStringSource(config.kafkaInputTopic), config.telemetryExtractorConsumer).uid(config.telemetryExtractorConsumer)
-        .rebalance()
-        .process(new DeduplicationFunction(config))
-        .name("ExtractorDeduplicationFn").uid("ExtractorDeduplicationFn")
-        .setParallelism(config.deDupParallelism)
-    /**
-     * After - De-Duplication process.
-     *  1. Extract the batch events.
-     *  2. Generate Audit events (To know the number of events in the per batch)
-     */
-    val extractionStream =
-      deDupStream.getSideOutput(config.uniqueEventOutputTag)
-        .process(new ExtractionFunction(config))
-        .name(config.extractionFunction).uid(config.extractionFunction)
-        .setParallelism(config.extractionParallelism)
+      /**
+       * Invoke De-Duplication - Filter all duplicate batch events from the mobile app.
+       * 1. Push all duplicate events to duplicate topic.
+       * 2. Push all unique events to unique topic.
+       */
+      val deDupStream =
+        env.addSource(kafkaConnector.kafkaStringSource(config.kafkaInputTopic), config.telemetryExtractorConsumer).uid(config.telemetryExtractorConsumer)
+          .rebalance()
+          .process(new DeduplicationFunction(config))
+          .name("ExtractorDeduplicationFn").uid("ExtractorDeduplicationFn")
+          .setParallelism(config.deDupParallelism)
+      /**
+       * After - De-Duplication process.
+       *  1. Extract the batch events.
+       *  2. Generate Audit events (To know the number of events in the per batch)
+       */
+      val extractionStream =
+        deDupStream.getSideOutput(config.uniqueEventOutputTag)
+          .process(new ExtractionFunction(config))
+          .name(config.extractionFunction).uid(config.extractionFunction)
+          .setParallelism(config.extractionParallelism)
 
-    val redactorStream =
-      extractionStream.getSideOutput(config.assessRedactEventsOutputTag)
-        .process(new RedactorFunction(config)).name(config.redactorFunction).uid(config.redactorFunction)
-        .setParallelism(config.redactorParallelism)
+      val redactorStream =
+        extractionStream.getSideOutput(config.assessRedactEventsOutputTag)
+          .process(new RedactorFunction(config)).name(config.redactorFunction).uid(config.redactorFunction)
+          .setParallelism(config.redactorParallelism)
 
-    deDupStream.getSideOutput(config.duplicateEventOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaDuplicateTopic)).name(config.extractorDuplicateProducer).uid(config.extractorDuplicateProducer)
-    extractionStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name(config.extractorRawEventsProducer).uid(config.extractorRawEventsProducer)
-    extractionStream.getSideOutput(config.logEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name(config.extractorAuditEventsProducer).uid(config.extractorAuditEventsProducer)
-    extractionStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaFailedTopic)).name(config.extractorFailedEventsProducer).uid(config.extractorFailedEventsProducer)
-    redactorStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name(config.assessEventsProducer).uid(config.assessEventsProducer)
-    redactorStream.getSideOutput(config.assessRawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaAssessRawTopic)).name(config.assessRawEventsProducer).uid(config.assessRawEventsProducer)
-    env.execute(config.jobName)
+      deDupStream.getSideOutput(config.duplicateEventOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaDuplicateTopic)).name(config.extractorDuplicateProducer).uid(config.extractorDuplicateProducer)
+      //deDupStream.getSideOutput(config.failedBatchEventOutputTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaBatchFailedTopic)).name(config.extractorDuplicateProducer).uid(config.extractorDuplicateProducer)
+
+      extractionStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name(config.extractorRawEventsProducer).uid(config.extractorRawEventsProducer)
+      extractionStream.getSideOutput(config.logEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name(config.extractorAuditEventsProducer).uid(config.extractorAuditEventsProducer)
+      extractionStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaFailedTopic)).name(config.extractorFailedEventsProducer).uid(config.extractorFailedEventsProducer)
+
+      redactorStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name(config.assessEventsProducer).uid(config.assessEventsProducer)
+      redactorStream.getSideOutput(config.assessRawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaAssessRawTopic)).name(config.assessRawEventsProducer).uid(config.assessRawEventsProducer)
+
+      env.execute(config.jobName)
+    }catch {
+      case ex: Exception =>{
+        println("exception==")
+        ex.printStackTrace()
+      }
+    }
 
   }
 }
