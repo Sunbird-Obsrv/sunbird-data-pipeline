@@ -22,7 +22,7 @@ job_manager_tmp_dir: "transient-data"
 channel: dev-test
 druid_broker_host: "{{groups['broker'][0]}}"
 druid_rollup_broker_host: "{{groups['broker'][0]}}"
-hierarchySearchServiceUrl: "{{ proto }}://{{ learning_lb_ip }}:8080/learning-service/content"
+hierarchySearchServiceUrl: "{{ proto }}://{{ private_ingress_gateway_ip }}/content/content"
 hierarchySearchServicEndpoint: /v3/hierarchy/
 
 analytics_job_list: '"wfs", "ds", "dpu", "content-rating-updater", "audit-metrics-report", "monitor-job-summ"'
