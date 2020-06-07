@@ -45,11 +45,9 @@ public class UserDataCache extends DataCache {
         try {
             userDataMap = getUserDataFromCache(userId);
         } catch (JedisException ex) {
-            redisPool.resetConnection();
-            try (Jedis redisConn = redisPool.getConnection(databaseIndex)) {
-                this.redisConnection = redisConn;
-                userDataMap = getUserDataFromCache(userId);
-            }
+            this.redisConnection.close();
+            this.redisConnection = redisPool.getConnection(databaseIndex);
+            userDataMap = getUserDataFromCache(userId);
         }
         if (null != userDataMap && !userDataMap.isEmpty()) {
             userDataMap.keySet().retainAll(this.fieldsList);

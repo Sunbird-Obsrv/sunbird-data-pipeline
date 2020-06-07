@@ -15,6 +15,11 @@
   tags:
     - framework
 
+- name: Copy Scruid Library
+  copy: src={{ scruid_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
+  tags:
+    - framework  
+
 - name: Copy Job Manager
   copy: src={{ analytics_job_manager_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
   tags:

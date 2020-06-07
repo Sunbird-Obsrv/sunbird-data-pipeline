@@ -58,8 +58,8 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val shareEventsFlattnerParallelism: Int = config.getInt("task.share.events.flattener.parallelism")
 
   val VALIDATION_FLAG_NAME = "pp_validation_processed"
-  val DE_DUP_FLAG_NAME = "pp_duplicate"
-  val DE_DUP_SKIP_FLAG_NAME = "pp_duplicate_skipped"
+  val DEDUP_FLAG_NAME = "pp_duplicate"
+  val DEDUP_SKIP_FLAG_NAME = "pp_duplicate_skipped"
   val SHARE_EVENTS_FLATTEN_FLAG_NAME = "pp_share_event_processed"
 
   // Router job metrics

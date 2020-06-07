@@ -30,11 +30,10 @@ public class DataCache {
             cacheDataMap = getDataFromCache(key);
         } catch (JedisException ex) {
             LOGGER.error("", "Exception when retrieving data from redis cache ", ex);
-            redisConnect.resetConnection();
-            try (Jedis redisConn = redisConnect.getConnection(databaseIndex)) {
-                this.redisConnection = redisConn;
-                cacheDataMap = getDataFromCache(key);
-            }
+            
+            this.redisConnection.close();
+            this.redisConnection = redisConnect.getConnection(databaseIndex);
+            cacheDataMap = getDataFromCache(key);
         }
         if (cacheDataMap != null && !cacheDataMap.isEmpty()) {
         	metrics.incCacheHitCounter();

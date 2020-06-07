@@ -53,6 +53,7 @@ public class DeDuplicationService {
 			LOGGER.error(null, "Exception when retrieving data from redis:  ", e);
 			event.markRedisFailure();
 			sink.toSuccessTopicIfRedisException(event);
+			throw e;
 		} catch (JsonSyntaxException e) {
 			LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
 			sink.toMalformedEventsTopic(source.getMessage());

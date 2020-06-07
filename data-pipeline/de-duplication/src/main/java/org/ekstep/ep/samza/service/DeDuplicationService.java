@@ -11,59 +11,58 @@ import org.ekstep.ep.samza.util.DeDupEngine;
 import redis.clients.jedis.exceptions.JedisException;
 
 public class DeDuplicationService {
-	private static Logger LOGGER = new Logger(DeDuplicationService.class);
-	private final DeDupEngine deDupEngine;
-	private final DeDuplicationConfig config;
+  private static Logger LOGGER = new Logger(DeDuplicationService.class);
+  private final DeDupEngine deDupEngine;
+  private final DeDuplicationConfig config;
 
+  public DeDuplicationService(DeDupEngine deDupEngine, DeDuplicationConfig config) {
+    this.deDupEngine = deDupEngine;
+    this.config = config;
+  }
 
-	public DeDuplicationService(DeDupEngine deDupEngine, DeDuplicationConfig config) {
-		this.deDupEngine = deDupEngine;
-		this.config = config;
-	}
+  public void process(DeDuplicationSource source, DeDuplicationSink sink) throws Exception {
+    Event event = null;
 
-	public void process(DeDuplicationSource source, DeDuplicationSink sink) throws Exception {
-		Event event = null;
+    try {
+      event = source.getEvent();
+      String checksum = event.getChecksum();
+      if (checksum == null) {
+        LOGGER.info(event.id(), "EVENT WITHOUT CHECKSUM & MID, PASSING THROUGH : {}", event);
+        event.markSkipped();
+        event.updateDefaults(config);
+        sink.toSuccessTopic(event);
+        return;
+      }
 
-		try {
-			event = source.getEvent();
-			String checksum = event.getChecksum();
-			if (checksum == null) {
-				LOGGER.info(event.id(), "EVENT WITHOUT CHECKSUM & MID, PASSING THROUGH : {}", event);
-				event.markSkipped();
-				event.updateDefaults(config);
-				sink.toSuccessTopic(event);
-				return;
-			}
+      if (isDupCheckRequired(event)) {
+        if (!deDupEngine.isUniqueEvent(checksum)) {
+          LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
+          event.markDuplicate();
+          sink.toDuplicateTopic(event);
+          return;
+        }
 
-			if (isDupCheckRequired(event)) {
-				if (!deDupEngine.isUniqueEvent(checksum)) {
-					LOGGER.info(event.id(), "DUPLICATE EVENT, CHECKSUM: {}", checksum);
-					event.markDuplicate();
-					sink.toDuplicateTopic(event);
-					return;
-				}
+        LOGGER.info(event.id(), "ADDING EVENT CHECKSUM TO STORE");
 
-				LOGGER.info(event.id(), "ADDING EVENT CHECKSUM TO STORE");
+        deDupEngine.storeChecksum(checksum);
+      }
+      event.updateDefaults(config);
+      event.markSuccess();
+      sink.toSuccessTopic(event);
 
-				deDupEngine.storeChecksum(checksum);
-			}
-			event.updateDefaults(config);
-			event.markSuccess();
-			sink.toSuccessTopic(event);
+    } catch (JedisException e) {
+      e.printStackTrace();
+      LOGGER.error(null, "Exception when retrieving data from redis: ", e);
+      deDupEngine.getRedisConnection().close();
+      throw e;
+    } catch (JsonSyntaxException e) {
+      LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
+      sink.toMalformedEventsTopic(source.getMessage());
+    }
+  }
 
-		} catch (JedisException e) {
-			LOGGER.error(null, "Exception when retrieving data from redis:  ", e);
-			event.updateDefaults(config);
-			event.markRedisFailure();
-			sink.toSuccessTopicIfRedisException(event);
-		} catch (JsonSyntaxException e) {
-			LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
-			sink.toMalformedEventsTopic(source.getMessage());
-		}
-	}
-
-	public boolean isDupCheckRequired(Event event) {
-		return (config.inclusiveProducerIds().isEmpty() || (null != event.producerId() && config.inclusiveProducerIds().contains(event.producerId())));
-	}
+  public boolean isDupCheckRequired(Event event) {
+    return (config.inclusiveProducerIds().isEmpty()
+        || (null != event.producerId() && config.inclusiveProducerIds().contains(event.producerId())));
+  }
 }
-

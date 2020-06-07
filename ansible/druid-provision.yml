@@ -75,7 +75,7 @@
                   db="{{ item.db }}"
       with_items: "{{ postgresql_users }}"
 
-- 
+-
   name : Install graphite on druid
   hosts: raw-graphite
   become: yes

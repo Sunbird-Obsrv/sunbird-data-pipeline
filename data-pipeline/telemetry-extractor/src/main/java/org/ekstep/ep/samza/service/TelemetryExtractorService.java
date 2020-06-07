@@ -1,6 +1,9 @@
 package org.ekstep.ep.samza.service;
 
 import com.google.gson.Gson;
+
+import redis.clients.jedis.exceptions.JedisException;
+
 import org.apache.commons.lang.StringUtils;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
@@ -10,7 +13,6 @@ import org.ekstep.ep.samza.task.TelemetryExtractorSink;
 import org.ekstep.ep.samza.util.DeDupEngine;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import redis.clients.jedis.exceptions.JedisException;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,128 +21,129 @@ import java.util.Map;
 
 public class TelemetryExtractorService {
 
-	static Logger LOGGER = new Logger(TelemetryExtractorService.class);
+  static Logger LOGGER = new Logger(TelemetryExtractorService.class);
 
-	private DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZoneUTC();
-	private JobMetrics metrics;
-	private DeDupEngine deDupEngine;
-	private String defaultChannel = "";
-	private int rawIndividualEventMaxSize;
-	private List<String> assessEvents = Arrays.asList("ASSESS", "RESPONSE");
-	
-	public TelemetryExtractorService(TelemetryExtractorConfig config, JobMetrics metrics, DeDupEngine deDupEngine) {
-		this.metrics = metrics;
-		this.deDupEngine = deDupEngine;
-		this.defaultChannel = config.defaultChannel();
-		this.rawIndividualEventMaxSize = config.rawIndividualEventMaxSize();
-	}
+  private DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZoneUTC();
+  private JobMetrics metrics;
+  private DeDupEngine deDupEngine;
+  private String defaultChannel = "";
+  private int rawIndividualEventMaxSize;
+  private List<String> assessEvents = Arrays.asList("ASSESS", "RESPONSE");
 
-	@SuppressWarnings("unchecked")
-	public void process(String message, TelemetryExtractorSink sink) {
+  public TelemetryExtractorService(TelemetryExtractorConfig config, JobMetrics metrics, DeDupEngine deDupEngine) {
+    this.metrics = metrics;
+    this.deDupEngine = deDupEngine;
+    this.defaultChannel = config.defaultChannel();
+    this.rawIndividualEventMaxSize = config.rawIndividualEventMaxSize();
+  }
 
-		try {
-			Map<String, Object> batchEvent = (Map<String, Object>) new Gson().fromJson(message, Map.class);
-			long syncts = getSyncTS(batchEvent);
-			String syncTimestamp = df.print(syncts);
+  @SuppressWarnings("unchecked")
+  public void process(String message, TelemetryExtractorSink sink) {
 
-			if (batchEvent.containsKey("params") && null != batchEvent.get("params")) {
-				String msgid = "";
-				try {
-					Map<String, Object> params = (Map<String, Object>) batchEvent.get("params");
-					if (params.containsKey("msgid") && null != params.get("msgid")) {
-						msgid = params.get("msgid").toString();
-						if (!deDupEngine.isUniqueEvent(msgid)) {
-						    LOGGER.info("", String.format("msgid: %s: DUPLICATE EVENT", msgid));
-							sink.toDuplicateTopic(addDuplicateFlag(batchEvent));
-							return;
-						}
-						deDupEngine.storeChecksum(msgid);
-					}
-				} catch (JedisException ex) {
-					ex.printStackTrace();
-					metrics.incSkippedCounter();
-					LOGGER.error(msgid, " Error from redis store: ", ex);
-				}
-			}
+    try {
+      Map<String, Object> batchEvent = (Map<String, Object>) new Gson().fromJson(message, Map.class);
+      long syncts = getSyncTS(batchEvent);
+      String syncTimestamp = df.print(syncts);
 
-			List<Map<String, Object>> events = (List<Map<String, Object>>) batchEvent.get("events");
+      if (batchEvent.containsKey("params") && null != batchEvent.get("params")) {
+        String msgid = "";
+        Map<String, Object> params = (Map<String, Object>) batchEvent.get("params");
+        if (params.containsKey("msgid") && null != params.get("msgid")) {
+          msgid = params.get("msgid").toString();
+          if (!deDupEngine.isUniqueEvent(msgid)) {
+            LOGGER.info("", String.format("msgid: %s: DUPLICATE EVENT", msgid));
+            sink.toDuplicateTopic(addDuplicateFlag(batchEvent));
+            return;
+          }
+          deDupEngine.storeChecksum(msgid);
+        }
 
-			for (Map<String, Object> event : events) {
-				String json = "";
-				try {
-					event.put("syncts", syncts);
-					event.put("@timestamp", syncTimestamp);
-					Map<String, Object> context = (Map<String, Object>) event.get("context");
-					String channel = (String) context.get("channel");
-					String eid = (String) event.get("eid");
-					if (StringUtils.isEmpty(channel)) {
-						event.put("context", context);
-					}
-					json = new Gson().toJson(event);
-					int eventSizeInBytes = json.getBytes("UTF-8").length;
-					if (eventSizeInBytes > rawIndividualEventMaxSize) {
-						LOGGER.info("", String.format("Event with mid %s of size %d bytes is greater than %d. " +
-								"Sending to error topic", event.get("mid"), eventSizeInBytes, rawIndividualEventMaxSize));
-						sink.toErrorTopic(json);
-					} else {
-					  if (assessEvents.contains(eid)) {
-	            sink.toAssessTopic(json);
-	          } else {
-	            sink.toSuccessTopic(json);
-	          }
-					}
-				} catch (Throwable t) {
-					LOGGER.info("", "Failed to send extracted event to success topic: " + t.getMessage());
-					sink.toErrorTopic(json);
-				}
-			}
-			metrics.incBatchSuccessCounter();
-			generateAuditEvent(batchEvent, syncts, syncTimestamp, sink, defaultChannel);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			LOGGER.error("", "Failed to extract the event batch: ", ex);
-			sink.sinkBatchErrorEvents(message);
-		}
+      }
 
-	}
+      List<Map<String, Object>> events = (List<Map<String, Object>>) batchEvent.get("events");
 
-	private long getSyncTS(Map<String, Object> batchEvent) {
+      for (Map<String, Object> event : events) {
+        String json = "";
+        try {
+          event.put("syncts", syncts);
+          event.put("@timestamp", syncTimestamp);
+          Map<String, Object> context = (Map<String, Object>) event.get("context");
+          String channel = (String) context.get("channel");
+          String eid = (String) event.get("eid");
+          if (StringUtils.isEmpty(channel)) {
+            event.put("context", context);
+          }
+          json = new Gson().toJson(event);
+          int eventSizeInBytes = json.getBytes("UTF-8").length;
+          if (eventSizeInBytes > rawIndividualEventMaxSize) {
+            LOGGER.info("",
+                String.format("Event with mid %s of size %d bytes is greater than %d. " + "Sending to error topic",
+                    event.get("mid"), eventSizeInBytes, rawIndividualEventMaxSize));
+            sink.toErrorTopic(json);
+          } else {
+            if (assessEvents.contains(eid)) {
+              sink.toAssessTopic(json);
+            } else {
+              sink.toSuccessTopic(json);
+            }
+          }
+        } catch (Throwable t) {
+          LOGGER.info("", "Failed to send extracted event to success topic: " + t.getMessage());
+          sink.toErrorTopic(json);
+        }
+      }
+      metrics.incBatchSuccessCounter();
+      generateAuditEvent(batchEvent, syncts, syncTimestamp, sink, defaultChannel);
+    } catch (JedisException e) {
+      e.printStackTrace();
+      LOGGER.error(null, "Exception when retrieving data from redis: ", e);
+      deDupEngine.getRedisConnection().close();
+      throw e;
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      LOGGER.error("", "Failed to extract the event batch: ", ex);
+      sink.sinkBatchErrorEvents(message);
+    }
 
-		if (batchEvent.containsKey("syncts")) {
-			Object obj = batchEvent.get("syncts");
-			if (obj instanceof Number) {
-				return ((Number) obj).longValue();
-			}
-		}
+  }
 
-		return System.currentTimeMillis();
-	}
+  private long getSyncTS(Map<String, Object> batchEvent) {
 
-	/**
-	 * Create LOG event to audit telemetry sync
-	 *
-	 * @param eventSpec
-	 * @param syncts
-	 * @param syncTimestamp
-	 * @param sink
-	 */
-	private void generateAuditEvent(Map<String, Object> eventSpec, long syncts, String syncTimestamp,
-									TelemetryExtractorSink sink, String defaultChannel) {
-		try {
-			Telemetry v3spec = new Telemetry(eventSpec, syncts, syncTimestamp, defaultChannel);
-			String auditEvent = v3spec.toJson();
-			sink.toSuccessTopic(auditEvent);
-		} catch (Exception e) {
-			e.printStackTrace();
-			LOGGER.debug("", "Failed to generate LOG event: " + e.getMessage());
-		}
-	}
+    if (batchEvent.containsKey("syncts")) {
+      Object obj = batchEvent.get("syncts");
+      if (obj instanceof Number) {
+        return ((Number) obj).longValue();
+      }
+    }
 
-	public String addDuplicateFlag(Map<String, Object> batchEvent) {
-		Map<String, String> flags = new HashMap<>();
-		flags.put("extractor_duplicate", "true");
-		batchEvent.put("flags", flags);
-		return new Gson().toJson(batchEvent);
-	}
+    return System.currentTimeMillis();
+  }
+
+  /**
+   * Create LOG event to audit telemetry sync
+   *
+   * @param eventSpec
+   * @param syncts
+   * @param syncTimestamp
+   * @param sink
+   */
+  private void generateAuditEvent(Map<String, Object> eventSpec, long syncts, String syncTimestamp,
+      TelemetryExtractorSink sink, String defaultChannel) {
+    try {
+      Telemetry v3spec = new Telemetry(eventSpec, syncts, syncTimestamp, defaultChannel);
+      String auditEvent = v3spec.toJson();
+      sink.toSuccessTopic(auditEvent);
+    } catch (Exception e) {
+      e.printStackTrace();
+      LOGGER.debug("", "Failed to generate LOG event: " + e.getMessage());
+    }
+  }
+
+  public String addDuplicateFlag(Map<String, Object> batchEvent) {
+    Map<String, String> flags = new HashMap<>();
+    flags.put("extractor_duplicate", "true");
+    batchEvent.put("flags", flags);
+    return new Gson().toJson(batchEvent);
+  }
 
 }

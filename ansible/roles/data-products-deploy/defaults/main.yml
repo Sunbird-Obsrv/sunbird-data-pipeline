@@ -22,8 +22,8 @@ job_manager_tmp_dir: "transient-data"
 channel: dev-test
 druid_broker_host: "{{groups['broker'][0]}}"
 druid_rollup_broker_host: "{{groups['broker'][0]}}"
-hierarchySearchServiceUrl: "{{ proto }}://{{ domain_name }}/api/course"
-hierarchySearchServicEndpoint: /v1/hierarchy/
+hierarchySearchServiceUrl: "{{ proto }}://{{ learning_lb_ip }}:8080/learning-service/content"
+hierarchySearchServicEndpoint: /v3/hierarchy/
 
 analytics_job_list: '"wfs", "ds", "dpu", "content-rating-updater", "audit-metrics-report", "monitor-job-summ"'
 analytics_jobs_count: 8
@@ -84,12 +84,12 @@ run_monitor_job:
 
 run_course_metrics_job:
   course-dashboard-metrics:
-    hour: 18
+    hour: 19
     minute: 45
 
 run_assessment_metrics_job:
   assessment-dashboard-metrics:
-    hour: 19
+    hour: 20
     minute: 45
 
 run_admin_user_reports_job:
@@ -110,8 +110,8 @@ run_admin_geo_reports_job:
 
 run_assessment_aggregator_report_job:
   assessment-aggregator-report:
-    hour: 20
-    minute: 30
+    hour: 18
+    minute: 35
 
 update_user_redis_cache:
   populate-user-cache:
@@ -152,6 +152,7 @@ analytics:
 producer_env: "dev.sunbird"
 analytics_job_manager_artifact: "job-manager-2.0.jar"
 analytics_core_artifact: "analytics-framework-2.0.jar"
+scruid_artifact: "scruid_2.11-2.3.2.jar"
 analytics_batch_module_artifact: "batch-models-2.0.jar"
 analytics_ed_dataporducts_artifact: "data-products-1.0-distribution.tar.gz"
 model_version: "2.0" 
