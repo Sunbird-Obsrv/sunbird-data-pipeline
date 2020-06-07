@@ -54,7 +54,8 @@ class TelemetryExtractorStreamTask(config: TelemetryExtractorConfig, kafkaConnec
      * 2. Push all unique events to unique topic.
      */
     val deDupStream =
-      env.addSource(kafkaConnector.kafkaStringSource(config.kafkaInputTopic), config.telemetryExtractorConsumer).uid(config.telemetryExtractorConsumer)
+      env.addSource(kafkaConnector.kafkaStringSource(config.kafkaInputTopic), config.telemetryExtractorConsumer)
+        .uid(config.telemetryExtractorConsumer).setParallelism(config.kafkaConsumerParallelism)
         .rebalance()
         .process(new DeduplicationFunction(config))
         .name("ExtractorDeduplicationFn").uid("ExtractorDeduplicationFn")

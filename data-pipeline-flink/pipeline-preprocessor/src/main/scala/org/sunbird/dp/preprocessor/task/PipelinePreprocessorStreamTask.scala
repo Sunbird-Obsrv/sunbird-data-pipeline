@@ -59,7 +59,8 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
      */
 
     val validationStream: SingleOutputStreamOperator[Event] =
-      env.addSource(kafkaConsumer, config.pipelinePreprocessorConsumer).uid(config.pipelinePreprocessorConsumer)
+      env.addSource(kafkaConsumer, config.pipelinePreprocessorConsumer)
+        .uid(config.pipelinePreprocessorConsumer).setParallelism(config.kafkaConsumerParallelism)
         .rebalance()
         .process(new TelemetryValidationFunction(config)).name(config.telemetryValidationFunction).uid(config.telemetryValidationFunction)
         .setParallelism(config.validationParallelism)

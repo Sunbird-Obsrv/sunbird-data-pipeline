@@ -56,7 +56,7 @@ class DenormalizationStreamTask(config: DenormalizationConfig, kafkaConnector: F
 
     val source = kafkaConnector.kafkaEventSource[Event](config.inputTopic)
     val deviceDenormStream =
-      env.addSource(source, config.denormalizationConsumer).uid(config.denormalizationConsumer).rebalance()
+      env.addSource(source, config.denormalizationConsumer).uid(config.denormalizationConsumer).setParallelism(config.kafkaConsumerParallelism).rebalance()
         .process(new DeviceDenormFunction(config)).name(config.deviceDenormFunction).uid(config.deviceDenormFunction)
     val userDenormStream = deviceDenormStream.getSideOutput(config.withDeviceEventsTag).process(new UserDenormFunction(config)).name(config.userDenormFunction).uid(config.userDenormFunction)
     val dialCodeDenormStream = userDenormStream.getSideOutput(config.withUserEventsTag).process(new DialCodeDenormFunction(config)).name(config.dialcodeDenormFunction).uid(config.dialcodeDenormFunction)
