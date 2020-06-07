@@ -53,13 +53,6 @@ object EventFixture {
       |redis {
       |  host = 127.0.0.1
       |  port = 6341
-      |  connection {
-      |    max = 2
-      |    idle.min = 1
-      |    idle.max = 2
-      |    minEvictableIdleTimeSeconds = 120
-      |    timeBetweenEvictionRunsSeconds = 300
-      |  }
       |  database {
       |    duplicationstore.id = 12
       |    key.expiry.seconds = 3600
