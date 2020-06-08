@@ -127,3 +127,9 @@ grafana:
 {% if grafana_service is defined and grafana_service %}
   service: {{ grafana_service|to_json}}
 {% endif %}
+ 
+## Overriding the kubernetes-apps alert rules by disabling default alert rule creation.
+defaultRules:
+  create: true
+  rules:
+    kubernetesApps: false
