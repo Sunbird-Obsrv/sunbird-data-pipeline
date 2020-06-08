@@ -26,7 +26,7 @@ config() {
 	druidBrokerUrl="http://{{druid_broker_host}}:8082/"
 	producerEnv="{{ producer_env }}"
 	baseScriptPath="{{ spark_output_temp_dir }}"
-	reportPostContainer="{{ report_container }}"
+	reportPostContainer="{{ reports_container }}"
 	
 	if [ -z "$2" ]; then endDate=$(date --date yesterday "+%Y-%m-%d"); else endDate=$2; fi
 	if [ ! -z "$3" ]; then inputBucket=$3; fi
