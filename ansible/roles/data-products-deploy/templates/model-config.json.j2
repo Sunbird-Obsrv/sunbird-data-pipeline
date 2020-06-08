@@ -2386,7 +2386,7 @@
   				"basePath": {{ spark_output_temp_dir }},
   				"rollup": 0,
   				"reportPath": "dialcode_counts.csv",
-          "postContainer":"reports"
+          "postContainer":"{{ reports_container }}"
   			}
   		},
   		"dialcodeReportConfig": {
@@ -2406,7 +2406,7 @@
   					"rollupAge": "ACADEMIC_YEAR",
   					"rollupCol": "Date",
   					"rollupRange": 1,
-            "postContainer":"reports"
+            "postContainer":"{{ reports_container }}"
   				}
   		},
   		"etbFileConfig": {
@@ -2640,7 +2640,7 @@
           "basePath": {{ spark_output_temp_dir }},
           "rollup": 0,
           "reportPath": "content_progress_metrics.csv",
-          "postContainer":"reports"
+          "postContainer":"{{ reports_container }}"
         }
         },
         "filter": {
