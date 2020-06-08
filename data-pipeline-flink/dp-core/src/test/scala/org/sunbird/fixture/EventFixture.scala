@@ -25,65 +25,69 @@ object EventFixture {
 
   val customConfig =
     """
-      |            kafka {
-      |                map.input.topic = "local.telemetry.map.input"
-      |                map.output.topic = "local.telemetry.map.output"
-      |                event.input.topic = "local.telemetry.event.input"
-      |                event.output.topic = "local.telemetry.event.output"
-      |                string.input.topic = "local.telemetry.string.input"
-      |                string.output.topic = "local.telemetry.string.output"
-      |                broker-servers = "localhost:9093"
-      |                zookeeper = "localhost:2183"
-      |                groupId = "pipeline-preprocessor-group"
-      |                auto.offset.reset = "earliest"
-      |              }
+      |kafka {
+      |  map.input.topic = "local.telemetry.map.input"
+      |  map.output.topic = "local.telemetry.map.output"
+      |  event.input.topic = "local.telemetry.event.input"
+      |  event.output.topic = "local.telemetry.event.output"
+      |  string.input.topic = "local.telemetry.string.input"
+      |  string.output.topic = "local.telemetry.string.output"
+      |  broker-servers = "localhost:9093"
+      |  zookeeper = "localhost:2183"
+      |  groupId = "pipeline-preprocessor-group"
+      |  auto.offset.reset = "earliest"
+      |  producer {
+      |     max-request-size = 102400
+      |  }
+      |}
       |
-      |              kafka.output.metrics.topic = "pipeline_metrics"
-      |              task {
-      |                parallelism = 2
-      |                checkpointing.interval = 60000
-      |                metrics.window.size = 100 # 3 min
-      |                restart-strategy.attempts = 1 # retry once
-      |                restart-strategy.delay = 1000 # in milli-seconds
-      |              }
+      |kafka.output.metrics.topic = "pipeline_metrics"
+      |task {
+      |  parallelism = 2
+      |  consumer.parallelism = 1
+      |  checkpointing.interval = 60000
+      |  metrics.window.size = 100 # 3 min
+      |  restart-strategy.attempts = 1 # retry once
+      |  restart-strategy.delay = 1000 # in milli-seconds
+      |}
       |
-      |              redis {
-      |                host = 127.0.0.1
-      |                port = 6341
-      |                connection {
-      |                  max = 2
-      |                  idle.min = 1
-      |                  idle.max = 2
-      |                  minEvictableIdleTimeSeconds = 120
-      |                  timeBetweenEvictionRunsSeconds = 300
-      |                }
-      |                database {
-      |                  duplicationstore.id = 12
-      |                  key.expiry.seconds = 3600
-      |                }
-      |              }
+      |redis {
+      |  host = 127.0.0.1
+      |  port = 6341
+      |  connection {
+      |    max = 2
+      |    idle.min = 1
+      |    idle.max = 2
+      |    minEvictableIdleTimeSeconds = 120
+      |    timeBetweenEvictionRunsSeconds = 300
+      |  }
+      |  database {
+      |    duplicationstore.id = 12
+      |    key.expiry.seconds = 3600
+      |  }
+      |}
       |
-      |              postgress {
-      |                  host = localhost
-      |                  port = 5432
-      |                  maxConnection = 2
-      |                  user = "postgres"
-      |                  password = "postgres"
-      |              }
-      |              job {
-      |                enable.distributed.checkpointing = true
-      |                statebackend {
-      |                  blob {
-      |                    storage {
-      |                      account = "blob.storage.account"
-      |                      container = "telemetry-container"
-      |                      checkpointing.dir = "flink-jobs"
-      |                    }
-      |                  }
-      |                  base.url = "hdfs://testpath"
-      |                }
-      |              }
-      |""".stripMargin
+      |postgress {
+      |    host = localhost
+      |    port = 5432
+      |    maxConnection = 2
+      |    user = "postgres"
+      |    password = "postgres"
+      |}
+      |job {
+      |  enable.distributed.checkpointing = true
+      |  statebackend {
+      |    blob {
+      |      storage {
+      |        account = "blob.storage.account"
+      |        container = "telemetry-container"
+      |        checkpointing.dir = "flink-jobs"
+      |      }
+      |    }
+      |    base.url = "hdfs://testpath"
+      |  }
+      |}
+    """.stripMargin
 
 
 }
