@@ -129,6 +129,12 @@ run_district_weekly_job:
     minute: 30
     weekday: 1
 
+run_etb_metrics_weekly_job:
+  etb-metrics-weekly:
+    hour: 23
+    minute: 30
+    weekday: 1
+
 run_district_monthly_job:
   district-monthly:
     hour: 04
