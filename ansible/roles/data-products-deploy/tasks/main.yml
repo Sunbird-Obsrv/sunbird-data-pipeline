@@ -146,6 +146,14 @@
     - ed-dataproducts
     - default-jobs     
 
+- name: Create etb_metrics cron job
+ cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} weekday={{ item.value.weekday }}  job="{{ analytics.home }}/scripts/run-job.sh etb-metrics"
+ with_dict: "{{ run_etb_metrics_weekly_job }}"
+ tags:
+   - cronjobs
+   - default-jobs
+   - ed-dataproducts
+
 #- name: Create district-weekly cron job
 #  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} weekday={{ item.value.weekday }}  job="{{ analytics.home }}/scripts/run-job.sh district-weekly"
 #  with_dict: "{{ run_district_weekly_job }}"
