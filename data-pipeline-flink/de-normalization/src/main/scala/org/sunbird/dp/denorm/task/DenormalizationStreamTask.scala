@@ -1,8 +1,11 @@
 package org.sunbird.dp.denorm.task
 
+import java.io.File
+
 import com.typesafe.config.ConfigFactory
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
+import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.FlinkUtil
@@ -74,10 +77,13 @@ class DenormalizationStreamTask(config: DenormalizationConfig, kafkaConnector: F
 object DenormalizationStreamTask {
 
   def main(args: Array[String]): Unit = {
-    val config = ConfigFactory.load("de-normalization.conf").withFallback(ConfigFactory.systemEnvironment())
-    val eConfig = new DenormalizationConfig(config)
-    val kafkaUtil = new FlinkKafkaConnector(eConfig)
-    val task = new DenormalizationStreamTask(eConfig, kafkaUtil)
+    val configFilePath = Option(ParameterTool.fromArgs(args).get("config.file.path"))
+    val config = configFilePath.map {
+      path => ConfigFactory.parseFile(new File(path)).resolve()
+    }.getOrElse(ConfigFactory.load("de-normalization.conf").withFallback(ConfigFactory.systemEnvironment()))
+    val denormalizationConfig = new DenormalizationConfig(config)
+    val kafkaUtil = new FlinkKafkaConnector(denormalizationConfig)
+    val task = new DenormalizationStreamTask(denormalizationConfig, kafkaUtil)
     task.process()
   }
 }

@@ -1,8 +1,11 @@
 package org.sunbird.dp.assessment.task
 
+import java.io.File
+
 import com.typesafe.config.ConfigFactory
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
+import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.assessment.domain.Event
@@ -62,10 +65,13 @@ class AssessmentAggregatorStreamTask(config: AssessmentAggregatorConfig, kafkaCo
 // $COVERAGE-OFF$ Disabling scoverage as the below code can only be invoked within flink cluster
 object AssessmentAggregatorStreamTask {
     def main(args: Array[String]): Unit = {
-        val config = ConfigFactory.load("assessment-aggregator.conf").withFallback(ConfigFactory.systemEnvironment())
-        val eConfig = new AssessmentAggregatorConfig(config)
-        val kafkaUtil = new FlinkKafkaConnector(eConfig)
-        val task = new AssessmentAggregatorStreamTask(eConfig, kafkaUtil)
+        val configFilePath = Option(ParameterTool.fromArgs(args).get("config.file.path"))
+        val config = configFilePath.map {
+            path => ConfigFactory.parseFile(new File(path)).resolve()
+        }.getOrElse(ConfigFactory.load("assessment-aggregator.conf").withFallback(ConfigFactory.systemEnvironment()))
+        val assessmentAggregatorConfig = new AssessmentAggregatorConfig(config)
+        val kafkaUtil = new FlinkKafkaConnector(assessmentAggregatorConfig)
+        val task = new AssessmentAggregatorStreamTask(assessmentAggregatorConfig, kafkaUtil)
         task.process()
     }
 }

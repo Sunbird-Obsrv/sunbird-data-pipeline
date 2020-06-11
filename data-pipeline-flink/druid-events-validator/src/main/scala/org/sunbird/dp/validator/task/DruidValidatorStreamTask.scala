@@ -1,14 +1,17 @@
 package org.sunbird.dp.validator.task
 
+import java.io.File
+
 import com.typesafe.config.ConfigFactory
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
+import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.FlinkUtil
 import org.sunbird.dp.validator.domain.Event
-import org.sunbird.dp.validator.functions.{DruidValidatorFunction, DruidRouterFunction}
+import org.sunbird.dp.validator.functions.{DruidRouterFunction, DruidValidatorFunction}
 
 /**
  * Druid Validator stream task does the following pipeline processing in a sequence:
@@ -78,7 +81,10 @@ class DruidValidatorStreamTask(config: DruidValidatorConfig, kafkaConnector: Fli
 object DruidValidatorStreamTask {
 
   def main(args: Array[String]): Unit = {
-    val config = ConfigFactory.load("druid-events-validator.conf").withFallback(ConfigFactory.systemEnvironment())
+    val configFilePath = Option(ParameterTool.fromArgs(args).get("config.file.path"))
+    val config = configFilePath.map {
+      path => ConfigFactory.parseFile(new File(path)).resolve()
+    }.getOrElse(ConfigFactory.load("druid-events-validator.conf").withFallback(ConfigFactory.systemEnvironment()))
     val druidValidatorConfig = new DruidValidatorConfig(config)
     val kafkaUtil = new FlinkKafkaConnector(druidValidatorConfig)
     val task = new DruidValidatorStreamTask(druidValidatorConfig, kafkaUtil)

@@ -1,8 +1,11 @@
 package org.sunbird.dp.preprocessor.task
 
+import java.io.File
+
 import com.typesafe.config.ConfigFactory
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
+import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.core.job.FlinkKafkaConnector
@@ -112,10 +115,13 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
 // $COVERAGE-OFF$ Disabling scoverage as the below code can only be invoked within flink cluster
 object PipelinePreprocessorStreamTask {
   def main(args: Array[String]): Unit = {
-    val config = ConfigFactory.load("pipeline-preprocessor.conf").withFallback(ConfigFactory.systemEnvironment())
-    val eConfig = new PipelinePreprocessorConfig(config)
-    val kafkaUtil = new FlinkKafkaConnector(eConfig)
-    val task = new PipelinePreprocessorStreamTask(eConfig, kafkaUtil)
+    val configFilePath = Option(ParameterTool.fromArgs(args).get("config.file.path"))
+    val config = configFilePath.map {
+      path => ConfigFactory.parseFile(new File(path)).resolve()
+    }.getOrElse(ConfigFactory.load("pipeline-preprocessor.conf").withFallback(ConfigFactory.systemEnvironment()))
+    val pipelinePreprocessorConfig = new PipelinePreprocessorConfig(config)
+    val kafkaUtil = new FlinkKafkaConnector(pipelinePreprocessorConfig)
+    val task = new PipelinePreprocessorStreamTask(pipelinePreprocessorConfig, kafkaUtil)
     task.process()
   }
 }
