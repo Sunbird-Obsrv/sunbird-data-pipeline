@@ -15,6 +15,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-streaming-scala_${scala.version}</artifactId>
+            <version>${flink.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
             <groupId>org.sunbird.dp.jobs</groupId>
             <artifactId>telemetry-extractor</artifactId>
             <version>1.0.0</version>
@@ -62,12 +68,6 @@
             <version>1.0.0</version>
             <type>jar</type>
         </dependency>
-        <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-streaming-scala_${scala.version}</artifactId>
-            <version>${flink.version}</version>
-            <type>jar</type>
-        </dependency>
     </dependencies>
 
     <build>
@@ -110,7 +110,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <repository>datapipeline</repository>
+                            <repository>sunbird-datapipeline</repository>
                             <tag>${release-version}</tag>
                         </configuration>
                     </plugin>

@@ -1,8 +1,11 @@
 package org.sunbird.dp.contentupdater.task
 
+import java.io.File
+
 import com.typesafe.config.ConfigFactory
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
+import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.contentupdater.domain.Event
 import org.sunbird.dp.contentupdater.functions.{ContentUpdaterFunction, DialCodeUpdaterFunction}
@@ -62,10 +65,13 @@ class ContentCacheUpdaterStreamTask(config: ContentCacheUpdaterConfig, kafkaConn
 object ContentCacheUpdaterStreamTask {
 
   def main(args: Array[String]): Unit = {
-    val config = ConfigFactory.load("content-cache-updater.conf").withFallback(ConfigFactory.systemEnvironment())
-    val eConfig = new ContentCacheUpdaterConfig(config)
-    val kafkaUtil = new FlinkKafkaConnector(eConfig)
-    val task = new ContentCacheUpdaterStreamTask(eConfig, kafkaUtil)
+    val configFilePath = Option(ParameterTool.fromArgs(args).get("config.file.path"))
+    val config = configFilePath.map {
+      path => ConfigFactory.parseFile(new File(path)).resolve()
+    }.getOrElse(ConfigFactory.load("content-cache-updater.conf").withFallback(ConfigFactory.systemEnvironment()))
+    val contentCacheUpdaterConfig = new ContentCacheUpdaterConfig(config)
+    val kafkaUtil = new FlinkKafkaConnector(contentCacheUpdaterConfig)
+    val task = new ContentCacheUpdaterStreamTask(contentCacheUpdaterConfig, kafkaUtil)
     task.process()
   }
 }
