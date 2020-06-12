@@ -2383,7 +2383,7 @@
   			}],
   			"mergeConfig": {
   				"frequency": "WEEK",
-  				"basePath": {{ spark_output_temp_dir }},
+  				"basePath": "{{ spark_output_temp_dir }}",
   				"rollup": 0,
   				"reportPath": "dialcode_counts.csv",
           "postContainer":"{{ reports_container }}"
@@ -2400,7 +2400,7 @@
   				}],
   				"mergeConfig": {
   					"frequency": "WEEK",
-  					"basePath": {{ spark_output_temp_dir }},
+  					"basePath": "{{ spark_output_temp_dir }}",
   					"rollup": 1,
   					"reportPath": "dialcode_counts.csv",
   					"rollupAge": "ACADEMIC_YEAR",
@@ -2637,7 +2637,7 @@
             }],
           "mergeConfig": {
           "frequency": "WEEK",
-          "basePath": {{ spark_output_temp_dir }},
+          "basePath": "{{ spark_output_temp_dir }}",
           "rollup": 0,
           "reportPath": "content_progress_metrics.csv",
           "postContainer":"{{ reports_container }}"
