@@ -19,78 +19,79 @@ object EventFixture {
   val dialcodeCacheData2 = """{"identifier":"PCZKA3","batchcode":"jkpublisher.20180801T122031","channel":"01254592085869363222","dialcode_index":1623464,"generated_on":1571999041881,"published_on":"2018-08-01T13:41:53.695Z","publisher":"jkpublisher","status":"Draft"}"""
   
 
-  val olderDate: Long = DateTime.now().minusMonths(4).getMillis
+  val currentDate: Long = DateTime.now().getMillis
+  val olderDate: Long = DateTime.now().minusMonths(5).getMillis
   val futureDate: Long = DateTime.now().plusMonths(1).getMillis
   
   val telemetrEvents: List[String] = List(
       
     // user_denorm = true, device_denorm=false
-    """{"actor":{"type":"User","id":"b7470841-7451-43db-b5c7-2dcf4f8d3b23"},"eid":"INTERACT",
+    s"""{"actor":{"type":"User","id":"b7470841-7451-43db-b5c7-2dcf4f8d3b23"},"eid":"INTERACT",
       |"edata":{"type":"OTHER","subtype":"sheen-animation-ended","id":"library","pageid":"library","extra":{"pos":[]}},
-      |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":1905414602000,
+      |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":$currentDate,
       |"context":{"cdata":[],"env":"home","channel":"505c7c48ac6dc1edc9b08f21db5a571d",
       |"pdata":{"id":"sunbird.app","pid":"sunbird.app","ver":"2.3.144"},"sid":"df936f82-e982-41ec-8412-70d414458272",
       |"did":"758e054a400f20f7677f2def76427dc13ad1f837"},"flags":{"dd_processed":true},
       |"mid":"mid1","type":"events","object":{"id":"","type":"",
       |"version":"","rollup":{}}}""".stripMargin,
     // user_denorm = true, device_denorm=true, content_denorm=true
-    """{"actor":{"type":"User","id":"610bab7d-1450-4e54-bf78-c7c9b14dbc81"},"eid":"INTERACT",
+    s"""{"actor":{"type":"User","id":"610bab7d-1450-4e54-bf78-c7c9b14dbc81"},"eid":"INTERACT",
       |"edata":{"type":"OTHER","subtype":"sheen-animation-ended","id":"library","pageid":"library","extra":{"pos":[]}},
-      |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":1905414602000,
+      |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":$currentDate,
       |"context":{"cdata":[],"env":"home","channel":"505c7c48ac6dc1edc9b08f21db5a571d",
       |"pdata":{"id":"sunbird.app","pid":"sunbird.app","ver":"2.3.144"},"sid":"df936f82-e982-41ec-8412-70d414458272",
       |"did":"264d679186d4b0734d858d4e18d4d31e"},"flags":{"dd_processed":true},
       |"mid":"mid2","type":"events","object":{"id":"do_31249064359802470412856","type":"Content",
       |"version":"","rollup":{}}}""".stripMargin,
     // user_denorm = false, device_denorm=true, content_denorm=true, collection_denorm=true
-    """{"actor":{"type":"User","id":"b7470841-7451-43db-b5c7-2dcf4f8d3b24"},"eid":"INTERACT",
+    s"""{"actor":{"type":"User","id":"b7470841-7451-43db-b5c7-2dcf4f8d3b24"},"eid":"INTERACT",
       |"edata":{"type":"OTHER","subtype":"sheen-animation-ended","id":"library","pageid":"library","extra":{"pos":[]}},
-      |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":1905414602000,
+      |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":$currentDate,
       |"context":{"cdata":[],"env":"home","channel":"505c7c48ac6dc1edc9b08f21db5a571d",
       |"pdata":{"id":"sunbird.app","pid":"sunbird.app","ver":"2.3.144"},"sid":"df936f82-e982-41ec-8412-70d414458272",
       |"did":"45f32f48592cb9bcf26bef9178b7bd20abe24932"},"flags":{"dd_processed":true},
       |"mid":"mid3","type":"events","object":{"id":"do_312526125187809280139353","type":"Content",
       |"version":"","rollup":{"l1":"do_312526125187809280139355"}}}""".stripMargin,
     // user_denorm = true, dialcode_denorm=true
-    """{"actor":{"type":"User","id":"610bab7d-1450-4e54-bf78-c7c9b14dbc81"},"eid":"INTERACT",
+    s"""{"actor":{"type":"User","id":"610bab7d-1450-4e54-bf78-c7c9b14dbc81"},"eid":"INTERACT",
       |"edata":{"type":"OTHER","subtype":"sheen-animation-ended","id":"library","pageid":"library","extra":{"pos":[]}},
-      |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":1905414602000,
+      |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":$currentDate,
       |"context":{"cdata":[],"env":"home","channel":"505c7c48ac6dc1edc9b08f21db5a571d",
       |"pdata":{"id":"sunbird.app","pid":"sunbird.app","ver":"2.3.144"},"sid":"df936f82-e982-41ec-8412-70d414458272",
       |"did":"45f32f48592cb9bcf26bef9178b7bd20abe24932"},"flags":{"dd_processed":true},
       |"mid":"mid4","type":"events","object":{"id":"GWNI38","type":"DialCode",
       |"version":"","rollup":{}}}""".stripMargin,
     // user_denorm = false, dialcode_denorm=true
-    """{"actor":{"type":"User","id":"610bab7d-1450-4e54-bf78-c7c9b14dbc82"},"eid":"INTERACT",
+    s"""{"actor":{"type":"User","id":"610bab7d-1450-4e54-bf78-c7c9b14dbc82"},"eid":"INTERACT",
       |"edata":{"type":"OTHER","subtype":"sheen-animation-ended","id":"library","pageid":"library","extra":{"pos":[]}},
-      |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":1905414602000,
+      |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":$currentDate,
       |"context":{"cdata":[],"env":"home","channel":"505c7c48ac6dc1edc9b08f21db5a571d",
       |"pdata":{"id":"sunbird.app","pid":"sunbird.app","ver":"2.3.144"},"sid":"df936f82-e982-41ec-8412-70d414458272",
       |"did":"45f32f48592cb9bcf26bef9178b7bd20abe24932"},"flags":{"dd_processed":true},
       |"mid":"mid5","type":"events","object":{"id":"PCZKA3","type":"qr",
       |"version":"","rollup":{}}}""".stripMargin,
       // user_denorm = false, dialcode_denorm=true
-    """{"actor":{"type":"User","id":"610bab7d-1450-4e54-bf78-c7c9b14dbc82"},"eid":"INTERACT",
+    s"""{"actor":{"type":"User","id":"610bab7d-1450-4e54-bf78-c7c9b14dbc82"},"eid":"INTERACT",
       |"edata":{"type":"OTHER","subtype":"sheen-animation-ended","id":"library","pageid":"library","extra":{"pos":[]}},
-      |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":1905414602000,
+      |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":$currentDate,
       |"context":{"cdata":[],"env":"home","channel":"505c7c48ac6dc1edc9b08f21db5a571d",
       |"pdata":{"id":"sunbird.app","pid":"sunbird.app","ver":"2.3.144"},"sid":"df936f82-e982-41ec-8412-70d414458272",
       |"did":"45f32f48592cb9bcf26bef9178b7bd20abe24932"},"flags":{"dd_processed":true},
       |"mid":"mid6","type":"events","object":{"id":"PCZKA4","type":"qr",
       |"version":"","rollup":{}}}""".stripMargin,
       // user_denorm = false, device_denorm=true, content_denorm=true, collection_denorm=false
-    """{"actor":{"type":"User","id":"anonymous"},"eid":"INTERACT",
+    s"""{"actor":{"type":"User","id":"anonymous"},"eid":"INTERACT",
       |"edata":{"type":"OTHER","subtype":"sheen-animation-ended","id":"library","pageid":"library","extra":{"pos":[]}},
-      |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":1905414602000,
+      |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":$currentDate,
       |"context":{"cdata":[],"env":"home","channel":"505c7c48ac6dc1edc9b08f21db5a571d",
       |"pdata":{"id":"sunbird.app","pid":"sunbird.app","ver":"2.3.144"},"sid":"df936f82-e982-41ec-8412-70d414458272",
       |"did":"45f32f48592cb9bcf26bef9178b7bd20abe24932"},"flags":{"dd_processed":true},
       |"mid":"mid7","type":"events","object":{"id":"do_312526125187809280139353","type":"Content",
       |"version":"","rollup":{"l1":"do_312526125187809280139353"}}}""".stripMargin,
       // user_denorm = false, device_denorm=false, content_denorm=false, collection_denorm=true
-    """{"actor":{"type":"User","id":"anonymous"},"eid":"INTERACT",
+    s"""{"actor":{"type":"User","id":"anonymous"},"eid":"INTERACT",
       |"edata":{"type":"OTHER","subtype":"sheen-animation-ended","id":"library","pageid":"library","extra":{"pos":[]}},
-      |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":1905414602000,
+      |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":$currentDate,
       |"context":{"cdata":[],"env":"home","channel":"505c7c48ac6dc1edc9b08f21db5a571d",
       |"pdata":{"id":"sunbird.app","pid":"sunbird.app","ver":"2.3.144"},"sid":"df936f82-e982-41ec-8412-70d414458272",
       |"did":""},"flags":{"dd_processed":true},
@@ -118,7 +119,7 @@ object EventFixture {
       |"version":"","rollup":{"l1":"do_312526125187809280139353"}}}""".stripMargin,
       
       // Test data for 100% coverage
-      """{"eid":"AUDIT","ets":1.581566069964E12,"ver":"3.0","mid":"AUDIT:eae9854a08764ce0c5c17f7ad8abe3e6",
+      s"""{"eid":"AUDIT","ets":$currentDate,"ver":"3.0","mid":"AUDIT:eae9854a08764ce0c5c17f7ad8abe3e6",
       |"actor":{"id":"264d679186d4b0734d858d4e18d4d31e","type":"User"},
       |"context":{"channel":"505c7c48ac6dc1edc9b08f21db5a571d","pdata":{"id":"prod.diksha.desktop","ver":"1.0.3","pid":"desktop.app"},
       |"env":"downloadManager","sid":"317574c5-41e3-48cb-ba3a-00b6dd7577ea","did":"6e1d6dc06874a8cc60a51e01f97bc7a8fc65978055ed1bdcd1d33e07a85530bd",

@@ -58,15 +58,15 @@ class DenormalizationStreamTask(config: DenormalizationConfig, kafkaConnector: F
     implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
 
     val source = kafkaConnector.kafkaEventSource[Event](config.inputTopic)
-    val deviceDenormStream =
-      env.addSource(source, config.denormalizationConsumer).uid(config.denormalizationConsumer).setParallelism(config.kafkaConsumerParallelism).rebalance()
-        .process(new DeviceDenormFunction(config)).name(config.deviceDenormFunction).uid(config.deviceDenormFunction)
-    val userDenormStream = deviceDenormStream.getSideOutput(config.withDeviceEventsTag).process(new UserDenormFunction(config)).name(config.userDenormFunction).uid(config.userDenormFunction)
-    val dialCodeDenormStream = userDenormStream.getSideOutput(config.withUserEventsTag).process(new DialCodeDenormFunction(config)).name(config.dialcodeDenormFunction).uid(config.dialcodeDenormFunction)
-    val contentDenormStream = dialCodeDenormStream.getSideOutput(config.withDialCodeEventsTag).process(new ContentDenormFunction(config)).name(config.contentDenormFunction).uid(config.contentDenormFunction)
-    val locDenormStream = contentDenormStream.getSideOutput(config.withContentEventsTag).process(new LocationDenormFunction(config)).name(config.locationDenormFunction).uid(config.locationDenormFunction)
+    val denormStream =
+      env.addSource(source, config.denormalizationConsumer).uid(config.denormalizationConsumer)
+        .setParallelism(config.kafkaConsumerParallelism).rebalance()
+        .process(new DenormalizationFunction(config)).name(config.denormalizationFunction).uid(config.denormalizationFunction)
+          .setParallelism(config.denormParallelism)
 
-    locDenormStream.getSideOutput(config.withLocationEventsTag).addSink(kafkaConnector.kafkaEventSink(config.denormSuccessTopic)).name(config.DENORM_EVENTS_PRODUCER).uid(config.DENORM_EVENTS_PRODUCER)
+    denormStream.getSideOutput(config.denormEventsTag).addSink(kafkaConnector.kafkaEventSink(config.denormSuccessTopic))
+      .name(config.DENORM_EVENTS_PRODUCER).uid(config.DENORM_EVENTS_PRODUCER)
+        .setParallelism(config.denormSinkParallelism)
 
     env.execute(config.jobName)
   }
