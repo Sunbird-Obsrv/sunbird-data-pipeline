@@ -25,6 +25,12 @@ public class TelemetryValidatorService {
         Event event = null;
         try {
             event = source.getEvent();
+            if(event.eid() == null) {
+                LOGGER.error(null, "VALIDATION FAILED: as eid is missing");
+                sink.toFailedTopic(event, String.format("validation failed. eid id missing"));
+                return;
+            }
+
             if (!telemetrySchemaValidator.schemaFileExists(event)) {
                 LOGGER.info("SCHEMA NOT FOUND FOR EID: ", event.eid());
                 LOGGER.debug("SKIP PROCESSING: SENDING TO SUCCESS", event.mid());
