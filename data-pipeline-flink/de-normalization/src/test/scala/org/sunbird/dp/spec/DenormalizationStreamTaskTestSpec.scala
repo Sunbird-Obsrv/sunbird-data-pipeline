@@ -206,9 +206,9 @@ class DerivedEventSource extends SourceFunction[Event] {
 
 class DenormEventsSink extends SinkFunction[Event] {
 
-  override def invoke(value: Event): Unit = {
+  override def invoke(event: Event): Unit = {
     synchronized {
-      DenormEventsSink.values.put(value.mid(), value)
+      DenormEventsSink.values.put(event.mid(), event)
     }
   }
 }

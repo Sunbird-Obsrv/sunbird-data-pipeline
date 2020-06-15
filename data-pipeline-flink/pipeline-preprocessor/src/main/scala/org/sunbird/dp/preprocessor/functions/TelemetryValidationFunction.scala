@@ -44,9 +44,11 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
                               context: ProcessFunction[Event, Event]#Context,
                               metrics: Metrics): Unit = {
     val isSchemaPresent: Boolean = schemaValidator.schemaFileExists(event)
-    if (!isSchemaPresent) onValidationSkip(event)
-    val validationReport = schemaValidator.validate(event, isSchemaPresent = isSchemaPresent)
-    if (validationReport.isSuccess) onValidationSuccess(event, metrics, context) else onValidationFailure(event, metrics, context, validationReport)
+    if (!isSchemaPresent) onMissingSchema(event, metrics, context, "Schema not found: eid looks incorrect, sending to failed")
+    else {
+        val validationReport = schemaValidator.validate(event, isSchemaPresent = isSchemaPresent)
+        if (validationReport.isSuccess) onValidationSuccess(event, metrics, context) else onValidationFailure(event, metrics, context, validationReport)
+    }
   }
 
   private def dataCorrection(event: Event): Event = {
@@ -87,8 +89,10 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
     context.output(config.validationFailedEventsOutputTag, event)
   }
 
-  def onValidationSkip(event: Event): Unit = {
-    logger.info(s"Schema not found, Skipping the: ${event.eid} from validation")
-    event.markSkipped(config.VALIDATION_FLAG_NAME) // Telemetry validation skipped
+  def onMissingSchema(event: Event, metrics: Metrics, context: ProcessFunction[Event, Event]#Context, message: String): Unit = {
+    logger.info(s"Telemetry schema validation is failed for: ${event.mid()} and error message is: $message")
+    event.markValidationFailure(message, config.VALIDATION_FLAG_NAME)
+    metrics.incCounter(config.validationFailureMetricsCount)
+    context.output(config.validationFailedEventsOutputTag, event)
   }
 }
