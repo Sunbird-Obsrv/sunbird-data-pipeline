@@ -22,6 +22,8 @@ class DenormalizationConfig(override val config: Config) extends BaseJobConfig(c
   val failedTopic: String = config.getString("kafka.output.failed.topic")
 
   override val kafkaConsumerParallelism: Int = config.getInt("task.consumer.parallelism")
+  val denormParallelism: Int = config.getInt("task.denorm.parallelism")
+  val denormSinkParallelism: Int = config.getInt("task.denorm.sink.parallelism")
 
   val userStore: Int = config.getInt("redis.database.userstore.id")
   val contentStore: Int = config.getInt("redis.database.contentstore.id")
@@ -87,6 +89,7 @@ class DenormalizationConfig(override val config: Config) extends BaseJobConfig(c
   val denormalizationConsumer = "denormalization-consumer"
 
   // Functions
+  val denormalizationFunction = "DenormalizationFunction"
   val deviceDenormFunction = "DeviceDenormFunction"
   val userDenormFunction = "UserDenormFunction"
   val dialcodeDenormFunction = "DialcodeDenormFunction"
