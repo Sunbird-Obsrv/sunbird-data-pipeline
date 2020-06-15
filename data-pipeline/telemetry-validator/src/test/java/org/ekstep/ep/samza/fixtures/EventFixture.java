@@ -616,6 +616,18 @@ public class EventFixture {
             "    }  \n" +
             "}";
 
+    public static final String EVENT_WITHOUT_EID = "{\n" +
+			"    \"@timestamp\": \"2020-06-14T18:31:18.487Z\",\n" +
+			"    \"@version\": \"1\",\n" +
+			"    \"context\": {\n" +
+			"        \"channel\": \"505c7c48ac6dc1edc9b08f21db5a571d\"\n" +
+			"    },\n" +
+			"    \"message\": \"478097.fdedf464-72ca-45ae-8100-9a92fac0c46b\\\",\\\"actor\\\":{\\\"id\\\":\\\"org.ekstep.learning.platform\\\",\\\"type\\\":\\\"System\\\"},\\\"context\\\":{\\\"channel\\\":\\\"in.ekstep\\\",\\\"pdata\\\":{\\\"id\\\":\\\"prod.ntp.learning.platform\\\",\\\"pid\\\":\\\"search-service\\\",\\\"ver\\\":\\\"1.0\\\"},\\\"env\\\":\\\"search\\\"},\\\"edata\\\":{\\\"size\\\":0,\\\"query\\\":\\\"\\\",\\\"filters\\\":{\\\"status\\\":[\\\"Live\\\",\\\"Draft\\\",\\\"Review\\\"],\\\"contentType\\\":[\\\"Resource\\\",\\\"Collection\\\"],\\\"createdFor\\\":\\\"01241408242723225614\\\",\\\"createdOn\\\":{\\\">=\\\":\\\"2020-06-08T00:00:00.000+0000\\\",\\\"<\\\":\\\"2020-06-15T00:00:00.000+0000\\\"}},\\\"sort\\\":{},\\\"type\\\":\\\"all\\\",\\\"topn\\\":[]},\\\"syncts\\\":1592159478097}\",\n" +
+			"    \"tags\": [\n" +
+			"        \"_jsonparsefailure\"\n" +
+			"    ]\n" +
+			"}";
+
 	public static final String ANY_STRING = "Hey Samza, Whats Up?";
 	public static final String EMPTY_JSON = "{}";
 	
