@@ -254,4 +254,4 @@ druid.healthcheck.url="druid/coordinator/v1/loadstatus"
 device.api.enable.debug.log=true
 kafka.device.register.topic={{ env }}.events.deviceprofile
 kafka.metrics.event.topic={{ env }}.pipeline_metrics
-kafka.broker.list="{{ kafka_broker }}"
+kafka.broker.list="{{ ingestion_kafka_brokers }}"
