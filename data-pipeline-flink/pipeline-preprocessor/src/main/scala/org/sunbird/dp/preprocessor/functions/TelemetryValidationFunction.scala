@@ -44,9 +44,12 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
                               context: ProcessFunction[Event, Event]#Context,
                               metrics: Metrics): Unit = {
     val isSchemaPresent: Boolean = schemaValidator.schemaFileExists(event)
-    if (!isSchemaPresent) onValidationSkip(event)
-    val validationReport = schemaValidator.validate(event, isSchemaPresent = isSchemaPresent)
-    if (validationReport.isSuccess) onValidationSuccess(event, metrics, context) else onValidationFailure(event, metrics, context, validationReport)
+    //if (!isSchemaPresent) onValidationSkip(event)
+    if (!isSchemaPresent) onMissingSchema(event, metrics, context, "Schema not found: eid looks incorrect, sending to failed")
+    else {
+        val validationReport = schemaValidator.validate(event, isSchemaPresent = isSchemaPresent)
+        if (validationReport.isSuccess) onValidationSuccess(event, metrics, context) else onValidationFailure(event, metrics, context, validationReport)
+    }
   }
 
   private def dataCorrection(event: Event): Event = {
@@ -83,6 +86,13 @@ class TelemetryValidationFunction(config: PipelinePreprocessorConfig,
     val failedErrorMsg = schemaValidator.getInvalidFieldName(validationReport.toString)
     logger.info(s"Telemetry schema validation is failed for: ${event.mid()} and error message is: ${validationReport.toString}")
     event.markValidationFailure(failedErrorMsg, config.VALIDATION_FLAG_NAME)
+    metrics.incCounter(config.validationFailureMetricsCount)
+    context.output(config.validationFailedEventsOutputTag, event)
+  }
+
+  def onMissingSchema(event: Event, metrics: Metrics, context: ProcessFunction[Event, Event]#Context, message: String): Unit = {
+    logger.info(s"Telemetry schema validation is failed for: ${event.mid()} and error message is: $message")
+    event.markValidationFailure(message, config.VALIDATION_FLAG_NAME)
     metrics.incCounter(config.validationFailureMetricsCount)
     context.output(config.validationFailedEventsOutputTag, event)
   }

@@ -302,7 +302,6 @@ public class TelemetryValidatorTaskTest {
             public boolean matches(Object o) {
                 OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
                 String outputMessage = (String) outgoingMessageEnvelope.getMessage();
-                System.out.println(outputMessage);
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
                 Map<String, Object> flags = new Gson().fromJson(new Gson().toJson(outputEvent.get("flags")), mapType);
                 Map<String, Object> metadata = new Gson().fromJson(new Gson().toJson(outputEvent.get("metadata")), mapType);
