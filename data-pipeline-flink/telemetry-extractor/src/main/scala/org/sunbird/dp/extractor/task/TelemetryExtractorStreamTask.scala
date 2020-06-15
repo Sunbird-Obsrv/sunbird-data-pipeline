@@ -1,10 +1,12 @@
 package org.sunbird.dp.extractor.task
 
+import java.io.File
 import java.util
 
 import com.typesafe.config.ConfigFactory
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
+import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.FlinkUtil
@@ -94,10 +96,13 @@ class TelemetryExtractorStreamTask(config: TelemetryExtractorConfig, kafkaConnec
 object TelemetryExtractorStreamTask {
 
   def main(args: Array[String]): Unit = {
-    val config = ConfigFactory.load("telemetry-extractor.conf").withFallback(ConfigFactory.systemEnvironment())
-    val eConfig = new TelemetryExtractorConfig(config)
-    val kafkaUtil = new FlinkKafkaConnector(eConfig)
-    val task = new TelemetryExtractorStreamTask(eConfig, kafkaUtil)
+    val configFilePath = Option(ParameterTool.fromArgs(args).get("config.file.path"))
+    val config = configFilePath.map {
+      path => ConfigFactory.parseFile(new File(path)).resolve()
+    }.getOrElse(ConfigFactory.load("telemetry-extractor.conf").withFallback(ConfigFactory.systemEnvironment()))
+    val telemetryExtractorConfig = new TelemetryExtractorConfig(config)
+    val kafkaUtil = new FlinkKafkaConnector(telemetryExtractorConfig)
+    val task = new TelemetryExtractorStreamTask(telemetryExtractorConfig, kafkaUtil)
     task.process()
   }
 }
