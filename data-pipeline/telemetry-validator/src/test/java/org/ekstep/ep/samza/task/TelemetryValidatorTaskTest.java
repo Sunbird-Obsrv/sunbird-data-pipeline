@@ -109,7 +109,7 @@ public class TelemetryValidatorTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.EMPTY_JSON);
 
         telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
 
     @Test
