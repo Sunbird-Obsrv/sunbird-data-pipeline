@@ -99,6 +99,7 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
      * User SignupType is "sso"
      * It should able to insert The Map(usersignintype, Validated)
      */
+    jedis.select(userCacheConfig.userStore)
 
     val ssoUser = jedis.get("user-1")
     ssoUser should not be (null)

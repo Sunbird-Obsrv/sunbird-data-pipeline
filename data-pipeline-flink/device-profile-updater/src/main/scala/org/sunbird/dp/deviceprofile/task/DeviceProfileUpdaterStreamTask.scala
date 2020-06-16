@@ -1,10 +1,12 @@
 package org.sunbird.dp.deviceprofile.task
 
+import java.io.File
 import java.util
 
 import com.typesafe.config.ConfigFactory
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
+import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.FlinkUtil
@@ -39,10 +41,13 @@ class DeviceProfileUpdaterStreamTask(config: DeviceProfileUpdaterConfig, kafkaCo
 object DeviceProfileUpdaterStreamTask {
 
   def main(args: Array[String]): Unit = {
-    val config = ConfigFactory.load("device-profile-updater.conf").withFallback(ConfigFactory.systemEnvironment())
-    val eConfig = new DeviceProfileUpdaterConfig(config)
-    val kafkaUtil = new FlinkKafkaConnector(eConfig)
-    val task = new DeviceProfileUpdaterStreamTask(eConfig, kafkaUtil)
+    val configFilePath = Option(ParameterTool.fromArgs(args).get("config.file.path"))
+    val config = configFilePath.map {
+      path => ConfigFactory.parseFile(new File(path)).resolve()
+    }.getOrElse(ConfigFactory.load("device-profile-updater.conf").withFallback(ConfigFactory.systemEnvironment()))
+    val deviceProfileUpdaterConfig = new DeviceProfileUpdaterConfig(config)
+    val kafkaUtil = new FlinkKafkaConnector(deviceProfileUpdaterConfig)
+    val task = new DeviceProfileUpdaterStreamTask(deviceProfileUpdaterConfig, kafkaUtil)
     task.process()
   }
 }

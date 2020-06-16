@@ -6,7 +6,7 @@ telemetry_converter_ver: 0.0.8
 bucket: "dev-data-store"
 kafka_broker_host: "{{groups['processing-cluster-kafka'][0]}}:9092"
 brokerlist: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
-zookeeper: "{{groups['processing-cluster-kafka']|join(':2181,')}}:2181"
+zookeeper: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
 dp_username: dp-monitor
 analytics_job_queue_topic: "{{ env }}.analytics.job_queue"
 datasetRawBucket: ekstep-data-sets-{{ env }}
@@ -22,8 +22,8 @@ job_manager_tmp_dir: "transient-data"
 channel: dev-test
 druid_broker_host: "{{groups['broker'][0]}}"
 druid_rollup_broker_host: "{{groups['broker'][0]}}"
-hierarchySearchServiceUrl: "{{ proto }}://{{ domain_name }}/api/course"
-hierarchySearchServicEndpoint: /v1/hierarchy/
+hierarchySearchServiceUrl: "{{ proto }}://{{ domain_name }}/action/content"
+hierarchySearchServicEndpoint: /v3/hierarchy/
 
 analytics_job_list: '"wfs", "ds", "dpu", "content-rating-updater", "audit-metrics-report", "monitor-job-summ"'
 analytics_jobs_count: 8
@@ -129,6 +129,12 @@ run_district_weekly_job:
     minute: 30
     weekday: 1
 
+run_etb_metrics_weekly_job:
+  etb-metrics-weekly:
+    hour: 23
+    minute: 30
+    weekday: 1
+
 run_district_monthly_job:
   district-monthly:
     hour: 04
@@ -159,3 +165,5 @@ model_version: "2.0"
 
 submit_jobs_auth_token: ""
 report_list_jobs_url: "http://{{groups['analytics-api'][0]}}:9000/"
+
+reports_container: "reports"

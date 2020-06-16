@@ -1,8 +1,11 @@
 package org.sunbird.dp.denorm.task
 
+import java.io.File
+
 import com.typesafe.config.ConfigFactory
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
+import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.FlinkUtil
@@ -55,15 +58,15 @@ class DenormalizationStreamTask(config: DenormalizationConfig, kafkaConnector: F
     implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
 
     val source = kafkaConnector.kafkaEventSource[Event](config.inputTopic)
-    val deviceDenormStream =
-      env.addSource(source, config.denormalizationConsumer).uid(config.denormalizationConsumer).rebalance()
-        .process(new DeviceDenormFunction(config)).name(config.deviceDenormFunction).uid(config.deviceDenormFunction)
-    val userDenormStream = deviceDenormStream.getSideOutput(config.withDeviceEventsTag).process(new UserDenormFunction(config)).name(config.userDenormFunction).uid(config.userDenormFunction)
-    val dialCodeDenormStream = userDenormStream.getSideOutput(config.withUserEventsTag).process(new DialCodeDenormFunction(config)).name(config.dialcodeDenormFunction).uid(config.dialcodeDenormFunction)
-    val contentDenormStream = dialCodeDenormStream.getSideOutput(config.withDialCodeEventsTag).process(new ContentDenormFunction(config)).name(config.contentDenormFunction).uid(config.contentDenormFunction)
-    val locDenormStream = contentDenormStream.getSideOutput(config.withContentEventsTag).process(new LocationDenormFunction(config)).name(config.locationDenormFunction).uid(config.locationDenormFunction)
+    val denormStream =
+      env.addSource(source, config.denormalizationConsumer).uid(config.denormalizationConsumer)
+        .setParallelism(config.kafkaConsumerParallelism).rebalance()
+        .process(new DenormalizationFunction(config)).name(config.denormalizationFunction).uid(config.denormalizationFunction)
+          .setParallelism(config.denormParallelism)
 
-    locDenormStream.getSideOutput(config.withLocationEventsTag).addSink(kafkaConnector.kafkaEventSink(config.denormSuccessTopic)).name(config.DENORM_EVENTS_PRODUCER).uid(config.DENORM_EVENTS_PRODUCER)
+    denormStream.getSideOutput(config.denormEventsTag).addSink(kafkaConnector.kafkaEventSink(config.denormSuccessTopic))
+      .name(config.DENORM_EVENTS_PRODUCER).uid(config.DENORM_EVENTS_PRODUCER)
+        .setParallelism(config.denormSinkParallelism)
 
     env.execute(config.jobName)
   }
@@ -74,10 +77,13 @@ class DenormalizationStreamTask(config: DenormalizationConfig, kafkaConnector: F
 object DenormalizationStreamTask {
 
   def main(args: Array[String]): Unit = {
-    val config = ConfigFactory.load("de-normalization.conf").withFallback(ConfigFactory.systemEnvironment())
-    val eConfig = new DenormalizationConfig(config)
-    val kafkaUtil = new FlinkKafkaConnector(eConfig)
-    val task = new DenormalizationStreamTask(eConfig, kafkaUtil)
+    val configFilePath = Option(ParameterTool.fromArgs(args).get("config.file.path"))
+    val config = configFilePath.map {
+      path => ConfigFactory.parseFile(new File(path)).resolve()
+    }.getOrElse(ConfigFactory.load("de-normalization.conf").withFallback(ConfigFactory.systemEnvironment()))
+    val denormalizationConfig = new DenormalizationConfig(config)
+    val kafkaUtil = new FlinkKafkaConnector(denormalizationConfig)
+    val task = new DenormalizationStreamTask(denormalizationConfig, kafkaUtil)
     task.process()
   }
 }

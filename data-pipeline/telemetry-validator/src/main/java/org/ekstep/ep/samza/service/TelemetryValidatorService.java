@@ -24,12 +24,18 @@ public class TelemetryValidatorService {
     public void process(TelemetryValidatorSource source, TelemetryValidatorSink sink) {
         Event event = null;
         try {
-            event = dataCorrection(source.getEvent());
+            event = source.getEvent();
+            if(event.eid() == null) {
+                LOGGER.error(null, "VALIDATION FAILED: as eid is missing");
+                sink.toFailedTopic(event, String.format("validation failed. eid id missing"));
+                return;
+            }
+
             if (!telemetrySchemaValidator.schemaFileExists(event)) {
                 LOGGER.info("SCHEMA NOT FOUND FOR EID: ", event.eid());
                 LOGGER.debug("SKIP PROCESSING: SENDING TO SUCCESS", event.mid());
                 event.markSkipped();
-                sink.toSuccessTopic(event);
+                sink.toSuccessTopic(dataCorrection(event));
                 return;
             }
 
@@ -39,7 +45,7 @@ public class TelemetryValidatorService {
                 LOGGER.debug("VALIDATION SUCCESS", event.mid());
                 event.markSuccess();
                 event.updateDefaults(config);
-                sink.toSuccessTopic(event);
+                sink.toSuccessTopic(dataCorrection(event));
             } else {
                 LOGGER.error(null, "VALIDATION FAILED: " + report.toString());
                 String fieldName = getInvalidFieldName(report.toString());

@@ -227,3 +227,11 @@ postgres.db="{{postgres.db_name}}"
 postgres.url="jdbc:postgresql://{{postgres.db_url}}:{{postgres.db_port}}/"
 postgres.user="{{postgres.db_username}}"
 postgres.pass="{{postgres.db_password}}"
+
+
+location.search.url="https://{{location_search_url}}/v1/location/search"
+location.search.token="{{ location_search_token }}"
+
+druid.state.lookup.url = "http://{{groups['raw-coordinator'][0]}}:8081/druid/coordinator/v1/lookups/config/__default/stateSlugLookup"
+
+

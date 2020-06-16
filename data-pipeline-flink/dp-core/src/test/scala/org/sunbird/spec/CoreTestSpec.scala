@@ -30,23 +30,6 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     status.isConnected should be(true)
   }
 
-  it should "be able to reset the redis connection" in {
-    val redisConnection = new RedisConnect(bsConfig)
-    val status = redisConnection.getConnection(2)
-    status.isConnected should be(true)
-    val resetStatus = redisConnection.resetConnection(2)
-    resetStatus.isConnected should be(true)
-  }
-
-  it should "be able to close the redis connection" in intercept[JedisConnectionException] {
-    val redisConnection = new RedisConnect(bsConfig)
-    val status = redisConnection.getConnection(2)
-    status.isConnected should be(true)
-    redisConnection.closePool()
-    val reConnectionStatus = redisConnection.getConnection(2)
-    reConnectionStatus.isConnected should be(false)
-  }
-
   "DedupEngine functionality" should "be able to identify if the key is unique or duplicate & it should able throw jedis excption for invalid action" in  intercept[JedisException] {
     val redisConnection = new RedisConnect(bsConfig)
     val dedupEngine = new DedupEngine(redisConnection, 2, 200)
@@ -94,7 +77,7 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     val event = new util.HashMap[String, AnyRef]()
     event.put("country_code", "IN")
     event.put("country", "INDIA")
-    deDup.updateFlag[util.Map[String, AnyRef]](event, "test-failed", true)
+    deDup.updateFlag[util.Map[String, AnyRef], util.Map[String, AnyRef]](event, "test-failed", true)
     val redisConnection = new RedisConnect(bsConfig)
     val dedupEngine = new DedupEngine(redisConnection, 2, 200)
     dedupEngine.storeChecksum("key-1")
@@ -146,7 +129,7 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     val redisData = dataCache.hgetAllWithRetry("device_1")
     redisData.size should be(2)
     redisData should not be (null)
-    redisConnection.closePool()
+    redisConnection.getConnection(2).close()
     dataCache.hmSet("device_1", deviceData)
     dataCache.getWithRetry(null)
   }
@@ -178,8 +161,7 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     val config = ConfigFactory.empty()
     config.entrySet()
 
-    val customConf =
-      ConfigFactory.parseString(EventFixture.customConfig)
+    val customConf = ConfigFactory.parseString(EventFixture.customConfig)
 
     val flinkConfig: BaseJobConfig = new BaseJobConfig(customConf, "base-job")
     val context: StreamExecutionEnvironment = FlinkUtil.getExecutionContext(flinkConfig)

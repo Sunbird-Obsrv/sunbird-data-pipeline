@@ -5,8 +5,8 @@ zookeeper_group: "{{ groups['druid-zookeeper'] }}"
 
 druid_user: druid
 druid_directory: "/data"
-druid_version: "0.16.0-incubating"
-druid_url: "http://mirrors.estointernet.in/apache/incubator/druid/0.16.0-incubating/apache-druid-0.16.0-incubating-bin.tar.gz"
+druid_version: "0.18.0"
+druid_url: "https://downloads.apache.org/druid/0.18.0/apache-druid-0.18.0-bin.tar.gz"
 druid_folder: "{{ druid_directory }}/apache-druid-{{ druid_version }}"
 druid_symlink: "{{ druid_directory }}/druid"
 druid_path: "{{ druid_symlink }}/"
@@ -49,7 +49,6 @@ druid_extensions_list : '"druid-azure-extensions", "graphite-emitter", "postgres
 
 druid_community_extensions:
   - graphite-emitter
-  - druid-azure-extensions
 
 # End of druid_extensions
 

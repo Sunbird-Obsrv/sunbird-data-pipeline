@@ -34,6 +34,14 @@
             "comments": {
               "id": "http://api.ekstep.org/telemetry/edata/comments",
               "type": "string"
+            },
+            "commentid": {
+              "id": "http://api.ekstep.org/telemetry/edata/commentid",
+              "type": "string"
+            },
+            "commenttxt": {
+              "id": "http://api.ekstep.org/telemetry/edata/commenttxt",
+              "type": "string"
             }
           }
         }

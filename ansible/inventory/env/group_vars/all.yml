@@ -187,3 +187,6 @@ druid_ingestion_specs:
 #Druid Proxy APi service
 sunbird_druid_broker_host: "http://{{ groups['broker'][0] }}"
 sunbird_learner_service_url: "{{swarm_manager_lb_ip}}:9000"
+
+location_search_url: "{{ domain_name }}/api/data/"
+location_search_token: "Bearer {{ dp_search_service_authorization_token }}"
