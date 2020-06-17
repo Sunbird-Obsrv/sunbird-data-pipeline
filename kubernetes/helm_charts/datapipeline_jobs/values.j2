@@ -1,0 +1,37 @@
+namespace: {{ namespace }}
+imagepullsecrets: {{ imagepullsecrets }}
+dockerhub: {{ dockerhub }}
+repository: {{cert_repository|default('cert_service')}}
+image_tag: {{ image_tag }}
+azure_account: {{ azure_account }}
+azure_secret: {{ azure_secret }}
+
+replicaCount: {{taskmana_replicacount|default(1)}}
+
+jobmanager:
+  rpcPort: {{ jobmanager_rpc_port }}
+  blobPort: {{ jobmanager_blob_port }}
+  queryPort: {{ jobmanager_query_port }}
+  uiPort: {{ jobmanager_ui_port }}
+  promPort: {{ jobmanager_prom_port }}
+  heap_memory: {{ jobmanager_heap_memory }}
+  mountPath: {{ jobmanager_mount_path }}
+
+{% if jobmanager_service is defined %}
+service: {{ jobmanager_service|to_json}}
+
+restPort: {{ jobmanager_ui_res_tport }}
+resttcpPort: {{ jobmanager_ui_tcp_port }}
+
+taskmanager:
+  promPort: {{ jobmanager_prom_port }}
+  rpcPort: {{ taskmanager_rpc_port }}
+  heap_memory: {{ taskmanager_heap_memory }}
+
+job_classname: {{ job_classname }}
+{{ taskmanager_liveness | to_nice_yaml }}
+
+
+
+
+

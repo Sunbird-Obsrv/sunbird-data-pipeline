@@ -1,0 +1,5 @@
+# helm variables for the alertrules
+prometheus_rule_selector_app: prometheus-operator
+prometheus_rule_selector_release: prometheus-operator
+fullnameOverride: sunbird-monitoring
+namespace: monitoring

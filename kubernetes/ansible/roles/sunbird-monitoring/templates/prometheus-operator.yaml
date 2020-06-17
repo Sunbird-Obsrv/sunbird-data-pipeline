@@ -1,0 +1,135 @@
+#jinja2:lstrip_blocks: True
+{#
+# This name is used to define the 
+# additionalScrapeConfigs name
+# {{ fullnameOverride }}-prometheus-scrape-confg
+# If you change this, make sure to update the value in 
+# additionalScrapeConfigs/defautls/main.yaml
+#}
+fullnameOverride: sunbird-monitoring
+
+# Enabling external prometheus scrape config 
+prometheus:
+  prometheusSpec:
+    additionalScrapeConfigs:
+      - job_name: 'telemetry-extractor-jobmanager-metrics'
+        scrape_interval: 30s
+        static_configs:
+          - targets: ['telemetry-extractor-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
+      - job_name: 'telemetry-extractor-taskmanager-metrics'
+        scrape_interval: 30s
+        static_configs:
+          - targets: ['telemetry-extractor-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
+      - job_name: 'pipeline-preprocessor-jobmanager-metrics'
+        scrape_interval: 30s
+        static_configs:
+          - targets: ['pipeline-preprocessor-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
+      - job_name: 'pipeline-preprocessor-taskmanager-metrics'
+        scrape_interval: 30s
+        static_configs:
+          - targets: ['pipeline-preprocessor-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
+      - job_name: 'de-normalization-jobmanager-metrics'
+        scrape_interval: 30s
+        static_configs:
+          - targets: ['de-normalization-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
+      - job_name: 'de-normalization-taskmanager-metrics'
+        scrape_interval: 30s
+        static_configs:
+          - targets: ['de-normalization-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
+      - job_name: 'druid-validator-jobmanager-metrics'
+        scrape_interval: 30s
+        static_configs:
+          - targets: ['druid-validator-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
+      - job_name: 'druid-validator-taskmanager-metrics'
+        scrape_interval: 30s
+        static_configs:
+          - targets: ['druid-validator-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
+      - job_name: 'device-profile-updater-jobmanager-metrics'
+        scrape_interval: 30s
+        static_configs:
+          - targets: ['device-profile-updater-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
+      - job_name: 'device-profile-updater-taskmanager-metrics'
+        scrape_interval: 30s
+        static_configs:
+          - targets: ['device-profile-updater-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
+      - job_name: 'content-cache-updater-jobmanager-metrics'
+        scrape_interval: 30s
+        static_configs:
+          - targets: ['content-cache-updater-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
+      - job_name: 'content-cache-updater-taskmanager-metrics'
+        scrape_interval: 30s
+        static_configs:
+          - targets: ['content-cache-updater-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
+      - job_name: 'user-cache-updater-jobmanager-metrics'
+        scrape_interval: 30s
+        static_configs:
+          - targets: ['user-cache-updater-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
+      - job_name: 'user-cache-updater-taskmanager-metrics'
+        scrape_interval: 30s
+        static_configs:
+          - targets: ['user-cache-updater-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
+      - job_name: 'assessment-aggregator-jobmanager-metrics'
+        scrape_interval: 30s
+        static_configs:
+          - targets: ['assessment-aggregator-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
+      - job_name: 'assessment-aggregator-taskmanager-metrics'
+        scrape_interval: 30s
+        static_configs:
+          - targets: ['assessment-aggregator-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
+    additionalScrapeConfigsExternal: true
+    retention: "{{ prometheus_retention_time | d('90d') }}"
+    externalLabels:
+      cluster: "{{ kubernetes_cluster_name | default('kubernetes-1')}}"
+{% if prometheus_storage_spec is defined and prometheus_storage_spec %}
+    storageSpec: {{ prometheus_storage_spec|to_json }}
+{% endif %}
+{% if prometheus_service is defined and prometheus_service %}
+  service: {{ (prometheus_service | to_json) }}
+{% endif %}
+
+
+alertmanager:
+  config:
+    global:
+      smtp_from: "{{ monitor_alerts_mail_from_email }}"
+      smtp_smarthost: "{{ monitor_alerts_mail_server_host }}:{{ monitor_alerts_mail_server_port}}"
+      smtp_auth_username: "{{ monitor_alerts_mail_server_username }}"
+      smtp_auth_password: "{{ monitor_alerts_mail_server_password }}"
+    route:
+      receiver: '{{env}}_devops_team'
+      group_by: ['alertname']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 4h
+      routes:
+      - match:
+          owner:
+        receiver: {{env}}_devops_team
+    receivers:
+      - name: {{env}}_devops_team
+        email_configs:
+          - send_resolved: true
+            to: '{{ default_mailing_list }}'
+            html: '{% raw %}{{ template "email.default.html" . }}{% endraw %}'
+            headers:
+              subject: '[{{ kubernetes_cluster_name }}] {% raw %}{{ .GroupLabels.alertname }}{% endraw %}'
+
+grafana:
+  env:
+    #    GF_SERVER_ROOT_URL: http://grafana.local.com/grafana
+  adminPassword: {{ (grafana_admin_password| default('prom-operator'))}}
+{% if grafana_data_sources is defined and grafana_data_sources %}
+  additionalDataSources: {{ (grafana_data_sources) | to_json}}
+{% endif %}
+{% if grafana_persistence is defined and grafana_persistence %}
+  persistence: {{ grafana_persistence|to_json}}
+{% endif %}
+{% if grafana_service is defined and grafana_service %}
+  service: {{ grafana_service|to_json}}
+{% endif %}
+ 
+## Overriding the kubernetes-apps alert rules by disabling default alert rule creation.
+defaultRules:
+  create: true
+  rules:
+    kubernetesApps: false
