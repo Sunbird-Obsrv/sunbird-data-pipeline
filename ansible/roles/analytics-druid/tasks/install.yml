@@ -48,7 +48,7 @@
 
 - name: To check if the druid directory exists
   stat:
-    path: "{{ druid_path }}"
+    path: "{{ druid_folder }}"
   register: check_druid_exist
 
 - name: Download Druid version {{ druid_version }}

@@ -109,7 +109,7 @@ public class TelemetryValidatorTaskTest {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.EMPTY_JSON);
 
         telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
     }
 
     @Test
@@ -283,6 +283,31 @@ public class TelemetryValidatorTaskTest {
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
                 Map<String, Object> object = new Gson().fromJson(new Gson().toJson(outputEvent.get("object")), mapType);
                 assertTrue(object.get("id").toString().equals("977D3I"));
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSendEventToFailedTopicIfEidMissing() throws Exception {
+
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.EVENT_WITHOUT_EID);
+
+        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        Type mapType = new TypeToken<Map<String, Object>>() {
+        }.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                Map<String, Object> flags = new Gson().fromJson(new Gson().toJson(outputEvent.get("flags")), mapType);
+                Map<String, Object> metadata = new Gson().fromJson(new Gson().toJson(outputEvent.get("metadata")), mapType);
+                assertEquals(false, flags.get("tv_processed"));
+                assertEquals("validation failed. eid id missing", metadata.get("tv_error"));
+                assertEquals("TelemetryValidator", metadata.get("src"));
                 return true;
             }
         }));

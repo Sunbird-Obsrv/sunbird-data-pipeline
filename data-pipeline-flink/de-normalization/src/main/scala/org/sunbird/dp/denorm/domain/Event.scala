@@ -2,7 +2,7 @@ package org.sunbird.dp.denorm.domain
 
 import java.util
 
-import org.joda.time.DateTime
+import org.joda.time.{DateTime, DateTimeZone}
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import org.sunbird.dp.core.domain.{Events, EventsPath}
 
@@ -45,25 +45,25 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
 
   def getUserProfileLocation(): Option[(String, String, String)] = {
 
-    val userData: util.Map[String, AnyRef] = telemetry.read(EventsPath.USERDATA_PATH).getOrElse(null)
+    val userData: util.Map[String, AnyRef] = telemetry.read(EventsPath.USERDATA_PATH).orNull
     Option(userData).map(user => {
-      Some(user.get("state").asInstanceOf[String], user.get("district").asInstanceOf[String], "user-profile")
-    }).getOrElse(None)
+      (user.get("state").asInstanceOf[String], user.get("district").asInstanceOf[String], "user-profile")
+    })
   }
 
   def getUserDeclaredLocation(): Option[(String, String, String)] = {
-    val deviceData: util.Map[String, AnyRef] = telemetry.read(EventsPath.DEVICE_DATA_PATH).getOrElse(null)
+    val deviceData: util.Map[String, AnyRef] = telemetry.read(EventsPath.DEVICE_DATA_PATH).orNull
     Option(deviceData).map(device => {
       val userDeclaredData = device.get("userdeclared").asInstanceOf[util.Map[String, String]]
-      Some(userDeclaredData.get("state"), userDeclaredData.get("district"), "user-declared")
-    }).getOrElse(None)
+      (userDeclaredData.get("state"), userDeclaredData.get("district"), "user-declared")
+    })
   }
 
   def getIpLocation(): Option[(String, String, String)] = {
-    val deviceData: util.Map[String, AnyRef] = telemetry.read(EventsPath.DEVICE_DATA_PATH).getOrElse(null)
+    val deviceData: util.Map[String, AnyRef] = telemetry.read(EventsPath.DEVICE_DATA_PATH).orNull
     Option(deviceData).map(device => {
-      Some(device.get("state").asInstanceOf[String], device.get("districtcustom").asInstanceOf[String], "ip-resolved")
-    }).getOrElse(None)
+      (device.get("state").asInstanceOf[String], device.get("districtcustom").asInstanceOf[String], "ip-resolved")
+    })
 
   }
 
@@ -85,22 +85,22 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
 
   def isOlder(periodInMonths: Int): Boolean = {
     val eventEts = ets()
-    val periodInMillis = new DateTime().minusMonths(periodInMonths).getMillis()
+    val periodInMillis = new DateTime(DateTimeZone.UTC).minusMonths(periodInMonths).getMillis
     eventEts < periodInMillis
   }
 
   def objectRollUpl1ID(): String = {
-    telemetry.read[String](keyPath = EventsPath.OBJECT_ROLLUP_L1).getOrElse(null)
+    telemetry.read[String](keyPath = EventsPath.OBJECT_ROLLUP_L1).orNull
   }
 
   def objectRollUpl1FieldsPresent(): Boolean = {
 
-    val objectrollUpl1 = telemetry.read[String](keyPath = EventsPath.OBJECT_ROLLUP_L1).getOrElse(null)
-    null != objectrollUpl1 && !objectrollUpl1.isEmpty()
+    val objectrollUpl1 = telemetry.read[String](keyPath = EventsPath.OBJECT_ROLLUP_L1).orNull
+    null != objectrollUpl1 && !objectrollUpl1.isEmpty
   }
 
   def checkObjectIdNotEqualsRollUpl1Id(): Boolean = {
-    objectRollUpl1FieldsPresent() && !(objectID().equals(objectRollUpl1ID()))
+    objectRollUpl1FieldsPresent() && !objectID().equals(objectRollUpl1ID())
   }
 
   def addUserData(newData: Map[String, AnyRef]) {
@@ -168,7 +168,7 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
 
   def getTimestamp(ts: String, df: DateTimeFormatter): Long = {
     try {
-      df.parseDateTime(ts).getMillis()
+      df.parseDateTime(ts).getMillis
     } catch {
       case ex: Exception =>
         0L
@@ -193,7 +193,7 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
   def addISOStateCodeToDeviceProfile(deviceProfile: DeviceProfile): String = {
     // add new statecode field
     val statecode = deviceProfile.stateCode
-    if (statecode != null && !statecode.isEmpty()) {
+    if (statecode != null && !statecode.isEmpty) {
       "IN-" + statecode
     } else ""
   }

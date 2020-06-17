@@ -1,0 +1,161 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${JOB_NAME}-jobmanager
+  labels:
+    app: flink
+    component: ${JOB_NAME}-jobmanager
+spec:
+  type: ClusterIP
+  ports:
+  - name: rpc
+    port: 6123
+  - name: blob
+    port: 6124
+  - name: query
+    port: 6125
+  - name: ui
+    port: 8081
+  - name: prom
+    port: 9250
+  selector:
+    app: flink
+    component: ${JOB_NAME}-jobmanager
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${JOB_NAME}-jobmanager-webui
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+spec:
+  type: LoadBalancer
+  ports:
+  - name: rest
+    port: 80
+    protocol: TCP
+    targetPort: 8081
+  selector:
+    app: flink
+    component: ${JOB_NAME}-jobmanager
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${JOB_NAME}-taskmanager-prometheus
+  labels:
+    app: flink
+    component: ${JOB_NAME}-taskmanager
+spec:
+  type: ClusterIP
+  ports:
+  - name: prom
+    port: 9251
+  selector:
+    app: flink
+    component: ${JOB_NAME}-taskmanager
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ${JOB_NAME}-jobmanager
+spec:
+  template:
+    metadata:
+      labels:
+        app: flink
+        component: ${JOB_NAME}-jobmanager
+      annotations:
+        prometheus.io/scrape: 'true'
+    spec:
+      volumes:
+      - name: flink-config-volume
+        configMap:
+          name: flink-config
+          items:
+          - key: base-config
+            path: base-config.conf
+          - key: ${JOB_NAME}
+            path: ${JOB_NAME}.conf
+      restartPolicy: OnFailure
+      imagePullSecrets:
+      - name: ${REGISTRY_SECRET}
+      containers:
+      - name: ${JOB_NAME}-jobmanager
+        image: ${SUNBIRD_DATAPIPELINE_IMAGE}
+        imagePullPolicy: Always
+        workingDir: /opt/flink
+        command: ["/opt/flink/bin/standalone-job.sh"]
+        args: ["start-foreground",
+               "--job-classname=${JOB_CLASSNAME}", 
+               "-Dfs.azure.account.key.${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net=${AZURE_STORAGE_SECRET}",
+               "-Dweb.submit.enable=false",
+               "-Dmetrics.reporter.prom.class=org.apache.flink.metrics.prometheus.PrometheusReporter",
+               "-Dmetrics.reporter.prom.port=9250",
+               "-Djobmanager.rpc.address=${JOB_NAME}-jobmanager",
+               "-Djobmanager.rpc.port=6123",
+               "-Dparallelism.default=1", 
+               "-Dblob.server.port=6124", 
+               "-Dqueryable-state.server.ports=6125",
+               "-Djobmanager.heap.size=${JOB_MANAGER_MEMORY}m",
+               "--config.file.path",
+               "/data/flink/conf/${JOB_NAME}.conf"]
+        ports:
+        - containerPort: 6123
+          name: rpc
+        - containerPort: 6124
+          name: blob
+        - containerPort: 6125
+          name: query
+        - containerPort: 8081
+          name: ui
+        volumeMounts:
+        - name: flink-config-volume
+          mountPath: /data/flink/conf
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${JOB_NAME}-taskmanager
+spec:
+  replicas: ${REPLICA}
+  selector:
+    matchLabels:
+      app: flink
+      component: ${JOB_NAME}-taskmanager
+  template:
+    metadata:
+      labels:
+        app: flink
+        component: ${JOB_NAME}-taskmanager
+    spec:
+      imagePullSecrets:
+      - name: ${REGISTRY_SECRET}
+      containers:
+      - name: ${JOB_NAME}-taskmanager
+        image: ${SUNBIRD_DATAPIPELINE_IMAGE}
+        imagePullPolicy: Always
+        workingDir: /opt/flink
+        command: ["/opt/flink/bin/taskmanager.sh"]
+        args: ["start-foreground",
+          "-Dfs.azure.account.key.${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net=${AZURE_STORAGE_SECRET}",
+          "-Dweb.submit.enable=false",
+          "-Dmetrics.reporter.prom.class=org.apache.flink.metrics.prometheus.PrometheusReporter",
+          "-Dmetrics.reporter.prom.host=${JOB_NAME}-taskmanager",
+          "-Dmetrics.reporter.prom.port=9251-9260",
+          "-Djobmanager.rpc.address=${JOB_NAME}-jobmanager",
+          "-Dtaskmanager.rpc.port=6122",
+          "-Dtaskmanager.heap.size=${TASK_MANAGER_MEMORY}m"]
+        ports:
+        - containerPort: 6122
+          name: rpc
+        livenessProbe:
+          tcpSocket:
+            port: 6122
+          initialDelaySeconds: 30
+          periodSeconds: 60

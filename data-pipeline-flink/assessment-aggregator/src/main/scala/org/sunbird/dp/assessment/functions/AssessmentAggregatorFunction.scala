@@ -14,7 +14,7 @@ import com.google.gson.reflect.TypeToken
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
-import org.joda.time.DateTime
+import org.joda.time.{DateTime, DateTimeZone}
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.assessment.domain.Event
 import org.sunbird.dp.assessment.task.AssessmentAggregatorConfig
@@ -138,7 +138,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
         val query = QueryBuilder.insertInto(config.dbKeyspace, config.dbTable)
           .value("course_id", batchEvent.courseId).value("batch_id", batchEvent.batchId).value("user_id", batchEvent.userId)
           .value("content_id", batchEvent.contentId).value("attempt_id", batchEvent.attemptId)
-          .value("updated_on", new DateTime().getMillis).value("created_on", createdOn)
+          .value("updated_on", new DateTime(DateTimeZone.UTC).getMillis).value("created_on", createdOn)
           .value("last_attempted_on", batchEvent.assessmentEts).value("total_score", aggregate.totalScore)
           .value("total_max_score", aggregate.totalMaxScore)
           .value("question", aggregate.questionsList.asJava).value("grand_total", aggregate.grandTotal).toString

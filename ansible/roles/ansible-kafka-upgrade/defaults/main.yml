@@ -19,6 +19,9 @@ zookeeper_port: 2181
 kafka_socket_send_buffer_bytes: 1048576
 kafka_socket_receive_buffer_bytes: 1048576
 kafka_socket_request_max_bytes: 104857600
+offsets_topic_replication_factor: 1
+transaction_state_log_replication_factor: 1
+transaction_state_log_min_isr: 1
 kafka_log_flush_interval_messages: 10000
 kafka_log_flush_interval_ms: 1000
 kafka_log_retention_bytes: 104857600  #100 M
@@ -29,6 +32,7 @@ kafka_heap_opts: "-Xmx1G -Xms1G"
 kafka_tarball_location: /root
 kafka_tarball_name: "kafka_{{kafka_scala_version}}-{{kafka_version}}.tgz"
 zookeeper_connection_timeout_ms: 1000000
+group_initial_rebalance_delay_ms: 10000
 
 num_replica_fetchers: 1
 

@@ -18,14 +18,9 @@ class DedupEngine(redisConnect: RedisConnect, store: Int, expirySeconds: Int) ex
     } catch {
       case ex: JedisException =>
         ex.printStackTrace()
-        val redisConn = redisConnect.getConnection(this.store)
-        try {
-          this.redisConnection = redisConn
-          this.redisConnection.select(store)
-          unique = !redisConnection.exists(checksum)
-        } finally {
-          if (redisConn != null) redisConn.close()
-        }
+        this.redisConnection.close()
+        this.redisConnection = redisConnect.getConnection(this.store, backoffTimeInMillis = 10000)
+        unique = !this.redisConnection.exists(checksum)
     }
     unique
   }
@@ -37,20 +32,16 @@ class DedupEngine(redisConnect: RedisConnect, store: Int, expirySeconds: Int) ex
     catch {
       case ex: JedisException =>
         ex.printStackTrace()
-        val redisConn = redisConnect.getConnection(this.store)
-        try {
-          this.redisConnection = redisConn
-          this.redisConnection.select(store)
-          redisConnection.setex(checksum, expirySeconds, "")
-        } finally {
-          if (redisConn != null) redisConn.close()
-        }
+        this.redisConnection.close()
+        this.redisConnection = redisConnect.getConnection(this.store, backoffTimeInMillis = 10000)
+        this.redisConnection.select(this.store)
+        this.redisConnection.setex(checksum, expirySeconds, "")
     }
   }
 
   def getRedisConnection: Jedis = redisConnection
 
   def closeConnectionPool(): Unit = {
-    redisConnect.closePool()
+    redisConnection.close()
   }
 }
