@@ -45,7 +45,7 @@ cloud_storage:
   object_key: "druid-content-snapshot/snapshot.txt"
   provider: "azure"
   account_name: "{{ azure_storage_account }}"
-  account_key: "{{ azure_storage_account }}"
+  account_key: "{{ azure_storage_secret }}"
 
 cassandra:
   host: "{{groups['lp-cassandra'][0]}}" ## LMS-Cassandra IP Address.
