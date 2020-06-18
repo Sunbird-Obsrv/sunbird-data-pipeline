@@ -779,7 +779,7 @@
         "type" : "static-azure-blobstore",
         "blobs": [
           {
-            "container": "dev-data-store",
+            "container": "telemetry-data-store",
             "path": "/druid-content-snapshot/snapshot.txt"
           }
         ],
