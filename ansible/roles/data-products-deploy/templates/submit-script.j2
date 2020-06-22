@@ -58,15 +58,15 @@ if [ "$mode" = "via-partition" ]; then
                 finalConfig=${job_config/'"delta":0'/$partitionString}
                 echo $finalConfig
                 echo "Running $job by partitions."
-                classVariable='--class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-2.0.jar --model "$job" --config "$finalConfig"'
+                classVariable="--class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-2.0.jar"
             else 
                 job_config=$(config $job '__endDate__')
                 finalConfig=${job_config/'"delta":0'/$partitionString}
                 echo $finalConfig
                 echo "Running $job by partitions via Replay-Supervisor."
-                classVariable='--class org.ekstep.analytics.job.ReplaySupervisor $MODELS_HOME/batch-models-2.0.jar --model "$job" --fromDate "$start_date" --toDate "$end_date" --config "$finalConfig"'
+                classVariable="--class org.ekstep.analytics.job.ReplaySupervisor $MODELS_HOME/batch-models-2.0.jar"
             fi
-            $SPARK_HOME/bin/spark-submit --master $sparkMaster --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.3.2.jar,$MODELS_HOME/batch-models-2.0.jar $classVariable >> "$DP_LOGS/$today-job-execution.log"
+            $SPARK_HOME/bin/spark-submit --master $sparkMaster --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.3.2.jar,$MODELS_HOME/batch-models-2.0.jar $classVariable  --model "$job" --fromDate "$start_date" --toDate "$end_date" --config "$finalConfig" >> "$DP_LOGS/$today-job-execution.log"
         done
 elif [ "$mode" = "job-manager" ]; then
     # push job-config to kafka      
@@ -77,11 +77,11 @@ else
     if [ -z "$start_date" ]; then
         echo "Running $job without partition via run-job."
         job_config=$(config $job)
-        classVariable='--class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-2.0.jar --model "$job" --config "$job_config"'
+        classVariable="--class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-2.0.jar"
     else   
         job_config=$(config $job '__endDate__')
         echo "Running $job without partition via Replay-Supervisor." 
-        classVariable='--class org.ekstep.analytics.job.ReplaySupervisor $MODELS_HOME/batch-models-2.0.jar --model "$job" --fromDate "$start_date" --toDate "$end_date" --config "$job_config"'
+        classVariable="--class org.ekstep.analytics.job.ReplaySupervisor $MODELS_HOME/batch-models-2.0.jar"
     fi  
-    $SPARK_HOME/bin/spark-submit --master $sparkMaster --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.3.2.jar,$MODELS_HOME/batch-models-2.0.jar $classVariable >> "$DP_LOGS/$today-job-execution.log"  
+    $SPARK_HOME/bin/spark-submit --master $sparkMaster --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.3.2.jar,$MODELS_HOME/batch-models-2.0.jar $classVariable --model "$job" --fromDate "$start_date" --toDate "$end_date" --config "$job_config" >> "$DP_LOGS/$today-job-execution.log"  
 fi
