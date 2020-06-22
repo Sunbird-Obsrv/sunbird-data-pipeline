@@ -16,6 +16,7 @@ jobmanager:
   promPort: {{ jobmanager_prom_port }}
   heap_memory: {{ jobmanager_heap_memory }}
   mountPath: {{ jobmanager_mount_path }}
+  flink_work_dir: {{ flink_work_dir }}
 
 {% if jobmanager_service is defined %}
 service: {{ jobmanager_service|to_json}}
@@ -27,11 +28,270 @@ taskmanager:
   promPort: {{ jobmanager_prom_port }}
   rpcPort: {{ taskmanager_rpc_port }}
   heap_memory: {{ taskmanager_heap_memory }}
+  replicas: {{taskmanager_replicacount|default(1)}}
 
 job_classname: {{ job_classname }}
 {{ taskmanager_liveness | to_nice_yaml }}
 
 
+base-config: |
+  kafka {
+      broker-servers = "{{ kafka_brokers }}"
+      zookeeper = "{{ zookeepers }}"
+      producer {
+        max-request-size = {{ producer_max_request_size }}
+      }
+    }
+    job {
+      env = "{{ env }}"
+      enable.distributed.checkpointing = true
+      statebackend {
+        blob {
+          storage {
+            account = "{{ sunbird_private_storage_account_name }}.blob.core.windows.net"
+            container = "{{ flink_container_name }}"
+            checkpointing.dir = "checkpoint"
+          }
+        }
+        base.url = "wasbs://"${job.statebackend.blob.storage.container}"@"${job.statebackend.blob.storage.account}"/"${job.statebackend.blob.storage.checkpointing.dir}
+      }
+    }
+    task {
+      parallelism = 1
+      consumer {
+        parallelism = 1
+      }
+      checkpointing.interval = {{ checkpoint_interval }}
+      restart-strategy.attempts = {{ restart_attempts }}
+      restart-strategy.delay = {{ restart_delay }} # in milli-seconds
+    }
+    redis {
+      host = {{ redis_host }}
+      port = 6379
+    }
+    postgres {
+      host = {{ postgres.db_url }}
+      port = {{ postgres.db_port }}
+      maxConnections = {{ postgres_max_connections }}
+      user = "{{ postgres.db_username }}"
+      password = "{{ postgres.db_password }}"
+    }
+    lms-cassandra {
+      host = "{{ core_cassandra_host }}"
+      port = "9042"
+    }
 
+telemetry-extractor: | 
+  include file("/data/flink/conf/base-config.conf")
+  kafka {
+    input.topic = {{ env }}.telemetry.ingest
+    output.success.topic = {{ env }}.telemetry.raw
+    output.duplicate.topic = {{ env }}.telemetry.extractor.duplicate
+    output.failed.topic = {{ env }}.telemetry.failed
+    output.batch.failed.topic = {{ env }}.telemetry.extractor.failed
+    output.assess.raw.topic = {{ env }}.telemetry.assess.raw
+    event.max.size = "{{ extractor_event_max_size }}" # Max is only 1MB
+    groupId = {{ env }}-telemetry-extractor-group
+    producer {
+      max-request-size = {{ extractor_max_request_size }}
+    }
+  }
+  task {
+    consumer.parallelism = {{ extractor_consumer_parallelism }}
+    dedup.parallelism = {{ dedup_parallelism }}
+    extraction.parallelism = {{ extraction_parallelism }}
+    redactor.parallelism = {{ redactor_parallelism }}
+  }
+  redis {
+    database {
+      duplicationstore.id = 1
+      key.expiry.seconds = {{ telemetry_extractor_key_expiry_seconds }} 
+      contentstore.id = 5
+    }
+  }
+  redact.events.list = ["ASSESS","RESPONSE"]
 
+pipeline-preprocessor: |
+  include file("/data/flink/conf/base-config.conf")
+  kafka {
+    input.topic = {{ env }}.telemetry.raw
+    output.failed.topic = {{ env }}.telemetry.failed
+    output.primary.route.topic = {{ env }}.telemetry.unique
+    output.log.route.topic = {{ env }}.druid.events.log
+    output.error.route.topic = {{ env }}.druid.events.error
+    output.audit.route.topic = {{ env }}.telemetry.audit
+    output.duplicate.topic = {{ env }}.telemetry.duplicate
+    groupId = {{ env }}-pipeline-preprocessor-group
+  }
+  task {
+    consumer.parallelism = {{ pipeline_preprocessor_consumer_parallelism }}
+    telemetry.validation.parallelism = {{ telemetry_validation_parallelism }}
+    telemetry.router.parallelism = {{ telemetry_router_parallelism }}
+    share.events.flattener.parallelism = {{ share_events_flattener_parallelism }}
+  }
+  telemetry.schema.path="schemas/telemetry/3.0"
+  default.channel="b00bc992ef25f1a9a8d63291e20efc8d"
+  dedup.producer.included.ids = ["dev.sunbird.portal", "dev.sunbird.desktop"]
+  redis {
+    database {
+      duplicationstore.id = 7
+      key.expiry.seconds = {{ pipeline_preprocessor_key_expiry_seconds }}
+    }
+  }
 
+de-normalization: |
+  include file("/data/flink/conf/base-config.conf")
+  kafka {
+    input.topic = {{ env }}.telemetry.unique
+    output.success.topic = {{ env }}.telemetry.denorm
+    output.failed.topic = {{ env }}.telemetry.failed
+    groupId = {{ env }}-telemetry-denorm-group
+  }
+  task {
+    consumer.parallelism = {{ denorm_consumer_parallelism }}
+    device.denorm.parallelism = {{ device_denorm_parallelism }}
+    user.denorm.parallelism = {{ user_denorm_parallelism }}
+    content.denorm.parallelism = {{ content_denorm_parallelism }}
+    loc.denorm.parallelism = {{ loc_denorm_parallelism }}
+    dialcode.denorm.parallelism = {{ dialcode_denorm_parallelism }}
+  }
+  # redis-metadata
+  redis {
+    host = {{ metadata_redis_host }}
+    port = 6379
+    database {
+      devicestore.id = 2
+      userstore.id = 4
+      contentstore.id = 5
+      dialcodestore.id = 6
+      key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
+    }
+  }
+
+druid-validator: |
+  include file("/data/flink/conf/base-config.conf")
+  kafka {
+    input.topic = {{ env }}.telemetry.denorm
+    output.telemetry.route.topic = {{ env }}.druid.events.telemetry
+    output.summary.route.topic = {{ env }}.druid.events.summary
+    output.failed.topic = {{ env }}.telemetry.failed
+    output.duplicate.topic = {{ env }}.telemetry.duplicate
+    groupId = {{ env }}-druid-validator-group
+  }
+  task {
+    consumer.parallelism = {{ druid_validator_consumer_parallelism }}
+    validator.parallelism = {{ validator_parallelism }} 
+    router.parallelism = {{ router_parallelism }}
+  }
+  schema {
+    path {
+      telemetry = "schemas/telemetry"
+      summary = "schemas/summary"
+    }
+    file {
+      default = envelope.json
+      summary = me_workflow_summary.json
+      search = search.json
+    }
+  }
+  redis {
+    database {
+      duplicationstore.id = 8
+      key.expiry.seconds = {{ druid_validator_key_expiry_seconds }}
+    }
+  }
+
+device-profile-updater: |
+  include file("/data/flink/conf/base-config.conf")
+  kafka {
+    input.topic = {{ env }}.events.deviceprofile
+    groupId = {{ env }}-device-profile-updater-group
+  }
+  task {
+    deviceprofile {
+      parallelism = {{ deviceprofile_parallelism }}
+    }
+  }
+  # redis-metadata
+  redis {E8V3
+    host = {{ metadata_redis_host }}
+    port = 6379
+    database {
+      devicestore.id = 2
+      key.expiry.seconds = {{ device_profile_updater_key_expiry_seconds }}
+    }
+  }
+  postgres {
+    database = "{{ postgres.db_name }}",
+    table = "device_profile"
+  }
+
+content-cache-updater: |
+  include file("/data/flink/conf/base-config.conf")
+  kafka {
+    input.topic = {{ env }}.learning.graph.events
+    groupId = {{ env }}-content-cache-updater-group
+  }
+  # redis-metadata
+  redis {
+    host = {{ metadata_redis_host }}
+    port = 6379
+    database {
+      contentstore.id = 5
+      dialcodestore.id = 6
+    }
+  }
+  dialcode {
+    api {
+      url = "{{ dialcode_api_url }}"
+      token = "{{ dialcode_api_auth_key }} "
+    }
+  }
+
+user-cache-updater: |
+  include file("/data/flink/conf/base-config.conf")
+  kafka {
+    input.topic = {{ env }}.telemetry.audit
+    groupId = {{ env }}-user-cache-updater-group
+  }
+  task {
+    usercache.updater.parallelism = {{ usercache_updater_parallelism }}
+  }
+  # redis-metadata
+  redis {
+    host = {{ metadata_redis_host }}
+    port = 6379
+    database {
+      userstore.id = 4
+      key.expiry.seconds = {{ user_cache_updater_key_expiry_seconds }}
+    }
+  }
+  lms-cassandra {
+    keyspace = "{{ middleware_cassandra_keyspace }}"
+    table {
+      user = "{{ middleware_cassandra_user_table }}"
+      location = "{{ middleware_cassandra_location_table }}"
+    }
+  }
+  user.self.signin.types = ["google","self"]
+  user.validated.types = ["sso"]
+  user.self.signin.key = "Self-Signed-In"
+  user.valid.key = "Validated"
+
+assessment-aggregator: |+
+  include file("/data/flink/conf/base-config.conf")
+  kafka {
+    input.topic = {{ env }}.telemetry.assess
+    failed.topic= {{ env }}.telemetry. assess.failed
+    groupId = {{ env }}-assessment-aggregator-group
+  }
+  task {
+    assessaggregator {
+      parallelism = {{ assessaggregator_parallelism }}
+    }
+  }
+  lms-cassandra {
+    keyspace = "{{ middleware_cassandra_courses_keyspace }}"
+    table = "{{ middleware_cassandra_assessment_aggregator_table }}"
+    questionudttype= "{{ middleware_cassandra_assessment_question_type }}"
+  }

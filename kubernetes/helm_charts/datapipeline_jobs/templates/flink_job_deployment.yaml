@@ -152,7 +152,7 @@ spec:
       - name: {{ .Release.Name }}-taskmanager
         image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
         imagePullPolicy: Always
-        workingDir: {{ .Values.flink.workDir }}
+        workingDir: {{ .Values.flink_work_dir }}
         command: ["/opt/flink/bin/taskmanager.sh"]
         args: ["start-foreground",
           "-Dfs.azure.account.key.{{ .Values.azure_account }}.blob.core.windows.net={{ .Values.azure_secret }}",

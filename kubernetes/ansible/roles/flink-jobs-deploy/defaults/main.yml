@@ -1,0 +1,52 @@
+namespace: flink-{{ env }}
+imagepullsecrets: sunbird-registry-secret
+azure_account: {{ sunbird_private_storage_account_name }}
+azure_secret: {{ sunbird_private_storage_account_key }}
+
+jobmanager_rpc_port: 6123
+jobmanager_blob_port: 6124
+jobmanager_query_port: 6125
+jobmanager_ui_port: 8081
+jobmanager_prom_port: 9250
+jobmanager_heap_memory: 1024
+jobmanager_mount_path: /data/flink/conf
+flink_work_dir: /opt/flink
+
+postgres_max_connections: 2
+flink_container_name: dev-data-store
+checkpoint_interval: 60000
+restart_attempts: 3
+restart_delay: 30000 # in milli-seconds
+extractor_event_max_size: 1048576 # Max is only 1MB
+extractor_max_request_size: 5242880
+
+### parallelism vars
+extractor_consumer_parallelism: 1
+dedup_parallelism: 1
+extraction_parallelism: 1
+redactor_parallelism: 1
+pipeline_preprocessor_consumer_parallelism: 1
+telemetry_validation_parallelism: 1
+telemetry_router_parallelism: 1
+share_events_flattener_parallelism: 1
+denorm_consumer_parallelism: 1
+device_denorm_parallelism: 1
+user_denorm_parallelism: 1
+content_denorm_parallelism: 1
+loc_denorm_parallelism: 1
+dialcode_denorm_parallelism: 1
+druid_validator_consumer_parallelism: 1
+validator_parallelism: 1
+router_parallelism: 1
+deviceprofile_parallelism: 1
+dialcode_api_url: 1                     
+usercache_updater_parallelism: 1
+assessaggregator_parallelism: 1
+
+### redis keys expiration related vars
+pipeline_preprocessor_key_expiry_seconds: 3600
+de_normalization_key_expiry_seconds: 3600
+druid_validator_key_expiry_seconds: 3600          
+device_profile_updater_key_expiry_seconds: 3600
+user_cache_updater_key_expiry_seconds: 3600
+telemetry_extractor_key_expiry_seconds: 3600
