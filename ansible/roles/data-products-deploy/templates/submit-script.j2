@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+
+export SPARK_HOME={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7
+export MODELS_HOME={{ analytics.home }}/models-{{ model_version }}
+export DP_LOGS={{ analytics.home }}/logs/data-products
+export KAFKA_HOME={{ analytics.home }}/kafka_2.11-0.10.1.0
+
+## Job to run daily
+cd /mount/data/analytics/scripts
+source model-config.sh
+today=$(date "+%Y-%m-%d")
+
+## job broker-list and kafka-topic
+zookeeper={{ zookeeper }}
+brokerList={{ brokerlist }}
+job_topic={{ analytics_job_queue_topic }}
+unique_topic={{ env }}.telemetry.unique
+
+while :; do
+    case $1 in
+        -j|--job)   shift 
+                    job="$1"            
+        ;;
+        -m|--mode)  shift 
+                    mode="$1"            
+        ;;
+        -p|--parallelisation)   shift 
+                                parallelisation=$1            
+        ;;
+        -sd|--startDate)   shift 
+                            start_date=$1            
+        ;;
+        -ed|--endDate)     shift 
+                            end_date=$1            
+        ;;
+        -h|--sparkMaster)   shift 
+                            sparkMaster=$1            
+        ;;
+        *) break
+    esac
+    shift
+done
+
+if [ -z "$sparkMaster" ]; then sparkMaster="local[*]"; else sparkMaster="$sparkMaster"; fi
+
+if [ "$mode" = "via-partition" ]; then
+    # get partitions from kafka metadata
+    partitions=`$KAFKA_HOME/bin/kafka-topics.sh --zookeeper $zookeeper --describe --topic $unique_topic   | awk 'NR==1{print $2}' |  awk -F":" '{print $2}'`
+    endPartitions=`expr $partitions - 1`
+    if [ -z "$parallelisation" ]; then parallelisation=1; else parallelisation=$parallelisation; fi
+    # add partitions to config and start jobs
+    for i in $(seq 0 $parallelisation $endPartitions)
+        do 
+            # add partitions to config
+            partitionString="\"delta\":0,\"partitions\":[$(seq -s , $i `expr $i + $parallelisation - 1`)]"
+            if [ -z "$start_date" ]; then
+                job_config=$(config $job)
+                finalConfig=${job_config/'"delta":0'/$partitionString}
+                echo $finalConfig
+                echo "Running $job by partitions."
+                classVariable="--class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-2.0.jar"
+            else 
+                job_config=$(config $job '__endDate__')
+                finalConfig=${job_config/'"delta":0'/$partitionString}
+                echo $finalConfig
+                echo "Running $job by partitions via Replay-Supervisor."
+                classVariable="--class org.ekstep.analytics.job.ReplaySupervisor $MODELS_HOME/batch-models-2.0.jar"
+            fi
+            $SPARK_HOME/bin/spark-submit --master $sparkMaster --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.3.2.jar,$MODELS_HOME/batch-models-2.0.jar $classVariable  --model "$job" --fromDate "$start_date" --toDate "$end_date" --config "$finalConfig" >> "$DP_LOGS/$today-job-execution.log"
+        done
+elif [ "$mode" = "job-manager" ]; then
+    # push job-config to kafka      
+    echo "Submitting $job to job-manager."
+    echo '{ "model" :' \"$job\" ',' ' "config": ' "$job_config" '}' > /tmp/job-request.json
+    cat /tmp/job-request.json | $KAFKA_HOME/bin/kafka-console-producer.sh --broker-list $brokerList --topic $job_topic >> "$DP_LOGS/$today-job-execution.log" 2>&1
+else
+    if [ -z "$start_date" ]; then
+        echo "Running $job without partition via run-job."
+        job_config=$(config $job)
+        classVariable="--class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-2.0.jar"
+    else   
+        job_config=$(config $job '__endDate__')
+        echo "Running $job without partition via Replay-Supervisor." 
+        classVariable="--class org.ekstep.analytics.job.ReplaySupervisor $MODELS_HOME/batch-models-2.0.jar"
+    fi  
+    $SPARK_HOME/bin/spark-submit --master $sparkMaster --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.3.2.jar,$MODELS_HOME/batch-models-2.0.jar $classVariable --model "$job" --fromDate "$start_date" --toDate "$end_date" --config "$job_config" >> "$DP_LOGS/$today-job-execution.log"  
+fi

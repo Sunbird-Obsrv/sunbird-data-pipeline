@@ -185,7 +185,7 @@ druid_ingestion_specs:
       ingestion_file_name: 'pipeline_metrics_index_kafka'
 
 #Druid Proxy APi service
-sunbird_druid_broker_host: "http://{{ groups['broker'][0] }}"
+sunbird_druid_broker_host: "http://{{ groups['raw-broker'][0] }}"
 sunbird_learner_service_url: "{{swarm_manager_lb_ip}}:9000"
 
 location_search_url: "{{ domain_name }}/api/data/"
