@@ -20,8 +20,8 @@ sink_topic: "{{ env }}.telemetry.sink"
 metrics_topic: "{{ env }}.telemetry.metrics"
 job_manager_tmp_dir: "transient-data"
 channel: dev-test
-druid_broker_host: "{{groups['broker'][0]}}"
-druid_rollup_broker_host: "{{groups['broker'][0]}}"
+druid_broker_host: "{{groups['raw-broker'][0]}}"
+druid_rollup_broker_host: "{{groups['raw-broker'][0]}}"
 hierarchySearchServiceUrl: "{{ proto }}://{{ domain_name }}/action/content"
 hierarchySearchServicEndpoint: /v3/hierarchy/
 
