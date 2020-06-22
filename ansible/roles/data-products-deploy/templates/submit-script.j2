@@ -18,16 +18,13 @@ unique_topic={{ env }}.telemetry.unique
 
 while :; do
     case $1 in
-        -c|--job)   shift 
+        -j|--job)   shift 
                     job="$1"            
         ;;
         -m|--mode)  shift 
-                    type="$1"            
+                    mode="$1"            
         ;;
-        -p|--partitions)    shift 
-                            partitions=$1          
-        ;;
-        -s|--parallelisation)   shift 
+        -p|--parallelisation)   shift 
                                 parallelisation=$1            
         ;;
         -sd|--startDate)   shift 
@@ -46,9 +43,9 @@ done
 
 if [ -z "$sparkMaster" ]; then sparkMaster="local[*]"; else sparkMaster="$sparkMaster"; fi
 
-if [ "$type" = "via-partition" ]; then
+if [ "$mode" = "via-partition" ]; then
     # get partitions from kafka metadata
-    if [ -z "$partitions" ]; then partitions=`$KAFKA_HOME/bin/kafka-topics.sh --zookeeper $zookeeper --describe --topic $unique_topic   | awk 'NR==1{print $2}' |  awk -F":" '{print $2}'`; else partitions=$partitions; fi
+    partitions=`$KAFKA_HOME/bin/kafka-topics.sh --zookeeper $zookeeper --describe --topic $unique_topic   | awk 'NR==1{print $2}' |  awk -F":" '{print $2}'`
     endPartitions=`expr $partitions - 1`
     if [ -z "$parallelisation" ]; then parallelisation=1; else parallelisation=$parallelisation; fi
     # add partitions to config and start jobs
@@ -61,16 +58,16 @@ if [ "$type" = "via-partition" ]; then
                 finalConfig=${job_config/'"delta":0'/$partitionString}
                 echo $finalConfig
                 echo "Running $job by partitions."
-                nohup $SPARK_HOME/bin/spark-submit --master $sparkMaster --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.3.2.jar,$MODELS_HOME/batch-models-2.0.jar --class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-2.0.jar --model "$job" --config "$finalConfig" >> "$DP_LOGS/$today-job-execution.log" 2>&1
+                $SPARK_HOME/bin/spark-submit --master $sparkMaster --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.3.2.jar,$MODELS_HOME/batch-models-2.0.jar --class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-2.0.jar --model "$job" --config "$finalConfig" >> "$DP_LOGS/$today-job-execution.log"
             else 
                 job_config=$(config $job '__endDate__')
                 finalConfig=${job_config/'"delta":0'/$partitionString}
                 echo $finalConfig
                 echo "Running $job by partitions via Replay-Supervisor."
-                nohup $SPARK_HOME/bin/spark-submit --master $sparkMaster --jars $MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.3.2.jar --class org.ekstep.analytics.job.ReplaySupervisor $MODELS_HOME/batch-models-2.0.jar --model "$job" --fromDate "$start_date" --toDate "$end_date" --config "$finalConfig" >> "$DP_LOGS/$end_date-$job-replay.log" 2>&1
+                $SPARK_HOME/bin/spark-submit --master $sparkMaster --jars $MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.3.2.jar --class org.ekstep.analytics.job.ReplaySupervisor $MODELS_HOME/batch-models-2.0.jar --model "$job" --fromDate "$start_date" --toDate "$end_date" --config "$finalConfig" >> "$DP_LOGS/$end_date-$job-replay.log"
             fi
         done
-elif [ "$type" = "job-manager" ]; then
+elif [ "$mode" = "job-manager" ]; then
     # push job-config to kafka      
     echo "Submitting $job to job-manager."
     echo '{ "model" :' \"$job\" ',' ' "config": ' "$job_config" '}' > /tmp/job-request.json
@@ -79,10 +76,10 @@ else
     if [ -z "$start_date" ]; then
         echo "Running $job without partition via run-job."
         job_config=$(config $job)
-        nohup $SPARK_HOME/bin/spark-submit --master $sparkMaster --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.3.2.jar,$MODELS_HOME/batch-models-2.0.jar --class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-2.0.jar --model "$job" --config "$job_config" >> "$DP_LOGS/$today-job-execution.log" 2>&1
+        $SPARK_HOME/bin/spark-submit --master $sparkMaster --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.3.2.jar,$MODELS_HOME/batch-models-2.0.jar --class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-2.0.jar --model "$job" --config "$job_config" >> "$DP_LOGS/$today-job-execution.log"
     else   
         job_config=$(config $job '__endDate__')
         echo "Running $job without partition via Replay-Supervisor." 
-        nohup $SPARK_HOME/bin/spark-submit --master $sparkMaster --jars $MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.3.2.jar --class org.ekstep.analytics.job.ReplaySupervisor $MODELS_HOME/batch-models-2.0.jar --model "$job" --fromDate "$start_date" --toDate "$end_date" --config "$job_config" >> "$DP_LOGS/$end_date-$job-replay.log" 2>&1
+        $SPARK_HOME/bin/spark-submit --master $sparkMaster --jars $MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.3.2.jar --class org.ekstep.analytics.job.ReplaySupervisor $MODELS_HOME/batch-models-2.0.jar --model "$job" --fromDate "$start_date" --toDate "$end_date" --config "$job_config" >> "$DP_LOGS/$end_date-$job-replay.log"
     fi    
 fi
