@@ -1,6 +1,7 @@
 namespace: flink-{{ env }}
 imagepullsecrets: sunbird-registry-secret
 docker_registry: sunbirded
+image_name: sunbird-datapipeline
 azure_account: "{{ sunbird_private_storage_account_name }}"
 azure_secret: "{{ sunbird_private_storage_account_key }}"
 
