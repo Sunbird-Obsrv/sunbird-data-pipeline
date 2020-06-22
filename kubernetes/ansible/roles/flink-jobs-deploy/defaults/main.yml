@@ -1,8 +1,10 @@
 namespace: flink-{{ env }}
 imagepullsecrets: sunbird-registry-secret
-azure_account: {{ sunbird_private_storage_account_name }}
-azure_secret: {{ sunbird_private_storage_account_key }}
+docker_registry: sunbirded
+azure_account: "{{ sunbird_private_storage_account_name }}"
+azure_secret: "{{ sunbird_private_storage_account_key }}"
 
+### ports vars
 jobmanager_rpc_port: 6123
 jobmanager_blob_port: 6124
 jobmanager_query_port: 6125
@@ -50,3 +52,32 @@ druid_validator_key_expiry_seconds: 3600
 device_profile_updater_key_expiry_seconds: 3600
 user_cache_updater_key_expiry_seconds: 3600
 telemetry_extractor_key_expiry_seconds: 3600
+
+
+### added from jenkins
+dockerhub: sunbirded.azurecr.io
+healthcheck: true
+taskmanager_liveness:
+  livenessProbe:
+    tcpSocket:
+      port: 6122
+    initialDelaySeconds: 30
+    periodSeconds: 60
+
+jobmanager_ui_rest_port: 80
+jobmanager_ui_tcp_port: 8081
+
+taskmanager_prom_port: 9051
+taskmanager_rpc_port: 6122
+taskmanager_heap_memory: 1024
+producer_max_request_size: 1572864
+middleware_cassandra_keyspace: sunbird
+middleware_cassandra_user_table: user
+middleware_cassandra_location_table: location
+middleware_cassandra_courses_keyspace: sunbird_courses
+middleware_cassandra_assessment_aggregator_table: assessment_aggregator
+middleware_cassandra_assessment_question_type : question
+jobmanager_ui_service:
+  type: LoadBalancer
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"

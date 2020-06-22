@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-jobmanager
+  name: {{ .Release.Name }}-jobmanager 
   namespace: {{ .Values.namespace }}
   labels:
     app: flink
@@ -31,8 +31,10 @@ metadata:
   name: {{ .Release.Name }}-jobmanager-webui
   namespace: {{ .Values.namespace }}
 {{- if .Values.service.annotations }}
+{{- with .Values.service.annotations }}
   annotations:
 {{ toYaml . | indent 4 }}
+{{- end }}
 {{- end }}
 spec:
   {{- if eq .Values.service.type "ClusterIP" }}
@@ -97,9 +99,9 @@ spec:
       - name: {{ .Values.imagepullsecrets }}
       containers:
       - name: {{ .Release.Name }}-jobmanager
-        image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
+        image: "{{ .Values.dockerhub }}/{{ .Values.registry }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
         imagePullPolicy: Always
-        workingDir: {{ .Values.flink.workDir }}
+        workingDir: {{ .Values.jobmanager.flink_work_dir }}
         command: ["/opt/flink/bin/standalone-job.sh"]
         args: ["start-foreground",
                "--job-classname={{ .Values.job_classname }}", 
@@ -150,9 +152,9 @@ spec:
       - name: {{ .Values.imagepullsecrets }}
       containers:
       - name: {{ .Release.Name }}-taskmanager
-        image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
+        image: "{{ .Values.dockerhub }}/{{ .Values.registry}}/{{ .Values.repository }}:{{ .Values.image_tag }}"
         imagePullPolicy: Always
-        workingDir: {{ .Values.flink_work_dir }}
+        workingDir: {{ .Values.taskmanager.flink_work_dir }}
         command: ["/opt/flink/bin/taskmanager.sh"]
         args: ["start-foreground",
           "-Dfs.azure.account.key.{{ .Values.azure_account }}.blob.core.windows.net={{ .Values.azure_secret }}",

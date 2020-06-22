@@ -1,8 +1,9 @@
 namespace: {{ namespace }}
 imagepullsecrets: {{ imagepullsecrets }}
 dockerhub: {{ dockerhub }}
-repository: {{cert_repository|default('cert_service')}}
+repository: {{flink_repository|default('sunbird-datapipeline')}}
 image_tag: {{ image_tag }}
+registry: {{ docker_registry }}
 azure_account: {{ azure_account }}
 azure_secret: {{ azure_secret }}
 
@@ -18,23 +19,23 @@ jobmanager:
   mountPath: {{ jobmanager_mount_path }}
   flink_work_dir: {{ flink_work_dir }}
 
-{% if jobmanager_service is defined %}
-service: {{ jobmanager_service|to_json}}
+service: {{ jobmanager_ui_service|to_json }}
 
-restPort: {{ jobmanager_ui_res_tport }}
+restPort: {{ jobmanager_ui_rest_port }}
 resttcpPort: {{ jobmanager_ui_tcp_port }}
 
 taskmanager:
-  promPort: {{ jobmanager_prom_port }}
+  promPort: {{ taskmanager_prom_port }}
   rpcPort: {{ taskmanager_rpc_port }}
   heap_memory: {{ taskmanager_heap_memory }}
   replicas: {{taskmanager_replicacount|default(1)}}
+  flink_work_dir: {{ flink_work_dir }}
 
 job_classname: {{ job_classname }}
 {{ taskmanager_liveness | to_nice_yaml }}
 
 
-base-config: |
+base_config: |
   kafka {
       broker-servers = "{{ kafka_brokers }}"
       zookeeper = "{{ zookeepers }}"
@@ -81,7 +82,7 @@ base-config: |
       port = "9042"
     }
 
-telemetry-extractor: | 
+telemetry_extractor: | 
   include file("/data/flink/conf/base-config.conf")
   kafka {
     input.topic = {{ env }}.telemetry.ingest
@@ -111,7 +112,7 @@ telemetry-extractor: |
   }
   redact.events.list = ["ASSESS","RESPONSE"]
 
-pipeline-preprocessor: |
+pipeline_preprocessor: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
     input.topic = {{ env }}.telemetry.raw
@@ -139,7 +140,7 @@ pipeline-preprocessor: |
     }
   }
 
-de-normalization: |
+de_normalization: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
     input.topic = {{ env }}.telemetry.unique
@@ -168,7 +169,7 @@ de-normalization: |
     }
   }
 
-druid-validator: |
+druid_validator: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
     input.topic = {{ env }}.telemetry.denorm
@@ -201,7 +202,7 @@ druid-validator: |
     }
   }
 
-device-profile-updater: |
+device_profile_updater: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
     input.topic = {{ env }}.events.deviceprofile
@@ -226,7 +227,7 @@ device-profile-updater: |
     table = "device_profile"
   }
 
-content-cache-updater: |
+content_cache_updater: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
     input.topic = {{ env }}.learning.graph.events
@@ -248,7 +249,7 @@ content-cache-updater: |
     }
   }
 
-user-cache-updater: |
+user_cache_updater: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
     input.topic = {{ env }}.telemetry.audit
@@ -278,7 +279,7 @@ user-cache-updater: |
   user.self.signin.key = "Self-Signed-In"
   user.valid.key = "Validated"
 
-assessment-aggregator: |+
+assessment_aggregator: |+
   include file("/data/flink/conf/base-config.conf")
   kafka {
     input.topic = {{ env }}.telemetry.assess
