@@ -7,4 +7,4 @@
   shell: helm upgrade --install {{ item.0 }} {{ chart_path }} --set job_classname={{ item.1 }} -n {{namespace}} 
   with_items: 
     - "{{ job_names_to_deploy.split(',')|list }}"
-    - "{{ classname.split(,)|list }}"
+    - "{{ job_class_name.split(,)|list }}"
