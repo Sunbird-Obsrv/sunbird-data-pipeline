@@ -82,7 +82,7 @@ base_config: |
       port = "9042"
     }
 
-telemetry_extractor: | 
+telemetry-extractor: | 
   include file("/data/flink/conf/base-config.conf")
   kafka {
     input.topic = {{ env }}.telemetry.ingest
@@ -112,7 +112,7 @@ telemetry_extractor: |
   }
   redact.events.list = ["ASSESS","RESPONSE"]
 
-pipeline_preprocessor: |
+pipeline-preprocessor: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
     input.topic = {{ env }}.telemetry.raw
@@ -140,7 +140,7 @@ pipeline_preprocessor: |
     }
   }
 
-de_normalization: |
+de-normalization: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
     input.topic = {{ env }}.telemetry.unique
@@ -169,7 +169,7 @@ de_normalization: |
     }
   }
 
-druid_validator: |
+druid-validator: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
     input.topic = {{ env }}.telemetry.denorm
@@ -202,7 +202,7 @@ druid_validator: |
     }
   }
 
-device_profile_updater: |
+device-profile-updater: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
     input.topic = {{ env }}.events.deviceprofile
@@ -227,7 +227,7 @@ device_profile_updater: |
     table = "device_profile"
   }
 
-content_cache_updater: |
+content-cache-updater: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
     input.topic = {{ env }}.learning.graph.events
@@ -249,7 +249,7 @@ content_cache_updater: |
     }
   }
 
-user_cache_updater: |
+user-cache-updater: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
     input.topic = {{ env }}.telemetry.audit
@@ -279,7 +279,7 @@ user_cache_updater: |
   user.self.signin.key = "Self-Signed-In"
   user.valid.key = "Validated"
 
-assessment_aggregator: |+
+assessment-aggregator: |+
   include file("/data/flink/conf/base-config.conf")
   kafka {
     input.topic = {{ env }}.telemetry.assess

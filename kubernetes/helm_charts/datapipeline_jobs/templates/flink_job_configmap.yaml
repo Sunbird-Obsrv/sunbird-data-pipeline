@@ -1,26 +1,13 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "name" . }}-config
+  name: {{ .Release.Name }}-config
   namespace: {{ .Values.namespace }}
   labels:
     app: flink
 data:
   base-config: |+
 {{ .Values.base_config | indent 4 }}
-  telemetry-extractor: |+
-{{ .Values.telemetry_extractor | indent 4 }}
-  pipeline-preprocessor: |+
-{{ .Values.pipeline_preprocessor | indent 4 }}
-  de-normalization: |+
-{{ .Values.de_normalization | indent 4 }}
-  druid-validator: |+
-{{ .Values.druid_validator | indent 4 }}
-  device-profile-updater: |+
-{{ .Values.device_profile_updater | indent 4 }}
-  content-cache-updater: |+
-{{ .Values.content_cache_updater | indent 4 }}
-  user-cache-updater: |+
-{{ .Values.user_cache_updater | indent 4 }}
-  assessment-aggregator: |+
-{{ .Values.assessment_aggregator | indent 4 }}
+  {{ .Release.Name }}:
+{{- $name := .Release.Name }}
+{{ index .Values $name | toYaml | indent 4 }}

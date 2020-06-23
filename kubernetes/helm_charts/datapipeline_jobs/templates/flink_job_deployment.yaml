@@ -92,7 +92,7 @@ spec:
           items:
           - key: base-config
             path: base-config.conf
-          - key: {{ .Release.Name }}
+          - key: {{ .Release.Name }}-config
             path: {{ .Release.Name }}.conf
       restartPolicy: OnFailure
       imagePullSecrets:
