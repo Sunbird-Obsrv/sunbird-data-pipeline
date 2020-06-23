@@ -84,4 +84,6 @@ jobmanager_ui_service:
     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 
 ### to be removed
-job_classname: org.sunbird.dp.extractor.task.TelemetryExtractorStreamTask
+job_classname: ""
+
+### class name vars

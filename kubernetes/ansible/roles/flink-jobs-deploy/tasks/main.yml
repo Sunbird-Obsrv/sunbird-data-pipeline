@@ -4,4 +4,7 @@
     dest: "{{ chart_path }}/values.yaml"
 
 - name: helm upgrade
-  shell: helm upgrade --install {{ release_name }} {{ chart_path }} -n {{namespace}}
+  shell: helm upgrade --install {{ item.0 }} {{ chart_path }} --set job_classname={{ item.1 }} -n {{namespace}} 
+  with_items: 
+    - "{{ job_names_to_deploy.split(',')|list }}"
+    - "{{ classname.split(,)|list }}"
