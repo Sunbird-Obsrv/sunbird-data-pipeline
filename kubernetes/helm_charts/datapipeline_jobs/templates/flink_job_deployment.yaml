@@ -88,7 +88,7 @@ spec:
       volumes:
       - name: flink-config-volume
         configMap:
-          name: flink-config
+          name: {{ template "name" . }}
           items:
           - key: base-config
             path: base-config.conf

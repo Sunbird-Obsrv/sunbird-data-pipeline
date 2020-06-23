@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: flink-config
+  name: {{ template "name" . }}-config
   namespace: {{ .Values.namespace }}
   labels:
     app: flink
@@ -15,7 +15,7 @@ data:
   de-normalization: |+
 {{ .Values.de_normalization | indent 4 }}
   druid-validator: |+
-{{ .Values.de_normalization | indent 4 }}
+{{ .Values.druid_validator | indent 4 }}
   device-profile-updater: |+
 {{ .Values.device_profile_updater | indent 4 }}
   content-cache-updater: |+
