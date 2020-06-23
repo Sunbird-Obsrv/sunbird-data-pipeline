@@ -88,11 +88,11 @@ spec:
       volumes:
       - name: flink-config-volume
         configMap:
-          name: {{ template "name" . }}
+          name: {{ .Release.Name }}-config
           items:
           - key: base-config
             path: base-config.conf
-          - key: {{ .Release.Name }}-config
+          - key: {{ .Release.Name }}
             path: {{ .Release.Name }}.conf
       restartPolicy: OnFailure
       imagePullSecrets:
