@@ -3,50 +3,30 @@ package org.ekstep.ep.samza.domain;
 import com.google.gson.annotations.SerializedName;
 
 import org.ekstep.ep.samza.core.Logger;
-import org.ekstep.ep.samza.task.TelemetryExtractorConfig;
 
 import java.util.*;
 
 public class Context {
-    private String channel = "";
-    private String env = "";
-    private String sid = "";
-    private String did = "";
-    static Logger LOGGER = new Logger(Context.class);
+    private String channel;
+    private String env = "data-pipeline";
+    private String sid;
+    private String did;
+    private static Logger LOGGER = new Logger(Context.class);
 
     @SerializedName("pdata")
-    private Map<String, String> pData = new HashMap<String, String>();
+    private Map<String, String> pData = new HashMap<>();
 
     @SerializedName("cdata")
-    private ArrayList<CData> cData = new ArrayList<>();
+    private ArrayList<CData> cData;
 
 
-    public Context(Map<String, Object> eventSpec, String defaultChannel) {
-
+    public Context(String did, String sid, String env, String defaultChannel) {
         this.channel = defaultChannel;
-        this.pData.put("id", "pipeline");
-        this.pData.put("pid", "");
-        this.pData.put("ver", "");
-
-        try {
-            List<Map<String, Object>> events = (List<Map<String, Object>>) eventSpec.get("events");
-            Map<String, Object> event = events.get(0);
-            Map<String, Object> eventContext = (Map<String, Object>) event.get("context");
-            env = "telemetry-sync";
-            did = (String) eventContext.get("did");
-            String channel = (String) eventContext.get("channel");
-            if (channel != null && !"".equals(channel.trim())) {
-                this.channel = channel;
-            }
-            Map<String, String> pdata = (Map<String, String>) eventContext.get("pdata");
-            if (pdata != null && pdata.containsKey("id")) {
-                this.pData = pdata;
-            }
-
-        } catch (Exception e) {
-            LOGGER.info("", "Failed to initialize context: " + e.getMessage());
-        }
-
+        this.pData.put("id", "data-pipeline");
+        this.pData.put("pid", "data-pipeline");
+        this.pData.put("ver", "3.0");
+        this.sid = sid;
+        this.did = did;
     }
 
 }
