@@ -87,3 +87,12 @@ jobmanager_ui_service:
 job_classname: ""
 
 ### class name vars
+flink_job_names:
+  telemetry-extractor:
+      job_class_name: 'org.sunbird.dp.extractor.task.TelemetryExtractorStreamTask'
+  pipeline-preprocessor:
+      job_class_name: 'org.sunbird.dp.preprocessor.task.PipelinePreprocessorStreamTask'
+  de-normalization:
+      job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+  druid-validator:
+      job_class_name: 'org.sunbird.dp.validator.task.DruidValidatorStreamTask'
