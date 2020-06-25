@@ -21,28 +21,25 @@ public class TelemetrySchemaValidator {
 
     public TelemetrySchemaValidator(TelemetryValidatorConfig config) throws IOException, ProcessingException {
 
-        String[] schemaVersions = config.schemaVersion().split(",");
+        String schemaVersion = config.schemaVersion();
+        File schemaDirectory = new File(MessageFormat.format("{0}/{1}/", config.schemaPath(), schemaVersion));
+        File[] schemaFiles = schemaDirectory.listFiles();
+        for (File schemafile : schemaFiles) {
+            String schemaKey = String.format("%s", schemafile.getName());
+            schemaJsonMap.put(schemaKey, JsonSchemaFactory
+                    .byDefault().getJsonSchema(JsonLoader.fromFile(schemafile)));
 
-        for (String schemaVersion : schemaVersions) {
-            File schemaDirectory = new File(MessageFormat.format("{0}/{1}/", config.schemaPath(), schemaVersion));
-            File[] schemaFiles = schemaDirectory.listFiles();
-            for (File schemafile : schemaFiles) {
-                String schemaKey = String.format("%s-%s", schemaVersion, schemafile.getName());
-                schemaJsonMap.put(schemaKey, JsonSchemaFactory
-                        .byDefault().getJsonSchema(JsonLoader.fromFile(schemafile)));
-
-            }
         }
 
     }
 
     public boolean schemaFileExists(Event event) {
-        return schemaJsonMap.containsKey(String.format("%s-%s", event.version(), event.schemaName()));
+        return schemaJsonMap.containsKey(String.format("%s", event.schemaName()));
     }
 
     public ProcessingReport validate(Event event) throws IOException, ProcessingException {
         JsonNode eventJson = JsonLoader.fromString(event.getJson());
-        String schemaKey = String.format("%s-%s", event.version(), event.schemaName());
+        String schemaKey = String.format("%s", event.schemaName());
         ProcessingReport report = schemaJsonMap.get(schemaKey).validate(eventJson);
         return report;
     }
