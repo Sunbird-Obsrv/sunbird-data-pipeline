@@ -70,25 +70,41 @@ public class TelemetryValidatorTaskTest {
     @Test
     public void shouldSendEventToSuccessTopicIfEventIsValid() throws Exception {
 
-        stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_GE_ERROR_EVENT);
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_IMPRESSION_EVENT);
 
         telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
     }
 
     @Test
-    public void shouldSendEventToValidTopicIfSchemaNotFound() throws Exception {
+    public void shouldSendEventToFailedTopicIfSchemaIsNotPresent() throws Exception {
 
-        stub(envelopeMock.getMessage()).toReturn(EventFixture.INVALID_GE_ERROR_EVENT);
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.EVENT_WITH_NO_VALIDATION_SCHEMA);
 
         telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        Type mapType = new TypeToken<Map<String, Object>>() {
+        }.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                Map<String, Object> flags = new Gson().fromJson(new Gson().toJson(outputEvent.get("flags")), mapType);
+                Map<String, Object> metadata = new Gson().fromJson(new Gson().toJson(outputEvent.get("metadata")), mapType);
+                assertEquals(false, flags.get("tv_processed"));
+                assertEquals("SCHEMA NOT FOUND", metadata.get("tv_error"));
+                assertEquals("TelemetryValidator", metadata.get("src"));
+                return true;
+            }
+        }));
     }
 
     @Test
     public void shouldSendEventToMalformedTopicIfEventIsNotParseable() throws Exception {
 
-        stub(envelopeMock.getMessage()).toReturn(EventFixture.UNPARSABLE_GE_GENIE_UPDATE_EVENT);
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.UNPARSEABLE_EVENT);
 
         telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), MALFORMED_TOPIC)));
@@ -113,15 +129,6 @@ public class TelemetryValidatorTaskTest {
     }
 
     @Test
-    public void shouldSendEventToSuccessTopicIfSchemaIsNotPresent() throws Exception {
-
-        stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_GE_INTERACT_EVENT);
-
-        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), SUCCESS_TOPIC)));
-    }
-
-    @Test
     public void shouldSendEventToFailedTopicIfEidNotPresent() throws Exception {
         stub(envelopeMock.getMessage()).toReturn(EventFixture.EVENT_WITH_EID_MISSING);
         telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
@@ -131,7 +138,7 @@ public class TelemetryValidatorTaskTest {
     @Test
     public void shouldRemoveFederatedUserIdPrefixIfPresent() throws Exception {
 
-        stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_GE_INTERACT_EVENT);
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.VALID_IMPRESSION_EVENT);
         telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
         Type mapType = new TypeToken<Map<String, Object>>() {
         }.getType();
@@ -306,7 +313,32 @@ public class TelemetryValidatorTaskTest {
                 Map<String, Object> flags = new Gson().fromJson(new Gson().toJson(outputEvent.get("flags")), mapType);
                 Map<String, Object> metadata = new Gson().fromJson(new Gson().toJson(outputEvent.get("metadata")), mapType);
                 assertEquals(false, flags.get("tv_processed"));
-                assertEquals("validation failed. eid id missing", metadata.get("tv_error"));
+                assertEquals("VALIDATION FAILED as eid is missing", metadata.get("tv_error"));
+                assertEquals("TelemetryValidator", metadata.get("src"));
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldValidateAllEventVersions() throws Exception {
+
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.EVENT_WITH_DIFFERENT_SCHEMA_VERSION);
+
+        telemetryValidatorTask.process(envelopeMock, collectorMock, coordinatorMock);
+        verify(collectorMock).send(argThat(validateOutputTopic(envelopeMock.getMessage(), FAILED_TOPIC)));
+        Type mapType = new TypeToken<Map<String, Object>>() {
+        }.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                Map<String, Object> flags = new Gson().fromJson(new Gson().toJson(outputEvent.get("flags")), mapType);
+                Map<String, Object> metadata = new Gson().fromJson(new Gson().toJson(outputEvent.get("metadata")), mapType);
+                assertEquals(false, flags.get("tv_processed"));
+                assertEquals("validation failed. fieldname: \"/context/cdata/2/id\"", metadata.get("tv_error"));
                 assertEquals("TelemetryValidator", metadata.get("src"));
                 return true;
             }

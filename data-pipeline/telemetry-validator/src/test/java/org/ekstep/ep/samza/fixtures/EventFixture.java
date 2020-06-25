@@ -7,153 +7,49 @@ import java.util.Map;
 
 public class EventFixture {
 
-	public static final String VALID_GE_ERROR_EVENT = "{\n" +
-            "  \"did\": \"00b09a9e-6af9-4bb7-b102-57380b43ddc8\",\n" +
-            "  \"mid\": \"43288930-e54a-230b-b56e-876gnm8712ok\",\n" +
-            "  \"edata\": {\n" +
-            "    \"eks\": {\n" +
-            "      \"data\": \"\",\n" +
-            "      \"err\": \"10\",\n" +
-            "      \"eventId\": \"GE_SIGNUP\",\n" +
-            "      \"id\": \"2131165210\",\n" +
-            "      \"type\": \"GENIE\"\n" +
-            "    }\n" +
-            "  },\n" +
-            "  \"eid\": \"GE_ERROR\",\n" +
-            "  \"gdata\": {\n" +
-            "    \"id\": \"genie.android\",\n" +
-            "    \"ver\": \"2.2.15\"\n" +
-            "  },\n" +
-            "  \"pdata\": {\n" +
-            "    \"id\": \"genie\",\n" +
-            "    \"ver\": \"2.0\"\n" +
-            "  },\n" +
-            "  \"sid\": \"\",\n" +
-            "  \"ets\": 1454064092546,\n" +
-            "  \"uid\": \"\",\n" +
-            "  \"ver\": \"2.2\",\n" +
-            "  \"channel\": \"in.ekstep\",\n" +
-            "  \"cdata\": [\n" +
-            "    {\n" +
-            "      \"id\": \"correlationid\",\n" +
-            "      \"type\": \"correlationtype\"\n" +
-            "    }\n" +
-            "  ]\n" +
-            "}";
-	public static final String INVALID_GE_ERROR_EVENT = "{\n" +
-            "  \"did\": \"00b09a9e-6af9-4bb7-b102-57380b43ddc8\",\n" +
-            "  \"mid\": \"43288930-e54a-230b-b56e-876gnm8712ok\",\n" +
-            "  \"eid\": \"GE_ERROR\",\n" +
-            "  \"gdata\": {\n" +
-            "    \"id\": \"genie.android\",\n" +
-            "    \"ver\": \"2.2.15\"\n" +
-            "  },\n" +
-            "  \"pdata\": {\n" +
-            "    \"id\": \"genie\",\n" +
-            "    \"ver\": \"2.0\"\n" +
-            "  },\n" +
-            "  \"sid\": \"\",\n" +
-            "  \"ets\": 1454064092546,\n" +
-            "  \"uid\": \"\",\n" +
-            "  \"ver\": \"2.2\",\n" +
-            "  \"channel\": \"in.ekstep\",\n" +
-            "  \"cdata\": [\n" +
-            "    {\n" +
-            "      \"id\": \"correlationid\",\n" +
-            "      \"type\": \"correlationtype\"\n" +
-            "    }\n" +
-            "  ]\n" +
-            "}";
-	public static final String UNPARSABLE_GE_GENIE_UPDATE_EVENT = "{\n" +
-            "  \"did\": \"c270f15d-5230-4954-92aa-d239e4281cc4\",\n" +
-            "  \"mid\": \"43288930-e54a-230b-b56e-876gnm8712ok\",\n" +
-            "  \"edata\": {\n" +
-            "    \"eks\": {\n" +
-            "      \"mode\": \"WIFI\",\n" +
-            "      \"ver\": \"12\",\n" +
-            "      \"size\": 12.67,\n" +
-            "      \"err\": \"\",\n" +
-            "      \"referrer\": [\n" +
-            "        {\n" +
-            "          \"action\": \"INSTALL\",\n" +
-            "          \"utmsource\": \"Ekstep\",\n" +
-            "          \"utmmedium\": \"Portal\",\n" +
-            "          \"utmterm\": \"December 2016\",\n" +
-            "          \"utmcontent\": \"Ramayana\",\n" +
-            "          \"utmcampaign\": \"Epics of India\"\n" +
-            "        }\n" +
-            "      ]\n" +
-            "    }\n" +
-            "  },\n" +
-            "  \"eid\": \"GE_GENIE_UPDATE\",\n" +
-            "  \"gdata\": {\n" +
-            "    \"id\": \"genie.android\",\n" +
-            "    \"ver\": \"1.0\"\n" +
-            "  },\n" +
-            "  \"sid\": \"\",\n" +
-            "  \"ets\": 1454064092546,\n" +
-            "  \"uid\": \"\",\n" +
-            "  \"ver\": \"2.0\",\n" +
-            "  \"cdata\": [\n" +
-            "    {\n" +
-            "      \"id\": \"correlationid\",\n" +
-            "      \"type\": \"correlationtype\"\n" +
-            "    ";
-	public static final String VALID_GE_INTERACT_EVENT = "{\n" +
-            "\"actor\": {\n" +
-            "   \"type\": \"User\",\n" +
-            "   \"id\": \"f:5a8a3f2b-3409-42e0-9001-f913bc0fde31:874ed8a5-782e-4f6c-8f36-e0288455901e\"\n" +
-            "  }, \n" +
-            "  \"cdata\": [],\n" +
-            "  \"channel\": \"in.ekstep\",\n" +
-            "  \"did\": \"0427fedf56eea1c8a127d876fd1907ffb245684f\",\n" +
-            "  \"edata\": {\n" +
-            "    \"eks\": {\n" +
-            "      \"extype\": \"\",\n" +
-            "      \"id\": \"\",\n" +
-            "      \"pos\": [],\n" +
-            "      \"stageid\": \"Genie-TelemetrySync\",\n" +
-            "      \"subtype\": \"ManualSync-Success\",\n" +
-            "      \"tid\": \"\",\n" +
-            "      \"type\": \"OTHER\",\n" +
-            "      \"uri\": \"\",\n" +
-            "      \"values\": [\n" +
-            "        {\n" +
-            "          \"SizeOfFileInKB\": \"0.81\"\n" +
-            "        }\n" +
-            "      ]\n" +
-            "    }\n" +
-            "  },\n" +
-            "  \"eid\": \"GE_INTERACT\",\n" +
-            "  \"etags\": {\n" +
-            "    \"app\": []\n" +
-            "  },\n" +
-            "  \"ets\": 1506328824238,\n" +
-            "  \"gdata\": {\n" +
-            "    \"id\": \"org.ekstep.genieservices.qa\",\n" +
-            "    \"ver\": \"6.5.localdev-debug\"\n" +
-            "  },\n" +
-            "  \"mid\": \"375f4921-bf7b-45b0-8cf1-ba92d876a815\",\n" +
-            "  \"pdata\": {\n" +
-            "    \"id\": \"genie\",\n" +
-            "    \"ver\": \"6.5.localdev-debug\"\n" +
-            "  },\n" +
-            "  \"sid\": \"e9662bb5-cf08-42d6-ad11-700b23566961\",\n" +
-            "  \"ts\": \"2017-09-25T08:40:24.238+0000\",\n" +
-            "  \"uid\": \"03762014-f67b-466b-bf20-467f46542563\",\n" +
-            "  \"ver\": \"2.2\",\n" +
-            "  \"@version\": \"1\",\n" +
-            "  \"@timestamp\": \"2017-09-25T08:35:44.037Z\",\n" +
-            "  \"metadata\": {\n" +
-            "    \"checksum\": \"375f4921-bf7b-45b0-8cf1-ba92d876a815\"\n" +
-            "  },\n" +
-            "  \"uuid\": \"7f2c9f88-cbf7-4527-9f8d-667d4dde0d1c1\",\n" +
-            "  \"key\": \"03762014-f67b-466b-bf20-467f46542563\",\n" +
-            "  \"type\": \"events\",\n" +
-            "  \"flags\": {\n" +
-            "    \"dd_processed\": true\n" +
-            "  }\n" +
-            "}";
+	public static final String VALID_IMPRESSION_EVENT = "{\"actor\":{\"type\":\"User\",\"id\":\"f:5a8a3f2b-3409-42e0-9001-f913bc0fde31:874ed8a5-782e-4f6c-8f36-e0288455901e\"},\"eid\":\"IMPRESSION\",\"edata\":{\"type\":\"detail\",\"pageid\":\"content-detail\",\"uri\":\"content-detail\"},\"ver\":\"3.0\",\"ets\":1.592591395144E12,\"context\":{\"pdata\":{\"pid\":\"sunbird.app\",\"ver\":\"2.10.307\",\"id\":\"prod.diksha.app\"},\"channel\":\"0126684405014528002\",\"env\":\"home\",\"did\":\"77f505f41501d86a0ccaec9cf3b9ec99bec5af06\",\"cdata\":[],\"sid\":\"57b8bc17-1705-4cdd-885b-99db23f4b36b\",\"rollup\":{\"l1\":\"0126684405014528002\"}},\"mid\":\"f5114fee-ab6b-42da-afbe-13bd2bdb0476\",\"object\":{\"id\":\"do_3130160314974781441206\",\"type\":\"ExplanationResource\",\"version\":\"1\",\"rollup\":{\"l1\":\"do_3130160314974781441206\"}},\"syncts\":1592591400233,\"@timestamp\":\"2020-06-19T18:30:00.233Z\"}";
+
+	public static final String UNPARSEABLE_EVENT = "{\n" +
+			"  \"actor\": {\n" +
+			"    \"type\": \"User\",\n" +
+			"    \"id\": \"5a75030f-79be-4a08-a6b2-eb27769a23f5\"\n" +
+			"  },\n" +
+			"  \"eid\": \"IMPRESSION\",\n" +
+			"  \"edata\": {\n" +
+			"    \"type\": \"detail\",\n" +
+			"    \"pageid\": \"content-detail\",\n" +
+			"    \"uri\": \"content-detail\"\n" +
+			"  },\n" +
+			"  \"ver\": \"3.0\",\n" +
+			"  \"ets\": 1.592591395144E12,\n" +
+			"  \"context\": {\n" +
+			"    \"pdata\": {\n" +
+			"      \"pid\": \"sunbird.app\",\n" +
+			"      \"ver\": \"2.10.307\",\n" +
+			"      \"id\": \"prod.diksha.app\"\n" +
+			"    },\n" +
+			"    \"channel\": \"0126684405014528002\",\n" +
+			"    \"env\": \"home\",\n" +
+			"    \"did\": \"77f505f41501d86a0ccaec9cf3b9ec99bec5af06\",\n" +
+			"    \"cdata\": [\n" +
+			"      \n" +
+			"    ],\n" +
+			"    \"sid\": \"57b8bc17-1705-4cdd-885b-99db23f4b36b\",\n" +
+			"    \"rollup\": {\n" +
+			"      \"l1\": \"0126684405014528002\"\n" +
+			"    }\n" +
+			"  \"mid\": \"f5114fee-ab6b-42da-afbe-13bd2bdb0476\",\n" +
+			"  \"object\": {\n" +
+			"    \"id\": \"do_3130160314974781441206\",\n" +
+			"    \"type\": \"ExplanationResource\",\n" +
+			"    \"version\": \"1\",\n" +
+			"    \"rollup\": {\n" +
+			"      \"l1\": \"do_3130160314974781441206\"\n" +
+			"    }\n" +
+			"  },\n" +
+			"  \"syncts\": 1592591400233,\n" +
+			"  \"@timestamp\": \"2020-06-19T18:30:00.233Z\"\n" +
+			"}";
 
 	public static final String SEARCH_EVENT_WITH_INCORRECT_DIALCODES_KEY = "{\n" +
             "  \"eid\": \"SEARCH\",\n" +
@@ -628,16 +524,74 @@ public class EventFixture {
 			"    ]\n" +
 			"}";
 
+	public static final String EVENT_WITH_NO_VALIDATION_SCHEMA = "{\n" +
+			"    \"actor\": {\n" +
+			"        \"type\": \"User\",\n" +
+			"        \"id\": \"anonymous\"\n" +
+			"    },\n" +
+			"    \"eid\": \"NO_SCHEMA_DEFINED\",\n" +
+			"    \"edata\": {\n" +
+			"        \"visits\": [\n" +
+			"            \n" +
+			"        ],\n" +
+			"        \"type\": \"view\",\n" +
+			"        \"pageid\": \"dialcode\",\n" +
+			"        \"subtype\": \"pageexit\",\n" +
+			"        \"uri\": \"https://play.diksha.gov.in/dialpage/index.html?dialcode=977D3I\"\n" +
+			"    },\n" +
+			"    \"ver\": \"3.0\",\n" +
+			"    \"ets\": 1570817279146,\n" +
+			"    \"context\": {\n" +
+			"        \"uid\": \"anonymous\",\n" +
+			"        \"pdata\": {\n" +
+			"            \"ver\": \"1.7.1\",\n" +
+			"            \"pid\": \"sunbird-portal\",\n" +
+			"            \"id\": \"dev.sunbird.portal\"\n" +
+			"        },\n" +
+			"        \"channel\": \"505c7c48ac6dc1edc9b08f21db5a571d\",\n" +
+			"        \"env\": \"public\",\n" +
+			"        \"did\": \"a49cfadff97c698c1766c71a42779d4e\",\n" +
+			"        \"sid\": \"5fd1cea0-3a9e-11e9-bed5-2f34fab96d07\",\n" +
+			"        \"cdata\": [\n" +
+			"            \n" +
+			"        ],\n" +
+			"        \"rollup\": {\n" +
+			"            \"l1\": \"505c7c48ac6dc1edc9b08f21db5a571d\"\n" +
+			"        }\n" +
+			"    },\n" +
+			"    \"mid\": \"IMPRESSION:bfd4026a4099370da57e3519cd3368c0\",\n" +
+			"    \"object\": {\n" +
+			"        \"ver\": \"1.0\",\n" +
+			"        \"id\": \"977d3i\",\n" +
+			"        \"type\": \"dialcode\",\n" +
+			"        \"rollup\": {\n" +
+			"            \n" +
+			"        }\n" +
+			"    },\n" +
+			"    \"tags\": [\n" +
+			"        \"505c7c48ac6dc1edc9b08f21db5a571d\"\n" +
+			"    ],\n" +
+			"    \"syncts\": 1550501698819,\n" +
+			"    \"@timestamp\": \"2019-02-18T14:54:58.819Z\",\n" +
+			"    \"flags\": {\n" +
+			"        \"tv_processed\": true,\n" +
+			"        \"dd_processed\": true,\n" +
+			"        \"ldata_retrieved\": false\n" +
+			"    },\n" +
+			"    \"type\": \"events\",\n" +
+			"    \"ts\": \"2019-02-27T14:45:51.866+0000\",\n" +
+			"    \"ldata\": {\n" +
+			"        \"country_code\": \"\",\n" +
+			"        \"country\": \"\",\n" +
+			"        \"city\": \"\",\n" +
+			"        \"state\": \"\",\n" +
+			"        \"state_code\": \"\"\n" +
+			"    }  \n" +
+			"}";
+
+	public static final String EVENT_WITH_DIFFERENT_SCHEMA_VERSION = "{\"actor\":{\"type\":\"User\",\"id\":\"4ba2bb28-16c6-483d-9d94-58c6364e5e3c\"},\"eid\":\"ASSESS\",\"edata\":{\"resvalues\":[{\"3\":{\"text\":\"24n\"}}],\"duration\":21.0,\"score\":0.0,\"item\":{\"mmc\":[],\"mc\":[],\"exlength\":0.0,\"id\":\"do_31296568773394432011706\",\"maxscore\":1.0,\"type\":\"mcq\",\"params\":[{\"1\":{\"text\":\"22n\"}},{\"2\":{\"text\":\"23n\"}},{\"answer\":{\"correct\":[\"4\"]}}],\"title\":\"Test title\",\"uri\":\"\",\"desc\":\"\"},\"pass\":\"No\",\"index\":1.0},\"ver\":\"3.1\",\"ets\":1.592982195439E12,\"context\":{\"pdata\":{\"ver\":\"3.0.0\",\"pid\":\"sunbird-portal.contentplayer\",\"id\":\"prod.diksha.portal\"},\"channel\":\"0126684405014528002\",\"env\":\"contentplayer\",\"did\":\"6798fa5a2d8335c43ba64d5b96a944b9\",\"sid\":\"lRc_DKH5C4034jqv8q1R4O3jxBACvd7e\",\"cdata\":[{\"type\":\"course\",\"id\":\"do_31296569862596198411604\"},{\"type\":\"batch\",\"id\":\"0129657011429376000\"},{\"type\":\"Source\",\"id\":[\"0126087586736619522\",\"0125196274181898243\"]}],\"rollup\":{\"l1\":\"0126684405014528002\"}},\"mid\":\"ASSESS:4ca1ce884b8eeb679abe8ec58c0ac763\",\"object\":{\"ver\":\"1\",\"id\":\"do_3129656882081382401299\",\"type\":\"Content\",\"rollup\":{\"l1\":\"do_3129655631697100801195\",\"l2\":\"do_31296569862596198411604\",\"l3\":\"do_3129656882081382401299\"}},\"tags\":[\"0126684405014528002\"],\"syncts\":1.592982225289E12,\"@timestamp\":\"2020-06-24T07:03:45.289Z\",\"flags\":{\"tv_skipped\":true,\"dd_processed\":true},\"type\":\"events\"}";
+
 	public static final String ANY_STRING = "Hey Samza, Whats Up?";
 	public static final String EMPTY_JSON = "{}";
-	
-    public static Map<String, Object> validGeErrorEventMap() {
-        return new Gson().fromJson(VALID_GE_ERROR_EVENT, new TypeToken<Map<String, Object>>() {
-        }.getType());
-    }
 
-    public static Map<String, Object> invalidGeErrorEventMap() {
-        return new Gson().fromJson(INVALID_GE_ERROR_EVENT, new TypeToken<Map<String, Object>>() {
-        }.getType());
-    }
 }
