@@ -33,13 +33,13 @@ node('build-slave') {
                 env.NODE_ENV = "build"
                 print "Environment will be : ${env.NODE_ENV}"
                 dir('data-pipeline-flink'){
-                sh 'mvn clean install -DskipTests'
+                sh '/opt/apache-maven-3.6.3/bin/mvn3.6 clean install -DskipTests'
                 }
             }
 
             stage('Package') {
                 dir('data-pipeline-flink/sunbird-dp-distribution') {
-                    sh "mvn package -Pbuild-docker-image -Drelease-version=${build_tag}"
+                    sh "/opt/apache-maven-3.6.3/bin/mvn3.6 package -Pbuild-docker-image -Drelease-version=${build_tag}"
                 }
                sh """ 
                   echo {\\"image_name\\" : \\"sunbird-datapipeline\\", \\"image_tag\\" : \\"${build_tag}\\", \\"node_name\\" : \\"${env.NODE_NAME}\\"} > metadata.json
