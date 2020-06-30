@@ -32,13 +32,18 @@ node('build-slave') {
             stage('Build') {
                 env.NODE_ENV = "build"
                 print "Environment will be : ${env.NODE_ENV}"
-                mvn clean install
+                dir('data-pipeline-flink'){
+                sh 'mvn clean install -DskipTests'
+                }
             }
 
             stage('Package') {
-                dir('sunbird-dp-distribution') {
-                    sh 'mvn package -Pbuild-docker-image'
+                dir('data-pipeline-flink/sunbird-dp-distribution') {
+                    sh "mvn package -Pbuild-docker-image -Drelease-version=${build_tag}"
                 }
+               sh """ 
+                  echo {\\"image_name\\" : \\"sunbird-datapipeline\\", \\"image_tag\\" : \\"${build_tag}\\", \\"node_name\\" : \\"${env.NODE_NAME}\\"} > metadata.json
+                  """ 
             }
             stage('ArchiveArtifacts') {
                 archiveArtifacts "metadata.json"
