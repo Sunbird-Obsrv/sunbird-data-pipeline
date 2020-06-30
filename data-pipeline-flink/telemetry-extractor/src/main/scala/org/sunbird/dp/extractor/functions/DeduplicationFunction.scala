@@ -25,7 +25,7 @@ class DeduplicationFunction(config: TelemetryExtractorConfig, @transient var ded
   override def open(parameters: Configuration): Unit = {
     super.open(parameters)
     if (dedupEngine == null) {
-      val redisConnect = new RedisConnect(config)
+      val redisConnect = new RedisConnect(config.redisHost, config.redisPort, config)
       dedupEngine = new DedupEngine(redisConnect, config.dedupStore, config.cacheExpirySeconds)
     }
   }

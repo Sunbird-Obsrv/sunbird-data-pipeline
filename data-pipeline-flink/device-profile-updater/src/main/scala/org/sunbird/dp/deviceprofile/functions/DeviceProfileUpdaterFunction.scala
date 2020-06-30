@@ -40,7 +40,7 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
   override def open(parameters: Configuration): Unit = {
     super.open(parameters)
     if (dataCache == null) {
-      val redisConnect = new RedisConnect(config)
+      val redisConnect = new RedisConnect(config.metaRedisHost, config.metaRedisPort, config)
       dataCache = new DataCache(config, redisConnect, config.deviceDbStore, config.fields)
       dataCache.init()
     }

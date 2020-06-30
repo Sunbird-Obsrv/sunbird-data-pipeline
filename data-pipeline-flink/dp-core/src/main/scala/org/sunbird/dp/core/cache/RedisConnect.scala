@@ -5,20 +5,16 @@ import org.slf4j.LoggerFactory
 import org.sunbird.dp.core.job.BaseJobConfig
 import redis.clients.jedis.Jedis
 
-class RedisConnect(jobConfig: BaseJobConfig) extends java.io.Serializable {
+class RedisConnect(redisHost: String, redisPort: Int, jobConfig: BaseJobConfig) extends java.io.Serializable {
 
   private val serialVersionUID = -396824011996012513L
 
   val config: Config = jobConfig.config
-  val redisHost: String = Option(config.getString("redis.host")).getOrElse("localhost")
-  val redisPort: Int = Option(config.getInt("redis.port")).getOrElse(6379)
   private val logger = LoggerFactory.getLogger(classOf[RedisConnect])
 
 
   private def getConnection(backoffTimeInMillis: Long): Jedis = {
-    val defaultTimeOut = 30000
-    val redisHost: String = Option(config.getString("redis.host")).getOrElse("localhost")
-    val redisPort = Option(config.getInt("redis.port")).getOrElse(6379)
+    val defaultTimeOut = jobConfig.redisConnectionTimeout
     if (backoffTimeInMillis > 0) try Thread.sleep(backoffTimeInMillis)
     catch {
       case e: InterruptedException =>

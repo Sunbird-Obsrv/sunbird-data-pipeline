@@ -17,21 +17,21 @@ import org.sunbird.dp.core.job.{BaseDeduplication, BaseJobConfig}
 import org.sunbird.dp.core.serde._
 import org.sunbird.dp.core.util.FlinkUtil
 import org.sunbird.fixture.EventFixture
-import redis.clients.jedis.exceptions.{JedisConnectionException, JedisDataException, JedisException}
+import redis.clients.jedis.exceptions.{JedisDataException, JedisException}
 
 class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
 
   val config: Config = ConfigFactory.load("base-test.conf")
-  val bsConfig: BaseJobConfig = new BaseJobConfig(config, "base-job")
+  val baseConfig: BaseJobConfig = new BaseJobConfig(config, "base-job")
 
   "RedisConnect functionality" should "be able to connect to redis" in {
-    val redisConnection = new RedisConnect(bsConfig)
+    val redisConnection = new RedisConnect(baseConfig.redisHost, baseConfig.redisPort, baseConfig)
     val status = redisConnection.getConnection(2)
     status.isConnected should be(true)
   }
 
   "DedupEngine functionality" should "be able to identify if the key is unique or duplicate & it should able throw jedis excption for invalid action" in  intercept[JedisException] {
-    val redisConnection = new RedisConnect(bsConfig)
+    val redisConnection = new RedisConnect(baseConfig.redisHost, baseConfig.redisPort, baseConfig)
     val dedupEngine = new DedupEngine(redisConnection, 2, 200)
     dedupEngine.getRedisConnection should not be (null)
     dedupEngine.isUniqueEvent("key-1") should be(true)
@@ -41,7 +41,7 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
   }
 
   it should "be able to reconnect when a jedis exception for invalid action is thrown" in intercept[JedisException] {
-    val redisConnection = new RedisConnect(bsConfig)
+    val redisConnection = new RedisConnect(baseConfig.redisHost, baseConfig.redisPort, baseConfig)
     val dedupEngine = new DedupEngine(redisConnection, 0, 4309535)
     dedupEngine.isUniqueEvent("event-id-3") should be(true)
     dedupEngine.storeChecksum(null)
@@ -49,7 +49,7 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
   }
 
   "DataCache hgetAllWithRetry function" should "be able to retrieve the map data from Redis" in {
-    val redisConnection = new RedisConnect(bsConfig)
+    val redisConnection = new RedisConnect(baseConfig.redisHost, baseConfig.redisPort, baseConfig)
     val map = new util.HashMap[String, String]()
     map.put("country_code", "IN")
     map.put("country", "INDIA")
@@ -59,7 +59,7 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     val deviceFields = List("country_code", "country", "state_code", "st" +
       "ate", "city", "district_custom", "state_code_custom",
       "state_custom", "user_declared_state", "user_declared_district", "devicespec", "firstaccess")
-    val dataCache = new DataCache(bsConfig, new RedisConnect(bsConfig), 2, deviceFields)
+    val dataCache = new DataCache(baseConfig, new RedisConnect(baseConfig.redisHost, baseConfig.redisPort, baseConfig), 2, deviceFields)
     dataCache.init()
     val hGetResponse = dataCache.hgetAllWithRetry("5d8947598347589fsdlh43y8")
     val hGetResponse2 = dataCache.getMultipleWithRetry(List("56934dufhksjd8947hdskj"))
@@ -78,7 +78,7 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     event.put("country_code", "IN")
     event.put("country", "INDIA")
     deDup.updateFlag[util.Map[String, AnyRef], util.Map[String, AnyRef]](event, "test-failed", true)
-    val redisConnection = new RedisConnect(bsConfig)
+    val redisConnection = new RedisConnect(baseConfig.redisHost, baseConfig.redisPort, baseConfig)
     val dedupEngine = new DedupEngine(redisConnection, 2, 200)
     dedupEngine.storeChecksum("key-1")
     implicit val stringTypeInfo: TypeInformation[String] = TypeExtractor.getForClass(classOf[String])
@@ -114,7 +114,7 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
   }
 
   "DataCache" should "be able to add the data into redis" in intercept[JedisDataException]{
-    val redisConnection = new RedisConnect(bsConfig)
+    val redisConnection = new RedisConnect(baseConfig.redisHost, baseConfig.redisPort, baseConfig)
     val deviceData = new util.HashMap[String, String]()
     deviceData.put("country_code", "IN")
     deviceData.put("country", "INDIA")
@@ -122,7 +122,7 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
     val deviceFields = List("country_code", "country", "state_code", "st" +
       "ate", "city", "district_custom", "state_code_custom",
       "state_custom", "user_declared_state", "user_declared_district", "devicespec", "firstaccess")
-    val dataCache = new DataCache(bsConfig, redisConnection, 2, deviceFields)
+    val dataCache = new DataCache(baseConfig, redisConnection, 2, deviceFields)
     dataCache.init()
     dataCache.isExists("device_10") should be(false)
     dataCache.hmSet("device_1", deviceData)
@@ -136,15 +136,15 @@ class CoreTestSpec extends BaseSpec with Matchers with MockitoSugar {
 
 
   "DataCache" should "thorw an jedis exception when invalid action happen" in  intercept[JedisDataException]{
-    val redisConnection = new RedisConnect(bsConfig)
-    val dataCache = new DataCache(bsConfig, redisConnection, 2, List())
+    val redisConnection = new RedisConnect(baseConfig.redisHost, baseConfig.redisPort, baseConfig)
+    val dataCache = new DataCache(baseConfig, redisConnection, 2, List())
     dataCache.init()
     dataCache.hgetAllWithRetry(null)
   }
 
   "DataCache setWithRetry function" should "be able to set the data from Redis" in {
-    val redisConnection = new RedisConnect(bsConfig)
-    val dataCache = new DataCache(bsConfig, redisConnection, 4, List("identifier"))
+    val redisConnection = new RedisConnect(baseConfig.redisHost, baseConfig.redisPort, baseConfig)
+    val dataCache = new DataCache(baseConfig, redisConnection, 4, List("identifier"))
     dataCache.init()
     dataCache.setWithRetry("key", "{\"test\": \"value\"}")
     redisConnection.getConnection(4).get("key") should equal("{\"test\": \"value\"}")

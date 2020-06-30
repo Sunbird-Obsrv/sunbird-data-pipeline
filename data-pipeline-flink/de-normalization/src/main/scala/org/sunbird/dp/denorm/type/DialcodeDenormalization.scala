@@ -7,7 +7,9 @@ import org.sunbird.dp.denorm.task.DenormalizationConfig
 
 class DialcodeDenormalization(config: DenormalizationConfig) {
 
-  private val dialcodeDataCache = new DataCache(config, new RedisConnect(config), config.dialcodeStore, config.dialcodeFields)
+  private val dialcodeDataCache =
+    new DataCache(config, new RedisConnect(config.metaRedisHost, config.metaRedisPort, config),
+      config.dialcodeStore, config.dialcodeFields)
   dialcodeDataCache.init()
 
   def denormalize(event: Event, metrics: Metrics): Event = {
