@@ -41,10 +41,15 @@ node('build-slave') {
                 dir('data-pipeline-flink/sunbird-dp-distribution') {
                     sh "/opt/apache-maven-3.6.3/bin/mvn3.6 package -Pbuild-docker-image -Drelease-version=${build_tag}"
                 }
-               sh """ 
+            }
+
+            stage('Retagging'){
+               sh """
+                  docker tag sunbird-datapipeline:${build_tag} ${hub_org}/sunbird-datapipeline:${build_tag}
                   echo {\\"image_name\\" : \\"sunbird-datapipeline\\", \\"image_tag\\" : \\"${build_tag}\\", \\"node_name\\" : \\"${env.NODE_NAME}\\"} > metadata.json
                   """ 
             }
+
             stage('ArchiveArtifacts') {
                 archiveArtifacts "metadata.json"
                 currentBuild.description = "${build_tag}"
