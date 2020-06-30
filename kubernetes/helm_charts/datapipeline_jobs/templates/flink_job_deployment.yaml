@@ -99,7 +99,7 @@ spec:
       - name: {{ .Values.imagepullsecrets }}
       containers:
       - name: {{ .Release.Name }}-jobmanager
-        image: "{{ .Values.dockerhub }}/{{ .Values.registry }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
+        image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
         imagePullPolicy: Always
         workingDir: {{ .Values.jobmanager.flink_work_dir }}
         command: ["/opt/flink/bin/standalone-job.sh"]
@@ -152,7 +152,7 @@ spec:
       - name: {{ .Values.imagepullsecrets }}
       containers:
       - name: {{ .Release.Name }}-taskmanager
-        image: "{{ .Values.dockerhub }}/{{ .Values.registry}}/{{ .Values.repository }}:{{ .Values.image_tag }}"
+        image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
         imagePullPolicy: Always
         workingDir: {{ .Values.taskmanager.flink_work_dir }}
         command: ["/opt/flink/bin/taskmanager.sh"]
