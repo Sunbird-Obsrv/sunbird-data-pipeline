@@ -50,6 +50,8 @@ object EventFixture {
       |  restart-strategy.delay = 1000 # in milli-seconds
       |}
       |
+      |redisdb.connection.timeout = 30000
+      |
       |redis {
       |  host = 127.0.0.1
       |  port = 6341
@@ -57,6 +59,11 @@ object EventFixture {
       |    duplicationstore.id = 12
       |    key.expiry.seconds = 3600
       |  }
+      |}
+      |
+      |redis-meta {
+      |  host = 127.0.0.1
+      |  port = 6341
       |}
       |
       |postgress {

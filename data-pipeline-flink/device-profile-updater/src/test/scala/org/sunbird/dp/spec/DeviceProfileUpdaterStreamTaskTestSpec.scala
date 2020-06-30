@@ -54,7 +54,7 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
     // Start Redis Server
     redisServer = new RedisServer(6340)
     redisServer.start()
-    redisConnect = new RedisConnect(deviceProfileUpdaterConfig)
+    redisConnect = new RedisConnect(deviceProfileUpdaterConfig.metaRedisHost, deviceProfileUpdaterConfig.metaRedisPort, deviceProfileUpdaterConfig)
     // get the connect to specific db
     jedis = redisConnect.getConnection(deviceProfileUpdaterConfig.deviceDbStore)
     // Start the embeddedPostgress Server

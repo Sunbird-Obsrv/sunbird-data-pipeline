@@ -12,7 +12,7 @@ import org.sunbird.dp.denorm.task.DenormalizationConfig
 class DenormalizationFunction(config: DenormalizationConfig)(implicit val mapTypeInfo: TypeInformation[Event])
   extends BaseProcessFunction[Event, Event](config) {
 
-  private[this] val logger = LoggerFactory.getLogger(classOf[UserDenormFunction])
+  private[this] val logger = LoggerFactory.getLogger(classOf[DenormalizationFunction])
 
   private[this] var deviceDenormalization: DeviceDenormalization = _
   private[this] var userDenormalization: UserDenormalization = _

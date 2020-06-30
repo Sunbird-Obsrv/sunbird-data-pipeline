@@ -17,7 +17,7 @@ class TestEventStreamFunc(config: BaseProcessTestConfig, @transient var dedupEng
 
   override def open(parameters: Configuration): Unit = {
     if (dedupEngine == null) {
-      val redisConnect = new RedisConnect(config)
+      val redisConnect = new RedisConnect(config.redisHost, config.redisPort, config)
       dedupEngine = new DedupEngine(redisConnect, config.dedupStore, config.cacheExpirySeconds)
     }
   }

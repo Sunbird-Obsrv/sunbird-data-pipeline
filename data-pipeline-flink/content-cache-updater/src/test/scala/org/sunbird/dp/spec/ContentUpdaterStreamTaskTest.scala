@@ -78,7 +78,7 @@ class ContentUpdaterStreamTaskTest extends BaseTestSpec {
 
     def setupRedisTestData() {
 
-        val redisConnect = new RedisConnect(contentConfig)
+        val redisConnect = new RedisConnect(contentConfig.metaRedisHost, contentConfig.metaRedisPort, contentConfig)
         val jedis = redisConnect.getConnection(contentConfig.dialcodeStore)
         // Insert dialcode test data
         jedis.set("X3J6W3", "{\"identifier\" :\"X3J6W3\",\"channel\": \"0124784842112040965\"}")
@@ -97,7 +97,7 @@ class ContentUpdaterStreamTaskTest extends BaseTestSpec {
         BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.dialCodeApiMissHit}").getValue() should be(1)
         BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.dialCodeCacheHit}").getValue() should be(2)
         BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.totaldialCodeCount}").getValue() should be(3)
-        val redisConnect = new RedisConnect(contentConfig)
+        val redisConnect = new RedisConnect(contentConfig.metaRedisHost, contentConfig.metaRedisPort, contentConfig)
         val jedis = redisConnect.getConnection(contentConfig.dialcodeStore)
         assert(jedis.get("X3J6W1").contains("channel"))
 

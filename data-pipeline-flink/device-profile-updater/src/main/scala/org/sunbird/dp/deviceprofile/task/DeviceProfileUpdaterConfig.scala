@@ -14,7 +14,7 @@ class DeviceProfileUpdaterConfig(override val config: Config) extends BaseJobCon
 
   implicit val mapTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
 
-  val deviceDbStore: Int = config.getInt("redis.database.devicestore.id")
+  val deviceDbStore: Int = config.getInt("redis-meta.database.devicestore.id")
 
   // Kafka Topics Configuration
   val kafkaInputTopic: String = config.getString("kafka.input.topic")

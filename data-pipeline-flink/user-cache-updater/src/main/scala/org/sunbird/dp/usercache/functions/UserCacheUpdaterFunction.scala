@@ -31,7 +31,7 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
 
   override def open(parameters: Configuration): Unit = {
     super.open(parameters)
-    dataCache = new DataCache(config, new RedisConnect(config), config.userStore, config.userFields)
+    dataCache = new DataCache(config, new RedisConnect(config.metaRedisHost, config.metaRedisPort, config), config.userStore, config.userFields)
     dataCache.init()
     cassandraConnect = new CassandraUtil(config.cassandraHost, config.cassandraPort)
   }
