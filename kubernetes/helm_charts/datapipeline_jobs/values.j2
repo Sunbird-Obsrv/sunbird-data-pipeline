@@ -71,11 +71,11 @@ base_config: |
       port = 6379
     }
     redis-meta {
-      {% if metadata_redis_host is defined %}
+{% if metadata_redis_host is defined %}
       host = {{ metadata_redis_host }}
-      {% else %}
+{% else %}
       host = {{ redis_host }}
-      {% endif %}
+{% endif %}
       port = 6379
     }
     postgres {
