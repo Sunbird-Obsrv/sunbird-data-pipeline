@@ -70,6 +70,14 @@ base_config: |
       host = {{ redis_host }}
       port = 6379
     }
+    redis-meta {
+      {% if metadata_redis_host is defined %}
+      host = {{ metadata_redis_host }}
+      {% else %}
+      host = {{ redis_host }}
+      {% endif %}
+      port = 6379
+    }
     postgres {
       host = {{ postgres.db_url }}
       port = {{ postgres.db_port }}
@@ -110,6 +118,11 @@ telemetry-extractor: |
       contentstore.id = 5
     }
   }
+  redis-meta {
+      database {
+        contentstore.id = 5
+      }
+    }
   redact.events.list = ["ASSESS","RESPONSE"]
 
 pipeline-preprocessor: |
@@ -132,7 +145,7 @@ pipeline-preprocessor: |
   }
   telemetry.schema.path="schemas/telemetry/3.0"
   default.channel="b00bc992ef25f1a9a8d63291e20efc8d"
-  dedup.producer.included.ids = ["dev.sunbird.portal", "dev.sunbird.desktop"]
+  dedup.producer.included.ids = ["{{ portal_id }}", "{{ desktop_id }}"]
   redis {
     database {
       duplicationstore.id = 7
@@ -155,11 +168,11 @@ de-normalization: |
     content.denorm.parallelism = {{ content_denorm_parallelism }}
     loc.denorm.parallelism = {{ loc_denorm_parallelism }}
     dialcode.denorm.parallelism = {{ dialcode_denorm_parallelism }}
+    denorm.parallelism = {{ denorm_parallelism }}
+    denorm.sink.parallelism = {{ denorm_sink_parallelism }}
   }
   # redis-metadata
-  redis {
-    host = {{ metadata_redis_host }}
-    port = 6379
+  redis-meta {
     database {
       devicestore.id = 2
       userstore.id = 4
@@ -214,9 +227,7 @@ device-profile-updater: |
     }
   }
   # redis-metadata
-  redis {E8V3
-    host = {{ metadata_redis_host }}
-    port = 6379
+  redis-meta {
     database {
       devicestore.id = 2
       key.expiry.seconds = {{ device_profile_updater_key_expiry_seconds }}
@@ -234,9 +245,7 @@ content-cache-updater: |
     groupId = {{ env_name }}-content-cache-updater-group
   }
   # redis-metadata
-  redis {
-    host = {{ metadata_redis_host }}
-    port = 6379
+  redis-meta {
     database {
       contentstore.id = 5
       dialcodestore.id = 6
@@ -259,9 +268,7 @@ user-cache-updater: |
     usercache.updater.parallelism = {{ usercache_updater_parallelism }}
   }
   # redis-metadata
-  redis {
-    host = {{ metadata_redis_host }}
-    port = 6379
+  redis-meta {
     database {
       userstore.id = 4
       key.expiry.seconds = {{ user_cache_updater_key_expiry_seconds }}

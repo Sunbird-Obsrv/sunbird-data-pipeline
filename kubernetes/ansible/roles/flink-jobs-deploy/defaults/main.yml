@@ -45,6 +45,11 @@ deviceprofile_parallelism: 1
 dialcode_api_url: 1                     
 usercache_updater_parallelism: 1
 assessaggregator_parallelism: 1
+denorm_parallelism: 1
+denorm_sink_parallelism: 1
+portal_id: dev.sunbird.portal
+desktop_id: dev.sunbird.desktop
+
 
 ### redis keys expiration related vars
 pipeline_preprocessor_key_expiry_seconds: 3600
