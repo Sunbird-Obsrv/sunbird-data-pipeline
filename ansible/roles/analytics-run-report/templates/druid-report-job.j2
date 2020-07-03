@@ -6,6 +6,7 @@ export SCRIPTS_HOME={{ analytics.home }}/scripts
 export DP_LOGS={{ analytics.home }}/logs/data-products
 cd {{ analytics.home }}/scripts
 
+today=$(date "+%Y-%m-%d")
 libs_path="{{ analytics.home }}/models-{{ model_version }}/data-products-1.0"
 
 job_config=`cat $SCRIPTS_HOME/report_config.json`
