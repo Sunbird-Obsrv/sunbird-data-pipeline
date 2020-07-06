@@ -1,6 +1,6 @@
 ---
 # Druid Template variables
-
+druid_monitoring: true
 zookeeper_group: "{{ groups['druid-zookeeper'] }}"
 
 druid_user: druid
