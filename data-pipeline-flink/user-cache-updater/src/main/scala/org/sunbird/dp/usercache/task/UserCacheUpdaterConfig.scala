@@ -38,6 +38,10 @@ class UserCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(
   val keySpace: String = config.getString("lms-cassandra.keyspace")
   val locationTable: String = config.getString("lms-cassandra.table.location")
   val userTable: String = config.getString("lms-cassandra.table.user")
+  val orgTable: String = config.getString("lms-cassandra.table.organisation")
+  val userExternalIdTable: String = config.getString("lms-cassandra.table.usr_external_identity")
+  val userOrgTable: String = config.getString("lms-cassandra.table.user_org")
+  val systemSettingsTable: String = config.getString("lms-cassandra.table.system_settings")
   val cassandraHost: String =  config.getString("lms-cassandra.host")
   val cassandraPort: Int =  config.getInt("lms-cassandra.port")
 
@@ -48,6 +52,12 @@ class UserCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(
   val userLoginTypeKey = "userlogintype"
   val stateKey = "state"
   val districtKey = "district"
+  val blockKey = "block"
+  val declareExternalId = "declared-ext-id"
+  val declaredSchoolName = "declared-school-name"
+  val declaredSchoolCode = "declared-school-udise-code"
+  val declaredState = "declared-state"
+  val declaredDistrict = "declared-district"
 
   // Consumers
   val userCacheConsumer = "user-cache-consumer"
