@@ -44,14 +44,6 @@ prometheus:
         scrape_interval: 30s
         static_configs:
           - targets: ['druid-validator-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
-      - job_name: 'assessment-aggregator-jobmanager-metrics'
-        scrape_interval: 30s
-        static_configs:
-          - targets: ['assessment-aggregator-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
-      - job_name: 'assessment-aggregator-taskmanager-metrics'
-        scrape_interval: 30s
-        static_configs:
-          - targets: ['assessment-aggregator-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
     additionalScrapeConfigsExternal: true
     retention: "{{ prometheus_retention_time | d('90d') }}"
     externalLabels:
