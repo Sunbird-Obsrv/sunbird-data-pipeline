@@ -44,30 +44,6 @@ prometheus:
         scrape_interval: 30s
         static_configs:
           - targets: ['druid-validator-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
-      - job_name: 'device-profile-updater-jobmanager-metrics'
-        scrape_interval: 30s
-        static_configs:
-          - targets: ['device-profile-updater-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
-      - job_name: 'device-profile-updater-taskmanager-metrics'
-        scrape_interval: 30s
-        static_configs:
-          - targets: ['device-profile-updater-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
-      - job_name: 'content-cache-updater-jobmanager-metrics'
-        scrape_interval: 30s
-        static_configs:
-          - targets: ['content-cache-updater-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
-      - job_name: 'content-cache-updater-taskmanager-metrics'
-        scrape_interval: 30s
-        static_configs:
-          - targets: ['content-cache-updater-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
-      - job_name: 'user-cache-updater-jobmanager-metrics'
-        scrape_interval: 30s
-        static_configs:
-          - targets: ['user-cache-updater-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
-      - job_name: 'user-cache-updater-taskmanager-metrics'
-        scrape_interval: 30s
-        static_configs:
-          - targets: ['user-cache-updater-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
       - job_name: 'assessment-aggregator-jobmanager-metrics'
         scrape_interval: 30s
         static_configs:
