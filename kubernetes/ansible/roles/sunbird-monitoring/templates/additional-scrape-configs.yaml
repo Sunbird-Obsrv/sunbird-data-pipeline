@@ -8,14 +8,6 @@
 fullnameOverride: "sunbird-monitoring"
 
 scrapeconfig:
-  - job_name: 'telemetry-extractor-jobmanager-metrics'
-    scrape_interval: 30s
-    static_configs:
-      - targets: ['telemetry-extractor-jobmanager.flink-namespace.svc.cluster.local:9250']
-  - job_name: 'telemetry-extractor-taskmanager-metrics'
-    scrape_interval: 30s
-    static_configs:
-      - targets: ['telemetry-extractor-taskmanager.flink-namespace.svc.cluster.local:9251']
   - job_name: 'helm-exporter'
     static_configs:
       - targets: ['helm-exporter.monitoring.svc.cluster.local:9571']
