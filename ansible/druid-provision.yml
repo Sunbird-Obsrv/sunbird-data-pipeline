@@ -95,4 +95,3 @@
   vars:
     druid_postgres_db: "druid"
     druid_zookeeper_host: "{{ groups['raw-zookeeper']|join(':2181,')}}:2181"
-    druid_graphite_host: "{{ groups['raw-graphite'][0] }}"
