@@ -204,6 +204,7 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
       case config.declaredSchoolCode => result.put("schooludisecode", row.getString("externalid"))
       case config.declaredState => result.put("state", row.getString("externalid"))
       case config.declaredDistrict => result.put("district", row.getString("externalid"))
+      case _ => result
     })
     result
   }

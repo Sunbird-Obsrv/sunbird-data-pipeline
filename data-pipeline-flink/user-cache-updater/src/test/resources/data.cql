@@ -270,6 +270,7 @@ CREATE TABLE sunbird.usr_external_identity (
     INSERT INTO sunbird.usr_external_identity (userid,idtype,originalprovider, externalid, provider) VALUES ('user-3','declared-school-udise-code', 'apekx', '038sba937', 'apekx');
     INSERT INTO sunbird.usr_external_identity (userid,idtype,originalprovider, externalid, provider) VALUES ('user-3','declared-state', 'apekx', 'Karnataka', 'apekx');
     INSERT INTO sunbird.usr_external_identity (userid,idtype,originalprovider, externalid, provider) VALUES ('user-3','declared-district', 'apekx', 'Tumkur', 'apekx');
+    INSERT INTO sunbird.usr_external_identity (userid,idtype,originalprovider, externalid, provider) VALUES ('user-3','declared-phone', 'apekx', '847389758393', 'apekx');
     INSERT INTO sunbird.usr_external_identity (userid,idtype,originalprovider, externalid, provider) VALUES ('user-4','apekx', 'apekx', '948ext1', 'apekx');
 
     CREATE TABLE sunbird.system_settings (
