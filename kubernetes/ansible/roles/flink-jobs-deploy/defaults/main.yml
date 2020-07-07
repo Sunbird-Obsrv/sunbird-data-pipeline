@@ -1,4 +1,5 @@
 namespace: flink-{{ env }}
+flink_namespace: flink-dev
 imagepullsecrets: sunbird-registry-secret
 docker_registry: sunbirded
 image_name: sunbird-datapipeline
