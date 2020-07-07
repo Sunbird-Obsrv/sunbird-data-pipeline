@@ -11,40 +11,7 @@ fullnameOverride: sunbird-monitoring
 # Enabling external prometheus scrape config 
 prometheus:
   prometheusSpec:
-    additionalScrapeConfigs:
-      - job_name: 'telemetry-extractor-jobmanager-metrics'
-        scrape_interval: 30s
-        static_configs:
-          - targets: ['telemetry-extractor-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
-      - job_name: 'telemetry-extractor-taskmanager-metrics'
-        scrape_interval: 30s
-        static_configs:
-          - targets: ['telemetry-extractor-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
-      - job_name: 'pipeline-preprocessor-jobmanager-metrics'
-        scrape_interval: 30s
-        static_configs:
-          - targets: ['pipeline-preprocessor-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
-      - job_name: 'pipeline-preprocessor-taskmanager-metrics'
-        scrape_interval: 30s
-        static_configs:
-          - targets: ['pipeline-preprocessor-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
-      - job_name: 'de-normalization-jobmanager-metrics'
-        scrape_interval: 30s
-        static_configs:
-          - targets: ['de-normalization-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
-      - job_name: 'de-normalization-taskmanager-metrics'
-        scrape_interval: 30s
-        static_configs:
-          - targets: ['de-normalization-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
-      - job_name: 'druid-validator-jobmanager-metrics'
-        scrape_interval: 30s
-        static_configs:
-          - targets: ['druid-validator-jobmanager.{{ flink_namespace }}.svc.cluster.local:9250']
-      - job_name: 'druid-validator-taskmanager-metrics'
-        scrape_interval: 30s
-        static_configs:
-          - targets: ['druid-validator-taskmanager.{{ flink_namespace }}.svc.cluster.local:9251']
-    additionalScrapeConfigsExternal: true
+    additionalScrapeConfigsExternal: {{ additional_scrape_configs_enabled | d(true) }}
     retention: "{{ prometheus_retention_time | d('90d') }}"
     externalLabels:
       cluster: "{{ kubernetes_cluster_name | default('kubernetes-1')}}"
@@ -65,7 +32,7 @@ alertmanager:
       smtp_auth_password: "{{ monitor_alerts_mail_server_password }}"
     route:
       receiver: '{{env}}_devops_team'
-      group_by: [cluster, alertname, job]
+      group_by: [cluster, alertname]
       group_wait: 30s
       group_interval: 5m
       repeat_interval: 4h
