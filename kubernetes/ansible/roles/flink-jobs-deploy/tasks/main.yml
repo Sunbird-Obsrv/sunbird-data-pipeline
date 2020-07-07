@@ -4,7 +4,7 @@
     dest: "{{ chart_path }}/values.yaml"
 
 - name: remove the job.batch
-  shell: kubectl delete job.batch {{ item }} -n {{ namespace }}
+  shell: kubectl delete job.batch {{ item }}-jobmanager -n {{ namespace }}
   with_items:
     - "{{ job_names_to_deploy.split(',')|list }}"
   ignore_errors: yes
