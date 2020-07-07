@@ -25,10 +25,10 @@ class DenormalizationConfig(override val config: Config) extends BaseJobConfig(c
   val denormParallelism: Int = config.getInt("task.denorm.parallelism")
   val denormSinkParallelism: Int = config.getInt("task.denorm.sink.parallelism")
 
-  val userStore: Int = config.getInt("redis.database.userstore.id")
-  val contentStore: Int = config.getInt("redis.database.contentstore.id")
-  val deviceStore: Int = config.getInt("redis.database.devicestore.id")
-  val dialcodeStore: Int = config.getInt("redis.database.dialcodestore.id")
+  val userStore: Int = config.getInt("redis-meta.database.userstore.id")
+  val contentStore: Int = config.getInt("redis-meta.database.contentstore.id")
+  val deviceStore: Int = config.getInt("redis-meta.database.devicestore.id")
+  val dialcodeStore: Int = config.getInt("redis-meta.database.dialcodestore.id")
 
   val deviceFields = List("country_code", "country", "state_code", "state", "city", "district_custom", "state_code_custom",
     "state_custom", "user_declared_state", "user_declared_district", "devicespec", "firstaccess")
@@ -90,10 +90,5 @@ class DenormalizationConfig(override val config: Config) extends BaseJobConfig(c
 
   // Functions
   val denormalizationFunction = "DenormalizationFunction"
-  val deviceDenormFunction = "DeviceDenormFunction"
-  val userDenormFunction = "UserDenormFunction"
-  val dialcodeDenormFunction = "DialcodeDenormFunction"
-  val contentDenormFunction = "ContentDenormFunction"
-  val locationDenormFunction = "LocationDenormFunction"
 
 }

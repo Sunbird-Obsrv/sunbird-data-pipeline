@@ -15,6 +15,8 @@ public class TelemetryValidatorService {
     private static Logger LOGGER = new Logger(TelemetryValidatorService.class);
     private final TelemetryValidatorConfig config;
     private TelemetrySchemaValidator telemetrySchemaValidator;
+    private String eidNullErrorMsg = "VALIDATION FAILED as eid is missing";
+    private String schemaNotFoundErrorMsg = "SCHEMA NOT FOUND";
 
     public TelemetryValidatorService(TelemetryValidatorConfig config, TelemetrySchemaValidator telemetrySchemaValidator) {
         this.config = config;
@@ -26,16 +28,14 @@ public class TelemetryValidatorService {
         try {
             event = source.getEvent();
             if(event.eid() == null) {
-                LOGGER.error(null, "VALIDATION FAILED: as eid is missing");
-                sink.toFailedTopic(event, String.format("validation failed. eid id missing"));
+                LOGGER.error(null, eidNullErrorMsg);
+                sink.toFailedTopic(event, eidNullErrorMsg);
                 return;
             }
 
             if (!telemetrySchemaValidator.schemaFileExists(event)) {
-                LOGGER.info("SCHEMA NOT FOUND FOR EID: ", event.eid());
-                LOGGER.debug("SKIP PROCESSING: SENDING TO SUCCESS", event.mid());
-                event.markSkipped();
-                sink.toSuccessTopic(dataCorrection(event));
+                LOGGER.debug(null, schemaNotFoundErrorMsg);
+                sink.toFailedTopic(event, schemaNotFoundErrorMsg);
                 return;
             }
 

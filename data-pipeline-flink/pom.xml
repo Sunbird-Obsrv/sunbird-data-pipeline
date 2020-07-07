@@ -40,7 +40,7 @@
 		<kafka.version>2.4.0</kafka.version>
 		<jackson-jaxrs.version>1.9.13</jackson-jaxrs.version>
 		<scoverage.plugin.version>1.4.0</scoverage.plugin.version>
-		<release-version>release-2.10.2</release-version>
+		<release-version>release-2.10.3</release-version>
 	</properties>
 
 	<repositories>

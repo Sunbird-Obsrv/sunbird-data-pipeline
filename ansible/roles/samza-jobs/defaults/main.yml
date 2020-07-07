@@ -72,7 +72,7 @@ assessment_aggregator_consumer_fetch_max_bytes: 5242880
 
 dedup_include_env_producer_ids: ""
 
-content_metadata_fields: "name, objectType, contentType, mediaType, language, medium, subject, gradeLevel, mimeType, createdBy, createdFor, framework, board, status, pkgVersion, lastSubmittedOn, lastUpdatedOn, lastPublishedOn"
+content_metadata_fields: "name, objectType, contentType, mediaType, language, medium, subject, gradeLevel, mimeType, createdBy, createdFor, framework, board, status, pkgVersion, lastSubmittedOn, lastUpdatedOn, lastPublishedOn, channel"
 user_metadata_fields: "usertype, grade, subject, language, state, district, usersignintype,userlogintype"
 dialcode_metadata_fields: "identifier, channel, batchcode, publisher, generated_on, published_on, status"
 

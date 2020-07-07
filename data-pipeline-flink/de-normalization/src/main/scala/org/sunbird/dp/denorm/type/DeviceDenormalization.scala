@@ -7,7 +7,9 @@ import org.sunbird.dp.denorm.task.DenormalizationConfig
 
 class DeviceDenormalization(config: DenormalizationConfig) {
 
-  private val deviceDataCache: DataCache = new DataCache(config, new RedisConnect(config), config.deviceStore, config.deviceFields)
+  private val deviceDataCache: DataCache =
+    new DataCache(config, new RedisConnect(config.metaRedisHost, config.metaRedisPort, config),
+      config.deviceStore, config.deviceFields)
   deviceDataCache.init()
 
   def denormalize(event: Event, metrics: Metrics): Event = {

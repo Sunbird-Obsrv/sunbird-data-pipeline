@@ -54,7 +54,7 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     redisServer = new RedisServer(6340)
     redisServer.start()
     BaseMetricsReporter.gaugeMetrics.clear()
-    val redisConnect = new RedisConnect(userCacheConfig)
+    val redisConnect = new RedisConnect(userCacheConfig.metaRedisHost, userCacheConfig.metaRedisPort, userCacheConfig)
 
     jedis = redisConnect.getConnection(userCacheConfig.userStore)
     setupRedisTestData(jedis)

@@ -17,15 +17,15 @@ class ContentCacheUpdaterConfig(override val config: Config) extends BaseJobConf
   // Kafka Topics Configuration
   val inputTopic: String = config.getString("kafka.input.topic")
 
-  val contentStore: Int = config.getInt("redis.database.contentstore.id")
-  val dialcodeStore: Int = config.getInt("redis.database.dialcodestore.id")
+  val contentStore: Int = config.getInt("redis-meta.database.contentstore.id")
+  val dialcodeStore: Int = config.getInt("redis-meta.database.dialcodestore.id")
 
   val contentListFields=List("gradeLevel","subject","medium","language")
   val contentDateFields=List("lastStatusChangedOn","lastUpdatedOn","createdOn")
   val dialcodeFields = List( "identifier", "channel", "publisher", "batchCode","status","generatedOn","publishedOn","metadata")
 
-  val dialCodeApiUrl = config.getString("dialcode.api.url")
-  val dialCodeApiToken = config.getString("dialcode.api.token")
+  val dialCodeApiUrl: String = config.getString("dialcode.api.url")
+  val dialCodeApiToken: String = config.getString("dialcode.api.token")
   
 
   val JOB_METRICS_PRODUCER = "telemetry-job-metrics-producer"
