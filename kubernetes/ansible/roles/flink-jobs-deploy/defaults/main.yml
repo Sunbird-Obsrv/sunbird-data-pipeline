@@ -73,7 +73,7 @@ taskmanager_liveness:
 jobmanager_ui_rest_port: 80
 jobmanager_ui_tcp_port: 8081
 
-taskmanager_prom_port: 9051
+taskmanager_prom_port: 9251
 taskmanager_rpc_port: 6122
 taskmanager_heap_memory: 1024
 producer_max_request_size: 1572864
