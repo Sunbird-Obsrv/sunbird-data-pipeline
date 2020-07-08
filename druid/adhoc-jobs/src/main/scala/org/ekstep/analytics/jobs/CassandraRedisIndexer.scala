@@ -16,10 +16,14 @@ object CassandraRedisIndexer {
 
   def main(args: Array[String]): Unit = {
 
-    val isForAllUsers = args(0)
-    val specificUserId = args(1)
-    val specificDate = args(2)
-    val insertionType = args(4)
+    val isForAllUsers = "true"
+    val specificUserId = null
+    val specificDate = null
+    val insertionType = "hashmap"
+    println("arg0" + args(0))
+    println("arg1" + args(1))
+    println("arg2" + args(2))
+    println("arg3" + args(3))
 
     val conf = new SparkConf()
       .setAppName("CassandraToRedisIndexer")
@@ -58,6 +62,7 @@ object CassandraRedisIndexer {
     }
 
     val usersData = getFilteredUserRecords(sc.cassandraTable(userKeyspace, userTableName).map(f => f.toMap))
+    println("usersData" + usersData.count())
     if (StringUtils.equalsIgnoreCase(insertionType, "hashmap")) {
       val mappedData = usersData.map { obj =>
         (obj.getOrElse(redisKeyProperty, "").asInstanceOf[String], obj)
