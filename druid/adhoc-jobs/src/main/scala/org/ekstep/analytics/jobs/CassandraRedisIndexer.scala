@@ -50,7 +50,7 @@ object CassandraRedisIndexer {
       if (StringUtils.equalsIgnoreCase(isForAllUsers, "true")) {
         usersData
       } else if (null != specificUserId) {
-        usersData.filter(user => StringUtils.equalsIgnoreCase(user.getOrElse("id", "").asInstanceOf[String], specificUserId))
+        usersData.filter(user => StringUtils.equalsIgnoreCase(user.getOrElse(redisKeyProperty, "").asInstanceOf[String], specificUserId))
       } else {
         null
       }
