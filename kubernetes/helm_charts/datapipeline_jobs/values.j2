@@ -10,26 +10,23 @@ azure_secret: {{ azure_secret }}
 replicaCount: {{taskmana_replicacount|default(1)}}
 
 jobmanager:
-  rpcPort: {{ jobmanager_rpc_port }}
-  blobPort: {{ jobmanager_blob_port }}
-  queryPort: {{ jobmanager_query_port }}
-  uiPort: {{ jobmanager_ui_port }}
-  promPort: {{ jobmanager_prom_port }}
+  rpc_port: {{ jobmanager_rpc_port }}
+  blob_port: {{ jobmanager_blob_port }}
+  query_port: {{ jobmanager_query_port }}
+  ui_port: {{ jobmanager_ui_port }}
+  prom_port: {{ jobmanager_prom_port }}
   heap_memory: {{ jobmanager_heap_memory }}
-  mountPath: {{ jobmanager_mount_path }}
-  flink_work_dir: {{ flink_work_dir }}
 
 service: {{ jobmanager_ui_service|to_json }}
 
-restPort: {{ jobmanager_ui_rest_port }}
-resttcpPort: {{ jobmanager_ui_tcp_port }}
+rest_port: {{ jobmanager_ui_rest_port }}
+resttcp_port: {{ jobmanager_ui_tcp_port }}
 
 taskmanager:
-  promPort: {{ taskmanager_prom_port }}
-  rpcPort: {{ taskmanager_rpc_port }}
+  prom_port: {{ taskmanager_prom_port }}
+  rpc_port: {{ taskmanager_rpc_port }}
   heap_memory: {{ taskmanager_heap_memory }}
   replicas: {{taskmanager_replicacount|default(1)}}
-  flink_work_dir: {{ flink_work_dir }}
 
 job_classname: {{ job_classname }}
 {{ taskmanager_liveness | to_nice_yaml }}
@@ -49,7 +46,7 @@ base_config: |
       statebackend {
         blob {
           storage {
-            account = "{{ sunbird_private_storage_account_name }}.blob.core.windows.net"
+            account = "{{ azure_account }}.blob.core.windows.net"
             container = "{{ flink_container_name }}"
             checkpointing.dir = "checkpoint"
           }

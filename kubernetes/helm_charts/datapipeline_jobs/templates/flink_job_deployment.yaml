@@ -11,15 +11,15 @@ spec:
   type: ClusterIP
   ports:
   - name: rpc
-    port: {{ .Values.jobmanager.rpcPort }}
+    port: {{ .Values.jobmanager.rpc_port }}
   - name: blob
-    port: {{ .Values.jobmanager.blobPort }}
+    port: {{ .Values.jobmanager.blob_port }}
   - name: query
-    port: {{ .Values.jobmanager.queryPort }}
+    port: {{ .Values.jobmanager.query_port }}
   - name: ui
-    port: {{ .Values.jobmanager.uiPort }}
+    port: {{ .Values.jobmanager.ui_port }}
   - name: prom
-    port: {{ .Values.jobmanager.promPort }}
+    port: {{ .Values.jobmanager.prom_port }}
   selector:
     app: flink
     component: {{ .Release.Name }}-jobmanager
@@ -45,9 +45,9 @@ spec:
   {{- end }}
   ports:
   - name: rest
-    port: {{ .Values.restPort }}
+    port: {{ .Values.rest_port }}
     protocol: TCP
-    targetPort: {{ .Values.resttcpPort }}
+    targetPort: {{ .Values.resttcp_port }}
   selector:
     app: flink
     component: {{ .Release.Name }}-jobmanager
@@ -65,7 +65,7 @@ spec:
   type: ClusterIP
   ports:
   - name: prom
-    port: {{ .Values.taskmanager.promPort }}
+    port: {{ .Values.taskmanager.prom_port }}
   selector:
     app: flink
     component: {{ .Release.Name }}-taskmanager
@@ -101,34 +101,34 @@ spec:
       - name: {{ .Release.Name }}-jobmanager
         image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
         imagePullPolicy: Always
-        workingDir: {{ .Values.jobmanager.flink_work_dir }}
+        workingDir: /opt/flink
         command: ["/opt/flink/bin/standalone-job.sh"]
         args: ["start-foreground",
                "--job-classname={{ .Values.job_classname }}", 
                "-Dfs.azure.account.key.{{ .Values.azure_account }}.blob.core.windows.net={{ .Values.azure_secret }}",
                "-Dweb.submit.enable=false",
                "-Dmetrics.reporter.prom.class=org.apache.flink.metrics.prometheus.PrometheusReporter",
-               "-Dmetrics.reporter.prom.port={{ .Values.jobmanager.promPort }}",
+               "-Dmetrics.reporter.prom.port={{ .Values.jobmanager.prom_port }}",
                "-Djobmanager.rpc.address={{ .Release.Name }}-jobmanager",
-               "-Djobmanager.rpc.port={{ .Values.jobmanager.rpcPort }}",
+               "-Djobmanager.rpc.port={{ .Values.jobmanager.rpc_port }}",
                "-Dparallelism.default=1", 
-               "-Dblob.server.port={{ .Values.jobmanager.blobPort }}", 
-               "-Dqueryable-state.server.ports={{ .Values.jobmanager.queryPort }}",
+               "-Dblob.server.port={{ .Values.jobmanager.blob_port }}", 
+               "-Dqueryable-state.server.ports={{ .Values.jobmanager.query_port }}",
                "-Djobmanager.heap.size={{ .Values.jobmanager.heap_memory }}m",
                "--config.file.path",
                "/data/flink/conf/{{ .Release.Name }}.conf"]
         ports:
-        - containerPort: {{ .Values.jobmanager.rpcPort }}
+        - containerPort: {{ .Values.jobmanager.rpc_port }}
           name: rpc
-        - containerPort: {{ .Values.jobmanager.blobPort }}
+        - containerPort: {{ .Values.jobmanager.blob_port }}
           name: blob
-        - containerPort: {{ .Values.jobmanager.queryPort }}
+        - containerPort: {{ .Values.jobmanager.query_port }}
           name: query
-        - containerPort: {{ .Values.jobmanager.uiPort }}
+        - containerPort: {{ .Values.jobmanager.ui_port }}
           name: ui
         volumeMounts:
         - name: flink-config-volume
-          mountPath: {{ .Values.jobmanager.mountPath }}
+          mountPath: /data/flink/conf
 
 ---
 apiVersion: apps/v1
@@ -163,10 +163,10 @@ spec:
           "-Dmetrics.reporter.prom.host={{ .Release.Name }}-taskmanager",
           "-Dmetrics.reporter.prom.port=9251-9260",
           "-Djobmanager.rpc.address={{ .Release.Name }}-jobmanager",
-          "-Dtaskmanager.rpc.port={{ .Values.taskmanager.rpcPort }}",
+          "-Dtaskmanager.rpc.port={{ .Values.taskmanager.rpc_port }}",
           "-Dtaskmanager.heap.size={{ .Values.taskmanager.heap_memory }}m"]
         ports:
-        - containerPort: {{ .Values.taskmanager.rpcPort }}
+        - containerPort: {{ .Values.taskmanager.rpc_port }}
           name: rpc
         {{- if .Values.healthcheck }}
         livenessProbe:
