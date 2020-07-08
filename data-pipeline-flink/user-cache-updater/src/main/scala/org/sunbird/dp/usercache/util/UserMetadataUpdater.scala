@@ -17,7 +17,7 @@ import scala.collection.mutable
 
 class UserMetadataUpdater (config: UserCacheUpdaterConfig) {
 
-  private[this] val logger = LoggerFactory.getLogger(classOf[UserMetadataUpdater[T]])
+  private[this] val logger = LoggerFactory.getLogger(classOf[UserMetadataUpdater])
   private val dataCache: DataCache = new DataCache(config, new RedisConnect(config), config.userStore, config.userFields)
   private val cassandraConnect: CassandraUtil = new CassandraUtil(config.cassandraHost, config.cassandraPort)
   private val custodianRootOrgId: String = getCustodianRootOrgId()
