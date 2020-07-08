@@ -14,9 +14,9 @@ telemetry_converter_ver=0.0.8
 
 get_report_job_model_name(){
 	case "$1" in
-		"assessment-dashboard-metrics") echo 'org.sunbird.analytics.job.report.AssessmentMetricsJob'
+		"assessment-dashboard-metrics") echo 'org.sunbird.analytics.job.report.AssessmentMetricsJobV2'
 		;;
-		"course-dashboard-metrics") echo 'org.sunbird.analytics.job.report.CourseMetricsJob'
+		"course-dashboard-metrics") echo 'org.sunbird.analytics.job.report.CourseMetricsJobV2'
 		;;
 		"course-enrollment-report") echo 'org.sunbird.analytics.job.report.CourseEnrollmentJob'
 		;;
