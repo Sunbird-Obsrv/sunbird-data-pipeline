@@ -119,7 +119,7 @@
         <dependency>
             <groupId>org.ekstep.ecosystem.jobs</groupId>
             <artifactId>assessment-aggregator</artifactId>
-            <version>0.0.4</version>
+            <version>0.0.5</version>
             <type>tar.gz</type>
             <classifier>distribution</classifier>
         </dependency>

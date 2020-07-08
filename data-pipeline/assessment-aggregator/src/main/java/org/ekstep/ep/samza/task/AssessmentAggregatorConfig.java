@@ -11,6 +11,8 @@ public class AssessmentAggregatorConfig {
     private final String assessmentQuestionUDT;
     private final String cassandraHost;
     private final int cassandraPort;
+    private final String contentServiceBaseUrl;
+    private final Integer leafNodesTtl;
 
     public AssessmentAggregatorConfig(Config config) {
     	
@@ -20,6 +22,8 @@ public class AssessmentAggregatorConfig {
         failedTopic = config.get("output.failed.topic.name", "telemetry.assess.failed");
         cassandraHost = config.get("middleware.cassandra.host", "127.0.0.1");
         cassandraPort = config.getInt("middleware.cassandra.port", 9042);
+        contentServiceBaseUrl = config.get("kp.content_service.base_url", "http://localhost:9000");
+        leafNodesTtl = config.getInt("content.leafnodes.ttl", 3600);
     }
 
     public String jobName() {
@@ -45,5 +49,9 @@ public class AssessmentAggregatorConfig {
     public String getCassandraHost() { return cassandraHost; }
 
     public int getCassandraPort() { return  cassandraPort; }
+
+    public String getContentServiceBaseUrl() { return contentServiceBaseUrl; }
+
+    public Integer getLeafNodesTtl() { return  leafNodesTtl; }
 
 }

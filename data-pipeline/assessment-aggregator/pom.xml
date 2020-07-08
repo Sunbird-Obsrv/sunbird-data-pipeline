@@ -12,7 +12,7 @@
 
     <groupId>org.ekstep.ecosystem.jobs</groupId>
     <artifactId>assessment-aggregator</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
     <name>AssessmentAggregator</name>
     <dependencies>
         <dependency>

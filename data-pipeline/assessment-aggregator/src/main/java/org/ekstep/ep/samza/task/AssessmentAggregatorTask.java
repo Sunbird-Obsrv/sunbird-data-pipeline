@@ -25,15 +25,20 @@ import org.apache.samza.task.*;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.service.AssessmentAggregatorService;
 import org.ekstep.ep.samza.util.CassandraConnect;
+import org.ekstep.ep.samza.util.ContentCache;
+import org.ekstep.ep.samza.util.RestUtil;
 
 public class AssessmentAggregatorTask extends BaseSamzaTask {
 
     private JobMetrics metrics;
     private AssessmentAggregatorService service;
     private AssessmentAggregatorConfig config;
+    private ContentCache contentCache;
+    private RestUtil restUtil;
 
-    public AssessmentAggregatorTask(Config config, TaskContext taskContext, CassandraConnect cassandraConnect) {
-        init(config, taskContext, cassandraConnect);
+
+    public AssessmentAggregatorTask(Config config, TaskContext taskContext, CassandraConnect cassandraConnect, ContentCache contentCache, RestUtil restUtil) {
+        init(config, taskContext, cassandraConnect, contentCache, restUtil);
     }
 
     public AssessmentAggregatorTask() {
@@ -42,15 +47,16 @@ public class AssessmentAggregatorTask extends BaseSamzaTask {
 
     @Override
     public void init(Config config, TaskContext context) {
-        init(config, context, null);
+        init(config, context, null, null, null);
     }
 
-    private void init(Config config, TaskContext context, CassandraConnect cassandraConnect) {
-
+    private void init(Config config, TaskContext context, CassandraConnect cassandraConnect, ContentCache contentCache, RestUtil restUtil) {
         this.config = new AssessmentAggregatorConfig(config);
         this.metrics = new JobMetrics(context, this.config.jobName());
         cassandraConnect = null != cassandraConnect ? cassandraConnect : new CassandraConnect(this.config.getCassandraHost(), this.config.getCassandraPort());
-        this.service = new AssessmentAggregatorService(cassandraConnect, this.config);
+        this.contentCache = null == contentCache ? new ContentCache(config) : contentCache;
+        this.restUtil = null == restUtil ? new RestUtil() : restUtil;
+        this.service = new AssessmentAggregatorService(cassandraConnect, this.config, this.contentCache, this.restUtil);
         this.initTask(config, this.metrics);
     }
 

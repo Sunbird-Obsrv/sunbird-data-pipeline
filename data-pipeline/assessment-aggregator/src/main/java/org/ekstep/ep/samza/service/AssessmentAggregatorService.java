@@ -4,6 +4,7 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.core.exceptions.DriverException;
 import com.google.gson.Gson;
+import org.apache.commons.lang3.StringUtils;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Aggregate;
 import org.ekstep.ep.samza.domain.BatchEvent;
@@ -12,7 +13,10 @@ import org.ekstep.ep.samza.task.AssessmentAggregatorConfig;
 import org.ekstep.ep.samza.task.AssessmentAggregatorSink;
 import org.ekstep.ep.samza.task.AssessmentAggregatorSource;
 import org.ekstep.ep.samza.util.CassandraConnect;
+import org.ekstep.ep.samza.util.ContentCache;
+import org.ekstep.ep.samza.util.ContentUtil;
 import org.ekstep.ep.samza.util.DBUtil;
+import org.ekstep.ep.samza.util.RestUtil;
 import org.joda.time.DateTime;
 
 import java.util.*;
@@ -21,15 +25,22 @@ public class AssessmentAggregatorService {
 
     private static Logger LOGGER = new Logger(AssessmentAggregatorService.class);
     private DBUtil dbUtil;
+    private ContentUtil  contentUtil;
     private Comparator<QuestionData> byEts = (QuestionData o1, QuestionData o2) -> Long.compare(o2.getEts(), o1.getEts());
 
-    public AssessmentAggregatorService(CassandraConnect cassandraConnect, AssessmentAggregatorConfig config) {
+    public AssessmentAggregatorService(CassandraConnect cassandraConnect, AssessmentAggregatorConfig config, ContentCache contentCache, RestUtil restUtil) {
         this.dbUtil = new DBUtil(cassandraConnect, config);
+        this.contentUtil = new ContentUtil(config, contentCache, restUtil);
     }
 
     public void process(AssessmentAggregatorSource source, AssessmentAggregatorSink sink) throws Exception {
         try {
             BatchEvent batchEvent = source.getEvent();
+            if (!validateEvent(batchEvent)) {
+                LOGGER.info(batchEvent.attemptId(), ": Batch Event validation failed. | ContentId : " + batchEvent.contentId() + " does not belong to CourseId :" + batchEvent.courseId() + ", skipping");
+                sink.skip(batchEvent);
+                return;
+            }
             Row assessment = dbUtil.getAssessmentFromDB(batchEvent);
             if (null != assessment) {
             	sink.incDBHits();
@@ -60,7 +71,7 @@ public class AssessmentAggregatorService {
             sink.fail(source.getMessage().toString());
         }
     }
-    
+
     public void saveAssessment(Row assessment, BatchEvent batchEvent) {
     	Long createdOn = null != assessment ? assessment.getTimestamp("created_on").getTime() : new DateTime().getMillis();
         Aggregate assess = getAggregateData(batchEvent, createdOn);
@@ -93,5 +104,18 @@ public class AssessmentAggregatorService {
         }
         return new Aggregate(totalScore, totalMaxScore, questionsList);
     }
+
+    private Boolean validateEvent(BatchEvent event) throws Exception {
+        String courseId = event.courseId();
+        String contentId = event.contentId();
+        System.out.println("courseId : "+courseId);
+        System.out.println("contentId : "+contentId);
+        if (StringUtils.isNotBlank(courseId) && StringUtils.isNotBlank(contentId)) {
+            return contentUtil.getLeafNodes(courseId).contains(contentId) ? true : false;
+        }
+        return false;
+    }
+
+
     
 }
