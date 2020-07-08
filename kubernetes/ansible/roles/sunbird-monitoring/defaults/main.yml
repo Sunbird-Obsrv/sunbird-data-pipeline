@@ -1,0 +1,23 @@
+---
+# defaults file for sunbird-monitoring
+fullnameOverride: sunbird-monitoring
+monitoring_stack:
+  - prometheus-operator
+  - alertrules
+
+namespace: monitoring
+flink_namespace: flink-dev
+env: dev
+kubernetes_cluster_name: kubernetes-dp-{{ env }}
+
+monitor_alerts_mail_from_email: "{{ alert_from_address }}"
+monitor_alerts_mail_server_host: "{{ sendgrid_hostname }}" 
+monitor_alerts_mail_server_port: 587
+monitor_alerts_mail_server_username: "{{ SGUSER }}" 
+monitor_alerts_mail_server_password: "{{ SGPASS }}" 
+monitor_alerts_slack_url: 
+monitor_alerts_slack_channel: 
+
+default_critical_mailing_list: "{{ default_mailing_list }}"
+default_fatal_mailing_list: "{{ default_mailing_list }}"
+default_mailing_list: kaliraja.ramasamy@tarento.com, anandp@ilimi.in, manjunathd@ilimi.in
