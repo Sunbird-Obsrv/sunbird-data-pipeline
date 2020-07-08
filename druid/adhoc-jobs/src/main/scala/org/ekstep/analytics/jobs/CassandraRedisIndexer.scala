@@ -16,8 +16,10 @@ object CassandraRedisIndexer {
 
   def main(args: Array[String]): Unit = {
 
-    val isForAllUsers = true
-    val specificUserId = null
+    val isForAllUsers = args(0)
+    val specificUserId = args(1)
+    val specificDate = args(2)
+    val insertionType = args(4)
 
     val conf = new SparkConf()
       .setAppName("CassandraToRedisIndexer")
@@ -27,7 +29,7 @@ object CassandraRedisIndexer {
       // redis settings
       .set("spark.redis.host", config.getString("redis.host"))
       .set("spark.redis.port", config.getString("redis.port"))
-      .set("spark.redis.db", "12")
+      .set("spark.redis.db", config.getString("redis.user.database.index"))
       .set("spark.redis.max.pipeline.size", config.getString("redis.max.pipeline.size"))
 
     val sc = new SparkContext(conf)
@@ -36,7 +38,6 @@ object CassandraRedisIndexer {
     val userTableName = config.getString("cassandra.user.table")
     val redisKeyProperty: String = config.getString("redis.user.index.source.key")
     //val insertionType: String = config.getString("insertion.type")
-    val insertionType = "hashmap"
 
     def seqOfAnyToSeqString(param: Seq[Any]): Seq[(String, String)]
     = {
@@ -46,7 +47,7 @@ object CassandraRedisIndexer {
     }
 
     def getFilteredUserRecords(usersData: RDD[Map[String, Any]]): RDD[Map[String, Any]] = {
-      if (isForAllUsers) {
+      if (StringUtils.equalsIgnoreCase(isForAllUsers, "true")) {
         usersData
       } else if (null != specificUserId) {
         usersData.filter(user => StringUtils.equalsIgnoreCase(user.getOrElse("id", "").asInstanceOf[String], specificUserId))
@@ -70,7 +71,7 @@ object CassandraRedisIndexer {
         val userRdd = sc.parallelize(seqOfAnyToSeqString(filteredData))
         sc.toRedisHASH(userRdd, record._1)
       })
-    } else {
+    } else if(StringUtils.equalsIgnoreCase(insertionType, "json")) {
       val mappedData = usersData.map { obj =>
         (obj.getOrElse(redisKeyProperty, "").asInstanceOf[String], JSONUtils.serialize(obj))
       }
