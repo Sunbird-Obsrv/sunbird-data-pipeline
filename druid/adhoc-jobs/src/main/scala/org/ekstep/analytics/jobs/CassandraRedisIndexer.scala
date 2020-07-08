@@ -3,6 +3,7 @@ package org.ekstep.analytics.jobs
 import com.typesafe.config.{Config, ConfigFactory}
 import org.ekstep.analytics.util.JSONUtils
 import com.datastax.spark.connector._
+import com.google.gson.Gson
 import com.redislabs.provider.redis._
 import org.apache.commons.lang.{StringEscapeUtils, StringUtils}
 import org.apache.spark.SparkConf
@@ -43,14 +44,14 @@ object CassandraRedisIndexer {
     val redisKeyProperty: String = config.getString("redis.user.index.source.key")
     //val insertionType: String = config.getString("insertion.type")
 
-    def seqOfAnyToSeqString(param: Seq[Any]): Seq[(String, String)]
+    def seqOfAnyToSeqString(param: Seq[AnyRef]): Seq[(String, String)]
     = {
       param.map {
-        case (x, y) => (x.toString, y.toString)
+        case (x, y) => (x.toString, if(!y.isInstanceOf[String]) JSONUtils.serialize(y.asInstanceOf[AnyRef]) else  y.asInstanceOf[String])
       }
     }
 
-    def getFilteredUserRecords(usersData: RDD[Map[String, Any]]): RDD[Map[String, Any]] = {
+    def getFilteredUserRecords(usersData: RDD[Map[String, AnyRef]]): RDD[Map[String, AnyRef]] = {
       if (StringUtils.equalsIgnoreCase(isForAllUsers, "true")) {
         usersData
       } else if (null != specificUserId) {
@@ -61,18 +62,14 @@ object CassandraRedisIndexer {
       }
     }
 
-    val usersData = getFilteredUserRecords(sc.cassandraTable(userKeyspace, userTableName).map(f => f.toMap))
+    val usersData = getFilteredUserRecords(sc.cassandraTable(userKeyspace, userTableName)).map(f => f.toMap.asInstanceOf[Map[String, AnyRef]])
     println("usersData" + usersData.count())
+
     if (StringUtils.equalsIgnoreCase(insertionType, "hashmap")) {
       val mappedData = usersData.map { obj =>
         (obj.getOrElse(redisKeyProperty, "").asInstanceOf[String], obj)
       }
-      mappedData.collect().foreach(record => {
-        val filteredData = record._2.toSeq.filterNot { case (_, y) => (
-          y.isInstanceOf[String] &&
-            y.asInstanceOf[String].forall(_.isWhitespace)
-          ) || y == null
-        }
+      mappedData.collect().foreach(record => {val filteredData = record._2.toSeq.filterNot { case (_, y) => (y.isInstanceOf[String] && y.asInstanceOf[String].forall(_.isWhitespace)) || y == null}
         val userRdd = sc.parallelize(seqOfAnyToSeqString(filteredData))
         sc.toRedisHASH(userRdd, record._1)
       })

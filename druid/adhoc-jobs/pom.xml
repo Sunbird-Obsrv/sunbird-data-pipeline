@@ -61,7 +61,7 @@
         </dependency>
        <dependency>
             <groupId>com.datastax.spark</groupId>
-            <artifactId>spark-cassandra-connector_{scala.maj.version}</artifactId>
+            <artifactId>spark-cassandra-connector_2.11</artifactId>
             <version>2.5.0</version>
        </dependency>
         <dependency>
