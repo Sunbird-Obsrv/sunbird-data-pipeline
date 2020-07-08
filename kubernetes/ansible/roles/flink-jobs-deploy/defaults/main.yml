@@ -80,7 +80,7 @@ device_profile_updater_key_expiry_seconds: 3600
 ### content-cache-updater
 dialcode_host: "{{ proto }}://{{ domain_name }}"
 dialcode_api_url: "{{ dialcode_host }}/{{ dialcode_endpoint }}"
-dialcode_api_auth_key: {{ dp_vault_dialcode_api_auth_key }}
+dialcode_api_auth_key: "{{ dp_vault_dialcode_api_auth_key }}"
 
 ### User-cache-updater related vars
 usercache_updater_parallelism: 1
