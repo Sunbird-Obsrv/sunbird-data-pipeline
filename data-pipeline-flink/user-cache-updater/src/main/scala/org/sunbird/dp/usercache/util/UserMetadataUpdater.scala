@@ -15,12 +15,12 @@ import org.sunbird.dp.usercache.task.UserCacheUpdaterConfig
 import scala.collection.JavaConverters.mapAsJavaMap
 import scala.collection.mutable
 
-class UserMetadataUpdater[T](config: UserCacheUpdaterConfig) {
+class UserMetadataUpdater (config: UserCacheUpdaterConfig) {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[UserMetadataUpdater[T]])
   private val dataCache: DataCache = new DataCache(config, new RedisConnect(config), config.userStore, config.userFields)
   private val cassandraConnect: CassandraUtil = new CassandraUtil(config.cassandraHost, config.cassandraPort)
-  private var custodianRootOrgId: String = null
+  private val custodianRootOrgId: String = getCustodianRootOrgId()
   dataCache.init()
 
   def userUpdater(event: Event, metrics: Metrics): Unit = {
@@ -69,7 +69,6 @@ class UserMetadataUpdater[T](config: UserCacheUpdaterConfig) {
 
   def updateAction(userId: String, event: Event, metrics: Metrics): mutable.Map[String, AnyRef] = {
     val userCacheData: mutable.Map[String, String] = dataCache.hgetAllWithRetry(userId)
-    custodianRootOrgId = if(null == custodianRootOrgId) getCustodianRootOrgId() else custodianRootOrgId
 
     Option(event.getContextDataId(cDataType = "UserRole")).map(loginType => {
       userCacheData.put(config.userLoginTypeKey, loginType)
