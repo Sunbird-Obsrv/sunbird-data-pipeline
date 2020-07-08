@@ -35,7 +35,8 @@ object CassandraRedisIndexer {
     val userKeyspace = config.getString("cassandra.user.keyspace")
     val userTableName = config.getString("cassandra.user.table")
     val redisKeyProperty: String = config.getString("redis.user.index.source.key")
-    val insertionType: String = config.getString("insertion.type")
+    //val insertionType: String = config.getString("insertion.type")
+    val insertionType = "hashmap"
 
     def seqOfAnyToSeqString(param: Seq[Any]): Seq[(String, String)]
     = {
