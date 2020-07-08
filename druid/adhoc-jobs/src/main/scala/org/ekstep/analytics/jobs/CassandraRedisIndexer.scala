@@ -52,12 +52,12 @@ object CassandraRedisIndexer {
       } else if (null != specificUserId) {
         usersData.filter(user => StringUtils.equalsIgnoreCase(user.getOrElse(redisKeyProperty, "").asInstanceOf[String], specificUserId))
       } else {
+        println("Data is not fetching from the table since input is invalid")
         null
       }
     }
 
     val usersData = getFilteredUserRecords(sc.cassandraTable(userKeyspace, userTableName).map(f => f.toMap))
-
     if (StringUtils.equalsIgnoreCase(insertionType, "hashmap")) {
       val mappedData = usersData.map { obj =>
         (obj.getOrElse(redisKeyProperty, "").asInstanceOf[String], obj)
