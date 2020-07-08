@@ -108,8 +108,6 @@ public class AssessmentAggregatorService {
     private Boolean validateEvent(BatchEvent event) throws Exception {
         String courseId = event.courseId();
         String contentId = event.contentId();
-        System.out.println("courseId : "+courseId);
-        System.out.println("contentId : "+contentId);
         if (StringUtils.isNotBlank(courseId) && StringUtils.isNotBlank(contentId)) {
             return contentUtil.getLeafNodes(courseId).contains(contentId) ? true : false;
         }
