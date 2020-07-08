@@ -49,7 +49,7 @@ cloud_storage:
 
 cassandra:
   host: "{{groups['lp-cassandra'][0]}}" ## LMS-Cassandra IP Address.
-  keyspace: 'sunbird'
+  keyspace: "sunbird"
   user:
     table: "user"
   device_profile:
