@@ -49,11 +49,11 @@ object CassandraRedisIndexer {
     val dtf2 = new SimpleDateFormat("yyyy-MM-dd")
 
     def getFilteredUserRecords(usersData: RDD[Map[String, Any]]): RDD[Map[String, Any]] = {
-      if (StringUtils.equalsIgnoreCase(isForAllUsers, "true")) {
+      if (StringUtils.equalsIgnoreCase(isForAllUsers, "true") && StringUtils.isNotEmpty(isForAllUsers)) {
         usersData
-      } else if (null != specificUserId) {
+      } else if (null != specificUserId && StringUtils.isNotEmpty(specificUserId)) {
         usersData.filter(user => StringUtils.equalsIgnoreCase(user.getOrElse(redisKeyProperty, "").asInstanceOf[String], specificUserId))
-      } else if (null != fromSpecificDate) {
+      } else if (null != fromSpecificDate && StringUtils.isNotEmpty(specificUserId)) {
         println(s"Fetching all the user records from this specific date:$fromSpecificDate ")
         usersData.filter(user => {
           dtf1.parse(user.getOrElse("updateddate", null).asInstanceOf[String]).after(dtf2.parse(fromSpecificDate))
