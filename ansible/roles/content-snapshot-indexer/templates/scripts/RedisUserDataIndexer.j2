@@ -10,6 +10,6 @@ echo "STARTED EXECUTING USER CACHE INDEXER... $1 $2 $3"
 
 nohup {{ spark_home }}/bin/spark-submit \
 --conf spark.driver.extraJavaOptions="-Dconfig.file=${jobConfPath}" \
---jars $(echo ${libs_path}/lib/*.jar | tr ' ' ',')
+--jars $(echo ${libs_path}/lib/*.jar | tr ' ' ',') \
 --class org.ekstep.analytics.jobs.CassandraRedisIndexer \
 ${jobJarPath} $1 $2 $3 >> "{{ content_snapshot_path }}/logs/$today-task-execution.log" 2>&1
