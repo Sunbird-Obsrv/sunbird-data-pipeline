@@ -20,21 +20,18 @@
             <version>${flink.version}</version>
             <type>jar</type>
         </dependency>
-        <!--
         <dependency>
             <groupId>org.sunbird.dp.jobs</groupId>
             <artifactId>telemetry-extractor</artifactId>
             <version>1.0.0</version>
             <type>jar</type>
         </dependency>
-        -->
         <dependency>
             <groupId>org.sunbird.dp.jobs</groupId>
             <artifactId>pipeline-preprocessor</artifactId>
             <version>1.0.0</version>
             <type>jar</type>
         </dependency>
-        <!--
         <dependency>
             <groupId>org.sunbird.dp.jobs</groupId>
             <artifactId>de-normalization</artifactId>
@@ -71,7 +68,6 @@
             <version>1.0.0</version>
             <type>jar</type>
         </dependency>
-        -->
     </dependencies>
 
     <build>
@@ -114,7 +110,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <repository>pipeline-preprocessor</repository>
+                            <repository>sunbird-data-pipeline</repository>
                             <tag>${release-version}</tag>
                         </configuration>
                     </plugin>

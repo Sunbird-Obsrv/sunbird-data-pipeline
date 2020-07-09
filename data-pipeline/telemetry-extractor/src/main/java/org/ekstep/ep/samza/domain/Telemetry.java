@@ -3,10 +3,7 @@ package org.ekstep.ep.samza.domain;
 import com.google.gson.Gson;
 import org.ekstep.ep.samza.core.Logger;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Telemetry {
 
@@ -18,16 +15,14 @@ public class Telemetry {
     private String mid;
     private Actor actor;
     private Context context;
-    private TObject object;
+    // private TObject object;
     private HashMap<String, Object> edata;
     private List<String> tags = new ArrayList<>();
     private HashMap<String, String> metadata;
     private long syncts;
     private String syncTimestamp;
 
-    public Telemetry() {
-
-    }
+    public Telemetry() {}
 
     public Telemetry(Map<String, Object> batchEvent, long syncts, String syncTimestamp, String defaultChannel) {
 
@@ -36,7 +31,7 @@ public class Telemetry {
             List<Map<String, Object>> events = (List<Map<String, Object>>) batchEvent.get("events");
 
             // TODO - Handle NPE if the batchEvent doesn't have 'ets'. Default 'ets' to System.currentTimeInMillis()
-            this.ets = ((Number) batchEvent.get("ets")).longValue();
+            this.ets = syncts;
             this.syncts = syncts;
             this.syncTimestamp = syncTimestamp;
 
@@ -53,13 +48,12 @@ public class Telemetry {
                 consumerId = "";
             }
 
-            HashMap<String, Object> edata = new HashMap<String, Object>();
+            HashMap<String, Object> edata = new HashMap<>();
             edata.put("type", "telemetry_audit");
             edata.put("level", "INFO");
             edata.put("message", "telemetry sync");
-            edata.put("pageid", "data-pipeline");
 
-            List<Map<String, Object>> params = new ArrayList<Map<String, Object>>();
+            List<Map<String, Object>> params = new ArrayList<>();
             Map<String, Object> param = new HashMap<>();
             param.put("sync_status", status);
             param.put("consumer_id", consumerId);
@@ -70,25 +64,29 @@ public class Telemetry {
 
             this.eid = "LOG";
             this.edata = edata;
-            this.mid = computeMid(this.eid, mid);
+            this.mid = String.format("%s:%s", eid, mid);
             this.metadata = new HashMap<>();
-            this.actor = new Actor(batchEvent);
-            this.context = new Context(batchEvent, defaultChannel);
-            this.object = new TObject(batchEvent);
+            this.actor = new Actor();
+            String did = getValuesFromParams(batchEvent, "did");
+            this.context = new Context(did, UUID.randomUUID().toString(), "data-pipeline", defaultChannel);
         } catch (Exception e) {
-
+            e.printStackTrace();
             LOGGER.info("", "Failed to initialize telemetry spec data: " + e.getMessage());
         }
-
     }
 
-    public String computeMid(String eid, String mid) {
-        // Because v2->v3 is one to many, mids have to be changed
-        // We just prefix the LOG EID with telemetry spec mid
-        return String.format("%s:%s", eid, mid);
+    private String getValuesFromParams(Map<String, Object> batchEvent, String key) {
+        String extractedValue = null;
+        if (null != batchEvent.get("params")) {
+            Map<String, Object> params = (Map<String, Object>) batchEvent.get("params");
+            if (null != params.get(key)) {
+                extractedValue = (String) params.get(key);
+            }
+        }
+        return extractedValue;
     }
 
-
+    /*
     public TObject getObject() {
         return object;
     }
@@ -96,6 +94,7 @@ public class Telemetry {
     public void setObject(TObject object) {
         this.object = object;
     }
+    */
 
 
     public Map<String, Object> toMap() {
@@ -106,7 +105,7 @@ public class Telemetry {
         v3map.put("mid", this.mid);
         v3map.put("actor", this.actor);
         v3map.put("context", this.context);
-        v3map.put("object", this.object);
+        // v3map.put("object", this.object);
         v3map.put("metadata", this.metadata);
         v3map.put("edata", this.edata);
         v3map.put("tags", this.tags);

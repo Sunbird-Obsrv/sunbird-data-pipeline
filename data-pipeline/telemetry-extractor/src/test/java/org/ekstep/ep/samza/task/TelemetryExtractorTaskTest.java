@@ -95,7 +95,6 @@ public class TelemetryExtractorTaskTest {
                 String message = (String) envelope.getMessage();
                 SystemStream stream = envelope.getSystemStream();
                 Map<String, Object> event = new Gson().fromJson(message, Map.class);
-                System.out.println("Eid" + event.get("eid"));
                 
                 if ("ASSESS".equals(event.get("eid"))) {
                     assertEquals("ASSESS:6ac822896cd8a1736d55806c13ada64c", event.get("mid"));
@@ -188,7 +187,7 @@ public class TelemetryExtractorTaskTest {
         assertEquals("01250894314817126443", channel);
 
         Map<String, String> padata = (Map<String, String>) context.get("pdata");
-        assertEquals("pipeline", padata.get("id"));
+        assertEquals("data-pipeline", padata.get("id"));
     }
 
     @Test
@@ -241,7 +240,7 @@ public class TelemetryExtractorTaskTest {
 
     @Test
     public void auditEventMetrics() throws Exception {
-        String spec = EventFixture.getEventAsString("event1");
+        String spec = EventFixture.getEventAsString("event");
         stub(envelope.getMessage()).toReturn(spec);
 
         task.process(envelope, collector, coordinator);
@@ -258,7 +257,7 @@ public class TelemetryExtractorTaskTest {
         assertEquals("INFO", (String) edata.get("level"));
 
         Map<String, Object> param = (Map<String, Object>) ((List<Object>) edata.get("params")).get(0);
-        assertEquals(2, ((Number) param.get("events_count")).intValue());
+        assertEquals(22, ((Number) param.get("events_count")).intValue());
         assertEquals("SUCCESS", (String) param.get("sync_status"));
     }
 }
