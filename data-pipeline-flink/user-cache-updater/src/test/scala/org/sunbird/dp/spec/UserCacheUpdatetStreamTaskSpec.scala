@@ -73,6 +73,7 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     // Insert user test data
     jedis.hmset("user-3", EventFixture.userCacheDataMap3)
     jedis.hmset("user-4", EventFixture.userCacheDataMap4)
+    jedis.hmset("user-9", EventFixture.userCacheData9)
     jedis.close()
   }
 
@@ -86,12 +87,12 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     /**
      * Metrics Assertions
      */
-    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheHit}").getValue() should be(5)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheHit}").getValue() should be(6)
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.totalEventsCount}").getValue() should be(9)
-    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadSuccessCount}").getValue() should be(4)
-    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadMissCount}").getValue() should be(0)
-    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.skipCount}").getValue() should be(5)
-    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.successCount}").getValue() should be(5)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadSuccessCount}").getValue() should be(5)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadMissCount}").getValue() should be(1)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.skipCount}").getValue() should be(4)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.successCount}").getValue() should be(6)
 
     /**
      * UserId = 89490534-126f-4f0b-82ac-3ff3e49f3468
@@ -135,6 +136,9 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     locationInfo.get("state") should be("KARNATAKA")
     locationInfo.get("district") should be("TUMKUR")
 
+    val skipUser = jedis.hgetAll("user-9")
+    skipUser.get("firstname") should be("UT")
+    skipUser.get("rootorgid") should be("01285019302823526477")
 
     val emptyProps = jedis.hgetAll("user-5")
     emptyProps.get(userCacheConfig.userLoginTypeKey) should be("25cb0530-7c52-ecb1-cff2-6a14faab7910")
