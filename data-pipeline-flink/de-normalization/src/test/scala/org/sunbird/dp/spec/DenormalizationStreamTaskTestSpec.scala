@@ -34,6 +34,7 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
   var redisServer: RedisServer = _
   val config: Config = ConfigFactory.load("test.conf")
   val denormConfig: DenormalizationConfig = new DenormalizationConfig(config)
+  println("Redis| Host = " + denormConfig.metaRedisHost + " Port = " + denormConfig.metaRedisPort)
   val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
   val gson = new Gson()
 
@@ -56,7 +57,7 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
 
   def setupRedisTestData() {
 
-    val redisConnect = new RedisConnect(denormConfig)
+    val redisConnect = new RedisConnect(denormConfig.metaRedisHost, denormConfig.metaRedisPort, denormConfig)
 
     // Insert device test data
     var jedis = redisConnect.getConnection(denormConfig.deviceStore)
@@ -172,13 +173,13 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
   
   it should " test the optional fields in denorm config " in {
     val config = ConfigFactory.load("test2.conf")
-    val extConfig: DenormalizationConfig = new DenormalizationConfig(config)
-    extConfig.ignorePeriodInMonths should be (6)
-    extConfig.userLoginInTypeDefault should be ("Google")
-    extConfig.userSignInTypeDefault should be ("Default")
-    extConfig.summaryFilterEvents.size should be (2)
-    extConfig.summaryFilterEvents.contains("ME_WORKFLOW_SUMMARY") should be (true)
-    extConfig.summaryFilterEvents.contains("ME_RANDOM_SUMMARY") should be (true)
+    val denormConfig: DenormalizationConfig = new DenormalizationConfig(config)
+    denormConfig.ignorePeriodInMonths should be (6)
+    denormConfig.userLoginInTypeDefault should be ("Google")
+    denormConfig.userSignInTypeDefault should be ("Default")
+    denormConfig.summaryFilterEvents.size should be (2)
+    denormConfig.summaryFilterEvents.contains("ME_WORKFLOW_SUMMARY") should be (true)
+    denormConfig.summaryFilterEvents.contains("ME_RANDOM_SUMMARY") should be (true)
   }
 
 }

@@ -63,7 +63,7 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
   }
   def setupRedisTestData() {
 
-    val redisConnect = new RedisConnect(extractorConfig)
+    val redisConnect = new RedisConnect(extractorConfig.redisHost, extractorConfig.redisPort, extractorConfig)
 
     // Insert content test data
     val jedis = redisConnect.getConnection(extractorConfig.contentStore)

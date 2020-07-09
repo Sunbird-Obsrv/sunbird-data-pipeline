@@ -32,7 +32,7 @@ class UserCacheUpdaterConfig(override val config: Config) extends BaseJobConfig(
   val userValidatedKey: String = config.getString("user.valid.key")
 
   // Redis
-  val userStore: Int = config.getInt("redis.database.userstore.id")
+  val userStore: Int = config.getInt("redis-meta.database.userstore.id")
 
   // lms-cassandra
   val keySpace: String = config.getString("lms-cassandra.keyspace")

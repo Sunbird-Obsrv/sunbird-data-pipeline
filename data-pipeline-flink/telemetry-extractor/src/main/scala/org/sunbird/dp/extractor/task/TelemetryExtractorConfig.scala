@@ -34,7 +34,7 @@ class TelemetryExtractorConfig(override val config: Config) extends BaseJobConfi
   val redactorParallelism: Int = config.getInt("task.redactor.parallelism")
 
   val redactEventsList: List[String] = config.getStringList("redact.events.list").asScala.toList
-  val contentStore: Int = config.getInt("redis.database.contentstore.id")
+  val contentStore: Int = config.getInt("redis-meta.database.contentstore.id")
 
   val UNIQUE_EVENTS_OUTPUT_TAG = "unique-events"
   val RAW_EVENTS_OUTPUT_TAG = "raw-events"

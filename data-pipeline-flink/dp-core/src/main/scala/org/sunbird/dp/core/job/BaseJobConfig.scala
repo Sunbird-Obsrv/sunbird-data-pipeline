@@ -26,6 +26,14 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
   // Only for Tests
   val kafkaAutoOffsetReset: Option[String] = if (config.hasPath("kafka.auto.offset.reset")) Option(config.getString("kafka.auto.offset.reset")) else None
 
+  // Redis
+  val redisHost: String = Option(config.getString("redis.host")).getOrElse("localhost")
+  val redisPort: Int = Option(config.getInt("redis.port")).getOrElse(6379)
+  val redisConnectionTimeout: Int = Option(config.getInt("redisdb.connection.timeout")).getOrElse(30000)
+
+  val metaRedisHost: String = Option(config.getString("redis-meta.host")).getOrElse("localhost")
+  val metaRedisPort: Int = Option(config.getInt("redis-meta.port")).getOrElse(6379)
+
   // Checkpointing config
   val checkpointingInterval: Int = config.getInt("task.checkpointing.interval")
   val enableDistributedCheckpointing: Option[Boolean] = if (config.hasPath("job")) Option(config.getBoolean("job.enable.distributed.checkpointing")) else None

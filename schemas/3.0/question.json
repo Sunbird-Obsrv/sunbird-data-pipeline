@@ -9,6 +9,10 @@
       "id": "http://api.ekstep.org/telemetry/question/id",
       "type": "string"
     },
+    "type": {
+      "id": "http://api.ekstep.org/telemetry/question/type",
+      "type": "string"
+    },
     "maxscore": {
       "id": "http://api.ekstep.org/telemetry/question/maxscore",
       "type": "number"
