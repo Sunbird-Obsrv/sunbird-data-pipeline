@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-echo "Executing the script $1"
+echo "Executing the script $1 $2 $3 $4 "
 case "$1" in
    "USER_CACHE_INDEXER") 
       echo "Invoked RedisUserDataIndexer"
-      nohup {{ content_snapshot_path }}/scripts/RedisUserDataIndexer.sh & 
+      nohup {{ content_snapshot_path }}/scripts/RedisUserDataIndexer.sh $2 $3 $4& 
    ;;
    "DRUID_CONTENT_INDEXER")
       echo "Invoked DruidContentIndexer"

@@ -6,10 +6,10 @@ jobConfPath="{{ job_config.cassandra_redis_path }}"
 today=$(date "+%Y-%m-%d")
 libs_path="{{ content_snapshot_path }}/jars/adhoc-jobs-1.0"
 
-echo "STARTED EXECUTING USER CACHE INDEXER..."
+echo "STARTED EXECUTING USER CACHE INDEXER... $1 $2 $3"
 
 nohup {{ spark_home }}/bin/spark-submit \
 --conf spark.driver.extraJavaOptions="-Dconfig.file=${jobConfPath}" \
 --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ',')
 --class org.ekstep.analytics.jobs.CassandraRedisIndexer \
-${jobJarPath} >> "{{ content_snapshot_path }}/logs/$today-task-execution.log" 2>&1
+${jobJarPath} $1 $2 $3 >> "{{ content_snapshot_path }}/logs/$today-task-execution.log" 2>&1
