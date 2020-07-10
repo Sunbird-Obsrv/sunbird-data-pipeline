@@ -119,6 +119,21 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
     redisConnection.set(key, value)
   }
 
+  def sMembers(key: String): util.Set[String] = {
+    redisConnection.smembers(key)
+  }
+  def getKeyMembers(key: String): util.Set[String] = {
+    try {
+      sMembers(key)
+    } catch {
+      case ex: JedisException =>
+        logger.error("Exception when retrieving data from redis cache", ex)
+        this.redisConnection.close()
+        this.redisConnection = redisConnect.getConnection(dbIndex)
+        sMembers(key)
+    }
+  }
+
 }
 
 // $COVERAGE-ON$

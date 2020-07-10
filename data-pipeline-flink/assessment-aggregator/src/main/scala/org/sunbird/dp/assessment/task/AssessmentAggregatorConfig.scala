@@ -26,6 +26,7 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
     val batchSuccessCount = "batch-success-event-count"
     val failedEventCount = "failed-event-count"
     val skippedEventCount = "skipped-event-count"
+    val cacheHitCount = "cache-hit-count"
 
 
     //Cassandra
@@ -48,5 +49,8 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
 
     // Producers
     val assessFailedEventsSink = "assess-failed-events-sink"
+
+    // Cache
+    val relationCacheNode = config.getInt("redis.database.relationCache.id")
 
 }
