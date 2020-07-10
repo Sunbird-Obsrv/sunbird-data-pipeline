@@ -65,21 +65,21 @@ object CassandraRedisIndexer {
       }
     }
 
-//    def getFilteredUserRecords(usersData: RDD[Map[String, Any]]): RDD[Map[String, Any]] = {
-//      if (StringUtils.equalsIgnoreCase(isForAllUsers, "true") && StringUtils.isNotEmpty(isForAllUsers)) {
-//        usersData
-//      } else if (null != specificUserId && StringUtils.isNotEmpty(specificUserId)) {
-//        usersData.filter(user => StringUtils.equalsIgnoreCase(user.getOrElse(redisKeyProperty, "").asInstanceOf[String], specificUserId))
-//      } else if (null != fromSpecificDate && StringUtils.isNotEmpty(specificUserId)) {
-//        println(s"Fetching all the user records from this specific date:$fromSpecificDate ")
-//        usersData.filter(user => {
-//          dtf1.parse(user.getOrElse("updateddate", null).asInstanceOf[String]).after(dtf2.parse(fromSpecificDate))
-//        })
-//      } else {
-//        println("Data is not fetching from the table since input is invalid")
-//        null
-//      }
-//    }
+    //    def getFilteredUserRecords(usersData: RDD[Map[String, Any]]): RDD[Map[String, Any]] = {
+    //      if (StringUtils.equalsIgnoreCase(isForAllUsers, "true") && StringUtils.isNotEmpty(isForAllUsers)) {
+    //        usersData
+    //      } else if (null != specificUserId && StringUtils.isNotEmpty(specificUserId)) {
+    //        usersData.filter(user => StringUtils.equalsIgnoreCase(user.getOrElse(redisKeyProperty, "").asInstanceOf[String], specificUserId))
+    //      } else if (null != fromSpecificDate && StringUtils.isNotEmpty(specificUserId)) {
+    //        println(s"Fetching all the user records from this specific date:$fromSpecificDate ")
+    //        usersData.filter(user => {
+    //          dtf1.parse(user.getOrElse("updateddate", null).asInstanceOf[String]).after(dtf2.parse(fromSpecificDate))
+    //        })
+    //      } else {
+    //        println("Data is not fetching from the table since input is invalid")
+    //        null
+    //      }
+    //    }
 
     def filterUserData(userDF: DataFrame): DataFrame = {
       if (null != specificUserId && StringUtils.isNotEmpty(specificUserId)) {
@@ -98,10 +98,19 @@ object CassandraRedisIndexer {
 
     def getUserData(): DataFrame = {
 
+      //Seq(Map("Board" -> List("B1", "B2"), "Id" -> "NCRET", "Sub" -> List("SBU1", "SUB2")), Map("Board" -> List("B1", "B2"), "Id" -> "NCRET", "Sub" -> List("SBU1", "SUB2")))
+
+
       val userDF = spark.read.format("org.apache.spark.sql.cassandra").option("table", "user").option("keyspace", sunbirdKeyspace).load().select("*").persist()
       val userDF1 = filterUserData(userDF)
-      println("userDF====" + userDF.show(false))
-      println("userDF1====" + userDF1.show(false))
+      println("frameworrrkk")
+      userDF1.select("framework").show(false)
+      println("mediummm")
+      val df = userDF1.withColumn("fmedium", explode_outer(col("framework.medium")))
+        .withColumn("fsubject", explode_outer(col("framework.subject")))
+        .withColumn("fboard", explode_outer(col("framework.board")))
+        .withColumn("fgrade", explode_outer(col("framework.gradeLevel")))
+      df.show(false)
       val userOrgDF = spark.read.format("org.apache.spark.sql.cassandra").option("table", "user_org").option("keyspace", sunbirdKeyspace).load().filter(lower(col("isdeleted")) === "false")
         .select(col("userid"), col("organisationid")).persist()
 
