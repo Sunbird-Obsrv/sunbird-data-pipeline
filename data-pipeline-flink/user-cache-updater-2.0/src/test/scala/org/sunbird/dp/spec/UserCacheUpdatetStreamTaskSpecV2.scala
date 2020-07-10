@@ -127,6 +127,7 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
     userInfo.get("iscustodianuser") should  be ("true")
     userInfo.get("externalid") should be("93nsoa01")
     userInfo.get("schoolname") should be("SBA School")
+    userInfo.get("framework") should be("[mp_k-12]")
 
     // When action is Updated and location ids are present
     val locationInfo = jedis.hgetAll("user-4")

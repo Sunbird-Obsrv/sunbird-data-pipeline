@@ -10,7 +10,7 @@ import org.sunbird.dp.core.cache.{DataCache, RedisConnect}
 import org.sunbird.dp.core.job.Metrics
 import org.sunbird.dp.core.util.CassandraUtil
 import org.sunbird.dp.usercache.domain.Event
-import org.sunbird.dp.usercache.task.{UserCacheUpdaterConfigV2}
+import org.sunbird.dp.usercache.task.UserCacheUpdaterConfigV2
 
 import scala.collection.JavaConverters.mapAsJavaMap
 import scala.collection.mutable
@@ -126,7 +126,20 @@ class UserMetadataUpdater (config: UserCacheUpdaterConfigV2) {
         result.put(columnDefinitions.getName(i), row.getObject(i))
       }
     }
+    val framework = result.get("framework").getOrElse(new util.LinkedHashMap()).asInstanceOf[util.LinkedHashMap[String, List[String]]]
+    if(!framework.isEmpty)
+     {
+       val board = framework.getOrDefault("board", List()).asInstanceOf[util.ArrayList[String]]
+       val medium = framework.getOrDefault("medium", List()).asInstanceOf[util.ArrayList[String]]
+       val grade = framework.getOrDefault("gradeLevel", List()).asInstanceOf[util.ArrayList[String]]
+       val subject = framework.getOrDefault("subject", List()).asInstanceOf[util.ArrayList[String]]
+       val id = framework.getOrDefault("id", List()).asInstanceOf[util.ArrayList[String]]
+       result.+=("board" -> board, "medium" -> medium, "grade" -> grade, "subject" -> subject, "framework" -> id)
+     }
     result
+  }
+  def getFlattenFramework(framework: mutable.Map[String, List[String]]): Unit = {
+    println("framework " + framework)
   }
 
   /**
