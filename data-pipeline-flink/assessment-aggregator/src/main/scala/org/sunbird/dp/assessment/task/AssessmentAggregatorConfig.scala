@@ -9,48 +9,49 @@ import org.sunbird.dp.core.job.BaseJobConfig
 
 class AssessmentAggregatorConfig(override val config: Config) extends BaseJobConfig(config, jobName = "AssessmentAggregatorJob") {
 
-    private val serialVersionUID = 2905979434303791379L
+  private val serialVersionUID = 2905979434303791379L
 
-    implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
-
-
-    // Kafka Topics Configurationval kafkaInputTopic: String = config.getString("kafka.input.topic")
-
-    val assessAggregatorParallelism: Int = config.getInt("task.assessaggregator.parallelism")
-    val kafkaInputTopic: String = config.getString("kafka.input.topic")
-    val kafkaFailedTopic: String = config.getString("kafka.failed.topic")
-
-    // Metric List
-    val dbUpdateCount = "db-update-count"
-    val dbReadCount = "db-read-count"
-    val batchSuccessCount = "batch-success-event-count"
-    val failedEventCount = "failed-event-count"
-    val skippedEventCount = "skipped-event-count"
-    val cacheHitCount = "cache-hit-count"
+  implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
 
 
-    //Cassandra
+  // Kafka Topics Configurationval kafkaInputTopic: String = config.getString("kafka.input.topic")
 
-    val dbTable: String = config.getString("lms-cassandra.table")
-    val dbKeyspace: String = config.getString("lms-cassandra.keyspace")
-    val dbHost: String = config.getString("lms-cassandra.host")
-    val dbPort: Int = config.getInt("lms-cassandra.port")
-    val dbudtType: String = config.getString("lms-cassandra.questionudttype")
+  val assessAggregatorParallelism: Int = config.getInt("task.assessaggregator.parallelism")
+  val kafkaInputTopic: String = config.getString("kafka.input.topic")
+  val kafkaFailedTopic: String = config.getString("kafka.failed.topic")
 
-    val FAILED_EVENTS_OUTPUT_TAG = "failed-events"
+  // Metric List
+  val dbUpdateCount = "db-update-count"
+  val dbReadCount = "db-read-count"
+  val batchSuccessCount = "batch-success-event-count"
+  val failedEventCount = "failed-event-count"
+  val skippedEventCount = "skipped-event-count"
+  val cacheHitCount = "cache-hit-count"
+  val cacheHitMissCount = "cache-hit-miss-count"
 
-    val failedEventsOutputTag: OutputTag[Event] = OutputTag[Event]("assess-failed-events")
 
-    // Consumers
-    val assessmentAggConsumer = "assessment-agg-consumer"
+  //Cassandra
 
-    // Functions
-    val assessmentAggregatorFunction = "AssessmentAggregatorFunction"
+  val dbTable: String = config.getString("lms-cassandra.table")
+  val dbKeyspace: String = config.getString("lms-cassandra.keyspace")
+  val dbHost: String = config.getString("lms-cassandra.host")
+  val dbPort: Int = config.getInt("lms-cassandra.port")
+  val dbudtType: String = config.getString("lms-cassandra.questionudttype")
 
-    // Producers
-    val assessFailedEventsSink = "assess-failed-events-sink"
+  val FAILED_EVENTS_OUTPUT_TAG = "failed-events"
 
-    // Cache
-    val relationCacheNode = config.getInt("redis.database.relationCache.id")
+  val failedEventsOutputTag: OutputTag[Event] = OutputTag[Event]("assess-failed-events")
+
+  // Consumers
+  val assessmentAggConsumer = "assessment-agg-consumer"
+
+  // Functions
+  val assessmentAggregatorFunction = "AssessmentAggregatorFunction"
+
+  // Producers
+  val assessFailedEventsSink = "assess-failed-events-sink"
+
+  // Cache
+  val relationCacheNode = config.getInt("redis.database.relationCache.id")
 
 }

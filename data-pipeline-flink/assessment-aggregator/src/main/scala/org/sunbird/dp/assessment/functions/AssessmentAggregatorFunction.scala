@@ -46,7 +46,9 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
   var questionType: UserType = _
   private val df = new DecimalFormat("0.0#")
 
-  override def metricsList() = List(config.dbUpdateCount, config.dbReadCount, config.failedEventCount, config.batchSuccessCount, config.skippedEventCount, config.cacheHitCount)
+  override def metricsList() = List(config.dbUpdateCount, config.dbReadCount,
+    config.failedEventCount, config.batchSuccessCount,
+    config.skippedEventCount, config.cacheHitCount, config.cacheHitMissCount)
 
 
   override def open(parameters: Configuration): Unit = {
@@ -143,9 +145,14 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
   }
 
   def isValidContent(courseId: String, contentId: String)(metrics: Metrics): Boolean = {
-    val leafNodes = dataCache.getKeyMembers(s"$courseId:$courseId:leafnodes")
-    metrics.incCounter(config.cacheHitCount)
-    leafNodes.contains(contentId)
+    val leafNodes = dataCache.getKeyMembers(key = s"$courseId:$courseId:leafnodes")
+    if (!leafNodes.isEmpty) {
+      metrics.incCounter(config.cacheHitCount)
+      leafNodes.contains(contentId)
+    } else {
+      metrics.incCounter(config.cacheHitMissCount)
+      true
+    }
   }
 
 

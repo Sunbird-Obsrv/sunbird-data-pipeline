@@ -90,10 +90,11 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
     assert(failedEvent.get("map").get.asInstanceOf[LinkedTreeMap[String, AnyRef]].containsKey("metadata"))
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.skippedEventCount}").getValue() should be(1)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbReadCount}").getValue() should be(2)
-    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbUpdateCount}").getValue() should be(4)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbUpdateCount}").getValue() should be(5)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.failedEventCount}").getValue() should be(2)
-    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.batchSuccessCount}").getValue() should be(4)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.batchSuccessCount}").getValue() should be(5)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.cacheHitCount}").getValue() should be(7)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.cacheHitMissCount}").getValue() should be(1)
     val test_row1 = cassandraUtil.findOne("select total_score,total_max_score from sunbird_courses.assessment_aggregator where course_id='do_2128410273679114241112'")
     assert(test_row1.getDouble("total_score") == 2.0)
     assert(test_row1.getDouble("total_max_score") == 2.0)
@@ -132,6 +133,7 @@ class AssessmentAggreagatorEventSource extends SourceFunction[Event] {
     val eventMap5 = gson.fromJson(EventFixture.LATEST_BATCH_ASSESS_EVENT, new util.LinkedHashMap[String, Any]().getClass)
     val eventMap6 = gson.fromJson(EventFixture.BATCH_DUPLICATE_QUESTION_EVENT, new util.LinkedHashMap[String, Any]().getClass)
     val eventMap7 = gson.fromJson(EventFixture.INVALID_CONTENT_ID_EVENT, new util.LinkedHashMap[String, Any]().getClass)
+    val eventMap8 = gson.fromJson(EventFixture.BATCH_ASSESS_EVENT_WITHOUT_CACHE, new util.LinkedHashMap[String, Any]().getClass)
     ctx.collect(new Event(eventMap1))
     ctx.collect(new Event(eventMap2))
     ctx.collect(new Event(eventMap3))
@@ -139,6 +141,7 @@ class AssessmentAggreagatorEventSource extends SourceFunction[Event] {
     ctx.collect(new Event(eventMap5))
     ctx.collect(new Event(eventMap6))
     ctx.collect(new Event(eventMap7))
+    ctx.collect(new Event(eventMap8))
   }
 
   override def cancel() = {}
