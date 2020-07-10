@@ -138,9 +138,6 @@ class UserMetadataUpdater (config: UserCacheUpdaterConfigV2) {
      }
     result
   }
-  def getFlattenFramework(framework: mutable.Map[String, List[String]]): Unit = {
-    println("framework " + framework)
-  }
 
   /**
     *
