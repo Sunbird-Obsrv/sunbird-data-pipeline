@@ -47,13 +47,13 @@
   tags:
     - deploy
 
-- name: Unarchive adhoc job script
+- name: Unarchive etl job script
   become: yes
   unarchive: src={{ content_snapshot_path }}/{{ content_snapshot_distribuction_name }} dest={{ content_snapshot_jar_path }} copy=no group={{ analytics_group }} owner={{ analytics_user }}
   tags:
     - deploy
 
-- name: Copy adhoc-jobs jar file
+- name: Copy etl-jobs jar file
   become: yes
   copy:
     src: "{{ content_snapshot_jar_name }}"
