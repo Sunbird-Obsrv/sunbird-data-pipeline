@@ -9,14 +9,6 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.functions.{col, collect_set, concat_ws, explode_outer, first, lit, lower, _}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.ekstep.analytics.util.JSONUtils
-//import org.ekstep.analytics.framework.Level._
-//import org.ekstep.analytics.framework._
-//import org.ekstep.analytics.framework.fetcher.DruidDataFetcher
-//import org.ekstep.analytics.framework.util.DatasetUtil.extensions
-//import org.ekstep.analytics.framework.util.{CommonUtil, JSONUtils, JobLogger}
-//import org.joda.time.format.DateTimeFormat
-//import org.sunbird.analytics.util.ESUtil
-
 import com.typesafe.config.{Config, ConfigFactory}
 import org.ekstep.analytics.util.JSONUtils
 import com.datastax.spark.connector._
@@ -98,7 +90,8 @@ object CassandraRedisIndexer {
 
     def getUserData(): DataFrame = {
 
-      val userDF = filterUserData(spark.read.format("org.apache.spark.sql.cassandra").option("table", "user").option("keyspace", sunbirdKeyspace).load().select("*").persist())
+      val userDF = filterUserData(spark.read.format("org.apache.spark.sql.cassandra").option("table", "user").option("keyspace", sunbirdKeyspace).load().
+        select("*").persist())
         // Flattening the BGMS
         .withColumn("medium", explode_outer(col("framework.medium")))
         .withColumn("subject", explode_outer(col("framework.subject")))
@@ -161,9 +154,71 @@ object CassandraRedisIndexer {
       locationDF.unpersist()
       externalIdentityDF.unpersist()
       userDF.unpersist()
-      userDataDF
-      //      userDataDF.select("id").as("id")
-      //        .select()
+      filteredDf(userDataDF)
+    }
+
+    def filteredDf(denormedUserDF: DataFrame): DataFrame = {
+      denormedUserDF.select(
+        col("id").as("id"),
+        col("userid").as("userid"),
+        col("channel").as("channel"),
+        col("countrycode").as("countrycode"),
+        col("createdby").as("createdby"),
+        col("createddate").as("createddate"),
+        col("currentlogintime").as("currentlogintime"),
+        col("email").as("email"),
+        col("emailverified").as("emailverified"),
+        col("firstname").as("firstname"),
+        col("flagsvalue").as("flagsvalue"),
+        col("framework").as("framework"),
+        col("gender").as("gender"),
+        col("grade").as("grade"),
+        col("isdeleted").as("isdeleted"),
+        col("language").as("language"),
+        col("lastlogintime").as("lastlogintime"),
+        col("lastname").as("lastname"),
+        col("location").as("location"),
+        col("locationids").as("locationids"),
+        col("loginid").as("loginid"),
+        col("maskedemail").as("maskedemail"),
+        col("maskedphone").as("maskedphone"),
+        col("password").as("password"),
+        col("phone").as("phone"),
+        col("phoneverified").as("phoneverified"),
+        col("prevusedemail").as("prevusedemail"),
+        col("prevusedphone").as("prevusedphone"),
+        col("profilesummary").as("profilesummary"),
+        col("profilevisibility").as("profilevisibility"),
+        col("provider").as("provider"),
+        col("recoveryemail").as("recoveryemail"),
+        col("recoveryphone").as("recoveryphone"),
+        col("registryid").as("registryid"),
+        col("roles").as("roles"),
+        col("rootorgid").as("rootorgid"),
+        col("status").as("status"),
+        col("subject").as("subject"),
+        col("tcstatus").as("tcstatus"),
+        col("tcupdateddate").as("tcupdateddate"),
+        col("temppassword").as("temppassword"),
+        col("thumbnail").as("thumbnail"),
+        col("temppassword").as("temppassword"),
+        col("tncacceptedon").as("tncacceptedon"),
+        col("tncacceptedversion").as("tncacceptedversion"),
+        col("updatedby").as("updatedby"),
+        col("updateddate").as("updateddate"),
+        col("username").as("username"),
+        col("usertype").as("usertype"),
+        col("webpages").as("webpages"),
+        col("temppassword").as("temppassword"),
+        col("declared-ext-id").as("externalid"),
+        col("declared-school-name").as("schoolname"),
+        col("declared-school-udise-code").as("schooludisecode"),
+        col("user_channel").as("userchannel"),
+        col("user_channel").as("orgname"),
+        col("schoolname_resolved").as("schoolname"),
+        col("district").as("district"),
+        col("block").as("block")
+      )
     }
 
     def getCustodianOrgId(): String = {
@@ -180,8 +235,11 @@ object CassandraRedisIndexer {
        * CustodianOrg Users will have state, district and block (optional) information
        */
 
-      val userExplodedLocationDF = userDF.withColumn("exploded_location", explode_outer(col("locationids")))
-        .select(col("userid"), col("exploded_location"))
+      val userExplodedLocationDF = userDF
+        .withColumn("exploded_location", explode_outer(col("locationids")))
+        .select(col("userid"), col("exploded_location"), col("locationids"))
+
+      println("userExplodedLocationDF" + userExplodedLocationDF.show(false))
 
       val userStateDF = userExplodedLocationDF
         .join(locationDF, col("exploded_location") === locationDF.col("id") && locationDF.col("type") === "state")
@@ -206,7 +264,8 @@ object CassandraRedisIndexer {
         .select(userDF.col("*"),
           col("state_name"),
           col("district"),
-          col("block")).drop(col("locationids"))
+          col("block"))
+      // .drop(col("locationids"))
 
       val custodianUserPivotDF = custodianOrguserLocationDF
         .join(externalIdentityDF, externalIdentityDF.col("userid") === custodianOrguserLocationDF.col("userid"), "left")
@@ -266,7 +325,8 @@ object CassandraRedisIndexer {
           subOrgDF.col("orgcode").as("declared-school-udise-code"),
           subOrgDF.col("state_name"),
           subOrgDF.col("district"),
-          subOrgDF.col("block")).drop(col("locationids"))
+          subOrgDF.col("block"))
+      // .drop(col("locationids"))
 
       val stateUserDF = stateUserLocationResolvedDF.as("state_user")
         .join(externalIdentityDF, externalIdentityDF.col("idtype") === col("state_user.channel")
