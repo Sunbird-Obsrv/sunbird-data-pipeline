@@ -30,8 +30,8 @@ node() {
                 stage('deploy artifact'){
                     sh """
                        unzip ${artifact}
-                       mv adhoc-jobs-1.0.jar ansible/roles/content-snapshot-indexer/files/
-                       mv adhoc-jobs-1.0-distribution.tar.gz ansible/roles/content-snapshot-indexer/files/
+                       mv etl-jobs-1.0.jar ansible/roles/content-snapshot-indexer/files/
+                       mv etl-jobs-1.0-distribution.tar.gz ansible/roles/content-snapshot-indexer/files/
                     """
                     ansiblePlaybook = "${currentWs}/ansible/content-snapshot-indexer.yml"
                     ansibleExtraArgs = " --tags ${invoke_type} --extra-vars \"script_to_run=${params.script_to_run} populate_all_data=${params.populate_all_data} date=${params.date} identifier=${params.user_id}\" --vault-password-file /var/lib/jenkins/secrets/vault-pass"
