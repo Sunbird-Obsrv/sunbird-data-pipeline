@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat
 
 import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.commons.lang.StringUtils
+import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.functions.{col, collect_set, concat_ws, explode_outer, first, lit, lower, _}
 import org.apache.spark.sql.{DataFrame, SparkSession}
@@ -16,6 +17,12 @@ import org.ekstep.analytics.util.JSONUtils
 //import org.joda.time.format.DateTimeFormat
 //import org.sunbird.analytics.util.ESUtil
 
+import com.typesafe.config.{Config, ConfigFactory}
+import org.ekstep.analytics.util.JSONUtils
+import com.datastax.spark.connector._
+import com.redislabs.provider.redis._
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
 
 object CassandraRedisIndexer {
 
@@ -35,18 +42,21 @@ object CassandraRedisIndexer {
     val dtf2 = new SimpleDateFormat("yyyy-MM-dd")
 
 
-    //    val conf = new SparkConf()
-    //      .setAppName("CassandraToRedisIndexer")
-    //      .setMaster("local[*]")
-    //      // Cassandra settings
-    //      .set("spark.cassandra.connection.host", "localhost")
-    //      // redis settings
-    //      .set("spark.redis.host", "localhost")
-    //      .set("spark.redis.port", "6379")
-    //      .set("spark.redis.db", "12")
+    val conf = new SparkConf()
+      .setAppName("CassandraToRedisIndexer")
+      .setMaster("local[*]")
+      // Cassandra settings
+      .set("spark.cassandra.connection.host", "localhost")
+      // redis settings
+      .set("spark.redis.host", "localhost")
+      .set("spark.redis.port", "6379")
+      .set("spark.redis.db", "12")
     //.set("spark.redis.max.pipeline.size", config.getString("redis.max.pipeline.size"))
 
-    //val sc = new SparkContext(conf)
+    val sc = new SparkContext(conf)
+    //val userKeyspace = config.getString("cassandra.user.keyspace")
+
+
     val spark: SparkSession =
       SparkSession
         .builder()
@@ -61,25 +71,17 @@ object CassandraRedisIndexer {
     def seqOfAnyToSeqString(param: Seq[AnyRef]): Seq[(String, String)]
     = {
       param.map {
-        case (x, y) => (x.toString, if (!y.isInstanceOf[String]) JSONUtils.serialize(y.asInstanceOf[AnyRef]) else y.asInstanceOf[String])
+        case (x, y) => (x.toString, if (!y.isInstanceOf[String]) {
+          if (null != y) {
+            JSONUtils.serialize(y.asInstanceOf[AnyRef])
+          } else {
+            ""
+          }
+        } else {
+          y.asInstanceOf[String]
+        })
       }
     }
-
-    //    def getFilteredUserRecords(usersData: RDD[Map[String, Any]]): RDD[Map[String, Any]] = {
-    //      if (StringUtils.equalsIgnoreCase(isForAllUsers, "true") && StringUtils.isNotEmpty(isForAllUsers)) {
-    //        usersData
-    //      } else if (null != specificUserId && StringUtils.isNotEmpty(specificUserId)) {
-    //        usersData.filter(user => StringUtils.equalsIgnoreCase(user.getOrElse(redisKeyProperty, "").asInstanceOf[String], specificUserId))
-    //      } else if (null != fromSpecificDate && StringUtils.isNotEmpty(specificUserId)) {
-    //        println(s"Fetching all the user records from this specific date:$fromSpecificDate ")
-    //        usersData.filter(user => {
-    //          dtf1.parse(user.getOrElse("updateddate", null).asInstanceOf[String]).after(dtf2.parse(fromSpecificDate))
-    //        })
-    //      } else {
-    //        println("Data is not fetching from the table since input is invalid")
-    //        null
-    //      }
-    //    }
 
     def filterUserData(userDF: DataFrame): DataFrame = {
       if (null != specificUserId && StringUtils.isNotEmpty(specificUserId)) {
@@ -94,23 +96,15 @@ object CassandraRedisIndexer {
       }
     }
 
-    println("Total UserData1" + getUserData().show(false))
-
     def getUserData(): DataFrame = {
 
-      //Seq(Map("Board" -> List("B1", "B2"), "Id" -> "NCRET", "Sub" -> List("SBU1", "SUB2")), Map("Board" -> List("B1", "B2"), "Id" -> "NCRET", "Sub" -> List("SBU1", "SUB2")))
+      val userDF = filterUserData(spark.read.format("org.apache.spark.sql.cassandra").option("table", "user").option("keyspace", sunbirdKeyspace).load().select("*").persist())
+        // Flattening the BGMS
+        .withColumn("medium", explode_outer(col("framework.medium")))
+        .withColumn("subject", explode_outer(col("framework.subject")))
+        .withColumn("board", explode_outer(col("framework.board")))
+        .withColumn("grade", explode_outer(col("framework.gradeLevel")))
 
-
-      val userDF = spark.read.format("org.apache.spark.sql.cassandra").option("table", "user").option("keyspace", sunbirdKeyspace).load().select("*").persist()
-      val userDF1 = filterUserData(userDF)
-      println("frameworrrkk")
-      userDF1.select("framework").show(false)
-      println("mediummm")
-      val df = userDF1.withColumn("fmedium", explode_outer(col("framework.medium")))
-        .withColumn("fsubject", explode_outer(col("framework.subject")))
-        .withColumn("fboard", explode_outer(col("framework.board")))
-        .withColumn("fgrade", explode_outer(col("framework.gradeLevel")))
-      df.show(false)
       val userOrgDF = spark.read.format("org.apache.spark.sql.cassandra").option("table", "user_org").option("keyspace", sunbirdKeyspace).load().filter(lower(col("isdeleted")) === "false")
         .select(col("userid"), col("organisationid")).persist()
 
@@ -167,8 +161,9 @@ object CassandraRedisIndexer {
       locationDF.unpersist()
       externalIdentityDF.unpersist()
       userDF.unpersist()
-
       userDataDF
+      //      userDataDF.select("id").as("id")
+      //        .select()
     }
 
     def getCustodianOrgId(): String = {
@@ -176,7 +171,6 @@ object CassandraRedisIndexer {
         .where(col("id") === "custodianOrgId" && col("field") === "custodianOrgId")
         .select(col("value")).persist()
       systemSettingDF.select("value").first().getString(0)
-      //"01285019302823526477"
     }
 
     def generateCustodianOrgUserData(custodianOrgId: String, userDF: DataFrame, organisationDF: DataFrame,
@@ -195,11 +189,11 @@ object CassandraRedisIndexer {
 
       val userDistrictDF = userExplodedLocationDF
         .join(locationDF, col("exploded_location") === locationDF.col("id") && locationDF.col("type") === "district")
-        .select(userExplodedLocationDF.col("userid"), col("name").as("district_name"))
+        .select(userExplodedLocationDF.col("userid"), col("name").as("district"))
 
       val userBlockDF = userExplodedLocationDF
         .join(locationDF, col("exploded_location") === locationDF.col("id") && locationDF.col("type") === "block")
-        .select(userExplodedLocationDF.col("userid"), col("name").as("block_name"))
+        .select(userExplodedLocationDF.col("userid"), col("name").as("block"))
 
       /**
        * Join with the userDF to get one record per user with district and block information
@@ -211,8 +205,8 @@ object CassandraRedisIndexer {
         .join(userBlockDF, Seq("userid"), "left")
         .select(userDF.col("*"),
           col("state_name"),
-          col("district_name"),
-          col("block_name")).drop(col("locationids"))
+          col("district"),
+          col("block")).drop(col("locationids"))
 
       val custodianUserPivotDF = custodianOrguserLocationDF
         .join(externalIdentityDF, externalIdentityDF.col("userid") === custodianOrguserLocationDF.col("userid"), "left")
@@ -243,18 +237,18 @@ object CassandraRedisIndexer {
 
       val orgDistrictDF = stateOrgExplodedDF
         .join(locationDF, col("exploded_location") === locationDF.col("id") && locationDF.col("type") === "district")
-        .select(stateOrgExplodedDF.col("id"), col("name").as("district_name"))
+        .select(stateOrgExplodedDF.col("id"), col("name").as("district"))
 
       val orgBlockDF = stateOrgExplodedDF
         .join(locationDF, col("exploded_location") === locationDF.col("id") && locationDF.col("type") === "block")
-        .select(stateOrgExplodedDF.col("id"), col("name").as("block_name"))
+        .select(stateOrgExplodedDF.col("id"), col("name").as("block"))
 
       val stateOrgLocationDF = organisationDF
         .join(orgStateDF, Seq("id"))
         .join(orgDistrictDF, Seq("id"), "left")
         .join(orgBlockDF, Seq("id"), "left")
         .select(organisationDF.col("id").as("orgid"), col("orgname"),
-          col("orgcode"), col("isrootorg"), col("state_name"), col("district_name"), col("block_name"))
+          col("orgcode"), col("isrootorg"), col("state_name"), col("district"), col("block"))
 
       // exclude the custodian user != custRootOrgId
       // join userDf to user_orgDF and then join with OrgDF to get orgname and orgcode ( filter isrootorg = false)
@@ -271,8 +265,8 @@ object CassandraRedisIndexer {
           subOrgDF.col("orgname").as("declared-school-name"),
           subOrgDF.col("orgcode").as("declared-school-udise-code"),
           subOrgDF.col("state_name"),
-          subOrgDF.col("district_name"),
-          subOrgDF.col("block_name")).drop(col("locationids"))
+          subOrgDF.col("district"),
+          subOrgDF.col("block")).drop(col("locationids"))
 
       val stateUserDF = stateUserLocationResolvedDF.as("state_user")
         .join(externalIdentityDF, externalIdentityDF.col("idtype") === col("state_user.channel")
@@ -282,15 +276,13 @@ object CassandraRedisIndexer {
       stateUserDF
     }
 
-
-    //    val usersData = getFilteredUserRecords(sc.cassandraTable(userKeyspace, userTableName).map(f => f.toMap))
-    //    val mappedData = usersData.map { obj =>
-    //      (obj.getOrElse(redisKeyProperty, "").asInstanceOf[String], obj)
-    //    }
-    //    mappedData.collect().foreach(record => {
-    //      val filteredData = record._2.toSeq.filterNot { case (_, y) => (y.isInstanceOf[String] && y.asInstanceOf[String].forall(_.isWhitespace)) || y == null }
-    //      val userRdd = sc.parallelize(seqOfAnyToSeqString(filteredData))
-    //      sc.toRedisHASH(userRdd, record._1)
-    //    })
+    val userDenormedData = getUserData()
+    val fn = userDenormedData.schema.fieldNames
+    val maps = userDenormedData.rdd.map(row => fn.map(field => field -> row.getAs(field)).toMap).collect()
+    val mappedData = maps.map(x => (x.getOrElse(redisKeyProperty, ""), x.toSeq))
+    mappedData.foreach(y => {
+      val toSeq = seqOfAnyToSeqString(y._2)
+      spark.sparkContext.toRedisHASH(spark.sparkContext.parallelize(toSeq), y._1)
+    })
   }
 }
