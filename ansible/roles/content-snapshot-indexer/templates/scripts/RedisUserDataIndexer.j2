@@ -11,7 +11,7 @@ jobConfPath="{{ job_config.cassandra_redis_path }}"
 today=$(date "+%Y-%m-%d")
 libs_path="{{ content_snapshot_path }}/jars/etl-jobs-1.0"
 
-echo "STARTED EXECUTING USER CACHE INDEXER... $1 $2 
+echo "STARTED EXECUTING USER CACHE INDEXER... $1 $2"
 
 nohup {{ spark_home }}/bin/spark-submit \
 --conf spark.driver.extraJavaOptions="-Dconfig.file=${jobConfPath}" \
