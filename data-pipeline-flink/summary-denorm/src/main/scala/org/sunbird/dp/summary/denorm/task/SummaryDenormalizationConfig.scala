@@ -8,6 +8,8 @@ import org.sunbird.dp.core.denorm.domain.Event
 class SummaryDenormalizationConfig(override val config: Config)
   extends DenormalizationConfig(config, "SummaryDenormalizationJob") {
 
+  val duplicateTopic: String = config.getString("kafka.output.duplicate.topic")
+
   val dedupStore: Int = config.getInt("redis.database.duplicationstore.id")
   val cacheExpirySeconds: Int = config.getInt("redis.database.key.expiry.seconds")
 
@@ -21,6 +23,7 @@ class SummaryDenormalizationConfig(override val config: Config)
 
   // Producers
   override val DENORM_EVENTS_PRODUCER = "summary-denorm-events-producer"
+  val duplicateEventProducer = "duplicate-events-sink"
 
   // Functions
   val summaryDedupFunction = "SummaryDeduplicationFunction"

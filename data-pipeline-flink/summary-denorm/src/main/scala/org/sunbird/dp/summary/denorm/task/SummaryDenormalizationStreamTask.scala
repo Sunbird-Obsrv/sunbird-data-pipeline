@@ -68,6 +68,10 @@ class SummaryDenormalizationStreamTask(config: SummaryDenormalizationConfig, kaf
       .name(config.denormalizationFunction).uid(config.denormalizationFunction)
       .setParallelism(config.denormParallelism)
 
+    summaryEventStream.getSideOutput(config.duplicateEventsOutputTag)
+      .addSink(kafkaConnector.kafkaEventSink[Event](config.duplicateTopic))
+      .name(config.duplicateEventProducer).uid(config.duplicateEventProducer)
+
     summaryDenormStream.getSideOutput(config.denormEventsTag).addSink(kafkaConnector.kafkaEventSink(config.denormSuccessTopic))
       .name(config.DENORM_EVENTS_PRODUCER).uid(config.DENORM_EVENTS_PRODUCER)
       .setParallelism(config.denormSinkParallelism)
