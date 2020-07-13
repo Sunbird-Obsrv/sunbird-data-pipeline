@@ -9,9 +9,7 @@ import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.FlinkUtil
-// import org.sunbird.dp.denorm.domain.Event
-// import org.sunbird.dp.denorm.functions._
-import org.sunbird.dp.core.denorm.config.{DenormalizationConfig => CoreDenormalizationConfig}
+import org.sunbird.dp.core.denorm.config.DenormalizationConfig
 import org.sunbird.dp.core.denorm.domain.Event
 import org.sunbird.dp.core.denorm.functions.DenormalizationFunction
 
@@ -52,7 +50,7 @@ import org.sunbird.dp.core.denorm.functions.DenormalizationFunction
  * 		9.2 Retry once from redis on any redis connection issues
  * 		9.3 Stop the job from proceeding further if there are any redis connection issues
  */
-class DenormalizationStreamTask(config: CoreDenormalizationConfig, kafkaConnector: FlinkKafkaConnector) {
+class DenormalizationStreamTask(config: DenormalizationConfig, kafkaConnector: FlinkKafkaConnector) {
 
   private val serialVersionUID = -7729362727131516112L
 
@@ -85,7 +83,7 @@ object DenormalizationStreamTask {
     val config = configFilePath.map {
       path => ConfigFactory.parseFile(new File(path)).resolve()
     }.getOrElse(ConfigFactory.load("de-normalization.conf").withFallback(ConfigFactory.systemEnvironment()))
-    val denormalizationConfig = new CoreDenormalizationConfig(config, "Denormalization")
+    val denormalizationConfig = new DenormalizationConfig(config, "Denormalization")
     val kafkaUtil = new FlinkKafkaConnector(denormalizationConfig)
     val task = new DenormalizationStreamTask(denormalizationConfig, kafkaUtil)
     task.process()
