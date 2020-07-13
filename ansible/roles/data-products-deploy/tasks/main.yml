@@ -67,6 +67,7 @@
   ignore_errors: yes
   tags:
     - default-jobs
+    - spark1-jobs
     - spark2-jobs
     - clean-cronjobs
 
@@ -87,6 +88,7 @@
   with_dict: "{{ submit_jobs }}"
   tags:
     - default-jobs
+    - spark1-jobs
     - cronjobs
 
 - name: Create start-jobmanager cron jobs
@@ -94,12 +96,14 @@
   with_dict: "{{ start_jobmanager }}"
   tags:
     - default-jobs
+    - spark1-jobs
     - cronjobs
 
 - name: Create video-streaming cron job
   cron: name="{{env}}-video-streaming" minute=*/{{ video_stream_job_schedule }} job="{{ analytics.home }}/scripts/run-job.sh video-streaming"
   tags:
     - default-jobs
+    - spark1-jobs
     - cronjobs
 
 - name: Create course-dashboard-metrics cron job
@@ -107,6 +111,7 @@
   with_dict: "{{ run_course_metrics_job }}"
   tags:
     - cronjobs
+    - default-jobs
     - spark2-jobs
 
 - name: Create assessment-dashboard-metrics cron job
@@ -114,6 +119,7 @@
   with_dict: "{{ run_assessment_metrics_job }}"
   tags:
     - cronjobs
+    - default-jobs
     - spark2-jobs
 
 - name: Create admin-user-reports cron job
@@ -122,20 +128,23 @@
   tags:
     - cronjobs 
     - default-jobs
+    - spark1-jobs
     
 - name: Create admin-geo-reports cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh admin-geo-reports"
   with_dict: "{{ run_admin_geo_reports_job }}"
   tags:
     - cronjobs
-    - default-jobs 
+    - default-jobs
+    - spark1-jobs 
 
 - name: Create assessment-aggregator reports cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="/bin/bash {{ analytics.home }}/adhoc-scripts/run_exporter.sh > /home/analytics/output.log"
   with_dict: "{{ run_assessment_aggregator_report_job }}"
   tags:
     - cronjobs
-    - default-jobs     
+    - default-jobs
+    - spark1-jobs  
 
 - name: Create etb metrics cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} weekday={{ item.value.weekday }}  job="{{ analytics.home }}/scripts/run-job.sh etb-metrics"
@@ -143,6 +152,7 @@
   tags:
     - cronjobs
     - default-jobs
+    - spark1-jobs
 
 #- name: Create district-weekly cron job
 #  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} weekday={{ item.value.weekday }}  job="{{ analytics.home }}/scripts/run-job.sh district-weekly"
