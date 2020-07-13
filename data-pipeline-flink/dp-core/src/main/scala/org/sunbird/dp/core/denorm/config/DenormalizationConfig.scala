@@ -33,7 +33,7 @@ class DenormalizationConfig(override val config: Config, override val jobName: S
   val deviceFields = List("country_code", "country", "state_code", "state", "city", "district_custom", "state_code_custom",
     "state_custom", "user_declared_state", "user_declared_district", "devicespec", "firstaccess")
   val contentFields = List("name", "objectType", "contentType", "mediaType", "language", "medium", "mimeType", "createdBy",
-    "createdFor", "framework", "board", "subject", "status", "pkgVersion", "lastSubmittedOn", "lastUpdatedOn", "lastPublishedOn")
+    "createdFor", "framework", "board", "subject", "status", "pkgVersion", "lastSubmittedOn", "lastUpdatedOn", "lastPublishedOn", "channel")
   val userFields = List("usertype", "grade", "language", "subject", "state", "district", "usersignintype", "userlogintype")
   val dialcodeFields = List("identifier", "channel", "batchcode", "publisher", "generated_on", "published_on", "status")
   
