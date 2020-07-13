@@ -88,7 +88,7 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
   }
 
   def addDeviceDataToDB(deviceId: String, deviceData: util.Map[String, String]): Unit = {
-    val firstAccess: Long = deviceData.get("first_access").toLong
+    val firstAccess: Long = if (deviceData.get("first_access").isInstanceOf[String]) deviceData.get("first_access").toLong else deviceData.get("first_access").asInstanceOf[Number].longValue()
     val lastUpdatedDate: Long = deviceData.get(config.apiLastUpdatedOn).asInstanceOf[Number].longValue()
     val parsedKeys = new util.ArrayList[String](util.Arrays.asList("first_access", config.apiLastUpdatedOn))
     deviceData.keySet.removeAll(parsedKeys)
@@ -128,22 +128,21 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
 
   private def addDeviceDataToCache(deviceId: String, deviceProfile: DeviceProfile): util.Map[String, String] = {
     val deviceMap = deviceProfile.toMap(config)
-    if (deviceMap.get(config.userDeclaredState) == null) deviceMap.remove(config.userDeclaredOn)
+    val updatedDeviceMap = removeEmptyFields(deviceMap)
+    if (updatedDeviceMap.get(config.userDeclaredState) == null) updatedDeviceMap.remove(config.userDeclaredOn)
     if (dataCache.isExists(deviceId)) {
       val redisData = dataCache.hgetAllWithRetry(deviceId)
       val firstAccess = redisData.get(config.firstAccess)
       val userDeclaredOn = redisData.get(config.userDeclaredOn)
-      if (firstAccess != null && "0" != firstAccess) deviceMap.remove(config.firstAccess)
-      if (userDeclaredOn != null && deviceMap.get(config.userDeclaredOn) != null) deviceMap.remove(config.userDeclaredOn)
-      val updatedDeviceMap = updatedMissingFields(deviceMap, redisData)
+      if ("0" != firstAccess.getOrElse("0")) updatedDeviceMap.remove(config.firstAccess)
       dataCache.hmSet(deviceId, updatedDeviceMap.asInstanceOf[util.Map[String, String]])
       logger.info(s"Device ID: $deviceId is present in the redis and required fields into redis")
       updatedDeviceMap
     }
     else {
-      dataCache.hmSet(deviceId, deviceMap.asInstanceOf[util.Map[String, String]])
+      dataCache.hmSet(deviceId, updatedDeviceMap.asInstanceOf[util.Map[String, String]])
       logger.info(s"Device ID: $deviceId does not exists in the redis and all fields into redis")
-      deviceMap
+      updatedDeviceMap
     }
   }
 
@@ -165,20 +164,10 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
     })
   }
 
-  /**
-   * Updating the Missing fields.
-   * UseCase:- While inserting device profile events into redis it should insert only missing fields,
-   * By comparing with the existing redis data.
-   *
-   */
-
-  def updatedMissingFields(deviceMap: util.Map[String, String], redisData: mutable.Map[String, String]): util.Map[String, String] = {
-    deviceMap.forEach((k, v) => {
-      if (!redisData.contains(k) && null != v && !v.isEmpty) {
-        redisData.put(k, v)
-      }
-    })
-    mapAsJavaMap(redisData)
+  def removeEmptyFields(deviceMap: util.Map[String, String]): util.Map[String, String] = {
+    deviceMap.values.removeAll(Collections.singleton(""))
+    deviceMap.values.removeAll(Collections.singleton("{}"))
+    deviceMap
   }
 
   /**
@@ -187,7 +176,7 @@ class DeviceProfileUpdaterFunction(config: DeviceProfileUpdaterConfig,
    * Then it should updated the postgres with redis data.
    */
   def updatedEvent(redisData: util.Map[String, String], deviceProfileEvent: util.Map[String, String]): util.Map[String, String] = {
-    deviceProfileEvent.put("first_access", redisData.get(config.firstAccess))
+    if(redisData.containsKey(config.firstAccess)) deviceProfileEvent.put("first_access", redisData.get(config.firstAccess))
     deviceProfileEvent
   }
 }
