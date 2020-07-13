@@ -230,7 +230,10 @@ object UserMetadataUpdater {
       .where(QueryBuilder.eq("idtype", userChannel))
       .and(QueryBuilder.eq("provider", userChannel))
       .and(QueryBuilder.eq("userid", userid)).toString
-    cassandraConnect.findOne(externalIdQuery).getString("externalid")
+    val row = cassandraConnect.findOne(externalIdQuery)
+    if (null != row)
+      row.getString("externalid")
+    else ""
   }
 
   def stringify(userData: mutable.Map[String, AnyRef]): mutable.Map[String, String] = {

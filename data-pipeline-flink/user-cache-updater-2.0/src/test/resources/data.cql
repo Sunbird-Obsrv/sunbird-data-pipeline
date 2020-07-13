@@ -125,6 +125,31 @@ INSERT INTO sunbird.user (
 )VALUES ('user-4', 'VOS','apekx', 'IN','UTKARSHA','04-jul-2020','04-jul-2020','28-10-1996','utkarsha@ilimi.in',true,'Utkarsha', 1, 'Female','Kapoor','Banglore','********gmail.com','******345', '*******','4682647342',true, '01285019302823526479', ['location-2', 'location-3', 'location-4']);
 
 INSERT INTO sunbird.user (id, userid, rootorgid, firstname, lastname) VALUES ('user-9', 'user-9', '01285019302823526477', 'UT', 'KAPOOR');
+INSERT INTO sunbird.user (
+    id,
+    avatar,
+    channel ,
+    countrycode,
+    createdby,
+    createddate,
+    currentlogintime,
+    dob,
+    email,
+    emailverified,
+    firstname,
+    flagsvalue,
+    gender,
+    lastname,
+    location,
+    maskedemail,
+    maskedphone,
+    password,
+    phone,
+    phoneverified,
+    rootorgid,
+    locationids
+)VALUES ('user-11', 'VOS','apekx', 'IN','SOWMYA','13-jul-2020','13-jul-2020','28-10-1996','sowmyad@ilimi.in',true,'Sowmya', 1, 'Female','Dixit','Banglore','********gmail.com','******358', '*******','4682647342',true, '01285019302823526480', ['location-2', 'location-3']);
+
 
 CREATE TABLE sunbird.location (
     id text PRIMARY KEY,
