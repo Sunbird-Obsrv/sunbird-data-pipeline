@@ -15,8 +15,11 @@ import org.mockito.Mockito
 import org.mockito.Mockito._
 import org.sunbird.dp.core.cache.RedisConnect
 import org.sunbird.dp.core.job.FlinkKafkaConnector
-import org.sunbird.dp.denorm.domain.Event
-import org.sunbird.dp.denorm.task.{DenormalizationConfig, DenormalizationStreamTask}
+// import org.sunbird.dp.denorm.domain.Event
+import org.sunbird.dp.core.denorm.domain.Event
+// import org.sunbird.dp.denorm.task.{DenormalizationConfig, DenormalizationStreamTask}
+import org.sunbird.dp.denorm.task.DenormalizationStreamTask
+import org.sunbird.dp.core.denorm.config.DenormalizationConfig
 import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import redis.embedded.RedisServer
@@ -33,8 +36,7 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
 
   var redisServer: RedisServer = _
   val config: Config = ConfigFactory.load("test.conf")
-  val denormConfig: DenormalizationConfig = new DenormalizationConfig(config)
-  println("Redis| Host = " + denormConfig.metaRedisHost + " Port = " + denormConfig.metaRedisPort)
+  val denormConfig: DenormalizationConfig = new DenormalizationConfig(config, "DenormalizationTest")
   val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
   val gson = new Gson()
 
@@ -173,7 +175,7 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
   
   it should " test the optional fields in denorm config " in {
     val config = ConfigFactory.load("test2.conf")
-    val denormConfig: DenormalizationConfig = new DenormalizationConfig(config)
+    val denormConfig: DenormalizationConfig = new DenormalizationConfig(config, "DenormalizationTest")
     denormConfig.ignorePeriodInMonths should be (6)
     denormConfig.userLoginInTypeDefault should be ("Google")
     denormConfig.userSignInTypeDefault should be ("Default")

@@ -29,6 +29,7 @@
 		<module>user-cache-updater</module>
 		<module>content-cache-updater</module>
 		<module>assessment-aggregator</module>
+		<module>summary-denorm</module>
 	</modules>
 
 	<properties>

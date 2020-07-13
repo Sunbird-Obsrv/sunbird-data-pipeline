@@ -1,16 +1,15 @@
-package org.sunbird.dp.denorm.task
+package org.sunbird.dp.core.denorm.config
 
 import com.typesafe.config.Config
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.sunbird.dp.core.job.BaseJobConfig
-import org.sunbird.dp.denorm.domain.Event
+import org.sunbird.dp.core.denorm.domain.Event
 
-// import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 
-class DenormalizationConfig(override val config: Config) extends BaseJobConfig(config, "DenormalizationJob") {
+class DenormalizationConfig(override val config: Config, override val jobName: String) extends BaseJobConfig(config, jobName) {
 
   private val serialVersionUID = 2905979434303791379L
 
