@@ -4,6 +4,7 @@ import java.util
 
 import com.datastax.driver.core.Row
 import com.datastax.driver.core.querybuilder.{Clause, QueryBuilder}
+import com.google.gson.Gson
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.core.cache.DataCache
 import org.sunbird.dp.core.job.Metrics
@@ -230,5 +231,20 @@ object UserMetadataUpdater {
       .and(QueryBuilder.eq("provider", userChannel))
       .and(QueryBuilder.eq("userid", userid)).toString
     cassandraConnect.findOne(externalIdQuery).getString("externalid")
+  }
+
+  def stringify(userData: mutable.Map[String, AnyRef]): mutable.Map[String, String] = {
+    userData.map{f =>
+      (f._1, if(!f._2.isInstanceOf[String]) {
+        if(null != f._2) {
+          new Gson().toJson(f._2)
+        }
+        else {
+          ""
+        }
+      } else {
+        f._2.asInstanceOf[String]
+      }
+      )}
   }
 }

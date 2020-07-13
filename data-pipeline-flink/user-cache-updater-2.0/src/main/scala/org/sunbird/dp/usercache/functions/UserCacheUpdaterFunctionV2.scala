@@ -1,7 +1,6 @@
 package org.sunbird.dp.usercache.functions
 
 import com.datastax.driver.core.querybuilder.QueryBuilder
-import com.google.gson.Gson
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
@@ -11,7 +10,7 @@ import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 import org.sunbird.dp.core.util.CassandraUtil
 import org.sunbird.dp.usercache.domain.Event
 import org.sunbird.dp.usercache.task.UserCacheUpdaterConfigV2
-import org.sunbird.dp.usercache.util.UserMetadataUpdater.{createAction, updateAction}
+import org.sunbird.dp.usercache.util.UserMetadataUpdater._
 
 import scala.collection.JavaConverters.mapAsJavaMap
 import scala.collection.mutable
@@ -57,9 +56,7 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
           }
         }
         if (!userData.isEmpty) {
-          val data = stringify(userData)
-          val filteredData = mapAsJavaMap(data)
-          dataCache.hmSet(id, filteredData)
+          dataCache.hmSet(id, mapAsJavaMap(stringify(userData)))
           metrics.incCounter(config.successCount)
           metrics.incCounter(config.userCacheHit)
         } else {
@@ -74,20 +71,5 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
       .where(QueryBuilder.eq("id", "custodianRootOrgId")).and(QueryBuilder.eq("field", "custodianRootOrgId")).toString
     val custRootOrgId = cassandraConnect.findOne(custRootOrgIdQuery)
     custRootOrgId.getString("value")
-  }
-
-  def stringify(userData: mutable.Map[String, AnyRef]): mutable.Map[String, String] = {
-    userData.map{f =>
-      (f._1, if(!f._2.isInstanceOf[String]) {
-        if(null != f._2) {
-          new Gson().toJson(f._2)
-        }
-        else {
-          ""
-        }
-      } else {
-        f._2.asInstanceOf[String]
-      }
-      )}
   }
 }
