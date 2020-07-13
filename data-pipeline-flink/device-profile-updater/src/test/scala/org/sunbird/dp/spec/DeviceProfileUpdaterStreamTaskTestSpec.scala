@@ -207,7 +207,7 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
       result2.next
     }) {
       assertEquals("Karnataka's", result2.getString(1))
-      assertEquals("2019-09-13 17:49:44.0", result2.getTimestamp("first_access").toString)
+      assertEquals(1568377184000L, result2.getTimestamp("first_access").getTime)
     }
 
     // Should not addUserDeclared on if it is already present in the postgres
