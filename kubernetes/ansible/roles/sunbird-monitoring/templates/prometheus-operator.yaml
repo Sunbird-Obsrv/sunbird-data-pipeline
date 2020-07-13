@@ -63,7 +63,8 @@ grafana:
   service: {{ grafana_service|to_json}}
 {% endif %}
  
-## Overriding the kubernetes-apps alert rules by disabling default alert rule creation.
+## Overriding the kubernetes-apps alert rules by disabling default alert rule creation. 
+# Why: We were getting few unwanted alerts and we wanted to disable those alerts. Hence created the custom alert rules.
 defaultRules:
   create: true
   rules:
