@@ -1,8 +1,7 @@
 package org.sunbird.dp.usercache.functions
 
-import java.util.Collections
-
 import com.datastax.driver.core.querybuilder.QueryBuilder
+import com.google.gson.Gson
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
@@ -58,10 +57,8 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
           }
         }
         if (!userData.isEmpty) {
-          val redisData = userData.filter{f => (null != f._2)}
-          val data = redisData.map(f => (f._1, f._2.toString))
+          val data = stringify(userData)
           val filteredData = mapAsJavaMap(data)
-          filteredData.values().removeAll(Collections.singleton({}))
           dataCache.hmSet(id, filteredData)
           metrics.incCounter(config.successCount)
           metrics.incCounter(config.userCacheHit)
@@ -79,4 +76,18 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
     custRootOrgId.getString("value")
   }
 
+  def stringify(userData: mutable.Map[String, AnyRef]): mutable.Map[String, String] = {
+    userData.map{f =>
+      (f._1, if(!f._2.isInstanceOf[String]) {
+        if(null != f._2) {
+          new Gson().toJson(f._2)
+        }
+        else {
+          ""
+        }
+      } else {
+        f._2.asInstanceOf[String]
+      }
+      )}
+  }
 }
