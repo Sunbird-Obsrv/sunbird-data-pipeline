@@ -87,12 +87,9 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
     */
     val updateQuery = String.format("UPDATE %s SET user_declared_on = '%s' WHERE device_id = '%s'", deviceProfileUpdaterConfig.postgresTable, new Timestamp(1587542087).toString, device_id)
 
-    /*
-    * If need to truncate the table uncomment the below and execute the query
-    * val truncateQuery = String.format("TRUNCATE TABLE  %s RESTART IDENTITY", deviceProfileUpdaterConfig.postgresTable)
-    * postgresConnect.execute(truncateQuery)
-    *
-    */
+    // If need to truncate the table uncomment the below and execute the query
+    val truncateQuery = String.format("TRUNCATE TABLE  %s RESTART IDENTITY", deviceProfileUpdaterConfig.postgresTable)
+    postgresConnect.execute(truncateQuery)
 
     postgresConnect.execute(updateQuery)
 

@@ -18,7 +18,7 @@ object EventFixture {
       |  "state_code": "KA",
       |  "state_custom": "Karnataka",
       |  "district_custom": "Karnataka,s",
-      |  "first_access": 1568377184000,
+      |  "first_access": 1568379184000,
       |  "api_last_updated_on": 1568377184000,
       |  "user_declared_district": "Bengaluru's",
       |  "user_declared_state": "Karnataka,'s"
@@ -61,7 +61,7 @@ object EventFixture {
       |"state_code" : "KA",
       |"state_custom" : "Karnataka",
       |"district_custom" : "Karnataka",
-      |"first_access": 1568377184000,
+      |"first_access": 1568399184000,
       |"api_last_updated_on": 1568379184000
       |}""".stripMargin,
 
