@@ -68,10 +68,7 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
       val dataMap = gson.fromJson(data, new util.HashMap[String, AnyRef]().getClass)
       if(fields.nonEmpty) dataMap.keySet().retainAll(fields.asJava)
       dataMap.values().removeAll(util.Collections.singleton(""))
-      val map = dataMap.asScala
-      map.map(f => {
-        (f._1.toLowerCase().replace("_", ""), f._2)
-      })
+      dataMap.asScala
     } else {
       Map[String, AnyRef]()
     }

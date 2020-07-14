@@ -17,7 +17,7 @@ class ContentDenormalization(config: DenormalizationConfig) {
     val objectId = event.objectID()
     if (!List("user", "qr", "dialcode").contains(objectType) && null != objectId) {
       metrics.incCounter(config.contentTotal)
-      val contentData = contentDataCache.getWithRetry(objectId)
+      val contentData = contentDataCache.getWithRetry(objectId).map(f => {(f._1.toLowerCase().replace("_", ""), f._2)})
 
       if (contentData.nonEmpty) {
         metrics.incCounter(config.contentCacheHit)
