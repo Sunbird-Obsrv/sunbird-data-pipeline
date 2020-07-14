@@ -1,0 +1,36 @@
+## This file contains alert rules related vars
+prometheus_rule_selector_app: prometheus-operator
+prometheus_rule_selector_release: prometheus-operator
+fullnameOverride: sunbird-monitoring
+namespace: monitoring
+
+# Node Exporter vars
+node_cpu_usage_percentage_threshold_Warning: 75
+node_cpu_usage_percentage_threshold_Critical: 85
+node_cpu_usage_percentage_threshold_Fatal: 95
+node_memory_usage_percentage_threshold_Critical: 85
+node_memory_usage_percentage_threshold_Warning: 75
+node_memory_usage_percentage_threshold_Fatal: 95
+node_load_avg_threshold_Critical: 95
+node_load_avg_threshold_Warning: 85
+node_load_avg_threshold_Fatal: 120
+node_disk_usage_percentage_threshold_Warning: 75
+node_disk_usage_percentage_threshold_Critical: 85
+node_disk_usage_percentage_threshold_Fatal: 95
+
+# Jobs lag vars 
+telemetry_extractor_threshold_critical: {{ telemetry_extractor_threshold_critical }}
+telemetry_extractor_threshold_fatal: {{ telemetry_extractor_threshold_fatal }}
+pipeline_preprocessor_threshold_critical: {{ pipeline_preprocessor_threshold_critical }}
+pipeline_preprocessor_threshold_fatal: {{ pipeline_preprocessor_threshold_fatal }}
+de_normalization_threshold_critical: {{ de_normalization_threshold_critical }}
+de_normalization_threshold_fatal: {{ de_normalization_threshold_fatal }}
+druid_validator_threshold_critical: {{ druid_validator_threshold_critical }}
+druid_validator_threshold_fatal: {{ druid_validator_threshold_fatal }}
+telemetry_extractor_failed_events_percentage_threshold_fatal: {{ telemetry_extractor_failed_events_percentage_threshold_fatal }}
+
+# Checkpoint failure vars
+telemetry_extractor_checkpointfailure_threshold_critical: {{ telemetry_extractor_checkpointfailure_threshold_critical }} 
+pipeline_preprocessor_checkpointfailure_threshold_critical: {{ pipeline_preprocessor_checkpointfailure_threshold_critical }}
+de_normalization_checkpointfailure_threshold_critical: {{ de_normalization_checkpointfailure_threshold_critical }}
+druid_validator_checkpointfailure_threshold_critical: {{ druid_validator_checkpointfailure_threshold_critical }}
