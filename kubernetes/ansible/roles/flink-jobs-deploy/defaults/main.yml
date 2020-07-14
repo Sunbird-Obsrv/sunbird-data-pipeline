@@ -37,6 +37,7 @@ checkpoint_interval: 60000
 restart_attempts: 3
 restart_delay: 30000 # in milli-seconds
 producer_max_request_size: 1572864
+redis_timeout: 30000
 
 ### Extractor job related vars
 extractor_event_max_size: 1048576 # Max is only 1MB
@@ -65,7 +66,17 @@ loc_denorm_parallelism: 1
 dialcode_denorm_parallelism: 1
 denorm_parallelism: 1
 denorm_sink_parallelism: 1
+denorm_summary_dedup_parallelism: 1
+de_normalization_duplicationstore_key_expiry_seconds: 3600
 de_normalization_key_expiry_seconds: 3600
+
+### summary-denormalization related vars
+summary_denorm_consumer_parallelism: 1
+summary_denorm_parallelism: 1
+summary_denorm_sink_parallelism: 1
+summary_denorm_dedup_parallelism: 1
+summary_denorm_duplication_key_expiry_seconds: 3600
+summary_denorm_key_expiry_seconds: 3600
 
 ### Druid-validator related vars
 druid_validator_consumer_parallelism: 1

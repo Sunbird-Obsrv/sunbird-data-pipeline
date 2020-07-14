@@ -63,6 +63,7 @@ base_config: |
       restart-strategy.attempts = {{ restart_attempts }}
       restart-strategy.delay = {{ restart_delay }} # in milli-seconds
     }
+    redisdb.connection.timeout = {{ redis_timeout }}
     redis {
       host = {{ redis_host }}
       port = 6379
@@ -154,19 +155,23 @@ de-normalization: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
     input.topic = {{ env_name }}.telemetry.unique
+    input.summary.topic = {{ env_name }}.telemetry.derived
     output.success.topic = {{ env_name }}.telemetry.denorm
     output.failed.topic = {{ env_name }}.telemetry.failed
+    output.duplicate.topic = {{ env_name }}.telemetry.duplicate
     groupId = {{ env_name }}-telemetry-denorm-group
   }
   task {
     consumer.parallelism = {{ denorm_consumer_parallelism }}
-    device.denorm.parallelism = {{ device_denorm_parallelism }}
-    user.denorm.parallelism = {{ user_denorm_parallelism }}
-    content.denorm.parallelism = {{ content_denorm_parallelism }}
-    loc.denorm.parallelism = {{ loc_denorm_parallelism }}
-    dialcode.denorm.parallelism = {{ dialcode_denorm_parallelism }}
     denorm.parallelism = {{ denorm_parallelism }}
     denorm.sink.parallelism = {{ denorm_sink_parallelism }}
+    denorm.summary-dedup.parallelism = {{ denorm_summary_dedup_parallelism }}
+  }
+  redis {
+    database {
+      duplicationstore.id = 9
+      key.expiry.seconds = {{ de_normalization_duplicationstore_key_expiry_seconds }} 
+    }
   }
   # redis-metadata
   redis-meta {
@@ -176,6 +181,39 @@ de-normalization: |
       contentstore.id = 5
       dialcodestore.id = 6
       key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
+    }
+  }
+
+summary-denormalization: |+
+  include file("/data/flink/conf/base-config.conf")
+  kafka {
+    input.telemetry.topic = {{ env_name }}.telemetry.unique
+    input.summary.topic = {{ env_name }}.telemetry.derived
+    output.success.topic = {{ env_name }}.telemetry.denorm
+    output.failed.topic = {{ env_name }}.telemetry.failed
+    output.duplicate.topic = {{ env_name }}.telemetry.duplicate
+    groupId = {{ env_name }}-summmary-denorm-group
+  }
+  task {
+    consumer.parallelism = {{ summary_denorm_consumer_parallelism }}
+    denorm.parallelism = {{ summary_denorm_parallelism }}
+    denorm.sink.parallelism = {{ summary_denorm_sink_parallelism }}
+    denorm.summary-dedup.parallelism = {{ summary_denorm_dedup_parallelism }}
+  }
+  redis {
+    database {
+      duplicationstore.id = 9
+      key.expiry.seconds = {{ summary_denorm_duplication_key_expiry_seconds }}
+    }
+  }
+  # redis-metadata
+  redis-meta {
+    database {
+      devicestore.id = 2
+      userstore.id = 4
+      contentstore.id = 5
+      dialcodestore.id = 6
+      key.expiry.seconds = {{ summary_denorm_key_expiry_seconds }}
     }
   }
 
@@ -225,6 +263,8 @@ device-profile-updater: |
   }
   # redis-metadata
   redis-meta {
+    host = {{ redis_metadata_host }}
+    port = 6379
     database {
       devicestore.id = 2
       key.expiry.seconds = {{ device_profile_updater_key_expiry_seconds }}
@@ -238,11 +278,15 @@ device-profile-updater: |
 content-cache-updater: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
+    broker-servers = "{{ ingestion_kafka_brokers }}"
+    zookeeper = "{{ ingestion_zookeepers }}"
     input.topic = {{ env_name }}.learning.graph.events
     groupId = {{ env_name }}-content-cache-updater-group
   }
   # redis-metadata
   redis-meta {
+    host = {{ redis_metadata_host }}
+    port = 6379
     database {
       contentstore.id = 5
       dialcodestore.id = 6
@@ -266,9 +310,10 @@ user-cache-updater: |
   }
   # redis-metadata
   redis-meta {
+    host = {{ redis_metadata_host }}
+    port = 6379
     database {
       userstore.id = 4
-      key.expiry.seconds = {{ user_cache_updater_key_expiry_seconds }}
     }
   }
   lms-cassandra {
@@ -286,8 +331,10 @@ user-cache-updater: |
 assessment-aggregator: |+
   include file("/data/flink/conf/base-config.conf")
   kafka {
+    broker-servers = {{ ingestion_kafka_brokers }}
+    zookeeper = {{ ingestion_zookeepers }}
     input.topic = {{ env_name }}.telemetry.assess
-    failed.topic= {{ env_name }}.telemetry. assess.failed
+    failed.topic= {{ env_name }}.telemetry.assess.failed
     groupId = {{ env_name }}-assessment-aggregator-group
   }
   task {
