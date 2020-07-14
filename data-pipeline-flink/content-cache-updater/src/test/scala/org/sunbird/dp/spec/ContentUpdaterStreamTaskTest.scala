@@ -103,6 +103,9 @@ class ContentUpdaterStreamTaskTest extends BaseTestSpec {
         val contentJedis = redisConnect.getConnection(contentConfig.contentStore)
         assert(contentJedis.get("do_312999792564027392148").contains("\"board\":\"CBSE\""))
         assert(contentJedis.get("do_312999792564027392148").contains("Class 8"))
+        assert(!contentJedis.get("do_312999792564027392148").contains("Class 12"))
+        assert(contentJedis.get("do_312999792564027392148").contains("\"copyright\":\"Ekstep\""))
+        assert(!contentJedis.get("do_312999792564027392148").contains("\"copyright\":\"EKSTEP\""))
     }
 }
 
