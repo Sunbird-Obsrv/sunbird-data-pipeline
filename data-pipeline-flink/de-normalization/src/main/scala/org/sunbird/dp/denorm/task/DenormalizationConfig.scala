@@ -9,7 +9,7 @@ import org.sunbird.dp.denorm.domain.Event
 
 import scala.collection.JavaConversions._
 
-class DenormalizationConfig(override val config: Config) extends BaseJobConfig(config, "DenormalizationJob") {
+class DenormalizationConfig(override val config: Config, jobName: String) extends BaseJobConfig(config, jobName ) {
 
   private val serialVersionUID = 2905979434303791379L
 
@@ -17,7 +17,8 @@ class DenormalizationConfig(override val config: Config) extends BaseJobConfig(c
   implicit val anyTypeInfo: TypeInformation[String] = TypeExtractor.getForClass(classOf[String])
 
   // Kafka Topics Configuration
-  val inputTopic: String = config.getString("kafka.input.topic")
+  val telemetryInputTopic: String = config.getString("kafka.input.telemetry.topic")
+  val summaryInputTopic: String = config.getString("kafka.input.summary.topic")
   val denormSuccessTopic: String = config.getString("kafka.output.success.topic")
   val failedTopic: String = config.getString("kafka.output.failed.topic")
 
@@ -33,7 +34,7 @@ class DenormalizationConfig(override val config: Config) extends BaseJobConfig(c
   val deviceFields = List("country_code", "country", "state_code", "state", "city", "district_custom", "state_code_custom",
     "state_custom", "user_declared_state", "user_declared_district", "devicespec", "firstaccess")
   val contentFields = List("name", "objectType", "contentType", "mediaType", "language", "medium", "mimeType", "createdBy",
-    "createdFor", "framework", "board", "subject", "status", "pkgVersion", "lastSubmittedOn", "lastUpdatedOn", "lastPublishedOn")
+    "createdFor", "framework", "board", "subject", "status", "pkgVersion", "lastSubmittedOn", "lastUpdatedOn", "lastPublishedOn", "channel")
   val userFields = List("usertype", "grade", "language", "subject", "state", "district", "usersignintype", "userlogintype")
   val dialcodeFields = List("identifier", "channel", "batchcode", "publisher", "generated_on", "published_on", "status")
   
@@ -90,5 +91,35 @@ class DenormalizationConfig(override val config: Config) extends BaseJobConfig(c
 
   // Functions
   val denormalizationFunction = "DenormalizationFunction"
+
+
+  // Summary Denorm config
+  val duplicateTopic: String = config.getString("kafka.output.duplicate.topic")
+
+  val dedupStore: Int = config.getInt("redis.database.duplicationstore.id")
+  val cacheExpirySeconds: Int = config.getInt("redis.database.key.expiry.seconds")
+
+  val uniqueSummaryEventsOutputTag: OutputTag[Event] = OutputTag[Event]("unique-events")
+  val duplicateEventsOutputTag: OutputTag[Event] = OutputTag[Event]("duplicate-events")
+
+  val DEDUP_FLAG_NAME = "summary_denorm_duplicate"
+
+  // Consumers
+  val summaryDenormalizationConsumer = "summary-denorm-consumer"
+
+  // Producers
+  val summaryDenormEventsProducer = "summary-denorm-events-producer"
+  val summaryDuplicateEventProducer = "summary-duplicate-events-sink"
+
+  // Functions
+  val summaryDedupFunction = "SummaryDeduplicationFunction"
+  val summaryDenormalizationFunction = "SummaryDenormalizationFunction"
+
+  val summaryDedupParallelism: Int = config.getInt("task.denorm.summary-dedup.parallelism")
+  val summarydenormParallelism: Int = config.getInt("task.denorm.parallelism")
+  val summaryDenormSinkParallelism: Int = config.getInt("task.denorm.sink.parallelism")
+
+  // Metrics
+  val summaryEventsCount = "summary-events-count"
 
 }
