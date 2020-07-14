@@ -41,7 +41,7 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
   private def hgetAll(key: String): Map[String, String] = {
     val dataMap = redisConnection.hgetAll(key)
     if (dataMap.size() > 0) {
-      dataMap.keySet().retainAll(fields.asJava)
+      if(fields.nonEmpty) dataMap.keySet().retainAll(fields.asJava)
       dataMap.values().removeAll(util.Collections.singleton(""))
       dataMap.asScala
     } else {
@@ -66,7 +66,7 @@ class DataCache(val config: BaseJobConfig, val redisConnect: RedisConnect, val d
     val data = redisConnection.get(key)
     if (data != null && !data.isEmpty()) {
       val dataMap = gson.fromJson(data, new util.HashMap[String, AnyRef]().getClass)
-      dataMap.keySet().retainAll(fields.asJava)
+      if(fields.nonEmpty) dataMap.keySet().retainAll(fields.asJava)
       dataMap.values().removeAll(util.Collections.singleton(""))
       val map = dataMap.asScala
       map.map(f => {

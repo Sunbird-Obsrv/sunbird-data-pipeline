@@ -93,14 +93,16 @@ class ContentUpdaterStreamTaskTest extends BaseTestSpec {
         val task = new ContentCacheUpdaterStreamTask(contentConfig, mockKafkaUtil)
         task.process()
         BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.dialCodeApiHit}").getValue() should be(1)
-        BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.contentCacheHit}").getValue() should be(7)
+        BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.contentCacheHit}").getValue() should be(10)
         BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.dialCodeApiMissHit}").getValue() should be(1)
         BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.dialCodeCacheHit}").getValue() should be(2)
         BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.totaldialCodeCount}").getValue() should be(3)
         val redisConnect = new RedisConnect(contentConfig.metaRedisHost, contentConfig.metaRedisPort, contentConfig)
         val jedis = redisConnect.getConnection(contentConfig.dialcodeStore)
         assert(jedis.get("X3J6W1").contains("channel"))
-
+        val contentJedis = redisConnect.getConnection(contentConfig.contentStore)
+        assert(contentJedis.get("do_312999792564027392148").contains("\"board\":\"CBSE\""))
+        assert(contentJedis.get("do_312999792564027392148").contains("Class 8"))
     }
 }
 
@@ -118,6 +120,7 @@ class ContentDialCodeSource extends SourceFunction[Event] {
         val event7 = gson.fromJson(EventFixture.dialcodedata2, new util.LinkedHashMap[String, Any]().getClass)
         val event8 = gson.fromJson(EventFixture.invalid_data, new util.LinkedHashMap[String, Any]().getClass)
         val event9 = gson.fromJson(EventFixture.empty_dialcode, new util.LinkedHashMap[String, Any]().getClass)
+        val event10 = gson.fromJson(EventFixture.contentUpdateData3, new util.LinkedHashMap[String, Any]().getClass)
         ctx.collect(new Event(event1))
         ctx.collect(new Event(event2))
         ctx.collect(new Event(event3))
@@ -127,6 +130,7 @@ class ContentDialCodeSource extends SourceFunction[Event] {
         ctx.collect(new Event(event7))
         ctx.collect(new Event(event8))
         ctx.collect(new Event(event9))
+        ctx.collect(new Event(event10))
 
     }
 
