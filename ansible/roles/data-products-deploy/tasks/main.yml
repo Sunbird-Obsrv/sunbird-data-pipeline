@@ -120,7 +120,7 @@
   tags:
     - cronjobs
     - default-jobs
-    - spark1-jobs
+    - spark-jobs
 
 - name: Create admin-user-reports cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh admin-user-reports"
