@@ -1,6 +1,6 @@
 ---
 # Druid Template variables
-
+druid_monitoring: true
 zookeeper_group: "{{ groups['druid-zookeeper'] }}"
 
 druid_user: druid
@@ -62,8 +62,6 @@ druid_indexing_queue_startDelay: PT30S
 druid_common_monitors: '"com.metamx.metrics.JvmMonitor","org.apache.druid.java.util.metrics.JvmMonitor"'
 druid_common_emitters: '"logging","graphite"'
 
-druid_graphite_host: "{{ groups['druid-graphite'][0] }}"
-druid_graphite_port : 2004
 druid_graphite_prefix: "druid.metric"
 druid_whitelist_filepath: "{{ druid_path }}whitelist"
 druid_postgress_graphite_pass: "{{ dp_vault_druid_postgress_graphite_pass }}"
