@@ -263,7 +263,7 @@ device-profile-updater: |
   }
   # redis-metadata
   redis-meta {
-    host = {{ redis_metadata_host }}
+    host = {{ metadata_redis_host }}
     port = 6379
     database {
       devicestore.id = 2
@@ -285,7 +285,7 @@ content-cache-updater: |
   }
   # redis-metadata
   redis-meta {
-    host = {{ redis_metadata_host }}
+    host = {{ metadata_redis_host }}
     port = 6379
     database {
       contentstore.id = 5
@@ -310,7 +310,7 @@ user-cache-updater: |
   }
   # redis-metadata
   redis-meta {
-    host = {{ redis_metadata_host }}
+    host = {{ metadata_redis_host }}
     port = 6379
     database {
       userstore.id = 4
