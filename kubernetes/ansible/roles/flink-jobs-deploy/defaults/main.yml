@@ -133,3 +133,13 @@ flink_job_names:
       job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
   druid-validator:
       job_class_name: 'org.sunbird.dp.validator.task.DruidValidatorStreamTask'
+  assessment-aggregator:
+      job_class_name: 'org.sunbird.dp.assessment.task.AssessmentAggregatorStreamTask'
+  content-cache-updater:
+      job_class_name: 'org.sunbird.dp.contentupdater.task.ContentCacheUpdaterStreamTask'
+  user-cache-updater:
+      job_class_name: 'org.sunbird.dp.usercache.task.UserCacheUpdaterStreamTask'
+  summary-denormalization:
+      job_class_name: 'org.sunbird.dp.denorm.task.SummaryDenormalizationStreamTask'
+  device-profile-updater:
+      job_class_name: 'org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterStreamTask'
