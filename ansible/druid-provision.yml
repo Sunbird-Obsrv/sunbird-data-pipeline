@@ -14,26 +14,6 @@
   vars:
     zookeeper_group: "{{ groups['raw-zookeeper'] }}"
 
-#-
-#  name: Install postgres on druid cluster
-#  hosts: druid-postgres
-#  vars_files:
-#    - "{{inventory_dir}}/secrets.yml"
-#  become: yes
-#  roles:
-#    - {role: postgres-provision }
-#  vars:
-#    postgres_address_space: "0.0.0.0/0"
-#    postgresql_databases:
-#      - name: druid
-#      - name: graphite
-#    postgresql_users:
-#      - name: druid
-#        password: "{{ dp_vault_druid_postgress_pass }}"
-#      - name: graphite 
-#        password: "{{ dp_vault_druid_postgress_graphite_pass }}"
-
-
 # Create postgres databases and users
 
 - hosts: local
@@ -43,14 +23,10 @@
   vars:
     postgresql_databases:
       - name: druid
-      - name: graphite
     postgresql_users:
       - name: druid
         db: druid
         password: "{{ dp_vault_druid_postgress_pass }}"
-      - name: graphite
-        db: graphite
-        password: "{{ dp_vault_druid_postgress_graphite_pass }}"     
   tasks:
     - name: Ensure database is created
       postgresql_db: name="{{ item.name }}" \
@@ -76,13 +52,6 @@
       with_items: "{{ postgresql_users }}"
 
 -
-  name : Install graphite on druid
-  hosts: raw-graphite
-  become: yes
-  roles:
-    - {role: druid_graphite}
-    
--
   name: Install role druid
   hosts: druid-raw
   become: yes
@@ -95,4 +64,3 @@
   vars:
     druid_postgres_db: "druid"
     druid_zookeeper_host: "{{ groups['raw-zookeeper']|join(':2181,')}}:2181"
-    druid_graphite_host: "{{ groups['raw-graphite'][0] }}"
