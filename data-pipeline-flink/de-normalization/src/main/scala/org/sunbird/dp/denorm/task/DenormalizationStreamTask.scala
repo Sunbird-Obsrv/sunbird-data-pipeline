@@ -81,7 +81,7 @@ object DenormalizationStreamTask {
     val config = configFilePath.map {
       path => ConfigFactory.parseFile(new File(path)).resolve()
     }.getOrElse(ConfigFactory.load("de-normalization.conf").withFallback(ConfigFactory.systemEnvironment()))
-    val denormalizationConfig = new DenormalizationConfig(config, "Denormalization")
+    val denormalizationConfig = new DenormalizationConfig(config, "DenormalizationJob")
     val kafkaUtil = new FlinkKafkaConnector(denormalizationConfig)
     val task = new DenormalizationStreamTask(denormalizationConfig, kafkaUtil)
     task.process()
