@@ -127,20 +127,29 @@ job_classname: ""
 ### class name vars
 flink_job_names:
   telemetry-extractor:
-      job_class_name: 'org.sunbird.dp.extractor.task.TelemetryExtractorStreamTask'
+    job_class_name: 'org.sunbird.dp.extractor.task.TelemetryExtractorStreamTask'
+    replica: 2
   pipeline-preprocessor:
-      job_class_name: 'org.sunbird.dp.preprocessor.task.PipelinePreprocessorStreamTask'
+    job_class_name: 'org.sunbird.dp.preprocessor.task.PipelinePreprocessorStreamTask'
+    replica: 1
   de-normalization:
-      job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+    job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+    replica: 1
   druid-validator:
-      job_class_name: 'org.sunbird.dp.validator.task.DruidValidatorStreamTask'
+    job_class_name: 'org.sunbird.dp.validator.task.DruidValidatorStreamTask'
+    replica: 1
   assessment-aggregator:
-      job_class_name: 'org.sunbird.dp.assessment.task.AssessmentAggregatorStreamTask'
+    job_class_name: 'org.sunbird.dp.assessment.task.AssessmentAggregatorStreamTask'
+    replica: 1
   content-cache-updater:
-      job_class_name: 'org.sunbird.dp.contentupdater.task.ContentCacheUpdaterStreamTask'
+    job_class_name: 'org.sunbird.dp.contentupdater.task.ContentCacheUpdaterStreamTask'
+    replica: 1
   user-cache-updater:
-      job_class_name: 'org.sunbird.dp.usercache.task.UserCacheUpdaterStreamTask'
+    job_class_name: 'org.sunbird.dp.usercache.task.UserCacheUpdaterStreamTask'
+    replica: 1
   summary-denormalization:
-      job_class_name: 'org.sunbird.dp.denorm.task.SummaryDenormalizationStreamTask'
+    job_class_name: 'org.sunbird.dp.denorm.task.SummaryDenormalizationStreamTask'
+    replica: 1
   device-profile-updater:
-      job_class_name: 'org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterStreamTask'
+    job_class_name: 'org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterStreamTask'
+    replica: 1
