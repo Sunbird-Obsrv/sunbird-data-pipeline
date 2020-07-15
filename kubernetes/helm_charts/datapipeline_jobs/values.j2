@@ -154,7 +154,7 @@ pipeline-preprocessor: |
 de-normalization: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
-    input.topic = {{ env_name }}.telemetry.unique
+    input.telemetry.topic = {{ env_name }}.telemetry.unique
     input.summary.topic = {{ env_name }}.telemetry.derived
     output.success.topic = {{ env_name }}.telemetry.denorm
     output.failed.topic = {{ env_name }}.telemetry.failed
@@ -267,7 +267,6 @@ device-profile-updater: |
     port = 6379
     database {
       devicestore.id = 2
-      key.expiry.seconds = {{ device_profile_updater_key_expiry_seconds }}
     }
   }
   postgres {
@@ -331,8 +330,8 @@ user-cache-updater: |
 assessment-aggregator: |+
   include file("/data/flink/conf/base-config.conf")
   kafka {
-    broker-servers = {{ ingestion_kafka_brokers }}
-    zookeeper = {{ ingestion_zookeepers }}
+    broker-servers = "{{ ingestion_kafka_brokers }}"
+    zookeeper = "{{ ingestion_zookeepers }}"
     input.topic = {{ env_name }}.telemetry.assess
     failed.topic= {{ env_name }}.telemetry.assess.failed
     groupId = {{ env_name }}-assessment-aggregator-group
