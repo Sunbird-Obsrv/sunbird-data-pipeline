@@ -38,6 +38,7 @@ restart_attempts: 3
 restart_delay: 30000 # in milli-seconds
 producer_max_request_size: 1572864
 redis_timeout: 30000
+device_profile_table: {{ env }}_device_profile
 
 ### Extractor job related vars
 extractor_event_max_size: 1048576 # Max is only 1MB
