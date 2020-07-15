@@ -45,7 +45,7 @@ node('build-slave') {
 
             stage('Retagging'){
                sh """
-                  docker tag sunbird-data-pipeline:${build_tag} ${hub_org}/sunbird-datapipeline:${build_tag}
+                  docker tag sunbird-datapipeline:${build_tag} ${hub_org}/sunbird-datapipeline:${build_tag}
                   echo {\\"image_name\\" : \\"sunbird-datapipeline\\", \\"image_tag\\" : \\"${build_tag}\\", \\"node_name\\" : \\"${env.NODE_NAME}\\"} > metadata.json
                   """ 
             }
