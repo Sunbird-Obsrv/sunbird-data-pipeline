@@ -32,7 +32,7 @@ class SummaryDeduplicationFunction(config: DenormalizationConfig, @transient var
   override def processElement(event: Event,
                               context: ProcessFunction[Event, Event]#Context,
                               metrics: Metrics): Unit = {
-    deDup[Event, Event](event.mid(), event, context, config.uniqueSummaryEventsOutputTag, config.duplicateEventsOutputTag, flagName = config.DEDUP_FLAG_NAME)(dedupEngine, metrics)
+      deDup[Event, Event](event.mid(), event, context, config.uniqueSummaryEventsOutputTag, config.duplicateEventsOutputTag, flagName = config.DEDUP_FLAG_NAME)(dedupEngine, metrics)
   }
 
 }

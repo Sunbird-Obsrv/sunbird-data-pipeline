@@ -76,6 +76,11 @@ class SummaryDenormalizationStreamTask(config: DenormalizationConfig, kafkaConne
       .name(config.summaryDenormEventsProducer).uid(config.summaryDenormEventsProducer)
       .setParallelism(config.denormSinkParallelism)
 
+    summaryEventStream.getSideOutput(config.uniqueSummaryEventsOutputTag)
+      .addSink(kafkaConnector.kafkaEventSink(config.summaryOutputEventsTopic))
+      .name(config.summaryEventsProducer).uid(config.summaryEventsProducer)
+      .setParallelism(config.summarySinkParallelism)
+
     env.execute(config.jobName)
   }
 

@@ -34,7 +34,6 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
   var redisServer: RedisServer = _
   val config: Config = ConfigFactory.load("test.conf")
   val denormConfig: DenormalizationConfig = new DenormalizationConfig(config, "DenormTest")
-  println("Redis| Host = " + denormConfig.metaRedisHost + " Port = " + denormConfig.metaRedisPort)
   val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
   val gson = new Gson()
 
