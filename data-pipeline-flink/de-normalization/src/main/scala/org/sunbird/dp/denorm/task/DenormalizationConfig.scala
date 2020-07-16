@@ -103,7 +103,6 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
 
   val uniqueSummaryEventsOutputTag: OutputTag[Event] = OutputTag[Event]("unique-summary-events")
   val duplicateEventsOutputTag: OutputTag[Event] = OutputTag[Event]("duplicate-events")
-  // val uniqueSummaryEventsOutputTag: OutputTag[Event] = OutputTag[Event]("unique-raw-summaries")
 
   val DEDUP_FLAG_NAME = "summary_denorm_duplicate"
 
@@ -113,8 +112,7 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
   // Producers
   val summaryDenormEventsProducer = "summary-denorm-events-producer"
   val summaryDuplicateEventProducer = "summary-duplicate-events-sink"
-  val workflowSummaryEventsProducer = "wfs-summary-events-producer"
-  val derivedEventsProducer = "derived-events-producer"
+  val summaryEventsProducer = "summary-events-producer"
 
   // Functions
   val summaryDedupFunction = "SummaryDeduplicationFunction"
