@@ -142,7 +142,7 @@ class SummaryDenormalizationStreamTaskTestSpec extends BaseTestSpec {
 
     BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.eventsExpired}").getValue() should be (0)
 
-    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.unique-event-count").getValue() should be(2)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.unique-event-count").getValue() should be(3)
     BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.duplicate-event-count").getValue() should be(1)
 
   }

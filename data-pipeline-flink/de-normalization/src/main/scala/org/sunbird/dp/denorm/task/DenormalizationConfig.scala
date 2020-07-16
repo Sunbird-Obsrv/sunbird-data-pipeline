@@ -101,9 +101,9 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
   val dedupStore: Int = config.getInt("redis.database.duplicationstore.id")
   val cacheExpirySeconds: Int = config.getInt("redis.database.key.expiry.seconds")
 
-  val uniqueSummaryEventsOutputTag: OutputTag[Event] = OutputTag[Event]("unique-events")
+  val uniqueSummaryEventsOutputTag: OutputTag[Event] = OutputTag[Event]("unique-summary-events")
   val duplicateEventsOutputTag: OutputTag[Event] = OutputTag[Event]("duplicate-events")
-  val derivedEventsOutputTag: OutputTag[Event] = OutputTag[Event]("raw-summaries")
+  // val uniqueSummaryEventsOutputTag: OutputTag[Event] = OutputTag[Event]("unique-raw-summaries")
 
   val DEDUP_FLAG_NAME = "summary_denorm_duplicate"
 

@@ -81,11 +81,6 @@ class SummaryDenormalizationStreamTask(config: DenormalizationConfig, kafkaConne
       .name(config.workflowSummaryEventsProducer).uid(config.workflowSummaryEventsProducer)
       .setParallelism(config.summarySinkParallelism)
 
-    summaryEventStream.getSideOutput(config.derivedEventsOutputTag)
-      .addSink(kafkaConnector.kafkaEventSink(config.summaryOutputEventsTopic))
-      .name(config.derivedEventsProducer).uid(config.derivedEventsProducer)
-      .setParallelism(config.summarySinkParallelism)
-
     env.execute(config.jobName)
   }
 
