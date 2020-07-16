@@ -196,7 +196,7 @@ secor_service_name:
     ostrich_port: "9982"
     partition_prefix_enabled: "true"
     partition_prefix_key: "eid"
-    partition_prefix_mapping: "{\"ME_SESSION_SUMMARY\":\"summary\",\"ME_WORKFLOW_SUMMARY\":\"summary\",\"ME_DEIVCE_SUMMARY\":\"summary\",\"ME_ITEM_SUMMARY\":\"summary\",\"ME_WORKFLOW_USAGE_SUMMARY\":\"summary\",\"ME_ITEM_USAGE_SUMMARY\":\"summary\",\"ME_USAGE_SUMMARY\":\"summary\",\"ME_DIALCODE_USAGE_SUMMARY\":\"summary\",\"DEFAULT\":\"me\"}"
+    partition_prefix_mapping: "{\"ME_SESSION_SUMMARY\":\"session_summary\",\"ME_WORKFLOW_SUMMARY\":\"workflow_summary\",\"ME_DEIVCE_SUMMARY\":\"device_summary\",\"ME_ITEM_SUMMARY\":\"item_summary\",\"ME_WORKFLOW_USAGE_SUMMARY\":\"workflow_usage_summary\",\"ME_ITEM_USAGE_SUMMARY\":\"item_usage_summary\",\"ME_USAGE_SUMMARY\":\"usage_summary\",\"ME_DIALCODE_USAGE_SUMMARY\":\"dialcode_usage_summary\",\"DEFAULT\":\"me\"}"
     output_file_pattern: "{partition}-{currentTimestamp}.json"
     service_description: "Derived Telemetry Backup"
     service_monitor_schedule_hr: "23"
