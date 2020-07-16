@@ -21,15 +21,6 @@ spec:
         message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "telemetry-extractor-taskmanager-prometheus" }) > {{ .Values.telemetry_extractor_threshold_critical }} 
         summary: telemetry-extractor lag is critical
 
-    - alert: telemetry-extractor lag fatal
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "telemetry-extractor-taskmanager-prometheus" }) >  {{ .Values.telemetry_extractor_threshold_fatal }}
-      for: 5m
-      labels:
-        severity: fatal
-      annotations:
-        message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "telemetry-extractor-taskmanager-prometheus" }) > {{ .Values.telemetry_extractor_threshold_fatal }}
-        summary: telemetry-extractor lag is fatal 
-
     - alert: pipeline-preprocessor lag critical
       expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "pipeline-preprocessor-taskmanager-prometheus" }) > {{ .Values.pipeline_preprocessor_threshold_critical }}
       for: 5m
@@ -38,15 +29,6 @@ spec:
       annotations:
         message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "pipeline-preprocessor-taskmanager-prometheus" }) > {{ .Values.pipeline_preprocessor_threshold_critical }} 
         summary: pipeline-preprocessor lag is critical
-
-    - alert: pipeline-preprocessor lag fatal
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "pipeline-preprocessor-taskmanager-prometheus" }) > {{ .Values.pipeline_preprocessor_threshold_fatal }}
-      for: 5m
-      labels:
-        severity: fatal
-      annotations:
-        message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "pipeline-preprocessor-taskmanager-prometheus" }) > {{ .Values.pipeline_preprocessor_threshold_fatal }}
-        summary:  pipeline-preprocessor lag is fatal 
    
     - alert:  de-normalization lag critical
       expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "de-normalization-taskmanager-prometheus" }) > {{ .Values.de_normalization_threshold_critical }}
@@ -57,15 +39,6 @@ spec:
         message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "de-normalization-taskmanager-prometheus" }) > {{ .Values.de_normalization_threshold_critical }}
         summary: de-normalization lag is critical
 
-    - alert:  de-normalization lag fatal
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "de-normalization-taskmanager-prometheus" }) > {{ .Values.de_normalization_threshold_fatal }}
-      for: 5m
-      labels:
-        severity: fatal
-      annotations:
-        message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "de-normalization-taskmanager-prometheus" }) > {{ .Values.de_normalization_threshold_fatal }}
-        summary: de-normalization lag is fatal
-
     - alert:  druid-validator lag critical
       expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "druid-validator-taskmanager-prometheus" }) > {{ .Values.druid_validator_threshold_critical }}
       for: 5m
@@ -74,15 +47,6 @@ spec:
       annotations:
         message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "drud-validator-taskmanager-prometheus" }) > {{ .Values.druid_validator_threshold_critical }}
         summary: druid-validator lag is critical
-
-    - alert:  druid-validator lag fatal
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "druid-validator-taskmanager-prometheus" }) > {{ .Values.druid_validator_threshold_fatal }}
-      for: 5m
-      labels:
-        severity: fatal
-      annotations:
-        message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "druid-validator-taskmanager-prometheus" }) > {{ .Values.druid_validator_threshold_fatal }}
-        summary: druid-validator lag is fatal
 
     - alert: assessment-aggregator lag critical
       expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "assessment-aggregator-taskmanager-prometheus" }) > {{ .Values.assessment_aggregator_threshold_critical }}
@@ -93,15 +57,6 @@ spec:
         message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "assessment-aggregator-taskmanager-prometheus" }) > {{ .Values.assessment_aggregator_threshold_critical }}
         summary: assessment-aggregator lag is critical
 
-    - alert: assessment-aggregator lag fatal
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "assessment-aggregator-taskmanager-prometheus" }) > {{ .Values.assessment_aggregator_threshold_fatal }}
-      for: 5m
-      labels:
-        severity: fatal
-      annotations:
-        message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "assessment-aggregator-taskmanager-prometheus" }) > {{ .Values.assessment_aggregator_threshold_fatal }}
-        summary: assessment-aggregator lag is fatal
-
     - alert: content-cache-updater lag critical
       expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "content-cache-updater-taskmanager-prometheus" }) > {{ .Values.content_cache_updater_threshold_critical }}
       for: 5m
@@ -110,15 +65,6 @@ spec:
       annotations:
         message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "content-cache-updater-taskmanager-prometheus" }) > {{ .Values.content_cache_updater_threshold_critical }}
         summary: content-cache-updater lag is critical
-
-    - alert: content-cache-updater lag fatal
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "content-cache-updater-taskmanager-prometheus" }) > {{ .Values.content_cache_updater_threshold_fatal }}
-      for: 5m
-      labels:
-        severity: fatal
-      annotations:
-        message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "content-cache-updater-taskmanager-prometheus" }) > {{ .Values.content_cache_updater_threshold_fatal }}
-        summary: content-cache-updater lag is fatal
 
     - alert: user-cache-updater lag critical
       expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "user-cache-updater-taskmanager-prometheus" }) > {{ .Values.user_cache_updater_threshold_critical }}
@@ -129,15 +75,6 @@ spec:
         message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "user-cache-updater-taskmanager-prometheus" }) > {{ .Values.user_cache_updater_threshold_critical }}
         summary: user-cache-updater lag is critical
 
-    - alert: user-cache-updater lag fatal
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "user-cache-updater-taskmanager-prometheus" }) > {{ .Values.user_cache_updater_threshold_fatal }}
-      for: 5m
-      labels:
-        severity: fatal
-      annotations:
-        message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "user-cache-updater-taskmanager-prometheus" }) > {{ .Values.user_cache_updater_threshold_fatal }}
-        summary: user-cache-updater lag is fatal
-
     - alert: summary-denormalization lag critical
       expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "summary-denormalization-taskmanager-prometheus" }) > {{ .Values.summary_denormalization_threshold_critical }}
       for: 5m
@@ -147,15 +84,6 @@ spec:
         message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "summary-denormalization-taskmanager-prometheus" }) > {{ .Values.summary_denormalization_threshold_critical }}
         summary: summary-denormalization lag is critical
 
-    - alert: summary-denormalization lag fatal
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "summary-denormalization-taskmanager-prometheus" }) > {{ .Values.summary_denormalization_threshold_fatal }}
-      for: 5m
-      labels:
-        severity: fatal
-      annotations:
-        message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "summary-denormalization-taskmanager-prometheus" }) > {{ .Values.summary_denormalization_threshold_fatal }}
-        summary: summary-denormalization lag is fatal
-
     - alert: device-profile-updater lag critical
       expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "device-profile-updater-taskmanager-prometheus" }) > {{ .Values.device_profile_updater_threshold_critical }}
       for: 5m
@@ -164,15 +92,6 @@ spec:
       annotations:
         message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "device-profile-updater-taskmanager-prometheus" }) > {{ .Values._device_profile_updater_threshold_critical }}
         summary: device-profile-updater lag is critical
-
-    - alert: device-profile-updater lag fatal
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "device-profile-updater-taskmanager-prometheus" }) > {{ .Values.device_profile_updater_threshold_fatal }}
-      for: 5m
-      labels:
-        severity: fatal
-      annotations:
-        message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "device-profile-updater-taskmanager-prometheus" }) > {{ .Values._device_profile_updater_threshold_fatal }}
-        summary: device-profile-updater lag is fatal
 
 #### Checkpoint failure alert rules
     
@@ -267,3 +186,12 @@ spec:
       annotations:
         message: sum(sum_over_time(flink_taskmanager_job_task_operator_TelemetryExtractorJob_failed_batch_count[5m])) / (sum(sum_over_time(flink_taskmanager_job_task_operator_TelemetryExtractorJob_failed_batch_count[5m]))  + sum(sum_over_time(flink_taskmanager_job_task_operator_TelemetryExtractorJob_success_batch_count[5m]))  + sum(sum_over_time(flink_taskmanager_job_task_operator_TelemetryExtractorJob_duplicate_event_count[5m]))) * 100 > {{ .Values.telemetry_extractor_failed_events_percentage_threshold_fatal }} 
         summary: telemetry-extractor failed events percentage fatal
+
+    - alert: telemetry-extractor failed events percentage critical
+      expr: sum(sum_over_time(flink_taskmanager_job_task_operator_TelemetryExtractorJob_failed_batch_count[5m])) / (sum(sum_over_time(flink_taskmanager_job_task_operator_TelemetryExtractorJob_failed_batch_count[5m]))  + sum(sum_over_time(flink_taskmanager_job_task_operator_TelemetryExtractorJob_success_batch_count[5m]))  + sum(sum_over_time(flink_taskmanager_job_task_operator_TelemetryExtractorJob_duplicate_event_count[5m]))) * 100 > {{ .Values.telemetry_extractor_failed_events_percentage_threshold_critical }}
+      for: 5m
+      labels:
+        severity: fatal
+      annotations:
+        message: sum(sum_over_time(flink_taskmanager_job_task_operator_TelemetryExtractorJob_failed_batch_count[5m])) / (sum(sum_over_time(flink_taskmanager_job_task_operator_TelemetryExtractorJob_failed_batch_count[5m]))  + sum(sum_over_time(flink_taskmanager_job_task_operator_TelemetryExtractorJob_success_batch_count[5m]))  + sum(sum_over_time(flink_taskmanager_job_task_operator_TelemetryExtractorJob_duplicate_event_count[5m]))) * 100 > {{ .Values.telemetry_extractor_failed_events_percentage_threshold_critical }}
+        summary: telemetry-extractor failed events percentage critical
