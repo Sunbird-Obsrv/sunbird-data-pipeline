@@ -38,6 +38,7 @@ restart_attempts: 3
 restart_delay: 30000 # in milli-seconds
 producer_max_request_size: 1572864
 redis_timeout: 30000
+device_profile_table: "{{ env }}_device_profile"
 
 ### Extractor job related vars
 extractor_event_max_size: 1048576 # Max is only 1MB
@@ -67,6 +68,7 @@ dialcode_denorm_parallelism: 1
 denorm_parallelism: 1
 denorm_sink_parallelism: 1
 denorm_summary_dedup_parallelism: 1
+summary_sink_parallelism: 1
 de_normalization_duplicationstore_key_expiry_seconds: 3600
 de_normalization_key_expiry_seconds: 3600
 
@@ -75,6 +77,7 @@ summary_denorm_consumer_parallelism: 1
 summary_denorm_parallelism: 1
 summary_denorm_sink_parallelism: 1
 summary_denorm_dedup_parallelism: 1
+summary_denorm_summary_sink_parallelism: 1
 summary_denorm_duplication_key_expiry_seconds: 3600
 summary_denorm_key_expiry_seconds: 3600
 
@@ -126,20 +129,29 @@ job_classname: ""
 ### class name vars
 flink_job_names:
   telemetry-extractor:
-      job_class_name: 'org.sunbird.dp.extractor.task.TelemetryExtractorStreamTask'
+    job_class_name: 'org.sunbird.dp.extractor.task.TelemetryExtractorStreamTask'
+    replica: 2
   pipeline-preprocessor:
-      job_class_name: 'org.sunbird.dp.preprocessor.task.PipelinePreprocessorStreamTask'
+    job_class_name: 'org.sunbird.dp.preprocessor.task.PipelinePreprocessorStreamTask'
+    replica: 1
   de-normalization:
-      job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+    job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+    replica: 1
   druid-validator:
-      job_class_name: 'org.sunbird.dp.validator.task.DruidValidatorStreamTask'
+    job_class_name: 'org.sunbird.dp.validator.task.DruidValidatorStreamTask'
+    replica: 1
   assessment-aggregator:
-      job_class_name: 'org.sunbird.dp.assessment.task.AssessmentAggregatorStreamTask'
+    job_class_name: 'org.sunbird.dp.assessment.task.AssessmentAggregatorStreamTask'
+    replica: 1
   content-cache-updater:
-      job_class_name: 'org.sunbird.dp.contentupdater.task.ContentCacheUpdaterStreamTask'
+    job_class_name: 'org.sunbird.dp.contentupdater.task.ContentCacheUpdaterStreamTask'
+    replica: 1
   user-cache-updater:
-      job_class_name: 'org.sunbird.dp.usercache.task.UserCacheUpdaterStreamTask'
+    job_class_name: 'org.sunbird.dp.usercache.task.UserCacheUpdaterStreamTask'
+    replica: 1
   summary-denormalization:
-      job_class_name: 'org.sunbird.dp.denorm.task.SummaryDenormalizationStreamTask'
+    job_class_name: 'org.sunbird.dp.denorm.task.SummaryDenormalizationStreamTask'
+    replica: 1
   device-profile-updater:
-      job_class_name: 'org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterStreamTask'
+    job_class_name: 'org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterStreamTask'
+    replica: 1
