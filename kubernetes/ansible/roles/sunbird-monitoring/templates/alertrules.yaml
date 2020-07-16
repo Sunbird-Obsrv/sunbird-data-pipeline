@@ -20,24 +20,16 @@ node_disk_usage_percentage_threshold_Fatal: 95
 
 # Jobs lag vars 
 telemetry_extractor_threshold_critical: {{ telemetry_extractor_threshold_critical }}
-telemetry_extractor_threshold_fatal: {{ telemetry_extractor_threshold_fatal }}
 pipeline_preprocessor_threshold_critical: {{ pipeline_preprocessor_threshold_critical }}
-pipeline_preprocessor_threshold_fatal: {{ pipeline_preprocessor_threshold_fatal }}
 de_normalization_threshold_critical: {{ de_normalization_threshold_critical }}
-de_normalization_threshold_fatal: {{ de_normalization_threshold_fatal }}
 druid_validator_threshold_critical: {{ druid_validator_threshold_critical }}
-druid_validator_threshold_fatal: {{ druid_validator_threshold_fatal }}
 assessment_aggregator_threshold_critical: {{ assessment_aggregator_threshold_critical }}
-assessment_aggregator_threshold_fatal: {{ assessment_aggregator_threshold_fatal }}
 content_cache_updater_threshold_critical: {{ content_cache_updater_threshold_critical }}
-content_cache_updater_threshold_fatal: {{ content_cache_updater_threshold_fatal }}
 user_cache_updater_threshold_critical: {{ user_cache_updater_threshold_critical }}
-user_cache_updater_threshold_fatal: {{ user_cache_updater_threshold_fatal }}
 summary_denormalization_threshold_critical: {{ summary_denormalization_threshold_critical }}
-summary_denormalization_threshold_fatal: {{ summary_denormalization_threshold_fatal }}
 device_profile_updater_threshold_critical: {{ device_profile_updater_threshold_critical }}
-device_profile_updater_threshold_fatal: {{ device_profile_updater_threshold_fatal }}
 telemetry_extractor_failed_events_percentage_threshold_fatal: {{ telemetry_extractor_failed_events_percentage_threshold_fatal }}
+telemetry_extractor_failed_events_percentage_threshold_critical: {{ telemetry_extractor_failed_events_percentage_threshold_critical }}
 
 # Checkpoint failure vars
 telemetry_extractor_checkpointfailure_threshold_critical: {{ telemetry_extractor_checkpointfailure_threshold_critical }} 
