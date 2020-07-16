@@ -177,6 +177,14 @@ object EventFixture {
        |"events_summary":[{"id":"START","count":1.0},{"id":"INTERACT","count":6.0},{"id":"END","count":1.0}],
        |"page_summary":[],"time_diff":5.09,"telemetry_version":"3.0","env_summary":[],"time_spent":5.09}},
        |"object":{"id":"","type":"","rollup":{}},"type":"events"}
+     """.stripMargin,
+    s"""
+       |{"eid":"ME_DEVICE_SUMMARY","ets":$currentDate,"syncts":$currentDate,"ver":"1.0","mid":
+       |"CFBA22543AA3EAD4C2737931D34F2E8D","context":{"pdata":{"id":"AnalyticsDataPipeline","ver":"1.0",
+       |"model":"DeviceSummary"},"granularity":"DAY","date_range":{"from":1572786370125,"to":1572786403121}},
+       |"dimensions":{"did":"3eb8d5dc49b063650ca18920956ea04e","channel":"ROOT_ORG"},"edata":{"eks":{"firstAccess":
+       |1572786370121,"dial_stats":{"total_count":3,"success_count":3,"failure_count":0},"content_downloads":0,
+       |"contents_played":0,"total_ts":0.0,"total_launches":0,"unique_contents_played":0}}}
      """.stripMargin
   )
 

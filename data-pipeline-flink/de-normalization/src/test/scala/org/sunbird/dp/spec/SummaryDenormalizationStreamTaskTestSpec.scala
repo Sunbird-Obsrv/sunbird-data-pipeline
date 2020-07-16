@@ -89,12 +89,14 @@ class SummaryDenormalizationStreamTaskTestSpec extends BaseTestSpec {
 
     when(mockKafkaUtil.kafkaEventSource[Event](denormConfig.summaryInputTopic)).thenReturn(new SummaryInputSource)
     when(mockKafkaUtil.kafkaEventSink[Event](denormConfig.denormSuccessTopic)).thenReturn(new SummaryDenormEventsSink)
+    when(mockKafkaUtil.kafkaEventSink[Event](denormConfig.summaryOutputEventsTopic)).thenReturn(new SummaryEventsSink)
     when(mockKafkaUtil.kafkaEventSink[Event](denormConfig.duplicateTopic)).thenReturn(new DuplicateEventsSink)
 
     val task = new SummaryDenormalizationStreamTask(denormConfig, mockKafkaUtil)
     task.process()
     SummaryDenormEventsSink.values.size should be (2)
     DuplicateEventsSink.values.size should be (1)
+    SummaryEventsSink.values.size should be (3)
 
     val event1 = SummaryDenormEventsSink.values("mid1")
     event1.kafkaKey() should be ("45f32f48592cb9bcf26bef9178b7bd20abe24932")
@@ -183,6 +185,19 @@ class DuplicateEventsSink extends SinkFunction[Event] {
 }
 
 object DuplicateEventsSink {
+  val values: scala.collection.mutable.Map[String, Event] = scala.collection.mutable.Map[String, Event]()
+}
+
+class SummaryEventsSink extends SinkFunction[Event] {
+
+  override def invoke(event: Event): Unit = {
+    synchronized {
+      SummaryEventsSink.values.put(event.mid(), event)
+    }
+  }
+}
+
+object SummaryEventsSink {
   val values: scala.collection.mutable.Map[String, Event] = scala.collection.mutable.Map[String, Event]()
 }
 

@@ -21,10 +21,12 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
   val summaryInputTopic: String = config.getString("kafka.input.summary.topic")
   val denormSuccessTopic: String = config.getString("kafka.output.success.topic")
   val failedTopic: String = config.getString("kafka.output.failed.topic")
+  val summaryOutputEventsTopic: String = config.getString("kafka.output.summary.topic")
 
   override val kafkaConsumerParallelism: Int = config.getInt("task.consumer.parallelism")
   val denormParallelism: Int = config.getInt("task.denorm.parallelism")
   val denormSinkParallelism: Int = config.getInt("task.denorm.sink.parallelism")
+  val summarySinkParallelism: Int = config.getInt("task.summary.sink.parallelism")
 
   val userStore: Int = config.getInt("redis-meta.database.userstore.id")
   val contentStore: Int = config.getInt("redis-meta.database.contentstore.id")
@@ -101,6 +103,7 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
 
   val uniqueSummaryEventsOutputTag: OutputTag[Event] = OutputTag[Event]("unique-events")
   val duplicateEventsOutputTag: OutputTag[Event] = OutputTag[Event]("duplicate-events")
+  val derivedEventsOutputTag: OutputTag[Event] = OutputTag[Event]("raw-summaries")
 
   val DEDUP_FLAG_NAME = "summary_denorm_duplicate"
 
@@ -110,6 +113,8 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
   // Producers
   val summaryDenormEventsProducer = "summary-denorm-events-producer"
   val summaryDuplicateEventProducer = "summary-duplicate-events-sink"
+  val workflowSummaryEventsProducer = "wfs-summary-events-producer"
+  val derivedEventsProducer = "derived-events-producer"
 
   // Functions
   val summaryDedupFunction = "SummaryDeduplicationFunction"
@@ -117,7 +122,7 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
 
   val summaryDedupParallelism: Int = config.getInt("task.denorm.summary-dedup.parallelism")
   val summarydenormParallelism: Int = config.getInt("task.denorm.parallelism")
-  val summaryDenormSinkParallelism: Int = config.getInt("task.denorm.sink.parallelism")
+  val summaryDenormSinkParallelism: Int = config.getInt("task.summary.sink.parallelism")
 
   // Metrics
   val summaryEventsCount = "summary-events-count"
