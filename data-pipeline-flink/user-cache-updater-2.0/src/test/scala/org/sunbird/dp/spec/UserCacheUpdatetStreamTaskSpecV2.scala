@@ -69,7 +69,6 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
 
   def setupRedisTestData(jedis: Jedis) {
 
-
     // Insert user test data
     jedis.hmset("user-3", EventFixture.userCacheDataMap3)
     jedis.hmset("user-4", EventFixture.userCacheDataMap4)
@@ -91,8 +90,8 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
       */
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheHit}").getValue() should be(7)
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.totalEventsCount}").getValue() should be(10)
-    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadSuccessCount}").getValue() should be(8)
-    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadMissCount}").getValue() should be(4)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadSuccessCount}").getValue() should be(10)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadMissCount}").getValue() should be(6)
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.skipCount}").getValue() should be(4)
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.successCount}").getValue() should be(7)
 
@@ -128,6 +127,7 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
     userInfo.get("iscustodianuser") should  be ("true")
     userInfo.get("externalid") should be("93nsoa01")
     userInfo.get("schoolname") should be("SBA School")
+    assert(userInfo.get("orgname").contains("Custodian ORG"))
 
     // When action is Updated and location ids are present
     val locationInfo = jedis.hgetAll("user-4")
