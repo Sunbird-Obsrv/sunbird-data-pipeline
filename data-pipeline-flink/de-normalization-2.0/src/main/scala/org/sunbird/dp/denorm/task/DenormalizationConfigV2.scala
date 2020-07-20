@@ -9,7 +9,7 @@ import org.sunbird.dp.denorm.domain.Event
 
 import scala.collection.JavaConversions._
 
-class DenormalizationConfigV2(override val config: Config) extends BaseJobConfig(config, "DenormalizationJob") {
+class DenormalizationConfigV2(override val config: Config) extends BaseJobConfig(config, "DenormalizationJobV2") {
 
   private val serialVersionUID = 2905979434303791379L
 
