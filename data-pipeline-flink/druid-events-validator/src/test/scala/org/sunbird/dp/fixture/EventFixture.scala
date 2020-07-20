@@ -31,7 +31,7 @@ object EventFixture {
       |"isUpdateAvailable":false}]}},"eid":"INTERACT","ver":"3.0","ets":1551344686294,
       |"context":{"pdata":{"ver":"2.0.localstaging-debug","pid":"sunbird.app","id":"staging.sunbird.app"},
       |"channel":"01231711180382208027","env":"home","did":"6c61348dc9841f27c96f4887b64ee1f777d74c38",
-      |"sid":"cef2d0be-83fc-4988-8ad9-1b72399e6d3a","cdata":[]},"mid":"3318a611-50fa-4ae9-9167-7b4390a62b9f",
+      |"sid":"cef2d0be-83fc-4988-8ad9-1b72399e6d3a","cdata":[]},"mid":"a46d82af-eb2f-434e-8e04-5f31fcbdc5d6",
       |"object":{"id":"do_21228031946955980819","type":"Worksheet","version":"1.0",
       |"rollup":{"l4":"do_21270636501657190413450","l1":"do_21270636097196032013440","l2":"do_21270636501655552013444",
       |"l3":"do_21270636501657190413448"}},"tags":[],"syncts":1551344699388,"@timestamp":"2019-02-28T09:04:59.388Z",
