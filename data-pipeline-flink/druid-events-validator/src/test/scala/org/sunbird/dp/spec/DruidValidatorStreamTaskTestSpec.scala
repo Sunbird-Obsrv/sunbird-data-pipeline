@@ -85,7 +85,7 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.unique-event-count").getValue() should be (3)
 
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.summaryRouterMetricCount}").getValue() should be (1)
-        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.telemetryRouterMetricCount}").getValue() should be (3)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.telemetryRouterMetricCount}").getValue() should be (2)
 
     }
 

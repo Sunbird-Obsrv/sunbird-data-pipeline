@@ -45,14 +45,14 @@ class DruidValidatorStreamTask(config: DruidValidatorConfig, kafkaConnector: Fli
     /**
      * Perform validation
      */
-    val dataStream =
+    val validationDataStream =
       env.addSource(kafkaConnector.kafkaEventSource[Event](config.kafkaInputTopic), config.druidValidatorConsumer)
       .uid(config.druidValidatorConsumer).setParallelism(config.kafkaConsumerParallelism)
       .rebalance()
       .process(new DruidValidatorFunction(config)).name(config.druidValidatorFunction).uid(config.druidValidatorFunction)
       .setParallelism(config.validatorParallelism)
 
-    val routerStream: SingleOutputStreamOperator[Event] = dataStream.getSideOutput(config.validEventOutputTag)
+    val routerStream: SingleOutputStreamOperator[Event] = validationDataStream.getSideOutput(config.validEventOutputTag)
       .process(new DruidRouterFunction(config)).name(config.druidRouterFunction).uid(config.druidRouterFunction)
       .setParallelism(config.routerParallelism)
 
@@ -65,10 +65,10 @@ class DruidValidatorStreamTask(config: DruidValidatorConfig, kafkaConnector: Fli
     routerStream.getSideOutput(config.summaryRouterOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaSummaryRouteTopic))
       .name(config.summaryEventsProducer).uid(config.summaryEventsProducer)
 
-    routerStream.getSideOutput(config.duplicateEventOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaDuplicateTopic))
+    validationDataStream.getSideOutput(config.duplicateEventOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaDuplicateTopic))
       .name(config.druidDuplicateEventsProducer).uid(config.druidDuplicateEventsProducer)
 
-    dataStream.getSideOutput(config.invalidEventOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaFailedTopic))
+    validationDataStream.getSideOutput(config.invalidEventOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaFailedTopic))
       .name(config.druidInvalidEventsProducer).uid(config.druidInvalidEventsProducer)
 
     env.execute(config.jobName)
