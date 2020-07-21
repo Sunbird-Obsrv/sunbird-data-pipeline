@@ -51,12 +51,14 @@ class DenormalizationFunction(config: DenormalizationConfig)(implicit val mapTyp
     if (event.isOlder(config.ignorePeriodInMonths)) { // Skip events older than configured value (default: 3 months)
       metrics.incCounter(config.eventsExpired)
     } else {
-      val deviceDenormEvent = deviceDenormalization.denormalize(event, metrics)
-      val userDenormEvent = userDenormalization.denormalize(deviceDenormEvent, metrics)
-      val dialcodeDenormEvent = dialcodeDenormalization.denormalize(userDenormEvent, metrics)
-      val contentDenormEvent = contentDenormalization.denormalize(dialcodeDenormEvent, metrics)
-      val locationDenormEvent = locationDenormalization.denormalize(contentDenormEvent, metrics)
-      context.output(config.denormEventsTag, deviceDenormEvent)
+      if ("ME_WORKFLOW_SUMMARY" == event.eid() || !event.eid().contains("SUMMARY")) {
+        val deviceDenormEvent = deviceDenormalization.denormalize(event, metrics)
+        val userDenormEvent = userDenormalization.denormalize(deviceDenormEvent, metrics)
+        val dialcodeDenormEvent = dialcodeDenormalization.denormalize(userDenormEvent, metrics)
+        val contentDenormEvent = contentDenormalization.denormalize(dialcodeDenormEvent, metrics)
+        val locationDenormEvent = locationDenormalization.denormalize(contentDenormEvent, metrics)
+        context.output(config.denormEventsTag, locationDenormEvent)
+      }
     }
   }
 }

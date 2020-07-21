@@ -37,7 +37,7 @@ class SchemaValidator(config: DruidValidatorConfig) extends java.io.Serializable
   @throws[IOException]
   @throws[ProcessingException]
   def validate(event: Event): ProcessingReport = {
-    val eventJson = JsonLoader.fromString(event.getJson)
+    val eventJson = JsonLoader.fromString(event.getJson())
     val report = if (event.isSearchEvent) searchEventJsonSchema.validate(eventJson)
     else if (event.isSummaryEvent) summaryJsonSchema.validate(eventJson)
     else telemetryJsonSchema.validate(eventJson)

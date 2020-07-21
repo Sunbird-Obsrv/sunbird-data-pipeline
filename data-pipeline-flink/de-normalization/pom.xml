@@ -41,11 +41,6 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>2.2</version>
-        </dependency>
-        <dependency>
             <groupId>org.sunbird.dp</groupId>
             <artifactId>dp-core</artifactId>
             <version>1.0.0</version>
@@ -133,10 +128,6 @@
                                 </filter>
                             </filters>
                             <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.sunbird.dp.denorm.task.DenormalizationStreamTask</mainClass>
-                                </transformer>
                                 <!-- append default configs -->
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
