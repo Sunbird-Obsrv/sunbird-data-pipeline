@@ -71,9 +71,7 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
 
         DupEventsSink.values.get(0).getFlags.get("dv_processed").booleanValue() should be(true)
         DupEventsSink.values.get(0).getFlags.get("dv_duplicate").booleanValue() should be(true)
-
-        TelemetryEventsSink.values.get(0).getFlags.get("dv_processed").booleanValue() should be(true)
-
+        
         FailedEventsSink.values.get(0).getFlags.get("dv_processed").booleanValue() should be(false)
         FailedEventsSink.values.get(0).getFlags.get("dv_validation_failed").booleanValue() should be(true)
         
