@@ -3,6 +3,7 @@ package org.sunbird.dp.validator.util
 import java.io.IOException
 import java.text.MessageFormat
 
+import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import com.github.fge.jackson.JsonLoader
 import com.github.fge.jsonschema.core.exceptions.ProcessingException
 import com.github.fge.jsonschema.core.report.ProcessingReport
@@ -17,6 +18,7 @@ class SchemaValidator(config: DruidValidatorConfig) extends java.io.Serializable
   private val serialVersionUID = 8780940932759659175L
   private[this] val logger = LoggerFactory.getLogger(classOf[SchemaValidator])
   private val schemaFactory = JsonSchemaFactory.byDefault
+  private[this] val objectMapper = new ObjectMapper()
 
   logger.info("Initializing schema for telemetry objects...")
   val pattern = "{0}/{1}"
@@ -37,7 +39,7 @@ class SchemaValidator(config: DruidValidatorConfig) extends java.io.Serializable
   @throws[IOException]
   @throws[ProcessingException]
   def validate(event: Event): ProcessingReport = {
-    val eventJson = JsonLoader.fromString(event.getJson())
+    val eventJson = objectMapper.convertValue[JsonNode](event.getTelemetry.map, classOf[JsonNode])
     val report = if (event.isSearchEvent) searchEventJsonSchema.validate(eventJson)
     else if (event.isSummaryEvent) summaryJsonSchema.validate(eventJson)
     else telemetryJsonSchema.validate(eventJson)

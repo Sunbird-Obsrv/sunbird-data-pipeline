@@ -35,7 +35,8 @@ class DruidValidatorFunction(config: DruidValidatorConfig,
   }
 
   override def metricsList(): List[String] = {
-    List(config.validationSuccessMetricsCount, config.validationFailureMetricsCount) ::: deduplicationMetrics
+    List(config.validationSuccessMetricsCount, config.validationFailureMetricsCount,
+      config.telemetryRouterMetricCount, config.summaryRouterMetricCount) ::: deduplicationMetrics
   }
 
   override def processElement(event: Event,
@@ -47,8 +48,18 @@ class DruidValidatorFunction(config: DruidValidatorConfig,
     if (validationReport.isSuccess) {
       event.markValidationSuccess()
       metrics.incCounter(config.validationSuccessMetricsCount)
-      deDup[Event, Event](event.mid(), event, ctx,
-        config.validEventOutputTag, config.duplicateEventOutputTag, flagName = "dv_duplicate")(dedupEngine, metrics)
+      val isUniqueEvent = deDuplicate[Event, Event](event.mid(), event, ctx, config.duplicateEventOutputTag, flagName = "dv_duplicate")(dedupEngine, metrics)
+
+      if (isUniqueEvent) {
+        if (event.isSummaryEvent) {
+          metrics.incCounter(config.summaryRouterMetricCount)
+          ctx.output(config.summaryRouterOutputTag, event)
+        } else {
+          metrics.incCounter(config.telemetryRouterMetricCount)
+          ctx.output(config.telemetryRouterOutputTag, event)
+        }
+      }
+
     } else {
       val failedErrorMsg = schemaValidator.getInvalidFieldName(validationReport.toString)
       event.markValidationFailure(failedErrorMsg)

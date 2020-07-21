@@ -57,7 +57,6 @@ class DruidValidatorConfig(override val config: Config) extends BaseJobConfig(co
 
   // Functions
   val druidValidatorFunction = "DruidValidatorFunction"
-  val druidRouterFunction = "DruidRouterFunction"
 
   // Producers
   val telemetryEventsProducer = "telemetry-events-sink"
