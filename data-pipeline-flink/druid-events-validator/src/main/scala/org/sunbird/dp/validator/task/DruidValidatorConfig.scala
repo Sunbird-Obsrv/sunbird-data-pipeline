@@ -49,7 +49,6 @@ class DruidValidatorConfig(override val config: Config) extends BaseJobConfig(co
   val telemetryRouterMetricCount = "telemetry-route-success-count"
 
   // Validation job metrics
-  val processedMetricsCount = "processed-message-count"
   val validationSuccessMetricsCount = "validation-success-message-count"
   val validationFailureMetricsCount = "validation-failed-message-count"
 

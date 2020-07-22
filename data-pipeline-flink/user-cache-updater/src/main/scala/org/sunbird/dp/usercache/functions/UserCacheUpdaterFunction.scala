@@ -94,7 +94,7 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
       userCacheData.put(config.userLoginTypeKey, loginType)
     })
     val userMetaDataList = event.userMetaData()
-    if (!userMetaDataList.isEmpty() && userCacheData.contains(config.userSignInTypeKey) && ("Anonymous" != userCacheData.get(config.userSignInTypeKey))) {
+    if (!userMetaDataList.isEmpty && userCacheData.contains(config.userSignInTypeKey) && ("Anonymous" != userCacheData.get(config.userSignInTypeKey).toString)) {
 
       // Get the user details from the cassandra table
       val userDetails: mutable.Map[String, AnyRef] = userCacheData.++(extractUserMetaData(readFromCassandra(
@@ -108,7 +108,7 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
       val updatedUserDetails: mutable.Map[String, AnyRef] = userDetails.++(extractLocationMetaData(readFromCassandra(
         keyspace = config.keySpace,
         table = config.locationTable,
-        clause = QueryBuilder.in("id", userDetails.get("locationids").getOrElse(new util.ArrayList()).asInstanceOf[util.ArrayList[String]]),
+        clause = QueryBuilder.in("id", userDetails.getOrElse("locationids", new util.ArrayList()).asInstanceOf[util.ArrayList[String]]),
         metrics)
       ))
       logger.info(s"User details ( $userId ) are fetched from the db's and updating the redis now.")
@@ -152,6 +152,7 @@ class UserCacheUpdaterFunction(config: UserCacheUpdaterConfig)(implicit val mapT
       record.getString("type").toLowerCase match {
         case config.stateKey => result.put(config.stateKey, record.getString("name"))
         case config.districtKey => result.put(config.districtKey, record.getString("name"))
+        case _ => // Do nothing
       }
     })
     result

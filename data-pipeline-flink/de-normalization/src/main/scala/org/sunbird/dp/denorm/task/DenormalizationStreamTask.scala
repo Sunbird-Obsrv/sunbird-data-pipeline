@@ -57,7 +57,7 @@ class DenormalizationStreamTask(config: DenormalizationConfig, kafkaConnector: F
     implicit val env: StreamExecutionEnvironment = FlinkUtil.getExecutionContext(config)
     implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
 
-    val source = kafkaConnector.kafkaEventSource[Event](config.inputTopic)
+    val source = kafkaConnector.kafkaEventSource[Event](config.telemetryInputTopic)
     val denormStream =
       env.addSource(source, config.denormalizationConsumer).uid(config.denormalizationConsumer)
         .setParallelism(config.kafkaConsumerParallelism).rebalance()
@@ -81,7 +81,7 @@ object DenormalizationStreamTask {
     val config = configFilePath.map {
       path => ConfigFactory.parseFile(new File(path)).resolve()
     }.getOrElse(ConfigFactory.load("de-normalization.conf").withFallback(ConfigFactory.systemEnvironment()))
-    val denormalizationConfig = new DenormalizationConfig(config)
+    val denormalizationConfig = new DenormalizationConfig(config, "DenormalizationJob")
     val kafkaUtil = new FlinkKafkaConnector(denormalizationConfig)
     val task = new DenormalizationStreamTask(denormalizationConfig, kafkaUtil)
     task.process()

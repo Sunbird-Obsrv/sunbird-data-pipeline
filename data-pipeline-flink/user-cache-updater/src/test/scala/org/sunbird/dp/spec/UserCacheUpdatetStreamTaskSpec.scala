@@ -48,7 +48,7 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     EmbeddedCassandraServerHelper.startEmbeddedCassandra(80000L)
     val cassandraUtil = new CassandraUtil(userCacheConfig.cassandraHost, userCacheConfig.cassandraPort)
     val session = cassandraUtil.session
-    val dataLoader = new CQLDataLoader(session);
+    val dataLoader = new CQLDataLoader(session)
     dataLoader.load(new FileCQLDataSet(getClass.getResource("/data.cql").getPath, true, true));
     testCassandraUtil(cassandraUtil)
     redisServer = new RedisServer(6340)
@@ -102,7 +102,7 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     jedis.select(userCacheConfig.userStore)
 
     val ssoUser = jedis.get("user-1")
-    ssoUser should not be (null)
+    ssoUser should not be null
     val ssoUserMap: util.Map[String, AnyRef] = gson.fromJson(ssoUser, new util.LinkedHashMap[String, AnyRef]().getClass)
     ssoUserMap.get("usersignintype") should be("Validated")
 
@@ -113,7 +113,7 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
      * It should able to insert The Map(usersignintype, Self-Signed-In)
      */
     val googleUser = jedis.get("user-2")
-    googleUser should not be (null)
+    googleUser should not be null
     val googleUserMap: util.Map[String, AnyRef] = gson.fromJson(googleUser, new util.LinkedHashMap[String, AnyRef]().getClass)
     googleUserMap.get("usersignintype") should be("Self-Signed-In")
 
@@ -146,13 +146,13 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
   def testCassandraUtil(cassandraUtil: CassandraUtil): Unit = {
     cassandraUtil.reconnect()
     val response = cassandraUtil.findOne("SELECT * FROM sunbird.location;")
-    response should not be (null)
+    response should not be null
     val upsert = cassandraUtil.upsert("SELECT * FROM sunbird.location;")
     upsert should be(true)
-    cassandraUtil.getUDTType("sunbird", "test") should not be (not)
+    cassandraUtil.getUDTType("sunbird", "test") should not be not
     cassandraUtil.close()
-    val onSessionClose = cassandraUtil.find("SELECT * FROM sunbird.location;");
-    onSessionClose should not be (null)
+    val onSessionClose = cassandraUtil.find("SELECT * FROM sunbird.location;")
+    onSessionClose should not be null
 
   }
 
