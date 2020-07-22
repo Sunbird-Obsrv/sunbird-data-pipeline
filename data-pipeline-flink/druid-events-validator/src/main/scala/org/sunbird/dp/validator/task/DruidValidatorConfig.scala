@@ -19,6 +19,9 @@ class DruidValidatorConfig(override val config: Config) extends BaseJobConfig(co
   val validatorParallelism: Int = config.getInt("task.validator.parallelism")
   val routerParallelism: Int = config.getInt("task.router.parallelism")
 
+  val druidValidationEnabled: Boolean = config.getBoolean("task.druid.validation.enabled")
+  val druidDeduplicationEnabled: Boolean = config.getBoolean("task.druid.deduplication.enabled")
+
   val telemetrySchemaPath: String = config.getString("schema.path.telemetry")
   val summarySchemaPath: String = config.getString("schema.path.summary")
   val defaultSchemaFile: String = config.getString("schema.file.default")

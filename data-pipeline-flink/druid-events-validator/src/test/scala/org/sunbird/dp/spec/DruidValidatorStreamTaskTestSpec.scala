@@ -69,17 +69,17 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
         FailedEventsSink.values.size() should be (1)
         DupEventsSink.values.size() should be (1)
 
-        DupEventsSink.values.get(0).getFlags.get("dv_processed").booleanValue() should be(true)
+        // DupEventsSink.values.get(0).getFlags.get("dv_processed").booleanValue() should be(true)
         DupEventsSink.values.get(0).getFlags.get("dv_duplicate").booleanValue() should be(true)
         
         FailedEventsSink.values.get(0).getFlags.get("dv_processed").booleanValue() should be(false)
         FailedEventsSink.values.get(0).getFlags.get("dv_validation_failed").booleanValue() should be(true)
         
-        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationSuccessMetricsCount}").getValue() should be (4)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationSuccessMetricsCount}").getValue() should be (3)
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationFailureMetricsCount}").getValue() should be (1)
 
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.duplicate-event-count").getValue() should be (1)
-        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.unique-event-count").getValue() should be (3)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.unique-event-count").getValue() should be (4)
 
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.summaryRouterMetricCount}").getValue() should be (1)
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.telemetryRouterMetricCount}").getValue() should be (2)
@@ -113,7 +113,7 @@ class TelemetryEventsSink extends SinkFunction[Event] {
 
     override def invoke(value: Event): Unit = {
         synchronized {
-            TelemetryEventsSink.values.add(value)
+          TelemetryEventsSink.values.add(value)
         }
     }
 }
@@ -126,7 +126,7 @@ class SummaryEventsSink extends SinkFunction[Event] {
 
     override def invoke(value: Event): Unit = {
         synchronized {
-            SummaryEventsSink.values.add(value)
+          SummaryEventsSink.values.add(value)
         }
     }
 }
@@ -139,7 +139,7 @@ class FailedEventsSink extends SinkFunction[Event] {
 
     override def invoke(value: Event): Unit = {
         synchronized {
-            FailedEventsSink.values.add(value)
+          FailedEventsSink.values.add(value)
         }
     }
 }
@@ -152,7 +152,7 @@ class DupEventsSink extends SinkFunction[Event] {
 
     override def invoke(value: Event): Unit = {
         synchronized {
-            DupEventsSink.values.add(value)
+          DupEventsSink.values.add(value)
         }
     }
 }
