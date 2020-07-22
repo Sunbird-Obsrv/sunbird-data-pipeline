@@ -112,11 +112,12 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
               |  druid.validation.enabled = false
               |  druid.deduplication.enabled = false
               |}
+              |
+              |redis.database.duplicationstore.id = 1
             """.stripMargin
 
         config = ConfigFactory.parseString(configString).resolve()
         druidValidatorConfig = new DruidValidatorConfig(config)
-        println("validation enabled = " + druidValidatorConfig.druidValidationEnabled)
         initialize()
 
         val task = new DruidValidatorStreamTask(druidValidatorConfig, mockKafkaUtil)
@@ -147,6 +148,8 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
             |  druid.validation.enabled = true
             |  druid.deduplication.enabled = false
             |}
+            |
+            |redis.database.duplicationstore.id = 2
           """.stripMargin
 
         config = ConfigFactory.parseString(configString)
@@ -181,6 +184,8 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
               |  druid.validation.enabled = false
               |  druid.deduplication.enabled = true
               |}
+              |
+              |redis.database.duplicationstore.id = 3
             """.stripMargin
 
         config = ConfigFactory.parseString(configString)
@@ -230,6 +235,8 @@ class DruidValidatorEventSource  extends SourceFunction[Event] {
 
 class TelemetryEventsSink extends SinkFunction[Event] {
 
+    TelemetryEventsSink.values.clear()
+
     override def invoke(value: Event): Unit = {
         synchronized {
           TelemetryEventsSink.values.add(value)
@@ -242,6 +249,8 @@ object TelemetryEventsSink {
 }
 
 class SummaryEventsSink extends SinkFunction[Event] {
+
+    SummaryEventsSink.values.clear()
 
     override def invoke(value: Event): Unit = {
         synchronized {
@@ -256,6 +265,8 @@ object SummaryEventsSink {
 
 class FailedEventsSink extends SinkFunction[Event] {
 
+    FailedEventsSink.values.clear()
+
     override def invoke(value: Event): Unit = {
         synchronized {
           FailedEventsSink.values.add(value)
@@ -268,6 +279,8 @@ object FailedEventsSink {
 }
 
 class DupEventsSink extends SinkFunction[Event] {
+
+    DupEventsSink.values.clear()
 
     override def invoke(value: Event): Unit = {
         synchronized {
