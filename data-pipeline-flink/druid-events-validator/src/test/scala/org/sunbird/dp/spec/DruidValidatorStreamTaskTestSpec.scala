@@ -32,8 +32,10 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
       .build)
 
     var redisServer: RedisServer = _
-    val config: Config = ConfigFactory.load("test.conf")
-    val druidValidatorConfig: DruidValidatorConfig = new DruidValidatorConfig(config)
+    // val config: Config = ConfigFactory.load("test.conf")
+    // val druidValidatorConfig: DruidValidatorConfig = new DruidValidatorConfig(config)
+    var config: Config = _
+    var druidValidatorConfig: DruidValidatorConfig = _
     val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
     val gson = new Gson()
 
@@ -44,14 +46,25 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
 
         BaseMetricsReporter.gaugeMetrics.clear()
 
+        /*
         when(mockKafkaUtil.kafkaEventSource[Event](druidValidatorConfig.kafkaInputTopic)).thenReturn(new DruidValidatorEventSource)
 
         when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
         when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaTelemetryRouteTopic)).thenReturn(new TelemetryEventsSink)
         when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaSummaryRouteTopic)).thenReturn(new SummaryEventsSink)
         when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
+        */
 
         flinkCluster.before()
+    }
+
+    def initialize() = {
+        when(mockKafkaUtil.kafkaEventSource[Event](druidValidatorConfig.kafkaInputTopic)).thenReturn(new DruidValidatorEventSource)
+
+        when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
+        when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaTelemetryRouteTopic)).thenReturn(new TelemetryEventsSink)
+        when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaSummaryRouteTopic)).thenReturn(new SummaryEventsSink)
+        when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
     }
 
     override protected def afterAll(): Unit = {
@@ -62,6 +75,10 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
 
     "Druid Validator job pipeline" should "validate events and route events to respective kafka topics" in {
 
+        config = ConfigFactory.load("test.conf")
+        druidValidatorConfig = new DruidValidatorConfig(config)
+        initialize()
+
         val task = new DruidValidatorStreamTask(druidValidatorConfig, mockKafkaUtil)
         task.process()
         TelemetryEventsSink.values.size() should be (2)
@@ -69,7 +86,6 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
         FailedEventsSink.values.size() should be (1)
         DupEventsSink.values.size() should be (1)
 
-        // DupEventsSink.values.get(0).getFlags.get("dv_processed").booleanValue() should be(true)
         DupEventsSink.values.get(0).getFlags.get("dv_duplicate").booleanValue() should be(true)
         
         FailedEventsSink.values.get(0).getFlags.get("dv_processed").booleanValue() should be(false)
@@ -83,6 +99,109 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
 
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.summaryRouterMetricCount}").getValue() should be (1)
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.telemetryRouterMetricCount}").getValue() should be (2)
+
+    }
+
+    "Druid Validator job pipeline" should "route events if validation and deduplication are disabled" in {
+
+        val configString =
+            """
+              |include "test.conf"
+              |
+              |task {
+              |  druid.validation.enabled = false
+              |  druid.deduplication.enabled = false
+              |}
+            """.stripMargin
+
+        config = ConfigFactory.parseString(configString).resolve()
+        druidValidatorConfig = new DruidValidatorConfig(config)
+        println("validation enabled = " + druidValidatorConfig.druidValidationEnabled)
+        initialize()
+
+        val task = new DruidValidatorStreamTask(druidValidatorConfig, mockKafkaUtil)
+        task.process()
+        TelemetryEventsSink.values.size() should be (4)
+        SummaryEventsSink.values.size() should be (1)
+        FailedEventsSink.values.size() should be (0)
+        DupEventsSink.values.size() should be (0)
+
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationSuccessMetricsCount}").getValue() should be (0)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationFailureMetricsCount}").getValue() should be (0)
+
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.duplicate-event-count").getValue() should be (0)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.unique-event-count").getValue() should be (0)
+
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.summaryRouterMetricCount}").getValue() should be (1)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.telemetryRouterMetricCount}").getValue() should be (4)
+
+    }
+
+    "Druid Validator job pipeline" should "skip deduplication if disabled" in {
+
+        val configString =
+          """
+            |include "test.conf"
+            |
+            |task {
+            |  druid.validation.enabled = true
+            |  druid.deduplication.enabled = false
+            |}
+          """.stripMargin
+
+        config = ConfigFactory.parseString(configString)
+        druidValidatorConfig = new DruidValidatorConfig(config)
+        initialize()
+
+        val task = new DruidValidatorStreamTask(druidValidatorConfig, mockKafkaUtil)
+        task.process()
+        TelemetryEventsSink.values.size() should be (3)
+        SummaryEventsSink.values.size() should be (1)
+        FailedEventsSink.values.size() should be (1)
+        DupEventsSink.values.size() should be (0)
+
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationSuccessMetricsCount}").getValue() should be (4)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationFailureMetricsCount}").getValue() should be (1)
+
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.duplicate-event-count").getValue() should be (0)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.unique-event-count").getValue() should be (0)
+
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.summaryRouterMetricCount}").getValue() should be (1)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.telemetryRouterMetricCount}").getValue() should be (3)
+
+    }
+
+    "Druid Validator job pipeline" should "skip validation if disabled" in {
+
+        val configString =
+            """
+              |include "test.conf"
+              |
+              |task {
+              |  druid.validation.enabled = false
+              |  druid.deduplication.enabled = true
+              |}
+            """.stripMargin
+
+        config = ConfigFactory.parseString(configString)
+        druidValidatorConfig = new DruidValidatorConfig(config)
+        initialize()
+
+        val task = new DruidValidatorStreamTask(druidValidatorConfig, mockKafkaUtil)
+        task.process()
+        TelemetryEventsSink.values.size() should be (3)
+        SummaryEventsSink.values.size() should be (1)
+        FailedEventsSink.values.size() should be (0)
+        DupEventsSink.values.size() should be (1)
+
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationSuccessMetricsCount}").getValue() should be (0)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationFailureMetricsCount}").getValue() should be (0)
+
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.duplicate-event-count").getValue() should be (1)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.unique-event-count").getValue() should be (4)
+
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.summaryRouterMetricCount}").getValue() should be (1)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.telemetryRouterMetricCount}").getValue() should be (3)
 
     }
 
