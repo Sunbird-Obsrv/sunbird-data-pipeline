@@ -1,0 +1,135 @@
+flink_namespace: flink-dev
+imagepullsecrets: sunbird-registry-secret
+
+### Job manager related vars
+jobmanager_rpc_port: 6123
+jobmanager_blob_port: 6124
+jobmanager_query_port: 6125
+jobmanager_ui_port: 8081
+jobmanager_prom_port: 9250
+jobmanager_heap_memory: 1024
+jobmanager_ui_rest_port: 80
+jobmanager_ui_tcp_port: 8081
+jobmanager_ui_service:
+  type: LoadBalancer
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+
+### taskmanager related vars
+healthcheck: true
+taskmanager_liveness:
+  livenessProbe:
+    tcpSocket:
+      port: 6122
+    initialDelaySeconds: 30
+    periodSeconds: 60
+
+taskmanager_prom_port: 9251
+taskmanager_rpc_port: 6122
+taskmanager_heap_memory: 1024
+
+### base-config related vars
+postgres_max_connections: 2
+azure_account: "{{ sunbird_private_storage_account_name }}"
+azure_secret: "{{ sunbird_private_storage_account_key }}"
+flink_container_name: dev-data-store
+checkpoint_interval: 60000
+restart_attempts: 3
+restart_delay: 30000 # in milli-seconds
+producer_max_request_size: 1572864
+redis_timeout: 30000
+
+### Extractor job related vars
+extractor_event_max_size: 1048576 # Max is only 1MB
+extractor_max_request_size: 5242880
+extractor_consumer_parallelism: 1
+dedup_parallelism: 1
+extraction_parallelism: 1
+redactor_parallelism: 1
+telemetry_extractor_key_expiry_seconds: 3600
+
+### Pipeline-preprocessor related vars
+pipeline_preprocessor_consumer_parallelism: 1
+telemetry_validation_parallelism: 1
+telemetry_router_parallelism: 1
+share_events_flattener_parallelism: 1
+portal_id: dev.sunbird.portal
+desktop_id: dev.sunbird.desktop
+pipeline_preprocessor_key_expiry_seconds: 3600
+
+### De-normalization related vars
+denorm_consumer_parallelism: 1
+device_denorm_parallelism: 1
+user_denorm_parallelism: 1
+content_denorm_parallelism: 1
+loc_denorm_parallelism: 1
+dialcode_denorm_parallelism: 1
+denorm_parallelism: 1
+denorm_sink_parallelism: 1
+denorm_summary_dedup_parallelism: 1
+de_normalization_duplicationstore_key_expiry_seconds: 3600
+de_normalization_key_expiry_seconds: 3600
+
+### summary-denormalization related vars
+summary_denorm_consumer_parallelism: 1
+summary_denorm_parallelism: 1
+summary_denorm_sink_parallelism: 1
+summary_denorm_dedup_parallelism: 1
+summary_denorm_duplication_key_expiry_seconds: 3600
+summary_denorm_key_expiry_seconds: 3600
+
+### Druid-validator related vars
+druid_validator_consumer_parallelism: 1
+validator_parallelism: 1
+router_parallelism: 1
+druid_validator_key_expiry_seconds: 3600
+
+### Device-profile-updater related vars
+deviceprofile_parallelism: 1
+device_profile_updater_key_expiry_seconds: 3600
+
+### content-cache-updater
+dialcode_host: "{{ proto }}://{{ domain_name }}"
+dialcode_api_url: "{{ dialcode_host }}/{{ dialcode_endpoint }}"
+dialcode_api_auth_key: "{{ dp_vault_dialcode_api_auth_key }}"
+
+### User-cache-updater related vars
+usercache_updater_parallelism: 1
+user_cache_updater_key_expiry_seconds: 3600
+middleware_cassandra_keyspace: sunbird
+middleware_cassandra_user_table: user
+middleware_cassandra_location_table: location
+
+### assessment-aggregator related vars
+assessaggregator_parallelism: 1
+middleware_cassandra_courses_keyspace: sunbird_courses
+middleware_cassandra_assessment_aggregator_table: assessment_aggregator
+middleware_cassandra_assessment_question_type : question
+
+### taskmanager related vars
+healthcheck: true
+taskmanager_liveness:
+  livenessProbe:
+    tcpSocket:
+      port: 6122
+    initialDelaySeconds: 30
+    periodSeconds: 60
+
+taskmanager_prom_port: 9251
+taskmanager_rpc_port: 6122
+taskmanager_heap_memory: 1024
+producer_max_request_size: 1572864
+
+### to be removed
+job_classname: ""
+
+### class name vars
+flink_job_names:
+  telemetry-extractor:
+      job_class_name: 'org.sunbird.dp.extractor.task.TelemetryExtractorStreamTask'
+  pipeline-preprocessor:
+      job_class_name: 'org.sunbird.dp.preprocessor.task.PipelinePreprocessorStreamTask'
+  de-normalization:
+      job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+  druid-validator:
+      job_class_name: 'org.sunbird.dp.validator.task.DruidValidatorStreamTask'

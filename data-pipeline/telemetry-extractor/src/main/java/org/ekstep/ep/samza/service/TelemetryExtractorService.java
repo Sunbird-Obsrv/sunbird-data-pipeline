@@ -115,22 +115,21 @@ public class TelemetryExtractorService {
         return ((Number) obj).longValue();
       }
     }
-
     return System.currentTimeMillis();
   }
 
   /**
    * Create LOG event to audit telemetry sync
    *
-   * @param eventSpec
+   * @param batchEvent
    * @param syncts
    * @param syncTimestamp
    * @param sink
    */
-  private void generateAuditEvent(Map<String, Object> eventSpec, long syncts, String syncTimestamp,
+  private void generateAuditEvent(Map<String, Object> batchEvent, long syncts, String syncTimestamp,
       TelemetryExtractorSink sink, String defaultChannel) {
     try {
-      Telemetry v3spec = new Telemetry(eventSpec, syncts, syncTimestamp, defaultChannel);
+      Telemetry v3spec = new Telemetry(batchEvent, syncts, syncTimestamp, defaultChannel);
       String auditEvent = v3spec.toJson();
       sink.toSuccessTopic(auditEvent);
     } catch (Exception e) {

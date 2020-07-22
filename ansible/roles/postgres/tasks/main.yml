@@ -62,3 +62,18 @@
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "select * from {{ env }}_consumer_channel_mapping"
   run_once: true
   tags: select
+
+- name: create report_status
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS report_status(reportid varchar(40) NOT NULL REFERENCES report(reportid) ON DELETE CASCADE, hashed_val text NOT NULL, status varchar(8) NOT NULL CHECK (status IN ('live', 'draft', 'retired')) DEFAULT 'draft', PRIMARY KEY (reportid, hashed_val))"
+  run_once: true
+  tags: create
+
+- name: update report
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE report ADD COLUMN parameters jsonb"
+  run_once: true
+  tags: update
+
+- name: update report_summary
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE report_summary ADD COLUMN param_hash text"
+  run_once: true
+  tags: update

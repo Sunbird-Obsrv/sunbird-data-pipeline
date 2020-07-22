@@ -1,0 +1,40 @@
+---
+# defaults file for sunbird-monitoring
+fullnameOverride: sunbird-monitoring
+monitoring_stack:
+  - prometheus-operator
+  - alertrules
+
+namespace: monitoring
+flink_namespace: flink-dev
+env: dev
+kubernetes_cluster_name: kubernetes-dp-{{ env }}
+
+monitor_alerts_mail_from_email: "{{ alert_from_address }}"
+monitor_alerts_mail_server_host: "{{ sendgrid_hostname }}" 
+monitor_alerts_mail_server_port: 587
+monitor_alerts_mail_server_username: "{{ SGUSER }}" 
+monitor_alerts_mail_server_password: "{{ SGPASS }}" 
+monitor_alerts_slack_url: 
+monitor_alerts_slack_channel: 
+
+default_critical_mailing_list: "{{ default_mailing_list }}"
+default_fatal_mailing_list: "{{ default_mailing_list }}"
+default_mailing_list: kaliraja.ramasamy@tarento.com, anandp@ilimi.in, manjunathd@ilimi.in
+
+# flink Jobs lag vars 
+telemetry_extractor_threshold_critical: 10000
+telemetry_extractor_threshold_fatal: 5000
+pipeline_preprocessor_threshold_critical: 10000
+pipeline_preprocessor_threshold_fatal: 5000
+de_normalization_threshold_critical: 10000
+de_normalization_threshold_fatal: 5000
+druid_validator_threshold_critical: 10000
+druid_validator_threshold_fatal: 5000
+telemetry_extractor_failed_events_percentage_threshold_fatal: 10
+
+# Flink jobmanager Checkpoint failure vars
+telemetry_extractor_checkpointfailure_threshold_critical: 5 
+pipeline_preprocessor_checkpointfailure_threshold_critical: 5
+de_normalization_checkpointfailure_threshold_critical: 5
+druid_validator_checkpointfailure_threshold_critical: 5

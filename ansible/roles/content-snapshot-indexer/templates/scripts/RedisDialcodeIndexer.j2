@@ -4,7 +4,7 @@ home=`echo $HOME`
 jobJarPath="{{ content_snapshot_jar_path }}/{{ content_snapshot_jar_name }}"
 jobConfPath="{{ job_config.es_dialCode_indexer_path }}"
 today=$(date "+%Y-%m-%d")
-libs_path="{{ content_snapshot_path }}/jars/adhoc-jobs-1.0"
+libs_path="{{ content_snapshot_path }}/jars/etl-jobs-1.0"
 export SPARK_HOME="{{ spark_home }}"
 
 echo "STARTED EXECUTING DIALCODE CACHE INDEXER..."
@@ -14,4 +14,4 @@ echo "STARTED EXECUTING DIALCODE CACHE INDEXER..."
 #--class org.ekstep.analytics.jobs.CSVToRedisIndexer \
 #${jobJarPath} >> "{{ content_snapshot_path }}/logs/$today-task-execution.log" 2>&1
 
-nohup $SPARK_HOME/bin/spark-submit --conf spark.driver.extraJavaOptions="-Dconfig.file=${jobConfPath}"  --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ',')  --class org.ekstep.analytics.jobs.CSVToRedisIndexer ${jobJarPath} >> "{{ content_snapshot_path }}/logs/$today-task-execution.log" 2>&1
+nohup $SPARK_HOME/bin/spark-submit --conf spark.driver.extraJavaOptions="-Dconfig.file=${jobConfPath}"  --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ',')  --class org.sunbird.analytics.jobs.CSVToRedisIndexer ${jobJarPath} >> "{{ content_snapshot_path }}/logs/$today-task-execution.log" 2>&1

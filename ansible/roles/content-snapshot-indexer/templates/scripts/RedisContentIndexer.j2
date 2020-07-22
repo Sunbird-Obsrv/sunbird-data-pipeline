@@ -6,10 +6,12 @@ home=`echo $HOME`
 jobJarPath="{{ content_snapshot_jar_path }}/{{ content_snapshot_jar_name }}"
 jobConfPath="{{ job_config.es_content_indexer_path }}"
 today=$(date "+%Y-%m-%d")
+libs_path="{{ content_snapshot_path }}/jars/etl-jobs-1.0"
 
 echo "STARTED EXECUTING CONTENT CACHE INDEXER..."
 
 nohup {{ spark_home }}/bin/spark-submit \
 --conf spark.driver.extraJavaOptions="-Dconfig.file=${jobConfPath}" \
---class org.ekstep.analytics.jobs.ESRedisIndexer \
+--class org.sunbird.analytics.jobs.ESRedisIndexer \
+--jars $(echo ${libs_path}/lib/*.jar | tr ' ' ',') \
 ${jobJarPath} >> "{{ content_snapshot_path }}/logs/$today-task-execution.log" 2>&1
