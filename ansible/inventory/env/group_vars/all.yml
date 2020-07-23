@@ -10,24 +10,29 @@ log4j_appender_kafka_topic: "{{env}}.telemetry.backend"
 channel_data_exhaust_bucket: dev-data-store
 
 
-azure_account_name: "{{dp_azure_account_name}}"
+#azure_account_name: "{{dp_azure_account_name}}"
 secrets_path: '{{inventory_dir}}/secrets.yml'
 artifacts_container: "{{dp_vault_artifacts_container}}"
-azure_storage_secret: "{{dp_vault_azure_account_key}}"
+#azure_storage_secret: "{{sunbird_private_storage_account_key}}"
+
+report_azure_account_name: "{{sunbird_private_storage_account_name}}"
+report_azure_storage_secret: "{{sunbird_private_storage_account_key}}"
+#azure_storage_secret: "{{dp_vault_azure_account_key}}"
 #monasca_log_level: ERROR
 resourcemanager: "{{ groups['yarn-master'][0] }}"
 yarn_slaves: "{{ groups['yarn-slave']}}"
 monitor_yarn_url: "http://{{ resourcemanager }}:8088/ws/v1/cluster/apps?states=RUNNING"
 
 # Artifact upload and download vars
-artifact_azure_account_name: "{{dp_azure_account_name}}"
-artifact_azure_account_key: "{{dp_vault_azure_account_key}}"
+#artifact_azure_account_name: "{{dp_azure_account_name}}"
+#artifact_azure_account_key: "{{dp_vault_azure_account_key}}"
 
 # Artifact upload and download vars
-artifact_azure_account_name: "{{dp_azure_account_name}}"
-artifact_azure_account_key: "{{dp_vault_azure_account_key}}"
+#artifact_azure_account_name: "{{dp_azure_account_name}}"
+#artifact_azure_account_key: "{{dp_vault_azure_account_key}}"
 
 redis_host: "{{ groups['redis'][0] }}"
+metadata_redis_host: "{{ groups['redis'][0] }}"
 searchServiceAuthorizationToken: "{{ dp_search_service_authorization_token }}"
 
 
@@ -42,9 +47,8 @@ env_name: "{{env}}"
 kafka_brokers: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
 zookeepers: "{{groups['zookeeper']|join(':2181,')}}:2181"
 # Ingestion cluster
-ingestion_zookeepers: "{{ groups['ingestion-cluster-zookeepers']|join(':2181,')}}:2181"
-
-
+ingestion_kafka_brokers: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
+ingestion_zookeepers: "{{groups['zookeeper']|join(':2181,')}}:2181"
 
 telemetry_schema_directory: /etc/{{env}}/telemetry
 telemetry_schema_path: /etc/{{env}}/telemetry/schemas
@@ -60,8 +64,8 @@ kibana_base_path : "/pipeline-dashboard"
 
 analytics_user: analytics
 analytics_group: analytics
-azure_storage_account: "{{dp_azure_account_name}}"
-azure_storage_key: "{{dp_vault_azure_account_key}}"
+#azure_storage_account: "{{dp_azure_account_name}}"
+#azure_storage_key: "{{dp_vault_azure_account_key}}"
 
 
 analytics_user_home: /home/{{ analytics_user }}
@@ -73,8 +77,8 @@ secor:
   properties: ['secor.azure', 'secor.common', 'secor', 'secor.partition', 'log4j']
   artifact_dir: /mount/secor
   azure:
-    account_name: "{{dp_azure_account_name}}"
-    account_key: "{{ dp_vault_azure_account_key }}"
+    account_name: "{{sunbird_private_storage_account_name}}"
+    account_key: "{{sunbird_private_storage_account_key}}"
     container_name: "{{channel_data_exhaust_bucket}}"
   paths: ['/mount/secor', '/mount/secor/reports', '/mount/secor/logs', '/home/analytics/sbin', '/mount/data/analytics']
   channel: "{{secor_alerts_slack_channel}}"
@@ -97,6 +101,9 @@ postgres:
   db_password: "{{dp_vault_pgdb_password}}"
   db_table_name: "{{env}}_consumer_channel_mapping"
   db_port: 5432
+  db_admin_user: analytics
+  db_admin_password: "{{dp_vault_pgdb_admin_password}}"
+
 postgres_address_space: 0.0.0.0/0 # Postgres trust address space
 
 lp_composite_search: "http://{{ groups['composite-search-cluster'][0] }}:9200" # Composite Cluster ip of LP
@@ -105,7 +112,7 @@ lp_search: "http://{{ groups['search'][0] }}:9000"
 lp_url: http://{{ groups['learning'][0] }}:8080/learning-service
 service:
   search:
-    url: http://{{groups['search'][0]}}:9000
+    url: http://{{private_ingressgateway_ip}}/search
     path: /v3/search
 
 cassandra_hierarchy_store_prefix: "{{env}}_"
@@ -113,8 +120,8 @@ data_exhaust_token: "{{dp_vault_data_exhaust_token}}"
 default_channel: "{{default_org_hash_id}}"
 
 #### backup storage secret
-backup_azure_storage_account_name: "{{dp_azure_account_name}}"
-backup_azure_storage_access_key: "{{dp_vault_azure_account_key}}"
+#backup_azure_storage_account_name: "{{dp_azure_account_name}}"
+#backup_azure_storage_access_key: "{{dp_vault_azure_account_key}}"
 
 ## es backup
 es_snapshot_host: "{{ groups['telemetry-search-cluster'][0] }}"
@@ -144,13 +151,42 @@ job_names:
       job_file_name: 'druid-events-validator'
   EventsRouter_1:
       job_file_name: 'events-router'
-  RedisUpdater_1:
-      job_file_name: 'redis-updater'
   TelemetryExtractor_1:
       job_file_name: 'telemetry-extractor'
   TelemetryLocationUpdater_1:
       job_file_name: 'telemetry-location-updater'
   TelemetryRouter_1:
       job_file_name: 'telemetry-router'
+  TelemetryRedacter_1:
+      job_file_name: 'telemetry-redacter'
   TelemetryValidator_1:
       job_file_name: 'telemetry-validator'
+  DeviceProfileUpdater_1:
+      job_file_name: 'device-profile-updater'
+  AssessmentAggregator_1:
+      job_file_name: 'assessment-aggregator'
+  DerivedDeDuplication_1:
+      job_file_name: 'derived-de-duplication'
+  UserCacheUpdater_1:
+      job_file_name: 'user-cache-updater'
+  ContentCacheUpdater_1:
+      job_file_name: 'content-cache-updater'
+  ShareEventsFlattener_1:
+      job_file_name: 'share-events-flattener'    
+
+druid_ingestion_specs:
+  telemetry-events:
+      ingestion_file_name: 'telemetry_index_kafka'
+  summary-events:
+      ingestion_file_name: 'summary_index_kafka'
+  telemtry-feedback-events:
+      ingestion_file_name: 'telemetry_feedback_index_kafka'
+  pipeline-metrics:
+      ingestion_file_name: 'pipeline_metrics_index_kafka'
+
+#Druid Proxy APi service
+sunbird_druid_broker_host: "http://{{ groups['raw-broker'][0] }}"
+sunbird_learner_service_url: "{{swarm_manager_lb_ip}}:9000"
+
+location_search_url: "{{ domain_name }}/api/data/"
+location_search_token: "Bearer {{ dp_search_service_authorization_token }}"

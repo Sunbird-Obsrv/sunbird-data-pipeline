@@ -1,0 +1,38 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "type",
+    "ver"
+  ],
+  "properties": {
+    "id": {
+      "id": "http://api.ekstep.org/telemetry/inlineobject/id",
+      "type": "string"
+    },
+    "type": {
+      "id": "http://api.ekstep.org/telemetry/inlineobject/type",
+      "type": "string"
+    },
+    "ver": {
+      "id": "http://api.ekstep.org/telemetry/inlineobject/ver",
+      "type": "string"
+    },
+    "subtype": {
+      "id": "http://api.ekstep.org/telemetry/inlineobject/subtype",
+      "type": "string"
+    },
+    "name": {
+      "id": "http://api.ekstep.org/telemetry/inlineobject/name",
+      "type": "string"
+    },
+    "code": {
+      "id": "http://api.ekstep.org/telemetry/inlineobject/code",
+      "type": "string"
+    },
+    "parent": {
+      "$ref": "resource:/schemas/telemetry/3.0/parent.json"
+    }
+  }
+}

@@ -26,3 +26,5 @@ terraform.tfstate.*
 *.retry
 target/
 *.iml
+**/.settings
+dependency-reduced-pom.xml

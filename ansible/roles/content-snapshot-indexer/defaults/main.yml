@@ -1,0 +1,82 @@
+analytics_user: analytics
+analytics_group: analytics
+content_snapshot_path: "/mount/data/analytics/content-snapshot"
+content_snapshot_jar_path: "{{content_snapshot_path}}/jars" # Add content snapshot jar file path.
+content_snapshot_jar_name: "adhoc-jobs-1.0.jar"
+content_snapshot_distribuction_name: "adhoc-jobs-1.0-distribution.tar.gz"
+spark_home: "/mount/data/analytics/spark-2.4.4-bin-hadoop2.7"
+redis:
+  host: "{{metadata_redis_host}}" # Redis DP IP 
+  port: "6379"
+  user:
+    index: "4"
+    source_key: "id"
+  content:
+    index: "5"
+    source_key: "identifier"
+  dialcode:
+    index: "6"
+    source_key: "identifier"
+  connection:
+    idle_max: 20
+    idle_min: 10
+    min_evict_idle_seconds: 120
+    time_evict_run_second: 300
+    max: 20
+  max_pipeline_size: "1000"
+  key_expiry_seconds: 3600
+
+elastic_search:
+  host: "{{ lp_composite_search_host }}" # compositesearch index
+  port: "9200"
+  content:
+    index: "compositesearch"
+    query: '"{\"query\":{\"bool\":{\"must\":[{\"match\":{\"status\":{\"query\":\"Live\"}}},{\"match\":{\"objectType\":{\"query\":\"Content\"}}}]}}}"'
+  dialcode:
+    index: "dialcode"
+    query: '"{\"query\":{\"match_all\":{}}}"'
+  cloud:
+    index: "compositesearch"
+    query: '"{\"query\":{\"match_all\":{}}}"'
+  scroll_size: "1000"
+
+cloud_storage:
+  container: "telemetry-data-store" # Container is different in all env so override this.
+  object_key: "druid-content-snapshot/snapshot.txt"
+  provider: "azure"
+  account_name: "{{ azure_storage_account }}"
+  account_key: "{{ azure_storage_secret }}"
+
+cassandra:
+  host: "{{groups['lp-cassandra'][0]}}" ## LMS-Cassandra IP Address.
+  keyspace: 'sunbird'
+  user:
+    table: "user"
+  device_profile:
+    old_table: "device_profile"
+    new_table: "device_profile_temp"
+
+druid:
+  coordinator_host: "{{groups['coordinator'][0]}}"
+  data_source: "content-model-snapshot"
+  ingestion_spec_path: "{{ content_snapshot_jar_path }}/adhoc-jobs-1.0/druid_models/content_index_batch.json"
+
+job_config:
+  es_cloud_uploader_path: "{{ content_snapshot_path }}/config/ESCloudUploader.conf"
+  es_content_indexer_path: "{{ content_snapshot_path }}/config/ESContentIndexer.conf"
+  es_dialCode_indexer_path: "{{ content_snapshot_path }}/config/DialcodeRedisIndexer.conf"
+  device_profile_path: "{{ content_snapshot_path }}/config/DeviceProfile.conf"
+  cassandra_redis_path: "{{ content_snapshot_path }}/config/cassandraRedis.conf"
+
+output_file_path: "{{ content_snapshot_path }}/compositeSearchBatchData"
+config_files: ["application","cassandraRedis","DeviceProfile","ESCloudUploader","ESContentIndexer","DialcodeRedisIndexer"]
+script_files: ["DeviceProfileScripts","DruidContentIndexer","RedisContentIndexer","RedisDialcodeIndexer","RedisUserDataIndexer","run-script"]
+
+
+
+
+
+
+
+
+

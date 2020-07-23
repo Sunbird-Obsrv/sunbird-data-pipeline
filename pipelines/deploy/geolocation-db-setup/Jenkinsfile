@@ -29,20 +29,19 @@ node() {
                values.put('ansibleExtraArgs', ansibleExtraArgs)
                println values
                ansible_playbook_run(values)
+               currentBuild.result = "SUCCESS"
+               currentBuild.description = "Artifact: ${values.artifact_version}, Private: ${params.private_branch}, Public: ${params.branch_or_tag}"
            }
        }
    }
+
    catch (err) {
+       currentBuild.result = "FAILURE"
        throw err
    }
-   
    finally {
-      
-       emailext (
-          subject: '[${BUILD_STATUS}: Job ${PROJECT_NAME} [#${BUILD_NUMBER}]',
-          body: '''<p>${BUILD_STATUS}: Job ${PROJECT_NAME} [#${BUILD_NUMBER}]:</p>
-         <p>Check console output at "<a href="${BUILD_URL}">`Console Output</a> to view full results.</a>"</p>''',
-       to: "${env.NOTIFY_IMPLEMENTATION}"
-     )
-  }
+       slack_notify(currentBuild.result)
+       email_notify()
+   }
 }
+

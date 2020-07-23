@@ -1,22 +1,31 @@
 ## Bootstrap for spark ##
 
-- name: Add azure key to user profile
+- name: Adding ENV Vars to bashrc file of spark.
   become: yes
   become_user: "{{ analytics_user }}"
-  lineinfile: dest={{ analytics_user_home }}/.bashrc line='export azure_storage_key={{ azure_account_name }}'  state=present insertafter=EOF create=yes
+  lineinfile:
+    path: '{{ analytics_user_home }}/.bashrc'
+    line: 'export {{item.var}}={{item.value}}'
+    regexp: "export {{ item.var }}.*"
+  with_items:
+    - {var: 'azure_storage_key', value: '{{ sunbird_private_storage_account_name }}'}
+    - {var: 'azure_storage_secret', value: '{{ sunbird_private_storage_account_key }}'}
 
-- name: Add azure secret to user profile
+- name: Adding ENV Vars to spark servers environment.
   become: yes
-  become_user: "{{ analytics_user }}"
-  lineinfile: dest={{ analytics_user_home }}/.bashrc line='export azure_storage_secret={{ azure_storage_secret }}' state=present insertafter=EOF create=yes
-
-- name: Add azure key to environment
-  become: yes
-  lineinfile: dest=/etc/environment line='azure_storage_key={{ azure_account_name }}'  state=present insertafter=EOF create=yes
-
-- name: Add azure secret to environment
-  become: yes
-  lineinfile: dest=/etc/environment line='azure_storage_secret={{ azure_storage_secret }}' state=present insertafter=EOF create=yes
+  lineinfile:
+    path: '/etc/environment'
+    line: '{{item.var}}={{item.value}}'
+    regexp: "{{ item.var }}.*"
+  with_items:
+    - {var: 'azure_storage_key', value: '{{ sunbird_private_storage_account_name }}'}
+    - {var: 'azure_storage_secret', value: '{{ sunbird_private_storage_account_key }}'}
+    - {var: 'AZURE_STORAGE_ACCOUNT', value: '{{ sunbird_private_storage_account_name }}'}
+    - {var: 'AZURE_STORAGE_ACCESS_KEY', value: '{{ sunbird_private_storage_account_key }}'}
+    - {var: 'GOOGLE_CREDENTIALS_PATH', value: '/home/analytics/credentials'}
+    - {var: 'STORAGE_PROVIDER', value: 'AZURE'}
+    - {var: 'ENV', value: '{{env}}'}
+    - {var: 'KAFKA_BROKER_HOST', value: "{{groups['processing-cluster-kafka'][0]}}:9092"}
 
 - name: Install required python packages
   become: yes
@@ -39,17 +48,3 @@
   become: yes
   file: path={{ item }} owner={{ analytics_user }} group={{ analytics_group }} state=directory
   with_items: "{{ analytics.paths }}"
-
-- name: Clone libfm from github
-  become: yes
-  become_user: "{{ analytics_user }}"
-  git: repo=https://github.com/srendle/libfm.git dest={{ analytics.home }}/libfm
-
-- name: Run make of libfm
-  become: yes
-  become_user: "{{ analytics_user }}"
-  command: make all chdir={{ analytics.home }}/libfm
-
-- name: Make a link for libfm
-  become: yes
-  file: src={{ analytics.home }}/libfm/bin/libFM dest=/usr/local/bin/libFM state=link

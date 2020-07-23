@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "ver"
+  ],
+  "properties": {
+    "id": {
+      "id": "http://api.ekstep.org/telemetry/plugin/id",
+      "type": "string"
+    },
+    "ver": {
+      "id": "http://api.ekstep.org/telemetry/plugin/ver",
+      "type": "string"
+    },
+    "category": {
+      "id": "http://api.ekstep.org/telemetry/plugin/category",
+      "type": "string"
+    }
+  }
+}

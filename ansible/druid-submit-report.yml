@@ -1,0 +1,6 @@
+-
+  name: Submit Druid Job Report
+  hosts: spark
+  become: yes
+  roles: 
+    - analytics-submit-report

@@ -94,6 +94,110 @@ public class EventFixture {
             "    \"@timestamp\": \"2018-10-18T07:10:05.341Z\"\n" +
             "}", current_ets);
 
+    public static final String INTERACT_EVENT_WITH_OBJECT_ROLLUP = String.format("{\n" +
+            "    \"actor\": {\n" +
+            "        \"type\": \"User\",\n" +
+            "        \"id\": \"393407b1-66b1-4c86-9080-b2bce9842886\"\n" +
+            "    },\n" +
+            "    \"eid\": \"INTERACT\",\n" +
+            "    \"edata\": {\n" +
+            "		 \"loc\":\"xyz\",\n" +
+            "        \"id\": \"ContentDetail\",\n" +
+            "        \"pageid\": \"ContentDetail\",\n" +
+            "        \"type\": \"TOUCH\",\n" +
+            "        \"subtype\": \"ContentDownload-Initiate\"\n" +
+            "    },\n" +
+            "    \"ver\": \"3.0\",\n" +
+            "    \"ets\": %s,\n" +
+            "    \"context\": {\n" +
+            "        \"pdata\": {\n" +
+            "            \"ver\": \"2.1.8\",\n" +
+            "            \"pid\": \"sunbird.app\",\n" +
+            "            \"id\": \"prod.diksha.app\"\n" +
+            "        },\n" +
+            "        \"channel\": \"0123221617357783046602\",\n" +
+            "        \"env\": \"sdk\",\n" +
+            "        \"did\": \"68dfc64a7751ad47617ac1a4e0531fb761ebea6f\",\n" +
+            "        \"cdata\": [\n" +
+            "            {\n" +
+            "                \"type\": \"qr\",\n" +
+            "                \"id\": \"K4KCXE\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"type\": \"API\",\n" +
+            "                \"id\": \"f3ac6610-d218-11e8-b2bb-1598ac1fcb99\"\n" +
+            "            }\n" +
+            "        ],\n" +
+            "        \"sid\": \"70ea93d0-e521-4030-934f-276e7194c225\"\n" +
+            "    },\n" +
+            "    \"mid\": \"e6a3bcd3-eb78-457b-8fc0-4acc94642ebf\",\n" +
+            "    \"object\": {\n" +
+                "        \"id\": \"do_31277438304183091217888\",\n" +
+            "        \"type\": \"TextBook\",\n" +
+            "        \"version\": \"\",\n" +
+            "        \"rollup\": { \n" +
+            "           \"l1\": \"do_31249561779090227216256\"\n" +
+            "       }\n" +
+            "    },\n" +
+            "    \"tags\": [\n" +
+            "        \n" +
+            "    ],\n" +
+            "    \"syncts\": 1539846605341,\n" +
+            "    \"@timestamp\": \"2018-10-18T07:10:05.341Z\"\n" +
+            "}", current_ets);
+
+    public static final String INTERACT_EVENT_WITH_OBJECTID_EQUALS_ROLLUPID = String.format("{\n" +
+            "    \"actor\": {\n" +
+            "        \"type\": \"User\",\n" +
+            "        \"id\": \"393407b1-66b1-4c86-9080-b2bce9842886\"\n" +
+            "    },\n" +
+            "    \"eid\": \"INTERACT\",\n" +
+            "    \"edata\": {\n" +
+            "		 \"loc\":\"xyz\",\n" +
+            "        \"id\": \"ContentDetail\",\n" +
+            "        \"pageid\": \"ContentDetail\",\n" +
+            "        \"type\": \"TOUCH\",\n" +
+            "        \"subtype\": \"ContentDownload-Initiate\"\n" +
+            "    },\n" +
+            "    \"ver\": \"3.0\",\n" +
+            "    \"ets\": %s,\n" +
+            "    \"context\": {\n" +
+            "        \"pdata\": {\n" +
+            "            \"ver\": \"2.1.8\",\n" +
+            "            \"pid\": \"sunbird.app\",\n" +
+            "            \"id\": \"prod.diksha.app\"\n" +
+            "        },\n" +
+            "        \"channel\": \"0123221617357783046602\",\n" +
+            "        \"env\": \"sdk\",\n" +
+            "        \"did\": \"68dfc64a7751ad47617ac1a4e0531fb761ebea6f\",\n" +
+            "        \"cdata\": [\n" +
+            "            {\n" +
+            "                \"type\": \"qr\",\n" +
+            "                \"id\": \"K4KCXE\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"type\": \"API\",\n" +
+            "                \"id\": \"f3ac6610-d218-11e8-b2bb-1598ac1fcb99\"\n" +
+            "            }\n" +
+            "        ],\n" +
+            "        \"sid\": \"70ea93d0-e521-4030-934f-276e7194c225\"\n" +
+            "    },\n" +
+            "    \"mid\": \"e6a3bcd3-eb78-457b-8fc0-4acc94642ebf\",\n" +
+            "    \"object\": {\n" +
+            "        \"id\": \"do_31277438304183091217888\",\n" +
+            "        \"type\": \"TextBook\",\n" +
+            "        \"version\": \"\",\n" +
+            "        \"rollup\": { \n" +
+            "           \"l1\": \"do_31277438304183091217888\"\n" +
+            "       }\n" +
+            "    },\n" +
+            "    \"tags\": [\n" +
+            "        \n" +
+            "    ],\n" +
+            "    \"syncts\": 1539846605341,\n" +
+            "    \"@timestamp\": \"2018-10-18T07:10:05.341Z\"\n" +
+            "}", current_ets);
+
     public static final String INTERACT_EVENT_WITH_DEVICEDATA = String.format("{\n" +
             "    \"actor\": {\n" +
             "        \"type\": \"User\",\n" +
@@ -1233,7 +1337,7 @@ public class EventFixture {
             "        \"index_type\": \"events_v1\"\n" +
             "    },\n" +
             "    \"@timestamp\": \"2019-06-02T17:21:35.546Z\",\n" +
-            "    \"ets\": 1559495257141,\n" +
+            "    \"ets\": %s,\n" +
             "    \"context\": {\n" +
             "        \"channel\": \"in.tnpilot\",\n" +
             "        \"env\": \"Genie\",\n" +
@@ -1271,7 +1375,7 @@ public class EventFixture {
             "    \"ts\": \"2019-06-02T17:07:37.141+0000\"\n" +
             "}", current_ets);
 
-    public static String IMPRESSION_EVENT = "{\n" +
+    public static String IMPRESSION_EVENT = String.format("{\n" +
             "  \"actor\": {\n" +
             "    \"type\": \"User\",\n" +
             "    \"id\": \"e9d73b7b-211a-43f4-8c01-cc9333757a9d\"\n" +
@@ -1283,7 +1387,7 @@ public class EventFixture {
             "    \"uri\": \"splash\"\n" +
             "  },\n" +
             "  \"ver\": \"3.0\",\n" +
-            "  \"ets\": 1562146941511,\n" +
+            "  \"ets\": %s,\n" +
             "  \"context\": {\n" +
             "    \"pdata\": {\n" +
             "      \"pid\": \"sunbird.app\",\n" +
@@ -1309,7 +1413,7 @@ public class EventFixture {
             "    \"tv_processed\": true\n" +
             "  },\n" +
             "  \"type\": \"events\"\n" +
-            "}";
+            "}", current_ets);
 
     public static Map<String, Object> getMap(String message) {
         return (Map<String, Object>) new Gson().fromJson(message, Map.class);

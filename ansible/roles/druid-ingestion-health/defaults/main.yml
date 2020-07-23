@@ -1,0 +1,13 @@
+druid_path : "/data/druid"
+druid_overlord_host: "{{ groups['overlord'][0] }}"
+druid_overlord_port: 8090
+druid_home: "/home/druid"
+druid_coordinator_host: "{{ groups['coordinator'][0] }}"
+druid_coordinator_port: 8081
+samza_slack_channel: samza-alrt-{{env}}
+druid_slack_channel: "{{ samza_slack_channel }}"
+druid_slack_token: "{{ samza_alert_slack_token }}"
+druid_slack_user : "Druid"
+
+supervisor_stats_url: "http://{{ druid_overlord_host }}:{{ druid_overlord_port }}/druid/indexer/v1/supervisor?state=true"
+segments_stats_url : "http://{{ druid_coordinator_host }}:{{ druid_coordinator_port }}/druid/coordinator/v1/loadstatus"

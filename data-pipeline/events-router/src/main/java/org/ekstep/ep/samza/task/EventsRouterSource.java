@@ -32,12 +32,5 @@ public class EventsRouterSource {
         return envelope.toString();
     }
 
-    public SystemStreamPartition getSystemStreamPartition() {
-        return envelope.getSystemStreamPartition();
-    }
-
-    public String getOffset() {
-        return envelope.getOffset();
-    }
 
 }

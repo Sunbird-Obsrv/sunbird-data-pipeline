@@ -1,0 +1,5 @@
+#Druid Proxy api
+
+druid_proxy_replicas: 1
+druid_proxy_reservation_memory: 300M
+druid_proxy_limit_memory: 300M

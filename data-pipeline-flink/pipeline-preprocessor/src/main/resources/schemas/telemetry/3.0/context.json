@@ -1,0 +1,33 @@
+{
+  "type": "object",
+  "properties": {
+    "channel": {
+      "id": "http://api.ekstep.org/telemetry/context/channel",
+      "type": "string",
+      "minLength": 1
+    },
+    "pdata": {
+      "$ref": "resource:/schemas/telemetry/3.0/pdata.json"
+    },
+    "env": {
+      "id": "http://api.ekstep.org/telemetry/context/env",
+      "type": "string"
+    },
+    "sid": {
+      "id": "http://api.ekstep.org/telemetry/context/sid",
+      "type": "string"
+    },
+    "did": {
+      "id": "http://api.ekstep.org/telemetry/context/did",
+      "type": "string"
+    },
+    "cdata": {
+      "$ref": "resource:/schemas/telemetry/3.0/cdata.json"
+    }
+  },
+  "required": [
+      "channel",
+      "env",
+      "pdata"
+  ]
+}

@@ -1,0 +1,189 @@
+---
+user: root
+group: root
+slack_channel: "{{ monitor_alerts_slack_channel }}"
+slack_user: Monit
+slack_web_hook: "{{ monit_alerts_slack_url }}"
+
+monit_logstash:
+  app_name: logstash
+  custom_start: /bin/systemctl start logstash.service
+  custom_stop: /bin/systemctl stop logstash.service
+  retry: 3
+
+monit_yarn_master:
+  app_name: resourcemanager
+  grep_string: resourcemanager
+  custom_start: /usr/local/hadoop/sbin/yarn-daemon.sh start resourcemanager
+  custom_stop: /usr/local/hadoop/bin/kill_jobs.sh && sleep 10 && bash /usr/local/hadoop/sbin/yarn-daemon.sh stop resourcemanager
+  retry: 3
+  user: hduser
+  group: hadoop
+
+monit_yarn_slave:
+  app_name: nodemanager
+  grep_string: nodemanager
+  custom_start: /usr/local/hadoop/sbin/yarn-daemon.sh start nodemanager
+  timeout: 20
+  custom_stop: /usr/local/hadoop/sbin/yarn-daemon.sh stop nodemanager
+  user: hduser
+  group: hadoop
+  retry: 3
+
+monit_kafka:
+  app_name: kafka
+  custom_start: "/bin/systemctl start kafka.service"
+  custom_stop: "/bin/systemctl stop kafka.service"
+  timeout: "30"
+  retry: 3
+
+monit_zookeeper:
+  app_name: zookeeper
+  custom_start: "/bin/systemctl start zookeeper.service"
+  custom_stop: "/bin/systemctl stop zookeeper.service"
+  pid_file: /var/run/zookeeper/zookeeper.pid
+  timeout: "30"
+  retry: 3
+
+monit_api-service:
+  app_name: "api-service"
+  script_path: "/home/analytics/sbin/api-service"
+  pid_file: "/mount/data/analytics/api/analytics-api-1.0/RUNNING_PID"
+  user: analytics
+  timeout: "30"
+  retry: 3
+
+monit_channel-telemetry-backup:
+  app_name: channel-telemetry-backup
+  custom_start: /home/analytics/sbin/secor channel-telemetry-backup start
+  custom_stop: /home/analytics/sbin/secor channel-telemetry-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/channel-telemetry-backup.pid
+  retry: 3
+
+monit_derived-telemetry-backup:
+  app_name: derived-telemetry-backup
+  custom_start: /home/analytics/sbin/secor derived-telemetry-backup start
+  custom_stop: /home/analytics/sbin/secor derived-telemetry-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/derived-telemetry-backup.pid
+  retry: 3
+
+monit_extractor-failed-backup:
+  app_name: extractor-failed-backup
+  custom_start: /home/analytics/sbin/secor extractor-failed-backup start
+  custom_stop: /home/analytics/sbin/secor extractor-failed-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/extractor-failed-backup.pid
+  retry: 3
+
+monit_pipeline-metrics-backup:
+  app_name: pipeline-metrics-backup
+  custom_start: /home/analytics/sbin/secor pipeline-metrics-backup start
+  custom_stop: /home/analytics/sbin/secor pipeline-metrics-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/pipeline-metrics-backup.pid
+  retry: 3
+
+monit_raw-telemetry-backup:
+  app_name: raw-telemetry-backup
+  custom_start: /home/analytics/sbin/secor raw-telemetry-backup start
+  custom_stop: /home/analytics/sbin/secor raw-telemetry-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/raw-telemetry-backup.pid
+  retry: 3
+
+monit_learning-events-backup:
+  app_name: learning-events-backup
+  custom_start: /home/analytics/sbin/secor learning-events-backup start
+  custom_stop: /home/analytics/sbin/secor learning-events-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/learning-events-backup.pid
+  retry: 3
+
+monit_ingestion-telemetry-backup:
+  app_name: ingestion-telemetry-backup
+  custom_start: /home/analytics/sbin/secor ingestion-telemetry-backup start
+  custom_stop: /home/analytics/sbin/secor ingestion-telemetry-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/ingestion-telemetry-backup.pid
+  retry: 3
+
+monit_unique-telemetry-backup:
+  app_name: unique-telemetry-backup
+  custom_start: /home/analytics/sbin/secor unique-telemetry-backup start
+  custom_stop: /home/analytics/sbin/secor unique-telemetry-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/unique-telemetry-backup.pid
+  retry: 3
+
+monit_failed-telemetry-backup:
+  app_name: failed-telemetry-backup
+  custom_start: /home/analytics/sbin/secor failed-telemetry-backup start
+  custom_stop: /home/analytics/sbin/secor failed-telemetry-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/failed-telemetry-backup.pid
+  retry: 3
+
+monit_denorm-events-backup:
+  app_name: denorm-events-backup
+  custom_start: /home/analytics/sbin/secor denorm-events-backup start
+  custom_stop: /home/analytics/sbin/secor denorm-events-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/denorm-events-backup.pid
+  retry: 3
+
+monit_assess-events-backup:
+  app_name: assess-events-backup
+  custom_start: /home/analytics/sbin/secor assess-events-backup start
+  custom_stop: /home/analytics/sbin/secor assess-events-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/assess-events-backup.pid
+  retry: 3
+
+monit_device-profile-backup:
+  app_name: device-profile-backup
+  custom_start: /home/analytics/sbin/secor device-profile-backup start
+  custom_stop: /home/analytics/sbin/secor device-profile-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/device-profile-backup.pid
+  retry: 3
+
+monit_learning-failed-backup:
+  app_name: learning-failed-backup
+  custom_start: /home/analytics/sbin/secor learning-failed-backup start
+  custom_stop: /home/analytics/sbin/secor learning-failed-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/learning-failed-backup.pid
+  retry: 3
+
+monit_cassandra-dp:
+  app_name: "cassandra"
+  custom_start: /bin/systemctl start cassandra
+  custom_stop: /bin/systemctl stop cassandra
+  timeout: "20"
+  retry: 3
+
+monit_influxdb:
+  app_name: influxdb
+  grep_string: influxdb.conf
+  custom_start: "/usr/sbin/service influxdb start"
+  custom_stop: "/usr/sbin/service influxdb stop"
+  timeout: "30"
+  retry: 3
+
+monit_influxdb-relay:
+  app_name: influxdb-relay
+  grep_string: influxdb-relay
+  custom_start: "/usr/sbin/service influxdb-relay start"
+  custom_stop: "/usr/sbin/service influxdb-relay stop"
+  timeout: "30"
+  retry: 3
+
+monit_redis:
+  app_name: redis-server
+  grep_string: redis-server
+  custom_start: "/bin/systemctl start redis"
+  custom_stop: "/bin/systemctl stop redis"
+  timeout: "30"
+  retry: 3

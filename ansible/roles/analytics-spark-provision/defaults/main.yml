@@ -1,9 +1,12 @@
 analytics:
    home: /mount/data/analytics
    soft_path: /mount/data/analytics
+   base_path: /home/analytics 
 scala_version: 2.11.8
+spark_version: 2.4.4
+model_version: "2.0" 
 spark:
-  home: "{{ analytics.home }}/spark-2.0.1-bin-hadoop2.7"
+  home: "{{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7"
   public_dns: 54.255.154.146
   master:
     url: spark://172.31.11.117:7077
@@ -17,13 +20,15 @@ spark:
   executor:
     memory: 4g
   driver_memory: 7g
-  executor_extraJavaOptions: -Dconfig.file=/mount/data/analytics/models/{{ env }}.conf -Dlog4j.configurationFile=file:////mount/data/analytics/models/log4j2.xml
-  driver_extraJavaOptions: -Dconfig.file=/mount/data/analytics/models/{{ env }}.conf -Dlog4j.configurationFile=file:////mount/data/analytics/models/log4j2.xml
+  executor_extraJavaOptions: -Dconfig.file=/mount/data/analytics/models-{{ model_version }}/{{ env }}.conf -Dlog4j.configurationFile=file:////mount/data/analytics/models-{{ model_version }}/log4j2.xml
+  driver_extraJavaOptions: -Dconfig.file=/mount/data/analytics/models-{{ model_version }}/{{ env }}.conf -Dlog4j.configurationFile=file:////mount/data/analytics/models-{{ model_version }}/log4j2.xml
   executor_memory: 2g
   heap_conf_str: -Xmx5120m
 
-spark_url: https://archive.apache.org/dist/spark/spark-2.0.1/spark-2.0.1-bin-hadoop2.7.tgz
-guava_url: http://central.maven.org/maven2/com/google/guava/guava/19.0/guava-19.0.jar
-jets3t_url: http://central.maven.org/maven2/net/java/dev/jets3t/jets3t/0.9.4/jets3t-0.9.4.jar
-hadoop_aws_url: http://central.maven.org/maven2/org/apache/hadoop/hadoop-aws/2.7.3/hadoop-aws-2.7.3.jar
-java_xmlbuilder_url: http://central.maven.org/maven2/com/jamesmurty/utils/java-xmlbuilder/1.1/java-xmlbuilder-1.1.jar
+spark_url: https://archive.apache.org/dist/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz
+guava_url: https://repo1.maven.org/maven2/com/google/guava/guava/19.0/guava-19.0.jar
+jets3t_url: https://repo1.maven.org/maven2/net/java/dev/jets3t/jets3t/0.9.4/jets3t-0.9.4.jar
+hadoop_aws_url: https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/2.7.3/hadoop-aws-2.7.3.jar
+java_xmlbuilder_url: https://repo1.maven.org/maven2/com/jamesmurty/utils/java-xmlbuilder/1.1/java-xmlbuilder-1.1.jar
+hadoop_azure_url: https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-azure/2.7.3/hadoop-azure-2.7.3.jar
+azure_storage: https://repo1.maven.org/maven2/com/microsoft/azure/azure-storage/3.0.0/azure-storage-3.0.0.jar

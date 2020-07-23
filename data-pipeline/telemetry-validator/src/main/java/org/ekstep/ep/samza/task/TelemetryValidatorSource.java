@@ -11,19 +11,19 @@ import com.google.gson.Gson;
 
 public class TelemetryValidatorSource {
     static Logger LOGGER = new Logger(TelemetryValidatorSource.class);
-    
+
     private IncomingMessageEnvelope envelope;
 
     public TelemetryValidatorSource(IncomingMessageEnvelope envelope) {
         this.envelope = envelope;
     }
 
-    public Event getEvent(){
+    public Event getEvent() {
         return new Event(getMap());
     }
 
     @SuppressWarnings("unchecked")
-	private Map<String, Object> getMap() {
+    private Map<String, Object> getMap() {
         String message = (String) envelope.getMessage();
         return (Map<String, Object>) new Gson().fromJson(message, Map.class);
     }
@@ -31,7 +31,6 @@ public class TelemetryValidatorSource {
     public String getMessage() {
         return envelope.toString();
     }
-    public SystemStreamPartition getSystemStreamPartition() { return envelope.getSystemStreamPartition();}
-    public String getOffset() { return envelope.getOffset();}
+
 
 }

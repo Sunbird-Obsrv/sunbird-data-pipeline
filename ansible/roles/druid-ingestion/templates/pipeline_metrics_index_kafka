@@ -120,6 +120,66 @@
             {
               "type": "root",
               "name": "duplicate-event-count"
+            },
+            {
+              "type": "root",
+              "name": "device-db-update-count"
+            },
+            {
+              "type": "root",
+              "name": "device-cache-update-count"
+            },
+            {
+              "type": "root",
+              "name": "user-declared-hit-count"
+            },
+            {
+              "type": "root",
+              "name": "ip-location-hit-count"
+            },
+            {
+              "type": "root",
+              "name": "no-cache-hit-count"
+            },
+            {
+              "type": "root",
+              "name": "audit-route-success-count"
+            },
+            {
+              "type": "root",
+              "name": "db-insert-count"
+            },
+            {
+              "type": "root",
+              "name": "db-update-count"
+            },
+            {
+              "type": "root",
+              "name": "share-route-success-count"
+            },
+            {
+              "type": "root",
+              "name": "dialcodes-count"
+            },
+            {
+              "type": "root",
+              "name": "dialcodes-api-hit"
+            },
+            {
+              "type": "root",
+              "name": "dialcodes-cache-hit"
+            },
+            {
+              "type": "root",
+              "name": "assess-route-success-count"
+            },
+            {
+              "type": "root",
+              "name": "log-route-success-count"
+            },
+            {
+              "type": "root",
+              "name": "error-route-success-count"
             }
           ]
         },
@@ -236,6 +296,66 @@
             {
               "type": "long",
               "name": "duplicate-event-count"
+            },
+            {
+              "type": "long",
+              "name": "device-db-update-count"
+            },
+            {
+              "type": "long",
+              "name": "device-cache-update-count"
+            },
+            {
+              "type": "long",
+              "name": "user-declared-hit-count"
+            },
+            {
+              "type": "long",
+              "name": "ip-location-hit-count"
+            },
+            {
+              "type": "long",
+              "name": "no-cache-hit-count"
+            },
+            {
+              "type": "long",
+              "name": "audit-route-success-count"
+            },
+            {
+              "type": "long",
+              "name": "db-insert-count"
+            },
+            {
+              "type": "long",
+              "name": "db-update-count"
+            },
+            {
+              "type": "long",
+              "name": "share-route-success-count"
+            },
+            {
+              "type": "long",
+              "name": "dialcodes-count"
+            },
+            {
+              "type": "long",
+              "name": "dialcodes-api-hit"
+            },
+            {
+              "type": "long",
+              "name": "dialcodes-cache-hit"
+            },
+            {
+              "type": "long",
+              "name": "assess-route-success-count"
+            },
+            {
+              "type": "long",
+              "name": "log-route-success-count"
+            },
+            {
+              "type": "long",
+              "name": "error-route-success-count"
             }
           ],
           "dimensionsExclusions": []

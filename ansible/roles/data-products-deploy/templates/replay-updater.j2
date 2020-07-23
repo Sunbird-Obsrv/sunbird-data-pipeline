@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-export SPARK_HOME={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7
-export MODELS_HOME={{ analytics.home }}/models
+export SPARK_HOME={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7
+export MODELS_HOME={{ analytics.home }}/models-{{ model_version }}
 export DP_LOGS={{ analytics.home }}/logs/data-products
 
 cd {{ analytics.home }}/scripts
@@ -13,7 +13,7 @@ start_date=$2
 end_date=$3
 
 echo "Running the $1 updater replay..." >> "$DP_LOGS/$end_date-$1-replay.log"
-$SPARK_HOME/bin/spark-submit --master local[*] --jars $MODELS_HOME/analytics-framework-1.0.jar --class org.ekstep.analytics.job.ReplaySupervisor $MODELS_HOME/batch-models-1.0.jar --model "$1" --fromDate "$start_date" --toDate "$end_date" --config "$job_config" >> "$DP_LOGS/$end_date-$1-replay.log"
+$SPARK_HOME/bin/spark-submit --master local[*] --jars $MODELS_HOME/analytics-framework-2.0.jar --class org.ekstep.analytics.job.ReplaySupervisor $MODELS_HOME/batch-models-2.0.jar --model "$1" --fromDate "$start_date" --toDate "$end_date" --config "$job_config" >> "$DP_LOGS/$end_date-$1-replay.log"
 
 if [ $? == 0 ] 
 	then

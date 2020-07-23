@@ -1,5 +1,6 @@
 application.env="{{ env }}"
 spark.cassandra.connection.host={{groups['dp-cassandra'][0]}}
+spark.cassandra.connection.port="9042"
 service.search.url="{{lp_search}}"
 service.search.path="/v2/search"
 service.search.requestbody="""{"request":{"filters":{"objectType":["Content"],"contentType":["Story","Worksheet","Collection","Game"],"status":["Live"]},"limit":1000}}"""
@@ -32,13 +33,13 @@ data_exhaust.output_format="json"
 
 # Log4j Kafka appender config
 log4j.appender.kafka.enable="false"
-log4j.appender.kafka.broker_host="{{groups['processing-cluster-kafka'][0]}}:9092"
+log4j.appender.kafka.broker_host="{{ kafka_broker }}"
 log4j.appender.kafka.topic="{{env}}.telemetry.log"
 
 cassandra.service.embedded.enable=false
 cassandra.keyspace_prefix="{{ cassandra.keyspace_prefix }}"
 
-device-register-controller {
+device-register-controller-dispatcher {
   type = "Dispatcher"
   executor = "fork-join-executor"
   fork-join-executor {
@@ -57,22 +58,21 @@ device-register-controller {
   throughput = 1
 }
 
-device-register-actor {
+device-register-actor-dispatcher {
   type = "Dispatcher"
-  executor = "fork-join-executor"
-  fork-join-executor {
-    # The parallelism factor is used to determine thread pool size using the
-    # following formula: ceil(available processors * factor). Resulting size
-    # is then bounded by the parallelism-min and parallelism-max values.
-    parallelism-factor = 3.0
-
-    # Min number of threads to cap factor-based parallelism number to
-    parallelism-min = 8
-
-    # Max number of threads to cap factor-based parallelism number to
-    parallelism-max = 16
+  executor = "thread-pool-executor"
+  thread-pool-executor {
+    fixed-pool-size = 8
   }
-  # Throughput for default Dispatcher, set to 1 for as fair as possible
+  throughput = 1
+}
+
+device-profile-actor-dispatcher {
+  type = "Dispatcher"
+  executor = "thread-pool-executor"
+  thread-pool-executor {
+    fixed-pool-size = 8
+  }
   throughput = 1
 }
 
@@ -118,42 +118,33 @@ akka {
   actor {
     deployment {
 
-        /metricsApiActor {
+        /druid-health-actor  {
             router = smallest-mailbox-pool
             nr-of-instances = 10
         }
-        /jobApiActor {
-            router = smallest-mailbox-pool
-            nr-of-instances = 10
-        }
-        /recommendAPIActor {
-            router = smallest-mailbox-pool
-            nr-of-instances = 10
-        }
-        /healthCheckAPIActor {
-            router = smallest-mailbox-pool
-            nr-of-instances = 10
-        }
-        /tagServiceAPIActor {
+        /job-service-actor {
           router = smallest-mailbox-pool
             nr-of-instances = 10
         }
-        /deviceRegisterServiceAPIActor {
+        /device-register-actor {
           router = smallest-mailbox-pool
-            nr-of-instances = 20
+          dispatcher = device-register-actor-dispatcher
+          nr-of-instances = 6
         }
-        /clientLogAPIActor {
+        /device-profile-actor {
+          router = smallest-mailbox-pool
+          dispatcher = device-profile-actor-dispatcher
+          nr-of-instances = 6
+        }
+        /client-log-actor {
           router = smallest-mailbox-pool
           nr-of-instances = 4
         }
-        /experimentActor {
+        /experiment-actor {
           router = smallest-mailbox-pool
-          nr-of-instances = 5
+          nr-of-instances = 2
         }
-        /expApiActor {
-          router = smallest-mailbox-pool
-          nr-of-instances = 1
-        }
+
     }
   }
 }
@@ -179,8 +170,23 @@ play.server {
   }
 }
 
-play.modules.enabled+="MetricsModule"
 play.modules.enabled+="modules.ActorInjector"
+play.filters.enabled+="filter.RequestInterceptor"
+play.filters.enabled+="play.filters.hosts.AllowedHostsFilter"
+play.filters.disabled+="play.filters.csrf.CSRFFilter"
+
+# Secret key
+# ~~~~~
+# The secret key is used to secure cryptographics functions.
+# If you deploy your application to several instances be sure to use the same key!
+play.http.secret.key="{{dp_play_http_secret_key}}"
+
+play.filters.hosts {
+   # A list of valid hosts (e.g. "example.com") or suffixes of valid hosts (e.g. ".example.com")
+   # Note that ".example.com" will match example.com and any subdomain of example.com, with or without a trailing dot.
+   # "." matches all domains, and "" matches an empty or nonexistent host.
+  allowed = ["."]
+}
 
 # body parser
 play.http.parser.maxMemoryBuffer=10M
@@ -196,6 +202,7 @@ postgres.pass="{{ postgres.db_password }}"
 postgres.table_name="{{ postgres.db_table_name }}"
 postgres.table.geo_location_city.name="{{ geo_location_city }}"
 postgres.table.geo_location_city_ipv4.name="{{ geo_location_city_ipv4 }}"
+postgres.table.report_config.name="{{ report_config }}"
 
 default.channel="{{ default_channel }}"
 
@@ -217,15 +224,15 @@ s3service.region="ap-south-1"
 cloud_storage_type="azure"
 
 metrics.time.interval.min=30
+cache.refresh.time.interval.min=1440
 
-
-redis.host="{{redis_host}}"
+redis.host="{{metadata_redis_host}}"
 #redis.host="localhost"
 redis.port=6379
 #redis.port=__redis_port__
-redis.connection.max=10
-redis.connection.idle.max=2
-redis.connection.idle.min=1
+redis.connection.max=20
+redis.connection.idle.max=20
+redis.connection.idle.min=10
 redis.connection.minEvictableIdleTimeSeconds=120
 redis.connection.timeBetweenEvictionRunsSeconds=300
 
@@ -236,9 +243,15 @@ elasticsearch.port=9200
 elasticsearch.searchExperiment.index="experiment"
 elasticsearch.searchExperiment.fieldWeight="{\"userId\":3.0, \"deviceId\":3.0, \"url\":3.0 }"
 elasticsearch.searchExperiment.matchQueryScore=9.0
-deviceRegisterAPI.experiment.enable=true
+deviceRegisterAPI.experiment.enable=false
 experimentService.redisEmptyValueExpirySeconds=86400
 redis.experimentIndex=9
+redis.deviceIndex=2
 
-druid.coordinator.host="http://{{groups['coordinator'][0]}}:8081/"
+druid.coordinator.host="http://{{groups['raw-coordinator'][0]}}:8081/"
 druid.healthcheck.url="druid/coordinator/v1/loadstatus"
+
+device.api.enable.debug.log=true
+kafka.device.register.topic={{ env }}.events.deviceprofile
+kafka.metrics.event.topic={{ env }}.pipeline_metrics
+kafka.broker.list="{{ ingestion_kafka_brokers }}"

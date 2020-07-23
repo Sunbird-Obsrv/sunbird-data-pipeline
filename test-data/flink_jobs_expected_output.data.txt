@@ -1,0 +1,32 @@
+Extractor:
+  flink.telemetry.raw: 19
+  flink.extractor.duplicate: 1
+  flink.extractor.failed: 0
+  flink.telemetry.assess.raw: 2
+PipelinePreprocessor:
+  flink.telemetry.failed: 1
+  flink.telemetry.duplicate: 1
+  flink.telemetry.audit: 1
+  flink.telemetry.log: 2
+  flink.telemetry.unique: 19
+  mid: 1587321009743.b1919f23-db45-4828-a3cb-25f58d8cf289 will have the edata.filters.dialCodes corrected to edata.filters.dialcodes
+Denorm:
+  flink.telemetry.denorm: 18
+  expired_event_count: 1
+  device_denorm flag true: 1
+  content_denorm flag true: 1
+  dialcode_denorm flag true: 1
+  flink.telemetry.failed: 1
+  flink.telemetry.duplicate: 1
+  flink.telemetry.audit: 1
+  flink.telemetry.log: 1
+DruidEventsValidator:
+  flink.telemetry.failed: 1
+  flink.telemetry.duplicate: 1
+  flink.telemetry.audit: 1
+  flink.telemetry.log: 2
+  flink.druid.events.log: 1
+  flink.druid.events.error: 1
+  flink.druid.events.summary: 0
+  flink.druid.events.telemetry: 18
+  flink.telemetry.duplicate: 0

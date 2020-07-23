@@ -99,6 +99,9 @@ elasticsearch.index.compositesearch.name="{{ es_search_index }}"
 org.search.api.url="{{ channelSearchServiceEndpoint }}"
 org.search.api.key="{{ searchServiceAuthorizationToken }}"
 
+hierarchy.search.api.url="{{ hierarchySearchServiceUrl }}"
+hierarchy.search.api.path="{{ hierarchySearchServicEndpoint }}"
+
 # Azure Media Service Config
 azure {
   location = "centralindia"
@@ -131,12 +134,13 @@ azure {
   }
 }
 
+## Reports - Global config
+cloud.container.reports="reports"
+
 # course metrics container in azure
 course.metrics.cassandra.sunbirdKeyspace="sunbird"
 course.metrics.cassandra.sunbirdCoursesKeyspace="sunbird_courses"
-course.metrics.cloud.provider="azure"
-course.metrics.cloud.container="course-metrics"
-course.metrics.cloud.objectKey="reports/"
+course.metrics.cloud.objectKey=""
 course.metrics.temp.dir="/mount/data/analytics/course-reports"
 course.metrics.cassandra.input.consistency="QUORUM"
 es.host="http://{{groups['core-es'][0]}}"
@@ -144,19 +148,40 @@ es.port="9200"
 course.metrics.es.alias="cbatchstats"
 course.metrics.es.index.cbatchstats.prefix="cbatchstats-"
 course.metrics.es.index.cbatch="course-batch"
+es.composite.host="{{groups['composite-search-cluster'][0]}}"
 
+# State admin user reports
+# Uses azure only - course.metrics.cloud.provider
+admin.reports.cloud.container="reports"
+admin.metrics.cloud.objectKey=""
+admin.metrics.temp.dir="/mount/data/analytics/admin-user-reports"
+
+#Assessment report config
+assessment.metrics.temp.dir="/mount/data/analytics/assessment-report"
+assessment.metrics.cassandra.input.consistency="QUORUM"
+assessment.metrics.cloud.objectKey="assessment-reports/"
+assessment.metrics.content.index="compositesearch"
+es.scroll.size = 1000
+assessment.metrics.es.alias="cbatch-assessment"
+assessment.metrics.es.index.prefix="cbatch-assessment-"
+course.upload.reports.enabled=true
+course.es.index.enabled=true
+assessment.metrics.bestscore.report=true // BestScore or Latst Updated Score
+assessment.metrics.supported.contenttype="SelfAssess"
+spark.sql.caseSensitive=true
 
 # content rating configurations
 
 druid.sql.host="http://{{druid_broker_host}}:8082/druid/v2/sql/"
-druid.unique.content.query="{\"query\":\"SELECT DISTINCT \\\"object_id\\\" AS \\\"Id\\\"\\nFROM \\\"druid\\\".\\\"telemetry-feedback-events\\\" WHERE \\\"eid\\\" = 'FEEDBACK' AND \\\"__time\\\" BETWEEN TIMESTAMP '%s' AND TIMESTAMP '%s' \"}"
-druid.content.rating.query="{\"query\": \"SELECT \\\"object_id\\\" AS ContentId, COUNT(*) AS \\\"Number of Ratings\\\", SUM(edata_rating) AS \\\"Total Ratings\\\", SUM(edata_rating)/COUNT(*) AS \\\"AverageRating\\\" FROM \\\"druid\\\".\\\"telemetry-feedback-events\\\" WHERE \\\"eid\\\" = 'FEEDBACK' GROUP BY \\\"object_id\\\"\"}"
+druid.unique.content.query="{\"query\":\"SELECT DISTINCT \\\"object_id\\\" AS \\\"Id\\\"\\nFROM \\\"druid\\\".\\\"summary-events\\\" WHERE \\\"__time\\\"  BETWEEN TIMESTAMP '%s' AND TIMESTAMP '%s'\"}"
+druid.content.rating.query="{\"query\":\"SELECT \\\"object_id\\\" AS contentId, COUNT(*) AS \\\"totalRatingsCount\\\", SUM(edata_rating) AS \\\"Total Ratings\\\", SUM(edata_rating)/COUNT(*) AS \\\"averageRating\\\" FROM \\\"druid\\\".\\\"telemetry-feedback-events\\\" WHERE \\\"eid\\\" = 'FEEDBACK' GROUP BY \\\"object_id\\\"\"}"
+druid.content.consumption.query="{\"query\":\"SELECT COUNT(*) as \\\"play_sessions_count\\\", object_id as \\\"contentId\\\", SUM(total_time_spent) as \\\"total_time_spent\\\", dimensions_pdata_id, object_id\\nFROM \\\"summary-events\\\"\\nWHERE \\\"dimensions_mode\\\" = 'play' AND \\\"dimensions_type\\\" ='content'\\nGROUP BY object_id, dimensions_pdata_id\"}"
 lp.system.update.base.url="{{lp_url}}/system/v3/content/update"
 
 
 #Experiment Configuration
 
-user.search.api.url="http://{{swarm_manager_lb_ip}}:9000/private/user/v1/search"
+user.search.api.url="http://{{sunbird_learner_service_url}}/private/user/v1/search"
 user.search.limit="10000"
 
 # pipeline auditing
@@ -176,4 +201,40 @@ pipeline_audit {
 	}
 }
 
+#Druid Query Processor
 
+druid = {
+	hosts = "{{druid_broker_host}}:8082"
+	secure = false
+	url = "/druid/v2/"
+	datasource = "telemetry-events"
+	response-parsing-timeout = 300000
+}
+druid.rollup.host="{{druid_rollup_broker_host}}"
+druid.rollup.port=8082
+druid.query.wait.time.mins=1
+druid.report.upload.wait.time.mins=1
+
+// Metric event config
+metric.producer.id="pipeline.monitoring"
+metric.producer.pid="dataproduct.metrics"
+push.metrics.kafka=true
+metric.kafka.broker="{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
+metric.kafka.topic="{{ env }}.telemetry.metrics"
+
+//Postgres Config
+postgres.db="{{postgres.db_name}}"
+postgres.url="jdbc:postgresql://{{postgres.db_url}}:{{postgres.db_port}}/"
+postgres.user="{{postgres.db_username}}"
+postgres.pass="{{postgres.db_password}}"
+
+
+location.search.url="https://{{location_search_url}}/v1/location/search"
+location.search.token="{{ location_search_token }}"
+
+druid.state.lookup.url = "http://{{groups['raw-coordinator'][0]}}:8081/druid/coordinator/v1/lookups/config/__default/stateSlugLookup"
+
+dcedialcode.filename="DCE_dialcode_data.csv"
+etbdialcode.filename="ETB_dialcode_data.csv"
+dcetextbook.filename="DCE_textbook_data.csv"
+etbtextbook.filename="ETB_textbook_data.csv"

@@ -11,21 +11,25 @@ public class TelemetryRouterConfig {
     private final String JOB_NAME = "TelemetryRouter";
 
     private String failedTopic;
-    private String metricsTopic;
     private String primaryRouteTopic;
     private String secondaryRouteTopic;
     private String secondaryRouteEvents;
     private String malformedTopic;
     private String auditRouteTopic;
+    private String shareEventRouterTopic;
+    private String logRouteTopic;
+    private String errorRouteTopic;
 
     public TelemetryRouterConfig(Config config) {
         failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
-        metricsTopic = config.get("output.metrics.topic.name", "telemetry.pipeline_metrics");
         primaryRouteTopic = config.get("router.events.primary.route.topic", "telemetry.sink");
         secondaryRouteEvents = config.get("router.events.secondary.route.events", "LOG,ERROR");
         secondaryRouteTopic = config.get("router.events.secondary.route.topic", "telemetry.log");
         auditRouteTopic = config.get("router.events.audit.route.topic", "telemetry.audit");
+        shareEventRouterTopic = config.get("router.events.share.route.topic", "telemetry.share");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
+        logRouteTopic = config.get("router.events.log.topic.name","events.log");
+        errorRouteTopic = config.get("router.events.error.topic.name","events.error");
 
     }
 
@@ -33,17 +37,19 @@ public class TelemetryRouterConfig {
         return primaryRouteTopic;
     }
 
-    public void setPrimaryRouteTopic(String primaryRouteTopic) {
-        this.primaryRouteTopic = primaryRouteTopic;
-    }
 
     public String getSecondaryRouteTopic() {
         return secondaryRouteTopic;
     }
 
-    public void setSecondaryRouteTopic(String secondaryRouteTopic) {
-        this.secondaryRouteTopic = secondaryRouteTopic;
+    public String getLogRouteTopic() {
+        return logRouteTopic;
     }
+
+    public String getErrorRouteTopic() {
+        return errorRouteTopic;
+    }
+
 
     public List<String> getSecondaryRouteEvents() {
         String[] events = this.secondaryRouteEvents.split(",");
@@ -54,16 +60,13 @@ public class TelemetryRouterConfig {
         return auditRouteTopic;
     }
 
-    public void setSecondaryRouteEvents(String secondaryRouteEvents) {
-        this.secondaryRouteEvents = secondaryRouteEvents;
+    public String getShareEventRouterTopic() {
+        return shareEventRouterTopic;
     }
+
 
     public String failedTopic() {
         return failedTopic;
-    }
-
-    public String metricsTopic() {
-        return metricsTopic;
     }
 
     public String malformedTopic() {

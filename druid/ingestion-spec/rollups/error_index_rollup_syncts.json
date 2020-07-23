@@ -1,0 +1,156 @@
+{
+  "type": "kafka",
+  "dataSchema": {
+    "dataSource": "error-rollup-syncts",
+    "parser": {
+      "type": "string",
+      "parseSpec": {
+        "format": "json",
+        "flattenSpec": {
+          "useFieldDiscovery": false,
+          "fields": [
+            {
+              "type": "root",
+              "name": "syncts"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_id",
+              "expr": "$.context.pdata.id"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_pid",
+              "expr": "$.context.pdata.pid"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_ver",
+              "expr": "$.context.pdata.ver"
+            },
+            {
+              "type": "path",
+              "name": "context_env",
+              "expr": "$.context.env"
+            },
+            {
+              "type": "path",
+              "name": "object_id",
+              "expr": "$.object.id"
+            },
+            {
+              "type": "path",
+              "name": "object_type",
+              "expr": "$.object.type"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l1",
+              "expr": "$.object.rollup.l1"
+            },
+            {
+              "type": "path",
+              "name": "edata_err",
+              "expr": "$.edata.err"
+            },
+            {
+              "type": "path",
+              "name": "edata_errtype",
+              "expr": "$.edata.errtype"
+            },
+            {
+              "type": "path",
+              "name": "edata_plugin_id",
+              "expr": "$.edata.plugin.id"
+            },
+            {
+              "type": "path",
+              "name": "edata_plugin_ver",
+              "expr": "$.edata.plugin.ver"
+            }
+          ]
+        },
+        "dimensionsSpec": {
+          "dimensions": [
+            {
+              "type": "string",
+              "name": "context_pdata_id"
+            },
+            {
+              "type": "string",
+              "name": "context_pdata_pid"
+            },
+            {
+              "type": "string",
+              "name": "context_pdata_ver"
+            },
+            {
+              "type": "string",
+              "name": "context_env"
+            },
+            {
+              "type": "string",
+              "name": "object_id"
+            },
+            {
+              "type": "string",
+              "name": "object_type"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l1"
+            },
+            {
+              "type": "string",
+              "name": "edata_err"
+            },
+            {
+              "type": "string",
+              "name": "edata_errtype"
+            },
+            {
+              "type": "string",
+              "name": "edata_plugin_id"
+            },
+            {
+              "type": "string",
+              "name": "edata_plugin_ver"
+            }
+          ]
+        },
+        "timestampSpec": {
+          "column": "ets",
+          "format": "auto"
+        }
+      }
+    },
+    "metricsSpec": [
+      {
+        "name": "total_count",
+        "type": "count"
+      }
+    ],
+    "granularitySpec": {
+      "type": "uniform",
+      "segmentGranularity": "day",
+      "queryGranularity": "day",
+      "rollup": true
+    }
+  },
+  "ioConfig": {
+    "topic": "{{env}}.events.error",
+    "consumerProperties": {
+      "bootstrap.servers": "{{kafka_brokers}}"
+    },
+    "taskCount": 1,
+    "replicas": 1,
+    "taskDuration": "PT14400S",
+    "useEarliestOffset": true
+  },
+  "tuningConfig": {
+    "type": "kafka",
+    "reportParseExceptions": false,
+    "logParseExceptions": true,
+    "maxSavedParseExceptions": 10
+  }
+}

@@ -1,0 +1,23 @@
+---
+
+- name: ensure script present in remote machine
+  copy:
+    src: files/secor.sh
+    dest: "{{ sbin_path }}/secor"
+    owner: analytics
+    group: analytics
+    mode: 0777
+
+- name: restart secor jobs
+  shell: "{{ sbin_path }}/secor {{ item }} {{ trigger }}"
+  become_user: "{{ analytics_user }}"
+  with_items: "{{ secor_jobs.split(',')|list }}"
+  ignore_errors: yes
+
+- name: display currently running secor process
+  shell: "ps -ef | grep secor | awk -F ' ' '{print $2, $5, $13}' | sed 's/-Dsecor_group=//g' | head -n -2"
+  become_user: "{{ analytics_user }}"
+  register: out
+  
+- debug:
+    var: out.stdout_lines

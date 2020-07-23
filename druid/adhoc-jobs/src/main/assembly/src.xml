@@ -37,7 +37,7 @@
             <directory>target</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
-                <include>adhoc-jobs-*.jar</include>
+                <include>*.jar</include>
             </includes>
         </fileSet>
     </fileSets>
@@ -48,4 +48,10 @@
             <filtered>true</filtered>
         </file>
     </files>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>lib</outputDirectory>
+            <useTransitiveFiltering>true</useTransitiveFiltering>
+        </dependencySet>
+    </dependencySets>
 </assembly>

@@ -1848,48 +1848,6 @@
       }
     }
   },
-  "cmu": {
-    "search": {
-      "type": "none"
-    },
-    "model": "org.ekstep.analytics.updater.ContentModelUpdater",
-    "modelParams": {
-      "date": "$(date '+%Y-%m-%d')",
-      "contentTypes": {
-        "Content": [
-          "Resource",
-          "Collection",
-          "TextBook",
-          "LessonPlan",
-          "Course",
-          "Template",
-          "Asset",
-          "Plugin",
-          "LessonPlanUnit",
-          "CourseUnit",
-          "TextBookUnit"
-        ]
-      }
-    },
-    "output": [
-      {
-        "to": "console",
-        "params": {
-          "printEvent": false
-        }
-      },
-      {
-        "to": "kafka",
-        "params": {
-          "brokerList": "{{ brokerlist }}",
-          "topic": "{{ learning_topic }}"
-        }
-      }
-    ],
-    "parallelization": 10,
-    "appName": "Content Model Updater",
-    "deviceMapping": false
-  },
   "wfs": {
     "search": {
       "type": "azure",
@@ -1904,14 +1862,14 @@
     },
     "filters": [
       {
-        "name": "eid",
-        "operator": "NIN",
-        "value": ["JOB_START","JOB_END"]
-      }
+        "name": "actor",
+        "operator": "ISNOTNULL"
+      }  
     ],
     "model": "org.ekstep.analytics.model.WorkflowSummary",
     "modelParams": {
-      "apiVersion": "v2"
+      "apiVersion": "v2",
+      "parallelization": 32
     },
     "output": [
       {
@@ -1929,7 +1887,7 @@
         }
       }
     ],
-    "parallelization": 8,
+    "parallelization": 32,
     "appName": "Workflow Summarizer",
     "deviceMapping": true
   },
@@ -2068,29 +2026,6 @@
     "appName": "Device Profile Updater",
     "deviceMapping": false
   },
-  "portal-metrics": {
-    "search": {
-      "type": "none"
-    },
-    "model": "org.ekstep.analytics.updater.UpdatePortalMetrics",
-    "modelParams": {
-      "bucket": "portal-metrics",
-      "key": "diksha-aggregate-metrics.json",
-      "dispatch": true,
-      "public":true
-    },
-    "output": [
-      {
-        "to": "console",
-        "params": {
-          "printEvent": false
-        }
-      }
-    ],
-    "parallelization": 8,
-    "appName": "PortalMetricsUpdater",
-    "deviceMapping": false
-  },
   "workflow-usage-metrics": {
     "search": {
       "type": "azure",
@@ -2115,109 +2050,6 @@
     ],
     "parallelization": 10,
     "appName": "Workflow Usage Metrics Updater",
-    "deviceMapping": false
-  },
-  "dialcode-usage-summary": {
-    "search": {
-      "type": "azure",
-      "queries": [
-        {
-          "bucket": "{{ bucket }}",
-          "prefix": "unique/",
-          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
-          "delta": 0
-        }
-      ]
-    },
-    "model": "org.ekstep.analytics.model.DialcodeUsageSummaryModel",
-    "modelParams": {},
-    "output": [
-      {
-        "to": "console",
-        "params": {
-          "printEvent": false
-        }
-      },
-      {
-        "to": "azure",
-        "params": {
-          "bucket": "{{ bucket }}",
-          "key": "{{ job_manager_tmp_dir }}/dialus/$(date --date yesterday '+%Y-%m-%d')"
-        }
-      },
-      {
-        "to": "kafka",
-        "params": {
-          "brokerList": "{{ brokerlist }}",
-          "topic": "{{ topic }}"
-        }
-      }
-    ],
-    "parallelization": 8,
-    "appName": "Dialcode Usage Summarizer",
-    "deviceMapping": false
-  },
-  "dialcode-usage-updater": {
-    "search": {
-      "type": "azure",
-      "queries": [
-        {
-          "bucket": "{{ bucket }}",
-          "prefix": "{{ job_manager_tmp_dir }}/dialus/",
-          "endDate": "$(date --date yesterday '+%Y-%m-%d')",
-          "delta": 0,
-          "folder": "true"
-        }
-      ]
-    },
-    "model": "org.ekstep.analytics.updater.UpdateDialcodeUsageDB",
-    "modelParams": {},
-    "output": [
-      {
-        "to": "console",
-        "params": {
-          "printEvent": false
-        }
-      },
-      {
-        "to": "kafka",
-        "params": {
-          "brokerList": "{{ brokerlist }}",
-          "topic": "{{ learning_topic }}"
-        }
-      }
-    ],
-    "parallelization": 8,
-    "appName": "Dialcode Usage Updater",
-    "deviceMapping": false
-  },
-  "etb-coverage-summary": {
-    "search": {
-      "type": "none"
-    },
-    "model": "org.ekstep.analytics.model.ETBCoverageSummaryModel",
-    "modelParams": {
-      "fromDate": "$(date --date yesterday '+%Y-%m-%d')",
-      "toDate": "$(date --date yesterday '+%Y-%m-%d')",
-      "sparkCassandraConnectionHost": "{{groups['lp-cassandra'][0]}}"
-    },
-    "output": [
-      {
-        "to": "console",
-        "params": {
-          "printEvent": false
-        }
-      },
-      {
-        "to": "kafka",
-        "params": {
-          "brokerList": "{{ brokerlist }}",
-          "topic": "{{ learning_topic }}"
-        }
-      }
-    ],
-    "parallelization": 8,
-    "appName": "ETB Coverage Model",
     "deviceMapping": false
   },
   "video-streaming": {
@@ -2246,6 +2078,47 @@
     },
     "model": "org.ekstep.analytics.updater.UpdateCourseMetrics",
     "modelParams": {
+        "druidConfig": {
+          "queryType": "groupBy",
+          "dataSource": "content-model-snapshot",
+          "intervals": "1901-01-01T00:00:00+00:00/2101-01-01T00:00:00+00:00",
+          "granularity": "all",
+          "aggregations": [
+            {
+              "name": "count",
+              "type": "count",
+              "fieldName": "count"
+            }
+          ],
+          "dimensions": [
+            {
+              "fieldName": "identifier",
+              "aliasName": "identifier"
+            },
+            {
+              "fieldName": "channel",
+              "aliasName": "channel"
+            }
+          ],
+          "filters": [
+            {
+              "type": "equals",
+              "dimension": "contentType",
+              "value": "Course"
+            },
+            {
+              "type": "isnotnull",
+              "dimension": "identifier",
+              "value": ""
+            },
+            {
+              "type": "isnotnull",
+              "dimension": "channel",
+              "value": ""
+            }
+          ],
+          "descending": "false"
+        },
       "fromDate": "$(date --date yesterday '+%Y-%m-%d')",
       "toDate": "$(date --date yesterday '+%Y-%m-%d')",
       "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
@@ -2261,6 +2134,112 @@
     ],
     "parallelization": 8,
     "appName": "Course Dashboard Metrics",
+    "deviceMapping": false
+  },
+  "assessment-dashboard-metrics": {
+    "search": {
+      "type": "none"
+    },
+    "model": "org.sunbird.analytics.job.report.AssessmentMetricsJob",
+    "modelParams": {
+        "druidConfig": {
+          "queryType": "groupBy",
+          "dataSource": "content-model-snapshot",
+          "intervals": "1901-01-01T00:00:00+00:00/2101-01-01T00:00:00+00:00",
+          "granularity": "all",
+          "aggregations": [
+            {
+              "name": "count",
+              "type": "count",
+              "fieldName": "count"
+            }
+          ],
+          "dimensions": [
+            {
+              "fieldName": "identifier",
+              "aliasName": "identifier"
+            },
+            {
+              "fieldName": "channel",
+              "aliasName": "channel"
+            }
+          ],
+          "filters": [
+            {
+              "type": "equals",
+              "dimension": "contentType",
+              "value": "Course"
+            },
+            {
+              "type": "isnotnull",
+              "dimension": "identifier",
+              "value": ""
+            },
+            {
+              "type": "isnotnull",
+              "dimension": "channel",
+              "value": ""
+            }
+          ],
+          "descending": "false"
+        },
+      "fromDate": "$(date --date yesterday '+%Y-%m-%d')",
+      "toDate": "$(date --date yesterday '+%Y-%m-%d')",
+      "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
+      "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Assessment Dashboard Metrics",
+    "deviceMapping": false
+  },
+  "admin-user-reports": {
+    "search": {
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.job.report.StateAdminReportJob",
+    "modelParams": {
+      "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
+      "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Admin User Reports",
+    "deviceMapping": false
+  },
+  "admin-geo-reports": {
+    "search": {
+      "type": "none"
+    },
+    "model": "org.ekstep.analytics.job.report.StateAdminGeoReportJob",
+    "modelParams": {
+      "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
+      "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}"
+    },
+    "output": [
+      {
+        "to": "console",
+        "params": {
+          "printEvent": false
+        }
+      }
+    ],
+    "parallelization": 8,
+    "appName": "Admin Geo Reports",
     "deviceMapping": false
   },
   "content-rating-updater": {
@@ -2282,30 +2261,6 @@
     ],
     "parallelization": 8,
     "appName": "Content Rating Updater",
-    "deviceMapping": false
-  },
-  "daily-metrics-consumption-reports": {
-    "search": {
-      "type": "none"
-    },
-    "model": "org.ekstep.analytics.updater.DailyConsumptionReportModel",
-    "modelParams": {
-      "adhoc_scripts_dir": "/home/analytics/telemetryreports/scripts",
-      "adhoc_scripts_output_dir": "/mount/portal_data",
-      "adhoc_scripts_virtualenv_dir": "/mount/venv",
-      "derived_summary_dir": "{{ job_manager_tmp_dir }}/wfs",
-      "druid_broker_url": "http://{{druid_broker_host}}:8082/"
-    },
-    "output": [
-      {
-        "to": "console",
-        "params": {
-          "printEvent": false
-        }
-      }
-    ],
-    "parallelization": 8,
-    "appName": "Daily metrics consumption reports",
     "deviceMapping": false
   },
   "monitor-job-summ": {
@@ -2332,11 +2287,6 @@
           "model": "UpdateDeviceProfileDB",
           "category": "consumption",
           "input_dependency": "DeviceSummaryModel"
-        },
-        {
-          "model": "UpdateContentModel",
-          "category": "consumption",
-          "input_dependency": "None"
         },
         {
           "model": "DataExhaustJob",
@@ -2369,21 +2319,6 @@
           "input_dependency": "None"
         },
         {
-          "model": "DialcodeUsageSummaryModel",
-          "category": "consumption",
-          "input_dependency": "None"
-        },
-        {
-          "model": "ETBCoverageSummaryModel",
-          "category": "consumption",
-          "input_dependency": "None"
-        },
-        {
-          "model": "UpdateDialcodeUsageDB",
-          "category": "consumption",
-          "input_dependency": "DialcodeUsageSummaryModel"
-        },
-        {
           "model": "CourseMetricsJob",
           "category": "consumption",
           "input_dependency": "None"
@@ -2394,12 +2329,52 @@
           "input_dependency": "None"
         },
         {
-          "model": "DailyConsumptionReportModel",
+          "model": "DruidQueryProcessingModel",
           "category": "consumption",
-          "input_dependency": "WorkFlowSummaryModel"
+          "input_dependency": "None"
         },
         {
-          "model": "AuditComputationModel",
+          "model": "DistrictMonthlyJob",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "DesktopConsumptionDailyMetricsJob",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "DistrictWeeklyJob",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "ConsumptionDailyMetricsJob",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "MetricsAuditJob",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "AssessmentMetricsJob",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "StateAdminReportJob",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "StateAdminGeoReportJob",
+          "category": "consumption",
+          "input_dependency": "None"
+        },
+        {
+          "model": "CourseEnrollmentJob",
           "category": "consumption",
           "input_dependency": "None"
         }
@@ -2425,14 +2400,14 @@
   },
   "experiment": {
     "search": {
-     "type": "none"
+      "type": "none"
     },
     "model": "org.ekstep.analytics.model.ExperimentDefinitionModel",
     "modelParams": {
       "sparkElasticsearchConnectionHost": "{{ lp_composite_search_host }}"
-     },
-      "output": [
-     {
+    },
+    "output": [
+      {
         "to": "elasticsearch",
         "params": {
           "index": "experiment"
@@ -2443,61 +2418,529 @@
     "appName": "Experiment-Definition",
     "deviceMapping": false
   },
-  "pipeline-failed-events-audit": {
-    "search": {
-      "type": "none"
-    },
-    "model": "org.ekstep.analytics.model.AuditComputationModel",
-    "modelParams": {
-      "startDate": "$(date --date yesterday '+%Y-%m-%d')",
-      "endDate": "$(date --date yesterday '+%Y-%m-%d')",
-      "auditRules": "[{\"name\":\"PipelineFailedEventsAudit\",\"description\":\"Pipeline Failed events Audit\",\"threshold\":20,\"model\":\"org.ekstep.analytics.audit.PipelineFailedEventsDailyAudit\",\"priority\":1,\"search\":[{\"type\":\"azure\",\"queries\":[{\"bucket\":\"{{ bucket }}\",\"prefix\":\"failed/\",\"endDate\":\"$(date --date yesterday '+%Y-%m-%d')\",\"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\",\"delta\":0}]}]}]"
-    },
-    "output": [
-      {
-        "to": "console",
-        "params": {
-          "printEvent": false
-        }
-      }
-    ]
+  "etb-metrics": {
+  	"search": {
+  		"type": "none"
+  	},
+  	"model": "org.ekstep.analytics.model.report.ETBMetricsJob",
+  	"modelParams": {
+  		"reportConfig": {
+  			"id": "etb_metrics",
+  			"metrics": [],
+  			"labels": {
+  				"date": "Date",
+  				"identifier": "TextBook ID",
+  				"name": "TextBook Name",
+  				"medium": "Medium",
+  				"gradeLevel": "Grade",
+  				"subject": "Subject",
+  				"createdOn": "Created On",
+  				"lastUpdatedOn": "Last Updated On",
+  				"totalQRCodes": "Total number of QR codes",
+  				"contentLinkedQR": "Number of QR codes with atleast 1 linked content",
+  				"withoutContentQR": "Number of QR codes with no linked content",
+  				"withoutContentT1": "Term 1 QR Codes with no linked content",
+  				"withoutContentT2": "Term 2 QR Codes with no linked content",
+  				"status": "Status",
+  				"totalContentLinked": "Total content linked",
+  				"totalQRLinked": "Total QR codes linked to content",
+  				"totalQRNotLinked": "Total number of QR codes with no linked content",
+  				"leafNodesCount": "Total number of leaf nodes",
+  				"leafNodeUnlinked": "Number of leaf nodes with no content",
+  				"l1Name": "Level 1 Name",
+  				"l2Name": "Level 2 Name",
+  				"l3Name": "Level 3 Name",
+  				"l4Name": "Level 4 Name",
+  				"l5Name": "Level 5 Name",
+  				"dialcode": "QR Code",
+  				"sum(scans)": "Total Scans",
+  				"noOfContent": "Number of contents",
+  				"nodeType": "Type of Node",
+  				"term": "Term"
+  			},
+  			"output": [{
+  				"type": "csv",
+  				"dims": ["identifier", "channel", "name"],
+  				"fileParameters": ["id", "dims"]
+  			}],
+  			"mergeConfig": {
+  				"frequency": "WEEK",
+  				"basePath": "{{ spark_output_temp_dir }}",
+  				"rollup": 0,
+  				"reportPath": "dialcode_counts.csv",
+          "postContainer":"{{ reports_container }}"
+  			}
+  		},
+  		"dialcodeReportConfig": {
+  				"id": "etb_metrics",
+  				"metrics": [],
+  				"labels": {},
+  				"output": [{
+  					"type": "csv",
+  					"dims": ["identifier", "channel", "name"],
+  					"fileParameters": ["id", "dims"]
+  				}],
+  				"mergeConfig": {
+  					"frequency": "WEEK",
+  					"basePath": "{{ spark_output_temp_dir }}",
+  					"rollup": 1,
+  					"reportPath": "dialcode_counts.csv",
+  					"rollupAge": "ACADEMIC_YEAR",
+  					"rollupCol": "Date",
+  					"rollupRange": 10,
+            "postContainer":"{{ reports_container }}"
+  				}
+  		},
+  		"etbFileConfig": {
+  			"bucket": "{{ reports_container }}",
+  			"file": "dialcode_scans/dialcode_counts.csv"
+  		},
+  		"druidConfig": {"queryType": "groupBy","dataSource": "content-model-snapshot","intervals": "1901-01-01T00:00:00+00:00/2101-01-01T00:00:00+00:00","aggregations": [{"name": "count","type": "count"}],"dimensions": [{"fieldName": "channel","aliasName": "channel"},{"fieldName": "identifier","aliasName": "identifier","type": "Extraction","outputType": "STRING","extractionFn": [{"type": "javascript","fn": "function(str){return str == null ? null: str.split(\".\")[0]}"}]},{"fieldName": "name","aliasName": "name"},{"fieldName": "createdFor","aliasName": "createdFor"},{"fieldName": "createdOn","aliasName": "createdOn"},{"fieldName": "lastUpdatedOn","aliasName": "lastUpdatedOn"},{"fieldName": "board","aliasName": "board"},{"fieldName": "medium","aliasName": "medium"},{"fieldName": "gradeLevel","aliasName": "gradeLevel"},{"fieldName": "subject","aliasName": "subject"},{"fieldName": "status","aliasName": "status"}],"filters": [{"type": "equals","dimension": "contentType","value": "TextBook"},{"type": "in","dimension": "status","values": ["Live","Draft","Review"]}],"postAggregation": [],"descending": "false","limitSpec": {"type": "default","limit": 1000000,"columns": [{"dimension": "count","direction": "descending"}]}},
+  		"tenantConfig": {
+  			"tenantId": "",
+  			"slugName": ""
+  		},
+  		"store": "azure",
+  		"format": "csv",
+  		"key": "druid-reports/",
+  		"filePath": "druid-reports/",
+  		"container": "{{ bucket }}",
+  		"folderPrefix": ["slug", "reportName"]
+  	},
+  	"output": [{
+  		"to": "console",
+  		"params": {
+  			"printEvent": false
+  		}
+  	}],
+  	"parallelization": 8,
+  	"appName": "ETB Metrics Model",
+  	"deviceMapping": false
   },
-  "pipeline-druid-events-audit": {
-       "search": {
-         "type": "none"
-       },
-       "model": "org.ekstep.analytics.model.AuditComputationModel",
-       "modelParams": {
-         "startDate": "$(date --date yesterday '+%Y-%m-%d')",
-         "endDate": "$(date --date yesterday '+%Y-%m-%d')",
-         "auditRules": "[{\"name\": \"DruidVsPipelineEventsDailyAudit\", \"description\": \"Druid Vs Pipeline events Audit\", \"threshold\": 20, \"model\": \"org.ekstep.analytics.audit.DruidVsPipelineEventsDailyAudit\", \"priority\": 1,\n\"params\": { \"syncMinusDays\": 2, \"syncPlusDays\": 1 }, \"startDate\": \"$(date --date yesterday '+%Y-%m-%d')\", \"endDate\": \"$(date --date yesterday '+%Y-%m-%d')\",\n\"search\": [{\"type\": \"azure\", \"queries\": [{\"bucket\":\"{{ bucket }}\",\"prefix\":\"telemetry-denormalized/raw/\", \"endDate\":\"$(date --date yesterday '+%Y-%m-%d')\", \"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\", \"delta\":0}]},\n{\"type\": \"azure\", \"queries\": [{\"bucket\":\"{{ bucket }}\",\"prefix\":\"telemetry-denormalized/summary/\", \"endDate\":\"$(date --date yesterday '+%Y-%m-%d')\", \"startDate\":\"$(date --date yesterday '+%Y-%m-%d')\", \"delta\":0}]}] }]"
-       },
-       "output": [
-         {
-           "to": "console",
-           "params": {
-             "printEvent": false
-           }
-         }
-       ]
-     },
-  "pipeline-audit": {
+  "course-enrollment-report":{
+    "search": {
+        "type": "none"
+      },
+      "model": "org.ekstep.analytics.model.report.CourseEnrollmentJob",
+      "modelParams": {
+        "reportConfig": {
+          "id": "tpd_metrics",
+          "metrics" : [],
+          "labels": {
+            "completionCount": "Completion Count",
+            "status": "Status",
+            "enrollmentCount": "Enrollment Count",
+            "courseName": "Course Name",
+            "batchName": "Batch Name"
+          },
+          "output": [{
+            "type": "csv",
+            "dims": []
+          }]
+        },
+        "esConfig": {
+        "request": {
+                "filters":{
+                    "objectType": ["Content"],
+                    "contentType": ["Course"],
+                    "identifier": [],
+                    "status": ["Live"]
+                },
+                "limit": 10000
+            }
+        },
+        "store": "azure",
+        "format":"csv",
+        "key": "druid-reports/",
+        "filePath": "druid-reports/",
+        "container": "{{ bucket }}",
+        "folderPrefix": ["slug", "reportName"],
+        "sparkCassandraConnectionHost":"{{core_cassandra_host}}",
+        "sparkElasticsearchConnectionHost":"{{sunbird_es_host}}"
+    },
+    "output": [{
+      "to": "console",
+      "params": {
+        "printEvent": false
+      }
+    }],
+    "parallelization": 8,
+    "appName": "TPD Course Enrollment Metrics Model",
+    "deviceMapping": false
+  },
+  "course-consumption-report":{
     "search": {
       "type": "none"
     },
-    "model": "org.ekstep.analytics.model.AuditComputationModel",
+    "model": "org.ekstep.analytics.model.report.CourseConsumptionJob",
     "modelParams": {
-      "startDate": "$(date --date yesterday '+%Y-%m-%d')",
-      "endDate": "$(date --date yesterday '+%Y-%m-%d')",
-      "auditRules": "[{\"name\": \"PipelineAudit\", \"description\": \"PipelineAudit\", \"threshold\": 2.0, \"model\": \"org.ekstep.analytics.audit.PipelineDailyAudit\", \"priority\": 1, \"startDate\": \"$(date --date yesterday '+%Y-%m-%d')\", \"endDate\": \"$(date --date yesterday '+%Y-%m-%d')\"}]"
-    },
-    "output": [
-      {
-        "to": "console",
-        "params": {
-          "printEvent": false
+      "esConfig": {
+        "request": {
+          "filters": {
+            "objectType": ["Content"],
+            "contentType": ["Course"],
+            "identifier": [],
+            "status": ["Live"]
+          }
         }
+      },
+      "reportConfig": {
+        "id": "tpd_metrics",
+        "labels": {
+          "date": "Date",
+          "status": "Batch Status",
+          "timespent": "Timespent in mins",
+          "courseName": "Course Name",
+          "batchName": "Batch Name"
+        },
+        "dateRange": {
+          "staticInterval": "LastDay",
+          "granularity": "all"
+        },
+        "metrics": [{
+          "metric": "totalCoursePlays",
+          "label": "Total Course Plays (in mins) ",
+          "druidQuery": {
+            "queryType": "groupBy",
+            "dataSource": "summary-events",
+            "intervals": "LastDay",
+            "aggregations": [{
+              "name": "sum__edata_time_spent",
+              "type": "doubleSum",
+              "fieldName": "edata_time_spent"
+            }],
+            "dimensions": [{
+              "fieldName": "object_rollup_l1",
+              "aliasName": "courseId"
+            }, {
+              "fieldName": "uid",
+              "aliasName": "userId"
+            }, {
+              "fieldName": "context_cdata_id",
+              "aliasName": "batchId"
+            }],
+            "filters": [{
+              "type": "equals",
+              "dimension": "eid",
+              "value": "ME_WORKFLOW_SUMMARY"
+            }, {
+              "type": "in",
+              "dimension": "dimensions_pdata_id",
+              "values": ["{{ producer_env }}.app", "{{ producer_env }}.portal"]
+            }, {
+              "type": "equals",
+              "dimension": "dimensions_type",
+              "value": "content"
+            }, {
+              "type": "equals",
+              "dimension": "dimensions_mode",
+              "value": "play"
+            }, {
+              "type": "equals",
+              "dimension": "context_cdata_type",
+              "value": "batch"
+            }],
+            "postAggregation": [{
+              "type": "arithmetic",
+              "name": "timespent",
+              "fields": {
+                "leftField": "sum__edata_time_spent",
+                "rightField": 60,
+                "rightFieldType": "constant"
+              },
+              "fn": "/"
+            }],
+            "descending": "false"
+          }
+        }],
+        "output": [{
+          "type": "csv",
+          "metrics": ["timespent"],
+          "dims": []
+        }],
+        "queryType": "groupBy"
+      },
+      "store": "azure",
+      "format":"csv",
+      "key": "druid-reports/",
+      "filePath": "druid-reports/",
+      "container": "{{ bucket }}",
+      "folderPrefix": ["slug", "reportName"],
+      "sparkCassandraConnectionHost":"{{core_cassandra_host}}",
+      "sparkElasticsearchConnectionHost":"{{sunbird_es_host}}"
+    },
+    "output": [{
+      "to": "console",
+      "params": {
+        "printEvent": false
       }
-    ]
+    }],
+    "parallelization": 8,
+    "appName": "TPD Course Consumption Metrics Model",
+    "deviceMapping": false
+  },
+  "textbook-progress-report": {
+      "search": {
+        "type": "none"
+      },
+      "model": "org.ekstep.analytics.model.report.TextBookProgressModel",
+      "modelParams": {
+        "reportConfig": {
+          "id": "content_progress_metrics",
+          "metrics": [],
+          "labels": {
+            "board": "Board",
+            "medium": "Medium",
+            "gradeLevel": "Grade",
+            "subject": "Subject",
+            "resourceType": "Content Type",
+            "totalContent": "Total Contents",
+            "live": "Live",
+            "review": "Review",
+            "draft": "Draft",
+            "unlisted": "Limited Sharing",
+            "application_ecml": "Created on Diksha",
+            "video_youtube": "YouTube Content",
+            "video_mp4": "Uploaded Videos",
+            "application_pdf": "Text Content",
+            "application_html": "Uploaded Interactive Content",
+            "identifier": "Content ID",
+            "creator": "Created By",
+            "createdOn": "Creation Date",
+            "lastPublishDate": "Last Publish Date",
+            "status": "Status",
+            "pkgVersion": "Number of times Published",
+            "lastPublishedOn": "Pending in current status since",
+            "pendingInCurrentStatus": "Pending in current status since"
+          },
+          "output": [{
+              "type": "csv",
+              "dims": []
+            }],
+          "mergeConfig": {
+          "frequency": "WEEK",
+          "basePath": "{{ spark_output_temp_dir }}",
+          "rollup": 0,
+          "reportPath": "content_progress_metrics.csv",
+          "postContainer":"{{ reports_container }}"
+        }
+        },
+        "filter": {
+          "tenantId": "",
+          "slugName": ""
+        },
+        "store": "azure",
+        "format": "csv",
+        "key": "druid-reports/",
+        "filePath": "druid-reports/",
+        "container": "{{ bucket }}",
+        "folderPrefix": [
+          "slug",
+          "reportName"
+        ],
+        "sparkCassandraConnectionHost": "{{core_cassandra_host}}"
+      },
+      "output": [
+        {
+          "to": "console",
+          "params": {
+            "printEvent": false
+          }
+        }
+      ],
+      "parallelization": 8,
+      "appName": "Textbook Progress Metrics Model",
+      "deviceMapping": false
+    },
+  "audit-metrics-report": {
+      "search": {
+        "type": "none"
+      },
+      "model": "org.ekstep.analytics.model.MetricsAuditJob",
+      "modelParams": {
+        "auditConfig": [
+          {
+            "name": "denorm",
+            "search": {
+              "type": "azure",
+              "queries": [
+                {
+                  "bucket": "{{ bucket }}",
+                  "prefix": "telemetry-denormalized/raw/",
+                  "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+                  "endDate": "$(date --date yesterday '+%Y-%m-%d')"
+                }
+              ]
+            },
+            "filters": [
+              {
+                "name": "flags.user_data_retrieved",
+                "operator": "EQ",
+                "value": true
+              },
+              {
+                "name": "flags.content_data_retrieved",
+                "operator": "EQ",
+                "value": true
+              },
+              {
+                "name": "flags.device_data_retrieved",
+                "operator": "EQ",
+                "value": true
+              },
+              {
+                "name": "flags.dialcode_data_retrieved",
+                "operator": "EQ",
+                "value": true
+              },
+              {
+                "name": "flags.collection_data_retrieved",
+                "operator": "EQ",
+                "value": true
+              },
+              {
+                "name": "flags.derived_location_retrieved",
+                "operator": "EQ",
+                "value": true
+              }
+            ]
+          },
+          {
+            "name": "failed",
+            "search": {
+              "type": "azure",
+              "queries": [
+                {
+                  "bucket": "{{ bucket }}",
+                  "prefix": "failed/",
+                  "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+                  "endDate": "$(date --date yesterday '+%Y-%m-%d')"
+                }
+              ]
+            }
+          },
+          {
+            "name": "unique",
+            "search": {
+              "type": "azure",
+              "queries": [
+                {
+                  "bucket": "{{ bucket }}",
+                  "prefix": "unique/",
+                  "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+                  "endDate": "$(date --date yesterday '+%Y-%m-%d')"
+                }
+              ]
+            }
+          },
+          {
+            "name": "raw",
+            "search": {
+              "type": "azure",
+              "queries": [
+                {
+                  "bucket": "{{ bucket }}",
+                  "prefix": "raw/",
+                  "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+                  "endDate": "$(date --date yesterday '+%Y-%m-%d')"
+                }
+              ]
+            }
+          },
+          {
+            "name": "channel-raw",
+            "search": {
+              "type": "azure",
+              "queries": [
+                {
+                  "folder": true,
+                  "bucket": "{{ bucket }}",
+                  "prefix": "channel/*/raw/",
+                  "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+                  "endDate": "$(date --date yesterday '+%Y-%m-%d')*.json.gz"
+                }
+              ]
+            }
+          },
+          {
+            "name": "channel-summary",
+            "search": {
+              "type": "azure",
+              "queries": [
+                {
+                  "folder": true,
+                  "bucket": "{{ bucket }}",
+                  "prefix": "channel/*/summary/",
+                  "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+                  "endDate": "$(date --date yesterday '+%Y-%m-%d')*.json.gz"
+                }
+              ]
+            }
+          },
+          {
+            "name": "derived",
+            "search": {
+              "type": "azure",
+              "queries": [
+                {
+                  "bucket": "{{ bucket }}",
+                  "prefix": "derived/wfs/",
+                  "startDate": "$(date --date yesterday '+%Y-%m-%d')",
+                  "endDate": "$(date --date yesterday '+%Y-%m-%d')"
+                }
+              ]
+            }
+          },
+          {
+            "name": "telemetry-count",
+            "search": {
+              "type": "druid",
+              "druidQuery": {
+                "queryType": "timeSeries",
+                "dataSource": "telemetry-events",
+                "intervals": "LastDay",
+                "aggregations": [
+                  {
+                    "name": "total_count",
+                    "type": "count",
+                    "fieldName": "count"
+                  }
+                ],
+                "descending": "false"
+              }
+            }
+          },
+          {
+            "name": "summary-count",
+            "search": {
+              "type": "druid",
+              "druidQuery": {
+                "queryType": "timeSeries",
+                "dataSource": "summary-events",
+                "intervals": "LastDay",
+                "aggregations": [
+                  {
+                    "name": "total_count",
+                    "type": "count",
+                    "fieldName": "count"
+                  }
+                ],
+                "descending": "false"
+              }
+            }
+          }
+        ]
+      },
+      "output": [
+        {
+          "to": "kafka",
+          "params": {
+            "brokerList": "{{ brokerlist }}",
+            "topic": "{{ metrics_topic }}"
+          }
+        }
+      ],
+      "parallelization": 8,
+      "appName": "Metrics Audit"
   }
 }

@@ -5,10 +5,11 @@ zookeeper_group: "{{ groups['druid-zookeeper'] }}"
 
 druid_user: druid
 druid_directory: "/data"
-druid_version: "0.15.0-incubating"
-druid_url: "http://mirrors.estointernet.in/apache/incubator/druid/0.15.0-incubating/apache-druid-0.15.0-incubating-bin.tar.gz"
-druid_path: "{{ druid_directory }}/apache-druid-{{ druid_version }}/"
+druid_version: "0.18.0"
+druid_url: "https://downloads.apache.org/druid/0.18.0/apache-druid-0.18.0-bin.tar.gz"
 druid_folder: "{{ druid_directory }}/apache-druid-{{ druid_version }}"
+druid_symlink: "{{ druid_directory }}/druid"
+druid_path: "{{ druid_symlink }}/"
 druid_checksum: "807581d54fa4c5a90eec2a230e2a7fc4c6daf18eb8136009bf36a775d793d6f6"
 
 #Common Varibles
@@ -21,7 +22,8 @@ druid_postgres_user: "druid@{{ postgres.db_url }}"
 druid_postgres_pass: "{{ dp_vault_druid_postgress_pass }}"
 
 druid_default_tmp_dir: "/var/tmp"
-druid_gc_logdir: "/var/gclog"
+druid_gc_logdir: "/var/log/druid/crash_logs"
+druid_crash_logdir: "/var/log/druid/crash_logs"
 druid_log_dir: "/var/log/druid/"
 
 #Writing request query logs to file 
@@ -30,8 +32,8 @@ druid_request_logging_type: "file"
 #azure config in group vars
 
 druid_azure_container_name: "telemetry-data-store"
-azure_account_name: "{{ dp_azure_account_name }}"
-azure_storage_secret: "{{ dp_vault_azure_account_key }}"
+azure_account_name: "{{sunbird_private_storage_account_name}}"
+azure_storage_secret: "{{sunbird_private_storage_account_key}}"
 azure_container: "{{ druid_azure_container_name }}"
 
 #Logging the indexing logs to azure
@@ -47,7 +49,6 @@ druid_extensions_list : '"druid-azure-extensions", "graphite-emitter", "postgres
 
 druid_community_extensions:
   - graphite-emitter
-  - druid-azure-extensions
 
 # End of druid_extensions
 
@@ -77,7 +78,7 @@ druid_coordinator_heap_size: 128m
 druid_coordinator_startDelay: PT30S
 druid_coordinator_period: PT30S
 druid_coordinator_tmp_dir: "{{ druid_default_tmp_dir }}"
-druid_coordinator_gc_logfile: "{{ druid_gc_logdir }}/gc.log"
+druid_coordinator_gc_logfile: "{{ druid_crash_logdir }}/gc.log"
 
 #Overlord Configurations
 druid_overlord_port: 8090
@@ -85,16 +86,16 @@ druid_overlord_service : druid/overlord
 
 druid_overlord_heap_size: 256m
 druid_overlord_tmp_dir: "{{ druid_default_tmp_dir }}"
-druid_overlord_gc_logfile: "{{ druid_gc_logdir }}/gc_overlord.log"
+druid_overlord_gc_logfile: "{{ druid_crash_logdir }}/gc_overlord.log"
 
-# Broker Configurations
+# Configurations Broker
 druid_broker_port: 8082
 druid_broker_service: druid/broker
 
 druid_broker_heap_size: 128m
 druid_broker_max_direct_size: 800m
 druid_broker_tmp_dir: /var/tmp
-druid_broker_gc_logdir: "{{ druid_gc_logdir }}/gc.log"
+druid_broker_gc_logdir: "{{ druid_crash_logdir }}/gc.log"
 
 druid_broker_http_numConnections: 5
 druid_broker_server_http_numThread: 25
@@ -108,16 +109,22 @@ druid_broker_processing_threads: 2
 druid_historical_port: 8083
 druid_historical_service: druid/historical
 
-druid_historical_heap_size: 128m
+druid_historical_heap_size: 1048m
 druid_historical_max_direct_size: 800m
 druid_historical_tmp_dir: "{{ druid_default_tmp_dir }}"
-druid_historical_gc_logfile: "{{ druid_gc_logdir }}/gc_historical.log"
+druid_historical_gc_logfile: "{{ druid_crash_logdir }}/historical.gc.log"
+druid_historical_heap_dump_file: "{{ druid_crash_logdir }}/historical.hprof"
+druid_broker_heap_dump_file : "{{ druid_crash_logdir }}/broker.hprof"
+druid_coordinator_heap_dump_file : "{{ druid_crash_logdir }}/coordinator.hprof"
+druid_overlord_heap_dump_file : "{{ druid_crash_logdir }}/overlord.hprof"
+druid_mm_heap_dump_file : "{{ druid_crash_logdir }}/middlemanager.hprof"
 
 druid_historical_http_numConnections: 5
 druid_historical_server_http_numThread: 25
 
 druid_historical_processing_bufferBytes: 134217728
 druid_historical_processing_threads: 2
+druid_historical_processing_num_merge_buffers: 2
 
 
 druid_historical_monitoring_monitors: '"org.apache.druid.server.metrics.HistoricalMetricsMonitor","com.metamx.metrics.JvmMonitor"'
@@ -138,10 +145,10 @@ druid_middlemanager_service: druid/middlemanager
 
 druid_middlemanager_heap_size: 128m
 druid_middlemanager_tmp_dir: "{{ druid_default_tmp_dir }}"
-druid_middlemanager_gc_logdir: "{{ druid_gc_logdir }}/gc.log"
+druid_middlemanager_gc_logdir: "{{ druid_crash_logdir }}/gc.log"
 
 druid_middlemanager_worker_cap: 4
-druid_mm_java_opts_array: "-server -Xmx900m -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+PrintGCDetails -XX:+PrintGCTimeStamps"
+druid_mm_java_opts_array: "-server -Xmx900m -XX:+UseG1GC -XX:HeapDumpPath={{ druid_mm_heap_dump_file }} -XX:MaxGCPauseMillis=100 -XX:+PrintGCDetails -XX:+PrintGCTimeStamps"
 
 druid_middlemanager_peon_server_http_numThread: 25
 druid_middlemanager_peon_processing_bufferBytes: 25000000
@@ -150,3 +157,12 @@ druid_middlemanager_peon_processing_threads: 2
 
 druid_middlemanager_peon_segmentcache_path: "/var/segment_cache"
 druid_middlemanager_peon_server_maxsize: 0
+
+# Router configurations	
+
+druid_router_heap_size: 1g
+druid_router_http_numConnections: 50
+druid_router_http_readTimeout: PT5M
+druid_router_http_numMaxThreads: 100
+druid_server_http_numThreads: 100
+druid_router_managementProxy_enabled: true

@@ -15,7 +15,7 @@
             },
             {
               "type": "root",
-              "name": "syncts"
+              "name": "ets"
             },
             {
               "type": "root",
@@ -223,7 +223,7 @@
             },
             {
               "type": "long",
-              "name": "syncts"
+              "name": "ets"
             },
             {
               "type": "string",
@@ -388,7 +388,7 @@
           ]
         },
         "timestampSpec": {
-          "column": "ets",
+          "column": "syncts",
           "format": "auto"
         }
       }

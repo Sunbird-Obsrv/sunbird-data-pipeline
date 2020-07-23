@@ -7,3 +7,14 @@
        args:
         chdir: /usr/local/bin
        become: yes
+  tags: throughput_monitor
+
+- hosts: influxdb
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml']
+  tasks:
+     - command: ./consumer_lag_monitor.sh {{ influxdb }} {{ env }} "{{ SGPASS }}" {{ SGUSER }}
+       args:
+        chdir: /usr/local/bin
+       become: yes
+  tags: consumer_lag_monitor

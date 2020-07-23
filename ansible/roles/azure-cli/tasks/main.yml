@@ -1,3 +1,6 @@
+#- name: Install azure cli
+#  shell: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+#  become: yes
 - name: Add Azure apt repository
   apt_repository: repo='deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ xenial main' state=present
 

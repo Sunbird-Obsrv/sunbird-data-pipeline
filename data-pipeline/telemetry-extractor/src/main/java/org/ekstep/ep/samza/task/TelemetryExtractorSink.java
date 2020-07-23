@@ -18,6 +18,10 @@ public class TelemetryExtractorSink extends BaseSink {
 		toTopic(config.successTopic(), null, message);
 	}
 	
+	public void toAssessTopic(String message) {
+    metrics.incAssessRouteSuccessCounter();
+    toTopic(config.assessTopic(), null, message);
+  }
 	
 	public void toErrorTopic(String message) {
 		metrics.incErrorCounter();

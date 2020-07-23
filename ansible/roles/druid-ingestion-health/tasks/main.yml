@@ -1,0 +1,22 @@
+- include_vars: "{{inventory_dir}}/secrets.yml"
+
+- name : Check for the segment retry file
+  stat:
+    path: "{{ druid_home }}/segment_retry_count"
+  register: result
+  tags:
+    - segment_health
+
+- name: Create the retry file with 0 value
+  shell: echo 0 > "{{ druid_home }}/segment_retry_count"
+  when: result.stat.exists == false
+  tags:
+    - segment_health
+
+- include: segments.yml
+  tags:
+    - segment_health
+
+- include: ingestion.yml
+  tags:
+    - ingestion_health

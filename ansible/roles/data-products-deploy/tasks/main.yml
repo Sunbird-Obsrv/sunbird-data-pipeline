@@ -1,89 +1,109 @@
 ## Data products deployment ##
-- name: Copy Data Products
-  copy: src=batch-models-1.0.jar dest={{ analytics.home }}/models
+- name: Copy Core Data Products
+  copy: src={{ analytics_batch_module_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
+  tags:
+    - dataproducts
+
+- name: Unarchive Ed Data Products
+  become: yes
+  unarchive: src={{ playbook_dir}}/{{ analytics_ed_dataporducts_artifact }} dest={{ analytics.home }}/models-{{ model_version }} copy=yes group={{ analytics_group }} owner={{ analytics_user }}
+  tags:
+    - ed-dataproducts    
 
 - name: Copy Framework Library
-  copy: src=analytics-framework-1.0.jar dest={{ analytics.home }}/models
+  copy: src={{ analytics_core_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
+  tags:
+    - framework
+
+- name: Copy Scruid Library
+  copy: src={{ scruid_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
+  tags:
+    - framework  
 
 - name: Copy Job Manager
-  copy: src=job-manager-1.0-distribution.tar.gz dest={{ analytics.home }}
-
-- name: Unarchive Job Manager
-  unarchive: src={{ analytics.home }}/job-manager-1.0-distribution.tar.gz dest={{ analytics.home }} copy=no group={{ analytics_group }} owner={{ analytics_user }} creates={{ analytics.home }}/script
+  copy: src={{ analytics_job_manager_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
+  tags:
+    - dataproducts
 
 - name: Copy configuration file
-  template: src=common.conf.j2 dest={{ analytics.home }}/models/{{ env }}.conf mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  template: src=common.conf.j2 dest={{ analytics.home }}/models-{{ model_version }}/{{ env }}.conf mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  tags:
+    - dataproducts
+    - ed-dataproducts
+    - framework
 
 - name: Copy log4j2 xml file
-  template: src=log4j2.xml.j2 dest={{ analytics.home }}/models/log4j2.xml mode=755 owner={{ analytics_user }} group={{ analytics_group }}
-
-- name: Copy Python Library
-  copy: src=script.zip dest={{ analytics.home }}
-
-- name: Unarchive script
-  unarchive: src={{ analytics.home }}/script.zip dest={{ analytics.home }}/ copy=no group={{ analytics_group }} owner={{ analytics_user }} creates={{ analytics.home }}/script
-
-- name: move files
-  command: cp -r {{ analytics.home }}/script/GenieSearch  {{ analytics.home }}/scripts/
-
-- name: move files
-  command: cp -r {{ analytics.home }}/script/VidyavaniCnQ  {{ analytics.home }}/scripts/
-
-- name: move files
-  command: cp -r {{ analytics.home }}/script/vidyavaani  {{ analytics.home }}/scripts/
-
-- name: move files
-  command: cp -r {{ analytics.home }}/script/BusinessMetrics  {{ analytics.home }}/scripts/
+  template: src=log4j2.xml.j2 dest={{ analytics.home }}/models-{{ model_version }}/log4j2.xml mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  tags: [ dataproducts, framework, ed-dataproducts ]
 
 - name: Copy Scripts
   template: src={{ item }}.j2 dest={{ analytics.home }}/scripts/{{ item }}.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   with_items: "{{ analytics.scripts }}"
+  tags: [ dataproducts, framework, ed-dataproducts ]
 
 - name: Update model config
   template: src=model-config.j2 dest={{ analytics.home }}/scripts/model-config.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
+    - dataproducts
     - update-config
-
-- name: Remove file
-  file: path={{ analytics.home }}/{{ item }} state=absent
-  with_items:
-    - script
-    - script.zip
-
-- name: Replace Working directory line
-  lineinfile: dest={{ analytics.home }}/scripts/vidyavaani/resources/config.properties regexp='^working_dir=' insertafter='^#working_dir=' line='working_dir=/mnt/data/analytics/content2vec' state=present
+    - ed-dataproducts
 
 - name: Copy submit-all-jobs ruby file
   template: src=submit-all-jobs.rb.j2 dest={{ analytics.home }}/scripts/submit-all-jobs.rb mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
+    - dataproducts
     - update-config
+    - ed-dataproducts
 
 - name: Copy model-config.json file
   template: src=model-config.json.j2 dest={{ analytics.home }}/scripts/model-config.json mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
+    - dataproducts
     - update-config
+    - ed-dataproducts
 
 - name: Clean cron jobs
   command: crontab -r
   ignore_errors: yes
   tags:
+    - default-jobs
+    - spark-jobs
+    - spark1-jobs
     - clean-cronjobs
 
+- name: Create daily cron jobs for wfs
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh wfs"
+  with_dict: "{{ run_wfs_job }}"
+  tags:
+    - spark1-jobs
+
+- name: Create daily cron jobs for monitor job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh monitor-job-summ"
+  with_dict: "{{ run_monitor_job }}"
+  tags:
+    - spark1-jobs
+
 - name: Create daily cron jobs using submit-all-jobs
-  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="ruby {{ analytics.home }}/scripts/submit-all-jobs.rb"
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job='/bin/bash -lc "ruby {{ analytics.home }}/scripts/submit-all-jobs.rb"'
   with_dict: "{{ submit_jobs }}"
   tags:
+    - default-jobs
+    - spark-jobs
     - cronjobs
 
 - name: Create start-jobmanager cron jobs
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/start-jobmanager.sh"
   with_dict: "{{ start_jobmanager }}"
   tags:
+    - default-jobs
+    - spark-jobs
     - cronjobs
 
 - name: Create video-streaming cron job
   cron: name="{{env}}-video-streaming" minute=*/{{ video_stream_job_schedule }} job="{{ analytics.home }}/scripts/run-job.sh video-streaming"
   tags:
+    - default-jobs
+    - spark-jobs
     - cronjobs
 
 - name: Create course-dashboard-metrics cron job
@@ -91,20 +111,67 @@
   with_dict: "{{ run_course_metrics_job }}"
   tags:
     - cronjobs
+    - default-jobs
+    - spark1-jobs
+
+- name: Create assessment-dashboard-metrics cron job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh assessment-dashboard-metrics"
+  with_dict: "{{ run_assessment_metrics_job }}"
+  tags:
+    - cronjobs
+    - default-jobs
+    - spark-jobs
+
+- name: Create admin-user-reports cron job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh admin-user-reports"
+  with_dict: "{{ run_admin_user_reports_job }}"
+  tags:
+    - cronjobs 
+    - default-jobs
+    - spark-jobs
+    
+- name: Create admin-geo-reports cron job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh admin-geo-reports"
+  with_dict: "{{ run_admin_geo_reports_job }}"
+  tags:
+    - cronjobs
+    - default-jobs
+    - spark-jobs 
+
+- name: Create assessment-aggregator reports cron job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="/bin/bash {{ analytics.home }}/adhoc-scripts/run_exporter.sh > /home/analytics/output.log"
+  with_dict: "{{ run_assessment_aggregator_report_job }}"
+  tags:
+    - cronjobs
+    - default-jobs
+    - spark-jobs  
+
+- name: Create etb metrics cron job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} weekday={{ item.value.weekday }}  job="{{ analytics.home }}/scripts/run-job.sh etb-metrics"
+  with_dict: "{{ run_etb_metrics_weekly_job }}"
+  tags:
+    - cronjobs
+    - default-jobs
+    - spark-jobs
+
+#- name: Create district-weekly cron job
+#  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} weekday={{ item.value.weekday }}  job="{{ analytics.home }}/scripts/run-job.sh district-weekly"
+#  with_dict: "{{ run_district_weekly_job }}"
+#  tags:
+#    - cronjobs
+#    - default-jobs
+#    - ed-dataproducts
+
+#- name: Create district-monthly cron job
+#  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} month={{ item.value.month }} day={{ item.value.day }}  job="{{ analytics.home }}/scripts/run-job.sh district-monthly"
+#  with_dict: "{{ run_district_monthly_job }}"
+#  tags:
+#    - cronjobs
+#    - default-jobs
+#    - ed-dataproducts
 
 - name: Update start jobmanager
   template: src=start-jobmanager.j2 dest={{ analytics.home }}/scripts/start-jobmanager.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
     - update-jobmanager-config
-
-- name: Update user redis cache
-  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="cd {{ analytics.home }} && adhoc-jobs-1.0/scripts/RedisUserDataIndexer.sh"
-  with_dict: "{{ update_user_redis_cache }}"
-  tags:
-    - cronjobs
-
-- name: Create content-model-snapshot-druid-indexer cron job
-  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="cd {{ analytics.home }} && adhoc-jobs-1.0/scripts/DruidContentIndexer.sh"
-  with_dict: "{{ index_content_model_druid }}"
-  tags:
-    - cronjobs
+    - dataproducts

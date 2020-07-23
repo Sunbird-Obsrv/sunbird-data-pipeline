@@ -172,6 +172,36 @@
               },
               {
                 "type": "path",
+                "name": "me_totalTimeSpentInApp",
+                "expr": "$.data.me_totalTimeSpentInSec.app"
+              },
+              {
+                "type": "path",
+                "name": "me_totalTimeSpentInPortal",
+                "expr": "$.data.me_totalTimeSpentInSec.portal"
+              },
+              {
+                "type": "path",
+                "name": "me_totalTimeSpentInDesktop",
+                "expr": "$.data.me_totalTimeSpentInSec.desktop"
+              },
+              {
+                "type": "path",
+                "name": "me_totalPlaySessionCountInApp",
+                "expr": "$.data.me_totalPlaySessionCount.app"
+              },
+              {
+                "type": "path",
+                "name": "me_totalPlaySessionCountInPortal",
+                "expr": "$.data.me_totalPlaySessionCount.portal"
+              },
+              {
+                "type": "path",
+                "name": "me_totalPlaySessionCountInDesktop",
+                "expr": "$.data.me_totalPlaySessionCount.desktop"
+              },
+              {
+                "type": "path",
                 "name": "me_averageSessionsPerDevice",
                 "expr": "$.data.me_averageSessionsPerDevice"
               },
@@ -248,7 +278,7 @@
               {
                 "type": "path",
                 "name": "me_totalRatings",
-                "expr": "$.data.me_totalRatings"
+                "expr": "$.data.me_totalRatingsCount"
               },
               {
                 "type": "path",
@@ -297,8 +327,8 @@
               },
               {
                 "type": "path",
-                "name": "organization",
-                "expr": "$.data.organization"
+                "name": "organisation",
+                "expr": "$.data.organisation"
               },
               {
                 "type": "path",
@@ -522,7 +552,7 @@
               },
               {
                 "type": "string",
-                "name": "organization"
+                "name": "organisation"
               },
               {
                 "type": "string",
@@ -605,6 +635,36 @@
           "type": "doubleSum",
           "name": "me_averageRating",
           "fieldName": "me_averageRating"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalTimeSpentInPortal",
+          "fieldName": "me_totalTimeSpentInPortal"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalTimeSpentInApp",
+          "fieldName": "me_totalTimeSpentInApp"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalTimeSpentInDesktop",
+          "fieldName": "me_totalTimeSpentInDesktop"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalPlaySessionCountInApp",
+          "fieldName": "me_totalPlaySessionCountInApp"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalPlaySessionCountInDesktop",
+          "fieldName": "me_totalPlaySessionCountInDesktop"
+        },
+        {
+          "type": "longSum",
+          "name": "me_totalPlaySessionCountInPortal",
+          "fieldName": "me_totalPlaySessionCountInPortal"
         },
         {
           "type": "doubleSum",
@@ -722,7 +782,8 @@
             "container": "telemetry-data-store",
             "path": "/druid-content-snapshot/snapshot.txt"
           }
-        ]
+        ],
+        "fetchTimeout": 120000
       }
     },
     "tuningConfig":{

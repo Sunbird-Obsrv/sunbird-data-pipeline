@@ -12,7 +12,6 @@ public class DruidEventsValidatorConfig {
     private String successTopic;
     private String failedTopic;
     private String malformedTopic;
-    private String metricsTopic;
     private String searchSchemafile;
     private String logSchemafile;
 
@@ -20,7 +19,6 @@ public class DruidEventsValidatorConfig {
         successTopic = config.get("output.success.topic.name", "telemetry.denorm.valid");
         failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
-        metricsTopic = config.get("output.metrics.topic.name", "telemetry.pipeline_metrics");
         telemetrySchemaPath = config.get("telemetry.schema.path", "schemas/telemetry");
         summarySchemaPath = config.get("summary.schema.path", "schemas/summary");
         defaultSchemafile = config.get("event.schema.file","envelope.json");
@@ -38,10 +36,6 @@ public class DruidEventsValidatorConfig {
 
     public String malformedTopic() {
         return malformedTopic;
-    }
-
-    public String metricsTopic() {
-        return metricsTopic;
     }
 
     public String telemetrySchemaPath() { return telemetrySchemaPath; }

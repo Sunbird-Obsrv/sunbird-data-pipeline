@@ -35,18 +35,18 @@
 
 - name: Remove the old artifacts
   file:
-    path: "{{ analytics_api.root }}/analytics-api-1.0-dist.zip"
+    path: "{{ analytics_api.root }}/{{ artifact_name }}"
     state: absent
   become_user: "{{analytics_user}}"    
       
 - name: Copy API artifact
   copy: 
-    src: analytics-api-1.0-dist.zip 
+    src: "{{ artifact_name }}"
     dest: "{{ analytics_api.root }}"
   become_user: "{{analytics_user}}"
 
 - name: Unarchive api artifact
-  unarchive: src={{ analytics_api.root }}/analytics-api-1.0-dist.zip dest={{ analytics_api.root }} copy=no group={{ analytics_user }} owner={{ analytics_user }}
+  unarchive: src={{ analytics_api.root }}/{{ artifact_name }} dest={{ analytics_api.root }} copy=no group={{ analytics_user }} owner={{ analytics_user }}
   become_user: "{{analytics_user}}"
     
 - name: Delete slf4j-log4j jar file
@@ -55,12 +55,6 @@
 
 - name: Copy API configuration file
   template: src=conf.j2 dest={{ analytics_api.root }}/{{ env }}.conf mode=755 owner={{ analytics_user }} group={{ analytics_group }}
-  become_user: "{{analytics_user}}"
-
-- name: temporarly overriding the netty jar
-  get_url:
-    url: http://central.maven.org/maven2/io/netty/netty-all/4.0.37.Final/netty-all-4.0.37.Final.jar
-    dest: "{{ analytics_api.root }}/analytics-api-1.0/lib/"
   become_user: "{{analytics_user}}"
 
 - name: Remove netty-all 4.0.29 from lib folder
@@ -85,7 +79,7 @@
 
 #Update ConsumerChannel Cache
 - uri:
-    url: "http://{{ ansible_hostname }}:9000/refresh-cache/{{ consumer_channel_cache_type }}"
+    url: "http://localhost:9000/refresh-cache/{{ consumer_channel_cache_type }}"
     method: GET
     return_content: yes
   tags: refresh-cache
