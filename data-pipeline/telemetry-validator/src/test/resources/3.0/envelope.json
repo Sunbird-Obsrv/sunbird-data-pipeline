@@ -12,14 +12,14 @@
   ],
   "allOf":[
     {
-      "$ref":"http://localhost:7070/schemas/3.0/common.json"
+      "$ref":"resource:/3.0/common.json"
     },
     {
       "properties":{
         "eid":{
           "id":"http://api.ekstep.org/telemetry/mid",
           "type":"string",
-          "minLength":1
+          "minLength": 1
         }
       }
     }

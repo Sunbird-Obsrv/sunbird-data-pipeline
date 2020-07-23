@@ -1,10 +1,12 @@
 analytics_user: analytics
 analytics_group: analytics
+spark_output_temp_dir: /mount/data/analytics/tmp/
 telemetry_converter_ver: 0.0.8
 
 bucket: "dev-data-store"
-brokerlist: "{{groups['processing-cluster-kafka'][0]}}:9092"
-zookeeper: "{{groups['processing-cluster-kafka'][0]}}:2181"
+kafka_broker_host: "{{groups['processing-cluster-kafka'][0]}}:9092"
+brokerlist: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
+zookeeper: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
 dp_username: dp-monitor
 analytics_job_queue_topic: "{{ env }}.analytics.job_queue"
 datasetRawBucket: ekstep-data-sets-{{ env }}
@@ -15,16 +17,22 @@ topic: "{{ env }}.telemetry.derived"
 learning_topic: "{{ env }}.learning.graph.events"
 analytics_metrics_topic: "{{ env }}.analytics_metrics"
 sink_topic: "{{ env }}.telemetry.sink"
+metrics_topic: "{{ env }}.telemetry.metrics"
 job_manager_tmp_dir: "transient-data"
 channel: dev-test
-druid_broker_host: "{{groups['broker'][0]}}"
-analytics_job_list: '"wfs", "wfus", "workflow-usage-metrics", "portal-metrics", "dialcode-usage-summary", "dialcode-usage-updater", "etb-coverage-summary", "data-exhaust", "pipeline-failed-events-audit", "pipeline-druid-events-audit", "pipeline-audit", "ds", "dpu","monitor-job-summ"'
-analytics_jobs_count: 14
+druid_broker_host: "{{groups['raw-broker'][0]}}"
+druid_rollup_broker_host: "{{groups['raw-broker'][0]}}"
+hierarchySearchServiceUrl: "{{ proto }}://{{ domain_name }}/action/content"
+hierarchySearchServicEndpoint: /v3/hierarchy/
+
+analytics_job_list: '"wfs", "ds", "dpu", "content-rating-updater", "audit-metrics-report", "monitor-job-summ"'
+analytics_jobs_count: 8
 
 cassandra_keyspace_prefix: '{{ env }}_'
 dp_dispatch_bucket_name: ekstep-dev-data-store
 data_exhaust_blob_name: sunbird1p7
 data_exhaust_s3_url: https://s3-ap-south-1.amazonaws.com
+spark_version: 2.4.4
 
 heap_memory: "-Xmx5120m"
 
@@ -33,7 +41,7 @@ business_metrics:
   env: "{{ env }}"
 
 spark:
-  home: "{{ analytics.home }}/spark-2.0.1-bin-hadoop2.7"
+  home: "{{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7"
   public_dns: 54.255.154.146
   master:
     url: spark://172.31.11.117:7077
@@ -49,8 +57,6 @@ spark:
   driver_memory: 7g
   memory_fraction: 0.3
   storage_fraction: 0.5  
-  executor_extraJavaOptions: -Dconfig.file=/mnt/data/analytics/models/{{ env }}.conf -Dlog4j.configurationFile=file:///mnt/data/analytics/models/log4j2.xml
-  driver_extraJavaOptions: -Dconfig.file=/mnt/data/analytics/models/{{ env }}.conf -Dlog4j.configurationFile=file:///mnt/data/analytics/models/log4j2.xml
   executor_memory: 2g
   heap_conf_str: '"-XX:+UseG1GC -XX:MaxGCPauseMillis=100 -Xms250m {{ heap_memory }} -XX:+UseStringDeduplication"'
 
@@ -67,10 +73,45 @@ have_weekly_jobs: false
 
 video_stream_job_schedule: 10
 
+run_wfs_job:
+  wfs:
+    hour: 00
+    minute: 30
+run_monitor_job:    
+  monitor-job-summ:
+    hour: 03
+    minute: 00
+
 run_course_metrics_job:
   course-dashboard-metrics:
+    hour: 19
+    minute: 45
+
+run_assessment_metrics_job:
+  assessment-dashboard-metrics:
+    hour: 20
+    minute: 15
+
+run_admin_user_reports_job:
+  admin-user-reports-3AMIST:
     hour: 21
     minute: 30
+  admin-user-reports-2PMIST:
+    hour: 8
+    minute: 30  
+
+run_admin_geo_reports_job:
+  admin-geo-reports-4AMIST:
+    hour: 22
+    minute: 30
+  admin-geo-reports-3PMIST:
+    hour: 9
+    minute: 30     
+
+run_assessment_aggregator_report_job:
+  assessment-aggregator-report:
+    hour: 18
+    minute: 35
 
 update_user_redis_cache:
   populate-user-cache:
@@ -82,9 +123,28 @@ index_content_model_druid:
     hour: 1
     minute: 00
 
+run_district_weekly_job:
+  district-weekly:
+    hour: 03
+    minute: 30
+    weekday: 1
+
+run_etb_metrics_weekly_job:
+  etb-metrics-weekly:
+    hour: 23
+    minute: 30
+    weekday: 1
+
+run_district_monthly_job:
+  district-monthly:
+    hour: 04
+    minute: 30
+    day: 1
+    month: 1-12         
+
 service:
   search:
-    url: http://{{groups['search1'][0]}}:9000
+    url: http://{{private_ingressgateway_ip}}/search
     path: /v3/search
 
 es_search_index: "compositesearch"
@@ -93,3 +153,17 @@ analytics:
   soft_path: /mount/data/analytics
   paths: ['/home/analytics/sbin', '/mount/data/analytics', '/mount/data/analytics/logs', '/mount/data/analytics/logs/services', '/mount/data/analytics/logs/data-products', '/mount/data/analytics/logs/api-service', '/mount/data/analytics/api', '/mount/data/analytics/tmp', '/mount/data/analytics/scripts/monitor-data', '/mount/data/analytics/models' ]
   scripts: ['model-config', 'replay-job', 'replay-updater', 'replay-utils', 'run-job', 'monitor-dp', 'generate-metrics', 'submit-job', 'start-jobmanager']
+
+
+producer_env: "dev.sunbird"
+analytics_job_manager_artifact: "job-manager-2.0.jar"
+analytics_core_artifact: "analytics-framework-2.0.jar"
+scruid_artifact: "scruid_2.11-2.3.2.jar"
+analytics_batch_module_artifact: "batch-models-2.0.jar"
+analytics_ed_dataporducts_artifact: "data-products-1.0-distribution.tar.gz"
+model_version: "2.0" 
+
+submit_jobs_auth_token: ""
+report_list_jobs_url: "http://{{groups['analytics-api'][0]}}:9000/"
+
+reports_container: "reports"

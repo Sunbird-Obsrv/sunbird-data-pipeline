@@ -15,7 +15,7 @@ output {
 	if [type] == 'pipeline_metrics' { 
 		influxdb {
 			allow_time_override => true
-			send_as_tags => ["env","job_name"]
+			send_as_tags => ["env","job_name","partition"]
 			data_points => { 
 				"env" => "{{env}}"
 				"job_name" => "%{[job-name]}"
@@ -58,6 +58,18 @@ output {
 				"user_db_hit" => "%{[user-db-hit-count]}"
 				"duplicate" => "%{[duplicate-event-count]}"
 				"expired_event" => "%{[expired-event-count]}"
+				"device_db_update" => "%{[device-db-update-count]}"
+				"device_cache_update" => "%{[device-cache-update-count]}"
+				"user_declared_location_hit" => "%{[user-declared-hit-count]}"
+				"ip_location_hit" => "%{[ip-location-hit-count]}"
+				"no_cache_hit" => "%{[no-cache-hit-count]}"
+				"audit_route_success" => "%{[audit-route-success-count]}"
+				"share_route_success" => "%{[share-route-success-count]}"
+				"db_insert" => "%{[db-insert-count]}"
+				"db_update" => "%{[db-update-count]}"
+				"assess_route_success" => "%{[assess-route-success-count]}"
+				"log_route_success" => "%{[log-route-success-count]}"
+				"error_route_success" => "%{[error-route-success-count]}"
 			}   
 			coerce_values => {
 				"success" => "float"
@@ -99,6 +111,18 @@ output {
 				"cache_error" => "float"
 				"expired_event" => "float"
 				"duplicate" => "float"
+				"device_db_update" => "float"
+				"device_cache_update" => "float"
+				"user_declared_location_hit" => "float"
+				"ip_location_hit" => "float"
+				"no_cache_hit" => "float"
+				"audit_route_success" => "float"
+				"share_route_success" => "float"
+				"db_insert" => "float"
+				"db_update" => "float"
+				"assess_route_success" => "float"
+				"log_route_success" => "float"
+				"error_route_success" => "float"
 			}
 			host => "{{influxdb_host}}"
 			port => "{{influxdb_port}}"

@@ -1,0 +1,7 @@
+{{ redis_dump_rdb_log_file_location }} {
+  rotate {{ redis_dump_rdb_log_file_log_rotate_backup }}
+  daily
+  compress
+  missingok
+  notifempty
+}

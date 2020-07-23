@@ -1,0 +1,64 @@
+{
+  "id": "http://api.ekstep.org/telemetry/start",
+  "type": "object",
+  "required": [
+    "eid",
+    "ets",
+    "ver",
+    "mid",
+    "actor",
+    "context",
+    "edata"
+  ],
+  "allOf": [
+    {
+      "$ref": "resource:/schemas/telemetry/3.0/common.json"
+    },
+    {
+      "properties": {
+        "eid": {
+          "id": "http://api.ekstep.org/telemetry/eid",
+          "enum": [
+            "START"
+          ]
+        },
+        "edata": {
+          "id": "http://api.ekstep.org/telemetry/edata",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "id": "http://api.ekstep.org/telemetry/edata/type",
+              "type": "string"
+            },
+            "dspec": {
+              "$ref": "resource:/schemas/telemetry/3.0/dspec.json"
+            },
+            "uaspec": {
+              "$ref": "resource:/schemas/telemetry/3.0/uaspec.json"
+            },
+            "loc": {
+              "id": "http://api.ekstep.org/telemetry/edata/loc",
+              "type": "string"
+            },
+            "mode": {
+              "id": "http://api.ekstep.org/telemetry/edata/mode",
+              "type": "string"
+            },
+            "duration": {
+              "id": "http://api.ekstep.org/telemetry/edata/duration",
+              "type": "number"
+            },
+            "pageid": {
+              "id": "http://api.ekstep.org/telemetry/edata/pageid",
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

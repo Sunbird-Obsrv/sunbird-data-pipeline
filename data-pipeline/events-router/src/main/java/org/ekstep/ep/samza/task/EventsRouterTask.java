@@ -21,21 +21,16 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
-import org.apache.samza.system.OutgoingMessageEnvelope;
-import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.InitableTask;
 import org.apache.samza.task.MessageCollector;
-import org.apache.samza.task.StreamTask;
 import org.apache.samza.task.TaskContext;
 import org.apache.samza.task.TaskCoordinator;
-import org.apache.samza.task.WindowableTask;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.EventsRouterService;
-import org.ekstep.ep.samza.domain.DeDupEngine;
+import org.ekstep.ep.samza.util.DeDupEngine;
 import org.ekstep.ep.samza.util.RedisConnect;
 
-public class EventsRouterTask implements StreamTask, InitableTask, WindowableTask {
+public class EventsRouterTask extends BaseSamzaTask {
 
 	static Logger LOGGER = new Logger(EventsRouterTask.class);
 	private EventsRouterConfig config;
@@ -62,10 +57,9 @@ public class EventsRouterTask implements StreamTask, InitableTask, WindowableTas
 		this.config = new EventsRouterConfig(config);
 		metrics = new JobMetrics(context, this.config.jobName());
 		deDupEngine = deDupEngine == null ?
-				new DeDupEngine(new RedisConnect(config).getConnection(),
-						this.config.dupStore(), this.config.expirySeconds()) : deDupEngine;
+				new DeDupEngine(new RedisConnect(config), this.config.dupStore(), this.config.expirySeconds()) : deDupEngine;
 		service = new EventsRouterService(deDupEngine, this.config);
-
+		this.initTask(config, metrics);
 	}
 
 	@Override
@@ -76,12 +70,5 @@ public class EventsRouterTask implements StreamTask, InitableTask, WindowableTas
 		EventsRouterSource source = new EventsRouterSource(envelope);
 		service.process(source, sink);
 	}
-
-	@Override
-	public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-
-		String mEvent = metrics.collect();
-		collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
-		metrics.clear();
-	}
+	
 }

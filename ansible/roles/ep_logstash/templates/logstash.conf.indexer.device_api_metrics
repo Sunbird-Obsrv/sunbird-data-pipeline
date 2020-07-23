@@ -18,8 +18,24 @@ input {
         sincedb_write_interval => 10
         type => "crash_logs"
     }
+    file {
+        path => "{{device_log_path}}"
+        start_position => "end"
+        sincedb_write_interval => 10
+        type => "device_logs"
+    }
 }
 output {
+  if [type] == "device_logs" {
+      kafka {
+        bootstrap_servers => "{{kafka_brokers}}"
+        topic_id => "{{kafka_topic_prefix}}.events.deviceprofile"
+        codec => plain {
+          format => "%{message}"
+        }
+      }
+  }
+
   if [type] == "device_register_api_metrics" {
     kafka {
       bootstrap_servers => "{{kafka_brokers}}"

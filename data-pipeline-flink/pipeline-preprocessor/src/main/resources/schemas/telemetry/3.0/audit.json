@@ -1,0 +1,58 @@
+{
+  "id": "http://api.ekstep.org/telemetry/audit",
+  "type": "object",
+  "required": [
+    "eid",
+    "ets",
+    "ver",
+    "mid",
+    "actor",
+    "context",
+    "edata"
+  ],
+  "allOf": [
+    {
+      "$ref": "resource:/schemas/telemetry/3.0/common.json"
+    },
+    {
+      "properties": {
+        "eid": {
+          "id": "http://api.ekstep.org/telemetry/eid",
+          "enum": [
+            "AUDIT"
+          ]
+        },
+        "edata": {
+          "id": "http://api.ekstep.org/telemetry/edata",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "id": "http://api.ekstep.org/telemetry/edata/type",
+              "type": "string"
+            },
+            "props": {
+              "id": "http://api.ekstep.org/telemetry/edata/props",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "state": {
+              "id": "http://api.ekstep.org/telemetry/edata/state",
+              "type": "string"
+            },
+            "prevstate": {
+              "id": "http://api.ekstep.org/telemetry/edata/prevstate",
+              "type": "string"
+            },
+            "duration": {
+              "id": "http://api.ekstep.org/telemetry/edata/duration",
+              "type": "number"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

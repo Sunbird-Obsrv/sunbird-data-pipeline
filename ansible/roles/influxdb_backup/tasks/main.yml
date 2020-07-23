@@ -6,6 +6,9 @@
   command: "influxd backup -portable -db {{ item }} {{ influxdb_backup_dir }}"
   with_items: "{{ influxdb_backup_databases }}"
 
+- name: Ensure azure blob storage container exists
+  command: az storage container create  --name "{{azure_influxdb_backup_container}}" --public-access blob
+
 - name: zip the backup dir
   archive:
     path: "{{ influxdb_backup_dir }}"

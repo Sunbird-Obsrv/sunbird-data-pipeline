@@ -1,19 +1,15 @@
 package org.ekstep.ep.samza.task;
 
-import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.ekstep.ep.samza.core.BaseSink;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.domain.Event;
 
-import java.text.SimpleDateFormat;
-
 
 public class TelemetryLocationUpdaterSink extends BaseSink {
 
 	private TelemetryLocationUpdaterConfig config;
-	private SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-	
+
 	public TelemetryLocationUpdaterSink(MessageCollector collector, JobMetrics metrics, TelemetryLocationUpdaterConfig config) {
 		super(collector, metrics);
 		this.config = config;

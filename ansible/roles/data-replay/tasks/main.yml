@@ -1,0 +1,56 @@
+- name: Create replay scripts folder
+  file: path={{ replay_script_path }} state=directory owner={{ analytics_user }} group={{ analytics_group }}
+  tags:
+    - common
+
+- name: Remove script directory
+  become_user: "{{analytics_user}}"
+  file:
+    path: "{{ replay_script_path }}/replay-scripts"
+    state: absent
+  tags:
+    - common
+
+- name: Copy the replay scripts
+  become_user: "{{analytics_user}}"
+  copy:
+    src: "{{ artifact }}"
+    dest: "{{ replay_script_path }}"
+    force: yes
+  tags:
+    - common
+
+- name: Unzip replay-scripts
+  become_user: "{{analytics_user}}"
+  shell: "cd {{ replay_script_path }} && unzip {{ artifact }}"
+  tags:
+    - common
+
+# - name: Activate venv
+#   pip:
+#     name: "{{ replay_script_path }}/replay_script_artifacts"
+#     virtualenv: "{{ virtualenv_path }}"
+#     virtualenv_python: "python3.6"
+#   tags:
+#     - common
+
+- name: Install required python modules
+  pip: 
+    virtualenv: "{{ virtualenv_path }}"
+    virtualenv_python: "python3.6"
+    requirements: "{{ replay_script_path }}/replay-scripts/{{ requirements_file }}"
+  tags:
+    - common
+
+- name: run data replay script
+  become_user: "{{analytics_user}}"
+  shell: "source {{ virtualenv_path }}/bin/activate && python {{ replay_script_path }}/replay-scripts/src/main/python/replay/data_replay.py {{ container }} {{ prefix }} {{ start_date }} {{ end_date }} {{ kafka_broker_list }} {{ delete_backups }} >> {{ replay_script_path }}/{{ end_date }}-data-replay.log"
+  args:
+    executable: /bin/bash
+  environment:
+    ENV: "{{ env }}"
+    SPARK_HOME: "{{ spark_home }}"
+    JAVA_HOME: "/opt/jdk1.8.0_121"
+    PATH: "{{ lookup('env','PATH') }}:{{ spark_home }}/bin:/opt/jdk1.8.0_121/bin"
+  tags:
+    - replay

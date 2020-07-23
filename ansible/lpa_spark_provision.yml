@@ -4,7 +4,9 @@
     - "{{inventory_dir}}/secrets.yml"
   roles:
     - analytics-bootstrap-always
-    - analytics-bootstrap-spark 
-    - at-ruby
+    - analytics-bootstrap-spark
+    #- at-ruby
     - analytics-spark-provision
     
+# running only spark provision to make changes in spark config.
+#  Please enable other roles if u want to provision spark in a new machine

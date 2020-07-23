@@ -21,19 +21,16 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
-import org.apache.samza.system.OutgoingMessageEnvelope;
-import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.*;
+import org.apache.samza.task.MessageCollector;
+import org.apache.samza.task.TaskContext;
+import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.core.JobMetrics;
-import org.ekstep.ep.samza.core.Logger;
-import org.ekstep.ep.samza.engine.DeDupEngine;
 import org.ekstep.ep.samza.service.DeDuplicationService;
+import org.ekstep.ep.samza.util.DeDupEngine;
 import org.ekstep.ep.samza.util.RedisConnect;
-import redis.clients.jedis.exceptions.JedisException;
 
-public class DeDuplicationTask implements StreamTask, InitableTask, WindowableTask {
+public class DeDuplicationTask extends BaseSamzaTask {
 
-	static Logger LOGGER = new Logger(DeDuplicationTask.class);
 	private DeDuplicationConfig config;
 	private JobMetrics metrics;
 	private DeDuplicationService service;
@@ -47,7 +44,6 @@ public class DeDuplicationTask implements StreamTask, InitableTask, WindowableTa
 
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void init(Config config, TaskContext context) {
 		init(config, context, null);
@@ -58,10 +54,9 @@ public class DeDuplicationTask implements StreamTask, InitableTask, WindowableTa
 		this.config = new DeDuplicationConfig(config);
 		metrics = new JobMetrics(context, this.config.jobName());
 		deDupEngine = deDupEngine == null ?
-				new DeDupEngine(new RedisConnect(config).getConnection(), this.config.dupStore(),
-						this.config.expirySeconds()) : deDupEngine;
+				new DeDupEngine(new RedisConnect(config), this.config.dupStore(), this.config.expirySeconds()) : deDupEngine;
 		service = new DeDuplicationService(deDupEngine, this.config);
-
+		this.initTask(config, metrics);
 	}
 
 	@Override
@@ -71,10 +66,4 @@ public class DeDuplicationTask implements StreamTask, InitableTask, WindowableTa
 		service.process(source, sink);
 	}
 
-	@Override
-	public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-		String mEvent = metrics.collect();
-		collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
-		metrics.clear();
-	}
 }

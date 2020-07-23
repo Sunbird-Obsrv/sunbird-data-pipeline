@@ -1,0 +1,21 @@
+---
+- hosts: secor
+  become: yes
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
+  pre_tasks:
+    - name: checking the list of installed services
+      service_facts:
+
+    - name: Stop the monit
+      service: name=monit state=stopped
+      become: yes
+      when: ansible_facts.services.monit is defined
+
+  roles:
+    - secor-telemetry-backup-deploy
+  post_tasks:
+    - name: Start the monit
+      service: name=monit state=started
+      become: yes
+      when: ansible_facts.services.monit is defined

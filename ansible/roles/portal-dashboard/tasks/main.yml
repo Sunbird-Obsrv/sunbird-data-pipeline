@@ -1,0 +1,109 @@
+---
+
+- name: Copy the library to library path
+  copy:
+    src: dataproducts.tar.gz
+    dest: "{{ library_path }}"
+    force: yes
+  tags:
+    - common
+
+- name: Installing package
+  pip:
+    name: "{{library_path}}"
+    virtualenv: "{{ virtualenv_path }}"
+    virtualenv_python: "python3.6"
+  tags:
+    - common
+
+- name: execute_content_creation
+  shell: "source {{virtualenv_path}}/bin/activate && dataproducts content_creation --data_store_location={{data_path}} --execution_date={{date}} --content_search={{content_search_api}} --org_search={{org_search_api}}"
+  register: out
+  args:
+    executable: /bin/bash
+  tags:
+    - content_creation
+
+- name: execute_content_progress
+  shell: "source {{ virtualenv_path }}/bin/activate && dataproducts content_progress --data_store_location={{data_path}} --execution_date={{date}} --content_search={{content_search_api}} --org_search={{org_search_api}}"
+  register: out
+  args:
+    executable: /bin/bash
+  tags:
+    - content_progress
+
+- name: execute_daily_metrics
+  shell: "source {{ virtualenv_path }}/bin/activate && dataproducts daily_metrics --data_store_location={{data_path}} --org_search={{org_search_api}} --content_search={{content_search_api}} --content_hierarchy={{content_hierarchy_api}} --druid_hostname={{druid_hostname}} --execution_date={{date}}"
+  register: out
+  args:
+    executable: /bin/bash
+  tags:
+    - daily_metrics
+
+- name: execute_gps_learning
+  shell: "source {{ virtualenv_path }}/bin/activate && dataproducts gps_learning --data_store_location={{data_path}} --org_search={{org_search_api}} --content_search={{content_search_api}} --content_hierarchy={{content_hierarchy_api}} --druid_hostname={{druid_hostname}} --execution_date={{date}}"
+  register: out
+  args:
+    executable: /bin/bash
+  tags:
+    - gps_learning
+
+- name: execute_dialcode_exception_etb_reports
+  shell: "source {{ virtualenv_path }}/bin/activate && dataproducts etb_metrics --data_store_location={{data_path}} --org_search={{org_search_api}} --content_search={{content_search_api}} --content_hierarchy={{content_hierarchy_api}} --druid_hostname={{druid_hostname}} --execution_date={{date}}"
+  register: out
+  args:
+    executable: /bin/bash
+  tags:
+    - dialcode_exception_etb_reports
+
+- name: execute_district_monthly
+  shell: "source {{ virtualenv_path }}/bin/activate && dataproducts district_monthly --data_store_location={{data_path}} --druid_hostname={{druid_hostname}} --execution_date={{date}}"
+  register: out
+  args:
+    executable: /bin/bash
+  tags:
+    - district_monthly
+
+- name: execute_district_weekly
+  shell: "source {{ virtualenv_path }}/bin/activate && dataproducts district_weekly --data_store_location={{data_path}} --druid_hostname={{druid_hostname}} --execution_date={{date}}"
+  register: out
+  args:
+    executable: /bin/bash
+  tags:
+    - district_weekly
+
+- name: execute_landing_page
+  shell: "source {{ virtualenv_path }}/bin/activate && dataproducts landing_page --data_store_location={{data_path}} --org_search={{org_search_api}}"
+  register: out
+  args:
+    executable: /bin/bash
+  tags:
+    - landing_page
+
+- name: execute_cmo_dashboards
+  shell: "source {{ virtualenv_path }}/bin/activate && dataproducts cmo_dashboard --data_store_location={{data_path}} --org_search={{org_search_api}} --execution_date={{date}}"
+  args:
+    executable: /bin/bash
+  tags:
+    - cmo_dashboards
+
+- name: execute_content_progress
+  shell: "source {{virtualenv_path}}/bin/activate && dataproducts content_progress --data_store_location={{data_path}} --execution_date={{date}} --content_search={{content_search_api}} --org_search={{org_search_api}}"
+  register: out
+  args:
+    executable: /bin/bash
+  tags:
+    - content_progress
+
+- name: execute_content_aggregates
+  shell: "source {{ virtualenv_path }}/bin/activate && dataproducts content_consumption --data_store_location={{data_path}} --org_search={{org_search_api}} --druid_hostname={{druid_hostname}} --cassandra_host={{cassandra_host}} --keyspace_prefix={{env}} --execution_date={{date}}"
+  register: out
+  args:
+    executable: /bin/bash
+  tags:
+    - content_aggregates
+
+- debug:
+    var: out.stdout_lines
+  tags:
+    - common

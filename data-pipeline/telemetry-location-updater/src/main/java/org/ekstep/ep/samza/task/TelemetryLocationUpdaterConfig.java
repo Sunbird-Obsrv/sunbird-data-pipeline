@@ -6,19 +6,18 @@ public class TelemetryLocationUpdaterConfig {
 
     private final String JOB_NAME = "TelemetryLocationUpdater";
     private static final String deviceProfileJobFlag = "device_profile_retrieved";
-    private static final String deviceLocaionJobFlag = "device_location_retrieved";
+    private static final String deviceLocationJobFlag = "device_location_retrieved";
+    private static final String derivedLocationJobFlag = "derived_location_retrieved";
 
     private String successTopic;
     private String failedTopic;
-    private String metricsTopic;
     private String malformedTopic;
 
     public TelemetryLocationUpdaterConfig(Config config) {
+    	
         successTopic = config.get("output.success.topic.name", "telemetry.with_loation");
         failedTopic = config.get("output.failed.topic.name", "telemetry.failed");
-        metricsTopic = config.get("output.metrics.topic.name", "telemetry.pipeline_metrics");
         malformedTopic = config.get("output.malformed.topic.name", "telemetry.malformed");
-
     }
 
     public String successTopic() {
@@ -29,10 +28,6 @@ public class TelemetryLocationUpdaterConfig {
         return failedTopic;
     }
 
-    public String metricsTopic() {
-        return metricsTopic;
-    }
-
     public String malformedTopic() {
         return malformedTopic;
     }
@@ -41,11 +36,13 @@ public class TelemetryLocationUpdaterConfig {
         return JOB_NAME;
     }
 
-    public static String getDeviceProfileJobFlag() {
-        return deviceProfileJobFlag;
-    }
+    public static String getDeviceProfileJobFlag() { return deviceProfileJobFlag; }
 
     public static String getDeviceLocationJobFlag() {
-        return deviceLocaionJobFlag;
+        return deviceLocationJobFlag;
+    }
+
+    public static String getDerivedLocationJobFlag() {
+        return derivedLocationJobFlag;
     }
 }

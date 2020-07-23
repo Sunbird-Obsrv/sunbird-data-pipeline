@@ -1,30 +1,25 @@
 version: 2.1
 jobs:
-  ep-build:
-    working_directory: ~/dp/data-pipeline
+  datapipeline-build:
+    working_directory: ~/dp/data-pipeline-flink
     machine: true
     steps:
       - checkout:
           path: ~/dp
-      
-      - run: sleep 120
-      
       - restore_cache:
           key: dependency-cache-{{ checksum "pom.xml" }}
-      
-      - run: mvn -Dlog4j.configuration=./logs -Dcobertura.report.format=xml clean cobertura:cobertura package
-      
       - save_cache:
           key: dependency-cache-{{ checksum "pom.xml" }}
           paths: ~/.m2
-          
-      - run: sudo apt update && sudo apt install jq
-      - run: wget -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r '.assets[0].browser_download_url')
-      - run: cd .. && find . -type f -name "coverage.xml" -exec java -jar ~/codacy-coverage-reporter-assembly-latest.jar report -l Java -r {} --partial \;
-      
-             
+      - run: mvn clean scoverage:report
+      - run:
+          name: sonar
+          command: |
+            mvn -X sonar:sonar -Dlog4j.configuration=./logs sonar:sonar -Dsonar.projectKey=project-sunbird_sunbird-data-pipeline -Dsonar.organization=project-sunbird -Dsonar.exclusions=/home/circleci/dp/ansible/**,/home/circleci/dp/schema/**,/home/circleci/dp/pipelines/**,/home/circleci/dp/data-pipeline/**,/home/circleci/dp/kubernetes/**,/home/circleci/dp/test-data/**, -Dsonar.host.url=https://sonarcloud.io -Dsonar.scala.coverage.reportPaths=/home/circleci/dp/data-pipeline-flink/target/scoverage.xml
+
 workflows:
   version: 2.1
   build_and_test:
     jobs:
-      - ep-build
+      - datapipeline-build
+#testing quality gate

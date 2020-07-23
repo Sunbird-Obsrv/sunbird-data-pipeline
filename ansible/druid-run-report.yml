@@ -1,0 +1,6 @@
+-
+  name: Run Druid Job Report
+  hosts: spark
+  become: yes
+  roles: 
+    - analytics-run-report

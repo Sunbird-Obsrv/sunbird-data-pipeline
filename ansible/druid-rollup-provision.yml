@@ -1,0 +1,95 @@
+-
+  name: Install Java
+  hosts: druid-rollup
+  become: yes
+  roles: 
+    - jdk-1.8.0_121
+
+-
+  name: Install java and zookeeper cluster for druid
+  hosts: druid-rollup-zookeeper
+  become: yes
+  roles:
+    - {role: zookeeper-upgrade}
+  vars:
+    zookeeper_group: "{{ groups['druid-rollup-zookeeper'] }}"
+
+#-
+#  name: Install postgres on druid cluster
+#  hosts: druid-postgres
+#  vars_files:
+#    - "{{inventory_dir}}/secrets.yml"
+#  become: yes
+#  roles:
+#    - {role: postgres-provision }
+#  vars:
+#    postgres_address_space: "0.0.0.0/0"
+#    postgresql_databases:
+#      - name: druid
+#      - name: graphite
+#    postgresql_users:
+#      - name: druid
+#        password: "{{ dp_vault_druid_postgress_pass }}"
+#      - name: graphite 
+#        password: "{{ dp_vault_druid_postgress_graphite_pass }}"
+
+
+# Create postgres databases and users
+
+- hosts: local
+  gather_facts: no
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
+  vars:
+    postgresql_databases:
+      - name: druid-rollup
+      - name: graphite-rollup
+    postgresql_users:
+      - name: druid
+        db: druid-rollup
+        password: "{{ dp_vault_druid_postgress_pass }}"
+      - name: graphite
+        db: graphite-rollup
+        password: "{{ dp_vault_druid_postgress_graphite_pass }}"     
+  tasks:
+    - name: Ensure database is created
+      postgresql_db: name="{{ item.name }}" \
+                login_host="{{ postgres.db_url }}" \
+                port="{{ postgres.db_port }}" \
+                login_user="{{ postgres.db_admin_user }}" \
+                login_password="{{ postgres.db_admin_password }}" \
+                encoding='UTF-8' \
+                state=present
+      with_items: "{{ postgresql_databases }}"
+
+    - name: Ensure user has access to the database
+      postgresql_user: name="{{ item.name }}" \
+                  password="{{ item.password }}" \
+                  no_password_changes=true \
+                  priv=ALL \
+                  state=present \
+                  login_host="{{ postgres.db_url }}" \
+                  port="{{ postgres.db_port }}" \
+                  login_user="{{ postgres.db_admin_user }}" \
+                  login_password="{{ postgres.db_admin_password }}" \
+                  db="{{ item.db }}"
+      with_items: "{{ postgresql_users }}"
+
+- 
+  name : Install graphite on druid
+  hosts: druid-rollup-graphite
+  become: yes
+  roles:
+    - {role: druid_graphite}
+-
+  name: Install role druid
+  hosts: druid-rollup
+  become: yes
+  roles:
+    - {role: analytics-druid, when: "'druid-rollup-coordinator' in group_names", druid_role: 'coordinator', service: 'coordinator' }
+    - {role: analytics-druid, when: "'druid-rollup-overlord' in group_names", druid_role: 'overlord', service: 'overlord'}
+    - {role: analytics-druid, when: "'druid-rollup-broker' in group_names", druid_role: 'broker', service: 'broker'}
+    - {role: analytics-druid, when: "'druid-rollup-historical' in group_names", druid_role: 'historical', service: 'historical'}
+    - {role: analytics-druid, when: "'druid-rollup-middlemanager' in group_names", druid_role: 'middlemanager', service: 'middleManager' }
+  vars:
+    druid_postgres_db: "druid-rollup"

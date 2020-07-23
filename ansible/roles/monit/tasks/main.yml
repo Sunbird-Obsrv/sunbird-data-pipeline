@@ -1,0 +1,48 @@
+---
+- name: Make sure monit directory exists
+  file:
+    path: /etc/monit/conf.d 
+    state: directory
+
+- name: Copying Monit binary init and config
+  copy:
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+    mode: "{{item.mode}}" 
+  with_items:
+    - { src: 'files/monit_init', dest: '/etc/init.d/monit', mode: '0755' }
+    - { src: 'files/monitrc', dest: '/etc/monit/monitrc', mode: '0700' }
+    - { src: 'files/monit_bin', dest: '/usr/bin/monit', mode: '0755' }   
+    - { src: 'files/monit_default', dest: '/etc/default/monit', mode: '0644' } 
+    - { src: 'files/force_kill', dest: '/usr/local/bin', mode: '0755' }
+    - { src: 'files/systemd', dest: '/lib/systemd/system/monit.service', mode: '0755' }
+
+- name: Softlinking monitrc for monit
+  file:
+    src: /etc/monit/monitrc
+    dest: /etc/monitrc
+    state: link
+
+- name: enable reload
+  systemd:
+    name: monit
+    enabled: yes
+    
+- name: Copy monit scripts to the destination
+  template:
+    src: monit_template
+    dest: "/etc/monit/conf.d/{{vars[item].app_name}}.conf"
+  with_items:
+    - "{{service.split(',')}}"
+
+- name: Copying slack.sh
+  template:
+    src: slack.sh
+    dest: /usr/local/bin
+    mode: 0755
+
+- name: monit start or stop 
+  systemd:
+    name: monit
+    daemon_reload: yes
+    state: "started"

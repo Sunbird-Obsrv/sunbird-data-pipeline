@@ -417,6 +417,9 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}device_db.device_profi
     district_custom text,
     city text,
     uaspec Map<text,text>,
+    fcm_token text, 
+    producer_id text,
+    api_last_updated_on timestamp,
     PRIMARY KEY (device_id)
 );
 
@@ -733,7 +736,7 @@ CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.workflow_u
 );
 
 ALTER TABLE {{ cassandra.keyspace_prefix }}device_db.device_profile
-ADD (fcm_token text, producer_id text);
+ADD (user_declared_state text, user_declared_district text);
 
 CREATE TABLE IF NOT EXISTS {{ cassandra.keyspace_prefix }}platform_db.experiment_definition (
     exp_id text,

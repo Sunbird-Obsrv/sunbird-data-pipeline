@@ -16,6 +16,7 @@
 - name: Remove the old artifacts
   file: name="{{ item }}" state=absent
   with_items: "{{ file_name.files[0].path }}"
+  when: file_name.files | length > 0
 
 - name: Copy secor libraries
   copy:

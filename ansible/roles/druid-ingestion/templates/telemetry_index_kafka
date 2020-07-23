@@ -102,6 +102,11 @@
             },
             {
               "type": "path",
+              "name": "content_play_progress",
+              "expr": "$.edata.summary[*].progress"
+            },
+            {
+              "type": "path",
               "name": "object_id",
               "expr": "$.object.id"
             },
@@ -228,6 +233,16 @@
               "type": "path",
               "name": "edata_comments",
               "expr": "$.edata.comments"
+            },
+            {
+              "type": "path",
+              "name": "edata_commentid",
+              "expr": "$.edata.commentid"
+            },
+            {
+              "type": "path",
+              "name": "edata_commenttxt",
+              "expr": "$.edata.commenttxt"
             },
             {
               "type": "path",
@@ -451,6 +466,31 @@
             },
             {
               "type": "path",
+              "name": "user_declared_state",
+              "expr": "$.devicedata.userdeclared.state"
+            },
+            {
+              "type": "path",
+              "name": "user_declared_district",
+              "expr": "$.devicedata.userdeclared.district"
+            },
+            {
+              "type": "path",
+              "name": "derived_loc_state",
+              "expr": "$.derivedlocationdata.state"
+            },
+            {
+              "type": "path",
+              "name": "derived_loc_district",
+              "expr": "$.derivedlocationdata.district"
+            },
+            {
+              "type": "path",
+              "name": "derived_loc_from",
+              "expr": "$.derivedlocationdata.from"
+            },
+            {
+              "type": "path",
               "name": "content_name",
               "expr": "$.contentdata.name"
             },
@@ -531,6 +571,106 @@
             },
             {
               "type": "path",
+              "name": "content_created_by",
+              "expr": "$.contentdata.createdby"
+            },
+            {
+              "type": "path",
+              "name": "content_created_for",
+              "expr": "$.contentdata.createdfor"
+            },
+            {
+              "type": "path",
+              "name": "collection_name",
+              "expr": "$.collectiondata.name"
+            },
+            {
+              "type": "path",
+              "name": "collection_object_type",
+              "expr": "$.collectiondata.objecttype"
+            },
+            {
+              "type": "path",
+              "name": "collection_type",
+              "expr": "$.collectiondata.contenttype"
+            },
+            {
+              "type": "path",
+              "name": "collection_media_type",
+              "expr": "$.collectiondata.mediatype"
+            },
+            {
+              "type": "path",
+              "name": "collection_language",
+              "expr": "$.collectiondata.language[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_medium",
+              "expr": "$.collectiondata.medium[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_gradelevel",
+              "expr": "$.collectiondata.gradelevel[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_subjects",
+              "expr": "$.collectiondata.subject[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_mimetype",
+              "expr": "$.collectiondata.mimetype"
+            },
+            {
+              "type": "path",
+              "name": "collection_framework",
+              "expr": "$.collectiondata.framework"
+            },
+            {
+              "type": "path",
+              "name": "collection_board",
+              "expr": "$.collectiondata.board"
+            },
+            {
+              "type": "path",
+              "name": "collection_status",
+              "expr": "$.collectiondata.status"
+            },
+            {
+              "type": "path",
+              "name": "collection_version",
+              "expr": "$.collectiondata.pkgversion"
+            },
+            {
+              "type": "path",
+              "name": "collection_last_submitted_on",
+              "expr": "$.collectiondata.lastsubmittedon"
+            },
+            {
+              "type": "path",
+              "name": "collection_last_published_on",
+              "expr": "$.collectiondata.lastpublishedon"
+            },
+            {
+              "type": "path",
+              "name": "collection_last_updated_on",
+              "expr": "$.collectiondata.lastupdatedon"
+            },
+            {
+              "type": "path",
+              "name": "collection_created_by",
+              "expr": "$.collectiondata.createdby"
+            },
+            {
+              "type": "path",
+              "name": "collection_created_for",
+              "expr": "$.collectiondata.createdfor"
+            },
+            {
+              "type": "path",
               "name": "user_grade_list",
               "expr": "$.userdata.gradelist[*]"
             },
@@ -598,11 +738,6 @@
               "type": "path",
               "name": "dialcode_published_on",
               "expr": "$.dialcodedata.publishedon"
-            },
-            {
-              "type": "path",
-              "name": "dialcode_status",
-              "expr": "$.dialcodedata.status"
             },
             {
               "type": "path",
@@ -796,6 +931,14 @@
             },
             {
               "type": "string",
+              "name": "edata_commentid"
+            },
+            {
+              "type": "string",
+              "name": "edata_commenttxt"
+            },
+            {
+              "type": "string",
               "name": "edata_dir"
             },
             {
@@ -970,6 +1113,26 @@
             },
             {
               "type": "string",
+              "name": "user_declared_state"
+            },
+            {
+              "type": "string",
+              "name": "user_declared_district"
+            },
+            {
+              "type": "string",
+              "name": "derived_loc_state"
+            },
+            {
+              "type": "string",
+              "name": "derived_loc_district"
+            },
+            {
+              "type": "string",
+              "name": "derived_loc_from"
+            },
+            {
+              "type": "string",
               "name": "content_name"
             },
             {
@@ -1029,6 +1192,83 @@
               "name": "content_last_updated_on"
             },
             {
+              "type": "string",
+              "name": "content_created_by"
+            },
+            {
+              "name": "content_created_for"
+            },
+            {
+              "name" : "content_play_progress"
+            },
+            {
+              "type": "string",
+              "name": "collection_name"
+            },
+            {
+              "type": "string",
+              "name": "collection_object_type"
+            },
+            {
+              "type": "string",
+              "name": "collection_type"
+            },
+            {
+              "type": "string",
+              "name": "collection_media_type"
+            },
+            {
+              "name": "collection_language"
+            },
+            {
+              "name": "collection_medium"
+            },
+            {
+              "name": "collection_gradelevel"
+            },
+            {
+              "name": "collection_subjects"
+            },
+            {
+              "type": "string",
+              "name": "collection_mimetype"
+            },
+            {
+              "type": "string",
+              "name": "collection_framework"
+            },
+            {
+              "type": "string",
+              "name": "collection_board"
+            },
+            {
+              "type": "string",
+              "name": "collection_status"
+            },
+            {
+              "type": "double",
+              "name": "collection_version"
+            },
+            {
+              "type": "long",
+              "name": "collection_last_submitted_on"
+            },
+            {
+              "type": "long",
+              "name": "collection_last_published_on"
+            },
+            {
+              "type": "long",
+              "name": "collection_last_updated_on"
+            },
+            {
+              "type": "string",
+              "name": "collection_created_by"
+            },
+            {
+              "name": "collection_created_for"
+            },
+            {
               "name": "user_grade_list"
             },
             {
@@ -1079,10 +1319,6 @@
             {
               "type": "long",
               "name": "dialcode_published_on"
-            },
-            {
-              "type": "string",
-              "name": "dialcode_status"
             },
             {
               "type": "string",

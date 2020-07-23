@@ -28,14 +28,15 @@ public class DataCache {
         Map<String, Object> cacheDataMap;
         try {
             cacheDataMap = getDataFromCache(key);
-            metrics.incCacheHitCounter();
         } catch (JedisException ex) {
             LOGGER.error("", "Exception when retrieving data from redis cache ", ex);
-            redisConnect.resetConnection();
-            try (Jedis redisConn = redisConnect.getConnection(databaseIndex)) {
-                this.redisConnection = redisConn;
-                cacheDataMap = getDataFromCache(key);
-            }
+            
+            this.redisConnection.close();
+            this.redisConnection = redisConnect.getConnection(databaseIndex);
+            cacheDataMap = getDataFromCache(key);
+        }
+        if (cacheDataMap != null && !cacheDataMap.isEmpty()) {
+        	metrics.incCacheHitCounter();
         }
         return cacheDataMap;
     }

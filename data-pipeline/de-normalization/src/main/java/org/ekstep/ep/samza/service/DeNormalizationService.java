@@ -10,8 +10,6 @@ import org.ekstep.ep.samza.task.DeNormalizationSource;
 
 import java.util.List;
 
-import static java.text.MessageFormat.format;
-
 public class DeNormalizationService {
 
     private static Logger LOGGER = new Logger(DeNormalizationService.class);
@@ -24,7 +22,6 @@ public class DeNormalizationService {
     }
 
     public void process(DeNormalizationSource source, DeNormalizationSink sink) {
-
         try {
             Event event = source.getEvent();
             String eid = event.eid();
@@ -54,6 +51,7 @@ public class DeNormalizationService {
                 }
             }
         } catch(JsonSyntaxException e){
+        	e.printStackTrace();
             LOGGER.error(null, "INVALID EVENT: " + source.getMessage());
             sink.toMalformedTopic(source.getMessage());
         }
@@ -73,6 +71,9 @@ public class DeNormalizationService {
         else {
             // add content details to the event
             eventUpdaterFactory.getInstance("content-data-updater").update(event, event.getKey("content"));
+            if(event.checkObjectIdNotEqualsRollUpl1Id()) {
+                eventUpdaterFactory.getInstance("collection-data-updater").update(event, event.getKey("collection"));
+            }
         }
         // add user details to the event
         eventUpdaterFactory.getInstance("user-data-updater").update(event);

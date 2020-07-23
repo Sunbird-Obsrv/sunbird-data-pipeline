@@ -1,0 +1,38 @@
+{
+  "type": "object",
+  "properties": {
+    "ets": {
+      "id": "http://api.ekstep.org/telemetry/ets",
+      "type": "number",
+      "format": "date-time"
+    },
+    "ver": {
+      "id": "http://api.ekstep.org/telemetry/ver",
+      "type": "string",
+      "enum": [
+        "3.0",
+        "3.1"
+      ]
+    },
+    "mid": {
+      "id": "http://api.ekstep.org/telemetry/mid",
+      "type": "string",
+      "minLength": 1
+    },
+    "actor": {
+      "$ref": "resource:/schemas/telemetry/3.0/actor.json"
+    },
+    "context": {
+      "$ref": "resource:/schemas/telemetry/3.0/context.json"
+    },
+    "object": {
+      "$ref": "resource:/schemas/telemetry/3.0/object.json"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -31,7 +31,7 @@ public abstract class IEventUpdater {
     }
 
     private Map getConvertedData(Map data) {
-        if("content".equals(cacheType))
+        if("content".equals(cacheType) || "collection".equals((cacheType)))
             return getEpochConvertedContentDataMap(data);
         else if("dialcode".equals(cacheType))
             return getEpochConvertedDialcodeDataMap(data);
@@ -76,6 +76,7 @@ public abstract class IEventUpdater {
         data.put("lastpublishedon", lastPublishedOn);
         return data;
     }
+
 
     private Map getEpochConvertedDialcodeDataMap(Map data) {
 

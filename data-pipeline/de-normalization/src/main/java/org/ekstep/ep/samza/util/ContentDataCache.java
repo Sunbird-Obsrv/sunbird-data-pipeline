@@ -11,7 +11,7 @@ public class ContentDataCache extends DataCache {
 
     public ContentDataCache(Config config, JobMetrics metrics) {
 
-        super(config.getList("content.metadata.fields", Arrays.asList("name", "objectType", "contentType", "mediaType", "language", "medium", "mimeType", "framework", "board", "subject", "status", "pkgVersion", "lastSubmittedOn", "lastUpdatedOn", "lastPublishedOn")));
+        super(config.getList("content.metadata.fields", Arrays.asList("name", "objectType", "contentType", "mediaType", "language", "medium", "mimeType", "createdBy", "createdFor", "framework", "board", "subject", "status", "pkgVersion", "lastSubmittedOn", "lastUpdatedOn", "lastPublishedOn")));
         this.databaseIndex = config.getInt("redis.contentDB.index", 5);
         this.redisConnect = new RedisConnect(config);
         this.redisConnection = this.redisConnect.getConnection(databaseIndex);

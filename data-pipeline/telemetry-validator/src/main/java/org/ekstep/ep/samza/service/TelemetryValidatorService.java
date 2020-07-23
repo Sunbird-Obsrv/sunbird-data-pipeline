@@ -15,6 +15,8 @@ public class TelemetryValidatorService {
     private static Logger LOGGER = new Logger(TelemetryValidatorService.class);
     private final TelemetryValidatorConfig config;
     private TelemetrySchemaValidator telemetrySchemaValidator;
+    private String eidNullErrorMsg = "VALIDATION FAILED as eid is missing";
+    private String schemaNotFoundErrorMsg = "SCHEMA NOT FOUND";
 
     public TelemetryValidatorService(TelemetryValidatorConfig config, TelemetrySchemaValidator telemetrySchemaValidator) {
         this.config = config;
@@ -24,12 +26,16 @@ public class TelemetryValidatorService {
     public void process(TelemetryValidatorSource source, TelemetryValidatorSink sink) {
         Event event = null;
         try {
-            event = dataCorrection(source.getEvent());
+            event = source.getEvent();
+            if(event.eid() == null) {
+                LOGGER.error(null, eidNullErrorMsg);
+                sink.toFailedTopic(event, eidNullErrorMsg);
+                return;
+            }
+
             if (!telemetrySchemaValidator.schemaFileExists(event)) {
-                LOGGER.info("SCHEMA NOT FOUND FOR EID: ", event.eid());
-                LOGGER.debug("SKIP PROCESSING: SENDING TO SUCCESS", event.mid());
-                event.markSkipped();
-                sink.toSuccessTopic(event);
+                LOGGER.debug(null, schemaNotFoundErrorMsg);
+                sink.toFailedTopic(event, schemaNotFoundErrorMsg);
                 return;
             }
 
@@ -39,7 +45,7 @@ public class TelemetryValidatorService {
                 LOGGER.debug("VALIDATION SUCCESS", event.mid());
                 event.markSuccess();
                 event.updateDefaults(config);
-                sink.toSuccessTopic(event);
+                sink.toSuccessTopic(dataCorrection(event));
             } else {
                 LOGGER.error(null, "VALIDATION FAILED: " + report.toString());
                 String fieldName = getInvalidFieldName(report.toString());
@@ -78,6 +84,10 @@ public class TelemetryValidatorService {
 
         if (event.eid() != null && event.eid().equalsIgnoreCase("SEARCH")) {
             event.correctDialCodeKey();
+        }
+
+        if (event.objectFieldsPresent() && (event.objectType().equalsIgnoreCase("DialCode") || event.objectType().equalsIgnoreCase("qr"))) {
+            event.correctDialCodeValue();
         }
         return event;
     }

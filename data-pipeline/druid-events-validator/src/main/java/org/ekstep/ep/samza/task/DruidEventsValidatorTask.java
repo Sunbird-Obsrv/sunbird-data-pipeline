@@ -19,19 +19,19 @@
 
 package org.ekstep.ep.samza.task;
 
-import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import org.apache.samza.system.OutgoingMessageEnvelope;
-import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.StreamTask;
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
-import org.apache.samza.task.*;
+import org.apache.samza.task.MessageCollector;
+import org.apache.samza.task.TaskContext;
+import org.apache.samza.task.TaskCoordinator;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.DruidEventsValidatorService;
 import org.ekstep.ep.samza.util.SchemaValidator;
 
-public class DruidEventsValidatorTask implements StreamTask, InitableTask, WindowableTask {
+import com.github.fge.jsonschema.main.JsonSchemaFactory;
+
+public class DruidEventsValidatorTask extends BaseSamzaTask {
 
     static Logger LOGGER = new Logger(DruidEventsValidatorTask.class);
     private DruidEventsValidatorConfig config;
@@ -54,6 +54,7 @@ public class DruidEventsValidatorTask implements StreamTask, InitableTask, Windo
         metrics = new JobMetrics(context, this.config.jobName());
         this.schemaValidator = schemaValidator == null ? new SchemaValidator(this.config) : schemaValidator;
         service = new DruidEventsValidatorService(this.config, this.schemaValidator);
+        this.initTask(config, metrics);
     }
 
     @Override
@@ -64,11 +65,5 @@ public class DruidEventsValidatorTask implements StreamTask, InitableTask, Windo
         jsonSchemaFactory = JsonSchemaFactory.byDefault();
         service.process(source, sink, jsonSchemaFactory);
     }
-
-    @Override
-    public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-        String mEvent = metrics.collect();
-        collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
-        metrics.clear();
-    }
+    
 }

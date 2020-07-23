@@ -1,0 +1,80 @@
+- hosts: analytics-api
+  become: yes
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml']
+  name: Installing and configuring monit
+  roles:
+    - { role: monit, service: 'monit_api-service' }
+  tags: analytics-api
+
+- hosts: cassandra
+  become: yes
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml']
+  name: Installing and configuring monit
+  roles:
+    - { role: monit, service: 'monit_cassandra-dp' }
+  tags: cassandra
+
+- hosts: influxdb
+  become: yes
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml']
+  name: Installing and configuring monit
+  roles:
+    - { role: monit, service: 'monit_influxdb' }
+  tags: influxdb
+
+- hosts: secor
+  become: yes
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml']
+  name: Installing and configuring monit
+  roles:
+    - { role: monit, service: 'monit_assess-events-backup,monit_channel-telemetry-backup,monit_denorm-events-backup,monit_derived-telemetry-backup,monit_device-profile-backup,monit_extractor-failed-backup,monit_failed-telemetry-backup,monit_ingestion-telemetry-backup,monit_learning-events-backup,monit_learning-failed-backup,monit_pipeline-metrics-backup,monit_raw-telemetry-backup,monit_unique-telemetry-backup' }
+  tags: secor
+
+- hosts: kafka-indexer:analytics-api
+  become: yes
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml']
+  name: Installing and configuring monit
+  roles:
+    - { role: monit, service: 'monit_logstash' }
+  tags: logstash
+
+- hosts: yarn-master
+  become: yes
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml']
+  name: Installing and configuring monit
+  roles:
+    - { role: monit, service: 'monit_yarn_master' }
+  tags: yarnmaster
+
+- hosts: yarn-slave
+  become: yes
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml']
+  name: Installing and configuring monit
+  roles:
+    - { role: monit, service: 'monit_yarn_slave' }
+  tags: yarnslave
+
+- hosts: redisall
+  become: yes
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml']
+  name: Installing and configuring monit
+  roles:
+    - { role: monit, service: 'monit_redis' }
+  tags: redis
+
+- hosts: processing-cluster-zookeepers
+  become: yes
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml']
+  name: Installing and configuring monit
+  roles:
+    - { role: monit, service: 'monit_zookeeper' }
+  tags: zookeeper  

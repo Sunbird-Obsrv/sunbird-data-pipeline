@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-jobmanager-rest
+spec:
+  type: NodePort
+  ports:
+  - name: rest
+{{- $job-config-key := .Release.Name }}
+    nodePort: {{ index .Values $job-config-key.job_nodeport }}
+    port: 12000
+    protocol: TCP
+    targetPort: 8081
+  selector:
+    app: flink
+    component: {{ .Release.Name }}-jobmanager

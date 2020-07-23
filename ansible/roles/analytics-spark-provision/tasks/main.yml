@@ -1,14 +1,14 @@
 ## Provision Spark ##
 
-- name: Download Apache Spark 2.0.1 hadoop 2.7
+- name: Download Apache Spark {{ spark_version }} hadoop 2.7
   become: yes
   become_user: "{{ analytics_user }}"
-  get_url: url={{ spark_url }} dest={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7.tgz force=no owner={{ analytics_user }} group={{ analytics_group }}
+  get_url: url={{ spark_url }} dest={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz force=no owner={{ analytics_user }} group={{ analytics_group }}
 
-- name: Unarchive Spark 2.0.1 hadoop 2.7
+- name: Unarchive Spark {{ spark_version }} hadoop 2.7
   become: yes
   become_user: "{{ analytics_user }}"
-  unarchive: src={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7.tgz dest={{ analytics.home }}/ copy=no owner={{ analytics_user }} group={{ analytics_group }} creates={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7
+  unarchive: src={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz dest={{ analytics.home }}/ copy=no owner={{ analytics_user }} group={{ analytics_group }} creates={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7
 
 - name: Download Scala 2.11.8
   become: yes
@@ -23,37 +23,49 @@
 - name: Remove Guava 14.0.1 from Spark jars folder
   become: yes
   become_user: "{{ analytics_user }}"
-  file: path={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7/jars/guava-14.0.1.jar state=absent
+  file: path={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/guava-14.0.1.jar state=absent
 
 - name: Download Guava 19.0 and copy to Spark jars folder
   become: yes
   become_user: "{{ analytics_user }}"
-  get_url: url={{ guava_url }} dest={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7/jars/guava-19.0.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
+  get_url: url={{ guava_url }} dest={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/guava-19.0.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
 
 - name: Remove jets3t 0.9.3 from Spark jars folder
   become: yes
   become_user: "{{ analytics_user }}"
-  file: path={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7/jars/jets3t-0.9.3.jar state=absent
+  file: path={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/jets3t-0.9.3.jar state=absent
 
 - name: Download jets3t 0.9.4 and copy to Spark jars folder
   become: yes
   become_user: "{{ analytics_user }}"
-  get_url: url={{ jets3t_url }} dest={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7/jars/jets3t-0.9.4.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
+  get_url: url={{ jets3t_url }} dest={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/jets3t-0.9.4.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
 
 - name: Download hadoop-aws 2.7.3 and copy to Spark jars folder
   become: yes
   become_user: "{{ analytics_user }}"
-  get_url: url={{ hadoop_aws_url }} dest={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7/jars/hadoop-aws-2.7.3.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
+  get_url: url={{ hadoop_aws_url }} dest={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/hadoop-aws-2.7.3.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
+
+- name: Download hadoop-azure 2.7.3 and copy to Spark jars folder
+  become: yes
+  become_user: "{{ analytics_user }}"
+  get_url: url={{ hadoop_azure_url }} dest={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/hadoop-azure-2.7.3.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
+
+
+- name: Download azure_storage 3.0.0 and copy to Spark jars folder
+  become: yes
+  become_user: "{{ analytics_user }}"
+  get_url: url={{ azure_storage }} dest={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/azure-storage-3.0.0.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
+
 
 - name: Remove java-xmlbuilder 1.0 from Spark jars folder
   become: yes
   become_user: "{{ analytics_user }}"
-  file: path={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7/jars/java-xmlbuilder-1.0.jar state=absent
+  file: path={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/java-xmlbuilder-1.0.jar state=absent
 
 - name: Download java-xmlbuilder 1.1 in to Spark jars folder
   become: yes
   become_user: "{{ analytics_user }}"
-  get_url: url={{ java_xmlbuilder_url }} dest={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7/jars/java-xmlbuilder-1.1.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
+  get_url: url={{ java_xmlbuilder_url }} dest={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/jars/java-xmlbuilder-1.1.jar timeout=1000 force=no owner={{ analytics_user }} group={{ analytics_group }}
 
 - name: Update spark default conf
   become: yes
@@ -68,7 +80,7 @@
 - name: Copy Jets3t properties file
   become: yes
   become_user: "{{ analytics_user }}"
-  template: src=jets3t.j2 dest={{ analytics.home }}/spark-2.0.1-bin-hadoop2.7/conf/jets3t.properties mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  template: src=jets3t.j2 dest={{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7/conf/jets3t.properties mode=755 owner={{ analytics_user }} group={{ analytics_group }}
 
 
 ## Provision DS ##
@@ -82,10 +94,39 @@
   with_items:
     - gem
     - ruby
+    - gnupg2
+
+- name: Import rvm keys
+  become: yes
+  become_user: "{{ analytics_user }}"
+  shell: command curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - && curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import -
+
+- name: Install rvm
+  become: yes
+  become_user: "{{ analytics_user }}"
+  shell: curl -sSL https://get.rvm.io | bash -s stable  
+
+- name: source ruby script
+  become: yes
+  become_user: "{{ analytics_user }}"
+  shell: echo "source {{ analytics.base_path }}/.rvm/scripts/rvm" >> ~/.bashrc
+  args:
+    executable: /bin/bash
+
+- name: Install latest ruby
+  become: yes
+  shell: "{{ analytics.base_path }}/.rvm/bin/rvm install ruby-2.6"
+
+- name: Set latest ruby as default
+  become: yes
+  become_user: "{{ analytics_user }}"
+  shell: "{{ analytics.base_path }}/.rvm/bin/rvm --default use ruby-2.6"
 
 - name: Install ruby-kafka
+  gem:
+     name: ruby-kafka
   become: yes
-  shell: gem install ruby-kafka
+  become_user: "{{ analytics_user }}"
 
 - name: Download Kafka-2.11
   become: yes
@@ -100,3 +141,7 @@
   unarchive: src={{ analytics.soft_path }}/kafka_2.11-0.10.1.0.tgz dest={{ analytics.home }}/ copy=no owner={{ analytics_user }} group={{ analytics_group }} creates={{ analytics.home }}/kafka_2.11-0.10.1.0
   tags:
     - kafka-provision
+
+
+
+

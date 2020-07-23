@@ -52,8 +52,6 @@ public class DeNormalizationTaskTest {
     private JobMetrics jobMetrics;
     private Jedis jedisMock = new MockJedis("test");
     private Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
-    private CassandraConnect cassandraConnectMock;
-
 
     @SuppressWarnings("unchecked")
     @Before
@@ -66,7 +64,6 @@ public class DeNormalizationTaskTest {
         envelopeMock = mock(IncomingMessageEnvelope.class);
         configMock = mock(Config.class);
         RedisConnect redisConnectMock = mock(RedisConnect.class);
-        cassandraConnectMock = mock(CassandraConnect.class);
         contentCacheMock = mock(ContentDataCache.class);
         dailcodeCacheMock = mock(DialCodeDataCache.class);
         jobMetrics = mock(JobMetrics.class);
@@ -79,9 +76,6 @@ public class DeNormalizationTaskTest {
         stub(configMock.getList("user.metadata.fields",
                 Arrays.asList("usertype", "grade", "language", "subject", "state", "district", "usersignintype", "userlogintype")))
                 .toReturn(Arrays.asList("usertype", "grade", "language", "subject", "state", "district", "usersignintype", "userlogintype"));
-        stub(configMock.get("middleware.cassandra.host", "127.0.0.1")).toReturn("");
-        stub(configMock.get("middleware.cassandra.port", "9042")).toReturn("9042");
-        stub(configMock.get("middleware.cassandra.keyspace", "sunbird")).toReturn("sunbird");
         stub(configMock.getInt("redis.userDB.index", 4)).toReturn(4);
         stub(redisConnectMock.getConnection(4)).toReturn(jedisMock);
         List<String> defaultSummaryEvents = new ArrayList<>();
@@ -95,8 +89,8 @@ public class DeNormalizationTaskTest {
         stub(configMock.get("user.signin.type.default", "Anonymous")).toReturn("Anonymous");
         stub(configMock.get("user.login.type.default", "NA")).toReturn("NA");
 
-        UserDataCache userCacheMock = new UserDataCache(configMock,jobMetrics,cassandraConnectMock, redisConnectMock);
-        deNormalizationTask = new DeNormalizationTask(configMock, contextMock, userCacheMock , contentCacheMock, dailcodeCacheMock, jobMetrics,cassandraConnectMock, redisConnectMock);
+        UserDataCache userCacheMock = new UserDataCache(configMock,jobMetrics, redisConnectMock);
+        deNormalizationTask = new DeNormalizationTask(configMock, contextMock, userCacheMock , contentCacheMock, dailcodeCacheMock, jobMetrics, redisConnectMock);
     }
 
     @Test
@@ -169,6 +163,113 @@ public class DeNormalizationTaskTest {
                 assertEquals(contentData.size(), 3);
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
                 assertEquals(flags.get("user_data_retrieved"), true);
+                assertEquals(flags.get("content_data_retrieved"), true);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicWithoutRollUpID() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT);
+        jedisMock.set("393407b1-66b1-4c86-9080-b2bce9842886","{\"grade\":[4,5],\"district\":\"Bengaluru\",\"state\":\"Karnataka\"}");
+        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                System.out.println(outputMessage);
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                assertEquals(outputEvent.get("ver").toString(), "3.0");
+                Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
+                assertEquals(userData.size(), 5);
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("user_data_retrieved"), true);
+                assertEquals(flags.get("content_data_retrieved"), false);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicWithRollUpIdInCollectionData() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITH_OBJECT_ROLLUP);
+        jedisMock.set("393407b1-66b1-4c86-9080-b2bce9842886","{\"grade\":[4,5],\"district\":\"Bengaluru\",\"state\":\"Karnataka\"}");
+        Map<String, Object> collection = new HashMap<>();
+        collection.put("name", "collection-1");
+        collection.put("objecttype", "TextBook");
+        collection.put("contenttype", "TextBook");
+        stub(contentCacheMock.getData("do_31249561779090227216256")).toReturn(collection);
+        deNormalizationTask.process(envelopeMock,collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                System.out.println();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                Map<String, Object> collectionData = new Gson().fromJson(outputEvent.get("collectiondata").toString(), mapType);
+                assertEquals(collectionData.size(), 3);
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("collection_data_retrieved"), true);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicWithObjectIdInCollectionData() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITH_OBJECT_ROLLUP);
+        jedisMock.set("393407b1-66b1-4c86-9080-b2bce9842886","{\"grade\":[4,5],\"district\":\"Bengaluru\",\"state\":\"Karnataka\"}");
+        Map<String, Object> collection = new HashMap<>();
+        collection.put("name", "collection-1");
+        collection.put("objecttype", "TextBook");
+        collection.put("contenttype", "TextBook");
+        stub(contentCacheMock.getData("do_31277438304183091217888")).toReturn(collection);
+        deNormalizationTask.process(envelopeMock,collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                Map<String, Object> collectionData = new Gson().fromJson(outputEvent.get("contentdata").toString(), mapType);
+                assertEquals(collectionData.size(), 3);
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
+                assertEquals(flags.get("collection_data_retrieved"), false);
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSendEventsToSuccessTopicWithObjectIdEqualsRollUpIDInCollectionData() throws Exception {
+        stub(envelopeMock.getMessage()).toReturn(EventFixture.INTERACT_EVENT_WITH_OBJECTID_EQUALS_ROLLUPID);
+        jedisMock.set("393407b1-66b1-4c86-9080-b2bce9842886","{\"grade\":[4,5],\"district\":\"Bengaluru\",\"state\":\"Karnataka\"}");
+        Map<String, Object> collection = new HashMap<>();
+        collection.put("name", "collection-1");
+        collection.put("objecttype", "TextBook");
+        collection.put("contenttype", "TextBook");
+        Map<String, Object> content = new HashMap<>();
+        content.put("name", "content-1"); content.put("objecttype", "Content"); content.put("contenttype", "TextBook");
+        stub(contentCacheMock.getData("do_31277438304183091217888")).toReturn(collection);
+        stub(contentCacheMock.getData("do_31277438304183091217888")).toReturn(content);
+        deNormalizationTask.process(envelopeMock,collectorMock, coordinatorMock);
+        Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
+            @Override
+            public boolean matches(Object o) {
+                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
+                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
+                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
+                System.out.println(outputEvent);
+                Map<String, Object> collectionData = new Gson().fromJson(outputEvent.get("contentdata").toString(), mapType);
+                assertEquals(collectionData.size(), 3);
+                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
                 assertEquals(flags.get("content_data_retrieved"), true);
                 return true;
             }
@@ -587,7 +688,12 @@ public class DeNormalizationTaskTest {
                 Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
                 assertEquals(outputEvent.get("ver").toString(), "3.0");
                 Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
+                String jedisMockData = jedisMock.get("393407b1-66b1-4c86-9080-b2bce9842886");
                 assertEquals(userData.size(), 5);
+                assert jedisMockData.contains("grade");
+                assert jedisMockData.contains("district");
+                assert jedisMockData.contains("type");
+                assert jedisMockData.contains("state");
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
                 assertEquals(flags.get("user_data_retrieved"), true);
                 assertEquals(flags.get("content_data_retrieved"), null);
@@ -615,56 +721,6 @@ public class DeNormalizationTaskTest {
                 Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
                 assertEquals(flags.get("user_data_retrieved"), true);
                 assertEquals(flags.get("content_data_retrieved"), null);
-                return true;
-            }
-        }));
-    }
-
-    @Test
-    public void shouldSkipCassandraCallifUserSignInTypeAnonymous() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(EventFixture.IMPRESSION_EVENT);
-        String user_id="e9d73b7b-211a-43f4-8c01-cc9333757a9d";
-        jedisMock.set(user_id,"{\"subject\":[],\"grade\":[],\"usersignintype\":\"Anonymous\",\"userlogintype\":\"student\"}");
-        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
-            @Override
-            public boolean matches(Object o) {
-                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
-                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
-                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-                assertEquals(outputEvent.get("ver").toString(), "3.0");
-                Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
-                assertEquals(userData.size(), 4);
-                assertEquals(userData.get("usersignintype"),"Anonymous");
-                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-                assertEquals(flags.get("user_data_retrieved"), true);
-                assertEquals(flags.get("content_data_retrieved"), null);
-                verify(cassandraConnectMock, times(0)).findOne(anyString());
-                return true;
-            }
-        }));
-    }
-
-    @Test
-    public void shouldHitCassandraCallifUserSignInTypeNotAnonymous() throws Exception {
-        stub(envelopeMock.getMessage()).toReturn(EventFixture.IMPRESSION_EVENT);
-        String user_id="e9d73b7b-211a-43f4-8c01-cc9333757a9d";
-        jedisMock.set(user_id,"{\"subject\":[],\"grade\":[],\"usersignintype\":\"Self-Signed-In\",\"userlogintype\":\"student\"}");
-        deNormalizationTask.process(envelopeMock, collectorMock, coordinatorMock);
-        verify(collectorMock).send(argThat(new ArgumentMatcher<OutgoingMessageEnvelope>() {
-            @Override
-            public boolean matches(Object o) {
-                OutgoingMessageEnvelope outgoingMessageEnvelope = (OutgoingMessageEnvelope) o;
-                String outputMessage = (String) outgoingMessageEnvelope.getMessage();
-                Map<String, Object> outputEvent = new Gson().fromJson(outputMessage, mapType);
-                assertEquals(outputEvent.get("ver").toString(), "3.0");
-                Map<String, Object> userData = new Gson().fromJson(outputEvent.get("userdata").toString(), mapType);
-                assertEquals(userData.size(), 4);
-                assertEquals(userData.get("usersignintype"),"Self-Signed-In");
-                Map<String, Object> flags = new Gson().fromJson(outputEvent.get("flags").toString(), mapType);
-                assertEquals(flags.get("user_data_retrieved"), true);
-                assertEquals(flags.get("content_data_retrieved"), null);
-                verify(cassandraConnectMock, times(1)).findOne(anyString());
                 return true;
             }
         }));

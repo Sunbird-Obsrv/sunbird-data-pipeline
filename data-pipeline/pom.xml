@@ -22,21 +22,22 @@
 	<modules>
 		<module>ep-core</module>
 		<module>distribution</module>
-		<module>checksum-generator</module>
-		<module>search-service</module>
-		<module>cache-service</module>
 		<module>ep-telemetry-reader</module>
-		<module>es-client</module>
 		<module>telemetry-validator</module>
 		<module>telemetry-extractor</module>
 		<module>de-duplication</module>
+		<module>derived-de-duplication</module>
 		<module>telemetry-router</module>
+		<module>telemetry-redacter</module>
 		<module>telemetry-location-updater</module>
 		<module>de-normalization</module>
 		<module>druid-events-validator</module>
 		<module>events-router</module>
-		<!-- <module>druid-processor</module> -->
-		<module>redis-updater</module>
+		<module>device-profile-updater</module>
+		<module>assessment-aggregator</module>
+		<module>user-cache-updater</module>
+		<module>content-cache-updater</module>
+		<module>share-events-flattener</module>
 	</modules>
 
 	<properties>

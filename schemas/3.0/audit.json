@@ -27,6 +27,10 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "type": {
+              "id": "http://api.ekstep.org/telemetry/edata/type",
+              "type": "string"
+            },
             "props": {
               "id": "http://api.ekstep.org/telemetry/edata/props",
               "type": "array",

@@ -3,7 +3,7 @@
   vars_files:
    - ['{{inventory_dir}}/secrets.yml']
   tasks:
-   - command: "./upload_samza_logs.sh {{CONTAINER_NAME_SAMZA}} {{backup_azure_storage_account_name}} {{dp_vault_backup_azure_storage_secret}}"
+   - command: "./upload_samza_logs.sh {{CONTAINER_NAME_SAMZA}} {{sunbird_management_storage_account_name}} {{sunbird_management_storage_account_key}}"
      args:
        chdir: "{{script_path}}"
      become: yes

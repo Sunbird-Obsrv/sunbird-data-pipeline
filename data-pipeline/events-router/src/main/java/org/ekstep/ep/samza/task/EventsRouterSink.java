@@ -1,12 +1,9 @@
 package org.ekstep.ep.samza.task;
 
-import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.task.MessageCollector;
 import org.ekstep.ep.samza.core.BaseSink;
 import org.ekstep.ep.samza.core.JobMetrics;
 import org.ekstep.ep.samza.domain.Event;
-
-import java.text.SimpleDateFormat;
 
 public class EventsRouterSink extends BaseSink {
 
@@ -47,16 +44,6 @@ public class EventsRouterSink extends BaseSink {
 
 	public void incrementSkippedCount(Event event) {
 		metrics.incSkippedCounter();
-	}
-
-	public void toLogEventsTopic(Event event){
-		toTopic(config.getLogEventsRouteTopic(), event.did(), event.getJson());
-		metrics.incSuccessCounter();
-	}
-
-	public void toErrorEventsTopic(Event event){
-		toTopic(config.getErrorEventsRouteTopic(), event.did(), event.getJson());
-		metrics.incSuccessCounter();
 	}
 
 }

@@ -1,0 +1,12 @@
+- name: Submit config to api
+  uri:
+    url: http://{{ analytics_host }}:9000/report/jobs/submit
+    method: POST
+    body: "{{ lookup('template','./config.json.j2') }}"
+    body_format: json
+    headers:
+      Content-Type: "application/json"
+  register: response
+
+- debug:
+    var: response.json

@@ -13,16 +13,16 @@ public class MetricsFixture {
 
 	public static final String METRIC_EVENT_STREAM1 = "{\n" +
 			"  \"org.apache.samza.system.kafka.KafkaSystemConsumerMetrics\": {\n" +
-			"    \"kafka-inputtopic1-0-high-watermark\": {\n" +
-			"      \"name\": \"kafka-inputtopic1-0-high-watermark\",\n" +
+			"    \"kafka-inputtopic-0-high-watermark\": {\n" +
+			"      \"name\": \"kafka-inputtopic-0-high-watermark\",\n" +
 			"      \"count\": {\n" +
 			"        \"value\": 1000\n" +
 			"      }\n" +
 			"    }\n" +
 			"  }, \n" +
 			"  \"org.apache.samza.checkpoint.OffsetManagerMetrics\": {\n" +
-			"    \"kafka-inputtopic1-0-checkpointed-offset\": {\n" +
-			"      \"name\": \"kafka-inputtopic1-0-checkpointed-offset\",\n" +
+			"    \"kafka-inputtopic-0-checkpointed-offset\": {\n" +
+			"      \"name\": \"kafka-inputtopic-0-checkpointed-offset\",\n" +
 			"      \"count\": {\n" +
 			"        \"value\": 200\n" +
 			"      }\n" +
@@ -32,16 +32,16 @@ public class MetricsFixture {
 
 	public static final String METRIC_EVENT_STREAM2 = "{\n" +
 			"  \"org.apache.samza.system.kafka.KafkaSystemConsumerMetrics\": {\n" +
-			"    \"kafka-inputtopic1-0-high-watermark\": {\n" +
-			"      \"name\": \"kafka-inputtopic1-0-high-watermark\",\n" +
+			"    \"kafka-inputtopic-0-high-watermark\": {\n" +
+			"      \"name\": \"kafka-inputtopic-0-high-watermark\",\n" +
 			"      \"count\": {\n" +
 			"        \"value\": 1000\n" +
 			"      }\n" +
 			"    }\n" +
 			"  }, \n" +
 			"  \"org.apache.samza.checkpoint.OffsetManagerMetrics\": {\n" +
-			"    \"kafka-inputtopic1-0-checkpointed-offset\": {\n" +
-			"      \"name\": \"kafka-inputtopic1-0-checkpointed-offset\",\n" +
+			"    \"kafka-inputtopic-0-checkpointed-offset\": {\n" +
+			"      \"name\": \"kafka-inputtopic-0-checkpointed-offset\",\n" +
 			"      \"count\": {\n" +
 			"        \"value\": 1000\n" +
 			"      }\n" +

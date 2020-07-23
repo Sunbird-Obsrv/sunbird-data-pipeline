@@ -1,0 +1,1 @@
+analytics_host: "{{ groups['analytics-api'][0] }}"

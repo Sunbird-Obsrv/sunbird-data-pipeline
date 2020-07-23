@@ -1,0 +1,77 @@
+{
+  "type": "object",
+  "properties": {
+    "name": {
+      "id": "http://api.sunbird.org/telemetry/collectiondata/name",
+      "type": "string"
+    },
+    "objecttype": {
+      "id": "http://api.sunbird.org/telemetry/collectiondata/objecttype",
+      "type": "string"
+    },
+    "contenttype": {
+      "id": "http://api.sunbird.org/telemetry/collectiondata/contenttype",
+      "type": "string"
+    },
+    "mediatype": {
+      "id": "http://api.sunbird.org/telemetry/collectiondata/mediatype",
+      "type": "string"
+    },
+    "language": {
+      "id": "http://api.sunbird.org/telemetry/collectiondata/language",
+      "type": "array"
+    },
+    "medium": {
+      "id": "http://api.sunbird.org/telemetry/collectiondata/medium",
+      "type": "array"
+    },
+    "gradelevel": {
+      "id": "http://api.sunbird.org/telemetry/collectiondata/gradelevel",
+      "type": "array"
+    },
+    "subject": {
+      "id": "http://api.sunbird.org/telemetry/collectiondata/subject",
+      "type": "array"
+    },
+    "mimetype": {
+      "id": "http://api.sunbird.org/telemetry/collectiondata/mimetype",
+      "type": "string"
+    },
+    "createdby": {
+      "id": "http://api.sunbird.org/telemetry/collectiondata/createdby",
+      "type": "string"
+    },
+    "createdfor": {
+      "id": "http://api.sunbird.org/telemetry/collectiondata/createdfor",
+      "type": "array"
+    },
+    "framework": {
+      "id": "http://api.sunbird.org/telemetry/collectiondata/framework",
+      "type": "string"
+    },
+    "board": {
+      "id": "http://api.sunbird.org/telemetry/collectiondata/board",
+      "type": "string"
+    },
+    "status": {
+      "id": "http://api.sunbird.org/telemetry/collectiondata/status",
+      "type": "string"
+    },
+    "pkgversion": {
+      "id": "http://api.sunbird.org/telemetry/collectiondata/pkgversion",
+      "type": "number"
+    },
+    "lastsubmittedon": {
+      "id": "http://api.sunbird.org/telemetry/collectiondata/lastsubmittedon",
+      "type": "number"
+    },
+    "lastpublishedon": {
+      "id": "http://api.sunbird.org/telemetry/collectiondata/lastpublishedon",
+      "type": "number"
+    },
+    "lastupdatedon": {
+      "id": "http://api.sunbird.org/telemetry/collectiondata/lastupdatedon",
+      "type": "number"
+    }
+  }
+}

@@ -1,13 +1,11 @@
 package org.ekstep.ep.samza.task;
 
-import java.util.Map;
-
+import com.google.gson.Gson;
 import org.apache.samza.system.IncomingMessageEnvelope;
-import org.apache.samza.system.SystemStreamPartition;
 import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.domain.Event;
 
-import com.google.gson.Gson;
+import java.util.Map;
 
 public class TelemetryLocationUpdaterSource {
     static Logger LOGGER = new Logger(TelemetryLocationUpdaterSource.class);
@@ -32,6 +30,4 @@ public class TelemetryLocationUpdaterSource {
         return envelope.toString();
     }
 
-    public SystemStreamPartition getSystemStreamPartition() { return envelope.getSystemStreamPartition();}
-    public String getOffset() { return envelope.getOffset();}
 }

@@ -30,12 +30,6 @@ public class DeNormalizationSink extends BaseSink {
 		metrics.incErrorCounter();
 	}
 
-	public void toErrorTopic(Event event, String errorMessage) {
-		event.markFailure(errorMessage, config);
-		toTopic(config.failedTopic(), event.did(), event.getJson());
-		metrics.incErrorCounter();
-	}
-
 	public void incrementSkippedCount(Event event) {
 		metrics.incSkippedCounter();
 	}

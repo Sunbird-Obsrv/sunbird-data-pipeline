@@ -1,0 +1,58 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id"
+  ],
+  "properties": {
+    "id": {
+      "id": "http://api.ekstep.org/telemetry/question/id",
+      "type": "string"
+    },
+    "maxscore": {
+      "id": "http://api.ekstep.org/telemetry/question/maxscore",
+      "type": "number"
+    },
+    "exlength": {
+      "id": "http://api.ekstep.org/telemetry/question/exlength",
+      "type": "number"
+    },
+    "params": {
+      "id": "http://api.ekstep.org/telemetry/question/params",
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "uri": {
+      "id": "http://api.ekstep.org/telemetry/question/uri",
+      "type": "string"
+    },
+    "desc": {
+      "id": "http://api.ekstep.org/telemetry/question/desc",
+      "type": "string"
+    },
+    "title": {
+      "id": "http://api.ekstep.org/telemetry/question/title",
+      "type": "string"
+    },
+    "mmc": {
+      "id": "http://api.ekstep.org/telemetry/question/mmc",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "mc": {
+      "id": "http://api.ekstep.org/telemetry/question/mc",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "type": {
+      "id": "http://api.ekstep.org/telemetry/question/type",
+      "type": "string"
+    }
+  }
+}

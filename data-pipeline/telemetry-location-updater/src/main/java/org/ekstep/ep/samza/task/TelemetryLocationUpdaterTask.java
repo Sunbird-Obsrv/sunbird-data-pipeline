@@ -21,42 +21,40 @@ package org.ekstep.ep.samza.task;
 
 import org.apache.samza.config.Config;
 import org.apache.samza.system.IncomingMessageEnvelope;
-import org.apache.samza.system.OutgoingMessageEnvelope;
-import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 import org.ekstep.ep.samza.core.JobMetrics;
-import org.ekstep.ep.samza.core.Logger;
 import org.ekstep.ep.samza.service.TelemetryLocationUpdaterService;
 import org.ekstep.ep.samza.util.DeviceProfileCache;
+import org.ekstep.ep.samza.util.RedisConnect;
 
-public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, WindowableTask {
+public class TelemetryLocationUpdaterTask extends BaseSamzaTask {
 
-	private static Logger LOGGER = new Logger(TelemetryLocationUpdaterTask.class);
 	private TelemetryLocationUpdaterConfig config;
 	private JobMetrics metrics;
 	private TelemetryLocationUpdaterService service;
 	private DeviceProfileCache deviceProfileCache;
+	private RedisConnect redisConnect;
 
-	public TelemetryLocationUpdaterTask(Config config, TaskContext context, DeviceProfileCache deviceProfileCache) {
-		init(config, context, deviceProfileCache);
+	public TelemetryLocationUpdaterTask(Config config, TaskContext context, DeviceProfileCache deviceProfileCache, RedisConnect redisConnect) {
+		init(config, context, deviceProfileCache, redisConnect);
 	}
 
 	public TelemetryLocationUpdaterTask() {
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void init(Config config, TaskContext context) {
-		init(config, context, deviceProfileCache);
+		init(config, context, deviceProfileCache, redisConnect);
 	}
 
-	@SuppressWarnings("unchecked")
-	public void init(Config config, TaskContext context, DeviceProfileCache deviceProfileCache) {
-
+	public void init(Config config, TaskContext context, DeviceProfileCache deviceProfileCache, RedisConnect redisConnect) {
+		
 		this.config = new TelemetryLocationUpdaterConfig(config);
 		this.metrics = new JobMetrics(context, this.config.jobName());
-		this.deviceProfileCache = deviceProfileCache == null ? new DeviceProfileCache(config, metrics) : deviceProfileCache;
-		this.service = new TelemetryLocationUpdaterService(this.deviceProfileCache, metrics);
+		this.redisConnect = redisConnect == null ? new RedisConnect(config) : redisConnect;
+		this.deviceProfileCache = deviceProfileCache == null ? new DeviceProfileCache(config, metrics, this.redisConnect) : deviceProfileCache;
+		this.service = new TelemetryLocationUpdaterService(this.deviceProfileCache, metrics, this.redisConnect, config);
+		this.initTask(config, metrics);
 	}
 
 	@Override
@@ -68,11 +66,4 @@ public class TelemetryLocationUpdaterTask implements StreamTask, InitableTask, W
 		service.process(source, sink);
 	}
 
-	@Override
-	public void window(MessageCollector collector, TaskCoordinator coordinator) throws Exception {
-
-		String mEvent = metrics.collect();
-		collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", config.metricsTopic()), mEvent));
-		metrics.clear();
-	}
 }

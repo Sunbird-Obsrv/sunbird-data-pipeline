@@ -1,0 +1,94 @@
+- name: Get the segment stats
+  uri:
+    url: "{{ segments_stats_url }}"
+    method: GET
+    return_content: yes
+  register : segment_stats
+
+- name: Check the segment percent
+  set_fact:
+    status: "Failed"
+  when: item.value != 100.0
+  with_dict: "{{ segment_stats.content }}"
+
+- name: Get the retry_count
+  shell : cat "{{ druid_home }}/segment_retry_count"
+  register : retry_count
+
+- name: Fail the job when segments down and when max retries reached
+  set_fact:
+   status : "Down"
+  when: status  is defined and status == "Failed" and retry_count.stdout == 3
+
+- name : Increment retry count
+  shell : echo "{{ retry_count.stdout | int  + 1}}" > /home/druid/segment_retry_count
+  when: status is defined and status  == "Failed"
+
+- name : Default retry count value to 0
+  shell : echo "0" > "{{druid_home }}/segment_retry_count"
+  when: status is not defined
+
+- name: Alert slack with segments down
+  slack:
+    token: '{{ druid_slack_token }}'
+    msg: 'Segments down , restarting the historical service'
+    channel: '{{ druid_slack_channel  }}'
+    username: '{{ druid_slack_user }}'
+    color: 'danger'
+    icon_emoji: ':heavy_exclamation_mark:'
+  when: status is defined and status  == "Failed"
+
+- name: Restart druid historical service
+  systemd:
+    name: druid_historical
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+  become: yes
+  when: status is defined and status  == "Failed"
+
+- name: Check if historical is up
+  wait_for: host={{ ansible_host }} port=8083  state=started
+  when: status is defined and status  == "Failed"
+
+- name : Set the service status
+  set_fact:
+    service_status : "Running"
+  when: status is defined and status  == "Failed"
+
+- name: Get the segment stats after the restart
+  uri:
+    method: GET
+    url: "{{ segments_stats_url }}"
+    return_content: yes
+  register : segment_stats
+  when : service_status is defined and service_status == "Running"
+
+- name: Check the segment stats again after the restart
+  set_fact:
+    segment_status: "Failed"
+  with_dict: "{{ segment_stats.content }}"
+  when : service_status is defined and service_status == "Running" and item.value != 100.0
+
+- name: Alert slack once the historical is up and segments status is fine
+  slack:
+    token: '{{ druid_slack_token }}'
+    msg: 'Historial Service Back to running on node {{ansible_host}} and Segments up'
+    color: 'good'
+    channel: '{{ druid_slack_channel  }}'
+    username: '{{ druid_slack_user }}'
+    icon_emoji: ':white_check_mark:'
+  when: service_status is defined and service_status == "Running" and segment_status is not defined
+
+- name : Default retry count value to 0
+  shell : echo "0" > {{druid_home }}/segment_retry_count
+  when: service_status is defined and service_status == "Running" and segment_status is not defined
+
+- name: Alert slack when segments down even after the restart
+  slack:
+    token: '{{ druid_slack_token }}'
+    msg: 'Segments down even after Restart'
+    color: 'danger'
+    channel: '{{ druid_slack_channel }}'
+    icon_emoji: ':heavy_exclamation_mark:'
+  when: segment_status is defined and segment_status == "Failed"
