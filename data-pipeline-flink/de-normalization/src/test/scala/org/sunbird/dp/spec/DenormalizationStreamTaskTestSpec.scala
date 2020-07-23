@@ -33,8 +33,7 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
 
   var redisServer: RedisServer = _
   val config: Config = ConfigFactory.load("test.conf")
-  val denormConfig: DenormalizationConfig = new DenormalizationConfig(config)
-  println("Redis| Host = " + denormConfig.metaRedisHost + " Port = " + denormConfig.metaRedisPort)
+  val denormConfig: DenormalizationConfig = new DenormalizationConfig(config, "DenormTest")
   val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
   val gson = new Gson()
 
@@ -88,7 +87,7 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
 
   "De-normalization pipeline" should "denormalize content, user, device and location metadata" in {
 
-    when(mockKafkaUtil.kafkaEventSource[Event](denormConfig.inputTopic)).thenReturn(new InputSource)
+    when(mockKafkaUtil.kafkaEventSource[Event](denormConfig.telemetryInputTopic)).thenReturn(new InputSource)
     when(mockKafkaUtil.kafkaEventSink[Event](denormConfig.denormSuccessTopic)).thenReturn(new DenormEventsSink)
 
     val task = new DenormalizationStreamTask(denormConfig, mockKafkaUtil)
@@ -112,6 +111,8 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     event.flags().get("content_denorm").asInstanceOf[Boolean] should be (true)
     event.flags().get("loc_denorm").asInstanceOf[Boolean] should be (true)
     Option(event.flags().get("coll_denorm")) should be (None)
+
+    event.getMap().get("contentdata").asInstanceOf[util.Map[String, Any]].get("lastsubmittedon") should be(1529068016090L)
     
     event = DenormEventsSink.values("mid3")
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
@@ -173,7 +174,7 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
   
   it should " test the optional fields in denorm config " in {
     val config = ConfigFactory.load("test2.conf")
-    val denormConfig: DenormalizationConfig = new DenormalizationConfig(config)
+    val denormConfig: DenormalizationConfig = new DenormalizationConfig(config, "DenormTest")
     denormConfig.ignorePeriodInMonths should be (6)
     denormConfig.userLoginInTypeDefault should be ("Google")
     denormConfig.userSignInTypeDefault should be ("Default")

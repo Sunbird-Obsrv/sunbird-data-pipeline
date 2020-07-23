@@ -17,7 +17,7 @@ class UserDenormalization(config: DenormalizationConfig) {
     val actorType = event.actorType()
     if (null != actorId && actorId.nonEmpty && !"anonymous".equalsIgnoreCase(actorId) && "user".equalsIgnoreCase(actorType)) {
       metrics.incCounter(config.userTotal)
-      val userData = userDataCache.getWithRetry(actorId)
+      val userData = userDataCache.getWithRetry(actorId).map(f => {(f._1.toLowerCase().replace("_", ""), f._2)})
 
       if (userData.isEmpty) {
         metrics.incCounter(config.userCacheMiss)

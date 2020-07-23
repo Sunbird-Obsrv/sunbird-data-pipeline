@@ -90,7 +90,7 @@ run_course_metrics_job:
 run_assessment_metrics_job:
   assessment-dashboard-metrics:
     hour: 20
-    minute: 45
+    minute: 15
 
 run_admin_user_reports_job:
   admin-user-reports-3AMIST:

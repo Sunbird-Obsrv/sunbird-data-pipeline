@@ -11,7 +11,7 @@ import scala.collection.mutable.Map
 
 class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
 
-  private[this] val df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZoneUTC
+  private[this] val df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ").withZoneUTC
   private[this] val df2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").withZoneUTC()
   private val jobName = "PipelinePreprocessor"
 

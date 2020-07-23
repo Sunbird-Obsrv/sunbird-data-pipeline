@@ -76,8 +76,7 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
 
         FailedEventsSink.values.get(0).getFlags.get("dv_processed").booleanValue() should be(false)
         FailedEventsSink.values.get(0).getFlags.get("dv_validation_failed").booleanValue() should be(true)
-
-        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.processedMetricsCount}").getValue() should be (5)
+        
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationSuccessMetricsCount}").getValue() should be (4)
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.validationFailureMetricsCount}").getValue() should be (1)
 
@@ -85,7 +84,7 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.unique-event-count").getValue() should be (3)
 
         BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.summaryRouterMetricCount}").getValue() should be (1)
-        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.telemetryRouterMetricCount}").getValue() should be (3)
+        BaseMetricsReporter.gaugeMetrics(s"${druidValidatorConfig.jobName}.${druidValidatorConfig.telemetryRouterMetricCount}").getValue() should be (2)
 
     }
 
