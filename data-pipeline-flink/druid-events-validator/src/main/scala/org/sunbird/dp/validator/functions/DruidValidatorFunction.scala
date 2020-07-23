@@ -35,25 +35,55 @@ class DruidValidatorFunction(config: DruidValidatorConfig,
   }
 
   override def metricsList(): List[String] = {
-    List(config.validationSuccessMetricsCount, config.validationFailureMetricsCount) ::: deduplicationMetrics
+    List(config.validationSuccessMetricsCount, config.validationFailureMetricsCount,
+      config.telemetryRouterMetricCount, config.summaryRouterMetricCount) ::: deduplicationMetrics
   }
 
   override def processElement(event: Event,
                               ctx: ProcessFunction[Event, Event]#Context,
                               metrics: Metrics): Unit = {
 
+    val isUnique =
+      if (config.druidDeduplicationEnabled) {
+        deDuplicate[Event, Event](event.mid(), event, ctx, config.duplicateEventOutputTag,
+          flagName = "dv_duplicate")(dedupEngine, metrics)
+      } else true
+
+    if (isUnique) {
+      val routeEventsDownstream =
+        if (config.druidValidationEnabled) {
+          validateEvent(event, ctx, metrics)
+        } else true
+
+      if (routeEventsDownstream) routeEvents(event, ctx, metrics)
+    }
+
+  }
+
+  def validateEvent(event: Event, ctx: ProcessFunction[Event, Event]#Context, metrics: Metrics): Boolean = {
+
     val validationReport = schemaValidator.validate(event)
 
     if (validationReport.isSuccess) {
       event.markValidationSuccess()
       metrics.incCounter(config.validationSuccessMetricsCount)
-      deDup[Event, Event](event.mid(), event, ctx,
-        config.validEventOutputTag, config.duplicateEventOutputTag, flagName = "dv_duplicate")(dedupEngine, metrics)
     } else {
       val failedErrorMsg = schemaValidator.getInvalidFieldName(validationReport.toString)
       event.markValidationFailure(failedErrorMsg)
       metrics.incCounter(config.validationFailureMetricsCount)
       ctx.output(config.invalidEventOutputTag, event)
+    }
+
+    validationReport.isSuccess
+  }
+
+  def routeEvents(event: Event, ctx: ProcessFunction[Event, Event]#Context, metrics: Metrics): Unit = {
+    if (event.isSummaryEvent) {
+      metrics.incCounter(config.summaryRouterMetricCount)
+      ctx.output(config.summaryRouterOutputTag, event)
+    } else {
+      metrics.incCounter(config.telemetryRouterMetricCount)
+      ctx.output(config.telemetryRouterOutputTag, event)
     }
   }
 }

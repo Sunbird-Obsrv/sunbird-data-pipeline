@@ -21,7 +21,8 @@ object EventFixture {
       |"Class 5","Class 6","Class 7","Class 8","Class 9","Class 10","Class 11","Class 12","Other"],"language":["English",
       |"Gujarati","Hindi"]},"contentdata":{"pkgversion":1,"language":["Assamese"],"lastpublishedon":1499851249497,
       |"contenttype":"Resource","lastupdatedon":1499851152176,"framework":"NCF","name":"Test review process",
-      |"mimetype":"application/vnd.ekstep.ecml-archive","objecttype":"Content","mediatype":"content","status":"Live"}}
+      |"mimetype":"application/vnd.ekstep.ecml-archive","objecttype":"Content","mediatype":"content","status":"Live"},
+      |"dialcodedata":{"identifier":"KLQ2G7","channel":"0123221617357783046602","publisher":"MHPUBLISHER","status":2.0}}
     """.stripMargin
 
   val INVALID_DENORM_TELEMETRY_EVENT: String =
@@ -82,11 +83,18 @@ object EventFixture {
 
   val VALID_SERACH_EVENT: String =
     """
-      |{"eid":"SEARCH","ets":1577826509166,"ver":"3.0","mid":"LP.1577826509166.c5d13bb7-43c6-4174-9bbe-b06aed6758f2",
-      |"actor":{"id":"org.ekstep.learning.platform","type":"System"},"context":{"channel":"in.ekstep",
-      |"pdata":{"id":"dev.sunbird.learning.platform","pid":"search-service","ver":"1.0"},"env":"search"},
-      |"edata":{"size":112402,"query":"","filters":{},"sort":{},"type":"all","topn":[{"identifier":"do_11278295762528665612"},
-      |{"identifier":"domain_14443"},{"identifier":"do_11243460107708006418"},{"identifier":"tpd_medium_code"},
-      |{"identifier":"0128260921141493762"}]},"syncts":1577826509166}
+      |{"eid":"SEARCH","ver":"3.0","syncts":1.59518415538E12,"ets":1.59518415538E12,"flags":
+      |{"pp_validation_processed":true,"pp_duplicate":false,"device_denorm":false,"dialcode_denorm":true,
+      |"content_denorm":false},"dialcodedata":{"identifier":"KLQ2G7","channel":"0123221617357783046602",
+      |"publisher":"MHPUBLISHER","status":2.0},"mid":"LP.1595184155380.f7537e7a-df01-43af-8f29-8e4d7a3607fa",
+      |"type":"events","tags":["kp-events"],"actor":{"id":"org.sunbird.learning.platform","type":"System"},
+      |"edata":{"topn":[{"identifier":"do_312528046917705728246886"}],"query":"","size":7.0,"type":"content",
+      |"filters":{"contentType":["TextBookUnit","Resource","TextBook","Collection","Course"],"mimeType":{},
+      |"resourceType":{},"status":["Live"],"objectType":["Content"],"dialcodes":"KLQ2G7","framework":{},
+      |"compatibilityLevel":{"max":4.0,"min":1.0},"channel":{"ne":["0124433024890224640","0124446042259128320",
+      |"0124487522476933120","0125840271570288640","0124453662635048969"]}},"sort":{}},
+      |"@timestamp":"2020-07-19T18:42:41.524Z","context":{"pdata":{"ver":"1.0","id":"prod.diksha.portal",
+      |"pid":"search-service"},"did":"79838ccb0ff2c7d0a9dd05f5b337fbca","env":"search","channel":"ROOT_ORG"},
+      |"@version":"1","object":{"id":"KLQ2G7","type":"DialCode"}}
     """.stripMargin
 }

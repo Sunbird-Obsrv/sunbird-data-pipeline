@@ -3,6 +3,7 @@ package org.sunbird.dp.preprocessor.util
 import java.io.{File, IOException}
 import java.nio.file.{FileSystems, Files, Paths}
 
+import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import com.github.fge.jackson.JsonLoader
 import com.github.fge.jsonschema.core.exceptions.ProcessingException
 import com.github.fge.jsonschema.core.report.ProcessingReport
@@ -22,6 +23,7 @@ class SchemaValidator(config: PipelinePreprocessorConfig) extends java.io.Serial
 
   private val serialVersionUID = 8780940932759659175L
   private[this] val logger = LoggerFactory.getLogger(classOf[SchemaValidator])
+  private[this] val objectMapper = new ObjectMapper()
 
   logger.info("Initializing schema for telemetry objects...")
 
@@ -64,7 +66,7 @@ class SchemaValidator(config: PipelinePreprocessorConfig) extends java.io.Serial
   @throws[IOException]
   @throws[ProcessingException]
   def validate(event: Event, isSchemaPresent:Boolean): ProcessingReport = {
-    val eventJson = JsonLoader.fromString(event.getJson())
+    val eventJson = objectMapper.convertValue[JsonNode](event.getTelemetry.map, classOf[JsonNode])
     val report = if(isSchemaPresent) schemaJsonMap(event.schemaName).validate(eventJson) else schemaJsonMap(config.defaultSchemaFile).validate(eventJson)
     report
   }

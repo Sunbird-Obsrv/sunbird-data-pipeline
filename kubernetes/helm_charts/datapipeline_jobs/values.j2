@@ -235,6 +235,8 @@ druid-validator: |
     consumer.parallelism = {{ druid_validator_consumer_parallelism }}
     validator.parallelism = {{ validator_parallelism }} 
     router.parallelism = {{ router_parallelism }}
+    druid.validation.enabled = {{ druid_validation_enabled|lower }}
+    druid.deduplication.enabled = {{ druid_deduplication_enabled|lower }}
   }
   schema {
     path {

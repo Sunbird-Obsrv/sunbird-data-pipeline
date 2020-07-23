@@ -6,12 +6,11 @@ import com.typesafe.config.ConfigFactory
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.api.java.utils.ParameterTool
-import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.FlinkUtil
 import org.sunbird.dp.validator.domain.Event
-import org.sunbird.dp.validator.functions.{DruidRouterFunction, DruidValidatorFunction}
+import org.sunbird.dp.validator.functions.DruidValidatorFunction
 
 /**
  * Druid Validator stream task does the following pipeline processing in a sequence:
@@ -52,17 +51,13 @@ class DruidValidatorStreamTask(config: DruidValidatorConfig, kafkaConnector: Fli
       .process(new DruidValidatorFunction(config)).name(config.druidValidatorFunction).uid(config.druidValidatorFunction)
       .setParallelism(config.validatorParallelism)
 
-    val routerStream: SingleOutputStreamOperator[Event] = validationDataStream.getSideOutput(config.validEventOutputTag)
-      .process(new DruidRouterFunction(config)).name(config.druidRouterFunction).uid(config.druidRouterFunction)
-      .setParallelism(config.routerParallelism)
-
     /**
      * Separate sinks for valid telemetry events, valid summary events, valid error events, valid log events and invalid events
      */
-    routerStream.getSideOutput(config.telemetryRouterOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaTelemetryRouteTopic))
+    validationDataStream.getSideOutput(config.telemetryRouterOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaTelemetryRouteTopic))
       .name(config.telemetryEventsProducer).uid(config.telemetryEventsProducer)
 
-    routerStream.getSideOutput(config.summaryRouterOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaSummaryRouteTopic))
+    validationDataStream.getSideOutput(config.summaryRouterOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaSummaryRouteTopic))
       .name(config.summaryEventsProducer).uid(config.summaryEventsProducer)
 
     validationDataStream.getSideOutput(config.duplicateEventOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaDuplicateTopic))

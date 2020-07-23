@@ -40,6 +40,30 @@ trait BaseDeduplication {
     }
   }
 
+  def deDuplicate[T, R](key: String,
+                  event: T,
+                  context: ProcessFunction[T, R]#Context,
+                  duplicateOutputTag: OutputTag[R],
+                  flagName: String
+                 )(implicit deDupEngine: DedupEngine, metrics: Metrics): Boolean = {
+
+    val isUniqueEvent = null != key && deDupEngine.isUniqueEvent(key)
+
+    if (!isUniqueEvent) {
+      logger.debug(s"Event with mid: $key is duplicate")
+      metrics.incCounter(duplicateEventMetricCount)
+      context.output(duplicateOutputTag, updateFlag[T, R](event, flagName, value = true))
+    } else {
+      if (key != null) {
+        logger.debug(s"Adding mid: $key to Redis")
+        deDupEngine.storeChecksum(key)
+      }
+      metrics.incCounter(uniqueEventMetricCount)
+      logger.debug(s"Pushing the event with mid: $key for further processing")
+    }
+    isUniqueEvent
+  }
+
   def updateFlag[T, R](event: T, flagName: String, value: Boolean): R = {
     val flags: util.HashMap[String, Boolean] = new util.HashMap[String, Boolean]()
     flags.put(flagName, value)
