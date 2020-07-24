@@ -47,7 +47,7 @@ class RedactorFunction(config: TelemetryExtractorConfig, @transient var dataCach
                 metrics.incCounter(config.cacheMissCount)
             } else {
                 metrics.incCounter(config.cacheHitCount)
-                if (questionData.contains("questiontype") && "Registration".equalsIgnoreCase(questionData("questiontype").asInstanceOf[String]))
+                if (questionData.contains("questionType") && "Registration".equalsIgnoreCase(questionData("questionType").asInstanceOf[String]))
                     redact = true
             }
         }

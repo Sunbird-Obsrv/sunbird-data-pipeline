@@ -13,7 +13,7 @@
       when: ansible_facts.services.monit is defined
 
   roles:
-    - secor-backup-deploy  
+    - secor-telemetry-backup-deploy
   post_tasks:
     - name: Start the monit
       service: name=monit state=started
