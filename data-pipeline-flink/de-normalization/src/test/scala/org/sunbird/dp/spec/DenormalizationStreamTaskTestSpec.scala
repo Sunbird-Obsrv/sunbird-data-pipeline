@@ -122,7 +122,8 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     event.flags().get("loc_denorm").asInstanceOf[Boolean] should be (true)
 
     event.getMap().get("collectiondata").asInstanceOf[util.Map[String, Any]].get("contenttype") should be("Asset")
-    
+    Option(event.getMap().get("collectiondata").asInstanceOf[util.Map[String, Any]].get("contentType")) should be (None)
+
     event = DenormEventsSink.values("mid4")
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
     event.flags().get("user_denorm").asInstanceOf[Boolean] should be (true)
