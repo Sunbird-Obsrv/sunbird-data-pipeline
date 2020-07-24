@@ -160,6 +160,11 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     Option(event.flags().get("content_denorm")) should be (None)
     Option(event.flags().get("location_denorm")) should be (None)
 
+    event.getMap().get("dialcodedata").asInstanceOf[util.Map[String, Any]].get("batchcode") should be("jkpublisher.20180801T122031")
+    event.getMap().get("dialcodedata").asInstanceOf[util.Map[String, Any]].get("channel") should be("01254592085869363222")
+    event.getMap().get("dialcodedata").asInstanceOf[util.Map[String, Any]].get("generatedon") should be(1.571999041881E12)
+    event.getMap().get("dialcodedata").asInstanceOf[util.Map[String, Any]].get("publishedon") should be(1533130913695L)
+
     // TODO: Complete the assertions
     event = DenormEventsSink.values("mid6")
     event = DenormEventsSink.values("mid7")
