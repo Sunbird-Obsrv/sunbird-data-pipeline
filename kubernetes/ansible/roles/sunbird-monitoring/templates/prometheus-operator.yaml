@@ -53,9 +53,9 @@ alertmanager:
       - name: 'slack'
         slack_configs:
           - send_resolved: true
-            api_url: "{{ monitor_alerts_slack_url }}"
+            api_url: "{{ dp_monitor_alerts_slack_url }}"
             username: 'Monitor - Alerter'
-            channel: "{{ monitor_alerts_slack_channel }}"
+            channel: "{{ dp_monitor_alerts_slack_channel }}"
             text: |-
                   {{ "{{" }} range .Alerts {{ "}}" }}
                     *Alert:* {{ "{{" }} .Annotations.message {{ "}}" }} - `{{ "{{" }} .Labels.severity {{ "}}" }}`

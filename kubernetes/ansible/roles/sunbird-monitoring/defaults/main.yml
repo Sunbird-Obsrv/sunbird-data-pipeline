@@ -15,8 +15,8 @@ monitor_alerts_mail_server_host: "{{ sendgrid_hostname }}"
 monitor_alerts_mail_server_port: 587
 monitor_alerts_mail_server_username: "{{ SGUSER }}" 
 monitor_alerts_mail_server_password: "{{ SGPASS }}" 
-monitor_alerts_slack_url: 
-monitor_alerts_slack_channel: dev-flink-alert
+dp_monitor_alerts_slack_url: 
+dp_monitor_alerts_slack_channel: dev-flink-alert
 
 default_critical_mailing_list: "{{ default_mailing_list }}"
 default_fatal_mailing_list: "{{ default_mailing_list }}"
