@@ -38,6 +38,7 @@ alertmanager:
       repeat_interval: 4h
       routes:
       - receiver: slack
+        continue: true
       - match:
           owner:
         receiver: {{env}}_devops_team
