@@ -37,6 +37,7 @@ alertmanager:
       group_interval: 5m
       repeat_interval: 4h
       routes:
+      - receiver: slack
       - match:
           owner:
         receiver: {{env}}_devops_team
@@ -48,6 +49,21 @@ alertmanager:
             html: '{% raw %}{{ template "email.default.html" . }}{% endraw %}'
             headers:
               subject: '[{{ kubernetes_cluster_name }}] {% raw %}{{ .GroupLabels.alertname }}{% endraw %}'
+      - name: 'slack'
+        slack_configs:
+          - send_resolved: true
+            api_url: "{{ monitor_alerts_slack_url }}"
+            username: 'Monitor - Alerter'
+            channel: "{{ monitor_alerts_slack_channel }}"
+            text: |-
+                  {{ "{{" }} range .Alerts {{ "}}" }}
+                    *Alert:* {{ "{{" }} .Annotations.message {{ "}}" }} - `{{ "{{" }} .Labels.severity {{ "}}" }}`
+                    *Description:* {{ "{{" }} .Annotations.message {{ "}}" }}
+                    *Details:*
+                    {{ "{{" }} range .Labels.SortedPairs {{ "}}" }} • *{{ "{{" }} .Name {{ "}}" }}:* `{{ "{{" }} .Value {{ "}}" }}`
+                    {{ "{{" }} end {{ "}}" }}
+                  {{ "{{" }} end {{ "}}" }}
+            icon_emoji: ':dart:'
 
 grafana:
   env:
