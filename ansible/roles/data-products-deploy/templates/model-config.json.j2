@@ -2132,14 +2132,12 @@
     "modelParams": {
       "allChannelData": true,
       "reportPath": "nishtha-course-progress-reports/",
-      "batchFilters": [
-        "TPD"
-      ],
+      "batchFilters": ["TPD"],
       "fromDate": "$(date --date yesterday '+%Y-%m-%d')",
       "toDate": "$(date --date yesterday '+%Y-%m-%d')",
-      "sparkCassandraConnectionHost": "'$sunbirdPlatformCassandraHost'",
-      "sparkElasticsearchConnectionHost": "'$sunbirdPlatformElasticsearchHost'",
-      "sparkRedisConnectionHost": "'$sparkRedisConnectionHost'",
+      "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
+      "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}",
+      "sparkRedisConnectionHost": "{{redis_host}}",
       "sparkUserDbRedisIndex": "12"
     },
     "output": [
@@ -2162,14 +2160,12 @@
     "modelParams": {
       "allChannelData": true,
       "reportPath": "nishtha-assessment-reports",
-      "batchFilters": [
-        "TPD"
-      ],
+      "batchFilters": ["TPD"],
       "fromDate": "$(date --date yesterday '+%Y-%m-%d')",
       "toDate": "$(date --date yesterday '+%Y-%m-%d')",
-      "sparkCassandraConnectionHost": "'$sunbirdPlatformCassandraHost'",
-      "sparkElasticsearchConnectionHost": "'$sunbirdPlatformElasticsearchHost'",
-      "sparkRedisConnectionHost": "'$sparkRedisConnectionHost'",
+      "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
+      "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}",
+      "sparkRedisConnectionHost": "{{redis_host}}",
       "sparkUserDbRedisIndex": "12"
     },
     "output": [
