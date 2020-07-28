@@ -339,7 +339,7 @@ user-cache-updater_v2: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
     input.topic = {{ env_name }}.telemetry.audit
-    groupId = {{ env_name }}-user-cache-updater-v2-group
+    groupId = {{ env_name }}-user-cache-updater-consumer-group
   }
   task {
     usercache.updater.parallelism = {{ usercache_updater_parallelism }}
