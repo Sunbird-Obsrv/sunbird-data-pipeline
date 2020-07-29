@@ -36,6 +36,6 @@ do
       count=$(echo $nic | cut -d'-' -f3)
       hostname=$name-$count
       echo $hostname : $private_ip
-      sed -i '/\['$hostname'\]/{n;s/.*/'$private_ip'/}' "{{host_file_path}}"
+      sed -i '/\['$hostname'\]/{n;s/.*/'$private_ip'/}' "{{inventory_dir}}/hosts"
   fi
 done
