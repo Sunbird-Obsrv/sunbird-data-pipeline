@@ -3,3 +3,9 @@
     src: create-cluster.sh.j2
     dest: /tmp/create-cluster.sh
     mode: 0744
+
+- name: running the script to create azure spark cluster and update inventory
+  command: /tmp/create-cluster.sh
+  register: out
+ 
+- debug: var=out.stdout_lines
