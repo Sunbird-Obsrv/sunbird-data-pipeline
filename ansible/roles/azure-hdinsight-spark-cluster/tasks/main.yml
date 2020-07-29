@@ -1,0 +1,5 @@
+- name: copy cluster creation script
+  template:
+    src: create-cluster.sh.j2
+    dest: /tmp/create-cluster.sh
+    mode: 0744
