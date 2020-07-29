@@ -4,7 +4,7 @@ cluster_name="{{env}}-spark-cluster"
 resource_group="{{azure_resource_group}}"
 cluster_type=spark
 component_version=2.4
-headnode_size=Standard_E4_v3
+headnode_size="{{headnode_size}}"
 location="{{location}}"
 http_user=admin
 http_password="{{azure_spark_cluster_http_password}}"
@@ -17,7 +17,7 @@ subnet_name="{{subnet_name}}"
 vnet_name="{{vnet_name}}"
 version=4.0
 workernode_count="{{workernode_count}}"
-workernode_size=Standard_E8_v3
+workernode_size="{{workernode_size}}"
 
 az login
 az account set --subscription "{{subscription_id}}"
