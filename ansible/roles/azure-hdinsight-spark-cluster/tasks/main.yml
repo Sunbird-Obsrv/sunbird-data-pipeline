@@ -2,7 +2,7 @@
   template:
     src: create-cluster.sh.j2
     dest: /tmp/create-cluster.sh
-    mode: 0744
+    mode: 0755
   tags:
     - copy-script
   
