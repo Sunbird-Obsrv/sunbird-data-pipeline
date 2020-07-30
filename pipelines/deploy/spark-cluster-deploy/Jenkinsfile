@@ -23,7 +23,7 @@ node() {
                 values = [:]
                 currentWs = sh(returnStdout: true, script: 'pwd').trim()
                 ansiblePlaybook = "${currentWs}/ansible/spark-cluster-job-submit.yml"
-                ansibleExtraArgs = "--vault-password-file /var/lib/jenkins/secrets/vault-pass --tags ${params.module} --extra-vars \"artifact=${artifact}\""
+                ansibleExtraArgs = "--vault-password-file /var/lib/jenkins/secrets/vault-pass --tags ${params.module}"
                 values.put('currentWs', currentWs)
                 values.put('ansiblePlaybook', ansiblePlaybook)
                 values.put('ansibleExtraArgs', ansibleExtraArgs)
