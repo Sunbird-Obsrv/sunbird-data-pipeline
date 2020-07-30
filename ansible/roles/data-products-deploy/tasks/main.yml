@@ -4,21 +4,49 @@
   tags:
     - dataproducts
 
+- name: Copy Core Data Products to azure blob
+  command: az storage blob upload -c {{ bucket }} --name {{ analytics_batch_module_artifact }} -f models-{{ model_version }}
+  async: 3600
+  poll: 10
+  tags:
+    - spark-cluster 
+
 - name: Unarchive Ed Data Products
   become: yes
   unarchive: src={{ playbook_dir}}/{{ analytics_ed_dataporducts_artifact }} dest={{ analytics.home }}/models-{{ model_version }} copy=yes group={{ analytics_group }} owner={{ analytics_user }}
   tags:
-    - ed-dataproducts    
+    - ed-dataproducts
+
+- name: Copy Ed Data Products to azure blob
+  command: az storage blob upload -c {{ bucket }} --name {{ analytics.home }}/models-{{ model_version }}/data-products-1.0/data-products-1.0.jar -f models-{{ model_version }}
+  async: 3600
+  poll: 10
+  tags:
+    - spark-cluster      
 
 - name: Copy Framework Library
   copy: src={{ analytics_core_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
   tags:
     - framework
 
+- name: Copy Framework Library to azure blob
+  command: az storage blob upload -c {{ bucket }} --name {{ analytics_core_artifact }} -f models-{{ model_version }}
+  async: 3600
+  poll: 10
+  tags:
+    - spark-cluster
+
 - name: Copy Scruid Library
   copy: src={{ scruid_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
   tags:
     - framework  
+
+- name: Copy Scruid Library to azure blob
+  command: az storage blob upload -c {{ bucket }} --name {{ scruid_artifact }} -f models-{{ model_version }}
+  async: 3600
+  poll: 10
+  tags:
+    - spark-cluster  
 
 - name: Copy Job Manager
   copy: src={{ analytics_job_manager_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
@@ -31,6 +59,13 @@
     - dataproducts
     - ed-dataproducts
     - framework
+
+- name: Copy configuration file to azure blob
+  command: az storage blob upload -c {{ bucket }} --name {{ analytics.home }}/models-{{ model_version }}/{{ env }}.conf -f models-{{ model_version }}
+  async: 3600
+  poll: 10
+  tags:
+    - spark-cluster    
 
 - name: Copy log4j2 xml file
   template: src=log4j2.xml.j2 dest={{ analytics.home }}/models-{{ model_version }}/log4j2.xml mode=755 owner={{ analytics_user }} group={{ analytics_group }}
