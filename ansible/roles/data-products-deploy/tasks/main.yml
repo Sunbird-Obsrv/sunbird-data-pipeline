@@ -9,7 +9,7 @@
   async: 3600
   poll: 10
   tags:
-    - spark-cluster 
+    - dataproducts-spark-cluster 
 
 - name: Unarchive Ed Data Products
   become: yes
@@ -22,7 +22,7 @@
   async: 3600
   poll: 10
   tags:
-    - spark-cluster      
+    - ed-dataproducts-spark-cluster      
 
 - name: Copy Framework Library
   copy: src={{ analytics_core_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
@@ -34,7 +34,7 @@
   async: 3600
   poll: 10
   tags:
-    - spark-cluster
+    - framework-spark-cluster
 
 - name: Copy Scruid Library
   copy: src={{ scruid_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
@@ -46,7 +46,7 @@
   async: 3600
   poll: 10
   tags:
-    - spark-cluster  
+    - framework-spark-cluster  
 
 - name: Copy Job Manager
   copy: src={{ analytics_job_manager_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
@@ -65,7 +65,7 @@
   async: 3600
   poll: 10
   tags:
-    - spark-cluster    
+    - framework-spark-cluster    
 
 - name: Copy log4j2 xml file
   template: src=log4j2.xml.j2 dest={{ analytics.home }}/models-{{ model_version }}/log4j2.xml mode=755 owner={{ analytics_user }} group={{ analytics_group }}
