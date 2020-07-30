@@ -38,6 +38,19 @@
                   db="{{ postgres.db_name }}"
   tags: createuser
 
+- name: Ensure user has access to the superset database
+  postgresql_user: name="{{ postgres.db_username }}" \
+                  password="{{ postgres.db_password }}" \
+                  no_password_changes=true \
+                  priv=ALL \
+                  state=present \
+                  login_host="{{ postgres.db_url }}" \
+                  port="{{ postgres.db_port }}" \
+                  login_user="{{ postgres.db_admin_user }}" \
+                  login_password="{{ postgres.db_admin_password }}" \
+                  db="superset"
+  tags: createuser
+
 - name: create {{ env }}_consumer-channel-mapping
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_consumer_channel_mapping(consumer_id text, channel text, status smallint, created_by text, created_on timestamptz, updated_on timestamptz, PRIMARY KEY(consumer_id, channel))"
   run_once: true
