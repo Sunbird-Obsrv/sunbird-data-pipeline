@@ -1,5 +1,5 @@
 admin_name: admin
-admin_password : {{ cluster_admin_pass }}
+admin_password: {{ cluster_admin_pass }}
 
 analytics_core_artifact: "analytics-framework-2.0.jar"
 scruid_artifact: "scruid_2.11-2.3.2.jar"
