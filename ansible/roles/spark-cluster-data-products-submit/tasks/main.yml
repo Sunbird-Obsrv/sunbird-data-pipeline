@@ -1,0 +1,100 @@
+- name: Copy Framework Library to azure blob
+  command: az storage blob upload -c {{ bucket }} --name {{ analytics_core_artifact }} -f {{ azure_models_path }}
+  async: 3600
+  poll: 10
+  tags:
+    - copy-models
+
+- name: Copy Scruid Library to azure blob
+  command: az storage blob upload -c {{ bucket }} --name {{ scruid_artifact }} -f {{ azure_models_path }}
+  async: 3600
+  poll: 10
+  tags:
+    - copy-models  
+
+- name: Copy Core Data Products to azure blob
+  command: az storage blob upload -c {{ bucket }} --name {{ analytics_batch_module_artifact }} -f {{ azure_models_path }}
+  async: 3600
+  poll: 10
+  tags:
+    - copy-models
+
+- name: Copy Ed Data Products to azure blob
+  command: az storage blob upload -c {{ bucket }} --name {{ analytics_ed_dataporducts_artifact }} -f {{ azure_models_path }}
+  async: 3600
+  poll: 10
+  tags:
+    - copy-models
+
+- name: Copy configuration file
+  template: src=common.conf.j2 dest=tmp/analytics/application.conf
+
+- name: Copy application.conf to azure blob
+  command: az storage blob upload -c {{ bucket }} --name tmp/analytics/application.conf -f {{ azure_models_path }}
+  async: 3600
+  poll: 10
+  tags:
+    - copy-models    
+
+- name: Submit wfs job
+  uri:
+    url: https://spark-jobs-cluster.azurehdinsight.net/livy/batches
+    user: "{{ admin_name }}"
+    password: "{{ admin_password }}"
+    method: POST
+    body: "{{ lookup('template', './model-config.json.j2').wfs }}"
+    force_basic_auth: yes
+    body_format: json
+    status_code: 201
+    headers:
+      X-Requested-By: "{{ admin_name }}"
+  register: wfs_output
+  tags:
+    - submit-jobs
+
+- debug:
+    var: wfs_output  
+    tags:
+    - submit-jobs
+
+- name: Submit course-dashboard-metrics job
+  uri:
+    url: https://spark-jobs-cluster.azurehdinsight.net/livy/batches
+    user: "{{ admin_name }}"
+    password: "{{ admin_password }}"
+    method: POST
+    body: "{{ lookup('template', './model-config.json.j2').course }}"
+    force_basic_auth: yes
+    body_format: json
+    status_code: 201
+    headers:
+      X-Requested-By: "{{ admin_name }}"
+  register: course_output 
+  tags:
+    - submit-jobs
+
+- debug:
+    var: course_output
+    tags:
+    - submit-jobs
+
+- name: Submit assessment-metrics job
+  uri:
+    url: https://spark-jobs-cluster.azurehdinsight.net/livy/batches
+    user: "{{ admin_name }}"
+    password: "{{ admin_password }}"
+    method: POST
+    body: "{{ lookup('template', './model-config.json.j2').assessment }}"
+    force_basic_auth: yes
+    body_format: json
+    status_code: 201
+    headers:
+      X-Requested-By: "{{ admin_name }}"
+  register: assessment_output
+  tags:
+    - submit-jobs
+
+- debug:
+    var: assessment_output 
+    tags:
+    - submit-jobs
