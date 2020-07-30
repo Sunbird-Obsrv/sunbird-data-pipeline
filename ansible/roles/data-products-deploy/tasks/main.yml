@@ -5,7 +5,7 @@
     - dataproducts
 
 - name: Copy Core Data Products to azure blob
-  command: az storage blob upload -c {{ bucket }} --name {{ analytics_batch_module_artifact }} -f models-{{ model_version }}
+  command: az storage blob upload -c {{ bucket }} --name models-{{ model_version }}/{{ analytics_batch_module_artifact }} -f {{ analytics_batch_module_artifact }}
   async: 3600
   poll: 10
   tags:
@@ -18,7 +18,7 @@
     - ed-dataproducts
 
 - name: Copy Ed Data Products to azure blob
-  command: az storage blob upload -c {{ bucket }} --name {{ analytics.home }}/models-{{ model_version }}/data-products-1.0/data-products-1.0.jar -f models-{{ model_version }}
+  command: az storage blob upload -c {{ bucket }} -f {{ analytics.home }}/models-{{ model_version }}/data-products-1.0/data-products-1.0.jar -name models-{{ model_version }}/data-products-1.0.jar
   async: 3600
   poll: 10
   tags:
@@ -30,7 +30,7 @@
     - framework
 
 - name: Copy Framework Library to azure blob
-  command: az storage blob upload -c {{ bucket }} --name {{ analytics_core_artifact }} -f models-{{ model_version }}
+  command: az storage blob upload -c {{ bucket }} --name models-{{ model_version }}/{{ analytics_core_artifact }} -f {{ analytics_core_artifact }}
   async: 3600
   poll: 10
   tags:
@@ -42,7 +42,7 @@
     - framework  
 
 - name: Copy Scruid Library to azure blob
-  command: az storage blob upload -c {{ bucket }} --name {{ scruid_artifact }} -f models-{{ model_version }}
+  command: az storage blob upload -c {{ bucket }} --name models-{{ model_version }}/{{ scruid_artifact }} -f {{ scruid_artifact }}
   async: 3600
   poll: 10
   tags:
@@ -61,7 +61,7 @@
     - framework
 
 - name: Copy configuration file to azure blob
-  command: az storage blob upload -c {{ bucket }} --name {{ analytics.home }}/models-{{ model_version }}/{{ env }}.conf -f models-{{ model_version }}
+  command: az storage blob upload -c {{ bucket }} -f {{ analytics.home }}/models-{{ model_version }}/{{ env }}.conf --name models-{{ model_version }}/application.conf
   async: 3600
   poll: 10
   tags:
