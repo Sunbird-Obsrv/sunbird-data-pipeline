@@ -21,17 +21,23 @@ node() {
         ansiColor('xterm') {
             stage('deploy'){
                 values = [:]
+                envDir = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-3].trim()
+                module = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-2].trim()
+                jobName = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-1].trim()
                 currentWs = sh(returnStdout: true, script: 'pwd').trim()
                 ansiblePlaybook = "${currentWs}/ansible/spark-cluster-job-submit.yml"
                 ansibleExtraArgs = "--vault-password-file /var/lib/jenkins/secrets/vault-pass --tags ${params.module}"
                 values.put('currentWs', currentWs)
+                values.put('env', envDir)
+                values.put('module', module)
+                values.put('jobName', jobName)
                 values.put('ansiblePlaybook', ansiblePlaybook)
                 values.put('ansibleExtraArgs', ansibleExtraArgs)
                 println values
                 ansible_playbook_run(values)
 
                 currentBuild.result = "SUCCESS"
-                currentBuild.description = "Private: ${params.private_branch}, Public: ${params.branch_or_tag}"
+                currentBuild.description = "Artifact: ${values.artifact_version}, Private: ${params.private_branch}, Public: ${params.branch_or_tag}"
             }
         }
          summary()
