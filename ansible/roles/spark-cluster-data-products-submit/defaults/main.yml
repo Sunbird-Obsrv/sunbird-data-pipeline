@@ -18,6 +18,9 @@ spark_elasticsearch_connection_host: "{{ sunbird_es_host }}"
 spark_redis_connection_host: "{{ redis_host }}"
 spark_userdb_redis_index: "12"
 
+#execution_date: 2020-05-13
+execution_date: "{{ '%Y-%m-%d'|strftime(ansible_date_time.epoch|int - 86400) }}"
+
 spark:
   driver_memory: 7g
   memory_fraction: 0.3
