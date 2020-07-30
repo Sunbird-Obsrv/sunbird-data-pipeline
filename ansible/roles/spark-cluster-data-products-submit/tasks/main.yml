@@ -1,3 +1,8 @@
+- debug:
+    msg: "{{ lookup('template', './model-config.json.j2').wfs }}"
+    tags:
+    - submit-jobs
+
 - name: Submit wfs job
   uri:
     url: https://spark-jobs-cluster.azurehdinsight.net/livy/batches
