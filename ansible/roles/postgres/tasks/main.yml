@@ -15,6 +15,16 @@
                 state=present
   tags: createdb
 
+- name: Ensure database for superset is created
+  postgresql_db: name="superset" \
+                login_host="{{ postgres.db_url }}" \
+                port="{{ postgres.db_port }}" \
+                login_user="{{ postgres.db_admin_user }}" \
+                login_password="{{ postgres.db_admin_password }}" \
+                encoding='UTF-8' \
+                state=present
+  tags: createdb
+
 - name: Ensure user has access to the database
   postgresql_user: name="{{ postgres.db_username }}" \
                   password="{{ postgres.db_password }}" \
