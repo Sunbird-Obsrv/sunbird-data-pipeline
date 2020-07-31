@@ -30,7 +30,7 @@
     - framework
 
 - name: Copy Framework Library to azure blob
-  command: az storage blob upload -c {{ bucket }} --name models-{{ model_version }}/{{ analytics_core_artifact }} -f /home/deployer/{{ analytics_core_artifact }}
+  command: az storage blob upload --debug -c {{ bucket }} --name {{ analytics.home }}/models-{{ model_version }}/{{ analytics_core_artifact }} -f {{ analytics.home }}/models-{{ model_version }}/{{ analytics_core_artifact }}
   async: 3600
   poll: 10
   tags:
