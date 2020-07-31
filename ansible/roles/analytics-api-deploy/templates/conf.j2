@@ -213,13 +213,16 @@ metrics.dialcodemetrics.request.limit=1000
 
 #channel specifix telemetry exhaust
 
-dataexhaust.authorization_check=true
+dataexhaust.authorization_check=false
 
 channel.data_exhaust.bucket="{{channel_data_exhaust_bucket}}"
 channel.data_exhaust.basePrefix="channel/"
 channel.data_exhaust.expiryMins=30
 storage-service.request-signature-version="AWS4-HMAC-SHA256"
 s3service.region="ap-south-1"
+
+#summary exhaust configs
+channel.summary_data_exhaust.basePrefix="data-exhaust/summary/"
 
 cloud_storage_type="azure"
 
