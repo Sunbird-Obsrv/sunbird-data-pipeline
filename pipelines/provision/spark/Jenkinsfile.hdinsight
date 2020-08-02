@@ -30,14 +30,15 @@ node('build-slave') {
                 ansible_playbook_run(values)
             }
             stage('create and provision spark HDinsight cluster') {
+                storage_container=params.storage_container
                 withCredentials([usernamePassword(credentialsId: 'azure-service-principal', passwordVariable: 'sppass', usernameVariable: 'spuser')]) {
                    sh '''
                    currentws=$(pwd)
                    ansibleplaybook="$currentws/ansible/azure-hdinsight-spark.provision.yml"
                    cd /tmp
                    ./create-cluster.sh
-                   ansible-playbook -i $currentws/ansible/inventory/env $ansibleplaybook --extra-vars "azure_resource_group=${params.resource_group} location=${params.location} storage_container=${params.storage_container} subnet_name=${subnet_name} vnet_name=${vnet_name} workernode_count=${workernode_count} subscription_id=${env.subscription_id}" --tags spark-provision --vault-password-file /var/lib/jenkins/secrets/vault-pass
-                   
+                   vars="storage_container=$storage_container"
+                   ansible-playbook -i $currentws/ansible/inventory/env $ansibleplaybook --extra-vars '"'$vars'"' --tags spark-provision --vault-password-file /var/lib/jenkins/secrets/vault-pass
                    '''
                 }   
                
