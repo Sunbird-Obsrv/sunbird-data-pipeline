@@ -11,6 +11,7 @@
 ---
 - hosts: "{{groups['spark-hdinsight-cluster']}}"
   become: yes
+  gather_facts: no
   vars_files:
     - "{{inventory_dir}}/secrets.yml"
   roles:
