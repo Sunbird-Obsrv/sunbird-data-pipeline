@@ -26,6 +26,7 @@ az account set --subscription {{subscription_id}}
 
 
 mapfile -t nic_array < <( az network nic list -g $resource_group -o table | grep 'headnode\|workernode' | awk '{print $5}' )
+chmod 0777 "{{inventory_dir}}/hosts"
 
 for nic in "${nic_array[@]}";
 do
