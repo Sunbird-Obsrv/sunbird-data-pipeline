@@ -6,6 +6,7 @@
   with_items:
     - {var: 'azure_storage_key', value: '{{ sunbird_private_storage_account_name }}'}
     - {var: 'azure_storage_secret', value: '{{ sunbird_private_storage_account_key }}'}
+  no_log: true
 
 - name: Download Guava 19.0 and copy to Spark jars folder
   become: yes
