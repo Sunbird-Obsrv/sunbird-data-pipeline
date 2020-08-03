@@ -53,4 +53,4 @@ user: ecosystem
 kafka_systemd_service: /etc/systemd/system/kafka.service
 kafka_auto_create_topics: "false"
 delete_topic_enable: "true"
-kafka_openfile_limit: 32768
+openfile_limit: 40768
