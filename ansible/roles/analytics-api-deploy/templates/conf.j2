@@ -222,7 +222,8 @@ storage-service.request-signature-version="AWS4-HMAC-SHA256"
 s3service.region="ap-south-1"
 
 #summary exhaust configs
-channel.data_exhaust.summary.basePrefix="data-exhaust/summary/"
+channel.data_exhaust.rollup.bucket="{{channel_data_exhaust_bucket}}"
+channel.data_exhaust.rollup.basePrefix="data-exhaust/summary-rollup/"
 channel.data_exhaust.whitelisted.consumers=["trusted-consumer"]
 
 cloud_storage_type="azure"
