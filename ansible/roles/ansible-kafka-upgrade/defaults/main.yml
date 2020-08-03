@@ -2,7 +2,7 @@
 apache_mirror: http://apache.mirrors.tds.net
 apache_mirror_archive: https://archive.apache.org/dist
 kafka_hosts: "{{ groups['processing-cluster-kafka']|join(':9092,')}}:9092"
-kafka_version: 2.4.1
+kafka_version: 1.1.0
 kafka_version_old: 0.10.0.1
 kafka_scala_version: 2.12
 run_mode: Deploy
