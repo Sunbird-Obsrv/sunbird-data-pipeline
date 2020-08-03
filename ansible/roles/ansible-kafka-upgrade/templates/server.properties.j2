@@ -128,8 +128,8 @@ zookeeper.connect={% for host in groups['zookeeper'] %}{{ hostvars[host].ansible
 # Timeout in ms for connecting to zookeeper
 zookeeper.connection.timeout.ms={{zookeeper_connection_timeout_ms}}
 
-inter.broker.protocol.version={{kafka_version_old}}
-log.message.format.version={{kafka_version_old}}
+inter.broker.protocol.version={{kafka_version}}
+log.message.format.version={{kafka_version}}
 
 ############################# Group Coordinator Settings #############################
 
