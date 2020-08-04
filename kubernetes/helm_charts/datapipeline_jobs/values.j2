@@ -335,7 +335,7 @@ user-cache-updater: |
   user.self.signin.key = "Self-Signed-In"
   user.valid.key = "Validated"
 
-user-cache-updater_v2: |
+user-cache-updater-v2: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
     input.topic = {{ env_name }}.telemetry.audit

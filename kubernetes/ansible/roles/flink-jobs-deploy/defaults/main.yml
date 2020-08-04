@@ -1,4 +1,4 @@
-flink_namespace: flink-{{ env }}
+flink_namespace: flink-dev
 imagepullsecrets: sunbird-registry-secret
 
 ### Job manager related vars
@@ -155,7 +155,7 @@ flink_job_names:
   user-cache-updater:
     job_class_name: 'org.sunbird.dp.usercache.task.UserCacheUpdaterStreamTask'
     replica: 1
-  user-cache-updater_v2:
+  user-cache-updater-v2:
     job_class_name: 'org.sunbird.dp.usercache.task.UserCacheUpdaterStreamTaskV2'
     replica: 1
   summary-denormalization:
