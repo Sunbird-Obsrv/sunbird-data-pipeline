@@ -28,7 +28,7 @@ class ContentDenormalization(config: DenormalizationConfig) {
       }
 
       if (event.checkObjectIdNotEqualsRollUpl1Id()) {
-        event.addCollectionData(contentDataCache.getWithRetry(event.objectRollUpl1ID()))
+        event.addCollectionData(contentDataCache.getWithRetry(event.objectRollUpl1ID()).map(f => {(f._1.toLowerCase().replace("_", ""), f._2)}))
       }
     }
     event
