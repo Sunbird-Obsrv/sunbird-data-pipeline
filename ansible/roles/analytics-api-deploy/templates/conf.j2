@@ -223,19 +223,19 @@ channel {
     expiryMins = 30
     dataset {
       default {
-        bucket = "{{channel_data_exhaust_bucket}}",
-        basePrefix = "data-exhaust/$channel/raw/"
+        bucket = "{{channel_data_exhaust_bucket}}"
+        basePrefix = "channel/$channel/raw/"
       }
       raw {
-        bucket = "{{channel_data_exhaust_bucket}}",
-        basePrefix = "data-exhaust/$channel/raw/"
-      },
+        bucket = "{{channel_data_exhaust_bucket}}"
+        basePrefix = "channel/$channel/raw/"
+      }
       summary {
-        bucket = "{{channel_data_exhaust_bucket}}",
-        basePrefix = "data-exhaust/$channel/summary/"
-      },
+        bucket = "{{channel_data_exhaust_bucket}}"
+        basePrefix = "channel/$channel/summary/"
+      }
       summary-rollup {
-        bucket = "{{channel_data_exhaust_bucket}}",
+        bucket = "{{channel_data_exhaust_bucket}}"
         basePrefix = "data-exhaust/summary-rollup/$channel/"
       }
     }
