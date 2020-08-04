@@ -103,6 +103,10 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     Option(event.flags().get("dialcode_denorm")) should be (None)
     Option(event.flags().get("content_denorm")) should be (None)
     Option(event.flags().get("location_denorm")) should be (None)
+
+    event.getMap().get("userdata").asInstanceOf[util.Map[String, Any]].get("usersignintype") should be("Anonymous")
+    event.getMap().get("userdata").asInstanceOf[util.Map[String, Any]].get("usertype") should be("TEACHER")
+    event.getMap().get("userdata").asInstanceOf[util.Map[String, Any]].get("userlogintype") should be("NA")
     
     event = DenormEventsSink.values("mid2")
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
@@ -113,14 +117,33 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     Option(event.flags().get("coll_denorm")) should be (None)
 
     event.getMap().get("contentdata").asInstanceOf[util.Map[String, Any]].get("lastsubmittedon") should be(1529068016090L)
-    
+    event.getMap().get("contentdata").asInstanceOf[util.Map[String, Any]].get("channel") should be("in.ekstep")
+    event.getMap().get("contentdata").asInstanceOf[util.Map[String, Any]].get("lastpublishedon") should be(1.571999041881E12)
+    event.getMap().get("contentdata").asInstanceOf[util.Map[String, Any]].get("contenttype") should be("Resource")
+
+    event.getMap().get("devicedata").asInstanceOf[util.Map[String, Any]].get("statecustomcode") should be("29")
+    event.getMap().get("devicedata").asInstanceOf[util.Map[String, Any]].get("countrycode") should be("IN")
+    event.getMap().get("devicedata").asInstanceOf[util.Map[String, Any]].get("firstaccess") should be(1571999041881L)
+    event.getMap().get("devicedata").asInstanceOf[util.Map[String, Any]].get("districtcustom") should be("BENGALURU URBAN SOUTH")
+
     event = DenormEventsSink.values("mid3")
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
     event.flags().get("user_denorm").asInstanceOf[Boolean] should be (false)
     event.flags().get("content_denorm").asInstanceOf[Boolean] should be (true)
     event.flags().get("coll_denorm").asInstanceOf[Boolean] should be (true)
     event.flags().get("loc_denorm").asInstanceOf[Boolean] should be (true)
-    
+
+    event.getMap().get("collectiondata").asInstanceOf[util.Map[String, Any]].get("contenttype") should be("Asset")
+    Option(event.getMap().get("collectiondata").asInstanceOf[util.Map[String, Any]].get("contentType")) should be (None)
+    event.getMap().get("collectiondata").asInstanceOf[util.Map[String, Any]].get("contenttype") should be("Asset")
+    event.getMap().get("collectiondata").asInstanceOf[util.Map[String, Any]].get("framework") should be("NCF")
+    event.getMap().get("collectiondata").asInstanceOf[util.Map[String, Any]].get("name") should be("do_312526125187809280139355")
+    event.getMap().get("collectiondata").asInstanceOf[util.Map[String, Any]].get("lastupdatedon") should be(1489169400448L)
+
+    event.getMap().get("derivedlocationdata").asInstanceOf[util.Map[String, Any]].get("district") should be("Raigad")
+    event.getMap().get("derivedlocationdata").asInstanceOf[util.Map[String, Any]].get("state") should be("Maharashtra")
+    event.getMap().get("derivedlocationdata").asInstanceOf[util.Map[String, Any]].get("from") should be("user-declared")
+
     event = DenormEventsSink.values("mid4")
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
     event.flags().get("user_denorm").asInstanceOf[Boolean] should be (true)
@@ -136,6 +159,11 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     event.flags().get("dialcode_denorm").asInstanceOf[Boolean] should be (true)
     Option(event.flags().get("content_denorm")) should be (None)
     Option(event.flags().get("location_denorm")) should be (None)
+
+    event.getMap().get("dialcodedata").asInstanceOf[util.Map[String, Any]].get("batchcode") should be("jkpublisher.20180801T122031")
+    event.getMap().get("dialcodedata").asInstanceOf[util.Map[String, Any]].get("channel") should be("01254592085869363222")
+    event.getMap().get("dialcodedata").asInstanceOf[util.Map[String, Any]].get("generatedon") should be(1.571999041881E12)
+    event.getMap().get("dialcodedata").asInstanceOf[util.Map[String, Any]].get("publishedon") should be(1533130913695L)
 
     // TODO: Complete the assertions
     event = DenormEventsSink.values("mid6")
