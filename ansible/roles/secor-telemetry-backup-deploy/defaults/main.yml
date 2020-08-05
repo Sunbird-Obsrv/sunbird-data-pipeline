@@ -106,6 +106,7 @@ secor_service_name:
     service_description: "Channel Telemetry Backup"
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "50"
+    message_channel_identifier: "derivedlocationdata.state"
     message_parser: "com.pinterest.secor.parser.ChannelDateMessageParser"  
   extractor-failed-backup:
     consumer_group: "{{ env }}.extractor.failed.backup"
