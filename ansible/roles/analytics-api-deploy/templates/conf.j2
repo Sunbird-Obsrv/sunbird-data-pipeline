@@ -224,19 +224,19 @@ channel {
     dataset {
       default {
         bucket = "{{channel_data_exhaust_bucket}}"
-        basePrefix = "data-exhaust/raw/$channel/"
+        basePrefix = "data-exhaust/"
       }
       raw {
         bucket = "{{channel_data_exhaust_bucket}}"
-        basePrefix = "data-exhaust/raw/$channel/"
+        basePrefix = "data-exhaust/"
       }
       summary {
         bucket = "{{channel_data_exhaust_bucket}}"
-        basePrefix = "data-exhaust/summary/$channel/"
+        basePrefix = "data-exhaust/"
       }
       summary-rollup {
         bucket = "{{channel_data_exhaust_bucket}}"
-        basePrefix = "data-exhaust/summary-rollup/$channel/"
+        basePrefix = "data-exhaust/"
       }
     }
   }
