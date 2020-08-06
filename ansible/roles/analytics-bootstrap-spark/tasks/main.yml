@@ -24,7 +24,8 @@
     - {var: 'AZURE_STORAGE_ACCESS_KEY', value: '{{ sunbird_private_storage_account_key }}'}
     - {var: 'PUBLIC_AZURE_STORAGE_ACCOUNT', value: '{{ sunbird_public_storage_account_name }}'}
     - {var: 'PUBLIC_AZURE_STORAGE_ACCESS_KEY', value: '{{ sunbird_public_storage_account_key }}'}
-    - {var: 'REPORT_CONTAINER', value: 'reports'}
+    - {var: 'PRIVATE_REPORT_CONTAINER', value: '{{ private_report_container }}'}
+    - {var: 'PUBLIC_REPORT_CONTAINER', value: '{{ public_report_container }}'}
     - {var: 'REPORT_BACKUP_CONTAINER', value: 'portal-reports-backup'}
     - {var: 'GOOGLE_CREDENTIALS_PATH', value: '/home/analytics/credentials'}
     - {var: 'STORAGE_PROVIDER', value: 'AZURE'}
