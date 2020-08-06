@@ -98,10 +98,29 @@ object UserMetadataUpdater {
   def getReportInfo(userDetails: mutable.Map[String, AnyRef], config: UserCacheUpdaterConfigV2, cassandraConnect: CassandraUtil,
                     userId: String, metrics: Metrics): mutable.Map[String, AnyRef] = {
     if (userDetails.get("iscustodianuser").get == true) {
-      val custUserChannel = userDetails.getOrElse("rootorgid", "").asInstanceOf[String]
-      getCustodianUserInfo(metrics, userId, config, cassandraConnect).+=(config.userChannelKey -> custUserChannel)
+      val custodianInfo = getCustodianUserInfo(metrics, userId, config, cassandraConnect)
+      val originalProvider = custodianInfo.getOrElse("originalprovider", "")
+      custodianInfo.+=(config.userChannelKey -> getCustUserChannel(originalProvider, config, cassandraConnect, metrics))
     }
-    else getStateUserInfo(userDetails, metrics, userId, config, cassandraConnect)
+    else {
+      val custUserChannel = userDetails.getOrElse("rootorgid", "").asInstanceOf[String]
+      getStateUserInfo(userDetails, metrics, userId, config, cassandraConnect).+=(config.userChannelKey -> custUserChannel)
+    }
+  }
+
+  def getCustUserChannel(origianlProvider: AnyRef, config: UserCacheUpdaterConfigV2, cassandraConnect: CassandraUtil, metrics: Metrics): String = {
+    var result: String = null
+    val organisationQuery = QueryBuilder.select("id").from(config.keySpace, config.orgTable)
+      .where(QueryBuilder.in("channel", origianlProvider))
+      .and(QueryBuilder.eq("isrootorg", true)).allowFiltering().toString
+    val organisationInfo = cassandraConnect.findOne(organisationQuery)
+    if (null != organisationInfo) {
+      metrics.incCounter(config.dbReadSuccessCount)
+      result = organisationInfo.getString(0)
+    } else {
+      metrics.incCounter(config.dbReadMissCount)
+    }
+    result
   }
 
   def readFromCassandra(keyspace: String, table: String, clause: Clause, metrics: Metrics, cassandraConnect: CassandraUtil, config: UserCacheUpdaterConfigV2): util.List[Row] = {
@@ -164,7 +183,7 @@ object UserMetadataUpdater {
 
   def extractCustodianUserExternalData(externalIdentity: util.List[Row], config: UserCacheUpdaterConfigV2): mutable.Map[String, AnyRef] = {
     val result: mutable.Map[String, AnyRef] = mutable.Map[String, AnyRef]()
-    externalIdentity.forEach(row =>
+    externalIdentity.forEach{row =>
       row.getString("idtype").toLowerCase() match {
         case config.declareExternalId => result.put(config.externalidKey, row.getString("externalid"))
         case config.declaredSchoolName => result.put(config.schoolNameKey, row.getString("externalid"))
@@ -172,7 +191,9 @@ object UserMetadataUpdater {
         case config.declaredStateKey => result.put(config.stateKey, row.getString("externalid"))
         case config.declaredDistrictKey => result.put(config.districtKey, row.getString("externalid"))
         case _ => result
-      })
+      }
+      result.put(config.originalprovider, row.getString("originalprovider"))
+    }
     result
   }
 
@@ -204,7 +225,6 @@ object UserMetadataUpdater {
       for (i <- 0 until columnCount) {
         result.put(columnDefinitions.getName(i), organisationInfo.getObject(i))
       }
-      result.put(config.userChannelKey, result.getOrElse("id", ""))
       if (result.contains("orgname"))
         result.put(config.schoolNameKey, result.remove("orgname").getOrElse(""))
       if (result.contains("orgcode"))

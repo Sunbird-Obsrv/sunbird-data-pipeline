@@ -264,6 +264,7 @@ CREATE TABLE sunbird.organisation (
 INSERT INTO sunbird.organisation (id,channel, isrootorg, locationids, orgcode, orgname) VALUES ('0123653943740170242','ROOT_ORG', False, ['location-2', 'location-3', 'location-4'], 'Org-1', 'QA ORG');
 INSERT INTO sunbird.organisation (id,channel, isrootorg, locationids, orgcode, orgname) VALUES ('0125648776347320320','ROOT_ORG', False, ['location-2', 'location-3', 'location-4'], 'Org-2', 'Sunbird ORG');
 INSERT INTO sunbird.organisation (id,channel, isrootorg, locationids, orgcode, orgname) VALUES ('01285019302823526477','ROOT_ORG', True, ['location-2', 'location-3', 'location-4'], 'Org-2', 'Custodian ORG');
+INSERT INTO sunbird.organisation (id,channel, isrootorg, locationids, orgcode, orgname) VALUES ('012850193028235264771','apekx', True, ['location-2', 'location-3', 'location-4'], 'Org-2', 'Custodian ORG');
 
 CREATE TABLE sunbird.usr_external_identity (
     userid text,
