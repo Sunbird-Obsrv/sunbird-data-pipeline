@@ -100,7 +100,7 @@ object UserMetadataUpdater {
     if (userDetails.get("iscustodianuser").get == true) {
       val custodianInfo = getCustodianUserInfo(metrics, userId, config, cassandraConnect)
       //fetch location information from USER.locationids
-      val locationIds = userDetails.get("locationids").getOrElse(new util.ArrayList()).asInstanceOf[util.ArrayList[String]]
+      val locationIds = userDetails.get("locationids").getOrElse(new util.ArrayList()).asInstanceOf[util.List[String]]
       val locationInfoMap= getLocationInformation(locationIds, metrics, userId, config, cassandraConnect)
       custodianInfo.++(locationInfoMap)
     }
@@ -206,7 +206,7 @@ object UserMetadataUpdater {
     val orgInfoMap = getOrganisationInfo(userOrgId, cassandraConnect, config, metrics)
 
     // locationids from organisation table
-    val locationIds = orgInfoMap.get("locationids").getOrElse(new util.ArrayList()).asInstanceOf[util.ArrayList[String]]
+    val locationIds = orgInfoMap.get("locationids").getOrElse(new util.ArrayList()).asInstanceOf[util.List[String]]
     val locationInfoMap= getLocationInformation(locationIds, metrics, userId, config, cassandraConnect)
     //externalid from usr_external_table
     val channel = userDetails.getOrElse("channel", "").asInstanceOf[String]
@@ -240,7 +240,7 @@ object UserMetadataUpdater {
     }
   }
 
-  def getLocationInformation(locationIds: util.ArrayList[String], metrics: Metrics, userId: String, config: UserCacheUpdaterConfigV2,
+  def getLocationInformation(locationIds: util.List[String], metrics: Metrics, userId: String, config: UserCacheUpdaterConfigV2,
                              cassandraConnect: CassandraUtil): mutable.Map[String, AnyRef] = {
     extractLocationMetaData(readFromCassandra(
       keyspace = config.keySpace,
