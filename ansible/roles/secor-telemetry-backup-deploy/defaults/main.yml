@@ -30,6 +30,7 @@ secor_service_name:
     service_description: "Failed Telemetry Backup"
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "50"
+    message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   raw-telemetry-backup:
     consumer_group: "{{ env }}.telemetry.raw.backup"
@@ -49,6 +50,7 @@ secor_service_name:
     service_description: "Raw Telemetry Backup"
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "50"
+    message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   unique-telemetry-backup:
     consumer_group: "{{ env }}.telemetry.unique.backup"
@@ -68,6 +70,7 @@ secor_service_name:
     service_description: "Unique Telemetry Backup"
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "50"
+    message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   denorm-events-backup:
     consumer_group: "{{ env }}.telemetry.denorm.backup"
@@ -87,6 +90,7 @@ secor_service_name:
     service_description: "Denormalized Events Backup"
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "50"
+    message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   channel-telemetry-backup:
     consumer_group: "{{ env }}.telemetry.channel.backup"
@@ -126,6 +130,7 @@ secor_service_name:
     service_description: "Extractor failed events backup"
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "50"
+    message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   assess-raw-events-backup:
     consumer_group: "{{ env }}.telemetry.assess.raw"
@@ -145,6 +150,7 @@ secor_service_name:
     service_description: "Telemetry raw assess events backup"
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "50"
+    message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   telemetry-ingest-backup:
     consumer_group: "{{ env }}.telemetry.ingest.backup"
@@ -164,6 +170,7 @@ secor_service_name:
     service_description: "Ingestion cluster Telemetry Backup"
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "54"
+    message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   telemetry-duplicate-backup:
     consumer_group: "{{ env }}.telemetry.duplicate.backup"
@@ -183,6 +190,7 @@ secor_service_name:
     service_description: "Telemetry Duplicate Backup"
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "50"
+    message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   extractor-duplicate-backup:
     consumer_group: "{{ env }}.extractor.duplicate.backup"
@@ -202,6 +210,7 @@ secor_service_name:
     service_description: "Telemetry Duplicate Backup"
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "50"
+    message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   derived-telemetry-backup:
     consumer_group: "{{ env }}.telemetry.derived.unique.backup"
@@ -221,6 +230,7 @@ secor_service_name:
     service_description: "Derived Telemetry Backup"
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "52"
+    message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   device-profile-backup:
     consumer_group: "{{ env }}.events.device.profile.backup"
@@ -240,6 +250,7 @@ secor_service_name:
     service_description: "Device Profile Backup"
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "50"
+    message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   learning-events-backup:
     consumer_group: "{{ env }}.learning.graph.events.backup"
@@ -259,6 +270,7 @@ secor_service_name:
     service_description: "Learning Events Backup"
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "56"
+    message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   learning-failed-backup:
     consumer_group: "{{ env }}.failed.learning.events.backup"
@@ -281,6 +293,7 @@ secor_service_name:
     service_description: "Learning Failed Backup"
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "52"
+    message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   assess-events-backup:
     consumer_group: "{{ env }}.telemetry.assess.events.backup"
@@ -300,6 +313,7 @@ secor_service_name:
     service_description: "Telemetry Batch assess events backup"
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "50"
+    message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   ingestion-cluster-telemetry-backup:
     consumer_group: "{{ env }}.telemetry.ingestion.events.backup"
@@ -319,4 +333,5 @@ secor_service_name:
     service_description: "Ingestion cluster Telemetry Backup"
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "54"
+    message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
