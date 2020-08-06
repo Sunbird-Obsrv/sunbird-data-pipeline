@@ -90,9 +90,27 @@ spec:
       labels:
         severity: critical
       annotations:
-        message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "device-profile-updater-taskmanager-prometheus" }) > {{ .Values._device_profile_updater_threshold_critical }}
+        message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "device-profile-updater-taskmanager-prometheus" }) > {{ .Values.device_profile_updater_threshold_critical }}
         summary: device-profile-updater lag is critical
 
+#### KP jobs lag alert rules
+    - alert: activity-aggregate-updater lag critical
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "activity-aggregate-updater-taskmanager-prometheus" }) > {{ .Values.activity_aggregater_updater_threshold_critical }}
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "activity-aggregate-updater-taskmanager-prometheus" }) > {{ .Values.activity_aggregater_updater_threshold_critical }}
+        summary: activity-aggregate-updater lag is critical
+
+    - alert: relation-cache-updater lag critical
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "relation-cache-updater-taskmanager-prometheus" }) > {{ .Values.relation_cache_updater_threshold_critical }}
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        message: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "relation-cache-updater-taskmanager-prometheus" }) > {{ .Values.relation_cache_updater_threshold_critical }}
+        summary: relation-cache-updater lag is critical
 #### Checkpoint failure alert rules
     
     - alert: telemetry-extractor checkpoint failure critical

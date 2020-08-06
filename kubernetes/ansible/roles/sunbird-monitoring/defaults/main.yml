@@ -35,6 +35,10 @@ device_profile_updater_threshold_critical: 50000
 telemetry_extractor_failed_events_percentage_threshold_fatal: 1
 telemetry_extractor_failed_events_percentage_threshold_critical: 0.5
 
+# Flink KP Jobs lag vars
+activity_aggregater_updater_threshold_critical: 50
+relation_cache_updater_threshold_critical: 5
+
 # Flink jobmanager Checkpoint failure vars
 telemetry_extractor_checkpointfailure_threshold_critical: 5 
 pipeline_preprocessor_checkpointfailure_threshold_critical: 5
