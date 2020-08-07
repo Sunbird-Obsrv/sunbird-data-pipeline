@@ -5,7 +5,7 @@
     - dataproducts
 
 - name: Copy Core Data Products to azure blob
-  command: az storage blob upload -c {{ bucket }} --name models-{{ model_version }}/{{ analytics_batch_module_artifact }} -f {{ analytics_batch_module_artifact }}
+  command: az storage blob upload -c {{ bucket }} --name models-{{ model_version }}/{{ analytics_batch_module_artifact }} -f {{ analytics.home }}/models-{{ model_version }}/{{ analytics_batch_module_artifact }}
   async: 3600
   poll: 10
   tags:
