@@ -1,7 +1,7 @@
 package org.sunbird.dp.usercache.util
 
 import java.util
-
+import collection.JavaConverters._
 import com.datastax.driver.core.Row
 import com.datastax.driver.core.querybuilder.{Clause, QueryBuilder}
 import com.google.gson.Gson
@@ -149,14 +149,14 @@ object UserMetadataUpdater {
         result.put(columnDefinitions.getName(i), row.getObject(i))
       }
     }
-    val framework = result.get("framework").getOrElse(new util.LinkedHashMap()).asInstanceOf[util.LinkedHashMap[String, List[String]]]
+    val framework = result.get("framework").getOrElse(new util.LinkedHashMap()).asInstanceOf[util.LinkedHashMap[String, java.util.List[String]]]
     if(!framework.isEmpty)
      {
-       val board = framework.getOrDefault("board", List()).asInstanceOf[util.ArrayList[String]]
-       val medium = framework.getOrDefault("medium", List()).asInstanceOf[util.ArrayList[String]]
-       val grade = framework.getOrDefault("gradeLevel", List()).asInstanceOf[util.ArrayList[String]]
-       val subject = framework.getOrDefault("subject", List()).asInstanceOf[util.ArrayList[String]]
-       val id = framework.getOrDefault("id", List()).asInstanceOf[util.ArrayList[String]]
+       val board = framework.getOrDefault("board", List().asJava)
+       val medium = framework.getOrDefault("medium", List().asJava)
+       val grade = framework.getOrDefault("gradeLevel", List().asJava)
+       val subject = framework.getOrDefault("subject", List().asJava)
+       val id = framework.getOrDefault("id", List().asJava)
        result.+=("board" -> board, "medium" -> medium, "grade" -> grade, "subject" -> subject, "framework" -> id)
      }
     result
