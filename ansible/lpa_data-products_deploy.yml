@@ -6,6 +6,6 @@
   become_user: "{{ analytics_user }}"
   environment:
     AZURE_STORAGE_ACCOUNT: "{{sunbird_artifact_storage_account_name}}"
-    AZURE_STORAGE_SAS_TOKEN: "{{sunbird_artifact_storage_account_sas}}"
+    AZURE_STORAGE_KEY: "{{artifact_azure_account_key}}"
   roles:
    - data-products-deploy
