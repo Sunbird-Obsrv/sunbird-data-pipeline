@@ -36,7 +36,7 @@ object UserMetadataUpdater {
 
   def updateAction(userId: String, event: Event, metrics: Metrics, config: UserCacheUpdaterConfigV2, dataCache: DataCache,
                    cassandraConnect: CassandraUtil, custodianRootOrgId: String): mutable.Map[String, AnyRef] = {
-    val userCacheData: mutable.Map[String, String] = dataCache.hgetAllWithRetry(userId)
+    val userCacheData: mutable.Map[String, String] = dataCache.hgetAllWithRetry(config.userStoreKeyPrefix + userId)
 
     Option(event.getContextDataId(cDataType = "UserRole")).map(loginType => {
       userCacheData.put(config.userLoginTypeKey, loginType)
