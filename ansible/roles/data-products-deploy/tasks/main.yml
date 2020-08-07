@@ -61,7 +61,7 @@
     - framework
 
 - name: Copy configuration file to azure blob
-  command: az storage blob upload -c {{ bucket }} -f {{ analytics.home }}/models-{{ model_version }}/{{ env }}.conf --name {{ analytics.home }}/models-{{ model_version }}/application.conf
+  command: az storage blob upload -c {{ bucket }} -f {{ analytics.home }}/models-{{ model_version }}/{{ env }}.conf --name models-{{ model_version }}/application.conf
   async: 3600
   poll: 10
   tags:
