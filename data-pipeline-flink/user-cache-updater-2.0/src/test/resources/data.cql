@@ -150,6 +150,31 @@ INSERT INTO sunbird.user (
     locationids
 )VALUES ('user-11', 'VOS','apekx', 'IN','SOWMYA','13-jul-2020','13-jul-2020','28-10-1996','sowmyad@ilimi.in',true,'Sowmya', 1, 'Female','Dixit','Banglore','********gmail.com','******358', '*******','4682647342',true, '01285019302823526480', ['location-2', 'location-3']);
 
+INSERT INTO sunbird.user (
+    id,
+    avatar,
+    channel ,
+    countrycode,
+    createdby,
+    createddate,
+    currentlogintime,
+    dob,
+    email,
+    emailverified,
+    firstname,
+    flagsvalue,
+    gender,
+    lastname,
+    location,
+    maskedemail,
+    maskedphone,
+    password,
+    phone,
+    phoneverified,
+    rootorgid,
+    locationids,
+    framework
+)VALUES ('user-12', 'VOS','sunbird', 'IN','ISHA','29-apr-2020','29-apr-2020','24-08-1993','isha@ilimi.in',true,'Isha', 1, 'Male','Wakankar','Jhansi','********gmail.com','******181', '*******','4682647342',true, '01285019302823526477', ['location-2', 'location-3', 'location-4'], {'board': ['State (Madhya Pradesh)'], 'gradeLevel': ['Class 11', 'Class 12'], 'id': ['mp_k-12'], 'medium': ['Hindi']});
 
 CREATE TABLE sunbird.location (
     id text PRIMARY KEY,
@@ -264,6 +289,7 @@ CREATE TABLE sunbird.organisation (
 INSERT INTO sunbird.organisation (id,channel, isrootorg, locationids, orgcode, orgname) VALUES ('0123653943740170242','ROOT_ORG', False, ['location-2', 'location-3', 'location-4'], 'Org-1', 'QA ORG');
 INSERT INTO sunbird.organisation (id,channel, isrootorg, locationids, orgcode, orgname) VALUES ('0125648776347320320','ROOT_ORG', False, ['location-2', 'location-3', 'location-4'], 'Org-2', 'Sunbird ORG');
 INSERT INTO sunbird.organisation (id,channel, isrootorg, locationids, orgcode, orgname) VALUES ('01285019302823526477','ROOT_ORG', True, ['location-2', 'location-3', 'location-4'], 'Org-2', 'Custodian ORG');
+INSERT INTO sunbird.organisation (id,channel, isrootorg, locationids, orgcode, orgname) VALUES ('012850193028235264771','apekx', True, ['location-2', 'location-3', 'location-4'], 'Org-2', 'Custodian ORG');
 
 CREATE TABLE sunbird.usr_external_identity (
     userid text,
@@ -297,9 +323,8 @@ CREATE TABLE sunbird.usr_external_identity (
     INSERT INTO sunbird.usr_external_identity (userid,idtype,originalprovider, externalid, provider) VALUES ('user-3','declared-ext-id', 'apekx', '93nsoa01', 'apekx');
     INSERT INTO sunbird.usr_external_identity (userid,idtype,originalprovider, externalid, provider) VALUES ('user-3','declared-school-name', 'apekx', 'SBA School', 'apekx');
     INSERT INTO sunbird.usr_external_identity (userid,idtype,originalprovider, externalid, provider) VALUES ('user-3','declared-school-udise-code', 'apekx', '038sba937', 'apekx');
-    INSERT INTO sunbird.usr_external_identity (userid,idtype,originalprovider, externalid, provider) VALUES ('user-3','declared-state', 'apekx', 'Karnataka', 'apekx');
-    INSERT INTO sunbird.usr_external_identity (userid,idtype,originalprovider, externalid, provider) VALUES ('user-3','declared-district', 'apekx', 'Tumkur', 'apekx');
     INSERT INTO sunbird.usr_external_identity (userid,idtype,originalprovider, externalid, provider) VALUES ('user-3','declared-phone', 'apekx', '847389758393', 'apekx');
+    INSERT INTO sunbird.usr_external_identity (userid,idtype,originalprovider, externalid, provider) VALUES ('user-12','declared-ext-id', 'apekx', '93nsoa01', 'apekx');
     INSERT INTO sunbird.usr_external_identity (userid,idtype,originalprovider, externalid, provider) VALUES ('user-4','apekx', 'apekx', '948ext1', 'apekx');
 
     CREATE TABLE sunbird.system_settings (

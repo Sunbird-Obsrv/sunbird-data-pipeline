@@ -62,12 +62,12 @@ spark:
 
 submit_jobs:
   submit-all-jobs:
-    hour: 00
+    hour: 02
     minute: 35
 
 start_jobmanager:
   job-manager:
-    hour: 00
+    hour: 02
     minute: 30
 have_weekly_jobs: false
 
