@@ -219,24 +219,24 @@ s3service.region="ap-south-1"
 #channel exhaust configs
 channel {
   data_exhaust {
-    whitelisted.consumers=["trusted-consumer"]
+    whitelisted.consumers=["trusted-consumer", "273f3b18-5dda-4a27-984a-060c7cd398d3"]
     expiryMins = 30
     dataset {
       default {
         bucket = "{{channel_data_exhaust_bucket}}"
-        basePrefix = "data-exhaust/raw/$channel/"
+        basePrefix = "data-exhaust/"
       }
       raw {
         bucket = "{{channel_data_exhaust_bucket}}"
-        basePrefix = "data-exhaust/raw/$channel/"
+        basePrefix = "data-exhaust/"
       }
       summary {
         bucket = "{{channel_data_exhaust_bucket}}"
-        basePrefix = "data-exhaust/summary/$channel/"
+        basePrefix = "data-exhaust/"
       }
       summary-rollup {
         bucket = "{{channel_data_exhaust_bucket}}"
-        basePrefix = "data-exhaust/summary-rollup/$channel/"
+        basePrefix = "data-exhaust/"
       }
     }
   }
