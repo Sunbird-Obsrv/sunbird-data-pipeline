@@ -59,17 +59,17 @@ class UserCacheUpdaterConfigV2(override val config: Config) extends BaseJobConfi
   val schoolNameKey = "schoolname"
   val orgcodeKey = "orgcode"
   val userChannelKey="userchannel"
+  val originalprovider="originalprovider"
 
   val declareExternalId = "declared-ext-id"
   val declaredSchoolName = "declared-school-name"
   val declaredSchoolCode = "declared-school-udise-code"
-  val declaredStateKey = "declared-state"
-  val declaredDistrictKey = "declared-district"
 
+  //user store key prefix
+  val userStoreKeyPrefix = "user:"
   // Consumers
   val userCacheConsumer = "user-cache-consumer"
 
   // Functions
   val userCacheUpdaterFunction = "UserCacheUpdaterFunctionV2"
-
 }

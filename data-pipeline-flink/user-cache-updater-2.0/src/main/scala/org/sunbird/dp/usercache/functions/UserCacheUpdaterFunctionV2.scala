@@ -56,7 +56,7 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
           }
         }
         if (!userData.isEmpty) {
-          dataCache.hmSet(id, mapAsJavaMap(stringify(userData)))
+          dataCache.hmSet(config.userStoreKeyPrefix + id, mapAsJavaMap(stringify(userData)))
           metrics.incCounter(config.successCount)
           metrics.incCounter(config.userCacheHit)
         } else {

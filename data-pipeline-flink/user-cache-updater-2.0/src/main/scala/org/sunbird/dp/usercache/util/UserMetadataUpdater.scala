@@ -1,7 +1,7 @@
 package org.sunbird.dp.usercache.util
 
 import java.util
-
+import collection.JavaConverters._
 import com.datastax.driver.core.Row
 import com.datastax.driver.core.querybuilder.{Clause, QueryBuilder}
 import com.google.gson.Gson
@@ -36,7 +36,7 @@ object UserMetadataUpdater {
 
   def updateAction(userId: String, event: Event, metrics: Metrics, config: UserCacheUpdaterConfigV2, dataCache: DataCache,
                    cassandraConnect: CassandraUtil, custodianRootOrgId: String): mutable.Map[String, AnyRef] = {
-    val userCacheData: mutable.Map[String, String] = dataCache.hgetAllWithRetry(userId)
+    val userCacheData: mutable.Map[String, String] = dataCache.hgetAllWithRetry(config.userStoreKeyPrefix + userId)
 
     Option(event.getContextDataId(cDataType = "UserRole")).map(loginType => {
       userCacheData.put(config.userLoginTypeKey, loginType)
@@ -48,7 +48,6 @@ object UserMetadataUpdater {
       val userDetails: mutable.Map[String, AnyRef] = getUserDetails(config, cassandraConnect, metrics, userId, custodianRootOrgId)
       val reportInfoMap: mutable.Map[String, AnyRef] = getReportInfo(userDetails, config, cassandraConnect, userId, metrics)
       val updatedCache = userCacheData.++(userDetails).++(reportInfoMap)
-
       logger.info(s"User details ( $userId ) are fetched from the db's and updating the redis now.")
       updatedCache
     } else {
@@ -75,33 +74,55 @@ object UserMetadataUpdater {
       config)
     )
     val rootOrgId: String = userDetails.getOrElse("rootorgid", "").asInstanceOf[String]
-    val orgname: util.List[String] = getRootOrgName(rootOrgId, cassandraConnect, metrics, config)
+    val orgname: String = getRootOrgName(rootOrgId, cassandraConnect, metrics, config)
     userDetails.+=("iscustodianuser" -> isCustodianUser(rootOrgId, custodianRootOrgId).asInstanceOf[AnyRef],
       config.orgnameKey -> orgname)
   }
 
-  def getRootOrgName(rootOrgId: String, cassandraConnect: CassandraUtil, metrics: Metrics, config: UserCacheUpdaterConfigV2): util.List[String] = {
+  def getRootOrgName(rootOrgId: String, cassandraConnect: CassandraUtil, metrics: Metrics, config: UserCacheUpdaterConfigV2): String = {
     var orgNameList: util.List[String] = new util.ArrayList[String]()
+    var orgName: String = null;
     val orgNameQuery = QueryBuilder.select("orgname").from(config.keySpace, config.orgTable).where(QueryBuilder.eq("id", rootOrgId)).toString
     val rowSet = cassandraConnect.find(orgNameQuery)
     if (null != rowSet && !rowSet.isEmpty) {
       metrics.incCounter(config.dbReadSuccessCount)
       rowSet.forEach(row => orgNameList.add(row.getString(0)))
-      orgNameList
+      orgName = String.join(",", orgNameList)
     }
     else {
       metrics.incCounter(config.dbReadMissCount)
-      orgNameList
     }
+    orgName
   }
 
   def getReportInfo(userDetails: mutable.Map[String, AnyRef], config: UserCacheUpdaterConfigV2, cassandraConnect: CassandraUtil,
                     userId: String, metrics: Metrics): mutable.Map[String, AnyRef] = {
     if (userDetails.get("iscustodianuser").get == true) {
-      val custUserChannel = userDetails.getOrElse("rootorgid", "").asInstanceOf[String]
-      getCustodianUserInfo(metrics, userId, config, cassandraConnect).+=(config.userChannelKey -> custUserChannel)
+      val custodianInfo = getCustodianUserInfo(metrics, userId, config, cassandraConnect)
+      //fetch location information from USER.locationids
+      val locationIds = userDetails.get("locationids").getOrElse(new util.ArrayList()).asInstanceOf[util.List[String]]
+      val locationInfoMap= getLocationInformation(locationIds, metrics, userId, config, cassandraConnect)
+      custodianInfo.++(locationInfoMap)
     }
-    else getStateUserInfo(userDetails, metrics, userId, config, cassandraConnect)
+    else {
+      val custUserChannel = userDetails.getOrElse("rootorgid", "").asInstanceOf[String]
+      getStateUserInfo(userDetails, metrics, userId, config, cassandraConnect).+=(config.userChannelKey -> custUserChannel)
+    }
+  }
+
+  def getCustUserChannel(origianlProvider: AnyRef, config: UserCacheUpdaterConfigV2, cassandraConnect: CassandraUtil, metrics: Metrics): String = {
+    var result: String = null
+    val organisationQuery = QueryBuilder.select("id").from(config.keySpace, config.orgTable)
+      .where(QueryBuilder.in("channel", origianlProvider))
+      .and(QueryBuilder.eq("isrootorg", true)).allowFiltering().toString
+    val organisationInfo = cassandraConnect.findOne(organisationQuery)
+    if (null != organisationInfo) {
+      metrics.incCounter(config.dbReadSuccessCount)
+      result = organisationInfo.getString(0)
+    } else {
+      metrics.incCounter(config.dbReadMissCount)
+    }
+    result
   }
 
   def readFromCassandra(keyspace: String, table: String, clause: Clause, metrics: Metrics, cassandraConnect: CassandraUtil, config: UserCacheUpdaterConfigV2): util.List[Row] = {
@@ -128,14 +149,14 @@ object UserMetadataUpdater {
         result.put(columnDefinitions.getName(i), row.getObject(i))
       }
     }
-    val framework = result.get("framework").getOrElse(new util.LinkedHashMap()).asInstanceOf[util.LinkedHashMap[String, List[String]]]
+    val framework = result.get("framework").getOrElse(new util.LinkedHashMap()).asInstanceOf[util.LinkedHashMap[String, java.util.List[String]]]
     if(!framework.isEmpty)
      {
-       val board = framework.getOrDefault("board", List()).asInstanceOf[util.ArrayList[String]]
-       val medium = framework.getOrDefault("medium", List()).asInstanceOf[util.ArrayList[String]]
-       val grade = framework.getOrDefault("gradeLevel", List()).asInstanceOf[util.ArrayList[String]]
-       val subject = framework.getOrDefault("subject", List()).asInstanceOf[util.ArrayList[String]]
-       val id = framework.getOrDefault("id", List()).asInstanceOf[util.ArrayList[String]]
+       val board = framework.getOrDefault("board", List().asJava)
+       val medium = framework.getOrDefault("medium", List().asJava)
+       val grade = framework.getOrDefault("gradeLevel", List().asJava)
+       val subject = framework.getOrDefault("subject", List().asJava)
+       val id = framework.getOrDefault("id", List().asJava)
        result.+=("board" -> board, "medium" -> medium, "grade" -> grade, "subject" -> subject, "framework" -> id)
      }
     result
@@ -152,27 +173,31 @@ object UserMetadataUpdater {
   }
 
   def getCustodianUserInfo(metrics: Metrics, userId: String, config: UserCacheUpdaterConfigV2, cassandraConnect: CassandraUtil): mutable.Map[String, AnyRef] = {
-    val custodianUserMap = extractCustodianUserExternalData(readFromCassandra(
+    val custodianExtUserMap = extractCustodianUserExternalData(readFromCassandra(
       keyspace = config.keySpace,
       table = config.userExternalIdTable,
       clause = QueryBuilder.eq("userid", userId),
       metrics,
       cassandraConnect, config
     ), config)
-    custodianUserMap
+
+    //fetch custodian User's channel from organisation table
+    val originalProvider = custodianExtUserMap.getOrElse("originalprovider", "")
+    val custChannel = getCustUserChannel(originalProvider, config, cassandraConnect, metrics)
+    custodianExtUserMap.+=(config.userChannelKey -> custChannel)
   }
 
   def extractCustodianUserExternalData(externalIdentity: util.List[Row], config: UserCacheUpdaterConfigV2): mutable.Map[String, AnyRef] = {
     val result: mutable.Map[String, AnyRef] = mutable.Map[String, AnyRef]()
-    externalIdentity.forEach(row =>
+    externalIdentity.forEach{row =>
       row.getString("idtype").toLowerCase() match {
         case config.declareExternalId => result.put(config.externalidKey, row.getString("externalid"))
         case config.declaredSchoolName => result.put(config.schoolNameKey, row.getString("externalid"))
         case config.declaredSchoolCode => result.put(config.schoolUdiseCodeKey, row.getString("externalid"))
-        case config.declaredStateKey => result.put(config.stateKey, row.getString("externalid"))
-        case config.declaredDistrictKey => result.put(config.districtKey, row.getString("externalid"))
         case _ => result
-      })
+      }
+      result.put(config.originalprovider, row.getString("originalprovider"))
+    }
     result
   }
 
@@ -181,7 +206,7 @@ object UserMetadataUpdater {
     val orgInfoMap = getOrganisationInfo(userOrgId, cassandraConnect, config, metrics)
 
     // locationids from organisation table
-    val locationIds = orgInfoMap.get("locationids").getOrElse(new util.ArrayList()).asInstanceOf[util.ArrayList[String]]
+    val locationIds = orgInfoMap.get("locationids").getOrElse(new util.ArrayList()).asInstanceOf[util.List[String]]
     val locationInfoMap= getLocationInformation(locationIds, metrics, userId, config, cassandraConnect)
     //externalid from usr_external_table
     val channel = userDetails.getOrElse("channel", "").asInstanceOf[String]
@@ -204,7 +229,6 @@ object UserMetadataUpdater {
       for (i <- 0 until columnCount) {
         result.put(columnDefinitions.getName(i), organisationInfo.getObject(i))
       }
-      result.put(config.userChannelKey, result.getOrElse("id", ""))
       if (result.contains("orgname"))
         result.put(config.schoolNameKey, result.remove("orgname").getOrElse(""))
       if (result.contains("orgcode"))
@@ -216,7 +240,7 @@ object UserMetadataUpdater {
     }
   }
 
-  def getLocationInformation(locationIds: util.ArrayList[String], metrics: Metrics, userId: String, config: UserCacheUpdaterConfigV2,
+  def getLocationInformation(locationIds: util.List[String], metrics: Metrics, userId: String, config: UserCacheUpdaterConfigV2,
                              cassandraConnect: CassandraUtil): mutable.Map[String, AnyRef] = {
     extractLocationMetaData(readFromCassandra(
       keyspace = config.keySpace,

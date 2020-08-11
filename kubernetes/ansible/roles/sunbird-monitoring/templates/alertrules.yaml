@@ -31,6 +31,10 @@ device_profile_updater_threshold_critical: {{ device_profile_updater_threshold_c
 telemetry_extractor_failed_events_percentage_threshold_fatal: {{ telemetry_extractor_failed_events_percentage_threshold_fatal }}
 telemetry_extractor_failed_events_percentage_threshold_critical: {{ telemetry_extractor_failed_events_percentage_threshold_critical }}
 
+# KP flink jobs lag vars
+activity_aggregater_updater_threshold_critical: {{ activity_aggregater_updater_threshold_critical }}
+relation_cache_updater_threshold_critical: {{ relation_cache_updater_threshold_critical }}
+
 # Checkpoint failure vars
 telemetry_extractor_checkpointfailure_threshold_critical: {{ telemetry_extractor_checkpointfailure_threshold_critical }} 
 pipeline_preprocessor_checkpointfailure_threshold_critical: {{ pipeline_preprocessor_checkpointfailure_threshold_critical }}

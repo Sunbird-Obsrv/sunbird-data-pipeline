@@ -220,7 +220,7 @@ metric.producer.id="pipeline.monitoring"
 metric.producer.pid="dataproduct.metrics"
 push.metrics.kafka=true
 metric.kafka.broker="{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
-metric.kafka.topic="{{ env }}.telemetry.metrics"
+metric.kafka.topic="{{ env }}.prom.monitoring.metrics"
 
 //Postgres Config
 postgres.db="{{postgres.db_name}}"
