@@ -32,9 +32,9 @@
         "wasbs://{{ bucket }}@{{ azure_account }}.blob.core.windows.net/{{ azure_models_path }}/application.conf"
     ],
     "className": "org.ekstep.analytics.job.JobExecutor",
-    "executorCores": 5,
-    "executorMemory": "19G",
-    "numExecutors": 11,
+    "executorCores": {{ spark.executor_core }},
+    "executorMemory": "{{ spark.executor_memory }}",
+    "numExecutors": {{ spark.num_executors }},
     "conf": {
         "spark.sql.autoBroadcastJoinThreshold": "-1",
         "spark.driver.extraJavaOptions": "-Detwlogger.component=sparkdriver -DlogFilter.filename=SparkLogFilters.xml -DpatternGroup.filename=SparkPatternGroups.xml -Dlog4jspark.root.logger=INFO,console,RFA,ETW,Anonymizer,org.ekstep.analytics -Dlog4jspark.log.dir=/var/log/sparkapp/${user.name} -Dlog4jspark.log.file=sparkdriver.log -Dlog4j.configuration=file:/usr/hdp/current/spark2-client/conf/log4j.properties -Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl -XX:+UseParallelGC -XX:+UseParallelOldGC -Dreports_storage_key={{ azure_account }} -Dreports_storage_secret={{ azure_secret }}",
@@ -58,9 +58,9 @@
         "wasbs://{{ bucket }}@{{ azure_account }}.blob.core.windows.net/{{ azure_models_path }}/application.conf"
     ],
     "className": "org.ekstep.analytics.job.JobExecutor",
-    "executorCores": 5,
-    "executorMemory": "19G",
-    "numExecutors": 11,
+     "executorCores": {{ spark.executor_core }},
+    "executorMemory": "{{ spark.executor_memory }}",
+    "numExecutors": {{ spark.num_executors }},
     "conf": {
         "spark.sql.autoBroadcastJoinThreshold": "-1",
         "spark.driver.extraJavaOptions": "-Detwlogger.component=sparkdriver -DlogFilter.filename=SparkLogFilters.xml -DpatternGroup.filename=SparkPatternGroups.xml -Dlog4jspark.root.logger=INFO,console,RFA,ETW,Anonymizer,org.ekstep.analytics -Dlog4jspark.log.dir=/var/log/sparkapp/${user.name} -Dlog4jspark.log.file=sparkdriver.log -Dlog4j.configuration=file:/usr/hdp/current/spark2-client/conf/log4j.properties -Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl -XX:+UseParallelGC -XX:+UseParallelOldGC -Dreports_storage_key={{ azure_account }} -Dreports_storage_secret={{ azure_secret }}",
