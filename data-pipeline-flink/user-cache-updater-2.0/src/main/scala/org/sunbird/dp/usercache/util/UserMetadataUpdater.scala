@@ -202,6 +202,7 @@ object UserMetadataUpdater {
   }
 
   def getStateUserInfo(userDetails: mutable.Map[String, AnyRef], metrics: Metrics, userId: String, config: UserCacheUpdaterConfigV2, cassandraConnect: CassandraUtil): mutable.Map[String, AnyRef] = {
+    var externalId: String = null;
     val userOrgId = getUserOrgId(metrics, userId, config, cassandraConnect)
     val orgInfoMap = getOrganisationInfo(userOrgId, cassandraConnect, config, metrics)
 
@@ -209,8 +210,11 @@ object UserMetadataUpdater {
     val locationIds = orgInfoMap.get("locationids").getOrElse(new util.ArrayList()).asInstanceOf[util.List[String]]
     val locationInfoMap= getLocationInformation(locationIds, metrics, userId, config, cassandraConnect)
     //externalid from usr_external_table
+    val locationMap = orgInfoMap.++(locationInfoMap)
     val channel = userDetails.getOrElse("channel", "").asInstanceOf[String]
-    val externalId: String = getExternalId(channel, userId, cassandraConnect, config)
+    if( null != channel ){
+      externalId= getExternalId(channel, userId, cassandraConnect, config)
+    }
     val externalMap = orgInfoMap.++(locationInfoMap).+=(config.externalidKey -> externalId.asInstanceOf[AnyRef])
     externalMap
   }
