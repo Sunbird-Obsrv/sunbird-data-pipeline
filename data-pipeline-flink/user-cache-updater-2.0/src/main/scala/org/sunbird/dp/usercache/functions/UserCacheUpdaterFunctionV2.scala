@@ -67,7 +67,7 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
       }).getOrElse(metrics.incCounter(config.skipCount))
     } catch {
       case ex: Exception => {
-        logger.error("Exception while fetching data from cassandra: ", ex)
+        logger.error("Exception while processing data: ", ex)
         logger.error("Event throwing exception: ", event)
         throw ex
       }
