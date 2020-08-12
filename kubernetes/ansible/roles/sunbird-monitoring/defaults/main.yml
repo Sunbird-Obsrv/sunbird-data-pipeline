@@ -15,8 +15,8 @@ monitor_alerts_mail_server_host: "{{ sendgrid_hostname }}"
 monitor_alerts_mail_server_port: 587
 monitor_alerts_mail_server_username: "{{ SGUSER }}" 
 monitor_alerts_mail_server_password: "{{ SGPASS }}" 
-monitor_alerts_slack_url: 
-monitor_alerts_slack_channel: 
+dp_monitor_alerts_slack_url: 
+dp_monitor_alerts_slack_channel: "{{ env }}_flink_alerts"
 
 default_critical_mailing_list: "{{ default_mailing_list }}"
 default_fatal_mailing_list: "{{ default_mailing_list }}"
@@ -34,6 +34,10 @@ summary_denormalization_threshold_critical: 50000
 device_profile_updater_threshold_critical: 50000
 telemetry_extractor_failed_events_percentage_threshold_fatal: 1
 telemetry_extractor_failed_events_percentage_threshold_critical: 0.5
+
+# Flink KP Jobs lag vars
+activity_aggregater_updater_threshold_critical: 50
+relation_cache_updater_threshold_critical: 5
 
 # Flink jobmanager Checkpoint failure vars
 telemetry_extractor_checkpointfailure_threshold_critical: 5 

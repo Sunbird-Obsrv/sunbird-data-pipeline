@@ -73,8 +73,8 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
     jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-3", EventFixture.userCacheDataMap3)
     jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-4", EventFixture.userCacheDataMap4)
     jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-9", EventFixture.userCacheData9)
-    jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-11", EventFixture.userCacheData11)
     jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-12", EventFixture.userCacheData11)
+    jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-11", EventFixture.userCacheData11)
 
     jedis.close()
   }
@@ -89,12 +89,7 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
     /**
       * Metrics Assertions
       */
-//    println(BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheHit}").getValue())
-//    println(BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.totalEventsCount}").getValue())
-//    println(BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadSuccessCount}").getValue())
-//    println(BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadMissCount}").getValue())
-//    println(BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.skipCount}").getValue())
-//    println(BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.successCount}").getValue())
+
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheHit}").getValue() should be(8)
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.totalEventsCount}").getValue() should be(11)
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadSuccessCount}").getValue() should be(17)
