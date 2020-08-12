@@ -73,7 +73,6 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
     jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-3", EventFixture.userCacheDataMap3)
     jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-4", EventFixture.userCacheDataMap4)
     jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-9", EventFixture.userCacheData9)
-    jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-11", EventFixture.userCacheData11)
     jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-12", EventFixture.userCacheData11)
 
     jedis.close()
@@ -151,6 +150,12 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
 
     val emptyProps = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix +  "user-5")
     emptyProps.get(userCacheConfig.userLoginTypeKey) should be("25cb0530-7c52-ecb1-cff2-6a14faab7910")
+  }
+
+  it should "throw exception while processing data" in intercept[Exception] {
+    jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-11", EventFixture.userCacheData11)
+    val userInfoMap = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix + "user-11")
+    userInfoMap.get("firstname") should be ("Sowmya")
   }
 
   def testCassandraUtil(cassandraUtil: CassandraUtil): Unit = {
