@@ -44,7 +44,6 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
 
   override def processElement(event: Event, context: ProcessFunction[Event, Event]#Context, metrics: Metrics): Unit = {
     metrics.incCounter(config.totalEventsCount)
-    try {
       Option(event.getId).map(id => {
         Option(event.getState).map(name => {
           val userData: mutable.Map[String, AnyRef] = name.toUpperCase match {
@@ -65,13 +64,6 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
           }
         }).getOrElse(metrics.incCounter(config.skipCount))
       }).getOrElse(metrics.incCounter(config.skipCount))
-    } catch {
-      case ex: Exception => {
-        logger.error("Exception while processing data: ", ex)
-        logger.error("Event throwing exception: ", event)
-        throw ex
-      }
-    }
   }
 
   def getCustodianRootOrgId(): String = {

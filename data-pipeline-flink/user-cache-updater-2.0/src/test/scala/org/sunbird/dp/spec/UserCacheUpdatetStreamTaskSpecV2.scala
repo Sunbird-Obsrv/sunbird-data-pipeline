@@ -74,6 +74,7 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
     jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-4", EventFixture.userCacheDataMap4)
     jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-9", EventFixture.userCacheData9)
     jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-12", EventFixture.userCacheData11)
+    jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-11", EventFixture.userCacheData11)
 
     jedis.close()
   }
@@ -88,12 +89,13 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
     /**
       * Metrics Assertions
       */
-//    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheHit}").getValue() should be(7)
-//    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.totalEventsCount}").getValue() should be(10)
-//    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadSuccessCount}").getValue() should be(12)
-//    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadMissCount}").getValue() should be(8)
-//    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.skipCount}").getValue() should be(4)
-//    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.successCount}").getValue() should be(7)
+
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheHit}").getValue() should be(8)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.totalEventsCount}").getValue() should be(11)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadSuccessCount}").getValue() should be(17)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadMissCount}").getValue() should be(8)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.skipCount}").getValue() should be(4)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.successCount}").getValue() should be(8)
 
     /**
       * UserId = 89490534-126f-4f0b-82ac-3ff3e49f3468
@@ -142,6 +144,15 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
     skipUser.get("firstname") should be("UT")
     skipUser.get("rootorgid") should be("01285019302823526477")
 
+    /** user: user-11
+      * State user having channel null in user table
+      * */
+
+    val user11 = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix + "user-11")
+    user11.get("firstname") should be ("Sowmya")
+    user11.get("channel") should be ("")
+    user11.get("externalid") should be ("")
+
     //user-12
     //Framework not having subject
     val userInfoMap = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix + "user-12")
@@ -150,12 +161,6 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
 
     val emptyProps = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix +  "user-5")
     emptyProps.get(userCacheConfig.userLoginTypeKey) should be("25cb0530-7c52-ecb1-cff2-6a14faab7910")
-  }
-
-  it should "throw exception while processing data" in intercept[Exception] {
-    jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-11", EventFixture.userCacheData11)
-    val userInfoMap = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix + "user-11")
-    userInfoMap.get("firstname") should be ("Sowmya")
   }
 
   def testCassandraUtil(cassandraUtil: CassandraUtil): Unit = {
