@@ -387,3 +387,8 @@ assessment-aggregator: |+
     table = "{{ middleware_cassandra_assessment_aggregator_table }}"
     questionudttype= "{{ middleware_cassandra_assessment_question_type }}"
   }
+  redis {
+    database {
+      relationCache.id = 10
+    }
+  }
