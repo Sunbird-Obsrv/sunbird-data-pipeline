@@ -1,0 +1,30 @@
+admin_name: admin
+admin_password: "{{ cluster_admin_pass }}"
+
+analytics_core_artifact: "analytics-framework-2.0.jar"
+scruid_artifact: "scruid_2.11-2.3.2.jar"
+analytics_batch_module_artifact: "batch-models-2.0.jar"
+analytics_ed_dataporducts_artifact: "data-products-1.0.jar"
+
+bucket: "dev-data-store"
+azure_models_path: "models"
+azure_account: "{{ sunbird_private_storage_account_name }}"
+azure_secret: "{{ sunbird_private_storage_account_key }}"
+brokerlist: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
+topic: "{{ env }}.telemetry.derived"
+
+spark_cassandra_connection_host: "{{ core_cassandra_host }}"
+spark_elasticsearch_connection_host: "{{ sunbird_es_host }}"
+spark_redis_connection_host: "{{ redis_host }}"
+spark_userdb_redis_index: "12"
+
+#execution_date: 2020-05-13
+execution_date: "{{ '%Y-%m-%d'|strftime(ansible_date_time.epoch|int - 86400) }}"
+
+spark:
+  driver_memory: 7g
+  memory_fraction: 0.3
+  storage_fraction: 0.5
+  executor_core: 5
+  executor_memory: 19G
+  num_executors: 11

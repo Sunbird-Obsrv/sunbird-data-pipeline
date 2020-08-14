@@ -62,12 +62,12 @@ spark:
 
 submit_jobs:
   submit-all-jobs:
-    hour: 00
+    hour: 02
     minute: 35
 
 start_jobmanager:
   job-manager:
-    hour: 00
+    hour: 02
     minute: 30
 have_weekly_jobs: false
 
@@ -90,7 +90,7 @@ run_course_metrics_job:
 run_assessment_metrics_job:
   assessment-dashboard-metrics:
     hour: 20
-    minute: 45
+    minute: 15
 
 run_admin_user_reports_job:
   admin-user-reports-3AMIST:

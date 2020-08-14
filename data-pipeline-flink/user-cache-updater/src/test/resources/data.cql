@@ -94,7 +94,8 @@ INSERT INTO sunbird.user (
     password,
     phone,
     phoneverified
-)VALUES ('user-3', 'VOS','sunbird', 'IN','MANJU','24-apr-2020','24-apr-2020','24-08-1993','manjunathd@ilimi.in',true,'Manjunath', 1, 'Male','Davanam','Banglore','********gmail.com','******181', '*******','4682647342',true);
+)
+VALUES ('user-3', 'VOS','sunbird', 'IN','MANJU','24-apr-2020','24-apr-2020','24-08-1993','manjunathd@ilimi.in',true,'Manjunath', 1, 'Male','Davanam','Banglore','********gmail.com','******181', '*******','4682647342',true);
 
 CREATE TABLE sunbird.location (
     id text PRIMARY KEY,
@@ -106,6 +107,6 @@ CREATE TABLE sunbird.location (
 
 CREATE INDEX inx_loc_code ON sunbird.location (code);
 
-INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-1','ft0507020006', 'KARNATAKA', 'state');
-INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-2','0f5f0702000f6', 'KARNATAKA', 'state');
-INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-3','g0507020f00f6', 'TUMKUR', 'district');
+INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-1','0f5f0702000f6', 'KARNATAKA', 'state');
+INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-2','g0507020f00f6', 'TUMKUR', 'district');
+INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-3','331211','MANVI','block');

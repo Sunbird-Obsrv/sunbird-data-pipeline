@@ -47,6 +47,7 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
   var redisConnect: RedisConnect = _
   var jedis: Jedis = _
   val device_id = "232455"
+  val device_id_2 = "test-device"
 
 
   override protected def beforeAll(): Unit = {
@@ -86,12 +87,9 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
     */
     val updateQuery = String.format("UPDATE %s SET user_declared_on = '%s' WHERE device_id = '%s'", deviceProfileUpdaterConfig.postgresTable, new Timestamp(1587542087).toString, device_id)
 
-    /*
-    * If need to truncate the table uncomment the below and execute the query
-    * val truncateQuery = String.format("TRUNCATE TABLE  %s RESTART IDENTITY", deviceProfileUpdaterConfig.postgresTable)
-    * postgresConnect.execute(truncateQuery)
-    *
-    */
+    // If need to truncate the table uncomment the below and execute the query
+    val truncateQuery = String.format("TRUNCATE TABLE  %s RESTART IDENTITY", deviceProfileUpdaterConfig.postgresTable)
+    postgresConnect.execute(truncateQuery)
 
     postgresConnect.execute(updateQuery)
 
@@ -103,12 +101,28 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
     deviceData.put("api_last_updated_on", "1568377184000")
     deviceData.put("firstaccess", "1568377184000")
     deviceData.put("country_code", "IN")
+    deviceData.put("state", "Tamil Nadu")
 
     jedis.hmset(device_id, deviceData)
     val redisData = jedis.hgetAll(device_id)
     redisData should not be(null)
-    redisData.size() should be(3)
+    redisData.size() should be(4)
 
+    /**
+      * Inserting device data into redis initially, Since while updating redis,
+      * Job should update the missing fields
+      */
+    val deviceData2 = new util.HashMap[String, String]()
+    deviceData2.put("api_last_updated_on", "1568377184000")
+    deviceData2.put("country_code", "IN")
+
+    jedis.hmset(device_id_2, deviceData2)
+    val redisData2 = jedis.hgetAll(device_id_2)
+    redisData2 should not be(null)
+    redisData2.size() should be(2)
+
+    val redisData3 = jedis.hgetAll("568089542")
+    redisData3.size() should be(0)
 
     val result1 = postgresConnect.executeQuery("SELECT * from device_profile where device_id='232455'")
     while ( {
@@ -119,7 +133,7 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
       assertEquals("India", result1.getString("country"))
       assertEquals("IN", result1.getString("country_code"))
       assertEquals("dev.sunbird.portal", result1.getString("producer_id"))
-      assertEquals("Bengaluru", result1.getString("user_declared_district"))
+      assertEquals("Bengaluru's", result1.getString("user_declared_district"))
       assertEquals("Karnataka", result1.getString("user_declared_state"))
     }
 
@@ -140,10 +154,10 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
 
     val task = new DeviceProfileUpdaterStreamTask(deviceProfileUpdaterConfig, mockKafkaUtil)
     task.process()
-    BaseMetricsReporter.gaugeMetrics(s"${deviceProfileUpdaterConfig.jobName}.${deviceProfileUpdaterConfig.successCount}").getValue() should be(3)
+    BaseMetricsReporter.gaugeMetrics(s"${deviceProfileUpdaterConfig.jobName}.${deviceProfileUpdaterConfig.successCount}").getValue() should be(4)
     BaseMetricsReporter.gaugeMetrics(s"${deviceProfileUpdaterConfig.jobName}.${deviceProfileUpdaterConfig.failedEventCount}").getValue() should be(1)
-    BaseMetricsReporter.gaugeMetrics(s"${deviceProfileUpdaterConfig.jobName}.${deviceProfileUpdaterConfig.cacheHitCount}").getValue() should be(3)
-    BaseMetricsReporter.gaugeMetrics(s"${deviceProfileUpdaterConfig.jobName}.${deviceProfileUpdaterConfig.deviceDbHitCount}").getValue() should be(3)
+    BaseMetricsReporter.gaugeMetrics(s"${deviceProfileUpdaterConfig.jobName}.${deviceProfileUpdaterConfig.cacheHitCount}").getValue() should be(4)
+    BaseMetricsReporter.gaugeMetrics(s"${deviceProfileUpdaterConfig.jobName}.${deviceProfileUpdaterConfig.deviceDbHitCount}").getValue() should be(4)
     redisTableAssertion()
     postgresTableDataAssertion()
 
@@ -152,13 +166,13 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
   def redisTableAssertion(): Unit = {
     val redisResponseData = jedis.hgetAll(device_id)
     redisResponseData should not be (null)
-    redisResponseData.get("api_last_updated_on") should be("1568377184000")
+    redisResponseData.get("api_last_updated_on") should be("1568379184000")
     redisResponseData.get("country") should be("India")
     redisResponseData.get("country_code") should be("IN")
     redisResponseData.get("user_declared_district") should be("Bengaluru's")
     redisResponseData.get("uaspec") should be("{\"agent\":\"Chrome\",\"ver\":\"76.0.3809.132\",\"system\":\"Mac OSX\",\"raw\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36\"}")
     redisResponseData.get("city") should be("Bengaluru")
-    redisResponseData.get("district_custom") should be("Karnataka,s")
+    redisResponseData.get("district_custom") should be("Karnataka")
     redisResponseData.get("user_declared_state") should be("Karnataka,'s")
     redisResponseData.get("state") should be("Karnataka")
     redisResponseData.get("state_code") should be("KA")
@@ -167,6 +181,8 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
     redisResponseData.get("firstaccess") should be("1568377184000")
     redisResponseData.get("state_custom") should be("Karnataka")
 
+    val redisResponseData1 = jedis.hgetAll(device_id_2)
+    redisResponseData.get("firstaccess") should be("1568377184000")
 
   }
 
@@ -186,11 +202,12 @@ class DeviceProfileUpdaterStreamTaskTestSpec extends BaseTestSpec {
     }
 
     // When the value is stored with special characters
-    val result2 = postgresConnect.executeQuery(String.format("SELECT user_declared_state FROM %s WHERE device_id='568089542';", deviceProfileUpdaterConfig.postgresTable))
+    val result2 = postgresConnect.executeQuery(String.format("SELECT user_declared_state, first_access FROM %s WHERE device_id='568089542';", deviceProfileUpdaterConfig.postgresTable))
     while ( {
       result2.next
     }) {
       assertEquals("Karnataka's", result2.getString(1))
+      assertEquals(1568377184000L, result2.getTimestamp("first_access").getTime)
     }
 
     // Should not addUserDeclared on if it is already present in the postgres

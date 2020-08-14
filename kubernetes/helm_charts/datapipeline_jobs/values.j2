@@ -154,11 +154,12 @@ pipeline-preprocessor: |
 de-normalization: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
-    input.topic = {{ env_name }}.telemetry.unique
+    input.telemetry.topic = {{ env_name }}.telemetry.unique
     input.summary.topic = {{ env_name }}.telemetry.derived
     output.success.topic = {{ env_name }}.telemetry.denorm
     output.failed.topic = {{ env_name }}.telemetry.failed
     output.duplicate.topic = {{ env_name }}.telemetry.duplicate
+    output.summary.topic = {{ env_name }}.telemetry.derived.unique
     groupId = {{ env_name }}-telemetry-denorm-group
   }
   task {
@@ -166,6 +167,7 @@ de-normalization: |
     denorm.parallelism = {{ denorm_parallelism }}
     denorm.sink.parallelism = {{ denorm_sink_parallelism }}
     denorm.summary-dedup.parallelism = {{ denorm_summary_dedup_parallelism }}
+    summary.sink.parallelism = {{ summary_sink_parallelism }}
   }
   redis {
     database {
@@ -192,6 +194,7 @@ summary-denormalization: |+
     output.success.topic = {{ env_name }}.telemetry.denorm
     output.failed.topic = {{ env_name }}.telemetry.failed
     output.duplicate.topic = {{ env_name }}.telemetry.duplicate
+    output.summary.topic = {{ env_name }}.telemetry.derived.unique
     groupId = {{ env_name }}-summmary-denorm-group
   }
   task {
@@ -199,6 +202,7 @@ summary-denormalization: |+
     denorm.parallelism = {{ summary_denorm_parallelism }}
     denorm.sink.parallelism = {{ summary_denorm_sink_parallelism }}
     denorm.summary-dedup.parallelism = {{ summary_denorm_dedup_parallelism }}
+    summary.sink.parallelism = {{ summary_denorm_summary_sink_parallelism }}
   }
   redis {
     database {
@@ -231,6 +235,8 @@ druid-validator: |
     consumer.parallelism = {{ druid_validator_consumer_parallelism }}
     validator.parallelism = {{ validator_parallelism }} 
     router.parallelism = {{ router_parallelism }}
+    druid.validation.enabled = {{ druid_validation_enabled|lower }}
+    druid.deduplication.enabled = {{ druid_deduplication_enabled|lower }}
   }
   schema {
     path {
@@ -253,6 +259,8 @@ druid-validator: |
 device-profile-updater: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
+    broker-servers = "{{ ingestion_kafka_brokers }}"
+    zookeeper = "{{ ingestion_zookeepers }}"
     input.topic = {{ env_name }}.events.deviceprofile
     groupId = {{ env_name }}-device-profile-updater-group
   }
@@ -263,16 +271,15 @@ device-profile-updater: |
   }
   # redis-metadata
   redis-meta {
-    host = {{ redis_metadata_host }}
+    host = {{ metadata_redis_host }}
     port = 6379
     database {
       devicestore.id = 2
-      key.expiry.seconds = {{ device_profile_updater_key_expiry_seconds }}
     }
   }
   postgres {
     database = "{{ postgres.db_name }}",
-    table = "device_profile"
+    table = "{{ device_profile_table }}"
   }
 
 content-cache-updater: |
@@ -285,7 +292,7 @@ content-cache-updater: |
   }
   # redis-metadata
   redis-meta {
-    host = {{ redis_metadata_host }}
+    host = {{ metadata_redis_host }}
     port = 6379
     database {
       contentstore.id = 5
@@ -310,7 +317,7 @@ user-cache-updater: |
   }
   # redis-metadata
   redis-meta {
-    host = {{ redis_metadata_host }}
+    host = {{ metadata_redis_host }}
     port = 6379
     database {
       userstore.id = 4
@@ -328,11 +335,44 @@ user-cache-updater: |
   user.self.signin.key = "Self-Signed-In"
   user.valid.key = "Validated"
 
+user-cache-updater-v2: |
+  include file("/data/flink/conf/base-config.conf")
+  kafka {
+    input.topic = {{ env_name }}.telemetry.audit
+    groupId = {{ env_name }}-user-cache-updater-consumer-group
+  }
+  task {
+    usercache.updater.parallelism = {{ usercache_updater_parallelism }}
+  }
+  # redis-metadata
+  redis-meta {
+    host = {{ metadata_redis_host }}
+    port = 6379
+    database {
+      userstore.id = 12
+    }
+  }
+  lms-cassandra {
+    keyspace = "{{ middleware_cassandra_keyspace }}"
+    table {
+      user = "{{ middleware_cassandra_user_table }}"
+      location = "{{ middleware_cassandra_location_table }}"
+      organisation = "{{ middleware_cassandra_organisation_table }}"
+      user_org = "{{ middleware_cassandra_user_org_table }}"
+      usr_external_identity = "{{ middleware_cassandra_usr_external_identity_table }}"
+      system_settings = "{{ middleware_cassandra_system_settings_table }}"
+    }
+  }
+  user.self.signin.types = ["google","self"]
+  user.validated.types = ["sso"]
+  user.self.signin.key = "Self-Signed-In"
+  user.valid.key = "Validated"
+
 assessment-aggregator: |+
   include file("/data/flink/conf/base-config.conf")
   kafka {
-    broker-servers = {{ ingestion_kafka_brokers }}
-    zookeeper = {{ ingestion_zookeepers }}
+    broker-servers = "{{ ingestion_kafka_brokers }}"
+    zookeeper = "{{ ingestion_zookeepers }}"
     input.topic = {{ env_name }}.telemetry.assess
     failed.topic= {{ env_name }}.telemetry.assess.failed
     groupId = {{ env_name }}-assessment-aggregator-group

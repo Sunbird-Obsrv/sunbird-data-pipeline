@@ -1854,7 +1854,7 @@
       "queries": [
         {
           "bucket": "{{ bucket }}",
-          "prefix": "unique/",
+          "prefix": "unique/raw/",
           "endDate": "$(date --date yesterday '+%Y-%m-%d')",
           "delta": 0
         }
@@ -2411,7 +2411,7 @@
   					"reportPath": "dialcode_counts.csv",
   					"rollupAge": "ACADEMIC_YEAR",
   					"rollupCol": "Date",
-  					"rollupRange": 1,
+  					"rollupRange": 10,
             "postContainer":"{{ reports_container }}"
   				}
   		},

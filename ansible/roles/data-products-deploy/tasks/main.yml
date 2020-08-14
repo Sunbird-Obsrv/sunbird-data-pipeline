@@ -4,21 +4,49 @@
   tags:
     - dataproducts
 
+- name: Copy Core Data Products to azure blob
+  command: az storage blob upload -c {{ bucket }} --name models-{{ model_version }}/{{ analytics_batch_module_artifact }} -f {{ analytics.home }}/models-{{ model_version }}/{{ analytics_batch_module_artifact }}
+  async: 3600
+  poll: 10
+  tags:
+    - dataproducts-spark-cluster 
+
 - name: Unarchive Ed Data Products
   become: yes
   unarchive: src={{ playbook_dir}}/{{ analytics_ed_dataporducts_artifact }} dest={{ analytics.home }}/models-{{ model_version }} copy=yes group={{ analytics_group }} owner={{ analytics_user }}
   tags:
-    - ed-dataproducts    
+    - ed-dataproducts
+
+- name: Copy Ed Data Products to azure blob
+  command: az storage blob upload -c {{ bucket }} --name models-{{ model_version }}/data-products-1.0.jar -f {{ analytics.home }}/models-{{ model_version }}/data-products-1.0/data-products-1.0.jar
+  async: 3600
+  poll: 10
+  tags:
+    - ed-dataproducts-spark-cluster      
 
 - name: Copy Framework Library
   copy: src={{ analytics_core_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
   tags:
     - framework
 
+- name: Copy Framework Library to azure blob
+  command: az storage blob upload --debug -c {{ bucket }} --name models-{{ model_version }}/{{ analytics_core_artifact }} -f {{ analytics.home }}/models-{{ model_version }}/{{ analytics_core_artifact }}
+  async: 3600
+  poll: 10
+  tags:
+    - framework-spark-cluster
+
 - name: Copy Scruid Library
   copy: src={{ scruid_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
   tags:
     - framework  
+
+- name: Copy Scruid Library to azure blob
+  command: az storage blob upload -c {{ bucket }} --name models-{{ model_version }}/{{ scruid_artifact }} -f {{ analytics.home }}/models-{{ model_version }}/{{ scruid_artifact }}
+  async: 3600
+  poll: 10
+  tags:
+    - framework-spark-cluster  
 
 - name: Copy Job Manager
   copy: src={{ analytics_job_manager_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
@@ -31,6 +59,13 @@
     - dataproducts
     - ed-dataproducts
     - framework
+
+- name: Copy configuration file to azure blob
+  command: az storage blob upload -c {{ bucket }} -f {{ analytics.home }}/models-{{ model_version }}/{{ env }}.conf --name models-{{ model_version }}/application.conf
+  async: 3600
+  poll: 10
+  tags:
+    - framework-spark-cluster    
 
 - name: Copy log4j2 xml file
   template: src=log4j2.xml.j2 dest={{ analytics.home }}/models-{{ model_version }}/log4j2.xml mode=755 owner={{ analytics_user }} group={{ analytics_group }}
@@ -67,60 +102,60 @@
   ignore_errors: yes
   tags:
     - default-jobs
-    - wfs-prod
+    - spark-jobs
+    - spark1-jobs
     - clean-cronjobs
-    - ed-dataproducts
 
 - name: Create daily cron jobs for wfs
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh wfs"
   with_dict: "{{ run_wfs_job }}"
   tags:
-    - wfs-prod
+    - spark1-jobs
 
 - name: Create daily cron jobs for monitor job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh monitor-job-summ"
   with_dict: "{{ run_monitor_job }}"
   tags:
-    - wfs-prod
+    - spark1-jobs
 
 - name: Create daily cron jobs using submit-all-jobs
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job='/bin/bash -lc "ruby {{ analytics.home }}/scripts/submit-all-jobs.rb"'
   with_dict: "{{ submit_jobs }}"
   tags:
     - default-jobs
+    - spark-jobs
     - cronjobs
-    - ed-dataproducts
 
 - name: Create start-jobmanager cron jobs
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/start-jobmanager.sh"
   with_dict: "{{ start_jobmanager }}"
   tags:
     - default-jobs
+    - spark-jobs
     - cronjobs
-    - ed-dataproducts
 
 - name: Create video-streaming cron job
   cron: name="{{env}}-video-streaming" minute=*/{{ video_stream_job_schedule }} job="{{ analytics.home }}/scripts/run-job.sh video-streaming"
   tags:
     - default-jobs
+    - spark-jobs
     - cronjobs
-    - ed-dataproducts
 
 - name: Create course-dashboard-metrics cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh course-dashboard-metrics"
   with_dict: "{{ run_course_metrics_job }}"
   tags:
-    - default-jobs
     - cronjobs
-    - ed-dataproducts
+    - default-jobs
+    - spark1-jobs
 
 - name: Create assessment-dashboard-metrics cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh assessment-dashboard-metrics"
   with_dict: "{{ run_assessment_metrics_job }}"
   tags:
     - cronjobs
-    - ed-dataproducts
     - default-jobs
+    - spark-jobs
 
 - name: Create admin-user-reports cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh admin-user-reports"
@@ -128,23 +163,23 @@
   tags:
     - cronjobs 
     - default-jobs
-    - ed-dataproducts
+    - spark-jobs
     
 - name: Create admin-geo-reports cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh admin-geo-reports"
   with_dict: "{{ run_admin_geo_reports_job }}"
   tags:
     - cronjobs
-    - ed-dataproducts
-    - default-jobs 
+    - default-jobs
+    - spark-jobs 
 
 - name: Create assessment-aggregator reports cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="/bin/bash {{ analytics.home }}/adhoc-scripts/run_exporter.sh > /home/analytics/output.log"
   with_dict: "{{ run_assessment_aggregator_report_job }}"
   tags:
     - cronjobs
-    - ed-dataproducts
-    - default-jobs     
+    - default-jobs
+    - spark-jobs  
 
 - name: Create etb metrics cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} weekday={{ item.value.weekday }}  job="{{ analytics.home }}/scripts/run-job.sh etb-metrics"
@@ -152,7 +187,7 @@
   tags:
     - cronjobs
     - default-jobs
-    - ed-dataproducts
+    - spark-jobs
 
 #- name: Create district-weekly cron job
 #  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} weekday={{ item.value.weekday }}  job="{{ analytics.home }}/scripts/run-job.sh district-weekly"
@@ -175,4 +210,3 @@
   tags:
     - update-jobmanager-config
     - dataproducts
-    - ed-dataproducts
