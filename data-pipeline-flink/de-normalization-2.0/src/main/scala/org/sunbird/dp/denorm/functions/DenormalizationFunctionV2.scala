@@ -8,6 +8,7 @@ import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 import org.sunbird.dp.denorm.`type`._
 import org.sunbird.dp.denorm.domain.Event
 import org.sunbird.dp.denorm.task.DenormalizationConfigV2
+
 class DenormalizationFunctionV2(config: DenormalizationConfigV2)(implicit val mapTypeInfo: TypeInformation[Event])
   extends BaseProcessFunction[Event, Event](config) {
 
@@ -50,12 +51,14 @@ class DenormalizationFunctionV2(config: DenormalizationConfigV2)(implicit val ma
     if (event.isOlder(config.ignorePeriodInMonths)) { // Skip events older than configured value (default: 3 months)
       metrics.incCounter(config.eventsExpired)
     } else {
-      val deviceDenormEvent = deviceDenormalization.denormalize(event, metrics)
-      val userDenormEvent = userDenormalization.denormalize(deviceDenormEvent, metrics)
-      val dialcodeDenormEvent = dialcodeDenormalization.denormalize(userDenormEvent, metrics)
-      val contentDenormEvent = contentDenormalization.denormalize(dialcodeDenormEvent, metrics)
-      val locationDenormEvent = locationDenormalization.denormalize(contentDenormEvent, metrics)
-      context.output(config.denormEventsTag, deviceDenormEvent)
+      if ("ME_WORKFLOW_SUMMARY" == event.eid() || !event.eid().contains("SUMMARY")) {
+        val deviceDenormEvent = deviceDenormalization.denormalize(event, metrics)
+        val userDenormEvent = userDenormalization.denormalize(deviceDenormEvent, metrics)
+        val dialcodeDenormEvent = dialcodeDenormalization.denormalize(userDenormEvent, metrics)
+        val contentDenormEvent = contentDenormalization.denormalize(dialcodeDenormEvent, metrics)
+        val locationDenormEvent = locationDenormalization.denormalize(contentDenormEvent, metrics)
+        context.output(config.denormEventsTag, locationDenormEvent)
+      }
     }
   }
 }
