@@ -128,7 +128,6 @@ INSERT INTO sunbird.user (id, userid, rootorgid, firstname, lastname) VALUES ('u
 INSERT INTO sunbird.user (
     id,
     avatar,
-    channel ,
     countrycode,
     createdby,
     createddate,
@@ -148,7 +147,7 @@ INSERT INTO sunbird.user (
     phoneverified,
     rootorgid,
     locationids
-)VALUES ('user-11', 'VOS','apekx', 'IN','SOWMYA','13-jul-2020','13-jul-2020','28-10-1996','sowmyad@ilimi.in',true,'Sowmya', 1, 'Female','Dixit','Banglore','********gmail.com','******358', '*******','4682647342',true, '01285019302823526480', ['location-2', 'location-3']);
+)VALUES ('user-11', 'VOS', 'IN','SOWMYA','13-jul-2020','13-jul-2020','28-10-1996','sowmyad@ilimi.in',true,'Sowmya', 1, 'Female','Dixit','Banglore','********gmail.com','******358', '*******','4682647342',true, '01285019302823526480', ['location-2', 'location-3']);
 
 INSERT INTO sunbird.user (
     id,

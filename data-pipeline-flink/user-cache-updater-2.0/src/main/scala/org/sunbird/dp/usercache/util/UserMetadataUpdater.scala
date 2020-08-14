@@ -210,7 +210,9 @@ object UserMetadataUpdater {
     val locationInfoMap= getLocationInformation(locationIds, metrics, userId, config, cassandraConnect)
     //externalid from usr_external_table
     val channel = userDetails.getOrElse("channel", "").asInstanceOf[String]
-    val externalId: String = getExternalId(channel, userId, cassandraConnect, config)
+    var externalId: String = if( null != channel ){
+      getExternalId(channel, userId, cassandraConnect, config)
+    } else ""
     val externalMap = orgInfoMap.++(locationInfoMap).+=(config.externalidKey -> externalId.asInstanceOf[AnyRef])
     externalMap
   }
