@@ -39,6 +39,7 @@ class DruidValidatorStreamTask(config: DruidValidatorConfig, kafkaConnector: Fli
 
   def process(): Unit = {
     implicit val env: StreamExecutionEnvironment = FlinkUtil.getExecutionContext(config)
+    env.setParallelism(config.validatorParallelism)
     implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
 
     /**
@@ -46,10 +47,10 @@ class DruidValidatorStreamTask(config: DruidValidatorConfig, kafkaConnector: Fli
      */
     val validationDataStream =
       env.addSource(kafkaConnector.kafkaEventSource[Event](config.kafkaInputTopic), config.druidValidatorConsumer)
-      .uid(config.druidValidatorConsumer).setParallelism(config.kafkaConsumerParallelism)
+      .uid(config.druidValidatorConsumer)//.setParallelism(config.kafkaConsumerParallelism)
       .rebalance()
       .process(new DruidValidatorFunction(config)).name(config.druidValidatorFunction).uid(config.druidValidatorFunction)
-      .setParallelism(config.validatorParallelism)
+      //.setParallelism(config.validatorParallelism)
 
     /**
      * Separate sinks for valid telemetry events, valid summary events, valid error events, valid log events and invalid events
