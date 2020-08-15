@@ -125,4 +125,7 @@ class DenormalizationConfigV2(override val config: Config, jobName: String) exte
   // Metrics
   val summaryEventsCount = "summary-events-count"
 
+  //Constants
+  val userStoreKeyPrefix = "user:"
+
 }

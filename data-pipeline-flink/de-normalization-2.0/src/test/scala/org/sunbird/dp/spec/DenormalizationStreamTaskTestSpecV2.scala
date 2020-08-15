@@ -66,8 +66,8 @@ class DenormalizationStreamTaskTestSpecV2 extends BaseTestSpec {
 
     // Insert user test data
     jedis = redisConnect.getConnection(denormConfig.userStore)
-    jedis.hmset("b7470841-7451-43db-b5c7-2dcf4f8d3b23", EventFixture.userCacheDataMap1)
-    jedis.hmset("610bab7d-1450-4e54-bf78-c7c9b14dbc81", EventFixture.userCacheDataMap2)
+    jedis.hmset(denormConfig.userStoreKeyPrefix + "b7470841-7451-43db-b5c7-2dcf4f8d3b23", EventFixture.userCacheDataMap1)
+    jedis.hmset(denormConfig.userStoreKeyPrefix + "610bab7d-1450-4e54-bf78-c7c9b14dbc81", EventFixture.userCacheDataMap2)
     jedis.close()
 
     // Insert dialcode test data
