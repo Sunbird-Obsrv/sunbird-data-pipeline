@@ -15,10 +15,10 @@
     </parent>
 
     <groupId>org.sunbird.dp.jobs</groupId>
-    <artifactId>de-normalization</artifactId>
-    <version>1.0.0</version>
+    <artifactId>de-normalization-2.0</artifactId>
+    <version>2.0.0</version>
     <packaging>jar</packaging>
-    <name>DeNormalizer</name>
+    <name>DeNormalizerV2</name>
     <description>
         De-normalize the events
     </description>
@@ -94,8 +94,8 @@
     </dependencies>
 
     <build>
-    		<sourceDirectory>src/main/scala</sourceDirectory>
-		    <testSourceDirectory>src/test/scala</testSourceDirectory>
+        <sourceDirectory>src/main/scala</sourceDirectory>
+        <testSourceDirectory>src/test/scala</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -128,6 +128,10 @@
                                 </filter>
                             </filters>
                             <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>org.sunbird.dp.denorm.task.DenormalizationStreamTaskV2</mainClass>
+                                </transformer>
                                 <!-- append default configs -->
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
@@ -193,16 +197,16 @@
                     </execution>
                 </executions>
             </plugin>
-			<plugin>
-				<groupId>org.scoverage</groupId>
-				<artifactId>scoverage-maven-plugin</artifactId>
-				<version>${scoverage.plugin.version}</version>
-				<configuration>
-					<scalaVersion>${scala.version}</scalaVersion>
-					<aggregate>true</aggregate>
-					<highlighting>true</highlighting>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.scoverage</groupId>
+                <artifactId>scoverage-maven-plugin</artifactId>
+                <version>${scoverage.plugin.version}</version>
+                <configuration>
+                    <scalaVersion>${scala.version}</scalaVersion>
+                    <aggregate>true</aggregate>
+                    <highlighting>true</highlighting>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

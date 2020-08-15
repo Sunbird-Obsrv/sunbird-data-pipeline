@@ -24,6 +24,7 @@
 		<module>telemetry-extractor</module>
 		<module>pipeline-preprocessor</module>
 		<module>de-normalization</module>
+		<module>de-normalization-2.0</module>
 		<module>druid-events-validator</module>
 		<module>device-profile-updater</module>
 		<module>user-cache-updater</module>
