@@ -1,6 +1,7 @@
 package org.sunbird.dp.denorm.`type`
 
 import org.sunbird.dp.core.cache.{DataCache, RedisConnect}
+import org.sunbird.dp.core.domain.EventsPath
 import org.sunbird.dp.core.job.Metrics
 import org.sunbird.dp.denorm.domain.Event
 import org.sunbird.dp.denorm.task.DenormalizationConfig
@@ -27,8 +28,11 @@ class ContentDenormalization(config: DenormalizationConfig) {
         event.setFlag("content_denorm", value = false)
       }
 
-      if (event.checkObjectIdNotEqualsRollUpl1Id()) {
+      if (event.checkObjectIdNotEqualsRollUpId(EventsPath.OBJECT_ROLLUP_L1)) {
         event.addCollectionData(contentDataCache.getWithRetry(event.objectRollUpl1ID()).map(f => {(f._1.toLowerCase().replace("_", ""), f._2)}))
+      }
+      if(event.checkObjectIdNotEqualsRollUpId(EventsPath.OBJECT_ROLLUP_L2)){
+        event.addL2Data(contentDataCache.getWithRetry(event.objectRollUpl2ID()).filter(x => config.l2Data.contains(x._1)).map(f => {(f._1.toLowerCase().replace("_", ""), f._2)}))
       }
     }
     event
