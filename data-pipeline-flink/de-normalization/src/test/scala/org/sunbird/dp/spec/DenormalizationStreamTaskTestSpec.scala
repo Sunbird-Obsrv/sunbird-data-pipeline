@@ -183,7 +183,6 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     l2Data.get("name") should be("test")
     l2Data.get("framework") should be("mh_k-12_1")
     event = DenormEventsSink.values("mid9")
-    val gson = new Gson()
     // Location Denorm Metrics Assertion
     BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.locCacheHit}").getValue() should be (7)
     BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.locCacheMiss}").getValue() should be (3)
