@@ -136,8 +136,7 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
 
   def addL2Data(newData: Map[String, AnyRef]) {
     val l2Map = new util.HashMap[String, AnyRef]()
-    val convertedData = getEpochConvertedContentDataMap(newData)
-    l2Map.putAll(convertedData.asJava)
+    l2Map.putAll(newData.asJava)
     telemetry.add(EventsPath.L2_DATA_PATH, l2Map)
     setFlag("l2_denorm", true)
   }
