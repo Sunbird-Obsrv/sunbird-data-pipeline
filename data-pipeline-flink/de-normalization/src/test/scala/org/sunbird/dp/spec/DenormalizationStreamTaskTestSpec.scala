@@ -98,7 +98,6 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
 
     var event = DenormEventsSink.values("mid1")
     event.kafkaKey() should be ("758e054a400f20f7677f2def76427dc13ad1f837")
-    println("Eventsss" + event)
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (false)
     event.flags().get("user_denorm").asInstanceOf[Boolean] should be (true)
     Option(event.flags().get("dialcode_denorm")) should be (None)
