@@ -66,7 +66,7 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
 
     // Insert user test data
     jedis = redisConnect.getConnection(denormConfig.userStore)
-    if (denormConfig.version.equalsIgnoreCase("v2")) {
+    if (denormConfig.userDenormVersion.equalsIgnoreCase("v2")) {
       jedis.hmset("b7470841-7451-43db-b5c7-2dcf4f8d3b23", EventFixture.userCacheDataMap1)
       jedis.hmset("610bab7d-1450-4e54-bf78-c7c9b14dbc81", EventFixture.userCacheDataMap2)
     } else {
