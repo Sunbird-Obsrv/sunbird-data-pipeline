@@ -35,7 +35,7 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
 
   //config version
   val version: String = config.getString("version")
-  
+
   val deviceFields = List("country_code", "country", "state_code", "state", "city", "district_custom", "state_code_custom",
     "state_custom", "user_declared_state", "user_declared_district", "devicespec", "firstaccess")
   val contentFields = List("name", "objectType", "contentType", "mediaType", "language", "medium", "mimeType", "createdBy",
