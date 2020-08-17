@@ -19,7 +19,7 @@ class UserDenormalization(config: DenormalizationConfig) {
     if (null != actorId && actorId.nonEmpty && !"anonymous".equalsIgnoreCase(actorId) && "user".equalsIgnoreCase(actorType)) {
       metrics.incCounter(config.userTotal)
 
-      val userData = if (config.version.equalsIgnoreCase("v2")) {
+      val userData = if (config.userDenormVersion.equalsIgnoreCase("v2")) {
         userDataCache.hgetAllWithRetry(actorId).map(f => {(f._1.toLowerCase().replace("_", ""), f._2)})
       } else {
         userDataCache.getWithRetry(actorId).map(f => {(f._1.toLowerCase().replace("_", ""), f._2)}).asInstanceOf[Map[String, String]]
