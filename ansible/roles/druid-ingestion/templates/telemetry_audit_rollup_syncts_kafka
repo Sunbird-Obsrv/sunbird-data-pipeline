@@ -15,7 +15,7 @@
             },
             {
               "type": "root",
-              "name": "ets"
+              "name": "syncts"
             },
             {
               "type": "path",
@@ -211,7 +211,7 @@
             },
             {
               "type":"long"
-              "name": "ets"            
+              "name": "syncts"            
             }
           ],
           "dimensionsExclusions": []
