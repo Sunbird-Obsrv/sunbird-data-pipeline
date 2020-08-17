@@ -18,7 +18,9 @@ class ContentDenormalization(config: DenormalizationConfig) {
     val objectId = event.objectID()
     if (!List("user", "qr", "dialcode").contains(objectType) && null != objectId) {
       metrics.incCounter(config.contentTotal)
-      val contentData = contentDataCache.getWithRetry(objectId).map(f => {(f._1.toLowerCase().replace("_", ""), f._2)})
+      val contentData = contentDataCache.getWithRetry(objectId).map(f => {
+        (f._1.toLowerCase().replace("_", ""), f._2)
+      })
 
       if (contentData.nonEmpty) {
         metrics.incCounter(config.contentCacheHit)
@@ -29,10 +31,14 @@ class ContentDenormalization(config: DenormalizationConfig) {
       }
 
       if (event.checkObjectIdNotEqualsRollUpId(EventsPath.OBJECT_ROLLUP_L1)) {
-        event.addCollectionData(contentDataCache.getWithRetry(event.objectRollUpl1ID()).map(f => {(f._1.toLowerCase().replace("_", ""), f._2)}))
+        event.addCollectionData(contentDataCache.getWithRetry(event.objectRollUpl1ID()).map(f => {
+          (f._1.toLowerCase().replace("_", ""), f._2)
+        }))
       }
-      if(config.contentDenormVersion.equalsIgnoreCase("v2") && event.checkObjectIdNotEqualsRollUpId(EventsPath.OBJECT_ROLLUP_L2)){
-        event.addL2Data(contentDataCache.getWithRetry(event.objectRollUpl2ID()).filter(x => config.l2Data.contains(x._1)).map(f => {(f._1.toLowerCase().replace("_", ""), f._2)}))
+      if (config.contentDenormVersion.equalsIgnoreCase("v2") && event.checkObjectIdNotEqualsRollUpId(EventsPath.OBJECT_ROLLUP_L2)) {
+        event.addL2Data(contentDataCache.getWithRetry(event.objectRollUpl2ID()).filter(x => config.l2Data.contains(x._1)).map(f => {
+          (f._1.toLowerCase().replace("_", ""), f._2)
+        }))
       }
     }
     event

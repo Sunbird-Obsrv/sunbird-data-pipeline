@@ -92,17 +92,18 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
   def objectRollUpl1ID(): String = {
     telemetry.read[String](keyPath = EventsPath.OBJECT_ROLLUP_L1).orNull
   }
+
   def objectRollUpl2ID(): String = {
     telemetry.read[String](keyPath = EventsPath.OBJECT_ROLLUP_L2).orNull
   }
 
-  def objectRollUpFieldsPresent(path:String): Boolean = {
+  def objectRollUpFieldsPresent(path: String): Boolean = {
 
     val objectrollUpl1 = telemetry.read[String](keyPath = path).orNull
     null != objectrollUpl1 && !objectrollUpl1.isEmpty
   }
 
-  def checkObjectIdNotEqualsRollUpId(path:String): Boolean = {
+  def checkObjectIdNotEqualsRollUpId(path: String): Boolean = {
     objectRollUpFieldsPresent(path) && !objectID().equals(objectRollUpl1ID())
   }
 
@@ -132,6 +133,7 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
     telemetry.add(EventsPath.COLLECTION_PATH, collectionMap)
     setFlag("coll_denorm", true)
   }
+
   def addL2Data(newData: Map[String, AnyRef]) {
     val l2Map = new util.HashMap[String, AnyRef]()
     val convertedData = getEpochConvertedContentDataMap(newData)
