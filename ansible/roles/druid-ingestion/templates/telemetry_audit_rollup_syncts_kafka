@@ -60,16 +60,6 @@
             },
             {
               "type": "path",
-              "name": "object_id",
-              "expr": "$.object.id"
-            },
-            {
-              "type": "path",
-              "name": "object_type",
-              "expr": "$.object.type"
-            },
-            {
-              "type": "path",
               "name": "object_version",
               "expr": "$.object.ver"
             }
@@ -115,14 +105,6 @@
             },
             {
               "name": "edata_props"
-            },
-            {
-              "type": "string",
-              "name": "object_id"
-            },
-            {
-              "type": "string",
-              "name": "object_type"
             },
             {
               "type": "string",
