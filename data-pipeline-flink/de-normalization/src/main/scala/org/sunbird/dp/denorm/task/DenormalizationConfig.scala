@@ -37,7 +37,7 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
     "state_custom", "user_declared_state", "user_declared_district", "devicespec", "firstaccess")
   val contentFields = List("name", "objectType", "contentType", "mediaType", "language", "medium", "mimeType", "createdBy",
     "createdFor", "framework", "board", "subject", "status", "pkgVersion", "lastSubmittedOn", "lastUpdatedOn", "lastPublishedOn", "channel", "gradeLevel")
-  val l2Data = List("name", "contentType", "mimeType", "framework", "subject", "medium", "board", "channel", "createdFor", "gradeLevel")
+  val l2DataFields = List("name", "contentType", "mimeType", "framework", "subject", "medium", "board", "channel", "createdFor", "gradeLevel")
   val userFields = List("usertype", "grade", "language", "subject", "state", "district", "usersignintype", "userlogintype")
   val dialcodeFields = List("identifier", "channel", "batchcode", "publisher", "generated_on", "published_on", "status")
   
