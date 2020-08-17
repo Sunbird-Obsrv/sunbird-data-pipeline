@@ -60,6 +60,21 @@
             },
             {
               "type": "path",
+              "name": "edata_state",
+              "expr": "$.edata.state"
+            },
+            {
+              "type": "path",
+              "name": "edata_prevstate",
+              "expr": "$.edata.prevstate"
+            },
+            {
+              "type": "path",
+              "name": "edata_duration",
+              "expr": "$.edata.duration"
+            },
+            {
+              "type": "path",
               "name": "object_version",
               "expr": "$.object.ver"
             }
@@ -105,6 +120,18 @@
             },
             {
               "name": "edata_props"
+            },
+            {
+              "type": "string",
+              "name": "edata_prevstate"
+            },
+            {
+              "type": "string",
+              "name": "edata_state"
+            },
+            {
+              "type": "long",
+              "name": "edata_duration"
             },
             {
               "type": "string",
