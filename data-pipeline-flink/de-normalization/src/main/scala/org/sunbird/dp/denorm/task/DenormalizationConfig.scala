@@ -34,7 +34,7 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
   val dialcodeStore: Int = config.getInt("redis-meta.database.dialcodestore.id")
 
   //config version
-  val configVersion: String = config.getString("config.version")
+  val configVersion: String = config.getString("version")
 
   val deviceFields = List("country_code", "country", "state_code", "state", "city", "district_custom", "state_code_custom",
     "state_custom", "user_declared_state", "user_declared_district", "devicespec", "firstaccess")
