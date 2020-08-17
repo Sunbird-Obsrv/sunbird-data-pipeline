@@ -20,7 +20,7 @@ class UserDenormalization(config: DenormalizationConfig) {
       metrics.incCounter(config.userTotal)
 
       val userData = if (config.userDenormVersion.equalsIgnoreCase("v2")) {
-        userDataCache.hgetAllWithRetry(actorId).map(f => {(f._1.toLowerCase().replace("_", ""), f._2)})
+        userDataCache.hgetAllWithRetry(config.userStoreKeyPrefix + actorId).map(f => {(f._1.toLowerCase().replace("_", ""), f._2)})
       } else {
         userDataCache.getWithRetry(actorId).map(f => {(f._1.toLowerCase().replace("_", ""), f._2)}).asInstanceOf[Map[String, String]]
       }

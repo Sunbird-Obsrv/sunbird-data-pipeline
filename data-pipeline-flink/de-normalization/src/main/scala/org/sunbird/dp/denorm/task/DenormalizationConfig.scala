@@ -128,4 +128,7 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
   // Metrics
   val summaryEventsCount = "summary-events-count"
 
+  //user store key prefix
+  val userStoreKeyPrefix = "user:"
+
 }
