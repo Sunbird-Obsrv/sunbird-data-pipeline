@@ -125,7 +125,4 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
 
   // Metrics
   val summaryEventsCount = "summary-events-count"
-
-  val contentDenormVersion = config.getString("content_denorm_version")
-
 }

@@ -35,7 +35,7 @@ class ContentDenormalization(config: DenormalizationConfig) {
           (f._1.toLowerCase().replace("_", ""), f._2)
         }))
       }
-      if (config.contentDenormVersion.equalsIgnoreCase("v2") && event.checkObjectIdNotEqualsRollUpId(EventsPath.OBJECT_ROLLUP_L2)) {
+      if (event.checkObjectIdNotEqualsRollUpId(EventsPath.OBJECT_ROLLUP_L2)) {
         event.addL2Data(contentDataCache.getWithRetry(event.objectRollUpl2ID()).filter(x => config.l2DataFields.contains(x._1)).map(f => {
           (f._1.toLowerCase().replace("_", ""), f._2)
         }))
