@@ -60,17 +60,12 @@ class DenormalizationStreamTaskTestSpecV2 extends BaseTestSpec {
 
     // Insert user test data
     var jedis = redisConnect.getConnection(denormConfig.userStore)
-    if (denormConfig.userDenormVersion.equalsIgnoreCase("v2")) {
-      jedis.hmset("b7470841-7451-43db-b5c7-2dcf4f8d3b23", EventFixture.userCacheDataMap1)
-      jedis.hmset("610bab7d-1450-4e54-bf78-c7c9b14dbc81", EventFixture.userCacheDataMap2)
-    } else {
       jedis.set("b7470841-7451-43db-b5c7-2dcf4f8d3b23", EventFixture.userCacheData1)
       jedis.set("610bab7d-1450-4e54-bf78-c7c9b14dbc81", EventFixture.userCacheData2)
-    }
     jedis.close()
   }
 
-  "De-normalization pipeline" should "denormalize user data for v1 verison" in {
+  "De-normalization pipeline v2" should "denormalize user data by fetching in string format from cache" in {
 
     when(mockKafkaUtil.kafkaEventSource[Event](denormConfig.telemetryInputTopic)).thenReturn(new DenormInputSource)
     when(mockKafkaUtil.kafkaEventSink[Event](denormConfig.denormSuccessTopic)).thenReturn(new DenormEventsSinkV2)
@@ -80,6 +75,15 @@ class DenormalizationStreamTaskTestSpecV2 extends BaseTestSpec {
 
     val event = DenormEventsSinkV2.values("mid1")
 
+    event.kafkaKey() should be ("758e054a400f20f7677f2def76427dc13ad1f837")
+
+    event.flags().get("device_denorm").asInstanceOf[Boolean] should be (false)
+    event.flags().get("user_denorm").asInstanceOf[Boolean] should be (true)
+    Option(event.flags().get("dialcode_denorm")) should be (None)
+    Option(event.flags().get("content_denorm")) should be (None)
+    Option(event.flags().get("location_denorm")) should be (None)
+
+    println("event: " + event)
     event.getMap().get("userdata").asInstanceOf[util.Map[String, Any]].get("usersignintype") should be("Anonymous")
     event.getMap().get("userdata").asInstanceOf[util.Map[String, Any]].get("usertype") should be("TEACHER")
     event.getMap().get("userdata").asInstanceOf[util.Map[String, Any]].get("userlogintype") should be("Google")
