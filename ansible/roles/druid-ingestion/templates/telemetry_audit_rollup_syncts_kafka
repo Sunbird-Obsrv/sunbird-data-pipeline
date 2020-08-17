@@ -14,9 +14,38 @@
               "name": "eid"
             },
             {
+              "type": "root",
+              "name": "ets"
+            },
+            {
+              "type": "path",
+              "name": "actor_id",
+              "expr": "$.actor.id"
+            },
+            {
+              "type": "path",
+              "name": "actor_type",
+              "expr": "$.actor.type"
+            },
+            {
               "type": "path",
               "name": "context_channel",
               "expr": "$.context.channel"
+            },
+            {
+              "type": "path",
+              "name": "context_env",
+              "expr": "$.context.env"
+            },
+            {
+              "type": "path",
+              "name": "context_sid",
+              "expr": "$.context.sid"
+            },
+            {
+              "type": "path",
+              "name": "context_did",
+              "expr": "$.context.did"
             },
             {
               "type": "path",
@@ -47,6 +76,21 @@
               "type": "path",
               "name": "object_rollup_l1",
               "expr": "$.object.rollup.l1"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l2",
+              "expr": "$.object.rollup.l2"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l3",
+              "expr": "$.object.rollup.l3"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l4",
+              "expr": "$.object.rollup.l4"
             },
             {
               "type": "path",
@@ -88,8 +132,28 @@
             },
             {
               "type": "string",
+              "name": "actor_id"
+            },
+            {
+              "type":"string",
+              "name":"actor_type"
+            },
+            {
+              "type": "string",
               "name": "context_channel"
             },
+            {
+              "type":"string", 
+              "name":"context_env"
+            },
+            {
+              "type":"string",
+              "name":"context_sid"
+            },
+            {
+              "type":"string"
+              "name":"context_did"
+            }
             {
               "type": "string",
               "name": "context_pdata_id"
@@ -116,6 +180,18 @@
             },
             {
               "type": "string",
+              "name": "object_rollup_l2"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l3"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l4"
+            },
+            {
+              "type": "string",
               "name": "edata_type"
             },
             {
@@ -132,6 +208,10 @@
             {
               "type": "string",
               "name": "object_version"
+            },
+            {
+              "type":"long"
+              "name": "ets"            
             }
           ],
           "dimensionsExclusions": []
