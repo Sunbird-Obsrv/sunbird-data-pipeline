@@ -130,10 +130,6 @@
               "name": "edata_state"
             },
             {
-              "type": "long",
-              "name": "edata_duration"
-            },
-            {
               "type": "string",
               "name": "object_version"
             }
@@ -146,7 +142,17 @@
         }
       }
     },
-    "metricsSpec": [],
+    "metricsSpec": [
+      {
+        "name": "total_count",
+        "type": "count"
+      },
+      {
+        "type": "doubleSum",
+        "name": "total_edata_duration",
+        "fieldName": "edata_duration"
+      }
+    ],
     "granularitySpec": {
       "type": "uniform",
       "segmentGranularity": "DAY",
