@@ -83,7 +83,6 @@ class DenormalizationStreamTaskTestSpecV2 extends BaseTestSpec {
     Option(event.flags().get("content_denorm")) should be (None)
     Option(event.flags().get("location_denorm")) should be (None)
 
-    println("event: " + event)
     event.getMap().get("userdata").asInstanceOf[util.Map[String, Any]].get("usersignintype") should be("Anonymous")
     event.getMap().get("userdata").asInstanceOf[util.Map[String, Any]].get("usertype") should be("TEACHER")
     event.getMap().get("userdata").asInstanceOf[util.Map[String, Any]].get("userlogintype") should be("Google")
