@@ -103,7 +103,7 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
     objectRollUpl1FieldsPresent() && !objectID().equals(objectRollUpl1ID())
   }
 
-  def addUserData(newData: Map[String, AnyRef]) {
+  def addUserData(newData: Map[String, String]) {
     val userdata: util.Map[String, AnyRef] = telemetry.read(EventsPath.USERDATA_PATH).getOrElse(new util.HashMap[String, AnyRef]())
     userdata.putAll(newData.asJava)
     telemetry.add(EventsPath.USERDATA_PATH, userdata)
