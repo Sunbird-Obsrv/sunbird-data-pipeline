@@ -197,7 +197,7 @@ object UserMetadataUpdater {
           result.put(columnDefinitions.getName(i), row.getObject(i))
         }
       }
-      val userInfo = result.get("userinfo").getOrElse(new util.LinkedHashMap()).asInstanceOf[util.LinkedHashMap[String, String]]
+      val userInfo = result.get("userinfo").getOrElse(new util.LinkedHashMap()).asInstanceOf[util.HashMap[String, String]]
       if(!userInfo.isEmpty)
       {
         result.+=(config.externalidKey -> userInfo.getOrDefault(config.declareExternalId, ""),
