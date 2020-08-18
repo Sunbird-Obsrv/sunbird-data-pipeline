@@ -135,25 +135,25 @@
               "name": "actor_id"
             },
             {
-              "type":"string",
-              "name":"actor_type"
+              "type": "string",
+              "name": "actor_type"
             },
             {
               "type": "string",
               "name": "context_channel"
             },
             {
-              "type":"string", 
-              "name":"context_env"
+              "type": "string",
+              "name": "context_env"
             },
             {
-              "type":"string",
-              "name":"context_sid"
+              "type": "string",
+              "name": "context_sid"
             },
             {
-              "type":"string"
-              "name":"context_did"
-            }
+              "type": "string",
+              "name": "context_did"
+            },
             {
               "type": "string",
               "name": "context_pdata_id"
@@ -210,8 +210,8 @@
               "name": "object_version"
             },
             {
-              "type":"long"
-              "name": "syncts"            
+              "type": "long",
+              "name": "syncts"
             }
           ],
           "dimensionsExclusions": []
