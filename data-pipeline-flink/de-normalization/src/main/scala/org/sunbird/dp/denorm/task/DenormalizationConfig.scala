@@ -33,6 +33,9 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
   val deviceStore: Int = config.getInt("redis-meta.database.devicestore.id")
   val dialcodeStore: Int = config.getInt("redis-meta.database.dialcodestore.id")
 
+  //config version
+  val userDenormVersion: String = config.getString("user_denorm_version")
+
   val deviceFields = List("country_code", "country", "state_code", "state", "city", "district_custom", "state_code_custom",
     "state_custom", "user_declared_state", "user_declared_district", "devicespec", "firstaccess")
   val contentFields = List("name", "objectType", "contentType", "mediaType", "language", "medium", "mimeType", "createdBy",
@@ -125,4 +128,8 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
 
   // Metrics
   val summaryEventsCount = "summary-events-count"
+
+  //user store key prefix
+  val userStoreKeyPrefix = "user:"
+
 }
