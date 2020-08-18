@@ -53,7 +53,6 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaErrorRouteTopic)).thenReturn(new TelemetryErrorEventSink)
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaFailedTopic)).thenReturn(new TelemetryFailedEventsSink)
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaAuditRouteTopic)).thenReturn(new TelemetryAuditEventSink)
-    when(mockKafkaUtil.kafkaStringSink(ppConfig.kafkaPrimaryRouteTopic)).thenReturn(new ShareItemEventSink)
 
     flinkCluster.before()
   }
@@ -69,8 +68,8 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     val task = new PipelinePreprocessorStreamTask(ppConfig, mockKafkaUtil)
     task.process()
 
-    ShareItemEventSink.values.size() should be(3)
-    TelemetryPrimaryEventSink.values.size() should be(5)
+    // 5 telemetry and 3 SHARE_ITEM
+    TelemetryPrimaryEventSink.values.size() should be(8)
     TelemetryFailedEventsSink.values.size() should be(4)
     DupEventsSink.values.size() should be(1)
     TelemetryAuditEventSink.values.size() should be(1)
@@ -139,19 +138,6 @@ class PipeLineProcessorEventSource extends SourceFunction[Event] {
 
   override def cancel() = {}
 
-}
-
-class ShareItemEventSink extends SinkFunction[String] {
-
-  override def invoke(value: String): Unit = {
-    synchronized {
-      ShareItemEventSink.values.add(value)
-    }
-  }
-}
-
-object ShareItemEventSink {
-  val values: util.List[String] = new util.ArrayList()
 }
 
 class TelemetryFailedEventsSink extends SinkFunction[Event] {
