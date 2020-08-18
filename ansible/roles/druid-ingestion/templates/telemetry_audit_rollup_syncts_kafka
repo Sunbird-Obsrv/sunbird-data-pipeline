@@ -39,11 +39,6 @@
             },
             {
               "type": "path",
-              "name": "context_sid",
-              "expr": "$.context.sid"
-            },
-            {
-              "type": "path",
               "name": "context_did",
               "expr": "$.context.did"
             },
@@ -74,23 +69,13 @@
             },
             {
               "type": "path",
+              "name": "object_version",
+              "expr": "$.object.ver"
+            },
+            {
+              "type": "path",
               "name": "object_rollup_l1",
               "expr": "$.object.rollup.l1"
-            },
-            {
-              "type": "path",
-              "name": "object_rollup_l2",
-              "expr": "$.object.rollup.l2"
-            },
-            {
-              "type": "path",
-              "name": "object_rollup_l3",
-              "expr": "$.object.rollup.l3"
-            },
-            {
-              "type": "path",
-              "name": "object_rollup_l4",
-              "expr": "$.object.rollup.l4"
             },
             {
               "type": "path",
@@ -119,8 +104,284 @@
             },
             {
               "type": "path",
-              "name": "object_version",
-              "expr": "$.object.ver"
+              "name": "context_cdata_type",
+              "expr": "$.context.cdata[*].type"
+            },
+            {
+              "type": "path",
+              "name": "context_cdata_id",
+              "expr": "$.context.cdata[*].id"
+            },
+            
+            {
+              "type": "path",
+              "name": "content_name",
+              "expr": "$.contentdata.name"
+            },
+            {
+              "type": "path",
+              "name": "content_object_type",
+              "expr": "$.contentdata.objecttype"
+            },
+            {
+              "type": "path",
+              "name": "content_type",
+              "expr": "$.contentdata.contenttype"
+            },
+            {
+              "type": "path",
+              "name": "content_media_type",
+              "expr": "$.contentdata.mediatype"
+            },
+            {
+              "type": "path",
+              "name": "content_language",
+              "expr": "$.contentdata.language[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_medium",
+              "expr": "$.contentdata.medium[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_gradelevel",
+              "expr": "$.contentdata.gradelevel[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_subjects",
+              "expr": "$.contentdata.subject[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_mimetype",
+              "expr": "$.contentdata.mimetype"
+            },
+            {
+              "type": "path",
+              "name": "content_framework",
+              "expr": "$.contentdata.framework"
+            },
+            {
+              "type": "path",
+              "name": "content_board",
+              "expr": "$.contentdata.board"
+            },
+            {
+              "type": "path",
+              "name": "content_status",
+              "expr": "$.contentdata.status"
+            },
+            {
+              "type": "path",
+              "name": "content_version",
+              "expr": "$.contentdata.pkgversion"
+            },
+            {
+              "type": "path",
+              "name": "content_last_submitted_on",
+              "expr": "$.contentdata.lastsubmittedon"
+            },
+            {
+              "type": "path",
+              "name": "content_last_published_on",
+              "expr": "$.contentdata.lastpublishedon"
+            },
+            {
+              "type": "path",
+              "name": "content_last_updated_on",
+              "expr": "$.contentdata.lastupdatedon"
+            },
+            {
+              "type": "path",
+              "name": "content_created_by",
+              "expr": "$.contentdata.createdby"
+            },
+            {
+              "type": "path",
+              "name": "content_created_for",
+              "expr": "$.contentdata.createdfor"
+            },
+            {
+              "type": "path",
+              "name": "collection_name",
+              "expr": "$.collectiondata.name"
+            },
+            {
+              "type": "path",
+              "name": "collection_object_type",
+              "expr": "$.collectiondata.objecttype"
+            },
+            {
+              "type": "path",
+              "name": "collection_type",
+              "expr": "$.collectiondata.contenttype"
+            },
+            {
+              "type": "path",
+              "name": "collection_media_type",
+              "expr": "$.collectiondata.mediatype"
+            },
+            {
+              "type": "path",
+              "name": "collection_language",
+              "expr": "$.collectiondata.language[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_medium",
+              "expr": "$.collectiondata.medium[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_gradelevel",
+              "expr": "$.collectiondata.gradelevel[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_subjects",
+              "expr": "$.collectiondata.subject[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_mimetype",
+              "expr": "$.collectiondata.mimetype"
+            },
+            {
+              "type": "path",
+              "name": "collection_framework",
+              "expr": "$.collectiondata.framework"
+            },
+            {
+              "type": "path",
+              "name": "collection_board",
+              "expr": "$.collectiondata.board"
+            },
+            {
+              "type": "path",
+              "name": "collection_status",
+              "expr": "$.collectiondata.status"
+            },
+            {
+              "type": "path",
+              "name": "collection_version",
+              "expr": "$.collectiondata.pkgversion"
+            },
+            {
+              "type": "path",
+              "name": "collection_last_submitted_on",
+              "expr": "$.collectiondata.lastsubmittedon"
+            },
+            {
+              "type": "path",
+              "name": "collection_last_published_on",
+              "expr": "$.collectiondata.lastpublishedon"
+            },
+            {
+              "type": "path",
+              "name": "collection_last_updated_on",
+              "expr": "$.collectiondata.lastupdatedon"
+            },
+            {
+              "type": "path",
+              "name": "collection_created_by",
+              "expr": "$.collectiondata.createdby"
+            },
+            {
+              "type": "path",
+              "name": "collection_created_for",
+              "expr": "$.collectiondata.createdfor"
+            },
+            {
+              "type": "path",
+              "name": "user_grade_list",
+              "expr": "$.userdata.gradelist[*]"
+            },
+            {
+              "type": "path",
+              "name": "user_language_list",
+              "expr": "$.userdata.languagelist[*]"
+            },
+            {
+              "type": "path",
+              "name": "user_subject_list",
+              "expr": "$.userdata.subjectlist[*]"
+            },
+            {
+              "type": "path",
+              "name": "user_type",
+              "expr": "$.userdata.usertype"
+            },
+            {
+              "type": "path",
+              "name": "user_roles",
+              "expr": "$.userdata.roles[*]"
+            },
+            {
+              "type": "path",
+              "name": "user_loc_state",
+              "expr": "$.userdata.state"
+            },
+            {
+              "type": "path",
+              "name": "user_loc_district",
+              "expr": "$.userdata.district"
+            },
+            {
+              "type": "path",
+              "name": "user_signin_type",
+              "expr": "$.userdata.usersignintype"
+            },
+            {
+              "type": "path",
+              "name": "user_login_type",
+              "expr": "$.userdata.userlogintype"
+            },
+            {
+              "type": "path",
+              "name": "device_loc_state",
+              "expr": "$.devicedata.state"
+            },
+            {
+              "type": "path",
+              "name": "device_loc_city",
+              "expr": "$.devicedata.city"
+            },
+            {
+              "type": "path",
+              "name": "device_loc_country",
+              "expr": "$.devicedata.country"
+            },
+            {
+              "type": "path",
+              "name": "device_first_access",
+              "expr": "$.devicedata.firstaccess"
+            },
+            {
+              "type": "path",
+              "name": "user_declared_state",
+              "expr": "$.devicedata.userdeclared.state"
+            },
+            {
+              "type": "path",
+              "name": "user_declared_district",
+              "expr": "$.devicedata.userdeclared.district"
+            },
+            {
+              "type": "path",
+              "name": "derived_loc_state",
+              "expr": "$.derivedlocationdata.state"
+            },
+            {
+              "type": "path",
+              "name": "derived_loc_district",
+              "expr": "$.derivedlocationdata.district"
+            },
+            {
+              "type": "path",
+              "name": "derived_loc_from",
+              "expr": "$.derivedlocationdata.from"
             }
           ]
         },
@@ -180,18 +441,6 @@
             },
             {
               "type": "string",
-              "name": "object_rollup_l2"
-            },
-            {
-              "type": "string",
-              "name": "object_rollup_l3"
-            },
-            {
-              "type": "string",
-              "name": "object_rollup_l4"
-            },
-            {
-              "type": "string",
               "name": "edata_type"
             },
             {
@@ -212,6 +461,288 @@
             {
               "type": "long",
               "name": "syncts"
+            },
+            {
+              "type": "string",
+              "name": "content_name"
+            },
+            {
+              "type": "string",
+              "name": "content_object_type"
+            },
+            {
+              "type": "string",
+              "name": "content_type"
+            },
+            {
+              "type": "string",
+              "name": "content_media_type"
+            },
+            {
+              "name": "content_language"
+            },
+            {
+              "name": "content_medium"
+            },
+            {
+              "name": "content_gradelevel"
+            },
+            {
+              "name": "content_subjects"
+            },
+            {
+              "type": "string",
+              "name": "content_mimetype"
+            },
+            {
+              "type": "string",
+              "name": "content_framework"
+            },
+            {
+              "type": "string",
+              "name": "content_board"
+            },
+            {
+              "type": "string",
+              "name": "content_status"
+            },
+            {
+              "type": "double",
+              "name": "content_version"
+            },
+            {
+              "type": "long",
+              "name": "content_last_submitted_on"
+            },
+            {
+              "type": "long",
+              "name": "content_last_published_on"
+            },
+            {
+              "type": "long",
+              "name": "content_last_updated_on"
+            },
+            {
+              "type": "string",
+              "name": "content_created_by"
+            },
+            {
+              "name": "content_created_for"
+            },
+            {
+              "type": "string",
+              "name": "collection_name"
+            },
+            {
+              "type": "string",
+              "name": "collection_object_type"
+            },
+            {
+              "type": "string",
+              "name": "collection_type"
+            },
+            {
+              "type": "string",
+              "name": "collection_media_type"
+            },
+            {
+              "name": "collection_language"
+            },
+            {
+              "name": "collection_medium"
+            },
+            {
+              "name": "collection_gradelevel"
+            },
+            {
+              "name": "collection_subjects"
+            },
+            {
+              "type": "string",
+              "name": "collection_mimetype"
+            },
+            {
+              "type": "string",
+              "name": "collection_framework"
+            },
+            {
+              "type": "string",
+              "name": "collection_board"
+            },
+            {
+              "type": "string",
+              "name": "collection_status"
+            },
+            {
+              "type": "double",
+              "name": "collection_version"
+            },
+            {
+              "type": "long",
+              "name": "collection_last_submitted_on"
+            },
+            {
+              "type": "long",
+              "name": "collection_last_published_on"
+            },
+            {
+              "type": "long",
+              "name": "collection_last_updated_on"
+            },
+            {
+              "type": "string",
+              "name": "collection_created_by"
+            },
+            {
+              "name": "collection_created_for"
+            },
+            {
+              "name": "user_grade_list"
+            },
+            {
+              "name": "user_language_list"
+            },
+            {
+              "name": "user_subject_list"
+            },
+            {
+              "type": "string",
+              "name": "user_type"
+            },
+            {
+              "name": "user_roles"
+            },
+            {
+              "type": "string",
+              "name": "user_loc_state"
+            },
+            {
+              "type": "string",
+              "name": "user_loc_district"
+            },
+            {
+              "type": "string",
+              "name": "user_signin_type"
+            },
+            {
+              "type": "string",
+              "name": "user_login_type"
+            },
+            {
+              "type": "string",
+              "name": "device_loc_state"
+            },
+            {
+              "type": "string",
+              "name": "device_loc_state_code"
+            },
+            {
+              "type": "string",
+              "name": "device_loc_city"
+            },
+            {
+              "type": "string",
+              "name": "device_loc_country_code"
+            },
+            {
+              "type": "string",
+              "name": "device_loc_country"
+            },
+            {
+              "type": "string",
+              "name": "device_os"
+            },
+            {
+              "type": "string",
+              "name": "device_make"
+            },
+            {
+              "type": "string",
+              "name": "device_id"
+            },
+            {
+              "type": "long",
+              "name": "device_mem"
+            },
+            {
+              "type": "string",
+              "name": "device_idisk"
+            },
+            {
+              "type": "string",
+              "name": "device_edisk"
+            },
+            {
+              "type": "string",
+              "name": "device_scrn"
+            },
+            {
+              "type": "string",
+              "name": "device_camera"
+            },
+            {
+              "type": "string",
+              "name": "device_cpu"
+            },
+            {
+              "type": "long",
+              "name": "device_sims"
+            },
+            {
+              "type": "string",
+              "name": "device_uaspec_agent"
+            },
+            {
+              "type": "string",
+              "name": "device_uaspec_ver"
+            },
+            {
+              "type": "string",
+              "name": "device_uaspec_system"
+            },
+            {
+              "type": "string",
+              "name": "device_uaspec_platform"
+            },
+            {
+              "type": "string",
+              "name": "device_uaspec_raw"
+            },
+            {
+              "type": "long",
+              "name": "device_first_access"
+            },
+            {
+              "type": "string",
+              "name": "device_loc_state_custom_code"
+            },
+            {
+              "type": "string",
+              "name": "device_loc_state_custom_name"
+            },
+            {
+              "type": "string",
+              "name": "device_loc_district"
+            },
+            {
+              "type": "string",
+              "name": "user_declared_state"
+            },
+            {
+              "type": "string",
+              "name": "user_declared_district"
+            },
+            {
+              "type": "string",
+              "name": "derived_loc_state"
+            },
+            {
+              "type": "string",
+              "name": "derived_loc_district"
+            },
+            {
+              "type": "string",
+              "name": "derived_loc_from"
             }
           ],
           "dimensionsExclusions": []
@@ -221,6 +752,11 @@
           "format": "auto"
         }
       }
+    },
+    "transformSpec": {
+      "transforms": [
+         { "type": "expression", "name": "device_first_access", "expression": "timestamp_format(device_first_access, 'YYYY-MM-dd','Asia/Kolkata')" }
+      ]
     },
     "metricsSpec": [
       {
