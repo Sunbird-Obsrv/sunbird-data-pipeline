@@ -411,52 +411,52 @@
             },
             {
               "type": "path",
-              "name": "l2data_created_for",
+              "name": "object_l2_created_for",
               "expr": "$.l2data.createdfor"
             },
             {
               "type": "path",
-              "name": "l2data_framework",
+              "name": "object_l2_framework",
               "expr": "$.l2data.framework"
             },
             {
               "type": "path",
-              "name": "l2data_name",
+              "name": "object_l2_name",
               "expr": "$.l2data.name"
             },
             {
               "type": "path",
-              "name": "l2data_channel",
+              "name": "object_l2_channel",
               "expr": "$.l2data.channel"
             },
             {
               "type": "path",
-              "name": "l2data_mimetype",
+              "name": "object_l2_mimetype",
               "expr": "$.l2data.mimetype"
             },
             {
               "type": "path",
-              "name": "l2data_medium",
+              "name": "object_l2_medium",
               "expr": "$.l2data.medium[*]"
             },
             {
               "type": "path",
-              "name": "l2data_board",
+              "name": "object_l2_board",
               "expr": "$.l2data.board"
             },
             {
               "type": "path",
-              "name": "l2data_contenttype",
+              "name": "object_l2_contenttype",
               "expr": "$.l2data.contenttype"
             },
             {
               "type": "path",
-              "name": "l2data_gradelevel",
+              "name": "object_l2_gradelevel",
               "expr": "$.l2data.gradelevel[*]"
             },
             {
               "type": "path",
-              "name": "l2data_subjects",
+              "name": "object_l2_subjects",
               "expr": "$.l2data.subject[*]"
             }
           ]
@@ -777,40 +777,40 @@
               "name": "device_loc_iso_state_code"
             },
             {
-              "name": "l2data_created_for"
+              "name": "object_l2_created_for"
             },
             {
               "type": "string",
-              "name": "l2data_framework"
+              "name": "object_l2_framework"
             },
             {
               "type": "string",
-              "name": "l2data_name"
+              "name": "object_l2_name"
             },
             {
               "type": "string",
-              "name": "l2data_channel"
+              "name": "object_l2_channel"
             },
             {
               "type": "string",
-              "name": "l2data_mimetype"
+              "name": "object_l2_mimetype"
             },
             {
-              "name": "l2data_medium"
-            },
-            {
-              "type": "string",
-              "name": "l2data_board"
+              "name": "object_l2_medium"
             },
             {
               "type": "string",
-              "name": "l2data_contenttype"
+              "name": "object_l2_board"
             },
             {
-              "name": "l2data_gradelevel"
+              "type": "string",
+              "name": "object_l2_contenttype"
             },
             {
-              "name": "l2data_subjects"
+              "name": "object_l2_gradelevel"
+            },
+            {
+              "name": "object_l2_subjects"
             }
           ],
           "dimensionsExclusions": []
