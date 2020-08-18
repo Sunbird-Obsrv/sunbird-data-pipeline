@@ -129,11 +129,6 @@
             },
             {
               "type": "path",
-              "name": "content_media_type",
-              "expr": "$.contentdata.mediatype"
-            },
-            {
-              "type": "path",
               "name": "content_language",
               "expr": "$.contentdata.language[*]"
             },
@@ -171,11 +166,6 @@
               "type": "path",
               "name": "content_status",
               "expr": "$.contentdata.status"
-            },
-            {
-              "type": "path",
-              "name": "content_version",
-              "expr": "$.contentdata.pkgversion"
             },
             {
               "type": "path",
@@ -293,79 +283,21 @@
               "expr": "$.collectiondata.createdfor"
             },
             {
-              "type": "path",
-              "name": "user_grade_list",
-              "expr": "$.userdata.gradelist[*]"
+              "type": "string",
+              "name": "user_type"
             },
             {
-              "type": "path",
-              "name": "user_language_list",
-              "expr": "$.userdata.languagelist[*]"
+              "type": "string",
+              "name": "user_signin_type"
             },
             {
-              "type": "path",
-              "name": "user_subject_list",
-              "expr": "$.userdata.subjectlist[*]"
-            },
-            {
-              "type": "path",
-              "name": "user_type",
-              "expr": "$.userdata.usertype"
-            },
-            {
-              "type": "path",
-              "name": "user_roles",
-              "expr": "$.userdata.roles[*]"
-            },
-            {
-              "type": "path",
-              "name": "user_loc_state",
-              "expr": "$.userdata.state"
-            },
-            {
-              "type": "path",
-              "name": "user_loc_district",
-              "expr": "$.userdata.district"
-            },
-            {
-              "type": "path",
-              "name": "user_signin_type",
-              "expr": "$.userdata.usersignintype"
-            },
-            {
-              "type": "path",
-              "name": "user_login_type",
-              "expr": "$.userdata.userlogintype"
-            },
-            {
-              "type": "path",
-              "name": "device_loc_state",
-              "expr": "$.devicedata.state"
-            },
-            {
-              "type": "path",
-              "name": "device_loc_city",
-              "expr": "$.devicedata.city"
-            },
-            {
-              "type": "path",
-              "name": "device_loc_country",
-              "expr": "$.devicedata.country"
+              "type": "string",
+              "name": "user_login_type"
             },
             {
               "type": "path",
               "name": "device_first_access",
               "expr": "$.devicedata.firstaccess"
-            },
-            {
-              "type": "path",
-              "name": "user_declared_state",
-              "expr": "$.devicedata.userdeclared.state"
-            },
-            {
-              "type": "path",
-              "name": "user_declared_district",
-              "expr": "$.devicedata.userdeclared.district"
             },
             {
               "type": "path",
@@ -476,10 +408,6 @@
               "name": "content_type"
             },
             {
-              "type": "string",
-              "name": "content_media_type"
-            },
-            {
               "name": "content_language"
             },
             {
@@ -506,10 +434,6 @@
             {
               "type": "string",
               "name": "content_status"
-            },
-            {
-              "type": "double",
-              "name": "content_version"
             },
             {
               "type": "long",
@@ -541,10 +465,6 @@
             {
               "type": "string",
               "name": "collection_type"
-            },
-            {
-              "type": "string",
-              "name": "collection_media_type"
             },
             {
               "name": "collection_language"
@@ -598,28 +518,8 @@
               "name": "collection_created_for"
             },
             {
-              "name": "user_grade_list"
-            },
-            {
-              "name": "user_language_list"
-            },
-            {
-              "name": "user_subject_list"
-            },
-            {
               "type": "string",
               "name": "user_type"
-            },
-            {
-              "name": "user_roles"
-            },
-            {
-              "type": "string",
-              "name": "user_loc_state"
-            },
-            {
-              "type": "string",
-              "name": "user_loc_district"
             },
             {
               "type": "string",
@@ -630,32 +530,8 @@
               "name": "user_login_type"
             },
             {
-              "type": "string",
-              "name": "device_loc_state"
-            },
-            {
-              "type": "string",
-              "name": "device_loc_city"
-            },
-            {
-              "type": "string",
-              "name": "device_loc_country"
-            },
-            {
               "type": "long",
               "name": "device_first_access"
-            },
-            {
-              "type": "string",
-              "name": "device_loc_state_custom_code"
-            },
-            {
-              "type": "string",
-              "name": "device_loc_state_custom_name"
-            },
-            {
-              "type": "string",
-              "name": "device_loc_district"
             },
             {
               "type": "string",
@@ -663,15 +539,7 @@
             },
             {
               "type": "string",
-              "name": "user_declared_district"
-            },
-            {
-              "type": "string",
-              "name": "derived_loc_state"
-            },
-            {
-              "type": "string",
-              "name": "derived_loc_district"
+              "name": "device_loc_district"
             },
             {
               "type": "string",
