@@ -14,10 +14,6 @@
               "name": "eid"
             },
             {
-              "type": "root",
-              "name": "syncts"
-            },
-            {
               "type": "path",
               "name": "actor_id",
               "expr": "$.actor.id"
@@ -321,10 +317,6 @@
             {
               "type": "string",
               "name": "eid"
-            },
-            {
-              "type": "long",
-              "name": "syncts"
             },
             {
               "type": "string",
