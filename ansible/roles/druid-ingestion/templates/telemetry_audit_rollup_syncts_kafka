@@ -10,10 +10,6 @@
           "useFieldDiscovery": false,
           "fields": [
             {
-              "type": "root",
-              "name": "eid"
-            },
-            {
               "type": "path",
               "name": "actor_id",
               "expr": "$.actor.id"
@@ -50,16 +46,6 @@
             },
             {
               "type": "path",
-              "name": "context_cdata_type",
-              "expr": "$.context.cdata[*].type"
-            },
-            {
-              "type": "path",
-              "name": "context_cdata_id",
-              "expr": "$.context.cdata[*].id"
-            },
-            {
-              "type": "path",
               "name": "object_id",
               "expr": "$.object.id"
             },
@@ -82,11 +68,6 @@
               "type": "path",
               "name": "object_rollup_l2",
               "expr": "$.object.rollup.l2"
-            },
-            {
-              "type": "path",
-              "name": "edata_props",
-              "expr": "$.edata.props[*]"
             },
             {
               "type": "path",
@@ -400,12 +381,6 @@
               "name": "context_pdata_ver"
             },
             {
-              "name": "context_cdata_type"
-            },
-            {
-              "name": "context_cdata_id"
-            },
-            {
               "type": "string",
               "name": "object_id"
             },
@@ -424,9 +399,6 @@
             {
               "type": "string",
               "name": "object_rollup_l2"
-            },
-            {
-              "name": "edata_props"
             },
             {
               "type": "string",
@@ -636,13 +608,11 @@
       }
     },
     "transformSpec": {
-      "transforms": [
-        {
-          "type": "expression",
-          "name": "device_first_access",
-          "expression": "timestamp_format(device_first_access, 'YYYY-MM-dd','Asia/Kolkata')"
-        }
-      ]
+      "filter": {
+        "type": "selector",
+        "dimension": "eid",
+        "value": "AUDIT"
+      }
     },
     "metricsSpec": [
       {
