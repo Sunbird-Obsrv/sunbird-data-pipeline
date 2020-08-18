@@ -105,15 +105,15 @@ object UserMetadataUpdater {
       custodianInfo.++(locationInfoMap)
     }
     else {
-      val custUserChannel = userDetails.getOrElse("rootorgid", "").asInstanceOf[String]
-      getStateUserInfo(userDetails, metrics, userId, config, cassandraConnect).+=(config.userChannelKey -> custUserChannel)
+      val userChannel = userDetails.getOrElse("rootorgid", "").asInstanceOf[String]
+      getStateUserInfo(userDetails, metrics, userId, config, cassandraConnect, userChannel).+=(config.userChannelKey -> userChannel)
     }
   }
 
   def getCustUserChannel(origianlProvider: AnyRef, config: UserCacheUpdaterConfigV2, cassandraConnect: CassandraUtil, metrics: Metrics): String = {
     var result: String = null
     val organisationQuery = QueryBuilder.select("id").from(config.keySpace, config.orgTable)
-      .where(QueryBuilder.in("channel", origianlProvider))
+      .where(QueryBuilder.in("id", origianlProvider))
       .and(QueryBuilder.eq("isrootorg", true)).allowFiltering().toString
     val organisationInfo = cassandraConnect.findOne(organisationQuery)
     if (null != organisationInfo) {
@@ -175,33 +175,42 @@ object UserMetadataUpdater {
   def getCustodianUserInfo(metrics: Metrics, userId: String, config: UserCacheUpdaterConfigV2, cassandraConnect: CassandraUtil): mutable.Map[String, AnyRef] = {
     val custodianExtUserMap = extractCustodianUserExternalData(readFromCassandra(
       keyspace = config.keySpace,
-      table = config.userExternalIdTable,
+      table = config.userDeclarationTable,
       clause = QueryBuilder.eq("userid", userId),
       metrics,
       cassandraConnect, config
-    ), config)
+    ), config, cassandraConnect, metrics)
 
-    //fetch custodian User's channel from organisation table
-    val originalProvider = custodianExtUserMap.getOrElse("originalprovider", "")
-    val custChannel = getCustUserChannel(originalProvider, config, cassandraConnect, metrics)
-    custodianExtUserMap.+=(config.userChannelKey -> custChannel)
+    custodianExtUserMap
   }
 
-  def extractCustodianUserExternalData(externalIdentity: util.List[Row], config: UserCacheUpdaterConfigV2): mutable.Map[String, AnyRef] = {
+  def extractCustodianUserExternalData(userDeclaration: util.List[Row], config: UserCacheUpdaterConfigV2, cassandraConnect: CassandraUtil, metrics: Metrics): mutable.Map[String, AnyRef] = {
     val result: mutable.Map[String, AnyRef] = mutable.Map[String, AnyRef]()
-    externalIdentity.forEach{row =>
-      row.getString("idtype").toLowerCase() match {
-        case config.declareExternalId => result.put(config.externalidKey, row.getString("externalid"))
-        case config.declaredSchoolName => result.put(config.schoolNameKey, row.getString("externalid"))
-        case config.declaredSchoolCode => result.put(config.schoolUdiseCodeKey, row.getString("externalid"))
-        case _ => result
+    userDeclaration.forEach{row =>
+      val custodianOrgId = row.getString("orgid")
+      val custUserChannel = getCustUserChannel(custodianOrgId, config, cassandraConnect, metrics)
+      if (null != custUserChannel && !userDeclaration.isEmpty) {
+        val row: Row = userDeclaration.get(0)
+        val columnDefinitions = row.getColumnDefinitions()
+        val columnCount = columnDefinitions.size
+        for (i <- 0 until columnCount) {
+          result.put(columnDefinitions.getName(i), row.getObject(i))
+        }
       }
-      result.put(config.originalprovider, row.getString("originalprovider"))
+      val userInfo = result.get("userinfo").getOrElse(new util.LinkedHashMap()).asInstanceOf[util.LinkedHashMap[String, String]]
+      if(!userInfo.isEmpty)
+      {
+        result.+=(config.externalidKey -> userInfo.getOrDefault(config.declareExternalId, ""),
+          config.schoolUdiseCodeKey -> userInfo.getOrDefault(config.declaredSchoolCode, ""),
+          config.schoolNameKey -> userInfo.getOrDefault(config.declaredSchoolName, ""))
+      }
+      result.+=(config.userChannelKey -> custodianOrgId)
     }
     result
   }
 
-  def getStateUserInfo(userDetails: mutable.Map[String, AnyRef], metrics: Metrics, userId: String, config: UserCacheUpdaterConfigV2, cassandraConnect: CassandraUtil): mutable.Map[String, AnyRef] = {
+  def getStateUserInfo(userDetails: mutable.Map[String, AnyRef], metrics: Metrics, userId: String,
+                       config: UserCacheUpdaterConfigV2, cassandraConnect: CassandraUtil, rootOrgId: String): mutable.Map[String, AnyRef] = {
     val userOrgId = getUserOrgId(metrics, userId, config, cassandraConnect)
     val orgInfoMap = getOrganisationInfo(userOrgId, cassandraConnect, config, metrics)
 
@@ -209,9 +218,8 @@ object UserMetadataUpdater {
     val locationIds = orgInfoMap.get("locationids").getOrElse(new util.ArrayList()).asInstanceOf[util.List[String]]
     val locationInfoMap= getLocationInformation(locationIds, metrics, userId, config, cassandraConnect)
     //externalid from usr_external_table
-    val channel = userDetails.getOrElse("channel", "").asInstanceOf[String]
-    var externalId: String = if( null != channel ){
-      getExternalId(channel, userId, cassandraConnect, config)
+    var externalId: String = if( null != rootOrgId ){
+      getExternalId(rootOrgId, userId, cassandraConnect, config)
     } else ""
     val externalMap = orgInfoMap.++(locationInfoMap).+=(config.externalidKey -> externalId.asInstanceOf[AnyRef])
     externalMap
@@ -277,10 +285,10 @@ object UserMetadataUpdater {
     userOrgIdList
   }
 
-  def getExternalId(channel: String, userid: String, cassandraConnect: CassandraUtil, config: UserCacheUpdaterConfigV2): String = {
+  def getExternalId(rootOrgId: String, userid: String, cassandraConnect: CassandraUtil, config: UserCacheUpdaterConfigV2): String = {
     val externalIdQuery = QueryBuilder.select("externalid").from(config.keySpace, config.userExternalIdTable)
-      .where(QueryBuilder.eq("idtype", channel))
-      .and(QueryBuilder.eq("provider", channel))
+      .where(QueryBuilder.eq("idtype", rootOrgId))
+      .and(QueryBuilder.eq("provider", rootOrgId))
       .and(QueryBuilder.eq("userid", userid)).toString
     val row = cassandraConnect.findOne(externalIdQuery)
     if (null != row)

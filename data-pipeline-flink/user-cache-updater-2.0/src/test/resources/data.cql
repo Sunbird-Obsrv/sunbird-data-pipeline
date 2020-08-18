@@ -192,25 +192,27 @@ INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-4','g0507020f0
 INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-5','g0507020f00f6', 'TAMIL NADU', 'state');
 INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-6','g0507020f00f6', 'VELLORE', 'district');
 
-CREATE TABLE sunbird.user_org (
-    id text PRIMARY KEY,
+CREATE TABLE sunbird.user_organisation (
+    userid text,
+    organisationid text,
     addedby text,
     addedbyname text,
     approvaldate text,
     approvedby text,
     hashtagid text,
+    id text,
     isapproved boolean,
     isdeleted boolean,
     isrejected boolean,
-    organisationid text,
     orgjoindate text,
     orgleftdate text,
     position text,
     roles list<text>,
     updatedby text,
     updateddate text,
-    userid text
-) WITH bloom_filter_fp_chance = 0.01
+    PRIMARY KEY (userid, organisationid)
+) WITH CLUSTERING ORDER BY (organisationid ASC)
+    AND bloom_filter_fp_chance = 0.01
     AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
     AND comment = ''
     AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}
@@ -224,11 +226,9 @@ CREATE TABLE sunbird.user_org (
     AND min_index_interval = 128
     AND read_repair_chance = 0.0
     AND speculative_retry = '99PERCENTILE';
-CREATE INDEX inx_uorg_userid ON sunbird.user_org (userid);
-CREATE INDEX inx_uorg_orgid ON sunbird.user_org (organisationid);
 
-    INSERT INTO sunbird.user_org (userid,id,organisationid) VALUES ('user-4','01267670270554112010', '0123653943740170242');
-    INSERT INTO sunbird.user_org (userid,id,organisationid) VALUES ('user-4','012676702705541120109', '0125648776347320320');
+    INSERT INTO sunbird.user_organisation (userid,id,organisationid) VALUES ('user-4','01267670270554112010', '0123653943740170242');
+    INSERT INTO sunbird.user_organisation (userid,id,organisationid) VALUES ('user-4','012676702705541120109', '0125648776347320320');
 
 
 CREATE TABLE sunbird.organisation (
@@ -319,31 +319,57 @@ CREATE TABLE sunbird.usr_external_identity (
     AND read_repair_chance = 0.0
     AND speculative_retry = '99PERCENTILE';
 
-    INSERT INTO sunbird.usr_external_identity (userid,idtype,originalprovider, externalid, provider) VALUES ('user-3','declared-ext-id', 'apekx', '93nsoa01', 'apekx');
-    INSERT INTO sunbird.usr_external_identity (userid,idtype,originalprovider, externalid, provider) VALUES ('user-3','declared-school-name', 'apekx', 'SBA School', 'apekx');
-    INSERT INTO sunbird.usr_external_identity (userid,idtype,originalprovider, externalid, provider) VALUES ('user-3','declared-school-udise-code', 'apekx', '038sba937', 'apekx');
-    INSERT INTO sunbird.usr_external_identity (userid,idtype,originalprovider, externalid, provider) VALUES ('user-3','declared-phone', 'apekx', '847389758393', 'apekx');
-    INSERT INTO sunbird.usr_external_identity (userid,idtype,originalprovider, externalid, provider) VALUES ('user-12','declared-ext-id', 'apekx', '93nsoa01', 'apekx');
-    INSERT INTO sunbird.usr_external_identity (userid,idtype,originalprovider, externalid, provider) VALUES ('user-4','apekx', 'apekx', '948ext1', 'apekx');
+    INSERT INTO sunbird.usr_external_identity (userid,idtype,originalprovider, externalid, provider) VALUES ('user-4','01285019302823526479', '01285019302823526479', '948ext1', '01285019302823526479');
 
-    CREATE TABLE sunbird.system_settings (
-        id text PRIMARY KEY,
-        field text,
-        value text
-    ) WITH bloom_filter_fp_chance = 0.01
-        AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
-        AND comment = ''
-        AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}
-        AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
-        AND crc_check_chance = 1.0
-        AND dclocal_read_repair_chance = 0.1
-        AND default_time_to_live = 0
-        AND gc_grace_seconds = 864000
-        AND max_index_interval = 2048
-        AND memtable_flush_period_in_ms = 0
-        AND min_index_interval = 128
-        AND read_repair_chance = 0.0
-        AND speculative_retry = '99PERCENTILE';
-    CREATE INDEX inx_system_settings ON sunbird.system_settings (field);
+CREATE TABLE sunbird.system_settings (
+     id text PRIMARY KEY,
+     field text,
+     value text
+) WITH bloom_filter_fp_chance = 0.01
+     AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+     AND comment = ''
+     AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}
+     AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+     AND crc_check_chance = 1.0
+     AND dclocal_read_repair_chance = 0.1
+     AND default_time_to_live = 0
+     AND gc_grace_seconds = 864000
+     AND max_index_interval = 2048
+     AND memtable_flush_period_in_ms = 0
+     AND min_index_interval = 128
+     AND read_repair_chance = 0.0
+     AND speculative_retry = '99PERCENTILE';
+     CREATE INDEX inx_system_settings ON sunbird.system_settings (field);
 
-    INSERT INTO sunbird.system_settings(id,field,value) VALUES ('custodianRootOrgId','custodianRootOrgId', '01285019302823526477');
+     INSERT INTO sunbird.system_settings(id,field,value) VALUES ('custodianRootOrgId','custodianRootOrgId', '01285019302823526477');
+
+CREATE TABLE sunbird.user_declarations (
+     userid text,
+     orgid text,
+     persona text,
+     createdby text,
+     createdon timestamp,
+     errortype text,
+     status text,
+     updatedby text,
+     updatedon timestamp,
+     userinfo map<text, text>,
+     PRIMARY KEY (userid, orgid, persona)
+) WITH CLUSTERING ORDER BY (orgid ASC, persona ASC)
+     AND bloom_filter_fp_chance = 0.01
+     AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+     AND comment = ''
+     AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}
+     AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+     AND crc_check_chance = 1.0
+     AND dclocal_read_repair_chance = 0.1
+     AND default_time_to_live = 0
+     AND gc_grace_seconds = 864000
+     AND max_index_interval = 2048
+     AND memtable_flush_period_in_ms = 0
+     AND min_index_interval = 128
+     AND read_repair_chance = 0.0
+     AND speculative_retry = '99PERCENTILE';
+
+     INSERT INTO sunbird.user_declarations (userid,orgid,persona,userinfo) VALUES ('user-3','012850193028235264771', 'teacher',{'declared-school-name': 'SBA School', 'declared-school-udise-code': '038sba937', 'type': 'school', 'declared-ext-id': '93nsoa01'});
+     INSERT INTO sunbird.user_declarations (userid,orgid,persona,userinfo) VALUES ('user-12','01285019302823526477', 'teacher',{'declared-ext-id': '93nsoa01'});
