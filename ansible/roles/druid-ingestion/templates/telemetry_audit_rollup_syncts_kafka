@@ -55,6 +55,16 @@
             },
             {
               "type": "path",
+              "name": "context_cdata_type",
+              "expr": "$.context.cdata[*].type"
+            },
+            {
+              "type": "path",
+              "name": "context_cdata_id",
+              "expr": "$.context.cdata[*].id"
+            },
+            {
+              "type": "path",
               "name": "object_id",
               "expr": "$.object.id"
             },
@@ -97,16 +107,6 @@
               "type": "path",
               "name": "edata_duration",
               "expr": "$.edata.duration"
-            },
-            {
-              "type": "path",
-              "name": "context_cdata_type",
-              "expr": "$.context.cdata[*].type"
-            },
-            {
-              "type": "path",
-              "name": "context_cdata_id",
-              "expr": "$.context.cdata[*].id"
             },
             {
               "type": "path",
@@ -351,6 +351,12 @@
               "name": "context_pdata_ver"
             },
             {
+              "name": "context_cdata_type"
+            },
+            {
+              "name": "context_cdata_id"
+            },
+            {
               "type": "string",
               "name": "object_id"
             },
@@ -380,12 +386,6 @@
             {
               "type": "string",
               "name": "edata_prevstate"
-            },
-            {
-              "name": "context_cdata_type"
-            },
-            {
-              "name": "context_cdata_id"
             },
             {
               "type": "string",
