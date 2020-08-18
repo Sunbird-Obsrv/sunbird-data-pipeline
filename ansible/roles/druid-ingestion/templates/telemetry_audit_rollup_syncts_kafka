@@ -634,7 +634,7 @@
     }
   },
   "ioConfig": {
-    "topic": "{{env}}.druid.events.telemetry",
+    "topic": "{{env}}.events.telemetry",
     "consumerProperties": {
       "bootstrap.servers": "{{kafka_brokers}}"
     },
