@@ -279,16 +279,19 @@
               "expr": "$.collectiondata.createdfor"
             },
             {
-              "type": "string",
-              "name": "user_type"
+              "type": "path",
+              "name": "user_type",
+              "expr": "$.userdata.usertype"
             },
             {
-              "type": "string",
-              "name": "user_signin_type"
+              "type": "path",
+              "name": "user_signin_type",
+              "expr": "$.userdata.usersignintype"
             },
             {
-              "type": "string",
-              "name": "user_login_type"
+              "type": "path",
+              "name": "user_login_type",
+              "expr": "$.userdata.userlogintype"
             },
             {
               "type": "path",
@@ -577,7 +580,7 @@
   "ioConfig": {
     "topic": "{{env}}.telemetry.audit",
     "consumerProperties": {
-      "bootstrap.servers": "{{kafka_brokers}}"
+    "bootstrap.servers": "{{kafka_brokers}}"
     },
     "taskCount": 1,
     "replicas": 1,
