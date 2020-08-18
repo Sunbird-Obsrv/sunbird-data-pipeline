@@ -35,11 +35,6 @@
             },
             {
               "type": "path",
-              "name": "context_did",
-              "expr": "$.context.did"
-            },
-            {
-              "type": "path",
               "name": "context_pdata_id",
               "expr": "$.context.pdata.id"
             },
@@ -336,10 +331,6 @@
             {
               "type": "string",
               "name": "context_env"
-            },
-            {
-              "type": "string",
-              "name": "context_did"
             },
             {
               "type": "string",
