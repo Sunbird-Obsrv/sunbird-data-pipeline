@@ -9,8 +9,7 @@ redis:
   host: "{{metadata_redis_host}}" # Redis DP IP 
   port: "6379"
   user:
-    index: "4" # For temporary will change once verification is done
-    output_index: "12" # Output index for hashmap format
+    index: "12" # For temporary will change once verification is done
     source_key: "id"
   content:
     index: "5"
