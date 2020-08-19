@@ -353,5 +353,6 @@ secor_service_name:
     service_description: "Content Consumption Events Backup"
     service_monitor_schedule_hr: "23"
     service_monitor_schedule_min: "56"
+    message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
 
