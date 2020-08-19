@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 
 #$1 script_to_run: It can be USER_CACHE_INDEXER, DRUID_CONTENT_INDEXER etc,.
-#$2 populate_all_data: true/false - Especially for UserCache indexer
-#$3 identifier: userid- Especially for UserCache indexer script to cache specific user id details
-#$4 date: YYYY-MM-DD- Especially for UserCache indexer script to cache all the user data from this specific updated date.
-#$5 populate_anonymous_user: true/false - Especially for UserCacheIndexer to read anonymous user's data
+#$2 identifier: userid- Especially for UserCache indexer script to cache specific user id details
+#$3 date: YYYY-MM-DD- Especially for UserCache indexer script to cache all the user data from this specific updated date.
+#$4 populate_anonymous_user: true/false - Especially for UserCacheIndexer to read anonymous user's data
 
 home=`echo $HOME`
 jobJarPath="{{ content_snapshot_jar_path }}/{{ content_snapshot_jar_name }}"
