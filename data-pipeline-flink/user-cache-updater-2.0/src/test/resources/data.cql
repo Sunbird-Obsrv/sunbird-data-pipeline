@@ -125,6 +125,7 @@ INSERT INTO sunbird.user (
 )VALUES ('user-4', 'VOS','apekx', 'IN','UTKARSHA','04-jul-2020','04-jul-2020','28-10-1996','utkarsha@ilimi.in',true,'Utkarsha', 1, 'Female','Kapoor','Banglore','********gmail.com','******345', '*******','4682647342',true, '01285019302823526479', ['location-2', 'location-3', 'location-4']);
 
 INSERT INTO sunbird.user (id, userid, rootorgid, firstname, lastname) VALUES ('user-9', 'user-9', '01285019302823526477', 'UT', 'KAPOOR');
+INSERT INTO sunbird.user (id, userid, rootorgid, firstname, lastname) VALUES ('user-6', 'user-6', '01285019302823526477', 'Revathi', 'Kotla');
 INSERT INTO sunbird.user (
     id,
     avatar,

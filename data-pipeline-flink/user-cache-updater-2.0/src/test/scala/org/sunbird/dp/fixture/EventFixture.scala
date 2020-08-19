@@ -67,6 +67,17 @@ object EventFixture {
       |
       |""".stripMargin,
 
+    /**
+      * User-Id :user-6
+      * Edata.state is update
+      * Data not present in organisation table
+      */
+    """
+      |{"eid":"AUDIT","ets":1573121861118,"ver":"3.0","mid":"1573121861118.40f9136b-1cc3-458d-a04a-4459606df","actor":{"id":"5609876543234567890987654345678","type":"Request"},"context":{"channel":"01285019302823526477","pdata":{"id":"dev.sunbird.portal","pid":"learner-service","ver":"2.5.0"},"env":"User","did":"user-6","cdata":[{"id":"25cb0530-7c52-ecb1-cff2-6a14faab7910","type":"SignupType"}],"rollup":{"l1":"01285019302823526477"}},"object":{"id":"user-6", "type":"user"},"edata":{"state":"Update","props":["recoveryEmail","recoveryPhone","userId","id","externalIds","updatedDate","updatedBy"]},"syncts":1573121861125,"@timestamp":"2019-11-07T10:17:41.125Z","flags":{"tv_processed":true,"dd_processed":true},"type":"events","ts":"2019-11-07T10:17:41.118+0000"}
+      |
+      |""".stripMargin,
+
+
 
     /**
       * AUDIT Event with object type as content. (not related to user)
