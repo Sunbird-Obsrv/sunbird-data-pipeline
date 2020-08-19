@@ -110,21 +110,6 @@ object UserMetadataUpdater {
     }
   }
 
-  def getCustUserChannel(origianlProvider: AnyRef, config: UserCacheUpdaterConfigV2, cassandraConnect: CassandraUtil, metrics: Metrics): String = {
-    var result: String = null
-    val organisationQuery = QueryBuilder.select("id").from(config.keySpace, config.orgTable)
-      .where(QueryBuilder.in("id", origianlProvider))
-      .and(QueryBuilder.eq("isrootorg", true)).allowFiltering().toString
-    val organisationInfo = cassandraConnect.findOne(organisationQuery)
-    if (null != organisationInfo) {
-      metrics.incCounter(config.dbReadSuccessCount)
-      result = organisationInfo.getString(0)
-    } else {
-      metrics.incCounter(config.dbReadMissCount)
-    }
-    result
-  }
-
   def readFromCassandra(keyspace: String, table: String, clause: Clause, metrics: Metrics, cassandraConnect: CassandraUtil, config: UserCacheUpdaterConfigV2): util.List[Row] = {
     var rowSet: util.List[Row] = null
     val query = QueryBuilder.select.all.from(keyspace, table).where(clause).toString
