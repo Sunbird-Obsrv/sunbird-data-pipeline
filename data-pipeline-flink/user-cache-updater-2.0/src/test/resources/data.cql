@@ -372,4 +372,5 @@ CREATE TABLE sunbird.user_declarations (
      AND speculative_retry = '99PERCENTILE';
 
      INSERT INTO sunbird.user_declarations (userid,orgid,persona,userinfo) VALUES ('user-3','012850193028235264771', 'teacher',{'declared-school-name': 'SBA School', 'declared-school-udise-code': '038sba937', 'type': 'school', 'declared-ext-id': '93nsoa01'});
+     INSERT INTO sunbird.user_declarations (userid,orgid,persona,userinfo) VALUES ('user-3','012850193028235264771', 'other',{'declared-school-name': 'School123', 'declared-school-udise-code': '038sba9371', 'type': 'school', 'declared-ext-id': '93nsoa0134'});
      INSERT INTO sunbird.user_declarations (userid,orgid,persona,userinfo) VALUES ('user-12','01285019302823526477', 'teacher',{'declared-ext-id': '93nsoa01'});

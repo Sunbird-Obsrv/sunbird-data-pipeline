@@ -173,40 +173,57 @@ object UserMetadataUpdater {
   }
 
   def getCustodianUserInfo(metrics: Metrics, userId: String, config: UserCacheUpdaterConfigV2, cassandraConnect: CassandraUtil): mutable.Map[String, AnyRef] = {
-    val custodianExtUserMap = extractCustodianUserExternalData(readFromCassandra(
-      keyspace = config.keySpace,
-      table = config.userDeclarationTable,
-      clause = QueryBuilder.eq("userid", userId),
-      metrics,
-      cassandraConnect, config
-    ), config, cassandraConnect, metrics)
+    var userExternalInfo: mutable.Map[String, AnyRef] = mutable.Map[String, AnyRef]()
 
-    custodianExtUserMap
-  }
+    val userDeclarationInfo = readUserDeclaredInfo(userId, config, cassandraConnect, metrics)
+    if (null != userDeclarationInfo) {
+      metrics.incCounter(config.dbReadSuccessCount)
 
-  def extractCustodianUserExternalData(userDeclaration: util.List[Row], config: UserCacheUpdaterConfigV2, cassandraConnect: CassandraUtil, metrics: Metrics): mutable.Map[String, AnyRef] = {
-    val result: mutable.Map[String, AnyRef] = mutable.Map[String, AnyRef]()
-    userDeclaration.forEach{row =>
-      val custodianOrgId = row.getString("orgid")
-      val custUserChannel = getCustUserChannel(custodianOrgId, config, cassandraConnect, metrics)
-      if (null != custUserChannel && !userDeclaration.isEmpty) {
-        val row: Row = userDeclaration.get(0)
-        val columnDefinitions = row.getColumnDefinitions()
+      val orgId = userDeclarationInfo.getString("orgid")
+      val validOrgId = validateOrgId(orgId, config, cassandraConnect, metrics)
+
+      if(validOrgId) {
+        val columnDefinitions = userDeclarationInfo.getColumnDefinitions()
         val columnCount = columnDefinitions.size
         for (i <- 0 until columnCount) {
-          result.put(columnDefinitions.getName(i), row.getObject(i))
+          userExternalInfo.put(columnDefinitions.getName(i), userDeclarationInfo.getObject(i))
+        }
+        val userInfo = userExternalInfo.get("userinfo").getOrElse(new util.LinkedHashMap()).asInstanceOf[util.HashMap[String, String]]
+        if(!userInfo.isEmpty)
+        {
+          userExternalInfo.+=(config.externalidKey -> userInfo.getOrDefault(config.declareExternalId, ""),
+            config.schoolUdiseCodeKey -> userInfo.getOrDefault(config.declaredSchoolCode, ""),
+            config.schoolNameKey -> userInfo.getOrDefault(config.declaredSchoolName, ""),
+            config.userChannelKey -> orgId)
         }
       }
-      val userInfo = result.get("userinfo").getOrElse(new util.LinkedHashMap()).asInstanceOf[util.HashMap[String, String]]
-      if(!userInfo.isEmpty)
-      {
-        result.+=(config.externalidKey -> userInfo.getOrDefault(config.declareExternalId, ""),
-          config.schoolUdiseCodeKey -> userInfo.getOrDefault(config.declaredSchoolCode, ""),
-          config.schoolNameKey -> userInfo.getOrDefault(config.declaredSchoolName, ""))
-      }
-      result.+=(config.userChannelKey -> custodianOrgId)
     }
-    result
+    else {
+      metrics.incCounter(config.dbReadMissCount)
+    }
+    userExternalInfo
+  }
+
+  def readUserDeclaredInfo(userId: String, config: UserCacheUpdaterConfigV2, cassandraConnect: CassandraUtil, metrics: Metrics): Row = {
+    val userDeclarationQuery = QueryBuilder.select().all().from(config.keySpace, config.userDeclarationTable)
+      .where(QueryBuilder.eq("userid", userId))
+      .and(QueryBuilder.eq("persona", config.persona)).allowFiltering().toString
+
+    cassandraConnect.findOne(userDeclarationQuery)
+  }
+
+  def validateOrgId(orgId: String, config: UserCacheUpdaterConfigV2, cassandraConnect: CassandraUtil, metrics: Metrics): Boolean = {
+    val organisationQuery = QueryBuilder.select("id").from(config.keySpace, config.orgTable)
+      .where(QueryBuilder.in("id", orgId))
+      .and(QueryBuilder.eq("isrootorg", true)).allowFiltering().toString
+    val organisationInfo = cassandraConnect.findOne(organisationQuery)
+    if (null != organisationInfo) {
+      metrics.incCounter(config.dbReadSuccessCount)
+      true
+    } else {
+      metrics.incCounter(config.dbReadMissCount)
+      false
+    }
   }
 
   def getStateUserInfo(userDetails: mutable.Map[String, AnyRef], metrics: Metrics, userId: String,
