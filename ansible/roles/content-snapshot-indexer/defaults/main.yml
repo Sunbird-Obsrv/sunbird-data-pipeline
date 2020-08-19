@@ -10,6 +10,7 @@ redis:
   port: "6379"
   user:
     index: "12" # For temporary will change once verification is done
+    input_index: "4" # Input index for string format
     source_key: "id"
   content:
     index: "5"

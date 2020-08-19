@@ -179,12 +179,15 @@ de-normalization: |
   redis-meta {
     database {
       devicestore.id = 2
-      userstore.id = 4
+      userstore.id = 12
       contentstore.id = 5
       dialcodestore.id = 6
       key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
     }
   }
+
+  # config version
+  user_denorm_version = v2
 
 summary-denormalization: |+
   include file("/data/flink/conf/base-config.conf")
