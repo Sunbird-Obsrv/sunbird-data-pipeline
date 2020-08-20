@@ -163,7 +163,7 @@ object UserMetadataUpdater {
 
     val userDeclarationList = readUserDeclaredInfo(userId, config, cassandraConnect, metrics)
     if (!userDeclarationList.isEmpty) {
-      val userDeclarationInfo = userDeclarationList.stream().filter(f => f.getString("persona").equalsIgnoreCase(config.persona)).findFirst().orElse(null)
+      val userDeclarationInfo = userDeclarationList.stream().filter(f => f.getString("persona").equalsIgnoreCase(config.personaType)).findFirst().orElse(null)
       if (null != userDeclarationInfo) {
         val orgId = userDeclarationInfo.getString("orgid")
         val validOrgId = validateOrgId(orgId, config, cassandraConnect, metrics)
