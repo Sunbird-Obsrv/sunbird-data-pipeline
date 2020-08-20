@@ -26,7 +26,7 @@ node() {
                 jobName = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-1].trim()
                 currentWs = sh(returnStdout: true, script: 'pwd').trim()
                 ansiblePlaybook = "${currentWs}/ansible/spark-cluster-job-submit.yml"
-                ansibleExtraArgs = "--limit spark --tags ${params.job_type} --extra-vars \"job_id=${params.job_id} mode=${params.mode} parallelisation=${params.parallelisation} start_date=${params.start_date} end_date=${params.end_date} batch_id=${params.batch_identifier} sparkMaster=${params.sparkMaster} pause_min=${params.pause_min}\" --vault-password-file /var/lib/jenkins/secrets/vault-pass -vvvv "
+                ansibleExtraArgs = "--tags ${params.job_type} --extra-vars \"job_id=${params.job_id} mode=${params.mode} parallelisation=${params.parallelisation} start_date=${params.start_date} end_date=${params.end_date} batch_id=${params.batch_identifier} sparkMaster=${params.sparkMaster} pause_min=${params.pause_min}\" --vault-password-file /var/lib/jenkins/secrets/vault-pass -vvvv "
                 values.put('currentWs', currentWs)
                 values.put('env', envDir)
                 values.put('module', module)
