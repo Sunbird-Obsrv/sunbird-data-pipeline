@@ -5,12 +5,6 @@ cd "{{ analytics.home }}"
 source model-config.sh
 today=$(date "+%Y-%m-%d")
 
-## job broker-list and kafka-topic
-zookeeper={{ zookeeper }}
-brokerList={{ brokerlist }}
-job_topic={{ analytics_job_queue_topic }}
-unique_topic={{ env }}.telemetry.unique
-
 while :; do
     case $1 in
         -j|--job)   shift 
