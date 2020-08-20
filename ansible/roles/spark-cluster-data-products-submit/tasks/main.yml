@@ -1,3 +1,35 @@
+- name: Copy cluster-config.json file
+  template: src=cluster-config.json.j2 dest={{ analytics.home }}/cluster-config.json
+  tags:
+    - replay-job
+    - run-job
+
+- name: Copy submit-script.sh file
+  template: src=submit-script.j2 dest={{ analytics.home }}/submit-script.sh  
+  tags:
+    - replay-job
+    - run-job
+
+- name: Copy model-config.sh file
+  template: src=model-config.j2 dest={{ analytics.home }}/model-config.sh  
+  tags:
+    - replay-job
+    - run-job
+
+- name: Replay Job
+  shell: "nohup {{ analytics.home }}/scripts/submit-script.sh --job {{ job_id }} --mode {{ mode }} --parallelisation {{ parallelisation }} --startDate {{ startDate }} --endDate {{ endDate }} --sparkMaster {{ sparkMaster }} &"
+  async: "{{ (pause_min * 60) }}"
+  poll: 0
+  tags:
+    - replay-job 
+
+- name: Run Job
+  shell: "nohup {{ analytics.home }}/scripts/submit-script.sh --job {{ job_id }} --mode {{ mode }} --parallelisation {{ parallelisation }} --sparkMaster {{ sparkMaster }} --batch_id {{ batch_id }} &"
+  async: "{{ (pause_min * 60) }}"
+  poll: 0
+  tags:
+    - run-job
+
 - name: Submit wfs job
   uri:
     url: https://spark-jobs-cluster.azurehdinsight.net/livy/batches
@@ -59,4 +91,4 @@
 - debug:
     var: assessment_output 
     tags:
-    - assessment-dashboard-metrics
+    - assessment-dashboard-metrics 
