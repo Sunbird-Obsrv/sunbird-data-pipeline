@@ -167,3 +167,6 @@ submit_jobs_auth_token: ""
 report_list_jobs_url: "http://{{groups['analytics-api'][0]}}:9000/"
 
 reports_container: "reports"
+
+admin_name: admin
+admin_password: "{{ cluster_admin_pass }}"

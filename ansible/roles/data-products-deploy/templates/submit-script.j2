@@ -58,15 +58,25 @@ if [ "$mode" = "via-partition" ]; then
                 finalConfig=${job_config/'"delta":0'/$partitionString}
                 echo $finalConfig
                 echo "Running $job by partitions."
-                classVariable="--class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-2.0.jar"
+                classVariable="org.ekstep.analytics.job.JobExecutor"
             else 
                 job_config=$(config $job '__endDate__')
                 finalConfig=${job_config/'"delta":0'/$partitionString}
                 echo $finalConfig
                 echo "Running $job by partitions via Replay-Supervisor."
-                classVariable="--class org.ekstep.analytics.job.ReplaySupervisor $MODELS_HOME/batch-models-2.0.jar"
+                classVariable="org.ekstep.analytics.job.ReplaySupervisor"
             fi
-            $SPARK_HOME/bin/spark-submit --master $sparkMaster --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.3.2.jar,$MODELS_HOME/batch-models-2.0.jar $classVariable  --model "$job" --fromDate "$start_date" --toDate "$end_date" --config "$finalConfig" >> "$DP_LOGS/$today-job-execution.log"
+            if [ "$sparkMaster" = "local[*]"]; then
+                $SPARK_HOME/bin/spark-submit --master $sparkMaster --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.3.2.jar,$MODELS_HOME/batch-models-2.0.jar --class $classVariable $MODELS_HOME/batch-models-2.0.jar  --model "$job" --fromDate "$start_date" --toDate "$end_date" --config "$finalConfig" >> "$DP_LOGS/$today-job-execution.log"
+            else 
+                args=["--model", $job, "--config", $finalConfig]
+                argsStr="\"className\": \"org.ekstep.analytics.job.JobExecutor\", $args"
+                clusterConfig=cat cluster-config.json
+                requestBody=${clusterConfig/'"className": "org.ekstep.analytics.job.JobExecutor"'/$argsStr}
+                finalRequestBody=${requestBody/'org.ekstep.analytics.job.JobExecutor'/$classVariable}
+                echo $finalRequestBody
+                curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d '$finalRequestBody' 'https://spark-jobs-cluster.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"
+            fi        
         done
 elif [ "$mode" = "job-manager" ]; then
     # push job-config to kafka      
@@ -77,11 +87,21 @@ else
     if [ -z "$start_date" ]; then
         echo "Running $job without partition via run-job."
         job_config=$(config $job)
-        classVariable="--class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-2.0.jar"
+        classVariable="org.ekstep.analytics.job.JobExecutor"
     else   
         job_config=$(config $job '__endDate__')
         echo "Running $job without partition via Replay-Supervisor." 
-        classVariable="--class org.ekstep.analytics.job.ReplaySupervisor $MODELS_HOME/batch-models-2.0.jar"
+        classVariable="org.ekstep.analytics.job.ReplaySupervisor"
     fi  
-    $SPARK_HOME/bin/spark-submit --master $sparkMaster --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.3.2.jar,$MODELS_HOME/batch-models-2.0.jar $classVariable --model "$job" --fromDate "$start_date" --toDate "$end_date" --config "$job_config" >> "$DP_LOGS/$today-job-execution.log"  
+    if [ "$sparkMaster" = "local[*]"]; then
+        $SPARK_HOME/bin/spark-submit --master $sparkMaster --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.3.2.jar,$MODELS_HOME/batch-models-2.0.jar --class $classVariable $MODELS_HOME/batch-models-2.0.jar --model "$job" --fromDate "$start_date" --toDate "$end_date" --config "$job_config" >> "$DP_LOGS/$today-job-execution.log"
+    else 
+        args=["--model", $job, "--config", $finalConfig]
+        argsStr="\"className\": \"org.ekstep.analytics.job.JobExecutor\", $args"
+        clusterConfig=cat cluster-config.json
+        requestBody=${clusterConfig/'"className": "org.ekstep.analytics.job.JobExecutor"'/$argsStr}
+        finalRequestBody=${requestBody/'org.ekstep.analytics.job.JobExecutor'/$classVariable}
+        echo $finalRequestBody
+        curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d '$finalRequestBody' 'https://spark-jobs-cluster.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"    
+
 fi
