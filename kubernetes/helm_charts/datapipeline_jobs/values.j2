@@ -217,12 +217,15 @@ summary-denormalization: |+
   redis-meta {
     database {
       devicestore.id = 2
-      userstore.id = 4
+      userstore.id = 12
       contentstore.id = 5
       dialcodestore.id = 6
       key.expiry.seconds = {{ summary_denorm_key_expiry_seconds }}
     }
   }
+  
+  # config version
+  user_denorm_version = v2
 
 druid-validator: |
   include file("/data/flink/conf/base-config.conf")
