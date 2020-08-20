@@ -29,4 +29,4 @@ spark:
   executor_memory: 19G
   num_executors: 11
 
-analytics.home: "/mount/data/analytics"
+analytics.home: "/tmp"
