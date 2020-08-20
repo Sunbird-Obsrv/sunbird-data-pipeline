@@ -81,6 +81,7 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     jedis.set("do_31249064359802470412856", EventFixture.contentCacheData1)
     jedis.set("do_312526125187809280139353", EventFixture.contentCacheData2)
     jedis.set("do_312526125187809280139355", EventFixture.contentCacheData3)
+    jedis.set("do_312523863923441664117896", EventFixture.contentCacheData4)
     jedis.close()
 
   }
@@ -97,7 +98,6 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
 
     var event = DenormEventsSink.values("mid1")
     event.kafkaKey() should be ("758e054a400f20f7677f2def76427dc13ad1f837")
-
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (false)
     event.flags().get("user_denorm").asInstanceOf[Boolean] should be (true)
     Option(event.flags().get("dialcode_denorm")) should be (None)
@@ -169,8 +169,19 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     event = DenormEventsSink.values("mid6")
     event = DenormEventsSink.values("mid7")
     event = DenormEventsSink.values("mid8")
-    event = DenormEventsSink.values("mid9")
+    event.flags().get("coll_denorm").asInstanceOf[Boolean] should be (true)
+    event.flags().get("l2_denorm").asInstanceOf[Boolean] should be (true)
+    val l2Data = event.getMap().get("l2data").asInstanceOf[util.Map[String, Any]]
+    l2Data should not be null
 
+    l2Data.get("contenttype") should be("TextBook")
+    l2Data.get("mimetype") should be("application/vnd.ekstep.content-collection")
+    l2Data.get("contenttype") should be("TextBook")
+    l2Data.get("channel") should be("0123221617357783046602")
+    l2Data.get("board") should be("State (Maharashtra)")
+    l2Data.get("name") should be("test")
+    l2Data.get("framework") should be("mh_k-12_1")
+    event = DenormEventsSink.values("mid9")
     // Location Denorm Metrics Assertion
     BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.locCacheHit}").getValue() should be (7)
     BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.locCacheMiss}").getValue() should be (3)

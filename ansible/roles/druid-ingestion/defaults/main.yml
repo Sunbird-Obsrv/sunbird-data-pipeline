@@ -8,6 +8,7 @@ druid_schema:
  - telemetry_feedback_index_kafka
  - error_index_kafka
  - pipeline_metrics_index_kafka
+ - telemetry_audit_rollup_syncts_kafka
 event_types:
  - telemetry-events
  - summary-events
@@ -15,3 +16,4 @@ event_types:
  - telemetry-feedback-events
  - telemetry-error-events
  - pipeline-metrics
+ - audit-rollup-syncts
