@@ -32,4 +32,10 @@ spark:
 analytics:
   home: "/tmp"
 
-model_version: "2.0"  
+model_version: "2.0"
+analytics_metrics_topic: "{{ env }}.analytics_metrics"
+sink_topic: "{{ env }}.telemetry.sink"
+druid_broker_host: "{{groups['raw-broker'][0]}}"
+producer_env: "dev.sunbird"
+spark_output_temp_dir: /mount/data/analytics/tmp/
+reports_container: "reports"
