@@ -20,7 +20,7 @@
     - run-job
 
 - name: Replay Job
-  shell: "nohup {{ analytics.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --startDate {{ startDate }} --endDate {{ endDate }} --sparkMaster {{ sparkMaster }} &"
+  shell: "nohup {{ analytics.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --startDate {{ start_date }} --endDate {{ end_date }} --sparkMaster {{ sparkMaster }} &"
   async: "{{ (pause_min * 60) }}"
   poll: 0
   tags:
