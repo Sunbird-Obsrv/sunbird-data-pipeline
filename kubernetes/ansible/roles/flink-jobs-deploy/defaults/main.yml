@@ -105,9 +105,10 @@ middleware_cassandra_keyspace: sunbird
 middleware_cassandra_user_table: user
 middleware_cassandra_location_table: location
 middleware_cassandra_organisation_table: organisation
-middleware_cassandra_user_org_table: user_org
+middleware_cassandra_user_org_table: user_organisation
 middleware_cassandra_usr_external_identity_table: usr_external_identity
 middleware_cassandra_system_settings_table: system_settings
+middleware_cassandra_user_declaration_table: user_declarations
 
 ### assessment-aggregator related vars
 assessaggregator_parallelism: 1
