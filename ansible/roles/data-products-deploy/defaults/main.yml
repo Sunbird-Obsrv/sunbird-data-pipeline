@@ -29,6 +29,7 @@ analytics_job_list: '"wfs", "ds", "dpu", "content-rating-updater", "audit-metric
 analytics_jobs_count: 8
 
 cassandra_keyspace_prefix: '{{ env }}_'
+cassandra_hierarchy_store_keyspace: "{{ env_name}}_hierarchy_store"
 dp_dispatch_bucket_name: ekstep-dev-data-store
 data_exhaust_blob_name: sunbird1p7
 data_exhaust_s3_url: https://s3-ap-south-1.amazonaws.com
