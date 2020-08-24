@@ -21,6 +21,10 @@ prometheus:
 {% if prometheus_service is defined and prometheus_service %}
   service: {{ (prometheus_service | to_json) }}
 {% endif %}
+  kubeControllerManager: 
+    enabled: false
+  kubeScheduler:
+    enabled: false
 
 
 alertmanager:
