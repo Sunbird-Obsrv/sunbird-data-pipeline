@@ -42,6 +42,7 @@ class UserCacheUpdaterConfigV2(override val config: Config) extends BaseJobConfi
   val userExternalIdTable: String = config.getString("lms-cassandra.table.usr_external_identity")
   val userOrgTable: String = config.getString("lms-cassandra.table.user_org")
   val systemSettingsTable: String = config.getString("lms-cassandra.table.system_settings")
+  val userDeclarationTable: String = config.getString("lms-cassandra.table.user_declarations")
   val cassandraHost: String =  config.getString("lms-cassandra.host")
   val cassandraPort: Int =  config.getInt("lms-cassandra.port")
 
@@ -61,6 +62,7 @@ class UserCacheUpdaterConfigV2(override val config: Config) extends BaseJobConfi
   val userChannelKey="userchannel"
   val originalprovider="originalprovider"
 
+  val personaType = "teacher"
   val declareExternalId = "declared-ext-id"
   val declaredSchoolName = "declared-school-name"
   val declaredSchoolCode = "declared-school-udise-code"

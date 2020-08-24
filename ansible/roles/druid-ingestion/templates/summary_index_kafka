@@ -1194,7 +1194,7 @@
     }
   },
   "ioConfig": {
-    "topic": "{{env}}.events.summary",
+    "topic": "{{env}}.druid.events.summary",
     "consumerProperties": {
       "bootstrap.servers": "{{kafka_brokers}}"
     },
