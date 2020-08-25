@@ -97,13 +97,6 @@
     - update-config
     - ed-dataproducts
 
-- name: Copy cluster-config.json file
-  template: src=cluster-config.json.j2 dest={{ analytics.home }}/scripts/cluster-config.json mode=755 owner={{ analytics_user }} group={{ analytics_group }}
-  tags:
-    - dataproducts
-    - update-config
-    - ed-dataproducts
-
 - name: Clean cron jobs
   command: crontab -r
   ignore_errors: yes
@@ -216,4 +209,4 @@
   template: src=start-jobmanager.j2 dest={{ analytics.home }}/scripts/start-jobmanager.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
     - update-jobmanager-config
-    - dataproducts     
+    - dataproducts
