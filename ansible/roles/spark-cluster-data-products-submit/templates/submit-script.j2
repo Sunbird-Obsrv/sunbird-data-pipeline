@@ -56,8 +56,9 @@ get_report_job_model_name(){
     esac        
 }
 
+job_id=$(get_report_job_model_name $job)
+
 if [ -z "$sparkMaster" ]; then sparkMaster="local[*]"; else sparkMaster="$sparkMaster"; fi
-job_id=$(get_report_job_model_name job)    
 
 if [ "$mode" = "via-partition" ]; then
     endPartitions=`expr $partitions - 1`
