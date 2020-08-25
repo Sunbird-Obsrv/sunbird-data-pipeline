@@ -6,7 +6,7 @@
     - run-job
 
 - name: Copy submit-script.sh file
-  template: src=submit-script.j2 dest={{ analytics.home }}/submit-script.sh
+  template: src=submit-script.j2 dest={{ analytics.home }}/submit-script.sh mode=755
   delegate_to: localhost
   tags:
     - replay-job
