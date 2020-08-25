@@ -33,7 +33,31 @@ while :; do
     shift
 done
 
+get_report_job_model_name(){
+    case "$1" in
+        "assessment-dashboard-metrics") echo 'org.sunbird.analytics.job.report.AssessmentMetricsJobV2'
+        ;;
+        "course-dashboard-metrics") echo 'org.sunbird.analytics.job.report.CourseMetricsJobV2'
+        ;;
+        "course-enrollment-report") echo 'org.sunbird.analytics.job.report.CourseEnrollmentJob'
+        ;;
+        "course-consumption-report") echo 'org.sunbird.analytics.job.report.CourseConsumptionJob'
+        ;;
+        "admin-geo-reports") echo 'org.sunbird.analytics.job.report.StateAdminGeoReportJob'
+        ;;
+        "etb-metrics") echo 'org.sunbird.analytics.job.report.ETBMetricsJob'
+        ;;
+        "admin-user-reports") echo 'org.sunbird.analytics.job.report.StateAdminReportJob'
+        ;;
+        "textbook-progress-report") echo 'org.sunbird.analytics.job.report.TextbookProgressJob'
+        ;;
+        *) echo $1
+        ;;
+    esac        
+}
+
 if [ -z "$sparkMaster" ]; then sparkMaster="local[*]"; else sparkMaster="$sparkMaster"; fi
+job_id=$(get_report_job_model_name job)    
 
 if [ "$mode" = "via-partition" ]; then
     endPartitions=`expr $partitions - 1`
@@ -49,14 +73,14 @@ if [ "$mode" = "via-partition" ]; then
                 echo $finalConfig
                 echo "Running $job by partitions."
                 classVariable="org.ekstep.analytics.job.JobExecutor"
-                argsList="\"args\": [\"--model\", \"$job\", \"--config\", \"$finalConfig\"]"
+                argsList="\"args\": [\"--model\", \"$job_id\", \"--config\", \"$finalConfig\"]"
             else 
                 job_config=$(config $job '__endDate__')
                 finalConfig=${job_config/'"delta":0'/$partitionString}
                 echo $finalConfig
                 echo "Running $job by partitions via Replay-Supervisor."
                 classVariable="org.ekstep.analytics.job.ReplaySupervisor"
-                argsList="\"args\": [\"--model\", \"$job\", \"--config\", \"$finalConfig\", \"--fromDate\", \"$start_date\", \"--toDate\", \"$end_date\"]"
+                argsList="\"args\": [\"--model\", \"$job_id\", \"--config\", \"$finalConfig\", \"--fromDate\", \"$start_date\", \"--toDate\", \"$end_date\"]"
             fi
             argsStr="\"className\": \"org.ekstep.analytics.job.JobExecutor\", $argsList"
             clusterConfig=`cat cluster-config.json`
@@ -70,12 +94,12 @@ else
         echo "Running $job without partition via run-job."
         job_config=$(config $job)
         classVariable="org.ekstep.analytics.job.JobExecutor"
-        argsList="\"args\": [\"--model\", \"$job\", \"--config\", \"$job_config\"]"
+        argsList="\"args\": [\"--model\", \"$job_id\", \"--config\", \"$job_config\"]"
     else   
         job_config=$(config $job '__endDate__')
         echo "Running $job without partition via Replay-Supervisor." 
         classVariable="org.ekstep.analytics.job.ReplaySupervisor"
-        argsList="\"args\": [\"--model\", \"$job\", \"--config\", \"$job_config\", \"--fromDate\", \"$start_date\", \"--toDate\", \"$end_date\"]"
+        argsList="\"args\": [\"--model\", \"$job_id\", \"--config\", \"$job_config\", \"--fromDate\", \"$start_date\", \"--toDate\", \"$end_date\"]"
     fi  
     argsStr="\"className\": \"org.ekstep.analytics.job.JobExecutor\", $argsList"
     echo $argsStr
