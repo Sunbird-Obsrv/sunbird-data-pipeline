@@ -38,12 +38,12 @@ class ShareEventsFlattenerFunction(config: PipelinePreprocessorConfig)
           val edataType = if (transfers == 0) "download" else "import"
           val shareItemEvent = generateShareItemEvents(shareEvent, EventObject(id = identifier, ver = version,
             `type` = contentType, rollup = Rollup(shareEvent.objectID())), Some(edataType), Some(size))
-          context.output(config.shareItemEventOutputTag, new Gson().toJson(shareItemEvent))
+          context.output(config.shareItemEventOutputTag, new Event(new Gson().fromJson(shareItemEvent, new util.LinkedHashMap[String, Any]().getClass)))
         })
       } else {
         val shareItemEvent = generateShareItemEvents(shareEvent, EventObject(id = identifier, ver = version,
           `type` = contentType, rollup = Rollup(shareEvent.objectID())), edataType = Some(shareEvent.edataType()))
-        context.output(config.shareItemEventOutputTag, new Gson().toJson(shareItemEvent))
+        context.output(config.shareItemEventOutputTag, new Event(new Gson().fromJson(shareItemEvent, new util.LinkedHashMap[String, Any]().getClass)))
       }
       metrics.incCounter(config.shareItemEventsMetircsCount)
     })
@@ -56,8 +56,8 @@ class ShareEventsFlattenerFunction(config: PipelinePreprocessorConfig)
                               eventObj: EventObject,
                               edataType: Option[String],
                               paramSize: Option[Double] = None
-                             ): ShareEvent = {
-    ShareEvent(
+                             ): String = {
+    val shareItemEvent = ShareEvent(
       ActorObject(event.actorId(), event.actorType()),
       "SHARE_ITEM",
       EData(event.edataDir, edataType.orNull, paramSize.getOrElse(0)),
@@ -69,6 +69,8 @@ class ShareEventsFlattenerFunction(config: PipelinePreprocessorConfig)
       eventObj,
       event.eventTags
     )
+
+    new Gson().toJson(shareItemEvent)
   }
 
   override def metricsList(): List[String] = {

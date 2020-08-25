@@ -44,26 +44,26 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
 
   override def processElement(event: Event, context: ProcessFunction[Event, Event]#Context, metrics: Metrics): Unit = {
     metrics.incCounter(config.totalEventsCount)
-    Option(event.getId).map(id => {
-      Option(event.getState).map(name => {
-        val userData: mutable.Map[String, AnyRef] = name.toUpperCase match {
-          case "CREATE" | "CREATED" => createAction(id, event, metrics, config)
-          case "UPDATE" | "UPDATED" => updateAction(id, event, metrics, config, dataCache, cassandraConnect, custodianOrgId)
-          case _ => {
-            logger.info(s"Invalid event state name either it should be(Create/Created/Update/Updated) but found $name for ${event.mid()}")
-            metrics.incCounter(config.skipCount)
-            mutable.Map[String, AnyRef]()
+      Option(event.getId).map(id => {
+        Option(event.getState).map(name => {
+          val userData: mutable.Map[String, AnyRef] = name.toUpperCase match {
+            case "CREATE" | "CREATED" => createAction(id, event, metrics, config)
+            case "UPDATE" | "UPDATED" => updateAction(id, event, metrics, config, dataCache, cassandraConnect, custodianOrgId)
+            case _ => {
+              logger.info(s"Invalid event state name either it should be(Create/Created/Update/Updated) but found $name for ${event.mid()}")
+              metrics.incCounter(config.skipCount)
+              mutable.Map[String, AnyRef]()
+            }
           }
-        }
-        if (!userData.isEmpty) {
-          dataCache.hmSet(id, mapAsJavaMap(stringify(userData)))
-          metrics.incCounter(config.successCount)
-          metrics.incCounter(config.userCacheHit)
-        } else {
-          metrics.incCounter(config.skipCount)
-        }
+          if (!userData.isEmpty) {
+            dataCache.hmSet(config.userStoreKeyPrefix + id, mapAsJavaMap(stringify(userData)))
+            metrics.incCounter(config.successCount)
+            metrics.incCounter(config.userCacheHit)
+          } else {
+            metrics.incCounter(config.skipCount)
+          }
+        }).getOrElse(metrics.incCounter(config.skipCount))
       }).getOrElse(metrics.incCounter(config.skipCount))
-    }).getOrElse(metrics.incCounter(config.skipCount))
   }
 
   def getCustodianRootOrgId(): String = {

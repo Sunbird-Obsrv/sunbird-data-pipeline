@@ -132,7 +132,7 @@ snapshot_base_path: telemetrysearch
 sunbird_es_host: "{{groups['core-es']| join(',')}}"
 
 ### Druid related vars
-overlord_host: "{{ groups['overlord'][0] }}"
+overlord_host: "{{ groups['raw-overlord'][0] }}"
 
 ### Datapipeline Custom monitoring related vars ###
 influxdb: "{{ groups['influxdb'][0] }}"

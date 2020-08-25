@@ -66,8 +66,8 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
 
     // Insert user test data
     jedis = redisConnect.getConnection(denormConfig.userStore)
-    jedis.set("b7470841-7451-43db-b5c7-2dcf4f8d3b23", EventFixture.userCacheData1)
-    jedis.set("610bab7d-1450-4e54-bf78-c7c9b14dbc81", EventFixture.userCacheData2)
+      jedis.hmset(denormConfig.userStoreKeyPrefix + "b7470841-7451-43db-b5c7-2dcf4f8d3b23", EventFixture.userCacheDataMap1)
+      jedis.hmset(denormConfig.userStoreKeyPrefix + "610bab7d-1450-4e54-bf78-c7c9b14dbc81", EventFixture.userCacheDataMap2)
     jedis.close()
 
     // Insert dialcode test data
@@ -81,6 +81,7 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     jedis.set("do_31249064359802470412856", EventFixture.contentCacheData1)
     jedis.set("do_312526125187809280139353", EventFixture.contentCacheData2)
     jedis.set("do_312526125187809280139355", EventFixture.contentCacheData3)
+    jedis.set("do_312523863923441664117896", EventFixture.contentCacheData4)
     jedis.close()
 
   }
@@ -97,12 +98,15 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
 
     var event = DenormEventsSink.values("mid1")
     event.kafkaKey() should be ("758e054a400f20f7677f2def76427dc13ad1f837")
-
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (false)
     event.flags().get("user_denorm").asInstanceOf[Boolean] should be (true)
     Option(event.flags().get("dialcode_denorm")) should be (None)
     Option(event.flags().get("content_denorm")) should be (None)
     Option(event.flags().get("location_denorm")) should be (None)
+
+    event.getMap().get("userdata").asInstanceOf[util.Map[String, Any]].get("usersignintype") should be("Anonymous")
+    event.getMap().get("userdata").asInstanceOf[util.Map[String, Any]].get("usertype") should be("TEACHER")
+    event.getMap().get("userdata").asInstanceOf[util.Map[String, Any]].get("userlogintype") should be("NA")
     
     event = DenormEventsSink.values("mid2")
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
@@ -113,14 +117,33 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     Option(event.flags().get("coll_denorm")) should be (None)
 
     event.getMap().get("contentdata").asInstanceOf[util.Map[String, Any]].get("lastsubmittedon") should be(1529068016090L)
-    
+    event.getMap().get("contentdata").asInstanceOf[util.Map[String, Any]].get("channel") should be("in.ekstep")
+    event.getMap().get("contentdata").asInstanceOf[util.Map[String, Any]].get("lastpublishedon") should be(1.571999041881E12)
+    event.getMap().get("contentdata").asInstanceOf[util.Map[String, Any]].get("contenttype") should be("Resource")
+
+    event.getMap().get("devicedata").asInstanceOf[util.Map[String, Any]].get("statecustomcode") should be("29")
+    event.getMap().get("devicedata").asInstanceOf[util.Map[String, Any]].get("countrycode") should be("IN")
+    event.getMap().get("devicedata").asInstanceOf[util.Map[String, Any]].get("firstaccess") should be(1571999041881L)
+    event.getMap().get("devicedata").asInstanceOf[util.Map[String, Any]].get("districtcustom") should be("BENGALURU URBAN SOUTH")
+
     event = DenormEventsSink.values("mid3")
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
     event.flags().get("user_denorm").asInstanceOf[Boolean] should be (false)
     event.flags().get("content_denorm").asInstanceOf[Boolean] should be (true)
     event.flags().get("coll_denorm").asInstanceOf[Boolean] should be (true)
     event.flags().get("loc_denorm").asInstanceOf[Boolean] should be (true)
-    
+
+    event.getMap().get("collectiondata").asInstanceOf[util.Map[String, Any]].get("contenttype") should be("Asset")
+    Option(event.getMap().get("collectiondata").asInstanceOf[util.Map[String, Any]].get("contentType")) should be (None)
+    event.getMap().get("collectiondata").asInstanceOf[util.Map[String, Any]].get("contenttype") should be("Asset")
+    event.getMap().get("collectiondata").asInstanceOf[util.Map[String, Any]].get("framework") should be("NCF")
+    event.getMap().get("collectiondata").asInstanceOf[util.Map[String, Any]].get("name") should be("do_312526125187809280139355")
+    event.getMap().get("collectiondata").asInstanceOf[util.Map[String, Any]].get("lastupdatedon") should be(1489169400448L)
+
+    event.getMap().get("derivedlocationdata").asInstanceOf[util.Map[String, Any]].get("district") should be("Raigad")
+    event.getMap().get("derivedlocationdata").asInstanceOf[util.Map[String, Any]].get("state") should be("Maharashtra")
+    event.getMap().get("derivedlocationdata").asInstanceOf[util.Map[String, Any]].get("from") should be("user-declared")
+
     event = DenormEventsSink.values("mid4")
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
     event.flags().get("user_denorm").asInstanceOf[Boolean] should be (true)
@@ -137,12 +160,28 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     Option(event.flags().get("content_denorm")) should be (None)
     Option(event.flags().get("location_denorm")) should be (None)
 
+    event.getMap().get("dialcodedata").asInstanceOf[util.Map[String, Any]].get("batchcode") should be("jkpublisher.20180801T122031")
+    event.getMap().get("dialcodedata").asInstanceOf[util.Map[String, Any]].get("channel") should be("01254592085869363222")
+    event.getMap().get("dialcodedata").asInstanceOf[util.Map[String, Any]].get("generatedon") should be(1.571999041881E12)
+    event.getMap().get("dialcodedata").asInstanceOf[util.Map[String, Any]].get("publishedon") should be(1533130913695L)
+
     // TODO: Complete the assertions
     event = DenormEventsSink.values("mid6")
     event = DenormEventsSink.values("mid7")
     event = DenormEventsSink.values("mid8")
-    event = DenormEventsSink.values("mid9")
+    event.flags().get("coll_denorm").asInstanceOf[Boolean] should be (true)
+    event.flags().get("l2_denorm").asInstanceOf[Boolean] should be (true)
+    val l2Data = event.getMap().get("l2data").asInstanceOf[util.Map[String, Any]]
+    l2Data should not be null
 
+    l2Data.get("contenttype") should be("TextBook")
+    l2Data.get("mimetype") should be("application/vnd.ekstep.content-collection")
+    l2Data.get("contenttype") should be("TextBook")
+    l2Data.get("channel") should be("0123221617357783046602")
+    l2Data.get("board") should be("State (Maharashtra)")
+    l2Data.get("name") should be("test")
+    l2Data.get("framework") should be("mh_k-12_1")
+    event = DenormEventsSink.values("mid9")
     // Location Denorm Metrics Assertion
     BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.locCacheHit}").getValue() should be (7)
     BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.locCacheMiss}").getValue() should be (3)

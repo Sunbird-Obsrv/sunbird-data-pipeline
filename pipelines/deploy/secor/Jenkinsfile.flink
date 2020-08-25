@@ -17,9 +17,8 @@ node() {
             checkout scm
 
         }
-       
             ansiColor('xterm') {
-                 values = lp_dp_params()
+                values = lp_dp_params()
                 stage('get artifact') {
                     currentWs = sh(returnStdout: true, script: 'pwd').trim()
                     artifact = values.artifact_name + ":" + values.artifact_version
@@ -30,11 +29,18 @@ node() {
                 stage('deploy artifact'){
                     sh """
                        unzip ${artifact}
-                       mv etl-jobs-1.0.jar ansible/roles/content-snapshot-indexer/files/
-                       mv etl-jobs-1.0-distribution.tar.gz ansible/roles/content-snapshot-indexer/files/
+                       mkdir -p ansible/artifacts/target
+                       mv secor-*.tar.gz ansible/artifacts/target
                     """
-                    ansiblePlaybook = "${currentWs}/ansible/content-snapshot-indexer.yml"
-                    ansibleExtraArgs = " --tags ${invoke_type} --extra-vars \"script_to_run=${params.script_to_run} date=${params.date} identifier=${params.user_id} populate_anonymous_user=${params.populate_anonymous_user}\" --vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                    ansiblePlaybook = "${currentWs}/ansible/lpa_secor_deploy.yml"
+                    ansibleExtraArgs = " --vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                    values.put('ansiblePlaybook', ansiblePlaybook)
+                    values.put('ansibleExtraArgs', ansibleExtraArgs)
+                    println values
+                    ansible_playbook_run(values)
+
+                    ansiblePlaybook = "${currentWs}/ansible/secor_telemetry_backup_deploy.yaml"
+                    ansibleExtraArgs = "--vault-password-file /var/lib/jenkins/secrets/vault-pass"
                     values.put('ansiblePlaybook', ansiblePlaybook)
                     values.put('ansibleExtraArgs', ansibleExtraArgs)
                     println values
@@ -56,3 +62,4 @@ node() {
         email_notify()
     }
 }
+

@@ -1,0 +1,76 @@
+{
+  "wfs": {
+    "jars": [
+        "wasbs://{{ bucket }}@{{ azure_account }}.blob.core.windows.net/{{ azure_models_path }}/analytics-framework-2.0.jar",
+        "wasbs://{{ bucket }}@{{ azure_account }}.blob.core.windows.net/{{ azure_models_path }}/scruid_2.11-2.3.2.jar"
+    ],
+    "file": "wasbs://{{ bucket }}@{{ azure_account }}.blob.core.windows.net/{{ azure_models_path }}/batch-models-2.0.jar",
+    "files": [
+        "wasbs://{{ bucket }}@{{ azure_account }}.blob.core.windows.net/{{ azure_models_path }}/application.conf"
+    ],
+    "className": "org.ekstep.analytics.job.JobExecutor",
+    "conf": {
+        "spark.sql.autoBroadcastJoinThreshold": "-1",
+        "spark.driver.extraJavaOptions": "-Detwlogger.component=sparkdriver -DlogFilter.filename=SparkLogFilters.xml -DpatternGroup.filename=SparkPatternGroups.xml -Dlog4jspark.root.logger=INFO,console,RFA,ETW,Anonymizer,org.ekstep.analytics -Dlog4jspark.log.dir=/var/log/sparkapp/${user.name} -Dlog4jspark.log.file=sparkdriver.log -Dlog4j.configuration=file:/usr/hdp/current/spark2-client/conf/log4j.properties -Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl -XX:+UseParallelGC -XX:+UseParallelOldGC -Dazure_storage_key={{ azure_account }} -Dazure_storage_secret={{ azure_secret }}",
+        "spark.executor.extraJavaOptions": "-Detwlogger.component=sparkdriver -DlogFilter.filename=SparkLogFilters.xml -DpatternGroup.filename=SparkPatternGroups.xml -Dlog4jspark.root.logger=INFO,console,RFA,ETW,Anonymizer,org.ekstep.analytics -Dlog4jspark.log.dir=/var/log/sparkapp/${user.name} -Dlog4jspark.log.file=sparkdriver.log -Dlog4j.configuration=file:/usr/hdp/current/spark2-client/conf/log4j.properties -Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl -XX:+UseParallelGC -XX:+UseParallelOldGC -Dazure_storage_key={{ azure_account }} -Dazure_storage_secret={{ azure_secret }}"
+    },
+    "args": [
+        "--model",
+        "wfs",
+        "--config",
+        "{\"search\":{\"type\":\"azure\",\"queries\":[{\"bucket\":\"{{ bucket }}\",\"prefix\":\"unique-partition-1B/0/\",\"endDate\":\"{{ execution_date }}\",\"delta\":0}]},\"model\":\"org.ekstep.analytics.model.WorkflowSummary\",\"modelParams\":{\"apiVersion\":\"v2\", \"parallelization\":200},\"output\":[{\"to\":\"kafka\",\"params\":{\"brokerList\":\"{{ brokerlist }}\",\"topic\":\"{{ topic }}\"} }],\"parallelization\":200,\"appName\":\"Workflow Summarizer\",\"deviceMapping\":true}"
+    ]
+  },
+  "course": {
+    "jars": [
+        "wasbs://{{ bucket }}@{{ azure_account }}.blob.core.windows.net/{{ azure_models_path }}/analytics-framework-2.0.jar",
+        "wasbs://{{ bucket }}@{{ azure_account }}.blob.core.windows.net/{{ azure_models_path }}/scruid_2.11-2.3.2.jar",
+        "wasbs://{{ bucket }}@{{ azure_account }}.blob.core.windows.net/{{ azure_models_path }}/data-products-1.0.jar"
+    ],
+    "file": "wasbs://{{ bucket }}@{{ azure_account }}.blob.core.windows.net/{{ azure_models_path }}/batch-models-2.0.jar",
+    "files": [
+        "wasbs://{{ bucket }}@{{ azure_account }}.blob.core.windows.net/{{ azure_models_path }}/application.conf"
+    ],
+    "className": "org.ekstep.analytics.job.JobExecutor",
+    "executorCores": {{ spark.executor_core }},
+    "executorMemory": "{{ spark.executor_memory }}",
+    "numExecutors": {{ spark.num_executors }},
+    "conf": {
+        "spark.sql.autoBroadcastJoinThreshold": "-1",
+        "spark.driver.extraJavaOptions": "-Detwlogger.component=sparkdriver -DlogFilter.filename=SparkLogFilters.xml -DpatternGroup.filename=SparkPatternGroups.xml -Dlog4jspark.root.logger=INFO,console,RFA,ETW,Anonymizer,org.ekstep.analytics -Dlog4jspark.log.dir=/var/log/sparkapp/${user.name} -Dlog4jspark.log.file=sparkdriver.log -Dlog4j.configuration=file:/usr/hdp/current/spark2-client/conf/log4j.properties -Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl -XX:+UseParallelGC -XX:+UseParallelOldGC -Dreports_storage_key={{ azure_account }} -Dreports_storage_secret={{ azure_secret }}",
+        "spark.executor.extraJavaOptions": "-Detwlogger.component=sparkdriver -DlogFilter.filename=SparkLogFilters.xml -DpatternGroup.filename=SparkPatternGroups.xml -Dlog4jspark.root.logger=INFO,console,RFA,ETW,Anonymizer,org.ekstep.analytics -Dlog4jspark.log.dir=/var/log/sparkapp/${user.name} -Dlog4jspark.log.file=sparkdriver.log -Dlog4j.configuration=file:/usr/hdp/current/spark2-client/conf/log4j.properties -Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl -XX:+UseParallelGC -XX:+UseParallelOldGC     -Dreports_storage_key={{ azure_account }} -Dreports_storage_secret={{ azure_secret }}"
+    },
+    "args": [
+        "--model",
+        "org.sunbird.analytics.job.report.CourseMetricsJobV2",
+        "--config",
+        "{\"search\":{\"type\":\"none\"},\"model\":\"org.sunbird.analytics.job.report.CourseMetricsJobV2\",\"modelParams\":{\"batchFilters\":[\"TPD\"],\"fromDate\":\"{{ execution_date }}\",\"toDate\":\"{{ execution_date }}\",\"sparkCassandraConnectionHost\":\"{{ spark_cassandra_connection_host }}\",\"sparkElasticsearchConnectionHost\":\"{{ spark_elasticsearch_connection_host }}\",\"sparkRedisConnectionHost\":\"{{ spark_redis_connection_host }}\",\"sparkUserDbRedisIndex\":\"{{ spark_userdb_redis_index }}\"},\"output\":[{\"to\":\"console\",\"params\":{\"printEvent\":false} }],\"parallelization\":8,\"appName\":\"Course Dashboard Metrics\",\"deviceMapping\":false}"
+    ]
+  },
+  "assessment": {
+    "jars": [
+        "wasbs://{{ bucket }}@{{ azure_account }}.blob.core.windows.net/{{ azure_models_path }}/analytics-framework-2.0.jar",
+        "wasbs://{{ bucket }}@{{ azure_account }}.blob.core.windows.net/{{ azure_models_path }}/scruid_2.11-2.3.2.jar",
+        "wasbs://{{ bucket }}@{{ azure_account }}.blob.core.windows.net/{{ azure_models_path }}/data-products-1.0.jar"
+    ],
+    "file": "wasbs://{{ bucket }}@{{ azure_account }}.blob.core.windows.net/{{ azure_models_path }}/batch-models-2.0.jar",
+    "files": [
+        "wasbs://{{ bucket }}@{{ azure_account }}.blob.core.windows.net/{{ azure_models_path }}/application.conf"
+    ],
+    "className": "org.ekstep.analytics.job.JobExecutor",
+     "executorCores": {{ spark.executor_core }},
+    "executorMemory": "{{ spark.executor_memory }}",
+    "numExecutors": {{ spark.num_executors }},
+    "conf": {
+        "spark.sql.autoBroadcastJoinThreshold": "-1",
+        "spark.driver.extraJavaOptions": "-Detwlogger.component=sparkdriver -DlogFilter.filename=SparkLogFilters.xml -DpatternGroup.filename=SparkPatternGroups.xml -Dlog4jspark.root.logger=INFO,console,RFA,ETW,Anonymizer,org.ekstep.analytics -Dlog4jspark.log.dir=/var/log/sparkapp/${user.name} -Dlog4jspark.log.file=sparkdriver.log -Dlog4j.configuration=file:/usr/hdp/current/spark2-client/conf/log4j.properties -Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl -XX:+UseParallelGC -XX:+UseParallelOldGC -Dreports_storage_key={{ azure_account }} -Dreports_storage_secret={{ azure_secret }}",
+        "spark.executor.extraJavaOptions": "-Detwlogger.component=sparkdriver -DlogFilter.filename=SparkLogFilters.xml -DpatternGroup.filename=SparkPatternGroups.xml -Dlog4jspark.root.logger=INFO,console,RFA,ETW,Anonymizer,org.ekstep.analytics -Dlog4jspark.log.dir=/var/log/sparkapp/${user.name} -Dlog4jspark.log.file=sparkdriver.log -Dlog4j.configuration=file:/usr/hdp/current/spark2-client/conf/log4j.properties -Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl -XX:+UseParallelGC -XX:+UseParallelOldGC     -Dreports_storage_key={{ azure_account }} -Dreports_storage_secret={{ azure_secret }}"
+    },
+    "args": [
+        "--model",
+        "org.sunbird.analytics.job.report.AssessmentMetricsJobV2",
+        "--config",
+        "{\"search\":{\"type\":\"none\"},\"model\":\"org.sunbird.analytics.job.report.AssessmentMetricsJobV2\",\"modelParams\":{\"batchFilters\":[\"TPD\"],\"fromDate\":\"{{ execution_date }}\",\"toDate\":\"{{ execution_date }}\",\"sparkCassandraConnectionHost\":\"{{ spark_cassandra_connection_host }}\",\"sparkElasticsearchConnectionHost\":\"{{ spark_elasticsearch_connection_host }}\",\"sparkRedisConnectionHost\":\"{{ spark_redis_connection_host }}\",\"sparkUserDbRedisIndex\":\"{{ spark_userdb_redis_index }}\"},\"output\":[{\"to\":\"console\",\"params\":{\"printEvent\":false} }],\"parallelization\":8,\"appName\":\"Assessment Dashboard Metrics\",\"deviceMapping\":false}"
+    ]
+  }
+}

@@ -48,4 +48,6 @@ object EventsPath {
   val OBJECT_ROLLUP_L1 = s"$OBJECT_PATH.rollup.l1"
   val SYNC_TS_PATH ="syncts"
   val TAGS_PATH ="tags"
+  val OBJECT_ROLLUP_L2 = s"$OBJECT_PATH.rollup.l2"
+  val L2_DATA_PATH = "l2data"
 }

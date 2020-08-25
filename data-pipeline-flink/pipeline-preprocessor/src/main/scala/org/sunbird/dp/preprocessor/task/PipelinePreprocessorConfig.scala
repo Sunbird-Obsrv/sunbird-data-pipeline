@@ -51,7 +51,7 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
 
   // Share events out put tags
   val shareRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("share-route-events")
-  val shareItemEventOutputTag: OutputTag[String] = OutputTag[String]("share-item-events")
+  val shareItemEventOutputTag: OutputTag[Event] = OutputTag[Event]("share-item-events")
 
   override val kafkaConsumerParallelism: Int = config.getInt("task.consumer.parallelism")
   val validationParallelism: Int = config.getInt("task.telemetry.validation.parallelism")

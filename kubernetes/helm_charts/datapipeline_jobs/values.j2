@@ -179,12 +179,15 @@ de-normalization: |
   redis-meta {
     database {
       devicestore.id = 2
-      userstore.id = 4
+      userstore.id = 12
       contentstore.id = 5
       dialcodestore.id = 6
       key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
     }
   }
+
+  # config version
+  user_denorm_version = v2
 
 summary-denormalization: |+
   include file("/data/flink/conf/base-config.conf")
@@ -214,12 +217,15 @@ summary-denormalization: |+
   redis-meta {
     database {
       devicestore.id = 2
-      userstore.id = 4
+      userstore.id = 12
       contentstore.id = 5
       dialcodestore.id = 6
       key.expiry.seconds = {{ summary_denorm_key_expiry_seconds }}
     }
   }
+  
+  # config version
+  user_denorm_version = v2
 
 druid-validator: |
   include file("/data/flink/conf/base-config.conf")
@@ -335,6 +341,40 @@ user-cache-updater: |
   user.self.signin.key = "Self-Signed-In"
   user.valid.key = "Validated"
 
+user-cache-updater-v2: |
+  include file("/data/flink/conf/base-config.conf")
+  kafka {
+    input.topic = {{ env_name }}.telemetry.audit
+    groupId = {{ env_name }}-user-cache-updater-consumer-group
+  }
+  task {
+    usercache.updater.parallelism = {{ usercache_updater_parallelism }}
+  }
+  # redis-metadata
+  redis-meta {
+    host = {{ metadata_redis_host }}
+    port = 6379
+    database {
+      userstore.id = 12
+    }
+  }
+  lms-cassandra {
+    keyspace = "{{ middleware_cassandra_keyspace }}"
+    table {
+      user = "{{ middleware_cassandra_user_table }}"
+      location = "{{ middleware_cassandra_location_table }}"
+      organisation = "{{ middleware_cassandra_organisation_table }}"
+      user_org = "{{ middleware_cassandra_user_org_table }}"
+      usr_external_identity = "{{ middleware_cassandra_usr_external_identity_table }}"
+      system_settings = "{{ middleware_cassandra_system_settings_table }}"
+      user_declarations = "{{ middleware_cassandra_user_declaration_table }}"
+    }
+  }
+  user.self.signin.types = ["google","self"]
+  user.validated.types = ["sso"]
+  user.self.signin.key = "Self-Signed-In"
+  user.valid.key = "Validated"
+
 assessment-aggregator: |+
   include file("/data/flink/conf/base-config.conf")
   kafka {
@@ -353,4 +393,9 @@ assessment-aggregator: |+
     keyspace = "{{ middleware_cassandra_courses_keyspace }}"
     table = "{{ middleware_cassandra_assessment_aggregator_table }}"
     questionudttype= "{{ middleware_cassandra_assessment_question_type }}"
+  }
+  redis {
+    database {
+      relationCache.id = 10
+    }
   }
