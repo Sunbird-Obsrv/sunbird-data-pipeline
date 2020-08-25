@@ -2,7 +2,8 @@ version: 2.1
 jobs:
   datapipeline-build:
     working_directory: ~/dp/data-pipeline-flink
-    machine: true
+    docker:
+      - image: maven:3.6-jdk-8-openj9
     steps:
       - checkout:
           path: ~/dp
