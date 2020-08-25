@@ -44,20 +44,20 @@
 - name: Replay Job
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: "nohup {{ analytics.home }}/scripts/submit-script.sh --job {{ job_id }} --mode {{ mode }} --parallelisation {{ parallelisation }} --startDate {{ startDate }} --endDate {{ endDate }} --sparkMaster {{ sparkMaster }} --batch_id {{ batch_id }} &"
+  shell: "nohup {{ analytics.home }}/scripts/replay-job.sh {{ job_id }} {{ start_date }} {{ end_date }} &"
   async: "{{ (pause_min * 60) }}"
   poll: 0
   tags:
-    - replay-job 
+    - replay-job
 
 - name: Run Job
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: "nohup {{ analytics.home }}/scripts/submit-script.sh --job {{ job_id }} --mode {{ mode }} --parallelisation {{ parallelisation }} --sparkMaster {{ sparkMaster }} &"
+  shell: "nohup {{ analytics.home }}/scripts/run-job.sh {{ job_id }} {{ batch_id }} &"
   async: "{{ (pause_min * 60) }}"
   poll: 0
   tags:
-    - run-job   
+    - run-job
 
 - name: Generate Metrics
   become: yes

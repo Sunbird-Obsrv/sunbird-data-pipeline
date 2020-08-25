@@ -74,7 +74,7 @@ else
         echo "Running $job without partition via Replay-Supervisor." 
         classVariable="org.ekstep.analytics.job.ReplaySupervisor"
     fi  
-    args=["--model", $job, "--config", $finalConfig]
+    args=["--model", $job, "--config", $job_config]
     argsStr="\"className\": \"org.ekstep.analytics.job.JobExecutor\", $args"
     clusterConfig=cat cluster-config.json
     requestBody=${clusterConfig/'"className": "org.ekstep.analytics.job.JobExecutor"'/$argsStr}
