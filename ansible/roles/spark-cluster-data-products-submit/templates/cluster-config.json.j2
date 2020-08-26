@@ -9,8 +9,13 @@
         "wasbs://{{ bucket }}@{{sunbird_artifact_storage_account_name}}.blob.core.windows.net/models-{{ model_version }}/application.conf"
     ],
     "className": "org.ekstep.analytics.job.JobExecutor",
+    "executorCores": {{ spark.executor_core }},
+    "executorMemory": "{{ spark.executor_memory }}",
+    "numExecutors": {{ spark.num_executors }},
     "conf": {
-        "spark.sql.autoBroadcastJoinThreshold": "-1",
+        "spark.sql.autoBroadcastJoinThreshold" : "-1",
+        "spark.dynamicAllocation.enabled" :"true", 
+        "spark.shuffle.service.enabled" :"true",
         "spark.driver.extraJavaOptions": "-Detwlogger.component=sparkdriver -DlogFilter.filename=SparkLogFilters.xml -DpatternGroup.filename=SparkPatternGroups.xml -Dlog4jspark.root.logger=INFO,console,RFA,ETW,Anonymizer,org.ekstep.analytics -Dlog4jspark.log.dir=/var/log/sparkapp/${user.name} -Dlog4jspark.log.file=sparkdriver.log -Dlog4j.configuration=file:/usr/hdp/current/spark2-client/conf/log4j.properties -Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl -XX:+UseParallelGC -XX:+UseParallelOldGC -Dazure_storage_key={{ sunbird_private_storage_account_name }} -Dazure_storage_secret={{ sunbird_private_storage_account_key }} -Dreports_storage_key={{dp_azure_account_name}} -Dreports_storage_secret={{dp_vault_azure_account_key}}",
         "spark.executor.extraJavaOptions": "-Detwlogger.component=sparkdriver -DlogFilter.filename=SparkLogFilters.xml -DpatternGroup.filename=SparkPatternGroups.xml -Dlog4jspark.root.logger=INFO,console,RFA,ETW,Anonymizer,org.ekstep.analytics -Dlog4jspark.log.dir=/var/log/sparkapp/${user.name} -Dlog4jspark.log.file=sparkdriver.log -Dlog4j.configuration=file:/usr/hdp/current/spark2-client/conf/log4j.properties -Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl -XX:+UseParallelGC -XX:+UseParallelOldGC -Dazure_storage_key={{ sunbird_private_storage_account_name }} -Dazure_storage_secret={{ sunbird_private_storage_account_key }} -Dreports_storage_key={{dp_azure_account_name}} -Dreports_storage_secret={{dp_vault_azure_account_key}}"
     }
