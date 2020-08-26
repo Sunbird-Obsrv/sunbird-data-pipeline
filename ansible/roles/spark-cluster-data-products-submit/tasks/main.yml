@@ -1,62 +1,34 @@
-- name: Submit wfs job
-  uri:
-    url: https://spark-jobs-cluster.azurehdinsight.net/livy/batches
-    user: "{{ admin_name }}"
-    password: "{{ admin_password }}"
-    method: POST
-    body: "{{ lookup('template', './model-config.json.j2').wfs }}"
-    force_basic_auth: yes
-    body_format: json
-    status_code: 201
-    headers:
-      X-Requested-By: "{{ admin_name }}"
-  register: wfs_output
+- name: Copy cluster-config.json file
+  template: src=cluster-config.json.j2 dest={{ analytics.home }}/cluster-config.json
+  delegate_to: localhost
   tags:
-    - wfs
+    - replay-job
+    - run-job
 
-- debug:
-    var: wfs_output  
-    tags:
-    - wfs
-
-- name: Submit course-dashboard-metrics job
-  uri:
-    url: https://spark-jobs-cluster.azurehdinsight.net/livy/batches
-    user: "{{ admin_name }}"
-    password: "{{ admin_password }}"
-    method: POST
-    body: "{{ lookup('template', './model-config.json.j2').course }}"
-    force_basic_auth: yes
-    body_format: json
-    status_code: 201
-    headers:
-      X-Requested-By: "{{ admin_name }}"
-  register: course_output 
+- name: Copy submit-script.sh file
+  template: src=submit-script.j2 dest={{ analytics.home }}/submit-script.sh mode=755
+  delegate_to: localhost
   tags:
-    - course-dashboard-metrics
+    - replay-job
+    - run-job
 
-- debug:
-    var: course_output
-    tags:
-    - course-dashboard-metrics
-
-- name: Submit assessment-metrics job
-  uri:
-    url: https://spark-jobs-cluster.azurehdinsight.net/livy/batches
-    user: "{{ admin_name }}"
-    password: "{{ admin_password }}"
-    method: POST
-    body: "{{ lookup('template', './model-config.json.j2').assessment }}"
-    force_basic_auth: yes
-    body_format: json
-    status_code: 201
-    headers:
-      X-Requested-By: "{{ admin_name }}"
-  register: assessment_output
+- name: Copy model-config.sh file
+  template: src=model-config.j2 dest={{ analytics.home }}/model-config.sh
+  delegate_to: localhost  
   tags:
-    - assessment-dashboard-metrics
+    - replay-job
+    - run-job
 
-- debug:
-    var: assessment_output 
-    tags:
-    - assessment-dashboard-metrics
+- name: Replay Job
+  shell: "nohup {{ analytics.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --startDate {{ start_date }} --endDate {{ end_date }} --sparkMaster {{ sparkMaster }} &"
+  async: "{{ (pause_min * 60) }}"
+  poll: 0
+  tags:
+    - replay-job 
+
+- name: Run Job
+  shell: "nohup {{ analytics.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --sparkMaster {{ sparkMaster }} --batch_id {{ batch_id }} &"
+  async: "{{ (pause_min * 60) }}"
+  poll: 0
+  tags:
+    - run-job
