@@ -20,7 +20,7 @@ node('build-slave') {
                 jobName = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-1].trim()
                 currentWs = sh(returnStdout: true, script: 'pwd').trim()
                 ansiblePlaybook = "${currentWs}/ansible/azure-hdinsight-spark.provision.yml"
-                ansibleExtraArgs = "--extra-vars \"azure_resource_group=${params.resource_group} location=${params.location} storage_container=${params.storage_container} subnet_name=${subnet_name} vnet_name=${vnet_name} workernode_count=${workernode_count} subscription_id=${env.subscription_id}\" --tags copy-script --vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                ansibleExtraArgs = "--extra-vars \"azure_resource_group=${params.resource_group} location=${params.location} headnode_size=${params.headnode_size} workernode_size=${params.workernode_size} subnet_name=${subnet_name} vnet_name=${vnet_name} workernode_count=${workernode_count} subscription_id=${env.subscription_id}\" --tags copy-script --vault-password-file /var/lib/jenkins/secrets/vault-pass"
                 values.put('currentWs', currentWs)
                 values.put('env', envDir)
                 values.put('module', module)
