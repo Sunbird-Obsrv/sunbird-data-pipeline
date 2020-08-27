@@ -17,6 +17,9 @@ version=4.0
 headnode_size="{{headnode_size}}"
 workernode_size="{{workernode_size}}"
 workernode_count="{{workernode_count}}"
+ssh_user=deployer
+ssh_pass="{{azure_spark_cluster_http_password}}"
+
 
 az login 
 az account set --subscription {{subscription_id}}
@@ -25,7 +28,7 @@ az account set --subscription {{subscription_id}}
 #az login --service-principal -u $1 -p $2 --tenant {{tenant_id}}
 #az account set --subscription {{subscription_id}}
 
-az hdinsight create --name $cluster_name --resource-group $resource_group --type $cluster_type --cluster-tier Standard --component-version Spark=$component_version --headnode-size $headnode_size --location $location --http-password $http_password --http-user $http_user --storage-account $storage_account_name --storage-account-key $storage_account_key --storage-container $storage_container --subnet $subnet_name --vnet-name $vnet_name --version $version --workernode-count $workernode_count --workernode-size $workernode_size --tags Name=$cluster_name
+az hdinsight create --name $cluster_name --resource-group $resource_group --type $cluster_type --cluster-tier Standard --component-version Spark=$component_version --headnode-size $headnode_size --location $location --http-password $http_password --http-user $http_user --ssh-user $ssh_user --ssh-password $ssh_pass --storage-account $storage_account_name --storage-account-key $storage_account_key --storage-container $storage_container --subnet $subnet_name --vnet-name $vnet_name --version $version --workernode-count $workernode_count --workernode-size $workernode_size --tags Name=$cluster_name
 
 
 mapfile -t nic_array < <( az network nic list -g $resource_group -o table | grep 'headnode\|workernode' | awk '{print $5}' )
