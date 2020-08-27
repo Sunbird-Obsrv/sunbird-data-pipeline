@@ -1,5 +1,6 @@
-admin_name: admin
-admin_password: "{{ cluster_admin_pass }}"
+admin_name: "{{ spark_cluster_user_name }}"
+admin_password: "{{ spark_cluster_user_password }}"
+spark_cluster_name: "{{env}}-spark-cluster"
 
 analytics_core_artifact: "analytics-framework-2.0.jar"
 scruid_artifact: "scruid_2.11-2.3.2.jar"

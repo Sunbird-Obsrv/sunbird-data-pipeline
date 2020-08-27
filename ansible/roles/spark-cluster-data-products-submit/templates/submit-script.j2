@@ -88,7 +88,7 @@ if [ "$mode" = "via-partition" ]; then
             requestBody=${clusterConfig/'"className": "org.ekstep.analytics.job.JobExecutor"'/$argsStr}
             finalRequestBody=${requestBody/'org.ekstep.analytics.job.JobExecutor'/$classVariable}
             echo $finalRequestBody
-            curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://spark-jobs-cluster.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"
+            curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_cluster_name }}.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"
         done
 else
     if [ -z "$start_date" ]; then
@@ -108,5 +108,5 @@ else
     requestBody=${clusterConfig/'"className": "org.ekstep.analytics.job.JobExecutor"'/$argsStr}
     finalRequestBody=${requestBody/'org.ekstep.analytics.job.JobExecutor'/$classVariable}
     echo $finalRequestBody
-    curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://spark-jobs-cluster.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"    
+    curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_cluster_name }}.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"    
 fi
