@@ -4,6 +4,7 @@
   tags:
     - replay-job
     - run-job
+    - config-update
 
 - name: Copy submit-script.sh file
   template: src=submit-script.j2 dest={{ analytics.home }}/submit-script.sh mode=755
@@ -11,6 +12,7 @@
   tags:
     - replay-job
     - run-job
+    - config-update
 
 - name: Copy model-config.sh file
   template: src=model-config.j2 dest={{ analytics.home }}/model-config.sh
@@ -18,6 +20,7 @@
   tags:
     - replay-job
     - run-job
+    - config-update
 
 - name: Replay Job
   shell: "nohup {{ analytics.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --startDate {{ start_date }} --endDate {{ end_date }} --sparkMaster {{ sparkMaster }} &"
