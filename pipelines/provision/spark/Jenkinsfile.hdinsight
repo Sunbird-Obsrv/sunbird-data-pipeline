@@ -37,7 +37,7 @@ node('build-slave') {
                    currentws=$(pwd)
                    ansibleplaybook="$currentws/ansible/azure-hdinsight-spark.provision.yml"
                    cd /tmp
-                   ./create-cluster.sh
+                   ./create-cluster.sh $spuser $sppass
                    vars="storage_container=$storage_container"
                    ansible-playbook -i $currentws/ansible/inventory/env $ansibleplaybook --extra-vars '"'$vars'"' --tags spark-provision --vault-password-file /var/lib/jenkins/secrets/vault-pass
                    '''
