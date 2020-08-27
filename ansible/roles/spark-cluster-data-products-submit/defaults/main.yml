@@ -22,7 +22,7 @@ spark_userdb_redis_index: "12"
 #execution_date: 2020-05-13
 execution_date: "{{ '%Y-%m-%d'|strftime(ansible_date_time.epoch|int - 86400) }}"
 
-spark:
+spark_cluster:
   driver_memory: 7g
   memory_fraction: 0.3
   storage_fraction: 0.5

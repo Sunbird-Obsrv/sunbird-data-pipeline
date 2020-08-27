@@ -9,9 +9,9 @@
         "wasbs://{{ bucket }}@{{sunbird_private_storage_account_name}}.blob.core.windows.net/models-{{ model_version }}/application.conf"
     ],
     "className": "org.ekstep.analytics.job.JobExecutor",
-    "executorCores": {{ spark.executor_core }},
-    "executorMemory": "{{ spark.executor_memory }}",
-    "numExecutors": {{ spark.num_executors }},
+    "executorCores": {{ spark_cluster.executor_core }},
+    "executorMemory": "{{ spark_cluster.executor_memory }}",
+    "numExecutors": {{ spark_cluster.num_executors }},
     "conf": {
         "spark.sql.autoBroadcastJoinThreshold" : "-1",
         "spark.dynamicAllocation.enabled" :"true", 
