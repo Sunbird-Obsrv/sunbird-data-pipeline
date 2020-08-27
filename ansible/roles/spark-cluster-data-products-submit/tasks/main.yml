@@ -36,17 +36,8 @@
   tags:
     - run-job
 
-- name: Submit WFS
-  shell: "nohup {{ analytics.home }}/submit-script.sh --job wfs --mode default --sparkMaster yarn &"
+- name: Submit jobs
+  shell: "nohup {{ analytics.home }}/submit-script.sh --job {{ item }} --mode default --sparkMaster yarn &"
+  with_items: "{{ jobs }}"
   tags:
-    - wfs
-
-- name: Submit course-dashboard-metrics job
-  shell: "nohup {{ analytics.home }}/submit-script.sh --job course-dashboard-metrics --mode default --sparkMaster yarn &"
-  tags:
-    - course-dashboard-metrics
-
-- name: Run assessment-dashboard-metrics job
-  shell: "nohup {{ analytics.home }}/submit-script.sh --job assessment-dashboard-metrics --mode default --sparkMaster yarn &"
-  tags:
-    - assessment-dashboard-metrics            
+    - job-submit
