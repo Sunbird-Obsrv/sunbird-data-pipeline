@@ -35,21 +35,15 @@
 
 - name: Submit WFS
   shell: "nohup {{ analytics.home }}/submit-script.sh --job wfs --mode default --sparkMaster yarn &"
-  async: "{{ (pause_min * 60) }}"
-  poll: 0
   tags:
     - wfs
 
 - name: Submit course-dashboard-metrics job
   shell: "nohup {{ analytics.home }}/submit-script.sh --job course-dashboard-metrics --mode default --sparkMaster yarn &"
-  async: "{{ (pause_min * 60) }}"
-  poll: 0
   tags:
     - course-dashboard-metrics
 
 - name: Run assessment-dashboard-metrics job
   shell: "nohup {{ analytics.home }}/submit-script.sh --job assessment-dashboard-metrics --mode default --sparkMaster yarn &"
-  async: "{{ (pause_min * 60) }}"
-  poll: 0
   tags:
     - assessment-dashboard-metrics            
