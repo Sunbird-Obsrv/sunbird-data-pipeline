@@ -6,7 +6,6 @@
     - azure-hdinsight-spark-cluster
   tags:
     - copy-script
-    - copy-delete-script
     
 - hosts: spark-hdinsight-cluster
   become: yes
