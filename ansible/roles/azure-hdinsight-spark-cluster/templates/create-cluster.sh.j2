@@ -19,9 +19,6 @@ workernode_size="{{workernode_size}}"
 workernode_count="{{workernode_count}}"
 workernode_size="{{workernode_size}}"
 
-az login
-az account set --subscription {{subscription_id}}
-
 az login --service-principal -u $1 -p $2 --tenant {{tenant_id}}
 az account set --subscription {{subscription_id}}
 
