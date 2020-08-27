@@ -30,6 +30,7 @@ class UserCacheUpdaterConfigV2(override val config: Config) extends BaseJobConfi
   val userValidatedTypeList: JList[String] = config.getStringList("user.validated.types")
   val userSelfSignedKey: String = config.getString("user.self.signin.key")
   val userValidatedKey: String = config.getString("user.valid.key")
+  val regdUserProducerPid: String = config.getString("regd.user.producer.pid")
 
   // Redis
   val userStore: Int = config.getInt("redis-meta.database.userstore.id")
