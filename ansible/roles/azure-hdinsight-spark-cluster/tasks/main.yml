@@ -4,7 +4,7 @@
     dest: /tmp/create-cluster.sh
     mode: 0755
   tags:
-    - copy-script
+    - copy-creation-script
 
 - name: copy cluster deletion script
   template:
@@ -12,4 +12,4 @@
     dest: /tmp/delete-cluster.sh
     mode: 0755
   tags:
-    - copy-delete-script
+    - copy-deletion-script
