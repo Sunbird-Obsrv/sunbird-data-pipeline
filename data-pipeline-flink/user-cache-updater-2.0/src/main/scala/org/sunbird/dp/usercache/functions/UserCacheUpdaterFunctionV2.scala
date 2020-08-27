@@ -5,15 +5,15 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.slf4j.LoggerFactory
-import org.sunbird.dp.core.cache.{DataCache, RedisConnect}
-import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
+import org.sunbird.dp.core.cache.{ DataCache, RedisConnect }
+import org.sunbird.dp.core.job.{ BaseProcessFunction, Metrics }
 import org.sunbird.dp.core.util.CassandraUtil
 import org.sunbird.dp.usercache.domain.Event
 import org.sunbird.dp.usercache.task.UserCacheUpdaterConfigV2
-import org.sunbird.dp.usercache.util.UserMetadataUpdater._
 
 import scala.collection.JavaConverters.mapAsJavaMap
 import scala.collection.mutable
+import org.sunbird.dp.usercache.util.UserMetadataUpdater
 
 class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val mapTypeInfo: TypeInformation[Event])
   extends BaseProcessFunction[Event, Event](config) {
@@ -41,29 +41,27 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
     cassandraConnect.close()
   }
 
-
   override def processElement(event: Event, context: ProcessFunction[Event, Event]#Context, metrics: Metrics): Unit = {
     metrics.incCounter(config.totalEventsCount)
-      Option(event.getId).map(id => {
-        Option(event.getState).map(name => {
-          val userData: mutable.Map[String, AnyRef] = name.toUpperCase match {
-            case "CREATE" | "CREATED" => createAction(id, event, metrics, config)
-            case "UPDATE" | "UPDATED" => updateAction(id, event, metrics, config, dataCache, cassandraConnect, custodianOrgId)
-            case _ => {
-              logger.info(s"Invalid event state name either it should be(Create/Created/Update/Updated) but found $name for ${event.mid()}")
-              metrics.incCounter(config.skipCount)
-              mutable.Map[String, AnyRef]()
-            }
-          }
-          if (!userData.isEmpty) {
-            dataCache.hmSet(config.userStoreKeyPrefix + id, mapAsJavaMap(stringify(userData)))
-            metrics.incCounter(config.successCount)
-            metrics.incCounter(config.userCacheHit)
-          } else {
+    Option(event.getId).map(id => {
+      Option(event.getState).map(name => {
+        val userData: mutable.Map[String, AnyRef] = name.toUpperCase match {
+          case "CREATE" | "CREATED" | "UPDATE" | "UPDATED" => UserMetadataUpdater.execute(id, event, metrics, config, dataCache, cassandraConnect, custodianOrgId)
+          case _ => {
+            logger.info(s"Invalid event state name either it should be(Create/Created/Update/Updated) but found $name for ${event.mid()}")
             metrics.incCounter(config.skipCount)
+            mutable.Map[String, AnyRef]()
           }
-        }).getOrElse(metrics.incCounter(config.skipCount))
+        }
+        if (!userData.isEmpty) {
+          dataCache.hmSet(config.userStoreKeyPrefix + id, mapAsJavaMap(UserMetadataUpdater.stringify(userData)))
+          metrics.incCounter(config.successCount)
+          metrics.incCounter(config.userCacheHit)
+        } else {
+          metrics.incCounter(config.skipCount)
+        }
       }).getOrElse(metrics.incCounter(config.skipCount))
+    }).getOrElse(metrics.incCounter(config.skipCount))
   }
 
   def getCustodianRootOrgId(): String = {
