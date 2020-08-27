@@ -3,9 +3,13 @@
     src: create-cluster.sh.j2
     dest: /tmp/create-cluster.sh
     mode: 0755
+  tags:
+    - copy-script
 
 - name: copy cluster deletion script
   template:
     src: delete-cluster.sh.j2
     dest: /tmp/delete-cluster.sh
     mode: 0755
+  tags:
+    - copy-delete-script
