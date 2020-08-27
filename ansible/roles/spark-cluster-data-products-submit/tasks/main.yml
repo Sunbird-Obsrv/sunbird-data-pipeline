@@ -38,6 +38,6 @@
 
 - name: Submit jobs
   shell: "nohup {{ analytics.home }}/submit-script.sh --job {{ item }} --mode default --sparkMaster yarn &"
-  with_items: "{{ jobs }}"
+  with_items: "{{ jobs.split(',')|list }}"
   tags:
     - job-submit
