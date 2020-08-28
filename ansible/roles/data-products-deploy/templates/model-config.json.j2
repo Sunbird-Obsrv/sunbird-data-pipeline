@@ -2079,6 +2079,9 @@
     "model": "org.ekstep.analytics.updater.UpdateCourseMetricsV2",
     "modelParams": {
       "batchFilters": ["TPD"],
+      "applyPrivacyPolicy": true,
+      "contentFilters": {},
+      "reportPath": "course-progress-reports/",
       "fromDate": "$(date --date yesterday '+%Y-%m-%d')",
       "toDate": "$(date --date yesterday '+%Y-%m-%d')",
       "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
@@ -2105,6 +2108,9 @@
     "model": "org.sunbird.analytics.job.report.AssessmentMetricsJobV2",
     "modelParams": {
       "batchFilters": ["TPD"],
+      "applyPrivacyPolicy": true,
+      "contentFilters": {},
+      "reportPath": "assessment-reports/",
       "fromDate": "$(date --date yesterday '+%Y-%m-%d')",
       "toDate": "$(date --date yesterday '+%Y-%m-%d')",
       "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
