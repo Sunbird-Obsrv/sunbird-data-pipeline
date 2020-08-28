@@ -215,6 +215,10 @@ druid.rollup.host="{{druid_rollup_broker_host}}"
 druid.rollup.port=8082
 druid.query.wait.time.mins=1
 druid.report.upload.wait.time.mins=1
+druid.scan.batch.size=100
+druid.scan.batch.bytes=2000000
+druid.query.batch.buffer=500000
+
 
 // Metric event config
 metric.producer.id="pipeline.monitoring"
