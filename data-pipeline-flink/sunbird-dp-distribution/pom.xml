@@ -20,37 +20,30 @@
             <version>${flink.version}</version>
             <type>jar</type>
         </dependency>
-        <!--
         <dependency>
             <groupId>org.sunbird.dp.jobs</groupId>
             <artifactId>telemetry-extractor</artifactId>
             <version>1.0.0</version>
             <type>jar</type>
         </dependency>
-        -->
-        <!--
         <dependency>
             <groupId>org.sunbird.dp.jobs</groupId>
             <artifactId>pipeline-preprocessor</artifactId>
             <version>1.0.0</version>
             <type>jar</type>
         </dependency>
-        -->
         <dependency>
             <groupId>org.sunbird.dp.jobs</groupId>
             <artifactId>de-normalization</artifactId>
             <version>1.0.0</version>
             <type>jar</type>
         </dependency>
-        <!--
         <dependency>
             <groupId>org.sunbird.dp.jobs</groupId>
             <artifactId>druid-events-validator</artifactId>
             <version>1.0.0</version>
             <type>jar</type>
         </dependency>
-        -->
-        <!--
         <dependency>
             <groupId>org.sunbird.dp.jobs</groupId>
             <artifactId>device-profile-updater</artifactId>
@@ -81,7 +74,6 @@
             <version>1.0.0</version>
             <type>jar</type>
         </dependency>
-        -->
     </dependencies>
 
     <build>
@@ -124,11 +116,8 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <!-- <repository>druid-validator</repository> -->
-                            <!-- <repository>pipeline-preprocessor</repository> -->
-                            <!-- <repository>telemetry-extractor</repository> -->
-                            <repository>denormalization</repository>
-                            <tag>1.0</tag>
+                            <repository>sunbird-datapipeline</repository>
+                            <tag>${release-version}</tag>
                         </configuration>
                     </plugin>
                 </plugins>

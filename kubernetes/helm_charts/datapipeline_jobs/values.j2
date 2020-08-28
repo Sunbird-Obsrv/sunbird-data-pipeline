@@ -105,9 +105,7 @@ telemetry-extractor: |
   }
   task {
     consumer.parallelism = {{ extractor_consumer_parallelism }}
-    dedup.parallelism = {{ dedup_parallelism }}
-    extraction.parallelism = {{ extraction_parallelism }}
-    redactor.parallelism = {{ redactor_parallelism }}
+    downstream.operators.parallelism = {{ extractor_operators_parallelism }}
   }
   redis {
     database {
@@ -137,9 +135,7 @@ pipeline-preprocessor: |
   }
   task {
     consumer.parallelism = {{ pipeline_preprocessor_consumer_parallelism }}
-    telemetry.validation.parallelism = {{ telemetry_validation_parallelism }}
-    telemetry.router.parallelism = {{ telemetry_router_parallelism }}
-    share.events.flattener.parallelism = {{ share_events_flattener_parallelism }}
+    downstream.operators.parallelism = {{ pipeline_preprocessor_operators_parallelism }}
   }
   telemetry.schema.path="schemas/telemetry/3.0"
   default.channel="b00bc992ef25f1a9a8d63291e20efc8d"
@@ -164,10 +160,9 @@ de-normalization: |
   }
   task {
     consumer.parallelism = {{ denorm_consumer_parallelism }}
-    denorm.parallelism = {{ denorm_parallelism }}
-    denorm.sink.parallelism = {{ denorm_sink_parallelism }}
-    denorm.summary-dedup.parallelism = {{ denorm_summary_dedup_parallelism }}
-    summary.sink.parallelism = {{ summary_sink_parallelism }}
+    telemetry.downstream.operators.parallelism = {{ telemetry_denorm_operators_parallelism }}
+    summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
+    downstream.operators.parallelism = {{ telemetry_denorm_operators_parallelism }}
   }
   redis {
     database {
@@ -202,10 +197,8 @@ summary-denormalization: |+
   }
   task {
     consumer.parallelism = {{ summary_denorm_consumer_parallelism }}
-    denorm.parallelism = {{ summary_denorm_parallelism }}
-    denorm.sink.parallelism = {{ summary_denorm_sink_parallelism }}
-    denorm.summary-dedup.parallelism = {{ summary_denorm_dedup_parallelism }}
-    summary.sink.parallelism = {{ summary_denorm_summary_sink_parallelism }}
+    telemetry.downstream.operators.parallelism = {{ telemetry_denorm_operators_parallelism }}
+    summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
   }
   redis {
     database {
@@ -239,8 +232,7 @@ druid-validator: |
   }
   task {
     consumer.parallelism = {{ druid_validator_consumer_parallelism }}
-    validator.parallelism = {{ validator_parallelism }} 
-    router.parallelism = {{ router_parallelism }}
+    downstream.operators.parallelism = {{ druid_validator_operators_parallelism }}
     druid.validation.enabled = {{ druid_validation_enabled|lower }}
     druid.deduplication.enabled = {{ druid_deduplication_enabled|lower }}
   }
