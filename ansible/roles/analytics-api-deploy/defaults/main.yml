@@ -19,3 +19,5 @@ artifact_name: "analytics-api-2.0-dist.zip"
 
 analytics: 
    home: /mount/data/analytics
+
+exhaust_api_consumer_ids: ["trusted-consumer"]
