@@ -19,9 +19,10 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
   // Kafka Topics Configuration
   val telemetryInputTopic: String = config.getString("kafka.input.telemetry.topic")
   val summaryInputTopic: String = config.getString("kafka.input.summary.topic")
-  val denormSuccessTopic: String = config.getString("kafka.output.success.topic")
+  val telemetryDenormOutputTopic: String = config.getString("kafka.telemetry.denorm.output.topic")
+  val summaryDenormOutputTopic: String = config.getString("kafka.summary.denorm.output.topic")
   val failedTopic: String = config.getString("kafka.output.failed.topic")
-  val summaryOutputEventsTopic: String = config.getString("kafka.output.summary.topic")
+  val summaryUniqueEventsTopic: String = config.getString("kafka.summary.unique.events.topic")
 
   override val kafkaConsumerParallelism: Int = config.getInt("task.consumer.parallelism")
   val telemetryDownstreamOperatorsParallelism: Int = config.getInt("task.telemetry.downstream.operators.parallelism")

@@ -64,7 +64,7 @@ class DenormalizationStreamTask(config: DenormalizationConfig, kafkaConnector: F
         .process(new DenormalizationFunction(config)).name(config.denormalizationFunction).uid(config.denormalizationFunction)
           .setParallelism(config.telemetryDownstreamOperatorsParallelism)
 
-    denormStream.getSideOutput(config.denormEventsTag).addSink(kafkaConnector.kafkaEventSink(config.denormSuccessTopic))
+    denormStream.getSideOutput(config.denormEventsTag).addSink(kafkaConnector.kafkaEventSink(config.telemetryDenormOutputTopic))
       .name(config.DENORM_EVENTS_PRODUCER).uid(config.DENORM_EVENTS_PRODUCER)
         .setParallelism(config.telemetryDownstreamOperatorsParallelism)
 

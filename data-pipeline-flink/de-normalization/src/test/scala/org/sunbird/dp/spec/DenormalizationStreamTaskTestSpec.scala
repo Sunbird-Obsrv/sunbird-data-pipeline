@@ -89,7 +89,7 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
   "De-normalization pipeline" should "denormalize content, user, device and location metadata" in {
 
     when(mockKafkaUtil.kafkaEventSource[Event](denormConfig.telemetryInputTopic)).thenReturn(new InputSource)
-    when(mockKafkaUtil.kafkaEventSink[Event](denormConfig.denormSuccessTopic)).thenReturn(new DenormEventsSink)
+    when(mockKafkaUtil.kafkaEventSink[Event](denormConfig.telemetryDenormOutputTopic)).thenReturn(new DenormEventsSink)
 
     val task = new DenormalizationStreamTask(denormConfig, mockKafkaUtil)
     task.process()
