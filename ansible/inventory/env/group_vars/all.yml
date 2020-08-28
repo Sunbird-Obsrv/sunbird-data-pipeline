@@ -117,6 +117,7 @@ service:
 
 cassandra_hierarchy_store_prefix: "{{env}}_"
 data_exhaust_token: "{{dp_vault_data_exhaust_token}}"
+sunbird_api_auth_token: "{{ core_vault_sunbird_api_auth_token }}"
 default_channel: "{{default_org_hash_id}}"
 
 #### backup storage secret
@@ -192,4 +193,4 @@ location_search_url: "{{ domain_name }}/api/data/"
 location_search_token: "Bearer {{ dp_search_service_authorization_token }}"
 
 druid_report_url_endpoint : "{{ proto}}://{{domain_name}}/api/data/v1/report/jobs"
-druid_report_token : "Bearer {{ core_vault_sunbird_api_auth_token }}"
+druid_report_token : "Bearer {{ sunbird_api_auth_token }}"
