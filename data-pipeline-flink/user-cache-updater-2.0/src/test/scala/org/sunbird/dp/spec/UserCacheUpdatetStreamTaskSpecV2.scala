@@ -90,11 +90,10 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
     /**
       * Metrics Assertions
       */
-
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheHit}").getValue() should be(9)
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.totalEventsCount}").getValue() should be(12)
-    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadSuccessCount}").getValue() should be(20)
-    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadMissCount}").getValue() should be(9)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadSuccessCount}").getValue() should be(29)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadMissCount}").getValue() should be(12)
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.skipCount}").getValue() should be(4)
     BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.successCount}").getValue() should be(9)
 
@@ -106,9 +105,9 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
       */
     jedis.select(userCacheConfig.userStore)
 
-    val ssoUser = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix +  "user-1")
-    ssoUser should not be (null)
-    ssoUser.get("usersignintype") should be("Validated")
+    var userInfo = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix +  "user-1")
+    userInfo should not be (null)
+    userInfo.get("usersignintype") should be("Validated")
 
     /**
       * UserId = user-2
@@ -116,14 +115,14 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
       * User SignupType is "google"
       * It should able to insert The Map(usersignintype, Self-Signed-In)
       */
-    val googleUser = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix +  "user-2")
-    googleUser should not be (null)
-    googleUser.get("usersignintype") should be("Self-Signed-In")
+    userInfo = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix +  "user-2")
+    userInfo should not be (null)
+    userInfo.get("usersignintype") should be("Self-Signed-In")
 
 
     // When action is Update and location id's are empty
 
-    val userInfo = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix +  "user-3")
+    userInfo = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix +  "user-3")
     userInfo.get("firstname") should be("Manjunath")
     userInfo.get("lastname") should be("Davanam")
     userInfo.get("location") should be("Banglore")
@@ -139,28 +138,28 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
     assert(userInfo.get("orgname").contains("Custodian ORG"))
 
     // When action is Updated and location ids are present
-    val locationInfo = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix +  "user-4")
+    userInfo = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix +  "user-4")
 
     // Initially, in the redis for the user-4 is loaded with location details
     // State - Telangana & District - Hyderabad
     // Now it should be bellow assertions
-    locationInfo.get("state") should be("KARNATAKA")
-    locationInfo.get("district") should be("TUMKUR")
-    locationInfo.get("externalid") should be ("948ext1")
-    locationInfo.get("rootorgid") should be ("01285019302823526479")
+    userInfo.get("state") should be("KARNATAKA")
+    userInfo.get("district") should be("TUMKUR")
+    userInfo.get("externalid") should be ("948ext1")
+    userInfo.get("rootorgid") should be ("01285019302823526479")
 
-    val skipUser = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix + "user-9")
-    skipUser.get("firstname") should be("UT")
-    skipUser.get("rootorgid") should be("01285019302823526477")
+    userInfo = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix + "user-9")
+    userInfo.get("firstname") should be("UT")
+    userInfo.get("rootorgid") should be("01285019302823526477")
 
     /** user: user-11
       * State user having channel null in user table
       * */
 
-    val user11 = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix + "user-11")
-    user11.get("firstname") should be ("Sowmya")
-    user11.get("channel") should be ("")
-    user11.get("externalid") should be ("")
+    userInfo = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix + "user-11")
+    userInfo.get("firstname") should be ("Sowmya")
+    userInfo.get("channel") should be ("")
+    userInfo.get("externalid") should be ("")
 
     //user-12
     //Framework not having subject

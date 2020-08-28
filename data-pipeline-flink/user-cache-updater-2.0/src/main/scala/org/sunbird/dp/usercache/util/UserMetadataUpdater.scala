@@ -30,7 +30,7 @@ object UserMetadataUpdater {
   }
 
   def getGeneralInfo(userId: String, event: Event, metrics: Metrics, config: UserCacheUpdaterConfigV2, dataCache: DataCache): mutable.Map[String, String] = {
-    val userCacheData: mutable.Map[String, String] = dataCache.hgetAllWithRetry(config.userStoreKeyPrefix + userId)
+    val userCacheData: mutable.Map[String, String] = mutable.Map[String, String]()
     Option(event.getContextDataId(cDataType = "SignupType")).map(signInType => {
       if (config.userSelfSignedInTypeList.contains(signInType)) {
         userCacheData.put(config.userSignInTypeKey, config.userSelfSignedKey)
@@ -196,7 +196,7 @@ object UserMetadataUpdater {
   }
 
   def validateOrgId(orgId: String, config: UserCacheUpdaterConfigV2, cassandraConnect: CassandraUtil, metrics: Metrics): Boolean = {
-    val organisationQuery = QueryBuilder.select("id").from(config.keySpace, config.orgTable)
+    val organisationQuery = QueryBuilder.select("id", "isrootorg").from(config.keySpace, config.orgTable)
       .where(QueryBuilder.in("id", orgId)).toString
     val organisationList = cassandraConnect.find(organisationQuery).asScala.filter(p => p.getBool("isrootorg"))
     val organisationInfo = if(!organisationList.isEmpty) organisationList.head else null;
