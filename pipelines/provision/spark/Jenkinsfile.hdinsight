@@ -39,6 +39,7 @@ node('build-slave') {
                    cd /tmp
                    ./create-cluster.sh $spuser $sppass
                    vars="storage_container=$storage_container"
+                   export ANSIBLE_HOST_KEY_CHECKING=False
                    ansible-playbook -i $currentws/ansible/inventory/env $ansibleplaybook --extra-vars '"'$vars'"' --tags spark-provision --vault-password-file /var/lib/jenkins/secrets/vault-pass
                    '''
                 }   
