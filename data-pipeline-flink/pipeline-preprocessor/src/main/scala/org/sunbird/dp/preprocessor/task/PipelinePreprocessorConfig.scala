@@ -54,9 +54,7 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val shareItemEventOutputTag: OutputTag[Event] = OutputTag[Event]("share-item-events")
 
   override val kafkaConsumerParallelism: Int = config.getInt("task.consumer.parallelism")
-  val validationParallelism: Int = config.getInt("task.telemetry.validation.parallelism")
-  val routerParallelism: Int = config.getInt("task.telemetry.router.parallelism")
-  val shareEventsFlattnerParallelism: Int = config.getInt("task.share.events.flattener.parallelism")
+  val downstreamOperatorsParallelism: Int = config.getInt("task.downstream.operators.parallelism")
 
   val VALIDATION_FLAG_NAME = "pp_validation_processed"
   val DEDUP_FLAG_NAME = "pp_duplicate"

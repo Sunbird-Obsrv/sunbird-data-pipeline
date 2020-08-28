@@ -29,9 +29,7 @@ class TelemetryExtractorConfig(override val config: Config) extends BaseJobConfi
   val eventMaxSize: Long = config.getLong("kafka.event.max.size")
 
   override val kafkaConsumerParallelism: Int = config.getInt("task.consumer.parallelism")
-  val deDupParallelism: Int = config.getInt("task.dedup.parallelism")
-  val extractionParallelism: Int = config.getInt("task.extraction.parallelism")
-  val redactorParallelism: Int = config.getInt("task.redactor.parallelism")
+  val downstreamOperatorsParallelism: Int = config.getInt("task.downstream.operators.parallelism")
 
   val redactEventsList: List[String] = config.getStringList("redact.events.list").asScala.toList
   val contentStore: Int = config.getInt("redis-meta.database.contentstore.id")
@@ -60,7 +58,8 @@ class TelemetryExtractorConfig(override val config: Config) extends BaseJobConfi
   val assessRedactEventsOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](ASSESS_REDACT_EVENTS_OUTPUT_TAG)
   val failedEventsOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](FAILED_EVENTS_OUTPUT_TAG)
   val failedBatchEventOutputTag: OutputTag[String] = OutputTag[String](FAILED_BATCH_EVENTS_OUTPUT_TAG)
-  val logEventsOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](LOG_EVENTS_OUTPUT_TAG)
+  // val logEventsOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](LOG_EVENTS_OUTPUT_TAG)
+  val logEventsOutputTag: OutputTag[String] = OutputTag[String](LOG_EVENTS_OUTPUT_TAG)
   val duplicateEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = DUPLICATE_EVENTS_OUTPUT_TAG)
   val uniqueEventOutputTag: OutputTag[util.Map[String, AnyRef]] = OutputTag[util.Map[String, AnyRef]](id = UNIQUE_EVENTS_OUTPUT_TAG)
 

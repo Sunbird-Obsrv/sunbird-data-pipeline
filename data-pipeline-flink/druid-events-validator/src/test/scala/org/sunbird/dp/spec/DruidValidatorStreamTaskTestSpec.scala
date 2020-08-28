@@ -32,8 +32,6 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
       .build)
 
     var redisServer: RedisServer = _
-    // val config: Config = ConfigFactory.load("test.conf")
-    // val druidValidatorConfig: DruidValidatorConfig = new DruidValidatorConfig(config)
     var config: Config = _
     var druidValidatorConfig: DruidValidatorConfig = _
     val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
@@ -45,16 +43,6 @@ class DruidValidatorStreamTaskTestSpec extends BaseTestSpec {
         redisServer.start()
 
         BaseMetricsReporter.gaugeMetrics.clear()
-
-        /*
-        when(mockKafkaUtil.kafkaEventSource[Event](druidValidatorConfig.kafkaInputTopic)).thenReturn(new DruidValidatorEventSource)
-
-        when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
-        when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaTelemetryRouteTopic)).thenReturn(new TelemetryEventsSink)
-        when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaSummaryRouteTopic)).thenReturn(new SummaryEventsSink)
-        when(mockKafkaUtil.kafkaEventSink[Event](druidValidatorConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
-        */
-
         flinkCluster.before()
     }
 

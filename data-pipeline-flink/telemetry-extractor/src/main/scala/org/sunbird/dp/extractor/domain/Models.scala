@@ -1,5 +1,7 @@
 package org.sunbird.dp.extractor.domain
 
+import com.fasterxml.jackson.annotation.JsonProperty
+
 case class Actor(id: String, `type`: String)
 
 case class Context(channel: String, env: String, sid: String, did: String, pdata: Pdata, cdata: Seq[AnyRef])
@@ -12,14 +14,5 @@ case class Pdata(ver: String, pid: String, id: String = "data-pipeline")
 
 case class  Object(id:String, ver: String, `type`:String, rollup: Option[Map[String, String]])
 
-case class LogEvent(actor: Actor,
-                    eid: String,
-                    edata: EData,
-                    ver: String = "3.0",
-                    syncts: Long,
-                    ets: Long = System.currentTimeMillis(),
-                    context: Context,
-                    mid: String,
-                    `object`: Object,
-                    tags: Seq[AnyRef]
-                   )
+case class LogEvent(actor: Actor, eid: String, edata: EData, ver: String = "3.0", syncts: Long, ets: Long = System.currentTimeMillis(),
+                    context: Context, mid: String, `object`: Object, tags: Seq[AnyRef])
