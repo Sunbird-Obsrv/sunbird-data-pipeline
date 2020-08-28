@@ -100,3 +100,8 @@
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE report_summary ADD COLUMN IF NOT EXISTS param_hash text"
   run_once: true
   tags: update
+
+- name: update report
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE report ADD COLUMN IF NOT EXISTS report_type varchar(8) NOT NULL DEFAULT 'report'"
+  run_once: true
+  tags: update

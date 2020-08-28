@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+
+## Job to run daily
+cd "{{ analytics.home }}"
+source model-config.sh
+today=$(date "+%Y-%m-%d")
+
+while :; do
+    case $1 in
+        -j|--job)   shift 
+                    job="$1"            
+        ;;
+        -m|--mode)  shift 
+                    mode="$1"            
+        ;;
+        -p|--parallelisation)   shift 
+                                parallelisation=$1            
+        ;;
+        -pa|--partitions)   shift 
+                                partitions=$1            
+        ;;
+        -sd|--startDate)   shift 
+                            start_date=$1            
+        ;;
+        -ed|--endDate)     shift 
+                            end_date=$1            
+        ;;
+        -h|--sparkMaster)   shift 
+                            sparkMaster=$1            
+        ;;
+        *) break
+    esac
+    shift
+done
+
+get_report_job_model_name(){
+    case "$1" in
+        "assessment-dashboard-metrics") echo 'org.sunbird.analytics.job.report.AssessmentMetricsJobV2'
+        ;;
+        "course-dashboard-metrics") echo 'org.sunbird.analytics.job.report.CourseMetricsJobV2'
+        ;;
+        "course-enrollment-report") echo 'org.sunbird.analytics.job.report.CourseEnrollmentJob'
+        ;;
+        "course-consumption-report") echo 'org.sunbird.analytics.job.report.CourseConsumptionJob'
+        ;;
+        "admin-geo-reports") echo 'org.sunbird.analytics.job.report.StateAdminGeoReportJob'
+        ;;
+        "etb-metrics") echo 'org.sunbird.analytics.job.report.ETBMetricsJob'
+        ;;
+        "admin-user-reports") echo 'org.sunbird.analytics.job.report.StateAdminReportJob'
+        ;;
+        "textbook-progress-report") echo 'org.sunbird.analytics.job.report.TextbookProgressJob'
+        ;;
+        *) echo $1
+        ;;
+    esac        
+}
+
+job_id=$(get_report_job_model_name $job)
+
+if [ -z "$sparkMaster" ]; then sparkMaster="local[*]"; else sparkMaster="$sparkMaster"; fi
+
+if [ "$mode" = "via-partition" ]; then
+    endPartitions=`expr $partitions - 1`
+    if [ -z "$parallelisation" ]; then parallelisation=1; else parallelisation=$parallelisation; fi
+    # add partitions to config and start jobs
+    for i in $(seq 0 $parallelisation $endPartitions)
+        do 
+            # add partitions to config
+            partitionString="\"delta\":0,\"partitions\":[$(seq -s , $i `expr $i + $parallelisation - 1`)]"
+            if [ -z "$start_date" ]; then
+                job_config=$(config $job)
+                finalConfig=${job_config/'"delta":0'/$partitionString}
+                echo $finalConfig
+                echo "Running $job by partitions."
+                classVariable="org.ekstep.analytics.job.JobExecutor"
+                argsList="\"args\": [\"--model\", \"$job_id\", \"--config\", \"$finalConfig\"]"
+            else 
+                job_config=$(config $job '__endDate__')
+                finalConfig=${job_config/'"delta":0'/$partitionString}
+                echo $finalConfig
+                echo "Running $job by partitions via Replay-Supervisor."
+                classVariable="org.ekstep.analytics.job.ReplaySupervisor"
+                argsList="\"args\": [\"--model\", \"$job_id\", \"--config\", \"$finalConfig\", \"--fromDate\", \"$start_date\", \"--toDate\", \"$end_date\"]"
+            fi
+            argsStr="\"className\": \"org.ekstep.analytics.job.JobExecutor\", $argsList"
+            clusterConfig=`cat cluster-config.json`
+            requestBody=${clusterConfig/'"className": "org.ekstep.analytics.job.JobExecutor"'/$argsStr}
+            finalRequestBody=${requestBody/'org.ekstep.analytics.job.JobExecutor'/$classVariable}
+            echo $finalRequestBody
+            curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_cluster_name }}.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"
+        done
+else
+    if [ -z "$start_date" ]; then
+        echo "Running $job without partition via run-job."
+        job_config=$(config $job)
+        classVariable="org.ekstep.analytics.job.JobExecutor"
+        argsList="\"args\": [\"--model\", \"$job_id\", \"--config\", \"$job_config\"]"
+    else   
+        job_config=$(config $job '__endDate__')
+        echo "Running $job without partition via Replay-Supervisor." 
+        classVariable="org.ekstep.analytics.job.ReplaySupervisor"
+        argsList="\"args\": [\"--model\", \"$job_id\", \"--config\", \"$job_config\", \"--fromDate\", \"$start_date\", \"--toDate\", \"$end_date\"]"
+    fi  
+    argsStr="\"className\": \"org.ekstep.analytics.job.JobExecutor\", $argsList"
+    echo $argsStr
+    clusterConfig=`cat cluster-config.json`
+    requestBody=${clusterConfig/'"className": "org.ekstep.analytics.job.JobExecutor"'/$argsStr}
+    finalRequestBody=${requestBody/'org.ekstep.analytics.job.JobExecutor'/$classVariable}
+    echo $finalRequestBody
+    curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_cluster_name }}.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"    
+fi
