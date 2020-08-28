@@ -11,7 +11,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.FlinkUtil
 import org.sunbird.dp.preprocessor.domain.Event
-import org.sunbird.dp.preprocessor.functions.{ShareEventsFlattenerFunction, TelemetryRouterFunction, TelemetryValidationFunction}
+import org.sunbird.dp.preprocessor.functions.{PipelinePreprocessorFunction, ShareEventsFlattenerFunction, TelemetryRouterFunction, TelemetryValidationFunction}
 
 /**
  * Telemetry Pipeline processor stream task does the following pipeline processing in a sequence:
@@ -61,52 +61,56 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
      * 4. Share Events Flattener
      */
 
-    val validationStream: SingleOutputStreamOperator[Event] =
+    val eventStream: SingleOutputStreamOperator[Event] =
       env.addSource(kafkaConsumer, config.pipelinePreprocessorConsumer)
         .uid(config.pipelinePreprocessorConsumer).setParallelism(config.kafkaConsumerParallelism)
         .rebalance()
-        .process(new TelemetryValidationFunction(config)).name(config.telemetryValidationFunction).uid(config.telemetryValidationFunction)
-        .setParallelism(config.validationParallelism)
-
-    val routerStream: SingleOutputStreamOperator[Event] =
-      validationStream.getSideOutput(config.uniqueEventsOutputTag)
-        .process(new TelemetryRouterFunction(config)).name(config.telemetryRouterFunction).uid(config.telemetryRouterFunction)
-        .setParallelism(config.routerParallelism)
-
-    val shareEventsFlattener: SingleOutputStreamOperator[Event] =
-      routerStream.getSideOutput(config.shareRouteEventsOutputTag)
-        .process(new ShareEventsFlattenerFunction(config)).name(config.shareEventsFlattenerFunction).uid(config.shareEventsFlattenerFunction)
-        .setParallelism(config.shareEventsFlattnerParallelism)
+        .process(new PipelinePreprocessorFunction(config)).setParallelism(config.downstreamOperatorsParallelism)
 
     /**
      * Sink for invalid events, duplicate events, log events, audit events and telemetry events
      */
-    validationStream.getSideOutput(config.validationFailedEventsOutputTag).addSink(kafkaConnector.kafkaEventSink(config.kafkaFailedTopic)).name(config.invalidEventProducer).uid(config.invalidEventProducer)
-    validationStream.getSideOutput(config.duplicateEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaDuplicateTopic)).name(config.duplicateEventProducer).uid(config.duplicateEventProducer)
+    eventStream.getSideOutput(config.validationFailedEventsOutputTag).addSink(kafkaConnector.kafkaEventSink(config.kafkaFailedTopic)).name(config.invalidEventProducer).uid(config.invalidEventProducer).setParallelism(config.downstreamOperatorsParallelism)
+    eventStream.getSideOutput(config.duplicateEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaDuplicateTopic)).name(config.duplicateEventProducer).uid(config.duplicateEventProducer).setParallelism(config.downstreamOperatorsParallelism)
 
     /**
      * Routing LOG & ERROR Events to "event.log" & "events.error" topic respectively.
      */
-    routerStream.getSideOutput(config.logEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaLogRouteTopic)).name(config.logRouterProducer).uid(config.logRouterProducer)
-    routerStream.getSideOutput(config.errorEventOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaErrorRouteTopic)).name(config.errorRouterProducer).uid(config.errorRouterProducer)
+    eventStream.getSideOutput(config.logEventsOutputTag)
+      .addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaLogRouteTopic))
+      .name(config.logRouterProducer).uid(config.logRouterProducer)
+      .setParallelism(config.downstreamOperatorsParallelism)
+
+    eventStream.getSideOutput(config.errorEventOutputTag)
+      .addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaErrorRouteTopic))
+      .name(config.errorRouterProducer).uid(config.errorRouterProducer)
+      .setParallelism(config.downstreamOperatorsParallelism)
 
     /**
      * Pushing "AUDIT" event into both sink and audit topic
      */
-    routerStream.getSideOutput(config.auditRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaAuditRouteTopic)).name(config.auditRouterProducer).uid(config.auditRouterProducer)
-    routerStream.getSideOutput(config.auditRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name(config.auditEventsPrimaryRouteProducer).uid(config.auditEventsPrimaryRouteProducer)
+    eventStream.getSideOutput(config.auditRouteEventsOutputTag)
+      .addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaAuditRouteTopic))
+      .name(config.auditRouterProducer).uid(config.auditRouterProducer)
+      .setParallelism(config.downstreamOperatorsParallelism)
+
+    eventStream.getSideOutput(config.auditRouteEventsOutputTag)
+      .addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic))
+      .name(config.auditEventsPrimaryRouteProducer).uid(config.auditEventsPrimaryRouteProducer)
+      .setParallelism(config.downstreamOperatorsParallelism)
 
     /**
      * Pushing all the events to unique topic (next stream = denorm) , except LOG, ERROR, AUDIT Events,
      */
-    routerStream.getSideOutput(config.primaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name(config.primaryRouterProducer).uid(config.primaryRouterProducer)
+    eventStream.getSideOutput(config.primaryRouteEventsOutputTag)
+      .addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic))
+      .name(config.primaryRouterProducer).uid(config.primaryRouterProducer)
+      .setParallelism(config.downstreamOperatorsParallelism)
 
     /**
      * Pushing "SHARE and SHARE_ITEM" event into out put topic unique topic(next_streaming_process = denorm)
      */
-
-    shareEventsFlattener.getSideOutput(config.primaryRouteEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name(config.shareEventsPrimaryRouteProducer).uid(config.shareEventsPrimaryRouteProducer)
-    shareEventsFlattener.getSideOutput(config.shareItemEventOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name(config.shareItemsPrimaryRouterProducer).uid(config.shareItemsPrimaryRouterProducer)
+    eventStream.getSideOutput(config.shareItemEventOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name(config.shareItemsPrimaryRouterProducer).uid(config.shareItemsPrimaryRouterProducer).setParallelism(config.downstreamOperatorsParallelism)
 
     env.execute(config.jobName)
   }

@@ -14,6 +14,7 @@ import org.apache.kafka.common.serialization.StringDeserializer
 import org.scalatest.Matchers
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.FlinkUtil
+import scala.concurrent.duration._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -139,6 +140,7 @@ class BaseProcessFunctionTestSpec extends BaseSpec with Matchers {
       env.execute("TestSerDeFunctionality")
     }
 
+    // val test = consumeNumberMessagesFromTopics[String](topics = Set(bsConfig.kafkaEventOutputTopic), number = 2, timeout = 30.seconds).values.toList
     val eventSchemaMessages = consumeNumberMessagesFrom[String](bsConfig.kafkaEventOutputTopic, 2)
     val eventSchemaDuplicates = consumeNumberMessagesFrom[String](bsConfig.kafkaEventDuplicateTopic, 1)
     val mapSchemaMessages = consumeNumberMessagesFrom[String](bsConfig.kafkaMapOutputTopic, 1)

@@ -62,11 +62,11 @@ class DenormalizationStreamTask(config: DenormalizationConfig, kafkaConnector: F
       env.addSource(source, config.denormalizationConsumer).uid(config.denormalizationConsumer)
         .setParallelism(config.kafkaConsumerParallelism).rebalance()
         .process(new DenormalizationFunction(config)).name(config.denormalizationFunction).uid(config.denormalizationFunction)
-          .setParallelism(config.denormParallelism)
+          .setParallelism(config.telemetryDownstreamOperatorsParallelism)
 
     denormStream.getSideOutput(config.denormEventsTag).addSink(kafkaConnector.kafkaEventSink(config.denormSuccessTopic))
       .name(config.DENORM_EVENTS_PRODUCER).uid(config.DENORM_EVENTS_PRODUCER)
-        .setParallelism(config.denormSinkParallelism)
+        .setParallelism(config.telemetryDownstreamOperatorsParallelism)
 
     env.execute(config.jobName)
   }

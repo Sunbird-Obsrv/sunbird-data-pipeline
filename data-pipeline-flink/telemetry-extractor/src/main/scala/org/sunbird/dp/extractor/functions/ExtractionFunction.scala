@@ -11,6 +11,7 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.joda.time.format.DateTimeFormat
 import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
+import org.sunbird.dp.core.util.JSONUtil
 import org.sunbird.dp.extractor.domain._
 import org.sunbird.dp.extractor.domain.{Context => EventContext}
 import org.sunbird.dp.extractor.task.TelemetryExtractorConfig
@@ -34,13 +35,14 @@ class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTy
   override def processElement(batchEvent: util.Map[String, AnyRef],
                               context: ProcessFunction[util.Map[String, AnyRef], util.Map[String, AnyRef]]#Context,
                               metrics: Metrics): Unit = {
-    val gson = new Gson()
+    // val gson = new Gson()
     val eventsList = getEventsList(batchEvent)
     val syncTs = Option(batchEvent.get("syncts")).getOrElse(System.currentTimeMillis()).asInstanceOf[Number].longValue()
     eventsList.forEach(event => {
       val eventId = event.get("eid").asInstanceOf[String]
       val eventData = updateEvent(event, syncTs)
-      val eventJson = gson.toJson(eventData)
+      // val eventJson = gson.toJson(eventData)
+      val eventJson = JSONUtil.serialize(eventData)
       val eventSize = eventJson.getBytes("UTF-8").length
       if (eventSize > config.eventMaxSize) {
         metrics.incCounter(config.failedEventCount)
@@ -57,8 +59,8 @@ class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTy
     /**
      * Generating Audit events to compute the number of events in the batch.
      */
-    context.output(config.logEventsOutputTag,
-      gson.fromJson(gson.toJson(generateAuditEvents(eventsList.size(), batchEvent)), mapType))
+    // context.output(config.logEventsOutputTag, gson.fromJson(gson.toJson(generateAuditEvents(eventsList.size(), batchEvent)), mapType))
+    context.output(config.logEventsOutputTag, gson.toJson(generateAuditEvents(eventsList.size(), batchEvent)))
     metrics.incCounter(config.auditEventCount)
 
   }

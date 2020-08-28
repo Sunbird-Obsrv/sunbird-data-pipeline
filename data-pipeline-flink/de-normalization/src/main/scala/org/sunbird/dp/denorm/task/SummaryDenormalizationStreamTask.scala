@@ -61,25 +61,26 @@ class SummaryDenormalizationStreamTask(config: DenormalizationConfig, kafkaConne
       env.addSource(source, config.summaryDenormalizationConsumer).uid(config.summaryDenormalizationConsumer)
         .setParallelism(config.kafkaConsumerParallelism).rebalance()
         .process(new SummaryDeduplicationFunction(config)).name(config.summaryDedupFunction).uid(config.summaryDedupFunction)
-        .setParallelism(config.summaryDedupParallelism)
+        .setParallelism(config.summaryDownstreamOperatorsParallelism)
 
     val summaryDenormStream = summaryEventStream.getSideOutput(config.uniqueSummaryEventsOutputTag)
       .process(new DenormalizationFunction(config))
       .name(config.summaryDenormalizationFunction).uid(config.summaryDenormalizationFunction)
-      .setParallelism(config.denormParallelism)
+      .setParallelism(config.summaryDownstreamOperatorsParallelism)
 
     summaryEventStream.getSideOutput(config.duplicateEventsOutputTag)
       .addSink(kafkaConnector.kafkaEventSink[Event](config.duplicateTopic))
       .name(config.summaryDuplicateEventProducer).uid(config.summaryDuplicateEventProducer)
+      .setParallelism(config.summaryDownstreamOperatorsParallelism)
 
     summaryDenormStream.getSideOutput(config.denormEventsTag).addSink(kafkaConnector.kafkaEventSink(config.denormSuccessTopic))
       .name(config.summaryDenormEventsProducer).uid(config.summaryDenormEventsProducer)
-      .setParallelism(config.denormSinkParallelism)
+      .setParallelism(config.summaryDownstreamOperatorsParallelism)
 
     summaryEventStream.getSideOutput(config.uniqueSummaryEventsOutputTag)
       .addSink(kafkaConnector.kafkaEventSink(config.summaryOutputEventsTopic))
       .name(config.summaryEventsProducer).uid(config.summaryEventsProducer)
-      .setParallelism(config.summarySinkParallelism)
+      .setParallelism(config.summaryDownstreamOperatorsParallelism)
 
     env.execute(config.jobName)
   }
