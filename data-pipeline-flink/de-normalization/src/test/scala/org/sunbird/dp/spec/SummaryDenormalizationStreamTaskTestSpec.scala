@@ -88,8 +88,8 @@ class SummaryDenormalizationStreamTaskTestSpec extends BaseTestSpec {
   "Summary Denormalization pipeline" should "denormalize content, user, device and location metadata for summary events" in {
 
     when(mockKafkaUtil.kafkaEventSource[Event](denormConfig.summaryInputTopic)).thenReturn(new SummaryInputSource)
-    when(mockKafkaUtil.kafkaEventSink[Event](denormConfig.denormSuccessTopic)).thenReturn(new SummaryDenormEventsSink)
-    when(mockKafkaUtil.kafkaEventSink[Event](denormConfig.summaryOutputEventsTopic)).thenReturn(new SummaryEventsSink)
+    when(mockKafkaUtil.kafkaEventSink[Event](denormConfig.summaryDenormOutputTopic)).thenReturn(new SummaryDenormEventsSink)
+    when(mockKafkaUtil.kafkaEventSink[Event](denormConfig.summaryUniqueEventsTopic)).thenReturn(new SummaryEventsSink)
     when(mockKafkaUtil.kafkaEventSink[Event](denormConfig.duplicateTopic)).thenReturn(new DuplicateEventsSink)
 
     val task = new SummaryDenormalizationStreamTask(denormConfig, mockKafkaUtil)

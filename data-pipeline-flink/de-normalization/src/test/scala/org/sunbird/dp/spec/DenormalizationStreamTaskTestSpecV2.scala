@@ -68,7 +68,7 @@ class DenormalizationStreamTaskTestSpecV2 extends BaseTestSpec {
   "De-normalization pipeline v2" should "denormalize user data by fetching in string format from cache" in {
 
     when(mockKafkaUtil.kafkaEventSource[Event](denormConfig.telemetryInputTopic)).thenReturn(new DenormInputSource)
-    when(mockKafkaUtil.kafkaEventSink[Event](denormConfig.denormSuccessTopic)).thenReturn(new DenormEventsSinkV2)
+    when(mockKafkaUtil.kafkaEventSink[Event](denormConfig.telemetryDenormOutputTopic)).thenReturn(new DenormEventsSinkV2)
 
     val task = new DenormalizationStreamTask(denormConfig, mockKafkaUtil)
     task.process()
