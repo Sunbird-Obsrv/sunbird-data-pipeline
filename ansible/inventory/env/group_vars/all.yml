@@ -117,7 +117,6 @@ service:
 
 cassandra_hierarchy_store_prefix: "{{env}}_"
 data_exhaust_token: "{{dp_vault_data_exhaust_token}}"
-sunbird_api_auth_token: "{{ core_vault_sunbird_api_auth_token }}"
 default_channel: "{{default_org_hash_id}}"
 
 #### backup storage secret
