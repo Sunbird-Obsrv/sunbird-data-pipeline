@@ -196,7 +196,7 @@ object UserMetadataUpdater {
   }
 
   def validateOrgId(orgId: String, config: UserCacheUpdaterConfigV2, cassandraConnect: CassandraUtil, metrics: Metrics): Boolean = {
-    val organisationQuery = QueryBuilder.select("id").from(config.keySpace, config.orgTable)
+    val organisationQuery = QueryBuilder.select("id", "isrootorg").from(config.keySpace, config.orgTable)
       .where(QueryBuilder.in("id", orgId)).toString
     val organisationList = cassandraConnect.find(organisationQuery).asScala.filter(p => p.getBool("isrootorg"))
     val organisationInfo = if(!organisationList.isEmpty) organisationList.head else null;
