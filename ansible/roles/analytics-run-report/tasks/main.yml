@@ -1,5 +1,5 @@
 - name: Get the report_config
-  shell: 'curl -H "Content-Type: application/json" {{ druid_report_url_endpoint }}/{{ report_id }}'
+  shell: 'curl -H "Content-Type: application/json" -H "Authorization: {{ location_search_token }}" {{ druid_report_url_endpoint }}/{{ report_id }}'
   register : output
 
 - set_fact:
