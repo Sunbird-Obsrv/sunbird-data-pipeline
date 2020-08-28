@@ -2124,62 +2124,6 @@
     "appName": "Assessment Dashboard Metrics",
     "deviceMapping": false
   },
-  "nishtha-course-dashboard-metrics": {
-    "search": {
-      "type": "none"
-    },
-    "model": "org.sunbird.analytics.job.report.CourseMetricsJobV2",
-    "modelParams": {
-      "allChannelData": true,
-      "reportPath": "nishtha-course-progress-reports/",
-      "batchFilters": ["TPD"],
-      "fromDate": "$(date --date yesterday '+%Y-%m-%d')",
-      "toDate": "$(date --date yesterday '+%Y-%m-%d')",
-      "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
-      "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}",
-      "sparkRedisConnectionHost": "{{redis_host}}",
-      "sparkUserDbRedisIndex": "12"
-    },
-    "output": [
-      {
-        "to": "console",
-        "params": {
-          "printEvent": false
-        }
-      }
-    ],
-    "parallelization": 8,
-    "appName": "Course Dashboard Metrics",
-    "deviceMapping": false
-  },
-  "nishtha-assessment-dashboard-metrics": {
-    "search": {
-      "type": "none"
-    },
-    "model": "org.ekstep.analytics.job.AssessmentMetricsJobV2",
-    "modelParams": {
-      "allChannelData": true,
-      "reportPath": "nishtha-assessment-reports",
-      "batchFilters": ["TPD"],
-      "fromDate": "$(date --date yesterday '+%Y-%m-%d')",
-      "toDate": "$(date --date yesterday '+%Y-%m-%d')",
-      "sparkCassandraConnectionHost": "{{core_cassandra_host}}",
-      "sparkElasticsearchConnectionHost": "{{sunbird_es_host}}",
-      "sparkRedisConnectionHost": "{{redis_host}}",
-      "sparkUserDbRedisIndex": "12"
-    },
-    "output": [
-      {
-        "to": "console",
-        "params": {
-          "printEvent": false
-        }
-      }
-    ],
-    "parallelization": 8,
-    "appName": "Assessment Dashboard Metrics",
-    "deviceMapping": false
-  },
   "admin-user-reports": {
     "search": {
       "type": "none"
