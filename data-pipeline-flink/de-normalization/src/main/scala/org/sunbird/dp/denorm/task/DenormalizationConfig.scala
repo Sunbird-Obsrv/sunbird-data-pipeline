@@ -26,9 +26,6 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
   override val kafkaConsumerParallelism: Int = config.getInt("task.consumer.parallelism")
   val telemetryDownstreamOperatorsParallelism: Int = config.getInt("task.telemetry.downstream.operators.parallelism")
   val summaryDownstreamOperatorsParallelism: Int = config.getInt("task.summary.downstream.operators.parallelism")
-  // val denormParallelism: Int = config.getInt("task.denorm.parallelism")
-  // val denormSinkParallelism: Int = config.getInt("task.denorm.sink.parallelism")
-  // val summarySinkParallelism: Int = config.getInt("task.summary.sink.parallelism")
 
   val userStore: Int = config.getInt("redis-meta.database.userstore.id")
   val contentStore: Int = config.getInt("redis-meta.database.contentstore.id")
@@ -123,10 +120,6 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
   // Functions
   val summaryDedupFunction = "SummaryDeduplicationFunction"
   val summaryDenormalizationFunction = "SummaryDenormalizationFunction"
-
-  // val summaryDedupParallelism: Int = config.getInt("task.denorm.summary-dedup.parallelism")
-  // val summarydenormParallelism: Int = config.getInt("task.denorm.parallelism")
-  // val summaryDenormSinkParallelism: Int = config.getInt("task.summary.sink.parallelism")
 
   // Metrics
   val summaryEventsCount = "summary-events-count"

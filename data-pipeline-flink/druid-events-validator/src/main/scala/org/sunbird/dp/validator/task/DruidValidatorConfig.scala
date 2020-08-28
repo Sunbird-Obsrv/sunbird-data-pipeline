@@ -7,7 +7,7 @@ import org.apache.flink.streaming.api.scala.OutputTag
 import org.sunbird.dp.core.job.BaseJobConfig
 import org.sunbird.dp.validator.domain.Event
 
-class DruidValidatorConfig(override val config: Config) extends BaseJobConfig(config, "DruidValidatorBenchmarkJob") {
+class DruidValidatorConfig(override val config: Config) extends BaseJobConfig(config, "DruidValidatorJob") {
 
   private val serialVersionUID = 2905979434303791379L
   implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
@@ -17,8 +17,6 @@ class DruidValidatorConfig(override val config: Config) extends BaseJobConfig(co
 
   override val kafkaConsumerParallelism: Int = config.getInt("task.consumer.parallelism")
   val downstreamOperatorsParallelism: Int = config.getInt("task.downstream.operators.parallelism")
-  // val validatorParallelism: Int = config.getInt("task.validator.parallelism")
-  // val routerParallelism: Int = config.getInt("task.router.parallelism")
 
   val druidValidationEnabled: Boolean = config.getBoolean("task.druid.validation.enabled")
   val druidDeduplicationEnabled: Boolean = config.getBoolean("task.druid.deduplication.enabled")

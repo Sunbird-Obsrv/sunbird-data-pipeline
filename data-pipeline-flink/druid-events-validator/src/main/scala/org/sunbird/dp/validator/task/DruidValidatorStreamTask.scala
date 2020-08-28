@@ -56,11 +56,11 @@ class DruidValidatorStreamTask(config: DruidValidatorConfig, kafkaConnector: Fli
     /**
      * Separate sinks for valid telemetry events, valid summary events, valid error events, valid log events and invalid events
      */
-    validationDataStream.getSideOutput(config.telemetryRouterOutputTag).rebalance().addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaTelemetryRouteTopic))
+    validationDataStream.getSideOutput(config.telemetryRouterOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaTelemetryRouteTopic))
       .name(config.telemetryEventsProducer).uid(config.telemetryEventsProducer)
       .setParallelism(config.downstreamOperatorsParallelism)
 
-    validationDataStream.getSideOutput(config.summaryRouterOutputTag).rebalance().addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaSummaryRouteTopic))
+    validationDataStream.getSideOutput(config.summaryRouterOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaSummaryRouteTopic))
       .name(config.summaryEventsProducer).uid(config.summaryEventsProducer)
       .setParallelism(config.downstreamOperatorsParallelism)
 

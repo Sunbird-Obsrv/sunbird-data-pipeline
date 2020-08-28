@@ -22,14 +22,6 @@ object JSONUtil {
     mapper.writeValueAsString(obj)
   }
 
-  def deserializeToMap(json: String): util.Map[String, AnyRef]  = {
-    mapper.readValue(json, new util.HashMap[String, AnyRef]().getClass)
-  }
-
-  def deserializeToMap(json: Array[Byte]): util.Map[String, AnyRef]  = {
-    mapper.readValue(json, new util.HashMap[String, AnyRef]().getClass)
-  }
-
   def deserialize[T: Manifest](json: String): T = {
     mapper.readValue(json, typeReference[T])
   }

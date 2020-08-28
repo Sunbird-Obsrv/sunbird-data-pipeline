@@ -20,7 +20,7 @@ class FlinkKafkaConnector(config: BaseJobConfig) extends Serializable {
   }
 
   def kafkaStringSource(kafkaTopic: String): SourceFunction[String] = {
-    new FlinkKafkaConsumer[String](kafkaTopic, new StringDeserializationSchema, config.kafkaConsumerProperties).setStartFromEarliest()
+    new FlinkKafkaConsumer[String](kafkaTopic, new StringDeserializationSchema, config.kafkaConsumerProperties)
   }
 
   def kafkaStringSink(kafkaTopic: String): SinkFunction[String] = {
