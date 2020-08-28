@@ -30,7 +30,7 @@ object UserMetadataUpdater {
   }
 
   def getGeneralInfo(userId: String, event: Event, metrics: Metrics, config: UserCacheUpdaterConfigV2, dataCache: DataCache): mutable.Map[String, String] = {
-    val userCacheData: mutable.Map[String, String] = dataCache.hgetAllWithRetry(config.userStoreKeyPrefix + userId)
+    val userCacheData: mutable.Map[String, String] = mutable.Map[String, String]()
     Option(event.getContextDataId(cDataType = "SignupType")).map(signInType => {
       if (config.userSelfSignedInTypeList.contains(signInType)) {
         userCacheData.put(config.userSignInTypeKey, config.userSelfSignedKey)
