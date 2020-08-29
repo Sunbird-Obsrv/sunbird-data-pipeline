@@ -152,10 +152,11 @@ de-normalization: |
   kafka {
     input.telemetry.topic = {{ env_name }}.telemetry.unique
     input.summary.topic = {{ env_name }}.telemetry.derived
-    output.success.topic = {{ env_name }}.telemetry.denorm
+    telemetry.denorm.output.topic = {{ env_name }}.telemetry.denorm"
+    summary.denorm.output.topic = {{ env_name }}.druid.events.summary"
+    summary.unique.events.topic = {{ env_name }}.telemetry.derived.unique"
     output.failed.topic = {{ env_name }}.telemetry.failed
     output.duplicate.topic = {{ env_name }}.telemetry.duplicate
-    output.summary.topic = {{ env_name }}.telemetry.derived.unique
     groupId = {{ env_name }}-telemetry-denorm-group
   }
   task {
@@ -189,10 +190,11 @@ summary-denormalization: |+
   kafka {
     input.telemetry.topic = {{ env_name }}.telemetry.unique
     input.summary.topic = {{ env_name }}.telemetry.derived
-    output.success.topic = {{ env_name }}.telemetry.denorm
+    telemetry.denorm.output.topic = {{ env_name }}.telemetry.denorm"
+    summary.denorm.output.topic = {{ env_name }}.druid.events.summary"
+    summary.unique.events.topic = {{ env_name }}.telemetry.derived.unique"
     output.failed.topic = {{ env_name }}.telemetry.failed
     output.duplicate.topic = {{ env_name }}.telemetry.duplicate
-    output.summary.topic = {{ env_name }}.telemetry.derived.unique
     groupId = {{ env_name }}-summmary-denorm-group
   }
   task {
