@@ -152,9 +152,9 @@ de-normalization: |
   kafka {
     input.telemetry.topic = {{ env_name }}.telemetry.unique
     input.summary.topic = {{ env_name }}.telemetry.derived
-    telemetry.denorm.output.topic = {{ env_name }}.telemetry.denorm"
-    summary.denorm.output.topic = {{ env_name }}.druid.events.summary"
-    summary.unique.events.topic = {{ env_name }}.telemetry.derived.unique"
+    telemetry.denorm.output.topic = {{ env_name }}.telemetry.denorm
+    summary.denorm.output.topic = {{ env_name }}.druid.events.summary
+    summary.unique.events.topic = {{ env_name }}.telemetry.derived.unique
     output.failed.topic = {{ env_name }}.telemetry.failed
     output.duplicate.topic = {{ env_name }}.telemetry.duplicate
     groupId = {{ env_name }}-telemetry-denorm-group
@@ -163,7 +163,6 @@ de-normalization: |
     consumer.parallelism = {{ denorm_consumer_parallelism }}
     telemetry.downstream.operators.parallelism = {{ telemetry_denorm_operators_parallelism }}
     summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
-    downstream.operators.parallelism = {{ telemetry_denorm_operators_parallelism }}
   }
   redis {
     database {
@@ -181,7 +180,6 @@ de-normalization: |
       key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
     }
   }
-
   # config version
   user_denorm_version = v2
 
@@ -190,9 +188,9 @@ summary-denormalization: |+
   kafka {
     input.telemetry.topic = {{ env_name }}.telemetry.unique
     input.summary.topic = {{ env_name }}.telemetry.derived
-    telemetry.denorm.output.topic = {{ env_name }}.telemetry.denorm"
-    summary.denorm.output.topic = {{ env_name }}.druid.events.summary"
-    summary.unique.events.topic = {{ env_name }}.telemetry.derived.unique"
+    telemetry.denorm.output.topic = {{ env_name }}.telemetry.denorm
+    summary.denorm.output.topic = {{ env_name }}.druid.events.summary
+    summary.unique.events.topic = {{ env_name }}.telemetry.derived.unique
     output.failed.topic = {{ env_name }}.telemetry.failed
     output.duplicate.topic = {{ env_name }}.telemetry.duplicate
     groupId = {{ env_name }}-summmary-denorm-group
@@ -218,7 +216,6 @@ summary-denormalization: |+
       key.expiry.seconds = {{ summary_denorm_key_expiry_seconds }}
     }
   }
-  
   # config version
   user_denorm_version = v2
 
