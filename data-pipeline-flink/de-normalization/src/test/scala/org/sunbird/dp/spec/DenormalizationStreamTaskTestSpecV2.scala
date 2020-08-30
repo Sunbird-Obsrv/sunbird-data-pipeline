@@ -59,9 +59,9 @@ class DenormalizationStreamTaskTestSpecV2 extends BaseTestSpec {
     val redisConnect = new RedisConnect(denormConfig.metaRedisHost, denormConfig.metaRedisPort, denormConfig)
 
     // Insert user test data
-    var jedis = redisConnect.getConnection(denormConfig.userStore)
-      jedis.set("b7470841-7451-43db-b5c7-2dcf4f8d3b23", EventFixture.userCacheData1)
-      jedis.set("610bab7d-1450-4e54-bf78-c7c9b14dbc81", EventFixture.userCacheData2)
+    val jedis = redisConnect.getConnection(denormConfig.userStore)
+    jedis.set("b7470841-7451-43db-b5c7-2dcf4f8d3b23", EventFixture.userCacheData1)
+    jedis.set("610bab7d-1450-4e54-bf78-c7c9b14dbc81", EventFixture.userCacheData2)
     jedis.close()
   }
 

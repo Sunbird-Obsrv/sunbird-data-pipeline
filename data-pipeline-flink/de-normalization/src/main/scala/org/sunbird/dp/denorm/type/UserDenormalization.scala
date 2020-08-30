@@ -16,9 +16,10 @@ class UserDenormalization(config: DenormalizationConfig) {
   def denormalize(event: Event, metrics: Metrics): Event = {
     val actorId = event.actorId()
     val actorType = event.actorType()
-    if (null != actorId && actorId.nonEmpty && !"anonymous".equalsIgnoreCase(actorId) && "user".equalsIgnoreCase(actorType)) {
-      metrics.incCounter(config.userTotal)
+    if (null != actorId && actorId.nonEmpty && !"anonymous".equalsIgnoreCase(actorId) &&
+      ("user".equalsIgnoreCase(Option(actorType).getOrElse("")) || "ME_WORKFLOW_SUMMARY".equals(event.eid()))) {
 
+      metrics.incCounter(config.userTotal)
       val userData = if (config.userDenormVersion.equalsIgnoreCase("v2")) {
         userDataCache.hgetAllWithRetry(config.userStoreKeyPrefix + actorId).map(f => {(f._1.toLowerCase().replace("_", ""), f._2)})
       } else {

@@ -21,6 +21,8 @@ import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import redis.embedded.RedisServer
 
+import scala.collection.JavaConverters._
+
 class SummaryDenormalizationStreamTaskTestSpec extends BaseTestSpec {
 
   implicit val mapTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
@@ -66,8 +68,8 @@ class SummaryDenormalizationStreamTaskTestSpec extends BaseTestSpec {
 
     // Insert user test data
     jedis = redisConnect.getConnection(denormConfig.userStore)
-    jedis.set("b7470841-7451-43db-b5c7-2dcf4f8d3b23", EventFixture.userCacheData1)
-    jedis.set("610bab7d-1450-4e54-bf78-c7c9b14dbc81", EventFixture.userCacheData2)
+    jedis.hmset(denormConfig.userStoreKeyPrefix + "b7470841-7451-43db-b5c7-2dcf4f8d3b23", EventFixture.userCacheDataMap1)
+    jedis.hmset(denormConfig.userStoreKeyPrefix + "610bab7d-1450-4e54-bf78-c7c9b14dbc81", EventFixture.userCacheDataMap2)
     jedis.close()
 
     // Insert dialcode test data
@@ -102,18 +104,27 @@ class SummaryDenormalizationStreamTaskTestSpec extends BaseTestSpec {
     event1.kafkaKey() should be ("45f32f48592cb9bcf26bef9178b7bd20abe24932")
 
     event1.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
-    event1.flags().get("user_denorm").asInstanceOf[Boolean] should be (false)
+    event1.flags().get("user_denorm").asInstanceOf[Boolean] should be (true)
     Option(event1.flags().get("dialcode_denorm")) should be (None)
     Option(event1.flags().get("content_denorm")) should be (None)
     Option(event1.flags().get("location_denorm")) should be (None)
+    val event1UserData = event1.getTelemetry.read[util.HashMap[String, AnyRef]]("userdata").getOrElse(new util.HashMap()).asScala
+    event1UserData("usersignintype").asInstanceOf[String] should be ("Anonymous")
+    event1UserData("userlogintype").asInstanceOf[String] should be ("NA")
+    event1UserData("usertype").asInstanceOf[String] should be ("TEACHER")
 
     val event2 = SummaryDenormEventsSink.values("mid2")
     event2.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
-    event2.flags().get("user_denorm").asInstanceOf[Boolean] should be (false)
+    event2.flags().get("user_denorm").asInstanceOf[Boolean] should be (true)
     Option(event2.flags().get("dialcode_denorm")) should be (None)
     event2.flags().get("content_denorm").asInstanceOf[Boolean] should be (true)
     event2.flags().get("loc_denorm").asInstanceOf[Boolean] should be (true)
     Option(event2.flags().get("coll_denorm")) should be (Some(true))
+    val event2UserData = event2.getTelemetry.read[util.HashMap[String, AnyRef]]("userdata").getOrElse(new util.HashMap()).asScala
+    event2UserData("usersignintype").asInstanceOf[String] should be ("Self-Signed-In")
+    event2UserData("userlogintype").asInstanceOf[String] should be ("Student")
+    event2UserData("usertype").asInstanceOf[String] should be ("TEACHER")
+    event2UserData("subject").asInstanceOf[String] should be ("[\"English\"]")
 
 
     BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.locCacheHit}").getValue() should be (2)
@@ -126,9 +137,9 @@ class SummaryDenormalizationStreamTaskTestSpec extends BaseTestSpec {
     BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.contentTotal}").getValue() should be (1)
 
     // User Denorm Metrics Assertion
-    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.userCacheHit}").getValue() should be (0)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.userCacheHit}").getValue() should be (2)
     BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.userCacheMiss}").getValue() should be (0)
-    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.userTotal}").getValue() should be (0)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.userTotal}").getValue() should be (2)
 
     // Dialcode Denorm Metrics Assertion
     BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.dialcodeCacheHit}").getValue() should be (0)
