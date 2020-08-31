@@ -24,8 +24,8 @@ abstract class Events(val map: util.Map[String, Any]) {
 
   def getMap(): util.Map[String, Any] = telemetry.getMap
 
-  // def getJson(): String = new Gson().toJson(getMap())
-  def getJson(): String = JSONUtil.serialize(getMap())
+  def getJson(): String = new Gson().toJson(getMap())
+  // def getJson(): String = JSONUtil.serialize(getMap())
 
   def mid(): String = telemetry.read[String](keyPath = EventsPath.MID_PATH).orNull
 
