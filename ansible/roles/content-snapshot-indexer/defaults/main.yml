@@ -24,8 +24,9 @@ redis:
     min_evict_idle_seconds: 120
     time_evict_run_second: 300
     max: 20
-  max_pipeline_size: "1000"
+  max_pipeline_size: "100000"
   key_expiry_seconds: 3600
+  scan_count: "100000"
 
 elastic_search:
   host: "{{ lp_composite_search_host }}" # compositesearch index
