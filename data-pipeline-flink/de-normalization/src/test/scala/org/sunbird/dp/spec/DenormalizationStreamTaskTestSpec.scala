@@ -21,6 +21,8 @@ import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import redis.embedded.RedisServer
 
+import scala.collection.JavaConverters._
+
 class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
 
   implicit val mapTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
@@ -104,9 +106,10 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     Option(event.flags().get("content_denorm")) should be (None)
     Option(event.flags().get("location_denorm")) should be (None)
 
-    event.getMap().get("userdata").asInstanceOf[util.Map[String, Any]].get("usersignintype") should be("Anonymous")
-    event.getMap().get("userdata").asInstanceOf[util.Map[String, Any]].get("usertype") should be("TEACHER")
-    event.getMap().get("userdata").asInstanceOf[util.Map[String, Any]].get("userlogintype") should be("NA")
+    val user1Data = event.getMap().get("userdata").asInstanceOf[util.Map[String, Any]]
+    user1Data.get("usersignintype") should be("Anonymous")
+    user1Data.get("usertype") should be("TEACHER")
+    user1Data.get("userlogintype") should be("NA")
     
     event = DenormEventsSink.values("mid2")
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
@@ -126,6 +129,14 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     event.getMap().get("devicedata").asInstanceOf[util.Map[String, Any]].get("firstaccess") should be(1571999041881L)
     event.getMap().get("devicedata").asInstanceOf[util.Map[String, Any]].get("districtcustom") should be("BENGALURU URBAN SOUTH")
 
+    val user2Data = event.getMap().get("userdata").asInstanceOf[util.Map[String, Any]]
+    user2Data.get("userlogintype") should be("Student")
+    user2Data.get("usersignintype") should be("Self-Signed-In")
+    user2Data.get("usertype") should be("TEACHER")
+    user2Data.get("subject").asInstanceOf[util.List[String]].asScala should be(List("English"))
+    user2Data.get("state") should be("Telangana")
+
+
     event = DenormEventsSink.values("mid3")
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
     event.flags().get("user_denorm").asInstanceOf[Boolean] should be (false)
@@ -143,6 +154,12 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     event.getMap().get("derivedlocationdata").asInstanceOf[util.Map[String, Any]].get("district") should be("Raigad")
     event.getMap().get("derivedlocationdata").asInstanceOf[util.Map[String, Any]].get("state") should be("Maharashtra")
     event.getMap().get("derivedlocationdata").asInstanceOf[util.Map[String, Any]].get("from") should be("user-declared")
+
+    val device3Data = event.getMap().get("devicedata").asInstanceOf[util.Map[String, Any]]
+    device3Data.get("firstaccess") should be (1578972432419L)
+    val deviceSpecData = device3Data.get("devicespec").asInstanceOf[util.Map[String, Any]]
+    deviceSpecData.get("edisk") should be ("25.42")
+    deviceSpecData.get("make") should be ("Samsung SM-J400F")
 
     event = DenormEventsSink.values("mid4")
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
