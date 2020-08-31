@@ -20,6 +20,10 @@ import org.sunbird.dp.preprocessor.domain.Event
 import org.sunbird.dp.preprocessor.task.{PipelinePreprocessorConfig, PipelinePreprocessorStreamTask}
 import redis.embedded.RedisServer
 
+import scala.collection.JavaConverters._
+
+case class SHARE_ITEM_EVENT(objectId: String, objectType: String)
+
 class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
 
   implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
@@ -70,6 +74,7 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
 
     // 5 telemetry and 3 SHARE_ITEM
     TelemetryPrimaryEventSink.values.size() should be(8)
+    TelemetryPrimaryEventSink.values.asScala.count(event => event.eid().equals("SHARE_ITEM")) should be (3)
     TelemetryFailedEventsSink.values.size() should be(4)
     DupEventsSink.values.size() should be(1)
     TelemetryAuditEventSink.values.size() should be(1)
@@ -89,7 +94,20 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
      * * 10. unique-event-count -> 02
      * * 12. share-item-event-success-count -> 03
      */
-    
+    val expectedShareItems: List[SHARE_ITEM_EVENT] = List(
+      SHARE_ITEM_EVENT(objectId = "do_312785709424099328114191", objectType = "CONTENT"),
+      SHARE_ITEM_EVENT(objectId = "do_31277435209002188818711", objectType = "CONTENT"),
+      SHARE_ITEM_EVENT(objectId = "do_31278794857559654411554", objectType = "TextBook")
+    )
+
+    val shareItems = TelemetryPrimaryEventSink.values.asScala.filter(event => event.eid().equals("SHARE_ITEM"))
+    shareItems.foreach {
+      event =>
+        val shareItemObject = event.getTelemetry.read[Map[String, AnyRef]]("object").getOrElse(Map())
+        val actualShareItem = SHARE_ITEM_EVENT(objectId = shareItemObject("id").asInstanceOf[String], shareItemObject("type").asInstanceOf[String])
+        expectedShareItems should contain (actualShareItem)
+    }
+
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.primaryRouterMetricCount}").getValue() should be(5)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.shareItemEventsMetircsCount}").getValue() should be(3)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.auditEventRouterMetricCount}").getValue() should be(1)
@@ -97,12 +115,12 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.logEventsRouterMetricsCount}").getValue() should be(1)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.errorEventsRouterMetricsCount}").getValue() should be(1)
 
-
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSuccessMetricsCount}").getValue() should be(8)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationFailureMetricsCount}").getValue() should be(4)
 
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.unique-event-count").getValue() should be(7)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.duplicate-event-count").getValue() should be(1)
+
   }
 }
 

@@ -8,10 +8,12 @@ import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper, Ser
 import java.util
 
 import com.fasterxml.jackson.core.`type`.TypeReference
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
 
 object JSONUtil {
 
   @transient val mapper = new ObjectMapper()
+  mapper.registerModule(DefaultScalaModule)
   mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
   mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
   mapper.configure(Feature.WRITE_BIGDECIMAL_AS_PLAIN, true)
