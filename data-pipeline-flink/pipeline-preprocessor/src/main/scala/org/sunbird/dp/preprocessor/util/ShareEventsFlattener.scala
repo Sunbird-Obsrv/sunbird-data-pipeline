@@ -4,6 +4,7 @@ import java.util
 import java.util.UUID
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.Gson
 import org.sunbird.dp.core.util.JSONUtil
 // import com.google.gson.Gson
 import org.apache.flink.streaming.api.functions.ProcessFunction
@@ -69,9 +70,7 @@ class ShareEventsFlattener(config: PipelinePreprocessorConfig) extends java.io.S
       event.eventTags
     )
 
-    // new Gson().toJson(shareItemEvent)
-    // objectMapper.writeValueAsString(shareItemEvent)
-    JSONUtil.serialize(shareItemEvent)
+    new Gson().toJson(shareItemEvent)
   }
 
 }

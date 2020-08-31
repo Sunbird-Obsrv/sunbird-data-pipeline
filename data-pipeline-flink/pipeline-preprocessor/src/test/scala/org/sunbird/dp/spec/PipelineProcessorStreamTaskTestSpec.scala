@@ -103,7 +103,7 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     val shareItems = TelemetryPrimaryEventSink.values.asScala.filter(event => event.eid().equals("SHARE_ITEM"))
     shareItems.foreach {
       event =>
-        val shareItemObject = event.getTelemetry.read[Map[String, AnyRef]]("object").getOrElse(Map())
+        val shareItemObject = event.getTelemetry.read[util.HashMap[String, AnyRef]]("object").getOrElse(new util.HashMap()).asScala
         val actualShareItem = SHARE_ITEM_EVENT(objectId = shareItemObject("id").asInstanceOf[String], shareItemObject("type").asInstanceOf[String])
         expectedShareItems should contain (actualShareItem)
     }
