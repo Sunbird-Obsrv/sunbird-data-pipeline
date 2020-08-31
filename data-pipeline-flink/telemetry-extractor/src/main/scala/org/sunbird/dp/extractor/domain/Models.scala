@@ -1,7 +1,5 @@
 package org.sunbird.dp.extractor.domain
 
-import com.fasterxml.jackson.annotation.JsonProperty
-
 case class Actor(id: String, `type`: String)
 
 case class Context(channel: String, env: String, sid: String, did: String, pdata: Pdata, cdata: Seq[AnyRef])
