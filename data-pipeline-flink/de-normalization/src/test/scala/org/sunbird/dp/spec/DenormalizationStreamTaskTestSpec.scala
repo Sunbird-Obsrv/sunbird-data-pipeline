@@ -112,6 +112,7 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     user1Data.get("userlogintype") should be("NA")
     
     event = DenormEventsSink.values("mid2")
+    println(event.getJson())
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
     event.flags().get("user_denorm").asInstanceOf[Boolean] should be (true)
     Option(event.flags().get("dialcode_denorm")) should be (None)
@@ -160,6 +161,9 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     val deviceSpecData = device3Data.get("devicespec").asInstanceOf[util.Map[String, Any]]
     deviceSpecData.get("edisk") should be ("25.42")
     deviceSpecData.get("make") should be ("Samsung SM-J400F")
+    val userDeclaredLocationData = device3Data.get("userdeclared").asInstanceOf[util.Map[String, Any]]
+    userDeclaredLocationData.get("district") should be ("Raigad")
+    userDeclaredLocationData.get("state") should be ("Maharashtra")
 
     event = DenormEventsSink.values("mid4")
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
