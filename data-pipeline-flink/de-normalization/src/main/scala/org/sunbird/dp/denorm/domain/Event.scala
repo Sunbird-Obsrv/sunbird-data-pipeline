@@ -8,6 +8,7 @@ import org.sunbird.dp.core.domain.{Events, EventsPath}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.Map
+import scala.collection.mutable
 
 class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
 
@@ -107,7 +108,8 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
     objectRollUpFieldsPresent(path) && !objectID().equals(objectRollUpl1ID())
   }
 
-  def addUserData(newData: Map[String, String]) {
+  // def addUserData(newData: Map[String, String]) {
+  def addUserData(newData: mutable.Map[String, AnyRef]) {
     val userdata: util.Map[String, AnyRef] = telemetry.read(EventsPath.USERDATA_PATH).getOrElse(new util.HashMap[String, AnyRef]())
     userdata.putAll(newData.asJava)
     telemetry.add(EventsPath.USERDATA_PATH, userdata)
