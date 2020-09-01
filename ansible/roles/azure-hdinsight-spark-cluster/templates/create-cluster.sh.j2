@@ -3,7 +3,7 @@
 cluster_name="{{env}}-spark-cluster"
 resource_group="{{azure_resource_group}}"
 cluster_type=spark
-component_version=2.4
+component_version="{{component_version}}"
 headnode_size="{{headnode_size}}"
 location="{{location}}"
 http_user=admin
@@ -13,7 +13,7 @@ storage_account_key="{{sunbird_private_storage_account_key}}"
 storage_container="{{spark_storage_container}}"
 subnet_name="{{subnet_name}}"
 vnet_name="{{vnet_name}}"
-version=4.0
+version="{{version}}
 headnode_size="{{headnode_size}}"
 workernode_size="{{workernode_size}}"
 workernode_count="{{workernode_count}}"
