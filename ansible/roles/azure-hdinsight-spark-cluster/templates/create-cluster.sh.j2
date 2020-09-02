@@ -23,12 +23,12 @@ ssh_pub_key="{{ssh_public_key_deployer}}"
 
 
 
-#az login 
-#az account set --subscription {{subscription_id}}
-
-
-az login --service-principal -u $1 -p $2 --tenant {{tenant_id}}
+az login 
 az account set --subscription {{subscription_id}}
+
+
+#az login --service-principal -u $1 -p $2 --tenant {{tenant_id}}
+#az account set --subscription {{subscription_id}}
 
 az hdinsight create --name $cluster_name --resource-group $resource_group --type $cluster_type --cluster-tier Standard --component-version Spark=$component_version --headnode-size $headnode_size --location $location --http-password $http_password --http-user $http_user --ssh-user $ssh_user --ssh-public-key "$ssh_pub_key" --storage-account $storage_account_name --storage-account-key $storage_account_key --storage-container $storage_container --subnet $subnet_name --vnet-name $vnet_name --version $version --workernode-count $workernode_count --workernode-size $workernode_size --tags Name=$cluster_name
 
