@@ -19,12 +19,12 @@
 
 - name: Unarchive Ed Data Products in tmp dir
   become: yes
-  unarchive: src={{ playbook_dir}}/{{ analytics_ed_dataporducts_artifact }} dest=tmp/models-{{ model_version }} copy=yes group={{ analytics_group }} owner={{ analytics_user }}
+  unarchive: src={{ playbook_dir}}/{{ analytics_ed_dataporducts_artifact }} dest=tmp copy=yes group={{ analytics_group }} owner={{ analytics_user }}
   tags:
     - ed-dataproducts-spark-cluster
 
 - name: Copy Ed Data Products to azure blob
-  command: az storage blob upload-batch -d {{ bucket }} --destination-path models-{{ model_version }}/data-products-1.0/ -s tmp/models-{{ model_version }}/data-products-1.0/
+  command: az storage blob upload-batch -d {{ bucket }} --destination-path models-{{ model_version }}/data-products-1.0/ -s tmp/data-products-1.0/
   async: 3600
   poll: 10
   tags:
