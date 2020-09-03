@@ -18,7 +18,7 @@
     - ed-dataproducts
 
 - name: Copy Ed Data Products to azure blob
-  command: az storage blob upload -c {{ bucket }} --name models-{{ model_version }}/data-products-1.0.jar -f {{ analytics.home }}/models-{{ model_version }}/data-products-1.0/data-products-1.0.jar
+  command: az storage blob upload-batch -d {{ bucket }} --destination-path models-{{ model_version }}/data-products-1.0/ -s {{ analytics.home }}/models-{{ model_version }}/data-products-1.0/
   async: 3600
   poll: 10
   tags:
