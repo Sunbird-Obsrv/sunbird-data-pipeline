@@ -168,3 +168,9 @@ submit_jobs_auth_token: "{{ sunbird_api_auth_token }}"
 report_list_jobs_url: "{{ druid_report_url_endpoint }} "
 
 reports_container: "reports"
+
+spark_redis_url: https://repo1.maven.org/maven2/com/redislabs/spark-redis_2.11/2.5.0/spark-redis_2.11-2.5.0.jar
+jedis_url: https://repo1.maven.org/maven2/redis/clients/jedis/3.2.0/jedis-3.2.0.jar
+
+spark_redis_version: "spark-redis_2.11-2.5.0.jar"
+jedis_version: "jedis-3.2.0.jar"
