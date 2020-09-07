@@ -157,6 +157,70 @@ monit_learning-failed-backup:
   pid_file: /home/analytics/sbin/learning-failed-backup.pid
   retry: 3
 
+monit_ingestion-cluster-telemetry-backup:
+  app_name: ingestion-cluster-telemetry-backup
+  custom_start: /home/analytics/sbin/secor ingestion-cluster-telemetry-backup start
+  custom_stop: /home/analytics/sbin/secor ingestion-cluster-telemetry-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/ingestion-cluster-telemetry-backup.pid
+  retry: 3
+
+monit_assess-raw-events-backup:
+  app_name: assess-raw-events-backup
+  custom_start: /home/analytics/sbin/secor assess-raw-events-backup start
+  custom_stop: /home/analytics/sbin/secor assess-raw-events-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/assess-raw-events-backup.pid
+  retry: 3
+
+monit_telemetry-duplicate-backup:
+  app_name: telemetry-duplicate-backup
+  custom_start: /home/analytics/sbin/secor telemetry-duplicate-backup start
+  custom_stop: /home/analytics/sbin/secor telemetry-duplicate-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/telemetry-duplicate-backup.pid
+  retry: 3
+
+monit_telemetry-ingest-backup:
+  app_name: telemetry-ingest-backup
+  custom_start: /home/analytics/sbin/secor telemetry-ingest-backup start
+  custom_stop: /home/analytics/sbin/secor telemetry-ingest-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/telemetry-ingest-backup.pid
+  retry: 3
+
+monit_extractor-duplicate-backup:
+  app_name: extractor-duplicate-backup
+  custom_start: /home/analytics/sbin/secor extractor-duplicate-backup start
+  custom_stop: /home/analytics/sbin/secor extractor-duplicate-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/extractor-duplicate-backup.pid
+  retry: 3
+
+monit_content-consumption-events-backup:
+  app_name: content-consumption-events-backup
+  custom_start: /home/analytics/sbin/secor content-consumption-events-backup start
+  custom_stop: /home/analytics/sbin/secor content-consumption-events-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/content-consumption-events-backup.pid
+  retry: 3
+
+monit_derived-denorm-events-backup:
+  app_name: derived-denorm-events-backup
+  custom_start: /home/analytics/sbin/secor derived-denorm-events-backup start
+  custom_stop: /home/analytics/sbin/secor derived-denorm-events-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/derived-denorm-events-backup.pid
+  retry: 3
+
+monit_channel-summary-backup:
+  app_name: channel-summary-backup
+  custom_start: /home/analytics/sbin/secor channel-summary-backup start
+  custom_stop: /home/analytics/sbin/secor channel-summary-backup stop
+  user: analytics
+  pid_file: /home/analytics/sbin/channel-summary-backup.pid
+  retry: 3
+
 monit_cassandra-dp:
   app_name: "cassandra"
   custom_start: /bin/systemctl start cassandra
