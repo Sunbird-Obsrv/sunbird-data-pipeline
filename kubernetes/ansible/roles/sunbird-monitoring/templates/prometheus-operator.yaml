@@ -101,6 +101,8 @@ alertmanager:
             api_url: "{{ dp_monitor_alerts_slack_url }}"
             username: 'Monitor - Alerter'
             channel: "{{ dp_monitor_alerts_slack_channel }}"
+            title_link: ""
+            title: '[{{ "{{" }} .Status | toUpper {{ "}}" }}{{ "{{" }} if eq .Status "firing" {{ "}}" }}:{{ "{{" }} .Alerts.Firing | len {{ "}}" }}{{ "{{" }} end {{ "}}"}}]'
             text: |-
                   {{ "{{" }} range .Alerts {{ "}}" }}
                     *Alert:* {{ "{{" }} .Annotations.message {{ "}}" }} - `{{ "{{" }} .Labels.severity {{ "}}" }}`
