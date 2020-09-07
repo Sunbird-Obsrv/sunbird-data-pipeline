@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+
+home=`echo $HOME`
+jobJarPath="{{ content_snapshot_jar_path }}/{{ content_snapshot_jar_name }}"
+jobConfPath="{{ job_config.user_lookup_migration }}"
+today=$(date "+%Y-%m-%d")
+libs_path="{{ content_snapshot_path }}/jars/etl-jobs-1.0"
+
+echo "STARTED EXECUTING USER LOOKUP MIGRATION... "
+
+nohup {{ spark_home }}/bin/spark-submit \
+--conf spark.driver.extraJavaOptions="-Dconfig.file=${jobConfPath}" \
+--jars $(echo ${libs_path}/lib/*.jar | tr ' ' ',') \
+--class org.sunbird.learner.jobs.UserLookupMigration \
+${jobJarPath} $1 $2 $3 >> "{{ content_snapshot_path }}/logs/$today-task-execution.log" 2>&1
