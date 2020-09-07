@@ -24,4 +24,8 @@ case "$1" in
       echo "Invoked RedisDialcodeIndexer"
       nohup {{ content_snapshot_path }}/scripts/RedisDialcodeIndexer.sh &
    ;;
+   "USER_LOOKUP_MIGRATION")
+      echo "Invoked UserLookupMigration"
+      nohup {{ content_snapshot_path }}/scripts/UserLookupMigration.sh &
+   ;;
 esac
