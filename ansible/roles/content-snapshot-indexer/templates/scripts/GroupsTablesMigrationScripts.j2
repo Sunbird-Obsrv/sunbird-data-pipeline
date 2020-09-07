@@ -2,7 +2,7 @@
 
 home=`echo $HOME`
 jobJarPath="{{ content_snapshot_jar_path }}/{{ content_snapshot_jar_name }}"
-jobConfPath="{{ job_config.groups_table_migration_path }}"
+jobConfPath="{{ job_config.groups_tables_migration_path }}"
 today=$(date "+%Y-%m-%d")
 
 nohup {{ spark_home }}/bin/spark-submit \
