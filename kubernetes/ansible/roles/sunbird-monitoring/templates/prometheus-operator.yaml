@@ -41,6 +41,9 @@ alertmanager:
       group_interval: 5m
       repeat_interval: 4h
       routes:
+      - match_re:
+         alertname: ^(node_exporter_down_critical|Watchdog|PrometheusRuleFailures)
+        receiver: "null"
       - match:
           alerttype: lag
         receiver: lag_slack
@@ -112,6 +115,8 @@ alertmanager:
                     {{ "{{" }} end {{ "}}" }}
                   {{ "{{" }} end {{ "}}" }}
             icon_emoji: ':dart:'
+
+      - name: 'null'
 
 grafana:
   env:
