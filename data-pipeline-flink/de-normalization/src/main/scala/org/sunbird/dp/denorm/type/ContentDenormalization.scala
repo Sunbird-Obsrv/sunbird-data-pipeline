@@ -13,7 +13,7 @@ class ContentDenormalization(config: DenormalizationConfig) {
       config.contentStore, config.contentFields)
   contentDataCache.init()
 
-  def denormalize(event: Event, metrics: Metrics): Event = {
+  def denormalize(event: Event, metrics: Metrics) = {
     val objectType = event.objectType()
     val objectId = event.objectID()
     if (!List("user", "qr", "dialcode").contains(objectType) && null != objectId) {
@@ -41,7 +41,6 @@ class ContentDenormalization(config: DenormalizationConfig) {
         }))
       }
     }
-    event
   }
 
   def closeDataCache() = {
