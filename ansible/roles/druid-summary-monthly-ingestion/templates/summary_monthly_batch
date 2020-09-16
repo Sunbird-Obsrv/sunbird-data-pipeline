@@ -6,7 +6,12 @@
       "inputSource": {
         "type": "druid",
         "dataSource": "{{ summary_monthly.base_data_source_name }}",
-        "interval": "{{ summary_monthly_interval }}"
+        "interval": "{{ summary_monthly_interval }}",
+        "metrics": [
+          "total_count",
+          "total_interactions",
+          "total_timespent"
+        ]
       },
       "appendToExisting": false
     },
@@ -24,6 +29,23 @@
         "column": "syncts",
         "format": "auto"
       },
+      "metricsSpec": [
+        {
+          "type": "longSum",
+          "name": "total_count",
+          "fieldName": "total_count"
+        },
+        {
+          "type": "longSum",
+          "name": "total_interactions",
+          "fieldName": "total_interactions"
+        },
+        {
+          "type": "doubleSum",
+          "name": "total_time_spent",
+          "fieldName": "total_time_spent"
+        }
+      ]
       "granularitySpec": {
         "type": "uniform",
         "segmentGranularity": "month",
