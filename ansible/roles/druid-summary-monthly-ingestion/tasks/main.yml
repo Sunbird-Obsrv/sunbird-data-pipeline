@@ -9,7 +9,7 @@
    dimensions_spec: "{{ supervisor_spec.json.dataSchema.parser.parseSpec.dimensionsSpec | to_json }}"
 
 - name : Retrive Interval Month Range
-  shell : echo $(date -d"1 $(date -d'last month' +%b)" +%F)/$(date -d"-1 day 1 $(date +%b)" +%F )
+  shell : echo $(date -d"1 $(date -d'last month' +%b)" +%F)/$(date -d"-0 day 1 $(date +%b)" +%F )
   register : output
 
 - set_fact:
