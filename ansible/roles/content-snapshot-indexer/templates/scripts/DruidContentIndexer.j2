@@ -3,11 +3,13 @@ set -e
 # Configurations
 druidCoordinatorIP="{{ druid.coordinator_host }}"
 dataSourceName="{{ druid.data_source }}"
+vdnDataSourceName="{{ druid.vdn_data_source }}"
 today=`date +%Y-%m-%d`
 interval="2019-01-01_$today"
 now=`date +%Y-%m-%d-%s`
 home=`echo $HOME`
 ingestionSpecFilePath="{{ druid.ingestion_spec_path }}"
+vdnIngestionSpecFilePath="{{ druid.vdn_ingestion_spec_path }}"
 jobJarPath="{{ content_snapshot_jar_path }}/{{ content_snapshot_jar_name }}"
 jobConfPath="{{ job_config.es_cloud_uploader_path }}"
 libs_path="{{ content_snapshot_path }}/jars/etl-jobs-1.0"
@@ -51,4 +53,37 @@ curl -X 'DELETE' -H 'Content-Type:application/json' http://${druidCoordinatorIP}
 
 printf "\n>>> success!\n"
 
+# Repeating steps for indexing into vdn datasource
+
+# get list of segments from content model snapshot datasource
+bkpIFS="$IFS"
+vdnsegmentIds=$(curl -X 'GET' -H 'Content-Type:application/json' http://${druidCoordinatorIP}:8081/druid/coordinator/v1/metadata/datasources/${vdnDataSourceName}/segments)
+IFS=',]['
+read -r -a arrayData <<< ${vdnsegmentIds}
+IFS="$bkpIFS"
+
+echo "STARTED EXECUTING USER DRUID CONTENT INDEXER..."
+
+nohup $SPARK_HOME/bin/spark-submit --conf spark.driver.extraJavaOptions="-Dconfig.file=${jobConfPath}"  --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ',')  --class org.sunbird.analytics.jobs.ESCloudUploader ${jobJarPath} >> "{{ content_snapshot_path }}/logs/$today-task-execution.log" 2>&1
+
+printf "\n>>> submit ingestion task to Druid!\n"
+
+# submit task to start batch ingestion
+curl -X 'POST' -H 'Content-Type:application/json' -d @${vdnIngestionSpecFilePath} http://${druidCoordinatorIP}:8090/druid/indexer/v1/task
+
+
+for index in "${!arrayData[@]}"
+do
+    val=( $(eval echo ${arrayData[index]}) )
+    printf "\n>>> Disabling segment id: $val \n"
+    # disable older segments
+    curl -X 'DELETE' -H 'Content-Type:application/json' http://${druidCoordinatorIP}:8081/druid/coordinator/v1/datasources/${vdnDataSourceName}/segments/$val
+done
+
+printf "\n>>> Deleting segments from interval $interval \n"
+
+# delete older segments
+curl -X 'DELETE' -H 'Content-Type:application/json' http://${druidCoordinatorIP}:8081/druid/coordinator/v1/datasources/${vdnDataSourceName}/intervals/${interval}
+
+printf "\n>>> success!\n"
 
