@@ -18,7 +18,7 @@ node_disk_usage_percentage_threshold_Warning: 75
 node_disk_usage_percentage_threshold_Critical: 85
 node_disk_usage_percentage_threshold_Fatal: 95
 
-# Jobs lag vars 
+# DP Jobs lag vars critical
 telemetry_extractor_threshold_critical: {{ telemetry_extractor_threshold_critical }}
 pipeline_preprocessor_threshold_critical: {{ pipeline_preprocessor_threshold_critical }}
 de_normalization_threshold_critical: {{ de_normalization_threshold_critical }}
@@ -28,12 +28,28 @@ content_cache_updater_threshold_critical: {{ content_cache_updater_threshold_cri
 user_cache_updater_threshold_critical: {{ user_cache_updater_threshold_critical }}
 summary_denormalization_threshold_critical: {{ summary_denormalization_threshold_critical }}
 device_profile_updater_threshold_critical: {{ device_profile_updater_threshold_critical }}
-telemetry_extractor_failed_events_percentage_threshold_fatal: {{ telemetry_extractor_failed_events_percentage_threshold_fatal }}
+telemetry_extractor_failed_events_percentage_threshold_warning: {{ telemetry_extractor_failed_events_percentage_threshold_warning }}
 telemetry_extractor_failed_events_percentage_threshold_critical: {{ telemetry_extractor_failed_events_percentage_threshold_critical }}
 
-# KP flink jobs lag vars
+# DP Jobs lag vars warning
+telemetry_extractor_threshold_warning: {{ telemetry_extractor_threshold_warning }}
+pipeline_preprocessor_threshold_warning: {{ pipeline_preprocessor_threshold_warning }}
+de_normalization_threshold_warning: {{ de_normalization_threshold_warning }}
+druid_validator_threshold_warning: {{ druid_validator_threshold_warning }}
+assessment_aggregator_threshold_warning: {{ assessment_aggregator_threshold_warning }}
+content_cache_updater_threshold_warning: {{ content_cache_updater_threshold_warning }}
+user_cache_updater_threshold_warning: {{ user_cache_updater_threshold_warning }}
+summary_denormalization_threshold_warning: {{ summary_denormalization_threshold_warning }}
+device_profile_updater_threshold_warning: {{ device_profile_updater_threshold_warning }}
+
+
+# KP flink jobs lag vars critical
 activity_aggregater_updater_threshold_critical: {{ activity_aggregater_updater_threshold_critical }}
 relation_cache_updater_threshold_critical: {{ relation_cache_updater_threshold_critical }}
+
+# KP flink jobs lag vars warning
+activity_aggregater_updater_threshold_warning: {{ activity_aggregater_updater_threshold_warning }}
+relation_cache_updater_threshold_warning: {{ relation_cache_updater_threshold_warning }}
 
 # Checkpoint failure vars
 telemetry_extractor_checkpointfailure_threshold_critical: {{ telemetry_extractor_checkpointfailure_threshold_critical }} 
@@ -45,3 +61,6 @@ content_cache_updater_checkpointfailure_threshold_critical: {{ content_cache_upd
 user_cache_updater_checkpointfailure_threshold_critical: {{ user_cache_updater_checkpointfailure_threshold_critical }}
 summary_denormalization_checkpointfailure_threshold_critical: {{ summary_denormalization_checkpointfailure_threshold_critical }}
 device_profile_updater_checkpointfailure_threshold_critical: {{ device_profile_updater_checkpointfailure_threshold_critical }}
+user_cache_v2_updater_checkpointfailure_threshold_critical: {{ user_cache_v2_updater_checkpointfailure_threshold_critical }}
+relation_cache_updater_checkpointfailure_threshold_critical: {{ relation_cache_updater_checkpointfailure_threshold_critical }}
+activity_aggregate_updater_checkpointfailure_threshold_critical: {{ activity_aggregate_updater_checkpointfailure_threshold_critical }}
