@@ -40,15 +40,15 @@ telemetry_extractor_failed_events_percentage_threshold_critical: 1
 telemetry_extractor_failed_events_percentage_threshold_warning: 0.5
 
 # Flink jobs lag warning
-telemetry_extractor_threshold_critical: 30000
-pipeline_preprocessor_threshold_critical: 30000
-de_normalization_threshold_critical: 30000
-druid_validator_threshold_critical: 30000
-assessment_aggregator_threshold_critical: 30000
-content_cache_updater_threshold_critical: 30000
-user_cache_updater_threshold_critical: 30000
-summary_denormalization_threshold_critical: 30000
-device_profile_updater_threshold_critical: 30000
+telemetry_extractor_threshold_warning: 30000
+pipeline_preprocessor_threshold_warning: 30000
+de_normalization_threshold_warning: 30000
+druid_validator_threshold_warning: 30000
+assessment_aggregator_threshold_warning: 30000
+content_cache_updater_threshold_warning: 30000
+user_cache_updater_threshold_warning: 30000
+summary_denormalization_threshold_warning: 30000
+device_profile_updater_threshold_warning: 30000
 
 
 # Flink KP Jobs lag vars critical
