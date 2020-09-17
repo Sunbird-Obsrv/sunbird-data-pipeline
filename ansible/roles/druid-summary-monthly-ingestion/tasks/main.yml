@@ -1,0 +1,31 @@
+- name: Get the summary supervisor spec
+  uri:
+    url: "{{ supervisor_summary_spec_url }}"
+    method: GET
+    return_content: yes
+  register : supervisor_spec
+
+- set_fact:
+   dimensions_spec: "{{ supervisor_spec.json.dataSchema.parser.parseSpec.dimensionsSpec | to_json }}"
+
+- name : Retrive Interval Month Range
+  shell : echo $(date -d"1 $(date -d'last month' +%b)" +%F)/$(date -d"-0 day 1 $(date +%b)" +%F )
+  register : output
+
+- set_fact:
+   summary_monthly_interval: "{{ output.stdout }}"
+
+- name: Copy the schema file
+  template: src="{{item}}" dest="{{druid_home}}/{{item}}.json"
+  become_user: "{{remote_user}}" 
+  with_items: "{{druid_schema}}"
+
+- name: Start batch ingestion task
+  shell: 'curl -X POST -H "Content-Type:application/json" -d @{{druid_home}}/{{item}}.json http://{{druid_overlord_host}}:{{druid_overlord_port}}/druid/indexer/v1/task'
+  with_items: "{{druid_schema}}"
+  become_user: "{{remote_user}}"
+
+
+
+
+
