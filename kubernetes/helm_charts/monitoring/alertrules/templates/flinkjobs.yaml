@@ -142,7 +142,140 @@ spec:
         job_id: user-cache-updater-v2
         alertname: FlinkJobsLag
 
-#### KP jobs lag alert rules
+### Dp Flink jobs lag alertrules warning
+
+    - alert: telemetry-extractor lag warning
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "telemetry-extractor-taskmanager-prometheus" }) >  {{ .Values.telemetry_extractor_threshold_warning }}
+      for: 5m
+      labels:
+        severity: warning
+        alerttype: lag
+      annotations:
+        message: The lag for telemetry-extractor job is more than {{ .Values.telemetry_extractor_threshold_warning }}
+        summary: telemetry-extractor lag is warning
+        lag: {{`({{$value}})`}}
+        job_id: telemetry-extractor
+        alertname: FlinkJobsLag
+
+    - alert: pipeline-preprocessor lag warning
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "pipeline-preprocessor-taskmanager-prometheus" }) > {{ .Values.pipeline_preprocessor_threshold_warning }}
+      for: 5m
+      labels:
+        severity: warning
+        alerttype: lag
+      annotations:
+        message: The lag for pipeline-preprocessor job is more than {{ .Values.pipeline_preprocessor_threshold_warning }}
+        summary: pipeline-preprocessor lag is warning
+        lag: {{`({{$value}})`}}
+        job_id: pipeline-preprocessor
+        alertname: FlinkJobsLag
+   
+    - alert:  de-normalization lag warning
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "de-normalization-taskmanager-prometheus" }) > {{ .Values.de_normalization_threshold_warning }}
+      for: 5m
+      labels:
+        severity: warning
+        alerttype: lag
+      annotations:
+        message: The lag for de-normalization job is more than {{ .Values.de_normalization_threshold_warning }}
+        summary: de-normalization lag is warning
+        lag: {{`({{$value}})`}}
+        job_id: de-normalization
+        alertname: FlinkJobsLag
+
+    - alert:  druid-validator lag warning
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "druid-validator-taskmanager-prometheus" }) > {{ .Values.druid_validator_threshold_warning }}
+      for: 5m
+      labels:
+        severity: warning
+        alerttype: lag
+      annotations:
+        message: The lag for druid-validator job is more than {{ .Values.druid_validator_threshold_warning }}
+        summary: druid-validator lag is warning
+        lag: {{`({{$value}})`}}
+        job_id: druid-validator
+        alertname: FlinkJobsLag
+
+    - alert: assessment-aggregator lag warning
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "assessment-aggregator-taskmanager-prometheus" }) > {{ .Values.assessment_aggregator_threshold_warning }}
+      for: 5m
+      labels:
+        severity: warning
+        alerttype: lag
+      annotations:
+        message: The lag for assessment-aggregator job is more than {{ .Values.assessment_aggregator_threshold_warning }}
+        summary: assessment-aggregator lag is warning
+        lag: {{`({{$value}})`}}
+        job_id: assessment-aggregator
+        alertname: FlinkJobsLag
+
+    - alert: content-cache-updater lag warning
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "content-cache-updater-taskmanager-prometheus" }) > {{ .Values.content_cache_updater_threshold_warning }}
+      for: 5m
+      labels:
+        severity: warning
+        alerttype: lag
+      annotations:
+        message: The lag for content-cache-updater job is more than {{ .Values.content_cache_updater_threshold_warning }}
+        summary: content-cache-updater lag is warning
+        lag: {{`({{$value}})`}}
+        job_id: content-cache-updater
+        alertname: FlinkJobsLag
+
+    - alert: user-cache-updater lag warning
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "user-cache-updater-taskmanager-prometheus" }) > {{ .Values.user_cache_updater_threshold_warning }}
+      for: 5m
+      labels:
+        severity: warning
+        alerttype: lag
+      annotations:
+        message: The lag for user-cache-updater job is more than {{ .Values.user_cache_updater_threshold_warning }}
+        summary: user-cache-updater lag is warning
+        lag: {{`({{$value}})`}}
+        job_id: user-cache-updater
+        alertname: FlinkJobsLag
+
+    - alert: summary-denormalization lag warning
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "summary-denormalization-taskmanager-prometheus" }) > {{ .Values.summary_denormalization_threshold_warning }}
+      for: 5m
+      labels:
+        severity: warning
+        alerttype: lag
+      annotations:
+        message: The lag for summary-denormalization job is more than {{ .Values.summary_denormalization_threshold_warning }}
+        summary: summary-denormalization lag is warning
+        lag: {{`({{$value}})`}}
+        job_id: summary-denormalization
+        alertname: FlinkJobsLag
+
+    - alert: device-profile-updater lag warning
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "device-profile-updater-taskmanager-prometheus" }) > {{ .Values.device_profile_updater_threshold_warning }}
+      for: 5m
+      labels:
+        severity: warning
+        alerttype: lag
+      annotations:
+        message: The lag for device-profile-updater job is more than {{ .Values.device_profile_updater_threshold_warning }}
+        summary: device-profile-updater lag is warning
+        lag: {{`({{$value}})`}}
+        job_id: device-profile-updater
+        alertname: FlinkJobsLag
+
+    - alert: user-cache-updater-v2 lag warning
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "user-cache-updater-v2-taskmanager-prometheus" }) > {{ .Values.user_cache_updater_threshold_warning }}
+      for: 5m
+      labels:
+        severity: warning
+        alerttype: lag
+      annotations:
+        message: The lag for user-cache-updater-v2 job is more than {{ .Values.user_cache_updater_threshold_warning }}
+        summary: user-cache-updater-v2 lag is warning
+        lag: {{`({{$value}})`}}
+        job_id: user-cache-updater-v2
+        alertname: FlinkJobsLag
+
+
+#### KP jobs lag alert rules critical
     - alert: activity-aggregate-updater lag critical
       expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "activity-aggregate-updater-taskmanager-prometheus" }) > {{ .Values.activity_aggregater_updater_threshold_critical }}
       for: 5m
@@ -165,6 +298,34 @@ spec:
       annotations:
         message: The lag for relation-cache-updater job is more than {{ .Values.relation_cache_updater_threshold_critical }}
         summary: relation-cache-updater lag is critical
+        lag: {{`({{$value}})`}}
+        job_id: relation-cache-updater
+        alertname: FlinkJobsLag
+
+## KP FLink jobs warning lag alertrules
+
+    - alert: activity-aggregate-updater lag warning
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "activity-aggregate-updater-taskmanager-prometheus" }) > {{ .Values.activity_aggregater_updater_threshold_warning }}
+      for: 5m
+      labels:
+        severity: warning
+        alerttype: lag
+      annotations:
+        message: The lag for activity-aggregate-updater job is more than {{ .Values.activity_aggregater_updater_threshold_warning }}
+        summary: activity-aggregate-updater lag is warning
+        lag: {{`({{$value}})`}}
+        job_id: activity-aggregate-updater
+        alertname: FlinkJobsLag
+
+    - alert: relation-cache-updater lag warning
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "relation-cache-updater-taskmanager-prometheus" }) > {{ .Values.relation_cache_updater_threshold_warning }}
+      for: 5m
+      labels:
+        severity: warning
+        alerttype: lag
+      annotations:
+        message: The lag for relation-cache-updater job is more than {{ .Values.relation_cache_updater_threshold_warning }}
+        summary: relation-cache-updater lag is warning
         lag: {{`({{$value}})`}}
         job_id: relation-cache-updater
         alertname: FlinkJobsLag
@@ -288,17 +449,57 @@ spec:
         job_id: device-profile-updater
         alertname: Flink jobs checkpoint commit failure
 
-### telemetry extractor failed event percentage alert rule
-
-    - alert: telemetry-extractor failed events percentage fatal
-      expr: sum(sum_over_time(flink_taskmanager_job_task_operator_TelemetryExtractorJob_failed_batch_count[5m])) / (sum(sum_over_time(flink_taskmanager_job_task_operator_TelemetryExtractorJob_failed_batch_count[5m]))  + sum(sum_over_time(flink_taskmanager_job_task_operator_TelemetryExtractorJob_success_batch_count[5m]))  + sum(sum_over_time(flink_taskmanager_job_task_operator_TelemetryExtractorJob_duplicate_event_count[5m]))) * 100 > {{ .Values.telemetry_extractor_failed_events_percentage_threshold_fatal }}
+    - alert: activity-aggregate-updater checkpoint failure critical
+      expr: sum(flink_jobmanager_job_numberOfFailedCheckpoints { job = "activity-aggregate-updater-jobmanager" }) > {{ .Values.activity_aggregate_updater_checkpointfailure_threshold_critical }}
       for: 5m
       labels:
-        severity: fatal
+        severity: critical
         alerttype: lag
       annotations:
-        message: The failed events percentage for telemetry-extractor job is more than {{ .Values.telemetry_extractor_failed_events_percentage_threshold_critical }} 
-        summary: telemetry-extractor failed events percentage fatal
+        message: The checkpoint failure count for device-profile-updater job is more than {{ .Values.activity_aggregate_updater_checkpointfailure_threshold_critical }}
+        summary: activity-aggregate-updater checkpoint failure critical
+        lag: {{`({{$value}})`}}
+        job_id: activity-aggregate-updater
+        alertname: Flink jobs checkpoint commit failure
+
+    - alert: relation-cache-updater checkpoint failure critical
+      expr: sum(flink_jobmanager_job_numberOfFailedCheckpoints { job = "relation-cache-updater-jobmanager" }) > {{ .Values.relation_cache_updater_checkpointfailure_threshold_critical }}
+      for: 5m
+      labels:
+        severity: critical
+        alerttype: lag
+      annotations:
+        message: The checkpoint failure count for device-profile-updater job is more than {{ .Values.relation_cache_updater_checkpointfailure_threshold_critical }}
+        summary: relation-cache-updater checkpoint failure critical
+        lag: {{`({{$value}})`}}
+        job_id: relation-cache-updater
+        alertname: Flink jobs checkpoint commit failure
+
+    - alert: user-cache-updater-v2 checkpoint failure critical
+      expr: sum(flink_jobmanager_job_numberOfFailedCheckpoints { job = "user-cache-updater-v2-jobmanager" }) > {{ .Values.user_cache_v2_updater_checkpointfailure_threshold_critical }}
+      for: 5m
+      labels:
+        severity: critical
+        alerttype: lag
+      annotations:
+        message: The checkpoint failure count for device-profile-updater job is more than {{ .Values.user_cache_v2_updater_checkpointfailure_threshold_critical }}
+        summary: device-profile-updater checkpoint failure critical
+        lag: {{`({{$value}})`}}
+        job_id: device-profile-updater
+        alertname: Flink jobs checkpoint commit failure
+
+
+### telemetry extractor failed event percentage alert rule
+
+    - alert: telemetry-extractor failed events percentage warning
+      expr: sum(sum_over_time(flink_taskmanager_job_task_operator_TelemetryExtractorJob_failed_batch_count[5m])) / (sum(sum_over_time(flink_taskmanager_job_task_operator_TelemetryExtractorJob_failed_batch_count[5m]))  + sum(sum_over_time(flink_taskmanager_job_task_operator_TelemetryExtractorJob_success_batch_count[5m]))  + sum(sum_over_time(flink_taskmanager_job_task_operator_TelemetryExtractorJob_duplicate_event_count[5m]))) * 100 > {{ .Values.telemetry_extractor_failed_events_percentage_threshold_warning }}
+      for: 5m
+      labels:
+        severity: warning
+        alerttype: lag
+      annotations:
+        message: The failed events percentage for telemetry-extractor job is more than {{ .Values.telemetry_extractor_failed_events_percentage_threshold_warning }} 
+        summary: telemetry-extractor failed events percentage warning
         lag: {{`({{$value}})`}}
         job_id: telemetry-extractor
         alertname: Flink jobs failed events percentage
@@ -308,6 +509,7 @@ spec:
       for: 5m
       labels:
         severity: critical
+        alerttype: lag
       annotations:
         message: The failed events percentage for telemetry-extractor job is more than {{ .Values.telemetry_extractor_failed_events_percentage_threshold_critical }} 
         summary: telemetry-extractor failed events percentage critical

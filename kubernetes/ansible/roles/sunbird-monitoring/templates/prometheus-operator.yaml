@@ -45,11 +45,25 @@ alertmanager:
          alertname: ^(node_exporter_down_critical|Watchdog|PrometheusRuleFailures)
         receiver: "null"
       - match:
+          alerttype: nodemetrics
+          severity: warning
+        receiver: nodemetrics_slack_warning
+      - match:
+          alerttype: nodemetrics
+          severity: critical
+        receiver: nodemetrics_slack_critical
+      - match:
           alerttype: lag
-        receiver: lag_slack
+          severity: warning
+        receiver: lag_slack_warning
+      - match:
+          alerttype: lag
+          severity: critical
+        receiver: lag_slack_critical
       - match:
           alerttype: job
-        receiver: jobs_slack
+          severity: critical
+        receiver: jobs_slack_critical
       - receiver: slack
         continue: true
       - match:
@@ -63,12 +77,12 @@ alertmanager:
             html: '{% raw %}{{ template "email.default.html" . }}{% endraw %}'
             headers:
               subject: '[{{ kubernetes_cluster_name }}] {% raw %}{{ .GroupLabels.alertname }}{% endraw %}'
-      - name: 'jobs_slack'
+      - name: 'jobs_slack_critical'
         slack_configs:
           - send_resolved: true
-            api_url: "{{ dp_monitor_alerts_slack_url }}"
+            api_url: "{{ dp_monitor_alerts_critical_slack_url }}"
             username: 'Monitor - Alerter'
-            channel: "{{ dp_monitor_alerts_slack_channel }}"
+            channel: "{{ dp_monitor_alerts_critical_slack_channel }}"
             title_link: ""
             title: '[{{ "{{" }} .Status | toUpper {{ "}}" }}{{ "{{" }} if eq .Status "firing" {{ "}}" }}:{{ "{{" }} .Alerts.Firing | len {{ "}}" }}{{ "{{" }} end {{ "}}"}}]'
             text: |-
@@ -80,12 +94,12 @@ alertmanager:
                   {{ "{{" }} end {{ "}}" }}
             icon_emoji: ':dart:'
 
-      - name: 'lag_slack'
+      - name: 'lag_slack_warning'
         slack_configs:
           - send_resolved: true
-            api_url: "{{ dp_monitor_alerts_slack_url }}"
+            api_url: "{{ dp_monitor_alerts_warning_slack_url }}"
             username: 'Monitor - Alerter'
-            channel: "{{ dp_monitor_alerts_slack_channel }}"
+            channel: "{{ dp_monitor_alerts_warning_slack_channel }}"
             title_link: ""
             title: '[{{ "{{" }} .Status | toUpper {{ "}}" }}{{ "{{" }} if eq .Status "firing" {{ "}}" }}:{{ "{{" }} .Alerts.Firing | len {{ "}}" }}{{ "{{" }} end {{ "}}"}}]'
             text: |-
@@ -98,12 +112,64 @@ alertmanager:
                   {{ "{{" }} end {{ "}}" }}
             icon_emoji: ':dart:'
 
+      - name: 'lag_slack_critical'
+        slack_configs:
+          - send_resolved: true
+            api_url: "{{ dp_monitor_alerts_critical_slack_url }}"
+            username: 'Monitor - Alerter'
+            channel: "{{ dp_monitor_alerts_critical_slack_channel }}"
+            title_link: ""
+            title: '[{{ "{{" }} .Status | toUpper {{ "}}" }}{{ "{{" }} if eq .Status "firing" {{ "}}" }}:{{ "{{" }} .Alerts.Firing | len {{ "}}" }}{{ "{{" }} end {{ "}}"}}]'
+            text: |-
+                  {{ "{{" }} range .Alerts {{ "}}" }}
+                    *Alert:* {{ "{{" }} .Annotations.alertname {{ "}}" }}
+                    *Job:* {{ "{{" }} .Annotations.job_id {{ "}}" }}
+                    *AlertType:* {{ "{{" }} .Labels.severity {{ "}}" }}
+                    *AlertMetric:* {{ "{{" }} .Annotations.lag {{ "}}" }}
+                    *Details:* {{ "{{" }} .Annotations.message {{ "}}" }}
+                  {{ "{{" }} end {{ "}}" }}
+            icon_emoji: ':dart:'
+
+      - name: 'nodemetrics_slack_warning'
+        slack_configs:
+          - send_resolved: true
+            api_url: "{{ dp_monitor_alerts_warning_slack_url }}"
+            username: 'Monitor - Alerter'
+            channel: "{{ dp_monitor_alerts_warning_slack_channel }}"
+            title_link: ""
+            title: '[{{ "{{" }} .Status | toUpper {{ "}}" }}{{ "{{" }} if eq .Status "firing" {{ "}}" }}:{{ "{{" }} .Alerts.Firing | len {{ "}}" }}{{ "{{" }} end {{ "}}"}}]'
+            text: |-
+                  {{ "{{" }} range .Alerts {{ "}}" }}
+                    *Alert:* {{ "{{" }} .Annotations.alertname {{ "}}" }}
+                    *AlertType:* {{ "{{" }} .Labels.severity {{ "}}" }}
+                    *AlertMetric:* {{ "{{" }} .Annotations.metrics {{ "}}" }}
+                    *Details:* {{ "{{" }} .Annotations.message {{ "}}" }}
+                  {{ "{{" }} end {{ "}}" }}
+            icon_emoji: ':dart:'
+   
+      - name: 'nodemetrics_slack_critical'
+        slack_configs:
+          - send_resolved: true
+            api_url: "{{ dp_monitor_alerts_critical_slack_url }}"
+            username: 'Monitor - Alerter'
+            channel: "{{ dp_monitor_alerts_critical_slack_channel }}"
+            title_link: ""
+            title: '[{{ "{{" }} .Status | toUpper {{ "}}" }}{{ "{{" }} if eq .Status "firing" {{ "}}" }}:{{ "{{" }} .Alerts.Firing | len {{ "}}" }}{{ "{{" }} end {{ "}}"}}]'
+            text: |-
+                  {{ "{{" }} range .Alerts {{ "}}" }}
+                    *Alert:* {{ "{{" }} .Annotations.alertname {{ "}}" }}
+                    *AlertType:* {{ "{{" }} .Labels.severity {{ "}}" }}
+                    *AlertMetric:* {{ "{{" }} .Annotations.metrics {{ "}}" }}
+                    *Details:* {{ "{{" }} .Annotations.message {{ "}}" }}
+                  {{ "{{" }} end {{ "}}" }}
+            icon_emoji: ':dart:'
+
       - name: 'slack'
         slack_configs:
           - send_resolved: true
-            api_url: "{{ dp_monitor_alerts_slack_url }}"
+            api_url: "{{ dp_monitor_alerts_warning_slack_url }}"
             username: 'Monitor - Alerter'
-            channel: "{{ dp_monitor_alerts_slack_channel }}"
+            channel: "{{ dp_monitor_alerts_warning_slack_channel }}"
             title_link: ""
             title: '[{{ "{{" }} .Status | toUpper {{ "}}" }}{{ "{{" }} if eq .Status "firing" {{ "}}" }}:{{ "{{" }} .Alerts.Firing | len {{ "}}" }}{{ "{{" }} end {{ "}}"}}]'
             text: |-
