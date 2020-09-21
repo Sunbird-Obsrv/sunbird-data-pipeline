@@ -343,6 +343,16 @@
               "type": "path",
               "name": "object_l2_subjects",
               "expr": "$.l2data.subject[*]"
+            },
+            {
+              "type": "path",
+              "name": "context_cdata_type",
+              "expr": "$.context.cdata[*].type"
+            },
+            {
+              "type": "path",
+              "name": "context_cdata_id",
+              "expr": "$.context.cdata[*].id"
             }
           ]
         },
@@ -597,6 +607,12 @@
             },
             {
               "name": "object_l2_subjects"
+            },
+            {
+              "name": "context_cdata_type"
+            },
+            {
+              "name": "context_cdata_id"
             }
           ],
           "dimensionsExclusions": []
