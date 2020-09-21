@@ -25,7 +25,7 @@ spec:
         metrics: {{`({{ humanize $value }})`}}%
 
     - alert: high_cpu_usage_on_node_critical
-      expr: (avg by (instance) (irate(node_cpu_seconds_total{job="node-exporter",mode!="idle"}[5m])) * 100) >= {{ .Values.node_cpu_usage_percentage_threshold_Critical }} and (avg by (instance) (irate(node_cpu_seconds_total{job="node-exporter",mode!="idle"}[5m])) * 100) < {{ .Values.node_cpu_usage_percentage_threshold_Fatal }}
+      expr: (avg by (instance) (irate(node_cpu_seconds_total{job="node-exporter",mode!="idle"}[5m])) * 100) >= {{ .Values.node_cpu_usage_percentage_threshold_Critical }}
       for: 1m
       labels:
         severity: critical
@@ -49,7 +49,7 @@ spec:
         metrics: {{`({{ humanize $value }})`}}%
 
     - alert: high_memory_usage_on_node_critical
-      expr: sum by(nodename) ((((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes) * on(instance) group_left(nodename) node_uname_info * 100) >= {{ .Values.node_memory_usage_percentage_threshold_Critical }} and (((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes) * on(instance) group_left(nodename) node_uname_info * 100) < {{ .Values.node_memory_usage_percentage_threshold_Fatal }} )
+      expr: sum by(nodename) ((((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes) * on(instance) group_left(nodename) node_uname_info * 100) >= {{ .Values.node_memory_usage_percentage_threshold_Critical }})
       for: 1m
       labels:
         severity: critical
@@ -73,7 +73,7 @@ spec:
         metrics: {{`({{ humanize $value }})`}}%
 
     - alert: high_load_on_node_critical
-      expr: sum by(instance) ((node_load1{job="node-exporter"} / count by (cluster, job, instance)(count by(cluster, job, instance, cpu)(node_cpu_seconds_total{job="node-exporter"})) * 100) >= {{ .Values.node_load_avg_threshold_Critical }} and (node_load1{job="node-exporter"} / count by (cluster, job, instance)(count by(cluster, job, instance, cpu)(node_cpu_seconds_total{job="node-exporter"})) * 100) < {{ .Values.node_load_avg_threshold_Fatal }})
+      expr: sum by(instance) ((node_load1{job="node-exporter"} / count by (cluster, job, instance)(count by(cluster, job, instance, cpu)(node_cpu_seconds_total{job="node-exporter"})) * 100) >= {{ .Values.node_load_avg_threshold_Critical }})
       for: 5m
       labels:
         severity: critical
@@ -106,7 +106,7 @@ spec:
         metrics: {{`({{ humanize $value }})`}}%
 
     - alert: node_running_out_of_disk_space_warning
-      expr: sum by(nodename) (((node_filesystem_size_bytes{mountpoint="/"} - node_filesystem_free_bytes{mountpoint="/"}) * 100 / node_filesystem_size_bytes{mountpoint="/"} * on(instance) group_left(nodename) node_uname_info) >= {{ .Values.node_disk_usage_percentage_threshold_Critical }} and ((node_filesystem_size_bytes{mountpoint="/"} - node_filesystem_free_bytes{mountpoint="/"}) * 100 / node_filesystem_size_bytes{mountpoint="/"} * on(instance) group_left(nodename) node_uname_info) < {{ .Values.node_disk_usage_percentage_threshold_Fatal }} )
+      expr: sum by(nodename) (((node_filesystem_size_bytes{mountpoint="/"} - node_filesystem_free_bytes{mountpoint="/"}) * 100 / node_filesystem_size_bytes{mountpoint="/"} * on(instance) group_left(nodename) node_uname_info) >= {{ .Values.node_disk_usage_percentage_threshold_Critical }})
       for: 1m
       labels:
         severity: critical
