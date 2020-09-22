@@ -245,3 +245,16 @@ dcedialcode.filename="DCE_dialcode_data.csv"
 etbdialcode.filename="ETB_dialcode_data.csv"
 dcetextbook.filename="DCE_textbook_data.csv"
 etbtextbook.filename="ETB_textbook_data.csv"
+
+## Collection Exhaust Jobs Configuration - Start ##
+
+sunbird.user.keyspace="sunbird"
+sunbird.courses.keyspace="sunbird_courses"
+sunbird.user.keyspace="sunbird"
+sunbird.content.hierarchy.keyspace="sunbird_courses"
+sunbird.user.cluster.host="{{ groups['core-cassandra'][0] }}"
+sunbird.courses.cluster.host="{{ groups['core-cassandra'][0] }}"
+sunbird.content.cluster.host="{{ groups['core-cassandra'][0] }}"
+collection.exhaust.store.prefix="reports/"
+
+## Collection Exhaust Jobs Configuration - End ##
