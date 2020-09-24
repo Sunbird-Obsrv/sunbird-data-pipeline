@@ -248,9 +248,8 @@ etbtextbook.filename="ETB_textbook_data.csv"
 
 ## Collection Exhaust Jobs Configuration - Start ##
 
-sunbird.user.keyspace="sunbird"
-sunbird.courses.keyspace="sunbird_courses"
-sunbird.user.keyspace="sunbird"
+sunbird.user.keyspace="{{ sunbird_keyspace }}"
+sunbird.courses.keyspace="{{ sunbird_course_keyspace }}"
 sunbird.content.hierarchy.keyspace="{{ cassandra_hierarchy_store_keyspace }}"
 sunbird.user.cluster.host="{{ groups['core-cassandra'][0] }}"
 sunbird.courses.cluster.host="{{ groups['core-cassandra'][0] }}"
