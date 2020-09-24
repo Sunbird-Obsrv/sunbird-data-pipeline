@@ -53,7 +53,8 @@
               "type": "number"
             },
             "filters": {
-              "$ref": "resource:/schemas/telemetry/filter.json"
+              "id": "http://api.sunbird.org/telemetry/edata/filters",
+              "type": "object"
             },
             "topn": {
               "id": "http://api.sunbird.org/telemetry/edata/topn",
