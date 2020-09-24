@@ -12,7 +12,7 @@ azure_models_path: "models"
 azure_account: "{{ sunbird_private_storage_account_name }}"
 azure_secret: "{{ sunbird_private_storage_account_key }}"
 brokerlist: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
-topic: "{{ env }}.telemetry.derived"
+topic: "{{ env }}.telemetry.derived.test"
 
 spark_cassandra_connection_host: "{{ core_cassandra_host }}"
 spark_elasticsearch_connection_host: "{{ sunbird_es_host }}"
