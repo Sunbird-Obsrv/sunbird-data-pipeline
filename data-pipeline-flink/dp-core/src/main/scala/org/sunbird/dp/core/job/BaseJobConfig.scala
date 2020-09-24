@@ -17,7 +17,10 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
 
   val kafkaBrokerServers: String = config.getString("kafka.broker-servers")
   val zookeeper: String = config.getString("kafka.zookeeper")
+  // Producer Properties
   val kafkaProducerMaxRequestSize: Int = config.getInt("kafka.producer.max-request-size")
+  val kafkaProducerBatchSize: Int = config.getInt("kafka.producer.batch.size")
+  val kafkaProducerLingerMs: Int = config.getInt("kafka.producer.linger.ms")
   val groupId: String = config.getString("kafka.groupId")
   val restartAttempts: Int = config.getInt("task.restart-strategy.attempts")
   val delayBetweenAttempts: Long = config.getLong("task.restart-strategy.delay")
@@ -35,7 +38,9 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
   val metaRedisPort: Int = Option(config.getInt("redis-meta.port")).getOrElse(6379)
 
   // Checkpointing config
+  val enableCompressedCheckpointing: Boolean = config.getBoolean("task.checkpointing.compressed")
   val checkpointingInterval: Int = config.getInt("task.checkpointing.interval")
+  val checkpointingPauseSeconds: Int = config.getInt("task.checkpointing.pause.between.seconds")
   val enableDistributedCheckpointing: Option[Boolean] = if (config.hasPath("job")) Option(config.getBoolean("job.enable.distributed.checkpointing")) else None
   val checkpointingBaseUrl: Option[String] = if (config.hasPath("job")) Option(config.getString("job.statebackend.base.url")) else None
 
@@ -52,8 +57,8 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
   def kafkaProducerProperties: Properties = {
     val properties = new Properties()
     properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBrokerServers)
-    properties.put(ProducerConfig.LINGER_MS_CONFIG, new Integer(10))
-    properties.put(ProducerConfig.BATCH_SIZE_CONFIG, new Integer(16384 * 4))
+    properties.put(ProducerConfig.LINGER_MS_CONFIG, new Integer(kafkaProducerLingerMs))
+    properties.put(ProducerConfig.BATCH_SIZE_CONFIG, new Integer(kafkaProducerBatchSize))
     properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy")
     properties.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, new Integer(kafkaProducerMaxRequestSize))
     properties

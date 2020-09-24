@@ -38,13 +38,17 @@ object EventFixture {
       |  auto.offset.reset = "earliest"
       |  producer {
       |     max-request-size = 102400
+      |     batch.size = 8192
+      |     linger.ms = 1
       |  }
       |}
       |
       |task {
       |  parallelism = 2
       |  consumer.parallelism = 1
+      |  checkpointing.compressed = true
       |  checkpointing.interval = 60000
+      |  checkpointing.pause.between.seconds = 30000
       |  metrics.window.size = 100 # 3 min
       |  restart-strategy.attempts = 1 # retry once
       |  restart-strategy.delay = 1000 # in milli-seconds
