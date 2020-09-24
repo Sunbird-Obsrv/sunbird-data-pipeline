@@ -14,7 +14,7 @@ class UserDenormalization(config: DenormalizationConfig) {
       config.userStore, config.userFields)
   userDataCache.init()
 
-  def denormalize(event: Event, metrics: Metrics): Event = {
+  def denormalize(event: Event, metrics: Metrics) = {
     val actorId = event.actorId()
     val actorType = event.actorType()
     if (null != actorId && actorId.nonEmpty && !"anonymous".equalsIgnoreCase(actorId) &&
@@ -40,7 +40,6 @@ class UserDenormalization(config: DenormalizationConfig) {
         userData += "userlogintype" -> config.userLoginInTypeDefault
       event.addUserData(userData)
     }
-    event
   }
 
   def closeDataCache() = {

@@ -24,8 +24,9 @@ class DenormalizationFunction(config: DenormalizationConfig)(implicit val mapTyp
   override def metricsList(): List[String] = {
     List(config.eventsExpired, config.userTotal, config.userCacheHit, config.userCacheMiss,
       config.contentTotal, config.contentCacheHit, config.contentCacheMiss, config.deviceTotal,
-      config.deviceCacheHit, config.deviceCacheMiss, config.eventsExpired, config.dialcodeTotal,
-      config.dialcodeCacheHit, config.dialcodeCacheMiss, config.locTotal, config.locCacheHit, config.locCacheMiss)
+      config.deviceCacheHit, config.deviceCacheMiss, config.dialcodeTotal,
+      config.dialcodeCacheHit, config.dialcodeCacheMiss,
+      config.locTotal, config.locCacheHit, config.locCacheMiss)
   }
 
   override def open(parameters: Configuration): Unit = {
@@ -52,12 +53,12 @@ class DenormalizationFunction(config: DenormalizationConfig)(implicit val mapTyp
       metrics.incCounter(config.eventsExpired)
     } else {
       if ("ME_WORKFLOW_SUMMARY" == event.eid() || !event.eid().contains("SUMMARY")) {
-        val deviceDenormEvent = deviceDenormalization.denormalize(event, metrics)
-        val userDenormEvent = userDenormalization.denormalize(deviceDenormEvent, metrics)
-        val dialcodeDenormEvent = dialcodeDenormalization.denormalize(userDenormEvent, metrics)
-        val contentDenormEvent = contentDenormalization.denormalize(dialcodeDenormEvent, metrics)
-        val locationDenormEvent = locationDenormalization.denormalize(contentDenormEvent, metrics)
-        context.output(config.denormEventsTag, locationDenormEvent)
+        deviceDenormalization.denormalize(event, metrics)
+        userDenormalization.denormalize(event, metrics)
+        dialcodeDenormalization.denormalize(event, metrics)
+        contentDenormalization.denormalize(event, metrics)
+        locationDenormalization.denormalize(event, metrics)
+        context.output(config.denormEventsTag, event)
       }
     }
   }
