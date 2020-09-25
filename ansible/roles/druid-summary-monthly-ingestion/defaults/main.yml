@@ -1,7 +1,7 @@
 remote_user: druid
-druid_overlord_host: {{ groups['rollup-overlord'][0] }}"
+druid_overlord_host: "{{ groups['rollup-overlord'][0] }}"
 druid_overlord_port: 8090
-druid_home: /home/revathi/druid
+druid_home: /home/druid
 
 summary_monthly:
   base_data_source_name: "summary-rollup-syncts"
