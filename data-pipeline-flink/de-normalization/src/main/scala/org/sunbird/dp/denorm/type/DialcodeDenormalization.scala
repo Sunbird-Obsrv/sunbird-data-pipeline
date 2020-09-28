@@ -12,7 +12,7 @@ class DialcodeDenormalization(config: DenormalizationConfig) {
       config.dialcodeStore, config.dialcodeFields)
   dialcodeDataCache.init()
 
-  def denormalize(event: Event, metrics: Metrics): Event = {
+  def denormalize(event: Event, metrics: Metrics) = {
     if (null != event.objectType() && List("dialcode", "qr").contains(event.objectType().toLowerCase())) {
       metrics.incCounter(config.dialcodeTotal)
       val dialcodeData = dialcodeDataCache.getWithRetry(event.objectID().toUpperCase()).map(f => {(f._1.toLowerCase().replace("_", ""), f._2)})
@@ -25,7 +25,6 @@ class DialcodeDenormalization(config: DenormalizationConfig) {
         event.setFlag("dialcode_denorm", value = false)
       }
     }
-    event
   }
 
   def closeDataCache() = {

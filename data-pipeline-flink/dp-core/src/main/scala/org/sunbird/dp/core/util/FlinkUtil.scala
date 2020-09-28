@@ -13,18 +13,19 @@ object FlinkUtil {
 
   def getExecutionContext(config: BaseJobConfig): StreamExecutionEnvironment = {
     val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
+    env.getConfig.setUseSnapshotCompression(config.enableCompressedCheckpointing)
     env.enableCheckpointing(config.checkpointingInterval)
 
     /**
       * Use Blob storage as distributed state backend if enabled
       */
-
     config.enableDistributedCheckpointing match {
       case Some(true) => {
         val stateBackend: StateBackend = new FsStateBackend(s"${config.checkpointingBaseUrl.getOrElse("")}/${config.jobName}", true)
         env.setStateBackend(stateBackend)
         val checkpointConfig: CheckpointConfig = env.getCheckpointConfig
         checkpointConfig.enableExternalizedCheckpoints(ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION)
+        checkpointConfig.setMinPauseBetweenCheckpoints(config.checkpointingPauseSeconds     )
       }
       case _ => // Do nothing
     }

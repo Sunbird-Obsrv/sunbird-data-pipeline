@@ -1,0 +1,57 @@
+{
+  "type": "index_parallel",
+  "spec": {
+    "ioConfig": {
+      "type": "index_parallel",
+      "inputSource": {
+        "type": "druid",
+        "dataSource": "{{ summary_monthly.base_data_source_name }}",
+        "interval": "{{ summary_monthly_interval }}",
+        "metrics": [
+          "total_count",
+          "total_interactions",
+          "total_timespent"
+        ]
+      },
+      "appendToExisting": false
+    },
+    "tuningConfig": {
+      "type": "index_parallel",
+      "targetPartitionSize": 5000000,
+      "maxRowsInMemory": 500000,
+      "forceExtendableShardSpecs": true,
+      "maxNumConcurrentSubTasks": "{{ summary_monthly.no_batch_parallel_tasks }}"
+    },
+    "dataSchema": {
+      "dataSource": "{{ summary_monthly.new_data_source_name }}",
+      "dimensionsSpec": {{ dimensions_spec }},
+      "timestampSpec": {
+        "column": "syncts",
+        "format": "auto"
+      },
+      "metricsSpec": [
+        {
+          "type": "longSum",
+          "name": "total_count",
+          "fieldName": "total_count"
+        },
+        {
+          "type": "longSum",
+          "name": "total_interactions",
+          "fieldName": "total_interactions"
+        },
+        {
+          "type": "doubleSum",
+          "name": "total_time_spent",
+          "fieldName": "total_time_spent"
+        }
+      ]
+      "granularitySpec": {
+        "type": "uniform",
+        "segmentGranularity": "month",
+        "queryGranularity": "none",
+        "rollup": true
+      }
+    }
+  }
+}

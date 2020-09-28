@@ -213,8 +213,8 @@ druid = {
 }
 druid.rollup.host="{{druid_rollup_broker_host}}"
 druid.rollup.port=8082
-druid.query.wait.time.mins=1
-druid.report.upload.wait.time.mins=1
+druid.query.wait.time.mins=10
+druid.report.upload.wait.time.mins=10
 druid.scan.batch.size=100
 druid.scan.batch.bytes=2000000
 druid.query.batch.buffer=500000
@@ -245,3 +245,16 @@ dcedialcode.filename="DCE_dialcode_data.csv"
 etbdialcode.filename="ETB_dialcode_data.csv"
 dcetextbook.filename="DCE_textbook_data.csv"
 etbtextbook.filename="ETB_textbook_data.csv"
+
+## Collection Exhaust Jobs Configuration -- Start ##
+
+sunbird.user.keyspace="{{ user_table_keyspace }}"
+sunbird.courses.keyspace="{{ course_keyspace }}"
+sunbird.content.hierarchy.keyspace="{{ hierarchy_store_keyspace }}"
+sunbird.user.cluster.host="{{ groups['core-cassandra'][0] }}"
+sunbird.courses.cluster.host="{{ groups['core-cassandra'][0] }}"
+sunbird.content.cluster.host="{{ groups['core-cassandra'][0] }}"
+collection.exhaust.store.prefix=""
+postgres.table.job_request="{{ job_request_table }}"
+
+## Collection Exhaust Jobs Configuration -- End ##

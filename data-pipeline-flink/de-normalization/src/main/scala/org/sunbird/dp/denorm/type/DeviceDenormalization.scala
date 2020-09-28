@@ -12,7 +12,7 @@ class DeviceDenormalization(config: DenormalizationConfig) {
       config.deviceStore, config.deviceFields)
   deviceDataCache.init()
 
-  def denormalize(event: Event, metrics: Metrics): Event = {
+  def denormalize(event: Event, metrics: Metrics) = {
     event.compareAndAlterEts() // Reset ets to today's date if we get future value
     val did = event.did()
     if (null != did && did.nonEmpty) {
@@ -26,7 +26,6 @@ class DeviceDenormalization(config: DenormalizationConfig) {
         event.setFlag("device_denorm", value = false)
       }
     }
-    event
   }
 
   def closeDataCache() = {

@@ -17,12 +17,16 @@ monitor_alerts_mail_server_username: "{{ SGUSER }}"
 monitor_alerts_mail_server_password: "{{ SGPASS }}" 
 dp_monitor_alerts_slack_url: 
 dp_monitor_alerts_slack_channel: "{{ env }}_flink_alerts"
+dp_monitor_alerts_warning_slack_url: 
+dp_monitor_alerts_warning_slack_channel: "{{ env }}_pipeline_warning_alerts"
+dp_monitor_alerts_critical_slack_url:
+dp_monitor_alerts_critical_slack_channel: "{{ env }}_pipeline_critical_alerts"
 
 default_critical_mailing_list: "{{ default_mailing_list }}"
 default_fatal_mailing_list: "{{ default_mailing_list }}"
 default_mailing_list: kaliraja.ramasamy@tarento.com, anandp@ilimi.in, manjunathd@ilimi.in
 
-# flink Jobs lag vars 
+# flink Jobs lag vars critical 
 telemetry_extractor_threshold_critical: 50000
 pipeline_preprocessor_threshold_critical: 50000
 de_normalization_threshold_critical: 50000
@@ -32,12 +36,28 @@ content_cache_updater_threshold_critical: 50000
 user_cache_updater_threshold_critical: 50000
 summary_denormalization_threshold_critical: 50000
 device_profile_updater_threshold_critical: 50000
-telemetry_extractor_failed_events_percentage_threshold_fatal: 1
-telemetry_extractor_failed_events_percentage_threshold_critical: 0.5
+telemetry_extractor_failed_events_percentage_threshold_critical: 1
+telemetry_extractor_failed_events_percentage_threshold_warning: 0.5
 
-# Flink KP Jobs lag vars
+# Flink jobs lag warning
+telemetry_extractor_threshold_warning: 30000
+pipeline_preprocessor_threshold_warning: 30000
+de_normalization_threshold_warning: 30000
+druid_validator_threshold_warning: 30000
+assessment_aggregator_threshold_warning: 30000
+content_cache_updater_threshold_warning: 30000
+user_cache_updater_threshold_warning: 30000
+summary_denormalization_threshold_warning: 30000
+device_profile_updater_threshold_warning: 30000
+
+
+# Flink KP Jobs lag vars critical
 activity_aggregater_updater_threshold_critical: 50
-relation_cache_updater_threshold_critical: 5
+relation_cache_updater_threshold_critical: 50
+
+# Flink KP Jobs lag vars warning
+activity_aggregater_updater_threshold_warning: 40
+relation_cache_updater_threshold_warning: 40 
 
 # Flink jobmanager Checkpoint failure vars
 telemetry_extractor_checkpointfailure_threshold_critical: 5 
@@ -49,3 +69,6 @@ content_cache_updater_checkpointfailure_threshold_critical: 5
 user_cache_updater_checkpointfailure_threshold_critical: 5
 summary_denormalization_checkpointfailure_threshold_critical: 5
 device_profile_updater_checkpointfailure_threshold_critical: 5
+user_cache_v2_updater_checkpointfailure_threshold_critical: 5
+relation_cache_updater_checkpointfailure_threshold_critical: 5
+activity_aggregate_updater_checkpointfailure_threshold_critical: 5

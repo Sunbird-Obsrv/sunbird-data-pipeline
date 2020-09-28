@@ -31,7 +31,7 @@
     - ['{{inventory_dir}}/secrets.yml']
   name: Installing and configuring monit
   roles:
-    - { role: monit, service: 'monit_assess-events-backup,monit_channel-telemetry-backup,monit_denorm-events-backup,monit_derived-telemetry-backup,monit_device-profile-backup,monit_extractor-failed-backup,monit_failed-telemetry-backup,monit_ingestion-telemetry-backup,monit_learning-events-backup,monit_learning-failed-backup,monit_pipeline-metrics-backup,monit_raw-telemetry-backup,monit_unique-telemetry-backup' }
+    - { role: monit, service: 'monit_assess-events-backup,monit_denorm-events-backup,monit_derived-telemetry-backup,monit_device-profile-backup,monit_extractor-failed-backup,monit_failed-telemetry-backup,monit_ingestion-cluster-telemetry-backup,monit_learning-events-backup,monit_learning-failed-backup,monit_raw-telemetry-backup,monit_unique-telemetry-backup,monit_assess-raw-events-backup,monit_telemetry-duplicate-backup,monit_extractor-duplicate-backup,monit_content-consumption-events-backup,monit_derived-denorm-events-backup,monit_channel-summary-backup' }
   tags: secor
 
 - hosts: kafka-indexer:analytics-api

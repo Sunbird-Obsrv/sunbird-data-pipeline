@@ -30,15 +30,12 @@ class TelemetryValidator(config: PipelinePreprocessorConfig) extends java.io.Ser
     }
   }
 
-  private def dataCorrection(event: Event): Event = {
+  private def dataCorrection(event: Event): Unit = {
     // Remove prefix from federated userIds
     val eventActorId = event.actorId()
     if (eventActorId != null && !eventActorId.isEmpty && eventActorId.startsWith("f:"))
       event.updateActorId(eventActorId.substring(eventActorId.lastIndexOf(":") + 1))
-    if (event.eid != null && event.eid().equalsIgnoreCase("SEARCH"))
-      event.correctDialCodeKey()
     if (event.objectFieldsPresent && (event.objectType().equalsIgnoreCase("DialCode") || event.objectType().equalsIgnoreCase("qr"))) event.correctDialCodeValue()
-    event
   }
 
   def onValidationSuccess(event: Event, metrics: Metrics, context: ProcessFunction[Event, Event]#Context): Unit = {

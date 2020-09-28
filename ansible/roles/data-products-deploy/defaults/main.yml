@@ -25,6 +25,12 @@ druid_rollup_broker_host: "{{groups['raw-broker'][0]}}"
 hierarchySearchServiceUrl: "{{ proto }}://{{ domain_name }}/action/content"
 hierarchySearchServicEndpoint: /v3/hierarchy/
 
+user_table_keyspace: "sunbird"
+course_keyspace: "sunbird_courses"
+hierarchy_store_keyspace: "{{ env }}_hierarchy_store"
+job_request_table: "{{ env }}_job_request"
+
+
 analytics_job_list: '"wfs", "ds", "dpu", "content-rating-updater", "audit-metrics-report", "monitor-job-summ"'
 analytics_jobs_count: 8
 
@@ -165,7 +171,7 @@ analytics_ed_dataporducts_artifact: "data-products-1.0-distribution.tar.gz"
 model_version: "2.0" 
 
 submit_jobs_auth_token: "{{ sunbird_api_auth_token }}"
-report_list_jobs_url: "{{ druid_report_url_endpoint }} "
+report_list_jobs_url: "{{ druid_report_url }}"
 
 reports_container: "reports"
 

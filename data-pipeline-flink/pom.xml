@@ -39,9 +39,10 @@
 		<scala.maj.version>2.12.11</scala.maj.version>
 		<flink.version>1.10.1</flink.version>
 		<kafka.version>2.4.0</kafka.version>
+		<java.target.runtime>1.8</java.target.runtime>
 		<jackson-jaxrs.version>1.9.13</jackson-jaxrs.version>
 		<scoverage.plugin.version>1.4.0</scoverage.plugin.version>
-		<release-version>release-3.0.2</release-version>
+		<release-version>release-3.3.0</release-version>
 	</properties>
 
 	<repositories>
@@ -74,10 +75,10 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.1</version>
+					<version>3.8.1</version>
 					<configuration>
-						<source>1.8</source>
-						<target>1.8</target>
+						<source>${java.target.runtime}</source>
+						<target>${java.target.runtime}</target>
 					</configuration>
 				</plugin>
 				<plugin>
