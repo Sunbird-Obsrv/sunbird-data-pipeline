@@ -19,9 +19,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The lag for telemetry-extractor job is more than {{ .Values.telemetry_extractor_threshold_critical }}
+        message: The lag for telemetry-extractor job is more than threshold {{ .Values.telemetry_extractor_threshold_critical | int }}
         summary: telemetry-extractor lag is critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value  }})`}}
         job_id: telemetry-extractor
         alertname: FlinkJobsLag
 
@@ -32,9 +32,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The lag for pipeline-preprocessor job is more than {{ .Values.pipeline_preprocessor_threshold_critical }}
+        message: The lag for pipeline-preprocessor job is more than threshold {{ .Values.pipeline_preprocessor_threshold_critical | int }}
         summary: pipeline-preprocessor lag is critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: pipeline-preprocessor
         alertname: FlinkJobsLag
    
@@ -45,9 +45,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The lag for de-normalization job is more than {{ .Values.de_normalization_threshold_critical }}
+        message: The lag for de-normalization job is more than threshold {{ .Values.de_normalization_threshold_critical | int }}
         summary: de-normalization lag is critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: de-normalization
         alertname: FlinkJobsLag
 
@@ -58,9 +58,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The lag for druid-validator job is more than {{ .Values.druid_validator_threshold_critical }}
+        message: The lag for druid-validator job is more than threshold {{ .Values.druid_validator_threshold_critical | int }}
         summary: druid-validator lag is critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: druid-validator
         alertname: FlinkJobsLag
 
@@ -71,9 +71,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The lag for assessment-aggregator job is more than {{ .Values.assessment_aggregator_threshold_critical }}
+        message: The lag for assessment-aggregator job is more than threshold {{ .Values.assessment_aggregator_threshold_critical | int }}
         summary: assessment-aggregator lag is critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: assessment-aggregator
         alertname: FlinkJobsLag
 
@@ -84,9 +84,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The lag for content-cache-updater job is more than {{ .Values.content_cache_updater_threshold_critical }}
+        message: The lag for content-cache-updater job is more than threshold {{ .Values.content_cache_updater_threshold_critical | int }}
         summary: content-cache-updater lag is critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: content-cache-updater
         alertname: FlinkJobsLag
 
@@ -97,9 +97,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The lag for user-cache-updater job is more than {{ .Values.user_cache_updater_threshold_critical }}
+        message: The lag for user-cache-updater job is more than threshold {{ .Values.user_cache_updater_threshold_critical | int }}
         summary: user-cache-updater lag is critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: user-cache-updater
         alertname: FlinkJobsLag
 
@@ -110,9 +110,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The lag for summary-denormalization job is more than {{ .Values.summary_denormalization_threshold_critical }}
+        message: The lag for summary-denormalization job is more than threshold {{ .Values.summary_denormalization_threshold_critical | int }}
         summary: summary-denormalization lag is critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: summary-denormalization
         alertname: FlinkJobsLag
 
@@ -123,9 +123,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The lag for device-profile-updater job is more than {{ .Values.device_profile_updater_threshold_critical }}
+        message: The lag for device-profile-updater job is more than threshold {{ .Values.device_profile_updater_threshold_critical | int }}
         summary: device-profile-updater lag is critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: device-profile-updater
         alertname: FlinkJobsLag
 
@@ -136,9 +136,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The lag for user-cache-updater-v2 job is more than {{ .Values.user_cache_updater_threshold_critical }}
+        message: The lag for user-cache-updater-v2 job is more than threshold {{ .Values.user_cache_updater_threshold_critical | int }}
         summary: user-cache-updater-v2 lag is critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: user-cache-updater-v2
         alertname: FlinkJobsLag
 
@@ -151,9 +151,9 @@ spec:
         severity: warning
         alerttype: lag
       annotations:
-        message: The lag for telemetry-extractor job is more than {{ .Values.telemetry_extractor_threshold_warning }}
+        message: The lag for telemetry-extractor job is more than threshold {{ .Values.telemetry_extractor_threshold_warning | int }}
         summary: telemetry-extractor lag is warning
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: telemetry-extractor
         alertname: FlinkJobsLag
 
@@ -164,9 +164,9 @@ spec:
         severity: warning
         alerttype: lag
       annotations:
-        message: The lag for pipeline-preprocessor job is more than {{ .Values.pipeline_preprocessor_threshold_warning }}
+        message: The lag for pipeline-preprocessor job is more than threshold {{ .Values.pipeline_preprocessor_threshold_warning | int }}
         summary: pipeline-preprocessor lag is warning
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: pipeline-preprocessor
         alertname: FlinkJobsLag
    
@@ -177,9 +177,9 @@ spec:
         severity: warning
         alerttype: lag
       annotations:
-        message: The lag for de-normalization job is more than {{ .Values.de_normalization_threshold_warning }}
+        message: The lag for de-normalization job is more than threshold {{ .Values.de_normalization_threshold_warning  | int }}
         summary: de-normalization lag is warning
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: de-normalization
         alertname: FlinkJobsLag
 
@@ -190,9 +190,9 @@ spec:
         severity: warning
         alerttype: lag
       annotations:
-        message: The lag for druid-validator job is more than {{ .Values.druid_validator_threshold_warning }}
+        message: The lag for druid-validator job is more than threshold {{ .Values.druid_validator_threshold_warning | int }}
         summary: druid-validator lag is warning
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: druid-validator
         alertname: FlinkJobsLag
 
@@ -203,9 +203,9 @@ spec:
         severity: warning
         alerttype: lag
       annotations:
-        message: The lag for assessment-aggregator job is more than {{ .Values.assessment_aggregator_threshold_warning }}
+        message: The lag for assessment-aggregator job is more than threshold {{ .Values.assessment_aggregator_threshold_warning | int }}
         summary: assessment-aggregator lag is warning
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: assessment-aggregator
         alertname: FlinkJobsLag
 
@@ -216,9 +216,9 @@ spec:
         severity: warning
         alerttype: lag
       annotations:
-        message: The lag for content-cache-updater job is more than {{ .Values.content_cache_updater_threshold_warning }}
+        message: The lag for content-cache-updater job is more than threshold {{ .Values.content_cache_updater_threshold_warning | int }}
         summary: content-cache-updater lag is warning
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: content-cache-updater
         alertname: FlinkJobsLag
 
@@ -229,9 +229,9 @@ spec:
         severity: warning
         alerttype: lag
       annotations:
-        message: The lag for user-cache-updater job is more than {{ .Values.user_cache_updater_threshold_warning }}
+        message: The lag for user-cache-updater job is more than threshold {{ .Values.user_cache_updater_threshold_warning | int }}
         summary: user-cache-updater lag is warning
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: user-cache-updater
         alertname: FlinkJobsLag
 
@@ -242,9 +242,9 @@ spec:
         severity: warning
         alerttype: lag
       annotations:
-        message: The lag for summary-denormalization job is more than {{ .Values.summary_denormalization_threshold_warning }}
+        message: The lag for summary-denormalization job is more than threshold {{ .Values.summary_denormalization_threshold_warning | int }}
         summary: summary-denormalization lag is warning
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: summary-denormalization
         alertname: FlinkJobsLag
 
@@ -255,9 +255,9 @@ spec:
         severity: warning
         alerttype: lag
       annotations:
-        message: The lag for device-profile-updater job is more than {{ .Values.device_profile_updater_threshold_warning }}
+        message: The lag for device-profile-updater job is more than threshold {{ .Values.device_profile_updater_threshold_warning | int }}
         summary: device-profile-updater lag is warning
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: device-profile-updater
         alertname: FlinkJobsLag
 
@@ -268,9 +268,9 @@ spec:
         severity: warning
         alerttype: lag
       annotations:
-        message: The lag for user-cache-updater-v2 job is more than {{ .Values.user_cache_updater_threshold_warning }}
+        message: The lag for user-cache-updater-v2 job is more than threshold {{ .Values.user_cache_updater_threshold_warning | int }}
         summary: user-cache-updater-v2 lag is warning
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: user-cache-updater-v2
         alertname: FlinkJobsLag
 
@@ -283,9 +283,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The lag for activity-aggregate-updater job is more than {{ .Values.activity_aggregater_updater_threshold_critical }}
+        message: The lag for activity-aggregate-updater job is more than threshold {{ .Values.activity_aggregater_updater_threshold_critical | int }}
         summary: activity-aggregate-updater lag is critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: activity-aggregate-updater
         alertname: FlinkJobsLag
 
@@ -296,9 +296,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The lag for relation-cache-updater job is more than {{ .Values.relation_cache_updater_threshold_critical }}
+        message: The lag for relation-cache-updater job is more than threshold {{ .Values.relation_cache_updater_threshold_critical | int }}
         summary: relation-cache-updater lag is critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: relation-cache-updater
         alertname: FlinkJobsLag
 
@@ -311,9 +311,9 @@ spec:
         severity: warning
         alerttype: lag
       annotations:
-        message: The lag for activity-aggregate-updater job is more than {{ .Values.activity_aggregater_updater_threshold_warning }}
+        message: The lag for activity-aggregate-updater job is more than threshold {{ .Values.activity_aggregater_updater_threshold_warning | int }}
         summary: activity-aggregate-updater lag is warning
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: activity-aggregate-updater
         alertname: FlinkJobsLag
 
@@ -324,9 +324,9 @@ spec:
         severity: warning
         alerttype: lag
       annotations:
-        message: The lag for relation-cache-updater job is more than {{ .Values.relation_cache_updater_threshold_warning }}
+        message: The lag for relation-cache-updater job is more than threshold {{ .Values.relation_cache_updater_threshold_warning | int }}
         summary: relation-cache-updater lag is warning
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: relation-cache-updater
         alertname: FlinkJobsLag
 
@@ -339,9 +339,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The checkpoint failure count for telemetry-extractor job is more than {{ .Values.telemetry_extractor_checkpointfailure_threshold_critical }}
+        message: The checkpoint failure count for telemetry-extractor job is more than threshold {{ .Values.telemetry_extractor_checkpointfailure_threshold_critical }}
         summary: telemetry-extractor checkpoint failure critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: telemetry-extractor
         alertname: Flink jobs checkpoint commit failure
 
@@ -352,9 +352,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The checkpoint failure count for pipeline-preprocessor job is more than {{ .Values.pipeline_preprocessor_checkpointfailure_threshold_critical }}
+        message: The checkpoint failure count for pipeline-preprocessor job is more than threshold {{ .Values.pipeline_preprocessor_checkpointfailure_threshold_critical }}
         summary: pipeline-preprocessor checkpoint failure critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: pipeline-preprocessor
         alertname: Flink jobs checkpoint commit failure
 
@@ -365,9 +365,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The checkpoint failure count for de-normalization job is more than {{ .Values.de_normalization_checkpointfailure_threshold_critical }}
+        message: The checkpoint failure count for de-normalization job is more than threshold {{ .Values.de_normalization_checkpointfailure_threshold_critical }}
         summary: de-normalization checkpoint failure critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: de-normalization
         alertname: Flink jobs checkpoint commit failure
 
@@ -378,9 +378,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The checkpoint failure count for druid-validator job is more than {{ .Values.druid_validator_checkpointfailure_threshold_critical }}
+        message: The checkpoint failure count for druid-validator job is more than threshold {{ .Values.druid_validator_checkpointfailure_threshold_critical }}
         summary: druid-validator checkpoint failure critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: druid-validator
         alertname: Flink jobs checkpoint commit failure
 
@@ -391,9 +391,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The checkpoint failure count for assessment-aggregator job is more than {{ .Values.assessment_aggregator_checkpointfailure_threshold_critical }}
+        message: The checkpoint failure count for assessment-aggregator job is more than threshold {{ .Values.assessment_aggregator_checkpointfailure_threshold_critical }}
         summary: assessment-aggregator checkpoint failure critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: assessment-aggregator
         alertname: Flink jobs checkpoint commit failure
 
@@ -404,9 +404,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The checkpoint failure count for content-cache-updater job is more than {{ .Values.content_cache_updater_checkpointfailure_threshold_critical }}
+        message: The checkpoint failure count for content-cache-updater job is more than threshold {{ .Values.content_cache_updater_checkpointfailure_threshold_critical }}
         summary: content-cache-updater checkpoint failure critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: content-cache-updater
         alertname: Flink jobs checkpoint commit failure
 
@@ -417,9 +417,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The checkpoint failure count for user-cache-updater job is more than {{ .Values.user_cache_updater_checkpointfailure_threshold_critical }}
+        message: The checkpoint failure count for user-cache-updater job is more than threshold {{ .Values.user_cache_updater_checkpointfailure_threshold_critical }}
         summary: user-cache-updater checkpoint failure critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: user-cache-updater
         alertname: Flink jobs checkpoint commit failure
 
@@ -430,9 +430,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The checkpoint failure count for summary-denormalization job is more than {{ .Values.summary_denormalization_checkpointfailure_threshold_critical }}
+        message: The checkpoint failure count for summary-denormalization job is more than threshold {{ .Values.summary_denormalization_checkpointfailure_threshold_critical }}
         summary: summary-denormalization checkpoint failure critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: summary-denormalization
         alertname: Flink jobs checkpoint commit failure
 
@@ -443,9 +443,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The checkpoint failure count for device-profile-updater job is more than {{ .Values.device_profile_updater_checkpointfailure_threshold_critical }}
+        message: The checkpoint failure count for device-profile-updater job is more than threshold {{ .Values.device_profile_updater_checkpointfailure_threshold_critical }}
         summary: device-profile-updater checkpoint failure critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: device-profile-updater
         alertname: Flink jobs checkpoint commit failure
 
@@ -456,9 +456,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The checkpoint failure count for device-profile-updater job is more than {{ .Values.activity_aggregate_updater_checkpointfailure_threshold_critical }}
+        message: The checkpoint failure count for device-profile-updater job is more than threshold {{ .Values.activity_aggregate_updater_checkpointfailure_threshold_critical }}
         summary: activity-aggregate-updater checkpoint failure critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: activity-aggregate-updater
         alertname: Flink jobs checkpoint commit failure
 
@@ -469,9 +469,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The checkpoint failure count for device-profile-updater job is more than {{ .Values.relation_cache_updater_checkpointfailure_threshold_critical }}
+        message: The checkpoint failure count for device-profile-updater job is more than threshold {{ .Values.relation_cache_updater_checkpointfailure_threshold_critical }}
         summary: relation-cache-updater checkpoint failure critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: relation-cache-updater
         alertname: Flink jobs checkpoint commit failure
 
@@ -482,9 +482,9 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The checkpoint failure count for device-profile-updater job is more than {{ .Values.user_cache_v2_updater_checkpointfailure_threshold_critical }}
+        message: The checkpoint failure count for device-profile-updater job is more than threshold {{ .Values.user_cache_v2_updater_checkpointfailure_threshold_critical }}
         summary: device-profile-updater checkpoint failure critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: device-profile-updater
         alertname: Flink jobs checkpoint commit failure
 
@@ -498,9 +498,9 @@ spec:
         severity: warning
         alerttype: lag
       annotations:
-        message: The failed events percentage for telemetry-extractor job is more than {{ .Values.telemetry_extractor_failed_events_percentage_threshold_warning }} 
+        message: The failed events percentage for telemetry-extractor job is more than threshold {{ .Values.telemetry_extractor_failed_events_percentage_threshold_warning }} 
         summary: telemetry-extractor failed events percentage warning
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: telemetry-extractor
         alertname: Flink jobs failed events percentage
 
@@ -511,8 +511,8 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The failed events percentage for telemetry-extractor job is more than {{ .Values.telemetry_extractor_failed_events_percentage_threshold_critical }} 
+        message: The failed events percentage for telemetry-extractor job is more than threshold {{ .Values.telemetry_extractor_failed_events_percentage_threshold_critical }} 
         summary: telemetry-extractor failed events percentage critical
-        lag: {{`({{$value}})`}}
+        lag: {{`({{ humanize $value }})`}}
         job_id: telemetry-extractor
         alertname: Flink jobs failed events percentage
