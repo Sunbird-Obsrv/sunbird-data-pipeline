@@ -142,6 +142,24 @@ run_etb_metrics_weekly_job:
     minute: 30
     weekday: 1
 
+# These are the dummy times till sept30 for exhaust reports
+#To-Do: Update time after 3.2.7 deployment
+
+run_progress_exhaust:
+  progress-exhaust:
+    hour: 08
+    minute: 00
+
+run_response_exhaust:
+  response-exhaust:
+    hour: 09
+    minute: 00
+
+run_userinfo_exhaust:
+  userinfo-exhaust:
+    hour: 10
+    minute: 00
+
 run_district_monthly_job:
   district-monthly:
     hour: 04
