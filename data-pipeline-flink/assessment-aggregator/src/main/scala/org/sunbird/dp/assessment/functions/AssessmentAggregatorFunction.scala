@@ -9,7 +9,6 @@ import java.util
 import com.datastax.driver.core.querybuilder.QueryBuilder
 import com.datastax.driver.core.{Row, UDTValue, UserType}
 import com.google.gson.Gson
-import com.google.gson.internal.LinkedTreeMap
 import com.google.gson.reflect.TypeToken
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
@@ -25,9 +24,9 @@ import org.sunbird.dp.core.util.CassandraUtil
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
-case class Question(id: String, maxscore: Double, params: util.List[LinkedTreeMap[String, Any]], title: String, `type`: String, desc: String)
+case class Question(id: String, maxscore: Double, params: util.List[util.HashMap[String, Any]], title: String, `type`: String, desc: String)
 
-case class QuestionData(resvalues: util.List[LinkedTreeMap[String, Any]], duration: Double, score: Double, item: Question)
+case class QuestionData(resvalues: util.List[util.HashMap[String, Any]], duration: Double, score: Double, item: Question)
 
 case class AssessEvent(ets: Double, edata: QuestionData)
 
@@ -63,7 +62,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
     super.close()
   }
 
-  def getListValues(values: util.List[LinkedTreeMap[String, Any]]): mutable.Buffer[util.Map[String, Any]] = {
+  def getListValues(values: util.List[util.HashMap[String, Any]]): mutable.Buffer[util.Map[String, Any]] = {
     values.asScala.map { res =>
       res.asScala.map {
         case (key, value) => key -> (if (null != value && !value.isInstanceOf[String]) new Gson().toJson(value) else value)
@@ -88,8 +87,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
         val assessment = getAssessment(event)
         val assessEvents = event.assessEvents.asScala
         val sortAndFilteredEvents = assessEvents.map(event => {
-          AssessEvent(event.get("ets").asInstanceOf[Double], new Gson().fromJson(new Gson().toJson(event.get("edata")),
-            classOf[QuestionData]))
+          AssessEvent(event.get("ets").asInstanceOf[Double].longValue(), new Gson().fromJson(new Gson().toJson(event.get("edata")), classOf[QuestionData]))
         }).sortWith(_.ets > _.ets).groupBy(_.edata.item.id).map(_._2.head)
 
         val result = sortAndFilteredEvents.map(event => {
