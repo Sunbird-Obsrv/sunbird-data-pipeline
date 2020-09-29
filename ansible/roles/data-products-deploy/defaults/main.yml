@@ -89,15 +89,20 @@ run_monitor_job:
     hour: 03
     minute: 00
 
-run_course_metrics_job:
-  course-dashboard-metrics:
+run_progress_exhaust:
+  progress-exhaust:
     hour: 19
     minute: 45
 
-run_assessment_metrics_job:
-  assessment-dashboard-metrics:
+run_response_exhaust:
+  response-exhaust:
     hour: 20
     minute: 15
+
+run_userinfo_exhaust:
+  userinfo-exhaust:
+    hour: 20
+    minute: 45
 
 run_admin_user_reports_job:
   admin-user-reports-3AMIST:

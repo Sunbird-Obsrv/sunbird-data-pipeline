@@ -167,17 +167,25 @@
     - spark-jobs
     - cronjobs
 
-- name: Create course-dashboard-metrics cron job
-  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh course-dashboard-metrics"
-  with_dict: "{{ run_course_metrics_job }}"
+- name: Create progress-exhaust cron job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh progress-exhaust"
+  with_dict: "{{ run_progress_exhaust }}"
   tags:
     - cronjobs
     - default-jobs
     - spark1-jobs
 
-- name: Create assessment-dashboard-metrics cron job
-  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh assessment-dashboard-metrics"
-  with_dict: "{{ run_assessment_metrics_job }}"
+- name: Create response-exhaust cron job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh response-exhaust"
+  with_dict: "{{ run_response_exhaust }}"
+  tags:
+    - cronjobs
+    - default-jobs
+    - spark-jobs
+
+- name: Create userinfo-exhaust cron job
+  cron: name="{{ env }}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} job="{{ analytics.home }}/scripts/run-job.sh userinfo-exhaust"
+  with_dict: "{{ run_userinfo_exhaust }}"
   tags:
     - cronjobs
     - default-jobs
