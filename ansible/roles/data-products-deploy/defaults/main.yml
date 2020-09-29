@@ -89,20 +89,15 @@ run_monitor_job:
     hour: 03
     minute: 00
 
-run_progress_exhaust:
-  progress-exhaust:
+run_course_metrics_job:
+  course-dashboard-metrics:
     hour: 19
     minute: 45
 
-run_response_exhaust:
-  response-exhaust:
+run_assessment_metrics_job:
+  assessment-dashboard-metrics:
     hour: 20
     minute: 15
-
-run_userinfo_exhaust:
-  userinfo-exhaust:
-    hour: 20
-    minute: 45
 
 run_admin_user_reports_job:
   admin-user-reports-3AMIST:
@@ -146,6 +141,24 @@ run_etb_metrics_weekly_job:
     hour: 23
     minute: 30
     weekday: 1
+
+# These are the dummy times till sept30 for exhaust reports
+#To-Do: Update time after 3.2.7 deployment
+
+run_progress_exhaust:
+  progress-exhaust:
+    hour: 08
+    minute: 00
+
+run_response_exhaust:
+  response-exhaust:
+    hour: 09
+    minute: 00
+
+run_userinfo_exhaust:
+  userinfo-exhaust:
+    hour: 10
+    minute: 00
 
 run_district_monthly_job:
   district-monthly:
