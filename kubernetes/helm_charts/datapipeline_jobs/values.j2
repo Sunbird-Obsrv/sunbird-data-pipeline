@@ -59,7 +59,7 @@ base_config: |
     task {
       parallelism = 1
       consumer.parallelism = 1
-      checkpointing.compressed = {{ checkpoint_compression_enabled }}
+      checkpointing.compressed = {{ checkpoint_compression_enabled|lower }}
       checkpointing.interval = {{ checkpoint_interval }}
       checkpointing.pause.between.seconds = {{ checkpoint_pause_between_seconds }}
       restart-strategy.attempts = {{ restart_attempts }}
