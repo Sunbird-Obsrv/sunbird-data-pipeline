@@ -3,7 +3,6 @@ package org.sunbird.dp.spec
 import java.util
 
 import com.google.gson.Gson
-import com.google.gson.internal.LinkedTreeMap
 import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
@@ -19,15 +18,12 @@ import org.mockito.Mockito
 import org.mockito.Mockito._
 import org.sunbird.dp.assessment.domain.Event
 import org.sunbird.dp.assessment.task.{AssessmentAggregatorConfig, AssessmentAggregatorStreamTask}
+import org.sunbird.dp.core.cache.RedisConnect
 import org.sunbird.dp.core.job.FlinkKafkaConnector
-import org.sunbird.dp.core.util.CassandraUtil
+import org.sunbird.dp.core.util.{CassandraUtil, JSONUtil}
 import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
-import org.junit.Assert.{assertEquals, assertNotNull}
-import org.sunbird.dp.core.cache.RedisConnect
 import redis.embedded.RedisServer
-
-import collection.JavaConverters._
 
 class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
 
@@ -86,8 +82,7 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
     when(mockKafkaUtil.kafkaEventSink[Event](assessmentConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
     val task = new AssessmentAggregatorStreamTask(assessmentConfig, mockKafkaUtil)
     task.process()
-    val failedEvent = gson.fromJson(gson.toJson(FailedEventsSink.values.get(0)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
-    assert(failedEvent.get("map").get.asInstanceOf[LinkedTreeMap[String, AnyRef]].containsKey("metadata"))
+    assert(FailedEventsSink.values.get(0).getTelemetry.getMap.containsKey("metadata"))
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.skippedEventCount}").getValue() should be(1)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbReadCount}").getValue() should be(2)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbUpdateCount}").getValue() should be(5)
@@ -126,14 +121,16 @@ class AssessmentAggreagatorEventSource extends SourceFunction[Event] {
   override def run(ctx: SourceContext[Event]) {
     val gson = new Gson()
 
-    val eventMap1 = gson.fromJson(EventFixture.BATCH_ASSESS_EVENT, new util.LinkedHashMap[String, Any]().getClass)
-    val eventMap2 = gson.fromJson(EventFixture.BATCH_ASSESS__OLDER_EVENT, new util.LinkedHashMap[String, Any]().getClass)
-    val eventMap3 = gson.fromJson(EventFixture.BATCH_ASSESS_FAIL_EVENT, new util.LinkedHashMap[String, Any]().getClass)
-    val eventMap4 = gson.fromJson(EventFixture.QUESTION_EVENT_RES_VALUES, new util.LinkedHashMap[String, Any]().getClass)
-    val eventMap5 = gson.fromJson(EventFixture.LATEST_BATCH_ASSESS_EVENT, new util.LinkedHashMap[String, Any]().getClass)
-    val eventMap6 = gson.fromJson(EventFixture.BATCH_DUPLICATE_QUESTION_EVENT, new util.LinkedHashMap[String, Any]().getClass)
-    val eventMap7 = gson.fromJson(EventFixture.INVALID_CONTENT_ID_EVENT, new util.LinkedHashMap[String, Any]().getClass)
-    val eventMap8 = gson.fromJson(EventFixture.BATCH_ASSESS_EVENT_WITHOUT_CACHE, new util.LinkedHashMap[String, Any]().getClass)
+    //val eventMap1 = gson.fromJson(EventFixture.BATCH_ASSESS_EVENT, new util.LinkedHashMap[String, Any]().getClass)
+
+    val eventMap1 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.BATCH_ASSESS_EVENT)
+    val eventMap2 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.BATCH_ASSESS__OLDER_EVENT)
+    val eventMap3 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.BATCH_ASSESS_FAIL_EVENT)
+    val eventMap4 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.QUESTION_EVENT_RES_VALUES)
+    val eventMap5 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.LATEST_BATCH_ASSESS_EVENT)
+    val eventMap6 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.BATCH_DUPLICATE_QUESTION_EVENT)
+    val eventMap7 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.INVALID_CONTENT_ID_EVENT)
+    val eventMap8 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.BATCH_ASSESS_EVENT_WITHOUT_CACHE)
     ctx.collect(new Event(eventMap1))
     ctx.collect(new Event(eventMap2))
     ctx.collect(new Event(eventMap3))
