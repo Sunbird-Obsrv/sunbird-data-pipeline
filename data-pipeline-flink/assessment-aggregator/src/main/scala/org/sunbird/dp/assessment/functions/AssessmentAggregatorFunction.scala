@@ -28,7 +28,7 @@ case class Question(id: String, maxscore: Double, params: util.List[util.HashMap
 
 case class QuestionData(resvalues: util.List[util.HashMap[String, Any]], duration: Double, score: Double, item: Question)
 
-case class AssessEvent(ets: Double, edata: QuestionData)
+case class AssessEvent(ets: Long, edata: QuestionData)
 
 
 case class Aggregate(totalScore: Double, totalMaxScore: Double, grandTotal: String, questionsList: List[UDTValue])
@@ -87,13 +87,15 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
         val assessment = getAssessment(event)
         val assessEvents = event.assessEvents.asScala
         val sortAndFilteredEvents = assessEvents.map(event => {
-          AssessEvent(event.get("ets").asInstanceOf[Double].longValue(), new Gson().fromJson(new Gson().toJson(event.get("edata")), classOf[QuestionData]))
+          val ets = event.get("ets").toString.toDouble.toLong
+          val assessEvents = new Gson().fromJson(new Gson().toJson(event.get("edata")),classOf[QuestionData])
+          AssessEvent(ets, assessEvents)
         }).sortWith(_.ets > _.ets).groupBy(_.edata.item.id).map(_._2.head)
 
         val result = sortAndFilteredEvents.map(event => {
           totalScore = totalScore + event.edata.score
           totalMaxScore = totalMaxScore + event.edata.item.maxscore
-          getQuestion(event.edata, event.ets.longValue())
+          getQuestion(event.edata, event.ets)
         })
 
         val grandTotal = String.format("%s/%s", df.format(totalScore), df.format(totalMaxScore))
@@ -121,6 +123,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
       }
     } catch {
       case ex: Exception =>
+        ex.printStackTrace()
         logger.info("Assessment Failed with exception :", ex)
         event.markFailed(ex.getMessage)
         context.output(config.failedEventsOutputTag, event)
