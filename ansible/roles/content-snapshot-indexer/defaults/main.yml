@@ -46,8 +46,8 @@ cloud_storage:
   container: "telemetry-data-store" # Container is different in all env so override this.
   object_key: "druid-content-snapshot/snapshot.txt"
   provider: "azure"
-  account_name: "{{dp_azure_account_name}}"
-  account_key: "{{dp_vault_azure_account_key}}"
+  account_name: "{{sunbird_private_storage_account_name}}"
+  account_key: "{{sunbird_private_storage_account_key}}"
 
 cassandra:
   host: "{{groups['lp-cassandra'][0]}}" ## LMS-Cassandra IP Address.
