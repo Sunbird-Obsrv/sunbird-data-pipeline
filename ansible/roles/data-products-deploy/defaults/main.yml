@@ -147,18 +147,18 @@ run_etb_metrics_weekly_job:
 
 run_progress_exhaust:
   progress-exhaust:
-    hour: 08
-    minute: 00
+    hour: 23
+    minute: 15
 
 run_response_exhaust:
   response-exhaust:
-    hour: 09
-    minute: 00
+    hour: 23
+    minute: 45
 
 run_userinfo_exhaust:
   userinfo-exhaust:
-    hour: 10
-    minute: 00
+    hour: 00
+    minute: 15
 
 run_district_monthly_job:
   district-monthly:
