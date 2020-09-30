@@ -8,8 +8,8 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
   private val jobName = "AssessmentAggregator"
 
   def assessmentEts: Long = {
-    val ets = telemetry.read[Double]("assessmentTs").get
-    ets.asInstanceOf[Double].longValue
+    val ets = telemetry.read[Long]("assessmentTs").get
+    ets.longValue()
 
   }
 

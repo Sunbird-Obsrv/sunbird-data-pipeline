@@ -28,7 +28,7 @@ case class Question(id: String, maxscore: Double, params: util.List[util.HashMap
 
 case class QuestionData(resvalues: util.List[util.HashMap[String, Any]], duration: Double, score: Double, item: Question)
 
-case class AssessEvent(ets: Double, edata: QuestionData)
+case class AssessEvent(ets: Long, edata: QuestionData)
 
 
 case class Aggregate(totalScore: Double, totalMaxScore: Double, grandTotal: String, questionsList: List[UDTValue])
@@ -87,7 +87,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
         val assessment = getAssessment(event)
         val assessEvents = event.assessEvents.asScala
         val sortAndFilteredEvents = assessEvents.map(event => {
-          AssessEvent(event.get("ets").asInstanceOf[Double].longValue(), new Gson().fromJson(new Gson().toJson(event.get("edata")), classOf[QuestionData]))
+          AssessEvent(event.get("ets").asInstanceOf[Long], new Gson().fromJson(new Gson().toJson(event.get("edata")), classOf[QuestionData]))
         }).sortWith(_.ets > _.ets).groupBy(_.edata.item.id).map(_._2.head)
 
         val result = sortAndFilteredEvents.map(event => {
