@@ -9,6 +9,11 @@ spark.cassandra.connection.host="{{groups['dp-cassandra'][0]}}"
 cassandra.keyspace_prefix="{{ cassandra_keyspace_prefix }}"
 cassandra.hierarchy_store_prefix="{{ cassandra_hierarchy_store_prefix }}"
 
+storage.key.config="azure_storage_key"
+storage.secret.config="azure_storage_secret"
+reports.storage.key.config="reports_azure_storage_key"
+reports.storage.secret.config="reports_azure_storage_secret"
+
 # Content to vec configurations
 
 pc_files_cache="s3"
