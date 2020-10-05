@@ -262,7 +262,7 @@ spec:
         alertname: FlinkJobsLag
 
     - alert: user-cache-updater-v2 lag warning
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "user-cache-updater-v2-taskmanager-prometheus" }) > {{ .Values.user_cache_updater_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "user-cache-updater-v2-taskmanager-prometheus" }) < {{ .Values.user_cache_updater_threshold_critcal }}
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "user-cache-updater-v2-taskmanager-prometheus" }) > {{ .Values.user_cache_updater_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "user-cache-updater-v2-taskmanager-prometheus" }) < {{ .Values.user_cache_updater_threshold_critical }}
       for: 5m
       labels:
         severity: warning
