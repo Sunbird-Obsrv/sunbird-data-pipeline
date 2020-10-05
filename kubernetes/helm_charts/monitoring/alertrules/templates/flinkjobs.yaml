@@ -145,7 +145,7 @@ spec:
 ### Dp Flink jobs lag alertrules warning
 
     - alert: telemetry-extractor lag warning
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "telemetry-extractor-taskmanager-prometheus" }) >  {{ .Values.telemetry_extractor_threshold_warning }}
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "telemetry-extractor-taskmanager-prometheus" }) >  {{ .Values.telemetry_extractor_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "telemetry-extractor-taskmanager-prometheus" }) <  {{ .Values.telemetry_extractor_threshold_critical }}
       for: 5m
       labels:
         severity: warning
@@ -158,7 +158,7 @@ spec:
         alertname: FlinkJobsLag
 
     - alert: pipeline-preprocessor lag warning
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "pipeline-preprocessor-taskmanager-prometheus" }) > {{ .Values.pipeline_preprocessor_threshold_warning }}
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "pipeline-preprocessor-taskmanager-prometheus" }) > {{ .Values.pipeline_preprocessor_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "pipeline-preprocessor-taskmanager-prometheus" }) < {{ .Values.pipeline_preprocessor_threshold_critical }}
       for: 5m
       labels:
         severity: warning
@@ -171,7 +171,7 @@ spec:
         alertname: FlinkJobsLag
    
     - alert:  de-normalization lag warning
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "de-normalization-taskmanager-prometheus" }) > {{ .Values.de_normalization_threshold_warning }}
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "de-normalization-taskmanager-prometheus" }) > {{ .Values.de_normalization_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "de-normalization-taskmanager-prometheus" }) < {{ .Values.de_normalization_threshold_critical }}
       for: 5m
       labels:
         severity: warning
@@ -184,7 +184,7 @@ spec:
         alertname: FlinkJobsLag
 
     - alert:  druid-validator lag warning
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "druid-validator-taskmanager-prometheus" }) > {{ .Values.druid_validator_threshold_warning }}
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "druid-validator-taskmanager-prometheus" }) > {{ .Values.druid_validator_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "druid-validator-taskmanager-prometheus" }) > {{ .Values.druid_validator_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "druid-validator-taskmanager-prometheus" }) < {{ .Values.druid_validator_threshold_critical }}
       for: 5m
       labels:
         severity: warning
@@ -197,7 +197,7 @@ spec:
         alertname: FlinkJobsLag
 
     - alert: assessment-aggregator lag warning
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "assessment-aggregator-taskmanager-prometheus" }) > {{ .Values.assessment_aggregator_threshold_warning }}
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "assessment-aggregator-taskmanager-prometheus" }) > {{ .Values.assessment_aggregator_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "assessment-aggregator-taskmanager-prometheus" }) < {{ .Values.assessment_aggregator_threshold_critical }}
       for: 5m
       labels:
         severity: warning
@@ -210,7 +210,7 @@ spec:
         alertname: FlinkJobsLag
 
     - alert: content-cache-updater lag warning
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "content-cache-updater-taskmanager-prometheus" }) > {{ .Values.content_cache_updater_threshold_warning }}
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "content-cache-updater-taskmanager-prometheus" }) > {{ .Values.content_cache_updater_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "content-cache-updater-taskmanager-prometheus" }) < {{ .Values.content_cache_updater_threshold_critical }}
       for: 5m
       labels:
         severity: warning
@@ -223,7 +223,7 @@ spec:
         alertname: FlinkJobsLag
 
     - alert: user-cache-updater lag warning
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "user-cache-updater-taskmanager-prometheus" }) > {{ .Values.user_cache_updater_threshold_warning }}
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "user-cache-updater-taskmanager-prometheus" }) > {{ .Values.user_cache_updater_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "user-cache-updater-taskmanager-prometheus" }) < {{ .Values.user_cache_updater_threshold_critical }}
       for: 5m
       labels:
         severity: warning
@@ -236,7 +236,7 @@ spec:
         alertname: FlinkJobsLag
 
     - alert: summary-denormalization lag warning
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "summary-denormalization-taskmanager-prometheus" }) > {{ .Values.summary_denormalization_threshold_warning }}
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "summary-denormalization-taskmanager-prometheus" }) > {{ .Values.summary_denormalization_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "summary-denormalization-taskmanager-prometheus" }) < {{ .Values.summary_denormalization_threshold_critical }}
       for: 5m
       labels:
         severity: warning
@@ -249,7 +249,7 @@ spec:
         alertname: FlinkJobsLag
 
     - alert: device-profile-updater lag warning
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "device-profile-updater-taskmanager-prometheus" }) > {{ .Values.device_profile_updater_threshold_warning }}
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "device-profile-updater-taskmanager-prometheus" }) > {{ .Values.device_profile_updater_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "device-profile-updater-taskmanager-prometheus" }) < {{ .Values.device_profile_updater_threshold_critical }}
       for: 5m
       labels:
         severity: warning
@@ -262,7 +262,7 @@ spec:
         alertname: FlinkJobsLag
 
     - alert: user-cache-updater-v2 lag warning
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "user-cache-updater-v2-taskmanager-prometheus" }) > {{ .Values.user_cache_updater_threshold_warning }}
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "user-cache-updater-v2-taskmanager-prometheus" }) > {{ .Values.user_cache_updater_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "user-cache-updater-v2-taskmanager-prometheus" }) < {{ .Values.user_cache_updater_threshold_critcal }}
       for: 5m
       labels:
         severity: warning
@@ -305,7 +305,7 @@ spec:
 ## KP FLink jobs warning lag alertrules
 
     - alert: activity-aggregate-updater lag warning
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "activity-aggregate-updater-taskmanager-prometheus" }) > {{ .Values.activity_aggregater_updater_threshold_warning }}
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "activity-aggregate-updater-taskmanager-prometheus" }) > {{ .Values.activity_aggregater_updater_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "activity-aggregate-updater-taskmanager-prometheus" }) < {{ .Values.activity_aggregater_updater_threshold_critical }}
       for: 5m
       labels:
         severity: warning
@@ -318,7 +318,7 @@ spec:
         alertname: FlinkJobsLag
 
     - alert: relation-cache-updater lag warning
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "relation-cache-updater-taskmanager-prometheus" }) > {{ .Values.relation_cache_updater_threshold_warning }}
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "relation-cache-updater-taskmanager-prometheus" }) > {{ .Values.relation_cache_updater_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "relation-cache-updater-taskmanager-prometheus" }) < {{ .Values.relation_cache_updater_threshold_critical }}
       for: 5m
       labels:
         severity: warning
