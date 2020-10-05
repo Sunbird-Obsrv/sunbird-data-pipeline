@@ -22,7 +22,9 @@ get_report_job_model_name(){
 		;;
 		"course-consumption-report") echo 'org.sunbird.analytics.job.report.CourseConsumptionJob'
 		;;
-		"funnel-report") echo 'org.sunbird.analytics.job.report.FunnelReport'
+		"funnel-report") echo 'org.sunbird.analytics.sourcing.FunnelReport'
+		;;
+		"sourcing-metrics") echo 'org.sunbird.analytics.sourcing.SourcingMetrics'
 		;;
 		"admin-geo-reports") echo 'org.sunbird.analytics.job.report.StateAdminGeoReportJob'
 		;;
