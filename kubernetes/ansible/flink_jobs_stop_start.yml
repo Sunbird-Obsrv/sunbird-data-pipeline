@@ -21,7 +21,7 @@
         - scaledown_jobmanager
   
     - name: scale up the jobmanager
-      shell: kubectl get job {{ item }}-jobmanager -o json -n {{ flink_namespace }} | jq 'del(.spec.selector)' | jq 'del(.spec.template.metadata.labels.controller-uid)' |jq '.spec.parallelism = 1' | kubectl replace --force -f -
+      shell: kubectl get job {{ item }}-jobmanager -o json -n {{ flink_namespace }} | jq 'del(.spec.selector)' | jq 'del(.spec.template.metadata.labels."controller-uid")' |jq '.spec.parallelism = 1' | kubectl replace --force -f -
       with_items:
         - "{{ job_names.split(',')|list }}"
       tags:
