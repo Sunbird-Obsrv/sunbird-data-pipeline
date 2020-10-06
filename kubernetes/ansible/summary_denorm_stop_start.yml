@@ -1,0 +1,17 @@
+---
+- hosts: local
+  gather_facts: no
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
+    - roles/flink-jobs-deploy/defaults/main.yml
+  environment:
+    KUBECONFIG: "{{ kubeconfig_path }}"
+  pre_tasks:
+    - name: Scale deployment down
+      community.kubernetes.k8s_scale:
+        api_version: v1
+        kind: Deployment
+        name: summary-denormalization-taskmanager
+        namespace: "{{ flink_namespace }}"
+        replicas: 0
+        wait_timeout: 60
