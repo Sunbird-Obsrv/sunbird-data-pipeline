@@ -8,6 +8,8 @@ import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 import org.sunbird.dp.denorm.`type`._
 import org.sunbird.dp.denorm.domain.Event
 import org.sunbird.dp.denorm.task.DenormalizationConfig
+import org.sunbird.dp.denorm.util.DenormCache
+import org.sunbird.dp.core.cache.RedisConnect
 
 class DenormalizationFunction(config: DenormalizationConfig)(implicit val mapTypeInfo: TypeInformation[Event])
   extends BaseProcessFunction[Event, Event](config) {
@@ -19,6 +21,7 @@ class DenormalizationFunction(config: DenormalizationConfig)(implicit val mapTyp
   private[this] var dialcodeDenormalization: DialcodeDenormalization = _
   private[this] var contentDenormalization: ContentDenormalization = _
   private[this] var locationDenormalization: LocationDenormalization = _
+  private[this] var denormCache: DenormCache = _
 
 
   override def metricsList(): List[String] = {
@@ -31,6 +34,8 @@ class DenormalizationFunction(config: DenormalizationConfig)(implicit val mapTyp
 
   override def open(parameters: Configuration): Unit = {
     super.open(parameters)
+    denormCache = new DenormCache(config, new RedisConnect(config.metaRedisHost, config.metaRedisPort, config))
+    denormCache.init()
     deviceDenormalization = new DeviceDenormalization(config)
     userDenormalization = new UserDenormalization(config)
     dialcodeDenormalization = new DialcodeDenormalization(config)
@@ -40,6 +45,7 @@ class DenormalizationFunction(config: DenormalizationConfig)(implicit val mapTyp
 
   override def close(): Unit = {
     super.close()
+    denormCache.close();
     deviceDenormalization.closeDataCache()
     userDenormalization.closeDataCache()
     dialcodeDenormalization.closeDataCache()
@@ -53,11 +59,12 @@ class DenormalizationFunction(config: DenormalizationConfig)(implicit val mapTyp
       metrics.incCounter(config.eventsExpired)
     } else {
       if ("ME_WORKFLOW_SUMMARY" == event.eid() || !event.eid().contains("SUMMARY")) {
-        deviceDenormalization.denormalize(event, metrics)
-        userDenormalization.denormalize(event, metrics)
-        dialcodeDenormalization.denormalize(event, metrics)
-        contentDenormalization.denormalize(event, metrics)
-        locationDenormalization.denormalize(event, metrics)
+        val cacheData = denormCache.getDenormData(event);
+        deviceDenormalization.denormalize(event, cacheData, metrics)
+        userDenormalization.denormalize(event, cacheData, metrics)
+        dialcodeDenormalization.denormalize(event, cacheData, metrics)
+        contentDenormalization.denormalize(event, cacheData, metrics)
+        locationDenormalization.denormalize(event, cacheData, metrics)
         context.output(config.denormEventsTag, event)
       }
     }
