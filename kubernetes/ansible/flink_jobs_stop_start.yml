@@ -33,3 +33,11 @@
         - "{{ job_names.split(',')|list }}"
       tags:
         - scaleup_taskmanager
+
+    - name: rollout the taskmanager
+      shell: kubectl rollout restart deployment {{ item }}-taskmanager -n {{ flink_namespace }}
+      with_items:
+        - "{{ job_names.split(',')|list }}"
+      tags:
+        - scaleup_taskmanager
+
