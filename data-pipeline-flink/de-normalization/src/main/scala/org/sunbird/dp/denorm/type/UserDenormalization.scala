@@ -6,6 +6,7 @@ import org.sunbird.dp.core.job.Metrics
 import org.sunbird.dp.denorm.domain.Event
 import org.sunbird.dp.denorm.task.DenormalizationConfig
 import scala.collection.mutable
+import org.sunbird.dp.denorm.util.CacheData
 
 class UserDenormalization(config: DenormalizationConfig) {
 
@@ -14,7 +15,7 @@ class UserDenormalization(config: DenormalizationConfig) {
       config.userStore, config.userFields)
   userDataCache.init()
 
-  def denormalize(event: Event, metrics: Metrics) = {
+  def denormalize(event: Event, cacheData: CacheData, metrics: Metrics) = {
     val actorId = event.actorId()
     val actorType = event.actorType()
     if (null != actorId && actorId.nonEmpty && !"anonymous".equalsIgnoreCase(actorId) &&
@@ -22,7 +23,7 @@ class UserDenormalization(config: DenormalizationConfig) {
 
       metrics.incCounter(config.userTotal)
       val userData: mutable.Map[String, AnyRef] = if (config.userDenormVersion.equalsIgnoreCase("v2")) {
-        userDataCache.hgetAllWithRetry(config.userStoreKeyPrefix + actorId).map(f => {(f._1.toLowerCase().replace("_", ""), f._2)})
+        cacheData.user.map(f => {(f._1.toLowerCase().replace("_", ""), f._2)})
       } else {
         userDataCache.getWithRetry(actorId).map(f => {(f._1.toLowerCase().replace("_", ""), f._2)}) // .asInstanceOf[Map[String, String]]
       }
