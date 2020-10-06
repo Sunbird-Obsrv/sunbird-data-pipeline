@@ -194,3 +194,10 @@ location_search_token: "Bearer {{ dp_search_service_authorization_token }}"
 druid_report_url_endpoint : "{{ proto}}://{{domain_name}}/api/data/v1/report/jobs"
 druid_report_url : "{{ proto}}://{{domain_name}}/api/data/v1/"
 druid_report_token : "Bearer {{ sunbird_api_auth_token }}"
+
+
+### flink jobs class name vars
+flink_job_names:
+  summary-denormalization:
+    job_class_name: 'org.sunbird.dp.denorm.task.SummaryDenormalizationStreamTask'
+    replica: 1
