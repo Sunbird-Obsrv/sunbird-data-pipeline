@@ -29,6 +29,7 @@ taskmanager:
   replicas: {{taskmanager_replicacount|default(1)}}
 
 job_classname: {{ job_classname }}
+cpu_requests: {{ cpu_requests }}
 {{ taskmanager_liveness | to_nice_yaml }}
 
 
