@@ -201,3 +201,6 @@ flink_job_names:
   summary-denormalization:
     job_class_name: 'org.sunbird.dp.denorm.task.SummaryDenormalizationStreamTask'
     replica: 1
+  druid-validator:
+    job_class_name: 'org.sunbird.dp.validator.task.DruidValidatorStreamTask'
+    replica: 1
