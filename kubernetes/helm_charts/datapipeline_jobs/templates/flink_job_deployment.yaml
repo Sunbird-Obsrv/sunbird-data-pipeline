@@ -156,7 +156,7 @@ spec:
         imagePullPolicy: Always
         resources:
           requests:
-            cpu: "{{ .Values.cpu_requests }}"
+            cpu: "{{ .Values.taskmanager.cpu_requests }}"
         workingDir: {{ .Values.taskmanager.flink_work_dir }}
         command: ["/opt/flink/bin/taskmanager.sh"]
         args: ["start-foreground",

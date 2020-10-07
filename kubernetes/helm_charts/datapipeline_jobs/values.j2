@@ -27,9 +27,9 @@ taskmanager:
   rpc_port: {{ taskmanager_rpc_port }}
   heap_memory: {{ taskmanager_heap_memory }}
   replicas: {{taskmanager_replicacount|default(1)}}
+  cpu_requests: {{ cpu_requests }}
 
 job_classname: {{ job_classname }}
-cpu_requests: {{ cpu_requests }}
 {{ taskmanager_liveness | to_nice_yaml }}
 
 
