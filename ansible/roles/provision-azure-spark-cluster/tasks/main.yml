@@ -28,6 +28,18 @@
   become: yes
   get_url: url={{ log4j_core_url }} dest={{ spark_folder }}/jars/log4j-core-{{log4j_version}}.jar timeout=1000 force=no
 
+- name: Download spark-redis and copy to Spark jars folder
+  become: yes
+  get_url: url={{ spark_redis_url }} dest={{ spark_folder }}/jars/spark-redis_2.11-{{spark_redis_version}}.jar timeout=1000 force=no
+
+- name: Download jedis and copy to Spark jars folder
+  become: yes
+  get_url: url={{ jedis_url }} dest={{ spark_folder }}/jars/jedis-{{jedis_version}}.jar timeout=1000 force=no
+
+- name: Download zip4j and copy to Spark jars folder
+  become: yes
+  get_url: url={{ zip4j_url }} dest={{ spark_folder }}/jars/zip4j-{{zip4j_version}}.jar timeout=1000 force=no
+
 - name: Update log4j.properties
   become: yes
   blockinfile:
