@@ -70,6 +70,7 @@ spec:
     app: flink
     component: {{ .Release.Name }}-taskmanager
 
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
