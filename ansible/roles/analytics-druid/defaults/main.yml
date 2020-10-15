@@ -1,7 +1,7 @@
 ---
 # Druid Template variables
 druid_monitoring: true
-zookeeper_group: "{{ groups['druid-zookeeper'] }}"
+zookeeper_group: "groups['raw-zookeeper']"
 
 druid_user: druid
 druid_directory: "/data"
@@ -14,7 +14,7 @@ druid_checksum: "807581d54fa4c5a90eec2a230e2a7fc4c6daf18eb8136009bf36a775d793d6f
 
 #Common Varibles
 
-druid_zookeeper_host: "{{ groups['druid-zookeeper']|join(':2181,')}}:2181"
+druid_zookeeper_host: "{{ groups['raw-zookeeper']|join(':2181,')}}:2181"
 #druid_postgres_host: "{{ groups['druid-postgres'][0] }}"
 druid_postgres_host: "{{ postgres.db_url }}"
 druid_postgres_port: "{{ postgres.db_port }}"
