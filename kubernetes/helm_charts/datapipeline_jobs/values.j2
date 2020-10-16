@@ -98,7 +98,7 @@ ingest-router: |
     producer.broker-servers = "{{ kafka_brokers }}"
     consumer.broker-servers = "{{ ingestion_kafka_brokers }}"
     input.topic = {{ env_name }}.telemetry.ingestion
-    output.success.topic = {{ env_name }}.ingest
+    output.success.topic = {{ env_name }}.telemetry.ingest
     groupId = {{ env_name }}-ingest-router-group
   }
   task {
@@ -390,7 +390,7 @@ user-cache-updater-v2: |
 assessment-aggregator: |+
   include file("/data/flink/conf/base-config.conf")
   kafka {
-  producer.broker-servers = "{{ ingestion_kafka_brokers }}"
+    producer.broker-servers = "{{ ingestion_kafka_brokers }}"
     consumer.broker-servers = "{{ ingestion_kafka_brokers }}"
     zookeeper = "{{ ingestion_zookeepers }}"
     input.topic = {{ env_name }}.telemetry.assess
