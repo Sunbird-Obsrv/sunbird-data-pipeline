@@ -21,7 +21,7 @@
 
 	<modules>
 		<module>dp-core</module>
-		<module>telemetry-processor</module>
+		<module>ingest-router</module>
 		<module>telemetry-extractor</module>
 		<module>pipeline-preprocessor</module>
 		<module>de-normalization</module>

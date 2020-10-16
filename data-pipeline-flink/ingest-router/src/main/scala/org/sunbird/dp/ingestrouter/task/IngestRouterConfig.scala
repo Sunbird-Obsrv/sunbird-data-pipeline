@@ -1,4 +1,4 @@
-package org.sunbird.dp.processor.task
+package org.sunbird.dp.ingestrouter.task
 
 import java.util
 
@@ -8,7 +8,7 @@ import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.sunbird.dp.core.job.BaseJobConfig
 
-class TelemetryProcessorConfig(override val config: Config) extends BaseJobConfig(config, "TelemetryProcessorJob") {
+class IngestRouterConfig(override val config: Config) extends BaseJobConfig(config, "IngestRouterJob") {
 
   private val serialVersionUID = 2905979434303791379L
 
@@ -30,12 +30,10 @@ class TelemetryProcessorConfig(override val config: Config) extends BaseJobConfi
   val eventsOutputTag: OutputTag[Array[Byte]] = OutputTag[Array[Byte]](EVENTS_OUTPUT_TAG)
 
   // Consumers
-  val telemetryProcessorConsumer = "telemetry-processor-consumer"
+  val telemetryProcessorConsumer = "ingest-router-consumer"
 
   // Producers
-  val telemetryProcessorProducer = "telemetry-processor-sink"
+  val telemetryProcessorProducer = "ingest-router-sink"
 
-  // Functions
-  val processorFunction = "ProcessorFucntion"
 
 }

@@ -11,12 +11,12 @@
     </parent>
 
     <groupId>org.sunbird.dp.jobs</groupId>
-    <artifactId>telemetry-processor</artifactId>
+    <artifactId>ingest-router</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
-    <name>TelemetryProcessor</name>
+    <name>IngestRouter</name>
     <description>
-        Processor to read from ingestion to processing
+        Ingest router
     </description>
     
     <properties>
@@ -125,7 +125,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.sunbird.dp.processor.task.TelemetryProcessorStreamTask</mainClass>
+                                    <mainClass>org.sunbird.dp.ingestrouter.task.IngestRouterStreamTask</mainClass>
                                 </transformer>
                                 <!-- append default configs -->
                                 <transformer

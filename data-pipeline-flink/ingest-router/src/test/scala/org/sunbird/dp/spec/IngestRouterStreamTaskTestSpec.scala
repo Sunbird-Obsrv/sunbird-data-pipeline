@@ -20,12 +20,12 @@ import com.typesafe.config.ConfigFactory
 import org.sunbird.dp.core.cache.RedisConnect
 import org.sunbird.dp.core.domain.Events
 import org.sunbird.dp.core.job.FlinkKafkaConnector
-import org.sunbird.dp.processor.task.{TelemetryProcessorConfig, TelemetryProcessorStreamTask}
+import org.sunbird.dp.ingestrouter.task.{IngestRouterConfig, IngestRouterStreamTask}
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 
 import collection.JavaConverters._
 
-class ProcessorStreamTaskTestSpec extends BaseTestSpec {
+class IngestRouterStreamTaskTestSpec extends BaseTestSpec {
 
   implicit val bytesTypeInfo: TypeInformation[Array[Byte]] = TypeExtractor.getForClass(classOf[Array[Byte]])
 
@@ -36,15 +36,15 @@ class ProcessorStreamTaskTestSpec extends BaseTestSpec {
     .build)
 
   val config: Config = ConfigFactory.load("test.conf")
-  val processorConfig: TelemetryProcessorConfig = new TelemetryProcessorConfig(config)
+  val ingestRouterConfig: IngestRouterConfig = new IngestRouterConfig(config)
   val mockKafkaUtil: FlinkKafkaConnector = mock[FlinkKafkaConnector](Mockito.withSettings().serializable())
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
     BaseMetricsReporter.gaugeMetrics.clear()
 
-    when(mockKafkaUtil.kafkaBytesSource(processorConfig.kafkaInputTopic)).thenReturn(new ProcessorEventSource)
-    when(mockKafkaUtil.kafkaBytesSink(processorConfig.kafkaSuccessTopic)).thenReturn(new SuccessEventsSink)
+    when(mockKafkaUtil.kafkaBytesSource(ingestRouterConfig.kafkaInputTopic)).thenReturn(new IngestRouterEventSource)
+    when(mockKafkaUtil.kafkaBytesSink(ingestRouterConfig.kafkaSuccessTopic)).thenReturn(new SuccessEventsSink)
 
     flinkCluster.before()
   }
@@ -54,21 +54,21 @@ class ProcessorStreamTaskTestSpec extends BaseTestSpec {
     flinkCluster.after()
   }
 
-  "Processor job pipeline" should "just pass through events" in {
+  "Ingest router job pipeline" should "just pass through events" in {
 
-    val task = new TelemetryProcessorStreamTask(processorConfig, mockKafkaUtil)
+    val task = new IngestRouterStreamTask(ingestRouterConfig, mockKafkaUtil)
     task.process()
 
       SuccessEventsSink.values.size() should be (3)
 
     val firstEvent = SuccessEventsSink.values.get(0)
-    println(new String(firstEvent, StandardCharsets.UTF_8))
+//    println(new String(firstEvent, StandardCharsets.UTF_8))
 
   }
 
 }
 
-class ProcessorEventSource extends SourceFunction[Array[Byte]] {
+class IngestRouterEventSource extends SourceFunction[Array[Byte]] {
 
   override def run(ctx: SourceContext[Array[Byte]]) {
     val gson = new Gson()

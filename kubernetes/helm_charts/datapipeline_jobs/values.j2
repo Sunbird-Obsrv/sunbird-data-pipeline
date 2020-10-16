@@ -92,18 +92,18 @@ base_config: |
       port = "9042"
     }
 
-telemetry-processor: | 
+ingest-router: | 
   include file("/data/flink/conf/base-config.conf")
   kafka {
     producer.broker-servers = "{{ kafka_brokers }}"
     consumer.broker-servers = "{{ ingestion_kafka_brokers }}"
     input.topic = {{ env_name }}.telemetry.ingestion
     output.success.topic = {{ env_name }}.ingest
-    groupId = {{ env_name }}-telemetry-processor-group
+    groupId = {{ env_name }}-ingest-router-group
   }
   task {
-    consumer.parallelism = {{ processor_consumer_parallelism }}
-    downstream.operators.parallelism = {{ processor_operators_parallelism }}
+    consumer.parallelism = {{ ingest_router_consumer_parallelism }}
+    downstream.operators.parallelism = {{ ingest_router_operators_parallelism }}
   }
 
 telemetry-extractor: | 

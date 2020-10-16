@@ -1,4 +1,4 @@
-package org.sunbird.dp.processor.task
+package org.sunbird.dp.ingestrouter.task
 
 import java.io.File
 import java.util
@@ -11,7 +11,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.FlinkUtil
 
-class TelemetryProcessorStreamTask(config: TelemetryProcessorConfig, kafkaConnector: FlinkKafkaConnector) {
+class IngestRouterStreamTask(config: IngestRouterConfig, kafkaConnector: FlinkKafkaConnector) {
 
   private val serialVersionUID = -7729362727131516112L
 
@@ -31,16 +31,16 @@ class TelemetryProcessorStreamTask(config: TelemetryProcessorConfig, kafkaConnec
 }
 
 // $COVERAGE-OFF$ Disabling scoverage as the below code can only be invoked within flink cluster
-object TelemetryProcessorStreamTask {
+object IngestRouterStreamTask {
 
   def main(args: Array[String]): Unit = {
     val configFilePath = Option(ParameterTool.fromArgs(args).get("config.file.path"))
     val config = configFilePath.map {
       path => ConfigFactory.parseFile(new File(path)).resolve()
-    }.getOrElse(ConfigFactory.load("telemetry-processor.conf").withFallback(ConfigFactory.systemEnvironment()))
-    val telemetryProcessorConfig = new TelemetryProcessorConfig(config)
+    }.getOrElse(ConfigFactory.load("ingest-router.conf").withFallback(ConfigFactory.systemEnvironment()))
+    val telemetryProcessorConfig = new IngestRouterConfig(config)
     val kafkaUtil = new FlinkKafkaConnector(telemetryProcessorConfig)
-    val task = new TelemetryProcessorStreamTask(telemetryProcessorConfig, kafkaUtil)
+    val task = new IngestRouterStreamTask(telemetryProcessorConfig, kafkaUtil)
     task.process()
   }
 }
