@@ -35,6 +35,8 @@ job_classname: {{ job_classname }}
 base_config: |
   kafka {
       broker-servers = "{{ kafka_brokers }}"
+      producer.broker-servers = "{{ kafka_brokers }}"
+      consumer.broker-servers = "{{ kafka_brokers }}"
       zookeeper = "{{ zookeepers }}"
       producer {
         max-request-size = {{ producer_max_request_size }}
@@ -89,6 +91,20 @@ base_config: |
       host = "{{ core_cassandra_host }}"
       port = "9042"
     }
+
+telemetry-processor: | 
+  include file("/data/flink/conf/base-config.conf")
+  kafka {
+    producer.broker-servers = "{{ kafka_brokers }}"
+    consumer.broker-servers = "{{ ingestion_kafka_brokers }}"
+    input.topic = {{ env_name }}.telemetry.ingestion
+    output.success.topic = {{ env_name }}.ingest
+    groupId = {{ env_name }}-telemetry-processor-group
+  }
+  task {
+    consumer.parallelism = {{ processor_consumer_parallelism }}
+    downstream.operators.parallelism = {{ processor_operators_parallelism }}
+  }
 
 telemetry-extractor: | 
   include file("/data/flink/conf/base-config.conf")
@@ -258,7 +274,8 @@ druid-validator: |
 device-profile-updater: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
-    broker-servers = "{{ ingestion_kafka_brokers }}"
+    producer.broker-servers = "{{ ingestion_kafka_brokers }}"
+    consumer.broker-servers = "{{ ingestion_kafka_brokers }}"
     zookeeper = "{{ ingestion_zookeepers }}"
     input.topic = {{ env_name }}.events.deviceprofile
     groupId = {{ env_name }}-device-profile-updater-group
@@ -284,7 +301,8 @@ device-profile-updater: |
 content-cache-updater: |
   include file("/data/flink/conf/base-config.conf")
   kafka {
-    broker-servers = "{{ ingestion_kafka_brokers }}"
+    producer.broker-servers = "{{ ingestion_kafka_brokers }}"
+    consumer.broker-servers = "{{ ingestion_kafka_brokers }}"
     zookeeper = "{{ ingestion_zookeepers }}"
     input.topic = {{ env_name }}.learning.graph.events
     groupId = {{ env_name }}-content-cache-updater-group
@@ -372,7 +390,8 @@ user-cache-updater-v2: |
 assessment-aggregator: |+
   include file("/data/flink/conf/base-config.conf")
   kafka {
-    broker-servers = "{{ ingestion_kafka_brokers }}"
+  producer.broker-servers = "{{ ingestion_kafka_brokers }}"
+    consumer.broker-servers = "{{ ingestion_kafka_brokers }}"
     zookeeper = "{{ ingestion_zookeepers }}"
     input.topic = {{ env_name }}.telemetry.assess
     failed.topic= {{ env_name }}.telemetry.assess.failed
