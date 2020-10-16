@@ -12,8 +12,7 @@ class TelemetryProcessorConfig(override val config: Config) extends BaseJobConfi
 
   private val serialVersionUID = 2905979434303791379L
 
-  implicit val mapTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
-  implicit val stringTypeInfo: TypeInformation[String] = TypeExtractor.getForClass(classOf[String])
+  implicit val bytesTypeInfo: TypeInformation[Array[Byte]] = TypeExtractor.getForClass(classOf[Array[Byte]])
 
   // Kafka Topics Configuration
   val kafkaInputTopic: String = config.getString("kafka.input.topic")
@@ -28,7 +27,7 @@ class TelemetryProcessorConfig(override val config: Config) extends BaseJobConfi
   // Metric List
   val successEventCount = "success-event-count"
 
-  val eventsOutputTag: OutputTag[String] = OutputTag[String](EVENTS_OUTPUT_TAG)
+  val eventsOutputTag: OutputTag[Array[Byte]] = OutputTag[Array[Byte]](EVENTS_OUTPUT_TAG)
 
   // Consumers
   val telemetryProcessorConsumer = "telemetry-processor-consumer"

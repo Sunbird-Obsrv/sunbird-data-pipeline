@@ -10,7 +10,6 @@ import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.FlinkUtil
-import org.sunbird.dp.processor.functions.ProcessorFunction
 
 class TelemetryProcessorStreamTask(config: TelemetryProcessorConfig, kafkaConnector: FlinkKafkaConnector) {
 
@@ -18,19 +17,14 @@ class TelemetryProcessorStreamTask(config: TelemetryProcessorConfig, kafkaConnec
 
   def process(): Unit = {
     implicit val env: StreamExecutionEnvironment = FlinkUtil.getExecutionContext(config)
-    implicit val mapTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
-    implicit val stringTypeInfo: TypeInformation[String] = TypeExtractor.getForClass(classOf[String])
+    implicit val bytesTypeInfo: TypeInformation[Array[Byte]] = TypeExtractor.getForClass(classOf[Array[Byte]])
 
     val processStream =
-      env.addSource(kafkaConnector.kafkaStringSource(config.kafkaInputTopic), config.telemetryProcessorConsumer)
+      env.addSource(kafkaConnector.kafkaBytesSource(config.kafkaInputTopic), config.telemetryProcessorConsumer)
         .uid(config.telemetryProcessorConsumer).setParallelism(config.kafkaConsumerParallelism)
-        .rebalance()
-        .process(new ProcessorFunction(config))
-        .name("ProcessorFn").uid("ProcessorFn")
+        .addSink(kafkaConnector.kafkaBytesSink(config.kafkaSuccessTopic))
+        .name(config.telemetryProcessorProducer).uid(config.telemetryProcessorProducer)
         .setParallelism(config.downstreamOperatorsParallelism)
-
-    processStream.getSideOutput(config.eventsOutputTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaSuccessTopic))
-      .name(config.telemetryProcessorProducer).uid(config.telemetryProcessorProducer).setParallelism(config.downstreamOperatorsParallelism)
 
     env.execute(config.jobName)
   }

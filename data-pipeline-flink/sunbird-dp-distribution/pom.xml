@@ -22,6 +22,12 @@
         </dependency>
         <dependency>
             <groupId>org.sunbird.dp.jobs</groupId>
+            <artifactId>telemetry-processor</artifactId>
+            <version>1.0.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.sunbird.dp.jobs</groupId>
             <artifactId>telemetry-extractor</artifactId>
             <version>1.0.0</version>
             <type>jar</type>

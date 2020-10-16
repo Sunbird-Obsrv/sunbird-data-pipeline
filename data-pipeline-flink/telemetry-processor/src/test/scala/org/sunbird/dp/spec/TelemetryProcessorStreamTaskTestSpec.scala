@@ -1,5 +1,6 @@
 package org.sunbird.dp.spec
 
+import java.nio.charset.StandardCharsets
 import java.util
 
 import com.google.gson.Gson
@@ -26,7 +27,7 @@ import collection.JavaConverters._
 
 class ProcessorStreamTaskTestSpec extends BaseTestSpec {
 
-  implicit val mapTypeInfo: TypeInformation[util.Map[String, AnyRef]] = TypeExtractor.getForClass(classOf[util.Map[String, AnyRef]])
+  implicit val bytesTypeInfo: TypeInformation[Array[Byte]] = TypeExtractor.getForClass(classOf[Array[Byte]])
 
   val flinkCluster = new MiniClusterWithClientResource(new MiniClusterResourceConfiguration.Builder()
     .setConfiguration(testConfiguration())
@@ -42,8 +43,8 @@ class ProcessorStreamTaskTestSpec extends BaseTestSpec {
     super.beforeAll()
     BaseMetricsReporter.gaugeMetrics.clear()
 
-    when(mockKafkaUtil.kafkaStringSource(processorConfig.kafkaInputTopic)).thenReturn(new ProcessorEventSource)
-    when(mockKafkaUtil.kafkaStringSink(processorConfig.kafkaSuccessTopic)).thenReturn(new SuccessEventsSink)
+    when(mockKafkaUtil.kafkaBytesSource(processorConfig.kafkaInputTopic)).thenReturn(new ProcessorEventSource)
+    when(mockKafkaUtil.kafkaBytesSink(processorConfig.kafkaSuccessTopic)).thenReturn(new SuccessEventsSink)
 
     flinkCluster.before()
   }
@@ -60,31 +61,32 @@ class ProcessorStreamTaskTestSpec extends BaseTestSpec {
 
       SuccessEventsSink.values.size() should be (3)
 
-//    val firstEvent = SuccessEventsSink.values.get(0)
-    BaseMetricsReporter.gaugeMetrics(s"${processorConfig.jobName}.${processorConfig.successEventCount}").getValue() should be (3)
+    val firstEvent = SuccessEventsSink.values.get(0)
+    println(new String(firstEvent, StandardCharsets.UTF_8))
+
   }
 
 }
 
-class ProcessorEventSource extends SourceFunction[String] {
+class ProcessorEventSource extends SourceFunction[Array[Byte]] {
 
-  override def run(ctx: SourceContext[String]) {
+  override def run(ctx: SourceContext[Array[Byte]]) {
     val gson = new Gson()
     val event1 = EventFixture.EVENT_WITH_MESSAGE_ID
     val event2 = EventFixture.EVENT_WITHOUT_MESSAGE_ID
     val event3 = EventFixture.INVALID_BATCH_EVENT
-    ctx.collect(event1)
-    ctx.collect(event2)
-    ctx.collect(event3)
+    ctx.collect(event1.getBytes(StandardCharsets.UTF_8))
+    ctx.collect(event2.getBytes(StandardCharsets.UTF_8))
+    ctx.collect(event3.getBytes(StandardCharsets.UTF_8))
   }
 
   override def cancel() = {}
 
 }
 
-class SuccessEventsSink extends SinkFunction[String] {
+class SuccessEventsSink extends SinkFunction[Array[Byte]] {
 
-  override def invoke(value: String): Unit = {
+  override def invoke(value: Array[Byte]): Unit = {
     synchronized {
       SuccessEventsSink.values.add(value)
     }
@@ -92,5 +94,5 @@ class SuccessEventsSink extends SinkFunction[String] {
 }
 
 object SuccessEventsSink {
-  val values: util.List[String] = new util.ArrayList[String]()
+  val values: util.List[Array[Byte]] = new util.ArrayList[Array[Byte]]()
 }

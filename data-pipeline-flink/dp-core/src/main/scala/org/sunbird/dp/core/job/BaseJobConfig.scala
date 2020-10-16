@@ -15,9 +15,8 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
 
   implicit val metricTypeInfo: TypeInformation[String] = TypeExtractor.getForClass(classOf[String])
 
-  val kafkaBrokerServers: String = config.getString("kafka.broker-servers")
-  val kafkaProducerBrokerServers: String = config.getString("kafka.processing.cluster.broker-servers")
-  val kafkaConsumerBrokerServers: String = config.getString("kafka.ingestion.cluster.broker-servers")
+  val kafkaProducerBrokerServers: String = config.getString("kafka.producer.broker-servers")
+  val kafkaConsumerBrokerServers: String = config.getString("kafka.consumer.broker-servers")
   val zookeeper: String = config.getString("kafka.zookeeper")
   // Producer Properties
   val kafkaProducerMaxRequestSize: Int = config.getInt("kafka.producer.max-request-size")
