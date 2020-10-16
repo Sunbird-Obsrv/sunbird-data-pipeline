@@ -15,7 +15,8 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
 
   implicit val metricTypeInfo: TypeInformation[String] = TypeExtractor.getForClass(classOf[String])
 
-  val kafkaBrokerServers: String = config.getString("kafka.broker-servers")
+  val kafkaProducerBrokerServers: String = config.getString("kafka.producer.broker-servers")
+  val kafkaConsumerBrokerServers: String = config.getString("kafka.consumer.broker-servers")
   val zookeeper: String = config.getString("kafka.zookeeper")
   // Producer Properties
   val kafkaProducerMaxRequestSize: Int = config.getInt("kafka.producer.max-request-size")
@@ -47,7 +48,7 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
 
   def kafkaConsumerProperties: Properties = {
     val properties = new Properties()
-    properties.setProperty("bootstrap.servers", kafkaBrokerServers)
+    properties.setProperty("bootstrap.servers", kafkaConsumerBrokerServers)
     properties.setProperty("group.id", groupId)
     properties.setProperty(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed")
     kafkaAutoOffsetReset.map { properties.setProperty("auto.offset.reset", _) }
@@ -56,7 +57,7 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
 
   def kafkaProducerProperties: Properties = {
     val properties = new Properties()
-    properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBrokerServers)
+    properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProducerBrokerServers)
     properties.put(ProducerConfig.LINGER_MS_CONFIG, new Integer(kafkaProducerLingerMs))
     properties.put(ProducerConfig.BATCH_SIZE_CONFIG, new Integer(kafkaProducerBatchSize))
     properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy")
