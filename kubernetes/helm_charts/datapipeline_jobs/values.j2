@@ -34,7 +34,6 @@ job_classname: {{ job_classname }}
 
 base_config: |
   kafka {
-      broker-servers = "{{ kafka_brokers }}"
       producer.broker-servers = "{{ kafka_brokers }}"
       consumer.broker-servers = "{{ kafka_brokers }}"
       zookeeper = "{{ zookeepers }}"
@@ -100,6 +99,9 @@ ingest-router: |
     input.topic = {{ env_name }}.telemetry.ingestion
     output.success.topic = {{ env_name }}.telemetry.ingest
     groupId = {{ env_name }}-ingest-router-group
+    producer {
+      max-request-size = {{ extractor_max_request_size }}
+    }
   }
   task {
     consumer.parallelism = {{ ingest_router_consumer_parallelism }}
