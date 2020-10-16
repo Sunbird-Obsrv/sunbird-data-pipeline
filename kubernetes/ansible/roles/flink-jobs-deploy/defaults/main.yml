@@ -158,3 +158,6 @@ flink_job_names:
   device-profile-updater:
     job_class_name: 'org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterStreamTask'
     replica: 1
+  ingest-router:
+    job_class_name: 'org.sunbird.dp.ingestrouter.task.IngestRouterStreamTask'
+    replica: 1  
