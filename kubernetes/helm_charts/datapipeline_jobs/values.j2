@@ -27,6 +27,7 @@ taskmanager:
   rpc_port: {{ taskmanager_rpc_port }}
   heap_memory: {{ taskmanager_heap_memory }}
   replicas: {{taskmanager_replicacount|default(1)}}
+  cpu_requests: {{ cpu_requests }}
 
 job_classname: {{ job_classname }}
 {{ taskmanager_liveness | to_nice_yaml }}
@@ -91,22 +92,30 @@ base_config: |
       port = "9042"
     }
 
-ingest-router: | 
-  include file("/data/flink/conf/base-config.conf")
-  kafka {
-    producer.broker-servers = "{{ kafka_brokers }}"
-    consumer.broker-servers = "{{ ingestion_kafka_brokers }}"
-    input.topic = {{ env_name }}.telemetry.ingestion
-    output.success.topic = {{ env_name }}.telemetry.ingest
-    groupId = {{ env_name }}-ingest-router-group
-    producer {
-      max-request-size = {{ extractor_max_request_size }}
+ingest-router:
+  ingest-router: |+
+    include file("/data/flink/conf/base-config.conf")
+    kafka {
+      producer.broker-servers = "{{ kafka_brokers }}"
+      consumer.broker-servers = "{{ ingestion_kafka_brokers }}"
+      input.topic = {{ env_name }}.telemetry.ingestion
+      output.success.topic = {{ env_name }}.telemetry.ingest
+      groupId = {{ env_name }}-ingest-router-group
+      producer {
+        max-request-size = {{ extractor_max_request_size }}
+      }
     }
-  }
-  task {
-    consumer.parallelism = {{ ingest_router_consumer_parallelism }}
-    downstream.operators.parallelism = {{ ingest_router_operators_parallelism }}
-  }
+    task {
+      consumer.parallelism = {{ ingest_router_consumer_parallelism }}
+      downstream.operators.parallelism = {{ ingest_router_operators_parallelism }}
+    }
+  flink-conf: |+
+    jobmanager.memory.flink.size: {{ flink_job_names['ingest-router'].jobmanager_memory }}
+    taskmanager.memory.flink.size: {{ flink_job_names['ingest-router'].taskmanager_memory }}
+    taskmanager.numberOfTaskSlots: {{ flink_job_names['ingest-router'].taskslots }}
+    parallelism.default: 1
+    jobmanager.execution.failover-strategy: region
+    taskmanager.memory.network.fraction: 0.1
 
 
 telemetry-extractor:

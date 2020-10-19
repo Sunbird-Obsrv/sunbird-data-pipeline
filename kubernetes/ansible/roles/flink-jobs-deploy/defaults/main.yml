@@ -134,63 +134,74 @@ flink_job_names:
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskslots: 1
+    cpu_requests: 300
   pipeline-preprocessor:
     job_class_name: 'org.sunbird.dp.preprocessor.task.PipelinePreprocessorStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskslots: 1
+    cpu_requests: 300
   de-normalization:
     job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskslots: 1
+    cpu_requests: 300
   druid-validator:
     job_class_name: 'org.sunbird.dp.validator.task.DruidValidatorStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskslots: 1
+    cpu_requests: 300
   assessment-aggregator:
     job_class_name: 'org.sunbird.dp.assessment.task.AssessmentAggregatorStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskslots: 1
+    cpu_requests: 300
   content-cache-updater:
     job_class_name: 'org.sunbird.dp.contentupdater.task.ContentCacheUpdaterStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskslots: 1
+    cpu_requests: 300
   user-cache-updater:
     job_class_name: 'org.sunbird.dp.usercache.task.UserCacheUpdaterStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskslots: 1
+    cpu_requests: 300
   user-cache-updater-v2:
     job_class_name: 'org.sunbird.dp.usercache.task.UserCacheUpdaterStreamTaskV2'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskslots: 1
+    cpu_requests: 300
   summary-denormalization:
     job_class_name: 'org.sunbird.dp.denorm.task.SummaryDenormalizationStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskslots: 1
+    cpu_requests: 300
   device-profile-updater:
     job_class_name: 'org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterStreamTask'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskslots: 1
+    cpu_requests: 300
   ingest-router:
     job_class_name: 'org.sunbird.dp.ingestrouter.task.IngestRouterStreamTask'
     replica: 1  
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskslots: 1
+    cpu_requests: 300
