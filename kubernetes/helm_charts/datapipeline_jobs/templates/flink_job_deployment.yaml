@@ -169,6 +169,9 @@ spec:
       - name: {{ .Release.Name }}-taskmanager
         image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
         imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: "{{ .Values.taskmanager.cpu_requests }}"
         workingDir: {{ .Values.taskmanager.flink_work_dir }}
         command: ["/opt/flink/bin/taskmanager.sh"]
         args: ["start-foreground",
