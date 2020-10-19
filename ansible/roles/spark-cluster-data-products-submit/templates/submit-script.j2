@@ -67,7 +67,7 @@ if [ "$mode" = "via-partition" ]; then
     for i in $(seq 0 $parallelisation $endPartitions)
         do 
             # add partitions to config
-            partitionString="\"delta\":0,\"partitions\":[$(seq -s , $i `expr $i + $parallelisation - 1`)]"
+            partitionString="\\\"delta\\\":0,\\\"partitions\\\":[$(seq -s , $i `expr $i + $parallelisation - 1`)]"
             if [ -z "$start_date" ]; then
                 job_config=$(config $job)
                 finalConfig=${job_config/'\"delta\":0'/$partitionString}
