@@ -35,6 +35,7 @@ job_classname: {{ job_classname }}
 
 base_config: |
   kafka {
+      broker-servers = "{{ kafka_brokers }}"
       producer.broker-servers = "{{ kafka_brokers }}"
       consumer.broker-servers = "{{ kafka_brokers }}"
       zookeeper = "{{ zookeepers }}"
