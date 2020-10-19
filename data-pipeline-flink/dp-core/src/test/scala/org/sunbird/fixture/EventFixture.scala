@@ -34,7 +34,6 @@ object EventFixture {
       |  string.output.topic = "local.telemetry.string.output"
       |  producer.broker-servers = "localhost:9093"
       |  consumer.broker-servers = "localhost:9093"
-      |  zookeeper = "localhost:2183"
       |  groupId = "pipeline-preprocessor-group"
       |  auto.offset.reset = "earliest"
       |  producer {

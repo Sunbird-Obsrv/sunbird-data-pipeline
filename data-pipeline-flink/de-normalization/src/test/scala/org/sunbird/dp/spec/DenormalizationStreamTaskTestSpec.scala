@@ -112,7 +112,6 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     user1Data.get("userlogintype") should be("NA")
     
     event = DenormEventsSink.values("mid2")
-    println(event.getJson())
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
     event.flags().get("user_denorm").asInstanceOf[Boolean] should be (true)
     Option(event.flags().get("dialcode_denorm")) should be (None)
