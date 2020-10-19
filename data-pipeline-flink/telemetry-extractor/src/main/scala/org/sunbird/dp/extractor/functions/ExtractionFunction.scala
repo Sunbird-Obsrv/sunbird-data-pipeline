@@ -48,10 +48,15 @@ class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTy
         context.output(config.failedEventsOutputTag, markFailed(eventData))
       } else {
         metrics.incCounter(config.successEventCount)
-        if (config.redactEventsList.contains(eventId))
+        if (config.redactEventsList.contains(eventId)) {
           context.output(config.assessRedactEventsOutputTag, markSuccess(eventData))
-        else
+        } else if ("LOG".equalsIgnoreCase(eventId)) {
+          context.output(config.logEventsOutputTag, markSuccess(eventData))
+        } else if ("ERROR".equalsIgnoreCase(eventId)) {
+          context.output(config.errorEventsOutputTag, markSuccess(eventData))
+        } else {
           context.output(config.rawEventsOutputTag, markSuccess(eventData))
+        }
       }
     })
 
@@ -59,7 +64,7 @@ class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTy
      * Generating Audit events to compute the number of events in the batch.
      */
     // context.output(config.logEventsOutputTag, gson.fromJson(gson.toJson(generateAuditEvents(eventsList.size(), batchEvent)), mapType))
-    context.output(config.logEventsOutputTag, gson.toJson(generateAuditEvents(eventsList.size(), batchEvent)))
+    context.output(config.auditEventsOutputTag, gson.toJson(generateAuditEvents(eventsList.size(), batchEvent)))
     metrics.incCounter(config.auditEventCount)
 
   }

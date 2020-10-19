@@ -87,7 +87,13 @@ class TelemetryExtractorStreamTask(config: TelemetryExtractorConfig, kafkaConnec
     extractionStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic))
       .name(config.extractorRawEventsProducer).uid(config.extractorRawEventsProducer).setParallelism(config.downstreamOperatorsParallelism)
 
-    extractionStream.getSideOutput(config.logEventsOutputTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaSuccessTopic))
+    extractionStream.getSideOutput(config.logEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaLogRouteTopic))
+      .name(config.extractorLogEventsProducer).uid(config.extractorLogEventsProducer).setParallelism(config.downstreamOperatorsParallelism)
+
+    extractionStream.getSideOutput(config.errorEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaErrorRouteTopic))
+      .name(config.extractorErrorEventsProducer).uid(config.extractorErrorEventsProducer).setParallelism(config.downstreamOperatorsParallelism)
+
+    extractionStream.getSideOutput(config.auditEventsOutputTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaLogRouteTopic))
       .name(config.extractorAuditEventsProducer).uid(config.extractorAuditEventsProducer).setParallelism(config.downstreamOperatorsParallelism)
 
     extractionStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaFailedTopic))
