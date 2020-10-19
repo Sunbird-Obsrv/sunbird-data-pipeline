@@ -17,7 +17,6 @@ class BaseJobConfig(val config: Config, val jobName: String) extends Serializabl
 
   val kafkaProducerBrokerServers: String = config.getString("kafka.producer.broker-servers")
   val kafkaConsumerBrokerServers: String = config.getString("kafka.consumer.broker-servers")
-  val zookeeper: String = config.getString("kafka.zookeeper")
   // Producer Properties
   val kafkaProducerMaxRequestSize: Int = config.getInt("kafka.producer.max-request-size")
   val kafkaProducerBatchSize: Int = config.getInt("kafka.producer.batch.size")

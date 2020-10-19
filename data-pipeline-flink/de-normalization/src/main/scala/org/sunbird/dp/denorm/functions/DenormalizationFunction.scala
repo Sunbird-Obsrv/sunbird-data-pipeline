@@ -4,10 +4,12 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.slf4j.LoggerFactory
+import org.sunbird.dp.core.cache.RedisConnect
 import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 import org.sunbird.dp.denorm.`type`._
 import org.sunbird.dp.denorm.domain.Event
 import org.sunbird.dp.denorm.task.DenormalizationConfig
+import org.sunbird.dp.denorm.util.DenormCache
 
 class DenormalizationFunction(config: DenormalizationConfig)(implicit val mapTypeInfo: TypeInformation[Event])
   extends BaseProcessFunction[Event, Event](config) {
@@ -19,6 +21,7 @@ class DenormalizationFunction(config: DenormalizationConfig)(implicit val mapTyp
   private[this] var dialcodeDenormalization: DialcodeDenormalization = _
   private[this] var contentDenormalization: ContentDenormalization = _
   private[this] var locationDenormalization: LocationDenormalization = _
+  private[this] var denormCache: DenormCache = _
 
 
   override def metricsList(): List[String] = {
@@ -31,6 +34,7 @@ class DenormalizationFunction(config: DenormalizationConfig)(implicit val mapTyp
 
   override def open(parameters: Configuration): Unit = {
     super.open(parameters)
+    denormCache = new DenormCache(config, new RedisConnect(config.metaRedisHost, config.metaRedisPort, config))
     deviceDenormalization = new DeviceDenormalization(config)
     userDenormalization = new UserDenormalization(config)
     dialcodeDenormalization = new DialcodeDenormalization(config)
@@ -40,10 +44,7 @@ class DenormalizationFunction(config: DenormalizationConfig)(implicit val mapTyp
 
   override def close(): Unit = {
     super.close()
-    deviceDenormalization.closeDataCache()
-    userDenormalization.closeDataCache()
-    dialcodeDenormalization.closeDataCache()
-    contentDenormalization.closeDataCache()
+    denormCache.close()
   }
 
   override def processElement(event: Event,
@@ -53,10 +54,11 @@ class DenormalizationFunction(config: DenormalizationConfig)(implicit val mapTyp
       metrics.incCounter(config.eventsExpired)
     } else {
       if ("ME_WORKFLOW_SUMMARY" == event.eid() || !event.eid().contains("SUMMARY")) {
-        deviceDenormalization.denormalize(event, metrics)
-        userDenormalization.denormalize(event, metrics)
-        dialcodeDenormalization.denormalize(event, metrics)
-        contentDenormalization.denormalize(event, metrics)
+        val cacheData = denormCache.getDenormData(event)
+        deviceDenormalization.denormalize(event, cacheData, metrics)
+        userDenormalization.denormalize(event, cacheData, metrics)
+        dialcodeDenormalization.denormalize(event, cacheData, metrics)
+        contentDenormalization.denormalize(event, cacheData, metrics)
         locationDenormalization.denormalize(event, metrics)
         context.output(config.denormEventsTag, event)
       }
