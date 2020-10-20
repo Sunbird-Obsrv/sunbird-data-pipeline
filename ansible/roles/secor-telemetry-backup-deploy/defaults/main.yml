@@ -53,11 +53,11 @@ secor_service_name:
     message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   unique-telemetry-backup:
-    consumer_group: "{{ env }}.telemetry.unique.backup"
+    consumer_group: "{{ env }}.telemetry.unique.latest.backup"
     base_path: "unique/raw"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
-    topic: "{{ env }}.telemetry.unique"
+    topic: "{{ env }}.telemetry.unique.latest"
     kafka_broker_host: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
     zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
     max_file_size: "100000000"
