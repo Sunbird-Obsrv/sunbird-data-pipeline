@@ -382,7 +382,8 @@ device-profile-updater:
   device-profile-updater: |+
     include file("/data/flink/conf/base-config.conf")
     kafka {
-      broker-servers = "{{ ingestion_kafka_brokers }}"
+      producer.broker-servers = "{{ ingestion_kafka_brokers }}"
+      consumer.broker-servers = "{{ ingestion_kafka_brokers }}"
       zookeeper = "{{ ingestion_zookeepers }}"
       input.topic = {{ env_name }}.events.deviceprofile
       groupId = {{ env_name }}-device-profile-updater-group
@@ -417,7 +418,8 @@ content-cache-updater:
   content-cache-updater: |+
     include file("/data/flink/conf/base-config.conf")
     kafka {
-      broker-servers = "{{ ingestion_kafka_brokers }}"
+      producer.broker-servers = "{{ ingestion_kafka_brokers }}"
+      consumer.broker-servers = "{{ ingestion_kafka_brokers }}"
       zookeeper = "{{ ingestion_zookeepers }}"
       input.topic = {{ env_name }}.learning.graph.events
       groupId = {{ env_name }}-content-cache-updater-group
@@ -532,7 +534,8 @@ assessment-aggregator:
   assessment-aggregator: |+
     include file("/data/flink/conf/base-config.conf")
     kafka {
-      broker-servers = "{{ ingestion_kafka_brokers }}"
+      producer.broker-servers = "{{ ingestion_kafka_brokers }}"
+      consumer.broker-servers = "{{ ingestion_kafka_brokers }}"
       zookeeper = "{{ ingestion_zookeepers }}"
       input.topic = {{ env_name }}.telemetry.assess
       failed.topic= {{ env_name }}.telemetry.assess.failed
