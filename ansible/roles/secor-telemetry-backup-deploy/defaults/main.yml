@@ -395,4 +395,3 @@ secor_service_name:
     service_monitor_schedule_min: "56"
     message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
-
