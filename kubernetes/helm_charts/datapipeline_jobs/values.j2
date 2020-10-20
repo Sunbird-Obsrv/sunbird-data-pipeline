@@ -286,9 +286,9 @@ de-normalization-v2:
     user_denorm_version = v2
 
   flink-conf: |+
-    jobmanager.memory.flink.size: {{ flink_job_names['de-normalization'].jobmanager_memory }}
-    taskmanager.memory.flink.size: {{ flink_job_names['de-normalization'].taskmanager_memory }}
-    taskmanager.numberOfTaskSlots: {{ flink_job_names['de-normalization'].taskslots }}
+    jobmanager.memory.flink.size: {{ flink_job_names['de-normalization-v2'].jobmanager_memory }}
+    taskmanager.memory.flink.size: {{ flink_job_names['de-normalization-v2'].taskmanager_memory }}
+    taskmanager.numberOfTaskSlots: {{ flink_job_names['de-normalization-v2'].taskslots }}
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1

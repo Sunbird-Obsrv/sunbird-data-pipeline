@@ -53,7 +53,7 @@ secor_service_name:
     message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
   unique-telemetry-backup:
-    consumer_group: "{{ env }}.telemetry.unique.backup"
+    consumer_group: "{{ env }}.telemetry.unique.latest.backup"
     base_path: "unique/raw"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
