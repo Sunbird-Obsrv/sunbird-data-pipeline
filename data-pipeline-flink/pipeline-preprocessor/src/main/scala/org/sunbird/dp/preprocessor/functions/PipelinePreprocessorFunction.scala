@@ -66,7 +66,7 @@ class PipelinePreprocessorFunction(config: PipelinePreprocessorConfig,
 
     if (isValid) {
       if (event.eid().equalsIgnoreCase("LOG") || event.eid().equalsIgnoreCase("ERROR")) {
-        event.eid().toUpperCase() match {
+        event.eid() match {
           case "LOG" =>
             context.output(config.logEventsOutputTag, event)
             metrics.incCounter(metric = config.logEventsRouterMetricsCount)
@@ -95,7 +95,7 @@ class PipelinePreprocessorFunction(config: PipelinePreprocessorConfig,
             context.output(config.denormPrimaryEventsRouteOutputTag, event)
             metrics.incCounter(metric = config.denormPrimaryEventsRouterMetricsCount)
           }
-          event.eid().toUpperCase() match {
+          event.eid() match {
             case "AUDIT" =>
               context.output(config.auditRouteEventsOutputTag, event)
               metrics.incCounter(metric = config.auditEventRouterMetricCount)
