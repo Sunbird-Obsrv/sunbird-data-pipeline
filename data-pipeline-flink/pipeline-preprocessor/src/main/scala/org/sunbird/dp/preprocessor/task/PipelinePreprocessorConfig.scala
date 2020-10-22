@@ -32,8 +32,8 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val kafkaFailedTopic: String = config.getString("kafka.output.failed.topic")
   val kafkaDuplicateTopic: String = config.getString("kafka.output.duplicate.topic")
 
-  val kafkaLowPriorityRouteTopic: String = config.getString("kafka.output.low.priority.route.topic")
-  val kafkaHighPriorityRouteTopic: String = config.getString("kafka.output.high.priority.route.topic")
+  val kafkaDenormSecondaryRouteTopic: String = config.getString("kafka.output.denorm.secondary.route.topic")
+  val kafkaDenormPrimaryRouteTopic: String = config.getString("kafka.output.denorm.primary.route.topic")
 
   val defaultChannel: String = config.getString("default.channel")
 
@@ -48,8 +48,8 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val primaryRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("primary-route-events")
 
   // Spliting events on priority for faster denorm processing
-  val lowPriorityEventsRouteOutputTag: OutputTag[Event] = OutputTag[Event]("low-priority-events")
-  val highPriorityEventsRouteOutputTag: OutputTag[Event] = OutputTag[Event]("high-priority-events")
+  val denormSecondaryEventsRouteOutputTag: OutputTag[Event] = OutputTag[Event]("denorm-secondary-events")
+  val denormPrimaryEventsRouteOutputTag: OutputTag[Event] = OutputTag[Event]("denorm-primary-events")
 
   // Audit, Log & Error Events output tag
   val auditRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("audit-route-events")
@@ -74,8 +74,8 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val shareEventsRouterMetricCount = "share-route-success-count"
   val logEventsRouterMetricsCount = "log-route-success-count"
   val errorEventsRouterMetricsCount = "error-route-success-count"
-  val lowPriorityEventsRouterMetricsCount = "low-priority-success-count"
-  val highPriorityEventsRouterMetricsCount = "high-priority-success-count"
+  val denormSecondaryEventsRouterMetricsCount = "denorm-secondary-route-success-count"
+  val denormPrimaryEventsRouterMetricsCount = "denorm-primary-route-success-count"
 
   // Validation job metrics
   val validationSuccessMetricsCount = "validation-success-event-count"
@@ -106,12 +106,12 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val auditRouterProducer = "audit-route-sink"
   val invalidEventProducer = "invalid-events-sink"
   val duplicateEventProducer = "duplicate-events-sink"
-  val lowPriorityEventProducer = "low-priority-events-sink"
-  val highPriorityEventProducer = "high-priority-events-sink"
+  val denormSecondaryEventProducer = "denorm-secondary-events-sink"
+  val denormPrimaryEventProducer = "denorm-primary-events-sink"
 
   val defaultSchemaFile = "envelope.json"
 
-  val lowPriorityEvents: List[String] = config.getStringList("low.priority.events").asScala.toList
+  val secondaryEvents: List[String] = config.getStringList("secondary.events").asScala.toList
 
 
 }

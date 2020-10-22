@@ -110,14 +110,14 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
     /**
       * Splitting events based on priority and route to different topics (next stream = denorm)
       */
-    eventStream.getSideOutput(config.lowPriorityEventsRouteOutputTag)
-      .addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaLowPriorityRouteTopic))
-      .name(config.lowPriorityEventProducer).uid(config.lowPriorityEventProducer)
+    eventStream.getSideOutput(config.denormSecondaryEventsRouteOutputTag)
+      .addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaDenormSecondaryRouteTopic))
+      .name(config.denormSecondaryEventProducer).uid(config.denormSecondaryEventProducer)
       .setParallelism(config.downstreamOperatorsParallelism)
 
-    eventStream.getSideOutput(config.highPriorityEventsRouteOutputTag)
-      .addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaHighPriorityRouteTopic))
-      .name(config.highPriorityEventProducer).uid(config.highPriorityEventProducer)
+    eventStream.getSideOutput(config.denormPrimaryEventsRouteOutputTag)
+      .addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaDenormPrimaryRouteTopic))
+      .name(config.denormPrimaryEventProducer).uid(config.denormPrimaryEventProducer)
       .setParallelism(config.downstreamOperatorsParallelism)
 
 

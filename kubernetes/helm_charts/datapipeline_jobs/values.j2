@@ -174,8 +174,8 @@ pipeline-preprocessor:
       output.error.route.topic = {{ env_name }}.druid.events.error
       output.audit.route.topic = {{ env_name }}.telemetry.audit
       output.duplicate.topic = {{ env_name }}.telemetry.duplicate
-      output.low.priority.route.topic = {{ env_name }}.telemetry.unique.secondary
-      output.high.priority.route.topic = {{ env_name }}.telemetry.unique.primary
+      output.denorm.secondary.route.topic = {{ env_name }}.telemetry.unique.secondary
+      output.denorm.primary.route.topic = {{ env_name }}.telemetry.unique.primary
       groupId = {{ env_name }}-pipeline-preprocessor-group
     }
     task {
@@ -185,7 +185,7 @@ pipeline-preprocessor:
     telemetry.schema.path="schemas/telemetry/3.0"
     default.channel="b00bc992ef25f1a9a8d63291e20efc8d"
     dedup.producer.included.ids = ["{{ portal_id }}", "{{ desktop_id }}"]
-    low.priority.events = ["INTERACT", "IMPRESSION", "SHARE_ITEM"]
+    secondary.events = ["INTERACT", "IMPRESSION", "SHARE_ITEM"]
     redis {
       database {
         duplicationstore.id = 7

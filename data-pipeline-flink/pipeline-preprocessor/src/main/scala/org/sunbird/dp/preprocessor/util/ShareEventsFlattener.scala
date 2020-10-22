@@ -78,13 +78,13 @@ class ShareEventsFlattener(config: PipelinePreprocessorConfig) extends java.io.S
   }
 
   def routeShareItemEvents(shareItem: Event, context: ProcessFunction[Event, Event]#Context, metrics: Metrics) = {
-    if (config.lowPriorityEvents.contains("SHARE_ITEM")) {
-      context.output(config.lowPriorityEventsRouteOutputTag, shareItem)
-      metrics.incCounter(metric = config.lowPriorityEventsRouterMetricsCount)
+    if (config.secondaryEvents.contains("SHARE_ITEM")) {
+      context.output(config.denormSecondaryEventsRouteOutputTag, shareItem)
+      metrics.incCounter(metric = config.denormSecondaryEventsRouterMetricsCount)
     }
     else {
-      context.output(config.highPriorityEventsRouteOutputTag, shareItem)
-      metrics.incCounter(metric = config.highPriorityEventsRouterMetricsCount)
+      context.output(config.denormPrimaryEventsRouteOutputTag, shareItem)
+      metrics.incCounter(metric = config.denormPrimaryEventsRouterMetricsCount)
     }
   }
 
