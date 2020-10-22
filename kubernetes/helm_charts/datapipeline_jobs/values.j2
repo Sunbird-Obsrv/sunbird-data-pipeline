@@ -305,7 +305,7 @@ de-normalization-secondary:
       output.duplicate.topic = {{ env_name }}.telemetry.duplicate
       groupId = {{ env_name }}-telemetry-denorm-secondary-group
     }
-    skip.events = ["SUMMARY", "INTERRUPT"]
+    skip.events = ["INTERRUPT"]
     task {
       consumer.parallelism = {{ denorm_secondary_consumer_parallelism }}
       telemetry.downstream.operators.parallelism = {{ telemetry_denorm_secondary_operators_parallelism }}
@@ -352,7 +352,7 @@ de-normalization-primary:
       output.duplicate.topic = {{ env_name }}.telemetry.duplicate
       groupId = {{ env_name }}-telemetry-denorm-primary-group
     }
-    skip.events = ["SUMMARY", "INTERRUPT"]
+    skip.events = ["INTERRUPT"]
     task {
       consumer.parallelism = {{ denorm_primary_consumer_parallelism }}
       telemetry.downstream.operators.parallelism = {{ telemetry_denorm_primary_operators_parallelism }}
@@ -399,6 +399,7 @@ summary-denormalization:
       output.duplicate.topic = {{ env_name }}.telemetry.duplicate
       groupId = {{ env_name }}-summmary-denorm-group
     }
+    skip.events = ["INTERRUPT"]
     task {
       consumer.parallelism = {{ summary_denorm_consumer_parallelism }}
       telemetry.downstream.operators.parallelism = {{ telemetry_denorm_operators_parallelism }}

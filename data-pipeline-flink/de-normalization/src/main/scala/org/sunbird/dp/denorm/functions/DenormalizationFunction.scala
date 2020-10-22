@@ -53,7 +53,7 @@ class DenormalizationFunction(config: DenormalizationConfig)(implicit val mapTyp
     if (event.isOlder(config.ignorePeriodInMonths)) { // Skip events older than configured value (default: 3 months)
       metrics.incCounter(config.eventsExpired)
     } else {
-      if ("ME_WORKFLOW_SUMMARY" == event.eid() || !event.eid().contains("SUMMARY") || "INTERRUPT" == event.eid()) {
+      if ("ME_WORKFLOW_SUMMARY" == event.eid() || !(event.eid().contains("SUMMARY") || config.eventsToskip.contains(event.eid()))) {
         val cacheData = denormCache.getDenormData(event)
         deviceDenormalization.denormalize(event, cacheData, metrics)
         userDenormalization.denormalize(event, cacheData, metrics)
