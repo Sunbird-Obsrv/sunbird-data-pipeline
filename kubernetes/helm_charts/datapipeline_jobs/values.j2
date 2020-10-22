@@ -174,6 +174,8 @@ pipeline-preprocessor:
       output.error.route.topic = {{ env_name }}.druid.events.error
       output.audit.route.topic = {{ env_name }}.telemetry.audit
       output.duplicate.topic = {{ env_name }}.telemetry.duplicate
+      output.denorm.secondary.route.topic = {{ env_name }}.telemetry.unique.secondary
+      output.denorm.primary.route.topic = {{ env_name }}.telemetry.unique.primary
       groupId = {{ env_name }}-pipeline-preprocessor-group
     }
     task {
@@ -183,6 +185,7 @@ pipeline-preprocessor:
     telemetry.schema.path="schemas/telemetry/3.0"
     default.channel="b00bc992ef25f1a9a8d63291e20efc8d"
     dedup.producer.included.ids = ["{{ portal_id }}", "{{ desktop_id }}"]
+    secondary.events = ["INTERACT", "IMPRESSION", "SHARE_ITEM"]
     redis {
       database {
         duplicationstore.id = 7
@@ -289,6 +292,100 @@ de-normalization-v2:
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
 
+de-normalization-secondary:
+  de-normalization-secondary: |+
+    include file("/data/flink/conf/base-config.conf")
+    kafka {
+      input.telemetry.topic = {{ env_name }}.telemetry.unique.secondary
+      input.summary.topic = {{ env_name }}.telemetry.derived
+      telemetry.denorm.output.topic = {{ env_name }}.telemetry.denorm
+      summary.denorm.output.topic = {{ env_name }}.druid.events.summary
+      summary.unique.events.topic = {{ env_name }}.telemetry.derived.unique
+      output.failed.topic = {{ env_name }}.telemetry.failed
+      output.duplicate.topic = {{ env_name }}.telemetry.duplicate
+      groupId = {{ env_name }}-telemetry-denorm-secondary-group
+    }
+    skip.events = ["INTERRUPT"]
+    task {
+      consumer.parallelism = {{ denorm_secondary_consumer_parallelism }}
+      telemetry.downstream.operators.parallelism = {{ telemetry_denorm_secondary_operators_parallelism }}
+      summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
+    }
+    redis {
+      database {
+        duplicationstore.id = 9
+        key.expiry.seconds = {{ de_normalization_duplicationstore_key_expiry_seconds }} 
+      }
+    }
+    # redis-metadata
+    redis-meta {
+      host = {{ metadata2_redis_host }}
+      database {
+        devicestore.id = 2
+        userstore.id = 12
+        contentstore.id = 5
+        dialcodestore.id = 6
+        key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
+      }
+    }
+    # config version
+    user_denorm_version = v2
+
+  flink-conf: |+
+    jobmanager.memory.flink.size: {{ flink_job_names['de-normalization-secondary'].jobmanager_memory }}
+    taskmanager.memory.flink.size: {{ flink_job_names['de-normalization-secondary'].taskmanager_memory }}
+    taskmanager.numberOfTaskSlots: {{ flink_job_names['de-normalization-secondary'].taskslots }}
+    parallelism.default: 1
+    jobmanager.execution.failover-strategy: region
+    taskmanager.memory.network.fraction: 0.1
+
+de-normalization-primary:
+  de-normalization-primary: |+
+    include file("/data/flink/conf/base-config.conf")
+    kafka {
+      input.telemetry.topic = {{ env_name }}.telemetry.unique.primary
+      input.summary.topic = {{ env_name }}.telemetry.derived
+      telemetry.denorm.output.topic = {{ env_name }}.telemetry.denorm
+      summary.denorm.output.topic = {{ env_name }}.druid.events.summary
+      summary.unique.events.topic = {{ env_name }}.telemetry.derived.unique
+      output.failed.topic = {{ env_name }}.telemetry.failed
+      output.duplicate.topic = {{ env_name }}.telemetry.duplicate
+      groupId = {{ env_name }}-telemetry-denorm-primary-group
+    }
+    skip.events = ["INTERRUPT"]
+    task {
+      consumer.parallelism = {{ denorm_primary_consumer_parallelism }}
+      telemetry.downstream.operators.parallelism = {{ telemetry_denorm_primary_operators_parallelism }}
+      summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
+    }
+    redis {
+      database {
+        duplicationstore.id = 9
+        key.expiry.seconds = {{ de_normalization_duplicationstore_key_expiry_seconds }} 
+      }
+    }
+    # redis-metadata
+    redis-meta {
+      host = {{ metadata2_redis_host }}
+      database {
+        devicestore.id = 2
+        userstore.id = 12
+        contentstore.id = 5
+        dialcodestore.id = 6
+        key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
+      }
+    }
+    # config version
+    user_denorm_version = v2
+
+  flink-conf: |+
+    jobmanager.memory.flink.size: {{ flink_job_names['de-normalization-primary'].jobmanager_memory }}
+    taskmanager.memory.flink.size: {{ flink_job_names['de-normalization-primary'].taskmanager_memory }}
+    taskmanager.numberOfTaskSlots: {{ flink_job_names['de-normalization-primary'].taskslots }}
+    parallelism.default: 1
+    jobmanager.execution.failover-strategy: region
+    taskmanager.memory.network.fraction: 0.1    
+
 summary-denormalization:
   summary-denormalization: |+
     include file("/data/flink/conf/base-config.conf")
@@ -302,6 +399,7 @@ summary-denormalization:
       output.duplicate.topic = {{ env_name }}.telemetry.duplicate
       groupId = {{ env_name }}-summmary-denorm-group
     }
+    skip.events = ["INTERRUPT"]
     task {
       consumer.parallelism = {{ summary_denorm_consumer_parallelism }}
       telemetry.downstream.operators.parallelism = {{ telemetry_denorm_operators_parallelism }}

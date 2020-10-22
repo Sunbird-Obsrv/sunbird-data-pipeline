@@ -133,7 +133,16 @@ object EventFixture {
       |"cdata":[],"rollup":{"l1":"505c7c48ac6dc1edc9b08f21db5a571d"}},"object":{"id":"do_31249064359802470412856","type":"content","ver":"","rollup":{}},
       |"tags":["505c7c48ac6dc1edc9b08f21db5a571d"],"edata":{"state":"COMPLETED","prevstate":"INPROGRESS",
       |"props":["stats.downloadedSize","status","updatedOn"],"duration":0.8},"syncts":1.58156611767E12,"@timestamp":"2020-02-13T03:55:17.670Z",
-      |"contentdata":{"objectType":"Content"},"userdata":{"firstname":"A512"},"type":"events"}""".stripMargin
+      |"contentdata":{"objectType":"Content"},"userdata":{"firstname":"A512"},"type":"events"}""".stripMargin,
+
+      s"""{"actor":{"type":"User","id":"610bab7d-1450-4e54-bf78-c7c9b14dbc82"},"eid":"INTERRUPT",
+       |"edata":{"type":"OTHER","subtype":"sheen-animation-ended","id":"library","pageid":"library","extra":{"pos":[]}},
+       |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":$currentDate,
+       |"context":{"cdata":[],"env":"home","channel":"505c7c48ac6dc1edc9b08f21db5a571d",
+       |"pdata":{"id":"sunbird.app","pid":"sunbird.app","ver":"2.3.144"},"sid":"df936f82-e982-41ec-8412-70d414458272",
+       |"did":"45f32f48592cb9bcf26bef9178b7bd20abe24932"},"flags":{"dd_processed":true},
+       |"mid":"mid6","type":"events","object":{"id":"PCZKA4","type":"qr",
+       |"version":"","rollup":{}}}""".stripMargin
             
   )
 

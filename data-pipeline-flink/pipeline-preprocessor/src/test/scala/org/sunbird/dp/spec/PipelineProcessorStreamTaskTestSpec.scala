@@ -16,6 +16,7 @@ import org.mockito.Mockito.when
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import org.sunbird.dp.fixture.EventFixtures
 import org.sunbird.dp.core.job.FlinkKafkaConnector
+import org.sunbird.dp.core.util.JSONUtil
 import org.sunbird.dp.preprocessor.domain.Event
 import org.sunbird.dp.preprocessor.task.{PipelinePreprocessorConfig, PipelinePreprocessorStreamTask}
 import redis.embedded.RedisServer
@@ -58,6 +59,9 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaFailedTopic)).thenReturn(new TelemetryFailedEventsSink)
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaAuditRouteTopic)).thenReturn(new TelemetryAuditEventSink)
 
+    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaDenormSecondaryRouteTopic)).thenReturn(new TelemetryDenormSecondaryEventSink)
+    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaDenormPrimaryRouteTopic)).thenReturn(new TelemetryDenormPrimaryEventSink)
+
     flinkCluster.before()
   }
 
@@ -80,6 +84,9 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     TelemetryAuditEventSink.values.size() should be(1)
     TelemetryLogEventSink.values.size() should be(1)
     TelemetryErrorEventSink.values.size() should be(1)
+
+    TelemetryDenormSecondaryEventSink.values.size() should be(4) // 1 INTERACT and 3 SHARE_ITEM
+    TelemetryDenormPrimaryEventSink.values.size() should be(4)
 
     /**
      * * 1. primary-route-success-count -> 05
@@ -118,8 +125,11 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSuccessMetricsCount}").getValue() should be(8)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationFailureMetricsCount}").getValue() should be(4)
 
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.unique-event-count").getValue() should be(7)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.unique-event-count").getValue() should be(5) // LOG & ERROR events are skipped from dedup
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.duplicate-event-count").getValue() should be(1)
+
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.denormSecondaryEventsRouterMetricsCount}").getValue() should be(4)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.denormPrimaryEventsRouterMetricsCount}").getValue() should be(4)
 
   }
 }
@@ -236,5 +246,31 @@ class DupEventsSink extends SinkFunction[Event] {
 }
 
 object DupEventsSink {
+  val values: util.List[Event] = new util.ArrayList()
+}
+
+class TelemetryDenormSecondaryEventSink extends SinkFunction[Event] {
+
+  override def invoke(value: Event): Unit = {
+    synchronized {
+      TelemetryDenormSecondaryEventSink.values.add(value)
+    }
+  }
+}
+
+object TelemetryDenormSecondaryEventSink {
+  val values: util.List[Event] = new util.ArrayList()
+}
+
+class TelemetryDenormPrimaryEventSink extends SinkFunction[Event] {
+
+  override def invoke(value: Event): Unit = {
+    synchronized {
+      TelemetryDenormPrimaryEventSink.values.add(value)
+    }
+  }
+}
+
+object TelemetryDenormPrimaryEventSink {
   val values: util.List[Event] = new util.ArrayList()
 }

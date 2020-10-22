@@ -69,6 +69,11 @@ telemetry_denorm_operators_parallelism: 1
 de_normalization_duplicationstore_key_expiry_seconds: 3600
 de_normalization_key_expiry_seconds: 3600
 
+denorm_secondary_consumer_parallelism: 1
+telemetry_denorm_secondary_operators_parallelism: 1
+denorm_primary_consumer_parallelism: 1
+telemetry_denorm_primary_operators_parallelism: 1
+
 ### summary-denormalization related vars
 summary_denorm_consumer_parallelism: 1
 summary_denorm_operators_parallelism: 1
@@ -155,7 +160,21 @@ flink_job_names:
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskslots: 1
-    cpu_requests: 0.3  
+    cpu_requests: 0.3 
+  de-normalization-secondary:
+    job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3 
+  de-normalization-primary:
+    job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3      
   druid-validator:
     job_class_name: 'org.sunbird.dp.validator.task.DruidValidatorStreamTask'
     replica: 1
