@@ -125,7 +125,7 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationSuccessMetricsCount}").getValue() should be(8)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.validationFailureMetricsCount}").getValue() should be(4)
 
-    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.unique-event-count").getValue() should be(7)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.unique-event-count").getValue() should be(5) // LOG & ERROR events are skipped from dedup
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.duplicate-event-count").getValue() should be(1)
 
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.lowPriorityEventsRouterMetricsCount}").getValue() should be(4)
