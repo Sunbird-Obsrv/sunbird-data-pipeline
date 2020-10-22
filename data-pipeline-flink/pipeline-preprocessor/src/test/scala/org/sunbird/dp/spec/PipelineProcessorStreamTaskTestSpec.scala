@@ -16,6 +16,7 @@ import org.mockito.Mockito.when
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import org.sunbird.dp.fixture.EventFixtures
 import org.sunbird.dp.core.job.FlinkKafkaConnector
+import org.sunbird.dp.core.util.JSONUtil
 import org.sunbird.dp.preprocessor.domain.Event
 import org.sunbird.dp.preprocessor.task.{PipelinePreprocessorConfig, PipelinePreprocessorStreamTask}
 import redis.embedded.RedisServer
@@ -58,6 +59,9 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaFailedTopic)).thenReturn(new TelemetryFailedEventsSink)
     when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaAuditRouteTopic)).thenReturn(new TelemetryAuditEventSink)
 
+    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaLowPriorityRouteTopic)).thenReturn(new TelemetryLowPriorityEventSink)
+    when(mockKafkaUtil.kafkaEventSink[Event](ppConfig.kafkaHighPriorityRouteTopic)).thenReturn(new TelemetryHighPriorityEventSink)
+
     flinkCluster.before()
   }
 
@@ -80,6 +84,9 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
     TelemetryAuditEventSink.values.size() should be(1)
     TelemetryLogEventSink.values.size() should be(1)
     TelemetryErrorEventSink.values.size() should be(1)
+
+    TelemetryLowPriorityEventSink.values.size() should be(4) // 1 INTERACT and 3 SHARE_ITEM
+    TelemetryHighPriorityEventSink.values.size() should be(4)
 
     /**
      * * 1. primary-route-success-count -> 05
@@ -120,6 +127,9 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
 
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.unique-event-count").getValue() should be(7)
     BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.duplicate-event-count").getValue() should be(1)
+
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.lowPriorityEventsRouterMetricsCount}").getValue() should be(4)
+    BaseMetricsReporter.gaugeMetrics(s"${ppConfig.jobName}.${ppConfig.highPriorityEventsRouterMetricsCount}").getValue() should be(4)
 
   }
 }
@@ -236,5 +246,31 @@ class DupEventsSink extends SinkFunction[Event] {
 }
 
 object DupEventsSink {
+  val values: util.List[Event] = new util.ArrayList()
+}
+
+class TelemetryLowPriorityEventSink extends SinkFunction[Event] {
+
+  override def invoke(value: Event): Unit = {
+    synchronized {
+      TelemetryLowPriorityEventSink.values.add(value)
+    }
+  }
+}
+
+object TelemetryLowPriorityEventSink {
+  val values: util.List[Event] = new util.ArrayList()
+}
+
+class TelemetryHighPriorityEventSink extends SinkFunction[Event] {
+
+  override def invoke(value: Event): Unit = {
+    synchronized {
+      TelemetryHighPriorityEventSink.values.add(value)
+    }
+  }
+}
+
+object TelemetryHighPriorityEventSink {
   val values: util.List[Event] = new util.ArrayList()
 }

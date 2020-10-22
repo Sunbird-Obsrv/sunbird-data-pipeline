@@ -108,6 +108,20 @@ class PipelinePreprocessorStreamTask(config: PipelinePreprocessorConfig, kafkaCo
       .setParallelism(config.downstreamOperatorsParallelism)
 
     /**
+      * Splitting events based on priority and route to different topics (next stream = denorm)
+      */
+    eventStream.getSideOutput(config.lowPriorityEventsRouteOutputTag)
+      .addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaLowPriorityRouteTopic))
+      .name(config.lowPriorityEventProducer).uid(config.lowPriorityEventProducer)
+      .setParallelism(config.downstreamOperatorsParallelism)
+
+    eventStream.getSideOutput(config.highPriorityEventsRouteOutputTag)
+      .addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaHighPriorityRouteTopic))
+      .name(config.highPriorityEventProducer).uid(config.highPriorityEventProducer)
+      .setParallelism(config.downstreamOperatorsParallelism)
+
+
+    /**
      * Pushing "SHARE and SHARE_ITEM" event into out put topic unique topic(next_streaming_process = denorm)
      */
     eventStream.getSideOutput(config.shareItemEventOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaPrimaryRouteTopic)).name(config.shareItemsPrimaryRouterProducer).uid(config.shareItemsPrimaryRouterProducer).setParallelism(config.downstreamOperatorsParallelism)

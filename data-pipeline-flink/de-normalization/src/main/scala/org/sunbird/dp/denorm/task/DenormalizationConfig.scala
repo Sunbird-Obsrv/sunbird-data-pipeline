@@ -63,6 +63,8 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
   val withDialCodeEventsTag: OutputTag[Event] = OutputTag[Event](WITH_DIALCODE_EVENTS)
   val denormEventsTag: OutputTag[Event] = OutputTag[Event](DENORM_EVENTS)
 
+  val eventsSkipped = "events-skipped"
+
   // Device Denorm Metrics
   val deviceTotal = "device-total"
   val deviceCacheHit = "device-cache-hit"

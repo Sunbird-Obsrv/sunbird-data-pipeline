@@ -29,7 +29,7 @@ class DenormalizationFunction(config: DenormalizationConfig)(implicit val mapTyp
       config.contentTotal, config.contentCacheHit, config.contentCacheMiss, config.deviceTotal,
       config.deviceCacheHit, config.deviceCacheMiss, config.dialcodeTotal,
       config.dialcodeCacheHit, config.dialcodeCacheMiss,
-      config.locTotal, config.locCacheHit, config.locCacheMiss)
+      config.locTotal, config.locCacheHit, config.locCacheMiss, config.eventsSkipped)
   }
 
   override def open(parameters: Configuration): Unit = {
@@ -53,7 +53,7 @@ class DenormalizationFunction(config: DenormalizationConfig)(implicit val mapTyp
     if (event.isOlder(config.ignorePeriodInMonths)) { // Skip events older than configured value (default: 3 months)
       metrics.incCounter(config.eventsExpired)
     } else {
-      if ("ME_WORKFLOW_SUMMARY" == event.eid() || !event.eid().contains("SUMMARY")) {
+      if ("ME_WORKFLOW_SUMMARY" == event.eid() || !event.eid().contains("SUMMARY") || "INTERRUPT" == event.eid()) {
         val cacheData = denormCache.getDenormData(event)
         deviceDenormalization.denormalize(event, cacheData, metrics)
         userDenormalization.denormalize(event, cacheData, metrics)
@@ -61,6 +61,9 @@ class DenormalizationFunction(config: DenormalizationConfig)(implicit val mapTyp
         contentDenormalization.denormalize(event, cacheData, metrics)
         locationDenormalization.denormalize(event, metrics)
         context.output(config.denormEventsTag, event)
+      }
+      else {
+        metrics.incCounter(config.eventsSkipped)
       }
     }
   }

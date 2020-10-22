@@ -28,7 +28,9 @@ class PipelinePreprocessorFunction(config: PipelinePreprocessorConfig,
       config.errorEventsRouterMetricsCount,
       config.auditEventRouterMetricCount,
       config.shareEventsRouterMetricCount,
-      config.shareItemEventsMetircsCount
+      config.shareItemEventsMetircsCount,
+      config.lowPriorityEventsRouterMetricsCount,
+      config.highPriorityEventsRouterMetricsCount
     ) ::: deduplicationMetrics
   }
 
@@ -72,6 +74,16 @@ class PipelinePreprocessorFunction(config: PipelinePreprocessorConfig,
       }
 
       if (isUnique) {
+        if (!event.eid().equalsIgnoreCase("LOG") && !event.eid().equalsIgnoreCase("ERROR")) {
+          if (config.lowPriorityEvents.contains(event.eid())) {
+            context.output(config.lowPriorityEventsRouteOutputTag, event)
+            metrics.incCounter(metric = config.lowPriorityEventsRouterMetricsCount)
+          }
+          else {
+            context.output(config.highPriorityEventsRouteOutputTag, event)
+            metrics.incCounter(metric = config.highPriorityEventsRouterMetricsCount)
+          }
+        }
         event.eid().toUpperCase() match {
           case "AUDIT" =>
             context.output(config.auditRouteEventsOutputTag, event)

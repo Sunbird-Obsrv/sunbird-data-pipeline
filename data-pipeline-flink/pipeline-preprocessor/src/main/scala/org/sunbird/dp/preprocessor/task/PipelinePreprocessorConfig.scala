@@ -32,6 +32,9 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val kafkaFailedTopic: String = config.getString("kafka.output.failed.topic")
   val kafkaDuplicateTopic: String = config.getString("kafka.output.duplicate.topic")
 
+  val kafkaLowPriorityRouteTopic: String = config.getString("kafka.output.low.priority.route.topic")
+  val kafkaHighPriorityRouteTopic: String = config.getString("kafka.output.high.priority.route.topic")
+
   val defaultChannel: String = config.getString("default.channel")
 
   val includedProducersForDedup: List[String] = config.getStringList("dedup.producer.included.ids").asScala.toList
@@ -43,6 +46,10 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
 
   // Router stream out put tags
   val primaryRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("primary-route-events")
+
+  // Spliting events on priority for faster denorm processing
+  val lowPriorityEventsRouteOutputTag: OutputTag[Event] = OutputTag[Event]("low-priority-events")
+  val highPriorityEventsRouteOutputTag: OutputTag[Event] = OutputTag[Event]("high-priority-events")
 
   // Audit, Log & Error Events output tag
   val auditRouteEventsOutputTag: OutputTag[Event] = OutputTag[Event]("audit-route-events")
@@ -67,7 +74,8 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val shareEventsRouterMetricCount = "share-route-success-count"
   val logEventsRouterMetricsCount = "log-route-success-count"
   val errorEventsRouterMetricsCount = "error-route-success-count"
-
+  val lowPriorityEventsRouterMetricsCount = "low-priority-success-count"
+  val highPriorityEventsRouterMetricsCount = "high-priority-success-count"
 
   // Validation job metrics
   val validationSuccessMetricsCount = "validation-success-event-count"
@@ -98,10 +106,12 @@ class PipelinePreprocessorConfig(override val config: Config) extends BaseJobCon
   val auditRouterProducer = "audit-route-sink"
   val invalidEventProducer = "invalid-events-sink"
   val duplicateEventProducer = "duplicate-events-sink"
+  val lowPriorityEventProducer = "low-priority-events-sink"
+  val highPriorityEventProducer = "high-priority-events-sink"
 
   val defaultSchemaFile = "envelope.json"
 
-
+  val lowPriorityEvents: List[String] = config.getStringList("low.priority.events").asScala.toList
 
 
 }

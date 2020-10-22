@@ -35,17 +35,21 @@ class ShareEventsFlattener(config: PipelinePreprocessorConfig) extends java.io.S
             val transfers = Try(shareEventParams.get("transfers").toString.toDouble).getOrElse(0d)
             val size = Try(shareEventParams.get("size").toString.toDouble).getOrElse(0d)
             val edataType = if (transfers == 0) "download" else "import"
-            val shareItemEvent = generateShareItemEvents(event, EventObject(id = identifier, ver = version,
+            val shareItemStr = generateShareItemEvents(event, EventObject(id = identifier, ver = version,
               `type` = contentType, rollup = Rollup(event.objectID())), Some(edataType), Some(size))
             // context.output(config.shareItemEventOutputTag, new Event(new Gson().fromJson(shareItemEvent, new util.LinkedHashMap[String, Any]().getClass)))
-            context.output(config.shareItemEventOutputTag, new Event(JSONUtil.deserialize[util.LinkedHashMap[String, Any]](shareItemEvent)))
+            val shareItemEvent = new Event(JSONUtil.deserialize[util.LinkedHashMap[String, Any]](shareItemStr))
+            context.output(config.shareItemEventOutputTag, shareItemEvent)
+            routeShareItemEvents(shareItemEvent, context, metrics)
           }
         )
       } else {
-        val shareItemEvent = generateShareItemEvents(event, EventObject(id = identifier, ver = version,
+        val shareItemStr = generateShareItemEvents(event, EventObject(id = identifier, ver = version,
           `type` = contentType, rollup = Rollup(event.objectID())), edataType = Some(event.edataType()))
         // context.output(config.shareItemEventOutputTag, new Event(new Gson().fromJson(shareItemEvent, new util.LinkedHashMap[String, Any]().getClass)))
-        context.output(config.shareItemEventOutputTag, new Event(JSONUtil.deserialize[util.LinkedHashMap[String, Any]](shareItemEvent)))
+        val shareItemEvent = new Event(JSONUtil.deserialize[util.LinkedHashMap[String, Any]](shareItemStr))
+        context.output(config.shareItemEventOutputTag, shareItemEvent)
+        routeShareItemEvents(shareItemEvent, context, metrics)
       }
       metrics.incCounter(config.shareItemEventsMetircsCount)
     })
@@ -71,6 +75,17 @@ class ShareEventsFlattener(config: PipelinePreprocessorConfig) extends java.io.S
     )
 
     new Gson().toJson(shareItemEvent)
+  }
+
+  def routeShareItemEvents(shareItem: Event, context: ProcessFunction[Event, Event]#Context, metrics: Metrics) = {
+    if (config.lowPriorityEvents.contains("SHARE_ITEM")) {
+      context.output(config.lowPriorityEventsRouteOutputTag, shareItem)
+      metrics.incCounter(metric = config.lowPriorityEventsRouterMetricsCount)
+    }
+    else {
+      context.output(config.highPriorityEventsRouteOutputTag, shareItem)
+      metrics.incCounter(metric = config.highPriorityEventsRouterMetricsCount)
+    }
   }
 
 }
