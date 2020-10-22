@@ -174,8 +174,8 @@ pipeline-preprocessor:
       output.error.route.topic = {{ env_name }}.druid.events.error
       output.audit.route.topic = {{ env_name }}.telemetry.audit
       output.duplicate.topic = {{ env_name }}.telemetry.duplicate
-      output.low.priority.route.topic = {{ env_name }}.telemetry.unique.low
-      output.high.priority.route.topic = {{ env_name }}.telemetry.unique.high
+      output.low.priority.route.topic = {{ env_name }}.telemetry.unique.secondary
+      output.high.priority.route.topic = {{ env_name }}.telemetry.unique.primary
       groupId = {{ env_name }}-pipeline-preprocessor-group
     }
     task {
@@ -292,22 +292,23 @@ de-normalization-v2:
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
 
-de-normalization-low-priority:
-  de-normalization-low-priority: |+
+de-normalization-secondary:
+  de-normalization-secondary: |+
     include file("/data/flink/conf/base-config.conf")
     kafka {
-      input.telemetry.topic = {{ env_name }}.telemetry.unique.low
+      input.telemetry.topic = {{ env_name }}.telemetry.unique.secondary
       input.summary.topic = {{ env_name }}.telemetry.derived
       telemetry.denorm.output.topic = {{ env_name }}.telemetry.denorm
       summary.denorm.output.topic = {{ env_name }}.druid.events.summary
       summary.unique.events.topic = {{ env_name }}.telemetry.derived.unique
       output.failed.topic = {{ env_name }}.telemetry.failed
       output.duplicate.topic = {{ env_name }}.telemetry.duplicate
-      groupId = {{ env_name }}-telemetry-denorm-low-priority-group
+      groupId = {{ env_name }}-telemetry-denorm-secondary-group
     }
+    skip.events = ["SUMMARY", "INTERRUPT"]
     task {
-      consumer.parallelism = {{ denorm_low_priority_consumer_parallelism }}
-      telemetry.downstream.operators.parallelism = {{ telemetry_denorm_low_priority_operators_parallelism }}
+      consumer.parallelism = {{ denorm_secondary_consumer_parallelism }}
+      telemetry.downstream.operators.parallelism = {{ telemetry_denorm_secondary_operators_parallelism }}
       summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
     }
     redis {
@@ -331,29 +332,30 @@ de-normalization-low-priority:
     user_denorm_version = v2
 
   flink-conf: |+
-    jobmanager.memory.flink.size: {{ flink_job_names['de-normalization-low-priority'].jobmanager_memory }}
-    taskmanager.memory.flink.size: {{ flink_job_names['de-normalization-low-priority'].taskmanager_memory }}
-    taskmanager.numberOfTaskSlots: {{ flink_job_names['de-normalization-low-priority'].taskslots }}
+    jobmanager.memory.flink.size: {{ flink_job_names['de-normalization-secondary'].jobmanager_memory }}
+    taskmanager.memory.flink.size: {{ flink_job_names['de-normalization-secondary'].taskmanager_memory }}
+    taskmanager.numberOfTaskSlots: {{ flink_job_names['de-normalization-secondary'].taskslots }}
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
 
-de-normalization-high-priority:
-  de-normalization-high-priority: |+
+de-normalization-primary:
+  de-normalization-primary: |+
     include file("/data/flink/conf/base-config.conf")
     kafka {
-      input.telemetry.topic = {{ env_name }}.telemetry.unique.high
+      input.telemetry.topic = {{ env_name }}.telemetry.unique.primary
       input.summary.topic = {{ env_name }}.telemetry.derived
       telemetry.denorm.output.topic = {{ env_name }}.telemetry.denorm
       summary.denorm.output.topic = {{ env_name }}.druid.events.summary
       summary.unique.events.topic = {{ env_name }}.telemetry.derived.unique
       output.failed.topic = {{ env_name }}.telemetry.failed
       output.duplicate.topic = {{ env_name }}.telemetry.duplicate
-      groupId = {{ env_name }}-telemetry-denorm-high-priority-group
+      groupId = {{ env_name }}-telemetry-denorm-primary-group
     }
+    skip.events = ["SUMMARY", "INTERRUPT"]
     task {
-      consumer.parallelism = {{ denorm_high_priority_consumer_parallelism }}
-      telemetry.downstream.operators.parallelism = {{ telemetry_denorm_high_priority_operators_parallelism }}
+      consumer.parallelism = {{ denorm_primary_consumer_parallelism }}
+      telemetry.downstream.operators.parallelism = {{ telemetry_denorm_primary_operators_parallelism }}
       summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
     }
     redis {
@@ -377,9 +379,9 @@ de-normalization-high-priority:
     user_denorm_version = v2
 
   flink-conf: |+
-    jobmanager.memory.flink.size: {{ flink_job_names['de-normalization-high-priority'].jobmanager_memory }}
-    taskmanager.memory.flink.size: {{ flink_job_names['de-normalization-high-priority'].taskmanager_memory }}
-    taskmanager.numberOfTaskSlots: {{ flink_job_names['de-normalization-high-priority'].taskslots }}
+    jobmanager.memory.flink.size: {{ flink_job_names['de-normalization-primary'].jobmanager_memory }}
+    taskmanager.memory.flink.size: {{ flink_job_names['de-normalization-primary'].taskmanager_memory }}
+    taskmanager.numberOfTaskSlots: {{ flink_job_names['de-normalization-primary'].taskslots }}
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1    
