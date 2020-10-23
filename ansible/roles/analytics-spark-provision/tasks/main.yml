@@ -120,7 +120,15 @@
 - name: Set latest ruby as default
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: "{{ analytics.base_path }}/.rvm/bin/rvm --default use ruby-2.6"
+  shell: "rvm --default use ruby-2.6"
+
+- name: Install latest ruby-dev
+  become: yes
+  apt:
+    name: "ruby2.6-dev"
+    state: installed
+    update_cache: true
+    cache_valid_time: 3600
 
 - name: Install ruby-kafka
   gem:
