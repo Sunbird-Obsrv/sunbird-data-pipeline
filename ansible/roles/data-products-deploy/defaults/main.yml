@@ -165,7 +165,14 @@ run_district_monthly_job:
     hour: 04
     minute: 30
     day: 1
-    month: 1-12         
+    month: 1-12
+
+
+run_collection_summary:
+  collection-summary:
+    hour: 09
+    minute: 30
+
 
 service:
   search:

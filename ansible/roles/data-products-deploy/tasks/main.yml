@@ -268,6 +268,16 @@
 #    - default-jobs
 #    - ed-dataproducts
 
+- name: Create collection-summary cron job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh collection-summary-report"
+  with_dict: "{{ collection-summary }}"
+  tags:
+    - cronjobs
+    - default-jobs
+    - spark-jobs
+
+
+
 - name: Update start jobmanager
   template: src=start-jobmanager.j2 dest={{ analytics.home }}/scripts/start-jobmanager.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
