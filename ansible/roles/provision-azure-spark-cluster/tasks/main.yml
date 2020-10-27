@@ -40,6 +40,11 @@
   become: yes
   get_url: url={{ zip4j_url }} dest={{ spark_folder }}/jars/zip4j-{{zip4j_version}}.jar timeout=1000 force=no
 
+- name: Download Data Products jars to Spark jars folder
+  command: az storage blob download-batch -d {{ spark_folder }}/jars/ --pattern models-{{ model_version }}/*.jar -s {{ bucket }} --account-name {{ sunbird_private_storage_account_name }} --account-key {{ sunbird_private_storage_account_key }}
+  async: 3600
+  poll: 10
+
 - name: Update log4j.properties
   become: yes
   blockinfile:
