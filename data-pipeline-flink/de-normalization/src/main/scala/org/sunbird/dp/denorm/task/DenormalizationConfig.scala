@@ -6,8 +6,7 @@ import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.streaming.api.scala.OutputTag
 import org.sunbird.dp.core.job.BaseJobConfig
 import org.sunbird.dp.denorm.domain.Event
-
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class DenormalizationConfig(override val config: Config, jobName: String) extends BaseJobConfig(config, jobName ) {
 
@@ -33,9 +32,6 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
   val deviceStore: Int = config.getInt("redis-meta.database.devicestore.id")
   val dialcodeStore: Int = config.getInt("redis-meta.database.dialcodestore.id")
 
-  //config version
-  val userDenormVersion: String = config.getString("user_denorm_version")
-
   val deviceFields = List("country_code", "country", "state_code", "state", "city", "district_custom", "state_code_custom",
     "state_custom", "user_declared_state", "user_declared_district", "devicespec", "firstaccess")
   val contentFields = List("name", "objectType", "contentType", "mediaType", "language", "medium", "mimeType", "createdBy",
@@ -45,7 +41,7 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
   val dialcodeFields = List("identifier", "channel", "batchcode", "publisher", "generated_on", "published_on", "status")
   
   val ignorePeriodInMonths:Int = if(config.hasPath("telemetry.ignore.period.months")) config.getInt("telemetry.ignore.period.months") else 3
-  val summaryFilterEvents: List[String] = if(config.hasPath("summary.filter.events")) config.getStringList("summary.filter.events").toList else List("ME_WORKFLOW_SUMMARY")
+  val summaryFilterEvents: List[String] = if(config.hasPath("summary.filter.events")) config.getStringList("summary.filter.events").asScala.toList else List("ME_WORKFLOW_SUMMARY")
   
   val userSignInTypeDefault: String = if (config.hasPath("user.signin.type.default")) config.getString("user.signin.type.default") else "Anonymous"
   val userLoginInTypeDefault: String = if (config.hasPath("user.login.type.default")) config.getString("user.login.type.default") else "NA"
@@ -65,6 +61,9 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
   val withContentEventsTag: OutputTag[Event] = OutputTag[Event](WITH_CONTENT_EVENTS)
   val withDialCodeEventsTag: OutputTag[Event] = OutputTag[Event](WITH_DIALCODE_EVENTS)
   val denormEventsTag: OutputTag[Event] = OutputTag[Event](DENORM_EVENTS)
+
+  val eventsToskip: List[String] = config.getStringList("skip.events").asScala.toList
+  val eventsSkipped = "events-skipped"
 
   // Device Denorm Metrics
   val deviceTotal = "device-total"
