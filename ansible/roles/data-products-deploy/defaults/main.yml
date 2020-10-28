@@ -176,8 +176,8 @@ es_search_index: "compositesearch"
 analytics:
   home: /mount/data/analytics
   soft_path: /mount/data/analytics
-  paths: ['/home/analytics/sbin', '/mount/data/analytics', '/mount/data/analytics/logs', '/mount/data/analytics/logs/services', '/mount/data/analytics/logs/data-products', '/mount/data/analytics/logs/api-service', '/mount/data/analytics/api', '/mount/data/analytics/tmp', '/mount/data/analytics/scripts/monitor-data', '/mount/data/analytics/models' ]
-  scripts: ['model-config', 'replay-job', 'replay-updater', 'replay-utils', 'run-job', 'monitor-dp', 'generate-metrics', 'submit-job', 'start-jobmanager', 'submit-script']
+  paths: ['/home/analytics/sbin', '/mount/data/analytics', '/mount/data/analytics/logs', '/mount/data/analytics/logs/services', '/mount/data/analytics/logs/data-products', '/mount/data/analytics/logs/api-service', '/mount/data/analytics/api', '/mount/data/analytics/tmp', '/mount/data/analytics/scripts/monitor-data', '/mount/data/analytics/scripts', '/mount/data/analytics/models' ]
+  scripts: ['model-config', 'replay-job', 'replay-updater', 'replay-utils', 'run-job', 'monitor-dp', 'generate-metrics', 'submit-job', 'start-jobmanager', 'run-dock-job','submit-script']
 
 
 producer_env: "dev.sunbird"

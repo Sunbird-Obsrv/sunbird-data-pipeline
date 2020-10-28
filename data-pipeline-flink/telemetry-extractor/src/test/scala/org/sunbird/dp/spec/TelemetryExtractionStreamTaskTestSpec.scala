@@ -49,8 +49,9 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
     when(mockKafkaUtil.kafkaStringSource(extractorConfig.kafkaInputTopic)).thenReturn(new ExtractorEventSource)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaSuccessTopic)).thenReturn(new RawEventsSink)
-    when(mockKafkaUtil.kafkaStringSink(extractorConfig.kafkaSuccessTopic)).thenReturn(new LogEventsSink)
-    // when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaSuccessTopic)).thenReturn(new LogEventsSink)
+    when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaLogRouteTopic)).thenReturn(new LogEventsSink)
+    when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaErrorRouteTopic)).thenReturn(new ErrorEventsSink)
+    when(mockKafkaUtil.kafkaStringSink(extractorConfig.kafkaLogRouteTopic)).thenReturn(new AuditEventsSink)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
     when(mockKafkaUtil.kafkaStringSink(extractorConfig.kafkaBatchFailedTopic)).thenReturn(new FailedBatchEventsSink)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaAssessRawTopic)).thenReturn(new AssessRawEventsSink)
@@ -81,12 +82,15 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
     val task = new TelemetryExtractorStreamTask(extractorConfig, mockKafkaUtil)
     task.process()
 
-      RawEventsSink.values.size() should be (43) // 43 events + 2 log events generated for auditing
-      LogEventsSink.values.size() should be (2)
-      FailedEventsSink.values.size() should be (2)
-      FailedBatchEventsSink.values.size() should be (1)
-      DupEventsSink.values.size() should be (1)
-      AssessRawEventsSink.values.size() should be (2)
+    // RawEventsSink.values.size() should be (43) // 43 events + 2 log events generated for auditing
+    RawEventsSink.values.size() should be (5)
+    AuditEventsSink.values.size() should be (2)
+    LogEventsSink.values.size() should be (38)
+    ErrorEventsSink.values.size() should be (0)
+    FailedEventsSink.values.size() should be (2)
+    FailedBatchEventsSink.values.size() should be (1)
+    DupEventsSink.values.size() should be (1)
+    AssessRawEventsSink.values.size() should be (2)
 
     // val rawEvent = gson.fromJson(gson.toJson(RawEventsSink.values.get(0)), new util.LinkedHashMap[String, AnyRef]().getClass).asInstanceOf[util.Map[String, AnyRef]].asScala
     val rawEvent = RawEventsSink.values.get(0)
@@ -154,13 +158,13 @@ class RawEventsSink extends SinkFunction[util.Map[String, AnyRef]] {
 
   override def invoke(value: util.Map[String, AnyRef]): Unit = {
     synchronized {
+      val res = new Event(value.asInstanceOf[util.Map[String, Any]])
       RawEventsSink.values.add(new Event(value.asInstanceOf[util.Map[String, Any]]))
     }
   }
 }
 
 object RawEventsSink {
-  // val values: util.List[util.Map[String, AnyRef]] = new util.ArrayList()
   val values: util.List[Event] = new util.ArrayList[Event]()
 }
 
@@ -189,19 +193,43 @@ object FailedEventsSink {
   val values: util.List[util.Map[String, AnyRef]] = new util.ArrayList()
 }
 
-// class LogEventsSink extends SinkFunction[util.Map[String, AnyRef]] {
-class LogEventsSink extends SinkFunction[String] {
+class LogEventsSink extends SinkFunction[util.Map[String, AnyRef]] {
 
-  // override def invoke(value: util.Map[String, AnyRef]): Unit = {
-  override def invoke(value: String): Unit = {
+  override def invoke(value: util.Map[String, AnyRef]): Unit = {
     synchronized {
-      LogEventsSink.values.add(value)
+      LogEventsSink.values.add(new Event(value.asInstanceOf[util.Map[String, Any]]))
     }
   }
 }
 
 object LogEventsSink {
-  // val values: util.List[util.Map[String, AnyRef]] = new util.ArrayList()
+  val values: util.List[Event] = new util.ArrayList[Event]()
+}
+
+
+class ErrorEventsSink extends SinkFunction[util.Map[String, AnyRef]] {
+
+  override def invoke(value: util.Map[String, AnyRef]): Unit = {
+    synchronized {
+      ErrorEventsSink.values.add(new Event(value.asInstanceOf[util.Map[String, Any]]))
+    }
+  }
+}
+
+object ErrorEventsSink {
+  val values: util.List[Event] = new util.ArrayList[Event]()
+}
+
+
+class AuditEventsSink extends SinkFunction[String] {
+  override def invoke(value: String): Unit = {
+    synchronized {
+      AuditEventsSink.values.add(value)
+    }
+  }
+}
+
+object AuditEventsSink {
   val values: util.List[String] = new util.ArrayList()
 }
 

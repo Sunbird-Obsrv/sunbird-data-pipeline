@@ -1,0 +1,43 @@
+---
+- hosts: local
+  gather_facts: no
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
+  environment:
+    KUBECONFIG: "{{ kubeconfig_path }}"
+  tasks:
+    - name: scale down the taskmanager to zero
+      shell: kubectl scale deployment {{ item }}-taskmanager --replicas=0 -n {{ flink_namespace }}
+      with_items:
+        - "{{ job_names.split(',')|list }}"
+      tags:
+        - scaledown_taskmanager
+ 
+    - name: scale down the jobmanager
+      shell: kubectl get job {{ item }}-jobmanager -o json -n {{ flink_namespace }} | jq 'del(.spec.selector)' | jq 'del(.spec.template.metadata.labels."controller-uid")' |jq '.spec.parallelism = 0' | kubectl replace --force -f -
+      with_items:
+        - "{{ job_names.split(',')|list }}"
+      tags:
+        - scaledown_jobmanager
+  
+    - name: scale up the jobmanager
+      shell: kubectl get job {{ item }}-jobmanager -o json -n {{ flink_namespace }} | jq 'del(.spec.selector)' | jq 'del(.spec.template.metadata.labels."controller-uid")' |jq '.spec.parallelism = 1' | kubectl replace --force -f -
+      with_items:
+        - "{{ job_names.split(',')|list }}"
+      tags:
+        - scaleup_jobmanager
+  
+    - name: Scale up taskmanager
+      shell: kubectl scale deployment {{ item }}-taskmanager --replicas={{ flink_job_names['%s'|format(item)].replica }} -n {{ flink_namespace }}
+      with_items:
+        - "{{ job_names.split(',')|list }}"
+      tags:
+        - scaleup_taskmanager
+
+    - name: rollout the taskmanager
+      shell: kubectl rollout restart deployment {{ item }}-taskmanager -n {{ flink_namespace }}
+      with_items:
+        - "{{ job_names.split(',')|list }}"
+      tags:
+        - scaleup_taskmanager
+

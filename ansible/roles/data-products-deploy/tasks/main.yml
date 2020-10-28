@@ -85,6 +85,15 @@
     - dataproducts
     - ed-dataproducts
     - framework
+  when: dockdataproducts is undefined
+
+- name: Copy configuration file
+  template: src=common.conf.j2 dest={{ analytics.home }}/models-{{ model_version }}/dock-{{ env }}.conf mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  tags:
+    - dataproducts
+    - ed-dataproducts
+    - framework
+  when: dockdataproducts is defined
 
 - name: Copy configuration file as application.conf for cluster
   template: src=common.conf.j2 dest={{ analytics.home }}/models-{{ model_version }}/application.conf mode=755 owner={{ analytics_user }} group={{ analytics_group }}

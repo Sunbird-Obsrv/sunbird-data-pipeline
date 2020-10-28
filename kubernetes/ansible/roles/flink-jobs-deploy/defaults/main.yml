@@ -52,6 +52,10 @@ extractor_consumer_parallelism: 1
 extractor_operators_parallelism: 1
 telemetry_extractor_key_expiry_seconds: 3600
 
+### Ingest router job related vars
+ingest_router_consumer_parallelism: 1
+ingest_router_operators_parallelism: 1
+
 ### Pipeline-preprocessor related vars
 pipeline_preprocessor_consumer_parallelism: 1
 pipeline_preprocessor_operators_parallelism: 1
@@ -64,6 +68,11 @@ denorm_consumer_parallelism: 1
 telemetry_denorm_operators_parallelism: 1
 de_normalization_duplicationstore_key_expiry_seconds: 3600
 de_normalization_key_expiry_seconds: 3600
+
+denorm_secondary_consumer_parallelism: 1
+telemetry_denorm_secondary_operators_parallelism: 1
+denorm_primary_consumer_parallelism: 1
+telemetry_denorm_primary_operators_parallelism: 1
 
 ### summary-denormalization related vars
 summary_denorm_consumer_parallelism: 1
@@ -126,31 +135,99 @@ job_classname: ""
 flink_job_names:
   telemetry-extractor:
     job_class_name: 'org.sunbird.dp.extractor.task.TelemetryExtractorStreamTask'
-    replica: 2
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
   pipeline-preprocessor:
     job_class_name: 'org.sunbird.dp.preprocessor.task.PipelinePreprocessorStreamTask'
     replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
   de-normalization:
     job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
     replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+  de-normalization-v2:
+    job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3 
+  de-normalization-secondary:
+    job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3 
+  de-normalization-primary:
+    job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3      
   druid-validator:
     job_class_name: 'org.sunbird.dp.validator.task.DruidValidatorStreamTask'
     replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
   assessment-aggregator:
     job_class_name: 'org.sunbird.dp.assessment.task.AssessmentAggregatorStreamTask'
     replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
   content-cache-updater:
     job_class_name: 'org.sunbird.dp.contentupdater.task.ContentCacheUpdaterStreamTask'
     replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
   user-cache-updater:
     job_class_name: 'org.sunbird.dp.usercache.task.UserCacheUpdaterStreamTask'
     replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
   user-cache-updater-v2:
     job_class_name: 'org.sunbird.dp.usercache.task.UserCacheUpdaterStreamTaskV2'
     replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
   summary-denormalization:
     job_class_name: 'org.sunbird.dp.denorm.task.SummaryDenormalizationStreamTask'
     replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
   device-profile-updater:
     job_class_name: 'org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterStreamTask'
     replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+  ingest-router:
+    job_class_name: 'org.sunbird.dp.ingestrouter.task.IngestRouterStreamTask'
+    replica: 1  
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
