@@ -9,6 +9,11 @@ spark.cassandra.connection.host="{{groups['dp-cassandra'][0]}}"
 cassandra.keyspace_prefix="{{ cassandra_keyspace_prefix }}"
 cassandra.hierarchy_store_prefix="{{ cassandra_hierarchy_store_prefix }}"
 
+storage.key.config="azure_storage_key"
+storage.secret.config="azure_storage_secret"
+reports.storage.key.config="reports_azure_storage_key"
+reports.storage.secret.config="reports_azure_storage_secret"
+
 # Content to vec configurations
 
 pc_files_cache="s3"
@@ -250,7 +255,7 @@ etbtextbook.filename="ETB_textbook_data.csv"
 
 sunbird.user.keyspace="{{ user_table_keyspace }}"
 sunbird.courses.keyspace="{{ course_keyspace }}"
-sunbird.content.hierarchy.keyspace="{{ hierarchy_store_keyspace }}"
+sunbird.content.hierarchy.keyspace="{{ cassandra_hierarchy_store_keyspace }}"
 sunbird.user.cluster.host="{{ groups['core-cassandra'][0] }}"
 sunbird.courses.cluster.host="{{ groups['core-cassandra'][0] }}"
 sunbird.content.cluster.host="{{ groups['core-cassandra'][0] }}"
