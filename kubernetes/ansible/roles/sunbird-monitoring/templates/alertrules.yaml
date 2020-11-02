@@ -30,6 +30,7 @@ summary_denormalization_threshold_critical: {{ summary_denormalization_threshold
 device_profile_updater_threshold_critical: {{ device_profile_updater_threshold_critical }}
 telemetry_extractor_failed_events_percentage_threshold_warning: {{ telemetry_extractor_failed_events_percentage_threshold_warning }}
 telemetry_extractor_failed_events_percentage_threshold_critical: {{ telemetry_extractor_failed_events_percentage_threshold_critical }}
+ingest_router_threshold_critical: {{ ingest_router_threshold_critical }}
 
 # DP Jobs lag vars warning
 telemetry_extractor_threshold_warning: {{ telemetry_extractor_threshold_warning }}
@@ -41,15 +42,18 @@ content_cache_updater_threshold_warning: {{ content_cache_updater_threshold_warn
 user_cache_updater_threshold_warning: {{ user_cache_updater_threshold_warning }}
 summary_denormalization_threshold_warning: {{ summary_denormalization_threshold_warning }}
 device_profile_updater_threshold_warning: {{ device_profile_updater_threshold_warning }}
+ingest_router_threshold_warning: {{ ingest_router_threshold_warning }}
 
 
 # KP flink jobs lag vars critical
 activity_aggregater_updater_threshold_critical: {{ activity_aggregater_updater_threshold_critical }}
 relation_cache_updater_threshold_critical: {{ relation_cache_updater_threshold_critical }}
+post_publish_processor_threshold_critical: {{ post_publish_processor_threshold_critical }}
 
 # KP flink jobs lag vars warning
 activity_aggregater_updater_threshold_warning: {{ activity_aggregater_updater_threshold_warning }}
 relation_cache_updater_threshold_warning: {{ relation_cache_updater_threshold_warning }}
+post_publish_processor_threshold_warning: {{ post_publish_processor_threshold_warning }}
 
 # Checkpoint failure vars
 telemetry_extractor_checkpointfailure_threshold_critical: {{ telemetry_extractor_checkpointfailure_threshold_critical }} 

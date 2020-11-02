@@ -38,17 +38,30 @@ spec:
         job_id: pipeline-preprocessor
         alertname: FlinkJobsLag
    
-    - alert:  de-normalization lag critical
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "de-normalization-taskmanager-prometheus" }) > {{ .Values.de_normalization_threshold_critical }}
+    - alert:  de-normalization-primary lag critical
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "de-normalization-primary-taskmanager-prometheus" }) > {{ .Values.de_normalization_threshold_critical }}
       for: 5m
       labels:
         severity: critical
         alerttype: lag
       annotations:
-        message: The lag for de-normalization job is more than threshold {{ .Values.de_normalization_threshold_critical | int }}
-        summary: de-normalization lag is critical
+        message: The lag for de-normalization-primary job is more than threshold {{ .Values.de_normalization_threshold_critical | int }}
+        summary: de-normalization-primary lag is critical
         lag: {{`({{ humanize $value }})`}}
-        job_id: de-normalization
+        job_id: de-normalization-primary
+        alertname: FlinkJobsLag
+
+    - alert:  de-normalization-secondary lag critical
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "de-normalization-secondary-taskmanager-prometheus" }) > {{ .Values.de_normalization_threshold_critical }}
+      for: 5m
+      labels:
+        severity: critical
+        alerttype: lag
+      annotations:
+        message: The lag for de-normalization-secondary job is more than threshold {{ .Values.de_normalization_threshold_critical | int }}
+        summary: de-normalization-secondary lag is critical
+        lag: {{`({{ humanize $value }})`}}
+        job_id: de-normalization-secondary
         alertname: FlinkJobsLag
 
     - alert:  druid-validator lag critical
@@ -142,6 +155,19 @@ spec:
         job_id: user-cache-updater-v2
         alertname: FlinkJobsLag
 
+    - alert: ingest-router lag critical
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "ingest-router-taskmanager-prometheus" }) > {{ .Values.ingest_router_threshold_critical}}
+      for: 5m
+      labels:
+        severity: critical
+        alerttype: lag
+      annotations:
+        message: The lag for ingest-router job is more than threshold {{ .Values.ingest_router_threshold_critical | int }}
+        summary: ingest-router lag is critical
+        lag: {{`({{ humanize $value }})`}}
+        job_id: ingest-router
+        alertname: FlinkJobsLag
+
 ### Dp Flink jobs lag alertrules warning
 
     - alert: telemetry-extractor lag warning
@@ -170,17 +196,30 @@ spec:
         job_id: pipeline-preprocessor
         alertname: FlinkJobsLag
    
-    - alert:  de-normalization lag warning
-      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "de-normalization-taskmanager-prometheus" }) > {{ .Values.de_normalization_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "de-normalization-taskmanager-prometheus" }) < {{ .Values.de_normalization_threshold_critical }}
+    - alert:  de-normalization-secondary lag warning
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "de-normalization-secondary-taskmanager-prometheus" }) > {{ .Values.de_normalization_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "de-normalization-secondary-taskmanager-prometheus" }) < {{ .Values.de_normalization_threshold_critical }}
       for: 5m
       labels:
         severity: warning
         alerttype: lag
       annotations:
-        message: The lag for de-normalization job is more than threshold {{ .Values.de_normalization_threshold_warning  | int }}
-        summary: de-normalization lag is warning
+        message: The lag for de-normalization-secondary job is more than threshold {{ .Values.de_normalization_threshold_warning  | int }}
+        summary: de-normalization-secondary lag is warning
         lag: {{`({{ humanize $value }})`}}
-        job_id: de-normalization
+        job_id: de-normalization-secondary
+        alertname: FlinkJobsLag
+
+    - alert:  de-normalization-primary lag warning
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "de-normalization-primary-taskmanager-prometheus" }) > {{ .Values.de_normalization_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "de-normalization-primary-taskmanager-prometheus" }) < {{ .Values.de_normalization_threshold_critical }}
+      for: 5m
+      labels:
+        severity: warning
+        alerttype: lag
+      annotations:
+        message: The lag for de-normalization-primary job is more than threshold {{ .Values.de_normalization_threshold_warning  | int }}
+        summary: de-normalization-primary lag is warning
+        lag: {{`({{ humanize $value }})`}}
+        job_id: de-normalization-primary
         alertname: FlinkJobsLag
 
     - alert:  druid-validator lag warning
@@ -274,6 +313,19 @@ spec:
         job_id: user-cache-updater-v2
         alertname: FlinkJobsLag
 
+    - alert: ingest-router lag warning
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "ingest-router-taskmanager-prometheus" }) > {{ .Values.ingest_router_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "ingest-router-taskmanager-prometheus" }) < {{ .Values.ingest_router_threshold_critical }}
+      for: 5m
+      labels:
+        severity: warning
+        alerttype: lag
+      annotations:
+        message: The lag for ingest-router job is more than threshold {{ .Values.ingest_router_threshold_warning | int }}
+        summary: ingest-router lag is warning
+        lag: {{`({{ humanize $value }})`}}
+        job_id: ingest-router
+        alertname: FlinkJobsLag
+
 
 #### KP jobs lag alert rules critical
     - alert: activity-aggregate-updater lag critical
@@ -300,6 +352,19 @@ spec:
         summary: relation-cache-updater lag is critical
         lag: {{`({{ humanize $value }})`}}
         job_id: relation-cache-updater
+        alertname: FlinkJobsLag
+
+    - alert: post-publish-processor lag critical
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "post-publish-processor-taskmanager-prometheus" }) > {{ .Values.post_publish_processor_threshold_critical }}
+      for: 5m
+      labels:
+        severity: critical
+        alerttype: lag
+      annotations:
+        message: The lag for post-publish-processor job is more than threshold {{ .Values.post_publish_processor_threshold_critical | int }}
+        summary: post-publish-processor lag is critical
+        lag: {{`({{ humanize $value }})`}}
+        job_id: post-publish-processor-taskmanager-prometheus
         alertname: FlinkJobsLag
 
 ## KP FLink jobs warning lag alertrules
@@ -330,6 +395,18 @@ spec:
         job_id: relation-cache-updater
         alertname: FlinkJobsLag
 
+    - alert: post-publish-processor lag warning
+      expr: sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "post-publish-processor-taskmanager-prometheus" }) > {{ .Values.post_publish_processor_threshold_warning }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "post-publish-processor-taskmanager-prometheus" }) < {{ .Values.post_publish_processor_threshold_critical }}
+      for: 5m
+      labels:
+        severity: warning
+        alerttype: lag
+      annotations:
+        message: The lag for post-publish-processor job is more than threshold {{ .Values.post_publish_processor_threshold_warning | int }}
+        summary: post-publish-processor lag is warning
+        lag: {{`({{ humanize $value }})`}}
+        job_id: post-publish-processor
+        alertname: FlinkJobsLag
 #### Checkpoint failure alert rules
     
     - alert: telemetry-extractor checkpoint failure critical
@@ -358,17 +435,30 @@ spec:
         job_id: pipeline-preprocessor
         alertname: Flink jobs checkpoint commit failure
 
-    - alert: de-normalization checkpoint failure critical
-      expr: sum(flink_jobmanager_job_numberOfFailedCheckpoints { job = "de-normalization-jobmanager" }) > {{ .Values.de_normalization_checkpointfailure_threshold_critical }}
+    - alert: de-normalization-primary checkpoint failure critical
+      expr: sum(flink_jobmanager_job_numberOfFailedCheckpoints { job = "de-normalization-primary-jobmanager" }) > {{ .Values.de_normalization_checkpointfailure_threshold_critical }}
       for: 5m
       labels:
         severity: critical
         alerttype: lag
       annotations:
-        message: The checkpoint failure count for de-normalization job is more than threshold {{ .Values.de_normalization_checkpointfailure_threshold_critical }}
-        summary: de-normalization checkpoint failure critical
+        message: The checkpoint failure count for de-normalization-primary job is more than threshold {{ .Values.de_normalization_checkpointfailure_threshold_critical }}
+        summary: de-normalization-primary checkpoint failure critical
         lag: {{`({{ humanize $value }})`}}
-        job_id: de-normalization
+        job_id: de-normalization-primary
+        alertname: Flink jobs checkpoint commit failure
+
+    - alert: de-normalization-secondary checkpoint failure critical
+      expr: sum(flink_jobmanager_job_numberOfFailedCheckpoints { job = "de-normalization-secondary-jobmanager" }) > {{ .Values.de_normalization_checkpointfailure_threshold_critical }}
+      for: 5m
+      labels:
+        severity: critical
+        alerttype: lag
+      annotations:
+        message: The checkpoint failure count for de-normalization-secondary job is more than threshold {{ .Values.de_normalization_checkpointfailure_threshold_critical }}
+        summary: de-normalization-secondary checkpoint failure critical
+        lag: {{`({{ humanize $value }})`}}
+        job_id: de-normalization-secondary
         alertname: Flink jobs checkpoint commit failure
 
     - alert: druid-validator checkpoint failure critical
@@ -469,7 +559,7 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The checkpoint failure count for device-profile-updater job is more than threshold {{ .Values.relation_cache_updater_checkpointfailure_threshold_critical }}
+        message: The checkpoint failure count for relation-cache-updater job is more than threshold {{ .Values.relation_cache_updater_checkpointfailure_threshold_critical }}
         summary: relation-cache-updater checkpoint failure critical
         lag: {{`({{ humanize $value }})`}}
         job_id: relation-cache-updater
@@ -482,10 +572,23 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: The checkpoint failure count for device-profile-updater job is more than threshold {{ .Values.user_cache_v2_updater_checkpointfailure_threshold_critical }}
-        summary: device-profile-updater checkpoint failure critical
+        message: The checkpoint failure count for user-cache-updater-v2 job is more than threshold {{ .Values.user_cache_v2_updater_checkpointfailure_threshold_critical }}
+        summary: user-cache-updater-v2 checkpoint failure critical
         lag: {{`({{ humanize $value }})`}}
-        job_id: device-profile-updater
+        job_id: user-cache-updater-v2
+        alertname: Flink jobs checkpoint commit failure
+     
+    - alert: post-publish-processor checkpoint failure critical
+      expr: sum(flink_jobmanager_job_numberOfFailedCheckpoints { job = "post-publish-processor-jobmanager" }) > {{ .Values.relation_cache_updater_checkpointfailure_threshold_critical }}
+      for: 5m
+      labels:
+        severity: critical
+        alerttype: lag
+      annotations:
+        message: The checkpoint failure count for post-publish-processor job is more than threshold {{ .Values.relation_cache_updater_checkpointfailure_threshold_critical }}
+        summary: post-publish-processor checkpoint failure critical
+        lag: {{`({{ humanize $value }})`}}
+        job_id: post-publish-processor-jobmanager
         alertname: Flink jobs checkpoint commit failure
 
 
