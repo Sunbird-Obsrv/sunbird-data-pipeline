@@ -12,7 +12,7 @@ fullnameOverride: sunbird-monitoring
 prometheus:
   prometheusSpec:
     additionalScrapeConfigsExternal: {{ additional_scrape_configs_enabled | d(false) }}
-    retention: "{{ prometheus_retention_time | d('90d') }}"
+    retention: "{{ prometheus_retention_time | d('60d') }}"
     externalLabels:
       sb_cluster: "{{ kubernetes_cluster_name | default('kubernetes-1')}}"
 {% if prometheus_storage_spec is defined and prometheus_storage_spec %}
