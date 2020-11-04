@@ -17,6 +17,7 @@ topic: "{{ env }}.telemetry.derived"
 learning_topic: "{{ env }}.learning.graph.events"
 analytics_metrics_topic: "{{ env }}.analytics_metrics"
 sink_topic: "{{ env }}.telemetry.sink"
+assess_topic: "{{ env }}.telemetry.assess"
 metrics_topic: "{{ env }}.telemetry.metrics"
 job_manager_tmp_dir: "transient-data"
 channel: dev-test

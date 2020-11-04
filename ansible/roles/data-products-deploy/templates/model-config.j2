@@ -28,6 +28,7 @@ config() {
 	producerEnv="{{ producer_env }}"
 	baseScriptPath="{{ spark_output_temp_dir }}"
 	reportPostContainer="{{ reports_container }}"
+	assessTopic={{ assess_topic }}
 	
 	if [ -z "$2" ]; then endDate=$(date --date yesterday "+%Y-%m-%d"); else endDate=$2; fi
 	if [ ! -z "$3" ]; then inputBucket=$3; fi
@@ -126,6 +127,9 @@ config() {
          ;;
         "audit-metrics-report")
         echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.model.MetricsAuditJob","modelParams":{"auditConfig":[{"name":"denorm","search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"telemetry-denormalized/raw/","startDate":"'$endDate'","endDate":"'$endDate'"}]},"filters":[{"name":"flags.user_data_retrieved","operator":"EQ","value":true},{"name":"flags.content_data_retrieved","operator":"EQ","value":true},{"name":"flags.device_data_retrieved","operator":"EQ","value":true},{"name":"flags.dialcode_data_retrieved","operator":"EQ","value":true},{"name":"flags.collection_data_retrieved","operator":"EQ","value":true},{"name":"flags.derived_location_retrieved","operator":"EQ","value":true}]},{"name":"failed","search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"failed/","startDate":"'$endDate'","endDate":"'$endDate'"}]}},{"name":"unique","search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"unique/","startDate":"'$endDate'","endDate":"'$endDate'"}]}},{"name":"raw","search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"raw/","startDate":"'$endDate'","endDate":"'$endDate'"}]}},{"name":"channel-raw","search":{"type":"azure","queries":[{"folder":true,"bucket":"'$bucket'","prefix":"channel/*/raw/","startDate":"'$endDate'","endDate":"'$endDate'*.json.gz"}]}},{"name":"channel-summary","search":{"type":"azure","queries":[{"folder":true,"bucket":"'$bucket'","prefix":"channel/*/summary/","startDate":"'$endDate'","endDate":"'$endDate'*.json.gz"}]}},{"name":"derived","search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/wfs/","startDate":"'$endDate'","endDate":"'$endDate'"}]}},{"name":"telemetry-count","search":{"type":"druid","druidQuery":{"queryType":"timeSeries","dataSource":"telemetry-events","intervals":"LastDay","aggregations":[{"name":"total_count","type":"count","fieldName":"count"}],"descending":"false"}}},{"name":"summary-count","search":{"type":"druid","druidQuery":{"queryType":"timeSeries","dataSource":"summary-events","intervals":"LastDay","aggregations":[{"name":"total_count","type":"count","fieldName":"count"}],"descending":"false"}}}]},"output":[{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$metricsTopic'"}}],"parallelization":8,"appName":"Metrics Audit"}'
+         ;;
+         "assessment-correction")
+         echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"unique/raw/","endDate":"'$endDate'","delta":0}]},"model":"org.sunbird.analytics.model.report.AssessmentCorrectionModel","modelParams":{"parallelization":200, "sparkRedisConnectionHost":"{{ metadata_redis_host }}","sparkUserDbRedisIndex":"5"},"output":[{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$assessTopic'"}}],"parallelization":200,"appName":"Assessment Correction Model"}'
          ;;
         "*")
 		echo "Unknown model code"
