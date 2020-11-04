@@ -28,6 +28,7 @@ config() {
 	producerEnv="{{ producer_env }}"
 	baseScriptPath="{{ spark_output_temp_dir }}"
 	reportPostContainer="{{ reports_container }}"
+	assessTopic={{ assess_topic }}
 	
 	if [ -z "$2" ]; then endDate=$(date --date yesterday "+%Y-%m-%d"); else endDate=$2; fi
 	if [ ! -z "$3" ]; then inputBucket=$3; fi
@@ -36,6 +37,9 @@ config() {
 		"cmu")
        	if [ -z "$2" ]; then queryDate=$currentDate; else queryDate=$endDate; fi
        	echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.updater.ContentModelUpdater","modelParams":{"date":"'$queryDate'","contentTypes":{"Content":["Resource", "Collection", "TextBook", "LessonPlan", "Course", "Template", "Asset", "Plugin", "LessonPlanUnit","CourseUnit", "TextBookUnit"]}},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$learning_topic'"}}],"parallelization":10,"appName":"Content Model Updater","deviceMapping":false}'
+        ;;
+        "assessment-correction")
+        echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"unique/raw/","endDate":"'$endDate'","delta":0}]},"model":"org.sunbird.analytics.model.report.AssessmentCorrectionModel","modelParams":{"parallelization":200, "sparkRedisConnectionHost":"{{ metadata_redis_host }}","sparkUserDbRedisIndex":"5"},"output":[{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$assessTopic'"}}],"parallelization":200,"appName":"Assessment Correction Model"}'
         ;;
         "collection-summary-report")
 		echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.job.report.CollectionSummaryJob","modelParams":{"searchFilter":{"request":{"filters":{"status":["Live"], "contentType": "Course"},"fields":["identifier","name","organisation","channel"],"limit":10000}},"store":"azure","sparkElasticsearchConnectionHost":"{{ sunbird_es_host }}","sparkRedisConnectionHost":"{{ metadata_redis_host }}","sparkUserDbRedisIndex":"12","sparkCassandraConnectionHost":"{{ core_cassandra_host }}","fromDate":"$(date --date yesterday '+%Y-%m-%d')","toDate":"$(date --date yesterday '+%Y-%m-%d')"},"parallelization":8,"appName":"Collection Summary Report"}'
