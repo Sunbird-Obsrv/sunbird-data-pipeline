@@ -43,12 +43,12 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
 
   override def processElement(event: Event, context: ProcessFunction[Event, Event]#Context, metrics: Metrics): Unit = {
     metrics.incCounter(config.totalEventsCount)
+    val userId = event.getId
     try {
-      Option(event.getId).map(id => {
+      Option(userId).map(id => {
         Option(event.getState).map(name => {
           val userData: mutable.Map[String, AnyRef] = name.toUpperCase match {
             case "CREATE" | "CREATED" | "UPDATE" | "UPDATED" => {
-              logger.info(s"Processing event for user: ${id} having mid: ${event.mid()}")
               UserMetadataUpdater.execute(id, event, metrics, config, dataCache, cassandraConnect, custodianOrgId)
             }
             case _ => {
@@ -69,7 +69,8 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
     } catch {
       case ex: Exception => {
         ex.printStackTrace()
-        logger.error("Event throwing exception: ", JSONUtil.serialize(event))
+        logger.info(s"Processing event for user: ${userId} having mid: ${event.mid()}")
+        logger.info("Event throwing exception: ", JSONUtil.serialize(event))
       }
     }
   }
