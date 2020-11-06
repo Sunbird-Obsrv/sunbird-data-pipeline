@@ -29,8 +29,10 @@ class CassandraUtil(host: String, port: Int) {
       rs.all
     } catch {
       case ex: DriverException =>
-        this.reconnect()
-        this.find(query)
+        ex.printStackTrace()
+        throw ex
+        // this.reconnect()
+        // this.find(query)
     }
   }
 
