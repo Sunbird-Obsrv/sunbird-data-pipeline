@@ -7,7 +7,7 @@ import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.core.cache.{DataCache, RedisConnect}
 import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
-import org.sunbird.dp.core.util.CassandraUtil
+import org.sunbird.dp.core.util.{CassandraUtil, JSONUtil}
 import org.sunbird.dp.usercache.domain.Event
 import org.sunbird.dp.usercache.task.UserCacheUpdaterConfigV2
 import org.sunbird.dp.usercache.util.UserMetadataUpdater
@@ -69,7 +69,7 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
     } catch {
       case ex: Exception => {
         ex.printStackTrace()
-        logger.error("Event throwing exception: ", event)
+        logger.error("Event throwing exception: ", JSONUtil.serialize(event))
       }
     }
   }
