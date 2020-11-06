@@ -46,7 +46,10 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
     Option(event.getId).map(id => {
       Option(event.getState).map(name => {
         val userData: mutable.Map[String, AnyRef] = name.toUpperCase match {
-          case "CREATE" | "CREATED" | "UPDATE" | "UPDATED" => UserMetadataUpdater.execute(id, event, metrics, config, dataCache, cassandraConnect, custodianOrgId)
+          case "CREATE" | "CREATED" | "UPDATE" | "UPDATED" => {
+            logger.info(s"Processing event for user: ${id} having mid: ${event.mid()}")
+            UserMetadataUpdater.execute(id, event, metrics, config, dataCache, cassandraConnect, custodianOrgId)
+          }
           case _ => {
             logger.info(s"Invalid event state name either it should be(Create/Created/Update/Updated) but found $name for ${event.mid()}")
             metrics.incCounter(config.skipCount)
