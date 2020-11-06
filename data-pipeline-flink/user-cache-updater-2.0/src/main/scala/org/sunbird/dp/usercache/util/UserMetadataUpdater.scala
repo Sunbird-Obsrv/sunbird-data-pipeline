@@ -48,7 +48,14 @@ object UserMetadataUpdater {
   def getRegisteredUserInfo(userId: String, event: Event, metrics: Metrics, config: UserCacheUpdaterConfigV2, dataCache: DataCache,
                             cassandraConnect: CassandraUtil, custodianRootOrgId: String): mutable.Map[String, AnyRef] = {
     val userDetails: mutable.Map[String, AnyRef] = getUserDetails(config, cassandraConnect, metrics, userId, custodianRootOrgId)
-    val reportInfoMap: mutable.Map[String, AnyRef] = getReportInfo(userDetails, config, cassandraConnect, userId, metrics)
+    val reportInfoMap: mutable.Map[String, AnyRef] =
+      if (!userDetails.isEmpty)
+        getReportInfo(userDetails, config, cassandraConnect, userId, metrics)
+      else {
+        logger.info(s"User DB does not have details for user: ${userId}")
+        metrics.incCounter(config.skipCount)
+        mutable.Map[String, AnyRef]()
+      }
     userDetails.++(reportInfoMap)
   }
 
@@ -61,18 +68,22 @@ object UserMetadataUpdater {
    */
   def getUserDetails(config: UserCacheUpdaterConfigV2, cassandraConnect: CassandraUtil, metrics: Metrics, userId: String,
                      custodianRootOrgId: String): mutable.Map[String, AnyRef] = {
-    val userDetails = extractUserMetaData(readFromCassandra(
+    var userDetails: mutable.Map[String, AnyRef] = mutable.Map[String, AnyRef]()
+    userDetails = extractUserMetaData(readFromCassandra(
       keyspace = config.keySpace,
       table = config.userTable,
       QueryBuilder.eq("id", userId),
       metrics,
       cassandraConnect: CassandraUtil,
       config))
-    val rootOrgId: String = userDetails.getOrElse("rootorgid", "").asInstanceOf[String]
-    val orgname: String = getRootOrgName(rootOrgId, cassandraConnect, metrics, config)
-    userDetails.+=(
-      "iscustodianuser" -> isCustodianUser(rootOrgId, custodianRootOrgId).asInstanceOf[AnyRef],
-      config.orgnameKey -> orgname)
+
+    if (!userDetails.isEmpty && null != userDetails) {
+      val rootOrgId: String = userDetails.getOrElse("rootorgid", "").asInstanceOf[String]
+      val orgname = if(null != rootOrgId) getRootOrgName(rootOrgId, cassandraConnect, metrics, config) else ""
+      userDetails.+=(
+        "iscustodianuser" -> isCustodianUser(rootOrgId, custodianRootOrgId).asInstanceOf[AnyRef],
+        config.orgnameKey -> orgname)
+    } else userDetails
   }
 
   def getRootOrgName(rootOrgId: String, cassandraConnect: CassandraUtil, metrics: Metrics, config: UserCacheUpdaterConfigV2): String = {

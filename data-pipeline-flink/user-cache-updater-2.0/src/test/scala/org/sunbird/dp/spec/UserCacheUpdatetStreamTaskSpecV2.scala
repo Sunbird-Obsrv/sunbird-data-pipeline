@@ -76,6 +76,7 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
     jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-9", EventFixture.userCacheData9)
     jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-12", EventFixture.userCacheData11)
     jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-11", EventFixture.userCacheData11)
+    jedis.hmset(userCacheConfig.userStoreKeyPrefix + "user-14", EventFixture.userCacheData11)
 
     jedis.close()
   }
@@ -90,12 +91,12 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
     /**
       * Metrics Assertions
       */
-    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheHit}").getValue() should be(9)
-    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.totalEventsCount}").getValue() should be(12)
-    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadSuccessCount}").getValue() should be(29)
-    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadMissCount}").getValue() should be(12)
-    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.skipCount}").getValue() should be(4)
-    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.successCount}").getValue() should be(9)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.userCacheHit}").getValue() should be(10)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.totalEventsCount}").getValue() should be(14)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadSuccessCount}").getValue() should be(30)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.dbReadMissCount}").getValue() should be(16)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.skipCount}").getValue() should be(6)
+    BaseMetricsReporter.gaugeMetrics(s"${userCacheConfig.jobName}.${userCacheConfig.successCount}").getValue() should be(10)
 
     /**
       * UserId = 89490534-126f-4f0b-82ac-3ff3e49f3468
@@ -190,6 +191,9 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
     val emptyProps = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix +  "user-5")
     emptyProps.get(userCacheConfig.userLoginTypeKey) should be("25cb0530-7c52-ecb1-cff2-6a14faab7910")
 
+    userInfo = jedis.hgetAll(userCacheConfig.userStoreKeyPrefix + "user-14")
+    userInfo.get("rootorgid") should be("")
+    userInfo.get("orgname") should be("")
 
   }
 
