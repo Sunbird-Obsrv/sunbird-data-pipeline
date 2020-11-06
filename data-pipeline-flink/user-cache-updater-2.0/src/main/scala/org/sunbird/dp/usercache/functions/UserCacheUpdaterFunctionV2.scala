@@ -70,7 +70,6 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
       case ex: Exception => {
         ex.printStackTrace()
         logger.error("Event throwing exception: ", event)
-        throw ex
       }
     }
   }
