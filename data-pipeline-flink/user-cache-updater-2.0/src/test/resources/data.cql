@@ -254,6 +254,30 @@ INSERT INTO sunbird.user (
     framework
 )VALUES ('user-2', 'VOS','sunbird', 'IN','ANAND','24-apr-2020','24-apr-2020','24-08-1993','anandp@ilimi.in',true,'Anand', 1, 'Male','Parthasarthy','Banglore','********gmail.com','******121', '*******','4682647342',true, '01285019302823526477', ['location-2', 'location-3', 'location-4'], {'board': ['State (Madhya Pradesh)'], 'gradeLevel': ['Class 8', 'Class 12'], 'id': ['mp_k-12'], 'medium': ['Hindi'], 'subject': ['English']});
 
+INSERT INTO sunbird.user (
+    id,
+    avatar,
+    channel ,
+    countrycode,
+    createdby,
+    createddate,
+    currentlogintime,
+    dob,
+    email,
+    emailverified,
+    firstname,
+    flagsvalue,
+    gender,
+    lastname,
+    location,
+    maskedemail,
+    maskedphone,
+    password,
+    phone,
+    phoneverified,
+    locationids,
+    framework
+)VALUES ('user-14', 'VOS','sunbird', 'IN','Mahesh','29-apr-2020','29-apr-2020','24-08-1993','mahesh@ilimi.in',true,'Mahesh', 1, 'Male','Gangula','Banglore','********gmail.com','******121', '*******','4682647342',true, ['location-2', 'location-3', 'location-4'], {'board': ['State (Madhya Pradesh)'], 'gradeLevel': ['Class 8', 'Class 12'], 'id': ['mp_k-12'], 'medium': ['Hindi'], 'subject': ['English']});
 
 CREATE TABLE sunbird.location (
     id text PRIMARY KEY,
