@@ -65,16 +65,9 @@ class PipelinePreprocessorFunction(config: PipelinePreprocessorConfig,
     val isValid = telemetryValidator.validate(event, context, metrics)
 
     if (isValid) {
-      if (event.eid().equalsIgnoreCase("LOG") || event.eid().equalsIgnoreCase("ERROR")) {
-        event.eid() match {
-          case "LOG" =>
-            context.output(config.logEventsOutputTag, event)
-            metrics.incCounter(metric = config.logEventsRouterMetricsCount)
-          case "ERROR" =>
-            context.output(config.errorEventOutputTag, event)
-            metrics.incCounter(metric = config.errorEventsRouterMetricsCount)
-          case _ => // Do nothing
-        }
+      if (event.eid().equalsIgnoreCase("LOG")) {
+        context.output(config.logEventsOutputTag, event)
+        metrics.incCounter(metric = config.logEventsRouterMetricsCount)
       }
       else {
         val isUnique = if (isDuplicateCheckRequired(event.producerId())) {
@@ -87,7 +80,9 @@ class PipelinePreprocessorFunction(config: PipelinePreprocessorConfig,
         }
 
         if (isUnique) {
-          if (config.secondaryEvents.contains(event.eid())) {
+          if("ERROR".equalsIgnoreCase(event.eid())) {
+              metrics.incCounter(metric = config.errorEventsRouterMetricsCount)
+          } else if (config.secondaryEvents.contains(event.eid())) {
             context.output(config.denormSecondaryEventsRouteOutputTag, event)
             metrics.incCounter(metric = config.denormSecondaryEventsRouterMetricsCount)
           }
@@ -104,6 +99,8 @@ class PipelinePreprocessorFunction(config: PipelinePreprocessorConfig,
               shareEventsFlattener.flatten(event, context, metrics)
               metrics.incCounter(metric = config.shareEventsRouterMetricCount)
               metrics.incCounter(metric = config.primaryRouterMetricCount) // // Since we are are sinking the SHARE Event into primary router topic
+            case "ERROR" =>
+              context.output(config.errorEventOutputTag, event)
             case _ => context.output(config.primaryRouteEventsOutputTag, event)
               metrics.incCounter(metric = config.primaryRouterMetricCount)
           }
