@@ -23,7 +23,6 @@ class TelemetryExtractorConfig(override val config: Config) extends BaseJobConfi
   val kafkaInputTopic: String = config.getString("kafka.input.topic")
   val kafkaSuccessTopic: String = config.getString("kafka.output.success.topic")
   val kafkaLogRouteTopic: String = config.getString("kafka.output.log.route.topic")
-  val kafkaErrorRouteTopic: String = config.getString("kafka.output.error.route.topic")
   val kafkaDuplicateTopic: String = config.getString("kafka.output.duplicate.topic")
   val kafkaFailedTopic: String = config.getString("kafka.output.failed.topic")
   val kafkaBatchFailedTopic: String = config.getString("kafka.output.batch.failed.topic")

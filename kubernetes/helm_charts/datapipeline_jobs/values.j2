@@ -126,7 +126,6 @@ telemetry-extractor:
       input.topic = {{ env_name }}.telemetry.ingest
       output.success.topic = {{ env_name }}.telemetry.raw
       output.log.route.topic = {{ env_name }}.druid.events.log
-      output.error.route.topic = {{ env_name }}.druid.events.error
       output.duplicate.topic = {{ env_name }}.telemetry.extractor.duplicate
       output.failed.topic = {{ env_name }}.telemetry.failed
       output.batch.failed.topic = {{ env_name }}.telemetry.extractor.failed
@@ -171,7 +170,7 @@ pipeline-preprocessor:
       output.failed.topic = {{ env_name }}.telemetry.failed
       output.primary.route.topic = {{ env_name }}.telemetry.unique
       output.log.route.topic = {{ env_name }}.druid.events.log
-      output.error.route.topic = {{ env_name }}.druid.events.error
+      output.error.route.topic = {{ env_name }}.telemetry.error
       output.audit.route.topic = {{ env_name }}.telemetry.audit
       output.duplicate.topic = {{ env_name }}.telemetry.duplicate
       output.denorm.secondary.route.topic = {{ env_name }}.telemetry.unique.secondary
@@ -658,6 +657,53 @@ assessment-aggregator:
     jobmanager.memory.flink.size: {{ flink_job_names['assessment-aggregator'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['assessment-aggregator'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['assessment-aggregator'].taskslots }}
+    parallelism.default: 1
+    jobmanager.execution.failover-strategy: region
+    taskmanager.memory.network.fraction: 0.1
+
+error-denormalization:
+  error-denormalization: |+
+    include file("/data/flink/conf/base-config.conf")
+    kafka {
+      input.telemetry.topic = {{ env_name }}.telemetry.error
+      input.summary.topic = {{ env_name }}.telemetry.derived
+      telemetry.denorm.output.topic = {{ env_name }}.druid.events.error
+      summary.denorm.output.topic = {{ env_name }}.druid.events.summary
+      summary.unique.events.topic = {{ env_name }}.telemetry.derived.unique
+      output.failed.topic = {{ env_name }}.telemetry.failed
+      output.duplicate.topic = {{ env_name }}.telemetry.duplicate
+      groupId = {{ env_name }}-error-denorm-group
+    }
+    skip.events = ["INTERRUPT"]
+    task {
+      consumer.parallelism = {{ error_denorm_consumer_parallelism }}
+      telemetry.downstream.operators.parallelism = {{ error_denorm_operators_parallelism }}
+      summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
+    }
+    redis {
+      database {
+        duplicationstore.id = 9
+        key.expiry.seconds = {{ de_normalization_duplicationstore_key_expiry_seconds }} 
+      }
+    }
+    # redis-metadata
+    redis-meta {
+      host = {{ metadata2_redis_host }}
+      database {
+        devicestore.id = 2
+        userstore.id = 12
+        contentstore.id = 5
+        dialcodestore.id = 6
+        key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
+      }
+    }
+    # config version
+    user_denorm_version = v2
+
+  flink-conf: |+
+    jobmanager.memory.flink.size: {{ flink_job_names['error-denormalization'].jobmanager_memory }}
+    taskmanager.memory.flink.size: {{ flink_job_names['error-denormalization'].taskmanager_memory }}
+    taskmanager.numberOfTaskSlots: {{ flink_job_names['error-denormalization'].taskslots }}
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
