@@ -271,7 +271,11 @@ de-normalization-v2:
     }
     # redis-metadata
     redis-meta {
+{% if metadata2_redis_host is defined %}
       host = {{ metadata2_redis_host }}
+{% else %}
+      host = {{ redis_host }}
+{% endif %}
       database {
         devicestore.id = 2
         userstore.id = 12
@@ -318,7 +322,11 @@ de-normalization-secondary:
     }
     # redis-metadata
     redis-meta {
+{% if metadata2_redis_host is defined %}
       host = {{ metadata2_redis_host }}
+{% else %}
+      host = {{ redis_host }}
+{% endif %}
       database {
         devicestore.id = 2
         userstore.id = 12
@@ -365,7 +373,11 @@ de-normalization-primary:
     }
     # redis-metadata
     redis-meta {
+{% if metadata2_redis_host is defined %}
       host = {{ metadata2_redis_host }}
+{% else %}
+      host = {{ redis_host }}
+{% endif %}
       database {
         devicestore.id = 2
         userstore.id = 12
@@ -412,7 +424,11 @@ summary-denormalization:
     }
     # redis-metadata
     redis-meta {
+{% if metadata2_redis_host is defined %}
       host = {{ metadata2_redis_host }}
+{% else %}
+      host = {{ redis_host }}
+{% endif %}
       database {
         devicestore.id = 2
         userstore.id = 12
@@ -492,7 +508,11 @@ device-profile-updater:
     }
     # redis-metadata
     redis-meta {
+{% if metadata2_redis_host is defined %}
       host = {{ metadata2_redis_host }}
+{% else %}
+      host = {{ redis_host }}
+{% endif %}
       port = 6379
       database {
         devicestore.id = 2
@@ -523,7 +543,11 @@ content-cache-updater:
     }
     # redis-metadata
     redis-meta {
+{% if metadata2_redis_host is defined %}
       host = {{ metadata2_redis_host }}
+{% else %}
+      host = {{ redis_host }}
+{% endif %}
       port = 6379
       database {
         contentstore.id = 5
@@ -557,7 +581,11 @@ user-cache-updater:
     }
     # redis-metadata
     redis-meta {
+{% if metadata2_redis_host is defined %}
       host = {{ metadata2_redis_host }}
+{% else %}
+      host = {{ redis_host }}
+{% endif %}
       port = 6379
       database {
         userstore.id = 4
@@ -595,7 +623,11 @@ user-cache-updater-v2:
     }
     # redis-metadata
     redis-meta {
+{% if metadata2_redis_host is defined %}
       host = {{ metadata2_redis_host }}
+{% else %}
+      host = {{ redis_host }}
+{% endif %}
       port = 6379
       database {
         userstore.id = 12
@@ -688,7 +720,11 @@ error-denormalization:
     }
     # redis-metadata
     redis-meta {
+{% if metadata2_redis_host is defined %}
       host = {{ metadata2_redis_host }}
+{% else %}
+      host = {{ redis_host }}
+{% endif %}
       database {
         devicestore.id = 2
         userstore.id = 12
