@@ -177,7 +177,7 @@ raw-router:
     }
     task {
       consumer.parallelism = {{ raw_router_consumer_parallelism }}
-      downstream.operators.parallelism = {{ ingest_router_operators_parallelism }}
+      downstream.operators.parallelism = {{ raw_router_operators_parallelism }}
     }
   flink-conf: |+
     jobmanager.memory.flink.size: {{ flink_job_names['raw-router'].jobmanager_memory }}
