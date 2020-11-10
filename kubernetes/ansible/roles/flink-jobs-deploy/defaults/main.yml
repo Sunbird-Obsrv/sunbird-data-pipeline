@@ -56,6 +56,11 @@ telemetry_extractor_key_expiry_seconds: 3600
 ingest_router_consumer_parallelism: 1
 ingest_router_operators_parallelism: 1
 
+### Raw router job related vars
+raw_router_consumer_parallelism: 1
+raw_router_operators_parallelism: 1
+raw_event_max_request_size: 1048576
+
 ### Pipeline-preprocessor related vars
 pipeline_preprocessor_consumer_parallelism: 1
 pipeline_preprocessor_operators_parallelism: 1
@@ -229,6 +234,13 @@ flink_job_names:
     taskslots: 1
     cpu_requests: 0.3
   ingest-router:
+    job_class_name: 'org.sunbird.dp.ingestrouter.task.IngestRouterStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+  raw-router:
     job_class_name: 'org.sunbird.dp.ingestrouter.task.IngestRouterStreamTask'
     replica: 1  
     jobmanager_memory: 1024m
