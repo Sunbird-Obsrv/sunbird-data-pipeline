@@ -74,8 +74,8 @@ base_config: |
       port = 6379
     }
     redis-meta {
-{% if metadata_redis_host is defined %}
-      host = {{ metadata_redis_host }}
+{% if metadata2_redis_host is defined %}
+      host = {{ metadata2_redis_host }}
 {% else %}
       host = {{ redis_host }}
 {% endif %}
@@ -271,7 +271,6 @@ de-normalization-v2:
     }
     # redis-metadata
     redis-meta {
-      host = {{ metadata2_redis_host }}
       database {
         devicestore.id = 2
         userstore.id = 12
@@ -318,7 +317,6 @@ de-normalization-secondary:
     }
     # redis-metadata
     redis-meta {
-      host = {{ metadata2_redis_host }}
       database {
         devicestore.id = 2
         userstore.id = 12
@@ -365,7 +363,6 @@ de-normalization-primary:
     }
     # redis-metadata
     redis-meta {
-      host = {{ metadata2_redis_host }}
       database {
         devicestore.id = 2
         userstore.id = 12
@@ -412,7 +409,6 @@ summary-denormalization:
     }
     # redis-metadata
     redis-meta {
-      host = {{ metadata2_redis_host }}
       database {
         devicestore.id = 2
         userstore.id = 12
@@ -492,8 +488,6 @@ device-profile-updater:
     }
     # redis-metadata
     redis-meta {
-      host = {{ metadata2_redis_host }}
-      port = 6379
       database {
         devicestore.id = 2
       }
@@ -523,8 +517,6 @@ content-cache-updater:
     }
     # redis-metadata
     redis-meta {
-      host = {{ metadata2_redis_host }}
-      port = 6379
       database {
         contentstore.id = 5
         dialcodestore.id = 6
@@ -557,8 +549,6 @@ user-cache-updater:
     }
     # redis-metadata
     redis-meta {
-      host = {{ metadata2_redis_host }}
-      port = 6379
       database {
         userstore.id = 4
       }
@@ -595,8 +585,6 @@ user-cache-updater-v2:
     }
     # redis-metadata
     redis-meta {
-      host = {{ metadata2_redis_host }}
-      port = 6379
       database {
         userstore.id = 12
       }
@@ -688,7 +676,6 @@ error-denormalization:
     }
     # redis-metadata
     redis-meta {
-      host = {{ metadata2_redis_host }}
       database {
         devicestore.id = 2
         userstore.id = 12
