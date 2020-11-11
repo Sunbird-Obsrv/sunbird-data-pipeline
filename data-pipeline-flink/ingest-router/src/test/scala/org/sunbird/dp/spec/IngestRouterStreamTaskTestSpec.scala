@@ -59,21 +59,12 @@ class IngestRouterStreamTaskTestSpec extends BaseTestSpec {
 
   "Ingest router job pipeline" should "just pass through ingest events" in {
 
-    val task = new IngestRouterStreamTask(ingestRouterConfig, mockKafkaUtil)
-    task.process()
+      val task = new IngestRouterStreamTask(ingestRouterConfig, mockKafkaUtil)
+      task.process()
 
-    IngestSuccessEventsSink.values.size() should be (3)
+      IngestSuccessEventsSink.values.size() should be(3)
 
-
-
-  }
-
-  "Ingest router job pipeline" should "just pass through raw events" in {
-
-    val task = new IngestRouterStreamTask(ingestRouterConfig, mockKafkaUtil)
-    task.process()
-
-    RawSuccessEventsSink.values.size() should be (3)
+      RawSuccessEventsSink.values.size() should be(3)
 
   }
 
