@@ -104,7 +104,7 @@ ingest-router:
        output.success.topic = {{ env_name }}.telemetry.ingest
       }
       raw {
-       input.topic = "{{ env_name }}.telemetry.raw"
+       input.topic = "{{ env_name }}.telemetry.raw.test"
        output.success.topic = "{{ env_name }}.telemetry.raw"
       }
       groupId = {{ env_name }}-ingest-router-group
