@@ -33,5 +33,22 @@ object EventFixture {
       |""".stripMargin
   }
 
+  val RAW_LOG_EVENT:String = {
+    """
+      |{"object":{"rollup":{},"ver":"","type":"content","id":"do_11307732367521382418684"},"ets":1596373063462,"ver":"3.0","eid":"LOG","actor":{"type":"service","id":"1"},"context":{"rollup":{},"sid":"","pdata":{"id":"local.dock.content-service","ver":"1.0","pid":"sunbird-content-service"},"env":"contentplayer","did":"","channel":"sunbird","cdata":[]},"mid":"LOG:89da1a341096f1e5e24806a0250c5c83","tags":[],"edata":{"params":[{"rid":"c1457c60-d4bf-11ea-9313-0912071b8abe"},{},{},{"url":"health"},{"method":"GET"}],"message":"successful","type":"api_access","level":"INFO"},"syncts":1596375302571,"@timestamp":"2020-08-02T13:35:02.571Z","flags":{"ex_processed":true}}
+      |""".stripMargin
+  }
+
+  val RAW_SEARCH_EVENT:String = {
+    """
+      |{"@timestamp":"2020-08-11T10:21:19.464Z","ets":1596001408756,"ver":"3.0","eid":"SEARCH","mid":"LP.1596001408756.045c0aa6-4b70-45d3-b43f-bc908e512175","actor":{"type":"System","id":"org.sunbird.learning.platform"},"context":{"channel":"in.ekstep","pdata":{"pid":"search-service","ver":"1.0","id":"sunbird.Sunbird_Dev.learning.platform"},"env":"search"},"syncts":1596001408756,"@version":"1","edata":{"filters":{"objectType":["Content"],"resourceType":{},"contentType":["course"],"framework":{},"channel":{},"mimeType":{},"status":"Live","identifier":["KP_FT_1564394114456","do_112476372676763648176","do_1124785353783377921154","do_112481468925796352148","do_1124834956377456641118","do_1124835868462612481134","do_1125083286221291521153","do_1125098016170639361238","do_1125110672521134081296","do_11269260687205990411105","do_112717173739429888132","do_112728688963133440110506","do_112736824142061568168","do_11283193441064550414","do_11307319880400076811160","do_2123251055368765441634"]},"query":"","size":14,"sort":{},"topn":[{"identifier":"do_112736824142061568168"},{"identifier":"do_1125110672521134081296"},{"identifier":"do_11269260687205990411105"},{"identifier":"do_112728688963133440110506"},{"identifier":"do_112717173739429888132"}],"type":"content"}}
+      |""".stripMargin
+  }
+
+  val RAW_ERROR_EVENT:String = {
+    """
+      |{"@timestamp":"2020-08-11T10:21:18.518Z","ets":1596483300965,"ver":"3.0","eid":"ERROR","mid":"LP.1596483300965.28e663f6-2994-442a-8f4a-eb1459c17a99","actor":{"type":"User","id":"org.ekstep.learning.platform"},"context":{"channel":"in.ekstep","pdata":{"pid":"learning-service","ver":"1.0","id":"dev.sunbird.learning.platform"},"env":"system"},"syncts":1596483300965,"@version":"1","edata":{"errtype":"system","err":"RESOURCE_NOT_FOUND","stacktrace":"RESOURCE_NOT_FOUND: Resource not found : KP_FT_1596483300820.img\n\tat org.ekstep.learning.actor.ContentStoreActor.onReceive(ContentStoreActor.java:77)\n\tat akka.actor.UntypedActor$$anonfun$receive$1.applyOrElse(UntypedActor.scala:167)\n\tat akka.actor.Actor$class.aroundReceive(Actor.scala:539)\n\tat akka.actor.UntypedActor.aroundReceive(UntypedActor.scala:97)\n\tat akka.actor.ActorCell.receiveMessage(ActorCell.scala:610)\n\tat akka.actor.ActorCell.invoke(ActorCell.scala:579)\n\tat akka.dispatch.Mailbox.processMailbox(Mailbox.scala:268)\n\tat akka.dispatch.Mailbox.run(Mailbox.scala:229)\n\tat akka.dispatch.Mailbox.exec(Mailbox.scala:241)\n\tat akka.dispatch.forkjoin.ForkJoinTask.doExec(ForkJoinTask.java:260)\n\tat akka.dispatch.forkjoin.ForkJoinPool$WorkQueue.runTask(ForkJoinPool.java:1339)\n\tat akka.dispatch.forkjoin.ForkJoinPool.runWorker(ForkJoinPool.java:1979)\n\tat akka.dispatch.forkjoin.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:107)\n"}}
+      |""".stripMargin
+  }
 
 }
