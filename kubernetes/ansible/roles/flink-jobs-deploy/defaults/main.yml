@@ -52,11 +52,9 @@ extractor_consumer_parallelism: 1
 extractor_operators_parallelism: 1
 telemetry_extractor_key_expiry_seconds: 3600
 
-### Ingest router job related vars
+### Ingest Raw router job related vars
 ingest_router_consumer_parallelism: 1
 ingest_router_operators_parallelism: 1
-
-### Raw router job related vars
 raw_router_consumer_parallelism: 1
 raw_router_downstream_parallelism: 1
 
