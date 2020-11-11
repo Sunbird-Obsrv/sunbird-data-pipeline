@@ -279,7 +279,7 @@
 
 - name: Create collection-summary cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh collection-summary-report"
-  with_dict: "{{ collection-summary }}"
+  with_dict: "{{ run_collection_summary }}"
   tags:
     - cronjobs
     - default-jobs
