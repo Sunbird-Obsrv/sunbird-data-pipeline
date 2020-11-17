@@ -76,6 +76,16 @@ telemetry_denorm_secondary_operators_parallelism: 1
 denorm_primary_consumer_parallelism: 1
 telemetry_denorm_primary_operators_parallelism: 1
 
+redis_meta_content_port: 6379
+redis_meta_device_port: 6379
+redis_meta_user_port: 6379
+redis_meta_dialcode_port: 6379
+
+denorm_secondary_window_count: 30
+denorm_secondary_window_shards: 1400
+denorm_primary_window_count: 30
+denorm_primary_window_shards: 1400
+
 ### summary-denormalization related vars
 summary_denorm_consumer_parallelism: 1
 summary_denorm_operators_parallelism: 1

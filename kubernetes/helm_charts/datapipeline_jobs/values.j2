@@ -315,6 +315,8 @@ de-normalization-secondary:
     }
     skip.events = ["INTERRUPT"]
     task {
+      window.count = {{ denorm_secondary_window_count }}
+      window.shards = {{ denorm_secondary_window_shards }}
       consumer.parallelism = {{ denorm_secondary_consumer_parallelism }}
       telemetry.downstream.operators.parallelism = {{ telemetry_denorm_secondary_operators_parallelism }}
       summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
@@ -334,6 +336,10 @@ de-normalization-secondary:
         dialcodestore.id = 6
         key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
       }
+      content.port = {{ redis_meta_content_port }}
+      device.port = {{ redis_meta_device_port }}
+      user.port = {{ redis_meta_user_port }}
+      dialcode.port = {{ redis_meta_dialcode_port }}
     }
     # config version
     user_denorm_version = v2
@@ -361,6 +367,8 @@ de-normalization-primary:
     }
     skip.events = ["INTERRUPT"]
     task {
+      window.count = {{ denorm_primary_window_count }}
+      window.shards = {{ denorm_primary_window_shards }}
       consumer.parallelism = {{ denorm_primary_consumer_parallelism }}
       telemetry.downstream.operators.parallelism = {{ telemetry_denorm_primary_operators_parallelism }}
       summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
@@ -380,6 +388,10 @@ de-normalization-primary:
         dialcodestore.id = 6
         key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
       }
+      content.port = {{ redis_meta_content_port }}
+      device.port = {{ redis_meta_device_port }}
+      user.port = {{ redis_meta_user_port }}
+      dialcode.port = {{ redis_meta_dialcode_port }}
     }
     # config version
     user_denorm_version = v2
@@ -407,6 +419,8 @@ summary-denormalization:
     }
     skip.events = ["INTERRUPT"]
     task {
+      window.count = {{ denorm_primary_window_count }}
+      window.shards = {{ denorm_primary_window_shards }}
       consumer.parallelism = {{ summary_denorm_consumer_parallelism }}
       telemetry.downstream.operators.parallelism = {{ telemetry_denorm_operators_parallelism }}
       summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
@@ -426,6 +440,10 @@ summary-denormalization:
         dialcodestore.id = 6
         key.expiry.seconds = {{ summary_denorm_key_expiry_seconds }}
       }
+      content.port = {{ redis_meta_content_port }}
+      device.port = {{ redis_meta_device_port }}
+      user.port = {{ redis_meta_user_port }}
+      dialcode.port = {{ redis_meta_dialcode_port }}
     }
     # config version
     user_denorm_version = v2
@@ -501,6 +519,7 @@ device-profile-updater:
       database {
         devicestore.id = 2
       }
+      port = {{ redis_meta_device_port }}
     }
     postgres {
       database = "{{ postgres.db_name }}",
@@ -531,6 +550,9 @@ content-cache-updater:
         contentstore.id = 5
         dialcodestore.id = 6
       }
+      port = {{ redis_meta_content_port }}
+      content.port = {{ redis_meta_content_port }}
+      dialcode.port = {{ redis_meta_dialcode_port }}
     }
     dialcode {
       api {
@@ -562,6 +584,7 @@ user-cache-updater:
       database {
         userstore.id = 4
       }
+      port = {{ redis_meta_user_port }}
     }
     lms-cassandra {
       keyspace = "{{ middleware_cassandra_keyspace }}"
@@ -598,6 +621,7 @@ user-cache-updater-v2:
       database {
         userstore.id = 12
       }
+      port = {{ redis_meta_user_port }}
     }
     lms-cassandra {
       keyspace = "{{ middleware_cassandra_keyspace }}"
