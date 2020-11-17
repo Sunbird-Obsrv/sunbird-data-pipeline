@@ -27,10 +27,19 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
   val telemetryDownstreamOperatorsParallelism: Int = config.getInt("task.telemetry.downstream.operators.parallelism")
   val summaryDownstreamOperatorsParallelism: Int = config.getInt("task.summary.downstream.operators.parallelism")
 
+  // Windows
+  val windowCount: Int = config.getInt("task.window.count")
+  val windowShards: Int = config.getInt("task.window.shards")
+
   val userStore: Int = config.getInt("redis-meta.database.userstore.id")
   val contentStore: Int = config.getInt("redis-meta.database.contentstore.id")
   val deviceStore: Int = config.getInt("redis-meta.database.devicestore.id")
   val dialcodeStore: Int = config.getInt("redis-meta.database.dialcodestore.id")
+
+  val userRedisPort: Int = config.getInt("redis-meta.user.port")
+  val deviceRedisPort: Int = config.getInt("redis-meta.device.port")
+  val contentRedisPort: Int = config.getInt("redis-meta.content.port")
+  val dialcodeRedisPort: Int = config.getInt("redis-meta.dialcode.port")
 
   val deviceFields = List("country_code", "country", "state_code", "state", "city", "district_custom", "state_code_custom",
     "state_custom", "user_declared_state", "user_declared_district", "devicespec", "firstaccess")
