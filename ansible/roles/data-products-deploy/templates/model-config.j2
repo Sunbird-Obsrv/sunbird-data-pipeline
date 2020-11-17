@@ -33,7 +33,6 @@ config() {
 	if [ ! -z "$3" ]; then inputBucket=$3; fi
 	if [ ! -z "$4" ]; then sinkTopic=$4; fi
 	if [ ! -z "$5" ]; then keyword=$5; fi
-	echo "keyword is" $keyword	
 	case "$1" in
 		"cmu")
        	if [ -z "$2" ]; then queryDate=$currentDate; else queryDate=$endDate; fi
