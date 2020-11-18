@@ -29,7 +29,7 @@ class ContentUpdaterFunction(config: ContentCacheUpdaterConfig)(implicit val map
 
     override def open(parameters: Configuration): Unit = {
         super.open(parameters)
-        dataCache = new DataCache(config, new RedisConnect(config.metaRedisHost, config.metaRedisPort, config), config.contentStore, List())
+        dataCache = new DataCache(config, new RedisConnect(config.contentRedisHost, config.contentRedisPort, config), config.contentStore, List())
         dataCache.init()
     }
 

@@ -550,7 +550,16 @@ content-cache-updater:
         contentstore.id = 5
         dialcodestore.id = 6
       }
-      port = {{ redis_meta_content_port }}
+      {% if metadata2_redis_host is defined %}
+      content.host = {{ metadata2_redis_host }}
+      {% else %}
+      content.host = {{ redis_host }}
+      {% endif %}
+      {% if metadata2_redis_host is defined %}
+      dialcode.host = {{ metadata2_redis_host }}
+      {% else %}
+      dialcode.host = {{ redis_host }}
+      {% endif %}
       content.port = {{ redis_meta_content_port }}
       dialcode.port = {{ redis_meta_dialcode_port }}
     }
@@ -698,6 +707,8 @@ error-denormalization:
     }
     skip.events = ["INTERRUPT"]
     task {
+      window.count = {{ denorm_primary_window_count }}
+      window.shards = {{ denorm_primary_window_shards }}
       consumer.parallelism = {{ error_denorm_consumer_parallelism }}
       telemetry.downstream.operators.parallelism = {{ error_denorm_operators_parallelism }}
       summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
@@ -717,6 +728,10 @@ error-denormalization:
         dialcodestore.id = 6
         key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
       }
+      content.port = {{ redis_meta_content_port }}
+      device.port = {{ redis_meta_device_port }}
+      user.port = {{ redis_meta_user_port }}
+      dialcode.port = {{ redis_meta_dialcode_port }}
     }
     # config version
     user_denorm_version = v2
