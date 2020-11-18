@@ -36,6 +36,11 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
   val deviceStore: Int = config.getInt("redis-meta.database.devicestore.id")
   val dialcodeStore: Int = config.getInt("redis-meta.database.dialcodestore.id")
 
+  val userRedisHost: String = config.getString("redis-meta.user.host")
+  val deviceRedisHost: String = config.getString("redis-meta.device.host")
+  val contentRedisHost: String = config.getString("redis-meta.content.host")
+  val dialcodeRedisHost: String = config.getString("redis-meta.dialcode.host")
+
   val userRedisPort: Int = config.getInt("redis-meta.user.port")
   val deviceRedisPort: Int = config.getInt("redis-meta.device.port")
   val contentRedisPort: Int = config.getInt("redis-meta.content.port")

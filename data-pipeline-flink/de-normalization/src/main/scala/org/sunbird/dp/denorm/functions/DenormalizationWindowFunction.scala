@@ -48,10 +48,10 @@ class DenormalizationWindowFunction(config: DenormalizationConfig)(implicit val 
     override def open(parameters: Configuration): Unit = {
         super.open(parameters)
         denormCache = new DenormWindowCache(config,
-            new RedisConnect(config.metaRedisHost, config.contentRedisPort, config),
-            new RedisConnect(config.metaRedisHost, config.deviceRedisPort, config),
-            new RedisConnect(config.metaRedisHost, config.userRedisPort, config),
-            new RedisConnect(config.metaRedisHost, config.dialcodeRedisPort, config)
+            new RedisConnect(config.contentRedisHost, config.contentRedisPort, config),
+            new RedisConnect(config.deviceRedisHost, config.deviceRedisPort, config),
+            new RedisConnect(config.userRedisHost, config.userRedisPort, config),
+            new RedisConnect(config.dialcodeRedisHost, config.dialcodeRedisPort, config)
         )
         deviceDenormalization = new DeviceDenormalization(config)
         userDenormalization = new UserDenormalization(config)
