@@ -161,6 +161,8 @@ telemetry-extractor:
         database {
           contentstore.id = 5
         }
+        host = {{ redis_meta_content_host }}
+        port = {{ redis_meta_content_port }}
       }
     redact.events.list = ["ASSESS","RESPONSE"]
 
@@ -336,6 +338,10 @@ de-normalization-secondary:
         dialcodestore.id = 6
         key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
       }
+      content.host = {{ redis_meta_content_host }}
+      device.host = {{ redis_meta_device_host }}
+      user.host = {{ redis_meta_user_host }}
+      dialcode.host = {{ redis_meta_dialcode_host }}
       content.port = {{ redis_meta_content_port }}
       device.port = {{ redis_meta_device_port }}
       user.port = {{ redis_meta_user_port }}
@@ -388,6 +394,10 @@ de-normalization-primary:
         dialcodestore.id = 6
         key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
       }
+      content.host = {{ redis_meta_content_host }}
+      device.host = {{ redis_meta_device_host }}
+      user.host = {{ redis_meta_user_host }}
+      dialcode.host = {{ redis_meta_dialcode_host }}
       content.port = {{ redis_meta_content_port }}
       device.port = {{ redis_meta_device_port }}
       user.port = {{ redis_meta_user_port }}
@@ -440,6 +450,10 @@ summary-denormalization:
         dialcodestore.id = 6
         key.expiry.seconds = {{ summary_denorm_key_expiry_seconds }}
       }
+      content.host = {{ redis_meta_content_host }}
+      device.host = {{ redis_meta_device_host }}
+      user.host = {{ redis_meta_user_host }}
+      dialcode.host = {{ redis_meta_dialcode_host }}
       content.port = {{ redis_meta_content_port }}
       device.port = {{ redis_meta_device_port }}
       user.port = {{ redis_meta_user_port }}
@@ -519,6 +533,7 @@ device-profile-updater:
       database {
         devicestore.id = 2
       }
+      host = {{ redis_meta_device_host }}
       port = {{ redis_meta_device_port }}
     }
     postgres {
@@ -550,16 +565,8 @@ content-cache-updater:
         contentstore.id = 5
         dialcodestore.id = 6
       }
-      {% if metadata2_redis_host is defined %}
-      content.host = {{ metadata2_redis_host }}
-      {% else %}
-      content.host = {{ redis_host }}
-      {% endif %}
-      {% if metadata2_redis_host is defined %}
-      dialcode.host = {{ metadata2_redis_host }}
-      {% else %}
-      dialcode.host = {{ redis_host }}
-      {% endif %}
+      content.host = {{ redis_meta_content_host }}
+      dialcode.host = {{ redis_meta_dialcode_host }}
       content.port = {{ redis_meta_content_port }}
       dialcode.port = {{ redis_meta_dialcode_port }}
     }
@@ -593,6 +600,7 @@ user-cache-updater:
       database {
         userstore.id = 4
       }
+      host = {{ redis_meta_user_host }}
       port = {{ redis_meta_user_port }}
     }
     lms-cassandra {
@@ -630,6 +638,7 @@ user-cache-updater-v2:
       database {
         userstore.id = 12
       }
+      host = {{ redis_meta_user_host }}
       port = {{ redis_meta_user_port }}
     }
     lms-cassandra {
@@ -728,6 +737,10 @@ error-denormalization:
         dialcodestore.id = 6
         key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
       }
+      content.host = {{ redis_meta_content_host }}
+      device.host = {{ redis_meta_device_host }}
+      user.host = {{ redis_meta_user_host }}
+      dialcode.host = {{ redis_meta_dialcode_host }}
       content.port = {{ redis_meta_content_port }}
       device.port = {{ redis_meta_device_port }}
       user.port = {{ redis_meta_user_port }}
