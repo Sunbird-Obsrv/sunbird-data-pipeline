@@ -215,6 +215,29 @@ druid = {
 	url = "/druid/v2/"
 	datasource = "telemetry-events"
 	response-parsing-timeout = 300000
+        client-backend = "ing.wbaa.druid.client.DruidAdvancedHttpClient"
+        client-config = {
+           druid-advanced-http-client ={
+           queue-size = 32768
+           queue-overflow-strategy = "Backpressure"
+           query-retries = 5
+           query-retry-delay = 10 ms
+           host-connection-pool = {
+             max-connections = 32
+             min-connections = 0
+             max-open-requests = 128
+             max-connection-lifetime = 20 min
+             idle-timeout = 15 min
+          client = {
+            # The time after which an idle connection will be automatically closed.
+            # Set to `infinite` to completely disable idle timeouts.
+            idle-timeout = 10 min
+           parsing.max-chunk-size = 10m
+        }
+        }
+    }
+
+  }
 }
 druid.rollup.host="{{druid_rollup_broker_host}}"
 druid.rollup.port=8082
