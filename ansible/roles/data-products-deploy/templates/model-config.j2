@@ -32,6 +32,7 @@ config() {
 	if [ -z "$2" ]; then endDate=$(date --date yesterday "+%Y-%m-%d"); else endDate=$2; fi
 	if [ ! -z "$3" ]; then inputBucket=$3; fi
 	if [ ! -z "$4" ]; then sinkTopic=$4; fi
+	if [ ! -z "$2" ]; then keyword=$2; fi
 	case "$1" in
 		"cmu")
        	if [ -z "$2" ]; then queryDate=$currentDate; else queryDate=$endDate; fi
@@ -42,6 +43,9 @@ config() {
 		;;
         "userinfo-exhaust")
 		echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.exhaust.collection.UserInfoExhaustJob","modelParams":{"store":"azure","mode":"OnDemand","batchFilters":["TPD"],"searchFilter":{}, "sparkElasticsearchConnectionHost":"{{ sunbird_es_host }}","sparkRedisConnectionHost":"{{ metadata2_redis_host }}","sparkUserDbRedisIndex":"12", "sparkCassandraConnectionHost":"{{ core_cassandra_host }}", "fromDate":"$(date --date yesterday '+%Y-%m-%d')","toDate":"$(date --date yesterday '+%Y-%m-%d')"},"parallelization":8,"appName":"UserInfo Exhaust"}'
+		;;
+		"program-collection-summary-report")
+		echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.job.report.CollectionSummaryJob","modelParams":{"searchFilter":{"request":{"filters":{"status":["Live"],"contentType":"Course","keywords":["'$keyword'"]},"fields":["identifier","name","organisation","channel"],"limit":10000}},"columns":["Published by","Batch id","Collection id","Collection name","Batch start date","Batch end date","State","Total enrolments By State","Total completion By State"], "keywords":"'$keyword'", "store":"azure","sparkElasticsearchConnectionHost":"{{ sunbird_es_host }}","sparkRedisConnectionHost":"{{ metadata2_redis_host }}","sparkUserDbRedisIndex":"12","sparkCassandraConnectionHost":"{{ core_cassandra_host }}","fromDate":"$(date --date yesterday '+%Y-%m-%d')","toDate":"$(date --date yesterday '+%Y-%m-%d')"},"parallelization":8,"appName":"Collection Summary Report"}'
 		;;
 		"response-exhaust")
 		echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.exhaust.collection.ResponseExhaustJob","modelParams":{"store":"azure","mode":"OnDemand","batchFilters":["TPD"],"searchFilter":{}, "sparkElasticsearchConnectionHost":"{{ sunbird_es_host }}","sparkRedisConnectionHost":"{{ metadata2_redis_host }}","sparkUserDbRedisIndex":"12", "sparkCassandraConnectionHost":"{{ core_cassandra_host }}", "fromDate":"$(date --date yesterday '+%Y-%m-%d')","toDate":"$(date --date yesterday '+%Y-%m-%d')"},"parallelization":8,"appName":"Response Exhaust"}'
