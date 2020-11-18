@@ -150,7 +150,7 @@ class UserCacheUpdatetStreamTaskSpec extends BaseTestSpec {
     val upsert = cassandraUtil.upsert("SELECT * FROM sunbird.location;")
     upsert should be(true)
     cassandraUtil.getUDTType("sunbird", "test") should not be not
-    cassandraUtil.close()
+//    cassandraUtil.close()
     val onSessionClose = cassandraUtil.find("SELECT * FROM sunbird.location;")
     onSessionClose should not be null
 
