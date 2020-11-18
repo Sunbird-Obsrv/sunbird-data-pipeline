@@ -81,6 +81,11 @@ redis_meta_device_port: 6379
 redis_meta_user_port: 6379
 redis_meta_dialcode_port: 6379
 
+redis_meta_content_host: "{% if metadata2_redis_host is defined %}{{ metadata2_redis_host }}{% else %}{{ redis_host }}{% endif %}"
+redis_meta_device_host: "{% if metadata2_redis_host is defined %}{{ metadata2_redis_host }}{% else %}{{ redis_host }}{% endif %}"
+redis_meta_user_host: "{% if metadata2_redis_host is defined %}{{ metadata2_redis_host }}{% else %}{{ redis_host }}{% endif %}"
+redis_meta_dialcode_host: "{% if metadata2_redis_host is defined %}{{ metadata2_redis_host }}{% else %}{{ redis_host }}{% endif %}"
+
 denorm_secondary_window_count: 30
 denorm_secondary_window_shards: 1400
 denorm_primary_window_count: 30
