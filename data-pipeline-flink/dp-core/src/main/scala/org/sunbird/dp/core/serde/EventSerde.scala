@@ -29,7 +29,7 @@ class EventDeserializationSchema[T <: Events](implicit ct: ClassTag[T]) extends 
     }
     catch {
       case ex: Exception =>
-        logger.error("Exception when parsing event from kafka: " + record, ex)
+        logger.error("Exception when parsing event from kafka: " + record)
         ct.runtimeClass.getConstructor(classOf[util.Map[String, AnyRef]]).newInstance(new util.HashMap[String, AnyRef]()).asInstanceOf[T]
     }
   }
