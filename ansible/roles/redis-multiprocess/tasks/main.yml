@@ -23,24 +23,8 @@
   become: yes
   lineinfile:
     path: '{{ redis_dir }}/redis-stable/redis-{{ item }}.conf'
-    regexp: '^port 6379'
-    line: 'port {{ item }}'
-  with_items: "{{ redis.processes }}"
-
-- name: Update redis conf for pid
-  become: yes
-  lineinfile:
-    path: '{{ redis_dir }}/redis-stable/redis-{{ item }}.conf'
-    regexp: '^pidfile /var/run/redis_6379.pid'
-    line: 'pidfile /var/run/redis_{{ item }}.pid'
-  with_items: "{{ redis.processes }}"    
- 
-- name: Update redis conf for dump
-  become: yes
-  lineinfile:
-    path: '{{ redis_dir }}/redis-stable/redis-{{ item }}.conf'
-    regexp: '^dbfilename dump.rdb'
-    line: 'dbfilename dump-{{ item }}.rdb'
+    regexp: '^_port_'
+    line: '{{ item }}'
   with_items: "{{ redis.processes }}"
 
 - name: Install required utils
@@ -69,8 +53,8 @@
   become: yes
   lineinfile:
     path: '/etc/systemd/system/redis-{{ item }}.service'
-    regexp: '^redis.conf'
-    line: 'redis-{{ item }}.conf'
+    regexp: '^_port_'
+    line: '{{ item }}'
   with_items: "{{ redis.processes }}"
 
 - name: enable redis systemd service

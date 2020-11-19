@@ -79,9 +79,9 @@
 # are explicitly listed using the "bind" directive.
 protected-mode no
 
-# Accept connections on the specified port, default is 6379 (IANA #815344).
+# Accept connections on the specified port, default is _port_ (IANA #815344).
 # If port 0 is specified Redis will not listen on a TCP socket.
-port 6379
+port _port_
 
 # TCP listen() backlog.
 #
@@ -147,7 +147,7 @@ supervised systemd
 #
 # Creating a pid file is best effort: if Redis is not able to create it
 # nothing bad happens, the server will start and run normally.
-pidfile /var/run/redis_6379.pid
+pidfile /var/run/redis__port_.pid
 
 # Specify the server verbosity level.
 # This can be one of:
@@ -236,7 +236,7 @@ rdbcompression yes
 rdbchecksum yes
 
 # The filename where to dump the DB
-dbfilename dump.rdb
+dbfilename dump-_port_.rdb
 
 # The working directory.
 #
@@ -700,7 +700,7 @@ lua-time-limit 5000
 # Make sure that instances running in the same system do not have
 # overlapping cluster configuration file names.
 #
-# cluster-config-file nodes-6379.conf
+# cluster-config-file nodes-_port_.conf
 
 # Cluster node timeout is the amount of milliseconds a node must be unreachable
 # for it to be considered in failure state.
