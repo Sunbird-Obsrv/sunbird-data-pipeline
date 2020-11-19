@@ -69,6 +69,12 @@ class BaseProcessFunctionTestSpec extends BaseSpec with Matchers {
       |"mid":"LP.1586994119534.4bfe9b31-216d-46ea-8e60-d7ea1b1a103c","type":"events"}
     """.stripMargin
 
+  val EVENT_INVALID =
+    """
+      |"{\"eid\":\"AUDIT\",\"ets\":1605674597050,\"ver\":\"3.0\",\"mid\":\"LP.1605674597050.e920319b-b6e4-4be8-877d-f4c588ee7a3c\",\"actor\":{\"id\":\"9bb884fc-8a56-4727-9522-25a7d5b8ea06\",\"type\":\"User\"},\"context\":{\"channel\":\"ORG_001\",\"pdata\":{\"pid\":\"lms-service\",\"ver\":\"1.0\"},\"env\":\"CourseBatch\",\"cdata\":[{\"id\":\"do_213153022369169408120\",\"type\":\"Course\"},{\"id\":\"01315302480262758472\",\"type\":\"CourseBatch\"}]},\"object\":{\"id\":\"9bb884fc-8a56-4727-9522-25a7d5b8ea06\",\"type\":\"User\",\"rollup\":{\"l1\":\"do_213153022369169408120\"}},\"edata\":{\"state\":\"Create\",\"type\":\"enrol\",\"props\":[\"courseId\",\"enrolledDate\",\"userId\",\"batchId\",\"active\"]}}"
+      |
+      |""".stripMargin
+
   val customKafkaConsumerProperties: Map[String, String] =
     Map[String, String]("auto.offset.reset" -> "earliest", "group.id" -> "test-event-schema-group")
   implicit val embeddedKafkaConfig: EmbeddedKafkaConfig =
@@ -90,6 +96,7 @@ class BaseProcessFunctionTestSpec extends BaseSpec with Matchers {
     publishStringMessageToKafka(bsConfig.kafkaEventInputTopic, SHARE_EVENT)
     publishStringMessageToKafka(bsConfig.kafkaMapInputTopic, EVENT_WITH_MESSAGE_ID)
     publishStringMessageToKafka(bsConfig.kafkaStringInputTopic, SHARE_EVENT)
+    publishStringMessageToKafka(bsConfig.kafkaEventInputTopic, EVENT_INVALID)
 
     flinkCluster.before()
   }
