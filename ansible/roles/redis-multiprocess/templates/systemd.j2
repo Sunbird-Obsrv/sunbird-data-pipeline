@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User={{ redis_user }}
 Group={{ redis_user }}
-ExecStart={{ redis_dir }}/redis-stable/src/redis-server {{ redis_dir }}/redis-stable/redis.conf
+ExecStart={{ redis_dir }}/redis-stable/src/redis-server {{ redis_dir }}/redis-stable/redis-_port_.conf
 ExecStop={{ redis_dir }}/redis-stable/src/redis-cli shutdown
 Restart=always
 Type=notify
