@@ -23,8 +23,8 @@
   become: yes
   replace:
     path: '{{ redis_dir }}/redis-stable/redis-{{ item }}.conf'
-    regexp: '^_port_'
-    replace: '{{ item }}'
+    regexp: "^_port_"
+    replace: "{{ item }}"
   with_items: "{{ redis.processes }}"
 
 # - name: Install required utils
