@@ -21,20 +21,20 @@
 
 - name: Update redis conf for port
   become: yes
-  lineinfile:
+  replace:
     path: '{{ redis_dir }}/redis-stable/redis-{{ item }}.conf'
     regexp: '^_port_'
-    line: '{{ item }}'
+    replace: '{{ item }}'
   with_items: "{{ redis.processes }}"
 
-- name: Install required utils
-  apt: name={{ item }} state=present
-  become: yes
-  with_items:
-    - make
-    - gcc
-    - build-essential
-    - tcl8.5
+# - name: Install required utils
+#   apt: name={{ item }} state=present
+#   become: yes
+#   with_items:
+#     - make
+#     - gcc
+#     - build-essential
+#     - tcl8.5
 
 - name: Go to the folder and run make
   become: yes
