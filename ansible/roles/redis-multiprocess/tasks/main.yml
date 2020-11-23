@@ -22,9 +22,9 @@
 - name: Update redis conf for port
   become: yes
   replace:
-    path: '{{ redis_dir }}/redis-stable/redis-6380.conf'
+    path: '{{ redis_dir }}/redis-stable/redis-{{ item }}.conf'
     regexp: "_port_"
-    replace: "6380"
+    replace: "{{ item }}"
   with_items: "{{ redis.processes }}"
 
 # - name: Install required utils
