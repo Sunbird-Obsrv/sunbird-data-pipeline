@@ -1,5 +1,4 @@
-redis_user: learning
-#redis_home_dir: analytics
+redis_user: analytics
 analytics_user_home: /home/{{ redis_user }}
 redis_home: "{{ analytics_user_home }}/redis-stable"
 redis_tar_ball: http://download.redis.io/releases/redis-stable.tar.gz
