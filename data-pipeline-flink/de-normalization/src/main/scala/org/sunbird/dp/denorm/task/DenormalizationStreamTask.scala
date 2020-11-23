@@ -59,12 +59,6 @@ class DenormalizationStreamTask(config: DenormalizationConfig, kafkaConnector: F
     implicit val eventTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
 
     val source = kafkaConnector.kafkaEventSource[Event](config.telemetryInputTopic)
-//    val denormStream =
-//      env.addSource(source, config.denormalizationConsumer).uid(config.denormalizationConsumer)
-//        .setParallelism(config.kafkaConsumerParallelism).rebalance()
-//        .process(new DenormalizationFunction(config)).name(config.denormalizationFunction).uid(config.denormalizationFunction)
-//          .setParallelism(config.telemetryDownstreamOperatorsParallelism)
-
     val denormStream =
       env.addSource(source, config.denormalizationConsumer).uid(config.denormalizationConsumer)
         .setParallelism(config.kafkaConsumerParallelism).rebalance()
