@@ -1,5 +1,6 @@
-redis_user: analytics
-analytics_user_home: /home/{{ redis_user }}
+redis_user: learning
+redis_home_dir: analytics
+analytics_user_home: /home/{{ redis_home_dir }}
 redis_home: "{{ analytics_user_home }}/redis-stable"
 redis_tar_ball: http://download.redis.io/releases/redis-stable.tar.gz
 dp_redis_max_memory: 100mb
