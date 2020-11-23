@@ -8,6 +8,3 @@ redis_dump_rdb_time_in_seconds: 900
 redis_dump_rdb_keys_to_save_state: 100
 redis:
   processes: ['6380', '6381', '6382', '6383']
-
-
-
