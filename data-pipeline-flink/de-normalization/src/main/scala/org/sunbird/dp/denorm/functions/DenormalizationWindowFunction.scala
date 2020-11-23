@@ -68,16 +68,14 @@ class DenormalizationWindowFunction(config: DenormalizationConfig)(implicit val 
     override def process(key: Int, context: ProcessWindowFunction[Event, Event, Int, GlobalWindow]#Context, elements: lang.Iterable[Event], metrics: Metrics): Unit = {
 
         val eventsList = elements.asScala.toList
-        val filteredEventsList: List[Event] = eventsList.filter{ event =>
+        val filteredEventsList: List[Event] = eventsList.filter { event =>
             if (event.isOlder(config.ignorePeriodInMonths)) { // Skip events older than configured value (default: 3 months)
                 metrics.incCounter(config.eventsExpired)
                 false
-            }
-            else {
+            } else {
                 if ("ME_WORKFLOW_SUMMARY" == event.eid() || !(event.eid().contains("SUMMARY") || config.eventsToskip.contains(event.eid()))) {
                     true
-                }
-                else {
+                } else {
                     metrics.incCounter(config.eventsSkipped)
                     false
                 }
