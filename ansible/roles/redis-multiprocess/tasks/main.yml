@@ -51,10 +51,10 @@
 
 - name: Update redis conf file in systemd script
   become: yes
-  lineinfile:
+  replace:
     path: '/etc/systemd/system/redis-{{ item }}.service'
     regexp: '_port_'
-    line: '{{ item }}'
+    replace: '{{ item }}'
   with_items: "{{ redis.processes }}"
 
 - name: enable redis systemd service
