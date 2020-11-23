@@ -23,7 +23,7 @@
   become: yes
   replace:
     path: '{{ redis_dir }}/redis-stable/redis-6380.conf'
-    regexp: "/_port_/"
+    regexp: "_port_"
     replace: "6380"
   #with_items: "{{ redis.processes }}"
 
