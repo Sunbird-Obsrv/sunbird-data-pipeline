@@ -25,7 +25,7 @@
     path: '{{ redis_dir }}/redis-stable/redis-6380.conf'
     regexp: "_port_"
     replace: "6380"
-  #with_items: "{{ redis.processes }}"
+  with_items: "{{ redis.processes }}"
 
 # - name: Install required utils
 #   apt: name={{ item }} state=present
