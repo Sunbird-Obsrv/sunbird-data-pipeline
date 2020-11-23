@@ -71,22 +71,20 @@ class DenormalizationWindowFunction(config: DenormalizationConfig)(implicit val 
                          metrics: Metrics): Unit = {
 
         val eventsList = elements.asScala.toList
-//        logger.info("EventsSize" + eventsList.size)
-        val filteredEventsList: List[Event] = eventsList.map{ event =>
+        val filteredEventsList: List[Event] = eventsList.filter{ event =>
             if (event.isOlder(config.ignorePeriodInMonths)) { // Skip events older than configured value (default: 3 months)
                 metrics.incCounter(config.eventsExpired)
-                null
+                false
             } else {
                 if ("ME_WORKFLOW_SUMMARY" == event.eid() || !(event.eid().contains("SUMMARY") || config.eventsToskip.contains(event.eid()))) {
-                    event
+                    true
                 }
                 else {
                     metrics.incCounter(config.eventsSkipped)
-                    null
+                    false
                 }
             }
-        }.filter(f => f != null)
-//        logger.info("FilteredEventsSize" + filteredEventsList.size)
+        }
         denormalize(filteredEventsList, context, metrics)
     }
 
