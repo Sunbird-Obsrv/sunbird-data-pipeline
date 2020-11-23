@@ -53,7 +53,7 @@
   become: yes
   lineinfile:
     path: '/etc/systemd/system/redis-{{ item }}.service'
-    regexp: '^_port_'
+    regexp: '_port_'
     line: '{{ item }}'
   with_items: "{{ redis.processes }}"
 
