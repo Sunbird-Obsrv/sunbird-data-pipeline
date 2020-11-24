@@ -18,7 +18,7 @@
     dest: "/tmp/{{ item }}"
 
 - set_fact:
-    redis_backup_dir: "{{ redis_restore_file_name | regex_replace(".zip", '') }}"
+    redis_backup_dir: "{{ redis_restore_file_name | regex_replace('.zip', '') }}"
 
 - name: copy dump.rdb files to data dir
   become: yes
