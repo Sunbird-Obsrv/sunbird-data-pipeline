@@ -16,6 +16,6 @@
         groups: sudo
         shell: /bin/bash
   roles:
-    - redis
+    - redis-multiprocess
   serial: 1
 
