@@ -26,6 +26,7 @@
   unarchive:
     src: "/tmp/{{ item }}/{{ redis_restore_file_name }}"
     dest: "/tmp/{{ item }}"
+    remote_src: True
   with_items: "{{ redis_restore_process_ports }}"  
 
 - name: copy dump.rdb files to data dir
