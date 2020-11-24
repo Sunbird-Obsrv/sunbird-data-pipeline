@@ -66,7 +66,12 @@
 
 - name: start redis
   become: yes
-  systemd:
-    name: redis-{{ item }}
-    state: restarted
-  with_items: "{{ redis.processes }}"  
+  command: {{ redis_dir }}/redis-stable/src/redis-server {{ redis_dir }}/redis-stable/redis-{{ item }}.conf
+  with_items: "{{ redis.processes }}"
+
+# - name: start redis
+#   become: yes
+#   systemd:
+#     name: redis-{{ item }}
+#     state: restarted
+#   with_items: "{{ redis.processes }}"  
