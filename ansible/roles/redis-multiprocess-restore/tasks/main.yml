@@ -14,12 +14,13 @@
   become: yes
   become_user: "{{ redis_user }}"
   shell: "echo shutdown | {{ analytics_user_home }}/redis-stable/src/redis-cli -p {{ item }}"
-  with_items: "{{ redis_restore_process_ports }}"  
+  with_items: "{{ redis_restore_process_ports }}"
 
 - name: Extract backup zip into tmp
   unarchive:
     src: "/tmp/{{ item }}/{{ redis_restore_file_name }}"
     dest: "/tmp/{{ item }}"
+  with_items: "{{ redis_restore_process_ports }}"  
 
 - set_fact:
     redis_backup_dir: "{{ redis_restore_file_name | regex_replace('.zip', '') }}"
