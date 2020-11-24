@@ -1,6 +1,6 @@
 - name: Create the directory
-  file: path={{ redis_backup_dir }} state=directory recurse=yes
-  
+  file: path={{ redis_backup_dir }}/{{ item }} state=directory recurse=yes
+  with_items: "{{ redis.processes }}"
 
 - set_fact:
     redis_backup_file_name: "redis-backup-{{ lookup('pipe', 'date +%Y-%m-%d-%T') }}-{{ ansible_hostname }}.zip"
