@@ -4,6 +4,6 @@
   hosts: redisall
   become: yes
   vars_files:
-   - ['{{inventory_dir}}/secrets.yml', 'secrets/{{env}}.yml']
+   - ['{{inventory_dir}}/secrets.yml']
   roles:
    - redis-multiprocess-restore
