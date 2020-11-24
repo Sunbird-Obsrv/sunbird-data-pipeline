@@ -1,10 +1,14 @@
 ---
 
 - name: Create the directory
+  become: yes
+  become_user: "{{ redis_user }}"
   file: path=/tmp/{{ item }} state=directory recurse=yes
   with_items: "{{ redis_restore_process_ports }}"
 
 - name: Download backup file
+  become: yes
+  become_user: "{{ redis_user }}"
   shell: "az storage blob download --container-name {{ redis_backup_azure_container_name }} --file {{ item }}/{{ redis_restore_file_name }} --name {{ item }}/{{ redis_restore_file_name }} --account-name {{sunbird_management_storage_account_name}} --account-key {{sunbird_management_storage_account_key}}"
   args:
     chdir: /tmp/
@@ -18,18 +22,16 @@
 
 - name: Extract backup zip into tmp
   become: yes
+  become_user: "{{ redis_user }}"
   unarchive:
     src: "/tmp/{{ item }}/{{ redis_restore_file_name }}"
     dest: "/tmp/{{ item }}"
   with_items: "{{ redis_restore_process_ports }}"  
 
-- set_fact:
-    redis_backup_dir: "{{ redis_restore_file_name | regex_replace('.zip', '') }}"
-
 - name: copy dump.rdb files to data dir
   become: yes
   become_user: "{{ redis_user }}"
-  shell: cp /tmp/{{ item }}/{{ redis_backup_dir }}/dump-{{ item }}.rdb {{ analytics_user_home }}/redis-stable/dump-{{ item }}.rdb
+  shell: cp /tmp/{{ item }}/dump-{{ item }}.rdb {{ analytics_user_home }}/redis-stable/dump-{{ item }}.rdb
   with_items: "{{ redis_restore_process_ports }}"
 
 - name: start redis
