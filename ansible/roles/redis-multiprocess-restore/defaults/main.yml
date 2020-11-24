@@ -1,5 +1,3 @@
 redis_user: analytics
 redis_backup_azure_container_name: dp-redis-backup
 analytics_user_home: /home/analytics
-redis:
-  processes: ['6380', '6381', '6382', '6383']
