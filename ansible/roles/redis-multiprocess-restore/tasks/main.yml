@@ -1,7 +1,8 @@
 ---
 
-- debug: "{{ redis_user }}"
-  
+- debug: 
+  msg: "{{ redis_user }}"
+
 - name: Create the directory
   become: yes
   become_user: "{{ redis_user }}"
