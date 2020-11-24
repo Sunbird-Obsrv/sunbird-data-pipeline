@@ -12,7 +12,7 @@ fullnameOverride: sunbird-monitoring
 prometheus:
   prometheusSpec:
     additionalScrapeConfigsExternal: {{ additional_scrape_configs_enabled | d(false) }}
-    retention: "{{ prometheus_retention_time | d('90d') }}"
+    retention: "{{ prometheus_retention_time | d('60d') }}"
     externalLabels:
       sb_cluster: "{{ kubernetes_cluster_name | default('kubernetes-1')}}"
 {% if prometheus_storage_spec is defined and prometheus_storage_spec %}
@@ -94,6 +94,13 @@ alertmanager:
                   {{ "{{" }} end {{ "}}" }}
             icon_emoji: ':dart:'
 
+        email_configs:
+          - send_resolved: true
+            to: '{{ default_mailing_list }}'
+            html: '{% raw %}{{ template "email.default.html" . }}{% endraw %}'
+            headers:
+              subject: '[{{ kubernetes_cluster_name }}] {% raw %}{{ .GroupLabels.alertname }}{% endraw %}'
+
       - name: 'lag_slack_warning'
         slack_configs:
           - send_resolved: true
@@ -111,6 +118,13 @@ alertmanager:
                     *Details:* {{ "{{" }} .Annotations.message {{ "}}" }}
                   {{ "{{" }} end {{ "}}" }}
             icon_emoji: ':dart:'
+        
+        email_configs:
+          - send_resolved: true
+            to: '{{ default_mailing_list }}'
+            html: '{% raw %}{{ template "email.default.html" . }}{% endraw %}'
+            headers:
+              subject: '[{{ kubernetes_cluster_name }}] {% raw %}{{ .GroupLabels.alertname }}{% endraw %}'
 
       - name: 'lag_slack_critical'
         slack_configs:
@@ -129,7 +143,14 @@ alertmanager:
                     *Details:* {{ "{{" }} .Annotations.message {{ "}}" }}
                   {{ "{{" }} end {{ "}}" }}
             icon_emoji: ':dart:'
-
+        
+        email_configs:
+          - send_resolved: true
+            to: '{{ default_mailing_list }}'
+            html: '{% raw %}{{ template "email.default.html" . }}{% endraw %}'
+            headers:
+              subject: '[{{ kubernetes_cluster_name }}] {% raw %}{{ .GroupLabels.alertname }}{% endraw %}'
+        
       - name: 'nodemetrics_slack_warning'
         slack_configs:
           - send_resolved: true
@@ -146,7 +167,14 @@ alertmanager:
                     *Details:* {{ "{{" }} .Annotations.message {{ "}}" }}
                   {{ "{{" }} end {{ "}}" }}
             icon_emoji: ':dart:'
-   
+
+        email_configs:
+          - send_resolved: true
+            to: '{{ default_mailing_list }}'
+            html: '{% raw %}{{ template "email.default.html" . }}{% endraw %}'
+            headers:
+              subject: '[{{ kubernetes_cluster_name }}] {% raw %}{{ .GroupLabels.alertname }}{% endraw %}'
+
       - name: 'nodemetrics_slack_critical'
         slack_configs:
           - send_resolved: true
@@ -163,6 +191,14 @@ alertmanager:
                     *Details:* {{ "{{" }} .Annotations.message {{ "}}" }}
                   {{ "{{" }} end {{ "}}" }}
             icon_emoji: ':dart:'
+
+        email_configs:
+          - send_resolved: true
+            to: '{{ default_mailing_list }}'
+            html: '{% raw %}{{ template "email.default.html" . }}{% endraw %}'
+            headers:
+              subject: '[{{ kubernetes_cluster_name }}] {% raw %}{{ .GroupLabels.alertname }}{% endraw %}'
+
 
       - name: 'slack'
         slack_configs:
