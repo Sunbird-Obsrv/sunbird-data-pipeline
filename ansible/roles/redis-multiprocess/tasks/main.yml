@@ -41,31 +41,32 @@
   become_user: "{{ redis_user }}"
   command: chdir={{ redis_home }} make
 
-- name: copy systemd script template
-  become: yes
-  template:
-    src: systemd.j2
-    dest: /etc/systemd/system/redis-{{ item }}.service
-    mode: 0755
-  with_items: "{{ redis.processes }}"  
+# - name: copy systemd script template
+#   become: yes
+#   template:
+#     src: systemd.j2
+#     dest: /etc/systemd/system/redis-{{ item }}.service
+#     mode: 0755
+#   with_items: "{{ redis.processes }}"  
 
-- name: Update redis conf file in systemd script
-  become: yes
-  replace:
-    path: '/etc/systemd/system/redis-{{ item }}.service'
-    regexp: '_port_'
-    replace: '{{ item }}'
-  with_items: "{{ redis.processes }}"
+# - name: Update redis conf file in systemd script
+#   become: yes
+#   replace:
+#     path: '/etc/systemd/system/redis-{{ item }}.service'
+#     regexp: '_port_'
+#     replace: '{{ item }}'
+#   with_items: "{{ redis.processes }}"
 
-- name: enable redis systemd service
-  become: yes
-  systemd:
-    name: redis-{{ item }}
-    enabled: yes
-  with_items: "{{ redis.processes }}"  
+# - name: enable redis systemd service
+#   become: yes
+#   systemd:
+#     name: redis-{{ item }}
+#     enabled: yes
+#   with_items: "{{ redis.processes }}"  
 
 - name: start redis
   become: yes
+  become_user: "{{ redis_user }}"
   command: '{{ redis_dir }}/redis-stable/src/redis-server {{ redis_dir }}/redis-stable/redis-{{ item }}.conf'
   with_items: "{{ redis.processes }}"
 
