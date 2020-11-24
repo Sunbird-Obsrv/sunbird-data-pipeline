@@ -22,7 +22,7 @@
   include_role:
     name: artifacts-upload-azure
   vars:
-    artifact: "{{ redis_backup_file_name }}"
+    artifact: "{{ item }}/{{ redis_backup_file_name }}"
     artifact_path: "{{ redis_backup_dir }}/{{ item }}/{{ redis_backup_file_name }}"
     artifacts_container: "{{ redis_backup_azure_container_name }}"
   with_items: "{{ redis.processes }}"  
