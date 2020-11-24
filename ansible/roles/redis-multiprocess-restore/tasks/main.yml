@@ -13,7 +13,7 @@
 - name: stop redis to restore backup 
   become: yes
   become_user: "{{ redis_user }}"
-  shell: "echo shutdown | ./src/redis-cli -p {{ item }}"
+  shell: "echo shutdown | {{ analytics_user_home }}/redis-stable/src/redis-cli -p {{ item }}"
   with_items: "{{ redis_restore_process_ports }}"  
 
 - name: Extract backup zip into tmp
@@ -37,7 +37,7 @@
   with_items: "{{ redis_restore_process_ports }}"
 
 - name: Keyspace info
-  shell: "echo info keyspace | ./src/redis-cli -p {{ item }}"
+  shell: "echo info keyspace | {{ analytics_user_home }}/redis-stable/src/redis-cli -p {{ item }}"
   register: "restoreinfo-{{ item }}"
   args:
     chdir: "{{analytics_user_home}}/redis-stable/"
