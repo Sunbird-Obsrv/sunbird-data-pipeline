@@ -17,6 +17,7 @@
   with_items: "{{ redis_restore_process_ports }}"
 
 - name: Extract backup zip into tmp
+  become: yes
   unarchive:
     src: "/tmp/{{ item }}/{{ redis_restore_file_name }}"
     dest: "/tmp/{{ item }}"
