@@ -1,3 +1,4 @@
 redis_user: analytics
+redis_restore_user: analytics
 redis_backup_azure_container_name: dp-redis-backup
 analytics_user_home: /home/analytics
