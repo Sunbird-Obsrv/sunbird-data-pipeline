@@ -1,5 +1,7 @@
 ---
 
+- debug: "{{ redis_user }}"
+  
 - name: Create the directory
   become: yes
   become_user: "{{ redis_user }}"
@@ -27,6 +29,14 @@
     src: "/tmp/{{ item }}/{{ redis_restore_file_name }}"
     dest: "/tmp/{{ item }}"
   with_items: "{{ redis_restore_process_ports }}"  
+
+# - name: Extract backup zip into tmp
+#   become: yes
+#   become_user: "{{ redis_user }}"
+#   shell: "unzip /tmp/{{ item }}/{{ redis_restore_file_name }}"
+#   args:
+#     chdir: "/tmp/{{ item }}"
+#   with_items: "{{ redis_restore_process_ports }}"
 
 - name: copy dump.rdb files to data dir
   become: yes
