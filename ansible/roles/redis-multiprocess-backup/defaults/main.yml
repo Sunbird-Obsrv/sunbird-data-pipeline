@@ -1,4 +1,12 @@
 redis_backup_dir: /tmp/redis-backup
 redis_backup_azure_container_name: dp-redis-backup
 redis:
-  processes: ['6380', '6381', '6382', '6383']
+  config:
+    device:
+      name: 'device'
+    user:
+      name: 'user'
+    content:
+      name: 'content'
+    dialcode:
+      name: 'dialcode'

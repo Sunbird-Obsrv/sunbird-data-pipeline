@@ -16,16 +16,12 @@
 
 - name: Copy redis conf files
   become: yes
-  template: src=redis.conf.j2 dest={{ redis_dir }}/redis-stable/redis-{{ item }}.conf
-  with_items: "{{ redis.processes }}"
-
-- name: Update redis conf for port
-  become: yes
-  replace:
-    path: '{{ redis_dir }}/redis-stable/redis-{{ item }}.conf'
-    regexp: "_port_"
-    replace: "{{ item }}"
-  with_items: "{{ redis.processes }}"
+  template: src=redis.conf.j2 dest={{ redis_dir }}/redis-stable/redis-{{ item.value.name }}.conf
+  vars:
+    _port_: "{{ item.value.port }}"
+    _name_: "{{ item.value.name }}"
+    max_memory: "{{ item.value.max_memory }}"
+  with_dict: "{{ redis.config }}"
 
 - name: Go to the folder and run make
   become: yes
@@ -35,5 +31,5 @@
 - name: start redis
   become: yes
   become_user: "{{ redis_user }}"
-  command: '{{ redis_dir }}/redis-stable/src/redis-server {{ redis_dir }}/redis-stable/redis-{{ item }}.conf'
-  with_items: "{{ redis.processes }}" 
+  command: '{{ redis_dir }}/redis-stable/src/redis-server {{ redis_dir }}/redis-stable/redis-{{ item.value.name }}.conf'
+  with_dict: "{{ redis.config }}" 

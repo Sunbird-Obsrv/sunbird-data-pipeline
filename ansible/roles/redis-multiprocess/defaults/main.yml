@@ -2,9 +2,25 @@ redis_user: analytics
 analytics_user_home: /home/{{ redis_user }}
 redis_home: "{{ analytics_user_home }}/redis-stable"
 redis_tar_ball: http://download.redis.io/releases/redis-stable.tar.gz
-dp_redis_max_memory: 100mb
 redis_dir: "{{ analytics_user_home }}"
 redis_dump_rdb_time_in_seconds: 900
 redis_dump_rdb_keys_to_save_state: 100
+
 redis:
-  processes: ['6380', '6381', '6382', '6383']
+  config:
+    device:
+      port: '6380'
+      name: 'device'
+      max_memory: 100mb
+    user:
+      port: '6381'
+      name: 'user'
+      max_memory: 100mb
+    content:
+      port: '6382'
+      name: 'content'
+      max_memory: 100mb
+    dialcode:
+      port: '6383'
+      name: 'dialcode'
+      max_memory: 100mb     
