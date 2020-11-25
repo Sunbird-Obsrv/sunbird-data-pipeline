@@ -48,5 +48,5 @@
     chdir: "{{analytics_user_home}}/redis-stable/"
   with_items: "{{ redis_restore_process_ports }}"
 
-- debug: var="restoreinfo-{{ item }}.stdout_lines"
+- debug: var=restoreinfo-{{ item }}.stdout_lines
   with_items: "{{ redis_restore_process_ports }}"
