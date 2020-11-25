@@ -46,7 +46,7 @@
   register: restoreinfo
   args:
     chdir: "{{analytics_user_home}}/redis-stable/"
-  # with_items: "{{ redis_restore_process_ports }}"
+  with_items: "{{ redis_restore_process_ports }}"
 
 - debug: var=restoreinfo
   # with_items: "{{ redis_restore_process_ports }}"
