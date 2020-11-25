@@ -79,9 +79,9 @@
 # are explicitly listed using the "bind" directive.
 protected-mode no
 
-# Accept connections on the specified port, default is _port_ (IANA #815344).
+# Accept connections on the specified port, default is {{ _port_ }} (IANA #815344).
 # If port 0 is specified Redis will not listen on a TCP socket.
-port _port_
+port {{ _port_ }}
 
 # TCP listen() backlog.
 #
@@ -147,7 +147,7 @@ supervised systemd
 #
 # Creating a pid file is best effort: if Redis is not able to create it
 # nothing bad happens, the server will start and run normally.
-pidfile /var/run/redis__port_.pid
+pidfile /var/run/redis_{{ _name_ }}.pid
 
 # Specify the server verbosity level.
 # This can be one of:
@@ -160,7 +160,7 @@ loglevel notice
 # Specify the log file name. Also the empty string can be used to force
 # Redis to log on the standard output. Note that if you use standard
 # output for logging but daemonize, logs will be sent to /dev/null
-logfile "{{ redis_dir }}/redis-stable/redis-_port_.log"
+logfile "{{ redis_dir }}/redis-stable/redis-{{ _name_ }}.log"
 
 
 # To enable logging to the system logger, just set 'syslog-enabled' to yes,
@@ -236,7 +236,7 @@ rdbcompression yes
 rdbchecksum yes
 
 # The filename where to dump the DB
-dbfilename dump-_port_.rdb
+dbfilename {{ _name_ }}-dump.rdb
 
 # The working directory.
 #
@@ -508,7 +508,7 @@ slave-priority 100
 # limit for maxmemory so that there is some free RAM on the system for slave
 # output buffers (but this is not needed if the policy is 'noeviction').
 #
-maxmemory {{ dp_redis_max_memory }}
+maxmemory {{ max_memory }}
 
 # MAXMEMORY POLICY: how Redis will select what to remove when maxmemory
 # is reached. You can select among five behaviors:
@@ -700,7 +700,7 @@ lua-time-limit 5000
 # Make sure that instances running in the same system do not have
 # overlapping cluster configuration file names.
 #
-# cluster-config-file nodes-_port_.conf
+# cluster-config-file nodes-{{ _name_ }}.conf
 
 # Cluster node timeout is the amount of milliseconds a node must be unreachable
 # for it to be considered in failure state.

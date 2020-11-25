@@ -4,7 +4,7 @@
   become: yes
   become_user: "{{ redis_user }}"
   file: path=/tmp/{{ item }} state=directory recurse=yes
-  with_items: "{{ redis_restore_process_ports }}"
+  with_items: "{{ redis_restore_process }}"
 
 - name: Download backup file
   become: yes
@@ -12,13 +12,13 @@
   shell: "az storage blob download --container-name {{ redis_backup_azure_container_name }} --file {{ item }}/{{ redis_restore_file_name }} --name {{ item }}/{{ redis_restore_file_name }} --account-name {{sunbird_management_storage_account_name}} --account-key {{sunbird_management_storage_account_key}}"
   args:
     chdir: /tmp/
-  with_items: "{{ redis_restore_process_ports }}"
+  with_items: "{{ redis_restore_process }}"
 
 - name: stop redis to restore backup 
   become: yes
   become_user: "{{ redis_user }}"
-  shell: "echo shutdown | {{ analytics_user_home }}/redis-stable/src/redis-cli -p {{ item }}"
-  with_items: "{{ redis_restore_process_ports }}"
+  shell: "echo shutdown | {{ analytics_user_home }}/redis-stable/src/redis-cli -p {{ lookup('vars', item +'.port') }}"
+  with_items: "{{ redis_restore_process }}"
 
 - name: Extract backup zip into tmp
   become: yes
@@ -27,26 +27,26 @@
     src: "/tmp/{{ item }}/{{ redis_restore_file_name }}"
     dest: "/tmp/{{ item }}"
     remote_src: True
-  with_items: "{{ redis_restore_process_ports }}"  
+  with_items: "{{ redis_restore_process }}"  
 
 - name: copy dump.rdb files to data dir
   become: yes
   become_user: "{{ redis_user }}"
-  shell: cp /tmp/{{ item }}/dump-{{ item }}.rdb {{ analytics_user_home }}/redis-stable/dump-{{ item }}.rdb
-  with_items: "{{ redis_restore_process_ports }}"
+  shell: cp /tmp/{{ item }}/{{ item }}-dump.rdb {{ analytics_user_home }}/redis-stable/{{ item }}-dump.rdb
+  with_items: "{{ redis_restore_process }}"
 
 - name: start redis
   become: yes
   become_user: "{{ redis_user }}"
   command: '{{ analytics_user_home }}/redis-stable/src/redis-server {{ analytics_user_home }}/redis-stable/redis-{{ item }}.conf'
-  with_items: "{{ redis_restore_process_ports }}"
+  with_items: "{{ redis_restore_process }}"
 
 - name: Keyspace info
-  shell: "echo info keyspace | {{ analytics_user_home }}/redis-stable/src/redis-cli -p {{ item }}"
+  shell: "echo info keyspace | {{ analytics_user_home }}/redis-stable/src/redis-cli -p {{ lookup('vars', item +'.port') }}"
   register: restoreinfo
   args:
     chdir: "{{analytics_user_home}}/redis-stable/"
-  with_items: "{{ redis_restore_process_ports }}"
+  with_items: "{{ redis_restore_process }}"
 
 - debug: var=item.stdout_lines
   with_items: "{{ restoreinfo.results }}"  
