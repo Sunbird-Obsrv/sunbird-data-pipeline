@@ -43,7 +43,7 @@
 
 - name: Keyspace info
   shell: "echo info keyspace | {{ analytics_user_home }}/redis-stable/src/redis-cli -p {{ item }}"
-  register: "restoreinfo-{{ item }}"
+  register: restoreinfo-{{ item }}
   args:
     chdir: "{{analytics_user_home}}/redis-stable/"
   with_items: "{{ redis_restore_process_ports }}"
