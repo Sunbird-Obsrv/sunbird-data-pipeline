@@ -49,4 +49,6 @@
   with_items: "{{ redis_restore_process_ports }}"
 
 - debug: var=restoreinfo
-  # with_items: "{{ redis_restore_process_ports }}"
+
+- debug: var=item.stdout_lines
+  with_items: "{{ restoreinfo.results }}"  
