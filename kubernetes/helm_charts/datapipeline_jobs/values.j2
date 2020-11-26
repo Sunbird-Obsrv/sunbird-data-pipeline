@@ -677,6 +677,7 @@ assessment-aggregator:
       input.topic = {{ env_name }}.telemetry.assess
       failed.topic= {{ env_name }}.telemetry.assess.failed
       groupId = {{ env_name }}-assessment-aggregator-group
+      output.certissue.topic = {{ env_name }}.issue.certificate.request
     }
     task {
       assessaggregator {
@@ -687,6 +688,7 @@ assessment-aggregator:
       keyspace = "{{ middleware_cassandra_courses_keyspace }}"
       table = "{{ middleware_cassandra_assessment_aggregator_table }}"
       questionudttype= "{{ middleware_cassandra_assessment_question_type }}"
+      enrolmentstable = "{{ middleware_cassandra_user_enrolments_table }}"
     }
     redis {
       database {
