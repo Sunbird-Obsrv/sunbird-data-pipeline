@@ -134,6 +134,7 @@ assessaggregator_parallelism: 1
 middleware_cassandra_courses_keyspace: sunbird_courses
 middleware_cassandra_assessment_aggregator_table: assessment_aggregator
 middleware_cassandra_assessment_question_type : question
+middleware_cassandra_user_enrolments_table: user_enrolments
 
 ### taskmanager related vars
 healthcheck: true
