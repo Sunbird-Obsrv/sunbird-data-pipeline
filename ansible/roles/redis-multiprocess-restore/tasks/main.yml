@@ -14,7 +14,7 @@
     chdir: /tmp/
   with_items: "{{ redis_restore_process }}"
 
-- debug: var="{{ item }}.port {{ item.port }}"
+- debug: var="{{ item }}".port
   with_items: "{{ redis_restore_process }}"
 
 - name: stop redis to restore backup 
