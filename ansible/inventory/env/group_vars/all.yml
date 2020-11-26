@@ -195,3 +195,9 @@ location_search_token: "Bearer {{ dp_search_service_authorization_token }}"
 druid_report_url_endpoint : "{{ proto}}://{{domain_name}}/api/data/v1/report/jobs"
 druid_report_url : "{{ proto}}://{{domain_name}}/api/data/v1/"
 druid_report_token : "Bearer {{ sunbird_api_auth_token }}"
+
+#redis multiprocess config
+device_port: 6380
+user_port: 6381
+content_port: 6382
+dialcode_port: 6383
