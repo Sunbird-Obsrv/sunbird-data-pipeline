@@ -14,14 +14,15 @@
     chdir: /tmp/
   with_items: "{{ redis_restore_process }}"
 
-- debug: var="{{ item }}".port
-  with_items: "{{ redis_restore_process }}"
+- shell: "echo {{ lookup ('vars', item + '_port') }}"
+  register: ports
+  with_items: "{{ redis_restore_process }}" 
 
 - name: stop redis to restore backup 
   become: yes
   become_user: "{{ redis_restore_user }}"
-  shell: "echo shutdown | {{ analytics_user_home }}/redis-stable/src/redis-cli -p {{ item.port }}"
-  with_items: "{{ redis_restore_process }}"
+  shell: "echo shutdown | {{ analytics_user_home }}/redis-stable/src/redis-cli -p {{ item.stdout }}"
+  with_items: "{{ ports }}"
 
 - name: Extract backup zip into tmp
   become: yes

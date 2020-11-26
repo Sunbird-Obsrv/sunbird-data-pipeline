@@ -11,3 +11,8 @@ content:
   port: '6382'
 dialcode:
   port: '6383'
+
+device_port: '6380'
+user_port: '6381'
+content_port: '6382'
+dialcode_port: '6383'
