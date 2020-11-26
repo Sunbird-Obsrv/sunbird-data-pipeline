@@ -19,6 +19,7 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
   val assessAggregatorParallelism: Int = config.getInt("task.assessaggregator.parallelism")
   val kafkaInputTopic: String = config.getString("kafka.input.topic")
   val kafkaFailedTopic: String = config.getString("kafka.failed.topic")
+  val kafkaCertIssueTopic: String = config.getString("kafka.output.certissue.topic")
 
   // Metric List
   val dbUpdateCount = "db-update-count"
@@ -28,6 +29,7 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
   val skippedEventCount = "skipped-event-count"
   val cacheHitCount = "cache-hit-count"
   val cacheHitMissCount = "cache-hit-miss-count"
+  val certIssueEventsCount = "cert-issue-events-count"
 
 
   //Cassandra
@@ -37,10 +39,13 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
   val dbHost: String = config.getString("lms-cassandra.host")
   val dbPort: Int = config.getInt("lms-cassandra.port")
   val dbudtType: String = config.getString("lms-cassandra.questionudttype")
+  val enrolmentTable: String = config.getString("lms-cassandra.enrolmentstable")
 
   val FAILED_EVENTS_OUTPUT_TAG = "failed-events"
 
   val failedEventsOutputTag: OutputTag[Event] = OutputTag[Event]("assess-failed-events")
+  val certIssueOutputTagName = "certificate-issue-events"
+  val certIssueOutputTag: OutputTag[String] = OutputTag[String](certIssueOutputTagName)
 
   // Consumers
   val assessmentAggConsumer = "assessment-agg-consumer"
@@ -50,6 +55,7 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
 
   // Producers
   val assessFailedEventsSink = "assess-failed-events-sink"
+  val certIssueEventSink = "certificate-issue-event-sink"
 
   // Cache
   val relationCacheNode = config.getInt("redis.database.relationCache.id")
