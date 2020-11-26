@@ -3,15 +3,6 @@ redis_restore_user: analytics
 redis_backup_azure_container_name: dp-redis-backup
 analytics_user_home: /home/analytics
 
-device:
-  port: '6380'
-user:
-  port: '6381'
-content:
-  port: '6382'
-dialcode:
-  port: '6383'
-
 device_port: '6380'
 user_port: '6381'
 content_port: '6382'

@@ -46,13 +46,9 @@
   with_items: "{{ redis_restore_process }}"
 
 - name: Keyspace info
-  shell: "echo info keyspace | {{ analytics_user_home }}/redis-stable/src/redis-cli -p {{ port }}"
+  shell: "echo info keyspace | {{ analytics_user_home }}/redis-stable/src/redis-cli -p {{ item.stdout }}"
   register: restoreinfo
-  vars:
-    port: "{{ item }}.port"
-  args:
-    chdir: "{{analytics_user_home}}/redis-stable/"
-  with_items: "{{ redis_restore_process }}"
+  with_items: "{{ ports.results }}"
 
 - debug: var=item.stdout_lines
   with_items: "{{ restoreinfo.results }}"  
