@@ -9,18 +9,18 @@ redis_dump_rdb_keys_to_save_state: 100
 redis:
   config:
     device:
-      port: '6380'
+      port: "{{ device_port }}"
       name: 'device'
       max_memory: 100mb
     user:
-      port: '6381'
+      port: "{{ user_port }}"
       name: 'user'
       max_memory: 100mb
     content:
-      port: '6382'
+      port: "{{ content_port }}"
       name: 'content'
       max_memory: 100mb
     dialcode:
-      port: '6383'
+      port: "{{ dialcode_port }}"
       name: 'dialcode'
       max_memory: 100mb     
