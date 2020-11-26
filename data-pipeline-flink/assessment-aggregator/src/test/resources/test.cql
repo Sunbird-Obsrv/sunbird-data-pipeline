@@ -40,3 +40,23 @@ CREATE INDEX assessment_aggregator_last_attempted_on_idx ON sunbird_courses.asse
 '0afe2cc175ffc95b83a4dc8d1af2c47b','2019-11-07 05:38:49.640+0000','2/5','2019-11-07 05:38:05.076+0000',null,
 5,2,'2019-11-07 05:38:49.642+0000');*/
 
+CREATE TABLE sunbird_courses.user_enrolments (
+userid text,
+courseid text,
+batchid text,
+active boolean,
+addedby text,
+certificates list<frozen<map<text, text>>>,
+completedon timestamp,
+completionpercentage int,
+contentstatus map<text, int>,
+datetime timestamp,
+enrolleddate text,
+issued_certificates list<frozen<map<text, text>>>,
+lastreadcontentid text,
+lastreadcontentstatus int,
+progress int,
+status int,
+PRIMARY KEY (userid, courseid, batchid));
+
+INSERT INTO sunbird_courses.user_enrolments(userid, courseid, batchid, completionpercentage, status) VALUES ('ff1c4bdf-27e2-49bc-a53f-6e304bb3a87f', 'do_2128415652377067521125', '012846671379595264119',100, 2)

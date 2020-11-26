@@ -5,6 +5,7 @@ import java.math.BigDecimal
 import java.sql.Timestamp
 import java.text.DecimalFormat
 import java.util
+import java.util.UUID
 
 import com.datastax.driver.core.querybuilder.QueryBuilder
 import com.datastax.driver.core.{Row, UDTValue, UserType}
@@ -47,7 +48,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
 
   override def metricsList() = List(config.dbUpdateCount, config.dbReadCount,
     config.failedEventCount, config.batchSuccessCount,
-    config.skippedEventCount, config.cacheHitCount, config.cacheHitMissCount)
+    config.skippedEventCount, config.cacheHitCount, config.cacheHitMissCount, config.certIssueEventsCount)
 
 
   override def open(parameters: Configuration): Unit = {
@@ -102,6 +103,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
           saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList), new DateTime().getMillis)
           metrics.incCounter(config.dbUpdateCount)
           metrics.incCounter(config.batchSuccessCount)
+          issueCertificate(event, context, metrics)
         }
         else {
           metrics.incCounter(config.dbReadCount)
@@ -110,6 +112,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
               assessment.getTimestamp("created_on").getTime)
             metrics.incCounter(config.dbUpdateCount)
             metrics.incCounter(config.batchSuccessCount)
+            issueCertificate(event, context, metrics)
           }
           else {
             metrics.incCounter(config.skippedEventCount)
@@ -169,7 +172,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
       + batchEvent.courseId + " ,contentid: " + batchEvent.contentId, "attempid" + batchEvent.attemptId)
   }
 
-  def getQuestion(questionData: QuestionData, assessTs: Long): UDTValue =
+  def getQuestion(questionData: QuestionData, assessTs: Long): UDTValue = {
 
     questionType.newValue().setString("id", questionData.item.id).setDouble("max_score", questionData.item.maxscore)
       .setDouble("score", questionData.score)
@@ -178,6 +181,33 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
       .setList("resvalues", getListValues(questionData.resvalues).asJava).setList("params", getListValues(questionData.item.params).asJava)
       .setString("description", questionData.item.desc)
       .setDecimal("duration", BigDecimal.valueOf(questionData.duration)).setTimestamp("assess_ts", new Timestamp(assessTs))
+  }
 
+  def issueCertificate(event: Event, context: ProcessFunction[Event, Event]#Context, metrics: Metrics): Unit = {
+    val query = QueryBuilder.select("status", "completionpercentage")
+      .from(config.dbKeyspace, config.enrolmentTable).where(QueryBuilder.eq("userid", event.userId))
+      .and(QueryBuilder.eq("courseid", event.courseId))
+      .and(QueryBuilder.eq("batchid", event.batchId)).toString
+      
+    val row: Row = cassandraUtil.findOne(query)
+    if(null != row && (2 == row.getInt("status") || 100 == row.getInt("completionpercentage"))) {
+      createIssueCertEvent(event, context, metrics)
+    }
+  }
+
+  /**
+   * Generation of Certificate Issue event for the enrolment completed users to validate and generate certificate.
+   * @param batchEvent
+   * @param context
+   * @param metrics
+   */
+  def createIssueCertEvent(batchEvent: Event, context: ProcessFunction[Event, Event]#Context,
+  metrics: Metrics): Unit = {
+    val ets = System.currentTimeMillis
+    val mid = s"""LP.${ets}.${UUID.randomUUID}"""
+    val event = s"""{"eid": "BE_JOB_REQUEST","ets": ${ets},"mid": "${mid}","actor": {"id": "Course Certificate Generator","type": "System"},"context": {"pdata": {"ver": "1.0","id": "org.sunbird.platform"}},"object": {"id": "${batchEvent.batchId}_${batchEvent.courseId}","type": "CourseCertificateGeneration"},"edata": {"userIds": ["${batchEvent.userId}"],"action": "issue-certificate","iteration": 1, "trigger": "auto-issue","batchId": "${batchEvent.batchId}","reIssue": false,"courseId": "${batchEvent.courseId}"}}"""
+    context.output(config.certIssueOutputTag, event)
+    metrics.incCounter(config.certIssueEventsCount)
+  }
 }
 

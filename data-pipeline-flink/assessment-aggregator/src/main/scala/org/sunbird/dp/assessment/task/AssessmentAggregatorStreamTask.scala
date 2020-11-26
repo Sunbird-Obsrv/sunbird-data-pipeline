@@ -48,7 +48,7 @@ class AssessmentAggregatorStreamTask(config: AssessmentAggregatorConfig, kafkaCo
         implicit val mapTypeInfo: TypeInformation[Event] = TypeExtractor.getForClass(classOf[Event])
         val source = kafkaConnector.kafkaEventSource[Event](config.kafkaInputTopic)
 
-        val aggregatorStream: SingleOutputStreamOperator[Event] =
+        val aggregatorStream =
             env.addSource(source, config.assessmentAggConsumer).uid(config.assessmentAggConsumer)
               .rebalance()
               .process(new AssessmentAggregatorFunction(config))
@@ -57,6 +57,9 @@ class AssessmentAggregatorStreamTask(config: AssessmentAggregatorConfig, kafkaCo
 
         aggregatorStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaFailedTopic))
           .name(config.assessFailedEventsSink).uid(config.assessFailedEventsSink)
+
+        aggregatorStream.getSideOutput(config.certIssueOutputTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaCertIssueTopic))
+                .name(config.certIssueEventSink).uid(config.certIssueEventSink)
         env.execute(config.jobName)
     }
 }
