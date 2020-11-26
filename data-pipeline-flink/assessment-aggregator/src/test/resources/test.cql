@@ -59,4 +59,5 @@ progress int,
 status int,
 PRIMARY KEY (userid, courseid, batchid));
 
-INSERT INTO sunbird_courses.user_enrolments(userid, courseid, batchid, completionpercentage, status) VALUES ('ff1c4bdf-27e2-49bc-a53f-6e304bb3a87f', 'do_2128415652377067521125', '012846671379595264119',100, 2)
+INSERT INTO sunbird_courses.user_enrolments(userid, courseid, batchid, completionpercentage, status) VALUES ('ff1c4bdf-27e2-49bc-a53f-6e304bb3a87f', 'do_2128415652377067521125', '012846671379595264119',100, 2);
+INSERT INTO sunbird_courses.user_enrolments(userid, courseid, batchid, completionpercentage, status) VALUES ('d0d8a341-9637-484c-b871-0c27015af238', 'do_2128410273679114241112', '01284169026368307244',80, 1);
