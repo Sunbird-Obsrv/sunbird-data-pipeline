@@ -22,7 +22,7 @@
   become: yes
   become_user: "{{ redis_restore_user }}"
   shell: "echo shutdown | {{ analytics_user_home }}/redis-stable/src/redis-cli -p {{ item.stdout }}"
-  with_items: "{{ ports }}"
+  with_items: "{{ ports.results }}"
 
 - name: Extract backup zip into tmp
   become: yes
