@@ -14,7 +14,8 @@
     chdir: /tmp/
   with_items: "{{ redis_restore_process }}"
 
-- shell: "echo {{ lookup ('vars', item + '_port') }}"
+- name: get redis process ports to stop 
+  shell: "echo {{ lookup ('vars', item + '_port') }}"
   register: ports
   with_items: "{{ redis_restore_process }}" 
 
