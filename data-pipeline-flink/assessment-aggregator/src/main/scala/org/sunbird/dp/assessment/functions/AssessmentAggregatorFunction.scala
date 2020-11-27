@@ -184,13 +184,13 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
   }
 
   def issueCertificate(event: Event, context: ProcessFunction[Event, Event]#Context, metrics: Metrics): Unit = {
-    val query = QueryBuilder.select("status", "completionpercentage")
+    val query = QueryBuilder.select("status")
       .from(config.dbKeyspace, config.enrolmentTable).where(QueryBuilder.eq("userid", event.userId))
       .and(QueryBuilder.eq("courseid", event.courseId))
       .and(QueryBuilder.eq("batchid", event.batchId)).toString
       
     val row: Row = cassandraUtil.findOne(query)
-    if(null != row && (2 == row.getInt("status") || 100 == row.getInt("completionpercentage"))) {
+    if(null != row && (2 == row.getInt("status"))) {
       createIssueCertEvent(event, context, metrics)
     }
   }
