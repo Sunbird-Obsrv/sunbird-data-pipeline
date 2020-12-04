@@ -28,7 +28,7 @@ spark_cluster:
   storage_fraction: 0.5
   executor_core: 5
   executor_memory: 19G
-  num_executors: 23
+  num_executors: 5
 
 analytics:
   home: "/tmp"
