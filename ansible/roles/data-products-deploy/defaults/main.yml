@@ -6,6 +6,7 @@ telemetry_converter_ver: 0.0.8
 bucket: "dev-data-store"
 kafka_broker_host: "{{groups['processing-cluster-kafka'][0]}}:9092"
 ingestion_kafka_broker_host: "{{groups['ingestion-cluster-kafka'][0]}}:9092"
+
 brokerlist: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
 zookeeper: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
 dp_username: dp-monitor
