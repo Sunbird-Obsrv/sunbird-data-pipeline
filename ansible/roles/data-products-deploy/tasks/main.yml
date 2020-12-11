@@ -212,7 +212,6 @@
     - cronjobs 
     - default-jobs
     - spark-jobs
-    
 - name: Create admin-geo-reports cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh admin-geo-reports"
   with_dict: "{{ run_admin_geo_reports_job }}"
@@ -286,7 +285,7 @@
     - spark-jobs
 
 - name: Copy collection-summary ingestion spec
-  copy: src={{ scruid_artifact }} dest={{ analytics.home }}/scripts/ mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  copy: src="collection-summary-ingestion-spec.json" dest={{ analytics.home }}/scripts/ mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
     - ed-dataproducts
 
