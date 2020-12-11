@@ -285,7 +285,10 @@
     - default-jobs
     - spark-jobs
 
-
+- name: Copy collection-summary ingestion spec
+  copy: src={{ scruid_artifact }} dest={{ analytics.home }}/scripts/ mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  tags:
+    - ed-dataproducts
 
 - name: Update start jobmanager
   template: src=start-jobmanager.j2 dest={{ analytics.home }}/scripts/start-jobmanager.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
