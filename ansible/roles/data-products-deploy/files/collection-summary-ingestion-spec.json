@@ -176,7 +176,7 @@
         "blobs": [
           {
             "container": "reports",
-            "path": "/collection-summary-v2/collection-summary-report-latest.json"
+            "path": "/collection-summary-reports-v2/collection-summary-report-latest.json"
           }
         ],
         "fetchTimeout": 300000
