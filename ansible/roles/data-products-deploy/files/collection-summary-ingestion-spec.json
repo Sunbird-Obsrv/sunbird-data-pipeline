@@ -2,7 +2,7 @@
   "type": "index",
   "spec": {
     "dataSchema": {
-      "dataSource": "collection-summary-v5",
+      "dataSource": "collection-summary-v6",
       "parser": {
         "type": "string",
         "parseSpec": {
