@@ -2,7 +2,7 @@
   "type": "index",
   "spec": {
     "dataSchema": {
-      "dataSource": "collection-summary-v8",
+      "dataSource": "collection-summary-v9",
       "parser": {
         "type": "string",
         "parseSpec": {
@@ -13,7 +13,7 @@
               {
                 "type": "root",
                 "name": "published_by",
-                "expr": "publishedBy"
+                "expr": "publishedby"
               },
               {
                 "type": "root",
@@ -28,7 +28,7 @@
               {
                 "type": "root",
                 "name": "has_certificate",
-                "expr": "hasCertified"
+                "expr": "hascertified"
               },
               {
                 "type": "root",
@@ -43,27 +43,27 @@
               {
                 "type": "root",
                 "name": "collection_name",
-                "expr": "collectionName"
+                "expr": "collectionname"
               },
               {
                 "type": "root",
                 "name": "total_enrolment",
-                "expr": "enrolledUsersCount"
+                "expr": "enrolleduserscount"
               },
               {
                 "type": "root",
                 "name": "total_completion",
-                "expr": "completionUserCount"
+                "expr": "completionuserscount"
               },
               {
                 "type": "root",
                 "name": "total_certificates_issued",
-                "expr": "certificateIssueCount"
+                "expr": "certificateissuedcount"
               },
               {
                 "type": "root",
                 "name": "content_status",
-                "expr": "contentStatus"
+                "expr": "contentstatus"
               },
               {
                 "type": "root",
