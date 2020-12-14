@@ -12,7 +12,7 @@ import org.sunbird.dp.core.serde._
 class FlinkKafkaConnector(config: BaseJobConfig) extends Serializable {
 
   def kafkaMapSource(kafkaTopic: String): SourceFunction[util.Map[String, AnyRef]] = {
-    new FlinkKafkaConsumer[util.Map[String, AnyRef]](kafkaTopic, new MapDeserializationSchema, config.kafkaConsumerProperties)
+    new FlinkKafkaConsumer[util.Map[String, AnyRef]](kafkaTopic, new MapDeserializationSchema, config.kafkaConsumerProperties).setStartFromEarliest()
   }
 
   def kafkaMapSink(kafkaTopic: String): SinkFunction[util.Map[String, AnyRef]] = {
@@ -20,11 +20,11 @@ class FlinkKafkaConnector(config: BaseJobConfig) extends Serializable {
   }
 
   def kafkaStringSource(kafkaTopic: String): SourceFunction[String] = {
-    new FlinkKafkaConsumer[String](kafkaTopic, new StringDeserializationSchema, config.kafkaConsumerProperties)
+    new FlinkKafkaConsumer[String](kafkaTopic, new StringDeserializationSchema, config.kafkaConsumerProperties).setStartFromEarliest()
   }
 
   def kafkaBytesSource(kafkaTopic: String): SourceFunction[Array[Byte]] = {
-    new FlinkKafkaConsumer[Array[Byte]](kafkaTopic, new ByteDeserializationSchema, config.kafkaConsumerProperties)
+    new FlinkKafkaConsumer[Array[Byte]](kafkaTopic, new ByteDeserializationSchema, config.kafkaConsumerProperties).setStartFromEarliest()
   }
 
   def kafkaStringSink(kafkaTopic: String): SinkFunction[String] = {
@@ -32,7 +32,7 @@ class FlinkKafkaConnector(config: BaseJobConfig) extends Serializable {
   }
 
   def kafkaEventSource[T <: Events](kafkaTopic: String)(implicit m: Manifest[T]): SourceFunction[T] = {
-      new FlinkKafkaConsumer[T](kafkaTopic, new EventDeserializationSchema[T], config.kafkaConsumerProperties)
+      new FlinkKafkaConsumer[T](kafkaTopic, new EventDeserializationSchema[T], config.kafkaConsumerProperties).setStartFromEarliest()
   }
 
   def kafkaEventSink[T <: Events](kafkaTopic: String)(implicit m: Manifest[T]): SinkFunction[T] = {
