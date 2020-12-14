@@ -11,10 +11,6 @@
           "fields": [
             {
               "type": "root",
-              "name": "syncts"
-            },
-            {
-              "type": "root",
               "name": "eid"
             },
             {
@@ -49,11 +45,6 @@
             },
             {
               "type": "path",
-              "name": "object_rollup_l1",
-              "expr": "$.object.rollup.l1"
-            },
-            {
-              "type": "path",
               "name": "user_signin_type",
               "expr": "$.userdata.usersignintype"
             },
@@ -72,7 +63,7 @@
         "dimensionsSpec": {
           "dimensions": [
             {
-              "type": "root",
+              "type": "string",
               "name": "eid"
             },
             {
@@ -120,17 +111,17 @@
         {
           "type": "expression",
           "name": "first_time_user  ",
-          "expression": "if((\"context_cdata_type\" == 'FirstTimeUser') && \"context_cdata_id\" == 'true') , 'true','false')"
+          "expression": "if(like(\"context_cdata_type\",'FirstTimeUser') && like(\"context_cdata_id\",'true') , 'true','false')"
         },
         {
           "type": "expression",
-          "name": "filter_pdata_id",
+          "name": "is_app_or_portal_or_playerstart_event",
           "expression": "if((like(\"context_pdata_pid\",'%contentplayer%'), if ( \"eid\" == 'START', 'true','false') ,'true')"
         }
       ],
       "filter": {
         "type": "selector",
-        "dimension": "filter_pdata_id",
+        "dimension": "is_app_or_portal_or_playerstart_event",
         "value": "true"
       }
     },
@@ -164,7 +155,8 @@
     },
     "taskCount": 1,
     "replicas": 1,
-    "taskDuration": "PT14400S",
+    "taskDuration": "PT7200S",
+    "completionTimeout" : "PT3600S",
     "useEarliestOffset": true
   },
   "tuningConfig": {
