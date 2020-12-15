@@ -115,13 +115,13 @@
         },
         {
           "type": "expression",
-          "name": "is_app_or_portal_or_playerstart_event",
+          "name": "is_playerstart_event",
           "expression": "if((like(\"context_pdata_pid\",'%contentplayer%'), if ( \"eid\" == 'START', 'true','false') ,'true')"
         }
       ],
       "filter": {
         "type": "selector",
-        "dimension": "is_app_or_portal_or_playerstart_event",
+        "dimension": "is_playerstart_event",
         "value": "true"
       }
     },
