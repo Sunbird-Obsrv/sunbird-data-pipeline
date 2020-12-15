@@ -83,7 +83,7 @@
               {
                 "type": "root",
                 "name": "keywords",
-                "expr": "$.keywords[*]"
+                "expr": "keywords"
               },
               {
                 "type": "root",
