@@ -133,7 +133,7 @@
       {
         "type": "HLLSketchBuild",
         "name": "unique_devices",
-        "fieldName": "dimensions_did"
+        "fieldName": "context_did"
       },
       {
         "type": "HLLSketchBuild",
