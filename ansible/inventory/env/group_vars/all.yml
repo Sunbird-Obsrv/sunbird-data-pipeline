@@ -197,7 +197,7 @@ druid_report_url : "{{ proto}}://{{domain_name}}/api/data/v1/"
 druid_report_token : "Bearer {{ sunbird_api_auth_token }}"
 
 #redis multiprocess config
+content_port: 6379
 device_port: 6380
 user_port: 6381
-content_port: 6382
-dialcode_port: 6383
+dialcode_port: 6382
