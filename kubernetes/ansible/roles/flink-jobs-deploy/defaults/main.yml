@@ -76,10 +76,10 @@ telemetry_denorm_secondary_operators_parallelism: 1
 denorm_primary_consumer_parallelism: 1
 telemetry_denorm_primary_operators_parallelism: 1
 
-redis_meta_content_port: 6379
-redis_meta_device_port: 6379
-redis_meta_user_port: 6379
-redis_meta_dialcode_port: 6379
+redis_meta_content_port: "{{ content_port }}"
+redis_meta_device_port: "{{ device_port }}"
+redis_meta_user_port: "{{ user_port }}"
+redis_meta_dialcode_port: "{{ dialcode_port }}"
 
 redis_meta_content_host: "{% if metadata2_redis_host is defined %}{{ metadata2_redis_host }}{% else %}{{ redis_host }}{% endif %}"
 redis_meta_device_host: "{% if metadata2_redis_host is defined %}{{ metadata2_redis_host }}{% else %}{{ redis_host }}{% endif %}"
