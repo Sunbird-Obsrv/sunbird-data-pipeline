@@ -16,6 +16,7 @@
 
 - name: Copy redis conf files
   become: yes
+  become_user: "{{ redis_user }}"
   template: src=redis.conf.j2 dest={{ redis_dir }}/redis-stable/redis-{{ item.value.name }}.conf
   vars:
     _port_: "{{ item.value.port }}"
