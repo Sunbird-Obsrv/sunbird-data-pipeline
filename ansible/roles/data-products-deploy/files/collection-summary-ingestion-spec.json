@@ -186,7 +186,7 @@
             "path": "/collection-summary-reports-v2/collection-summary-report-latest.json"
           }
         ],
-        "fetchTimeout": 300000
+        "fetchTimeout": 30000
       }
     },
     "tuningConfig": {
