@@ -120,7 +120,7 @@ class DenormalizationWindowFunction(config: DenormalizationConfig)(implicit val 
         val eventsCache = events.map { event =>
             val objectType = event.objectType()
             val objectId = event.objectID()
-            val deviceId = if (event.did() != null) Some(event.did()) else None
+            val deviceId = if (null != event.did()) Some(event.did()) else None
             val actorId = event.actorId()
             val actorType = event.actorType()
 
