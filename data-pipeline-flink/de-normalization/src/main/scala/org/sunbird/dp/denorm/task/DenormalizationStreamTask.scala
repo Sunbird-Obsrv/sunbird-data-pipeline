@@ -94,6 +94,6 @@ object DenormalizationStreamTask {
 class DenormKeySelector(config: DenormalizationConfig) extends KeySelector[Event, Int] {
   val shards = config.windowShards
   override def getKey(in: Event): Int = {
-    if (in.did() == null) "".hashCode % shards else in.did().hashCode % shards
+    if (Option(in.did()) == None) "".hashCode % shards else in.did().hashCode % shards
   }
 }
