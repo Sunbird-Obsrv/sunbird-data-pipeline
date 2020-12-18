@@ -144,7 +144,7 @@ object EventFixture {
        |"mid":"mid6","type":"events","object":{"id":"PCZKA4","type":"qr",
        |"version":"","rollup":{}}}""".stripMargin,
 
-      // event without did
+      // event without did - INTERRUPT skips
       s"""{"actor":{"type":"User","id":"610bab7d-1450-4e54-bf78-c7c9b14dbc82"},"eid":"INTERRUPT",
        |"edata":{"type":"OTHER","subtype":"sheen-animation-ended","id":"library","pageid":"library","extra":{"pos":[]}},
        |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":$currentDate,
@@ -152,7 +152,18 @@ object EventFixture {
        |"pdata":{"id":"sunbird.app","pid":"sunbird.app","ver":"2.3.144"},"sid":"df936f82-e982-41ec-8412-70d414458272"},
        |"flags":{"dd_processed":true},
        |"mid":"mid11","type":"events","object":{"id":"PCZKA4","type":"qr",
+       |"version":"","rollup":{}}}""".stripMargin,
+      // event without did
+      s"""{"actor":{"type":"User","id":"b7470841-7451-43db-b5c7-2dcf4f8d3b23"},"eid":"INTERACT",
+       |"edata":{"type":"OTHER","subtype":"sheen-animation-ended","id":"library","pageid":"library","extra":{"pos":[]}},
+       |"ver":"3.0","syncts":1.579564974098E12,"@timestamp":"2020-01-21T00:02:54.098Z","ets":$currentDate,
+       |"context":{"cdata":[],"env":"home","channel":"505c7c48ac6dc1edc9b08f21db5a571d",
+       |"pdata":{"id":"sunbird.app","pid":"sunbird.app","ver":"2.3.144"},"sid":"df936f82-e982-41ec-8412-70d414458272"},
+       |"flags":{"dd_processed":true},
+       |"mid":"mid12","type":"events","object":{"id":"","type":"",
        |"version":"","rollup":{}}}""".stripMargin
+
+
             
   )
 
