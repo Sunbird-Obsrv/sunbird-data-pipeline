@@ -12,8 +12,13 @@
             "fields": [
               {
                 "type": "root",
-                "name": "published_by",
-                "expr": "publishedby"
+                "name": "content_org",
+                "expr": "contentorg"
+              },
+              {
+                "type": "root",
+                "name": "user_org",
+                "expr": "orgname"
               },
               {
                 "type": "root",
@@ -67,17 +72,17 @@
               },
               {
                 "type": "root",
-                "name": "state",
+                "name": "user_state",
                 "expr": "state"
               },
               {
                 "type": "root",
-                "name": "district",
+                "name": "user_district",
                 "expr": "district"
               },
               {
                 "type": "root",
-                "name": "channel",
+                "name": "content_channel",
                 "expr": "channel"
               },
               {
@@ -95,8 +100,10 @@
           "dimensionsSpec": {
             "dimensions": [
               {
-                "type": "string",
-                "name": "published_by"
+                "name": "content_org"
+              },
+              {
+                "name": "user_org"
               },
               {
                 "type": "string",
@@ -136,11 +143,11 @@
               },
               {
                 "type": "string",
-                "name": "state"
+                "name": "user_state"
               },
               {
                 "type": "string",
-                "name": "district"
+                "name": "user_district"
               },
               {
                 "name": "keywords"
@@ -150,7 +157,7 @@
               },
               {
                 "type": "string",
-                "name": "channel"
+                "name": "content_channel"
               }
             ],
             "dimensionsExclusions": []
