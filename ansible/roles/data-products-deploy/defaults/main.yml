@@ -210,3 +210,18 @@ jedis_url: https://repo1.maven.org/maven2/redis/clients/jedis/3.2.0/jedis-3.2.0.
 
 spark_redis_version: "spark-redis_2.11-2.5.0.jar"
 jedis_version: "jedis-3.2.0.jar"
+
+# Cluster vars
+admin_name: "{{ spark_cluster_user_name }}"
+admin_password: "{{ spark_cluster_user_password }}"
+spark_cluster_name: "{{env}}-spark-cluster"
+
+spark_cluster:
+  executor_core: 5
+  executor_memory: 19G
+  num_executors: 23
+
+analytics_cluster:
+  home: "/tmp"
+
+analytics_ed_dataporducts_jar_artifact: "data-products-1.0.jar"  
