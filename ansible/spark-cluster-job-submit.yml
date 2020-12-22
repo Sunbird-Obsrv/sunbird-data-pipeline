@@ -7,5 +7,5 @@
     AZURE_STORAGE_ACCOUNT: "{{sunbird_private_storage_account_name}}"
     AZURE_STORAGE_ACCESS_KEY: "{{sunbird_private_storage_account_key}}"
   roles:
-    - spark-cluster-data-products-submit
+    - data-products-deploy
 
