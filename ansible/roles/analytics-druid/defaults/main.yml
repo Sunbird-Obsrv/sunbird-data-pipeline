@@ -5,8 +5,8 @@ zookeeper_group: "groups['raw-zookeeper']"
 
 druid_user: druid
 druid_directory: "/data"
-druid_version: "0.18.0"
-druid_url: "https://archive.apache.org/dist/druid/0.18.0/apache-druid-0.18.0-bin.tar.gz"
+druid_version: "0.20.0"
+druid_url: "https://downloads.apache.org/druid/0.20.0/apache-druid-0.20.0-bin.tar.gz"
 druid_folder: "{{ druid_directory }}/apache-druid-{{ druid_version }}"
 druid_symlink: "{{ druid_directory }}/druid"
 druid_path: "{{ druid_symlink }}/"
