@@ -14,7 +14,7 @@ spec:
     rules:
     {{ range $key, $threshold := .Values.flink_job_names }}
     - alert: {{ $key }} lag increase critical
-      expr: ((sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"}) - sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"} offset 30m ) ) / sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"} offset 30m) ) * 100 > {{ $.Values.flink_lag_percentage_threshold }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "{{ $key}}-taskmanager-prometheus" }) >  {{ $threshold }}
+      expr: ((sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"}) - sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"} offset {{ $.Values.flink_lag_offset_duration }}m ) ) / sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"} offset {{ $.Values.flink_lag_offset_duration }}m) ) * 100 > {{ $.Values.flink_lag_percentage_threshold }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "{{ $key}}-taskmanager-prometheus" }) >  {{ $threshold }}
       for: 10m
       labels:
         severity: critical
@@ -29,7 +29,7 @@ spec:
 
     {{ range $key, $threshold := .Values.flink_job_names }}
     - alert: {{ $key }} lag increase percentage critical
-      expr: sum(job:nginx_http_requests_total:rate:sum:5m) - sum(job:nginx_http_requests_total:rate:sum:5m offset 20m) > {{ $.Values.nginx_tps_threshold }} and ((sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"}) - sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"} offset 20m)) / sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"} offset 20m)) * 100 > {{ $.Values.flink_lag_percentage_threshold }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"}) > {{ $threshold }}
+      expr: sum(job:nginx_http_requests_total:rate:sum:5m) - sum(job:nginx_http_requests_total:rate:sum:5m offset {{ $.Values.flink_lag_offset_duration }}m) > {{ $.Values.nginx_tps_threshold }} and ((sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"}) - sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"} offset {{ $.Values.flink_lag_offset_duration }}m)) / sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"} offset {{ $.Values.flink_lag_offset_duration }}m)) * 100 > {{ $.Values.flink_lag_percentage_threshold }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"}) > {{ $threshold }}
       for: 10m
       labels:
         severity: critical
@@ -43,7 +43,7 @@ spec:
 
     {{ range $key, $threshold := .Values.flink_job_names }}
     - alert: {{ $key }} lag increase percentage critical
-      expr: sum(job:nginx_http_requests_total:rate:sum:5m) - sum(job:nginx_http_requests_total:rate:sum:5m offset 20m) < {{ $.Values.nginx_tps_threshold }} and ((sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"}) - sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"} offset 20m)) / sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"} offset 20m)) * 100 > {{ $.Values.flink_lag_percentage_threshold }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"}) > {{ $threshold }}
+      expr: sum(job:nginx_http_requests_total:rate:sum:5m) - sum(job:nginx_http_requests_total:rate:sum:5m offset {{ $.Values.flink_lag_offset_duration }}m) < {{ $.Values.nginx_tps_threshold }} and ((sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"}) - sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"} offset {{ $.Values.flink_lag_offset_duration }}m)) / sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"} offset {{ $.Values.flink_lag_offset_duration }}m)) * 100 > {{ $.Values.flink_lag_percentage_threshold }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"}) > {{ $threshold }}
       for: 10m
       labels:
         severity: critical
