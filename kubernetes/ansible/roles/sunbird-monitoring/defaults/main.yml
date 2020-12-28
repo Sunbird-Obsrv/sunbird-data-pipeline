@@ -84,6 +84,6 @@ ingest_router_checkpointfailure_threshold_critical: 5
 error_denormalization_checkpointfailure_threshold_critical: 5
 post_publish_processor_checkpontfailure_threshold_critical: 5
 
-nginx_tps_threshold: 1000 # being used in flink jobs percentage lag alert rules
+nginx_tps_threshold: 50 # being used in flink jobs percentage lag alert rules
 flink_lag_percentage_threshold: 10 # being used in flink jobs percentage lag alert rule
 flink_lag_offset_duration: 30 # values in minutes and being used in alert rule
