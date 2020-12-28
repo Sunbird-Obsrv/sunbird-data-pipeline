@@ -38,6 +38,8 @@ summary_denormalization_threshold_critical: 50000
 device_profile_updater_threshold_critical: 50000
 ingest_router_threshold_critical: 50000
 error_denormalization_threshold_critical: 50000
+de_normalization_primary_threshold_critical: 50000
+de_normalization_secondary_threshold_critical: 50000
 telemetry_extractor_failed_events_percentage_threshold_critical: 1
 telemetry_extractor_failed_events_percentage_threshold_warning: 0.5
 
@@ -52,7 +54,9 @@ user_cache_updater_threshold_warning: 30000
 summary_denormalization_threshold_warning: 30000
 device_profile_updater_threshold_warning: 30000
 ingest_router_threshold_warning: 30000
-
+error_denormalization_threshold_warning: 30000
+de_normalization_primary_threshold_warning: 30000
+de_normalization_secondary_threshold_warning: 30000
 # Flink KP Jobs lag vars critical
 activity_aggregater_updater_threshold_critical: 50
 relation_cache_updater_threshold_critical: 50
