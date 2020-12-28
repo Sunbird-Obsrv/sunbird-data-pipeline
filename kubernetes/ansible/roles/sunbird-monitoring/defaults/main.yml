@@ -37,6 +37,7 @@ user_cache_updater_threshold_critical: 50000
 summary_denormalization_threshold_critical: 50000
 device_profile_updater_threshold_critical: 50000
 ingest_router_threshold_critical: 50000
+error_denormalization_threshold_critical: 50000
 telemetry_extractor_failed_events_percentage_threshold_critical: 1
 telemetry_extractor_failed_events_percentage_threshold_warning: 0.5
 
@@ -75,3 +76,9 @@ device_profile_updater_checkpointfailure_threshold_critical: 5
 user_cache_v2_updater_checkpointfailure_threshold_critical: 5
 relation_cache_updater_checkpointfailure_threshold_critical: 5
 activity_aggregate_updater_checkpointfailure_threshold_critical: 5
+ingest_router_checkpointfailure_threshold_critical: 5
+error_denormalization_checkpointfailure_threshold_critical: 5
+post_publish_processor_checkpontfailure_threshold_critical: 5
+
+nginx_tps_threshold: 1000 # being used in flink jobs percentage lag alert rules
+flink_lag_percentage_threshold: 10 # being used in flink jobs percentage lag alert rule
