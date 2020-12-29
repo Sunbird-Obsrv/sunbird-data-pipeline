@@ -68,3 +68,26 @@ device_profile_updater_checkpointfailure_threshold_critical: {{ device_profile_u
 user_cache_v2_updater_checkpointfailure_threshold_critical: {{ user_cache_v2_updater_checkpointfailure_threshold_critical }}
 relation_cache_updater_checkpointfailure_threshold_critical: {{ relation_cache_updater_checkpointfailure_threshold_critical }}
 activity_aggregate_updater_checkpointfailure_threshold_critical: {{ activity_aggregate_updater_checkpointfailure_threshold_critical }}
+
+
+flink_job_names:
+  assessment-aggregator: {{ assessment_aggregator_threshold_critical }} 
+  content-cache-updater: {{ content_cache_updater_threshold_critical }} 
+  de-normalization-primary: {{ de_normalization_primary_threshold_critical }}
+  de-normalization-secondary: {{ de_normalization_secondary_threshold_critical }}
+  device-profile-updater: {{ device_profile_updater_threshold_critical }}  
+  druid-validator: {{ druid_validator_threshold_critical }} 
+  error-denormalization: {{ error_denormalization_threshold_critical }}
+  ingest-router: {{ ingest_router_threshold_critical }} 
+  pipeline-preprocessor: {{ pipeline_preprocessor_threshold_critical }}
+  summary-denormalization: {{ summary_denormalization_threshold_critical }}
+  telemetry-extractor: {{ telemetry_extractor_threshold_critical }}       
+  user-cache-updater-v2: {{ user_cache_updater_threshold_critical }}
+## KP flink jobs
+  activity-aggregate-updater: {{ activity_aggregater_updater_threshold_critical }}
+  relation-cache-updater: {{ relation_cache_updater_threshold_critical }}
+  post-publish-processor: {{ post_publish_processor_threshold_critical }}
+
+nginx_tps_threshold: {{ nginx_tps_threshold }} # being used in flink jobs percentage lag alertrules
+flink_lag_percentage_threshold: {{ flink_lag_percentage_threshold }} # being used in flink jobs percentage lag alertrules
+flink_lag_offset_duration: {{ flink_lag_offset_duration }} # values in mins.  offset time window to compare the metrics between current metrics and last 30(example) minutes. 

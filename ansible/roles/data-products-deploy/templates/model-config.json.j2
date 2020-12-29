@@ -2183,9 +2183,10 @@
     },
     "output": [
       {
-        "to": "console",
+        "to": "kafka",
         "params": {
-          "printEvent": false
+          "brokerList": "'$dockbrokerList'",
+          "topic": "'$dockEnv'.mvc.processor.job.request" 
         }
       }
     ],
