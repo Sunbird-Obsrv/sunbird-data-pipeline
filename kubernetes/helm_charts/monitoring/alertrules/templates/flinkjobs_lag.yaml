@@ -49,7 +49,7 @@ spec:
         severity: critical
         alerttype: lag
       annotations:
-        message: There is no increase in tps but pipeline-preprocessor lag is increasing. Please check and restart the job.
+        message: There is no increase in tps but {{ $key }} lag is increasing. Please check and restart the job.
         lag: '{{`{{printf `}}`sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job = "{{ $key }}-taskmanager-prometheus" })`  | query | first | value | humanize }}'
         job_id: {{ $key }}
         alertname: FlinkJobsPercentageLag
