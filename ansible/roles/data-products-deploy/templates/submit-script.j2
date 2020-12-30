@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ## Job to run daily
-cd "{{ analytics.home }}"
+cd "{{ analytics_cluster.home }}"
 source model-config.sh
 today=$(date "+%Y-%m-%d")
 
