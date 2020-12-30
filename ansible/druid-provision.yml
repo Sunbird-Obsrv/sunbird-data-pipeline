@@ -1,13 +1,13 @@
 -
   name: Install Java
-  hosts: "{{remote}}"
+  hosts: "druid-{{remote}}"
   become: yes
   roles: 
     - {role: jdk-1.8.0_121, when: "'java' in deploy"}
 
 -
   name: Install java and zookeeper cluster for druid
-  hosts: "{{ cluster}}-zookeeper"
+  hosts: "{{ remote }}-zookeeper"
   become: yes
   roles:
     - {role: zookeeper-upgrade, when: "'graphite' in deploy"}
@@ -53,11 +53,11 @@
 
 -
   name: Install role druid
-  hosts: "{{remote}}"
+  hosts: "druid-{{remote}}"
   become: yes
   roles:
-    - {role: analytics-druid, when: "'{{ cluster }}-coordinator' in group_names and 'coordinator' in deploy", druid_role: 'coordinator', service: 'coordinator' }
-    - {role: analytics-druid, when: "'{{ cluster }}-overlord' in group_names and 'overlord' in deploy", druid_role: 'overlord', service: 'overlord'}
-    - {role: analytics-druid, when: "'{{ cluster }}-broker' in group_names and 'broker' in deploy", druid_role: 'broker', service: 'broker'}
-    - {role: analytics-druid, when: "'{{ cluster }}-historical' in group_names and 'historical' in deploy", druid_role: 'historical', service: 'historical'}
-    - {role: analytics-druid, when: "'{{ cluster }}-middlemanager' in group_names and 'mm' in deploy", druid_role: 'middlemanager', service: 'middleManager' }
+    - {role: analytics-druid, when: "'{{ remote }}-coordinator' in group_names and 'coordinator' in deploy", druid_role: 'coordinator', service: 'coordinator' }
+    - {role: analytics-druid, when: "'{{ remote }}-overlord' in group_names and 'overlord' in deploy", druid_role: 'overlord', service: 'overlord'}
+    - {role: analytics-druid, when: "'{{ remote }}-broker' in group_names and 'broker' in deploy", druid_role: 'broker', service: 'broker'}
+    - {role: analytics-druid, when: "'{{ remote }}-historical' in group_names and 'historical' in deploy", druid_role: 'historical', service: 'historical'}
+    - {role: analytics-druid, when: "'{{ remote }}-middlemanager' in group_names and 'mm' in deploy", druid_role: 'middlemanager', service: 'middleManager' }
