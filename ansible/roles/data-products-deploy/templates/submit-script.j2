@@ -7,13 +7,13 @@ today=$(date "+%Y-%m-%d")
 
 while :; do
     case $1 in
-        -j|--job) shift job=$1         
+        -j|--job) shift job="$1"         
         ;;
-        -m|--mode) shift mode=$1            
+        -m|--mode) shift mode="$1"            
         ;;
         -p|--parallelisation) shift parallelisation=$1            
         ;;
-        -pa|--partitions) shift partitions=$1            
+        -pa|--partitions) shift partitions=$1       
         ;;
         -sd|--startDate) shift start_date=$1            
         ;;
