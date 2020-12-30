@@ -1,13 +1,13 @@
 -
   name: Install Java
-  hosts: druid-raw
+  hosts: "{{remote}}"
   become: yes
   roles: 
     - {role: jdk-1.8.0_121, when: "'java' in deploy"}
 
 -
   name: Install java and zookeeper cluster for druid
-  hosts: raw-zookeeper
+  hosts: "{{ cluster}}-zookeeper"
   become: yes
   roles:
     - {role: zookeeper-upgrade, when: "'graphite' in deploy"}
@@ -53,14 +53,11 @@
 
 -
   name: Install role druid
-  hosts: druid-raw
+  hosts: "{{remote}}"
   become: yes
   roles:
-    - {role: analytics-druid, when: "'raw-coordinator' in group_names and 'coordinator' in deploy", druid_role: 'coordinator', service: 'coordinator' }
-    - {role: analytics-druid, when: "'raw-overlord' in group_names and 'overlord' in deploy", druid_role: 'overlord', service: 'overlord'}
-    - {role: analytics-druid, when: "'raw-broker' in group_names and 'broker' in deploy", druid_role: 'broker', service: 'broker'}
-    - {role: analytics-druid, when: "'raw-historical' in group_names and 'historical' in deploy", druid_role: 'historical', service: 'historical'}
-    - {role: analytics-druid, when: "'raw-middlemanager' in group_names and 'mm' in deploy", druid_role: 'middlemanager', service: 'middleManager' }
-  vars:
-    druid_postgres_db: "druid"
-    druid_zookeeper_host: "{{ groups['raw-zookeeper']|join(':2181,')}}:2181"
+    - {role: analytics-druid, when: "'{{ cluster }}-coordinator' in group_names and 'coordinator' in deploy", druid_role: 'coordinator', service: 'coordinator' }
+    - {role: analytics-druid, when: "'{{ cluster }}-overlord' in group_names and 'overlord' in deploy", druid_role: 'overlord', service: 'overlord'}
+    - {role: analytics-druid, when: "'{{ cluster }}-broker' in group_names and 'broker' in deploy", druid_role: 'broker', service: 'broker'}
+    - {role: analytics-druid, when: "'{{ cluster }}-historical' in group_names and 'historical' in deploy", druid_role: 'historical', service: 'historical'}
+    - {role: analytics-druid, when: "'{{ cluster }}-middlemanager' in group_names and 'mm' in deploy", druid_role: 'middlemanager', service: 'middleManager' }
