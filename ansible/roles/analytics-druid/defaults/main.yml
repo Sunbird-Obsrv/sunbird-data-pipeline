@@ -103,7 +103,7 @@ druid_middlemanager_tmp_dir: "{{ druid_default_tmp_dir }}"
 druid_middlemanager_gc_logdir: "{{ druid_crash_logdir }}/gc.log"
 
 druid_middlemanager_peon_segmentcache_path: "/var/segment_cache"
-
+druid_azure_container_name: "telemetry-data-store"
 
 druid_configs:
   raw:
@@ -113,7 +113,6 @@ druid_configs:
    druid_postgres_port: "{{ postgres.db_port }}"
    druid_postgres_user: "druid@{{ postgres.db_url }}"
    #Druid Azure Details 
-   druid_azure_container_name: "telemetry-data-store"
    druid_postgres_pass: "{{ dp_vault_druid_postgress_pass }}"
    azure_account_name: "{{ sunbird_druid_storage_account_name }}"
    azure_storage_secret: "{{ sunbird_druid_storage_account_key }}"
