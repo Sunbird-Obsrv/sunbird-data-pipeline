@@ -191,13 +191,17 @@ analytics:
   paths: ['/home/analytics/sbin', '/mount/data/analytics', '/mount/data/analytics/logs', '/mount/data/analytics/logs/services', '/mount/data/analytics/logs/data-products', '/mount/data/analytics/logs/api-service', '/mount/data/analytics/api', '/mount/data/analytics/tmp', '/mount/data/analytics/scripts/monitor-data', '/mount/data/analytics/scripts', '/mount/data/analytics/models' ]
   scripts: ['model-config', 'replay-job', 'replay-updater', 'replay-utils', 'run-job', 'monitor-dp', 'generate-metrics', 'submit-job', 'start-jobmanager', 'run-dock-job','submit-script']
 
+# artifact versions
+analytics_core_artifact_ver: "2.0"
+analytics_ed_dataporducts_artifact_ver: "1.0"
+scruid_artifact_ver: "2.4.0"
 
 producer_env: "dev.sunbird"
-analytics_job_manager_artifact: "job-manager-2.0.jar"
-analytics_core_artifact: "analytics-framework-2.0.jar"
-scruid_artifact: "scruid_2.11-2.4.0.jar"
-analytics_batch_module_artifact: "batch-models-2.0.jar"
-analytics_ed_dataporducts_artifact: "data-products-1.0-distribution.tar.gz"
+analytics_job_manager_artifact: "job-manager-{{ analytics_core_artifact_ver }}.jar"
+analytics_core_artifact: "analytics-framework-{{ analytics_core_artifact_ver }}.jar"
+scruid_artifact: "scruid_2.11-{{ scruid_artifact_ver }}.jar"
+analytics_batch_module_artifact: "batch-models-{{ analytics_core_artifact_ver }}.jar"
+analytics_ed_dataporducts_artifact: "data-products-{{ analytics_ed_dataporducts_artifact_ver }}-distribution.tar.gz"
 model_version: "2.0" 
 
 submit_jobs_auth_token: "{{ sunbird_api_auth_token }}"
@@ -210,3 +214,18 @@ jedis_url: https://repo1.maven.org/maven2/redis/clients/jedis/3.2.0/jedis-3.2.0.
 
 spark_redis_version: "spark-redis_2.11-2.5.0.jar"
 jedis_version: "jedis-3.2.0.jar"
+
+# Cluster vars
+admin_name: "{{ spark_cluster_user_name }}"
+admin_password: "{{ spark_cluster_user_password }}"
+spark_cluster_name: "{{env}}-spark-cluster"
+
+spark_cluster:
+  executor_core: 5
+  executor_memory: 19G
+  num_executors: 5
+
+analytics_cluster:
+  home: "/tmp"
+
+analytics_ed_dataporducts_jar_artifact: "data-products-{{ analytics_ed_dataporducts_artifact_ver }}.jar"  
