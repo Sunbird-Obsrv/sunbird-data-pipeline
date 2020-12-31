@@ -8,7 +8,7 @@ config() {
 	sinkTopic={{ sink_topic }}
 	currentDate=$(date "+%Y-%m-%d");
 	sparkCassandraConnectionHost="{{groups['lp-cassandra'][0]}}"
-	sparkRedisConnectionHost={{ metadata_redis_host }}
+	sparkRedisConnectionHost={{ metadata2_redis_host }}
 	sunbirdPlatformCassandraHost="{{ core_cassandra_host }}"
 	sunbirdPlatformElasticsearchHost="{{ sunbird_es_host }}"
 	pipelineAuditSlackUser="Pipeline Audit"
