@@ -10,9 +10,9 @@
   hosts: "{{ remote }}-zookeeper"
   become: yes
   roles:
-    - {role: zookeeper-upgrade, when: "'graphite' in deploy"}
+    - {role: zookeeper-upgrade, when: "'zookeeper' in deploy"}
   vars:
-    zookeeper_group: "{{ groups[{{ remote }}+'-zookeeper'] }}"
+    zookeeper_group: "{{ groups[remote+'-zookeeper'] }}"
 
 # Create postgres databases and users
 
