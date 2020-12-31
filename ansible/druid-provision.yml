@@ -12,7 +12,7 @@
   roles:
     - {role: zookeeper-upgrade, when: "'graphite' in deploy"}
   vars:
-    zookeeper_group: "{{ groups['raw-zookeeper'] }}"
+    zookeeper_group: "{{ groups[{{ remote }}+'-zookeeper'] }}"
 
 # Create postgres databases and users
 
@@ -62,3 +62,4 @@
     - {role: analytics-druid, when: "'{{ remote }}-historical' in group_names and 'historical' in deploy", druid_role: 'historical', service: 'historical'}
     - {role: analytics-druid, when: "'{{ remote }}-middlemanager' in group_names and 'mm' in deploy", druid_role: 'middlemanager', service: 'middleManager' }
     - {role: analytics-druid, when: "'{{ remote }}-router' in group_names and 'router' in deploy", druid_role: 'router', service: 'router' }
+
