@@ -196,7 +196,7 @@ default_druid_configs:
    druid_historical_processing_bufferBytes: 134217728
    druid_historical_processing_threads: 2
    druid_historical_enable_cache: false
-   druid_historical_segmentcache_size: 10000000000
+   druid_historical_segmentcache_size: 2000000000
    druid_historical_server_maxsize: 10000000000
    druid_historical_processing_num_merge_buffers: 2
    #Druid middlemanager configuration
