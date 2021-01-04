@@ -105,7 +105,7 @@ druid_middlemanager_gc_logdir: "{{ druid_crash_logdir }}/gc.log"
 druid_middlemanager_peon_segmentcache_path: "/var/segment_cache"
 druid_azure_container_name: "telemetry-data-store"
 
-druid_configs:
+default_druid_configs:
   raw:
    #Druid Postgres Details
    druid_postgres_db: "druid"

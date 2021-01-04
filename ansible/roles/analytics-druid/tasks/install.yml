@@ -1,5 +1,7 @@
 ---
 # file: install.yml
+- name: Set the druid configs
+  set_fact: druid_configs="{{ default_druid_configs | combine(private_druid_configs,recursive=True) if private_druid_configs is defined else default_druid_configs }}"
 
 - name: Create druid user
   user:
