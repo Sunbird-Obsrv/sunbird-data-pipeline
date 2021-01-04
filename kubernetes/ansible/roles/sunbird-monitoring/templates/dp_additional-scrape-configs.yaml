@@ -23,4 +23,4 @@ scrapeconfig:
         - '{__name__=~"^job:.*"}'
     static_configs:
       # This empty line make sure the indentation is correct
-      - targets: [ "{{core_prom_ip}}":9090 ]
+      - targets: [ '{{core_prom_ip}}' ]
