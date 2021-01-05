@@ -40,7 +40,10 @@ config() {
        	if [ -z "$2" ]; then queryDate=$currentDate; else queryDate=$endDate; fi
        	echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.updater.ContentModelUpdater","modelParams":{"date":"'$queryDate'","contentTypes":{"Content":["Resource", "Collection", "TextBook", "LessonPlan", "Course", "Template", "Asset", "Plugin", "LessonPlanUnit","CourseUnit", "TextBookUnit"]}},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$learning_topic'"}}],"parallelization":10,"appName":"Content Model Updater","deviceMapping":false}'
         ;;
-        "collection-summary-report")
+        "collection-reconciliation-job")
+		echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.audit.CollectionReconciliationJob","modelParams":{"mode":"prodrun","brokerList":"{{ingestion_kafka_broker_host}}","topic":"{{env}}.issue.certificate.request","sparkCassandraConnectionHost":"{{ core_cassandra_host }}"},"parallelization":30,"appName":"CollectionReconciliationJob"}'
+		;;
+		"collection-summary-report")
 		echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.job.report.CollectionSummaryJob","modelParams":{"searchFilter":{"request":{"filters":{"status":["Live"], "contentType": "Course"},"fields":["identifier","name","organisation","channel"],"limit":10000}},"store":"azure","sparkElasticsearchConnectionHost":"{{ sunbird_es_host }}","sparkRedisConnectionHost":"{{ metadata2_redis_host }}","sparkUserDbRedisIndex":"12","sparkUserDbRedisPort":"{{ user_port }}","sparkCassandraConnectionHost":"{{ core_cassandra_host }}","fromDate":"$(date --date yesterday '+%Y-%m-%d')","toDate":"$(date --date yesterday '+%Y-%m-%d')"},"parallelization":8,"appName":"Collection Summary Report"}'
 		;;
         "userinfo-exhaust")
