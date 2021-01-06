@@ -217,7 +217,7 @@ jedis_version: "jedis-3.2.0.jar"
 
 # Cluster vars
 spark_cluster_user_password: ""
-spark_cluster_user_name:""
+spark_cluster_user_name: ""
 admin_name: "{{ spark_cluster_user_name }}"
 admin_password: "{{ spark_cluster_user_password }}"
 spark_cluster_name: "{{env}}-spark-cluster"
