@@ -44,6 +44,8 @@ get_report_job_model_name(){
 		;;
 		"collection-summary-report-v2") echo 'org.sunbird.analytics.job.report.CollectionSummaryJobV2'
 		;;
+		"course-batch-status-updater") echo 'org.sunbird.analytics.audit.CourseBatchStatusUpdaterJob'
+		;;
 		*) echo $1
 		;;
 	esac		
