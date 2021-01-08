@@ -321,14 +321,14 @@
     - config-update
 
 - name: Replay Job
-  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --startDate {{ start_date }} --endDate {{ end_date }} --sparkMaster {{ sparkMaster }} &"
+  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --startDate {{ start_date }} --endDate {{ end_date }} --sparkMaster {{ sparkMaster }} --selectedPartitions {{ selected_partitions }} &"
   async: "{{ (pause_min * 60) }}"
   poll: 0
   tags:
     - replay-job 
 
 - name: Run Job
-  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --sparkMaster {{ sparkMaster }} --batch_id {{ batch_id }} &"
+  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --sparkMaster {{ sparkMaster }} --batch_id {{ batch_id }} --selectedPartitions {{ selected_partitions }} &"
   async: "{{ (pause_min * 60) }}"
   poll: 0
   tags:
