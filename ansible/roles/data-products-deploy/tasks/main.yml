@@ -328,7 +328,7 @@
     - replay-job 
 
 - name: Run Job
-  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --sparkMaster {{ sparkMaster }} --batch_id {{ batch_id }} --selectedPartitions {{ selected_partitions }} &"
+  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --sparkMaster {{ sparkMaster }} --selectedPartitions {{ selected_partitions }} --batch_id {{ batch_id }} &"
   async: "{{ (pause_min * 60) }}"
   poll: 0
   tags:
