@@ -123,6 +123,7 @@ default_druid_configs:
    druid_coordinator_heap_size: 128m
    druid_coordinator_period: PT30S
    druid_coordinator_startDelay: PT30S
+   druid_coordinator_balance_strategy: diskNormalized
    #Druid overlord node configuration
    druid_overlord_heap_size: 256m
    #Druid broker node configuration
@@ -145,6 +146,9 @@ default_druid_configs:
    druid_historical_segmentcache_size: 10000000000
    druid_historical_server_maxsize: 10000000000
    druid_historical_processing_num_merge_buffers: 2
+   druid_query_ondiskstorage_enabled: true
+   druid_historical_maxMergingDictionarySize: 100000000
+   druid.query.groupBy.maxOnDiskStorage: 10737418240
    #Druid middlemanager configuration
    druid_middlemanager_heap_size: 128m
    druid_middlemanager_worker_cap: 4
@@ -177,6 +181,7 @@ default_druid_configs:
    druid_coordinator_heap_size: 128m
    druid_coordinator_period: PT30S
    druid_coordinator_startDelay: PT30S
+   druid_coordinator_balance_strategy: cost
    #Druid overlord node configuration
    druid_overlord_heap_size: 256m
    #Druid broker node configuration
@@ -199,6 +204,7 @@ default_druid_configs:
    druid_historical_segmentcache_size: 2000000000
    druid_historical_server_maxsize: 10000000000
    druid_historical_processing_num_merge_buffers: 2
+   druid_query_ondiskstorage_enabled: false
    #Druid middlemanager configuration
    druid_middlemanager_heap_size: 128m
    druid_middlemanager_worker_cap: 4
