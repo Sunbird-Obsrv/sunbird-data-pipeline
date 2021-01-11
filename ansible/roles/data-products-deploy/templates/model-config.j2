@@ -2,8 +2,6 @@
 
 config() {
 	bucket={{ bucket }}
-	dockbrokerList={{ dock.brokerList }}
-	dockEnv={{ dock.env }}
 	datasetRawBucket={{ datasetRawBucket }}
 	dataExhaustBucket={{ dataExhaustBucket }}
 	dataExhaustPrefix={{ dataExhaustPrefix }}
@@ -107,7 +105,7 @@ config() {
         echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/wfs/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.job.EventsReplayJob","modelParams":{},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$sinkTopic'"}}],"parallelization":8,"appName":"SummaryReplayJob","deviceMapping":false}'
         ;;
         "content-rating-updater")
-		echo '{"search": {"type": "none"},"model": "org.ekstep.analytics.updater.UpdateContentRating","modelParams": {"startDate": "'$endDate'","endDate": "'$endDate'"},"output": [{"to": "kafka","params": {"brokerList": "'$dockbrokerList'","topic": "'$dockEnv'.mvc.processor.job.request"}}],"parallelization": 8,"appName": "Content Rating Updater","deviceMapping": false}'
+		echo '{"search": {"type": "none"},"model": "org.ekstep.analytics.updater.UpdateContentRating","modelParams": {"startDate": "'$endDate'","endDate": "'$endDate'"},"output": [{"printEvent":false}],"parallelization": 8,"appName": "Content Rating Updater","deviceMapping": false}'
 		;;
         "experiment")
 		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.model.ExperimentDefinitionModel","modelParams":{"sparkElasticsearchConnectionHost":"{{ lp_composite_search_host }}"},"output":[{"to":"elasticsearch","params":{"index":"experiment"}}],"parallelization":8,"appName":"Experiment-Definition","deviceMapping":false}'
