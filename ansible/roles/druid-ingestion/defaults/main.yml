@@ -1,3 +1,4 @@
 remote_user: druid
 broker_port: 8082
 druid_home: /home/druid
+desktop_pdata_id: "{{env}}.sunbird.desktop"

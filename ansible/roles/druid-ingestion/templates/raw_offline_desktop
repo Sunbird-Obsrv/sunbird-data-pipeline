@@ -1331,7 +1331,7 @@
       "filter": {
         "type": "selector",
         "dimension": "context_pdata_id",
-        "value": "prod.diksha.desktop"
+        "value": "{{desktop_pdata_id}}"
       }
     }
   },

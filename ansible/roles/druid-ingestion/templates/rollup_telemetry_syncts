@@ -428,7 +428,7 @@
     "completionTimeout": "PT1800S",
     "lateMessageRejectionPeriod": null,
     "earlyMessageRejectionPeriod": null,
-    "stream": "ntpprod.druid.events.telemetry",
+    "stream": "{{env}}.druid.events.telemetry",
     "useEarliestSequenceNumber": false
   },
   "context": null,
