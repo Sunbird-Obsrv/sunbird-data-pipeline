@@ -1,6 +1,6 @@
 ---
 
-- hosts: raw-overlord
+- hosts: "{{ cluster }}-overlord"
   become: yes
   roles:
      - druid-ingestion
