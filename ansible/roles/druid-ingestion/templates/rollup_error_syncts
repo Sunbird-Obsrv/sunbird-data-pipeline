@@ -1,0 +1,372 @@
+{
+  "type": "kafka",
+  "dataSchema": {
+    "dataSource": "error-rollup-syncts",
+    "parser": {
+      "type": "string",
+      "parseSpec": {
+        "format": "json",
+        "flattenSpec": {
+          "useFieldDiscovery": false,
+          "fields": [
+            {
+              "type": "root",
+              "name": "syncts"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_id",
+              "expr": "$.context.pdata.id"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_pid",
+              "expr": "$.context.pdata.pid"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_ver",
+              "expr": "$.context.pdata.ver"
+            },
+            {
+              "type": "path",
+              "name": "context_env",
+              "expr": "$.context.env"
+            },
+            {
+              "type": "path",
+              "name": "object_id",
+              "expr": "$.object.id"
+            },
+            {
+              "type": "path",
+              "name": "object_type",
+              "expr": "$.object.type"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l1",
+              "expr": "$.object.rollup.l1"
+            },
+                                   {
+              "type": "path",
+              "name": "content_name",
+              "expr": "$.contentdata.name"
+            },
+            {
+              "type": "path",
+              "name": "content_board",
+              "expr": "$.contentdata.board"
+            },
+            {
+              "type": "path",
+              "name": "content_medium",
+              "expr": "$.contentdata.medium[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_gradelevel",
+              "expr": "$.contentdata.gradelevel[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_subject",
+              "expr": "$.contentdata.subject[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_mimetype",
+              "expr": "$.contentdata.mimetype"
+            },
+                        {
+              "type": "path",
+              "name": "derived_loc_state",
+              "expr": "$.derivedlocationdata.state"
+            },
+            {
+              "type": "path",
+              "name": "derived_loc_district",
+              "expr": "$.derivedlocationdata.district"
+            },
+            {
+              "type": "path",
+              "name": "derived_loc_from",
+              "expr": "$.derivedlocationdata.from"
+            },
+            {
+              "type": "path",
+              "name": "collection_name",
+              "expr": "$.collectiondata.name"
+            },
+            {
+              "type": "path",
+              "name": "collection_type",
+              "expr": "$.collectiondata.contenttype"
+            },
+            {
+              "type": "path",
+              "name": "collection_board",
+              "expr": "$.collectiondata.board"
+            },
+            {
+              "type": "path",
+              "name": "collection_medium",
+              "expr": "$.collectiondata.medium[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_subject",
+              "expr": "$.collectiondata.subject[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_gradelevel",
+              "expr": "$.collectiondata.gradelevel[*]"
+            },
+            {
+              "type": "path",
+              "name": "dialcode_channel",
+              "expr": "$.dialcodedata.channel"
+            },
+            {
+              "type": "path",
+              "name": "user_type",
+              "expr": "$.userdata.usertype"
+            },
+            {
+              "type": "path",
+              "name": "user_signin_type",
+              "expr": "$.userdata.usersignintype"
+            },
+            {
+              "type": "path",
+              "name": "user_login_type",
+              "expr": "$.userdata.userlogintype"
+            },
+            {
+              "type": "path",
+              "name": "edata_err",
+              "expr": "$.edata.err"
+            },
+            {
+              "type": "path",
+              "name": "edata_errtype",
+              "expr": "$.edata.errtype"
+            },
+            {
+              "type": "path",
+              "name": "edata_plugin_id",
+              "expr": "$.edata.plugin.id"
+            },
+            {
+              "type": "path",
+              "name": "edata_plugin_ver",
+              "expr": "$.edata.plugin.ver"
+            }
+          ]
+        },
+        "dimensionsSpec": {
+          "dimensions": [
+            {
+              "type": "string",
+              "name": "context_pdata_id"
+            },
+            {
+              "type": "string",
+              "name": "context_pdata_pid"
+            },
+            {
+              "type": "string",
+              "name": "context_pdata_ver"
+            },
+            {
+              "type": "string",
+              "name": "context_env"
+            },
+            {
+              "type": "string",
+              "name": "object_id"
+            },
+            {
+              "type": "string",
+              "name": "object_type"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l1"
+            },
+            {
+              "type": "string",
+              "name": "content_name"
+            },
+            {
+              "type": "string",
+              "name": "content_board"
+            },
+            {
+              "name": "content_medium"
+            },
+            {
+              "name": "content_gradelevel"
+            },
+            {
+              "name": "content_subject"
+            },
+            {
+              "type": "string",
+              "name": "content_mimetype"
+            },
+            {
+              "type": "string",
+              "name": "derived_loc_state"
+            },
+            {
+              "type": "string",
+              "name": "derived_loc_district"
+            },
+            {
+              "type": "string",
+              "name": "derived_loc_from"
+            },
+            {
+              "type": "string",
+              "name": "collection_name"
+            },
+            {
+              "type": "string",
+              "name": "collection_type"
+            },
+            {
+              "type": "string",
+              "name": "collection_board"
+            },
+            {
+              "name": "collection_medium"
+            },
+            {
+              "name": "collection_gradelevel"
+            },
+            {
+              "name": "collection_subject"
+            },
+            {
+              "type": "string",
+              "name": "dialcode_channel"
+            },
+            {
+              "type": "string",
+              "name": "user_type"
+            },
+            {
+              "type": "string",
+              "name": "user_signin_type"
+            },
+            {
+              "type": "string",
+              "name": "user_login_type"
+            },
+            {
+              "type": "string",
+              "name": "edata_err"
+            },
+            {
+              "type": "string",
+              "name": "edata_errtype"
+            },
+            {
+              "type": "string",
+              "name": "edata_plugin_id"
+            },
+            {
+              "type": "string",
+              "name": "edata_plugin_ver"
+            }
+          ]
+        },
+        "timestampSpec": {
+          "column": "ets",
+          "format": "auto"
+        }
+      }
+    },
+    "metricsSpec": [
+      {
+        "type": "count",
+        "name": "total_count"
+      }
+    ],
+    "granularitySpec": {
+      "type": "uniform",
+      "segmentGranularity": "DAY",
+      "queryGranularity": "DAY",
+      "rollup": true,
+      "intervals": null
+    },
+    "transformSpec": {
+      "filter": null,
+      "transforms": []
+    }
+  },
+  "tuningConfig": {
+    "type": "kafka",
+    "maxRowsInMemory": 1000000,
+    "maxBytesInMemory": 0,
+    "maxRowsPerSegment": 5000000,
+    "maxTotalRows": 20000000,
+    "intermediatePersistPeriod": "PT10M",
+    "basePersistDirectory": "/var/tmp/1587571776232-0",
+    "maxPendingPersists": 0,
+    "indexSpec": {
+      "bitmap": {
+        "type": "concise"
+      },
+      "dimensionCompression": "lz4",
+      "metricCompression": "lz4",
+      "longEncoding": "longs"
+    },
+    "indexSpecForIntermediatePersists": {
+      "bitmap": {
+        "type": "concise"
+      },
+      "dimensionCompression": "lz4",
+      "metricCompression": "lz4",
+      "longEncoding": "longs"
+    },
+    "buildV9Directly": true,
+    "reportParseExceptions": false,
+    "handoffConditionTimeout": 0,
+    "resetOffsetAutomatically": false,
+    "segmentWriteOutMediumFactory": null,
+    "workerThreads": null,
+    "chatThreads": null,
+    "chatRetries": 8,
+    "httpTimeout": "PT10S",
+    "shutdownTimeout": "PT80S",
+    "offsetFetchPeriod": "PT30S",
+    "intermediateHandoffPeriod": "P2147483647D",
+    "logParseExceptions": true,
+    "maxParseExceptions": 2147483647,
+    "maxSavedParseExceptions": 10,
+    "skipSequenceNumberAvailabilityCheck": false
+  },
+  "ioConfig": {
+    "topic": "{{env}}.druid.events.error",
+    "replicas": 1,
+    "taskCount": 1,
+    "taskDuration": "PT14400S",
+    "consumerProperties": {
+      "bootstrap.servers": "{{kafka_brokers}}"
+    },
+    "pollTimeout": 100,
+    "startDelay": "PT5S",
+    "period": "PT30S",
+    "useEarliestOffset": true,
+    "completionTimeout": "PT1800S",
+    "lateMessageRejectionPeriod": null,
+    "earlyMessageRejectionPeriod": null,
+    "stream": "ntpprod.druid.events.error",
+    "useEarliestSequenceNumber": true
+  },
+  "context": null,
+  "suspended": false
+}
