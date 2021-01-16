@@ -106,7 +106,7 @@
     owner: "{{ druid_user }}"
     mode: 755
 
-- name: Copy over systemd service file for druid role {{ druid_role }}
+- name: Copy over systemd service file for druid role {{cluster}}-{{ druid_role }}
   template: src=druid.service dest=/lib/systemd/system/druid_{{ druid_role }}.service
 
 - name: Start druid {{ druid_role }} service
