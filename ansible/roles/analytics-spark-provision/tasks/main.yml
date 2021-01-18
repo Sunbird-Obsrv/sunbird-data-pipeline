@@ -160,3 +160,16 @@
   unarchive: src={{ analytics.soft_path }}/kafka_2.11-0.10.1.0.tgz dest={{ analytics.home }}/ copy=no owner={{ analytics_user }} group={{ analytics_group }} creates={{ analytics.home }}/kafka_2.11-0.10.1.0
   tags:
     - kafka-provision
+
+- name: Add python ppa
+  become: yes
+  apt_repository:
+    repo: ppa:deadsnakes/ppa
+
+- name: Install python 3.6
+  become: yes
+  apt:
+    name: python3.6
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
