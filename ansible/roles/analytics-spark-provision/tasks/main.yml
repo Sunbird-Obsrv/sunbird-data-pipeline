@@ -124,7 +124,7 @@
 - name: Set latest ruby as default
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: "rvm --default use ruby-2.6"
+  shell: "{{ analytics.base_path }}/.rvm/bin/rvm --default use ruby-2.6"
   args:
     executable: /bin/bash
 
