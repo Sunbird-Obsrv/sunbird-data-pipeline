@@ -95,6 +95,7 @@
     - gem
     - ruby
     - gnupg2
+    - virtualenv
 
 - name: Import rvm keys
   become: yes
