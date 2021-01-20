@@ -429,8 +429,8 @@ summary-denormalization:
     }
     skip.events = ["INTERRUPT"]
     task {
-      window.count = {{ denorm_primary_window_count }}
-      window.shards = {{ denorm_primary_window_shards }}
+      window.count = {{ denorm_summary_window_count }}
+      window.shards = {{ denorm_summary_window_shards }}
       consumer.parallelism = {{ summary_denorm_consumer_parallelism }}
       telemetry.downstream.operators.parallelism = {{ telemetry_denorm_operators_parallelism }}
       summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
