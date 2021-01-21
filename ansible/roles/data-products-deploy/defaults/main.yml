@@ -5,6 +5,7 @@ telemetry_converter_ver: 0.0.8
 
 bucket: "dev-data-store"
 kafka_broker_host: "{{groups['processing-cluster-kafka'][0]}}:9092"
+ingestion_kafka_broker_host: "{{groups['ingestion-cluster-kafka'][0]}}:9092"
 brokerlist: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
 zookeeper: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
 dp_username: dp-monitor
@@ -42,11 +43,6 @@ data_exhaust_s3_url: https://s3-ap-south-1.amazonaws.com
 spark_version: 2.4.4
 
 heap_memory: "-Xmx5120m"
-
-# Adding dock broker ip for data-products
-dock:
-  brokerList: ""
-  env: ""
 
 business_metrics:
   s3_path: "s3://ekstep-{{ env }}-data-store/business_metrics/"
@@ -216,6 +212,8 @@ spark_redis_version: "spark-redis_2.11-2.5.0.jar"
 jedis_version: "jedis-3.2.0.jar"
 
 # Cluster vars
+spark_cluster_user_password: ""
+spark_cluster_user_name: ""
 admin_name: "{{ spark_cluster_user_name }}"
 admin_password: "{{ spark_cluster_user_password }}"
 spark_cluster_name: "{{env}}-spark-cluster"
