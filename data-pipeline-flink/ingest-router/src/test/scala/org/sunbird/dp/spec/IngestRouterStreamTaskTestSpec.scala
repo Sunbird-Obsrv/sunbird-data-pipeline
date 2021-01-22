@@ -43,8 +43,11 @@ class IngestRouterStreamTaskTestSpec extends BaseTestSpec {
     super.beforeAll()
     BaseMetricsReporter.gaugeMetrics.clear()
 
-    when(mockKafkaUtil.kafkaBytesSource(ingestRouterConfig.kafkaInputTopic)).thenReturn(new IngestRouterEventSource)
-    when(mockKafkaUtil.kafkaBytesSink(ingestRouterConfig.kafkaSuccessTopic)).thenReturn(new SuccessEventsSink)
+    when(mockKafkaUtil.kafkaBytesSource(ingestRouterConfig.kafkaIngestInputTopic)).thenReturn(new IngestRouterEventSource)
+    when(mockKafkaUtil.kafkaBytesSink(ingestRouterConfig.kafkaIngestSuccessTopic)).thenReturn(new IngestSuccessEventsSink)
+
+    when(mockKafkaUtil.kafkaBytesSource(ingestRouterConfig.kafkaRawInputTopic)).thenReturn(new RawRouterEventSource)
+    when(mockKafkaUtil.kafkaBytesSink(ingestRouterConfig.kafkaRawSuccessTopic)).thenReturn(new RawSuccessEventsSink)
 
     flinkCluster.before()
   }
@@ -54,15 +57,14 @@ class IngestRouterStreamTaskTestSpec extends BaseTestSpec {
     flinkCluster.after()
   }
 
-  "Ingest router job pipeline" should "just pass through events" in {
+  "Ingest router job pipeline" should "just pass through ingest events" in {
 
-    val task = new IngestRouterStreamTask(ingestRouterConfig, mockKafkaUtil)
-    task.process()
+      val task = new IngestRouterStreamTask(ingestRouterConfig, mockKafkaUtil)
+      task.process()
 
-      SuccessEventsSink.values.size() should be (3)
+      IngestSuccessEventsSink.values.size() should be(3)
 
-    val firstEvent = SuccessEventsSink.values.get(0)
-//    println(new String(firstEvent, StandardCharsets.UTF_8))
+      RawSuccessEventsSink.values.size() should be(3)
 
   }
 
@@ -84,15 +86,46 @@ class IngestRouterEventSource extends SourceFunction[Array[Byte]] {
 
 }
 
-class SuccessEventsSink extends SinkFunction[Array[Byte]] {
+class RawRouterEventSource extends SourceFunction[Array[Byte]] {
+
+  override def run(ctx: SourceContext[Array[Byte]]) {
+    val gson = new Gson()
+    val event1 = EventFixture.RAW_LOG_EVENT
+    val event2 = EventFixture.RAW_SEARCH_EVENT
+    val event3 = EventFixture.RAW_ERROR_EVENT
+    ctx.collect(event1.getBytes(StandardCharsets.UTF_8))
+    ctx.collect(event2.getBytes(StandardCharsets.UTF_8))
+    ctx.collect(event3.getBytes(StandardCharsets.UTF_8))
+
+  }
+
+  override def cancel() = {}
+
+}
+
+
+class IngestSuccessEventsSink extends SinkFunction[Array[Byte]] {
 
   override def invoke(value: Array[Byte]): Unit = {
     synchronized {
-      SuccessEventsSink.values.add(value)
+      IngestSuccessEventsSink.values.add(value)
     }
   }
 }
 
-object SuccessEventsSink {
+object IngestSuccessEventsSink {
+  val values: util.List[Array[Byte]] = new util.ArrayList[Array[Byte]]()
+}
+
+class RawSuccessEventsSink extends SinkFunction[Array[Byte]] {
+
+  override def invoke(value: Array[Byte]): Unit = {
+    synchronized {
+      RawSuccessEventsSink.values.add(value)
+    }
+  }
+}
+
+object RawSuccessEventsSink {
   val values: util.List[Array[Byte]] = new util.ArrayList[Array[Byte]]()
 }

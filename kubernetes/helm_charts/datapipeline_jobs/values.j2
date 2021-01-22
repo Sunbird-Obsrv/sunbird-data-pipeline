@@ -74,8 +74,8 @@ base_config: |
       port = 6379
     }
     redis-meta {
-{% if metadata_redis_host is defined %}
-      host = {{ metadata_redis_host }}
+{% if metadata2_redis_host is defined %}
+      host = {{ metadata2_redis_host }}
 {% else %}
       host = {{ redis_host }}
 {% endif %}
@@ -99,8 +99,14 @@ ingest-router:
     kafka {
       producer.broker-servers = "{{ kafka_brokers }}"
       consumer.broker-servers = "{{ ingestion_kafka_brokers }}"
-      input.topic = {{ env_name }}.telemetry.ingestion
-      output.success.topic = {{ env_name }}.telemetry.ingest
+      ingest {
+       input.topic = {{ env_name }}.telemetry.ingestion
+       output.success.topic = {{ env_name }}.telemetry.ingest
+      }
+      raw {
+       input.topic = "{{ env_name }}.telemetry.raw"
+       output.success.topic = "{{ env_name }}.telemetry.raw"
+      }
       groupId = {{ env_name }}-ingest-router-group
       producer {
         max-request-size = {{ extractor_max_request_size }}
@@ -109,6 +115,10 @@ ingest-router:
     task {
       consumer.parallelism = {{ ingest_router_consumer_parallelism }}
       downstream.operators.parallelism = {{ ingest_router_operators_parallelism }}
+      raw {
+       consumer.parallelism = {{ raw_router_consumer_parallelism }}
+       downstream.operators.parallelism = {{ raw_router_downstream_parallelism }}
+      }
     }
   flink-conf: |+
     jobmanager.memory.flink.size: {{ flink_job_names['ingest-router'].jobmanager_memory }}
@@ -126,7 +136,6 @@ telemetry-extractor:
       input.topic = {{ env_name }}.telemetry.ingest
       output.success.topic = {{ env_name }}.telemetry.raw
       output.log.route.topic = {{ env_name }}.druid.events.log
-      output.error.route.topic = {{ env_name }}.druid.events.error
       output.duplicate.topic = {{ env_name }}.telemetry.extractor.duplicate
       output.failed.topic = {{ env_name }}.telemetry.failed
       output.batch.failed.topic = {{ env_name }}.telemetry.extractor.failed
@@ -152,6 +161,8 @@ telemetry-extractor:
         database {
           contentstore.id = 5
         }
+        host = {{ redis_meta_content_host }}
+        port = {{ redis_meta_content_port }}
       }
     redact.events.list = ["ASSESS","RESPONSE"]
 
@@ -161,7 +172,7 @@ telemetry-extractor:
     taskmanager.numberOfTaskSlots: {{ flink_job_names['telemetry-extractor'].taskslots }}
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
-    taskmanager.memory.network.fraction: 0.1 
+    taskmanager.memory.network.fraction: 0.1
 
 pipeline-preprocessor:
   pipeline-preprocessor: |+
@@ -171,7 +182,7 @@ pipeline-preprocessor:
       output.failed.topic = {{ env_name }}.telemetry.failed
       output.primary.route.topic = {{ env_name }}.telemetry.unique
       output.log.route.topic = {{ env_name }}.druid.events.log
-      output.error.route.topic = {{ env_name }}.druid.events.error
+      output.error.route.topic = {{ env_name }}.telemetry.error
       output.audit.route.topic = {{ env_name }}.telemetry.audit
       output.duplicate.topic = {{ env_name }}.telemetry.duplicate
       output.denorm.secondary.route.topic = {{ env_name }}.telemetry.unique.secondary
@@ -272,7 +283,6 @@ de-normalization-v2:
     }
     # redis-metadata
     redis-meta {
-      host = {{ metadata2_redis_host }}
       database {
         devicestore.id = 2
         userstore.id = 12
@@ -307,6 +317,8 @@ de-normalization-secondary:
     }
     skip.events = ["INTERRUPT"]
     task {
+      window.count = {{ denorm_secondary_window_count }}
+      window.shards = {{ denorm_secondary_window_shards }}
       consumer.parallelism = {{ denorm_secondary_consumer_parallelism }}
       telemetry.downstream.operators.parallelism = {{ telemetry_denorm_secondary_operators_parallelism }}
       summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
@@ -319,7 +331,6 @@ de-normalization-secondary:
     }
     # redis-metadata
     redis-meta {
-      host = {{ metadata2_redis_host }}
       database {
         devicestore.id = 2
         userstore.id = 12
@@ -327,6 +338,14 @@ de-normalization-secondary:
         dialcodestore.id = 6
         key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
       }
+      content.host = {{ redis_meta_content_host }}
+      device.host = {{ redis_meta_device_host }}
+      user.host = {{ redis_meta_user_host }}
+      dialcode.host = {{ redis_meta_dialcode_host }}
+      content.port = {{ redis_meta_content_port }}
+      device.port = {{ redis_meta_device_port }}
+      user.port = {{ redis_meta_user_port }}
+      dialcode.port = {{ redis_meta_dialcode_port }}
     }
     # config version
     user_denorm_version = v2
@@ -354,6 +373,8 @@ de-normalization-primary:
     }
     skip.events = ["INTERRUPT"]
     task {
+      window.count = {{ denorm_primary_window_count }}
+      window.shards = {{ denorm_primary_window_shards }}
       consumer.parallelism = {{ denorm_primary_consumer_parallelism }}
       telemetry.downstream.operators.parallelism = {{ telemetry_denorm_primary_operators_parallelism }}
       summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
@@ -366,7 +387,6 @@ de-normalization-primary:
     }
     # redis-metadata
     redis-meta {
-      host = {{ metadata2_redis_host }}
       database {
         devicestore.id = 2
         userstore.id = 12
@@ -374,6 +394,14 @@ de-normalization-primary:
         dialcodestore.id = 6
         key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
       }
+      content.host = {{ redis_meta_content_host }}
+      device.host = {{ redis_meta_device_host }}
+      user.host = {{ redis_meta_user_host }}
+      dialcode.host = {{ redis_meta_dialcode_host }}
+      content.port = {{ redis_meta_content_port }}
+      device.port = {{ redis_meta_device_port }}
+      user.port = {{ redis_meta_user_port }}
+      dialcode.port = {{ redis_meta_dialcode_port }}
     }
     # config version
     user_denorm_version = v2
@@ -401,6 +429,8 @@ summary-denormalization:
     }
     skip.events = ["INTERRUPT"]
     task {
+      window.count = {{ denorm_summary_window_count }}
+      window.shards = {{ denorm_summary_window_shards }}
       consumer.parallelism = {{ summary_denorm_consumer_parallelism }}
       telemetry.downstream.operators.parallelism = {{ telemetry_denorm_operators_parallelism }}
       summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
@@ -413,7 +443,6 @@ summary-denormalization:
     }
     # redis-metadata
     redis-meta {
-      host = {{ metadata2_redis_host }}
       database {
         devicestore.id = 2
         userstore.id = 12
@@ -421,6 +450,14 @@ summary-denormalization:
         dialcodestore.id = 6
         key.expiry.seconds = {{ summary_denorm_key_expiry_seconds }}
       }
+      content.host = {{ redis_meta_content_host }}
+      device.host = {{ redis_meta_device_host }}
+      user.host = {{ redis_meta_user_host }}
+      dialcode.host = {{ redis_meta_dialcode_host }}
+      content.port = {{ redis_meta_content_port }}
+      device.port = {{ redis_meta_device_port }}
+      user.port = {{ redis_meta_user_port }}
+      dialcode.port = {{ redis_meta_dialcode_port }}
     }
     # config version
     user_denorm_version = v2
@@ -493,11 +530,11 @@ device-profile-updater:
     }
     # redis-metadata
     redis-meta {
-      host = {{ metadata2_redis_host }}
-      port = 6379
       database {
         devicestore.id = 2
       }
+      host = {{ redis_meta_device_host }}
+      port = {{ redis_meta_device_port }}
     }
     postgres {
       database = "{{ postgres.db_name }}",
@@ -524,12 +561,14 @@ content-cache-updater:
     }
     # redis-metadata
     redis-meta {
-      host = {{ metadata2_redis_host }}
-      port = 6379
       database {
         contentstore.id = 5
         dialcodestore.id = 6
       }
+      content.host = {{ redis_meta_content_host }}
+      dialcode.host = {{ redis_meta_dialcode_host }}
+      content.port = {{ redis_meta_content_port }}
+      dialcode.port = {{ redis_meta_dialcode_port }}
     }
     dialcode {
       api {
@@ -558,11 +597,11 @@ user-cache-updater:
     }
     # redis-metadata
     redis-meta {
-      host = {{ metadata2_redis_host }}
-      port = 6379
       database {
         userstore.id = 4
       }
+      host = {{ redis_meta_user_host }}
+      port = {{ redis_meta_user_port }}
     }
     lms-cassandra {
       keyspace = "{{ middleware_cassandra_keyspace }}"
@@ -596,11 +635,11 @@ user-cache-updater-v2:
     }
     # redis-metadata
     redis-meta {
-      host = {{ metadata2_redis_host }}
-      port = 6379
       database {
         userstore.id = 12
       }
+      host = {{ redis_meta_user_host }}
+      port = {{ redis_meta_user_port }}
     }
     lms-cassandra {
       keyspace = "{{ middleware_cassandra_keyspace }}"
@@ -638,6 +677,7 @@ assessment-aggregator:
       input.topic = {{ env_name }}.telemetry.assess
       failed.topic= {{ env_name }}.telemetry.assess.failed
       groupId = {{ env_name }}-assessment-aggregator-group
+      output.certissue.topic = {{ env_name }}.issue.certificate.request
     }
     task {
       assessaggregator {
@@ -648,6 +688,7 @@ assessment-aggregator:
       keyspace = "{{ middleware_cassandra_courses_keyspace }}"
       table = "{{ middleware_cassandra_assessment_aggregator_table }}"
       questionudttype= "{{ middleware_cassandra_assessment_question_type }}"
+      enrolmentstable = "{{ middleware_cassandra_user_enrolments_table }}"
     }
     redis {
       database {
@@ -658,6 +699,62 @@ assessment-aggregator:
     jobmanager.memory.flink.size: {{ flink_job_names['assessment-aggregator'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['assessment-aggregator'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['assessment-aggregator'].taskslots }}
+    parallelism.default: 1
+    jobmanager.execution.failover-strategy: region
+    taskmanager.memory.network.fraction: 0.1
+
+error-denormalization:
+  error-denormalization: |+
+    include file("/data/flink/conf/base-config.conf")
+    kafka {
+      input.telemetry.topic = {{ env_name }}.telemetry.error
+      input.summary.topic = {{ env_name }}.telemetry.derived
+      telemetry.denorm.output.topic = {{ env_name }}.druid.events.error
+      summary.denorm.output.topic = {{ env_name }}.druid.events.summary
+      summary.unique.events.topic = {{ env_name }}.telemetry.derived.unique
+      output.failed.topic = {{ env_name }}.telemetry.failed
+      output.duplicate.topic = {{ env_name }}.telemetry.duplicate
+      groupId = {{ env_name }}-error-denorm-group
+    }
+    skip.events = ["INTERRUPT"]
+    task {
+      window.count = {{ denorm_primary_window_count }}
+      window.shards = {{ denorm_primary_window_shards }}
+      consumer.parallelism = {{ error_denorm_consumer_parallelism }}
+      telemetry.downstream.operators.parallelism = {{ error_denorm_operators_parallelism }}
+      summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
+    }
+    redis {
+      database {
+        duplicationstore.id = 9
+        key.expiry.seconds = {{ de_normalization_duplicationstore_key_expiry_seconds }} 
+      }
+    }
+    # redis-metadata
+    redis-meta {
+      database {
+        devicestore.id = 2
+        userstore.id = 12
+        contentstore.id = 5
+        dialcodestore.id = 6
+        key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
+      }
+      content.host = {{ redis_meta_content_host }}
+      device.host = {{ redis_meta_device_host }}
+      user.host = {{ redis_meta_user_host }}
+      dialcode.host = {{ redis_meta_dialcode_host }}
+      content.port = {{ redis_meta_content_port }}
+      device.port = {{ redis_meta_device_port }}
+      user.port = {{ redis_meta_user_port }}
+      dialcode.port = {{ redis_meta_dialcode_port }}
+    }
+    # config version
+    user_denorm_version = v2
+
+  flink-conf: |+
+    jobmanager.memory.flink.size: {{ flink_job_names['error-denormalization'].jobmanager_memory }}
+    taskmanager.memory.flink.size: {{ flink_job_names['error-denormalization'].taskmanager_memory }}
+    taskmanager.numberOfTaskSlots: {{ flink_job_names['error-denormalization'].taskslots }}
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1

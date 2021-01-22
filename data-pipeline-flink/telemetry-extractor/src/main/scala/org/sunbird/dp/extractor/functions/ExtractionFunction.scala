@@ -52,8 +52,6 @@ class ExtractionFunction(config: TelemetryExtractorConfig)(implicit val stringTy
           context.output(config.assessRedactEventsOutputTag, markSuccess(eventData))
         } else if ("LOG".equalsIgnoreCase(eventId)) {
           context.output(config.logEventsOutputTag, markSuccess(eventData))
-        } else if ("ERROR".equalsIgnoreCase(eventId)) {
-          context.output(config.errorEventsOutputTag, markSuccess(eventData))
         } else {
           context.output(config.rawEventsOutputTag, markSuccess(eventData))
         }

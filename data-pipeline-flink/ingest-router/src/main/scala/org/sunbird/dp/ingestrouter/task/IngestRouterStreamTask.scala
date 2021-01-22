@@ -19,12 +19,19 @@ class IngestRouterStreamTask(config: IngestRouterConfig, kafkaConnector: FlinkKa
     implicit val env: StreamExecutionEnvironment = FlinkUtil.getExecutionContext(config)
     implicit val bytesTypeInfo: TypeInformation[Array[Byte]] = TypeExtractor.getForClass(classOf[Array[Byte]])
 
-    val processStream =
-      env.addSource(kafkaConnector.kafkaBytesSource(config.kafkaInputTopic), config.telemetryProcessorConsumer)
-        .uid(config.telemetryProcessorConsumer).setParallelism(config.kafkaConsumerParallelism)
-        .addSink(kafkaConnector.kafkaBytesSink(config.kafkaSuccessTopic))
-        .name(config.telemetryProcessorProducer).uid(config.telemetryProcessorProducer)
+    val ingestStream =
+      env.addSource(kafkaConnector.kafkaBytesSource(config.kafkaIngestInputTopic), config.telemetryIngestProcessorConsumer)
+        .uid(config.telemetryIngestProcessorConsumer).setParallelism(config.kafkaConsumerParallelism)
+        .addSink(kafkaConnector.kafkaBytesSink(config.kafkaIngestSuccessTopic))
+        .name(config.telemetryIngestProcessorProducer).uid(config.telemetryIngestProcessorProducer)
         .setParallelism(config.downstreamOperatorsParallelism)
+    val rawStream =
+      env.addSource(kafkaConnector.kafkaBytesSource(config.kafkaRawInputTopic), config.telemetryRawProcessorConsumer)
+        .uid(config.telemetryRawProcessorConsumer).setParallelism(config.rawKafkaConsumerParallelism)
+        .addSink(kafkaConnector.kafkaBytesSink(config.kafkaRawSuccessTopic))
+        .name(config.telemetryRawProcessorProducer).uid(config.telemetryRawProcessorProducer)
+        .setParallelism(config.rawDownstreamOperatorsParallelism)
+
 
     env.execute(config.jobName)
   }

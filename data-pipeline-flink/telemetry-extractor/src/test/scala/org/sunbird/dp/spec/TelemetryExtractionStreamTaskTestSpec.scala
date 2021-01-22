@@ -50,7 +50,6 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaDuplicateTopic)).thenReturn(new DupEventsSink)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaSuccessTopic)).thenReturn(new RawEventsSink)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaLogRouteTopic)).thenReturn(new LogEventsSink)
-    when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaErrorRouteTopic)).thenReturn(new ErrorEventsSink)
     when(mockKafkaUtil.kafkaStringSink(extractorConfig.kafkaLogRouteTopic)).thenReturn(new AuditEventsSink)
     when(mockKafkaUtil.kafkaMapSink(extractorConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
     when(mockKafkaUtil.kafkaStringSink(extractorConfig.kafkaBatchFailedTopic)).thenReturn(new FailedBatchEventsSink)
@@ -83,10 +82,9 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
     task.process()
 
     // RawEventsSink.values.size() should be (43) // 43 events + 2 log events generated for auditing
-    RawEventsSink.values.size() should be (5)
+    RawEventsSink.values.size() should be (6) // includes 1 Error Event
     AuditEventsSink.values.size() should be (2)
     LogEventsSink.values.size() should be (38)
-    ErrorEventsSink.values.size() should be (0)
     FailedEventsSink.values.size() should be (2)
     FailedBatchEventsSink.values.size() should be (1)
     DupEventsSink.values.size() should be (1)
@@ -126,7 +124,7 @@ class ExtractionStreamTaskTestSpec extends BaseTestSpec {
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.successBatchCount}").getValue() should be (3)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.failedBatchCount}").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.failedEventCount}").getValue() should be (2)
-    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.successEventCount}").getValue() should be (43)
+    BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.successEventCount}").getValue() should be (44)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.unique-event-count").getValue() should be (2)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.duplicate-event-count").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${extractorConfig.jobName}.${extractorConfig.auditEventCount}").getValue() should be (2)
@@ -203,20 +201,6 @@ class LogEventsSink extends SinkFunction[util.Map[String, AnyRef]] {
 }
 
 object LogEventsSink {
-  val values: util.List[Event] = new util.ArrayList[Event]()
-}
-
-
-class ErrorEventsSink extends SinkFunction[util.Map[String, AnyRef]] {
-
-  override def invoke(value: util.Map[String, AnyRef]): Unit = {
-    synchronized {
-      ErrorEventsSink.values.add(new Event(value.asInstanceOf[util.Map[String, Any]]))
-    }
-  }
-}
-
-object ErrorEventsSink {
   val values: util.List[Event] = new util.ArrayList[Event]()
 }
 

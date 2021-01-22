@@ -131,15 +131,36 @@ object EventFixture {
     |""".stripMargin,
 
   /**
-    * User-Id :user-12
+    * User-Id :user-13
     * Edata.state is update
     *
     */
   """
     |{"eid":"AUDIT","ets":1573121861118,"ver":"3.0","mid":"1573121861118.40f9136b-1cc3-458d-a04a-4459606df","actor":{"id":"5609876543234567890987654345678","type":"Request"},"context":{"channel":"01285019302823526477","pdata":{"id":"dev.sunbird.portal","pid":"learner-service","ver":"2.5.0"},"env":"User","did":"user-12","cdata":[{"id":"25cb0530-7c52-ecb1-cff2-6a14faab7910","type":"SignupType"}],"rollup":{"l1":"01285019302823526477"}},"object":{"id":"user-12", "type":"user"},"edata":{"state":"Update","props":["recoveryEmail","recoveryPhone","userId","id","externalIds","updatedDate","updatedBy"]},"syncts":1573121861125,"@timestamp":"2019-11-07T10:17:41.125Z","flags":{"tv_processed":true,"dd_processed":true},"type":"events","ts":"2019-11-07T10:17:41.118+0000"}
     |
-    |""".stripMargin
+    |""".stripMargin,
 
+    /**
+      * User-Id :user-13
+      * User table has no row for a user
+      *
+      */
+
+  """
+    |{"eid":"AUDIT","ets":1573121861118,"ver":"3.0","mid":"1573121861118.40f9136b-1cc3-458d-a04a-4459606df","actor":{"id":"5609876543234567890987654345678","type":"Request"},"context":{"channel":"01285019302823526477","pdata":{"id":"dev.sunbird.portal","pid":"learner-service","ver":"2.5.0"},"env":"User","did":"user-13","cdata":[{"id":"25cb0530-7c52-ecb1-cff2-6a14faab7910","type":"SignupType"}],"rollup":{"l1":"01285019302823526477"}},"object":{"id":"user-13", "type":"user"},"edata":{"state":"Update","props":["recoveryEmail","recoveryPhone","userId","id","externalIds","updatedDate","updatedBy"]},"syncts":1573121861125,"@timestamp":"2019-11-07T10:17:41.125Z","flags":{"tv_processed":true,"dd_processed":true},"type":"events","ts":"2019-11-07T10:17:41.118+0000"}
+    |
+    |""".stripMargin,
+
+  /**
+    * User-Id :user-14
+    * Rootorgid not present in the db
+    *
+    */
+
+  """
+    |{"eid":"AUDIT","ets":1573121861118,"ver":"3.0","mid":"1573121861118.40f9136b-1cc3-458d-a04a-4459606df","actor":{"id":"5609876543234567890987654345678","type":"Request"},"context":{"channel":"01285019302823526477","pdata":{"id":"dev.sunbird.portal","pid":"learner-service","ver":"2.5.0"},"env":"User","did":"user-13","cdata":[{"id":"25cb0530-7c52-ecb1-cff2-6a14faab7910","type":"SignupType"}],"rollup":{"l1":"01285019302823526477"}},"object":{"id":"user-14", "type":"user"},"edata":{"state":"Update","props":["recoveryEmail","recoveryPhone","userId","id","externalIds","updatedDate","updatedBy"]},"syncts":1573121861125,"@timestamp":"2019-11-07T10:17:41.125Z","flags":{"tv_processed":true,"dd_processed":true},"type":"events","ts":"2019-11-07T10:17:41.118+0000"}
+    |
+    |""".stripMargin
 
   //      |{"eid":"AUDIT","ets":1573121861118,"ver":"3.0","mid":"1573121861118.40f9136b-1cc3-458d-a04a-4459606dfdd6","actor":{"id":"627a431d-4f5c-4adc-812d-1f01c5588555","type":"User"},"context":{"channel":"01285019302823526477","pdata":{"id":"dev.sunbird.portal","pid":"learner-service","ver":"2.5.0"},"env":"User","did":"2bcfc645e27e64625f7bad6ce282f9d0","cdata":[{"id":"25cb0530-7c52-ecb1-cff2-6a14faab7910","type":"SignupType"}],"rollup":{"l1":"01285019302823526477"}},"object":{"id":"627a431d-4f5c-4adc-812d-1f01c5588555","type":"User"},"edata":{"state":"Create","props":["recoveryEmail","recoveryPhone","userId","id","externalIds","updatedDate","updatedBy"]},"syncts":1573121861125,"@timestamp":"2019-11-07T10:17:41.125Z","flags":{"tv_processed":true,"dd_processed":true},"type":"events","ts":"2019-11-07T10:17:41.118+0000"}
     //      |""".stripMargin,

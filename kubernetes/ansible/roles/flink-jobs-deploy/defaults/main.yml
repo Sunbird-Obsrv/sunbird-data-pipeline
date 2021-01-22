@@ -52,9 +52,11 @@ extractor_consumer_parallelism: 1
 extractor_operators_parallelism: 1
 telemetry_extractor_key_expiry_seconds: 3600
 
-### Ingest router job related vars
+### Ingest Raw router job related vars
 ingest_router_consumer_parallelism: 1
 ingest_router_operators_parallelism: 1
+raw_router_consumer_parallelism: 1
+raw_router_downstream_parallelism: 1
 
 ### Pipeline-preprocessor related vars
 pipeline_preprocessor_consumer_parallelism: 1
@@ -74,6 +76,24 @@ telemetry_denorm_secondary_operators_parallelism: 1
 denorm_primary_consumer_parallelism: 1
 telemetry_denorm_primary_operators_parallelism: 1
 
+redis_meta_content_port: "{{ content_port }}"
+redis_meta_device_port: "{{ device_port }}"
+redis_meta_user_port: "{{ user_port }}"
+redis_meta_dialcode_port: "{{ dialcode_port }}"
+
+redis_meta_content_host: "{% if metadata2_redis_host is defined %}{{ metadata2_redis_host }}{% else %}{{ redis_host }}{% endif %}"
+redis_meta_device_host: "{% if metadata2_redis_host is defined %}{{ metadata2_redis_host }}{% else %}{{ redis_host }}{% endif %}"
+redis_meta_user_host: "{% if metadata2_redis_host is defined %}{{ metadata2_redis_host }}{% else %}{{ redis_host }}{% endif %}"
+redis_meta_dialcode_host: "{% if metadata2_redis_host is defined %}{{ metadata2_redis_host }}{% else %}{{ redis_host }}{% endif %}"
+
+denorm_secondary_window_count: 30
+denorm_secondary_window_shards: 1400
+denorm_primary_window_count: 30
+denorm_primary_window_shards: 1400
+
+denorm_summary_window_count: 5
+denorm_summary_window_shards: 1400
+
 ### summary-denormalization related vars
 summary_denorm_consumer_parallelism: 1
 summary_denorm_operators_parallelism: 1
@@ -86,6 +106,10 @@ druid_validator_operators_parallelism: 1
 druid_validator_key_expiry_seconds: 3600
 druid_validation_enabled: true
 druid_deduplication_enabled: true
+
+### error-denormalization related vars
+error_denorm_consumer_parallelism: 1
+error_denorm_operators_parallelism: 1
 
 ### Device-profile-updater related vars
 deviceprofile_parallelism: 1
@@ -113,6 +137,7 @@ assessaggregator_parallelism: 1
 middleware_cassandra_courses_keyspace: sunbird_courses
 middleware_cassandra_assessment_aggregator_table: assessment_aggregator
 middleware_cassandra_assessment_question_type : question
+middleware_cassandra_user_enrolments_table: user_enrolments
 
 ### taskmanager related vars
 healthcheck: true
@@ -226,8 +251,15 @@ flink_job_names:
     cpu_requests: 0.3
   ingest-router:
     job_class_name: 'org.sunbird.dp.ingestrouter.task.IngestRouterStreamTask'
-    replica: 1  
+    replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
     taskslots: 1
     cpu_requests: 0.3
+  error-denormalization:
+    job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3 

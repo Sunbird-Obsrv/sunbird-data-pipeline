@@ -1,0 +1,55 @@
+---
+
+- name: Create the directory
+  become: yes
+  become_user: "{{ redis_restore_user }}"
+  file: path=/tmp/{{ item }} state=directory recurse=yes
+  with_items: "{{ redis_restore_process }}"
+
+- name: Download backup file
+  become: yes
+  become_user: "{{ redis_restore_user }}"
+  shell: "az storage blob download --container-name {{ redis_backup_azure_container_name }} --file {{ item }}/{{ redis_restore_file_name }} --name {{ item }}/{{ redis_restore_file_name }} --account-name {{sunbird_management_storage_account_name}} --account-key {{sunbird_management_storage_account_key}}"
+  args:
+    chdir: /tmp/
+  with_items: "{{ redis_restore_process }}"
+
+- name: get redis process ports to stop 
+  shell: "echo {{ lookup ('vars', item + '_port') }}"
+  register: ports
+  with_items: "{{ redis_restore_process }}" 
+
+- name: stop redis to restore backup 
+  become: yes
+  become_user: "{{ redis_restore_user }}"
+  shell: "echo shutdown | {{ analytics_user_home }}/redis-stable/src/redis-cli -p {{ item.stdout }}"
+  with_items: "{{ ports.results }}"
+
+- name: Extract backup zip into tmp
+  become: yes
+  become_user: "{{ redis_restore_user }}"
+  unarchive:
+    src: "/tmp/{{ item }}/{{ redis_restore_file_name }}"
+    dest: "/tmp/{{ item }}"
+    remote_src: True
+  with_items: "{{ redis_restore_process }}"  
+
+- name: copy dump.rdb files to data dir
+  become: yes
+  become_user: "{{ redis_restore_user }}"
+  shell: cp /tmp/{{ item }}/{{ item }}-dump.rdb {{ analytics_user_home }}/redis-stable/{{ item }}-dump.rdb
+  with_items: "{{ redis_restore_process }}"
+
+- name: start redis
+  become: yes
+  become_user: "{{ redis_restore_user }}"
+  command: '{{ analytics_user_home }}/redis-stable/src/redis-server {{ analytics_user_home }}/redis-stable/redis-{{ item }}.conf'
+  with_items: "{{ redis_restore_process }}"
+
+- name: Keyspace info
+  shell: "echo info keyspace | {{ analytics_user_home }}/redis-stable/src/redis-cli -p {{ item.stdout }}"
+  register: restoreinfo
+  with_items: "{{ ports.results }}"
+
+- debug: var=item.stdout_lines
+  with_items: "{{ restoreinfo.results }}"  

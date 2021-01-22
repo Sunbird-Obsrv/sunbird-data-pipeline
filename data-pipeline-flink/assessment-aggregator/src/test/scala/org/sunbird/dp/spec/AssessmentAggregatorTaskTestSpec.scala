@@ -80,6 +80,7 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
   "AssessmentAggregator " should "Update event to db" in {
     when(mockKafkaUtil.kafkaEventSource[Event](assessmentConfig.kafkaInputTopic)).thenReturn(new AssessmentAggreagatorEventSource)
     when(mockKafkaUtil.kafkaEventSink[Event](assessmentConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
+    when(mockKafkaUtil.kafkaStringSink(assessmentConfig.kafkaCertIssueTopic)).thenReturn(new certificateIssuedEventsSink)
     val task = new AssessmentAggregatorStreamTask(assessmentConfig, mockKafkaUtil)
     task.process()
     assert(FailedEventsSink.values.get(0).getTelemetry.getMap.containsKey("metadata"))
@@ -90,6 +91,8 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.batchSuccessCount}").getValue() should be(5)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.cacheHitCount}").getValue() should be(7)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.cacheHitMissCount}").getValue() should be(1)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.certIssueEventsCount}").getValue() should be(2)
+    
     val test_row1 = cassandraUtil.findOne("select total_score,total_max_score from sunbird_courses.assessment_aggregator where course_id='do_2128410273679114241112'")
     assert(test_row1.getDouble("total_score") == 2.0)
     assert(test_row1.getDouble("total_max_score") == 2.0)
@@ -157,4 +160,17 @@ class FailedEventsSink extends SinkFunction[Event] {
 
 object FailedEventsSink {
   val values: util.List[Event] = new util.ArrayList()
+}
+
+class certificateIssuedEventsSink extends SinkFunction[String] {
+
+  override def invoke(value: String): Unit = {
+    synchronized {
+      certificateIssuedEvents.values.add(value)
+    }
+  }
+}
+
+object certificateIssuedEvents {
+  val values: util.List[String] = new util.ArrayList()
 }

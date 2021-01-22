@@ -1,0 +1,56 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    role: alert-rules
+    app: {{ .Values.prometheus_rule_selector_app }}
+    release: {{ .Values.prometheus_rule_selector_release }}
+  name: {{ .Values.fullnameOverride }}-flinkjobs-lag
+  namespace: {{ .Values.namespace }}
+spec:
+  groups:
+  - name: alertrules.flinkjobs-lag
+    rules:
+    {{ range $key, $threshold := .Values.flink_job_names }}
+    - alert: {{ $key }} lag increase critical
+      expr: ((sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"}) - sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"} offset {{ $.Values.flink_lag_offset_duration }}m ) ) / sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"} offset {{ $.Values.flink_lag_offset_duration }}m) ) * 100 > {{ $.Values.flink_lag_percentage_threshold }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max { job = "{{ $key}}-taskmanager-prometheus" }) >  {{ $threshold }}
+      for: 10m
+      labels:
+        severity: critical
+        alerttype: lag
+      annotations:
+        message: The lag for {{ $key }} is increased by {{`{{ humanize $value }}`}} percentage
+        summary: {{ $key }} lag is increasing
+        lag: '{{`{{printf `}}`sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job = "{{ $key }}-taskmanager-prometheus" })`  | query | first | value | humanize }}'
+        job_id: {{ $key }}
+        alertname: FlinkJobsLag
+    {{- end }}
+
+    {{ range $key, $threshold := .Values.flink_job_names }}
+    - alert: {{ $key }} lag increase percentage critical
+      expr: sum(job:nginx_http_requests_total:rate:sum:5m) - sum(job:nginx_http_requests_total:rate:sum:5m offset {{ $.Values.flink_lag_offset_duration }}m) > {{ $.Values.nginx_tps_threshold }} and ((sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"}) - sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"} offset {{ $.Values.flink_lag_offset_duration }}m)) / sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"} offset {{ $.Values.flink_lag_offset_duration }}m)) * 100 > {{ $.Values.flink_lag_percentage_threshold }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"}) > {{ $threshold }}
+      for: 10m
+      labels:
+        severity: critical
+        alerttype: lag
+      annotations:
+        message: The tps is increasing and {{ $key }} lag is also increasing. Please check and increase the replica.
+        lag: '{{`{{printf `}}`sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job = "{{ $key }}-taskmanager-prometheus" })`  | query | first | value | humanize }}'
+        job_id: {{ $key }}
+        alertname: FlinkJobsPercentageLag
+    {{- end }}
+
+    {{ range $key, $threshold := .Values.flink_job_names }}
+    - alert: {{ $key }} lag increase percentage critical
+      expr: sum(job:nginx_http_requests_total:rate:sum:5m) - sum(job:nginx_http_requests_total:rate:sum:5m offset {{ $.Values.flink_lag_offset_duration }}m) < {{ $.Values.nginx_tps_threshold }} and ((sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"}) - sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"} offset {{ $.Values.flink_lag_offset_duration }}m)) / sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"} offset {{ $.Values.flink_lag_offset_duration }}m)) * 100 > {{ $.Values.flink_lag_percentage_threshold }} and sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job="{{ $key }}-taskmanager-prometheus"}) > {{ $threshold }}
+      for: 10m
+      labels:
+        severity: critical
+        alerttype: lag
+      annotations:
+        message: There is no increase in tps but {{ $key }} lag is increasing. Please check and restart the job.
+        lag: '{{`{{printf `}}`sum(flink_taskmanager_job_task_operator_KafkaConsumer_records_lag_max{job = "{{ $key }}-taskmanager-prometheus" })`  | query | first | value | humanize }}'
+        job_id: {{ $key }}
+        alertname: FlinkJobsPercentageLag
+    {{- end }}

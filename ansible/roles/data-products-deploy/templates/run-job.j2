@@ -40,16 +40,20 @@ get_report_job_model_name(){
 		;;
 		"collection-summary-report") echo 'org.sunbird.analytics.job.report.CollectionSummaryJob'
 		;;
+		"program-collection-summary-report") echo 'org.sunbird.analytics.job.report.CollectionSummaryJob'
+		;;
+		"collection-reconciliation-job") echo 'org.sunbird.analytics.audit.CollectionReconciliationJob'
+		;;
 		"assessment-correction") echo 'org.sunbird.analytics.job.report.AssessmentCorrectionJob'
         ;;
 		*) echo $1
 		;;
-	esac		
+	esac
 }
 
 if [ ! -z "$1" ]; then job_id=$(get_report_job_model_name $1); fi
 
-if [ ! -z "$1" ]; then job_config=$(config $1); else job_config="$2"; fi
+if [ ! -z "$1" ]; then job_config=$(config $1 $2); else job_config="$2"; fi
 
 if [ ! -z "$2" ]; then batchIds=";$2"; else batchIds=""; fi
 
