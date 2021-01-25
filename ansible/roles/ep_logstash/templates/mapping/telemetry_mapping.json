@@ -54,7 +54,7 @@
                 "type": "double"
               },
               "data": {
-                "type": "keyword"
+                "type": "auto"
               },
               "dir": {
                 "type": "keyword"
