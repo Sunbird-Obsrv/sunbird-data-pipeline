@@ -212,7 +212,6 @@ spark_redis_version: "spark-redis_2.11-2.5.0.jar"
 jedis_version: "jedis-3.2.0.jar"
 
 # Cluster vars
-
 spark_cluster_user_password: ""
 spark_cluster_user_name: ""
 admin_name: "{{ spark_cluster_user_name }}"
