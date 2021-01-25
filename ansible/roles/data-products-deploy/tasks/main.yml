@@ -111,8 +111,8 @@
 - name: Update logger kafka config for cluster
   lineinfile:
     path: '{{ analytics.home }}/models-{{ model_version }}/application.conf'
-    regexp: '^log4j.appender.kafka.enable="false"'
-    line: 'log4j.appender.kafka.enable="true"'
+    regexp: '^log.appender.kafka.enable="false"'
+    line: 'log.appender.kafka.enable="true"'
   tags:
     - framework-spark-cluster       
 
