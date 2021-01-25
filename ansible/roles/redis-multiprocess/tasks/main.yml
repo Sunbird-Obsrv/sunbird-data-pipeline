@@ -16,12 +16,22 @@
 
 - name: Copy redis conf files
   become: yes
+  become_user: "{{ redis_user }}"
   template: src=redis.conf.j2 dest={{ redis_dir }}/redis-stable/redis-{{ item.value.name }}.conf
   vars:
     _port_: "{{ item.value.port }}"
     _name_: "{{ item.value.name }}"
     max_memory: "{{ item.value.max_memory }}"
   with_dict: "{{ redis.config }}"
+
+- name: Install required utils
+  apt: name={{ item }} state=present
+  become: yes
+  with_items:
+    - make
+    - gcc
+    - build-essential
+    - tcl8.5
 
 - name: Go to the folder and run make
   become: yes

@@ -5,6 +5,7 @@ telemetry_converter_ver: 0.0.8
 
 bucket: "dev-data-store"
 kafka_broker_host: "{{groups['processing-cluster-kafka'][0]}}:9092"
+ingestion_kafka_broker_host: "{{groups['ingestion-cluster-kafka'][0]}}:9092"
 brokerlist: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
 zookeeper: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
 dp_username: dp-monitor
@@ -211,6 +212,9 @@ spark_redis_version: "spark-redis_2.11-2.5.0.jar"
 jedis_version: "jedis-3.2.0.jar"
 
 # Cluster vars
+
+spark_cluster_user_password: ""
+spark_cluster_user_name: ""
 admin_name: "{{ spark_cluster_user_name }}"
 admin_password: "{{ spark_cluster_user_password }}"
 spark_cluster_name: "{{env}}-spark-cluster"
@@ -224,3 +228,6 @@ analytics_cluster:
   home: "/tmp"
 
 analytics_ed_dataporducts_jar_artifact: "data-products-{{ analytics_ed_dataporducts_artifact_ver }}.jar"  
+
+druid_report_postgres_db_name: druid
+druid_report_postgres_db_username: druid

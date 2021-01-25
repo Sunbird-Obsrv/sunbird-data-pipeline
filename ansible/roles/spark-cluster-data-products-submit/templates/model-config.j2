@@ -8,7 +8,7 @@ config() {
 	sinkTopic={{ sink_topic }}
 	currentDate=$(date "+%Y-%m-%d");
 	sparkCassandraConnectionHost="{{groups['lp-cassandra'][0]}}"
-	sparkRedisConnectionHost={{ metadata_redis_host }}
+	sparkRedisConnectionHost={{ metadata2_redis_host }}
 	sunbirdPlatformCassandraHost="{{ core_cassandra_host }}"
 	sunbirdPlatformElasticsearchHost="{{ sunbird_es_host }}"
 	pipelineAuditSlackUser="Pipeline Audit"
@@ -32,13 +32,13 @@ config() {
 		echo '{\"search\": {\"type\": \"none\"},\"model\": \"org.ekstep.analytics.job.AssessmentMetricsJobV2\",\"modelParams\": {\"batchFilters\": [\"TPD\"],\"fromDate\": \"$(date --date yesterday '+%Y-%m-%d')\",\"toDate\": \"$(date --date yesterday '+%Y-%m-%d')\",\"sparkCassandraConnectionHost\": \"'$sunbirdPlatformCassandraHost'\",\"sparkElasticsearchConnectionHost\": \"'$sunbirdPlatformElasticsearchHost'\",\"sparkRedisConnectionHost\": \"'$sparkRedisConnectionHost'\",\"sparkUserDbRedisIndex\": \"12\"},\"output\": [{\"to\": \"console\",\"params\": {\"printEvent\": false} }],\"parallelization\": 8,\"appName\": \"Assessment Dashboard Metrics\",\"deviceMapping\": false}'
 		;;
 		"userinfo-exhaust")
-		echo '{\"search\":{\"type\":\"none\"},\"model\":\"org.sunbird.analytics.exhaust.collection.UserInfoExhaustJob\",\"modelParams\":{\"store\":\"azure\",\"mode\":\"OnDemand\",\"batchFilters\":[\"TPD\"],\"searchFilter\":{}, \"sparkElasticsearchConnectionHost\":\"{{ sunbird_es_host }}\",\"sparkRedisConnectionHost\":\"{{ metadata_redis_host }}\",\"sparkUserDbRedisIndex\":\"12\", \"sparkCassandraConnectionHost\":\"{{ core_cassandra_host }}\", \"fromDate\":\"$(date --date yesterday '+%Y-%m-%d')\",\"toDate\":\"$(date --date yesterday '+%Y-%m-%d')\"},\"parallelization\":8,\"appName\":\"UserInfo Exhaust\"}'
+		echo '{\"search\":{\"type\":\"none\"},\"model\":\"org.sunbird.analytics.exhaust.collection.UserInfoExhaustJob\",\"modelParams\":{\"store\":\"azure\",\"mode\":\"OnDemand\",\"batchFilters\":[\"TPD\"],\"searchFilter\":{}, \"sparkElasticsearchConnectionHost\":\"{{ sunbird_es_host }}\",\"sparkRedisConnectionHost\":\"{{ metadata2_redis_host }}\",\"sparkUserDbRedisIndex\":\"12\",\"sparkUserDbRedisPort\":\"{{ user_port }}\",\"sparkCassandraConnectionHost\":\"{{ core_cassandra_host }}\", \"fromDate\":\"$(date --date yesterday '+%Y-%m-%d')\",\"toDate\":\"$(date --date yesterday '+%Y-%m-%d')\"},\"parallelization\":8,\"appName\":\"UserInfo Exhaust\"}'
 		;;
 		"response-exhaust")
-		echo '{\"search\":{\"type\":\"none\"},\"model\":\"org.sunbird.analytics.exhaust.collection.ResponseExhaustJob\",\"modelParams\":{\"store\":\"azure\",\"mode\":\"OnDemand\",\"batchFilters\":[\"TPD\"],\"searchFilter\":{}, \"sparkElasticsearchConnectionHost\":\"{{ sunbird_es_host }}\",\"sparkRedisConnectionHost\":\"{{ metadata_redis_host }}\",\"sparkUserDbRedisIndex\":\"12\", \"sparkCassandraConnectionHost\":\"{{ core_cassandra_host }}\", \"fromDate\":\"$(date --date yesterday '+%Y-%m-%d')\",\"toDate\":\"$(date --date yesterday '+%Y-%m-%d')\"},\"parallelization\":8,\"appName\":\"Response Exhaust\"}'
+		echo '{\"search\":{\"type\":\"none\"},\"model\":\"org.sunbird.analytics.exhaust.collection.ResponseExhaustJob\",\"modelParams\":{\"store\":\"azure\",\"mode\":\"OnDemand\",\"batchFilters\":[\"TPD\"],\"searchFilter\":{}, \"sparkElasticsearchConnectionHost\":\"{{ sunbird_es_host }}\",\"sparkRedisConnectionHost\":\"{{ metadata2_redis_host }}\",\"sparkUserDbRedisIndex\":\"12\",\"sparkUserDbRedisPort\":\"{{ user_port }}\",\"sparkCassandraConnectionHost\":\"{{ core_cassandra_host }}\", \"fromDate\":\"$(date --date yesterday '+%Y-%m-%d')\",\"toDate\":\"$(date --date yesterday '+%Y-%m-%d')\"},\"parallelization\":8,\"appName\":\"Response Exhaust\"}'
 		;;
 		"progress-exhaust")
-		echo '{\"search\":{\"type\":\"none\"},\"model\":\"org.sunbird.analytics.exhaust.collection.ProgressExhaustJob\",\"modelParams\":{\"store\":\"azure\",\"mode\":\"OnDemand\",\"batchFilters\":[\"TPD\"],\"searchFilter\":{}, \"sparkElasticsearchConnectionHost\":\"{{ sunbird_es_host }}\",\"sparkRedisConnectionHost\":\"{{ metadata_redis_host }}\",\"sparkUserDbRedisIndex\":\"12\", \"sparkCassandraConnectionHost\":\"{{ core_cassandra_host }}\", \"fromDate\":\"$(date --date yesterday '+%Y-%m-%d')\",\"toDate\":\"$(date --date yesterday '+%Y-%m-%d')\"},\"parallelization\":8,\"appName\":\"Progress Exhaust\"}'
+		echo '{\"search\":{\"type\":\"none\"},\"model\":\"org.sunbird.analytics.exhaust.collection.ProgressExhaustJob\",\"modelParams\":{\"store\":\"azure\",\"mode\":\"OnDemand\",\"batchFilters\":[\"TPD\"],\"searchFilter\":{}, \"sparkElasticsearchConnectionHost\":\"{{ sunbird_es_host }}\",\"sparkRedisConnectionHost\":\"{{ metadata2_redis_host }}\",\"sparkUserDbRedisIndex\":\"12\",\"sparkUserDbRedisPort\":\"{{ user_port }}\",\"sparkCassandraConnectionHost\":\"{{ core_cassandra_host }}\", \"fromDate\":\"$(date --date yesterday '+%Y-%m-%d')\",\"toDate\":\"$(date --date yesterday '+%Y-%m-%d')\"},\"parallelization\":8,\"appName\":\"Progress Exhaust\"}'
 		;;
         "*")
 		echo "Unknown model code"

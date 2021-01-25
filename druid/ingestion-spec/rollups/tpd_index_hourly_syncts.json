@@ -1,0 +1,168 @@
+{
+  "type": "kafka",
+  "dataSchema": {
+    "dataSource": "tpd-hourly-rollup-syncts",
+    "parser": {
+      "type": "string",
+      "parseSpec": {
+        "format": "json",
+        "flattenSpec": {
+          "useFieldDiscovery": false,
+          "fields": [
+            {
+              "type": "root",
+              "name": "eid"
+            },
+            {
+              "type": "path",
+              "name": "collection_type",
+              "expr": "$.collectiondata.contenttype"
+            },
+            {
+              "type": "path",
+              "name": "context_env",
+              "expr": "$.context.env"
+            },
+            {
+              "type": "path",
+              "name": "edata_id",
+              "expr": "$.edata.id"
+            },
+            {
+              "type": "path",
+              "name": "edata_mode",
+              "expr": "$.edata.mode"
+            },
+            {
+              "type": "path",
+              "name": "edata_pageid",
+              "expr": "$.edata.pageid"
+            },
+            {
+              "type": "path",
+              "name": "edata_type",
+              "expr": "$.edata.type"
+            },
+            {
+              "type": "path",
+              "name": "user_signin_type",
+              "expr": "$.userdata.usersignintype"
+            },
+            {
+              "type": "path",
+              "name": "actor_id",
+              "expr": "$.actor.id"
+            },
+            {
+              "type": "path",
+              "name": "context_did",
+              "expr": "$.context.did"
+            }
+          ]
+        },
+        "dimensionsSpec": {
+          "dimensions": [
+            {
+              "type": "string",
+              "name": "eid"
+            },
+            {
+              "type": "string",
+              "name": "context_env"
+            },
+            {
+              "type": "string",
+              "name": "user_signin_type"
+            },
+            {
+              "type": "string",
+              "name": "collection_type"
+            },
+            {
+              "type": "string",
+              "name": "edata_id"
+            },
+            {
+              "type": "string",
+              "name": "edata_mode"
+            },
+            {
+              "type": "string",
+              "name": "edata_pageid"
+            },
+            {
+              "type": "string",
+              "name": "edata_type"
+            },
+            {
+              "type":"string",
+              "name": "first_time_user"
+            }
+          ]
+        },
+        "timestampSpec": {
+          "column": "syncts",
+          "format": "auto"
+        }
+      }
+    },
+    "transformSpec": {
+      "transforms": [
+        {
+          "type": "expression",
+          "name": "first_time_user  ",
+          "expression": "if(like(\"context_cdata_type\",'FirstTimeUser') && like(\"context_cdata_id\",'true') , 'true','false')"
+        },
+        {
+          "type": "expression",
+          "name": "is_playerstart_event",
+          "expression": "if((like(\"context_pdata_pid\",'%contentplayer%'), if ( \"eid\" == 'START', 'true','false') ,'true')"
+        }
+      ],
+      "filter": {
+        "type": "selector",
+        "dimension": "is_playerstart_event",
+        "value": "true"
+      }
+    },
+    "metricsSpec": [
+      {
+        "name": "total_count",
+        "type": "count"
+      },
+      {
+        "type": "HLLSketchBuild",
+        "name": "unique_devices",
+        "fieldName": "context_did"
+      },
+      {
+        "type": "HLLSketchBuild",
+        "name": "unique_users",
+        "fieldName": "actor_id"
+      }
+    ],
+    "granularitySpec": {
+      "type": "uniform",
+      "segmentGranularity": "hour",
+      "queryGranularity": "hour",
+      "rollup": true
+    }
+  },
+  "ioConfig": {
+    "topic": "{{env}}.druid.events.telemetry",
+    "consumerProperties": {
+      "bootstrap.servers": "{{kafka_brokers}}"
+    },
+    "taskCount": 1,
+    "replicas": 1,
+    "taskDuration": "PT7200S",
+    "completionTimeout" : "PT3600S",
+    "useEarliestOffset": true
+  },
+  "tuningConfig": {
+    "type": "kafka",
+    "reportParseExceptions": false,
+    "logParseExceptions": true,
+    "maxSavedParseExceptions": 10
+  }
+}

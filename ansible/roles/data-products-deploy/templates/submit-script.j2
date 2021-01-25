@@ -26,7 +26,10 @@ while :; do
                         end_date=$1            
         ;;
         -h|--sparkMaster)   shift
-                            sparkMaster=$1            
+                            sparkMaster=$1
+        ;;
+        -sp|--selectedPartitions)   shift 
+                                    selected_partitions=$1
         ;;
         *) break
     esac
@@ -86,6 +89,34 @@ if [ "$mode" = "via-partition" ]; then
             echo $finalRequestBody
             curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_cluster_name }}.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"
         done
+
+elif [ "$mode" = "selected-partition" ]; then
+     # add partitions to config
+     partitionString="\\\"delta\\\":0,\\\"partitions\\\":[$selected_partitions]"
+     if [ -z "$start_date" ]; then
+         job_config=$(config $job)
+         cluster_job_config=${job_config//'"'/'\"'}
+         finalConfig=${cluster_job_config/'\"delta\":0'/$partitionString}
+         echo $finalConfig
+         echo "Running $job by partitions."
+         classVariable="org.ekstep.analytics.job.JobExecutor"
+         argsList="\"args\": [\"--model\", \"$job_id\", \"--config\", \"$finalConfig\"]"
+     else 
+         job_config=$(config $job '__endDate__')
+         cluster_job_config=${job_config//'"'/'\"'}
+         finalConfig=${cluster_job_config/'\"delta\":0'/$partitionString}
+         echo $finalConfig
+         echo "Running $job by partitions via Replay-Supervisor."
+         classVariable="org.ekstep.analytics.job.ReplaySupervisor"
+         argsList="\"args\": [\"--model\", \"$job_id\", \"--config\", \"$finalConfig\", \"--fromDate\", \"$start_date\", \"--toDate\", \"$end_date\"]"
+     fi
+     argsStr="\"className\": \"org.ekstep.analytics.job.JobExecutor\", $argsList"
+     clusterConfig=`cat cluster-config.json`
+     requestBody=${clusterConfig/'"className": "org.ekstep.analytics.job.JobExecutor"'/$argsStr}
+     finalRequestBody=${requestBody/'org.ekstep.analytics.job.JobExecutor'/$classVariable}
+     echo $finalRequestBody
+     curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_cluster_name }}.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"
+
 else
     if [ -z "$start_date" ]; then
         echo "Running $job without partition via run-job."

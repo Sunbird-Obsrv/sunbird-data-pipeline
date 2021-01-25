@@ -8,10 +8,9 @@ import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.denorm.domain.Event
-import org.sunbird.dp.denorm.functions.DenormalizationFunction
+import org.sunbird.dp.denorm.functions.{DenormalizationFunction, DenormalizationWindowFunction, SummaryDeduplicationFunction}
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.FlinkUtil
-import org.sunbird.dp.denorm.functions.SummaryDeduplicationFunction
 
 /**
   * Denormalization stream task does the following pipeline processing in a sequence:
@@ -64,7 +63,8 @@ class SummaryDenormalizationStreamTask(config: DenormalizationConfig, kafkaConne
         .setParallelism(config.summaryDownstreamOperatorsParallelism)
 
     val summaryDenormStream = summaryEventStream.getSideOutput(config.uniqueSummaryEventsOutputTag)
-      .process(new DenormalizationFunction(config))
+      .keyBy(new DenormKeySelector(config)).countWindow(config.windowCount)
+      .process(new DenormalizationWindowFunction(config))
       .name(config.summaryDenormalizationFunction).uid(config.summaryDenormalizationFunction)
       .setParallelism(config.summaryDownstreamOperatorsParallelism)
 
