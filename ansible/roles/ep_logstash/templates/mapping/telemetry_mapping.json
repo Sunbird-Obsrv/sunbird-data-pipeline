@@ -54,7 +54,7 @@
                 "type": "double"
               },
               "data": {
-                "type": "auto"
+                "type": "nested"
               },
               "dir": {
                 "type": "keyword"
