@@ -34,7 +34,7 @@ output {
 			manage_template => true        
 			document_type => "events"
 		}
-	}else if [eid] == "JOB_*" {
+	}else if "JOB_" in [eid] {
 		elasticsearch {
 			codec => "json"
 			hosts => ["{{logger_es}}"]
