@@ -34,6 +34,16 @@ output {
 			manage_template => true        
 			document_type => "events"
 		}
+	}else if [eid] == "JOB_*" {
+		elasticsearch {
+			codec => "json"
+			hosts => ["{{logger_es}}"]
+			template => "{{telemetry_mapping_file_path}}"
+			template_name => "telemetry"
+			index => "{{log_es_index}}"
+			manage_template => true        
+			document_type => "events"
+		}
 	}
 }
 
