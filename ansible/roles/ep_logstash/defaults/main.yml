@@ -16,7 +16,7 @@ kafka_topic_prefix: "{{ env }}"
 error_es_index: "telemetry-error-events"
 log_es_index: "telemetry-log-events"
 telemetry_mapping_file_path: "{{ logstash_home }}/mappings/telemetry_mapping.json"
-backend_log_es_index: "backend-events"
+backend_log_es_index: "dp-backend-events"
 backend_telemetry_mapping_file_path: "{{ logstash_home }}/mappings/backend_telemetry_mapping.json"
 apt_cache_valid_time: 3600
 
