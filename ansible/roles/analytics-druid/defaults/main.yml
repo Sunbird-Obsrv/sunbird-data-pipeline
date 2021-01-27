@@ -148,6 +148,8 @@ default_druid_configs:
    druid_historical_processing_num_merge_buffers: 2
    druid_query_ondiskstorage_enabled: true
    druid_historical_maxMergingDictionarySize: 100000000
+   druid_historical_segmentcache_numloadingthreads: 4
+   druid_historical_segmentcache_path: "/var/segmentstore"
    druid.query.groupBy.maxOnDiskStorage: 10737418240
    #Druid middlemanager configuration
    druid_middlemanager_heap_size: 128m
@@ -205,6 +207,8 @@ default_druid_configs:
    druid_historical_server_maxsize: 10000000000
    druid_historical_processing_num_merge_buffers: 2
    druid_query_ondiskstorage_enabled: false
+   druid_historical_segmentcache_numloadingthreads: 4
+   druid_historical_segmentcache_path: "/var/segmentstore"
    #Druid middlemanager configuration
    druid_middlemanager_heap_size: 128m
    druid_middlemanager_worker_cap: 4
