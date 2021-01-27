@@ -38,9 +38,9 @@ output {
 		elasticsearch {
 			codec => "json"
 			hosts => ["{{logger_es}}"]
-			template => "{{telemetry_mapping_file_path}}"
-			template_name => "telemetry"
-			index => "{{log_es_index}}"
+			template => "{{backend_telemetry_mapping_file_path}}"
+			template_name => "backend"
+			index => "{{backend_log_es_index}}"
 			manage_template => true        
 			document_type => "events"
 		}

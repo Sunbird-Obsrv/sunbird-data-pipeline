@@ -54,52 +54,7 @@
                 "type": "double"
               },
               "data": {
-                "type": "object",
-                "dynamic":  true,
-                "properties": {
-                  "config": {
-                    "properties": {
-                      "search": {
-                        "type": "nested",
-                        "dynamic":  true
-                      },
-                      "model": {
-                        "type": "keyword"
-                      },
-                      "modelParams": {
-                        "type": "nested",
-                        "dynamic":  true
-                      },
-                      "output": {
-                        "type": "object"
-                      },
-                      "parallelization": {
-                        "type": "long"
-                      },
-                      "appName": {
-                        "type": "keyword"
-                      },
-                      "deviceMapping": {
-                        "type": "boolean"
-                      }
-                    }
-                  },
-                  "model": {
-                    "type": "keyword"
-                  },
-                  "date": {
-                    "type": "keyword"
-                  },
-                  "inputEvents": {
-                    "type": "long"
-                  },
-                  "outputEvents": {
-                    "type": "long"
-                  },
-                  "timeTaken": {
-                    "type": "double"
-                  }
-                }
+                "type": "keyword"
               },
               "dir": {
                 "type": "keyword"
