@@ -32,10 +32,10 @@ neo4j.bolt.url=""
 neo4j.bolt.user=""
 neo4j.bolt.password=""
 
-# Log4j Kafka appender config
-log4j.appender.kafka.enable="false"
-log4j.appender.kafka.broker_host="{{groups['processing-cluster-kafka'][0]}}:9092"
-log4j.appender.kafka.topic="{{ env }}.telemetry.backend"
+# Joblog Kafka appender config for cluster execution
+log.appender.kafka.enable="false"
+log.appender.kafka.broker_host="{{groups['processing-cluster-kafka'][0]}}:9092"
+log.appender.kafka.topic="{{ env }}.telemetry.log"
 
 # Kafka connection configuration
 kafka.consumer.brokerlist="{{groups['processing-cluster-kafka'][0]}}:9092"
