@@ -40,7 +40,7 @@ output {
 			hosts => ["{{logger_es}}"]
 			template => "{{backend_telemetry_mapping_file_path}}"
 			template_name => "dp-backend"
-			index => "{{backend_log_es_index}}"
+			index => "{{backend_log_es_index}}-%{+YYYY.MM.ww}"
 			manage_template => true        
 			document_type => "events"
 		}
