@@ -20,8 +20,8 @@ backend_log_es_index: "dp-backend-events"
 backend_telemetry_mapping_file_path: "{{ logstash_home }}/mappings/backend_telemetry_mapping.json"
 apt_cache_valid_time: 3600
 
-zookeepers: "{{ groups['ingestion-cluster-zookeepers']|join(':2181,') }}:2181"
-bootstrap_server: "{{ groups['ingestion-cluster-kafka']|join(':9092,') }}:9092"
+zookeepers: "{{ groups['processing-cluster-zookeepers']|join(':2181,') }}:2181"
+bootstrap_server: "{{ groups['processing-cluster-kafka']|join(':9092,') }}:9092"
 influxdb_host: "{{ groups['influxdb'][0] }}"
 influxdb_db_source: monitoring_events
 influxdb_port: 9096
