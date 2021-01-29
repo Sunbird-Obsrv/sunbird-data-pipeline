@@ -1,6 +1,6 @@
 # redis
 redis.host="{{ redis.host }}"
-redis.port="{{ redis.port }}"
+redis.port="{{ content_port }}"
 redis.connection.max={{ redis.connection.max }}
 location.db.redis.key.expiry.seconds={{ redis.key_expiry_seconds }}
 redis.connection.idle.max={{ redis.connection.idle_max }}
