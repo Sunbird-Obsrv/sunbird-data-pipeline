@@ -153,7 +153,7 @@
                 <configuration>
                     <source>${java.target.runtime}</source>
                     <target>${java.target.runtime}</target>
-                    <scalaVersion>${scala.maj.version}</scalaVersion>
+                    <scalaVersion>${scala.version}</scalaVersion>
                     <checkMultipleScalaVersions>false</checkMultipleScalaVersions>
                 </configuration>
                 <executions>
