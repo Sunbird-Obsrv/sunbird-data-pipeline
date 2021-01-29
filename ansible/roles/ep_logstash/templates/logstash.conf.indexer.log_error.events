@@ -5,7 +5,7 @@ input {
 	kafka {
 		bootstrap_servers => "{{bootstrap_server}}"
 		topics => ["{{kafka_topic_prefix}}.druid.events.log", "{{kafka_topic_prefix}}.druid.events.error"]
-		group_id => "{{kafka_topic_prefix}}.telemetry.log"
+		group_id => "{{kafka_topic_prefix}}.telemetry-log.indexer"
 		auto_offset_reset => "latest"
 		codec => "json"
 		consumer_threads => 1
