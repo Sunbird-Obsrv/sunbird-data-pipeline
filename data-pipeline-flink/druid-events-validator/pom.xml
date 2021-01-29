@@ -167,7 +167,7 @@
                 <configuration>
                     <source>${java.target.runtime}</source>
                     <target>${java.target.runtime}</target>
-                    <scalaVersion>${scala.version}</scalaVersion>
+                    <scalaVersion>${scala.maj.version}</scalaVersion>
                     <checkMultipleScalaVersions>false</checkMultipleScalaVersions>
                 </configuration>
                 <executions>
@@ -220,7 +220,7 @@
                 <artifactId>scoverage-maven-plugin</artifactId>
                 <version>${scoverage.plugin.version}</version>
                 <configuration>
-                    <scalaVersion>${scala.version}</scalaVersion>
+                    <scalaVersion>${scala.maj.version}</scalaVersion>
                     <aggregate>true</aggregate>
                     <highlighting>true</highlighting>
                 </configuration>
