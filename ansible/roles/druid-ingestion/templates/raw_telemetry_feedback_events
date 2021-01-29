@@ -1,7 +1,7 @@
 {
   "type": "kafka",
   "dataSchema": {
-    "dataSource": "offline-desktop-events",
+    "dataSource": "telemetry-feedback-events",
     "parser": {
       "type": "string",
       "parseSpec": {
@@ -19,7 +19,7 @@
             },
             {
               "type": "root",
-              "name": "syncts"
+              "name": "ets"
             },
             {
               "type": "root",
@@ -141,86 +141,6 @@
             },
             {
               "type": "path",
-              "name": "edata_type",
-              "expr": "$.edata.type"
-            },
-            {
-              "type": "path",
-              "name": "edata_subtype",
-              "expr": "$.edata.subtype"
-            },
-            {
-              "type": "path",
-              "name": "edata_mode",
-              "expr": "$.edata.mode"
-            },
-            {
-              "type": "path",
-              "name": "edata_pageid",
-              "expr": "$.edata.pageid"
-            },
-            {
-              "type": "path",
-              "name": "edata_uri",
-              "expr": "$.edata.uri"
-            },
-            {
-              "type": "path",
-              "name": "edata_id",
-              "expr": "$.edata.id"
-            },
-            {
-              "type": "path",
-              "name": "edata_duration",
-              "expr": "$.edata.duration"
-            },
-            {
-              "type": "path",
-              "name": "edata_index",
-              "expr": "$.edata.index"
-            },
-            {
-              "type": "path",
-              "name": "edata_pass",
-              "expr": "$.edata.pass"
-            },
-            {
-              "type": "path",
-              "name": "edata_score",
-              "expr": "$.edata.score"
-            },
-            {
-              "type": "path",
-              "name": "edata_resvalues",
-              "expr": "$.edata.resvalues[*]"
-            },
-            {
-              "type": "path",
-              "name": "edata_item_id",
-              "expr": "$.edata.item.id"
-            },
-            {
-              "type": "path",
-              "name": "edata_item_title",
-              "expr": "$.edata.item.title"
-            },
-            {
-              "type": "path",
-              "name": "edata_item_maxscore",
-              "expr": "$.edata.item.maxscore"
-            },
-            {
-              "type": "path",
-              "name": "edata_target_id",
-              "expr": "$.edata.target.id"
-            },
-            {
-              "type": "path",
-              "name": "edata_target_type",
-              "expr": "$.edata.target.type"
-            },
-            {
-              "type": "path",
               "name": "edata_rating",
               "expr": "$.edata.rating"
             },
@@ -231,103 +151,13 @@
             },
             {
               "type": "path",
-              "name": "edata_dir",
-              "expr": "$.edata.dir"
+              "name": "edata_commentid",
+              "expr": "$.edata.commentid"
             },
             {
               "type": "path",
-              "name": "edata_items_id",
-              "expr": "$.edata.items[*].id"
-            },
-            {
-              "type": "path",
-              "name": "edata_items_type",
-              "expr": "$.edata.items[*].type"
-            },
-            {
-              "type": "path",
-              "name": "edata_items_origin_id",
-              "expr": "$.edata.items[*].origin.id"
-            },
-            {
-              "type": "path",
-              "name": "edata_items_origin_type",
-              "expr": "$.edata.items[*].origin.type"
-            },
-            {
-              "type": "path",
-              "name": "edata_items_to_id",
-              "expr": "$.edata.items[*].to.id"
-            },
-            {
-              "type": "path",
-              "name": "edata_items_to_type",
-              "expr": "$.edata.items[*].to.type"
-            },
-            {
-              "type": "path",
-              "name": "edata_plugin_id",
-              "expr": "$.edata.plugin.id"
-            },
-            {
-              "type": "path",
-              "name": "edata_plugin_ver",
-              "expr": "$.edata.plugin.ver"
-            },
-            {
-              "type": "path",
-              "name": "edata_plugin_category",
-              "expr": "$.edata.plugin.category"
-            },
-            {
-              "type": "path",
-              "name": "edata_props",
-              "expr": "$.edata.props[*]"
-            },
-            {
-              "type": "path",
-              "name": "edata_state",
-              "expr": "$.edata.state"
-            },
-            {
-              "type": "path",
-              "name": "edata_prevstate",
-              "expr": "$.edata.prevstate"
-            },
-            {
-              "type": "path",
-              "name": "edata_size",
-              "expr": "$.edata.size"
-            },
-            {
-              "type": "path",
-              "name": "edata_filters_dialcodes",
-              "expr": "$.edata.filters.dialcodes"
-            },
-            {
-              "type": "path",
-              "name": "edata_topn_identifier",
-              "expr": "$.edata.topn[*].identifier"
-            },
-            {
-              "type": "path",
-              "name": "edata_visits_objid",
-              "expr": "$.edata.visits[*].objid"
-            },
-            {
-              "type": "path",
-              "name": "edata_visits_objtype",
-              "expr": "$.edata.visits[*].objtype"
-            },
-            {
-              "type": "path",
-              "name": "edata_visits_objver",
-              "expr": "$.edata.visits[*].objver"
-            },
-            {
-              "type": "path",
-              "name": "edata_visits_index",
-              "expr": "$.edata.visits[*].index"
+              "name": "edata_commenttxt",
+              "expr": "$.edata.commenttxt"
             },
             {
               "type": "path",
@@ -451,31 +281,6 @@
             },
             {
               "type": "path",
-              "name": "user_declared_state",
-              "expr": "$.devicedata.userdeclared.state"
-            },
-            {
-              "type": "path",
-              "name": "user_declared_district",
-              "expr": "$.devicedata.userdeclared.district"
-            },
-            {
-              "type": "path",
-              "name": "derived_loc_state",
-              "expr": "$.derivedlocationdata.state"
-            },
-            {
-              "type": "path",
-              "name": "derived_loc_district",
-              "expr": "$.derivedlocationdata.district"
-            },
-            {
-              "type": "path",
-              "name": "derived_loc_from",
-              "expr": "$.derivedlocationdata.from"
-            },
-            {
-              "type": "path",
               "name": "content_name",
               "expr": "$.contentdata.name"
             },
@@ -556,106 +361,6 @@
             },
             {
               "type": "path",
-              "name": "content_created_by",
-              "expr": "$.contentdata.createdby"
-            },
-            {
-              "type": "path",
-              "name": "content_created_for",
-              "expr": "$.contentdata.createdfor"
-            },
-            {
-              "type": "path",
-              "name": "collection_name",
-              "expr": "$.collectiondata.name"
-            },
-            {
-              "type": "path",
-              "name": "collection_object_type",
-              "expr": "$.collectiondata.objecttype"
-            },
-            {
-              "type": "path",
-              "name": "collection_type",
-              "expr": "$.collectiondata.contenttype"
-            },
-            {
-              "type": "path",
-              "name": "collection_media_type",
-              "expr": "$.collectiondata.mediatype"
-            },
-            {
-              "type": "path",
-              "name": "collection_language",
-              "expr": "$.collectiondata.language[*]"
-            },
-            {
-              "type": "path",
-              "name": "collection_medium",
-              "expr": "$.collectiondata.medium[*]"
-            },
-            {
-              "type": "path",
-              "name": "collection_gradelevel",
-              "expr": "$.collectiondata.gradelevel[*]"
-            },
-            {
-              "type": "path",
-              "name": "collection_subjects",
-              "expr": "$.collectiondata.subject[*]"
-            },
-            {
-              "type": "path",
-              "name": "collection_mimetype",
-              "expr": "$.collectiondata.mimetype"
-            },
-            {
-              "type": "path",
-              "name": "collection_framework",
-              "expr": "$.collectiondata.framework"
-            },
-            {
-              "type": "path",
-              "name": "collection_board",
-              "expr": "$.collectiondata.board"
-            },
-            {
-              "type": "path",
-              "name": "collection_status",
-              "expr": "$.collectiondata.status"
-            },
-            {
-              "type": "path",
-              "name": "collection_version",
-              "expr": "$.collectiondata.pkgversion"
-            },
-            {
-              "type": "path",
-              "name": "collection_last_submitted_on",
-              "expr": "$.collectiondata.lastsubmittedon"
-            },
-            {
-              "type": "path",
-              "name": "collection_last_published_on",
-              "expr": "$.collectiondata.lastpublishedon"
-            },
-            {
-              "type": "path",
-              "name": "collection_last_updated_on",
-              "expr": "$.collectiondata.lastupdatedon"
-            },
-            {
-              "type": "path",
-              "name": "collection_created_by",
-              "expr": "$.collectiondata.createdby"
-            },
-            {
-              "type": "path",
-              "name": "collection_created_for",
-              "expr": "$.collectiondata.createdfor"
-            },
-            {
-              "type": "path",
               "name": "user_grade_list",
               "expr": "$.userdata.gradelist[*]"
             },
@@ -701,43 +406,58 @@
             },
             {
               "type": "path",
-              "name": "dialcode_channel",
-              "expr": "$.dialcodedata.channel"
-            },
-            {
-              "type": "path",
-              "name": "dialcode_batchcode",
-              "expr": "$.dialcodedata.batchcode"
-            },
-            {
-              "type": "path",
-              "name": "dialcode_publisher",
-              "expr": "$.dialcodedata.publisher"
-            },
-            {
-              "type": "path",
-              "name": "dialcode_generated_on",
-              "expr": "$.dialcodedata.generatedon"
-            },
-            {
-              "type": "path",
-              "name": "dialcode_published_on",
-              "expr": "$.dialcodedata.publishedon"
-            },
-            {
-              "type": "path",
-              "name": "dialcode_status",
-              "expr": "$.dialcodedata.status"
-            },
-            {
-              "type": "path",
-              "name": "dialcode_object_type",
-              "expr": "$.dialcodedata.objecttype"
-            },
-            {
-              "type": "path",
               "name": "device_loc_iso_state_code",
               "expr": "$.devicedata.iso3166statecode"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_created_for",
+              "expr": "$.l2data.createdfor"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_framework",
+              "expr": "$.l2data.framework"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_name",
+              "expr": "$.l2data.name"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_channel",
+              "expr": "$.l2data.channel"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_mimetype",
+              "expr": "$.l2data.mimetype"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_medium",
+              "expr": "$.l2data.medium[*]"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_board",
+              "expr": "$.l2data.board"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_contenttype",
+              "expr": "$.l2data.contenttype"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_gradelevel",
+              "expr": "$.l2data.gradelevel[*]"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_subjects",
+              "expr": "$.l2data.subject[*]"
             }
           ]
         },
@@ -753,7 +473,7 @@
             },
             {
               "type": "long",
-              "name": "syncts"
+              "name": "ets"
             },
             {
               "type": "string",
@@ -849,69 +569,6 @@
               "name": "tags"
             },
             {
-              "type": "string",
-              "name": "edata_type"
-            },
-            {
-              "type": "string",
-              "name": "edata_subtype"
-            },
-            {
-              "type": "string",
-              "name": "edata_mode"
-            },
-            {
-              "type": "string",
-              "name": "edata_pageid"
-            },
-            {
-              "type": "string",
-              "name": "edata_uri"
-            },
-            {
-              "type": "string",
-              "name": "edata_id"
-            },
-            {
-              "type": "double",
-              "name": "edata_duration"
-            },
-            {
-              "type": "long",
-              "name": "edata_index"
-            },
-            {
-              "type": "string",
-              "name": "edata_pass"
-            },
-            {
-              "type": "double",
-              "name": "edata_score"
-            },
-            {
-              "name": "edata_resvalues"
-            },
-            {
-              "type": "string",
-              "name": "edata_item_id"
-            },
-            {
-              "type": "string",
-              "name": "edata_item_title"
-            },
-            {
-              "type": "double",
-              "name": "edata_item_maxscore"
-            },
-            {
-              "type": "string",
-              "name": "edata_target_id"
-            },
-            {
-              "type": "string",
-              "name": "edata_target_type"
-            },
-            {
               "type": "long",
               "name": "edata_rating"
             },
@@ -921,81 +578,11 @@
             },
             {
               "type": "string",
-              "name": "edata_dir"
+              "name": "edata_commentid"
             },
             {
               "type": "string",
-              "name": "edata_items_id"
-            },
-            {
-              "type": "string",
-              "name": "edata_items_type"
-            },
-            {
-              "type": "string",
-              "name": "edata_items_origin_id"
-            },
-            {
-              "type": "string",
-              "name": "edata_items_origin_type"
-            },
-            {
-              "type": "string",
-              "name": "edata_items_to_id"
-            },
-            {
-              "type": "string",
-              "name": "edata_items_to_type"
-            },
-            {
-              "type": "string",
-              "name": "edata_plugin_id"
-            },
-            {
-              "type": "string",
-              "name": "edata_plugin_ver"
-            },
-            {
-              "type": "string",
-              "name": "edata_plugin_category"
-            },
-            {
-              "name": "edata_props"
-            },
-            {
-              "type": "string",
-              "name": "edata_state"
-            },
-            {
-              "type": "string",
-              "name": "edata_prevstate"
-            },
-            {
-              "type": "long",
-              "name": "edata_size"
-            },
-            {
-              "name": "edata_filters_dialcodes"
-            },
-            {
-              "type": "string",
-              "name": "edata_topn_identifier"
-            },
-            {
-              "type": "string",
-              "name": "edata_visits_objid"
-            },
-            {
-              "type": "string",
-              "name": "edata_visits_objtype"
-            },
-            {
-              "type": "string",
-              "name": "edata_visits_objver"
-            },
-            {
-              "type": "string",
-              "name": "edata_visits_index"
+              "name": "edata_commenttxt"
             },
             {
               "type": "string",
@@ -1095,26 +682,6 @@
             },
             {
               "type": "string",
-              "name": "user_declared_state"
-            },
-            {
-              "type": "string",
-              "name": "user_declared_district"
-            },
-            {
-              "type": "string",
-              "name": "derived_loc_state"
-            },
-            {
-              "type": "string",
-              "name": "derived_loc_district"
-            },
-            {
-              "type": "string",
-              "name": "derived_loc_from"
-            },
-            {
-              "type": "string",
               "name": "content_name"
             },
             {
@@ -1174,80 +741,6 @@
               "name": "content_last_updated_on"
             },
             {
-              "type": "string",
-              "name": "content_created_by"
-            },
-            {
-              "name": "content_created_for"
-            },
-            {
-              "type": "string",
-              "name": "collection_name"
-            },
-            {
-              "type": "string",
-              "name": "collection_object_type"
-            },
-            {
-              "type": "string",
-              "name": "collection_type"
-            },
-            {
-              "type": "string",
-              "name": "collection_media_type"
-            },
-            {
-              "name": "collection_language"
-            },
-            {
-              "name": "collection_medium"
-            },
-            {
-              "name": "collection_gradelevel"
-            },
-            {
-              "name": "collection_subjects"
-            },
-            {
-              "type": "string",
-              "name": "collection_mimetype"
-            },
-            {
-              "type": "string",
-              "name": "collection_framework"
-            },
-            {
-              "type": "string",
-              "name": "collection_board"
-            },
-            {
-              "type": "string",
-              "name": "collection_status"
-            },
-            {
-              "type": "double",
-              "name": "collection_version"
-            },
-            {
-              "type": "long",
-              "name": "collection_last_submitted_on"
-            },
-            {
-              "type": "long",
-              "name": "collection_last_published_on"
-            },
-            {
-              "type": "long",
-              "name": "collection_last_updated_on"
-            },
-            {
-              "type": "string",
-              "name": "collection_created_by"
-            },
-            {
-              "name": "collection_created_for"
-            },
-            {
               "name": "user_grade_list"
             },
             {
@@ -1281,70 +774,87 @@
             },
             {
               "type": "string",
-              "name": "dialcode_channel"
-            },
-            {
-              "type": "string",
-              "name": "dialcode_batchcode"
-            },
-            {
-              "type": "string",
-              "name": "dialcode_publisher"
-            },
-            {
-              "type": "long",
-              "name": "dialcode_generated_on"
-            },
-            {
-              "type": "long",
-              "name": "dialcode_published_on"
-            },
-            {
-              "type": "string",
-              "name": "dialcode_status"
-            },
-            {
-              "type": "string",
-              "name": "dialcode_object_type"
-            },
-            {
-              "type": "string",
               "name": "device_loc_iso_state_code"
+            },
+            {
+              "name": "object_l2_created_for"
+            },
+            {
+              "type": "string",
+              "name": "object_l2_framework"
+            },
+            {
+              "type": "string",
+              "name": "object_l2_name"
+            },
+            {
+              "type": "string",
+              "name": "object_l2_channel"
+            },
+            {
+              "type": "string",
+              "name": "object_l2_mimetype"
+            },
+            {
+              "name": "object_l2_medium"
+            },
+            {
+              "type": "string",
+              "name": "object_l2_board"
+            },
+            {
+              "type": "string",
+              "name": "object_l2_contenttype"
+            },
+            {
+              "name": "object_l2_gradelevel"
+            },
+            {
+              "name": "object_l2_subjects"
             }
           ],
           "dimensionsExclusions": []
         },
         "timestampSpec": {
-          "column": "ets",
+          "column": "syncts",
           "format": "auto"
         }
       }
     },
-    "metricsSpec": [],
+    "metricsSpec": [
+      {
+        "type": "count",
+        "name": "count"
+      },
+      {
+        "type": "longSum",
+        "name": "total_rating",
+        "fieldName": "edata_rating"
+      }
+    ],
     "granularitySpec": {
       "type": "uniform",
       "segmentGranularity": "day",
       "queryGranularity": "none",
-      "rollup": false
+      "rollup": true
     },
     "transformSpec": {
       "filter": {
         "type": "selector",
-        "dimension": "context_pdata_id",
-        "value": "{{desktop_pdata_id}}"
+        "dimension": "eid",
+        "value": "FEEDBACK"
       }
     }
   },
   "ioConfig": {
-    "topic": "{{env}}.events.telemetry",
+    "topic": "{{env}}.druid.events.telemetry",
     "consumerProperties": {
       "bootstrap.servers": "{{kafka_brokers}}"
     },
-    "taskCount": 1,
+    "taskCount": 2,
     "replicas": 1,
     "taskDuration": "PT14400S",
-    "useEarliestOffset": false,
-    "completionTimeout": "PT30M"
+    "useEarliestOffset": true
   },
   "tuningConfig": {
     "type": "kafka",

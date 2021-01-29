@@ -1336,7 +1336,7 @@
     }
   },
   "ioConfig": {
-    "topic": "{{env}}.events.telemetry",
+    "topic": "{{env}}.druid.events.telemetry",
     "consumerProperties": {
       "bootstrap.servers": "{{kafka_brokers}}"
     },
@@ -1344,7 +1344,7 @@
     "replicas": 1,
     "taskDuration": "PT14400S",
     "useEarliestOffset": false,
-    "completionTimeout": "PT30M"
+    "completionTimeout" : "PT30M"
   },
   "tuningConfig": {
     "type": "kafka",

@@ -1,7 +1,7 @@
 {
   "type": "kafka",
   "dataSchema": {
-    "dataSource": "offline-desktop-events",
+    "dataSource": "telemetry-events-syncts",
     "parser": {
       "type": "string",
       "parseSpec": {
@@ -19,7 +19,7 @@
             },
             {
               "type": "root",
-              "name": "syncts"
+              "name": "ets"
             },
             {
               "type": "root",
@@ -198,6 +198,11 @@
               "type": "path",
               "name": "edata_item_id",
               "expr": "$.edata.item.id"
+            },
+            {
+              "type": "path",
+              "name": "edata_item_type",
+              "expr": "$.edata.item.type"
             },
             {
               "type": "path",
@@ -481,6 +486,11 @@
             },
             {
               "type": "path",
+              "name": "content_channel",
+              "expr": "$.contentdata.channel"
+            },
+            {
+              "type": "path",
               "name": "content_object_type",
               "expr": "$.contentdata.objecttype"
             },
@@ -568,6 +578,11 @@
               "type": "path",
               "name": "collection_name",
               "expr": "$.collectiondata.name"
+            },
+            {
+              "type": "path",
+              "name": "collection_channel",
+              "expr": "$.collectiondata.channel"
             },
             {
               "type": "path",
@@ -726,11 +741,6 @@
             },
             {
               "type": "path",
-              "name": "dialcode_status",
-              "expr": "$.dialcodedata.status"
-            },
-            {
-              "type": "path",
               "name": "dialcode_object_type",
               "expr": "$.dialcodedata.objecttype"
             },
@@ -738,6 +748,61 @@
               "type": "path",
               "name": "device_loc_iso_state_code",
               "expr": "$.devicedata.iso3166statecode"
+            },
+            {
+              "type": "path",
+              "name": "content_play_progress",
+              "expr": "$.edata.summary[*].progress"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_created_for",
+              "expr": "$.l2data.createdfor"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_framework",
+              "expr": "$.l2data.framework"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_name",
+              "expr": "$.l2data.name"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_channel",
+              "expr": "$.l2data.channel"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_mimetype",
+              "expr": "$.l2data.mimetype"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_medium",
+              "expr": "$.l2data.medium[*]"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_board",
+              "expr": "$.l2data.board"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_contenttype",
+              "expr": "$.l2data.contenttype"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_gradelevel",
+              "expr": "$.l2data.gradelevel[*]"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_subjects",
+              "expr": "$.l2data.subject[*]"
             }
           ]
         },
@@ -753,7 +818,7 @@
             },
             {
               "type": "long",
-              "name": "syncts"
+              "name": "ets"
             },
             {
               "type": "string",
@@ -816,6 +881,9 @@
             {
               "type": "string",
               "name": "context_rollup_l4"
+            },
+            {
+            "name" : "content_play_progress"
             },
             {
               "type": "string",
@@ -894,6 +962,10 @@
             {
               "type": "string",
               "name": "edata_item_id"
+            },
+            {
+              "type": "string",
+              "name": "edata_item_type"
             },
             {
               "type": "string",
@@ -1133,6 +1205,9 @@
               "name": "content_language"
             },
             {
+              "name": "content_channel"
+            },
+            {
               "name": "content_medium"
             },
             {
@@ -1201,6 +1276,9 @@
             },
             {
               "name": "collection_medium"
+            },
+            {
+              "name": "collection_channel"
             },
             {
               "name": "collection_gradelevel"
@@ -1301,21 +1379,53 @@
             },
             {
               "type": "string",
-              "name": "dialcode_status"
-            },
-            {
-              "type": "string",
               "name": "dialcode_object_type"
             },
             {
               "type": "string",
               "name": "device_loc_iso_state_code"
-            }
+            },
+            {
+              "name": "object_l2_created_for"
+            },
+            {
+              "type": "string",
+              "name": "object_l2_framework"
+            },
+            {
+              "type": "string",
+              "name": "object_l2_name"
+            },
+            {
+              "type": "string",
+              "name": "object_l2_channel"
+            },
+            {
+              "type": "string",
+              "name": "object_l2_mimetype"
+            },
+            {
+              "name": "object_l2_medium"
+            },
+            {
+              "type": "string",
+              "name": "object_l2_board"
+            },
+            {
+              "type": "string",
+              "name": "object_l2_contenttype"
+            },
+            {
+              "name": "object_l2_gradelevel"
+            },
+            {
+              "name": "object_l2_subjects"
+            }      
           ],
           "dimensionsExclusions": []
         },
         "timestampSpec": {
-          "column": "ets",
+          "column": "syncts",
           "format": "auto"
         }
       }
@@ -1326,28 +1436,22 @@
       "segmentGranularity": "day",
       "queryGranularity": "none",
       "rollup": false
-    },
-    "transformSpec": {
-      "filter": {
-        "type": "selector",
-        "dimension": "context_pdata_id",
-        "value": "{{desktop_pdata_id}}"
-      }
     }
   },
   "ioConfig": {
-    "topic": "{{env}}.events.telemetry",
+    "topic": "{{env}}.druid.events.telemetry",
     "consumerProperties": {
       "bootstrap.servers": "{{kafka_brokers}}"
     },
-    "taskCount": 1,
+    "taskCount": 32,
     "replicas": 1,
-    "taskDuration": "PT14400S",
-    "useEarliestOffset": false,
-    "completionTimeout": "PT30M"
+    "taskDuration": "PT7200S",
+    "useEarliestOffset": true,
+    "completionTimeout" : "PT2H"
   },
   "tuningConfig": {
     "type": "kafka",
-    "reportParseExceptions": false
+    "reportParseExceptions": false,
+    "maxRowsPerSegment": 2000000
   }
 }
