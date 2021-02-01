@@ -26,7 +26,7 @@ node("ops-slave") {
                 jobName = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-1].trim()
                 currentWs = sh(returnStdout: true, script: 'pwd').trim()
                 ansiblePlaybook = "${currentWs}/ansible/druid-ingestion.yml"
-                ansibleExtraArgs = "--tags ${params.action} --vault-password-file /var/lib/jenkins/secrets/vault-pass -vv"
+                ansibleExtraArgs = "--extra-vars \"ingestion_task_names=${params.ingestion_task_names} cluster=${params.cluster}\" --tags ${params.action} --vault-password-file /var/lib/jenkins/secrets/vault-pass -vv"
                 values.put('currentWs', currentWs)
                 values.put('env', envDir)
                 values.put('module', module)
