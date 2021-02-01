@@ -36,8 +36,8 @@
 	<properties>
 		<!-- maven specific properties -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<scala.version>2.12</scala.version>
-		<scala.maj.version>2.12.11</scala.maj.version>
+		<scala.maj.version>2.12</scala.maj.version>
+		<scala.version>2.12.11</scala.version>
 		<flink.version>1.12.0</flink.version>
 		<kafka.version>2.4.0</kafka.version>
 		<java.target.runtime>11</java.target.runtime>
@@ -87,7 +87,7 @@
 					<artifactId>scoverage-maven-plugin</artifactId>
 					<version>${scoverage.plugin.version}</version>
 					<configuration>
-						<scalaVersion>${scala.maj.version}</scalaVersion>
+						<scalaVersion>${scala.version}</scalaVersion>
 						<aggregate>true</aggregate>
 						<highlighting>true</highlighting>
 					</configuration>
