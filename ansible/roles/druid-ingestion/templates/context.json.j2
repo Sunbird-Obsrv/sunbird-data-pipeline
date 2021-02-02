@@ -1,0 +1,1 @@
+{"context":{"druid.indexer.runner.javaOpts":"-server -Xms{{ ingestion_spec_configs[item].minTaskMemory }} -Xmx{{ ingestion_spec_configs[item].maxTaskMemory }} -XX:+UseG1GC -XX:HeapDumpPath=/var/log/druid/crash_logs/middlemanager.hprof -XX:MaxGCPauseMillis=100"}}
