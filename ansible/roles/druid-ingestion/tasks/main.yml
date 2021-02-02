@@ -5,7 +5,7 @@
   tags: start-task
 
 - name: Load the ingestion json
-  set_fact: {"{{ item }}_json":"{{ lookup('template', ('cluster_' + item))}}"}
+  set_fact: {"{{ item }}_json":"{{ lookup('template', (cluster + '_' + item))}}"}
   with_items: "{{ ingestion_task_names.split(',')|list }}"
   tags: start-task
   
