@@ -270,6 +270,7 @@ postgres.druid.pass="{{ dp_vault_druid_postgress_pass }}"
 
 location.search.url="https://{{location_search_url}}/v1/location/search"
 location.search.token="{{ location_search_token }}"
+location.search.request="{\"request\": {\"filters\": {\"type\" :[\"state\",\"district\"]},\"limit\" : 10000}}"
 
 druid.state.lookup.url = "http://{{groups['raw-coordinator'][0]}}:8081/druid/coordinator/v1/lookups/config/__default/stateSlugLookup"
 
