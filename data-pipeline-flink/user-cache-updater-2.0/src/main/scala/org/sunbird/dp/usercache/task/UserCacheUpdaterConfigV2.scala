@@ -55,6 +55,7 @@ class UserCacheUpdaterConfigV2(override val config: Config) extends BaseJobConfi
   val stateKey = "state"
   val districtKey = "district"
   val blockKey = "block"
+  val clusterKey = "cluster"
   val orgnameKey = "orgname"
   val externalidKey = "externalid"
   val schoolUdiseCodeKey = "schooludisecode"

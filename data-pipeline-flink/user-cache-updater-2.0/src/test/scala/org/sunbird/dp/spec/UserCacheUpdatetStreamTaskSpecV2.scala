@@ -137,6 +137,7 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
     userInfo.get("district") should be ("TUMKUR")
     userInfo.get("block") should be ("MANVI")
     userInfo.get("userchannel") should be ("012850193028235264771")
+    userInfo.get("cluster") should be ("BMS BAGTORE")
     assert(userInfo.get("orgname").contains("Custodian ORG"))
 
     // When action is Updated and location ids are present
