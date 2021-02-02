@@ -277,7 +277,6 @@ object UserMetadataUpdater {
         case config.stateKey    => result.put(config.stateKey, record.getString("name"))
         case config.districtKey => result.put(config.districtKey, record.getString("name"))
         case config.blockKey    => result.put(config.blockKey, record.getString("name"))
-        case config.clusterKey  =>  result.put(config.clusterKey, record.getString("name"))
         case _ =>   //Do Nothing
       }
     })
