@@ -27,7 +27,6 @@
 		<module>de-normalization</module>
 		<module>druid-events-validator</module>
 		<module>device-profile-updater</module>
-		<module>user-cache-updater</module>
 		<module>content-cache-updater</module>
 		<module>assessment-aggregator</module>
 		<module>user-cache-updater-2.0</module>
@@ -36,8 +35,8 @@
 	<properties>
 		<!-- maven specific properties -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<scala.version>2.12</scala.version>
-		<scala.maj.version>2.12.11</scala.maj.version>
+		<scala.maj.version>2.12</scala.maj.version>
+		<scala.version>2.12.11</scala.version>
 		<flink.version>1.12.0</flink.version>
 		<kafka.version>2.4.0</kafka.version>
 		<java.target.runtime>11</java.target.runtime>
