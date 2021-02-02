@@ -1,13 +1,25 @@
 
-- name: Copy the schema file
-  template: src="{{ cluster }}_{{item}}" dest="{{druid_home}}/{{item}}.json"
-  with_items: "{{ ingestion_task_names.split(',')|list }}"
+- name: Load the context json
+  set_fact: {"{{ item }}_context":"{{ lookup('template', 'context.json.j2')}}"}
+  with_items: "{{ ingestion_spec_configs }}"
   tags: start-task
 
+- name: Load the ingestion json
+  set_fact: {"{{ item }}_json":"{{ lookup('template', ('cluster_' + item))}}"}
+  with_items: "{{ ingestion_task_names.split(',')|list }}"
+  tags: start-task
+  
+- name: Override the schema spec with context
+  copy:
+     content: "{{ (lookup('vars', item + '_context' , default={}) | combine(vars[(item + '_json')])) | to_json(indent=4) }}"
+     dest: "{{druid_home}}/{{item}}.json"
+  with_items: "{{ ingestion_task_names.split(',')|list }}"
+  tags: start-task
+  
 - name: Start kafka supervisor tasks for defined datasources
   shell: 'curl -X POST -H "Content-Type:application/json" -d @{{druid_home}}/{{item}}.json http://{{overlord_host}}:8090/druid/indexer/v1/supervisor'
   with_items: "{{ ingestion_task_names.split(',')|list }}"
-  become_user: "{{remote_user}}" 
+  become_user: "{{remote_user}}"
   tags: start-task
 
 - name: Stop kafka supervisor tasks for defined datasources
