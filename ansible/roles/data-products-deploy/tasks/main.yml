@@ -130,6 +130,7 @@
     - dataproducts
     - update-config
     - ed-dataproducts
+  when: dockdataproducts is undefined
 
 - name: Copy submit-all-jobs ruby file
   template: src=submit-all-jobs.rb.j2 dest={{ analytics.home }}/scripts/submit-all-jobs.rb mode=755 owner={{ analytics_user }} group={{ analytics_group }}
