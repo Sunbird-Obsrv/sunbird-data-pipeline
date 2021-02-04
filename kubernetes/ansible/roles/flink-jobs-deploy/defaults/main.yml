@@ -91,6 +91,9 @@ denorm_secondary_window_shards: 1400
 denorm_primary_window_count: 30
 denorm_primary_window_shards: 1400
 
+denorm_summary_window_count: 5
+denorm_summary_window_shards: 1400
+
 ### summary-denormalization related vars
 summary_denorm_consumer_parallelism: 1
 summary_denorm_operators_parallelism: 1

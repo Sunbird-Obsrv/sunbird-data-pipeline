@@ -106,7 +106,15 @@
     regexp: '^spark_output_temp_dir="/mount/data/analytics/tmp/"'
     line: 'spark_output_temp_dir="/var/log/sparkapp/tmp/"'
   tags:
-    - framework-spark-cluster    
+    - framework-spark-cluster
+
+- name: Update logger kafka config for cluster
+  lineinfile:
+    path: '{{ analytics.home }}/models-{{ model_version }}/application.conf'
+    regexp: '^log.appender.kafka.enable="false"'
+    line: 'log.appender.kafka.enable="true"'
+  tags:
+    - framework-spark-cluster       
 
 - name: Copy configuration file to azure blob
   command: az storage blob upload -c {{ bucket }} -f {{ analytics.home }}/models-{{ model_version }}/application.conf --name models-{{ model_version }}/application.conf
@@ -329,14 +337,14 @@
     - config-update
 
 - name: Replay Job
-  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --startDate {{ start_date }} --endDate {{ end_date }} --sparkMaster {{ sparkMaster }} &"
+  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --startDate {{ start_date }} --endDate {{ end_date }} --sparkMaster {{ sparkMaster }} --selectedPartitions {{ selected_partitions }} &"
   async: "{{ (pause_min * 60) }}"
   poll: 0
   tags:
     - replay-job 
 
 - name: Run Job
-  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --sparkMaster {{ sparkMaster }} --batch_id {{ batch_id }} &"
+  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --sparkMaster {{ sparkMaster }} --selectedPartitions {{ selected_partitions }} --batch_id {{ batch_id }} &"
   async: "{{ (pause_min * 60) }}"
   poll: 0
   tags:

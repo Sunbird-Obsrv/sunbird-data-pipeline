@@ -1,19 +1,4 @@
 remote_user: druid
 broker_port: 8082
 druid_home: /home/druid
-druid_schema:
- - telemetry_index_kafka
- - summary_index_kafka
- - log_index_kafka
- - telemetry_feedback_index_kafka
- - error_index_kafka
- - pipeline_metrics_index_kafka
- - telemetry_audit_rollup_syncts_kafka
-event_types:
- - telemetry-events
- - summary-events
- - telemetry-log-events
- - telemetry-feedback-events
- - telemetry-error-events
- - pipeline-metrics
- - audit-rollup-syncts
+desktop_pdata_id: "{{env}}.sunbird.desktop"

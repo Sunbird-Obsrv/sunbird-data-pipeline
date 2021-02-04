@@ -2,8 +2,6 @@
 
 config() {
 	bucket={{ bucket }}
-	dockbrokerList={{ dock.brokerList }}
-	dockEnv={{ dock.env }}
 	datasetRawBucket={{ datasetRawBucket }}
 	dataExhaustBucket={{ dataExhaustBucket }}
 	dataExhaustPrefix={{ dataExhaustPrefix }}
@@ -41,11 +39,17 @@ config() {
        	if [ -z "$2" ]; then queryDate=$currentDate; else queryDate=$endDate; fi
        	echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.updater.ContentModelUpdater","modelParams":{"date":"'$queryDate'","contentTypes":{"Content":["Resource", "Collection", "TextBook", "LessonPlan", "Course", "Template", "Asset", "Plugin", "LessonPlanUnit","CourseUnit", "TextBookUnit"]}},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$learning_topic'"}}],"parallelization":10,"appName":"Content Model Updater","deviceMapping":false}'
         ;;
-        "collection-summary-report")
+        "collection-reconciliation-job")
+		echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.audit.CollectionReconciliationJob","modelParams":{"mode":"prodrun","brokerList":"{{ingestion_kafka_broker_host}}","topic":"{{env}}.issue.certificate.request","sparkCassandraConnectionHost":"{{ core_cassandra_host }}"},"parallelization":30,"appName":"CollectionReconciliationJob"}'
+		;;
+		"collection-summary-report")
 		echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.job.report.CollectionSummaryJob","modelParams":{"searchFilter":{"request":{"filters":{"status":["Live"], "contentType": "Course"},"fields":["identifier","name","organisation","channel"],"limit":10000}},"store":"azure","sparkElasticsearchConnectionHost":"{{ sunbird_es_host }}","sparkRedisConnectionHost":"{{ metadata2_redis_host }}","sparkUserDbRedisIndex":"12","sparkUserDbRedisPort":"{{ user_port }}","sparkCassandraConnectionHost":"{{ core_cassandra_host }}","fromDate":"$(date --date yesterday '+%Y-%m-%d')","toDate":"$(date --date yesterday '+%Y-%m-%d')"},"parallelization":8,"appName":"Collection Summary Report"}'
 		;;
+		"course-batch-status-updater")
+		echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.audit.CourseBatchStatusUpdaterJob","modelParams":{"store":"azure","sparkElasticsearchConnectionHost":"http://{{ sunbird_es_host }}:9200","sparkCassandraConnectionHost":"{{ core_cassandra_host }}","kpLearningBasePath":"http://{{groups['learning'][0]}}:8080/learning-service","fromDate":"$(date --date yesterday '+%Y-%m-%d')","toDate":"$(date --date yesterday '+%Y-%m-%d')"},"parallelization":8,"appName":"Course Batch Status Updater Job"}'
+		;;
 		"collection-summary-report-v2")
-		echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.job.report.CollectionSummaryJobV2","modelParams":{"searchFilter":{"request":{"filters":{"status":["Live","Unlisted","Retired"],"contentType":"Course"},"fields":["identifier","name","organisation","channel","status","keywords"],"limit":10000}},"store":"azure","specPath":"/mount/data/analytics/scripts/collection-summary-ingestion-spec.json","druidIngestionUrl":"'$druidIngestionURL'","sparkElasticsearchConnectionHost":"{{ sunbird_es_host }}","sparkRedisConnectionHost":"{{ metadata2_redis_host }}","sparkUserDbRedisIndex":"12", "sparkUserDbRedisPort":"{{ user_port }}", "sparkCassandraConnectionHost":"{{ core_cassandra_host }}","fromDate":"$(date --date yesterday '+%Y-%m-%d')","toDate":"$(date --date yesterday '+%Y-%m-%d')"},"parallelization":8,"appName":"Collection Summary Report V2"}'
+		echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.job.report.CollectionSummaryJobV2","modelParams":{"storageKeyConfig":"druid_storage_account_key","storageSecretConfig":"druid_storage_account_secret","searchFilter":{"request":{"filters":{"status":["Live","Unlisted","Retired"],"contentType":"Course"},"fields":["identifier","name","organisation","channel","status","keywords"],"limit":10000}},"store":"azure","specPath":"/mount/data/analytics/scripts/collection-summary-ingestion-spec.json","druidIngestionUrl":"'$druidIngestionURL'","sparkElasticsearchConnectionHost":"{{ sunbird_es_host }}","sparkRedisConnectionHost":"{{ metadata2_redis_host }}","sparkUserDbRedisIndex":"12","sparkUserDbRedisPort":"{{ user_port }}","sparkCassandraConnectionHost":"{{ core_cassandra_host }}","fromDate":"$(date --date yesterday '+%Y-%m-%d')","toDate":"$(date --date yesterday '+%Y-%m-%d')"},"parallelization":8,"appName":"Collection Summary Report V2"}'
 		;;
         "userinfo-exhaust")
 		echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.exhaust.collection.UserInfoExhaustJob","modelParams":{"store":"azure","mode":"OnDemand","batchFilters":["TPD"],"searchFilter":{}, "sparkElasticsearchConnectionHost":"{{ sunbird_es_host }}","sparkRedisConnectionHost":"{{ metadata2_redis_host }}","sparkUserDbRedisIndex":"12","sparkUserDbRedisPort":"{{ user_port }}", "sparkCassandraConnectionHost":"{{ core_cassandra_host }}", "fromDate":"$(date --date yesterday '+%Y-%m-%d')","toDate":"$(date --date yesterday '+%Y-%m-%d')"},"parallelization":8,"appName":"UserInfo Exhaust"}'
@@ -108,7 +112,7 @@ config() {
         echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"derived/wfs/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.job.EventsReplayJob","modelParams":{},"output":[{"to":"console","params":{"printEvent":false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$sinkTopic'"}}],"parallelization":8,"appName":"SummaryReplayJob","deviceMapping":false}'
         ;;
         "content-rating-updater")
-		echo '{"search": {"type": "none"},"model": "org.ekstep.analytics.updater.UpdateContentRating","modelParams": {"startDate": "'$endDate'","endDate": "'$endDate'"},"output": [{"to": "kafka","params": {"brokerList": "'$dockbrokerList'","topic": "'$dockEnv'.mvc.processor.job.request"}}],"parallelization": 8,"appName": "Content Rating Updater","deviceMapping": false}'
+		echo '{"search": {"type": "none"},"model": "org.ekstep.analytics.updater.UpdateContentRating","modelParams": {"startDate": "'$endDate'","endDate": "'$endDate'"},"output": [{"to":"console","params":{"printEvent":false}}],"parallelization": 8,"appName": "Content Rating Updater","deviceMapping": false}'
 		;;
         "experiment")
 		echo '{"search":{"type":"none"},"model":"org.ekstep.analytics.model.ExperimentDefinitionModel","modelParams":{"sparkElasticsearchConnectionHost":"{{ lp_composite_search_host }}"},"output":[{"to":"elasticsearch","params":{"index":"experiment"}}],"parallelization":8,"appName":"Experiment-Definition","deviceMapping":false}'
