@@ -123,6 +123,13 @@
   template: src={{ item }}.j2 dest={{ analytics.home }}/scripts/{{ item }}.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   with_items: "{{ analytics.scripts }}"
   tags: [ dataproducts, framework, ed-dataproducts ]
+  when: dockdataproducts is undefined
+
+- name: Copy Dock Scripts
+  template: src={{ item }}.j2 dest={{ analytics.home }}/scripts/{{ item }}.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  with_items: "{{ analytics.dockScripts }}"
+  tags: [ dataproducts, framework, ed-dataproducts ]
+  when: dockdataproducts is defined
 
 - name: Update model config
   template: src=model-config.j2 dest={{ analytics.home }}/scripts/model-config.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
