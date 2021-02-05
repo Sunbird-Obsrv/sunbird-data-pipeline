@@ -2,3 +2,8 @@ remote_user: druid
 broker_port: 8082
 druid_home: /home/druid
 desktop_pdata_id: "{{env}}.sunbird.desktop"
+
+ingestion_spec_configs:
+  telemetry_index_kafka:
+    minTaskMemory: 200m
+    maxTaskMemory: 400m
