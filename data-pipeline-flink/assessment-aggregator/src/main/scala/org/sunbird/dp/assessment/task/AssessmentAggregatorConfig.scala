@@ -23,6 +23,7 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
 
   // Metric List
   val dbUpdateCount = "db-update-count"
+  val dbUpdateFailed = "db-update-failed"
   val dbReadCount = "db-read-count"
   val batchSuccessCount = "batch-success-event-count"
   val failedEventCount = "failed-event-count"
@@ -59,5 +60,12 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
 
   // Cache
   val relationCacheNode = config.getInt("redis.database.relationCache.id")
+
+
+
+  val thresholdBatchWriteSize: Int = config.getInt("threshold.batch.write.size")
+  val thresholdBatchReadSize: Int = config.getInt("task.assessaggregator.window.count")
+  val windowShards: Int = config.getInt("task.assessaggregator.window.shards")
+
 
 }

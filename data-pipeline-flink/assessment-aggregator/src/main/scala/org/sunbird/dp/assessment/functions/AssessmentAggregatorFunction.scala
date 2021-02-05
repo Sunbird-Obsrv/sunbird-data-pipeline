@@ -21,18 +21,9 @@ import org.sunbird.dp.assessment.task.AssessmentAggregatorConfig
 import org.sunbird.dp.core.cache.{DataCache, RedisConnect}
 import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
 import org.sunbird.dp.core.util.CassandraUtil
-
+import org.sunbird.dp.assessment.domain.{Aggregate, AssessEvent, Event, QuestionData}
 import scala.collection.JavaConverters._
 import scala.collection.mutable
-
-case class Question(id: String, maxscore: Double, params: util.List[util.HashMap[String, Any]], title: String, `type`: String, desc: String)
-
-case class QuestionData(resvalues: util.List[util.HashMap[String, Any]], duration: Double, score: Double, item: Question)
-
-case class AssessEvent(ets: Long, edata: QuestionData)
-
-
-case class Aggregate(totalScore: Double, totalMaxScore: Double, grandTotal: String, questionsList: List[UDTValue])
 
 
 class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
@@ -100,7 +91,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
         val grandTotal = String.format("%s/%s", df.format(totalScore), df.format(totalMaxScore))
 
         if (null == assessment) {
-          saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList), new DateTime().getMillis)
+          saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList, None, None), new DateTime().getMillis)
           metrics.incCounter(config.dbUpdateCount)
           metrics.incCounter(config.batchSuccessCount)
           issueCertificate(event, context, metrics)
@@ -108,7 +99,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
         else {
           metrics.incCounter(config.dbReadCount)
           if (event.assessmentEts > assessment.getTimestamp("last_attempted_on").getTime) {
-            saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList),
+            saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList, None, None),
               assessment.getTimestamp("created_on").getTime)
             metrics.incCounter(config.dbUpdateCount)
             metrics.incCounter(config.batchSuccessCount)
@@ -132,7 +123,6 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
   }
 
   def getAssessment(event: Event): Row = {
-
     val query = QueryBuilder.select("last_attempted_on", "created_on")
       .from(config.dbKeyspace, config.dbTable).
       where(QueryBuilder.eq("attempt_id", event.attemptId))
@@ -188,7 +178,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
       .from(config.dbKeyspace, config.enrolmentTable).where(QueryBuilder.eq("userid", event.userId))
       .and(QueryBuilder.eq("courseid", event.courseId))
       .and(QueryBuilder.eq("batchid", event.batchId)).toString
-      
+
     val row: Row = cassandraUtil.findOne(query)
     if(null != row && (2 == row.getInt("status"))) {
       createIssueCertEvent(event, context, metrics)
