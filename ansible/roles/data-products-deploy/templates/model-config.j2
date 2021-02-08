@@ -80,7 +80,7 @@ config() {
 		echo '{"jobsCount":'$jobManagerJobsCount',"topic":"'$job_topic'","bootStrapServer":"'$brokerList'","zookeeperConnect":"'$zookeeper'","consumerGroup":"jobmanager","slackChannel":"#test_channel","slackUserName":"JobManager","tempBucket":"'$bucket'","tempFolder":"'$temp_folder'"}'
 		;;
 		"wfs")
-		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"unique/raw/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.model.WorkflowSummary","modelParams":{"apiVersion":"v2", "parallelization":200},"output":[{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$topic'"}}],"parallelization":200,"appName":"Workflow Summarizer","deviceMapping":true}'
+		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"unique/raw/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.model.WorkflowSummary","modelParams":{"apiVersion":"v2", "parallelization":200},"output":[{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$topic'"} }],"parallelization":200,"appName":"Workflow Summarizer","deviceMapping":true}'
 		#echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"unique/","endDate":"'$endDate'","delta":0}]},"model":"org.ekstep.analytics.model.WorkflowSummary","modelParams":{"apiVersion":"v2"},"output":[{"to":"console","params":{"printEvent": false}},{"to":"kafka","params":{"brokerList":"'$brokerList'","topic":"'$topic'"}}],"parallelization":8,"appName":"Workflow Summarizer","deviceMapping":true}'
 	   	;;
 	   	"wfus")
