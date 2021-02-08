@@ -92,14 +92,16 @@
     update_cache: true
     cache_valid_time: 3600
   with_items:
+    - gpgv2
     - gem
     - ruby
     - gnupg2
+    - virtualenv
 
 - name: Import rvm keys
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: command curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - && curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import -
+  shell: curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - && curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import -
 
 - name: Install rvm
   become: yes
@@ -116,11 +118,20 @@
 - name: Install latest ruby
   become: yes
   shell: "{{ analytics.base_path }}/.rvm/bin/rvm install ruby-2.6"
+  args:
+    executable: /bin/bash
 
 - name: Set latest ruby as default
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: "rvm --default use ruby-2.6"
+  shell: "{{ analytics.base_path }}/.rvm/bin/rvm --default use ruby-2.6"
+  args:
+    executable: /bin/bash
+
+- name: Add ruby repository
+  become: yes
+  apt_repository:
+    repo: ppa:brightbox/ruby-ng
 
 - name: Install latest ruby-dev
   become: yes
@@ -150,6 +161,15 @@
   tags:
     - kafka-provision
 
+- name: Add python ppa
+  become: yes
+  apt_repository:
+    repo: ppa:deadsnakes/ppa
 
-
-
+- name: Install python 3.6
+  become: yes
+  apt:
+    name: python3.6
+    state: present
+    update_cache: true
+    cache_valid_time: 3600

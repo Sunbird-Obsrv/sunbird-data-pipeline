@@ -32,10 +32,10 @@ neo4j.bolt.url=""
 neo4j.bolt.user=""
 neo4j.bolt.password=""
 
-# Log4j Kafka appender config
-log4j.appender.kafka.enable="false"
-log4j.appender.kafka.broker_host="{{groups['processing-cluster-kafka'][0]}}:9092"
-log4j.appender.kafka.topic="{{ env }}.telemetry.backend"
+# Joblog Kafka appender config for cluster execution
+log.appender.kafka.enable="false"
+log.appender.kafka.broker_host="{{groups['processing-cluster-kafka'][0]}}:9092"
+log.appender.kafka.topic="{{ env }}.druid.events.log"
 
 # Kafka connection configuration
 kafka.consumer.brokerlist="{{groups['processing-cluster-kafka'][0]}}:9092"
@@ -262,8 +262,15 @@ postgres.user="{{postgres.db_username}}"
 postgres.pass="{{postgres.db_password}}"
 
 
+postgres.druid.db="{{ druid_report_postgres_db_name }}"
+postgres.druid.url="jdbc:postgresql://{{postgres.db_url}}:{{postgres.db_port}}/"
+postgres.druid.user="{{ druid_report_postgres_db_username }}"
+postgres.druid.pass="{{ dp_vault_druid_postgress_pass }}"
+
+
 location.search.url="https://{{location_search_url}}/v1/location/search"
 location.search.token="{{ location_search_token }}"
+location.search.request="{\"request\": {\"filters\": {\"type\" :[\"state\",\"district\"]},\"limit\" : 10000}}"
 
 druid.state.lookup.url = "http://{{groups['raw-coordinator'][0]}}:8081/druid/coordinator/v1/lookups/config/__default/stateSlugLookup"
 

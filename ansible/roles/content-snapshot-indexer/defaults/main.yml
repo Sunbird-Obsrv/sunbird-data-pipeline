@@ -6,7 +6,7 @@ content_snapshot_jar_name: "etl-jobs-1.0.jar"
 content_snapshot_distribuction_name: "etl-jobs-1.0-distribution.tar.gz"
 spark_home: "/mount/data/analytics/spark-2.4.4-bin-hadoop2.7"
 redis:
-  host: "{{metadata_redis_host}}" # Redis DP IP 
+  host: "{{metadata2_redis_host}}" # Redis DP IP
   port: "6379"
   user:
     index: "12" # For temporary will change once verification is done

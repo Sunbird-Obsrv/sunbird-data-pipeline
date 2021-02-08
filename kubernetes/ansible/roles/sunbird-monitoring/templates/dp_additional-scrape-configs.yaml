@@ -16,11 +16,11 @@ scrapeconfig:
   #   prometheus.io/path: /api/v1/metrics/prometheus
   #
   - job_name: 'federate'
-    metrics_path: /federate
+    metrics_path: /prometheus/federate
     honor_labels: true
     params:
       match[]:
         - '{__name__=~"^job:.*"}'
     static_configs:
       # This empty line make sure the indentation is correct
-      - targets: [ '{{core_prom_ip}}' ]
+      - targets: [ '{{private_ingressgateway_ip}}' ]

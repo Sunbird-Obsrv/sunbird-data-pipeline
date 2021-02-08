@@ -5,7 +5,7 @@ export MODELS_HOME={{ analytics.home }}/models-{{ model_version }}
 export DP_LOGS={{ analytics.home }}/logs/data-products
 ## Job to run daily
 cd {{ analytics.home }}/scripts
-source model-config.sh
+source model-dock-config.sh
 today=$(date "+%Y-%m-%d")
 
 libs_path="{{ analytics.home }}/models-{{ model_version }}/data-products-1.0"
@@ -26,6 +26,8 @@ get_report_job_model_name(){
 		"funnel-report") echo 'org.sunbird.analytics.sourcing.FunnelReport'
 		;;
 		"sourcing-metrics") echo 'org.sunbird.analytics.sourcing.SourcingMetrics'
+		;;
+		"content-details") echo 'org.sunbird.analytics.sourcing.ContentDetailsReport'
 		;;
 		"admin-geo-reports") echo 'org.sunbird.analytics.job.report.StateAdminGeoReportJob'
 		;;

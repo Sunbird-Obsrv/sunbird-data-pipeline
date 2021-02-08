@@ -239,7 +239,7 @@ object UserMetadataUpdater {
   def getOrganisationInfo(userOrgIds: util.List[String], cassandraConnect: CassandraUtil, config: UserCacheUpdaterConfigV2,
                           metrics: Metrics): mutable.Map[String, AnyRef] = {
     val result: mutable.Map[String, AnyRef] = mutable.Map[String, AnyRef]()
-    val organisationQuery = QueryBuilder.select("id", "isrootorg", "orgcode", "orgname", "locationids").from(config.keySpace, config.orgTable)
+    val organisationQuery = QueryBuilder.select("id", "isrootorg", "externalid", "orgname", "locationids").from(config.keySpace, config.orgTable)
       .where(QueryBuilder.in("id", userOrgIds)).toString
     val organisationList = cassandraConnect.find(organisationQuery).asScala.filter(p => !p.getBool("isrootorg"))
     val organisationInfo = if(!organisationList.isEmpty) organisationList.head else null;
@@ -252,8 +252,8 @@ object UserMetadataUpdater {
       }
       if (result.contains("orgname"))
         result.put(config.schoolNameKey, result.remove("orgname").getOrElse(""))
-      if (result.contains("orgcode"))
-        result.put(config.schoolUdiseCodeKey, result.remove("orgcode").getOrElse(""))
+      if (result.contains("externalid"))
+        result.put(config.schoolUdiseCodeKey, result.remove("externalid").getOrElse(""))
       result
     } else {
       metrics.incCounter(config.dbReadMissCount)
@@ -277,6 +277,7 @@ object UserMetadataUpdater {
         case config.stateKey    => result.put(config.stateKey, record.getString("name"))
         case config.districtKey => result.put(config.districtKey, record.getString("name"))
         case config.blockKey    => result.put(config.blockKey, record.getString("name"))
+        case _ =>   //Do Nothing
       }
     })
     result

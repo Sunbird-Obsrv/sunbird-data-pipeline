@@ -106,7 +106,15 @@
     regexp: '^spark_output_temp_dir="/mount/data/analytics/tmp/"'
     line: 'spark_output_temp_dir="/var/log/sparkapp/tmp/"'
   tags:
-    - framework-spark-cluster    
+    - framework-spark-cluster
+
+- name: Update logger kafka config for cluster
+  lineinfile:
+    path: '{{ analytics.home }}/models-{{ model_version }}/application.conf'
+    regexp: '^log.appender.kafka.enable="false"'
+    line: 'log.appender.kafka.enable="true"'
+  tags:
+    - framework-spark-cluster       
 
 - name: Copy configuration file to azure blob
   command: az storage blob upload -c {{ bucket }} -f {{ analytics.home }}/models-{{ model_version }}/application.conf --name models-{{ model_version }}/application.conf
@@ -123,6 +131,13 @@
   template: src={{ item }}.j2 dest={{ analytics.home }}/scripts/{{ item }}.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   with_items: "{{ analytics.scripts }}"
   tags: [ dataproducts, framework, ed-dataproducts ]
+  when: dockdataproducts is undefined
+
+- name: Copy Dock Scripts
+  template: src={{ item }}.j2 dest={{ analytics.home }}/scripts/{{ item }}.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  with_items: "{{ analytics.dockScripts }}"
+  tags: [ dataproducts, framework, ed-dataproducts ]
+  when: dockdataproducts is defined
 
 - name: Update model config
   template: src=model-config.j2 dest={{ analytics.home }}/scripts/model-config.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
@@ -130,6 +145,15 @@
     - dataproducts
     - update-config
     - ed-dataproducts
+  when: dockdataproducts is undefined
+
+- name: Update model dock config
+  template: src=model-dock-config.j2 dest={{ analytics.home }}/scripts/model-dock-config.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  tags:
+    - dataproducts
+    - update-config
+    - ed-dataproducts
+  when: dockdataproducts is defined
 
 - name: Copy submit-all-jobs ruby file
   template: src=submit-all-jobs.rb.j2 dest={{ analytics.home }}/scripts/submit-all-jobs.rb mode=755 owner={{ analytics_user }} group={{ analytics_group }}
@@ -212,7 +236,6 @@
     - cronjobs 
     - default-jobs
     - spark-jobs
-    
 - name: Create admin-geo-reports cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh admin-geo-reports"
   with_dict: "{{ run_admin_geo_reports_job }}"
@@ -285,10 +308,58 @@
     - default-jobs
     - spark-jobs
 
-
+- name: Copy collection-summary ingestion spec
+  copy: src="collection-summary-ingestion-spec.json" dest={{ analytics.home }}/scripts/ mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  tags:
+    - ed-dataproducts
 
 - name: Update start jobmanager
   template: src=start-jobmanager.j2 dest={{ analytics.home }}/scripts/start-jobmanager.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
     - update-jobmanager-config
     - dataproducts
+
+# Cluster job sumbit tasks
+- name: Copy cluster-config.json file
+  template: src=cluster-config.json.j2 dest={{ analytics_cluster.home }}/cluster-config.json
+  delegate_to: localhost
+  tags:
+    - replay-job
+    - run-job
+    - config-update
+
+- name: Copy submit-script.sh file
+  template: src=submit-script.j2 dest={{ analytics_cluster.home }}/submit-script.sh mode=755
+  delegate_to: localhost
+  tags:
+    - replay-job
+    - run-job
+    - config-update
+
+- name: Copy model-config.sh file
+  template: src=model-config.j2 dest={{ analytics_cluster.home }}/model-config.sh
+  delegate_to: localhost  
+  tags:
+    - replay-job
+    - run-job
+    - config-update
+
+- name: Replay Job
+  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --startDate {{ start_date }} --endDate {{ end_date }} --sparkMaster {{ sparkMaster }} --selectedPartitions {{ selected_partitions }} &"
+  async: "{{ (pause_min * 60) }}"
+  poll: 0
+  tags:
+    - replay-job 
+
+- name: Run Job
+  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ job_id }} --mode {{ mode }} --partitions {{ partitions }} --parallelisation {{ parallelisation }} --sparkMaster {{ sparkMaster }} --selectedPartitions {{ selected_partitions }} --batch_id {{ batch_id }} &"
+  async: "{{ (pause_min * 60) }}"
+  poll: 0
+  tags:
+    - run-job
+
+- name: Submit jobs
+  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ item }} --mode default --sparkMaster yarn &"
+  with_items: "{{ jobs.split(',')|list }}"
+  tags:
+    - job-submit
