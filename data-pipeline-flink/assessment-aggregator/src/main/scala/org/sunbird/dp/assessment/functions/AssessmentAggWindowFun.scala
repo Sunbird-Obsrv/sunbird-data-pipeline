@@ -26,15 +26,6 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 
-// 1. Read the batch of List Events.
-// remove the point2
-// for same attempt merge the question data.
-// 2. Remove the duplicate attempt Id &  grouping the userId & batchId & courseId & contentId&
-// 3. Validate the all the list of events content on group
-// 4. Compute the score & construct a batch query for every attempt
-// 5. Update the batch query
-// 6. Batch attempt query to get the status from the user_enrolement
-// 7. Generate certificate issue event.
 
 class AssessmentAggWindowFun(config: AssessmentAggregatorConfig,
                              @transient var cassandraUtil: CassandraUtil = null
@@ -107,7 +98,6 @@ class AssessmentAggWindowFun(config: AssessmentAggregatorConfig,
   }
 
   def getCreatedOnColValue(event: Event)(metrics: Metrics): Long = {
-    println("Reading Eventss")
     val assessmentData = readAssessment(event)
     metrics.incCounter(config.dbReadCount)
     if (assessmentData != null && event.assessmentEts > assessmentData.getTimestamp("last_attempted_on").getTime) {
