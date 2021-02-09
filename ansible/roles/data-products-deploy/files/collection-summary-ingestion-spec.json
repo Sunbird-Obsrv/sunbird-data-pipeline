@@ -52,6 +52,11 @@
               },
               {
                 "type": "root",
+                "name": "batch_name",
+                "expr": "batchname"
+              },
+              {
+                "type": "root",
                 "name": "total_enrolment",
                 "expr": "enrolleduserscount"
               },
@@ -124,6 +129,10 @@
               {
                 "type": "string",
                 "name": "collection_name"
+              },
+              {
+                "type": "string",
+                "name": "batch_name"
               },
               {
                 "type": "long",

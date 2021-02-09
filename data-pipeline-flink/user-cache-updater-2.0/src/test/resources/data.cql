@@ -97,7 +97,7 @@ INSERT INTO sunbird.user (
     rootorgid,
     locationids,
     framework
-)VALUES ('user-3', 'VOS','sunbird', 'IN','MANJU','24-apr-2020','24-apr-2020','24-08-1993','manjunathd@ilimi.in',true,'Manjunath', 1, 'Male','Davanam','Banglore','********gmail.com','******181', '*******','4682647342',true, '01285019302823526477', ['location-2', 'location-3', 'location-4'], {'board': ['State (Madhya Pradesh)'], 'gradeLevel': ['Class 11', 'Class 12'], 'id': ['mp_k-12'], 'medium': ['Hindi'], 'subject': ['Hindi']});
+)VALUES ('user-3', 'VOS','sunbird', 'IN','MANJU','24-apr-2020','24-apr-2020','24-08-1993','manjunathd@ilimi.in',true,'Manjunath', 1, 'Male','Davanam','Banglore','********gmail.com','******181', '*******','4682647342',true, '01285019302823526477', ['location-2', 'location-3', 'location-4', 'location-7'], {'board': ['State (Madhya Pradesh)'], 'gradeLevel': ['Class 11', 'Class 12'], 'id': ['mp_k-12'], 'medium': ['Hindi'], 'subject': ['Hindi']});
 
 INSERT INTO sunbird.user (
     id,
@@ -122,7 +122,7 @@ INSERT INTO sunbird.user (
     phoneverified,
     rootorgid,
     locationids
-)VALUES ('user-4', 'VOS','apekx', 'IN','UTKARSHA','04-jul-2020','04-jul-2020','28-10-1996','utkarsha@ilimi.in',true,'Utkarsha', 1, 'Female','Kapoor','Banglore','********gmail.com','******345', '*******','4682647342',true, '01285019302823526479', ['location-2', 'location-3', 'location-4']);
+)VALUES ('user-4', 'VOS','apekx', 'IN','UTKARSHA','04-jul-2020','04-jul-2020','28-10-1996','utkarsha@ilimi.in',true,'Utkarsha', 1, 'Female','Kapoor','Banglore','********gmail.com','******345', '*******','4682647342',true, '01285019302823526479', ['location-2', 'location-3', 'location-4', 'location-8']);
 
 INSERT INTO sunbird.user (id, userid, rootorgid, firstname, lastname) VALUES ('user-9', 'user-9', '01285019302823526477', 'UT', 'KAPOOR');
 INSERT INTO sunbird.user (id, userid, rootorgid, firstname, lastname) VALUES ('user-6', 'user-6', '01285019302823526477', 'Revathi', 'Kotla');
@@ -321,6 +321,8 @@ INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-3','g0507020f0
 INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-4','g0507020f00f6', 'MANVI', 'block');
 INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-5','g0507020f00f6', 'TAMIL NADU', 'state');
 INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-6','g0507020f00f6', 'VELLORE', 'district');
+INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-7','g0507020f00f6', 'BMS BAGTORE', 'cluster');
+INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-8','g0507020f00f6', 'Gorakhpark', 'street');
 
 CREATE TABLE sunbird.user_organisation (
     userid text,
