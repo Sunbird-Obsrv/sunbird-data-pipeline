@@ -103,7 +103,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
           saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList), new DateTime().getMillis)
           metrics.incCounter(config.dbUpdateCount)
           metrics.incCounter(config.batchSuccessCount)
-          issueCertificate(event, context, metrics)
+          createIssueCertEvent(event, context, metrics)
         }
         else {
           metrics.incCounter(config.dbReadCount)
@@ -112,7 +112,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
               assessment.getTimestamp("created_on").getTime)
             metrics.incCounter(config.dbUpdateCount)
             metrics.incCounter(config.batchSuccessCount)
-            issueCertificate(event, context, metrics)
+            createIssueCertEvent(event, context, metrics)
           }
           else {
             metrics.incCounter(config.skippedEventCount)
@@ -181,18 +181,6 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
       .setList("resvalues", getListValues(questionData.resvalues).asJava).setList("params", getListValues(questionData.item.params).asJava)
       .setString("description", questionData.item.desc)
       .setDecimal("duration", BigDecimal.valueOf(questionData.duration)).setTimestamp("assess_ts", new Timestamp(assessTs))
-  }
-
-  def issueCertificate(event: Event, context: ProcessFunction[Event, Event]#Context, metrics: Metrics): Unit = {
-    val query = QueryBuilder.select("status")
-      .from(config.dbKeyspace, config.enrolmentTable).where(QueryBuilder.eq("userid", event.userId))
-      .and(QueryBuilder.eq("courseid", event.courseId))
-      .and(QueryBuilder.eq("batchid", event.batchId)).toString
-      
-    val row: Row = cassandraUtil.findOne(query)
-    if(null != row && (2 == row.getInt("status"))) {
-      createIssueCertEvent(event, context, metrics)
-    }
   }
 
   /**
