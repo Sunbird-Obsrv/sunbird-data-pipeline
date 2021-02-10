@@ -5,7 +5,7 @@ export MODELS_HOME={{ analytics.home }}/models-{{ model_version }}
 export DP_LOGS={{ analytics.home }}/logs/data-products
 ## Job to run daily
 cd {{ analytics.home }}/scripts
-source model-config.sh
+source model-dock-config.sh
 today=$(date "+%Y-%m-%d")
 
 libs_path="{{ analytics.home }}/models-{{ model_version }}/data-products-1.0"
