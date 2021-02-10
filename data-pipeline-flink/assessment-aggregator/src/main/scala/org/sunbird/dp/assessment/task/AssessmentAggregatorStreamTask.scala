@@ -60,8 +60,8 @@ class AssessmentAggregatorStreamTask(config: AssessmentAggregatorConfig, kafkaCo
           .setParallelism(config.downstreamOperatorsParallelism)
 
         aggregatorStream.getSideOutput(config.certIssueOutputTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaCertIssueTopic))
-                .name(config.certIssueEventSink).uid(config.certIssueEventSink)
-                .setParallelism(config.downstreamOperatorsParallelism)
+          .name(config.certIssueEventSink).uid(config.certIssueEventSink)
+          .setParallelism(config.downstreamOperatorsParallelism)
         env.execute(config.jobName)
     }
 }
