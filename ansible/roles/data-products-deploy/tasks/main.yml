@@ -351,13 +351,12 @@
 # Cluster exhaust parallel jobs sumbit tasks
 
 - name: Install required python packages
-  become: yes
-  action: apt pkg={{ item }} state=present update_cache=yes
-  with_items:
-    - pyspark
-    - psycopg2
+  pip:
+    name:
+      - pyspark
+      - psycopg2 
   tags:
-    - parallel-jobs-submit  
+    - parallel-jobs-submit    
 
 - name: Download postgresql and copy to cluster home folder
   get_url: url="https://jdbc.postgresql.org/download/postgresql-42.2.18.jar" dest={{ analytics_cluster.home }}/postgresql-42.2.18.jar timeout=1000
