@@ -347,3 +347,70 @@
   with_items: "{{ jobs.split(',')|list }}"
   tags:
     - job-submit
+
+# Cluster exhaust parallel jobs sumbit tasks
+
+- name: Install required python packages
+  become: yes
+  action: apt pkg={{ item }} state=present update_cache=yes
+  with_items:
+    - pyspark
+    - psycopg2
+  tags:
+    - parallel-jobs-submit  
+
+- name: Download postgresql and copy to cluster home folder
+  get_url: url="https://jdbc.postgresql.org/download/postgresql-42.2.18.jar" dest={{ analytics_cluster.home }}/postgresql-42.2.18.jar timeout=1000
+  tags:
+    - parallel-jobs-submit
+
+- name: Copy python script file
+  template: src=update-job-requests.py.j2 dest={{ analytics_cluster.home }}/update-job-requests.py
+  delegate_to: localhost  
+  tags:
+    - parallel-jobs-submit
+
+- name: Execute python script to populate batch numbers
+  shell: "python3 {{ analytics_cluster.home }}/update-job-requests.py {{ job_id }} {{ batch_size }}"
+  tags:
+    - parallel-jobs-submit
+  register: jobsCountStr
+
+- debug:
+    var: jobsCountStr
+  tags:
+    - parallel-jobs-submit  
+
+- name: Get stdout with parallelisation value from python script to tmp file
+  shell: echo "{{ jobsCountStr.results[0].stdout }}" > /tmp/test.txt
+  tags:
+    - parallel-jobs-submit
+
+- name: Extract parallelisation value from tmp file
+  shell: "cat /tmp/test.txt | tr '\n' ' ' | awk -F': ' '{print $NF}'"
+  register: jobsCountOut
+  tags:
+    - parallel-jobs-submit
+
+- debug:
+    var: jobsCountOut
+  tags:
+    - parallel-jobs-submit  
+
+# set jobs count variable from python script output
+- set_fact:
+    jobs_count: "{{ jobsCountOut.stdout }}"
+  tags:
+    - parallel-jobs-submit  
+
+- name: Submit parallel exhaust jobs
+  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ job_id }} --mode parallel-jobs --parallelisation {{ jobs_count }} &"
+  # with_items: "{{ jobs.split(',')|list }}"
+  tags:
+    - parallel-jobs-submit 
+  register: submitOutput
+
+- debug:
+    var: submitOutput 
+  tags:
+    - parallel-jobs-submit      

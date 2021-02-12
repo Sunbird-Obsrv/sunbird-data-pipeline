@@ -1,0 +1,76 @@
+from pyspark.sql import SparkSession
+import math
+from pyspark.sql.functions import expr
+from pyspark.sql.functions import lit,row_number,col
+from pyspark.sql.window import Window
+import psycopg2
+import sys
+
+def updateRequests(db, update_list):
+    for r in update_list:
+        cursor = db.cursor()
+        batchNum = r.batch_number
+        requestId = r.request_id
+        insertQry = "UPDATE local_job_request SET batch_number = {0} WHERE request_id = '{1}'".format(batchNum, requestId)
+        n = cursor.execute(insertQry)
+
+def processRequests(spark, df, jobId, batchSize, db):
+    # Get total requests submitted
+    # Compute parallelism from batchSize & totalRequests
+    # update batch_number to table
+    totalRequestsDf = df.filter(col("job_id") == jobId).filter(col("status").isin(["SUBMITTED", "FAILED"])).filter(col("iteration") <= 3)
+
+    totalRequests = totalRequestsDf.count()
+    print("totalRequests {0}".format(totalRequests))
+
+    parallelism = math.ceil(totalRequests/batchSize)
+    print("parallelism computed {0}".format(parallelism))
+
+    w = Window().partitionBy(lit('a')).orderBy(lit('a'))
+    df1 = totalRequestsDf.withColumn("row_num", row_number().over(w)).persist()
+
+    index1 = 1
+    index2 = batchSize
+    for i in range(1, parallelism+1):
+        subSetDf = df1.filter(col("row_num").between(index1,index2)).withColumn("batch_number", lit(i))
+        print(index1,index2)
+        updateRequests(db, subSetDf.collect())
+        index1 = 1 + index2
+        index2 = index2 + batchSize
+    db.commit()
+    db.close()    
+    return parallelism    
+
+def main(batchSize, jobId):
+    host={{postgres.db_url}}
+    port={{postgres.db_port}}
+    user="{{postgres.db_username}}"
+    password="{{postgres.db_password}}"
+    database="{{postgres.db_name}}"
+    url_connect = "jdbc:postgresql://{0}:{1}/{2}".format(host, port, database)
+    table = "{{ env }}_job_request"
+
+    db = psycopg2.connect(host=host, user=user, password=password, database=database, port=port)
+
+    spark = SparkSession \
+            .builder \
+            .appName("Python Spark SQL basic example") \
+            .config("spark.jars", "{{ analytics_cluster.home }}/postgresql-42.2.18.jar") \
+            .getOrCreate()
+
+    df = spark.read \
+            .format("jdbc") \
+            .option("url", url_connect) \
+            .option("dbtable", table) \
+            .option("user", user) \
+            .option("password", password) \
+            .option("driver", "org.postgresql.Driver") \
+            .load()
+
+    parallelism = processRequests(spark, df, jobId, batchSize, db)
+    return parallelism
+
+batchSize =int(sys.argv[2])
+jobId=sys.argv[1]
+parallelism = main(batchSize, jobId) 
+print("returning parallelism value: {0}".format(parallelism))
