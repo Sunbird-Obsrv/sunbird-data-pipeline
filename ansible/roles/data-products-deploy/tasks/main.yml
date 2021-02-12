@@ -370,7 +370,7 @@
     - parallel-jobs-submit
 
 - name: Execute python script to populate batch numbers
-  shell: "python3 {{ analytics_cluster.home }}/update-job-requests.py {{ job_id }} {{ batch_size }}"
+  shell: "python3 {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }}"
   tags:
     - parallel-jobs-submit
   register: jobsCountStr
@@ -403,7 +403,7 @@
     - parallel-jobs-submit  
 
 - name: Submit parallel exhaust jobs
-  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ job_id }} --mode parallel-jobs --parallelisation {{ jobs_count }} &"
+  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ jobs }} --mode parallel-jobs --parallelisation {{ jobs_count }} &"
   # with_items: "{{ jobs.split(',')|list }}"
   tags:
     - parallel-jobs-submit 
