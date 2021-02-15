@@ -1,4 +1,4 @@
-from __future__ import division
+#from __future__ import division
 from pyspark.sql import SparkSession
 import math
 from pyspark.sql.functions import expr
@@ -24,7 +24,7 @@ def processRequests(spark, df, jobId, batchSize, db):
     totalRequests = totalRequestsDf.count()
     print("totalRequests {0}".format(totalRequests))
 
-    parallelism = int(math.ceil(totalRequests/batchSize))
+    parallelism = math.ceil(totalRequests/batchSize)
     print("parallelism computed {0}".format(parallelism))
 
     w = Window().partitionBy(lit('a')).orderBy(lit('a'))
