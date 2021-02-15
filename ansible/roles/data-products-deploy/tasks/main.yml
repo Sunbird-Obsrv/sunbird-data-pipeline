@@ -350,26 +350,26 @@
 
 # Cluster exhaust parallel jobs sumbit tasks
 
-# - name: Install required python packages
-#   pip:
-#     name:
-#       - pyspark
-#       - psycopg2 
+- name: Install required python packages
+  pip:
+    name:
+      - pyspark
+      - psycopg2 
+  tags:
+    - parallel-jobs-submit 
+
+# - name: Install pip for python3
+#   shell: apt-get install python3-pip
 #   tags:
-#     - parallel-jobs-submit 
+#     - parallel-jobs-submit
 
-- name: Install pip for python3
-  shell: apt-get install python3-pip
-  tags:
-    - parallel-jobs-submit
-
-- name: Install required python modules
-  shell: python3 -m pip install {{ item }}
-  with_items: 
-    - pyspark
-    - psycopg2
-  tags:
-    - parallel-jobs-submit    
+# - name: Install required python modules
+#   shell: python3 -m pip install {{ item }}
+#   with_items: 
+#     - pyspark
+#     - psycopg2
+#   tags:
+#     - parallel-jobs-submit    
 
 - name: Download postgresql and copy to cluster home folder
   get_url: url="https://jdbc.postgresql.org/download/postgresql-42.2.18.jar" dest={{ analytics_cluster.home }}/postgresql-42.2.18.jar timeout=1000
@@ -383,7 +383,7 @@
     - parallel-jobs-submit
 
 - name: Execute python script to populate batch numbers
-  shell: "python3 {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }}"
+  shell: "python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }}"
   tags:
     - parallel-jobs-submit
   register: jobsCountStr
