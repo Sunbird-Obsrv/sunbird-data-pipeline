@@ -93,6 +93,7 @@ class ContentUpdaterStreamTaskTest extends BaseTestSpec {
         when(mockKafkaUtil.kafkaEventSource[Event](contentConfig.inputTopic)).thenReturn(new ContentDialCodeSource)
         val task = new ContentCacheUpdaterStreamTask(contentConfig, mockKafkaUtil)
         task.process()
+        BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.skippedEventCount}").getValue() should be(1)
         BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.dialCodeApiHit}").getValue() should be(1)
         BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.contentCacheHit}").getValue() should be(10)
         BaseMetricsReporter.gaugeMetrics(s"${contentConfig.jobName}.${contentConfig.dialCodeApiMissHit}").getValue() should be(1)

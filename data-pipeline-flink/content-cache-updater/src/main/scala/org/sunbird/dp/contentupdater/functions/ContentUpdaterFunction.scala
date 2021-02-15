@@ -24,7 +24,7 @@ class ContentUpdaterFunction(config: ContentCacheUpdaterConfig)(implicit val map
     private lazy val gson = new Gson()
 
     override def metricsList(): List[String] = {
-        List(config.contentCacheHit)
+        List(config.contentCacheHit, config.skippedEventCount)
     }
 
     override def open(parameters: Configuration): Unit = {
@@ -68,6 +68,7 @@ class ContentUpdaterFunction(config: ContentCacheUpdaterConfig)(implicit val map
                 context.output(config.withContentDailCodeEventsTag, event)
         }
         else{
+            metrics.incCounter(config.skippedEventCount)
             logger.info("Skipping as nodeUniqueId retrieved is null from event. Event json might be invalid")
         }
     }
