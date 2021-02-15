@@ -381,7 +381,7 @@
     - parallel-jobs-submit  
 
 - name: Get stdout with parallelisation value from python script to tmp file
-  shell: echo "{{ jobsCountStr.results[0].stdout }}" > /tmp/test.txt
+  shell: echo "{{ jobsCountStr.stdout }}" > /tmp/test.txt
   tags:
     - parallel-jobs-submit
 
