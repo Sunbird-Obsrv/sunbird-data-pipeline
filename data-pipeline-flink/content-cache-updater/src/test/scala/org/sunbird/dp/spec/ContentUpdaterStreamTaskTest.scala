@@ -135,7 +135,9 @@ class ContentDialCodeSource extends SourceFunction[Event] {
         ctx.collect(new Event(event8))
         ctx.collect(new Event(event9))
         ctx.collect(new Event(event10))
-
+        // for invalid event check - EventSerializationSchema returns empty map for invalid JSON.
+        // EX: """Type":"DialCode"}""" and """reatedOn":"2021-02-11T07:41:59.691+0000","objectType":"DialCode"}"""
+        ctx.collect(new Event(new util.HashMap[String, Any]()))
     }
 
     override def cancel() = {

@@ -16,5 +16,7 @@ object EventFixture {
 
     val contentUpdateData3 = """{"ets":1586888770204,"channel":"0123221758376673287017","transactionData":{"properties":{"gradeLevel":{"ov":null,"nv":["Class 8"]},"appIcon":{"ov":null,"nv":"https://ntpproductionall.blob.core.windows.net/ntp-content-production/content/do_31293113605096243214/artifact/0_h2y5p6_1578507818966.png"},"copyright":{"ov":null,"nv":"Ekstep"},"subject":{"ov":null,"nv":["Home Science"]},"copyrightYear":{"ov":null,"nv":2021},"topic":{"ov":null,"nv":[]},"licenseterms":{"ov":null,"nv":"By creating any type of content (resources, books, courses etc.) on DIKSHA, you consent to publish it under the Creative Commons License Framework. Please choose the applicable creative commons license you wish to apply to your content."},"lastUpdatedOn":{"ov":"2020-04-14T18:25:58.919+0000","nv":"2020-06-14T18:26:10.133+0000"},"medium":{"ov":null,"nv":["Sanskrit"]},"versionKey":{"ov":"1586888758919","nv":"1586888770133"}}},"mid":"09be8943-0b8b-4c49-91f9-63fff4ebe58a","label":"ResourceACydney","nodeType":"DATA_NODE","userId":"ANONYMOUS","createdOn":"2020-04-14T18:26:10.204+0000","objectType":"Content","nodeUniqueId":"do_312999792564027392148","requestId":null,"operationType":"UPDATE","nodeGraphId":1071617,"graphId":"domain"}"""
 
+    val invalidEvent1 = """Type":"DialCode"}"""
+    val invalidEvent2 = """reatedOn":"2021-02-11T07:41:59.691+0000","objectType":"DialCode"}"""
 
 }
