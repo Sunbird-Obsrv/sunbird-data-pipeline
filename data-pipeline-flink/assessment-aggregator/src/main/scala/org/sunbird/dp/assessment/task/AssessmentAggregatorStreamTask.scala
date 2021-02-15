@@ -49,17 +49,18 @@ class AssessmentAggregatorStreamTask(config: AssessmentAggregatorConfig, kafkaCo
         val source = kafkaConnector.kafkaEventSource[Event](config.kafkaInputTopic)
 
         val aggregatorStream =
-            env.addSource(source, config.assessmentAggConsumer).uid(config.assessmentAggConsumer)
-              .rebalance()
+            env.addSource(source, config.assessmentAggConsumer)
+              .uid(config.assessmentAggConsumer).setParallelism(config.kafkaConsumerParallelism).rebalance()
               .process(new AssessmentAggregatorFunction(config))
               .name(config.assessmentAggregatorFunction).uid(config.assessmentAggregatorFunction)
               .setParallelism(config.assessAggregatorParallelism)
 
         aggregatorStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaFailedTopic))
           .name(config.assessFailedEventsSink).uid(config.assessFailedEventsSink)
-
+          .setParallelism(config.downstreamOperatorsParallelism)
         aggregatorStream.getSideOutput(config.certIssueOutputTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaCertIssueTopic))
-                .name(config.certIssueEventSink).uid(config.certIssueEventSink)
+          .name(config.certIssueEventSink).uid(config.certIssueEventSink)
+          .setParallelism(config.downstreamOperatorsParallelism)
         env.execute(config.jobName)
     }
 }

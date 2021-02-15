@@ -680,6 +680,8 @@ assessment-aggregator:
       output.certissue.topic = {{ env_name }}.issue.certificate.request
     }
     task {
+      consumer.parallelism = {{ assessaggregator_consumer_parallelism }}
+      downstream.parallelism = {{ assessaggregator_downstream_parallelism }}
       assessaggregator {
         parallelism = {{ assessaggregator_parallelism }}
       }
