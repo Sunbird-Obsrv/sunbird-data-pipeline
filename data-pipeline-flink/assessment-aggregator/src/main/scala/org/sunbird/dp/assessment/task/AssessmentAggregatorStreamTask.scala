@@ -37,7 +37,7 @@ import org.sunbird.dp.core.util.FlinkUtil
   *       6.8 Increment db-update-count
   * 6. Common
   * 	  7.1 Retry once from connection issues from DB
-  * 	  7.2 Stop the job from procee  ding further if there are any DB issue
+  * 	  7.2 Stop the job from procee  ding further if there are any DB issues
   */
 class AssessmentAggregatorStreamTask(config: AssessmentAggregatorConfig, kafkaConnector: FlinkKafkaConnector) {
 
