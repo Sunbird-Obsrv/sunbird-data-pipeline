@@ -7,15 +7,15 @@ from pyspark.sql.window import Window
 import psycopg2
 import sys
 
-def updateRequests(db, update_list):
+def updateRequests(db, table, update_list):
     for r in update_list:
         cursor = db.cursor()
         batchNum = r.batch_number
         requestId = r.request_id
-        insertQry = "UPDATE local_job_request SET batch_number = {0} WHERE request_id = '{1}'".format(batchNum, requestId)
+        insertQry = "UPDATE {0} SET batch_number = {1} WHERE request_id = '{2}'".format(table, batchNum, requestId)
         n = cursor.execute(insertQry)
 
-def processRequests(spark, df, jobId, batchSize, db):
+def processRequests(spark, df, jobId, batchSize, db, table):
     # Get total requests submitted
     # Compute parallelism from batchSize & totalRequests
     # update batch_number to table
@@ -35,7 +35,7 @@ def processRequests(spark, df, jobId, batchSize, db):
     for i in range(1, parallelism+1):
         subSetDf = df1.filter(col("row_num").between(index1,index2)).withColumn("batch_number", lit(i))
         print(index1,index2)
-        updateRequests(db, subSetDf.collect())
+        updateRequests(db, table, subSetDf.collect())
         index1 = 1 + index2
         index2 = index2 + batchSize
     db.commit()
@@ -49,7 +49,7 @@ def main(batchSize, jobId):
     password="{{postgres.db_password}}"
     database="{{postgres.db_name}}"
     url_connect = "jdbc:postgresql://{0}:{1}/{2}".format(host, port, database)
-    table = "{{ env }}_job_request"
+    table = "{{ env }}_job_request_tmp"
 
     db = psycopg2.connect(host=host, user=user, password=password, database=database, port=port)
 
@@ -68,7 +68,7 @@ def main(batchSize, jobId):
             .option("driver", "org.postgresql.Driver") \
             .load()
 
-    parallelism = processRequests(spark, df, jobId, batchSize, db)
+    parallelism = processRequests(spark, df, jobId, batchSize, db, table)
     return parallelism
 
 batchSize =int(sys.argv[2])
