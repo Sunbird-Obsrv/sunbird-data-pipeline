@@ -49,7 +49,7 @@ class AssessmentAggregatorStreamTask(config: AssessmentAggregatorConfig, kafkaCo
         val source = kafkaConnector.kafkaEventSource[Event](config.kafkaInputTopic)
 
         val aggregatorStream =
-            env.addSource(source, config.assessmentAggConsumer).uid(config.assessmentAggConsumer)
+            env.addSource(source, config.assessmentAggConsumer)
               .uid(config.assessmentAggConsumer).setParallelism(config.kafkaConsumerParallelism).rebalance()
               .process(new AssessmentAggregatorFunction(config))
               .name(config.assessmentAggregatorFunction).uid(config.assessmentAggregatorFunction)
