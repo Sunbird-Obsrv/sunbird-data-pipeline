@@ -1,3 +1,4 @@
+from __future__ import division
 from pyspark.sql import SparkSession
 import math
 from pyspark.sql.functions import expr
@@ -23,7 +24,7 @@ def processRequests(spark, df, jobId, batchSize, db):
     totalRequests = totalRequestsDf.count()
     print("totalRequests {0}".format(totalRequests))
 
-    parallelism = math.ceil(totalRequests/batchSize)
+    parallelism = int(math.ceil(totalRequests/batchSize))
     print("parallelism computed {0}".format(parallelism))
 
     w = Window().partitionBy(lit('a')).orderBy(lit('a'))
@@ -42,7 +43,7 @@ def processRequests(spark, df, jobId, batchSize, db):
     return parallelism    
 
 def main(batchSize, jobId):
-    host={{postgres.db_url}}
+    host="{{postgres.db_url}}"
     port={{postgres.db_port}}
     user="{{postgres.db_username}}"
     password="{{postgres.db_password}}"
