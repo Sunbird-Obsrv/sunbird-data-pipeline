@@ -358,6 +358,11 @@
 #   tags:
 #     - parallel-jobs-submit 
 
+- name: Install pip for python3
+  shell: apt-get install python3-pip
+  tags:
+    - parallel-jobs-submit
+
 - name: Install required python modules
   shell: python3 -m pip install {{ item }}
   with_items: 
