@@ -25,6 +25,7 @@ channel: dev-test
 druid_broker_host: "{{groups['raw-broker'][0]}}"
 druid_rollup_broker_host: "{{groups['raw-broker'][0]}}"
 hierarchySearchServiceUrl: "{{ proto }}://{{ domain_name }}/action/content"
+
 hierarchySearchServicEndpoint: /v3/hierarchy/
 
 user_table_keyspace: "sunbird"
