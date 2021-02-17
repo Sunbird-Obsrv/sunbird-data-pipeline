@@ -49,7 +49,7 @@ def main(batchSize, jobId):
     password="{{postgres.db_password}}"
     database="{{postgres.db_name}}"
     url_connect = "jdbc:postgresql://{0}:{1}/{2}".format(host, port, database)
-    table = "{{ env }}_job_request_tmp"
+    table = "{{ env }}_job_request"
 
     db = psycopg2.connect(host=host, user=user, password=password, database=database, port=port)
 

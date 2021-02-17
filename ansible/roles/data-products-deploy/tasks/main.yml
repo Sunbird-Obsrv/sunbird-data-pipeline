@@ -358,19 +358,6 @@
   tags:
     - parallel-jobs-submit 
 
-# - name: Install pip for python3
-#   shell: apt-get install python3-pip
-#   tags:
-#     - parallel-jobs-submit
-
-# - name: Install required python modules
-#   shell: python3 -m pip install {{ item }}
-#   with_items: 
-#     - pyspark
-#     - psycopg2
-#   tags:
-#     - parallel-jobs-submit    
-
 - name: Download postgresql and copy to cluster home folder
   get_url: url="https://jdbc.postgresql.org/download/postgresql-42.2.18.jar" dest={{ analytics_cluster.home }}/postgresql-42.2.18.jar timeout=1000
   tags:
@@ -417,7 +404,6 @@
 
 - name: Submit parallel exhaust jobs
   shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ jobs }} --mode parallel-jobs --parallelisation {{ jobs_count }} &"
-  # with_items: "{{ jobs.split(',')|list }}"
   tags:
     - parallel-jobs-submit 
   register: submitOutput
