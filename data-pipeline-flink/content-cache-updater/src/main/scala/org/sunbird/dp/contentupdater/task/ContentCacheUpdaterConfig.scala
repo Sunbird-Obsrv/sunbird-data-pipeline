@@ -41,6 +41,7 @@ class ContentCacheUpdaterConfig(override val config: Config) extends BaseJobConf
   val withDialCodeEventsTag: OutputTag[Event] = OutputTag[Event](WITH_DIALCODE_EVENTS)
   val withContentDailCodeEventsTag: OutputTag[Event] = OutputTag[Event](WITH_CONTENT_EVENTS)
 
+  val skippedEventCount = "skipped-event-count"
   val contentCacheHit = "cache-hit-count"
   val dialCodeCacheHit = "dial-codes-cache-hit-count"
   val dialCodeApiHit = "dial-codes-api-hit-count"

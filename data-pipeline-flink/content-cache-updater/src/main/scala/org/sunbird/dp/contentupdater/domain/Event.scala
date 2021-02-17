@@ -19,6 +19,6 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
 
 
     def getNodeUniqueId(): String = {
-        telemetry.read[String]("nodeUniqueId").get
+        telemetry.read[String]("nodeUniqueId").orNull
     }
 }
