@@ -82,6 +82,8 @@ have_weekly_jobs: false
 
 video_stream_job_schedule: 10
 
+course_batch_status_updater_job_schedule: 60
+
 run_wfs_job:
   wfs:
     hour: 00
