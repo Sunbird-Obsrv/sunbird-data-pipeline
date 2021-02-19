@@ -58,7 +58,6 @@ class AssessmentAggregatorStreamTask(config: AssessmentAggregatorConfig, kafkaCo
         aggregatorStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaFailedTopic))
           .name(config.assessFailedEventsSink).uid(config.assessFailedEventsSink)
           .setParallelism(config.downstreamOperatorsParallelism)
-
         aggregatorStream.getSideOutput(config.certIssueOutputTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaCertIssueTopic))
           .name(config.certIssueEventSink).uid(config.certIssueEventSink)
           .setParallelism(config.downstreamOperatorsParallelism)
