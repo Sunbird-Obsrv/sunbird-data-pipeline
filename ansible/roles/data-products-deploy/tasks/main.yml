@@ -161,6 +161,7 @@
     - dataproducts
     - update-config
     - ed-dataproducts
+  when: dockdataproducts is undefined
 
 - name: Copy model-config.json file
   template: src=model-config.json.j2 dest={{ analytics.home }}/scripts/model-config.json mode=755 owner={{ analytics_user }} group={{ analytics_group }}
@@ -168,6 +169,7 @@
     - dataproducts
     - update-config
     - ed-dataproducts
+  when: dockdataproducts is undefined
 
 - name: Clean cron jobs
   command: crontab -r
