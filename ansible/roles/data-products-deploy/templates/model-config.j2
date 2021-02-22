@@ -29,7 +29,7 @@ config() {
 	producerEnv="{{ producer_env }}"
 	baseScriptPath="{{ spark_output_temp_dir }}"
 	reportPostContainer="{{ reports_container }}"
-	druidIngestionURL="http://{{groups['raw-overlord'][0]}}:8081/druid/indexer/v1/task"
+	druidIngestionURL="{{ druid_rollup_cluster_ingestion_task_url }}/druid/indexer/v1/task"
     assessTopic={{ assess_topic }}
 
 
