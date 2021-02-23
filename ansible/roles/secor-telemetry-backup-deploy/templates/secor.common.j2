@@ -165,7 +165,7 @@ kafka.fetch.min.bytes=
 kafka.fetch.wait.max.ms=
 
 # Port of the broker serving topic partition metadata.
-kafka.seed.broker.port=9092
+#kafka.seed.broker.port=9092
 
 # Zookeeper path at which kafka is registered. In Zookeeper parlance, this is referred
 # to as the chroot.
@@ -420,3 +420,76 @@ parquet.validation=false
 secor.orc.message.schema.*=struct<a:int\,b:int\,c:struct<d:int\,e:string>\,f:array<string>\,g:int>
 # Below config used for defining ORC schema provider class name. User can use the custom implementation for orc schema provider
 secor.orc.schema.provider=com.pinterest.secor.util.orc.schema.DefaultORCSchemaProvider
+
+# Changes related to 0.29 upgrade
+
+# If true, runs a final upload when the JVM is shut down (eg, from SIGTERM).
+# You may want to ensure that whatever system you use to run secor sets an
+# appropriate grace period to allow a full upload before a forced termination.
+secor.upload.on.shutdown=false
+
+# If true, uploads lastSeen offset onto ZK, see https://github.com/pinterest/secor/issues/600 for details
+secor.upload.secor.upload.last.seen.offset=false
+
+# If true, uploads are entirely deterministic, which can avoid some race conditions
+# which can lead to messages being backed up multiple times. This is incompatible with
+# secor.upload.on.shutdown=true, and ignores the values of secor.max.file.size.bytes,
+# secor.max.file.age.seconds, and secor.upload.minute_mark.
+#
+# In deterministic mode, you must set one or both of secor.max.file.timestamp.range.millis and
+# secor.max.input.payload.size.bytes. These determine when to upload, and are ignored outside
+# of deterministic mode.
+secor.upload.deterministic=false
+
+# Classname for the message iterator you want to use. The message iterator determines what kind of consumer
+# secor will use to communicate with kafka. com.pinterest.secor.reader.LegacyKafkaMessageIterator uses
+# the old kafka consumer written scala. Its not recommended to use the legacy iterator with kafka version >= 1.0 since it
+# does not support the new broker protocols. You may face significant performance degradation on your brokers if you use it
+kafka.message.iterator.className=com.pinterest.secor.reader.SecorKafkaMessageIterator
+
+# Classname for the kafka client used by utility classes like PartitionFinalizer and Progress monitor.
+# Legacy client is kept for compatibility purposes and is deprecated
+kafka.client.className=com.pinterest.secor.common.SecorKafkaClient
+
+
+########################################
+# Optional: Kafka New Consumer Configs #
+########################################
+
+# Same as old configuration. Except accepted values are earliest and latest instead of smallest
+# and largest
+kafka.new.consumer.auto.offset.reset=earliest
+
+# Comma-separated list of topics to consume. Please note that this is not a regular expression.
+# If that's what you want, you can use "secor.kafka.topic_filter" instead.
+kafka.new.consumer.topic.list={{ secor_service_name[item[0]].topic }}
+
+kafka.new.consumer.poll.timeout.seconds=10
+kafka.new.consumer.request.timeout.ms=10000
+kafka.new.consumer.ssl.key.password=
+kafka.new.consumer.ssl.keystore.location=
+kafka.new.consumer.ssl.keystore.password=
+kafka.new.consumer.ssl.truststore.location=
+kafka.new.consumer.ssl.truststore.password=
+kafka.new.consumer.isolation.level=
+kafka.new.consumer.max.poll.interval.ms=
+kafka.new.consumer.max.poll.records=
+kafka.new.consumer.sasl.client.callback.handler.class=
+kafka.new.consumer.sasl.jaas.config=
+kafka.new.consumer.sasl.kerberos.service.name=
+kafka.new.consumer.sasl.login.callback.handler.class=
+kafka.new.consumer.sasl.login.class=
+kafka.new.consumer.sasl.mechanism=
+kafka.new.consumer.security.protocol=
+kafka.new.consumer.ssl.enabled.protocols=
+kafka.new.consumer.ssl.keystore.type=
+kafka.new.consumer.ssl.protocol=
+kafka.new.consumer.ssl.provider=
+kafka.new.consumer.ssl.truststore.type=
+kafka.new.consumer.partition.assignment.strategy.class=
+
+########################################
+# End: Kafka New Consumer Configs      #
+########################################
+
+kafka.fetch.max.bytes=
