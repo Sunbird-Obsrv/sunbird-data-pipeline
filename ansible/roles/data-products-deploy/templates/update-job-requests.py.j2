@@ -19,7 +19,7 @@ def processRequests(spark, df, jobId, batchSize, db, table):
     # Get total requests submitted
     # Compute parallelism from batchSize & totalRequests
     # update batch_number to table
-    totalRequestsDf = df.filter(col("job_id") == jobId).filter(col("status").isin(["SUBMITTED", "FAILED"])).filter(col("iteration") <= 3)
+    totalRequestsDf = df.filter(col("job_id") == jobId).filter(col("status").isin(["SUBMITTED", "FAILED"])).filter(col("iteration") < 3)
 
     totalRequests = totalRequestsDf.count()
     print("totalRequests {0}".format(totalRequests))
