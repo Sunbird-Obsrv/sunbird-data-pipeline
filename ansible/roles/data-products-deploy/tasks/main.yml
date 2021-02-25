@@ -355,13 +355,10 @@
     name:
       - pyspark
       - psycopg2 
+      - pandas
+      - IPython
   tags:
     - parallel-jobs-submit 
-
-- name: Download postgresql and copy to cluster home folder
-  get_url: url="https://jdbc.postgresql.org/download/postgresql-42.2.18.jar" dest={{ analytics_cluster.home }}/postgresql-42.2.18.jar timeout=1000
-  tags:
-    - parallel-jobs-submit
 
 - name: Copy python script file
   template: src=update-job-requests.py.j2 dest={{ analytics_cluster.home }}/update-job-requests.py
