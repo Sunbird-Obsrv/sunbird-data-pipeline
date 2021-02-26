@@ -350,13 +350,20 @@
 
 # Cluster exhaust parallel jobs sumbit tasks
 
-- name: Create venv directory if it does not exist
-  ansible.builtin.file:
+# - name: Create venv directory if it does not exist
+#   ansible.builtin.file:
+#     path: "{{ virtualenv_path }}"
+#     state: directory
+#     mode: '0755'
+#   tags:
+#     - parallel-jobs-submit 
+    
+- name: Creates venv directory
+  file:
     path: "{{ virtualenv_path }}"
-    state: directory
-    mode: '0755'
+    state: directory  
   tags:
-    - parallel-jobs-submit  
+    - parallel-jobs-submit     
 
 - name: Install required python modules
   pip: 
