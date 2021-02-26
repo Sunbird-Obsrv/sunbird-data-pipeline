@@ -374,6 +374,7 @@
     virtualenv: "{{ virtualenv_path }}"
     virtualenv_python: "python3"
     requirements: "requirements.txt"
+    executable: pip3
   tags:
     - parallel-jobs-submit
 
