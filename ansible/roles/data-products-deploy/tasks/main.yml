@@ -350,6 +350,11 @@
 
 # Cluster exhaust parallel jobs sumbit tasks
 
+- name: Upgrade pip
+  shell: "pip install --upgrade pip"
+  tags:
+    - parallel-jobs-submit
+
 - name: Install required python packages
   pip:
     name:
