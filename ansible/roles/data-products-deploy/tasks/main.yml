@@ -349,39 +349,28 @@
     - job-submit
 
 # Cluster exhaust parallel jobs sumbit tasks
-
-# - name: Create venv directory if it does not exist
-#   ansible.builtin.file:
-#     path: "{{ virtualenv_path }}"
-#     state: directory
-#     mode: '0755'
-#   tags:
-#     - parallel-jobs-submit 
     
-- name: Creates venv directory
-  file:
-    path: "{{ virtualenv_path }}"
-    state: directory  
+# - name: Creates venv directory
+#   file:
+#     path: "{{ virtualenv_path }}"
+#     state: directory  
+#   tags:
+#     - parallel-jobs-submit     
+
+- name: Install virtualenv via pip
+  pip:
+    name: virtualenv
+    executable: pip3
   tags:
-    - parallel-jobs-submit     
+    - parallel-jobs-submit  
 
 - name: Install required python modules
   pip: 
     virtualenv: "{{ virtualenv_path }}"
-    virtualenv_python: "python3.6"
+    virtualenv_python: "python3"
     requirements: "requirements.txt"
   tags:
     - parallel-jobs-submit
-
-# - name: Install required python packages
-#   pip:
-#     name:
-#       - pyspark
-#       - psycopg2 
-#       - pandas
-#       - IPython
-#   tags:
-#     - parallel-jobs-submit 
 
 - name: Copy python script file
   template: src=update-job-requests.py.j2 dest={{ analytics_cluster.home }}/update-job-requests.py
