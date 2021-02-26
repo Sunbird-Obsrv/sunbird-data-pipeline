@@ -367,7 +367,12 @@
   shell: "pip3 install virtualenv"
   become: yes
   tags:
-    - parallel-jobs-submit      
+    - parallel-jobs-submit
+
+- name: Export LC_ALL
+  shell: "export LC_ALL=C"
+  tags:
+    - parallel-jobs-submit         
 
 - name: Install required python modules
   pip: 
