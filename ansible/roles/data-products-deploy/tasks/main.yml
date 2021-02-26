@@ -357,11 +357,17 @@
 #   tags:
 #     - parallel-jobs-submit     
 
-- name: Install virtualenv via pip
-  pip:
-    name: virtualenv
+- name: Install pip3
+  shell: "apt-get install python3-pip"
+  become: yes
   tags:
-    - parallel-jobs-submit  
+    - parallel-jobs-submit
+
+- name: Install pip3
+  shell: "pip3 install virtualenv"
+  become: yes
+  tags:
+    - parallel-jobs-submit      
 
 - name: Install required python modules
   pip: 
