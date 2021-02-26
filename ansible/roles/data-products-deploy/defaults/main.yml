@@ -230,3 +230,5 @@ analytics_ed_dataporducts_jar_artifact: "data-products-{{ analytics_ed_datapordu
 
 druid_report_postgres_db_name: druid
 druid_report_postgres_db_username: druid
+
+virtualenv_path: "/mount/venv"

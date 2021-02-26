@@ -350,20 +350,23 @@
 
 # Cluster exhaust parallel jobs sumbit tasks
 
-- name: Upgrade pip
-  shell: "pip install --upgrade pip"
+- name: Install required python modules
+  pip: 
+    virtualenv: "{{ virtualenv_path }}"
+    virtualenv_python: "python3.6"
+    requirements: "requirements.txt"
   tags:
     - parallel-jobs-submit
-
-- name: Install required python packages
-  pip:
-    name:
-      - pyspark
-      - psycopg2 
-      - pandas
-      - IPython
-  tags:
-    - parallel-jobs-submit 
+    
+# - name: Install required python packages
+#   pip:
+#     name:
+#       - pyspark
+#       - psycopg2 
+#       - pandas
+#       - IPython
+#   tags:
+#     - parallel-jobs-submit 
 
 - name: Copy python script file
   template: src=update-job-requests.py.j2 dest={{ analytics_cluster.home }}/update-job-requests.py
@@ -372,7 +375,7 @@
     - parallel-jobs-submit
 
 - name: Execute python script to populate batch numbers
-  shell: "python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }}"
+  shell: "source {{ virtualenv_path }}/bin/activate && python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }}"
   tags:
     - parallel-jobs-submit
   register: jobsCountStr
