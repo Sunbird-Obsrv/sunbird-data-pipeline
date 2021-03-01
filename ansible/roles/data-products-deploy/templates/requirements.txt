@@ -1,4 +1,0 @@
-pyspark
-psycopg2 
-pandas
-IPython
