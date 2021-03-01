@@ -206,7 +206,6 @@
     - spark-jobs
     - cronjobs
 
-
 - name: Create course-batch-status-updater cron job
   cron: name="{{env}}-course-batch-status-updater" minute=*/{{ course_batch_status_updater_job_schedule }} job="{{ analytics.home }}/scripts/run-job.sh course-batch-status-updater"
   tags:
