@@ -349,27 +349,6 @@
     - job-submit
 
 # Cluster exhaust parallel jobs sumbit tasks
-    
-# - name: Creates venv directory
-#   file:
-#     path: "{{ virtualenv_path }}"
-#     state: directory  
-#   tags:
-#     - parallel-jobs-submit     
-
-# - name: Install virtualenv
-#   shell: "pip3 install virtualenv"
-#   become: yes
-#   tags:
-#     - parallel-jobs-submit
-
-# - name: Install required python modules
-#   pip: 
-#     virtualenv: "{{ virtualenv_path }}"
-#     virtualenv_python: "python3"
-#     requirements: "requirements.txt"
-#   tags:
-#     - parallel-jobs-submit
 
 - name: Install required python packages
   pip:
@@ -388,7 +367,7 @@
     - parallel-jobs-submit
 
 - name: Execute python script to populate batch numbers
-  shell: "python3 {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }}"
+  shell: "python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }}"
   tags:
     - parallel-jobs-submit
   register: jobsCountStr
