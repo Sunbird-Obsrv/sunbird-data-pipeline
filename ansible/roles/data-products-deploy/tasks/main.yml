@@ -357,30 +357,29 @@
 #   tags:
 #     - parallel-jobs-submit     
 
-# - name: Install pip3
-#   shell: "apt-get install -y python3-pip"
-#   become: yes
-#   tags:
-#     - parallel-jobs-submit
-
-# - name: Export LC_ALL
-#   shell: "export LC_ALL=C"
-#   tags:
-#     - parallel-jobs-submit
-
 # - name: Install virtualenv
 #   shell: "pip3 install virtualenv"
 #   become: yes
 #   tags:
 #     - parallel-jobs-submit
 
-- name: Install required python modules
-  pip: 
-    virtualenv: "{{ virtualenv_path }}"
-    virtualenv_python: "python3"
-    requirements: "requirements.txt"
+# - name: Install required python modules
+#   pip: 
+#     virtualenv: "{{ virtualenv_path }}"
+#     virtualenv_python: "python3"
+#     requirements: "requirements.txt"
+#   tags:
+#     - parallel-jobs-submit
+
+- name: Install required python packages
+  pip:
+    name:
+      - pyspark
+      - psycopg2
+      - pandas
+      - IPython
   tags:
-    - parallel-jobs-submit
+    - parallel-jobs-submit  
 
 - name: Copy python script file
   template: src=update-job-requests.py.j2 dest={{ analytics_cluster.home }}/update-job-requests.py
