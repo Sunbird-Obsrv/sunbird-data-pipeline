@@ -388,7 +388,7 @@
     - parallel-jobs-submit
 
 - name: Execute python script to populate batch numbers
-  shell: "source {{ virtualenv_path }}/bin/activate && python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }}"
+  shell: "python3 {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }}"
   tags:
     - parallel-jobs-submit
   register: jobsCountStr
