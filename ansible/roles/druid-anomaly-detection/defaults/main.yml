@@ -1,0 +1,12 @@
+library_path: /home/analytics/anomaly_detection.tar.gz
+virtualenv_path: /home/analytics/anomaly_venv
+anomaly_detection_job_config_file: "{{virtualenv_path}}/config.json"
+anomaly_detection_data_dir: "/home/anand/anomaly_detection"
+anomaly_detection_queries:
+  content-mimetype-errors:
+    job_id: "content-mimetype-errors"
+    query_granularity: "day"
+    query: 'WITH \"content_plays\" AS (SELECT \"content_mimetype\", COUNT(*) AS \"plays\" FROM \"druid\".\"telemetry-rollup-syncts\" WHERE \"__time\" BETWEEN TIMESTAMP ''{start_time}'' AND TIMESTAMP ''{end_time}'' GROUP BY \"content_mimetype\" LIMIT 20) SELECT cp.content_mimetype, SUM(cpe.errors) * 100.0/SUM(cp.plays) AS \"perc_errors\" FROM (SELECT \"content_mimetype\", SUM(\"total_count\") AS \"errors\" FROM \"druid\".\"error-hourly-rollup-syncts\" WHERE \"__time\" BETWEEN TIMESTAMP ''{start_time}'' AND TIMESTAMP ''{end_time}'' GROUP BY \"content_mimetype\" LIMIT 20) AS cpe INNER JOIN content_plays AS cp ON cp.content_mimetype = cpe.content_mimetype GROUP BY cp.content_mimetype'
+    frequency: "day"
+    cron: "* */1 * * *"
+    offset_in_mins: 120

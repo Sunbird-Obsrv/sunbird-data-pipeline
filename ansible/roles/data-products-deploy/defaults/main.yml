@@ -18,6 +18,7 @@ topic: "{{ env }}.telemetry.derived"
 learning_topic: "{{ env }}.learning.graph.events"
 analytics_metrics_topic: "{{ env }}.analytics_metrics"
 sink_topic: "{{ env }}.telemetry.sink"
+assess_topic: "{{ env }}.telemetry.assess"
 metrics_topic: "{{ env }}.telemetry.metrics"
 job_manager_tmp_dir: "transient-data"
 channel: dev-test
@@ -80,6 +81,8 @@ start_jobmanager:
 have_weekly_jobs: false
 
 video_stream_job_schedule: 10
+
+course_batch_status_updater_job_schedule: 60
 
 run_wfs_job:
   wfs:
@@ -185,7 +188,8 @@ analytics:
   home: /mount/data/analytics
   soft_path: /mount/data/analytics
   paths: ['/home/analytics/sbin', '/mount/data/analytics', '/mount/data/analytics/logs', '/mount/data/analytics/logs/services', '/mount/data/analytics/logs/data-products', '/mount/data/analytics/logs/api-service', '/mount/data/analytics/api', '/mount/data/analytics/tmp', '/mount/data/analytics/scripts/monitor-data', '/mount/data/analytics/scripts', '/mount/data/analytics/models' ]
-  scripts: ['model-config', 'replay-job', 'replay-updater', 'replay-utils', 'run-job', 'monitor-dp', 'generate-metrics', 'submit-job', 'start-jobmanager', 'run-dock-job','submit-script']
+  scripts: ['model-config', 'replay-job', 'replay-updater', 'replay-utils', 'run-job', 'monitor-dp', 'generate-metrics', 'submit-job', 'start-jobmanager', 'submit-script']
+  dockScripts: ['model-dock-config','run-dock-job']
 
 # artifact versions
 analytics_core_artifact_ver: "2.0"
@@ -230,3 +234,7 @@ analytics_ed_dataporducts_jar_artifact: "data-products-{{ analytics_ed_datapordu
 
 druid_report_postgres_db_name: druid
 druid_report_postgres_db_username: druid
+
+#Override this variable in production and point to druid rollup ingestion cluster 
+# Example: "http://$rollup_cluster_ip:8090"
+druid_rollup_cluster_ingestion_task_url: "http://{{groups['raw-overlord'][0]}}:8081" 

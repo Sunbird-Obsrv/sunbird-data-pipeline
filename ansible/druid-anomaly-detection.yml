@@ -1,0 +1,4 @@
+- hosts: spark
+  become: yes
+  roles:
+    - druid-anomaly-detection

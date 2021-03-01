@@ -15,8 +15,11 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
 
 
   // Kafka Topics Configurationval kafkaInputTopic: String = config.getString("kafka.input.topic")
-
+  // Parallelism configs
   val assessAggregatorParallelism: Int = config.getInt("task.assessaggregator.parallelism")
+  val downstreamOperatorsParallelism: Int = config.getInt("task.downstream.parallelism")
+  override val kafkaConsumerParallelism: Int = config.getInt("task.consumer.parallelism")
+
   val kafkaInputTopic: String = config.getString("kafka.input.topic")
   val kafkaFailedTopic: String = config.getString("kafka.failed.topic")
   val kafkaCertIssueTopic: String = config.getString("kafka.output.certissue.topic")

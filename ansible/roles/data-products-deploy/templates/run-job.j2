@@ -48,9 +48,11 @@ get_report_job_model_name(){
 		;;
 		"collection-reconciliation-job") echo 'org.sunbird.analytics.audit.CollectionReconciliationJob'
 		;;
+		"assessment-correction") echo 'org.sunbird.analytics.job.report.AssessmentCorrectionJob'
+        ;;
 		*) echo $1
 		;;
-	esac		
+	esac
 }
 
 if [ ! -z "$1" ]; then job_id=$(get_report_job_model_name $1); fi

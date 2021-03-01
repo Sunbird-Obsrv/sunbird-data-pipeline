@@ -131,6 +131,13 @@
   template: src={{ item }}.j2 dest={{ analytics.home }}/scripts/{{ item }}.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   with_items: "{{ analytics.scripts }}"
   tags: [ dataproducts, framework, ed-dataproducts ]
+  when: dockdataproducts is undefined
+
+- name: Copy Dock Scripts
+  template: src={{ item }}.j2 dest={{ analytics.home }}/scripts/{{ item }}.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  with_items: "{{ analytics.dockScripts }}"
+  tags: [ dataproducts, framework, ed-dataproducts ]
+  when: dockdataproducts is defined
 
 - name: Update model config
   template: src=model-config.j2 dest={{ analytics.home }}/scripts/model-config.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
@@ -138,6 +145,15 @@
     - dataproducts
     - update-config
     - ed-dataproducts
+  when: dockdataproducts is undefined
+
+- name: Update model dock config
+  template: src=model-dock-config.j2 dest={{ analytics.home }}/scripts/model-dock-config.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  tags:
+    - dataproducts
+    - update-config
+    - ed-dataproducts
+  when: dockdataproducts is defined
 
 - name: Copy submit-all-jobs ruby file
   template: src=submit-all-jobs.rb.j2 dest={{ analytics.home }}/scripts/submit-all-jobs.rb mode=755 owner={{ analytics_user }} group={{ analytics_group }}
@@ -196,6 +212,13 @@
     - default-jobs
     - spark-jobs
     - cronjobs
+
+- name: Create course-batch-status-updater cron job
+  cron: name="{{env}}-course-batch-status-updater" minute=*/{{ course_batch_status_updater_job_schedule }} job="{{ analytics.home }}/scripts/run-job.sh course-batch-status-updater"
+  tags:
+    - cronjobs
+    - default-jobs
+    - spark1-jobs
 
 - name: Create course-dashboard-metrics cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh course-dashboard-metrics"

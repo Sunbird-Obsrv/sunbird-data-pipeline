@@ -2,7 +2,7 @@
   "type": "index",
   "spec": {
     "dataSchema": {
-      "dataSource": "collection-summary",
+      "dataSource": "collection-summary-snapshot",
       "parser": {
         "type": "string",
         "parseSpec": {
@@ -49,6 +49,11 @@
                 "type": "root",
                 "name": "collection_name",
                 "expr": "collectionname"
+              },
+              {
+                "type": "root",
+                "name": "batch_name",
+                "expr": "batchname"
               },
               {
                 "type": "root",
@@ -124,6 +129,10 @@
               {
                 "type": "string",
                 "name": "collection_name"
+              },
+              {
+                "type": "string",
+                "name": "batch_name"
               },
               {
                 "type": "long",

@@ -1,0 +1,27 @@
+---
+
+- name: Copy the library to library path
+  copy:
+    src: /home/anand/Documents/code/ekstep/sunbird-source/sunbird-data-products/anomaly-detection/bin/anomaly_detection.tar.gz
+    dest: "{{ library_path }}"
+    force: yes
+  tags:
+    - common
+
+- name: Installing package
+  pip:
+    name: "{{library_path}}"
+    virtualenv: "{{ virtualenv_path }}"
+    virtualenv_python: "python3.8"
+  tags:
+    - common
+
+- name: copy query config to config.json
+  template: src="config.json.j2" dest="{{ virtualenv_path }}/config.json"
+  with_items: "{{ anomaly_detection_queries | list }}"
+
+- name: execute_anomaly_detection
+  shell: "source {{virtualenv_path}}/bin/activate && nohup anomaly_detection druid_anomaly_detection --config_file={{ anomaly_detection_job_config_file }} --data_dir={{ anomaly_detection_data_dir }} --druid_broker_host={{ sunbird_druid_broker_host }} --druid_broker_port=8082 &"
+  register: out
+  args:
+    executable: /bin/bash
