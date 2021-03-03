@@ -77,7 +77,7 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
 
   def getCustodianRootOrgId(): String = {
     val custRootOrgIdQuery = QueryBuilder.select("value").from(config.keySpace, config.systemSettingsTable)
-      .where(QueryBuilder.eq("id", "custodianRootOrgId")).and(QueryBuilder.eq("field", "custodianRootOrgId")).toString
+      .where(QueryBuilder.eq("id", "custodianRootOrgId")).toString
     val custRootOrgId = cassandraConnect.findOne(custRootOrgIdQuery)
     custRootOrgId.getString("value")
   }
