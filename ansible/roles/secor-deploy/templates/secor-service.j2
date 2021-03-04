@@ -29,7 +29,7 @@ function start() {
   fi
 
   cd /mount/$SECOR_NAME
-    nohup /usr/bin/java -Xms256M -Xmx1000M -ea -Duser.timezone=UTC -Dsecor_group=$SECOR_NAME -Dlog4j.configuration=log4j.properties -Dconfig=secor.partition.properties -cp secor-0.25-SNAPSHOT.jar:lib/* com.pinterest.secor.main.ConsumerMain > /mount/secor/logs/$SECOR_NAME-service.log 2>&1 &
+    nohup /usr/bin/java -Xms256M -Xmx1000M -ea -Duser.timezone=UTC -Dsecor_group=$SECOR_NAME -Dlog4j.configuration=log4j.properties -Dconfig=secor.partition.properties -cp secor-{{ secor.artifact_ver }}.jar:lib/* com.pinterest.secor.main.ConsumerMain > /mount/secor/logs/$SECOR_NAME-service.log 2>&1 &
   pid=$!
   sleep 1
 
