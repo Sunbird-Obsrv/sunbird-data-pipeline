@@ -1,0 +1,31 @@
+image:
+  prefix: {}
+  repository: "secor"
+  tag: 0.29
+  pullPolicy: IfNotPresent
+
+secor:
+  zookeeper:
+    quorum: "zookeeper:2181"
+    path: "/"
+  partition:
+    configFile: /opt/secor/config/secor.partition.properties
+    logConfigFile: /opt/secor/config/log4j.docker.properties
+    monitor:
+      logConfigFile: /opt/secor/config/log4j.docker-warn.properties
+    storage:
+      class: standard
+      size: 20Gi
+    jvm:
+      memory: 512m
+    resources:
+      requests:
+        cpu: 800m
+        memory: 768Mi
+ 
+
+exporter:
+  image:
+    repository: prom/statsd-exporter
+    tag: latest
+    pullPolicy: IfNotPresent

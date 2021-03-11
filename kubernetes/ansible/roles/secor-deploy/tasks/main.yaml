@@ -1,0 +1,10 @@
+- name: remove the job.batch
+  shell: kubectl delete statefulsets {{ item }} -n {{ secor_namespace }}
+  with_items:
+    - "{{ job_names_to_deploy.split(',')|list }}"
+  ignore_errors: yes
+
+- name: helm upgrade
+  shell: helm --debug upgrade --install {{ item }} {{ chart_path }} --set service_name="{{ secor_jobs['%s'|format(item)].service_name }}" --set base_path="{{ secor_jobs['%s'|format(item)].base_path }}" --set timestamp_key="{{ secor_jobs['%s'|format(item)].timestamp_key }}" --set fallback_timestamp_key="{{ secor_jobs['%s'|format(item)].fallback_timestamp_key }}" --set topic="{{ secor_jobs['%s'|format(item)].topic }}" --set kafka_broker_host="{{ secor_jobs['%s'|format(item)].kafka_broker_host }}" --set zookeeper_quorum="{{ secor_jobs['%s'|format(item)].zookeeper_quorum }}" --set max_file_size="{{ secor_jobs['%s'|format(item)].max_file_size }}" --set max_file_age="{{ secor_jobs['%s'|format(item)].max_file_age }}" --set partition_prefix_enabled="{{ secor_jobs['%s'|format(item)].partition_prefix_enabled }}" --set partition_prefix_key="{{ secor_jobs['%s'|format(item)].partition_prefix_key }}" --set partition_prefix_mapping="{{ secor_jobs['%s'|format(item)].partition_prefix_mapping }}" --set output_file_pattern="{{ secor_jobs['%s'|format(item)].output_file_pattern }}" --set message_channel_identifier="{{ secor_jobs['%s'|format(item)].message_channel_identifier }}" --set message_parser="{{ secor_jobs['%s'|format(item)].message_parser }}" -n {{ secor_namespace }}
+  with_items:
+    - "{{ job_names_to_deploy.split(',')|list }}"

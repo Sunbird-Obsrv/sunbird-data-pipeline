@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+# kind: StatefulSet
+kind: StatefulSet
+metadata:
+  # name: {{ template "secor.fullname" . }}
+  name: secor
+  labels:
+    # app: {{ template "secor.fullname" . }}
+    app: secor
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  serviceName: {{ template "secor.fullname" . }}
+  updateStrategy:
+    type: RollingUpdate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: secor
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        # app: {{ template "secor.fullname" . }}
+        app: secor
+        release: {{ .Release.Name }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9102"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: secor
+          # image: {{ .Values.image.prefix }}{{ .Values.image.repository }}:{{ .Values.image.tag }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          # command: [ "/bin/sh", "-c" ]
+          # args: ["sleep 1000000"]
+          env:
+            - name: "CONFIG_FILE"
+              value: "{{ .Values.secor.partition.configFile }}"
+            - name: "LOG4J_CONFIGURATION"
+              value: "{{ .Values.secor.partition.logConfigFile }}"
+            - name: "ZOOKEEPER_QUORUM"
+              value: "{{ .Values.secor.zookeeper.quorum }}"
+            - name: "ZOOKEEPER_PATH"
+              value: "{{ .Values.secor.zookeeper.path }}"
+            - name: "JVM_MEMORY"
+              value: "{{ .Values.secor.partition.jvm.memory }}"
+
+          volumeMounts:
+           - mountPath: /opt/secor/config
+             name: config
+           - name: "local-var"
+             mountPath: "/mnt/secor_data/message_logs/partition"
+          resources:
+{{ toYaml .Values.secor.partition.resources | indent 12 }}
+
+        - name: statsd
+          image: {{ .Values.exporter.image.repository }}:{{ .Values.exporter.image.tag }}
+          imagePullPolicy: {{ .Values.exporter.image.pullPolicy }}
+          ports:
+            - containerPort: 9102
+            - containerPort: 9125
+              protocol: UDP
+
+      volumes:
+       - configMap:
+           name: secor-config
+         name: config
+
+  volumeClaimTemplates:
+    - metadata:
+        name: local-var
+        labels:
+          # app: {{ template "secor.fullname" . }}
+          app: secor
+        annotations:
+          volume.beta.kubernetes.io/storage-class: "{{ .Values.secor.partition.storage.class }}"
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: "{{ .Values.secor.partition.storage.size }}"
