@@ -2,16 +2,14 @@ apiVersion: apps/v1
 # kind: StatefulSet
 kind: StatefulSet
 metadata:
-  # name: {{ template "secor.fullname" . }}
-  name: secor
+  name: {{ .Release.Name }}
   labels:
-    # app: {{ template "secor.fullname" . }}
     app: secor
     chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  serviceName: {{ template "secor.fullname" . }}
+  serviceName: secor
   updateStrategy:
     type: RollingUpdate
   replicas: 1
@@ -22,7 +20,6 @@ spec:
   template:
     metadata:
       labels:
-        # app: {{ template "secor.fullname" . }}
         app: secor
         release: {{ .Release.Name }}
       annotations:
@@ -31,7 +28,7 @@ spec:
         prometheus.io/path: "/metrics"
     spec:
       containers:
-        - name: secor
+        - name: {{ .Release.Name }}-secor
           # image: {{ .Values.image.prefix }}{{ .Values.image.repository }}:{{ .Values.image.tag }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -57,7 +54,7 @@ spec:
           resources:
 {{ toYaml .Values.secor.partition.resources | indent 12 }}
 
-        - name: statsd
+        - name: {{ .Release.Name }}-statsd
           image: {{ .Values.exporter.image.repository }}:{{ .Values.exporter.image.tag }}
           imagePullPolicy: {{ .Values.exporter.image.pullPolicy }}
           ports:
@@ -67,14 +64,13 @@ spec:
 
       volumes:
        - configMap:
-           name: secor-config
+           name: {{ .Release.Name }}-config
          name: config
 
   volumeClaimTemplates:
     - metadata:
         name: local-var
         labels:
-          # app: {{ template "secor.fullname" . }}
           app: secor
         annotations:
           volume.beta.kubernetes.io/storage-class: "{{ .Values.secor.partition.storage.class }}"

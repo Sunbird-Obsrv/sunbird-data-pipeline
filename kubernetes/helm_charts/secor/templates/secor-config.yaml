@@ -1,13 +1,15 @@
+{{- range $job_name, $job_config :=  .Values.secor_jobs }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  # name: {{ template "secor.fullname" . }}-config
-  name: secor-config
+  name: {{ template "secor.appConfigName" }}-config
+  namespace: {{ $.Values.secor_namespace }}
   labels:
-    # app: {{ template "secor.fullname" . }}-config
-    app: secor-config
-    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    app: {{ template "secor.appConfigName" }}-config
+    chart: {{ $.Chart.Name }}-{{ $.Chart.Version }}
+    release: {{ $.Release.Name }}
+    heritage: {{ $.Release.Service }}
 data:
-{{ (.Files.Glob "config/*.properties").AsConfig | indent 2 }}
+{{- $secor_job_name := .Release.Name }}
+{{- (tpl ($.Files.Glob "config/*.properties").AsConfig $) | indent 2 -}}
+{{- end }}

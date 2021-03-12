@@ -6,6 +6,10 @@ Expand the name of the chart.
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+{{- define "name" -}}
+{{- default .Release.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
@@ -29,4 +33,19 @@ Create chart name and version as used by the chart label.
 */}}
 {{- define "secor.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+App config names
+*/}}
+{{- define "secor.appConfigName" -}}
+{{- .Release.Name -}}
+{{- end -}}
+
+{{/*
+Selector labels
+*/}}
+{{- define "secor.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "secor.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}

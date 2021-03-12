@@ -1,7 +1,12 @@
 secor_namespace: "secor"
+# secor_image_tag: 0.29
+# secor_config_file: "/opt/secor/config/secor.partition.properties"
+# secor_log_config_file: "/opt/secor/config/log4j.docker.properties"
+# secor_monitor_config_file: "/opt/secor/config/log4j.docker-warn.properties"
+
 
 secor_jobs:
-  raw-telemetry-backup:
+  rawbackup:
     service_name: "raw_telemetry_backup"
     base_path: "raw_secor_helm"
     timestamp_key: "syncts"
