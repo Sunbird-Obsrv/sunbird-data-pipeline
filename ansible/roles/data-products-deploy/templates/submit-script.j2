@@ -48,6 +48,8 @@ get_report_job_model_name(){
         ;;
         "progress-exhaust") echo 'org.sunbird.analytics.exhaust.collection.ProgressExhaustJob'
         ;;
+        "cassandra-migration" echo 'org.sunbird.analytics.updater.CassandraMigratorJob'
+        ;;
         *) echo $1
         ;;
     esac        
