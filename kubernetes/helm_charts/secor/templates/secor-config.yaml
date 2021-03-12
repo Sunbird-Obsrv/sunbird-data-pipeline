@@ -10,6 +10,5 @@ metadata:
     release: {{ $.Release.Name }}
     heritage: {{ $.Release.Service }}
 data:
-{{- $secor_job_name := .Release.Name }}
 {{- (tpl ($.Files.Glob "config/*.properties").AsConfig $) | indent 2 -}}
 {{- end }}
