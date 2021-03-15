@@ -1,12 +1,14 @@
 secor_namespace: "secor"
-# secor_image_tag: 0.29
-# secor_config_file: "/opt/secor/config/secor.partition.properties"
-# secor_log_config_file: "/opt/secor/config/log4j.docker.properties"
-# secor_monitor_config_file: "/opt/secor/config/log4j.docker-warn.properties"
-
+image:
+  prefix: {}
+  repository: "secor"
+  tag: 0.29
+  pullPolicy: IfNotPresent
 
 secor_jobs:
   rawbackup:
+    replicas: 1
+    consumer_group: "local.telemetry.raw"
     service_name: "raw_telemetry_backup"
     base_path: "raw_secor_helm"
     timestamp_key: "syncts"
@@ -15,11 +17,11 @@ secor_jobs:
     kafka_broker_host: "{{ groups['processing-cluster-kafka']|join(',') }}"
     zookeeper_quorum: "{{ groups['processing-cluster-zookeepers']|join(':2182,')}}:2182 "
     max_file_size: 100000000
-    max_file_age: 300
+    max_file_age: 14400
     partition_prefix_enabled: "false"
     partition_prefix_key: ""
     partition_prefix_mapping: "{}"
     message_channel_identifier: ""
-    output_file_pattern: "'{'partition'}'-'{'currentTimestamp'}'.json"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
     

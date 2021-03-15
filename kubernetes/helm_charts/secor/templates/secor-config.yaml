@@ -2,13 +2,20 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "secor.appConfigName" }}-config
+  name: {{ $.Release.Name }}-config
   namespace: {{ $.Values.secor_namespace }}
   labels:
-    app: {{ template "secor.appConfigName" }}-config
+    app: {{ $.Release.Name }}-config
     chart: {{ $.Chart.Name }}-{{ $.Chart.Version }}
     release: {{ $.Release.Name }}
     heritage: {{ $.Release.Service }}
 data:
-{{- (tpl ($.Files.Glob "config/*.properties").AsConfig $) | indent 2 -}}
+  secor.properties: |+
+{{- (tpl ($.Files.Get "config/secor.properties") $) | nindent 4 }}
+  secor.common.properties: |+
+{{- (tpl ($.Files.Get "config/secor.common.properties") $) | nindent 4 }}
+  secor.azure.properties: |+
+{{- (tpl ($.Files.Get "config/secor.azure.properties") $) | nindent 4 }}
+  secor.partition.properties: |+
+{{- (tpl ($.Files.Get "config/secor.partition.properties") $) | nindent 4 }}
 {{- end }}

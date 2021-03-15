@@ -39,7 +39,7 @@ Create chart name and version as used by the chart label.
 App config names
 */}}
 {{- define "secor.appConfigName" -}}
-{{- .Release.Name -}}
+{{- $.Release.Name -}}
 {{- end -}}
 
 {{/*
