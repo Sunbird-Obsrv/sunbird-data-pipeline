@@ -8,7 +8,7 @@ image:
 secor_jobs:
   rawbackup:
     replicas: 1
-    consumer_group: "local.telemetry.raw"
+    consumer_group: "{env}.telemetry.raw"
     service_name: "raw_telemetry_backup"
     base_path: "raw_secor_helm"
     timestamp_key: "syncts"
