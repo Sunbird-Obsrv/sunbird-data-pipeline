@@ -46,8 +46,8 @@ spec:
              name: secor-config
            - mountPath: /opt/secor/config/logs
              name: secor-log-config
-           - name: "local-var"
-             mountPath: "/mnt/secor_data/message_logs/partition"
+           - name: "data-path"
+             mountPath: /mnt/{{ dig $.Release.Name "service_name" "" $.Values.secor_jobs }}/message_logs/partition
           resources:
 {{ toYaml .Values.secor.partition.resources | indent 12 }}
 
@@ -61,7 +61,7 @@ spec:
 
   volumeClaimTemplates:
     - metadata:
-        name: local-var
+        name: data-path
         labels:
           app: secor
         annotations:

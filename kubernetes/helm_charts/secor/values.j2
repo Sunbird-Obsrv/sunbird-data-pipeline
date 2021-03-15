@@ -32,9 +32,6 @@ image:
   pullPolicy: {{ image.pullPolicy }}
 
 secor:
-  zookeeper:
-    quorum: "zookeeper:2181"
-    path: "/"
   partition:
     configFile: /opt/secor/config/secor.partition.properties
     logConfigFile: /opt/secor/config/log4j.docker.properties
