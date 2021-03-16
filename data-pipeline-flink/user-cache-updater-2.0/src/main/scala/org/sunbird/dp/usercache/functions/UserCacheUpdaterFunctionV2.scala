@@ -25,7 +25,7 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
   private lazy val headers = Map("Authorization" -> String.format("%s %s","Bearer",config.userReadApiToken))
 
   override def metricsList(): List[String] = {
-    List(config.dbReadSuccessCount, config.dbReadMissCount, config.userCacheHit, config.skipCount, config.successCount, config.totalEventsCount, config.apiReadMissCount, config.apiReadSuccessCount)
+    List(config.userCacheHit, config.skipCount, config.successCount, config.totalEventsCount, config.apiReadMissCount, config.apiReadSuccessCount)
   }
 
   override def open(parameters: Configuration): Unit = {
