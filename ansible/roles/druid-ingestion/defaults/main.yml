@@ -4,6 +4,6 @@ druid_home: /home/druid
 desktop_pdata_id: "{{env}}.sunbird.desktop"
 
 ingestion_spec_configs:
-  telemetry_index_kafka:
+  raw_telemetry_events:
     minTaskMemory: 200m
     maxTaskMemory: 400m
