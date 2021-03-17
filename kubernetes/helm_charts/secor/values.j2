@@ -3,7 +3,7 @@ azure_secret: "{{ sunbird_private_storage_account_key }}"
 azure_container_name: "telemetry-data-store"
 
 namespace: {{ secor_namespace }}
-storageClass: {{ secor_storage_class | default '' }}
+storageClass: {{ secor_storage_class | default('') }}
 
 secor_jobs:
 {% for item in secor_job_list %}
@@ -25,10 +25,10 @@ secor_jobs:
     output_file_pattern: "{{ secor_jobs['%s'|format(item)].output_file_pattern }}"
     message_parser: "{{ secor_jobs['%s'|format(item)].message_parser }}"
     storage:
-      size: "{{ secor_jobs['%s'|format(item)].storage_size }}"
+      size: "{{ secor_jobs['%s'|format(item)].storage.size }}"
     requests:
-      cpu: "{{ secor_jobs['%s'|format(item)].process_cpu }}"
-      memory: "{{ secor_jobs['%s'|format(item)].process_memory }}"
+      cpu: "{{ secor_jobs['%s'|format(item)].requests.cpu }}"
+      memory: "{{ secor_jobs['%s'|format(item)].requests.memory }}"
 {% endfor %}
 
 image:
@@ -36,23 +36,6 @@ image:
   repository: {{ image.repository }}
   tag: {{ image.tag }}
   pullPolicy: {{ image.pullPolicy }}
-
-secor:
-  partition:
-    configFile: /opt/secor/config/secor.partition.properties
-    logConfigFile: /opt/secor/config/log4j.docker.properties
-    monitor:
-      logConfigFile: /opt/secor/config/log4j.docker-warn.properties
-    storage:
-      class: standard
-      size: 20Gi
-    jvm:
-      memory: 512m
-    resources:
-      requests:
-        cpu: 800m
-        memory: 768Mi
- 
 
 exporter:
   image:

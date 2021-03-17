@@ -6,11 +6,11 @@ image:
   pullPolicy: IfNotPresent
 
 secor_jobs:
-  rawbackup:
+  raw-telemetry-backup:
     replicas: 1
     consumer_group: "{{env}}.telemetry.raw"
     service_name: "raw_telemetry_backup"
-    base_path: "raw_secor_helm"
+    base_path: "raw"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
     topic: "{{env}}.telemetry.raw"
