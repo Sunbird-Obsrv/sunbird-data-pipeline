@@ -71,27 +71,36 @@ object UserMetadataUpdater {
 
       //Location and School Information
       val locationInfo = response.userLocations
-      locationInfo.forEach(location => {
-        location.getOrDefault("type", "").asInstanceOf[String].toLowerCase match {
-          case config.stateKey => userCacheData.put(config.stateKey, location.getOrDefault("name", "").asInstanceOf[String])
-          case config.districtKey => userCacheData.put(config.districtKey, location.getOrDefault("name", "").asInstanceOf[String])
-          case config.blockKey => userCacheData.put(config.blockKey, location.getOrDefault("name", "").asInstanceOf[String])
-          case config.clusterKey => userCacheData.put(config.clusterKey, location.getOrDefault("name", "").asInstanceOf[String])
-          case config.schoolKey => userCacheData.put(config.schoolNameKey, location.getOrDefault("name", "").asInstanceOf[String])
-            userCacheData.put(config.schoolUdiseCodeKey, location.getOrDefault("code", "").asInstanceOf[String])
-          case _ => //Do Nothing
-        }
-      })
+      if(null != locationInfo && !locationInfo.isEmpty) {
+        locationInfo.forEach(location => {
+          location.getOrDefault("type", "").asInstanceOf[String].toLowerCase match {
+            case config.stateKey => userCacheData.put(config.stateKey, location.getOrDefault("name", "").asInstanceOf[String])
+            case config.districtKey => userCacheData.put(config.districtKey, location.getOrDefault("name", "").asInstanceOf[String])
+            case config.blockKey => userCacheData.put(config.blockKey, location.getOrDefault("name", "").asInstanceOf[String])
+            case config.clusterKey => userCacheData.put(config.clusterKey, location.getOrDefault("name", "").asInstanceOf[String])
+            case config.schoolKey => userCacheData.put(config.schoolNameKey, location.getOrDefault("name", "").asInstanceOf[String])
+              userCacheData.put(config.schoolUdiseCodeKey, location.getOrDefault("code", "").asInstanceOf[String])
+            case _ => //Do Nothing
+          }
+        })
+      }
+
 
       //Flatten User Type and subType
       val profileUserType = response.profileUserType
-      userCacheData.+=(config.userTypeKey -> profileUserType.getOrDefault(config.userTypeKey, ""),
-        config.userSubtypeKey -> profileUserType.getOrDefault(config.userSubtypeKey, ""))
+      if (null != profileUserType && !profileUserType.isEmpty) {
+        userCacheData.+=(config.userTypeKey -> profileUserType.getOrDefault(config.userTypeKey, ""),
+          config.userSubtypeKey -> profileUserType.getOrDefault(config.userSubtypeKey, ""))
+      }
 
       //Personal information
       userCacheData.+=(config.firstName -> response.firstName, config.lastName -> response.lastName,
         config.language -> response.language,
-        config.orgnameKey -> response.rootOrg.orgName, config.rootOrgId -> response.rootOrgId, config.userId -> response.userId)
+        config.orgnameKey -> response.rootOrg.orgName,
+        config.rootOrgId -> response.rootOrgId,
+        config.phone -> response.encphone,
+        config.email -> response.encemail,
+        config.userId -> response.userId)
 
     } else {
       logger.info(s"User Read API does not have details for user: ${userId}")
