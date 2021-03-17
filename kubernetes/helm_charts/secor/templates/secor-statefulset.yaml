@@ -35,11 +35,9 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: "CONFIG_FILE"
-              value: "{{ .Values.secor.partition.configFile }}"
+              value: "/opt/secor/config/secor.partition.properties"
             - name: "LOG4J_CONFIGURATION"
-              value: "{{ .Values.secor.partition.logConfigFile }}"
-            - name: "JVM_MEMORY"
-              value: "{{ .Values.secor.partition.jvm.memory }}"
+              value: "/opt/secor/config/log4j.docker.properties"
 
           volumeMounts:
            - mountPath: /opt/secor/config
@@ -49,7 +47,8 @@ spec:
            - name: "data-path"
              mountPath: /mnt/{{ dig $.Release.Name "service_name" "" $.Values.secor_jobs }}/message_logs/partition
           resources:
-{{ toYaml .Values.secor.partition.resources | indent 12 }}
+            cpu: {{ dig $.Release.Name "requests" "cpu" "500m" $.Values.secor_jobs }}
+            memory: {{ dig $.Release.Name "requests" "memory" "500Mi" $.Values.secor_jobs }}
 
       volumes:
        - configMap:
@@ -65,60 +64,11 @@ spec:
         labels:
           app: secor
         annotations:
-          volume.beta.kubernetes.io/storage-class: "{{ .Values.secor.partition.storage.class }}"
+          volume.beta.kubernetes.io/storage-class: "{{ .Values.secor_persistent_volume_storage_class }}"
       spec:
         accessModes:
           - ReadWriteOnce
         resources:
           requests:
-            storage: "{{ .Values.secor.partition.storage.size }}"
+            storage: {{ dig $.Release.Name "storage" "size" "10Gi" $.Values.secor_jobs }}
 
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: {{ .Release.Name }}-statsd-exporter
-  namespace: {{ .Values.secor_namespace }}
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: secor
-      component: {{ .Release.Name }}-statsd-exporter
-  template:
-    metadata:
-      labels:
-        app: secor
-        component: {{ .Release.Name }}-statsd-exporter
-    spec:
-      containers:
-      - name: {{ .Release.Name }}-statsd-exporter
-        image: {{ .Values.exporter.image.repository }}:{{ .Values.exporter.image.tag }}
-        imagePullPolicy: {{ .Values.exporter.image.pullPolicy }}
-        ports:
-        - containerPort: 9102
-        - containerPort: 9125
-          protocol: UDP
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ .Release.Name }}-statsd-exporter-svc
-  namespace: {{ .Values.secor_namespace }}
-  labels:
-    app: secor
-    component: {{ .Release.Name }}-statsd-exporter
-spec:
-  ports:
-  - name: udp
-    port: 9125 #port to push metrics to
-    protocol: UDP
-    targetPort: 9125
-  - name: tcp
-    port: 9102 #port to fetch metrics from
-    protocol: TCP
-    targetPort: 9102
-  selector:
-    app: secor
-    component: {{ .Release.Name }}-statsd-exporter

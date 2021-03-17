@@ -3,6 +3,7 @@ azure_secret: "{{ sunbird_private_storage_account_key }}"
 azure_container_name: "telemetry-data-store"
 
 namespace: {{ secor_namespace }}
+secor_persistent_volume_storage_class: {{ secor_persistent_volume_storage_class }}
 
 secor_jobs:
 {% for item in secor_job_list %}
@@ -23,6 +24,11 @@ secor_jobs:
     message_channel_identifier: "{{ secor_jobs['%s'|format(item)].message_channel_identifier }}"
     output_file_pattern: "{{ secor_jobs['%s'|format(item)].output_file_pattern }}"
     message_parser: "{{ secor_jobs['%s'|format(item)].message_parser }}"
+    storage:
+      size: "{{ secor_jobs['%s'|format(item)].storage_size }}"
+    requests:
+      cpu: "{{ secor_jobs['%s'|format(item)].process_cpu }}"
+      memory: "{{ secor_jobs['%s'|format(item)].process_memory }}"
 {% endfor %}
 
 image:
