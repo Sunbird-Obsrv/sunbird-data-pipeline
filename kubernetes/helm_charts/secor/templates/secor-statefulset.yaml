@@ -77,7 +77,7 @@ spec:
         labels:
           app: secor
         annotations:
-          volume.beta.kubernetes.io/storage-class: "{{- .Values.secor_storage_class }}"
+          volume.beta.kubernetes.io/storage-class: "{{- .Values.storageClass }}"
       spec:
         accessModes:
           - ReadWriteOnce
