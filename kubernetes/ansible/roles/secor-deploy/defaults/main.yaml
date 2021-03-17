@@ -5,8 +5,6 @@ image:
   tag: 0.29
   pullPolicy: IfNotPresent
 
-secor_persistent_volume_storage_class: "managed-premium"
-
 secor_jobs:
   rawbackup:
     replicas: 1
