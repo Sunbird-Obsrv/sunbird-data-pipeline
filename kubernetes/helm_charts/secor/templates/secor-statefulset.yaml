@@ -1,0 +1,74 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Values.secor_namespace }}
+  labels:
+    app: secor
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  serviceName: secor
+  updateStrategy:
+    type: RollingUpdate
+  replicas: {{ dig $.Release.Name "replicas" "" $.Values.secor_jobs }}
+  selector:
+    matchLabels:
+      app: secor
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: secor
+        release: {{ .Release.Name }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9102"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-secor
+          image: {{ .Values.image.prefix | default "" }}{{ .Values.image.repository }}:{{ .Values.image.tag }}
+          # image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: "CONFIG_FILE"
+              value: "/opt/secor/config/secor.partition.properties"
+            - name: "LOG4J_CONFIGURATION"
+              value: "/opt/secor/config/log4j.docker.properties"
+
+          volumeMounts:
+           - mountPath: /opt/secor/config
+             name: secor-config
+           - mountPath: /opt/secor/config/logs
+             name: secor-log-config
+           - name: "data-path"
+             mountPath: /mnt/{{ dig $.Release.Name "service_name" "" $.Values.secor_jobs }}/message_logs/partition
+          resources:
+            cpu: {{ dig $.Release.Name "requests" "cpu" "500m" $.Values.secor_jobs }}
+            memory: {{ dig $.Release.Name "requests" "memory" "500Mi" $.Values.secor_jobs }}
+
+      volumes:
+       - configMap:
+           name: {{ .Release.Name }}-config
+         name: secor-config
+       - configMap:
+           name: secor-log-config
+         name: secor-log-config
+
+  volumeClaimTemplates:
+    - metadata:
+        name: data-path
+        labels:
+          app: secor
+        annotations:
+          volume.beta.kubernetes.io/storage-class: "{{- .Values.secor_storage_class }}"
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ dig $.Release.Name "storage" "size" "10Gi" $.Values.secor_jobs }}
+

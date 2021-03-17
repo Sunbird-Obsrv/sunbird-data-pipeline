@@ -1,0 +1,32 @@
+secor_namespace: "secor"
+image:
+  prefix: {}
+  repository: "secor"
+  tag: 0.29
+  pullPolicy: IfNotPresent
+
+secor_jobs:
+  rawbackup:
+    replicas: 1
+    consumer_group: "{{env}}.telemetry.raw"
+    service_name: "raw_telemetry_backup"
+    base_path: "raw_secor_helm"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{env}}.telemetry.raw"
+    kafka_broker_host: "{{ groups['processing-cluster-kafka']|join(',') }}"
+    zookeeper_quorum: "{{ groups['processing-cluster-zookeepers']|join(':2182,')}}:2182 "
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    message_channel_identifier: ""
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    

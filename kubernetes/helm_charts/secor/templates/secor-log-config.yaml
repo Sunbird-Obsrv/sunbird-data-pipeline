@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: secor-log-config
+  namespace: {{ $.Values.secor_namespace }}
+  labels:
+    app: secor-log-config
+    chart: {{ $.Chart.Name }}-{{ $.Chart.Version }}
+    release: secor-log-config
+    heritage: secor-log-config
+data:
+{{ ($.Files.Glob "config/log4j*.properties").AsConfig | nindent 4 }}
