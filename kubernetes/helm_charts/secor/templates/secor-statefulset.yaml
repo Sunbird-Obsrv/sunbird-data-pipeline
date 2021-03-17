@@ -28,6 +28,17 @@ spec:
         prometheus.io/port: "9102"
         prometheus.io/path: "/metrics"
     spec:
+      initContainers:
+      - name: change-pv-dir-ownership
+        image: alpine:3
+        command:
+        - chown
+        - -R
+        - 9999:9999
+        - /mnt/data
+        volumeMounts:
+        - name: data-path
+          mountPath: /mnt/data
       containers:
         - name: {{ .Release.Name }}-secor
           image: {{ .Values.image.prefix | default "" }}{{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -45,10 +56,12 @@ spec:
            - mountPath: /opt/secor/config/logs
              name: secor-log-config
            - name: "data-path"
-             mountPath: /mnt/{{ dig $.Release.Name "service_name" "" $.Values.secor_jobs }}/message_logs/partition
+             mountPath: /mnt/data
           resources:
             cpu: {{ dig $.Release.Name "requests" "cpu" "500m" $.Values.secor_jobs }}
             memory: {{ dig $.Release.Name "requests" "memory" "500Mi" $.Values.secor_jobs }}
+          securityContext:
+            runAsUser: 9999
 
       volumes:
        - configMap:
