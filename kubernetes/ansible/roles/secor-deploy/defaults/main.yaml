@@ -1,4 +1,6 @@
 secor_namespace: "secor"
+image_tag: 0.29
+
 image:
   prefix: {}
   repository: "secor"
