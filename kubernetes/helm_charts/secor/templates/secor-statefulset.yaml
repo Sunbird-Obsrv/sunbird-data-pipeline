@@ -28,6 +28,8 @@ spec:
         prometheus.io/port: "9102"
         prometheus.io/path: "/metrics"
     spec:
+      imagePullSecrets:
+      - name: {{ .Values.imagepullsecrets }}
       initContainers:
       - name: change-pv-dir-ownership
         image: alpine:3

@@ -1,11 +1,15 @@
 secor_namespace: "secor"
-image_tag: "secor-0.29_cf79409_7018"
+image_prefix: {}
+image_repository: "secor"
+image_tag: "0.29"
+image_pullPolicy: IfNotPresent
+imagepullsecrets: loadtestregistrysecret
 
-image:
-  prefix: {}
-  repository: "secor"
-  tag: "secor-0.29_cf79409_7018"
-  pullPolicy: IfNotPresent
+# image:
+#   prefix: {}
+#   repository: "secor"
+#   tag: "secor-0.29_cf79409_7018"
+#   pullPolicy: IfNotPresent
 
 secor_jobs:
   raw-telemetry-backup:

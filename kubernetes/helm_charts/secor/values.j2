@@ -4,6 +4,7 @@ azure_container_name: "telemetry-data-store"
 
 namespace: {{ secor_namespace }}
 storageClass: {{ secor_storage_class | default('default') }}
+imagepullsecrets: {{ imagepullsecrets }}
 
 secor_jobs:
 {% for item in secor_job_list %}
@@ -32,10 +33,10 @@ secor_jobs:
 {% endfor %}
 
 image:
-  prefix: {{ image.prefix }}
-  repository: {{ image.repository }}
-  tag: {{ image.tag }}
-  pullPolicy: {{ image.pullPolicy }}
+  prefix: {{ image_prefix }}
+  repository: {{ image_repository }}
+  tag: {{ image_tag }}
+  pullPolicy: {{ image_pullPolicy }}
 
 exporter:
   image:
