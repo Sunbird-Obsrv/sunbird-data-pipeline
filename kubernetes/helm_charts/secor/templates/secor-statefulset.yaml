@@ -72,16 +72,16 @@ spec:
            name: secor-log-config
          name: secor-log-config
 
-  volumeClaimTemplates:
-    - metadata:
-        name: data-path
-        labels:
-          app: secor
-      spec:
-        storageClassName: "{{- .Values.storageClass }}"
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: {{ get (get (get $.Values.secor_jobs $.Release.Name) "storage") "size" }}
+  # volumeClaimTemplates:
+  #   - metadata:
+  #       name: data-path
+  #       labels:
+  #         app: secor
+  #     spec:
+  #       storageClassName: "{{- .Values.storageClass }}"
+  #       accessModes:
+  #         - ReadWriteOnce
+  #       resources:
+  #         requests:
+  #           storage: {{ get (get (get $.Values.secor_jobs $.Release.Name) "storage") "size" }}
 

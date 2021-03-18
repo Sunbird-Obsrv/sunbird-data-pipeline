@@ -1,10 +1,10 @@
 secor_namespace: "secor"
-image_tag: 0.29
+image_tag: "secor-0.29_cf79409_7018"
 
 image:
   prefix: {}
   repository: "secor"
-  tag: 0.29
+  tag: "{{ image_tag }}"
   pullPolicy: IfNotPresent
 
 secor_jobs:
