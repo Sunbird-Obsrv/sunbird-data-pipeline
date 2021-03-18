@@ -29,7 +29,7 @@ spec:
         prometheus.io/path: "/metrics"
     spec:
       imagePullSecrets:
-      - name: {{ .Values.imagepullsecrets }}
+      - name: loadtestregistrysecret
       initContainers:
       - name: change-pv-dir-ownership
         image: alpine:3
