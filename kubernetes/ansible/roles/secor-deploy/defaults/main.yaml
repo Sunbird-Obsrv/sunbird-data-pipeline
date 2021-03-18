@@ -4,7 +4,7 @@ image_tag: "secor-0.29_cf79409_7018"
 image:
   prefix: {}
   repository: "secor"
-  tag: "{{ image_tag }}"
+  tag: "secor-0.29_cf79409_7018"
   pullPolicy: IfNotPresent
 
 secor_jobs:
