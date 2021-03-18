@@ -71,6 +71,8 @@ spec:
        - configMap:
            name: secor-log-config
          name: secor-log-config
+       - name: data-path
+         emptyDir: {}   
 
   # volumeClaimTemplates:
   #   - metadata:
