@@ -1,4 +1,4 @@
-secor_namespace: "secor-testing"
+secor_namespace: "secor"
 image_prefix: {}
 image_repository: "secor"
 image_tag: "0.29"
