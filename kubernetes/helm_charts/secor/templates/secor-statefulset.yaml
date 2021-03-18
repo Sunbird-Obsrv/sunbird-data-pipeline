@@ -58,8 +58,9 @@ spec:
            - name: "data-path"
              mountPath: /mnt/data
           resources:
-            cpu: {{ get (get (get $.Values.secor_jobs $.Release.Name) "requests") "cpu" }}
-            memory: {{ get (get (get $.Values.secor_jobs $.Release.Name) "requests") "memory"}}
+            requests:
+              cpu: {{ get (get (get $.Values.secor_jobs $.Release.Name) "requests") "cpu" }}
+              memory: {{ get (get (get $.Values.secor_jobs $.Release.Name) "requests") "memory"}}
           securityContext:
             runAsUser: 9999
 
