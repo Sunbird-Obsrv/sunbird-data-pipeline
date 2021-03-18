@@ -77,8 +77,8 @@ spec:
         name: data-path
         labels:
           app: secor
-        annotations:
-          volume.beta.kubernetes.io/storage-class: "{{- .Values.storageClass }}"
+        # annotations:
+        #   volume.beta.kubernetes.io/storage-class: "{{- .Values.storageClass }}"
       spec:
         accessModes:
           - ReadWriteOnce
