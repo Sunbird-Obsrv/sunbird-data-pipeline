@@ -13,7 +13,7 @@ spec:
   serviceName: secor
   updateStrategy:
     type: RollingUpdate
-  replicas: {{ dig $.Release.Name "replicas" "" $.Values.secor_jobs }}
+  replicas: {{ get (get $.Values.secor_jobs $.Release.Name) "replicas" }}
   selector:
     matchLabels:
       app: secor
@@ -58,8 +58,8 @@ spec:
            - name: "data-path"
              mountPath: /mnt/data
           resources:
-            cpu: {{ dig $.Release.Name "requests" "cpu" "500m" $.Values.secor_jobs }}
-            memory: {{ dig $.Release.Name "requests" "memory" "500Mi" $.Values.secor_jobs }}
+            cpu: {{ get (get (get $.Values.secor_jobs $.Release.Name) "requests") "cpu" }}
+            memory: {{ get (get (get $.Values.secor_jobs $.Release.Name) "requests") "memory"}}
           securityContext:
             runAsUser: 9999
 
@@ -83,5 +83,5 @@ spec:
           - ReadWriteOnce
         resources:
           requests:
-            storage: {{ dig $.Release.Name "storage" "size" "10Gi" $.Values.secor_jobs }}
+            storage: {{ get (get (get $.Values.secor_jobs $.Release.Name) "storage") "size" }}
 
