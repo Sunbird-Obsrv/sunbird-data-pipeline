@@ -73,17 +73,12 @@ object UserMetadataUpdater {
       if(null != locationInfo && !locationInfo.isEmpty) {
         locationInfo.forEach(location => {
           location.getOrDefault("type", "").asInstanceOf[String].toLowerCase match {
-            case config.stateKey => userCacheData.put(config.stateKey, location.getOrDefault("name", "").asInstanceOf[String])
-            case config.districtKey => userCacheData.put(config.districtKey, location.getOrDefault("name", "").asInstanceOf[String])
-            case config.blockKey => userCacheData.put(config.blockKey, location.getOrDefault("name", "").asInstanceOf[String])
-            case config.clusterKey => userCacheData.put(config.clusterKey, location.getOrDefault("name", "").asInstanceOf[String])
-            case config.schoolKey => userCacheData.put(config.schoolNameKey, location.getOrDefault("name", "").asInstanceOf[String])
+          case config.schoolKey => userCacheData.put(config.schoolNameKey, location.getOrDefault("name", "").asInstanceOf[String])
               userCacheData.put(config.schoolUdiseCodeKey, location.getOrDefault("code", "").asInstanceOf[String])
-            case _ => //Do Nothing
+          case _ => userCacheData.put(location.getOrDefault("type", "").asInstanceOf[String], location.getOrDefault("name", "").asInstanceOf[String])
           }
         })
       }
-
 
       //Flatten User Type and subType
       val profileUserType = response.profileUserType
