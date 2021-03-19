@@ -12,7 +12,7 @@ imagepullsecrets: loadtestregistrysecret
 
 secor_jobs:
   raw-telemetry-backup:
-    replicas: 1
+    replicas: 2
     consumer_group: "{{env}}.telemetry.raw"
     service_name: "raw_telemetry_backup"
     base_path: "raw"
