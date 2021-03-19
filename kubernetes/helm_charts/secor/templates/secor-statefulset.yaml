@@ -31,18 +31,14 @@ spec:
       initContainers:
       - name: change-pv-dir-ownership
         image: alpine:3
-        command:
-        - chown
-        - -R
-        - 9999:9999
-        - /mnt/data
+        command: ["/bin/sh", "-c"]
+        args: ["chown -R 9999:9999 /mnt/data"]
         volumeMounts:
         - name: data-path
           mountPath: /mnt/data
       containers:
         - name: {{ .Release.Name }}-secor
           image: {{ .Values.image.prefix | default "" }}{{ .Values.image.repository }}:{{ .Values.image.tag }}
-          # image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: "CONFIG_FILE"
@@ -53,23 +49,19 @@ spec:
           volumeMounts:
            - mountPath: /opt/secor/config
              name: secor-config
-           - mountPath: /opt/secor/config/logs
-             name: secor-log-config
            - name: "data-path"
              mountPath: /mnt/data
           resources:
-            cpu: {{ get (get (get $.Values.secor_jobs $.Release.Name) "requests") "cpu" }}
-            memory: {{ get (get (get $.Values.secor_jobs $.Release.Name) "requests") "memory"}}
+            requests:
+              cpu: {{ get (get (get $.Values.secor_jobs $.Release.Name) "requests") "cpu" }}
+              memory: {{ get (get (get $.Values.secor_jobs $.Release.Name) "requests") "memory"}}
           securityContext:
             runAsUser: 9999
 
       volumes:
-       - configMap:
-           name: {{ .Release.Name }}-config
-         name: secor-config
-       - configMap:
-           name: secor-log-config
-         name: secor-log-config
+        - configMap:
+            name: {{ .Release.Name }}-config
+          name: secor-config
 
   volumeClaimTemplates:
     - metadata:
