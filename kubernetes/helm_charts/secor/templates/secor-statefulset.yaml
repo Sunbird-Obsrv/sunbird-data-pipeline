@@ -43,7 +43,7 @@ spec:
           mountPath: /mnt/data
       containers:
         - name: {{ .Release.Name }}-secor
-          image: {{ .Values.image.prefix | default "" }}{{ .Values.image.repository }}:{{ .Values.image.tag }}
+          image: {{ .Values.image.prefix | default "" }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
           # image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:

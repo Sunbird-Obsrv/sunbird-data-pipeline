@@ -33,7 +33,7 @@ secor_jobs:
 {% endfor %}
 
 image:
-  prefix: {{ image_prefix }}
+  prefix: {{ dockerhub }}
   repository: {{ image_repository }}
   tag: {{ image_tag }}
   pullPolicy: {{ image_pullPolicy }}
