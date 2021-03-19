@@ -18,7 +18,7 @@ secor_jobs:
     base_path: "raw"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
-    topic: "{{env}}.telemetry.raw"
+    topic: "{{env}}.telemetry.raw.tmp"
     kafka_broker_host: "{{ groups['processing-cluster-kafka']|join(',') }}"
     zookeeper_quorum: "{{ groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
     max_file_size: 100000000
