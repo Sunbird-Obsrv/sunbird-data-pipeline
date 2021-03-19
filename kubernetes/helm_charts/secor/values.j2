@@ -9,6 +9,7 @@ imagepullsecrets: {{ imagepullsecrets }}
 secor_jobs:
 {% for item in secor_job_list %}
   {{ item }}:
+    replicas: "{{ secor_jobs['%s'|format(item)].replicas }}"
     consumer_group: "{{ secor_jobs['%s'|format(item)].consumer_group }}"
     service_name: "{{ secor_jobs['%s'|format(item)].service_name }}"
     base_path: "{{ secor_jobs['%s'|format(item)].base_path }}"

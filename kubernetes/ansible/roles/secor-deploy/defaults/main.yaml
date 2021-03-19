@@ -2,7 +2,7 @@ secor_namespace: "secor"
 image_repository: "secor"
 image_tag: "0.29"
 image_pullPolicy: IfNotPresent
-imagepullsecrets: loadtestregistrysecret
+imagepullsecrets: sunbird-registry-secret
 
 # image:
 #   prefix: {}
