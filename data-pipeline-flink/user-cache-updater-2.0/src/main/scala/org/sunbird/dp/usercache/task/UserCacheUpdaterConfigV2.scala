@@ -70,5 +70,4 @@ class UserCacheUpdaterConfigV2(override val config: Config) extends BaseJobConfi
 
   //User Read API
   val userReadApiUrl = config.getString("user-read.api.url")
-  val userReadApiToken = config.getString("user-read.api.token")
 }

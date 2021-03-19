@@ -22,7 +22,6 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
   private var dataCache: DataCache = _
 
   private var restUtil: RestUtil = _
-  private lazy val headers = Map("Authorization" -> String.format("%s %s","Bearer",config.userReadApiToken))
 
   override def metricsList(): List[String] = {
     List(config.userCacheHit, config.skipCount, config.successCount, config.totalEventsCount, config.apiReadMissCount, config.apiReadSuccessCount)
@@ -48,7 +47,7 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
         Option(event.getState).map(name => {
           val userData: mutable.Map[String, AnyRef] = name.toUpperCase match {
             case "CREATE" | "CREATED" | "UPDATE" | "UPDATED" => {
-              UserMetadataUpdater.execute(id, event, metrics, config, dataCache, headers, restUtil)
+              UserMetadataUpdater.execute(id, event, metrics, config, dataCache, restUtil)
             }
             case _ => {
               logger.info(s"Invalid event state name either it should be(Create/Created/Update/Updated) but found $name for ${event.mid()}")
@@ -70,6 +69,7 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
         ex.printStackTrace()
         logger.info(s"Processing event for user: ${userId} having mid: ${event.mid()}")
         logger.info("Event throwing exception: ", JSONUtil.serialize(event))
+        throw ex
       }
     }
   }

@@ -22,12 +22,11 @@ object UserMetadataUpdater {
 
   val logger = LoggerFactory.getLogger("UserMetadataUpdater")
 
-  def execute(userId: String, event: Event, metrics: Metrics, config: UserCacheUpdaterConfigV2, dataCache: DataCache,
-              headers: Map[String, String], restUtil: RestUtil): mutable.Map[String, AnyRef] = {
+  def execute(userId: String, event: Event, metrics: Metrics, config: UserCacheUpdaterConfigV2, dataCache: DataCache, restUtil: RestUtil): mutable.Map[String, AnyRef] = {
 
     val generalInfo = getGeneralInfo(userId, event, metrics, config, dataCache);
     val regdInfo = if (config.regdUserProducerPid.equals(event.producerPid())) {
-      getRegisteredUserInfo(userId, event, metrics, config, dataCache, headers, restUtil)
+      getRegisteredUserInfo(userId, event, metrics, config, dataCache, restUtil)
     } else mutable.Map[String, String]()
     generalInfo.++:(regdInfo);
   }
@@ -49,10 +48,10 @@ object UserMetadataUpdater {
   }
 
   def getRegisteredUserInfo(userId: String, event: Event, metrics: Metrics, config: UserCacheUpdaterConfigV2, dataCache: DataCache,
-                            headers: Map[String, String], restUtil: RestUtil): mutable.Map[String, AnyRef] = {
+                            restUtil: RestUtil): mutable.Map[String, AnyRef] = {
     var userCacheData: mutable.Map[String, AnyRef] = mutable.Map[String, AnyRef]()
 
-    val result = gson.fromJson[UserReadResult](restUtil.get(String.format("%s%s",config.userReadApiUrl, userId), Some(headers)), classOf[UserReadResult]).result
+    val result = gson.fromJson[UserReadResult](restUtil.get(String.format("%s%s",config.userReadApiUrl, userId)), classOf[UserReadResult]).result
     if(!result.isEmpty && result.containsKey("response")) {
       // Inc API Read metrics
       metrics.incCounter(config.apiReadSuccessCount)
