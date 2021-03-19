@@ -641,17 +641,10 @@ user-cache-updater-v2:
       host = {{ redis_meta_user_host }}
       port = {{ redis_meta_user_port }}
     }
-    lms-cassandra {
-      keyspace = "{{ middleware_cassandra_keyspace }}"
-      table {
-        user = "{{ middleware_cassandra_user_table }}"
-        location = "{{ middleware_cassandra_location_table }}"
-        organisation = "{{ middleware_cassandra_organisation_table }}"
-        user_org = "{{ middleware_cassandra_user_org_table }}"
-        usr_external_identity = "{{ middleware_cassandra_usr_external_identity_table }}"
-        system_settings = "{{ middleware_cassandra_system_settings_table }}"
-        user_declarations = "{{ middleware_cassandra_user_declaration_table }}"
-      }
+    user-read {
+     api {
+       url = "{{ user_read_api_url  }}"
+     }
     }
     regd.user.producer.pid = "learner-service"
     user.self.signin.types = ["google","self"]
