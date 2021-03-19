@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: secor-log-config
+  name: {{ $.Release.Name }}-log-config
   namespace: {{ $.Values.secor_namespace }}
   labels:
-    app: secor-log-config
+    app: {{ $.Release.Name }}-log-config
     chart: {{ $.Chart.Name }}-{{ $.Chart.Version }}
     release: secor-log-config
     heritage: secor-log-config
