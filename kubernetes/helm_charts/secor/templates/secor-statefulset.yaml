@@ -28,6 +28,8 @@ spec:
         prometheus.io/port: "9102"
         prometheus.io/path: "/metrics"
     spec:
+      imagePullSecrets:
+      - name: {{ .Values.imagepullsecrets }}
       initContainers:
       - name: change-pv-dir-ownership
         image: alpine:3
@@ -41,7 +43,7 @@ spec:
           mountPath: /mnt/data
       containers:
         - name: {{ .Release.Name }}-secor
-          image: {{ .Values.image.prefix | default "" }}{{ .Values.image.repository }}:{{ .Values.image.tag }}
+          image: {{ .Values.image.prefix | default "" }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
           # image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
@@ -58,8 +60,9 @@ spec:
            - name: "data-path"
              mountPath: /mnt/data
           resources:
-            cpu: {{ get (get (get $.Values.secor_jobs $.Release.Name) "requests") "cpu" }}
-            memory: {{ get (get (get $.Values.secor_jobs $.Release.Name) "requests") "memory"}}
+            requests:
+              cpu: {{ get (get (get $.Values.secor_jobs $.Release.Name) "requests") "cpu" }}
+              memory: {{ get (get (get $.Values.secor_jobs $.Release.Name) "requests") "memory"}}
           securityContext:
             runAsUser: 9999
 
@@ -76,9 +79,8 @@ spec:
         name: data-path
         labels:
           app: secor
-        annotations:
-          volume.beta.kubernetes.io/storage-class: "{{- .Values.storageClass }}"
       spec:
+        storageClassName: "{{- .Values.storageClass }}"
         accessModes:
           - ReadWriteOnce
         resources:
