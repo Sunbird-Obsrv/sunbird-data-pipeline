@@ -69,7 +69,7 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
     } catch {
       case ex: Exception => {
         ex.printStackTrace()
-        logger.info(s"Processing event for user: ${userId} having mid: ${event.mid()}" + " Getting exception: " + ex.getMessage)
+        logger.info(s"Processing event for user: ${userId} having mid: ${event.mid()}")
         logger.info("Event throwing exception: ", JSONUtil.serialize(event))
         throw ex
       }
