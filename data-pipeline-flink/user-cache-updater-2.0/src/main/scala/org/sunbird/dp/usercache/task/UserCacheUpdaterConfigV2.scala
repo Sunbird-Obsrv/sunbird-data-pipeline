@@ -24,6 +24,8 @@ class UserCacheUpdaterConfigV2(override val config: Config) extends BaseJobConfi
   val successCount = "success-message-count"
   val dbReadSuccessCount = "db-read-success-count"
   val dbReadMissCount = "db-read-miss-count"
+  val apiReadSuccessCount = "api-read-success-count"
+  val apiReadMissCount = "api-read-miss-count"
   val totalEventsCount ="total-audit-events-count"
 
   val userSelfSignedInTypeList: JList[String] = config.getStringList("user.self.signin.types")
@@ -35,38 +37,28 @@ class UserCacheUpdaterConfigV2(override val config: Config) extends BaseJobConfi
   // Redis
   val userStore: Int = config.getInt("redis-meta.database.userstore.id")
 
-  // lms-cassandra
-  val keySpace: String = config.getString("lms-cassandra.keyspace")
-  val locationTable: String = config.getString("lms-cassandra.table.location")
-  val userTable: String = config.getString("lms-cassandra.table.user")
-  val orgTable: String = config.getString("lms-cassandra.table.organisation")
-  val userExternalIdTable: String = config.getString("lms-cassandra.table.usr_external_identity")
-  val userOrgTable: String = config.getString("lms-cassandra.table.user_org")
-  val systemSettingsTable: String = config.getString("lms-cassandra.table.system_settings")
-  val userDeclarationTable: String = config.getString("lms-cassandra.table.user_declarations")
-  val cassandraHost: String =  config.getString("lms-cassandra.host")
-  val cassandraPort: Int =  config.getInt("lms-cassandra.port")
-
   val userCacheParallelism: Int = config.getInt("task.usercache.updater.parallelism")
 
   // constants
   val userSignInTypeKey = "usersignintype"
   val userLoginTypeKey = "userlogintype"
+  val firstName = "firstname"
+  val lastName = "lastname"
+  val rootOrgId = "rootorgid"
   val stateKey = "state"
   val districtKey = "district"
   val blockKey = "block"
+  val clusterKey = "cluster"
   val orgnameKey = "orgname"
-  val externalidKey = "externalid"
+  val schoolKey = "school"
   val schoolUdiseCodeKey = "schooludisecode"
   val schoolNameKey = "schoolname"
-  val orgcodeKey = "orgcode"
-  val userChannelKey="userchannel"
-  val originalprovider="originalprovider"
-
-  val personaType = "teacher"
-  val declareExternalId = "declared-ext-id"
-  val declaredSchoolName = "declared-school-name"
-  val declaredSchoolCode = "declared-school-udise-code"
+  val userTypeKey = "usertype"
+  val userSubtypeKey = "usersubtype"
+  val userId = "userid"
+  val language = "language"
+  val email = "email"
+  val phone = "phone"
 
   //user store key prefix
   val userStoreKeyPrefix = "user:"
@@ -75,4 +67,7 @@ class UserCacheUpdaterConfigV2(override val config: Config) extends BaseJobConfi
 
   // Functions
   val userCacheUpdaterFunction = "UserCacheUpdaterFunctionV2"
+
+  //User Read API
+  val userReadApiUrl = config.getString("user-read.api.url")
 }

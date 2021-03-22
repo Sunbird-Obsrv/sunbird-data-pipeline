@@ -49,6 +49,7 @@ kafka_brokers: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
 zookeepers: "{{groups['zookeeper']|join(':2181,')}}:2181"
 # Ingestion cluster
 ingestion_kafka_brokers: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
+secor_ingestion_kafka_brokers: "{{groups['processing-cluster-kafka']|join(',')}}"
 ingestion_zookeepers: "{{groups['zookeeper']|join(':2181,')}}:2181"
 
 telemetry_schema_directory: /etc/{{env}}/telemetry
@@ -57,6 +58,7 @@ schema_repo_url: https://github.com/project-sunbird/sunbird-data-pipeline.git
 # Create learningall group with LP ips
 cassandra_host:  "{{ groups['cassandra'][0] }}"
 core_cassandra_host: "{{ groups['core-cassandra'][0] }}"
+report_cassandra_host: "{{ groups['report-cassandra'][0] }}"
 content_to_vec_url: http://{{ groups['analytics-api'][0] }}:9000/content-to-vec
 
 kibana_base_path : "/pipeline-dashboard"
@@ -77,6 +79,7 @@ sbin_path: "{{ analytics_user_home }}/sbin"
 secor:
   properties: ['secor.azure', 'secor.common', 'secor', 'secor.partition', 'log4j']
   artifact_dir: /mount/secor
+  artifact_ver: "0.29"
   azure:
     account_name: "{{sunbird_private_storage_account_name}}"
     account_key: "{{sunbird_private_storage_account_key}}"

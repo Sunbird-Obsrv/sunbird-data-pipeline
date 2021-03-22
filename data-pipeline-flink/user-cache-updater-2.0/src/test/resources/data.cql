@@ -66,12 +66,6 @@ CREATE TABLE sunbird.user (
     AND min_index_interval = 128
     AND read_repair_chance = 0.0
     AND speculative_retry = '99PERCENTILE';
-CREATE INDEX inx_u_userid ON sunbird.user (userid);
-CREATE INDEX inx_u_email ON sunbird.user (email);
-CREATE INDEX inx_u_loginid ON sunbird.user (loginid);
-CREATE INDEX inx_u_status ON sunbird.user (status);
-CREATE INDEX inx_u_username ON sunbird.user (username);
-CREATE INDEX inx_u_phone ON sunbird.user (phone);
 
 INSERT INTO sunbird.user (
     id,
@@ -313,8 +307,6 @@ CREATE TABLE sunbird.location (
     type text
 );
 
-CREATE INDEX inx_loc_code ON sunbird.location (code);
-
 INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-1','ft0507020006', 'KARNATAKA', 'state');
 INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-2','0f5f0702000f6', 'KARNATAKA', 'state');
 INSERT INTO sunbird.location(id,code,name,type) VALUES ('location-3','g0507020f00f6', 'TUMKUR', 'district');
@@ -472,7 +464,6 @@ CREATE TABLE sunbird.system_settings (
      AND min_index_interval = 128
      AND read_repair_chance = 0.0
      AND speculative_retry = '99PERCENTILE';
-     CREATE INDEX inx_system_settings ON sunbird.system_settings (field);
 
      INSERT INTO sunbird.system_settings(id,field,value) VALUES ('custodianRootOrgId','custodianRootOrgId', '01285019302823526477');
 
