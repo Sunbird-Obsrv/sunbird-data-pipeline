@@ -12,7 +12,7 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 case class UserReadResult(result: java.util.HashMap[String, Any], responseCode: String)
-case class Response(firstName: String, lastName: String, encemail: String, encphone: String, language: java.util.List[String], rootOrgId: String, profileUserType: java.util.HashMap[String, String],
+case class Response(firstName: String, lastName: String, encEmail: String, encPhone: String, language: java.util.List[String], rootOrgId: String, profileUserType: java.util.HashMap[String, String],
                     userLocations: java.util.ArrayList[java.util.Map[String, AnyRef]], rootOrg: RootOrgInfo, userId: String, framework: java.util.LinkedHashMap[String, java.util.List[String]])
 case class RootOrgInfo(orgName: String)
 
@@ -93,8 +93,8 @@ object UserMetadataUpdater {
         config.language -> response.language,
         config.orgnameKey -> response.rootOrg.orgName,
         config.rootOrgId -> response.rootOrgId,
-        config.phone -> response.encphone,
-        config.email -> response.encemail,
+        config.phone -> response.encPhone,
+        config.email -> response.encEmail,
         config.userId -> response.userId)
 
     } else {
