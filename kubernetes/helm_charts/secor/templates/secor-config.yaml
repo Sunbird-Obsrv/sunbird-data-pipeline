@@ -18,4 +18,6 @@ data:
 {{- (tpl ($.Files.Get "config/secor.azure.properties") $) | nindent 4 }}
   secor.partition.properties: |+
 {{- (tpl ($.Files.Get "config/secor.partition.properties") $) | nindent 4 }}
+  log4j.properties: |+
+{{ ($.Files.Glob "config/log4j*.properties").AsConfig | nindent 4 }}
 {{- end }}
