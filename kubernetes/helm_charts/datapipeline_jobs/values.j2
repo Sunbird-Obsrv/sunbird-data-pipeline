@@ -651,6 +651,7 @@ user-cache-updater-v2:
     user.validated.types = ["sso"]
     user.self.signin.key = "Self-Signed-In"
     user.valid.key = "Validated"
+    user.read.url.fields = "?locations"
 
   flink-conf: |+
     jobmanager.memory.flink.size: {{ flink_job_names['user-cache-updater-v2'].jobmanager_memory }}

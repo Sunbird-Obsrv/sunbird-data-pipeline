@@ -51,7 +51,8 @@ object UserMetadataUpdater {
                             restUtil: RestUtil): mutable.Map[String, AnyRef] = {
     var userCacheData: mutable.Map[String, AnyRef] = mutable.Map[String, AnyRef]()
 
-    val result = gson.fromJson[UserReadResult](restUtil.get(String.format("%s%s",config.userReadApiUrl, userId)), classOf[UserReadResult]).result
+    // ?locations is appended in url to get userLocation in API response
+    val result = gson.fromJson[UserReadResult](restUtil.get(String.format("%s%s",config.userReadApiUrl, userId + config.userReadApiFields)), classOf[UserReadResult]).result
     if(!result.isEmpty && result.containsKey("response")) {
       // Inc API Read metrics
       metrics.incCounter(config.apiReadSuccessCount)
@@ -83,8 +84,8 @@ object UserMetadataUpdater {
       //Flatten User Type and subType
       val profileUserType = response.profileUserType
       if (null != profileUserType && !profileUserType.isEmpty) {
-        userCacheData.+=(config.userTypeKey -> profileUserType.getOrDefault(config.userTypeKey, ""),
-          config.userSubtypeKey -> profileUserType.getOrDefault(config.userSubtypeKey, ""))
+        userCacheData.+=(config.userTypeKey -> profileUserType.getOrDefault(config.`type`, ""),
+          config.userSubtypeKey -> profileUserType.getOrDefault(config.subtype, ""))
       }
 
       //Personal information

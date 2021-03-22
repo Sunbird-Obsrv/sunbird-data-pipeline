@@ -57,6 +57,7 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
           }
           if (!userData.isEmpty) {
             dataCache.hmSet(config.userStoreKeyPrefix + id, mapAsJavaMap(UserMetadataUpdater.stringify(userData)))
+            logger.info(s"Data inserted into cache for user: ${userId} having mid: ${event.mid()}")
             metrics.incCounter(config.successCount)
             metrics.incCounter(config.userCacheHit)
           } else {
