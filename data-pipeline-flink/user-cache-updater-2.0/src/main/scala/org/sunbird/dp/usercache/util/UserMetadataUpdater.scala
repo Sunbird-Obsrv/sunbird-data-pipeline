@@ -96,7 +96,6 @@ object UserMetadataUpdater {
         config.phone -> response.encPhone,
         config.email -> response.encEmail,
         config.userId -> response.userId)
-
     } else {
       logger.info(s"User Read API does not have details for user: ${userId}")
       metrics.incCounter(config.apiReadMissCount)
