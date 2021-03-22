@@ -51,8 +51,8 @@ object UserMetadataUpdater {
                             restUtil: RestUtil): mutable.Map[String, AnyRef] = {
     var userCacheData: mutable.Map[String, AnyRef] = mutable.Map[String, AnyRef]()
 
-    // ?locations is appended in url to get userLocation in API response
-    val result = gson.fromJson[UserReadResult](restUtil.get(String.format("%s%s",config.userReadApiUrl, userId + "?" + config.userReadApiFields)), classOf[UserReadResult]).result
+    //?fields=locations is appended in url to get userLocation in API response
+    val result = gson.fromJson[UserReadResult](restUtil.get(String.format("%s%s",config.userReadApiUrl, userId + "?fields=" + config.userReadApiFields)), classOf[UserReadResult]).result
     if(!result.isEmpty && result.containsKey("response")) {
       // Inc API Read metrics
       metrics.incCounter(config.apiReadSuccessCount)

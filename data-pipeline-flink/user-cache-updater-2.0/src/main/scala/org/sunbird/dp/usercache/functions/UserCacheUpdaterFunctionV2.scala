@@ -61,6 +61,7 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
             metrics.incCounter(config.successCount)
             metrics.incCounter(config.userCacheHit)
           } else {
+            logger.info(s"User Data to be updated is empty for user: ${userId}")
             metrics.incCounter(config.skipCount)
           }
         }).getOrElse(metrics.incCounter(config.skipCount))
@@ -68,7 +69,7 @@ class UserCacheUpdaterFunctionV2(config: UserCacheUpdaterConfigV2)(implicit val 
     } catch {
       case ex: Exception => {
         ex.printStackTrace()
-        logger.info(s"Processing event for user: ${userId} having mid: ${event.mid()}")
+        logger.info(s"Failed to Process event for user: ${userId} having mid: ${event.mid()}" + " Getting exception: " + ex.getMessage)
         logger.info("Event throwing exception: ", JSONUtil.serialize(event))
         throw ex
       }
