@@ -363,3 +363,64 @@
   with_items: "{{ jobs.split(',')|list }}"
   tags:
     - job-submit
+
+# Cluster exhaust parallel jobs sumbit tasks
+
+- name: Install required python packages
+  pip:
+    name:
+      - psycopg2
+      - pandas
+      - IPython
+  tags:
+    - parallel-jobs-submit  
+
+- name: Copy python script file
+  template: src=update-job-requests.py.j2 dest={{ analytics_cluster.home }}/update-job-requests.py
+  delegate_to: localhost  
+  tags:
+    - parallel-jobs-submit
+
+- name: Execute python script to populate batch numbers
+  shell: "python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }}"
+  tags:
+    - parallel-jobs-submit
+  register: jobsCountStr
+
+- debug:
+    var: jobsCountStr
+  tags:
+    - parallel-jobs-submit  
+
+- name: Get stdout with parallelisation value from python script to tmp file
+  shell: echo "{{ jobsCountStr.stdout }}" > /tmp/test.txt
+  tags:
+    - parallel-jobs-submit
+
+- name: Extract parallelisation value from tmp file
+  shell: "cat /tmp/test.txt | tr '\n' ' ' | awk -F': ' '{print $NF}'"
+  register: jobsCountOut
+  tags:
+    - parallel-jobs-submit
+
+- debug:
+    var: jobsCountOut
+  tags:
+    - parallel-jobs-submit  
+
+# set jobs count variable from python script output
+- set_fact:
+    jobs_count: "{{ jobsCountOut.stdout }}"
+  tags:
+    - parallel-jobs-submit  
+
+- name: Submit parallel exhaust jobs
+  shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ jobs }} --mode parallel-jobs --parallelisation {{ jobs_count }} &"
+  tags:
+    - parallel-jobs-submit 
+  register: submitOutput
+
+- debug:
+    var: submitOutput 
+  tags:
+    - parallel-jobs-submit      
