@@ -13,7 +13,7 @@ imagepullsecrets: sunbird-registry-secret
 secor_jobs:
   raw-telemetry-backup:
     replicas: 2
-    consumer_group: "{{env}}.telemetry.raw.backup"
+    consumer_group: "{{env}}.telemetry.raw.backup.group"
     service_name: "raw_telemetry_backup"
     base_path: "raw"
     timestamp_key: "syncts"
