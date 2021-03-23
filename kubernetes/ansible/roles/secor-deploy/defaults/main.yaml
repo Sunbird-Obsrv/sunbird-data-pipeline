@@ -117,7 +117,7 @@ secor_jobs:
     max_file_age: 600
     partition_prefix_enabled: "true"
     partition_prefix_key: "eid"
-    partition_prefix_mapping: "{'ME_WORKFLOW_SUMMARY':'summary','DEFAULT':'raw'}"
+    partition_prefix_mapping: '{"ME_WORKFLOW_SUMMARY":"summary","DEFAULT":"raw"}'
     output_file_pattern: "{partition}-{kafkaPartition}-{currentTimestamp}.json"
     message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
