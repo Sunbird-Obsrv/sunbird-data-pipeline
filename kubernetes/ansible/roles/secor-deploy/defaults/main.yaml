@@ -41,7 +41,7 @@ secor_jobs:
     base_path: "raw-8"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
-    topic: "{{env}}.telemetry.raw.8"
+    topic: "{{env}}.telemetry.raw"
     kafka_broker_host: "{{ groups['processing-cluster-kafka']|join(',') }}"
     zookeeper_quorum: "{{ groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
     max_file_size: 100000000
@@ -115,9 +115,9 @@ secor_jobs:
     zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
     max_file_size: 100000000
     max_file_age: 600
-    partition_prefix_enabled: "false"
+    partition_prefix_enabled: "true"
     partition_prefix_key: "eid"
-    partition_prefix_mapping: "{}"
+    partition_prefix_mapping: "{\"ME_WORKFLOW_SUMMARY\":\"summary\",\"DEFAULT\":\"raw\"}"
     output_file_pattern: "{partition}-{kafkaPartition}-{currentTimestamp}.json"
     message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
