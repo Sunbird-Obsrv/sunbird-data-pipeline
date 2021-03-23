@@ -55,7 +55,8 @@ secor_jobs:
     storage:
       size: 10Gi
     requests:
-      cpu: 500m    
+      cpu: 500m
+      memory: 500Mi  
   failed-telemetry-backup:
     replicas: 1
     service_name: "failed_telemetry_backup"
