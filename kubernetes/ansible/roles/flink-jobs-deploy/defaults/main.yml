@@ -127,10 +127,8 @@ middleware_cassandra_keyspace: sunbird
 middleware_cassandra_user_table: user
 middleware_cassandra_location_table: location
 
-#user-cache-updater-v2 (user read api details)
-user_read_host: "http://{{private_ingressgateway_ip}}"
-user_read_endpoint: "learner/private/user/v1/read/"
-user_read_api_url : "{{ user_read_host }}/{{ user_read_endpoint }}"
+#(user read api details)
+user_read_api_url : "http://{{private_ingressgateway_ip}}/learner/private/user/v1/read/"
 
 
 ### assessment-aggregator related vars
