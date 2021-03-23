@@ -60,6 +60,9 @@ object UserMetadataUpdater {
       val response = gson.fromJson[Response](gson.toJson(result.get("response")), classOf[Response])
       val framework = response.framework
       //flatten BGMS value
+      /**
+        * Assumption: Board and Framework-id is single valued
+        */
       if (!framework.isEmpty) {
         val boardList = framework.getOrDefault("board", List().asJava)
         val board = if (!boardList.isEmpty) boardList.get(0) else ""
@@ -70,7 +73,6 @@ object UserMetadataUpdater {
         val id = if (!frameworkIdList.isEmpty) frameworkIdList.get(0) else ""
         userCacheData.+=("board" -> board, "medium" -> medium, "grade" -> grade, "subject" -> subject, "framework" -> id)
       }
-      println("userdata: " + userCacheData)
 
       //Location and School Information
       val locationInfo = response.userLocations
