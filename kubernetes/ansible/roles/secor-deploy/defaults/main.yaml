@@ -106,7 +106,7 @@ secor_jobs:
   denorm-events-backup:
     replicas: 1
     service_name: "denorm_events_backup"
-    consumer_group: "{{ env }}.telemetry.denorm.backup.group.tmp"
+    consumer_group: "{{ env }}.telemetry.denorm.backup.group"
     base_path: "telemetry-denormalized"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
