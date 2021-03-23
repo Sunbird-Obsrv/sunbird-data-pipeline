@@ -52,6 +52,9 @@ cloud_storage:
 cassandra:
   host: "{{groups['lp-cassandra'][0]}}" ## LMS-Cassandra IP Address.
   keyspace: "sunbird"
+  read_timeout: "500000"
+  retry_count: "100"
+  input_consistency_level: "LOCAL_QUORUM"
   user:
     table: "user"
   device_profile:

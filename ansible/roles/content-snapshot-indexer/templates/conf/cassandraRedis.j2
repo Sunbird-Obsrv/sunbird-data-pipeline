@@ -18,3 +18,6 @@ redis.user.database.index="{{ redis.user.index }}"
 redis.user.input.index="{{ redis.user.input_index }}"
 redis.scan.count="{{ redis.scan_count }}"
 redis.user.index.source.key="{{ redis.user.source_key }}" # this will be used as key for redis
+cassandra.read.timeoutMS="{{ cassandra.read_timeout }}"
+cassandra.query.retry.count="{{ cassandra.retry_count }}"
+cassandra.input.consistency.level="{{ cassandra.input_consistency_level }}"
