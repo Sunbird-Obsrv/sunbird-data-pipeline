@@ -12,7 +12,7 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 case class UserReadResult(result: java.util.HashMap[String, Any], responseCode: String)
-case class Response(firstName: String, lastName: String, encemail: String, encphone: String, language: java.util.List[String], rootOrgId: String, profileUserType: java.util.HashMap[String, String],
+case class Response(firstName: String, lastName: String, encEmail: String, encPhone: String, language: java.util.List[String], rootOrgId: String, profileUserType: java.util.HashMap[String, String],
                     userLocations: java.util.ArrayList[java.util.Map[String, AnyRef]], rootOrg: RootOrgInfo, userId: String, framework: java.util.LinkedHashMap[String, java.util.List[String]])
 case class RootOrgInfo(orgName: String)
 
@@ -51,7 +51,8 @@ object UserMetadataUpdater {
                             restUtil: RestUtil): mutable.Map[String, AnyRef] = {
     var userCacheData: mutable.Map[String, AnyRef] = mutable.Map[String, AnyRef]()
 
-    val result = gson.fromJson[UserReadResult](restUtil.get(String.format("%s%s",config.userReadApiUrl, userId)), classOf[UserReadResult]).result
+    //?fields=locations is appended in url to get userLocation in API response
+    val result = gson.fromJson[UserReadResult](restUtil.get(String.format("%s%s",config.userReadApiUrl, userId + "?fields=" + config.userReadApiFields)), classOf[UserReadResult]).result
     if(!result.isEmpty && result.containsKey("response")) {
       // Inc API Read metrics
       metrics.incCounter(config.apiReadSuccessCount)
@@ -59,12 +60,17 @@ object UserMetadataUpdater {
       val response = gson.fromJson[Response](gson.toJson(result.get("response")), classOf[Response])
       val framework = response.framework
       //flatten BGMS value
+      /**
+        * Assumption: Board and Framework-id is single valued
+        */
       if (!framework.isEmpty) {
-        val board = framework.getOrDefault("board", List().asJava)
+        val boardList = framework.getOrDefault("board", List().asJava)
+        val board = if (!boardList.isEmpty) boardList.get(0) else ""
         val medium = framework.getOrDefault("medium", List().asJava)
         val grade = framework.getOrDefault("gradeLevel", List().asJava)
         val subject = framework.getOrDefault("subject", List().asJava)
-        val id = framework.getOrDefault("id", List().asJava)
+        val frameworkIdList = framework.getOrDefault("id", List().asJava)
+        val id = if (!frameworkIdList.isEmpty) frameworkIdList.get(0) else ""
         userCacheData.+=("board" -> board, "medium" -> medium, "grade" -> grade, "subject" -> subject, "framework" -> id)
       }
 
@@ -83,8 +89,8 @@ object UserMetadataUpdater {
       //Flatten User Type and subType
       val profileUserType = response.profileUserType
       if (null != profileUserType && !profileUserType.isEmpty) {
-        userCacheData.+=(config.userTypeKey -> profileUserType.getOrDefault(config.userTypeKey, ""),
-          config.userSubtypeKey -> profileUserType.getOrDefault(config.userSubtypeKey, ""))
+        userCacheData.+=(config.userTypeKey -> profileUserType.getOrDefault(config.`type`, ""),
+          config.userSubtypeKey -> profileUserType.getOrDefault(config.subtype, ""))
       }
 
       //Personal information
@@ -92,10 +98,9 @@ object UserMetadataUpdater {
         config.language -> response.language,
         config.orgnameKey -> response.rootOrg.orgName,
         config.rootOrgId -> response.rootOrgId,
-        config.phone -> response.encphone,
-        config.email -> response.encemail,
+        config.phone -> response.encPhone,
+        config.email -> response.encEmail,
         config.userId -> response.userId)
-
     } else {
       logger.info(s"User Read API does not have details for user: ${userId}")
       metrics.incCounter(config.apiReadMissCount)
