@@ -13,16 +13,16 @@ imagepullsecrets: sunbird-registry-secret
 secor_jobs:
   raw-telemetry-backup:
     replicas: 2
-    consumer_group: "{{env}}.telemetry.raw.group"
+    consumer_group: "{{env}}.telemetry.raw.backup"
     service_name: "raw_telemetry_backup"
-    base_path: "raw-group"
+    base_path: "raw"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
     topic: "{{env}}.telemetry.raw"
     kafka_broker_host: "{{ groups['processing-cluster-kafka']|join(',') }}"
     zookeeper_quorum: "{{ groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
     max_file_size: 100000000
-    max_file_age: 600
+    max_file_age: 14400
     partition_prefix_enabled: "false"
     partition_prefix_key: ""
     partition_prefix_mapping: "{}"
@@ -33,30 +33,7 @@ secor_jobs:
       size: 10Gi
     requests:
       cpu: 500m
-      memory: 500Mi
-  raw-test-backup:
-    replicas: 2
-    consumer_group: "{{env}}.telemetry.raw.8.group"
-    service_name: "raw_telemetry_backup"
-    base_path: "raw-8"
-    timestamp_key: "syncts"
-    fallback_timestamp_key: "@timestamp"
-    topic: "{{env}}.telemetry.raw"
-    kafka_broker_host: "{{ groups['processing-cluster-kafka']|join(',') }}"
-    zookeeper_quorum: "{{ groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
-    max_file_size: 100000000
-    max_file_age: 600
-    partition_prefix_enabled: "false"
-    partition_prefix_key: ""
-    partition_prefix_mapping: "{}"
-    message_channel_identifier: ""
-    output_file_pattern: "{partition}-{currentTimestamp}.json"
-    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
-    storage:
-      size: 10Gi
-    requests:
-      cpu: 500m
-      memory: 500Mi    
+      memory: 500Mi 
   failed-telemetry-backup:
     replicas: 1
     service_name: "failed_telemetry_backup"
@@ -106,7 +83,7 @@ secor_jobs:
   denorm-events-backup:
     replicas: 1
     service_name: "denorm_events_backup"
-    consumer_group: "{{ env }}.telemetry.denorm.backup.group"
+    consumer_group: "{{ env }}.telemetry.denorm.backup"
     base_path: "telemetry-denormalized"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
@@ -114,7 +91,7 @@ secor_jobs:
     kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
     zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
     max_file_size: 100000000
-    max_file_age: 600
+    max_file_age: 14400
     partition_prefix_enabled: "true"
     partition_prefix_key: "eid"
     partition_prefix_mapping: '{"ME_WORKFLOW_SUMMARY":"summary","DEFAULT":"raw"}'
@@ -324,7 +301,7 @@ secor_jobs:
     max_file_age: 600
     partition_prefix_enabled: "true"
     partition_prefix_key: "eid"
-    partition_prefix_mapping: "{\"ME_WORKFLOW_SUMMARY\":\"workflow_summary\",\"DEFAULT\":\"me\"}"
+    partition_prefix_mapping: '{"ME_WORKFLOW_SUMMARY":"workflow_summary","DEFAULT":"me"}'
     output_file_pattern: "{partition}-{currentTimestamp}.json"
     message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
@@ -396,7 +373,7 @@ secor_jobs:
     max_file_age: 3600
     partition_prefix_enabled: "true"
     partition_prefix_key: "jobName"
-    partition_prefix_mapping: "{\"publish-pipeline\":\"publish_pipeline\",\"composite-search-indexer\":\"cs_index\",\"DEFAULT\":\"failed_events\"}"
+    partition_prefix_mapping: '{"publish-pipeline":"publish_pipeline","composite-search-indexer":"cs_index","DEFAULT":"failed_events"}'
     output_file_pattern: "{partition}-{currentTimestamp}.json"
     message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
