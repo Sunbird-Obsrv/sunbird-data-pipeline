@@ -35,13 +35,13 @@ secor_jobs:
       cpu: 500m
       memory: 500Mi 
   raw-test-backup:
-    replicas: 2
-    consumer_group: "{{env}}.telemetry.raw.8.group"
+    replicas: 1
+    consumer_group: "{{env}}.telemetry.raw.backup.tmp"
     service_name: "raw_telemetry_backup"
-    base_path: "raw-8"
+    base_path: "raw-withoutpv-test"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
-    topic: "{{env}}.telemetry.raw"
+    topic: "{{env}}.telemetry.raw.test"
     kafka_broker_host: "{{ groups['processing-cluster-kafka']|join(',') }}"
     zookeeper_quorum: "{{ groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
     max_file_size: 100000000
