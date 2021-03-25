@@ -37,12 +37,12 @@ secor_jobs:
       memory: 500Mi 
   raw-tmp-backup:
     replicas: 1
-    consumer_group: "{{env}}.telemetry.raw.backup.tmp.ppv"
+    consumer_group: "{{env}}.telemetry.raw.backup.tmp.mtest"
     service_name: "raw_telemetry_backup"
-    base_path: "raw-withpremiumpv-test"
+    base_path: "raw-migration-test-ppv"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
-    topic: "{{env}}.telemetry.raw.tmp.ppv"
+    topic: "{{env}}.telemetry.raw.tmp"
     kafka_broker_host: "{{ groups['processing-cluster-kafka']|join(',') }}"
     zookeeper_quorum: "{{ groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
     max_file_size: 100000000
