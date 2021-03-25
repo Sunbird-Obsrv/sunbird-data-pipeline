@@ -3,6 +3,7 @@ image_repository: "secor"
 image_tag: "0.29"
 image_pullPolicy: IfNotPresent
 imagepullsecrets: sunbird-registry-secret
+secor_storage_class: managed-premium
 
 # image:
 #   prefix: {}
@@ -34,14 +35,14 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi 
-  raw-test-backup:
+  raw-tmp-backup:
     replicas: 1
-    consumer_group: "{{env}}.telemetry.raw.backup.tmp"
+    consumer_group: "{{env}}.telemetry.raw.backup.tmp.ppv"
     service_name: "raw_telemetry_backup"
-    base_path: "raw-withoutpv-test"
+    base_path: "raw-withpremiumpv-test"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
-    topic: "{{env}}.telemetry.raw.test"
+    topic: "{{env}}.telemetry.raw.tmp.ppv"
     kafka_broker_host: "{{ groups['processing-cluster-kafka']|join(',') }}"
     zookeeper_quorum: "{{ groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
     max_file_size: 100000000
@@ -53,7 +54,7 @@ secor_jobs:
     output_file_pattern: "{partition}-{currentTimestamp}.json"
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
     storage:
-      size: 10Gi
+      size: 128Gi
     requests:
       cpu: 500m
       memory: 500Mi  
