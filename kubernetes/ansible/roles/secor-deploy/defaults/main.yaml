@@ -35,7 +35,7 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi 
-  raw-migration-test-backup:
+  raw-test-10gPV-backup:
     replicas: 1
     consumer_group: "{{env}}.telemetry.raw.backup.tmp.mtest"
     service_name: "raw_telemetry_backup"
@@ -54,7 +54,7 @@ secor_jobs:
     output_file_pattern: "{partition}-{currentTimestamp}.json"
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
     storage:
-      size: 50Gi
+      size: 10Gi
     requests:
       cpu: 500m
       memory: 500Mi  
