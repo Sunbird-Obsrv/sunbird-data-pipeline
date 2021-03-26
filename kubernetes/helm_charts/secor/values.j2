@@ -22,7 +22,7 @@ secor_jobs:
     max_file_age: "{{ secor_jobs['%s'|format(item)].max_file_age }}"
     partition_prefix_enabled: "{{ secor_jobs['%s'|format(item)].partition_prefix_enabled }}"
     partition_prefix_key: "{{ secor_jobs['%s'|format(item)].partition_prefix_key }}"
-    partition_prefix_mapping: "{{ secor_jobs['%s'|format(item)].partition_prefix_mapping }}"
+    partition_prefix_mapping: '{{ secor_jobs['%s'|format(item)].partition_prefix_mapping }}'
     message_channel_identifier: "{{ secor_jobs['%s'|format(item)].message_channel_identifier }}"
     output_file_pattern: "{{ secor_jobs['%s'|format(item)].output_file_pattern }}"
     message_parser: "{{ secor_jobs['%s'|format(item)].message_parser }}"
