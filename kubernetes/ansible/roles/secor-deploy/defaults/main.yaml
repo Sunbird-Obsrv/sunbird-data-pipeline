@@ -35,7 +35,7 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi 
-  raw-test-10gPV-backup:
+  raw-test-10gpv-backup:
     replicas: 1
     consumer_group: "{{env}}.telemetry.raw.backup.mtest"
     service_name: "raw_telemetry_backup"
