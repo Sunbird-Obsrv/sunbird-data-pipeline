@@ -54,7 +54,7 @@ secor_jobs:
     output_file_pattern: "{partition}-{currentTimestamp}.json"
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
     storage:
-      size: 128Gi
+      size: 50Gi
     requests:
       cpu: 500m
       memory: 500Mi  
