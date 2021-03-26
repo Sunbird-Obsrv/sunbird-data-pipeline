@@ -3,6 +3,7 @@ image_repository: "secor"
 image_tag: "0.29"
 image_pullPolicy: IfNotPresent
 imagepullsecrets: sunbird-registry-secret
+secor_storage_class: managed-premium
 
 # image:
 #   prefix: {}
@@ -12,7 +13,7 @@ imagepullsecrets: sunbird-registry-secret
 
 secor_jobs:
   raw-telemetry-backup:
-    replicas: 2
+    replicas: 1
     consumer_group: "{{env}}.telemetry.raw.backup"
     service_name: "raw_telemetry_backup"
     base_path: "raw"
@@ -22,7 +23,7 @@ secor_jobs:
     kafka_broker_host: "{{ groups['processing-cluster-kafka']|join(',') }}"
     zookeeper_quorum: "{{ groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
     max_file_size: 100000000
-    max_file_age: 600
+    max_file_age: 14400
     partition_prefix_enabled: "false"
     partition_prefix_key: ""
     partition_prefix_mapping: "{}"
@@ -94,7 +95,7 @@ secor_jobs:
     max_file_age: 14400
     partition_prefix_enabled: "true"
     partition_prefix_key: "eid"
-    partition_prefix_mapping: "{\"ME_WORKFLOW_SUMMARY\":\"summary\",\"DEFAULT\":\"raw\"}"
+    partition_prefix_mapping: '{"ME_WORKFLOW_SUMMARY":"summary","DEFAULT":"raw"}'
     output_file_pattern: "{partition}-{kafkaPartition}-{currentTimestamp}.json"
     message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
@@ -301,7 +302,7 @@ secor_jobs:
     max_file_age: 600
     partition_prefix_enabled: "true"
     partition_prefix_key: "eid"
-    partition_prefix_mapping: "{\"ME_WORKFLOW_SUMMARY\":\"workflow_summary\",\"DEFAULT\":\"me\"}"
+    partition_prefix_mapping: '{"ME_WORKFLOW_SUMMARY":"workflow_summary","DEFAULT":"me"}'
     output_file_pattern: "{partition}-{currentTimestamp}.json"
     message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
@@ -373,7 +374,7 @@ secor_jobs:
     max_file_age: 3600
     partition_prefix_enabled: "true"
     partition_prefix_key: "jobName"
-    partition_prefix_mapping: "{\"publish-pipeline\":\"publish_pipeline\",\"composite-search-indexer\":\"cs_index\",\"DEFAULT\":\"failed_events\"}"
+    partition_prefix_mapping: '{"publish-pipeline":"publish_pipeline","composite-search-indexer":"cs_index","DEFAULT":"failed_events"}'
     output_file_pattern: "{partition}-{currentTimestamp}.json"
     message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
