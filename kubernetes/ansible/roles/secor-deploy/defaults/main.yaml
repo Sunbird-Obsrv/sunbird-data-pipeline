@@ -13,7 +13,7 @@ secor_storage_class: managed-premium
 
 secor_jobs:
   raw-telemetry-backup:
-    replicas: 2
+    replicas: 1
     consumer_group: "{{env}}.telemetry.raw.backup"
     service_name: "raw_telemetry_backup"
     base_path: "raw"
@@ -34,30 +34,7 @@ secor_jobs:
       size: 10Gi
     requests:
       cpu: 500m
-      memory: 500Mi 
-  raw-test-10gpv-backup:
-    replicas: 1
-    consumer_group: "{{env}}.telemetry.raw.backup.mtest"
-    service_name: "raw_telemetry_backup"
-    base_path: "raw-migration-test-10gppv"
-    timestamp_key: "syncts"
-    fallback_timestamp_key: "@timestamp"
-    topic: "{{env}}.telemetry.raw.tmp.26th"
-    kafka_broker_host: "{{ groups['processing-cluster-kafka']|join(',') }}"
-    zookeeper_quorum: "{{ groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
-    max_file_size: 100000000
-    max_file_age: 300
-    partition_prefix_enabled: "false"
-    partition_prefix_key: ""
-    partition_prefix_mapping: "{}"
-    message_channel_identifier: ""
-    output_file_pattern: "{partition}-{currentTimestamp}.json"
-    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
-    storage:
-      size: 10Gi
-    requests:
-      cpu: 500m
-      memory: 500Mi  
+      memory: 500Mi
   failed-telemetry-backup:
     replicas: 1
     service_name: "failed_telemetry_backup"
