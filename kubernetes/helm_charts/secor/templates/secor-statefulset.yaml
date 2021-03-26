@@ -63,7 +63,7 @@ spec:
       volumes:
         - configMap:
             name: {{ .Release.Name }}-config
-          name: secor-config 
+          name: secor-config
 
   volumeClaimTemplates:
     - metadata:
