@@ -369,7 +369,7 @@
 - name: Install required python packages
   pip:
     name:
-      - psycopg2
+      - psycopg2-binary
       - pandas
       - IPython
   tags:
