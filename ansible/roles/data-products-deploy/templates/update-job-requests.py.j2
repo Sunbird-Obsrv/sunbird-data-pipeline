@@ -87,7 +87,7 @@ def get_columns_names(db,table):
         print ("get_columns_names ERROR:", err)
     return columns
 
-def main(batchSize, jobId):
+def main(batchSize, jobId,jobType,table):
     host="{{postgres.db_url}}"
     port={{postgres.db_port}}
     user="{{postgres.db_username}}"
