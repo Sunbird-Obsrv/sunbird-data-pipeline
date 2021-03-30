@@ -75,7 +75,6 @@ def get_columns_names(db,table):
     col_cursor = db.cursor()
     col_names_str = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE "
     col_names_str += "table_name = '{}';".format( table )
-    print ("\ncol_names_str:", col_names_str)
     try:
         sql_object = sql.SQL(col_names_str).format(sql.Identifier( table))
         col_cursor.execute( sql_object )
