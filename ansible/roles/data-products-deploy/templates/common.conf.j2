@@ -147,22 +147,21 @@ course.metrics.cassandra.sunbirdKeyspace="sunbird"
 course.metrics.cassandra.sunbirdCoursesKeyspace="sunbird_courses"
 course.metrics.cassandra.sunbirdHierarchyStore="{{ cassandra_hierarchy_store_keyspace }}"
 course.metrics.cloud.objectKey=""
-course.metrics.temp.dir="/mount/data/analytics/course-reports"
 course.metrics.cassandra.input.consistency="QUORUM"
 es.host="http://{{groups['core-es'][0]}}"
 es.port="9200"
-course.metrics.es.index.cbatch="course-batch"
 es.composite.host="{{groups['composite-search-cluster'][0]}}"
 
 # State admin user reports
 # Uses azure only - course.metrics.cloud.provider
-admin.reports.cloud.container="reports"
 admin.metrics.cloud.objectKey=""
 admin.metrics.temp.dir="/mount/data/analytics/admin-user-reports"
 
 #Assessment report config
 es.scroll.size = 1000
-assessment.metrics.bestscore.report=true // BestScore or Latst Updated Score
+
+#BestScore or Latst Updated Score
+assessment.metrics.bestscore.report=true
 assessment.metrics.supported.contenttype="SelfAssess"
 spark.sql.caseSensitive=true
 
