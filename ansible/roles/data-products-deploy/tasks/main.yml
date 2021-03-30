@@ -283,23 +283,7 @@
     - cronjobs
     - default-jobs
     - spark-jobs
-    -
-#- name: Create district-weekly cron job
-#  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} weekday={{ item.value.weekday }}  job="{{ analytics.home }}/scripts/run-job.sh district-weekly"
-#  with_dict: "{{ run_district_weekly_job }}"
-#  tags:
-#    - cronjobs
-#    - default-jobs
-#    - ed-dataproducts
-
-#- name: Create district-monthly cron job
-#  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} month={{ item.value.month }} day={{ item.value.day }}  job="{{ analytics.home }}/scripts/run-job.sh district-monthly"
-#  with_dict: "{{ run_district_monthly_job }}"
-#  tags:
-#    - cronjobs
-#    - default-jobs
-#    - ed-dataproducts
-
+    
 - name: Create collection-summary cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh collection-summary-report"
   with_dict: "{{ run_collection_summary }}"
