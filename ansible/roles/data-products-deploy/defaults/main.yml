@@ -178,6 +178,11 @@ run_collection_summary:
     hour: 09
     minute: 30
 
+run_cassandra_migration:
+  cassandra-migration:
+    hour: 19
+    minute: 15
+
 
 service:
   search:
