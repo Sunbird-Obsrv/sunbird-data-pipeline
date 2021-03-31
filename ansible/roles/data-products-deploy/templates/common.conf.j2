@@ -147,32 +147,21 @@ course.metrics.cassandra.sunbirdKeyspace="sunbird"
 course.metrics.cassandra.sunbirdCoursesKeyspace="sunbird_courses"
 course.metrics.cassandra.sunbirdHierarchyStore="{{ cassandra_hierarchy_store_keyspace }}"
 course.metrics.cloud.objectKey=""
-course.metrics.temp.dir="/mount/data/analytics/course-reports"
 course.metrics.cassandra.input.consistency="QUORUM"
 es.host="http://{{groups['core-es'][0]}}"
 es.port="9200"
-course.metrics.es.alias="cbatchstats"
-course.metrics.es.index.cbatchstats.prefix="cbatchstats-"
-course.metrics.es.index.cbatch="course-batch"
 es.composite.host="{{groups['composite-search-cluster'][0]}}"
 
 # State admin user reports
 # Uses azure only - course.metrics.cloud.provider
-admin.reports.cloud.container="reports"
 admin.metrics.cloud.objectKey=""
 admin.metrics.temp.dir="/mount/data/analytics/admin-user-reports"
 
 #Assessment report config
-assessment.metrics.temp.dir="/mount/data/analytics/assessment-report"
-assessment.metrics.cassandra.input.consistency="QUORUM"
-assessment.metrics.cloud.objectKey="assessment-reports/"
-assessment.metrics.content.index="compositesearch"
 es.scroll.size = 1000
-assessment.metrics.es.alias="cbatch-assessment"
-assessment.metrics.es.index.prefix="cbatch-assessment-"
-course.upload.reports.enabled=true
-course.es.index.enabled=true
-assessment.metrics.bestscore.report=true // BestScore or Latst Updated Score
+
+#BestScore or Latst Updated Score
+assessment.metrics.bestscore.report=true
 assessment.metrics.supported.contenttype="SelfAssess"
 spark.sql.caseSensitive=true
 
