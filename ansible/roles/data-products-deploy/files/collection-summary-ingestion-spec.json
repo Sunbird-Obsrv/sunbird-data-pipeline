@@ -99,6 +99,21 @@
                 "type": "root",
                 "name": "timestamp",
                 "expr": "timestamp"
+              },
+              {
+                "type": "root",
+                "name": "medium",
+                "expr": "medium"
+              },
+              {
+                "type": "root",
+                "name": "subject",
+                "expr": "subject"
+              },
+              {
+                "type": "root",
+                "name": "createdFor",
+                "expr": "createdFor"
               }
             ]
           },
@@ -160,6 +175,15 @@
               },
               {
                 "name": "keywords"
+              },
+              {
+                "name": "medium"
+              },
+              {
+                "name": "subject"
+              },
+              {
+                "name": "createdFor"
               },
               {
                 "name": "has_certificate"
