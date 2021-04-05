@@ -99,6 +99,8 @@ elif [ "$mode" = "parallel-jobs" ]; then
     for i in $(seq 1 $parallelisation)
         do 
             # add batch number to config
+            echo "Running for below batch number"
+            echo $i
             batchNumberString="\\\"modelParams\\\":{\\\"batchNumber\\\":$i,"
             job_config=$(config $job)
             cluster_job_config=${job_config//'"'/'\"'}
