@@ -99,6 +99,8 @@ elif [ "$mode" = "parallel-jobs" ]; then
     for i in $(seq 1 $parallelisation)
         do 
             # add batch number to config
+            echo "Running for below batch number"
+            echo $i
             batchNumberString="\\\"modelParams\\\":{\\\"batchNumber\\\":$i,"
             job_config=$(config $job)
             cluster_job_config=${job_config//'"'/'\"'}
@@ -112,7 +114,8 @@ elif [ "$mode" = "parallel-jobs" ]; then
             requestBody=${clusterConfig/'"className": "org.ekstep.analytics.job.JobExecutor"'/$argsStr}
             finalRequestBody=${requestBody/'org.ekstep.analytics.job.JobExecutor'/$classVariable}
             echo $finalRequestBody
-            curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_cluster_name }}.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"
+            curlOutput=curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_cluster_name }}.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"
+            echo $curlOutput
         done
 
 elif [ "$mode" = "selected-partition" ]; then
