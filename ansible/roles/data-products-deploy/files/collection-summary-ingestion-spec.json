@@ -112,7 +112,7 @@
               },
               {
                 "type": "root",
-                "name": "createdFor",
+                "name": "created_for",
                 "expr": "createdFor"
               }
             ]
@@ -190,7 +190,7 @@
                 "name": "subject"
               },
               {
-                "name": "createdFor"
+                "name": "created_for"
               }
             ],
             "dimensionsExclusions": []
