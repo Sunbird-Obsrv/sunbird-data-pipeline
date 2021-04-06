@@ -96,7 +96,7 @@ elif [ "$mode" = "parallel-jobs" ]; then
      # add batch number to config and submit jobs
     echo "inside parallel-jobs block" 
     echo $parallelisation
-    if [$parallelisation > 0]; then
+    if [$parallelisation -lt 1]; then
         for i in $(seq 1 $parallelisation)
             do 
                 # add batch number to config
@@ -117,7 +117,9 @@ elif [ "$mode" = "parallel-jobs" ]; then
                 echo $finalRequestBody
                 curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_cluster_name }}.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"
             done
-    else echo "No requests found in table"; fi       
+    else 
+        echo "No requests found in table"; 
+    fi       
 
 elif [ "$mode" = "selected-partition" ]; then
      # add partitions to config
