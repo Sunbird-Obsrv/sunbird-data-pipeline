@@ -96,26 +96,28 @@ elif [ "$mode" = "parallel-jobs" ]; then
      # add batch number to config and submit jobs
     echo "inside parallel-jobs block" 
     echo $parallelisation
-    for i in $(seq 1 $parallelisation)
-        do 
-            # add batch number to config
-            echo "Running for below batch number"
-            echo $i
-            batchNumberString="\\\"modelParams\\\":{\\\"batchNumber\\\":$i,"
-            job_config=$(config $job)
-            cluster_job_config=${job_config//'"'/'\"'}
-            finalConfig=${cluster_job_config/'\"modelParams\":{'/$batchNumberString}
-            echo $finalConfig
-            echo "Running $job as parallel jobs"
-            classVariable="org.ekstep.analytics.job.JobExecutor"
-            argsList="\"args\": [\"--model\", \"$job_id\", \"--config\", \"$finalConfig\"]"
-            argsStr="\"className\": \"org.ekstep.analytics.job.JobExecutor\", $argsList"
-            clusterConfig=`cat cluster-config.json`
-            requestBody=${clusterConfig/'"className": "org.ekstep.analytics.job.JobExecutor"'/$argsStr}
-            finalRequestBody=${requestBody/'org.ekstep.analytics.job.JobExecutor'/$classVariable}
-            echo $finalRequestBody
-            curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_cluster_name }}.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"
-        done
+    if [$parallelisation > 0]; then
+        for i in $(seq 1 $parallelisation)
+            do 
+                # add batch number to config
+                echo "Running for below batch number"
+                echo $i
+                batchNumberString="\\\"modelParams\\\":{\\\"batchNumber\\\":$i,"
+                job_config=$(config $job)
+                cluster_job_config=${job_config//'"'/'\"'}
+                finalConfig=${cluster_job_config/'\"modelParams\":{'/$batchNumberString}
+                echo $finalConfig
+                echo "Running $job as parallel jobs"
+                classVariable="org.ekstep.analytics.job.JobExecutor"
+                argsList="\"args\": [\"--model\", \"$job_id\", \"--config\", \"$finalConfig\"]"
+                argsStr="\"className\": \"org.ekstep.analytics.job.JobExecutor\", $argsList"
+                clusterConfig=`cat cluster-config.json`
+                requestBody=${clusterConfig/'"className": "org.ekstep.analytics.job.JobExecutor"'/$argsStr}
+                finalRequestBody=${requestBody/'org.ekstep.analytics.job.JobExecutor'/$classVariable}
+                echo $finalRequestBody
+                curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_cluster_name }}.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"
+            done
+    else echo "No requests found in table"; fi       
 
 elif [ "$mode" = "selected-partition" ]; then
      # add partitions to config
