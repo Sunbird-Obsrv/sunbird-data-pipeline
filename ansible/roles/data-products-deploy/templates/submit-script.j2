@@ -96,7 +96,7 @@ elif [ "$mode" = "parallel-jobs" ]; then
      # add batch number to config and submit jobs
     echo "inside parallel-jobs block" 
     echo $parallelisation
-    if [ $parallelisation -lt 1 ]; then
+    if [ $parallelisation -gt 1 ]; then
         for i in $(seq 1 $parallelisation)
             do 
                 # add batch number to config
