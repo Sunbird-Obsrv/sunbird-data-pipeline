@@ -432,6 +432,7 @@
 
 - name: Submit parallel exhaust jobs
   shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ jobs }} --mode parallel-jobs --parallelisation {{ jobs_count }} &"
+  poll: 30
   tags:
     - parallel-jobs-submit 
   register: submitOutput
