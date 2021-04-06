@@ -234,7 +234,7 @@ spark_cluster:
   num_executors: 5
 
 analytics_cluster:
-  home: "/tmp"
+  home: "/tmp/{{ env }}"
 
 analytics_ed_dataporducts_jar_artifact: "data-products-{{ analytics_ed_dataporducts_artifact_ver }}.jar"  
 

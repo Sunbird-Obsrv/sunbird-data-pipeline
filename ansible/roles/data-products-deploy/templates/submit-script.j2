@@ -115,7 +115,8 @@ elif [ "$mode" = "parallel-jobs" ]; then
                 requestBody=${clusterConfig/'"className": "org.ekstep.analytics.job.JobExecutor"'/$argsStr}
                 finalRequestBody=${requestBody/'org.ekstep.analytics.job.JobExecutor'/$classVariable}
                 echo $finalRequestBody
-                curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_cluster_name }}.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}"
+                response=$(curl -k --user "{{ admin_name }}:{{ admin_password }}" -v -H "Content-Type: application/json" -X POST -d "$finalRequestBody" 'https://{{ spark_cluster_name }}.azurehdinsight.net/livy/batches' -H "X-Requested-By: {{ admin_name }}")
+                echo $response
             done
     else echo "No requests found in table"; fi       
 
