@@ -320,7 +320,7 @@
 - name: Install required python packages
   pip:
     name:
-      - psycopg2
+      - psycopg2-binary
       - pandas
       - IPython
   tags:
@@ -333,11 +333,19 @@
     - parallel-jobs-submit
 
 - name: Execute python script to populate batch numbers
-  shell: "python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }}"
+  shell: "python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} exhaust {{env}}_job_request"
   tags:
     - parallel-jobs-submit
   register: jobsCountStr
-
+  when: jobs.find("exhaust") != -1
+    
+- name: Execute python script to populate batch numbers
+  shell: "python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} druid {{env}}_report_config"
+  tags:
+    - parallel-jobs-submit
+  register: jobsCountStr
+  when: jobs.find("druid") != -1
+  
 - debug:
     var: jobsCountStr
   tags:
@@ -357,7 +365,7 @@
 - debug:
     var: jobsCountOut
   tags:
-    - parallel-jobs-submit  
+    - parallel-jobs-submit
 
 # set jobs count variable from python script output
 - set_fact:
