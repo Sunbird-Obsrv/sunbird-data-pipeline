@@ -34,6 +34,7 @@ def processRequests(totalRequestsDf, jobId, batchSize, db, table,jobType):
     parallelism = int(math.ceil(totalRequests/batchSize))
     print("parallelism computed {0}".format(parallelism))
 
+<<<<<<< HEAD
     if jobType == 'exhaust':
       totalRequestsDf["row_num"] = totalRequestsDf.groupby(by=['job_id'])['request_id'].transform(lambda x: x.rank())
     else:
@@ -55,6 +56,26 @@ def processRequests(totalRequestsDf, jobId, batchSize, db, table,jobType):
     db.commit()
     db.close()    
     return parallelism      
+=======
+    if totalRequests > 0:
+        totalRequestsDf["row_num"] = totalRequestsDf.groupby(by=['job_id'])['request_id'].transform(lambda x: x.rank())
+        #display(totalRequestsDf)
+
+        start_index = 1
+        end_index = batchSize
+        for i in range(1, parallelism+1):
+            subSetDf = totalRequestsDf[(totalRequestsDf['row_num'] >= start_index) & (totalRequestsDf['row_num'] <= end_index)]
+            subSetDf["batch_number"] = i
+            print(start_index,end_index)
+            updateRequests(db, table, json.loads(subSetDf.to_json(orient='records')))
+            start_index = 1 + end_index
+            end_index = end_index + batchSize
+        db.commit()
+        db.close()    
+        return parallelism
+    else:
+        return 0        
+>>>>>>> 8b252248519118b2e1c689e96222d86f3abac332
 
 def postgresql_to_dataframe(db, select_query, column_names):
     cursor = db.cursor()
