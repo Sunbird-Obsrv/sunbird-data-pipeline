@@ -58,7 +58,7 @@ schema_repo_url: https://github.com/project-sunbird/sunbird-data-pipeline.git
 # Create learningall group with LP ips
 cassandra_host:  "{{ groups['cassandra'][0] }}"
 core_cassandra_host: "{{ groups['core-cassandra'][0] }}"
-report_cassandra_host: "{{ groups['core-cassandra'][0] }}"
+report_cassandra_host: "{{ groups['report-cassandra'][0] }}"
 content_to_vec_url: http://{{ groups['analytics-api'][0] }}:9000/content-to-vec
 
 kibana_base_path : "/pipeline-dashboard"

@@ -1,12 +1,12 @@
 {
     "jars": [
-        "wasbs://{{ bucket }}@{{spark_hdinsight_storage_account_name}}.blob.core.windows.net/models-{{ model_version }}/{{ analytics_core_artifact }}",
-        "wasbs://{{ bucket }}@{{spark_hdinsight_storage_account_name}}.blob.core.windows.net/models-{{ model_version }}/{{ scruid_artifact }}",
-        "wasbs://{{ bucket }}@{{spark_hdinsight_storage_account_name}}.blob.core.windows.net/models-{{ model_version }}/{{ analytics_ed_dataporducts_jar_artifact }}"
+        "wasbs://{{ bucket }}@{{sunbird_private_storage_account_name}}.blob.core.windows.net/models-{{ model_version }}/{{ analytics_core_artifact }}",
+        "wasbs://{{ bucket }}@{{sunbird_private_storage_account_name}}.blob.core.windows.net/models-{{ model_version }}/{{ scruid_artifact }}",
+        "wasbs://{{ bucket }}@{{sunbird_private_storage_account_name}}.blob.core.windows.net/models-{{ model_version }}/{{ analytics_ed_dataporducts_jar_artifact }}"
     ],
-    "file": "wasbs://{{ bucket }}@{{spark_hdinsight_storage_account_name}}.blob.core.windows.net/models-{{ model_version }}/{{ analytics_batch_module_artifact }}",
+    "file": "wasbs://{{ bucket }}@{{sunbird_private_storage_account_name}}.blob.core.windows.net/models-{{ model_version }}/{{ analytics_batch_module_artifact }}",
     "files": [
-        "wasbs://{{ bucket }}@{{spark_hdinsight_storage_account_name}}.blob.core.windows.net/models-{{ model_version }}/application.conf"
+        "wasbs://{{ bucket }}@{{sunbird_private_storage_account_name}}.blob.core.windows.net/models-{{ model_version }}/application.conf"
     ],
     "className": "org.ekstep.analytics.job.JobExecutor",
     "executorCores": {{ spark_cluster.executor_core }},
@@ -17,7 +17,7 @@
         "spark.dynamicAllocation.enabled" :"true", 
         "spark.shuffle.service.enabled" :"true",
         "spark.scheduler.mode" : "FAIR",
-        "spark.driver.extraJavaOptions": "-Detwlogger.component=sparkdriver -DlogFilter.filename=SparkLogFilters.xml -DpatternGroup.filename=SparkPatternGroups.xml -Dlog4jspark.root.logger=INFO,console,RFA,ETW,Anonymizer,org.ekstep.analytics -Dlog4jspark.log.dir=/var/log/sparkapp/${user.name} -Dlog4jspark.log.file=sparkdriver.log -Dlog4j.configuration=file:/usr/hdp/current/spark2-client/conf/log4j.properties -Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl -XX:+UseParallelGC -XX:+UseParallelOldGC -Dazure_storage_key={{ spark_hdinsight_storage_account_name }} -Dazure_storage_secret={{ spark_hdinsight_storage_account_key }} -Dreports_storage_key={{spark_hdinsight_storage_account_name}} -Dreports_storage_secret={{spark_hdinsight_storage_account_key}}",
-        "spark.executor.extraJavaOptions": "-Detwlogger.component=sparkdriver -DlogFilter.filename=SparkLogFilters.xml -DpatternGroup.filename=SparkPatternGroups.xml -Dlog4jspark.root.logger=INFO,console,RFA,ETW,Anonymizer,org.ekstep.analytics -Dlog4jspark.log.dir=/var/log/sparkapp/${user.name} -Dlog4jspark.log.file=sparkdriver.log -Dlog4j.configuration=file:/usr/hdp/current/spark2-client/conf/log4j.properties -Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl -XX:+UseParallelGC -XX:+UseParallelOldGC -Dazure_storage_key={{ spark_hdinsight_storage_account_name }} -Dazure_storage_secret={{ spark_hdinsight_storage_account_key }} -Dreports_storage_key={{spark_hdinsight_storage_account_name}} -Dreports_storage_secret={{spark_hdinsight_storage_account_key}}"
+        "spark.driver.extraJavaOptions": "-Detwlogger.component=sparkdriver -DlogFilter.filename=SparkLogFilters.xml -DpatternGroup.filename=SparkPatternGroups.xml -Dlog4jspark.root.logger=INFO,console,RFA,ETW,Anonymizer,org.ekstep.analytics -Dlog4jspark.log.dir=/var/log/sparkapp/${user.name} -Dlog4jspark.log.file=sparkdriver.log -Dlog4j.configuration=file:/usr/hdp/current/spark2-client/conf/log4j.properties -Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl -XX:+UseParallelGC -XX:+UseParallelOldGC -Dazure_storage_key={{ sunbird_private_storage_account_name }} -Dazure_storage_secret={{ sunbird_private_storage_account_key }} -Dreports_storage_key={{sunbird_private_storage_account_name}} -Dreports_storage_secret={{sunbird_private_storage_account_key}}",
+        "spark.executor.extraJavaOptions": "-Detwlogger.component=sparkdriver -DlogFilter.filename=SparkLogFilters.xml -DpatternGroup.filename=SparkPatternGroups.xml -Dlog4jspark.root.logger=INFO,console,RFA,ETW,Anonymizer,org.ekstep.analytics -Dlog4jspark.log.dir=/var/log/sparkapp/${user.name} -Dlog4jspark.log.file=sparkdriver.log -Dlog4j.configuration=file:/usr/hdp/current/spark2-client/conf/log4j.properties -Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl -XX:+UseParallelGC -XX:+UseParallelOldGC -Dazure_storage_key={{ sunbird_private_storage_account_name }} -Dazure_storage_secret={{ sunbird_private_storage_account_key }} -Dreports_storage_key={{sunbird_private_storage_account_name}} -Dreports_storage_secret={{sunbird_private_storage_account_key}}"
     }
 }
