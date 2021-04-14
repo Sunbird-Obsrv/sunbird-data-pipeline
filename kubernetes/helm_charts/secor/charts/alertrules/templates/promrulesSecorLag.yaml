@@ -6,7 +6,7 @@ metadata:
     role: alert-rules
     app: {{ .Values.prometheus_rule_selector_app }}
     release: {{ .Values.prometheus_rule_selector_release }}
-  name: {{ .Release.Name }
+  name: {{ .Release.Name }}
   namespace: monitoring
 spec:
   groups:
