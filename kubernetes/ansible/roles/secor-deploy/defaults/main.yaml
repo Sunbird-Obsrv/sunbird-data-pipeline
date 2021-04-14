@@ -35,6 +35,8 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
+    warning_lag_threshold: 500000
+    critical_lag_threshold: 1000000
   failed-telemetry-backup:
     replicas: 1
     service_name: "failed_telemetry_backup"

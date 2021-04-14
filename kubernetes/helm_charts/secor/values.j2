@@ -31,7 +31,10 @@ secor_jobs:
     requests:
       cpu: "{{ secor_jobs['%s'|format(item)].requests.cpu }}"
       memory: "{{ secor_jobs['%s'|format(item)].requests.memory }}"
+    critical_lag_threshold: "{{ secor_jobs['%s'|format(item)].critical_lag_threshold }}"
+    warning_lag_threshold: "{{ secor_jobs['%s'|format(item)].warning_lag_threshold }}"
 {% endfor %}
+    
 
 image:
   prefix: {{ dockerhub }}
@@ -44,3 +47,6 @@ exporter:
     repository: prom/statsd-exporter
     tag: latest
     pullPolicy: IfNotPresent
+
+prometheus_rule_selector_app: prometheus-operator
+prometheus_rule_selector_release: prometheus-operator
