@@ -7,7 +7,7 @@ metadata:
     app: {{ .Values.prometheus_rule_selector_app }}
     release: {{ .Values.prometheus_rule_selector_release }}
   name: {{ .Release.Name }
-  namespace: {{ .Values.secor_namespace }}
+  namespace: monitoring
 spec:
   groups:
   - name: alertrules.secor_jobs_lag_rule

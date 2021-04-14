@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ .Release.Name }}
-  namespace: {{ .Values.secor_namespace }}
+  namespace: {{ .Values.namespace }}
   labels:
     app: secor
     chart: {{ .Chart.Name }}-{{ .Chart.Version }}
