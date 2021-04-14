@@ -51,5 +51,12 @@ exporter:
 prometheus_rule_selector_app: prometheus-operator
 prometheus_rule_selector_release: prometheus-operator
 
+# If you enable this secor lag alert rules will be created in the flink cluster.
+# In our case the consumer group lag metrics available in core prometheus.
+# By adding this condition we are avoiding creating the secor lag alert rule in flink cluster. 
 alertrules:
   enabled: false
+
+# This condition is whether to create the secor lag alert rule or not.
+alertrule:
+  enabled: {{ alertrule_enabled | lower}}

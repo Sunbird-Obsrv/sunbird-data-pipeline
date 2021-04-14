@@ -1,4 +1,4 @@
----
+{{- if .Values.alertrule.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -37,3 +37,4 @@ spec:
         lag: {{`({{ humanize $value }})`}}
         job_id: {{ .Release.Name }}
         alertname: SecorJobsLag
+{{- end }}
