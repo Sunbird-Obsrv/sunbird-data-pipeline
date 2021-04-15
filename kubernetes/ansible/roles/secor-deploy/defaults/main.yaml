@@ -39,8 +39,8 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
-    warning_lag_threshold: 500000
-    critical_lag_threshold: 1000000
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
   failed-telemetry-backup:
     replicas: 1
     service_name: "failed_telemetry_backup"
@@ -63,7 +63,9 @@ secor_jobs:
       size: 10Gi
     requests:
       cpu: 500m
-      memory: 500Mi    
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
   unique-telemetry-backup:
     replicas: 1
     service_name: "unique_telemetry_backup"
@@ -87,6 +89,8 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
   denorm-events-backup:
     replicas: 1
     service_name: "denorm_events_backup"
@@ -110,6 +114,8 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
   derived-denorm-events-backup:
     replicas: 1
     service_name: "derived_denorm_events_backup"
@@ -133,6 +139,8 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
   channel-telemetry-backup:
     replicas: 1
     service_name: "channel_telemetry_backup"
@@ -156,6 +164,8 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
   channel-summary-backup:
     replicas: 1
     service_name: "channel_summary_backup"
@@ -178,7 +188,9 @@ secor_jobs:
       size: 10Gi
     requests:
       cpu: 500m
-      memory: 500Mi    
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
   extractor-failed-backup:
     replicas: 1
     service_name: "extractor_failed_backup"
@@ -202,6 +214,8 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
   assess-raw-events-backup:
     replicas: 1
     service_name: "assess_raw_events_backup"
@@ -225,6 +239,8 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
   telemetry-ingest-backup:
     replicas: 1
     service_name: "telemetry_ingest_backup"
@@ -248,6 +264,8 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
   telemetry-duplicate-backup:
     replicas: 1
     service_name: "telemetry_duplicate_backup"
@@ -271,6 +289,8 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
   extractor-duplicate-backup:
     replicas: 1
     service_name: "extractor_duplicate_backup"
@@ -294,6 +314,8 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
   derived-telemetry-backup:
     replicas: 1
     service_name: "derived_telemetry_backup"
@@ -317,6 +339,8 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
   device-profile-backup:
     replicas: 1
     service_name: "device_profile_backup"
@@ -340,6 +364,8 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
   learning-events-backup:
     replicas: 1
     service_name: "learning_events_backup"
@@ -363,6 +389,8 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
   learning-failed-backup:
     replicas: 1
     service_name: "learning_failed_backup"
@@ -389,6 +417,8 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
   assess-events-backup:
     replicas: 1
     service_name: "assess_events_backup"
@@ -412,6 +442,8 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
   ingestion-cluster-telemetry-backup:
     replicas: 1
     service_name: "ingestion_cluster_telemetry_backup"
@@ -435,6 +467,8 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
   content-consumption-events-backup:
     replicas: 1
     service_name: "content_consumption_events_backup"
@@ -458,6 +492,8 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
   issue-certificate-events-backup:
     replicas: 1
     service_name: "issue_certificate_events_backup"
@@ -481,6 +517,8 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000
   content-auto-creation-events-backup:
     replicas: 1
     service_name: "content_auto_creation_events_backup"
@@ -504,3 +542,5 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000

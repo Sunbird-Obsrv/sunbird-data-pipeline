@@ -214,3 +214,16 @@ spec:
       for: 15m
       labels:
         severity: warning
+
+## kubepersistentvolumeusagecritical
+    - alert: KubePersistentVolumeUsageCritical
+      annotations:
+        message: The PersistentVolume claimed by {{`{{`}} $labels.persistentvolumeclaim {{`}}`}} in Namespace {{`{{`}} $labels.namespace {{`}}`}} is only {{`{{`}} printf "%0.2f" $value {{`}}`}}% free.
+      expr: |-
+        100 * kubelet_volume_stats_available_bytes{job="kubelet", namespace="secor"}
+          /
+        kubelet_volume_stats_capacity_bytes{job="kubelet", namespace="secor"}
+          < {{ .Values.pv_usage_threshold }} 
+      for: 1m
+      labels:
+        severity: critical

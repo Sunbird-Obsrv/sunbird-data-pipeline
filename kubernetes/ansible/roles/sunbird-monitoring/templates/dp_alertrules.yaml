@@ -91,3 +91,5 @@ flink_job_names:
 nginx_tps_threshold: {{ nginx_tps_threshold }} # being used in flink jobs percentage lag alertrules
 flink_lag_percentage_threshold: {{ flink_lag_percentage_threshold }} # being used in flink jobs percentage lag alertrules
 flink_lag_offset_duration: {{ flink_lag_offset_duration }} # values in mins.  offset time window to compare the metrics between current metrics and last 30(example) minutes. 
+
+pv_usage_threshold: {{ pv_usage_threshold }}

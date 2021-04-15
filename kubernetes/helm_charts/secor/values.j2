@@ -31,8 +31,8 @@ secor_jobs:
     requests:
       cpu: "{{ secor_jobs['%s'|format(item)].requests.cpu }}"
       memory: "{{ secor_jobs['%s'|format(item)].requests.memory }}"
-    critical_lag_threshold: "{{ secor_jobs['%s'|format(item)].critical_lag_threshold }}"
-    warning_lag_threshold: "{{ secor_jobs['%s'|format(item)].warning_lag_threshold }}"
+    lag_threshold_warning: "{{ secor_jobs['%s'|format(item)].lag_threshold_warning }}"
+    lag_threshold_critical: "{{ secor_jobs['%s'|format(item)].lag_threshold_critical }}"
 {% endfor %}
     
 
