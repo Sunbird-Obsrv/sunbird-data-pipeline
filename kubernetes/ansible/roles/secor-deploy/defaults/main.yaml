@@ -8,7 +8,7 @@ secor_storage_class: managed-premium
 # this varible is to control the monitoring deployment. override this value by adding into
 # private repo common.yml to not to create the secor lag alert rules.
 alertrule_enabled: true
-
+core_kubeconfig_path: "" # This var being used to create the secor lag alert rule in core prometheus.
 # image:
 #   prefix: {}
 #   repository: "secor"
