@@ -13,7 +13,7 @@ spec:
   - name: alertrules.secor_jobs_lag_rule
     rules:
     - alert: secor job {{ .Release.Name }} lag 
-      expr: kafka_consumergroup_lag_sum{consumergroup="{{ .Values.env }}.{{ get (get $.Values.secor_jobs $.Release.Name) "consumer_group" }}", job="processing-kafka-exporter"} > {{ get (get $.Values.secor_jobs $.Release.Name) "lag_threshold_critical" }}
+      expr: kafka_consumergroup_lag_sum{consumergroup="{{ get (get $.Values.secor_jobs $.Release.Name) "consumer_group" }}", job="processing-kafka-exporter"} > {{ get (get $.Values.secor_jobs $.Release.Name) "lag_threshold_critical" }}
       for: 30m
       labels:
         severity: critical
@@ -26,7 +26,7 @@ spec:
         alertname: SecorJobsLag
 
     - alert: secor job {{ .Release.Name }} lag 
-      expr: kafka_consumergroup_lag_sum{consumergroup="{{ .Values.env }}.{{ get (get $.Values.secor_jobs $.Release.Name) "consumer_group" }}", job="processing-kafka-exporter"} > {{ get (get $.Values.secor_jobs $.Release.Name) "lag_threshold_warning" }}
+      expr: kafka_consumergroup_lag_sum{consumergroup="{{ get (get $.Values.secor_jobs $.Release.Name) "consumer_group" }}", job="processing-kafka-exporter"} > {{ get (get $.Values.secor_jobs $.Release.Name) "lag_threshold_warning" }}
       for: 30m
       labels:
         severity: warning
@@ -39,7 +39,7 @@ spec:
         alertname: SecorJobsLag
 
     - alert: secor job {{ .Release.Name }} lag 
-      expr: kafka_consumergroup_lag_sum{consumergroup="{{ .Values.env }}.{{ get (get $.Values.secor_jobs $.Release.Name) "consumer_group" }}", job="ingestion-kafka-exporter"} > {{ get (get $.Values.secor_jobs $.Release.Name) "lag_threshold_critical" }}
+      expr: kafka_consumergroup_lag_sum{consumergroup="{{ get (get $.Values.secor_jobs $.Release.Name) "consumer_group" }}", job="ingestion-kafka-exporter"} > {{ get (get $.Values.secor_jobs $.Release.Name) "lag_threshold_critical" }}
       for: 30m
       labels:
         severity: critical
@@ -52,7 +52,7 @@ spec:
         alertname: SecorJobsLag
 
     - alert: secor job {{ .Release.Name }} lag 
-      expr: kafka_consumergroup_lag_sum{consumergroup="{{ .Values.env }}.{{ get (get $.Values.secor_jobs $.Release.Name) "consumer_group" }}", job="ingestion-kafka-exporter"} > {{ get (get $.Values.secor_jobs $.Release.Name) "lag_threshold_warning" }}
+      expr: kafka_consumergroup_lag_sum{consumergroup="{{ get (get $.Values.secor_jobs $.Release.Name) "consumer_group" }}", job="ingestion-kafka-exporter"} > {{ get (get $.Values.secor_jobs $.Release.Name) "lag_threshold_warning" }}
       for: 30m
       labels:
         severity: warning
