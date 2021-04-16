@@ -88,4 +88,4 @@ nginx_tps_threshold: 50 # being used in flink jobs percentage lag alert rules
 flink_lag_percentage_threshold: 10 # being used in flink jobs percentage lag alert rule
 flink_lag_offset_duration: 30 # values in minutes and being used in alert rule
 
-pv_usage_threshold: 20  # If the persistant volume free percentage is less than 20% then will get an alert.
+pv_usage_threshold_critical: 90  # If the persistant volume used percentage is greater than 90% then will get an alert.
