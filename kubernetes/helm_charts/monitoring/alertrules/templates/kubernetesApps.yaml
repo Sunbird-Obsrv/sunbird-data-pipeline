@@ -219,7 +219,7 @@ spec:
     - alert: KubePersistentVolumeUsageCritical
       annotations:
         message: The PersistentVolume claimed by {{`{{`}} $labels.persistentvolumeclaim {{`}}`}} in Namespace {{`{{`}} $labels.namespace {{`}}`}} usage is {{`{{`}} printf "%0.2f" $value {{`}}`}}%.
-        metrics: {{`({{ humanize $value }})`}}%
+        metrics: {{`({{ humanize $value }})`}}
         alertname: KubePersistentVolumeUsageCritical
       expr: |-
         100 * kubelet_volume_stats_used_bytes{job="kubelet", namespace="secor"}
