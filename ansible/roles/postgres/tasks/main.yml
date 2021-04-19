@@ -106,6 +106,10 @@
   run_once: true
   tags: create  
 
+- name: create {{ env }}_dataset_metadata
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_dataset_metadata(dataset_id VARCHAR(50), dataset_config json, visibility VARCHAR(50), dataset_type VARCHAR(50), version VARCHAR(10), authorized_roles text[], available_from TIMESTAMP, sample_request VARCHAR(300), sample_response VARCHAR(500), PRIMARY KEY (dataset_id))"
+  run_once: true
+  tags: create
 
 - name: update report
   shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE report ADD COLUMN IF NOT EXISTS parameters jsonb"
