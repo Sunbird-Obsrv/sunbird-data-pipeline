@@ -103,6 +103,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
           saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList), new DateTime().getMillis)
           metrics.incCounter(config.dbUpdateCount)
           metrics.incCounter(config.batchSuccessCount)
+          context.output(config.scoreAggregateTag, event)
           createIssueCertEvent(event, context, metrics)
         }
         else {
@@ -112,6 +113,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
               assessment.getTimestamp("created_on").getTime)
             metrics.incCounter(config.dbUpdateCount)
             metrics.incCounter(config.batchSuccessCount)
+            context.output(config.scoreAggregateTag, event)
             createIssueCertEvent(event, context, metrics)
           }
           else {
