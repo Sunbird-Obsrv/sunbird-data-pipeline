@@ -219,29 +219,6 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
-  telemetry-ingest-backup:
-    replicas: 1
-    service_name: "telemetry_ingest_backup"
-    consumer_group: "{{ env }}.telemetry.ingest.backup"
-    base_path: "ingest-telemetry"
-    timestamp_key: "syncts"
-    fallback_timestamp_key: "@timestamp"
-    topic: "{{ env }}.telemetry.ingest"
-    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
-    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
-    max_file_size: 100000000
-    max_file_age: 14400
-    partition_prefix_enabled: "false"
-    partition_prefix_key: ""
-    partition_prefix_mapping: "{}"
-    output_file_pattern: "{partition}-{currentTimestamp}.json"
-    message_channel_identifier: ""
-    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
-    storage:
-      size: 10Gi
-    requests:
-      cpu: 500m
-      memory: 500Mi
   telemetry-duplicate-backup:
     replicas: 1
     service_name: "telemetry_duplicate_backup"
@@ -406,14 +383,14 @@ secor_jobs:
     requests:
       cpu: 500m
       memory: 500Mi
-  ingestion-cluster-telemetry-backup:
+  ingestion-telemetry-backup:
     replicas: 1
-    service_name: "ingestion_cluster_telemetry_backup"
+    service_name: "ingestion_telemetry_backup"
     consumer_group: "{{ env }}.telemetry.ingestion.events.backup"
     base_path: "ingestion-telemetry"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
-    topic: "{{ telemetry_ingestion_topic }}"
+    topic: "{{ env }}.telemetry.ingestion"
     kafka_broker_host: "{{ secor_ingestion_kafka_brokers }}"
     zookeeper_quorum: "{{ ingestion_zookeepers }}"
     max_file_size: 100000000
