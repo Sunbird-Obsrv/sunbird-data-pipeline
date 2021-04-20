@@ -6,7 +6,8 @@ image_tag: {{ image_tag }}
 registry: {{ docker_registry }}
 azure_account: {{ azure_account }}
 azure_secret: {{ azure_secret }}
-
+serviceMonitor:
+  enabled: {{ service_monitor_enabled | lower}}
 replicaCount: {{taskmana_replicacount|default(1)}}
 
 jobmanager:
