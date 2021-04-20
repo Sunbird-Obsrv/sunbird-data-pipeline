@@ -18,6 +18,7 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
   // Parallelism configs
   val assessAggregatorParallelism: Int = config.getInt("task.assessaggregator.parallelism")
   val downstreamOperatorsParallelism: Int = config.getInt("task.downstream.parallelism")
+  val scoreAggregatorParallelism: Int = config.getInt("task.scoreaggregator.parallelism")
   override val kafkaConsumerParallelism: Int = config.getInt("task.consumer.parallelism")
 
   val kafkaInputTopic: String = config.getString("kafka.input.topic")
@@ -33,6 +34,8 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
   val cacheHitCount = "cache-hit-count"
   val cacheHitMissCount = "cache-hit-miss-count"
   val certIssueEventsCount = "cert-issue-events-count"
+  val dbScoreAggUpdateCount = "db-score-update-count"
+  val dbScoreAggReadCount = "db-score-read-count"
 
 
   //Cassandra
@@ -43,6 +46,7 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
   val dbPort: Int = config.getInt("lms-cassandra.port")
   val dbudtType: String = config.getString("lms-cassandra.questionudttype")
   val enrolmentTable: String = config.getString("lms-cassandra.enrolmentstable")
+  val activityTable: String = config.getString("lms-cassandra.activitytable")
 
   val FAILED_EVENTS_OUTPUT_TAG = "failed-events"
 
@@ -59,8 +63,17 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
   // Producers
   val assessFailedEventsSink = "assess-failed-events-sink"
   val certIssueEventSink = "certificate-issue-event-sink"
+  val userScoreAggregateFn = "user-score-aggregator"
 
   // Cache
   val relationCacheNode = config.getInt("redis.database.relationCache.id")
-
+  
+  //UserActivityAgg
+  val scoreAggregateTag: OutputTag[Event] = OutputTag[Event]("score-aggregate-events")
+  val activityType = "activity_type"
+  val activityId = "activity_id"
+  val contextId = "context_id"
+  val activityUser = "user_id"
+  val aggLastUpdated = "agg_last_updated"
+  val agg = "agg"
 }

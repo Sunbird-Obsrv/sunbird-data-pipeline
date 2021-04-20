@@ -16,11 +16,11 @@ duration decimal
 
 
 CREATE TABLE IF NOT EXISTS sunbird_courses.assessment_aggregator (
+user_id text,
 course_id text,
 batch_id text,
 content_id text,
 attempt_id text,
-user_id text,
 created_on timestamp,
 last_attempted_on timestamp,
 total_max_score double,
@@ -28,7 +28,7 @@ grand_total text,
 question list<frozen<question>>,
 total_score double,
 updated_on timestamp,
-PRIMARY KEY (course_id, batch_id, content_id, attempt_id, user_id)
+PRIMARY KEY ((user_id, course_id), batch_id, content_id, attempt_id)
 );
 
 CREATE INDEX assessment_aggregator_last_attempted_on_idx ON sunbird_courses.assessment_aggregator (last_attempted_on);
@@ -61,3 +61,14 @@ PRIMARY KEY (userid, courseid, batchid));
 
 INSERT INTO sunbird_courses.user_enrolments(userid, courseid, batchid, status) VALUES ('ff1c4bdf-27e2-49bc-a53f-6e304bb3a87f', 'do_2128415652377067521125', '012846671379595264119', 2);
 INSERT INTO sunbird_courses.user_enrolments(userid, courseid, batchid, status) VALUES ('d0d8a341-9637-484c-b871-0c27015af238', 'do_2128410273679114241112', '01284169026368307244', 1);
+
+
+CREATE TABLE sunbird_courses.user_activity_agg (
+activity_type text,
+activity_id text,
+user_id text,
+context_id text,
+agg map<text, int>,
+agg_last_updated map<text, timestamp>,
+PRIMARY KEY ((activity_type, activity_id, user_id), context_id)
+) WITH CLUSTERING ORDER BY (context_id ASC);

@@ -2,6 +2,7 @@ package org.sunbird.dp.spec
 
 import java.util
 
+import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.flink.api.common.typeinfo.TypeInformation
@@ -92,14 +93,21 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.cacheHitCount}").getValue() should be(7)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.cacheHitMissCount}").getValue() should be(1)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.certIssueEventsCount}").getValue() should be(5)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbScoreAggUpdateCount}").getValue() should be(5)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbScoreAggReadCount}").getValue() should be(5)
     
-    val test_row1 = cassandraUtil.findOne("select total_score,total_max_score from sunbird_courses.assessment_aggregator where course_id='do_2128410273679114241112'")
+    val test_row1 = cassandraUtil.findOne("select total_score,total_max_score from sunbird_courses.assessment_aggregator where user_id='d0d8a341-9637-484c-b871-0c27015af238' and course_id='do_2128410273679114241112'")
     assert(test_row1.getDouble("total_score") == 2.0)
     assert(test_row1.getDouble("total_max_score") == 2.0)
 
-    val test_row2 = cassandraUtil.findOne("select total_score,total_max_score from sunbird_courses.assessment_aggregator where course_id='do_2128415652377067521125'")
+    val test_row2 = cassandraUtil.findOne("select total_score,total_max_score from sunbird_courses.assessment_aggregator where user_id='ff1c4bdf-27e2-49bc-a53f-6e304bb3a87f' and course_id='do_2128415652377067521125'")
     assert(test_row2.getDouble("total_score") == 3.0)
     assert(test_row2.getDouble("total_max_score") == 4.0)
+
+    val test_row3 = cassandraUtil.findOne("select agg from sunbird_courses.user_activity_agg where activity_type='Course' and activity_id='do_2128410273679114241112' and  user_id='d0d8a341-9637-484c-b871-0c27015af238'")
+    val resultMap = test_row3.getMap("agg", new TypeToken[String]() {}, new TypeToken[Integer]() {})
+    assert(null != resultMap)
+    assert(2 == resultMap.getOrDefault("score:do_2128373396098744321673", 0))
   }
 
   def testCassandraUtil(cassandraUtil: CassandraUtil): Unit = {
