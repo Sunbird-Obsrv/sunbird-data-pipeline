@@ -29,7 +29,7 @@ node() {
             ansible_playbook_run(values)
             archiveArtifacts 'metadata.json'
             currentBuild.description = "Image: ${values.image_tag}, Private: ${params.private_branch}, Public: ${params.branch_or_tag}"
-        if (params.monitoring_enabled == true) {
+        if (params.monitoring_enabled) {
             ansiblePlaybook = "${currentWs}/kubernetes/ansible/secor_deploy.yaml"
             ansibleExtraArgs = "--extra-vars \"chart_path=${currentWs}/kubernetes/helm_charts/secor job_names_to_deploy=${params.job_names_to_deploy}\" --skip-tags secor_deploy --vault-password-file /var/lib/jenkins/secrets/vault-pass"
             values.put('ansiblePlaybook', ansiblePlaybook)
