@@ -45,7 +45,7 @@ class UserScoreAggregateFunction(config: AssessmentAggregatorConfig,
         val rows: java.util.List[Row] = cassandraUtil.find(query.toString);
         if (null != rows && !rows.isEmpty) {
             rows.asScala.toList.map(row => {
-                "score:" + row.getString("content_id") -> rows.asScala.toList.head.getDouble("score").toInt
+                "score:" + row.getString("content_id") -> row.getDouble("score").toInt
             }).toMap
         } else Map[String, Int]()
     }
