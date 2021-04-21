@@ -18,7 +18,7 @@ secor_alertrule_enabled: true
 secor_jobs:
   raw-telemetry-backup:
     replicas: 1
-    consumer_group: "{{env_name}}.telemetry.raw.backup"
+    consumer_group: "{{env_name}}.telemetry.raw.backup.tmp"
     service_name: "raw_telemetry_backup"
     base_path: "raw"
     timestamp_key: "syncts"
@@ -44,7 +44,7 @@ secor_jobs:
   failed-telemetry-backup:
     replicas: 1
     service_name: "failed_telemetry_backup"
-    consumer_group: "{{ env_name }}.telemetry.failed.backup"
+    consumer_group: "{{ env_name }}.telemetry.failed.backup.tmp"
     base_path: "failed"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
@@ -69,7 +69,7 @@ secor_jobs:
   unique-telemetry-backup:
     replicas: 1
     service_name: "unique_telemetry_backup"
-    consumer_group: "{{ env_name }}.telemetry.unique.backup"
+    consumer_group: "{{ env_name }}.telemetry.unique.backup.tmp"
     base_path: "unique/raw"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
@@ -94,7 +94,7 @@ secor_jobs:
   denorm-events-backup:
     replicas: 1
     service_name: "denorm_events_backup"
-    consumer_group: "{{ env_name }}.telemetry.denorm.backup"
+    consumer_group: "{{ env_name }}.telemetry.denorm.backup.tmp"
     base_path: "telemetry-denormalized"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
@@ -119,7 +119,7 @@ secor_jobs:
   derived-denorm-events-backup:
     replicas: 1
     service_name: "derived_denorm_events_backup"
-    consumer_group: "{{ env_name }}.summary.backup"
+    consumer_group: "{{ env_name }}.summary.backup.tmp"
     base_path: "telemetry-denormalized/summary"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
@@ -144,7 +144,7 @@ secor_jobs:
   channel-telemetry-backup:
     replicas: 1
     service_name: "channel_telemetry_backup"
-    consumer_group: "{{ env_name }}.telemetry.channel.backup"
+    consumer_group: "{{ env_name }}.telemetry.channel.backup.tmp"
     base_path: "data-exhaust/raw"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
@@ -169,7 +169,7 @@ secor_jobs:
   channel-summary-backup:
     replicas: 1
     service_name: "channel_summary_backup"
-    consumer_group: "{{ env_name }}.summary.channel.backup"
+    consumer_group: "{{ env_name }}.summary.channel.backup.tmp"
     base_path: "data-exhaust/summary"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
@@ -194,7 +194,7 @@ secor_jobs:
   extractor-failed-backup:
     replicas: 1
     service_name: "extractor_failed_backup"
-    consumer_group: "{{ env_name }}.extractor.failed.backup"
+    consumer_group: "{{ env_name }}.extractor.failed.backup.tmp"
     base_path: "extractor-failed"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
@@ -219,7 +219,7 @@ secor_jobs:
   assess-raw-events-backup:
     replicas: 1
     service_name: "assess_raw_events_backup"
-    consumer_group: "{{ env_name }}.telemetry.assess.raw"
+    consumer_group: "{{ env_name }}.telemetry.assess.raw.tmp"
     base_path: "telemetry-raw-assess"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
@@ -244,7 +244,7 @@ secor_jobs:
   telemetry-duplicate-backup:
     replicas: 1
     service_name: "telemetry_duplicate_backup"
-    consumer_group: "{{ env_name }}.telemetry.duplicate.backup"
+    consumer_group: "{{ env_name }}.telemetry.duplicate.backup.tmp"
     base_path: "telemetry-duplicate"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
@@ -269,7 +269,7 @@ secor_jobs:
   extractor-duplicate-backup:
     replicas: 1
     service_name: "extractor_duplicate_backup"
-    consumer_group: "{{ env_name }}.extractor.duplicate.backup"
+    consumer_group: "{{ env_name }}.extractor.duplicate.backup.tmp"
     base_path: "extractor-duplicate"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
@@ -294,7 +294,7 @@ secor_jobs:
   derived-telemetry-backup:
     replicas: 1
     service_name: "derived_telemetry_backup"
-    consumer_group: "{{ env_name }}.telemetry.derived.unique.backup"
+    consumer_group: "{{ env_name }}.telemetry.derived.unique.backup.tmp"
     base_path: "unique/summary"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
@@ -319,7 +319,7 @@ secor_jobs:
   device-profile-backup:
     replicas: 1
     service_name: "device_profile_backup"
-    consumer_group: "{{ env_name }}.events.device.profile.backup"
+    consumer_group: "{{ env_name }}.events.device.profile.backup.tmp"
     base_path: "device-profile-events"
     timestamp_key: "updated_date"
     fallback_timestamp_key: "updated_date"
@@ -344,7 +344,7 @@ secor_jobs:
   learning-events-backup:
     replicas: 1
     service_name: "learning_events_backup"
-    consumer_group: "{{ env_name }}.learning.graph.events.backup"
+    consumer_group: "{{ env_name }}.learning.graph.events.backup.tmp"
     base_path: "learning-events"
     timestamp_key: "createdOn"
     fallback_timestamp_key: "@timestamp"
@@ -369,7 +369,7 @@ secor_jobs:
   learning-failed-backup:
     replicas: 1
     service_name: "learning_failed_backup"
-    consumer_group: "{{ env_name }}.failed.learning.events.backup"
+    consumer_group: "{{ env_name }}.failed.learning.events.backup.tmp"
     base_path: "learning-failed-events"
     timestamp_key: "ets"
     fallback_timestamp_key: "@timestamp"
@@ -397,7 +397,7 @@ secor_jobs:
   assess-events-backup:
     replicas: 1
     service_name: "assess_events_backup"
-    consumer_group: "{{ env_name }}.telemetry.assess.events.backup"
+    consumer_group: "{{ env_name }}.telemetry.assess.events.backup.tmp"
     base_path: "telemetry-batch-assess"
     timestamp_key: "assessmentTs"
     fallback_timestamp_key: "assessmentTs"
@@ -422,7 +422,7 @@ secor_jobs:
   ingestion-telemetry-backup:
     replicas: 1
     service_name: "ingestion_telemetry_backup"
-    consumer_group: "{{ env_name }}.telemetry.ingestion.events.backup"
+    consumer_group: "{{ env_name }}.telemetry.ingestion.events.backup.tmp"
     base_path: "ingestion-telemetry"
     timestamp_key: "syncts"
     fallback_timestamp_key: "@timestamp"
@@ -447,7 +447,7 @@ secor_jobs:
   content-consumption-events-backup:
     replicas: 1
     service_name: "content_consumption_events_backup"
-    consumer_group: "{{ env_name }}.coursebatch.job.request.backup"
+    consumer_group: "{{ env_name }}.coursebatch.job.request.backup.tmp"
     base_path: "content-consumption-events"
     timestamp_key: "ets"
     fallback_timestamp_key: "@timestamp"
@@ -472,7 +472,7 @@ secor_jobs:
   issue-certificate-events-backup:
     replicas: 1
     service_name: "issue_certificate_events_backup"
-    consumer_group: "{{ env_name }}.issue.certificate.request.backup"
+    consumer_group: "{{ env_name }}.issue.certificate.request.backup.tmp"
     base_path: "issue-certificate-events"
     timestamp_key: "ets"
     fallback_timestamp_key: "@timestamp"
@@ -497,7 +497,7 @@ secor_jobs:
   content-auto-creation-events-backup:
     replicas: 1
     service_name: "content_auto_creation_events_backup"
-    consumer_group: "{{ env_name }}.auto.creation.job.request.backup"
+    consumer_group: "{{ env_name }}.auto.creation.job.request.backup.tmp"
     base_path: "content-auto-creation-events"
     timestamp_key: "ets"
     fallback_timestamp_key: "@timestamp"
