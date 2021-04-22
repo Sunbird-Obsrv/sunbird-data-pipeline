@@ -4,7 +4,7 @@ image_tag: "0.29"
 image_pullPolicy: IfNotPresent
 imagepullsecrets: sunbird-registry-secret
 secor_storage_class: managed-premium
-azure_container_name: secor-data-store
+azure_secor_container_name: secor-data-store
 
 # this varible is to control the monitoring deployment. override this value by adding into
 # private repo common.yml to not to create the secor lag alert rules. The scenorio is , if adopters does not have
