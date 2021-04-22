@@ -1,6 +1,6 @@
 azure_account: "{{ sunbird_private_storage_account_name }}"
 azure_secret: "{{ sunbird_private_storage_account_key }}"
-azure_container_name: "secor-data-store"
+azure_container_name: "{{ azure_container_name }}"
 
 namespace: {{ secor_namespace }}
 storageClass: {{ secor_storage_class | default('default') }}
