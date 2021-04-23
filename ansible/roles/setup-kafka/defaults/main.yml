@@ -14,6 +14,40 @@ ingestion_kafka_overriden_topics:
     max_message_bytes: 5242880
 
 processing_kafka_overriden_topics:
+  
+  - name: dev.sl.observation.raw
+    retention_time: 604800000
+    replication_factor: 1
+  - name: dev.sl.observation.raw
+    retention_time: 604800000
+    replication_factor: 1    
+  - name: dev.sl.observation.evidence.druid
+    retention_time: 604800000
+    replication_factor: 1  
+  - name: dev.sl.survey.raw
+    retention_time: 604800000
+    replication_factor: 1
+  - name: dev.sl.survey.druid
+    retention_time: 604800000
+    replication_factor: 1        
+  - name: dev.sl.survey.evidence.druid
+    retention_time: 604800000
+    replication_factor: 1
+  - name: dev.sl.submission.rating.raw
+    retention_time: 604800000
+    replication_factor: 1
+  - name: dev.sl.incomplete.observation.raw
+    retention_time: 604800000
+    replication_factor: 1
+  - name: dev.sl.notification.raw
+    retention_time: 604800000
+    replication_factor: 1
+  - name: dev.sl.incomplete.survey.raw
+    retention_time: 604800000
+    replication_factor: 1
+  - name: dev.sl.improvement.project.submission
+    retention_time: 604800000
+    replication_factor: 1
   - name: telemetry.raw
     retention_time: 172800000
     replication_factor: 1
@@ -138,6 +172,40 @@ processing_kafka_overriden_topics:
     replication_factor: 1        
 
 processing_kafka_topics:
+  
+  - name: dev.sl.observation.raw
+    num_of_partitions: 1
+    replication_factor: 1    
+  - name: dev.sl.observation.druid
+    num_of_partitions: 1
+    replication_factor: 1    
+  - name: dev.sl.observation.evidence.druid
+    num_of_partitions: 1
+    replication_factor: 1    
+  - name: dev.sl.survey.raw
+    num_of_partitions: 1
+    replication_factor: 1    
+  - name: dev.sl.survey.druid
+    num_of_partitions: 1
+    replication_factor: 1    
+  - name: dev.sl.survey.evidence.druid
+    num_of_partitions: 1
+    replication_factor: 1 
+  - name: dev.sl.submission.rating.raw
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: dev.sl.incomplete.observation.raw
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: dev.sl.notification.raw
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: dev.sl.incomplete.survey.raw
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: dev.sl.improvement.project.submission
+    num_of_partitions: 1
+    replication_factor: 1
   - name: system.command
     retention_time: 3600
     num_of_partitions: 1
