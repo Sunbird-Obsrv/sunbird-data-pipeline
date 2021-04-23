@@ -2,6 +2,8 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
+  annotations:
+    configmap.reloader.stakater.com/reload: {{ .Release.Name }}-config
   name: {{ .Release.Name }}
   namespace: {{ .Values.namespace }}
   labels:
