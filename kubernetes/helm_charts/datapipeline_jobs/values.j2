@@ -679,12 +679,14 @@ assessment-aggregator:
       assessaggregator {
         parallelism = {{ assessaggregator_parallelism }}
       }
+      scoreaggregator.parallelism = {{ assessaggregator_scoreaggregator_parallelism }}
     }
     lms-cassandra {
       keyspace = "{{ middleware_cassandra_courses_keyspace }}"
       table = "{{ middleware_cassandra_assessment_aggregator_table }}"
       questionudttype= "{{ middleware_cassandra_assessment_question_type }}"
       enrolmentstable = "{{ middleware_cassandra_user_enrolments_table }}"
+      activitytable = "{{ middleware_cassandra_user_activity_agg_table }}"
     }
     redis {
       database {
