@@ -1,4 +1,4 @@
-flink_namespace: flink-dev
+flink_namespace: "flink-{{ env }}"
 imagepullsecrets: "{{ env }}-registry-secret"
 service_monitor_enabled: true
 ### Job manager related vars
