@@ -8,16 +8,6 @@
     - {var: 'azure_storage_secret', value: '{{ sunbird_private_storage_account_key }}'}
   no_log: true
 
-- name: Remove guava-jre default jar
-  become: yes
-  file:
-    path: {{ spark_folder }}/jars/guava-{{guava_default_gre_version}}.jar
-    state: absent
-
-- name: Download guava_jre_url and copy to Spark jars folder
-  become: yes
-  get_url: url={{ guava_jre_url }} dest={{ spark_folder }}/jars/guava-{{guava_gre_version}}.jar timeout=1000 force=no
-   
 - name: Download log4j api and copy to Spark jars folder
   become: yes
   get_url: url={{ log4j_api_url }} dest={{ spark_folder }}/jars/log4j-api-{{log4j_version}}.jar timeout=1000 force=no
