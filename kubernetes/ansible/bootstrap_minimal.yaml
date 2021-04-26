@@ -37,6 +37,7 @@
       with_items:
         - "flink-{{ env }}"
         - "flink-kp-{{ env }}"
+        - secor
       when: imagepullsecrets|length > 0
 
     - name: Installing reloader for configmaps reload
