@@ -206,5 +206,5 @@ user_port: 6381
 dialcode_port: 6382
 
 ### kafka and zookeeper ip vars and being used in kafka topiccreation role. 
-ingestion_zookeeper_ip: "{{ groups['ingestion-cluster-zookeeper'][0] }}"
-processing_zookeeper_ip: "{{ groups['processing-cluster-zookeepers'][0] }}"
+ingestion_kafka_ip: "{{ groups['ingestion-cluster-kafka'][0] }}"
+processing_kafka_ip: "{{ groups['processing-cluster-kafka'][0] }}"
