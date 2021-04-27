@@ -47,7 +47,10 @@ def processRequests(totalRequestsDf, jobId, batchSize, db, table,jobType):
             subSetDf = totalRequestsDf[(totalRequestsDf['row_num'] >= start_index) & (totalRequestsDf['row_num'] <= end_index)]
             subSetDf["batch_number"] = i
             print(start_index,end_index)
-            updateRequests(db, table, json.loads(subSetDf.to_json(orient='records')))
+            if jobType == 'exhaust':
+              updateExhaustRequests(db, table, json.loads(subSetDf.to_json(orient='records')))
+            else:
+              updateDruidRequests(db, table, json.loads(subSetDf.to_json(orient='records')))
             start_index = 1 + end_index
             end_index = end_index + batchSize
         db.commit()

@@ -2,7 +2,7 @@ secor_namespace: "secor"
 image_repository: "secor"
 image_tag: "0.29"
 image_pullPolicy: IfNotPresent
-imagepullsecrets: sunbird-registry-secret
+imagepullsecrets: "{{ env }}-registry-secret"
 secor_storage_class: managed-premium
 azure_secor_container_name: secor-data-store
 
