@@ -46,8 +46,9 @@ class ContentUpdaterFunction(config: ContentCacheUpdaterConfig)(implicit val map
             val finalProperties = event.extractProperties().filter(property => null != property._2)
 
             val newProperties = finalProperties.map { case (property, nv) =>
-                if (config.contentDateFields.contains(property))
+                if (config.contentDateFields.contains(property) && null != nv && nv.asInstanceOf[String].nonEmpty) {
                     (property, new SimpleDateFormat(config.contentDateFormat).parse(nv.toString).getTime)
+                }
                 else if (config.contentListFields.contains(property))
                     (property, nv match {
                         case _: String => List(nv)
