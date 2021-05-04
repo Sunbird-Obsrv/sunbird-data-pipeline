@@ -134,6 +134,7 @@ snapshot_base_path: telemetrysearch
 
 # sunbird learner service
 sunbird_es_host: "{{groups['core-es']| join(',')}}"
+single_node_es_host: "{{ groups['core-es'][0] }}"
 
 ### Druid related vars
 overlord_host: "{{ groups['raw-overlord'][0] }}"
