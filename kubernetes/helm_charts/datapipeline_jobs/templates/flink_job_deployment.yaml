@@ -96,7 +96,7 @@ spec:
             path: base-config.conf
           - key: {{ .Release.Name }}
             path: {{ .Release.Name }}.conf
-          - key: log4j_properties
+          - key: log4j_console_properties
             path: log4j-console.properties
       restartPolicy: OnFailure
       imagePullSecrets:
@@ -168,7 +168,7 @@ spec:
           items:
           - key: flink-conf
             path: flink-conf.yaml
-          - key: log4j_properties
+          - key: log4j_console_properties
             path: log4j-console.properties 
       imagePullSecrets:
       - name: {{ .Values.imagepullsecrets }}
