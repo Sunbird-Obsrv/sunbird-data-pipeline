@@ -1,7 +1,6 @@
 package org.sunbird.dp.spec
 
 import java.util
-
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import com.typesafe.config.{Config, ConfigFactory}
@@ -25,6 +24,7 @@ import org.sunbird.dp.core.util.{CassandraUtil, JSONUtil}
 import org.sunbird.dp.fixture.EventFixture
 import org.sunbird.dp.{BaseMetricsReporter, BaseTestSpec}
 import redis.embedded.RedisServer
+
 
 class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
 

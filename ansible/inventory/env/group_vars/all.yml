@@ -209,3 +209,7 @@ dialcode_port: 6382
 ### kafka and zookeeper ip vars and being used in kafka topiccreation role. 
 ingestion_kafka_ip: "{{ groups['ingestion-cluster-zookeeper'][0] }}"
 processing_kafka_ip: "{{ groups['processing-cluster-zookeepers'][0] }}"
+
+### docker image pull secrets name and this will be created in kubernetes
+imagepullsecrets: "{{env}}-registry-secret"
+
