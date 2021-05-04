@@ -24,32 +24,6 @@
   tags:
     - ed-dataproducts-spark-cluster      
 
-- name: Download spark-redis to tmp dir
-  become: yes
-  get_url: url={{ spark_redis_url }} dest=/tmp/{{ spark_redis_version }} timeout=1000
-  tags:
-    - ed-dataproducts-spark-cluster
-
-- name: Download Jedis to tmp dir
-  become: yes
-  get_url: url={{ jedis_url }} dest=/tmp/{{ jedis_version }} timeout=1000
-  tags:
-    - ed-dataproducts-spark-cluster
-
-- name: Copy spark-redis to azure blob
-  command: az storage blob upload -c {{ bucket }} --name models-{{ model_version }}/{{ spark_redis_version }} -f /tmp/{{ spark_redis_version }}
-  async: 3600
-  poll: 10
-  tags:
-    - ed-dataproducts-spark-cluster
-
-- name: Copy Jedis to azure blob
-  command: az storage blob upload -c {{ bucket }} --name models-{{ model_version }}/{{ jedis_version }} -f /tmp/{{ jedis_version }}
-  async: 3600
-  poll: 10
-  tags:
-    - ed-dataproducts-spark-cluster    
-
 - name: Copy Framework Library
   copy: src={{ analytics_core_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
   tags:
@@ -213,22 +187,6 @@
     - default-jobs
     - spark1-jobs
 
-- name: Create course-dashboard-metrics cron job
-  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh course-dashboard-metrics"
-  with_dict: "{{ run_course_metrics_job }}"
-  tags:
-    - cronjobs
-    - default-jobs
-    - spark1-jobs
-
-- name: Create assessment-dashboard-metrics cron job
-  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh assessment-dashboard-metrics"
-  with_dict: "{{ run_assessment_metrics_job }}"
-  tags:
-    - cronjobs
-    - default-jobs
-    - spark-jobs
-
 - name: Create admin-user-reports cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh admin-user-reports"
   with_dict: "{{ run_admin_user_reports_job }}"
@@ -276,6 +234,15 @@
     - default-jobs
     - spark-jobs
 
+- name: Create cassandra-migration cron job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh cassandra-migration"
+  with_dict: "{{ run_cassandra_migration }}"
+  tags:
+    - cronjobs
+    - default-jobs
+    - spark-jobs
+    
+
 - name: Create userinfo-exhaust cron job
   cron: name="{{ env }}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }} job="{{ analytics.home }}/scripts/run-job.sh userinfo-exhaust"
   with_dict: "{{ run_userinfo_exhaust }}"
@@ -283,7 +250,7 @@
     - cronjobs
     - default-jobs
     - spark-jobs
-    
+
 - name: Create collection-summary cron job
   cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-job.sh collection-summary-report"
   with_dict: "{{ run_collection_summary }}"
@@ -353,7 +320,7 @@
 - name: Install required python packages
   pip:
     name:
-      - psycopg2
+      - psycopg2-binary
       - pandas
       - IPython
   tags:
@@ -366,11 +333,19 @@
     - parallel-jobs-submit
 
 - name: Execute python script to populate batch numbers
-  shell: "python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }}"
+  shell: "python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} exhaust {{env}}_job_request"
   tags:
     - parallel-jobs-submit
   register: jobsCountStr
-
+  when: jobs.find("exhaust") != -1
+    
+- name: Execute python script to populate batch numbers
+  shell: "python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} druid {{env}}_report_config"
+  tags:
+    - parallel-jobs-submit
+  register: jobsCountStr
+  when: jobs.find("druid") != -1
+  
 - debug:
     var: jobsCountStr
   tags:
@@ -390,7 +365,7 @@
 - debug:
     var: jobsCountOut
   tags:
-    - parallel-jobs-submit  
+    - parallel-jobs-submit
 
 # set jobs count variable from python script output
 - set_fact:
@@ -400,6 +375,7 @@
 
 - name: Submit parallel exhaust jobs
   shell: "nohup {{ analytics_cluster.home }}/submit-script.sh --job {{ jobs }} --mode parallel-jobs --parallelisation {{ jobs_count }} &"
+  poll: 30
   tags:
     - parallel-jobs-submit 
   register: submitOutput

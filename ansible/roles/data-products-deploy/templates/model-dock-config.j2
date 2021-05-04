@@ -2,38 +2,16 @@
 
 config() {
 	bucket={{ bucket }}
-	datasetRawBucket={{ datasetRawBucket }}
-	dataExhaustBucket={{ dataExhaustBucket }}
-	dataExhaustPrefix={{ dataExhaustPrefix }}
-	consumptionRawPrefix={{ consumptionRawPrefix }}
 	brokerList={{ brokerlist }}
 	zookeeper={{ zookeeper }}
 	job_topic={{ analytics_job_queue_topic }}
 	topic={{ topic }}
-	analyticsMetricsTopic={{ analytics_metrics_topic }}
-	learning_topic={{ learning_topic }}
-	sinkTopic={{ sink_topic }}
-	metricsTopic={{ metrics_topic }}
-	currentDate=$(date "+%Y-%m-%d");
-	analytics_home={{ analytics.home }}	
-	temp_folder={{ job_manager_tmp_dir }}
 	sparkCassandraConnectionHost="{{groups['lp-cassandra'][0]}}"
-	sparkRedisConnectionHost={{ metadata2_redis_host }}
 	sunbirdPlatformCassandraHost="{{ core_cassandra_host }}"
-	sunbirdPlatformElasticsearchHost="{{ sunbird_es_host }}"
-	jobManagerJobsCount="{{ analytics_jobs_count }}"
-	dataExhaustChannel="{{ data_exhaust_Channel }}"
-	pipelineAuditSlackUser="Pipeline Audit"
-	druidBrokerUrl="http://{{druid_broker_host}}:8082/"
-	producerEnv="{{ producer_env }}"
-	baseScriptPath="{{ spark_output_temp_dir }}"
 	reportPostContainer="{{ reports_container }}"
-	druidIngestionURL="http://{{groups['raw-overlord'][0]}}:8081/druid/indexer/v1/task"
 	
 	if [ -z "$2" ]; then endDate=$(date --date yesterday "+%Y-%m-%d"); else endDate=$2; fi
 	if [ ! -z "$3" ]; then inputBucket=$3; fi
-	if [ ! -z "$4" ]; then sinkTopic=$4; fi
-	if [ ! -z "$2" ]; then keyword=$2; fi
 	case "$1" in
 		"content-details")
 		echo '{"search": {"type": "none"},"model": "org.ekstep.analytics.sourcing.ContentDetailsReport","modelParams": {"reportConfig": {"id": "content_report","metrics": [],"labels": {"programName": "Project Name","programId": "Project ID","contentId": "Content ID","contentName": "Content Name","contentType": "Content Type","mimeType": "MimeType","chapterId": "Chapter ID","contentStatus": "Content Status","creator": "Creator Name","createdBy": "CreatedBy ID","date": "Date","identifier": "Textbook ID","name": "Textbook Name","medium": "Medium","gradeLevel": "Grade","subject": "Subject","board": "Board","grade": "Grade","chapters": "Chapter Name","status": "Textbook Status"},"output": [{"type": "csv","dims": ["identifier", "channel", "name"],"fileParameters": ["id", "dims"]}, {"type": "json","dims": ["identifier", "channel", "name"],"fileParameters": ["id", "dims"]}]},"contentQuery": {"queryType": "groupBy","dataSource": "vdn-content-model-snapshot","intervals": "1901-01-01T00:00:00+00:00/2101-01-01T00:00:00+00:00","aggregations": [{"name": "count","type": "count"}],"dimensions": [{"fieldName": "identifier","aliasName": "identifier"}, {"fieldName": "name","aliasName": "name"}, {"fieldName": "primaryCategory","aliasName": "primaryCategory"}, {"fieldName": "unitIdentifiers","aliasName": "unitIdentifiers"}, {"fieldName": "collectionId","aliasName": "collectionId"}, {"fieldName": "createdBy","aliasName": "createdBy"}, {"fieldName": "creator","aliasName": "creator"}, {"fieldName": "mimeType","aliasName": "mimeType"}],"filters": [{"type": "notequals","dimension": "contentType","value": "TextBook"}, {"type": "in","dimension": "status","values": ["Live"]}, {"type": "isnotnull","dimension": "collectionId"}],"postAggregation": [],"descending": "false","limitSpec": {"type": "default","limit": 1000000,"columns": [{"dimension": "count","direction": "descending"}]}},"textbookQuery": {"queryType": "groupBy","dataSource": "vdn-content-model-snapshot","intervals": "1901-01-01T00:00:00+00:00/2101-01-01T00:00:00+00:00","aggregations": [{"name": "count","type": "count"}],"dimensions": [{"fieldName": "programId","aliasName": "programId"}, {"fieldName": "identifier","aliasName": "identifier"}, {"fieldName": "name","aliasName": "name"}, {"fieldName": "board","aliasName": "board"}, {"fieldName": "medium","aliasName": "medium"}, {"fieldName": "gradeLevel","aliasName": "gradeLevel"}, {"fieldName": "subject","aliasName": "subject"}, {"fieldName": "status","aliasName": "status"}, {"fieldName": "acceptedContents","aliasName": "acceptedContents"}, {"fieldName": "rejectedContents","aliasName": "rejectedContents"}],"filters": [{"type": "in","dimension": "contentType","values": ["TextBook", "Course", "Collection"]}, {"type": "isnotnull","dimension": "programId"}, {"type": "in","dimension": "status","values": ["Draft"]}, {"type": "equals","dimension": "channel","value": "channelId"}],"postAggregation": [],"descending": "false","limitSpec": {"type": "default","limit": 1000000,"columns": [{"dimension": "count","direction": "descending"}]}},"store": "azure","storageKeyConfig": "azure_storage_key","storageSecretConfig": "azure_storage_secret","storageContainer": "'$reportPostContainer'","format": "csv","key": "druid-reports/","filePath": "druid-reports/","container": "'$reportPostContainer'","sparkCassandraConnectionHost": "'$sunbirdPlatformCassandraHost'","folderPrefix": ["slug", "reportName"]},"output": [{"to": "console","params": {"printEvent": false}}],"parallelization": 8,"appName": "Content Report Job","deviceMapping": false}'

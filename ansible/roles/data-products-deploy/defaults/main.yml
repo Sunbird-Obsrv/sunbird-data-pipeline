@@ -1,7 +1,6 @@
 analytics_user: analytics
 analytics_group: analytics
 spark_output_temp_dir: /mount/data/analytics/tmp/
-telemetry_converter_ver: 0.0.8
 
 bucket: "dev-data-store"
 kafka_broker_host: "{{groups['processing-cluster-kafka'][0]}}:9092"
@@ -10,12 +9,7 @@ brokerlist: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
 zookeeper: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
 dp_username: dp-monitor
 analytics_job_queue_topic: "{{ env }}.analytics.job_queue"
-datasetRawBucket: ekstep-data-sets-{{ env }}
-dataExhaustBucket: ekstep-public-{{ env }}
-dataExhaustPrefix: data-exhaust/
-consumptionRawPrefix: datasets/D001/4208ab995984d222b59299e5103d350a842d8d41/
 topic: "{{ env }}.telemetry.derived"
-learning_topic: "{{ env }}.learning.graph.events"
 analytics_metrics_topic: "{{ env }}.analytics_metrics"
 sink_topic: "{{ env }}.telemetry.sink"
 assess_topic: "{{ env }}.telemetry.assess"
@@ -34,21 +28,14 @@ job_request_table: "{{ env }}_job_request"
 report_user_table_keyspace: "sunbird_courses"
 
 
-analytics_job_list: '"wfs", "ds", "dpu", "content-rating-updater", "audit-metrics-report", "monitor-job-summ"'
-analytics_jobs_count: 8
+analytics_job_list: '"wfs", "content-rating-updater", "monitor-job-summ"'
+analytics_jobs_count: 3
 
 cassandra_keyspace_prefix: '{{ env }}_'
 cassandra_hierarchy_store_keyspace: "{{ env_name}}_hierarchy_store"
-dp_dispatch_bucket_name: ekstep-dev-data-store
-data_exhaust_blob_name: sunbird1p7
-data_exhaust_s3_url: https://s3-ap-south-1.amazonaws.com
 spark_version: 2.4.4
 
 heap_memory: "-Xmx5120m"
-
-business_metrics:
-  s3_path: "s3://ekstep-{{ env }}-data-store/business_metrics/"
-  env: "{{ env }}"
 
 spark:
   home: "{{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7"
@@ -123,12 +110,6 @@ index_content_model_druid:
     hour: 1
     minute: 00
 
-run_district_weekly_job:
-  district-weekly:
-    hour: 03
-    minute: 30
-    weekday: 1
-
 run_etb_metrics_weekly_job:
   etb-metrics-weekly:
     hour: 23
@@ -153,18 +134,15 @@ run_userinfo_exhaust:
     hour: 10
     minute: 00
 
-run_district_monthly_job:
-  district-monthly:
-    hour: 04
-    minute: 30
-    day: 1
-    month: 1-12
-
-
 run_collection_summary:
   collection-summary:
     hour: 09
     minute: 30
+
+run_cassandra_migration:
+  cassandra-migration:
+    hour: 19
+    minute: 15
 
 
 service:
@@ -176,8 +154,8 @@ es_search_index: "compositesearch"
 analytics:
   home: /mount/data/analytics
   soft_path: /mount/data/analytics
-  paths: ['/home/analytics/sbin', '/mount/data/analytics', '/mount/data/analytics/logs', '/mount/data/analytics/logs/services', '/mount/data/analytics/logs/data-products', '/mount/data/analytics/logs/api-service', '/mount/data/analytics/api', '/mount/data/analytics/tmp', '/mount/data/analytics/scripts/monitor-data', '/mount/data/analytics/scripts', '/mount/data/analytics/models' ]
-  scripts: ['model-config', 'replay-job', 'replay-updater', 'replay-utils', 'run-job', 'monitor-dp', 'generate-metrics', 'submit-job', 'start-jobmanager', 'submit-script']
+  paths: ['/mount/data/analytics', '/mount/data/analytics/logs', '/mount/data/analytics/logs/services', '/mount/data/analytics/logs/data-products', '/mount/data/analytics/tmp', '/mount/data/analytics/scripts', '/mount/data/analytics/models' ]
+  scripts: ['model-config', 'replay-job', 'replay-updater', 'replay-utils', 'run-job', 'submit-job', 'start-jobmanager', 'submit-script']
   dockScripts: ['model-dock-config','run-dock-job']
 
 # artifact versions
@@ -197,12 +175,6 @@ submit_jobs_auth_token: "{{ sunbird_api_auth_token }}"
 report_list_jobs_url: "{{ druid_report_url }}"
 
 reports_container: "reports"
-
-spark_redis_url: https://repo1.maven.org/maven2/com/redislabs/spark-redis_2.11/2.5.0/spark-redis_2.11-2.5.0.jar
-jedis_url: https://repo1.maven.org/maven2/redis/clients/jedis/3.2.0/jedis-3.2.0.jar
-
-spark_redis_version: "spark-redis_2.11-2.5.0.jar"
-jedis_version: "jedis-3.2.0.jar"
 
 # Cluster vars
 spark_cluster_user_password: ""
