@@ -9,11 +9,12 @@ import org.slf4j.LoggerFactory
 class CassandraUtil(host: String, port: Int) {
 
   val logger = LoggerFactory.getLogger("CassandraUtil")
-
+  val options : QueryOptions = new QueryOptions()
   val cluster = {
     Cluster.builder()
       .addContactPoint(host)
       .withPort(port)
+      .withQueryOptions(options.setConsistencyLevel(ConsistencyLevel.QUORUM))
       .withoutJMXReporting()
       .build()
   }

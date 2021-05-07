@@ -1,6 +1,6 @@
-flink_namespace: flink-dev
-imagepullsecrets: sunbird-registry-secret
-
+flink_namespace: "flink-{{ env }}"
+imagepullsecrets: "{{ env }}-registry-secret"
+service_monitor_enabled: true
 ### Job manager related vars
 jobmanager_rpc_port: 6123
 jobmanager_blob_port: 6124
