@@ -166,6 +166,7 @@ default_druid_configs:
    druid_router_http_numMaxThreads: 100
    druid_server_http_numThreads: 100
    druid_router_managementProxy_enabled: true
+   druid_historical_maxOnDiskStorage: 10737418240
   rollup:
    #Druid Postgres Details
    druid_postgres_db: "druid"
