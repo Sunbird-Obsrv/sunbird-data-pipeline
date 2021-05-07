@@ -1,0 +1,3 @@
+analytics_user: analytics
+analytics_group: analytics
+analytics_user_home: /home/{{ analytics_user }}

@@ -1,0 +1,34 @@
+## Common bootstrap for all analytics instances ##
+
+- name: Create analytics group
+  become: yes
+  group:
+    state: present
+    name: "{{ analytics_group }}"
+    system: yes
+
+- name: Create analytics user
+  become: yes
+  user:
+    state: present
+    name: "{{ analytics_user }}"
+    comment: analytics user
+    system: yes
+    createhome: yes
+    group: "{{ analytics_group }}"
+
+- name: Installing packages
+  become: yes
+  apt:
+    name: "{{item}}"
+    state: latest
+    update_cache: true
+  with_items:
+    - rsync
+    - zip
+    - python-pip
+
+- name: Set locale LC_ALL=en_US.UTF-8
+  become: yes
+  become_user: "{{ analytics_user }}"
+  lineinfile: dest={{ analytics_user_home }}/.bashrc line='export LC_ALL=en_US.UTF-8'  state=present insertafter=EOF create=yes
