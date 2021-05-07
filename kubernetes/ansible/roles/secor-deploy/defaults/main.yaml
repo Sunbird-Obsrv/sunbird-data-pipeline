@@ -131,7 +131,7 @@ secor_jobs:
     partition_prefix_enabled: "false"
     partition_prefix_key: ""
     partition_prefix_mapping: "{}"
-    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    output_file_pattern: "{partition}-{kafkaPartition}-{currentTimestamp}.json"
     message_channel_identifier: ""
     message_parser: "com.pinterest.secor.parser.PatternDateMessageParser" 
     storage:
@@ -156,7 +156,7 @@ secor_jobs:
     partition_prefix_enabled: "false"
     partition_prefix_key: "eid"
     partition_prefix_mapping: "{}"
-    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    output_file_pattern: "{partition}-{kafkaPartition}-{currentTimestamp}.json"
     message_channel_identifier: "derivedlocationdata.state"
     message_parser: "com.pinterest.secor.parser.ChannelDateMessageParser"
     storage:
@@ -181,7 +181,7 @@ secor_jobs:
     partition_prefix_enabled: "false"
     partition_prefix_key: ""
     partition_prefix_mapping: "{}"
-    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    output_file_pattern: "{partition}-{kafkaPartition}-{currentTimestamp}.json"
     message_channel_identifier: "derivedlocationdata.state"
     message_parser: "com.pinterest.secor.parser.ChannelDateMessageParser"
     storage:
