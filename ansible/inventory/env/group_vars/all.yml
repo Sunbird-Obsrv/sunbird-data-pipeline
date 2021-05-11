@@ -12,9 +12,6 @@ artifacts_container: "{{dp_vault_artifacts_container}}"
 
 report_azure_account_name: "{{sunbird_private_storage_account_name}}"
 report_azure_storage_secret: "{{sunbird_private_storage_account_key}}"
-resourcemanager: "{{ groups['yarn-master'][0] }}"
-yarn_slaves: "{{ groups['yarn-slave']}}"
-monitor_yarn_url: "http://{{ resourcemanager }}:8088/ws/v1/cluster/apps?states=RUNNING"
 
 redis_host: "{{ groups['redis'][0] }}"
 metadata_redis_host: "{{ groups['redis'][0] }}"
@@ -25,9 +22,6 @@ searchServiceAuthorizationToken: "{{ sunbird_api_auth_token }}"
 channelSearchServiceEndpoint: "{{ proto}}://{{domain_name}}/api/org/v1/search"
 locationSearchServiceEndpoint: "{{ proto}}://{{domain_name}}/api/data/v1/location/search"
 
-__yarn_host__: "{{ groups['yarn-master'][0] }}"
-search_service_endpoint: "{{proto}}://{{domain_name}}/api/search/v2/search"
-yarn_es_hosts: "{{ groups['telemetry-search-cluster'] | join(',') }}"
 env_name: "{{env}}"
 kafka_brokers: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
 zookeepers: "{{groups['zookeeper']|join(':2181,')}}:2181"
@@ -42,8 +36,8 @@ schema_repo_url: https://github.com/project-sunbird/sunbird-data-pipeline.git
 # Create learningall group with LP ips
 cassandra_host:  "{{ groups['cassandra'][0] }}"
 core_cassandra_host: "{{ groups['core-cassandra'][0] }}"
+lp_cassandra_host: "{{ groups['lp-cassandra'][0] }}"
 report_cassandra_host: "{{ groups['report-cassandra'][0] }}"
-content_to_vec_url: http://{{ groups['analytics-api'][0] }}:9000/content-to-vec
 
 analytics_user: analytics
 analytics_group: analytics
