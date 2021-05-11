@@ -143,9 +143,6 @@ influxdb: "{{ groups['influxdb'][0] }}"
 CONTAINER_NAME_SAMZA: samza-logs
 script_path: /usr/local/hadoop
 
-#### samza jobs deployment related vars ####
-samza_tar_files_localpath: roles/samza-jobs/defaults
-
 job_names:
   DeDuplication_1:
       job_file_name: 'de-duplication'
