@@ -204,4 +204,5 @@ dialcode_port: 6382
 
 ### docker image pull secrets name and this will be created in kubernetes
 imagepullsecrets: "{{env}}-registry-secret"
-
+dialcode_host: "http://{{private_ingressgateway_ip}}/learner"
+dialcode_endpoint: "dialcode/v3/read/"
