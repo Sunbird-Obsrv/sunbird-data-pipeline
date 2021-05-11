@@ -1,4 +1,9 @@
 ## Data products deployment ##
+- name: Ensure azure blob storage container exists
+  command: az storage container create --name {{ bucket }}
+  tags:
+    - always
+
 - name: Copy Core Data Products
   copy: src={{ analytics_batch_module_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
   tags:
@@ -28,9 +33,6 @@
   copy: src={{ analytics_core_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
   tags:
     - framework
-
-- name: Ensure azure blob storage container exists
-  command: az storage container create --name {{ bucket }}
 
 - name: Copy Framework Library to azure blob
   command: az storage blob upload --debug -c {{ bucket }} --name models-{{ model_version }}/{{ analytics_core_artifact }} -f {{ analytics.home }}/models-{{ model_version }}/{{ analytics_core_artifact }}
