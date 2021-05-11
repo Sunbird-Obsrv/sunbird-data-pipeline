@@ -50,7 +50,7 @@ cloud_storage:
   account_key: "{{sunbird_public_storage_account_key}}"
 
 cassandra:
-  host: "{{groups['lp-cassandra'][0]}}" ## LMS-Cassandra IP Address.
+  host: "{{lp_cassandra_host}}" ## LMS-Cassandra IP Address.
   keyspace: "sunbird"
   read_timeout: "500000"
   retry_count: "100"

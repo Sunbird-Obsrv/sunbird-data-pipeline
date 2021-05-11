@@ -12,7 +12,7 @@ config() {
 	metricsTopic={{ metrics_topic }}
 	analytics_home={{ analytics.home }}	
 	temp_folder={{ job_manager_tmp_dir }}
-	sparkCassandraConnectionHost="{{groups['lp-cassandra'][0]}}"
+	sparkCassandraConnectionHost="{{ lp_cassandra_host  }}"
 	sparkRedisConnectionHost={{ metadata2_redis_host }}
 	sunbirdPlatformCassandraHost="{{ core_cassandra_host }}"
 	sunbirdPlatformElasticsearchHost="{{ sunbird_es_host }}"
