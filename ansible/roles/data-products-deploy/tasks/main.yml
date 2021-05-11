@@ -29,6 +29,9 @@
   tags:
     - framework
 
+- name: Ensure azure blob storage container exists
+  command: az storage container create --name {{ bucket }}
+
 - name: Copy Framework Library to azure blob
   command: az storage blob upload --debug -c {{ bucket }} --name models-{{ model_version }}/{{ analytics_core_artifact }} -f {{ analytics.home }}/models-{{ model_version }}/{{ analytics_core_artifact }}
   async: 3600

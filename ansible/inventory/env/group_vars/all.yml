@@ -34,7 +34,7 @@ monitor_yarn_url: "http://{{ resourcemanager }}:8088/ws/v1/cluster/apps?states=R
 redis_host: "{{ groups['redis'][0] }}"
 metadata_redis_host: "{{ groups['redis'][0] }}"
 metadata2_redis_host: "{{ groups['redis'][0] }}"
-searchServiceAuthorizationToken: "{{ dp_search_service_authorization_token }}"
+searchServiceAuthorizationToken: "{{ sunbird_api_auth_token }}"
 
 
 # Learning Service organization and location search endpoints
@@ -190,7 +190,7 @@ sunbird_druid_broker_host: "http://{{ groups['raw-broker'][0] }}"
 sunbird_learner_service_url: "{{swarm_manager_lb_ip}}:9000"
 
 location_search_url: "{{ domain_name }}/api/data/"
-location_search_token: "Bearer {{ dp_search_service_authorization_token }}"
+location_search_token: "Bearer {{ sunbird_api_auth_token }}"
 
 druid_report_url_endpoint : "{{ proto}}://{{domain_name}}/api/data/v1/report/jobs"
 druid_report_url : "{{ proto}}://{{domain_name}}/api/data/v1/"
