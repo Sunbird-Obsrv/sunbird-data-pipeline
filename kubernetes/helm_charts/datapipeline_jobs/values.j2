@@ -226,6 +226,8 @@ de-normalization:
       groupId = {{ env_name }}-telemetry-denorm-group
     }
     task {
+      window.count = {{ denorm_window_count }}
+      window.shards = {{ denorm_window_shards }}
       consumer.parallelism = {{ denorm_consumer_parallelism }}
       telemetry.downstream.operators.parallelism = {{ telemetry_denorm_operators_parallelism }}
       summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}

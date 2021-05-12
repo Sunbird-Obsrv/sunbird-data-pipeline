@@ -70,6 +70,8 @@ denorm_consumer_parallelism: 1
 telemetry_denorm_operators_parallelism: 1
 de_normalization_duplicationstore_key_expiry_seconds: 3600
 de_normalization_key_expiry_seconds: 3600
+denorm_window_count: 30
+denorm_window_shards: 1400
 
 denorm_secondary_consumer_parallelism: 1
 telemetry_denorm_secondary_operators_parallelism: 1
