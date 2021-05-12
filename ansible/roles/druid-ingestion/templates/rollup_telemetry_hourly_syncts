@@ -334,26 +334,22 @@
       {
         "type": "doubleSum",
         "name": "total_edata_duration",
-        "fieldName": "edata_duration",
-        "expression": null
+        "fieldName": "edata_duration"
       },
       {
         "type": "doubleSum",
         "name": "total_edata_rating",
-        "fieldName": "edata_rating",
-        "expression": null
+        "fieldName": "edata_rating"
       },
       {
         "type": "doubleSum",
         "name": "total_edata_score",
-        "fieldName": "edata_score",
-        "expression": null
+        "fieldName": "edata_score"
       },
       {
         "type": "doubleSum",
         "name": "total_max_score",
-        "fieldName": "edata_item_maxscore",
-        "expression": null
+        "fieldName": "edata_item_maxscore"
       }
     ],
     "granularitySpec": {
@@ -373,18 +369,16 @@
   },
   "tuningConfig": {
     "type": "kafka",
-    "maxRowsPerSegment": 10000000,
-    "maxTotalRows": 20000000
+    "maxRowsPerSegment": 5000000
   },
   "ioConfig": {
     "topic": "{{env}}.druid.events.telemetry",
     "replicas": 1,
-    "taskCount": 1,
+    "taskCount": {{rollup_telemetry_hourly_syncts_taskcount}},
     "taskDuration": "PT3600S",
     "consumerProperties": {
       "bootstrap.servers": "{{kafka_brokers}}"
     },
-    "completionTimeout": "PT1800S",
-    "stream": "{{env}}.druid.events.telemetry"
+    "completionTimeout": "PT1800S"
   }
 }

@@ -144,7 +144,6 @@
     "granularitySpec": {
       "type": "uniform",
       "segmentGranularity": "hour",
-      "queryGranularity": "hour",
       "rollup": true
     }
   },
@@ -153,7 +152,7 @@
     "consumerProperties": {
       "bootstrap.servers": "{{kafka_brokers}}"
     },
-    "taskCount": 2,
+    "taskCount": {{rollup_tpd_hourly_taskcount}},
     "replicas": 1,
     "taskDuration": "PT7200S",
     "completionTimeout" : "PT3600S"
@@ -161,7 +160,6 @@
   "tuningConfig": {
     "type": "kafka",
     "reportParseExceptions": false,
-    "logParseExceptions": true,
-    "maxSavedParseExceptions": 10
+     "maxRowsPerSegment": 5000000
   }
 }
