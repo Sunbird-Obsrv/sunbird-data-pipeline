@@ -247,6 +247,14 @@ de-normalization:
         dialcodestore.id = 6
         key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
       }
+      content.host = {{ redis_meta_content_host }}
+      device.host = {{ redis_meta_device_host }}
+      user.host = {{ redis_meta_user_host }}
+      dialcode.host = {{ redis_meta_dialcode_host }}
+      content.port = {{ redis_meta_content_port }}
+      device.port = {{ redis_meta_device_port }}
+      user.port = {{ redis_meta_user_port }}
+      dialcode.port = {{ redis_meta_dialcode_port }}
     }
     # config version
     user_denorm_version = v2
