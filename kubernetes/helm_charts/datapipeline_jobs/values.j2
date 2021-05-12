@@ -225,6 +225,7 @@ de-normalization:
       output.duplicate.topic = {{ env_name }}.telemetry.duplicate
       groupId = {{ env_name }}-telemetry-denorm-group
     }
+    skip.events = ["INTERRUPT"]
     task {
       window.count = {{ denorm_window_count }}
       window.shards = {{ denorm_window_shards }}
