@@ -1,20 +1,15 @@
 ---
 
-- name: Copy the library to library path
-  copy:
-    src: /home/anand/Documents/code/ekstep/sunbird-source/sunbird-data-products/anomaly-detection/bin/anomaly_detection.tar.gz
-    dest: "{{ library_path }}"
-    force: yes
+- name: Copy the anomaly detection artifact
+  copy: src={{ anomaly_detection_module_artifact }} dest={{ anomaly_detection_lib_path }}
   tags:
-    - common
+    - dataproducts
 
-- name: Installing package
+- name: Installing pip-3.8
   pip:
-    name: "{{library_path}}"
+    name: "{{ anomaly_detection_lib_path }}/{{ anomaly_detection_module_artifact }}"
     virtualenv: "{{ virtualenv_path }}"
     virtualenv_python: "python3.8"
-  tags:
-    - common
 
 - name: copy query config to config.json
   template: src="config.json.j2" dest="{{ virtualenv_path }}/config.json"
