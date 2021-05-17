@@ -1,5 +1,16 @@
 ---
 
+- name: create module directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ analytics_user }}"
+    group: "{{ analytics_user }}"
+    mode: 0775
+  loop:
+    - /home/analytics/anomaly_detection/anomaly_venv
+    - /home/analytics/anomaly_detection/data
+
 - name: Copy the anomaly detection artifact
   copy: src={{ anomaly_detection_module_artifact }} dest={{ anomaly_detection_lib_path }}
 
