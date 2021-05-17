@@ -2,8 +2,6 @@
 
 - name: Copy the anomaly detection artifact
   copy: src={{ anomaly_detection_module_artifact }} dest={{ anomaly_detection_lib_path }}
-  tags:
-    - dataproducts
 
 - name: Installing pip-3.8
   pip:
