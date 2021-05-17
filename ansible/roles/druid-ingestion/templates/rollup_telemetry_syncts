@@ -331,34 +331,28 @@
       {
         "type": "doubleSum",
         "name": "total_edata_duration",
-        "fieldName": "edata_duration",
-        "expression": null
+        "fieldName": "edata_duration"
       },
       {
         "type": "doubleSum",
         "name": "total_edata_rating",
-        "fieldName": "edata_rating",
-        "expression": null
+        "fieldName": "edata_rating"
       },
       {
         "type": "doubleSum",
         "name": "total_edata_score",
-        "fieldName": "edata_score",
-        "expression": null
+        "fieldName": "edata_score"
       },
       {
         "type": "doubleSum",
         "name": "total_max_score",
-        "fieldName": "edata_item_maxscore",
-        "expression": null
+        "fieldName": "edata_item_maxscore"
       }
     ],
     "granularitySpec": {
       "type": "uniform",
       "segmentGranularity": "DAY",
-      "queryGranularity": "DAY",
-      "rollup": true,
-      "intervals": null
+      "rollup": true
     },
     "transformSpec": {
       "filter": null,
@@ -373,64 +367,18 @@
   },
   "tuningConfig": {
     "type": "kafka",
-    "maxRowsInMemory": 1000000,
-    "maxBytesInMemory": 0,
-    "maxRowsPerSegment": 10000000,
-    "maxTotalRows": 20000000,
-    "intermediatePersistPeriod": "PT10M",
-    "basePersistDirectory": "/var/tmp/1587709403222-0",
-    "maxPendingPersists": 0,
-    "indexSpec": {
-      "bitmap": {
-        "type": "concise"
-      },
-      "dimensionCompression": "lz4",
-      "metricCompression": "lz4",
-      "longEncoding": "longs"
-    },
-    "indexSpecForIntermediatePersists": {
-      "bitmap": {
-        "type": "concise"
-      },
-      "dimensionCompression": "lz4",
-      "metricCompression": "lz4",
-      "longEncoding": "longs"
-    },
-    "buildV9Directly": true,
     "reportParseExceptions": false,
-    "handoffConditionTimeout": 0,
-    "resetOffsetAutomatically": false,
-    "segmentWriteOutMediumFactory": null,
-    "workerThreads": null,
-    "chatThreads": null,
-    "chatRetries": 8,
-    "httpTimeout": "PT10S",
-    "shutdownTimeout": "PT80S",
-    "offsetFetchPeriod": "PT30S",
-    "intermediateHandoffPeriod": "P2147483647D",
-    "logParseExceptions": false,
-    "maxParseExceptions": 2147483647,
-    "maxSavedParseExceptions": 0,
-    "skipSequenceNumberAvailabilityCheck": false
+    "maxRowsPerSegment": 10000000
   },
   "ioConfig": {
     "topic": "{{env}}.druid.events.telemetry",
     "replicas": 1,
-    "taskCount": 4,
+    "taskCount": {{rollup_telemetry_syncts_taskcount}},
     "taskDuration": "PT14400S",
     "consumerProperties": {
       "bootstrap.servers": "{{kafka_brokers}}"
     },
-    "pollTimeout": 100,
-    "startDelay": "PT5S",
-    "period": "PT30S",
     "useEarliestOffset": false,
-    "completionTimeout": "PT1800S",
-    "lateMessageRejectionPeriod": null,
-    "earlyMessageRejectionPeriod": null,
-    "stream": "{{env}}.druid.events.telemetry",
-    "useEarliestSequenceNumber": false
-  },
-  "context": null,
-  "suspended": false
+    "completionTimeout": "PT1800S"
+  }
 }

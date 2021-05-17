@@ -652,9 +652,7 @@
     "granularitySpec": {
       "type": "uniform",
       "segmentGranularity": "DAY",
-      "queryGranularity": "DAY",
-      "rollup": true,
-      "intervals": null
+      "rollup": true
     }
   },
   "ioConfig": {
@@ -662,13 +660,15 @@
     "consumerProperties": {
       "bootstrap.servers": "{{kafka_brokers}}"
     },
-    "taskCount": 4,
+    "taskCount": {{rollup_telemetry_audit_syncts_taskcount}},
     "replicas": 1,
     "taskDuration": "PT14400S",
-    "useEarliestOffset": false
+    "useEarliestOffset": false,
+    "completionTimeout": "PT1800S"
   },
   "tuningConfig": {
     "type": "kafka",
-    "reportParseExceptions": false
+    "reportParseExceptions": false,
+     "maxRowsPerSegment": 5000000
   }
 }
