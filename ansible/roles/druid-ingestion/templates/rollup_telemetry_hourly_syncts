@@ -355,7 +355,7 @@
     "granularitySpec": {
       "type": "uniform",
       "segmentGranularity": "HOUR",
-      "rollup": true,
+      "rollup": true
     },
     "transformSpec": {
       "transforms": [
