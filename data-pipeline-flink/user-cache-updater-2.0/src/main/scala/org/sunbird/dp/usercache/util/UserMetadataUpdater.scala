@@ -47,17 +47,19 @@ object UserMetadataUpdater {
     userCacheData;
   }
 
+  @throws(classOf[Exception])
   def getRegisteredUserInfo(userId: String, event: Event, metrics: Metrics, config: UserCacheUpdaterConfigV2, dataCache: DataCache,
                             restUtil: RestUtil): mutable.Map[String, AnyRef] = {
     var userCacheData: mutable.Map[String, AnyRef] = mutable.Map[String, AnyRef]()
 
     //?fields=locations is appended in url to get userLocation in API response
-    val result = gson.fromJson[UserReadResult](restUtil.get(String.format("%s%s",config.userReadApiUrl, userId + "?fields=" + config.userReadApiFields)), classOf[UserReadResult]).result
-    if(!result.isEmpty && result.containsKey("response")) {
+    val userReadRes = gson.fromJson[UserReadResult](restUtil.get(String.format("%s%s",config.userReadApiUrl, userId + "?fields=" + config.userReadApiFields)), classOf[UserReadResult])
+
+    if(userReadRes.responseCode.equalsIgnoreCase("OK") && !userReadRes.result.isEmpty && userReadRes.result.containsKey("response")) {
       // Inc API Read metrics
       metrics.incCounter(config.apiReadSuccessCount)
 
-      val response = gson.fromJson[Response](gson.toJson(result.get("response")), classOf[Response])
+      val response = gson.fromJson[Response](gson.toJson(userReadRes.result.get("response")), classOf[Response])
       val framework = response.framework
       //flatten BGMS value
       if (!framework.isEmpty) {
@@ -99,6 +101,7 @@ object UserMetadataUpdater {
     } else {
       logger.info(s"User Read API does not have details for user: ${userId}")
       metrics.incCounter(config.apiReadMissCount)
+      throw new Exception(s"User Read API does not have details for user: ${userId}")
     }
     userCacheData
   }
