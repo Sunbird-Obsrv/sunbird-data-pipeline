@@ -1,5 +1,4 @@
 - hosts: spark
   become: yes
-  become_user: "{{ analytics_user }}"
   roles:
     - druid-anomaly-detection

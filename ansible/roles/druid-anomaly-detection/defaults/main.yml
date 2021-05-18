@@ -1,5 +1,6 @@
+supervisord_process_name: anomaly_detection
 anomaly_detection_module_artifact: anomaly_detection.tar.gz
-anomaly_detection_lib_path: /home/analytics/anomaly_detection
+anomaly_detection_module_path: /home/analytics/anomaly_detection
 virtualenv_path: /home/analytics/anomaly_detection/anomaly_venv
 anomaly_detection_job_config_file: "{{virtualenv_path}}/config.json"
 anomaly_detection_data_dir: "/home/analytics/anomaly_detection/data"
