@@ -142,6 +142,9 @@ processing_kafka_overriden_topics:
   - name: telemetry.error
     retention_time: 2592000000
     replication_factor: 1
+  - name: druid.events.log
+    retention_time: 172800000
+    replication_factor: 1
 
 processing_kafka_topics:
   - name: system.command
@@ -281,5 +284,8 @@ processing_kafka_topics:
     num_of_partitions: 1
     replication_factor: 1
   - name: prom.monitoring.metrics
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: druid.events.log
     num_of_partitions: 1
     replication_factor: 1
