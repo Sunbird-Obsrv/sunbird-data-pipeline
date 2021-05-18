@@ -7,14 +7,15 @@
     update_cache: yes
   become: true
 
+- name: copy supervisor conf
+  template: src="supervisor.conf.j2" dest="/etc/supervisor/conf.d/anomaly_detection.conf"
+  become: true
+
 - name: Start supervisord
   service:
     name: "supervisor"
     state: started
     enabled: yes
-
-- name: copy supervisor conf
-  template: src="supervisor.conf.j2" dest="/etc/supervisor/conf.d/anomaly_detection.conf"
   become: true
 
 - name: Add deadsnakes repo
@@ -61,7 +62,6 @@
 
 - name: Start anomaly detection process
   supervisorctl:
-    name: "{{ supervisord_process_name }}"
-    state: present
-    config: "/etc/supervisor/conf.d/{{ supervisord_process_name }}.conf"
+    name: "anomaly_detection"
+    state: restarted
   become: true
