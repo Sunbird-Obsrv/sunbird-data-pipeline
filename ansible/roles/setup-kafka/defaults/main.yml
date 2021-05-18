@@ -148,6 +148,9 @@ processing_kafka_overriden_topics:
   - name: druid.events.log
     retention_time: 172800000
     replication_factor: 1
+  - name: druid.events.telemetry
+    retention_time: 172800000
+    replication_factor: 1
 
 processing_kafka_topics:
   - name: system.command
@@ -293,5 +296,8 @@ processing_kafka_topics:
     num_of_partitions: 1
     replication_factor: 1
   - name: druid.events.log
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: druid.events.telemetry
     num_of_partitions: 1
     replication_factor: 1
