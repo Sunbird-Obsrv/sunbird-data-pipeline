@@ -134,6 +134,7 @@ snapshot_base_path: telemetrysearch
 
 # sunbird learner service
 sunbird_es_host: "{{groups['core-es']| join(',')}}"
+single_node_es_host: "{{ groups['core-es'][0] }}"
 
 ### Druid related vars
 overlord_host: "{{ groups['raw-overlord'][0] }}"
@@ -204,3 +205,11 @@ content_port: 6379
 device_port: 6380
 user_port: 6381
 dialcode_port: 6382
+
+### kafka and zookeeper ip vars and being used in kafka topiccreation role. 
+ingestion_kafka_ip: "{{ groups['ingestion-cluster-zookeeper'][0] }}"
+processing_kafka_ip: "{{ groups['processing-cluster-zookeepers'][0] }}"
+
+### docker image pull secrets name and this will be created in kubernetes
+imagepullsecrets: "{{env}}-registry-secret"
+

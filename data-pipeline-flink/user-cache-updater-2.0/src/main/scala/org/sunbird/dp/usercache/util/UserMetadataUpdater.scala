@@ -62,12 +62,17 @@ object UserMetadataUpdater {
       val response = gson.fromJson[Response](gson.toJson(userReadRes.result.get("response")), classOf[Response])
       val framework = response.framework
       //flatten BGMS value
+      /**
+        * Assumption: Board and Framework-id is single valued
+        */
       if (!framework.isEmpty) {
-        val board = framework.getOrDefault("board", List().asJava)
+        val boardList = framework.getOrDefault("board", List().asJava)
+        val board = if (!boardList.isEmpty) boardList.get(0) else ""
         val medium = framework.getOrDefault("medium", List().asJava)
         val grade = framework.getOrDefault("gradeLevel", List().asJava)
         val subject = framework.getOrDefault("subject", List().asJava)
-        val id = framework.getOrDefault("id", List().asJava)
+        val frameworkIdList = framework.getOrDefault("id", List().asJava)
+        val id = if (!frameworkIdList.isEmpty) frameworkIdList.get(0) else ""
         userCacheData.+=("board" -> board, "medium" -> medium, "grade" -> grade, "subject" -> subject, "framework" -> id)
       }
 

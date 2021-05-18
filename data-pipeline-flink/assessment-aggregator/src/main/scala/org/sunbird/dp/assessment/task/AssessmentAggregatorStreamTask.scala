@@ -6,10 +6,9 @@ import com.typesafe.config.ConfigFactory
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.api.java.utils.ParameterTool
-import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.sunbird.dp.assessment.domain.Event
-import org.sunbird.dp.assessment.functions.AssessmentAggregatorFunction
+import org.sunbird.dp.assessment.functions.{AssessmentAggregatorFunction, UserScoreAggregateFunction}
 import org.sunbird.dp.core.job.FlinkKafkaConnector
 import org.sunbird.dp.core.util.FlinkUtil
 
@@ -61,6 +60,8 @@ class AssessmentAggregatorStreamTask(config: AssessmentAggregatorConfig, kafkaCo
         aggregatorStream.getSideOutput(config.certIssueOutputTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaCertIssueTopic))
           .name(config.certIssueEventSink).uid(config.certIssueEventSink)
           .setParallelism(config.downstreamOperatorsParallelism)
+        aggregatorStream.getSideOutput(config.scoreAggregateTag).process(new UserScoreAggregateFunction(config))
+          .name(config.userScoreAggregateFn).uid(config.userScoreAggregateFn).setParallelism(config.scoreAggregatorParallelism)
         env.execute(config.jobName)
     }
 }

@@ -103,6 +103,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
           saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList), new DateTime().getMillis)
           metrics.incCounter(config.dbUpdateCount)
           metrics.incCounter(config.batchSuccessCount)
+          context.output(config.scoreAggregateTag, event)
           createIssueCertEvent(event, context, metrics)
         }
         else {
@@ -112,6 +113,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
               assessment.getTimestamp("created_on").getTime)
             metrics.incCounter(config.dbUpdateCount)
             metrics.incCounter(config.batchSuccessCount)
+            context.output(config.scoreAggregateTag, event)
             createIssueCertEvent(event, context, metrics)
           }
           else {
@@ -169,7 +171,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
     cassandraUtil.upsert(query)
     logger.info("Successfully Aggregated the batch event - batchid: "
       + batchEvent.batchId + " ,userid: " + batchEvent.userId + " ,couserid: "
-      + batchEvent.courseId + " ,contentid: " + batchEvent.contentId, "attempid" + batchEvent.attemptId)
+      + batchEvent.courseId + " ,contentid: " + batchEvent.contentId + "attempid" + batchEvent.attemptId)
   }
 
   def getQuestion(questionData: QuestionData, assessTs: Long): UDTValue = {

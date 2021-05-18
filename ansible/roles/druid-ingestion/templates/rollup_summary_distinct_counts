@@ -334,13 +334,15 @@
     "consumerProperties": {
       "bootstrap.servers": "{{kafka_brokers}}"
     },
-    "taskCount": 1,
+    "taskCount": {{rollup_summary_distinct_counts_taskcount}},
     "replicas": 1,
     "taskDuration": "PT14400S",
-    "useEarliestOffset": true
+    "useEarliestOffset": true,
+    "completionTimeout": "PT1800S"
   },
   "tuningConfig": {
     "type": "kafka",
-    "reportParseExceptions": false
+    "reportParseExceptions": false,
+    "maxRowsPerSegment": 5000000
   }
 }

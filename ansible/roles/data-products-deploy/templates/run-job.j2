@@ -10,14 +10,8 @@ today=$(date "+%Y-%m-%d")
 
 libs_path="{{ analytics.home }}/models-{{ model_version }}/data-products-1.0"
 
-telemetry_converter_ver=0.0.8
-
 get_report_job_model_name(){
 	case "$1" in
-		"assessment-dashboard-metrics") echo 'org.sunbird.analytics.job.report.AssessmentMetricsJobV2'
-		;;
-		"course-dashboard-metrics") echo 'org.sunbird.analytics.job.report.CourseMetricsJobV2'
-		;;
 		"course-enrollment-report") echo 'org.sunbird.analytics.job.report.CourseEnrollmentJob'
 		;;
 		"course-consumption-report") echo 'org.sunbird.analytics.job.report.CourseConsumptionJob'
@@ -39,7 +33,7 @@ get_report_job_model_name(){
 		"progress-exhaust") echo 'org.sunbird.analytics.exhaust.collection.ProgressExhaustJob'
 		;;
 		"cassandra-migration") echo 'org.sunbird.analytics.updater.CassandraMigratorJob'
-               ;;
+        ;;
 		"collection-summary-report") echo 'org.sunbird.analytics.job.report.CollectionSummaryJob'
 		;;
 		"program-collection-summary-report") echo 'org.sunbird.analytics.job.report.CollectionSummaryJob'

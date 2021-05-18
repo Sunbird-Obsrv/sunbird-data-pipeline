@@ -2,8 +2,10 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
+  annotations:
+    configmap.reloader.stakater.com/reload: {{ .Release.Name }}-config
   name: {{ .Release.Name }}
-  namespace: {{ .Values.secor_namespace }}
+  namespace: {{ .Values.namespace }}
   labels:
     app: secor
     chart: {{ .Chart.Name }}-{{ .Chart.Version }}
@@ -23,10 +25,6 @@ spec:
       labels:
         app: secor
         release: {{ .Release.Name }}
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9102"
-        prometheus.io/path: "/metrics"
     spec:
       imagePullSecrets:
       - name: {{ .Values.imagepullsecrets }}

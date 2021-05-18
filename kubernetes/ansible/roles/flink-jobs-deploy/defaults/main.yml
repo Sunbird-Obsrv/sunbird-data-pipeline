@@ -1,6 +1,6 @@
-flink_namespace: flink-dev
-imagepullsecrets: sunbird-registry-secret
-
+flink_namespace: "flink-{{ env }}"
+imagepullsecrets: "{{ env }}-registry-secret"
+service_monitor_enabled: true
 ### Job manager related vars
 jobmanager_rpc_port: 6123
 jobmanager_blob_port: 6124
@@ -136,10 +136,12 @@ user_read_api_url : "http://{{private_ingressgateway_ip}}{{ user_read_api_endpoi
 assessaggregator_parallelism: 1
 assessaggregator_consumer_parallelism: 1
 assessaggregator_downstream_parallelism: 1
+assessaggregator_scoreaggregator_parallelism: 1
 middleware_cassandra_courses_keyspace: sunbird_courses
 middleware_cassandra_assessment_aggregator_table: assessment_aggregator
 middleware_cassandra_assessment_question_type : question
 middleware_cassandra_user_enrolments_table: user_enrolments
+middleware_cassandra_user_activity_agg_table: user_activity_agg
 
 ### taskmanager related vars
 healthcheck: true
@@ -265,3 +267,7 @@ flink_job_names:
     taskmanager_memory: 1024m
     taskslots: 1
     cpu_requests: 0.3 
+
+### controlling the flink jobs log level
+flink_jobs_console_log_level: INFO
+flink_libraries_log_level: ERROR

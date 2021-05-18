@@ -11,3 +11,7 @@ sources:
 - https://github.com/pinterest/secor
 engine: gotpl
 home: https://github.com/pinterest/secor
+
+dependencies:
+  - name: alertrules
+    condition: alertrules.enabled

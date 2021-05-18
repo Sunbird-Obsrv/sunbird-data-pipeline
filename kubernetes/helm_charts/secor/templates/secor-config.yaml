@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ $.Release.Name }}-config
-  namespace: {{ $.Values.secor_namespace }}
+  namespace: {{ $.Values.namespace }}
   labels:
     app: {{ $.Release.Name }}-config
     chart: {{ $.Chart.Name }}-{{ $.Chart.Version }}

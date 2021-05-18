@@ -2,9 +2,12 @@ spark_folder: /usr/hdp/current/spark2-client
 guava_version: 19.0
 log4j_version: 2.5
 spark_redis_version: 2.5.0
+guava_default_jre_version: 28.0-jre
+guava_jre_version: 24.1.1-jre
 jedis_version: 3.2.0
 zip4j_version: 2.6.2
 guava_url: https://repo1.maven.org/maven2/com/google/guava/guava/{{guava_version}}/guava-{{guava_version}}.jar
+guava_jre_url: https://repo1.maven.org/maven2/com/google/guava/guava/{{guava_jre_version}}/guava-{{guava_jre_version}}.jar
 log4j_core_url: https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/{{log4j_version}}/log4j-core-{{log4j_version}}.jar
 log4j_api_url: https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-api/{{log4j_version}}/log4j-api-{{log4j_version}}.jar
 spark_redis_url: https://repo1.maven.org/maven2/com/redislabs/spark-redis_2.11/{{spark_redis_version}}/spark-redis_2.11-{{spark_redis_version}}.jar
