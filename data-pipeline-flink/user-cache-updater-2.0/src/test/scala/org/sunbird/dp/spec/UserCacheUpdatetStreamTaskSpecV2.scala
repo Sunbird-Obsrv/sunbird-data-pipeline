@@ -90,7 +90,7 @@ class UserCacheUpdatetStreamTaskSpecV2 extends BaseTestSpec {
 
   }
 
-  "UserCacheUpdater" should "be able to add user to cache with all information" in {
+  "UserCacheUpdater" should "be able to add user to cache with all information" in intercept[Exception] {
     when(mockKafkaUtil.kafkaEventSource[Event](userCacheConfig.inputTopic)).thenReturn(new InputSource)
 
     val task = new UserCacheUpdaterStreamTaskV2(userCacheConfig, mockKafkaUtil)
