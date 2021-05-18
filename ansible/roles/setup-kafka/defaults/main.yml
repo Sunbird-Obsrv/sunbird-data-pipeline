@@ -26,6 +26,9 @@ processing_kafka_overriden_topics:
   - name: telemetry.unique.primary
     retention_time: 172800000
     replication_factor: 1
+  - name: telemetry.unique.secondary
+    retention_time: 172800000
+    replication_factor: 1
   - name: telemetry.duplicate
     retention_time: 21600000
     replication_factor: 1
@@ -161,6 +164,9 @@ processing_kafka_topics:
     num_of_partitions: 8
     replication_factor: 1
   - name: telemetry.unique.primary
+    num_of_partitions: 8
+    replication_factor: 1
+  - name: telemetry.unique.secondary
     num_of_partitions: 8
     replication_factor: 1
   - name: telemetry.duplicate
