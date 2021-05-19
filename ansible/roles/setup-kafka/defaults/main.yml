@@ -118,6 +118,9 @@ processing_kafka_overriden_topics:
   - name: telemetry.extractor.failed
     retention_time: 21600000
     replication_factor: 1
+  - name: telemetry.extractor.duplicate
+    retention_time: 21600000
+    replication_factor: 1
   - name: events.deviceprofile
     retention_time: 604800000
     replication_factor: 1
@@ -149,6 +152,9 @@ processing_kafka_overriden_topics:
     retention_time: 172800000
     replication_factor: 1
   - name: druid.events.telemetry
+    retention_time: 172800000
+    replication_factor: 1
+  - name: druid.events.summary
     retention_time: 172800000
     replication_factor: 1
 
@@ -253,6 +259,9 @@ processing_kafka_topics:
   - name: telemetry.extractor.failed
     num_of_partitions: 1
     replication_factor: 1
+  - name: telemetry.extractor.duplicate
+    num_of_partitions: 1
+    replication_factor: 1
   - name: telemetry.indexer.failed
     num_of_partitions: 1
     replication_factor: 1
@@ -299,5 +308,8 @@ processing_kafka_topics:
     num_of_partitions: 1
     replication_factor: 1
   - name: druid.events.telemetry
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: druid.events.summary
     num_of_partitions: 1
     replication_factor: 1
