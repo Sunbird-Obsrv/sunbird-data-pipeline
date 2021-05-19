@@ -115,6 +115,7 @@
     owner: "{{ analytics_user }}"
     group: "{{ analytics_user }}"
     recurse: yes
+  become: yes
 
 - name: Install latest ruby
   become: yes
