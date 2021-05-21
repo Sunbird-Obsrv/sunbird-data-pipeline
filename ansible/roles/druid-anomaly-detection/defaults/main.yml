@@ -1,3 +1,4 @@
+druid_broker_host: "http://{{ groups['rollup-broker'][0] | default(groups['raw-broker'][0]) }}"
 supervisord_process_name: anomaly_detection
 anomaly_detection_module_artifact: anomaly_detection.tar.gz
 anomaly_detection_module_path: /home/analytics/anomaly_detection
