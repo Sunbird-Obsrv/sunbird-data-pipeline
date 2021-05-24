@@ -137,7 +137,8 @@ sunbird_es_host: "{{groups['core-es']| join(',')}}"
 single_node_es_host: "{{ groups['core-es'][0] }}"
 
 ### Druid related vars
-overlord_host: "{{ groups['raw-overlord'][0] }}"
+raw_overlord_host: "{{ groups['raw-overlord'][0] }}"
+rollup_overlord_host: "{{ groups['rollup-overlord'][0] }}"
 
 ### Datapipeline Custom monitoring related vars ###
 influxdb: "{{ groups['influxdb'][0] }}"
