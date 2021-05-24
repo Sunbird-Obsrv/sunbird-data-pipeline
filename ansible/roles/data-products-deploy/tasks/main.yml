@@ -335,9 +335,9 @@
 - name: Execute python script to populate batch numbers
   shell: |
     if [[ "{{jobs}}" == *"exhaust"* ]]; then
-     "python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} exhaust {{env}}_job_request"
+     python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} exhaust {{env}}_job_request
     elif [[ "{{jobs}}" == *"druid"* ]]; then
-     "python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} druid {{env}}_report_config"
+     python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} druid {{env}}_report_config
     else
     echo "No job found"
     fi
