@@ -31,6 +31,8 @@ data_exhaust.dataset.list=["eks-consumption-raw", "eks-consumption-summary", "ek
 data_exhaust.dataset.default="eks-consumption-raw"
 data_exhaust.output_format="json"
 
+dataset.request.search.limit=10
+
 # Log4j Kafka appender config
 log4j.appender.kafka.enable="false"
 log4j.appender.kafka.broker_host="{{ kafka_broker }}"
