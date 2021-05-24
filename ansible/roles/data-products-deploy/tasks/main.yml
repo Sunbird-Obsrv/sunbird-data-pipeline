@@ -333,19 +333,20 @@
     - parallel-jobs-submit
 
 - name: Execute python script to populate batch numbers
-  shell: "python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} exhaust {{env}}_job_request"
+  shell: |
+    if [[ "{{jobs}}" == *"exhaust"* ]]; then
+     "python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} exhaust {{env}}_job_request"
+    elif [[ "{{jobs}}" == *"druid"* ]]; then
+     "python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} druid {{env}}_report_config"
+    else
+    echo "No job found"
+    fi
+  args:
+    executable: /usr/bin/bash
   tags:
     - parallel-jobs-submit
   register: jobsCountStr
-  when: jobs.find("exhaust") != -1
     
-- name: Execute python script to populate batch numbers
-  shell: "python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} druid {{env}}_report_config"
-  tags:
-    - parallel-jobs-submit
-  register: jobsCountStr
-  when: jobs.find("druid") != -1
-  
 - debug:
     var: jobsCountStr
   tags:
