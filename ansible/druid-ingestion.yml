@@ -1,6 +1,56 @@
 ---
-
-- hosts: "{{ cluster }}-overlord"
+- hosts: rollup-overlord
   become: yes
+  pre_tasks:
+   - name: set_fact
+     set_fact:
+       single_cluster: true
+     tags: populate_var
+
+   - name: check for hosts
+     set_fact:
+       single_cluster: false
+     when: "'rollup-overlord' in groups"
+     tags: populate_var
+
+   - name: debug
+     debug:
+       msg: "{{single_cluster}}"
+     tags: populate_var
   roles:
-     - druid-ingestion
+    - role: druid-ingestion
+      vars:
+        ingestion_task_names: "{{ rollup_vars }}"
+        overlord_host: "{{ rollup_overlord_host }}"
+      when: not single_cluster
+
+- hosts: raw-overlord
+  become: yes
+  pre_tasks:
+   - name: set_fact
+     set_fact:
+       single_cluster: true
+     tags: populate_var
+
+   - name: check for hosts
+     set_fact:
+       single_cluster: false
+     when: "'rollup-overlord' in groups"
+     tags: populate_var
+
+   - name: debug
+     debug:
+       msg: "{{single_cluster}}"
+     tags: populate_var
+
+  roles:
+    - role: druid-ingestion
+      vars:
+        ingestion_task_names: "{{ raw_vars }}"
+        overlord_host: "{{ raw_overlord_host }}"
+      when: not single_cluster
+    - role: druid-ingestion
+      vars:
+        ingestion_task_names: "{{ raw_vars }},{{ rollup_vars }}"
+        overlord_host: "{{ raw_overlord_host }}"
+      when: single_cluster
