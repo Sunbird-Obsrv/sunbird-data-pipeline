@@ -55,7 +55,7 @@ object UserMetadataUpdater {
     //?fields=locations is appended in url to get userLocation in API response
     val userReadRes = gson.fromJson[UserReadResult](restUtil.get(String.format("%s%s",config.userReadApiUrl, userId + "?fields=" + config.userReadApiFields)), classOf[UserReadResult])
 
-    if(userReadRes.responseCode.equalsIgnoreCase("OK") && !userReadRes.result.isEmpty && userReadRes.result.containsKey("response")) {
+    if(event.isValid(userReadRes)) {
       // Inc API Read metrics
       metrics.incCounter(config.apiReadSuccessCount)
 
@@ -103,6 +103,9 @@ object UserMetadataUpdater {
         config.phone -> response.encPhone,
         config.email -> response.encEmail,
         config.userId -> response.userId)
+    } else if (userReadRes.responseCode.equalsIgnoreCase("CLIENT_ERROR")) { //Skip the events for which response is 400 Bad request
+      logger.info(s"User Read API has response as CLIENT_ERROR for user: ${userId}")
+      metrics.incCounter(config.apiReadMissCount)
     } else {
       logger.info(s"User Read API does not have details for user: ${userId}")
       metrics.incCounter(config.apiReadMissCount)

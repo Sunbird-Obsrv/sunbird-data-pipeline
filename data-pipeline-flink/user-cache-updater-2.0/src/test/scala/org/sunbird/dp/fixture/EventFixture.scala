@@ -14,6 +14,11 @@ object EventFixture {
       |
       |""".stripMargin,
     /**
+      * UserId: user-9
+      * Client_Error
+      */
+    """{"actor":{"id":"cb0defc7-9f5f-4c0a-bb73-207d34ed2cf0","type":"User"},"eid":"AUDIT","edata":{"state":"Update","type":"mergeUser","props":["fromAccountId","toAccountId","type"]},"ver":"3.0","syncts":1621593310099,"@timestamp":"2021-05-21T10:35:10.099Z","ets":1621593307552,"context":{"channel":"0126796199493140480","pdata":{"id":"preprod.diksha.learning.service","pid":"learner-service","ver":"3.9.0"},"env":"User","cdata":[{"id":"9e6f3392-af99-425b-9404-e8e4078a1b65","type":"FromAccountId"},{"id":"cb0defc7-9f5f-4c0a-bb73-207d34ed2cf0","type":"ToAccountId"},{"id":"8f0d93fd-33ac-4a64-a39c-f008011c976a","type":"Request"}],"rollup":{"l1":"01275678925675724817"}},"flags":{"pp_duplicate_skipped":true,"pp_validation_processed":true},"mid":"8f0d93fd-33ac-4a64-a39c-f008011c976a","type":"events","object":{"id":"user-8","type":"User"}}""",
+    /**
       * User-Id : user-2
       * Edata.state is update
       * user's data missed from API
