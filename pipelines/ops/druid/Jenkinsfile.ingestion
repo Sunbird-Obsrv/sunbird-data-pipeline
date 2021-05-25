@@ -18,22 +18,6 @@ node("ops-slave") {
 
         }
 
-        stage('populate vars'){
-           list_vars="raw_a,raw_b,raw_b,rollup_a,rollup_b,rollup_c";
-           println(list_vars);
-           List<String> list_vars_array = list_vars.split(',');
-           List<String> rollup_vars = [], raw_vars = [];
-           list_vars_array.each {
-               if(it.startsWith("rollup")) {
-                   rollup_vars.add(it);
-               }
-               else
-                   raw_vars.add(it);
-           }
-           print(rollup_vars.join(","));
-           print(raw_vars.join(","));
-           }
-
         ansiColor('xterm') {
             stage('deploy'){
                 values = [:]
