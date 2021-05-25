@@ -11,10 +11,11 @@ import org.sunbird.dp.usercache.task.UserCacheUpdaterConfigV2
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
-case class UserReadResult(result: java.util.HashMap[String, Any], responseCode: String)
+case class UserReadResult(result: java.util.HashMap[String, Any], responseCode: String, params: Params)
 case class Response(firstName: String, lastName: String, encEmail: String, encPhone: String, language: java.util.List[String], rootOrgId: String, profileUserType: java.util.HashMap[String, String],
                     userLocations: java.util.ArrayList[java.util.Map[String, AnyRef]], rootOrg: RootOrgInfo, userId: String, framework: java.util.LinkedHashMap[String, java.util.List[String]])
 case class RootOrgInfo(orgName: String)
+case class Params(msgid: String, err: String, status: String, errmsg: String)
 
 object UserMetadataUpdater {
 
@@ -54,8 +55,7 @@ object UserMetadataUpdater {
 
     //?fields=locations is appended in url to get userLocation in API response
     val userReadRes = gson.fromJson[UserReadResult](restUtil.get(String.format("%s%s",config.userReadApiUrl, userId + "?fields=" + config.userReadApiFields)), classOf[UserReadResult])
-
-    if(userReadRes.responseCode.equalsIgnoreCase("OK") && !userReadRes.result.isEmpty && userReadRes.result.containsKey("response")) {
+    if(event.isValid(userReadRes)) {
       // Inc API Read metrics
       metrics.incCounter(config.apiReadSuccessCount)
 
@@ -103,6 +103,10 @@ object UserMetadataUpdater {
         config.phone -> response.encPhone,
         config.email -> response.encEmail,
         config.userId -> response.userId)
+
+    } else if (config.userReadApiErrors.contains(userReadRes.responseCode.toUpperCase) && userReadRes.params.status.equalsIgnoreCase("USER_ACCOUNT_BLOCKED")) { //Skip the events for which response is 400 Bad request
+      logger.info(s"User Read API has response as ${userReadRes.responseCode.toUpperCase} for user: ${userId}")
+      metrics.incCounter(config.apiReadMissCount)
     } else {
       logger.info(s"User Read API does not have details for user: ${userId}")
       metrics.incCounter(config.apiReadMissCount)
