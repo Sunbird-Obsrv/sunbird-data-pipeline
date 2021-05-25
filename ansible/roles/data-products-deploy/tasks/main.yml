@@ -1,4 +1,9 @@
 ## Data products deployment ##
+- name: Ensure azure blob storage container exists
+  command: az storage container create --name {{ bucket }}
+  tags:
+    - always
+
 - name: Copy Core Data Products
   copy: src={{ analytics_batch_module_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
   tags:

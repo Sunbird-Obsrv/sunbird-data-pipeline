@@ -2,7 +2,7 @@ analytics_user: analytics
 analytics_group: analytics
 spark_output_temp_dir: /mount/data/analytics/tmp/
 
-bucket: "dev-data-store"
+bucket: "telemetry-data-store"
 kafka_broker_host: "{{groups['processing-cluster-kafka'][0]}}:9092"
 ingestion_kafka_broker_host: "{{groups['ingestion-cluster-kafka'][0]}}:9092"
 brokerlist: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"

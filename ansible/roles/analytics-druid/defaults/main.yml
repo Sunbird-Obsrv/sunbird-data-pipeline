@@ -6,7 +6,7 @@ zookeeper_group: "groups[{{ cluster }}-zookeeper]"
 druid_user: druid
 druid_directory: "/data"
 druid_version: "0.20.0"
-druid_url: "https://downloads.apache.org/druid/0.20.0/apache-druid-0.20.0-bin.tar.gz"
+druid_url: "https://archive.apache.org/dist/druid/0.20.0/apache-druid-0.20.0-bin.tar.gz"
 druid_folder: "{{ druid_directory }}/apache-druid-{{ druid_version }}"
 druid_symlink: "{{ druid_directory }}/druid"
 druid_path: "{{ druid_symlink }}/"
@@ -111,7 +111,7 @@ default_druid_configs:
    druid_postgres_db: "druid"
    druid_postgres_host: "{{ postgres.db_url }}"
    druid_postgres_port: "{{ postgres.db_port }}"
-   druid_postgres_user: "druid@{{ postgres.db_url }}"
+   druid_postgres_user: "{{ druid_postgres_user | default('druid@{{ postgres.db_url }}') }}"
    #Druid Azure Details 
    druid_postgres_pass: "{{ dp_vault_druid_postgress_pass }}"
    azure_account_name: "{{ sunbird_druid_storage_account_name }}"
@@ -166,12 +166,13 @@ default_druid_configs:
    druid_router_http_numMaxThreads: 100
    druid_server_http_numThreads: 100
    druid_router_managementProxy_enabled: true
+   druid_historical_maxOnDiskStorage: 10737418240
   rollup:
    #Druid Postgres Details
    druid_postgres_db: "druid"
    druid_postgres_host: "{{ postgres.db_url }}"
    druid_postgres_port: "{{ postgres.db_port }}"
-   druid_postgres_user: "druid@{{ postgres.db_url }}"
+   druid_postgres_user: "{{ druid_postgres_user | default('druid@{{ postgres.db_url }}') }}"
    #Druid Azure Details
    druid_postgres_pass: "{{ dp_vault_druid_postgress_pass }}"
    azure_account_name: "{{ sunbird_druid_storage_account_name }}"

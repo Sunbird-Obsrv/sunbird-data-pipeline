@@ -6,7 +6,7 @@ config() {
 	zookeeper={{ zookeeper }}
 	job_topic={{ analytics_job_queue_topic }}
 	topic={{ topic }}
-	sparkCassandraConnectionHost="{{groups['lp-cassandra'][0]}}"
+	sparkCassandraConnectionHost="{{ lp_cassandra_host  }}"
 	sunbirdPlatformCassandraHost="{{ core_cassandra_host }}"
 	reportPostContainer="{{ reports_container }}"
 	

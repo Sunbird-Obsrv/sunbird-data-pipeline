@@ -1,6 +1,0 @@
-- hosts: cassandra 
-  # Install cassandra
-  become: yes
-  roles:
-    - analytics-bootstrap-always
-    - cassandra-3.7.0
