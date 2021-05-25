@@ -1,3 +1,4 @@
+{% if not send_logs_to_graylog %}
 # Logstash configuration 
 # Kafka(telemetry.log) -> Logstash -> Elasticsearch pipeline index error type events into(telemetry-error-events) and log type events into(telemetry-log-index).
 
@@ -46,7 +47,4 @@ output {
 		}
 	}
 }
-
-
-
-
+{% endif %}
