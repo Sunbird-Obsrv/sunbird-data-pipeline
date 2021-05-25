@@ -1,7 +1,0 @@
----
-- hosts: telemetry-search-cluster-kibana-node
-  name: Setup Kibana
-  remote_user: ecosystem
-  become: yes
-  roles:
-    - kibana
