@@ -46,3 +46,4 @@ logstash_version: '6.x'
 crash_log_mapping_file_path: "{{ logstash_home }}/mappings/crash-log-mapping.json"
 crash_log_index : "crash-logs"
 
+send_logs_to_graylog: false
