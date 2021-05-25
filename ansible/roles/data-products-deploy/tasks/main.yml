@@ -351,7 +351,7 @@
     if echo "{{jobs}}" | grep 'druid'
     then
      python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} druid {{env}}_report_config
-    elif if echo "{{jobs}}" | grep 'exhaust'
+    elif echo "{{jobs}}" | grep 'exhaust'
      then
      python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} exhaust {{env}}_job_request
     fi
