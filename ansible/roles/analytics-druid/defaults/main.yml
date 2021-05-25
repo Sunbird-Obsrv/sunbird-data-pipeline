@@ -225,3 +225,4 @@ default_druid_configs:
    druid_server_http_numThreads: 100
    druid_router_managementProxy_enabled: true
 
+enable_druid_sql: true
