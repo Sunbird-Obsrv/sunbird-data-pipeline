@@ -350,10 +350,10 @@
   shell: |
     if [ "{{ jobs }}" = *"druid"* ]
     then
-     python "{{ analytics_cluster.home }}"/update-job-requests.py "{{ jobs }}" "{{ batch_size }}" druid "{{env}}"_report_config
-    elif [ "{{ jobs }}" = *"druid"* ]
+     python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} druid {{env}}_report_config
+    elif [ "{{ jobs }}" = *"exhaust"* ]
      then
-     python "{{ analytics_cluster.home }}"/update-job-requests.py "{{ jobs }}" "{{ batch_size }}" exhaust "{{env}}"_job_request
+     python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} exhaust {{env}}_job_request
     fi
   tags:
     - parallel-jobs-submit
