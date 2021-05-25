@@ -5,4 +5,4 @@
   roles:
     - portal-dashboard
   environment:
-    API_KEY: "{{dp_search_service_authorization_token}}"
+    API_KEY: "{{ sunbird_api_auth_token }}"

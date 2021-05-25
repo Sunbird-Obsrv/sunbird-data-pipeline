@@ -3,7 +3,6 @@ imagepullsecrets: {{ imagepullsecrets }}
 dockerhub: {{ dockerhub }}
 repository: {{flink_repository|default('sunbird-datapipeline')}}
 image_tag: {{ image_tag }}
-registry: {{ docker_registry }}
 azure_account: {{ azure_account }}
 azure_secret: {{ azure_secret }}
 serviceMonitor:
@@ -256,7 +255,10 @@ de-normalization:
       output.duplicate.topic = {{ env_name }}.telemetry.duplicate
       groupId = {{ env_name }}-telemetry-denorm-group
     }
+    skip.events = ["INTERRUPT"]
     task {
+      window.count = {{ denorm_window_count }}
+      window.shards = {{ denorm_window_shards }}
       consumer.parallelism = {{ denorm_consumer_parallelism }}
       telemetry.downstream.operators.parallelism = {{ telemetry_denorm_operators_parallelism }}
       summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
@@ -276,6 +278,14 @@ de-normalization:
         dialcodestore.id = 6
         key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
       }
+      content.host = {{ redis_meta_content_host }}
+      device.host = {{ redis_meta_device_host }}
+      user.host = {{ redis_meta_user_host }}
+      dialcode.host = {{ redis_meta_dialcode_host }}
+      content.port = {{ redis_meta_content_port }}
+      device.port = {{ redis_meta_device_port }}
+      user.port = {{ redis_meta_user_port }}
+      dialcode.port = {{ redis_meta_dialcode_port }}
     }
     # config version
     user_denorm_version = v2
@@ -604,7 +614,7 @@ content-cache-updater:
     dialcode {
       api {
         url = "{{ dialcode_api_url }}"
-        token = "{{ dialcode_api_auth_key }} "
+        token = "{{ sunbird_api_auth_token }} "
       }
     }
 
