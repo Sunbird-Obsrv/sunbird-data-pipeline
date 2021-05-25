@@ -3,6 +3,7 @@ package org.sunbird.dp.usercache.domain
 import java.util
 
 import org.sunbird.dp.core.domain.Events
+import org.sunbird.dp.usercache.util.UserReadResult
 
 class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
 
@@ -32,6 +33,10 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
 
   def userMetaData(): util.ArrayList[String] = {
     telemetry.read[util.ArrayList[String]]("edata.props").getOrElse(new util.ArrayList[String]())
+  }
+
+  def isValid(userReadRes: UserReadResult) = {
+    if (userReadRes.responseCode.equalsIgnoreCase("OK") && !userReadRes.result.isEmpty && userReadRes.result.containsKey("response")) true else false
   }
 
 }
