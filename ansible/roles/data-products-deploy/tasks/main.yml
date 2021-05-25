@@ -345,7 +345,7 @@
     - parallel-jobs-submit
   register: jobsCountStr
   when: jobs.find("druid") != -1
-  
+    
 - debug:
     var: jobsCountStr
   tags:
