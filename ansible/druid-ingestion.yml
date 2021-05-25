@@ -20,7 +20,7 @@
   roles:
     - role: druid-ingestion
       vars:
-        ingestion_task_names: "{{ rollup_vars }}"
+        ingestion_task_names: "{{ rollup_ingestion_task_names }}"
         overlord_host: "{{ rollup_overlord_host }}"
       when: not single_cluster
 
@@ -46,11 +46,11 @@
   roles:
     - role: druid-ingestion
       vars:
-        ingestion_task_names: "{{ raw_vars }}"
+        ingestion_task_names: "{{ raw_ingestion_task_names }}"
         overlord_host: "{{ raw_overlord_host }}"
       when: not single_cluster
     - role: druid-ingestion
       vars:
-        ingestion_task_names: "{{ raw_vars }},{{ rollup_vars }}"
+        ingestion_task_names: "{{ raw_ingestion_task_names }},{{ rollup_ingestion_task_names }}"
         overlord_host: "{{ raw_overlord_host }}"
       when: single_cluster
