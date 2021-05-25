@@ -355,6 +355,8 @@
      then
      python "{{ analytics_cluster.home }}"/update-job-requests.py "{{ jobs }}" "{{ batch_size }}" exhaust "{{env}}"_job_request
     fi
+  tags:
+    - parallel-jobs-submit
   register: jobsCountStr
 
 
