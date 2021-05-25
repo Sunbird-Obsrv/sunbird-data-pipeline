@@ -348,10 +348,10 @@
 
 - name: Execute python script to populate batch numbers
   shell: |
-    if [ -z "${{{ jobs }}##*druid*}" ]
+    if echo "{{jobs}}" | grep 'druid'
     then
      python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} druid {{env}}_report_config
-    elif [ "{{ jobs }}" = "exhaust" ]
+    elif if echo "{{jobs}}" | grep 'exhaust'
      then
      python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} exhaust {{env}}_job_request
     fi
