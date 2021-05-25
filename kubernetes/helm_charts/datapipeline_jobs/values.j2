@@ -683,6 +683,7 @@ user-cache-updater-v2:
     user.self.signin.key = "Self-Signed-In"
     user.valid.key = "Validated"
     user.read.url.fields = "locations,organisations"
+    user.read.api.error = ["CLIENT_ERROR"]
 
   flink-conf: |+
     jobmanager.memory.flink.size: {{ flink_job_names['user-cache-updater-v2'].jobmanager_memory }}
