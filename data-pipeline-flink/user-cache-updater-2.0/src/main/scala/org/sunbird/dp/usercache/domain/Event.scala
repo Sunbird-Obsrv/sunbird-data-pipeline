@@ -36,7 +36,7 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
   }
 
   def isValid(userReadRes: UserReadResult) = {
-    if (userReadRes.responseCode.equalsIgnoreCase("OK") && !userReadRes.result.isEmpty && userReadRes.result.containsKey("response")) true else false
+    if (userReadRes.responseCode.toUpperCase.equalsIgnoreCase("OK") && !userReadRes.result.isEmpty && userReadRes.result.containsKey("response")) true else false
   }
 
 }
