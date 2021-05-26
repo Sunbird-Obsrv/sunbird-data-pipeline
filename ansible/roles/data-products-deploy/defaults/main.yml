@@ -193,8 +193,16 @@ analytics_cluster:
 
 analytics_ed_dataporducts_jar_artifact: "data-products-{{ analytics_ed_dataporducts_artifact_ver }}.jar"  
 
+spark_enable_dynamic_allocation: true
+# Spark Cassandra config-vars
+spark_cassandra_connection_timeout_millis: 30000
+spark_cassandra_query_timeout_millis: 180000
+spark_cassandra_query_max_rows_fetch_count: 1000
+spark_sql_shuffle_partitions: 200
+
 druid_report_postgres_db_name: druid
 druid_report_postgres_db_username: druid
+
 
 #Override this variable in production and point to druid rollup ingestion cluster 
 # Example: "http://$rollup_cluster_ip:8090"

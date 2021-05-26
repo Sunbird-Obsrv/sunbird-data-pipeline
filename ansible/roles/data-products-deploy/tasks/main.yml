@@ -338,19 +338,19 @@
     - parallel-jobs-submit
 
 - name: Execute python script to populate batch numbers
-  shell: "python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} exhaust {{env}}_job_request"
+  shell: |
+    if echo "{{jobs}}" | grep 'druid'
+    then
+     python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} druid {{env}}_report_config
+    elif echo "{{jobs}}" | grep 'exhaust'
+     then
+     python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} exhaust {{env}}_job_request
+    fi
   tags:
     - parallel-jobs-submit
   register: jobsCountStr
-  when: jobs.find("exhaust") != -1
-    
-- name: Execute python script to populate batch numbers
-  shell: "python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} druid {{env}}_report_config"
-  tags:
-    - parallel-jobs-submit
-  register: jobsCountStr
-  when: jobs.find("druid") != -1
-  
+
+
 - debug:
     var: jobsCountStr
   tags:
