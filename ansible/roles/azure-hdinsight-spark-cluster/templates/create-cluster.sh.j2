@@ -17,7 +17,7 @@ version="{{version}}"
 headnode_size="{{headnode_size}}"
 workernode_size="{{workernode_size}}"
 workernode_count="{{workernode_count}}"
-ssh_user=deployer
+ssh_user="{{ ansible_ssh_user }}"
 ssh_pub_key="{{ssh_public_key_deployer}}"
 #ssh_pass="{{azure_spark_cluster_http_password}}"
 
