@@ -8,7 +8,7 @@
       "cron": "{{ item.cron }}",
       "offset_in_mins": {{ item.offset_in_mins }},
       "frequency": "{{ item.frequency }}"
-    }
+    }{{ "," if not loop.last else "" }}
     {% endfor %}
   ]
 }
