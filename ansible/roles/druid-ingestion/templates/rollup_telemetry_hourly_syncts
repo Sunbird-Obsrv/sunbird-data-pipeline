@@ -165,6 +165,11 @@
             },
             {
               "type": "path",
+              "name": "edata_mode",
+              "expr": "$.edata.mode"
+            },
+            {
+              "type": "path",
               "name": "edata_size",
               "expr": "$.edata.size"
             },
@@ -297,6 +302,10 @@
             {
               "type": "string",
               "name": "edata_type"
+            },
+            {
+              "type": "string",
+              "name": "edata_mode"
             },
             {
               "type": "string",
