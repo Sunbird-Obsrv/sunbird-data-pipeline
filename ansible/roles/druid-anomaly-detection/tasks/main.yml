@@ -40,8 +40,8 @@
     group: "{{ analytics_user }}"
     mode: 0775
   loop:
-    - /home/analytics/anomaly_detection/anomaly_venv
-    - /home/analytics/anomaly_detection/data
+    - "{{ anomaly_detection_module_path }}/anomaly_venv"
+    - "{{ anomaly_detection_module_path }}/data"
   become_user: "{{ analytics_user }}"
 
 - name: Copy the anomaly detection artifact
