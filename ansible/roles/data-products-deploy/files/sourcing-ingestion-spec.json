@@ -1,0 +1,138 @@
+{
+    "type": "index",
+    "spec": {
+      "dataSchema": {
+        "dataSource": "sourcing-model-snapshot",
+        "parser": {
+          "type": "string",
+          "parseSpec": {
+            "format": "json",
+            "flattenSpec": {
+              "useFieldDiscovery": false,
+              "fields": [
+                {
+                  "type": "root",
+                  "name": "program_id",
+                  "expr": "program_id"
+                },
+                {
+                  "type": "root",
+                  "name": "status",
+                  "expr": "status"
+                },
+                {
+                  "type": "root",
+                  "name": "rootorg_id",
+                  "expr": "rootorg_id"
+                },
+                {
+                  "type": "root",
+                  "name": "userId",
+                  "expr": "userId"
+                },
+                {
+                  "type": "root",
+                  "name": "userType",
+                  "expr": "userType"
+                },
+                {
+                  "type": "root",
+                  "name": "contributorId",
+                  "expr": "contributorId"
+                },
+                {
+                  "type": "root",
+                  "name": "totalContributedContent",
+                  "expr": "totalContributedContent"
+                },
+                {
+                  "type": "root",
+                  "name": "primaryCategory",
+                  "expr": "primaryCategory"
+                },
+                {
+                  "type": "root",
+                  "name": "createdBy",
+                  "expr": "createdBy"
+                }
+              ]
+            },
+            "dimensionsSpec": {
+              "dimensions": [
+                {
+                  "type": "string",
+                  "name": "program_id"
+                },
+                {
+                  "type": "string",
+                  "name": "status"
+                },
+                {
+                  "type": "string",
+                  "name": "rootorg_id"
+                },
+                {
+                  "type": "string",
+                  "name": "userId"
+                },
+                {
+                  "type": "string",
+                  "name": "userType"
+                },
+                {
+                  "type": "string",
+                  "name": "contributorId"
+                },
+                {
+                  "type": "string",
+                  "name": "primaryCategory"
+                },
+                {
+                  "type": "string",
+                  "name": "createdBy"
+                }
+              ],
+              "dimensionsExclusions": []
+            },
+            "timestampSpec": {
+              "column": "timestamp",
+              "format": "auto"
+            }
+          }
+        },
+        "metricsSpec": [
+          {
+            "type": "longSum",
+            "name": "totalContributedContent",
+            "fieldName": "totalContributedContent"
+          }
+        ],
+        "granularitySpec": {
+          "type": "uniform",
+          "segmentGranularity": "day",
+          "queryGranularity": "none",
+          "rollup": true
+        }
+      },
+      "ioConfig": {
+        "type": "index",
+        "firehose": {
+          "type": "static-azure-blobstore",
+          "blobs": [
+            {
+              "container": "reports",
+              "path": "/sourcing/SourcingReport.json"
+            }
+          ],
+          "fetchTimeout": 300000
+        }
+      },
+      "tuningConfig": {
+        "type": "index",
+        "targetPartitionSize": 5000000,
+        "maxRowsInMemory": 25000,
+        "forceExtendableShardSpecs": false,
+        "logParseExceptions": true
+      }
+    }
+}
