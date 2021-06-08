@@ -2,7 +2,7 @@
     "type": "index",
     "spec": {
       "dataSchema": {
-        "dataSource": "sourcing-model-snapshot",
+        "dataSource": "sourcing-summary-snapshot",
         "parser": {
           "type": "string",
           "parseSpec": {
@@ -27,33 +27,33 @@
                 },
                 {
                   "type": "root",
-                  "name": "userId",
-                  "expr": "userId"
+                  "name": "user_id",
+                  "expr": "user_id"
                 },
                 {
                   "type": "root",
-                  "name": "userType",
-                  "expr": "userType"
+                  "name": "user_type",
+                  "expr": "user_type"
                 },
                 {
                   "type": "root",
-                  "name": "contributorId",
-                  "expr": "contributorId"
+                  "name": "contributor_id",
+                  "expr": "contributor_id"
                 },
                 {
                   "type": "root",
-                  "name": "totalContributedContent",
-                  "expr": "totalContributedContent"
+                  "name": "total_contributed_content",
+                  "expr": "total_contributed_content"
                 },
                 {
                   "type": "root",
-                  "name": "primaryCategory",
-                  "expr": "primaryCategory"
+                  "name": "primary_category",
+                  "expr": "primary_category"
                 },
                 {
                   "type": "root",
-                  "name": "createdBy",
-                  "expr": "createdBy"
+                  "name": "created_by",
+                  "expr": "created_by"
                 }
               ]
             },
@@ -73,23 +73,23 @@
                 },
                 {
                   "type": "string",
-                  "name": "userId"
+                  "name": "user_id"
                 },
                 {
                   "type": "string",
-                  "name": "userType"
+                  "name": "user_type"
                 },
                 {
                   "type": "string",
-                  "name": "contributorId"
+                  "name": "contributor_id"
                 },
                 {
                   "type": "string",
-                  "name": "primaryCategory"
+                  "name": "primary_category"
                 },
                 {
                   "type": "string",
-                  "name": "createdBy"
+                  "name": "created_by"
                 }
               ],
               "dimensionsExclusions": []
@@ -103,8 +103,8 @@
         "metricsSpec": [
           {
             "type": "longSum",
-            "name": "totalContributedContent",
-            "fieldName": "totalContributedContent"
+            "name": "total_contributed_content",
+            "fieldName": "total_contributed_content"
           }
         ],
         "granularitySpec": {
@@ -121,7 +121,7 @@
           "blobs": [
             {
               "container": "reports",
-              "path": "/sourcing/SourcingReport.json"
+              "path": "/sourcing/SourcingSummaryReport.json"
             }
           ],
           "fetchTimeout": 300000
