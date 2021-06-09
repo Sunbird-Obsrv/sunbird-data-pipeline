@@ -10,7 +10,7 @@
 
 - name: Registering server_id
   set_fact:
-    server_id: "{% for servername in play_hosts %}{% if inventory_hostname==servername %}{{ loop.index }}{% endif %}{% endfor %}"
+    server_id: "{% for servername in ansible_play_hosts %}{% if inventory_hostname==servername %}{{ loop.index }}{% endif %}{% endfor %}"
 
 - name: Overwrite myid file.
   template: src=myid.j2 dest=/etc/zookeeper/conf/myid

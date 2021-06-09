@@ -1,4 +1,9 @@
 ## Data products deployment ##
+- name: Ensure azure blob storage container exists
+  command: az storage container create --name {{ bucket }}
+  tags:
+    - always
+
 - name: Copy Core Data Products
   copy: src={{ analytics_batch_module_artifact }} dest={{ analytics.home }}/models-{{ model_version }}
   tags:
@@ -264,6 +269,19 @@
   tags:
     - ed-dataproducts
 
+- name: Create sourcing-summary cron job
+  cron: name="{{env}}-{{ item.key }}" minute={{ item.value.minute }} hour={{ item.value.hour }}  job="{{ analytics.home }}/scripts/run-dock-job.sh sourcing-summary-report"
+  with_dict: "{{ run_sourcing_summary }}"
+  tags:
+    - cronjobs
+    - default-jobs
+    - spark-jobs
+
+- name: Copy sourcing-summary ingestion spec
+  copy: src="sourcing-ingestion-spec.json" dest={{ analytics.home }}/scripts/ mode=755 owner={{ analytics_user }} group={{ analytics_group }}
+  tags:
+    - ed-dataproducts
+
 - name: Update start jobmanager
   template: src=start-jobmanager.j2 dest={{ analytics.home }}/scripts/start-jobmanager.sh mode=755 owner={{ analytics_user }} group={{ analytics_group }}
   tags:
@@ -333,19 +351,19 @@
     - parallel-jobs-submit
 
 - name: Execute python script to populate batch numbers
-  shell: "python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} exhaust {{env}}_job_request"
+  shell: |
+    if echo "{{jobs}}" | grep 'druid'
+    then
+     python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} druid {{env}}_report_config
+    elif echo "{{jobs}}" | grep 'exhaust'
+     then
+     python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} exhaust {{env}}_job_request
+    fi
   tags:
     - parallel-jobs-submit
   register: jobsCountStr
-  when: jobs.find("exhaust") != -1
-    
-- name: Execute python script to populate batch numbers
-  shell: "python {{ analytics_cluster.home }}/update-job-requests.py {{ jobs }} {{ batch_size }} druid {{env}}_report_config"
-  tags:
-    - parallel-jobs-submit
-  register: jobsCountStr
-  when: jobs.find("druid") != -1
-  
+
+
 - debug:
     var: jobsCountStr
   tags:

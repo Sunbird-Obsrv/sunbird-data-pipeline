@@ -16,8 +16,11 @@
   become: yes
   file: path={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}.zip state=absent
 
-- name: Download Maxmind GeoCity database
-  get_url: url={{ maxmind_geocity_db_url }} dest={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}.zip force=no
+- name: Copy the  Maxmind GeoCity database to remote
+  copy: 
+    src: "files/{{ geoip_zip_csv_file_name }}"
+    dest: "{{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}.zip"
+    force: no
 
 - name: Unarchive Maxmind GeoCity database
   unarchive: src={{ maxmind_db_download_dir }}/{{ maxmind_db_dir_name }}.zip dest={{ maxmind_db_download_dir }} copy=no

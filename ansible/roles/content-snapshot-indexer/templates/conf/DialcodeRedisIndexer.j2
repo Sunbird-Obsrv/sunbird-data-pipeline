@@ -12,5 +12,5 @@ redis.dialcode.database.index=6
 
 cloudStorage.accountName="{{sunbird_private_storage_account_name}}"
 cloudStorage.accountKey="{{sunbird_private_storage_account_key}}"
-cloudStorage.container="{{ bucket }}"
+cloudStorage.container="{{ bucket | default('telemetry-data-store') }}"
 cloudStorage.dialCodeDataFile="dialcode-data/dial_code.csv"
