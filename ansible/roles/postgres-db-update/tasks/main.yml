@@ -107,7 +107,7 @@
   tags: update
 
 - name: update {{ env }}_job_request
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE {{ env }}_job_request ADD COLUMN IF NOT EXISTS processed_batches json"
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE {{ env }}_job_request ADD COLUMN IF NOT EXISTS processed_batches text"
   run_once: true
   tags: update      
 
