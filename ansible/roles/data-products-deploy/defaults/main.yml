@@ -193,7 +193,7 @@ analytics_cluster:
 
 analytics_ed_dataporducts_jar_artifact: "data-products-{{ analytics_ed_dataporducts_artifact_ver }}.jar"  
 
-spark_enable_dynamic_allocation: true
+spark_enable_dynamic_allocation: false
 # Spark Cassandra config-vars
 spark_cassandra_connection_timeout_millis: 30000
 spark_cassandra_query_timeout_millis: 180000
