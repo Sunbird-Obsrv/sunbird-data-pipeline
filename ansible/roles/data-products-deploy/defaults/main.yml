@@ -212,3 +212,9 @@ druid_report_postgres_db_username: druid
 #Override this variable in production and point to druid rollup ingestion cluster 
 # Example: "http://$rollup_cluster_ip:8090"
 druid_rollup_cluster_ingestion_task_url: "http://{{groups['raw-overlord'][0]}}:8081"
+
+# On demand Exhaust throttling vars
+exhaust_batches_limit=30
+exhaust_file_size_limit_bytes=1073741824
+
+
