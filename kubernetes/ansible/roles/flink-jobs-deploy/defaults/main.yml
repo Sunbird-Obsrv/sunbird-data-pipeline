@@ -1,6 +1,6 @@
-flink_namespace: flink-dev
-imagepullsecrets: sunbird-registry-secret
-
+flink_namespace: "flink-{{ env }}"
+imagepullsecrets: "{{ env }}-registry-secret"
+service_monitor_enabled: true
 ### Job manager related vars
 jobmanager_rpc_port: 6123
 jobmanager_blob_port: 6124
@@ -70,6 +70,8 @@ denorm_consumer_parallelism: 1
 telemetry_denorm_operators_parallelism: 1
 de_normalization_duplicationstore_key_expiry_seconds: 3600
 de_normalization_key_expiry_seconds: 3600
+denorm_window_count: 30
+denorm_window_shards: 1400
 
 denorm_secondary_consumer_parallelism: 1
 telemetry_denorm_secondary_operators_parallelism: 1
@@ -118,7 +120,7 @@ device_profile_updater_key_expiry_seconds: 3600
 ### content-cache-updater
 dialcode_host: "{{ proto }}://{{ domain_name }}"
 dialcode_api_url: "{{ dialcode_host }}/{{ dialcode_endpoint }}"
-dialcode_api_auth_key: "{{ dp_vault_dialcode_api_auth_key }}"
+dialcode_api_auth_key: "{{ sunbird_api_auth_token }}"
 
 ### User-cache-updater related vars
 usercache_updater_parallelism: 1
@@ -267,3 +269,7 @@ flink_job_names:
     taskmanager_memory: 1024m
     taskslots: 1
     cpu_requests: 0.3 
+
+### controlling the flink jobs log level
+flink_jobs_console_log_level: INFO
+flink_libraries_log_level: ERROR

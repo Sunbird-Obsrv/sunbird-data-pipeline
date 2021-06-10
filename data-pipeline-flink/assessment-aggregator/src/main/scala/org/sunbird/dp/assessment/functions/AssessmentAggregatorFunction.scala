@@ -171,7 +171,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
     cassandraUtil.upsert(query)
     logger.info("Successfully Aggregated the batch event - batchid: "
       + batchEvent.batchId + " ,userid: " + batchEvent.userId + " ,couserid: "
-      + batchEvent.courseId + " ,contentid: " + batchEvent.contentId, "attempid" + batchEvent.attemptId)
+      + batchEvent.courseId + " ,contentid: " + batchEvent.contentId + "attempid" + batchEvent.attemptId)
   }
 
   def getQuestion(questionData: QuestionData, assessTs: Long): UDTValue = {

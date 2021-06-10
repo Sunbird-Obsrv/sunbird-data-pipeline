@@ -11,8 +11,6 @@ today=$(date "+%Y-%m-%d")
 libs_path="{{ analytics.home }}/models-{{ model_version }}/data-products-1.0"
 file_path="dock-{{ env }}.conf"
 
-telemetry_converter_ver=0.0.8
-
 get_report_job_model_name(){
 	case "$1" in
 		"assessment-dashboard-metrics") echo 'org.sunbird.analytics.job.report.AssessmentMetricsJobV2'

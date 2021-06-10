@@ -1434,7 +1434,6 @@
     "granularitySpec": {
       "type": "uniform",
       "segmentGranularity": "day",
-      "queryGranularity": "none",
       "rollup": false
     }
   },
@@ -1443,11 +1442,11 @@
     "consumerProperties": {
       "bootstrap.servers": "{{kafka_brokers}}"
     },
-    "taskCount": 32,
+    "taskCount": {{raw_telemetry_events_taskcount}},
     "replicas": 1,
     "taskDuration": "PT7200S",
     "useEarliestOffset": true,
-    "completionTimeout" : "PT2H"
+    "completionTimeout" : "PT7200S"
   },
   "tuningConfig": {
     "type": "kafka",

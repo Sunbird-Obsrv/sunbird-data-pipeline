@@ -3,10 +3,10 @@ imagepullsecrets: {{ imagepullsecrets }}
 dockerhub: {{ dockerhub }}
 repository: {{flink_repository|default('sunbird-datapipeline')}}
 image_tag: {{ image_tag }}
-registry: {{ docker_registry }}
 azure_account: {{ azure_account }}
 azure_secret: {{ azure_secret }}
-
+serviceMonitor:
+  enabled: {{ service_monitor_enabled | lower}}
 replicaCount: {{taskmana_replicacount|default(1)}}
 
 jobmanager:
@@ -32,6 +32,36 @@ taskmanager:
 job_classname: {{ job_classname }}
 {{ taskmanager_liveness | to_nice_yaml }}
 
+log4j_console_properties: |
+  # This affects logging for both user code and Flink
+  rootLogger.level = {{ flink_jobs_console_log_level | default(INFO) }}
+  rootLogger.appenderRef.console.ref = ConsoleAppender
+
+  # Uncomment this if you want to _only_ change Flink's logging
+  #logger.flink.name = org.apache.flink
+  #logger.flink.level = {{ flink_jobs_console_log_level | default(INFO) }}
+
+  # The following lines keep the log level of common libraries/connectors on
+  # log level INFO. The root logger does not override this. You have to manually
+  # change the log levels here.
+  logger.akka.name = akka
+  logger.akka.level = {{ flink_libraries_log_level | default(INFO) }}
+  logger.kafka.name= org.apache.kafka
+  logger.kafka.level = {{ flink_libraries_log_level | default(INFO) }}
+  logger.hadoop.name = org.apache.hadoop
+  logger.hadoop.level = {{ flink_libraries_log_level | default(INFO) }}
+  logger.zookeeper.name = org.apache.zookeeper
+  logger.zookeeper.level = {{ flink_libraries_log_level | default(INFO) }}
+
+  # Log all infos to the console
+  appender.console.name = ConsoleAppender
+  appender.console.type = CONSOLE
+  appender.console.layout.type = PatternLayout
+  appender.console.layout.pattern = %d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %-60c %x - %m%n
+
+  # Suppress the irrelevant (wrong) warnings from the Netty channel handler
+  logger.netty.name = org.apache.flink.shaded.akka.org.jboss.netty.channel.DefaultChannelPipeline
+  logger.netty.level = OFF
 
 base_config: |
   kafka {
@@ -225,7 +255,10 @@ de-normalization:
       output.duplicate.topic = {{ env_name }}.telemetry.duplicate
       groupId = {{ env_name }}-telemetry-denorm-group
     }
+    skip.events = ["INTERRUPT"]
     task {
+      window.count = {{ denorm_window_count }}
+      window.shards = {{ denorm_window_shards }}
       consumer.parallelism = {{ denorm_consumer_parallelism }}
       telemetry.downstream.operators.parallelism = {{ telemetry_denorm_operators_parallelism }}
       summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
@@ -245,6 +278,14 @@ de-normalization:
         dialcodestore.id = 6
         key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
       }
+      content.host = {{ redis_meta_content_host }}
+      device.host = {{ redis_meta_device_host }}
+      user.host = {{ redis_meta_user_host }}
+      dialcode.host = {{ redis_meta_dialcode_host }}
+      content.port = {{ redis_meta_content_port }}
+      device.port = {{ redis_meta_device_port }}
+      user.port = {{ redis_meta_user_port }}
+      dialcode.port = {{ redis_meta_dialcode_port }}
     }
     # config version
     user_denorm_version = v2
@@ -573,7 +614,7 @@ content-cache-updater:
     dialcode {
       api {
         url = "{{ dialcode_api_url }}"
-        token = "{{ dialcode_api_auth_key }} "
+        token = "{{ sunbird_api_auth_token }} "
       }
     }
 
@@ -651,7 +692,8 @@ user-cache-updater-v2:
     user.validated.types = ["sso"]
     user.self.signin.key = "Self-Signed-In"
     user.valid.key = "Validated"
-    user.read.url.fields = "locations"
+    user.read.url.fields = "locations,organisations"
+    user.read.api.error = ["CLIENT_ERROR"]
 
   flink-conf: |+
     jobmanager.memory.flink.size: {{ flink_job_names['user-cache-updater-v2'].jobmanager_memory }}
