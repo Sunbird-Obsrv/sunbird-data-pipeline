@@ -203,6 +203,11 @@ telemetry-extractor:
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
+    scheduler-mode: reactive
+    heartbeat.timeout: 8000
+    heartbeat.interval: 5000
+    taskmanager.memory.process.size: 1728m
+    jobmanager.memory.process.size: 1600m
 
 pipeline-preprocessor:
   pipeline-preprocessor: |+
