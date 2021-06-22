@@ -46,6 +46,8 @@ get_report_job_model_name(){
 		;;
 		"assessment-correction") echo 'org.sunbird.analytics.job.report.AssessmentCorrectionJob'
         ;;
+        "activity_agg_migration-job") echo 'org.sunbird.analytics.audit.ActivityAggMigrationJob'
+        ;;
 		*) echo $1
 		;;
 	esac
