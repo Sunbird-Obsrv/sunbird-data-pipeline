@@ -102,9 +102,8 @@
         },
         "metricsSpec": [
           {
-            "type": "longSum",
-            "name": "total_contributed_content",
-            "fieldName": "total_contributed_content"
+            "name": "total_count",
+            "type": "count"
           }
         ],
         "granularitySpec": {
