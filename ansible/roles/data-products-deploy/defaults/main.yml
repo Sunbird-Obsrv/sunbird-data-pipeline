@@ -32,6 +32,7 @@ analytics_job_list: '"wfs", "content-rating-updater", "monitor-job-summ"'
 analytics_jobs_count: 3
 
 cassandra_keyspace_prefix: '{{ env }}_'
+report_cassandra_cluster_host: "{{ report_cassandra_host | default(core_cassandra_host) }}"
 cassandra_hierarchy_store_keyspace: "{{ env_name}}_hierarchy_store"
 spark_version: 2.4.4
 
@@ -212,3 +213,9 @@ druid_report_postgres_db_username: druid
 #Override this variable in production and point to druid rollup ingestion cluster 
 # Example: "http://$rollup_cluster_ip:8090"
 druid_rollup_cluster_ingestion_task_url: "http://{{groups['raw-overlord'][0]}}:8081"
+
+# On demand Exhaust throttling vars
+exhaust_batches_limit: 30
+exhaust_file_size_limit_bytes: 1073741824
+
+

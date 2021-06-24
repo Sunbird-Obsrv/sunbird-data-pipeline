@@ -254,9 +254,13 @@ sunbird.content.hierarchy.keyspace="{{ cassandra_hierarchy_store_keyspace }}"
 sunbird.user.cluster.host="{{ core_cassandra_host }}"
 sunbird.courses.cluster.host="{{ core_cassandra_host }}"
 sunbird.content.cluster.host="{{ core_cassandra_host }}"
-sunbird.report.cluster.host="{{ report_cassandra_host }}"
+sunbird.report.cluster.host="{{ report_cassandra_cluster_host }}"
 sunbird.user.report.keyspace="{{ report_user_table_keyspace }}"
 collection.exhaust.store.prefix=""
 postgres.table.job_request="{{ job_request_table }}"
 
 ## Collection Exhaust Jobs Configuration -- End ##
+
+## Exhaust throttling variables
+exhaust.batches.limit={{ exhaust_batches_limit }}
+exhaust.file.size.limit={{ exhaust_file_size_limit_bytes }}
