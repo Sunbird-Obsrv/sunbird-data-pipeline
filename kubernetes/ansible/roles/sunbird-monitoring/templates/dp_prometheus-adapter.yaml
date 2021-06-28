@@ -66,7 +66,7 @@ rules:
           resource: pod
     name:
       matches: "^(.*)"
-      as: "telemetry_extractor_kafka_consumergroup_lag_sum"
+      as: "telemetry-extractor_kafka_consumergroup_lag_sum"
     metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-telemetry-extractor-group",topic="{{ env_name }}.telemetry.ingest"}) by (<<.GroupBy>>)
   - seriesQuery: 'kafka_consumergroup_lag_sum'
     resources:
@@ -77,7 +77,7 @@ rules:
           resource: pod
     name:
       matches: "^(.*)"
-      as: "ingest_router_kafka_consumergroup_lag_sum"
+      as: "ingest-router_kafka_consumergroup_lag_sum"
     metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-ingest-router-group",topic="{{ env_name }}.telemetry.ingestion"}) by (<<.GroupBy>>)  
 
 
