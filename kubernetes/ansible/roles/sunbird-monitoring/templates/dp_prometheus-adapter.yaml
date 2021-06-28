@@ -18,7 +18,7 @@ priorityClassName: ""
 
 # Url to access prometheus
 prometheus:
-  url: http://{{core_prom_ip}}
+  url: http://{{core_prom_ip.split(":")[0]}}
   port: 9090
   path: ""
 
@@ -45,7 +45,7 @@ resources: {}
 
 rules:
   default: true
-  custom:{}
+  custom: {}
 # - seriesQuery: '{__name__=~"^some_metric_count$"}'
 #   resources:
 #     template: <<.Resource>>
