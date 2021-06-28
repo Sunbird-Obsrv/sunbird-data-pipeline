@@ -18,7 +18,7 @@ priorityClassName: ""
 
 # Url to access prometheus
 prometheus:
-  url: http://'{{core_prom_ip.split(":")[0]}}
+  url: http://'{{core_prom_ip}}
   port: 9090
   path: ""
 
