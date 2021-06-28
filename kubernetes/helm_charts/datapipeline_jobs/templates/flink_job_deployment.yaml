@@ -204,3 +204,22 @@ spec:
         - name: flink-config-volume
           mountPath: /opt/flink/conf/log4j-console.properties
           subPath: log4j-console.properties
+
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-taskmanager-hpa
+  namespace: {{ .Values.namespace }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Release.Name }}-taskmanager
+  minReplicas: 1
+  maxReplicas: 2
+  metrics:
+    - type: External
+      external:
+        metricName: {{ .Release.Name }}_kafka_consumergroup_lag_sum
+        targetValue: "500000"
