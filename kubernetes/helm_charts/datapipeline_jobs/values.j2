@@ -157,6 +157,11 @@ ingest-router:
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
+    scheduler-mode: reactive
+    heartbeat.timeout: 8000
+    heartbeat.interval: 5000
+    taskmanager.memory.process.size: 1728m
+    jobmanager.memory.process.size: 1600m
 
 
 telemetry-extractor:
@@ -245,108 +250,12 @@ pipeline-preprocessor:
     taskmanager.numberOfTaskSlots: {{ flink_job_names['pipeline-preprocessor'].taskslots }}
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
-    taskmanager.memory.network.fraction: 0.1 
-
-de-normalization:
-  de-normalization: |+
-    include file("/data/flink/conf/base-config.conf")
-    kafka {
-      input.telemetry.topic = {{ env_name }}.telemetry.unique
-      input.summary.topic = {{ env_name }}.telemetry.derived
-      telemetry.denorm.output.topic = {{ env_name }}.telemetry.denorm
-      summary.denorm.output.topic = {{ env_name }}.druid.events.summary
-      summary.unique.events.topic = {{ env_name }}.telemetry.derived.unique
-      output.failed.topic = {{ env_name }}.telemetry.failed
-      output.duplicate.topic = {{ env_name }}.telemetry.duplicate
-      groupId = {{ env_name }}-telemetry-denorm-group
-    }
-    skip.events = ["INTERRUPT"]
-    task {
-      window.count = {{ denorm_window_count }}
-      window.shards = {{ denorm_window_shards }}
-      consumer.parallelism = {{ denorm_consumer_parallelism }}
-      telemetry.downstream.operators.parallelism = {{ telemetry_denorm_operators_parallelism }}
-      summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
-    }
-    redis {
-      database {
-        duplicationstore.id = 9
-        key.expiry.seconds = {{ de_normalization_duplicationstore_key_expiry_seconds }} 
-      }
-    }
-    # redis-metadata
-    redis-meta {
-      database {
-        devicestore.id = 2
-        userstore.id = 12
-        contentstore.id = 5
-        dialcodestore.id = 6
-        key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
-      }
-      content.host = {{ redis_meta_content_host }}
-      device.host = {{ redis_meta_device_host }}
-      user.host = {{ redis_meta_user_host }}
-      dialcode.host = {{ redis_meta_dialcode_host }}
-      content.port = {{ redis_meta_content_port }}
-      device.port = {{ redis_meta_device_port }}
-      user.port = {{ redis_meta_user_port }}
-      dialcode.port = {{ redis_meta_dialcode_port }}
-    }
-    # config version
-    user_denorm_version = v2
-
-  flink-conf: |+
-    jobmanager.memory.flink.size: {{ flink_job_names['de-normalization'].jobmanager_memory }}
-    taskmanager.memory.flink.size: {{ flink_job_names['de-normalization'].taskmanager_memory }}
-    taskmanager.numberOfTaskSlots: {{ flink_job_names['de-normalization'].taskslots }}
-    parallelism.default: 1
-    jobmanager.execution.failover-strategy: region
-    taskmanager.memory.network.fraction: 0.1 
-
-de-normalization-v2:
-  de-normalization-v2: |+
-    include file("/data/flink/conf/base-config.conf")
-    kafka {
-      input.telemetry.topic = {{ env_name }}.telemetry.unique.latest
-      input.summary.topic = {{ env_name }}.telemetry.derived
-      telemetry.denorm.output.topic = {{ env_name }}.telemetry.denorm
-      summary.denorm.output.topic = {{ env_name }}.druid.events.summary
-      summary.unique.events.topic = {{ env_name }}.telemetry.derived.unique
-      output.failed.topic = {{ env_name }}.telemetry.failed
-      output.duplicate.topic = {{ env_name }}.telemetry.duplicate
-      groupId = {{ env_name }}-telemetry-denorm-v2-group
-    }
-    task {
-      consumer.parallelism = {{ denorm_consumer_parallelism }}
-      telemetry.downstream.operators.parallelism = {{ telemetry_denorm_operators_parallelism }}
-      summary.downstream.operators.parallelism = {{ summary_denorm_operators_parallelism  }}
-    }
-    redis {
-      database {
-        duplicationstore.id = 9
-        key.expiry.seconds = {{ de_normalization_duplicationstore_key_expiry_seconds }} 
-      }
-    }
-    # redis-metadata
-    redis-meta {
-      database {
-        devicestore.id = 2
-        userstore.id = 12
-        contentstore.id = 5
-        dialcodestore.id = 6
-        key.expiry.seconds = {{ de_normalization_key_expiry_seconds }}
-      }
-    }
-    # config version
-    user_denorm_version = v2
-
-  flink-conf: |+
-    jobmanager.memory.flink.size: {{ flink_job_names['de-normalization-v2'].jobmanager_memory }}
-    taskmanager.memory.flink.size: {{ flink_job_names['de-normalization-v2'].taskmanager_memory }}
-    taskmanager.numberOfTaskSlots: {{ flink_job_names['de-normalization-v2'].taskslots }}
-    parallelism.default: 1
-    jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
+    scheduler-mode: reactive
+    heartbeat.timeout: 8000
+    heartbeat.interval: 5000
+    taskmanager.memory.process.size: 1728m
+    jobmanager.memory.process.size: 1600m
 
 de-normalization-secondary:
   de-normalization-secondary: |+
@@ -403,6 +312,11 @@ de-normalization-secondary:
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
+    scheduler-mode: reactive
+    heartbeat.timeout: 8000
+    heartbeat.interval: 5000
+    taskmanager.memory.process.size: 1728m
+    jobmanager.memory.process.size: 1600m
 
 de-normalization-primary:
   de-normalization-primary: |+
@@ -458,7 +372,12 @@ de-normalization-primary:
     taskmanager.numberOfTaskSlots: {{ flink_job_names['de-normalization-primary'].taskslots }}
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
-    taskmanager.memory.network.fraction: 0.1    
+    taskmanager.memory.network.fraction: 0.1
+    scheduler-mode: reactive
+    heartbeat.timeout: 8000
+    heartbeat.interval: 5000
+    taskmanager.memory.process.size: 1728m
+    jobmanager.memory.process.size: 1600m   
 
 summary-denormalization:
   summary-denormalization: |+
@@ -558,6 +477,11 @@ druid-validator:
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
+    scheduler-mode: reactive
+    heartbeat.timeout: 8000
+    heartbeat.interval: 5000
+    taskmanager.memory.process.size: 1728m
+    jobmanager.memory.process.size: 1600m
 
 device-profile-updater:
   device-profile-updater: |+
@@ -627,44 +551,6 @@ content-cache-updater:
     jobmanager.memory.flink.size: {{ flink_job_names['content-cache-updater'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['content-cache-updater'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['content-cache-updater'].taskslots }}
-    parallelism.default: 1
-    jobmanager.execution.failover-strategy: region
-    taskmanager.memory.network.fraction: 0.1
-
-user-cache-updater:
-  user-cache-updater: |+
-    include file("/data/flink/conf/base-config.conf")
-    kafka {
-      input.topic = {{ env_name }}.telemetry.audit
-      groupId = {{ env_name }}-user-cache-updater-group
-    }
-    task {
-      usercache.updater.parallelism = {{ usercache_updater_parallelism }}
-    }
-    # redis-metadata
-    redis-meta {
-      database {
-        userstore.id = 4
-      }
-      host = {{ redis_meta_user_host }}
-      port = {{ redis_meta_user_port }}
-    }
-    lms-cassandra {
-      keyspace = "{{ middleware_cassandra_keyspace }}"
-      table {
-        user = "{{ middleware_cassandra_user_table }}"
-        location = "{{ middleware_cassandra_location_table }}"
-      }
-    }
-    user.self.signin.types = ["google","self"]
-    user.validated.types = ["sso"]
-    user.self.signin.key = "Self-Signed-In"
-    user.valid.key = "Validated"
-
-  flink-conf: |+
-    jobmanager.memory.flink.size: {{ flink_job_names['user-cache-updater'].jobmanager_memory }}
-    taskmanager.memory.flink.size: {{ flink_job_names['user-cache-updater'].taskmanager_memory }}
-    taskmanager.numberOfTaskSlots: {{ flink_job_names['user-cache-updater'].taskslots }}
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
