@@ -78,7 +78,7 @@ rules:
     name:
       matches: "^(.*)"
       as: "ingest-router_kafka_consumergroup_lag_sum"
-    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-ingest-router-group",topic="{{ env_name }}.telemetry.ingestion"}) by (<<.GroupBy>>)
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-ingest-router-group"}) by (consumergroup)
   - seriesQuery: 'kafka_consumergroup_lag_sum'
     resources:
       overrides:
