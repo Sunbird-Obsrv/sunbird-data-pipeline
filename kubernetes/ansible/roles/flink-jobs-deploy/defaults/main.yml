@@ -173,6 +173,8 @@ flink_job_names:
     cpu_requests: 0.3
     scale_enabled: true
     scale_target_value: 500000
+    min_replica: 1
+    max_replica: 2
   pipeline-preprocessor:
     job_class_name: 'org.sunbird.dp.preprocessor.task.PipelinePreprocessorStreamTask'
     replica: 1
@@ -182,6 +184,8 @@ flink_job_names:
     cpu_requests: 0.3
     scale_enabled: true
     scale_target_value: 1000000
+    min_replica: 1
+    max_replica: 2
   de-normalization:
     job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
     replica: 1
@@ -206,7 +210,9 @@ flink_job_names:
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: true
-    scale_target_value: 1000000 
+    scale_target_value: 1000000
+    min_replica: 1
+    max_replica: 2 
   de-normalization-primary:
     job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
     replica: 1
@@ -215,7 +221,9 @@ flink_job_names:
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: true
-    scale_target_value: 1000000      
+    scale_target_value: 1000000
+    min_replica: 1
+    max_replica: 2      
   druid-validator:
     job_class_name: 'org.sunbird.dp.validator.task.DruidValidatorStreamTask'
     replica: 1
@@ -225,6 +233,8 @@ flink_job_names:
     cpu_requests: 0.3
     scale_enabled: true
     scale_target_value: 1000000
+    min_replica: 1
+    max_replica: 2
   assessment-aggregator:
     job_class_name: 'org.sunbird.dp.assessment.task.AssessmentAggregatorStreamTask'
     replica: 1
@@ -282,6 +292,8 @@ flink_job_names:
     cpu_requests: 0.3
     scale_enabled: true
     scale_target_value: 500000
+    min_replica: 1
+    max_replica: 2
   error-denormalization:
     job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
     replica: 1

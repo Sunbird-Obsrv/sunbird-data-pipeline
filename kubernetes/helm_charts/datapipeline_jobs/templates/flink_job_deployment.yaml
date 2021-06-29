@@ -219,8 +219,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ .Release.Name }}-taskmanager
-  minReplicas: 1
-  maxReplicas: 2
+  minReplicas: {{ $prop.min_replica }}
+  maxReplicas: {{ $prop.max_replica }}
   metrics:
     - type: External
       external:

@@ -13,39 +13,63 @@ scale_properties:
   telemetry-extractor:
     enabled: {{ flink_job_names['telemetry-extractor'].scale_enabled | lower}}
     scale_target_value: {{ flink_job_names['telemetry-extractor'].scale_target_value }}
+    min_replica: {{ flink_job_names['telemetry-extractor'].min_replica | default(1) }}
+    max_replica: {{ flink_job_names['telemetry-extractor'].max_replica | default(2) }}
   pipeline-preprocessor:
     enabled: {{ flink_job_names['pipeline-preprocessor'].scale_enabled | lower}}
     scale_target_value: {{ flink_job_names['pipeline-preprocessor'].scale_target_value }}
+    min_replica: {{ flink_job_names['pipeline-preprocessor'].min_replica | default(1) }}
+    max_replica: {{ flink_job_names['pipeline-preprocessor'].max_replica | default(2) }}
   de-normalization-secondary:
     enabled: {{ flink_job_names['de-normalization-secondary'].scale_enabled | lower}}
     scale_target_value: {{ flink_job_names['de-normalization-secondary'].scale_target_value }} 
+    min_replica: {{ flink_job_names['de-normalization-secondary'].min_replica | default(1) }}
+    max_replica: {{ flink_job_names['de-normalization-secondary'].max_replica | default(2) }}
   de-normalization-primary:
     enabled: {{ flink_job_names['de-normalization-primary'].scale_enabled | lower}}
-    scale_target_value: {{ flink_job_names['de-normalization-primary'].scale_target_value }}      
+    scale_target_value: {{ flink_job_names['de-normalization-primary'].scale_target_value }}
+    min_replica: {{ flink_job_names['de-normalization-primary'].min_replica | default(1) }}
+    max_replica: {{ flink_job_names['de-normalization-primary'].max_replica | default(2) }}      
   druid-validator:
     enabled: {{ flink_job_names['druid-validator'].scale_enabled | lower}}
     scale_target_value: {{ flink_job_names['druid-validator'].scale_target_value }}
+    min_replica: {{ flink_job_names['druid-validator'].min_replica | default(1) }}
+    max_replica: {{ flink_job_names['druid-validator'].max_replica | default(2) }}
   assessment-aggregator:
     enabled: {{ flink_job_names['assessment-aggregator'].scale_enabled | lower}}
     scale_target_value: {{ flink_job_names['assessment-aggregator'].scale_target_value | default(0) }}
+    min_replica: {{ flink_job_names['assessment-aggregator'].min_replica | default(1) }}
+    max_replica: {{ flink_job_names['assessment-aggregator'].max_replica | default(2) }}
   content-cache-updater:
     enabled: {{ flink_job_names['content-cache-updater'].scale_enabled | lower}}
     scale_target_value: {{ flink_job_names['content-cache-updaterr'].scale_target_value | default(0) }}
+    min_replica: {{ flink_job_names['content-cache-updater'].min_replica | default(1) }}
+    max_replica: {{ flink_job_names['content-cache-updater'].max_replica | default(2) }}
   user-cache-updater-v2:
     enabled: {{ flink_job_names['user-cache-updater-v2'].scale_enabled | lower}}
     scale_target_value: {{ flink_job_names['user-cache-updater-v2'].scale_target_value | default(0) }}
+    min_replica: {{ flink_job_names['user-cache-updater-v2'].min_replica | default(1) }}
+    max_replica: {{ flink_job_names['user-cache-updater-v2'].max_replica | default(2) }}
   summary-denormalization:
     enabled: {{ flink_job_names['summary-denormalization'].scale_enabled | lower}}
     scale_target_value: {{ flink_job_names['summary-denormalization'].scale_target_value | default(0) }}
+    min_replica: {{ flink_job_names['summary-denormalization'].min_replica | default(1) }}
+    max_replica: {{ flink_job_names['summary-denormalization'].max_replica | default(2) }}
   device-profile-updater:
     enabled: {{ flink_job_names['device-profile-updater'].scale_enabled | lower}}
     scale_target_value: {{ flink_job_names['device-profile-updater'].scale_target_value | default(0) }}
+    min_replica: {{ flink_job_names['device-profile-updater'].min_replica | default(1) }}
+    max_replica: {{ flink_job_names['device-profile-updater'].max_replica | default(2) }}
   ingest-router:
     enabled: {{ flink_job_names['ingest-router'].scale_enabled | lower}}
     scale_target_value: {{ flink_job_names['ingest-router'].scale_target_value }}
+    min_replica: {{ flink_job_names['ingest-router'].min_replica | default(1) }}
+    max_replica: {{ flink_job_names['ingest-router'].max_replica | default(2) }}
   error-denormalization:
     enabled: {{ flink_job_names['error-denormalization'].scale_enabled | lower}}
     scale_target_value: {{ flink_job_names['error-denormalization'].scale_target_value | default(0) }}
+    min_replica: {{ flink_job_names['error-denormalization'].min_replica | default(1) }}
+    max_replica: {{ flink_job_names['error-denormalization'].max_replica | default(2) }}
 
 jobmanager:
   rpc_port: {{ jobmanager_rpc_port }}
