@@ -9,6 +9,44 @@ serviceMonitor:
   enabled: {{ service_monitor_enabled | lower}}
 replicaCount: {{taskmana_replicacount|default(1)}}
 
+scale_properties:
+  telemetry-extractor:
+    enabled: {{ flink_job_names['telemetry-extractor'].scale_enabled | lower}}
+    scale_target_value: {{ flink_job_names['telemetry-extractor'].scale_target_value }}
+  pipeline-preprocessor:
+    enabled: {{ flink_job_names['pipeline-preprocessor'].scale_enabled | lower}}
+    scale_target_value: {{ flink_job_names['pipeline-preprocessor'].scale_target_value }}
+  de-normalization-secondary:
+    enabled: {{ flink_job_names['de-normalization-secondary'].scale_enabled | lower}}
+    scale_target_value: {{ flink_job_names['de-normalization-secondaryr'].scale_target_value }} 
+  de-normalization-primary:
+    enabled: {{ flink_job_names['de-normalization-primary'].scale_enabled | lower}}
+    scale_target_value: {{ flink_job_names['de-normalization-primary'].scale_target_value }}      
+  druid-validator:
+    enabled: {{ flink_job_names['druid-validator'].scale_enabled | lower}}
+    scale_target_value: {{ flink_job_names['druid-validator'].scale_target_value }}
+  assessment-aggregator:
+    enabled: {{ flink_job_names['assessment-aggregator'].scale_enabled | lower}}
+    scale_target_value: {{ flink_job_names['assessment-aggregator'].scale_target_value | default(0) }}
+  content-cache-updater:
+    enabled: {{ flink_job_names['content-cache-updater'].scale_enabled | lower}}
+    scale_target_value: {{ flink_job_names['content-cache-updaterr'].scale_target_value | default(0) }}
+  user-cache-updater-v2:
+    enabled: {{ flink_job_names['user-cache-updater-v2'].scale_enabled | lower}}
+    scale_target_value: {{ flink_job_names['user-cache-updater-v2'].scale_target_value | default(0) }}
+  summary-denormalization:
+    enabled: {{ flink_job_names['summary-denormalization'].scale_enabled | lower}}
+    scale_target_value: {{ flink_job_names['summary-denormalization'].scale_target_value | default(0) }}
+  device-profile-updater:
+    enabled: {{ flink_job_names['device-profile-updater'].scale_enabled | lower}}
+    scale_target_value: {{ flink_job_names['device-profile-updater'].scale_target_value | default(0) }}
+  ingest-router:
+    enabled: {{ flink_job_names['ingest-router'].scale_enabled | lower}}
+    scale_target_value: {{ flink_job_names['ingest-router'].scale_target_value }}
+  error-denormalization:
+    enabled: {{ flink_job_names['error-denormalization'].scale_enabled | lower}}
+    scale_target_value: {{ flink_job_names['error-denormalization'].scale_target_value | default(0) }}
+
 jobmanager:
   rpc_port: {{ jobmanager_rpc_port }}
   blob_port: {{ jobmanager_blob_port }}
