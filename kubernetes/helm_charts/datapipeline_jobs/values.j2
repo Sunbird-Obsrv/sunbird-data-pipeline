@@ -18,7 +18,7 @@ scale_properties:
     scale_target_value: {{ flink_job_names['pipeline-preprocessor'].scale_target_value }}
   de-normalization-secondary:
     enabled: {{ flink_job_names['de-normalization-secondary'].scale_enabled | lower}}
-    scale_target_value: {{ flink_job_names['de-normalization-secondaryr'].scale_target_value }} 
+    scale_target_value: {{ flink_job_names['de-normalization-secondary'].scale_target_value }} 
   de-normalization-primary:
     enabled: {{ flink_job_names['de-normalization-primary'].scale_enabled | lower}}
     scale_target_value: {{ flink_job_names['de-normalization-primary'].scale_target_value }}      
