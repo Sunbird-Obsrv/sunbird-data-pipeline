@@ -224,5 +224,5 @@ spec:
     - type: External
       external:
         metricName: {{ .Release.Name }}_kafka_consumergroup_lag_sum
-        targetValue: "{{ .Values.scale_properties. $name .scale_target_value }}"
+        targetValue: "{{ .Values.scale_properties $name .scale_target_value }}"
 {{- end }}        
