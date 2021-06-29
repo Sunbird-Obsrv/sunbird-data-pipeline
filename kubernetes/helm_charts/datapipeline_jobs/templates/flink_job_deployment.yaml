@@ -206,7 +206,7 @@ spec:
           subPath: log4j-console.properties
 
 {{- $name := .Release.Name }}
-{{- if .Values.scale_properties. $name .enabled}}
+{{- if .Values.scale_properties $name .enabled}}
 ---
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
