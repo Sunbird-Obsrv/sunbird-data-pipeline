@@ -206,8 +206,9 @@ spec:
           subPath: log4j-console.properties
 
 {{- $name := .Release.Name }}
-{{- $prop := $.Value.scale_properties $name}}
-{{- if $prop.enabled}}
+{{- $scaleProp := $.Value.scale_properties}}
+{{- $jobConfig := $scaleProp.$name}}
+{{- if $jobConfig.enabled}}
 ---
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
@@ -225,5 +226,5 @@ spec:
     - type: External
       external:
         metricName: {{ .Release.Name }}_kafka_consumergroup_lag_sum
-        targetValue: "{{ $prop.scale_target_value }}"
+        targetValue: "{{ $jobConfig.scale_target_value }}"
 {{- end }}        
