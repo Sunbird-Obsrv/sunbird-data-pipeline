@@ -222,4 +222,4 @@ spec:
     - type: External
       external:
         metricName: {{ .Release.Name }}_kafka_consumergroup_lag_sum
-        targetValue: "500000"
+        targetValue: "{{ flink_job_names['%s'|format(item)].scale_target_value }}"
