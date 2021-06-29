@@ -222,7 +222,7 @@ ingest-router:
     scheduler-mode: reactive
     heartbeat.timeout: 8000
     heartbeat.interval: 5000
-    taskmanager.memory.process.size: {{ flink_job_names['ingest-router'].taskmanager_memory }}
+    taskmanager.memory.process.size: {{ flink_job_names['ingest-router'].taskmanager_process_memory }}
     jobmanager.memory.process.size: 1600m
 
 
@@ -273,7 +273,7 @@ telemetry-extractor:
     scheduler-mode: reactive
     heartbeat.timeout: 8000
     heartbeat.interval: 5000
-    taskmanager.memory.process.size: {{ flink_job_names['telemetry-extractor'].taskmanager_memory }}
+    taskmanager.memory.process.size: {{ flink_job_names['telemetry-extractor'].taskmanager_process_memory }}
     jobmanager.memory.process.size: 1600m
 
 pipeline-preprocessor:
@@ -316,7 +316,7 @@ pipeline-preprocessor:
     scheduler-mode: reactive
     heartbeat.timeout: 8000
     heartbeat.interval: 5000
-    taskmanager.memory.process.size: {{ flink_job_names['pipeline-preprocessor'].taskmanager_memory }}
+    taskmanager.memory.process.size: {{ flink_job_names['pipeline-preprocessor'].taskmanager_process_memory }}
     jobmanager.memory.process.size: 1600m
 
 de-normalization-secondary:
@@ -377,7 +377,7 @@ de-normalization-secondary:
     scheduler-mode: reactive
     heartbeat.timeout: 8000
     heartbeat.interval: 5000
-    taskmanager.memory.process.size: {{ flink_job_names['de-normalization-secondary'].taskmanager_memory }}
+    taskmanager.memory.process.size: {{ flink_job_names['de-normalization-secondary'].taskmanager_process_memory }}
     jobmanager.memory.process.size: 1600m
 
 de-normalization-primary:
@@ -438,7 +438,7 @@ de-normalization-primary:
     scheduler-mode: reactive
     heartbeat.timeout: 8000
     heartbeat.interval: 5000
-    taskmanager.memory.process.size: {{ flink_job_names['de-normalization-primary'].taskmanager_memory }}
+    taskmanager.memory.process.size: {{ flink_job_names['de-normalization-primary'].taskmanager_process_memory }}
     jobmanager.memory.process.size: 1600m   
 
 summary-denormalization:
@@ -542,7 +542,7 @@ druid-validator:
     scheduler-mode: reactive
     heartbeat.timeout: 8000
     heartbeat.interval: 5000
-    taskmanager.memory.process.size: {{ flink_job_names['druid-validator'].taskmanager_memory }}
+    taskmanager.memory.process.size: {{ flink_job_names['druid-validator'].taskmanager_process_memory }}
     jobmanager.memory.process.size: 1600m
 
 device-profile-updater:

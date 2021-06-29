@@ -169,6 +169,7 @@ flink_job_names:
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: true
@@ -180,6 +181,7 @@ flink_job_names:
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: true
@@ -191,6 +193,7 @@ flink_job_names:
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: false
@@ -199,6 +202,7 @@ flink_job_names:
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: false 
@@ -207,6 +211,7 @@ flink_job_names:
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: true
@@ -218,6 +223,7 @@ flink_job_names:
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: true
@@ -229,6 +235,7 @@ flink_job_names:
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: true
@@ -240,6 +247,7 @@ flink_job_names:
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: false
@@ -248,6 +256,7 @@ flink_job_names:
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: false
@@ -256,6 +265,7 @@ flink_job_names:
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: false
@@ -264,6 +274,7 @@ flink_job_names:
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: false
@@ -272,6 +283,7 @@ flink_job_names:
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: false
@@ -280,6 +292,7 @@ flink_job_names:
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: false
@@ -288,6 +301,7 @@ flink_job_names:
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: true
@@ -299,6 +313,7 @@ flink_job_names:
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
     taskslots: 1
     cpu_requests: 0.3
     scale_enabled: false 
