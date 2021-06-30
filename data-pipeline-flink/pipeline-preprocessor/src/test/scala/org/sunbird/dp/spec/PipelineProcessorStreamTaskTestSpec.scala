@@ -75,7 +75,7 @@ class PipelineProcessorStreamTaskTestSpec extends BaseTestSpec {
 
     val task = new PipelinePreprocessorStreamTask(ppConfig, mockKafkaUtil)
     task.process()
-    
+
     // 5 telemetry and 3 SHARE_ITEM
     TelemetryPrimaryEventSink.values.size() should be(9)
     TelemetryPrimaryEventSink.values.asScala.count(event => event.eid().equals("SHARE_ITEM")) should be (3)
