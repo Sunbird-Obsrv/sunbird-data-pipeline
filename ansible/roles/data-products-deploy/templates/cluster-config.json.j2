@@ -14,7 +14,7 @@
     "numExecutors": {{ spark_cluster.num_executors }},
     "conf": {
         "spark.sql.autoBroadcastJoinThreshold" : "-1",
-        "spark.dynamicAllocation.enabled" :"{{ spark_enable_dynamic_allocation }}",
+        "spark.dynamicAllocation.enabled" :"{{ spark_enable_dynamic_allocation }}"
         "spark.shuffle.service.enabled" :"{{ spark_enable_dynamic_allocation }}",
         "spark.sql.shuffle.partitions" : "{{ spark_sql_shuffle_partitions }}",
         "spark.scheduler.mode" : "FAIR",
