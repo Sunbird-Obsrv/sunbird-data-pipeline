@@ -328,18 +328,6 @@
             {
               "type": "long",
               "name": "edata_size"
-            },
-            {
-              "type": "double",
-              "name": "edata_timespent"
-            },
-            {
-              "type": "long",
-              "name": "edata_pageviews"
-            },
-            {
-              "type": "long",
-              "name": "edata_interactions"
             }
           ],
           "dimensionsExclusions": []
@@ -374,6 +362,21 @@
         "type": "doubleSum",
         "name": "total_max_score",
         "fieldName": "edata_item_maxscore"
+      },
+      {
+        "type": "doubleSum",
+        "name": "total_edata_timespent",
+        "fieldName": "edata_timespent"
+      },
+      {
+        "type": "longSum",
+        "name": "total_edata_pageviews",
+        "fieldName": "edata_pageviews"
+      },
+      {
+        "type": "longSum",
+        "name": "total_edata_interactions",
+        "fieldName": "edata_interactions"
       }
     ],
     "granularitySpec": {
