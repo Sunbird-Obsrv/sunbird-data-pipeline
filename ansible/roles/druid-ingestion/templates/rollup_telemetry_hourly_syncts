@@ -192,6 +192,21 @@
               "type": "path",
               "name": "edata_rating",
               "expr": "$.edata.rating"
+            },
+            {
+              "type": "path",
+              "name": "edata_timespent",
+              "expr": "$.edata.timespent"
+            },
+            {
+              "type": "path",
+              "name": "edata_pageviews",
+              "expr": "$.edata.pageviews"
+            },
+            {
+              "type": "path",
+              "name": "edata_interactions",
+              "expr": "$.edata.interactions"
             }
           ]
         },
@@ -322,6 +337,18 @@
             {
               "type": "long",
               "name": "edata_size"
+            },
+            {
+              "type": "double",
+              "name": "edata_timespent"
+            },
+            {
+              "type": "long",
+              "name": "edata_pageviews"
+            },
+            {
+              "type": "long",
+              "name": "edata_interactions"
             }
           ],
           "dimensionsExclusions": []
