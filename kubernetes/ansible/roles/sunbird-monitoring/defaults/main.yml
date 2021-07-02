@@ -4,6 +4,7 @@ fullnameOverride: sunbird-monitoring
 monitoring_stack:
   - prometheus-operator
   - alertrules
+  - prometheus-adapter
 
 namespace: monitoring
 flink_namespace: flink-dev

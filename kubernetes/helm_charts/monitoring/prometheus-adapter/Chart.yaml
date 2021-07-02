@@ -1,0 +1,15 @@
+apiVersion: v1
+appVersion: v0.7.0
+deprecated: true
+description: DEPRECATED A Helm chart for k8s prometheus adapter
+home: https://github.com/DirectXMan12/k8s-prometheus-adapter
+keywords:
+- hpa
+- metrics
+- prometheus
+- adapter
+name: prometheus-adapter
+sources:
+- https://github.com/kubernetes/charts
+- https://github.com/DirectXMan12/k8s-prometheus-adapter
+version: 2.5.1

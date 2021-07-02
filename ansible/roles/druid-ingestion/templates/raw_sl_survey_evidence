@@ -1,0 +1,61 @@
+{
+   "type":"kafka",
+   "dataSchema":{
+      "dataSource":"sl-survey-evidence",
+      "parser":{
+         "type":"string",
+         "parseSpec":{
+            "format":"json",
+            "timestampSpec":{
+               "column":"completedDate",
+               "format":"auto"
+            },
+            "dimensionsSpec":{
+               "dimensions":[
+                  "total_evidences",
+                  "surveySubmissionId",
+                  "createdBy",
+                  "solutionExternalId",
+                  "solutionId",
+                  "surveyId",
+                  "remarks",
+                  "questionId",
+                  "questionExternalId",
+                  "questionResponseType",
+                  "questionName",
+                  "evidence_count",
+                  "fileName",
+                  "fileSourcePath",
+                  "completedDate",
+                  "appName"
+               ]
+            }
+         }
+      },
+      "metricsSpec":[
+         
+      ],
+      "granularitySpec":{
+         "type":"uniform",
+         "segmentGranularity":"day",
+         "queryGranularity":"day",
+         "rollup": true
+      }
+   },
+   "tuningConfig":{
+      "type":"kafka",
+      "reportParseExceptions":false
+      "maxRowsPerSegment": 5000000
+   },
+   "ioConfig":{
+      "topic":"{{env}}.sl.survey.evidence.druid",
+      "consumerProperties":{
+         "bootstrap.servers":"{{kafka_brokers}}"
+      },
+      "taskCount":"{{sl_survey_evidence_task_count}}",
+      "replicas":1,
+      "taskDuration":"PT14400S",
+      "useEarliestOffset": true,
+      "completionTimeout": "PT1800S"
+   }
+}
