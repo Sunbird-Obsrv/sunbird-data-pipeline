@@ -77,3 +77,70 @@ rules:
       matches: "^(.*)"
       as: "druid-validator_kafka_consumergroup_lag_sum"
     metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-druid-validator-group",topic="{{ env_name }}.telemetry.denorm"}) by (<<.GroupBy>>)
+  - seriesQuery: 'kafka_consumergroup_lag_sum'
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    name:
+      matches: "^(.*)"
+      as: "error-denormalization_kafka_consumergroup_lag_sum"
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-error-denorm-group",topic="{{ env_name }}.telemetry.error"}) by (<<.GroupBy>>)
+  - seriesQuery: 'kafka_consumergroup_lag_sum'
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    name:
+      matches: "^(.*)"
+      as: "summary-denormalization_kafka_consumergroup_lag_sum"
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-summmary-denorm-group",topic="{{ env_name }}.telemetry.derived"}) by (<<.GroupBy>>)
+  - seriesQuery: 'kafka_consumergroup_lag_sum'
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    name:
+      matches: "^(.*)"
+      as: "content-cache-updater_kafka_consumergroup_lag_sum"
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-content-cache-updater-group",topic="{{ env_name }}.learning.graph.events"}) by (<<.GroupBy>>)
+  - seriesQuery: 'kafka_consumergroup_lag_sum'
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    name:
+      matches: "^(.*)"
+      as: "device-profile-updater_kafka_consumergroup_lag_sum"
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-device-profile-updater-group",topic="{{ env_name }}.events.deviceprofile"}) by (<<.GroupBy>>)
+  - seriesQuery: 'kafka_consumergroup_lag_sum'
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    name:
+      matches: "^(.*)"
+      as: "user-cache-updater-v2_kafka_consumergroup_lag_sum"
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-user-cache-updater-consumer-group",topic="{{ env_name }}.telemetry.audit"}) by (<<.GroupBy>>)
+  - seriesQuery: 'kafka_consumergroup_lag_sum'
+    resources:
+      overrides:
+        namespace:
+          resource: namespace
+        pod:
+          resource: pod
+    name:
+      matches: "^(.*)"
+      as: "assessment-aggregator_kafka_consumergroup_lag_sum"
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-assessment-aggregator-group",topic="{{ env_name }}.telemetry.assess"}) by (<<.GroupBy>>)
+  
