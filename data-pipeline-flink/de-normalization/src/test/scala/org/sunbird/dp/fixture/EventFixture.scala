@@ -162,9 +162,30 @@ object EventFixture {
        |"pdata":{"id":"sunbird.app","pid":"sunbird.app","ver":"2.3.144"},"sid":"df936f82-e982-41ec-8412-70d414458272"},
        |"flags":{"dd_processed":true},
        |"mid":"mid12","type":"events","object":{"id":"","type":"",
-       |"version":"","rollup":{}}}""".stripMargin
+       |"version":"","rollup":{}}}""".stripMargin,
 
+      // SUMMARY event - user_denorm = true, device_denorm=true, content_denorm=true
+      s"""{"eid":"SUMMARY","ets":1625043400402,"ver":"3.0","mid":"SUMMARY:a3e517153c4ba392297e70521aa5e17a",
+         |"actor":{"id":"610bab7d-1450-4e54-bf78-c7c9b14dbc81","type":"User"},
+         |"context":{"channel":"01268904781886259221","pdata":{"id":"staging.sunbird.portal","ver":"4.1.0",
+         |"pid":"sunbird-portal"},"env":"contentplayer","sid":"73d82044-8ea5-dffc-1af5-6cdf2a1fa1da",
+         |"did":"264d679186d4b0734d858d4e18d4d31e","cdata":[{"id":"kubXMwcsJK2JANa0PeYc00GK5CSXoS1q","type":"ContentSession"},
+         |{"id":"xcFG0rntKUGltu2m8zJh7ZqattT9u3Ix","type":"PlaySession"},{"id":"2.0","type":"PlayerVersion"}],
+         |"rollup":{"l1":"01268904781886259221"},"uid":"anonymous"},"object":{"id":"do_31249064359802470412856","ver":"1","type":"Content","rollup":{}},
+         |"tags":["01268904781886259221"],"edata":{"type":"content","mode":"play","starttime":1625043385301,
+         |"endtime":1625043401236,"timespent":16,"pageviews":2,"interactions":2,"extra":[{"id":"progress","value":"100"},
+         |{"id":"endpageseen","value":"true"},{"id":"score","value":"2"},{"id":"correct","value":"2"},
+         |{"id":"incorrect","value":"0"},{"id":"partial","value":"0"},{"id":"skipped","value":"0"}]}}""".stripMargin,
 
+      // ME_DEVICE_SUMMARY event - should skip
+      s"""
+         |{"eid":"ME_DEVICE_SUMMARY","ets":$currentDate,"syncts":$currentDate,"ver":"1.0","mid":
+         |"CFBA22543AA3EAD4C2737931D34F2E8D","context":{"pdata":{"id":"AnalyticsDataPipeline","ver":"1.0",
+         |"model":"DeviceSummary"},"granularity":"DAY","date_range":{"from":1572786370125,"to":1572786403121}},
+         |"dimensions":{"did":"3eb8d5dc49b063650ca18920956ea04e","channel":"ROOT_ORG"},"edata":{"eks":{"firstAccess":
+         |1572786370121,"dial_stats":{"total_count":3,"success_count":3,"failure_count":0},"content_downloads":0,
+         |"contents_played":0,"total_ts":0.0,"total_launches":0,"unique_contents_played":0}}}
+         """.stripMargin
             
   )
 
