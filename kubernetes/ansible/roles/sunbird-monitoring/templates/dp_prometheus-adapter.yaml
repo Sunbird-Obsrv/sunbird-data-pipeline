@@ -54,7 +54,7 @@ rules:
     name:
       matches: "^(.*)"
       as: "de-normalization-primary_kafka_consumergroup_lag_sum"
-    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-de-normalization-primary-group",topic="{{ env_name }}.telemetry.unique.primary"}) by (<<.GroupBy>>)
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-telemetry-denorm-primary-group",topic="{{ env_name }}.telemetry.unique.primary"}) by (<<.GroupBy>>)
   - seriesQuery: 'kafka_consumergroup_lag_sum'
     resources:
       overrides:
@@ -65,7 +65,7 @@ rules:
     name:
       matches: "^(.*)"
       as: "de-normalization-secondary_kafka_consumergroup_lag_sum"
-    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-de-normalization-secondary-group",topic="{{ env_name }}.telemetry.unique.secondary"}) by (<<.GroupBy>>)
+    metricsQuery: sum(kafka_consumergroup_lag_sum{consumergroup="{{ env_name }}-telemetry-denorm-secondary-group",topic="{{ env_name }}.telemetry.unique.secondary"}) by (<<.GroupBy>>)
   - seriesQuery: 'kafka_consumergroup_lag_sum'
     resources:
       overrides:
