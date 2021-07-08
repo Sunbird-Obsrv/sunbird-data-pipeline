@@ -215,10 +215,12 @@ druid_report_postgres_db_username: druid
 druid_rollup_cluster_ingestion_task_url: "http://{{groups['raw-overlord'][0]}}:8081"
 
 # On demand Exhaust throttling vars
-exhaust_batches_limit: 30
-exhaust_file_size_limit_bytes: 1073741824
+exhaust_batches_limit_per_channel: 30
+exhaust_file_size_limit_bytes_per_channel: 1073741824
 
 exhaust_parallel_batch_load_limit: 10
 exhaust_user_parallelism: 200
+
+data_exhaust_batch_limit_per_request: 20
 
 
