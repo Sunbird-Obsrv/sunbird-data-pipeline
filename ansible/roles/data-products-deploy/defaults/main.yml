@@ -218,4 +218,7 @@ druid_rollup_cluster_ingestion_task_url: "http://{{groups['raw-overlord'][0]}}:8
 exhaust_batches_limit: 30
 exhaust_file_size_limit_bytes: 1073741824
 
+exhaust_parallel_batch_load_limit: 10
+exhaust_user_parallelism: 200
+
 
