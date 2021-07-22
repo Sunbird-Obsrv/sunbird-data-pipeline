@@ -741,6 +741,21 @@
             },
             {
               "type": "path",
+              "name": "user_loc_block",
+              "expr": "$.userdata.block"
+            },
+            {
+              "type": "path",
+              "name": "user_loc_cluster",
+              "expr": "$.userdata.cluster"
+            },
+            {
+              "type": "path",
+              "name": "user_school_name",
+              "expr": "$.userdata.schoolname"
+            },
+            {
+              "type": "path",
               "name": "dialcode_channel",
               "expr": "$.dialcodedata.channel"
             },
@@ -1401,6 +1416,18 @@
             {
               "type": "string",
               "name": "user_login_type"
+            },
+            {
+              "type": "string",
+              "name": "user_loc_block"
+            },
+            {
+              "type": "string",
+              "name": "user_loc_cluster"
+            },
+            {
+              "type": "string",
+              "name": "user_school_name"
             },
             {
               "type": "string",
