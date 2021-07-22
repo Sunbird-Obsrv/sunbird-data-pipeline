@@ -124,6 +124,7 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     event.getMap().get("contentdata").asInstanceOf[util.Map[String, Any]].get("channel") should be("in.ekstep")
     event.getMap().get("contentdata").asInstanceOf[util.Map[String, Any]].get("lastpublishedon") should be(1.571999041881E12)
     event.getMap().get("contentdata").asInstanceOf[util.Map[String, Any]].get("contenttype") should be("Resource")
+    event.getMap().get("contentdata").asInstanceOf[util.Map[String, Any]].get("keywords").asInstanceOf[util.ArrayList[String]].get(0) should be ("Story")
 
     event.getMap().get("devicedata").asInstanceOf[util.Map[String, Any]].get("statecustomcode") should be("29")
     event.getMap().get("devicedata").asInstanceOf[util.Map[String, Any]].get("countrycode") should be("IN")
@@ -136,7 +137,9 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     user2Data.get("usertype") should be("TEACHER")
     user2Data.get("subject").asInstanceOf[util.List[String]].asScala should be(List("English"))
     user2Data.get("state") should be("Telangana")
-
+    user2Data.get("cluster") should be("Cluster001")
+    user2Data.get("schoolname") should be("TPS")
+    user2Data.get("block") should be ("Sri Sai ACC Block")
 
     event = DenormEventsSink.values("mid3")
     event.flags().get("device_denorm").asInstanceOf[Boolean] should be (true)
