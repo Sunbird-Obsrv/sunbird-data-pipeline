@@ -245,6 +245,8 @@ uci_fushionauth_db_psss: ""
 
 uci_encryption_secret_key: ""
 
+uci_pdata_id: "dev.UCI.sunbird"
+
 # End Of UCI Related Variables 
 
 
