@@ -1509,12 +1509,15 @@
               "name": "object_l2_subjects"
             },
             {
+              "type": "string",
               "name": "utm_source"
             },
             {
+              "type": "string",
               "name": "utm_medium"
             },
             {
+              "type": "string",
               "name": "utm_campaign"
             }
           ],
