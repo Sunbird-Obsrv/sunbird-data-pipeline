@@ -1507,7 +1507,16 @@
             },
             {
               "name": "object_l2_subjects"
-            }      
+            },
+            {
+              "name": "utm_source"
+            },
+            {
+              "name": "utm_medium"
+            },
+            {
+              "name": "utm_campaign"
+            }
           ],
           "dimensionsExclusions": []
         },
