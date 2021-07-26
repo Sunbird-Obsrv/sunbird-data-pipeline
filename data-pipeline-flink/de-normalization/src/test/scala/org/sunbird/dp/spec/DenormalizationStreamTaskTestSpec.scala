@@ -84,8 +84,6 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     jedis.set("do_312526125187809280139353", EventFixture.contentCacheData2)
     jedis.set("do_312526125187809280139355", EventFixture.contentCacheData3)
     jedis.set("do_312523863923441664117896", EventFixture.contentCacheData4)
-    jedis.set("7426472e-8b1a-4387-8b7a-962cb6cda006", EventFixture.contentCacheData5)
-    jedis.set("do_31331086175718604812701", EventFixture.collectionCache1)
     jedis.close()
 
   }
@@ -98,7 +96,7 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     val task = new DenormalizationStreamTask(denormConfig, mockKafkaUtil)
     task.process()
 
-    DenormEventsSink.values.size should be (13)
+    DenormEventsSink.values.size should be (12)
     DenormEventsSink.values.get("mid10") should be (None)
 
     var event = DenormEventsSink.values("mid1")
@@ -208,42 +206,20 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     l2Data.get("name") should be("test")
     l2Data.get("framework") should be("mh_k-12_1")
     event = DenormEventsSink.values("mid9")
-
-    event = DenormEventsSink.values("LP.AUDIT.d14d8be6-da4e-4ee9-b833-fd86d57b8808")
-    event.flags().get("device_denorm").asInstanceOf[Boolean] should be (false)
-    event.flags().get("user_denorm").asInstanceOf[Boolean] should be (false)
-    event.flags().get("coll_denorm").asInstanceOf[Boolean] should be (true)
-    event.flags().get("content_denorm").asInstanceOf[Boolean] should be (true)
-
-    val contentData = event.getMap().get("contentdata").asInstanceOf[util.Map[String, Any]]
-    contentData.get("name") should be ("Anction Words")
-    contentData.get("mimetype") should be ("application/vnd.ekstep.content-collection")
-    contentData.get("objecttype") should be ("Content")
-    contentData.get("contenttype") should be ("TextBookUnit")
-    contentData.get("status") should be ("Draft")
-
-    val collData = event.getMap().get("collectiondata").asInstanceOf[util.Map[String, Any]]
-    collData.get("name") should be ("Anction Words")
-    collData.get("mimetype") should be ("application/vnd.ekstep.content-collection")
-    collData.get("objecttype") should be ("Content")
-    collData.get("contenttype") should be ("TextBookUnit")
-    collData.get("status") should be ("Draft")
-
-
     // Location Denorm Metrics Assertion
     BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.locCacheHit}").getValue() should be (8)
-    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.locCacheMiss}").getValue() should be (5)
-    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.locTotal}").getValue() should be (13)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.locCacheMiss}").getValue() should be (4)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.locTotal}").getValue() should be (12)
 
     // Content Denorm Metrics Assertion
-    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.contentCacheHit}").getValue() should be (6)
-    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.contentCacheMiss}").getValue() should be (2)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.contentCacheHit}").getValue() should be (5)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.contentCacheMiss}").getValue() should be (3)
     BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.contentTotal}").getValue() should be (8)
 
     // User Denorm Metrics Assertion
     BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.userCacheHit}").getValue() should be (5)
-    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.userCacheMiss}").getValue() should be (5)
-    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.userTotal}").getValue() should be (10)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.userCacheMiss}").getValue() should be (4)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.userTotal}").getValue() should be (9)
 
     // Dialcode Denorm Metrics Assertion
     BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.dialcodeCacheHit}").getValue() should be (2)
@@ -252,8 +228,8 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
 
     // Device Denorm Metrics Assertion
     BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.deviceCacheHit}").getValue() should be (8)
-    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.deviceCacheMiss}").getValue() should be (3)
-    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.deviceTotal}").getValue() should be (11)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.deviceCacheMiss}").getValue() should be (2)
+    BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.deviceTotal}").getValue() should be (10)
 
     BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.eventsExpired}").getValue() should be (1)
     BaseMetricsReporter.gaugeMetrics(s"${denormConfig.jobName}.${denormConfig.eventsSkipped}").getValue() should be (3) // Skipped INTERRUPT event

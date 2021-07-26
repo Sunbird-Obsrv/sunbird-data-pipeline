@@ -11,8 +11,7 @@ class ContentDenormalization(config: DenormalizationConfig) {
   def denormalize(event: Event, cacheData: CacheResponseData, metrics: Metrics) = {
     val objectType = event.objectType()
     val objectId = event.objectID()
-
-    if (null != objectType && (config.permitEid.contains(event.eid()) || !List("user", "qr", "dialcode").contains(objectType.toLowerCase())) && null != objectId) {
+    if (!List("user", "qr", "dialcode").contains(objectType) && null != objectId) {
       metrics.incCounter(config.contentTotal)
       val contentData = cacheData.content.map(f => {
         (f._1.toLowerCase().replace("_", ""), f._2)
