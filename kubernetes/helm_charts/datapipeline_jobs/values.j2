@@ -357,6 +357,7 @@ de-normalization-secondary:
       groupId = {{ env_name }}-telemetry-denorm-secondary-group
     }
     skip.events = ["INTERRUPT"]
+    permit.eid=["AUDIT"]
     task {
       window.count = {{ denorm_secondary_window_count }}
       window.shards = {{ denorm_secondary_window_shards }}
@@ -413,6 +414,7 @@ de-normalization-primary:
       groupId = {{ env_name }}-telemetry-denorm-primary-group
     }
     skip.events = ["INTERRUPT"]
+    permit.eid=["AUDIT"]
     task {
       window.count = {{ denorm_primary_window_count }}
       window.shards = {{ denorm_primary_window_shards }}
@@ -469,6 +471,7 @@ summary-denormalization:
       groupId = {{ env_name }}-summmary-denorm-group
     }
     skip.events = ["INTERRUPT"]
+    permit.eid=["AUDIT"]
     task {
       window.count = {{ denorm_summary_window_count }}
       window.shards = {{ denorm_summary_window_shards }}
@@ -757,6 +760,7 @@ error-denormalization:
       groupId = {{ env_name }}-error-denorm-group
     }
     skip.events = ["INTERRUPT"]
+    permit.eid=["AUDIT"]
     task {
       window.count = {{ denorm_primary_window_count }}
       window.shards = {{ denorm_primary_window_shards }}

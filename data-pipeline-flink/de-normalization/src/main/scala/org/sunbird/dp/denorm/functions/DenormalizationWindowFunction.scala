@@ -125,7 +125,7 @@ class DenormalizationWindowFunction(config: DenormalizationConfig)(implicit val 
             val actorId = event.actorId()
             val actorType = event.actorType()
 
-            val contentIds = if (null != objectType && !List("user", "qr", "dialcode").contains(objectType.toLowerCase()) && null != objectId) {
+            val contentIds = if (null != objectType && (config.permitEid.contains(event.eid()) || !List("user", "qr", "dialcode").contains(objectType.toLowerCase()))  && null != objectId) {
                 contentMap.put(objectId, null)
                 val collectionId = if (event.checkObjectIdNotEqualsRollUpId(EventsPath.OBJECT_ROLLUP_L1)) {
                     collectionMap.put(event.objectRollUpl1ID(), null)
