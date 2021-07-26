@@ -79,7 +79,7 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
   val eventsToskip: List[String] = config.getStringList("skip.events").asScala.toList
   val eventsSkipped = "events-skipped"
 
-  val auditEid: List[String] = config.getStringList("audit.eid").asScala.toList
+  val permitEid: List[String] = config.getStringList("permit.eid").asScala.toList
 
   // Device Denorm Metrics
   val deviceTotal = "device-total"
