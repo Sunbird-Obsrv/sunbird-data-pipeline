@@ -224,21 +224,21 @@ exhaust_user_parallelism: 200
 data_exhaust_batch_limit_per_request: 20
 
 # Start Of UCI Related Variables
-uci_conversation_db_name: "postgres"
-postgres.uci_conversation_db_host: "localhost"
-postgres.uci_conversation_db_port: "65124"
+uci_conversation_db_name: "{{ uci_bot_postgres_database }}"
+postgres.uci_conversation_db_host: "{{ uci_postgres_host }}"
+postgres.uci_conversation_db_port: "5432"
 
-uci_fushionauth_db_name: "postgres"
-postgres.uci_fushionauth_db_host: "localhost"
-postgres.uci_fushionauth_db_port: "65124"
+uci_fushionauth_db_name: "{{ uci_fusionauth_postgres_database }}"
+postgres.uci_fushionauth_db_host: "{{ uci_postgres_host }}"
+postgres.uci_fushionauth_db_port: "5432"
 
 uci_conversation_table_name: "bot"
 uci_user_table_name: "users"
 uci_user_registration_table_name: "user_registrations"
 uci_user_identities_table_name: "identities"
 
-uci_conversation_db_user: ""
-uci_conversation_db_psss: ""
+uci_conversation_db_user: "{{ uci_postgres_user }}"
+uci_conversation_db_psss: "{{ uci_postgres_password }}"
 
 uci_fushionauth_db_user: ""
 uci_fushionauth_db_psss: ""
