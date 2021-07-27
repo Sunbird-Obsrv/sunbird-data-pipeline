@@ -77,6 +77,7 @@ class DenormalizationConfig(override val config: Config, jobName: String) extend
   val denormEventsTag: OutputTag[Event] = OutputTag[Event](DENORM_EVENTS)
 
   val eventsToskip: List[String] = config.getStringList("skip.events").asScala.toList
+  val permitEid: List[String] = config.getStringList("permit.eid").asScala.toList
   val eventsSkipped = "events-skipped"
 
   // Device Denorm Metrics
