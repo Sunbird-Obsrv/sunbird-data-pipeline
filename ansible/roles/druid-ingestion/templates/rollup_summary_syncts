@@ -150,6 +150,11 @@
             },
             {
               "type": "path",
+              "name": "collection_keywords",
+              "expr": "$.collectiondata.keywords[*]"
+            },
+            {
+              "type": "path",
               "name": "collection_created_for",
               "expr": "$.collectiondata.createdfor"
             },
@@ -167,6 +172,21 @@
               "type": "path",
               "name": "user_login_type",
               "expr": "$.userdata.userlogintype"
+            },
+            {
+              "type": "path",
+              "name": "user_loc_block",
+              "expr": "$.userdata.block"
+            },
+            {
+              "type": "path",
+              "name": "user_loc_cluster",
+              "expr": "$.userdata.cluster"
+            },
+            {
+              "type": "path",
+              "name": "user_school_name",
+              "expr": "$.userdata.schoolname"
             },
             {
               "type": "path",
@@ -271,6 +291,18 @@
             },
             {
               "type": "string",
+              "name": "user_loc_block"
+            },
+            {
+              "type": "string",
+              "name": "user_loc_cluster"
+            },
+            {
+              "type": "string",
+              "name": "user_school_name"
+            },
+            {
+              "type": "string",
               "name": "collection_name"
             },
             {
@@ -289,6 +321,9 @@
             },
             {
               "name": "collection_gradelevel"
+            },
+            {
+              "name": "collection_keywords"
             },
             {
               "name": "collection_subject"
