@@ -1,0 +1,16 @@
+[Unit]
+Description=ZooKeeper Service
+Documentation=http://zookeeper.apache.org
+Requires=network.target
+After=network.target
+
+[Service]
+Type=forking
+User=zookeeper
+Group=zookeeper
+ExecStart={{ zookeeper_dir }}/zookeeper/bin/zkServer.sh start {{ zookeeper_dir }}/zookeeper/conf/zookeeper.conf
+ExecStop={{ zookeeper_dir }}/zookeeper/bin/zkServer.sh stop {{ zookeeper_dir }}/zookeeper/conf/zookeeper.conf
+ExecReload={{ zookeeper_dir }}/zookeeper/bin/zkServer.sh restart {{ zookeeper_dir }}/zookeeper/conf/zookeeper.conf
+
+[Install]
+WantedBy=default.target
