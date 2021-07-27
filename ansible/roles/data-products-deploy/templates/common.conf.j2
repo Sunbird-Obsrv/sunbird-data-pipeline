@@ -262,8 +262,10 @@ postgres.table.job_request="{{ job_request_table }}"
 ## Collection Exhaust Jobs Configuration -- End ##
 
 ## Exhaust throttling variables
-exhaust.batches.limit={{ exhaust_batches_limit }}
-exhaust.file.size.limit={{ exhaust_file_size_limit_bytes }}
+exhaust.batches.limit.per.channel={{ exhaust_batches_limit_per_channel }}
+exhaust.file.size.limit.per.channel={{ exhaust_file_size_limit_bytes_per_channel }}
 
 exhaust.parallel.batch.load.limit={{ exhaust_parallel_batch_load_limit }}
 exhaust.user.parallelism={{ exhaust_user_parallelism }}
+
+data_exhaust.batch.limit.per.request={{ data_exhaust_batch_limit_per_request }}
