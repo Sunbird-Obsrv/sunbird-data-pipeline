@@ -77,7 +77,6 @@ class DenormalizationWindowFunction(config: DenormalizationConfig)(implicit val 
                 if (summaryEventsList.contains(event.eid()) || !(event.eid().contains("SUMMARY") || config.eventsToskip.contains(event.eid()))) {
                     true
                 } else {
-                    logger.info(s"DenormWindowFunction::Event Skipped having mid:${event.mid()} in event: " + event)
                     metrics.incCounter(config.eventsSkipped)
                     false
                 }
@@ -107,7 +106,6 @@ class DenormalizationWindowFunction(config: DenormalizationConfig)(implicit val 
                 dialcodeDenormalization.denormalize(event, cacheData, metrics)
                 contentDenormalization.denormalize(event, cacheData, metrics)
                 locationDenormalization.denormalize(event, metrics)
-                logger.info(s"DenormWindowFunction::Final Event processed:${event.mid()} in event: " + event)
                 context.output(config.denormEventsTag, event)
         }
     }
@@ -128,7 +126,6 @@ class DenormalizationWindowFunction(config: DenormalizationConfig)(implicit val 
             val actorType = event.actorType()
 
             val contentIds = if (event.isValidEventForContentDenorm(config, objectId, objectType, event.eid())) {
-                logger.info(s"DenormWindowFunction::Event Valid For Content Denorm having mid:${event.mid()} in event: " + event)
                 contentMap.put(objectId, null)
                 val collectionId = if (event.checkObjectIdNotEqualsRollUpId(EventsPath.OBJECT_ROLLUP_L1)) {
                     collectionMap.put(event.objectRollUpl1ID(), null)
@@ -142,7 +139,6 @@ class DenormalizationWindowFunction(config: DenormalizationConfig)(implicit val 
 
                 Some((objectId, collectionId, l2RollupId))
             } else {
-                logger.info(s"DenormWindowFunction::Event not valid for Content Denorm having mid:${event.mid()} in event: " + event)
                 None
             }
 
