@@ -9,6 +9,11 @@
     owner: "{{ zookeeper_user }}"
     remote_src: True
 
+- name: check if the zookeeper dir already exists
+  stat:
+    path: "{{ zookeeper_dir }}/zookeeper"
+  register: folder_exists
+
 - name: rename the dir name
   become: yes
   shell: mv "apache-zookeeper-{{ zookeeper_version }}-bin" zookeeper
@@ -16,6 +21,7 @@
   #owner: "{{ zookeeper_user }}"
   args:
     chdir: "{{ zookeeper_dir }}"
+  when: folder_exists.stat.exists == false
 
 - name: Change ownership of zookeeper installation
   become: yes
