@@ -51,6 +51,10 @@
   notify:
     - Restart zookeeper
 
+- name: Change ownership of zookeeper installation
+  become: yes
+  file: path={{ zookeeper_dir }}/zookeeper owner={{ zookeeper_user }} group={{ zookeeper_user }} state=directory recurse=yes
+
 - name: create systemd config
   template: dest={{zookeeper_systemd_service}} owner=root group=root mode=644 src=zookeeper.service.j2
   notify:
