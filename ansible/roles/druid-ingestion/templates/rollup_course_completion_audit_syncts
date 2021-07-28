@@ -670,7 +670,7 @@
     "consumerProperties": {
       "bootstrap.servers": "{{kafka_brokers}}"
     },
-    "taskCount": {{rollup_telemetry_audit_syncts_taskcount}},
+    "taskCount": {{rollup_course_completion_audit_syncts_taskcount}},
     "replicas": 1,
     "taskDuration": "PT14400S",
     "useEarliestOffset": false,
