@@ -156,21 +156,6 @@
             },
             {
               "type": "path",
-              "name": "content_last_submitted_on",
-              "expr": "$.contentdata.lastsubmittedon"
-            },
-            {
-              "type": "path",
-              "name": "content_last_published_on",
-              "expr": "$.contentdata.lastpublishedon"
-            },
-            {
-              "type": "path",
-              "name": "content_last_updated_on",
-              "expr": "$.contentdata.lastupdatedon"
-            },
-            {
-              "type": "path",
               "name": "content_created_by",
               "expr": "$.contentdata.createdby"
             },
@@ -246,21 +231,6 @@
             },
             {
               "type": "path",
-              "name": "collection_last_submitted_on",
-              "expr": "$.collectiondata.lastsubmittedon"
-            },
-            {
-              "type": "path",
-              "name": "collection_last_published_on",
-              "expr": "$.collectiondata.lastpublishedon"
-            },
-            {
-              "type": "path",
-              "name": "collection_last_updated_on",
-              "expr": "$.collectiondata.lastupdatedon"
-            },
-            {
-              "type": "path",
               "name": "collection_created_by",
               "expr": "$.collectiondata.createdby"
             },
@@ -283,11 +253,6 @@
               "type": "path",
               "name": "user_login_type",
               "expr": "$.userdata.userlogintype"
-            },
-            {
-              "type": "path",
-              "name": "device_first_access",
-              "expr": "$.devicedata.firstaccess"
             },
             {
               "type": "path",
@@ -469,18 +434,6 @@
               "name": "content_status"
             },
             {
-              "type": "long",
-              "name": "content_last_submitted_on"
-            },
-            {
-              "type": "long",
-              "name": "content_last_published_on"
-            },
-            {
-              "type": "long",
-              "name": "content_last_updated_on"
-            },
-            {
               "type": "string",
               "name": "content_created_by"
             },
@@ -532,18 +485,6 @@
               "name": "collection_version"
             },
             {
-              "type": "long",
-              "name": "collection_last_submitted_on"
-            },
-            {
-              "type": "long",
-              "name": "collection_last_published_on"
-            },
-            {
-              "type": "long",
-              "name": "collection_last_updated_on"
-            },
-            {
               "type": "string",
               "name": "collection_created_by"
             },
@@ -561,10 +502,6 @@
             {
               "type": "string",
               "name": "user_login_type"
-            },
-            {
-              "type": "long",
-              "name": "device_first_access"
             },
             {
               "type": "string",
