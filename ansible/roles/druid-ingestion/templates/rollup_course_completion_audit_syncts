@@ -46,16 +46,6 @@
             },
             {
               "type": "path",
-              "name": "context_cdata_type",
-              "expr": "$.context.cdata[*].type"
-            },
-            {
-              "type": "path",
-              "name": "context_cdata_id",
-              "expr": "$.context.cdata[*].id"
-            },
-            {
-              "type": "path",
               "name": "object_id",
               "expr": "$.object.id"
             },
@@ -354,12 +344,6 @@
             {
               "type": "string",
               "name": "context_pdata_ver"
-            },
-            {
-              "name": "context_cdata_type"
-            },
-            {
-              "name": "context_cdata_id"
             },
             {
               "type": "string",
