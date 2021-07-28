@@ -240,12 +240,12 @@ uci_user_identities_table_name: "identities"
 uci_conversation_db_user: "{{ uci_postgres_user }}"
 uci_conversation_db_psss: "{{ uci_postgres_password }}"
 
-uci_fushionauth_db_user: ""
-uci_fushionauth_db_psss: ""
+uci_fushionauth_db_user: "{{ uci_postgres_user }}"
+uci_fushionauth_db_psss: "{{ uci_postgres_password }}"
 
 uci_encryption_secret_key: ""
 
-uci_pdata_id: "dev.UCI.sunbird"
+uci_pdata_id: "{{ env }}.UCI.diksha"
 
 # End Of UCI Related Variables 
 
