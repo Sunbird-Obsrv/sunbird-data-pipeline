@@ -1,7 +1,7 @@
 {
   "type": "kafka",
   "dataSchema": {
-    "dataSource": "course-completion-audit-rollup-syncts",
+    "dataSource": "course-completion-events-rollup",
     "parser": {
       "type": "string",
       "parseSpec": {
