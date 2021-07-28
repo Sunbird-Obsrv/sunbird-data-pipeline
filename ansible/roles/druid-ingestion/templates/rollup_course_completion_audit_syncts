@@ -1,0 +1,605 @@
+{
+  "type": "kafka",
+  "dataSchema": {
+    "dataSource": "course-completion-events-rollup",
+    "parser": {
+      "type": "string",
+      "parseSpec": {
+        "format": "json",
+        "flattenSpec": {
+          "useFieldDiscovery": false,
+          "fields": [
+            {
+              "type": "path",
+              "name": "actor_id",
+              "expr": "$.actor.id"
+            },
+            {
+              "type": "path",
+              "name": "actor_type",
+              "expr": "$.actor.type"
+            },
+            {
+              "type": "path",
+              "name": "context_channel",
+              "expr": "$.context.channel"
+            },
+            {
+              "type": "path",
+              "name": "context_env",
+              "expr": "$.context.env"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_id",
+              "expr": "$.context.pdata.id"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_pid",
+              "expr": "$.context.pdata.pid"
+            },
+            {
+              "type": "path",
+              "name": "context_pdata_ver",
+              "expr": "$.context.pdata.ver"
+            },
+            {
+              "type": "path",
+              "name": "object_id",
+              "expr": "$.object.id"
+            },
+            {
+              "type": "path",
+              "name": "object_type",
+              "expr": "$.object.type"
+            },
+            {
+              "type": "path",
+              "name": "object_version",
+              "expr": "$.object.ver"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l1",
+              "expr": "$.object.rollup.l1"
+            },
+            {
+              "type": "path",
+              "name": "object_rollup_l2",
+              "expr": "$.object.rollup.l2"
+            },
+            {
+              "type": "path",
+              "name": "edata_type",
+              "expr": "$.edata.type"
+            },
+            {
+              "type": "path",
+              "name": "edata_state",
+              "expr": "$.edata.state"
+            },
+            {
+              "type": "path",
+              "name": "edata_prevstate",
+              "expr": "$.edata.prevstate"
+            },
+            {
+              "type": "path",
+              "name": "edata_duration",
+              "expr": "$.edata.duration"
+            },
+            {
+              "type": "path",
+              "name": "content_name",
+              "expr": "$.contentdata.name"
+            },
+            {
+              "type": "path",
+              "name": "content_object_type",
+              "expr": "$.contentdata.objecttype"
+            },
+            {
+              "type": "path",
+              "name": "content_type",
+              "expr": "$.contentdata.contenttype"
+            },
+            {
+              "type": "path",
+              "name": "content_language",
+              "expr": "$.contentdata.language[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_medium",
+              "expr": "$.contentdata.medium[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_gradelevel",
+              "expr": "$.contentdata.gradelevel[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_subjects",
+              "expr": "$.contentdata.subject[*]"
+            },
+            {
+              "type": "path",
+              "name": "content_mimetype",
+              "expr": "$.contentdata.mimetype"
+            },
+            {
+              "type": "path",
+              "name": "content_framework",
+              "expr": "$.contentdata.framework"
+            },
+            {
+              "type": "path",
+              "name": "content_board",
+              "expr": "$.contentdata.board"
+            },
+            {
+              "type": "path",
+              "name": "content_status",
+              "expr": "$.contentdata.status"
+            },
+            {
+              "type": "path",
+              "name": "content_created_by",
+              "expr": "$.contentdata.createdby"
+            },
+            {
+              "type": "path",
+              "name": "content_created_for",
+              "expr": "$.contentdata.createdfor"
+            },
+            {
+              "type": "path",
+              "name": "collection_name",
+              "expr": "$.collectiondata.name"
+            },
+            {
+              "type": "path",
+              "name": "collection_object_type",
+              "expr": "$.collectiondata.objecttype"
+            },
+            {
+              "type": "path",
+              "name": "collection_type",
+              "expr": "$.collectiondata.contenttype"
+            },
+            {
+              "type": "path",
+              "name": "collection_media_type",
+              "expr": "$.collectiondata.mediatype"
+            },
+            {
+              "type": "path",
+              "name": "collection_language",
+              "expr": "$.collectiondata.language[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_medium",
+              "expr": "$.collectiondata.medium[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_gradelevel",
+              "expr": "$.collectiondata.gradelevel[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_subjects",
+              "expr": "$.collectiondata.subject[*]"
+            },
+            {
+              "type": "path",
+              "name": "collection_mimetype",
+              "expr": "$.collectiondata.mimetype"
+            },
+            {
+              "type": "path",
+              "name": "collection_framework",
+              "expr": "$.collectiondata.framework"
+            },
+            {
+              "type": "path",
+              "name": "collection_board",
+              "expr": "$.collectiondata.board"
+            },
+            {
+              "type": "path",
+              "name": "collection_status",
+              "expr": "$.collectiondata.status"
+            },
+            {
+              "type": "path",
+              "name": "collection_version",
+              "expr": "$.collectiondata.pkgversion"
+            },
+            {
+              "type": "path",
+              "name": "collection_created_by",
+              "expr": "$.collectiondata.createdby"
+            },
+            {
+              "type": "path",
+              "name": "collection_created_for",
+              "expr": "$.collectiondata.createdfor"
+            },
+            {
+              "type": "path",
+              "name": "user_type",
+              "expr": "$.userdata.usertype"
+            },
+            {
+              "type": "path",
+              "name": "user_signin_type",
+              "expr": "$.userdata.usersignintype"
+            },
+            {
+              "type": "path",
+              "name": "user_login_type",
+              "expr": "$.userdata.userlogintype"
+            },
+            {
+              "type": "path",
+              "name": "derived_loc_state",
+              "expr": "$.derivedlocationdata.state"
+            },
+            {
+              "type": "path",
+              "name": "derived_loc_district",
+              "expr": "$.derivedlocationdata.district"
+            },
+            {
+              "type": "path",
+              "name": "derived_loc_from",
+              "expr": "$.derivedlocationdata.from"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_created_for",
+              "expr": "$.l2data.createdfor"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_framework",
+              "expr": "$.l2data.framework"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_name",
+              "expr": "$.l2data.name"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_channel",
+              "expr": "$.l2data.channel"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_mimetype",
+              "expr": "$.l2data.mimetype"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_medium",
+              "expr": "$.l2data.medium[*]"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_board",
+              "expr": "$.l2data.board"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_contenttype",
+              "expr": "$.l2data.contenttype"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_gradelevel",
+              "expr": "$.l2data.gradelevel[*]"
+            },
+            {
+              "type": "path",
+              "name": "object_l2_subjects",
+              "expr": "$.l2data.subject[*]"
+            }
+          ]
+        },
+        "dimensionsSpec": {
+          "dimensions": [
+            {
+              "type": "string",
+              "name": "eid"
+            },
+            {
+              "type": "string",
+              "name": "actor_id"
+            },
+            {
+              "type": "string",
+              "name": "actor_type"
+            },
+            {
+              "type": "string",
+              "name": "context_channel"
+            },
+            {
+              "type": "string",
+              "name": "context_env"
+            },
+            {
+              "type": "string",
+              "name": "context_pdata_id"
+            },
+            {
+              "type": "string",
+              "name": "context_pdata_pid"
+            },
+            {
+              "type": "string",
+              "name": "context_pdata_ver"
+            },
+            {
+              "type": "string",
+              "name": "object_id"
+            },
+            {
+              "type": "string",
+              "name": "object_type"
+            },
+            {
+              "type": "string",
+              "name": "object_version"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l1"
+            },
+            {
+              "type": "string",
+              "name": "object_rollup_l2"
+            },
+            {
+              "type": "string",
+              "name": "edata_type"
+            },
+            {
+              "type": "string",
+              "name": "edata_state"
+            },
+            {
+              "type": "string",
+              "name": "edata_prevstate"
+            },
+            {
+              "type": "string",
+              "name": "content_name"
+            },
+            {
+              "type": "string",
+              "name": "content_object_type"
+            },
+            {
+              "type": "string",
+              "name": "content_type"
+            },
+            {
+              "name": "content_language"
+            },
+            {
+              "name": "content_medium"
+            },
+            {
+              "name": "content_gradelevel"
+            },
+            {
+              "name": "content_subjects"
+            },
+            {
+              "type": "string",
+              "name": "content_mimetype"
+            },
+            {
+              "type": "string",
+              "name": "content_framework"
+            },
+            {
+              "type": "string",
+              "name": "content_board"
+            },
+            {
+              "type": "string",
+              "name": "content_status"
+            },
+            {
+              "type": "string",
+              "name": "content_created_by"
+            },
+            {
+              "name": "content_created_for"
+            },
+            {
+              "type": "string",
+              "name": "collection_name"
+            },
+            {
+              "type": "string",
+              "name": "collection_object_type"
+            },
+            {
+              "type": "string",
+              "name": "collection_type"
+            },
+            {
+              "name": "collection_language"
+            },
+            {
+              "name": "collection_medium"
+            },
+            {
+              "name": "collection_gradelevel"
+            },
+            {
+              "name": "collection_subjects"
+            },
+            {
+              "type": "string",
+              "name": "collection_mimetype"
+            },
+            {
+              "type": "string",
+              "name": "collection_framework"
+            },
+            {
+              "type": "string",
+              "name": "collection_board"
+            },
+            {
+              "type": "string",
+              "name": "collection_status"
+            },
+            {
+              "type": "double",
+              "name": "collection_version"
+            },
+            {
+              "type": "string",
+              "name": "collection_created_by"
+            },
+            {
+              "name": "collection_created_for"
+            },
+            {
+              "type": "string",
+              "name": "user_type"
+            },
+            {
+              "type": "string",
+              "name": "user_signin_type"
+            },
+            {
+              "type": "string",
+              "name": "user_login_type"
+            },
+            {
+              "type": "string",
+              "name": "user_declared_state"
+            },
+            {
+              "type": "string",
+              "name": "device_loc_district"
+            },
+            {
+              "type": "string",
+              "name": "derived_loc_from"
+            },
+            {
+              "type": "string",
+              "name": "derived_loc_state"
+            },
+            {
+              "type": "string",
+              "name": "derived_loc_district"
+            },
+            {
+              "name": "object_l2_created_for"
+            },
+            {
+              "type": "string",
+              "name": "object_l2_framework"
+            },
+            {
+              "type": "string",
+              "name": "object_l2_name"
+            },
+            {
+              "type": "string",
+              "name": "object_l2_channel"
+            },
+            {
+              "type": "string",
+              "name": "object_l2_mimetype"
+            },
+            {
+              "name": "object_l2_medium"
+            },
+            {
+              "type": "string",
+              "name": "object_l2_board"
+            },
+            {
+              "type": "string",
+              "name": "object_l2_contenttype"
+            },
+            {
+              "name": "object_l2_gradelevel"
+            },
+            {
+              "name": "object_l2_subjects"
+            }
+          ],
+          "dimensionsExclusions": []
+        },
+        "timestampSpec": {
+          "column": "syncts",
+          "format": "auto"
+        }
+      }
+    },
+    "transformSpec": {
+      "filter": {
+        "type": "and",
+        "fields": [
+          {
+            "type": "selector",
+            "dimension": "eid",
+            "value": "AUDIT"
+          },
+          {
+            "type": "selector",
+            "dimension": "edata_type",
+            "value": "enrol-complete"
+          }
+        ]
+      }
+    },
+    "metricsSpec": [
+      {
+        "name": "total_count",
+        "type": "count"
+      },
+      {
+        "type": "doubleSum",
+        "name": "total_edata_duration",
+        "fieldName": "edata_duration"
+      }
+    ],
+    "granularitySpec": {
+      "type": "uniform",
+      "segmentGranularity": "DAY",
+      "rollup": true
+    }
+  },
+  "ioConfig": {
+    "topic": "{{env}}.druid.events.telemetry",
+    "consumerProperties": {
+      "bootstrap.servers": "{{kafka_brokers}}"
+    },
+    "taskCount": {{rollup_course_completion_audit_syncts_taskcount}},
+    "replicas": 1,
+    "taskDuration": "PT14400S",
+    "useEarliestOffset": false,
+    "completionTimeout": "PT1800S"
+  },
+  "tuningConfig": {
+    "type": "kafka",
+    "reportParseExceptions": false,
+     "maxRowsPerSegment": 5000000
+  }
+}
