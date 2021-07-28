@@ -8,9 +8,9 @@ After=network.target
 Type=forking
 User=zookeeper
 Group=zookeeper
-ExecStart={{ zookeeper_dir }}/zookeeper/bin/zkServer.sh start {{ zookeeper_dir }}/zookeeper/conf/zookeeper.conf
-ExecStop={{ zookeeper_dir }}/zookeeper/bin/zkServer.sh stop {{ zookeeper_dir }}/zookeeper/conf/zookeeper.conf
-ExecReload={{ zookeeper_dir }}/zookeeper/bin/zkServer.sh restart {{ zookeeper_dir }}/zookeeper/conf/zookeeper.conf
+ExecStart={{ zookeeper_dir }}/zookeeper/bin/zkServer.sh start {{ zookeeper_dir }}/zookeeper/conf/zoo.cfg
+ExecStop={{ zookeeper_dir }}/zookeeper/bin/zkServer.sh stop {{ zookeeper_dir }}/zookeeper/conf/zoo.cfg
+ExecReload={{ zookeeper_dir }}/zookeeper/bin/zkServer.sh restart {{ zookeeper_dir }}/zookeeper/conf/zoo.cfg
 
 [Install]
 WantedBy=default.target

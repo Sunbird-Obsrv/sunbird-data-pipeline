@@ -1,21 +1,21 @@
----
-#- name: Update apt cache
-#  apt: update_cache=yes cache_valid_time={{apt_cache_timeout}}
-
-#- name: Apt install required system packages.
-#  apt: pkg={{item}} state=present
-#  with_items:
-#    - zookeeper
-#    - zookeeperd
-- name: download the version {{ zookeeper_version }} zookeeper tar file
+- name: download and unarchive zookeeper binary
   become: yes
-  become_user: "{{ zookeeper_user }}"
-  get_url: url={{ zookeeper_url }} dest={{ zookeeper_dir }}/zookeeper-{{ zookeeper_version }}.tar.gz timeout=50 force=no owner={{ zookeeper_user }}
+  #  become_user: "{{ zookeeper_user }}"
+  unarchive: 
+    src: "{{ zookeeper_url }}"
+    dest: "{{ zookeeper_dir }}"
+    mode: 0755
+    group: "{{ zookeeper_user }}"
+    owner: "{{ zookeeper_user }}"
+    remote_src: True
 
-- name: unzip
+- name: rename the dir name
   become: yes
-  become_user: "{{ zookeeper_user }}"
-  unarchive: src={{ zookeeper_dir }}/zookeeper-{{ zookeeper_version }}.tar.gz dest={{ zookeeper_dir }} copy=no group={{ zookeeper_user }} owner={{ zookeeper_user }} creates={{ zookeeper_dir }}/zookeeper
+  shell: mv "apache-zookeeper-{{ zookeeper_version }}-bin" zookeeper
+  #group: "{{ zookeeper_user }}"
+  #owner: "{{ zookeeper_user }}"
+  args:
+    chdir: "{{ zookeeper_dir }}"
 
 - name: Change ownership of zookeeper installation
   become: yes
@@ -48,7 +48,7 @@
 - name: create systemd config
   template: dest={{zookeeper_systemd_service}} owner=root group=root mode=644 src=zookeeper.service.j2
   notify:
-    - restart zookeeper
+    - Restart zookeeper
 
 - name: just force systemd to reread configs
   systemd: daemon_reload=yes
