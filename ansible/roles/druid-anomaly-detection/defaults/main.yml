@@ -13,6 +13,34 @@ anomaly_detection_queries:
     frequency: "hour"
     cron: "0 */1 * * *"
     offset_in_mins: 5
+    mobile-app-pdf-play-errors:
+    job_id: "mobile-client-pdf-errors"
+    query_granularity: "hour"
+    query: 'WITH \"content_plays\" AS (SELECT \"content_mimetype\", sum(total_count) AS \"plays\" FROM \"druid\".\"telemetry-hourly-rollup-syncts\" WHERE \"__time\" BETWEEN TIMESTAMP ''{start_time}'' AND TIMESTAMP ''{end_time}'' AND \"edata_type\" = ''content'' AND \"context_pdata_pid\" LIKE ''%app%'' AND \"content_mimetype\" = ''application/pdf'' AND \"edata_mode\" = ''play'' GROUP BY \"content_mimetype\") SELECT cp.content_mimetype, SUM(cpe.errors) * 100.0/SUM(cp.plays) AS \"perc_errors\" FROM (SELECT \"content_mimetype\", SUM(\"total_count\") AS \"errors\" FROM \"druid\".\"error-hourly-rollup-syncts\" WHERE \"__time\" BETWEEN TIMESTAMP ''{start_time}'' AND TIMESTAMP ''{end_time}'' AND \"object_type\" = ''content'' \"context_pdata_pid\" LIKE ''%app%'' AND \"content_mimetype\" = ''application/pdf'' GROUP BY \"content_mimetype\") AS cpe INNER JOIN content_plays AS cp ON cp.content_mimetype = cpe.content_mimetype GROUP BY cp.content_mimetype'
+    frequency: "hour"
+    cron: "0 */1 * * *"
+    offset_in_mins: 5
+  portal-app-pdf-play-errors:
+    job_id: "portal-client-pdf-errors"
+    query_granularity: "hour"
+    query: 'WITH \"content_plays\" AS (SELECT \"content_mimetype\", sum(total_count) AS \"plays\" FROM \"druid\".\"telemetry-hourly-rollup-syncts\" WHERE \"__time\" BETWEEN TIMESTAMP ''{start_time}'' AND TIMESTAMP ''{end_time}'' AND \"edata_type\" = ''content'' AND \"context_pdata_pid\" LIKE ''%portal%'' AND \"content_mimetype\" = ''application/pdf'' AND \"edata_mode\" = ''play'' GROUP BY \"content_mimetype\") SELECT cp.content_mimetype, SUM(cpe.errors) * 100.0/SUM(cp.plays) AS \"perc_errors\" FROM (SELECT \"content_mimetype\", SUM(\"total_count\") AS \"errors\" FROM \"druid\".\"error-hourly-rollup-syncts\" WHERE \"__time\" BETWEEN TIMESTAMP ''{start_time}'' AND TIMESTAMP ''{end_time}'' AND \"object_type\" = ''content'' \"context_pdata_pid\" LIKE ''%portal%'' AND \"content_mimetype\" = ''application/pdf'' GROUP BY \"content_mimetype\") AS cpe INNER JOIN content_plays AS cp ON cp.content_mimetype = cpe.content_mimetype GROUP BY cp.content_mimetype'
+    frequency: "hour"
+    cron: "0 */1 * * *"
+    offset_in_mins: 5
+  mobile-app-epub-play-errors:
+    job_id: "mobile-client-epub-errors"
+    query_granularity: "hour"
+    query: 'WITH \"content_plays\" AS (SELECT \"content_mimetype\", sum(total_count) AS \"plays\" FROM \"druid\".\"telemetry-hourly-rollup-syncts\" WHERE \"__time\" BETWEEN TIMESTAMP ''{start_time}'' AND TIMESTAMP ''{end_time}'' AND \"edata_type\" = ''content'' AND \"context_pdata_pid\" LIKE ''%app%'' AND \"content_mimetype\" = ''application/epub'' AND \"edata_mode\" = ''play'' GROUP BY \"content_mimetype\") SELECT cp.content_mimetype, SUM(cpe.errors) * 100.0/SUM(cp.plays) AS \"perc_errors\" FROM (SELECT \"content_mimetype\", SUM(\"total_count\") AS \"errors\" FROM \"druid\".\"error-hourly-rollup-syncts\" WHERE \"__time\" BETWEEN TIMESTAMP ''{start_time}'' AND TIMESTAMP ''{end_time}'' AND \"object_type\" = ''content'' \"context_pdata_pid\" LIKE ''%app%'' AND \"content_mimetype\" = ''application/epub'' GROUP BY \"content_mimetype\") AS cpe INNER JOIN content_plays AS cp ON cp.content_mimetype = cpe.content_mimetype GROUP BY cp.content_mimetype'
+    frequency: "hour"
+    cron: "0 */1 * * *"
+    offset_in_mins: 5
+  portal-app-epub-play-errors:
+    job_id: "portal-client-epub-errors"
+    query_granularity: "hour"
+    query: 'WITH \"content_plays\" AS (SELECT \"content_mimetype\", sum(total_count) AS \"plays\" FROM \"druid\".\"telemetry-hourly-rollup-syncts\" WHERE \"__time\" BETWEEN TIMESTAMP ''{start_time}'' AND TIMESTAMP ''{end_time}'' AND \"edata_type\" = ''content'' AND \"context_pdata_pid\" LIKE ''%portal%'' AND \"content_mimetype\" = ''application/epub'' AND \"edata_mode\" = ''play'' GROUP BY \"content_mimetype\") SELECT cp.content_mimetype, SUM(cpe.errors) * 100.0/SUM(cp.plays) AS \"perc_errors\" FROM (SELECT \"content_mimetype\", SUM(\"total_count\") AS \"errors\" FROM \"druid\".\"error-hourly-rollup-syncts\" WHERE \"__time\" BETWEEN TIMESTAMP ''{start_time}'' AND TIMESTAMP ''{end_time}'' AND \"object_type\" = ''content'' \"context_pdata_pid\" LIKE ''%portal%'' AND \"content_mimetype\" = ''application/epub'' GROUP BY \"content_mimetype\") AS cpe INNER JOIN content_plays AS cp ON cp.content_mimetype = cpe.content_mimetype GROUP BY cp.content_mimetype'
+    frequency: "hour"
+    cron: "0 */1 * * *"
+    offset_in_mins: 5
   collection-type-errors:
     job_id: "collection-type-errors"
     query_granularity: "hour"
