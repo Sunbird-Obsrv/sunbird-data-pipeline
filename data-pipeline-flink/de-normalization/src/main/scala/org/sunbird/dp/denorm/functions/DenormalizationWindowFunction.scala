@@ -107,6 +107,7 @@ class DenormalizationWindowFunction(config: DenormalizationConfig)(implicit val 
                 dialcodeDenormalization.denormalize(event, cacheData, metrics)
                 contentDenormalization.denormalize(event, cacheData, metrics)
                 locationDenormalization.denormalize(event, metrics)
+                logger.info(s"DenormWindowFunction::Final Event processed:${event.mid()} in event: " + event)
                 context.output(config.denormEventsTag, event)
         }
     }
