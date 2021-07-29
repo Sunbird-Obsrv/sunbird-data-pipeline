@@ -23,10 +23,6 @@
     chdir: "{{ zookeeper_dir }}"
   when: folder_exists.stat.exists == false
 
-- name: Change ownership of zookeeper installation
-  become: yes
-  file: path={{ zookeeper_dir }}/zookeeper owner={{ zookeeper_user }} group={{ zookeeper_user }} state=directory recurse=yes
-
 - name: Registering server_id
   set_fact:
     server_id: "{% for servername in ansible_play_hosts %}{% if inventory_hostname==servername %}{{ loop.index }}{% endif %}{% endfor %}"
