@@ -5,6 +5,7 @@ import java.util
 import org.joda.time.{DateTime, DateTimeZone}
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import org.sunbird.dp.core.domain.{Events, EventsPath}
+import org.sunbird.dp.denorm.task.DenormalizationConfig
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.Map
@@ -210,6 +211,10 @@ class Event(eventMap: util.Map[String, Any]) extends Events(eventMap) {
     if (statecode != null && !statecode.isEmpty) {
       "IN-" + statecode
     } else ""
+  }
+
+  def isValidEventForContentDenorm(config: DenormalizationConfig, objectId: String, objectType: String, eid: String): Boolean = {
+    (null != objectType && (config.permitEid.contains(eid) || !List("user", "qr", "dialcode").contains(objectType.toLowerCase())) && null != objectId)
   }
 
 }
