@@ -1,17 +1,17 @@
 package org.sunbird.dp.denorm.util
 
 import java.util
-
 import com.google.gson.Gson
+import org.slf4j.LoggerFactory
 import redis.clients.jedis.Response
 
 import scala.collection.mutable.{Map => MMap}
 import scala.collection.JavaConverters._
-
 import scala.collection.mutable
 
 trait DenormBaseCache {
 
+    private[this] val logger = LoggerFactory.getLogger(classOf[DenormBaseCache])
     val gson = new Gson()
 
     def getData(data: Response[java.util.Map[String, String]], fields: List[String]): MMap[String, String] = {
@@ -52,13 +52,22 @@ trait DenormBaseCache {
         data.keys.map {
             redisKey =>
                 val redisValue = data(redisKey)
-                if (isArray(redisValue)) {
-                    result += redisKey -> gson.fromJson(redisValue, new util.ArrayList[AnyRef]().getClass)
-                } else if (isObject(redisValue)) {
-                    result += redisKey -> gson.fromJson(redisValue, new util.HashMap[String, AnyRef]().getClass)
-                } else {
-                    result += redisKey -> redisValue
+                try {
+                    if (isArray(redisValue)) {
+                        result += redisKey -> gson.fromJson(redisValue, new util.ArrayList[AnyRef]().getClass)
+                    } else if (isObject(redisValue)) {
+                        result += redisKey -> gson.fromJson(redisValue, new util.HashMap[String, AnyRef]().getClass)
+                    } else {
+                        result += redisKey -> redisValue
+                    }
                 }
+                catch {
+                    case ex: Exception =>
+                        logger.info("Denorm convertToComplexDataTypes failure :", ex)
+                        logger.info("Denorm convertToComplexDataTypes failure for redis key : " + redisKey + " and value : " + redisValue)
+                        throw ex
+                }
+
         }
         result
     }
