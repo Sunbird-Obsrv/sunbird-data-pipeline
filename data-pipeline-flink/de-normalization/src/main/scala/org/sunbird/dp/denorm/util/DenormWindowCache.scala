@@ -1,5 +1,6 @@
 package org.sunbird.dp.denorm.util
 
+import org.slf4j.LoggerFactory
 import org.sunbird.dp.core.cache.RedisConnect
 import org.sunbird.dp.denorm.functions.EventsMetadata
 import org.sunbird.dp.denorm.task.DenormalizationConfig
@@ -14,6 +15,7 @@ class DenormWindowCache(config: DenormalizationConfig, contentRedis: RedisConnec
     private val devicePipeline = deviceRedis.getConnection(config.deviceStore).pipelined()
     private val userPipeline = userRedis.getConnection(config.userStore).pipelined()
     private val dialcodePipeline = dialcodeRedis.getConnection(config.dialcodeStore).pipelined()
+    private[this] val logger = LoggerFactory.getLogger(classOf[DenormWindowCache])
 
     def close(): Unit = {
         contentPipeline.close()
@@ -94,7 +96,15 @@ class DenormWindowCache(config: DenormalizationConfig, contentRedis: RedisConnec
 
         eventsMeta.userMap.foreach {
             case (userId, userResponse) =>
-                eventsMeta.userMap.put(userId, convertToComplexDataTypes(getData(userResponse.asInstanceOf[Response[java.util.Map[String, String]]], config.userFields)))
+                try {
+                    eventsMeta.userMap.put(userId, convertToComplexDataTypes(getData(userResponse.asInstanceOf[Response[java.util.Map[String, String]]], config.userFields)))
+                }
+                catch {
+                    case ex: Exception =>
+                        logger.error("Denorm parseResponses failure for user id : " + userId)
+                        logger.error("Denorm parseResponses failure :", ex)
+                        throw ex
+                }
         }
 
         eventsMeta.dialcodeMap.foreach {
