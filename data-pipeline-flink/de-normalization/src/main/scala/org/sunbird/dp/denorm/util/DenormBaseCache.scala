@@ -63,8 +63,8 @@ trait DenormBaseCache {
                 }
                 catch {
                     case ex: Exception =>
-                        logger.info("Denorm convertToComplexDataTypes failure :", ex)
-                        logger.info("Denorm convertToComplexDataTypes failure for redis key : " + redisKey + " and value : " + redisValue)
+                        logger.error("Denorm convertToComplexDataTypes failure for redis key : " + redisKey + " and value : " + redisValue)
+                        logger.error("Denorm convertToComplexDataTypes failure :", ex)
                         throw ex
                 }
 
