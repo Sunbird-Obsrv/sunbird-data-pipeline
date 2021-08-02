@@ -140,7 +140,7 @@ class DenormalizationStreamTaskTestSpec extends BaseTestSpec {
     user2Data.get("subject").asInstanceOf[util.List[String]].asScala should be(List("English"))
     user2Data.get("state") should be("Telangana")
     user2Data.get("cluster") should be("Cluster001")
-    user2Data.get("schoolname") should be("TPS")
+    user2Data.get("schoolname") should be("\\[RPMMAT M.S UDHADIH")
     user2Data.get("block") should be ("Sri Sai ACC Block")
 
     event = DenormEventsSink.values("mid3")
