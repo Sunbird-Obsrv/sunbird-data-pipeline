@@ -124,7 +124,7 @@ object UserMetadataUpdater {
           ""
         }
       } else {
-        f._2.asInstanceOf[String]
+        f._2.asInstanceOf[String].replace("[", "\\[")
       })
     }
   }
