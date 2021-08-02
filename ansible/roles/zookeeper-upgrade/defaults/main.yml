@@ -10,7 +10,7 @@ sync_limit: 2
 tick_time: 2000
 zoo_id: 1
 maxclinetconnection_limit: 200
-data_dir: /var/lib/zookeeper
+zookeeper_data_dir: /opt/zookeeper
 log_dir: /var/log/zookeeper
 client_port: "{{ zookeeper_port }}"
 zookeeper_group: "{{ groups['zookeeper'] }}"
