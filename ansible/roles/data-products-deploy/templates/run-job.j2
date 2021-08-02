@@ -45,9 +45,13 @@ get_report_job_model_name(){
 		"collection-reconciliation-job") echo 'org.sunbird.analytics.audit.CollectionReconciliationJob'
 		;;
 		"assessment-correction") echo 'org.sunbird.analytics.job.report.AssessmentCorrectionJob'
-	    ;;
-	    "score-metric-migration-job") echo 'org.sunbird.analytics.audit.ScoreMetricMigrationJob'
-	    ;;
+	  ;;
+	  "score-metric-migration-job") echo 'org.sunbird.analytics.audit.ScoreMetricMigrationJob'
+	  ;;
+    "uci-private-exhaust") echo 'org.sunbird.analytics.exhaust.uci.UCIPrivateExhaustJob'
+    ;;
+    "uci-response-exhaust") echo 'org.sunbird.analytics.exhaust.uci.UCIResponseExhaustJob'
+    ;;
 		*) echo $1
 		;;
 	esac

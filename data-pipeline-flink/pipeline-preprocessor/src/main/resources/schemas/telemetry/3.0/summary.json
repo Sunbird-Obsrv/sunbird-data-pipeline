@@ -1,0 +1,87 @@
+{
+  "id": "http://api.ekstep.org/telemetry/summary",
+  "type": "object",
+  "required": [
+    "eid",
+    "ets",
+    "ver",
+    "mid",
+    "actor",
+    "context",
+    "edata"
+  ],
+  "allOf": [
+    {
+      "$ref": "resource:/schemas/telemetry/3.0/common.json"
+    },
+    {
+      "properties": {
+        "eid": {
+          "id": "http://api.ekstep.org/telemetry/eid",
+          "enum": [
+            "SUMMARY"
+          ]
+        },
+        "edata": {
+          "id": "http://api.ekstep.org/telemetry/edata",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "starttime",
+            "endtime",
+            "timespent",
+            "pageviews",
+            "interactions"
+          ],
+          "properties": {
+            "type": {
+              "id": "http://api.ekstep.org/telemetry/edata/type",
+              "type": "string"
+            },
+            "mode": {
+              "id": "http://api.ekstep.org/telemetry/edata/mode",
+              "type": "string"
+            },
+            "starttime": {
+              "id": "http://api.ekstep.org/telemetry/edata/starttime",
+              "type": "number"
+            },
+            "endtime": {
+              "id": "http://api.ekstep.org/telemetry/edata/endtime",
+              "type": "number"
+            },
+            "timespent": {
+              "id": "http://api.ekstep.org/telemetry/edata/timespent",
+              "type": "number"
+            },
+            "pageviews": {
+              "id": "http://api.ekstep.org/telemetry/edata/pageviews",
+              "type": "number"
+            },
+            "interactions": {
+              "id": "http://api.ekstep.org/telemetry/edata/interactions",
+              "type": "number"
+            },
+            "extra": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "id": "http://api.ekstep.org/telemetry/edata/extra/id",
+                    "type": "string"
+                  },
+                  "value": {
+                    "id": "http://api.ekstep.org/telemetry/edata/extra/value",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
