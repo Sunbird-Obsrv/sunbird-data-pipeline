@@ -58,7 +58,7 @@ trait DenormBaseCache {
                     } else if (isObject(redisValue)) {
                         result += redisKey -> gson.fromJson(redisValue, new util.HashMap[String, AnyRef]().getClass)
                     } else {
-                        result += redisKey -> redisValue
+                        result += redisKey -> redisValue.replaceAll("\\\\", "")
                     }
                 }
                 catch {
