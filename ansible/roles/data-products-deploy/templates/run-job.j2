@@ -46,6 +46,10 @@ get_report_job_model_name(){
 		;;
 		"assessment-correction") echo 'org.sunbird.analytics.job.report.AssessmentCorrectionJob'
         ;;
+        "uci-private-exhaust") echo 'org.sunbird.analytics.exhaust.uci.UCIPrivateExhaustJob'
+        ;;
+        "uci-response-exhaust") echo 'org.sunbird.analytics.exhaust.uci.UCIResponseExhaustJob'
+        ;;
 		*) echo $1
 		;;
 	esac
