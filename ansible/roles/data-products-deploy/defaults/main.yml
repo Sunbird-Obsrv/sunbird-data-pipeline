@@ -224,6 +224,12 @@ exhaust_user_parallelism: 200
 data_exhaust_batch_limit_per_request: 20
 
 # Start Of UCI Related Variables
+uci_postgres_host: dev-postgres
+uci_bot_postgres_database: bot
+uci_fusionauth_postgres_database: fusionauth
+uci_postgres_user: postgres
+uci_postgres_password: postgres
+
 uci_conversation_db_name: "{{ uci_bot_postgres_database }}"
 postgres.uci_conversation_db_host: "{{ uci_postgres_host }}"
 postgres.uci_conversation_db_port: "5432"
