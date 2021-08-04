@@ -127,7 +127,7 @@ class SummaryDenormalizationStreamTaskTestSpec extends BaseTestSpec {
     event2UserData("usertype") should be ("TEACHER")
     event2UserData("subject").asInstanceOf[util.List[String]].asScala should be(List("English"))
     event2UserData("cluster") should be ("Cluster001")
-    event2UserData("schoolname") should be ("TPS")
+    event2UserData("schoolname") should be ("[RPMMAT M.S UDHADIH")
     event2UserData("block") should be ("Sri Sai ACC Block")
 
     val event2ContentData = event2.getTelemetry.read[util.HashMap[String, AnyRef]]("contentdata").getOrElse(new util.HashMap()).asScala
