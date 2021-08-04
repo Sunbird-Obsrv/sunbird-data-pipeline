@@ -13,7 +13,7 @@ object EventFixture {
   
   val userCacheData1 = """{"usersignintype":"Anonymous","usertype":"TEACHER"}"""
   val userCacheData2 = """{"channel":"KV123","phoneverified":false,"createdby":"c8e51123-61a3-454d-beb0-2202450b0096","subject":["English"],"email":"BJAguqy3GaJECrYqDUPjeducVxa5J9ZsW9A8qc7YHelkV7KbgkCKW10quCbhpgxbh2t4toXC8uXW\\ngiguS+8ucwzbmgPm7q7YSYz26SfpHnzBo/0Vh3TWqr2MOq9LlX6gT6a+wzaAmCWueMEdPmZuRg==","username":"I+CyiN6Bx0GCRm9lkA3xn5uNBm0AODhxeDwJebxxBfuGJ5V2v1R8v1PEQsP+V+y9sAFcM2WtaMLj\\n91hpzBq0PFcQTq6OSPQOm0sySPXTDzyLvm1cKaLwzvJ6fzLLs9nKT6a+wzaAmCWueMEdPmZuRg==","firstname":"A512","framework":{},"userid":"610bab7d-1450-4e54-bf78-c7c9b14dbc81","usertype":"TEACHER","rootorgid":"0126978705345576967","id":"610bab7d-1450-4e54-bf78-c7c9b14dbc81","language":[],"grade":[],"roles":["BOOK_REVIEWER"],"status":1,"webpages":[],"createddate":"2019-04-11 08:58:16:512+0000","emailverified":true,"isdeleted":false,"locationids":[],"maskedemail":"a5**@yopmail.com","profilevisibility":{},"loginid":"I+CyiN6Bx0GCRm9lkA3xnx2W8+QgN39Y0We3KjR98O8hD6YjyoCirIBDsWHGwRf65PY/Cx+pFFK1\\nIz1VinIaKgDnSQwkl7ajzQjjRTzQbKOyHsAXkJgo9I5l7ulEYVXRT6a+wzaAmCWueMEdPmZuRg==","usersignintype":"Self-Signed-In","userlogintype":"Student","state":"Telangana","district":"Hyderabad"}"""
-  val userCacheData3 = """{"channel":"KV123","phoneverified":"false","createdby":"c8e51123-61a3-454d-beb0-2202450b0096","subject":"[\"English\"]","email":"BJAguqy3GaJECrYqDUPjeducVxa5J9ZsW9A8qc7YHelkV7KbgkCKW10quCbhpgxbh2t4toXC8uXW\\ngiguS+8ucwzbmgPm7q7YSYz26SfpHnzBo/0Vh3TWqr2MOq9LlX6gT6a+wzaAmCWueMEdPmZuRg==","username":"I+CyiN6Bx0GCRm9lkA3xn5uNBm0AODhxeDwJebxxBfuGJ5V2v1R8v1PEQsP+V+y9sAFcM2WtaMLj\\n91hpzBq0PFcQTq6OSPQOm0sySPXTDzyLvm1cKaLwzvJ6fzLLs9nKT6a+wzaAmCWueMEdPmZuRg==","firstname":"A512","framework":"{}","userid":"610bab7d-1450-4e54-bf78-c7c9b14dbc81","usertype":"TEACHER","rootorgid":"0126978705345576967","id":"610bab7d-1450-4e54-bf78-c7c9b14dbc81","language":"","grade":"","roles":"[\"BOOK_REVIEWER\"]","status":"1","webpages":"[]","createddate":"2019-04-11 08:58:16:512+0000","emailverified":"true","isdeleted":"false","locationids":"[\"location-1\",\"location-2\",\"location-3\"]","maskedemail":"a5**@yopmail.com","profilevisibility":"{}","loginid":"I+CyiN6Bx0GCRm9lkA3xnx2W8+QgN39Y0We3KjR98O8hD6YjyoCirIBDsWHGwRf65PY/Cx+pFFK1\\nIz1VinIaKgDnSQwkl7ajzQjjRTzQbKOyHsAXkJgo9I5l7ulEYVXRT6a+wzaAmCWueMEdPmZuRg==","usersignintype":"Self-Signed-In","userlogintype":"Student","state":"Telangana","district":"Hyderabad","cluster":"Cluster001","block":"Sri Sai ACC Block","schoolname":"TPS"}"""
+  val userCacheData3 = """{"channel":"KV123","phoneverified":"false","createdby":"c8e51123-61a3-454d-beb0-2202450b0096","subject":"[\"English\"]","email":"BJAguqy3GaJECrYqDUPjeducVxa5J9ZsW9A8qc7YHelkV7KbgkCKW10quCbhpgxbh2t4toXC8uXW\\ngiguS+8ucwzbmgPm7q7YSYz26SfpHnzBo/0Vh3TWqr2MOq9LlX6gT6a+wzaAmCWueMEdPmZuRg==","username":"I+CyiN6Bx0GCRm9lkA3xn5uNBm0AODhxeDwJebxxBfuGJ5V2v1R8v1PEQsP+V+y9sAFcM2WtaMLj\\n91hpzBq0PFcQTq6OSPQOm0sySPXTDzyLvm1cKaLwzvJ6fzLLs9nKT6a+wzaAmCWueMEdPmZuRg==","firstname":"A512","framework":"{}","userid":"610bab7d-1450-4e54-bf78-c7c9b14dbc81","usertype":"TEACHER","rootorgid":"0126978705345576967","id":"610bab7d-1450-4e54-bf78-c7c9b14dbc81","language":"","grade":"","roles":"[\"BOOK_REVIEWER\"]","status":"1","webpages":"[]","createddate":"2019-04-11 08:58:16:512+0000","emailverified":"true","isdeleted":"false","locationids":"[\"location-1\",\"location-2\",\"location-3\"]","maskedemail":"a5**@yopmail.com","profilevisibility":"{}","loginid":"I+CyiN6Bx0GCRm9lkA3xnx2W8+QgN39Y0We3KjR98O8hD6YjyoCirIBDsWHGwRf65PY/Cx+pFFK1\\nIz1VinIaKgDnSQwkl7ajzQjjRTzQbKOyHsAXkJgo9I5l7ulEYVXRT6a+wzaAmCWueMEdPmZuRg==","usersignintype":"Self-Signed-In","userlogintype":"Student","state":"Telangana","district":"Hyderabad","cluster":"Cluster001","block":"Sri Sai ACC Block","schoolname":"\\[RPMMAT M.S UDHADIH"}"""
   val userCacheDataMap1: util.HashMap[String, String] = gson.fromJson(userCacheData1, new util.HashMap[String, String]().getClass)
   val userCacheDataMap2: util.HashMap[String, String] = gson.fromJson(userCacheData3, new util.HashMap[String, String]().getClass)
 
@@ -189,16 +189,15 @@ object EventFixture {
          |1572786370121,"dial_stats":{"total_count":3,"success_count":3,"failure_count":0},"content_downloads":0,
          |"contents_played":0,"total_ts":0.0,"total_launches":0,"unique_contents_played":0}}}
          """.stripMargin,
-    //SB-25755: if enrol-complete , denorm the event
-    """
-      |{"actor":{"id":"7426472e-8b1a-4387-8b7a-962cb6cda006","type":"User"},"eid":"AUDIT","edata":{"props":["status","completedon"],
-      |"type":"enrol-complete"},"ver":"3.0","syncts":1626346241621,"ets":1626346241621,"context":{"channel":"in.sunbird",
-      |"env":"Course","sid":"2ba8a10a-9722-42c6-a27f-f9fd86ff6bb5","did":"0a65cbaf-2d0e-4cc8-bc70-6ee1e71fb605","pdata":
-      |{"ver":"3.0","id":"org.sunbird.learning.platform","pid":"course-progress-updater"},"cdata":[{"type":"CourseBatch","id":"01331092647782809655"},
-      |{"type":"Course","id":"do_31331086175718604812701"}]},"mid":"LP.AUDIT.d14d8be6-da4e-4ee9-b833-fd86d57b8808",
-      |"object":{"id":"7426472e-8b1a-4387-8b7a-962cb6cda006","type":"User","rollup":{"l1":"do_31331086175718604812701"}},"tags":[]}
-    """.stripMargin
-            
+      //SB-25755: if enrol-complete , denorm the event
+      """
+          |{"actor":{"id":"7426472e-8b1a-4387-8b7a-962cb6cda006","type":"User"},"eid":"AUDIT","edata":{"props":["status","completedon"],
+          |"type":"enrol-complete"},"ver":"3.0","syncts":1626346241621,"ets":1626346241621,"context":{"channel":"in.sunbird",
+          |"env":"Course","sid":"2ba8a10a-9722-42c6-a27f-f9fd86ff6bb5","did":"0a65cbaf-2d0e-4cc8-bc70-6ee1e71fb605","pdata":
+          |{"ver":"3.0","id":"org.sunbird.learning.platform","pid":"course-progress-updater"},"cdata":[{"type":"CourseBatch","id":"01331092647782809655"},
+          |{"type":"Course","id":"do_31331086175718604812701"}]},"mid":"LP.AUDIT.d14d8be6-da4e-4ee9-b833-fd86d57b8808",
+          |"object":{"id":"7426472e-8b1a-4387-8b7a-962cb6cda006","type":"User","rollup":{"l1":"do_31331086175718604812701"}},"tags":[]}
+        """.stripMargin
   )
 
   val summaryEvents: List[String] = List(
