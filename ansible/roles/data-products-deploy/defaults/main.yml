@@ -230,27 +230,23 @@ uci_fusionauth_postgres_database: fusionauth
 uci_postgres_user: postgres
 uci_postgres_password: postgres
 
-uci_conversation_db_name: "{{ uci_bot_postgres_database }}"
-postgres.uci_conversation_db_host: "{{ uci_postgres_host }}"
-postgres.uci_conversation_db_port: "5432"
-
-uci_fushionauth_db_name: "{{ uci_fusionauth_postgres_database }}"
-postgres.uci_fushionauth_db_host: "{{ uci_postgres_host }}"
-postgres.uci_fushionauth_db_port: "5432"
-
-uci_conversation_table_name: "bot"
-uci_user_table_name: "users"
-uci_user_registration_table_name: "user_registrations"
-uci_user_identities_table_name: "identities"
-
-uci_conversation_db_user: "{{ uci_postgres_user }}"
-uci_conversation_db_psss: "{{ uci_postgres_password }}"
-
-uci_fushionauth_db_user: "{{ uci_postgres_user }}"
-uci_fushionauth_db_psss: "{{ uci_postgres_password }}"
+uci_postgres:
+  conversation_db_name: "{{ uci_bot_postgres_database }}"
+  conversation_db_host: "{{ uci_postgres_host }}"
+  conversation_db_port: "5432"
+  conversation_db_user: "{{ uci_postgres_user }}"
+  conversation_db_psss: "{{ uci_postgres_password }}"
+  conversation_table_name: "bot"
+  fushionauth_db_name: "{{ uci_fusionauth_postgres_database }}"
+  fushionauth_db_host: "{{ uci_postgres_host }}"
+  fushionauth_db_port: "5432"
+  fushionauth_db_user: "{{ uci_postgres_user }}"
+  fushionauth_db_psss: "{{ uci_postgres_password }}"
+  user_table_name: "users"
+  user_registration_table_name: "user_registrations"
+  user_identities_table_name: "identities"
 
 uci_encryption_secret_key: ""
-
 uci_pdata_id: "{{ env }}.UCI.diksha"
 
 # End Of UCI Related Variables 
