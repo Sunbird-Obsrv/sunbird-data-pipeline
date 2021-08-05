@@ -44,12 +44,6 @@ config() {
 		"collection-summary-report-v2")
 		echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.job.report.CollectionSummaryJobV2","modelParams":{"storageKeyConfig":"druid_storage_account_key","storageSecretConfig":"druid_storage_account_secret","batchSize":50,"generateForAllBatches":true,"contentFields":["identifier","name","organisation","channel","status","keywords","createdFor","medium","subject"],"contentStatus":["Live","Unlisted","Retired"],"store":"azure","specPath":"/mount/data/analytics/scripts/collection-summary-ingestion-spec.json","druidIngestionUrl":"'$druidIngestionURL'","sparkElasticsearchConnectionHost":"{{ sunbird_es_host }}","sparkRedisConnectionHost":"{{ metadata2_redis_host }}","sparkUserDbRedisIndex":"12","sparkUserDbRedisPort":"{{ user_port }}","sparkCassandraConnectionHost":"{{ core_cassandra_host }}","fromDate":"$(date --date yesterday '+%Y-%m-%d')","toDate":"$(date --date yesterday '+%Y-%m-%d')"},"parallelization":8,"appName":"Collection Summary Report V2"}'
 		;;
-		"uci-private-exhaust")
-		echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.exhaust.uci.UCIPrivateExhaustJob","modelParams":{"store":"local","mode":"OnDemand","storageContainer":"","fromDate":"$(date --date yesterday '+%Y-%m-%d')","toDate":"$(date --date yesterday '+%Y-%m-%d')"},"parallelization":8,"appName":"UCI Private Exhaust"}'
-		;;
-		"uci-response-exhaust")
-		echo '{"search":{"type":"azure","queries":[{"bucket":"'$bucket'","prefix":"unique/raw/","endDate":"'$endDate'","delta":0}]},"filters":[{"name":"eid","operator":"EQ","value":"ASSESS"}],"model":"org.sunbird.analytics.uci.UCIResponseExhaust","modelParams":{"store":"local","botPdataId":"{{ uci_pdata_id }}","mode":"OnDemand","fromDate":"","toDate":"","storageContainer":""},"parallelization":8,"appName":"UCI Response Exhaust"}'
-		;;
         "userinfo-exhaust")
 		echo '{"search":{"type":"none"},"model":"org.sunbird.analytics.exhaust.collection.UserInfoExhaustJob","modelParams":{"store":"azure","mode":"OnDemand","batchFilters":["TPD"],"searchFilter":{}, "sparkElasticsearchConnectionHost":"{{ sunbird_es_host }}","sparkRedisConnectionHost":"{{ metadata2_redis_host }}","sparkUserDbRedisIndex":"12","sparkUserDbRedisPort":"{{ user_port }}", "sparkCassandraConnectionHost":"{{ core_cassandra_host }}", "fromDate":"$(date --date yesterday '+%Y-%m-%d')","toDate":"$(date --date yesterday '+%Y-%m-%d')"},"parallelization":8,"appName":"UserInfo Exhaust"}'
 		;;
