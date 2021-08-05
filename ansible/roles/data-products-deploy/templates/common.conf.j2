@@ -274,22 +274,22 @@ data_exhaust.batch.limit.per.request={{ data_exhaust_batch_limit_per_request }}
 
 //START of UCI Postgres Config
 
-uci.conversation.postgres.db="{{ uci_conversation_db_name }}"
-uci.conversation.postgres.url="jdbc:postgresql://{{postgres.uci_conversation_db_host}}:{{postgres.uci_conversation_db_port}}/"
+uci.conversation.postgres.db="{{ uci_postgres.conversation_db_name }}"
+uci.conversation.postgres.url="jdbc:postgresql://{{uci_postgres.conversation_db_host}}:{{uci_postgres.conversation_db_port}}/"
 
-uci.fushionauth.postgres.db="{{ uci_fushionauth_db_name }}"
-uci.fushionauth.postgres.url="jdbc:postgresql://{{postgres.uci_fushionauth_db_host}}:{{postgres.uci_fushionauth_db_port}}/"
+uci.fushionauth.postgres.db="{{ uci_postgres.fushionauth_db_name }}"
+uci.fushionauth.postgres.url="jdbc:postgresql://{{uci_postgres.fushionauth_db_host}}:{{uci_postgres.fushionauth_db_port}}/"
 
-uci.postgres.table.conversation="{{ uci_conversation_table_name }}"
-uci.postgres.table.user="{{ uci_user_table_name }}"
-uci.postgres.table.user_registration="{{ uci_user_registration_table_name }}"
-uci.postgres.table.identities="{{ uci_user_identities_table_name }}"
+uci.postgres.table.conversation="{{ uci_postgres.conversation_table_name }}"
+uci.postgres.table.user="{{ uci_postgres.user_table_name }}"
+uci.postgres.table.user_registration="{{ uci_postgres.user_registration_table_name }}"
+uci.postgres.table.identities="{{ uci_postgres.user_identities_table_name }}"
 
-uci.conversation.postgres.user="{{ uci_conversation_db_user }}"
-uci.conversation.postgres.pass="{{ uci_conversation_db_psss }}"
+uci.conversation.postgres.user="{{ uci_postgres.conversation_db_user }}"
+uci.conversation.postgres.pass="{{ uci_postgres.conversation_db_psss }}"
 
-uci.fushionauth.postgres.user="{{ uci_fushionauth_db_user }}"
-uci.fushionauth.postgres.pass="{{ uci_fushionauth_db_psss }}"
+uci.fushionauth.postgres.user="{{ uci_postgres.fushionauth_db_user }}"
+uci.fushionauth.postgres.pass="{{ uci_postgres.fushionauth_db_psss }}"
 
 uci.exhaust.store.prefix=""
 uci.encryption.secret="{{ uci_encryption_secret_key }}"
