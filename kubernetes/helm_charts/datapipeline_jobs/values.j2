@@ -223,7 +223,7 @@ ingest-router:
     heartbeat.timeout: 8000
     heartbeat.interval: 5000
     taskmanager.memory.process.size: {{ flink_job_names['ingest-router'].taskmanager_process_memory }}
-    jobmanager.memory.process.size: 1600m
+    jobmanager.memory.process.size: {{ flink_job_names['ingest-router'].jobmanager_process_memory }}
 
 
 telemetry-extractor:
@@ -274,7 +274,7 @@ telemetry-extractor:
     heartbeat.timeout: 8000
     heartbeat.interval: 5000
     taskmanager.memory.process.size: {{ flink_job_names['telemetry-extractor'].taskmanager_process_memory }}
-    jobmanager.memory.process.size: 1600m
+    jobmanager.memory.process.size: {{ flink_job_names['telemetry-extractor'].jobmanager_process_memory }}
 
 pipeline-preprocessor:
   pipeline-preprocessor: |+
@@ -317,7 +317,7 @@ pipeline-preprocessor:
     heartbeat.timeout: 8000
     heartbeat.interval: 5000
     taskmanager.memory.process.size: {{ flink_job_names['pipeline-preprocessor'].taskmanager_process_memory }}
-    jobmanager.memory.process.size: 1600m
+    jobmanager.memory.process.size: {{ flink_job_names['pipeline-preprocessor'].jobmanager_process_memory }}
 
 de-normalization-secondary:
   de-normalization-secondary: |+
@@ -379,7 +379,7 @@ de-normalization-secondary:
     heartbeat.timeout: 8000
     heartbeat.interval: 5000
     taskmanager.memory.process.size: {{ flink_job_names['de-normalization-secondary'].taskmanager_process_memory }}
-    jobmanager.memory.process.size: 1600m
+    jobmanager.memory.process.size: {{ flink_job_names['de-normalization-secondary'].jobmanager_process_memory }}
 
 de-normalization-primary:
   de-normalization-primary: |+
@@ -441,7 +441,7 @@ de-normalization-primary:
     heartbeat.timeout: 8000
     heartbeat.interval: 5000
     taskmanager.memory.process.size: {{ flink_job_names['de-normalization-primary'].taskmanager_process_memory }}
-    jobmanager.memory.process.size: 1600m   
+    jobmanager.memory.process.size: {{ flink_job_names['de-normalization-primary'].jobmanager_process_memory }}
 
 summary-denormalization:
   summary-denormalization: |+
@@ -546,7 +546,7 @@ druid-validator:
     heartbeat.timeout: 8000
     heartbeat.interval: 5000
     taskmanager.memory.process.size: {{ flink_job_names['druid-validator'].taskmanager_process_memory }}
-    jobmanager.memory.process.size: 1600m
+    jobmanager.memory.process.size: {{ flink_job_names['druid-validator'].jobmanager_process_memory }}
 
 device-profile-updater:
   device-profile-updater: |+
