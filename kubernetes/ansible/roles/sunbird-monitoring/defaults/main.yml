@@ -92,3 +92,11 @@ flink_lag_offset_duration: 30 # values in minutes and being used in alert rule
 
 pv_usage_threshold_critical: 90  # If the persistant volume used percentage is greater than 90% then will get an alert.
 kafka_exporter_image_tag: v1.3.0
+# kafka exporters vars
+### processing kafka exporters related vars
+processing_cluster_zookeeper: "{{ groups['processing-cluster-zookeepers'] | difference(['localhost']) | map('regex_replace', '^(.*)$', '\\1:2181') | list}}"
+processing_cluster_kafka: "{{ groups['processing-cluster-kafka'] | difference(['localhost']) | map('regex_replace', '^(.*)$', '\\1:9092') | list}}"
+
+### ingestion kafka exporters related vars.
+ingestion_cluster_zookeeper: "{{ groups['ingestion-cluster-zookeeper'] | difference(['localhost']) | map('regex_replace', '^(.*)$', '\\1:2181') | list}}"
+ingestion_cluster_kafka: "{{ groups['ingestion-cluster-kafka'] | difference(['localhost']) | map('regex_replace', '^(.*)$', '\\1:9092') | list}}"
