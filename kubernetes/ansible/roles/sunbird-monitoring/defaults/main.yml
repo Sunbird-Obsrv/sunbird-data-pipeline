@@ -5,6 +5,7 @@ monitoring_stack:
   - prometheus-operator
   - alertrules
   - prometheus-adapter
+  - processing-kafka-exporter
 
 namespace: monitoring
 flink_namespace: flink-dev
@@ -90,3 +91,4 @@ flink_lag_percentage_threshold: 10 # being used in flink jobs percentage lag ale
 flink_lag_offset_duration: 30 # values in minutes and being used in alert rule
 
 pv_usage_threshold_critical: 90  # If the persistant volume used percentage is greater than 90% then will get an alert.
+kafka_exporter_image_tag: v1.3.0
