@@ -1,6 +1,6 @@
 ---
 - hosts: "{{remote}}"
-  gather_facts: yes
+  gather_facts: true
   pre_tasks:
     - service: name=monit state=stopped
       become: yes
