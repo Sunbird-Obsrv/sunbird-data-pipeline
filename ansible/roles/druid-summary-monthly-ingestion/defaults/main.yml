@@ -1,0 +1,14 @@
+remote_user: druid
+druid_overlord_host: "{{ groups['rollup-overlord'][0] }}"
+druid_overlord_port: 8090
+druid_home: /home/druid
+
+summary_monthly:
+  base_data_source_name: "summary-rollup-syncts"
+  new_data_source_name: "summary-monthly-rollup-syncts"
+  no_batch_parallel_tasks: 1
+
+supervisor_summary_spec_url: "http://{{ druid_overlord_host }}:{{ druid_overlord_port }}/druid/indexer/v1/supervisor/{{ summary_monthly.base_data_source_name }}"
+
+druid_schema:
+ - summary_monthly_batch

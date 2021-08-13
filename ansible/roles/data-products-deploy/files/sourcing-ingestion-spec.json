@@ -1,0 +1,146 @@
+{
+    "type": "index",
+    "spec": {
+      "dataSchema": {
+        "dataSource": "sourcing-summary-snapshot",
+        "parser": {
+          "type": "string",
+          "parseSpec": {
+            "format": "json",
+            "flattenSpec": {
+              "useFieldDiscovery": false,
+              "fields": [
+                {
+                  "type": "root",
+                  "name": "program_id",
+                  "expr": "program_id"
+                },
+                {
+                  "type": "root",
+                  "name": "status",
+                  "expr": "status"
+                },
+                {
+                  "type": "root",
+                  "name": "rootorg_id",
+                  "expr": "rootorg_id"
+                },
+                {
+                  "type": "root",
+                  "name": "user_id",
+                  "expr": "user_id"
+                },
+                {
+                  "type": "root",
+                  "name": "osid",
+                  "expr": "osid"
+                },
+                {
+                  "type": "root",
+                  "name": "user_type",
+                  "expr": "user_type"
+                },
+                {
+                  "type": "root",
+                  "name": "contributor_id",
+                  "expr": "contributor_id"
+                },
+                {
+                  "type": "root",
+                  "name": "total_contributed_content",
+                  "expr": "total_contributed_content"
+                },
+                {
+                  "type": "root",
+                  "name": "primary_category",
+                  "expr": "primary_category"
+                },
+                {
+                  "type": "root",
+                  "name": "created_by",
+                  "expr": "created_by"
+                }
+              ]
+            },
+            "dimensionsSpec": {
+              "dimensions": [
+                {
+                  "type": "string",
+                  "name": "program_id"
+                },
+                {
+                  "type": "string",
+                  "name": "status"
+                },
+                {
+                  "type": "string",
+                  "name": "rootorg_id"
+                },
+                {
+                  "type": "string",
+                  "name": "user_id"
+                },
+                {
+                  "type": "string",
+                  "name": "osid"
+                },
+                {
+                  "type": "string",
+                  "name": "user_type"
+                },
+                {
+                  "type": "string",
+                  "name": "contributor_id"
+                },
+                {
+                  "type": "string",
+                  "name": "primary_category"
+                },
+                {
+                  "type": "string",
+                  "name": "created_by"
+                }
+              ],
+              "dimensionsExclusions": []
+            },
+            "timestampSpec": {
+              "column": "timestamp",
+              "format": "auto"
+            }
+          }
+        },
+        "metricsSpec": [
+          {
+            "name": "total_count",
+            "type": "count"
+          }
+        ],
+        "granularitySpec": {
+          "type": "uniform",
+          "segmentGranularity": "day",
+          "queryGranularity": "none",
+          "rollup": true
+        }
+      },
+      "ioConfig": {
+        "type": "index",
+        "firehose": {
+          "type": "static-azure-blobstore",
+          "blobs": [
+            {
+              "container": "reports",
+              "path": "/sourcing/SourcingSummaryReport.json"
+            }
+          ],
+          "fetchTimeout": 300000
+        }
+      },
+      "tuningConfig": {
+        "type": "index",
+        "targetPartitionSize": 5000000,
+        "maxRowsInMemory": 25000,
+        "forceExtendableShardSpecs": false,
+        "logParseExceptions": true
+      }
+    }
+}

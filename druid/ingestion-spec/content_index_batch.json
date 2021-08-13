@@ -783,7 +783,7 @@
             "path": "/druid-content-snapshot/snapshot.txt"
           }
         ],
-        "fetchTimeout": 120000
+        "fetchTimeout": 300000
       }
     },
     "tuningConfig":{

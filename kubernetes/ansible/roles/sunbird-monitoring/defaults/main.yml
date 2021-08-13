@@ -4,6 +4,7 @@ fullnameOverride: sunbird-monitoring
 monitoring_stack:
   - prometheus-operator
   - alertrules
+  - prometheus-adapter
 
 namespace: monitoring
 flink_namespace: flink-dev
@@ -15,25 +16,57 @@ monitor_alerts_mail_server_host: "{{ sendgrid_hostname }}"
 monitor_alerts_mail_server_port: 587
 monitor_alerts_mail_server_username: "{{ SGUSER }}" 
 monitor_alerts_mail_server_password: "{{ SGPASS }}" 
-monitor_alerts_slack_url: 
-monitor_alerts_slack_channel: 
+dp_monitor_alerts_slack_url: 
+dp_monitor_alerts_slack_channel: "{{ env }}_flink_alerts"
+dp_monitor_alerts_warning_slack_url: 
+dp_monitor_alerts_warning_slack_channel: "{{ env }}_pipeline_warning_alerts"
+dp_monitor_alerts_critical_slack_url:
+dp_monitor_alerts_critical_slack_channel: "{{ env }}_pipeline_critical_alerts"
 
 default_critical_mailing_list: "{{ default_mailing_list }}"
 default_fatal_mailing_list: "{{ default_mailing_list }}"
 default_mailing_list: kaliraja.ramasamy@tarento.com, anandp@ilimi.in, manjunathd@ilimi.in
 
-# flink Jobs lag vars 
+# flink Jobs lag vars critical 
 telemetry_extractor_threshold_critical: 50000
 pipeline_preprocessor_threshold_critical: 50000
-de_normalization_threshold_critical: 50000
+de_normalization_threshold_critical: 50000   ### this var being used for de-normalization-primary and secondary jobs
 druid_validator_threshold_critical: 50000
 assessment_aggregator_threshold_critical: 50000
 content_cache_updater_threshold_critical: 50000
 user_cache_updater_threshold_critical: 50000
 summary_denormalization_threshold_critical: 50000
 device_profile_updater_threshold_critical: 50000
-telemetry_extractor_failed_events_percentage_threshold_fatal: 1
-telemetry_extractor_failed_events_percentage_threshold_critical: 0.5
+ingest_router_threshold_critical: 50000
+error_denormalization_threshold_critical: 50000
+de_normalization_primary_threshold_critical: 50000
+de_normalization_secondary_threshold_critical: 50000
+telemetry_extractor_failed_events_percentage_threshold_critical: 1
+telemetry_extractor_failed_events_percentage_threshold_warning: 0.5
+
+# Flink jobs lag warning
+telemetry_extractor_threshold_warning: 30000
+pipeline_preprocessor_threshold_warning: 30000
+de_normalization_threshold_warning: 30000 ### this var being used for de-normalization-primary and secondary jobs
+druid_validator_threshold_warning: 30000
+assessment_aggregator_threshold_warning: 30000
+content_cache_updater_threshold_warning: 30000
+user_cache_updater_threshold_warning: 30000
+summary_denormalization_threshold_warning: 30000
+device_profile_updater_threshold_warning: 30000
+ingest_router_threshold_warning: 30000
+error_denormalization_threshold_warning: 30000
+de_normalization_primary_threshold_warning: 30000
+de_normalization_secondary_threshold_warning: 30000
+# Flink KP Jobs lag vars critical
+activity_aggregater_updater_threshold_critical: 50
+relation_cache_updater_threshold_critical: 50
+post_publish_processor_threshold_critical: 50
+
+# Flink KP Jobs lag vars warning
+activity_aggregater_updater_threshold_warning: 40
+relation_cache_updater_threshold_warning: 40 
+post_publish_processor_threshold_warning: 40
 
 # Flink jobmanager Checkpoint failure vars
 telemetry_extractor_checkpointfailure_threshold_critical: 5 
@@ -45,3 +78,15 @@ content_cache_updater_checkpointfailure_threshold_critical: 5
 user_cache_updater_checkpointfailure_threshold_critical: 5
 summary_denormalization_checkpointfailure_threshold_critical: 5
 device_profile_updater_checkpointfailure_threshold_critical: 5
+user_cache_v2_updater_checkpointfailure_threshold_critical: 5
+relation_cache_updater_checkpointfailure_threshold_critical: 5
+activity_aggregate_updater_checkpointfailure_threshold_critical: 5
+ingest_router_checkpointfailure_threshold_critical: 5
+error_denormalization_checkpointfailure_threshold_critical: 5
+post_publish_processor_checkpontfailure_threshold_critical: 5
+
+nginx_tps_threshold: 50 # being used in flink jobs percentage lag alert rules
+flink_lag_percentage_threshold: 10 # being used in flink jobs percentage lag alert rule
+flink_lag_offset_duration: 30 # values in minutes and being used in alert rule
+
+pv_usage_threshold_critical: 90  # If the persistant volume used percentage is greater than 90% then will get an alert.

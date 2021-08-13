@@ -2,14 +2,15 @@ analytics_user: analytics
 analytics_group: analytics
 content_snapshot_path: "/mount/data/analytics/content-snapshot"
 content_snapshot_jar_path: "{{content_snapshot_path}}/jars" # Add content snapshot jar file path.
-content_snapshot_jar_name: "adhoc-jobs-1.0.jar"
-content_snapshot_distribuction_name: "adhoc-jobs-1.0-distribution.tar.gz"
+content_snapshot_jar_name: "etl-jobs-1.0.jar"
+content_snapshot_distribuction_name: "etl-jobs-1.0-distribution.tar.gz"
 spark_home: "/mount/data/analytics/spark-2.4.4-bin-hadoop2.7"
 redis:
-  host: "{{metadata_redis_host}}" # Redis DP IP 
+  host: "{{metadata2_redis_host}}" # Redis DP IP
   port: "6379"
   user:
-    index: "4"
+    index: "12" # For temporary will change once verification is done
+    input_index: "4" # Input index for string format
     source_key: "id"
   content:
     index: "5"
@@ -23,8 +24,9 @@ redis:
     min_evict_idle_seconds: 120
     time_evict_run_second: 300
     max: 20
-  max_pipeline_size: "1000"
+  max_pipeline_size: "100000"
   key_expiry_seconds: 3600
+  scan_count: "100000"
 
 elastic_search:
   host: "{{ lp_composite_search_host }}" # compositesearch index
@@ -44,12 +46,15 @@ cloud_storage:
   container: "telemetry-data-store" # Container is different in all env so override this.
   object_key: "druid-content-snapshot/snapshot.txt"
   provider: "azure"
-  account_name: "{{ azure_storage_account }}"
-  account_key: "{{ azure_storage_secret }}"
+  account_name: "{{sunbird_public_storage_account_name}}"
+  account_key: "{{sunbird_public_storage_account_key}}"
 
 cassandra:
-  host: "{{groups['lp-cassandra'][0]}}" ## LMS-Cassandra IP Address.
-  keyspace: 'sunbird'
+  host: "{{lp_cassandra_host}}" ## LMS-Cassandra IP Address.
+  keyspace: "sunbird"
+  read_timeout: "500000"
+  retry_count: "100"
+  input_consistency_level: "LOCAL_QUORUM"
   user:
     table: "user"
   device_profile:
@@ -57,9 +62,9 @@ cassandra:
     new_table: "device_profile_temp"
 
 druid:
-  coordinator_host: "{{groups['coordinator'][0]}}"
+  coordinator_host: "{{ groups['rollup-coordinator'][0] | default(groups['raw-coordinator'][0]) }}" 
   data_source: "content-model-snapshot"
-  ingestion_spec_path: "{{ content_snapshot_jar_path }}/adhoc-jobs-1.0/druid_models/content_index_batch.json"
+  ingestion_spec_path: "{{ content_snapshot_jar_path }}/etl-jobs-1.0/druid_models/content_index_batch.json"
 
 job_config:
   es_cloud_uploader_path: "{{ content_snapshot_path }}/config/ESCloudUploader.conf"

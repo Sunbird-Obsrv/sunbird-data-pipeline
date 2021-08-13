@@ -1,0 +1,13 @@
+ 
+#!/bin/bash
+
+cluster_name="{{env}}-spark-cluster"
+resource_group="{{azure_resource_group}}"
+
+#az login
+#az account set --subscription {{subscription_id}}
+
+az login --service-principal -u $1 -p $2 --tenant {{tenant_id}}
+az account set --subscription {{subscription_id}}
+
+az hdinsight delete --name $cluster_name --resource-group $resource_group --yes

@@ -1,22 +1,18 @@
 analytics_user: analytics
 analytics_group: analytics
 spark_output_temp_dir: /mount/data/analytics/tmp/
-telemetry_converter_ver: 0.0.8
 
-bucket: "dev-data-store"
+bucket: "telemetry-data-store"
 kafka_broker_host: "{{groups['processing-cluster-kafka'][0]}}:9092"
+ingestion_kafka_broker_host: "{{groups['ingestion-cluster-kafka'][0]}}:9092"
 brokerlist: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
 zookeeper: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
 dp_username: dp-monitor
 analytics_job_queue_topic: "{{ env }}.analytics.job_queue"
-datasetRawBucket: ekstep-data-sets-{{ env }}
-dataExhaustBucket: ekstep-public-{{ env }}
-dataExhaustPrefix: data-exhaust/
-consumptionRawPrefix: datasets/D001/4208ab995984d222b59299e5103d350a842d8d41/
 topic: "{{ env }}.telemetry.derived"
-learning_topic: "{{ env }}.learning.graph.events"
 analytics_metrics_topic: "{{ env }}.analytics_metrics"
 sink_topic: "{{ env }}.telemetry.sink"
+assess_topic: "{{ env }}.telemetry.assess"
 metrics_topic: "{{ env }}.telemetry.metrics"
 job_manager_tmp_dir: "transient-data"
 channel: dev-test
@@ -25,20 +21,22 @@ druid_rollup_broker_host: "{{groups['raw-broker'][0]}}"
 hierarchySearchServiceUrl: "{{ proto }}://{{ domain_name }}/action/content"
 hierarchySearchServicEndpoint: /v3/hierarchy/
 
-analytics_job_list: '"wfs", "ds", "dpu", "content-rating-updater", "audit-metrics-report", "monitor-job-summ"'
-analytics_jobs_count: 8
+user_table_keyspace: "sunbird"
+course_keyspace: "sunbird_courses"
+hierarchy_store_keyspace: "{{ env }}_hierarchy_store"
+job_request_table: "{{ env }}_job_request"
+report_user_table_keyspace: "sunbird_courses"
+report_user_enrolment_table: "report_user_enrolments"
+
+analytics_job_list: '"wfs", "content-rating-updater", "monitor-job-summ"'
+analytics_jobs_count: 3
 
 cassandra_keyspace_prefix: '{{ env }}_'
-dp_dispatch_bucket_name: ekstep-dev-data-store
-data_exhaust_blob_name: sunbird1p7
-data_exhaust_s3_url: https://s3-ap-south-1.amazonaws.com
+report_cassandra_cluster_host: "{{ report_cassandra_host | default(core_cassandra_host) }}"
+cassandra_hierarchy_store_keyspace: "{{ env_name}}_hierarchy_store"
 spark_version: 2.4.4
 
 heap_memory: "-Xmx5120m"
-
-business_metrics:
-  s3_path: "s3://ekstep-{{ env }}-data-store/business_metrics/"
-  env: "{{ env }}"
 
 spark:
   home: "{{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7"
@@ -62,16 +60,16 @@ spark:
 
 submit_jobs:
   submit-all-jobs:
-    hour: 00
+    hour: 02
     minute: 35
 
 start_jobmanager:
   job-manager:
-    hour: 00
+    hour: 02
     minute: 30
 have_weekly_jobs: false
 
-video_stream_job_schedule: 10
+course_batch_status_updater_job_schedule: 60
 
 run_wfs_job:
   wfs:
@@ -81,16 +79,6 @@ run_monitor_job:
   monitor-job-summ:
     hour: 03
     minute: 00
-
-run_course_metrics_job:
-  course-dashboard-metrics:
-    hour: 19
-    minute: 45
-
-run_assessment_metrics_job:
-  assessment-dashboard-metrics:
-    hour: 20
-    minute: 15
 
 run_admin_user_reports_job:
   admin-user-reports-3AMIST:
@@ -123,24 +111,45 @@ index_content_model_druid:
     hour: 1
     minute: 00
 
-run_district_weekly_job:
-  district-weekly:
-    hour: 03
-    minute: 30
-    weekday: 1
-
 run_etb_metrics_weekly_job:
   etb-metrics-weekly:
     hour: 23
     minute: 30
     weekday: 1
 
-run_district_monthly_job:
-  district-monthly:
-    hour: 04
+# These are the dummy times till sept30 for exhaust reports
+#To-Do: Update time after 3.2.7 deployment
+
+run_progress_exhaust:
+  progress-exhaust:
+    hour: 08
+    minute: 00
+
+run_response_exhaust:
+  response-exhaust:
+    hour: 09
+    minute: 00
+
+run_userinfo_exhaust:
+  userinfo-exhaust:
+    hour: 10
+    minute: 00
+
+run_collection_summary:
+  collection-summary:
+    hour: 09
     minute: 30
-    day: 1
-    month: 1-12         
+
+run_sourcing_summary:
+  sourcing-summary:
+    hour: 10
+    minute: 30
+
+run_cassandra_migration:
+  cassandra-migration:
+    hour: 19
+    minute: 15
+
 
 service:
   search:
@@ -151,19 +160,95 @@ es_search_index: "compositesearch"
 analytics:
   home: /mount/data/analytics
   soft_path: /mount/data/analytics
-  paths: ['/home/analytics/sbin', '/mount/data/analytics', '/mount/data/analytics/logs', '/mount/data/analytics/logs/services', '/mount/data/analytics/logs/data-products', '/mount/data/analytics/logs/api-service', '/mount/data/analytics/api', '/mount/data/analytics/tmp', '/mount/data/analytics/scripts/monitor-data', '/mount/data/analytics/models' ]
-  scripts: ['model-config', 'replay-job', 'replay-updater', 'replay-utils', 'run-job', 'monitor-dp', 'generate-metrics', 'submit-job', 'start-jobmanager']
+  paths: ['/mount/data/analytics', '/mount/data/analytics/logs', '/mount/data/analytics/logs/services', '/mount/data/analytics/logs/data-products', '/mount/data/analytics/tmp', '/mount/data/analytics/scripts', '/mount/data/analytics/models' ]
+  scripts: ['model-config', 'replay-job', 'replay-updater', 'replay-utils', 'run-job', 'submit-job', 'start-jobmanager', 'submit-script']
+  dockScripts: ['model-dock-config','run-dock-job']
 
+# artifact versions
+analytics_core_artifact_ver: "2.0"
+analytics_ed_dataporducts_artifact_ver: "1.0"
+scruid_artifact_ver: "2.4.0"
 
 producer_env: "dev.sunbird"
-analytics_job_manager_artifact: "job-manager-2.0.jar"
-analytics_core_artifact: "analytics-framework-2.0.jar"
-scruid_artifact: "scruid_2.11-2.3.2.jar"
-analytics_batch_module_artifact: "batch-models-2.0.jar"
-analytics_ed_dataporducts_artifact: "data-products-1.0-distribution.tar.gz"
+analytics_job_manager_artifact: "job-manager-{{ analytics_core_artifact_ver }}.jar"
+analytics_core_artifact: "analytics-framework-{{ analytics_core_artifact_ver }}.jar"
+scruid_artifact: "scruid_2.11-{{ scruid_artifact_ver }}.jar"
+analytics_batch_module_artifact: "batch-models-{{ analytics_core_artifact_ver }}.jar"
+analytics_ed_dataporducts_artifact: "data-products-{{ analytics_ed_dataporducts_artifact_ver }}-distribution.tar.gz"
 model_version: "2.0" 
 
-submit_jobs_auth_token: ""
-report_list_jobs_url: "http://{{groups['analytics-api'][0]}}:9000/"
+submit_jobs_auth_token: "{{ sunbird_api_auth_token }}"
+report_list_jobs_url: "{{ druid_report_url }}"
 
 reports_container: "reports"
+
+# Cluster vars
+spark_cluster_user_password: ""
+spark_cluster_user_name: ""
+admin_name: "{{ spark_cluster_user_name }}"
+admin_password: "{{ spark_cluster_user_password }}"
+spark_cluster_name: "{{env}}-spark-cluster"
+
+spark_cluster:
+  executor_core: 5
+  executor_memory: 19G
+  num_executors: 5
+
+analytics_cluster:
+  home: "/tmp"
+
+analytics_ed_dataporducts_jar_artifact: "data-products-{{ analytics_ed_dataporducts_artifact_ver }}.jar"  
+
+spark_enable_dynamic_allocation: false
+# Spark Cassandra config-vars
+spark_cassandra_connection_timeout_millis: 30000
+spark_cassandra_query_timeout_millis: 180000
+spark_cassandra_query_max_rows_fetch_count: 1000
+spark_sql_shuffle_partitions: 200
+
+druid_report_postgres_db_name: druid
+druid_report_postgres_db_username: druid
+
+
+#Override this variable in production and point to druid rollup ingestion cluster 
+# Example: "http://$rollup_cluster_ip:8090"
+druid_rollup_cluster_ingestion_task_url: "http://{{groups['raw-overlord'][0]}}:8081"
+
+# On demand Exhaust throttling vars
+exhaust_batches_limit_per_channel: 30
+exhaust_file_size_limit_bytes_per_channel: 1073741824
+
+exhaust_parallel_batch_load_limit: 10
+exhaust_user_parallelism: 200
+
+data_exhaust_batch_limit_per_request: 20
+
+# Start Of UCI Related Variables
+uci_postgres_host: dev-postgres
+uci_bot_postgres_database: bot
+uci_fusionauth_postgres_database: fusionauth
+uci_postgres_user: postgres
+uci_postgres_password: postgres
+
+uci_postgres:
+  conversation_db_name: "{{ uci_bot_postgres_database }}"
+  conversation_db_host: "{{ uci_postgres_host }}"
+  conversation_db_port: "5432"
+  conversation_db_user: "{{ uci_postgres_user }}"
+  conversation_db_psss: "{{ uci_postgres_password }}"
+  conversation_table_name: "bot"
+  fushionauth_db_name: "{{ uci_fusionauth_postgres_database }}"
+  fushionauth_db_host: "{{ uci_postgres_host }}"
+  fushionauth_db_port: "5432"
+  fushionauth_db_user: "{{ uci_postgres_user }}"
+  fushionauth_db_psss: "{{ uci_postgres_password }}"
+  user_table_name: "users"
+  user_registration_table_name: "user_registrations"
+  user_identities_table_name: "identities"
+
+uci_encryption_secret_key: ""
+uci_pdata_id: "{{ env }}.UCI.diksha"
+
+# End Of UCI Related Variables 
+
+

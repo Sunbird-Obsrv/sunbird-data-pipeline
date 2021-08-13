@@ -11,10 +11,13 @@ logstash_conf:
 es_mapping_file:
  - "telemetry_mapping.json" 
  - "crash-log-mapping.json"
+ - "backend_telemetry_mapping.json"
 kafka_topic_prefix: "{{ env }}"
 error_es_index: "telemetry-error-events"
 log_es_index: "telemetry-log-events"
 telemetry_mapping_file_path: "{{ logstash_home }}/mappings/telemetry_mapping.json"
+backend_log_es_index: "dp-backend-events"
+backend_telemetry_mapping_file_path: "{{ logstash_home }}/mappings/backend_telemetry_mapping.json"
 apt_cache_valid_time: 3600
 
 zookeepers: "{{ groups['processing-cluster-zookeepers']|join(':2181,') }}:2181"
@@ -31,15 +34,10 @@ private_exhaust_topic: "telemetry.private_exhaust"
 public_exhaust_topic: "telemetry.public_exhaust"
 public_data_exhaust_dir_prefix: 4208ab995984d222b59299e5103d350a842d8d41
 
-#Device register API metrics
-device_register_api_metrics_log_path: "/mount/data/analytics/logs/api-service/api-metrics.log"
-api_job_log_path: "/mount/data/analytics/logs/api-service/joblog.log"
-device_log_path: "/mount/data/analytics/logs/api-service/device-profile.log"
-
 # client API error log
-crash_log_path: "/mount/data/analytics/logs/api-service/crash-logs.log"
 logger_es: "{{ groups['log-es']|join(':9200,') }}"
 logstash_version: '6.x'
 crash_log_mapping_file_path: "{{ logstash_home }}/mappings/crash-log-mapping.json"
 crash_log_index : "crash-logs"
 
+send_logs_to_graylog: false

@@ -1,5 +1,5 @@
 @Library('deploy-conf') _
-node("ops-slave") {
+node() {
     try {
         String ANSI_GREEN = "\u001B[32m"
         String ANSI_NORMAL = "\u001B[0m"
@@ -25,8 +25,20 @@ node("ops-slave") {
                 module = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-2].trim()
                 jobName = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-1].trim()
                 currentWs = sh(returnStdout: true, script: 'pwd').trim()
+        // populating the vars for raw-overlord and rollup-overlord cluster respectively.
+                task_names="${params.ingestion_task_names}";
+                println(task_names);
+                List<String> task_names_list = task_names.split(',');
+                List<String> rollup_task_names = [], raw_task_names = [];
+                task_names_list.each {
+                    if(it.startsWith("rollup")) {
+                        rollup_task_names.add(it);
+                    }
+                    else
+                        raw_task_names.add(it);
+                }
                 ansiblePlaybook = "${currentWs}/ansible/druid-ingestion.yml"
-                ansibleExtraArgs = "--tags ${params.action} --vault-password-file /var/lib/jenkins/secrets/vault-pass -vv"
+                ansibleExtraArgs = "--extra-vars \"rollup_ingestion_task_names=${rollup_task_names.join(",")} raw_ingestion_task_names=${raw_task_names.join(",")}\" --tags populate_var,${params.action} --vault-password-file /var/lib/jenkins/secrets/vault-pass -vv"
                 values.put('currentWs', currentWs)
                 values.put('env', envDir)
                 values.put('module', module)

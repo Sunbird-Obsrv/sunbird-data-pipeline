@@ -49,22 +49,28 @@ class DruidValidatorStreamTask(config: DruidValidatorConfig, kafkaConnector: Fli
       .uid(config.druidValidatorConsumer).setParallelism(config.kafkaConsumerParallelism)
       .rebalance()
       .process(new DruidValidatorFunction(config)).name(config.druidValidatorFunction).uid(config.druidValidatorFunction)
-      .setParallelism(config.validatorParallelism)
+      .setParallelism(config.downstreamOperatorsParallelism)
+
+    validationDataStream.getSideOutput(config.telemetryRouterOutputTag)
 
     /**
      * Separate sinks for valid telemetry events, valid summary events, valid error events, valid log events and invalid events
      */
     validationDataStream.getSideOutput(config.telemetryRouterOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaTelemetryRouteTopic))
       .name(config.telemetryEventsProducer).uid(config.telemetryEventsProducer)
+      .setParallelism(config.downstreamOperatorsParallelism)
 
     validationDataStream.getSideOutput(config.summaryRouterOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaSummaryRouteTopic))
       .name(config.summaryEventsProducer).uid(config.summaryEventsProducer)
+      .setParallelism(config.downstreamOperatorsParallelism)
 
     validationDataStream.getSideOutput(config.duplicateEventOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaDuplicateTopic))
       .name(config.druidDuplicateEventsProducer).uid(config.druidDuplicateEventsProducer)
+      .setParallelism(config.downstreamOperatorsParallelism)
 
     validationDataStream.getSideOutput(config.invalidEventOutputTag).addSink(kafkaConnector.kafkaEventSink[Event](config.kafkaFailedTopic))
       .name(config.druidInvalidEventsProducer).uid(config.druidInvalidEventsProducer)
+      .setParallelism(config.downstreamOperatorsParallelism)
 
     env.execute(config.jobName)
 

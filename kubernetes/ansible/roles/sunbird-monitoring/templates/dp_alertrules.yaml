@@ -1,0 +1,95 @@
+## This file contains alert rules related vars
+prometheus_rule_selector_app: prometheus-operator
+prometheus_rule_selector_release: prometheus-operator
+fullnameOverride: sunbird-monitoring
+namespace: monitoring
+
+# Node Exporter vars
+node_cpu_usage_percentage_threshold_Warning: 80
+node_cpu_usage_percentage_threshold_Critical: 90
+node_cpu_usage_percentage_threshold_Fatal: 95
+node_memory_usage_percentage_threshold_Critical: 90
+node_memory_usage_percentage_threshold_Warning: 80
+node_memory_usage_percentage_threshold_Fatal: 95
+node_load_avg_threshold_Critical: 90
+node_load_avg_threshold_Warning: 80
+node_load_avg_threshold_Fatal: 95
+node_disk_usage_percentage_threshold_Warning: 80
+node_disk_usage_percentage_threshold_Critical: 90
+node_disk_usage_percentage_threshold_Fatal: 95
+
+# DP Jobs lag vars critical
+telemetry_extractor_threshold_critical: {{ telemetry_extractor_threshold_critical }}
+pipeline_preprocessor_threshold_critical: {{ pipeline_preprocessor_threshold_critical }}
+de_normalization_threshold_critical: {{ de_normalization_threshold_critical }}
+druid_validator_threshold_critical: {{ druid_validator_threshold_critical }}
+assessment_aggregator_threshold_critical: {{ assessment_aggregator_threshold_critical }}
+content_cache_updater_threshold_critical: {{ content_cache_updater_threshold_critical }}
+user_cache_updater_threshold_critical: {{ user_cache_updater_threshold_critical }}
+summary_denormalization_threshold_critical: {{ summary_denormalization_threshold_critical }}
+device_profile_updater_threshold_critical: {{ device_profile_updater_threshold_critical }}
+telemetry_extractor_failed_events_percentage_threshold_warning: {{ telemetry_extractor_failed_events_percentage_threshold_warning }}
+telemetry_extractor_failed_events_percentage_threshold_critical: {{ telemetry_extractor_failed_events_percentage_threshold_critical }}
+ingest_router_threshold_critical: {{ ingest_router_threshold_critical }}
+
+# DP Jobs lag vars warning
+telemetry_extractor_threshold_warning: {{ telemetry_extractor_threshold_warning }}
+pipeline_preprocessor_threshold_warning: {{ pipeline_preprocessor_threshold_warning }}
+de_normalization_threshold_warning: {{ de_normalization_threshold_warning }}
+druid_validator_threshold_warning: {{ druid_validator_threshold_warning }}
+assessment_aggregator_threshold_warning: {{ assessment_aggregator_threshold_warning }}
+content_cache_updater_threshold_warning: {{ content_cache_updater_threshold_warning }}
+user_cache_updater_threshold_warning: {{ user_cache_updater_threshold_warning }}
+summary_denormalization_threshold_warning: {{ summary_denormalization_threshold_warning }}
+device_profile_updater_threshold_warning: {{ device_profile_updater_threshold_warning }}
+ingest_router_threshold_warning: {{ ingest_router_threshold_warning }}
+
+
+# KP flink jobs lag vars critical
+activity_aggregater_updater_threshold_critical: {{ activity_aggregater_updater_threshold_critical }}
+relation_cache_updater_threshold_critical: {{ relation_cache_updater_threshold_critical }}
+post_publish_processor_threshold_critical: {{ post_publish_processor_threshold_critical }}
+
+# KP flink jobs lag vars warning
+activity_aggregater_updater_threshold_warning: {{ activity_aggregater_updater_threshold_warning }}
+relation_cache_updater_threshold_warning: {{ relation_cache_updater_threshold_warning }}
+post_publish_processor_threshold_warning: {{ post_publish_processor_threshold_warning }}
+
+# Checkpoint failure vars
+telemetry_extractor_checkpointfailure_threshold_critical: {{ telemetry_extractor_checkpointfailure_threshold_critical }} 
+pipeline_preprocessor_checkpointfailure_threshold_critical: {{ pipeline_preprocessor_checkpointfailure_threshold_critical }}
+de_normalization_checkpointfailure_threshold_critical: {{ de_normalization_checkpointfailure_threshold_critical }}
+druid_validator_checkpointfailure_threshold_critical: {{ druid_validator_checkpointfailure_threshold_critical }}
+assessment_aggregator_checkpointfailure_threshold_critical: {{ assessment_aggregator_checkpointfailure_threshold_critical }}
+content_cache_updater_checkpointfailure_threshold_critical: {{ content_cache_updater_checkpointfailure_threshold_critical }}
+user_cache_updater_checkpointfailure_threshold_critical: {{ user_cache_updater_checkpointfailure_threshold_critical }}
+summary_denormalization_checkpointfailure_threshold_critical: {{ summary_denormalization_checkpointfailure_threshold_critical }}
+device_profile_updater_checkpointfailure_threshold_critical: {{ device_profile_updater_checkpointfailure_threshold_critical }}
+user_cache_v2_updater_checkpointfailure_threshold_critical: {{ user_cache_v2_updater_checkpointfailure_threshold_critical }}
+relation_cache_updater_checkpointfailure_threshold_critical: {{ relation_cache_updater_checkpointfailure_threshold_critical }}
+activity_aggregate_updater_checkpointfailure_threshold_critical: {{ activity_aggregate_updater_checkpointfailure_threshold_critical }}
+
+
+flink_job_names:
+  assessment-aggregator: {{ assessment_aggregator_threshold_critical }} 
+  content-cache-updater: {{ content_cache_updater_threshold_critical }} 
+  de-normalization-primary: {{ de_normalization_primary_threshold_critical }}
+  de-normalization-secondary: {{ de_normalization_secondary_threshold_critical }}
+  device-profile-updater: {{ device_profile_updater_threshold_critical }}  
+  druid-validator: {{ druid_validator_threshold_critical }} 
+  error-denormalization: {{ error_denormalization_threshold_critical }}
+  ingest-router: {{ ingest_router_threshold_critical }} 
+  pipeline-preprocessor: {{ pipeline_preprocessor_threshold_critical }}
+  summary-denormalization: {{ summary_denormalization_threshold_critical }}
+  telemetry-extractor: {{ telemetry_extractor_threshold_critical }}       
+  user-cache-updater-v2: {{ user_cache_updater_threshold_critical }}
+## KP flink jobs
+  activity-aggregate-updater: {{ activity_aggregater_updater_threshold_critical }}
+  relation-cache-updater: {{ relation_cache_updater_threshold_critical }}
+  post-publish-processor: {{ post_publish_processor_threshold_critical }}
+
+nginx_tps_threshold: {{ nginx_tps_threshold }} # being used in flink jobs percentage lag alertrules
+flink_lag_percentage_threshold: {{ flink_lag_percentage_threshold }} # being used in flink jobs percentage lag alertrules
+flink_lag_offset_duration: {{ flink_lag_offset_duration }} # values in mins.  offset time window to compare the metrics between current metrics and last 30(example) minutes. 
+
+pv_usage_threshold_critical: {{ pv_usage_threshold_critical }}

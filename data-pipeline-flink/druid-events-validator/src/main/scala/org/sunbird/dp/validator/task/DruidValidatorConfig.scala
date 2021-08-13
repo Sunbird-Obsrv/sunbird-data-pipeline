@@ -16,8 +16,7 @@ class DruidValidatorConfig(override val config: Config) extends BaseJobConfig(co
   val cacheExpirySeconds: Int = config.getInt("redis.database.key.expiry.seconds")
 
   override val kafkaConsumerParallelism: Int = config.getInt("task.consumer.parallelism")
-  val validatorParallelism: Int = config.getInt("task.validator.parallelism")
-  val routerParallelism: Int = config.getInt("task.router.parallelism")
+  val downstreamOperatorsParallelism: Int = config.getInt("task.downstream.operators.parallelism")
 
   val druidValidationEnabled: Boolean = config.getBoolean("task.druid.validation.enabled")
   val druidDeduplicationEnabled: Boolean = config.getBoolean("task.druid.deduplication.enabled")

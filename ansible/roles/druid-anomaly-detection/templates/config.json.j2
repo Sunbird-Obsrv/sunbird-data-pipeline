@@ -1,0 +1,14 @@
+{
+  "jobs": [
+  	{% for item in anomaly_detection_queries.values() %}
+    {
+      "job_id": "{{ item.job_id }}",
+      "query_granularity": "{{ item.query_granularity }}",
+      "query": "{{ item.query }}",
+      "cron": "{{ item.cron }}",
+      "offset_in_mins": {{ item.offset_in_mins }},
+      "frequency": "{{ item.frequency }}"
+    }{{ "," if not loop.last else "" }}
+    {% endfor %}
+  ]
+}

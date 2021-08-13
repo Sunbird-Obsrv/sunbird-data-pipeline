@@ -10,7 +10,7 @@ home=`echo $HOME`
 ingestionSpecFilePath="{{ druid.ingestion_spec_path }}"
 jobJarPath="{{ content_snapshot_jar_path }}/{{ content_snapshot_jar_name }}"
 jobConfPath="{{ job_config.es_cloud_uploader_path }}"
-libs_path="{{ content_snapshot_path }}/jars/adhoc-jobs-1.0"
+libs_path="{{ content_snapshot_path }}/jars/etl-jobs-1.0"
 export SPARK_HOME="{{ spark_home }}"
 
 # get list of segments from content model snapshot datasource
@@ -28,7 +28,7 @@ echo "STARTED EXECUTING USER DRUID CONTENT INDEXER..."
 #--class org.ekstep.analytics.jobs.ESCloudUploader \
 #${jobJarPath} >> "{{ content_snapshot_path }}/logs/$today-task-execution.log" 2>&1
 
-nohup $SPARK_HOME/bin/spark-submit --conf spark.driver.extraJavaOptions="-Dconfig.file=${jobConfPath}"  --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ',')  --class org.ekstep.analytics.jobs.ESCloudUploader ${jobJarPath} >> "{{ content_snapshot_path }}/logs/$today-task-execution.log" 2>&1
+nohup $SPARK_HOME/bin/spark-submit --conf spark.driver.extraJavaOptions="-Dconfig.file=${jobConfPath}"  --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ',')  --class org.sunbird.analytics.jobs.ESCloudUploader ${jobJarPath} >> "{{ content_snapshot_path }}/logs/$today-task-execution.log" 2>&1
 
 printf "\n>>> submit ingestion task to Druid!\n"
 

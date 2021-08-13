@@ -1,38 +1,18 @@
 -
   name: Install Java
-  hosts: druid-raw
+  hosts: "druid-{{remote}}"
   become: yes
   roles: 
-    - jdk-1.8.0_121
+    - {role: jdk-1.8.0_121, when: "'java' in deploy"}
 
 -
   name: Install java and zookeeper cluster for druid
-  hosts: raw-zookeeper
+  hosts: "{{ remote }}-zookeeper"
   become: yes
   roles:
-    - {role: zookeeper-upgrade}
+    - {role: zookeeper-upgrade, when: "'zookeeper' in deploy"}
   vars:
-    zookeeper_group: "{{ groups['raw-zookeeper'] }}"
-
-#-
-#  name: Install postgres on druid cluster
-#  hosts: druid-postgres
-#  vars_files:
-#    - "{{inventory_dir}}/secrets.yml"
-#  become: yes
-#  roles:
-#    - {role: postgres-provision }
-#  vars:
-#    postgres_address_space: "0.0.0.0/0"
-#    postgresql_databases:
-#      - name: druid
-#      - name: graphite
-#    postgresql_users:
-#      - name: druid
-#        password: "{{ dp_vault_druid_postgress_pass }}"
-#      - name: graphite 
-#        password: "{{ dp_vault_druid_postgress_graphite_pass }}"
-
+    zookeeper_group: "{{ groups[remote+'-zookeeper'] }}"
 
 # Create postgres databases and users
 
@@ -43,14 +23,10 @@
   vars:
     postgresql_databases:
       - name: druid
-      - name: graphite
     postgresql_users:
       - name: druid
         db: druid
         password: "{{ dp_vault_druid_postgress_pass }}"
-      - name: graphite
-        db: graphite
-        password: "{{ dp_vault_druid_postgress_graphite_pass }}"     
   tasks:
     - name: Ensure database is created
       postgresql_db: name="{{ item.name }}" \
@@ -76,23 +52,14 @@
       with_items: "{{ postgresql_users }}"
 
 -
-  name : Install graphite on druid
-  hosts: raw-graphite
-  become: yes
-  roles:
-    - {role: druid_graphite}
-    
--
   name: Install role druid
-  hosts: druid-raw
+  hosts: "druid-{{remote}}"
   become: yes
   roles:
-    - {role: analytics-druid, when: "'raw-coordinator' in group_names", druid_role: 'coordinator', service: 'coordinator' }
-    - {role: analytics-druid, when: "'raw-overlord' in group_names", druid_role: 'overlord', service: 'overlord'}
-    - {role: analytics-druid, when: "'raw-broker' in group_names", druid_role: 'broker', service: 'broker'}
-    - {role: analytics-druid, when: "'raw-historical' in group_names", druid_role: 'historical', service: 'historical'}
-    - {role: analytics-druid, when: "'raw-middlemanager' in group_names", druid_role: 'middlemanager', service: 'middleManager' }
-  vars:
-    druid_postgres_db: "druid"
-    druid_zookeeper_host: "{{ groups['raw-zookeeper']|join(':2181,')}}:2181"
-    druid_graphite_host: "{{ groups['raw-graphite'][0] }}"
+    - {role: analytics-druid, when: "'{{ remote }}-coordinator' in group_names and 'coordinator' in deploy", druid_role: 'coordinator', service: 'coordinator' }
+    - {role: analytics-druid, when: "'{{ remote }}-overlord' in group_names and 'overlord' in deploy", druid_role: 'overlord', service: 'overlord'}
+    - {role: analytics-druid, when: "'{{ remote }}-broker' in group_names and 'broker' in deploy", druid_role: 'broker', service: 'broker'}
+    - {role: analytics-druid, when: "'{{ remote }}-historical' in group_names and 'historical' in deploy", druid_role: 'historical', service: 'historical'}
+    - {role: analytics-druid, when: "'{{ remote }}-middlemanager' in group_names and 'mm' in deploy", druid_role: 'middlemanager', service: 'middleManager' }
+    - {role: analytics-druid, when: "'{{ remote }}-router' in group_names and 'router' in deploy", druid_role: 'router', service: 'router' }
+

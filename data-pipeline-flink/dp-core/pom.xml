@@ -20,13 +20,13 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-streaming-scala_${scala.version}</artifactId>
+            <artifactId>flink-streaming-scala_${scala.maj.version}</artifactId>
             <version>${flink.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-connector-kafka_${scala.version}</artifactId>
+            <artifactId>flink-connector-kafka_${scala.maj.version}</artifactId>
             <version>${flink.version}</version>
         </dependency>
         <dependency>
@@ -48,6 +48,11 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.10.0</version>
         </dependency>
         <dependency>
             <groupId>redis.clients</groupId>
@@ -78,20 +83,20 @@
         </dependency>
         <dependency>
             <groupId>net.manub</groupId>
-            <artifactId>scalatest-embedded-kafka_${scala.version}</artifactId>
+            <artifactId>scalatest-embedded-kafka_${scala.maj.version}</artifactId>
             <version>2.0.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_${scala.version}</artifactId>
+            <artifactId>kafka_${scala.maj.version}</artifactId>
             <version>2.4.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-test-utils_2.12</artifactId>
-            <version>1.10.0</version>
+            <version>${flink.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -122,7 +127,7 @@
         <dependency>
             <groupId>org.cassandraunit</groupId>
             <artifactId>cassandra-unit</artifactId>
-            <version>3.1.1.0</version>
+            <version>3.11.2.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -132,6 +137,14 @@
         <testSourceDirectory>src/test/scala</testSourceDirectory>
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <release>11</release>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.20</version>
@@ -186,10 +199,11 @@
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
-                <version>3.2.2</version>
+                <version>4.4.0</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>${java.target.runtime}</source>
+                    <target>${java.target.runtime}</target>
+                    <scalaVersion>${scala.version}</scalaVersion>
                     <checkMultipleScalaVersions>false</checkMultipleScalaVersions>
                 </configuration>
                 <executions>

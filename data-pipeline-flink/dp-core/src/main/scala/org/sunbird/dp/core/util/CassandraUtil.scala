@@ -4,15 +4,17 @@ import java.util
 
 import com.datastax.driver.core._
 import com.datastax.driver.core.exceptions.DriverException
-import com.datastax.driver.core.querybuilder.Insert
+import org.slf4j.LoggerFactory
 
 class CassandraUtil(host: String, port: Int) {
 
-
+  val logger = LoggerFactory.getLogger("CassandraUtil")
+  val options : QueryOptions = new QueryOptions()
   val cluster = {
     Cluster.builder()
       .addContactPoint(host)
       .withPort(port)
+      .withQueryOptions(options.setConsistencyLevel(ConsistencyLevel.QUORUM))
       .withoutJMXReporting()
       .build()
   }
@@ -29,8 +31,11 @@ class CassandraUtil(host: String, port: Int) {
       rs.all
     } catch {
       case ex: DriverException =>
-        this.reconnect()
-        this.find(query)
+        logger.info(s"Failed cassandra query is ${query}")
+        ex.printStackTrace()
+        throw ex
+        // this.reconnect()
+        // this.find(query)
     }
   }
 

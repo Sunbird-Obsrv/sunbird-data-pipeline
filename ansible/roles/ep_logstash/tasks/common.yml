@@ -74,11 +74,11 @@
   become: yes
   ignore_errors: yes
 
-
 - name: Copy logstash init.d file
   copy: 
     src: logstash.sh 
-    dest: /etc/init.d/logstash mode=755
+    dest: /etc/init.d/logstash 
+    mode: 755
   become: true
 
 - name: Install plugins

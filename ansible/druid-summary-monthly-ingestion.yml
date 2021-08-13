@@ -1,0 +1,5 @@
+---
+- hosts: rollup-overlord
+  become: yes
+  roles:
+     - druid-summary-monthly-ingestion

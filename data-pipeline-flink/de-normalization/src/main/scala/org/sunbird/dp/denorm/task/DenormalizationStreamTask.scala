@@ -4,6 +4,7 @@ import java.io.File
 
 import com.typesafe.config.ConfigFactory
 import org.apache.flink.api.common.typeinfo.TypeInformation
+import org.apache.flink.api.java.functions.KeySelector
 import org.apache.flink.api.java.typeutils.TypeExtractor
 import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
@@ -61,12 +62,13 @@ class DenormalizationStreamTask(config: DenormalizationConfig, kafkaConnector: F
     val denormStream =
       env.addSource(source, config.denormalizationConsumer).uid(config.denormalizationConsumer)
         .setParallelism(config.kafkaConsumerParallelism).rebalance()
-        .process(new DenormalizationFunction(config)).name(config.denormalizationFunction).uid(config.denormalizationFunction)
-          .setParallelism(config.denormParallelism)
+        .keyBy(new DenormKeySelector(config)).countWindow(config.windowCount)
+        .process(new DenormalizationWindowFunction(config)).name(config.denormalizationFunction).uid(config.denormalizationFunction)
+        .setParallelism(config.telemetryDownstreamOperatorsParallelism)
 
-    denormStream.getSideOutput(config.denormEventsTag).addSink(kafkaConnector.kafkaEventSink(config.denormSuccessTopic))
+    denormStream.getSideOutput(config.denormEventsTag).addSink(kafkaConnector.kafkaEventSink(config.telemetryDenormOutputTopic))
       .name(config.DENORM_EVENTS_PRODUCER).uid(config.DENORM_EVENTS_PRODUCER)
-        .setParallelism(config.denormSinkParallelism)
+        .setParallelism(config.telemetryDownstreamOperatorsParallelism)
 
     env.execute(config.jobName)
   }
@@ -88,3 +90,10 @@ object DenormalizationStreamTask {
   }
 }
 // $COVERAGE-ON$
+
+class DenormKeySelector(config: DenormalizationConfig) extends KeySelector[Event, Int] {
+  val shards = config.windowShards
+  override def getKey(in: Event): Int = {
+    if (Option(in.did()) == None) "".hashCode % shards else in.did().hashCode % shards
+  }
+}

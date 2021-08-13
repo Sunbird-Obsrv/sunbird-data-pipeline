@@ -35,7 +35,7 @@ secor.azure.path={{ secor_service_name[item[0]].base_path }}
 secor.local.path=/mount/{{ item.0 }}/message_logs/partition
 
 # Port of the Ostrich server.
-ostrich.port={{ secor_service_name[item[0]].ostrich_port }}
+#ostrich.port=
 
 # Secor custom properties
 
@@ -63,3 +63,5 @@ secor.max.file.age.policy=oldest
 # currentDate - Time of upload in YYYYMMDD format
 # folder - Folder to use based on message id map lookup
 secor.s3.output_file_pattern={{ secor_service_name[item[0]].output_file_pattern }}
+
+secor.partition.message.channel.identifier={{ secor_service_name[item[0]].message_channel_identifier }}

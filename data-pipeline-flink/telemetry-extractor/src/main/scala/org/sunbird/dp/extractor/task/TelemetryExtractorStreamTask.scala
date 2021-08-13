@@ -61,7 +61,7 @@ class TelemetryExtractorStreamTask(config: TelemetryExtractorConfig, kafkaConnec
         .rebalance()
         .process(new DeduplicationFunction(config))
         .name("ExtractorDeduplicationFn").uid("ExtractorDeduplicationFn")
-        .setParallelism(config.deDupParallelism)
+        .setParallelism(config.downstreamOperatorsParallelism)
     /**
      * After - De-Duplication process.
      *  1. Extract the batch events.
@@ -71,22 +71,36 @@ class TelemetryExtractorStreamTask(config: TelemetryExtractorConfig, kafkaConnec
       deDupStream.getSideOutput(config.uniqueEventOutputTag)
         .process(new ExtractionFunction(config))
         .name(config.extractionFunction).uid(config.extractionFunction)
-        .setParallelism(config.extractionParallelism)
+        .setParallelism(config.downstreamOperatorsParallelism)
 
     val redactorStream =
       extractionStream.getSideOutput(config.assessRedactEventsOutputTag)
         .process(new RedactorFunction(config)).name(config.redactorFunction).uid(config.redactorFunction)
-        .setParallelism(config.redactorParallelism)
+        .setParallelism(config.downstreamOperatorsParallelism)
 
-    deDupStream.getSideOutput(config.duplicateEventOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaDuplicateTopic)).name(config.extractorDuplicateProducer).uid(config.extractorDuplicateProducer)
-    deDupStream.getSideOutput(config.failedBatchEventOutputTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaBatchFailedTopic)).name(config.extractorBatchFailedEventsProducer).uid(config.extractorBatchFailedEventsProducer)
+    deDupStream.getSideOutput(config.duplicateEventOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaDuplicateTopic))
+      .name(config.extractorDuplicateProducer).uid(config.extractorDuplicateProducer).setParallelism(config.downstreamOperatorsParallelism)
 
-    extractionStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name(config.extractorRawEventsProducer).uid(config.extractorRawEventsProducer)
-    extractionStream.getSideOutput(config.logEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name(config.extractorAuditEventsProducer).uid(config.extractorAuditEventsProducer)
-    extractionStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaFailedTopic)).name(config.extractorFailedEventsProducer).uid(config.extractorFailedEventsProducer)
+    deDupStream.getSideOutput(config.failedBatchEventOutputTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaBatchFailedTopic))
+      .name(config.extractorBatchFailedEventsProducer).uid(config.extractorBatchFailedEventsProducer).setParallelism(config.downstreamOperatorsParallelism)
 
-    redactorStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic)).name(config.assessEventsProducer).uid(config.assessEventsProducer)
-    redactorStream.getSideOutput(config.assessRawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaAssessRawTopic)).name(config.assessRawEventsProducer).uid(config.assessRawEventsProducer)
+    extractionStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic))
+      .name(config.extractorRawEventsProducer).uid(config.extractorRawEventsProducer).setParallelism(config.downstreamOperatorsParallelism)
+
+    extractionStream.getSideOutput(config.logEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaLogRouteTopic))
+      .name(config.extractorLogEventsProducer).uid(config.extractorLogEventsProducer).setParallelism(config.downstreamOperatorsParallelism)
+
+    extractionStream.getSideOutput(config.auditEventsOutputTag).addSink(kafkaConnector.kafkaStringSink(config.kafkaLogRouteTopic))
+      .name(config.extractorAuditEventsProducer).uid(config.extractorAuditEventsProducer).setParallelism(config.downstreamOperatorsParallelism)
+
+    extractionStream.getSideOutput(config.failedEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaFailedTopic))
+      .name(config.extractorFailedEventsProducer).uid(config.extractorFailedEventsProducer).setParallelism(config.downstreamOperatorsParallelism)
+
+    redactorStream.getSideOutput(config.rawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaSuccessTopic))
+      .name(config.assessEventsProducer).uid(config.assessEventsProducer).setParallelism(config.downstreamOperatorsParallelism)
+
+    redactorStream.getSideOutput(config.assessRawEventsOutputTag).addSink(kafkaConnector.kafkaMapSink(config.kafkaAssessRawTopic))
+      .name(config.assessRawEventsProducer).uid(config.assessRawEventsProducer).setParallelism(config.downstreamOperatorsParallelism)
 
     env.execute(config.jobName)
   }

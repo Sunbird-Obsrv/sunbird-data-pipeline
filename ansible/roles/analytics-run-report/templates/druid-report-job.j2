@@ -6,12 +6,13 @@ export SCRIPTS_HOME={{ analytics.home }}/scripts
 export DP_LOGS={{ analytics.home }}/logs/data-products
 cd {{ analytics.home }}/scripts
 
+today=$(date "+%Y-%m-%d")
 libs_path="{{ analytics.home }}/models-{{ model_version }}/data-products-1.0"
 
 job_config=`cat $SCRIPTS_HOME/report_config.json`
 
 echo "Job Config - $job_config" >> "$DP_LOGS/$today-job-execution.log"
 
-nohup $SPARK_HOME/bin/spark-submit --master local[*] --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.3.2.jar,$MODELS_HOME/batch-models-2.0.jar --class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-2.0.jar --model "druid_reports" --config "$job_config"  >> "$DP_LOGS/$today-job-execution.log" 2>&1
+nohup $SPARK_HOME/bin/spark-submit --master local[*] --jars $(echo ${libs_path}/lib/*.jar | tr ' ' ','),$MODELS_HOME/analytics-framework-2.0.jar,$MODELS_HOME/scruid_2.11-2.4.0.jar,$MODELS_HOME/batch-models-2.0.jar --class org.ekstep.analytics.job.JobExecutor $MODELS_HOME/batch-models-2.0.jar --model "druid_reports" --config "$job_config"  >> "$DP_LOGS/$today-job-execution.log" 2>&1
 
 echo "Job execution completed - $1" >> "$DP_LOGS/$today-job-execution.log"

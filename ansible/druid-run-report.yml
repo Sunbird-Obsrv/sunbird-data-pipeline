@@ -1,6 +1,8 @@
 -
   name: Run Druid Job Report
   hosts: spark
+  vars_files:
+       - "{{inventory_dir}}/secrets.yml"
   become: yes
   roles: 
     - analytics-run-report

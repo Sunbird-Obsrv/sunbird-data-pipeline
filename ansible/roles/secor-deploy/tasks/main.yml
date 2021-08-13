@@ -25,4 +25,4 @@
     owner: "{{ analytics_user }}"
     group: "{{ analytics_user }}"
   with_fileglob:
-    - "artifacts/target/secor-*-SNAPSHOT-bin.tar.gz"
+    - "artifacts/target/secor-{{ secor.artifact_ver }}-bin.tar.gz"

@@ -1,6 +1,6 @@
-flink_namespace: flink-dev
-imagepullsecrets: sunbird-registry-secret
-
+flink_namespace: "flink-{{ env }}"
+imagepullsecrets: "{{ env }}-registry-secret"
+service_monitor_enabled: true
 ### Job manager related vars
 jobmanager_rpc_port: 6123
 jobmanager_blob_port: 6124
@@ -34,9 +34,14 @@ azure_account: "{{ sunbird_private_storage_account_name }}"
 azure_secret: "{{ sunbird_private_storage_account_key }}"
 flink_container_name: dev-data-store
 checkpoint_interval: 60000
+checkpoint_pause_between_seconds: 5000
+checkpoint_compression_enabled: true
 restart_attempts: 3
 restart_delay: 30000 # in milli-seconds
 producer_max_request_size: 1572864
+producer_batch_size: 98304
+producer_linger_ms: 10
+
 redis_timeout: 30000
 device_profile_table: "{{ env }}_device_profile"
 
@@ -44,50 +49,69 @@ device_profile_table: "{{ env }}_device_profile"
 extractor_event_max_size: 1048576 # Max is only 1MB
 extractor_max_request_size: 5242880
 extractor_consumer_parallelism: 1
-dedup_parallelism: 1
-extraction_parallelism: 1
-redactor_parallelism: 1
+extractor_operators_parallelism: 1
 telemetry_extractor_key_expiry_seconds: 3600
+
+### Ingest Raw router job related vars
+ingest_router_consumer_parallelism: 1
+ingest_router_operators_parallelism: 1
+raw_router_consumer_parallelism: 1
+raw_router_downstream_parallelism: 1
 
 ### Pipeline-preprocessor related vars
 pipeline_preprocessor_consumer_parallelism: 1
-telemetry_validation_parallelism: 1
-telemetry_router_parallelism: 1
-share_events_flattener_parallelism: 1
+pipeline_preprocessor_operators_parallelism: 1
 portal_id: dev.sunbird.portal
 desktop_id: dev.sunbird.desktop
 pipeline_preprocessor_key_expiry_seconds: 3600
 
 ### De-normalization related vars
 denorm_consumer_parallelism: 1
-device_denorm_parallelism: 1
-user_denorm_parallelism: 1
-content_denorm_parallelism: 1
-loc_denorm_parallelism: 1
-dialcode_denorm_parallelism: 1
-denorm_parallelism: 1
-denorm_sink_parallelism: 1
-denorm_summary_dedup_parallelism: 1
-summary_sink_parallelism: 1
+telemetry_denorm_operators_parallelism: 1
 de_normalization_duplicationstore_key_expiry_seconds: 3600
 de_normalization_key_expiry_seconds: 3600
+denorm_window_count: 30
+denorm_window_shards: 1400
+
+denorm_secondary_consumer_parallelism: 1
+telemetry_denorm_secondary_operators_parallelism: 1
+denorm_primary_consumer_parallelism: 1
+telemetry_denorm_primary_operators_parallelism: 1
+
+redis_meta_content_port: "{{ content_port }}"
+redis_meta_device_port: "{{ device_port }}"
+redis_meta_user_port: "{{ user_port }}"
+redis_meta_dialcode_port: "{{ dialcode_port }}"
+
+redis_meta_content_host: "{% if metadata2_redis_host is defined %}{{ metadata2_redis_host }}{% else %}{{ redis_host }}{% endif %}"
+redis_meta_device_host: "{% if metadata2_redis_host is defined %}{{ metadata2_redis_host }}{% else %}{{ redis_host }}{% endif %}"
+redis_meta_user_host: "{% if metadata2_redis_host is defined %}{{ metadata2_redis_host }}{% else %}{{ redis_host }}{% endif %}"
+redis_meta_dialcode_host: "{% if metadata2_redis_host is defined %}{{ metadata2_redis_host }}{% else %}{{ redis_host }}{% endif %}"
+
+denorm_secondary_window_count: 30
+denorm_secondary_window_shards: 1400
+denorm_primary_window_count: 30
+denorm_primary_window_shards: 1400
+
+denorm_summary_window_count: 5
+denorm_summary_window_shards: 1400
 
 ### summary-denormalization related vars
 summary_denorm_consumer_parallelism: 1
-summary_denorm_parallelism: 1
-summary_denorm_sink_parallelism: 1
-summary_denorm_dedup_parallelism: 1
-summary_denorm_summary_sink_parallelism: 1
+summary_denorm_operators_parallelism: 1
 summary_denorm_duplication_key_expiry_seconds: 3600
 summary_denorm_key_expiry_seconds: 3600
 
 ### Druid-validator related vars
 druid_validator_consumer_parallelism: 1
-validator_parallelism: 1
-router_parallelism: 1
+druid_validator_operators_parallelism: 1
 druid_validator_key_expiry_seconds: 3600
 druid_validation_enabled: true
 druid_deduplication_enabled: true
+
+### error-denormalization related vars
+error_denorm_consumer_parallelism: 1
+error_denorm_operators_parallelism: 1
 
 ### Device-profile-updater related vars
 deviceprofile_parallelism: 1
@@ -96,7 +120,7 @@ device_profile_updater_key_expiry_seconds: 3600
 ### content-cache-updater
 dialcode_host: "{{ proto }}://{{ domain_name }}"
 dialcode_api_url: "{{ dialcode_host }}/{{ dialcode_endpoint }}"
-dialcode_api_auth_key: "{{ dp_vault_dialcode_api_auth_key }}"
+dialcode_api_auth_key: "{{ sunbird_api_auth_token }}"
 
 ### User-cache-updater related vars
 usercache_updater_parallelism: 1
@@ -105,11 +129,21 @@ middleware_cassandra_keyspace: sunbird
 middleware_cassandra_user_table: user
 middleware_cassandra_location_table: location
 
+#(user read api details)
+user_read_api_endpoint: "/learner/private/user/v1/read/"
+user_read_api_url : "http://{{private_ingressgateway_ip}}{{ user_read_api_endpoint }}"
+
+
 ### assessment-aggregator related vars
 assessaggregator_parallelism: 1
+assessaggregator_consumer_parallelism: 1
+assessaggregator_downstream_parallelism: 1
+assessaggregator_scoreaggregator_parallelism: 1
 middleware_cassandra_courses_keyspace: sunbird_courses
 middleware_cassandra_assessment_aggregator_table: assessment_aggregator
 middleware_cassandra_assessment_question_type : question
+middleware_cassandra_user_enrolments_table: user_enrolments
+middleware_cassandra_user_activity_agg_table: user_activity_agg
 
 ### taskmanager related vars
 healthcheck: true
@@ -132,28 +166,158 @@ job_classname: ""
 flink_job_names:
   telemetry-extractor:
     job_class_name: 'org.sunbird.dp.extractor.task.TelemetryExtractorStreamTask'
-    replica: 2
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    taskslots: 1
+    cpu_requests: 0.3
+    scale_enabled: true
+    scale_target_value: 500000
+    min_replica: 1
+    max_replica: 2
   pipeline-preprocessor:
     job_class_name: 'org.sunbird.dp.preprocessor.task.PipelinePreprocessorStreamTask'
     replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    taskslots: 1
+    cpu_requests: 0.3
+    scale_enabled: true
+    scale_target_value: 1000000
+    min_replica: 1
+    max_replica: 2
   de-normalization:
     job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
     replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    taskslots: 1
+    cpu_requests: 0.3
+    scale_enabled: false
+  de-normalization-v2:
+    job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    taskslots: 1
+    cpu_requests: 0.3
+    scale_enabled: false 
+  de-normalization-secondary:
+    job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    taskslots: 1
+    cpu_requests: 0.3
+    scale_enabled: true
+    scale_target_value: 1000000
+    min_replica: 1
+    max_replica: 2 
+  de-normalization-primary:
+    job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    taskslots: 1
+    cpu_requests: 0.3
+    scale_enabled: true
+    scale_target_value: 1000000
+    min_replica: 1
+    max_replica: 2      
   druid-validator:
     job_class_name: 'org.sunbird.dp.validator.task.DruidValidatorStreamTask'
     replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    taskslots: 1
+    cpu_requests: 0.3
+    scale_enabled: true
+    scale_target_value: 1000000
+    min_replica: 1
+    max_replica: 2
   assessment-aggregator:
     job_class_name: 'org.sunbird.dp.assessment.task.AssessmentAggregatorStreamTask'
     replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    taskslots: 1
+    cpu_requests: 0.3
+    scale_enabled: false
   content-cache-updater:
     job_class_name: 'org.sunbird.dp.contentupdater.task.ContentCacheUpdaterStreamTask'
     replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    taskslots: 1
+    cpu_requests: 0.3
+    scale_enabled: false
   user-cache-updater:
     job_class_name: 'org.sunbird.dp.usercache.task.UserCacheUpdaterStreamTask'
     replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    taskslots: 1
+    cpu_requests: 0.3
+    scale_enabled: false
+  user-cache-updater-v2:
+    job_class_name: 'org.sunbird.dp.usercache.task.UserCacheUpdaterStreamTaskV2'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    taskslots: 1
+    cpu_requests: 0.3
+    scale_enabled: false
   summary-denormalization:
     job_class_name: 'org.sunbird.dp.denorm.task.SummaryDenormalizationStreamTask'
     replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    taskslots: 1
+    cpu_requests: 0.3
+    scale_enabled: false
   device-profile-updater:
     job_class_name: 'org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterStreamTask'
     replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    taskslots: 1
+    cpu_requests: 0.3
+    scale_enabled: false
+  ingest-router:
+    job_class_name: 'org.sunbird.dp.ingestrouter.task.IngestRouterStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    taskslots: 1
+    cpu_requests: 0.3
+    scale_enabled: true
+    scale_target_value: 500000
+    min_replica: 1
+    max_replica: 2
+  error-denormalization:
+    job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    taskslots: 1
+    cpu_requests: 0.3
+    scale_enabled: false 
+
+### controlling the flink jobs log level
+flink_jobs_console_log_level: INFO
+flink_libraries_log_level: ERROR

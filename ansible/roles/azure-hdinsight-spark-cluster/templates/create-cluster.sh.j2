@@ -1,0 +1,53 @@
+#!/bin/bash
+
+cluster_name="{{env}}-spark-cluster"
+resource_group="{{azure_resource_group}}"
+cluster_type=spark
+component_version="{{component_version}}"
+headnode_size="{{headnode_size}}"
+location="{{location}}"
+http_user=admin
+http_password="{{azure_spark_cluster_http_password}}"
+storage_account_name="{{sunbird_private_storage_account_name}}"
+storage_account_key="{{sunbird_private_storage_account_key}}"
+storage_container="{{spark_storage_container}}"
+subnet_name="{{subnet_name}}"
+vnet_name="{{vnet_name}}"
+version="{{version}}"
+headnode_size="{{headnode_size}}"
+workernode_size="{{workernode_size}}"
+workernode_count="{{workernode_count}}"
+ssh_user="{{ ansible_ssh_user }}"
+ssh_pub_key="{{ssh_public_key_deployer}}"
+#ssh_pass="{{azure_spark_cluster_http_password}}"
+
+
+
+#az login 
+#az account set --subscription {{subscription_id}}
+
+
+az login --service-principal -u $1 -p $2 --tenant {{tenant_id}}
+az account set --subscription {{subscription_id}}
+
+az hdinsight create --name $cluster_name --resource-group $resource_group --type $cluster_type --cluster-tier Standard --component-version Spark=$component_version --headnode-size $headnode_size --location $location --http-password $http_password --http-user $http_user --ssh-user $ssh_user --ssh-public-key "$ssh_pub_key" --storage-account $storage_account_name --storage-account-key $storage_account_key --storage-container $storage_container --subnet $subnet_name --vnet-name $vnet_name --version $version --workernode-count $workernode_count --workernode-size $workernode_size --tags Name=$cluster_name
+
+mapfile -t nic_array < <( az network nic list -g $resource_group -o table | grep 'headnode\|workernode' | awk '{print $5}' )
+chmod 0777 "{{inventory_dir}}/hosts"
+host_line=$(sed -n '/\[spark-hdinsight\]/=' "{{inventory_dir}}/hosts")
+del_line=$((host_line+1))
+sed -i $del_line'd' "{{inventory_dir}}/hosts"
+
+
+for nic in "${nic_array[@]}";
+do
+  tag_name=$(az network nic show -n  $nic -g $resource_group | grep "$cluster_name" | cut -d':' -f2 | tr -d '"' | tr -d ' ')
+  if [ "$tag_name" == "$cluster_name" ]; then
+      private_ip=$(az network nic show -n $nic -g $resource_group | grep '"privateIpAddress":' | cut -d':' -f 2 | cut -d ',' -f1  | tr -d '"' | tr -d ' ')
+      name=$(echo $nic | cut -d'-' -f2)
+      count=$(echo $nic | cut -d'-' -f3)
+      hostname=$name-$count
+      echo $hostname : $private_ip
+      sed -i '/^\[spark-hdinsight\]/a '$private_ip'' "{{inventory_dir}}/hosts"
+  fi
+done

@@ -1,0 +1,138 @@
+{
+  "template" : "backend",
+  "index_patterns" : "backend-*",
+  "settings" : {
+    "number_of_shards" : 5
+  },
+  "mappings" : {
+    "events" : {
+      "dynamic": false,
+      "properties": {
+          "@timestamp": {
+            "format": "strict_date_optional_time||epoch_millis",
+            "type": "date"
+          },
+          "@version": {
+            "type": "keyword"
+          },
+          "eid": {
+            "type": "keyword"
+          },
+          "ets": {
+            "format": "strict_date_optional_time||epoch_millis",
+            "type": "date"
+          },
+          "mid": {
+            "type": "keyword"
+          },
+          "ts": {
+            "format": "strict_date_optional_time||epoch_millis",
+            "type": "date"
+          },
+          "ver": {
+            "type": "keyword"
+          },
+          "actor": {
+             "properties": {
+                "id": {
+                  "type": "keyword"
+                },
+                "type": {
+                  "type": "keyword"
+                }
+             }
+          },
+          "edata": {
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "config": {
+                    "properties": {
+                      "search": {
+                        "type": "object",
+                      },
+                      "model": {
+                        "type": "keyword"
+                      },
+                      "modelParams": {
+                        "type": "object",
+                      },
+                      "output": {
+                        "type": "object"
+                      },
+                      "parallelization": {
+                        "type": "long"
+                      },
+                      "appName": {
+                        "type": "keyword"
+                      },
+                      "deviceMapping": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "model": {
+                    "type": "keyword"
+                  },
+                  "date": {
+                    "type": "keyword"
+                  },
+                  "inputEvents": {
+                    "type": "long"
+                  },
+                  "outputEvents": {
+                    "type": "long"
+                  },
+                  "timeTaken": {
+                    "type": "double"
+                  }
+                }
+              },
+              "level": {
+                "type": "keyword"
+              },
+              "message": {
+                "type": "keyword"
+              },
+              "class": {
+                "type": "keyword"
+              },
+              "status": {
+                "type": "keyword"
+              }
+            }
+          },
+          "context": {
+            "properties": {
+              "channel": {
+                "type": "keyword"
+              },
+              "env": {
+                "type": "keyword"
+              },
+              "sid": {
+                "type": "keyword"
+              },
+              "did": {
+                "type": "keyword"
+              },
+              "pdata": {
+                "properties": {
+                  "id": {
+                    "type": "keyword"
+                  },
+                  "pid": {
+                    "type": "keyword"
+                  },
+                  "ver": {
+                    "type": "keyword"
+                  }
+                }
+              }
+            }
+          }
+       }
+    }
+  }
+}

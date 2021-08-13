@@ -9,28 +9,17 @@ spark.cassandra.connection.host="{{groups['dp-cassandra'][0]}}"
 cassandra.keyspace_prefix="{{ cassandra_keyspace_prefix }}"
 cassandra.hierarchy_store_prefix="{{ cassandra_hierarchy_store_prefix }}"
 
-# Content to vec configurations
-
-pc_files_cache="s3"
-pc_dispatch_params="""{"bucket":"{{dp_dispatch_bucket_name}}"}"""
-pc_files_prefix="metrics/"
-
-metrics.dispatch.to="s3"
-metrics.dispatch.params="""{"bucket":"{{dp_dispatch_bucket_name}}"}"""
-metrics.consumption.dataset.id="eks-consumption-metrics/"
-metrics.creation.dataset.id="eks-creation-metrics/"
+storage.key.config="azure_storage_key"
+storage.secret.config="azure_storage_secret"
+reports.storage.key.config="reports_azure_storage_key"
+reports.storage.secret.config="reports_azure_storage_secret"
 
 lp.contentmodel.versionkey="jd5ECm/o0BXwQCe8PfZY1NoUkB9HN41QjA80p22MKyRIcP5RW4qHw8sZztCzv87M"
 
-# Neo4j
-neo4j.bolt.url=""
-neo4j.bolt.user=""
-neo4j.bolt.password=""
-
-# Log4j Kafka appender config
-log4j.appender.kafka.enable="false"
-log4j.appender.kafka.broker_host="{{groups['processing-cluster-kafka'][0]}}:9092"
-log4j.appender.kafka.topic="{{ env }}.telemetry.backend"
+# Joblog Kafka appender config for cluster execution
+log.appender.kafka.enable="false"
+log.appender.kafka.broker_host="{{groups['processing-cluster-kafka'][0]}}:9092"
+log.appender.kafka.topic="{{ env }}.druid.events.log"
 
 # Kafka connection configuration
 kafka.consumer.brokerlist="{{groups['processing-cluster-kafka'][0]}}:9092"
@@ -43,20 +32,6 @@ spark.driver.memory=6g
 spark.memory_fraction={{ spark.memory_fraction }}
 spark.storage_fraction={{ spark.storage_fraction }}
 spark.driver_memory="{{ spark.driver_memory }}" 
-
-#Data Exhaust
-
-data_exhaust {
-	save_config {
-		save_type="azure"
-		bucket="{{data_exhaust_blob_name}}"
-		prefix="data-exhaust/"
-		public_s3_url="{{data_exhaust_s3_url}}"
-		local_path="/mount/data/analytics/{{ env }}/tmp/"
-	}
-	delete_source: "true"
-	package.enable: "true"
-}
 
 #Monitor Jobs
 
@@ -74,12 +49,6 @@ monitor {
 default.consumption.app.id="no_value"
 default.channel.id="in.ekstep"
 default.creation.app.id="no_value"
-
-metrics.creation.es.url="http://{{groups['telemetry-search-cluster-kibana-node'][0]}}:9200"
-metrics.creation.es.indexes="compositesearch"
-
-storage-service.request-signature-version="AWS4-HMAC-SHA256"
-s3service.region="ap-south-1"
 
 cloud_storage_type="azure"
 
@@ -140,33 +109,23 @@ cloud.container.reports="reports"
 # course metrics container in azure
 course.metrics.cassandra.sunbirdKeyspace="sunbird"
 course.metrics.cassandra.sunbirdCoursesKeyspace="sunbird_courses"
+course.metrics.cassandra.sunbirdHierarchyStore="{{ cassandra_hierarchy_store_keyspace }}"
 course.metrics.cloud.objectKey=""
-course.metrics.temp.dir="/mount/data/analytics/course-reports"
 course.metrics.cassandra.input.consistency="QUORUM"
 es.host="http://{{groups['core-es'][0]}}"
 es.port="9200"
-course.metrics.es.alias="cbatchstats"
-course.metrics.es.index.cbatchstats.prefix="cbatchstats-"
-course.metrics.es.index.cbatch="course-batch"
 es.composite.host="{{groups['composite-search-cluster'][0]}}"
 
 # State admin user reports
 # Uses azure only - course.metrics.cloud.provider
-admin.reports.cloud.container="reports"
 admin.metrics.cloud.objectKey=""
 admin.metrics.temp.dir="/mount/data/analytics/admin-user-reports"
 
 #Assessment report config
-assessment.metrics.temp.dir="/mount/data/analytics/assessment-report"
-assessment.metrics.cassandra.input.consistency="QUORUM"
-assessment.metrics.cloud.objectKey="assessment-reports/"
-assessment.metrics.content.index="compositesearch"
 es.scroll.size = 1000
-assessment.metrics.es.alias="cbatch-assessment"
-assessment.metrics.es.index.prefix="cbatch-assessment-"
-course.upload.reports.enabled=true
-course.es.index.enabled=true
-assessment.metrics.bestscore.report=true // BestScore or Latst Updated Score
+
+#BestScore or Latst Updated Score
+assessment.metrics.bestscore.report=true
 assessment.metrics.supported.contenttype="SelfAssess"
 spark.sql.caseSensitive=true
 
@@ -174,14 +133,14 @@ spark.sql.caseSensitive=true
 
 druid.sql.host="http://{{druid_broker_host}}:8082/druid/v2/sql/"
 druid.unique.content.query="{\"query\":\"SELECT DISTINCT \\\"object_id\\\" AS \\\"Id\\\"\\nFROM \\\"druid\\\".\\\"summary-events\\\" WHERE \\\"__time\\\"  BETWEEN TIMESTAMP '%s' AND TIMESTAMP '%s'\"}"
-druid.content.rating.query="{\"query\":\"SELECT \\\"object_id\\\" AS contentId, COUNT(*) AS \\\"totalRatingsCount\\\", SUM(edata_rating) AS \\\"Total Ratings\\\", SUM(edata_rating)/COUNT(*) AS \\\"averageRating\\\" FROM \\\"druid\\\".\\\"telemetry-feedback-events\\\" WHERE \\\"eid\\\" = 'FEEDBACK' GROUP BY \\\"object_id\\\"\"}"
+druid.content.rating.query="{\"query\":\"SELECT \\\"object_id\\\" AS contentId, COUNT(*) AS \\\"totalRatingsCount\\\", SUM(edata_rating) AS \\\"Total Ratings\\\", SUM(edata_rating)/COUNT(*) AS \\\"averageRating\\\" FROM \\\"druid\\\".\\\"telemetry-feedback-events\\\" WHERE \\\"eid\\\" = 'FEEDBACK' AND \\\"edata_rating\\\">0 GROUP BY \\\"object_id\\\"\"}"
 druid.content.consumption.query="{\"query\":\"SELECT COUNT(*) as \\\"play_sessions_count\\\", object_id as \\\"contentId\\\", SUM(total_time_spent) as \\\"total_time_spent\\\", dimensions_pdata_id, object_id\\nFROM \\\"summary-events\\\"\\nWHERE \\\"dimensions_mode\\\" = 'play' AND \\\"dimensions_type\\\" ='content'\\nGROUP BY object_id, dimensions_pdata_id\"}"
 lp.system.update.base.url="{{lp_url}}/system/v3/content/update"
 
 
 #Experiment Configuration
 
-user.search.api.url="http://{{sunbird_learner_service_url}}/private/user/v1/search"
+user.search.api.url="{{sunbird_learner_service_url}}/private/user/v1/search"
 user.search.limit="10000"
 
 # pipeline auditing
@@ -209,32 +168,131 @@ druid = {
 	url = "/druid/v2/"
 	datasource = "telemetry-events"
 	response-parsing-timeout = 300000
+        client-backend = "ing.wbaa.druid.client.DruidAdvancedHttpClient"
+        client-config = {
+           druid-advanced-http-client ={
+           queue-size = 32768
+           queue-overflow-strategy = "Backpressure"
+           query-retries = 5
+           query-retry-delay = 10 ms
+           host-connection-pool = {
+             max-connections = 32
+             min-connections = 0
+             max-open-requests = 128
+             max-connection-lifetime = 20 min
+             idle-timeout = 15 min
+          client = {
+            # The time after which an idle connection will be automatically closed.
+            # Set to `infinite` to completely disable idle timeouts.
+            idle-timeout = 10 min
+           parsing.max-chunk-size = 10m
+        }
+        }
+    }
+
+  }
 }
 druid.rollup.host="{{druid_rollup_broker_host}}"
 druid.rollup.port=8082
-druid.query.wait.time.mins=1
-druid.report.upload.wait.time.mins=1
+druid.query.wait.time.mins=10
+druid.report.upload.wait.time.mins=10
+druid.scan.batch.size=100
+druid.scan.batch.bytes=2000000
+druid.query.batch.buffer=500000
+
 
 // Metric event config
 metric.producer.id="pipeline.monitoring"
 metric.producer.pid="dataproduct.metrics"
 push.metrics.kafka=true
 metric.kafka.broker="{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
-metric.kafka.topic="{{ env }}.telemetry.metrics"
+metric.kafka.topic="{{ env }}.prom.monitoring.metrics"
 
 //Postgres Config
 postgres.db="{{postgres.db_name}}"
 postgres.url="jdbc:postgresql://{{postgres.db_url}}:{{postgres.db_port}}/"
 postgres.user="{{postgres.db_username}}"
 postgres.pass="{{postgres.db_password}}"
+postgres.program.table="program"
+postgres.nomination.table="nomination"
+postgres.usertable="\"V_User\""
+postgres.org.table="\"V_User_Org\""
+
+druid.ingestion.path="/druid/indexer/v1/task"
+druid.segment.path="/druid/coordinator/v1/metadata/datasources/"
+druid.deletesegment.path="/druid/coordinator/v1/datasources/"
+
+postgres.druid.db="{{ druid_report_postgres_db_name }}"
+postgres.druid.url="jdbc:postgresql://{{postgres.db_url}}:{{postgres.db_port}}/"
+postgres.druid.user="{{ druid_report_postgres_db_username }}"
+postgres.druid.pass="{{ dp_vault_druid_postgress_pass }}"
 
 
 location.search.url="https://{{location_search_url}}/v1/location/search"
 location.search.token="{{ location_search_token }}"
+location.search.request="{\"request\": {\"filters\": {\"type\" :[\"state\",\"district\"]},\"limit\" : 10000}}"
 
 druid.state.lookup.url = "http://{{groups['raw-coordinator'][0]}}:8081/druid/coordinator/v1/lookups/config/__default/stateSlugLookup"
+
+sunbird_encryption_key="{{ core_vault_sunbird_encryption_key }}"
 
 dcedialcode.filename="DCE_dialcode_data.csv"
 etbdialcode.filename="ETB_dialcode_data.csv"
 dcetextbook.filename="DCE_textbook_data.csv"
 etbtextbook.filename="ETB_textbook_data.csv"
+
+
+druid.report.default.storage="azure"
+druid.report.date.format="yyyy-MM-dd"
+druid.report.default.container="report-verification"
+
+## Collection Exhaust Jobs Configuration -- Start ##
+
+sunbird.user.keyspace="{{ user_table_keyspace }}"
+sunbird.courses.keyspace="{{ course_keyspace }}"
+sunbird.content.hierarchy.keyspace="{{ cassandra_hierarchy_store_keyspace }}"
+sunbird.user.cluster.host="{{ core_cassandra_host }}"
+sunbird.courses.cluster.host="{{ core_cassandra_host }}"
+sunbird.content.cluster.host="{{ core_cassandra_host }}"
+sunbird.report.cluster.host="{{ report_cassandra_cluster_host }}"
+sunbird.user.report.keyspace="{{ report_user_table_keyspace }}"
+collection.exhaust.store.prefix=""
+postgres.table.job_request="{{ job_request_table }}"
+
+## Collection Exhaust Jobs Configuration -- End ##
+
+## Exhaust throttling variables
+exhaust.batches.limit.per.channel={{ exhaust_batches_limit_per_channel }}
+exhaust.file.size.limit.per.channel={{ exhaust_file_size_limit_bytes_per_channel }}
+
+exhaust.parallel.batch.load.limit={{ exhaust_parallel_batch_load_limit }}
+exhaust.user.parallelism={{ exhaust_user_parallelism }}
+
+data_exhaust.batch.limit.per.request={{ data_exhaust_batch_limit_per_request }}
+
+
+
+//START of UCI Postgres Config
+
+uci.conversation.postgres.db="{{ uci_postgres.conversation_db_name }}"
+uci.conversation.postgres.url="jdbc:postgresql://{{uci_postgres.conversation_db_host}}:{{uci_postgres.conversation_db_port}}/"
+
+uci.fushionauth.postgres.db="{{ uci_postgres.fushionauth_db_name }}"
+uci.fushionauth.postgres.url="jdbc:postgresql://{{uci_postgres.fushionauth_db_host}}:{{uci_postgres.fushionauth_db_port}}/"
+
+uci.postgres.table.conversation="{{ uci_postgres.conversation_table_name }}"
+uci.postgres.table.user="{{ uci_postgres.user_table_name }}"
+uci.postgres.table.user_registration="{{ uci_postgres.user_registration_table_name }}"
+uci.postgres.table.identities="{{ uci_postgres.user_identities_table_name }}"
+
+uci.conversation.postgres.user="{{ uci_postgres.conversation_db_user }}"
+uci.conversation.postgres.pass="{{ uci_postgres.conversation_db_psss }}"
+
+uci.fushionauth.postgres.user="{{ uci_postgres.fushionauth_db_user }}"
+uci.fushionauth.postgres.pass="{{ uci_postgres.fushionauth_db_psss }}"
+
+uci.exhaust.store.prefix=""
+uci.encryption.secret="{{ uci_encryption_secret_key }}"
+
+// END OF UCI Related Job Configs
+

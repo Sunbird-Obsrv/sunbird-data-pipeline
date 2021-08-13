@@ -53,7 +53,7 @@
 - name: Run Job
   become: yes
   become_user: "{{ analytics_user }}"
-  shell: "nohup {{ analytics.home }}/scripts/run-job.sh {{ job_id }} &"
+  shell: "nohup {{ analytics.home }}/scripts/run-job.sh {{ job_id }} {{ batch_id }} {{ keyword }} &"
   async: "{{ (pause_min * 60) }}"
   poll: 0
   tags:
