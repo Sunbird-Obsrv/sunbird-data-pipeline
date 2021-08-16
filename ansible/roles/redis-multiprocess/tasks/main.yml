@@ -3,12 +3,12 @@
 - name: download redis zipfile
   become: yes
   become_user: "{{ redis_user }}"
-  get_url: url={{ redis_tar_ball }} dest={{ redis_dir }}/redis-stable.tar.gz timeout=50 force=no owner={{ redis_user }}
+  get_url: url={{ redis_tar_ball }} dest={{ redis_dir }}/redis-{{ redis_version }}.tar.gz timeout=50 force=no owner={{ redis_user }}
 
 - name: unzip
   become: yes
   become_user: "{{ redis_user }}"
-  unarchive: src={{ redis_dir }}/redis-stable.tar.gz dest={{ redis_dir }} copy=no group={{ redis_user }} owner={{ redis_user }} creates={{ redis_home }}
+  unarchive: src={{ redis_dir }}/redis-{{ redis_version }}.tar.gz dest={{ redis_dir }} copy=no group={{ redis_user }} owner={{ redis_user }} creates={{ redis_home }}
 
 - name: Change ownership of redis installation
   become: yes
@@ -17,7 +17,7 @@
 - name: Copy redis conf files
   become: yes
   become_user: "{{ redis_user }}"
-  template: src=redis.conf.j2 dest={{ redis_dir }}/redis-stable/redis-{{ item.value.name }}.conf
+  template: src=redis.conf.j2 dest={{ redis_dir }}/redis-{{ redis_version }}/redis-{{ item.value.name }}.conf
   vars:
     _port_: "{{ item.value.port }}"
     _name_: "{{ item.value.name }}"
@@ -41,5 +41,5 @@
 - name: start redis
   become: yes
   become_user: "{{ redis_user }}"
-  command: '{{ redis_dir }}/redis-stable/src/redis-server {{ redis_dir }}/redis-stable/redis-{{ item.value.name }}.conf'
+  command: '{{ redis_dir }}/redis-{{ redis_version }}/src/redis-server {{ redis_dir }}/redis-{{ redis_version }}/redis-{{ item.value.name }}.conf'
   with_dict: "{{ redis.config }}" 
