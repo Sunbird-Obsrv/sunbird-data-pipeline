@@ -1,5 +1,7 @@
 superset_namespace: "superset-{{ env }}"
 imagepullsecrets: "{{ env }}-registry-secret"
+apache_superset_image: "amancevice/superset"
+apache_superset_image_version: "1.2.0"
 runAsUser: 1000
 # User ID directive. This user must have enough permissions to run the bootstrap script
 # Runn containers as root is not recommended in production. Change this to another UID - e.g. 1000 to be more secure
