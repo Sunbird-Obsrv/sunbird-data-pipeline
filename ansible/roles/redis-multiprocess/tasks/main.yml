@@ -1,5 +1,14 @@
 ---
 # tasks file for redis
+- name: create the redis dir
+  file:
+    path: "{{ analytics_user_home }}/redis"
+    state: directory
+    owner: "{{ redis_user }}"
+    group: "{{ redis_user }}"
+    mode: 0755
+    become: yes
+
 - name: download redis zipfile
   become: yes
   become_user: "{{ redis_user }}"
