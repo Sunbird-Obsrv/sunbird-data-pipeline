@@ -1,0 +1,25 @@
+superset_namespace: "superset-{{ env }}"
+imagepullsecrets: "{{ env }}-registry-secret"
+runAsUser: 1000
+# User ID directive. This user must have enough permissions to run the bootstrap script
+# Runn containers as root is not recommended in production. Change this to another UID - e.g. 1000 to be more secure
+replicas: 1
+configMountPath: "/etc/superset"
+extraConfigMountPath: "/app/configs"
+
+oauth:
+  enabled: false
+  client_id: "{{ google_oauth_clientid | default('') }}"
+  client_secret: "{{ google_oauth_client_secret | default('') }}"
+  email_whitelist_regex: ""
+  whitelist_domain: ""
+  user_registration_role: "Gamma"
+
+createAdmin: true
+
+adminUser:
+  username: "admin"
+  firstname: "Superset"
+  lastname: "Admin"
+  email: "admin@superset.com"
+  password: "{{ superset_admin_password }}"

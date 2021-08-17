@@ -1,0 +1,35 @@
+- name: Create superset_db database if not exists
+  postgresql_db: name="{{ postgres.superset.db_name }}" \
+            login_host="{{ postgres.db_url }}" \
+            port="{{ postgres.db_port }}" \
+            login_user="{{ postgres.db_admin_user }}" \
+            login_password="{{ postgres.db_admin_password }}" \
+            encoding='UTF-8' \
+            state=present
+
+- name: Create superset user if not exists
+  postgresql_user: name="{{ postgres.superset.db_username }}" \
+              password="{{ dp_vault_superset_postgress_pass }}" \
+              no_password_changes=true \
+              priv=ALL \
+              state=present \
+              login_host="{{ postgres.db_url }}" \
+              port="{{ postgres.db_port }}" \
+              login_user="{{ postgres.db_admin_user }}" \
+              login_password="{{ postgres.db_admin_password }}" \
+              db="{{ postgres.superset.db_name }}"
+
+- name: Download helm chart dependencies
+  shell: helm dependency update "{{ chart_path }}"
+
+- name: template values.yaml file
+  template:
+    src: "{{ chart_path }}/values.j2"
+    dest: "{{ chart_path }}/values.yaml"
+
+- name: remove the job.batch
+  shell: kubectl delete job.batch/superset-init-db -n {{ superset_namespace }}
+  ignore_errors: yes
+
+- name: helm upgrade
+  shell: helm upgrade --install superset "{{ chart_path }}" -n {{ superset_namespace }} --create-namespace
