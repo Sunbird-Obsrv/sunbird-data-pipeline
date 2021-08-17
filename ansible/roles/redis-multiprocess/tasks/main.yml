@@ -31,7 +31,6 @@
     - make
     - gcc
     - build-essential
-    - tcl8.5
 
 - name: Go to the folder and run make
   become: yes
