@@ -8,7 +8,7 @@ Group={{ redis_user }}
 ExecStart={{ redis_dir }}/redis-stable/src/redis-server {{ redis_dir }}/redis-stable/redis.conf
 ExecStop={{ redis_dir }}/redis-stable/src/redis-cli shutdown
 Restart=always
-Type=notify
+Type=forking
 
 [Install]
 WantedBy=multi-user.target
