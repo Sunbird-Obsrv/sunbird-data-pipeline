@@ -144,8 +144,8 @@ middleware_cassandra_assessment_aggregator_table: assessment_aggregator
 middleware_cassandra_assessment_question_type : question
 middleware_cassandra_user_enrolments_table: user_enrolments
 middleware_cassandra_user_activity_agg_table: user_activity_agg
-content_service_host: "http://dev.sunbirded.org"
-content_service_end_point: "/api/content/v1/read/" 
+content_read_api_host: "http://dev.sunbirded.org"
+content_read_api_endpoint: "/api/content/v1/read/" 
 
 ### taskmanager related vars
 healthcheck: true

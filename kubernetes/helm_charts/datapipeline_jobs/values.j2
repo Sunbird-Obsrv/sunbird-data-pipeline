@@ -693,7 +693,7 @@ assessment-aggregator:
       }
     }
     assessment.forcefilter = false
-    content.read.api = "{{ content_host }}/{{ content_service_end_point }}"
+    content.read.api = "{{ content_read_api_host }}/{{ content_read_api_endpoint }}"
 
   flink-conf: |+
     jobmanager.memory.flink.size: {{ flink_job_names['assessment-aggregator'].jobmanager_memory }}
