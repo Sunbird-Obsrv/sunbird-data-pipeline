@@ -43,6 +43,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
   val mapType: Type = new TypeToken[util.Map[String, AnyRef]]() {}.getType
   private[this] val logger = LoggerFactory.getLogger(classOf[AssessmentAggregatorFunction])
   private var dataCache: DataCache = _
+  private var contentCache: DataCache = _
   var questionType: UserType = _
   private var restUtil: RestUtil = _
   private val df = new DecimalFormat("0.0#")
@@ -56,6 +57,8 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
     super.open(parameters)
     dataCache = new DataCache(config, new RedisConnect(config.metaRedisHost, config.metaRedisPort, config), config.relationCacheNode, List())
     dataCache.init()
+    contentCache = new DataCache(config, new RedisConnect(config.metaRedisHost, config.metaRedisPort, config), config.contentCacheNode, List())
+    contentCache.init()
     cassandraUtil = new CassandraUtil(config.dbHost, config.dbPort)
     questionType = cassandraUtil.getUDTType(config.dbKeyspace, config.dbudtType)
     restUtil = new RestUtil()
@@ -220,8 +223,12 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
     metrics.incCounter(config.certIssueEventsCount)
   }
 
+  def getQuestionCountFromCache(contentId: String): Int = {
+    val result = contentCache.getWithRetry(contentId)
+    result.getOrElse("totalQuestions", 0.0).asInstanceOf[Double].toInt
+  }
 
-  def getTotalQuestionsCount(contentId: String): Int = {
+  def getQuestionCountFromAPI(contentId: String): Int = {
     val contentReadResp = JSONUtil.deserialize[util.HashMap[String, AnyRef]](restUtil.get(config.contentReadAPI.concat(contentId)))
     if (contentReadResp.get("responseCode").asInstanceOf[String].toUpperCase.equalsIgnoreCase("OK")) {
       val result = contentReadResp.getOrDefault("result", new util.HashMap()).asInstanceOf[util.Map[String, AnyRef]]
@@ -230,10 +237,15 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
       logger.info(s"Fetched the totalQuestion Value from the Content Read API - ContentId:$contentId, TotalQuestionCount:$totalQuestions")
       totalQuestions
     } else {
-      println("else part")
       logger.info(s"API Failed to Fetch the TotalQuestion Count - ContentId:$contentId, ResponseCode - ${contentReadResp.get("responseCode")} ")
       0
     }
+  }
+
+  def getTotalQuestionsCount(contentId: String): Int = {
+    val totalQuestionsCount: Int = getQuestionCountFromCache(contentId)
+    logger.info(s" Total Question Count Value From Redis - ContentId:$contentId, TotalQuestionCount - ${totalQuestionsCount} ")
+    if (totalQuestionsCount == 0) getQuestionCountFromAPI(contentId) else totalQuestionsCount
   }
 
 }

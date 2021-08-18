@@ -134,6 +134,14 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
         jedis.sadd(node._1, node._2)
       })
     })
+
+    // Setup content Cache
+    val contentCache = redisConnect.getConnection(assessmentConfig.contentCacheNode)
+    EventFixture.contentCacheList.map(nodes => {
+      nodes.map(node => {
+        contentCache.set(node._1, node._2)
+      })
+    })
   }
 }
 

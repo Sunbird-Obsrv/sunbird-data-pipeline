@@ -67,6 +67,7 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
 
   // Cache
   val relationCacheNode = config.getInt("redis.database.relationCache.id")
+  val contentCacheNode = config.getInt("redis.database.contentCache.id")
   
   //UserActivityAgg
   val scoreAggregateTag: OutputTag[Event] = OutputTag[Event]("score-aggregate-events")
