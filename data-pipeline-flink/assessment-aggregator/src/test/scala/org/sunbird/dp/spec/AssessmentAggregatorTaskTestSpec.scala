@@ -116,7 +116,7 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
     when(mockKafkaUtil.kafkaStringSink(forceValidationAssessmentConfig.kafkaCertIssueTopic)).thenReturn(new certificateIssuedEventsSink)
     val task = new AssessmentAggregatorStreamTask(forceValidationAssessmentConfig, mockKafkaUtil)
     task.process()
-    //BaseMetricsReporter.gaugeMetrics(s"${forceValidationAssessmentConfig.jobName}.${forceValidationAssessmentConfig.skippedEventCount}").getValue() should be(0)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.batchSuccessCount}").getValue() should be(1)
 
   }
 
