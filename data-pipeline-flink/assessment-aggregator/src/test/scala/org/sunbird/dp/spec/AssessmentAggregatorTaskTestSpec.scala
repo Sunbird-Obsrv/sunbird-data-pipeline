@@ -95,7 +95,6 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.certIssueEventsCount}").getValue() should be(5)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbScoreAggUpdateCount}").getValue() should be(5)
     BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.dbScoreAggReadCount}").getValue() should be(5)
-    
     val test_row1 = cassandraUtil.findOne("select total_score,total_max_score from sunbird_courses.assessment_aggregator where user_id='d0d8a341-9637-484c-b871-0c27015af238' and course_id='do_2128410273679114241112'")
     assert(test_row1.getDouble("total_score") == 2.0)
     assert(test_row1.getDouble("total_max_score") == 2.0)
@@ -108,6 +107,17 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
     val resultMap = test_row3.getMap("agg", new TypeToken[String]() {}, new TypeToken[Integer]() {})
     assert(null != resultMap)
     assert(2 == resultMap.getOrDefault("score:do_2128373396098744321673", 0))
+  }
+
+  "AssessmentAggregator " should "Force Validate the Question Counts And Update the DB" in {
+    val forceValidationAssessmentConfig: AssessmentAggregatorConfig = new AssessmentAggregatorConfig(ConfigFactory.load("forcevalidate.conf"))
+    when(mockKafkaUtil.kafkaEventSource[Event](forceValidationAssessmentConfig.kafkaInputTopic)).thenReturn(new AssessmentAggreagatorEventSourceForceValidation)
+    when(mockKafkaUtil.kafkaEventSink[Event](forceValidationAssessmentConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)
+    when(mockKafkaUtil.kafkaStringSink(forceValidationAssessmentConfig.kafkaCertIssueTopic)).thenReturn(new certificateIssuedEventsSink)
+    val task = new AssessmentAggregatorStreamTask(forceValidationAssessmentConfig, mockKafkaUtil)
+    task.process()
+    //BaseMetricsReporter.gaugeMetrics(s"${forceValidationAssessmentConfig.jobName}.${forceValidationAssessmentConfig.skippedEventCount}").getValue() should be(0)
+
   }
 
   def testCassandraUtil(cassandraUtil: CassandraUtil): Unit = {
@@ -126,6 +136,8 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
     })
   }
 }
+
+
 
 class AssessmentAggreagatorEventSource extends SourceFunction[Event] {
 
@@ -150,6 +162,17 @@ class AssessmentAggreagatorEventSource extends SourceFunction[Event] {
     ctx.collect(new Event(eventMap6))
     ctx.collect(new Event(eventMap7))
     ctx.collect(new Event(eventMap8))
+  }
+
+  override def cancel() = {}
+
+}
+
+
+class AssessmentAggreagatorEventSourceForceValidation extends SourceFunction[Event] {
+  override def run(ctx: SourceContext[Event]) {
+    val eventMap1 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.DUPLICATE_BATCH_ASSESS_EVENTS)
+    ctx.collect(new Event(eventMap1))
   }
 
   override def cancel() = {}

@@ -76,4 +76,8 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
   val activityUser = "user_id"
   val aggLastUpdated = "agg_last_updated"
   val agg = "agg"
+
+  val forceFilterQuestions = config.getBoolean("forceFilterQuestions")
+  val contentReadAPI = config.getString("contentReadAPI")
+
 }

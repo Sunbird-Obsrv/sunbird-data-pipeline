@@ -6,7 +6,6 @@ import java.sql.Timestamp
 import java.text.DecimalFormat
 import java.util
 import java.util.UUID
-
 import com.datastax.driver.core.querybuilder.QueryBuilder
 import com.datastax.driver.core.{Row, UDTValue, UserType}
 import com.google.gson.Gson
@@ -18,9 +17,10 @@ import org.joda.time.{DateTime, DateTimeZone}
 import org.slf4j.LoggerFactory
 import org.sunbird.dp.assessment.domain.Event
 import org.sunbird.dp.assessment.task.AssessmentAggregatorConfig
+import org.sunbird.dp.contentupdater.core.util.RestUtil
 import org.sunbird.dp.core.cache.{DataCache, RedisConnect}
 import org.sunbird.dp.core.job.{BaseProcessFunction, Metrics}
-import org.sunbird.dp.core.util.CassandraUtil
+import org.sunbird.dp.core.util.{CassandraUtil, JSONUtil}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -44,6 +44,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
   private[this] val logger = LoggerFactory.getLogger(classOf[AssessmentAggregatorFunction])
   private var dataCache: DataCache = _
   var questionType: UserType = _
+  private var restUtil: RestUtil = _
   private val df = new DecimalFormat("0.0#")
 
   override def metricsList() = List(config.dbUpdateCount, config.dbReadCount,
@@ -57,6 +58,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
     dataCache.init()
     cassandraUtil = new CassandraUtil(config.dbHost, config.dbPort)
     questionType = cassandraUtil.getUDTType(config.dbKeyspace, config.dbudtType)
+    restUtil = new RestUtil()
   }
 
   override def close(): Unit = {
@@ -91,12 +93,22 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
           AssessEvent(event.get("ets").asInstanceOf[Long], new Gson().fromJson(new Gson().toJson(event.get("edata")), classOf[QuestionData]))
         }).sortWith(_.ets > _.ets).groupBy(_.edata.item.id).map(_._2.head)
 
-        val result = sortAndFilteredEvents.map(event => {
-          totalScore = totalScore + event.edata.score
-          totalMaxScore = totalMaxScore + event.edata.item.maxscore
-          getQuestion(event.edata, event.ets.longValue())
-        })
-
+        val result = if (config.forceFilterQuestions) {
+          logger.info("Force Filter of Question Is Enabled - " + config.forceFilterQuestions)
+          val totalQuestions = getTotalQuestionsCount(event.contentId)
+          sortAndFilteredEvents.take(totalQuestions).foreach(event => { // Reading Only Top TotalQuestionCount Values From the sortAndFilteredEvents Object
+            totalScore = totalScore + event.edata.score
+            totalMaxScore = totalMaxScore + event.edata.item.maxscore
+          })
+          sortAndFilteredEvents.map(event => {getQuestion(event.edata, event.ets.longValue())})
+        } else {
+          logger.info("Force Filter of Question Is Disabled - " + config.forceFilterQuestions)
+          sortAndFilteredEvents.map(event => {
+            totalScore = totalScore + event.edata.score
+            totalMaxScore = totalMaxScore + event.edata.item.maxscore
+            getQuestion(event.edata, event.ets.longValue())
+          }).toList
+        }
         val grandTotal = String.format("%s/%s", df.format(totalScore), df.format(totalMaxScore))
 
         if (null == assessment) {
@@ -207,5 +219,22 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
     context.output(config.certIssueOutputTag, event)
     metrics.incCounter(config.certIssueEventsCount)
   }
+
+
+  def getTotalQuestionsCount(contentId: String): Int = {
+    val contentReadResp = JSONUtil.deserialize[util.HashMap[String, AnyRef]](restUtil.get(config.contentReadAPI.concat(contentId)))
+    if (contentReadResp.get("responseCode").asInstanceOf[String].toUpperCase.equalsIgnoreCase("OK")) {
+      val result = contentReadResp.getOrDefault("result", new util.HashMap()).asInstanceOf[util.Map[String, AnyRef]]
+      val content = result.getOrDefault("content", new util.HashMap()).asInstanceOf[util.Map[String, Any]]
+      val totalQuestions = content.getOrDefault("totalQuestions", 0).asInstanceOf[Int]
+      logger.info(s"Fetched the totalQuestion Value from the Content Read API - ContentId:$contentId, TotalQuestionCount:$totalQuestions")
+      totalQuestions
+    } else {
+      println("else part")
+      logger.info(s"API Failed to Fetch the TotalQuestion Count - ContentId:$contentId, ResponseCode - ${contentReadResp.get("responseCode")} ")
+      0
+    }
+  }
+
 }
 
