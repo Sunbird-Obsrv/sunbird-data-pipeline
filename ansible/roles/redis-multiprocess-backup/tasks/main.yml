@@ -7,7 +7,7 @@
  
 - name: copy dump.rdb files
   copy:
-    src: /home/analytics/redis-stable/{{ item.value.name }}-dump.rdb
+    src: "{{ redis_data_dir }}/{{ item.value.name }}-dump.rdb"
     dest: "{{ redis_backup_dir }}/{{ item.value.name }}/{{ item.value.name }}-dump.rdb"
     remote_src: yes
   with_dict: "{{ redis.config }}"
