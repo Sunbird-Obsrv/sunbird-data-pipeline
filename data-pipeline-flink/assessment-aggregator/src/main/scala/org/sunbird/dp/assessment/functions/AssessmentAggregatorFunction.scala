@@ -50,7 +50,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
 
   override def metricsList() = List(config.dbUpdateCount, config.dbReadCount,
     config.failedEventCount, config.batchSuccessCount,
-    config.skippedEventCount, config.cacheHitCount, config.cacheHitMissCount, config.certIssueEventsCount)
+    config.skippedEventCount, config.cacheHitCount, config.cacheHitMissCount, config.certIssueEventsCount, config.apiHitFailedCount, config.apiHitSuccessCount)
 
 
   override def open(parameters: Configuration): Unit = {
@@ -98,7 +98,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
 
         val result = if (config.forceFilterQuestions) {
           logger.info("Force Filter of Question Is Enabled - " + config.forceFilterQuestions)
-          val totalQuestions = getTotalQuestionsCount(event.contentId)
+          val totalQuestions = getTotalQuestionsCount(event.contentId)(metrics)
           sortAndFilteredEvents.take(totalQuestions).foreach(event => { // Reading Only Top TotalQuestionCount Values From the sortAndFilteredEvents Object
             totalScore = totalScore + event.edata.score
             totalMaxScore = totalMaxScore + event.edata.item.maxscore
@@ -223,29 +223,37 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
     metrics.incCounter(config.certIssueEventsCount)
   }
 
-  def getQuestionCountFromCache(contentId: String): Int = {
+  def getQuestionCountFromCache(contentId: String)(metrics: Metrics): Int = {
     val result = contentCache.getWithRetry(contentId)
+    metrics.incCounter(config.cacheHitCount)
     result.getOrElse("totalQuestions", 0.0).asInstanceOf[Double].toInt
   }
 
-  def getQuestionCountFromAPI(contentId: String): Int = {
+  def getQuestionCountFromAPI(contentId: String)(metrics: Metrics): Int = {
     val contentReadResp = JSONUtil.deserialize[util.HashMap[String, AnyRef]](restUtil.get(config.contentReadAPI.concat(contentId)))
     if (contentReadResp.get("responseCode").asInstanceOf[String].toUpperCase.equalsIgnoreCase("OK")) {
+      metrics.incCounter(config.apiHitSuccessCount)
       val result = contentReadResp.getOrDefault("result", new util.HashMap()).asInstanceOf[util.Map[String, AnyRef]]
       val content = result.getOrDefault("content", new util.HashMap()).asInstanceOf[util.Map[String, Any]]
       val totalQuestions = content.getOrDefault("totalQuestions", 0).asInstanceOf[Int]
       logger.info(s"Fetched the totalQuestion Value from the Content Read API - ContentId:$contentId, TotalQuestionCount:$totalQuestions")
       totalQuestions
     } else {
+      metrics.incCounter(config.apiHitFailedCount)
       logger.info(s"API Failed to Fetch the TotalQuestion Count - ContentId:$contentId, ResponseCode - ${contentReadResp.get("responseCode")} ")
       0
     }
   }
 
-  def getTotalQuestionsCount(contentId: String): Int = {
-    val totalQuestionsCount: Int = getQuestionCountFromCache(contentId)
+  def getTotalQuestionsCount(contentId: String)(metrics: Metrics): Int = {
+    val totalQuestionsCount: Int = getQuestionCountFromCache(contentId)(metrics)
     logger.info(s" Total Question Count Value From Redis - ContentId:$contentId, TotalQuestionCount - ${totalQuestionsCount} ")
-    if (totalQuestionsCount == 0) getQuestionCountFromAPI(contentId) else totalQuestionsCount
+    if (totalQuestionsCount == 0) {
+      metrics.incCounter(config.cacheHitMissCount)
+      getQuestionCountFromAPI(contentId)(metrics)
+    } else {
+      totalQuestionsCount
+    }
   }
 
 }
