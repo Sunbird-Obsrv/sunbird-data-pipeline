@@ -116,7 +116,7 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
     when(mockKafkaUtil.kafkaStringSink(forceValidationAssessmentConfig.kafkaCertIssueTopic)).thenReturn(new certificateIssuedEventsSink)
     val task = new AssessmentAggregatorStreamTask(forceValidationAssessmentConfig, mockKafkaUtil)
     task.process()
-    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.batchSuccessCount}").getValue() should be(1)
+    BaseMetricsReporter.gaugeMetrics(s"${assessmentConfig.jobName}.${assessmentConfig.batchSuccessCount}").getValue() should be(2)
 
   }
 
@@ -179,8 +179,10 @@ class AssessmentAggreagatorEventSource extends SourceFunction[Event] {
 
 class AssessmentAggreagatorEventSourceForceValidation extends SourceFunction[Event] {
   override def run(ctx: SourceContext[Event]) {
-    val eventMap1 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.DUPLICATE_BATCH_ASSESS_EVENTS)
+    val eventMap1 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.DUPLICATE_BATCH_ASSESS_EVENTS_1)
+    val eventMap2 = JSONUtil.deserialize[util.HashMap[String, Any]](EventFixture.DUPLICATE_BATCH_ASSESS_EVENTS_2)
     ctx.collect(new Event(eventMap1))
+    ctx.collect(new Event(eventMap2))
   }
 
   override def cancel() = {}
