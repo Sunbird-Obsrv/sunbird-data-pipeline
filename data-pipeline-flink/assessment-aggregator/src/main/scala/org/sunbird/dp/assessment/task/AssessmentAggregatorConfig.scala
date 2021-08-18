@@ -78,7 +78,7 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
   val aggLastUpdated = "agg_last_updated"
   val agg = "agg"
 
-  val forceFilterQuestions = config.getBoolean("forceFilterQuestions")
-  val contentReadAPI = config.getString("contentReadAPI")
+  val forceFilterQuestions = config.getBoolean("assessment.forcefilter")
+  val contentReadAPI = config.getString("content.read.api")
 
 }
