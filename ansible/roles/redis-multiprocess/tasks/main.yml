@@ -1,5 +1,14 @@
 ---
 # tasks file for redis
+- name: change the data dir ownership
+  file:
+    path: /data
+    state: directory
+    owner: "{{ redis_user }}"
+    group: "{{ redis_user }}"
+    mode: 0755
+    become: yes
+
 - name: create the redis dir
   become: yes
   become_user: "{{ redis_user }}"
