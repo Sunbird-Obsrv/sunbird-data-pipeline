@@ -692,7 +692,7 @@ assessment-aggregator:
         contentCache.id = 5
       }
     }
-    assessment.forcefilter = false
+    assessment.skip.missingRecords = true
     content.read.api = "{{ content_read_api_host }}/{{ content_read_api_endpoint }}"
 
   flink-conf: |+
