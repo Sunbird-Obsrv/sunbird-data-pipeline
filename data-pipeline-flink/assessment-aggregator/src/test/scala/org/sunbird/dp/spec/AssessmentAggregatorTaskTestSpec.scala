@@ -109,7 +109,7 @@ class AssessmentAggregatorTaskTestSpec extends BaseTestSpec {
     assert(2 == resultMap.getOrDefault("score:do_2128373396098744321673", 0))
   }
 
-  "AssessmentAggregator " should "Force Validate the Question Counts And Update the DB" in {
+  "AssessmentAggregator " should "Skip the missing records from the event" in {
     val forceValidationAssessmentConfig: AssessmentAggregatorConfig = new AssessmentAggregatorConfig(ConfigFactory.load("forcevalidate.conf"))
     when(mockKafkaUtil.kafkaEventSource[Event](forceValidationAssessmentConfig.kafkaInputTopic)).thenReturn(new AssessmentAggreagatorEventSourceForceValidation)
     when(mockKafkaUtil.kafkaEventSink[Event](forceValidationAssessmentConfig.kafkaFailedTopic)).thenReturn(new FailedEventsSink)

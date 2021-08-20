@@ -69,8 +69,8 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
   val userScoreAggregateFn = "user-score-aggregator"
 
   // Cache
-  val relationCacheNode = config.getInt("redis.database.relationCache.id")
-  val contentCacheNode = config.getInt("redis.database.contentCache.id")
+  val relationCacheNode:Int = config.getInt("redis.database.relationCache.id")
+  val contentCacheNode:Int = config.getInt("redis.database.contentCache.id")
   
   //UserActivityAgg
   val scoreAggregateTag: OutputTag[Event] = OutputTag[Event]("score-aggregate-events")
@@ -81,7 +81,7 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
   val aggLastUpdated = "agg_last_updated"
   val agg = "agg"
 
-  val forceFilterQuestions = config.getBoolean("assessment.forcefilter")
-  val contentReadAPI = config.getString("content.read.api")
+  val skipMissingRecords: Boolean = config.getBoolean("assessment.skip.missingRecords")
+  val contentReadAPI: String = config.getString("content.read.api")
 
 }

@@ -89,27 +89,25 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
       if (isValidContent(event.courseId, event.contentId)(metrics)) {
         val assessEvents = event.assessEvents.asScala
         val sortAndFilteredEvents: List[AssessEvent] = getUniqueQuestions(assessEvents = assessEvents.toList)
-        if (false) {
+        if (config.skipMissingRecords) { // Skip configuration to enable the force filter of duplicate questions based on the question meta
           val totalQuestions: Int = getTotalQuestionsCount(event.contentId)(metrics)
           if (totalQuestions == sortAndFilteredEvents.size) {
-            val scoreMetrics: Aggregate = computeScoreMetrics(sortAndFilteredEvents)
-            updateDB(scoreMetrics = scoreMetrics, event = event)(metrics, context)
+            updateDB(scoreMetrics = computeScoreMetrics(sortAndFilteredEvents), event = event)(metrics, context)
           } else {
             context.output(config.failedEventsOutputTag, event)
             metrics.incCounter(config.ignoredEventsCount)
           }
         } else {
-          val scoreMetrics: Aggregate = computeScoreMetrics(sortAndFilteredEvents)
-          updateDB(scoreMetrics = scoreMetrics, event = event)(metrics, context)
+          updateDB(scoreMetrics = computeScoreMetrics(sortAndFilteredEvents), event = event)(metrics, context)
         }
-
       } else {
         context.output(config.failedEventsOutputTag, event)
         metrics.incCounter(config.failedEventCount)
       }
     } catch {
       case ex: Exception =>
-        logger.info("Assessment Failed with exception :", ex)
+        ex.printStackTrace()
+        logger.info("Assessment Failed with exception :", ex.getMessage)
         event.markFailed(ex.getMessage)
         context.output(config.failedEventsOutputTag, event)
         metrics.incCounter(config.failedEventCount)
