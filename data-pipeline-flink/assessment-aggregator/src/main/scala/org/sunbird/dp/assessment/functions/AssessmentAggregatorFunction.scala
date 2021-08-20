@@ -34,7 +34,6 @@ case class AssessEvent(ets: Long, edata: QuestionData)
 
 case class Aggregate(totalScore: Double, totalMaxScore: Double, grandTotal: String, questionsList: List[UDTValue])
 
-
 class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
                                    @transient var cassandraUtil: CassandraUtil = null
                                   )(implicit val mapTypeInfo: TypeInformation[Event])
@@ -46,11 +45,11 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
   private var contentCache: DataCache = _
   var questionType: UserType = _
   private var restUtil: RestUtil = _
-  private val df = new DecimalFormat("0.0#")
+
 
   override def metricsList() = List(config.dbUpdateCount, config.dbReadCount,
     config.failedEventCount, config.batchSuccessCount,
-    config.skippedEventCount, config.cacheHitCount, config.cacheHitMissCount, config.certIssueEventsCount, config.apiHitFailedCount, config.apiHitSuccessCount)
+    config.skippedEventCount, config.cacheHitCount, config.cacheHitMissCount, config.certIssueEventsCount, config.apiHitFailedCount, config.apiHitSuccessCount, config.ignoredEventsCount)
 
 
   override def open(parameters: Configuration): Unit = {
@@ -88,53 +87,22 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
     try {
       // Validating the contentId
       if (isValidContent(event.courseId, event.contentId)(metrics)) {
-        var totalScore = 0.0
-        var totalMaxScore = 0.0
-        val assessment = getAssessment(event)
         val assessEvents = event.assessEvents.asScala
-        val sortAndFilteredEvents = assessEvents.map(event => {
-          AssessEvent(event.get("ets").asInstanceOf[Long], new Gson().fromJson(new Gson().toJson(event.get("edata")), classOf[QuestionData]))
-        }).sortWith(_.ets > _.ets).groupBy(_.edata.item.id).map(_._2.head)
-
-        val result = if (config.forceFilterQuestions) {
-          logger.info("Force Filter of Question Is Enabled - " + config.forceFilterQuestions)
-          val totalQuestions = getTotalQuestionsCount(event.contentId)(metrics)
-          sortAndFilteredEvents.take(totalQuestions).foreach(event => { // Reading Only Top TotalQuestionCount Values From the sortAndFilteredEvents Object
-            totalScore = totalScore + event.edata.score
-            totalMaxScore = totalMaxScore + event.edata.item.maxscore
-          })
-          sortAndFilteredEvents.map(event => {getQuestion(event.edata, event.ets.longValue())})
+        val sortAndFilteredEvents: List[AssessEvent] = getUniqueQuestions(assessEvents = assessEvents.toList)
+        if (false) {
+          val totalQuestions: Int = getTotalQuestionsCount(event.contentId)(metrics)
+          if (totalQuestions == sortAndFilteredEvents.size) {
+            val scoreMetrics: Aggregate = computeScoreMetrics(sortAndFilteredEvents)
+            updateDB(scoreMetrics = scoreMetrics, event = event)(metrics, context)
+          } else {
+            context.output(config.failedEventsOutputTag, event)
+            metrics.incCounter(config.ignoredEventsCount)
+          }
         } else {
-          logger.info("Force Filter of Question Is Disabled - " + config.forceFilterQuestions)
-          sortAndFilteredEvents.map(event => {
-            totalScore = totalScore + event.edata.score
-            totalMaxScore = totalMaxScore + event.edata.item.maxscore
-            getQuestion(event.edata, event.ets.longValue())
-          }).toList
+          val scoreMetrics: Aggregate = computeScoreMetrics(sortAndFilteredEvents)
+          updateDB(scoreMetrics = scoreMetrics, event = event)(metrics, context)
         }
-        val grandTotal = String.format("%s/%s", df.format(totalScore), df.format(totalMaxScore))
 
-        if (null == assessment) {
-          saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList), new DateTime().getMillis)
-          metrics.incCounter(config.dbUpdateCount)
-          metrics.incCounter(config.batchSuccessCount)
-          context.output(config.scoreAggregateTag, event)
-          createIssueCertEvent(event, context, metrics)
-        }
-        else {
-          metrics.incCounter(config.dbReadCount)
-          if (event.assessmentEts > assessment.getTimestamp("last_attempted_on").getTime) {
-            saveAssessment(event, Aggregate(totalScore, totalMaxScore, grandTotal, result.toList),
-              assessment.getTimestamp("created_on").getTime)
-            metrics.incCounter(config.dbUpdateCount)
-            metrics.incCounter(config.batchSuccessCount)
-            context.output(config.scoreAggregateTag, event)
-            createIssueCertEvent(event, context, metrics)
-          }
-          else {
-            metrics.incCounter(config.skippedEventCount)
-          }
-        }
       } else {
         context.output(config.failedEventsOutputTag, event)
         metrics.incCounter(config.failedEventCount)
@@ -146,6 +114,50 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
         context.output(config.failedEventsOutputTag, event)
         metrics.incCounter(config.failedEventCount)
     }
+  }
+
+  def updateDB(scoreMetrics: Aggregate, event: Event)(metrics: Metrics, context: ProcessFunction[Event, Event]#Context): Unit = {
+    val assessmentDBResult = getAssessment(event)
+    if (null == assessmentDBResult) {
+      saveAssessment(event, Aggregate(scoreMetrics.totalScore, scoreMetrics.totalMaxScore, scoreMetrics.grandTotal, scoreMetrics.questionsList), new DateTime().getMillis)
+      metrics.incCounter(config.dbUpdateCount)
+      metrics.incCounter(config.batchSuccessCount)
+      context.output(config.scoreAggregateTag, event)
+      createIssueCertEvent(event, context, metrics)
+    }
+    else {
+      metrics.incCounter(config.dbReadCount)
+      if (event.assessmentEts > assessmentDBResult.getTimestamp("last_attempted_on").getTime) {
+        saveAssessment(event, Aggregate(scoreMetrics.totalScore, scoreMetrics.totalMaxScore, scoreMetrics.grandTotal, scoreMetrics.questionsList),
+          assessmentDBResult.getTimestamp("created_on").getTime)
+        metrics.incCounter(config.dbUpdateCount)
+        metrics.incCounter(config.batchSuccessCount)
+        context.output(config.scoreAggregateTag, event)
+        createIssueCertEvent(event, context, metrics)
+      }
+      else {
+        metrics.incCounter(config.skippedEventCount)
+      }
+    }
+  }
+
+  def getUniqueQuestions(assessEvents: List[util.Map[String, AnyRef]]): List[AssessEvent] = {
+    assessEvents.map(event => {
+      AssessEvent(event.get("ets").asInstanceOf[Long], new Gson().fromJson(new Gson().toJson(event.get("edata")), classOf[QuestionData]))
+    }).sortWith(_.ets > _.ets).groupBy(_.edata.item.id).map(_._2.head).toList
+  }
+
+  def computeScoreMetrics(events: List[AssessEvent]): Aggregate = {
+    var totalScore = 0.0
+    var totalMaxScore = 0.0
+    val df = new DecimalFormat("0.0#")
+    val questions = events.map(event => {
+      totalScore = totalScore + event.edata.score
+      totalMaxScore = totalMaxScore + event.edata.item.maxscore
+      getQuestion(event.edata, event.ets.longValue())
+    })
+    val grandTotal = String.format("%s/%s", df.format(totalScore), df.format(totalMaxScore))
+    Aggregate(totalScore = totalScore, totalMaxScore = totalMaxScore, grandTotal = grandTotal, questionsList = questions)
   }
 
   def getAssessment(event: Event): Row = {
@@ -202,12 +214,13 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
 
   /**
    * Generation of Certificate Issue event for the enrolment completed users to validate and generate certificate.
+   *
    * @param batchEvent
    * @param context
    * @param metrics
    */
   def createIssueCertEvent(batchEvent: Event, context: ProcessFunction[Event, Event]#Context,
-  metrics: Metrics): Unit = {
+                           metrics: Metrics): Unit = {
     val ets = System.currentTimeMillis
     val mid = s"""LP.${ets}.${UUID.randomUUID}"""
     val event =

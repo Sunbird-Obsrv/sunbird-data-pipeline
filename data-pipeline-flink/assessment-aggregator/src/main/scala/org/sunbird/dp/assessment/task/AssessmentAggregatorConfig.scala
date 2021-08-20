@@ -30,6 +30,7 @@ class AssessmentAggregatorConfig(override val config: Config) extends BaseJobCon
   val dbReadCount = "db-read-count"
   val batchSuccessCount = "batch-success-event-count"
   val failedEventCount = "failed-event-count"
+  val ignoredEventsCount = "ignored-event-count"
   val skippedEventCount = "skipped-event-count"
   val cacheHitCount = "cache-hit-count"
   val cacheHitMissCount = "cache-hit-miss-count"
