@@ -49,7 +49,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
 
   override def metricsList() = List(config.dbUpdateCount, config.dbReadCount,
     config.failedEventCount, config.batchSuccessCount,
-    config.skippedEventCount, config.cacheHitCount, config.cacheHitMissCount, config.certIssueEventsCount, config.apiHitFailedCount, config.apiHitSuccessCount, config.ignoredEventsCount)
+    config.skippedEventCount, config.cacheHitCount, config.cacheHitMissCount, config.certIssueEventsCount, config.apiHitFailedCount, config.apiHitSuccessCount, config.ignoredEventsCount, config.invalidContentSkippedCount)
 
 
   override def open(parameters: Configuration): Unit = {
@@ -91,13 +91,32 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
         val sortAndFilteredEvents: List[AssessEvent] = getUniqueQuestions(assessEvents = assessEvents.toList)
         if (config.skipMissingRecords) { // Skip configuration to enable the force filter of duplicate questions based on the question meta
           val totalQuestions: Int = getTotalQuestionsCount(event.contentId)(metrics)
-          if (totalQuestions == sortAndFilteredEvents.size) {
-            updateDB(scoreMetrics = computeScoreMetrics(sortAndFilteredEvents), event = event)(metrics, context)
-          } else {
+          /**
+           * Adding NegligibleValue condition Since we have invalid content Id's in the assessment event
+           * EX - For PDF content users are generating the ASSESS events
+           */
+          if (isNegligibleValue(totalQuestions)) {
             context.output(config.failedEventsOutputTag, event)
-            metrics.incCounter(config.ignoredEventsCount)
+            metrics.incCounter(config.invalidContentSkippedCount)
+          } else {
+            /**
+             * If the totalQuestions from the content Meta and Events count are matching
+             * Then we are computing the score metrics and updating the table
+             */
+            if (totalQuestions == sortAndFilteredEvents.size) {
+              updateDB(scoreMetrics = computeScoreMetrics(sortAndFilteredEvents), event = event)(metrics, context)
+            } else {
+              /**
+               * if the totalQuestions Count value is not matching with the event size then job should skip those events
+               */
+              context.output(config.failedEventsOutputTag, event)
+              metrics.incCounter(config.ignoredEventsCount)
+            }
           }
         } else {
+          /**
+           * If the config.skipMissingRecords = false then it will work as previous logic, no further validation
+           */
           updateDB(scoreMetrics = computeScoreMetrics(sortAndFilteredEvents), event = event)(metrics, context)
         }
       } else {
@@ -252,19 +271,24 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
     } else {
       metrics.incCounter(config.apiHitFailedCount)
       logger.info(s"API Failed to Fetch the TotalQuestion Count - ContentId:$contentId, ResponseCode - ${contentReadResp.get("responseCode")} ")
+      throw new Exception(s"Failed to fetch the content meta for the content ID: $contentId") // Job should stop if the api has failed
       0
     }
   }
 
   def getTotalQuestionsCount(contentId: String)(metrics: Metrics): Int = {
-    val totalQuestionsCount: Int = getQuestionCountFromCache(contentId)(metrics)
-    logger.info(s" Total Question Count Value From Redis - ContentId:$contentId, TotalQuestionCount - ${totalQuestionsCount} ")
-    if (totalQuestionsCount == 0) {
+    val totalQuestionsCountFromCache: Int = getQuestionCountFromCache(contentId)(metrics)
+    logger.info(s" Total Question Count Value From Redis - ContentId:$contentId, TotalQuestionCount - ${totalQuestionsCountFromCache} ")
+    if (isNegligibleValue(totalQuestionsCountFromCache)) {
       metrics.incCounter(config.cacheHitMissCount)
       getQuestionCountFromAPI(contentId)(metrics)
     } else {
-      totalQuestionsCount
+      totalQuestionsCountFromCache
     }
+  }
+
+  def isNegligibleValue(value: Int): Boolean = {
+    if (value == 0) true else false
   }
 
 }
