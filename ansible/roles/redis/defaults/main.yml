@@ -1,11 +1,10 @@
 redis_user: analytics
-analytics_user_home: /home/{{ redis_user }}
-redis_home: "{{ analytics_user_home }}/redis-stable"
-redis_tar_ball: http://download.redis.io/releases/redis-stable.tar.gz
+analytics_redis_user_home: /home/{{ redis_user }}
+redis_home: "{{ analytics_redis_user_home }}/redis-{{ redis_version }}"
+redis_tar_ball: "http://download.redis.io/releases/redis-{{ redis_version }}.tar.gz"
 dp_redis_max_memory: 2gb
-redis_dir: "{{ analytics_user_home }}"
+redis_dir: "{{ analytics_redis_user_home }}"
 redis_dump_rdb_time_in_seconds: 900
 redis_dump_rdb_keys_to_save_state: 100
-
-
-
+redis_data_dir: /data
+redis_version: 6.2.5
