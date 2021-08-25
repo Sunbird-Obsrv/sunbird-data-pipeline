@@ -103,7 +103,7 @@ class AssessmentAggregatorFunction(config: AssessmentAggregatorConfig,
              * If the totalQuestions from the content Meta and Events count are matching
              * Then we are computing the score metrics and updating the table
              */
-            if (totalQuestions == sortAndFilteredEvents.size) {
+            if (sortAndFilteredEvents.size <= totalQuestions) {
               updateDB(scoreMetrics = computeScoreMetrics(sortAndFilteredEvents), event = event)(metrics, context)
             } else {
               /**
